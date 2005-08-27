@@ -34,10 +34,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.*;
 import net.sourceforge.squirrel_sql.client.mainframe.action.AboutAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CascadeAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CloseAllSessionsAction;
@@ -215,7 +212,7 @@ public final class ActionCollection
 	 *
 	 * @param	frame	The <TT>JInternalFrame</TT> deactivated.
 	 */
-	public void internalFrameDeactivated(JInternalFrame frame)
+	public void deactivationChanged(JInternalFrame frame)
 	{
 		final boolean isSQLFrame = (frame instanceof SQLInternalFrame);
 		final boolean isTreeFrame = (frame instanceof ObjectTreeInternalFrame);
@@ -257,7 +254,7 @@ public final class ActionCollection
 	 *
 	 * @param	frame	The <TT>JInternalFrame</TT> activated.
 	 */
-	public synchronized void internalFrameActivated(JInternalFrame frame)
+	public synchronized void activationChanged(JInternalFrame frame)
 	{
 		final boolean isSQLFrame = (frame instanceof SQLInternalFrame);
 		final boolean isTreeFrame = (frame instanceof ObjectTreeInternalFrame);
@@ -287,11 +284,27 @@ public final class ActionCollection
 
 			if ((isSessionInternalFrame) && (act instanceof ISQLPanelAction))
 			{
-				((ISQLPanelAction)act).setSQLPanel(((SessionInternalFrame)frame).getSessionPanel().getSQLPaneAPI());
+            SessionInternalFrame sif = (SessionInternalFrame) frame;
+            if(sif.getSessionPanel().isSQLTabSelected())
+            {
+   				((ISQLPanelAction)act).setSQLPanel(sif.getSessionPanel().getSQLPaneAPI());
+            }
+            else
+            {
+               ((ISQLPanelAction)act).setSQLPanel(null);
+            }
 			}
 			if ((isSessionInternalFrame) && (act instanceof IObjectTreeAction))
 			{
-				((IObjectTreeAction)act).setObjectTree(((SessionInternalFrame)frame).getSessionPanel().getObjectTreePanel());
+            SessionInternalFrame sif = (SessionInternalFrame) frame;
+            if(sif.getSessionPanel().isObjectTreeTabSelected())
+            {
+               ((IObjectTreeAction)act).setObjectTree(((SessionInternalFrame)frame).getSessionPanel().getObjectTreePanel());
+            }
+            else
+            {
+               ((IObjectTreeAction)act).setObjectTree(null);
+            }
 			}
 		}
 	}
@@ -402,9 +415,14 @@ public final class ActionCollection
 	{
 		add(new AboutAction(_app));
 		add(new CascadeAction(_app));
+		add(new ToolsPopupAction(_app));
 		add(new CloseAllSessionsAction(_app));
 		add(new CloseAllSQLResultTabsAction(_app));
+		add(new CloseAllSQLResultTabsButCurrentAction(_app));
+		add(new CloseCurrentSQLResultTabAction(_app));
+		add(new ToggleCurrentSQLResultTabStickyAction(_app));
 		add(new CloseAllSQLResultWindowsAction(_app));
+		add(new ViewObjectAtCursorInObjectTreeAction(_app));
 		add(new CloseSessionAction(_app));
 		add(new CommitAction(_app));
 		add(new CopyQualifiedObjectNameAction(_app));
@@ -451,12 +469,12 @@ public final class ActionCollection
 	{
 		public void internalFrameActivated(InternalFrameEvent e)
 		{
-			ActionCollection.this.internalFrameActivated(e.getInternalFrame());
+			ActionCollection.this.activationChanged(e.getInternalFrame());
 		}
 
 		public void internalFrameDeactivated(InternalFrameEvent e)
 		{
-			ActionCollection.this.internalFrameDeactivated(e.getInternalFrame());
+			ActionCollection.this.deactivationChanged(e.getInternalFrame());
 		}
 
 		public void internalFrameClosed(InternalFrameEvent e)

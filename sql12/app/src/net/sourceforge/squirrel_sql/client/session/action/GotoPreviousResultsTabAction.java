@@ -61,6 +61,7 @@ public class GotoPreviousResultsTabAction extends SquirrelAction
 	{
 		_panel = panel;
 		_cmd = null;
+      setEnabled(null != _panel);
 	}
 
 	/**

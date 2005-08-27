@@ -22,27 +22,28 @@ import java.beans.PropertyChangeListener;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import javax.swing.JTabbedPane;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
+import net.sourceforge.squirrel_sql.client.Version;
+import net.sourceforge.squirrel_sql.client.IApplication;
 
 class SquirrelTabbedPane extends JTabbedPane
 {
 	private SquirrelPreferences _prefs;
-	private Method _setter;
-	private int SCROLL;
-	private int WRAP;
 
 	private PropsListener _prefsListener;
+   private IApplication _app;
+   private static boolean _jdk14SrollWarningWasIssued = false;
 
-	/** Convenient way to refer to Application Preferences property names. */
+   /** Convenient way to refer to Application Preferences property names. */
 	private interface IAppPrefPropertynames
 							extends SquirrelPreferences.IPropertyNames
 	{
 		// Empty block.
 	}
 
-	SquirrelTabbedPane(SquirrelPreferences prefs)
+	SquirrelTabbedPane(SquirrelPreferences prefs, IApplication app)
 	{
 		super();
 
@@ -51,37 +52,32 @@ class SquirrelTabbedPane extends JTabbedPane
 			throw new IllegalArgumentException("SquirrelPreferences == null");
 		}
 		_prefs = prefs;
+      _app = app;
 
-		try
-		{
-			// Look for the new JDK 1.4 fields indicating tab types.
-			Class clazz = getClass();
-			SCROLL = clazz.getField("SCROLL_TAB_LAYOUT").getInt(this);
-			WRAP = clazz.getField("WRAP_TAB_LAYOUT").getInt(this);
-			_setter = clazz.getMethod("setTabLayoutPolicy", new Class[] { int.class });
-			Object[] parms = new Object[1];
-			parms[0] = new Integer(_prefs.useScrollableTabbedPanes() ? SCROLL : WRAP);
-			_setter.invoke(this, parms);
-		}
-		catch (IllegalAccessException ex)
-		{
-			// Running an old versin of Java.
-		}
-		catch (NoSuchFieldException ex)
-		{
-			// Running an old versin of Java.
-		}
-		catch (NoSuchMethodException ex)
-		{
-			// Running an old versin of Java.
-		}
-		catch (InvocationTargetException ex)
-		{
-			// Running an old versin of Java.
-		}
+      int tabLayoutPolicy = _prefs.useScrollableTabbedPanes() ? JTabbedPane.SCROLL_TAB_LAYOUT : JTabbedPane.WRAP_TAB_LAYOUT;
+      setTabLayoutPolicy(tabLayoutPolicy);
+      maybeIssueJDK14SrollWarning();
 	}
 
-	/**
+   private void maybeIssueJDK14SrollWarning()
+   {
+      if(false == _jdk14SrollWarningWasIssued && Version.isJDK14() && getTabLayoutPolicy() == JTabbedPane.SCROLL_TAB_LAYOUT)
+      {
+         _jdk14SrollWarningWasIssued = true;
+         SwingUtilities.invokeLater(new Runnable()
+         {
+            public void run()
+            {
+               String msg = "Right mouse menu on tabbed panes won't work (JDK 1.4 bug #4465870). " +
+                  "Consider using JDK 1.5 or higher or " +
+                  "switch off scrollable tabbed panes. See menu File --> Global Preferences";
+               _app.getMessageHandler().showMessage(msg);
+            }
+         });
+      }
+   }
+
+   /**
 	 * Component is being added to its parent so add a property change
 	 * listener to application perferences.
 	 */
@@ -111,26 +107,9 @@ class SquirrelTabbedPane extends JTabbedPane
 	{
 		if (propName == null || propName.equals(IAppPrefPropertynames.SCROLLABLE_TABBED_PANES))
 		{
-			if (_setter != null)
-			{
-				{
-					try
-					{
-						final Object[] parms = new Object[1];
-						final boolean scroll = _prefs.useScrollableTabbedPanes();
-						parms[0] = new Integer(scroll ? SCROLL : WRAP);
-						_setter.invoke(this, parms);
-					}
-					catch (IllegalAccessException ex)
-					{
-						// Running an old versin of Java.
-					}
-					catch (InvocationTargetException ex)
-					{
-						// Running an old versin of Java.
-					}
-				}
-			}
+         int tabLayoutPolicy = _prefs.useScrollableTabbedPanes() ? JTabbedPane.SCROLL_TAB_LAYOUT : JTabbedPane.WRAP_TAB_LAYOUT;
+         setTabLayoutPolicy(tabLayoutPolicy);
+         maybeIssueJDK14SrollWarning();
 		}
 	}
 

@@ -441,9 +441,18 @@ public class SQLBookmarkPreferencesPanel implements IGlobalPreferencesPanel {
 	public void actionPerformed(ActionEvent e) {
 	    item = admin.markList.getSelectedIndex();
 	    if (item < 0) return;
-	    
+
 	    admin.markModel.removeElementAt(item);
 	    admin.allMarksWorkCopy.remove(item);
+
+      if(item < admin.markList.getModel().getSize())
+      {
+         admin.markList.setSelectedIndex(item);
+      }
+      else if(0 < admin.markList.getModel().getSize() && item-1 < admin.markList.getModel().getSize())
+      {
+         admin.markList.setSelectedIndex(item-1);
+      }
 	}
     }
 

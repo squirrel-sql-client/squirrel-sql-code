@@ -60,7 +60,7 @@ public class TableFrame extends JInternalFrame
          r.width = (int)(zoom*xmlBean.getWidht() + 0.5);
          r.height = (int)(zoom*xmlBean.getHeight() + 0.5);
          setBounds(r);
-         onZoomEnabled(_zoomer.isEnabled());
+         setClosable(!_zoomer.isEnabled());
       }
 
       _zoomerListener = new ZoomerListener()

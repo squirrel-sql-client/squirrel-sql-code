@@ -29,7 +29,9 @@ import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabLi
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
-import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupAction;
+import net.sourceforge.squirrel_sql.client.session.action.ViewObjectAtCursorInObjectTreeAction;
+import net.sourceforge.squirrel_sql.client.session.action.ToolsPopupAction;
+import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 /**
  * This class is the API through which plugins can work with the SQL Panel.
@@ -45,7 +47,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	/** The SQL Panel. */
 	private SQLPanel _panel;
 
-   private ToolsPopupAction _toolsPopupAction;
+   private ToolsPopupController _toolsPopupController;
    private FileManager _fileManager = new FileManager(this);
 
    /**
@@ -64,25 +66,34 @@ public class SQLPanelAPI implements ISQLPanelAPI
 			throw new IllegalArgumentException("SQLPanel == null");
 		}
 		_panel = panel;
-      createToolsPopup();
+      _toolsPopupController = new ToolsPopupController(getSession().getApplication(), _panel, getSession());
+      createStandardEntryAreaMenuItems();
 	}
 
 
-   private void createToolsPopup()
+   private void createStandardEntryAreaMenuItems()
    {
-      _toolsPopupAction = new ToolsPopupAction(getSession().getApplication(), _panel, getSession());
+      JMenuItem item;
+      SquirrelResources resources = getSession().getApplication().getResources();
 
-      JMenuItem item = getSQLEntryPanel().addToSQLEntryAreaMenu(_toolsPopupAction);
 
-      SquirrelResources resources = _panel.getSession().getApplication().getResources();
-      resources.configureMenuItem(_toolsPopupAction, item);
-      JComponent comp = getSQLEntryPanel().getTextComponent();
-      comp.registerKeyboardAction(_toolsPopupAction, resources. getKeyStroke(_toolsPopupAction), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+      Action toolsPopupAction = _panel.getSession().getApplication().getActionCollection().get(ToolsPopupAction.class);
+      item = getSQLEntryPanel().addToSQLEntryAreaMenu(toolsPopupAction);
+      resources.configureMenuItem(toolsPopupAction, item);
+
+      if(_panel.isInMainSessionWindow())
+      {
+         Action vioAction = _panel.getSession().getApplication().getActionCollection().get(ViewObjectAtCursorInObjectTreeAction.class);
+         item = getSQLEntryPanel().addToSQLEntryAreaMenu(vioAction);
+         resources.configureMenuItem(vioAction, item);
+      }
+
    }
+
 
    public void addToToolsPopUp(String selectionString, Action action)
    {
-      _toolsPopupAction.addAction(selectionString, action);
+      _toolsPopupController.addAction(selectionString, action);
    }
 
    public void fileSave()
@@ -98,6 +109,11 @@ public class SQLPanelAPI implements ISQLPanelAPI
    public void fileOpen()
    {
       _fileManager.open();
+   }
+
+   public void showToolsPopup()
+   {
+      _toolsPopupController.showToolsPopup();
    }
 
 
@@ -445,15 +461,30 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	/**
 	 * Close all the SQL result tabs.
 	 */
-	public synchronized void closeAllSQLResultTabs()
+	public void closeAllSQLResultTabs()
 	{
 		_panel.getSQLExecPanel().closeAllSQLResultTabs();
 	}
 
+   public void closeAllButCurrentResultTabs()
+   {
+      _panel.getSQLExecPanel().closeAllButCurrentResultTabs();
+   }
+
+   public void closeCurrentResultTab()
+   {
+      _panel.getSQLExecPanel().closeCurrentResultTab();
+   }
+
+   public void toggleCurrentSQLResultTabSticky()
+   {
+      _panel.getSQLExecPanel().toggleCurrentSQLResultTabSticky();
+   }
+
 	/**
 	 * Close all the "torn off" SQL result frames.
 	 */
-	public synchronized void closeAllSQLResultFrames()
+	public void closeAllSQLResultFrames()
 	{
 		_panel.getSQLExecPanel().closeAllSQLResultFrames();
 	}
@@ -469,7 +500,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	/**
 	 * Display the previous tab in the SQL results.
 	 */
-	public synchronized void gotoPreviousResultsTab()
+	public void gotoPreviousResultsTab()
 	{
 		_panel.getSQLExecPanel().gotoPreviousResultsTab();
 	}
@@ -539,4 +570,10 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	{
 		return _panel.getSession();
 	}
+
+   public boolean isInMainSessionWindow()
+   {
+      return _panel.isInMainSessionWindow();
+   }
+
 }

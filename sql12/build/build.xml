@@ -250,14 +250,16 @@
 			<param name="p_internal_name" value="dataimport"/>
 		</antcall>
 -->
+
 <!--		<antcall target="build_plugin">
 			<param name="p_internal_name" value="dbinfo"/>
-		</antcall> -->
-<!--
+		</antcall> 
+-->
+
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="editextras"/>
 		</antcall>
--->
+
 <!--
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="favs"/>
@@ -268,21 +270,17 @@
 			<param name="p_internal_name" value="firebird"/>
 		</antcall>
 -->
-<!--
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="graph"/>
 		</antcall>
--->
 <!--
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="jedit"/>
 		</antcall>
 -->
-<!--
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="laf"/>
 		</antcall>
--->
 <!--
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="macosx"/>
@@ -308,16 +306,12 @@
 			<param name="p_internal_name" value="sessionscript"/>
 		</antcall>
 -->
-<!--
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="sqlbookmark"/>
 		</antcall>
--->
-<!--
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="sqlscript"/>
 		</antcall>
--->
 <!--
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="sqlval"/>
@@ -430,9 +424,6 @@
 		<ant	inheritAll="false" dir="${lcl_this_plugin_src_dir}"
 				antfile="${plugins_src_dir}/${p_internal_name}/${plugin_build_file_name}"
 				target="${plugin_build_target_name}">
-			<property name="p_plugin.work_dir" value="${lcl_this_plugin_dist_dir}/work"/>
-			<property name="p_plugin.dist_dir" value="${lcl_this_plugin_dist_dir}/dist"/>
-			<property name="p_plugin.core_libs_dir" value="${core_dist_lib_dir}"/>
 		</ant>
 
 		<zip zipfile="${dist_dir}/${p_internal_name}.zip" compress="true">

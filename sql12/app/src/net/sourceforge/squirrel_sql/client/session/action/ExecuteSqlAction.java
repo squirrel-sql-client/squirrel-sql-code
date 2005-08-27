@@ -42,6 +42,7 @@ public class ExecuteSqlAction extends SquirrelAction implements ISQLPanelAction
 	public void setSQLPanel(ISQLPanelAPI panel)
 	{
 		_panel = panel;
+      setEnabled(null != _panel);
 	}
 
 	public void actionPerformed(ActionEvent evt)

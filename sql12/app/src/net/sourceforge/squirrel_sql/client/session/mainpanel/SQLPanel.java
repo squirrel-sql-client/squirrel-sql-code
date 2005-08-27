@@ -75,6 +75,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.action.RedoAction;
 import net.sourceforge.squirrel_sql.client.session.action.UndoAction;
+import net.sourceforge.squirrel_sql.client.session.action.ViewObjectAtCursorInObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.event.*;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 /**
@@ -171,6 +172,12 @@ public class SQLPanel extends JPanel
    private UndoAction _undoAction;
    private RedoAction _redoAction;
 
+   /**
+    * true if this panel is within a SessionInternalFrame
+    * false if this panle is within a SQLInternalFrame
+    */
+   private boolean _inMainSessionWindow;
+
 
    /**
 	 * Ctor.
@@ -180,10 +187,11 @@ public class SQLPanel extends JPanel
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
 	 */
-	public SQLPanel(ISession session)
+	public SQLPanel(ISession session, boolean isInMainSessionWindow)
 	{
 		super();
-		setSession(session);
+      _inMainSessionWindow = isInMainSessionWindow;
+      setSession(session);
 		createGUI();
 		propertiesHaveChanged(null);
 		_sqlExecPanel = new SQLResultExecuterPanel(session);
@@ -336,39 +344,6 @@ public class SQLPanel extends JPanel
 		_listeners.remove(ISQLPanelListener.class, lis);
 	}
 
-	/**
-	 * Add a listener listening for events on result tabs.
-	 *
-	 * @param	lis	Listener
-	 *
-	 * @throws	IllegalArgumentException
-	 *			If a null <TT>IResultTabListener</TT> passed.
-	 */
-//	public synchronized void addResultTabListener(IResultTabListener lis)
-//	{
-//		if (lis == null)
-//		{
-//			throw new IllegalArgumentException("null IResultTabListener passed");
-//		}
-//		_listeners.add(IResultTabListener.class, lis);
-//	}
-
-	/**
-	 * Remove a listener listening for events on result tabs.
-	 *
-	 * @param	lis	Listener
-	 *
-	 * @throws	IllegalArgumentException
-	 *			If a null <TT>IResultTabListener</TT> passed.
-	 */
-//	public synchronized void removeResultTabListener(IResultTabListener lis)
-//	{
-//		if (lis == null)
-//		{
-//			throw new IllegalArgumentException("null IResultTabListener passed");
-//		}
-//		_listeners.remove(IResultTabListener.class, lis);
-//	}
 
 	/**
 	 * Add a listener for events in this sql panel executer tabs.
@@ -387,22 +362,6 @@ public class SQLPanel extends JPanel
  		_listeners.add(ISQLResultExecuterTabListener.class, lis);
 	}
 
-	/**
-	 * Remove a listener for events in this sql panel executer tabs.
-	 *
-	 * @param	lis		Listener
-	 *
-	 * @throws	IllegalArgumentException
-	 *			If a null <TT>IResultTabListener</TT> passed.
-	 */
-//	public synchronized void removeResultTabListener(ISQLResultExecuterTabListener lis)
-//	{
-//		if (lis == null)
-//		{
-//			throw new IllegalArgumentException("ISQLResultExecuterTabListener == null");
-//		}
-//		_listeners.remove(ISQLResultExecuterTabListener.class, lis);
-//	}
 
 	public synchronized void removeExecuterTabListener(ISQLResultExecuterTabListener lis)
 	{
@@ -413,75 +372,12 @@ public class SQLPanel extends JPanel
 		_listeners.remove(ISQLResultExecuterTabListener.class, lis);
 	}
 
-//	public ISQLEntryPanel getSQLEntryPanel()
-//	{
-//		return _sqlEntry;
-//	}
-
-//	public void executeCurrentSQL()
-//	{
-//		String sql = getSQLEntryPanel().getSQLToBeExecuted();
-//		if (sql != null && sql.length() > 0)
-//		{
-//			executeSQL(sql);
-//		}
-//		else
-//		{
-//			_session.getMessageHandler().showErrorMessage("No SQL selected for execution.");
-//		}
-//	}
-
-//	public void executeSQL(String sql)
-//	{
-//		if (sql != null && sql.trim().length() > 0)
-//		{
-//			SQLExecuterTask task = new SQLExecuterTask(this, _session, sql);
-//			_session.getApplication().getThreadPool().addTask(task);
-//		}
-//	}
-
-	/**
-	 * Close all the Results frames.
-	 */
-//	public synchronized void closeAllSQLResultFrames()
-//	{
-//		List tabs = (List)_usedTabs.clone();
-//		for (Iterator it = tabs.iterator(); it.hasNext();)
-//		{
-//			ResultTabInfo ti = (ResultTabInfo) it.next();
-//			if (ti._resultFrame != null)
-//			{
-//				ti._resultFrame.dispose();
-//				ti._resultFrame = null;
-//			}
-//		}
-//	}
-
-	/**
-	 * Close all the Results tabs.
-	 */
-//	public synchronized void closeAllSQLResultTabs()
-//	{
-//		List tabs = (List)_usedTabs.clone();
-//		for (Iterator it = tabs.iterator(); it.hasNext();)
-//		{
-//			ResultTabInfo ti = (ResultTabInfo) it.next();
-//			if (ti._resultFrame == null)
-//			{
-//				closeTab(ti._tab);
-//			}
-//		}
-//	}
 
 	public ISQLEntryPanel getSQLEntryPanel()
 	{
 		return _sqlEntry;
 	}
 
-//	void selected()
-//	{
-//		// Empty body.
-//	}
 
 	public void runCurrentExecuter()
 	{
@@ -580,93 +476,12 @@ public class SQLPanel extends JPanel
 			_sqlEntry.addUndoableEditListener(_undoManager);
 		}
 
-		fireSQLEntryAreaInstalled();
+      fireSQLEntryAreaInstalled();
 	}
 
-	/**
-	 * Close the passed <TT>ResultTab</TT>. This is done by clearing
-	 * all data from the tab, removing it from the tabbed panel
-	 * and adding it to the list of available tabs.
-	 *
-	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>ResultTab</TT> passed.
-	 */
-//	public void closeTab(ResultTab tab)
-//	{
-//		if (tab == null)
-//		{
-//			throw new IllegalArgumentException("Null ResultTab passed");
-//		}
-//		s_log.debug("SQLPanel.closeTab(" + tab.getIdentifier().toString() + ")");
-//		tab.clear();
-//		_tabbedResultsPanel.remove(tab);
-//		ResultTabInfo tabInfo = (ResultTabInfo) _allTabs.get(tab.getIdentifier());
-//		_availableTabs.add(tabInfo);
-//		_usedTabs.remove(tabInfo);
-//		tabInfo._resultFrame = null;
-//		fireTabRemovedEvent(tab);
-//	}
 
-	/**
-	 * Create an internal frame for the specified tab and
-	 * display the tab in the internal frame after removing
-	 * it from the tabbed pane.
-	 *
-	 * @param	tab	<TT>ResultTab</TT> to be displayed in
-	 *				an internal frame.
-	 *
-	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>ResultTab</TT> passed.
-	 */
-//	public void createWindow(ResultTab tab)
-//	{
-//		if (tab == null)
-//		{
-//			throw new IllegalArgumentException("Null ResultTab passed");
-//		}
-//		s_log.debug("SQLPanel.createWindow(" + tab.getIdentifier().toString() + ")");
-//		_tabbedResultsPanel.remove(tab);
-//		ResultFrame frame = new ResultFrame(_session, tab);
-//		ResultTabInfo tabInfo = (ResultTabInfo) _allTabs.get(tab.getIdentifier());
-//		tabInfo._resultFrame = frame;
-//		_session.getApplication().getMainFrame().addInternalFrame(frame, true, null);
-//		fireTabTornOffEvent(tab);
-//		frame.setVisible(true);
-//
-//		// There used to be a frame.pack() here but it resized the frame
-//		// to be very wide if text output was used.
-//
-//		frame.toFront();
-//		frame.requestFocus();
-//	}
 
-	/**
-	 * Return the passed tab back into the tabbed pane.
-	 *
-	 * @param	tab	<TT>Resulttab</TT> to be returned
-	 *
-	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>ResultTab</TT> passed.
-	 */
-//	public void returnToTabbedPane(ResultTab tab)
-//	{
-//		if (tab == null)
-//		{
-//			throw new IllegalArgumentException("Null ResultTab passed");
-//		}
-//
-//		s_log.debug("SQLPanel.returnToTabbedPane(" + tab.getIdentifier().toString() + ")");
-//
-//		ResultTabInfo tabInfo = (ResultTabInfo) _allTabs.get(tab.getIdentifier());
-//		if (tabInfo._resultFrame != null)
-//		{
-//			addResultsTab(tab);
-//			fireTornOffResultTabReturned(tab);
-//			tabInfo._resultFrame = null;
-//		}
-//	}
-
-	public void setVisible(boolean value)
+   public void setVisible(boolean value)
 	{
       super.setVisible(value);
       if (!_hasBeenVisible && value == true)
@@ -685,39 +500,6 @@ public class SQLPanel extends JPanel
       }
 	}
 
-	/**
-	 * Display the next tab in the SQL results.
-	 */
-//	public void gotoNextResultsTab()
-//	{
-//		final int tabCount = _tabbedResultsPanel.getTabCount();
-//		if (tabCount > 1)
-//		{
-//			int nextTabIdx = _tabbedResultsPanel.getSelectedIndex() + 1;
-//			if (nextTabIdx >= tabCount)
-//			{
-//				nextTabIdx = 0;
-//			}
-//			_tabbedResultsPanel.setSelectedIndex(nextTabIdx);
-//		}
-//	}
-
-	/**
-	 * Display the previous tab in the SQL results.
-	 */
-//	public void gotoPreviousResultsTab()
-//	{
-//		final int tabCount = _tabbedResultsPanel.getTabCount();
-//		if (tabCount > 1)
-//		{
-//			int prevTabIdx = _tabbedResultsPanel.getSelectedIndex() - 1;
-//			if (prevTabIdx < 0)
-//			{
-//				prevTabIdx = tabCount - 1;
-//			}
-//			_tabbedResultsPanel.setSelectedIndex(prevTabIdx);
-//		}
-//	}
 
 	/**
 	 * Add the passed item to end of the SQL history. If the item
@@ -749,6 +531,7 @@ public class SQLPanel extends JPanel
 			} while (beforeSize != afterSize);
 			_sqlCombo.insertItemAt(sql, afterSize);
 			_sqlCombo.setSelectedIndex(afterSize);
+         _sqlCombo.repaint();
 		}
 		finally
 		{
@@ -811,68 +594,6 @@ public class SQLPanel extends JPanel
 		}
 	}
 
-//	protected void fireTabAddedEvent(ResultTab tab)
-//	{
-//		// Guaranteed to be non-null.
-//		Object[] listeners = _listeners.getListenerList();
-//		// Process the listeners last to first, notifying
-//		// those that are interested in this event.
-//		ResultTabEvent evt = null;
-//		for (int i = listeners.length - 2; i >= 0; i -= 2)
-//		{
-//			if (listeners[i] == IResultTabListener.class)
-//			{
-//				// Lazily create the event:
-//				if (evt == null)
-//				{
-//					evt = new ResultTabEvent(_session, tab);
-//				}
-//				((IResultTabListener)listeners[i + 1]).resultTabAdded(evt);
-//			}
-//		}
-//	}
-
-//	protected void fireTabRemovedEvent(ResultTab tab)
-//	{
-//		// Guaranteed to be non-null.
-//		Object[] listeners = _listeners.getListenerList();
-//		// Process the listeners last to first, notifying
-//		// those that are interested in this event.
-//		ResultTabEvent evt = null;
-//		for (int i = listeners.length - 2; i >= 0; i -= 2)
-//		{
-//			if (listeners[i] == IResultTabListener.class)
-//			{
-//				// Lazily create the event:
-//				if (evt == null)
-//				{
-//					evt = new ResultTabEvent(_session, tab);
-//				}
-//				((IResultTabListener) listeners[i + 1]).resultTabRemoved(evt);
-//			}
-//		}
-//	}
-
-//	protected void fireTabRemovedEvent(ResultTab tab)
-//	{
-//		// Guaranteed to be non-null.
-//		Object[] listeners = _listeners.getListenerList();
-//		// Process the listeners last to first, notifying
-//		// those that are interested in this event.
-//		ResultTabEvent evt = null;
-//		for (int i = listeners.length - 2; i >= 0; i -= 2)
-//		{
-//			if (listeners[i] == IResultTabListener.class)
-//			{
-//				// Lazily create the event:
-//				if (evt == null)
-//				{
-//					evt = new ResultTabEvent(_session, tab);
-//				}
-//				((IResultTabListener) listeners[i + 1]).resultTabRemoved(evt);
-//			}
-//		}
-//	}
 
 	protected void fireTabTornOffEvent(ResultTab tab)
 	{
@@ -958,95 +679,6 @@ public class SQLPanel extends JPanel
 		}
 	}
 
-//	void setCancelPanel(final JPanel panel)
-//	{
-//		SwingUtilities.invokeLater(new Runnable()
-//		{
-//			public void run()
-//			{
-//				_tabbedResultsPanel.addTab("Executing SQL", null, panel, "Press Cancel to Stop");
-//				_tabbedResultsPanel.setSelectedComponent(panel);
-//			}
-//		});
-//	}
-
-//	void addResultsTab(SQLExecutionInfo exInfo, ResultSetDataSet rsds,
-//						ResultSetMetaDataDataSet mdds, final JPanel cancelPanel,
-//						IDataSetUpdateableTableModel creator)
-//	{
-//		final ResultTab tab;
-//		if (_availableTabs.size() > 0)
-//		{
-//			ResultTabInfo ti = (ResultTabInfo)_availableTabs.remove(0);
-//			_usedTabs.add(ti);
-//			tab = ti._tab;
-//			s_log.debug("Using tab " + tab.getIdentifier().toString() + " for results.");
-//		}
-//		else
-//		{
-//			tab = new ResultTab(_session, this, _idFactory.createIdentifier(), exInfo, creator);
-//			ResultTabInfo ti = new ResultTabInfo(tab);
-//			_allTabs.put(tab.getIdentifier(), ti);
-//			_usedTabs.add(ti);
-//			s_log.debug("Created new tab " + tab.getIdentifier().toString() + " for results.");
-//		}
-//
-//		try
-//		{
-//			tab.showResults(rsds, mdds, exInfo);
-//			SwingUtilities.invokeLater(new Runnable()
-//			{
-//				public void run()
-//				{
-//					_tabbedResultsPanel.remove(cancelPanel);
-//					addResultsTab(tab);
-//					_tabbedResultsPanel.setSelectedComponent(tab);
-//					fireTabAddedEvent(tab);
-//				}
-//			});
-//		}
-//		catch (DataSetException dse)
-//		{
-//			_session.getMessageHandler().showErrorMessage(dse);
-//		}
-//	}
-
-//	void removeCancelPanel(final JPanel cancelPanel)
-//	{
-//		SwingUtilities.invokeLater(new Runnable()
-//		{
-//			public void run()
-//			{
-//				_tabbedResultsPanel.remove(cancelPanel);
-//			}
-//		});
-//	}
-
-//	private void addResultsTab(ResultTab tab)
-//	{
-//		_tabbedResultsPanel.addTab(tab.getTitle(), null, tab, tab.getViewableSqlString());
-//	}
-
-//	private String modifyIndividualScript(String sql)
-//	{
-//		// Guaranteed to be non-null.
-//		Object[] listeners = _listeners.getListenerList();
-//		// Process the listeners last to first, notifying
-//		// those that are interested in this event.
-//		for (int i = listeners.length - 2; i >= 0; i -= 2)
-//		{
-//			if (listeners[i] == ISQLExecutionListener.class)
-//			{
-//				sql = ((ISQLExecutionListener) listeners[i]).statementExecuting(sql);
-//				if (sql == null)
-//				{
-//					break;
-//				}
-//			}
-//		}
-//
-//		return sql;
-//	}
 
 	private void appendSQL(String sql)
 	{
@@ -1227,6 +859,11 @@ public class SQLPanel extends JPanel
    public Action getRedoAction()
    {
       return _redoAction;
+   }
+
+   public boolean isInMainSessionWindow()
+   {
+      return _inMainSessionWindow;
    }
 
    /**

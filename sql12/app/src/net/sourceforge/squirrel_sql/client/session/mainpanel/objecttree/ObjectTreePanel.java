@@ -35,6 +35,7 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeNode;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -604,7 +605,37 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 		return getTabbedPane(dbObjectType).getTabIfSelected(title);
 	}
 
-	/**
+   /**
+    * Tries to locate the object given by the paramteres in the Object tree.
+    * The first matching object found is selected.
+    *
+    * @param catalog null means any catalog
+    * @param schema null means any schema
+    * @param table, view, ... but not a table or view column
+    * @return true if the Object was found and selected.
+    */
+   public boolean selectInObjectTree(String catalog, String schema, String object)
+   {
+      ObjectTreeModel otm = (ObjectTreeModel) _tree.getModel();
+      TreePath treePath = otm.getPathToDbInfo(catalog, schema, object, (ObjectTreeNode) otm.getRoot(), false);
+      if(null == treePath)
+      {
+         treePath = otm.getPathToDbInfo(catalog, schema, object, (ObjectTreeNode) otm.getRoot(), true);
+      }
+
+      if(null != treePath)
+      {
+         _tree.setSelectionPath(treePath);
+         _tree.scrollPathToVisible(treePath);
+         return true;
+      }
+      else
+      {
+         return false;
+      }
+   }
+
+   /**
 	 * Add a known database object type to the object tree.
 	 *
 	 * @param	dboType		The new database object type.

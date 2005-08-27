@@ -277,6 +277,7 @@ public class MessagePanel extends JTextPane implements IMessageHandler
 			_lastLength = document.getLength();
 			_lastMessage = string;
 			_lastSASet = saSet;
+
 			document.insertString(document.getLength(), string,
 				saSet == _saSetError ? _saSetLastMessageError : _saSetLastMessage);
 		}
@@ -333,6 +334,7 @@ public class MessagePanel extends JTextPane implements IMessageHandler
 				{
 					Document doc = MessagePanel.this.getDocument();
 					doc.remove(0, doc.getLength());
+               _lastMessage = null;
 				}
 				catch (BadLocationException ex)
 				{

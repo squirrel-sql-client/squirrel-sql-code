@@ -66,12 +66,24 @@ public interface ISQLExecuterHandler
 	/** Called when the SQLExecutor succesfully completes execution of a sql
 	 *  statement.
 	 */
-	public void sqlExecutionComplete(SQLExecutionInfo info);
+	public void sqlExecutionComplete(SQLExecutionInfo info, int processedStatementCount, int statementCount);
 
 	/** Called when the SQLExecutor terminates due to an exception
 	 */
-	public void sqlExecutionException(Throwable ex);
+	public void sqlExecutionException(Throwable ex, String postErrorString);
 
 	/** Called when a SQLWarning is received during execuion of the sql*/
 	public void sqlExecutionWarning(SQLWarning warn);
+
+   /**
+    * To set the number of statements that will be executed
+    */
+   public void sqlStatementCount(int statementCount);
+
+   /**
+    * Tell the execution handler that we don't need it anymore
+    * In SQLExecutionHandler this will close the cancel panel.
+    *
+    */
+   public void sqlCloseExecutionHandler();
 }

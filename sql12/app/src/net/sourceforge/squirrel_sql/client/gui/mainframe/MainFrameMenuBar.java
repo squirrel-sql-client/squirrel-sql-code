@@ -35,6 +35,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsButCurrentAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.AboutAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CascadeAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CloseAllSessionsAction;
@@ -303,16 +304,20 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, SessionPropertiesAction.class, menu);
 		addToMenu(rsrc, DumpSessionAction.class, menu);
 		menu.addSeparator();
+		addToMenu(rsrc, ToolsPopupAction.class, menu);
 		addToMenu(rsrc, RefreshObjectTreeAction.class, menu);
 		addToMenu(rsrc, ExecuteSqlAction.class, menu);
 		addToMenu(rsrc, CommitAction.class, menu);
 		addToMenu(rsrc, RollbackAction.class, menu);
 		addToMenu(rsrc, SQLFilterAction.class, menu);
 		menu.addSeparator();
+      addToMenu(rsrc, ViewObjectAtCursorInObjectTreeAction.class, menu);
+		menu.addSeparator();
       menu.add(createFileMenu(rsrc));
       menu.addSeparator();
 		addToMenu(rsrc, GotoPreviousResultsTabAction.class, menu);
 		addToMenu(rsrc, GotoNextResultsTabAction.class, menu);
+		addToMenu(rsrc, ToggleCurrentSQLResultTabStickyAction.class, menu);
 		menu.addSeparator();
 		addToMenu(rsrc, ShowNativeSQLAction.class, menu);
 		menu.addSeparator();
@@ -407,6 +412,8 @@ final class MainFrameMenuBar extends JMenuBar
 	{
 		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.CLOSE_ALL_SQL_RESULTS);
 		addToMenu(rsrc, CloseAllSQLResultTabsAction.class, menu);
+		addToMenu(rsrc, CloseCurrentSQLResultTabAction.class, menu);
+		addToMenu(rsrc, CloseAllSQLResultTabsButCurrentAction.class, menu);
 		addToMenu(rsrc, CloseAllSQLResultWindowsAction.class, menu);
 		return menu;
 	}

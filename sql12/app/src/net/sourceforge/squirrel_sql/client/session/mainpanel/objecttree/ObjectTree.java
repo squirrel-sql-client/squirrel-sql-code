@@ -51,12 +51,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.CopyQualifiedObjectNameAction;
-import net.sourceforge.squirrel_sql.client.session.action.CopySimpleObjectNameAction;
-import net.sourceforge.squirrel_sql.client.session.action.DropSelectedTablesAction;
-import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeAction;
-import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeItemAction;
-import net.sourceforge.squirrel_sql.client.session.action.SetDefaultCatalogAction;
+import net.sourceforge.squirrel_sql.client.session.action.*;
 /**
  * This is the tree showing the structure of objects in the database.
  *
@@ -138,6 +133,9 @@ class ObjectTree extends JTree
 		addToPopup(actions.get(RefreshObjectTreeAction.class));
 		addToPopup(actions.get(RefreshObjectTreeItemAction.class));
 //		addToPopup(actions.get(FilterObjectTreeAction.class));
+
+      addToPopup(DatabaseObjectType.TABLE, actions.get(EditWhereColsAction.class));
+      addToPopup(DatabaseObjectType.TABLE, actions.get(SQLFilterAction.class));
 
 		// Option to select default catalog only applies to sessions
 		// that support catalogs.
@@ -718,11 +716,12 @@ class ObjectTree extends JTree
 					if (_selectedPathNames != null)
 					{
 						final List newlySelectedTreepaths = new ArrayList();
-						restoreExpansionState(_node, _selectedPathNames, newlySelectedTreepaths);
+						
 						GUIUtils.processOnSwingEventThread(new Runnable()
 						{
 							public void run()
 							{
+                                restoreExpansionState(_node, _selectedPathNames, newlySelectedTreepaths);
 								setSelectionPaths((TreePath[])newlySelectedTreepaths.toArray(new TreePath[newlySelectedTreepaths.size()]));
 							}
 						});

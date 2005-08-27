@@ -786,7 +786,6 @@ class Session implements ISession
 
 
 
-
    private class SQLConnectionListener implements PropertyChangeListener
 	{
 		public void propertyChange(PropertyChangeEvent evt)

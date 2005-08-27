@@ -233,6 +233,22 @@ public interface ISQLPanelAPI
 	 */
 	void closeAllSQLResultTabs();
 
+   /**
+	 * Close all the SQL result tabs except from the selected.
+	 */
+   void closeAllButCurrentResultTabs();
+
+   /**
+	 * Close the selected result tab.
+	 */
+   void closeCurrentResultTab();
+
+   /**
+	 * Toggle if all further SQL resutls should go to the current tab.
+	 */
+   void toggleCurrentSQLResultTabSticky();
+
+
 	/**
 	 * Close all the "torn off" SQL result frames.
 	 */
@@ -274,6 +290,8 @@ public interface ISQLPanelAPI
 
 	ISession getSession();
 
+   boolean isInMainSessionWindow();
+
    void addToToolsPopUp(String selectionString, Action action);
 
    void fileSave();
@@ -281,5 +299,7 @@ public interface ISQLPanelAPI
    void fileSaveAs();
 
    void fileOpen();
+
+   void showToolsPopup();
 }
 

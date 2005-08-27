@@ -170,14 +170,27 @@ public class ViewLogsSheet extends BaseInternalFrame
 		}
 	}
 
+    /**
+     * Enables the log combo box and refresh button using the Swing event 
+     * thread.
+     */
+    private void enableComponents(final boolean enabled) 
+    {
+        GUIUtils.processOnSwingEventThread(new Runnable() {
+            public void run() {
+                _refreshBtn.setEnabled(enabled);
+                _logDirCmb.setEnabled(enabled);
+            }
+        });
+    }
+    
 	/**
 	 * Refresh the log.
 	 */
 	private void refreshLog()
 	{
-		_refreshBtn.setEnabled(false);
-		_logDirCmb.setEnabled(false);
-		CursorChanger cursorChg = new CursorChanger(this);
+	    enableComponents(false);
+        CursorChanger cursorChg = new CursorChanger(this);
 		cursorChg.show();
 		try
 		{
@@ -277,7 +290,7 @@ public class ViewLogsSheet extends BaseInternalFrame
 			// Position to the start of the last line in log.
 			try
 			{
-				int pos = _logContentsTxt.getText().length() - 1;
+				int pos = Math.max(0, _logContentsTxt.getText().length() - 1);
 				int line = _logContentsTxt.getLineOfOffset(pos);
 				pos = _logContentsTxt.getLineStartOffset(line);
 				_logContentsTxt.setCaretPosition(pos);
@@ -289,8 +302,7 @@ public class ViewLogsSheet extends BaseInternalFrame
 		}
 		finally
 		{
-			_refreshBtn.setEnabled(true);
-			_logDirCmb.setEnabled(true);
+            enableComponents(true);
 			_refreshing = false;
 			cursorChg.restore();
 		}

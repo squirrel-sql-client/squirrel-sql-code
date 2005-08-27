@@ -127,12 +127,16 @@ public class SessionSQLPropertiesPanel
 	private static final class SQLPropertiesPanel extends JPanel
 	{
 		private JCheckBox _abortOnErrorChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.abortonerror"));
+		private JCheckBox _writeSQLErrorsToLogChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.writesqlerrorstolog"));
 		private JCheckBox _autoCommitChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.autocommit"));
 		private JCheckBox _commitOnClose = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.commitonclose"));
 		private IntegerField _sqlNbrRowsToShowField = new IntegerField(5);
 		private JCheckBox _sqlLimitRowsChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.limitrows"));
 		private JTextField _stmtSepField = new JTextField(5);
 		private JTextField _solCommentField = new JTextField(2);
+
+      private JCheckBox _limitSQLResultTabsChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.limitsqlresulttabs"));
+      private IntegerField _limitSQLResultTabsField = new IntegerField(5);
 
 		/** Label displaying the selected font. */
 		private JLabel _fontLbl = new JLabel();
@@ -162,6 +166,7 @@ public class SessionSQLPropertiesPanel
 		void loadData(SessionProperties props)
 		{
 			_abortOnErrorChk.setSelected(props.getAbortOnError());
+			_writeSQLErrorsToLogChk.setSelected(props.getWriteSQLErrorsToLog());
 			_autoCommitChk.setSelected(props.getAutoCommit());
 			_commitOnClose.setSelected(props.getCommitOnClosingConnection());
 			_sqlNbrRowsToShowField.setInt(props.getSQLNbrRowsToShow());
@@ -172,6 +177,10 @@ public class SessionSQLPropertiesPanel
 			_shareSQLHistoryChk.setSelected(props.getSQLShareHistory());
 			_limitSQLHistoryComboSizeChk.setSelected(props.getLimitSQLEntryHistorySize());
 			_limitSQLHistoryComboSizeField.setInt(props.getSQLEntryHistorySize());
+
+			_limitSQLResultTabsChk.setSelected(props.getLimitSQLResultTabs());
+			_limitSQLResultTabsField.setInt(props.getSqlResultTabLimit());
+
 			_showResultsMetaChk.setSelected(props.getShowResultsMetaData());
 
 			FontInfo fi = props.getFontInfo();
@@ -188,6 +197,7 @@ public class SessionSQLPropertiesPanel
 		void applyChanges(SessionProperties props)
 		{
 			props.setAbortOnError(_abortOnErrorChk.isSelected());
+			props.setWriteSQLErrorsToLog(_writeSQLErrorsToLogChk.isSelected());
 			props.setAutoCommit(_autoCommitChk.isSelected());
 			props.setCommitOnClosingConnection(_commitOnClose.isSelected());
 			props.setSQLNbrRowsToShow(_sqlNbrRowsToShowField.getInt());
@@ -201,6 +211,17 @@ public class SessionSQLPropertiesPanel
 			props.setLimitSQLEntryHistorySize(_limitSQLHistoryComboSizeChk.isSelected());
 			props.setSQLEntryHistorySize(_limitSQLHistoryComboSizeField.getInt());
 
+			props.setLimitSQLResultTabs(_limitSQLResultTabsChk.isSelected());
+
+         if(0 >= _limitSQLResultTabsField.getInt())
+         {
+            props.setSqlResultTabLimit(15);
+         }
+         else
+         {
+            props.setSqlResultTabLimit(_limitSQLResultTabsField.getInt());
+         }
+
 			props.setShowResultsMetaData(_showResultsMetaChk.isSelected());
 		}
 
@@ -210,21 +231,23 @@ public class SessionSQLPropertiesPanel
 
 			_sqlNbrRowsToShowField.setEnabled(_sqlLimitRowsChk.isSelected());
 
+         _limitSQLResultTabsField.setEnabled(_limitSQLResultTabsChk.isSelected());
+
 			// If this session doesn't share SQL history with other sessions
 			// then disable the controls that relate to SQL History.
 			final boolean shareSQLHistory = _shareSQLHistoryChk.isSelected();
 
-         if(_newSessionProperties)
-         {
-            _limitSQLHistoryComboSizeChk.setEnabled(true);
-            _limitSQLHistoryComboSizeField.setEnabled(_limitSQLHistoryComboSizeChk.isSelected());
-         }
-         else
-         {
-            _limitSQLHistoryComboSizeChk.setEnabled(!shareSQLHistory);
-            _limitSQLHistoryComboSizeField.setEnabled(!shareSQLHistory &&
-                           _limitSQLHistoryComboSizeChk.isSelected());
-         }
+//         if(_newSessionProperties)
+//         {
+//            _limitSQLHistoryComboSizeChk.setEnabled(true);
+//            _limitSQLHistoryComboSizeField.setEnabled(_limitSQLHistoryComboSizeChk.isSelected());
+//         }
+//         else
+//         {
+//            _limitSQLHistoryComboSizeChk.setEnabled(!shareSQLHistory);
+//            _limitSQLHistoryComboSizeField.setEnabled(!shareSQLHistory &&
+//                           _limitSQLHistoryComboSizeChk.isSelected());
+//         }
 		}
 
 		private void createGUI()
@@ -257,9 +280,12 @@ public class SessionSQLPropertiesPanel
 
 			_autoCommitChk.addChangeListener(_controlMediator);
 			_sqlLimitRowsChk.addChangeListener(_controlMediator);
-
 			_sqlNbrRowsToShowField.setColumns(5);
 			_stmtSepField.setColumns(5);
+
+         _limitSQLResultTabsChk.addChangeListener(_controlMediator);
+         _limitSQLResultTabsField.setColumns(5);
+
 
 			gbc.gridx = 0;
 			gbc.gridy = 0;
@@ -286,10 +312,27 @@ public class SessionSQLPropertiesPanel
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			pnl.add(new JLabel(s_stringMgr.getString("SessionSQLPropertiesPanel.rows")), gbc);
 
+         ++gbc.gridy; // new line
+         gbc.gridx = 0;
+         gbc.gridwidth = 2;
+         pnl.add(_limitSQLResultTabsChk, gbc);
+         gbc.gridwidth = 1;
+         gbc.gridx+=2;
+         pnl.add(_limitSQLResultTabsField, gbc);
+         ++gbc.gridx;
+         gbc.gridwidth = GridBagConstraints.REMAINDER;
+         pnl.add(new JLabel(s_stringMgr.getString("SessionSQLPropertiesPanel.tabs")), gbc);
+
+
 			++gbc.gridy; // new line
 			gbc.gridx = 0;
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			pnl.add(_abortOnErrorChk, gbc);
+
+         ++gbc.gridy; // new line
+         gbc.gridx = 0;
+         gbc.gridwidth = GridBagConstraints.REMAINDER;
+         pnl.add(_writeSQLErrorsToLogChk, gbc);
 
 			++gbc.gridy; // new line
 			gbc.gridx = 0;

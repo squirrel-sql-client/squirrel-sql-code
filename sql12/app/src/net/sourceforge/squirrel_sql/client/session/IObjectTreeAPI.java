@@ -28,6 +28,7 @@ import javax.swing.event.TreeSelectionListener;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.IObjectTreeListener;
@@ -257,4 +258,15 @@ public interface IObjectTreeAPI extends IHasIdentifier
 	void addKnownDatabaseObjectType(DatabaseObjectType dboType);
 
 	IObjectTab getTabbedPaneIfSelected(DatabaseObjectType dbObjectType, String title);
+
+   /**
+    * Tries to locate the object given by the paramteres in the Object tree.
+    * The first matching object found is selected.
+    *
+    * @param catalog null means any catalog
+    * @param schema null means any schema
+    * @param table, view, ... but not a table or view column
+    * @return true if the Object was found and selected.
+    */
+   boolean selectInObjectTree(String catalog, String schema, String object);
 }

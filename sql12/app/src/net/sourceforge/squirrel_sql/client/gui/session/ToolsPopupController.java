@@ -3,12 +3,10 @@ package net.sourceforge.squirrel_sql.client.gui.session;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsButCurrentAction;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
-import net.sourceforge.squirrel_sql.client.session.action.FileOpenAction;
-import net.sourceforge.squirrel_sql.client.session.action.FileSaveAction;
-import net.sourceforge.squirrel_sql.client.session.action.FileSaveAsAction;
+import net.sourceforge.squirrel_sql.client.session.action.*;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 import net.sourceforge.squirrel_sql.fw.completion.Completor;
@@ -21,7 +19,7 @@ import java.awt.event.ActionEvent;
 import java.util.prefs.Preferences;
 
 
-public class ToolsPopupAction extends SquirrelAction
+public class ToolsPopupController
 {
    private ToolsPopupCompletorModel _toolsPopupCompletorModel;
    private ISQLEntryPanel _sqlEntryPanel;
@@ -30,9 +28,8 @@ public class ToolsPopupAction extends SquirrelAction
    private static final String PREFS_KEY_CTRL_T_COUNT = "squirrelSql_toolsPopup_ctrl_t_count";
    private int _ctrlTCount;
 
-   public ToolsPopupAction(IApplication app, SQLPanel sqlPanel, ISession session)
+   public ToolsPopupController(IApplication app, SQLPanel sqlPanel, ISession session)
    {
-      super(app);
       _sqlEntryPanel = sqlPanel.getSQLEntryPanel();
       _session = session;
 
@@ -57,6 +54,19 @@ public class ToolsPopupAction extends SquirrelAction
       addAction("filesave", ac.get(FileSaveAction.class));
       addAction("filesaveas", ac.get(FileSaveAsAction.class));
 
+      addAction("tabnext", ac.get(GotoNextResultsTabAction.class));
+      addAction("tabprevious", ac.get(GotoPreviousResultsTabAction.class));
+      addAction("tabcloseall", ac.get(CloseAllSQLResultTabsAction.class));
+      addAction("tabcloseallbutcur", ac.get(CloseAllSQLResultTabsButCurrentAction.class));
+      addAction("tabclosecur", ac.get(CloseCurrentSQLResultTabAction.class));
+      addAction("tabsticky", ac.get(ToggleCurrentSQLResultTabStickyAction.class));
+
+      if(sqlPanel.isInMainSessionWindow())
+      {
+         addAction("viewinobjecttree", ac.get(ViewObjectAtCursorInObjectTreeAction.class));
+      }
+
+
       _ctrlTCount = Preferences.userRoot().getInt(PREFS_KEY_CTRL_T_COUNT, 0);
 
       if(3 > _ctrlTCount)
@@ -72,7 +82,7 @@ public class ToolsPopupAction extends SquirrelAction
    }
 
 
-   public void actionPerformed(ActionEvent evt)
+   public void showToolsPopup()
    {
       if(3 > _ctrlTCount)
       {

@@ -17,20 +17,18 @@ package net.sourceforge.squirrel_sql.client.session.properties;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Font;
-import java.beans.PropertyChangeListener;
-import java.io.Serializable;
-import java.util.prefs.Preferences;
-
-import javax.swing.SwingConstants;
-
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerEditableTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
+import javax.swing.*;
+import java.awt.*;
+import java.beans.PropertyChangeListener;
+import java.io.Serializable;
+import java.util.prefs.Preferences;
 /**
  * This class represents the settings for a session.
  *
@@ -38,7 +36,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
  */
 public class SessionProperties implements Cloneable, Serializable
 {
-	public interface IDataSetDestinations
+   public interface IDataSetDestinations
 	{
 		String TEXT = DataSetViewerTextPanel.class.getName();
 		String READ_ONLY_TABLE = DataSetViewerTablePanel.class.getName();
@@ -47,7 +45,9 @@ public class SessionProperties implements Cloneable, Serializable
 
 	public interface IPropertyNames
 	{
+		String SQL_RESULT_TAB_LIMIT = "sqlResultTabLimit";
 		String ABORT_ON_ERROR = "abortOnError";
+      String WRITE_SQL_ERRORS_TO_LOG = "writeSQLErrorsToLog";
 		String AUTO_COMMIT = "autoCommit";
 		String CATALOG_PREFIX_LIST = "catalogPrefixList";
 		String COMMIT_ON_CLOSING_CONNECTION = "commitOnClosingConnection";
@@ -74,7 +74,8 @@ public class SessionProperties implements Cloneable, Serializable
 		String SQL_START_OF_LINE_COMMENT = "sqlStartOfLineComment";
 		String SQL_STATEMENT_SEPARATOR_STRING = "sqlStatementSeparatorString";
 		String TABLE_CONTENTS_OUTPUT_CLASS_NAME = "tableContentsOutputClassName";
-	}
+      String LIMIT_SQL_RESULT_TABS = "limitSqlResultTabs";
+   }
 
 	private static final FontInfo DEFAULT_FONT_INFO =
 									new FontInfo(new Font("Monospaced", 0, 12));
@@ -184,7 +185,23 @@ public class SessionProperties implements Cloneable, Serializable
 	/**
 	 * If <TT>true</TT> then don't execute any further SQL if an error occurs in one.
 	 */
-	private boolean _abortOnError = false;
+	private boolean _abortOnError = true;
+
+   /**
+    * If <TT>true</TT> SQL Errors are written to Log.
+    */
+   private boolean _writeSQLErrorsToLog;
+
+
+   /** Should the number of SQL result tabs be limited?. */
+   private boolean _limitSqlResultTabs = true;
+
+
+   /**
+    * The maximum number of open result tabs.
+    * <= 0 means unlimited.
+    */
+   private int _sqlResultTabLimit = 15;
 
 	/**
 	 * Default ctor.
@@ -400,6 +417,56 @@ public class SessionProperties implements Cloneable, Serializable
 				!_abortOnError, _abortOnError);
 		}
 	}
+
+   public boolean getWriteSQLErrorsToLog()
+   {
+      return _writeSQLErrorsToLog;
+   }
+
+   public void setWriteSQLErrorsToLog(boolean value)
+   {
+      if (_writeSQLErrorsToLog != value)
+      {
+         _writeSQLErrorsToLog = value;
+         getPropertyChangeReporter().firePropertyChange(
+            IPropertyNames.WRITE_SQL_ERRORS_TO_LOG,
+            !_writeSQLErrorsToLog, _writeSQLErrorsToLog);
+      }
+   }
+
+
+   public boolean getLimitSQLResultTabs()
+   {
+      return _limitSqlResultTabs;
+   }
+
+   public void setLimitSQLResultTabs(boolean data)
+   {
+      final boolean oldValue = _limitSqlResultTabs;
+      _limitSqlResultTabs = data;
+      getPropertyChangeReporter().firePropertyChange(IPropertyNames.LIMIT_SQL_RESULT_TABS,
+                           oldValue, _limitSqlResultTabs);
+   }
+
+
+
+   public int getSqlResultTabLimit()
+   {
+      return _sqlResultTabLimit;
+   }
+
+   public void setSqlResultTabLimit(int value)
+   {
+      if (_sqlResultTabLimit != value)
+      {
+         int oldValue = _sqlResultTabLimit;
+         _sqlResultTabLimit = value;
+         getPropertyChangeReporter().firePropertyChange(
+            IPropertyNames.SQL_RESULT_TAB_LIMIT,
+            oldValue, _sqlResultTabLimit);
+      }
+   }
+
 
 	public boolean getShowToolBar()
 	{

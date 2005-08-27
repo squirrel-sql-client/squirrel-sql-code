@@ -1,51 +1,121 @@
 package net.sourceforge.squirrel_sql.client.session;
 
 import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 
 public class EditableSqlCheck
 {
-   private boolean _allowEditing = false;
-   private String _tableNameFromSQL = "";
+   private static final int ALLOWS_EDITING_FALSE = 0;
+   private static final int ALLOWS_EDITING_TRUE = 1;
+   private static final int ALLOWS_EDITING_UNKNOWN = 2;
 
+   private String _tableNameFromSQL = null;
 
    public EditableSqlCheck(SQLExecutionInfo exInfo)
    {
-      // if the sql contains  results from only one table, the user
-      // may choose to edit it later.  If so, we need to have the
-      // full name of the table available.
-      // First determine if the SQL is a query on only one table
-      // The following assumes SQL is either:
-      //		select <fields> FROM <tables>
-      //	or
-      //		select <fields> FROM <tables> WHERE <etc>
-      // and that the presence of multiple tables is indicated by
-      // a comma separating the table names
-      String sqlString = exInfo != null ? exInfo.getSQL() : null;
-      if (sqlString != null && sqlString.trim().substring(0, "SELECT".length()).equalsIgnoreCase("SELECT")) {
-         sqlString = sqlString.toUpperCase();
-         int selectIndex = sqlString.indexOf("SELECT");
-         int fromIndex = sqlString.indexOf("FROM");
-         if (selectIndex > -1 && fromIndex > -1 && selectIndex < fromIndex) {
-            int whereIndex = sqlString.indexOf("WHERE");
-            if (whereIndex == -1)
-               whereIndex = sqlString.length();	//???need -1?
-
-            String fromClause = sqlString.substring(fromIndex+4, whereIndex);
-            boolean foundJoin = Pattern.compile("\\s[J|j][O|o][I|i][N|n]\\s").matcher(fromClause).find();
-
-            if (fromClause.indexOf(',') == -1 && false == foundJoin)
-               _allowEditing = true;	// no comma, so only one table selected from
-
-            _tableNameFromSQL = sqlString.substring(fromIndex+4, whereIndex).trim();
-         }
+      if(null == exInfo || null == exInfo.getSQL())
+      {
+         return;
       }
 
+      _tableNameFromSQL = getTableFromSQLIntern(exInfo.getSQL());
    }
+
+   private String getTableFromSQLIntern(String sql)
+   {
+      Pattern patternBeforeTable = Pattern.compile("SELECT\\s.*\\s+FROM\\s+([A-Z0-9_\\.]+)");
+      sql = sql.toUpperCase().trim();
+
+      Matcher matcher;
+
+      matcher = patternBeforeTable.matcher(sql);
+      if(false == matcher.find())
+      {
+         return null;
+      }
+      String table = matcher.group(1);
+      String behindTable = sql.substring(matcher.end(1)).trim();
+
+      int ret = behindTableAllowsEditing(behindTable);
+
+      if(ALLOWS_EDITING_UNKNOWN == ret)
+      {
+         // This might be because an table alias is used maybe with an AS before it.
+
+         Pattern patternBehindTable;
+         if(behindTable.startsWith("AS") && 2 < behindTable.length() && Character.isWhitespace(behindTable.charAt(2)))
+         {
+            patternBehindTable = Pattern.compile("AS\\s+([A-Z0-9_]+)\\s+");
+         }
+         else
+         {
+            patternBehindTable = Pattern.compile("([A-Z0-9_]+)\\s+");
+         }
+
+         matcher = patternBehindTable.matcher(behindTable);
+         if(false == matcher.find())
+         {
+            return null;
+         }
+
+         String alias = matcher.group(0);
+         String behindAlias = behindTable.substring(matcher.end(0)).trim();
+
+         ret = behindTableAllowsEditing(behindAlias);
+
+         if(ALLOWS_EDITING_TRUE == ret)
+         {
+            return table;
+         }
+         else
+         {
+            return null;
+         }
+      }
+      else if(ALLOWS_EDITING_TRUE == ret)
+      {
+         return table;
+      }
+      else //(ALLOWS_EDITING_FALSE == ret)
+      {
+         return null;
+      }
+   }
+
+   private int behindTableAllowsEditing(String behindTable)
+   {
+      if(0 == behindTable.length())
+      {
+         return ALLOWS_EDITING_TRUE;
+      }
+      else if(   behindTable.startsWith("WHERE")
+         || behindTable.startsWith("ORDER")
+         || behindTable.startsWith("GROUP"))
+      {
+         return ALLOWS_EDITING_TRUE;
+      }
+      else if(   behindTable.startsWith(",")
+         || behindTable.startsWith("INNER")
+         || behindTable.startsWith("LEFT")
+         || behindTable.startsWith("RIGHT")
+         || behindTable.startsWith("OUTER")
+         || behindTable.startsWith(","))
+      {
+         return ALLOWS_EDITING_FALSE;
+      }
+      else
+      {
+         return ALLOWS_EDITING_UNKNOWN;
+      }
+   }
+
+
+
 
    public boolean allowsEditing()
    {
-      return _allowEditing;
+      return null != _tableNameFromSQL;
    }
 
    public String getTableNameFromSQL()

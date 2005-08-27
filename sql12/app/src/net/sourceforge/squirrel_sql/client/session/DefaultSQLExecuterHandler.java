@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 import java.sql.ResultSet;
 import java.sql.SQLWarning;
+import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
@@ -54,17 +55,45 @@ public class DefaultSQLExecuterHandler implements ISQLExecuterHandler
 	{
 	}
 
-	public void sqlExecutionComplete(SQLExecutionInfo info)
+	public void sqlExecutionComplete(SQLExecutionInfo info, int processedStatementCount, int statementCount)
 	{
 	}
 
-	public void sqlExecutionException(Throwable ex)
+	public void sqlExecutionException(Throwable th, String postErrorString)
 	{
-		_session.getMessageHandler().showErrorMessage("Error: " + ex);
+      String msg = "Error: ";
+
+      if(th instanceof SQLException)
+      {
+         SQLException sqlEx = (SQLException) th;
+         sqlEx.getSQLState();
+         sqlEx.getErrorCode();
+
+         msg += sqlEx + ", SQL State: " + sqlEx.getSQLState() + ", Error Code: " + sqlEx.getErrorCode();
+      }
+      else
+      {
+         msg += th;
+      }
+
+      if(null != postErrorString)
+      {
+         msg += "\n" + postErrorString;
+      }
+
+      _session.getMessageHandler().showErrorMessage(msg);
 	}
 
 	public void sqlExecutionWarning(SQLWarning warn)
 	{
 		_session.getMessageHandler().showMessage(warn);
 	}
+
+   public void sqlStatementCount(int statementCount)
+   {
+   }
+
+   public void sqlCloseExecutionHandler()
+   {
+   }
 }

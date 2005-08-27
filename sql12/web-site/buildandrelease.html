@@ -1,0 +1,185 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=iso-8859-15">
+	<TITLE></TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 1.1.4  (Linux)">
+	<META NAME="CREATED" CONTENT="20050724;22420500">
+	<META NAME="CHANGEDBY" CONTENT="Gerd Wagner">
+	<META NAME="CHANGED" CONTENT="20050802;22171000">
+	<STYLE>
+	<!--
+		@page { size: 21.59cm 27.94cm; margin: 2cm }
+		P { margin-bottom: 0.21cm; direction: ltr; color: #000000; text-align: left; widows: 0; orphans: 0 }
+		P.western { font-family: "Thorndale", "Times New Roman", serif; font-size: 12pt; so-language: en-US }
+		P.cjk { font-family: "Andale Sans UI", "Arial Unicode MS"; font-size: 12pt; so-language:  }
+		P.ctl { font-family: "Tahoma"; font-size: 10pt; so-language:  }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="en-US" TEXT="#000000" DIR="LTR">
+<P CLASS="western" STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><FONT SIZE=3><B><SPAN STYLE="background: transparent">Build
+/ Release System:</SPAN></B></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><SPAN STYLE="background: transparent"><SPAN LANG="en-US"><FONT SIZE=3><FONT COLOR="#000000">SquirreL
+SQL Client is written in Java, so it is only natural that it's build
+mechanism is also platform-independent.  The Apache foundation's
+&ldquo;Ant&rdquo; (http://ant.apache.org/) build tool is used to
+build the code from source and turn the result into a java installer
+archive (with help from IzPack &ndash; see 
+</FONT></FONT></SPAN></SPAN><U><A HREF="http://www.izforge.com/izpack/"><SPAN STYLE="background: transparent"><SPAN LANG="en-US"><FONT SIZE=3>http://www.izforge.com/izpack/</FONT></FONT></SPAN></SPAN></A></U></FONT><SPAN STYLE="background: transparent"><SPAN LANG="en-US"><FONT SIZE=3><FONT COLOR="#000000">).
+</FONT></FONT></SPAN></SPAN>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><FONT SIZE=3><SPAN STYLE="background: transparent">All
+of the build configuration files are found in the &ldquo;build&rdquo;
+subdirectory in the active module. As of this writing the active
+module is called &ldquo;sql12&rdquo; and was used to release version
+2.0 RC1.  The main point of entry to build the SquirreL SQL Client
+with ant is the file called &ldquo;build.xml&rdquo;.  This file is
+special to ant in that it is the default file that ant looks for when
+a build configuration file isn't specified.  If ant is run from the
+command-line in the same directory as this file with a single
+argument of &ldquo;help&rdquo;, a menu of build targets is displayed.
+ The most useful targets - from the viewpoint of developing SQuirreL
+- are:</SPAN></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><BR>
+</P>
+<UL>
+	<LI><P CLASS="western" STYLE="margin-bottom: 0cm"><FONT SIZE=3><SPAN STYLE="background: transparent">clean
+	&ndash; cleans the previously compiled result of the source files</SPAN></FONT></P>
+	<LI><P CLASS="western" STYLE="margin-bottom: 0cm"><FONT SIZE=3><SPAN STYLE="background: transparent">complile_plugins
+	&ndash; since this target depends on targets that compile the
+	framework and core application classes, this target will build
+	everything.</SPAN></FONT></P>
+	<LI><P CLASS="western" STYLE="margin-bottom: 0cm"><FONT SIZE=3><SPAN STYLE="background: transparent">make_install_jar
+	&ndash; this target cleans and builds the source code, then if
+	IzPack has been installed and properly configured, will run IzPack
+	to create an install jar.  The install jar can then be used to
+	install the version of SQuirreL that was just built on any machine
+	that has a Java Runtime Environment (JRE).</SPAN></FONT></P>
+</UL>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><FONT SIZE=3><SPAN STYLE="background: transparent">IzPack
+is an open source application which will package up files into a
+platform-independent installer as a single executable jar file. The
+IzPack configuration file called
+&ldquo;izpack-squirrel-with-plugins.xml&rdquo;will produce an
+installer that is capable of installing SQuirrel in &ldquo;base&rdquo;
+or &ldquo;standard&rdquo; configurations. The &ldquo;base&rdquo;
+configuration installs the files necessary to run SQuirreL.  The
+&ldquo;standard&rdquo; configuration enhances the &ldquo;base&rdquo;
+configuration by installing a set of plugins which have been deemed
+stable and most likely to be useful to any user of SQuirreL.  That
+is, no vendor-specific plugins are provided in the &ldquo;standard&rdquo;
+configuration, only plugins which provide features which are
+applicable to any database.</SPAN></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><SPAN STYLE="background: transparent"><SPAN LANG="en-US"><FONT SIZE=3><FONT COLOR="#000000">In
+order to use the IzPack installer to create a SQuirreL installer,
+IzPack must be downloaded and installed (see
+</FONT></FONT></SPAN></SPAN><U><A HREF="http://www.izforge.com/izpack/izpack-doc.pdf"><SPAN STYLE="background: transparent"><SPAN LANG="en-US"><FONT SIZE=3>http://www.izforge.com/izpack/izpack-doc.pdf</FONT></FONT></SPAN></SPAN></A></U></FONT><SPAN STYLE="background: transparent"><SPAN LANG="en-US"><FONT SIZE=3>
+for detailed usage).  Next, there is a file in the SQuirreL build
+directory that is called build.properties. Among other items, ,it
+contains the following configuration:</FONT></FONT></SPAN></SPAN></P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><FONT COLOR="#3f7f5f"><FONT FACE="Courier New"><FONT SIZE=2><SPAN STYLE="background: transparent">#
+Directory where IzPack is installed - only required</SPAN></FONT></FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><FONT COLOR="#3f7f5f"><FONT FACE="Courier New"><FONT SIZE=2>#
+for the &quot;make_install_jar&quot; target</FONT></FONT></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><SPAN STYLE="font-weight: medium"><SPAN LANG="en-US"><FONT SIZE=2><FONT FACE="Courier New"><FONT COLOR="#000000">izpack.home.dir=</FONT></FONT></FONT></SPAN></SPAN><FONT COLOR="#000080"><U><A HREF="../../../../../../../tools/IzPack"><SPAN STYLE="font-weight: medium"><SPAN LANG="en-US"><FONT SIZE=2><FONT FACE="Courier New"><FONT COLOR="#000000">C:/tools/IzPack</FONT></FONT></FONT></SPAN></SPAN></A></U></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><SPAN STYLE="background: transparent"><SPAN LANG="en-US"><FONT SIZE=3><FONT COLOR="#000000">If
+IzPack was installed in a directory other than &ldquo;</FONT></FONT></SPAN></SPAN><FONT COLOR="#000080"><U><A HREF="../../../../../../../tools/IzPack"><SPAN STYLE="background: transparent"><SPAN LANG="en-US"><FONT SIZE=3><FONT COLOR="#000000">c:/tools/IzPack</FONT></FONT></SPAN></SPAN></A></U></FONT><SPAN STYLE="background: transparent"><SPAN LANG="en-US"><FONT SIZE=3><FONT COLOR="#000000">&rdquo;
+change this value to whatever directory the IzPack software is
+installed in.  This is probably the only value that will need
+modification.  Consult build.properties for information regarding
+other configuration options available for building SQuirreL.</FONT></FONT></SPAN></SPAN></P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><FONT SIZE=3><B><SPAN STYLE="background: transparent">Weekly
+(Snapshot) Build / Release System:</SPAN></B></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><FONT SIZE=3><SPAN STYLE="background: transparent">Each
+week the SQuirreL developers create a &ldquo;snapshot&rdquo; release
+which consists of an install jar (IzPack) and source archive which
+represents code modifications made during that week.  The purpose of
+these snapshots are to provide a way for end-users to provide
+immediate feedback to bug-fixes and enhancements made outside of the
+normal release cycle. In order to prevent clutter in the main build
+scripts that are used for development, weekly snapshots are created
+using a special-purpose ant build script that meets the following
+criteria:</SPAN></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><BR>
+</P>
+<UL>
+	<LI><P CLASS="western" STYLE="margin-bottom: 0cm"><FONT SIZE=3><SPAN STYLE="background: transparent">The
+	source code is checked out from scratch from the source repository
+	on SourceForge.</SPAN></FONT></P>
+	<LI><P CLASS="western" STYLE="margin-bottom: 0cm"><FONT SIZE=3><SPAN STYLE="background: transparent">The
+	source code version is modified to specify the snapshot version
+	(date and time snapshot was created)</SPAN></FONT></P>
+	<LI><P CLASS="western" STYLE="margin-bottom: 0cm"><FONT SIZE=3><SPAN STYLE="background: transparent">The
+	application is built and the installer is created exactly like the
+	main build script.</SPAN></FONT></P>
+	<LI><P CLASS="western" STYLE="margin-bottom: 0cm"><FONT SIZE=3><SPAN STYLE="background: transparent">The
+	application is then auto-installed using the silent configuration
+	option to IzPack</SPAN></FONT></P>
+	<LI><P CLASS="western" STYLE="margin-bottom: 0cm"><FONT SIZE=3><SPAN STYLE="background: transparent">The
+	installed application is then launched &ndash; this allows the
+	person doing the build to verify that the build was successful.</SPAN></FONT></P>
+	<LI><P CLASS="western" STYLE="margin-bottom: 0cm"><FONT SIZE=3><SPAN STYLE="background: transparent">The
+	install jar file is renamed to provide date and time in the
+	filename.</SPAN></FONT></P>
+	<LI><P CLASS="western" STYLE="margin-bottom: 0cm"><FONT SIZE=3><SPAN STYLE="background: transparent">The
+	archive file is created from the source that was used to build the
+	installer.</SPAN></FONT></P>
+</UL>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><FONT SIZE=3><SPAN STYLE="background: transparent">The
+snapshot build script is located in a subdirectory of the main build
+directory called &ldquo;snapshot&rdquo;. It's ant build configuration
+file is called build-weekly.xml instead of build.xml to prevent
+confusing this with the main build configuration file.  It also
+references a properties file to account for environment changes.  The
+properties most likely to need modification are:</SPAN></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><BR>
+</P>
+<UL>
+	<LI><P CLASS="western" STYLE="margin-bottom: 0cm"><FONT SIZE=3><SPAN STYLE="background: transparent">cvs.dest.dir
+	- What temporary directory to checkout to in order to perform the
+	build in.</SPAN></FONT></P>
+	<LI><P CLASS="western" STYLE="margin-bottom: 0cm"><FONT SIZE=3><SPAN STYLE="background: transparent">izpack.home.dir
+	- Directory where IzPack is installed</SPAN></FONT></P>
+	<LI><P CLASS="western" STYLE="margin-bottom: 0cm"><FONT SIZE=3><SPAN STYLE="background: transparent">bv.install.dir
+	- The directory that the application gets installed into for build
+	verification testing</SPAN></FONT></P>
+</UL>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><FONT SIZE=3><SPAN STYLE="background: transparent">Other
+properties are less likely to change.  Consult
+build-weekly.properties for information regarding other configuration
+options available for the snapshot builds.</SPAN></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><BR>
+</P>
+</BODY>
+</HTML>

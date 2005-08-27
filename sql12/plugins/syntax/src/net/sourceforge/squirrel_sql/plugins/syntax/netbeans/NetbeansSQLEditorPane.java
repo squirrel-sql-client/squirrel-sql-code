@@ -22,6 +22,7 @@ import org.netbeans.editor.ext.ExtSettingsInitializer;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.ActionEvent;
 import java.awt.*;
 import java.util.Vector;
 
@@ -70,6 +71,19 @@ public class NetbeansSQLEditorPane extends JEditorPane
       //
       //////////////////////////////////////////////////////////////////////////////////////////
 
+      modifyKeyStrokes();
+
+      Document doc = getDocument();
+      _syntaxFactory.putDocument(_session, doc);
+
+
+      setToolTipText("Just to make getToolTiptext() to be called");
+
+      new KeyManager(this);
+   }
+
+   private void modifyKeyStrokes()
+   {
       //////////////////////////////////////////////////////////////////////////////////////////////////////////////
       // The ctrl enter short cut in the Netbeans editor is set in org.netbeans.editor.ext.BaseKit
       // to the org.netbeans.editor.ext.BaseKit.SplitLineAction.
@@ -85,16 +99,37 @@ public class NetbeansSQLEditorPane extends JEditorPane
       // Removed for the tools popup
       KeyStroke ctrlTStroke = KeyStroke.getKeyStroke(KeyEvent.VK_T, java.awt.event.InputEvent.CTRL_MASK);
       getKeymap().removeKeyStrokeBinding(ctrlTStroke);
+
+      // Removed for reformatting
+      KeyStroke ctrlShiftFStroke = KeyStroke.getKeyStroke(KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK | java.awt.event.InputEvent.SHIFT_MASK);
+      getKeymap().removeKeyStrokeBinding(ctrlShiftFStroke);
       //
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-      Document doc = getDocument();
-      _syntaxFactory.putDocument(_session, doc);
 
+      ////////////////////////////////////////////////////////////
+      // The parser didn't get triggered on shift+insert.
+      // We do it here by hand
+      KeyStroke ks = KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, Event.SHIFT_MASK);
+      final Action origAction = getKeymap().getAction(ks);
+      Action triggerParserAction = new AbstractAction()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            // This event does not always hit the righr editor !?
+            // That's why we can't use _sqlEntryPanelIdentifier
+            origAction.actionPerformed(e);
+            if(_session.getActiveSessionWindow().hasSQLPanelAPI())
+            {
+               IIdentifier entryPanelId = _session.getSQLPanelAPIOfActiveSessionWindow().getSQLEntryPanel().getIdentifier();
+               _session.getParserEventsProcessor(entryPanelId).triggerParser();
+            }
+         }
+      };
+      //
+      //////////////////////////////////////////////////////////
 
-      setToolTipText("Just to make getToolTiptext() to be called");
-
-      new KeyManager(this);
+      getKeymap().addActionForKeyStroke(ks, triggerParserAction);
    }
 
    public void updateFromPreferences()
@@ -116,23 +151,7 @@ public class NetbeansSQLEditorPane extends JEditorPane
       Settings.addInitializer(new SQLSettingsInitializer(SQLKit.class, _prefs, font, _plugin));
 
 
-      //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      // The ctrl enter short cut in the Netbeans editor is set in org.netbeans.editor.ext.BaseKit
-      // to the org.netbeans.editor.ext.BaseKit.SplitLineAction.
-      // Since the ctrl enter shorcut is a basic SQuirreL short cut and is defined via the main menu action
-      // we must remove this binding here.
-      KeyStroke ctrlEnterStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, java.awt.event.InputEvent.CTRL_MASK);
-      getKeymap().removeKeyStrokeBinding(ctrlEnterStroke);
-
-      // Removed for the SQLBookmark Plugin
-      KeyStroke ctrlJStroke = KeyStroke.getKeyStroke(KeyEvent.VK_J, java.awt.event.InputEvent.CTRL_MASK);
-      getKeymap().removeKeyStrokeBinding(ctrlJStroke);
-
-      // Removed for the tools popup
-      KeyStroke ctrlTStroke = KeyStroke.getKeyStroke(KeyEvent.VK_T, java.awt.event.InputEvent.CTRL_MASK);
-      getKeymap().removeKeyStrokeBinding(ctrlTStroke);
-      //
-      ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+      modifyKeyStrokes();
 
       Document doc = getDocument();
       _syntaxFactory.putDocument(_session, doc);

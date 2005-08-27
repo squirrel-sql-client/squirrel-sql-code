@@ -37,7 +37,7 @@
             <LI><P STYLE="font-style: normal"><B>Wide range of look and feels.</B></P>
          </UL>
          <P STYLE="font-style: normal"><B>For further details see SQuirreL's
-         help. <A HREF="http://sourceforge.net/project/showfiles.php?group_id=28383">Download</A></B></P>
+         help. <a href="#installation">Download</A></B></P>
          <P STYLE="font-style: normal"><BR><BR>
          </P>
 		</td>
@@ -66,7 +66,7 @@
 			<p class="menu_item">
 				<a href="#latestnews">Latest News</a>&nbsp;&nbsp;
 				<a href="#overview">Overview</a>&nbsp;&nbsp;
-				<a href="#installation">Installation</a>&nbsp;&nbsp;
+				<a href="#installation">Download and Installation</a>&nbsp;&nbsp;
 				<a href="#mailinglists">Mailing Lists</a>&nbsp;&nbsp;
 				<a href="#cvs">CVS</a>&nbsp;&nbsp;
 				<a href="#ofinterest">Of Interest</a>&nbsp;&nbsp;
@@ -166,15 +166,17 @@
 	<tr>
 		<td class="body_left_border">&nbsp;</td>
 		<td width='100%' bgcolor="white" valign="top">
-			<h1 class="body"><A name="installation">Installation</A></h1>
+			<h1 class="body"><A name="installation">Download and Installation</A></h1>
 			<p>The SQuirreL SQL Client is installed with the IzPack Java
 			installer.
-			<a href="http://sourceforge.net/project/showfiles.php?group_id=28383">Download</A>
+			<a href="http://sourceforge.net/project/showfiles.php?group_id=28383&package_id=22079&release_id=336780">Download</A>
 			the file
 			<span class="code">squirrel-sql-&lt;version&gt;-install.jar</span>
 			and execute it using the following command:
 
-			<p class="code">java -jar squirrel-sql-&lt;version&gt;-install.jar</p>
+         <BR><code>
+			&nbsp;&nbsp;&nbsp;java -jar squirrel-sql-&lt;version&gt;-install.jar
+			</code>
 
 			<p>Make sure that you have sufficent rights to the directory
 			that you want to install into.</P>
@@ -187,9 +189,31 @@
 			<p>On Windows, execute the file <span class="code">squirrel-sql.bat</span> to run the
 			application. On Unix, the file is <span class="code">squirrel-sql.sh</span>.
 
+			<h2>The most important <U>downloads</U> are:</h2>
+
+         <UL>
+            <LI><B><a href="http://sourceforge.net/project/showfiles.php?group_id=28383&package_id=22079&release_id=336780">Install jar of SQuirreL 2.0 rc1 for Windows/Linux/others</a></B></LI>
+            <LI><B><a href="http://sourceforge.net/project/showfiles.php?group_id=28383&package_id=158128">Install jars of weekly snapshots for Windows/Linux/others</a></B></LI>
+            <LI><B><a href="http://sourceforge.net/project/showfiles.php?group_id=28383&package_id=22079&release_id=337442">Plain zip format of SQuirreL 2.0 rc1</a></B></LI>
+            <LI><B><a href="http://sourceforge.net/project/showfiles.php?group_id=28383">Overview of all available downloads</a></B></LI>
+         </UL>
+
+
+
+
+
 			<p>See the <A HREF="index.php?page=plugins">plugins</A>
 			page for instructions on installing plugins.</P>
 
+			<p>To checkout SQuirreL from CVS use the command:
+			<BR><code>
+			&nbsp;&nbsp;&nbsp;cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/squirrel-sql co -P sql12
+			</code>
+			</p>
+
+			<p><a href="buildandrelease.html">Click here for detailed information on the build and release system.</a></p>
+
+			<!--
 			<p><A HREF="http://sourceforge.net/sendmessage.php?touser=726679">Lynn Pye</A> has built a native Mac OS X intallation
 			package for SQuirreL. This will work with version 10.2 and above of OS X. To do the installation
 			<a href="http://sourceforge.net/project/showfiles.php?group_id=28383">download</A>
@@ -198,6 +222,7 @@
 			and double click on it, which, assuming a typical installation, will
 			fire up StuffIt Expander to get the .pkg file. Double click on the
 			.pkg file and the installation will begin.</p>
+			-->
 		</td>
 		<td class="body_right_border">&nbsp;</td>
 	</tr>

@@ -17,12 +17,35 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
+import net.sourceforge.squirrel_sql.client.session.*;
+import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsAction;
+import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsButCurrentAction;
+import net.sourceforge.squirrel_sql.client.session.action.CloseCurrentSQLResultTabAction;
+import net.sourceforge.squirrel_sql.client.session.action.ToggleCurrentSQLResultTabStickyAction;
+import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
+import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
+import net.sourceforge.squirrel_sql.client.session.event.ResultTabEvent;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
+import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
+import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import javax.swing.*;
+import javax.swing.event.EventListenerList;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.sql.ResultSet;
@@ -30,36 +53,7 @@ import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.text.NumberFormat;
 import java.util.*;
-
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
-import javax.swing.event.EventListenerList;
-
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
-import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
-import net.sourceforge.squirrel_sql.client.session.ISQLExecuterHandler;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
-import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
-import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
-import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
-import net.sourceforge.squirrel_sql.client.session.event.ResultTabEvent;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import java.util.List;
 /**
  * This is the panel where SQL scripts are executed and results presented.
  *
@@ -99,8 +93,12 @@ public class SQLResultExecuterPanel extends JPanel
 
 	/** Factory for generating unique IDs for new <TT>ResultTab</TT> objects. */
 	private IntegerIdentifierFactory _idFactory = new IntegerIdentifierFactory();
+   private ResultTab _stickyTab;
 
-	/**
+   private ILogger _log = LoggerController.createLogger(SQLResultExecuterPanel.class);
+
+
+   /**
 	 * Ctor.
 	 *
 	 * @param	session	 Current session.
@@ -282,11 +280,110 @@ public class SQLResultExecuterPanel extends JPanel
 		}
 	}
 
-	void selected()
-	{
-	}
+   public synchronized void closeAllButCurrentResultTabs()
+   {
+      Component selectedTab = _tabbedResultsPanel.getSelectedComponent();
 
-	/**
+      List tabs = (List)_usedTabs.clone();
+      for (Iterator it = tabs.iterator(); it.hasNext();)
+      {
+         ResultTabInfo ti = (ResultTabInfo)it.next();
+         if(false == ti._tab.equals(selectedTab))
+         {
+            if (ti._resultFrame == null)
+            {
+               closeTab(ti._tab);
+            }
+         }
+      }
+   }
+
+   public synchronized void toggleCurrentSQLResultTabSticky()
+   {
+      if (null != _stickyTab)
+      {
+         if(_stickyTab.equals(_tabbedResultsPanel.getSelectedComponent()))
+         {
+            // Sticky is turned off. Just remove sticky and return.
+            _stickyTab = null;
+            _tabbedResultsPanel.setIconAt(_tabbedResultsPanel.getSelectedIndex(), null);
+            return;
+
+         }
+         else
+         {
+            // remove old sticky tab
+            int indexOfStickyTab = getIndexOfStickyTab();
+            if(-1 != indexOfStickyTab)
+            {
+               _tabbedResultsPanel.setIconAt(indexOfStickyTab, null);
+            }
+            _stickyTab = null;
+         }
+      }
+
+      if(false == _tabbedResultsPanel.getSelectedComponent() instanceof ResultTab)
+      {
+         JOptionPane.showMessageDialog(_session.getApplication().getMainFrame(), "Cannot make a cancel panel sticky");
+         return;
+      }
+
+      _stickyTab = (ResultTab) _tabbedResultsPanel.getSelectedComponent();
+      int selectedIndex = _tabbedResultsPanel.getSelectedIndex();
+
+      ImageIcon icon = getStickyIcon();
+
+      _tabbedResultsPanel.setIconAt(selectedIndex, icon);
+   }
+
+   private ImageIcon getStickyIcon()
+   {
+      ActionCollection actionCollection = _session.getApplication().getActionCollection();
+
+      ImageIcon icon =
+         (ImageIcon) actionCollection.get(ToggleCurrentSQLResultTabStickyAction.class).getValue(Action.SMALL_ICON);
+      return icon;
+   }
+
+   private int getIndexOfStickyTab()
+   {
+      if(null == _stickyTab)
+      {
+         return -1;
+      }
+
+      for (int i = 0; i < _tabbedResultsPanel.getTabCount(); i++)
+      {
+         if (_stickyTab.equals(_tabbedResultsPanel.getComponentAt(i)))
+         {
+            return i;
+         }
+      }
+      _stickyTab = null;
+      return -1;
+   }
+
+
+
+   public synchronized void closeCurrentResultTab()
+   {
+      Component selectedTab = _tabbedResultsPanel.getSelectedComponent();
+
+      List tabs = (List)_usedTabs.clone();
+      for (Iterator it = tabs.iterator(); it.hasNext();)
+      {
+         ResultTabInfo ti = (ResultTabInfo)it.next();
+         if(ti._tab.equals(selectedTab))
+         {
+            if (ti._resultFrame == null)
+            {
+               closeTab(ti._tab);
+            }
+         }
+      }
+   }
+
+   /**
 	 * Sesssion is ending.
 	 * Remove all listeners that this component has setup. Close all
 	 * torn off result tab windows.
@@ -533,18 +630,6 @@ public class SQLResultExecuterPanel extends JPanel
 		}
 	}
 
-	void setCancelPanel(final JPanel panel)
-	{
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{
-				_tabbedResultsPanel.addTab("Executing SQL", null, panel,
-						"Press Cancel to Stop");
-				_tabbedResultsPanel.setSelectedComponent(panel);
-			}
-		});
-	}
 
 	void addResultsTab(SQLExecutionInfo exInfo, ResultSetDataSet rsds,
 					ResultSetMetaDataDataSet mdds, final JPanel cancelPanel,
@@ -590,22 +675,60 @@ public class SQLResultExecuterPanel extends JPanel
 		}
 	}
 
-	void removeCancelPanel(final JPanel cancelPanel)
-	{
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{
-				_tabbedResultsPanel.remove(cancelPanel);
-			}
-		});
-	}
-
 	private void addResultsTab(ResultTab tab)
 	{
-		_tabbedResultsPanel.addTab(tab.getTitle(), null, tab, tab
-				.getViewableSqlString());
+      if(null == _stickyTab)
+      {
+   		_tabbedResultsPanel.addTab(tab.getTitle(), null, tab, tab.getViewableSqlString());
+         checkResultTabLimit();
+      }
+      else
+      {
+         int indexOfSticky = getIndexOfStickyTab();
+
+         if(-1 == indexOfSticky)
+         {
+            // sticky tab was closed
+            _stickyTab = null;
+            addResultsTab(tab);
+            return;
+         }
+
+         closeResultTabAt(indexOfSticky);
+         _tabbedResultsPanel.insertTab(tab.getTitle(), getStickyIcon(), tab, tab.getViewableSqlString(), indexOfSticky);
+         _stickyTab = tab;
+      }
 	}
+
+   private void checkResultTabLimit()
+   {
+      SessionProperties props = _session.getProperties();
+
+      while(props.getLimitSQLResultTabs() && props.getSqlResultTabLimit() < _tabbedResultsPanel.getTabCount())
+      {
+         closeResultTabAt(0);
+      }
+   }
+
+
+   private void closeResultTabAt(int index)
+   {
+      Component selectedTab = _tabbedResultsPanel.getComponentAt(index);
+
+      List tabs = (List)_usedTabs.clone();
+      for (Iterator it = tabs.iterator(); it.hasNext();)
+      {
+         ResultTabInfo ti = (ResultTabInfo)it.next();
+         if(ti._tab.equals(selectedTab))
+         {
+            if (ti._resultFrame == null)
+            {
+               closeTab(ti._tab);
+            }
+         }
+      }
+   }
+
 
    private void propertiesHaveChanged(String propName)
 	{
@@ -651,49 +774,150 @@ public class SQLResultExecuterPanel extends JPanel
 
 	private void createGUI()
 	{
-		final IApplication app = _session.getApplication();
+      final SessionProperties props = _session.getProperties();
+		_tabbedResultsPanel = UIFactory.getInstance().createTabbedPane(props.getSQLResultsTabPlacement());
 
-		_tabbedResultsPanel = UIFactory.getInstance().createTabbedPane();
 
-		setLayout(new BorderLayout());
-		final SessionProperties props = _session.getProperties();
+      createTabPopup();
+
+
+      setLayout(new BorderLayout());
 
 		add(_tabbedResultsPanel, BorderLayout.CENTER);
 	}
 
-	/** This class is the handler for the execution of sql against the SQLExecuterPanel
+
+   /**
+    * Due to JDK 1.4 Bug 4465870 this doesn't work with JDK 1.4. when scrollable tabbed pane is used.
+    */
+   private void createTabPopup()
+   {
+      final JPopupMenu popup = new JPopupMenu();
+
+
+      JMenuItem mnuClose = new JMenuItem("Close");
+      initAccelerator(CloseCurrentSQLResultTabAction.class, mnuClose);
+      mnuClose.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            closeCurrentResultTab();
+         }
+      });
+      popup.add(mnuClose);
+
+      JMenuItem mnuCloseAllButThis = new JMenuItem("Close all but this");
+      initAccelerator(CloseAllSQLResultTabsButCurrentAction.class, mnuCloseAllButThis);
+      mnuCloseAllButThis.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            closeAllButCurrentResultTabs();
+         }
+      });
+      popup.add(mnuCloseAllButThis);
+
+
+      JMenuItem mnuCloseAll = new JMenuItem("Close all");
+      initAccelerator(CloseAllSQLResultTabsAction.class, mnuCloseAll);
+      mnuCloseAll.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            closeAllSQLResultTabs();
+         }
+      });
+      popup.add(mnuCloseAll);
+
+      JMenuItem mnuToggleSticky = new JMenuItem("Toggle sticky");
+      initAccelerator(ToggleCurrentSQLResultTabStickyAction.class, mnuToggleSticky);
+      mnuToggleSticky.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            toggleCurrentSQLResultTabSticky();
+         }
+      });
+      popup.add(mnuToggleSticky);
+
+
+
+      _tabbedResultsPanel.addMouseListener(new MouseAdapter()
+      {
+         public void mousePressed(MouseEvent e)
+         {
+            maybeShowPopup(e, popup);
+         }
+
+         public void mouseReleased(MouseEvent e)
+         {
+            maybeShowPopup(e, popup);
+         }
+      });
+   }
+
+   private void initAccelerator(Class actionClass, JMenuItem mnuItem)
+   {
+      Action action = _session.getApplication().getActionCollection().get(actionClass);
+
+      String accel = (String) action.getValue(Resources.ACCELERATOR_STRING);
+      if(   null != accel
+         && 0 != accel.trim().length())
+      {
+         mnuItem.setAccelerator(KeyStroke.getKeyStroke(accel));
+      }
+   }
+
+   private void maybeShowPopup(MouseEvent e, JPopupMenu popup)
+   {
+      if (e.isPopupTrigger())
+      {
+         int tab = _tabbedResultsPanel.getUI().tabForCoordinate(_tabbedResultsPanel, e.getX(), e.getY());
+         if (-1 != tab)
+         {
+            popup.show(e.getComponent(), e.getX(), e.getY());
+         }
+      }
+   }
+
+   /** This class is the handler for the execution of sql against the SQLExecuterPanel
 	 *
 	 */
 	private class SQLExecutionHandler implements ISQLExecuterHandler
 	{
 		private CancelPanel _cancelPanel = new CancelPanel();
 
-		public SQLExecutionHandler()
+      public SQLExecutionHandler()
 		{
 			super();
 			setCancelPanel(_cancelPanel);
 		}
 
-		public void sqlToBeExecuted(String sql)
+		public void sqlToBeExecuted(final String sql)
 		{
-			//JASON: Need to do something about this
-			//_cancelPanel.setQueryCount(queryStrings.size());
-			_cancelPanel.setSQL(StringUtilities.cleanString(sql));
-			_cancelPanel.setStatusLabel("Executing SQL...");
+         SwingUtilities.invokeLater(new Runnable()
+         {
+            public void run()
+            {
+               _cancelPanel.setSQL(StringUtilities.cleanString(sql));
+               _cancelPanel.setStatusLabel("Executing SQL...");
+            }
+         });
 		}
 
-		public void sqlExecutionComplete(SQLExecutionInfo exInfo)
+		public void sqlExecutionComplete(SQLExecutionInfo exInfo, int processedStatementCount, int statementCount)
 		{
-			removeCancelPanel(_cancelPanel);
-
 			// i18n
 			final NumberFormat nbrFmt = NumberFormat.getNumberInstance();
 			double executionLength = exInfo.getSQLExecutionElapsedMillis() / 1000.0;
 			double outputLength = exInfo.getResultsProcessingElapsedMillis() / 1000.0;
 			StringBuffer buf = new StringBuffer();
-			buf.append("Query ").append(" elapsed time (seconds) - Total: ")
-					.append(nbrFmt.format(executionLength + outputLength))
-					.append(", SQL query: ").append(
+			buf.append("Query ")
+            .append(processedStatementCount)
+            .append(" of ").append(statementCount)
+            .append(" elapsed time (seconds) - Total: ")
+				.append(nbrFmt.format(executionLength + outputLength))
+				.append(", SQL query: ").append(
 							nbrFmt.format(executionLength)).append(
 							", Building output: ").append(
 							nbrFmt.format(outputLength));
@@ -728,9 +952,11 @@ public class SQLResultExecuterPanel extends JPanel
 			ResultSetMetaDataDataSet rsmdds = null;
 			try
 			{
-//				rsds.setResultSet(rs, props.getLargeResultSetObjectInfo());
+            if (props.getShowResultsMetaData())
+            {
+               rsmdds = new ResultSetMetaDataDataSet(rs);
+            }
 				rsds.setResultSet(rs);
-				rsmdds = new ResultSetMetaDataDataSet(rs);
 			}
 			catch (DataSetException ex)
 			{
@@ -747,13 +973,76 @@ public class SQLResultExecuterPanel extends JPanel
 			getSession().getMessageHandler().showMessage(warn);
 		}
 
-		public void sqlExecutionException(Throwable th)
+      public void sqlStatementCount(int statementCount)
+      {
+         _cancelPanel.setQueryCount(statementCount);
+      }
+
+      public void sqlCloseExecutionHandler()
+      {
+         removeCancelPanel(_cancelPanel);
+      }
+
+      public void sqlExecutionException(Throwable th, String postErrorString)
 		{
-			removeCancelPanel(_cancelPanel);
-			getSession().getMessageHandler().showErrorMessage("Error: " + th);
+         String msg = "Error: ";
+
+         if(th instanceof SQLException)
+         {
+            SQLException sqlEx = (SQLException) th;
+            sqlEx.getSQLState();
+            sqlEx.getErrorCode();
+
+            msg += sqlEx + ", SQL State: " + sqlEx.getSQLState() + ", Error Code: " + sqlEx.getErrorCode();
+         }
+         else
+         {
+            msg += th;
+         }
+
+         if(null != postErrorString)
+         {
+            msg += "\n" + postErrorString;
+         }
+
+         getSession().getMessageHandler().showErrorMessage(msg);
+
+         if(getSession().getProperties().getWriteSQLErrorsToLog())
+         {
+            _log.info(msg);   
+         }
 		}
 
-		private final class CancelPanel extends JPanel
+
+      private void removeCancelPanel(final JPanel cancelPanel)
+      {
+         SwingUtilities.invokeLater(new Runnable()
+         {
+            public void run()
+            {
+               _tabbedResultsPanel.remove(cancelPanel);
+               int indexOfSticky = getIndexOfStickyTab();
+               if(-1 != indexOfSticky)
+               {
+                  _tabbedResultsPanel.setSelectedIndex(indexOfSticky);
+               }
+
+            }
+         });
+      }
+      private void setCancelPanel(final JPanel panel)
+      {
+         SwingUtilities.invokeLater(new Runnable()
+         {
+            public void run()
+            {
+               _tabbedResultsPanel.addTab("Executing SQL", null, panel,	"Press Cancel to Stop");
+               _tabbedResultsPanel.setSelectedComponent(panel);
+            }
+         });
+      }
+
+      private final class CancelPanel extends JPanel
 										implements ActionListener
 		{
 			private JLabel _sqlLbl = new JLabel();

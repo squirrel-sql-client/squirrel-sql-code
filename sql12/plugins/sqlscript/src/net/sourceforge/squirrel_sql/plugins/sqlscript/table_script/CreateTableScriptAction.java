@@ -25,11 +25,13 @@ import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
+import net.sourceforge.squirrel_sql.client.session.action.IObjectTreeAction;
 
 public class CreateTableScriptAction 
     extends SquirrelAction
-    implements ISessionAction {
+    implements IObjectTreeAction{
 
 	/** Current session. */
     private ISession _session;
@@ -57,4 +59,17 @@ public class CreateTableScriptAction
     public void setSession(ISession session) {
         _session = session;
     }
+
+   public void setObjectTree(IObjectTreeAPI tree)
+   {
+      if(null != tree)
+      {
+         _session = tree.getSession();
+      }
+      else
+      {
+         _session = null;
+      }
+      setEnabled(null != _session);
+   }
 }
