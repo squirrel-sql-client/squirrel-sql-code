@@ -382,11 +382,14 @@ public class DataTypeBoolean
 		
         } else {
             String bitValue = value.toString();
-            if ("true".equalsIgnoreCase(value.toString())) {
-                bitValue = "1";
-            }
-            if ("false".equalsIgnoreCase(value.toString())) {
-                bitValue = "0";
+            if ("Adaptive Server Enterprise".equals(databaseProductName)
+                    || "Microsoft SQL Server".equals(databaseProductName)) {
+                if ("true".equalsIgnoreCase(value.toString())) {
+                    bitValue = "1";
+                }
+                if ("false".equalsIgnoreCase(value.toString())) {
+                    bitValue = "0";
+                }
             }
             return _colDef.getLabel() + "=" + bitValue;
         }
