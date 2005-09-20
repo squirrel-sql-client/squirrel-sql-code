@@ -2,6 +2,27 @@
 
 <Beans>
 
+
+    <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+        <driverClassName>org.apache.derby.jdbc.ClientDriver</driverClassName>
+        <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+            <string>-31</string>
+        </identifier>
+        <jarFileNames Indexed="true"/>
+        <name>Apache Derby Client</name>
+        <url>jdbc:derby://&lt;server&gt;[:&lt;port&gt;]/&lt;databaseName&gt;[;&lt;URL attribute&gt;=&lt;value&gt;]</url>
+    </Bean>
+
+    <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+        <driverClassName>org.apache.derby.jdbc.EmbeddedDriver</driverClassName>
+        <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+            <string>-30</string>
+        </identifier>
+        <jarFileNames Indexed="true"/>
+        <name>Apache Derby Embedded</name>
+        <url>jdbc:derby:&lt;database&gt;[;create=true]</url>
+    </Bean>
+
    <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
        <driverClassName>com.intersys.jdbc.CacheDriver</driverClassName>
        <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
