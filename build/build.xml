@@ -327,6 +327,10 @@
 			<param name="p_internal_name" value="userscript"/>
 			<param name="p_rebuild" value="${rebuild.plugin.userscript}"/>
 		</antcall>		
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="i18n"/>
+			<param name="p_rebuild" value="${rebuild.plugin.i18n}"/>
+		</antcall>
 	</target>
 
 	<!--

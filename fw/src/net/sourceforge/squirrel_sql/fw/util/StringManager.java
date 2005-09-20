@@ -21,6 +21,7 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.Vector;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -35,22 +36,47 @@ public class StringManager
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(StringManager.class);
 
-	/** Contains the localised strings. */
+    private static Vector _localeChangeListeners = new Vector();
+
+
+    /** Contains the localised strings. */
 	private ResourceBundle _rsrcBundle;
 
-	/**
+
+   public static void setDefaultLocale(Locale defLoc)
+   {
+      Locale.setDefault(defLoc);
+
+      for (int i = 0; i < _localeChangeListeners.size(); i++)
+      {
+         ((LocaleChangeListener) _localeChangeListeners.get(i)).localeChanged();
+      }
+   }
+
+
+
+   /**
 	 * Ctor specifying the package name. Attempt to load a resource bundle
 	 * from the package directory.
 	 *
 	 * @param	packageName	Name of package
 	 * @param	classLoader	Class loader to use
 	 */
-	StringManager(String packageName, ClassLoader loader)
+	StringManager(final String packageName, final ClassLoader loader)
 	{
 		super();
-		_rsrcBundle = ResourceBundle.getBundle(packageName + ".I18NStrings",
-						Locale.getDefault(), loader);
-	}
+		_rsrcBundle = ResourceBundle.getBundle(packageName + ".I18NStrings", Locale.getDefault(), loader);
+
+      _localeChangeListeners.add(
+           new LocaleChangeListener()
+           {
+              public void localeChanged()
+              {
+                 _rsrcBundle = ResourceBundle.getBundle(packageName + ".I18NStrings", Locale.getDefault(), loader);
+              }
+           }
+      );
+   }
 
 	/**
 	 * Retrieve the localized string for the passed key. If it isn't found
@@ -149,4 +175,10 @@ public class StringManager
 			return msg + ": " + ex.toString();
 		}
 	}
+
+   private static interface LocaleChangeListener
+   {
+      void localeChanged();
+   }
+
 }
