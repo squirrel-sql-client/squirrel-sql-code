@@ -381,16 +381,9 @@ public class DataTypeBoolean
 			return _colDef.getLabel() + " IS NULL";
 		
         } else {
-            String bitValue = value.toString();
-            if ("Adaptive Server Enterprise".equals(databaseProductName)
-                    || "Microsoft SQL Server".equals(databaseProductName)) {
-                if ("true".equalsIgnoreCase(value.toString())) {
-                    bitValue = "1";
-                }
-                if ("false".equalsIgnoreCase(value.toString())) {
-                    bitValue = "0";
-                }
-            }
+            String bitValue = 
+                DatabaseSpecificBooleanValue.getBooleanValue(value.toString(),
+                                                             databaseProductName);                   
             return _colDef.getLabel() + "=" + bitValue;
         }
 	}
