@@ -7,6 +7,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import java.awt.*;
 import java.util.Locale;
+import java.util.Arrays;
+import java.util.Comparator;
 
 public class I18nPanelController implements IGlobalPreferencesPanel
 {
@@ -24,6 +26,16 @@ public class I18nPanelController implements IGlobalPreferencesPanel
    public void initialize(IApplication app)
    {
       Locale[] availableLocales = Locale.getAvailableLocales();
+
+      Arrays.sort(availableLocales, new Comparator()
+      {
+         public int compare(Object o1, Object o2)
+         {
+            return o1.toString().compareTo(o2.toString());
+         }
+      });
+
+
       for (int i = 0; i < availableLocales.length; i++)
       {
          _panel.cboLocales.addItem(availableLocales[i]);
