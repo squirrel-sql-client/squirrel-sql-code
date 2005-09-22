@@ -26,7 +26,7 @@ public class I18nPanel extends JPanel
    JTabbedPane tabTranslations = new JTabbedPane();
 
 
-   JTree treePackages = new JTree();
+   JList listPackages = new JList();
    JTable tblTranslations = new JTable();
    JTextField txtNote;
 
@@ -72,7 +72,7 @@ public class I18nPanel extends JPanel
       gbc = new GridBagConstraints(0,3,3,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,0,5),0,0);
       add(tabTranslations, gbc);
 
-      tabTranslations.add(s_stringMgr.getString("I18n.packages"), treePackages); // i18n{I18n.packages=Packages}
+      tabTranslations.add(s_stringMgr.getString("I18n.packages"), listPackages); // i18n{I18n.packages=Packages}
       tabTranslations.add(s_stringMgr.getString("I18n.translations"), tblTranslations); // i18n{I18n.translations=Translations}
 
       txtNote = new JTextField();
