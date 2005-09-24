@@ -171,6 +171,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 			_typedModel = (MyTableModel) ((SortableTableModel) getModel()).getActualModel();
 			_multiplier =
 				getFontMetrics(getFont()).stringWidth(data) / data.length();
+			setRowHeight(getFontMetrics(getFont()).getHeight());
 			boolean allowUpdate = false;
 			// we want to allow editing of read-only tables on-demand, but
 			// it would be confusing to include the "Make Editable" option
