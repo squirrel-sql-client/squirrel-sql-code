@@ -2,6 +2,8 @@ SQuirreL SQL Client Change Log
 ==============================
 
 
+- Fixed table row height for large fonts. (Thanks to Mitch Skinner)
+
 2.0 final
 =========
 - Fix for not shown SQL result on derby DB
