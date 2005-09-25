@@ -1,7 +1,7 @@
 SQuirreL SQL Client Change Log
 ==============================
 
-
+- Fixed bug #1288519 (Postgres: editing boolean fields)
 - Fixed table row height for large fonts. (Thanks to Mitch Skinner)
 - User may define an Object tree filter through the Session Properties. Useful for large databases. (Thanks to Oliver Jehle)
  
