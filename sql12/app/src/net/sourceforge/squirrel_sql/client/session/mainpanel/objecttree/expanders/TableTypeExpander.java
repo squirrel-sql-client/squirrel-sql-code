@@ -69,10 +69,14 @@ public class TableTypeExpander implements INodeExpander
 			final SQLDatabaseMetaData md = conn.getSQLMetaData();
 			final String catalogName = parentDbinfo.getCatalogName();
 			final String schemaName = parentDbinfo.getSchemaName();
-			final String tableType = parentDbinfo.getSimpleName();
-			final ITableInfo[] tables = md.getTables(catalogName, schemaName,
-						"%", tableType != null ? new String[]{tableType} : null);
-			if (session.getProperties().getShowRowCount()) {
+         final String objFilter = session.getProperties().getObjectFilter();
+         final String tableType = parentDbinfo.getSimpleName();
+//			final ITableInfo[] tables = md.getTables(catalogName, schemaName,
+//						"%", tableType != null ? new String[]{tableType} : null);
+         final ITableInfo[] tables = md.getTables(catalogName, schemaName,
+ 						objFilter != null && objFilter.length() > 0 ? objFilter :"%", tableType != null ? new String[]{tableType} : null);
+
+         if (session.getProperties().getShowRowCount()) {
 				stmt = conn.createStatement();
 			}
 

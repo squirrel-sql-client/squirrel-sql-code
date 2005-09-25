@@ -41,7 +41,7 @@ public class ObjectTypeExpander implements INodeExpander
 	/** SQL that retrieves the objects for the object types. */
 	private static String SQL =
 		"select object_name from sys.all_objects where object_type = ?" +
-		" and owner = ? order by object_name";
+		" and owner = ? and object_name like ? order by object_name";
 
 	/** Type of the objects to be displayed in the child nodes. */
 	private ObjectType _objectType;
@@ -93,13 +93,15 @@ public class ObjectTypeExpander implements INodeExpander
 		final SQLConnection conn = session.getSQLConnection();
 		final SQLDatabaseMetaData md = conn.getSQLMetaData();
 		final List childNodes = new ArrayList();
+		String objFilter =  session.getProperties().getObjectFilter();
 
 		// Add node for each object.
 		PreparedStatement pstmt = conn.prepareStatement(SQL);
 		try
-		{
+		{	
 			pstmt.setString(1, _objectType._objectTypeColumnData);
 			pstmt.setString(2, schemaName);
+			pstmt.setString(3, objFilter != null && objFilter.length() > 0 ? objFilter :"%");
 			ResultSet rs = pstmt.executeQuery();
 			try
 			{

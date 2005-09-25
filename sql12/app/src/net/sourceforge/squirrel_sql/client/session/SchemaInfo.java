@@ -23,7 +23,7 @@ package net.sourceforge.squirrel_sql.client.session;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.util.*;
-
+import net.sourceforge.squirrel_sql.client.session.Session;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
@@ -45,24 +45,34 @@ public class SchemaInfo
 	private final List _catalogs = new ArrayList();
 	private final List _schemas = new ArrayList();
 	private final List _extendedtableInfos = new ArrayList();
+	private Session _session = null;
 	private IProcedureInfo[] _procInfos = new IProcedureInfo[0];
-
 
 	/** Logger for this class. */
 	private static final ILogger s_log =
 				LoggerController.createLogger(SchemaInfo.class);
 
-   public SchemaInfo()
+   public SchemaInfo(Session session)
 	{
 		super();
+		if (session == null)
+		{
+			throw new IllegalArgumentException("SQLConnection == null");
+		}
+		_session=session;
 	}
 
-	public SchemaInfo(SQLConnection conn)
+	public SchemaInfo(SQLConnection conn,Session session)
 	{
 		if (conn == null)
 		{
 			throw new IllegalArgumentException("SQLConnection == null");
 		}
+		if (session == null)
+		{
+			throw new IllegalArgumentException("SQLConnection == null");
+		}
+		_session=session;
 		load(conn);
 	}
 
@@ -173,9 +183,12 @@ public class SchemaInfo
 
 	private void loadStoredProcedures(SQLDatabaseMetaData dmd)
 	{
+		
+		final String objFilter = _session.getProperties().getObjectFilter();
 		try
 		{
-			_procInfos = dmd.getProcedures(null, null, "%");
+			System.out.println("load stored procedureds with filter "+objFilter);
+			_procInfos = dmd.getProcedures(null, null,objFilter != null && objFilter.length() > 0 ? objFilter :"%");
 		}
 		catch (Throwable th)
 		{

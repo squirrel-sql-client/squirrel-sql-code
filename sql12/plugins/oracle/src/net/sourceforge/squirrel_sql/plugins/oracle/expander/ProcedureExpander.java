@@ -66,9 +66,10 @@ public class ProcedureExpander implements INodeExpander
 		final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
 		final List childNodes = new ArrayList();
 		IProcedureInfo[] procs = null;
+		String objFilter = session.getProperties().getObjectFilter();
 		try
 		{
-			procs = md.getProcedures(catalogName, schemaName, "%");
+			procs = md.getProcedures(catalogName, schemaName, objFilter != null && objFilter.length() > 0 ? objFilter :"%");
 		}
 		catch (SQLException ignore)
 		{

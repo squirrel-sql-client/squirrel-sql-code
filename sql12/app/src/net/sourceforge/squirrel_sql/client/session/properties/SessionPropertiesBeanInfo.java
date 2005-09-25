@@ -98,7 +98,9 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
             new PropertyDescriptor(IPropNames.LOAD_SCHEMAS_CATALOGS,
                CLAZZ, "getLoadSchemasCatalogs", "setLoadSchemasCatalogs"),
             new PropertyDescriptor(IPropNames.SHOW_RESULTS_META_DATA,
-               CLAZZ, "getShowResultsMetaData", "setShowResultsMetaData")
+               CLAZZ, "getShowResultsMetaData", "setShowResultsMetaData"),
+            new PropertyDescriptor(IPropNames.OBJECT_FILTER,
+                CLAZZ, "getObjectFilter", "setObjectFilter")
          };
       }
    }
