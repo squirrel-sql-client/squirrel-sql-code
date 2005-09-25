@@ -19,24 +19,18 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.TreeModelListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeNode;
-
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.FilterObjectsAction;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.*;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.procedure.ProcedureColumnsTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.*;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterClauses;
+import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
@@ -44,38 +38,16 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
 
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.CatalogsTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.ConnectionStatusTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.DataTypesTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.KeywordsTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.MetaDataTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.NumericFunctionsTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.SchemasTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.StringFunctionsTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.SystemFunctionsTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.TableTypesTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.TimeDateFunctionsTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.procedure.ProcedureColumnsTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ColumnPriviligesTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ColumnsTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ContentsTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ExportedKeysTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ImportedKeysTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.IndexesTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.PrimaryKeyTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.RowCountTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.RowIDTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.TablePriviligesTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.VersionColumnsTab;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
-import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterClauses;
-import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
+import javax.swing.*;
+import javax.swing.event.*;
+import javax.swing.tree.TreePath;
+import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 /**
  * This is the panel for the Object Tree tab.
  *
@@ -202,7 +174,10 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 
 		// Register tabs to display in the details panel for UDT nodes.
 		addDetailTab(DatabaseObjectType.UDT, new DatabaseObjectInfoTab());
-	}
+
+
+      addToPopup(DatabaseObjectType.SESSION, _session.getApplication().getActionCollection().get(FilterObjectsAction.class));
+   }
 
    private void addDetailTabForTableLikeObjects(DatabaseObjectType type)
    {

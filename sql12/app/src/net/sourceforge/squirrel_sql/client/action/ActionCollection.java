@@ -452,7 +452,8 @@ public final class ActionCollection
 		add(new RefreshObjectTreeItemAction(_app));
 		add(new RollbackAction(_app));
 		add(new SessionPropertiesAction(_app));
-		add(new SetDefaultCatalogAction(_app));
+      add(new FilterObjectsAction(_app));      
+      add(new SetDefaultCatalogAction(_app));
 		add(new ShowLoadedDriversOnlyAction(_app));
 		add(new ShowNativeSQLAction(_app));
 		add(new SQLFilterAction(_app));

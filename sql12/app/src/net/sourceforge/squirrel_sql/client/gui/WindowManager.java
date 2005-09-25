@@ -461,11 +461,14 @@ public class WindowManager
 	 * created.
 	 *
 	 * @param	session		The session that user has request property dialog for.
-	 *
-	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
+    * @param tabNameToSelect The name (title) of the Tab to select. First Tab will be selected
+    * if tabNameToSelect is null or doesnt match any tab.
+    *
+    * @param tabNameToSelect
+    * @throws	IllegalArgumentException
+    *			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
 	 */
-	public synchronized void showSessionPropertiesDialog(ISession session)
+	public synchronized void showSessionPropertiesDialog(ISession session, String tabNameToSelect)
 	{
 		if (session == null)
 		{
@@ -483,7 +486,9 @@ public class WindowManager
 		{
 			moveToFront(propsSheet);
 		}
-	}
+
+      propsSheet.selectTabByTitle(tabNameToSelect);
+   }
 
 	/**
 	 * Get an SQL Filter sheet for the passed data. If one already exists it

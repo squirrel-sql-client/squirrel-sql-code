@@ -869,7 +869,7 @@ public class SessionProperties implements Cloneable, Serializable
 	 */
 
 	public synchronized void setObjectFilter(String data) {
-		final String oldValue = data;
+		final String oldValue = _objectFilter;
 		_objectFilter = data;
 		getPropertyChangeReporter().firePropertyChange(IPropertyNames.OBJECT_FILTER, oldValue, _objectFilter);
 	}
