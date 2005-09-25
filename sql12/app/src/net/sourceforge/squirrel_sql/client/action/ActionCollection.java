@@ -445,14 +445,13 @@ public final class ActionCollection
 		add(new NewSQLWorksheetAction(_app));
 		add(new NewSessionPropertiesAction(_app));
 		add(new NextSessionAction(_app));
-//		add(new FilterObjectTreeAction(_app));
 		add(new PreviousSessionAction(_app));
 		add(new ReconnectAction(_app));
 		add(new RefreshObjectTreeAction(_app));
 		add(new RefreshObjectTreeItemAction(_app));
 		add(new RollbackAction(_app));
 		add(new SessionPropertiesAction(_app));
-      add(new FilterObjectsAction(_app));      
+      add(new FilterObjectsAction(_app));
       add(new SetDefaultCatalogAction(_app));
 		add(new ShowLoadedDriversOnlyAction(_app));
 		add(new ShowNativeSQLAction(_app));

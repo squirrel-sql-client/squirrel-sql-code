@@ -174,9 +174,6 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 
 		// Register tabs to display in the details panel for UDT nodes.
 		addDetailTab(DatabaseObjectType.UDT, new DatabaseObjectInfoTab());
-
-
-      addToPopup(DatabaseObjectType.SESSION, _session.getApplication().getActionCollection().get(FilterObjectsAction.class));
    }
 
    private void addDetailTabForTableLikeObjects(DatabaseObjectType type)
