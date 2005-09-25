@@ -57,7 +57,7 @@ public class SchemaInfo
 		super();
 		if (session == null)
 		{
-			throw new IllegalArgumentException("SQLConnection == null");
+			throw new IllegalArgumentException("Session == null");
 		}
 		_session=session;
 	}
