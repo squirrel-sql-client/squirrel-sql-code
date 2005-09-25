@@ -19,7 +19,6 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
  */
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,8 +38,6 @@ import javax.swing.event.EventListenerList;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.TreePath;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.TreeCellRenderer;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -135,12 +132,13 @@ class ObjectTree extends JTree
 		// Options for global popup menu.
 		addToPopup(actions.get(RefreshObjectTreeAction.class));
 		addToPopup(actions.get(RefreshObjectTreeItemAction.class));
-//		addToPopup(actions.get(FilterObjectTreeAction.class));
 
       addToPopup(DatabaseObjectType.TABLE, actions.get(EditWhereColsAction.class));
       addToPopup(DatabaseObjectType.TABLE, actions.get(SQLFilterAction.class));
+      addToPopup(DatabaseObjectType.SESSION, actions.get(FilterObjectsAction.class));
 
-		// Option to select default catalog only applies to sessions
+
+      // Option to select default catalog only applies to sessions
 		// that support catalogs.
 		try
 		{
