@@ -82,6 +82,7 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo
 		return _catalog;
 	}
 
+
 	public String getSchemaName()
 	{
 		return _schema;

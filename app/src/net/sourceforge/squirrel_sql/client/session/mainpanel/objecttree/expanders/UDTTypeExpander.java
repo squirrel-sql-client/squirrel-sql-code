@@ -56,8 +56,9 @@ public class UDTTypeExpander implements INodeExpander
 		final SQLConnection conn = session.getSQLConnection();
 		final String catalogName = parentDbinfo.getCatalogName();
 		final String schemaName = parentDbinfo.getSchemaName();
+		final String objFilter = session.getProperties().getObjectFilter();
 		IUDTInfo[] udts = null;
-		udts = conn.getSQLMetaData().getUDTs(catalogName, schemaName, "%", null);
+		udts = conn.getSQLMetaData().getUDTs(catalogName, schemaName, objFilter != null && objFilter.length() > 0 ? objFilter :"%", null);
 
 		for (int i = 0; i < udts.length; ++i)
 		{

@@ -38,6 +38,7 @@ import javax.swing.event.EventListenerList;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.TreePath;
+import javax.swing.tree.DefaultTreeCellRenderer;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -174,8 +175,7 @@ class ObjectTree extends JTree
 				}
 			}
 		});
-	}
-
+   }
 	/**
 	 * Component has been added to its parent.
 	 */

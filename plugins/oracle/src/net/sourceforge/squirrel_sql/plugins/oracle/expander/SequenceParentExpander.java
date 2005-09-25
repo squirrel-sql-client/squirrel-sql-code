@@ -46,7 +46,8 @@ public class SequenceParentExpander implements INodeExpander
 	private static final String SQL =
 		"select sequence_name"
 			+ " from all_sequences"
-			+ " where sequence_owner = ?";
+			+ " where sequence_owner = ?"
+			+ " and sequence_name like ?";
 
 	/**
 	 * Default ctor.
@@ -76,11 +77,14 @@ public class SequenceParentExpander implements INodeExpander
 		final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
 		final String catalogName = parentDbinfo.getCatalogName();
 		final String schemaName = parentDbinfo.getSchemaName();
+		final String objFilter =  session.getProperties().getObjectFilter();
+
 
 		final PreparedStatement pstmt = conn.prepareStatement(SQL);
 		try
 		{
 			pstmt.setString(1, schemaName);
+			pstmt.setString(2, objFilter != null && objFilter.length() > 0 ? objFilter :"%"); 
 			ResultSet rs = pstmt.executeQuery();
 			try
 			{

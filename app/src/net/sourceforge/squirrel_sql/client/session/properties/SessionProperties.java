@@ -54,6 +54,7 @@ public class SessionProperties implements Cloneable, Serializable
 		String CONTENTS_LIMIT_ROWS = "contentsLimitRows";
 		String CONTENTS_NBR_ROWS_TO_SHOW = "contentsNbrOfRowsToShow";
 		String FONT_INFO = "fontInfo";
+		String OBJECT_FILTER = "objectFilter";
 		String LARGE_RESULT_SET_OBJECT_INFO = "largeResultSetObjectInfo";
 		String LIMIT_SQL_ENTRY_HISTORY_SIZE = "limitSqlEntryHistorySize";
 		String LOAD_SCHEMAS_CATALOGS = "loadCatalogsSchemas";
@@ -108,6 +109,10 @@ public class SessionProperties implements Cloneable, Serializable
 
 	/** Limit catalog objects to those in this comma-delimited list. */
 	private String _catalogPrefixList = "";
+
+	/** Object Filter */
+
+	private String _objectFilter = "";
 
 	/** <TT>true</TT> if sql result meta data should be shown. */
 	private boolean _showResultsMetaData = true;
@@ -835,6 +840,11 @@ public class SessionProperties implements Cloneable, Serializable
 		return _catalogPrefixList;
 	}
 
+	public String getObjectFilter()
+	{
+		return _objectFilter;
+	}
+
 	/**
 	 * Return array of catalog prefixes to display in the object tree.
 	 */
@@ -852,6 +862,16 @@ public class SessionProperties implements Cloneable, Serializable
 		_catalogPrefixList = data;
 		getPropertyChangeReporter().firePropertyChange(IPropertyNames.CATALOG_PREFIX_LIST,
 												oldValue, _catalogPrefixList);
+	}
+
+	/**
+	 * Set the objectFilter
+	 */
+
+	public synchronized void setObjectFilter(String data) {
+		final String oldValue = data;
+		_objectFilter = data;
+		getPropertyChangeReporter().firePropertyChange(IPropertyNames.OBJECT_FILTER, oldValue, _objectFilter);
 	}
 
 	/**

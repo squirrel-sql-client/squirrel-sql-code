@@ -63,9 +63,10 @@ public class ProcedureTypeExpander implements INodeExpander
 		throws SQLException
 	{
 		final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
+		final String objFilter = session.getProperties().getObjectFilter();
 		final List childNodes = new ArrayList();
 		IProcedureInfo[] procs = null;
-		procs = md.getProcedures(catalogName, schemaName, "%");
+		procs = md.getProcedures(catalogName, schemaName, objFilter != null && objFilter.length() > 0 ? objFilter :"%");
 		for (int i = 0; i < procs.length; ++i)
 		{
 			ObjectTreeNode child = new ObjectTreeNode(session, procs[i]);

@@ -114,7 +114,7 @@ class Session implements ISession
 	private IMessageHandler _msgHandler = NullMessageHandler.getInstance();
 
 	/** Xref info about the current connection. */
-	private final SchemaInfo _schemaInfo = new SchemaInfo();
+	private final SchemaInfo _schemaInfo = new SchemaInfo(this);
 
    /** Set to <TT>true</TT> once session closed. */
 	private boolean _closed;
