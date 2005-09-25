@@ -22,8 +22,12 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
-import java.util.*;
-import net.sourceforge.squirrel_sql.client.session.Session;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.StringTokenizer;
+
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
@@ -45,14 +49,14 @@ public class SchemaInfo
 	private final List _catalogs = new ArrayList();
 	private final List _schemas = new ArrayList();
 	private final List _extendedtableInfos = new ArrayList();
-	private Session _session = null;
+	private ISession _session = null;
 	private IProcedureInfo[] _procInfos = new IProcedureInfo[0];
 
 	/** Logger for this class. */
 	private static final ILogger s_log =
 				LoggerController.createLogger(SchemaInfo.class);
 
-   public SchemaInfo(Session session)
+   public SchemaInfo(ISession session)
 	{
 		super();
 		if (session == null)
@@ -62,7 +66,7 @@ public class SchemaInfo
 		_session=session;
 	}
 
-	public SchemaInfo(SQLConnection conn,Session session)
+	public SchemaInfo(SQLConnection conn, ISession session)
 	{
 		if (conn == null)
 		{
