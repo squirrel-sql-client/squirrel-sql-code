@@ -3,6 +3,8 @@ SQuirreL SQL Client Change Log
 
 
 - Fixed table row height for large fonts. (Thanks to Mitch Skinner)
+- User may define an Object tree filter through the Session Properties. Useful for large databases. (Thanks to Oliver Jehle)
+ 
 
 2.0 final
 =========

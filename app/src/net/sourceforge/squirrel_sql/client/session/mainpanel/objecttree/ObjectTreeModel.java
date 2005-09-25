@@ -324,20 +324,25 @@ public class ObjectTreeModel extends DefaultTreeModel
       return true;
    }
 
-   private static final class RootNode extends ObjectTreeNode
-	{
-		RootNode(ISession session)
-		{
-			super(session, createDbo(session));
-		}
+   public boolean isRootNode(Object node)
+   {
+      return node instanceof RootNode;
+   }
 
-		private static final IDatabaseObjectInfo createDbo(ISession session)
-		{
-			return new DatabaseObjectInfo(null, null, session.getAlias().getName(),
-											DatabaseObjectType.SESSION,
-											session.getSQLConnection().getSQLMetaData());
-		}
-	}
+   private static final class RootNode extends ObjectTreeNode
+   {
+      RootNode(ISession session)
+      {
+         super(session, createDbo(session));
+      }
+
+      private static final IDatabaseObjectInfo createDbo(ISession session)
+      {
+         return new DatabaseObjectInfo(null, null, session.getAlias().getName(),
+                                 DatabaseObjectType.SESSION,
+                                 session.getSQLConnection().getSQLMetaData());
+      }
+   }
 
 	private static final class DatabaseObjectTypeComparator implements Comparator
 	{

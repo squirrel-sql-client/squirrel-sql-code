@@ -31,34 +31,41 @@ public class SessionPropertiesCommand implements ICommand
 {
 	/** The session whose properties are to be displayed/maintained. */
 	private final ISession _session;
+   private String _tabNameToSelect;
 
-	/**
-	 * Ctor.
-	 *
-	 * @param	session The session whose properties are to be displayed/maintained.
-	 *
-	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
-	 */
-	public SessionPropertiesCommand(ISession session)
-	{
-		super();
-		if (session == null)
-		{
-			throw new IllegalArgumentException("Null ISession passed");
-		}
-		_session = session;
-	}
+   /**
+    * Ctor.
+    *
+    * @param	session The session whose properties are to be displayed/maintained.
+    *
+    * @throws	IllegalArgumentException
+    *			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
+    */
+   public SessionPropertiesCommand(ISession session)
+   {
+      this(session, null);
+   }
 
-	/**
-	 * Display the properties dialog.
-	 */
-	public void execute()
-	{
-		if (_session != null)
-		{
-			WindowManager winMgr = _session.getApplication().getWindowManager();
-			winMgr.showSessionPropertiesDialog(_session);
-		}
-	}
+   public SessionPropertiesCommand(ISession session, String tabNameToSelect)
+   {
+      super();
+      _tabNameToSelect = tabNameToSelect;
+      if (session == null)
+      {
+         throw new IllegalArgumentException("Null ISession passed");
+      }
+      _session = session;
+   }
+
+   /**
+    * Display the properties dialog.
+    */
+   public void execute()
+   {
+      if (_session != null)
+      {
+         WindowManager winMgr = _session.getApplication().getWindowManager();
+         winMgr.showSessionPropertiesDialog(_session, _tabNameToSelect);
+      }
+   }
 }

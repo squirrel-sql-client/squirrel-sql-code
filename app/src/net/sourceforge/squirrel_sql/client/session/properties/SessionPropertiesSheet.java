@@ -46,14 +46,14 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 // JASON: Create thru WindowManager
 public class SessionPropertiesSheet extends BaseSessionInternalFrame
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n
-	{
-		String TITLE = "- Session Properties";
-	}
+   /**
+    * This interface defines locale specific strings. This should be
+    * replaced with a property file.
+    */
+   private interface i18n
+   {
+      String TITLE = "- Session Properties";
+   }
 
 	/** Logger for this class. */
 	private static final ILogger s_log =
@@ -61,7 +61,9 @@ public class SessionPropertiesSheet extends BaseSessionInternalFrame
 
 	private final List _panels = new ArrayList();
 
-	/** Frame title. */
+   private JTabbedPane _tabbedPane;
+
+   /** Frame title. */
 	private JLabel _titleLbl = new JLabel();
 
 	public SessionPropertiesSheet(ISession session)
@@ -101,7 +103,26 @@ public class SessionPropertiesSheet extends BaseSessionInternalFrame
 		super.setVisible(show);
 	}
 
-	/**
+   public void selectTabByTitle(String tabNameToSelect)
+   {
+      if(null == tabNameToSelect)
+      {
+         return;
+      }
+
+      int tabCount = _tabbedPane.getTabCount();
+
+      for (int i = 0; i < tabCount; i++)
+      {
+         if(tabNameToSelect.equals(_tabbedPane.getTitleAt(i)))
+         {
+            _tabbedPane.setSelectedIndex(i);
+         }
+      }
+   }
+
+
+   /**
 	 * Set title of this frame. Ensure that the title label
 	 * matches the frame title.
 	 *
@@ -183,7 +204,7 @@ public class SessionPropertiesSheet extends BaseSessionInternalFrame
 		}
 
 		// Add all panels to the tabbed panel.
-		JTabbedPane tabPane = UIFactory.getInstance().createTabbedPane();
+		_tabbedPane = UIFactory.getInstance().createTabbedPane();
 		for (Iterator it = _panels.iterator(); it.hasNext();)
 		{
 			ISessionPropertiesPanel pnl = (ISessionPropertiesPanel) it.next();
@@ -192,7 +213,7 @@ public class SessionPropertiesSheet extends BaseSessionInternalFrame
 			final JScrollPane sp = new JScrollPane(pnl.getPanelComponent());
 			sp.setBorder(BorderFactory.createEmptyBorder());
 			sp.setPreferredSize(new Dimension(450, 400));
-			tabPane.addTab(pnlTitle, null, sp, hint);
+			_tabbedPane.addTab(pnlTitle, null, sp, hint);
 		}
 
 		final JPanel contentPane = new JPanel(new GridBagLayout());
@@ -212,7 +233,7 @@ public class SessionPropertiesSheet extends BaseSessionInternalFrame
 
 		++gbc.gridy;
 		gbc.weighty = 1;
-		contentPane.add(tabPane, gbc);
+		contentPane.add(_tabbedPane, gbc);
 
 		++gbc.gridy;
 		gbc.weighty = 0;
