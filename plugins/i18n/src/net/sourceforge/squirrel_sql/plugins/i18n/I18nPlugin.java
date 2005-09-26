@@ -111,6 +111,12 @@ public class I18nPlugin extends DefaultSessionPlugin
 	 */
 	public IGlobalPreferencesPanel[] getGlobalPreferencePanels()
 	{
+      if(null == _i18nPanelController)
+      {
+         _i18nPanelController = new I18nPanelController(_resources);
+      }
+
+
       return
                new IGlobalPreferencesPanel[]
                {
@@ -123,9 +129,7 @@ public class I18nPlugin extends DefaultSessionPlugin
 	 */
 	public synchronized void initialize() throws PluginException
 	{
-      _i18nPanelController = new I18nPanelController();
-
-		_resources = new PluginResources("net.sourceforge.squirrel_sql.plugins.i18n.i18n", this);
+      _resources = new PluginResources("net.sourceforge.squirrel_sql.plugins.i18n.i18n", this);
 	}
 
 

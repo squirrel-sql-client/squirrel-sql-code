@@ -17,14 +17,9 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
@@ -42,23 +37,26 @@ public class DataTypePreferencesPanel implements  IGlobalPreferencesPanel
 
 	/** The actual GUI panel that allows user to do the maintenance. */
 	private final DataTypePropertiesPanel _myPanel;
+   private JScrollPane _myscrolledPanel;
 
 
-	/**
-	 * ctor specifying the Application API.
-	 *
-	 * @param	app		Application API.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if <tt>null</tt> <tt>IApplication</tt>
-	 * 			passed.
-	 */
-	public DataTypePreferencesPanel()
-	{
-		super();
+   /**
+    * ctor specifying the Application API.
+    *
+    * @param	app		Application API.
+    *
+    * @throws	IllegalArgumentException
+    * 			Thrown if <tt>null</tt> <tt>IApplication</tt>
+    * 			passed.
+    */
+   public DataTypePreferencesPanel()
+   {
+      super();
 
-		_myPanel = new DataTypePropertiesPanel();
-	}
+      _myPanel = new DataTypePropertiesPanel();
+      _myscrolledPanel = new JScrollPane(_myPanel);
+      _myscrolledPanel.setPreferredSize(new Dimension(600, 450));      
+   }
 
 
 	public void initialize(IApplication app)
@@ -80,7 +78,7 @@ public class DataTypePreferencesPanel implements  IGlobalPreferencesPanel
 
 	public Component getPanelComponent()
 	{
-		return _myPanel;
+		return _myscrolledPanel;
 	}
 
 	public String getTitle()

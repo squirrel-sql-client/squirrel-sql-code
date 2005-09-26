@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.plugins.i18n;
 
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -10,10 +11,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.*;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipEntry;
 import java.net.URLClassLoader;
 import java.net.URL;
 import java.io.File;
+import java.io.IOException;
 
 public class I18nPanelController implements IGlobalPreferencesPanel
 {
@@ -22,10 +28,56 @@ public class I18nPanelController implements IGlobalPreferencesPanel
 
    I18nPanel _panel;
    private IApplication _app;
+   private BundlesTableModel bundlesTableModel;
 
-   I18nPanelController()
+   private JPopupMenu _popUp = new JPopupMenu();
+   private JMenuItem _mnuGenerateTemplateComments = new JMenuItem(s_stringMgr.getString("I18n.generateTemplateComments"));
+   // i18n{I18n.generateTemplateComments=Generate template comments for missing translations}
+
+   private JMenuItem _mnuOpenInEditor = new JMenuItem(s_stringMgr.getString("I18n.openIOnEditor"));
+   // i18n{I18n.openIOnEditor=Open in Editor}
+
+   I18nPanelController(PluginResources resources)
    {
-      _panel = new I18nPanel();
+      _panel = new I18nPanel(resources);
+
+      bundlesTableModel = new BundlesTableModel();
+
+      _panel.tblBundels.setModel(bundlesTableModel);
+
+
+      _panel.tblBundels.addMouseListener(new MouseAdapter()
+      {
+         public void mousePressed(MouseEvent e)
+         {
+            maybeShowPopup(e);
+         }
+
+         public void mouseReleased(MouseEvent e)
+         {
+            maybeShowPopup(e);
+         }
+      });
+
+      _popUp.add(_mnuGenerateTemplateComments);
+      _popUp.add(_mnuOpenInEditor);
+
+      _mnuGenerateTemplateComments.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            System.out.println("_mnuGenerateTemplateComments");
+         }
+      });
+
+      _mnuOpenInEditor.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            System.out.println("_mnuOpenInEditor");
+         }
+      });
+
 
       Locale[] availableLocales = Locale.getAvailableLocales();
 
@@ -61,6 +113,15 @@ public class I18nPanelController implements IGlobalPreferencesPanel
       _app = app;
 
    }
+
+   private void maybeShowPopup(MouseEvent e)
+   {
+      if (e.isPopupTrigger())
+      {
+         _popUp.show(e.getComponent(), e.getX(), e.getY());
+      }
+   }
+
 
 
    private void onLoadBundels(IApplication app)
@@ -121,31 +182,60 @@ public class I18nPanelController implements IGlobalPreferencesPanel
          }
       }
 
-      Hashtable i18nPackagesByName = new Hashtable();
+      Hashtable i18nBundlesByName = new Hashtable();
 
       for (int i = 0; i < defaultI18nProps.size(); i++)
       {
          I18nProps i18nProps = (I18nProps) defaultI18nProps.get(i);
-         I18nPackage pack = new I18nPackage(i18nProps);
-         i18nPackagesByName.put(i18nProps.getPackage(), pack);
+         I18nBundle pack = new I18nBundle(i18nProps);
+         i18nBundlesByName.put(i18nProps.getPackage(), pack);
       }
 
       for (int i = 0; i < localizedI18nProps.size(); i++)
       {
          I18nProps locI18nProps = (I18nProps) localizedI18nProps.get(i);
-         I18nPackage pack = (I18nPackage) i18nPackagesByName.get(locI18nProps.getPackage());
+         I18nBundle pack = (I18nBundle) i18nBundlesByName.get(locI18nProps.getPackage());
          if(null != pack)
          {
-            System.out.println(locI18nProps.getPackage());
             pack.setLocalizedProp(locI18nProps);
          }
       }
 
-      _panel.listPackages.setListData(i18nPackagesByName.values().toArray(new I18nPackage[0]));
+      I18nBundle[] bundles = (I18nBundle[]) i18nBundlesByName.values().toArray(new I18nBundle[0]);
+
+      bundlesTableModel.setBundles(bundles);
    }
 
    private void findI18nInArchive(String i18nPropsFileName, String localizedI18nPropsFileName, File file, ArrayList defaultI18nProps, ArrayList localizedI18nProps)
    {
+      try
+      {
+         ZipFile zf = new ZipFile(file);
+
+         for(Enumeration e=zf.entries(); e.hasMoreElements();)
+         {
+            ZipEntry entry = (ZipEntry) e.nextElement();
+
+            if(entry.getName().endsWith(i18nPropsFileName))
+            {
+               defaultI18nProps.add(new I18nProps(file, entry.getName()));
+            }
+            else if(entry.getName().endsWith(localizedI18nPropsFileName))
+            {
+               localizedI18nProps.add(new I18nProps(file, entry.getName()));
+            }
+
+         }
+
+
+      }
+      catch (IOException e)
+      {
+         String msg = s_stringMgr.getString("I18n.failedToOpenZip", file.getAbsolutePath());
+         // i18n{I18n.failedToOpenZip=Failed to open zip/jar {0}}
+         _app.getMessageHandler().showMessage(msg);
+      }
+
    }
 
    private void findI18nInDir(String i18nPropsFileName, String localizedI18nPropsFileName, File dir, ArrayList defaultI18nProps, ArrayList localizedI18nProps)

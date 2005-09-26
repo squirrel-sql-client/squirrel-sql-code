@@ -154,7 +154,7 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 								+ (System.currentTimeMillis() - start) + "ms");
 					}
 				}
-				pack();
+				setSize(650, 600);
 				GUIUtils.centerWithinDesktop(this);
 			}
 			moveToFront();
@@ -309,10 +309,7 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 			IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel) it.next();
 			String pnlTitle = pnl.getTitle();
 			String hint = pnl.getHint();
-			final JScrollPane sp = new JScrollPane(pnl.getPanelComponent());
-			sp.setBorder(BorderFactory.createEmptyBorder());
-			sp.setPreferredSize(new Dimension(600, 450));
-			tabPane.addTab(pnlTitle, null, sp/*pnl.getPanelComponent()*/, hint);
+			tabPane.addTab(pnlTitle, null, pnl.getPanelComponent(), hint);
 		}
 
 		// This seems to be necessary to get background colours
