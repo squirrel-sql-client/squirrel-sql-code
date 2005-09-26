@@ -1,11 +1,11 @@
 package net.sourceforge.squirrel_sql.plugins.i18n;
 
-public class I18nPackage
+public class I18nBundle
 {
    private I18nProps _defaultProps;
    private I18nProps _localizedProps;
 
-   public I18nPackage(I18nProps defaultProps)
+   public I18nBundle(I18nProps defaultProps)
    {
       _defaultProps = defaultProps;
    }
@@ -18,5 +18,15 @@ public class I18nPackage
    public String toString()
    {
       return _defaultProps.getPackage();
+   }
+
+   public String getName()
+   {
+      return _defaultProps.getPackage();
+   }
+
+   public String getTranslationState()
+   {
+      return "incomplete";
    }
 }

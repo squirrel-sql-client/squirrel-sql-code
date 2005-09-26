@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.plugins.i18n;
 
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,22 +17,27 @@ public class I18nPanel extends JPanel
    JButton btnLoad = new JButton(s_stringMgr.getString("I18n.loadTabs")); // i18n{I18n.loadTabs=Load tabs}
 
    JTextField txtWorkingDir = new JTextField();
-   JButton btnChooseDir = new JButton("...");
-   JCheckBox chkShowSelectedPackages = new JCheckBox(s_stringMgr.getString("I18n.showSelectedPackages"));
+   JButton btnChooseDir;
+
+   JTextField txtEditorCommand = new JTextField();
+   JButton btnChooseCommand;
+
+
+
+   //JCheckBox chkShowSelectedPackages = new JCheckBox(s_stringMgr.getString("I18n.showSelectedPackages"));
    // i18n{I18n.showSelectedPackages=Show translations for selected packages only}
 
-   JCheckBox chkShowUntranslated = new JCheckBox(s_stringMgr.getString("I18n.showUntranslated"));
+   //JCheckBox chkShowUntranslated = new JCheckBox(s_stringMgr.getString("I18n.showUntranslated"));
    // i18n{I18n.showUntranslated=Show untranslated resources only}
 
    JTabbedPane tabTranslations = new JTabbedPane();
 
 
-   JList listPackages = new JList();
-   JTable tblTranslations = new JTable();
+   JTable tblBundels = new JTable();
    JTextField txtNote;
 
 
-   public I18nPanel()
+   public I18nPanel(PluginResources resources)
    {
       setLayout(new GridBagLayout());
 
@@ -53,27 +59,38 @@ public class I18nPanel extends JPanel
       gbc = new GridBagConstraints(1,1,1,1,1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,0,0,5),0,0);
       add(txtWorkingDir, gbc);
 
+      btnChooseDir = new JButton(resources.getIcon("Open"));
       gbc = new GridBagConstraints(2,1,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,0,0,5),0,0);
       add(btnChooseDir, gbc);
 
 
-      JPanel pnlChk = new JPanel(new GridBagLayout());
+      gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      add(new JLabel(s_stringMgr.getString("I18n.EditorCommand")), gbc); // i18n{I18n.WorkingDir=Working Directory}
 
-      gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
-      pnlChk.add(chkShowSelectedPackages, gbc);
+      gbc = new GridBagConstraints(1,2,1,1,1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,0,0,5),0,0);
+      add(txtEditorCommand, gbc);
 
-      gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
-      pnlChk.add(chkShowUntranslated, gbc);
+      btnChooseCommand = new JButton(resources.getIcon("Open"));
+      gbc = new GridBagConstraints(2,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,0,0,5),0,0);
+      add(btnChooseCommand, gbc);
 
-      gbc = new GridBagConstraints(0,2,3,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,0,0,0),0,0);
-      add(pnlChk, gbc);
+
+//      JPanel pnlChk = new JPanel(new GridBagLayout());
+
+//      gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+//      pnlChk.add(chkShowSelectedPackages, gbc);
+//
+//      gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+//      pnlChk.add(chkShowUntranslated, gbc);
+
+//      gbc = new GridBagConstraints(0,1,3,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,0,0,0),0,0);
+//      add(pnlChk, gbc);
 
 
       gbc = new GridBagConstraints(0,3,3,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,0,5),0,0);
       add(tabTranslations, gbc);
 
-      tabTranslations.add(s_stringMgr.getString("I18n.packages"), listPackages); // i18n{I18n.packages=Packages}
-      tabTranslations.add(s_stringMgr.getString("I18n.translations"), tblTranslations); // i18n{I18n.translations=Translations}
+      tabTranslations.add(s_stringMgr.getString("I18n.packages"), new JScrollPane(tblBundels)); // i18n{I18n.packages=Packages}
 
       txtNote = new JTextField();
       txtNote.setText(s_stringMgr.getString("I18n.changeApplicationDefaultLocaleNote"));
