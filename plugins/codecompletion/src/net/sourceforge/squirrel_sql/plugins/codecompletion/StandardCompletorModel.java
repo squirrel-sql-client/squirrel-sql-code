@@ -36,7 +36,7 @@ import java.util.Vector;
 
 public class StandardCompletorModel
 {
-   private static final char[] SEPARATORS = {' ', '\t', '\n' ,  ',', '('};
+   private static final char[] SEPARATORS = {' ', '\t', '\n' ,  ',', '(', '\'','"'};
 
    private ISession _session;
    private ILogger _log = LoggerController.createLogger(CodeCompletorModel.class);
@@ -155,7 +155,6 @@ public class StandardCompletorModel
 
       return new CompletionCandidates(ccis, replacementStart, stringToReplace);
    }
-
 
 
    private String getStringToParse(String textTillCaret)
