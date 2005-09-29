@@ -116,6 +116,7 @@ class ObjectTree extends JTree
 		{
 			throw new IllegalArgumentException("ISession == null");
 		}
+		setRowHeight(getFontMetrics(getFont()).getHeight());
 		_session = session;
 		_model = (ObjectTreeModel)getModel();
 		setModel(_model);

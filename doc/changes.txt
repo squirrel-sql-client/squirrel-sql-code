@@ -1,9 +1,12 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+Not yet released, available in CVS or propably in latest weekly build
+=====================================================================
+
 - Enabled code completion when a ' or a " is on front of the name to complete (RFE 1305802)
 - Fixed bug #1288519 (Postgres: editing boolean fields)
-- Fixed table row height for large fonts. (Thanks to Mitch Skinner)
+- Fixed for table and tree row height for large fonts. (Thanks to Mitch Skinner)
 - User may define an Object tree filter through the Session Properties. Useful for large databases. (Thanks to Oliver Jehle)
  
 
