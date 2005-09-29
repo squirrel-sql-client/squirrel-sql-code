@@ -1,7 +1,7 @@
 SQuirreL SQL Client Change Log
 ==============================
 
-Not yet released, available in CVS or propably in latest weekly build
+Not yet released, available in CVS or probably in latest weekly build
 =====================================================================
 
 - Enabled code completion when a ' or a " is on front of the name to complete (RFE 1305802)
