@@ -1,19 +1,21 @@
 package net.sourceforge.squirrel_sql.client.session.parser;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
-import net.sourceforge.squirrel_sql.client.session.parser.kernel.ParserThread;
-import net.sourceforge.squirrel_sql.client.session.parser.kernel.ParsingFinishedListener;
-import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasInfo;
-import net.sourceforge.squirrel_sql.fw.util.BaseRuntimeException;
-
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Vector;
+
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.ParserThread;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.ParsingFinishedListener;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasInfo;
+import net.sourceforge.squirrel_sql.fw.util.BaseRuntimeException;
 
 public class ParserEventsProcessor implements IParserEventsProcessor
 {
@@ -57,10 +59,14 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 	public void addParserEventsListener(ParserEventsListener l){_listeners.add(l);}
 	public void removeParserEventsListener(ParserEventsListener l){_listeners.add(l);}
 
-   public void endProcessing()
-	{
-		_parserThread.exitThread();
-		_parserTimer.stop();
+    public void endProcessing()
+    {
+        if (_parserThread != null) {
+            _parserThread.exitThread();
+        }
+        if (_parserTimer != null) {
+            _parserTimer.stop();
+        }
 	}
 
    public void triggerParser()
