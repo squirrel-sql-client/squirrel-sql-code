@@ -91,7 +91,7 @@ public class SchemaInfo
 		try
 		{
 			final SQLDatabaseMetaData sqlDmd = conn.getSQLMetaData();
-
+			
 			_dmd = null;
 			try
 			{
@@ -115,7 +115,9 @@ public class SchemaInfo
 
 			try
 			{
+                s_log.debug("Loading data types");
 				loadDataTypes(_dmd);
+                s_log.debug("Data types loaded");
 			}
 			catch (Exception ex)
 			{
@@ -135,24 +137,24 @@ public class SchemaInfo
 
 			try
 			{
-				s_log.debug("Loading functions");
+				s_log.debug("Loading catalogs");
 				loadCatalogs(_dmd);
-				s_log.debug("Functions loaded");
+				s_log.debug("Catalogs loaded");
 			}
 			catch (Exception ex)
 			{
-				s_log.error("Error loading functions", ex);
+				s_log.error("Error loading catalogs", ex);
 			}
 
 			try
 			{
-				s_log.debug("Loading functions");
+				s_log.debug("Loading schemas");
 				loadSchemas(_dmd);
-				s_log.debug("Functions loaded");
+				s_log.debug("Schemas loaded");
 			}
 			catch (Exception ex)
 			{
-				s_log.error("Error loading functions", ex);
+				s_log.error("Error loading schemas", ex);
 			}
 
 
@@ -175,7 +177,7 @@ public class SchemaInfo
 			}
 			catch (Exception ex)
 			{
-				s_log.error("Error loading tables", ex);
+				s_log.error("Error loading stored procedures", ex);
 			}
 		}
 		finally
@@ -191,12 +193,12 @@ public class SchemaInfo
 		final String objFilter = _session.getProperties().getObjectFilter();
 		try
 		{
-			System.out.println("load stored procedureds with filter "+objFilter);
+			s_log.debug("Loading stored procedures with filter "+objFilter);
 			_procInfos = dmd.getProcedures(null, null,objFilter != null && objFilter.length() > 0 ? objFilter :"%");
 		}
 		catch (Throwable th)
 		{
-			s_log.error("failed to load stroed procedures", th);
+			s_log.error("Failed to load stored procedures", th);
 		}
 
 	}
