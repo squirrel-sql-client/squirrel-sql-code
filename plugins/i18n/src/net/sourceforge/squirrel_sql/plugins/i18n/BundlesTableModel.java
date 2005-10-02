@@ -1,6 +1,8 @@
 package net.sourceforge.squirrel_sql.plugins.i18n;
 
 import javax.swing.table.DefaultTableModel;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class BundlesTableModel extends DefaultTableModel
 {
@@ -54,6 +56,21 @@ public class BundlesTableModel extends DefaultTableModel
    public void setBundles(I18nBundle[] bundles)
    {
       _bundles = bundles;
+
+      Arrays.sort(_bundles);
+
       fireTableDataChanged();
+   }
+
+   public I18nBundle[] getBundlesForRows(int[] selRows)
+   {
+      ArrayList ret = new ArrayList(selRows.length);
+
+      for (int i = 0; i < selRows.length; i++)
+      {
+         ret.add(_bundles[selRows[i]]);
+      }
+
+      return (I18nBundle[]) ret.toArray(new I18nBundle[ret.size()]);
    }
 }

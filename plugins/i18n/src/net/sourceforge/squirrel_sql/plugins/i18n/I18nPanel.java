@@ -14,7 +14,7 @@ public class I18nPanel extends JPanel
 
 
    JComboBox cboLocales = new JComboBox();
-   JButton btnLoad = new JButton(s_stringMgr.getString("I18n.loadTabs")); // i18n{I18n.loadTabs=Load tabs}
+   JButton btnLoad = new JButton(s_stringMgr.getString("I18n.loadTabs")); // i18n[I18n.loadTabs=Load tabs]
 
    JTextField txtWorkingDir = new JTextField();
    JButton btnChooseDir;
@@ -25,10 +25,10 @@ public class I18nPanel extends JPanel
 
 
    //JCheckBox chkShowSelectedPackages = new JCheckBox(s_stringMgr.getString("I18n.showSelectedPackages"));
-   // i18n{I18n.showSelectedPackages=Show translations for selected packages only}
+   // i18n[I18n.showSelectedPackages=Show translations for selected packages only]
 
    //JCheckBox chkShowUntranslated = new JCheckBox(s_stringMgr.getString("I18n.showUntranslated"));
-   // i18n{I18n.showUntranslated=Show untranslated resources only}
+   // i18n[I18n.showUntranslated=Show untranslated resources only]
 
    JTabbedPane tabTranslations = new JTabbedPane();
 
@@ -44,7 +44,7 @@ public class I18nPanel extends JPanel
       GridBagConstraints gbc;
 
       gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
-      add(new JLabel(s_stringMgr.getString("I18n.locales")), gbc); // i18n{I18n.locales=Locales}
+      add(new JLabel(s_stringMgr.getString("I18n.locales")), gbc); // i18n[I18n.locales=Locales]
 
       gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,0,0,5),0,0);
       add(cboLocales, gbc);
@@ -54,7 +54,7 @@ public class I18nPanel extends JPanel
 
 
       gbc = new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
-      add(new JLabel(s_stringMgr.getString("I18n.WorkingDir")), gbc); // i18n{I18n.WorkingDir=Working Directory}
+      add(new JLabel(s_stringMgr.getString("I18n.WorkingDir")), gbc); // i18n[I18n.WorkingDir=Working Directory]
 
       gbc = new GridBagConstraints(1,1,1,1,1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,0,0,5),0,0);
       add(txtWorkingDir, gbc);
@@ -65,7 +65,7 @@ public class I18nPanel extends JPanel
 
 
       gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
-      add(new JLabel(s_stringMgr.getString("I18n.EditorCommand")), gbc); // i18n{I18n.WorkingDir=Working Directory}
+      add(new JLabel(s_stringMgr.getString("I18n.EditorCommand")), gbc); // i18n[I18n.WorkingDir=Working Directory]
 
       gbc = new GridBagConstraints(1,2,1,1,1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,0,0,5),0,0);
       add(txtEditorCommand, gbc);
@@ -90,12 +90,12 @@ public class I18nPanel extends JPanel
       gbc = new GridBagConstraints(0,3,3,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,0,5),0,0);
       add(tabTranslations, gbc);
 
-      tabTranslations.add(s_stringMgr.getString("I18n.packages"), new JScrollPane(tblBundels)); // i18n{I18n.packages=Packages}
+      tabTranslations.add(s_stringMgr.getString("I18n.packages"), new JScrollPane(tblBundels)); // i18n[I18n.packages=Packages]
 
       txtNote = new JTextField();
       txtNote.setText(s_stringMgr.getString("I18n.changeApplicationDefaultLocaleNote"));
       txtNote.setEditable(false);
-      // i18n{I18n.changeApplicationDefaultLocaleNote=Example VM Parameters to change used locale: -Duser.language=en -Duser.country=US}
+      // i18n[I18n.changeApplicationDefaultLocaleNote=Example VM Parameters to change used locale: -Duser.language=en -Duser.country=US]
       gbc = new GridBagConstraints(0,4,3,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,0,5),0,0);
       add(txtNote, gbc);
 
