@@ -28,22 +28,22 @@ public class I18nPanelController implements IGlobalPreferencesPanel
 
    I18nPanel _panel;
    private IApplication _app;
-   private BundlesTableModel bundlesTableModel;
+   private BundlesTableModel _bundlesTableModel;
 
    private JPopupMenu _popUp = new JPopupMenu();
    private JMenuItem _mnuGenerateTemplateComments = new JMenuItem(s_stringMgr.getString("I18n.generateTemplateComments"));
-   // i18n{I18n.generateTemplateComments=Generate template comments for missing translations}
+   // i18n[I18n.generateTemplateComments=Generate template comments for missing translations]
 
    private JMenuItem _mnuOpenInEditor = new JMenuItem(s_stringMgr.getString("I18n.openIOnEditor"));
-   // i18n{I18n.openIOnEditor=Open in Editor}
+   // i18n[I18n.openIOnEditor=Open in Editor]
 
    I18nPanelController(PluginResources resources)
    {
       _panel = new I18nPanel(resources);
 
-      bundlesTableModel = new BundlesTableModel();
+      _bundlesTableModel = new BundlesTableModel();
 
-      _panel.tblBundels.setModel(bundlesTableModel);
+      _panel.tblBundels.setModel(_bundlesTableModel);
 
 
       _panel.tblBundels.addMouseListener(new MouseAdapter()
@@ -66,7 +66,7 @@ public class I18nPanelController implements IGlobalPreferencesPanel
       {
          public void actionPerformed(ActionEvent e)
          {
-            System.out.println("_mnuGenerateTemplateComments");
+            onGenerate();
          }
       });
 
@@ -123,6 +123,58 @@ public class I18nPanelController implements IGlobalPreferencesPanel
    }
 
 
+   private void onGenerate()
+   {
+      String buf = _panel.txtWorkingDir.getText();
+      if(null == buf || 0 == buf.trim().length())
+      {
+         String msg = s_stringMgr.getString("I18n.NoWorkDir");
+         // I18n[I18n.NoWorkDir=Please choose a work dir to store your translations.]
+
+         JOptionPane.showMessageDialog(_app.getMainFrame(), msg);
+         return;
+
+      }
+
+
+      File workDir = new File(buf);
+      if(false == workDir.isDirectory())
+      {
+         String msg = s_stringMgr.getString("I18n.WorkDirIsNotADirectory", workDir.getPath());
+         // I18n[I18n.WorkDirIsNotADirectory=Working directory {0} is not a directory]
+
+         JOptionPane.showMessageDialog(_app.getMainFrame(), msg);
+         return;
+      }
+
+      if(false == workDir.exists())
+      {
+         String msg = s_stringMgr.getString("I18n.WorkDirDoesNotExistQuestionCreate", workDir.getPath());
+         // I18n[I18n.WorkDirDoesNotExistQuestionCreate=Working directory {0} does not exist.\nDo you want to create it?]
+
+         if(JOptionPane.YES_OPTION ==  JOptionPane.showConfirmDialog(_app.getMainFrame(), msg))
+         {
+            if(false == workDir.mkdirs())
+            {
+               msg = s_stringMgr.getString("I18n.CouldNotCreateWorkDir", workDir.getPath());
+               // I18n[I18n.CouldNotCreateWorkDir=Could not create Working directory {0}]
+               JOptionPane.showMessageDialog(_app.getMainFrame(), msg);
+               return;
+
+            }
+         }
+      }
+
+
+      int[] selRows = _panel.tblBundels.getSelectedRows();
+      I18nBundle[] selBundles = _bundlesTableModel.getBundlesForRows(selRows);
+
+      for (int i = 0; i < selBundles.length; i++)
+      {
+         selBundles[i].writeMissingProps(_app, workDir);
+      }
+   }
+
 
    private void onLoadBundels(IApplication app)
    {
@@ -145,7 +197,7 @@ public class I18nPanelController implements IGlobalPreferencesPanel
          if(false == f.exists())
          {
             String msg = s_stringMgr.getString("I18n.noWorkdir");
-            // i18n{I18n.noWorkdir=Working directory doesn't exist.\nDo you want to create it?}
+            // i18n[I18n.noWorkdir=Working directory doesn't exist.\nDo you want to create it?]
             if(JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(app.getMainFrame(), msg))
             {
                f.mkdirs();
@@ -154,7 +206,7 @@ public class I18nPanelController implements IGlobalPreferencesPanel
          else if(false == f.isDirectory())
          {
             String msg = s_stringMgr.getString("I18n.WorkdirIsNoDir", f.getAbsolutePath());
-            // i18n{I18n.WorkdirIsNoDir=The working directory is not a directory.\nNo bundles will be loaded from {0}}
+            // i18n[I18n.WorkdirIsNoDir=The working directory is not a directory.\nNo bundles will be loaded from {0}]
             JOptionPane.showMessageDialog(app.getMainFrame(), msg);
 
          }
@@ -187,14 +239,17 @@ public class I18nPanelController implements IGlobalPreferencesPanel
       for (int i = 0; i < defaultI18nProps.size(); i++)
       {
          I18nProps i18nProps = (I18nProps) defaultI18nProps.get(i);
-         I18nBundle pack = new I18nBundle(i18nProps);
-         i18nBundlesByName.put(i18nProps.getPackage(), pack);
+         I18nBundle pack = new I18nBundle(i18nProps, localizedI18nPropsFileName);
+         i18nBundlesByName.put(i18nProps.getPath(), pack);
       }
 
       for (int i = 0; i < localizedI18nProps.size(); i++)
       {
          I18nProps locI18nProps = (I18nProps) localizedI18nProps.get(i);
-         I18nBundle pack = (I18nBundle) i18nBundlesByName.get(locI18nProps.getPackage());
+         String path = locI18nProps.getPath();
+         String key = path.substring(0, path.lastIndexOf(File.separator)) + File.separator + i18nPropsFileName;
+
+         I18nBundle pack = (I18nBundle) i18nBundlesByName.get(key);
          if(null != pack)
          {
             pack.setLocalizedProp(locI18nProps);
@@ -203,7 +258,7 @@ public class I18nPanelController implements IGlobalPreferencesPanel
 
       I18nBundle[] bundles = (I18nBundle[]) i18nBundlesByName.values().toArray(new I18nBundle[0]);
 
-      bundlesTableModel.setBundles(bundles);
+      _bundlesTableModel.setBundles(bundles);
    }
 
    private void findI18nInArchive(String i18nPropsFileName, String localizedI18nPropsFileName, File file, ArrayList defaultI18nProps, ArrayList localizedI18nProps)
@@ -232,7 +287,7 @@ public class I18nPanelController implements IGlobalPreferencesPanel
       catch (IOException e)
       {
          String msg = s_stringMgr.getString("I18n.failedToOpenZip", file.getAbsolutePath());
-         // i18n{I18n.failedToOpenZip=Failed to open zip/jar {0}}
+         // i18n[I18n.failedToOpenZip=Failed to open zip/jar {0}]
          _app.getMessageHandler().showMessage(msg);
       }
 
