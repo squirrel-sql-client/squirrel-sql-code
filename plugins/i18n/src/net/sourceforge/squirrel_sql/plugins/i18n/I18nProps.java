@@ -174,4 +174,64 @@ public class I18nProps extends Object
 
 
    }
+
+   public Properties getTranslateableProperties()
+   {
+      String name;
+
+      if(null == _entryName)
+      {
+         name = _file.getName();
+      }
+      else
+      {
+         if(-1 == _entryName.lastIndexOf(File.separator))
+         {
+            name = _entryName;
+         }
+         else
+         {
+            name = _entryName.substring(_entryName.lastIndexOf(File.separator));
+         }
+      }
+
+      if(name.startsWith("I18nStrings"))
+      {
+         return getProperties();
+      }
+      else
+      {
+         // These files contain images etc. We try to filter out these props.
+         Properties ret = getProperties();
+         for(Enumeration e=ret.keys(); e.hasMoreElements();)
+         {
+            String key = (String) e.nextElement();
+
+            if(key.endsWith(".image") ||
+               key.endsWith(".image") ||
+               key.endsWith(".rolloverimage") ||
+               key.endsWith(".disabledimage") ||
+               key.endsWith(".frameIcon") ||
+               key.endsWith(".file") ||
+               key.endsWith(".images") ||
+               key.endsWith(".accelerator") ||
+               key.equals("path.defaults")
+               )
+            {
+               ret.remove(key);
+            }
+         }
+
+         return ret;
+
+
+
+
+
+
+      }
+
+
+
+   }
 }
