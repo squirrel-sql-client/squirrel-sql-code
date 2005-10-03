@@ -362,9 +362,6 @@ public class I18nPanelController implements IGlobalPreferencesPanel
       ArrayList defaultI18nProps = new ArrayList();
       ArrayList localizedI18nProps = new ArrayList();
 
-      String i18nPropsFileName = "I18NStrings.properties";
-      String localizedI18nPropsFileName = "I18NStrings_" + selLocale + ".properties";
-
       String workDir = _panel.txtWorkingDir.getText();
       if(null != workDir && 0 < workDir.trim().length())
       {
@@ -385,10 +382,6 @@ public class I18nPanelController implements IGlobalPreferencesPanel
             JOptionPane.showMessageDialog(app.getMainFrame(), msg);
 
          }
-         else
-         {
-            findI18nInDir(i18nPropsFileName, localizedI18nPropsFileName, f, defaultI18nProps, localizedI18nProps);
-         }
       }
 
       for (int i = 0; i < urLs.length; i++)
@@ -397,15 +390,15 @@ public class I18nPanelController implements IGlobalPreferencesPanel
 
          if(file.isDirectory())
          {
-            findI18nInDir(i18nPropsFileName, localizedI18nPropsFileName, file, defaultI18nProps, localizedI18nProps);
+            findI18nInDir(selLocale, file, defaultI18nProps, localizedI18nProps);
          }
          else if (file.getName().equalsIgnoreCase("squirrel-sql.jar") || file.getName().equalsIgnoreCase("fw.jar"))
          {
-            findI18nInArchive(i18nPropsFileName, localizedI18nPropsFileName, file, defaultI18nProps, localizedI18nProps);
+            findI18nInArchive(selLocale, file, defaultI18nProps, localizedI18nProps);
          }
          else if(file.getPath().startsWith(pluginDir))
          {
-            findI18nInArchive(i18nPropsFileName, localizedI18nPropsFileName, file, defaultI18nProps, localizedI18nProps);
+            findI18nInArchive(selLocale, file, defaultI18nProps, localizedI18nProps);
          }
       }
 
@@ -414,29 +407,35 @@ public class I18nPanelController implements IGlobalPreferencesPanel
       for (int i = 0; i < defaultI18nProps.size(); i++)
       {
          I18nProps i18nProps = (I18nProps) defaultI18nProps.get(i);
-         I18nBundle pack = new I18nBundle(i18nProps, localizedI18nPropsFileName, getWorkDir());
+         I18nBundle pack = new I18nBundle(i18nProps, selLocale, getWorkDir());
          i18nBundlesByName.put(i18nProps.getPath(), pack);
       }
 
       for (int i = 0; i < localizedI18nProps.size(); i++)
       {
          I18nProps locI18nProps = (I18nProps) localizedI18nProps.get(i);
-         String path = locI18nProps.getPath();
-         String key = path.substring(0, path.lastIndexOf(File.separator)) + File.separator + i18nPropsFileName;
+         String key = locI18nProps.getUnlocalizedPath(selLocale);
 
-         I18nBundle pack = (I18nBundle) i18nBundlesByName.get(key);
-         if(null != pack)
+         I18nBundle bundle = (I18nBundle) i18nBundlesByName.get(key);
+         if(null != bundle)
          {
-            pack.setLocalizedProp(locI18nProps);
+            bundle.setLocalizedProp(locI18nProps);
          }
       }
 
       I18nBundle[] bundles = (I18nBundle[]) i18nBundlesByName.values().toArray(new I18nBundle[0]);
 
+      int[] selRows = _panel.tblBundels.getSelectedRows();
       _bundlesTableModel.setBundles(bundles);
+
+      for (int i = 0; i < selRows.length; i++)
+      {
+         _panel.tblBundels.getSelectionModel().addSelectionInterval(selRows[i], selRows[i]);
+      }
+
    }
 
-   private void findI18nInArchive(String i18nPropsFileName, String localizedI18nPropsFileName, File file, ArrayList defaultI18nProps, ArrayList localizedI18nProps)
+   private void findI18nInArchive(Locale selLoc, File file, ArrayList defaultI18nProps, ArrayList localizedI18nProps)
    {
       try
       {
@@ -446,15 +445,20 @@ public class I18nPanelController implements IGlobalPreferencesPanel
          {
             ZipEntry entry = (ZipEntry) e.nextElement();
 
-            if(entry.getName().endsWith(i18nPropsFileName))
-            {
-               defaultI18nProps.add(new I18nProps(file, entry.getName()));
-            }
-            else if(entry.getName().endsWith(localizedI18nPropsFileName))
-            {
-               localizedI18nProps.add(new I18nProps(file, entry.getName()));
-            }
 
+            if(entry.getName().endsWith(".properties"))
+            {
+               Locale loc = I18nProps.parseLocaleFromPropsFileName(file.getName());
+
+               if(null == loc)
+               {
+                  defaultI18nProps.add(new I18nProps(file, entry.getName()));
+               }
+               if(selLoc.equals(loc))
+               {
+                  localizedI18nProps.add(new I18nProps(file, entry.getName()));
+               }
+            }
          }
 
 
@@ -468,7 +472,7 @@ public class I18nPanelController implements IGlobalPreferencesPanel
 
    }
 
-   private void findI18nInDir(String i18nPropsFileName, String localizedI18nPropsFileName, File dir, ArrayList defaultI18nProps, ArrayList localizedI18nProps)
+   private void findI18nInDir(Locale selLoc, File dir, ArrayList defaultI18nProps, ArrayList localizedI18nProps)
    {
       File[] files = dir.listFiles();
 
@@ -476,15 +480,20 @@ public class I18nPanelController implements IGlobalPreferencesPanel
       {
          if(files[i].isDirectory())
          {
-            findI18nInDir(i18nPropsFileName, localizedI18nPropsFileName, files[i], defaultI18nProps, localizedI18nProps);
+            findI18nInDir(selLoc, files[i], defaultI18nProps, localizedI18nProps);
          }
-         else if(files[i].getName().equals(i18nPropsFileName))
+         else if(files[i].getName().endsWith(".properties"))
          {
-            defaultI18nProps.add(new I18nProps(files[i]));
-         }
-         else if(files[i].getName().equals(localizedI18nPropsFileName))
-         {
-            localizedI18nProps.add(new I18nProps(files[i]));
+            Locale loc = I18nProps.parseLocaleFromPropsFileName(files[i].getName());
+
+            if(null == loc)
+            {
+               defaultI18nProps.add(new I18nProps(files[i]));
+            }
+            if(selLoc.equals(loc))
+            {
+               localizedI18nProps.add(new I18nProps(files[i]));
+            }
          }
       }
 

@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.Enumeration;
+import java.util.Locale;
 
 public class I18nBundle implements Comparable
 {
@@ -18,8 +19,9 @@ public class I18nBundle implements Comparable
       StringManagerFactory.getStringManager(I18nProps.class);
 
    private I18nProps _defaultProps;
-   private String _localizedI18nPropsFileName;
-   private Integer _missingTranslations;
+   private Locale _locale;
+   private File _workDir;
+   private Integer _missingTranslationsCount;
 
    /**
     * The localizations that already exist in SQuirreL.
@@ -28,10 +30,19 @@ public class I18nBundle implements Comparable
     */
    private I18nProps _localizedProps;
 
-   public I18nBundle(I18nProps defaultProps, String localizedI18nPropsFileName, File workDir)
+   public I18nBundle(I18nProps defaultProps, Locale locale, File workDir)
    {
       _defaultProps = defaultProps;
-      _localizedI18nPropsFileName = localizedI18nPropsFileName;
+      _locale = locale;
+      _workDir = workDir;
+   }
+
+   private void initMissingTranslationsCount()
+   {
+      if(null != _missingTranslationsCount)
+      {
+         return;
+      }
 
       Properties buf = _defaultProps.getProperties();
       if(null != _localizedProps)
@@ -39,17 +50,16 @@ public class I18nBundle implements Comparable
          _localizedProps.removeProps(buf);
       }
 
-      if(null != workDir)
+      if(null != _workDir)
       {
-         File pathInWorkDir = getPathInWorkDir(workDir);
+         File pathInWorkDir = getPathInWorkDir(_workDir);
          if(pathInWorkDir.exists())
          {
             new I18nProps(pathInWorkDir).removeProps(buf);
          }
       }
 
-      _missingTranslations = new Integer(buf.size());
-
+      _missingTranslationsCount = new Integer(buf.size());
    }
 
    public void setLocalizedProp(I18nProps localizedProps)
@@ -67,9 +77,10 @@ public class I18nBundle implements Comparable
       return _defaultProps.getName();
    }
 
-   public Integer getTranslationState()
+   public Integer getMissingTranslationsCount()
    {
-      return _missingTranslations;
+      initMissingTranslationsCount();
+      return _missingTranslationsCount;
    }
 
 
@@ -148,7 +159,8 @@ public class I18nBundle implements Comparable
    File getPathInWorkDir(File workDir)
    {
       File toAppendTo = new File(workDir.getPath() + File.separator + getName());
-      toAppendTo = new File(toAppendTo.getParent() + File.separator + _localizedI18nPropsFileName);
+      String localizedFileName = _defaultProps.getLocalizedFileName(_locale);
+      toAppendTo = new File(toAppendTo.getParent() + File.separator + localizedFileName);
       return toAppendTo;
    }
 

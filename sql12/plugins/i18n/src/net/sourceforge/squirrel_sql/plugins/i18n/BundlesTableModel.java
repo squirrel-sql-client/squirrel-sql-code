@@ -55,7 +55,7 @@ public class BundlesTableModel extends DefaultTableModel
       }
       else if(1 == column)
       {
-         return _bundles[row].getTranslationState();
+         return _bundles[row].getMissingTranslationsCount();
       }
       else
       {

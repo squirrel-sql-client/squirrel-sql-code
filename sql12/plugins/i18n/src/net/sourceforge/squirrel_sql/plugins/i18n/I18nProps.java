@@ -6,6 +6,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import java.io.*;
 import java.util.Properties;
 import java.util.Enumeration;
+import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -53,7 +54,7 @@ public class I18nProps extends Object
       }
       else
       {
-         return getPath().substring(cutOffPos + nameCutOff.length());
+         return getPath().substring(cutOffPos);
       }
    }
 
@@ -132,5 +133,45 @@ public class I18nProps extends Object
       {
          throw new RuntimeException(e);
       }
+   }
+
+   public String getLocalizedFileName(Locale loc)
+   {
+      String name = getPath().substring(getPath().lastIndexOf(File.separator));
+      return name.substring(name.lastIndexOf(".properties")) + "_" + loc + ".properties";
+   }
+
+   public String getUnlocalizedPath(Locale loc)
+   {
+      String path = getPath().substring(0, getPath().lastIndexOf(File.separator));
+      String name = getPath().substring(getPath().lastIndexOf(File.separator));
+
+      return path + name.replaceAll("_"+ loc.toString(), "");
+   }
+
+   public static Locale parseLocaleFromPropsFileName(String propsFileName)
+   {
+      if(false == propsFileName.endsWith(".properties"))
+      {
+         return null;
+      }
+
+      String buf = propsFileName.substring(0, propsFileName.length() - ".properties".length());
+
+      Locale[] availableLocales = Locale.getAvailableLocales();
+
+      for (int i = 0; i < availableLocales.length; i++)
+      {
+         if(buf.endsWith("_" + availableLocales[i].toString()))
+         {
+            return availableLocales[i];
+         }
+      }
+
+      return null;
+
+
+
+
    }
 }
