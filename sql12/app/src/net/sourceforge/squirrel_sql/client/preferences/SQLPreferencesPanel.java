@@ -110,6 +110,11 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 
 	}
 
+   public void uninitialize(IApplication app)
+   {
+      
+   }
+
 
    public void onChooseDir(SQLPrefsPanel pnl)
    {

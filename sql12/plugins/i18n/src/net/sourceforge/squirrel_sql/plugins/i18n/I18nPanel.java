@@ -17,10 +17,10 @@ public class I18nPanel extends JPanel
    JButton btnLoad = new JButton(s_stringMgr.getString("I18n.loadTabs")); // i18n[I18n.loadTabs=Load tabs]
 
    JTextField txtWorkingDir = new JTextField();
-   JButton btnChooseDir;
+   JButton btnChooseWorkDir;
 
    JTextField txtEditorCommand = new JTextField();
-   JButton btnChooseCommand;
+   JButton btnChooseEditorCommand;
 
 
 
@@ -59,9 +59,9 @@ public class I18nPanel extends JPanel
       gbc = new GridBagConstraints(1,1,1,1,1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,0,0,5),0,0);
       add(txtWorkingDir, gbc);
 
-      btnChooseDir = new JButton(resources.getIcon("Open"));
+      btnChooseWorkDir = new JButton(resources.getIcon("Open"));
       gbc = new GridBagConstraints(2,1,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,0,0,5),0,0);
-      add(btnChooseDir, gbc);
+      add(btnChooseWorkDir, gbc);
 
 
       gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
@@ -70,9 +70,9 @@ public class I18nPanel extends JPanel
       gbc = new GridBagConstraints(1,2,1,1,1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,0,0,5),0,0);
       add(txtEditorCommand, gbc);
 
-      btnChooseCommand = new JButton(resources.getIcon("Open"));
+      btnChooseEditorCommand = new JButton(resources.getIcon("Open"));
       gbc = new GridBagConstraints(2,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,0,0,5),0,0);
-      add(btnChooseCommand, gbc);
+      add(btnChooseEditorCommand, gbc);
 
 
 //      JPanel pnlChk = new JPanel(new GridBagLayout());
@@ -95,7 +95,7 @@ public class I18nPanel extends JPanel
       txtNote = new JTextField();
       txtNote.setText(s_stringMgr.getString("I18n.changeApplicationDefaultLocaleNote"));
       txtNote.setEditable(false);
-      // i18n[I18n.changeApplicationDefaultLocaleNote=Example VM Parameters to change used locale: -Duser.language=en -Duser.country=US]
+      // i18n[I18n.changeApplicationDefaultLocaleNote=Example VM Parameters to change locale used by SQuirreL: -Duser.language=en -Duser.country=US]
       gbc = new GridBagConstraints(0,4,3,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,0,5),0,0);
       add(txtNote, gbc);
 

@@ -67,7 +67,15 @@ public class DataTypePreferencesPanel implements  IGlobalPreferencesPanel
 		// there is nothing for us to do here
 	}
 
-	public void initialize(IApplication app, ISession session)
+   public void uninitialize(IApplication app)
+   {
+      // We need this method to satisfy one of the Interfaces we implement,
+      // but since we have moved all operations to the DataType sub-panels
+      // which initialize their own data during creation,
+      // there is nothing for us to do here
+   }
+
+   public void initialize(IApplication app, ISession session)
 		throws IllegalArgumentException
 	{
 		// We need this method to satisfy one of the Interfaces we implement,

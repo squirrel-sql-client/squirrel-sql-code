@@ -19,6 +19,7 @@ public class I18nBundle implements Comparable
 
    private I18nProps _defaultProps;
    private String _localizedI18nPropsFileName;
+   private Integer _missingTranslations;
 
    /**
     * The localizations that already exist in SQuirreL.
@@ -27,10 +28,28 @@ public class I18nBundle implements Comparable
     */
    private I18nProps _localizedProps;
 
-   public I18nBundle(I18nProps defaultProps, String localizedI18nPropsFileName)
+   public I18nBundle(I18nProps defaultProps, String localizedI18nPropsFileName, File workDir)
    {
       _defaultProps = defaultProps;
       _localizedI18nPropsFileName = localizedI18nPropsFileName;
+
+      Properties buf = _defaultProps.getProperties();
+      if(null != _localizedProps)
+      {
+         _localizedProps.removeProps(buf);
+      }
+
+      if(null != workDir)
+      {
+         File pathInWorkDir = getPathInWorkDir(workDir);
+         if(pathInWorkDir.exists())
+         {
+            new I18nProps(pathInWorkDir).removeProps(buf);
+         }
+      }
+
+      _missingTranslations = new Integer(buf.size());
+
    }
 
    public void setLocalizedProp(I18nProps localizedProps)
@@ -48,9 +67,9 @@ public class I18nBundle implements Comparable
       return _defaultProps.getName();
    }
 
-   public String getTranslationState()
+   public Integer getTranslationState()
    {
-      return "incomplete";
+      return _missingTranslations;
    }
 
 
@@ -60,8 +79,7 @@ public class I18nBundle implements Comparable
       {
          Properties propsToAppend = _defaultProps.getProperties();
 
-         File toAppendTo = new File(workDir.getPath() + File.separator + getName());
-         toAppendTo = new File(toAppendTo.getParent() + File.separator + _localizedI18nPropsFileName);
+         File toAppendTo = getPathInWorkDir(workDir);
          if(toAppendTo.exists())
          {
             new I18nProps(toAppendTo).removeProps(propsToAppend);
@@ -101,6 +119,7 @@ public class I18nBundle implements Comparable
             String val = propsToAppend.getProperty(key);
 
             pw.println("#" + key + "=" + normalizePropVal(val));
+            pw.println("#" + key + "=");
          }
 
          pw.flush();
@@ -124,6 +143,13 @@ public class I18nBundle implements Comparable
          throw new RuntimeException(e);
       }
 
+   }
+
+   File getPathInWorkDir(File workDir)
+   {
+      File toAppendTo = new File(workDir.getPath() + File.separator + getName());
+      toAppendTo = new File(toAppendTo.getParent() + File.separator + _localizedI18nPropsFileName);
+      return toAppendTo;
    }
 
    private String normalizePropVal(String val)

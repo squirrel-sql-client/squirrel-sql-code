@@ -23,4 +23,6 @@ import net.sourceforge.squirrel_sql.client.util.IOptionPanel;
 public interface IGlobalPreferencesPanel extends IOptionPanel
 {
 	void initialize(IApplication app);
+
+   void uninitialize(IApplication app);
 }

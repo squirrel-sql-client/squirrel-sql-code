@@ -32,6 +32,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.event.InternalFrameListener;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -115,6 +116,13 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 
 	public void dispose()
 	{
+      for (Iterator it = _panels.iterator(); it.hasNext();)
+      {
+         IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel) it.next();
+         pnl.uninitialize(_app);
+      }
+
+
 		synchronized (getClass())
 		{
 			s_instance = null;
@@ -264,8 +272,6 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
             _app.getSquirrelPreferences().save();
             cursorChg.restore();
         }
-
-        dispose();        
     }
     
 	/**
