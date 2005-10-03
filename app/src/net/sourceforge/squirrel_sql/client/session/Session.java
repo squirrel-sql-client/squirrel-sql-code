@@ -24,6 +24,7 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,10 +32,25 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import javax.swing.*;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
 
+import javax.swing.Action;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
+import net.sourceforge.squirrel_sql.client.mainframe.action.OpenConnectionCommand;
+import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
+import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
+import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsProcessor;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
@@ -47,15 +63,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.session.*;
-import net.sourceforge.squirrel_sql.client.mainframe.action.OpenConnectionCommand;
-import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
-import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
-import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsProcessor;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 /**
  * Think of a session as being the users view of the database. IE it includes
  * the database connection and the UI.
@@ -182,6 +189,8 @@ class Session implements ISession
 		_connLis = new SQLConnectionListener();
 		_conn.addPropertyChangeListener(_connLis);
 
+        checkDriverVersion();
+        
 		// Start loading table/column info about the current database.
 		_app.getThreadPool().addTask(new Runnable()
 		{
@@ -784,8 +793,83 @@ class Session implements ISession
       return objectTreeAPI;
    }
 
+    /**
+     * The point of this method is to try to determine if the driver being used
+     * for this session supports the API methods we are likely to use with this
+     * version of the Java runtime environment.  It's not a showstopper to use
+     * an older driver, but we noticed that in some cases, older versions of 
+     * drivers connecting to newer databases causes various unpredictable error
+     * conditions that are hard to troubleshoot, given that we don't have the 
+     * source to the driver.  Be that as it may, the user will inevitably claim 
+     * that their xyz java app works fine with their antiquated driver, 
+     * whereas SQuirreL does not - therefore it's a SQuirreL bug. So this will 
+     * warn the user when this condition exists and hopefully persuade them to 
+     * correct the problem. 
+     */
+    private void checkDriverVersion() {
+        DatabaseMetaData data = null;
+        try {
+            data = _conn.getSQLMetaData().getJDBCMetaData();
+        } catch (SQLException e) {
+            /* Do Nothing */
+        }
+        String javaVersion = System.getProperty("java.vm.version");
+        boolean javaVersionIsAtLeast14 = true; 
+        if (javaVersion != null) {
+            if (javaVersion.startsWith("1.1") 
+                    || javaVersion.startsWith("1.2") 
+                    || javaVersion.startsWith("1.3")) 
+            {
+                javaVersionIsAtLeast14 = false;
+            }
+        }
+        if (!javaVersionIsAtLeast14) {
+            return;
+        }
+        // At this point we know that we have a 1.4 or higher java runtime
+        boolean driverIs21Compliant = true;
+        if (data != null) { 
+            try {
+                boolean supportsSavePoints = data.supportsSavepoints();
+                if (!supportsSavePoints) {
+                    driverIs21Compliant = false;
+                }
+            } catch (Throwable e) {
+                driverIs21Compliant = false;
+            }
+        }
+        if (!driverIs21Compliant && javaVersionIsAtLeast14) {
+            StringBuffer tmp = new StringBuffer();
+            tmp.append("The driver being used for alias '");
+            tmp.append(_alias.getName());
+            tmp.append("' is not JDBC 2.1 compliant.\n");
+            tmp.append("You should consider getting a more ");
+            tmp.append("recent version of this driver");
+            
+            String message = tmp.toString();
+            showMessageDialog(message, 
+                              "JRE/JDBC Version Mismatch", 
+                              JOptionPane.ERROR_MESSAGE);
+            s_log.error(message);
+        }
+    }
 
-
+    private void showMessageDialog(final String message, 
+                                   final String title, 
+                                   final int messageType) 
+    {
+        final JFrame f = _app.getMainFrame();
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                JOptionPane.showMessageDialog(f, 
+                        message, 
+                        title, 
+                        messageType);
+            }
+        });
+    }
+    
+    
    private class SQLConnectionListener implements PropertyChangeListener
 	{
 		public void propertyChange(PropertyChangeEvent evt)
