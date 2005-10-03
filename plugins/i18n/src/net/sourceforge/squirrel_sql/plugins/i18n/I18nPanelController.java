@@ -193,7 +193,7 @@ public class I18nPanelController implements IGlobalPreferencesPanel
 
    private void onOpenInEditor()
    {
-      File workDir = getWorkDir();
+      File workDir = getWorkDir(true);
 
       String editorCommmand = _panel.txtEditorCommand.getText();
 
@@ -282,7 +282,7 @@ public class I18nPanelController implements IGlobalPreferencesPanel
 
    private void onGenerate()
    {
-      File workDir = getWorkDir();
+      File workDir = getWorkDir(true);
 
       if(null == workDir)
       {
@@ -303,16 +303,20 @@ public class I18nPanelController implements IGlobalPreferencesPanel
     * if it doesn't exist.
     *
     * @return null if to directory name is not valid
+    * @param b
     */
-   private File getWorkDir()
+   private File getWorkDir(boolean withMessages)
    {
       String buf = _panel.txtWorkingDir.getText();
       if(null == buf || 0 == buf.trim().length())
       {
-         String msg = s_stringMgr.getString("I18n.NoWorkDir");
-         // I18n[I18n.NoWorkDir=Please choose a work dir to store your translations.]
 
-         JOptionPane.showMessageDialog(_app.getMainFrame(), msg);
+         if (withMessages)
+         {
+            String msg = s_stringMgr.getString("I18n.NoWorkDir");
+            // I18n[I18n.NoWorkDir=Please choose a work dir to store your translations.]
+            JOptionPane.showMessageDialog(_app.getMainFrame(), msg);
+         }
          return null;
 
       }
@@ -321,10 +325,12 @@ public class I18nPanelController implements IGlobalPreferencesPanel
       File workDir = new File(buf);
       if(false == workDir.isDirectory())
       {
-         String msg = s_stringMgr.getString("I18n.WorkDirIsNotADirectory", workDir.getPath());
-         // I18n[I18n.WorkDirIsNotADirectory=Working directory {0} is not a directory]
-
-         JOptionPane.showMessageDialog(_app.getMainFrame(), msg);
+         if (withMessages)
+         {
+            String msg = s_stringMgr.getString("I18n.WorkDirIsNotADirectory", workDir.getPath());
+            // I18n[I18n.WorkDirIsNotADirectory=Working directory {0} is not a directory]
+            JOptionPane.showMessageDialog(_app.getMainFrame(), msg);
+         }
          return null;
       }
 
@@ -333,16 +339,23 @@ public class I18nPanelController implements IGlobalPreferencesPanel
          String msg = s_stringMgr.getString("I18n.WorkDirDoesNotExistQuestionCreate", workDir.getPath());
          // I18n[I18n.WorkDirDoesNotExistQuestionCreate=Working directory {0} does not exist.\nDo you want to create it?]
 
-         if(JOptionPane.YES_OPTION ==  JOptionPane.showConfirmDialog(_app.getMainFrame(), msg))
+         if (withMessages)
          {
-            if(false == workDir.mkdirs())
+            if(JOptionPane.YES_OPTION ==  JOptionPane.showConfirmDialog(_app.getMainFrame(), msg))
             {
-               msg = s_stringMgr.getString("I18n.CouldNotCreateWorkDir", workDir.getPath());
-               // I18n[I18n.CouldNotCreateWorkDir=Could not create Working directory {0}]
-               JOptionPane.showMessageDialog(_app.getMainFrame(), msg);
-               return null;
+               if(false == workDir.mkdirs())
+               {
+                  msg = s_stringMgr.getString("I18n.CouldNotCreateWorkDir", workDir.getPath());
+                  // I18n[I18n.CouldNotCreateWorkDir=Could not create Working directory {0}]
+                  JOptionPane.showMessageDialog(_app.getMainFrame(), msg);
+                  return null;
 
+               }
             }
+         }
+         else
+         {
+            return null;
          }
       }
 
@@ -407,7 +420,7 @@ public class I18nPanelController implements IGlobalPreferencesPanel
       for (int i = 0; i < defaultI18nProps.size(); i++)
       {
          I18nProps i18nProps = (I18nProps) defaultI18nProps.get(i);
-         I18nBundle pack = new I18nBundle(i18nProps, selLocale, getWorkDir());
+         I18nBundle pack = new I18nBundle(i18nProps, selLocale, getWorkDir(false));
          i18nBundlesByName.put(i18nProps.getPath(), pack);
       }
 

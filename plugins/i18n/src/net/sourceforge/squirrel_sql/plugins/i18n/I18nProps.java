@@ -137,8 +137,8 @@ public class I18nProps extends Object
 
    public String getLocalizedFileName(Locale loc)
    {
-      String name = getPath().substring(getPath().lastIndexOf(File.separator));
-      return name.substring(name.lastIndexOf(".properties")) + "_" + loc + ".properties";
+      String name = getPath().substring(getPath().lastIndexOf(File.separator) + 1);
+      return name.substring(0, name.lastIndexOf(".properties")) + "_" + loc + ".properties";
    }
 
    public String getUnlocalizedPath(Locale loc)
