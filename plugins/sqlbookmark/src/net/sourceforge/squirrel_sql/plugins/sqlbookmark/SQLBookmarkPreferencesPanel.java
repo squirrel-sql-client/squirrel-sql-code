@@ -92,7 +92,11 @@ public class SQLBookmarkPreferencesPanel implements IGlobalPreferencesPanel {
 	buildPanelComponent(main);
     }
 
-    /** 
+   public void uninitialize(IApplication app)
+   {
+   }
+
+   /**
      * Return the title for the tab name 
      *
      * @return      The tab title.

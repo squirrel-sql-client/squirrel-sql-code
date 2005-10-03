@@ -82,7 +82,12 @@ public class ValidatorGlobalPreferencesTab implements IGlobalPreferencesPanel
 		((PrefsPanel)getPanelComponent()).loadData();
 	}
 
-	/**
+   public void uninitialize(IApplication app)
+   {
+      
+   }
+
+   /**
 	 * Return the component to be displayed in the Preferences dialog.
 	 *
 	 * @return	the component to be displayed in the Preferences dialog.

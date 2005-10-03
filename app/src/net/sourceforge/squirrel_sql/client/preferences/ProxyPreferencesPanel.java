@@ -69,7 +69,12 @@ class ProxyPreferencesPanel implements IGlobalPreferencesPanel
 		((MyPanel)getPanelComponent()).loadData(_app, _app.getSquirrelPreferences());
 	}
 
-	public synchronized Component getPanelComponent()
+   public void uninitialize(IApplication app)
+   {
+      
+   }
+
+   public synchronized Component getPanelComponent()
 	{
 		if (_myPanel == null)
 		{

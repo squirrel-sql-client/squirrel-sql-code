@@ -109,7 +109,11 @@ class LAFFontsTab implements IGlobalPreferencesPanel
 		((FontSelectionPanel) getPanelComponent()).loadData();
 	}
 
-	/**
+   public void uninitialize(IApplication app)
+   {
+   }
+
+   /**
 	 * Return the component to be displayed in the Preferences dialog.
 	 *
 	 * @return  the component to be displayed in the Preferences dialog.

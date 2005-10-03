@@ -1,17 +1,28 @@
 package net.sourceforge.squirrel_sql.plugins.i18n;
 
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class BundlesTableModel extends DefaultTableModel
 {
+
+   private static final StringManager s_stringMgr =
+      StringManagerFactory.getStringManager(I18nProps.class);
+
+
    private I18nBundle[] _bundles;
 
    public BundlesTableModel()
    {
-      addColumn("Bundle");
-      addColumn("Translation");
+      addColumn(s_stringMgr.getString("i18n.bundle"));
+      // i18n[i18n.bundle=Bundle]
+      addColumn(s_stringMgr.getString("i18n.missingTarnslation"));
+      // i18n[i18n.missingTarnslation=Missing translations]
+
    }
 
    public int getColumnCount()
@@ -62,13 +73,13 @@ public class BundlesTableModel extends DefaultTableModel
       fireTableDataChanged();
    }
 
-   public I18nBundle[] getBundlesForRows(int[] selRows)
+   public I18nBundle[] getBundlesForRows(int[] rows)
    {
-      ArrayList ret = new ArrayList(selRows.length);
+      ArrayList ret = new ArrayList(rows.length);
 
-      for (int i = 0; i < selRows.length; i++)
+      for (int i = 0; i < rows.length; i++)
       {
-         ret.add(_bundles[selRows[i]]);
+         ret.add(_bundles[rows[i]]);
       }
 
       return (I18nBundle[]) ret.toArray(new I18nBundle[ret.size()]);
