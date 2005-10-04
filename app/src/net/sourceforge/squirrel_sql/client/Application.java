@@ -39,6 +39,7 @@ import java.util.Iterator;
 import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
+import javax.swing.PopupFactory;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
@@ -915,6 +916,14 @@ class Application implements IApplication
 
 		try
 		{
+            // The following is a work-around for the problem on Mac OS X where
+            // the Apple LAF delegates to the Swing Popup factory but then 
+            // tries to set a 90% alpha on the underlying Cocoa window, which 
+            // will always be null if you're using JGoodies L&F
+            // see http://www.caimito.net/pebble/2005/07/26/1122392314480.html#comment1127522262179
+            // This has no effect on Linux/Windows
+            PopupFactory.setSharedInstance(new PopupFactory());
+            
 			UIManager.setLookAndFeel(lafClassName);
 		}
 		catch (Exception ex)
