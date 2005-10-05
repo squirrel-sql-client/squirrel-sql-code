@@ -1,30 +1,23 @@
 package net.sourceforge.squirrel_sql.plugins.syntax.netbeans;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
 import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsAdapter;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
-import net.sourceforge.squirrel_sql.plugins.syntax.KeyManager;
 import net.sourceforge.squirrel_sql.plugins.syntax.KeyManager;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPugin;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 
 import javax.swing.*;
 import javax.swing.event.UndoableEditListener;
-import javax.swing.undo.UndoManager;
 import javax.swing.text.Document;
-import javax.swing.text.Keymap;
 
 import org.netbeans.editor.*;
-import org.netbeans.editor.ext.ExtSettingsInitializer;
 
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionEvent;
 import java.awt.*;
-import java.util.Vector;
 
 
 public class NetbeansSQLEditorPane extends JEditorPane
@@ -103,6 +96,18 @@ public class NetbeansSQLEditorPane extends JEditorPane
       // Removed for reformatting
       KeyStroke ctrlShiftFStroke = KeyStroke.getKeyStroke(KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK | java.awt.event.InputEvent.SHIFT_MASK);
       getKeymap().removeKeyStrokeBinding(ctrlShiftFStroke);
+
+      // Removed for duplicate line
+      KeyStroke ctrlDStroke = KeyStroke.getKeyStroke(KeyEvent.VK_D, java.awt.event.InputEvent.CTRL_MASK);
+      getKeymap().removeKeyStrokeBinding(ctrlDStroke);
+
+      // Removed for comment
+      KeyStroke ctrlSubstractStroke = KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, java.awt.event.InputEvent.CTRL_MASK);
+      getKeymap().removeKeyStrokeBinding(ctrlSubstractStroke);
+
+      // Removed for uncomment
+      KeyStroke ctrlShiftSubstractStroke = KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, java.awt.event.InputEvent.CTRL_MASK | java.awt.event.InputEvent.SHIFT_MASK);
+      getKeymap().removeKeyStrokeBinding(ctrlShiftSubstractStroke);
       //
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 

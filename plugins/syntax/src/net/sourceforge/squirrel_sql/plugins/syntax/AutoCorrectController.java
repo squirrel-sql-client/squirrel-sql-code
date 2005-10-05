@@ -66,7 +66,7 @@ public class AutoCorrectController
 
       _dlg.setVisible(true);
 
-      _dlg.btnAply.addActionListener(new ActionListener()
+      _dlg.btnApply.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
          {
