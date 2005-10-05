@@ -4,6 +4,9 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS or probably in latest weekly build
 =====================================================================
 
+- Added comment/uncomment functions to the SQL editor.
+- Made auto corrections and duplicate line available outside the Netabeans editor.
+- Bug fix: Code completion did not work when object was directly preceded by =,> or <. Example: Table1.col1=Tab...
 - Enabled code completion when a ' or a " is on front of the name to complete (RFE 1305802)
 - Fixed bug #1288519 (Postgres: editing boolean fields)
 - Fixed for table and tree row height for large fonts. (Thanks to Mitch Skinner)
