@@ -3,9 +3,7 @@ package net.sourceforge.squirrel_sql.plugins.syntax.netbeans;
 import org.netbeans.editor.Syntax;
 import org.netbeans.editor.ext.ExtKit;
 
-import javax.swing.*;
 import javax.swing.text.Document;
-import javax.swing.text.TextAction;
 
 
 public class SQLKit extends ExtKit
@@ -31,13 +29,13 @@ public class SQLKit extends ExtKit
    }
 
 
-   protected Action[] createActions()
-   {
-      Action[] javaActions = new Action[]
-      {
-         new NetbeansDuplicateLineAction(),
-      };
-      return TextAction.augmentList(super.createActions(), javaActions);
-   }
+//   protected Action[] createActions()
+//   {
+//      Action[] javaActions = new Action[]
+//      {
+//         new NetbeansDuplicateLineAction(),
+//      };
+//      return TextAction.augmentList(super.createActions(), javaActions);
+//   }
 
 }

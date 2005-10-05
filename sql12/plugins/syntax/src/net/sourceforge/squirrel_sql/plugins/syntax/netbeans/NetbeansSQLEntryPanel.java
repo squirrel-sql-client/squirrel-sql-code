@@ -30,8 +30,6 @@ import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPugin;
 import javax.swing.*;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.DocumentEvent;
 import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
 import javax.swing.text.Element;
@@ -41,7 +39,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.ActionEvent;
-import java.util.Hashtable;
 import java.util.prefs.Preferences;
 
 import org.netbeans.editor.ext.ExtKit;
@@ -66,8 +63,6 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
    private SyntaxFactory _syntaxFactory;
    private ISession _session;
    private SyntaxPugin _plugin;
-   private int _autocorrectionsCount = 0;
-   private static final String PREFS_KEY_AUTO_COORECTIONS_COUNT = "squirrelSql_syntax_autocorrections_count";
 
    NetbeansSQLEntryPanel(ISession session, SyntaxPreferences prefs, SyntaxFactory syntaxFactory, SyntaxPugin plugin)
 	{
@@ -88,100 +83,7 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 
 		_textPopupMenu = new SessionTextEditPopupMenu();
 		_textArea.addMouseListener(_sqlEntryMouseListener);
-
-
-      _textArea.getDocument().addDocumentListener(new DocumentListener()
-      {
-         public void changedUpdate(DocumentEvent e)
-         {
-            //To change body of implemented methods use File | Settings | File Templates.
-         }
-
-         public void insertUpdate(DocumentEvent e)
-         {
-            onInsertUpdate(e);
-         }
-
-         public void removeUpdate(DocumentEvent e)
-         {
-            //To change body of implemented methods use File | Settings | File Templates.
-         }
-      });
-
-      _autocorrectionsCount = Preferences.userRoot().getInt(PREFS_KEY_AUTO_COORECTIONS_COUNT, 0);
 	}
-
-   private void onInsertUpdate(DocumentEvent e)
-   {
-      try
-      {
-         if(1 != e.getLength())
-         {
-            return;
-         }
-
-         final String insertChar = e.getDocument().getText(e.getOffset(), 1);
-
-         if (Character.isWhitespace(insertChar.charAt(0)))
-         {
-            String autoCorrCandidate = getStringBeforeWhiteSpace(e.getOffset()).toUpperCase();
-            final String corr = (String) _plugin.getAutoCorrectProviderImpl().getAutoCorrects().get(autoCorrCandidate);
-            if(null != corr)
-            {
-               setSelectionStart(e.getOffset() - autoCorrCandidate.length());
-               setSelectionEnd(e.getOffset());
-
-               if(10 > _autocorrectionsCount)
-               {
-                  _session.getMessageHandler().showMessage(autoCorrCandidate + " has been auto corrected / extended to " + corr + ". To configure auto correct / abreviations see Menu Session --> Syntax --> Configure auto correct / abreviation");
-                  Preferences.userRoot().putInt(PREFS_KEY_AUTO_COORECTIONS_COUNT, ++_autocorrectionsCount);
-               }
-
-               SwingUtilities.invokeLater(new Runnable()
-               {
-                  public void run()
-                  {
-                     replaceSelection(corr + insertChar);
-                  }
-               });
-            }
-         }
-      }
-      catch (BadLocationException ex)
-      {
-         throw new RuntimeException(ex);
-
-      }
-   }
-
-   private String getStringBeforeWhiteSpace(int offset)
-   {
-      try
-      {
-         String text = _textArea.getDocument().getText(0, offset);
-
-
-         String ret = null;
-         int begPos = text.length();
-         for(int i=text.length()-1; 0 <= i; --i)
-         {
-            if(Character.isWhitespace(text.charAt(i)))
-            {
-               break;
-            }
-            --begPos;
-         }
-
-         ret = text.substring(begPos, text.length());
-
-         return ret;
-
-      }
-      catch (BadLocationException e)
-      {
-         throw new RuntimeException(e);
-      }
-   }
 
 
    public int getCaretLineNumber()
