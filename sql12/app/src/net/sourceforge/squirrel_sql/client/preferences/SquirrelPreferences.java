@@ -79,6 +79,7 @@ public class SquirrelPreferences implements Serializable
       String FILE_OPEN_IN_SPECIFIED_DIR = "fileOpenInSpecifiedDir";
       String FILE_SPECIFIED_DIR = "fileSpecifiedDir";
       String FILE_PREVIOUS_DIR = "filePreviousdDir";
+        String WARN_JRE_JDBC_MISMATCH = "warnJreJdbcMismatch"; 
    }
 
 	public interface IJdbcDebugTypes
@@ -178,6 +179,9 @@ public class SquirrelPreferences implements Serializable
 	/** Confirm closing sessions */
  	private boolean _confirmSessionClose = true;
 
+    /** Warn for JRE/JDBC Driver API Version mismatch */
+    private boolean _warnJreJdbcMismatch = true;
+    
 	/** Collection of <TT>PluginStatus</tt> objects. */
 	private final ArrayList _pluginStatusInfoColl = new ArrayList();
 
@@ -856,5 +860,26 @@ public class SquirrelPreferences implements Serializable
 		}
 		return _propChgReporter;
 	}
+
+    /**
+     * @param _warnJreJdbcMismatch The _warnJreJdbcMismatch to set.
+     */
+    public synchronized void setWarnJreJdbcMismatch(boolean data) {
+        if (data != _warnJreJdbcMismatch)
+        {
+            final boolean oldValue = _warnJreJdbcMismatch;
+            _warnJreJdbcMismatch = data;
+            getPropertyChangeReporter().firePropertyChange(
+                                        IPropertyNames.WARN_JRE_JDBC_MISMATCH,
+                                        oldValue, _warnJreJdbcMismatch);
+        }
+    }
+
+    /**
+     * @return Returns the _warnJreJdbcMismatch.
+     */
+    public boolean getWarnJreJdbcMismatch() {
+        return _warnJreJdbcMismatch;
+    }
 
 }

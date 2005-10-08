@@ -98,8 +98,10 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
             new PropertyDescriptor(FILE_PREVIOUS_DIR, CLS,
                "getFilePreviousDir", "setFilePreviousDir"),
             new PropertyDescriptor(SHOW_PLUGIN_FILES_IN_SPLASH_SCREEN, CLS,
-               "getShowPluginFilesInSplashScreen()", 
-               "setShowPluginFilesInSplashScreen")
+               "getShowPluginFilesInSplashScreen", 
+               "setShowPluginFilesInSplashScreen"),
+            new PropertyDescriptor(WARN_JRE_JDBC_MISMATCH, CLS,
+               "getWarnJreJdbcMismatch", "setWarnJreJdbcMismatch")
          };
       }
    }
