@@ -115,6 +115,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 		private JLabel _logConfigFileNameLbl = new OutputLabel(" ");
 		// Must have at least 1 blank otherwise width gets set to zero.
 		private JCheckBox _confirmSessionCloseChk = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.confirmSessionClose"));
+        private JCheckBox _warnJreJdbcMismatch = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.warnJreJdbcMismatch"));
 
 		MyPanel()
 		{
@@ -144,6 +145,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 									: s_stringMgr.getString("GeneralPreferencesPanel.unspecified"));
 
 			_confirmSessionCloseChk.setSelected(prefs.getConfirmSessionClose());
+            _warnJreJdbcMismatch.setSelected(prefs.getWarnJreJdbcMismatch());
 		}
 
 		void applyChanges(SquirrelPreferences prefs)
@@ -159,6 +161,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			prefs.setShowColoriconsInToolbar(_showColoriconsInToolbar.isSelected());
             prefs.setShowPluginFilesInSplashScreen(_showPluginFilesInSplashScreen.isSelected());
 			prefs.setConfirmSessionClose(_confirmSessionCloseChk.isSelected());
+            prefs.setWarnJreJdbcMismatch(_warnJreJdbcMismatch.isSelected());
 		}
 
 		private void createUserInterface()
@@ -228,6 +231,14 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			gbc.weightx = 1;
 			pnl.add(_confirmSessionCloseChk, gbc);
 
+            final GridBagConstraints gbc2 = new GridBagConstraints();
+            gbc2.fill = GridBagConstraints.HORIZONTAL;
+            gbc2.insets = new Insets(2, 4, 2, 4);
+            gbc2.gridx = 0;
+            gbc2.gridy = 1;
+            gbc2.weightx = 1;
+            pnl.add(_warnJreJdbcMismatch, gbc2);
+            
 			return pnl;
 		}
 

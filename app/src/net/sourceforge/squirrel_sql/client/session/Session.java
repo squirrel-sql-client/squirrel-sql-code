@@ -807,6 +807,9 @@ class Session implements ISession
      * correct the problem. 
      */
     private void checkDriverVersion() {
+        if (!_app.getSquirrelPreferences().getWarnJreJdbcMismatch()) {
+            return;
+        }
         DatabaseMetaData data = null;
         try {
             data = _conn.getSQLMetaData().getJDBCMetaData();
