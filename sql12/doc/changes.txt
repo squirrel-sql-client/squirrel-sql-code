@@ -4,6 +4,7 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS or probably in latest weekly build
 =====================================================================
 
+- Fixed bug #1316903 (SQL Panel hangs when Ctrl-B on whitespace)
 - Added comment/uncomment functions to the SQL editor.
 - Made auto corrections and duplicate line available outside the Netabeans editor.
 - Bug fix: Code completion did not work when object was directly preceded by =,> or <. Example: Table1.col1=Tab...
