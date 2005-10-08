@@ -91,6 +91,9 @@ public class Completor
          {
             onCompletionListFocusGained(e);
          }
+         public void focusLost(FocusEvent e) {
+             closePopup();
+         }
       });
 
       
