@@ -50,12 +50,15 @@ public class ViewObjectAtCursorInObjectTreeAction extends SquirrelAction
       }
 
       ObjectCandidates candidates = getObjectCandidates();
-
+      if (candidates.size() == 0) {
+          return;
+      }
       IObjectTreeAPI objectTree = _panel.getSession().getObjectTreeAPIOfActiveSessionWindow();
 
       boolean success = false;
       while (candidates.hasNext())
       {
+          
          String[] catSchemObj = candidates.next();
          success = objectTree.selectInObjectTree(catSchemObj[0], catSchemObj[1], catSchemObj[2]);
          if (success)
@@ -100,7 +103,9 @@ public class ViewObjectAtCursorInObjectTreeAction extends SquirrelAction
          {
             catalog = splits[i+2];
          }
-
+         if (catalog == null && schema == null && "".equals(object)) {
+             continue;
+         }
          ret.add(catalog, schema, object);
       }
 
@@ -177,6 +182,10 @@ public class ViewObjectAtCursorInObjectTreeAction extends SquirrelAction
          candidate.add(schema);
          candidate.add(object);
          _candidates.add(candidate);
+      }
+
+      public int size() {
+          return _candidates.size();
       }
    }
 
