@@ -36,7 +36,7 @@ import java.util.prefs.Preferences;
  */
 public class SessionProperties implements Cloneable, Serializable
 {
-   public interface IDataSetDestinations
+	public interface IDataSetDestinations
 	{
 		String TEXT = DataSetViewerTextPanel.class.getName();
 		String READ_ONLY_TABLE = DataSetViewerTablePanel.class.getName();
@@ -48,6 +48,7 @@ public class SessionProperties implements Cloneable, Serializable
 		String SQL_RESULT_TAB_LIMIT = "sqlResultTabLimit";
 		String ABORT_ON_ERROR = "abortOnError";
       String WRITE_SQL_ERRORS_TO_LOG = "writeSQLErrorsToLog";
+		String LOAD_COLUMNS_IN_BACKGROUND = "loadColumnsInBackground";
 		String AUTO_COMMIT = "autoCommit";
 		String CATALOG_PREFIX_LIST = "catalogPrefixList";
 		String COMMIT_ON_CLOSING_CONNECTION = "commitOnClosingConnection";
@@ -76,7 +77,7 @@ public class SessionProperties implements Cloneable, Serializable
 		String SQL_STATEMENT_SEPARATOR_STRING = "sqlStatementSeparatorString";
 		String TABLE_CONTENTS_OUTPUT_CLASS_NAME = "tableContentsOutputClassName";
       String LIMIT_SQL_RESULT_TABS = "limitSqlResultTabs";
-   }
+	}
 
 	private static final FontInfo DEFAULT_FONT_INFO =
 									new FontInfo(new Font("Monospaced", 0, 12));
@@ -198,7 +199,13 @@ public class SessionProperties implements Cloneable, Serializable
    private boolean _writeSQLErrorsToLog;
 
 
-   /** Should the number of SQL result tabs be limited?. */
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.session.SchemaInfo.loadColumns()
+	 */
+	private boolean _loadColumnsInBackground;
+
+
+	/** Should the number of SQL result tabs be limited?. */
    private boolean _limitSqlResultTabs = true;
 
 
@@ -440,7 +447,25 @@ public class SessionProperties implements Cloneable, Serializable
    }
 
 
-   public boolean getLimitSQLResultTabs()
+	public boolean getLoadColumnsInBackground()
+	{
+		return _loadColumnsInBackground;
+	}
+
+	public void setLoadColumnsInBackground(boolean value)
+	{
+		if (_loadColumnsInBackground != value)
+		{
+			_loadColumnsInBackground = value;
+			getPropertyChangeReporter().firePropertyChange(
+				IPropertyNames.LOAD_COLUMNS_IN_BACKGROUND,
+				!_loadColumnsInBackground, _loadColumnsInBackground);
+		}
+	}
+
+
+
+	public boolean getLimitSQLResultTabs()
    {
       return _limitSqlResultTabs;
    }
