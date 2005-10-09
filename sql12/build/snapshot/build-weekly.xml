@@ -68,6 +68,21 @@
 	    </java>					
 	</target>
 	
+	<!-- Creates the autoinstall.xml file from the template file 
+	     autoinstall.xml.template -->
+	<target name="createinstallscript">
+		<echo message="Copying template autoinstall file to ${auto.install.file}"/>		
+		<copy file="${auto.intall.template}" toFile="${auto.install.file}">
+			<filterchain>
+				<filterreader classname="org.apache.tools.ant.filters.ReplaceTokens">
+					<param type="token" 
+						   name="bv.install.dir" 
+						   value="${bv.install.dir}"/>
+				</filterreader>
+			</filterchain>
+		</copy>	
+	</target>		
+	
 	<!-- create the source archive for this snapshot -->
 	<target name="createsourcearchive" depends="cvsexport">
 		 <zip destfile="${source.zip.file}"
@@ -140,7 +155,7 @@
 	<target name="launchsquirrel">
 		<exec executable="${launch.file}"/>
 	</target>	
-	
+		
 	<!-- Replaces the Version.java which comes with the trunk, with one that 
 	     has the snapshot build number in it. -->
 	<target name="replaceversion" if="targettest">
@@ -160,7 +175,7 @@
 		</copy>	
 	</target>
 	
-	<!-- Runs the installer, feeding it the autoconfigure script -->
+	<!-- Runs the installer, feeding it the autoinstall script -->
 	<target name="runinstaller">
 		<delete includeEmptyDirs="true" quiet="true">
 			<fileset dir="${bv.install.dir}" defaultexcludes="no">
@@ -240,6 +255,8 @@
 		<antcall target="executebuild"/>
 			
 		<antcall target="createinstaller"/>
+		
+		<antcall target="createinstallscript"/>
 		
 		<antcall target="runinstaller"/>
 		
