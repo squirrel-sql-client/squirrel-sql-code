@@ -20,19 +20,16 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.StringTokenizer;
-
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 public class SchemaInfo
 {
@@ -91,7 +88,7 @@ public class SchemaInfo
 		try
 		{
 			final SQLDatabaseMetaData sqlDmd = conn.getSQLMetaData();
-			
+
 			_dmd = null;
 			try
 			{
@@ -189,7 +186,7 @@ public class SchemaInfo
 
 	private void loadStoredProcedures(SQLDatabaseMetaData dmd)
 	{
-		
+
 		final String objFilter = _session.getProperties().getObjectFilter();
 		try
 		{
@@ -794,7 +791,7 @@ public class SchemaInfo
 		}
 	}
 
-   private void loadColumns(String tableName)
+   private void loadColumns(final String tableName)
    {
       try
       {
@@ -803,38 +800,63 @@ public class SchemaInfo
             return;
          }
 
-
-         ResultSet rs = _dmd.getColumns(null, null
-            , getCaseSensitiveTableName(tableName), null);
-         try
+			
+			if(_session.getProperties().getLoadColumnsInBackground())
+			{
+			_session.getApplication().getThreadPool().addTask(new Runnable()
          {
-            ArrayList infos = new ArrayList();
-
-            while (rs.next())
+            public void run()
             {
-               String columnName = rs.getString("COLUMN_NAME");
-               String columnType = rs.getString("TYPE_NAME");
-               int columnSize = rs.getInt("COLUMN_SIZE");
-               int decimalDigits = rs.getInt("DECIMAL_DIGITS");
-               boolean nullable = "YES".equals(rs.getString("IS_NULLABLE"));
-               String cat = rs.getString("TABLE_CAT");
-               String schem = rs.getString("TABLE_SCHEM");
-               ExtendedColumnInfo buf = new ExtendedColumnInfo(columnName, columnType, columnSize, decimalDigits, nullable, cat, schem);
-               infos.add(buf);
-
-               _columns.put(columnName.toUpperCase(), columnName);
+               try
+               {
+                  accessDbToLoadColumns(tableName);
+               }
+               catch (SQLException e)
+               {
+                  throw new RuntimeException(e);
+               }
             }
-            _extendedColumnInfosByTableName.put(tableName, infos);
-
-         }
-         finally
-         {
-            rs.close();
-         }
-      }
+         });
+			}
+			else
+			{
+				accessDbToLoadColumns(tableName);
+			}
+		}
       catch (Throwable th)
       {
          s_log.error("failed to load table names", th);
+      }
+   }
+
+   private void accessDbToLoadColumns(String tableName)
+      throws SQLException
+   {
+      ResultSet rs = _dmd.getColumns(null, null, getCaseSensitiveTableName(tableName), null);
+      try
+      {
+         ArrayList infos = new ArrayList();
+
+         while (rs.next())
+         {
+            String columnName = rs.getString("COLUMN_NAME");
+            String columnType = rs.getString("TYPE_NAME");
+            int columnSize = rs.getInt("COLUMN_SIZE");
+            int decimalDigits = rs.getInt("DECIMAL_DIGITS");
+            boolean nullable = "YES".equals(rs.getString("IS_NULLABLE"));
+            String cat = rs.getString("TABLE_CAT");
+            String schem = rs.getString("TABLE_SCHEM");
+            ExtendedColumnInfo buf = new ExtendedColumnInfo(columnName, columnType, columnSize, decimalDigits, nullable, cat, schem);
+            infos.add(buf);
+
+            _columns.put(columnName.toUpperCase(), columnName);
+         }
+         _extendedColumnInfosByTableName.put(tableName, infos);
+
+      }
+      finally
+      {
+         rs.close();
       }
    }
 

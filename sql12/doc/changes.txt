@@ -4,6 +4,8 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS or probably in latest weekly build
 =====================================================================
 
+- Added Session Property "load columns in background". This option might help people who feel that the SQL editor
+  hangs because they use databases with a lot of objects and/or use low data transfer rates.
 - Configurable warning for JDBC API version mismatch between the JVM and JDBC driver
 - Fixed bug #1316903 (SQL Panel hangs when Ctrl-B on whitespace)
 - Added comment/uncomment functions to the SQL editor.
@@ -13,7 +15,7 @@ Not yet released, available in CVS or probably in latest weekly build
 - Fixed bug #1288519 (Postgres: editing boolean fields)
 - Fixed for table and tree row height for large fonts. (Thanks to Mitch Skinner)
 - User may define an Object tree filter through the Session Properties. Useful for large databases. (Thanks to Oliver Jehle)
- 
+
 
 2.0 final
 =========
@@ -21,7 +23,7 @@ Not yet released, available in CVS or probably in latest weekly build
 - Right Mouse Menu on SQL result tabs (Not working on JDK 1.4 with scrollable tabbed panes due to Bug #4465870.)
   Functions also available in tools popup
 - Session property: Limit SQL result tabs.
-  By default limiting is switched on and set to 15 tabs.   
+  By default limiting is switched on and set to 15 tabs.
 - Fixed Bug #1234642 (Missing query numbers in message panel)
 - When executing a SQL batch (several SQL's separated by statement separator)
   in case of an error the errornous SQL is printed to the message panel.
@@ -102,7 +104,7 @@ Bug Fixes
   didn't display correctly on OSX.
 - On Linux the $JAVA_HOME variable in the squirrel-sql.sh script was replaced
   with the actual value during the install which caused problems if a new
-  version of Java was later installed. 
+  version of Java was later installed.
 - Fix ClassCastException thrown by the parser (Gerd Wagner).
 - Fix Bug #981490 OutOfMemoryException partly caused by the parser (Gerd
   Wagner).
@@ -136,7 +138,7 @@ Enhancements
 	  user-selected format
 	- Strings containing newlines may display the newlines as "\n" or not show
 	  them as selected by the user.
-    
+
 
 Bug Fixes
 ---------
@@ -164,12 +166,12 @@ Bug Fixes
 
 Enhancements
 ------------
-- added the 'IS NULL' and 'IS NOT NULL' to the choices for operator in 
+- added the 'IS NULL' and 'IS NOT NULL' to the choices for operator in
   the Where Clause panel (Maury Hammel).
-- When the 'add' button is pressed to put a Where Clause construct into 
+- When the 'add' button is pressed to put a Where Clause construct into
   the text area, the 'Value' text area is cleared (Maury Hammel).
-- Enabled wrapping and added JScrollPanes to the Where Clause and Order 
-  By Clause text areas, so Panels behave better where large values are put 
+- Enabled wrapping and added JScrollPanes to the Where Clause and Order
+  By Clause text areas, so Panels behave better where large values are put
   in them (Maury Hammel).
 - You can now specify whether JDBC logging uses the deprecated output stream or
   the new writer (Neville Rowe).

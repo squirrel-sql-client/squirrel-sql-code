@@ -39,6 +39,7 @@ import javax.swing.event.ChangeListener;
 import net.sourceforge.squirrel_sql.fw.gui.FontChooser;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -128,6 +129,7 @@ public class SessionSQLPropertiesPanel
 	{
 		private JCheckBox _abortOnErrorChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.abortonerror"));
 		private JCheckBox _writeSQLErrorsToLogChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.writesqlerrorstolog"));
+		private JCheckBox _loadColumsInBackgroundChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.loadColumsInBackground"));
 		private JCheckBox _autoCommitChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.autocommit"));
 		private JCheckBox _commitOnClose = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.commitonclose"));
 		private IntegerField _sqlNbrRowsToShowField = new IntegerField(5);
@@ -167,6 +169,8 @@ public class SessionSQLPropertiesPanel
 		{
 			_abortOnErrorChk.setSelected(props.getAbortOnError());
 			_writeSQLErrorsToLogChk.setSelected(props.getWriteSQLErrorsToLog());
+			_loadColumsInBackgroundChk.setSelected(props.getLoadColumnsInBackground());
+
 			_autoCommitChk.setSelected(props.getAutoCommit());
 			_commitOnClose.setSelected(props.getCommitOnClosingConnection());
 			_sqlNbrRowsToShowField.setInt(props.getSQLNbrRowsToShow());
@@ -198,6 +202,7 @@ public class SessionSQLPropertiesPanel
 		{
 			props.setAbortOnError(_abortOnErrorChk.isSelected());
 			props.setWriteSQLErrorsToLog(_writeSQLErrorsToLogChk.isSelected());
+			props.setLoadColumnsInBackground(_loadColumsInBackgroundChk.isSelected());
 			props.setAutoCommit(_autoCommitChk.isSelected());
 			props.setCommitOnClosingConnection(_commitOnClose.isSelected());
 			props.setSQLNbrRowsToShow(_sqlNbrRowsToShowField.getInt());
@@ -333,6 +338,32 @@ public class SessionSQLPropertiesPanel
          gbc.gridx = 0;
          gbc.gridwidth = GridBagConstraints.REMAINDER;
          pnl.add(_writeSQLErrorsToLogChk, gbc);
+
+
+			//////////////////////////////////////////////
+			// belong together
+			Insets defaultInsets = gbc.insets;
+
+			gbc.insets = (Insets) defaultInsets.clone();
+			gbc.insets.bottom = 0;
+
+			++gbc.gridy; // new line
+			gbc.gridx = 0;
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
+			String loadColsInBackgroundDescription = s_stringMgr.getString("SessionSQLPropertiesPanel.loadColsInBackgroundDescription");
+			pnl.add(new MultipleLineLabel(loadColsInBackgroundDescription), gbc);
+
+			gbc.insets = (Insets) defaultInsets.clone();
+			gbc.insets.top = 0;
+
+			++gbc.gridy; // new line
+			gbc.gridx = 0;
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
+			pnl.add(_loadColumsInBackgroundChk, gbc);
+
+			gbc.insets = defaultInsets;
+			//
+			/////////////////////////////////////////////
 
 			++gbc.gridy; // new line
 			gbc.gridx = 0;
