@@ -261,12 +261,18 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 
 	private void createSQLEntryAreaPopMenuItems(ISQLPanelAPI api)
 	{
+		JMenuItem mnu;
+
 		ActionCollection actions = getApplication().getActionCollection();
 		api.addToSQLEntryAreaMenu(actions.get(InQuotesAction.class));
 		api.addToSQLEntryAreaMenu(actions.get(RemoveQuotesAction.class));
 		api.addToSQLEntryAreaMenu(actions.get(ConvertToStringBufferAction.class));
-		api.addToSQLEntryAreaMenu(actions.get(FormatSQLAction.class));
-      api.addToSQLEntryAreaMenu(actions.get(EscapeDateAction.class));
+
+		// To make the shortcut visible in the popup
+		mnu = api.addToSQLEntryAreaMenu(actions.get(FormatSQLAction.class));
+		_resources.configureMenuItem(actions.get(FormatSQLAction.class), mnu);
+
+		api.addToSQLEntryAreaMenu(actions.get(EscapeDateAction.class));
 	}
 
 	private class SQLPanelListener extends SQLPanelAdapter
