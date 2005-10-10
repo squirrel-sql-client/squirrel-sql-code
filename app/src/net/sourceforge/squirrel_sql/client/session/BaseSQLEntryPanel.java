@@ -79,7 +79,7 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
          }
 
          int iIndex = sql.lastIndexOf(SQL_STMT_SEP, iCaretPos);
-         if (iIndex > 0)
+         if (iIndex >= 0)
          {
             bounds[0] = iIndex + SQL_STMT_SEP.length();
          }
