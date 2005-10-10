@@ -35,8 +35,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
-import javax.swing.text.BadLocationException;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.DirectoryListComboBox;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -47,9 +48,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 /**
  * This sheet shows the SQuirreL log files.
  *
@@ -292,10 +290,15 @@ public class ViewLogsSheet extends BaseInternalFrame
 			{
 				int pos = Math.max(0, _logContentsTxt.getText().length() - 1);
 				int line = _logContentsTxt.getLineOfOffset(pos);
-				pos = _logContentsTxt.getLineStartOffset(line);
-				_logContentsTxt.setCaretPosition(pos);
+				final int finalpos = _logContentsTxt.getLineStartOffset(line);
+                SwingUtilities.invokeAndWait(new Runnable() {
+                    public void run()
+                    {
+                        _logContentsTxt.setCaretPosition(finalpos);
+                    }
+                });
 			}
-			catch (BadLocationException ex)
+			catch (Exception ex)
 			{
 				s_log.error("Error positioning caret in log text component", ex);
 			}
