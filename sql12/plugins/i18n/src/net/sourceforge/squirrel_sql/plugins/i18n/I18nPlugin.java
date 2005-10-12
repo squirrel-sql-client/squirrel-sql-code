@@ -8,6 +8,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.IApplication;
 
 /**
  * The SQL Script plugin class.
@@ -129,7 +130,7 @@ public class I18nPlugin extends DefaultSessionPlugin
 	 */
 	public synchronized void initialize() throws PluginException
 	{
-      _resources = new PluginResources("net.sourceforge.squirrel_sql.plugins.i18n.i18n", this);
+		_resources = new PluginResources("net.sourceforge.squirrel_sql.plugins.i18n.i18n", this);
 	}
 
 
@@ -140,26 +141,26 @@ public class I18nPlugin extends DefaultSessionPlugin
 	 * @param   session	 The session that is starting.
 	 *
 	 * @return An implementation of PluginSessionCallback or null to indicate
-    * the plugin does not work with this session
+	 * the plugin does not work with this session
 	 */
 	public PluginSessionCallback sessionStarted(ISession session)
 	{
 		try
 		{
-         return new PluginSessionCallback()
-         {
-            public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
-            {
-            }
+			return new PluginSessionCallback()
+			{
+				public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+				{
+				}
 
-            public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
-            {
-            }
-         };
+				public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+				{
+				}
+			};
 		}
 		catch(Exception e)
 		{
-         throw new RuntimeException(e);
+			throw new RuntimeException(e);
 		}
 	}
 

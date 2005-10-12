@@ -347,11 +347,11 @@ public abstract class Resources
 				// This slash stuff is a ...
 				if(null == url && imagePathName.startsWith("/"))
 				{
-					url = _classLoader.getResource(imagePathName.substring(1));
+					url = getClass().getResource(imagePathName.substring(1));
 				}
 				else if(null == url && false == imagePathName.startsWith("/"))
 				{
-					url = _classLoader.getResource("/" + imagePathName);
+					url = getClass().getResource("/" + imagePathName);
 				}
 
 			}

@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.plugins.i18n;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 
 import javax.swing.*;
 import java.awt.*;
