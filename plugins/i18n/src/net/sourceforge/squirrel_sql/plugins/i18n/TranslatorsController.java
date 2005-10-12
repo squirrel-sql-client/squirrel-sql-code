@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.i18n;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -351,50 +352,59 @@ public class TranslatorsController
    {
       Locale selLocale = (Locale) _panel.cboLocales.getSelectedItem();
 
-      URL[] urLs = ((URLClassLoader) getClass().getClassLoader()).getURLs();
 
-      String pluginDir = new ApplicationFiles().getPluginsDirectory().getPath();
-
-      ArrayList defaultI18nProps = new ArrayList();
-      ArrayList localizedI18nProps = new ArrayList();
-
-      String workDir = _panel.txtWorkingDir.getText();
-      if(null != workDir && 0 < workDir.trim().length())
+      File workDir = null;
+      if(null != _panel.txtWorkingDir.getText() && 0 < _panel.txtWorkingDir.getText().trim().length())
       {
-         File f = new File(workDir);
-         if(false == f.exists())
+         workDir = new File(_panel.txtWorkingDir.getText());
+         if(false == workDir.exists())
          {
             String msg = s_stringMgr.getString("I18n.noWorkdir");
             // i18n[I18n.noWorkdir=Working directory doesn't exist.\nDo you want to create it?]
             if(JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(app.getMainFrame(), msg))
             {
-               f.mkdirs();
+               workDir.mkdirs();
             }
          }
-         else if(false == f.isDirectory())
+         else if(false == workDir.isDirectory())
          {
-            String msg = s_stringMgr.getString("I18n.WorkdirIsNoDir", f.getAbsolutePath());
+            String msg = s_stringMgr.getString("I18n.WorkdirIsNoDir", workDir.getAbsolutePath());
             // i18n[I18n.WorkdirIsNoDir=The working directory is not a directory.\nNo bundles will be loaded from {0}]
             JOptionPane.showMessageDialog(app.getMainFrame(), msg);
 
-         }
+			}
       }
+		else
+		{
+			String msg = s_stringMgr.getString("I18n.noWorkdirSpecified");
+			// i18n[I18n.noWorkdirSpecified=No working directory specified.]
+			JOptionPane.showMessageDialog(app.getMainFrame(), msg);
+		}
 
-      for (int i = 0; i < urLs.length; i++)
+		URL[] sourceUrls = getUrlsToLoadI18nPropertiesFrom(workDir);
+
+
+		String pluginDir = new ApplicationFiles().getPluginsDirectory().getPath();
+
+      ArrayList defaultI18nProps = new ArrayList();
+      ArrayList localizedI18nProps = new ArrayList();
+
+
+      for (int i = 0; i < sourceUrls.length; i++)
       {
-         File file = new File(urLs[i].getFile());
+         File file = new File(sourceUrls[i].getFile());
 
          if(file.isDirectory())
          {
-            findI18nInDir(selLocale, file, defaultI18nProps, localizedI18nProps);
+            findI18nInDir(selLocale, file, defaultI18nProps, localizedI18nProps, sourceUrls);
          }
          else if (file.getName().equalsIgnoreCase("squirrel-sql.jar") || file.getName().equalsIgnoreCase("fw.jar"))
          {
-            findI18nInArchive(selLocale, file, defaultI18nProps, localizedI18nProps);
+            findI18nInArchive(selLocale, file, defaultI18nProps, localizedI18nProps, sourceUrls);
          }
          else if(file.getPath().startsWith(pluginDir))
          {
-            findI18nInArchive(selLocale, file, defaultI18nProps, localizedI18nProps);
+            findI18nInArchive(selLocale, file, defaultI18nProps, localizedI18nProps, sourceUrls);
          }
       }
 
@@ -403,7 +413,7 @@ public class TranslatorsController
       for (int i = 0; i < defaultI18nProps.size(); i++)
       {
          I18nProps i18nProps = (I18nProps) defaultI18nProps.get(i);
-         I18nBundle pack = new I18nBundle(i18nProps, selLocale, getWorkDir(false));
+         I18nBundle pack = new I18nBundle(i18nProps, selLocale, getWorkDir(false), sourceUrls);
          i18nBundlesByName.put(i18nProps.getPath(), pack);
       }
 
@@ -431,44 +441,96 @@ public class TranslatorsController
 
    }
 
-   private void findI18nInArchive(Locale selLoc, File file, ArrayList defaultI18nProps, ArrayList localizedI18nProps)
-   {
-      try
-      {
-         ZipFile zf = new ZipFile(file);
+	private URL[] getUrlsToLoadI18nPropertiesFrom(File workDir)
+	{
+		ApplicationFiles af = new ApplicationFiles();
 
-         for(Enumeration e=zf.entries(); e.hasMoreElements();)
-         {
-            ZipEntry entry = (ZipEntry) e.nextElement();
+		ArrayList ret = new ArrayList();
+		URL[] urls;
 
 
-            if(entry.getName().endsWith(".properties"))
-            {
-               Locale loc = I18nProps.parseLocaleFromPropsFileName(file.getName());
+		urls = ((URLClassLoader) _app.getClass().getClassLoader()).getURLs();
 
-               if(null == loc)
-               {
-                  defaultI18nProps.add(new I18nProps(file, entry.getName()));
-               }
-               if(selLoc.equals(loc))
-               {
-                  localizedI18nProps.add(new I18nProps(file, entry.getName()));
-               }
-            }
-         }
+		for (int i = 0; i < urls.length; i++)
+		{
+			File file = new File(urls[i].getFile());
+			if(file.equals(af.getSQuirrelJarFile()))
+			{
+				ret.add(urls[i]);
+			}
+			else if(file.equals(af.getFwJarFile()))
+			{
+				ret.add(urls[i]);
+			}
+		}
+
+		PluginInfo[] pi = _app.getPluginManager().getPluginInformation();
+
+		urls = _app.getPluginManager().getPluginURLs();
+		for (int i = 0; i < urls.length; i++)
+		{
+			String jarName = new File(urls[i].getFile()).getName();
+
+			String cleanJarName;
+			if(jarName.endsWith(".jar"))
+			{
+				cleanJarName = jarName.substring(0,jarName.length() - ".jar".length());
+			}
+			else
+			{
+				continue;
+			}
+
+			for (int j = 0; j < pi.length; j++)
+			{
+				if(pi[j].getInternalName().equalsIgnoreCase(cleanJarName))
+				{
+					ret.add(urls[i]);
+				}
+			}
+		}
+
+		return (URL[]) ret.toArray(new URL[ret.size()]);
+	}
+
+	private void findI18nInArchive(Locale selLoc, File file, ArrayList defaultI18nProps, ArrayList localizedI18nProps, URL[] sourceUrls)
+	{
+		try
+		{
+			ZipFile zf = new ZipFile(file);
+
+			for(Enumeration e=zf.entries(); e.hasMoreElements();)
+			{
+				ZipEntry entry = (ZipEntry) e.nextElement();
 
 
-      }
-      catch (IOException e)
-      {
-         String msg = s_stringMgr.getString("I18n.failedToOpenZip", file.getAbsolutePath());
-         // i18n[I18n.failedToOpenZip=Failed to open zip/jar {0}]
-         _app.getMessageHandler().showMessage(msg);
-      }
+				if(entry.getName().endsWith(".properties"))
+				{
+					Locale loc = I18nProps.parseLocaleFromPropsFileName(entry.getName());
 
-   }
+					if(null == loc)
+					{
+						defaultI18nProps.add(new I18nProps(file, entry.getName(), sourceUrls));
+					}
+					if(selLoc.equals(loc))
+					{
+						localizedI18nProps.add(new I18nProps(file, entry.getName(), sourceUrls));
+					}
+				}
+			}
 
-   private void findI18nInDir(Locale selLoc, File dir, ArrayList defaultI18nProps, ArrayList localizedI18nProps)
+
+		}
+		catch (IOException e)
+		{
+			String msg = s_stringMgr.getString("I18n.failedToOpenZip", file.getAbsolutePath());
+			// i18n[I18n.failedToOpenZip=Failed to open zip/jar {0}]
+			_app.getMessageHandler().showMessage(msg);
+		}
+
+	}
+
+   private void findI18nInDir(Locale selLoc, File dir, ArrayList defaultI18nProps, ArrayList localizedI18nProps, URL[] sourceUrls)
    {
       File[] files = dir.listFiles();
 
@@ -476,7 +538,7 @@ public class TranslatorsController
       {
          if(files[i].isDirectory())
          {
-            findI18nInDir(selLoc, files[i], defaultI18nProps, localizedI18nProps);
+            findI18nInDir(selLoc, files[i], defaultI18nProps, localizedI18nProps, sourceUrls);
          }
          else if(files[i].getName().endsWith(".properties"))
          {
@@ -484,11 +546,11 @@ public class TranslatorsController
 
             if(null == loc)
             {
-               defaultI18nProps.add(new I18nProps(files[i]));
+               defaultI18nProps.add(new I18nProps(files[i], sourceUrls));
             }
             if(selLoc.equals(loc))
             {
-               localizedI18nProps.add(new I18nProps(files[i]));
+               localizedI18nProps.add(new I18nProps(files[i], sourceUrls));
             }
          }
       }

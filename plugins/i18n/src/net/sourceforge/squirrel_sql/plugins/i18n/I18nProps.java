@@ -24,46 +24,25 @@ public class I18nProps extends Object
 	private String _entryName;
 	private String _name;
 
-	public I18nProps(File file)
+	public I18nProps(File file, URL[] sourceUrls)
 	{
 		_file = file;
-		initName();
+		initName(sourceUrls);
 	}
 
-	public I18nProps(File zipFile, String entryName)
+	public I18nProps(File zipFile, String entryName, URL[] sourceUrls)
 	{
 		_zipFile = zipFile;
 		_entryName = entryName;
-		initName();
+		initName(sourceUrls);
 	}
 
-	private void initName()
+	private void initName(URL[] sourceUrls)
 	{
-		ArrayList classPath = new ArrayList();
-		if(I18nProps.class.getClassLoader() instanceof URLClassLoader)
+
+		for (int i = 0; i < sourceUrls.length; i++)
 		{
-			URL[] urLs = ((URLClassLoader) this.getClass().getClassLoader()).getURLs();
-
-			for (int i = 0; i < urLs.length; i++)
-			{
-				classPath.add(urLs[i].getPath());
-			}
-		}
-
-		if(ClassLoader.getSystemClassLoader() instanceof URLClassLoader)
-		{
-			URL[] urLs = ((URLClassLoader) ClassLoader.getSystemClassLoader()).getURLs();
-
-			for (int i = 0; i < urLs.length; i++)
-			{
-				classPath.add(urLs[i].getPath());
-			}
-		}
-
-
-		for (int i = 0; i < classPath.size(); i++)
-		{
-			String classPathEntry = (String) classPath.get(i);
+			String classPathEntry = (String) sourceUrls[i].getPath();
 			if(getPath().startsWith(classPathEntry))
 			{
 				_name = getPath().substring(classPathEntry.length());
