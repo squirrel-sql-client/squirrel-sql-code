@@ -15,7 +15,7 @@ public class TranslatorsPanel extends JPanel
 
 
    JComboBox cboLocales = new JComboBox();
-   JButton btnLoad = new JButton(s_stringMgr.getString("I18n.loadTabs")); // i18n[I18n.loadTabs=Load tabs]
+   JButton btnLoad = new JButton(s_stringMgr.getString("I18n.loadBundles")); // i18n[I18n.loadBundles=Load bundles]
 
    JTextField txtWorkingDir = new JTextField();
    JButton btnChooseWorkDir;
