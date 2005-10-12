@@ -72,6 +72,7 @@ import net.sourceforge.squirrel_sql.plugins.oracle.tab.TriggerColumnInfoTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.TriggerDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.TriggerSourceTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.UserDetailsTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.ViewSourceTab;
 
 /**
  * Oracle plugin class.
@@ -331,6 +332,8 @@ public class OraclePlugin extends DefaultSessionPlugin
                 objTree.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab());
                 objTree.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerColumnInfoTab());
                 objTree.addDetailTab(DatabaseObjectType.USER, new UserDetailsTab());
+                
+                objTree.addDetailTab(DatabaseObjectType.VIEW, new ViewSourceTab());
               }
             }
           }

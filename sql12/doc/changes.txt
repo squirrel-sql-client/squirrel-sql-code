@@ -4,6 +4,8 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS or probably in latest weekly build
 =====================================================================
 
+- Patch #1324774 The source SQL statement used to create a view is now available via the 
+  Oracle Plugin (Thanks to Alexander Buloichik)
 - Added Session Property "load columns in background". This option might help people who feel that the SQL editor
   hangs because they use databases with a lot of objects and/or use low data transfer rates.
 - Configurable warning for JDBC API version mismatch between the JVM and JDBC driver
