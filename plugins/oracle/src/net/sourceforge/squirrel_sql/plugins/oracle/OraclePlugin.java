@@ -118,7 +118,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 	 */
 	public String getVersion()
 	{
-		return "0.13";
+		return "0.14";
 	}
 
 	/**
@@ -131,6 +131,16 @@ public class OraclePlugin extends DefaultSessionPlugin
 		return "Colin Bell";
 	}
 
+    /**
+     * Returns a comma separated list of other contributors.
+     *
+     * @return  Contributors names.
+     */
+    public String getContributors()
+    {
+        return "Alexander Buloichik";
+    }    
+    
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getChangeLogFileName()
 	 */
