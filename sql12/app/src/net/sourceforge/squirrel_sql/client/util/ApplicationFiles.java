@@ -36,7 +36,7 @@ public class ApplicationFiles
 	private String _userSettingsDir;
 
 	/** Name of folder that contains Squirrel app. */
-	private final String _squirrelHomeDir;
+	private final File _squirrelHomeDir;
 
 	/** Name of folder that contains plugins. */
 	private String _squirrelPluginsDir;
@@ -59,9 +59,9 @@ public class ApplicationFiles
 		ApplicationArguments args = ApplicationArguments.getInstance();
 
 		final String homeDir = args.getSquirrelHomeDirectory();
-		_squirrelHomeDir = homeDir != null ? homeDir : System.getProperty(IJavaPropertyNames.USER_DIR);
-		_squirrelPluginsDir = _squirrelHomeDir + File.separator + "plugins";
-		_documentationDir = _squirrelHomeDir + File.separator + "doc";
+		_squirrelHomeDir = new File(homeDir != null ? homeDir : System.getProperty(IJavaPropertyNames.USER_DIR));
+		_squirrelPluginsDir = _squirrelHomeDir.getPath() + File.separator + "plugins";
+		_documentationDir = _squirrelHomeDir.getPath() + File.separator + "doc";
 
 		_userSettingsDir = args.getUserSettingsDirectoryOverride();
 		if (_userSettingsDir == null)
@@ -201,6 +201,12 @@ public class ApplicationFiles
  		return new File(_userSettingsDir + File.separator + "sql_history.xml");
  	}
 
+	public File getSquirrelHomeDir()
+	{
+		return _squirrelHomeDir;
+	}
+
+
 	/**
 	 * @return directory that contains plugin specific user settings
 	 */
@@ -311,5 +317,15 @@ public class ApplicationFiles
 			File oldFile = new File(dirPath + File.separator + fileNames[i]);
 			oldFile.delete();
 		}
+	}
+
+	public File getSQuirrelJarFile()
+	{
+		return new File(_squirrelHomeDir.getPath() + File.separator + "lib" + File.separator + "squirrel-sql.jar");
+	}
+
+	public File getFwJarFile()
+	{
+		return new File(_squirrelHomeDir.getPath() + File.separator + "lib" + File.separator + "fw.jar");		
 	}
 }

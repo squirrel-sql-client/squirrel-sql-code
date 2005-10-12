@@ -34,7 +34,7 @@ public class TranslatorsPanel extends JPanel
       gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
       add(new JLabel(s_stringMgr.getString("I18n.locales")), gbc); // i18n[I18n.locales=Locales]
 
-      gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,0,0,5),0,0);
+      gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,0,0,5),0,0);
       add(cboLocales, gbc);
 
       gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,0,0,5),0,0);
@@ -44,7 +44,7 @@ public class TranslatorsPanel extends JPanel
       gbc = new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
       add(new JLabel(s_stringMgr.getString("I18n.WorkingDir")), gbc); // i18n[I18n.WorkingDir=Working Directory]
 
-      gbc = new GridBagConstraints(1,1,1,1,1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,0,0,5),0,0);
+      gbc = new GridBagConstraints(1,1,1,1,1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,0,0,5),0,0);
       add(txtWorkingDir, gbc);
 
       btnChooseWorkDir = new JButton(resources.getIcon("Open"));
@@ -55,7 +55,7 @@ public class TranslatorsPanel extends JPanel
       gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
       add(new JLabel(s_stringMgr.getString("I18n.EditorCommand")), gbc); // i18n[I18n.WorkingDir=Working Directory]
 
-      gbc = new GridBagConstraints(1,2,1,1,1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,0,0,5),0,0);
+      gbc = new GridBagConstraints(1,2,1,1,1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,0,0,5),0,0);
       add(txtEditorCommand, gbc);
 
       btnChooseEditorCommand = new JButton(resources.getIcon("Open"));

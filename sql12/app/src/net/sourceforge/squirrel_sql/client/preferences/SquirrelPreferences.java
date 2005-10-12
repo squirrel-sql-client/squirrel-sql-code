@@ -140,9 +140,6 @@ public class SquirrelPreferences implements Serializable
 	/** Show main toolbar. */
 	private boolean _showMainToolBar = true;
 
-	/** Show main action toolbar. */
-	private boolean _showActionToolBar = true;
-
 	/** Show toolbar in the drivers window. */
 	private boolean _showDriversToolBar = true;
 

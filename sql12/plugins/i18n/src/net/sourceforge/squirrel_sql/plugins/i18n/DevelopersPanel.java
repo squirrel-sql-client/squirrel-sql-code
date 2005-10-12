@@ -29,7 +29,7 @@ public class DevelopersPanel extends JPanel
       gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
       add(new JLabel(s_stringMgr.getString("I18n.SourceDir")), gbc); // i18n[I18n.SourceDir=Source directory]
 
-      gbc = new GridBagConstraints(1,0,1,1,1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,0,0,5),0,0);
+      gbc = new GridBagConstraints(1,0,1,1,1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,0,0,5),0,0);
       add(txtSourceDir, gbc);
 
       btnChooseSourceDir = new JButton(resources.getIcon("Open"));
