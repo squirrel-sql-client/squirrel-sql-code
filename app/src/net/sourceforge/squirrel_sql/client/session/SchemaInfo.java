@@ -36,24 +36,26 @@ public class SchemaInfo
 	private boolean _loading = false;
 	private boolean _loaded = false;
 
-   private DatabaseMetaData _dmd;
+	private DatabaseMetaData _dmd;
 	private final HashMap _keywords = new HashMap();
 	private final HashMap _dataTypes = new HashMap();
 	private final List _functions = new ArrayList();
 	private final HashMap _tables = new HashMap();
 	private final HashMap _columns = new HashMap();
-   private Hashtable _extendedColumnInfosByTableName = new Hashtable();
+	private Hashtable _extendedColumnInfosByTableName = new Hashtable();
+	private HashMap _tablesLoadingColsInBackground = new HashMap();
 	private final List _catalogs = new ArrayList();
 	private final List _schemas = new ArrayList();
 	private final List _extendedtableInfos = new ArrayList();
 	private ISession _session = null;
 	private IProcedureInfo[] _procInfos = new IProcedureInfo[0];
 
+
 	/** Logger for this class. */
 	private static final ILogger s_log =
 				LoggerController.createLogger(SchemaInfo.class);
 
-   public SchemaInfo(ISession session)
+	public SchemaInfo(ISession session)
 	{
 		super();
 		if (session == null)
@@ -112,9 +114,9 @@ public class SchemaInfo
 
 			try
 			{
-                s_log.debug("Loading data types");
+					 s_log.debug("Loading data types");
 				loadDataTypes(_dmd);
-                s_log.debug("Data types loaded");
+					 s_log.debug("Data types loaded");
 			}
 			catch (Exception ex)
 			{
@@ -200,7 +202,7 @@ public class SchemaInfo
 
 	}
 
-   private void loadCatalogs(DatabaseMetaData dmd)
+	private void loadCatalogs(DatabaseMetaData dmd)
 	{
 		try
 		{
@@ -305,41 +307,41 @@ public class SchemaInfo
 	{
 		if (!_loading && data != null)
 		{
-         String ucData = data.toUpperCase();
-         if(_tables.containsKey(ucData))
-         {
-            loadColumns(ucData);
-            return true;
-         }
+			String ucData = data.toUpperCase();
+			if(_tables.containsKey(ucData))
+			{
+				loadColumns(ucData);
+				return true;
+			}
 		}
 		return false;
 	}
 
-   /**
-    * This method returns the case sensitive name of a table as it is stored
-    * in the database.
-    * The case sensitive name is needed for example if you want to retrieve
-    * a table's meta data. Quote from the API doc of DataBaseMetaData.getTables():
-    * Parameters:
-    * ...
-    * tableNamePattern - a table name pattern; must match the table name as it is stored in the database
-    *
-    *
-    * @param data The tables name in arbitrary case.
-    * @return the table name as it is stored in the database
-    */
-   public String getCaseSensitiveTableName(String data)
-   {
-      if (!_loading && data != null)
-      {
-         String ucData = data.toUpperCase();
-         return (String) _tables.get(ucData);
-      }
-      return null;
-   }
+	/**
+	 * This method returns the case sensitive name of a table as it is stored
+	 * in the database.
+	 * The case sensitive name is needed for example if you want to retrieve
+	 * a table's meta data. Quote from the API doc of DataBaseMetaData.getTables():
+	 * Parameters:
+	 * ...
+	 * tableNamePattern - a table name pattern; must match the table name as it is stored in the database
+	 *
+	 *
+	 * @param data The tables name in arbitrary case.
+	 * @return the table name as it is stored in the database
+	 */
+	public String getCaseSensitiveTableName(String data)
+	{
+		if (!_loading && data != null)
+		{
+			String ucData = data.toUpperCase();
+			return (String) _tables.get(ucData);
+		}
+		return null;
+	}
 
 
-   /**
+	/**
 	 * Retrieve whether the passed string is a column.
 	 *
 	 * @param	keyword		String to check.
@@ -567,7 +569,7 @@ public class SchemaInfo
 			{
 				while (rs.next())
 				{
-               String typeName = rs.getString(1).trim();
+					String typeName = rs.getString(1).trim();
 					_dataTypes.put(typeName.toUpperCase(), typeName);
 				}
 			}
@@ -678,39 +680,39 @@ public class SchemaInfo
 		return getExtendedTableInfos(null, null);
 	}
 
-   public ExtendedTableInfo[] getExtendedTableInfos(String catalog, String schema)
-   {
-      if(null == catalog && null == schema)
-      {
-         return (ExtendedTableInfo[]) _extendedtableInfos.toArray(new ExtendedTableInfo[_extendedtableInfos.size()]);
-      }
-      else
-      {
-         ArrayList ret = new ArrayList();
+	public ExtendedTableInfo[] getExtendedTableInfos(String catalog, String schema)
+	{
+		if(null == catalog && null == schema)
+		{
+			return (ExtendedTableInfo[]) _extendedtableInfos.toArray(new ExtendedTableInfo[_extendedtableInfos.size()]);
+		}
+		else
+		{
+			ArrayList ret = new ArrayList();
 
-         for (int i = 0; i < _extendedtableInfos.size(); i++)
-         {
-            ExtendedTableInfo extendedTableInfo = (ExtendedTableInfo) _extendedtableInfos.get(i);
-            boolean toAdd = true;
-            if(null != catalog && false == catalog.equalsIgnoreCase(extendedTableInfo.getCatalog()) )
-            {
-               toAdd = false;
-            }
+			for (int i = 0; i < _extendedtableInfos.size(); i++)
+			{
+				ExtendedTableInfo extendedTableInfo = (ExtendedTableInfo) _extendedtableInfos.get(i);
+				boolean toAdd = true;
+				if(null != catalog && false == catalog.equalsIgnoreCase(extendedTableInfo.getCatalog()) )
+				{
+					toAdd = false;
+				}
 
-            if(null != schema && false == schema.equalsIgnoreCase(extendedTableInfo.getSchema()) )
-            {
-               toAdd = false;
-            }
+				if(null != schema && false == schema.equalsIgnoreCase(extendedTableInfo.getSchema()) )
+				{
+					toAdd = false;
+				}
 
-            if(toAdd)
-            {
-               ret.add(extendedTableInfo);
-            }
-         }
+				if(toAdd)
+				{
+					ret.add(extendedTableInfo);
+				}
+			}
 
-         return (ExtendedTableInfo[]) ret.toArray(new ExtendedTableInfo[ret.size()]);
-      }
-   }
+			return (ExtendedTableInfo[]) ret.toArray(new ExtendedTableInfo[ret.size()]);
+		}
+	}
 
 
 	public IProcedureInfo[] getStoredProceduresInfos()
@@ -718,38 +720,38 @@ public class SchemaInfo
 		return getStoredProceduresInfos(null, null);
 	}
 
-   public IProcedureInfo[] getStoredProceduresInfos(String catalog, String schema)
-   {
-      if(null == catalog && null == schema)
-      {
-         return _procInfos;
-      }
-      else
-      {
-         ArrayList ret = new ArrayList();
+	public IProcedureInfo[] getStoredProceduresInfos(String catalog, String schema)
+	{
+		if(null == catalog && null == schema)
+		{
+			return _procInfos;
+		}
+		else
+		{
+			ArrayList ret = new ArrayList();
 
-         for (int i = 0; i < _procInfos.length; i++)
-         {
-            boolean toAdd = true;
-            if(null != catalog && false == catalog.equalsIgnoreCase(_procInfos[i].getCatalogName()) )
-            {
-               toAdd = false;
-            }
+			for (int i = 0; i < _procInfos.length; i++)
+			{
+				boolean toAdd = true;
+				if(null != catalog && false == catalog.equalsIgnoreCase(_procInfos[i].getCatalogName()) )
+				{
+					toAdd = false;
+				}
 
-            if(null != schema && false == schema.equalsIgnoreCase(_procInfos[i].getSchemaName()) )
-            {
-               toAdd = false;
-            }
+				if(null != schema && false == schema.equalsIgnoreCase(_procInfos[i].getSchemaName()) )
+				{
+					toAdd = false;
+				}
 
-            if(toAdd)
-            {
-               ret.add(_procInfos[i]);
-            }
-         }
+				if(toAdd)
+				{
+					ret.add(_procInfos[i]);
+				}
+			}
 
-         return (IProcedureInfo[]) ret.toArray(new IProcedureInfo[ret.size()]);
-      }
-   }
+			return (IProcedureInfo[]) ret.toArray(new IProcedureInfo[ret.size()]);
+		}
+	}
 
 
 	public boolean isLoaded()
@@ -768,14 +770,14 @@ public class SchemaInfo
 			{
 				while (rs.next())
 				{
-               String tableName = rs.getString("TABLE_NAME");
+					String tableName = rs.getString("TABLE_NAME");
 
 					_tables.put(tableName.toUpperCase(), tableName);
 
 					String tableType = rs.getString("TABLE_TYPE");
 
-               String cat = rs.getString("TABLE_CAT");
-               String schem = rs.getString("TABLE_SCHEM");
+					String cat = rs.getString("TABLE_CAT");
+					String schem = rs.getString("TABLE_SCHEM");
 
 					_extendedtableInfos.add(new ExtendedTableInfo(tableName, tableType, cat, schem));
 				}
@@ -791,120 +793,127 @@ public class SchemaInfo
 		}
 	}
 
-   private void loadColumns(final String tableName)
-   {
-      try
-      {
-         if(_extendedColumnInfosByTableName.containsKey(tableName))
-         {
-            return;
-         }
-
-			
-			if(_session.getProperties().getLoadColumnsInBackground())
+	private void loadColumns(final String tableName)
+	{
+		try
+		{
+			if(_extendedColumnInfosByTableName.containsKey(tableName))
 			{
-			_session.getApplication().getThreadPool().addTask(new Runnable()
-         {
-            public void run()
-            {
-               try
-               {
-                  accessDbToLoadColumns(tableName);
-               }
-               catch (SQLException e)
-               {
-                  throw new RuntimeException(e);
-               }
-            }
-         });
+				return;
+			}
+
+
+			if (_session.getProperties().getLoadColumnsInBackground())
+			{
+				if(_tablesLoadingColsInBackground.containsKey(tableName))
+				{
+					return;
+				}
+
+				_tablesLoadingColsInBackground.put(tableName, tableName);
+				_session.getApplication().getThreadPool().addTask(new Runnable()
+				{
+					public void run()
+					{
+						try
+						{
+							accessDbToLoadColumns(tableName);
+							_tablesLoadingColsInBackground.remove(tableName);
+						}
+						catch (SQLException e)
+						{
+							throw new RuntimeException(e);
+						}
+					}
+				});
 			}
 			else
 			{
 				accessDbToLoadColumns(tableName);
 			}
 		}
-      catch (Throwable th)
-      {
-         s_log.error("failed to load table names", th);
-      }
-   }
+		catch (Throwable th)
+		{
+			s_log.error("failed to load table names", th);
+		}
+	}
 
-   private void accessDbToLoadColumns(String tableName)
-      throws SQLException
-   {
-      ResultSet rs = _dmd.getColumns(null, null, getCaseSensitiveTableName(tableName), null);
-      try
-      {
-         ArrayList infos = new ArrayList();
+	private void accessDbToLoadColumns(String tableName)
+		throws SQLException
+	{
+		ResultSet rs = _dmd.getColumns(null, null, getCaseSensitiveTableName(tableName), null);
+		try
+		{
+			ArrayList infos = new ArrayList();
 
-         while (rs.next())
-         {
-            String columnName = rs.getString("COLUMN_NAME");
-            String columnType = rs.getString("TYPE_NAME");
-            int columnSize = rs.getInt("COLUMN_SIZE");
-            int decimalDigits = rs.getInt("DECIMAL_DIGITS");
-            boolean nullable = "YES".equals(rs.getString("IS_NULLABLE"));
-            String cat = rs.getString("TABLE_CAT");
-            String schem = rs.getString("TABLE_SCHEM");
-            ExtendedColumnInfo buf = new ExtendedColumnInfo(columnName, columnType, columnSize, decimalDigits, nullable, cat, schem);
-            infos.add(buf);
+			while (rs.next())
+			{
+				String columnName = rs.getString("COLUMN_NAME");
+				String columnType = rs.getString("TYPE_NAME");
+				int columnSize = rs.getInt("COLUMN_SIZE");
+				int decimalDigits = rs.getInt("DECIMAL_DIGITS");
+				boolean nullable = "YES".equals(rs.getString("IS_NULLABLE"));
+				String cat = rs.getString("TABLE_CAT");
+				String schem = rs.getString("TABLE_SCHEM");
+				ExtendedColumnInfo buf = new ExtendedColumnInfo(columnName, columnType, columnSize, decimalDigits, nullable, cat, schem);
+				infos.add(buf);
 
-            _columns.put(columnName.toUpperCase(), columnName);
-         }
-         _extendedColumnInfosByTableName.put(tableName, infos);
+				_columns.put(columnName.toUpperCase(), columnName);
+			}
+			_extendedColumnInfosByTableName.put(tableName, infos);
 
-      }
-      finally
-      {
-         rs.close();
-      }
-   }
+		}
+		finally
+		{
+			rs.close();
+		}
+	}
 
-   public ExtendedColumnInfo[] getExtendedColumnInfos(String tableName)
-   {
-      return getExtendedColumnInfos(null, null, tableName);
-   }
+	public ExtendedColumnInfo[] getExtendedColumnInfos(String tableName)
+	{
+		return getExtendedColumnInfos(null, null, tableName);
+	}
 
-   public ExtendedColumnInfo[] getExtendedColumnInfos(String catalog, String schema, String tableName)
-   {
-      String upperCaseTableName = tableName.toUpperCase();
-      loadColumns(upperCaseTableName);
-      ArrayList extColInfo = (ArrayList) _extendedColumnInfosByTableName.get(upperCaseTableName);
+	public ExtendedColumnInfo[] getExtendedColumnInfos(String catalog, String schema, String tableName)
+	{
+		String upperCaseTableName = tableName.toUpperCase();
+		loadColumns(upperCaseTableName);
+		ArrayList extColInfo = (ArrayList) _extendedColumnInfosByTableName.get(upperCaseTableName);
 
-      if (null == extColInfo)
-      {
-         return new ExtendedColumnInfo[0];
-      }
+		if (null == extColInfo)
+		{
+			return new ExtendedColumnInfo[0];
+		}
 
-      if (null == catalog && null == schema)
-      {
-         return (ExtendedColumnInfo[]) extColInfo.toArray(new ExtendedColumnInfo[extColInfo.size()]);
-      }
-      else
-      {
-         ArrayList ret = new ArrayList();
+		if (null == catalog && null == schema)
+		{
+			return (ExtendedColumnInfo[]) extColInfo.toArray(new ExtendedColumnInfo[extColInfo.size()]);
+		}
+		else
+		{
+			ArrayList ret = new ArrayList();
 
-         for (int i = 0; i < extColInfo.size(); i++)
-         {
-            ExtendedColumnInfo extendedColumnInfo = (ExtendedColumnInfo) extColInfo.get(i);
-            boolean toAdd = true;
-            if (null != catalog && false == catalog.equalsIgnoreCase(extendedColumnInfo.getCatalog()))
-            {
-               toAdd = false;
-            }
+			for (int i = 0; i < extColInfo.size(); i++)
+			{
+				ExtendedColumnInfo extendedColumnInfo = (ExtendedColumnInfo) extColInfo.get(i);
+				boolean toAdd = true;
+				if (null != catalog && false == catalog.equalsIgnoreCase(extendedColumnInfo.getCatalog()))
+				{
+					toAdd = false;
+				}
 
-            if (null != schema && false == schema.equalsIgnoreCase(extendedColumnInfo.getSchema()))
-            {
-               toAdd = false;
-            }
+				if (null != schema && false == schema.equalsIgnoreCase(extendedColumnInfo.getSchema()))
+				{
+					toAdd = false;
+				}
 
-            if (toAdd)
-            {
-               ret.add(extendedColumnInfo);
-            }
-         }
+				if (toAdd)
+				{
+					ret.add(extendedColumnInfo);
+				}
+			}
 
-         return (ExtendedColumnInfo[]) ret.toArray(new ExtendedColumnInfo[ret.size()]);
-      }
-   }
+			return (ExtendedColumnInfo[]) ret.toArray(new ExtendedColumnInfo[ret.size()]);
+		}
+	}
 }
