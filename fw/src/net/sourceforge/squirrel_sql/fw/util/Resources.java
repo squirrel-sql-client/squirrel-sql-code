@@ -39,7 +39,7 @@ public abstract class Resources
 {
    public static final String ACCELERATOR_STRING = "SQuirreLAcceleratorString";
 
-   private interface ActionProperties
+	private interface ActionProperties
 	{
 		String DISABLED_IMAGE = "disabledimage";
 		String IMAGE = "image";
@@ -72,6 +72,9 @@ public abstract class Resources
 	/** Applications resource bundle. */
 	private final ResourceBundle _bundle;
 
+	/** To load resources */
+	private ClassLoader _classLoader;
+
 	/** Path to images. */
 	private final String _imagePath;
 
@@ -83,6 +86,7 @@ public abstract class Resources
 			throw new IllegalArgumentException("Null or empty rsrcBundleBaseName passed");
 		}
 
+		_classLoader = cl;
 		_bundle = ResourceBundle.getBundle(rsrcBundleBaseName, Locale.getDefault(), cl);
 		_imagePath = _bundle.getString("path.images");
 	}
@@ -333,7 +337,39 @@ public abstract class Resources
 	{
 		if (iconName != null && iconName.length() > 0)
 		{
-			URL url = getClass().getResource(getImagePathName(iconName));
+			URL url;
+			String imagePathName = getImagePathName(iconName);
+
+			if(null == _classLoader)
+			{
+				url = getClass().getResource(imagePathName);
+
+				// This slash stuff is a ...
+				if(null == url && imagePathName.startsWith("/"))
+				{
+					url = _classLoader.getResource(imagePathName.substring(1));
+				}
+				else if(null == url && false == imagePathName.startsWith("/"))
+				{
+					url = _classLoader.getResource("/" + imagePathName);
+				}
+
+			}
+			else
+			{
+				url = _classLoader.getResource(imagePathName);
+
+				if(null == url && imagePathName.startsWith("/"))
+				{
+					url = _classLoader.getResource(imagePathName.substring(1));
+				}
+				else if(null == url && false == imagePathName.startsWith("/"))
+				{
+					url = _classLoader.getResource("/" + imagePathName);
+				}
+			}
+
+
 			if (url != null)
 			{
 				return new ImageIcon(url);
