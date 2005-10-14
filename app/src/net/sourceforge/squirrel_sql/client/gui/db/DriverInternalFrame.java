@@ -239,6 +239,10 @@ public class DriverInternalFrame extends BaseInternalFrame
 			{
 				_app.getDataCache().addDriver(_sqlDriver);
 			}
+			else
+			{
+				_app.getDataCache().refreshDriver(_sqlDriver, _app.getMessageHandler());
+			}
 			dispose();
 		}
 		catch (Throwable th)

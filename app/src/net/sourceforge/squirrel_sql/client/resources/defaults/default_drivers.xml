@@ -2,8 +2,20 @@
 
 <Beans>
 
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		 <driverClassName>COM.ibm.db2.jdbc.net.DB2Driver</driverClassName>
+		 <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			  <string>-32</string>
+		 </identifier>
+		 <jarFileName/>
+		 <jarFileNames Indexed="true"/>
+		 <name>IBM DB2 Net Driver</name>
+		 <url>jdbc:db2://&lt;server&gt;:&lt;6789&gt;/&lt;db-name&gt;</url>
+	</Bean>
 
-    <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+
+
+	 <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
         <driverClassName>org.apache.derby.jdbc.ClientDriver</driverClassName>
         <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
             <string>-31</string>
