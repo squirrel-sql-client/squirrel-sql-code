@@ -324,7 +324,11 @@ public class DataCache
 			s_log.error("Error loading drivers", ex);
 		}
 
-		registerDrivers(msgHandler);
+		for (Iterator it = drivers(); it.hasNext();)
+		{
+			ISQLDriver sqlDriver = (ISQLDriver) it.next();
+			registerDriver(sqlDriver, msgHandler);
+		}
 	}
 
 	public ISQLAlias createAlias(IIdentifier id)
@@ -356,28 +360,23 @@ public class DataCache
 		}
 	}
 
-	private void registerDrivers(IMessageHandler msgHandler)
+	private void registerDriver(ISQLDriver sqlDriver, IMessageHandler msgHandler)
 	{
-		SQLDriverManager driverMgr = _driverMgr;
-		for (Iterator it = drivers(); it.hasNext();)
+		try
 		{
-			ISQLDriver sqlDriver = (ISQLDriver) it.next();
-			try
-			{
-				driverMgr.registerSQLDriver(sqlDriver);
-			}
-			catch (ClassNotFoundException ignore)
-			{
-				// Ignore.
-			}
-			catch (Throwable th)
-			{
-				String msg = s_stringMgr.getString("DataCache.error.registerdriver",
-													sqlDriver.getName());
-				s_log.error(msg, th);
-				msgHandler.showErrorMessage(msg);
-				msgHandler.showErrorMessage(th);
-			}
+			_driverMgr.registerSQLDriver(sqlDriver);
+		}
+		catch (ClassNotFoundException ignore)
+		{
+			// Ignore.
+		}
+		catch (Throwable th)
+		{
+			String msg = s_stringMgr.getString("DataCache.error.registerdriver",
+												sqlDriver.getName());
+			s_log.error(msg, th);
+			msgHandler.showErrorMessage(msg);
+			msgHandler.showErrorMessage(th);
 		}
 	}
 
@@ -430,5 +429,10 @@ public class DataCache
 				}
 			}
 		}
+	}
+
+	public void refreshDriver(ISQLDriver driver, IMessageHandler messageHandler)
+	{
+		registerDriver(driver, messageHandler);
 	}
 }

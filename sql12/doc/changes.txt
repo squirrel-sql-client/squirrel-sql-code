@@ -4,14 +4,16 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS or probably in latest weekly build
 =====================================================================
 
-- Patch #1324774 The source SQL statement used to create a view is now available via the 
+- Bug fix: Driver Icon did not update when driver was changed.
+- Added IBM DB2 Net driver to default drivers.
+- Patch #1324774 The source SQL statement used to create a view is now available via the
   Oracle Plugin (Thanks to Alexander Buloichik)
 - Added Session Property "load columns in background". This option might help people who feel that the SQL editor
   hangs because they use databases with a lot of objects and/or use low data transfer rates.
 - Configurable warning for JDBC API version mismatch between the JVM and JDBC driver
 - Fixed bug #1316903 (SQL Panel hangs when Ctrl-B on whitespace)
 - Added comment/uncomment functions to the SQL editor.
-- Made auto corrections and duplicate line available outside the Netabeans editor.
+- Made auto corrections and duplicate line available outside the Netbeans editor.
 - Bug fix: Code completion did not work when object was directly preceded by =,> or <. Example: Table1.col1=Tab...
 - Enabled code completion when a ' or a " is on front of the name to complete (RFE 1305802)
 - Fixed bug #1288519 (Postgres: editing boolean fields)
