@@ -30,11 +30,11 @@ import javax.swing.KeyStroke;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.session.*;
+import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.mainframe.action.AboutAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CascadeAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CloseAllSessionsAction;
@@ -52,7 +52,46 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.TileVerticalAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewHelpAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewLogsAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.*;
+import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsAction;
+import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsButCurrentAction;
+import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultWindowsAction;
+import net.sourceforge.squirrel_sql.client.session.action.CloseCurrentSQLResultTabAction;
+import net.sourceforge.squirrel_sql.client.session.action.CloseSessionAction;
+import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
+import net.sourceforge.squirrel_sql.client.session.action.CopyQualifiedObjectNameAction;
+import net.sourceforge.squirrel_sql.client.session.action.CopySimpleObjectNameAction;
+import net.sourceforge.squirrel_sql.client.session.action.DropSelectedTablesAction;
+import net.sourceforge.squirrel_sql.client.session.action.DumpSessionAction;
+import net.sourceforge.squirrel_sql.client.session.action.EditWhereColsAction;
+import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.FileOpenAction;
+import net.sourceforge.squirrel_sql.client.session.action.FileSaveAction;
+import net.sourceforge.squirrel_sql.client.session.action.FileSaveAsAction;
+import net.sourceforge.squirrel_sql.client.session.action.FilterObjectsAction;
+import net.sourceforge.squirrel_sql.client.session.action.GotoNextResultsTabAction;
+import net.sourceforge.squirrel_sql.client.session.action.GotoPreviousResultsTabAction;
+import net.sourceforge.squirrel_sql.client.session.action.IObjectTreeAction;
+import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
+import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
+import net.sourceforge.squirrel_sql.client.session.action.NewObjectTreeAction;
+import net.sourceforge.squirrel_sql.client.session.action.NewSQLWorksheetAction;
+import net.sourceforge.squirrel_sql.client.session.action.NextSessionAction;
+import net.sourceforge.squirrel_sql.client.session.action.PreviousSessionAction;
+import net.sourceforge.squirrel_sql.client.session.action.ReconnectAction;
+import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeAction;
+import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeItemAction;
+import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
+import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
+import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesAction;
+import net.sourceforge.squirrel_sql.client.session.action.SetDefaultCatalogAction;
+import net.sourceforge.squirrel_sql.client.session.action.ShowNativeSQLAction;
+import net.sourceforge.squirrel_sql.client.session.action.ToggleCurrentSQLResultTabStickyAction;
+import net.sourceforge.squirrel_sql.client.session.action.ToolsPopupAction;
+import net.sourceforge.squirrel_sql.client.session.action.ViewObjectAtCursorInObjectTreeAction;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
  * This class represents a collection of <TT>Action</CODE> objects for the
  * application.
@@ -70,6 +109,10 @@ public final class ActionCollection
 	/** Collection of all Actions keyed by class name. */
 	private final Map _actionColl = new HashMap();
 
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(ActionCollection.class);
+    
 	/**
 	 * Ctor. Disable all actions that are not valid when the
 	 * application is first initialised.
@@ -156,8 +199,11 @@ public final class ActionCollection
 		Action action = (Action)_actionColl.get(actionClassName);
 		if (action == null)
 		{
-			s_log.error("Action " + actionClassName +
-						" not found in ActionCollection.");
+            // i18n[ActionCollection.actionNotFound=Action {0} not found in ActionCollection.]
+            String errMsg = 
+                s_stringMgr.getString("ActionCollection.actionNotFound", 
+                                      actionClassName);
+            s_log.error(errMsg);
 			action = createAction(actionClassName);
 		}
 		return action;
@@ -384,12 +430,21 @@ public final class ActionCollection
 		Action action = null;
 		try
 		{
-			action = (Action)Class.forName(actionClassName).newInstance();
+            // i18n[ActionCollection.createActionInfo=Attempting to load action class - {0}]
+            String msg = 
+                s_stringMgr.getString("ActionCollection.createActionInfo", 
+                                      actionClassName);
+		    s_log.info(msg);
+            action = (Action)Class.forName(actionClassName).newInstance();
 			_actionColl.put(actionClassName, action);
 		}
 		catch (Exception ex)
 		{
-			s_log.error("Error occured creating Action: " + actionClassName, ex);
+            // i18n[ActionCollection.createActionError=Error occured creating Action: {0}]
+            String msg = 
+                s_stringMgr.getString("ActionCollection.createActionError",
+                                      actionClassName);
+			s_log.error(msg, ex);
 		}
 		return action;
 	}
