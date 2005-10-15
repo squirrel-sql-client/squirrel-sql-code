@@ -1,21 +1,25 @@
 package net.sourceforge.squirrel_sql.plugins.i18n;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.*;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.util.prefs.Preferences;
-import java.util.ArrayList;
-import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Properties;
+import java.util.prefs.Preferences;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class DevelopersController
 {
@@ -83,6 +87,7 @@ public class DevelopersController
 
 	private void appendProps(File sourceDir)
 	{
+        
 		try
 		{
 			File[] files = sourceDir.listFiles();
@@ -104,12 +109,14 @@ public class DevelopersController
 
 			for (int i = 0; i < files.length; i++)
 			{
+                
 				if(files[i].isDirectory() && false == "CVS".equals(files[i].getName()))
 				{
 					appendProps(files[i]);
 				}
 				else if(files[i].getName().endsWith(".java"))
 				{
+                    int occurrences = 0;
 					StringBuffer code = new StringBuffer();
 					fis = new FileInputStream(files[i]);
 
@@ -122,12 +129,24 @@ public class DevelopersController
 
 					fis.close();
 
-
+					
 					try
 					{
-						parseProps(code.toString(),curProps, newProps, replaceProps);
+						occurrences = parseProps(code.toString(),curProps, newProps, replaceProps);
+                        if (occurrences > 0) {
+                            int occurrencesFound = fixSourceFile(files[i].getAbsolutePath());
+                            if (occurrences != occurrencesFound) {
+                                Object[] params = 
+                                    new Object[]{new Integer(occurrencesFound), 
+                                                 new Integer(occurrences),
+                                                 files[i].getPath() };
+                                String msg = 
+                                    s_stringMgr.getString("i18n.unequalOccurrences", params);
+                                _app.getMessageHandler().showErrorMessage(msg);
+                            }
+                        }                        
 					}
-					catch (I18nParseException e)
+					catch (Exception e)
 					{
 						Object[] params = new Object[]{files[i].getPath(), e.getMessage()};
 						_app.getMessageHandler().showErrorMessage(s_stringMgr.getString("i18n.failedToParse", params));
@@ -177,8 +196,9 @@ public class DevelopersController
 
 	}
 
-	private void parseProps(String code, Properties curProps, ArrayList newProps, ArrayList replaceProps) throws I18nParseException
+	private int parseProps(String code, Properties curProps, ArrayList newProps, ArrayList replaceProps) throws I18nParseException
 	{
+        int occurrences = 0;
 		code = code.replace('\r', ' ');
 
 		Pattern pat = Pattern.compile("//\\x20*i18n\\[(.*)");
@@ -188,6 +208,7 @@ public class DevelopersController
 
 		while(m.find(propBounds[1]))
 		{
+            occurrences++;
 			propBounds[0] = m.start(m.groupCount());
 			String prop = getProp(code, propBounds);
 
@@ -224,7 +245,7 @@ public class DevelopersController
 
 			}
 		}
-
+		return occurrences;
 	}
 
 	private String getProp(String code, int[] propBounds) throws I18nParseException
@@ -325,7 +346,39 @@ public class DevelopersController
 		return sourceDir;
 	}
 
-
+    private int fixSourceFile(String filename) throws Exception {
+        BufferedReader in = new BufferedReader(new FileReader(filename));
+        PrintWriter out = new PrintWriter(new FileOutputStream(filename+".fixed"));
+        String nextLine = in.readLine();
+        nextLine = nextLine.replace('r', ' ');
+        String lineToPrint = nextLine;
+        int occurrencesReplaced = 0;
+        
+        Pattern pat = Pattern.compile("\\s*//\\s*i18n\\[(.*)");
+        while (nextLine != null) {
+            Matcher m = pat.matcher(nextLine);
+            if (m.matches()) {
+                // print the i18n comment
+                out.println(nextLine);
+                String[] parts = nextLine.split("\\[");
+                parts = parts[1].split("\\]");
+                parts = parts[0].split("=");
+                String key = parts[0];
+                String val = parts[1];
+                nextLine = in.readLine();
+                lineToPrint = nextLine.replaceFirst("\\\""+val+"\\\"",
+                                                    "s_stringMgr.getString(\""+key+"\")");
+                occurrencesReplaced++;
+            }
+            out.println(lineToPrint);
+            nextLine = in.readLine();
+            lineToPrint = nextLine;
+        } 
+        in.close();
+        out.close();
+        return occurrencesReplaced;
+    }
+    
 	public void initialize(IApplication app)
 	{
 		_app = app;
