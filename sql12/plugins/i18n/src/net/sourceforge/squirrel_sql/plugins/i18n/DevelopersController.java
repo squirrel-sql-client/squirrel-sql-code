@@ -61,7 +61,13 @@ public class DevelopersController
 
 	private void onChooseSourceDir()
 	{
-		JFileChooser chooser = new JFileChooser(System.getProperties().getProperty("user.home"));
+        String startDir = System.getProperties().getProperty("user.home");
+        if (_panel.txtSourceDir.getText() != null
+                && !"".equals(_panel.txtSourceDir.getText())) 
+        {
+            startDir = _panel.txtSourceDir.getText();
+        }
+		JFileChooser chooser = new JFileChooser(startDir);
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		chooser.showOpenDialog(_app.getMainFrame());
 
@@ -350,11 +356,11 @@ public class DevelopersController
         BufferedReader in = new BufferedReader(new FileReader(filename));
         PrintWriter out = new PrintWriter(new FileOutputStream(filename+".fixed"));
         String nextLine = in.readLine();
-        nextLine = nextLine.replace('r', ' ');
         String lineToPrint = nextLine;
         int occurrencesReplaced = 0;
         
         Pattern pat = Pattern.compile("\\s*//\\s*i18n\\[(.*)");
+        Pattern commentLinePattern = Pattern.compile("\\s*//");
         while (nextLine != null) {
             Matcher m = pat.matcher(nextLine);
             if (m.matches()) {
@@ -366,9 +372,17 @@ public class DevelopersController
                 String key = parts[0];
                 String val = parts[1];
                 nextLine = in.readLine();
-                lineToPrint = nextLine.replaceFirst("\\\""+val+"\\\"",
+                Matcher commentMatch = commentLinePattern.matcher(nextLine);
+                
+                if (!commentMatch.matches()) {
+                    lineToPrint = nextLine.replaceFirst("\\\""+val+"\\\"",
                                                     "s_stringMgr.getString(\""+key+"\")");
-                occurrencesReplaced++;
+                    occurrencesReplaced++;
+                } else {
+                    // here we've hit the second line of a multi-line i18n stanza
+                    // Just skip it, we're not that sophisticated.
+                }
+                
             }
             out.println(lineToPrint);
             nextLine = in.readLine();
