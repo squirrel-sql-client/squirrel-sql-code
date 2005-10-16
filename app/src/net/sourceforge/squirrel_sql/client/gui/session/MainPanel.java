@@ -323,6 +323,11 @@ public class MainPanel extends JPanel
 
 	private void performStateChanged()
 	{
+		// Needed to guarantee other components a focus lost
+		// and to allow to enter the tabs components via tab
+		// key in a well defined way (the user can see where the focus is).
+		_tabPnl.requestFocusInWindow();
+
 		updateState();
 		int idx = _tabPnl.getSelectedIndex();
 		if (idx != -1)
