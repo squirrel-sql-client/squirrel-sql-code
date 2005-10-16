@@ -178,10 +178,11 @@ public class DataCache
 	 *
 	 * @param	sqlDriver	The driver to add.
 	 *
+	 * @param messageHandler
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>ISQLDriver</TT> is null.
 	 */
-	public void addDriver(ISQLDriver sqlDriver)
+	public void addDriver(ISQLDriver sqlDriver, IMessageHandler messageHandler)
 		throws ClassNotFoundException, IllegalAccessException,
 				InstantiationException, DuplicateObjectException,
 				MalformedURLException
@@ -190,7 +191,7 @@ public class DataCache
 		{
 			throw new IllegalArgumentException("ISQLDriver == null");
 		}
-		_driverMgr.registerSQLDriver(sqlDriver);
+		registerDriver(sqlDriver, messageHandler, true);
 		_cache.add(sqlDriver);
 	}
 
@@ -327,7 +328,7 @@ public class DataCache
 		for (Iterator it = drivers(); it.hasNext();)
 		{
 			ISQLDriver sqlDriver = (ISQLDriver) it.next();
-			registerDriver(sqlDriver, msgHandler);
+			registerDriver(sqlDriver, msgHandler, false);
 		}
 	}
 
@@ -360,15 +361,32 @@ public class DataCache
 		}
 	}
 
-	private void registerDriver(ISQLDriver sqlDriver, IMessageHandler msgHandler)
+	private void registerDriver(ISQLDriver sqlDriver, IMessageHandler msgHandler, boolean extendedMessaging)
 	{
+		boolean registrationSucessfully = false;
 		try
 		{
 			_driverMgr.registerSQLDriver(sqlDriver);
+			registrationSucessfully = true;
 		}
-		catch (ClassNotFoundException ignore)
+		catch (ClassNotFoundException cnfe)
 		{
-			// Ignore.
+			if(extendedMessaging)
+			{
+				Object[] params  = new Object[]
+					{
+						sqlDriver.getDriverClassName(),
+						sqlDriver.getName(),
+						cnfe
+					};
+
+				String msg = s_stringMgr.getString("DataCache.error.driverClassNotFound", params);
+				// i18n[DataCache.msg.driverClassNotFound=Could not find class {0} in neither
+				// the Java class path nor the Extra class path of the {1} driver definition:\n{2}]
+
+				s_log.error(msg, cnfe);
+				msgHandler.showErrorMessage(msg);
+			}
 		}
 		catch (Throwable th)
 		{
@@ -377,6 +395,21 @@ public class DataCache
 			s_log.error(msg, th);
 			msgHandler.showErrorMessage(msg);
 			msgHandler.showErrorMessage(th);
+		}
+
+		if(extendedMessaging && registrationSucessfully)
+		{
+			Object[] params  = new Object[]
+				{
+					sqlDriver.getDriverClassName(),
+					sqlDriver.getName(),
+				};
+
+
+			String msg = s_stringMgr.getString("DataCache.msg.driverRegisteredSucessfully", params);
+			// i18n[DataCache.msg.driverRegisteredSucessfully=Driver class {0} sucessfully registered
+			// for driver definition: {1}]
+			msgHandler.showMessage(msg);
 		}
 	}
 
@@ -433,6 +466,6 @@ public class DataCache
 
 	public void refreshDriver(ISQLDriver driver, IMessageHandler messageHandler)
 	{
-		registerDriver(driver, messageHandler);
+		registerDriver(driver, messageHandler, true);
 	}
 }

@@ -237,7 +237,7 @@ public class DriverInternalFrame extends BaseInternalFrame
 			applyFromDialog();
 			if (_maintType == MaintenanceType.NEW || _maintType == MaintenanceType.COPY)
 			{
-				_app.getDataCache().addDriver(_sqlDriver);
+				_app.getDataCache().addDriver(_sqlDriver, _app.getMessageHandler());
 			}
 			else
 			{
