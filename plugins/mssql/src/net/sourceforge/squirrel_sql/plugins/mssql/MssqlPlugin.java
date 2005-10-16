@@ -35,6 +35,7 @@ import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.plugin.*;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
@@ -61,6 +62,7 @@ import net.sourceforge.squirrel_sql.plugins.mssql.event.IndexIterationListener;
 import net.sourceforge.squirrel_sql.plugins.mssql.sql.dbfile.DatabaseFileInfo;
 import net.sourceforge.squirrel_sql.plugins.mssql.sql.dbfile.DatabaseFile;
 import net.sourceforge.squirrel_sql.plugins.mssql.util.MssqlIntrospector;
+import net.sourceforge.squirrel_sql.plugins.mssql.tab.ViewSourceTab;
 
 public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin {
 	private final static ILogger s_log = LoggerController.createLogger(MssqlPlugin.class);
@@ -78,10 +80,7 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
     }
     
     public String getContributors() {
-        String retValue;
-        
-        retValue = super.getContributors();
-        return retValue;
+        return "Rob Manning";
     }
     
     public net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel[] getGlobalPreferencePanels() {
@@ -191,6 +190,7 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
             _treeAPI.addToPopup(DatabaseObjectType.TABLE, addToMssqlTableMenu(null));
             _treeAPI.addToPopup(DatabaseObjectType.PROCEDURE, addToMssqlProcedureMenu(null));
 
+            _treeAPI.addDetailTab(DatabaseObjectType.VIEW, new ViewSourceTab());
             _session = iSession;
             
             MonitorPanel monitorPanel = new MonitorPanel();
