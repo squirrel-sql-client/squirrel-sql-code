@@ -63,7 +63,7 @@ public class DevelopersController
 	{
         String startDir = System.getProperties().getProperty("user.home");
         if (_panel.txtSourceDir.getText() != null
-                && !"".equals(_panel.txtSourceDir.getText())) 
+                && !"".equals(_panel.txtSourceDir.getText()))
         {
             startDir = _panel.txtSourceDir.getText();
         }
@@ -87,13 +87,13 @@ public class DevelopersController
 		}
 
 		appendProps(sourceDir);
-		_app.getMessageHandler().showMessage(s_stringMgr.getString("i18n.ParsingFinish"));
 		// i18n[i18n.ParsingFinish=Parsing finished]
+		_app.getMessageHandler().showMessage("Parsing finished");
 	}
 
 	private void appendProps(File sourceDir)
 	{
-        
+
 		try
 		{
 			File[] files = sourceDir.listFiles();
@@ -115,7 +115,7 @@ public class DevelopersController
 
 			for (int i = 0; i < files.length; i++)
 			{
-                
+
 				if(files[i].isDirectory() && false == "CVS".equals(files[i].getName()))
 				{
 					appendProps(files[i]);
@@ -135,26 +135,28 @@ public class DevelopersController
 
 					fis.close();
 
-					
+
 					try
 					{
 						occurrences = parseProps(code.toString(),curProps, newProps, replaceProps);
                         if (occurrences > 0) {
                             int occurrencesFound = fixSourceFile(files[i].getAbsolutePath());
                             if (occurrences != occurrencesFound) {
-                                Object[] params = 
-                                    new Object[]{new Integer(occurrencesFound), 
-                                                 new Integer(occurrences),
-                                                 files[i].getPath() };
-                                String msg = 
-                                    s_stringMgr.getString("i18n.unequalOccurrences", params);
+                                Object[] params =
+                                    new Object[]{new Integer(occurrences),
+													          new Integer(occurrencesFound),
+																 files[i].getPath() };
+
+										  // i18n[i18n.unequalOccurrences=Found {0} i18n comments but only {1} places
+										  // to convert to s_stringMgr.getString() in file {2}]
+										  String msg = s_stringMgr.getString("i18n.unequalOccurrences", params);
                                 _app.getMessageHandler().showErrorMessage(msg);
                             }
-                        }                        
+                        }
 					}
 					catch (Exception e)
 					{
-						Object[] params = new Object[]{files[i].getPath(), e.getMessage()};
+						Object[] params = new Object[]{files[i].getPath(), e.toString()};
 						_app.getMessageHandler().showErrorMessage(s_stringMgr.getString("i18n.failedToParse", params));
 						// i18n[i18n.failedToParse=Failed to parse {0}\n{1}]
 						continue;
@@ -352,47 +354,65 @@ public class DevelopersController
 		return sourceDir;
 	}
 
-    private int fixSourceFile(String filename) throws Exception {
-        BufferedReader in = new BufferedReader(new FileReader(filename));
-        PrintWriter out = new PrintWriter(new FileOutputStream(filename+".fixed"));
-        String nextLine = in.readLine();
-        String lineToPrint = nextLine;
-        int occurrencesReplaced = 0;
-        
-        Pattern pat = Pattern.compile("\\s*//\\s*i18n\\[(.*)");
-        Pattern commentLinePattern = Pattern.compile("\\s*//");
-        while (nextLine != null) {
-            Matcher m = pat.matcher(nextLine);
-            if (m.matches()) {
-                // print the i18n comment
-                out.println(nextLine);
-                String[] parts = nextLine.split("\\[");
-                parts = parts[1].split("\\]");
-                parts = parts[0].split("=");
-                String key = parts[0];
-                String val = parts[1];
-                nextLine = in.readLine();
-                Matcher commentMatch = commentLinePattern.matcher(nextLine);
-                
-                if (!commentMatch.matches()) {
-                    lineToPrint = nextLine.replaceFirst("\\\""+val+"\\\"",
-                                                    "s_stringMgr.getString(\""+key+"\")");
-                    occurrencesReplaced++;
-                } else {
-                    // here we've hit the second line of a multi-line i18n stanza
-                    // Just skip it, we're not that sophisticated.
-                }
-                
-            }
-            out.println(lineToPrint);
-            nextLine = in.readLine();
-            lineToPrint = nextLine;
-        } 
-        in.close();
-        out.close();
-        return occurrencesReplaced;
-    }
-    
+	private int fixSourceFile(String filename) throws Exception
+	{
+		BufferedReader in = new BufferedReader(new FileReader(filename));
+		PrintWriter out = new PrintWriter(new FileOutputStream(filename + ".fixed"));
+		String nextLine = in.readLine();
+		String lineToPrint = nextLine;
+		int occurrencesReplaced = 0;
+
+		Pattern pat = Pattern.compile("\\s*//\\s*i18n\\[(.*)");
+		Pattern commentLinePattern = Pattern.compile("\\s*//");
+		while (nextLine != null)
+		{
+			Matcher m = pat.matcher(nextLine);
+			if (m.matches())
+			{
+				String[] parts = nextLine.split("\\[");
+				if (1 < parts.length)
+				{
+					parts = parts[1].split("\\]");
+					if (0 < parts.length)
+					{
+						parts = parts[0].split("=");
+						if (1 < parts.length)
+						{
+							String key = parts[0];
+							String val = parts[1];
+
+							// print the i18n comment
+							out.println(nextLine);
+
+							nextLine = in.readLine();
+							Matcher commentMatch = commentLinePattern.matcher(nextLine);
+
+							if (!commentMatch.matches())
+							{
+								lineToPrint = nextLine.replaceFirst("\\\"" + val + "\\\"",
+									"s_stringMgr.getString(\"" + key + "\")");
+								occurrencesReplaced++;
+							}
+							else
+							{
+								lineToPrint = nextLine;
+								// here we've hit the second line of a multi-line i18n stanza
+								// Just skip it, we're not that sophisticated.
+							}
+						}
+					}
+				}
+
+			}
+			out.println(lineToPrint);
+			nextLine = in.readLine();
+			lineToPrint = nextLine;
+		}
+		in.close();
+		out.close();
+		return occurrencesReplaced;
+	}
+
 	public void initialize(IApplication app)
 	{
 		_app = app;
