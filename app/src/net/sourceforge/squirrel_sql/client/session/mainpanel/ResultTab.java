@@ -203,7 +203,11 @@ public class ResultTab extends JPanel implements IHasIdentifier
 		final int maxRows =_exInfo.getMaxRows(); 
 		if (maxRows > 0 && rowCount >= maxRows)
 		{
-			_currentSqlLbl.setText("<html><pre>&nbsp;Limited to <font color='red'>" + rowCount + "</font> rows;&nbsp;&nbsp;" + _sql + "</pre></html>");
+			String buf = _sql.replaceAll("&", "&amp;");
+			buf = buf.replaceAll("<", "&lt;");
+			buf = buf.replaceAll("<", "&gt;");
+			buf = buf.replaceAll("\"", "&quot;");
+			_currentSqlLbl.setText("<html><pre>&nbsp;Limited to <font color='red'>" + rowCount + "</font> rows;&nbsp;&nbsp;" + buf + "</pre></html>");
 		}
 		else
 		{

@@ -4,6 +4,8 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS or probably in latest weekly build
 =====================================================================
 
+- Bug fix: Limited rows/SQL - hints on top of a result tab could be corrupted (for example multi lined) because of missing HTML escaping. 
+- Improved messaging for driver definition.
 - Bug fix: Driver Icon did not update when driver was changed.
 - Added IBM DB2 Net driver to default drivers.
 - Patch #1324774 The source SQL statement used to create a view is now available via the
