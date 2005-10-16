@@ -242,7 +242,12 @@ class Application implements IApplication
 
 		_prefs.save();
 
-		FileViewerFactory.getInstance().closeAllViewers();
+        try {
+            FileViewerFactory.getInstance().closeAllViewers();
+        } catch (Throwable t) {
+            // i18n[Application.error.closeFileViewers=Unable to close all file viewers]
+            s_log.error(s_stringMgr.getString("Application.error.closeFileViewers"), t);
+        }
 
 		final ApplicationFiles appFiles = new ApplicationFiles();
 
@@ -596,7 +601,12 @@ class Application implements IApplication
 //		AliasMaintSheetFactory.initialize(this);
 //		DriverMaintSheetFactory.initialize(this);
 
-		indicateNewStartupTask(splash, loadPlugins ? "Initializing plugins..." : "No Plugins are to be loaded...");
+		String initializingPlugins = 
+            s_stringMgr.getString("Application.splash.initializingplugins");
+        String notloadingplugins =
+            s_stringMgr.getString("Application.splash.notloadingplugins");
+        String task = (loadPlugins ? initializingPlugins : notloadingplugins);
+		indicateNewStartupTask(splash, task);
 		if (loadPlugins)
 		{
 			_pluginManager.initializePlugins();
@@ -606,26 +616,37 @@ class Application implements IApplication
 				long created = pli.getCreationTime();
 				long load = pli.getLoadTime();
 				long init = pli.getInitializeTime();
-				s_log.info("Plugin " + (pli.getInternalName())
-						+ " created in " + created + " ms, loaded in " + load
-						+ " ms, initialized in " + init + " ms, total "
-						+ (created + load + init) + " ms.");
+                Object[] params = new Object[] { pli.getInternalName(),
+                                                 new Long(created),
+                                                 new Long(load),
+                                                 new Long(init),
+                                                 new Long(created + load + init)
+                };
+                String pluginLoadMsg = 
+                    s_stringMgr.getString("Application.splash.loadplugintime",
+                                          params);
+				s_log.info(pluginLoadMsg);
 			}
 		}
 
-		indicateNewStartupTask(splash, "Loading SQL history...");
+        // i18n[Application.splash.loadsqlhistory=Loading SQL history...]
+		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadsqlhistory"));
 		loadSQLHistory();
 
-		indicateNewStartupTask(splash, "Loading Cell Import/Export selections...");
+        // i18n[Application.splash.loadcellselections=Loading Cell Import/Export selections...]        
+		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadcellselections"));
 		loadCellImportExportInfo();
 
-		indicateNewStartupTask(splash, "Loading Edit 'Where' Columns selections...");
+        // i18n[Application.splash.loadeditselections=Loading Edit 'Where' Columns selections...]        
+		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadeditselections"));
 		loadEditWhereColsInfo();
 
-		indicateNewStartupTask(splash, "Loading Data Type Properties...");
+        // i18n[Application.splash.loaddatatypeprops=Loading Data Type Properties...]        
+		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loaddatatypeprops"));
 		loadDTProperties();
 
-		indicateNewStartupTask(splash, "Showing main window...");
+        // i18n[Application.splash.showmainwindow=Showing main window...]        
+		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.showmainwindow"));
 		_windowManager.moveToFront(_windowManager.getMainFrame());
       _threadPool.setParentForMessages(_windowManager.getMainFrame());
 
@@ -643,7 +664,8 @@ class Application implements IApplication
 			}
 			catch (BaseException ex)
 			{
-				s_log.error("Error showing help window", ex);
+                // i18n[Application.error.showhelpwindow=Error showing help window]
+				s_log.error(s_stringMgr.getString("Application.error.showhelpwindow"), ex);
 			}
 		}
 	}
@@ -711,7 +733,8 @@ class Application implements IApplication
 		}
 		catch (Exception ex)
 		{
-			s_log.error("Unable to load SQL history from persistant storage.", ex);
+            // i18n[Application.error.loadsqlhistory=Unable to load SQL history from persistant storage.]
+			s_log.error(s_stringMgr.getString("Application.error.loadsqlhistory"), ex);
 		}
 		finally
 		{
@@ -749,7 +772,8 @@ class Application implements IApplication
 		}
 		catch (Exception ex)
 		{
-			s_log.error("Unable to write SQL queries to persistant storage.", ex);
+            // i18n[Application.error.savesqlhistory=Unable to write SQL queries to persistant storage.]
+			s_log.error(s_stringMgr.getString("Application.error.savesqlhistory"), ex);
 		}
 	}
 
@@ -777,7 +801,8 @@ class Application implements IApplication
 		}
 		catch (Exception ex)
 		{
-			s_log.error("Unable to load Cell Import/Export selections from persistant storage.", ex);
+            // i18n[Application.error.loadcellselections=Unable to load Cell Import/Export selections from persistant storage.]
+			s_log.error(s_stringMgr.getString("Application.error.loadcellselections"), ex);
 		}
 		finally
 		{
@@ -799,7 +824,8 @@ class Application implements IApplication
 		}
 		catch (Exception ex)
 		{
-			s_log.error("Unable to write Cell Import/Export options to persistant storage.", ex);
+            // i18n[Application.error.writecellselections=Unable to write Cell Import/Export options to persistant storage.]
+			s_log.error(s_stringMgr.getString("Application.error.writecellselections"), ex);
 		}
 	}
 
@@ -827,7 +853,8 @@ class Application implements IApplication
 		}
 		catch (Exception ex)
 		{
-			s_log.error("Unable to load Cell Import/Export selections from persistant storage.", ex);
+            // i18n[Application.error.loadcolsinfo=Unable to load Edit 'Where' Columns selections.]
+			s_log.error(s_stringMgr.getString("Application.error.loadcolsinfo"), ex);
 		}
 		finally
 		{
@@ -847,7 +874,8 @@ class Application implements IApplication
 		}
 		catch (Exception ex)
 		{
-			s_log.error("Unable to write Edit Where Cols options to persistant storage.", ex);
+		    // i18n[Application.error.savecolsinfo=Unable to write Edit Where Cols options to persistant storage.]
+			s_log.error(s_stringMgr.getString("Application.error.savecolsinfo"), ex);
 		}
 	}
 
@@ -875,7 +903,8 @@ class Application implements IApplication
 		}
 		catch (Exception ex)
 		{
-			s_log.error("Unable to load DataType Properties selections from persistant storage.", ex);
+            // i18n[Application.error.loaddatatypeprops=Unable to load DataType Properties selections from persistant storage.]
+			s_log.error(s_stringMgr.getString("Application.error.loaddatatypeprops"), ex);
 		}
 		finally
 		{
@@ -895,7 +924,8 @@ class Application implements IApplication
 		}
 		catch (Exception ex)
 		{
-			s_log.error("Unable to write DataType properties to persistant storage.", ex);
+            //i18n[Application.error.savedatatypeprops=Unable to write DataType properties to persistant storage.]
+			s_log.error(s_stringMgr.getString("Application.error.savedatatypeprops"), ex);
 		}
 	}
 
@@ -928,7 +958,8 @@ class Application implements IApplication
 		}
 		catch (Exception ex)
 		{
-			s_log.error("Error setting LAF", ex);
+            // i18n[Application.error.setlaf=Error setting LAF]
+			s_log.error(s_stringMgr.getString("Application.error.setlaf"), ex);
 		}
 	}
 
@@ -958,10 +989,12 @@ class Application implements IApplication
 			{
 				try
 				{
-					s_log.debug("Attempting to set JDBC debug log to output stream");
+                    // i18n[Application.info.setjdbcdebuglog=Attempting to set JDBC debug log to output stream]
+					s_log.debug(s_stringMgr.getString("Application.info.setjdbcdebuglog"));
 					_jdbcDebugOutputStream = new PrintStream(new FileOutputStream(outFile));
 					DriverManager.setLogStream(_jdbcDebugOutputStream);
-					s_log.debug("JDBC debug log set to output stream successfully");
+                    // i18n[Application.info.setjdbcdebuglogsuccess=JDBC debug log set to output stream successfully]
+					s_log.debug(s_stringMgr.getString("Application.info.setjdbcdebuglogsuccess"));
 				}
 				catch (IOException ex)
 				{
@@ -976,10 +1009,12 @@ class Application implements IApplication
 			{
 				try
 				{
-					s_log.debug("Attempting to set JDBC debug log to writer");
+                    // i18n[Application.info.jdbcwriter=Attempting to set JDBC debug log to writer]
+					s_log.debug(s_stringMgr.getString("Application.info.jdbcwriter"));
 					_jdbcDebugOutputWriter = new PrintWriter(new FileWriter(outFile));
 					DriverManager.setLogWriter(_jdbcDebugOutputWriter);
-					s_log.debug("JDBC debug log set to writer successfully");
+                    // i18n[Application.info.jdbcwritersuccess=JDBC debug log set to writer successfully]
+					s_log.debug(s_stringMgr.getString("Application.info.jdbcwritersuccess"));
 				}
 				catch (IOException ex)
 				{
