@@ -38,9 +38,11 @@ public class Completor
 	private Rectangle _curCompletionPanelSize;
 	private PopupManager _popupMan;
 	private TextComponentProvider _txtComp;
+	private CompletionFocusHandler _completionFocusHandler;
+	private FocusListener _completionFocusListener;
 
 	private MouseAdapter _listMouseAdapter;
-	private KeyListener _listKeyListener;
+	private KeyListener _filterKeyListener;
 	private static final int MAX_ITEMS_IN_COMPLETION_LIST = 10;
 	private JScrollPane _completionListScrollPane;
 
@@ -61,14 +63,15 @@ public class Completor
 
    private Action[] _originalActions = null;
 
-   public Completor(JTextComponent txtComp, ICompletorModel model)
-   {
-      this(txtComp, model, new Color(255,255,204), false); // light yellow
-   }
+	public Completor(JTextComponent txtComp, ICompletorModel model)
+	{
+		this(txtComp, model, new Color(255,255,204), false); // light yellow
+	}
 
    public Completor(JTextComponent txtComp, ICompletorModel model, Color popUpBackGround, boolean useOwnFilterTextField)
 	{
 		_txtComp = new TextComponentProvider(txtComp, useOwnFilterTextField);
+
 		_model = model;
 
 		_completionPanel =
@@ -85,25 +88,20 @@ public class Completor
 		_completionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		_completionList.setBackground(popUpBackGround);
 
-      _completionList.addFocusListener(new FocusAdapter()
-      {
-         public void focusGained(FocusEvent e)
-         {
-            onCompletionListFocusGained(e);
-         }
-         public void focusLost(FocusEvent e) {
-             closePopup();
-         }
-      });
+		_completionFocusHandler = new CompletionFocusHandler(_txtComp, _completionList);
+		_completionFocusListener = new FocusAdapter()
+		{
+			public void focusLost(FocusEvent e){closePopup();}
+		};
 
-      
+
 		_listMouseAdapter =
 			new MouseAdapter()
 			{
 				public void mouseClicked(MouseEvent e)	{onMousClicked(e);}
 			};
 
-		_listKeyListener =
+		_filterKeyListener =
 			new KeyAdapter()
 			{
 				public void keyPressed(KeyEvent e){onKeyPressedOnList(e);}
@@ -126,14 +124,6 @@ public class Completor
 		_popupMan = new PopupManager(txtComp);
 	}
 
-   private void onCompletionListFocusGained(FocusEvent e)
-   {
-      if(false == e.isTemporary() && false == _txtComp.editorEqualsFilter())
-      {
-         _txtComp.getFilter().requestFocusInWindow();
-      }
-   }
-
    private void onKeyPressedOnList(KeyEvent e)
 	{
 		if(e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_TAB)
@@ -152,7 +142,7 @@ public class Completor
 			}
 			else
 			{
-				reInitList(false);
+				reInitList();
 			}
 		}
 		else if(e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_TAB)
@@ -209,7 +199,7 @@ public class Completor
       }
 		else
 		{
-			reInitList(true);
+			reInitList();
 
 			DefaultListModel listModel = (DefaultListModel) _completionList.getModel();
 			if(1 == listModel.size())
@@ -223,7 +213,7 @@ public class Completor
 		}
 	}
 
-	private void reInitList(boolean selectionNarrowed)
+	private void reInitList()
 	{
       SwingUtilities.invokeLater(new Runnable()
       {
@@ -235,20 +225,6 @@ public class Completor
             reInitListLater();
          }
       });
-
-
-
-      /*
-		As long as there are no performance problems, don't care for this
-		if(selectionNarrowed)
-		{
-
-		}
-		else
-		{
-
-		}
-		*/
 	}
 
    private void reInitListLater()
@@ -315,7 +291,9 @@ public class Completor
 	private void closePopup()
 	{
 		_completionList.removeMouseListener(_listMouseAdapter);
-		_txtComp.getFilter().removeKeyListener(_listKeyListener);
+		_txtComp.getFilter().removeKeyListener(_filterKeyListener);
+		_completionFocusHandler.setFocusListener(null);
+
 		_completionPanel.setVisible(false);
 
       if(_txtComp.editorEqualsFilter())
@@ -406,11 +384,13 @@ public class Completor
 
          _completionList.removeMouseListener(_listMouseAdapter);
          _completionList.addMouseListener(_listMouseAdapter);
-         _txtComp.getFilter().removeKeyListener(_listKeyListener);
-         _txtComp.getFilter().addKeyListener(_listKeyListener);
+         _txtComp.getFilter().removeKeyListener(_filterKeyListener);
+         _txtComp.getFilter().addKeyListener(_filterKeyListener);
+
+			_completionFocusHandler.setFocusListener(_completionFocusListener);
 
 
-         if(_txtComp.editorEqualsFilter())
+			if(_txtComp.editorEqualsFilter())
          {
             Action doNothingAction = new AbstractAction("doNothingAction")
             {
