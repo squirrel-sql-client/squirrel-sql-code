@@ -2,6 +2,8 @@ package net.sourceforge.squirrel_sql.plugins.graph;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ConstraintViewXmlBean;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
@@ -17,7 +19,10 @@ import java.util.Vector;
 
 public class ConstraintView implements GraphComponent
 {
-   private GraphDesktopController _desktopController;
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ConstraintView.class);
+
+	private GraphDesktopController _desktopController;
 
    private boolean _isSelected;
 
@@ -72,7 +77,8 @@ public class ConstraintView implements GraphComponent
    {
       _connectLinePopup = new JPopupMenu();
 
-      _mnuAddFoldingPoint = new JMenuItem("add folding point");
+		// i18n[graph.addFoldingPoint=add folding point]
+		_mnuAddFoldingPoint = new JMenuItem(s_stringMgr.getString("graph.addFoldingPoint"));
       _mnuAddFoldingPoint.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
@@ -82,7 +88,8 @@ public class ConstraintView implements GraphComponent
       });
       _connectLinePopup.add(_mnuAddFoldingPoint);
 
-      _mnuShowDDL = new JMenuItem("show DDL");
+      // i18n[graph.showddl=show DDL]
+		_mnuShowDDL = new JMenuItem(s_stringMgr.getString("graph.showddl"));
       _mnuShowDDL.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
@@ -92,7 +99,8 @@ public class ConstraintView implements GraphComponent
       });
       _connectLinePopup.add(_mnuShowDDL);
 
-      _mnuScriptDDL = new JMenuItem("script DDL");
+		// i18n[graph.scriptdd=script DDL]
+		_mnuScriptDDL = new JMenuItem(s_stringMgr.getString("graph.scriptdd"));
       _mnuScriptDDL.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
@@ -105,7 +113,8 @@ public class ConstraintView implements GraphComponent
 
       _foldingPointPopUp = new JPopupMenu();
 
-      _mnuRemoveFoldingPoint = new JMenuItem("remove folding point");
+		// i18n[graph.removeFoldingPoint=remove folding point]
+		_mnuRemoveFoldingPoint = new JMenuItem(s_stringMgr.getString("graph.removeFoldingPoint"));
       _mnuRemoveFoldingPoint.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)

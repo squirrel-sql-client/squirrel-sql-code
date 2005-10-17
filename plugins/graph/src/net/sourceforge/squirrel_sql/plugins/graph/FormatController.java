@@ -4,6 +4,8 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.FormatXmlBean;
 
 import javax.swing.*;
@@ -18,7 +20,11 @@ import java.util.Vector;
 
 public class FormatController
 {
-   private FormatDlg _dlg;
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(FormatController.class);
+
+
+	private FormatDlg _dlg;
    private FormatXmlBean[] _formats;
    private ISession _session;
    private GraphPlugin _plugin;
@@ -68,7 +74,8 @@ public class FormatController
 
       if(null == _dlg.txtName.getText() || "".equals(_dlg.txtName.getText().trim()))
       {
-         JOptionPane.showMessageDialog(_dlg, "Invalid name");
+			// i18n[graph.invalidName=Invalid name]
+			JOptionPane.showMessageDialog(_dlg, s_stringMgr.getString("graph.invalidName"));
          return;
       }
       String name = _dlg.txtName.getText().trim();
@@ -86,7 +93,8 @@ public class FormatController
       }
       catch (NumberFormatException e)
       {
-         JOptionPane.showMessageDialog(_dlg, "Invalid height");
+			// i18n[graph.invalidHeight=Invalid height]
+			JOptionPane.showMessageDialog(_dlg, s_stringMgr.getString("graph.invalidHeight"));
          return;
       }
 
@@ -97,7 +105,8 @@ public class FormatController
       }
       catch (NumberFormatException e)
       {
-         JOptionPane.showMessageDialog(_dlg, "Invalid width");
+			// i18n[graph.invalidWidth=Invalid width]
+			JOptionPane.showMessageDialog(_dlg, s_stringMgr.getString("graph.invalidWidth"));
          return;
       }
 
@@ -196,9 +205,12 @@ public class FormatController
       return new
          FormatXmlBean[]
       {
-         new FormatXmlBean("Din A 3", 29.7, 42.0, false, false),
-         new FormatXmlBean("Din A 4", 21.0, 29.7, false, false),
-         new FormatXmlBean("Din A 5", 14.8, 21.0, true, false)
+			// i18n[graph.dina3=Din A 3]
+			new FormatXmlBean(s_stringMgr.getString("graph.dina3"), 29.7, 42.0, false, false),
+			// i18n[graph.dina4=Din A 4]
+         new FormatXmlBean(s_stringMgr.getString("graph.dina4"), 21.0, 29.7, false, false),
+			// i18n[graph.dina5=Din A 5]
+         new FormatXmlBean(s_stringMgr.getString("graph.dina5"), 14.8, 21.0, true, false)
       };
    }
 
@@ -402,7 +414,8 @@ public class FormatController
          }
          catch (NumberFormatException e1)
          {
-            JOptionPane.showMessageDialog(_dlg, "Invalid number format. Can not calculate new unit.");
+				// i18n[graph.invalidNumberFormat=Invalid number format. Can not calculate new unit.]
+				JOptionPane.showMessageDialog(_dlg, s_stringMgr.getString("graph.invalidNumberFormat"));
 
             SwingUtilities.invokeLater(new Runnable()
             {

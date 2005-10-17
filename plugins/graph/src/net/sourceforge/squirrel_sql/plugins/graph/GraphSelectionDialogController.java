@@ -1,6 +1,8 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
 import java.util.Arrays;
@@ -13,7 +15,11 @@ import java.awt.event.ActionEvent;
 
 public class GraphSelectionDialogController
 {
-   GraphSelectionDialog _dlg;
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(GraphSelectionDialogController.class);
+
+
+	GraphSelectionDialog _dlg;
    private boolean m_ok;
    private GraphController m_selectedController;
    private JFrame _parent;
@@ -23,7 +29,8 @@ public class GraphSelectionDialogController
       _parent = parent;
       _dlg = new GraphSelectionDialog(parent);
       Vector buf = new Vector();
-      buf.add("Create a new graph");
+		// i18n[graph.createNewGraph=Create a new graph]
+		buf.add(s_stringMgr.getString("graph.createNewGraph"));
       buf.addAll(Arrays.asList(controllers));
       _dlg.lstControllers.setListData(buf);
       _dlg.lstControllers.setSelectedIndex(0);
@@ -63,7 +70,8 @@ public class GraphSelectionDialogController
    {
       if (null == _dlg.lstControllers.getSelectedValue())
       {
-         JOptionPane.showConfirmDialog(_parent, "No selection");
+			// i18n[graph.noSel=No selection]
+			JOptionPane.showConfirmDialog(_parent, s_stringMgr.getString("graph.noSel"));
          return;
       }
 

@@ -6,6 +6,8 @@ import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ConstraintViewXmlBean
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.TableFrameControllerXmlBean;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
@@ -20,6 +22,9 @@ import java.util.*;
 
 public class TableFrameController
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(TableFrameController.class);
+
    ////////////////////////////////////////
    // Serialized attributes
    private String _schema;
@@ -413,7 +418,8 @@ public class TableFrameController
          }
       });
 
-      _mnuAddChildTables = new JMenuItem("Add child tables");
+		// i18n[graph.addChildTables=Add child tables]
+		_mnuAddChildTables = new JMenuItem(s_stringMgr.getString("graph.addChildTables"));
       _mnuAddChildTables.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
@@ -422,7 +428,8 @@ public class TableFrameController
          }
       });
 
-      _mnuAddParentTables = new JMenuItem("Add parent tables");
+		// i18n[graph.addParentTables=Add parent tables]
+		_mnuAddParentTables = new JMenuItem(s_stringMgr.getString("graph.addParentTables"));
       _mnuAddParentTables.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
@@ -431,7 +438,8 @@ public class TableFrameController
          }
       });
 
-      _mnuAddAllRelatedTables = new JMenuItem("Add all related tables");
+		// i18n[graph.addRelTables=Add all related tables]
+		_mnuAddAllRelatedTables = new JMenuItem(s_stringMgr.getString("graph.addRelTables"));
       _mnuAddAllRelatedTables.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
@@ -440,7 +448,8 @@ public class TableFrameController
          }
       });
 
-      _mnuRefreshTable = new JMenuItem("Refresh table");
+		// i18n[graph.refreshTable=Refresh table]
+		_mnuRefreshTable = new JMenuItem(s_stringMgr.getString("graph.refreshTable"));
       _mnuRefreshTable.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
@@ -449,7 +458,8 @@ public class TableFrameController
          }
       });
 
-      _mnuScriptTable = new JMenuItem("Script table");
+		// i18n[graph.scriptTable=Script table]
+		_mnuScriptTable = new JMenuItem(s_stringMgr.getString("graph.scriptTable"));
       _mnuScriptTable.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
@@ -458,7 +468,8 @@ public class TableFrameController
          }
       });
 
-      _mnuDbOrder = new JCheckBoxMenuItem("db order");
+		// i18n[graph.dbOrder=db order]
+		_mnuDbOrder = new JCheckBoxMenuItem(s_stringMgr.getString("graph.dbOrder"));
       _mnuDbOrder.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
@@ -467,7 +478,8 @@ public class TableFrameController
          }
       });
 
-      _mnuOrderByName = new JCheckBoxMenuItem("order by name");
+		// i18n[graph.orderyName=order by name]
+		_mnuOrderByName = new JCheckBoxMenuItem(s_stringMgr.getString("graph.orderyName"));
       _mnuOrderByName.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
@@ -476,7 +488,8 @@ public class TableFrameController
          }
       });
 
-      _mnuPksAndConstraintsOnTop = new JCheckBoxMenuItem("order PKs/constraints on top");
+		// i18n[graph.orderPksConstr=order PKs/constraints on top]
+		_mnuPksAndConstraintsOnTop = new JCheckBoxMenuItem(s_stringMgr.getString("graph.orderPksConstr"));
       _mnuPksAndConstraintsOnTop.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
@@ -485,7 +498,8 @@ public class TableFrameController
          }
       });
 
-      _mnuClose = new JMenuItem("close");
+		// i18n[graph.close=close]
+		_mnuClose = new JMenuItem(s_stringMgr.getString("graph.close"));
       _mnuClose.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
@@ -791,12 +805,14 @@ public class TableFrameController
          if(null == ci || null == ci.getImportedTableName())
          {
             _mnuAddTableForForeignKey.setEnabled(false);
-            _mnuAddTableForForeignKey.setText("add table referenced by (no hit on FK)");
+				// i18n[graph.addTableRefByNoHit=add table referenced by (no hit on FK)]
+				_mnuAddTableForForeignKey.setText("add table referenced by (no hit on FK)");
          }
          else
          {
             _mnuAddTableForForeignKey.setEnabled(true);
-            _mnuAddTableForForeignKey.setText("add table referenced by " + ci.getName());
+				// i18n[graph.addTableRefBy=add table referenced by {0}]
+				_mnuAddTableForForeignKey.setText(s_stringMgr.getString("graph.addTableRefBy",ci.getName()));
             _mnuAddTableForForeignKey.putClientProperty(MNU_PROP_COLUMN_INFO, ci);
          }
 

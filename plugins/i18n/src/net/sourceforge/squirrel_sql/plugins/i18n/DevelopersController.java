@@ -88,7 +88,7 @@ public class DevelopersController
 
 		appendProps(sourceDir);
 		// i18n[i18n.ParsingFinish=Parsing finished]
-		_app.getMessageHandler().showMessage("Parsing finished");
+		_app.getMessageHandler().showMessage(s_stringMgr.getString("i18n.ParsingFinish"));
 	}
 
 	private void appendProps(File sourceDir)
@@ -237,7 +237,7 @@ public class DevelopersController
 				boolean found = false;
 				for (int i = 0; i < newProps.size(); i++)
 				{
-					if(((String)newProps.get(i)).startsWith(key))
+					if(((String)newProps.get(i)).split("=")[0].startsWith(key.split("=")[0]))
 					{
 						found = true;
 						replaceProps.add(prop);
@@ -348,6 +348,7 @@ public class DevelopersController
 		{
 			String msg = s_stringMgr.getString("I18n.SourceDirDoesNotExist", sourceDir.getPath());
 			// i18n[I18n.SourceDirDoesNotExist=Source directory {0} does not exist.]
+			JOptionPane.showMessageDialog(_app.getMainFrame(), msg);
 			return null;
 		}
 
@@ -357,10 +358,12 @@ public class DevelopersController
 	private int fixSourceFile(String filename) throws Exception
 	{
 		BufferedReader in = new BufferedReader(new FileReader(filename));
-		PrintWriter out = new PrintWriter(new FileOutputStream(filename + ".fixed"));
 		String nextLine = in.readLine();
 		String lineToPrint = nextLine;
 		int occurrencesReplaced = 0;
+		boolean writeFixFile =false;
+
+		ArrayList linesToPrint = new ArrayList();
 
 		Pattern pat = Pattern.compile("\\s*//\\s*i18n\\[(.*)");
 		Pattern commentLinePattern = Pattern.compile("\\s*//");
@@ -382,16 +385,22 @@ public class DevelopersController
 							String val = parts[1];
 
 							// print the i18n comment
-							out.println(nextLine);
+							linesToPrint.add(nextLine);
 
 							nextLine = in.readLine();
 							Matcher commentMatch = commentLinePattern.matcher(nextLine);
 
 							if (!commentMatch.matches())
 							{
-								lineToPrint = nextLine.replaceFirst("\\\"" + val + "\\\"",
-									"s_stringMgr.getString(\"" + key + "\")");
+								// TODO Since val is used as a regular expression several characters need to be escaped.
+								lineToPrint = nextLine.replaceFirst("\\\"" + val + "\\\"", "s_stringMgr.getString(\"" + key + "\")");
 								occurrencesReplaced++;
+
+								if(false == lineToPrint.equals(nextLine))
+								{
+									// To decide if we need to write a .fixed file.
+									writeFixFile = true;
+								}
 							}
 							else
 							{
@@ -404,12 +413,26 @@ public class DevelopersController
 				}
 
 			}
-			out.println(lineToPrint);
+			linesToPrint.add(lineToPrint);
 			nextLine = in.readLine();
 			lineToPrint = nextLine;
 		}
 		in.close();
-		out.close();
+
+		if(writeFixFile)
+		{
+			String outFileName = filename + ".fixed";
+			PrintWriter out = new PrintWriter(new FileOutputStream(outFileName));
+			for (int i = 0; i < linesToPrint.size(); i++)
+			{
+				out.println(linesToPrint.get(i));
+			}
+			out.flush();
+			out.close();
+			// i18n[i18n.wroteFixedFile=Wrote file {0}]
+			_app.getMessageHandler().showMessage(s_stringMgr.getString("i18n.wroteFixedFile", outFileName));
+		}
+
 		return occurrencesReplaced;
 	}
 

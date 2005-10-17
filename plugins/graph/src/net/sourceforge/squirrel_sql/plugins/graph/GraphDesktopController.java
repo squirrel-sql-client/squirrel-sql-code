@@ -5,6 +5,8 @@ import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ZoomerXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.FormatXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.GraphControllerXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.PrintXmlBean;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,8 +16,11 @@ import java.util.Vector;
 
 public class GraphDesktopController
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(GraphDesktopController.class);
 
-   private GraphDesktopPane _desktopPane;
+
+	private GraphDesktopPane _desktopPane;
    private JScrollPane _scrollPane;
    private ConstraintView _lastPressedConstraintView;
 
@@ -111,7 +116,8 @@ public class GraphDesktopController
    {
       _popUp = new JPopupMenu();
 
-      _mnuSaveGraph = new JMenuItem("Save graph");
+		// i18n[graph.saveGraph=Save graph]
+		_mnuSaveGraph = new JMenuItem(s_stringMgr.getString("graph.saveGraph"));
       _mnuSaveGraph.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
@@ -121,7 +127,8 @@ public class GraphDesktopController
       });
 
 
-      _mnuRenameGraph= new JMenuItem("Rename graph");
+		// i18n[graph.renameGraph=Rename graph]
+		_mnuRenameGraph= new JMenuItem(s_stringMgr.getString("graph.renameGraph"));
       _mnuRenameGraph.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
@@ -130,7 +137,8 @@ public class GraphDesktopController
          }
       });
 
-      _mnuRemoveGraph= new JMenuItem("Remove graph");
+		// i18n[graph.removeGraph=Remove graph]
+		_mnuRemoveGraph= new JMenuItem(s_stringMgr.getString("graph.removeGraph"));
       _mnuRemoveGraph.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
@@ -140,7 +148,8 @@ public class GraphDesktopController
       });
 
 
-      _mnuRefreshAllTables = new JMenuItem("Refresh all tables");
+		// i18n[graph.refreshAllTables=Refresh all tables]
+		_mnuRefreshAllTables = new JMenuItem(s_stringMgr.getString("graph.refreshAllTables"));
       _mnuRefreshAllTables.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
@@ -149,7 +158,8 @@ public class GraphDesktopController
          }
       });
 
-      _mnuScriptAllTables = new JMenuItem("Script all tables");
+		// i18n[graph.scriptAllTables=Script all tables]
+		_mnuScriptAllTables = new JMenuItem(s_stringMgr.getString("graph.scriptAllTables"));
       _mnuScriptAllTables.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
@@ -158,7 +168,8 @@ public class GraphDesktopController
          }
       });
 
-      _mnuShowConstraintNames = new JCheckBoxMenuItem("Show constraint names");
+		// i18n[graph.showConstr=Show constraint names]
+		_mnuShowConstraintNames = new JCheckBoxMenuItem(s_stringMgr.getString("graph.showConstr"));
       _mnuShowConstraintNames.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
@@ -167,7 +178,8 @@ public class GraphDesktopController
          }
       });
 
-      _mnuZoomPrint = new JCheckBoxMenuItem("Zoom/Print");
+		// i18n[graph.zoomPrint=Zoom/Print]
+		_mnuZoomPrint = new JCheckBoxMenuItem(s_stringMgr.getString("graph.zoomPrint"));
       _mnuZoomPrint.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
@@ -204,7 +216,8 @@ public class GraphDesktopController
 
    private void onRemoveGraph()
    {
-      int res = JOptionPane.showConfirmDialog(_session.getApplication().getMainFrame(), "Do you really wish to delete this graph?");
+		// i18n[graph.delGraph=Do you really wish to delete this graph?]
+		int res = JOptionPane.showConfirmDialog(_session.getApplication().getMainFrame(), "Do you really wish to delete this graph?");
       if(res == JOptionPane.YES_OPTION)
       {
          _listener.removeRequest();
@@ -213,7 +226,9 @@ public class GraphDesktopController
 
    private void onRenameGraph()
    {
-      String newName = JOptionPane.showInputDialog(_session.getApplication().getMainFrame(), "Please enter a new name");
+
+		// i18n[graph.newName=Please enter a new name]
+		String newName = JOptionPane.showInputDialog(_session.getApplication().getMainFrame(), s_stringMgr.getString("graph.newName"));
       if(null != newName && 0 != newName.trim().length())
       {
          _listener.renameRequest(newName);
