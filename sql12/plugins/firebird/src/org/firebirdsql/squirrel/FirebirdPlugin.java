@@ -214,7 +214,7 @@ public class FirebirdPlugin extends DefaultSessionPlugin {
           _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
           _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab("Show trigger source"));
           _treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureSourceTab("Show procedure source"));
-          _treeAPI.addDetailTab(DatabaseObjectType.TABLE, new ViewSourceTab("Show view source"));
+          _treeAPI.addDetailTab(DatabaseObjectType.VIEW, new ViewSourceTab("Show view source"));
 //                _treeAPI.addDetailTab(DatabaseObjectType.USER, new UserDetailsTab());
 
           final ActionCollection coll = getApplication().getActionCollection();
