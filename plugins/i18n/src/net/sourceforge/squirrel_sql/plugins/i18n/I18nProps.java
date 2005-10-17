@@ -221,7 +221,6 @@ public class I18nProps extends Object
 				String key = (String) e.nextElement();
 
 				if(key.endsWith(".image") ||
-					key.endsWith(".image") ||
 					key.endsWith(".rolloverimage") ||
 					key.endsWith(".disabledimage") ||
 					key.endsWith(".frameIcon") ||

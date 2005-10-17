@@ -392,7 +392,7 @@ public class DevelopersController
 
 							if (!commentMatch.matches())
 							{
-								// TODO Since val is used as a regular expression several characters need to be escaped.
+								// TODO Since val is used as a regular expression several characters need to be escaped, for example . --> \.
 								lineToPrint = nextLine.replaceFirst("\\\"" + val + "\\\"", "s_stringMgr.getString(\"" + key + "\")");
 								occurrencesReplaced++;
 
