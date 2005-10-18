@@ -392,14 +392,31 @@ public class DevelopersController
 
 							if (!commentMatch.matches())
 							{
-								// TODO Since val is used as a regular expression several characters need to be escaped, for example . --> \.
-								lineToPrint = nextLine.replaceFirst("\\\"" + val + "\\\"", "s_stringMgr.getString(\"" + key + "\")");
-								occurrencesReplaced++;
+								String quotedVal = "\"" + val + "\"";
+								int indexOfQuotedVal = nextLine.indexOf(quotedVal);
 
-								if(false == lineToPrint.equals(nextLine))
+								lineToPrint = nextLine;
+								if(-1 < indexOfQuotedVal)
 								{
-									// To decide if we need to write a .fixed file.
+									// Rob: Removed replacement via RegExp because it needed several RegExp escapes in val.
+
+									String stringManager = "s_stringMgr.getString(\"" + key + "\")";
+									lineToPrint =
+										nextLine.substring(0, indexOfQuotedVal) +
+									   stringManager +
+									   nextLine.substring(indexOfQuotedVal + quotedVal.length());
+
 									writeFixFile = true;
+									occurrencesReplaced++;
+								}
+								else
+								{
+									String stringManagerBegin = "s_stringMgr.getString(\"" + key + "\""; // No end bracket, params might follow 
+									if(-1 < nextLine.indexOf(stringManagerBegin))
+									{
+										// We see that the replacement was already done before so we can count this as replaced
+										occurrencesReplaced++;
+									}
 								}
 							}
 							else

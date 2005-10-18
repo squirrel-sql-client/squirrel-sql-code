@@ -217,7 +217,7 @@ public class GraphDesktopController
    private void onRemoveGraph()
    {
 		// i18n[graph.delGraph=Do you really wish to delete this graph?]
-		int res = JOptionPane.showConfirmDialog(_session.getApplication().getMainFrame(), "Do you really wish to delete this graph?");
+		int res = JOptionPane.showConfirmDialog(_session.getApplication().getMainFrame(), s_stringMgr.getString("graph.delGraph"));
       if(res == JOptionPane.YES_OPTION)
       {
          _listener.removeRequest();
