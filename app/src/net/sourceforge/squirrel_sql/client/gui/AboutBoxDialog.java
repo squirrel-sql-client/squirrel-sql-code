@@ -140,7 +140,8 @@ public class AboutBoxDialog extends JDialog
 		_tabPnl.add(s_stringMgr.getString("AboutBoxDialog.about"), new AboutPanel(app));
 		if (isDebug)
 		{
-			s_log.debug("AboutPanel created in "
+            // i18n[AboutBoxDialog.aboutpanelcreatetime=AboutPanel created in ]
+			s_log.debug(s_stringMgr.getString("AboutBoxDialog.aboutpanelcreatetime")
 					+ (System.currentTimeMillis() - start)
 					+ "ms");
 		}
@@ -152,7 +153,8 @@ public class AboutBoxDialog extends JDialog
 		_tabPnl.add(s_stringMgr.getString("AboutBoxDialog.credits"), new CreditsPanel(app)); // i18n
 		if (isDebug)
 		{
-			s_log.debug("CreditsPanel created in "
+            // i18n[AboutBoxDialog.creditspanelcreatetime=CreditsPanel created in ]
+			s_log.debug(s_stringMgr.getString("AboutBoxDialog.creditspanelcreatetime")
 					+ (System.currentTimeMillis() - start)
 					+ "ms");
 		}
@@ -165,8 +167,8 @@ public class AboutBoxDialog extends JDialog
 		_tabPnl.add(s_stringMgr.getString("AboutBoxDialog.system"), _systemPnl);
 		if (isDebug)
 		{
-			s_log.debug(
-				"SystemPanel created in "
+            // i18n[AboutBoxDialog.systempanelcreatetime=SystemPanel created in ]
+			s_log.debug(s_stringMgr.getString("AboutBoxDialog.systempanelcreatetime")
 					+ (System.currentTimeMillis() - start)
 					+ "ms");
 		}
@@ -312,7 +314,8 @@ public class AboutBoxDialog extends JDialog
 			}
 			else
 			{
-				s_log.error("Unable to find Plugin Developers replacement token %0 in credits.html");
+                // i18n[AboutBoxDialog.error.plugindeveloperstokennotfound=Unable to find Plugin Developers replacement token %0 in credits.html]
+				s_log.error(s_stringMgr.getString("AboutBoxDialog.error.plugindeveloperstokennotfound"));
 			}
 
 			setViewportView(credits);
@@ -342,12 +345,14 @@ public class AboutBoxDialog extends JDialog
 				}
 				catch (IOException ex)
 				{
-					s_log.error("Error reading contributors file", ex);
+                    // i18n[AboutBoxDialog.error.contribfile=Error reading contributors file]
+					s_log.error(s_stringMgr.getString("AboutBoxDialog.error.contribfile"), ex);
 				}
 			}
 			else
 			{
-				s_log.error("Couldn't retrieve contributors File URL");
+                // i18n[AboutBoxDialog.error.contribfileurl=Couldn't retrieve contributors File URL]
+				s_log.error(s_stringMgr.getString("AboutBoxDialog.error.contribfileurl"));
 			}
 		}
 
@@ -376,13 +381,15 @@ public class AboutBoxDialog extends JDialog
 				}
 				catch (IOException ex)
 				{
-					s_log.error("Error reading credits file", ex);
+                    // i18n[AboutBoxDialog.error.creditsfile=Error reading credits file]
+					s_log.error(s_stringMgr.getString("AboutBoxDialog.error.creditsfile"), ex);
 					buf.append("Error reading credits file: " + ex.toString());
 				}
 			}
 			else
 			{
-				s_log.error("Couldn't retrieve Credits File URL");
+                // i18n[AboutBoxDialog.error.creditsfileurl=Couldn't retrieve Credits File URL]
+				s_log.error(s_stringMgr.getString("AboutBoxDialog.error.creditsfileurl"));
 				buf.append("Couldn't retrieve Credits File URL");
 			}
 			return buf;
@@ -429,7 +436,8 @@ public class AboutBoxDialog extends JDialog
 			}
 			catch (DataSetException ex)
 			{
-				s_log.error("Error occured displaying System Properties", ex);
+                // i18n[AboutBoxDialog.error.systemprops=Error occured displaying System Properties]
+				s_log.error(s_stringMgr.getString("AboutBoxDialog.error.systemprops"), ex);
 			}
 
 			_memoryPnl = new MemoryPanel();
@@ -487,6 +495,7 @@ public class AboutBoxDialog extends JDialog
 		{
 			if (_timer == null)
 			{
+                // i18n[AboutBoxDialog.info.startmemtime=Starting memory timer (AboutBox)]
 				s_log.debug("Starting memory timer (AboutBox)");
 				//_thread = new Thread(new MemoryTimer());
 				//_thread.start();
@@ -500,6 +509,7 @@ public class AboutBoxDialog extends JDialog
 		{
 			if (_timer != null)
 			{
+                // i18n[AboutBoxDialog.info.endmemtimer=Ending memory timer (AboutBox)]
 				s_log.debug("Ending memory timer (AboutBox)");
 				_timer.stop();
 				_timer = null;
