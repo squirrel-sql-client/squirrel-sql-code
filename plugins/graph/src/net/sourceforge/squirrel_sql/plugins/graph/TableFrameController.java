@@ -806,7 +806,7 @@ public class TableFrameController
          {
             _mnuAddTableForForeignKey.setEnabled(false);
 				// i18n[graph.addTableRefByNoHit=add table referenced by (no hit on FK)]
-				_mnuAddTableForForeignKey.setText("add table referenced by (no hit on FK)");
+				_mnuAddTableForForeignKey.setText(s_stringMgr.getString("graph.addTableRefByNoHit"));
          }
          else
          {
