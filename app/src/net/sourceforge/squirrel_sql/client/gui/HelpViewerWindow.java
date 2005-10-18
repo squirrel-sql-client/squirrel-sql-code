@@ -103,6 +103,7 @@ public class HelpViewerWindow extends JFrame
 	public HelpViewerWindow(IApplication app)
 		throws IllegalArgumentException, BaseException
 	{
+        // i18n[HelpViewerWindow.title=SQuirreL SQL Client Help]
 		super(s_stringMgr.getString("HelpViewerWindow.title"));
 		if (app == null)
 		{
@@ -129,11 +130,13 @@ public class HelpViewerWindow extends JFrame
 		try
 		{
 			_detailPnl.gotoURL(url);
+            // i18n[HelpViewerWindow.pageloaded=Page loaded.]
 			_statusBar.setText(s_stringMgr.getString("HelpViewerWindow.pageloaded"));
 		}
 		catch (IOException ex)
 		{
-			s_log.error("Error displaying document", ex);
+            // i18n[HelpViewerWindow.error.displaydocument=Error displaying document]
+			s_log.error(s_stringMgr.getString("HelpViewerWindow.error.displaydocument"), ex);
 			_statusBar.setText(ex.toString());
 		}
 	}
@@ -234,6 +237,7 @@ public class HelpViewerWindow extends JFrame
 	private JScrollPane createContentsTree() throws IOException
 	{
 		final ApplicationFiles appFiles = new ApplicationFiles();
+        // i18n[HelpViewerWindow.help=Help]
 		final FolderNode root = new FolderNode(s_stringMgr.getString("HelpViewerWindow.help"));
 		_tree = new JTree(new DefaultTreeModel(root));
 		_tree.setShowsRootHandles(true);
@@ -251,25 +255,30 @@ public class HelpViewerWindow extends JFrame
  		File file = appFiles.getWelcomeFile();
  		try
  		{
+            // i18n[HelpViewerWindow.welcome=Welcome]
  			DocumentNode dn = new DocumentNode(s_stringMgr.getString("HelpViewerWindow.welcome"), file);
  			root.add(dn);
  			_nodes.put(dn.getURL().toString(), dn);
  		}
  		catch (MalformedURLException ex)
  		{
- 			StringBuffer msg = new StringBuffer();
- 			msg.append("Error retrieving Welcome file URL for ")
- 				.append(file.getAbsolutePath());
- 			s_log.error(msg.toString(), ex);
+            // i18n[HelpViewerWindow.error.loadwelcomefile=Error retrieving Welcome file URL for {0}]
+ 		    String msg = 
+ 		        s_stringMgr.getString("HelpViewerWindow.error.loadwelcomefile",
+                                      file.getAbsolutePath());
+ 			s_log.error(msg, ex);
  		}
 
 		// Add Help, Licence and Change Log nodes to the tree.
+        // i18n[HelpViewerWindow.help=Help]
 		final FolderNode helpRoot = new FolderNode(s_stringMgr.getString("HelpViewerWindow.help"));
 		root.add(helpRoot);
 		_nodes.put(helpRoot.getURL().toString(), helpRoot);
+        // i18n[HelpViewerWindow.licences=Licences]
 		final FolderNode licenceRoot = new FolderNode(s_stringMgr.getString("HelpViewerWindow.licences"));
 		root.add(licenceRoot);
 		_nodes.put(licenceRoot.getURL().toString(), licenceRoot);
+        // i18n[HelpViewerWindow.changelogs=Change Logs]
 		final FolderNode changeLogRoot = new FolderNode(s_stringMgr.getString("HelpViewerWindow.changelogs"));
 		root.add(changeLogRoot);
 		_nodes.put(changeLogRoot.getURL().toString(), changeLogRoot);
@@ -278,6 +287,7 @@ public class HelpViewerWindow extends JFrame
 		file = appFiles.getQuickStartGuideFile();
 		try
 		{
+            // i18n[HelpViewerWindow.squirrel=SQuirreL]
 			DocumentNode dn = new DocumentNode(s_stringMgr.getString("HelpViewerWindow.squirrel"), file);
 			helpRoot.add(dn);
 			_homeURL = dn.getURL();
@@ -285,42 +295,47 @@ public class HelpViewerWindow extends JFrame
 		}
 		catch (MalformedURLException ex)
 		{
-			StringBuffer msg = new StringBuffer();
-			msg.append("Error retrieving Help file URL for ")
-				.append(file.getAbsolutePath());
-			s_log.error(msg.toString(), ex);
+            // i18n[HelpViewerWindow.error.loadwelcomefile=Error retrieving Help file URL for {0}]
+            String msg = 
+                s_stringMgr.getString("HelpViewerWindow.error.loadhelpfile",
+                                      file.getAbsolutePath());
+			s_log.error(msg, ex);
 		}
 
 		// Add SQuirreL Licence to the Licence node.
 		file = appFiles.getLicenceFile();
 		try
 		{
+            // i18n[HelpViewerWindow.squirrel=SQuirreL]
 			DocumentNode dn = new DocumentNode(s_stringMgr.getString("HelpViewerWindow.squirrel"), file);
 			licenceRoot.add(dn);
 			_nodes.put(dn.getURL(), dn);
 		}
 		catch (MalformedURLException ex)
 		{
-			StringBuffer msg = new StringBuffer();
-			msg.append("Error retrieving Licence file URL for ")
-				.append(file.getAbsolutePath());
-			s_log.error(msg.toString(), ex);
+            // i18n[HelpViewerWindow.error.loadlicencefile=Error retrieving Licence file URL for {0}]
+            String msg = 
+                s_stringMgr.getString("HelpViewerWindow.error.loadlicencefile",
+                                      file.getAbsolutePath());
+			s_log.error(msg, ex);
 		}
 
 		// Add SQuirreL Change Log to the Licence node.
 		file = appFiles.getChangeLogFile();
 		try
 		{
+            // i18n[HelpViewerWindow.squirrel=SQuirreL]
 			DocumentNode dn = new DocumentNode(s_stringMgr.getString("HelpViewerWindow.squirrel"), file);
 			changeLogRoot.add(dn);
 			_nodes.put(dn.getURL(), dn);
 		}
 		catch (MalformedURLException ex)
 		{
-			StringBuffer msg = new StringBuffer();
-			msg.append("Error retrieving Change Log file URL for ")
-				.append(file.getAbsolutePath());
-			s_log.error(msg.toString(), ex);
+            // i18n[HelpViewerWindow.error.loadchangelogfile=Error retrieving Change Log file URL for {0}]
+            String msg = 
+                s_stringMgr.getString("HelpViewerWindow.error.loadchangelogfile",
+                                      file.getAbsolutePath());
+			s_log.error(msg, ex);
 		}
 
 		// Add plugin help, licence and change log documents to the tree.
@@ -345,8 +360,11 @@ public class HelpViewerWindow extends JFrame
 				}
 				catch (IOException ex)
 				{
-					s_log.error("Error generating Help entry for plugin"
-										+ pi[i].getDescriptiveName(), ex);
+                    // i18n[HelpViewerWindow.error.loadpluginhelp=Error generating Help entry for plugin {0}]
+                    String msg = 
+                        s_stringMgr.getString("HelpViewerWindow.error.loadpluginhelp",
+                                              pi[i].getDescriptiveName());
+					s_log.error(msg, ex);
 				}
 
 				// Licence document.
@@ -362,8 +380,11 @@ public class HelpViewerWindow extends JFrame
 				}
 				catch (IOException ex)
 				{
-					s_log.error("Error generating Licence entry for plugin"
-										+ pi[i].getDescriptiveName(), ex);
+                    // i18n[HelpViewerWindow.error.loadpluginlicence=Error generating Licence entry for plugin {0}]
+                    String msg = 
+                        s_stringMgr.getString("HelpViewerWindow.error.loadpluginlicence",
+                                              pi[i].getDescriptiveName());
+					s_log.error(msg, ex);
 				}
 
 				try
@@ -379,14 +400,20 @@ public class HelpViewerWindow extends JFrame
 				}
 				catch (IOException ex)
 				{
-					s_log.error("Error generating Change Log entry for plugin"
-										+ pi[i].getDescriptiveName(), ex);
+                    // i18n[HelpViewerWindow.error.loadchangelog=Error generating Change Log entry for plugin {0}]
+                    String msg = 
+                        s_stringMgr.getString("HelpViewerWindow.error.loadchangelog",
+                                              pi[i].getDescriptiveName());
+					s_log.error(msg, ex);
 				}
 			}
 			catch (IOException ex)
 			{
-				s_log.error("Error retrieving app settings folder for plugin"
-									+ pi[i].getDescriptiveName(), ex);
+                // i18n[HelpViewerWindow.error.loadpluginsettings=Error retrieving app settings folder for plugin {0}]
+                String msg = 
+                    s_stringMgr.getString("HelpViewerWindow.error.loadpluginsettings",
+                                          pi[i].getDescriptiveName());
+				s_log.error(msg, ex);
 			}
 		}
 
@@ -394,16 +421,18 @@ public class HelpViewerWindow extends JFrame
 		file = appFiles.getFAQFile();
 		try
 		{
+            // i18n[HelpViewerWindow.faq=FAQ]
 			DocumentNode dn = new DocumentNode(s_stringMgr.getString("HelpViewerWindow.faq"), file);
 			root.add(dn);
 			_nodes.put(dn.getURL().toString(), dn);
 		}
 		catch (MalformedURLException ex)
 		{
-			StringBuffer msg = new StringBuffer();
-			msg.append("Error retrieving FAQ URL for ")
-				.append(file.getAbsolutePath());
-			s_log.error(msg.toString(), ex);
+            // i18n[HelpViewerWindow.error.loadfaqfile=Error retrieving FAQ from URL = {0}]
+            String msg = 
+                s_stringMgr.getString("HelpViewerWindow.error.loadfaqfile",
+                                      file.getAbsolutePath());
+			s_log.error(msg, ex);
 		}
 
 		// generate contents file.
@@ -517,6 +546,7 @@ public class HelpViewerWindow extends JFrame
 			}
 			catch (IOException ex)
 			{
+                // i18n[HelpViewerWindow.error.congen=Error generating Contents file]
 				String msg = s_stringMgr.getString("HelpViewerWindow.error.congen");
 				s_log.error(msg, ex);
 				_statusBar.setText(msg);
