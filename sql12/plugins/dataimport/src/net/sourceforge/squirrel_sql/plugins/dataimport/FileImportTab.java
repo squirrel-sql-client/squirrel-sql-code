@@ -21,16 +21,25 @@ import java.awt.Component;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.BaseMainPanelTab;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class FileImportTab extends BaseMainPanelTab {
-    /**
-     * This interface defines locale specific strings. This should be
-     * replaced with a property file.
-     */
-    private interface i18n {
-        String TITLE = "Import Data";
-        String DESC = "Import csv files into database";
-    }
+	 /**
+	  * This interface defines locale specific strings. This should be
+	  * replaced with a property file.
+	  */
+
+	 private static final StringManager s_stringMgr =
+		 StringManagerFactory.getStringManager(FileImportTab.class);
+
+
+	 private interface i18n {
+		 // i18n[dataimport.importData=Import Data]
+		 String TITLE = s_stringMgr.getString("dataimport.importData");
+		 // i18n[dataimport.importCsv=Import csv files into database]
+		  String DESC = s_stringMgr.getString("dataimport.importCsv");
+	 }
 
 	FileImportTab(ISession session) {
 		super();

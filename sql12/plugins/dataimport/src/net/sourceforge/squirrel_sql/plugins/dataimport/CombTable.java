@@ -17,6 +17,9 @@ package net.sourceforge.squirrel_sql.plugins.dataimport;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
 import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.border.*;
@@ -36,7 +39,11 @@ import java.awt.Color;
 
 
 public class CombTable extends JScrollPane{
-    public String[] names;
+
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(CombTable.class);
+
+	 public String[] names;
     public Object[][] data;
     public CombTable(String[] _names, Object _data[][]) {
         // Create a model of the data.
@@ -89,7 +96,8 @@ public class CombTable extends JScrollPane{
         // Set a pink background and tooltip for the Color column renderer.
          DefaultTableCellRenderer colorColumnRenderer = new DefaultTableCellRenderer();
         colorColumnRenderer.setBackground(Color.pink);
-        colorColumnRenderer.setToolTipText("Click for combo box");
+		 // i18n[dataimport.clickForCbo=Click for combo box]
+		  colorColumnRenderer.setToolTipText(s_stringMgr.getString("dataimport.clickForCbo"));
         colorColumn.setCellRenderer(colorColumnRenderer);
     colorColumn.setPreferredWidth(120);
 
@@ -97,16 +105,21 @@ public class CombTable extends JScrollPane{
         // Set a tooltip for the header of the colors column.
     TableCellRenderer headerRenderer = colorColumn.getHeaderRenderer();
     if (headerRenderer instanceof DefaultTableCellRenderer)
-        ((DefaultTableCellRenderer)headerRenderer).setToolTipText("Hi Mom!");
+	 {
+		 // i18n[dataimport.hiMom=Hi Mom!]
+		  ((DefaultTableCellRenderer)headerRenderer).setToolTipText(s_stringMgr.getString("dataimport.hiMom"));
+	 }
 
 
-    // Set the width of the "NewName" column.
-        TableColumn newNameColumn = tableView.getColumn("New Name");
+	 // Set the width of the "NewName" column.
+		 // i18n[dataimport.newName=New Name]
+		  TableColumn newNameColumn = tableView.getColumn(s_stringMgr.getString("dataimport.newName"));
         newNameColumn.setPreferredWidth(100);
 
 
     // Show the values in the "Original Name" column in different colors.
-          TableColumn originalColumn = tableView.getColumn("Original Name");
+		 // i18n[dataimport.origName=Original Name]
+			 TableColumn originalColumn = tableView.getColumn(s_stringMgr.getString("dataimport.origName"));
         DefaultTableCellRenderer numberColumnRenderer = new DefaultTableCellRenderer() {
         public void setValue(Object value) {
             setForeground(Color.red);
