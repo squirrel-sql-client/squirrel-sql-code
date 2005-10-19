@@ -17,7 +17,10 @@ package net.sourceforge.squirrel_sql.plugins.oracle;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.swing.Action;
 import javax.swing.SwingUtilities;
@@ -91,6 +94,8 @@ public class OraclePlugin extends DefaultSessionPlugin
        private NewSessionInfoWorksheetAction _newSessionInfoWorksheet;
        private NewSGATraceWorksheetAction _newSGATraceWorksheet;
 
+       /** A list of Oracle sessions that are open so we'll know when none are left */
+       private ArrayList oracleSessions = new ArrayList();
 	/**
 	 * Return the internal name of this plugin.
 	 *
@@ -278,6 +283,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 	}
 
     public class OraclePluginSessionListener extends SessionAdapter {
+        
         public void sessionActivated(SessionEvent evt) {
           final ISession session = evt.getSession();
           final boolean enable = isOracle(session);
@@ -289,6 +295,31 @@ public class OraclePlugin extends DefaultSessionPlugin
                   _newSGATraceWorksheet.setEnabled(enable);     
               }
           });
+          if (isOracle(session) && !oracleSessions.contains(session)) {
+              oracleSessions.add(session);
+          }
+        }
+        
+        public void sessionClosing(SessionEvent evt) {
+            final ISession session = evt.getSession();
+            if (isOracle(session)) {
+                int idx = oracleSessions.indexOf(session);
+                if (idx != -1) {
+                    oracleSessions.remove(idx);
+                }
+            }
+            // if the last oracle session is closing, then disable the 
+            // worksheets
+            if (oracleSessions.size() == 0) {
+                GUIUtils.processOnSwingEventThread(new Runnable() {
+                    public void run() {
+                        _newDBOutputWorksheet.setEnabled(false);
+                        _newInvalidObjectsWorksheet.setEnabled(false);
+                        _newSessionInfoWorksheet.setEnabled(false);
+                        _newSGATraceWorksheet.setEnabled(false);     
+                    }
+                });
+            }
         }
       }
         /** This class listens to new frames as they are opened and adds
@@ -319,11 +350,12 @@ public class OraclePlugin extends DefaultSessionPlugin
                 objTree.addDetailTab(IObjectTypes.TYPE, new DatabaseObjectInfoTab());
 
                 // Expanders.
+                
                 objTree.addExpander(DatabaseObjectType.SESSION, new DatabaseExpander());
                 objTree.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander(OraclePlugin.this));
                 objTree.addExpander(DatabaseObjectType.TABLE, new TableExpander());
                 objTree.addExpander(IObjectTypes.PACKAGE, new PackageExpander());
-                objTree.addExpander(IObjectTypes.USER_PARENT, new UserParentExpander());
+                objTree.addExpander(IObjectTypes.USER_PARENT, new UserParentExpander(session));
                 objTree.addExpander(IObjectTypes.SESSION_PARENT, new SessionParentExpander());
                 objTree.addExpander(IObjectTypes.INSTANCE_PARENT, new InstanceParentExpander(OraclePlugin.this));
                 objTree.addExpander(IObjectTypes.TRIGGER_PARENT, new TriggerParentExpander());
@@ -341,11 +373,39 @@ public class OraclePlugin extends DefaultSessionPlugin
                 objTree.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
                 objTree.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab());
                 objTree.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerColumnInfoTab());
-                objTree.addDetailTab(DatabaseObjectType.USER, new UserDetailsTab());
+                objTree.addDetailTab(DatabaseObjectType.USER, new UserDetailsTab(session));
                 
                 objTree.addDetailTab(DatabaseObjectType.VIEW, new ViewSourceTab());
               }
             }
           }
+        }
+        
+        /**
+         * Check if we can run query. 
+         * 
+         * @param session session
+         * @param query query text
+         * @return true if query works fine
+         */
+        public static boolean checkObjectAccessible(final ISession session, final String query) {
+        	PreparedStatement pstmt = null;
+        	ResultSet rs = null;
+        	try {
+        		pstmt = session.getSQLConnection().prepareStatement(query);
+        		rs = pstmt.executeQuery();
+        		return true;
+        	} catch (SQLException ex) {
+        		return false;
+        	} finally {
+        		try {
+            		if (rs != null) {
+            			rs.close();
+            		}
+            		if (pstmt != null) {
+            			pstmt.close();
+            		}
+        		} catch (SQLException ex) {}
+        	}
         }
 }
