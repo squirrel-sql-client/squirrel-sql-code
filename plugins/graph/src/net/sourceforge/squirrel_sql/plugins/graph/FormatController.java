@@ -260,7 +260,8 @@ public class FormatController
 
          m_lstPopup = new JPopupMenu();
 
-         JMenuItem mnuDeleteFomat = new JMenuItem("delete");
+			// i18n[graph.mnuDelete=delete]
+			JMenuItem mnuDeleteFomat = new JMenuItem(s_stringMgr.getString("graph.mnuDelete"));
          mnuDeleteFomat.addActionListener(new ActionListener()
          {
             public void actionPerformed(ActionEvent e)
@@ -270,8 +271,8 @@ public class FormatController
          });
          m_lstPopup.add(mnuDeleteFomat);
 
-
-         JMenuItem mnuLandscape = new JMenuItem("landscape");
+			// i18n[graph.landscape=landscape]
+			JMenuItem mnuLandscape = new JMenuItem(s_stringMgr.getString("graph.landscape"));
          mnuLandscape.addActionListener(new ActionListener()
          {
             public void actionPerformed(ActionEvent e)
@@ -468,8 +469,10 @@ public class FormatController
 
    public static class Unit
    {
-      public static final Unit UNIT_CM = new Unit("cm", 1);
-      public static final Unit UNIT_INCH = new Unit("inch", 2.54);
+		// i18n[graph.cm=cm]
+		public static final Unit UNIT_CM = new Unit(s_stringMgr.getString("graph.cm"), 1);
+		// i18n[graph.inch=inch]
+      public static final Unit UNIT_INCH = new Unit(s_stringMgr.getString("graph.inch"), 2.54);
 
       private String _name;
       private double _inCm;
