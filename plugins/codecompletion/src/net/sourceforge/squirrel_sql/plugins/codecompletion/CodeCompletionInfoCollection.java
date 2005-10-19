@@ -21,13 +21,19 @@ import net.sourceforge.squirrel_sql.client.session.ExtendedTableInfo;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
 import java.util.*;
 
 public class CodeCompletionInfoCollection
 {
-   private Hashtable _completionInfosByCataLogAndSchema = new Hashtable();
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(CodeCompletionInfoCollection.class);
+
+
+	private Hashtable _completionInfosByCataLogAndSchema = new Hashtable();
    private Vector _aliasCompletionInfos = new Vector();
 
    private Vector _schemas = new Vector();
@@ -35,7 +41,9 @@ public class CodeCompletionInfoCollection
 
 	private ISession _session;
    private static final int MAX_COMPLETION_INFOS = 300;
-   private static final String TOO_MANY_COMPLETION_INFOS = "Completion list truncated. Narrow by typing to get missing entries.";
+
+	// i18n[codecompletion.listTruncated=Completion list truncated. Narrow by typing to get missing entries.]
+	private static final String TOO_MANY_COMPLETION_INFOS = s_stringMgr.getString("codecompletion.listTruncated");
 
    public CodeCompletionInfoCollection(ISession session)
 	{
@@ -50,7 +58,8 @@ public class CodeCompletionInfoCollection
 		{
 			if(!_session.getSchemaInfo().isLoaded())
 			{
-				String msg = "Code competion infomation is still being loaded.\nTry again later.";
+				// i18n[codecompletion.beingLoaded=Code competion infomation is still being loaded.\nTry again later.]
+				String msg = s_stringMgr.getString("codecompletion.beingLoaded");
 				JOptionPane.showMessageDialog(_session.getApplication().getMainFrame(), msg);
 				return;
 			}
@@ -142,7 +151,8 @@ public class CodeCompletionInfoCollection
 
             if(null == autoCorrectProvider)
             {
-               _session.getMessageHandler().showMessage("Code completion will work better if you use the Syntax plugin. Get it from squirrelsql.org, it's free!");
+					// i18n[codecompletion.useSyntaxPlugin=Code completion will work better if you use the Syntax plugin. Get it from squirrelsql.org, it's free!]
+					_session.getMessageHandler().showMessage(s_stringMgr.getString("codecompletion.useSyntaxPlugin"));
             }
             else
             {

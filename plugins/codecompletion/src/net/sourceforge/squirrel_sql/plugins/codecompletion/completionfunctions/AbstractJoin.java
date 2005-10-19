@@ -3,6 +3,8 @@ package net.sourceforge.squirrel_sql.plugins.codecompletion.completionfunctions;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.CodeCompletionInfo;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import java.util.*;
 import java.sql.SQLException;
@@ -12,6 +14,10 @@ import java.sql.DatabaseMetaData;
 
 public abstract class AbstractJoin extends CodeCompletionFunction
 {
+
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(AbstractJoin.class);
+
    private ISession _session;
 
    public AbstractJoin(ISession session)
@@ -33,13 +39,15 @@ public abstract class AbstractJoin extends CodeCompletionFunction
 
          if(3 > st.countTokens())
          {
-            _session.getMessageHandler().showMessage("function needs at least two arguments");
+				// i18n[codecompletion.function.needsTwoArgs=function needs at least two arguments]
+				_session.getMessageHandler().showMessage(s_stringMgr.getString("codecompletion.function.needsTwoArgs"));
             return null;
          }
 
          if(false == functionSting.trim().endsWith(","))
          {
-            _session.getMessageHandler().showMessage("function must end with ','");
+				// i18n[codecompletion.function.mustEndWith=function must end with ',']
+				_session.getMessageHandler().showMessage(s_stringMgr.getString("codecompletion.function.mustEndWith"));
             return null;
          }
 
@@ -63,7 +71,8 @@ public abstract class AbstractJoin extends CodeCompletionFunction
             table = _session.getSchemaInfo().getCaseSensitiveTableName(table);
             if(null == table)
             {
-               _session.getMessageHandler().showMessage("unknown table " + table);
+					// i18n[codecompletion.unknowntable=unknown table {0}]
+					_session.getMessageHandler().showMessage(s_stringMgr.getString("codecompletion.unknowntable", table));
                return null;
             }
             tables.add(table);
