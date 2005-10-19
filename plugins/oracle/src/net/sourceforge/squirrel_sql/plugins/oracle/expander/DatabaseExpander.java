@@ -21,13 +21,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 
 import net.sourceforge.squirrel_sql.plugins.oracle.IObjectTypes;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.InstanceDetailsTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.SessionDetailsTab;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 /**
@@ -63,17 +63,21 @@ public class DatabaseExpander implements INodeExpander
 		ObjectTreeNode node = new ObjectTreeNode(session, dboInfo);
 		childNodes.add(node);
 
-		// Instances.
-		dboInfo = new DatabaseObjectInfo(null, null, "INSTANCES",
+		if (InstanceDetailsTab.isAccessible(session)) {
+		  // Instances.
+		  dboInfo = new DatabaseObjectInfo(null, null, "INSTANCES",
 											IObjectTypes.INSTANCE_PARENT, md);
-		node = new ObjectTreeNode(session, dboInfo);
-		childNodes.add(node);
+		  node = new ObjectTreeNode(session, dboInfo);
+		  childNodes.add(node);
+		}
 
-		// Sessions.
-		dboInfo = new DatabaseObjectInfo(null, null, "SESSIONS",
+		if (SessionDetailsTab.isAccessible(session)) {
+		  // Sessions.
+		  dboInfo = new DatabaseObjectInfo(null, null, "SESSIONS",
 											IObjectTypes.SESSION_PARENT, md);
-		node = new ObjectTreeNode(session, dboInfo);
-		childNodes.add(node);
+		  node = new ObjectTreeNode(session, dboInfo);
+		  childNodes.add(node);
+		}
 
 		return childNodes;
 	}

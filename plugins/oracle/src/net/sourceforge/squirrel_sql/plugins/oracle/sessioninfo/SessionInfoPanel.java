@@ -18,9 +18,9 @@ package net.sourceforge.squirrel_sql.plugins.oracle.sessioninfo;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.BorderLayout;
-import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -29,12 +29,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin;
 import net.sourceforge.squirrel_sql.plugins.oracle.common.AutoWidthResizeTable;
 
 public class SessionInfoPanel extends JPanel
@@ -190,6 +189,9 @@ public class SessionInfoPanel extends JPanel
         }
 
         public synchronized void populateSessionInfo() {
+            if (!OraclePlugin.checkObjectAccessible(_session, sessionInfoSQL)) {
+                return;
+            }            
           try {
 //An interestibng piece of SQL
 //            SELECT SQL_Text

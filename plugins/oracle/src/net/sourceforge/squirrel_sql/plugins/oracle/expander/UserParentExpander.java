@@ -28,13 +28,12 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin;
 
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 
-import net.sourceforge.squirrel_sql.plugins.oracle.IObjectTypes;
 /**
  * This class handles the expanding of the "user type"
  * node. It will give a list of all the users.
@@ -44,19 +43,16 @@ import net.sourceforge.squirrel_sql.plugins.oracle.IObjectTypes;
 public class UserParentExpander implements INodeExpander
 {
 	/** SQL used to load info. */
-	private static final String SQL = "select username, user_id," +
-			" account_status, lock_date, expiry_date, default_tablespace," +
-			" temporary_tablespace, created, initial_rsrc_consumer_group," +
-			" external_name from user_users order by username";
+	private static final String SQL_ADMIN = "select username from dba_users order by username";
+	/** SQL used to load info. */
+	private static final String SQL_USER = "select username from user_users order by username";
 
-	/**
-	 * Default ctor.
-	 */
-	public UserParentExpander()
-	{
-		super();
+	/** Is user can access to dba_users. */
+	final protected boolean isAdmin;
+
+	public UserParentExpander(final ISession session) {
+		isAdmin=OraclePlugin.checkObjectAccessible(session, SQL_ADMIN);
 	}
-
 	/**
 	 * Create the child nodes for the passed parent node and return them. Note
 	 * that this method should <B>not</B> actually add the child nodes to the
@@ -77,7 +73,7 @@ public class UserParentExpander implements INodeExpander
 		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
 		final String schemaName = parentDbinfo.getSchemaName();
 
-		PreparedStatement pstmt = conn.prepareStatement(SQL);
+		final PreparedStatement pstmt = conn.prepareStatement(isAdmin?SQL_ADMIN:SQL_USER);
 		try
 		{
 			ResultSet rs = pstmt.executeQuery();

@@ -21,8 +21,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
@@ -49,6 +48,12 @@ public class SessionDetailsTab extends BasePreparedStatementTab
 			+ " from sys.v_$session"
 			+ " where sid = ?";
 
+    /** SQL that is used to see if the session has access to query this info */
+    private static String CHECK_ACCESS_SQL =
+        "select sid, user#, username, status, server, schemaname, osuser,"
+            + " machine, terminal, program"
+            + " from sys.v_$session";
+    
 	public SessionDetailsTab()
 	{
 		super(i18n.TITLE, i18n.HINT, true);
@@ -63,5 +68,15 @@ public class SessionDetailsTab extends BasePreparedStatementTab
 		IDatabaseObjectInfo doi = getDatabaseObjectInfo();
 		pstmt.setLong(1, Long.parseLong(doi.getSimpleName()));
 		return pstmt;
+	}
+	
+	/**
+	 * Check if data accessible from current connection.
+	 * 
+	 * @param session session 
+	 * @return true if data accessible
+	 */
+	public static boolean isAccessible(final ISession session) {
+		return OraclePlugin.checkObjectAccessible(session, CHECK_ACCESS_SQL);
 	}
 }

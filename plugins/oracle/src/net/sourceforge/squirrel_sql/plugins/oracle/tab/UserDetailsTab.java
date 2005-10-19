@@ -20,12 +20,10 @@ package net.sourceforge.squirrel_sql.plugins.oracle.tab;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin;
 
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
 /**
  * This class will display the details for an Oracle user.
  *
@@ -33,7 +31,6 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IOb
  */
 public class UserDetailsTab extends BasePreparedStatementTab
 {
-
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
@@ -41,26 +38,46 @@ public class UserDetailsTab extends BasePreparedStatementTab
 	private interface i18n
 	{
 		String TITLE = "Details";
-		String HINT = "Display session details";
+		String HINT = "Display User details";
 	}
-
+    /** SQL that is used to see if the session has access to query this info */
+    private static final String SQL_CHECK_ACCESS = 
+        "select username, user_id,"
+            + " account_status, lock_date, expiry_date, default_tablespace,"
+            + " temporary_tablespace, created, initial_rsrc_consumer_group,"
+            + " external_name from dba_users";        
+    
 	/** SQL that retrieves the data. */
-	private static final String SQL =
+	private static final String SQL_ADMIN =
+		"select username, user_id,"
+			+ " account_status, lock_date, expiry_date, default_tablespace,"
+			+ " temporary_tablespace, created, initial_rsrc_consumer_group,"
+			+ " external_name from dba_users"
+			+ " where username = ?";
+    
+	/** SQL that retrieves the data. */
+	private static final String SQL_USER =
 		"select username, user_id,"
 			+ " account_status, lock_date, expiry_date, default_tablespace,"
 			+ " temporary_tablespace, created, initial_rsrc_consumer_group,"
 			+ " external_name from user_users"
 			+ " where username = ?";
 
-	public UserDetailsTab()
+	/** Is user can access to dba_users. */
+	final protected boolean isAdmin;
+	
+	public UserDetailsTab(final ISession session)
 	{
 		super(i18n.TITLE, i18n.HINT, true);
+		isAdmin=OraclePlugin.checkObjectAccessible(session, SQL_CHECK_ACCESS);
 	}
 
 	protected PreparedStatement createStatement() throws SQLException
 	{
 		ISession session = getSession();
-		PreparedStatement pstmt = session.getSQLConnection().prepareStatement(SQL);
+
+		final PreparedStatement pstmt = session.getSQLConnection().prepareStatement(isAdmin?SQL_ADMIN:SQL_USER);
+		
 		IDatabaseObjectInfo doi = getDatabaseObjectInfo();
 		pstmt.setString(1, doi.getSimpleName());
 		return pstmt;
