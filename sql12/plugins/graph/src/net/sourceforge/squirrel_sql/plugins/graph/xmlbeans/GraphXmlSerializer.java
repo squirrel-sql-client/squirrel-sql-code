@@ -4,6 +4,8 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLException;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.plugins.graph.GraphMainPanelTab;
 import net.sourceforge.squirrel_sql.plugins.graph.GraphPlugin;
 
@@ -15,6 +17,10 @@ import java.io.FileNotFoundException;
 
 public class GraphXmlSerializer
 {
+
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(GraphXmlSerializer.class);
+
    private static final String XML_BEAN_POSTFIX = ".graph.xml";
 
    private GraphPlugin _plugin;
@@ -54,7 +60,12 @@ public class GraphXmlSerializer
       {
          XMLBeanWriter bw = new XMLBeanWriter(xmlBean);
          bw.save(_graphFile);
-         _session.getMessageHandler().showMessage("Graph \'" + xmlBean.getTitle() + "\' saved to " + _graphFile);
+
+			String[] params = {xmlBean.getTitle(), _graphFile};
+			// i18n[graph.graphSaved=Graph "{0}" saved to "{1}"]
+			String msg = s_stringMgr.getString("graph.graphSaved", params);
+
+			_session.getMessageHandler().showMessage(msg);
       }
       catch (Exception e)
       {
@@ -179,7 +190,10 @@ public class GraphXmlSerializer
          String url = _session.getAlias().getUrl();
          String newGraphFile = getFileName(_plugin.getPluginUserSettingsFolder().getPath(), url, newName);
          (new File(_graphFile)).renameTo(new File(newGraphFile));
-         _session.getMessageHandler().showMessage("Renamed " + _graphFile + " to " + newGraphFile);
+
+			String[] params = {_graphFile, newGraphFile};
+			// i18n[graph.graphRenamed=Renamed "{0}" to "{1}"]
+			_session.getMessageHandler().showMessage(s_stringMgr.getString("graph.graphRenamed", params));
 
          _graphFile = newGraphFile;
       }
@@ -194,7 +208,10 @@ public class GraphXmlSerializer
    public void remove()
    {
       (new File(_graphFile)).delete();
-      _session.getMessageHandler().showMessage("Removed graph file " + _graphFile);
+
+		String[] params = {_graphFile};
+		// i18n[graph.graphRemoved=Removed graph file "{1}"]
+      _session.getMessageHandler().showMessage(s_stringMgr.getString("graph.graphRemoved", params));
 
    }
 }

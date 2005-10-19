@@ -1,12 +1,18 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+
 import javax.swing.*;
 import java.awt.*;
 
 
 public class FormatDlg extends JDialog
 {
-   JList lstFormats;
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(FormatDlg.class);
+
+	JList lstFormats;
    JTextField txtName;
    JTextField txtWidth;
    JTextField txtHeight;
@@ -18,7 +24,8 @@ public class FormatDlg extends JDialog
 
    public FormatDlg(JFrame parent)
    {
-      super(parent, "Formats", false);
+		// i18n[graph.formats=Formats]
+		super(parent, s_stringMgr.getString("graph.formats"), false);
 
       getContentPane().setLayout(new GridLayout(1,2,10,0));
 
@@ -30,7 +37,9 @@ public class FormatDlg extends JDialog
       pnlEdit.setLayout(new GridLayout(5,1));
 
       JPanel pnlName = new JPanel(new BorderLayout());
-      JLabel lblName = new JLabel("Name");
+
+		// i18n[graph.name=Name]
+      JLabel lblName = new JLabel(s_stringMgr.getString("graph.name"));
       pnlName.add(lblName, BorderLayout.WEST);
       txtName = new JTextField();
       pnlName.add(txtName, BorderLayout.CENTER);
@@ -38,7 +47,8 @@ public class FormatDlg extends JDialog
       pnlEdit.add(pnlName);
 
       JPanel pnlWidth = new JPanel(new BorderLayout());
-      JLabel lblWidth = new JLabel("Width");
+		// i18n[graph.width=Width]
+		JLabel lblWidth = new JLabel(s_stringMgr.getString("graph.width"));
       pnlWidth.add(lblWidth, BorderLayout.WEST);
       txtWidth = new JTextField();
       pnlWidth.add(txtWidth, BorderLayout.CENTER);
@@ -47,7 +57,9 @@ public class FormatDlg extends JDialog
 
 
       JPanel pnlHeight = new JPanel(new BorderLayout());
-      JLabel lblHeight = new JLabel("Height");
+
+		// i18n[graph.height=Height]
+		JLabel lblHeight = new JLabel(s_stringMgr.getString("graph.height"));
       pnlHeight.add(lblHeight, BorderLayout.WEST);
       txtHeight = new JTextField();
       pnlHeight.add(txtHeight, BorderLayout.CENTER);
@@ -55,14 +67,16 @@ public class FormatDlg extends JDialog
       pnlEdit.add(pnlHeight);
 
       JPanel pnlUnit = new JPanel(new BorderLayout());
-      JLabel lblUnit = new JLabel("Unit");
+		// i18n[graph.unit=Unit]
+		JLabel lblUnit = new JLabel(s_stringMgr.getString("graph.unit"));
       pnlUnit.add(lblUnit, BorderLayout.WEST);
       cboUnit = new JComboBox();
       pnlUnit.add(cboUnit, BorderLayout.CENTER);
 
       pnlEdit.add(pnlUnit);
 
-      chkIsLandscape = new JCheckBox("Landscape");
+		// i18n[graph.chkIsLandscape=Landscape]
+		chkIsLandscape = new JCheckBox(s_stringMgr.getString("graph.chkIsLandscape"));
       pnlEdit.add(chkIsLandscape);
       
 
@@ -77,8 +91,11 @@ public class FormatDlg extends JDialog
       pnlLeft.add(new JPanel(), BorderLayout.CENTER);
 
       JPanel pnlButtons = new JPanel(new GridLayout(1,2));
-      btnSave = new JButton("Save");
-      btnNew = new JButton("New");
+
+		// i18n[graph.save=Save]
+		btnSave = new JButton(s_stringMgr.getString("graph.save"));
+		// i18n[graph.new=New]
+      btnNew = new JButton(s_stringMgr.getString("graph.new"));
       pnlButtons.add(btnNew);
       pnlButtons.add(btnSave);
 

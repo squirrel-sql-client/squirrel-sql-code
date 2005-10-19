@@ -1,12 +1,18 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
 import javax.swing.*;
 import java.awt.*;
 
 
 public class ZoomPrintPanel extends JPanel
 {
-   static final int ZOOM_MIN_PERCENT = 10;
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ZoomPrintPanel.class);
+
+	static final int ZOOM_MIN_PERCENT = 10;
    static final int ZOOM_MAX_PERCENT = 400;
 
    static final int EDGES_MIN_PERCENT = 10;
@@ -33,11 +39,14 @@ public class ZoomPrintPanel extends JPanel
 
       JPanel pnlLeft = new JPanel(new BorderLayout());
 
-      chkShowEdges = new JCheckBox("Show/Zoom paper edges");
+		// i18n[graph.showZoomPaper=Show/Zoom paper edges]
+		chkShowEdges = new JCheckBox(s_stringMgr.getString("graph.showZoomPaper"));
       pnlLeft.add(chkShowEdges, BorderLayout.WEST);
 
       JPanel pnlFormat = new JPanel(new BorderLayout());
-      btnFormat = new JButton("Format ...");
+
+		// i18n[graph.format=Format ...]
+		btnFormat = new JButton(s_stringMgr.getString("graph.format"));
       pnlFormat.add(btnFormat, BorderLayout.WEST);
       cboFormat = new JComboBox();
       pnlFormat.add(cboFormat, BorderLayout.CENTER);
@@ -52,7 +61,8 @@ public class ZoomPrintPanel extends JPanel
       ret.add(sldEdges, BorderLayout.CENTER);
 
       // TODO use a label
-      btnPrint = new JButton("Print");
+		// i18n[graph.print=Print]
+		btnPrint = new JButton(s_stringMgr.getString("graph.print"));
       ret.add(btnPrint, BorderLayout.EAST);
 
 
@@ -62,12 +72,14 @@ public class ZoomPrintPanel extends JPanel
    private JPanel createZoomPanel()
    {
       JPanel ret = new JPanel(new BorderLayout());
-      ret.add(new JLabel("Zoom"), BorderLayout.WEST);
+		// i18n[graph.zoom=Zoom]
+		ret.add(new JLabel(s_stringMgr.getString("graph.zoom")), BorderLayout.WEST);
 
       sldZoom = new JSlider(JSlider.HORIZONTAL, ZOOM_MIN_PERCENT, ZOOM_MAX_PERCENT, 100);
       ret.add(sldZoom, BorderLayout.CENTER);
 
-      chkHideScrollBars = new JCheckBox("Hide scrollbars");
+		// i18n[graph.hideScrollBars=Hide scrollbars]
+		chkHideScrollBars = new JCheckBox(s_stringMgr.getString("graph.hideScrollBars"));
       ret.add(chkHideScrollBars, BorderLayout.EAST);
       return ret;
    }
