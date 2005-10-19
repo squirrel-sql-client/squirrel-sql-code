@@ -4,6 +4,8 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS or probably in latest weekly build
 =====================================================================
 
+- Patch #1326472 - Oracle plugin is smarter about access restricted tables as an unprivileged user
+  (Thanks to Alexander Buloichik)
 - Bug fix: Limited rows/SQL - hints on top of a result tab could be corrupted (for example multi lined) because of missing HTML escaping. 
 - Improved messaging for driver definition.
 - Bug fix: Driver Icon did not update when driver was changed.
