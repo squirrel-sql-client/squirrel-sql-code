@@ -100,7 +100,7 @@
 				<exclude name="CVS/**/*"/>
 			</fileset>
 		</delete>		
-		<cvs command="update -A -C -P -d"
+		<cvs command="update -A -C -P -d -r ${cvs.tag}"
 		     compressionlevel="3"
 			 cvsroot="${project.cvsroot}" 
 			 dest="${cvs.dest.dir}" 
@@ -126,13 +126,18 @@
 			 cvsroot="${project.cvsroot}" 
 			 dest="${cvs.dest.dir}" 
 			 package="${project.module}"
+			 tag="${cvs.tag}"
 		/>	
 	</target>
 
 	<!-- exports the source (minus the CVS directories) from the repository. -->
 	<target name="cvsexport">
+		<delete includeEmptyDirs="true" quiet="true">
+			<fileset dir="${dist.dir}/src" defaultexcludes="no">
+			</fileset>
+		</delete>		
 		<mkdir dir="${dist.dir}/src"/>
-		<cvs command="export -r HEAD ${project.module}"
+		<cvs command="export -r ${cvs.tag} ${project.module}"
 			 reallyquiet="true"
 		     compressionlevel="3"
 			 cvsroot="${project.cvsroot}" 
