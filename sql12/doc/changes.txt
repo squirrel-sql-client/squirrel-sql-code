@@ -4,12 +4,13 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS or probably in latest weekly build
 =====================================================================
 
-- Patch #1326472 - Oracle plugin is smarter about access restricted tables as an unprivileged user
+- Patch #1326472 - Oracle plugin is smarter about accessing restricted tables as an unprivileged user
   (Thanks to Alexander Buloichik)
 - Bug fix: Limited rows/SQL - hints on top of a result tab could be corrupted (for example multi lined) because of missing HTML escaping. 
 - Improved messaging for driver definition.
 - Bug fix: Driver Icon did not update when driver was changed.
 - Added IBM DB2 Net driver to default drivers.
+- The source SQL statement used to create a view is now available via the MS SQLServer plugin.
 - Patch #1324774 The source SQL statement used to create a view is now available via the
   Oracle Plugin (Thanks to Alexander Buloichik)
 - Added Session Property "load columns in background". This option might help people who feel that the SQL editor
