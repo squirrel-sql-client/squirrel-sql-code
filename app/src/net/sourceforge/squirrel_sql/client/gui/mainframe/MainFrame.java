@@ -34,8 +34,11 @@ import java.util.prefs.Preferences;
 import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.fw.gui.CascadeInternalFramePositioner;
+import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.IInternalFramePositioner;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -60,6 +63,10 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 	/** Logger for this class. */
 	private final ILogger s_log = LoggerController.createLogger(MainFrame.class);
 
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(MainFrame.class);    
+    
 	/** Application API. */
 	private final IApplication _app;
 
@@ -136,12 +143,16 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 
 	public void dispose()
 	{
-		if (_app.shutdown())
-		{
-			closeAllToolWindows();
-			super.dispose();
-			System.exit(0);
-		}
+        boolean shouldDispose = true;
+		if (!_app.shutdown()) {
+            String msg = s_stringMgr.getString("MainFrame.errorOnClose");
+            shouldDispose = Dialogs.showYesNo(_app.getMainFrame(), msg);
+        }
+        if (shouldDispose) {
+            closeAllToolWindows();
+            super.dispose();
+            System.exit(0);     
+        }
 	}
 
 	// TODO: Why?
