@@ -6,6 +6,8 @@ import javax.swing.JComponent;
 import javax.swing.RepaintManager;
 import javax.swing.SwingUtilities;
 
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -15,6 +17,10 @@ public class ThreadCheckingRepaintManager extends RepaintManager
 	private static final ILogger s_log =
 		LoggerController.createLogger(ThreadCheckingRepaintManager.class);
 
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(ThreadCheckingRepaintManager.class);
+    
 	public synchronized void addInvalidComponent(JComponent comp)
 	{
 		try
@@ -23,7 +29,8 @@ public class ThreadCheckingRepaintManager extends RepaintManager
 		}
 		catch (Exception ex)
 		{
-			s_log.debug("GUI work done in wrong thread", ex);
+            // i18n[ThreadCheckingRepaintManager.workinwrongthread=GUI work done in wrong thread]
+			s_log.debug(s_stringMgr.getString("ThreadCheckingRepaintManager.workinwrongthread"), ex);
 		}
 		super.addInvalidComponent(comp);
 	}
@@ -37,7 +44,8 @@ public class ThreadCheckingRepaintManager extends RepaintManager
 			{
 				if (!SwingUtilities.isEventDispatchThread())
 				{
-					throw new Exception("GUI work done in wrong thread");
+                    // i18n[ThreadCheckingRepaintManager.workinwrongthread=GUI work done in wrong thread]
+					throw new Exception(s_stringMgr.getString("ThreadCheckingRepaintManager.workinwrongthread"));
 				}
 			}
 		}
@@ -52,7 +60,8 @@ public class ThreadCheckingRepaintManager extends RepaintManager
 		}
 		catch (Exception ex)
 		{
-			s_log.debug("GUI work done in wrong thread", ex);
+            // i18n[ThreadCheckingRepaintManager.workinwrongthread=GUI work done in wrong thread]
+			s_log.debug(s_stringMgr.getString("ThreadCheckingRepaintManager.workinwrongthread"), ex);
 		}
 		super.addDirtyRegion(comp, i, i1, i2, i3);
 	}
