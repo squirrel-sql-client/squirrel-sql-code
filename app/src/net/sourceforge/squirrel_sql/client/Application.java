@@ -219,12 +219,19 @@ class Application implements IApplication
 	{
 		s_log.info(s_stringMgr.getString("Application.shutdown",
 									Calendar.getInstance().getTime()));
-		if (!_sessionManager.closeAllSessions())
-		{
-			s_log.info(s_stringMgr.getString("Application.shutdownCancelled",
-					Calendar.getInstance().getTime()));
-			return false;
-		}
+		try {
+            if (!_sessionManager.closeAllSessions())
+    		{
+    			s_log.info(s_stringMgr.getString("Application.shutdownCancelled",
+    					Calendar.getInstance().getTime()));
+    			return false;
+    		}
+        } catch (Throwable t) {
+            String msg = 
+                s_stringMgr.getString("Application.error.closeAllSessions", 
+                                      t.getMessage());
+            s_log.error(msg, t);
+        }
 
 		_pluginManager.unloadPlugins();
 
