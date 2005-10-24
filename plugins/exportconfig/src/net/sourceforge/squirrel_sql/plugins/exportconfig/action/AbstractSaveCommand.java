@@ -25,9 +25,7 @@ import javax.swing.JFileChooser;
 
 import net.sourceforge.squirrel_sql.fw.gui.ChooserPreviewer;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
-import net.sourceforge.squirrel_sql.fw.util.BaseException;
-import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.*;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLException;
@@ -42,6 +40,10 @@ import net.sourceforge.squirrel_sql.plugins.exportconfig.ExportConfigPlugin;
  */
 abstract class AbstractSaveCommand implements ICommand
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(AbstractSaveCommand.class);
+
+
 	/** Logger for this class. */
 	private final static ILogger s_log =
 		LoggerController.createLogger(AbstractSaveCommand.class);
@@ -62,7 +64,7 @@ abstract class AbstractSaveCommand implements ICommand
 	 * @param	plugin	The current plugin.
 	 *
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> <TT>ISession</TT>,
+	 * 			Thrown if aï¿½<TT>null</TT> <TT>ISession</TT>,
 	 * 			<TT>Resources</TT> or <TT>MysqlPlugin</TT> passed.
 	 */
 	AbstractSaveCommand(Frame frame, ExportConfigPlugin plugin)
@@ -115,15 +117,19 @@ abstract class AbstractSaveCommand implements ICommand
 	{
 		if (file.exists())
 		{
-			if (!Dialogs.showYesNo(_frame, file.getAbsolutePath()
-						+ "\nalready exists. Do you want to replace it?"))
+			// i18n[exportconfig.fileExistsReplace={0}\nalready exists. Do you want to replace it?]
+			String msg = s_stringMgr.getString("exportconfig.fileExistsReplace", file.getAbsolutePath());
+
+			if (!Dialogs.showYesNo(_frame, msg))
 			{
 				return false;
 			}
 			if (!file.canWrite())
 			{
-				Dialogs.showOk(_frame, file.getAbsolutePath()
-						+ "\nexists and you cannot write to it.\nPlease use a different name.");
+				// i18n[exportconfig.fileExistsButReadOnly={0}\nexists and you cannot write to it.\nPlease use a different name.]
+				msg = s_stringMgr.getString("exportconfig.fileExistsButReadOnly", file.getAbsolutePath());
+
+				Dialogs.showOk(_frame, msg);
 				return false;
 			}
 			file.delete();
@@ -135,18 +141,29 @@ abstract class AbstractSaveCommand implements ICommand
 		try
 		{
 			writeToFile(file);
-			app.showErrorDialog(getSaveDescription() + " saved to " +
-						file.getAbsolutePath());
+
+			String[] params = new String[]
+				{
+					getSaveDescription(),
+					file.getAbsolutePath()
+				};
+
+			// i18n[exportconfig.fileSavedTo={0} saved to {1}]
+			String msg = s_stringMgr.getString("exportconfig.fileSavedTo", params);
+
+			Dialogs.showOk(_frame, msg);
 		}
 		catch (IOException ex)
 		{
-			_plugin.getApplication().showErrorDialog("Error writing to\n" +
-										file.getAbsolutePath(), ex);
+			// i18n[exportconfig.ioErrorWritingTo=IO Error writing to\n{0}]
+			String msg = s_stringMgr.getString("exportconfig.ioErrorWritingTo", file.getAbsolutePath());
+			_plugin.getApplication().showErrorDialog(msg, ex);
 		}
 		catch (XMLException ex)
 		{
-			_plugin.getApplication().showErrorDialog("Error writing to\n" +
-										file.getAbsolutePath(), ex);
+			// i18n[exportconfig.xmlErrorWritingTo=XML Error writing to\n{0}]
+			String msg = s_stringMgr.getString("exportconfig.xmlErrorWritingTo", file.getAbsolutePath());
+			_plugin.getApplication().showErrorDialog(msg, ex);
 		}
 		return true;
 	}

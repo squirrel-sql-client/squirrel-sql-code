@@ -39,11 +39,11 @@ public class CodeReformatorKernel
 
 		Vector ret = new Vector();
 
-      // toUpperCase replaces the German ß by ss.
+      // toUpperCase replaces the German ÃŸ by ss.
       // This will kill reformating later.
       // Since upperIn is just for building pieces
-      // it is OK to place ß here. 
-      String upperIn = in.replaceAll("ß", "s");
+      // it is OK to place ÃŸ here.
+      String upperIn = in.replaceAll("ÃŸ", "s");
 
 
 		upperIn = upperIn.toUpperCase();

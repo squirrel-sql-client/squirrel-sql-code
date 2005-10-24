@@ -21,6 +21,8 @@ import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
@@ -34,6 +36,9 @@ import net.sourceforge.squirrel_sql.plugins.exportconfig.ExportConfigPlugin;
  */
 public class ExportSettingsAction extends SquirrelAction
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ExportSettingsAction.class);
+
 	/** Application API. */
 	private final IApplication _app;
 
@@ -48,7 +53,7 @@ public class ExportSettingsAction extends SquirrelAction
 	 * @param	plugin		This plugin.
 	 *
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> <TT>IApplication</TT>,
+	 * 			Thrown if aï¿½<TT>null</TT> <TT>IApplication</TT>,
 	 * 			<TT>Resources</TT> or <TT>MysqlPlugin</TT> passed.
 	 *
 	 * @throws	IllegalArgumentException
@@ -83,7 +88,8 @@ public class ExportSettingsAction extends SquirrelAction
 		}
 		catch (BaseException ex)
 		{
-			_app.showErrorDialog("Error saving aliases", ex);
+			// i18n[exportconfig.errorSavingAliases=Error saving aliases]			
+			_app.showErrorDialog(s_stringMgr.getString("exportconfig.errorSavingAliases"), ex);
 		}
 	}
 }

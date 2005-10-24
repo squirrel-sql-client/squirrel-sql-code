@@ -24,6 +24,8 @@ import java.io.IOException;
 import net.sourceforge.squirrel_sql.fw.sql.DataCache;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
@@ -36,6 +38,9 @@ import net.sourceforge.squirrel_sql.plugins.exportconfig.ExportConfigPlugin;
  */
 class ExportAliasesCommand extends AbstractSaveCommand
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ExportAliasesCommand.class);
+
 	/** Logger for this class. */
 	private final static ILogger s_log =
 		LoggerController.createLogger(ExportAliasesCommand.class);
@@ -50,7 +55,7 @@ class ExportAliasesCommand extends AbstractSaveCommand
 	 * Ctor.
 	 *
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> <TT>ISession</TT>,
+	 * 			Thrown if aï¿½<TT>null</TT> <TT>ISession</TT>,
 	 * 			<TT>Resources</TT> or <TT>MysqlPlugin</TT> passed.
 	 */
 	public ExportAliasesCommand(Frame frame, ExportConfigPlugin plugin)
@@ -90,6 +95,7 @@ class ExportAliasesCommand extends AbstractSaveCommand
 	 */
 	protected String getSaveDescription()
 	{
-		return "Database Aliases";
+		// i18n[exportconfig.databaseAliases=Database Aliases]
+		return s_stringMgr.getString("exportconfig.databaseAliases");
 	}
 }

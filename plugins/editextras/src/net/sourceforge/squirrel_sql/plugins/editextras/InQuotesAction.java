@@ -20,6 +20,8 @@ import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
@@ -35,6 +37,10 @@ import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
 class InQuotesAction extends SquirrelAction
 					implements ISQLPanelAction
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(InQuotesAction.class);
+
+
 	/** Logger for this class. */
 	private static final ILogger s_log =
 		LoggerController.createLogger(InQuotesAction.class);
@@ -77,8 +83,9 @@ class InQuotesAction extends SquirrelAction
 			}
 			catch (Throwable ex)
 			{
-				final String msg = "Error processing Quote SQL command";
-				_session.getMessageHandler().showErrorMessage(msg + ": " + ex);
+				// i18n[editextras.errorQuoteSql=Error processing Quote SQL command: {0}]
+				final String msg = s_stringMgr.getString("editextras.errorQuoteSql", ex);
+				_session.getMessageHandler().showErrorMessage(msg);
 				s_log.error(msg, ex);
 			}
 		}

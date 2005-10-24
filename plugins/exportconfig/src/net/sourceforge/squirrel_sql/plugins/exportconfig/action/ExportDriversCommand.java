@@ -24,6 +24,8 @@ import java.io.IOException;
 import net.sourceforge.squirrel_sql.fw.sql.DataCache;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
@@ -36,6 +38,10 @@ import net.sourceforge.squirrel_sql.plugins.exportconfig.ExportConfigPlugin;
  */
 class ExportDriversCommand extends AbstractSaveCommand
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ExportDriversCommand.class);
+
+
 	/** Logger for this class. */
 	private final static ILogger s_log =
 		LoggerController.createLogger(ExportDriversCommand.class);
@@ -50,7 +56,7 @@ class ExportDriversCommand extends AbstractSaveCommand
 	 * Ctor.
 	 *
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> <TT>ISession</TT>,
+	 * 			Thrown if aï¿½<TT>null</TT> <TT>ISession</TT>,
 	 * 			<TT>Resources</TT> or <TT>MysqlPlugin</TT> passed.
 	 */
 	public ExportDriversCommand(Frame frame, ExportConfigPlugin plugin)
@@ -90,6 +96,7 @@ class ExportDriversCommand extends AbstractSaveCommand
 	 */
 	protected String getSaveDescription()
 	{
-		return "Database Drivers";
+		// i18n[exportconfig.databaseDrivers=Database Drivers]		
+		return s_stringMgr.getString("exportconfig.databaseDrivers");
 	}
 }

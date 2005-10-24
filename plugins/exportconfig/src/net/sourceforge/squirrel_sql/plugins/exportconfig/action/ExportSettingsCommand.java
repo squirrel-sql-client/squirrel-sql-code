@@ -23,6 +23,8 @@ import java.io.IOException;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 
@@ -37,6 +39,10 @@ import net.sourceforge.squirrel_sql.plugins.exportconfig.ExportConfigPlugin;
  */
 class ExportSettingsCommand extends AbstractSaveCommand
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ExportSettingsCommand.class);
+
+
 	/** Logger for this class. */
 	private final static ILogger s_log =
 		LoggerController.createLogger(ExportSettingsCommand.class);
@@ -51,7 +57,7 @@ class ExportSettingsCommand extends AbstractSaveCommand
 	 * Ctor.
 	 *
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> <TT>ISession</TT>,
+	 * 			Thrown if aï¿½<TT>null</TT> <TT>ISession</TT>,
 	 * 			<TT>Resources</TT> or <TT>MysqlPlugin</TT> passed.
 	 */
 	public ExportSettingsCommand(Frame frame, ExportConfigPlugin plugin)
@@ -91,7 +97,8 @@ class ExportSettingsCommand extends AbstractSaveCommand
 	 */
 	protected String getSaveDescription()
 	{
-		return "Application Settings";
+		// i18n[exportconfig.applicationSettings=Application Settings]
+		return s_stringMgr.getString("exportconfig.applicationSettings");
 	}
 
 }
