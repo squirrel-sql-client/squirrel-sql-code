@@ -117,9 +117,12 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 				}
 
 				// Retrieve all the statements to execute.
-				final QueryTokenizer qt = new QueryTokenizer(_sql, props
-						.getSQLStatementSeparator(), props
-						.getStartOfLineComment());
+				final QueryTokenizer qt =
+					new QueryTokenizer(
+						_sql,
+						props.getSQLStatementSeparator(),
+						props.getStartOfLineComment());
+
 				List queryStrings = new ArrayList();
 				boolean queriesFound = false;
             while (qt.hasQuery())

@@ -17,216 +17,202 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.util.StringTokenizer;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class QueryTokenizer
 {
-	/** String used to separate SQL statemets in the query string. */
-	private final String _querySep;
+	private ArrayList _queries = new ArrayList();
+	private Iterator _queryIterator;
 
-	private String _sQuerys;
 
-	private String _sNextQuery;
-
-	/**
-	 * These characters at the beginning of an SQL statement indicate that it
-	 * is a comment.
-	 */
-	private String _solComment;
-
-	/**
-	 * Construct a query tokenizer.
-	 *
-	 * @param	sql			The SQL string to tokenize.
-	 * @param	querySep	The string used to separate individual SQL
-	 * 						statements within <TT>sql</TT>.
-	 * @param	solComment	The string that indicates that the current line
-	 * 						is a comment.
-	 */
-	public QueryTokenizer(String sql, String querySep, String solComment)
+	public QueryTokenizer(String sql, String querySep, String lineCommentBegin)
 	{
-		super();
-		_querySep = querySep;
+		String MULTI_LINE_COMMENT_END = "*/";
+		String MULTI_LINE_COMMENT_BEGIN = "/*";
 
-		if (solComment != null && solComment.trim().length() > 0)
+		sql = sql.replace('\r', ' ');
+
+		StringBuffer curQuery = new StringBuffer();
+
+		boolean isInLiteral = false;
+		boolean isInMultiLineComment = false;
+		boolean isInLineComment = false;
+		int literalSepCount = 0;
+
+
+		for (int i = 0; i < sql.length(); ++i)
 		{
-			_solComment = solComment;
+			char c = sql.charAt(i);
+
+			if(false == isInLiteral)
+			{
+				///////////////////////////////////////////////////////////
+				// Handling of comments
+				if(false == isInLineComment && false == isInMultiLineComment)
+				{
+					// We look forward
+					isInMultiLineComment = sql.startsWith(MULTI_LINE_COMMENT_BEGIN, i);
+					isInLineComment = sql.startsWith(lineCommentBegin, i);
+				}
+
+				// We look backwards
+				if(isInLineComment && sql.startsWith("\n", i - "\n".length()))
+				{
+					isInLineComment = false;
+				}
+
+				// We look backwards
+				if(isInMultiLineComment && sql.startsWith("*/", i - MULTI_LINE_COMMENT_END.length()))
+				{
+					isInMultiLineComment = false;
+				}
+
+				if(isInMultiLineComment || isInLineComment)
+				{
+					// This is responsible that comments are not in curQuery
+					continue;
+				}
+				//
+				////////////////////////////////////////////////////////////
+			}
+
+			curQuery.append(c);
+
+			if ('\'' == c)
+			{
+				if(false == isInLiteral)
+				{
+					isInLiteral = true;
+				}
+				else
+				{
+					++literalSepCount;
+				}
+			}
+			else
+			{
+				if(0 != literalSepCount % 2)
+				{
+					isInLiteral = false;
+				}
+				literalSepCount = 0;
+			}
+
+
+			int querySepLen = getLenOfQuerySepIfAtLastCharOfQuerySep(sql, i, querySep,isInLiteral);
+
+			if(-1 < querySepLen)
+			{
+				int newLength = curQuery.length() - querySepLen;
+				if(-1 < newLength && curQuery.length() > newLength)
+				{
+					curQuery.setLength(newLength);
+
+					String newQuery = curQuery.toString().trim();
+					if(0 < newQuery.length())
+					{
+						_queries.add(curQuery.toString());
+					}
+				}
+				curQuery.setLength(0);
+			}
+		}
+
+		String lastQuery = curQuery.toString().trim();
+		if(0 < lastQuery.length())
+		{
+			_queries.add(lastQuery.toString());
+		}
+
+
+		_queryIterator = _queries.iterator();
+	}
+
+
+	private int getLenOfQuerySepIfAtLastCharOfQuerySep(String sql, int i, String querySep, boolean inLiteral)
+	{
+		if(inLiteral)
+		{
+			return -1;
+		}
+
+		char c = sql.charAt(i);
+
+		if(1 == querySep.length() && c == querySep.charAt(0))
+		{
+			return 1;
 		}
 		else
 		{
-			_solComment = null;
-		}
+			int fromIndex = i - querySep.length();
+			if(0 > fromIndex)
+			{
+				return -1;
+			}
 
-		if (sql != null)
-		{
-			_sQuerys = prepareSQL(sql);
-			_sNextQuery = parse();
-		}
-		else
-		{
-			_sQuerys = "";
+			int querySepIndex = sql.indexOf(querySep, fromIndex);
+
+			if(0 > querySepIndex)
+			{
+				return -1;
+			}
+
+			if(Character.isWhitespace(c))
+			{
+				if(querySepIndex + querySep.length() == i)
+				{
+					if(0 == querySepIndex)
+					{
+						return querySep.length() + 1;
+					}
+					else if(Character.isWhitespace(sql.charAt(querySepIndex - 1)))
+					{
+						return querySep.length() + 2;
+					}
+				}
+			}
+			else if(sql.length() -1 == i)
+			{
+				if(querySepIndex + querySep.length() - 1 == i)
+				{
+					if(0 == querySepIndex)
+					{
+						return querySep.length();
+					}
+					else if(Character.isWhitespace(sql.charAt(querySepIndex - 1)))
+					{
+						return querySep.length() + 1;
+					}
+				}
+			}
+
+			return -1;
 		}
 	}
 
+
 	public boolean hasQuery()
 	{
-		return _sNextQuery != null;
+		return _queryIterator.hasNext();
 	}
 
 	public String nextQuery()
 	{
-		String sReturnQuery = _sNextQuery;
-		_sNextQuery = parse();
-		return sReturnQuery;
+		return (String) _queryIterator.next();
 	}
 
-	public String parse()
-	{
-		if (_sQuerys.length() == 0)
-		{
-			return null;
-		}
-		int iQuoteCount = 1;
-		int iIndex1 = -_querySep.length();
-		while (iQuoteCount % 2 != 0)
-		{
-			iQuoteCount = 0;
 
-			iIndex1 = _sQuerys.indexOf(_querySep, iIndex1 + _querySep.length());
-
-			while (-1 != iIndex1)
-			{
-//            boolean isSep =
-//                  !((0 != iIndex1 && !Character.isWhitespace(_sQuerys.charAt(iIndex1 - 1)))
-//               || (_sQuerys.length() - _querySep.length() != iIndex1
-//               && !Character.isWhitespace(_sQuerys.charAt(iIndex1 + _querySep.length()))));
-
-            boolean isSep = true;
-            if(1 < _querySep.length())
-            {
-               // A multiple character querySep is expected to be surounded by
-               // white spaces. We check this here
-               // For a single character querySep there are no such restrictions
-
-               if( 0 < iIndex1 && false == Character.isWhitespace(_sQuerys.charAt(iIndex1 - 1)) )
-               {
-                  isSep = false;
-               }
-
-               if( _sQuerys.length() < iIndex1 + _querySep.length() && false == Character.isWhitespace(_sQuerys.charAt(iIndex1 + _querySep.length())) )
-               {
-                  isSep = false;
-               }
-            }
-
-
-
-
-				if (!isSep && _querySep.length() == 1)
-				{
-					if (iIndex1 == (_sQuerys.length() - 1)
-							|| _sQuerys.charAt(iIndex1 + 1) == '\n'
-							|| _sQuerys.charAt(iIndex1 + 1) == '\r')
-					{
-						isSep = true;
-					}
-				}
-
-				if (!isSep)
-				{
-					// this querySep is not surounded by whitespace, so look for next querySep
-					iIndex1 = _sQuerys.indexOf(_querySep, iIndex1 + _querySep.length());
-				}
-				else
-				{
-					break;
-				}
-			}
-
-			if (iIndex1 != -1)
-			{
-				int iIndex2 = _sQuerys.lastIndexOf('\'', iIndex1);
-				while (iIndex2 != -1)
-				{
-					if (_sQuerys.charAt(iIndex2 - 1) != '\\')
-					{
-						iQuoteCount++;
-					}
-					iIndex2 = _sQuerys.lastIndexOf('\'', iIndex2 - 1);
-				}
-			}
-			else
-			{
-				String sNextQuery = _sQuerys;
-				_sQuerys = "";
-				if (_solComment != null && sNextQuery.startsWith(_solComment))
-				{
-					return parse();
-				}
-				return replaceLineFeeds(sNextQuery);
-			}
-		}
-		String sNextQuery = _sQuerys.substring(0, iIndex1);
-		_sQuerys = _sQuerys.substring(iIndex1 + _querySep.length()).trim();
-		if (_solComment != null && sNextQuery.startsWith(_solComment))
-		{
-			return parse();
-		}
-		return replaceLineFeeds(sNextQuery);
-	}
-
-	private String prepareSQL(String sql)
-	{
-		StringBuffer results = new StringBuffer(1024);
-
-		for (StringTokenizer tok = new StringTokenizer(sql.trim(), "\n", false);
-				tok.hasMoreTokens();)
-		{
-			String line = tok.nextToken();
-			if (!line.startsWith(_solComment))
-			{
-				results.append(line).append('\n');
-			}
-		}
-
-		return results.toString();
-	}
-
-	private String replaceLineFeeds(String sql)
-	{
-		StringBuffer sbReturn = new StringBuffer();
-		int iPrev = 0;
-		int linefeed = sql.indexOf('\n');
-		int iQuote = -1;
-		while (linefeed != -1)
-		{
-			iQuote = sql.indexOf('\'', iQuote + 1);
-			if (iQuote != -1 && iQuote < linefeed)
-			{
-				int iNextQute = sql.indexOf('\'', iQuote + 1);
-				if (iNextQute > linefeed)
-				{
-					sbReturn.append(sql.substring(iPrev, linefeed));
-					sbReturn.append('\n');
-					iPrev = linefeed + 1;
-					linefeed = sql.indexOf('\n', iPrev);
-				}
-			}
-			else
-			{
-				linefeed = sql.indexOf('\n', linefeed + 1);
-			}
-		}
-		sbReturn.append(sql.substring(iPrev));
-		return sbReturn.toString();
-	}
-
-/*
-	public static void main(String[] args)
-	{
-		String s = new String("insert into test (ikey,var) values(1,'\\\'test;');  ");
-		QueryTokenizer qt = new QueryTokenizer(s);
-		System.out.println(qt.nextQuery());
-	}
-*/
+//	public static void main(String[] args)
+//	{
+//		String sql = "A'''' sss ;  GO ;; GO'";
+//		//String sql = "GO GO";
+//
+//		QueryTokenizer qt = new QueryTokenizer(sql, "GO", "--");
+//
+//		while(qt.hasQuery())
+//		{
+//			System.out.println(">" + qt.nextQuery() + "<");
+//		}
+//	}
 }
