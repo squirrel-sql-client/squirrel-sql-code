@@ -943,7 +943,6 @@ public class SQLSyntax extends Syntax
    private TokenID matchTable(char[] buffer, int offset, int len)
    {
       String s = new String(buffer, offset, len);
-      s=s.toUpperCase();
 
       if(_sess.getSchemaInfo().isTable(s))
       {
