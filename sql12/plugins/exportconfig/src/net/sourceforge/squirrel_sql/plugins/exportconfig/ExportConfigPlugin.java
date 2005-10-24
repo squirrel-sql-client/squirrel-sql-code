@@ -26,6 +26,8 @@ import javax.swing.JMenu;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 
@@ -46,6 +48,10 @@ import net.sourceforge.squirrel_sql.plugins.exportconfig.action.ExportSettingsAc
  */
 public class ExportConfigPlugin extends DefaultPlugin
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ExportConfigPlugin.class);
+
+
 	/** Logger for this class. */
 	private final static ILogger s_log = LoggerController.createLogger(ExportConfigPlugin.class);
 
@@ -225,12 +231,13 @@ public class ExportConfigPlugin extends DefaultPlugin
 		}
 		catch (FileNotFoundException ignore)
 		{
-			s_log.info(USER_PREFS_FILE_NAME + " not found - will be created");
+			// i18n[exportconfig.fileWillBeCreated={0} not found - will be created]
+			s_log.info(s_stringMgr.getString("exportconfig.fileWillBeCreated", USER_PREFS_FILE_NAME));
 		}
 		catch (Exception ex)
 		{
-			s_log.error("Error occured reading from preferences file: "
-					+ USER_PREFS_FILE_NAME, ex);
+			// i18n[exportconfig.errorCreatingFile=Error occured reading from preferences file: {0}]
+			s_log.error(s_stringMgr.getString("exportconfig.errorCreatingFile", USER_PREFS_FILE_NAME), ex);
 		}
 		if (_prefs == null)
 		{
@@ -250,8 +257,8 @@ public class ExportConfigPlugin extends DefaultPlugin
 		}
 		catch (Exception ex)
 		{
-			s_log.error("Error occured writing to preferences file: "
-					+ USER_PREFS_FILE_NAME, ex);
+			// i18n[exportconfig.errorWritingPrefs=Error occured writing to preferences file: {0}]
+			s_log.error(s_stringMgr.getString("exportconfig.errorWritingPrefs", USER_PREFS_FILE_NAME), ex);
 		}
 	}
 

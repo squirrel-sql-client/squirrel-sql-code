@@ -16,11 +16,18 @@ package net.sourceforge.squirrel_sql.plugins.editextras.codereformat;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
 import java.util.Arrays;
 import java.util.Vector;
 
 public class CodeReformator
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(CodeReformator.class);
+
+
 	private static final String INDENT = "   ";
 	private static final int TRY_SPLIT_LINE_LEN = 80;
 
@@ -82,14 +89,19 @@ public class CodeReformator
 			}
 			diffPos.append('^');
 
-			StringBuffer msg = new StringBuffer();
-		   msg.append("Reformat failed, normalized Strings differ\n");
-			msg.append(normalizedBefore).append("\n");
-			msg.append(normalizedAfter).append("\n");
-			msg.append(diffPos).append("\n");
+
+			String[] params = new String[]
+				{
+					normalizedBefore,
+					normalizedAfter,
+					diffPos.toString()
+				};
+
+			// i18n[editextras.reformatFailed=Reformat failed, normalized Strings differ\n{0}\n{1}\n{2}\n]
+			String msg = s_stringMgr.getString("editextras.reformatFailed", params);
 
 			System.out.println(msg);
-			throw new IllegalStateException(msg.toString());
+			throw new IllegalStateException(msg);
 		}
 	}
 

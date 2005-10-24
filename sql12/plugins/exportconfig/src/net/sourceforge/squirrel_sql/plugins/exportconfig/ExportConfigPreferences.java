@@ -5,6 +5,8 @@ import java.io.IOException;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 
@@ -34,6 +36,9 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
  */
 public class ExportConfigPreferences
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ExportConfigPreferences.class);
+
 	/** Logger for this class. */
 	private final static ILogger s_log =
 		LoggerController.createLogger(ExportConfigPreferences.class);
@@ -257,7 +262,8 @@ public class ExportConfigPreferences
 		}
 		catch (IOException ex)
 		{
-			s_log.error("Error resolving file name", ex);
+			// i18n[exportconfig.errorResolvingFile=Error resolving file name]
+			s_log.error(s_stringMgr.getString("exportconfig.errorResolvingFile"), ex);
 		}
 		return file.getAbsolutePath();
 	}

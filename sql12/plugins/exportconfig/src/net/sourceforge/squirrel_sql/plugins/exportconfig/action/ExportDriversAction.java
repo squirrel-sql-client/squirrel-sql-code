@@ -21,6 +21,8 @@ import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
@@ -34,6 +36,10 @@ import net.sourceforge.squirrel_sql.plugins.exportconfig.ExportConfigPlugin;
  */
 public class ExportDriversAction extends SquirrelAction 
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ExportDriversAction.class);
+
+
 	/** Application API. */
 	private final IApplication _app;
 
@@ -48,7 +54,7 @@ public class ExportDriversAction extends SquirrelAction
 	 * @param	plugin		This plugin.
 	 *
 	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> <TT>IApplication</TT>,
+	 * 			Thrown if aï¿½<TT>null</TT> <TT>IApplication</TT>,
 	 * 			<TT>Resources</TT> or <TT>MysqlPlugin</TT> passed.
 	 *
 	 * @throws	IllegalArgumentException
@@ -83,7 +89,8 @@ public class ExportDriversAction extends SquirrelAction
 		}
 		catch (BaseException ex)
 		{
-			_app.showErrorDialog("Error saving drivers", ex);
+			// i18n[exportconfig.errorSavingDrivers=Error saving drivers]
+			_app.showErrorDialog(s_stringMgr.getString("exportconfig.errorSavingDrivers"), ex);
 		}
 	}
 }

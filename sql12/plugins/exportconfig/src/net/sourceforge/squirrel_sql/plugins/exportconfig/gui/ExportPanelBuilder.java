@@ -287,7 +287,8 @@ public class ExportPanelBuilder
 		}
 		catch (IOException ex)
 		{
-			s_log.error("Error resolving file name", ex);
+			// i18n[exportconfig.errorReslovingFileName=Error resolving file name]
+			s_log.error(s_stringMgr.getString("exportconfig.errorReslovingFileName"), ex);
 		}
 		return file.getAbsolutePath();
 	}
