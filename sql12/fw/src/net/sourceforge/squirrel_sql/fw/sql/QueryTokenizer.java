@@ -49,12 +49,6 @@ public class QueryTokenizer
 			{
 				///////////////////////////////////////////////////////////
 				// Handling of comments
-				if(false == isInLineComment && false == isInMultiLineComment)
-				{
-					// We look forward
-					isInMultiLineComment = sql.startsWith(MULTI_LINE_COMMENT_BEGIN, i);
-					isInLineComment = sql.startsWith(lineCommentBegin, i);
-				}
 
 				// We look backwards
 				if(isInLineComment && sql.startsWith("\n", i - "\n".length()))
@@ -66,6 +60,14 @@ public class QueryTokenizer
 				if(isInMultiLineComment && sql.startsWith("*/", i - MULTI_LINE_COMMENT_END.length()))
 				{
 					isInMultiLineComment = false;
+				}
+
+
+				if(false == isInLineComment && false == isInMultiLineComment)
+				{
+					// We look forward
+					isInMultiLineComment = sql.startsWith(MULTI_LINE_COMMENT_BEGIN, i);
+					isInLineComment = sql.startsWith(lineCommentBegin, i);
 				}
 
 				if(isInMultiLineComment || isInLineComment)
@@ -205,7 +207,8 @@ public class QueryTokenizer
 
 //	public static void main(String[] args)
 //	{
-//		String sql = "A'''' sss ;  GO ;; GO'";
+//		//String sql = "A'''' sss ;  GO ;; GO'";
+//		String sql = "A\n--x\n--y\n/*\n*/B";
 //		//String sql = "GO GO";
 //
 //		QueryTokenizer qt = new QueryTokenizer(sql, "GO", "--");
