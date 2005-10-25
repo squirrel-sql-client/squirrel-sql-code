@@ -191,6 +191,8 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
       sqlPanelAPI.addToToolsPopUp("quotesb", actions.get(ConvertToStringBufferAction.class));
       sqlPanelAPI.addToToolsPopUp("format", actions.get(FormatSQLAction.class));
       sqlPanelAPI.addToToolsPopUp("date", actions.get(EscapeDateAction.class));
+      sqlPanelAPI.addToToolsPopUp("cutsql", actions.get(CutSqlAction.class));
+      sqlPanelAPI.addToToolsPopUp("copysql", actions.get(CopySqlAction.class));
    }
 
    /**
@@ -257,6 +259,15 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
       act = new EscapeDateAction(getApplication(), _resources);
       coll.add(act);
       _resources.addToMenu(act, menu);
+
+		act = new CutSqlAction(getApplication(), _resources);
+		coll.add(act);
+		_resources.addToMenu(act, menu);
+
+		act = new CopySqlAction(getApplication(), _resources);
+		coll.add(act);
+		_resources.addToMenu(act, menu);
+
 	}
 
 	private void createSQLEntryAreaPopMenuItems(ISQLPanelAPI api)
@@ -273,6 +284,13 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 		_resources.configureMenuItem(actions.get(FormatSQLAction.class), mnu);
 
 		api.addToSQLEntryAreaMenu(actions.get(EscapeDateAction.class));
+
+		mnu = api.addToSQLEntryAreaMenu(actions.get(CutSqlAction.class));
+		_resources.configureMenuItem(actions.get(CutSqlAction.class), mnu);
+
+		mnu = api.addToSQLEntryAreaMenu(actions.get(CopySqlAction.class));
+		_resources.configureMenuItem(actions.get(CopySqlAction.class), mnu);
+
 	}
 
 	private class SQLPanelListener extends SQLPanelAdapter

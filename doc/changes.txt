@@ -4,6 +4,10 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS or probably in latest weekly build
 =====================================================================
 
+- Added "cut/copy SQL to be executed" function to the editor. Since SQuirreL knows the concept
+  of SQL text without selection (from caret position between previous and next empty line),
+  these functions are short hands for the usual copy and cut which only work on selected text.
+- Fixed deleting rows from editable SQL result and from contents tab (ArrayIndexOutOfBounds) 
 - Fixed bug #1331445: Line comments could change SQLs.
 - Patch #1326472 - Oracle plugin is smarter about accessing restricted tables as an unprivileged user
   (Thanks to Alexander Buloichik)
