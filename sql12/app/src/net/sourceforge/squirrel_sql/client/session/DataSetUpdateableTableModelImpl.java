@@ -490,10 +490,20 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
          // to use in the where clause, so see if there is a table of col names
          HashMap colNames = (EditWhereCols.get(getFullTableName()));
 
-         ColumnDisplayDefinition editedCol = colDefs[col];
-         for (int i=0; i< colDefs.length; i++) {
 
-            if(i != col && colDefs[i].getFullTableColumnName().equalsIgnoreCase(editedCol.getFullTableColumnName()))
+
+			ColumnDisplayDefinition editedCol = null;
+			if(-1 != col)
+			{
+				editedCol = colDefs[col];
+			}
+
+			
+			for (int i=0; i< colDefs.length; i++) {
+
+            if(i != col &&
+					null != editedCol &&
+					colDefs[i].getFullTableColumnName().equalsIgnoreCase(editedCol.getFullTableColumnName()))
             {
                // The edited column is in the resultset twice (example: SELECT MyName,* FROM MyTable).
                // We won't add the this col to the where clause.

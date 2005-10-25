@@ -29,6 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -197,8 +198,23 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			pnl.add(_showContents, gbc);
 			++gbc.gridy;
 			pnl.add(_showToolTips, gbc);
+
+			// i8n[globalPrefs.scrollTabWarn=
+			// Right mouse menu on tabbed panes won't work when scrollable tabbed panes are
+			// used (JDK 1.4 bug #4465870). Consider using JDK 1.5 or higher or switch off scrollable tabbed panes.]
+			MultipleLineLabel scrollTabWarnLable = new MultipleLineLabel(s_stringMgr.getString("globalPrefs.scrollTabWarn"));
+			++gbc.gridy;
+			Insets oldInsets = (Insets) gbc.insets.clone();
+			gbc.insets.bottom = 0;
+			pnl.add(scrollTabWarnLable, gbc);
+			gbc.insets = oldInsets;
+
+			oldInsets = (Insets) gbc.insets.clone();
+			gbc.insets.top = 0;
 			++gbc.gridy;
 			pnl.add(_useScrollableTabbedPanes, gbc);
+			gbc.insets = oldInsets;
+
 			++gbc.gridy;
 			pnl.add(_showMainToolBar, gbc);
 			++gbc.gridy;

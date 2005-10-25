@@ -108,7 +108,16 @@ public class NetbeansSQLEditorPane extends JEditorPane
       // Removed for uncomment
       KeyStroke ctrlShiftSubstractStroke = KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, java.awt.event.InputEvent.CTRL_MASK | java.awt.event.InputEvent.SHIFT_MASK);
       getKeymap().removeKeyStrokeBinding(ctrlShiftSubstractStroke);
-      //
+
+		// Removed for cut SQL
+		KeyStroke ctrlShiftXStroke = KeyStroke.getKeyStroke(KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_MASK | java.awt.event.InputEvent.SHIFT_MASK);
+		getKeymap().removeKeyStrokeBinding(ctrlShiftXStroke);
+
+		// Removed for copy SQL
+		KeyStroke ctrlShiftCStroke = KeyStroke.getKeyStroke(KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK | java.awt.event.InputEvent.SHIFT_MASK);
+		getKeymap().removeKeyStrokeBinding(ctrlShiftCStroke);
+
+		//
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
