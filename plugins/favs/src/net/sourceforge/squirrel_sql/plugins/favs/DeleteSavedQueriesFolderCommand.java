@@ -24,21 +24,30 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class DeleteSavedQueriesFolderCommand {
+
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(DeleteSavedQueriesFolderCommand.class);
+
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
-	private interface i18n {
-		String MSG_CONFIRM = "Are you sure to want to delete the folder \"{0}\" and all of its contents?";
+	private static class i18n {
+
+		// i18n[favs.deletelFolder=Are you sure to want to delete the folder \"{0}\" and all of its contents?]
+		static String MSG_CONFIRM = s_stringMgr.getString("favs.deletelFolder");
 	}
-	private Frame _frame;
+
+	private Frame _frame;
 	private QueryTree _tree;
 	private TreePath _path;
 
 	public DeleteSavedQueriesFolderCommand(Frame frame, QueryTree tree,
-											TreePath path) {
+														TreePath path) {
 		super();
 		_frame = frame;
 		_tree = tree;

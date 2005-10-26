@@ -30,10 +30,17 @@ import javax.swing.tree.DefaultTreeModel;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 
 final class QueryTreeModel extends DefaultTreeModel {
+
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(QueryTreeModel.class);
+
+
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(QueryTreeModel.class);
 
@@ -48,14 +55,20 @@ final class QueryTreeModel extends DefaultTreeModel {
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
-	private interface i18n {
-		String DATABASE = "Database";
-//	  String TITLE = "Catalogs";  // ?? Replace with md.getCatalogueTerm.
-		String NO_CATALOG = "No Catalog";   // ?? Replace with md.getCatalogueTerm.
-		String MAY_RETURN = "May return a result";
-		String DOESNT_RETURN = "Does not return a result";
-		String DOES_RETURN = "Returns a result";
-		String UNKNOWN = "Unknown";
+	private static class i18n {
+
+		// i18n[favs.database=Database]
+		String DATABASE = s_stringMgr.getString("favs.database");
+		// i18n[favs.noCatalog=No Catalog]
+		String NO_CATALOG = s_stringMgr.getString("favs.noCatalog");   // ?? Replace with md.getCatalogueTerm.
+		// i18n[favs.mayNotReturn=May return a result]
+		String MAY_RETURN = s_stringMgr.getString("favs.mayNotReturn");
+		// i18n[favs.doesNotReturn=Does not return a result]
+		String DOESNT_RETURN = s_stringMgr.getString("favs.doesNotReturn");
+		// i18n[favs.returns=Returns a result]
+		String DOES_RETURN = s_stringMgr.getString("favs.returns");
+		// i18n[favs.unknown=Unknown]
+		String UNKNOWN = s_stringMgr.getString("favs.unknown");
 	}
 
 	QueryTreeModel(IApplication app, FoldersCache cache) throws IllegalArgumentException {
@@ -90,7 +103,8 @@ final class QueryTreeModel extends DefaultTreeModel {
 			_modelListener.startListening();
 		}
 	}
-	private void loadSubFolders(FolderNode node) {
+
+	private void loadSubFolders(FolderNode node) {
 		Folder[] subFolders = node.getFolder().getSubFolders();
 		for (int i = 0; i < subFolders.length; ++i) {
 			FolderNode childNode = new FolderNode(subFolders[i]);

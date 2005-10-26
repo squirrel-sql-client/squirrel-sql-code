@@ -28,6 +28,8 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.IValidatable;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 //??import net.sourceforge.squirrel_sql.client.util.IHasName;
@@ -37,6 +39,10 @@ import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
  */
 public final class Folder implements Cloneable, Serializable, IHasIdentifier,
 										IValidatable /*, IHasName*/ {
+
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(Folder.class);
+
 	private static final String EMPTY_STRING = "";
 
 	/**
@@ -44,7 +50,8 @@ public final class Folder implements Cloneable, Serializable, IHasIdentifier,
 	 * replaced with a property file.
 	 */
 	private interface i18n {
-		String ERR_BLANK_NAME = "Name cannot be blank.";
+		// i18n[favs.nameMustNotBeBlank=Name cannot be blank.]
+		static String ERR_BLANK_NAME = s_stringMgr.getString("favs.nameMustNotBeBlank");
 	}
 
 	public interface IPropertyNames {
@@ -171,14 +178,16 @@ public final class Folder implements Cloneable, Serializable, IHasIdentifier,
 	public Iterator subFolders() {
 		return _subFolders.iterator();
 	}
-	public Folder[] getSubFolders() {
+
+	public Folder[] getSubFolders() {
 		return (Folder[])_subFolders.toArray(new Folder[_subFolders.size()]);
 	}
 
 	public Folder getSubFolder(int idx) throws ArrayIndexOutOfBoundsException {
 		return (Folder)_subFolders.get(idx);
 	}
-	public void setSubFolders(Folder[] value) {
+
+	public void setSubFolders(Folder[] value) {
 		_subFolders.clear();
 		if (value != null) {
 			for (int i = 0; i < value.length; ++i) {
