@@ -36,6 +36,8 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
@@ -46,6 +48,10 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
  */
 public class SkinLookAndFeelController extends DefaultLookAndFeelController
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(SkinLookAndFeelController.class);
+
+
 	/** Logger for this class. */
 	private static final ILogger s_log =
 		LoggerController.createLogger(SkinLookAndFeelController.class);
@@ -159,8 +165,10 @@ public class SkinLookAndFeelController extends DefaultLookAndFeelController
 		 */
 		interface SkinPrefsPanelI18n
 		{
-			String THEME_PACK = "Theme Pack:";
-			String THEMEPACK_LOC = "Theme Pack Directory:";
+			// i18n[laf.skinThemPack=Theme Pack:]
+			String THEME_PACK = s_stringMgr.getString("laf.skinThemPack");
+			// i18n[laf.skinThemePackDir=Theme Pack Directory:]
+			String THEMEPACK_LOC = s_stringMgr.getString("laf.skinThemePackDir");
 		}
 
 		private SkinLookAndFeelController _ctrl;
@@ -203,7 +211,8 @@ public class SkinLookAndFeelController extends DefaultLookAndFeelController
 		{
 			super.loadPreferencesPanel();
 			final String themePackDir = _ctrl._prefs.getThemePackDirectory();
-			final FileExtensionFilter filter = new FileExtensionFilter("JAR/Zip files", new String[] { ".jar", ".zip" });
+			// i18n[laf.jarZip=JAR/Zip files]
+			final FileExtensionFilter filter = new FileExtensionFilter(s_stringMgr.getString("laf.jarZip"), new String[] { ".jar", ".zip" });
 			_themePackCmb.load(new File(themePackDir), filter);
 			_themePackCmb.setSelectedItem(_ctrl._prefs.getThemePackName());
 			if (_themePackCmb.getSelectedIndex() == -1 &&

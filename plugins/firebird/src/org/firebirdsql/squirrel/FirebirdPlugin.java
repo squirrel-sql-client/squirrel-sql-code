@@ -7,6 +7,8 @@ import javax.swing.JMenu;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
@@ -35,6 +37,10 @@ import org.firebirdsql.squirrel.tab.TriggerSourceTab;
 import org.firebirdsql.squirrel.tab.ViewSourceTab;
 
 public class FirebirdPlugin extends DefaultSessionPlugin {
+
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(FirebirdPlugin.class);
+
     /** Logger for this class. */
     private final static ILogger s_log = LoggerController.createLogger(FirebirdPlugin.class);
 
@@ -212,9 +218,12 @@ public class FirebirdPlugin extends DefaultSessionPlugin {
 //                _treeAPI.addDetailTab(IObjectTypes.SESSION, new SessionDetailsTab());
 //                _treeAPI.addDetailTab(IObjectTypes.SESSION, new SessionStatisticsTab());
           _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
-          _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab("Show trigger source"));
-          _treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureSourceTab("Show procedure source"));
-          _treeAPI.addDetailTab(DatabaseObjectType.VIEW, new ViewSourceTab("Show view source"));
+			 // i18n[firebird.showTrigger=Show trigger source]
+			 _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab(s_stringMgr.getString("firebird.showTrigger")));
+			 // i18n[firebird.showProcedureSource=Show procedure source]
+			 _treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureSourceTab(s_stringMgr.getString("firebird.showProcedureSource")));
+			 // i18n[firebird.showView=Show view source]
+			 _treeAPI.addDetailTab(DatabaseObjectType.VIEW, new ViewSourceTab(s_stringMgr.getString("firebird.showView")));
 //                _treeAPI.addDetailTab(DatabaseObjectType.USER, new UserDetailsTab());
 
           final ActionCollection coll = getApplication().getActionCollection();
@@ -270,7 +279,7 @@ public class FirebirdPlugin extends DefaultSessionPlugin {
         }
         catch (SQLException ex)
         {
-            s_log.debug("Error in getDatabaseProductName()", ex);
+				s_log.debug("Error in getDatabaseProductName()", ex);
         }
         return dbms != null && dbms.toLowerCase().startsWith(FIREBIRD);
     }

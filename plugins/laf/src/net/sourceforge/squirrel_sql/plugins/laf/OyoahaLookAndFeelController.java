@@ -36,6 +36,8 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
@@ -46,6 +48,10 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
  */
 public class OyoahaLookAndFeelController extends DefaultLookAndFeelController
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(OyoahaLookAndFeelController.class);
+
+
 	/** Logger for this class. */
 	private static ILogger s_log =
 		LoggerController.createLogger(OyoahaLookAndFeelController.class);
@@ -149,8 +155,10 @@ public class OyoahaLookAndFeelController extends DefaultLookAndFeelController
 		 */
 		interface OyoahaPrefsPanelI18n
 		{
-			String THEME_PACK = "Theme Pack:";
-			String THEMEPACK_LOC = "Theme Pack Directory:";
+			// i18n[laf.themePack=Theme Pack:]
+			String THEME_PACK = s_stringMgr.getString("laf.themePack");
+			// i18n[laf.themePacLoc=Theme Pack Directory:]
+			String THEMEPACK_LOC = s_stringMgr.getString("laf.themePacLoc");
 		}
 
 		private OyoahaLookAndFeelController _ctrl;
@@ -193,7 +201,8 @@ public class OyoahaLookAndFeelController extends DefaultLookAndFeelController
 		{
 			super.loadPreferencesPanel();
 			final String themePackDir = _ctrl._prefs.getThemePackDirectory();
-			final FileExtensionFilter filter = new FileExtensionFilter("OTM files", new String[] {".otm"});
+			// i18n[laf.otmFiles=OTM files]
+			final FileExtensionFilter filter = new FileExtensionFilter(s_stringMgr.getString("laf.otmFiles"), new String[] {".otm"});
 			_themePackCmb.load(new File(themePackDir), filter);
 			_themePackCmb.setSelectedItem(_ctrl._prefs.getThemePackName());
 			if (_themePackCmb.getSelectedIndex() == -1 &&

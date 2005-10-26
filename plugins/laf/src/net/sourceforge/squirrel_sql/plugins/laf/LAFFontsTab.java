@@ -37,6 +37,8 @@ import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
@@ -47,6 +49,10 @@ import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
  */
 class LAFFontsTab implements IGlobalPreferencesPanel
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(LAFFontsTab.class);
+
+
 	/** Logger for this class. */
 	private static final ILogger s_log =
 		LoggerController.createLogger(LAFFontsTab.class);
@@ -167,10 +173,12 @@ class LAFFontsTab implements IGlobalPreferencesPanel
 		 */
 		interface i18n
 		{
-			String LAF_WARNING =
-				"Note: Changes may not take effect until the application is restarted.";
-			String TAB_TITLE = "Fonts";
-			String TAB_HINT = "Fonts";
+			// i18n[laf.warning=Note: Changes may not take effect until the application is restarted.]
+			String LAF_WARNING =	s_stringMgr.getString("laf.warning");
+			// i18n[laf.tabTitle=Fonts]
+			String TAB_TITLE = s_stringMgr.getString("laf.tabTitle");
+			// i18n[laf.tabHint=Fonts]
+			String TAB_HINT = s_stringMgr.getString("laf.tabHint");
 		}
 
 		/** Button to select font for menus. */
@@ -190,10 +198,14 @@ class LAFFontsTab implements IGlobalPreferencesPanel
 		private JLabel _statusBarFontLbl = new OutputLabel(" ");
 		private JLabel _otherFontLbl = new OutputLabel(" ");
 
-		private JCheckBox _menuFontEnabledChk = new JCheckBox("Enabled");
-		private JCheckBox _staticFontEnabledChk = new JCheckBox("Enabled");
-		private JCheckBox _statusBarFontEnabledChk = new JCheckBox("Enabled");
-		private JCheckBox _otherFontEnabledChk = new JCheckBox("Enabled");
+		// i18n[laf.menuFontEanbled=Enabled]
+		private JCheckBox _menuFontEnabledChk = new JCheckBox(s_stringMgr.getString("laf.menuFontEanbled"));
+		// i18n[laf.staticFontEanbled=Enabled]
+		private JCheckBox _staticFontEnabledChk = new JCheckBox(s_stringMgr.getString("laf.staticFontEanbled"));
+		// i18n[laf.statusFontEanbled=Enabled]
+		private JCheckBox _statusBarFontEnabledChk = new JCheckBox(s_stringMgr.getString("laf.statusFontEanbled"));
+		// i18n[laf.otherFontEanbled=Enabled]
+		private JCheckBox _otherFontEnabledChk = new JCheckBox(s_stringMgr.getString("laf.otherFontEanbled"));
 
 		private LAFPlugin _plugin;
 		private LAFRegister _lafRegister;
@@ -276,13 +288,17 @@ class LAFFontsTab implements IGlobalPreferencesPanel
 		private JPanel createFontsPanel()
 		{
 			_menuFontBtn =
-				new FontButton("Menus", _menuFontLbl, _prefs.getMenuFontInfo());
+				// i18n[laf.menus=Menus]
+				new FontButton(s_stringMgr.getString("laf.menus"), _menuFontLbl, _prefs.getMenuFontInfo());
 			_staticFontBtn =
-				new FontButton("Static Text", _staticFontLbl, _prefs.getStaticFontInfo());
+				// i18n[laf.staticText=Static Text]
+				new FontButton(s_stringMgr.getString("laf.staticText"), _staticFontLbl, _prefs.getStaticFontInfo());
 			_statusBarFontBtn =
-				new FontButton("Status Bars", _statusBarFontLbl, _prefs.getStatusBarFontInfo());
+				// i18n[laf.statusBars=Status Bars]
+				new FontButton(s_stringMgr.getString("laf.statusBars"), _statusBarFontLbl, _prefs.getStatusBarFontInfo());
 			_otherFontBtn =
-				new FontButton("Other", _otherFontLbl, _prefs.getOtherFontInfo());
+				// i18n[laf.other=Other]
+				new FontButton(s_stringMgr.getString("laf.other"), _otherFontLbl, _prefs.getOtherFontInfo());
 
 			FontButtonListener lis = new FontButtonListener();
 			_menuFontBtn.addActionListener(lis);
@@ -322,7 +338,8 @@ class LAFFontsTab implements IGlobalPreferencesPanel
 			});
 
 			JPanel pnl = new JPanel();
-			pnl.setBorder(BorderFactory.createTitledBorder("Fonts"));
+			// i18n[laf.tabFonts=Fonts]
+			pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("laf.tabFonts")));
 			pnl.setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = GridBagConstraints.HORIZONTAL;
