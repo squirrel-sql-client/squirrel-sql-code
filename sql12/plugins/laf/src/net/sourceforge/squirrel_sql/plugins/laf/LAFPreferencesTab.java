@@ -34,6 +34,8 @@ import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
@@ -44,6 +46,10 @@ import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
  */
 public class LAFPreferencesTab implements IGlobalPreferencesPanel
 {
+
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(LAFPreferencesTab.class);
+
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(LAFPreferencesTab.class);
 
@@ -164,13 +170,16 @@ public class LAFPreferencesTab implements IGlobalPreferencesPanel
 		 */
 		interface LAFPreferencesPanelI18n
 		{
-			String LOOK_AND_FEEL = "Look and Feel:";
-			String LAF_WARNING = "Note: Controls may not be drawn correctly " +
-									"after changes in this panel until the " +
-									"application is restarted.";
-			String TAB_TITLE = "L & F";
-			String TAB_HINT = "Look and Feel settings";
-			String LAF_LOC = "L & F jars:";
+			// i18n[laf.lookAndFeel=Look and Feel:]
+			String LOOK_AND_FEEL = s_stringMgr.getString("laf.lookAndFeel");
+			// i18n[laf.lafWarning=Note: Controls may not be drawn correctly after changes in this panel until the application is restarted.]
+			String LAF_WARNING = s_stringMgr.getString("laf.lafWarning");
+			// i18n[laf.lf=L & F]
+			String TAB_TITLE = s_stringMgr.getString("laf.lf");
+			// i18n[laf.settings=Look and Feel settings]
+			String TAB_HINT = s_stringMgr.getString("laf.settings");
+			// i18n[laf.jars=L & F jars:]
+			String LAF_LOC = s_stringMgr.getString("laf.jars");
 		}
 
 		private LookAndFeelComboBox _lafCmb = new LookAndFeelComboBox();
@@ -266,7 +275,8 @@ public class LAFPreferencesTab implements IGlobalPreferencesPanel
 		private JPanel createLookAndFeelPanel()
 		{
 			_lafPnl = new JPanel(new GridBagLayout());
-			_lafPnl.setBorder(BorderFactory.createTitledBorder("Look and Feel"));
+			// i18n[laf.broderLaf=Look and Feel]
+			_lafPnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("laf.broderLaf")));
 
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.weightx = 1;

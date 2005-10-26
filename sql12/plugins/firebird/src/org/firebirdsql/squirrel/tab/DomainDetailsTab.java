@@ -20,6 +20,8 @@ import java.sql.SQLException;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
@@ -29,8 +31,11 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  */
 public class DomainDetailsTab extends BasePreparedStatementTab
 {
-    
-    /** SQL that retrieves the data. */
+
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(DomainDetailsTab.class);
+
+	 /** SQL that retrieves the data. */
     private static String SQL =
         "select rdb$field_name, " +
         "rdb$validation_source, " +
@@ -59,8 +64,10 @@ public class DomainDetailsTab extends BasePreparedStatementTab
 	 */
 	private interface i18n
 	{
-		String TITLE = "Details";
-		String HINT = "Display domain details";
+		// i18n[firebird.details=Details]
+		String TITLE = s_stringMgr.getString("firebird.details");
+		// i18n[firebird.domainDetails=Display domain details]
+		String HINT = s_stringMgr.getString("firebird.domainDetails");
 	}
 
 	/** Logger for this class. */

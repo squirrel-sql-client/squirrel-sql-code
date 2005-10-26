@@ -44,8 +44,12 @@ public class DevelopersPanel extends JPanel
 		// I18nStrings.properties file in the same directory as the Java file.
 		// If the file doesn't exist it will be created.
 		// Such a comment may stretch over serveral subsequent lines.
-		// To have a ]] in a property use ]]]] in the comment. /* ... */ comments are not supported.]
-      MultipleLineLabel lblDescription = new MultipleLineLabel(s_stringMgr.getString("I18n.appendCodeDescription"));
+		// To have a ]] in a property use ]]]] in the comment. /* ... */ comments are not supported.\n\n
+		//The parser is also able to replace a string in the source code by the usual s_stringMgr.getString("key") if:\n
+		// - the string fits in none line\n
+		// - the i18n comment is placed in the line above the string\n
+		// - the string doesn't contain parameters]
+		MultipleLineLabel lblDescription = new MultipleLineLabel(s_stringMgr.getString("I18n.appendCodeDescription"));
       add(lblDescription, gbc);
 
 

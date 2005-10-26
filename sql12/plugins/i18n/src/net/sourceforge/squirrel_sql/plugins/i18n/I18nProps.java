@@ -232,6 +232,12 @@ public class I18nProps extends Object
 				{
 					ret.remove(key);
 				}
+
+				if(key.endsWith(".noi18n") && ret.getProperty(key).equalsIgnoreCase("true"))
+				{
+					ret.remove(key);
+					ret.remove(key.substring(0, key.length() - ".noi18n".length()));
+				}
 			}
 
 			return ret;

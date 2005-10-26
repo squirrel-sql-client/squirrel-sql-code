@@ -51,11 +51,11 @@ class MetalLookAndFeelController extends AbstractPlasticController
       "ContrastTheme",
       "EmeraldTheme",
       "RubyTheme",
-//      "net.sourceforge.squirrel_sql.plugins.laf.swingsetthemes.AquaTheme",
-//      "net.sourceforge.squirrel_sql.plugins.laf.swingsetthemes.CharcoalTheme",
-//      "net.sourceforge.squirrel_sql.plugins.laf.swingsetthemes.ContrastTheme",
-//      "net.sourceforge.squirrel_sql.plugins.laf.swingsetthemes.EmeraldTheme",
-//      "net.sourceforge.squirrel_sql.plugins.laf.swingsetthemes.RubyTheme",
+      "net.sourceforge.squirrel_sql.plugins.laf.swingsetthemes.AquaTheme",
+      "net.sourceforge.squirrel_sql.plugins.laf.swingsetthemes.CharcoalTheme",
+      "net.sourceforge.squirrel_sql.plugins.laf.swingsetthemes.ContrastTheme",
+      "net.sourceforge.squirrel_sql.plugins.laf.swingsetthemes.EmeraldTheme",
+      "net.sourceforge.squirrel_sql.plugins.laf.swingsetthemes.RubyTheme",
    };
 
 

@@ -12,19 +12,27 @@ import javax.swing.JTextArea;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseObjectTab;
 
 
 public abstract class BaseSourceTab extends BaseObjectTab {
+
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(BaseSourceTab.class);
+
+
     /**
      * This interface defines locale specific strings. This should be
      * replaced with a property file.
      */
     private interface i18n
     {
-        String TITLE = "Source";
+		 // i18n[firebird.source=Source]
+		  String TITLE = s_stringMgr.getString("firebird.source");
     }
 
     /** Hint to display for tab. */
