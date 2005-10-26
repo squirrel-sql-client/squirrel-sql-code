@@ -20,14 +20,21 @@ package net.sourceforge.squirrel_sql.plugins.favs;
 import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 
 public class NewSavedQueriesFolderCommand {
+
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(NewSavedQueriesFolderCommand.class);
+
 	private IApplication _app;
 	private QueryTree _tree;
 	private TreePath _path;
-	public NewSavedQueriesFolderCommand(IApplication app, QueryTree tree,
+
+	public NewSavedQueriesFolderCommand(IApplication app, QueryTree tree,
 											TreePath path)
 			throws IllegalArgumentException {
 		super();
@@ -45,7 +52,8 @@ public class NewSavedQueriesFolderCommand {
 		_tree = tree;
 		_path = path;
 	}
-	public void execute() {
+
+	public void execute() {
 		FolderNode rootNode = (FolderNode)_tree.getModel().getRoot();
 		FolderNode parentNode = null;
 		if (_path == null) {
@@ -59,7 +67,8 @@ public class NewSavedQueriesFolderCommand {
 			}
 		}
 		if (parentNode != null) {
-			final Folder folder = new Folder(null, "New Folder"); // ?? i18n
+			// i18n[favs.newFolder=New Folder]
+			final Folder folder = new Folder(null, s_stringMgr.getString("favs.newFolder")); // ?? i18n
 			final FolderNode newNode = new FolderNode(folder);
 			parentNode.getFolder().addSubFolder(folder);
 			parentNode.add(newNode);

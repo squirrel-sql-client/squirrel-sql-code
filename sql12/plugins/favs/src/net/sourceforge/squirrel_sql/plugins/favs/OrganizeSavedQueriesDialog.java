@@ -27,16 +27,24 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.client.IApplication;
 
 class OrganizeSavedQueriesDialog extends JDialog {
+
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(OrganizeSavedQueriesDialog.class);
+
 	private IApplication _app;
 	private FoldersCache _cache;
 
 	private JSplitPane _mainSplitPane = new JSplitPane();
 	private QueryTree _queryTree;// = new QueryTree();
-	private static interface i18n {
-		String TITLE = "Saved Queries";
+
+	private static interface i18n {
+		// i18n[favs.savedQueries=Saved Queries]
+		String TITLE = s_stringMgr.getString("favs.savedQueries");
 	}
 
 	public OrganizeSavedQueriesDialog(IApplication app, FoldersCache cache, Frame owner)
@@ -48,9 +56,11 @@ class OrganizeSavedQueriesDialog extends JDialog {
 		if (cache == null) {
 			throw new IllegalArgumentException("Null FoldersCache passed");
 		}
-		_app = app;
+
+		_app = app;
 		_cache = cache;
-		createUserInterface();
+
+		createUserInterface();
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}
 
@@ -59,13 +69,15 @@ class OrganizeSavedQueriesDialog extends JDialog {
 		setVisible(false);
 
 		_queryTree = new QueryTree(_app, _cache);
-		_mainSplitPane.setOneTouchExpandable(true);
+
+		_mainSplitPane.setOneTouchExpandable(true);
 		_mainSplitPane.setContinuousLayout(true);
 
 		_queryTree.setPreferredSize(new Dimension(200, 200));
 		_mainSplitPane.add(new JScrollPane(_queryTree), JSplitPane.LEFT);
 //	  _mainSplitPane.add(getDesktopPane(), JSplitPane.RIGHT);
-		contentPane.setLayout(new BorderLayout());
+
+		contentPane.setLayout(new BorderLayout());
 		contentPane.add(_mainSplitPane, BorderLayout.CENTER);
 
 		//setBounds(new Rectangle(600, 400));
