@@ -4,6 +4,8 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS or probably in latest weekly build
 =====================================================================
 
+- Fixed java.sql.SQLException: "futmatch_dev8"."dbo"."DBColumnList" not found on Sybase.
+  (Thanks to Gupta, Abhishek)
 - Added "cut/copy SQL to be executed" function to the editor. Since SQuirreL knows the concept
   of SQL text without selection (from caret position between previous and next empty line),
   these functions are short hands for the usual copy and cut which only work on selected text.
