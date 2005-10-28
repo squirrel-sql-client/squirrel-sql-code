@@ -74,6 +74,7 @@ public class SQLDatabaseMetaData
 		String FREE_TDS = "InternetCDS Type 4 JDBC driver for MS SQLServer";
 		String JCONNECT = "jConnect (TM) for JDBC (TM)";
 		String OPTA2000 = "i-net OPTA 2000";
+		String JTDS = "jTDS Type 4 JDBC Driver for MS SQL Server and Sybase";
 	}
 
 	/**
@@ -245,7 +246,8 @@ public class SQLDatabaseMetaData
 		{
 			final String driverName = getDriverName();
 			if (driverName.equals(IDriverNames.FREE_TDS)
-				|| driverName.equals(IDriverNames.JCONNECT))
+				|| driverName.equals(IDriverNames.JCONNECT)
+				|| driverName.equals(IDriverNames.JTDS))
 			{
 				value = "";
 			}
