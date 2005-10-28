@@ -496,7 +496,7 @@ public class AboutBoxDialog extends JDialog
 			if (_timer == null)
 			{
                 // i18n[AboutBoxDialog.info.startmemtime=Starting memory timer (AboutBox)]
-				s_log.debug("Starting memory timer (AboutBox)");
+				s_log.debug(s_stringMgr.getString("AboutBoxDialog.info.startmemtime"));
 				//_thread = new Thread(new MemoryTimer());
 				//_thread.start();
 				updateMemoryStatus();
@@ -510,7 +510,7 @@ public class AboutBoxDialog extends JDialog
 			if (_timer != null)
 			{
                 // i18n[AboutBoxDialog.info.endmemtimer=Ending memory timer (AboutBox)]
-				s_log.debug("Ending memory timer (AboutBox)");
+				s_log.debug(s_stringMgr.getString("AboutBoxDialog.info.endmemtimer"));
 				_timer.stop();
 				_timer = null;
 			}
