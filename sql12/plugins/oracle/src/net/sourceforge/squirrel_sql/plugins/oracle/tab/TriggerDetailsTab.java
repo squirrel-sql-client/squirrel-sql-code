@@ -22,6 +22,8 @@ import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -33,14 +35,20 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IOb
  */
 public class TriggerDetailsTab extends BasePreparedStatementTab
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(TriggerDetailsTab.class);
+
+
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
 	private interface i18n
 	{
-		String TITLE = "Details";
-		String HINT = "Display trigger details";
+		// i18n[oracle.triggerDetails=Details]
+		String TITLE = s_stringMgr.getString("oracle.triggerDetails");
+		// i18n[oracle.displayTriggerDetails=Display trigger details]
+		String HINT = s_stringMgr.getString("oracle.displayTriggerDetails");
 	}
 
 	/** SQL that retrieves the data. */

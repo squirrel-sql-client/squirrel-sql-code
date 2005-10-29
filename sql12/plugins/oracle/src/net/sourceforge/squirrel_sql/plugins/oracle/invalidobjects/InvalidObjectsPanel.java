@@ -30,6 +30,8 @@ import javax.swing.table.TableModel;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -38,6 +40,10 @@ import net.sourceforge.squirrel_sql.plugins.oracle.common.AutoWidthResizeTable;
 
 public class InvalidObjectsPanel extends JPanel
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(InvalidObjectsPanel.class);
+
+
 	/** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(InvalidObjectsPanel.class);
 
@@ -75,9 +81,13 @@ public class InvalidObjectsPanel extends JPanel
 
         protected DefaultTableModel createTableModel() {
           DefaultTableModel tm = new DefaultTableModel();
-          tm.addColumn("Owner");
-          tm.addColumn("Object Name");
-          tm.addColumn("Object Type");
+
+			 // i18n[oracle.owner=Owner]
+			 tm.addColumn(s_stringMgr.getString("oracle.owner"));
+			  // i18n[oracle.objectName=Object Name]
+          tm.addColumn(s_stringMgr.getString("oracle.objectName"));
+			  // i18n[oracle.objectType=Object Type]
+          tm.addColumn(s_stringMgr.getString("oracle.objectType"));
           return tm;
         }
 

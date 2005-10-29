@@ -23,6 +23,8 @@ import java.sql.SQLException;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -34,6 +36,8 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IOb
  */
 public class TriggerSourceTab extends BaseSourceTab
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(TriggerSourceTab.class);
 
 	/** SQL that retrieves the source of a stored procedure. */
 	private static String SQL =
@@ -42,7 +46,8 @@ public class TriggerSourceTab extends BaseSourceTab
 
 	public TriggerSourceTab()
 	{
-		super("Show trigger source");
+		// i18n[oracle.showTriggerSource=Show trigger source]
+		super(s_stringMgr.getString("oracle.showTriggerSource"));
 	}
 
 	protected PreparedStatement createStatement() throws SQLException

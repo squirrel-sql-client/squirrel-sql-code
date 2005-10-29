@@ -33,11 +33,17 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin;
 import net.sourceforge.squirrel_sql.plugins.oracle.common.AutoWidthResizeTable;
 
 public class SGATracePanel extends JPanel
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(SGATracePanel.class);
+
+
 	/** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(SGATracePanel.class);
 
@@ -165,22 +171,38 @@ public class SGATracePanel extends JPanel
 
         protected DefaultTableModel createTableModel() {
           DefaultTableModel tm = new DefaultTableModel();
-          tm.addColumn("SQL Text");
-          tm.addColumn("First Load Time");
-          tm.addColumn("Parse Schema");
-          tm.addColumn("Parse Calls");
-          tm.addColumn("Executions");
-          tm.addColumn("Sorts");
-          tm.addColumn("Disk Reads");
-          tm.addColumn("Buffer Gets");
-          tm.addColumn("Rows");
-          tm.addColumn("Sorts per Exec");
-          tm.addColumn("Disk Reads per Exec");
-          tm.addColumn("Buffer Gets per Exec");
-          tm.addColumn("Rows per Exec");
-          tm.addColumn("Sorts per Row");
-          tm.addColumn("Disk Reads per Row");
-          tm.addColumn("Buffer Gets per Row");
+			 // i18n[oracle.sqlText=SQL Text]
+			 tm.addColumn(s_stringMgr.getString("oracle.sqlText"));
+			  // i18n[oracle.firstLoadTime=First Load Time]
+          tm.addColumn(s_stringMgr.getString("oracle.firstLoadTime"));
+			  // i18n[oracle.parseSchema=Parse Schema]
+          tm.addColumn(s_stringMgr.getString("oracle.parseSchema"));
+			  // i18n[oracle.parseCalla=Parse Calls]
+          tm.addColumn(s_stringMgr.getString("oracle.parseCalla"));
+			  // i18n[oracle.execution=Executions]
+          tm.addColumn(s_stringMgr.getString("oracle.execution"));
+			  // i18n[oracle.sorts=Sorts]
+          tm.addColumn(s_stringMgr.getString("oracle.sorts"));
+			  // i18n[oracle.diskReads=Disk Reads]
+          tm.addColumn(s_stringMgr.getString("oracle.diskReads"));
+			  // i18n[oracle.bufferGets=Buffer Gets]
+          tm.addColumn(s_stringMgr.getString("oracle.bufferGets"));
+			  // i18n[oracle.rows=Rows]
+          tm.addColumn(s_stringMgr.getString("oracle.rows"));
+			  // i18n[oracle.sortsPerExec=Sorts per Exec]
+          tm.addColumn(s_stringMgr.getString("oracle.sortsPerExec"));
+			  // i18n[oracle.diskReadsPerExec=Disk Reads per Exec]
+          tm.addColumn(s_stringMgr.getString("oracle.diskReadsPerExec"));
+			  // i18n[oracle.bufferPerExec=Buffer Gets per Exec]
+          tm.addColumn(s_stringMgr.getString("oracle.bufferPerExec"));
+			  // i18n[oracle.rowsPerExec=Rows per Exec]
+          tm.addColumn(s_stringMgr.getString("oracle.rowsPerExec"));
+			  // i18n[oracle.sortsPerExec=Sorts per Row]
+          tm.addColumn(s_stringMgr.getString("oracle.sortsPerExec"));
+			  // i18n[oracle.diskReadsPerRow=Disk Reads per Row]
+          tm.addColumn(s_stringMgr.getString("oracle.diskReadsPerRow"));
+			  // i18n[oracle.buffer getsPerRow=Buffer Gets per Row]
+          tm.addColumn(s_stringMgr.getString("oracle.buffer getsPerRow"));
           return tm;
         }
 

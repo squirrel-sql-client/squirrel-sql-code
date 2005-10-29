@@ -5,16 +5,23 @@ import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class ViewSourceTab extends BaseSourceTab
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ViewSourceTab.class);
+
+
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
 	private interface i18n
 	{
-		String HINT = "Display script details";
+		// i18n[oracle.diplayScriptDetails=Display script details]
+		String HINT = s_stringMgr.getString("oracle.diplayScriptDetails");
 	}
 
 	/** SQL that retrieves the data. */

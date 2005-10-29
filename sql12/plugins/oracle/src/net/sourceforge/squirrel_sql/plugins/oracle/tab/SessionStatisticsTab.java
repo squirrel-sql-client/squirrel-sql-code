@@ -22,6 +22,8 @@ import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -35,6 +37,9 @@ import net.sourceforge.squirrel_sql.plugins.oracle.IObjectTypes;
  */
 public class SessionStatisticsTab extends BasePreparedStatementTab
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(SessionStatisticsTab.class);
+
 
 	/**
 	 * This interface defines locale specific strings. This should be
@@ -42,8 +47,10 @@ public class SessionStatisticsTab extends BasePreparedStatementTab
 	 */
 	private interface i18n
 	{
-		String TITLE = "Session Statistics";
-		String HINT = "Display database session statistics";
+		// i18n[oracle.sessionStatistics=Session Statistics]
+		String TITLE = s_stringMgr.getString("oracle.sessionStatistics");
+		// i18n[oracle.displaySessionStatistics=Display database session statistics]
+		String HINT = s_stringMgr.getString("oracle.displaySessionStatistics");
 	}
 
 	/** SQL that retrieves the data. */

@@ -19,6 +19,8 @@ import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -30,6 +32,9 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IOb
  */
 public class IndexDetailsTab extends BasePreparedStatementTab
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(IndexDetailsTab.class);
+
 
 	/**
 	 * This interface defines locale specific strings. This should be
@@ -37,8 +42,10 @@ public class IndexDetailsTab extends BasePreparedStatementTab
 	 */
 	private interface i18n
 	{
-		String TITLE = "Details";
-		String HINT = "Display index details";
+		// i18n[oracle.details=Details]
+		String TITLE = s_stringMgr.getString("oracle.details");
+		// i18n[oracle.displayDetails=Display index details]
+		String HINT = s_stringMgr.getString("oracle.displayDetails");
 	}
 
 	/** SQL that retrieves the data. */
