@@ -36,6 +36,8 @@ import javax.swing.event.InternalFrameEvent;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -43,7 +45,11 @@ import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
 
 public class SGATraceInternalFrame extends BaseSessionInternalFrame
 {
-        /** Application API. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(SGATraceInternalFrame.class);
+
+
+		  /** Application API. */
         private final IApplication _app;
 
         /** ID of the session for this window. */
@@ -114,7 +120,8 @@ public class SGATraceInternalFrame extends BaseSessionInternalFrame
                         add(new GetSGATraceAction(app, _resources, _sgaTracePanel));
 
                         //Create checkbox for enabling auto refresh
-                        final JCheckBox autoRefresh = new JCheckBox("Enable auto refresh", false);
+						 		// i18n[oracle.enableAutoRefresh=Enable auto refresh]
+								final JCheckBox autoRefresh = new JCheckBox(s_stringMgr.getString("oracle.enableAutoRefresh"), false);
                         autoRefresh.addActionListener(new ActionListener() {
                           public void actionPerformed(ActionEvent e) {
                             _sgaTracePanel.setAutoRefresh(autoRefresh.isSelected());
@@ -131,7 +138,8 @@ public class SGATraceInternalFrame extends BaseSessionInternalFrame
                           }
                         });
                         add(refreshRate);
-                        add(new JLabel("(seconds)"));
+						 		// i18n[oracle.refreshSecons=(seconds)]
+								add(new JLabel(s_stringMgr.getString("oracle.refreshSecons")));
                 }
         }
 }

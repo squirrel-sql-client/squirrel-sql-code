@@ -36,6 +36,8 @@ import javax.swing.event.InternalFrameEvent;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -43,6 +45,10 @@ import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
 
 public class SessionInfoInternalFrame extends BaseSessionInternalFrame
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(SessionInfoInternalFrame.class);
+
+
         /** Application API. */
         private final IApplication _app;
 
@@ -114,7 +120,8 @@ public class SessionInfoInternalFrame extends BaseSessionInternalFrame
                         add(new GetSessionInfoAction(app, _resources, _sessionInfoPanel));
 
                         //Create checkbox for enabling auto refresh
-                        final JCheckBox autoRefresh = new JCheckBox("Enable auto refresh", false);
+      					   // i18n[oracle.auotRefresh2=Enable auto refresh]
+								final JCheckBox autoRefresh = new JCheckBox(s_stringMgr.getString("oracle.auotRefresh2"), false);
                         autoRefresh.addActionListener(new ActionListener() {
                           public void actionPerformed(ActionEvent e) {
                             _sessionInfoPanel.setAutoRefresh(autoRefresh.isSelected());
@@ -131,7 +138,8 @@ public class SessionInfoInternalFrame extends BaseSessionInternalFrame
                           }
                         });
                         add(refreshRate);
-                        add(new JLabel("(seconds)"));
+						 		// i18n[oracle.secons3=(seconds)]
+								add(new JLabel(s_stringMgr.getString("oracle.secons3")));
                 }
         }
 }

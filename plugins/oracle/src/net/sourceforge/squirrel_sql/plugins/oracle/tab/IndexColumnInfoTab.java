@@ -22,6 +22,8 @@ import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -33,14 +35,19 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IOb
  */
 public class IndexColumnInfoTab extends BasePreparedStatementTab
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(IndexColumnInfoTab.class);
+
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
 	private interface i18n
 	{
-		String TITLE = "Columns";
-		String HINT = "Display index column information";
+		// i18n[oracle.columns=Columns]
+		String TITLE = s_stringMgr.getString("oracle.columns");
+		// i18n[oracle.displayColumns=Display index column information]
+		String HINT = s_stringMgr.getString("oracle.displayColumns");
 	}
 
 	/** SQL that retrieves the data. */

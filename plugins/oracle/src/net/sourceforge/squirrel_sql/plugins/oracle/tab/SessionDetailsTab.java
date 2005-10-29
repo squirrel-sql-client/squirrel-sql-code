@@ -21,6 +21,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -31,14 +33,21 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  */
 public class SessionDetailsTab extends BasePreparedStatementTab
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(SessionDetailsTab.class);
+
+
 	/**
+	 *
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
 	private interface i18n
 	{
-		String TITLE = "Details";
-		String HINT = "Display session details";
+		// i18n[oracle.sessionDetails=Details]
+		String TITLE = s_stringMgr.getString("oracle.sessionDetails");
+		// i18n[oracle.displaySessionDetails=Display session details]
+		String HINT = s_stringMgr.getString("oracle.displaySessionDetails");
 	}
 
 	/** SQL that retrieves the data. */

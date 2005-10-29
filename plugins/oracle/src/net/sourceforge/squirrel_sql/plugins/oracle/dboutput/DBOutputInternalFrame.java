@@ -36,6 +36,8 @@ import javax.swing.event.InternalFrameEvent;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -43,6 +45,10 @@ import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
 
 public class DBOutputInternalFrame extends BaseSessionInternalFrame
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(DBOutputInternalFrame.class);
+
+
         /** Application API. */
         private final IApplication _app;
 
@@ -116,7 +122,8 @@ public class DBOutputInternalFrame extends BaseSessionInternalFrame
 
 
                         //Create checkbox for enabling auto refresh
-                        final JCheckBox autoRefresh = new JCheckBox("Enable auto refresh", false);
+						 		// i18n[oracle.dboutputEnableAutoRefer=Enable auto refresh]
+								final JCheckBox autoRefresh = new JCheckBox(s_stringMgr.getString("oracle.dboutputEnableAutoRefer"), false);
                         autoRefresh.addActionListener(new ActionListener() {
                           public void actionPerformed(ActionEvent e) {
                             _dbOutputPanel.setAutoRefresh(autoRefresh.isSelected());
@@ -133,7 +140,8 @@ public class DBOutputInternalFrame extends BaseSessionInternalFrame
                           }
                         });
                         add(refreshRate);
-                        add(new JLabel("(seconds)"));
+						 		// i18n[oracle.Seconds2=(seconds)]
+								add(new JLabel(s_stringMgr.getString("oracle.Seconds2")));
                 }
         }
 }
