@@ -34,6 +34,8 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDriverProperty;
 import net.sourceforge.squirrel_sql.fw.sql.WrappedSQLException;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
 
 import net.sourceforge.squirrel_sql.plugins.mssql.MssqlPlugin;
 import net.sourceforge.squirrel_sql.plugins.mssql.gui.GenerateSqlDialog;
@@ -41,6 +43,10 @@ import net.sourceforge.squirrel_sql.plugins.mssql.util.ExtensionFilter;
 import net.sourceforge.squirrel_sql.plugins.mssql.util.MssqlIntrospector;
 
 public class GenerateSqlCommand implements ICommand {
+
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(GenerateSqlCommand.class);
+
 	private ISession _session;
 	private final MssqlPlugin _plugin;
 
@@ -71,13 +77,10 @@ public class GenerateSqlCommand implements ICommand {
                 if (props[i].getName().equals("DBNAME")) {
                     // there's a DBNAME specified, so make sure it matches the current catalog.
                     if (!props[i].getValue().equals(_session.getSQLConnection().getCatalog())) {
-                        StringBuffer buf = new StringBuffer();
-                        buf.append("The DBNAME of the session's URL is set to '");
-                        buf.append(props[i].getValue());
-                        buf.append("', but the session's current catalog is set to '");
-                        buf.append(_session.getSQLConnection().getCatalog());
-                        buf.append("'.\n\nSQL Server doesn't support this in most cases.  This is a current issue.");
-                        _session.getApplication().showErrorDialog(buf.toString());
+
+							   String[] params = {props[i].getValue(), _session.getSQLConnection().getCatalog()};
+							   // i18n[mmsql.catalogErr=The DBNAME of the session's URL is set to '{0}', but the session's current catalog is set to '{1}'.\n\nSQL Server doesn't support this in most cases.  This is a current issue.]
+								_session.getApplication().showErrorDialog(s_stringMgr.getString("mmsql.catalogErr", params));
                         return;
                     }
                 }
@@ -93,8 +96,10 @@ public class GenerateSqlCommand implements ICommand {
             JFileChooser fc = new JFileChooser();
             if (dlog.getOneFile()) {
                 ExtensionFilter ef = new ExtensionFilter();
-                ef.addExtension("SQL Scripts","sql");
-                ef.addExtension("Text Files","txt");
+					 // i18n[mmsql.sqlScripts=SQL Scripts]
+					 ef.addExtension(s_stringMgr.getString("mmsql.sqlScripts"),"sql");
+					 // i18n[mmsql.textFiles=Text Files]
+					 ef.addExtension(s_stringMgr.getString("mmsql.textFiles"),"txt");
                 fc.setFileFilter(ef);
             }
             else

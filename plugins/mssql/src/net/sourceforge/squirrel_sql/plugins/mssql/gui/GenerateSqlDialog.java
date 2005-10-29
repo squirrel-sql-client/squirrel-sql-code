@@ -73,6 +73,11 @@ import net.sourceforge.squirrel_sql.plugins.mssql.util.DatabaseObjectInfoTableMo
 import net.sourceforge.squirrel_sql.plugins.mssql.util.MssqlIntrospector;
 
 public class GenerateSqlDialog extends JDialog {
+
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(GenerateSqlDialog.class);
+
+
     private ISession _session;
     private MssqlPlugin _plugin;
     private IDatabaseObjectInfo[] _dbObjs;
@@ -115,8 +120,8 @@ public class GenerateSqlDialog extends JDialog {
 	}
 
 	private void createGUI() throws SQLException {
-		//setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setTitle("Generate SQL Script");
+		// i18n[mssql.generateSqlScript=Generate SQL Script]
+		setTitle(s_stringMgr.getString("mssql.generateSqlScript"));
 		setContentPane(buildContentPane());
 	}
 
@@ -131,9 +136,12 @@ public class GenerateSqlDialog extends JDialog {
 
 	private JTabbedPane buildMainPanel() throws SQLException {
 		final JTabbedPane tabPanel = UIFactory.getInstance().createTabbedPane();
-		tabPanel.addTab("General",null,buildGeneralPanel());
-        tabPanel.addTab("Formatting",null,buildFormattingPanel());
-        tabPanel.addTab("Options",null,buildOptionsPanel());
+		// i18n[mssql.general=General]
+		tabPanel.addTab(s_stringMgr.getString("mssql.general"),null,buildGeneralPanel());
+		// i18n[mssql.foematting=Formatting]
+        tabPanel.addTab(s_stringMgr.getString("mssql.foematting"),null,buildFormattingPanel());
+		// i18n[mssql.options=Options]
+		  tabPanel.addTab(s_stringMgr.getString("mssql.options"),null,buildOptionsPanel());
 		return tabPanel;
 	}
     
@@ -147,18 +155,27 @@ public class GenerateSqlDialog extends JDialog {
         c.weightx = 0.0;
         
         JLabel objectsLabel = new JLabel();
-        objectsLabel.setText("Objects to script:");
+		 // i18n[mssql.toScript=Objects to script:]
+		  objectsLabel.setText(s_stringMgr.getString("mssql.toScript"));
         gridBag.setConstraints(objectsLabel, c);
         panel.add(objectsLabel);
-        
-        final JCheckBox allObjectsCheckbox = new JCheckBox("All objects");
-        final JCheckBox allTablesCheckbox = new JCheckBox("All tables");
-        final JCheckBox allRulesCheckbox = new JCheckBox("All rules");
-        final JCheckBox allViewsCheckbox = new JCheckBox("All views");
-        final JCheckBox allUddtCheckbox = new JCheckBox("All user-defined data types");
-        final JCheckBox allProceduresCheckbox = new JCheckBox("All stored procedures");
-        final JCheckBox allUdfsCheckbox = new JCheckBox("All user-defined functions");
-        final JCheckBox allDefaultsCheckbox = new JCheckBox("All defaults");
+
+		 // i18n[mssql.allObjects=All objects]
+		  final JCheckBox allObjectsCheckbox = new JCheckBox(s_stringMgr.getString("mssql.allObjects"));
+		 // i18n[mssql.allTables=All tables]
+        final JCheckBox allTablesCheckbox = new JCheckBox(s_stringMgr.getString("mssql.allTables"));
+		 // i18n[mssql.allRules=All rules]
+        final JCheckBox allRulesCheckbox = new JCheckBox(s_stringMgr.getString("mssql.allRules"));
+		 // i18n[mssql.allViews=All views]
+        final JCheckBox allViewsCheckbox = new JCheckBox(s_stringMgr.getString("mssql.allViews"));
+		 // i18n[mssql.allUserDef=All user-defined data types]
+        final JCheckBox allUddtCheckbox = new JCheckBox(s_stringMgr.getString("mssql.allUserDef"));
+		 // i18n[mssql.allSps=All stored procedures]
+        final JCheckBox allProceduresCheckbox = new JCheckBox(s_stringMgr.getString("mssql.allSps"));
+		 // i18n[mssql.allUDFs=All user-defined functions]
+        final JCheckBox allUdfsCheckbox = new JCheckBox(s_stringMgr.getString("mssql.allUDFs"));
+		 // i18n[mssql.allDefaults=All defaults]
+        final JCheckBox allDefaultsCheckbox = new JCheckBox(s_stringMgr.getString("mssql.allDefaults"));
         
         c.gridx = 0;
         c.gridy = 1;
@@ -285,22 +302,27 @@ public class GenerateSqlDialog extends JDialog {
         JLabel availableLabel = new JLabel();
         c.gridx = 0;
         c.gridy = 6;
-        objectsLabel.setText("Objects on " + _dbObjs[0].getCatalogName() + ":");
+
+		  // i18n[mssql.objectsOn=Objects on {0}:]
+ 		  objectsLabel.setText(s_stringMgr.getString("mssql.objectsOn", _dbObjs[0].getCatalogName()));
         gridBag.setConstraints(availableLabel, c);
         panel.add(availableLabel);
         
         JLabel selectedLabel = new JLabel();
         c.gridx = 2;
         c.gridy = 6;
-        objectsLabel.setText("Objects to be scripted:");
+		  // i18n[mssql.objectsToBeScripted=Objects to be scripted]
+		  objectsLabel.setText("Objects to be scripted:");
         gridBag.setConstraints(selectedLabel, c);
         panel.add(selectedLabel);
         
         JButton addButton = new JButton();
         c.gridx = 1;
         c.gridy = 8;
-        addButton.setText("Add >>");
-        addButton.setMnemonic('A');
+		 // i18n[mssql.add=Add >>]
+        addButton.setText(s_stringMgr.getString("mssql.add"));
+		 // i18n[mssql.add_Menmonic="]
+        addButton.setMnemonic("A".charAt(0));
         addButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 transferSelectedItems(_availableTable,_selectedTable);
@@ -312,8 +334,10 @@ public class GenerateSqlDialog extends JDialog {
         JButton removeButton = new JButton();
         c.gridx = 1;
         c.gridy = 9;
-        removeButton.setText("<< Remove");
-        removeButton.setMnemonic('R');
+		  // i18n[mssql.remove=<< Remove]
+		  removeButton.setText(s_stringMgr.getString("mssql.remove"));
+		  // i18n[mssql.remove_Mnemonic=R]
+		  removeButton.setMnemonic(s_stringMgr.getString("mssql.remove_Mnemonic").charAt(0));
         removeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 transferSelectedItems(_selectedTable,_availableTable);
@@ -428,11 +452,13 @@ public class GenerateSqlDialog extends JDialog {
         c.weightx = 0.0;
         
         JLabel optionsLabel = new JLabel();
-        optionsLabel.setText("Scripting options allow you to specify how an object will be scripted.");
+		  // i18n[mssql.scriptingOptionsDlg=Scripting options allow you to specify how an object will be scripted.]
+		  optionsLabel.setText(s_stringMgr.getString("mssql.scriptingOptionsDlg"));
         gridBag.setConstraints(optionsLabel, c);
         panel.add(optionsLabel);
-        
-        _generateCreateCheckbox = new JCheckBox("Generate the CREATE <object> command for each object",true);
+
+		  // i18n[mssql.genereateCreate=Generate the CREATE <object> command for each object]
+		  _generateCreateCheckbox = new JCheckBox(s_stringMgr.getString("mssql.genereateCreate"),true);
         c.gridx = 0;
         c.gridy = 1;
         _generateCreateCheckbox.addItemListener(new ItemListener() {
@@ -442,8 +468,9 @@ public class GenerateSqlDialog extends JDialog {
         });
         gridBag.setConstraints(_generateCreateCheckbox, c);
         panel.add(_generateCreateCheckbox);
-        
-        _generateDropCheckbox = new JCheckBox("Generate the DROP <object> command for each object",true);
+
+		  // i18n[mssql.generateDrop=Generate the DROP <object> command for each object]
+		  _generateDropCheckbox = new JCheckBox(s_stringMgr.getString("mssql.generateDrop"),true);
         c.gridx = 0;
         c.gridy = 2;
         _generateDropCheckbox.addItemListener(new ItemListener() {
@@ -453,8 +480,9 @@ public class GenerateSqlDialog extends JDialog {
         });
         gridBag.setConstraints(_generateDropCheckbox, c);
         panel.add(_generateDropCheckbox);
-        
-        _generateDependentCheckbox = new JCheckBox("Generate scripts for all dependent objects",false);
+
+		  // i18n[mssql.generateDependend=Generate scripts for all dependent objects]
+		  _generateDependentCheckbox = new JCheckBox(s_stringMgr.getString("mssql.generateDependend"),false);
         c.gridx = 0;
         c.gridy = 3;
         _generateDependentCheckbox.setEnabled(false);
@@ -466,7 +494,8 @@ public class GenerateSqlDialog extends JDialog {
         gridBag.setConstraints(_generateDependentCheckbox, c);
         panel.add(_generateDependentCheckbox);
         
-        _includeHeadersCheckbox = new JCheckBox("Include descriptive headers in the script files",false);
+        // i18n[mssql.includeHeaders=Include descriptive headers in the script files]
+		  _includeHeadersCheckbox = new JCheckBox(s_stringMgr.getString("mssql.includeHeaders"),false);
         c.gridx = 0;
         c.gridy = 4;
         _includeHeadersCheckbox.addItemListener(new ItemListener() {
@@ -476,8 +505,9 @@ public class GenerateSqlDialog extends JDialog {
         });
         gridBag.setConstraints(_includeHeadersCheckbox, c);
         panel.add(_includeHeadersCheckbox);
-        
-        _extendedPropsCheckbox = new JCheckBox("Include extended properties",false);
+
+		  // i18n[mssql.extProps=Include extended properties]
+		  _extendedPropsCheckbox = new JCheckBox(s_stringMgr.getString("mssql.extProps"),false);
         c.gridx = 0;
         c.gridy = 5;
         _extendedPropsCheckbox.setEnabled(false);
@@ -488,8 +518,9 @@ public class GenerateSqlDialog extends JDialog {
         });
         gridBag.setConstraints(_extendedPropsCheckbox, c);
         panel.add(_extendedPropsCheckbox);
-        
-        _onlySevenCheckbox = new JCheckBox("Only script 7.0 compatible features",false);
+
+		  // i18n[mssql.only70compatible=Only script 7.0 compatible features]
+		  _onlySevenCheckbox = new JCheckBox(s_stringMgr.getString("mssql.only70compatible"),false);
         c.gridx = 0;
         c.gridy = 6;
         _onlySevenCheckbox.setEnabled(false);
@@ -504,7 +535,8 @@ public class GenerateSqlDialog extends JDialog {
         JLabel templateLabel = new JLabel();
         c.gridx = 0;
         c.gridy = 7;
-        templateLabel.setText("Script template");
+		  // i18n[mssql.scriptTemplate=Script template]
+		  templateLabel.setText(s_stringMgr.getString("mssql.scriptTemplate"));
         gridBag.setConstraints(templateLabel, c);
         panel.add(templateLabel);
         
@@ -563,27 +595,31 @@ public class GenerateSqlDialog extends JDialog {
         c.gridy = 0;
         gridBag.setConstraints(securityPanel,c);
         panel.add(securityPanel);
-        
-        _scriptDatabaseCheckbox = new JCheckBox("Script database");
+
+		  // i18n[mssql.scriptDatabase=Script database]
+		  _scriptDatabaseCheckbox = new JCheckBox(s_stringMgr.getString("mssql.scriptDatabase"));
         c.gridx = 0;
         c.gridy = 0;
         securityBag.setConstraints(_scriptDatabaseCheckbox, c);
         securityPanel.add(_scriptDatabaseCheckbox);
-        
-        _scriptUsersAndRolesCheckbox = new JCheckBox("Script database users and database roles");
+
+		  // i18n[mssql.scriptUsers=Script database users and database roles]
+		  _scriptUsersAndRolesCheckbox = new JCheckBox(s_stringMgr.getString("mssql.scriptUsers"));
         c.gridx = 0;
         c.gridy = 1;
         securityBag.setConstraints(_scriptUsersAndRolesCheckbox, c);
         securityPanel.add(_scriptUsersAndRolesCheckbox);
-        
-        _scriptLoginsCheckbox = new JCheckBox("Script SQL Server logins (Windows and SQL Server logins)");
+
+		  // i18n[mssql.scriptLogins=Script SQL Server logins (Windows and SQL Server logins)]
+		  _scriptLoginsCheckbox = new JCheckBox(s_stringMgr.getString("mssql.scriptLogins"));
         c.gridx = 0;
         c.gridy = 2;
         _scriptLoginsCheckbox.setEnabled(false);
         securityBag.setConstraints(_scriptLoginsCheckbox, c);
         securityPanel.add(_scriptLoginsCheckbox);
-        
-        _scriptPermissionsCheckbox = new JCheckBox("Script object-level permissions");
+
+		  // i18n[mssql.scriptPermission=Script object-level permissions]
+		  _scriptPermissionsCheckbox = new JCheckBox(s_stringMgr.getString("mssql.scriptPermission"));
         c.gridx = 0;
         c.gridy = 3;
         securityBag.setConstraints(_scriptPermissionsCheckbox, c);
@@ -592,21 +628,24 @@ public class GenerateSqlDialog extends JDialog {
         
         /* --- TABLE SCRIPTING PANEL ---------------------------------------------- */
         JPanel tablePanel = new JPanel();
-        tablePanel.setBorder(BorderFactory.createTitledBorder("Table Scripting Options"));
+		  // i18n[mssql.scriptingOptions=Table Scripting Options]
+		  tablePanel.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("mssql.scriptingOptions")));
         GridBagLayout tableBag = new GridBagLayout();
         tablePanel.setLayout(tableBag);
         c.gridx = 0;
         c.gridy = 1;
         gridBag.setConstraints(tablePanel,c);
         panel.add(tablePanel);
-        
-        _scriptIndexesCheckbox = new JCheckBox("Script indexes");
+
+		  // i18n[mssql.scriptIndexses=Script indexes]
+		  _scriptIndexesCheckbox = new JCheckBox(s_stringMgr.getString("mssql.scriptIndexses"));
         c.gridx = 0;
         c.gridy = 0;
         tableBag.setConstraints(_scriptIndexesCheckbox, c);
         tablePanel.add(_scriptIndexesCheckbox);
-        
-        _scriptFTIndexesCheckbox = new JCheckBox("Script full-text indexes");
+
+		  // i18n[mssql.scriptFullText=Script full-text indexes]
+		  _scriptFTIndexesCheckbox = new JCheckBox(s_stringMgr.getString("mssql.scriptFullText"));
         c.gridx = 0;
         c.gridy = 1;
         _scriptFTIndexesCheckbox.setEnabled(false);
@@ -618,8 +657,9 @@ public class GenerateSqlDialog extends JDialog {
         c.gridy = 2;
         tableBag.setConstraints(_scriptTriggersCheckbox, c);
         tablePanel.add(_scriptTriggersCheckbox);
-        
-        _scriptConstraintsCheckbox = new JCheckBox("Script PRIMARY keys, FOREIGN keys, defaults, and check constraints");
+
+		  // i18n[mssql.scriptPrimary=Script PRIMARY keys, FOREIGN keys, defaults, and check constraints]
+		  _scriptConstraintsCheckbox = new JCheckBox(s_stringMgr.getString("mssql.scriptPrimary"));
         c.gridx = 0;
         c.gridy = 3;
         tableBag.setConstraints(_scriptConstraintsCheckbox, c);
@@ -628,20 +668,25 @@ public class GenerateSqlDialog extends JDialog {
         
         /* --- TABLE SCRIPTING PANEL ---------------------------------------------- */
         JPanel fileOptionsPanel = new JPanel();
-        fileOptionsPanel.setBorder(BorderFactory.createTitledBorder("File Options"));
+		  // i18n[mssql.fileOptions=File Options]
+		  fileOptionsPanel.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("mssql.fileOptions")));
         c.gridx = 0;
         c.gridy = 2;
         gridBag.setConstraints(fileOptionsPanel,c);
         panel.add(fileOptionsPanel);
         
         JPanel fileFormatPanel = new JPanel();
-        fileFormatPanel.setBorder(BorderFactory.createTitledBorder("File Format"));
+		  // i18n[mssql.fileFormat=File Format]
+		  fileFormatPanel.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("mssql.fileFormat")));
         fileOptionsPanel.add(fileFormatPanel);
         
         ButtonGroup fileFormatGroup = new ButtonGroup();
-        _OEMRadio = new JRadioButton("MS-DOS text (OEM)");
-        _ANSIRadio = new JRadioButton("Windows text (ANSI)");
-        _UnicodeRadio = new JRadioButton("International text (Unicode)",true);
+		  // i18n[mssql.msdos=MS-DOS text (OEM)]
+		  _OEMRadio = new JRadioButton(s_stringMgr.getString("mssql.msdos"));
+		  // i18n[mssql.windows=Windows text (ANSI)]
+		  _ANSIRadio = new JRadioButton(s_stringMgr.getString("mssql.windows"));
+		  // i18n[mssql.unicode=International text (Unicode)]
+		  _UnicodeRadio = new JRadioButton(s_stringMgr.getString("mssql.unicode"),true);
         fileFormatGroup.add(_OEMRadio);
         fileFormatGroup.add(_ANSIRadio);
         fileFormatGroup.add(_UnicodeRadio);
@@ -652,12 +697,15 @@ public class GenerateSqlDialog extends JDialog {
         _ANSIRadio.setEnabled(false);
         
         JPanel generatePanel = new JPanel();
-        generatePanel.setBorder(BorderFactory.createTitledBorder("Files to Generate"));
+		  // i18n[mssql.filesToGenerate=Files to Generate]
+		  generatePanel.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("mssql.filesToGenerate")));
         fileOptionsPanel.add(generatePanel);
         
         ButtonGroup generateGroup = new ButtonGroup();
-        _oneFileRadio = new JRadioButton("Create one file",true);
-        _separateFilesRadio = new JRadioButton("Create one file per object");
+		  // i18n[mssql.oneFile=Create one file]
+		  _oneFileRadio = new JRadioButton(s_stringMgr.getString("mssql.oneFile"),true);
+		  // i18n[mssql.oneFilePerObject=Create one file per object]
+		  _separateFilesRadio = new JRadioButton(s_stringMgr.getString("mssql.oneFilePerObject"));
         generateGroup.add(_oneFileRadio);
         generateGroup.add(_separateFilesRadio);
         generatePanel.add(_oneFileRadio);
@@ -671,8 +719,9 @@ public class GenerateSqlDialog extends JDialog {
 		final ButtonBarBuilder builder = new ButtonBarBuilder();
 		builder.addGlue();
         final GenerateSqlDialog dlg = this;
-        
-        JButton okButton = new JButton("OK");
+
+		  // i18n[mssql.ok=OK]
+		  JButton okButton = new JButton(s_stringMgr.getString("mssql.ok"));
         okButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                _wasCompleted = true;
@@ -682,8 +731,9 @@ public class GenerateSqlDialog extends JDialog {
 		builder.addGridded(okButton);
         
 		builder.addRelatedGap();
-		
-        JButton cancelButton = new JButton("Cancel");
+
+		 // i18n[mssql.cancel=Cancel]
+		  JButton cancelButton = new JButton(s_stringMgr.getString("mssql.cancel"));
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 _wasCompleted = false;
