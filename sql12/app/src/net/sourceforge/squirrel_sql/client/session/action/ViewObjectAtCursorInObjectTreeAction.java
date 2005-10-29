@@ -5,6 +5,9 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.plugins.i18n.DevelopersController;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -20,6 +23,10 @@ public class ViewObjectAtCursorInObjectTreeAction extends SquirrelAction
     */
    private ISQLPanelAPI _panel;
 
+    /** Internationalized strings for this class */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(ViewObjectAtCursorInObjectTreeAction.class);
+   
 
    /**
     * Ctor specifying Application API.
@@ -71,7 +78,11 @@ public class ViewObjectAtCursorInObjectTreeAction extends SquirrelAction
 
       if (false == success)
       {
-         String msg = "Could not locate the database object '" + candidates.getSearchString() + "' in Object tree";
+         // i18n[ViewObjectAtCursorInObjectTreeAction.error.objectnotfound=Could not locate the database object '{0}' in Object tree]
+         String msg =  
+             s_stringMgr.getString(
+                     "ViewObjectAtCursorInObjectTreeAction.error.objectnotfound", 
+                     candidates.getSearchString()); 
          JOptionPane.showMessageDialog(_panel.getSession().getApplication().getMainFrame(), msg);
       }
 
