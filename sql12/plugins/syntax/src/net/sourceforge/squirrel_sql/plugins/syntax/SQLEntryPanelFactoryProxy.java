@@ -5,12 +5,18 @@ import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.NetbeansSQLEntryAreaFactory;
 import net.sourceforge.squirrel_sql.plugins.syntax.oster.OsterSQLEntryAreaFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
 
 
 public class SQLEntryPanelFactoryProxy implements ISQLEntryPanelFactory
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(SQLEntryPanelFactoryProxy.class);
+
+
    private NetbeansSQLEntryAreaFactory _netbeansFactory;
    private OsterSQLEntryAreaFactory _osterFactory;
    private SyntaxPugin _syntaxPugin;
@@ -58,8 +64,8 @@ public class SQLEntryPanelFactoryProxy implements ISQLEntryPanelFactory
             public void run()
             {
                session.getMessageHandler().showMessage(
-                  "You are using the Oster editor. Please consider using the Netbeans editor. " +
-                  "See menu File --> New Session Properties --> Syntax");
+						// i18n[syntax.osterWarning=You are using the Oster editor. Please consider using the Netbeans editor. See menu File --> New Session Properties --> Syntax]
+						s_stringMgr.getString("syntax.osterWarning"));
             }
          });
 

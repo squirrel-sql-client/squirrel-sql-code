@@ -32,6 +32,8 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.FindAction;
@@ -62,6 +64,10 @@ import java.util.prefs.Preferences;
  */
 public class SyntaxPugin extends DefaultSessionPlugin
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(SyntaxPugin.class);
+
+
    /** Logger for this class. */
    private static final ILogger s_log = LoggerController.createLogger(SyntaxPugin.class);
 
@@ -525,8 +531,8 @@ public class SyntaxPugin extends DefaultSessionPlugin
             */
 
             String msg =
-               "Switching the editor of a runninig session is not supported.\n" +
-               "You may switch the entry area in the New Session Properties dialog";
+					// i18n[syntax.switchingNotSupported=Switching the editor of a runninig session is not supported.\nYou may switch the entry area in the New Session Properties dialog]
+					s_stringMgr.getString("syntax.switchingNotSupported");
 
             JOptionPane.showMessageDialog(_session.getApplication().getMainFrame(), msg);
 
