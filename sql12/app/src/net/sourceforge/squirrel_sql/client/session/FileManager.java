@@ -5,6 +5,9 @@ import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.fw.gui.ChooserPreviewer;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.plugins.i18n.DevelopersController;
 
 import javax.swing.*;
 import java.io.*;
@@ -17,6 +20,9 @@ public class FileManager
 
    private File _toSaveTo = null;
 
+   private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(FileManager.class);
+   
    FileManager(ISQLPanelAPI sqlPanelAPI)
    {
       _sqlPanelAPI = sqlPanelAPI;
@@ -197,9 +203,12 @@ public class FileManager
       boolean doSave = false;
       if (askReplace && file.exists())
       {
-         doSave =
-            Dialogs.showYesNo(frame,
-               file.getAbsolutePath() + "\nalready exists. Do you want to replace it?");
+          // i18n[FileManager.confirm.filereplace={0} \nalready exists. Do you want to replace it?]
+         String confirmMsg = 
+             s_stringMgr.getString("FileManager.confirm.filereplace", 
+                                   file.getAbsolutePath());
+          doSave =
+            Dialogs.showYesNo(frame, confirmMsg);
          //i18n
          if (!doSave)
          {
@@ -207,9 +216,11 @@ public class FileManager
          }
          if (!file.canWrite())
          {
-            Dialogs.showOk(frame,
-               "File " + file.getAbsolutePath() + "\ncannot be written to.");
-            //i18n
+             // i18n[FileManager.error.cannotwritefile=File {0} \ncannot be written to.]
+             String msg = 
+                 s_stringMgr.getString("FileManager.error.cannotwritefile", 
+                                       file.getAbsolutePath());
+            Dialogs.showOk(frame, msg);
             return false;
          }
          file.delete();
@@ -235,7 +246,10 @@ public class FileManager
 
             fos.write(sScript.getBytes());
             setFile(file);
-            _sqlPanelAPI.getSession().getMessageHandler().showMessage("Saved to " + file.getAbsolutePath());
+            // i18n[FileManager.savedfile=Saved to {0}]
+            String msg = s_stringMgr.getString("FileManager.savedfile",
+                                               file.getAbsolutePath());
+            _sqlPanelAPI.getSession().getMessageHandler().showMessage(msg);
          }
          catch (IOException ex)
          {
