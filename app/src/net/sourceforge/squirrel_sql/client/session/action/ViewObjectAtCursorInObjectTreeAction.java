@@ -1,5 +1,10 @@
 package net.sourceforge.squirrel_sql.client.session.action;
 
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+
+import javax.swing.JOptionPane;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
@@ -7,11 +12,6 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.plugins.i18n.DevelopersController;
-
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
 
 
 public class ViewObjectAtCursorInObjectTreeAction extends SquirrelAction
