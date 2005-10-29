@@ -1,5 +1,8 @@
 package net.sourceforge.squirrel_sql.plugins.userscript.kernel;
 
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -11,7 +14,18 @@ import java.util.List;
 
 public class ScriptListTableModel extends AbstractTableModel
 {
-	private static final String[] colNames = {"Name", "Script class", "Show in standard menues"};
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ScriptListTableModel.class);
+
+	private static final String[] colNames =
+		{
+			// i18n[userscript.tableColName=Name]
+			s_stringMgr.getString("userscript.tableColName"),
+			// i18n[userscript.scriptClass=Script class]
+			s_stringMgr.getString("userscript.scriptClass"),
+			// i18n[userscript.showInStandardMenues=Show in standard menues]
+			s_stringMgr.getString("userscript.showInStandardMenues")
+		};
 	private Script[] m_scripts = new Script[0];
 
 	void setScripts(Script[] scripts)

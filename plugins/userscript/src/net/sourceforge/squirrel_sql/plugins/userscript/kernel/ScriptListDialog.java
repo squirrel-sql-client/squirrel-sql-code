@@ -1,5 +1,8 @@
 package net.sourceforge.squirrel_sql.plugins.userscript.kernel;
 
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
 import javax.swing.*;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableCellRenderer;
@@ -8,6 +11,10 @@ import java.awt.*;
 
 public class ScriptListDialog extends JDialog
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ScriptListDialog.class);
+
+
 	JTable tblScriptList;
 	JButton btnExecute;
 	JButton btnAdd;
@@ -25,9 +32,11 @@ public class ScriptListDialog extends JDialog
       super(owner, title, false);
 
 		JTabbedPane tab = new JTabbedPane();
-		tab.addTab("Scripts", createScriptPanel(applicableScriptsText));
+		// i18n[userscript.dlgTabScripts=Scripts]
+		tab.addTab(s_stringMgr.getString("userscript.dlgTabScripts"), createScriptPanel(applicableScriptsText));
 		tab.setSelectedIndex(0);
-		tab.addTab("Extra class path", createClasspathPanel());
+		// i18n[userscript.dlgTabecp=Extra class path]
+		tab.addTab(s_stringMgr.getString("userscript.dlgTabecp"), createClasspathPanel());
 
 		getContentPane().add(tab);
 		setSize(500, 400);
@@ -44,8 +53,10 @@ public class ScriptListDialog extends JDialog
 		JPanel pnlSouth = new JPanel();
 		pnlSouth.setLayout(new GridLayout(1,2));
 
-		btnCpAdd = new JButton("Add...");
-		btnCpRemove = new JButton("Remove");
+		// i18n[userscript.dlgTabScriptsAdd=Add...]
+		btnCpAdd = new JButton(s_stringMgr.getString("userscript.dlgTabScriptsAdd"));
+		// i18n[userscript.dlgTabScriptsRemove=Remove]
+		btnCpRemove = new JButton(s_stringMgr.getString("userscript.dlgTabScriptsRemove"));
 
 		pnlSouth.add(btnCpAdd);
 		pnlSouth.add(btnCpRemove);
@@ -88,12 +99,16 @@ public class ScriptListDialog extends JDialog
 		JPanel southPanelLower = new JPanel();
 		southPanelLower.setLayout(new GridLayout(1, 3));
 
-
-      btnExecute = new JButton("Execute");
-		btnAdd = new JButton("Add...");
-		btnEdit = new JButton("Edit...");
-		btnRemove = new JButton("Remove");
-		btnGenerateTemplate = new JButton("Generate script template...");
+		// i18n[userscript.dlgTabScriptsExecute=Execute]
+      btnExecute = new JButton(s_stringMgr.getString("userscript.dlgTabScriptsExecute"));
+		// i18n[userscript.dlgTabScriptsAdd2=Add...]
+		btnAdd = new JButton(s_stringMgr.getString("userscript.dlgTabScriptsAdd2"));
+		// i18n[userscript.dlgTabScriptsEdit=Edit...]
+		btnEdit = new JButton(s_stringMgr.getString("userscript.dlgTabScriptsEdit"));
+		// i18n[userscript.dlgTabScriptsRemove2=Remove]
+		btnRemove = new JButton(s_stringMgr.getString("userscript.dlgTabScriptsRemove2"));
+		// i18n[userscript.dlgTabScriptsGenTempl=Generate script template...]
+		btnGenerateTemplate = new JButton(s_stringMgr.getString("userscript.dlgTabScriptsGenTempl"));
 		southPanelLower.add(btnExecute);
 		southPanelLower.add(btnAdd);
 		southPanelLower.add(btnEdit);

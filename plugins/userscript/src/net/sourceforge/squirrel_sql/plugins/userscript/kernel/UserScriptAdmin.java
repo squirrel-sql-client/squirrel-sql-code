@@ -7,6 +7,8 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.userscript.UserScriptPlugin;
 import net.sourceforge.squirrel_sql.plugins.userscript.FrameWorkAcessor;
 
@@ -21,6 +23,10 @@ import java.sql.Connection;
 
 public class UserScriptAdmin
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(UserScriptAdmin.class);
+
+
 	public static final String SCRIPT_PROPERTIES_FILE = "UserScriptProperties.xml";
 
 	public static final boolean TARGET_TYPE_DB_OBJECT = false;
@@ -232,7 +238,8 @@ public class UserScriptAdmin
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace(env.createPrintStream("Err Msg"));
+			// i18n[userscript.scriptAdminErr=Err Msg]
+			e.printStackTrace(env.createPrintStream(s_stringMgr.getString("userscript.scriptAdminErr")));
 			env.flushAll();
 			env.setExecutionFinished(false);
 			throw new RuntimeException(e);

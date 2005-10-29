@@ -1,6 +1,8 @@
 package net.sourceforge.squirrel_sql.plugins.userscript.kernel;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.plugins.userscript.UserScriptPlugin;
 
 import javax.swing.*;
@@ -11,6 +13,10 @@ import java.net.URL;
 
 public class ScriptPropertiesController
 {
+
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ScriptPropertiesController.class);
+
 	private ScriptPropsListener m_scriptPropsListener;
 
 	private Script m_script;
@@ -84,11 +90,14 @@ public class ScriptPropertiesController
 		String msg;
 		if(null == classUrl)
 		{
-			msg = "Class " + m_dlg.txtScriptClass.getText() + " not found";
+			// i18n[userscript.classNotFound=Class {0} not found]
+			msg = s_stringMgr.getString("userscript.classNotFound", m_dlg.txtScriptClass.getText());
 		}
 		else
 		{
-			msg = "Class " + m_dlg.txtScriptClass.getText() + " found in\n" + classUrl.getFile();
+			String params[] = new String[]{m_dlg.txtScriptClass.getText(), classUrl.getFile()};
+			// i18n[userscript.classNotFoundIn=Class {0} found in\n{1}]
+			msg = s_stringMgr.getString("userscript.classNotFoundIn", params);
 		}
 
 		JOptionPane.showMessageDialog(m_owner, msg);
@@ -111,12 +120,14 @@ public class ScriptPropertiesController
 	{
       if(null == m_dlg.txtName.getText() || "".equals(m_dlg.txtName.getText().trim()))
 		{
-			JOptionPane.showMessageDialog(m_owner, "Please enter a script name");
+			// i18n[userscript.enterScriptName=Please enter a script name]
+			JOptionPane.showMessageDialog(m_owner, s_stringMgr.getString("userscript.enterScriptName"));
 			return;
 		}
 		if(null == m_dlg.txtScriptClass.getText() || "".equals(m_dlg.txtScriptClass.getText().trim()))
 		{
-			JOptionPane.showMessageDialog(m_owner, "Please enter a script class");
+			// i18n[userscript.enterScriptClass=Please enter a script class]
+			JOptionPane.showMessageDialog(m_owner, s_stringMgr.getString("userscript.enterScriptClass"));
 			return;
 		}
 

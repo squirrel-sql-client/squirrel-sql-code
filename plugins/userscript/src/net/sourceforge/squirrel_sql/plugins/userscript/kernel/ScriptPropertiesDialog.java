@@ -1,10 +1,17 @@
 package net.sourceforge.squirrel_sql.plugins.userscript.kernel;
 
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class ScriptPropertiesDialog extends JDialog
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ScriptPropertiesDialog.class);
+
+
 	JTextField txtName;
 	JTextField txtScriptClass;
 	JCheckBox chkShowInStandard;
@@ -15,12 +22,14 @@ public class ScriptPropertiesDialog extends JDialog
 
 	public ScriptPropertiesDialog(Frame owner)
 	{
-		super(owner, "Script properties", false);
+		// i18n[userscript.scriptProps=Script properties]
+		super(owner, s_stringMgr.getString("userscript.scriptProps"), false);
 
       getContentPane().setLayout(new GridLayout(4,1));
 
 		JPanel pnl1 = new JPanel(new BorderLayout());
-		JLabel lblName = new JLabel("Name");
+		// i18n[userscript.scriptPropsName=Name]
+		JLabel lblName = new JLabel(s_stringMgr.getString("userscript.scriptPropsName"));
 		pnl1.add(lblName, BorderLayout.WEST);
 		txtName = new JTextField();
 		pnl1.add(txtName, BorderLayout.CENTER);
@@ -28,22 +37,27 @@ public class ScriptPropertiesDialog extends JDialog
 
 
 		JPanel pnl2 = new JPanel(new BorderLayout());
-		JLabel lblScriptClass = new JLabel("Script class");
+		// i18n[userscript1.scriptClass=Script class]
+		JLabel lblScriptClass = new JLabel(s_stringMgr.getString("userscript.scriptClass1"));
 		pnl2.add(lblScriptClass, BorderLayout.WEST);
 		txtScriptClass = new JTextField();
 		pnl2.add(txtScriptClass, BorderLayout.CENTER);
 		getContentPane().add(pnl2);
 
-		chkShowInStandard = new JCheckBox("Show in standard menues");
+		// i18n[userscript.showInStandardMenues1=Show in standard menues]
+		chkShowInStandard = new JCheckBox(s_stringMgr.getString("userscript.showInStandardMenues1"));
 		getContentPane().add(chkShowInStandard);
 
 		JPanel pnl3 = new JPanel();
 		pnl3.setLayout(new GridLayout(1,3));
-		btnCheck = new JButton("Check");
+		// i18n[userscript.propsDlgCheck=Check]
+		btnCheck = new JButton(s_stringMgr.getString("userscript.propsDlgCheck"));
 		pnl3.add(btnCheck);
-		btnOk = new JButton("OK");
+		// i18n[userscript.propsDlgOk=OK]
+		btnOk = new JButton(s_stringMgr.getString("userscript.propsDlgOk"));
 		pnl3.add(btnOk);
-		btnCancel = new JButton("Cancel");
+		// i18n[userscript.propsDlgCancel=Cancel]
+		btnCancel = new JButton(s_stringMgr.getString("userscript.propsDlgCancel"));
 		pnl3.add(btnCancel);
 		getContentPane().add(pnl3);
 
