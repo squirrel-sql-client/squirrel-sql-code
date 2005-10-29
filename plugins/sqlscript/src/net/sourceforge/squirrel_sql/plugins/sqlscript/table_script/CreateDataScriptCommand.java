@@ -32,6 +32,8 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
 
@@ -40,7 +42,11 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public class CreateDataScriptCommand implements ICommand, InternalFrameListener
 {
-   protected JInternalFrame _statusFrame;
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(CreateDataScriptCommand.class);
+
+
+	protected JInternalFrame _statusFrame;
    protected boolean _bStop = false;
 
    /**
@@ -69,8 +75,11 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
    {
       if (_statusFrame == null)
       {
-         JOptionPane optionPane = new JOptionPane("Abort?", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION);
-         _statusFrame = optionPane.createInternalFrame(_session.getSessionSheet(), "Creating data script");
+			// i18n[sqlscript.abort=Abort?]
+         JOptionPane optionPane = new JOptionPane(s_stringMgr.getString("sqlscript.abort"), JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION);
+
+			// i18n[sqlscript.creatingDataScript=Creating data script]
+			_statusFrame = optionPane.createInternalFrame(_session.getSessionSheet(), s_stringMgr.getString("sqlscript.creatingDataScript"));
          _statusFrame.addInternalFrameListener(this);
       }
       _bStop = false;

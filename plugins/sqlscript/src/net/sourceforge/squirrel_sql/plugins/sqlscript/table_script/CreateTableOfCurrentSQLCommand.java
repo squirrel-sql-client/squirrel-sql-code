@@ -31,6 +31,8 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
 
@@ -38,6 +40,10 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(CreateTableOfCurrentSQLCommand.class);
+
+
    /**
     * Current plugin.
     */
@@ -106,7 +112,9 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
                            }
                            catch(Exception e)
                            {
-                              _session.getMessageHandler().showMessage("Drop table " + sTable + " failed:");
+
+										// i18n[sqlscript.dropTableFailed=Drop table {0} failed:]
+										_session.getMessageHandler().showMessage(s_stringMgr.getString("sqlscript.dropTableFailed", sTable));
                               _session.getMessageHandler().showMessage(e);
                            }
                         }
@@ -114,16 +122,17 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
                         stmt.execute(sbCreate.toString());
                         stmt.execute(sbInsert.toString());
                         hideAbortFrame();
-                        _session.getMessageHandler().showMessage("Successfully created table " + sTable);
+								// i18n[sqlscript.successCreate=Successfully created table {0}]
+                        _session.getMessageHandler().showMessage(s_stringMgr.getString("sqlscript.successCreate", sTable));
                         return;
                      }
                      catch(Exception e)
                      {
                         _session.getMessageHandler().showErrorMessage(e);
-                        String msg =
-                           "An error occured during storing SQL result in table " + sTable + ". See messages for details.\n" +
-                           "I will create the copy script. You may correct errors and run it again.";
-                        JOptionPane.showMessageDialog(_session.getApplication().getMainFrame(), msg);
+
+								// i18n[sqlscript.storeSqlInTableFailed=An error occured during storing SQL result in table {0}. See messages for details.\nI will create the copy script. You may correct errors and run it again.]
+								String msg = s_stringMgr.getString("sqlscript.storeSqlInTableFailed", sTable);
+								JOptionPane.showMessageDialog(_session.getApplication().getMainFrame(), msg);
                      }
 
                   }

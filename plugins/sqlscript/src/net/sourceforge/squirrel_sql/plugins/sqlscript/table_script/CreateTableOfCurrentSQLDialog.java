@@ -1,41 +1,75 @@
 package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
 
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
 public class CreateTableOfCurrentSQLDialog extends JDialog
 {
-   JButton btnOK;
-   JButton btnCancel;
-   JTextField txtTableName;
-   JCheckBox chkScriptOnly;
-   JCheckBox chkDropTable;
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(CreateTableOfCurrentSQLDialog.class);
 
-   public CreateTableOfCurrentSQLDialog(JFrame parentFrame)
-   {
-      super(parentFrame, "Create table of SQL", true);
 
-      getContentPane().setLayout(new GridLayout(5,1,5,0));
+	JButton btnOK;
+	JButton btnCancel;
+	JTextField txtTableName;
+	JCheckBox chkScriptOnly;
+	JCheckBox chkDropTable;
 
-      getContentPane().add(new JLabel("Enter name of table:"));
+	public CreateTableOfCurrentSQLDialog(JFrame parentFrame)
+	{
+		// i18n[sqlscript.dlgCreatTableOfSql=Create table of SQL]
+		super(parentFrame, s_stringMgr.getString("sqlscript.dlgCreatTableOfSql"), true);
 
-      txtTableName = new JTextField();
-      getContentPane().add(txtTableName);
+		getContentPane().setLayout(new GridLayout(5,1,5,0));
 
-      chkDropTable = new JCheckBox("Drop table if exists");
-      getContentPane().add(chkDropTable);
+		// i18n[sqlscript.enterNameOfTable=Enter name of table:]
+		getContentPane().add(new JLabel(s_stringMgr.getString("sqlscript.enterNameOfTable")));
 
-      chkScriptOnly = new JCheckBox("Generate script only");
-      getContentPane().add(chkScriptOnly);
+		txtTableName = new JTextField();
+		getContentPane().add(txtTableName);
 
-      JPanel pnlButtons = new JPanel();
-      pnlButtons.setLayout(new GridLayout(1,2,0,5));
+		// i18n[sqlscript.dropIfExists=Drop table if exists]
+		chkDropTable = new JCheckBox(s_stringMgr.getString("sqlscript.dropIfExists"));
+		getContentPane().add(chkDropTable);
 
-      btnOK = new JButton("OK");
-      pnlButtons.add(btnOK);
-      btnCancel = new JButton("Cancel");
-      pnlButtons.add(btnCancel);
+		// i18n[sqlscript.scriptOnly=Generate script only]
+		chkScriptOnly = new JCheckBox(s_stringMgr.getString("sqlscript.scriptOnly"));
+		getContentPane().add(chkScriptOnly);
 
-      getContentPane().add(pnlButtons);
-   }
+		JPanel pnlButtons = new JPanel();
+		pnlButtons.setLayout(new GridLayout(1,2,0,5));
+
+		// i18n[sqlscript.tableScriptOk=OK]
+		btnOK = new JButton(s_stringMgr.getString("sqlscript.tableScriptOk"));
+		pnlButtons.add(btnOK);
+		// i18n[sqlscript.tableScriptCancel=Cancel]
+		btnCancel = new JButton(s_stringMgr.getString("sqlscript.tableScriptCancel"));
+		pnlButtons.add(btnCancel);
+
+		getContentPane().add(pnlButtons);
+		
+		getRootPane().setDefaultButton(btnOK);
+
+		AbstractAction closeAction = new AbstractAction()
+					{
+						public void actionPerformed(ActionEvent actionEvent)
+						{
+							setVisible(false);
+							dispose();
+						}
+					};
+		KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(escapeStroke, "CloseAction");
+		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "CloseAction");
+		getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escapeStroke, "CloseAction");
+		getRootPane().getActionMap().put("CloseAction", closeAction);
+
+
+
+	}
 }
