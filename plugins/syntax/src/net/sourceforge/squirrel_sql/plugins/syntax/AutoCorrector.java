@@ -1,5 +1,8 @@
 package net.sourceforge.squirrel_sql.plugins.syntax;
 
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
 import javax.swing.text.JTextComponent;
 import javax.swing.text.BadLocationException;
 import javax.swing.event.DocumentListener;
@@ -9,6 +12,10 @@ import java.util.prefs.Preferences;
 
 public class AutoCorrector
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(AutoCorrector.class);
+
+
    private JTextComponent _txtComp;
    private SyntaxPugin _plugin;
 
@@ -63,7 +70,9 @@ public class AutoCorrector
 
                if(10 > _autocorrectionsCount)
                {
-                  _plugin.getApplication().getMessageHandler().showMessage(autoCorrCandidate + " has been auto corrected / extended to " + corr + ". To configure auto correct / abreviations see Menu Session --> Syntax --> Configure auto correct / abreviation");
+						String[] params = new String[]{autoCorrCandidate, corr};
+						// i18n[syntax.hasBeenAutocorr={0} has been auto corrected / extended to {1}. To configure auto correct / abreviations see Menu Session --> Syntax --> Configure auto correct / abreviation]
+                  _plugin.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("syntax.hasBeenAutocorr", params));
                   Preferences.userRoot().putInt(PREFS_KEY_AUTO_COORECTIONS_COUNT, ++_autocorrectionsCount);
                }
 

@@ -27,6 +27,9 @@ import javax.swing.event.ListSelectionListener;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
@@ -43,6 +46,10 @@ import net.sourceforge.squirrel_sql.plugins.syntax.prefspanel.StylesList;
 public class SyntaxPreferencesPanel
 	implements INewSessionPropertiesPanel, ISessionPropertiesPanel
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(SyntaxPreferencesPanel.class);
+
+
 	/** Logger for this class. */
 	private static final ILogger s_log =
 		LoggerController.createLogger(SyntaxPreferencesPanel.class);
@@ -158,11 +165,16 @@ public class SyntaxPreferencesPanel
 		 */
 		interface i18n
 		{
-			String TAB_TITLE = "Syntax";
-			String TAB_HINT = "Syntax Highlighting";
-         String NETBEANS = "Use Netbeans editor (recommended)";
-			String OSTER = "Use Ostermiller editor";
-         String PLAIN = "Use plain editor";
+			// i18n[syntax.prefSyntax=Syntax]
+			String TAB_TITLE = s_stringMgr.getString("syntax.prefSyntax");
+			// i18n[syntax.prefSyntaxHint=Syntax Highlighting]
+			String TAB_HINT = s_stringMgr.getString("syntax.prefSyntaxHint");
+			// i18n[syntax.prefUseNetbeans=Use Netbeans editor (recommended)]
+         String NETBEANS = s_stringMgr.getString("syntax.prefUseNetbeans");
+			// i18n[syntax.prefUseOster=Use Ostermiller editor]
+			String OSTER = s_stringMgr.getString("syntax.prefUseOster");
+			// i18n[syntax.prefUsePlain=Use plain editor]
+         String PLAIN = s_stringMgr.getString("syntax.prefUsePlain");
       }
 
       private final JRadioButton _netbeansActiveOpt  = new JRadioButton(i18n.NETBEANS);
@@ -304,33 +316,21 @@ public class SyntaxPreferencesPanel
 
          JPanel pnlLeft = new JPanel(new BorderLayout(4,0));
 
-         String[] text =
-            {
-            "Note:",
-            "The preferable editor is the",
-            "Netbeans editor.",
-            "The Netbeans editor",
-            "- is less memory consuming,",
-            "- its highlightning is more exact,",
-            "- can handle many lines well.",
-            "The Oster editor is still there",
-            "because it can handle",
-            "very long lines better than the",
-            "Netbeans editor.",
-            "This is due to a known bug in",
-            "the Netbeans editor (Issue #41241).",
-            "As soon as this bug is fixed",
-            "the Oster editor will be removed."
-            };
+			// i18n[syntax.osterExplain=Note: The preferable editor is the Netbeans editor. The Netbeans editor\n
+			//- is less memory consuming,\n
+			//- its highlightning is more exact,\n
+			//- can handle many lines well.\n
+			// The Oster editor is still there
+			// because it can handle
+			// very long lines better than the
+			// Netbeans editor.
+			// This is due to a known bug in
+			// the Netbeans editor (Issue #41241).
+			// As soon as this bug is fixed
+			// the Oster editor will be removed.]
+			String text = s_stringMgr.getString("syntax.osterExplain");
 
-         JPanel multiLineLabel = new JPanel(new GridLayout(text.length + 1,1));
-
-         for (int i = 0; i < text.length; i++)
-         {
-            multiLineLabel.add(new JLabel(text[i]));
-         }
-         multiLineLabel.add(new JLabel());
-         pnlLeft.add(multiLineLabel);
+         pnlLeft.add(new MultipleLineLabel(text));
 
 
          JPanel pnlOpt = new JPanel(new GridLayout(3,1,4,0));
@@ -353,7 +353,8 @@ public class SyntaxPreferencesPanel
 		private JPanel createStylePanel(SyntaxPluginResources rsrc)
 		{
 			JPanel pnl = new JPanel(new BorderLayout());
-			pnl.setBorder(BorderFactory.createTitledBorder("Syntax Styles"));
+			// i18n[syntax.styles=Syntax Styles]
+			pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("syntax.styles")));
 
 			_styleMaintPnl = new StyleMaintenancePanel(_stylesList, rsrc);
 

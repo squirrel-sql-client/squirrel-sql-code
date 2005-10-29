@@ -31,6 +31,9 @@ import javax.swing.UIManager;
 
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxStyle;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
 /**
  * This control is a listbox containing SyntaxStyle objects.
  *
@@ -38,6 +41,10 @@ import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxStyle;
  */
 public class StylesList extends JList
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(StylesList.class);
+
+
 	/** Defines indices in the Styles list for the individual styles. */
 	public interface IStylesListIndices
 	{
@@ -61,18 +68,30 @@ public class StylesList extends JList
 	/** Titles for each style in the styles list. */
 	private final static String[] s_styleTitles = new String[]
 	{
-		"Columns",
-		"Comments",
-		"Data Types",
-		"Errors",
-		"Functions",
-		"Identifiers",
-		"Literals",
-		"Operators",
-		"Reserved Words",
-		"Separators",
-		"Tables",
-		"White Space",
+		//i18n[syntax.cols=Columns]
+		s_stringMgr.getString("syntax.cols"),
+		//i18n[syntax.comments=Comments]
+		s_stringMgr.getString("syntax.comments"),
+		//i18n[syntax.dataTypes=Data Types]
+		s_stringMgr.getString("syntax.dataTypes"),
+		//i18n[syntax.errors=Errors]
+		s_stringMgr.getString("syntax.errors"),
+		//i18n[syntax.functions=Functions]
+		s_stringMgr.getString("syntax.functions"),
+		//i18n[syntax.identifiers=Identifiers]
+		s_stringMgr.getString("syntax.identifiers"),
+		//i18n[syntax.literals=Literals]
+		s_stringMgr.getString("syntax.literals"),
+		//i18n[syntax.operators=Operators]
+		s_stringMgr.getString("syntax.operators"),
+		//i18n[syntax.resWords=Reserved Words]
+		s_stringMgr.getString("syntax.resWords"),
+		//i18n[syntax.separators=Separators]
+		s_stringMgr.getString("syntax.separators"),
+		//i18n[syntax.tables=Tables]
+		s_stringMgr.getString("syntax.tables"),
+		//i18n[syntax.whiteSpace=White Space]
+		s_stringMgr.getString("syntax.whiteSpace"),
 	};
 
 	private SyntaxStyle[] _styles = new SyntaxStyle[IStylesListIndices.LIST_SIZE];
@@ -134,8 +153,8 @@ public class StylesList extends JList
 		}
 
 		public Component getListCellRendererComponent(JList list,
-							Object value, int idx, boolean isSelected,
-							boolean cellHasFocus)
+																	 Object value, int idx, boolean isSelected,
+																	 boolean cellHasFocus)
 		{
 			final SyntaxStyle style = (SyntaxStyle)value;
 			setForeground(new Color(style.getTextRGB()));

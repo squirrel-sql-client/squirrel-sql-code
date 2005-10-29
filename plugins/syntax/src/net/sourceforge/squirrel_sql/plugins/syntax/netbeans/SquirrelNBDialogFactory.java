@@ -10,6 +10,8 @@ import java.util.Hashtable;
 
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPugin;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 /**
@@ -17,6 +19,8 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  */
 public class SquirrelNBDialogFactory extends WindowAdapter implements DialogSupport.DialogFactory, ActionListener
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(SquirrelNBDialogFactory.class);
 
    private JButton cancelButton;
    private SyntaxPugin _plugin;
@@ -65,7 +69,8 @@ public class SquirrelNBDialogFactory extends WindowAdapter implements DialogSupp
 
          for (int i = 0; i < activeSessions.length; i++)
          {
-            activeSessions[i].getMessageHandler().showMessage("Press F3 to go to next result. Press Ctrl+Shift+F7 to toggle highlight search.");
+				//i18n[syntax.findExplain=Press F3 to go to next result. Press Ctrl+Shift+F7 to toggle highlight search.]
+				activeSessions[i].getMessageHandler().showMessage(s_stringMgr.getString("syntax.findExplain"));
          }
          _findHintProvided = true;
       }

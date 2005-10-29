@@ -1,6 +1,8 @@
 package net.sourceforge.squirrel_sql.plugins.syntax;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
@@ -11,6 +13,10 @@ import java.awt.event.ActionEvent;
 
 public class AutoCorrectController
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(AutoCorrectController.class);
+
+
    private AutoCorrectDlg _dlg;
    private SyntaxPugin _syntaxPugin;
 
@@ -47,8 +53,10 @@ public class AutoCorrectController
 
 
       Vector colHeaders = new Vector();
-      colHeaders.add("error / abreviation");
-      colHeaders.add("correction / extension");
+		// i18n[syntax.errAbrev=error / abreviation]
+		colHeaders.add(s_stringMgr.getString("syntax.errAbrev"));
+		// i18n[syntax.corExt=correction / extension]
+      colHeaders.add(s_stringMgr.getString("syntax.corExt"));
 
 
       DefaultTableModel dtm = new DefaultTableModel();

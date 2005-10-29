@@ -28,6 +28,9 @@ import javax.swing.JToolBar;
 
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPluginResources;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxStyle;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
 /**
  * This panel allows maintenance of the selected Syntax Style.
  *
@@ -35,6 +38,10 @@ import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxStyle;
  */
 public class StyleMaintenancePanel extends JToolBar
 {
+
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(StyleMaintenancePanel.class);
+
 	private final StylesList _list;
 	private final JToggleButton _boldChk;
 	private final JToggleButton _italicChk;
@@ -54,14 +61,18 @@ public class StyleMaintenancePanel extends JToolBar
 		this.setFloatable(false);
 
 		_boldChk = new JToggleButton(rsrc.getIcon(SyntaxPluginResources.IKeys.BOLD_IMAGE));
-		_boldChk.setToolTipText("Bold");
+		//i18n[syntax.bold=Bold]
+		_boldChk.setToolTipText(s_stringMgr.getString("syntax.bold"));
 		_italicChk = new JToggleButton(rsrc.getIcon(SyntaxPluginResources.IKeys.ITALIC_IMAGE));
-		_italicChk.setToolTipText("Italic");
+		//i18n[syntax.italic=Italic]
+		_italicChk.setToolTipText(s_stringMgr.getString("syntax.italic"));
 
 		_fontColorBtn = new JButton(rsrc.getIcon(SyntaxPluginResources.IKeys.FOREGROUND_IMAGE));
-		_fontColorBtn.setToolTipText("Select font color");
+		//i18n[syntax.font=Select font color]
+		_fontColorBtn.setToolTipText(s_stringMgr.getString("syntax.font"));
 		_backgroundColorBtn = new JButton(rsrc.getIcon(SyntaxPluginResources.IKeys.BACKGROUND_IMAGE));
-		_backgroundColorBtn.setToolTipText("Select background color");
+		//i18n[syntax.background=Select background color]
+		_backgroundColorBtn.setToolTipText(s_stringMgr.getString("syntax.background"));
 
 		add(_boldChk);
 		add(_italicChk);
@@ -159,7 +170,8 @@ public class StyleMaintenancePanel extends JToolBar
 			final SyntaxStyle style = _list.getSelectedSyntaxStyle();
 			final int origRGB = style.getTextRGB();
 			final Color color = JColorChooser.showDialog(null,
-												"Select Color", new Color(origRGB));
+				//i18n[syntax.selColor=Select Color]
+												s_stringMgr.getString("syntax.selColor"), new Color(origRGB));
 			if (color != null)
 			{
 				style.setTextRGB(color.getRGB());
@@ -187,7 +199,8 @@ public class StyleMaintenancePanel extends JToolBar
 			final SyntaxStyle style = _list.getSelectedSyntaxStyle();
 			final int origRGB = style.getBackgroundRGB();
 			final Color color = JColorChooser.showDialog(null,
-												"Select Color", new Color(origRGB));
+				//i18n[syntax.selColor2=Select Color]
+												s_stringMgr.getString("syntax.selColor2"), new Color(origRGB));
 			if (color != null)
 			{
 				style.setBackgroundRGB(color.getRGB());

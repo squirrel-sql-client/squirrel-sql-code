@@ -10,12 +10,18 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPluginResources;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 public class FindAction extends SquirrelAction implements ISQLPanelAction
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(FindAction.class);
+
+
    private ISession _session;
 
    public FindAction(IApplication app, SyntaxPluginResources rsrc)
@@ -34,8 +40,8 @@ public class FindAction extends SquirrelAction implements ISQLPanelAction
          if(false == sqlEntryPanel instanceof NetbeansSQLEntryPanel)
          {
             String msg =
-               "Find is only available when the Netbeans editor is used.\n" +
-               "See menu File --> New Session Properties --> Tab Syntax";
+					//i18n[syntax.findNetbeansOnly=Find is only available when the Netbeans editor is used.\nSee menu File --> New Session Properties --> Tab Syntax]
+					s_stringMgr.getString("syntax.findNetbeansOnly");
             JOptionPane.showMessageDialog(_session.getApplication().getMainFrame(), msg);
             return;
          }

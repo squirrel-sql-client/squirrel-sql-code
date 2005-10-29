@@ -1,6 +1,9 @@
 package net.sourceforge.squirrel_sql.plugins.syntax;
 
 
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -9,6 +12,10 @@ import java.awt.event.KeyEvent;
 
 public class AutoCorrectDlg extends JDialog
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(AutoCorrectDlg.class);
+
+
    JTable tblAutoCorrects;
    JCheckBox chkEnable;
    JButton btnApply;
@@ -18,13 +25,16 @@ public class AutoCorrectDlg extends JDialog
 
    public AutoCorrectDlg(JFrame parent)
    {
-      super(parent, "Configure auto correct /abreviation");
+		// i18n[syntax.configAutoCorr=Configure auto correct /abreviation]
+		super(parent, s_stringMgr.getString("syntax.configAutoCorr"));
 
       getContentPane().setLayout(new GridBagLayout());
 
       GridBagConstraints gbc;
 
-      chkEnable = new JCheckBox("Enable auto correct / abreviation");
+
+		// i18n[syntax.enableAutoCorr=Enable auto correct / abreviation]
+		chkEnable = new JCheckBox(s_stringMgr.getString("syntax.enableAutoCorr"));
       gbc = new GridBagConstraints(0,0,3,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
       getContentPane().add(chkEnable, gbc);
 
@@ -33,15 +43,18 @@ public class AutoCorrectDlg extends JDialog
       getContentPane().add(new JScrollPane(tblAutoCorrects), gbc);
 
 
-      btnApply = new JButton("Apply");
+		// i18n[syntax.autoCorrApply=Apply]
+      btnApply = new JButton(s_stringMgr.getString("syntax.autoCorrApply"));
       gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
       getContentPane().add(btnApply, gbc);
 
-      btnAddRow = new JButton("Add row");
+		// i18n[syntax.addRow=Add row]
+      btnAddRow = new JButton(s_stringMgr.getString("syntax.addRow"));
       gbc = new GridBagConstraints(1,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
       getContentPane().add(btnAddRow, gbc);
 
-      btnRemoveRows = new JButton("remove selected rows");
+		// i18n[syntax.removeRows=remove selected rows]
+      btnRemoveRows = new JButton(s_stringMgr.getString("syntax.removeRows"));
       gbc = new GridBagConstraints(2,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
       getContentPane().add(btnRemoveRows, gbc);
 
