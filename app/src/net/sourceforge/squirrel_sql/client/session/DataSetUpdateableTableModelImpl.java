@@ -1,5 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session;
 
+import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
@@ -8,6 +9,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModel
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -20,9 +23,13 @@ import java.util.Vector;
 public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableModel
 {
 
-   // string to be passed to user when table name is not found or is ambiguous
-   private final String TI_ERROR_MESSAGE =
-      "Cannot edit table because table cannot be found\nor table name is not unique in DB.";
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(DataSetUpdateableTableModelImpl.class);       
+    
+   /** string to be passed to user when table name is not found or is ambiguous */
+   // i18n[DataSetUpdateableTableModelImpl.error.tablenotfound=Cannot edit table because table cannot be found\nor table name is not unique in DB.]
+   private final String TI_ERROR_MESSAGE = s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.tablenotfound");
 
    /** Logger for this class. */
    private static final ILogger s_log = LoggerController.createLogger(DataSetUpdateableTableModelImpl.class);
@@ -61,9 +68,6 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
     * ResultSet, and thus we never have any legal column index here.
     */
    int _rowIDcol = -1;
-
-
-
 
    public void setTableInfo(ITableInfo ti)
    {
@@ -185,7 +189,8 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       // Since this check is on the structure of the table rather than the contents,
       // we only need to do it once (ie: it is not needed in getWarningOnProjectedUpdate)
       if (whereClause.length() == 0)
-         return "The table has no columns that can be SELECTed on.\nAll rows will be updated.\nDo you wish to proceed?";
+         // i18n[DataSetUpdateableTableModelImpl.confirmupdateallrows=The table has no columns that can be SELECTed on.\nAll rows will be updated.\nDo you wish to proceed?]
+         return s_stringMgr.getString("DataSetUpdateableTableModelImpl.confirmupdateallrows");
 
       final ISession session = _session;
       final SQLConnection conn = session.getSQLConnection();
@@ -209,19 +214,22 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       }
       catch (SQLException ex)
       {
-         return "Exception seen during check on DB.  Exception was:\n"+
-            ex.getMessage() +
-            "\nUpdate is probably not safe to do.\nDo you wish to proceed?";
+          // i18n[DataSetUpdateableTableModelImpl.error.exceptionduringcheck=Exception seen during check on DB.  Exception was:\n{0}\nUpdate is probably not safe to do.\nDo you wish to proceed?]
+          return s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.exceptionduringcheck", ex.getMessage());
       }
 
       if (count == -1)
-         return "Unknown error during check on DB.  Update is probably not safe.\nDo you wish to proceed?";
+          // i18n[DataSetUpdateableTableModelImpl.error.unknownerror=Unknown error during check on DB.  Update is probably not safe.\nDo you wish to proceed?]
+         return s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.unknownerror");
 
       if (count == 0)
-         return "This row in the Database has been changed since you refreshed the data.\nNo rows will be updated by this operation.\nDo you wish to proceed?";
+          // i18n[DataSetUpdateableTableModelImpl.error.staleupdaterow=This row in the Database has been changed since you refreshed the data.\nNo rows will be updated by this operation.\nDo you wish to proceed?]
+         return s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.staleupdaterow");
 
       if (count > 1)
-         return "This operation will update " + count + " identical rows.\nDo you wish to proceed?";
+          // i18n[DataSetUpdateableTableModelImpl.info.updateidenticalrows=This operation will update {0} identical rows.\nDo you wish to proceed?]
+          return s_stringMgr.getString("DataSetUpdateableTableModelImpl.info.updateidenticalrows",
+                                       new Long(count));
 
       // no problems found, so do not return a warning message.
       return null;	// nothing for user to worry about
@@ -267,9 +275,8 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
          }
          catch (SQLException ex)
          {
-            return "Exception seen during check on DB.  Exception was:\n"+
-               ex.getMessage() +
-               "\nUpdate is probably not safe to do.\nDo you wish to proceed?";
+             // i18n[DataSetUpdateableTableModelImpl.error.exceptionduringcheck=Exception seen during check on DB.  Exception was:\n{0}\nUpdate is probably not safe to do.\nDo you wish to proceed?]
+             s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.exceptionduringcheck", ex.getMessage());
          }
 
          if (count == -1)
@@ -294,16 +301,23 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
          // used will return a null or zero-length string.
          String databaseProductName = _session.getSQLConnection().getSQLMetaData().getDatabaseProductName();
 
-         if (CellComponentFactory.getWhereClauseValue(colDefs[col], values[col], databaseProductName) == null ||
-            CellComponentFactory.getWhereClauseValue(colDefs[col], values[col], databaseProductName).length() == 0) {
-               if (count > 1)
-                  return "This operation will result in " + count +" identical rows.\nDo you wish to proceed?";
+         if (CellComponentFactory.getWhereClauseValue(colDefs[col], values[col], databaseProductName) == null 
+                 || CellComponentFactory.getWhereClauseValue(colDefs[col], values[col], databaseProductName).length() == 0) 
+         {
+             if (count > 1) {
+                 // i18n[DataSetUpdateableTableModelImpl.info.identicalrows=This operation will result in {0} identical rows.\nDo you wish to proceed?]
+                 return s_stringMgr.getString("DataSetUpdateableTableModelImpl.info.identicalrows",
+                                              new Long(count));
+             }
          }
          else {
             // the field being updated is one whose contents
             //should be visible in the WHERE clause
-            if (count > 1)
-               return "This operation will result in " + count + " identical rows.\nDo you wish to proceed?";
+             if (count > 1) {
+                 // i18n[DataSetUpdateableTableModelImpl.info.identicalrows=This operation will result in {0} identical rows.\nDo you wish to proceed?]
+                 return s_stringMgr.getString("DataSetUpdateableTableModelImpl.info.identicalrows",
+                                              new Long(count));
+             }
          }
 
          // no problems found, so do not return a warning message.
@@ -360,8 +374,8 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
             // There should be one row in the data, so try to move to it
             if (rs.next() == false) {
                // no first row, so we cannot retrieve the data
-               throw new SQLException(
-                  "Could not find any row in DB matching current row in table");
+               // i18n[DataSetUpdateableTableModelImpl.error.nomatchingrow=Could not find any row in DB matching current row in table]
+               throw new SQLException(s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.nomatchingrow"));
             }
 
             // we have at least one row, so try to retrieve the object
@@ -374,8 +388,8 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
             if (rs.next() == true) {
                // multiple rows - not good
                wholeDatum = null;
-               throw new SQLException(
-                  "Muliple rows in DB match current row in table - cannot re-read data.");
+               // i18n[DataSetUpdateableTableModelImpl.error.multimatchingrows=Muliple rows in DB match current row in table - cannot re-read data.]
+               throw new SQLException(s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.multimatchingrows"));
             }
          }
          finally
@@ -385,9 +399,11 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       }
       catch (Exception ex)
       {
-         message.append(
-            "There was a problem reported while re-reading the DB.  The DB message was:\n"+
-            ex.getMessage());
+          // i18n[DataSetUpdateableTableModelImpl.error.rereadingdb=There was a problem reported while re-reading the DB.  The DB message was:\n{0}]
+          message.append(
+              s_stringMgr.getString(
+                          "DataSetUpdateableTableModelImpl.error.rereadingdb", 
+                          ex.getMessage()));
 
          // It would be nice to tell the user what happened, but if we try to
          // put up a dialog box at this point, we run into trouble in some
@@ -444,18 +460,19 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       }
       catch (SQLException ex)
       {
-         return "There was a problem reported during the update.  The DB message was:\n"+
-            ex.getMessage() +
-            "\nThis may or may not be serious depending on the above message."+
-            "\nThe data was probably not changed in the database."+
-            "\nYou may need to refresh the table to get an accurate view of the current data.";
+          // i18n[DataSetUpdateableTableModelImpl.error.updateproblem=There was a problem reported during the update.  The DB message was:\n{0}\nThis may or may not be serious depending on the above message.\nThe data was probably not changed in the database.\nYou may need to refresh the table to get an accurate view of the current data.]
+         return s_stringMgr.getString(
+                     "DataSetUpdateableTableModelImpl.error.updateproblem",
+                     ex.getMessage());          
       }
 
       if (count == -1)
-         return "Unknown problem during update.\nNo count of updated rows was returned.\nDatabase may be corrupted!";
+          // i18n[DataSetUpdateableTableModelImpl.error.unknownupdateerror=Unknown problem during update.\nNo count of updated rows was returned.\nDatabase may be corrupted!]
+         return s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.unknownupdateerror");
 
       if (count == 0)
-         return "No rows updated.";
+          // i18n[DataSetUpdateableTableModelImpl.info.norowsupdated=No rows updated.]
+         return s_stringMgr.getString("DataSetUpdateableTableModelImpl.info.norowsupdated");
 
       // everything seems to have worked ok
       return null;
@@ -599,10 +616,20 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
 
                rs.next();
                if (rs.getInt(1) != 1) {
-                  if (rs.getInt(1) == 0)
+                  if (rs.getInt(1) == 0) {
+                      // i18n[DataSetUpdateableTableModelImpl.error.rownotmatch=\n   Row {0}  did not match any row in DB]
                      rowCountErrorMessage += "\n   Row "+ (i+1) +" did not match any row in DB";
-                  else
-                     rowCountErrorMessage += "\n   Row "+ (i+1) +" matched "+rs.getInt(1)+" rows in DB";
+                     rowCountErrorMessage = 
+                         s_stringMgr.getString(
+                                 "DataSetUpdateableTableModelImpl.error.rownotmatch",
+                                 new Integer(i+1));
+                  } else {
+                      //i18n[DataSetUpdateableTableModelImpl.error.rowmatched=\n   Row {0} matched {1} rows in DB]
+                      rowCountErrorMessage = 
+                          s_stringMgr.getString(
+                                  "DataSetUpdateableTableModelImpl.error.rowmatched", 
+                                  new Integer[] { new Integer(i+1), new Integer(rs.getInt(1)) });
+                  }
                }
             }
             finally
@@ -612,20 +639,30 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
          }
          catch (Exception e) {
             // some kind of problem - tell user
-            return "While preparing for delete, saw exception:\n" + e;
+             // i18n[DataSetUpdateableTableModelImpl.error.preparingdelete=While preparing for delete, saw exception:\n{0}]
+             return 
+                 s_stringMgr.getString(
+                         "DataSetUpdateableTableModelImpl.error.preparingdelete",
+                         e);
          }
       }
 
       // if the rows do not match 1-for-1 to DB, ask user if they
       // really want to do delete
       if (rowCountErrorMessage.length() > 0) {
-         int option = JOptionPane.showConfirmDialog(null,
-            "There may be a mismatch between the table and the DB:\n"+
-            rowCountErrorMessage +
-            "\nDo you wish to proceed with the deletes anyway?",
-            "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+          // i18n[DataSetUpdateableTableModelImpl.error.tabledbmismatch=There may be a mismatch between the table and the DB:\n{0}\nDo you wish to proceed with the deletes anyway?]
+          String msg = 
+              s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.tabledbmismatch",
+                                    rowCountErrorMessage);
+         
+         int option = 
+             JOptionPane.showConfirmDialog(null, msg, "Warning", 
+                                           JOptionPane.YES_NO_OPTION, 
+                                           JOptionPane.WARNING_MESSAGE);
+         
          if ( option != JOptionPane.YES_OPTION) {
-            return "Delete canceled at user request.";
+             // i18n[DataSetUpdateableTableModelImpl.info.deletecancelled=Delete canceled at user request.]
+            return s_stringMgr.getString("DataSetUpdateableTableModelImpl.info.deletecancelled");
          }
       }
 
@@ -652,8 +689,8 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
          }
          catch (Exception e) {
             // some kind of problem - tell user
-            return "One of the delete operations failed with exception:\n" + e +
-                  "\nDatabase is in an unknown state and may be corrupted.";
+             // i18n[DataSetUpdateableTableModelImpl.error.deleteFailed=One of the delete operations failed with exception:\n{0}\nDatabase is in an unknown state and may be corrupted.]
+             return s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.deleteFailed", e);
          }
       }
 
@@ -733,7 +770,8 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       }
       catch (Exception ex)
       {
-         s_log.error("Error retrieving default column values", ex);
+          // i18n[DataSetUpdateableTableModelImpl.error.retrievingdefaultvalues=Error retrieving default column values]
+          s_log.error(s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.retrievingdefaultvalues"), ex);
       }
 
       return defaultValues;
@@ -791,13 +829,15 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       }
       catch (SQLException ex)
       {
-         return "Exception seen during check on DB.  Exception was:\n"+
-            ex.getMessage() +
-            "\nInsert was probably not completed correctly.  DB may be corrupted!";
+          // i18n[DataSetUpdateableTableModelImpl.error.duringInsert=Exception seen during check on DB.  Exception was:\n{0}\nInsert was probably not completed correctly.  DB may be corrupted!]
+          return s_stringMgr.getString(
+                  "DataSetUpdateableTableModelImpl.error.duringInsert", 
+                  ex.getMessage());
       }
 
       if (count != 1)
-         return "Unknown problem during update.\nNo count of inserted rows was returned.\nDatabase may be corrupted!";
+          // i18n[DataSetUpdateableTableModelImpl.error.unknownerrorupdate=Unknown problem during update.\nNo count of inserted rows was returned.\nDatabase may be corrupted!]
+         return s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.unknownerrorupdate");
 
       // insert succeeded
       return null;
