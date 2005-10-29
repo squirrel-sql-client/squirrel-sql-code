@@ -282,9 +282,10 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
              s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.exceptionduringcheck", ex.getMessage());
          }
 
-         if (count == -1)
-            return "Unknown error during check on DB.  Update is probably not safe.\nDo you wish to proceed?";
-
+         if (count == -1) {
+             // i18n[DataSetUpdateableTableModelImpl.error.unknownerror=Unknown error during check on DB.  Update is probably not safe.\nDo you wish to proceed?]
+            return s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.unknownerror");
+         }
          // There are some fields that cannot be used in a WHERE clause, either
          // because there cannot be an exact match (e.g. REAL, FLOAT), or
          // because we may not have the actual data in hand (BLOB/CLOB), or
@@ -469,14 +470,14 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
                      ex.getMessage());          
       }
 
-      if (count == -1)
+      if (count == -1) {
           // i18n[DataSetUpdateableTableModelImpl.error.unknownupdateerror=Unknown problem during update.\nNo count of updated rows was returned.\nDatabase may be corrupted!]
          return s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.unknownupdateerror");
-
-      if (count == 0)
+      }
+      if (count == 0) {
           // i18n[DataSetUpdateableTableModelImpl.info.norowsupdated=No rows updated.]
          return s_stringMgr.getString("DataSetUpdateableTableModelImpl.info.norowsupdated");
-
+      }
       // everything seems to have worked ok
       return null;
    }
@@ -621,14 +622,13 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
                if (rs.getInt(1) != 1) {
                   if (rs.getInt(1) == 0) {
                       // i18n[DataSetUpdateableTableModelImpl.error.rownotmatch=\n   Row {0}  did not match any row in DB]
-                     rowCountErrorMessage += "\n   Row "+ (i+1) +" did not match any row in DB";
-                     rowCountErrorMessage = 
+                     rowCountErrorMessage += 
                          s_stringMgr.getString(
                                  "DataSetUpdateableTableModelImpl.error.rownotmatch",
                                  new Integer(i+1));
                   } else {
                       //i18n[DataSetUpdateableTableModelImpl.error.rowmatched=\n   Row {0} matched {1} rows in DB]
-                      rowCountErrorMessage = 
+                      rowCountErrorMessage += 
                           s_stringMgr.getString(
                                   "DataSetUpdateableTableModelImpl.error.rowmatched", 
                                   new Integer[] { new Integer(i+1), new Integer(rs.getInt(1)) });
