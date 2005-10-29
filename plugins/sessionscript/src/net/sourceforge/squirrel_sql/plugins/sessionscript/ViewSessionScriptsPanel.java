@@ -32,11 +32,17 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 
 public class ViewSessionScriptsPanel extends JPanel
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ViewSessionScriptsPanel.class);
+
+
 	private SessionScriptPlugin _plugin;
 	private IApplication _app;
 	private SQLALiasesCombo _aliasesCmb = new SQLALiasesCombo();
@@ -107,7 +113,8 @@ public class ViewSessionScriptsPanel extends JPanel
 			}
 		});
 
-		_saveBtn = new JButton("Save");
+		// i18n[sessionscript.Save=Save]
+		_saveBtn = new JButton(s_stringMgr.getString("sessionscript.Save"));
 		_saveBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)

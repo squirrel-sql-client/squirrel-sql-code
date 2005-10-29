@@ -24,12 +24,18 @@ import java.awt.Dimension;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
 
 class ScriptsSheet extends BaseInternalFrame
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ScriptsSheet.class);
+	
+
 	/** Logger for this class. */
 	private static ILogger s_log =
 		LoggerController.createLogger(ScriptsSheet.class);
@@ -48,7 +54,8 @@ class ScriptsSheet extends BaseInternalFrame
 
 	private ScriptsSheet(SessionScriptPlugin plugin, IApplication app)
 	{
-		super("Startup Scripts", true, true, true, true);
+		// i18n[sessionscript.startupScripts=Startup Scripts]
+		super(s_stringMgr.getString("sessionscript.startupScripts"), true, true, true, true);
 		_plugin = plugin;
 		_app = app;
 
