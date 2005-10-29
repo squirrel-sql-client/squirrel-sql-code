@@ -19,6 +19,8 @@ package net.sourceforge.squirrel_sql.plugins.sqlval.cmd;
  */
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
@@ -32,6 +34,10 @@ import net.sourceforge.squirrel_sql.plugins.sqlval.WebServiceSessionProperties;
  */
 public class DisconnectCommand implements ICommand
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(DisconnectCommand.class);
+
+
 	private final ISession _session;
 	private final WebServicePreferences _prefs;
 	private final WebServiceSessionProperties _sessionProps;
@@ -69,7 +75,8 @@ public class DisconnectCommand implements ICommand
 			if (wss.isOpen())
 			{
 				wss.close();
-				_session.getMessageHandler().showMessage("Disconnected from the SQL Validation web service");
+				// i18n[sqlval.disconnected=Disconnected from the SQL Validation web service]
+				_session.getMessageHandler().showMessage(s_stringMgr.getString("sqlval.disconnected"));
 			}
 		}
 		catch (Throwable th)

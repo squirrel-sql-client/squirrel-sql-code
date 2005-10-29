@@ -29,9 +29,15 @@ import javax.swing.JPanel;
 import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 class SessionSettingsPanel extends JPanel
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(SessionSettingsPanel.class);
+
+
 	/** Logger for this class. */
 	private final static ILogger s_log =
 		LoggerController.createLogger(SessionSettingsPanel.class);
@@ -43,7 +49,8 @@ class SessionSettingsPanel extends JPanel
 	private final WebServiceSessionProperties _sessionProps;
 
 	/** Use anonymous DBMS. */
-	private JCheckBox _anonDBMSChk = new JCheckBox("Anonymous");
+	// i18n[sqlval.settingsAnon=Anonymous]
+	private JCheckBox _anonDBMSChk = new JCheckBox(s_stringMgr.getString("sqlval.settingsAnon"));
 
 	/** DBMS name. */
 	private OutputLabel _dbmsNameLbl = new OutputLabel(" ");
@@ -58,7 +65,7 @@ class SessionSettingsPanel extends JPanel
 	private OutputLabel _techVersionLbl = new OutputLabel(" ");
 
 	SessionSettingsPanel(WebServicePreferences prefs,
-						WebServiceSessionProperties sessionProps)
+								WebServiceSessionProperties sessionProps)
 	{
 		super(new GridBagLayout());
 
@@ -117,7 +124,8 @@ class SessionSettingsPanel extends JPanel
 	private JPanel createDBMSPanel()
 	{
 		JPanel pnl = new JPanel();
-		pnl.setBorder(BorderFactory.createTitledBorder("DBMS"));
+		// i18n[sqlval.dbms=DBMS]
+		pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("sqlval.dbms")));
 
 		pnl.setLayout(new GridBagLayout());
 		final GridBagConstraints gbc = new GridBagConstraints();
@@ -132,16 +140,20 @@ class SessionSettingsPanel extends JPanel
 		pnl.add(_anonDBMSChk, gbc);
 
 		++gbc.gridy;
-		pnl.add(new JLabel("DBMS Name:", JLabel.RIGHT), gbc);
+		// i18n[sqlval.dbmsName=DBMS Name:]
+		pnl.add(new JLabel(s_stringMgr.getString("sqlval.dbmsName"), JLabel.RIGHT), gbc);
 
 		++gbc.gridy;
-		pnl.add(new JLabel("DBMS Version:", JLabel.RIGHT), gbc);
+		// i18n[sqlval.dbmsVersion=DBMS Version:]
+		pnl.add(new JLabel(s_stringMgr.getString("sqlval.dbmsVersion"), JLabel.RIGHT), gbc);
 
 		++gbc.gridy;
-		pnl.add(new JLabel("Technology:", JLabel.RIGHT), gbc);
+		// i18n[sqlval.technology=Technology:]
+		pnl.add(new JLabel(s_stringMgr.getString("sqlval.technology"), JLabel.RIGHT), gbc);
 
 		++gbc.gridy;
-		pnl.add(new JLabel("Technology Version:", JLabel.RIGHT), gbc);
+		// i18n[sqlval.technologyVersion=Technology Version:]
+		pnl.add(new JLabel(s_stringMgr.getString("sqlval.technologyVersion"), JLabel.RIGHT), gbc);
 
 		gbc.gridx = 1;
 		gbc.gridy = 1;
