@@ -92,7 +92,8 @@ public class RenameTableAction extends SquirrelAction
 			}
 			else
 			{
-				_session.getApplication().showErrorDialog("Must select a single table");
+				// i18n[mysql.selectSingleTable=Must select a single table]
+				_session.getApplication().showErrorDialog(s_stringMgr.getString("mysql.selectSingleTable"));
 			}
 		}
 	}

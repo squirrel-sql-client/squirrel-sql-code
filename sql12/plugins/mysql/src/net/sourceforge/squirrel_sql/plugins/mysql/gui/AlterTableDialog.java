@@ -126,9 +126,11 @@ public class AlterTableDialog extends JDialog
 	{
 		final ButtonBarBuilder builder = new ButtonBarBuilder();
 		builder.addGlue();
-		builder.addGridded(new JButton("Alter"));
+		// i18n[mysql.alterDlgAlter=Alter]
+		builder.addGridded(new JButton(s_stringMgr.getString("mysql.alterDlgAlter")));
 		builder.addRelatedGap();
-		builder.addGridded(new JButton("Close"));
+		// i18n[mysql.alterDlgClose=Close]
+		builder.addGridded(new JButton(s_stringMgr.getString("mysql.alterDlgClose")));
 
 		return builder.getPanel();
 	}

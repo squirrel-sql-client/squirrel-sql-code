@@ -25,6 +25,8 @@ import javax.swing.ListSelectionModel;
 
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 //import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 //import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -41,6 +43,10 @@ import net.sourceforge.squirrel_sql.plugins.mysql.util.DBUtils;
  */
 public class CopyTableCommand implements ICommand
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(CopyTableCommand.class);
+
+
 	private javax.swing.JCheckBox chAllFields;
 	private javax.swing.JButton buttonOk;
 	private javax.swing.JButton buttonCancel;
@@ -112,7 +118,8 @@ public class CopyTableCommand implements ICommand
 		jd =
 			new JDialog(
 				_session.getApplication().getMainFrame(),
-				"Copy Table...");
+				// i18n[mysql.copyTable=Copy Table...]
+				s_stringMgr.getString("mysql.copyTable"));
 		jd.getContentPane().setLayout(null);
 
 		jd.addWindowListener(new java.awt.event.WindowAdapter()
@@ -124,7 +131,8 @@ public class CopyTableCommand implements ICommand
 		});
 
 		lbCopyToNewTable.setFont(new java.awt.Font("Dialog", 0, 12));
-		lbCopyToNewTable.setText("Copy to new Table:");
+		// i18n[mysql.copyToNewTable=Copy to new Table:]
+		lbCopyToNewTable.setText(s_stringMgr.getString("mysql.copyToNewTable"));
 		jd.getContentPane().add(lbCopyToNewTable);
 		lbCopyToNewTable.setBounds(20, 20, 110, 16);
 
@@ -132,7 +140,8 @@ public class CopyTableCommand implements ICommand
 		tfTableName.setBounds(20, 40, 350, 20);
 
 		rdStructure.setFont(new java.awt.Font("Dialog", 0, 12));
-		rdStructure.setText("Structure");
+		// i18n[mysql.structure=Structure]
+		rdStructure.setText(s_stringMgr.getString("mysql.structure"));
 		rdStructure.addActionListener(new java.awt.event.ActionListener()
 		{
 			public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -145,7 +154,8 @@ public class CopyTableCommand implements ICommand
 		rdStructure.setSelected(true);
 
 		rdStructureData.setFont(new java.awt.Font("Dialog", 0, 12));
-		rdStructureData.setText("Structure and Data");
+		// i18n[mysql.structureAndData=Structure and Data]
+		rdStructureData.setText(s_stringMgr.getString("mysql.structureAndData"));
 		rdStructureData.addActionListener(new java.awt.event.ActionListener()
 		{
 			public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -177,7 +187,8 @@ public class CopyTableCommand implements ICommand
 		listFields.setEnabled(false);
 
 		buttonOk.setFont(new java.awt.Font("Dialog", 0, 12));
-		buttonOk.setText("Ok");
+		// i18n[mysql.copyOk=Ok]
+		buttonOk.setText(s_stringMgr.getString("mysql.copyOk"));
 		buttonOk.addActionListener(new java.awt.event.ActionListener()
 		{
 			public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -190,7 +201,8 @@ public class CopyTableCommand implements ICommand
 		buttonOk.setBounds(190, 230, 70, 26);
 
 		buttonCancel.setFont(new java.awt.Font("Dialog", 0, 12));
-		buttonCancel.setText("Cancel");
+		// i18n[mysql.copyCancel=Cancel]
+		buttonCancel.setText(s_stringMgr.getString("mysql.copyCancel"));
 		buttonCancel.addActionListener(new java.awt.event.ActionListener()
 		{
 			public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -202,7 +214,8 @@ public class CopyTableCommand implements ICommand
 		jd.getContentPane().add(buttonCancel);
 		buttonCancel.setBounds(280, 230, 73, 26);
 		chAllFields.setFont(new java.awt.Font("Dialog", 0, 12));
-		chAllFields.setText("With all Fields");
+		// i18n[mysql.withAllFields=With all Fields]
+		chAllFields.setText(s_stringMgr.getString("mysql.withAllFields"));
 		chAllFields.setSelected(true);
 		chAllFields.addActionListener(new java.awt.event.ActionListener()
 		{

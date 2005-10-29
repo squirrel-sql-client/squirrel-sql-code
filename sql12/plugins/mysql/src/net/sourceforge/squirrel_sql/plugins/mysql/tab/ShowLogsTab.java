@@ -1,4 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.mysql.tab;
+
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /*
  * Copyright (C) 2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -24,14 +27,20 @@ package net.sourceforge.squirrel_sql.plugins.mysql.tab;
  */
 public class ShowLogsTab extends BaseSQLTab
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ShowLogsTab.class);
+
+
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
 	private interface i18n
 	{
-		String TITLE = "MySQL Logs";
-		String HINT = "(MySQL) Show Logs";
+		// i18n[mysql.logs=MySQL Logs]
+		String TITLE = s_stringMgr.getString("mysql.logs");
+		// i18n[mysql.showLogs=(MySQL) Show Logs]
+		String HINT = s_stringMgr.getString("mysql.showLogs");
 	}
 
 	public ShowLogsTab()

@@ -26,6 +26,8 @@ import javax.swing.JScrollPane;
 
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 //import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 //import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -43,6 +45,10 @@ import net.sourceforge.squirrel_sql.plugins.mysql.util.FieldDetails;
  */
 public class CreateTableCommand extends JDialog implements ICommand
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(CreateTableCommand.class);
+
+
 	private javax.swing.JButton btAdd;
 	private javax.swing.JButton btRemove;
 	private javax.swing.JButton btCancel;
@@ -133,7 +139,8 @@ public class CreateTableCommand extends JDialog implements ICommand
 		jd =
 			new JDialog(
 				_session.getApplication().getMainFrame(),
-				"Create Table..");
+				// i18n[mysql.createTableComm=Create Table...]
+				s_stringMgr.getString("mysql.createTableComm"));
 		jd.getContentPane().setLayout(null);
 
 		addWindowListener(new java.awt.event.WindowAdapter()
@@ -144,7 +151,8 @@ public class CreateTableCommand extends JDialog implements ICommand
 			}
 		});
 
-		lbTableName.setText("Table Name:");
+		// i18n[mysql.tableNamelbl=Table Name:]
+		lbTableName.setText(s_stringMgr.getString("mysql.tableNamelbl"));
 		jd.getContentPane().add(lbTableName);
 		lbTableName.setBounds(20, 30, 70, 16);
 
@@ -190,7 +198,8 @@ public class CreateTableCommand extends JDialog implements ICommand
 		tfFieldName.setBounds(10, 150, 110, 20);
 
 		btAdd.setFont(new java.awt.Font("Dialog", 0, 12));
-		btAdd.setText("Add");
+		// i18n[mysql.createAdd=Add]
+		btAdd.setText(s_stringMgr.getString("mysql.createAdd"));
 		btAdd.addActionListener(new java.awt.event.ActionListener()
 		{
 			public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -202,7 +211,8 @@ public class CreateTableCommand extends JDialog implements ICommand
 		jd.getContentPane().add(btAdd);
 		btAdd.setBounds(130, 150, 80, 26);
 
-		lbFieldProp.setText("Field Properties:");
+		// i18n[mysql.fieldProps=Field Properties:]
+		lbFieldProp.setText(s_stringMgr.getString("mysql.fieldProps"));
 		lbFieldProp.setBorder(
 			new javax.swing.border.EmptyBorder(
 				new java.awt.Insets(1, 1, 1, 1)));
@@ -254,7 +264,8 @@ public class CreateTableCommand extends JDialog implements ICommand
 		cbFieldType.setBounds(300, 190, 110, 20);
 
 		lbFieldLength.setFont(new java.awt.Font("Dialog", 0, 12));
-		lbFieldLength.setText("Length/Set");
+		// i18n[mysql.lengtSet=Length/Set]
+		lbFieldLength.setText(s_stringMgr.getString("mysql.lengtSet"));
 		jd.getContentPane().add(lbFieldLength);
 		lbFieldLength.setBounds(220, 220, 70, 16);
 
@@ -262,7 +273,8 @@ public class CreateTableCommand extends JDialog implements ICommand
 		tfFieldLength.setBounds(300, 220, 110, 20);
 
 		lbDefault.setFont(new java.awt.Font("Dialog", 0, 12));
-		lbDefault.setText("Default Value");
+		// i18n[mysql.defaultValue=Default Value]
+		lbDefault.setText(s_stringMgr.getString("mysql.defaultValue"));
 		jd.getContentPane().add(lbDefault);
 		lbDefault.setBounds(220, 250, 80, 16);
 
@@ -333,7 +345,8 @@ public class CreateTableCommand extends JDialog implements ICommand
 		scrollPane.setBounds(10, 190, 110, 150);
 
 		btCreateTable.setFont(new java.awt.Font("Dialog", 0, 12));
-		btCreateTable.setText("Create table");
+		// i18n[mysql.createTableBtn=Create table]
+		btCreateTable.setText(s_stringMgr.getString("mysql.createTableBtn"));
 		btCreateTable.addActionListener(new java.awt.event.ActionListener()
 		{
 			public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -345,7 +358,8 @@ public class CreateTableCommand extends JDialog implements ICommand
 
 		btCreateTable.setBounds(221, 380, 110, 26);
 		btRemove.setFont(new java.awt.Font("Dialog", 0, 12));
-		btRemove.setText("Remove");
+		// i18n[mysql.btRemove=Remove]
+		btRemove.setText(s_stringMgr.getString("mysql.btRemove"));
 		btRemove.addActionListener(new java.awt.event.ActionListener()
 		{
 			public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -357,7 +371,8 @@ public class CreateTableCommand extends JDialog implements ICommand
 		btRemove.setBounds(130, 190, 80, 26);
 
 		btCancel.setFont(new java.awt.Font("Dialog", 0, 12));
-		btCancel.setText("Cancel");
+		// i18n[mysql.btCancel=Cancel]
+		btCancel.setText(s_stringMgr.getString("mysql.btCancel"));
 		btCancel.addActionListener(new java.awt.event.ActionListener()
 		{
 			public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -435,7 +450,8 @@ public class CreateTableCommand extends JDialog implements ICommand
 			jd.dispose();
 			JOptionPane.showMessageDialog(
 				null,
-				"Table " + tfTableName.getText() + " created");
+				// i18n[mysql.msgTableCreated=Table {0} created]
+				s_stringMgr.getString("mysql.msgTableCreated", tfTableName.getText()));
 		}
 		catch (SQLException ex)
 		{

@@ -1,4 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.mysql.tab;
+
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /*
  * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -24,14 +27,20 @@ package net.sourceforge.squirrel_sql.plugins.mysql.tab;
  */
 public class ShowVariablesTab extends BaseSQLTab
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ShowVariablesTab.class);
+
+
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
 	private interface i18n
 	{
-		String TITLE = "MySQL Variables";
-		String HINT = "(MySQL) Show Variables";
+		// i18n[mysql.variables=MySQL Variables]
+		String TITLE = s_stringMgr.getString("mysql.variables");
+		// i18n[mysql.shoeVariables=(MySQL) Show Variables]
+		String HINT = s_stringMgr.getString("mysql.shoeVariables");
 	}
 
 	public ShowVariablesTab()
