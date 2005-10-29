@@ -18,12 +18,13 @@ public class TableScriptConfigCtrl
 
    private boolean _constAndIndAtEnd = true;
    private boolean _constToTablesNotInScript = true;
+	private boolean _isOk = false;
 
 
-   public TableScriptConfigCtrl(JFrame mainFrame)
-   {
-      this._mainFrame = mainFrame;
-   }
+	public TableScriptConfigCtrl(JFrame mainFrame)
+	{
+		this._mainFrame = mainFrame;
+	}
 
    public void doModal()
    {
@@ -58,7 +59,9 @@ public class TableScriptConfigCtrl
       Preferences.userRoot().put(PREFS_KEY_CONSTRAINTS_AND_INDEXES_AT_END, "" + _constAndIndAtEnd);
       Preferences.userRoot().put(PREFS_KEY_CONSTRAINTS_TO_TABLES_NOT_IN_SCRIPT, "" + _constToTablesNotInScript);
 
-      _dlg.setVisible(false);
+		_isOk = true;
+
+		_dlg.setVisible(false);
       _dlg.dispose();
 
 
@@ -73,5 +76,11 @@ public class TableScriptConfigCtrl
    {
       return _constToTablesNotInScript;
    }
+
+	public boolean isOk()
+	{
+		return _isOk;
+	}
+
 
 }

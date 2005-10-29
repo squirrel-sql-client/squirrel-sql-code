@@ -7,6 +7,8 @@ import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
 
 
 /**
@@ -16,27 +18,32 @@ import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
  */
 public class FrameWorkAcessor
 {
-   public static ISQLPanelAPI getSQLPanelAPI(ISession session, SQLScriptPlugin plugin)
-   {
-      // old version before multible sesssion windows
-      //return session.getSQLPanelAPI(plugin);
 
-      if(session.getActiveSessionWindow() instanceof ObjectTreeInternalFrame)
-      {
-         session.getMessageHandler().showMessage("Script is written to the SQL editor in the main session window.");
-         return session.getSessionSheet().getSQLPaneAPI();
-      }
-      else
-      {
-         return session.getSQLPanelAPIOfActiveSessionWindow();
-      }
-   }
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(FrameWorkAcessor.class);
 
-   public static IObjectTreeAPI getObjectTreeAPI(ISession session, SQLScriptPlugin sqlScriptPlugin)
-   {
-      // old version
-      //return session.getObjectTreeAPI(sqlScriptPlugin);
+	public static ISQLPanelAPI getSQLPanelAPI(ISession session, SQLScriptPlugin plugin)
+	{
+		// old version before multible sesssion windows
+		//return session.getSQLPanelAPI(plugin);
 
-      return session.getObjectTreeAPIOfActiveSessionWindow();
-   }
+		if(session.getActiveSessionWindow() instanceof ObjectTreeInternalFrame)
+		{
+			// i18n[sqlscript.scriptWritten=Script was written to the SQL editor of the main session window.]
+			session.getMessageHandler().showMessage(s_stringMgr.getString("sqlscript.scriptWritten"));
+			return session.getSessionSheet().getSQLPaneAPI();
+		}
+		else
+		{
+			return session.getSQLPanelAPIOfActiveSessionWindow();
+		}
+	}
+
+	public static IObjectTreeAPI getObjectTreeAPI(ISession session, SQLScriptPlugin sqlScriptPlugin)
+	{
+		// old version
+		//return session.getObjectTreeAPI(sqlScriptPlugin);
+
+		return session.getObjectTreeAPIOfActiveSessionWindow();
+	}
 }

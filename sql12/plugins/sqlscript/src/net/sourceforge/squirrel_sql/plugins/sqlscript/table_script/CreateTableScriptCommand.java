@@ -72,9 +72,12 @@ public class CreateTableScriptCommand implements ICommand
    public void scriptTablesToSQLEntryArea(IDatabaseObjectInfo[] dbObjs)
    {
       String script = createTableScriptString(dbObjs);
-      FrameWorkAcessor.getSQLPanelAPI(_session, _plugin).appendSQLScript(script, true);
-      _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
-   }
+		if(null != script)
+		{
+			FrameWorkAcessor.getSQLPanelAPI(_session, _plugin).appendSQLScript(script, true);
+			_session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
+		}
+	}
 
 
    public String createTableScriptString(IDatabaseObjectInfo[] dbObjs)
@@ -98,7 +101,11 @@ public class CreateTableScriptCommand implements ICommand
             if (1 < dbObjs.length)
             {
                tscc.doModal();
-            }
+					if(false == tscc.isOk())
+					{
+						return null;
+					}
+				}
 
             for (int k = 0; k < dbObjs.length; k++)
             {
