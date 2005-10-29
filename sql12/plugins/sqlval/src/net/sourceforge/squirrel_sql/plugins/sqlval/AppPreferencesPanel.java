@@ -36,27 +36,34 @@ import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
 
 class AppPreferencesPanel extends JPanel
 {
+
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(AppPreferencesPanel.class);
+
 	/** Logger for this class. */
 	private final static ILogger s_log =
 		LoggerController.createLogger(AppPreferencesPanel.class);
 
-	private static final String INFO = "This plugin uses version 1.0 of the " +
-		"SQL Validator Web Service developed by MimerSQL " +
-		"http://sqlvalidator.mimer.com. " +
-		"The SQL Statement is stored anonymously to be used by " +
-		" the ISO SQL Standards committee.";
+	// i18n[sqlval.info=This plugin uses version 1.0 of the SQL Validator Web Service developed by MimerSQL http://sqlvalidator.mimer.com. The SQL Statement is stored anonymously to be used by the ISO SQL Standards committee.]
+	private static final String INFO = s_stringMgr.getString("sqlval.info");
 
 	/** Preferences object. */
 	private final WebServicePreferences _prefs;
 
 	/** Logon on as Anonymus checkbox. */
-	private JCheckBox _anonLogonChk = new JCheckBox("Anonymous");
+
+	// i18n[sqlval.anonymous=Anonymous]
+	private JCheckBox _anonLogonChk = new JCheckBox(s_stringMgr.getString("sqlval.anonymous"));
 
 	/** Use anonymous client. */
-	private JCheckBox _anonClientChk = new JCheckBox("Anonymous");
+
+	// i18n[sqlval.anonymous2=Anonymous]
+	private JCheckBox _anonClientChk = new JCheckBox(s_stringMgr.getString("sqlval.anonymous2"));
 
 	/** User name D/E. */
 	private JTextField _userNameText = new JTextField();
@@ -160,7 +167,8 @@ class AppPreferencesPanel extends JPanel
 	private JPanel createInfoPanel()
 	{
 		final JPanel pnl = new JPanel();
-		pnl.setBorder(BorderFactory.createTitledBorder("Info"));
+		// i18n[sqlval.infoBorder=Info]
+		pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("sqlval.infoBorder")));
 		pnl.setLayout(new BorderLayout());
 		final MultipleLineLabel lbl = new MultipleLineLabel(INFO);
 		lbl.setCaretPosition(0);
@@ -183,7 +191,8 @@ class AppPreferencesPanel extends JPanel
 		_passwordText.setColumns(15);
 
 		JPanel pnl = new JPanel();
-		pnl.setBorder(BorderFactory.createTitledBorder("Log on as"));
+		// i18n[sqlval.loOnAs=Log on as]
+		pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("sqlval.loOnAs")));
 
 		pnl.setLayout(new GridBagLayout());
 		final GridBagConstraints gbc = new GridBagConstraints();
@@ -201,10 +210,12 @@ class AppPreferencesPanel extends JPanel
 		gbc.gridheight = 1;
 		gbc.weightx = 1;
 		++gbc.gridx;
-		pnl.add(new JLabel("User:", JLabel.RIGHT), gbc);
+		// i18n[sqlval.user=User:]
+		pnl.add(new JLabel(s_stringMgr.getString("sqlval.user"), JLabel.RIGHT), gbc);
 
 		++gbc.gridy;
-		pnl.add(new JLabel("Password:", JLabel.RIGHT), gbc);
+		// i18n[sqlval.pwdPref=Password:]
+		pnl.add(new JLabel(s_stringMgr.getString("sqlval.pwdPref"), JLabel.RIGHT), gbc);
 
 		gbc.fill = GridBagConstraints.NONE;
 		++gbc.gridx;
@@ -222,13 +233,14 @@ class AppPreferencesPanel extends JPanel
 
 	/**
 	 * This creates the panel containing the client information.
-	 * 
+	 *
 	 * @return	New panel.
 	 */
 	private JPanel createClientPanel()
 	{
 		JPanel pnl = new JPanel();
-		pnl.setBorder(BorderFactory.createTitledBorder("Client"));
+		// i18n[sqlval.clientBorder=Client]
+		pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("sqlval.clientBorder")));
 
 		pnl.setLayout(new GridBagLayout());
 		final GridBagConstraints gbc = new GridBagConstraints();
@@ -242,10 +254,12 @@ class AppPreferencesPanel extends JPanel
 
 		gbc.gridwidth = 1;
 		++gbc.gridy;
-		pnl.add(new JLabel("Client:", JLabel.RIGHT), gbc);
+		// i18n[sqlval.clientLogon=Client:]
+		pnl.add(new JLabel(s_stringMgr.getString("sqlval.clientLogon"), JLabel.RIGHT), gbc);
 
 		++gbc.gridy;
-		pnl.add(new JLabel("Version:", JLabel.RIGHT), gbc);
+		// i18n[sqlval.version=Version:]
+		pnl.add(new JLabel(s_stringMgr.getString("sqlval.version"), JLabel.RIGHT), gbc);
 
 		gbc.gridx = 1;
 		gbc.gridy = 1;

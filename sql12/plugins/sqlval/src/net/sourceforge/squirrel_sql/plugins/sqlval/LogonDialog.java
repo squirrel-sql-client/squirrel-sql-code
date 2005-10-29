@@ -30,6 +30,8 @@ import javax.swing.JPanel;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.sqlval.cmd.ConnectCommand;
@@ -39,6 +41,10 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public class LogonDialog extends JDialog
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(LogonDialog.class);
+
+
 	/** Logger for this class. */
 	private final static ILogger s_log =
 		LoggerController.createLogger(LogonDialog.class);
@@ -59,7 +65,8 @@ public class LogonDialog extends JDialog
 	public LogonDialog(ISession session, WebServicePreferences prefs,
 				WebServiceSessionProperties sessionProps)
 	{
-		super(session.getApplication().getMainFrame(), "SQL Validation Logon", true);
+		// i18n[sqlval.logon=SQL Validation Logon]
+		super(session.getApplication().getMainFrame(), s_stringMgr.getString("sqlval.logon"), true);
 
 		if (session == null)
 		{
@@ -166,7 +173,8 @@ public class LogonDialog extends JDialog
 	{
 		JPanel pnl = new JPanel();
 
-		JButton okBtn = new JButton("OK");
+		// i18n[sqlval.logonOk=OK]
+		JButton okBtn = new JButton(s_stringMgr.getString("sqlval.logonOk"));
 		okBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
@@ -174,7 +182,8 @@ public class LogonDialog extends JDialog
 				performOk();
 			}
 		});
-		JButton closeBtn = new JButton("Close");
+		// i18n[sqlval.logonClose=Close]
+		JButton closeBtn = new JButton(s_stringMgr.getString("sqlval.logonClose"));
 		closeBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
