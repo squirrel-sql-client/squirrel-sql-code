@@ -1,4 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.mysql.tab;
+
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
 /*
  * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -26,14 +29,20 @@ package net.sourceforge.squirrel_sql.plugins.mysql.tab;
  */
 public class ProcessesTab extends BaseSQLTab
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ProcessesTab.class);
+
+
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
 	private interface i18n
 	{
-		String TITLE = "MySQL Processes";
-		String HINT = "(MySQL) Display database processes";
+		// i18n[mysql.processes=MySQL Processes]
+		String TITLE = s_stringMgr.getString("mysql.processes");
+		// i18n[mysql.displayProcesses=(MySQL) Display database processes]
+		String HINT = s_stringMgr.getString("mysql.displayProcesses");
 	}
 
 	/** Logger for this class. */

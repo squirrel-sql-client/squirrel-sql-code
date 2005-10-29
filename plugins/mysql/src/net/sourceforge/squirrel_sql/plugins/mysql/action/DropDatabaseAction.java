@@ -21,6 +21,8 @@ import java.awt.event.ActionEvent;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 
@@ -41,11 +43,17 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTr
 public class DropDatabaseAction	extends SquirrelAction
 								implements ISessionAction
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(DropDatabaseAction.class);
+
+
 	/** Title for confirmation dialog. */
-	private static final String TITLE = "Dropping database(s)";
+	// i18n[mysql.droppingDBs=Dropping database(s)]
+	private static final String TITLE = s_stringMgr.getString("mysql.droppingDBs");
 
 	/** Message for confirmation dialog. */
-	private static final String MSG = "Are you sure?";
+	// i18n[mysql.sureDropping=Are you sure?]
+	private static final String MSG = s_stringMgr.getString("mysql.sureDropping");
 
 	/** Current session. */
 	private ISession _session;

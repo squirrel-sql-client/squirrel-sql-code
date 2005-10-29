@@ -1,4 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.mysql.tab;
+
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /*
  * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -26,14 +29,20 @@ package net.sourceforge.squirrel_sql.plugins.mysql.tab;
  */
 public class DatabaseStatusTab extends BaseSQLTab
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(DatabaseStatusTab.class);
+
+
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
 	private interface i18n
 	{
-		String TITLE = "MySQL Status";
-		String HINT = "(MySQL) Display database status";
+		// i18n[mysql.status=MySQL Status]
+		String TITLE = s_stringMgr.getString("mysql.status");
+		// i18n[mysql.displayStatus=(MySQL) Display database status]
+		String HINT = s_stringMgr.getString("mysql.displayStatus");
 	}
 
 	/** Logger for this class. */

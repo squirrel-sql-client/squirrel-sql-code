@@ -1,4 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.mysql.tab;
+
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /*
  * Copyright (C) 2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -24,14 +27,20 @@ package net.sourceforge.squirrel_sql.plugins.mysql.tab;
  */
 public class UserGrantsTab extends BaseSQLTab
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(UserGrantsTab.class);
+
+
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
 	private interface i18n
 	{
-		String TITLE = "MySQL Grants";
-		String HINT = "(MySQL) Grants";
+		// i18n[mysql.grants=MySQL Grants]
+		String TITLE = s_stringMgr.getString("mysql.grants");
+		// i18n[mysql.hintGrants=(MySQL) Grants]
+		String HINT = s_stringMgr.getString("mysql.hintGrants");
 	}
 
 	public UserGrantsTab()
