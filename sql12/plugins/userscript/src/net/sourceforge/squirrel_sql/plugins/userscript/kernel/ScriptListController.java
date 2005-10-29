@@ -1,6 +1,8 @@
 package net.sourceforge.squirrel_sql.plugins.userscript.kernel;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -10,6 +12,9 @@ import java.util.Vector;
 
 public class ScriptListController
 {
+
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ScriptListController.class);
 
 	private ScriptListDialog m_dlg;
 	private JFrame m_ownerFrame;
@@ -30,13 +35,17 @@ public class ScriptListController
 
 			if(1 < m_targets.size())
 			{
-				title = "Execute script on selected targets";
-				applicableScriptsText = "Scripts applicable to selected targets";
+				// i18n[userscript.execOnTargets=Execute script on selected targets]
+				title = s_stringMgr.getString("userscript.execOnTargets");
+				// i18n[userscript.applicableToTarget=Scripts applicable to selected targets]
+				applicableScriptsText = s_stringMgr.getString("userscript.applicableToTarget");
 			}
 			else
 			{
-				title = "Execute script on " + m_targets.getAll()[0].getTargetInfo();
-				applicableScriptsText = "Scripts applicable to objects of type " + m_targets.getAll()[0].getTargetInfo();
+				// i18n[userscript.execOn=Execute script on {0}]
+				title = s_stringMgr.getString("userscript.execOn", m_targets.getAll()[0].getTargetInfo());
+				// i18n[userscript.applicableTo=Scripts applicable to objects of type {0}]
+				applicableScriptsText = s_stringMgr.getString("userscript.applicableTo", m_targets.getAll()[0].getTargetInfo());
 			}
 
 
@@ -140,7 +149,8 @@ public class ScriptListController
 
 		if(0 == selIndices.length)
 		{
-			JOptionPane.showMessageDialog(m_ownerFrame, "Please select the classpath entry to delete");
+			// i18n[userscript.selClasspathToDel=Please select the classpath entry to delete]
+			JOptionPane.showMessageDialog(m_ownerFrame, s_stringMgr.getString("userscript.selClasspathToDel"));
 			return;
 		}
 
@@ -201,7 +211,9 @@ public class ScriptListController
 
 		if(-1 == m_dlg.tblScriptList.getSelectedRow())
 		{
-			JOptionPane.showMessageDialog(m_ownerFrame, "Please select the script to execute");
+
+			// i18n[userscript.selScriptToExec=Please select the script to execute]
+			JOptionPane.showMessageDialog(m_ownerFrame, s_stringMgr.getString("userscript.selScriptToExec"));
 			return;
 		}
 
@@ -214,7 +226,8 @@ public class ScriptListController
 	{
 		if(-1 == m_dlg.tblScriptList.getSelectedRow())
 		{
-			JOptionPane.showMessageDialog(m_ownerFrame, "Please select the script to delete");
+			// i18n[userscript.selScriptToDel=Please select the script to delete]
+			JOptionPane.showMessageDialog(m_ownerFrame, s_stringMgr.getString("userscript.selScriptToDel"));
 			return;
 		}
 
@@ -222,7 +235,8 @@ public class ScriptListController
 		Script selScript = tm.getScripts()[m_dlg.tblScriptList.getSelectedRow()];
 
 
-		int option = JOptionPane.showConfirmDialog(m_ownerFrame, "Do you want to remove script " + selScript.getName() + " from the list?");
+		// i18n[userscript.confirmRemove=Do you want to remove script {0} from the list?]
+		int option = JOptionPane.showConfirmDialog(m_ownerFrame,  s_stringMgr.getString("userscript.confirmRemove", selScript.getName()));
 
 		if(JOptionPane.YES_OPTION == option)
 		{
@@ -235,7 +249,8 @@ public class ScriptListController
 	{
       if(-1 == m_dlg.tblScriptList.getSelectedRow())
 		{
-			JOptionPane.showMessageDialog(m_ownerFrame, "Please select the script to edit");
+			// i18n[userscript.selScriptToEdit=Please select the script to edit]
+			JOptionPane.showMessageDialog(m_ownerFrame, s_stringMgr.getString("userscript.selScriptToEdit"));
 			return;
 		}
 

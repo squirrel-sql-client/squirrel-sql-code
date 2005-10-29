@@ -2,6 +2,8 @@ package net.sourceforge.squirrel_sql.plugins.userscript.kernel;
 
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
 import java.io.PrintStream;
@@ -11,6 +13,9 @@ import java.awt.*;
 
 public class ScriptEnvironment
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ScriptEnvironment.class);
+
 	private ISQLPanelAPI m_sqlPanelApi;
 	private JFrame m_ownerFrame;
 
@@ -26,10 +31,12 @@ public class ScriptEnvironment
 		m_sqlPanelApi = sqlPanelApi;
 		m_ownerFrame = ownerFrame;
 
-		m_dlg = new JDialog(m_ownerFrame, "Script execution output", false);
+		// i18n[userscript.execOutput=Script execution output]
+		m_dlg = new JDialog(m_ownerFrame, s_stringMgr.getString("userscript.execOutput"), false);
 		m_dlg.getContentPane().setLayout(new BorderLayout());
 		m_tabbedPane = new JTabbedPane();
-		m_lblStatus = new JLabel("Executing Script...");
+		// i18n[userscript.executing=Executing Script...]
+		m_lblStatus = new JLabel(s_stringMgr.getString("userscript.executing"));
 
 		m_dlg.getContentPane().add(m_tabbedPane, BorderLayout.CENTER);
 		m_dlg.getContentPane().add(m_lblStatus, BorderLayout.SOUTH);
@@ -119,11 +126,13 @@ public class ScriptEnvironment
 	{
 		if(successful)
 		{
-			m_lblStatus.setText("Script completed");
+			// i18n[userscript.scriptCompleted=Script completed]
+			m_lblStatus.setText(s_stringMgr.getString("userscript.scriptCompleted"));
 		}
 		else
 		{
-			m_lblStatus.setText("Script completed with errors");
+			// i18n[userscript.scriptCompletedErr=Script completed with errors]
+			m_lblStatus.setText(s_stringMgr.getString("userscript.scriptCompletedErr"));
 		}
 	}
 }
