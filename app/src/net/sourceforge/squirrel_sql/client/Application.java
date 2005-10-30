@@ -35,6 +35,9 @@ import java.io.PrintWriter;
 import java.sql.DriverManager;
 import java.util.Calendar;
 import java.util.Iterator;
+import java.util.Date;
+import java.text.MessageFormat;
+import java.text.DateFormat;
 
 import javax.swing.Action;
 import javax.swing.JComponent;
@@ -156,6 +159,10 @@ class Application implements IApplication
 	{
 		LoggerController.registerLoggerFactory(new SquirrelLoggerFactory());
 		s_log = LoggerController.createLogger(getClass());
+
+		s_log.info("#############################################################################################################");
+		s_log.info("# Starting SQuirreL SQL " + DateFormat.getInstance().format(new Date()));
+		s_log.info("#############################################################################################################");
 
 		final ApplicationArguments args = ApplicationArguments.getInstance();
 
@@ -576,7 +583,8 @@ class Application implements IApplication
       _pluginManager = new PluginManager(this);
 		if (args.getLoadPlugins())
 		{
-            if (_prefs.getShowPluginFilesInSplashScreen()) {
+            if (null != splash && _prefs.getShowPluginFilesInSplashScreen())
+				{
                 ClassLoaderListener listener = splash.getClassLoaderListener();
                 _pluginManager.setClassLoaderListener(listener);
             }

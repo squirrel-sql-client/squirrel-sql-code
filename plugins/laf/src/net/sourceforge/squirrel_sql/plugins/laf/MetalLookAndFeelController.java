@@ -29,6 +29,8 @@ import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
+import net.sourceforge.squirrel_sql.client.Version;
+
 /**
  * Behaviour for the jGoodies Plastic Look and Feel. It also takes
  * responsibility for the metal Look and Feel.
@@ -43,20 +45,7 @@ class MetalLookAndFeelController extends AbstractPlasticController
 
 	static final String METAL_LAF_CLASS_NAME = MetalLookAndFeel.class.getName();
 
-   protected static final String[] METAL_THEME_CLASS_NAMES = new String[]
-   {
-      "javax.swing.plaf.metal.OceanTheme", // Only available with JDK 1.5
-      "AquaTheme",
-      "CharcoalTheme",
-      "ContrastTheme",
-      "EmeraldTheme",
-      "RubyTheme",
-      "net.sourceforge.squirrel_sql.plugins.laf.swingsetthemes.AquaTheme",
-      "net.sourceforge.squirrel_sql.plugins.laf.swingsetthemes.CharcoalTheme",
-      "net.sourceforge.squirrel_sql.plugins.laf.swingsetthemes.ContrastTheme",
-      "net.sourceforge.squirrel_sql.plugins.laf.swingsetthemes.EmeraldTheme",
-      "net.sourceforge.squirrel_sql.plugins.laf.swingsetthemes.RubyTheme",
-   };
+	private String[] _extraThemeClassNames = new String[0];
 
 
 
@@ -72,9 +61,41 @@ class MetalLookAndFeelController extends AbstractPlasticController
 	 * @param	lafRegister	LAF register.
 	 */
 	MetalLookAndFeelController(LAFPlugin plugin,
-								LAFRegister lafRegister)
+										LAFRegister lafRegister)
 	{
+
 		super(plugin, lafRegister);
+		if(Version.isJDK14())
+		{
+			_extraThemeClassNames = new String[]
+			{
+				////////////////////////////////////////////////////////////////////
+				// These classes have no package see swingsetthemes.jar
+				"AquaTheme",
+				"CharcoalTheme",
+				"ContrastTheme",
+				"EmeraldTheme",
+				"RubyTheme",
+				//
+				///////////////////////////////////////////////////////////////////
+			};
+		}
+		else
+		{
+			_extraThemeClassNames = new String[]
+			{
+				"javax.swing.plaf.metal.OceanTheme", // Only available with JDK 1.5
+				////////////////////////////////////////////////////////////////////
+				// These classes have no package see swingsetthemes.jar
+				"AquaTheme",
+				"CharcoalTheme",
+				"ContrastTheme",
+				"EmeraldTheme",
+				"RubyTheme",
+				//
+				///////////////////////////////////////////////////////////////////
+			};
+		}
 
 		_defaultMetalTheme = new DefaultMetalTheme();
 
@@ -97,7 +118,7 @@ class MetalLookAndFeelController extends AbstractPlasticController
 			}
 		}
 	}
-	
+
 	/**
 	 * Retrieve extra themes for this Look and Feel.
 	 * 
@@ -105,47 +126,47 @@ class MetalLookAndFeelController extends AbstractPlasticController
 	 */
 	MetalTheme[] getExtraThemes()
 	{
-      ClassLoader cl = getLAFRegister().getLookAndFeelClassLoader();
+		ClassLoader cl = getLAFRegister().getLookAndFeelClassLoader();
 
-      Vector ret = new Vector();
+		Vector ret = new Vector();
 
-      boolean defaultThemeIsIncluded = false;
+		boolean defaultThemeIsIncluded = false;
 
-      for (int i = 0; i < METAL_THEME_CLASS_NAMES.length; ++i)
-      {
-         try
-         {
-            Class clazz = cl.loadClass(METAL_THEME_CLASS_NAMES[i]);
-            ret.add((MetalTheme)clazz.newInstance());
+		for (int i = 0; i < _extraThemeClassNames.length; ++i)
+		{
+			try
+			{
+				Class clazz = cl.loadClass(_extraThemeClassNames[i]);
+				ret.add((MetalTheme)clazz.newInstance());
 
-            if(null != _defaultMetalTheme && METAL_THEME_CLASS_NAMES[i].equals(_defaultMetalTheme.getClass().getName()))
-            {
-               defaultThemeIsIncluded = true;
-            }
-         }
-         catch (Throwable th)
-         {
-            s_log.error("Error loading theme " + METAL_THEME_CLASS_NAMES[i], th);
-         }
-      }
+				if(null != _defaultMetalTheme && _extraThemeClassNames[i].equals(_defaultMetalTheme.getClass().getName()))
+				{
+					defaultThemeIsIncluded = true;
+				}
+			}
+			catch (Throwable th)
+			{
+				s_log.error("Error loading theme " + _extraThemeClassNames[i], th);
+			}
+		}
 
-      if(false == defaultThemeIsIncluded)
-      {
-         ret.add(_defaultMetalTheme);
-      }
+		if(false == defaultThemeIsIncluded)
+		{
+			ret.add(_defaultMetalTheme);
+		}
 
 
-      return (MetalTheme[]) ret.toArray(new MetalTheme[ret.size()]);
+		return (MetalTheme[]) ret.toArray(new MetalTheme[ret.size()]);
 	}
 
 	void installCurrentTheme(LookAndFeel laf, MetalTheme theme)
 	{
-      // This works only on JDK 1.5
-      // With JDK 1.4.x fonts will be bold for all SwingSet themes.
-      // See also SwingSet2 demos in JDK 1.4 and JDK 1.5 
-      UIManager.put("swing.boldMetal", Boolean.FALSE);
+		// This works only on JDK 1.5
+		// With JDK 1.4.x fonts will be bold for all SwingSet themes.
+		// See also SwingSet2 demos in JDK 1.4 and JDK 1.5
+		UIManager.put("swing.boldMetal", Boolean.FALSE);
 
-      MetalLookAndFeel.setCurrentTheme(theme);
+		MetalLookAndFeel.setCurrentTheme(theme);
 	}
 
 	/**

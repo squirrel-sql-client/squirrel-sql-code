@@ -322,7 +322,6 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin {
 
 	for (Iterator i = bookmarkManager.iterator(); i.hasNext(); ) {
 	    Object o = i.next();
-	    logger.error(o.getClass().getName());
 	    Bookmark bookmark = (Bookmark) o;
 
 	    addBookmarkItem(bookmark);
