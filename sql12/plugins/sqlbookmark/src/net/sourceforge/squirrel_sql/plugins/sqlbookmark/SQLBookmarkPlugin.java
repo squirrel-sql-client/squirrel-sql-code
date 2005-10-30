@@ -36,6 +36,8 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -51,6 +53,10 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
  * @author      Joseph Mocker
  **/
 public class SQLBookmarkPlugin extends DefaultSessionPlugin {
+
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(SQLBookmarkPlugin.class);
+
    private static final String PREF_KEY_DEFAULT_BOOKMARKS_LOADED = "Squirrel.sqlbookmark.defaultbookmarksloaded";
 
    private interface IMenuResourceKeys {
@@ -242,7 +248,8 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin {
          }
 
          Preferences.userRoot().putBoolean(PREF_KEY_DEFAULT_BOOKMARKS_LOADED, true);
-         getApplication().getMessageHandler().showMessage("Default bookmarks have been added. See menu File --> Global Preferences --> Bookmarks");
+			// i18n[sqlbookmark.defaultsAdded=Default bookmarks have been added. See menu File --> Global Preferences --> Bookmarks]
+			getApplication().getMessageHandler().showMessage(s_stringMgr.getString("sqlbookmark.defaultsAdded"));
       }
 	}
 	catch (IOException e) {

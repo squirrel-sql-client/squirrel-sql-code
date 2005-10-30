@@ -42,6 +42,8 @@ import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
 
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -56,7 +58,11 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * @author      Joseph Mocker
  **/
 public class RunBookmarkCommand implements ICommand {
-    private static ILogger logger = 
+
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(RunBookmarkCommand.class);
+
+    private static ILogger logger =
 	LoggerController.createLogger(RunBookmarkCommand.class);
 
     /** Parent frame. */
@@ -197,7 +203,8 @@ public class RunBookmarkCommand implements ICommand {
 	// to prompt for some answers.
 	//
 	if (parameters.size() > 0) {
-	    JDialog dialog = new JDialog(frame, "Query Parameters", true);
+		 // i18n[sqlbookmark.qureyParams=Query Parameters]
+		 JDialog dialog = new JDialog(frame, s_stringMgr.getString("sqlbookmark.qureyParams"), true);
 	    Container contentPane = dialog.getContentPane();
 	    contentPane.setLayout(new BorderLayout());
 
@@ -220,7 +227,9 @@ public class RunBookmarkCommand implements ICommand {
 
 	    JPanel actionPane = new JPanel();
 	    contentPane.add(actionPane, BorderLayout.SOUTH);
-	    JButton done = new JButton("OK");
+
+		 // i18n[sqlbookmark.btnOk=OK]
+		 JButton done = new JButton(s_stringMgr.getString("sqlbookmark.btnOk"));
 	    actionPane.add(done);
        doneAction = new DoneAction(dialog);
        done.addActionListener(doneAction);

@@ -29,6 +29,8 @@ import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -49,7 +51,11 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  **/
 public class AddBookmarkCommand implements ICommand {
 
-    private static ILogger logger = 
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(AddBookmarkCommand.class);
+
+
+	 private static ILogger logger =
 	LoggerController.createLogger(AddBookmarkCommand.class);
 
     /** Parent frame. */
@@ -112,7 +118,8 @@ public class AddBookmarkCommand implements ICommand {
        String sql = sqlEntryPanel.getSQLToBeExecuted();
        if(null == sql || 0 == sql.trim().length())
        {
-          JOptionPane.showMessageDialog(frame, "No text to be added.");
+			 // i18n[sqlbookmark.noAdd=No text to be added.]
+			 JOptionPane.showMessageDialog(frame, s_stringMgr.getString("sqlbookmark.noAdd"));
           return;
        }
 

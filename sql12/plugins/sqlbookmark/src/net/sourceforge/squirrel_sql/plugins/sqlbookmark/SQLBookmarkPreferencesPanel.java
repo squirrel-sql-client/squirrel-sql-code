@@ -29,6 +29,8 @@ import java.awt.event.ActionEvent;
 import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.IApplication;
@@ -46,6 +48,10 @@ import com.sun.java.swing.plaf.windows.WindowsScrollBarUI;
  * @author      Joseph Mocker
  **/
 public class SQLBookmarkPreferencesPanel implements IGlobalPreferencesPanel {
+
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(SQLBookmarkPreferencesPanel.class);
+
     private interface IPrefKeys {
 	String BM_TITLE = "prefs.title";
 	String BM_HINT = "prefs.hint";
@@ -230,7 +236,9 @@ public class SQLBookmarkPreferencesPanel implements IGlobalPreferencesPanel {
 	 * @param    owner The frame the dialog will be centered in
 	 */
 	public EntryDialog(Frame owner) {
-	    super(owner, "Edit bookmark", true);
+
+		 // i18n[sqlbookmark.editBookmark=Edit bookmark]
+		 super(owner, s_stringMgr.getString("sqlbookmark.editBookmark"), true);
 
 	    Container contentPane = getContentPane();
 	    contentPane.setLayout(new GridBagLayout());
@@ -238,21 +246,24 @@ public class SQLBookmarkPreferencesPanel implements IGlobalPreferencesPanel {
       GridBagConstraints gbc;
 
       gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
-      contentPane.add(new JLabel("Name:"), gbc);
+	   // i18n[sqlbookmark.prefName=Name:]
+		contentPane.add(new JLabel(s_stringMgr.getString("sqlbookmark.prefName")), gbc);
 
       name = new JTextField(30);
       gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(0,5,5,5),0,0);
       contentPane.add(name, gbc);
 
       gbc = new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,5,5,5),0,0);
-      contentPane.add(new JLabel("Description:"), gbc);
+			 // i18n[sqlbookmark.desc=Description:]
+		contentPane.add(new JLabel(s_stringMgr.getString("sqlbookmark.desc")), gbc);
 
       description = new JTextField();
       gbc = new GridBagConstraints(1,1,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(0,5,5,5),0,0);
       contentPane.add(description, gbc);
 
       gbc = new GridBagConstraints(0,2,2,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(0,5,5,5),0,0);
-      contentPane.add(new JLabel("Script:"), gbc);
+ 	   // i18n[sqlbookmark.script=Script:]
+		contentPane.add(new JLabel(s_stringMgr.getString("sqlbookmark.script")), gbc);
 
       sql = new JTextArea(5,30);
       gbc = new GridBagConstraints(0,3,2,1,1,1, GridBagConstraints.NORTHEAST, GridBagConstraints.BOTH, new Insets(0,5,5,5),0,0);
@@ -260,11 +271,13 @@ public class SQLBookmarkPreferencesPanel implements IGlobalPreferencesPanel {
           contentPane.add(sqlScroll, gbc);
 
 
-      action = new JButton("OK");
+	    // i18n[sqlbookmark.prefOk=OK]
+      action = new JButton(s_stringMgr.getString("sqlbookmark.prefOk"));
       gbc = new GridBagConstraints(0,4,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,5,5,5),0,0);
       contentPane.add(action, gbc);
 
-      cancel = new JButton("Close");
+			 // i18n[sqlbookmark.prefClose=Close]
+      cancel = new JButton(s_stringMgr.getString("sqlbookmark.prefClose"));
       gbc = new GridBagConstraints(1,4,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,5,5,5),0,0);
       contentPane.add(cancel, gbc);
 
