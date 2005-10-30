@@ -204,7 +204,8 @@ public class ViewLogsSheet extends BaseInternalFrame
 			}
 			catch (Exception ex)
 			{
-				s_log.error("Error", ex);
+                // i18n[ViewLogsSheet.error.clearlogcontents=Error clearing the log contents]
+				s_log.error(s_stringMgr.getString("ViewLogsSheet.error.clearlogcontents"), ex);
 			}
 			final File logFile = (File)_logDirCmb.getSelectedItem();
 			if (logFile != null)
@@ -271,13 +272,15 @@ public class ViewLogsSheet extends BaseInternalFrame
 				}
 				catch (Exception ex)
 				{
-					final String msg = "Error occured processing log file";
+                    // i18n[ViewLogsSheet.error.processinglogfile=Error occured processing log file]
+					final String msg = s_stringMgr.getString("ViewLogsSheet.error.processinglogfile");
 					s_log.error(msg, ex);
 				}
 			}
 			else
 			{
-				s_log.debug("Null log file name");
+                // i18n[ViewLogsSheet.info.nulllogfile=Null log file name]
+				s_log.debug(s_stringMgr.getString("ViewLogsSheet.info.nulllogfile"));
 			}
 
 			if (_closing)
@@ -300,7 +303,8 @@ public class ViewLogsSheet extends BaseInternalFrame
 			}
 			catch (Exception ex)
 			{
-				s_log.error("Error positioning caret in log text component", ex);
+                // i18n[ViewLogsSheet.error.setcaret=Error positioning caret in log text component]
+				s_log.error(s_stringMgr.getString("ViewLogsSheet.error.setcaret"), ex);
 			}
 		}
 		finally
