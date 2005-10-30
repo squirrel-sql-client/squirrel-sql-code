@@ -39,6 +39,8 @@ import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
@@ -52,6 +54,10 @@ public class HtmlViewerPanel extends JPanel
 	private final static ILogger s_log =
 		LoggerController.createLogger(HtmlViewerPanel.class);
 
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(HtmlViewerPanel.class);    
+    
 	/** Text area containing the HTML. */
 	private final JEditorPane _contentsTxt = new JEditorPane();
 
@@ -235,7 +241,8 @@ public class HtmlViewerPanel extends JPanel
 			}
 			catch (Exception ex)
 			{
-				s_log.error("Error displaying URL", ex);
+                // i18n[HtmlViewerPanel.error.displayurl=Error displaying URL]
+				s_log.error(s_stringMgr.getString("HtmlViewerPanel.error.displayurl"), ex);
 			}
 		}
 	}
@@ -355,7 +362,8 @@ public class HtmlViewerPanel extends JPanel
 						}
 						catch (IOException ex)
 						{
-							s_log.error("Error processing hyperlink", ex);
+                            // i18n[HtmlViewerPanel.error.processhyperlink=Error processing hyperlink]
+							s_log.error(s_stringMgr.getString("HtmlViewerPanel.error.processhyperlink"), ex);
 						}
 					}
 				}
