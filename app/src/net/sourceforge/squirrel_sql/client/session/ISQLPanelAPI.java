@@ -107,13 +107,6 @@ public interface ISQLPanelAPI
 	 */
 	public void removeExecuterTabListener(ISQLResultExecuterTabListener lis);
 
-	/**
-	 * Replace the SQL entry area with the passed one.
-	 *
-	 * @param	pnl	New SQL entry area.
-	 */
-	void installSQLEntryPanel(ISQLEntryPanel pnl);
-
 	// TODO: Do we need this?
 	ISQLEntryPanel getSQLEntryPanel();
 
