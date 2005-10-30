@@ -75,7 +75,6 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.action.RedoAction;
 import net.sourceforge.squirrel_sql.client.session.action.UndoAction;
-import net.sourceforge.squirrel_sql.client.session.action.ViewObjectAtCursorInObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.event.*;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 /**
@@ -145,11 +144,6 @@ public class SQLPanel extends JPanel
 	private boolean _hasBeenVisible = false;
 	private JSplitPane _splitPane;
 
-	/**
-	 * Label added to session sheets statusbar sgowing row/col of the
-	 * caret in the sql entryy area.
-	 */
-	private final RowColumnLabel _rowColLbl = new RowColumnLabel();
 
 	/** Listeners */
 	private EventListenerList _listeners = new EventListenerList();
@@ -158,9 +152,6 @@ public class SQLPanel extends JPanel
 
 	/** Factory for generating unique IDs for new <TT>ResultTab</TT> objects. */
 //	private IntegerIdentifierFactory _idFactory = new IntegerIdentifierFactory();
-
-	/** Listens to caret events in data entry area. */
-	private final DataEntryAreaCaretListener _dataEntryCaretListener = new DataEntryAreaCaretListener();
 
 	private final List _executors = new ArrayList();
 
@@ -420,44 +411,27 @@ public class SQLPanel extends JPanel
    }
 
 
-	public void installSQLEntryPanel(ISQLEntryPanel pnl)
+	private void installSQLEntryPanel(ISQLEntryPanel pnl)
 	{
 		if (pnl == null)
 		{
 			throw new IllegalArgumentException("Null ISQLEntryPanel passed");
 		}
 
-		SQLEntryState state = new SQLEntryState(this, _sqlEntry);
+		_sqlEntry = pnl;
+
 		final int pos = _splitPane.getDividerLocation();
-		if (_sqlEntry != null)
+		if (!_sqlEntry.getDoesTextComponentHaveScroller())
 		{
-			_sqlEntry.removeUndoableEditListener(_undoManager);
-			_sqlEntry.removeCaretListener(_dataEntryCaretListener);
-			if (_sqlEntryScroller != null)
-			{
-				_splitPane.remove(_sqlEntryScroller);
-				_sqlEntryScroller = null;
-			}
-			else
-			{
-				_splitPane.remove(_sqlEntry.getTextComponent());
-			}
-		}
-		if (!pnl.getDoesTextComponentHaveScroller())
-		{
-			_sqlEntryScroller = new JScrollPane(pnl.getTextComponent());
+			_sqlEntryScroller = new JScrollPane(_sqlEntry.getTextComponent());
 			_sqlEntryScroller.setBorder(BorderFactory.createEmptyBorder());
 			_splitPane.add(_sqlEntryScroller);
 		}
 		else
 		{
-			_splitPane.add(pnl.getTextComponent(), JSplitPane.LEFT);
+			_splitPane.add(_sqlEntry.getTextComponent(), JSplitPane.LEFT);
 		}
 		_splitPane.setDividerLocation(pos);
-		state.restoreState(pnl);
-		_sqlEntry = pnl;
-
-		_sqlEntry.addCaretListener(_dataEntryCaretListener);
 
 		if (!_sqlEntry.hasOwnUndoableManager())
 		{
@@ -823,8 +797,6 @@ public class SQLPanel extends JPanel
 		_splitPane.setOneTouchExpandable(true);
 
 		installSQLEntryPanel(app.getSQLEntryPanelFactory().createSQLEntryPanel(_session));
-//		_splitPane.add(_tabbedResultsPanel, JSplitPane.RIGHT);
-//		_splitPane.add(_tabbedExecuterPanel, JSplitPane.RIGHT);
 
       _executerPanleHolder = new JPanel(new GridLayout(1,1));
       _simpleExecuterPanel = new JPanel(new GridLayout(1,1));
@@ -836,10 +808,6 @@ public class SQLPanel extends JPanel
 		_sqlCombo.addActionListener(_sqlComboListener);
 		_limitRowsChk.addChangeListener(new LimitRowsCheckBoxListener());
 		_nbrRows.getDocument().addDocumentListener(new LimitRowsTextBoxListener());
-
-		// Add a label to the session sheets statusbar to show the current
-		// row/col of the caret in the sql entry area.
-		_session.addToStatusBar(_rowColLbl);
 
 		// Set focus to the SQL entry panel.
 		SwingUtilities.invokeLater(new Runnable()
@@ -1007,132 +975,6 @@ public class SQLPanel extends JPanel
 		}
 	}
 
-//	private final static class ResultTabInfo
-//	{
-//		final ResultTab _tab;
-//		ResultFrame _resultFrame;
-//
-//		ResultTabInfo(ResultTab tab)
-//		{
-//			if (tab == null)
-//			{
-//				throw new IllegalArgumentException("Null ResultTab passed");
-//			}
-//			_tab = tab;
-//		}
-//	}
-
-	private final class SQLEntryState
-	{
-		private SQLPanel _sqlPnl;
-		private boolean _saved = false;
-		private String _text;
-		private int _caretPos;
-		private int _selStart;
-		private int _selEnd;
-		private boolean _hasFocus;
-
-		SQLEntryState(SQLPanel sqlPnl, ISQLEntryPanel pnl)
-		{
-			super();
-			_sqlPnl = sqlPnl;
-			if (pnl != null)
-			{
-				_saved = true;
-				_text = pnl.getText();
-				_selStart = pnl.getSelectionStart();
-				_selEnd = pnl.getSelectionEnd();
-				_caretPos = pnl.getCaretPosition();
-				//??
-				//				_hasFocus = SwingUtilities.findFocusOwner(sqlPnl) == pnl.getComponent();
-				//				_hasFocus = pnl.hasFocus();
-				//				_hasFocus = sqlPnl.f pnl.hasFocus();
-				_hasFocus = true;
-			}
-		}
-
-		void restoreState(final ISQLEntryPanel pnl)
-		{
-			if (_saved && pnl != null)
-			{
-				pnl.setText(_text);
-				pnl.setSelectionStart(_selStart);
-				pnl.setSelectionEnd(_selEnd);
-				//pnl.setCaretPosition(_caretPos);
-				//				if (_hasFocus) {
-				//					SwingUtilities.invokeLater(new Runnable() {
-				//						public void run() {
-				//							pnl.requestFocus();
-				//						}
-				//					});
-				//				}
-			}
-		}
-	}
-
-	private final class DataEntryAreaCaretListener implements CaretListener
-	{
-		public void caretUpdate(CaretEvent evt)
-		{
-			final StringBuffer msg = new StringBuffer();
-			msg.append(_sqlEntry.getCaretLineNumber() + 1)
-				.append(",").append(_sqlEntry.getCaretLinePosition() + 1);
-			SQLPanel.this._rowColLbl.setText(msg.toString());
-		}
-	}
-
-	private final class GetLastSQLAction extends SquirrelAction
-	{
-		GetLastSQLAction(IApplication app, Resources rsrc)
-		{
-			super(app, rsrc);
-		}
-
-		public void actionPerformed(ActionEvent evt)
-		{
-			int idx = _sqlCombo.getItemCount() - 1;
-			if (idx > -1)
-			{
-				final SQLHistoryItem hi = (SQLHistoryItem)_sqlCombo.getItemAt(idx);
-				appendSQL(hi.getSQL());
-			}
-		}
-	}
-
-	private final class RowColumnLabel extends JLabel
-	{
-		RowColumnLabel()
-		{
-			super(" ", JLabel.CENTER);
-		}
-
-		/**
-		 * Return the preferred size of this component.
-		 *
-		 * @return	the preferred size of this component.
-		 */
-		public Dimension getPreferredSize()
-		{
-			Dimension dim = super.getPreferredSize();
-			FontMetrics fm = getFontMetrics(getFont());
-			dim.width = fm.stringWidth("000,000");
-			Border border = getBorder();
-			if (border != null)
-			{
-				Insets ins = border.getBorderInsets(this);
-				if (ins != null)
-				{
-					dim.width += (ins.left + ins.right);
-				}
-			}
-			Insets ins = getInsets();
-			if (ins != null)
-			{
-				dim.width += (ins.left + ins.right);
-			}
-			return dim;
-		}
-	}
 
 	private class CopyLastButton extends JButton
 	{

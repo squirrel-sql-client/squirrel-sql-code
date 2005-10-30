@@ -26,13 +26,13 @@ import net.sourceforge.squirrel_sql.client.session.*;
 import net.sourceforge.squirrel_sql.client.session.action.*;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
+import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 
 import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 import java.awt.*;
 
-/* JASON: Class*/
 public class SQLInternalFrame extends BaseSessionInternalFrame
 								implements ISQLInternalFrame
 {
@@ -43,7 +43,9 @@ public class SQLInternalFrame extends BaseSessionInternalFrame
 	/** Toolbar for window. */
 	private SQLToolBar _toolBar;
 
-   public SQLInternalFrame(ISession session)
+	private StatusBar _statusBar = new StatusBar();
+
+	public SQLInternalFrame(ISession session)
 	{
 		super(session, session.getTitle(), true, true, true, true);
 		_app = session.getApplication();
@@ -113,13 +115,22 @@ public class SQLInternalFrame extends BaseSessionInternalFrame
 
 		_sqlPanel = new SQLPanel(getSession(), false);
 
-      // Needed to make the panel set the divider location from preferences
+
+		// Needed to make the panel set the divider location from preferences
       _sqlPanel.setVisible(true);
 
 		_toolBar = new SQLToolBar(getSession(), _sqlPanel.getSQLPanelAPI());
 		JPanel contentPanel = new JPanel(new BorderLayout());
 		contentPanel.add(_toolBar, BorderLayout.NORTH);
 		contentPanel.add(_sqlPanel, BorderLayout.CENTER);
+
+		Font fn = app.getFontInfoStore().getStatusBarFontInfo().createFont();
+		_statusBar.setFont(fn);
+		contentPanel.add(_statusBar, BorderLayout.SOUTH);
+
+		RowColumnLabel lblRowCol = new RowColumnLabel(_sqlPanel.getSQLEntryPanel());
+		_statusBar.addJComponent(lblRowCol);
+
 		setContentPane(contentPanel);
 		validate();
 	}

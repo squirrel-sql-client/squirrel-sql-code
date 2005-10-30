@@ -259,16 +259,6 @@ public class SQLPanelAPI implements ISQLPanelAPI
 		_panel.removeSQLPanelListener(lis);
 	}
 
-	/**
-	 * Replace the SQL entry area with the passed one.
-	 *
-	 * @param	pnl		New SQL entry area.
-	 */
-	public synchronized void installSQLEntryPanel(ISQLEntryPanel pnl)
-	{
-		_panel.installSQLEntryPanel(pnl);
-	}
-
 	public ISQLEntryPanel getSQLEntryPanel()
 	{
 		return _panel.getSQLEntryPanel();

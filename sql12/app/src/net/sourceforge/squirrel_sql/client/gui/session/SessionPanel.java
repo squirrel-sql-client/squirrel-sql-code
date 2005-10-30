@@ -180,11 +180,6 @@ public class SessionPanel extends JPanel
    }
 
 
-	void installSQLEntryPanel(ISQLEntryPanel pnl)
-	{
-		_mainTabPane.getSQLPanel().installSQLEntryPanel(pnl);
-	}
-
 	/*
 	 * TODO: This should not be public. Check all usages of it
 	 * and put appropriate methods in an API object.
@@ -416,14 +411,6 @@ public class SessionPanel extends JPanel
 
 		_mainTabPane = new MainPanel(session);
 
-//		MessagePanel msgPnl = new MessagePanel();
-//		session.setMessageHandler(msgPnl);
-//		msgPnl.setEditable(false);
-//		_msgSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-//		_msgSplit.setOneTouchExpandable(true);
-//		_msgSplit.add(_mainTabPane, JSplitPane.LEFT);
-//		_msgSplit.add(new JScrollPane(msgPnl), JSplitPane.RIGHT);
-//		add(_msgSplit, BorderLayout.CENTER);
 		add(_mainTabPane, BorderLayout.CENTER);
 
 		Font fn = app.getFontInfoStore().getStatusBarFontInfo().createFont();
@@ -433,6 +420,8 @@ public class SessionPanel extends JPanel
 		_objTreeSelectionLis = new ObjectTreeSelectionListener();
 		getObjectTreePanel().addTreeSelectionListener(_objTreeSelectionLis);
 
+		RowColumnLabel lblRowCol = new RowColumnLabel(_mainTabPane.getSQLPanel().getSQLEntryPanel());
+		addToStatusBar(lblRowCol);
 		validate();
 	}
 
