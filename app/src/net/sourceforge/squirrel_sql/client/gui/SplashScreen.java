@@ -35,6 +35,8 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.ClassLoaderListener;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -43,6 +45,10 @@ public class SplashScreen extends JWindow
 	/** Logger for this class. */
 	private final static ILogger s_log =
 		LoggerController.createLogger(SplashScreen.class);
+
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(SplashScreen.class);
 
 	private JProgressBar _progressBar;
 
@@ -122,7 +128,8 @@ public class SplashScreen extends JWindow
                 public void run()
                 {
                     if (filename != null) {
-                        pluginLabel.setText("Loading file - "+filename);
+                        // i18n[SplashScreen.info.loadingfile=Loading file - ]
+                        pluginLabel.setText(s_stringMgr.getString("SplashScreen.info.loadingfile")+filename);
                     } else {
                         pluginLabel.setText("");
                     }
@@ -132,7 +139,8 @@ public class SplashScreen extends JWindow
         }
         catch (Exception ex)
         {
-            s_log.error("Error occured updating progress bar", ex);
+            //i18n[SplashScreen.error.updatingprogressbar=Error occured updating progress bar]
+            s_log.error(s_stringMgr.getString("SplashScreen.error.updatingprogressbar"), ex);
         }        
     }
 
@@ -153,7 +161,8 @@ public class SplashScreen extends JWindow
 		}
 		catch (Exception ex)
 		{
-			s_log.error("Error occured updating progress bar", ex);
+            // i18n[SplashScreen.error.updatingprogressbar=Error occured updating progress bar]
+			s_log.error(s_stringMgr.getString("SplashScreen.error.updatingprogressbar"), ex);
 		}
 	}
     
