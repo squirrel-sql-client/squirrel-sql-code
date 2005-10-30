@@ -128,10 +128,17 @@ public class MyURLClassLoader extends URLClassLoader
 						}
 						catch (Throwable th)
 						{
-							Object[] args = {className};
-							String msg = s_stringMgr.getString(
-											"MyURLClassLoader.errorLoadingClass", args);
-							logger.error(msg, th);
+//							Object[] args = {className};
+//							String msg = s_stringMgr.getString(
+//											"MyURLClassLoader.errorLoadingClass", args);
+//							logger.error(msg, th);
+
+							// During assignable checks many classes can't be loaded but don't cause problems either.
+							// So we just issue an info.
+							Object[] args = new Object[]{className, type.getName(), th.toString()};
+							// i18n[MyURLClassLoader.noAssignCheck=Failed to load {0} to check if it is assignable to {1}. Reason: {2}]
+							String msg = s_stringMgr.getString("MyURLClassLoader.noAssignCheck", args);
+							logger.info(msg);
 						}
 						if (cls != null)
 						{

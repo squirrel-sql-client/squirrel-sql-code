@@ -4,6 +4,8 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS or probably in latest weekly build
 =====================================================================
 
+- Cleaned up SQuirreL logs
+- Made Swingset's Aqua Look and Feel available
 - Fixed bug: No line counter label on SQL Worksheet (opened by ctrl+n)
 - Fixed the following Exception on Sybase when the Object tab was used:
   java.sql.SQLException: "..."."dbo"."..." not found 
