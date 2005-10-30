@@ -19,9 +19,29 @@ package net.sourceforge.squirrel_sql.client.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.Window;
+import java.beans.PropertyVetoException;
+
+import javax.swing.Action;
+import javax.swing.JDesktopPane;
+import javax.swing.JInternalFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.RepaintManager;
+import javax.swing.SwingUtilities;
+import javax.swing.event.EventListenerList;
+import javax.swing.event.InternalFrameEvent;
+import javax.swing.event.InternalFrameListener;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.gui.db.*;
+import net.sourceforge.squirrel_sql.client.gui.db.AliasWindowManager;
+import net.sourceforge.squirrel_sql.client.gui.db.AliasesList;
+import net.sourceforge.squirrel_sql.client.gui.db.AliasesListInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.db.ConnectionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.db.DriverWindowManager;
+import net.sourceforge.squirrel_sql.client.gui.db.DriversList;
+import net.sourceforge.squirrel_sql.client.gui.db.DriversListInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrameWindowState;
 import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
@@ -29,7 +49,17 @@ import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.util.ThreadCheckingRepaintManager;
-import net.sourceforge.squirrel_sql.client.mainframe.action.*;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CopyAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CopyDriverAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CreateAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CreateDriverAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.DeleteAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.DeleteDriverAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyDriverAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ViewAliasesAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ViewDriversAction;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -47,15 +77,10 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.*;
-import javax.swing.event.EventListenerList;
-import javax.swing.event.InternalFrameEvent;
-import javax.swing.event.InternalFrameListener;
-import java.awt.*;
-import java.beans.PropertyVetoException;
 /**
  * This class manages the windows for the application.
  *
@@ -80,8 +105,8 @@ public class WindowManager
 		LoggerController.createLogger(WindowManager.class);
 
 	/** Internationalized strings for this class. */
-//	private static final StringManager s_stringMgr =
-//		StringManagerFactory.getStringManager(WindowManager.class);
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(WindowManager.class);
 
 	/**
 	 * Key to client property stored in internal frame that udentifies the
@@ -321,11 +346,15 @@ public class WindowManager
 	 */
 	public synchronized void registerSessionSheet(BaseSessionInternalFrame sheet)
 	{
-		s_log.debug("Registering " + sheet.getClass().getName() + " in WindowManager");
+        //i18n[WindowManager.registerSessionSheet=Registering {0} in WindowManager]
+        String dbg = 
+            s_stringMgr.getString("WindowManager.registerSessionSheet",
+                                  sheet.getClass().getName());
+		s_log.debug(dbg);
 		final IIdentifier sessionIdentifier = sheet.getSession().getIdentifier();
 
 		// Store ptr to newly open window in list of windows per session.
-   	final int idx = _sessionWindows.addFrame(sessionIdentifier, sheet);
+		final int idx = _sessionWindows.addFrame(sessionIdentifier, sheet);
 
 		// For all windows (other than the first one opened) for a session
 		// add a number on the end of the title to differentiate them in
@@ -604,7 +633,8 @@ public class WindowManager
 					}
 					catch (PropertyVetoException ex)
 					{
-						s_log.error("Error bringing internal frame to the front", ex);
+                        // i18n[WindowManager.error.bringtofront=Error bringing internal frame to the front]
+						s_log.error(s_stringMgr.getString("WindowManager.error.bringtofront"), ex);
 					}
 				}
 			});
@@ -931,7 +961,8 @@ public class WindowManager
 		}
 		catch (PropertyVetoException ex)
 		{
-			s_log.error("Error selecting window", ex);
+            // i18n[WindowManager.errorselectingwindow=Error selecting window]
+			s_log.error(s_stringMgr.getString("WindowManager.errorselectingwindow"), ex);
 		}
 
 		_mainFrame.addInternalFrame(_aliasesListWindow, false, null);
@@ -946,7 +977,8 @@ public class WindowManager
 			}
 			catch (PropertyVetoException ex)
 			{
-				s_log.error("Error selecting window", ex);
+                // i18n[WindowManager.errorselectingwindow=Error selecting window]
+				s_log.error(s_stringMgr.getString("WindowManager.errorselectingwindow"), ex);
 			}
 		}
 		else
