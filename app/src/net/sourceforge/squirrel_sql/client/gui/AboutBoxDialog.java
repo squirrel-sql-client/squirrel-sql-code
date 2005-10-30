@@ -382,15 +382,19 @@ public class AboutBoxDialog extends JDialog
 				catch (IOException ex)
 				{
                     // i18n[AboutBoxDialog.error.creditsfile=Error reading credits file]
-					s_log.error(s_stringMgr.getString("AboutBoxDialog.error.creditsfile"), ex);
-					buf.append("Error reading credits file: " + ex.toString());
+                    String errorMsg = 
+                        s_stringMgr.getString("AboutBoxDialog.error.creditsfile");
+					s_log.error(errorMsg, ex);
+					buf.append(errorMsg + ": " + ex.toString());
 				}
 			}
 			else
 			{
                 // i18n[AboutBoxDialog.error.creditsfileurl=Couldn't retrieve Credits File URL]
-				s_log.error(s_stringMgr.getString("AboutBoxDialog.error.creditsfileurl"));
-				buf.append("Couldn't retrieve Credits File URL");
+                String errorMsg = 
+                    s_stringMgr.getString("AboutBoxDialog.error.creditsfileurl");
+				s_log.error(errorMsg);
+				buf.append(errorMsg);
 			}
 			return buf;
 		}
