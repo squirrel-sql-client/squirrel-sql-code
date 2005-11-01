@@ -36,7 +36,7 @@ public class SessionTextEditPopupMenu extends TextPopupMenu
 {
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(MainPanel.class);
+		StringManagerFactory.getStringManager(SessionTextEditPopupMenu.class);
 
 	private MakeEditableAction _makeEditable = new MakeEditableAction();
 
