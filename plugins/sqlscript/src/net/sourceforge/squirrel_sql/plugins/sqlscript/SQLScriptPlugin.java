@@ -219,6 +219,10 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
       api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTableScriptAction.class));
 		api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateDataScriptAction.class));
 		api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTemplateDataScriptAction.class));
+        api.addToPopup(DatabaseObjectType.VIEW, coll.get(CreateTableScriptAction.class));
+        api.addToPopup(DatabaseObjectType.VIEW, coll.get(CreateDataScriptAction.class));
+        api.addToPopup(DatabaseObjectType.VIEW, coll.get(CreateTemplateDataScriptAction.class));
+        
 
       session.addSeparatorToToolbar();
 		session.addToToolbar(coll.get(CreateTableOfCurrentSQLAction.class));
