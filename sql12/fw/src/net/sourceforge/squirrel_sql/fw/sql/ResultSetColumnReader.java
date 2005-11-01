@@ -246,7 +246,13 @@ public class ResultSetColumnReader
 							results = new Long(obj.toString());
 						}
 						break;
-
+                    case Types.BIT:
+                        if ("true".equalsIgnoreCase(obj.toString())) {
+                            results = new Long(1);
+                        } else {
+                            results = new Long(0);
+                        }
+                        break;
 					default:
 						results = new Long(obj.toString());
 						break;
