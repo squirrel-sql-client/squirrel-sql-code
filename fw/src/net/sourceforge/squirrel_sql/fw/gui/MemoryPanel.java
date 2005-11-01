@@ -1,157 +1,77 @@
 package net.sourceforge.squirrel_sql.fw.gui;
-/*
- * Copyright (C) 2002-2003 Colin Bell
- * colbell@users.sourceforge.net
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- */
-import java.awt.Dimension;
-import java.awt.FontMetrics;
-import java.awt.Insets;
+
+
+import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
+
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JLabel;
-import javax.swing.Timer;
-import javax.swing.ToolTipManager;
-import javax.swing.border.Border;
+import javax.swing.*;
 
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
-/**
- * Memory panel. This will show the used/total memory in the heap.
- * A timer to update the memory status is started when the component
- * is added to its parent and stopped when removed from its parent.
- *
- * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
- */
-public class MemoryPanel extends JLabel
+public class MemoryPanel extends JLabel implements ActionListener
 {
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(MemoryPanel.class);
-
-	/** Timer that updates memory status. */
-	private Timer _timer;
-
-	/**
-	 * Default ctor.
-	 */
+	private JProgressBar _bar;
+	private JButton _btnGarbage;
+	private StringBuffer _buffy = new StringBuffer();
 	public MemoryPanel()
 	{
-		super("", JLabel.CENTER);
-	}
+		this.setPreferredSize(new Dimension(125, 18));
 
-	/**
-	 * Add component to its parent. Start the timer for auto-update.
-	 */
-	public void addNotify()
-	{
-		super.addNotify();
-		updateMemoryStatus();
-		ToolTipManager.sharedInstance().registerComponent(this);
-		_timer = new Timer(2000, new TimerListener());
-		_timer.start();
-	}
 
-	/**
-	 * Remove component from its parent. Stop the timer.
-	 */
-	public void removeNotify()
-	{
-		super.removeNotify();
-		ToolTipManager.sharedInstance().unregisterComponent(this);
-		if (_timer != null)
+		final Color selectionBackground = (Color)UIManager.get("ProgressBar.selectionBackground");
+		final Color selectionForeground = (Color)UIManager.get("ProgressBar.selectionForeground");
+		UIManager.put("ProgressBar.selectionBackground",Color.black);
+		UIManager.put("ProgressBar.selectionForeground",Color.black);
+
+		_bar = new JProgressBar();
+		_bar.setBorderPainted(false);
+		_bar.setOpaque(true);
+		_bar.setBackground(new Color(244,244,244));
+		_bar.setForeground(new Color(153, 204, 255));
+		_bar.setBorder(null);
+
+		UIManager.put("ProgressBar.selectionBackground",selectionBackground);
+		UIManager.put("ProgressBar.selectionForeground",selectionForeground);
+
+		_bar.setStringPainted(true);
+
+		_btnGarbage = new JButton();
+		_btnGarbage.setToolTipText("Run garbage collection");
+		_btnGarbage.setFocusable(false);
+		_btnGarbage.setFocusPainted(false);
+		_btnGarbage.setBorder(null);
+		_btnGarbage.setIcon(new LibraryResources().getIcon(LibraryResources.IImageNames.TRASH));
+		_btnGarbage.setPreferredSize(new Dimension(20,10));
+		_btnGarbage.addActionListener(new ActionListener()
 		{
-			_timer.stop();
-			_timer = null;
-		}
-	}
-
-	/**
-	 * Return tooltip for this component.
-	 * 
-	 * @return	tooltip for this component.
-	 */
-	public String getToolTipText()
-	{
-		final Runtime rt = Runtime.getRuntime();
-		final long totalMemory = rt.totalMemory();
-		final long freeMemory = rt.freeMemory();
-		final long usedMemory = totalMemory - freeMemory;
-		final Object[] args = new Object[]
-		{
-			Utilities.formatSize(usedMemory), Utilities.formatSize(totalMemory),
-			Utilities.formatSize(freeMemory)
-		};
-		return s_stringMgr.getString("MemoryPanel.message", args);
-	}
-
-	/**
-	 * Return the preferred size of this component.
-	 * 
-	 * @return	the preferred size of this component.
-	 */
-	public Dimension getPreferredSize()
-	{
-		Dimension dim = super.getPreferredSize();
-		FontMetrics fm = getFontMetrics(getFont());
-		dim.width = fm.stringWidth("99.9MB/99.9MB");
-		Border border = getBorder();
-		if (border != null)
-		{
-			Insets ins = border.getBorderInsets(this);
-			if (ins != null)
+			public void actionPerformed(ActionEvent e)
 			{
-				dim.width += (ins.left + ins.right);
+				System.gc();
 			}
-		}
-		Insets ins = getInsets();
-		if (ins != null)
-		{
-			dim.width += (ins.left + ins.right);
-		}
-		return dim;
+		});
+
+		this.setLayout(new BorderLayout());
+		this.add(_bar, BorderLayout.CENTER);
+		this.add(_btnGarbage, BorderLayout.EAST);
+
+		this.setBorder(null);
+
+		Timer t = new Timer(500, this);
+		t.start();
 	}
 
-	/**
-	 * Update component with the current memory status.
-	 * 
-	 * @param	evt		The current event.
-	 */
-	private void updateMemoryStatus()
+	public void actionPerformed(ActionEvent e)
 	{
-		final Runtime rt = Runtime.getRuntime();
-		final long totalMemory = rt.totalMemory();
-		final long freeMemory = rt.freeMemory();
-		final long usedMemory = totalMemory - freeMemory;
-		StringBuffer buf = new StringBuffer();
-		buf.append(Utilities.formatSize(usedMemory, 1)).append("/")
-			.append(Utilities.formatSize(totalMemory, 1));
-		setText(buf.toString());
-	}
+		long total = Runtime.getRuntime().totalMemory() >> 10 >> 10;
+		long free = Runtime.getRuntime().freeMemory() >> 10 >> 10;
+		long just = total-free;
 
-	/**
-	 * Update component with the current memory status.
-	 */
-	private class TimerListener implements ActionListener
-	{
-		public void actionPerformed(ActionEvent evt)
-		{
-			updateMemoryStatus();
-		}
+		_bar.setMinimum(0);
+		_bar.setMaximum((int)total);
+		_bar.setValue((int)just);
+		_buffy.setLength(0);
+		_buffy.append(just).append(" of ").append(total).append(" MB");
+		_bar.setString(_buffy.toString());
 	}
 }

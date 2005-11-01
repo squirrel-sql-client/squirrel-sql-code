@@ -19,6 +19,8 @@ package net.sourceforge.squirrel_sql.client;
  */
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.Date;
+import java.text.DateFormat;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Category;
@@ -50,9 +52,7 @@ public class SquirrelLoggerFactory extends Log4jLoggerFactory
 
 				BasicConfigurator.configure(fa);
 				final ILogger log = createLogger(getClass());
-				log.warn(
-					"No logger configuration file passed on command line arguments. Using default log file: "
-						+ fa.getFile() /*logFileName*/);
+				log.info("No logger configuration file passed on command line arguments. Using default log file: "	+ fa.getFile() );
 			}
 			catch (IOException ex)
 			{
@@ -67,9 +67,9 @@ public class SquirrelLoggerFactory extends Log4jLoggerFactory
 	private void doStartupLogging()
 	{
 		final ILogger log = createLogger(getClass());
-		log.info("=======================================================");
-		log.info("=======================================================");
-		log.info("=======================================================");
+		log.info("#############################################################################################################");
+		log.info("# Starting " + Version.getVersion()  + " at " + DateFormat.getInstance().format(new Date()));
+		log.info("#############################################################################################################");
 		log.info(Version.getVersion() + " started: " + Calendar.getInstance().getTime());
 		log.info(Version.getCopyrightStatement());
 		log.info("java.vendor: " + System.getProperty("java.vendor"));

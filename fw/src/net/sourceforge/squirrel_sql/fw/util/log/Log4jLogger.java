@@ -28,6 +28,8 @@ public class Log4jLogger implements ILogger
 {
 	/** Log4j logger to log to. */
 	private Logger _log;
+	private ILoggerListener _listener;
+	private Class _clazz;
 
 	/**
 	 * Ctor specifying the object requesting the logger. A
@@ -39,13 +41,20 @@ public class Log4jLogger implements ILogger
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>clazz</TT> is <TT>null</TT>.
 	 */
-	public Log4jLogger(Class clazz)
+	Log4jLogger(Class clazz, ILoggerListener listener)
 	{
 		if (clazz == null)
 		{
 			throw new IllegalArgumentException("Empty requesterClass passed");
 		}
 
+		if (listener == null)
+		{
+			throw new IllegalArgumentException("Empty listener passed");
+		}
+
+		_listener = listener;
+		_clazz = clazz;
 		_log = Logger.getLogger(clazz);
 	}
 
@@ -71,6 +80,7 @@ public class Log4jLogger implements ILogger
 	public void info(Object message)
 	{
 		_log.info(message);
+		_listener.info(_clazz, message);
 	}
 
 	/**
@@ -79,6 +89,7 @@ public class Log4jLogger implements ILogger
 	public void info(Object message, Throwable th)
 	{
 		_log.info(message, th);
+		_listener.info(_clazz, message, th);
 	}
 
 	/**
@@ -87,6 +98,7 @@ public class Log4jLogger implements ILogger
 	public void warn(Object message)
 	{
 		_log.warn(message);
+		_listener.warn(_clazz, message);
 	}
 
 	/**
@@ -95,6 +107,7 @@ public class Log4jLogger implements ILogger
 	public void warn(Object message, Throwable th)
 	{
 		_log.warn(message, th);
+		_listener.warn(_clazz, message, th);
 	}
 
 	/**
@@ -103,6 +116,7 @@ public class Log4jLogger implements ILogger
 	public void error(Object message)
 	{
 		_log.error(message);
+		_listener.error(_clazz, message);
 	}
 
 	/**
@@ -111,6 +125,7 @@ public class Log4jLogger implements ILogger
 	public void error(Object message, Throwable th)
 	{
 		_log.error(message, th);
+		_listener.error(_clazz, message, th);
 	}
 
 	/**

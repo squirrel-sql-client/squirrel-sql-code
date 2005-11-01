@@ -4,6 +4,18 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS or probably in latest weekly build
 =====================================================================
 
+- Improved Exception handling and new Log panel in Status bar:
+  SQuirreL's: exception/log handling had two problems:
+  i. Exceptions could easily occur without being logged.
+  ii. It was hard for users to get aware of logs. The only way was to regularly open the logs window.
+
+  It is taken care now that all exceptions are logged. The user is notified that a log was produced by the
+  new Log panel in SQuirreL's status bar. A traffic lights color of the last log is displayed on one of the
+  Log panel's buttons.  The last log color is displayed for 5 seconds and is then turned bag to white.
+  This allows the user to have an eye an the logs without much disturbance.
+  The buttons of the Log panel allow the user to view the last Log and to open the logs window.
+
+- New Memory panel in Status bar.
 - Cleaned up SQuirreL logs
 - Made Swingset's Aqua Look and Feel available
 - Fixed bug: No line counter label on SQL Worksheet (opened by ctrl+n)
