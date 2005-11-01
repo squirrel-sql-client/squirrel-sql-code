@@ -304,8 +304,8 @@ public class SessionManager
 		}
 		catch (Throwable ex)
 		{
-			ex.printStackTrace();
-			session.getMessageHandler().showErrorMessage(ex);
+			s_log.error(ex);
+			session.getMessageHandler().showErrorMessage(s_stringMgr.getString("SessionManager.ErrorClosingSession", ex));
 		}
 
 		return false;
@@ -482,5 +482,53 @@ public class SessionManager
 		final String msg = s_stringMgr.getString("SessionManager.confirmClose",
 							session.getTitle());
 		return Dialogs.showYesNo(_app.getMainFrame(), msg);
+	}
+
+	protected void fireConnectionClosedForReconnect(Session session)
+	{
+		Object[] listeners = listenerList.getListenerList();
+		SessionEvent evt = null;
+		for (int i = listeners.length - 2; i >= 0; i -= 2)
+		{
+			if (listeners[i] == ISessionListener.class)
+			{
+				// Lazily create the event:
+				if (evt == null)
+					evt = new SessionEvent(session);
+				((ISessionListener)listeners[i + 1]).connectionClosedForReconnect(evt);
+			}
+		}
+	}
+
+	protected void fireReconnected(Session session)
+	{
+		Object[] listeners = listenerList.getListenerList();
+		SessionEvent evt = null;
+		for (int i = listeners.length - 2; i >= 0; i -= 2)
+		{
+			if (listeners[i] == ISessionListener.class)
+			{
+				// Lazily create the event:
+				if (evt == null)
+					evt = new SessionEvent(session);
+				((ISessionListener)listeners[i + 1]).reconnected(evt);
+			}
+		}
+	}
+
+	protected void fireReconnectFailed(Session session)
+	{
+		Object[] listeners = listenerList.getListenerList();
+		SessionEvent evt = null;
+		for (int i = listeners.length - 2; i >= 0; i -= 2)
+		{
+			if (listeners[i] == ISessionListener.class)
+			{
+				// Lazily create the event:
+				if (evt == null)
+					evt = new SessionEvent(session);
+				((ISessionListener)listeners[i + 1]).reconnectFailed(evt);
+			}
+		}
 	}
 }

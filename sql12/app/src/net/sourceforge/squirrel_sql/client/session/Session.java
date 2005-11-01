@@ -121,7 +121,7 @@ class Session implements ISession
 	private IMessageHandler _msgHandler = NullMessageHandler.getInstance();
 
 	/** Xref info about the current connection. */
-	private final SchemaInfo _schemaInfo = new SchemaInfo(this);
+	private final SchemaInfo _schemaInfo;
 
    /** Set to <TT>true</TT> once session closed. */
 	private boolean _closed;
@@ -152,6 +152,8 @@ class Session implements ISession
 					IIdentifier sessionId)
 	{
 		super();
+		_schemaInfo = new SchemaInfo(app);
+
 		if (app == null)
 		{
 			throw new IllegalArgumentException("null IApplication passed");
@@ -459,6 +461,18 @@ class Session implements ISession
 			connState = new SQLConnectionState();
 			try
 			{
+
+
+
+
+
+
+
+
+
+
+
+
 				connState.saveState(_conn, _msgHandler);
 			}
 			catch (SQLException ex)
@@ -471,6 +485,7 @@ class Session implements ISession
 		try
 		{
 			closeSQLConnection();
+			_app.getSessionManager().fireConnectionClosedForReconnect(this);
 		}
 		catch (SQLException ex)
 		{
@@ -486,20 +501,18 @@ class Session implements ISession
 			if (connState != null)
 			{
 				connState.restoreState(_conn, _msgHandler);
+				getProperties().setAutoCommit(connState.getAutoCommit());
 			}
 			final String msg = s_stringMgr.getString("Session.reconn", _alias.getName());
 			_msgHandler.showMessage(msg);
-			// JASON: need to have listeners attached to the tree
-			// to refresh when re-connected
-			//getObjectTreeAPI(_app.getDummyAppPlugin()).refreshTree();
+			_app.getSessionManager().fireReconnected(this);
 		}
-		catch (SQLException ex)
+		catch (Throwable t)
 		{
-			_msgHandler.showErrorMessage(ex);
-		}
-		catch (BaseException ex)
-		{
-			_msgHandler.showErrorMessage(ex);
+			final String msg = s_stringMgr.getString("Session.reconnError", _alias.getName());
+			_msgHandler.showErrorMessage(msg +"\n" + t.toString());
+			s_log.error(msg, t);
+			_app.getSessionManager().fireReconnectFailed(this);
 		}
 	}
 
@@ -638,7 +651,7 @@ class Session implements ISession
 	 */
 	private void loadTableInfo()
 	{
-		_schemaInfo.load(getSQLConnection());
+		_schemaInfo.load(this);
 	}
 
 	private void setupTitle()

@@ -4,6 +4,8 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS or probably in latest weekly build
 =====================================================================
 
+- Fixed several problems when reconnecting an open Session. (See menu Session --> reconnect)
+
 - Improved Exception handling and new Log panel in Status bar:
   SQuirreL's: exception/log handling had two problems:
   i. Exceptions could easily occur without being logged.

@@ -59,4 +59,16 @@ public class SessionAdapter implements ISessionListener
 	{
 		//Empty Body
 	}
+
+	public void connectionClosedForReconnect(SessionEvent evt)
+	{
+	}
+
+	public void reconnected(SessionEvent evt)
+	{
+	}
+
+	public void reconnectFailed(SessionEvent evt)
+	{
+	}
 }

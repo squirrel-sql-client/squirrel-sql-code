@@ -25,6 +25,12 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
+import net.sourceforge.squirrel_sql.client.session.event.ISessionListener;
+import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
+import net.sourceforge.squirrel_sql.client.IApplication;
 
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -33,6 +39,9 @@ import java.util.*;
 
 public class SchemaInfo
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(SchemaInfo.class);
+
 	private boolean _loading = false;
 	private boolean _loaded = false;
 
@@ -55,51 +64,49 @@ public class SchemaInfo
 	private static final ILogger s_log =
 				LoggerController.createLogger(SchemaInfo.class);
 
-	public SchemaInfo(ISession session)
+	SchemaInfo(IApplication app)
 	{
-		super();
+		app.getSessionManager().addSessionListener(new SessionAdapter()
+		{
+			public void connectionClosedForReconnect(SessionEvent evt)
+			{
+				if(null != _session && _session.getIdentifier().equals(evt.getSession().getIdentifier()))
+				{
+					_dmd = null;
+				}
+			}
+
+			public void reconnected(SessionEvent evt)
+			{
+				if(null != _session && _session.getIdentifier().equals(evt.getSession().getIdentifier()))
+				{
+					initJDBCDatabaseMetaData(_session.getSQLConnection().getSQLMetaData());
+					if(null != _dmd)
+					{
+						s_log.info(s_stringMgr.getString("SchemaInfo.SuccessfullyRestoredDatabaseMetaData"));
+					}
+				}
+			}
+		});
+	}
+
+	public void load(Session session)
+	{
 		if (session == null)
 		{
 			throw new IllegalArgumentException("Session == null");
-		}
-		_session=session;
-	}
-
-	public SchemaInfo(SQLConnection conn, ISession session)
-	{
-		if (conn == null)
-		{
-			throw new IllegalArgumentException("SQLConnection == null");
-		}
-		if (session == null)
-		{
-			throw new IllegalArgumentException("SQLConnection == null");
-		}
-		_session=session;
-		load(conn);
-	}
-
-	public void load(SQLConnection conn)
-	{
-		if (conn == null)
-		{
-			throw new IllegalArgumentException("SQLConnection == null");
 		}
 
 		_loading = true;
 		try
 		{
+			_session = session;
+			SQLConnection conn = _session.getSQLConnection();
+
+
 			final SQLDatabaseMetaData sqlDmd = conn.getSQLMetaData();
 
-			_dmd = null;
-			try
-			{
-				_dmd = sqlDmd.getJDBCMetaData();
-			}
-			catch (Exception ex)
-			{
-				s_log.error("Error retrieving metadata", ex);
-			}
+			initJDBCDatabaseMetaData(sqlDmd);
 
 			try
 			{
@@ -183,6 +190,19 @@ public class SchemaInfo
 		{
 			_loading = false;
 			_loaded = true;
+		}
+	}
+
+	private void initJDBCDatabaseMetaData(SQLDatabaseMetaData sqlDmd)
+	{
+		_dmd = null;
+		try
+		{
+			_dmd = sqlDmd.getJDBCMetaData();
+		}
+		catch (Exception ex)
+		{
+			s_log.error("Error retrieving metadata", ex);
 		}
 	}
 
@@ -841,6 +861,12 @@ public class SchemaInfo
 	private void accessDbToLoadColumns(String tableName)
 		throws SQLException
 	{
+		if(null == _dmd)
+		{
+			s_log.warn(s_stringMgr.getString("SchemaInfo.UnableToLoadColumns", tableName));
+			return;
+		}
+
 		ResultSet rs = _dmd.getColumns(null, null, getCaseSensitiveTableName(tableName), null);
 		try
 		{

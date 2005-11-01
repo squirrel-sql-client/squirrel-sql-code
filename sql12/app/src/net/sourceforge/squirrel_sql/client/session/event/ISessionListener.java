@@ -56,4 +56,10 @@ public interface ISessionListener extends EventListener
 	 * The session has become the currently active session
 	 */
 	public void sessionActivated(SessionEvent evt);
+
+	void connectionClosedForReconnect(SessionEvent evt);
+
+	void reconnected(SessionEvent evt);
+
+	void reconnectFailed(SessionEvent evt);
 }

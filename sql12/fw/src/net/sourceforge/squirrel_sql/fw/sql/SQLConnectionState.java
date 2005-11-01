@@ -62,12 +62,17 @@ public class SQLConnectionState
 		}
 		catch (SQLException ex)
 		{
-			s_log.error("Error saving transaction isolation", ex);
+			String msg =
+				"Error saving transaction isolation.\n" +
+				"This might happen when reconnecting a Session to restore a broken connection.\n" +
+				"The new connection will use the default transaction isolation.";
+
+			s_log.error(msg, ex);
 			if (msgHandler == null)
 			{
 				throw ex;
 			}
-			msgHandler.showErrorMessage(ex);
+			msgHandler.showErrorMessage(msg);
 		}
 
 		try
@@ -76,12 +81,17 @@ public class SQLConnectionState
 		}
 		catch (SQLException ex)
 		{
-			s_log.error("Error saving current catalog", ex);
+			String msg =
+				"Error saving current catalog.\n" +
+				"This might happen when reconnecting a Session to restore a broken connection.\n" +
+				"The new connection will use the default catalog.";
+
+			s_log.error(msg, ex);
 			if (msgHandler == null)
 			{
 				throw ex;
 			}
-			msgHandler.showErrorMessage(ex);
+			msgHandler.showErrorMessage(msg);
 		}
 
 		try
@@ -90,12 +100,18 @@ public class SQLConnectionState
 		}
 		catch (SQLException ex)
 		{
-			s_log.error("Error saving autocommit state", ex);
+			String msg =
+				"Error saving autocommit state.\n" +
+				"This might happen when reconnecting a Session to restore a broken connection.\n" +
+				"The new connection will use the autocommit state.";
+
+
+			s_log.error(msg, ex);
 			if (msgHandler == null)
 			{
 				throw ex;
 			}
-			msgHandler.showErrorMessage(ex);
+			msgHandler.showErrorMessage(msg);
 		}
 
 		_connProps = conn.getConnectionProperties();
@@ -167,6 +183,11 @@ public class SQLConnectionState
 	public SQLDriverPropertyCollection getConnectionProperties()
 	{
 		return _connProps;
+	}
+
+	public boolean getAutoCommit()
+	{
+		return _autoCommit;
 	}
 }
 
