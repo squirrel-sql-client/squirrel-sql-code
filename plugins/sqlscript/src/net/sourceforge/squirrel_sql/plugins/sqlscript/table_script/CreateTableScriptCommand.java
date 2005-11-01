@@ -245,6 +245,9 @@ public class CreateTableScriptCommand implements ICommand
    private String createIndexes(ITableInfo ti)
       throws SQLException
    {
+      if (ti.getDatabaseObjectType() == DatabaseObjectType.VIEW) {
+          return "";
+      }
       StringBuffer sbToAppend = new StringBuffer();
       DatabaseMetaData metaData = _session.getSQLConnection().getConnection().getMetaData();
       ResultSet primaryKeys = metaData.getPrimaryKeys(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName());
