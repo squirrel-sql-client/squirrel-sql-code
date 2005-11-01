@@ -57,6 +57,13 @@ public class SquirrelResources extends Resources
 		String PLUGINS = "Plugins";
 		String SPLASH_SCREEN = "SplashScreen";
 		String VIEW = "View";
+
+		String GREEN_GEM = "green_gem";
+		String YELLOW_GEM = "yellow_gem";
+		String RED_GEM = "red_gem";
+		String WHITE_GEM = "white_gem";
+		String LOGS = "logs";
+
 	}
 
 	public SquirrelResources(String rsrcBundleBaseName)

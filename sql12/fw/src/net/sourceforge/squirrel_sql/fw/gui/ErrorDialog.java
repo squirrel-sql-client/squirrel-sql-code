@@ -17,24 +17,13 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.UIManager;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -51,9 +40,6 @@ public class ErrorDialog extends JDialog
 		String ERROR = "ErrorDialog.error";
 		String UNKNOWN_ERROR = "ErrorDialog.unknownerror";
 	}
-
-	/** Preferred width of the message area. TODO: remove magic number*/
-	private static final int PREFERRED_WIDTH = 400;
 
 	/** Close button. */
 	private JButton _closeBtn;
@@ -170,30 +156,51 @@ public class ErrorDialog extends JDialog
 
 		Container content = getContentPane();
 		content.setLayout(new GridBagLayout());
-		final GridBagConstraints gbc = new GridBagConstraints();
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.insets = new Insets(4, 4, 4, 4);
 
-		gbc.gridx = 0;
-		gbc.gridy = 0;
+		GridBagConstraints gbc;
+
+		gbc = new GridBagConstraints(0,0,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5),0,0);
 		content.add(createMessagePanel(msg, th), gbc);
 
-		++gbc.gridy;
+		gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,5,5),0,0);
 		content.add(createButtonsPanel(th), gbc);
 
-		++gbc.gridy;
+		gbc = new GridBagConstraints(0,2,1,1,3,3,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,5,5,5),0,0);
 		content.add(_stackTraceScroller, gbc);
 
 		if (_moreErrorsScroller != null)
 		{
-			++gbc.gridy;
+			gbc = new GridBagConstraints(0,2,1,1,3,3,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,5,5,5),0,0);
 			content.add(_moreErrorsScroller, gbc);
 		}
 
-		getRootPane().setDefaultButton(_closeBtn);
-		setResizable(false);
 
-		pack();
+		getRootPane().setDefaultButton(_closeBtn);
+
+		if(null == th)
+		{
+			setSize(400,200);
+		}
+		else
+		{
+			setSize(400,500);
+		}
+
+		AbstractAction closeAction = new AbstractAction()
+		{
+			public void actionPerformed(ActionEvent actionEvent)
+			{
+				setVisible(false);
+				dispose();
+			}
+		};
+		KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(escapeStroke, "CloseAction");
+		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "CloseAction");
+		getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escapeStroke, "CloseAction");
+		getRootPane().getActionMap().put("CloseAction", closeAction);
+		
+
 		GUIUtils.centerWithinParent(ErrorDialog.this);
 	}
 
@@ -223,9 +230,9 @@ public class ErrorDialog extends JDialog
 			msg = s_stringMgr.getString(IStringKeys.UNKNOWN_ERROR);
 		}
 		JScrollPane sp = new JScrollPane(new MessagePanel(msg));
-		Dimension dim = sp.getPreferredSize();
-		dim.width = PREFERRED_WIDTH;
-		sp.setPreferredSize(dim);
+//		Dimension dim = sp.getPreferredSize();
+//		dim.width = PREFERRED_WIDTH;
+//		sp.setPreferredSize(new Dimension(sp.getPreferredSize().width, 200));
 
 		return sp;
 	}
@@ -290,7 +297,7 @@ public class ErrorDialog extends JDialog
 //			Dimension dim = getPreferredSize();
 //			dim.width = PREFERRED_WIDTH;
 //			setPreferredSize(dim);
-			setRows(3);
+//			setRows(3);
 		}
 	}
 
@@ -306,7 +313,6 @@ public class ErrorDialog extends JDialog
 			if (th != null)
 			{
 				setText(Utilities.getStackTrace(th));
-				setRows(10);
 			}
 		}
 	}
@@ -332,7 +338,6 @@ public class ErrorDialog extends JDialog
 				ex = ex.getNextException();
 			}
 			setText(buf.toString());
-			setRows(10);
 		}
 	}
 
@@ -370,7 +375,7 @@ public class ErrorDialog extends JDialog
 				}
 			}
 			_stackTraceScroller.setVisible(!currentlyVisible);
-			ErrorDialog.this.pack();
+			ErrorDialog.this.validate();
 		}
 	}
 
@@ -390,7 +395,7 @@ public class ErrorDialog extends JDialog
 				_stackTraceScroller.setVisible(false);
 			}
 			_moreErrorsScroller.setVisible(!currentlyVisible);
-			ErrorDialog.this.pack();
+			ErrorDialog.this.validate();
 		}
 	}
 }

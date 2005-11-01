@@ -17,14 +17,15 @@ package net.sourceforge.squirrel_sql.client.gui.mainframe;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 import net.sourceforge.squirrel_sql.fw.gui.MemoryPanel;
 import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 import net.sourceforge.squirrel_sql.fw.gui.TimePanel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.client.gui.LogPanel;
+import net.sourceforge.squirrel_sql.client.IApplication;
+
 /**
  * Statusbar component for the main frame.
  *
@@ -39,29 +40,18 @@ public class MainFrameStatusBar extends StatusBar
 	/**
 	 * Default ctor.
 	 */
-	public MainFrameStatusBar()
+	public MainFrameStatusBar(IApplication app)
 	{
 		super();
-		createGUI();
+		createGUI(app);
 	}
 
-	private void createGUI()
+	private void createGUI(IApplication app)
 	{
 		clearText();
 
-		final MemoryPanel mp = new MemoryPanel();
-		mp.addMouseListener(new MouseAdapter()
-		{
-			public void mouseClicked(MouseEvent evt)
-			{
-				if (evt.getClickCount() == 2)
-				{
-					System.gc();
-					setText(s_stringMgr.getString("MainFrameStatusBar.gc"));
-				}
-			}
-		});
-		addJComponent(mp);
+		addJComponent(new LogPanel(app));
+		addJComponent(new MemoryPanel());
 		addJComponent(new TimePanel());
 	}
 }

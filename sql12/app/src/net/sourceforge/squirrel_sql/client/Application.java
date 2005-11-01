@@ -38,6 +38,7 @@ import java.util.Iterator;
 import java.util.Date;
 import java.text.MessageFormat;
 import java.text.DateFormat;
+import java.awt.*;
 
 import javax.swing.Action;
 import javax.swing.JComponent;
@@ -160,9 +161,24 @@ class Application implements IApplication
 		LoggerController.registerLoggerFactory(new SquirrelLoggerFactory());
 		s_log = LoggerController.createLogger(getClass());
 
-		s_log.info("#############################################################################################################");
-		s_log.info("# Starting SQuirreL SQL " + DateFormat.getInstance().format(new Date()));
-		s_log.info("#############################################################################################################");
+		EventQueue q = Toolkit.getDefaultToolkit().getSystemEventQueue();
+		q.push(
+			new EventQueue()
+			{
+				protected void dispatchEvent(AWTEvent event)
+				{
+					try
+					{
+						super.dispatchEvent(event);
+					}
+					catch (Throwable t)
+					{
+						t.printStackTrace();
+						s_log.error("Exeption occured dispatching Event " + event, t);
+					}
+				}
+			}
+		);
 
 		final ApplicationArguments args = ApplicationArguments.getInstance();
 

@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.client;
 
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
 import javax.swing.*;
 
 /*

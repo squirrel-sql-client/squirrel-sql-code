@@ -426,7 +426,7 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 
 		content.add(_splitPn, BorderLayout.CENTER);
 
-		_statusBar = new MainFrameStatusBar();
+		_statusBar = new MainFrameStatusBar(_app);
 		final Font fn = _app.getFontInfoStore().getStatusBarFontInfo().createFont();
 		_statusBar.setFont(fn);
 
