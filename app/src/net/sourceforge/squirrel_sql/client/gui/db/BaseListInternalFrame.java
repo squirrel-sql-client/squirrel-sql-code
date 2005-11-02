@@ -35,6 +35,8 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -68,6 +70,10 @@ abstract class BaseListInternalFrame extends BaseInternalFrame
 
 	private boolean _hasBeenSized = false;
 
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(BaseListInternalFrame.class);
+    
 	public BaseListInternalFrame(IUserInterfaceFactory uiFactory)
 	{
 		super("", true, true);
@@ -205,7 +211,8 @@ abstract class BaseListInternalFrame extends BaseInternalFrame
 						}
 						catch (BaseException ex)
 						{
-							s_log.error("Error occured executing doubleclick event", ex);
+                            // i18n[BaseListInternalFrame.error.execdoubleclick=Error occured executing doubleclick event]
+							s_log.error(s_stringMgr.getString("BaseListInternalFrame.error.execdoubleclick"), ex);
 						}
 					}
 				}
