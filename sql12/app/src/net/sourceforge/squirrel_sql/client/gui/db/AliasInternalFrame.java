@@ -181,8 +181,10 @@ public class AliasInternalFrame extends BaseInternalFrame
 		if (maintType < IMaintenanceType.NEW
 			|| maintType > IMaintenanceType.COPY)
 		{
-			final String msg = "Illegal value of " + maintType
-								+ " passed for Maintenance type";
+            // i18n[AliasInternalFrame.illegalValue=Illegal value of {0} passed for Maintenance type]
+			final String msg = 
+                s_stringMgr.getString("AliasInternalFrame.illegalValue",
+                                      new Integer(maintType)); 
 			throw new IllegalArgumentException(msg);
 		}
 
@@ -668,7 +670,8 @@ public class AliasInternalFrame extends BaseInternalFrame
 		 */
 		public void sessionCreated(ISession session)
 		{
-			s_log.error("Test Button has created a session, this is a programming error");
+            // i18n[AliasInternalFrame.error.sessioncreation=Test Button has created a session, this is a programming error]
+			s_log.error(s_stringMgr.getString("AliasInternalFrame.error.sessioncreation"));
 		}
 	}
 

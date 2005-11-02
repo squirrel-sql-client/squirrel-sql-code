@@ -30,6 +30,8 @@ import javax.swing.ToolTipManager;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
@@ -48,6 +50,10 @@ public class DriversList extends JList implements IDriversList
 	/** Model for this component. */
 	private DriversListModel _model;
 
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(DriversList.class);    
+    
 	/**
 	 * Ctor specifying Application API object.
 	 *
@@ -198,7 +204,8 @@ public class DriversList extends JList implements IDriversList
 	 */
 	public String getToolTipText()
 	{
-		return "List of database drivers that can be used to configure an alias"; //i18n
+        // i18n[DriversList.tooltiptext=List of database drivers that can be used to configure an alias]
+		return s_stringMgr.getString("DriversList.tooltiptext");
 	}
 
 	/**

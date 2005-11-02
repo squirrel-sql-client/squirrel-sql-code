@@ -28,6 +28,8 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.DataCache;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -48,6 +50,10 @@ class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
 	/** Application API. */
 	private final IApplication _app;
 
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(AliasWindowFactory.class);
+    
 	/**
 	 * Collection of <TT>AliasMaintDialog</TT> that are currently visible modifying
 	 * an existing aliss. Keyed by <TT>ISQLAlias.getIdentifier()</TT>.
@@ -158,7 +164,8 @@ class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
 		}
 		catch (ValidationException ex)
 		{
-			s_log.error("Error occured copying the alias", ex);
+            // i18n[AliasWindowFactory.error.copyAlias=Error occured copying the alias]
+			s_log.error(s_stringMgr.getString("AliasWindowFactory.error.copyAlias"), ex);
 		}
 		final AliasInternalFrame sheet = new AliasInternalFrame(_app, newAlias, COPY);
 		_app.getMainFrame().addInternalFrame(sheet, true, null);

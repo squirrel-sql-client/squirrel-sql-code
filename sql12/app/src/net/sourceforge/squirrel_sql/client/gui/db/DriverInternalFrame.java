@@ -160,7 +160,9 @@ public class DriverInternalFrame extends BaseInternalFrame
 		if (maintType < MaintenanceType.NEW || maintType > MaintenanceType.COPY)
 		{
 			throw new IllegalArgumentException(
-				"Illegal value of " + maintType + " passed for Maintenance type");
+                // i18n[DriverInternalFrame.error.illegalvalue=Illegal value of {0} passed for Maintenance type]
+			    s_stringMgr.getString("DriverInternalFrame.error.illegalvalue", 
+                                      new Integer(maintType)));
 		}
 
 		_app = app;

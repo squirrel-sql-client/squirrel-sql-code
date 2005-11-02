@@ -83,7 +83,8 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
          {
             if(IS_CLOSED_PROPERTY.equals(evt.getPropertyName()) && Boolean.TRUE.equals(evt.getNewValue()))
             {
-               throw new PropertyVetoException("Propably closed by the ctrl F4 key. See BasicDesktopPaneUi.CloseAction", evt);
+                // i18n[AliasesListInternalFrame.error.ctrlF4key=Probably closed by the ctrl F4 key. See BasicDesktopPaneUi.CloseAction]
+               throw new PropertyVetoException(s_stringMgr.getString("AliasesListInternalFrame.error.ctrlF4key"), evt);
             }
          }
       });
