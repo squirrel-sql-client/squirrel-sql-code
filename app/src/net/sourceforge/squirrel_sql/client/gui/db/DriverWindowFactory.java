@@ -28,6 +28,8 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.DataCache;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -48,6 +50,10 @@ class DriverWindowFactory implements AliasInternalFrame.IMaintenanceType
 	/** Application API. */
 	private IApplication _app;
 
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(DriverWindowFactory.class);
+    
 	/**
 	 * Collection of <TT>DriverMaintDialog</TT> that are currently visible
 	 * modifying an existing driver. Keyed by
