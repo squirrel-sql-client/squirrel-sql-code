@@ -908,5 +908,7 @@ class Session implements ISession
 		System.out.println("+ Finalize " + getClass() + ". Hash code:" + hashCode());
 		System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 		System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+		_app.getSessionManager().fireSessionFinalized(_id);
+
 	}
 }

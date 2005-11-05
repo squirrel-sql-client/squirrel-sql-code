@@ -168,10 +168,12 @@ public class LogPanel extends JPanel
 		_btnLastLog.setBorder(null);
 		_btnViewLogs.setBorder(null);
 
+		JPanel pnlButtons = new JPanel(new GridLayout(1,2,3,0));
+		pnlButtons.add(_btnLastLog);
+		pnlButtons.add(_btnViewLogs);
 
-		add(_btnViewLogs, BorderLayout.WEST);
+		add(pnlButtons, BorderLayout.EAST);
 		add(_lblLogInfo, BorderLayout.CENTER);
-		add(_btnLastLog, BorderLayout.EAST);
 
 		_btnLastLog.setToolTipText("Press to view last log entry");
 

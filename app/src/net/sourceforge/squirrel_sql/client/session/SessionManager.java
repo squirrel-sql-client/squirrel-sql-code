@@ -34,6 +34,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.event.EventListenerList;
+import javax.swing.*;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -534,5 +535,26 @@ public class SessionManager
 				((ISessionListener)listeners[i + 1]).reconnectFailed(evt);
 			}
 		}
+	}
+
+
+	protected void fireSessionFinalized(final IIdentifier sessionIdentifier)
+	{
+		// invokeLater to make the call synchronto the event queue 
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				Object[] listeners = listenerList.getListenerList();
+				for (int i = listeners.length - 2; i >= 0; i -= 2)
+				{
+					if (listeners[i] == ISessionListener.class)
+					{
+						((ISessionListener)listeners[i + 1]).sessionFinalized(sessionIdentifier);
+					}
+				}
+			}
+		});
+
 	}
 }
