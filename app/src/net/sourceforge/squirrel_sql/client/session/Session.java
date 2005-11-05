@@ -239,6 +239,8 @@ class Session implements ISession
             }
          }
 
+			_schemaInfo.dispose();
+
 
 			try
 			{
@@ -896,5 +898,15 @@ class Session implements ISession
 				setupTitle();
 			}
 		}
+	}
+
+
+	protected void finalize() throws Throwable
+	{
+		System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+		System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+		System.out.println("+ Finalize " + getClass() + ". Hash code:" + hashCode());
+		System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+		System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 	}
 }

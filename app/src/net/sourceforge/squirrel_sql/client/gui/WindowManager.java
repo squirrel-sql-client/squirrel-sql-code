@@ -1124,6 +1124,8 @@ public class WindowManager
 
 			// Enable/Disable actions that require open session frames.
 			JInternalFrame[] frames = GUIUtils.getOpenNonToolWindows(getMainFrame().getDesktopPane().getAllFrames());
+			
+			_app.getActionCollection().deactivationChanged(jif);
 			_app.getActionCollection().internalFrameOpenedOrClosed(frames.length);
 
 			refireSessionSheetClosed(evt);

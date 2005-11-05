@@ -42,6 +42,8 @@ public class TimePanel extends JLabel implements ActionListener
 
 	/** Used to format the displayed date. */
 	private DateFormat _fmt = DateFormat.getTimeInstance(DateFormat.LONG);
+	private Dimension _prefSize;
+	private Calendar _calendar = Calendar.getInstance();
 
 	/**
 	 * Default ctor.
@@ -81,7 +83,8 @@ public class TimePanel extends JLabel implements ActionListener
 	 */
 	public void actionPerformed(ActionEvent evt)
 	{
-		setText(_fmt.format(Calendar.getInstance().getTime()));
+		_calendar.setTimeInMillis(System.currentTimeMillis());
+		setText(_fmt.format(_calendar.getTime()));
 	}
 
 	/**
@@ -91,27 +94,33 @@ public class TimePanel extends JLabel implements ActionListener
 	 */
 	public Dimension getPreferredSize()
 	{
-		Dimension dim = super.getPreferredSize();
-		FontMetrics fm = getFontMetrics(getFont());
-		Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.HOUR_OF_DAY, 23);
-		cal.set(Calendar.MINUTE, 59);
-		cal.set(Calendar.SECOND, 59);
-		dim.width = fm.stringWidth(_fmt.format(cal.getTime()));
-		Border border = getBorder();
-		if (border != null)
+		if(null == _prefSize)
 		{
-			Insets ins = border.getBorderInsets(this);
+			// This was originaly done every time.
+			// and the count of instantiated objects was amazing
+			_prefSize = new Dimension();
+			_prefSize.height = 20;
+			FontMetrics fm = getFontMetrics(getFont());
+			Calendar cal = Calendar.getInstance();
+			cal.set(Calendar.HOUR_OF_DAY, 23);
+			cal.set(Calendar.MINUTE, 59);
+			cal.set(Calendar.SECOND, 59);
+			_prefSize.width = fm.stringWidth(_fmt.format(cal.getTime()));
+			Border border = getBorder();
+			if (border != null)
+			{
+				Insets ins = border.getBorderInsets(this);
+				if (ins != null)
+				{
+					_prefSize.width += (ins.left + ins.right);
+				}
+			}
+			Insets ins = getInsets();
 			if (ins != null)
 			{
-				dim.width += (ins.left + ins.right);
+				_prefSize.width += (ins.left + ins.right) + 20;
 			}
 		}
-		Insets ins = getInsets();
-		if (ins != null)
-		{
-			dim.width += (ins.left + ins.right);
-		}
-		return dim;
+		return _prefSize;
 	}
 }

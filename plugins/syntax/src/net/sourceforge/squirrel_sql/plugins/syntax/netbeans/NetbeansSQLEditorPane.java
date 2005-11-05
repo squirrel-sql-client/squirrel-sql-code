@@ -1,6 +1,9 @@
 package net.sourceforge.squirrel_sql.plugins.syntax.netbeans;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.event.ISessionListener;
+import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
+import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
 import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsAdapter;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
@@ -17,6 +20,7 @@ import org.netbeans.editor.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputMethodListener;
 import java.awt.*;
 
 
@@ -30,52 +34,64 @@ public class NetbeansSQLEditorPane extends JEditorPane
    private SyntaxPugin _plugin;
 
    private IIdentifier _sqlEntryPanelIdentifier;
+	private SessionAdapter _sessionListener;
 
-   public NetbeansSQLEditorPane(ISession session, SyntaxPreferences prefs, SyntaxFactory syntaxFactory, SyntaxPugin plugin, IIdentifier sqlEntryPanelIdentifier)
-   {
-      _session = session;
-      _prefs = prefs;
-      _syntaxFactory = syntaxFactory;
-      _plugin = plugin;
-      _sqlEntryPanelIdentifier = sqlEntryPanelIdentifier;
+	public NetbeansSQLEditorPane(ISession session, SyntaxPreferences prefs, SyntaxFactory syntaxFactory, SyntaxPugin plugin, IIdentifier sqlEntryPanelIdentifier)
+	{
+		_session = session;
 
-      _syntaxFactory.putEditorPane(_session, this);
+		_prefs = prefs;
+		_syntaxFactory = syntaxFactory;
+		_plugin = plugin;
+		_sqlEntryPanelIdentifier = sqlEntryPanelIdentifier;
 
-      Settings.removeInitializer(BaseSettingsInitializer.NAME);
-      Settings.addInitializer(new BaseSettingsInitializer(), Settings.CORE_LEVEL);
-      /////////////////////////////////////////////////////////////////////////////////
-      // There are a lot of goodies in the ExtSettingsInitializer
-      // that might be interesting in th future.
-      // Unfortunately some conflicts with some of Squirrels shortcuts
-      // are in ExtSettingsInitializer
-      //Settings.removeInitializer(ExtSettingsInitializer.NAME);
-      //Settings.addInitializer(new ExtSettingsInitializer(), Settings.CORE_LEVEL);
-      //
-      /////////////////////////////////////////////////////////////////////////////
-      Settings.removeInitializer(SQLSettingsInitializer.NAME);
+		_syntaxFactory.putEditorPane(_session, this);
 
-      Font font = _session.getProperties().getFontInfo().createFont();
-      Settings.addInitializer(new SQLSettingsInitializer(SQLKit.class, _prefs, font, _plugin));
+		Settings.removeInitializer(BaseSettingsInitializer.NAME);
+		Settings.addInitializer(new BaseSettingsInitializer(), Settings.CORE_LEVEL);
+		/////////////////////////////////////////////////////////////////////////////////
+		// There are a lot of goodies in the ExtSettingsInitializer
+		// that might be interesting in th future.
+		// Unfortunately some conflicts with some of Squirrels shortcuts
+		// are in ExtSettingsInitializer
+		//Settings.removeInitializer(ExtSettingsInitializer.NAME);
+		//Settings.addInitializer(new ExtSettingsInitializer(), Settings.CORE_LEVEL);
+		//
+		/////////////////////////////////////////////////////////////////////////////
+		Settings.removeInitializer(SQLSettingsInitializer.NAME);
 
-
-      //////////////////////////////////////////////////////////////////////////////////////////
-      //Needs to be done at this moment. That's why we can't call updateFromPreferences() here.
-      setEditorKit(new SQLKit(syntaxFactory));
-      //
-      //////////////////////////////////////////////////////////////////////////////////////////
-
-      modifyKeyStrokes();
-
-      Document doc = getDocument();
-      _syntaxFactory.putDocument(_session, doc);
+		Font font = _session.getProperties().getFontInfo().createFont();
+		Settings.addInitializer(new SQLSettingsInitializer(SQLKit.class, _prefs, font, _plugin));
 
 
-      setToolTipText("Just to make getToolTiptext() to be called");
+		//////////////////////////////////////////////////////////////////////////////////////////
+		//Needs to be done at this moment. That's why we can't call updateFromPreferences() here.
+		setEditorKit(new SQLKit(syntaxFactory));
+		//
+		//////////////////////////////////////////////////////////////////////////////////////////
 
-      new KeyManager(this);
-   }
+		modifyKeyStrokes();
 
-   private void modifyKeyStrokes()
+		Document doc = getDocument();
+		_syntaxFactory.putDocument(_session, doc);
+
+		_sessionListener = new SessionAdapter()
+		{
+			public void sessionClosed(SessionEvent evt)
+			{
+				dispose(evt);
+			}
+		};
+		_session.getApplication().getSessionManager().addSessionListener(_sessionListener);
+
+
+		setToolTipText("Just to make getToolTiptext() to be called");
+
+		new KeyManager(this);
+	}
+
+
+	private void modifyKeyStrokes()
    {
       //////////////////////////////////////////////////////////////////////////////////////////////////////////////
       // The ctrl enter short cut in the Netbeans editor is set in org.netbeans.editor.ext.BaseKit
@@ -206,7 +222,7 @@ public class NetbeansSQLEditorPane extends JEditorPane
       }
    }
 
-   private void onErrorsFound(ErrorInfo[] errorInfos)
+	private void onErrorsFound(ErrorInfo[] errorInfos)
    {
       _currentErrorInfos = errorInfos;
    }
@@ -226,5 +242,23 @@ public class NetbeansSQLEditorPane extends JEditorPane
    {
       return _sqlEntryPanelIdentifier;
    }
+
+
+
+	private void dispose(SessionEvent evt)
+	{
+		if(evt.getSession().getIdentifier().equals(_session.getIdentifier()))
+		{
+			// The SQLSettingsInitializer added above holds a reference to the
+			// SyntaxPreferences of the current Session which itself holds a
+			// reference to the Session. We remove the SQLSettingsInitializer
+			// to give the Session the chance to get Garbage Collected.
+			Settings.removeInitializer(SQLSettingsInitializer.NAME);
+
+			// With an hanging SessionListener a Session nvere gets Garbage Collected.
+			_session.getApplication().getSessionManager().removeSessionListener(_sessionListener);
+		}
+	}
+
 
 }

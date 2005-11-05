@@ -297,6 +297,10 @@ public class SessionManager
 					{
 						setActiveSession((ISession)_sessionsList.getLast());
 					}
+					else
+					{
+						_activeSession = null;
+					}
 				}
 
 				return true;

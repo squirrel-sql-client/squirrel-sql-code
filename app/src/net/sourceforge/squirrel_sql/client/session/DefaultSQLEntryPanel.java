@@ -32,6 +32,7 @@ import javax.swing.event.UndoableEditListener;
 import javax.swing.text.BadLocationException;
 
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
+import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -51,22 +52,15 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	/** Text area control. */
 	private MyTextArea _comp;
 
-	/** Popup menu for this component. */
-	private SessionTextEditPopupMenu _textPopupMenu;
-
-	/** Listener for displaying the popup menu. */
-	private MouseListener _sqlEntryMouseListener = new MyMouseListener();
-
 	public DefaultSQLEntryPanel(ISession session)
 	{
-		super();
+		super(session.getApplication());
 		if (session == null)
 		{
 			throw new IllegalArgumentException("ISession == null");
 		}
 
 		_session = session;
-		_textPopupMenu = new SessionTextEditPopupMenu();
 		_comp = new MyTextArea(session, this);
 	}
 
@@ -112,16 +106,6 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 		return false;
 	}
 
-	/**
-	 * @see ISQLEntryPanel#setUndoActions(Action, Action)
-	 */
-	public void setUndoActions(Action undo, Action redo)
-	{
-		_textPopupMenu.addSeparator();
-		final IApplication app = _session.getApplication();
-		app.getResources().addToPopupMenu(undo, _textPopupMenu);
-		app.getResources().addToPopupMenu(redo, _textPopupMenu);
-	}
 
 	/**
 	 * @see ISQLEntryPanel#getText()
@@ -231,43 +215,6 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 		_comp.setFont(font);
 	}
 
-	/**
-	 * Add a hierarchical menu to the SQL Entry Area popup menu.
-	 *
-	 * @param	menu	The menu that will be added.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> <TT>Menu</TT> passed.
-	 */
-	public void addToSQLEntryAreaMenu(JMenu menu)
-	{
-		if (menu == null)
-		{
-			throw new IllegalArgumentException("Menu == null");
-		}
-
-		_textPopupMenu.add(menu);
-	}
-
-	/**
-	 * Add an <TT>Action</TT> to the SQL Entry Area popup menu.
-	 *
-	 * @param	action	The action to be added.
-	 *
-	 * @return	The newly cerated menu item.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> <TT>Action</TT> passed.
-	 */
-	public JMenuItem addToSQLEntryAreaMenu(Action action)
-	{
-		if (action == null)
-		{
-			throw new IllegalArgumentException("Action == null");
-		}
-
-		return _textPopupMenu.add(action);
-	}
 
 	/**
 	 * @see ISQLEntryPanel#addMouseListener(MouseListener)
@@ -387,29 +334,6 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 		_comp.removeCaretListener(lis);
 	}
 
-	private final class MyMouseListener extends MouseAdapter
-	{
-		public void mousePressed(MouseEvent evt)
-		{
-			if (evt.isPopupTrigger())
-			{
-				displayPopupMenu(evt);
-			}
-		}
-		public void mouseReleased(MouseEvent evt)
-		{
-			if (evt.isPopupTrigger())
-			{
-				displayPopupMenu(evt);
-			}
-		}
-		private void displayPopupMenu(MouseEvent evt)
-		{
-			_textPopupMenu.setTextComponent(_comp);
-			_textPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
-		}
-	}
-
 	public void addSQLTokenListener(SQLTokenListener tl)
 	{
 		// Not implemented
@@ -436,16 +360,16 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 			}
 		}
 
-		public void addNotify()
-		{
-			super.addNotify();
-			_pnl.addMouseListener(_pnl._sqlEntryMouseListener);
-		}
-
-		public void removeNotify()
-		{
-			super.removeNotify();
-			_pnl.removeMouseListener(_pnl._sqlEntryMouseListener);
-		}
+//		public void addNotify()
+//		{
+//			super.addNotify();
+//			_pnl.addMouseListener(_pnl._sqlEntryMouseListener);
+//		}
+//
+//		public void removeNotify()
+//		{
+//			super.removeNotify();
+//			_pnl.removeMouseListener(_pnl._sqlEntryMouseListener);
+//		}
 	}
 }
