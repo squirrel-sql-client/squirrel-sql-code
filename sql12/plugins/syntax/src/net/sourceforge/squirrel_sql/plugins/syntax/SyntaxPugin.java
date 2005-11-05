@@ -369,9 +369,8 @@ public class SyntaxPugin extends DefaultSessionPlugin
       super.sessionEnding(session);
 
       session.removePluginObject(this, IConstants.ISessionKeys.PREFS);
-      _prefListeners.remove(session.getIdentifier());
-
-      _sqlEntryFactoryProxy.sessionEnding(session);
+		_prefListeners.remove(session.getIdentifier());
+		_sqlEntryFactoryProxy.sessionEnding(session);
    }
 
    /**
@@ -541,5 +540,5 @@ public class SyntaxPugin extends DefaultSessionPlugin
          }
 
       }
-   }
+	}
 }

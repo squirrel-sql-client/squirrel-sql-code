@@ -48,7 +48,7 @@ public class SchemaInfo
 	private DatabaseMetaData _dmd;
 	private final HashMap _keywords = new HashMap();
 	private final HashMap _dataTypes = new HashMap();
-	private final List _functions = new ArrayList();
+	private final HashMap _functions = new HashMap();
 	private final HashMap _tables = new HashMap();
 	private final HashMap _columns = new HashMap();
 	private Hashtable _extendedColumnInfosByTableName = new Hashtable();
@@ -63,10 +63,11 @@ public class SchemaInfo
 	/** Logger for this class. */
 	private static final ILogger s_log =
 				LoggerController.createLogger(SchemaInfo.class);
+	private SessionAdapter _sessionListener;
 
 	SchemaInfo(IApplication app)
 	{
-		app.getSessionManager().addSessionListener(new SessionAdapter()
+		_sessionListener = new SessionAdapter()
 		{
 			public void connectionClosedForReconnect(SessionEvent evt)
 			{
@@ -87,7 +88,8 @@ public class SchemaInfo
 					}
 				}
 			}
-		});
+		};
+		app.getSessionManager().addSessionListener(_sessionListener);
 	}
 
 	public void load(Session session)
@@ -268,6 +270,11 @@ public class SchemaInfo
 		}
 	}
 
+	public boolean isKeyword(String data)
+	{
+		return isKeyword(new CaseInsensitiveString(data));
+	}
+
 	/**
 	 * Retrieve whether the passed string is a keyword.
 	 *
@@ -275,14 +282,21 @@ public class SchemaInfo
 	 *
 	 * @return	<TT>true</TT> if a keyword.
 	 */
-	public boolean isKeyword(String data)
+	public boolean isKeyword(CaseInsensitiveString data)
 	{
 		if (!_loading && data != null)
 		{
-			return _keywords.containsKey(data.toUpperCase());
+			return _keywords.containsKey(data);
 		}
 		return false;
 	}
+
+
+	public boolean isDataType(String data)
+	{
+		return isDataType(new CaseInsensitiveString(data));
+	}
+
 
 	/**
 	 * Retrieve whether the passed string is a data type.
@@ -291,13 +305,19 @@ public class SchemaInfo
 	 *
 	 * @return	<TT>true</TT> if a data type.
 	 */
-	public boolean isDataType(String data)
+	public boolean isDataType(CaseInsensitiveString data)
 	{
 		if (!_loading && data != null)
 		{
-			return _dataTypes.containsKey(data.toUpperCase());
+			return _dataTypes.containsKey(data);
 		}
 		return false;
+	}
+
+
+	public boolean isFunction(String data)
+	{
+		return isFunction(new CaseInsensitiveString(data));
 	}
 
 	/**
@@ -307,13 +327,18 @@ public class SchemaInfo
 	 *
 	 * @return	<TT>true</TT> if a function.
 	 */
-	public boolean isFunction(String data)
+	public boolean isFunction(CaseInsensitiveString data)
 	{
 		if (!_loading && data != null)
 		{
-			return _functions.contains(data.toUpperCase());
+			return _functions.containsKey(data);
 		}
 		return false;
+	}
+
+	public boolean isTable(String data)
+	{
+		return isTable(new CaseInsensitiveString(data));
 	}
 
 	/**
@@ -323,16 +348,38 @@ public class SchemaInfo
 	 *
 	 * @return	<TT>true</TT> if a table.
 	 */
-	public boolean isTable(String data)
+	public boolean isTable(CaseInsensitiveString data)
 	{
 		if (!_loading && data != null)
 		{
-			String ucData = data.toUpperCase();
-			if(_tables.containsKey(ucData))
+			if(_tables.containsKey(data))
 			{
-				loadColumns(ucData);
+				loadColumns(data);
 				return true;
 			}
+		}
+		return false;
+	}
+
+
+	public boolean isColumn(String data)
+	{
+		return isColumn(new CaseInsensitiveString(data));
+	}
+
+
+	/**
+	 * Retrieve whether the passed string is a column.
+	 *
+	 * @param	keyword		String to check.
+	 *
+	 * @return	<TT>true</TT> if a column.
+	 */
+	public boolean isColumn(CaseInsensitiveString data)
+	{
+		if (!_loading && data != null)
+		{
+			return _columns.containsKey(data);
 		}
 		return false;
 	}
@@ -354,176 +401,158 @@ public class SchemaInfo
 	{
 		if (!_loading && data != null)
 		{
-			String ucData = data.toUpperCase();
-			return (String) _tables.get(ucData);
+			return (String) _tables.get(new CaseInsensitiveString(data));
 		}
 		return null;
-	}
-
-
-	/**
-	 * Retrieve whether the passed string is a column.
-	 *
-	 * @param	keyword		String to check.
-	 *
-	 * @return	<TT>true</TT> if a column.
-	 */
-	public boolean isColumn(String data)
-	{
-		if (!_loading && data != null)
-		{
-			return _columns.containsKey(data.toUpperCase());
-		}
-		return false;
 	}
 
 	private void loadKeywords(DatabaseMetaData dmd)
 	{
 		try
 		{
-			_keywords.put("ABSOLUTE", "DUMMY");
-			_keywords.put("ACTION", "DUMMY");
-			_keywords.put("ADD", "DUMMY");
-			_keywords.put("ALL", "DUMMY");
-			_keywords.put("ALTER", "DUMMY");
-			_keywords.put("AND", "DUMMY");
-			_keywords.put("AS", "DUMMY");
-			_keywords.put("ASC", "DUMMY");
-			_keywords.put("ASSERTION", "DUMMY");
-			_keywords.put("AUTHORIZATION", "DUMMY");
-			_keywords.put("AVG", "DUMMY");
-			_keywords.put("BETWEEN", "DUMMY");
-			_keywords.put("BY", "DUMMY");
-			_keywords.put("CASCADE", "DUMMY");
-			_keywords.put("CASCADED", "DUMMY");
-			_keywords.put("CATALOG", "DUMMY");
-			_keywords.put("CHARACTER", "DUMMY");
-			_keywords.put("CHECK", "DUMMY");
-			_keywords.put("COLLATE", "DUMMY");
-			_keywords.put("COLLATION", "DUMMY");
-			_keywords.put("COLUMN", "DUMMY");
-			_keywords.put("COMMIT", "DUMMY");
-			_keywords.put("COMMITTED", "DUMMY");
-			_keywords.put("CONNECT", "DUMMY");
-			_keywords.put("CONNECTION", "DUMMY");
-			_keywords.put("CONSTRAINT", "DUMMY");
-			_keywords.put("COUNT", "DUMMY");
-			_keywords.put("CORRESPONDING", "DUMMY");
-			_keywords.put("CREATE", "DUMMY");
-			_keywords.put("CROSS", "DUMMY");
-			_keywords.put("CURRENT", "DUMMY");
-			_keywords.put("CURSOR", "DUMMY");
-			_keywords.put("DECLARE", "DUMMY");
-			_keywords.put("DEFAULT", "DUMMY");
-			_keywords.put("DEFERRABLE", "DUMMY");
-			_keywords.put("DEFERRED", "DUMMY");
-			_keywords.put("DELETE", "DUMMY");
-			_keywords.put("DESC", "DUMMY");
-			_keywords.put("DIAGNOSTICS", "DUMMY");
-			_keywords.put("DISCONNECT", "DUMMY");
-			_keywords.put("DISTINCT", "DUMMY");
-			_keywords.put("DOMAIN", "DUMMY");
-			_keywords.put("DROP", "DUMMY");
-			_keywords.put("ESCAPE", "DUMMY");
-			_keywords.put("EXCEPT", "DUMMY");
-			_keywords.put("EXISTS", "DUMMY");
-			_keywords.put("EXTERNAL", "DUMMY");
-			_keywords.put("FALSE", "DUMMY");
-			_keywords.put("FETCH", "DUMMY");
-			_keywords.put("FIRST", "DUMMY");
-			_keywords.put("FOREIGN", "DUMMY");
-			_keywords.put("FROM", "DUMMY");
-			_keywords.put("FULL", "DUMMY");
-			_keywords.put("GET", "DUMMY");
-			_keywords.put("GLOBAL", "DUMMY");
-			_keywords.put("GRANT", "DUMMY");
-			_keywords.put("GROUP", "DUMMY");
-			_keywords.put("HAVING", "DUMMY");
-			_keywords.put("IDENTITY", "DUMMY");
-			_keywords.put("IMMEDIATE", "DUMMY");
-			_keywords.put("IN", "DUMMY");
-			_keywords.put("INITIALLY", "DUMMY");
-			_keywords.put("INNER", "DUMMY");
-			_keywords.put("INSENSITIVE", "DUMMY");
-			_keywords.put("INSERT", "DUMMY");
-			_keywords.put("INTERSECT", "DUMMY");
-			_keywords.put("INTO", "DUMMY");
-			_keywords.put("IS", "DUMMY");
-			_keywords.put("ISOLATION", "DUMMY");
-			_keywords.put("JOIN", "DUMMY");
-			_keywords.put("KEY", "DUMMY");
-			_keywords.put("LAST", "DUMMY");
-			_keywords.put("LEFT", "DUMMY");
-			_keywords.put("LEVEL", "DUMMY");
-			_keywords.put("LIKE", "DUMMY");
-			_keywords.put("LOCAL", "DUMMY");
-			_keywords.put("MATCH", "DUMMY");
-			_keywords.put("MAX", "DUMMY");
-			_keywords.put("MIN", "DUMMY");
-			_keywords.put("NAMES", "DUMMY");
-			_keywords.put("NEXT", "DUMMY");
-			_keywords.put("NO", "DUMMY");
-			_keywords.put("NOT", "DUMMY");
-			_keywords.put("NULL", "DUMMY");
-			_keywords.put("OF", "DUMMY");
-			_keywords.put("ON", "DUMMY");
-			_keywords.put("ONLY", "DUMMY");
-			_keywords.put("OPEN", "DUMMY");
-			_keywords.put("OPTION", "DUMMY");
-			_keywords.put("OR", "DUMMY");
-			_keywords.put("ORDER", "DUMMY");
-			_keywords.put("OUTER", "DUMMY");
-			_keywords.put("OVERLAPS", "DUMMY");
-			_keywords.put("PARTIAL", "DUMMY");
-			_keywords.put("PRESERVE", "DUMMY");
-			_keywords.put("PRIMARY", "DUMMY");
-			_keywords.put("PRIOR", "DUMMY");
-			_keywords.put("PRIVILIGES", "DUMMY");
-			_keywords.put("PUBLIC", "DUMMY");
-			_keywords.put("READ", "DUMMY");
-			_keywords.put("REFERENCES", "DUMMY");
-			_keywords.put("RELATIVE", "DUMMY");
-			_keywords.put("REPEATABLE", "DUMMY");
-			_keywords.put("RESTRICT", "DUMMY");
-			_keywords.put("REVOKE", "DUMMY");
-			_keywords.put("RIGHT", "DUMMY");
-			_keywords.put("ROLLBACK", "DUMMY");
-			_keywords.put("ROWS", "DUMMY");
-			_keywords.put("SCHEMA", "DUMMY");
-			_keywords.put("SCROLL", "DUMMY");
-			_keywords.put("SELECT", "DUMMY");
-			_keywords.put("SERIALIZABLE", "DUMMY");
-			_keywords.put("SESSION", "DUMMY");
-			_keywords.put("SET", "DUMMY");
-			_keywords.put("SIZE", "DUMMY");
-			_keywords.put("SOME", "DUMMY");
-			_keywords.put("SUM", "DUMMY");
-			_keywords.put("TABLE", "DUMMY");
-			_keywords.put("TEMPORARY", "DUMMY");
-			_keywords.put("THEN", "DUMMY");
-			_keywords.put("TIME", "DUMMY");
-			_keywords.put("TO", "DUMMY");
-			_keywords.put("TRANSACTION", "DUMMY");
-			_keywords.put("TRIGGER", "DUMMY");
-			_keywords.put("TRUE", "DUMMY");
-			_keywords.put("UNCOMMITTED", "DUMMY");
-			_keywords.put("UNION", "DUMMY");
-			_keywords.put("UNIQUE", "DUMMY");
-			_keywords.put("UNKNOWN", "DUMMY");
-			_keywords.put("UPDATE", "DUMMY");
-			_keywords.put("USAGE", "DUMMY");
-			_keywords.put("USER", "DUMMY");
-			_keywords.put("USING", "DUMMY");
-			_keywords.put("VALUES", "DUMMY");
-			_keywords.put("VIEW", "DUMMY");
-			_keywords.put("WHERE", "DUMMY");
-			_keywords.put("WITH", "DUMMY");
-			_keywords.put("WORK", "DUMMY");
-			_keywords.put("WRITE", "DUMMY");
-			_keywords.put("ZONE", "DUMMY");
+			_keywords.put(new CaseInsensitiveString("ABSOLUTE"), "ABSOLUTE");
+			_keywords.put(new CaseInsensitiveString("ACTION"), "ACTION");
+			_keywords.put(new CaseInsensitiveString("ADD"), "ADD");
+			_keywords.put(new CaseInsensitiveString("ALL"), "ALL");
+			_keywords.put(new CaseInsensitiveString("ALTER"), "ALTER");
+			_keywords.put(new CaseInsensitiveString("AND"), "AND");
+			_keywords.put(new CaseInsensitiveString("AS"), "AS");
+			_keywords.put(new CaseInsensitiveString("ASC"), "ASC");
+			_keywords.put(new CaseInsensitiveString("ASSERTION"), "ASSERTION");
+			_keywords.put(new CaseInsensitiveString("AUTHORIZATION"), "AUTHORIZATION");
+			_keywords.put(new CaseInsensitiveString("AVG"), "AVG");
+			_keywords.put(new CaseInsensitiveString("BETWEEN"), "BETWEEN");
+			_keywords.put(new CaseInsensitiveString("BY"), "BY");
+			_keywords.put(new CaseInsensitiveString("CASCADE"), "CASCADE");
+			_keywords.put(new CaseInsensitiveString("CASCADED"), "CASCADED");
+			_keywords.put(new CaseInsensitiveString("CATALOG"), "CATALOG");
+			_keywords.put(new CaseInsensitiveString("CHARACTER"), "CHARACTER");
+			_keywords.put(new CaseInsensitiveString("CHECK"), "CHECK");
+			_keywords.put(new CaseInsensitiveString("COLLATE"), "COLLATE");
+			_keywords.put(new CaseInsensitiveString("COLLATION"), "COLLATION");
+			_keywords.put(new CaseInsensitiveString("COLUMN"), "COLUMN");
+			_keywords.put(new CaseInsensitiveString("COMMIT"), "COMMIT");
+			_keywords.put(new CaseInsensitiveString("COMMITTED"), "COMMITTED");
+			_keywords.put(new CaseInsensitiveString("CONNECT"), "CONNECT");
+			_keywords.put(new CaseInsensitiveString("CONNECTION"), "CONNECTION");
+			_keywords.put(new CaseInsensitiveString("CONSTRAINT"), "CONSTRAINT");
+			_keywords.put(new CaseInsensitiveString("COUNT"), "COUNT");
+			_keywords.put(new CaseInsensitiveString("CORRESPONDING"), "CORRESPONDING");
+			_keywords.put(new CaseInsensitiveString("CREATE"), "CREATE");
+			_keywords.put(new CaseInsensitiveString("CROSS"), "CROSS");
+			_keywords.put(new CaseInsensitiveString("CURRENT"), "CURRENT");
+			_keywords.put(new CaseInsensitiveString("CURSOR"), "CURSOR");
+			_keywords.put(new CaseInsensitiveString("DECLARE"), "DECLARE");
+			_keywords.put(new CaseInsensitiveString("DEFAULT"), "DEFAULT");
+			_keywords.put(new CaseInsensitiveString("DEFERRABLE"), "DEFERRABLE");
+			_keywords.put(new CaseInsensitiveString("DEFERRED"), "DEFERRED");
+			_keywords.put(new CaseInsensitiveString("DELETE"), "DELETE");
+			_keywords.put(new CaseInsensitiveString("DESC"), "DESC");
+			_keywords.put(new CaseInsensitiveString("DIAGNOSTICS"), "DIAGNOSTICS");
+			_keywords.put(new CaseInsensitiveString("DISCONNECT"), "DISCONNECT");
+			_keywords.put(new CaseInsensitiveString("DISTINCT"), "DISTINCT");
+			_keywords.put(new CaseInsensitiveString("DOMAIN"), "DOMAIN");
+			_keywords.put(new CaseInsensitiveString("DROP"), "DROP");
+			_keywords.put(new CaseInsensitiveString("ESCAPE"), "ESCAPE");
+			_keywords.put(new CaseInsensitiveString("EXCEPT"), "EXCEPT");
+			_keywords.put(new CaseInsensitiveString("EXISTS"), "EXISTS");
+			_keywords.put(new CaseInsensitiveString("EXTERNAL"), "EXTERNAL");
+			_keywords.put(new CaseInsensitiveString("FALSE"), "FALSE");
+			_keywords.put(new CaseInsensitiveString("FETCH"), "FETCH");
+			_keywords.put(new CaseInsensitiveString("FIRST"), "FIRST");
+			_keywords.put(new CaseInsensitiveString("FOREIGN"), "FOREIGN");
+			_keywords.put(new CaseInsensitiveString("FROM"), "FROM");
+			_keywords.put(new CaseInsensitiveString("FULL"), "FULL");
+			_keywords.put(new CaseInsensitiveString("GET"), "GET");
+			_keywords.put(new CaseInsensitiveString("GLOBAL"), "GLOBAL");
+			_keywords.put(new CaseInsensitiveString("GRANT"), "GRANT");
+			_keywords.put(new CaseInsensitiveString("GROUP"), "GROUP");
+			_keywords.put(new CaseInsensitiveString("HAVING"), "HAVING");
+			_keywords.put(new CaseInsensitiveString("IDENTITY"), "IDENTITY");
+			_keywords.put(new CaseInsensitiveString("IMMEDIATE"), "IMMEDIATE");
+			_keywords.put(new CaseInsensitiveString("IN"), "IN");
+			_keywords.put(new CaseInsensitiveString("INITIALLY"), "INITIALLY");
+			_keywords.put(new CaseInsensitiveString("INNER"), "INNER");
+			_keywords.put(new CaseInsensitiveString("INSENSITIVE"), "INSENSITIVE");
+			_keywords.put(new CaseInsensitiveString("INSERT"), "INSERT");
+			_keywords.put(new CaseInsensitiveString("INTERSECT"), "INTERSECT");
+			_keywords.put(new CaseInsensitiveString("INTO"), "INTO");
+			_keywords.put(new CaseInsensitiveString("IS"), "IS");
+			_keywords.put(new CaseInsensitiveString("ISOLATION"), "ISOLATION");
+			_keywords.put(new CaseInsensitiveString("JOIN"), "JOIN");
+			_keywords.put(new CaseInsensitiveString("KEY"), "KEY");
+			_keywords.put(new CaseInsensitiveString("LAST"), "LAST");
+			_keywords.put(new CaseInsensitiveString("LEFT"), "LEFT");
+			_keywords.put(new CaseInsensitiveString("LEVEL"), "LEVEL");
+			_keywords.put(new CaseInsensitiveString("LIKE"), "LIKE");
+			_keywords.put(new CaseInsensitiveString("LOCAL"), "LOCAL");
+			_keywords.put(new CaseInsensitiveString("MATCH"), "MATCH");
+			_keywords.put(new CaseInsensitiveString("MAX"), "MAX");
+			_keywords.put(new CaseInsensitiveString("MIN"), "MIN");
+			_keywords.put(new CaseInsensitiveString("NAMES"), "NAMES");
+			_keywords.put(new CaseInsensitiveString("NEXT"), "NEXT");
+			_keywords.put(new CaseInsensitiveString("NO"), "NO");
+			_keywords.put(new CaseInsensitiveString("NOT"), "NOT");
+			_keywords.put(new CaseInsensitiveString("NULL"), "NULL");
+			_keywords.put(new CaseInsensitiveString("OF"), "OF");
+			_keywords.put(new CaseInsensitiveString("ON"), "ON");
+			_keywords.put(new CaseInsensitiveString("ONLY"), "ONLY");
+			_keywords.put(new CaseInsensitiveString("OPEN"), "OPEN");
+			_keywords.put(new CaseInsensitiveString("OPTION"), "OPTION");
+			_keywords.put(new CaseInsensitiveString("OR"), "OR");
+			_keywords.put(new CaseInsensitiveString("ORDER"), "ORDER");
+			_keywords.put(new CaseInsensitiveString("OUTER"), "OUTER");
+			_keywords.put(new CaseInsensitiveString("OVERLAPS"), "OVERLAPS");
+			_keywords.put(new CaseInsensitiveString("PARTIAL"), "PARTIAL");
+			_keywords.put(new CaseInsensitiveString("PRESERVE"), "PRESERVE");
+			_keywords.put(new CaseInsensitiveString("PRIMARY"), "PRIMARY");
+			_keywords.put(new CaseInsensitiveString("PRIOR"), "PRIOR");
+			_keywords.put(new CaseInsensitiveString("PRIVILIGES"), "PRIVILIGES");
+			_keywords.put(new CaseInsensitiveString("PUBLIC"), "PUBLIC");
+			_keywords.put(new CaseInsensitiveString("READ"), "READ");
+			_keywords.put(new CaseInsensitiveString("REFERENCES"), "REFERENCES");
+			_keywords.put(new CaseInsensitiveString("RELATIVE"), "RELATIVE");
+			_keywords.put(new CaseInsensitiveString("REPEATABLE"), "REPEATABLE");
+			_keywords.put(new CaseInsensitiveString("RESTRICT"), "RESTRICT");
+			_keywords.put(new CaseInsensitiveString("REVOKE"), "REVOKE");
+			_keywords.put(new CaseInsensitiveString("RIGHT"), "RIGHT");
+			_keywords.put(new CaseInsensitiveString("ROLLBACK"), "ROLLBACK");
+			_keywords.put(new CaseInsensitiveString("ROWS"), "ROWS");
+			_keywords.put(new CaseInsensitiveString("SCHEMA"), "SCHEMA");
+			_keywords.put(new CaseInsensitiveString("SCROLL"), "SCROLL");
+			_keywords.put(new CaseInsensitiveString("SELECT"), "SELECT");
+			_keywords.put(new CaseInsensitiveString("SERIALIZABLE"), "SERIALIZABLE");
+			_keywords.put(new CaseInsensitiveString("SESSION"), "SESSION");
+			_keywords.put(new CaseInsensitiveString("SET"), "SET");
+			_keywords.put(new CaseInsensitiveString("SIZE"), "SIZE");
+			_keywords.put(new CaseInsensitiveString("SOME"), "SOME");
+			_keywords.put(new CaseInsensitiveString("SUM"), "SUM");
+			_keywords.put(new CaseInsensitiveString("TABLE"), "TABLE");
+			_keywords.put(new CaseInsensitiveString("TEMPORARY"), "TEMPORARY");
+			_keywords.put(new CaseInsensitiveString("THEN"), "THEN");
+			_keywords.put(new CaseInsensitiveString("TIME"), "TIME");
+			_keywords.put(new CaseInsensitiveString("TO"), "TO");
+			_keywords.put(new CaseInsensitiveString("TRANSACTION"), "TRANSACTION");
+			_keywords.put(new CaseInsensitiveString("TRIGGER"), "TRIGGER");
+			_keywords.put(new CaseInsensitiveString("TRUE"), "TRUE");
+			_keywords.put(new CaseInsensitiveString("UNCOMMITTED"), "UNCOMMITTED");
+			_keywords.put(new CaseInsensitiveString("UNION"), "UNION");
+			_keywords.put(new CaseInsensitiveString("UNIQUE"), "UNIQUE");
+			_keywords.put(new CaseInsensitiveString("UNKNOWN"), "UNKNOWN");
+			_keywords.put(new CaseInsensitiveString("UPDATE"), "UPDATE");
+			_keywords.put(new CaseInsensitiveString("USAGE"), "USAGE");
+			_keywords.put(new CaseInsensitiveString("USER"), "USER");
+			_keywords.put(new CaseInsensitiveString("USING"), "USING");
+			_keywords.put(new CaseInsensitiveString("VALUES"), "VALUES");
+			_keywords.put(new CaseInsensitiveString("VIEW"), "VIEW");
+			_keywords.put(new CaseInsensitiveString("WHERE"), "WHERE");
+			_keywords.put(new CaseInsensitiveString("WITH"), "WITH");
+			_keywords.put(new CaseInsensitiveString("WORK"), "WORK");
+			_keywords.put(new CaseInsensitiveString("WRITE"), "WRITE");
+			_keywords.put(new CaseInsensitiveString("ZONE"), "ZONE");
 
 			// Not actually in the std.
-			_keywords.put("INDEX", "DUMMY");
+			_keywords.put(new CaseInsensitiveString("INDEX"), "INDEX");
 
 			// Extra _keywords that this DBMS supports.
 			if (dmd != null)
@@ -543,7 +572,8 @@ public class SchemaInfo
 
 				while (strtok.hasMoreTokens())
 				{
-					_keywords.put(strtok.nextToken().trim(), "DUMMY");
+					String keyword = strtok.nextToken().trim();
+					_keywords.put(new CaseInsensitiveString(keyword), keyword);
 				}
 
 				try
@@ -590,7 +620,7 @@ public class SchemaInfo
 				while (rs.next())
 				{
 					String typeName = rs.getString(1).trim();
-					_dataTypes.put(typeName.toUpperCase(), typeName);
+					_dataTypes.put(new CaseInsensitiveString(typeName), typeName);
 				}
 			}
 			finally
@@ -646,7 +676,7 @@ public class SchemaInfo
 			final String func = strtok.nextToken().trim();
 			if (func.length() > 0)
 			{
-				_functions.add(func.toUpperCase());
+				_functions.put(new CaseInsensitiveString(func) ,func);
 			}
 		}
 	}
@@ -660,14 +690,14 @@ public class SchemaInfo
 
 			if (keyword.length() > 0)
 			{
-				_keywords.put(keyword.toUpperCase(), "DUMMY");
+				_keywords.put(new CaseInsensitiveString(keyword), keyword);
 			}
 		}
 	}
 
 	public String[] getKeywords()
 	{
-		return (String[]) _keywords.keySet().toArray(new String[_keywords.size()]);
+		return (String[]) _keywords.values().toArray(new String[_keywords.size()]);
 	}
 
 	public String[] getDataTypes()
@@ -677,7 +707,7 @@ public class SchemaInfo
 
 	public String[] getFunctions()
 	{
-		return (String[]) _functions.toArray(new String[_functions.size()]);
+		return (String[]) _functions.values().toArray(new String[_functions.size()]);
 	}
 
 	public String[] getTables()
@@ -783,7 +813,6 @@ public class SchemaInfo
 	{
 		try
 		{
-			// TODO: Use table types from meta data?
 			final String[] tabTypes = new String[] { "TABLE", "VIEW" };
 			final ResultSet rs = dmd.getTables(null, null, null, tabTypes);
 			try
@@ -792,7 +821,7 @@ public class SchemaInfo
 				{
 					String tableName = rs.getString("TABLE_NAME");
 
-					_tables.put(tableName.toUpperCase(), tableName);
+					_tables.put(new CaseInsensitiveString(tableName), tableName);
 
 					String tableType = rs.getString("TABLE_TYPE");
 
@@ -813,7 +842,7 @@ public class SchemaInfo
 		}
 	}
 
-	private void loadColumns(final String tableName)
+	private void loadColumns(final CaseInsensitiveString tableName)
 	{
 		try
 		{
@@ -858,7 +887,7 @@ public class SchemaInfo
 		}
 	}
 
-	private void accessDbToLoadColumns(String tableName)
+	private void accessDbToLoadColumns(CaseInsensitiveString tableName)
 		throws SQLException
 	{
 		if(null == _dmd)
@@ -867,7 +896,7 @@ public class SchemaInfo
 			return;
 		}
 
-		ResultSet rs = _dmd.getColumns(null, null, getCaseSensitiveTableName(tableName), null);
+		ResultSet rs = _dmd.getColumns(null, null, getCaseSensitiveTableName(tableName.toString()), null);
 		try
 		{
 			ArrayList infos = new ArrayList();
@@ -884,7 +913,7 @@ public class SchemaInfo
 				ExtendedColumnInfo buf = new ExtendedColumnInfo(columnName, columnType, columnSize, decimalDigits, nullable, cat, schem);
 				infos.add(buf);
 
-				_columns.put(columnName.toUpperCase(), columnName);
+				_columns.put(new CaseInsensitiveString(columnName), columnName);
 			}
 			_extendedColumnInfosByTableName.put(tableName, infos);
 
@@ -902,9 +931,9 @@ public class SchemaInfo
 
 	public ExtendedColumnInfo[] getExtendedColumnInfos(String catalog, String schema, String tableName)
 	{
-		String upperCaseTableName = tableName.toUpperCase();
-		loadColumns(upperCaseTableName);
-		ArrayList extColInfo = (ArrayList) _extendedColumnInfosByTableName.get(upperCaseTableName);
+		CaseInsensitiveString cissTableName = new CaseInsensitiveString(tableName);
+		loadColumns(cissTableName);
+		ArrayList extColInfo = (ArrayList) _extendedColumnInfosByTableName.get(cissTableName);
 
 		if (null == extColInfo)
 		{
@@ -941,5 +970,13 @@ public class SchemaInfo
 
 			return (ExtendedColumnInfo[]) ret.toArray(new ExtendedColumnInfo[ret.size()]);
 		}
+	}
+
+	public void dispose()
+	{
+		// The SessionManager is global to SQuirreL.
+		// If we don't remove the listeners the
+		// Session won't get Garbeage Collected.
+		_session.getApplication().getSessionManager().removeSessionListener(_sessionListener);
 	}
 }

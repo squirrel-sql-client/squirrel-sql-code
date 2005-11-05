@@ -519,21 +519,4 @@ public final class ActionCollection
 		add(new ViewLogsAction(_app));
 	}
 
-	// JASON: Should this be in Sessionmanager or SessionWindowmanager?
-	public class SessionWindowListener extends InternalFrameAdapter
-	{
-		public void internalFrameActivated(InternalFrameEvent e)
-		{
-			ActionCollection.this.activationChanged(e.getInternalFrame());
-		}
-
-		public void internalFrameDeactivated(InternalFrameEvent e)
-		{
-			ActionCollection.this.deactivationChanged(e.getInternalFrame());
-		}
-
-		public void internalFrameClosed(InternalFrameEvent e)
-		{
-		}
-	}
 }

@@ -21,8 +21,7 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JComponent;
-import javax.swing.JList;
+import javax.swing.*;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
 import net.sourceforge.squirrel_sql.fw.gui.MemoryComboBox;
@@ -94,6 +93,13 @@ public class SQLHistoryComboBox extends MemoryComboBox
 		return buf.toString();
 	}
 
+	public void dispose()
+	{
+		// The SQLHistoryComboBoxModel has a static member that prevents garbage collection.
+		// Therefore we need to remove the model. 
+		setModel(new DefaultComboBoxModel());
+	}
+
 	/**
 	 * Renderer for this combobox. It displays the entire SQL for the current
 	 * line as the tooltip. We use the HTML <PRE> tag in order to linebreak the
@@ -102,8 +108,8 @@ public class SQLHistoryComboBox extends MemoryComboBox
 	private final class Renderer extends BasicComboBoxRenderer
 	{
 		public Component getListCellRendererComponent(JList list,
-								Object value, int index, boolean isSelected,
-								boolean cellHasFocus)
+																	 Object value, int index, boolean isSelected,
+																	 boolean cellHasFocus)
 		{
 			if (isSelected)
 			{

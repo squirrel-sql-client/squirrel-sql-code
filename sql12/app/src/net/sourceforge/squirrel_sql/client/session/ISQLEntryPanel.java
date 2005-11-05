@@ -156,4 +156,6 @@ public interface ISQLEntryPanel extends IHasIdentifier
 
 	void addSQLTokenListener(SQLTokenListener tl);
 	void removeSQLTokenListener(SQLTokenListener tl);
+
+	void dispose();
 }

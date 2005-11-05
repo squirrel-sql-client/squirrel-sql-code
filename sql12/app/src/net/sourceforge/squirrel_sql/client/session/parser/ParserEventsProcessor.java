@@ -24,17 +24,27 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 	private Vector _listeners = new Vector();
 	private ISession _session;
    private ISQLPanelAPI _sqlPanelApi;
+	private KeyAdapter _triggerParserKeyListener;
 
-   public ParserEventsProcessor(ISQLPanelAPI sqlPanelApi, ISession session)
+	public ParserEventsProcessor(ISQLPanelAPI sqlPanelApi, ISession session)
 	{
-      _session = session;
-      _sqlPanelApi = sqlPanelApi;
+		_session = session;
+		_sqlPanelApi = sqlPanelApi;
 
 		ActionListener al = new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
 				onTimerStart();
+			}
+		};
+
+
+		_triggerParserKeyListener = new KeyAdapter()
+		{
+			public void keyTyped(KeyEvent e)
+			{
+				onKeyTyped(e);
 			}
 		};
 
@@ -59,17 +69,28 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 	public void addParserEventsListener(ParserEventsListener l){_listeners.add(l);}
 	public void removeParserEventsListener(ParserEventsListener l){_listeners.add(l);}
 
-    public void endProcessing()
-    {
-        if (_parserThread != null) {
-            _parserThread.exitThread();
-        }
-        if (_parserTimer != null) {
-            _parserTimer.stop();
-        }
+	public void endProcessing()
+	{
+		_sqlPanelApi.getSQLEntryPanel().getTextComponent().removeKeyListener(_triggerParserKeyListener);
+
+		if (_parserThread != null)
+		{
+			_parserThread.exitThread();
+		}
+		if (_parserTimer != null)
+		{
+			_parserTimer.stop();
+		}
+
+
+		_session = null;
+		_sqlPanelApi = null;
+		_listeners = null;
+
+
 	}
 
-   public void triggerParser()
+	public void triggerParser()
    {
       _parserTimer.restart();
    }
@@ -123,13 +144,7 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 
 		_parserThread = new ParserThread(new SQLSchemaImpl(_session));
 
-      _sqlPanelApi.getSQLEntryPanel().getTextComponent().addKeyListener(new KeyAdapter()
-      {
-         public void keyTyped(KeyEvent e)
-         {
-            onKeyTyped(e);
-         }
-      });
+		_sqlPanelApi.getSQLEntryPanel().getTextComponent().addKeyListener(_triggerParserKeyListener);
 
       // No more automatic restarts because
       // key events will restart the parser from now on.

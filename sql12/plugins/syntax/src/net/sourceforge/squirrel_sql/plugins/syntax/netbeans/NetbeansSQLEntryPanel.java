@@ -21,9 +21,9 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.BaseSQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
-import net.sourceforge.squirrel_sql.client.session.SessionTextEditPopupMenu;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPugin;
 
@@ -54,11 +54,6 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 	/** Text component. */
 	private NetbeansSQLEditorPane _textArea;
 
-	/** Popup menu for this component. */
-	private SessionTextEditPopupMenu _textPopupMenu;
-
-	/** Listener for displaying the popup menu. */
-	private MouseListener _sqlEntryMouseListener = new MyMouseListener();
 
    private SyntaxFactory _syntaxFactory;
    private ISession _session;
@@ -66,7 +61,8 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 
    NetbeansSQLEntryPanel(ISession session, SyntaxPreferences prefs, SyntaxFactory syntaxFactory, SyntaxPugin plugin)
 	{
-      _plugin = plugin;
+		super(session.getApplication());
+		_plugin = plugin;
 
       if (session == null)
 		{
@@ -81,8 +77,6 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 
 		_textArea = new NetbeansSQLEditorPane(session, prefs, syntaxFactory, _plugin, getIdentifier());
 
-		_textPopupMenu = new SessionTextEditPopupMenu();
-		_textArea.addMouseListener(_sqlEntryMouseListener);
 	}
 
 
@@ -297,41 +291,6 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 		_textArea.requestFocus();
 	}
 
-	/**
-	 * Add a hierarchical menu to the SQL Entry Area popup menu.
-	 *
-	 * @param	menu	The menu that will be added.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> <TT>Menu</TT> passed.
-	 */
-	public void addToSQLEntryAreaMenu(JMenu menu)
-	{
-		if (menu == null)
-		{
-			throw new IllegalArgumentException("Menu == null");
-		}
-
-		_textPopupMenu.add(menu);
-	}
-
-	/**
-	 * Add an <TT>Action</TT> to the SQL Entry Area popup menu.
-	 *
-	 * @param	action	The action to be added.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> <TT>Action</TT> passed.
-	 */
-	public JMenuItem addToSQLEntryAreaMenu(Action action)
-	{
-		if (action == null)
-		{
-			throw new IllegalArgumentException("Action == null");
-		}
-
-		return _textPopupMenu.add(action);
-	}
 
 	/**
 	 * @see ISQLEntryPanel#addMouseListener(java.awt.event.MouseListener)
@@ -378,16 +337,6 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 		_textArea.getDocument().removeUndoableEditListener(listener);
 	}
 
-	/**
-	 * @see ISQLEntryPanel#setUndoActions(javax.swing.Action, javax.swing.Action)
-	 */
-	public void setUndoActions(Action undo, Action redo)
-	{
-		_textPopupMenu.addSeparator();
-		_app.getResources().addToPopupMenu(undo, _textPopupMenu);
-		_app.getResources().addToPopupMenu(redo, _textPopupMenu);
-		_textPopupMenu.addSeparator();
-	}
 
 
 	/**
@@ -452,29 +401,4 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
       SQLKit kit = (SQLKit) _textArea.getEditorKit();
       kit.getActionByName(ExtKit.replaceAction).actionPerformed(evt);
    }
-
-   private final class MyMouseListener extends MouseAdapter
-	{
-		public void mousePressed(MouseEvent evt)
-		{
-			if (evt.isPopupTrigger())
-			{
-				displayPopupMenu(evt);
-			}
-		}
-
-		public void mouseReleased(MouseEvent evt)
-		{
-			if (evt.isPopupTrigger())
-			{
-				displayPopupMenu(evt);
-			}
-		}
-
-		private void displayPopupMenu(MouseEvent evt)
-		{
-			_textPopupMenu.setTextComponent(_textArea);
-			_textPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
-		}
-	}
 }

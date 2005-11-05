@@ -39,7 +39,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -47,9 +46,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
-import javax.swing.border.Border;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -66,7 +62,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
@@ -168,9 +163,10 @@ public class SQLPanel extends JPanel
     * false if this panle is within a SQLInternalFrame
     */
    private boolean _inMainSessionWindow;
+	private SQLPanel.SQLExecutorHistoryListener _sqlExecutorHistoryListener = new SQLExecutorHistoryListener();
 
 
-   /**
+	/**
 	 * Ctor.
 	 *
 	 * @param	session	 Current session.
@@ -181,12 +177,12 @@ public class SQLPanel extends JPanel
 	public SQLPanel(ISession session, boolean isInMainSessionWindow)
 	{
 		super();
-      _inMainSessionWindow = isInMainSessionWindow;
-      setSession(session);
+		_inMainSessionWindow = isInMainSessionWindow;
+		setSession(session);
 		createGUI();
 		propertiesHaveChanged(null);
 		_sqlExecPanel = new SQLResultExecuterPanel(session);
-		_sqlExecPanel.addSQLExecutionListener(new SQLExecutorHistoryListener());
+		_sqlExecPanel.addSQLExecutionListener(_sqlExecutorHistoryListener);
 		addExecutor(_sqlExecPanel);
 		_panelAPI = new SQLPanelAPI(this);
 	}
@@ -408,7 +404,14 @@ public class SQLPanel extends JPanel
          int dividerLoc = _splitPane.getDividerLocation();
          Preferences.userRoot().putInt(PREFS_KEY_SPLIT_DIVIDER_LOC, dividerLoc);
       }
-   }
+
+		_sqlCombo.removeActionListener(_sqlComboListener);
+		_sqlCombo.dispose();
+		_sqlExecPanel.removeSQLExecutionListener(_sqlExecutorHistoryListener);
+		
+
+		_sqlEntry.dispose();
+	}
 
 
 	private void installSQLEntryPanel(ISQLEntryPanel pnl)

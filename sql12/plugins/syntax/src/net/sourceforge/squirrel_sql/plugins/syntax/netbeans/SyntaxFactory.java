@@ -88,7 +88,7 @@ public class SyntaxFactory
       }
 
 
-      Vector syntaxes = (Vector) _syntaxesBySessionID.get(sess);
+      Vector syntaxes = (Vector) _syntaxesBySessionID.get(sess.getIdentifier());
       if(null == syntaxes)
       {
          syntaxes = new Vector();

@@ -2,6 +2,15 @@ package net.sourceforge.squirrel_sql.client.session;
 
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
+import net.sourceforge.squirrel_sql.client.IApplication;
+
+import javax.swing.*;
+import javax.swing.text.JTextComponent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
 
 /*
  * Copyright (C) 2001-2003 Colin Bell
@@ -30,10 +39,27 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
    public static final IntegerIdentifierFactory ENTRY_PANEL_IDENTIFIER_FACTORY = new IntegerIdentifierFactory();
    private IIdentifier _entryPanelIdentifier;
 
-   protected BaseSQLEntryPanel()
-   {
-      _entryPanelIdentifier = ENTRY_PANEL_IDENTIFIER_FACTORY.createIdentifier();
-   }
+	private TextPopupMenu _textPopupMenu;
+	private IApplication _app;
+
+	private MouseListener _sqlEntryMouseListener = new MyMouseListener();
+
+
+	protected BaseSQLEntryPanel(IApplication app)
+	{
+		_entryPanelIdentifier = ENTRY_PANEL_IDENTIFIER_FACTORY.createIdentifier();
+		_textPopupMenu = new TextPopupMenu();
+		_app = app;
+
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				getTextComponent().addMouseListener(_sqlEntryMouseListener);
+			}
+		});
+
+	}
 
    public IIdentifier getIdentifier()
    {
@@ -97,4 +123,93 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
 
       return bounds;
    }
+
+	/**
+	 * Add a hierarchical menu to the SQL Entry Area popup menu.
+	 *
+	 * @param	menu	The menu that will be added.
+	 *
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>Menu</TT> passed.
+	 */
+	public void addToSQLEntryAreaMenu(JMenu menu)
+	{
+		if (menu == null)
+		{
+			throw new IllegalArgumentException("Menu == null");
+		}
+
+		_textPopupMenu.add(menu);
+	}
+
+	/**
+	 * Add an <TT>Action</TT> to the SQL Entry Area popup menu.
+	 *
+	 * @param	action	The action to be added.
+	 *
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <TT>null</TT> <TT>Action</TT> passed.
+	 */
+	public JMenuItem addToSQLEntryAreaMenu(Action action)
+	{
+		if (action == null)
+		{
+			throw new IllegalArgumentException("Action == null");
+		}
+
+		return _textPopupMenu.add(action);
+	}
+
+	/**
+	 * @see ISQLEntryPanel#setUndoActions(javax.swing.Action, javax.swing.Action)
+	 */
+	public void setUndoActions(Action undo, Action redo)
+	{
+		_textPopupMenu.addSeparator();
+
+		JMenuItem buf;
+
+		buf = addToSQLEntryAreaMenu(undo);
+		_app.getResources().configureMenuItem(undo, buf);
+
+		buf = addToSQLEntryAreaMenu(redo);
+		_app.getResources().configureMenuItem(redo, buf);
+
+		_textPopupMenu.addSeparator();
+	}
+
+	public void dispose()
+	{
+		// Menues that are also shown in the main window Session menu might
+		// be in this popup. If we don't remove them, the Session won't be Garbage Collected.
+		_textPopupMenu.removeAll();
+	}
+
+	private final class MyMouseListener extends MouseAdapter
+	{
+		public void mousePressed(MouseEvent evt)
+		{
+			if (evt.isPopupTrigger())
+			{
+				displayPopupMenu(evt);
+			}
+		}
+
+		public void mouseReleased(MouseEvent evt)
+		{
+			if (evt.isPopupTrigger())
+			{
+				displayPopupMenu(evt);
+			}
+		}
+
+		private void displayPopupMenu(MouseEvent evt)
+		{
+			_textPopupMenu.setTextComponent((JTextComponent)getTextComponent());
+			_textPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+		}
+	}
+
+
+
 }
