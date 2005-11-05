@@ -18,7 +18,7 @@ package net.sourceforge.squirrel_sql.client.gui.mainframe;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.fw.gui.MemoryPanel;
+import net.sourceforge.squirrel_sql.client.gui.MemoryPanel;
 import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 import net.sourceforge.squirrel_sql.fw.gui.TimePanel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -51,7 +51,7 @@ public class MainFrameStatusBar extends StatusBar
 		clearText();
 
 		addJComponent(new LogPanel(app));
-		addJComponent(new MemoryPanel());
+		addJComponent(new MemoryPanel(app));
 		addJComponent(new TimePanel());
 	}
 }

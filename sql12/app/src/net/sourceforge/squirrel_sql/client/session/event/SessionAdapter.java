@@ -1,4 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session.event;
+
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 /*
  * Copyright (C) 2003-2004 Colin Bell
  * colbell@users.sourceforge.net
@@ -69,6 +71,10 @@ public class SessionAdapter implements ISessionListener
 	}
 
 	public void reconnectFailed(SessionEvent evt)
+	{
+	}
+
+	public void sessionFinalized(IIdentifier sessionIdentifier)
 	{
 	}
 }

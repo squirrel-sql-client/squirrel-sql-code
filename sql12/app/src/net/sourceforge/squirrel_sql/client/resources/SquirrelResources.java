@@ -58,6 +58,8 @@ public class SquirrelResources extends Resources
 		String SPLASH_SCREEN = "SplashScreen";
 		String VIEW = "View";
 
+		String TRASH = "trash";
+
 		String GREEN_GEM = "green_gem";
 		String YELLOW_GEM = "yellow_gem";
 		String RED_GEM = "red_gem";

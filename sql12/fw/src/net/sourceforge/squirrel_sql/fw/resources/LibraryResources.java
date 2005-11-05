@@ -25,7 +25,6 @@ public class LibraryResources extends Resources
 	{
 		String TABLE_ASCENDING = "table.ascending";
 		String TABLE_DESCENDING = "table.descending";
-		String TRASH = "trash";
 	}
 
 	public LibraryResources() throws IllegalArgumentException
