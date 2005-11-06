@@ -17,14 +17,15 @@ package net.sourceforge.squirrel_sql.client.gui.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.io.File;
+
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-
-import java.io.FileOutputStream;
-import java.io.File;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * Base functionality for Squirrels internal frames that are attached directly
  * to a session.
@@ -37,6 +38,11 @@ public class BaseSessionInternalFrame extends BaseInternalFrame
    private String _titleWithoutFile = "";
    private String _sqlFilePath = null;
 
+   /** Internationalized strings for this class. */
+   private static final StringManager s_stringMgr =
+       StringManagerFactory.getStringManager(BaseSessionInternalFrame.class);        
+   
+   
    /**
 	 * Creates a non-resizable, non-closable, non-maximizable,
 	 * non-iconifiable JInternalFrame with no title.
@@ -92,7 +98,12 @@ public class BaseSessionInternalFrame extends BaseInternalFrame
       }
       else
       {
-         super.setTitle(_titleWithoutFile + "   SQL file: " + _sqlFilePath);
+         // i18n[BaseSessionInternalFrame.sqlfile={0}   SQL file: {1}]
+         String compositetitle = 
+             s_stringMgr.getString("BaseSessionInternalFrame.title",
+                                   new String[] { _titleWithoutFile,
+                                                  _sqlFilePath });
+         super.setTitle(compositetitle);
       }
    }
 

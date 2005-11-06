@@ -65,6 +65,10 @@ public class ObjectTreeInternalFrame extends BaseSessionInternalFrame
 
 	private boolean _hasBeenVisible = false;
 
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(ObjectTreeInternalFrame.class);            
+    
 	public ObjectTreeInternalFrame(ISession session)
 	{
 		super(session, session.getTitle(), true, true, true, true);
@@ -178,7 +182,8 @@ public class ObjectTreeInternalFrame extends BaseSessionInternalFrame
 			catch (SQLException ex)
 			{
 				getSession().getMessageHandler().showErrorMessage(ex);
-				s_log.error("Unable to retrieve catalog info", ex);
+                // i18n[ObjectTreeInternalFrame.error.retrievecatalog=Unable to retrieve catalog info]
+				s_log.error(s_stringMgr.getString("ObjectTreeInternalFrame.error.retrievecatalog"), ex);
 			}
 
 			ActionCollection actions = session.getApplication()
