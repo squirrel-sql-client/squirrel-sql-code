@@ -496,7 +496,8 @@ public class SessionPanel extends JPanel
 			}
 			catch (SQLException ex)
 			{
-				s_log.error("Unable to retrieve catalog info", ex);
+                // i18n[SessionPanel.error.retrievecatalog=Unable to retrieve catalog info]
+				s_log.error(s_stringMgr.getString("SessionPanel.error.retrievecatalog"), ex);
 			}
 
 			ActionCollection actions = session.getApplication().getActionCollection();
@@ -533,7 +534,8 @@ public class SessionPanel extends JPanel
 			}
 			catch (SQLException ex)
 			{
-				s_log.error("Unable to retrieve catalog info", ex);
+                // i18n[SessionPanel.error.retrievecatalog=Unable to retrieve catalog info]
+				s_log.error(s_stringMgr.getString("SessionPanel.error.retrievecatalog"), ex);
 			}
 		}
 	}
