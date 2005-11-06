@@ -21,6 +21,7 @@ import java.io.File;
 
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -134,7 +135,21 @@ public class BaseSessionInternalFrame extends BaseInternalFrame
       return false;
    }
 
-   /**
+	public void closeFrame(boolean withEvents)
+	{
+		if(withEvents)
+		{
+			fireInternalFrameEvent(InternalFrameEvent.INTERNAL_FRAME_CLOSING);
+		}
+		dispose();
+
+		if(withEvents)
+		{
+			fireInternalFrameEvent(InternalFrameEvent.INTERNAL_FRAME_CLOSED);
+		}
+	}
+
+	/**
 	 * Sets the session behind this sheet to the active session when the
 	 * frame is activated
 	 */

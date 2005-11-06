@@ -1215,21 +1215,40 @@ public class WindowManager
 			// Clear session info from all actions.
 			_app.getActionCollection().setCurrentSession(null);
 
-			// Close all sheets for the session.
-			_sessionClosing = true;
-			IIdentifier sessionId = evt.getSession().getIdentifier();
+			try
+			{
+				if(_sessionClosing)
+				{
+					return;
+				}
 
-         BaseSessionInternalFrame[] framesOfSession = _sessionWindows.getFramesOfSession(sessionId);
-         for (int i = 0; i < framesOfSession.length; i++)
-         {
-            framesOfSession[i].dispose();
-         }
+				_sessionClosing = true;
+				IIdentifier sessionId = evt.getSession().getIdentifier();
 
-			_sessionWindows.removeAllWindows(sessionId);
+				BaseSessionInternalFrame[] framesOfSession = _sessionWindows.getFramesOfSession(sessionId);
+				for (int i = 0; i < framesOfSession.length; i++)
+				{
+					if(framesOfSession[i] instanceof SessionInternalFrame)
+					{
+						// We are in the closing event of the Session main window.
+						// We don't want to send this event again therefore
+						// we pass withEvents = false.
+						framesOfSession[i].closeFrame(false);
+					}
+					else
+					{
+						framesOfSession[i].closeFrame(true);
+					}
+				}
 
-			selectFrontWindow();
+				_sessionWindows.removeAllWindows(sessionId);
 
-			_sessionClosing = false;
+				selectFrontWindow();
+			}
+			finally
+			{
+				_sessionClosing = false;
+			}
 		}
 	}
 }

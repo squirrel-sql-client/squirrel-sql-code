@@ -393,8 +393,6 @@ public class SQLPanel extends JPanel
 			_session.getProperties().removePropertyChangeListener(_propsListener);
 			_propsListener = null;
 		}
-
-//		closeAllSQLResultFrames();
 	}
 
    public void sessionWindowClosing()
