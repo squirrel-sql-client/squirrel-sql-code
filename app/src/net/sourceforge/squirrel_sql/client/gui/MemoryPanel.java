@@ -121,9 +121,9 @@ public class MemoryPanel extends JPanel implements ActionListener
 	{
 		SessionGCStatus ret = new SessionGCStatus();
 		int numSessAwaitingGC = _aliasesBySessionIDsClosed.size() - _aliasesBySessionIDsFinalized.size();
-		System.out.println("numSessAwaitingGC = " + numSessAwaitingGC);
+		//System.out.println("numSessAwaitingGC = " + numSessAwaitingGC);
 
-		ret.tooltip = numSessAwaitingGC + " Session waiting for garbage collection";
+		ret.tooltip = numSessAwaitingGC + " Sessions waiting for garbage collection";
 
 		if(numSessAwaitingGC < 2)
 		{

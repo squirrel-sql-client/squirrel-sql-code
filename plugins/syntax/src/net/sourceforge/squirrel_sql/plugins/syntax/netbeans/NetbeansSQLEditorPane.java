@@ -257,6 +257,8 @@ public class NetbeansSQLEditorPane extends JEditorPane
 
 			// With an hanging SessionListener a Session nvere gets Garbage Collected.
 			_session.getApplication().getSessionManager().removeSessionListener(_sessionListener);
+
+			getKeymap().removeBindings();
 		}
 	}
 
