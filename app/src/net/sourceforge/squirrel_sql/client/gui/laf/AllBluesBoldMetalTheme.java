@@ -11,8 +11,14 @@ package net.sourceforge.squirrel_sql.client.gui.laf;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.metal.DefaultMetalTheme;
 
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
 public class AllBluesBoldMetalTheme extends DefaultMetalTheme
 {
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(AllBluesBoldMetalTheme.class);
+    
         // light blue colors
         private final ColorUIResource primary1  = new ColorUIResource( 44,  73, 135);
         private final ColorUIResource primary2  = new ColorUIResource( 85, 115, 170); // 58, 110, 165);
@@ -23,7 +29,10 @@ public class AllBluesBoldMetalTheme extends DefaultMetalTheme
         private final ColorUIResource secondary3 = new ColorUIResource(220, 220, 220); 
         
         
-        public String getName() { return "All Blues - Bold"; }
+        public String getName() {
+            // i18n[AllBluesBoldMetalTheme.name=All Blues - Bold]       
+            return s_stringMgr.getString("AllBluesBoldMetalTheme.name"); 
+        }
         
         public  ColorUIResource getMenuItemSelectedBackground() { return getPrimary2(); }
         public  ColorUIResource getMenuItemSelectedForeground() { return getWhite();            }
