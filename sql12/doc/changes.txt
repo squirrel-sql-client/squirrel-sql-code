@@ -4,6 +4,10 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS or probably in latest weekly build
 =====================================================================
 
+
+- Fixed memory leaks. The memory panel in the status bar now tells which Session are garbage collected.
+  Use JDK 1.5.x for better memory behavior.
+
 - Fixed several problems when reconnecting an open Session. (See menu Session --> reconnect)
 
 - Improved Exception handling and new Log panel in Status bar:

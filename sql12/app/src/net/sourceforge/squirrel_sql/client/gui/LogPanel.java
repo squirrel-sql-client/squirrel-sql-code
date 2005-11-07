@@ -6,6 +6,8 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.util.log.ILoggerListener;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,6 +16,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Vector;
+import java.util.Date;
+import java.text.DateFormat;
 
 
 /**
@@ -29,6 +33,10 @@ import java.util.Vector;
  */
 public class LogPanel extends JPanel
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(MemoryPanel.class);
+
+
 	private SquirrelResources _resources;
 
 	private static final int LOG_TYPE_INFO = 0;
@@ -84,37 +92,37 @@ public class LogPanel extends JPanel
 		{
 			public void info(Class source, Object message)
 			{
-				++_statistics.infoCount;
+				_statistics.setInfoCount(_statistics._infoCount + 1);
 				addLog(LOG_TYPE_INFO, source, message, null);
 			}
 
 			public void info(Class source, Object message, Throwable th)
 			{
-				++_statistics.infoCount;
+				_statistics.setInfoCount(_statistics._infoCount + 1);
 				addLog(LOG_TYPE_INFO, source, message, th);
 			}
 
 			public void warn(Class source, Object message)
 			{
-				++_statistics.warnCount;
+				_statistics.setWarnCount(_statistics._warnCount + 1);
 				addLog(LOG_TYPE_WARN, source, message, null);
 			}
 
 			public void warn(Class source, Object message, Throwable th)
 			{
-				++_statistics.warnCount;
+				_statistics.setWarnCount(_statistics._warnCount + 1);
 				addLog(LOG_TYPE_WARN, source, message, th);
 			}
 
 			public void error(Class source, Object message)
 			{
-				++_statistics.errorCount;
+				_statistics.setErrorCount(_statistics._errorCount + 1);
 				addLog(LOG_TYPE_ERROR, source, message, null);
 			}
 
 			public void error(Class source, Object message, Throwable th)
 			{
-				++_statistics.errorCount;
+				_statistics.setErrorCount(_statistics._errorCount + 1);
 				addLog(LOG_TYPE_ERROR, source, message, th);
 			}
 		});
@@ -175,9 +183,11 @@ public class LogPanel extends JPanel
 		add(pnlButtons, BorderLayout.EAST);
 		add(_lblLogInfo, BorderLayout.CENTER);
 
-		_btnLastLog.setToolTipText("Press to view last log entry");
+		// i18n[LogPanel.viewLastLog=Press to view last log entry]
+		_btnLastLog.setToolTipText(s_stringMgr.getString("LogPanel.viewLastLog"));
 
-		_btnViewLogs.setToolTipText("Press to open logs");
+		// i18n[LogPanel.openLogs=Press to open logs]
+		_btnViewLogs.setToolTipText(s_stringMgr.getString("LogPanel.openLogs"));
 	}
 
 
@@ -185,7 +195,15 @@ public class LogPanel extends JPanel
 	{
 		if(null != _curlogToDisplay)
 		{
-			String extMsg = "Logged by " + _curlogToDisplay.source  + ":\n\n" + _curlogToDisplay.message;
+			Object[] params = new Object[]
+				{
+					_curlogToDisplay.source,
+					_curlogToDisplay.logTime,
+					_curlogToDisplay.message
+				};
+
+			// i18n[LogPanel.logMsg=Logged by {0} at {1}:\n\n {2}]
+			String extMsg = s_stringMgr.getString("LogPanel.logMsg", params);
 			ErrorDialog errorDialog = new ErrorDialog(_app.getMainFrame(), extMsg, _curlogToDisplay.throwable);
 
 			String title;
@@ -193,16 +211,20 @@ public class LogPanel extends JPanel
 			switch(_curlogToDisplay.logType)
 			{
 				case LOG_TYPE_INFO:
-					title = "Last log entry (Entry type: Info)";
+					// i18n[LogPanel.titleInfo=Last log entry (Entry type: Info)]
+					title = s_stringMgr.getString("LogPanel.titleInfo");
 					break;
 				case LOG_TYPE_WARN:
-					title = "Last log entry (Entry type: Warning)";
+					// i18n[LogPanel.titleWarn=Last log entry (Entry type: Warning)]
+					title = s_stringMgr.getString("LogPanel.titleWarn");
 					break;
 				case LOG_TYPE_ERROR:
-					title = "Last log entry (Entry type: ERROR)";
+					// i18n[LogPanel.titleError=Last log entry (Entry type: ERROR)]
+					title = s_stringMgr.getString("LogPanel.titleError");
 					break;
 				default:
-					title = "Last log entry (Entry type: Unknown)";
+					// i18n[LogPanel.titleUnknown=Last log entry (Entry type: Unknown)]
+					title = s_stringMgr.getString("LogPanel.titleUnknown");
 					break;
 			}
 
@@ -289,26 +311,63 @@ public class LogPanel extends JPanel
 		Object message = null;
 		Throwable throwable = null;
 		Class source;
+		String logTime;
+
+		public LogData()
+		{
+			logTime = DateFormat.getInstance().format(new Date());
+		}
+
 	}
 
 	private static class LogStatistics
 	{
-		int errorCount;
-		int warnCount;
-		int infoCount;
+		private int _errorCount;
+		private int _warnCount;
+		private int _infoCount;
 
-		private StringBuffer buffy = new StringBuffer();
+		private String _toString = "";
+
+		public LogStatistics()
+		{
+			updateToString();
+		}
+
 
 		public String toString()
 		{
-			buffy.setLength(0);
-			buffy.append("Logs: Errors ").append(errorCount);
-			buffy.append(", Warnings ").append(warnCount);
-			buffy.append(", Infos ").append(infoCount);
-
-			return buffy.toString();
+			return _toString;
 		}
 
+		void setErrorCount(int errorCount)
+		{
+			this._errorCount = errorCount;
+			updateToString();
+		}
+
+		private void updateToString()
+		{
+			Integer[] params = new Integer[]
+				{
+					new Integer(_errorCount),
+					new Integer(_warnCount),
+					new Integer(_infoCount),
+				};
+			// i18n[LogPanel.logInfoLabel=Logs: Errors {0}, Warnings {1}, Infos {2}]
+			_toString = s_stringMgr.getString("LogPanel.logInfoLabel", params);
+		}
+
+		void setWarnCount(int warnCount)
+		{
+			this._warnCount = warnCount;
+			updateToString();
+		}
+
+		void setInfoCount(int infoCount)
+		{
+			this._infoCount = infoCount;
+			updateToString();
+		}
 	}
 
 

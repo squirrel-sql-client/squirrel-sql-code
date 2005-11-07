@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
  */
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.KeyListener;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -660,6 +661,22 @@ class ObjectTree extends JTree
 				((IObjectTreeListener)listeners[i + 1]).objectTreeRefreshed(evt);
 			}
 		}
+	}
+
+	public void dispose()
+	{
+		// Menues that are also shown in the main window Session menu might
+		// be in this popup. If we don't remove them, the Session won't be Garbage Collected.
+		_globalPopup.removeAll();
+		_globalPopup.setInvoker(null);
+		_globalActions.clear();
+		for(Iterator i=_popups.values().iterator(); i.hasNext();)
+		{
+			JPopupMenu popup = (JPopupMenu) i.next();
+			popup.removeAll();
+			popup.setInvoker(null);
+		}
+		_popups.clear();
 	}
 
 	private final class NodeExpansionListener implements TreeExpansionListener
