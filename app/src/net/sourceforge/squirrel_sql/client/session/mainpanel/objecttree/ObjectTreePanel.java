@@ -826,6 +826,11 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 		p.addChangeListener(_tabPnlListener);
 	}
 
+	public void sessionWindowClosing()
+	{
+		_tree.dispose();	
+	}
+
 	private final class LeftPanel extends JPanel
 	{
 		LeftPanel()

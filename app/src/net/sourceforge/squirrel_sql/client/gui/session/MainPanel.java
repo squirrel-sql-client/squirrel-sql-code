@@ -297,7 +297,8 @@ public class MainPanel extends JPanel
    public void sessionWindowClosing()
    {
       getSQLPanel().sessionWindowClosing();
-      int selIx = _tabPnl.getSelectedIndex();
+		getObjectTreePanel().sessionWindowClosing();
+		int selIx = _tabPnl.getSelectedIndex();
 
       if(selIx == ITabIndexes.OBJECT_TREE_TAB || selIx == ITabIndexes.SQL_TAB)
       {

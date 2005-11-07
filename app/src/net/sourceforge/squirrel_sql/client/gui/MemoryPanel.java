@@ -2,6 +2,9 @@ package net.sourceforge.squirrel_sql.client.gui;
 
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
@@ -10,23 +13,25 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
+import java.util.*;
+import java.text.DateFormat;
 
 import javax.swing.*;
+import javax.swing.Timer;
 
-public class MemoryPanel extends JPanel implements ActionListener
+public class MemoryPanel extends JPanel
 {
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(MemoryPanel.class);
+
+
 	private JProgressBar _bar;
 	private JButton _btnGarbage;
 	private JButton _btnSessionGCStatus;
 	private StringBuffer _buffy = new StringBuffer();
 	private IApplication _app;
-	private HashMap _aliasesBySessionIDsClosed = new HashMap();
-	private HashMap _aliasesBySessionIDsConnected = new HashMap();
-	private HashMap _aliasesBySessionIDsFinalized = new HashMap();
-	private ImageIcon _greenGemIcon;
-	private ImageIcon _yellowGemIcon;
-	private ImageIcon _redGemIcon;
+	private HashMap _sessionInfosBySessionIDs = new HashMap();
 
 	public MemoryPanel(IApplication app)
 	{
@@ -37,7 +42,8 @@ public class MemoryPanel extends JPanel implements ActionListener
 		_bar.setStringPainted(true);
 
 		_btnGarbage = new JButton();
-		_btnGarbage.setToolTipText("Run garbage collection");
+		// i18n[MemoryPanel.runGC=Run garbage collection]
+		_btnGarbage.setToolTipText(s_stringMgr.getString("MemoryPanel.runGC"));
 		_btnGarbage.setBorder(null);
 
 		ImageIcon trashIcon = _app.getResources().getIcon(SquirrelResources.IImageNames.TRASH);
@@ -55,12 +61,14 @@ public class MemoryPanel extends JPanel implements ActionListener
 			}
 		});
 
-
-		_greenGemIcon = _app.getResources().getIcon(SquirrelResources.IImageNames.GREEN_GEM);
-		_yellowGemIcon = _app.getResources().getIcon(SquirrelResources.IImageNames.YELLOW_GEM);
-		_redGemIcon = _app.getResources().getIcon(SquirrelResources.IImageNames.RED_GEM);
-
-		_btnSessionGCStatus = new JButton();
+		_btnSessionGCStatus = new JButton()
+		{
+			public void paint(Graphics g)
+			{
+				super.paint(g);
+//				paintNumWaitingGC(g);
+			}
+		};
 
 		_btnSessionGCStatus.setBorder(null);
 
@@ -68,6 +76,15 @@ public class MemoryPanel extends JPanel implements ActionListener
 
 		_btnSessionGCStatus.setBorder(null);
 		_btnSessionGCStatus.setPreferredSize(prefButtonSize);
+
+
+		_btnSessionGCStatus.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				showSessionGCStatus();
+			}
+		});
 
 
 		JPanel pnlButtons = new JPanel(new GridLayout(1,2,3,0));
@@ -86,27 +103,46 @@ public class MemoryPanel extends JPanel implements ActionListener
 			public void sessionClosed(SessionEvent evt)
 			{
 				IIdentifier id = evt.getSession().getIdentifier();
-				String aliasName = evt.getSession().getAlias().getName();
-				_aliasesBySessionIDsClosed.put(id, aliasName);
+				MemorySessionInfo msi = (MemorySessionInfo) _sessionInfosBySessionIDs.get(id);
+				if(null == msi)
+				{
+					throw new IllegalStateException("A session with ID " + id + " has not been created");
+				}
+				msi.closed = new Date();
 				updateGcStatus();
 			}
 
 			public void sessionConnected(SessionEvent evt)
 			{
 				IIdentifier id = evt.getSession().getIdentifier();
-				String aliasName = evt.getSession().getAlias().getName();
-				_aliasesBySessionIDsConnected.put(id, aliasName);
+				if(null != _sessionInfosBySessionIDs.get(id))
+				{
+					throw new IllegalStateException("A session with ID " + id + " has already been created");
+				}
+				MemorySessionInfo msi = new MemorySessionInfo(id, evt.getSession().getAlias().getName());
+				_sessionInfosBySessionIDs.put(id, msi);
+
 			}
 
 			public void sessionFinalized(IIdentifier sessionId)
 			{
-				String aliasName = (String) _aliasesBySessionIDsClosed.get(sessionId);
-				_aliasesBySessionIDsFinalized.put(sessionId, aliasName);
+				MemorySessionInfo msi = (MemorySessionInfo) _sessionInfosBySessionIDs.get(sessionId);
+				if(null == msi)
+				{
+					throw new IllegalStateException("A session with ID " + sessionId + " has not been created");
+				}
+				msi.finalized = new Date();
 				updateGcStatus();
 			}
 		});
 
-		Timer t = new Timer(500, this);
+		Timer t = new Timer(500, new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				updateLabel();
+			}
+		});
 		t.start();
 	}
 
@@ -114,28 +150,39 @@ public class MemoryPanel extends JPanel implements ActionListener
 	{
 		SessionGCStatus gcStat = getSessionGCStatus();
 		_btnSessionGCStatus.setToolTipText(gcStat.tooltip);
-		_btnSessionGCStatus.setIcon(gcStat.icon);
+		_btnSessionGCStatus.setBackground(gcStat.color);
+		_btnSessionGCStatus.setText(gcStat.numSessAwaitingGC);
 	}
+
+
 
 	private SessionGCStatus getSessionGCStatus()
 	{
 		SessionGCStatus ret = new SessionGCStatus();
-		int numSessAwaitingGC = _aliasesBySessionIDsClosed.size() - _aliasesBySessionIDsFinalized.size();
-		//System.out.println("numSessAwaitingGC = " + numSessAwaitingGC);
 
-		ret.tooltip = numSessAwaitingGC + " Sessions waiting for garbage collection";
+		int numSessAwaitingGC = 0;
+		for(Iterator i = _sessionInfosBySessionIDs.values().iterator(); i.hasNext();)
+		{
+			MemorySessionInfo msi = (MemorySessionInfo) i.next();
+			if(null != msi.closed && null == msi.finalized)
+			{
+				++numSessAwaitingGC;
+			}
+		}
 
+		ret.numSessAwaitingGC = "" + numSessAwaitingGC;
+
+		// i18n [MemoryPanel.gcStatusToolTip={0} Sessions waiting for garbage collection]
+		ret.tooltip = s_stringMgr.getString("MemoryPanel.gcStatusToolTip", new Integer(ret.numSessAwaitingGC));
+
+		ret.color = Color.yellow;
 		if(numSessAwaitingGC < 2)
 		{
-			ret.icon = _greenGemIcon;
+			ret.color = Color.green;
 		}
-		else if(numSessAwaitingGC == 2)
+		else if(numSessAwaitingGC > 4)
 		{
-			ret.icon = _yellowGemIcon;
-		}
-		else if(numSessAwaitingGC > 2)
-		{
-			ret.icon = _redGemIcon;
+			ret.color = Color.red;
 		}
 
 		return ret;
@@ -143,7 +190,7 @@ public class MemoryPanel extends JPanel implements ActionListener
 
 	}
 
-	public void actionPerformed(ActionEvent e)
+	private void updateLabel()
 	{
 		long total = Runtime.getRuntime().totalMemory() >> 10 >> 10;
 		long free = Runtime.getRuntime().freeMemory() >> 10 >> 10;
@@ -152,15 +199,133 @@ public class MemoryPanel extends JPanel implements ActionListener
 		_bar.setMinimum(0);
 		_bar.setMaximum((int)total);
 		_bar.setValue((int)just);
-		_buffy.setLength(0);
-		_buffy.append(just).append(" of ").append(total).append(" MB");
-		_bar.setString(_buffy.toString());
+
+		Long[] params = new Long[]
+			{
+				new Long(just),
+				new Long(total)
+			};
+
+		// i18n[MemoryPanel.memSize={0} of {1} MB];
+		String msg = s_stringMgr.getString("MemoryPanel.memSize", params);
+		_bar.setString(msg);
 	}
+
+	private void showSessionGCStatus()
+	{
+		StringBuffer[] params = new StringBuffer[]
+			{
+				new StringBuffer(getSessionGCStatus().tooltip),
+				new StringBuffer(),
+				new StringBuffer(),
+				new StringBuffer()
+			};
+
+
+		MemorySessionInfo[] msis = (MemorySessionInfo[]) _sessionInfosBySessionIDs.values().toArray(new MemorySessionInfo[0]);
+
+		Arrays.sort(msis);
+
+		for (int i = 0; i < msis.length; i++)
+		{
+			if(null != msis[i].closed && null == msis[i].finalized)
+			{
+				params[1].append(msis[i].toString()).append('\n');
+			}
+			else if(null == msis[i].closed)
+			{
+				params[2].append(msis[i].toString()).append('\n');
+			}
+			else if(null != msis[i].finalized)
+			{
+				params[3].append(msis[i].toString()).append('\n');
+			}
+		}
+
+
+		// i18n [MemoryPanel.gcStatus={0}\n\n
+		//Sessions waiting for garbage collection:\n
+		//==================================================\n
+		//{1}\n
+		//Sessions open:\n
+		//==================================================\n
+		//{2}\n
+		//Sessions garbage collected:\n
+		//==================================================\n
+		//{3}\n]
+		String msg = s_stringMgr.getString("MemoryPanel.gcStatus", params);
+		ErrorDialog errorDialog = new ErrorDialog(_app.getMainFrame(), msg);
+
+
+		// i18n[MemoryPanel.statusDialogTitle=Session garbage collection status]
+		errorDialog.setTitle(s_stringMgr.getString("MemoryPanel.statusDialogTitle"));
+		errorDialog.setVisible(true);
+	}
+
+	private static class MemorySessionInfo implements Comparable
+	{
+		MemorySessionInfo(IIdentifier sessionId, String aliasName)
+		{
+			this.sessionId = sessionId;
+			this.aliasName = aliasName;
+		}
+
+		IIdentifier sessionId;
+		String aliasName;
+		java.util.Date created = new Date();
+		java.util.Date closed;
+		java.util.Date finalized;
+
+		public String toString()
+		{
+			DateFormat df = DateFormat.getInstance();
+
+			Object[] params = new Object[]
+				{
+					sessionId,
+					aliasName,
+					df.format(created),
+					null == closed ? "" : df.format(closed),
+					null == finalized ? "" :df.format(finalized)
+				};
+
+			if(null != closed && null == finalized)
+			{
+				// i18n[MemoryPanel.sessionInfo.toString1=Session: ID={0}, Alias={1}: created at {2}, closed at {3}]
+				return s_stringMgr.getString("MemoryPanel.sessionInfo.toString1", params);
+			}
+			else if(null == closed)
+			{
+				// i18n[MemoryPanel.sessionInfo.toString2=Session: ID={0}, Alias={1}: created at {2}]
+				return s_stringMgr.getString("MemoryPanel.sessionInfo.toString2", params);
+			}
+			else if(null != finalized)
+			{
+				// i18n[MemoryPanel.sessionInfo.toString3=Session: ID={0}, Alias={1}: created at {2}, closed at {3}, finalized at {4}]
+				return s_stringMgr.getString("MemoryPanel.sessionInfo.toString3", params);
+			}
+			else
+			{
+				throw new IllegalStateException("Unknown Session state");
+			}
+		}
+
+		public int compareTo(Object o)
+		{
+			MemorySessionInfo other = (MemorySessionInfo) o;
+
+			return new Integer(sessionId.toString()).compareTo(new Integer(other.sessionId.toString()));
+
+		}
+	}
+
+
 
 	private static class SessionGCStatus
 	{
 		String tooltip;
-		ImageIcon icon;
+		Color color;
+		String numSessAwaitingGC;
 	}
 
 }

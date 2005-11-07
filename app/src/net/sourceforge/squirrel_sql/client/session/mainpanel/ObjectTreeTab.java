@@ -20,6 +20,8 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
 import java.awt.Component;
 
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+
 /**
  * This is the tab that contains the object tree.
  *
