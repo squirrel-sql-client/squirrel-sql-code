@@ -73,13 +73,14 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 	{
 		_sqlPanelApi.getSQLEntryPanel().getTextComponent().removeKeyListener(_triggerParserKeyListener);
 
-		if (_parserThread != null)
-		{
-			_parserThread.exitThread();
-		}
 		if (_parserTimer != null)
 		{
 			_parserTimer.stop();
+		}
+
+		if (_parserThread != null)
+		{
+			_parserThread.exitThread();
 		}
 
 
