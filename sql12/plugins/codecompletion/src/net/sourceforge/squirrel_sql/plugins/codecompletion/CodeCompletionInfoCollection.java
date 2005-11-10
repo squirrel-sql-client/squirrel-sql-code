@@ -40,14 +40,17 @@ public class CodeCompletionInfoCollection
    private Vector _catalogs = new Vector();
 
 	private ISession _session;
+	private CodeCompletionPlugin _plugin;
+
    private static final int MAX_COMPLETION_INFOS = 300;
 
 	// i18n[codecompletion.listTruncated=Completion list truncated. Narrow by typing to get missing entries.]
 	private static final String TOO_MANY_COMPLETION_INFOS = s_stringMgr.getString("codecompletion.listTruncated");
 
-   public CodeCompletionInfoCollection(ISession session)
+	public CodeCompletionInfoCollection(ISession session, CodeCompletionPlugin plugin)
 	{
 		_session = session;
+		_plugin = plugin;
 	}
 
 	private void load(String catalog, String schema)
@@ -97,7 +100,8 @@ public class CodeCompletionInfoCollection
                new CodeCompletionStoredProcedureInfo(storedProceduresInfos[i].getSimpleName(), 
                                                      storedProceduresInfos[i].getType(),
                                                      _session,
-                                                     catalog,
+						                                   _plugin,
+																	  catalog,
                                                      schema);
             completionInfos.add(buf);
          }

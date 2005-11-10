@@ -94,6 +94,27 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 
 		_app = app;
 		createGUI();
+
+		for (Iterator it = _panels.iterator(); it.hasNext();)
+		{
+			IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel) it.next();
+			try
+			{
+				pnl.initialize(_app);
+			}
+			catch (Throwable th)
+			{
+				final String msg = s_stringMgr.getString("GlobalPreferencesSheet.error.loading", pnl.getTitle());
+				s_log.error(msg, th);
+				_app.showErrorDialog(msg, th);
+			}
+		}
+		setSize(650, 600);
+
+		app.getMainFrame().addInternalFrame(this, true, null);
+		GUIUtils.centerWithinDesktop(this);
+		setVisible(true);
+
 	}
 
 	/**
@@ -109,9 +130,11 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 		if (s_instance == null)
 		{
 			s_instance = new GlobalPreferencesSheet(app);
-			app.getMainFrame().addInternalFrame(s_instance, true, null);
 		}
-		s_instance.setVisible(true);
+		else
+		{
+			s_instance.moveToFront();
+		}
 	}
 
 	public void dispose()
@@ -122,7 +145,6 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
          pnl.uninitialize(_app);
       }
 
-
 		synchronized (getClass())
 		{
 			s_instance = null;
@@ -130,46 +152,6 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 		super.dispose();
 	}
 
-	public synchronized void setVisible(boolean show)
-	{
-		if (show)
-		{
-			if (!isVisible())
-			{
-				final boolean isDebug = s_log.isDebugEnabled();
-				long start = 0;
-				for (Iterator it = _panels.iterator(); it.hasNext();)
-				{
-					IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel) it.next();
-					if (isDebug)
-					{
-						start = System.currentTimeMillis();
-					}
-					try
-					{
-						pnl.initialize(_app);
-					}
-					catch (Throwable th)
-					{
-						final String msg = s_stringMgr.getString("GlobalPreferencesSheet.error.loading", pnl.getTitle());
-						s_log.error(msg, th);
-						_app.showErrorDialog(msg, th);
-					}
-					if (isDebug)
-					{
-						s_log.debug("Panel " + pnl.getTitle()
-								+ " initialized in "
-								+ (System.currentTimeMillis() - start) + "ms");
-					}
-				}
-				setSize(650, 600);
-				GUIUtils.centerWithinDesktop(this);
-			}
-			moveToFront();
-		}
-
-		super.setVisible(show);
-	}
 
 	/**
 	 * Set title of this frame. Ensure that the title label

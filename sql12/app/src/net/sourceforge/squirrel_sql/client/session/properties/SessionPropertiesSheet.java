@@ -70,38 +70,15 @@ public class SessionPropertiesSheet extends BaseSessionInternalFrame
 	{
 		super(session, session.getTitle() + " " + i18n.TITLE, true);
 		createGUI();
+		for (Iterator it = _panels.iterator(); it.hasNext();)
+		{
+			ISessionPropertiesPanel pnl = (ISessionPropertiesPanel)it.next();
+			pnl.initialize(getSession().getApplication(), getSession());
+		}
+
+		setSize(500,700);
 	}
 
-	public synchronized void setVisible(boolean show)
-	{
-		if (show)
-		{
-			if (!isVisible())
-			{
-				_titleLbl.setText(getTitle());
-				final boolean isDebug = s_log.isDebugEnabled();
-				long start = 0;
-				for (Iterator it = _panels.iterator(); it.hasNext();)
-				{
-					ISessionPropertiesPanel pnl = (ISessionPropertiesPanel)it.next();
-					if (isDebug)
-					{
-						start = System.currentTimeMillis();
-					}
-					pnl.initialize(getSession().getApplication(), getSession());
-					if (isDebug)
-					{
-						s_log.debug("Panel " + pnl.getTitle() + " initialized in "
-								+ (System.currentTimeMillis() - start) + "ms");
-					}
-				}
-				pack();
-				GUIUtils.centerWithinDesktop(this);
-			}
-			moveToFront();
-		}
-		super.setVisible(show);
-	}
 
    public void selectTabByTitle(String tabNameToSelect)
    {
@@ -210,10 +187,7 @@ public class SessionPropertiesSheet extends BaseSessionInternalFrame
 			ISessionPropertiesPanel pnl = (ISessionPropertiesPanel) it.next();
 			String pnlTitle = pnl.getTitle();
 			String hint = pnl.getHint();
-			final JScrollPane sp = new JScrollPane(pnl.getPanelComponent());
-			sp.setBorder(BorderFactory.createEmptyBorder());
-			sp.setPreferredSize(new Dimension(450, 500));
-			_tabbedPane.addTab(pnlTitle, null, sp, hint);
+			_tabbedPane.addTab(pnlTitle, null, pnl.getPanelComponent(), hint);
 		}
 
 		final JPanel contentPane = new JPanel(new GridBagLayout());

@@ -26,12 +26,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -72,7 +67,18 @@ public class NewSessionPropertiesSheet extends BaseInternalFrame
 		super(s_stringMgr.getString("NewSessionPropertiesSheet.title"), true);
 		_app = app;
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
+
 		createGUI();
+		for (Iterator it = _panels.iterator(); it.hasNext();)
+		{
+			INewSessionPropertiesPanel pnl = (INewSessionPropertiesPanel) it.next();
+			pnl.initialize(_app);
+		}
+
+		setSize(500,700);
+		app.getMainFrame().addInternalFrame(this, true, null);
+		GUIUtils.centerWithinDesktop(this);
+		setVisible(true);
 	}
 
 	/**
@@ -88,9 +94,11 @@ public class NewSessionPropertiesSheet extends BaseInternalFrame
 		if (s_instance == null)
 		{
 			s_instance = new NewSessionPropertiesSheet(app);
-			app.getMainFrame().addInternalFrame(s_instance, true, null);
 		}
-		s_instance.setVisible(true);
+		else
+		{
+			s_instance.moveToFront();
+		}
 	}
 
 	public void dispose()
@@ -100,36 +108,6 @@ public class NewSessionPropertiesSheet extends BaseInternalFrame
 			s_instance = null;
 		}
 		super.dispose();
-	}
-
-	public void setVisible(boolean show)
-	{
-		if (show)
-		{
-			if (!isVisible())
-			{
-				final boolean isDebug = s_log.isDebugEnabled();
-				long start = 0;
-				for (Iterator it = _panels.iterator(); it.hasNext();)
-				{
-					INewSessionPropertiesPanel pnl = (INewSessionPropertiesPanel) it.next();
-					if (isDebug)
-					{
-						start = System.currentTimeMillis();
-					}
-					pnl.initialize(_app);
-					if (isDebug)
-					{
-						s_log.debug("Panel " + pnl.getTitle() + " initialized in "
-								+ (System.currentTimeMillis() - start) + "ms");
-					}
-				}
-				pack();
-				GUIUtils.centerWithinDesktop(this);
-			}
-			moveToFront();
-		}
-		super.setVisible(show);
 	}
 
 	/**
@@ -212,10 +190,7 @@ public class NewSessionPropertiesSheet extends BaseInternalFrame
 			INewSessionPropertiesPanel pnl = (INewSessionPropertiesPanel)it.next();
 			String winTitle = pnl.getTitle();
 			String hint = pnl.getHint();
-			final JScrollPane sp = new JScrollPane(pnl.getPanelComponent());
-			sp.setBorder(BorderFactory.createEmptyBorder());
-			sp.setPreferredSize(new Dimension(450, 500));
-			tabPane.addTab(winTitle, null, sp/*pnl.getPanelComponent()*/, hint);
+			tabPane.addTab(winTitle, null, pnl.getPanelComponent(), hint);
 		}
 
 		final JPanel contentPane = new JPanel(new GridBagLayout());

@@ -17,10 +17,7 @@ package net.sourceforge.squirrel_sql.fw.util;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.text.NumberFormat;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -312,4 +309,42 @@ public class Utilities
 	{
 		return StringUtilities.split(str, delimiter, removeEmpty);
 	}
+
+	/**
+	 * Creates a clone of any serializable object. Collections and arrays
+	 * may be cloned if the entries are serializable.
+	 *
+	 * Caution super class members are not cloned if a super class is not serializable. 
+	 */
+	public static Object cloneObject(Object toClone)
+	{
+		if(null == toClone)
+		{
+			return null;
+		}
+		else
+		{
+			try
+			{
+				ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+				ObjectOutputStream oOut = new ObjectOutputStream(bOut);
+				oOut.writeObject(toClone);
+				oOut.close();
+				ByteArrayInputStream bIn = new ByteArrayInputStream(bOut.toByteArray());
+				bOut.close();
+				ObjectInputStream oIn = new ObjectInputStream(bIn);
+				bIn.close();
+				Object copy = oIn.readObject();
+				oIn.close();
+
+				return copy;
+			}
+			catch (Exception e)
+			{
+				throw new RuntimeException(e);
+			}
+
+		}
+	}
+
 }
