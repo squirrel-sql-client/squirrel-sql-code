@@ -120,6 +120,16 @@ public class TextPopupMenu extends BasePopupMenu
 		return _comp;
 	}
 
+	public void dispose()
+	{
+		// Menues that are also shown in the main window Session menu might
+		// be in this popup. If we don't remove them, the Session won't be Garbage Collected.
+		removeAll();
+		setInvoker(null);
+		_comp = null;
+	}
+
+
 	protected class CutAction extends BaseAction
 	{
 		CutAction()
