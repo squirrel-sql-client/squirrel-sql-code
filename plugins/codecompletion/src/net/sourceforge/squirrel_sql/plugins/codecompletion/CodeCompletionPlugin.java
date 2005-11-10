@@ -17,22 +17,27 @@ package net.sourceforge.squirrel_sql.plugins.codecompletion;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
+import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
+import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.CodeCompletionPreferences;
+import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.CodeCompletionPreferencesController;
 
 import javax.swing.*;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
-import java.util.List;
+import java.io.File;
+import java.util.Iterator;
 
 /**
  * The plugin class.
@@ -46,12 +51,12 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 			s_log = LoggerController.createLogger(CodeCompletionPlugin.class);
 
 
-
-	/** Name of file to store user prefs in. */
-	static final String USER_PREFS_FILE_NAME = "prefs.xml";
-
 	/** Resources for this plugin. */
 	private Resources _resources;
+	private static final String PREFS_FILE_NAME = "codecompletionprefs.xml";
+
+	private CodeCompletionPreferences _newSessionPrefs;
+	public static final String PLUGIN_OBJECT_PREFS_KEY = "codecompletionprefs";
 
 	/**
 	 * Return the internal name of this plugin.
@@ -84,15 +89,15 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 	}
 
 
-   /**
-    * Returns a comma separated list of other contributors.
-    *
-    * @return      Contributors names.
-    */
-   public String getContributors()
-   {
-      return "Christian Sell";
-   }
+	/**
+	 * Returns a comma separated list of other contributors.
+	 *
+	 * @return      Contributors names.
+	 */
+	public String getContributors()
+	{
+		return "Christian Sell";
+	}
 
 	/**
 	 * Returns the authors name.
@@ -148,14 +153,92 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 	 */
 	public void initialize() throws PluginException
 	{
-		super.initialize();
-
-		final IApplication app = getApplication();
-
-		// Load resources.
 		_resources = new Resources(this);
-
+		loadPrefs();
 	}
+
+	public void unload()
+	{
+		savePrefs();
+	}
+
+	private void savePrefs()
+	{
+		try
+		{
+			File prefsFile = new File(getPluginUserSettingsFolder(), PREFS_FILE_NAME);
+			final XMLBeanWriter wtr = new XMLBeanWriter(_newSessionPrefs);
+			wtr.save(prefsFile);
+		}
+		catch (Exception e)
+		{
+			throw new RuntimeException(e);
+		}
+	}
+
+
+
+	private void loadPrefs()
+	{
+		try
+		{
+			_newSessionPrefs = new CodeCompletionPreferences();
+			File prefsFile = new File(getPluginUserSettingsFolder(), PREFS_FILE_NAME);
+			if(prefsFile.exists())
+			{
+				XMLBeanReader reader = new XMLBeanReader();
+				reader.load(prefsFile, getClass().getClassLoader());
+
+				Iterator it = reader.iterator();
+
+				if (it.hasNext())
+				{
+					_newSessionPrefs = (CodeCompletionPreferences) it.next();
+				}
+
+			}
+		}
+		catch (Exception e)
+		{
+			throw new RuntimeException(e);
+		}
+	}
+
+
+	/**
+	 * Create preferences panel for the New Session Properties dialog.
+	 *
+	 * @return	preferences panel.
+	 */
+	public INewSessionPropertiesPanel[] getNewSessionPropertiesPanels()
+	{
+		return new INewSessionPropertiesPanel[]
+		{
+			new CodeCompletionPreferencesController(_newSessionPrefs)
+		};
+	}
+
+	/**
+	 * Create panels for the Session Properties dialog.
+	 *
+	 * @return		Array of panels for the properties dialog.
+	 */
+	public ISessionPropertiesPanel[] getSessionPropertiesPanels(ISession session)
+	{
+		CodeCompletionPreferences sessionPrefs = (CodeCompletionPreferences)session.getPluginObject(this, PLUGIN_OBJECT_PREFS_KEY);
+
+		return new ISessionPropertiesPanel[]
+		{
+			new CodeCompletionPreferencesController(sessionPrefs)
+		};
+	}
+
+	public void sessionCreated(ISession session)
+	{
+		CodeCompletionPreferences prefs = (CodeCompletionPreferences) Utilities.cloneObject(_newSessionPrefs);
+		session.putPluginObject(this, PLUGIN_OBJECT_PREFS_KEY, prefs);
+	}
+
 
 	/**
 	 * Session has been started.
@@ -164,46 +247,37 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 	 */
 	public PluginSessionCallback sessionStarted(final ISession session)
 	{
-      ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getSQLPaneAPI();
+		ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getSQLPaneAPI();
 
-      initCodeCompletion(sqlPaneAPI, session);
+		initCodeCompletion(sqlPaneAPI, session);
 
-      PluginSessionCallback ret = new PluginSessionCallback()
-      {
-         public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
-         {
-            initCodeCompletion(sqlInternalFrame.getSQLPanelAPI(), sess);
-         }
+		PluginSessionCallback ret = new PluginSessionCallback()
+		{
+			public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+			{
+				initCodeCompletion(sqlInternalFrame.getSQLPanelAPI(), sess);
+			}
 
-         public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
-         {
-         }
-      };
+			public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+			{
+			}
+		};
 
 		return ret;
 	}
 
-   private void initCodeCompletion(ISQLPanelAPI sqlPaneAPI, ISession session)
-   {
-      CompleteCodeAction cca = new CompleteCodeAction(session.getApplication(), _resources, sqlPaneAPI.getSQLEntryPanel(), session, new CodeCompletionInfoCollection(session));
-
-      JMenuItem item = sqlPaneAPI.addToSQLEntryAreaMenu(cca);
-
-      _resources.configureMenuItem(cca, item);
-
-      JComponent comp = sqlPaneAPI.getSQLEntryPanel().getTextComponent();
-      comp.registerKeyboardAction(cca, _resources.getKeyStroke(cca), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-
-      sqlPaneAPI.addToToolsPopUp("completecode", cca);
-   }
-
-   /**
-	 * Called when a session shutdown.
-	 *
-	 * @param	session	The session that is ending.
-	 */
-	public void sessionEnding(ISession session)
+	private void initCodeCompletion(ISQLPanelAPI sqlPaneAPI, ISession session)
 	{
+		CompleteCodeAction cca = new CompleteCodeAction(session.getApplication(), _resources, sqlPaneAPI.getSQLEntryPanel(), session, new CodeCompletionInfoCollection(session, this));
+
+		JMenuItem item = sqlPaneAPI.addToSQLEntryAreaMenu(cca);
+
+		_resources.configureMenuItem(cca, item);
+
+		JComponent comp = sqlPaneAPI.getSQLEntryPanel().getTextComponent();
+		comp.registerKeyboardAction(cca, _resources.getKeyStroke(cca), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+		sqlPaneAPI.addToToolsPopUp("completecode", cca);
 	}
 
 	/**

@@ -1,6 +1,8 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.CodeCompletionPreferences;
+import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.PrefixedConfig;
 
 import java.sql.SQLException;
 import java.sql.ResultSet;
@@ -13,18 +15,27 @@ public class CodeCompletionStoredProcedureInfo extends CodeCompletionInfo
    private String _procName;
    private int _procType;
    private ISession _session;
+	private CodeCompletionPlugin _plugin;
    private String _catalog;
    private String _schema;
-   private String _completionString;
 
-   public CodeCompletionStoredProcedureInfo(String procName, int procType, ISession session, String catalog, String schema)
-   {
-      _procName = procName;
-      _procType = procType;
-      _session = session;
-      _catalog = catalog;
-      _schema = schema;
-   }
+	private String _params = null;
+
+	/**
+	 * This Sessions prefs. Note it is just a reference. Contents change when user changes Session properties.
+	 */
+	private CodeCompletionPreferences _prefs;
+
+	public CodeCompletionStoredProcedureInfo(String procName, int procType, ISession session, CodeCompletionPlugin plugin, String catalog, String schema)
+	{
+		_procName = procName;
+		_procType = procType;
+		_session = session;
+		_plugin = plugin;
+		_prefs = (CodeCompletionPreferences) _session.getPluginObject(_plugin, CodeCompletionPlugin.PLUGIN_OBJECT_PREFS_KEY);
+		_catalog = catalog;
+		_schema = schema;
+	}
 
    public String getCompareString()
    {
@@ -35,29 +46,27 @@ public class CodeCompletionStoredProcedureInfo extends CodeCompletionInfo
    {
       try
       {
-         if(null == _completionString)
-         {
-            _completionString = "{call " + _procName + "(";
-            ResultSet res = _session.getSQLConnection().getConnection().getMetaData().getProcedureColumns(_catalog, _schema, _procName, null);
+			String ret = "";
 
-            String[] paramStrings = getParamStrings(res);
-            res.close();
+			int completionConfig = getCopmpletionConfig();
 
-            if(0 < paramStrings.length)
-            {
-               _completionString += paramStrings[0];
-            }
+			switch (completionConfig)
+			{
+				case CodeCompletionPreferences.CONFIG_SP_WITH_PARARMS:
+						ret = "{call " + _procName + "(" + getParams() + ")}";
+					break;
+				case CodeCompletionPreferences.CONFIG_SP_WITHOUT_PARARMS:
+						ret = "{call " + _procName + "()}";
+					break;
+				case CodeCompletionPreferences.CONFIG_UDF_WITH_PARARMS:
+						ret = _procName + "(" + getParams() + ")";
+					break;
+				case CodeCompletionPreferences.CONFIG_UDF_WITHOUT_PARARMS:
+						ret = _procName + "()";
+					break;
+			}
 
-            for (int i = 1; i < paramStrings.length; i++)
-            {
-               _completionString += ", " + paramStrings[i];
-            }
-
-            _completionString += ")}";
-
-         }
-
-         return _completionString;
+         return ret;
       }
       catch (SQLException e)
       {
@@ -65,24 +74,60 @@ public class CodeCompletionStoredProcedureInfo extends CodeCompletionInfo
       }
    }
 
-   private String[] getParamStrings(ResultSet res) throws SQLException
-   {
-      Vector ret = new Vector();
-      while(res.next())
-      {
-         switch(res.getInt("COLUMN_TYPE"))
-         {
-            case DatabaseMetaData.procedureColumnIn:
-            case DatabaseMetaData.procedureColumnOut:
-            case DatabaseMetaData.procedureColumnInOut:
-               ret.add(getParamString(res));
-         }
-      }
+	private int getCopmpletionConfig()
+	{
+		PrefixedConfig[] prefixedConfigs = _prefs.getPrefixedConfigs();
 
-      return (String[]) ret.toArray(new String[ret.size()]);
-   }
+		for (int i = 0; i < prefixedConfigs.length; i++)
+		{
+			if(_procName.toUpperCase().startsWith(prefixedConfigs[i].getPrefix().toUpperCase()))
+			{
+				return prefixedConfigs[i].getCompletionConfig();
+			}
+		}
 
-   private String getParamString(ResultSet res) throws SQLException
+		return _prefs.getGeneralCompletionConfig();
+	}
+
+
+	private String getParams() throws SQLException
+	{
+		if (null == _params)
+		{
+			ResultSet res = _session.getSQLConnection().getConnection().getMetaData().getProcedureColumns(_catalog, _schema, _procName, null);
+
+			Vector ret = new Vector();
+			while (res.next())
+			{
+				switch (res.getInt("COLUMN_TYPE"))
+				{
+					case DatabaseMetaData.procedureColumnIn:
+					case DatabaseMetaData.procedureColumnOut:
+					case DatabaseMetaData.procedureColumnInOut:
+						ret.add(getParamString(res));
+				}
+			}
+			res.close();
+
+			String[] _paramStrings = (String[]) ret.toArray(new String[ret.size()]);
+
+
+			_params = "";
+			if (0 < _paramStrings.length)
+			{
+				_params += _paramStrings[0];
+			}
+
+			for (int i = 1; i < _paramStrings.length; i++)
+			{
+				_params += ", " + _paramStrings[i];
+			}
+		}
+
+		return _params;
+	}
+
+	private String getParamString(ResultSet res) throws SQLException
    {
       String ret = "<";
 
@@ -112,7 +157,7 @@ public class CodeCompletionStoredProcedureInfo extends CodeCompletionInfo
 
       ret += ">";
 
-      return ret;
+		return ret;
    }
 
    public String toString()
