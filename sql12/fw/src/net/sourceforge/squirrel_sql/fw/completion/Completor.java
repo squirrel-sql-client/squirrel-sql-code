@@ -128,7 +128,7 @@ public class Completor
 	{
 		if(e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_TAB)
 		{
-         completionSelected();
+			completionSelected(e.getKeyCode());
 		}
 		else if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
 		{
@@ -270,11 +270,11 @@ public class Completor
 	{
 		if(2 == e.getClickCount())
 		{
-			completionSelected();
+			completionSelected(KeyEvent.VK_ENTER);
 		}
 	}
 
-	private void completionSelected()
+	private void completionSelected(int keyCode)
 	{
       Object selected = null;
       if(0 < _completionList.getModel().getSize())
@@ -284,7 +284,7 @@ public class Completor
       closePopup();
 		if(null != selected && selected instanceof CompletionInfo)
 		{
-			fireEvent( (CompletionInfo)selected);
+			fireEvent((CompletionInfo)selected, keyCode);
 		}
 	}
 
@@ -335,7 +335,7 @@ public class Completor
 			}
 			if(1 == _currCandidates.getCandidates().length)
 			{
-				fireEvent(_currCandidates.getCandidates()[0]);
+				fireEvent(_currCandidates.getCandidates()[0], KeyEvent.VK_ENTER);
 				return;
 			}
 
@@ -460,7 +460,7 @@ public class Completor
 	}
 
 
-	private void fireEvent(CompletionInfo completion)
+	private void fireEvent(CompletionInfo completion, int keyCode)
 	{
 		Vector clone =(Vector) _listeners.clone();
 
@@ -469,11 +469,11 @@ public class Completor
          CompletorListener completorListener = (CompletorListener)clone.elementAt(i);
          if(_txtComp.editorEqualsFilter())
          {
-            completorListener.completionSelected(completion, _currCandidates.getReplacementStart());
+            completorListener.completionSelected(completion, _currCandidates.getReplacementStart(), keyCode);
          }
          else
          {
-            completorListener.completionSelected(completion, -1);
+            completorListener.completionSelected(completion, -1, keyCode);
          }
 		}
 	}
