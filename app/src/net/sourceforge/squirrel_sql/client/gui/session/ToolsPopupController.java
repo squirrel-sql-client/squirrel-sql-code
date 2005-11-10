@@ -9,7 +9,6 @@ import javax.swing.text.JTextComponent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrameStatusBar;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsAction;
@@ -56,7 +55,7 @@ public class ToolsPopupController
       (
          new CompletorListener()
          {
-            public void completionSelected(CompletionInfo completion, int replaceBegin)
+            public void completionSelected(CompletionInfo completion, int replaceBegin, int keyCode)
             {onToolsPopupActionSelected(completion);}
          }
       );

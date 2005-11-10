@@ -26,51 +26,74 @@ import net.sourceforge.squirrel_sql.fw.completion.Completor;
 import net.sourceforge.squirrel_sql.fw.completion.CompletorListener;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 
-import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
-import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
 public class CompleteCodeAction extends SquirrelAction
 {
-   private ISQLEntryPanel _sqlEntryPanel;
-   private Completor _cc;
+	private ISQLEntryPanel _sqlEntryPanel;
+	private Completor _cc;
 
 
 
 	public CompleteCodeAction(IApplication app, PluginResources rsrc, ISQLEntryPanel sqlEntryPanel, ISession session, CodeCompletionInfoCollection codeCompletionInfos)
-   {
-      super(app, rsrc);
-      _sqlEntryPanel = sqlEntryPanel;
+	{
+		super(app, rsrc);
+		_sqlEntryPanel = sqlEntryPanel;
 
 		CodeCompletorModel model = new CodeCompletorModel(session, codeCompletionInfos, sqlEntryPanel.getIdentifier());
-      _cc = new Completor((JTextComponent)_sqlEntryPanel.getTextComponent(), model);
+		_cc = new Completor((JTextComponent)_sqlEntryPanel.getTextComponent(), model);
 		_sqlEntryPanel.addSQLTokenListener(model.getSQLTokenListener());
 
-      _cc.addCodeCompletorListener
-      (
-         new CompletorListener()
-         {
-            public void completionSelected(CompletionInfo completion, int replaceBegin)
-            {performCompletionSelected((CodeCompletionInfo) completion, replaceBegin);}
-         }
-      );
-   }
+		_cc.addCodeCompletorListener
+		(
+			new CompletorListener()
+			{
+				public void completionSelected(CompletionInfo completion, int replaceBegin, int keyCode)
+				{performCompletionSelected((CodeCompletionInfo) completion, replaceBegin, keyCode);}
+			}
+		);
+	}
 
 
-   public void actionPerformed(ActionEvent evt)
-   {
-      _cc.show();
-   }
+	public void actionPerformed(ActionEvent evt)
+	{
+		_cc.show();
+	}
 
 
 
-   private void performCompletionSelected(CodeCompletionInfo completion, int replaceBegin)
-   {
+	private void performCompletionSelected(CodeCompletionInfo completion, int replaceBegin, int keyCode)
+	{
+		if(KeyEvent.VK_TAB == keyCode)
+		{
+			_sqlEntryPanel.setSelectionStart(replaceBegin);
+			_sqlEntryPanel.setSelectionEnd(getNextWhiteSpacePos(_sqlEntryPanel.getCaretPosition()));
+			_sqlEntryPanel.replaceSelection(completion.getCompletionString());
+		}
+		else
+		{
+			_sqlEntryPanel.setSelectionStart(replaceBegin);
+			_sqlEntryPanel.setSelectionEnd(_sqlEntryPanel.getCaretPosition());
+			_sqlEntryPanel.replaceSelection(completion.getCompletionString());
+		}
+	}
 
-      _sqlEntryPanel.setSelectionStart(replaceBegin);
-      _sqlEntryPanel.setSelectionEnd(_sqlEntryPanel.getCaretPosition());
+	private int getNextWhiteSpacePos(int startPos)
+	{
+		String text = _sqlEntryPanel.getText();
 
-      _sqlEntryPanel.replaceSelection(completion.getCompletionString());
+		int retPos = startPos;
+
+		for(;retPos < text.length(); ++retPos)
+		{
+			if(Character.isWhitespace(text.charAt(retPos)))
+			{
+				return retPos;
+			}
+		}
+
+		return retPos;
 	}
 }

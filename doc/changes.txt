@@ -4,7 +4,7 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS or probably in latest weekly build
 =====================================================================
 
-
+- Selecting a code completion with tab (instead of enter) will delete the string between the carret position and the next white space.  
 - New Session properties to configure code completion for functions. Examples: {call myFun(<IN Integer myParam>} or plain myFun()
 
 - Fixed memory leaks. The memory panel in the status bar now tells which Session are garbage collected.
