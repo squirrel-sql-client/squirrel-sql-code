@@ -180,10 +180,7 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
 
 	public void dispose()
 	{
-		// Menues that are also shown in the main window Session menu might
-		// be in this popup. If we don't remove them, the Session won't be Garbage Collected.
-		_textPopupMenu.removeAll();
-		_textPopupMenu.setInvoker(null);
+		_textPopupMenu.dispose();
 	}
 
 	private final class MyMouseListener extends MouseAdapter
