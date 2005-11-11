@@ -17,4 +17,12 @@ public abstract class CodeCompletionInfo extends CompletionInfo
    }
 
 
+	/**
+	 * Will be called after getCompletionString()
+	 * @return Position to mo mve the Carret back counted from the end of the completion string.
+	 */
+	public int getMoveCarretBackCount()
+	{
+		return 0;
+	}
 }
