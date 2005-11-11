@@ -18,6 +18,7 @@ public class CodeCompletionStoredProcedureInfo extends CodeCompletionInfo
 	private CodeCompletionPlugin _plugin;
    private String _catalog;
    private String _schema;
+	private int _moveCarretBackCount = 0;
 
 	private String _params = null;
 
@@ -50,23 +51,42 @@ public class CodeCompletionStoredProcedureInfo extends CodeCompletionInfo
 
 			int completionConfig = getCopmpletionConfig();
 
+			_moveCarretBackCount = 0;
+
+			String params = getParams();
 			switch (completionConfig)
 			{
 				case CodeCompletionPreferences.CONFIG_SP_WITH_PARARMS:
-						ret = "{call " + _procName + "(" + getParams() + ")}";
+					ret = "{call " + _procName + "(" + params + ")}";
+					if (0 < params.length())
+					{
+						_moveCarretBackCount = params.length() + 2;
+					}
 					break;
 				case CodeCompletionPreferences.CONFIG_SP_WITHOUT_PARARMS:
-						ret = "{call " + _procName + "()}";
+					ret = "{call " + _procName + "()}";
+					if (0 < params.length())
+					{
+						_moveCarretBackCount = 2;
+					}
 					break;
 				case CodeCompletionPreferences.CONFIG_UDF_WITH_PARARMS:
-						ret = _procName + "(" + getParams() + ")";
+					ret = _procName + "(" + params + ")";
+					if (0 < params.length())
+					{
+						_moveCarretBackCount = params.length() + 1;
+					}
 					break;
 				case CodeCompletionPreferences.CONFIG_UDF_WITHOUT_PARARMS:
-						ret = _procName + "()";
+					if (0 < params.length())
+					{
+						_moveCarretBackCount = 1;
+					}
+					ret = _procName + "()";
 					break;
 			}
 
-         return ret;
+			return ret;
       }
       catch (SQLException e)
       {
@@ -164,4 +184,13 @@ public class CodeCompletionStoredProcedureInfo extends CodeCompletionInfo
    {
       return _procName + "(SP)";
    }
+
+	/**
+	 * Will be called after getCompletionString()
+	 * @return Position to move the carret back counted from the end of the completion string.
+	 */
+	public int getMoveCarretBackCount()
+	{
+		return _moveCarretBackCount;
+	}
 }

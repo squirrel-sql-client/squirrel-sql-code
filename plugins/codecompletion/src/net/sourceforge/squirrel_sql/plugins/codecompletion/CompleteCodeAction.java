@@ -78,6 +78,11 @@ public class CompleteCodeAction extends SquirrelAction
 			_sqlEntryPanel.setSelectionEnd(_sqlEntryPanel.getCaretPosition());
 			_sqlEntryPanel.replaceSelection(completion.getCompletionString());
 		}
+
+		if(0 < completion.getMoveCarretBackCount())
+		{
+			_sqlEntryPanel.setCaretPosition(_sqlEntryPanel.getCaretPosition()  - completion.getMoveCarretBackCount());
+		}
 	}
 
 	private int getNextWhiteSpacePos(int startPos)
