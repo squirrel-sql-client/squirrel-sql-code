@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.fw.util;
  */
 import java.io.*;
 import java.text.NumberFormat;
+import java.net.URLClassLoader;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -316,7 +317,7 @@ public class Utilities
 	 *
 	 * Caution super class members are not cloned if a super class is not serializable. 
 	 */
-	public static Object cloneObject(Object toClone)
+	public static Object cloneObject(Object toClone, final ClassLoader classLoader)
 	{
 		if(null == toClone)
 		{
@@ -332,7 +333,13 @@ public class Utilities
 				oOut.close();
 				ByteArrayInputStream bIn = new ByteArrayInputStream(bOut.toByteArray());
 				bOut.close();
-				ObjectInputStream oIn = new ObjectInputStream(bIn);
+				ObjectInputStream oIn = new ObjectInputStream(bIn)
+				{
+					protected Class resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException
+					{
+						return classLoader.loadClass(desc.getName());	 //To change body of overridden methods use File | Settings | File Templates.
+					}
+				};
 				bIn.close();
 				Object copy = oIn.readObject();
 				oIn.close();
