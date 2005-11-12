@@ -80,21 +80,13 @@ public class SessionPropertiesSheet extends BaseSessionInternalFrame
 	}
 
 
-   public void selectTabByTitle(String tabNameToSelect)
+   public void selectTabIndex(int index)
    {
-      if(null == tabNameToSelect)
-      {
-         return;
-      }
+		int tabCount = _tabbedPane.getTabCount();
 
-      int tabCount = _tabbedPane.getTabCount();
-
-      for (int i = 0; i < tabCount; i++)
+      if(0 <= index && index < tabCount)
       {
-         if(tabNameToSelect.equals(_tabbedPane.getTitleAt(i)))
-         {
-            _tabbedPane.setSelectedIndex(i);
-         }
+			_tabbedPane.setSelectedIndex(index);
       }
    }
 

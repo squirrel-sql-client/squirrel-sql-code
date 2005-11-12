@@ -497,7 +497,7 @@ public class WindowManager
     * @throws	IllegalArgumentException
     *			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
 	 */
-	public synchronized void showSessionPropertiesDialog(ISession session, String tabNameToSelect)
+	public synchronized void showSessionPropertiesDialog(ISession session, int tabIndexToSelect)
 	{
 		if (session == null)
 		{
@@ -516,7 +516,7 @@ public class WindowManager
 			moveToFront(propsSheet);
 		}
 
-      propsSheet.selectTabByTitle(tabNameToSelect);
+      propsSheet.selectTabIndex(tabIndexToSelect);
    }
 
 	/**
