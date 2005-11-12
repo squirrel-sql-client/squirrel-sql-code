@@ -36,8 +36,8 @@ public class Version
 	private static final int MINOR_VERSION = 0;
 	//private static final String TYPE = " alpha";
 	//private static final String TYPE = " beta/";
-	private static final String TYPE = " rc 1";
-	//private static final String TYPE = " final";
+	//private static final String TYPE = " rc 1";
+	private static final String TYPE = " final";
 	private static final int RELEASE = 0;
 
 	private static final String COPYRIGHT = s_stringMgr.getString("Version.copyright");
