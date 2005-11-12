@@ -11,7 +11,7 @@
 		<appversion>2.1 rc1</appversion>
 		<authors>
 			<author email="gerdwagner@users.sourceforge.net" name="Gerd Wagner"/>
-			<author email="manningr@users.sourceforge.net" name=" Rob Manning"/>
+			<author email="manningr@users.sourceforge.net" name="Rob Manning"/>
 			<author email="colbell@users.sourceforge.net" name="Colin Bell"/>
 		</authors>
 		<url>http://www.squirrelsql.org</url>
