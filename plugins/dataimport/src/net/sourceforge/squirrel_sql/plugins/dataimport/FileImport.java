@@ -425,7 +425,15 @@ boolean insertData(){
 		  //try{
 				mytable = new SortableTable(names,data);
 
-				final String[] setnames = {"Original Name", "New Name", "DataType"};
+				final String[] setnames =
+					{
+						// i18n[dataimport.origName=Original Name]
+						s_stringMgr.getString("dataimport.origName"),
+						// i18n[dataimport.newName=New Name]
+						s_stringMgr.getString("dataimport.newName"),
+						// i18n[dataimport.dataType=Data Type]
+						s_stringMgr.getString("dataimport.dataType")
+					};
 
 				settingTable = new CombTable(setnames,colAttribute);
 				jsp.setLeftComponent(settingTable);

@@ -25,7 +25,7 @@ public class FilterObjectsAction extends SquirrelAction implements ISessionActio
    {
       if (_session != null)
       {
-         new SessionPropertiesCommand(_session, "Object Tree").execute();
+         new SessionPropertiesCommand(_session, 1).execute();
       }
    }
 }

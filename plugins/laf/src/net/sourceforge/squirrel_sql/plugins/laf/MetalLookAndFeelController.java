@@ -78,6 +78,15 @@ class MetalLookAndFeelController extends AbstractPlasticController
 				"RubyTheme",
 				//
 				///////////////////////////////////////////////////////////////////
+
+				/////////////////////////////////////////////////////////////////////////////
+				// This theme was presented to SQuirreL by Karsten Lentzsch of jgoodies.com.
+				// It is SQuirreL's default theme if the LAF plugin is not used.
+				// Here we make the AllBluesBoldMetalTheme also available within the LAF plugin.
+				// Thanks a lot Karsten.
+				"net.sourceforge.squirrel_sql.client.gui.laf.AllBluesBoldMetalTheme"
+				//
+				////////////////////////////////////////////////////////////////////////////
 			};
 		}
 		else
@@ -94,6 +103,17 @@ class MetalLookAndFeelController extends AbstractPlasticController
 				"RubyTheme",
 				//
 				///////////////////////////////////////////////////////////////////
+
+				/////////////////////////////////////////////////////////////////////////////
+				// This theme was presented to SQuirreL by Karsten Lentzsch of jgoodies.com.
+				// It is SQuirreL's default theme if the LAF plugin is not used.
+				// Here we make the AllBluesBoldMetalTheme also available within the LAF plugin.
+				// Thanks a lot Karsten.
+				"net.sourceforge.squirrel_sql.client.gui.laf.AllBluesBoldMetalTheme"
+				//
+				////////////////////////////////////////////////////////////////////////////
+
+
 			};
 		}
 

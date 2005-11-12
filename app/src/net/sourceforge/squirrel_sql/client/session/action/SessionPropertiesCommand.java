@@ -31,7 +31,7 @@ public class SessionPropertiesCommand implements ICommand
 {
 	/** The session whose properties are to be displayed/maintained. */
 	private final ISession _session;
-   private String _tabNameToSelect;
+   private int _tabIndexToSelect = -1;
 
    /**
     * Ctor.
@@ -43,13 +43,13 @@ public class SessionPropertiesCommand implements ICommand
     */
    public SessionPropertiesCommand(ISession session)
    {
-      this(session, null);
+      this(session, -1);
    }
 
-   public SessionPropertiesCommand(ISession session, String tabNameToSelect)
+   public SessionPropertiesCommand(ISession session, int tabIndexToSelect)
    {
       super();
-      _tabNameToSelect = tabNameToSelect;
+      _tabIndexToSelect = tabIndexToSelect;
       if (session == null)
       {
          throw new IllegalArgumentException("Null ISession passed");
@@ -65,7 +65,7 @@ public class SessionPropertiesCommand implements ICommand
       if (_session != null)
       {
          WindowManager winMgr = _session.getApplication().getWindowManager();
-         winMgr.showSessionPropertiesDialog(_session, _tabNameToSelect);
+         winMgr.showSessionPropertiesDialog(_session, _tabIndexToSelect);
       }
    }
 }
