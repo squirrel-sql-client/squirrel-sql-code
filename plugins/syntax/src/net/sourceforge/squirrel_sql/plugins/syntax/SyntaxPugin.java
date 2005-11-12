@@ -130,13 +130,9 @@ public class SyntaxPugin extends DefaultSessionPlugin
     */
    public String getAuthor()
    {
-      return "Colin Bell";
+      return "Gerd Wagner, Colin Bell";
    }
 
-   public String getContributors()
-   {
-      return "Gerd Wagner";
-   }
 
    /**
     * Returns the name of the change log for the plugin. This should

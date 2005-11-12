@@ -84,9 +84,4 @@ public class SquirrelResources extends Resources
 	{
 		return getClass().getResource(getBundle().getString("Credits.file"));
 	}
-
-	public URL getContributorsURL()
-	{
-		return getClass().getResource(getBundle().getString("Contributors.file"));
-	}
 }
