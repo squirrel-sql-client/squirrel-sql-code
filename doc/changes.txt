@@ -1,7 +1,7 @@
 SQuirreL SQL Client Change Log
 ==============================
 
-2.0 rc1
+2.1 rc1
 =======
 
 - Selecting a code completion with tab (instead of enter) will delete the string between the carret position and the next white space.  
