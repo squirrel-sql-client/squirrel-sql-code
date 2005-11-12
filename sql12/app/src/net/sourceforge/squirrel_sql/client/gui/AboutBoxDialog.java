@@ -268,95 +268,41 @@ public class AboutBoxDialog extends JDialog
 			// this scrollpane from being too tall.
 			credits.setPreferredSize(new Dimension(200, 200));
 
-			final StringBuffer creditsData = readCreditsFile(app);
+			String creditsHtml = readCreditsHtml(app);
 
-			// Get list of contributors names.
-			final Map map = new TreeMap();
-			readContributorsFile(app, map);
-
+			StringBuffer pluginHtml = new StringBuffer();
 			// Get list of all plugin developers names. Allow for multiple
 			// developers for a plugin in the form "John Smith, James Brown".
 			PluginInfo[] pi = app.getPluginManager().getPluginInformation();
 			for (int i = 0; i < pi.length; ++i)
 			{
+				pluginHtml.append("<br><b>").append(pi[i].getDescriptiveName()).append(":</b>");
+
 				String authors = pi[i].getAuthor();
 				StringTokenizer strok = new StringTokenizer(authors, ",");
 				while (strok.hasMoreTokens())
 				{
-					String tok = strok.nextToken().trim();
-					map.put(tok, tok);
+					pluginHtml.append("<br>").append(strok.nextToken().trim());
 				}
-				authors = pi[i].getAuthor();
-				strok = new StringTokenizer(authors, ",");
+				String contribs = pi[i].getContributors();
+				strok = new StringTokenizer(contribs, ",");
 				while (strok.hasMoreTokens())
 				{
-					String tok = strok.nextToken().trim();
-					map.put(tok, tok);
+					pluginHtml.append("<br>").append(strok.nextToken().trim());
 				}
+
+
+				pluginHtml.append("<br>");
 			}
 
-			// Put some HTML formatting around each developers name.
-			final StringBuffer devNamesBuf = new StringBuffer();
-			devNamesBuf.append("<CENTER>");
-			for (Iterator it = map.keySet().iterator(); it.hasNext();)
-			{
-				String theName = (String) it.next();
-				devNamesBuf.append("<EM>").append(theName).append("</EM><BR>");
-			}
-			devNamesBuf.append("</CENTER>");
-			final String names = devNamesBuf.toString();
-
-			int pos = creditsData.toString().indexOf("%0");
-			if (pos > -1)
-			{
-				creditsData.replace(pos, pos + 2, names);
-				credits.setText(creditsData.toString());
-			}
-			else
-			{
-                // i18n[AboutBoxDialog.error.plugindeveloperstokennotfound=Unable to find Plugin Developers replacement token %0 in credits.html]
-				s_log.error(s_stringMgr.getString("AboutBoxDialog.error.plugindeveloperstokennotfound"));
-			}
+			creditsHtml = creditsHtml.replaceAll("@@replace", pluginHtml.toString());
+			credits.setText(creditsHtml);
 
 			setViewportView(credits);
 			credits.setCaretPosition(0);
 		}
 
-		private void readContributorsFile(IApplication app, Map map)
-		{
-			final URL url = app.getResources().getContributorsURL();
-			if (url != null)
-			{
-				try
-				{
-					BufferedReader rdr = new BufferedReader(new InputStreamReader(url.openStream()));
-					try
-					{
-						String line = null;
-						while ((line = rdr.readLine()) != null)
-						{
-							map.put(line, line);
-						}
-					}
-					finally
-					{
-						rdr.close();
-					}
-				}
-				catch (IOException ex)
-				{
-                    // i18n[AboutBoxDialog.error.contribfile=Error reading contributors file]
-					s_log.error(s_stringMgr.getString("AboutBoxDialog.error.contribfile"), ex);
-				}
-			}
-			else
-			{
-                // i18n[AboutBoxDialog.error.contribfileurl=Couldn't retrieve contributors File URL]
-				s_log.error(s_stringMgr.getString("AboutBoxDialog.error.contribfileurl"));
-			}
-		}
-
-		private StringBuffer readCreditsFile(IApplication app)
+		private String readCreditsHtml(IApplication app)
 		{
 			final URL url = app.getResources().getCreditsURL();
 			StringBuffer buf = new StringBuffer(2048);
@@ -381,22 +327,22 @@ public class AboutBoxDialog extends JDialog
 				}
 				catch (IOException ex)
 				{
-                    // i18n[AboutBoxDialog.error.creditsfile=Error reading credits file]
-                    String errorMsg = 
-                        s_stringMgr.getString("AboutBoxDialog.error.creditsfile");
+						  // i18n[AboutBoxDialog.error.creditsfile=Error reading credits file]
+						  String errorMsg =
+								s_stringMgr.getString("AboutBoxDialog.error.creditsfile");
 					s_log.error(errorMsg, ex);
 					buf.append(errorMsg + ": " + ex.toString());
 				}
 			}
 			else
 			{
-                // i18n[AboutBoxDialog.error.creditsfileurl=Couldn't retrieve Credits File URL]
-                String errorMsg = 
-                    s_stringMgr.getString("AboutBoxDialog.error.creditsfileurl");
+					 // i18n[AboutBoxDialog.error.creditsfileurl=Couldn't retrieve Credits File URL]
+					 String errorMsg =
+						  s_stringMgr.getString("AboutBoxDialog.error.creditsfileurl");
 				s_log.error(errorMsg);
 				buf.append(errorMsg);
 			}
-			return buf;
+			return buf.toString();
 		}
 	}
 
