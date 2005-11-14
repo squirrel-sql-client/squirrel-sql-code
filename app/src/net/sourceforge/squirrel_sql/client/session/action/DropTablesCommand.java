@@ -19,15 +19,18 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.ICommand;
 /**
- * @version 	$Id: DropTablesCommand.java,v 1.6 2004-08-18 12:10:43 colbell Exp $
+ * @version 	$Id: DropTablesCommand.java,v 1.7 2005-11-14 02:19:43 manningr Exp $
  * @author		Johan Compagner
  */
 public class DropTablesCommand implements ICommand
@@ -71,18 +74,24 @@ public class DropTablesCommand implements ICommand
 	{
 		final String sqlSep = _session.getProperties().getSQLStatementSeparator();
 		final StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < _tables.length; i++)
+        boolean isFrontBase = isFrontBaseSession();
+        for (int i = 0; i < _tables.length; i++)
 		{
 			final ITableInfo ti = (ITableInfo)_tables[i];
-			//buf.append("drop table ")
-			buf.append("drop ")
-				.append(ti.getType())
-				.append(" ")
-				.append(ti.getQualifiedName())
-				.append(" ")
-				.append(sqlSep)
-				.append(" ")
-				.append('\n');
+		    if (isFrontBase && "BASE TABLE".equals(ti.getType())) {
+		        buf.append("drop table ");
+		    } else {
+		        buf.append("drop ").append(ti.getType());
+		    }
+			buf.append(" ")
+			.append(ti.getQualifiedName())
+			.append(" ");
+            if (isFrontBase) {
+                buf.append(" CASCADE ");
+            }
+			buf.append(sqlSep)
+			.append(" ")
+			.append('\n');
 		}
 
 		// Execute the sql synchronously
@@ -92,4 +101,27 @@ public class DropTablesCommand implements ICommand
 		// Use this to run asynch
 		// _session.getApplication().getThreadPool().addTask(executer);
 	}
+    
+    /**
+     * Helper method to determine whether we are talking to FrontBase or not.
+     * 
+     * @return true if FrontBase; false otherwise.
+     */
+    private boolean isFrontBaseSession() {
+        boolean result = false;
+        SQLConnection con = _session.getSQLConnection();
+        String productName = null;
+        if (con != null) {
+            SQLDatabaseMetaData md = con.getSQLMetaData();
+            if (md != null) {
+                try {
+                    productName = md.getDatabaseProductName();
+                } catch (SQLException e) { /* Do Nothing */ }
+            }
+        }
+        if ("frontbase".equalsIgnoreCase(productName)) {
+            result = true;
+        }
+        return result;
+    }
 }
