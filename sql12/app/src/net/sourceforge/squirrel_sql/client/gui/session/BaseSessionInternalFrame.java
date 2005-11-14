@@ -99,7 +99,7 @@ public class BaseSessionInternalFrame extends BaseInternalFrame
       }
       else
       {
-         // i18n[BaseSessionInternalFrame.sqlfile={0}   SQL file: {1}]
+         // i18n[BaseSessionInternalFrame.title={0}   SQL file: {1}]
          String compositetitle = 
              s_stringMgr.getString("BaseSessionInternalFrame.title",
                                    new String[] { _titleWithoutFile,
