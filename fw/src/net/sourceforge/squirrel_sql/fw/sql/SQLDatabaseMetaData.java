@@ -307,7 +307,9 @@ public class SQLDatabaseMetaData
 		}
 		finally
 		{
-			rs.close();
+            if (rs != null) {
+                rs.close();
+            }
 		}
 
 		// Some drivers for both MS SQL and Sybase don't return guest as
@@ -479,7 +481,9 @@ public class SQLDatabaseMetaData
 		}
 		finally
 		{
-			rs.close();
+            if (rs != null) {
+                rs.close();
+            }
 		}
 
 		value = (String[])list.toArray(new String[list.size()]);
@@ -696,7 +700,9 @@ public class SQLDatabaseMetaData
 		}
 		finally
 		{
-			rs.close();
+            if (rs != null) {
+                rs.close();
+            }
 		}
 		return (DataTypeInfo[])list.toArray(new DataTypeInfo[list.size()]);
 	}
@@ -739,7 +745,10 @@ public class SQLDatabaseMetaData
 		}
 		finally
 		{
-			rs.close();
+            if (rs != null) {
+                rs.close();
+            }
+			
 		}
 		return (IProcedureInfo[])list.toArray(new IProcedureInfo[list.size()]);
 	}
@@ -763,7 +772,7 @@ public class SQLDatabaseMetaData
 		}
 
 		final DatabaseMetaData md = privateGetJDBCMetaData();
-
+        
 		// Use a set rather than a list as some combinations of MS SQL and the
 		// JDBC/ODBC return multiple copies of each table type.
 		final Set tableTypes = new TreeSet();
@@ -779,7 +788,9 @@ public class SQLDatabaseMetaData
 			}
 			finally
 			{
-				rs.close();
+                if (rs != null) {
+                    rs.close();
+                }
 			}
 		}
 
@@ -994,7 +1005,9 @@ public class SQLDatabaseMetaData
 		}
 		finally
 		{
-			rs.close();
+            if (rs != null) {
+                rs.close();
+            }
 		}
 
 		return (IUDTInfo[])list.toArray(new IUDTInfo[list.size()]);
@@ -1154,7 +1167,9 @@ public class SQLDatabaseMetaData
 			}
 			finally
 			{
-				rs.close();
+                if (rs != null) {
+                    rs.close();
+                }
 			}
 		}
 
@@ -1239,7 +1254,9 @@ public class SQLDatabaseMetaData
 		}
 		finally
 		{
-			rs.close();
+            if (rs != null) {
+                rs.close();
+            }
 		}
 
 		final ForeignKeyInfo[] results = new ForeignKeyInfo[keys.size()];
@@ -1336,7 +1353,9 @@ public class SQLDatabaseMetaData
 		}
 		finally
 		{
-			rs.close();
+            if (rs != null) {
+                rs.close();
+            }
 		}
 
 		return (TableColumnInfo[])columns.values().toArray(
