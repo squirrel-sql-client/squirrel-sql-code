@@ -1,6 +1,12 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+Not yet released, available in CVS and probably in latest weekly build
+=======================================================================
+
+2.1 rc2
+=======
+
 - Bug fix: If SQLs are saved to a file the Session window's title bar displayed an error message instead of
   the alias and file name.
 
