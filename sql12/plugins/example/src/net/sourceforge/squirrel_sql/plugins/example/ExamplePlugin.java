@@ -13,7 +13,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 
 /**
- * The SQL Example plugin class.
+ * The Example plugin class.
  */
 public class ExamplePlugin extends DefaultSessionPlugin
 {
