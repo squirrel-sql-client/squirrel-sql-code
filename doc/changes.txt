@@ -1,6 +1,13 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+- Bug fix: If SQLs are saved to a file the Session window's title bar displayed an error message instead of
+  the alias and file name.
+
+- Bug fix: If two Sessions are open and one is closed the one left open lost key bindings
+  which means that for example arrow navigation keys don't work anymore.
+
+
 2.1 rc1
 =======
 

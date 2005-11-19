@@ -47,10 +47,7 @@ public class AddBookmarkAction extends SquirrelAction
    implements ISQLPanelAction
 {
 
-   private static ILogger logger =
-      LoggerController.createLogger(AddBookmarkAction.class);
-
-   private ISession session;
+	private ISession session;
    private SQLBookmarkPlugin plugin;
 
    public AddBookmarkAction(IApplication app, Resources rsrc,
@@ -68,7 +65,6 @@ public class AddBookmarkAction extends SquirrelAction
 
    public void actionPerformed(ActionEvent evt)
    {
-      logger.info("::AddBookmarkAction.actionPerformed()");
       if (session != null)
       {
          new AddBookmarkCommand(getParentFrame(evt), session, plugin).execute();

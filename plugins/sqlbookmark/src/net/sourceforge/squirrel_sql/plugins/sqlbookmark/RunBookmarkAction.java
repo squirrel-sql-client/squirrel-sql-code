@@ -48,13 +48,10 @@ public class RunBookmarkAction extends SquirrelAction
    implements ISQLPanelAction
 {
 
-   private static ILogger logger =
-      LoggerController.createLogger(RunBookmarkAction.class);
-
-   /**
-    * Current session to load the bookmark into
-    */
-   private ISession session;
+	/**
+	 * Current session to load the bookmark into
+	 */
+	private ISession session;
 
    /**
     * Handle to the main plugin object
@@ -75,7 +72,6 @@ public class RunBookmarkAction extends SquirrelAction
 
    public void actionPerformed(ActionEvent evt)
    {
-      logger.info("::RunBookmarkAction.actionPerformed()");
       if (session != null)
       {
          Object source = evt.getSource();

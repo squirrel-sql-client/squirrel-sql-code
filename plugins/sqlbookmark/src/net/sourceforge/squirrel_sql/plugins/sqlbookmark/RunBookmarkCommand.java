@@ -62,11 +62,8 @@ public class RunBookmarkCommand implements ICommand {
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(RunBookmarkCommand.class);
 
-    private static ILogger logger =
-	LoggerController.createLogger(RunBookmarkCommand.class);
-
-    /** Parent frame. */
-    private final Frame frame;
+	/** Parent frame. */
+	private final Frame frame;
 
     /** The session that we are saving a script for. */
     private final ISession session;
@@ -112,22 +109,24 @@ public class RunBookmarkCommand implements ICommand {
     /**
      * Load the Bookmark into the SQL Edit buffer.
      */
-    public void execute() {
-        if (session != null) {
-	    logger.info("running sql: " + bookmark.getSql());
-	    String sql = parseAndLoadSql(bookmark.getSql());
+	 public void execute()
+	 {
+		 if (session != null)
+		 {
+			 String sql = parseAndLoadSql(bookmark.getSql());
 
-       if(null != sql){
+			 if (null != sql)
+			 {
 
-       int caretPosition = _sqlEntryPanel.getCaretPosition();
-       _sqlEntryPanel.replaceSelection(sql);
-       _sqlEntryPanel.setCaretPosition(caretPosition + sql.length());
-         }
-       }
-    }
+				 int caretPosition = _sqlEntryPanel.getCaretPosition();
+				 _sqlEntryPanel.replaceSelection(sql);
+				 _sqlEntryPanel.setCaretPosition(caretPosition + sql.length());
+			 }
+		 }
+	 }
 
 
-    /**
+	/**
      * Parse the SQL and prompt the user for entry values.
      *
      * Bookmarked SQL strings can have replaceable parameters. At the time 

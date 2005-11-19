@@ -132,8 +132,6 @@ public class AddBookmarkCommand implements ICommand {
            if(false == abd.isOK())
             return;
 
-	    logger.info("bookmark name: " + abd.getName());
-	    logger.info("bookmark sql: " + sql);
 
 	    Bookmark bookmark = new Bookmark(abd.getBookmarkName(), abd.getDescription(), sql);
 	    
