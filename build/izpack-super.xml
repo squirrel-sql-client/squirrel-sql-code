@@ -1,14 +1,8 @@
 <installation version="1.0">
 
-	<!--
-	<variables>
-		<variable name="sqsc-version" value="1.2beta7"/>
-	</variables>
-	-->
-
 	<info>
 		<appname>SQuirreL SQL Client</appname>
-		<appversion>2.1 rc1</appversion>
+		<appversion>2.1 rc2</appversion>
 		<authors>
 			<author email="gerdwagner@users.sourceforge.net" name="Gerd Wagner"/>
 			<author email="manningr@users.sourceforge.net" name="Rob Manning"/>
