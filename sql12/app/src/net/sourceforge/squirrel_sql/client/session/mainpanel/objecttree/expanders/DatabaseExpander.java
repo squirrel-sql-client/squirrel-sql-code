@@ -197,8 +197,9 @@ public class DatabaseExpander implements INodeExpander
 		return childNodes;
 	}
 
-	private List createSchemaNodes(ISession session, SQLDatabaseMetaData md,
-										String catalogName)
+	protected List createSchemaNodes(ISession session, 
+                                     SQLDatabaseMetaData md,
+								     String catalogName)
 		throws SQLException
 	{
 		final List childNodes = new ArrayList();
