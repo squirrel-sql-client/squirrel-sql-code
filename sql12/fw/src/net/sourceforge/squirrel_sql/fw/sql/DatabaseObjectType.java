@@ -55,6 +55,9 @@ public class DatabaseObjectType implements IHasIdentifier
 	/** Standard datatype. */
 	public final static DatabaseObjectType DATATYPE = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.datatype"));
 
+    /** Unique Key for a table. */
+    public final static DatabaseObjectType PRIMARY_KEY = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.primarykey"));
+    
 	/** Foreign Key relationship. */
 	public final static DatabaseObjectType FOREIGN_KEY = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.foreignkey"));
 
