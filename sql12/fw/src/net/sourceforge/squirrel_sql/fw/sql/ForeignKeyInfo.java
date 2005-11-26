@@ -39,15 +39,42 @@ public class ForeignKeyInfo extends DatabaseObjectInfo
 	private final String _pkCatalog;
 	private final String _pkSchema;
 	private final String _pkTableName;
+    private final String _pkColumnName;
 	private final String _fkTableName;
+    private final String _fkColumnName;
 	private final int _updateRule;
 	private final int _deleteRule;
 	private final String _pkName;
 	private final int _deferability;
 	private ForeignKeyColumnInfo[] _columnInfo;
 
+    /**
+     * @deprecated use the version of the constructor accepts fk and pk column
+     * names. 
+     */
+    ForeignKeyInfo(String pkCatalog, String pkSchema, String pkTableName,
+                   String fkCatalog, String fkSchema, String fkTableName,
+                   int updateRule, int deleteRule, String fkName,
+                   String pkName, int deferability,
+                   ForeignKeyColumnInfo[] columnInfo, SQLDatabaseMetaData md)
+    {
+        super(fkCatalog, fkSchema, fkName, DatabaseObjectType.FOREIGN_KEY, md);
+        _pkCatalog = pkCatalog;
+        _pkSchema = pkSchema;
+        _pkTableName = pkTableName;
+        _fkTableName = fkTableName;
+        _updateRule = updateRule;
+        _deleteRule = deleteRule;
+        _pkName = pkName;
+        _deferability = deferability;
+        setForeignKeyColumnInfo(columnInfo);    
+        _pkColumnName = null;
+        _fkColumnName = null;
+    }
+    
 	ForeignKeyInfo(String pkCatalog, String pkSchema, String pkTableName,
-					String fkCatalog, String fkSchema, String fkTableName,
+                   String pkColumnName, String fkCatalog, String fkSchema, 
+                   String fkTableName, String fkColumnName,
 					int updateRule, int deleteRule, String fkName,
 					String pkName, int deferability,
 					ForeignKeyColumnInfo[] columnInfo, SQLDatabaseMetaData md)
@@ -56,7 +83,9 @@ public class ForeignKeyInfo extends DatabaseObjectInfo
 		_pkCatalog = pkCatalog;
 		_pkSchema = pkSchema;
 		_pkTableName = pkTableName;
+        _pkColumnName = pkColumnName;
 		_fkTableName = fkTableName;
+        _fkColumnName = fkColumnName;
 		_updateRule = updateRule;
 		_deleteRule = deleteRule;
 		_pkName = pkName;
@@ -79,6 +108,11 @@ public class ForeignKeyInfo extends DatabaseObjectInfo
 		return _pkTableName;
 	}
 
+    public String getPrimaryKeyColumnName()
+    {
+        return _pkColumnName;
+    }
+    
 	public String getPrimaryKeyName()
 	{
 		return _pkName;
@@ -99,6 +133,10 @@ public class ForeignKeyInfo extends DatabaseObjectInfo
 		return _fkTableName;
 	}
 
+    public String getForeignKeyColumnName() {
+        return _fkColumnName;
+    }
+    
 	public String getForeignKeyName()
 	{
 		return getSimpleName();
