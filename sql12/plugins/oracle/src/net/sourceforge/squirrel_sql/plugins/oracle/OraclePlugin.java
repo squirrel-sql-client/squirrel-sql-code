@@ -52,6 +52,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.oracle.SGAtrace.NewSGATraceWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.dboutput.NewDBOutputWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.DatabaseExpander;
+import net.sourceforge.squirrel_sql.plugins.oracle.expander.DefaultDatabaseExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.InstanceParentExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.PackageExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.ProcedureExpander;
@@ -123,7 +124,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 	 */
 	public String getVersion()
 	{
-		return "0.14";
+		return "0.15";
 	}
 
 	/**
@@ -143,7 +144,7 @@ public class OraclePlugin extends DefaultSessionPlugin
      */
     public String getContributors()
     {
-        return "Alexander Buloichik";
+        return "Alexander Buloichik, Rob Manning";
     }    
     
 	/**
@@ -239,6 +240,9 @@ public class OraclePlugin extends DefaultSessionPlugin
           if ((type == IObjectTreeAPI.PROC_TYPE_DBO) && (isOracle(session))) {
             return new ProcedureExpander();
           }
+          if (type == IObjectTreeAPI.DATABASE_TYPE_DBO && isOracle(session)) {
+              return new DefaultDatabaseExpander(session); 
+          }
           return null;
         }
         
@@ -265,6 +269,9 @@ public class OraclePlugin extends DefaultSessionPlugin
 	{
 		final String ORACLE = "oracle";
 		String dbms = null;
+        if (oracleSessions.contains(session)) {
+            return true;
+        }
 		try
 		{
             SQLConnection con = session.getSQLConnection();
@@ -282,6 +289,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 		return dbms != null && dbms.toLowerCase().startsWith(ORACLE);
 	}
 
+    
     public class OraclePluginSessionListener extends SessionAdapter {
         
         public void sessionActivated(SessionEvent evt) {
@@ -295,7 +303,7 @@ public class OraclePlugin extends DefaultSessionPlugin
                   _newSGATraceWorksheet.setEnabled(enable);     
               }
           });
-          if (isOracle(session) && !oracleSessions.contains(session)) {
+          if (enable && !oracleSessions.contains(session)) {
               oracleSessions.add(session);
           }
         }
@@ -408,4 +416,5 @@ public class OraclePlugin extends DefaultSessionPlugin
         		} catch (SQLException ex) {}
         	}
         }
+        
 }
