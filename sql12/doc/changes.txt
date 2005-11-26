@@ -4,6 +4,11 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+- Fixed bug #1276957: Oracle protocol violation.
+
+- Oracle Plugin (v0.15) - If the user doesn't have the DBA privilege, then only loads the 
+  schemas in the object tree to which the user has been granted access.
+
 2.1 rc2
 =======
 
