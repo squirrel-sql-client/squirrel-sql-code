@@ -1,6 +1,17 @@
 Oracle Change Log
 =================
 
+0.15
+====
+
+- Automatically limits the schema objects shown the object tree to those schemas that
+  have tables that the user has privileges to access.(Users with DBA privilege are 
+  unaffected by this change)  This removes the clutter of excess empty schemas in the 
+  object tree .
+
+- Requires 2.1final or higher
+
+
 0.14
 ====
 
