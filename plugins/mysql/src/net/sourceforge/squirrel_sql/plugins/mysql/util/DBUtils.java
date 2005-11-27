@@ -22,16 +22,16 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Vector;
 
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.sql.DataTypeInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-
 import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 /*
  * DBUtils.java
@@ -155,12 +155,10 @@ public class DBUtils
 		{
 			final SQLConnection conn = _session.getSQLConnection();
 			SQLDatabaseMetaData dmd = conn.getSQLMetaData();
-			ResultSet rs = dmd.getTypeInfo();
-			ResultSetMetaData md = rs.getMetaData();
-			while (rs.next())
-			{
-				dataTypes.add(rs.getString(1));
-			}
+			DataTypeInfo[] infos = dmd.getDataTypes();
+            for (int i = 0; i < infos.length; i++) {
+                dataTypes.add(infos[i].getSimpleName());
+            }
 		}
 		catch (SQLException ex)
 		{
@@ -177,11 +175,10 @@ public class DBUtils
 		{
 			SQLConnection con = _session.getSQLConnection();
 			SQLDatabaseMetaData db = con.getSQLMetaData();
-			ResultSet keys = db.getPrimaryKeys(getTableInfo());
-			while (keys.next())
-			{
-				primaryKey = keys.getString(4);
-			}
+            PrimaryKeyInfo[] infos = db.getPrimaryKey(getTableInfo());
+            for (int i=0; i < infos.length; i++) {
+                primaryKey = infos[i].getColumnName();
+            }
 		}
 		catch (SQLException ex)
 		{

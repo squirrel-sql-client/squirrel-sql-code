@@ -19,21 +19,25 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.sql.SQLException;
 import java.sql.DatabaseMetaData;
-import java.util.Vector;
-import java.util.Hashtable;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collections;
-
-import net.sourceforge.squirrel_sql.fw.sql.*;
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
+import java.util.Hashtable;
+import java.util.Vector;
 
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
+import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 
 public class CreateTableScriptCommand implements ICommand
 {
@@ -84,152 +88,129 @@ public class CreateTableScriptCommand implements ICommand
    {
       StringBuffer sbScript = new StringBuffer(1000);
       StringBuffer sbConstraints = new StringBuffer(1000);
+      SQLConnection conn = _session.getSQLConnection();
       try
       {
-         SQLConnection conn = _session.getSQLConnection();
-         final Statement stmt = conn.createStatement();
-         try
-         {
-            boolean isJdbcOdbc = conn.getSQLMetaData().getJDBCMetaData().getURL().startsWith("jdbc:odbc:");
-            if (isJdbcOdbc)
-            {
-               _session.getMessageHandler().showErrorMessage("JDBC-ODBC Bridge doesn't provide necessary meta data. Script will be incomplete");
-            }
+        boolean isJdbcOdbc = conn.getSQLMetaData().getURL().startsWith("jdbc:odbc:");
+        if (isJdbcOdbc)
+        {
+           _session.getMessageHandler().showErrorMessage("JDBC-ODBC Bridge doesn't provide necessary meta data. Script will be incomplete");
+        }
 
 
-            TableScriptConfigCtrl tscc = new TableScriptConfigCtrl(_session.getApplication().getMainFrame());
-            if (1 < dbObjs.length)
-            {
-               tscc.doModal();
-					if(false == tscc.isOk())
-					{
-						return null;
-					}
+        TableScriptConfigCtrl tscc = new TableScriptConfigCtrl(_session.getApplication().getMainFrame());
+        if (1 < dbObjs.length)
+        {
+           tscc.doModal();
+				if(false == tscc.isOk())
+				{
+					return null;
 				}
+			}
 
-            for (int k = 0; k < dbObjs.length; k++)
-            {
-               if (false == dbObjs[k] instanceof ITableInfo)
-               {
-                  continue;
+        for (int k = 0; k < dbObjs.length; k++)
+        {
+           if (false == dbObjs[k] instanceof ITableInfo)
+           {
+              continue;
 
-               }
-               ITableInfo ti = (ITableInfo) dbObjs[k];
+           }
+           ITableInfo ti = (ITableInfo) dbObjs[k];
 
-               String sTable = ti.getSimpleName();
-               sbScript.append("CREATE TABLE ");
-               sbScript.append(sTable);
-               sbScript.append("\n(");
+           String sTable = ti.getSimpleName();
+           sbScript.append("CREATE TABLE ");
+           sbScript.append(sTable);
+           sbScript.append("\n(");
 
-               Vector pks = new Vector();
+           Vector pks = new Vector();
+           if (false == isJdbcOdbc)
+           {
+              PrimaryKeyInfo[] infos = 
+                  conn.getSQLMetaData().getPrimaryKey(ti);
+              for (int i = 0; i < infos.length; i++) {
+                  int iKeySeq = infos[i].getKeySequence() - 1;
+                  if (pks.size() <= iKeySeq)
+                     pks.setSize(iKeySeq + 1);
+                  pks.set(iKeySeq, infos[i].getColumnName());                      
+              }
+           }
+
+           ScriptUtil su = new ScriptUtil();
+           TableColumnInfo[] infos = conn.getSQLMetaData().getColumnInfo(ti);
+           for (int i = 0; i < infos.length; i++) {
+               int decimalDigits = 0;
                if (false == isJdbcOdbc)
                {
-                  ResultSet rsPks = null;
-                  rsPks = conn.getSQLMetaData().getPrimaryKeys(ti);
-                  //					String sPkName = "";
-                  while (rsPks.next())
-                  {
-                     //						sPkName = rsPks.getString(6);
-                     int iKeySeq = rsPks.getInt(5) - 1;
-                     if (pks.size() <= iKeySeq)
-                        pks.setSize(iKeySeq + 1);
-                     pks.set(iKeySeq, rsPks.getString(4));
-                  }
-                  rsPks.close();
+                  decimalDigits = infos[i].getDecimalDigits();
                }
-
-               ScriptUtil su = new ScriptUtil();
-               ResultSet rsColumns = conn.getSQLMetaData().getColumns(ti);
-               while (rsColumns.next())
+               String sColumnName = infos[i].getColumnName();
+               String sType = infos[i].getTypeName();
+               int colSize = infos[i].getColumnSize();
+               String isNullable = infos[i].isNullable();
+               
+               sbScript.append("\n   ");
+               sbScript.append(su.getColumnDef(sColumnName, sType, colSize, decimalDigits));
+               
+               if (pks.size() == 1 && pks.get(0).equals(sColumnName))
                {
-
-                  int decimalDigits = 0;
-                  if (false == isJdbcOdbc)
-                  {
-                     decimalDigits = rsColumns.getInt(9);
-                  }
-
-                  String sColumnName = rsColumns.getString(4);
-                  String sType = rsColumns.getString(6);
-                  int colSize = rsColumns.getInt(7);
-
-                  sbScript.append("\n   ");
-                  sbScript.append(su.getColumnDef(sColumnName, sType, colSize, decimalDigits));
-
-                  if (pks.size() == 1 && pks.get(0).equals(sColumnName))
-                  {
-                     sbScript.append(" PRIMARY KEY");
-                  }
-                  if ("NO".equalsIgnoreCase(rsColumns.getString(18)))
-                  {
-                     sbScript.append(" not null");
-                  }
-                  sbScript.append(",");
-
+                  sbScript.append(" PRIMARY KEY");
                }
-               rsColumns.close();
-
-               if (pks.size() > 1)
+               if ("NO".equalsIgnoreCase(isNullable))
                {
-                  sbScript.append("\n   CONSTRAINT ");
-                  sbScript.append(sTable);
-                  sbScript.append("_PK PRIMARY KEY (");
-                  for (int i = 0; i < pks.size(); i++)
-                  {
-                     sbScript.append(pks.get(i));
-                     sbScript.append(",");
-                  }
-                  sbScript.setLength(sbScript.length() - 1);
-                  sbScript.append("),");
+                  sbScript.append(" not null");
                }
-               sbScript.setLength(sbScript.length() - 1);
+               sbScript.append(",");                   
+           }
+           
+           if (pks.size() > 1)
+           {
+              sbScript.append("\n   CONSTRAINT ");
+              sbScript.append(sTable);
+              sbScript.append("_PK PRIMARY KEY (");
+              for (int i = 0; i < pks.size(); i++)
+              {
+                 sbScript.append(pks.get(i));
+                 sbScript.append(",");
+              }
+              sbScript.setLength(sbScript.length() - 1);
+              sbScript.append("),");
+           }
+           sbScript.setLength(sbScript.length() - 1);
 
-               sbScript.append("\n)").append(ScriptUtil.getStatementSeparator(_session)).append("\n");
+           sbScript.append("\n)").append(ScriptUtil.getStatementSeparator(_session)).append("\n");
 
 
-               if(isJdbcOdbc)
-               {
-                  continue;
-               }
+           if(isJdbcOdbc)
+           {
+              continue;
+           }
 
-               String constraints = createConstraints(ti, dbObjs, tscc.includeConstToTablesNotInScript());
-               String indexes = createIndexes(ti);
+           String constraints = createConstraints(ti, dbObjs, tscc.includeConstToTablesNotInScript());
+           String indexes = createIndexes(ti);
 
-               if(0 < constraints.length())
-               {
-                  if(tscc.isConstAndIndAtEnd())
-                  {
-                     sbConstraints.append(constraints);
-                  }
-                  else
-                  {
-                     sbScript.append(constraints);
-                  }
-               }
+           if(0 < constraints.length())
+           {
+              if(tscc.isConstAndIndAtEnd())
+              {
+                 sbConstraints.append(constraints);
+              }
+              else
+              {
+                 sbScript.append(constraints);
+              }
+           }
 
-               if(0 < indexes.length())
-               {
-                  if(tscc.isConstAndIndAtEnd())
-                  {
-                     sbConstraints.append(indexes);
-                  }
-                  else
-                  {
-                     sbScript.append(indexes);
-                  }
-               }
-
-            }
-         }
-         finally
-         {
-            try
-            {
-               stmt.close();
-            }
-            catch (Exception ignore)
-            {
-            }
+           if(0 < indexes.length())
+           {
+              if(tscc.isConstAndIndAtEnd())
+              {
+                 sbConstraints.append(indexes);
+              }
+              else
+              {
+                 sbScript.append(indexes);
+              }
+           }
          }
       }
       catch (Exception e)

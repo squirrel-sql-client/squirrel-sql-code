@@ -18,36 +18,28 @@ package net.sourceforge.squirrel_sql.plugins.mssql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.event.ActionListener;
-import java.lang.StringBuffer;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.plugin.*;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.sql.WrappedSQLException;
-import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import net.sourceforge.squirrel_sql.plugins.mssql.action.GenerateSqlAction;
 import net.sourceforge.squirrel_sql.plugins.mssql.action.IndexDefragAction;
 import net.sourceforge.squirrel_sql.plugins.mssql.action.ScriptProcedureAction;
@@ -57,12 +49,12 @@ import net.sourceforge.squirrel_sql.plugins.mssql.action.ShrinkDatabaseAction;
 import net.sourceforge.squirrel_sql.plugins.mssql.action.ShrinkDatabaseFileAction;
 import net.sourceforge.squirrel_sql.plugins.mssql.action.TruncateLogAction;
 import net.sourceforge.squirrel_sql.plugins.mssql.action.UpdateStatisticsAction;
-import net.sourceforge.squirrel_sql.plugins.mssql.gui.MonitorPanel;
 import net.sourceforge.squirrel_sql.plugins.mssql.event.IndexIterationListener;
-import net.sourceforge.squirrel_sql.plugins.mssql.sql.dbfile.DatabaseFileInfo;
+import net.sourceforge.squirrel_sql.plugins.mssql.gui.MonitorPanel;
 import net.sourceforge.squirrel_sql.plugins.mssql.sql.dbfile.DatabaseFile;
-import net.sourceforge.squirrel_sql.plugins.mssql.util.MssqlIntrospector;
+import net.sourceforge.squirrel_sql.plugins.mssql.sql.dbfile.DatabaseFileInfo;
 import net.sourceforge.squirrel_sql.plugins.mssql.tab.ViewSourceTab;
+import net.sourceforge.squirrel_sql.plugins.mssql.util.MssqlIntrospector;
 
 public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin {
 	private final static ILogger s_log = LoggerController.createLogger(MssqlPlugin.class);
@@ -70,6 +62,7 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
 	private IObjectTreeAPI _treeAPI;
 	private JMenu _mssqlMenu;
     private ISession _session;
+    private int[] indexColumnIndices = new int[] { 6 };
     
     public MssqlPlugin() {
         super();
@@ -324,20 +317,20 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
         SQLDatabaseMetaData metaData = conn.getSQLMetaData();
         
         try {
-            ResultSet indexInfo = metaData.getIndexInfo(tableInfo);
+            ResultSetDataSet rsds = 
+                metaData.getIndexInfo(tableInfo, indexColumnIndices, false);
             String indexName = "";
-            while (indexInfo.next()) {
-                String thisIndexName = indexInfo.getString(6);
-                /* for some reason, the first value is always NULL. */
+            while (rsds.next(null)) {
+                String thisIndexName = (String)rsds.get(0);
                 if (thisIndexName != null) {
                     if (!indexName.equals(thisIndexName)) {
                         listener.indexSpotted(tableInfo,thisIndexName);
                         indexName = thisIndexName;
                     }
-                }
+                }                
             }
         }
-        catch (SQLException ex) {
+        catch (DataSetException ex) {
             ex.printStackTrace();
             // fine, don't show any indexes.
 			//throw new WrappedSQLException(ex);
