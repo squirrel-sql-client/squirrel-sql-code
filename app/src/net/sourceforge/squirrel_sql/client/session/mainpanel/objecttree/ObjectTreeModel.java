@@ -20,6 +20,19 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.swing.SwingUtilities;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+
 import net.sourceforge.squirrel_sql.client.plugin.ISessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.plugin.SessionPluginInfo;
@@ -35,11 +48,6 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreePath;
-import java.util.*;
 /**
  * This is the model for the object tree.
  *
@@ -68,7 +76,7 @@ public class ObjectTreeModel extends DefaultTreeModel
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>ISession</TT> passed.
 	 */
-	public ObjectTreeModel(ISession session)
+	public ObjectTreeModel(final ISession session)
 	{
 		super(createRootNode(session), true);
 		if (session == null)
@@ -77,50 +85,72 @@ public class ObjectTreeModel extends DefaultTreeModel
 		}
 
 		// Standard expanders.
-		final INodeExpander expander = new DatabaseExpander(session);
-		addExpander(DatabaseObjectType.SESSION, expander);
-		addExpander(DatabaseObjectType.CATALOG, expander);
-		addExpander(DatabaseObjectType.SCHEMA, expander);
+        session.getApplication().getThreadPool().addTask(new Runnable() {
+            public void run() {
+                // must *not* be done in the GUI thread
+                final INodeExpander expander = new DatabaseExpander(session);
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        // *must* be done in the GUI thread
+                        
+                        addExpander(DatabaseObjectType.CATALOG, expander);
+                        addExpander(DatabaseObjectType.SCHEMA, expander);
 
-		boolean foundTableExp = false;
-		boolean foundProcExp = false;
-		boolean foundUDTExp = false;
-		final PluginManager pmgr = session.getApplication().getPluginManager();
-		for (Iterator pluginItr = pmgr.getSessionPluginIterator(); pluginItr.hasNext();)
-		{
-			ISessionPlugin p = ((SessionPluginInfo)pluginItr.next()).getSessionPlugin();
-			INodeExpander tableExp = p.getDefaultNodeExpander(session, IObjectTreeAPI.TABLE_TYPE_DBO);
-			if (tableExp != null)
-			{
-				foundTableExp = true;
-				addExpander(IObjectTreeAPI.TABLE_TYPE_DBO, tableExp);
-			}
-			INodeExpander procExp = p.getDefaultNodeExpander(session, IObjectTreeAPI.PROC_TYPE_DBO);
-			if (procExp != null)
-			{
-				foundProcExp = true;
-				addExpander(IObjectTreeAPI.PROC_TYPE_DBO, procExp);
-			}
-			INodeExpander udtExp = p.getDefaultNodeExpander(session, IObjectTreeAPI.UDT_TYPE_DBO);
-			if (udtExp != null)
-			{
-				foundUDTExp = true;
-				addExpander(IObjectTreeAPI.UDT_TYPE_DBO, udtExp);
-			}
-		}
+                        boolean foundTableExp = false;
+                        boolean foundProcExp = false;
+                        boolean foundUDTExp = false;
+                        boolean foundDatabaseExp = false;
+                        final PluginManager pmgr = session.getApplication().getPluginManager();
+                        for (Iterator pluginItr = pmgr.getSessionPluginIterator(); pluginItr.hasNext();)
+                        {
+                            ISessionPlugin p = ((SessionPluginInfo)pluginItr.next()).getSessionPlugin();
+                            INodeExpander tableExp = p.getDefaultNodeExpander(session, IObjectTreeAPI.TABLE_TYPE_DBO);
+                            if (tableExp != null)
+                            {
+                                foundTableExp = true;
+                                addExpander(IObjectTreeAPI.TABLE_TYPE_DBO, tableExp);
+                            }
+                            INodeExpander procExp = p.getDefaultNodeExpander(session, IObjectTreeAPI.PROC_TYPE_DBO);
+                            if (procExp != null)
+                            {
+                                foundProcExp = true;
+                                addExpander(IObjectTreeAPI.PROC_TYPE_DBO, procExp);
+                            }
+                            INodeExpander udtExp = p.getDefaultNodeExpander(session, IObjectTreeAPI.UDT_TYPE_DBO);
+                            if (udtExp != null)
+                            {
+                                foundUDTExp = true;
+                                addExpander(IObjectTreeAPI.UDT_TYPE_DBO, udtExp);
+                            }
+                            INodeExpander databaseExp = p.getDefaultNodeExpander(session, IObjectTreeAPI.DATABASE_TYPE_DBO);
+                            if (databaseExp != null) {
+                                foundDatabaseExp = true;
+                                addExpander(DatabaseObjectType.SESSION, databaseExp);
+                            }
+                        }
 
-		if (!foundTableExp) 
-		{
-			addExpander(IObjectTreeAPI.TABLE_TYPE_DBO, new TableTypeExpander());
-		}
-		if (!foundProcExp)
-		{
-			addExpander(IObjectTreeAPI.PROC_TYPE_DBO, new ProcedureTypeExpander());
-		}
-		if (!foundUDTExp)
-		{
-			addExpander(IObjectTreeAPI.UDT_TYPE_DBO, new UDTTypeExpander());
-		}
+                        if (!foundTableExp) 
+                        {
+                            addExpander(IObjectTreeAPI.TABLE_TYPE_DBO, new TableTypeExpander());
+                        }
+                        if (!foundProcExp)
+                        {
+                            addExpander(IObjectTreeAPI.PROC_TYPE_DBO, new ProcedureTypeExpander());
+                        }
+                        if (!foundUDTExp)
+                        {
+                            addExpander(IObjectTreeAPI.UDT_TYPE_DBO, new UDTTypeExpander());
+                        }
+                        if (!foundDatabaseExp) 
+                        {
+                            addExpander(DatabaseObjectType.SESSION, expander);
+                        }
+                        reload();
+                    }
+                });
+            }
+        });
+		
 	}
 
 	/**
