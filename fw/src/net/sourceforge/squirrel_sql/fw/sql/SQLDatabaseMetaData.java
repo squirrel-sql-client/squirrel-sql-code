@@ -33,6 +33,12 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import javax.swing.SwingUtilities;
+
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DatabaseTypesDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -53,6 +59,16 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * argument is set to null, that argument's criterion will be dropped from the
  * search.&quot;
  *
+ * <P>Additionally, it should be noted that some JDBC drivers (like Oracle) do
+ * not handle multi-threaded access to methods that return ResultSets very well.
+ * It is therefore highly recommended that methods in this class that return 
+ * a ResultSet, should not be called outside of this class where this class' 
+ * monitor has no jurisdiction.  Furthermore, methods that are meant to be 
+ * called externally that create a ResultSet should package the data in some 
+ * container object structure for use by the caller, and should always be 
+ * synchronized on this class' monitor. 
+ * 
+ * 
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SQLDatabaseMetaData
@@ -98,7 +114,7 @@ public class SQLDatabaseMetaData
 	 * Cache of commonly accessed metadata properties keyed by the method
 	 * name that attempts to retrieve them.
 	 */
-	private Map _cache = new HashMap();
+	private Map _cache = Collections.synchronizedMap(new HashMap());
 
 	/**
 	 * ctor specifying the connection that we are retrieving metadata for.
@@ -116,15 +132,14 @@ public class SQLDatabaseMetaData
 			throw new IllegalArgumentException("SQLDatabaseMetaData == null");
 		}
 		_conn = conn;
-
 	}
 
-	/**
-	 * Return the name of the current user. Cached on first call.
-	 *
-	 * @return	the current user name.
-	 */
-	public synchronized String getUserName() throws SQLException
+    /**
+     * Return the name of the current user. Cached on first call.
+     *
+     * @return  the current user name.
+     */
+    public synchronized String getUserName() throws SQLException
 	{
 		final String key = "getUserName";
 		String value = (String)_cache.get(key);
@@ -136,15 +151,15 @@ public class SQLDatabaseMetaData
 		return value;
 	}
 
-	/**
-	 * Return the database product name for this connection. Cached on first
-	 * call.
-	 *
-	 * @return	the database product name for this connection.
-	 *
-	 * @throws	SQLException	Thrown if an SQL error occurs.
-	 */
-	public synchronized String getDatabaseProductName()
+    /**
+     * Return the database product name for this connection. Cached on first
+     * call.
+     *
+     * @return  the database product name for this connection.
+     *
+     * @throws  SQLException    Thrown if an SQL error occurs.
+     */
+    public synchronized String getDatabaseProductName()
 		throws SQLException
 	{
 		final String key = "getDatabaseProductName";
@@ -152,19 +167,19 @@ public class SQLDatabaseMetaData
 		if (value == null)
 		{
 			value = privateGetJDBCMetaData().getDatabaseProductName();
-			_cache.put(key, value);
+            _cache.put(key, value);
 		}
 		return value;
 	}
 
-	/**
-	 * Return the database product version for this connection. Cached on first
-	 * call.
-	 *
-	 * @return	database product version
-	 *
-	 * @throws	SQLException	Thrown if an SQL error occurs.
-	 */
+    /**
+     * Return the database product version for this connection. Cached on first
+     * call.
+     *
+     * @return  database product version
+     *
+     * @throws  SQLException    Thrown if an SQL error occurs.
+     */
 	public synchronized String getDatabaseProductVersion()
 		throws SQLException
 	{
@@ -178,13 +193,13 @@ public class SQLDatabaseMetaData
 		return value;
 	}
 
-	/**
-	 * Return the JDBC driver name for this connection. Cached on first call.
-	 *
-	 * @return	the JDBC driver name for this connection.
-	 *
-	 * @throws	SQLException	Thrown if an SQL error occurs.
-	 */
+    /**
+     * Return the JDBC driver name for this connection. Cached on first call.
+     *
+     * @return  the JDBC driver name for this connection.
+     *
+     * @throws  SQLException    Thrown if an SQL error occurs.
+     */
 	public synchronized String getDriverName() throws SQLException
 	{
 		final String key = "getDriverName";
@@ -197,47 +212,37 @@ public class SQLDatabaseMetaData
 		return value;
 	}
 
-	/**
-	 * Return the JDBC version of this driver. Cached on first call.
-	 *
-	 * @return	the JDBC version of the driver.
-	 *
-	 * @throws	SQLException	Thrown if an SQL error occurs.
-	 */
-	public synchronized int getJDBCVersion() throws SQLException
+    /**
+     * Return the JDBC version of this driver. Cached on first call.
+     *
+     * @return  the JDBC version of the driver.
+     *
+     * @throws  SQLException    Thrown if an SQL error occurs.
+     */
+    public int getJDBCVersion() throws SQLException
 	{
-		//TODO: When min version supported is 1.4 then remove reflection.
 		final String key = "getJDBCVersion";
 		Integer value = (Integer)_cache.get(key);
 		if (value == null)
 		{
 			DatabaseMetaData md = privateGetJDBCMetaData();
-			try
-			{
-				final Method getMajorVersion = md.getClass().getMethod("getJDBCMajorVersion", null);
-				final Method getMinorVersion = md.getClass().getMethod("getJDBCMinorVersion", null);
-				final Integer major = (Integer)getMajorVersion.invoke(md, null);
-				final Integer minor = (Integer)getMinorVersion.invoke(md, null);
-				int vers = (major.intValue() * 100) + minor.intValue();
-				value = new Integer(vers);
-				_cache.put(key, value);
-			}
-			catch (Throwable th)
-			{
-				throw new SQLException(s_stringMgr.getString("SQLDatabaseMetaData.unsupported"));
-			}
+            int major = md.getJDBCMajorVersion();
+            int minor = md.getJDBCMinorVersion();
+            int vers = (major * 100) + minor;
+            value = new Integer(vers);
+            _cache.put(key, value);
 		}
 		return value.intValue();
 	}
 
-	/**
-	 * Return the string used to quote characters in this DBMS. Cached on first
-	 * call.
-	 *
-	 * @return	quote string.
-	 *
-	 * @throws	SQLException	Thrown if an SQL error occurs.
-	 */
+    /**
+     * Return the string used to quote characters in this DBMS. Cached on first
+     * call.
+     *
+     * @return  quote string.
+     *
+     * @throws  SQLException    Thrown if an SQL error occurs.
+     */
 	public synchronized String getIdentifierQuoteString() throws SQLException
 	{
 		final String key = "getIdentifierQuoteString";
@@ -260,14 +265,14 @@ public class SQLDatabaseMetaData
 		return value;
 	}
 
-	/**
-	 * Return a string array containing the names of all the schemas in the
-	 * database. Cached on first call.
-	 *
-	 * @return	String[] of the names of the schemas in the database.
-	 *
-	 * @throws	SQLException	Thrown if an SQL error occurs.
-	 */
+    /**
+     * Return a string array containing the names of all the schemas in the
+     * database. Cached on first call.
+     *
+     * @return  String[] of the names of the schemas in the database.
+     *
+     * @throws  SQLException    Thrown if an SQL error occurs.
+     */
 	public synchronized String[] getSchemas() throws SQLException
 	{
 		final String key = "getSchemas";
@@ -290,20 +295,22 @@ public class SQLDatabaseMetaData
 		ResultSet rs = privateGetJDBCMetaData().getSchemas();
 		try
 		{
-			final ResultSetReader rdr = new ResultSetReader(rs);
-			Object[] row = null;
-			while ((row = rdr.readRow()) != null)
-			{
-				if (isMSSQLorSYBASE && row[0].equals("guest"))
-				{
-					hasGuest = true;
-				}
-				if (isDB2 && row[0].equals("SYSFUN"))
-				{
-					hasSysFun = true;
-				}
-				list.add(row[0]);
-			}
+            if (rs != null) {
+    			final ResultSetReader rdr = new ResultSetReader(rs);
+    			Object[] row = null;
+    			while ((row = rdr.readRow()) != null)
+    			{
+    				if (isMSSQLorSYBASE && row[0].equals("guest"))
+    				{
+    					hasGuest = true;
+    				}
+    				if (isDB2 && row[0].equals("SYSFUN"))
+    				{
+    					hasSysFun = true;
+    				}
+    				list.add(row[0]);
+    			}
+            }
 		}
 		finally
 		{
@@ -332,29 +339,29 @@ public class SQLDatabaseMetaData
 		return value;
 	}
 
-	/**
-	 * Retrieves whether this database supports schemas at all.
-	 *
-	 * @return	<TT>true</TT> if database supports schemas.
-	 *
-	 * @throws	SQLException	Thrown if an SQL error occurs.
-	 */
-	public boolean supportsSchemas() throws SQLException
+    /**
+     * Retrieves whether this database supports schemas at all.
+     *
+     * @return  <TT>true</TT> if database supports schemas.
+     *
+     * @throws  SQLException    Thrown if an SQL error occurs.
+     */
+    public boolean supportsSchemas() throws SQLException
 	{
 		return supportsSchemasInDataManipulation()
 				|| supportsSchemasInTableDefinitions();
 	}
 
-	/**
-	 * Retrieves whether a schema name can be used in a data manipulation
-	 * statement. Cached on first call.
-	 *
-	 * @return	<TT>true</TT> if a schema name can be used in a data
-	 *			manipulation statement.
-	 *
-	 * @throws	SQLException	Thrown if an SQL error occurs.
-	 */
-	public synchronized boolean supportsSchemasInDataManipulation()
+    /**
+     * Retrieves whether a schema name can be used in a data manipulation
+     * statement. Cached on first call.
+     *
+     * @return  <TT>true</TT> if a schema name can be used in a data
+     *          manipulation statement.
+     *
+     * @throws  SQLException    Thrown if an SQL error occurs.
+     */
+    public synchronized boolean supportsSchemasInDataManipulation()
 		throws SQLException
 	{
 		final String key = "supportsSchemasInDataManipulation";
@@ -382,15 +389,15 @@ public class SQLDatabaseMetaData
 		return value.booleanValue();
 	}
 
-	/**
-	 * Retrieves whether a schema name can be used in a table definition
-	 * statement. Cached on first call.
-	 *
-	 * @return	<TT>true</TT> if a schema name can be used in a table
-	 *			definition statement.
-	 *
-	 * @throws	SQLException	Thrown if an SQL error occurs.
-	 */
+    /**
+     * Retrieves whether a schema name can be used in a table definition
+     * statement. Cached on first call.
+     *
+     * @return  <TT>true</TT> if a schema name can be used in a table
+     *          definition statement.
+     *
+     * @throws  SQLException    Thrown if an SQL error occurs.
+     */
 	public synchronized boolean supportsSchemasInTableDefinitions()
 		throws SQLException
 	{
@@ -419,15 +426,15 @@ public class SQLDatabaseMetaData
 		return value.booleanValue();
 	}
 
-	/**
-	 * Retrieves whether this DBMS supports stored procedures. Cached on first
-	 * call.
-	 *
-	 * @return	<TT>true</TT> if DBMS supports stored procedures.
-	 *
-	 * @throws	SQLException	Thrown if an SQL error occurs.
-	 */
-	public synchronized boolean supportsStoredProcedures() throws SQLException
+    /**
+     * Retrieves whether this DBMS supports stored procedures. Cached on first
+     * call.
+     *
+     * @return  <TT>true</TT> if DBMS supports stored procedures.
+     *
+     * @throws  SQLException    Thrown if an SQL error occurs.
+     */
+    public synchronized boolean supportsStoredProcedures() throws SQLException
 	{
 		final String key = "supportsStoredProcedures";
 		Boolean value = (Boolean)_cache.get(key);
@@ -451,15 +458,37 @@ public class SQLDatabaseMetaData
 		return value.booleanValue();
 	}
 
-	/**
-	 * Return a string array containing the names of all the catalogs in the
-	 * database. Cached on first call.
-	 *
-	 * @return	String[] of the names of the catalogs in the database.
-	 *
-	 * @throws	SQLException	Thrown if an SQL error occurs.
-	 */
-	public synchronized String[] getCatalogs() throws SQLException
+    /**
+     * Retrieves whether this database supports savepoints.
+     * 
+     * @return true if savepoints are supported; false otherwise
+     * 
+     * @throws SQLException if a database access error occurs
+     */
+    public boolean supportsSavepoints() throws SQLException {
+        
+        final String key = "supportsSavepoints";
+        Boolean value = (Boolean)_cache.get(key);
+        if (value != null)
+        {
+            return value.booleanValue();
+        }
+        value = new Boolean(privateGetJDBCMetaData().supportsSavepoints());
+
+        _cache.put(key, value);
+
+        return value.booleanValue();        
+    }
+    
+    /**
+     * Return a string array containing the names of all the catalogs in the
+     * database. Cached on first call.
+     *
+     * @return  String[] of the names of the catalogs in the database.
+     *
+     * @throws  SQLException    Thrown if an SQL error occurs.
+     */
+    public synchronized String[] getCatalogs() throws SQLException
 	{
 		final String key = "getCatalogs";
 		String[] value = (String[])_cache.get(key);
@@ -472,12 +501,14 @@ public class SQLDatabaseMetaData
 		ResultSet rs = privateGetJDBCMetaData().getCatalogs();
 		try
 		{
-			final ResultSetReader rdr = new ResultSetReader(rs);
-			Object[] row = null;
-			while ((row = rdr.readRow()) != null)
-			{
-				list.add(row[0]);
-			}
+            if (rs != null) {
+    			final ResultSetReader rdr = new ResultSetReader(rs);
+    			Object[] row = null;
+    			while ((row = rdr.readRow()) != null)
+    			{
+    				list.add(row[0]);
+    			}
+            }
 		}
 		finally
 		{
@@ -492,15 +523,96 @@ public class SQLDatabaseMetaData
 		return value;
 	}
 
-	/**
-	 * Retrieves the String that this database uses as the separator between a
-	 * catalog and table name. Cached on first call.
-	 *
-	 * @return	The separator character.
-	 *
-	 * @throws	SQLException	Thrown if an SQL error occurs.
-	 */
-	public synchronized String getCatalogSeparator() throws SQLException
+    /**
+     * Retrieves the URL for this DBMS.
+     * 
+     * @return  the URL for this DBMS or null if it cannot be generated
+     * 
+     * @throws SQLException if a database access error occurs
+     */
+    public synchronized String getURL() throws SQLException {
+        final String key = "getURL";
+        String value = (String)_cache.get(key);
+        if (value != null) {
+            return value;
+        }
+        
+        value = privateGetJDBCMetaData().getURL();
+        _cache.put(key, value);
+        
+        return value;
+    }    
+    
+    /**
+     * Retrieves the database vendor's preferred term for "catalog".
+     * 
+     * @return the vendor term for "catalog"
+     * 
+     * @throws SQLException if a database access error occurs
+     */
+    public synchronized String getCatalogTerm() throws SQLException {
+        final String key = "getCatalogTerm";
+        String value = (String)_cache.get(key);
+        if (value != null) {
+            return value;
+        }
+        
+        value = privateGetJDBCMetaData().getCatalogTerm();
+        _cache.put(key, value);
+        
+        return value;
+    }
+    
+    /**
+     * Retrieves the database vendor's preferred term for "schema".
+     * 
+     * @return  the vendor term for "schema"
+     * 
+     * @throws SQLException if a database access error occurs
+     */
+    public synchronized String getSchemaTerm() throws SQLException {
+        final String key = "getSchemaTerm";
+        String value = (String)_cache.get(key);
+        if (value != null) {
+            return value;
+        }
+        
+        value = privateGetJDBCMetaData().getSchemaTerm();
+        _cache.put(key, value);
+        
+        return value;        
+    }
+
+    /**
+     * Retrieves the database vendor's preferred term for "procedure".
+     * 
+     * @return the vendor term for "procedure"
+     * 
+     * @throws SQLException if a database access error occurs
+     */
+    public synchronized String getProcedureTerm() throws SQLException {
+        final String key = "getProcedureTerm";
+        String value = (String)_cache.get(key);
+        if (value != null) {
+            return value;
+        }
+        
+        value = privateGetJDBCMetaData().getProcedureTerm();
+        _cache.put(key, value);
+        
+        return value;        
+    }
+    
+    
+    /**
+     * Retrieves the String that this database uses as the separator between a
+     * catalog and table name. Cached on first call.
+     *
+     * @return  The separator character.
+     *
+     * @throws  SQLException    Thrown if an SQL error occurs.
+     */
+    public synchronized String getCatalogSeparator() throws SQLException
 	{
 		final String key = "getCatalogSeparator";
 		String value = (String)_cache.get(key);
@@ -515,30 +627,30 @@ public class SQLDatabaseMetaData
 		return value;
 	}
 
-	/**
-	 * Retrieves whether this database supports catalogs at all.
-	 *
-	 * @return	<TT>true</TT> fi database supports catalogs.
-	 *
-	 * @throws	SQLException	Thrown if an SQL error occurs.
-	 */
-	public boolean supportsCatalogs() throws SQLException
+    /**
+     * Retrieves whether this database supports catalogs at all.
+     *
+     * @return  <TT>true</TT> fi database supports catalogs.
+     *
+     * @throws  SQLException    Thrown if an SQL error occurs.
+     */
+    public boolean supportsCatalogs() throws SQLException
 	{
 		return supportsCatalogsInTableDefinitions()
 			|| supportsCatalogsInDataManipulation()
 			|| supportsCatalogsInProcedureCalls();
 	}
 
-	/**
-	 * Retrieves whether a catalog name can be used in a table definition
-	 * statement. Cached on first call.
-	 *
-	 * @return	<TT>true</TT> if a catalog name can be used in a table
-	 *			definition statement.
-	 *
-	 * @throws	SQLException	Thrown if an SQL error occurs.
-	 */
-	public synchronized boolean supportsCatalogsInTableDefinitions() throws SQLException
+    /**
+     * Retrieves whether a catalog name can be used in a table definition
+     * statement. Cached on first call.
+     *
+     * @return  <TT>true</TT> if a catalog name can be used in a table
+     *          definition statement.
+     *
+     * @throws  SQLException    Thrown if an SQL error occurs.
+     */
+    public synchronized boolean supportsCatalogsInTableDefinitions() throws SQLException
 	{
 		final String key = "supportsCatalogsInTableDefinitions";
 		Boolean value = (Boolean)_cache.get(key);
@@ -565,16 +677,16 @@ public class SQLDatabaseMetaData
 		return value.booleanValue();
 	}
 
-	/**
-	 * Retrieves whether a catalog name can be used in a data manipulation
-	 * statement. Cached on first call.
-	 *
-	 * @return	<TT>true</TT> if a catalog name can be used in a data
-	 *			manipulation statement.
-	 *
-	 * @throws	SQLException	Thrown if an SQL error occurs.
-	 */
-	public synchronized boolean supportsCatalogsInDataManipulation() throws SQLException
+    /**
+     * Retrieves whether a catalog name can be used in a data manipulation
+     * statement. Cached on first call.
+     *
+     * @return  <TT>true</TT> if a catalog name can be used in a data
+     *          manipulation statement.
+     *
+     * @throws  SQLException    Thrown if an SQL error occurs.
+     */
+    public synchronized boolean supportsCatalogsInDataManipulation() throws SQLException
 	{
 		final String key = "supportsCatalogsInDataManipulation";
 		Boolean value = (Boolean)_cache.get(key);
@@ -600,15 +712,15 @@ public class SQLDatabaseMetaData
 		return value.booleanValue();
 	}
 
-	/**
-	 * Retrieves whether a catalog name can be used in a procedure call. Cached
-	 * on first call.
-	 *
-	 * @return	<TT>true</TT> if a catalog name can be used in a procedure
-	 *			call.
-	 *
-	 * @throws	SQLException	Thrown if an SQL error occurs.
-	 */
+    /**
+     * Retrieves whether a catalog name can be used in a procedure call. Cached
+     * on first call.
+     *
+     * @return  <TT>true</TT> if a catalog name can be used in a procedure
+     *          call.
+     *
+     * @throws  SQLException    Thrown if an SQL error occurs.
+     */
 	public synchronized boolean supportsCatalogsInProcedureCalls() throws SQLException
 	{
 		final String key = "supportsCatalogsInProcedureCalls";
@@ -635,34 +747,60 @@ public class SQLDatabaseMetaData
 		return value.booleanValue();
 	}
 
-	/**
-	 * Return the <TT>DatabaseMetaData</TT> object for this connection.
-	 *
-	 * @return	The <TT>DatabaseMetaData</TT> object for this connection.
-	 *
-	 * @throws	SQLException	Thrown if an SQL error occurs.
-	 */
+    /**
+     * Return the <TT>DatabaseMetaData</TT> object for this connection.
+     *
+     * @return  The <TT>DatabaseMetaData</TT> object for this connection.
+     *
+     * @throws  SQLException    Thrown if an SQL error occurs.
+     */
 	public synchronized DatabaseMetaData getJDBCMetaData() throws SQLException
 	{
 		return privateGetJDBCMetaData();
 	}
 
 	/**
-	 * @deprecated	Replaced by getDataTypes
+     * 
+     * @return
+     * @throws SQLException
 	 */
-	public ResultSet getTypeInfo() throws SQLException
+    public synchronized IDataSet getMetaDataSet() throws SQLException {
+        return new MetaDataDataSet(privateGetJDBCMetaData());
+    }
+    
+    /**
+     * @deprecated  Replaced by getDataTypes
+     */
+    public ResultSet getTypeInfo() throws SQLException
 	{
 		return privateGetJDBCMetaData().getTypeInfo();
 	}
 
-	/**
-	 * Retrieve information about the data types in the database.
-	 *
-	 * TODO: Any reason this is not cached?
-	 *
-	 * @throws	SQLException	Thrown if an SQL error occurs.
-	 */
-	public DataTypeInfo[] getDataTypes()
+    /**
+     * 
+     * @return
+     * @throws DataSetException
+     */
+    public synchronized IDataSet getTypesDataSet() throws DataSetException {
+        ResultSet rs = null;
+        try {
+            rs = privateGetJDBCMetaData().getTypeInfo();
+            return (new DatabaseTypesDataSet(rs));
+        } catch (SQLException e) {
+            throw new DataSetException(e);
+        } finally {
+            if (rs != null) try { rs.close(); } catch (SQLException e) {}
+        }
+    }
+    
+    /**
+     * Retrieve information about the data types in the database.
+     *
+     * TODO: Any reason this is not cached?
+     *
+     * @throws  SQLException    Thrown if an SQL error occurs.
+     */
+    public synchronized DataTypeInfo[] getDataTypes()
 		throws SQLException
 	{
 		final DatabaseMetaData md = privateGetJDBCMetaData();
@@ -707,24 +845,24 @@ public class SQLDatabaseMetaData
 		return (DataTypeInfo[])list.toArray(new DataTypeInfo[list.size()]);
 	}
 
-	/**
-	 * Retrieve information about the stored procedures in the system
-	 *
-	 * @param	catalog		The name of the catalog to retrieve procedures
-	 *						for. An empty string will return those without a
-	 * 						catalog. <TT>null</TT> means that the catalog
-	 * 						will not be used to narrow the search.
-	 * @param	schemaPattern	The name of the schema to retrieve procedures
-	 *						for. An empty string will return those without a
-	 * 						schema. <TT>null</TT> means that the schema
-	 * 						will not be used to narrow the search.
-	 * @param	procedureNamepattern	A procedure name pattern; must match the
-	 *									procedure name as it is stored in the
-	 *									database.
-	 *
-	 * @throws	SQLException	Thrown if an SQL error occurs.
-	 */
-	public IProcedureInfo[] getProcedures(String catalog,
+    /**
+     * Retrieve information about the stored procedures in the system
+     *
+     * @param   catalog     The name of the catalog to retrieve procedures
+     *                      for. An empty string will return those without a
+     *                      catalog. <TT>null</TT> means that the catalog
+     *                      will not be used to narrow the search.
+     * @param   schemaPattern   The name of the schema to retrieve procedures
+     *                      for. An empty string will return those without a
+     *                      schema. <TT>null</TT> means that the schema
+     *                      will not be used to narrow the search.
+     * @param   procedureNamepattern    A procedure name pattern; must match the
+     *                                  procedure name as it is stored in the
+     *                                  database.
+     *
+     * @throws  SQLException    Thrown if an SQL error occurs.
+     */
+    public synchronized IProcedureInfo[] getProcedures(String catalog,
 				String schemaPattern, String procedureNamePattern)
 		throws SQLException
 	{
@@ -753,16 +891,16 @@ public class SQLDatabaseMetaData
 		return (IProcedureInfo[])list.toArray(new IProcedureInfo[list.size()]);
 	}
 
-	/**
-	 * Return a string array containing the different types of tables in this
-	 * database. E.G. <TT>"TABLE", "VIEW", "SYSTEM TABLE"</TT>. Cached on first
-	 * call.
-	 *
-	 * @return	table type names.
-	 *
-	 * @throws	SQLException	Thrown if an SQL error occurs.
-	 */
-	public synchronized String[] getTableTypes() throws SQLException
+    /**
+     * Return a string array containing the different types of tables in this
+     * database. E.G. <TT>"TABLE", "VIEW", "SYSTEM TABLE"</TT>. Cached on first
+     * call.
+     *
+     * @return  table type names.
+     *
+     * @throws  SQLException    Thrown if an SQL error occurs.
+     */
+    public synchronized String[] getTableTypes() throws SQLException
 	{
 		final String key = "getTableTypes";
 		String[] value = (String[])_cache.get(key);
@@ -831,7 +969,6 @@ public class SQLDatabaseMetaData
 		return value;
 	}
 
-
 	public synchronized ITableInfo[] getAllTables()
 			throws SQLException
 	{
@@ -844,28 +981,29 @@ public class SQLDatabaseMetaData
 		}
 		return value;
 	}
-
-
-	/**
-	 * Retrieve information about the tables in the system.
-	 *
-	 * @param	catalog		The name of the catalog to retrieve tables
-	 *						for. An empty string will return those without a
-	 * 						catalog. <TT>null</TT> means that the catalog
-	 * 						will not be used to narrow the search.
-	 * @param	schemaPattern	The name of the schema to retrieve tables
-	 *						for. An empty string will return those without a
-	 * 						schema. <TT>null</TT> means that the schema
-	 * 						will not be used to narrow the search.
-	 * @param	tableNamepattern	A table name pattern; must match the
-	 *								table name as it is stored in the
-	 *								database.
-	 * @param	types		List of table types to include; null returns all types.
-	 *
-	 * @throws	SQLException	Thrown if an SQL error occurs.
-	 */
-	public ITableInfo[] getTables(String catalog, String schemaPattern,
-									String tableNamePattern, String[] types)
+    
+    /**
+     * Retrieve information about the tables in the system.
+     *
+     * @param   catalog     The name of the catalog to retrieve tables
+     *                      for. An empty string will return those without a
+     *                      catalog. <TT>null</TT> means that the catalog
+     *                      will not be used to narrow the search.
+     * @param   schemaPattern   The name of the schema to retrieve tables
+     *                      for. An empty string will return those without a
+     *                      schema. <TT>null</TT> means that the schema
+     *                      will not be used to narrow the search.
+     * @param   tableNamepattern    A table name pattern; must match the
+     *                              table name as it is stored in the
+     *                              database.
+     * @param   types       List of table types to include; null returns all types.
+     *
+     * @throws  SQLException    Thrown if an SQL error occurs.
+     */
+    public synchronized ITableInfo[] getTables(String catalog, 
+                                               String schemaPattern,
+                                               String tableNamePattern, 
+                                               String[] types)
 		throws SQLException
 	{
 		final DatabaseMetaData md = privateGetJDBCMetaData();
@@ -916,7 +1054,7 @@ public class SQLDatabaseMetaData
 
 			// store all plain table info we have.
 			tabResult = md.getTables(catalog, schemaPattern, tableNamePattern, types);
-			while (tabResult.next())
+			while (tabResult != null && tabResult.next())
 			{
 				ITableInfo tabInfo = new TableInfo(tabResult.getString(1),
 									tabResult.getString(2), tabResult.getString(3),
@@ -965,27 +1103,27 @@ public class SQLDatabaseMetaData
 		return (ITableInfo[])list.toArray(new ITableInfo[list.size()]);
 	}
 
-	/**
-	 * Retrieve information about the UDTs in the system.
-	 *
-	 * @param	catalog		The name of the catalog to retrieve UDTs
-	 *						for. An empty string will return those without a
-	 * 						catalog. <TT>null</TT> means that the catalog
-	 * 						will not be used to narrow the search.
-	 * @param	schemaPattern	The name of the schema to retrieve UDTs
-	 *						for. An empty string will return those without a
-	 * 						schema. <TT>null</TT> means that the schema
-	 * 						will not be used to narrow the search.
-	 * @param	typeNamepattern		A type name pattern; must match the
-	 *								type name as it is stored in the
-	 *								database.
-	 * @param	types		List of user-defined types (JAVA_OBJECT, STRUCT, or
-	 *						DISTINCT) to include; null returns all types
-	 *
-	 * @throws	SQLException	Thrown if an SQL error occurs.
-	 */
-	public IUDTInfo[] getUDTs(String catalog, String schemaPattern,
-								String typeNamePattern, int[] types)
+    /**
+     * Retrieve information about the UDTs in the system.
+     *
+     * @param   catalog     The name of the catalog to retrieve UDTs
+     *                      for. An empty string will return those without a
+     *                      catalog. <TT>null</TT> means that the catalog
+     *                      will not be used to narrow the search.
+     * @param   schemaPattern   The name of the schema to retrieve UDTs
+     *                      for. An empty string will return those without a
+     *                      schema. <TT>null</TT> means that the schema
+     *                      will not be used to narrow the search.
+     * @param   typeNamepattern     A type name pattern; must match the
+     *                              type name as it is stored in the
+     *                              database.
+     * @param   types       List of user-defined types (JAVA_OBJECT, STRUCT, or
+     *                      DISTINCT) to include; null returns all types
+     *
+     * @throws  SQLException    Thrown if an SQL error occurs.
+     */
+    public synchronized IUDTInfo[] getUDTs(String catalog, String schemaPattern,
+								           String typeNamePattern, int[] types)
 		throws SQLException
 	{
 		DatabaseMetaData md = privateGetJDBCMetaData();
@@ -1027,12 +1165,12 @@ public class SQLDatabaseMetaData
    }
 
    /**
-	 * Retrieve the names of the Numeric Functions that this DBMS supports.
-	 * Cached on first call.
-	 *
-	 * @return	String[] of function names.
-	 */
-	public synchronized String[] getNumericFunctions() throws SQLException
+     * Retrieve the names of the Numeric Functions that this DBMS supports.
+     * Cached on first call.
+     *
+     * @return  String[] of function names.
+     */
+   public synchronized String[] getNumericFunctions() throws SQLException
 	{
 		final String key = "getNumericFunctions";
 		String[] value = (String[])_cache.get(key);
@@ -1046,12 +1184,12 @@ public class SQLDatabaseMetaData
 		return value;
 	}
 
-	/**
-	 * Retrieve the names of the String Functions that this DBMS supports.
-	 * Cached on first call.
-	 *
-	 * @return	String[] of function names.
-	 */
+    /**
+     * Retrieve the names of the String Functions that this DBMS supports.
+     * Cached on first call.
+     *
+     * @return  String[] of function names.
+     */
 	public synchronized String[] getStringFunctions() throws SQLException
 	{
 		final String key = "getStringFunctions";
@@ -1066,12 +1204,12 @@ public class SQLDatabaseMetaData
 		return value;
 	}
 
-	/**
-	 * Retrieve the names of the System Functions that this DBMS supports.
-	 * Cached on first call.
-	 *
-	 * @return	String[] of function names.
-	 */
+    /**
+     * Retrieve the names of the System Functions that this DBMS supports.
+     * Cached on first call.
+     *
+     * @return  String[] of function names.
+     */
 	public synchronized String[] getSystemFunctions() throws SQLException
 	{
 		final String key = "getSystemFunctions";
@@ -1086,12 +1224,12 @@ public class SQLDatabaseMetaData
 		return value;
 	}
 
-	/**
-	 * Retrieve the names of the Date/Time Functions that this DBMS supports.
-	 * Cached on first call.
-	 *
-	 * @return	String[] of function names.
-	 */
+    /**
+     * Retrieve the names of the Date/Time Functions that this DBMS supports.
+     * Cached on first call.
+     *
+     * @return  String[] of function names.
+     */
 	public synchronized String[] getTimeDateFunctions() throws SQLException
 	{
 		final String key = "getTimeDateFunctions";
@@ -1106,12 +1244,12 @@ public class SQLDatabaseMetaData
 		return value;
 	}
 
-	/**
-	 * Retrieve the names of the non-standard keywords that this DBMS supports.
-	 * Cached on first call.
-	 *
-	 * @return	String[] of keywords.
-	 */
+    /**
+     * Retrieve the names of the non-standard keywords that this DBMS supports.
+     * Cached on first call.
+     *
+     * @return  String[] of keywords.
+     */
 	public synchronized String[] getSQLKeywords() throws SQLException
 	{
 		final String key = "getSQLKeywords";
@@ -1126,59 +1264,49 @@ public class SQLDatabaseMetaData
 		return value;
 	}
 
-	// TODO: Write a version that returns an array of RowIdentifier objects.
-//	public ResultSet getBestRowIdentifier(ITableInfo ti)
-//		throws SQLException
-//	{
-//		return privateGetJDBCMetaData().getBestRowIdentifier(
-//			ti.getCatalogName(), ti.getSchemaName(),
-//			ti.getSimpleName(), DatabaseMetaData.bestRowTransaction,
-//			true);
-//	}
-
-	public BestRowIdentifier[] getBestRowIdentifier(ITableInfo ti)
+	public synchronized BestRowIdentifier[] getBestRowIdentifier(ITableInfo ti)
 		throws SQLException
 	{
 		final List results = new ArrayList();
 
-		ResultSet rs = privateGetJDBCMetaData().getBestRowIdentifier(
-								ti.getCatalogName(), ti.getSchemaName(),
-								ti.getSimpleName(),
-								DatabaseMetaData.bestRowTransaction, true);
-		if (rs != null)
+        ResultSet rs = null;
+		try
 		{
-			try
-			{
-				final String catalog = ti.getCatalogName();
-				final String schema = ti.getSchemaName();
-				final String table = ti.getSimpleName();
+            
+            rs = privateGetJDBCMetaData().getBestRowIdentifier(
+                    ti.getCatalogName(), ti.getSchemaName(),
+                    ti.getSimpleName(),
+                    DatabaseMetaData.bestRowTransaction, true);
+            
+			final String catalog = ti.getCatalogName();
+			final String schema = ti.getSchemaName();
+			final String table = ti.getSimpleName();
 
-				final ResultSetColumnReader rdr = new ResultSetColumnReader(rs);
-				while (rdr.next())
-				{
-					final BestRowIdentifier rid = new BestRowIdentifier(catalog,
-								schema, table, rdr.getLong(1).intValue(),
-								rdr.getString(2), rdr.getLong(3).shortValue(),
-								rdr.getString(4), rdr.getLong(5).intValue(),
-								rdr.getLong(7).shortValue(),
-								rdr.getLong(8).shortValue(), this);
-					results.add(rid);
-				}
-			}
-			finally
+			final ResultSetColumnReader rdr = new ResultSetColumnReader(rs);
+			while (rdr.next())
 			{
-                if (rs != null) {
-                    rs.close();
-                }
+				final BestRowIdentifier rid = new BestRowIdentifier(catalog,
+							schema, table, rdr.getLong(1).intValue(),
+							rdr.getString(2), rdr.getLong(3).shortValue(),
+							rdr.getString(4), rdr.getLong(5).intValue(),
+							rdr.getLong(7).shortValue(),
+							rdr.getLong(8).shortValue(), this);
+				results.add(rid);
 			}
+		}
+		finally
+		{
+            if (rs != null) try { rs.close(); } catch (SQLException e) {}
 		}
 
 		final BestRowIdentifier[] ar = new BestRowIdentifier[results.size()];
 		return (BestRowIdentifier[])results.toArray(ar);
 	}
 
-	// TODO: Write a version that returns an array of ColumnPrivilige objects.
-	public ResultSet getColumnPrivileges(ITableInfo ti)
+	/**
+     * @deprecated use getColumnPrivilegesDataSet instead. 
+	 */
+    public ResultSet getColumnPrivileges(ITableInfo ti)
 		throws SQLException
 	{
 		// MM-MYSQL driver doesnt support null for column name.
@@ -1190,8 +1318,44 @@ public class SQLDatabaseMetaData
 													columns);
 	}
 
-	// @deprecated. Replaced by getExportedKeysInfo
-	public ResultSet getExportedKeys(ITableInfo ti)
+    /**
+     * 
+     * @param ti
+     * @param columnIndices
+     * @param computeWidths
+     * @return
+     * @throws DataSetException
+     */
+    public synchronized IDataSet getColumnPrivilegesDataSet(ITableInfo ti,
+                                                            int[] columnIndices,
+                                                            boolean computeWidths) 
+        throws DataSetException 
+    {
+        ResultSet rs = null;
+        try {
+            DatabaseMetaData md = privateGetJDBCMetaData();
+            final String dbProdName = getDatabaseProductName();
+            final String columns = 
+                dbProdName.equalsIgnoreCase(IDBMSProductNames.MYSQL) ? "%" : null;
+            
+            rs = md.getColumnPrivileges(ti.getCatalogName(),
+                    ti.getSchemaName(),
+                    ti.getSimpleName(),
+                    columns);
+            ResultSetDataSet rsds = new ResultSetDataSet();
+                rsds.setResultSet(rs, columnIndices, computeWidths);
+            return rsds;
+        } catch (SQLException e) {
+            throw new DataSetException(e);
+        } finally {
+            if (rs != null) try { rs.close(); } catch (SQLException e) {}
+        }
+    }
+    
+    /**
+     *  @deprecated. Replaced by getExportedKeysInfo 
+     */
+    public ResultSet getExportedKeys(ITableInfo ti)
 		throws SQLException
 	{
 		return privateGetJDBCMetaData().getExportedKeys(
@@ -1199,7 +1363,33 @@ public class SQLDatabaseMetaData
 			ti.getSimpleName());
 	}
 
-	// @deprecated. Replaced by getImportedKeysInfo
+    /**
+     * 
+     * @param ti
+     * @return
+     * @throws DataSetException
+     */
+    public synchronized IDataSet getExportedKeysDataSet(ITableInfo ti) 
+        throws DataSetException  
+    {
+        ResultSet rs = null;
+        try {
+            rs = privateGetJDBCMetaData().getExportedKeys(ti.getCatalogName(), 
+                                                          ti.getSchemaName(),
+                                                          ti.getSimpleName());
+            ResultSetDataSet rsds = new ResultSetDataSet();
+            rsds.setResultSet(rs, null, true);
+            return rsds;            
+        } catch (SQLException e) { 
+            throw new DataSetException(e);
+        } finally {
+            if (rs != null) try { rs.close(); } catch (SQLException e) {}
+        }
+    }
+    
+    /**
+     * @deprecated. Replaced by getImportedKeysInfo
+     */
 	public ResultSet getImportedKeys(ITableInfo ti)
 		throws SQLException
 	{
@@ -1208,21 +1398,57 @@ public class SQLDatabaseMetaData
 			ti.getSimpleName());
 	}
 
-	public ForeignKeyInfo[] getImportedKeysInfo(ITableInfo ti)
+	public synchronized ForeignKeyInfo[] getImportedKeysInfo(String catalog, 
+                                                             String schema, 
+                                                             String tableName) 
+        throws SQLException 
+    {
+        ResultSet rs = 
+            privateGetJDBCMetaData().getImportedKeys(catalog, schema, tableName);
+        return getForeignKeyInfo(rs);
+    }
+    
+    public synchronized ForeignKeyInfo[] getImportedKeysInfo(ITableInfo ti)
 		throws SQLException
 	{
 		return getForeignKeyInfo(privateGetJDBCMetaData().getImportedKeys(ti.getCatalogName(),
 								ti.getSchemaName(), ti.getSimpleName()));
 	}
 
-	public ForeignKeyInfo[] getExportedKeysInfo(ITableInfo ti)
+    public synchronized IDataSet getImportedKeysDataSet(ITableInfo ti) 
+        throws DataSetException  
+    {
+        ResultSet rs = null;
+        try {
+            rs = privateGetJDBCMetaData().getImportedKeys(ti.getCatalogName(), 
+                                                          ti.getSchemaName(),
+                                                          ti.getSimpleName());
+            ResultSetDataSet rsds = new ResultSetDataSet();
+            rsds.setResultSet(rs, null, true);
+            return rsds;            
+        } catch (SQLException e) { 
+            throw new DataSetException(e);
+        } finally {
+            if (rs != null) try { rs.close(); } catch (SQLException e) {}
+        }
+    }    
+    
+    public synchronized ForeignKeyInfo[] getExportedKeysInfo(String catalog, String schema, String tableName)
+        throws SQLException
+    {
+        ResultSet rs = 
+            privateGetJDBCMetaData().getExportedKeys(catalog, schema, tableName);
+        return getForeignKeyInfo(rs);
+    } 
+    
+	public synchronized ForeignKeyInfo[] getExportedKeysInfo(ITableInfo ti)
 		throws SQLException
 	{
 		return getForeignKeyInfo(privateGetJDBCMetaData().getExportedKeys(ti.getCatalogName(),
 								ti.getSchemaName(), ti.getSimpleName()));
 	}
-
-	public ForeignKeyInfo[] getForeignKeyInfo(ResultSet rs)
+        
+	private ForeignKeyInfo[] getForeignKeyInfo(ResultSet rs)
 		throws SQLException
 	{
 		final Map keys = new HashMap();
@@ -1234,8 +1460,9 @@ public class SQLDatabaseMetaData
 			while (rdr.next())
 			{
 				final ForeignKeyInfo fki = new ForeignKeyInfo(rdr.getString(1),
-							rdr.getString(2), rdr.getString(3), rdr.getString(5),
-							rdr.getString(6), rdr.getString(7),
+							rdr.getString(2), rdr.getString(3), rdr.getString(4),
+                            rdr.getString(5),rdr.getString(6), rdr.getString(7),
+                            rdr.getString(8),
 							rdr.getLong(10).intValue(), rdr.getLong(11).intValue(),
 							rdr.getString(12), rdr.getString(13),
 							rdr.getLong(14).intValue(), null, this);
@@ -1275,8 +1502,10 @@ public class SQLDatabaseMetaData
 		return results;
 	}
 
-	// TODO: Write a version that returns an array of data objects.
-	public ResultSet getIndexInfo(ITableInfo ti)
+    /**
+     * @deprecated use getIndexInfo instead.
+     */
+    public ResultSet getIndexInfo(ITableInfo ti)
 		throws SQLException
 	{
 		return privateGetJDBCMetaData().getIndexInfo(
@@ -1284,7 +1513,37 @@ public class SQLDatabaseMetaData
 			ti.getSimpleName(), false, true);
 	}
 
-	// TODO: Write a version that returns an array of data objects.
+    /**
+     * 
+     * @param ti
+     * @param columnIndices
+     * @param computeWidths
+     * @return
+     * @throws DataSetException
+     */
+    public synchronized ResultSetDataSet getIndexInfo(ITableInfo ti, 
+                                                      int[] columnIndices,
+                                                      boolean computeWidths) 
+        throws DataSetException 
+    {
+        ResultSet rs = null;
+        try {
+            rs = privateGetJDBCMetaData().getIndexInfo(
+                    ti.getCatalogName(), ti.getSchemaName(),
+                    ti.getSimpleName(), false, true);
+            ResultSetDataSet rsds = new ResultSetDataSet();
+            rsds.setResultSet(rs, columnIndices, computeWidths);
+            return rsds;
+        } catch (SQLException e) {
+            throw new DataSetException(e);
+        } finally {
+            if (rs != null) try { rs.close(); } catch (SQLException e) {}
+        }
+    }
+    
+    /**
+     * @deprecated use getPrimaryKey instead
+     */
 	public ResultSet getPrimaryKeys(ITableInfo ti)
 		throws SQLException
 	{
@@ -1292,18 +1551,109 @@ public class SQLDatabaseMetaData
 			ti.getCatalogName(), ti.getSchemaName(),
 			ti.getSimpleName());
 	}
+    
+	/**
+     * 
+     * @param ti
+     * @param columnIndices
+     * @param computeWidths
+     * @return
+     * @throws DataSetException
+	 */
+    public synchronized IDataSet getPrimaryKey(ITableInfo ti, 
+                                               int[] columnIndices,
+                                               boolean computeWidths)
+        throws DataSetException
+    {
+        ResultSet rs = null;
+        try {
+            rs = privateGetJDBCMetaData().getPrimaryKeys(
+                    ti.getCatalogName(), ti.getSchemaName(),
+                    ti.getSimpleName());
+            ResultSetDataSet rsds = new ResultSetDataSet();
+                rsds.setResultSet(rs, columnIndices , computeWidths);
+            return rsds;  
+        } catch (SQLException e) { 
+            throw new DataSetException(e);
+        }finally {
+            if (rs != null) try { rs.close(); } catch (SQLException e) {}
+        }
+    }
 
-	// TODO: Write a version that returns an array of data objects.
-	public ResultSet getProcedureColumns(IProcedureInfo ti)
+    /**
+     * 
+     * @param ti
+     * @return
+     * @throws SQLException
+     */
+    public synchronized PrimaryKeyInfo[] getPrimaryKey(ITableInfo ti) 
+        throws SQLException
+    {
+        final List results = new ArrayList();
+        ResultSet rs = null;
+        try {
+            rs = privateGetJDBCMetaData().getPrimaryKeys(
+                    ti.getCatalogName(), ti.getSchemaName(),
+                    ti.getSimpleName());
+            while (rs.next()) {
+                PrimaryKeyInfo pkInfo = 
+                    new PrimaryKeyInfo(rs.getString(1),  // catalog
+                                       rs.getString(2),  // schema
+                                       rs.getString(4),  // columnName
+                                       rs.getShort(5),   // keySequence
+                                       rs.getString(6),  // pkName
+                                       this);
+                results.add(pkInfo);
+            }
+        }finally {
+            if (rs != null) try { rs.close(); } catch (SQLException e) {}
+        }
+        
+        final PrimaryKeyInfo[] ar = new PrimaryKeyInfo[results.size()];
+        return (PrimaryKeyInfo[])results.toArray(ar);
+    }
+    
+    /**
+     * @deprecated use getProcedureColumnsDataSet instead
+     */
+    public ResultSet getProcedureColumns(IProcedureInfo ti)
 		throws SQLException
 	{
 		return privateGetJDBCMetaData().getProcedureColumns(ti.getCatalogName(),
-													ti.getSchemaName(),
-													ti.getSimpleName(),
-													"%");
+													        ti.getSchemaName(),
+													        ti.getSimpleName(),
+													        "%");
 	}
 
-	// TODO: Write a version that returns an array of data objects.
+    /**
+     * 
+     * @param ti
+     * @return
+     * @throws DataSetException
+     */
+    public synchronized IDataSet getProcedureColumnsDataSet(IProcedureInfo ti)
+        throws DataSetException
+    {
+        ResultSet rs = null;
+        try {
+            DatabaseMetaData md = privateGetJDBCMetaData();
+            rs = md.getProcedureColumns(ti.getCatalogName(),
+                                        ti.getSchemaName(),
+                                        ti.getSimpleName(),
+                                        "%");
+            ResultSetDataSet rsds = new ResultSetDataSet();
+            rsds.setResultSet(rs);
+            return rsds;
+        } catch (SQLException e) {
+            throw new DataSetException(e);
+        } finally {
+            if (rs != null) try { rs.close(); } catch (SQLException e) {}
+        }
+    }
+    
+    /**
+     * @deprecated use getTablePrivilegesDataSet instead
+     */ 
 	public ResultSet getTablePrivileges(ITableInfo ti)
 		throws SQLException
 	{
@@ -1312,16 +1662,77 @@ public class SQLDatabaseMetaData
 													ti.getSimpleName());
 	}
 
-	// TODO: Write a version that returns an array of data objects.
+	/**
+     * 
+     * @param ti
+     * @param columnIndices
+     * @param computeWidths
+     * @return
+     * @throws DataSetException
+	 */
+    public synchronized IDataSet getTablePrivilegesDataSet(ITableInfo ti,
+                                                           int[] columnIndices,
+                                                           boolean computeWidths) 
+        throws DataSetException 
+    {
+        ResultSet rs = null;
+        try {
+            DatabaseMetaData md = privateGetJDBCMetaData();
+            rs = md.getTablePrivileges(ti.getCatalogName(),
+                                       ti.getSchemaName(),
+                                       ti.getSimpleName());
+            ResultSetDataSet rsds = new ResultSetDataSet();
+            rsds.setResultSet(rs, columnIndices, computeWidths);
+            return rsds;
+        } catch (SQLException e) {
+            throw new DataSetException(e);
+        } finally {
+            if (rs != null) try { rs.close(); } catch (SQLException e) {}
+        }
+    }
+    
+    
+	/**
+     *  @deprecated use getVersionColumnsDataSet instead
+	 */
 	public ResultSet getVersionColumns(ITableInfo ti)
 		throws SQLException
 	{
 		return privateGetJDBCMetaData().getVersionColumns(ti.getCatalogName(),
-												ti.getSchemaName(),
-												ti.getSimpleName());
+												          ti.getSchemaName(),
+												          ti.getSimpleName());
 	}
 
-	// TODO: Write a version that returns an array of data objects.
+	/**
+     * 
+     * @param ti
+     * @return
+     * @throws DataSetException
+	 */
+    public synchronized IDataSet getVersionColumnsDataSet(ITableInfo ti)
+        throws DataSetException
+    {
+        ResultSet rs = null;
+        try {
+            DatabaseMetaData md = privateGetJDBCMetaData();
+            rs = md.getVersionColumns(ti.getCatalogName(),
+                                      ti.getSchemaName(),
+                                      ti.getSimpleName());
+            ResultSetDataSet rsds = new ResultSetDataSet();
+            rsds.setResultSet(rs);
+            return rsds;
+        } catch (SQLException e) {
+            throw new DataSetException(e);
+        } finally {
+            if (rs != null) try { rs.close(); } catch (SQLException e) {}
+        }
+    }
+    
+    
+    /**
+     * @deprecated use getColumns that returns an IDataSet or a 
+     *             TableColumnInfo[] instead.
+     */
 	public ResultSet getColumns(ITableInfo ti)
 		throws SQLException
 	{
@@ -1329,64 +1740,111 @@ public class SQLDatabaseMetaData
 											ti.getSchemaName(),
 											ti.getSimpleName(), "%");
 	}
-
-	public TableColumnInfo[] getColumnInfo(ITableInfo ti)
+    
+	/**
+     * 
+     * @param ti
+     * @param columnIndices
+     * @param computeWidths
+     * @return
+     * @throws DataSetException
+	 */
+    public synchronized IDataSet getColumns(ITableInfo ti, 
+                                            int[] columnIndices,
+                                            boolean computeWidths)
+        throws DataSetException
+    {
+        IDataSet result = null;
+        ResultSet rs = null;
+        try {
+            rs = getColumns(ti);
+            ResultSetDataSet rsds = new ResultSetDataSet();
+            rsds.setResultSet(rs, columnIndices, computeWidths);
+            result = rsds;
+        } catch (SQLException e) { 
+            throw new DataSetException(e);
+        } finally {
+            if (rs != null) try { rs.close(); } catch (SQLException e) {}
+        }
+        return result;
+    }
+    
+    /**
+     * 
+     * @param catalog
+     * @param schema
+     * @param table
+     * @return
+     * @throws SQLException
+     */
+    public synchronized TableColumnInfo[] getColumnInfo(String catalog, 
+                                                        String schema, 
+                                                        String table) 
+        throws SQLException 
+    {
+        final Map columns = new TreeMap();
+        ResultSet rs = null;
+        try {
+            DatabaseMetaData md = privateGetJDBCMetaData();
+            rs = md.getColumns(catalog, schema, table, "%");
+            final ResultSetColumnReader rdr = new ResultSetColumnReader(rs);
+            while (rdr.next())
+            {
+                final TableColumnInfo tci = new TableColumnInfo(rdr.getString(1),
+                            rdr.getString(2), rdr.getString(3), rdr.getString(4),
+                            rdr.getLong(5).intValue(), rdr.getString(6),
+                            rdr.getLong(7).intValue(), rdr.getLong(9).intValue(),
+                            rdr.getLong(10).intValue(), rdr.getLong(11).intValue(),
+                            rdr.getString(12), rdr.getString(13),
+                            rdr.getLong(16).intValue(), rdr.getLong(17).intValue(),
+                            rdr.getString(18), this);
+                columns.put(new Integer(tci.getOrdinalPosition()), tci);
+            }
+            
+        } finally {
+            if (rs != null) try { rs.close(); } catch (SQLException e) {}
+        }
+        return (TableColumnInfo[])columns.values().toArray(
+                new TableColumnInfo[columns.size()]);        
+    }
+    
+    /**
+     * 
+     * @param ti
+     * @return
+     * @throws SQLException
+     */
+    public synchronized TableColumnInfo[] getColumnInfo(ITableInfo ti)
 		throws SQLException
 	{
-		final Map columns = new TreeMap();
-		final ResultSet rs = getColumns(ti);
-		try
-		{
-			final ResultSetColumnReader rdr = new ResultSetColumnReader(rs);
-			while (rdr.next())
-			{
-				final TableColumnInfo tci = new TableColumnInfo(rdr.getString(1),
-							rdr.getString(2), rdr.getString(3), rdr.getString(4),
-							rdr.getLong(5).intValue(), rdr.getString(6),
-							rdr.getLong(7).intValue(), rdr.getLong(9).intValue(),
-							rdr.getLong(10).intValue(), rdr.getLong(11).intValue(),
-							rdr.getString(12), rdr.getString(13),
-							rdr.getLong(16).intValue(), rdr.getLong(17).intValue(),
-							rdr.getString(18), this);
-				columns.put(new Integer(tci.getOrdinalPosition()), tci);
-			}
-		}
-		finally
-		{
-            if (rs != null) {
-                rs.close();
-            }
-		}
+	    return getColumnInfo(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName());
+    }
 
-		return (TableColumnInfo[])columns.values().toArray(
-									new TableColumnInfo[columns.size()]);
-	}
-
-	/**
-	 * Retrieve whether this driver correctly handles Statement.setMaxRows(int).
-	 * Some drivers such as version 5.02 of the Opta2000 driver use setMaxRows
-	 * for UPDATEs, DELETEs etc. instead of just SELECTs. If this method returns
-	 * <TT>false</TT> then setMaxRows should only be applied to statements
-	 * that are running SELECTs.
-	 *
-	 * @return	<TT>true</TT> if this driver correctly implements setMaxRows().
-	 *
-	 * @throws	SQLException	Thrown if an SQL error occurs.
-	 */
-	public boolean correctlySupportsSetMaxRows() throws SQLException
+    /**
+     * Retrieve whether this driver correctly handles Statement.setMaxRows(int).
+     * Some drivers such as version 5.02 of the Opta2000 driver use setMaxRows
+     * for UPDATEs, DELETEs etc. instead of just SELECTs. If this method returns
+     * <TT>false</TT> then setMaxRows should only be applied to statements
+     * that are running SELECTs.
+     *
+     * @return  <TT>true</TT> if this driver correctly implements setMaxRows().
+     *
+     * @throws  SQLException    Thrown if an SQL error occurs.
+     */
+    public boolean correctlySupportsSetMaxRows() throws SQLException
 	{
 		return !IDriverNames.OPTA2000.equals(getDriverName());
 	}
 
-	/**
-	 * Retrieve whether this driver supports multiple result sets. Cached on
-	 * first call.
-	 *
-	 * @return	<tt>true</tt> if driver supports multiple result sets
-	 *			else <tt>false</tt>.
-	 *
-	 * @throws	SQLException	Thrown if an SQL error occurs.
-	 */
+    /**
+     * Retrieve whether this driver supports multiple result sets. Cached on
+     * first call.
+     *
+     * @return  <tt>true</tt> if driver supports multiple result sets
+     *          else <tt>false</tt>.
+     *
+     * @throws  SQLException    Thrown if an SQL error occurs.
+     */
 	public synchronized boolean supportsMultipleResultSets()
 			throws SQLException
 	{
@@ -1403,10 +1861,10 @@ public class SQLDatabaseMetaData
 		return value.booleanValue();
 	}
 
-	/**
-	 * Clear cache of commonly accessed metadata properties.
-	 */
-	public synchronized void clearCache()
+    /**
+     * Clear cache of commonly accessed metadata properties.
+     */
+	public void clearCache()
 	{
 		_cache.clear();
 	}
@@ -1446,9 +1904,15 @@ public class SQLDatabaseMetaData
 	 */
 	private DatabaseMetaData privateGetJDBCMetaData() throws SQLException
 	{
+        checkThread();
 		return _conn.getConnection().getMetaData();
 	}
 
+    /**
+     * 
+     * @param fki
+     * @return
+     */
 	private String createForeignKeyInfoKey(ForeignKeyInfo fki)
 	{
 		final StringBuffer buf = new StringBuffer();
@@ -1462,5 +1926,19 @@ public class SQLDatabaseMetaData
 			.append(fki.getPrimaryKeyName());
 		return buf.toString();
 	}
+    
+    /**
+     * Check the thread of the caller to see if it is the event dispatch thread
+     * and if we are debugging print an error message with the call trace.
+     */
+    private void checkThread() {
+        if (s_log.isDebugEnabled() && SwingUtilities.isEventDispatchThread()) {
+            try {
+                throw new Exception("GUI Thread is doing database work");
+            } catch (Exception e) {
+                s_log.error(e.getMessage(), e);
+            }
+        }
+    }
 }
 
