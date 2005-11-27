@@ -19,12 +19,10 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.da
  */
 import java.sql.SQLException;
 
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseDataSetTab;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
-import net.sourceforge.squirrel_sql.fw.sql.MetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
-
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseDataSetTab;
 
 /**
  * This is the tab displaying database metadata.
@@ -71,7 +69,7 @@ public class MetaDataTab extends BaseDataSetTab
 		final SQLConnection conn = getSession().getSQLConnection();
 		try
 		{
-			return new MetaDataDataSet(conn.getSQLMetaData().getJDBCMetaData());
+			return conn.getSQLMetaData().getMetaDataSet();
 		}
 		catch (SQLException ex)
 		{

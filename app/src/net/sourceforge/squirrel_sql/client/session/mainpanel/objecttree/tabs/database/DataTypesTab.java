@@ -17,15 +17,10 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.da
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DatabaseTypesDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseDataSetTab;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 /**
  * This is the tab displaying the data types in the database.
  *
@@ -71,14 +66,6 @@ public class DataTypesTab extends BaseDataSetTab
 		// Dont need to close the ResultSet as DatabaseTypesDataSet
 		// will do so when its finished with it.
 		final ISession session = getSession();
-		try
-		{
-			ResultSet rs = session.getSQLConnection().getSQLMetaData().getTypeInfo();
-			return new DatabaseTypesDataSet(rs);
-		}
-		catch (SQLException ex)
-		{
-			throw new DataSetException(ex);
-		}
+        return session.getSQLConnection().getSQLMetaData().getTypesDataSet();
 	}
 }

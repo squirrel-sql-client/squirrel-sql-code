@@ -17,13 +17,9 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.ta
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 /**
  * This tab shows the version info for the currently selected table.
  *
@@ -66,24 +62,8 @@ public class VersionColumnsTab extends BaseTableTab
 	 */
 	protected IDataSet createDataSet() throws DataSetException
 	{
-		final SQLConnection conn = getSession().getSQLConnection();
-		try
-		{
-			final ResultSet rs = conn.getSQLMetaData().getVersionColumns(getTableInfo());
-			try
-			{
-				final ResultSetDataSet rsds = new ResultSetDataSet();
-				rsds.setResultSet(rs);
-				return rsds;
-			}
-			finally
-			{
-				rs.close();
-			}
-		}
-		catch (SQLException ex)
-		{
-			throw new DataSetException(ex);
-		}
+		final SQLDatabaseMetaData md = 
+            getSession().getSQLConnection().getSQLMetaData();
+		return md.getVersionColumnsDataSet(getTableInfo()); 
 	}
 }
