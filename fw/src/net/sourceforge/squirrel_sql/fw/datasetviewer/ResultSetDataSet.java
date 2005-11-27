@@ -90,7 +90,6 @@ public class ResultSetDataSet implements IDataSet
 		setResultSet(rs, null, columnIndices, computeWidths, false);
 	}
 
-
 	/**
 	 * Internal method to read the contents of a ResultSet that is used by
 	 * all Tab classes
@@ -294,5 +293,14 @@ public class ResultSetDataSet implements IDataSet
    {
       _iCurrent = -1;
       _currentRow = null;
+   }
+
+   /**
+    * Removes the row at the specified index.
+    * 
+    * @param index the row number starting at 0.
+    */
+   public Object removeRow(int index) {
+       return _alData.remove(index);
    }
 }
