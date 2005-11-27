@@ -31,9 +31,9 @@ public class TableInfo extends DatabaseObjectInfo implements ITableInfo
 	private SortedSet _childList; // build up datastructure.
 	private ITableInfo[] _childs; // final cache.
 
-	TableInfo(String catalog, String schema, String simpleName,
-							String tableType, String remarks,
-							SQLDatabaseMetaData md)
+	public TableInfo(String catalog, String schema, String simpleName,
+					 String tableType, String remarks,
+					 SQLDatabaseMetaData md)
 	{
 		super(catalog, schema, simpleName, tableType.equalsIgnoreCase("VIEW") ? DatabaseObjectType.VIEW : DatabaseObjectType.TABLE, md);
 		_remarks = remarks;
