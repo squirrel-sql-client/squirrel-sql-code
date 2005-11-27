@@ -28,11 +28,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextFileDestination;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DatabaseTypesDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ObjectArrayDataSet;
-import net.sourceforge.squirrel_sql.fw.sql.MetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
@@ -41,8 +40,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.fw.xml.XMLException;
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
 
 /**
  * This <CODE>ICommand</CODE> will dump the status of a session to a text
@@ -226,7 +223,7 @@ public class DumpSessionCommand implements ICommand
 			{
 				File tempFile = File.createTempFile(PREFIX, SUFFIX);
 				IDataSetViewer dest = new DataSetViewerTextFileDestination(tempFile);
-				dest.show(new MetaDataDataSet(conn.getSQLMetaData().getJDBCMetaData()));
+				dest.show(conn.getSQLMetaData().getMetaDataSet());
 				files.add(tempFile);
 				titles.add("Metadata");
 			}
@@ -277,7 +274,7 @@ public class DumpSessionCommand implements ICommand
 			{
 				File tempFile = File.createTempFile(PREFIX, SUFFIX);
 				IDataSetViewer dest = new DataSetViewerTextFileDestination(tempFile);
-				dest.show(new DatabaseTypesDataSet(conn.getSQLMetaData().getTypeInfo()));
+				dest.show(conn.getSQLMetaData().getTypesDataSet());
 				files.add(tempFile);
 				titles.add("Data Types");
 			}
