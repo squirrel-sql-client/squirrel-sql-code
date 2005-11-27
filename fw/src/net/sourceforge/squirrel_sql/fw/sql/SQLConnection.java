@@ -26,6 +26,8 @@ import java.sql.Statement;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -60,9 +62,6 @@ public class SQLConnection
 	/** Connectiopn properties specified when connection was opened. */
 	private final SQLDriverPropertyCollection _connProps;
 
-	/** MetaData for this connection. */
-	private SQLDatabaseMetaData _metaData;
-
 	private boolean _autoCommitOnClose = false;
 
 	private Date _timeOpened;
@@ -71,6 +70,8 @@ public class SQLConnection
 	/** Object to handle property change events. */
 	private transient PropertyChangeReporter _propChgReporter;
 
+    private SQLDatabaseMetaData metaData = null;
+    
 	public SQLConnection(Connection conn, SQLDriverPropertyCollection connProps)
 	{
 		super();
@@ -81,6 +82,7 @@ public class SQLConnection
 		_conn = conn;
 		_connProps = connProps;
 		_timeOpened = Calendar.getInstance().getTime();
+        metaData = new SQLDatabaseMetaData(this);
 	}
 
 	public void close() throws SQLException
@@ -226,17 +228,22 @@ public class SQLConnection
 	 * 
 	 * @return	The <TT>SQLMetaData</TT> object.
 	 */
-	public synchronized SQLDatabaseMetaData getSQLMetaData()
-	{
-		if (_metaData == null)
-		{
-			_metaData = new SQLDatabaseMetaData(this);
-		}
-		return _metaData;
+	public SQLDatabaseMetaData getSQLMetaData()
+	{        
+	    return metaData;
 	}
 
 	public Connection getConnection()
 	{
+        if (s_log.isDebugEnabled()) {
+            try {
+                if (SwingUtilities.isEventDispatchThread() ) {
+                    throw new Exception();
+                }
+            } catch (Exception e) {
+                s_log.debug("GUI thread doing database work", e);
+            }
+        }
 		return _conn;
 	}
 
