@@ -18,6 +18,8 @@
 
 package net.sourceforge.squirrel_sql.client.session;
 
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+
 public class ExtendedColumnInfo
 {
    private String _columnName;
@@ -39,6 +41,20 @@ public class ExtendedColumnInfo
       _schem = schem;
    }
 
+   public ExtendedColumnInfo(TableColumnInfo info) {
+       _columnName = info.getColumnName();
+       _columnType = info.getTypeName();
+       _columnSize = info.getColumnSize();
+       _decimalDigits = info.getDecimalDigits();
+       if ("YES".equals(info.isNullable())) {
+           _nullable = true;
+       } else {
+           _nullable = false;
+       }
+       _cat = info.getCatalogName();
+       _schem = info.getSchemaName();
+   }
+   
    public String getColumnName()
    {
       return _columnName;

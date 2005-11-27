@@ -1,6 +1,5 @@
 package net.sourceforge.squirrel_sql.client.session;
 
-import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,6 +16,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableMode
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -718,57 +719,47 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       final ISession session = _session;
       final SQLConnection conn = session.getSQLConnection();
 
-      DatabaseMetaData dmd = null;
       try
       {
-         dmd = conn.getSQLMetaData().getJDBCMetaData();
-         final ResultSet rs =
-            dmd.getColumns(ti.getCatalogName(), ti.getSchemaName(),
-               ti.getSimpleName(), "");
-         try
-         {
-            // read the DB MetaData info and fill in the value, if any
-            // Note that the ResultSet info and the colDefs should be
-            // in the same order, but we cannot guarantee that.
-            int expectedColDefIndex = 0;
-            while (rs.next()) {
-               // get the column name
-               String colName = rs.getString(4);
+         SQLDatabaseMetaData md = conn.getSQLMetaData();
+         TableColumnInfo[] infos = md.getColumnInfo(ti);
+         
+         // read the DB MetaData info and fill in the value, if any
+         // Note that the ResultSet info and the colDefs should be
+         // in the same order, but we cannot guarantee that.
+         int expectedColDefIndex = 0;
+         
+         for (int idx = 0; idx < infos.length; idx++) {
+             String colName = infos[idx].getColumnName();
+             String defValue = infos[idx].getDefaultValue();
+             
+             // if value was null, we do not need to do
+             // anything else with this column.
+             // Also assume that a value of "" is equivilent to null
+             if (defValue != null &&  defValue.length() > 0) {
+                // find the entry in colDefs matching this column
+                if (colDefs[expectedColDefIndex].getLabel().equals(colName)) {
+                   // DB cols are in same order as colDefs
+                   defaultValues[expectedColDefIndex] = defValue;
+                }
+                else {
+                   // colDefs not in same order as DB, so search for
+                   // matching colDef entry
+                   // Note: linear search here will NORMALLY be not too bad
+                   // because most tables do not have huge numbers of columns.
+                   for (int i=0; i<colDefs.length; i++) {
+                      if (colDefs[i].getLabel().equals(colName)) {
+                         defaultValues[i] = defValue;
+                         break;
+                      }
+                   }
+                }
+             }
 
-               // get the default value
-               String defValue = rs.getString(13);
-
-               // if value was null, we do not need to do
-               // anything else with this column.
-               // Also assume that a value of "" is equivilent to null
-               if (defValue != null &&  defValue.length() > 0) {
-                  // find the entry in colDefs matching this column
-                  if (colDefs[expectedColDefIndex].getLabel().equals(colName)) {
-                     // DB cols are in same order as colDefs
-                     defaultValues[expectedColDefIndex] = defValue;
-                  }
-                  else {
-                     // colDefs not in same order as DB, so search for
-                     // matching colDef entry
-                     // Note: linear search here will NORMALLY be not too bad
-                     // because most tables do not have huge numbers of columns.
-                     for (int i=0; i<colDefs.length; i++) {
-                        if (colDefs[i].getLabel().equals(colName)) {
-                           defaultValues[i] = defValue;
-                           break;
-                        }
-                     }
-                  }
-               }
-
-               // assuming that the columns in table match colDefs,
-               // bump the index to point to the next colDef entry
-               expectedColDefIndex++;
-            } // while
-         }
-         finally
-         {
-            rs.close();
+             // assuming that the columns in table match colDefs,
+             // bump the index to point to the next colDef entry
+             expectedColDefIndex++;
+             
          }
       }
       catch (Exception ex)

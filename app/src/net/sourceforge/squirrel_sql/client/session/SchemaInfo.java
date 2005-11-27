@@ -20,22 +20,28 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.StringTokenizer;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
+import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
+import net.sourceforge.squirrel_sql.fw.sql.DataTypeInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
-import net.sourceforge.squirrel_sql.client.session.event.ISessionListener;
-import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
-import net.sourceforge.squirrel_sql.client.IApplication;
-
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
 
 public class SchemaInfo
 {
@@ -45,7 +51,7 @@ public class SchemaInfo
 	private boolean _loading = false;
 	private boolean _loaded = false;
 
-	private DatabaseMetaData _dmd;
+	private SQLDatabaseMetaData _dmd;
 	private final HashMap _keywords = new HashMap();
 	private final HashMap _dataTypes = new HashMap();
 	private final HashMap _functions = new HashMap();
@@ -81,7 +87,7 @@ public class SchemaInfo
 			{
 				if(null != _session && _session.getIdentifier().equals(evt.getSession().getIdentifier()))
 				{
-					initJDBCDatabaseMetaData(_session.getSQLConnection().getSQLMetaData());
+					_dmd = _session.getSQLConnection().getSQLMetaData();
 					if(null != _dmd)
 					{
 						s_log.info(s_stringMgr.getString("SchemaInfo.SuccessfullyRestoredDatabaseMetaData"));
@@ -108,12 +114,12 @@ public class SchemaInfo
 
 			final SQLDatabaseMetaData sqlDmd = conn.getSQLMetaData();
 
-			initJDBCDatabaseMetaData(sqlDmd);
+			_dmd = sqlDmd;
 
 			try
 			{
 				s_log.debug("Loading keywords");
-				loadKeywords(_dmd);
+				loadKeywords(sqlDmd);
 				s_log.debug("Keywords loaded");
 			}
 			catch (Exception ex)
@@ -123,9 +129,9 @@ public class SchemaInfo
 
 			try
 			{
-					 s_log.debug("Loading data types");
-				loadDataTypes(_dmd);
-					 s_log.debug("Data types loaded");
+			    s_log.debug("Loading data types");
+				loadDataTypes(sqlDmd);
+				s_log.debug("Data types loaded");
 			}
 			catch (Exception ex)
 			{
@@ -135,7 +141,7 @@ public class SchemaInfo
 			try
 			{
 				s_log.debug("Loading functions");
-				loadFunctions(_dmd);
+				loadFunctions(sqlDmd);
 				s_log.debug("Functions loaded");
 			}
 			catch (Exception ex)
@@ -146,7 +152,7 @@ public class SchemaInfo
 			try
 			{
 				s_log.debug("Loading catalogs");
-				loadCatalogs(_dmd);
+				loadCatalogs(sqlDmd);
 				s_log.debug("Catalogs loaded");
 			}
 			catch (Exception ex)
@@ -157,7 +163,7 @@ public class SchemaInfo
 			try
 			{
 				s_log.debug("Loading schemas");
-				loadSchemas(_dmd);
+				loadSchemas(sqlDmd);
 				s_log.debug("Schemas loaded");
 			}
 			catch (Exception ex)
@@ -169,7 +175,7 @@ public class SchemaInfo
 			try
 			{
 				s_log.debug("Loading tables");
-				loadTables(_dmd);
+				loadTables(sqlDmd);
 				s_log.debug("Tables loaded");
 			}
 			catch (Exception ex)
@@ -195,19 +201,6 @@ public class SchemaInfo
 		}
 	}
 
-	private void initJDBCDatabaseMetaData(SQLDatabaseMetaData sqlDmd)
-	{
-		_dmd = null;
-		try
-		{
-			_dmd = sqlDmd.getJDBCMetaData();
-		}
-		catch (Exception ex)
-		{
-			s_log.error("Error retrieving metadata", ex);
-		}
-	}
-
 	private void loadStoredProcedures(SQLDatabaseMetaData dmd)
 	{
 
@@ -224,22 +217,11 @@ public class SchemaInfo
 
 	}
 
-	private void loadCatalogs(DatabaseMetaData dmd)
+	private void loadCatalogs(SQLDatabaseMetaData dmd)
 	{
 		try
 		{
-			final ResultSet rs = dmd.getCatalogs();
-			try
-			{
-				while(rs.next())
-				{
-					_catalogs.add(rs.getString("TABLE_CAT"));
-				}
-			}
-			finally
-			{
-				rs.close();
-			}
+            _catalogs.addAll(Arrays.asList(dmd.getCatalogs()));
 		}
 		catch (Throwable th)
 		{
@@ -247,22 +229,11 @@ public class SchemaInfo
 		}
 	}
 
-	private void loadSchemas(DatabaseMetaData dmd)
+	private void loadSchemas(SQLDatabaseMetaData dmd)
 	{
 		try
 		{
-			final ResultSet rs = dmd.getSchemas();
-			try
-			{
-				while(rs.next())
-				{
-					_schemas.add(rs.getString("TABLE_SCHEM"));
-				}
-			}
-			finally
-			{
-				rs.close();
-			}
+            _schemas.addAll(Arrays.asList(dmd.getSchemas()));
 		}
 		catch (Throwable th)
 		{
@@ -406,7 +377,7 @@ public class SchemaInfo
 		return null;
 	}
 
-	private void loadKeywords(DatabaseMetaData dmd)
+	private void loadKeywords(SQLDatabaseMetaData dmd)
 	{
 		try
 		{
@@ -610,23 +581,15 @@ public class SchemaInfo
 		}
 	}
 
-	private void loadDataTypes(DatabaseMetaData dmd)
+	private void loadDataTypes(SQLDatabaseMetaData dmd)
 	{
 		try
 		{
-			final ResultSet rs = dmd.getTypeInfo();
-			try
-			{
-				while (rs.next())
-				{
-					String typeName = rs.getString(1).trim();
-					_dataTypes.put(new CaseInsensitiveString(typeName), typeName);
-				}
-			}
-			finally
-			{
-				rs.close();
-			}
+            DataTypeInfo[] infos = dmd.getDataTypes();
+            for (int i = 0; i < infos.length; i++) {
+                String typeName = infos[i].getSimpleName();
+                _dataTypes.put(new CaseInsensitiveString(typeName), typeName);
+            }
 		}
 		catch (Throwable ex)
 		{
@@ -634,7 +597,7 @@ public class SchemaInfo
 		}
 	}
 
-	private void loadFunctions(DatabaseMetaData dmd)
+	private void loadFunctions(SQLDatabaseMetaData dmd)
 	{
 		StringBuffer buf = new StringBuffer(1024);
 
@@ -809,32 +772,22 @@ public class SchemaInfo
 		return _loaded;
 	}
 
-	private void loadTables(DatabaseMetaData dmd)
+	private void loadTables(SQLDatabaseMetaData dmd)
 	{
 		try
 		{
 			final String[] tabTypes = new String[] { "TABLE", "VIEW" };
-			final ResultSet rs = dmd.getTables(null, null, null, tabTypes);
-			try
-			{
-				while (rs.next())
-				{
-					String tableName = rs.getString("TABLE_NAME");
-
-					_tables.put(new CaseInsensitiveString(tableName), tableName);
-
-					String tableType = rs.getString("TABLE_TYPE");
-
-					String cat = rs.getString("TABLE_CAT");
-					String schem = rs.getString("TABLE_SCHEM");
-
-					_extendedtableInfos.add(new ExtendedTableInfo(tableName, tableType, cat, schem));
-				}
-			}
-			finally
-			{
-				rs.close();
-			}
+            ITableInfo[] infos = dmd.getTables(null, null, null, tabTypes);
+            for (int i = 0; i < infos.length; i++) {
+                String tableName = infos[i].getSimpleName();
+                _tables.put(new CaseInsensitiveString(tableName), tableName);
+                ExtendedTableInfo info = 
+                    new ExtendedTableInfo(tableName, 
+                                          infos[i].getType(), 
+                                          infos[i].getCatalogName(), 
+                                          infos[i].getSchemaName());
+                _extendedtableInfos.add(info);
+            }            
 		}
 		catch (Throwable th)
 		{
@@ -895,33 +848,16 @@ public class SchemaInfo
 			s_log.warn(s_stringMgr.getString("SchemaInfo.UnableToLoadColumns", tableName));
 			return;
 		}
-
-		ResultSet rs = _dmd.getColumns(null, null, getCaseSensitiveTableName(tableName.toString()), null);
-		try
-		{
-			ArrayList infos = new ArrayList();
-
-			while (rs.next())
-			{
-				String columnName = rs.getString("COLUMN_NAME");
-				String columnType = rs.getString("TYPE_NAME");
-				int columnSize = rs.getInt("COLUMN_SIZE");
-				int decimalDigits = rs.getInt("DECIMAL_DIGITS");
-				boolean nullable = "YES".equals(rs.getString("IS_NULLABLE"));
-				String cat = rs.getString("TABLE_CAT");
-				String schem = rs.getString("TABLE_SCHEM");
-				ExtendedColumnInfo buf = new ExtendedColumnInfo(columnName, columnType, columnSize, decimalDigits, nullable, cat, schem);
-				infos.add(buf);
-
-				_columns.put(new CaseInsensitiveString(columnName), columnName);
-			}
-			_extendedColumnInfosByTableName.put(tableName, infos);
-
-		}
-		finally
-		{
-			rs.close();
-		}
+        String name = getCaseSensitiveTableName(tableName.toString());
+        TableInfo ti = 
+            new TableInfo(null, null, name, "TABLE", null, _dmd);
+        TableColumnInfo[] infos = _dmd.getColumnInfo(ti);
+        ArrayList result = new ArrayList();
+        for (int i = 0; i < infos.length; i++) {
+            ExtendedColumnInfo buf = new ExtendedColumnInfo(infos[i]);
+            result.add(buf);
+        }
+        _extendedColumnInfosByTableName.put(tableName, result);    
 	}
 
 	public ExtendedColumnInfo[] getExtendedColumnInfos(String tableName)

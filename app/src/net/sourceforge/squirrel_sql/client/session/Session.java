@@ -24,7 +24,6 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,7 +55,6 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnectionState;
-import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -463,18 +461,6 @@ class Session implements ISession
 			connState = new SQLConnectionState();
 			try
 			{
-
-
-
-
-
-
-
-
-
-
-
-
 				connState.saveState(_conn, _msgHandler);
 			}
 			catch (SQLException ex)
@@ -825,12 +811,6 @@ class Session implements ISession
         if (!_app.getSquirrelPreferences().getWarnJreJdbcMismatch()) {
             return;
         }
-        DatabaseMetaData data = null;
-        try {
-            data = _conn.getSQLMetaData().getJDBCMetaData();
-        } catch (SQLException e) {
-            /* Do Nothing */
-        }
         String javaVersion = System.getProperty("java.vm.version");
         boolean javaVersionIsAtLeast14 = true; 
         if (javaVersion != null) {
@@ -846,16 +826,15 @@ class Session implements ISession
         }
         // At this point we know that we have a 1.4 or higher java runtime
         boolean driverIs21Compliant = true;
-        if (data != null) { 
-            try {
-                boolean supportsSavePoints = data.supportsSavepoints();
-                if (!supportsSavePoints) {
-                    driverIs21Compliant = false;
-                }
-            } catch (Throwable e) {
+ 
+        try {
+            if (!_conn.getSQLMetaData().supportsSavepoints()) {
                 driverIs21Compliant = false;
             }
+        } catch (Throwable e) {
+            driverIs21Compliant = false;
         }
+
         if (!driverIs21Compliant && javaVersionIsAtLeast14) {
             StringBuffer tmp = new StringBuffer();
             tmp.append("The driver being used for alias '");
