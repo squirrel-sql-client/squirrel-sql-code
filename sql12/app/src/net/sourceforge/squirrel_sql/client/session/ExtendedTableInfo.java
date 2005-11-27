@@ -23,7 +23,7 @@ public class ExtendedTableInfo
    private String _catalog;
    private String _schema;
 
-   ExtendedTableInfo(String tableName, String tableType, String catalog, String schema)
+   public ExtendedTableInfo(String tableName, String tableType, String catalog, String schema)
 	{
 		_tableName = tableName;
 		_tableType = tableType;
