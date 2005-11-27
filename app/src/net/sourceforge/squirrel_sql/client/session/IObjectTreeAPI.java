@@ -60,6 +60,12 @@ public interface IObjectTreeAPI extends IHasIdentifier
 	 */
 	DatabaseObjectType UDT_TYPE_DBO = DatabaseObjectType.createNewDatabaseObjectType("UDT Type");
 
+    /**
+     * Datbase object type for a "Database" node in the object tree.  There is onle one
+     * node of this type in the object tree and it indicates the alias of the database. 
+     */
+    DatabaseObjectType DATABASE_TYPE_DBO = DatabaseObjectType.createNewDatabaseObjectType("Database Type");
+    
 	/**
 	 * Retrieves the session of associated with the tree.
 	 *
