@@ -127,7 +127,7 @@ class ObjectTree extends JTree
 		setShowsRootHandles(true);
 
 		// Add actions to the popup menu.
-		ActionCollection actions = session.getApplication().getActionCollection();
+		final ActionCollection actions = session.getApplication().getActionCollection();
 		addToPopup(DatabaseObjectType.TABLE, actions.get(DropSelectedTablesAction.class));
 		addToPopup(DatabaseObjectType.VIEW, actions.get(DropSelectedTablesAction.class));
 
@@ -135,50 +135,66 @@ class ObjectTree extends JTree
 		addToPopup(actions.get(RefreshObjectTreeAction.class));
 		addToPopup(actions.get(RefreshObjectTreeItemAction.class));
 
-      addToPopup(DatabaseObjectType.TABLE, actions.get(EditWhereColsAction.class));
-      addToPopup(DatabaseObjectType.TABLE, actions.get(SQLFilterAction.class));
-      addToPopup(DatabaseObjectType.SESSION, actions.get(FilterObjectsAction.class));
+		addToPopup(DatabaseObjectType.TABLE, actions.get(EditWhereColsAction.class));
+		addToPopup(DatabaseObjectType.TABLE, actions.get(SQLFilterAction.class));
+		addToPopup(DatabaseObjectType.SESSION, actions.get(FilterObjectsAction.class));
 
 
-      // Option to select default catalog only applies to sessions
-		// that support catalogs.
-		try
-		{
-			if (_session.getSQLConnection().getSQLMetaData().supportsCatalogs())
-			{
-				addToPopup(DatabaseObjectType.CATALOG,
-							actions.get(SetDefaultCatalogAction.class));
-			}
-		}
-		catch (Throwable th)
-		{
-			// Assume DBMS doesn't support catalogs.
-			s_log.debug(th);
-		}
+		session.getApplication().getThreadPool().addTask(new Runnable() {
+          public void run() {
+            try
+            {
+                // Option to select default catalog only applies to sessions
+                // that support catalogs.
+                if (_session.getSQLConnection().getSQLMetaData().supportsCatalogs())
+                {
+                    SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                            addToPopup(DatabaseObjectType.CATALOG,
+                                       actions.get(SetDefaultCatalogAction.class));
+                        }
+                        
+                    });
+                }
+            }
+            catch (Throwable th)
+            {
+                // Assume DBMS doesn't support catalogs.
+                s_log.debug(th);
+            }
+            
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    addToPopup(actions.get(CopySimpleObjectNameAction.class));
+                    addToPopup(actions.get(CopyQualifiedObjectNameAction.class));
 
-		addToPopup(actions.get(CopySimpleObjectNameAction.class));
-		addToPopup(actions.get(CopyQualifiedObjectNameAction.class));
+                    // Mouse listener used to display popup menu.
+                    addMouseListener(new MouseAdapter()
+                    {
+                        public void mousePressed(MouseEvent evt)
+                        {
+                            if (evt.isPopupTrigger())
+                            {
+                                showPopup(evt.getX(), evt.getY());
+                            }
+                        }
+                        public void mouseReleased(MouseEvent evt)
+                        {
+                            if (evt.isPopupTrigger())
+                            {
+                                showPopup(evt.getX(), evt.getY());
+                            }
+                        }
+                    });
 
-		// Mouse listener used to display popup menu.
-		addMouseListener(new MouseAdapter()
-		{
-			public void mousePressed(MouseEvent evt)
-			{
-				if (evt.isPopupTrigger())
-				{
-					showPopup(evt.getX(), evt.getY());
-				}
-			}
-			public void mouseReleased(MouseEvent evt)
-			{
-				if (evt.isPopupTrigger())
-				{
-					showPopup(evt.getX(), evt.getY());
-				}
-			}
-		});
+                  setCellRenderer(new ObjectTreeCellRenderer(_model, _session));
+                  ObjectTree.this.refresh();
+                  ObjectTree.this.setSelectionPath(ObjectTree.this.getPathForRow(0));
+                }
+            });
+          }
+      });
 
-      setCellRenderer(new ObjectTreeCellRenderer(_model, _session));
 
    }
 	/**
