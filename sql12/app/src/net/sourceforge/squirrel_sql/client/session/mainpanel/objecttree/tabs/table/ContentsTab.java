@@ -22,33 +22,33 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Vector;
 
-import javax.swing.JOptionPane;
-
-import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
-import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.DataSetUpdateableTableModelImpl;
-import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.OrderByClausePanel;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterClauses;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.WhereClausePanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetScrollingPanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * This is the tab showing the contents (data) of the table.
@@ -175,7 +175,9 @@ public class ContentsTab extends BaseTableTab
    {
       final ISession session = getSession();
       final SQLConnection conn = session.getSQLConnection();
-      final SQLDatabaseMetaData md = conn.getSQLMetaData();
+      SQLDatabaseMetaData md = conn.getSQLMetaData();
+      //ISQLDatabaseMetaData md = conn.getSQLMetaData();
+      //md = (ISQLDatabaseMetaData)Spin.off(md);
 //		final SQLFilterClauses sqlFilterClauses = session.getSQLFilterClauses();
 
       try
@@ -246,7 +248,8 @@ public class ContentsTab extends BaseTableTab
             // getBestRowIdentifier.
             catch (Throwable th)
             {
-               s_log.debug("getBestRowIdentifier not supported", th);
+               s_log.debug("getBestRowIdentifier not supported for table "+
+                           currentTableName, th);
             }
 
             // TODO: - Col - Add method to Databasemetadata that returns array
@@ -350,7 +353,9 @@ public class ContentsTab extends BaseTableTab
             // We also include the URL used to connect to the DB so that
             // the same table/DB on different machines is treated differently.
             rsds.setContentsTabResultSet(rs, _dataSetUpdateableTableModel.getFullTableName());
-
+            if (rs != null) {
+                try { rs.close(); } catch (SQLException e) {}
+            }
             // KLUDGE:
             // We want some info about the columns to be available for validating the
             // user input during cell editing operations.  Ideally we would get that
@@ -366,25 +371,20 @@ public class ContentsTab extends BaseTableTab
             // DBMSs, while it is correct for those DBMSs in the getColumns() info.  Therefore,
             // we collect the collumn nullability information from getColumns() and pass that
             // info to the ResultSet to override what it got from the ResultSetMetaData.
-            final ResultSet columnRS = md.getColumns(getTableInfo());
-            try
-            {
-               final ColumnDisplayDefinition[] colDefs = rsds.getDataSetDefinition().getColumnDefinitions();
+            TableColumnInfo[] columnInfos = md.getColumnInfo(getTableInfo());
+            final ColumnDisplayDefinition[] colDefs = 
+                rsds.getDataSetDefinition().getColumnDefinitions();
 
-               // get the nullability information and pass it into the ResultSet
-               // Unfortunately, not all DBMSs provide the column number in object 17 as stated in the
-               // SQL documentation, so we have to guess that the result set is in column order
-               int columnNumber = 0;
-               while (columnRS.next()) {
-                  boolean isNullable = true;
-                  if (columnRS.getInt(11) == DatabaseMetaData.columnNoNulls)
-                     isNullable = false;
-                  colDefs[columnNumber++].setIsNullable(isNullable);
-               }
-            }
-            finally
-            {
-               columnRS.close();
+            // get the nullability information and pass it into the ResultSet
+            // Unfortunately, not all DBMSs provide the column number in object 17 as stated in the
+            // SQL documentation, so we have to guess that the result set is in column order
+            for (int i = 0; i < columnInfos.length; i++) {
+                boolean isNullable = true;
+                TableColumnInfo info = columnInfos[i];
+                if (info.isNullAllowed() == DatabaseMetaData.columnNoNulls) {
+                    isNullable = false;
+                }
+                colDefs[i].setIsNullable(isNullable);
             }
 
             //?? remember which column is the rowID (if any) so we can

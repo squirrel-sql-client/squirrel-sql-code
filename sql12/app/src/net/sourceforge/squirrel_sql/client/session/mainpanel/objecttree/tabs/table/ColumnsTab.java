@@ -17,13 +17,10 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.ta
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 /**
  * This tab shows the columns in the currently selected table.
  *
@@ -31,6 +28,9 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
  */
 public class ColumnsTab extends BaseTableTab
 {
+    private static int[] columnIndices = 
+        new int[] { 4, 6, 7, 9, 18, 13, 12, 5, 8, 10, 11, 14, 15, 16, 17 };
+    
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
@@ -67,23 +67,7 @@ public class ColumnsTab extends BaseTableTab
 	protected IDataSet createDataSet() throws DataSetException
 	{
 		final SQLConnection conn = getSession().getSQLConnection();
-		try
-		{
-			final ResultSet rs = conn.getSQLMetaData().getColumns(getTableInfo());
-			try
-			{
-				final ResultSetDataSet rsds = new ResultSetDataSet();
- 				rsds.setResultSet(rs, new int[] { 4, 6, 7, 9, 18, 13, 12, 5, 8, 10, 11, 14, 15, 16, 17 }, true);
-				return rsds;
-			}
-			finally
-			{
-				rs.close();
-			}
-		}
-		catch (SQLException ex)
-		{
-			throw new DataSetException(ex);
-		}
+        SQLDatabaseMetaData md = conn.getSQLMetaData();
+        return md.getColumns(getTableInfo(), columnIndices, true);
 	}
 }
