@@ -341,6 +341,9 @@ public class SQLSyntax extends Syntax
                   TokenID tid = matchError(buffer, tokenOffset, offset - tokenOffset);
                   tid = (tid != null) ? tid : matchKeyword(buffer, tokenOffset, offset - tokenOffset);
                   tid = (tid != null) ? tid : matchTable(buffer, tokenOffset, offset - tokenOffset);
+                  tid = (tid != null) ? tid : matchFunction(buffer, tokenOffset, offset - tokenOffset);
+                  tid = (tid != null) ? tid : matchDataType(buffer, tokenOffset, offset - tokenOffset);
+                  tid = (tid != null) ? tid : matchStatementSeparator(buffer, tokenOffset, offset - tokenOffset);
                   tid = (tid != null) ? tid : matchColumn(buffer, tokenOffset, offset - tokenOffset);
                   return (tid != null) ? tid : SQLTokenContext.IDENTIFIER;
                }
@@ -877,77 +880,77 @@ public class SQLSyntax extends Syntax
       return null; // nothing found
    }
 
-   public String getStateName(int stateNumber)
-   {
-      switch (stateNumber)
-      {
-         case ISI_WHITESPACE:
-            return "ISI_WHITESPACE"; // NOI18N
-         case ISI_LINE_COMMENT:
-            return "ISI_LINE_COMMENT"; // NOI18N
-         case ISI_BLOCK_COMMENT:
-            return "ISI_BLOCK_COMMENT"; // NOI18N
-         case ISI_STRING:
-            return "ISI_STRING"; // NOI18N
-         case ISI_STRING_A_BSLASH:
-            return "ISI_STRING_A_BSLASH"; // NOI18N
-         case ISI_CHAR:
-            return "ISI_CHAR"; // NOI18N
-         case ISI_CHAR_A_BSLASH:
-            return "ISI_CHAR_A_BSLASH"; // NOI18N
-         case ISI_IDENTIFIER:
-            return "ISI_IDENTIFIER"; // NOI18N
-         case ISA_MINUS:
-            return "ISA_MINUS"; // NOI18N
-         case ISA_EQ:
-            return "ISA_EQ"; // NOI18N
-         case ISA_GT:
-            return "ISA_GT"; // NOI18N
-         case ISA_GTGT:
-            return "ISA_GTGT"; // NOI18N
-         case ISA_GTGTGT:
-            return "ISA_GTGTGT"; // NOI18N
-         case ISA_LT:
-            return "ISA_LT"; // NOI18N
-         case ISA_LTLT:
-            return "ISA_LTLT"; // NOI18N
-         case ISA_PLUS:
-            return "ISA_PLUS"; // NOI18N
-         case ISA_SLASH:
-            return "ISA_SLASH"; // NOI18N
-         case ISA_STAR:
-            return "ISA_STAR"; // NOI18N
-         case ISA_STAR_I_BLOCK_COMMENT:
-            return "ISA_STAR_I_BLOCK_COMMENT"; // NOI18N
-         case ISA_PIPE:
-            return "ISA_PIPE"; // NOI18N
-         case ISA_PERCENT:
-            return "ISA_PERCENT"; // NOI18N
-         case ISA_AND:
-            return "ISA_AND"; // NOI18N
-         case ISA_XOR:
-            return "ISA_XOR"; // NOI18N
-         case ISA_EXCLAMATION:
-            return "ISA_EXCLAMATION"; // NOI18N
-         case ISA_ZERO:
-            return "ISA_ZERO"; // NOI18N
-         case ISI_INT:
-            return "ISI_INT"; // NOI18N
-         case ISI_OCTAL:
-            return "ISI_OCTAL"; // NOI18N
-         case ISI_DOUBLE:
-            return "ISI_DOUBLE"; // NOI18N
-         case ISI_DOUBLE_EXP:
-            return "ISI_DOUBLE_EXP"; // NOI18N
-         case ISI_HEX:
-            return "ISI_HEX"; // NOI18N
-         case ISA_DOT:
-            return "ISA_DOT"; // NOI18N
+	public String getStateName(int stateNumber)
+	{
+		switch (stateNumber)
+		{
+			case ISI_WHITESPACE:
+				return "ISI_WHITESPACE"; // NOI18N
+			case ISI_LINE_COMMENT:
+				return "ISI_LINE_COMMENT"; // NOI18N
+			case ISI_BLOCK_COMMENT:
+				return "ISI_BLOCK_COMMENT"; // NOI18N
+			case ISI_STRING:
+				return "ISI_STRING"; // NOI18N
+			case ISI_STRING_A_BSLASH:
+				return "ISI_STRING_A_BSLASH"; // NOI18N
+			case ISI_CHAR:
+				return "ISI_CHAR"; // NOI18N
+			case ISI_CHAR_A_BSLASH:
+				return "ISI_CHAR_A_BSLASH"; // NOI18N
+			case ISI_IDENTIFIER:
+				return "ISI_IDENTIFIER"; // NOI18N
+			case ISA_MINUS:
+				return "ISA_MINUS"; // NOI18N
+			case ISA_EQ:
+				return "ISA_EQ"; // NOI18N
+			case ISA_GT:
+				return "ISA_GT"; // NOI18N
+			case ISA_GTGT:
+				return "ISA_GTGT"; // NOI18N
+			case ISA_GTGTGT:
+				return "ISA_GTGTGT"; // NOI18N
+			case ISA_LT:
+				return "ISA_LT"; // NOI18N
+			case ISA_LTLT:
+				return "ISA_LTLT"; // NOI18N
+			case ISA_PLUS:
+				return "ISA_PLUS"; // NOI18N
+			case ISA_SLASH:
+				return "ISA_SLASH"; // NOI18N
+			case ISA_STAR:
+				return "ISA_STAR"; // NOI18N
+			case ISA_STAR_I_BLOCK_COMMENT:
+				return "ISA_STAR_I_BLOCK_COMMENT"; // NOI18N
+			case ISA_PIPE:
+				return "ISA_PIPE"; // NOI18N
+			case ISA_PERCENT:
+				return "ISA_PERCENT"; // NOI18N
+			case ISA_AND:
+				return "ISA_AND"; // NOI18N
+			case ISA_XOR:
+				return "ISA_XOR"; // NOI18N
+			case ISA_EXCLAMATION:
+				return "ISA_EXCLAMATION"; // NOI18N
+			case ISA_ZERO:
+				return "ISA_ZERO"; // NOI18N
+			case ISI_INT:
+				return "ISI_INT"; // NOI18N
+			case ISI_OCTAL:
+				return "ISI_OCTAL"; // NOI18N
+			case ISI_DOUBLE:
+				return "ISI_DOUBLE"; // NOI18N
+			case ISI_DOUBLE_EXP:
+				return "ISI_DOUBLE_EXP"; // NOI18N
+			case ISI_HEX:
+				return "ISI_HEX"; // NOI18N
+			case ISA_DOT:
+				return "ISA_DOT"; // NOI18N
 
-         default:
-            return super.getStateName(stateNumber);
-      }
-   }
+			default:
+				return super.getStateName(stateNumber);
+		}
+	}
 
    private TokenID matchTable(char[] buffer, int offset, int len)
    {
@@ -973,7 +976,62 @@ public class SQLSyntax extends Syntax
       return null;
    }
 
-   private void fireTableOrViewFound(String tableOrViewName)
+	private TokenID matchFunction(char[] buffer, int offset, int len)
+	{
+		_caseInsensitiveStringBuffer.setCharBuffer(buffer, offset, len);
+
+
+		if(_sess.getSchemaInfo().isFunction(_caseInsensitiveStringBuffer))
+      {
+         return SQLTokenContext.FUNCTION;
+      }
+		if(_sess.getSchemaInfo().isProcedure(_caseInsensitiveStringBuffer))
+      {
+         return SQLTokenContext.FUNCTION;
+      }
+
+
+      return null;
+	}
+
+	private TokenID matchDataType(char[] buffer, int offset, int len)
+	{
+		_caseInsensitiveStringBuffer.setCharBuffer(buffer, offset, len);
+
+
+		if(_sess.getSchemaInfo().isDataType(_caseInsensitiveStringBuffer))
+      {
+         return SQLTokenContext.DATA_TYPE;
+      }
+      return null;
+	}
+
+	private TokenID matchStatementSeparator(char[] buffer, int offset, int len)
+	{
+		_caseInsensitiveStringBuffer.setCharBuffer(buffer, offset, len);
+
+		String statSep = _sess.getProperties().getSQLStatementSeparator();
+
+		if(statSep.length() != len)
+		{
+			return null;
+		}
+
+		// no new here, method is called very often.
+		for(int i=0; i < statSep.length(); ++i)
+		{
+			if(buffer[offset +i] != statSep.charAt(i))
+			{
+				return null;
+			}
+		}
+
+      return SQLTokenContext.STATEMENT_SEPARATOR;
+	}
+
+
+
+	private void fireTableOrViewFound(String tableOrViewName)
    {
       for (int i = 0; i < _sqlTokenListeners.size(); i++)
       {

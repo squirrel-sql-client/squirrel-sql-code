@@ -20,9 +20,13 @@ public class SQLTokenContext extends TokenContext
    public static final int TABLE_ID = IDENTIFIER_ID + 1;
    public static final int COLUMN_ID = TABLE_ID + 1;
    public static final int ERROR_ID = COLUMN_ID + 1;
+   public static final int FUNCTION_ID = ERROR_ID + 1;
+	public static final int DATA_TYPE_ID = FUNCTION_ID + 1;
+	public static final int STATEMENT_SEPARATOR_ID = DATA_TYPE_ID + 1;
 
 
-   public static final int LINE_COMMENT_ID = ERROR_ID + 1;
+
+	public static final int LINE_COMMENT_ID = STATEMENT_SEPARATOR_ID + 1;
    public static final int BLOCK_COMMENT_ID = LINE_COMMENT_ID + 1;
    public static final int CHAR_LITERAL_ID = BLOCK_COMMENT_ID + 1;
    public static final int STRING_LITERAL_ID = CHAR_LITERAL_ID + 1;
@@ -200,9 +204,17 @@ public class SQLTokenContext extends TokenContext
    public static final BaseTokenID ERROR
       = new BaseTokenID("error", ERROR_ID); // NOI18N
 
+	public static final BaseTokenID FUNCTION
+		= new BaseTokenID("function", FUNCTION_ID); // NOI18N
+
+	public static final BaseTokenID DATA_TYPE
+		= new BaseTokenID("dataType", DATA_TYPE_ID); // NOI18N
+
+	public static final BaseTokenID STATEMENT_SEPARATOR
+		= new BaseTokenID("statementSeparator", STATEMENT_SEPARATOR_ID); // NOI18N
 
 
-   /**
+	/**
     * Comment with the '//' prefix
     */
    public static final BaseTokenID LINE_COMMENT
