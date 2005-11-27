@@ -19,14 +19,57 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.JMenu;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.TreeModelListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreePath;
+
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.FilterObjectsAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.*;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.CatalogsTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.ConnectionStatusTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.DataTypesTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.KeywordsTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.MetaDataTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.NumericFunctionsTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.SchemasTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.StringFunctionsTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.SystemFunctionsTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.TableTypesTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.TimeDateFunctionsTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.procedure.ProcedureColumnsTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.*;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ColumnPriviligesTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ColumnsTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ContentsTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ExportedKeysTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ImportedKeysTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.IndexesTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.PrimaryKeyTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.RowCountTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.RowIDTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.TablePriviligesTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.VersionColumnsTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterClauses;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
@@ -38,16 +81,6 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.tree.TreePath;
-import java.awt.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 /**
  * This is the panel for the Object Tree tab.
  *
@@ -127,53 +160,73 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 
 		final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
 
-		try
-		{
-			if (md.supportsCatalogs())
-			{
-				addDetailTab(DatabaseObjectType.SESSION, new CatalogsTab());
-			}
-		}
-		catch (Throwable th)
-		{
-			s_log.error("Error in supportsCatalogs()", th);
-		}
+        session.getApplication().getThreadPool().addTask(new Runnable() {
+            public void run() {
+                try
+                {
+                    if (md.supportsCatalogs())
+                    {
+                        SwingUtilities.invokeLater(new Runnable() {
+                            public void run() {
+                                addDetailTab(DatabaseObjectType.SESSION, new CatalogsTab());
+                            }
+                        });
+                    }
+                }
+                catch (Throwable th)
+                {
+                    s_log.error("Error in supportsCatalogs()", th);
+                }                
+            }
+        });
 
-		try
-		{
-			if (md.supportsSchemas())
-			{
-				addDetailTab(DatabaseObjectType.SESSION, new SchemasTab());
-			}
-		}
-		catch (Throwable th)
-		{
-			s_log.error("Error in supportsCatalogs()", th);
-		}
-
-		addDetailTab(DatabaseObjectType.SESSION, new TableTypesTab());
-		addDetailTab(DatabaseObjectType.SESSION, new DataTypesTab());
-		addDetailTab(DatabaseObjectType.SESSION, new NumericFunctionsTab());
-		addDetailTab(DatabaseObjectType.SESSION, new StringFunctionsTab());
-		addDetailTab(DatabaseObjectType.SESSION, new SystemFunctionsTab());
-		addDetailTab(DatabaseObjectType.SESSION, new TimeDateFunctionsTab());
-		addDetailTab(DatabaseObjectType.SESSION, new KeywordsTab());
-
-		// Register tabs to display in the details panel for catalog nodes.
-		addDetailTab(DatabaseObjectType.CATALOG, new DatabaseObjectInfoTab());
-
-		// Register tabs to display in the details panel for schema nodes.
-		addDetailTab(DatabaseObjectType.SCHEMA, new DatabaseObjectInfoTab());
-
-      addDetailTabForTableLikeObjects(DatabaseObjectType.TABLE);
-      addDetailTabForTableLikeObjects(DatabaseObjectType.VIEW);
-
-      // Register tabs to display in the details panel for procedure nodes.
-		addDetailTab(DatabaseObjectType.PROCEDURE, new DatabaseObjectInfoTab());
-		addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureColumnsTab());
-
-		// Register tabs to display in the details panel for UDT nodes.
-		addDetailTab(DatabaseObjectType.UDT, new DatabaseObjectInfoTab());
+        session.getApplication().getThreadPool().addTask(new Runnable() {
+            public void run() {
+                try
+                {
+                    if (md.supportsSchemas())
+                    {
+                        SwingUtilities.invokeLater(new Runnable() {
+                            public void run() {
+                                addDetailTab(DatabaseObjectType.SESSION, new SchemasTab());
+                            }
+                        });
+                        
+                    }
+                }
+                catch (Throwable th)
+                {
+                    s_log.error("Error in supportsCatalogs()", th);
+                }
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        addDetailTab(DatabaseObjectType.SESSION, new TableTypesTab());
+                        addDetailTab(DatabaseObjectType.SESSION, new DataTypesTab());
+                        addDetailTab(DatabaseObjectType.SESSION, new NumericFunctionsTab());
+                        addDetailTab(DatabaseObjectType.SESSION, new StringFunctionsTab());
+                        addDetailTab(DatabaseObjectType.SESSION, new SystemFunctionsTab());
+                        addDetailTab(DatabaseObjectType.SESSION, new TimeDateFunctionsTab());
+                        addDetailTab(DatabaseObjectType.SESSION, new KeywordsTab());
+        
+                        // Register tabs to display in the details panel for catalog nodes.
+                        addDetailTab(DatabaseObjectType.CATALOG, new DatabaseObjectInfoTab());
+        
+                        // Register tabs to display in the details panel for schema nodes.
+                        addDetailTab(DatabaseObjectType.SCHEMA, new DatabaseObjectInfoTab());
+        
+                        addDetailTabForTableLikeObjects(DatabaseObjectType.TABLE);
+                        addDetailTabForTableLikeObjects(DatabaseObjectType.VIEW);
+        
+                        // Register tabs to display in the details panel for procedure nodes.
+                        addDetailTab(DatabaseObjectType.PROCEDURE, new DatabaseObjectInfoTab());
+                        addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureColumnsTab());
+        
+                        // Register tabs to display in the details panel for UDT nodes.
+                        addDetailTab(DatabaseObjectType.UDT, new DatabaseObjectInfoTab());
+                    }
+                });
+            }
+        });
    }
 
    private void addDetailTabForTableLikeObjects(DatabaseObjectType type)
@@ -588,6 +641,9 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
     */
    public boolean selectInObjectTree(String catalog, String schema, String object)
    {
+      if ("".equals(object)) {
+          return false;
+      }
       ObjectTreeModel otm = (ObjectTreeModel) _tree.getModel();
       TreePath treePath = otm.getPathToDbInfo(catalog, schema, object, (ObjectTreeNode) otm.getRoot(), false);
       if(null == treePath)
