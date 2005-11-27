@@ -20,11 +20,13 @@
  */
 package net.sourceforge.squirrel_sql.client.session.parser.kernel;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 /**
  * requirements for objects that maintain schema information
@@ -42,7 +44,7 @@ public interface SQLSchema
         public final String compositeName;
         public transient String alias;
 
-        private DatabaseMetaData dmd;
+        private SQLDatabaseMetaData dmd;
         private String[] columns;
 
         public static String createCompositeName(String catalog, String schema, String name)
@@ -74,7 +76,7 @@ public interface SQLSchema
             }
         }
 
-        public Table(String catalog, String schema, String name, DatabaseMetaData dmd)
+        public Table(String catalog, String schema, String name, SQLDatabaseMetaData dmd)
         {
             this.catalog = catalog;
             this.schema = schema;
@@ -194,10 +196,9 @@ public interface SQLSchema
             ResultSet rs = null;
             try {
                 List cols = new ArrayList();
-                rs = dmd.getColumns(catalog, schema, name, null);
-                while(rs.next())
-                {
-                    cols.add(rs.getString(4));
+                TableColumnInfo[] infos = dmd.getColumnInfo(catalog, schema, name);
+                for (int i = 0; i < infos.length; i++) {
+                    cols.add(infos[i].getColumnName());
                 }
                 setColumns(cols);
             }
