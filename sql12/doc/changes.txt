@@ -4,6 +4,8 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+- Made Syntax highlighting work for: Data Types, Functions, Operators, Identifiers, White Spaces
+
 - Fixed bug #1276957: Oracle protocol violation.
 
 - Oracle Plugin (v0.15) - If the user doesn't have the DBA privilege, then only loads the 

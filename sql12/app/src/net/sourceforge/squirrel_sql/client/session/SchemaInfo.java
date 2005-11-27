@@ -64,6 +64,7 @@ public class SchemaInfo
 	private final List _extendedtableInfos = new ArrayList();
 	private ISession _session = null;
 	private IProcedureInfo[] _procInfos = new IProcedureInfo[0];
+	private HashMap _procedures = new HashMap();
 
 
 	/** Logger for this class. */
@@ -209,6 +210,17 @@ public class SchemaInfo
 		{
 			s_log.debug("Loading stored procedures with filter "+objFilter);
 			_procInfos = dmd.getProcedures(null, null,objFilter != null && objFilter.length() > 0 ? objFilter :"%");
+
+			for (int i = 0; i < _procInfos.length; i++)
+			{
+				String proc = (String) _procInfos[i].getSimpleName();
+				if (proc.length() > 0)
+				{
+					_procedures.put(new CaseInsensitiveString(_procInfos[i].getSimpleName()) ,proc);
+				}
+
+			}
+
 		}
 		catch (Throwable th)
 		{
@@ -599,48 +611,43 @@ public class SchemaInfo
 
 	private void loadFunctions(SQLDatabaseMetaData dmd)
 	{
-		StringBuffer buf = new StringBuffer(1024);
+		ArrayList buf = new ArrayList();
 
 		try
 		{
-			buf.append(dmd.getNumericFunctions());
+			buf.addAll(Arrays.asList(dmd.getNumericFunctions()));
 		}
 		catch (Throwable ex)
 		{
 			s_log.error("Error", ex);
 		}
 
-		buf.append(",");
-
 		try
 		{
-			buf.append(dmd.getStringFunctions());
+			buf.addAll(Arrays.asList((dmd.getStringFunctions())));
 		}
 		catch (Throwable ex)
 		{
 			s_log.error("Error", ex);
 		}
 
-		buf.append(",");
-
 		try
 		{
-			buf.append(dmd.getTimeDateFunctions());
+			buf.addAll(Arrays.asList(dmd.getTimeDateFunctions()));
 		}
 		catch (Throwable ex)
 		{
 			s_log.error("Error", ex);
 		}
 
-		StringTokenizer strtok = new StringTokenizer(buf.toString(), ",");
-
-		while (strtok.hasMoreTokens())
+		for (int i = 0; i < buf.size(); i++)
 		{
-			final String func = strtok.nextToken().trim();
+			String func = (String) buf.get(i);
 			if (func.length() > 0)
 			{
 				_functions.put(new CaseInsensitiveString(func) ,func);
 			}
+
 		}
 	}
 
@@ -843,21 +850,24 @@ public class SchemaInfo
 	private void accessDbToLoadColumns(CaseInsensitiveString tableName)
 		throws SQLException
 	{
-		if(null == _dmd)
+		if (null == _dmd)
 		{
 			s_log.warn(s_stringMgr.getString("SchemaInfo.UnableToLoadColumns", tableName));
 			return;
 		}
-        String name = getCaseSensitiveTableName(tableName.toString());
-        TableInfo ti = 
-            new TableInfo(null, null, name, "TABLE", null, _dmd);
-        TableColumnInfo[] infos = _dmd.getColumnInfo(ti);
-        ArrayList result = new ArrayList();
-        for (int i = 0; i < infos.length; i++) {
-            ExtendedColumnInfo buf = new ExtendedColumnInfo(infos[i]);
-            result.add(buf);
-        }
-        _extendedColumnInfosByTableName.put(tableName, result);    
+		String name = getCaseSensitiveTableName(tableName.toString());
+		TableInfo ti =
+			new TableInfo(null, null, name, "TABLE", null, _dmd);
+		TableColumnInfo[] infos = _dmd.getColumnInfo(ti);
+		ArrayList result = new ArrayList();
+		for (int i = 0; i < infos.length; i++)
+		{
+			ExtendedColumnInfo buf = new ExtendedColumnInfo(infos[i]);
+			result.add(buf);
+			_columns.put(new CaseInsensitiveString(buf.getColumnName()), buf.getColumnName());
+
+		}
+		_extendedColumnInfosByTableName.put(tableName, result);
 	}
 
 	public ExtendedColumnInfo[] getExtendedColumnInfos(String tableName)
@@ -914,5 +924,10 @@ public class SchemaInfo
 		// If we don't remove the listeners the
 		// Session won't get Garbeage Collected.
 		_session.getApplication().getSessionManager().removeSessionListener(_sessionListener);
+	}
+
+	public boolean isProcedure(CaseInsensitiveString data)
+	{
+		return _procedures.containsKey(data);
 	}
 }

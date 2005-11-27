@@ -62,19 +62,34 @@ public class SQLSettingsDefaults extends ExtSettingsDefaults
          {
             switch (tokenIDOrCategory.getNumericID())
             {
-               case SQLTokenContext.WHITESPACE_ID:
-               case SQLTokenContext.OPERATORS_ID:
                case SQLTokenContext.IDENTIFIER_ID:
-                  return SettingsDefaults.emptyColoring;
+						return createColoringFromStyle(_syntaxPreferences.getIdentifierStyle());
 
-               case SQLTokenContext.TABLE_ID:
+					case SQLTokenContext.WHITESPACE_ID:
+						return createColoringFromStyle(_syntaxPreferences.getWhiteSpaceStyle());
+
+
+					case SQLTokenContext.OPERATORS_ID:
+						return createColoringFromStyle(_syntaxPreferences.getOperatorStyle());
+
+
+					case SQLTokenContext.TABLE_ID:
                   return createColoringFromStyle(_syntaxPreferences.getTableStyle());
 
 
                case SQLTokenContext.COLUMN_ID:
                   return createColoringFromStyle(_syntaxPreferences.getColumnStyle());
 
-               case SQLTokenContext.ERROR_ID:
+					case SQLTokenContext.FUNCTION_ID:
+						return createColoringFromStyle(_syntaxPreferences.getFunctionStyle());
+
+					case SQLTokenContext.DATA_TYPE_ID:
+						return createColoringFromStyle(_syntaxPreferences.getDataTypeStyle());
+
+					case SQLTokenContext.STATEMENT_SEPARATOR_ID:
+						return createColoringFromStyle(_syntaxPreferences.getSeparatorStyle());
+
+					case SQLTokenContext.ERROR_ID:
                   return createColoringFromStyle(_syntaxPreferences.getErrorStyle());
 
                case SQLTokenContext.ERRORS_ID:
