@@ -1,34 +1,28 @@
 package net.sourceforge.squirrel_sql.client.session.parser;
 
-import net.sourceforge.squirrel_sql.client.session.SchemaInfo;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.parser.kernel.SQLSchema;
-
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
-import java.util.Hashtable;
-import java.sql.DatabaseMetaData;
-import java.sql.SQLException;
 
-import net.sourceforge.squirrel_sql.fw.util.BaseRuntimeException;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.SQLSchema;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 
 public class SQLSchemaImpl implements SQLSchema
 {
    private ISession _session;
    private Hashtable _tableCache = new Hashtable();
-   private DatabaseMetaData _dmd;
+   private SQLDatabaseMetaData _dmd;
 
    SQLSchemaImpl(ISession session)
 	{
-      try
-      {
          _session = session;
-         _dmd = _session.getSQLConnection().getConnection().getMetaData();
-      }
-      catch (SQLException e)
-      {
-         throw new BaseRuntimeException(e);
-      }
+         if (_session != null
+                 && _session.getSQLConnection() != null
+                 && _session.getSQLConnection().getSQLMetaData() != null) 
+         {
+             _dmd = _session.getSQLConnection().getSQLMetaData();
+         }
    }
 
 	public SQLSchema.Table getTable(String catalog, String schema, String name)
@@ -64,31 +58,24 @@ public class SQLSchemaImpl implements SQLSchema
       return ret.toString();
    }
 
-   public List getTables(String catalog, String schema, String name)
+    public List getTables(String catalog, String schema, String name)
 	{
-      try
-      {
-         Vector ret = new Vector();
-         String[] tableNames = _session.getSchemaInfo().getTables();
-
-         for (int i = 0; i < tableNames.length; i++)
-         {
+        Vector ret = new Vector();
+        String[] tableNames = _session.getSchemaInfo().getTables();
+        
+        for (int i = 0; i < tableNames.length; i++)
+        {
             String key = getKey(catalog, schema, name);
             SQLSchema.Table buf = (SQLSchema.Table) _tableCache.get(key);
             if(null == buf)
             {
-               buf = new SQLSchema.Table(catalog, schema, tableNames[i], _session.getSQLConnection().getConnection().getMetaData());
-               _tableCache.put(key, buf);
+                buf = new SQLSchema.Table(catalog, schema, tableNames[i], _dmd); 
+                _tableCache.put(key, buf);
             }
             ret.add(buf);
-         }
-         return ret;
-      }
-      catch (SQLException e)
-      {
-         throw new BaseRuntimeException(e);
-      }
-   }
+        }
+        return ret;
+    }
 
 	public SQLSchema.Table getTableForAlias(String alias)
 	{

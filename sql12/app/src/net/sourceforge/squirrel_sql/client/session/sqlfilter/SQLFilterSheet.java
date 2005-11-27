@@ -26,7 +26,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -46,19 +45,20 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
+import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ContentsTab;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
-import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ContentsTab;
 /**
  * SQLFilter dialog gui.
  * JASON: Rename to SQLFilterInternalFrame
@@ -294,23 +294,21 @@ public class SQLFilterSheet extends BaseSessionInternalFrame
 		try
 		{
 			SQLConnection sqlConnection = getSession().getSQLConnection();
-			ResultSet rs =
-				sqlConnection.getSQLMetaData().getColumns((ITableInfo)_objectInfo);
-			while (rs.next())
-			{
-				columnNames.add(rs.getString("COLUMN_NAME"));
-				int dataType = rs.getInt("DATA_TYPE");
-
-				if ((dataType == Types.CHAR)
-					|| (dataType == Types.CLOB)
-					|| (dataType == Types.LONGVARCHAR)
-					|| (dataType == Types.VARCHAR))
-				{
-					textColumns.put(
-						rs.getString("COLUMN_NAME"),
-						new Boolean(true));
-				}
-			}
+            SQLDatabaseMetaData md = sqlConnection.getSQLMetaData();
+            TableColumnInfo[] infos = md.getColumnInfo((ITableInfo)_objectInfo);
+            for (int i = 0; i < infos.length; i++) {
+                String columnName = infos[i].getColumnName();
+                int dataType = infos[i].getDataType();
+                columnNames.add(columnName);
+                if ((dataType == Types.CHAR)
+                        || (dataType == Types.CLOB)
+                        || (dataType == Types.LONGVARCHAR)
+                        || (dataType == Types.VARCHAR))
+                {
+                    textColumns.put(columnName, new Boolean(true));
+                }
+                
+            }
 		}
 		catch (SQLException ex)
 		{

@@ -25,7 +25,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -36,16 +35,16 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ContentsTab;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ContentsTab;
 /**
  * Edit Where Cols dialog gui.
  * JASON: Rename to EditWhereColsInternalFrame 
@@ -206,18 +205,11 @@ public class EditWhereColsSheet extends BaseSessionInternalFrame
 		try
 		{
 			final SQLConnection conn = session.getSQLConnection();
-			final ResultSet rs = conn.getSQLMetaData().getColumns((ITableInfo)_objectInfo);
-			try
-			{
-				while (rs.next())
-				{
-					columnNames.add(rs.getString("COLUMN_NAME"));
-				}
-			}
-			finally
-			{
-				rs.close();
-			}
+            TableColumnInfo[] infos = conn.getSQLMetaData().getColumnInfo((ITableInfo)_objectInfo);
+            for (int i = 0; i < infos.length; i++) {
+                TableColumnInfo info = infos[i];
+                columnNames.add(info.getColumnName());
+            }
 		}
 		catch (SQLException ex)
 		{
