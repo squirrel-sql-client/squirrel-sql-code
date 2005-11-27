@@ -38,7 +38,7 @@ public abstract class BaseObjectTab implements IObjectTab
 		LoggerController.createLogger(BaseObjectTab.class);
 
 	/** Application API. */
-	private IApplication _app;
+	protected IApplication _app;
 
 	/** Current session. */
 //	private ISession _session;
