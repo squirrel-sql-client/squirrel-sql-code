@@ -117,8 +117,16 @@ public abstract class BaseDataSetTab extends BaseObjectTab
 		{
 			throw new IllegalStateException("Null ISession");
 		}
-
-		((DataSetScrollingPanel)getComponent()).load(createDataSet());
+		super._app.getThreadPool().addTask(new Runnable() {
+		    public void run() {
+                try {
+                ((DataSetScrollingPanel)getComponent()).load(createDataSet());
+                } catch (DataSetException e) {
+                    s_log.error("", e);
+                }
+            }
+        });
+		
 	}
 
 	protected abstract IDataSet createDataSet() throws DataSetException;
