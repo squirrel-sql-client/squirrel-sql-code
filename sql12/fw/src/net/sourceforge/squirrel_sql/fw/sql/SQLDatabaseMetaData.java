@@ -1929,14 +1929,14 @@ public class SQLDatabaseMetaData
     
     /**
      * Check the thread of the caller to see if it is the event dispatch thread
-     * and if we are debugging print an error message with the call trace.
+     * and if we are debugging print a debug log message with the call trace.
      */
     private void checkThread() {
         if (s_log.isDebugEnabled() && SwingUtilities.isEventDispatchThread()) {
             try {
                 throw new Exception("GUI Thread is doing database work");
             } catch (Exception e) {
-                s_log.error(e.getMessage(), e);
+                s_log.debug(e.getMessage(), e);
             }
         }
     }
