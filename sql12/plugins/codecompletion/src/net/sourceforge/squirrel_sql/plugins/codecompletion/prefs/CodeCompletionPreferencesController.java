@@ -86,6 +86,7 @@ public class CodeCompletionPreferencesController
 
 	private void onDeleteRows()
 	{
+		stopEditing();
 		PrefixesTableModel tm = (PrefixesTableModel) _panel.tblPrefixes.getModel();
 		int[] selRows = _panel.tblPrefixes.getSelectedRows();
 		tm.removeRows(selRows);
@@ -147,15 +148,20 @@ public class CodeCompletionPreferencesController
 		}
 
 
+		stopEditing();
+
+		PrefixesTableModel tm = (PrefixesTableModel) _panel.tblPrefixes.getModel();
+
+		_prefs.setPrefixedConfigs(tm.getData());
+	}
+
+	private void stopEditing()
+	{
 		TableCellEditor cellEditor = _panel.tblPrefixes.getCellEditor();
 		if(null != cellEditor)
 		{
 			cellEditor.stopCellEditing();
 		}
-
-		PrefixesTableModel tm = (PrefixesTableModel) _panel.tblPrefixes.getModel();
-
-		_prefs.setPrefixedConfigs(tm.getData());
 	}
 
 	/**
