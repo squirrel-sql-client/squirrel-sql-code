@@ -25,6 +25,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.prefs.Preferences;
 
 import javax.swing.*;
 
@@ -62,6 +63,10 @@ public class NewSessionPropertiesSheet extends BaseInternalFrame
 	private IApplication _app;
 	private List _panels = new ArrayList();
 
+	public static final String PREF_KEY_NEW_SESSION_PROPS_SHEET_WIDTH = "Squirrel.newSessionPropsSheetWidth";
+	public static final String PREF_KEY_NEW_SESSION_PROPS_SHEET_HEIGHT = "Squirrel.newSessionPropsSheetHeight";
+
+
 	private NewSessionPropertiesSheet(IApplication app)
 	{
 		super(s_stringMgr.getString("NewSessionPropertiesSheet.title"), true);
@@ -75,10 +80,18 @@ public class NewSessionPropertiesSheet extends BaseInternalFrame
 			pnl.initialize(_app);
 		}
 
-		setSize(500,700);
+		setSize(getDimension());
 		app.getMainFrame().addInternalFrame(this, true, null);
 		GUIUtils.centerWithinDesktop(this);
 		setVisible(true);
+	}
+
+	private Dimension getDimension()
+	{
+		return new Dimension(
+			Preferences.userRoot().getInt(PREF_KEY_NEW_SESSION_PROPS_SHEET_WIDTH, 500),
+			Preferences.userRoot().getInt(PREF_KEY_NEW_SESSION_PROPS_SHEET_HEIGHT, 600)
+		);
 	}
 
 	/**
@@ -103,6 +116,10 @@ public class NewSessionPropertiesSheet extends BaseInternalFrame
 
 	public void dispose()
 	{
+		Dimension size = getSize();
+		Preferences.userRoot().putInt(PREF_KEY_NEW_SESSION_PROPS_SHEET_WIDTH, size.width);
+		Preferences.userRoot().putInt(PREF_KEY_NEW_SESSION_PROPS_SHEET_HEIGHT, size.height);
+
 		synchronized (getClass())
 		{
 			s_instance = null;

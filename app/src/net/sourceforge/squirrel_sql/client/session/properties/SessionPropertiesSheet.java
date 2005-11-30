@@ -25,6 +25,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.prefs.Preferences;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -38,6 +39,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.preferences.NewSessionPropertiesSheet;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.SessionPluginInfo;
@@ -76,11 +78,20 @@ public class SessionPropertiesSheet extends BaseSessionInternalFrame
 			pnl.initialize(getSession().getApplication(), getSession());
 		}
 
-		setSize(500,700);
+		setSize(getDimension());
 	}
 
 
-   public void selectTabIndex(int index)
+	private Dimension getDimension()
+	{
+		return new Dimension(
+			Preferences.userRoot().getInt(NewSessionPropertiesSheet.PREF_KEY_NEW_SESSION_PROPS_SHEET_WIDTH, 500),
+			Preferences.userRoot().getInt(NewSessionPropertiesSheet.PREF_KEY_NEW_SESSION_PROPS_SHEET_HEIGHT, 600)
+		);
+	}
+
+
+	public void selectTabIndex(int index)
    {
 		int tabCount = _tabbedPane.getTabCount();
 
@@ -135,6 +146,15 @@ public class SessionPropertiesSheet extends BaseSessionInternalFrame
 		}
 
 		dispose();
+	}
+
+	public void dispose()
+	{
+		Dimension size = getSize();
+		Preferences.userRoot().putInt(NewSessionPropertiesSheet.PREF_KEY_NEW_SESSION_PROPS_SHEET_WIDTH, size.width);
+		Preferences.userRoot().putInt(NewSessionPropertiesSheet.PREF_KEY_NEW_SESSION_PROPS_SHEET_HEIGHT, size.height);
+
+		super.dispose();	 //To change body of overridden methods use File | Settings | File Templates.
 	}
 
 	private void createGUI()

@@ -25,6 +25,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.prefs.Preferences;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -76,6 +77,10 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 	/** Sheet title. */
 	private JLabel _titleLbl = new JLabel();
 
+	public static final String PREF_KEY_GLOBAL_PREFS_SHEET_WIDTH = "Squirrel.globalPrefsSheetWidth";
+	public static final String PREF_KEY_GLOBAL_PREFS_SHEET_HEIGHT = "Squirrel.globalPrefsSheetHeight";
+
+
 	/**
 	 * Ctor specifying the application API.
 	 *
@@ -109,13 +114,22 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 				_app.showErrorDialog(msg, th);
 			}
 		}
-		setSize(650, 600);
+		setSize(getDimension());
 
 		app.getMainFrame().addInternalFrame(this, true, null);
 		GUIUtils.centerWithinDesktop(this);
 		setVisible(true);
 
 	}
+
+	private Dimension getDimension()
+	{
+		return new Dimension(
+			Preferences.userRoot().getInt(PREF_KEY_GLOBAL_PREFS_SHEET_WIDTH, 650),
+			Preferences.userRoot().getInt(PREF_KEY_GLOBAL_PREFS_SHEET_HEIGHT, 600)
+		);
+	}
+
 
 	/**
 	 * Show the Preferences dialog
@@ -139,7 +153,11 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 
 	public void dispose()
 	{
-      for (Iterator it = _panels.iterator(); it.hasNext();)
+		Dimension size = getSize();
+		Preferences.userRoot().putInt(PREF_KEY_GLOBAL_PREFS_SHEET_WIDTH, size.width);
+		Preferences.userRoot().putInt(PREF_KEY_GLOBAL_PREFS_SHEET_HEIGHT, size.height);
+
+		for (Iterator it = _panels.iterator(); it.hasNext();)
       {
          IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel) it.next();
          pnl.uninitialize(_app);
