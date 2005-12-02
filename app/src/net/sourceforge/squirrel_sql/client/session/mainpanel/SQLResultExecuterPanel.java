@@ -641,13 +641,13 @@ public class SQLResultExecuterPanel extends JPanel
 			ResultTabInfo ti = (ResultTabInfo)_availableTabs.remove(0);
 			_usedTabs.add(ti);
 			tab = ti._tab;
+			tab.reInit(creator, exInfo);
 			s_log.debug("Using tab " + tab.getIdentifier().toString()
 					+ " for results.");
 		}
 		else
 		{
-			tab = new ResultTab(_session, this, _idFactory.createIdentifier(),
-									exInfo, creator);
+			tab = new ResultTab(_session, this, _idFactory.createIdentifier(), exInfo, creator);
 			ResultTabInfo ti = new ResultTabInfo(tab);
 			_allTabs.put(tab.getIdentifier(), ti);
 			_usedTabs.add(ti);

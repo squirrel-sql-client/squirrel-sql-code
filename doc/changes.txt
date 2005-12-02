@@ -4,6 +4,13 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+- Fixed *ugly* bug in editing SQL results:
+  To reproduce the bug you had to have two editable SQLs for different tables. Execute the first
+  and edit some results. Close the result tab. Execute the second SQL. Editing of this
+  result would fail. The reason was that SQuirreL reuses result tabs but did not properly initialize
+  them before reuse. Because of this editing could feel terribly instable when some results had been closed
+  and SQuirreL began to reuse tabs.
+
 - Sizes of Properies and Prefrences windows are restored.
 - Made Syntax highlighting work for: Data Types, Functions, Operators, Identifiers, White Spaces
 - Fixed bug #1276957: Oracle protocol violation.
