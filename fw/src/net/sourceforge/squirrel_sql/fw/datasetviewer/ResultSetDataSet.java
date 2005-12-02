@@ -193,9 +193,16 @@ public class ResultSetDataSet implements IDataSet
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet#get(int)
+	 */
 	public Object get(int columnIndex)
 	{
-		return _currentRow[columnIndex];
+        if (_currentRow != null) {
+            return _currentRow[columnIndex];
+        } else {
+            return null;
+        }
 	}
 
 	public void cancelProcessing()
@@ -296,11 +303,17 @@ public class ResultSetDataSet implements IDataSet
    }
 
    /**
-    * Removes the row at the specified index.
+    * Removes the row at the specified index. 
     * 
     * @param index the row number starting at 0.
+    * @return the object at the specified row or null if there is not row at the
+    *         specified index.
     */
    public Object removeRow(int index) {
-       return _alData.remove(index);
+       if (_alData.size() > index) {
+           return _alData.remove(index);
+       } else {
+           return null;
+       }
    }
 }
