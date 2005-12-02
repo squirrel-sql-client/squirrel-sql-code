@@ -128,21 +128,57 @@ public class ResultTab extends JPanel implements IHasIdentifier
 		_session = session;
 		_sqlPanel = sqlPanel;
 		_id = id;
-      _creator = creator;
+		reInit(creator, exInfo);
 
-      _creator.addListener(new DataSetUpdateableTableModelListener()
-      {
-         public void forceEditMode(boolean mode)
-         {
-            onForceEditMode(mode);
-         }
-      });
 
-		createGUI(exInfo);
+		createGUI();
 		propertiesHaveChanged(null);
 	}
 
-   /**
+	public void reInit(IDataSetUpdateableTableModel creator, SQLExecutionInfo exInfo)
+	{
+		_creator = creator;
+		_creator.addListener(new DataSetUpdateableTableModelListener()
+		{
+			public void forceEditMode(boolean mode)
+			{
+				onForceEditMode(mode);
+			}
+		});
+
+		_allowEditing = new EditableSqlCheck(exInfo).allowsEditing();
+
+		final SessionProperties props = _session.getProperties();
+
+		if (_allowEditing)
+		{
+			_resultSetOutput = BaseDataSetViewerDestination.getInstance(props.getSQLResultsOutputClassName(), _creator);
+
+		}
+		else
+		{
+			// sql contains columns from multiple tables,
+			// so we cannot use all of the columns in a WHERE clause
+			// and it becomes difficult to know which table (or tables!) an
+			// edited column belongs to.  Therefore limit the output
+			// to be read-only
+			_resultSetOutput = BaseDataSetViewerDestination.getInstance(
+				props.getReadOnlySQLResultsOutputClassName(), null);
+		}
+
+
+		_resultSetSp.setViewportView(_resultSetOutput.getComponent());
+      _resultSetSp.setRowHeader(null);
+
+      if (_session.getProperties().getShowResultsMetaData())
+      {
+         _metaDataOutput = BaseDataSetViewerDestination.getInstance(props.getMetaDataOutputClassName(), null);
+         _metaDataSp.setViewportView(_metaDataOutput.getComponent());
+         _metaDataSp.setRowHeader(null);
+      }
+	}
+
+	/**
 	 * Panel is being added to its parent. Setup any required listeners.
 	 */
 	public void addNotify()
@@ -354,7 +390,7 @@ public class ResultTab extends JPanel implements IHasIdentifier
    }
 
 
-	private void createGUI(SQLExecutionInfo exInfo)
+	private void createGUI()
 	{
 		//	final Resources rsrc = _session.getApplication().getResources();
 		setLayout(new BorderLayout());
@@ -384,34 +420,6 @@ public class ResultTab extends JPanel implements IHasIdentifier
 		final JScrollPane sp = new JScrollPane(_queryInfoPanel);
 		sp.setBorder(BorderFactory.createEmptyBorder());
 		_tp.addTab("Info", sp);
-
-		final SessionProperties props = _session.getProperties();
-
-      _allowEditing = new EditableSqlCheck(exInfo).allowsEditing();
-
-		if (_allowEditing) {
-			_resultSetOutput = BaseDataSetViewerDestination.getInstance(props.getSQLResultsOutputClassName(), _creator);
-
-		}
-		else {
-			// sql contains columns from multiple tables,
-			// so we cannot use all of the columns in a WHERE clause
-			// and it becomes difficult to know which table (or tables!) an
-			// edited column belongs to.  Therefore limit the output
-			// to be read-only
-			_resultSetOutput = BaseDataSetViewerDestination.getInstance(
-				props.getReadOnlySQLResultsOutputClassName(), null);
-		}
-
-      _resultSetSp.setViewportView(_resultSetOutput.getComponent());
-      _resultSetSp.setRowHeader(null);
-
-      if (_session.getProperties().getShowResultsMetaData())
-      {
-         _metaDataOutput = BaseDataSetViewerDestination.getInstance(props.getMetaDataOutputClassName(), null);
-         _metaDataSp.setViewportView(_metaDataOutput.getComponent());
-         _metaDataSp.setRowHeader(null);
-      }
 	}
 
 	private final class TabButton extends JButton
