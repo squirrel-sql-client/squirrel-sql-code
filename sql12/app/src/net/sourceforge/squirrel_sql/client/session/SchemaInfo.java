@@ -72,7 +72,7 @@ public class SchemaInfo
 				LoggerController.createLogger(SchemaInfo.class);
 	private SessionAdapter _sessionListener;
 
-	SchemaInfo(IApplication app)
+	public SchemaInfo(IApplication app)
 	{
 		_sessionListener = new SessionAdapter()
 		{
@@ -96,10 +96,12 @@ public class SchemaInfo
 				}
 			}
 		};
-		app.getSessionManager().addSessionListener(_sessionListener);
+        if (app != null) {
+            app.getSessionManager().addSessionListener(_sessionListener);
+        }
 	}
 
-	public void load(Session session)
+	public void load(ISession session)
 	{
 		if (session == null)
 		{
