@@ -633,6 +633,15 @@
                         </fileset>
                 </copy>
 		<!--<tar tarfile="${dist_dir}/SquirrelSQLMac.tar" basedir="${dist_dir}/mac"/>-->
-		<zip destfile="${dist_dir}/SquirrelSQLMac.zip" basedir="${dist_dir}/mac"/>
+		<!--<zip destfile="${dist_dir}/SquirrelSQLMac.zip" basedir="${dist_dir}/mac"/>-->
+		<tar destfile="${dist_dir}/SquirrelSQLMac.tar.gz" compression="gzip">
+			<tarfileset dir="${dist_dir}/mac" mode="755">
+				<include name="**/JavaApplicationStub" />
+			</tarfileset>
+			<tarfileset dir="${dist_dir}/mac">
+				<include name="**" />
+				<exclude name="**/JavaApplicationStub" />
+			</tarfileset>
+		</tar>		
 	</target>
 </project>
