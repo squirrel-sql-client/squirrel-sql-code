@@ -22,7 +22,6 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -36,6 +35,10 @@ import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 
@@ -51,6 +54,15 @@ public class CreateTableScriptCommand implements ICommand
     */
    private final SQLScriptPlugin _plugin;
 
+    /** Logger for this class. */
+    private static ILogger s_log = LoggerController.createLogger(CreateTableScriptCommand.class);
+   
+    /** i18n strings for this class */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(CreateTableScriptCommand.class);
+
+    
+    
    /**
     * Ctor specifying the current session.
     */
@@ -125,13 +137,22 @@ public class CreateTableScriptCommand implements ICommand
            Vector pks = new Vector();
            if (false == isJdbcOdbc)
            {
-              PrimaryKeyInfo[] infos = 
-                  conn.getSQLMetaData().getPrimaryKey(ti);
-              for (int i = 0; i < infos.length; i++) {
-                  int iKeySeq = infos[i].getKeySequence() - 1;
-                  if (pks.size() <= iKeySeq)
-                     pks.setSize(iKeySeq + 1);
-                  pks.set(iKeySeq, infos[i].getColumnName());                      
+              try {
+                  PrimaryKeyInfo[] infos = 
+                      conn.getSQLMetaData().getPrimaryKey(ti);
+                  for (int i = 0; i < infos.length; i++) {
+                      int iKeySeq = infos[i].getKeySequence() - 1;
+                      if (pks.size() <= iKeySeq)
+                         pks.setSize(iKeySeq + 1);
+                      pks.set(iKeySeq, infos[i].getColumnName());                      
+                  }
+              } catch (SQLException e) {
+                  //i18n[CreateTableScriptCommand.error.getprimarykey=Unable to get primary key info for table {0}]
+                  String msg = 
+                      s_stringMgr.getString(
+                              "CreateTableScriptCommand.error.getprimarykey", 
+                              sTable);
+                  s_log.error(msg, e);
               }
            }
 
@@ -231,7 +252,20 @@ public class CreateTableScriptCommand implements ICommand
       }
       StringBuffer sbToAppend = new StringBuffer();
       DatabaseMetaData metaData = _session.getSQLConnection().getConnection().getMetaData();
-      ResultSet primaryKeys = metaData.getPrimaryKeys(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName());
+      
+      ResultSet primaryKeys = null;
+      try {
+          primaryKeys = 
+              metaData.getPrimaryKeys(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName());
+      } catch (SQLException e) {
+          //i18n[CreateTableScriptCommand.error.getprimarykey=Unable to get primary key info for table {0}]
+          String msg = 
+              s_stringMgr.getString(
+                      "CreateTableScriptCommand.error.getprimarykey", 
+                      ti.getSimpleName());
+          s_log.error(msg, e);
+          return "";
+      }
 
       Vector pkCols = new Vector();
       while(primaryKeys.next())
@@ -327,7 +361,18 @@ public class CreateTableScriptCommand implements ICommand
 
       StringBuffer sbToAppend = new StringBuffer();
       DatabaseMetaData metaData = _session.getSQLConnection().getConnection().getMetaData();
-      ResultSet importedKeys = metaData.getImportedKeys(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName());
+      ResultSet importedKeys = null;
+      try {
+          importedKeys = 
+              metaData.getImportedKeys(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName());
+      } catch (SQLException e) {
+          //i18n[CreateTableScriptCommand.error.getimportedkeys=Unable to get exported keys info for table {0}]
+          String msg = 
+              s_stringMgr.getString("CreateTableScriptCommand.error.getimportedkeys",
+                                    ti.getSimpleName());
+          s_log.error(msg, e);
+          return "";
+      }
 
       Hashtable buf = new Hashtable();
       while(importedKeys.next())
