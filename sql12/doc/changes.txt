@@ -4,6 +4,8 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+- Fixed bug #1377304: Ant-built distributions do not preserve file permissions 
+  (Thanks to Charles Albrecht)
 - Fixed bug #1376981: SQL Scripts plugin fails to create table script for Axion DB.
 - Fixed *ugly* bug in editing SQL results:
   To reproduce the bug you had to have two editable SQLs for different tables. Execute the first
@@ -11,11 +13,9 @@ Not yet released, available in CVS and probably in latest weekly build
   result would fail. The reason was that SQuirreL reuses result tabs but did not properly initialize
   them before reuse. Because of this editing could feel terribly instable when some results had been closed
   and SQuirreL began to reuse tabs.
-
 - Sizes of Properies and Prefrences windows are restored.
 - Made Syntax highlighting work for: Data Types, Functions, Operators, Identifiers, White Spaces
 - Fixed bug #1276957: Oracle protocol violation.
-
 - Oracle Plugin (v0.15) - If the user doesn't have the DBA privilege, then only loads the 
   schemas in the object tree to which the user has been granted access.
 
