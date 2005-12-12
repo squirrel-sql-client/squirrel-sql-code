@@ -1159,7 +1159,11 @@ public class SQLDatabaseMetaData
       }
       else
       {
-         return "" + val;
+         if (val instanceof String) {
+             return (String)val;
+         } else {
+             return "" + val;
+         }
       }
 
    }
