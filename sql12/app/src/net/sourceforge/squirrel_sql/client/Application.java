@@ -174,7 +174,7 @@ class Application implements IApplication
 					catch (Throwable t)
 					{
 						t.printStackTrace();
-						s_log.error("Exeption occured dispatching Event " + event, t);
+						s_log.error("Exception occured dispatching Event " + event, t);
 					}
 				}
 			}
