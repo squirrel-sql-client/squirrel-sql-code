@@ -20,14 +20,14 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
 import java.awt.Frame;
 import java.util.Iterator;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.sql.DataCache;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
+import net.sourceforge.squirrel_sql.fw.sql.SQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
 /**
  * This <CODE>ICommand</CODE> allows the user to delete an existing
  * <TT>ISQLDriver</TT>.
@@ -88,7 +88,16 @@ public class DeleteDriverCommand implements ICommand
 		Iterator it = cache.getAliasesForDriver(_sqlDriver);
 		if (it.hasNext())
 		{
-			Dialogs.showOk(_frame, s_stringMgr.getString("DeleteDriverCommand.used", args));
+            StringBuffer aliasList = new StringBuffer();
+            while (it.hasNext()) {
+                SQLAlias alias = (SQLAlias)it.next();
+                aliasList.append("\n");
+                aliasList.append(alias.getName());
+            }
+            final Object[] args2 = { _sqlDriver.getName(), aliasList };
+            String msg = 
+                s_stringMgr.getString("DeleteDriverCommand.used", args2);
+			Dialogs.showOk(_frame, msg);
 		}
 		else
 		{
