@@ -28,7 +28,15 @@
 						(schema.table) is not in the database" when trying to
 						view the contents of a table in the current schema.
 						</TT></a></li>
-				</ul>
+					<li><a href="#faq8">I am using SQL Squirrel 2.x and when I connect to a database 
+                                                            I get the following warning message: </a></li>
+	<PRE>
+	JRE/JDBC Version mismatch
+
+	The driver being used ... is not JDBC 2.1 compliant. 
+	You should consider getting a more recent version of this driver.
+	</PRE>
+					</ul>
 			</p>
 		</td>
 		<td class="body_right_border">&nbsp;</td>
@@ -178,6 +186,24 @@
 			<p class="answer">This is a bug in earlier versions of the Informix JDBC
 						driver and is known to be fixed in version 9.4 of
 						Informix and version 2.21 of the Informix JDBC driver.</p>
+			<p><A HREF="#top">Top</A><HR SIZE=1></HR></P>
+			<h1 class="question"><A NAME="faq8">I am using SQL Squirrel 2.x and when I connect to a database 
+                                                            I get the following warning message: </A></h1>
+	<PRE>
+	JRE/JDBC Version mismatch
+
+	The driver being used ... is not JDBC 2.1 compliant. 
+	You should consider getting a more recent version of this driver.
+	</PRE>
+			<p class="answer">It's telling you that your JRE version is much newer than your driver's supported JDBC version. In general,
+					  it's hard to tell how well tested an older driver is with a newer JVM(1.4+). The odds are good that the newer JVM
+					  wasn't available when the older driver was written. So the warning message is there to let you know that you
+					  aren't getting the most efficient use from SQuirreL 2.x and your database driver. SQuirreL 2.x requires JVM 1.4
+				          or higher so your choices are limited there. Upgrade your JDBC driver if possible - if not, then you can 
+					  disable the warning.  To disable it go to Global Preferences -> General and uncheck the checkbox next to
+                                          <b><i>Warning for JRE/JDBC Version Mismatch</b></i></p></p>
+
+
 			<p><A HREF="#top">Top</A></P>
 
 		</td>
