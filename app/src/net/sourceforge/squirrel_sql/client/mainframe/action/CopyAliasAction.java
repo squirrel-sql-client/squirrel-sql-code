@@ -21,6 +21,8 @@ import java.awt.event.ActionEvent;
 import java.beans.PropertyVetoException;
 
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -38,8 +40,12 @@ public class CopyAliasAction extends SquirrelAction
 {
 	/** Logger for this class. */
 	private static ILogger s_log =
-		LoggerController.createLogger(ConnectToAliasAction.class);
+		LoggerController.createLogger(CopyAliasAction.class);
 
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(CopyAliasAction.class);
+    
 	/**
 	 * List of all the users aliases.
 	 */
@@ -80,7 +86,8 @@ public class CopyAliasAction extends SquirrelAction
 		}
 		catch (PropertyVetoException ex)
 		{
-			s_log.error("Error selecting window", ex);
+            // i18n[CopyAliasAction.error.selectingwindow=Error selecting window]
+			s_log.error(s_stringMgr.getString("CopyAliasAction.error.selectingwindow"), ex);
 		}
 		ISQLAlias alias = _aliases.getSelectedAlias();
 		if (alias != null)

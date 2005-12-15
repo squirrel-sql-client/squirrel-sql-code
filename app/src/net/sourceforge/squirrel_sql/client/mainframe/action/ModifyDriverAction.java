@@ -21,6 +21,8 @@ import java.awt.event.ActionEvent;
 import java.beans.PropertyVetoException;
 
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -44,6 +46,10 @@ public class ModifyDriverAction extends SquirrelAction
 	 */
 	private IDriversList _drivers;
 
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(ModifyDriverAction.class);        
+    
 	/**
 	 * Ctor specifying the list of drivers.
 	 *
@@ -81,7 +87,8 @@ public class ModifyDriverAction extends SquirrelAction
 		}
 		catch (PropertyVetoException ex)
 		{
-			s_log.error("Error selecting window", ex);
+            //i18n[ModifyDriverAction.error.selectingwindow=Error selecting window]
+			s_log.error(s_stringMgr.getString("ModifyDriverAction.error.selectingwindow"), ex);
 		}
 		ISQLDriver driver = _drivers.getSelectedDriver();
 		if (driver != null)

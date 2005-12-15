@@ -20,6 +20,8 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyVetoException;
 
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -35,8 +37,12 @@ public class CreateAliasAction extends SquirrelAction
 {
 	/** Logger for this class. */
 	private static ILogger s_log =
-		LoggerController.createLogger(ConnectToAliasAction.class);
+		LoggerController.createLogger(CreateAliasAction.class);
 
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(CreateAliasAction.class);    
+    
 	/**
 	 * Ctor.
 	 *
@@ -63,7 +69,8 @@ public class CreateAliasAction extends SquirrelAction
 		}
 		catch (PropertyVetoException ex)
 		{
-			s_log.error("Error selecting window", ex);
+            //i18n[CreateAliasAction.error.selectingwindow=Error selecting window]
+			s_log.error(s_stringMgr.getString("CreateAliasAction.error.selectingwindow"), ex);
 		}
 		new CreateAliasCommand(getApplication()).execute();
 	}
