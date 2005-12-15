@@ -1,9 +1,5 @@
 package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * TODO: i18n
- */
-
-/*
  * Copyright (C) 2002-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
@@ -38,6 +34,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.beanwrapper.URLWrapper;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -80,6 +78,10 @@ public class DumpApplicationCommand implements ICommand
 
 	/** Message handler to write status/error info to. */
 	private IMessageHandler _msgHandler;
+    
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(DumpApplicationCommand.class);
 
 	/**
 	 * Ctor.
@@ -122,11 +124,13 @@ public class DumpApplicationCommand implements ICommand
 			try
 			{
 				files.add(createJavaBeanDumpFile(bean));
-				titles.add("Application Status Bean");
+                //i18n[DumpApplicationCommand.title.status=Application Status Bean]
+				titles.add(s_stringMgr.getString("DumpApplicationCommand.title.status"));
 			}
 			catch (Throwable th)
 			{
-				final String msg = "Error dumping Application Status bean";
+                //i18n[DumpApplicationCommand.error.dumpingstatus=Error dumping Application Status bean]
+				final String msg = s_stringMgr.getString("DumpApplicationCommand.error.dumpingstatus");
 				_msgHandler.showMessage(msg);
 				_msgHandler.showMessage(th);
 				s_log.error(msg, th);
@@ -139,11 +143,13 @@ public class DumpApplicationCommand implements ICommand
 				IDataSetViewer dest = new DataSetViewerTextFileDestination(tempFile);
 				dest.show(new HashtableDataSet(System.getProperties()));
 				files.add(tempFile);
-				titles.add("System Properties");
+				//i18n[DumpApplicationCommand.title.systemprops=System Properties]
+				titles.add(s_stringMgr.getString("DumpApplicationCommand.title.systemprops"));
 			}
 			catch (Throwable th)
 			{
-				final String msg = "Error dumping metadata";
+                //i18n[DumpApplicationCommand.error.dumpingsystemprops=Error dumping metadata]
+				final String msg = s_stringMgr.getString("DumpApplicationCommand.error.dumpingsystemprops");
 				_msgHandler.showMessage(msg);
 				_msgHandler.showMessage(th);
 				s_log.error(msg, th);
@@ -155,11 +161,13 @@ public class DumpApplicationCommand implements ICommand
 				File tempFile = File.createTempFile(PREFIX, SUFFIX);
 				_app.getDataCache().saveDrivers(tempFile);
 				files.add(tempFile);
-				titles.add("Drivers");
+                //i18n[DumpApplicationCommand.title.drivers=Drivers]
+				titles.add(s_stringMgr.getString("DumpApplicationCommand.title.drivers"));
 			}
 			catch (Throwable th)
 			{
-				final String msg = "Error dumping drivers";
+                //i18n[DumpApplicationCommand.error.dumpingdrivers=Error dumping drivers]
+				final String msg = s_stringMgr.getString("DumpApplicationCommand.error.dumpingdrivers");
 				_msgHandler.showMessage(msg);
 				_msgHandler.showMessage(th);
 				s_log.error(msg, th);
@@ -171,18 +179,19 @@ public class DumpApplicationCommand implements ICommand
 				File tempFile = File.createTempFile(PREFIX, SUFFIX);
 				_app.getDataCache().saveAliases(tempFile);
 				files.add(tempFile);
-				titles.add("Aliases");
+                //i18n[DumpApplicationCommand.title.aliases=Aliases]
+				titles.add(s_stringMgr.getString("DumpApplicationCommand.title.aliases"));
 			}
 			catch (Throwable th)
 			{
-				final String msg = "Error dumping drivers";
+                //i18n[DumpApplicationCommand.error.dumpingaliases=Error dumping aliases]
+				final String msg = s_stringMgr.getString("DumpApplicationCommand.error.dumpingaliases");
 				_msgHandler.showMessage(msg);
 				_msgHandler.showMessage(th);
 				s_log.error(msg, th);
 			}
 
 			// Dump sessions.
-//			ISession[] sessions = _app.getSessionManager().getActiveSessions();
 			final ISession[] sessions = _app.getSessionManager().getConnectedSessions();
 			final DumpSessionCommand sessionCmd = new DumpSessionCommand();
 			for (int i = 0; i < sessions.length; ++i)
@@ -194,11 +203,16 @@ public class DumpApplicationCommand implements ICommand
 					sessionCmd.setDumpFile(tempFile);
 					sessionCmd.execute();
 					files.add(tempFile);
-					titles.add("Session Dump: " + sessions[i].getIdentifier());
+                    //i18n[DumpApplicationCommand.title.sessiondump=Session Dump: {0}]
+                    String title = 
+                        s_stringMgr.getString("DumpApplicationCommand.title.sessiondump",
+                                              sessions[i].getIdentifier());
+					titles.add(title);
 				}
 				catch (Throwable th)
 				{
-					final String msg = "Error dumping sessions";
+                    //i18n[DumpApplicationCommand.error.sessiondump=Error dumping sessions]
+					final String msg = s_stringMgr.getString("DumpApplicationCommand.error.sessiondump");
 					_msgHandler.showMessage(msg);
 					_msgHandler.showMessage(th);
 					s_log.error(msg, th);
@@ -217,8 +231,10 @@ public class DumpApplicationCommand implements ICommand
 			PrintWriter wtr = new PrintWriter(new FileWriter(_outFile));
 			try
 			{
-				wtr.println("SQuirreL SQL Client Application Dump " +
-								Calendar.getInstance().getTime());
+                //i18n[DumpApplicationCommand.header=SQuirreL SQL Client Application Dump {0}]
+                String header = s_stringMgr.getString("DumpApplicationCommand.header",
+                                                      Calendar.getInstance().getTime());
+				wtr.println(header);
 				for (int i = 0, limit = files.size(); i < limit; ++i)
 				{
 					wtr.println();
@@ -249,7 +265,8 @@ public class DumpApplicationCommand implements ICommand
 		}
 		catch (IOException ex)
 		{
-			final String msg = "Error combining temp files into dump file";
+            //i18n[DumpApplicationCommand.error.combiningtempfiles=Error combining temp files into dump file]
+			final String msg = s_stringMgr.getString("DumpApplicationCommand.error.combiningtempfiles");
 			_msgHandler.showMessage(msg);
 			_msgHandler.showMessage(ex.toString());
 			s_log.error(msg, ex);
@@ -262,7 +279,8 @@ public class DumpApplicationCommand implements ICommand
 		{
 			if (!((File)files.get(i)).delete())
 			{
-				s_log.error("Couldn't delete temporary DumpSession file");
+                //i18n[DumpApplicationCommand.error.deletetempfile=Couldn't delete temporary DumpSession file]
+				s_log.error(s_stringMgr.getString("DumpApplicationCommand.error.deletetempfile"));
 			}
 		}
 	}

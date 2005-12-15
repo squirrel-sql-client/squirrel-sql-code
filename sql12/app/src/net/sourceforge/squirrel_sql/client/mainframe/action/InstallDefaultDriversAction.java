@@ -77,7 +77,8 @@ public class InstallDefaultDriversAction extends SquirrelAction
 			}
 			catch (PropertyVetoException ex)
 			{
-				s_log.error("Error selecting window", ex);
+                //i18n[InstallDefaultDriversAction.error.selectingwindow=Error selecting window]
+				s_log.error(s_stringMgr.getString("InstallDefaultDriversAction.error.selectingwindow"), ex);
 			}
 			final URL url = app.getResources().getDefaultDriversUrl();
 			try
