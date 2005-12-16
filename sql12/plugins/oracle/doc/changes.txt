@@ -1,6 +1,12 @@
 Oracle Change Log
 =================
 
+0.16
+====
+
+- Added access to SYS schema for non-privileged users since this is where the 
+  user-oriented DDL information tables and views are located.
+
 0.15
 ====
 
