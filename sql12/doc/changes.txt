@@ -4,6 +4,8 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+- Oracle Plugin: Added access to SYS schema in the object tree for non-privileged 
+  users since this is where the user-oriented DDL information tables and views are located.
 - Fixed bug #1377304: Ant-built distributions do not preserve file permissions 
   (Thanks to Charles Albrecht)
 - Fixed bug #1376981: SQL Scripts plugin fails to create table script for Axion DB.
