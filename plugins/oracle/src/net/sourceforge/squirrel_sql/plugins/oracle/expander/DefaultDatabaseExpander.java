@@ -129,7 +129,8 @@ public class DefaultDatabaseExpander extends DatabaseExpander {
                 }
                 if (currentUserName != null && !tmp.contains(currentUserName)) {
                     tmp.add(currentUserName);
-                }                
+                }        
+                tmp.add("SYS");
                 result = (String[])tmp.toArray(new String[tmp.size()]);
             }
         } catch (SQLException e) {
