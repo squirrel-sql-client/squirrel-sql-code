@@ -974,4 +974,32 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 		}
 	}
 
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI#selectRoot()
+     */
+    public void selectRoot() {
+        // TODO: Figure out why the selection of the root node in the object tree
+        // is undone if we don't delay. It seems like some other thread racing 
+        // to set the selected node to none.  When this happens, the detail pane
+        // for the root node disappears when a session is first opened, or when
+        // an ObjectTree frame is created.  This is a really crappy and unreliable
+        // way to fix this problem, but it hides the problem for now.  A better 
+        // understanding of the architecture of session creation is required 
+        // before a proper solution can be attempted. RMM 20051217
+        _session.getApplication().getThreadPool().addTask(new delaySelectionRunnable());
+    }
+
+    private class delaySelectionRunnable implements Runnable {
+        public void run() {
+            try {
+                Thread.sleep(50);
+            } catch (Exception e) {}
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    TreePath rootPath = _tree.getPathForRow(0);
+                    _tree.setSelectionPath(rootPath);
+                }
+            });            
+        }
+    }
 }

@@ -270,25 +270,36 @@ public class ConnectionInternalFrame extends BaseInternalFrame
 	 */
 	private void loadData()
 	{
-		final String userName = _alias.getUserName();
-		final String password = _alias.getPassword();
-		_aliasName.setText(_alias.getName());
-		_driverName.setText(_sqlDriver.getName());
-		_url.setText(_alias.getUrl());
-		_user.setText(userName);
-		_password.setText(password);
-		_useDriverPropsChk.setSelected(_alias.getUseDriverProperties());
-		_driverPropsBtn.setEnabled(_useDriverPropsChk.isSelected());
+        if (SwingUtilities.isEventDispatchThread()) {
+            _loadData();
+        } else {
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    _loadData();
+                }
+            });
+        }
+        loadDriverProperties();
 
-		loadDriverProperties();
-
-		// This is mainly for long URLs that cannot be fully
-		// displayed in the label.
-		_aliasName.setToolTipText(_aliasName.getText());
-		_driverName.setToolTipText(_driverName.getText());
-		_url.setToolTipText(_url.getText());
 	}
 
+    private void _loadData() {
+        String userName = _alias.getUserName();
+        String password = _alias.getPassword();        
+        _aliasName.setText(_alias.getName());
+        _driverName.setText(_sqlDriver.getName());
+        _url.setText(_alias.getUrl());
+        _user.setText(userName);
+        _password.setText(password);
+        _useDriverPropsChk.setSelected(_alias.getUseDriverProperties());
+        _driverPropsBtn.setEnabled(_useDriverPropsChk.isSelected());
+        // This is mainly for long URLs that cannot be fully
+        // displayed in the label.
+        _aliasName.setToolTipText(_aliasName.getText());
+        _driverName.setToolTipText(_driverName.getText());
+        _url.setToolTipText(_url.getText());        
+    }
+    
 	private void connect()
 	{
 		if (!_connecting)
@@ -328,10 +339,11 @@ public class ConnectionInternalFrame extends BaseInternalFrame
 			s_stringMgr.getString("ConnectionInternalFrame.title", _alias.getName());
 		setTitle(winTitle);
 
-		JPanel content = new JPanel(new BorderLayout());
+		final JPanel content = new JPanel(new BorderLayout());
 		content.add(createMainPanel(), BorderLayout.CENTER);
 		content.add(_statusBar, BorderLayout.SOUTH);
-		setContentPane(content);
+        setContentPane(content);
+		
 
 // TODO:
 //		_btnsPnl.makeOKButtonDefault();

@@ -129,12 +129,17 @@ public class ConnectToAliasCommand implements ICommand
 	{
 		try
 		{
-			SheetHandler hdl = new SheetHandler(_app, _sqlAlias, _createSession, _callback);
-			ConnectionInternalFrame sheet = new ConnectionInternalFrame(_app, _sqlAlias, hdl);
-			_app.getMainFrame().addInternalFrame(sheet, true, null);
-			GUIUtils.centerWithinDesktop(sheet);
-			sheet.moveToFront();
-			sheet.setVisible(true);
+			final SheetHandler hdl = new SheetHandler(_app, _sqlAlias, _createSession, _callback);
+			
+            if (SwingUtilities.isEventDispatchThread()) {
+                createConnectionInternalFrame(hdl);
+            } else {
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        createConnectionInternalFrame(hdl);
+                    }
+                });
+            }
 		}
 		catch (Exception ex)
 		{
@@ -142,6 +147,15 @@ public class ConnectToAliasCommand implements ICommand
 		}
 	}
 
+    private void createConnectionInternalFrame(SheetHandler hdl) {
+        ConnectionInternalFrame sheet = 
+            new ConnectionInternalFrame(_app, _sqlAlias, hdl);                        
+        _app.getMainFrame().addInternalFrame(sheet, true, null);
+        GUIUtils.centerWithinDesktop(sheet);
+        sheet.moveToFront();
+        sheet.setVisible(true);                        
+    }
+    
 	public static class ClientCallback implements ICompletionCallback
 	{
 		private final IApplication _app;
@@ -445,7 +459,7 @@ public class ConnectToAliasCommand implements ICommand
 			{
 				app.getPluginManager().sessionCreated(_session);
 				final SessionInternalFrame child = app.getWindowManager().createInternalFrame(_session);
-				_connSheet.executed(true);
+                _connSheet.executed(true);
 			}
 			catch (Throwable th)
 			{
