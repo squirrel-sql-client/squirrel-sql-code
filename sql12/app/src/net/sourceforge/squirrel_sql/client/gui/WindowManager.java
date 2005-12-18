@@ -415,6 +415,7 @@ public class WindowManager
 			public void run()
 			{
 				sif.setVisible(true);
+                sif.getObjectTreeAPI().selectRoot();
 			}
 		});
 
@@ -478,6 +479,7 @@ public class WindowManager
 			public void run()
 			{
 				oif.setVisible(true);
+                oif.getObjectTreeAPI().selectRoot();
 			}
 		});
 

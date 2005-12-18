@@ -275,4 +275,9 @@ public interface IObjectTreeAPI extends IHasIdentifier
     * @return true if the Object was found and selected.
     */
    boolean selectInObjectTree(String catalog, String schema, String object);
+   
+   /**
+    * Selects the root node of the tree.
+    */
+   void selectRoot();
 }

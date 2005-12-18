@@ -685,29 +685,12 @@ public class SQLPanel extends JPanel
 
 		if (propName == null || propName.equals(SessionProperties.IPropertyNames.AUTO_COMMIT))
 		{
-			final SQLConnection conn = _session.getSQLConnection();
-			if (conn != null)
-			{
-				boolean auto = true;
-				try
-				{
-					auto = conn.getAutoCommit();
-				}
-				catch (SQLException ex)
-				{
-					s_log.error("Error with transaction control", ex);
-					_session.getMessageHandler().showErrorMessage(ex);
-				}
-				try
-				{
-					conn.setAutoCommit(props.getAutoCommit());
-				}
-				catch (SQLException ex)
-				{
-					props.setAutoCommit(auto);
-					_session.getMessageHandler().showErrorMessage(ex);
-				}
-			}
+            SetAutoCommitTask task = new SetAutoCommitTask();
+            if (SwingUtilities.isEventDispatchThread()) {
+                _session.getApplication().getThreadPool().addTask(task);
+            } else {
+                task.run();
+            }
 		}
 
 		if (propName == null || propName.equals(SessionProperties.IPropertyNames.SQL_LIMIT_ROWS))
@@ -750,6 +733,36 @@ public class SQLPanel extends JPanel
 //		}
 	}
 
+    private class SetAutoCommitTask implements Runnable {
+        
+        public void run() {
+            final SQLConnection conn = _session.getSQLConnection();
+            final SessionProperties props = _session.getProperties();
+            if (conn != null)
+            {
+                boolean auto = true;
+                try
+                {
+                    auto = conn.getAutoCommit();
+                }
+                catch (SQLException ex)
+                {
+                    s_log.error("Error with transaction control", ex);
+                    _session.getMessageHandler().showErrorMessage(ex);
+                }
+                try
+                {
+                    conn.setAutoCommit(props.getAutoCommit());
+                }
+                catch (SQLException ex)
+                {
+                    props.setAutoCommit(auto);
+                    _session.getMessageHandler().showErrorMessage(ex);
+                }
+            }        
+        }
+    }    
+    
 	private void createGUI()
 	{
 		final IApplication app = _session.getApplication();

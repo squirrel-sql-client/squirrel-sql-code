@@ -22,6 +22,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -47,7 +49,7 @@ public class DatabaseExpander implements INodeExpander
 		LoggerController.createLogger(DatabaseExpander.class);
 
 	/** Array of the different types of tables in this database. */
-	private String[] _tableTypes;
+	private String[] _tableTypes = new String[] {};
 
 	/**
 	 * Ctor.
@@ -64,17 +66,35 @@ public class DatabaseExpander implements INodeExpander
 		{
 			throw new IllegalArgumentException("ISession == null");
 		}
-		try
-		{
-			_tableTypes = session.getSQLConnection().getSQLMetaData().getTableTypes();
-		}
-		catch (SQLException ex)
-		{
-			_tableTypes = new String[] {};
-			s_log.debug("DBMS doesn't support 'getTableTypes()", ex);
-		}
-	}
+        GetTableTypes task = new GetTableTypes(session);
+		if (SwingUtilities.isEventDispatchThread()) {
+		    session.getApplication().getThreadPool().addTask(task);
+        } else {
+            task.run();
+        }
+    }
 
+    private class GetTableTypes implements Runnable {
+        
+        ISession _session = null;
+        
+        public GetTableTypes(ISession session) {
+            _session = session;
+        }
+        
+        public void run() {
+            try
+            {
+                _tableTypes = _session.getSQLConnection().getSQLMetaData().getTableTypes();
+            }
+            catch (SQLException ex)
+            {
+                s_log.debug("DBMS doesn't support 'getTableTypes()", ex);
+            }
+        }
+        
+    }
+    
 	/**
 	 * Create the child nodes for the passed parent node and return them. Note
 	 * that this method should <B>not</B> actually add the child nodes to the
