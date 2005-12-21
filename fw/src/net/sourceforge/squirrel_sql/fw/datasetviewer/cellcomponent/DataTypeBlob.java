@@ -48,6 +48,8 @@ import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 /**
  * @author gwg
@@ -79,6 +81,10 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 public class DataTypeBlob
 	implements IDataTypeComponent
 {
+
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(DataTypeBlob.class);
+
 	/* the whole column definition */
 	private ColumnDisplayDefinition _colDef;
 
@@ -87,10 +93,10 @@ public class DataTypeBlob
 
 	/* table of which we are part (needed for creating popup dialog) */
 	private JTable _table;
-	
+
 	/* The JTextComponent that is being used for editing */
 	private IRestorableTextComponent _textComponent;
-	
+
 	/* The CellRenderer used for this data type */
 	//??? For now, use the same renderer as everyone else.
 	//??
@@ -115,8 +121,8 @@ public class DataTypeBlob
 	 */
 	 // flag for whether we have already loaded the properties or not
 	 private static boolean propertiesAlreadyLoaded = false;
-	 
-		 
+
+
 	/** Read the contents of Blobs from Result sets when first loading the tables. */
 	private static boolean _readBlobs = false;
 
@@ -132,9 +138,9 @@ public class DataTypeBlob
 	 */
 	private static int _readBlobsSize = LARGE_COLUMN_DEFAULT_READ_LENGTH;
 
-	 
 
-	 
+
+
 
 	/**
 	 * Constructor - save the data needed by this data type.
@@ -143,10 +149,10 @@ public class DataTypeBlob
 		_table = table;
 		_colDef = colDef;
 		_isNullable = colDef.isNullable();
-		
+
 		loadProperties();
 	}
-	
+
 	/** Internal function to get the user-settable properties from the DTProperties,
 	 * if they exist, and to ensure that defaults are set if the properties have
 	 * not yet been created.
@@ -157,7 +163,7 @@ public class DataTypeBlob
 	 * the first time we are called.
 	 */
 	private static void loadProperties() {
-		
+
 		//set the property values
 		// Note: this may have already been done by another instance of
 		// this DataType created to handle a different column.
@@ -174,7 +180,7 @@ public class DataTypeBlob
 				thisClassName, "readCompleteBlobs");
 			if (readCompleteBlobsString != null && readCompleteBlobsString.equals("true"))
 				_readCompleteBlobs = true;
-		
+
 			_readBlobsSize = LARGE_COLUMN_DEFAULT_READ_LENGTH;	// set to default
 			String readBlobsSizeString = DTProperties.get(
 				thisClassName, "readBlobsSize");
@@ -184,7 +190,7 @@ public class DataTypeBlob
 			propertiesAlreadyLoaded = true;
 		}
 	}
-	
+
 	/**
 	 * Return the name of the java class used to hold this data type.
 	 */
@@ -199,7 +205,7 @@ public class DataTypeBlob
 	public boolean areEqual(Object obj1, Object obj2) {
 		if (obj1 == obj2)
 			return true;
-		
+
 		// if both objs are null, then they matched in the previous test,
 		// so at this point we know that at least one of them (or both) is not null.
 		// However, one of them may still be null, and we cannot call equals() on
@@ -214,14 +220,14 @@ public class DataTypeBlob
 	/*
 	 * First we have the methods for in-cell and Text-table operations
 	 */
-	 
+
 	/**
 	 * Render a value into text for this DataType.
 	 */
 	public String renderObject(Object value) {
 		return (String)_renderer.renderObject(value);
 	}
-	
+
 	/**
 	 * This Data Type can be edited in a table cell.
 	 * This function is not called during the initial table load, or during
@@ -259,16 +265,16 @@ public class DataTypeBlob
 		// this descriptor.
 		return false;
 	}
-	
+
 	/**
 	 * Return a JTextField usable in a CellEditor.
 	 */
 	public JTextField getJTextField() {
 		_textComponent = new RestorableJTextField();
-		
+
 		// special handling of operations while editing this data type
 		((RestorableJTextField)_textComponent).addKeyListener(new KeyTextHandler());
-				
+
 		//
 		// handle mouse events for double-click creation of popup dialog.
 		// This happens only in the JTextField, not the JTextArea, so we can
@@ -305,9 +311,9 @@ public class DataTypeBlob
 		// handle null, which is shown as the special string "<null>"
 		if (value.equals("<null>"))
 			return null;
-			
+
 		// Do the conversion into the object in a safe manner
-		
+
 		//First convert the string representation into the binary bytes it is describing
 		Byte[] byteClassData;
 		try {
@@ -320,7 +326,7 @@ public class DataTypeBlob
 			//messageBuffer.append(e.getMessage());
 			return null;
 		}
-		
+
 		byte[] byteData = new byte[byteClassData.length];
 		for (int i=0; i<byteClassData.length; i++)
 			byteData[i] = byteClassData[i].byteValue();
@@ -337,7 +343,7 @@ public class DataTypeBlob
 		else {
 			// for convenience, cast the existing object
 			bdesc = (BlobDescriptor)originalValue;
-			
+
 			// create new object to hold the different value, but use the same internal BLOB pointer
 			// as the original
 			bdesc = new BlobDescriptor(bdesc.getBlob(), byteData, true, true, 0);
@@ -362,12 +368,12 @@ public class DataTypeBlob
 	public boolean useBinaryEditingPanel() {
 		return true;
 	}
-	 
+
 
 	/*
-	 * Now the functions for the Popup-related operations.
-	 */
-	
+		 * Now the functions for the Popup-related operations.
+		 */
+
 	/**
 	 * Returns true if data type may be edited in the popup,
 	 * false if not.
@@ -384,15 +390,15 @@ public class DataTypeBlob
 	 */
 	 public JTextArea getJTextArea(Object value) {
 		_textComponent = new RestorableJTextArea();
-		
-		
+
+
 		// value is a simple string representation of the data,
 		// the same one used in Text and in-cell operations.
 		((RestorableJTextArea)_textComponent).setText(renderObject(value));
-		
+
 		// special handling of operations while editing this data type
 		((RestorableJTextArea)_textComponent).addKeyListener(new KeyTextHandler());
-		
+
 		return (RestorableJTextArea)_textComponent;
 	 }
 
@@ -405,16 +411,16 @@ public class DataTypeBlob
 
 	/*
 	 * The following is used in both cell and popup operations.
-	 */	
-	
-	/*
-	 * Internal class for handling key events during editing
-	 * of both JTextField and JTextArea.
 	 */
+
+	/*
+		 * Internal class for handling key events during editing
+		 * of both JTextField and JTextArea.
+		 */
 	 private class KeyTextHandler extends KeyAdapter {
-	 	public void keyTyped(KeyEvent e) {
+		 public void keyTyped(KeyEvent e) {
 				char c = e.getKeyChar();
-				
+
 				// as a coding convenience, create a reference to the text component
 				// that is typecast to JTextComponent.  this is not essential, as we
 				// could typecast every reference, but this makes the code cleaner
@@ -478,20 +484,20 @@ public class DataTypeBlob
 	private boolean wholeBlobRead(BlobDescriptor bdesc) {
 		if (bdesc == null)
 			return true;	// can use an empty blob for editing
-			
+
 		if (bdesc.getWholeBlobRead())
 			return true;	// the whole blob has been previously read in
 
 		// data was not fully read in before, so try to do that now
 		try {
 			byte[] data = bdesc.getBlob().getBytes(1, (int)bdesc.getBlob().length());
-			
+
 			// read succeeded, so reset the BlobDescriptor to match
 			bdesc.setBlobRead(true);
 			bdesc.setData(data);
 			bdesc.setWholeBlobRead(true);
 			bdesc.setUserSetBlobLimit(0);
-			
+
 			// we successfully read the whole thing
 			 return true;
 		}
@@ -502,18 +508,18 @@ public class DataTypeBlob
 			//?? What to do with this error?
 			//?? error message = "Could not read the complete data. Error was: "+ex.getMessage());
 			return false;
-		}	
+		}
 	}
 
 	/*
 	 * DataBase-related functions
 	 */
 
-   public Object readResultSet(ResultSet rs, int index, boolean limitDataRead)
-      throws java.sql.SQLException {
+	public Object readResultSet(ResultSet rs, int index, boolean limitDataRead)
+		throws java.sql.SQLException {
 
-      return staticReadResultSet(rs, index);
-   }
+		return staticReadResultSet(rs, index);
+	}
 
 	 /**
 	  * On input from the DB, read the data from the ResultSet into the appropriate
@@ -521,7 +527,7 @@ public class DataTypeBlob
 	  */
 	public static Object staticReadResultSet(ResultSet rs, int index)
 		throws java.sql.SQLException {
-		
+
 		// We always get the BLOB, even when we are not reading the contents.
 		// Since the BLOB is just a pointer to the BLOB data rather than the
 		// data itself, this operation should not take much time (as opposed
@@ -530,7 +536,7 @@ public class DataTypeBlob
 
 		if (rs.wasNull())
 			return null;
-		
+
 		// BLOB exists, so try to read the data from it
 		// based on the user's directions
 		if (_readBlobs)
@@ -554,13 +560,13 @@ public class DataTypeBlob
 					blobData = blob.getBytes(1, charsToRead);
 				}
 			}
-			
+
 			// determine whether we read all there was in the blob or not
 			boolean wholeBlobRead = false;
 			if (_readCompleteBlobs ||
 				blobData.length < _readBlobsSize)
 				wholeBlobRead = true;
-				
+
 			return new BlobDescriptor(blob, blobData, true, wholeBlobRead,
 				_readBlobsSize);
 		}
@@ -591,8 +597,8 @@ public class DataTypeBlob
 		else
 			return "";	// BLOB cannot be used in WHERE clause
 	}
-	
-	
+
+
 	/**
 	 * When updating the database, insert the appropriate datatype into the
 	 * prepared statment at the given variable position.
@@ -605,7 +611,7 @@ public class DataTypeBlob
 		else {
 			// for convenience cast the object to BlobDescriptor
 			BlobDescriptor bdesc = (BlobDescriptor)value;
-			
+
 			// There are a couple of possible ways to update the data in the DB.
 			// The first is to use setString like this:
 			//		bdesc.getBlob().setString(0, bdesc.getData());
@@ -614,7 +620,7 @@ public class DataTypeBlob
 			pstmt.setBinaryStream(position, new ByteArrayInputStream(bdesc.getData()), bdesc.getData().length);
 		}
 	}
-	
+
 	/**
 	 * Get a default value for the table used to input data for a new row
 	 * to be inserted into the DB.
@@ -624,37 +630,37 @@ public class DataTypeBlob
 			// try to use the DB default value
 			StringBuffer mbuf = new StringBuffer();
 			Object newObject = validateAndConvert(dbDefaultValue, null, mbuf);
-			
+
 			// if there was a problem with converting, then just fall through
 			// and continue as if there was no default given in the DB.
 			// Otherwise, use the converted object
 			if (mbuf.length() == 0)
 				return newObject;
 		}
-		
+
 		// no default in DB.  If nullable, use null.
 		if (_isNullable)
 			return null;
-		
+
 		// field is not nullable, so create a reasonable default value
 		return null;
 	}
-	
-	
+
+
 	/*
-	 * File IO related functions
-	 */
-	 
-	 
+		 * File IO related functions
+		 */
+
+
 	 /**
 	  * Say whether or not object can be exported to and imported from
 	  * a file.  We put both export and import together in one test
 	  * on the assumption that all conversions can be done both ways.
 	  */
 	 public boolean canDoFileIO() {
-	 	return true;
+		 return true;
 	 }
-	 
+
 	 /**
 	  * Read a file and construct a valid object from its contents.
 	  * Errors are returned by throwing an IOException containing the
@@ -672,31 +678,31 @@ public class DataTypeBlob
 	  */
 	public String importObject(FileInputStream inStream)
 		throws IOException {
-	 	
+
 
 		int fileSize = inStream.available();
-	 	
+
 		byte[] buf = new byte[fileSize];
-	 	
+
 		int count = inStream.read(buf);
-	 	
+
 		if (count != fileSize)
 			throw new IOException(
 				"Could read only "+ count +
 				" bytes from a total file size of " + fileSize +
 				". Import failed.");
-	 	
+
 		// Convert bytes to Bytes
 		Byte[] bBytes = new Byte[count];
 		for (int i=0; i<count; i++)
 			bBytes[i] = new Byte(buf[i]);
-	 	
+
 		// return the text converted from the file 
 		return BinaryDisplayConverter.convertToString(bBytes,
 			BinaryDisplayConverter.HEX, false);
 	}
 
-	 	 
+
 	 /**
 	  * Construct an appropriate external representation of the object
 	  * and write it to a file.
@@ -717,35 +723,35 @@ public class DataTypeBlob
 	  * representing a value of this data type.
 	  */
 	public void exportObject(FileOutputStream outStream, String text)
-	   throws IOException {
-	 	
-	   Byte[] bBytes = BinaryDisplayConverter.convertToBytes(text,
-		   BinaryDisplayConverter.HEX, false);
-	 	
-	   // check that the text is a valid representation
-	   StringBuffer messageBuffer = new StringBuffer();
-	   validateAndConvertInPopup(text, null, messageBuffer);
-	   if (messageBuffer.length() > 0) {
-		   // there was an error in the conversion
-		   throw new IOException(new String(messageBuffer));
-	   }
-	 	
-	   // Convert Bytes to bytes
-	   byte[] bytes = new byte[bBytes.length];
-	   for (int i=0; i<bytes.length; i++)
-		   bytes[i] = bBytes[i].byteValue();
-	 	
-	   // just send the text to the output file
-	   outStream.write(bytes);
-	   outStream.flush();
-	   outStream.close();
+		throws IOException {
+
+		Byte[] bBytes = BinaryDisplayConverter.convertToBytes(text,
+			BinaryDisplayConverter.HEX, false);
+
+		// check that the text is a valid representation
+		StringBuffer messageBuffer = new StringBuffer();
+		validateAndConvertInPopup(text, null, messageBuffer);
+		if (messageBuffer.length() > 0) {
+			// there was an error in the conversion
+			throw new IOException(new String(messageBuffer));
+		}
+
+		// Convert Bytes to bytes
+		byte[] bytes = new byte[bBytes.length];
+		for (int i=0; i<bytes.length; i++)
+			bytes[i] = bBytes[i].byteValue();
+
+		// just send the text to the output file
+		outStream.write(bytes);
+		outStream.flush();
+		outStream.close();
 	}
-	
+
 
 	/*
-	 * Property change control panel
-	 */	  
-	 
+		 * Property change control panel
+		 */
+
 	 /**
 	  * Generate a JPanel containing controls that allow the user
 	  * to adjust the properties for this DataType.
@@ -763,28 +769,28 @@ public class DataTypeBlob
 	  * but the Interface does not seem to like static methods.
 	  */
 	 public static OkJPanel getControlPanel() {
-	 	
+
 		/*
-		 * If you add this method to one of the standard DataTypes in the
-		 * fw/datasetviewer/cellcomponent directory, you must also add the name
-		 * of that DataType class to the list in CellComponentFactory, method
-		 * getControlPanels, variable named initialClassNameList.
-		 * If the class is being registered with the factory using registerDataType,
-		 * then you should not include the class name in the list (it will be found
-		 * automatically), but if the DataType is part of the case statement in the
-		 * factory method getDataTypeObject, then it does need to be explicitly listed
-		 * in the getControlPanels method also.
-		 */
-		 
+				 * If you add this method to one of the standard DataTypes in the
+				 * fw/datasetviewer/cellcomponent directory, you must also add the name
+				 * of that DataType class to the list in CellComponentFactory, method
+				 * getControlPanels, variable named initialClassNameList.
+				 * If the class is being registered with the factory using registerDataType,
+				 * then you should not include the class name in the list (it will be found
+				 * automatically), but if the DataType is part of the case statement in the
+				 * factory method getDataTypeObject, then it does need to be explicitly listed
+				 * in the getControlPanels method also.
+				 */
+
 		 // if this panel is called before any instances of the class have been
 		 // created, we need to load the properties from the DTProperties.
 		 loadProperties();
-		 
+
 		return new BlobOkJPanel();
 	 }
-	 
-	 
-	 
+
+
+
 	 /**
 	  * Inner class that extends OkJPanel so that we can call the ok()
 	  * method to save the data when the user is happy with it.
@@ -794,47 +800,49 @@ public class DataTypeBlob
 		 * GUI components - need to be here because they need to be
 		 * accessible from the event handlers to alter each other's state.
 		 */
-	   // check box for whether to read contents during table load or not
+		// check box for whether to read contents during table load or not
 	  private JCheckBox _showBlobChk = new JCheckBox(
-		"Read contents when table is first loaded:");
-		
+		// i18n[dataTypeBlob.readOnFirstLoad=Read contents when table is first loaded:]
+		s_stringMgr.getString("dataTypeBlob.readOnFirstLoad"));
+
 		// label for type combo - used to enable/disable text associated with the combo
-		private RightLabel _typeDropLabel = new RightLabel("Read");
-				
+		// i18n[dataTypeBlob.read=Read]
+		private RightLabel _typeDropLabel = new RightLabel(s_stringMgr.getString("dataTypeBlob.read"));
+
 		// Combo box for read-all/read-part of blob
 		private ReadTypeCombo _blobTypeDrop = new ReadTypeCombo();
 
 		// text field for how many bytes of Blob to read
 		private IntegerField _showBlobSizeField = new IntegerField(5);
-	   
+
 
 		public BlobOkJPanel() {
-		 	 
+
 			/* set up the controls */
 			// checkbox for read/not-read on table load
 			_showBlobChk.setSelected(_readBlobs);
 			_showBlobChk.addChangeListener(new ChangeListener(){
-				public void stateChanged(ChangeEvent e) {		
+				public void stateChanged(ChangeEvent e) {
 				_blobTypeDrop.setEnabled(_showBlobChk.isSelected());
 				_typeDropLabel.setEnabled(_showBlobChk.isSelected());
 				_showBlobSizeField.setEnabled(_showBlobChk.isSelected() &&
-					(_blobTypeDrop.getSelectedIndex()== 0));	
+					(_blobTypeDrop.getSelectedIndex()== 0));
 				}
 			});
-		
+
 			// Combo box for read-all/read-part of blob
 			_blobTypeDrop = new ReadTypeCombo();
 			_blobTypeDrop.setSelectedIndex( (_readCompleteBlobs) ? 1 : 0 );
 			_blobTypeDrop.addActionListener(new ActionListener(){
-				public void actionPerformed(ActionEvent e) {		
-					_showBlobSizeField.setEnabled(_blobTypeDrop.getSelectedIndex()== 0);	
+				public void actionPerformed(ActionEvent e) {
+					_showBlobSizeField.setEnabled(_blobTypeDrop.getSelectedIndex()== 0);
 				}
 			});
 
-			_showBlobSizeField = new IntegerField(5);	
+			_showBlobSizeField = new IntegerField(5);
 			_showBlobSizeField.setInt(_readBlobsSize);
 
-	 	 
+
 			// handle cross-connection between fields
 			_blobTypeDrop.setEnabled(_readBlobs);
 			_typeDropLabel.setEnabled(_readBlobs);
@@ -843,10 +851,12 @@ public class DataTypeBlob
 			/*
 			  * Create the panel and add the GUI items to it
 			 */
-	 	  
+
 			setLayout(new GridBagLayout());
-	 	
-			setBorder(BorderFactory.createTitledBorder("BLOB   (SQL type 2004)"));
+
+
+			// i18n[dataTypeBlob.blobType=BLOB   (SQL type 2004)]
+			setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("dataTypeBlob.blobType")));
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
@@ -868,8 +878,8 @@ public class DataTypeBlob
 			add(_showBlobSizeField, gbc);
 
 		} // end of constructor for inner class
-	 
-	 
+
+
 		/**
 		  * User has clicked OK in the surrounding JPanel,
 		  * so save the current state of all variables
@@ -880,18 +890,18 @@ public class DataTypeBlob
 			DTProperties.put(
 				thisClassName,
 				"readBlobs", new Boolean(_readBlobs).toString());
-			
-		
+
+
 			_readCompleteBlobs = (_blobTypeDrop.getSelectedIndex() == 0) ? false : true;
 			DTProperties.put(
 				thisClassName,
-				"readCompleteBlobs", new Boolean(_readCompleteBlobs).toString());	
-		
+				"readCompleteBlobs", new Boolean(_readCompleteBlobs).toString());
+
 			_readBlobsSize = _showBlobSizeField.getInt();
 			DTProperties.put(
 				thisClassName,
 				"readBlobsSize", Integer.toString(_readBlobsSize));
 		}
-	 
+
 	 } // end of inner class
 }

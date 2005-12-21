@@ -49,6 +49,9 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponent
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextArea;
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
+ import net.sourceforge.squirrel_sql.fw.util.StringManager;
+ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
 /**
  * @author gwg
  *
@@ -57,29 +60,33 @@ import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
  */
 public class PopupEditableIOPanel extends JPanel
 	implements ActionListener {
-	
+
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(PopupEditableIOPanel.class);
+
+
 	// The text area displaying the object contents
 	private final JTextArea _ta;
-	
+
 	// the scroll pane that holds the text area
 	private final JScrollPane scrollPane;
-	
+
 	// Description needed to handle conversion of data to/from Object
 	private final ColumnDisplayDefinition _colDef;
-	
+
 	private MouseAdapter _lis;
-	
+
 	private final TextPopupMenu _popupMenu;
-	
+
 	// name of file to do export/import/process on
 	private JTextField fileNameField;
 
 	// command to use when processing data with an external program
 	private JComboBox externalCommandCombo;
-	
+
 	// save the original value for re-use by CLOB/BLOB types in conversion
 	private Object originalValue;
-	
+
 	// Binary data viewing option: which radix to use
 	// This object is only non-null when the data is binary data
 	private JComboBox radixList = null;
@@ -87,29 +94,29 @@ public class PopupEditableIOPanel extends JPanel
 	// Binary data viewing option: view ascii as char rather than as numeric value
 	private JCheckBox showAscii = null;
 	private boolean previousShowAscii;
-	
+
 	class BinaryOptionActionListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			
+
 			// user asked to see binary data in a different format
 			int base = 16;	// default to hex
 			if (previousRadixListItem.equals("Decimal")) base = 10;
 			else if (previousRadixListItem.equals("Octal")) base = 8;
 			else if (previousRadixListItem.equals("Binary")) base = 2;
-			
+
 			Byte[] bytes = BinaryDisplayConverter.convertToBytes(_ta.getText(),
 				base, previousShowAscii);
-		
+
 			// return the expected format for this data
 			base = 16;	// default to hex
 			if (radixList.getSelectedItem().equals("Decimal")) base = 10;
 			else if (radixList.getSelectedItem().equals("Octal")) base = 8;
 			else if (radixList.getSelectedItem().equals("Binary")) base = 2;
-		
-			((RestorableJTextArea)_ta).updateText(			
+
+			((RestorableJTextArea)_ta).updateText(
 				BinaryDisplayConverter.convertToString(bytes,
 				base, showAscii.isSelected()));
-			
+
 			previousRadixListItem = (String)radixList.getSelectedItem();
 			previousShowAscii = showAscii.isSelected();
 
@@ -118,11 +125,11 @@ public class PopupEditableIOPanel extends JPanel
 	}
 	private BinaryOptionActionListener optionActionListener =
 		new BinaryOptionActionListener();
-	
+
 	// text put in file name field to indicate that we should
 	// create a temp file for export
 	private final String TEMP_FILE_FLAG = "<temp file>";
-	
+
 	// Symbol used by user in Command field to indicate
 	// "Put the file name here" when the command is executed.
 	private final String FILE_REPLACE_FLAG = "%f";
@@ -131,15 +138,15 @@ public class PopupEditableIOPanel extends JPanel
 	 * Constructor
 	 */
 	public PopupEditableIOPanel(ColumnDisplayDefinition colDef,
-		Object value, boolean isEditable) {
-			
+										 Object value, boolean isEditable) {
+
 		originalValue = value;	// save for possible future use
-		
+
 		_popupMenu = new TextPopupMenu();
-		
+
 		_colDef = colDef;
 		_ta = CellComponentFactory.getJTextArea(colDef, value);
-		
+
 		if (isEditable) {
 			_ta.setEditable(true);
 			_ta.setBackground(Color.yellow);	// tell user it is editable
@@ -148,12 +155,12 @@ public class PopupEditableIOPanel extends JPanel
 			_ta.setEditable(false);
 		}
 
-		
+
 		_ta.setLineWrap(true);
 		_ta.setWrapStyleWord(true);
-		
+
 		setLayout(new BorderLayout());
-		
+
 		// add a panel containing binary data editing options, if needed
 		JPanel displayPanel = new JPanel();
 		displayPanel.setLayout(new BorderLayout());
@@ -169,23 +176,26 @@ public class PopupEditableIOPanel extends JPanel
 		displayPanel.add(scrollPane, BorderLayout.CENTER);
 		if (CellComponentFactory.useBinaryEditingPanel(colDef)) {
 			// this is a binary field, so allow for multiple viewing options
-			
+
 			String[] radixListData = { "Hex", "Decimal", "Octal", "Binary" };
 			radixList = new JComboBox(radixListData);
 			radixList.addActionListener(optionActionListener);
 			previousRadixListItem = "Hex";
-			
+
 			showAscii = new JCheckBox();
 			previousShowAscii = false;
 			showAscii.addActionListener(optionActionListener);
-			
+
 			JPanel displayControlsPanel = new JPanel();
 			// use default sequential layout
-			displayControlsPanel.add(new JLabel("Number Base:"));
+
+			// i18n[popupeditableIoPanel.numberBase=Number Base:]
+			displayControlsPanel.add(new JLabel(s_stringMgr.getString("popupeditableIoPanel.numberBase")));
 			displayControlsPanel.add(radixList);
 			displayControlsPanel.add(new JLabel("    "));	// add some space
 			displayControlsPanel.add(showAscii);
-			displayControlsPanel.add(new JLabel("Show ASCII as chars"));
+			// i18n[popupeditableIoPanel.showAscii=Show ASCII as chars]
+			displayControlsPanel.add(new JLabel(s_stringMgr.getString("popupeditableIoPanel.showAscii")));
 			displayPanel.add(displayControlsPanel, BorderLayout.SOUTH);
 		}
 		add(displayPanel, BorderLayout.CENTER);
@@ -196,69 +206,74 @@ public class PopupEditableIOPanel extends JPanel
 			// yes it can, so add controls
 			add(exportImportPanel(isEditable), BorderLayout.SOUTH);
 		}
-		
+
 		_popupMenu.add(new LineWrapAction());
 		_popupMenu.add(new WordWrapAction());
 		_popupMenu.add(new XMLReformatAction());
 		_popupMenu.setTextComponent(_ta);
 	}
-	
+
 	/**
 	 * build the user interface for export/import operations
 	 */
 	private JPanel exportImportPanel(boolean isEditable) {
 		JPanel eiPanel = new JPanel();
 		eiPanel.setLayout(new GridBagLayout());
-		
+
 		final GridBagConstraints gbc = new GridBagConstraints();
-		
+
 		gbc.insets = new Insets(4,4,4,4);
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		
+
 		// File handling controls
-		eiPanel.add(new JLabel("Use File: "), gbc);
+		// i18n[popupeditableIoPanel.useFile=Use File: ]
+		eiPanel.add(new JLabel(s_stringMgr.getString("popupeditableIoPanel.useFile")), gbc);
 
 
 		fileNameField = new JTextField(TEMP_FILE_FLAG, 19);
 		gbc.gridx++;
 		eiPanel.add(fileNameField, gbc);
 
-		
+
 		// add button for Brows
-		JButton browseButton = new JButton("Browse");
+		// i18n[popupeditableIoPanel.browse=Browse]
+		JButton browseButton = new JButton(s_stringMgr.getString("popupeditableIoPanel.browse"));
 		browseButton.setActionCommand("browse");
 		browseButton.addActionListener(this);
 
 
 		gbc.gridx++;
 		eiPanel.add(browseButton, gbc);
-		
 
-		JButton exportButton = new JButton("Export");
+
+		// i18n[popupeditableIoPanel.export44=Export]
+		JButton exportButton = new JButton(s_stringMgr.getString("popupeditableIoPanel.export44"));
 		exportButton.setActionCommand("export");
 		exportButton.addActionListener(this);
 
 		gbc.gridx++;
 		eiPanel.add(exportButton, gbc);
-		
+
 		// import and external processing can only be done if
 		// panel is editable
 		if ( isEditable == false)
 			return eiPanel;
 
 		// Add import control
-		JButton importButton = new JButton("Import");
+		// i18n[popupeditableIoPanel.import44=Import]
+		JButton importButton = new JButton(s_stringMgr.getString("popupeditableIoPanel.import44"));
 		importButton.setActionCommand("import");
 		importButton.addActionListener(this);
 
 		gbc.gridx++;
 		eiPanel.add(importButton, gbc);
-		
+
 		// add external processing command field and button
 		gbc.gridy++;
 		gbc.gridx = 0;
-		eiPanel.add(new JLabel("With command:"), gbc);
+		// i18n[popupeditableIoPanel.withCommand=With command:]
+		eiPanel.add(new JLabel(s_stringMgr.getString("popupeditableIoPanel.withCommand")), gbc);
 
 		// add combo box for command to execute
 		gbc.gridx++;
@@ -266,51 +281,55 @@ public class PopupEditableIOPanel extends JPanel
 			CellImportExportInfoSaver.getInstance().getCmdList());
 		externalCommandCombo.setSelectedIndex(-1);	// no entry selected
 		externalCommandCombo.setEditable(true);
-		
+
 		// make this the same size as the fileNameField
 		externalCommandCombo.setPreferredSize(fileNameField.getPreferredSize());
-	
+
 		eiPanel.add(externalCommandCombo, gbc);
-		
+
 		// add button to execute external command
-		JButton externalCommandButton = new JButton("Execute");
+		// i18n[popupeditableIoPanel.execute34=Execute]
+		JButton externalCommandButton = new JButton(s_stringMgr.getString("popupeditableIoPanel.execute34"));
 		externalCommandButton.setActionCommand("execute");
 		externalCommandButton.addActionListener(this);
 
 		gbc.gridx++;
 		eiPanel.add(externalCommandButton, gbc);
-		
+
 		// add button for applying file & cmd info without doing anything else
-		JButton applyButton = new JButton("Apply File & Cmd");
+		// i18n[popupeditableIoPanel.applyFile=Apply File & Cmd]
+		JButton applyButton = new JButton(s_stringMgr.getString("popupeditableIoPanel.applyFile"));
 		applyButton.setActionCommand("apply");
 		applyButton.addActionListener(this);
 
 		gbc.gridx++;
 		gbc.gridwidth = 2;
-		eiPanel.add(applyButton, gbc);	
+		eiPanel.add(applyButton, gbc);
 		gbc.gridwidth = 1;	// reset width to normal	
-	
+
 		// add note to user about including file name in command
 		gbc.gridy++;
 		gbc.gridx = 0;
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		eiPanel.add(new JLabel("(In command, the string "+FILE_REPLACE_FLAG+
-			" is replaced by the file name when Executed.)"), gbc);
+
+
+		// i18n[popupeditableIoPanel.replaceFile=(In command, the string {0} is replaced by the file name when Executed.)]
+		eiPanel.add(new JLabel(s_stringMgr.getString("popupeditableIoPanel.replaceFile", FILE_REPLACE_FLAG)), gbc);
 
 		// load filename and command with previously entered info
 		// if not the default
-		CellImportExportInfo info = 
+		CellImportExportInfo info =
 			CellImportExportInfoSaver.getInstance().get(_colDef.getFullTableColumnName());
 		if (info != null) {
 			// load the info into the text fields
 			fileNameField.setText(info.getFileName());
 			externalCommandCombo.getEditor().setItem(info.getCommand());
 		}
-		
+
 		return eiPanel;
 	}
-	
-	
+
+
 	/**
 	 * Return the contents of the editable text area as an Object
 	 * converted by the correct DataType function.  Errors in converting
@@ -330,7 +349,7 @@ public class PopupEditableIOPanel extends JPanel
 		return CellComponentFactory.validateAndConvertInPopup(_colDef,
 					originalValue, text, messageBuffer);
 	}
-	
+
 	/**
 	 * When focus is passed to this panel, automatically pass it
 	 * on to the text area.
@@ -338,14 +357,14 @@ public class PopupEditableIOPanel extends JPanel
 	public void requestFocus() {
 		_ta.requestFocus();
 	}
-	
+
 	/**
 	 * Handle actions on the buttons in the file operations panel
 	 */
 	public void actionPerformed(ActionEvent e) {
-		
+
 		//File object for doing IO
-		File file;		
+		File file;
 
 		if (e.getActionCommand().equals("browse")) {
 			JFileChooser chooser = new JFileChooser();
@@ -361,12 +380,14 @@ public class PopupEditableIOPanel extends JPanel
 					// should not happen since the file that was selected was
 					// just being shown in the Chooser dialog, but just to be safe...
 					JOptionPane.showMessageDialog(this,
-						"Error getting full path name for selected file",
-						"File Chooser Error",JOptionPane.ERROR_MESSAGE);
+						// i18n[popupeditableIoPanel.errorGettingPath=Error getting full path name for selected file]
+						s_stringMgr.getString("popupeditableIoPanel.errorGettingPath"),
+						// i18n[popupeditableIoPanel.fileChooserError=File Chooser Error]
+						s_stringMgr.getString("popupeditableIoPanel.fileChooserError"),JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
-		
+
 		else if (e.getActionCommand().equals("apply")) {
 			// If file name default and cmd is null or empty,
 			// make sure this entry is not being held in CellImportExportInfoSaver
@@ -385,36 +406,41 @@ public class PopupEditableIOPanel extends JPanel
 					_colDef.getFullTableColumnName(),fileNameField.getText(),
 					((String)externalCommandCombo.getEditor().getItem()));
 			}
-			
-		}
- 
- 		else if (e.getActionCommand().equals("import")) {
- 			
- 			// IMPORT OBJECT FROM OSX_FILE
- 			
- 			if (fileNameField.getText() == null ||
- 				fileNameField.getText().equals(TEMP_FILE_FLAG)) {
- 				// not allowed - must have existing file for import
- 				JOptionPane.showMessageDialog(this,
-						"You must select an existing file to import data from.",
-						"No File Selected",JOptionPane.ERROR_MESSAGE);
-				return;	// do not do import
- 			}
 
- 			// get name of file, which must exist
+		}
+
+		 else if (e.getActionCommand().equals("import")) {
+
+			 // IMPORT OBJECT FROM OSX_FILE
+
+			 if (fileNameField.getText() == null ||
+				 fileNameField.getText().equals(TEMP_FILE_FLAG)) {
+				 // not allowed - must have existing file for import
+				 JOptionPane.showMessageDialog(this,
+					 // i18n[popupeditableIoPanel.selectImportDataFile=You must select an existing file to import data from.]
+						s_stringMgr.getString("popupeditableIoPanel.selectImportDataFile"),
+					 // i18n[popupeditableIoPanel.noFile=No File Selected]
+						s_stringMgr.getString("popupeditableIoPanel.noFile"),JOptionPane.ERROR_MESSAGE);
+				return;	// do not do import
+			 }
+
+			 // get name of file, which must exist
 			if (fileNameField.getText() == null)
 				fileNameField.setText("");	// guard against something really stupid
 			file = new File(fileNameField.getText());
 			if ( ! file.exists() || ! file.isFile() || ! file.canRead()) {
 				// not something we can read
-				JOptionPane.showMessageDialog(this,
-						"File "+fileNameField.getText()+" does not exist,\n"+
-						"or is not a readable, normal file.\n"+
-						"Please enter a valid file name or use Browse to select a file.",
-						"File Name Error",JOptionPane.ERROR_MESSAGE);
+
+				// i18n[popupeditableIoPanel.fileDoesNotExist=File {0} does not exist,\nor is not a readable, normal file.\nPlease enter a valid file name or use Browse to select a file.]
+				String msg = s_stringMgr.getString("popupeditableIoPanel.fileDoesNotExist", fileNameField.getText());
+
+			   JOptionPane.showMessageDialog(this, msg,
+
+						// i18n[popupeditableIoPanel.fileError=File Name Error]
+						s_stringMgr.getString("popupeditableIoPanel.fileError"),JOptionPane.ERROR_MESSAGE);
 				return;	// do not do import
 			}
-			
+
 			// Now that we have the file, do the import.
 			//
 			// Note: the sequence of operations is divided into two sections
@@ -431,50 +457,54 @@ public class PopupEditableIOPanel extends JPanel
 			CellImportExportInfoSaver.getInstance().save(
 				_colDef.getFullTableColumnName(), fileNameField.getText(),
 				((String)externalCommandCombo.getEditor().getItem()));
-	
- 		}
+
+		 }
 
 		else {
-			
+
 			// GET OSX_FILE FOR EXPORT & EXTERNAL PROCESSING
-			
+
 			String canonicalFilePathName = fileNameField.getText();
-			
+
 			// file name verification operations are the same for both
 			// export and execute, so do that work here for both.
 			//
 			// If file name is null or empty, do not proceed
 			if (fileNameField.getText() == null ||
 				fileNameField.getText().equals("")) {
-					
+
 				JOptionPane.showMessageDialog(this,
-					"No file name given for export.\n"+
-					"Please enter a file name  or use Browse before clicking Export.",
-					"Export Error",JOptionPane.ERROR_MESSAGE);
+
+					// i18n[popupeditableIoPanel.noExportFile=No file name given for export.\nPlease enter a file name  or use Browse before clicking Export.]
+					s_stringMgr.getString("popupeditableIoPanel.noExportFile"),
+					// i18n[popupeditableIoPanel.exportError=Export Error]
+					s_stringMgr.getString("popupeditableIoPanel.exportError"),JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			
+
 			// create the file to open
 			if (fileNameField.getText().equals(TEMP_FILE_FLAG)) {
 				// user wants us to create a temp file
 				try {
 					file = File.createTempFile("squirrel", ".tmp");
-					
+
 					// get the real name for use later
 					canonicalFilePathName = file.getCanonicalPath();
 				}
 				catch (Exception ex) {
 					JOptionPane.showMessageDialog(this,
-						"Cannot create temp file..\n"+
-						"Error was:\n"+ex.getMessage(),
-						"Export Error",JOptionPane.ERROR_MESSAGE);
+						// i18n[popupeditableIoPanel.cannotCreateTempFile=Cannot create temp file..\nError was:\n{0}]
+						s_stringMgr.getString("popupeditableIoPanel.cannotCreateTempFile", ex.getMessage()),
+						// i18n[popupeditableIoPanel.exportError2=Export Error]
+						s_stringMgr.getString("popupeditableIoPanel.exportError2"),
+						JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 			}
 			else {
 				//user must have supplied a file name.
 				file = new File(fileNameField.getText());
-				
+
 				try {
 					canonicalFilePathName = file.getCanonicalPath();
 				}
@@ -483,38 +513,42 @@ public class PopupEditableIOPanel extends JPanel
 					// reached or has moved or some such.  In any case,
 					// the file cannot be used for export.
 					JOptionPane.showMessageDialog(this,
-						"Cannot access file name "+ fileNameField.getText() +
-						".\n"+
-						"Aborting export.",
-						"Export Error",JOptionPane.ERROR_MESSAGE);
+						// i18n[popupeditableIoPanel.cannotAccessFile=Cannot access file name {0}\nAborting export.]
+						s_stringMgr.getString("popupeditableIoPanel.cannotAccessFile", fileNameField.getText()),
+
+						// i18n[popupeditableIoPanel.exportError3=Export Error]
+						s_stringMgr.getString("popupeditableIoPanel.exportError3"),JOptionPane.ERROR_MESSAGE);
 						return;
 				}
-					
+
 				// see if file exists
 				if (file.exists()) {
 					if ( ! file.isFile()) {
 						JOptionPane.showMessageDialog(this,
-							"File is not a normal file.\n"+
-							"Cannot do export to a directory or system file.",
-							"Export Error",JOptionPane.ERROR_MESSAGE);
+							// i18n[popupeditableIoPanel.notANormalFile=File is not a normal file.\n Cannot do export to a directory or system file.]
+							s_stringMgr.getString("popupeditableIoPanel.notANormalFile"),
+							// i18n[popupeditableIoPanel.exportError4=Export Error]
+							s_stringMgr.getString("popupeditableIoPanel.exportError4"),JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 					if ( ! file.canWrite()) {
 						JOptionPane.showMessageDialog(this,
-							"File is not writeable.\n"+
-							"Change file permissions or select a differnt file for export.",
-							"Export Error",JOptionPane.ERROR_MESSAGE);
+							// i18n[popupeditableIoPanel.notWriteable=File is not writeable.\nChange file permissions or select a differnt file for export.]
+							s_stringMgr.getString("popupeditableIoPanel.notWriteable"),
+							// i18n[popupeditableIoPanel.exportError5=Export Error]
+							s_stringMgr.getString("popupeditableIoPanel.exportError5"),JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 					// file exists, is normal and is writable, so see if user
 					// wants to overwrite contents of file
 					int option = JOptionPane.showConfirmDialog(this,
-							"File "+ canonicalFilePathName +
-							" already exists.\n\nDo you wish to overwrite this file?",
-							"File Overwrite Warning", JOptionPane.YES_NO_OPTION);
+						// i18n[popupeditableIoPanel.fileOverwrite=File {0} already exists.\n\nDo you wish to overwrite this file?]
+						s_stringMgr.getString("popupeditableIoPanel.fileOverwrite", canonicalFilePathName),
+						// i18n[popupeditableIoPanel.overwriteWarning=File Overwrite Warning]
+							s_stringMgr.getString("popupeditableIoPanel.overwriteWarning"), JOptionPane.YES_NO_OPTION);
 					if (option != JOptionPane.YES_OPTION) {
 						// user does not want to overwrite the file
-						
+
 						// we could tell user here that export was canceled,
 						// but I don't think its necessary, and that avoids
 						// forcing user to do yet another annoying mouse click.
@@ -530,23 +564,26 @@ public class PopupEditableIOPanel extends JPanel
 					try {
 						if ( ! file.createNewFile()) {
 							JOptionPane.showMessageDialog(this,
-								"Failed to create file "+canonicalFilePathName+
-								".\n"+
-								"Change file name or select a differnt file for export.",
-								"Export Error",JOptionPane.ERROR_MESSAGE);
+								// i18n[popupeditableIoPanel.createFileError=Failed to create file {0}.\nChange file name or select a differnt file for export.]
+								s_stringMgr.getString("popupeditableIoPanel.createFileError", canonicalFilePathName),
+								// i18n[popupeditableIoPanel.exportError6=Export Error]
+								s_stringMgr.getString("popupeditableIoPanel.exportError6"),JOptionPane.ERROR_MESSAGE);
 							return;
 						}
 					}
 					catch (Exception ex) {
+
+						Object[] args = new Object[]{canonicalFilePathName, ex.getMessage()};
 						JOptionPane.showMessageDialog(this,
-							"Cannot open file "+canonicalFilePathName+
-							".\nError was:\n"+ex.getMessage(),
-							"Export Error",JOptionPane.ERROR_MESSAGE);
+							// i18n[popupeditableIoPanel.cannotOpenFile=Cannot open file {0}.\nError was:{1}]
+							s_stringMgr.getString("popupeditableIoPanel.cannotOpenFile", args),
+							// i18n[popupeditableIoPanel.exportError7=Export Error]
+							s_stringMgr.getString("popupeditableIoPanel.exportError7"),JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 				}
 			}
-			
+
 			// at this point we have an actual file that we can output to,
 			// so create the output stream
 			// (so that data type objects do not have to).
@@ -562,9 +599,10 @@ public class PopupEditableIOPanel extends JPanel
 			}
 			catch (Exception ex) {
 				JOptionPane.showMessageDialog(this,
-					"Cannot find file "+canonicalFilePathName+"\n"+
-					"Check file name and re-try export.",
-					"Export Error",JOptionPane.ERROR_MESSAGE);
+					// i18n[popupeditableIoPanel.cannotFindFile=Cannot find file {0}\nCheck file name and re-try export.]
+					s_stringMgr.getString("popupeditableIoPanel.cannotFindFile", canonicalFilePathName),
+					// i18n[popupeditableIoPanel.exportError8=Export Error]
+					s_stringMgr.getString("popupeditableIoPanel.exportError8"),JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 
@@ -572,26 +610,26 @@ public class PopupEditableIOPanel extends JPanel
 			// their options
 			if ( ! fileNameField.getText().equals(TEMP_FILE_FLAG) ||
 				(((String)externalCommandCombo.getEditor().getItem()) != null &&
-				((String)externalCommandCombo.getEditor().getItem()).length() > 0)) {	
-				
+				((String)externalCommandCombo.getEditor().getItem()).length() > 0)) {
+
 				// This may be called either when the table is editable or when it is
 				// read-only.  When it is read-only, there is no command to be saved,
 				// but when it is editable, there may be a command.
 				String commandString = null;
 				if (externalCommandCombo != null)
 					commandString = (String)(externalCommandCombo.getEditor().getItem());
-						
+
 				CellImportExportInfoSaver.getInstance().save(
 					_colDef.getFullTableColumnName(), fileNameField.getText(),
 					commandString);
 			}
-			
+
 			if (e.getActionCommand().equals("export")) {
-				
+
 				// EXPORT OBJECT TO OSX_FILE
 
 				if (exportData(file, outStream, canonicalFilePathName) == true) {
-								
+
 					// if we get here, then everything worked correctly, so
 					// tell user that data was put into file.
 					// This is different from the Import strategy
@@ -600,26 +638,28 @@ public class PopupEditableIOPanel extends JPanel
 					// operation, or they may not know what directory the file
 					// was actually put into, so this tells them the full file path.
 					JOptionPane.showMessageDialog(this,
-						"Data Successfully exported to file "+
-						canonicalFilePathName+ ".\n",
-						"Export Success",JOptionPane.INFORMATION_MESSAGE);			
+						// i18n[popupeditableIoPanel.exportedToFile=Data Successfully exported to file {0}]
+						s_stringMgr.getString("popupeditableIoPanel.exportedToFile", canonicalFilePathName),
+						// i18n[popupeditableIoPanel.exportSuccess=Export Success]
+						s_stringMgr.getString("popupeditableIoPanel.exportSuccess"),JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
-		
+
 			else if (e.getActionCommand().equals("execute")) {
-				
+
 				// EXPORT OBJECT TO OSX_FILE, EXECUTE PROGRAM ON IT, IMPORT IT BACK
-				
+
 				if (((String)externalCommandCombo.getEditor().getItem()) == null ||
 					((String)externalCommandCombo.getEditor().getItem()).length() == 0) {
 					// cannot execute a null command
 					JOptionPane.showMessageDialog(this,
-						"Cannot execute a null command.\n"+
-						"Please enter a command in the Command field before clicking on Execute.",
-						"Execute Error",JOptionPane.ERROR_MESSAGE);
+						// i18n[popupeditableIoPanel.cannotExec=Cannot execute a null command.\nPlease enter a command in the Command field before clicking on Execute.]
+						s_stringMgr.getString("popupeditableIoPanel.cannotExec"),
+						// i18n[popupeditableIoPanel.executeError=Execute Error]
+						s_stringMgr.getString("popupeditableIoPanel.executeError"),JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				
+
 				// replace any instance of flag in command with file name
 				String command = ((String)externalCommandCombo.getEditor().getItem());
 
@@ -629,7 +669,7 @@ public class PopupEditableIOPanel extends JPanel
 						canonicalFilePathName +
 						command.substring(index + FILE_REPLACE_FLAG.length());
 				}
-				
+
 				// export data to file
 				if (exportData(file, outStream, canonicalFilePathName) == false) {
 					// bad export - do not proceed with command
@@ -637,15 +677,15 @@ public class PopupEditableIOPanel extends JPanel
 					// to the user saying the export failed.
 					return;
 				}
-				
+
 				int commandResult;
 				try {
 					// execute command
 					Process cmdProcess = Runtime.getRuntime().exec(command);
-				
+
 					// wait for command to complete
 					commandResult = cmdProcess.waitFor();
-					
+
 					// check the error stream for a problem
 					//
 					// This is a bit questionable since it is possible
@@ -655,35 +695,38 @@ public class PopupEditableIOPanel extends JPanel
 					// messages from the process).
 					BufferedReader err = new BufferedReader(
 						new InputStreamReader(cmdProcess.getErrorStream()));
-					
+
 					String errMsg = err.readLine();
-					if (errMsg != null) 
+					if (errMsg != null)
 						throw new IOException(
 							"text on error stream from command starting with:\n"+errMsg);
 				}
 				catch (Exception ex) {
+
+					Object[] args = new Object[]{command, ex.getMessage()};
 					JOptionPane.showMessageDialog(this,
-						"Error while executing command.\n"+
-						"The command was:\n  "+command +
-						"\nThe error was:\n "+ex.getMessage(),
-						"Execute Error",JOptionPane.ERROR_MESSAGE);
+						// i18n[popupeditableIoPanel.errWhileExecutin=Error while executing command.\nThe command was:\n {0}\nThe error was:\n{1}]
+						s_stringMgr.getString("popupeditableIoPanel.errWhileExecutin", args),
+						// i18n[popupeditableIoPanel.executeError2=Execute Error]
+						s_stringMgr.getString("popupeditableIoPanel.executeError2"),JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				
+
 				// check for possibly bad return from child
 				if (commandResult != 0) {
 					// command returned non-standard value.
 					// ask user before proceeding.
 					int option = JOptionPane.showConfirmDialog(this,
-							"The convention for command returns is that 0 means success,"+
-							" but this command returned "+ commandResult +
-							".\nDo you wish to import the file contents anyway?",
-							"File Overwrite Warning", JOptionPane.YES_NO_OPTION);
+							// i18n[popupeditableIoPanel.commandReturnNot0=The convention for command returns is that 0 means success, but this command returned {0}.\nDo you wish to import the file contents anyway?]
+							s_stringMgr.getString("popupeditableIoPanel.commandReturnNot0", new Integer(commandResult)),
+
+							// i18n[popupeditableIoPanel.importWarning=Import Warning]
+							s_stringMgr.getString("popupeditableIoPanel.importWarning"), JOptionPane.YES_NO_OPTION);
 					if (option != JOptionPane.YES_OPTION) {
 						return;
 					}
 				}
-				
+
 				//import the data back from the same file
 				importData(file);
 
@@ -695,7 +738,7 @@ public class PopupEditableIOPanel extends JPanel
 			}
 		} // end of combined export and execute operations
 	}
-	
+
 	/**
 	 * Function to import data from a file.
 	 * This is a separate function because it is called from two places.
@@ -710,7 +753,7 @@ public class PopupEditableIOPanel extends JPanel
 		String canonicalFilePathName = fileNameField.getText();
 		try {
 			inStream = new FileInputStream(file);
-				
+
 			// it is handy to have the cannonical path name
 			// to show user in error messages.  Since getting
 			// that name might involve an IOException, we need
@@ -723,10 +766,14 @@ public class PopupEditableIOPanel extends JPanel
 			canonicalFilePathName = file.getCanonicalPath();
 		}
 		catch (Exception ex) {
+
+			Object[] args = new Object[]{canonicalFilePathName, ex.getMessage()};
+
 			JOptionPane.showMessageDialog(this,
-				"There was an error opening file "+canonicalFilePathName+
-				".\nThe error was:\n"+ex.getMessage(),
-				"File Open Error",JOptionPane.ERROR_MESSAGE);
+				// i18n[popupeditableIoPanel.fileOpenError=There was an error opening file {0}.\nThe error was:\n{1}]
+				s_stringMgr.getString("popupeditableIoPanel.fileOpenError", args),
+				// i18n[popupeditableIoPanel.fileOpenErrorHeader=File Open Error]
+				s_stringMgr.getString("popupeditableIoPanel.fileOpenErrorHeader"),JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 
@@ -734,18 +781,18 @@ public class PopupEditableIOPanel extends JPanel
 		// Also, handle File IO errors here so that DataType objects
 		// do not have to.
 		try {
-				
+
 			// The DataObject returns a string to put into the
 			// popup which can later be converted to the appropriate
 			// object type.
 			String replacementText =
 				CellComponentFactory.importObject(_colDef, inStream);
-				
+
 			// since the above did not throw an exception,
 			// we now have a good new data object, so
 			// change the text area to reflect that new object.
 			//
-			
+
 			// If the user has selected a non-cannonical Binary format, we need
 			// to convert the text appropriately
 			if (radixList != null &&
@@ -756,25 +803,28 @@ public class PopupEditableIOPanel extends JPanel
 				if (radixList.getSelectedItem().equals("Decimal")) base = 10;
 				else if (radixList.getSelectedItem().equals("Octal")) base = 8;
 				else if (radixList.getSelectedItem().equals("Binary")) base = 2;
-		
+
 				Byte[] bytes = BinaryDisplayConverter.convertToBytes(replacementText,
 					16, false);
-		
+
 				// return the expected format for this data
 				replacementText = BinaryDisplayConverter.convertToString(bytes,
-					base, showAscii.isSelected());				
+					base, showAscii.isSelected());
 			}
 
 			((RestorableJTextArea)_ta).updateText(replacementText);
 		}
 		catch (Exception ex) {
+
+			Object[] args = new Object[]{canonicalFilePathName, ex.getMessage()};
 			JOptionPane.showMessageDialog(this,
-				"There was an error while reading file "+canonicalFilePathName+
-				".\nThe error was:\n"+ex.getMessage(),
-				"Import Error",JOptionPane.ERROR_MESSAGE);
+				// i18n[popupeditableIoPanel.errorReadingFile=There was an error while reading file {0}.\nThe error was:\n{1}]
+				s_stringMgr.getString("popupeditableIoPanel.errorReadingFile", args),
+				// i18n[popupeditableIoPanel.importError2=Import Error]
+				s_stringMgr.getString("popupeditableIoPanel.importError2"),JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-			
+
 		// cleanup resources used
 		try {
 			inStream.close();
@@ -783,21 +833,21 @@ public class PopupEditableIOPanel extends JPanel
 			// I cannot think of any reason for doing anything
 			// at all here
 		}
-			
+
 		/*
-		 * Issue: After importing the data, we could tell the user that
-		 * it has been successfully imported.  This would give good
-		 * positive feedback.  However, it would mean that they need
-		 * to click on yet another button to dismiss that message.
-		 * On the other hand, since the operation is synchronous,
-		 * the user cannot proceed to do anything until it is done.
-		 * If we assume that import usually works correctly unless
-		 * they are shown an error message, then we do not need to
-		 * display anything here.
-		 */
+				 * Issue: After importing the data, we could tell the user that
+				 * it has been successfully imported.  This would give good
+				 * positive feedback.  However, it would mean that they need
+				 * to click on yet another button to dismiss that message.
+				 * On the other hand, since the operation is synchronous,
+				 * the user cannot proceed to do anything until it is done.
+				 * If we assume that import usually works correctly unless
+				 * they are shown an error message, then we do not need to
+				 * display anything here.
+				 */
 	}
-	
-	
+
+
 	/**
 	 * Function to export data to a file.
 	 * This is a separate function because it is called from two places.
@@ -805,13 +855,13 @@ public class PopupEditableIOPanel extends JPanel
 	 * as to run an external command, which involves exporting to file first.
 	 */
 	private boolean exportData(File file, FileOutputStream outStream,
-		String canonicalFilePathName){
-		
+										String canonicalFilePathName){
+
 		// hand file output stream to DataType object for export
 		// Also, handle File IO errors here so that DataType objects
 		// do not have to.
 		try {
-				
+
 			// Hand the current text to the DataType object.
 			// DataType object is responsible for validating
 			// that the text makes sense for this type of object
@@ -819,19 +869,23 @@ public class PopupEditableIOPanel extends JPanel
 			// All errors are handled as IOExceptions
 			CellComponentFactory.exportObject(_colDef, outStream,
 				getTextAreaCannonicalForm());
-				
+
 		}
 		catch (Exception ex) {
+
+			Object[] args = new Object[]{canonicalFilePathName, ex.getMessage()};
+
 			JOptionPane.showMessageDialog(this,
-				"There was an error while writing file "+canonicalFilePathName+
-				".\nThe error was:\n"+ex.getMessage(),
-				"Export Error",JOptionPane.ERROR_MESSAGE);
+				// i18n[popupeditableIoPanel.errorWritingFile=There was an error while writing file {0}.\nThe error was:\n{1}]
+				s_stringMgr.getString("popupeditableIoPanel.errorWritingFile", args),
+				// i18n[popupeditableIoPanel.exportError100=Export Error]
+				s_stringMgr.getString("popupeditableIoPanel.exportError100"),JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * catch and handle mouse events to put up a menu
 	 */
@@ -875,7 +929,8 @@ public class PopupEditableIOPanel extends JPanel
 	{
 		LineWrapAction()
 		{
-			super("Wrap Lines on/off");
+			// i18n[popupEditableIoPanel.wrapLines=Wrap Lines on/off]
+			super(s_stringMgr.getString("popupEditableIoPanel.wrapLines"));
 		}
 
 		public void actionPerformed(ActionEvent evt)
@@ -891,7 +946,8 @@ public class PopupEditableIOPanel extends JPanel
 	{
 		WordWrapAction()
 		{
-			super("Wrap on Word on/off");
+			// i18n[popupEditableIoPanel.wrapWord=Wrap on Word on/off]
+			super(s_stringMgr.getString("popupEditableIoPanel.wrapWord"));
 		}
 
 		public void actionPerformed(ActionEvent evt)
@@ -907,7 +963,8 @@ public class PopupEditableIOPanel extends JPanel
 	{
 		XMLReformatAction()
 		{
-			super("Reformat XML");
+			// i18n[popupEditableIoPanel.reformatXml=Reformat XML]
+			super(s_stringMgr.getString("popupEditableIoPanel.reformatXml"));
 		}
 
 		public void actionPerformed(ActionEvent evt)
@@ -936,7 +993,7 @@ public class PopupEditableIOPanel extends JPanel
 			_ta.getText().equals("<null>") ||
 			_ta.getText().length() == 0)
 			return _ta.getText();
-		
+
 		// if the data is not binary, then there is no need for conversion.
 		// if the data is Hex with ASCII not shown as chars, then no conversion needed.
 		if (radixList == null ||
@@ -944,17 +1001,17 @@ public class PopupEditableIOPanel extends JPanel
 			// no need for conversion
 			return _ta.getText();
 		}
-			
+
 		// The field is binary and not in the format expected by the DataType
 		int base = 16;	// default to hex
 		if (radixList.getSelectedItem().equals("Decimal")) base = 10;
 		else if (radixList.getSelectedItem().equals("Octal")) base = 8;
 		else if (radixList.getSelectedItem().equals("Binary")) base = 2;
-		
+
 		// the following can cause and exception if the text is not formatted correctly
 		Byte[] bytes = BinaryDisplayConverter.convertToBytes(_ta.getText(),
 			base, showAscii.isSelected());
-		
+
 		// return the expected format for this data
 		return BinaryDisplayConverter.convertToString(bytes, 16, false);
 	}

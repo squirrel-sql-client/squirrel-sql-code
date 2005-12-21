@@ -30,10 +30,17 @@ import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.gui.action.MakeEditableCommand;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
 //??RENAME to DataSetViewerTextDestination
 
 public class DataSetViewerTextPanel extends BaseDataSetViewerDestination
 {
+
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(DataSetViewerTextPanel.class);
+
+
 	private final static int COLUMN_PADDING = 2;
 
 	private MyJTextArea _outText = null;
@@ -230,7 +237,8 @@ public class DataSetViewerTextPanel extends BaseDataSetViewerDestination
 		{
 			MakeEditableAction()
 			{
-				super("Make Editable");
+				// i18n[dataSetViewerTablePanel.makeEditable=Make Editable]
+ 				super(s_stringMgr.getString("dataSetViewerTablePanel.makeEditable"));
 			}
 
 			public void actionPerformed(ActionEvent evt)

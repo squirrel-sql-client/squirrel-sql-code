@@ -17,6 +17,9 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
  
+ import net.sourceforge.squirrel_sql.fw.util.StringManager;
+ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
  import javax.swing.JOptionPane;
  import java.util.ArrayList;
 
@@ -32,7 +35,12 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
 public class XmlRefomatter
 {
 
-	private static String DEFAULT_MESSAGE = "Unexpected problem during formatting.";
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(XmlRefomatter.class);
+
+
+	// i18n[xmlRefomatter.unexpectedProblem=Unexpected problem during formatting.]
+	private static String DEFAULT_MESSAGE = s_stringMgr.getString("xmlRefomatter.unexpectedProblem");
 	private static String _message = DEFAULT_MESSAGE;
    private static boolean _showWarningMessages = true;
 
@@ -42,8 +50,10 @@ public class XmlRefomatter
 		if (xml.indexOf("<") == -1 || xml.equals("<null>")) {
 			// no tags, so cannot be XML
 			JOptionPane.showMessageDialog(null,
-				"The data does not contain any XML tags.  No reformatting done.",
-				"XML Warning", JOptionPane.WARNING_MESSAGE);
+				// i18n[xmlRefomatter.noXml=The data does not contain any XML tags.  No reformatting done.]
+				s_stringMgr.getString("xmlRefomatter.noXml"),
+				// i18n[xmlRefomatter.xmlWarning=XML Warning]
+				s_stringMgr.getString("xmlRefomatter.xmlWarning"), JOptionPane.WARNING_MESSAGE);
 			return xml;
 		}
 
@@ -104,9 +114,10 @@ public class XmlRefomatter
 
 						if ( ! testableStartTag.equals(endTag))
                   {
-                     String msg =
-                        "Possible mal-formed XML:\n   Starting tag was: "+startTag +
-                        "\n   Ending Tag was: "+ parseRes.item +"\nContinuing with reformatting XML.";
+							Object[] args = new Object[]{startTag, parseRes.item};
+
+							// i18n[xmlRefomatter.malformedXml=Possible mal-formed XML:\n   Starting tag was: {0}\nEnding Tag was: {1}\nContinuing with reformatting XML."]
+							String msg = s_stringMgr.getString("xmlRefomatter.malformedXml", args);
                      showWarning(msg);
 						}
 					}
@@ -137,7 +148,8 @@ public class XmlRefomatter
 			// the parse did not find XML, or it was mal-formed
 			JOptionPane.showMessageDialog(null,
 				DEFAULT_MESSAGE,
-				"XML Warning", JOptionPane.WARNING_MESSAGE);
+				// i18n[xmlReformatter.xmlWarning2=XML Warning]
+				s_stringMgr.getString("xmlReformatter.xmlWarning2"), JOptionPane.WARNING_MESSAGE);
 			e.printStackTrace();
 		}
       finally
@@ -157,10 +169,20 @@ public class XmlRefomatter
          return;
       }
 
-      Object[] options = { "YES", "NO" };
-      int ret = JOptionPane.showOptionDialog(null,
-                message + "\nDo you wish to see other errors?",
-                "XML Warning",
+      Object[] options =
+			{
+				// i18n[xmlReformatter.yes=YES]
+				s_stringMgr.getString("xmlReformatter.yes"),
+				// i18n[xmlReformatter.no=NO]
+				s_stringMgr.getString("xmlReformatter.no")
+			};
+
+
+		int ret = JOptionPane.showOptionDialog(null,
+		    		 // i18n[xmlReformatter.seeOtherErrs={0}\nDo you wish to see other errors?"]
+					s_stringMgr.getString("xmlReformatter.seeOtherErrs", message),
+					 // i18n[xmlReformatter.xmlWarning5=XML Warning]
+                s_stringMgr.getString("xmlReformatter.xmlWarning5"),
                 JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
                 null, options, options[0]);
 
@@ -213,8 +235,9 @@ public class XmlRefomatter
 				int lengthToPrint = xml.length() - pos;
 				if (lengthToPrint > 40)
 					lengthToPrint = 40;
-				_message = "Malformed XML.  No ending tag seen for text starting at:\n   " +
-					xml.substring(pos, pos + lengthToPrint);
+
+				// i18n[xmlReformatter.malformedXmlAt=Malformed XML.  No ending tag seen for text starting at:\n{0}]
+				_message = s_stringMgr.getString("xmlReformatter.malformedXmlAt", xml.substring(pos, pos + lengthToPrint));
 				return null;
 			}		
 

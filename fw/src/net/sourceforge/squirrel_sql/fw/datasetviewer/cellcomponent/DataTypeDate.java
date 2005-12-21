@@ -51,6 +51,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
 
 /**
  * @author gwg
@@ -82,6 +84,10 @@ import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
 public class DataTypeDate
 	implements IDataTypeComponent
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(DataTypeDate.class);
+
+
 	/* the whole column definition */
 	private ColumnDisplayDefinition _colDef;
 
@@ -90,10 +96,10 @@ public class DataTypeDate
 
 	/* table of which we are part (needed for creating popup dialog) */
 	private JTable _table;
-	
+
 	/* The JTextComponent that is being used for editing */
 	private IRestorableTextComponent _textComponent;
-	
+
 	/* The CellRenderer used for this data type */
 	//??? For now, use the same renderer as everyone else.
 	//??
@@ -118,22 +124,22 @@ public class DataTypeDate
 	 */
 	 // flag for whether we have already loaded the properties or not
 	 private static boolean propertiesAlreadyLoaded = false;
-	 
+
 	 // flag for whether to use the default Java format (true)
 	 // or the Locale-dependent format (false)
 	 private static boolean useJavaDefaultFormat = true;
-	 
+
 	 // which locale-dependent format to use; short, medium, long, or full
 	 private static int localeFormat = DEFAULT_LOCALE_FORMAT;
-	 
+
 	 // Whether to force user to enter dates in exact format or use heuristics to guess it
 	 private static boolean lenient = true;
-	 
+
 	 // The DateFormat object to use for all locale-dependent formatting.
 	 // This is reset each time the user changes the previous settings.
 	 private static DateFormat dateFormat = DateFormat.getDateInstance(localeFormat);
-	
-	
+
+
 
 	/**
 	 * Constructor - save the data needed by this data type.
@@ -142,10 +148,10 @@ public class DataTypeDate
 		_table = table;
 		_colDef = colDef;
 		_isNullable = colDef.isNullable();
-		
+
 		loadProperties();
 	}
-	
+
 	/** Internal function to get the user-settable properties from the DTProperties,
 	 * if they exist, and to ensure that defaults are set if the properties have
 	 * not yet been created.
@@ -156,7 +162,7 @@ public class DataTypeDate
 	 * the first time we are called.
 	 */
 	private static void loadProperties() {
-		
+
 		//set the property values
 		// Note: this may have already been done by another instance of
 		// this DataType created to handle a different column.
@@ -167,14 +173,14 @@ public class DataTypeDate
 				thisClassName, "useJavaDefaultFormat");
 			if (useJavaDefaultFormatString != null && useJavaDefaultFormatString.equals("false"))
 				useJavaDefaultFormat =false;
-			
+
 			// get which locale-dependent format to use
 			localeFormat =DateFormat.SHORT;	// set to use the Java default
 			String localeFormatString = DTProperties.get(
 				thisClassName, "localeFormat");
 			if (localeFormatString != null)
 				localeFormat = Integer.parseInt(localeFormatString);
-				
+
 			// use lenient input or force user to enter exact format
 			lenient = true;	// set to allow less stringent input
 			String lenientString = DTProperties.get(
@@ -183,7 +189,7 @@ public class DataTypeDate
 				lenient =false;
 		}
 	}
-	
+
 	/**
 	 * Return the name of the java class used to hold this data type.
 	 */
@@ -202,7 +208,7 @@ public class DataTypeDate
 	/*
 	 * First we have the methods for in-cell and Text-table operations
 	 */
-	 
+
 	/**
 	 * Render a value into text for this DataType.
 	 */
@@ -210,18 +216,18 @@ public class DataTypeDate
 		// use the Java default date-to-string
 		if (useJavaDefaultFormat == true || value == null)
 			return (String)_renderer.renderObject(value);
-			
+
 		// use a date formatter
 		if (value == null)
 			return (String)_renderer.renderObject(value);
 		else return (String)_renderer.renderObject(dateFormat.format(value));
 	}
-	
+
 	/**
 	 * This Data Type can be edited in a table cell.
 	 */
 	public boolean isEditableInCell(Object originalValue) {
-		return true;	
+		return true;
 	}
 
 	/**
@@ -236,16 +242,16 @@ public class DataTypeDate
 		// so there is no need to re-read the complete data later
 		return false;
 	}
-	
+
 	/**
 	 * Return a JTextField usable in a CellEditor.
 	 */
 	public JTextField getJTextField() {
 		_textComponent = new RestorableJTextField();
-		
+
 		// special handling of operations while editing this data type
 		((RestorableJTextField)_textComponent).addKeyListener(new KeyTextHandler());
-				
+
 		//
 		// handle mouse events for double-click creation of popup dialog.
 		// This happens only in the JTextField, not the JTextArea, so we can
@@ -317,12 +323,12 @@ public class DataTypeDate
 	public boolean useBinaryEditingPanel() {
 		return false;
 	}
-	 
+
 
 	/*
-	 * Now the functions for the Popup-related operations.
-	 */
-	
+		 * Now the functions for the Popup-related operations.
+		 */
+
 	/**
 	 * Returns true if data type may be edited in the popup,
 	 * false if not.
@@ -337,14 +343,14 @@ public class DataTypeDate
 	 */
 	 public JTextArea getJTextArea(Object value) {
 		_textComponent = new RestorableJTextArea();
-		
+
 		// value is a simple string representation of the data,
 		// the same one used in Text and in-cell operations.
 		((RestorableJTextArea)_textComponent).setText(renderObject(value));
-		
+
 		// special handling of operations while editing this data type
 		((RestorableJTextArea)_textComponent).addKeyListener(new KeyTextHandler());
-		
+
 		return (RestorableJTextArea)_textComponent;
 	 }
 
@@ -357,23 +363,23 @@ public class DataTypeDate
 
 	/*
 	 * The following is used in both cell and popup operations.
-	 */	
-	
-	/*
-	 * Internal class for handling key events during editing
-	 * of both JTextField and JTextArea.
 	 */
+
+	/*
+		 * Internal class for handling key events during editing
+		 * of both JTextField and JTextArea.
+		 */
 	 private class KeyTextHandler extends KeyAdapter {
-	 	public void keyTyped(KeyEvent e) {
+		 public void keyTyped(KeyEvent e) {
 				char c = e.getKeyChar();
-				
+
 				// as a coding convenience, create a reference to the text component
 				// that is typecast to JTextComponent.  this is not essential, as we
 				// could typecast every reference, but this makes the code cleaner
 				JTextComponent _theComponent = (JTextComponent)DataTypeDate.this._textComponent;
 				String text = _theComponent.getText();
-	
-												
+
+
 				// tabs and newlines get put into the text before this check,
 				// so remove them
 				// This only applies to Popup editing since these chars are
@@ -443,19 +449,19 @@ public class DataTypeDate
 		}
 
 
-	
-	
+
+
 	/*
-	 * DataBase-related functions
-	 */
-	 
+		 * DataBase-related functions
+		 */
+
 	 /**
 	  * On input from the DB, read the data from the ResultSet into the appropriate
 	  * type of object to be stored in the table cell.
 	  */
 	public Object readResultSet(ResultSet rs, int index, boolean limitDataRead)
 		throws java.sql.SQLException {
-		
+
 		Date data = rs.getDate(index);
 		if (rs.wasNull())
 			return null;
@@ -481,8 +487,8 @@ public class DataTypeDate
 		else
 			return _colDef.getLabel() + "={d '" + value.toString() +"'}";
 	}
-	
-	
+
+
 	/**
 	 * When updating the database, insert the appropriate datatype into the
 	 * prepared statment at the given variable position.
@@ -496,7 +502,7 @@ public class DataTypeDate
 			pstmt.setDate(position, ((Date)value));
 		}
 	}
-	
+
 	/**
 	 * Get a default value for the table used to input data for a new row
 	 * to be inserted into the DB.
@@ -506,37 +512,37 @@ public class DataTypeDate
 			// try to use the DB default value
 			StringBuffer mbuf = new StringBuffer();
 			Object newObject = validateAndConvert(dbDefaultValue, null, mbuf);
-			
+
 			// if there was a problem with converting, then just fall through
 			// and continue as if there was no default given in the DB.
 			// Otherwise, use the converted object
 			if (mbuf.length() == 0)
 				return newObject;
 		}
-		
+
 		// no default in DB.  If nullable, use null.
 		if (_isNullable)
 			return null;
-		
+
 		// field is not nullable, so create a reasonable default value
 		return new Date( new java.util.Date().getTime());
 	}
-	
-	
+
+
 	/*
-	 * File IO related functions
-	 */
-	 
-	 
+		 * File IO related functions
+		 */
+
+
 	 /**
 	  * Say whether or not object can be exported to and imported from
 	  * a file.  We put both export and import together in one test
 	  * on the assumption that all conversions can be done both ways.
 	  */
 	 public boolean canDoFileIO() {
-	 	return true;
+		 return true;
 	 }
-	 
+
 	 /**
 	  * Read a file and construct a valid object from its contents.
 	  * Errors are returned by throwing an IOException containing the
@@ -553,48 +559,48 @@ public class DataTypeDate
 	  * representing a value of this data type.
 	  */
 	public String importObject(FileInputStream inStream)
-	 	throws IOException {
-	 	
-	 	InputStreamReader inReader = new InputStreamReader(inStream);
-	 	
-	 	int fileSize = inStream.available();
-	 	
-	 	char charBuf[] = new char[fileSize];
-	 	
-	 	int count = inReader.read(charBuf, 0, fileSize);
-	 	
-	 	if (count != fileSize)
-	 		throw new IOException(
-	 			"Could read only "+ count +
-	 			" chars from a total file size of " + fileSize +
-	 			". Import failed.");
-	 	
-	 	// convert file text into a string
-	 	// Special case: some systems tack a newline at the end of
-	 	// the text read.  Assume that if last char is a newline that
-	 	// we want everything else in the line.
-	 	String fileText;
-	 	if (charBuf[count-1] == KeyEvent.VK_ENTER)
-	 		fileText = new String(charBuf, 0, count-1);
-	 	else fileText = new String(charBuf);
-	 	
-	 	// test that the string is valid by converting it into an
-	 	// object of this data type
-	 	StringBuffer messageBuffer = new StringBuffer();
-	 	validateAndConvertInPopup(fileText, null, messageBuffer);
-	 	if (messageBuffer.length() > 0) {
-	 		// convert number conversion issue into IO issue for consistancy
-	 		throw new IOException(
-	 			"Text does not represent data of type "+getClassName()+
-	 			".  Text was:\n"+fileText);
-	 	}
-	 	
-	 	// return the text from the file since it does
-	 	// represent a valid data value
-	 	return fileText;
+		 throws IOException {
+
+		 InputStreamReader inReader = new InputStreamReader(inStream);
+
+		 int fileSize = inStream.available();
+
+		 char charBuf[] = new char[fileSize];
+
+		 int count = inReader.read(charBuf, 0, fileSize);
+
+		 if (count != fileSize)
+			 throw new IOException(
+				 "Could read only "+ count +
+				 " chars from a total file size of " + fileSize +
+				 ". Import failed.");
+
+		 // convert file text into a string
+		 // Special case: some systems tack a newline at the end of
+		 // the text read.  Assume that if last char is a newline that
+		 // we want everything else in the line.
+		 String fileText;
+		 if (charBuf[count-1] == KeyEvent.VK_ENTER)
+			 fileText = new String(charBuf, 0, count-1);
+		 else fileText = new String(charBuf);
+
+		 // test that the string is valid by converting it into an
+		 // object of this data type
+		 StringBuffer messageBuffer = new StringBuffer();
+		 validateAndConvertInPopup(fileText, null, messageBuffer);
+		 if (messageBuffer.length() > 0) {
+			 // convert number conversion issue into IO issue for consistancy
+			 throw new IOException(
+				 "Text does not represent data of type "+getClassName()+
+				 ".  Text was:\n"+fileText);
+		 }
+
+		 // return the text from the file since it does
+		 // represent a valid data value
+		 return fileText;
 	}
 
-	 	 
+
 	 /**
 	  * Construct an appropriate external representation of the object
 	  * and write it to a file.
@@ -615,29 +621,29 @@ public class DataTypeDate
 	  * representing a value of this data type.
 	  */
 	 public void exportObject(FileOutputStream outStream, String text)
-	 	throws IOException {
-	 	
-	 	OutputStreamWriter outWriter = new OutputStreamWriter(outStream);
-	 	
-	 	// check that the text is a valid representation
-	 	StringBuffer messageBuffer = new StringBuffer();
-	 	validateAndConvertInPopup(text, null, messageBuffer);
-	 	if (messageBuffer.length() > 0) {
-	 		// there was an error in the conversion
-	 		throw new IOException(new String(messageBuffer));
-	 	}
-	 	
-	 	// just send the text to the output file
+		 throws IOException {
+
+		 OutputStreamWriter outWriter = new OutputStreamWriter(outStream);
+
+		 // check that the text is a valid representation
+		 StringBuffer messageBuffer = new StringBuffer();
+		 validateAndConvertInPopup(text, null, messageBuffer);
+		 if (messageBuffer.length() > 0) {
+			 // there was an error in the conversion
+			 throw new IOException(new String(messageBuffer));
+		 }
+
+		 // just send the text to the output file
 		outWriter.write(text);
 		outWriter.flush();
 		outWriter.close();
 	 }
-	
+
 
 	/*
-	 * Property change control panel
-	 */	  
-	 
+		 * Property change control panel
+		 */
+
 	 /**
 	  * Generate a JPanel containing controls that allow the user
 	  * to adjust the properties for this DataType.
@@ -655,23 +661,23 @@ public class DataTypeDate
 	  * but the Interface does not seem to like static methods.
 	  */
 	 public static OkJPanel getControlPanel() {
-	 	
+
 		/*
-		 * If you add this method to one of the standard DataTypes in the
-		 * fw/datasetviewer/cellcomponent directory, you must also add the name
-		 * of that DataType class to the list in CellComponentFactory, method
-		 * getControlPanels, variable named initialClassNameList.
-		 * If the class is being registered with the factory using registerDataType,
-		 * then you should not include the class name in the list (it will be found
-		 * automatically), but if the DataType is part of the case statement in the
-		 * factory method getDataTypeObject, then it does need to be explicitly listed
-		 * in the getControlPanels method also.
-		 */
-		 
+				 * If you add this method to one of the standard DataTypes in the
+				 * fw/datasetviewer/cellcomponent directory, you must also add the name
+				 * of that DataType class to the list in CellComponentFactory, method
+				 * getControlPanels, variable named initialClassNameList.
+				 * If the class is being registered with the factory using registerDataType,
+				 * then you should not include the class name in the list (it will be found
+				 * automatically), but if the DataType is part of the case statement in the
+				 * factory method getDataTypeObject, then it does need to be explicitly listed
+				 * in the getControlPanels method also.
+				 */
+
 		 // if this panel is called before any instances of the class have been
 		 // created, we need to load the properties from the DTProperties.
 		 loadProperties();
-		 
+
 		return new BlobOkJPanel();
 	 }
 
@@ -680,16 +686,16 @@ public class DataTypeDate
 	{
 		public DateFormatTypeCombo()
 		{
-			addItem("Full (" + 
-				DateFormat.getDateInstance(DateFormat.FULL).format(new java.util.Date()) + ")"  );
-			addItem("Long (" + 
-				DateFormat.getDateInstance(DateFormat.LONG).format(new java.util.Date()) + ")"  );
-			addItem("Medium (" + 
-				DateFormat.getDateInstance(DateFormat.MEDIUM).format(new java.util.Date()) + ")"  );											
-			addItem("Short (" + 
-				DateFormat.getDateInstance(DateFormat.SHORT).format(new java.util.Date()) + ")" );
+			// i18n[dataTypeDate.full=Full ({0})]
+			addItem(s_stringMgr.getString("dataTypeDate.full", DateFormat.getDateInstance(DateFormat.FULL).format(new java.util.Date())));
+			// i18n[dataTypeDate.long=Long ({0})]
+			addItem(s_stringMgr.getString("dataTypeDate.long", DateFormat.getDateInstance(DateFormat.LONG).format(new java.util.Date())));
+			// i18n[dataTypeDate.medium=Medium ({0})]
+			addItem(s_stringMgr.getString("dataTypeDate.medium", DateFormat.getDateInstance(DateFormat.MEDIUM).format(new java.util.Date())));
+			// i18n[dataTypeDate.short=Short ({0})]
+			addItem(s_stringMgr.getString("dataTypeDate.short", DateFormat.getDateInstance(DateFormat.SHORT).format(new java.util.Date())));
 		}
-		
+
 		public void setSelectedIndex(int option) {
 			if (option == DateFormat.SHORT)
 				super.setSelectedIndex(3);
@@ -699,7 +705,7 @@ public class DataTypeDate
 				super.setSelectedIndex(1);
 			else super.setSelectedIndex(0);
 		}
-		
+
 		public int getValue() {
 			if (getSelectedIndex() == 3)
 				return DateFormat.SHORT;
@@ -709,115 +715,122 @@ public class DataTypeDate
 				return DateFormat.LONG;
 			else return DateFormat.FULL;
 		}
-	}	 
-	 
-	 
+	}
+
+
 	 /**
 	  * Inner class that extends OkJPanel so that we can call the ok()
 	  * method to save the data when the user is happy with it.
 	  */
-	 private static class BlobOkJPanel extends OkJPanel {
-		/*
+	 private static class BlobOkJPanel extends OkJPanel
+	 {
+		 /*
 		 * GUI components - need to be here because they need to be
 		 * accessible from the event handlers to alter each other's state.
 		 */
-		// check box for whether to use Java Default or a Locale-dependent format
-		private JCheckBox useJavaDefaultFormatChk = new JCheckBox(
-			"Use default format (" + 
-			new java.sql.Date(new java.util.Date().getTime()).toString() + ")");
-		
-		// label for the date format combo, used to enable/disable text
-		private RightLabel dateFormatTypeDropLabel = new RightLabel(" or locale-dependent format:");
-				
-		// Combo box for read-all/read-part of blob
-		private DateFormatTypeCombo dateFormatTypeDrop = new DateFormatTypeCombo();
+		 // check box for whether to use Java Default or a Locale-dependent format
+		 private JCheckBox useJavaDefaultFormatChk = new JCheckBox(
+			 // i18n[dataTypeDate.useDefaultFormat=Use default format ({0})]
+			 s_stringMgr.getString("dataTypeDate.useDefaultFormat", new java.sql.Date(new java.util.Date().getTime()).toString()));
 
-		// checkbox for whether to interpret input leniently or not
-		private JCheckBox lenientChk = new JCheckBox("allow inexact format on input");
+		 // label for the date format combo, used to enable/disable text
+		 // i18n[dataTypeDate.orlocaleIndependent= or locale-dependent format:]
+		 private RightLabel dateFormatTypeDropLabel = new RightLabel(s_stringMgr.getString("dataTypeDate.orlocaleIndependent"));
 
-		public BlobOkJPanel() {
-		 	 
-			/* set up the controls */
-			// checkbox for Java default/non-default format
-			useJavaDefaultFormatChk.setSelected(useJavaDefaultFormat);
-			useJavaDefaultFormatChk.addChangeListener(new ChangeListener(){
-				public void stateChanged(ChangeEvent e) {		
-					dateFormatTypeDrop.setEnabled( ! useJavaDefaultFormatChk.isSelected());
-					dateFormatTypeDropLabel.setEnabled( ! useJavaDefaultFormatChk.isSelected());
-					lenientChk.setEnabled( ! useJavaDefaultFormatChk.isSelected());	
-				}
-			});
-		
-			// Combo box for read-all/read-part of blob
-			dateFormatTypeDrop = new DateFormatTypeCombo();
-			dateFormatTypeDrop.setSelectedIndex( localeFormat );
+		 // Combo box for read-all/read-part of blob
+		 private DateFormatTypeCombo dateFormatTypeDrop = new DateFormatTypeCombo();
 
-			// lenient checkbox
-			lenientChk.setSelected(lenient);
+		 // checkbox for whether to interpret input leniently or not
+		 // i18n[dataTypeDate.allowInexact=allow inexact format on input]
+		 private JCheckBox lenientChk = new JCheckBox(s_stringMgr.getString("dataTypeDate.allowInexact"));
 
-	 	 
-			// handle cross-connection between fields
-			dateFormatTypeDrop.setEnabled( ! useJavaDefaultFormatChk.isSelected());
-			dateFormatTypeDropLabel.setEnabled( ! useJavaDefaultFormatChk.isSelected());
-			lenientChk.setEnabled( ! useJavaDefaultFormatChk.isSelected());	
+		 public BlobOkJPanel()
+		 {
 
-			/*
-			  * Create the panel and add the GUI items to it
-			 */
-	 	  
-			setLayout(new GridBagLayout());
-	 	
-			setBorder(BorderFactory.createTitledBorder("Date   (SQL type 91)"));
-			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.fill = GridBagConstraints.HORIZONTAL;
-			gbc.insets = new Insets(4, 4, 4, 4);
-			gbc.anchor = GridBagConstraints.WEST;
+			 /* set up the controls */
+			 // checkbox for Java default/non-default format
+			 useJavaDefaultFormatChk.setSelected(useJavaDefaultFormat);
+			 useJavaDefaultFormatChk.addChangeListener(new ChangeListener()
+			 {
+				 public void stateChanged(ChangeEvent e)
+				 {
+					 dateFormatTypeDrop.setEnabled(! useJavaDefaultFormatChk.isSelected());
+					 dateFormatTypeDropLabel.setEnabled(! useJavaDefaultFormatChk.isSelected());
+					 lenientChk.setEnabled(! useJavaDefaultFormatChk.isSelected());
+				 }
+			 });
 
-			gbc.gridx = 0;
-			gbc.gridy = 0;
+			 // Combo box for read-all/read-part of blob
+			 dateFormatTypeDrop = new DateFormatTypeCombo();
+			 dateFormatTypeDrop.setSelectedIndex(localeFormat);
 
-			gbc.gridwidth = GridBagConstraints.REMAINDER;
-			add(useJavaDefaultFormatChk, gbc);
+			 // lenient checkbox
+			 lenientChk.setSelected(lenient);
 
-			gbc.gridwidth = 1;
-			gbc.gridx = 0;
-			++gbc.gridy;
-			add(dateFormatTypeDropLabel, gbc);
+			 // handle cross-connection between fields
+			 dateFormatTypeDrop.setEnabled(! useJavaDefaultFormatChk.isSelected());
+			 dateFormatTypeDropLabel.setEnabled(! useJavaDefaultFormatChk.isSelected());
+			 lenientChk.setEnabled(! useJavaDefaultFormatChk.isSelected());
 
-			++gbc.gridx;
-			add(dateFormatTypeDrop, gbc);
+			 /*
+										* Create the panel and add the GUI items to it
+									  */
 
-			gbc.gridx = 0;
-			++gbc.gridy;
-			add(lenientChk, gbc);
+			 setLayout(new GridBagLayout());
 
-		} // end of constructor for inner class
-	 
-	 
-		/**
+			 // i18n[dataTypeDate.typeDate=Date   (SQL type 91)]
+			 setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("dataTypeDate.typeDate")));
+			 final GridBagConstraints gbc = new GridBagConstraints();
+			 gbc.fill = GridBagConstraints.HORIZONTAL;
+			 gbc.insets = new Insets(4, 4, 4, 4);
+			 gbc.anchor = GridBagConstraints.WEST;
+
+			 gbc.gridx = 0;
+			 gbc.gridy = 0;
+
+			 gbc.gridwidth = GridBagConstraints.REMAINDER;
+			 add(useJavaDefaultFormatChk, gbc);
+
+			 gbc.gridwidth = 1;
+			 gbc.gridx = 0;
+			 ++gbc.gridy;
+			 add(dateFormatTypeDropLabel, gbc);
+
+			 ++gbc.gridx;
+			 add(dateFormatTypeDrop, gbc);
+
+			 gbc.gridx = 0;
+			 ++gbc.gridy;
+			 add(lenientChk, gbc);
+
+		 } // end of constructor for inner class
+
+
+		 /**
 		  * User has clicked OK in the surrounding JPanel,
 		  * so save the current state of all variables
 		  */
-		public void ok() {
-			// get the values from the controls and set them in the static properties
-			useJavaDefaultFormat = useJavaDefaultFormatChk.isSelected();
-			DTProperties.put(
-				thisClassName,
-				"useJavaDefaultFormat", new Boolean(useJavaDefaultFormat).toString());
-			
-		
-			localeFormat = dateFormatTypeDrop.getValue();
-			dateFormat = DateFormat.getDateInstance(localeFormat);	// lenient is set next
-			DTProperties.put(
-				thisClassName,
-				"localeFormat", Integer.toString(localeFormat));	
-		
-			lenient = lenientChk.isSelected();
-			dateFormat.setLenient(lenient);
-			DTProperties.put(
-				thisClassName,
-				"lenient", new Boolean(lenient).toString());
-		}
-	 
+		 public void ok()
+		 {
+			 // get the values from the controls and set them in the static properties
+			 useJavaDefaultFormat = useJavaDefaultFormatChk.isSelected();
+			 DTProperties.put(
+				 thisClassName,
+				 "useJavaDefaultFormat", new Boolean(useJavaDefaultFormat).toString());
+
+
+			 localeFormat = dateFormatTypeDrop.getValue();
+			 dateFormat = DateFormat.getDateInstance(localeFormat);	// lenient is set next
+			 DTProperties.put(
+				 thisClassName,
+				 "localeFormat", Integer.toString(localeFormat));
+
+			 lenient = lenientChk.isSelected();
+			 dateFormat.setLenient(lenient);
+			 DTProperties.put(
+				 thisClassName,
+				 "lenient", new Boolean(lenient).toString());
+		 }
+
 	 } // end of inner class
 }

@@ -31,6 +31,8 @@ import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 
 /**
@@ -39,6 +41,11 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponent
  */
 public class CellDataPopup
 {
+
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(CellDataPopup.class);
+
+
 	/**
 	 * function to create the popup display when called from JTable
 	 */
@@ -213,7 +220,8 @@ public class CellDataPopup
 			JPanel updateControls = new JPanel();
 
 			// set up Update button
-			JButton updateButton = new JButton("Update Data");
+			// i18n[cellDataPopUp.updateData=Update Data]
+			JButton updateButton = new JButton(s_stringMgr.getString("cellDataPopUp.updateData"));
 			updateButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent event) {
 
@@ -223,14 +231,19 @@ public class CellDataPopup
 					Object newValue = ColumnDataPopupPanel.this.ioPanel.getObject(messageBuffer);
 					if (messageBuffer.length() > 0) {
 						// handle an error in conversion of text to object
-						messageBuffer.insert(0,
-							"The given text cannot be converted into the internal object.\n"+
-							"Please change the data or cancel editing.\n"+
-							"The conversion error was:\n");
-						JOptionPane.showMessageDialog(ColumnDataPopupPanel.this,
-							messageBuffer,
-							"Conversion Error",
+
+						// i18n[cellDataPopUp.cannnotBGeConverted=The given text cannot be converted into the internal object.\n
+						//Please change the data or cancel editing.\n
+						//The conversion error was:\n{0}]
+						String msg = s_stringMgr.getString("cellDataPopUp.cannnotBGeConverted", messageBuffer);
+
+						JOptionPane.showMessageDialog(
+							ColumnDataPopupPanel.this,
+							msg,
+							// i18n[cellDataPopUp.conversionError=Conversion Error]
+							s_stringMgr.getString("cellDataPopUp.conversionError"),
 							JOptionPane.ERROR_MESSAGE);
+
 						ColumnDataPopupPanel.this.ioPanel.requestFocus();
 
 					}
@@ -246,7 +259,8 @@ _table.setValueAt(newValue, _row, _col);
 			});
 
 			// set up Cancel button
-			JButton cancelButton = new JButton("Cancel");
+			// i18n[cellDataPopup.cancel=Cancel]
+			JButton cancelButton = new JButton(s_stringMgr.getString("cellDataPopup.cancel"));
 			cancelButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent event) {
 					ColumnDataPopupPanel.this._parentFrame.setVisible(false);
@@ -288,7 +302,8 @@ _table.setValueAt(newValue, _row, _col);
 			Object value, int row, int col,
 			boolean isModelEditable, JTable table)
 		{
-			super("Value of column " + columnName, true, true, true, true);
+			// i18n[cellDataPopup.valueofColumn=Value of column {0}]
+			super(s_stringMgr.getString("cellDataPopup.valueofColumn", columnName), true, true, true, true);
 			ColumnDataPopupPanel popup =
 				new ColumnDataPopupPanel(value, colDef, isModelEditable);
 			popup.setUserActionInfo(this, row, col, table);

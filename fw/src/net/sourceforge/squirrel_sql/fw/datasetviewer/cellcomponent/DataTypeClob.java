@@ -52,6 +52,9 @@ import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.gui.ReadTypeCombo;
 import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
 /**
  * @author gwg
  *
@@ -81,6 +84,11 @@ import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
 public class DataTypeClob
 	implements IDataTypeComponent
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(DataTypeClob.class);
+
+
+
 	/* the whole column definition */
 	private ColumnDisplayDefinition _colDef;
 
@@ -234,12 +242,12 @@ public class DataTypeClob
 			 int index = 0;
 			 StringBuffer buf = new StringBuffer(text);
 			 while (index < buf.length()) {
-			 	if (buf.charAt(index) == '\n') {
-			 		// found a newline - change it into the string "\n"
-			 		buf.replace(index, index+1 , "/n");
-			 		index +=1;
-			 	}
-			 	index++;
+				 if (buf.charAt(index) == '\n') {
+					 // found a newline - change it into the string "\n"
+					 buf.replace(index, index+1 , "/n");
+					 index +=1;
+				 }
+				 index++;
 			 }
 			 text = buf.toString();
 		}
@@ -441,7 +449,7 @@ public class DataTypeClob
 	 * of both JTextField and JTextArea.
 	 */
 	 private class KeyTextHandler extends KeyAdapter {
-	 	public void keyTyped(KeyEvent e) {
+		 public void keyTyped(KeyEvent e) {
 				char c = e.getKeyChar();
 
 				// as a coding convenience, create a reference to the text component
@@ -544,64 +552,64 @@ public class DataTypeClob
 	  */
 	public Object readResultSet(ResultSet rs, int index, boolean limitDataRead)
 		throws java.sql.SQLException
-   {
-      return staticReadResultSet(rs, index);
+	{
+		return staticReadResultSet(rs, index);
 	}
 
 
-   public static Object staticReadResultSet(ResultSet rs, int index)
-      throws java.sql.SQLException
-   {
-      // We always get the CLOB, even when we are not reading the contents.
-      // Since the CLOB is just a pointer to the CLOB data rather than the
-      // data itself, this operation should not take much time (as opposed
-      // to getting all of the data in the clob).
-      Clob clob = rs.getClob(index);
+	public static Object staticReadResultSet(ResultSet rs, int index)
+		throws java.sql.SQLException
+	{
+		// We always get the CLOB, even when we are not reading the contents.
+		// Since the CLOB is just a pointer to the CLOB data rather than the
+		// data itself, this operation should not take much time (as opposed
+		// to getting all of the data in the clob).
+		Clob clob = rs.getClob(index);
 
-      if (rs.wasNull())
-         return null;
+		if (rs.wasNull())
+			return null;
 
-      // CLOB exists, so try to read the data from it
-      // based on the user's directions
-      if (_readClobs)
-      {
-         // User said to read at least some of the data from the clob
-         String clobData = null;
-         if (clob != null)
-         {
-            int len = (int)clob.length();
-            if (len > 0)
-            {
-               int charsToRead = len;
-               if ( ! _readCompleteClobs)
-               {
-                  charsToRead = _readClobsSize;
-               }
-               if (charsToRead > len)
-               {
-                  charsToRead = len;
-               }
-               clobData = clob.getSubString(1, charsToRead);
-            }
-         }
+		// CLOB exists, so try to read the data from it
+		// based on the user's directions
+		if (_readClobs)
+		{
+			// User said to read at least some of the data from the clob
+			String clobData = null;
+			if (clob != null)
+			{
+				int len = (int)clob.length();
+				if (len > 0)
+				{
+					int charsToRead = len;
+					if ( ! _readCompleteClobs)
+					{
+						charsToRead = _readClobsSize;
+					}
+					if (charsToRead > len)
+					{
+						charsToRead = len;
+					}
+					clobData = clob.getSubString(1, charsToRead);
+				}
+			}
 
-         // determine whether we read all there was in the clob or not
-         boolean wholeClobRead = false;
-         if (_readCompleteClobs || clobData == null ||
-            clobData.length() < _readClobsSize)
-         {
-            wholeClobRead = true;
-         }
+			// determine whether we read all there was in the clob or not
+			boolean wholeClobRead = false;
+			if (_readCompleteClobs || clobData == null ||
+				clobData.length() < _readClobsSize)
+			{
+				wholeClobRead = true;
+			}
 
-         return new ClobDescriptor(clob, clobData, true, wholeClobRead,
-            _readClobsSize);
-      }
-      else
-      {
-         // user said not to read any of the data from the clob
-         return new ClobDescriptor(clob, null, false, false, 0);
-      }
-   }
+			return new ClobDescriptor(clob, clobData, true, wholeClobRead,
+				_readClobsSize);
+		}
+		else
+		{
+			// user said not to read any of the data from the clob
+			return new ClobDescriptor(clob, null, false, false, 0);
+		}
+	}
 
 
 	/**
@@ -684,7 +692,7 @@ public class DataTypeClob
 	  * on the assumption that all conversions can be done both ways.
 	  */
 	 public boolean canDoFileIO() {
-	 	return true;
+		 return true;
 	 }
 
 	 /**
@@ -703,45 +711,45 @@ public class DataTypeClob
 	  * representing a value of this data type.
 	  */
 	public String importObject(FileInputStream inStream)
-	 	throws IOException {
+		 throws IOException {
 
-	 	InputStreamReader inReader = new InputStreamReader(inStream);
+		 InputStreamReader inReader = new InputStreamReader(inStream);
 
-	 	int fileSize = inStream.available();
+		 int fileSize = inStream.available();
 
-	 	char charBuf[] = new char[fileSize];
+		 char charBuf[] = new char[fileSize];
 
-	 	int count = inReader.read(charBuf, 0, fileSize);
+		 int count = inReader.read(charBuf, 0, fileSize);
 
-	 	if (count != fileSize)
-	 		throw new IOException(
-	 			"Could read only "+ count +
-	 			" chars from a total file size of " + fileSize +
-	 			". Import failed.");
+		 if (count != fileSize)
+			 throw new IOException(
+				 "Could read only "+ count +
+				 " chars from a total file size of " + fileSize +
+				 ". Import failed.");
 
-	 	// convert file text into a string
-	 	// Special case: some systems tack a newline at the end of
-	 	// the text read.  Assume that if last char is a newline that
-	 	// we want everything else in the line.
-	 	String fileText;
-	 	if (charBuf[count-1] == KeyEvent.VK_ENTER)
-	 		fileText = new String(charBuf, 0, count-1);
-	 	else fileText = new String(charBuf);
+		 // convert file text into a string
+		 // Special case: some systems tack a newline at the end of
+		 // the text read.  Assume that if last char is a newline that
+		 // we want everything else in the line.
+		 String fileText;
+		 if (charBuf[count-1] == KeyEvent.VK_ENTER)
+			 fileText = new String(charBuf, 0, count-1);
+		 else fileText = new String(charBuf);
 
-	 	// test that the string is valid by converting it into an
-	 	// object of this data type
-	 	StringBuffer messageBuffer = new StringBuffer();
-	 	validateAndConvertInPopup(fileText, null, messageBuffer);
-	 	if (messageBuffer.length() > 0) {
-	 		// convert number conversion issue into IO issue for consistancy
-	 		throw new IOException(
-	 			"Text does not represent data of type "+getClassName()+
-	 			".  Text was:\n"+fileText);
-	 	}
+		 // test that the string is valid by converting it into an
+		 // object of this data type
+		 StringBuffer messageBuffer = new StringBuffer();
+		 validateAndConvertInPopup(fileText, null, messageBuffer);
+		 if (messageBuffer.length() > 0) {
+			 // convert number conversion issue into IO issue for consistancy
+			 throw new IOException(
+				 "Text does not represent data of type "+getClassName()+
+				 ".  Text was:\n"+fileText);
+		 }
 
-	 	// return the text from the file since it does
-	 	// represent a valid data value
-	 	return fileText;
+		 // return the text from the file since it does
+		 // represent a valid data value
+		 return fileText;
 	}
 
 
@@ -765,19 +773,19 @@ public class DataTypeClob
 	  * representing a value of this data type.
 	  */
 	 public void exportObject(FileOutputStream outStream, String text)
-	 	throws IOException {
+		 throws IOException {
 
-	 	OutputStreamWriter outWriter = new OutputStreamWriter(outStream);
+		 OutputStreamWriter outWriter = new OutputStreamWriter(outStream);
 
-	 	// check that the text is a valid representation
-	 	StringBuffer messageBuffer = new StringBuffer();
-	 	validateAndConvertInPopup(text, null, messageBuffer);
-	 	if (messageBuffer.length() > 0) {
-	 		// there was an error in the conversion
-	 		throw new IOException(new String(messageBuffer));
-	 	}
+		 // check that the text is a valid representation
+		 StringBuffer messageBuffer = new StringBuffer();
+		 validateAndConvertInPopup(text, null, messageBuffer);
+		 if (messageBuffer.length() > 0) {
+			 // there was an error in the conversion
+			 throw new IOException(new String(messageBuffer));
+		 }
 
-	 	// just send the text to the output file
+		 // just send the text to the output file
 		outWriter.write(text);
 		outWriter.flush();
 		outWriter.close();
@@ -831,125 +839,135 @@ public class DataTypeClob
 	  * Inner class that extends OkJPanel so that we can call the ok()
 	  * method to save the data when the user is happy with it.
 	  */
-	 private static class ClobOkJPanel extends OkJPanel {
-		/*
+	 private static class ClobOkJPanel extends OkJPanel
+	 {
+		 /*
 		 * GUI components - need to be here because they need to be
 		 * accessible from the event handlers to alter each other's state.
 		 */
-		// check box for whether to read contents during table load or not
-		private JCheckBox _showClobChk = new JCheckBox("Read contents when table is first loaded;");
+		 // check box for whether to read contents during table load or not
+		 // i18n[dataTypeBigDecimal.readContentsOnFirstLoad=Read contents when table is first loaded;]
+		 private JCheckBox _showClobChk = new JCheckBox(s_stringMgr.getString("dataTypeBigDecimal.readContentsOnFirstLoad"));
 
-		// label for type combo - used to enable/disable text associated with the combo
-		private RightLabel _typeDropLabel = new RightLabel("Read");
+		 // label for type combo - used to enable/disable text associated with the combo
+		 // i18n[dataTypeBigDecimal.read2=Read]
+		 private RightLabel _typeDropLabel = new RightLabel(s_stringMgr.getString("dataTypeBigDecimal.read2"));
 
-		// Combo box for read-all/read-part of blob
-		private ReadTypeCombo _clobTypeDrop = new ReadTypeCombo();
+		 // Combo box for read-all/read-part of blob
+		 private ReadTypeCombo _clobTypeDrop = new ReadTypeCombo();
 
-		// text field for how many bytes of Blob to read
-		private IntegerField _showClobSizeField = new IntegerField(5);
+		 // text field for how many bytes of Blob to read
+		 private IntegerField _showClobSizeField = new IntegerField(5);
 
-		// check box for whether to show newlines as "\n" for in-cell display
-		private JCheckBox _makeNewlinesVisibleInCellChk =
-			new JCheckBox("Show newlines as \\n within cells");
-
-
-		public ClobOkJPanel() {
-
-			/* set up the controls */
-			// checkbox for read/not-read on table load
-			_showClobChk.setSelected(_readClobs);
-			_showClobChk.addChangeListener(new ChangeListener(){
-				public void stateChanged(ChangeEvent e) {
-					_clobTypeDrop.setEnabled(_showClobChk.isSelected());
-					_typeDropLabel.setEnabled(_showClobChk.isSelected());
-					_showClobSizeField.setEnabled(_showClobChk.isSelected() &&
-					 (_clobTypeDrop.getSelectedIndex()== 0));
-				}
-			});
-
-			// Combo box for read-all/read-part of blob
-			_clobTypeDrop = new ReadTypeCombo();
-			_clobTypeDrop.setSelectedIndex( (_readCompleteClobs) ? 1 : 0 );
-			_clobTypeDrop.addActionListener(new ActionListener(){
-				public void actionPerformed(ActionEvent e) {
-					_showClobSizeField.setEnabled(_clobTypeDrop.getSelectedIndex()== 0);
-				}
-			});
-
-			// field for size of text to read
-			_showClobSizeField = new IntegerField(5);
-			_showClobSizeField.setInt(_readClobsSize);
-
-			// checkbox for displaying newlines as \n in-cell
-			_makeNewlinesVisibleInCellChk.setSelected(_makeNewlinesVisibleInCell);
+		 // check box for whether to show newlines as "\n" for in-cell display
+		 private JCheckBox _makeNewlinesVisibleInCellChk =
+			 // i18n[dataTypeBigDecimal.newlinesAsbackslashN=Show newlines as \\n within cells]
+			 new JCheckBox(s_stringMgr.getString("dataTypeBigDecimal.newlinesAsbackslashN"));
 
 
-			// handle cross-connection between fields
-			_clobTypeDrop.setEnabled(_readClobs);
-			_typeDropLabel.setEnabled(_readClobs);
-			_showClobSizeField.setEnabled(_readClobs &&  ! _readCompleteClobs);
+		 public ClobOkJPanel()
+		 {
 
-			/*
-			 * Create the panel and add the GUI items to it
-			  */
+			 /* set up the controls */
+			 // checkbox for read/not-read on table load
+			 _showClobChk.setSelected(_readClobs);
+			 _showClobChk.addChangeListener(new ChangeListener()
+			 {
+				 public void stateChanged(ChangeEvent e)
+				 {
+					 _clobTypeDrop.setEnabled(_showClobChk.isSelected());
+					 _typeDropLabel.setEnabled(_showClobChk.isSelected());
+					 _showClobSizeField.setEnabled(_showClobChk.isSelected() &&
+						 (_clobTypeDrop.getSelectedIndex() == 0));
+				 }
+			 });
 
-			setLayout(new GridBagLayout());
+			 // Combo box for read-all/read-part of blob
+			 _clobTypeDrop = new ReadTypeCombo();
+			 _clobTypeDrop.setSelectedIndex((_readCompleteClobs) ? 1 : 0);
+			 _clobTypeDrop.addActionListener(new ActionListener()
+			 {
+				 public void actionPerformed(ActionEvent e)
+				 {
+					 _showClobSizeField.setEnabled(_clobTypeDrop.getSelectedIndex() == 0);
+				 }
+			 });
 
-			setBorder(BorderFactory.createTitledBorder("CLOB   (SQL type 2005)"));
-			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.fill = GridBagConstraints.HORIZONTAL;
-			gbc.insets = new Insets(4, 4, 4, 4);
-			gbc.anchor = GridBagConstraints.WEST;
+			 // field for size of text to read
+			 _showClobSizeField = new IntegerField(5);
+			 _showClobSizeField.setInt(_readClobsSize);
 
-			gbc.gridx = 0;
-			gbc.gridy = 0;
+			 // checkbox for displaying newlines as \n in-cell
+			 _makeNewlinesVisibleInCellChk.setSelected(_makeNewlinesVisibleInCell);
 
-			gbc.gridwidth = 1;
-			add(_showClobChk, gbc);
+			 // handle cross-connection between fields
+			 _clobTypeDrop.setEnabled(_readClobs);
+			 _typeDropLabel.setEnabled(_readClobs);
+			 _showClobSizeField.setEnabled(_readClobs && ! _readCompleteClobs);
 
-			++gbc.gridx;
-			add(_typeDropLabel, gbc);
+			 /*
+						  * Create the panel and add the GUI items to it
+							*/
 
-			++gbc.gridx;
-			add(_clobTypeDrop, gbc);
+			 setLayout(new GridBagLayout());
 
-			++gbc.gridx;
-			add(_showClobSizeField, gbc);
+			 // i18n[dataTypeClob.typeClob=CLOB   (SQL type 2005)]
+			 setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("dataTypeClob.typeClob")));
+			 final GridBagConstraints gbc = new GridBagConstraints();
+			 gbc.fill = GridBagConstraints.HORIZONTAL;
+			 gbc.insets = new Insets(4, 4, 4, 4);
+			 gbc.anchor = GridBagConstraints.WEST;
 
-			++gbc.gridy;
-			gbc.gridx = 0;
-			gbc.gridwidth = GridBagConstraints.REMAINDER;
-			add(_makeNewlinesVisibleInCellChk, gbc);
+			 gbc.gridx = 0;
+			 gbc.gridy = 0;
 
-		} // end of constructor for inner class
+			 gbc.gridwidth = 1;
+			 add(_showClobChk, gbc);
+
+			 ++gbc.gridx;
+			 add(_typeDropLabel, gbc);
+
+			 ++gbc.gridx;
+			 add(_clobTypeDrop, gbc);
+
+			 ++gbc.gridx;
+			 add(_showClobSizeField, gbc);
+
+			 ++gbc.gridy;
+			 gbc.gridx = 0;
+			 gbc.gridwidth = GridBagConstraints.REMAINDER;
+			 add(_makeNewlinesVisibleInCellChk, gbc);
+
+		 } // end of constructor for inner class
 
 
-		/**
+		 /**
 		  * User has clicked OK in the surrounding JPanel,
-		 * so save the current state of all variables
+		  * so save the current state of all variables
 		  */
-		public void ok() {
-			// get the values from the controls and set them in the static properties
-			_readClobs = _showClobChk.isSelected();
-			DTProperties.put(
-				thisClassName,
-				"readClobs", new Boolean(_readClobs).toString());
+		 public void ok()
+		 {
+			 // get the values from the controls and set them in the static properties
+			 _readClobs = _showClobChk.isSelected();
+			 DTProperties.put(
+				 thisClassName,
+				 "readClobs", new Boolean(_readClobs).toString());
 
-			_readCompleteClobs = (_clobTypeDrop.getSelectedIndex() == 0) ? false : true;
-			DTProperties.put(
-				thisClassName,
-				"readCompleteClobs", new Boolean(_readCompleteClobs).toString());
+			 _readCompleteClobs = (_clobTypeDrop.getSelectedIndex() == 0) ? false : true;
+			 DTProperties.put(
+				 thisClassName,
+				 "readCompleteClobs", new Boolean(_readCompleteClobs).toString());
 
-			_readClobsSize = _showClobSizeField.getInt();
-			DTProperties.put(
-				thisClassName,
-				"readClobsSize", Integer.toString(_readClobsSize));
+			 _readClobsSize = _showClobSizeField.getInt();
+			 DTProperties.put(
+				 thisClassName,
+				 "readClobsSize", Integer.toString(_readClobsSize));
 
-			_makeNewlinesVisibleInCell = _makeNewlinesVisibleInCellChk.isSelected();
-			DTProperties.put(
-				thisClassName,
-				"makeNewlinesVisibleInCell", new Boolean(_makeNewlinesVisibleInCell).toString());
-		}
+			 _makeNewlinesVisibleInCell = _makeNewlinesVisibleInCellChk.isSelected();
+			 DTProperties.put(
+				 thisClassName,
+				 "makeNewlinesVisibleInCell", new Boolean(_makeNewlinesVisibleInCell).toString());
+		 }
 
 	 } // end of inner class
 }

@@ -28,17 +28,26 @@ import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class ResultSetMetaDataDataSet implements IDataSet
 {
+
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ResultSetMetaDataDataSet.class);
+
+
 	private interface i18n
 	{
 		String UNSUPPORTED = "<Unsupported>";
-		String NAME_COLUMN = "Property Name";
+		// i18n[resultSetMentaDataSet.propName=Property Name]
+		String NAME_COLUMN = s_stringMgr.getString("resultSetMentaDataSet.propName");
 //		String NULL = "<null>";
-		String VALUE_COLUMN = "Value";
+		// i18n[resultSetMentaDataSet.val=Value]
+		String VALUE_COLUMN = s_stringMgr.getString("resultSetMentaDataSet.val");
 	}
 
 	/** Logger for this class. */
