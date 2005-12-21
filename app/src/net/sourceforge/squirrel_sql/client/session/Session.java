@@ -829,7 +829,11 @@ class Session implements ISession
  
         try {
             if (!_conn.getSQLMetaData().supportsSavepoints()) {
-                driverIs21Compliant = false;
+                // Database doesn't support save points. But the driver is 
+                // JDBC 2.1 compliant - at least as far as supportsSavePoints
+                // method goes.  This functionality could probably be a plugin 
+                // at some point.
+                driverIs21Compliant = true;
             }
         } catch (Throwable e) {
             driverIs21Compliant = false;
