@@ -21,6 +21,8 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
 
 import javax.swing.*;
 import javax.swing.table.TableColumnModel;
@@ -36,6 +38,11 @@ import java.util.ArrayList;
  */
 public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 {
+
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(DataSetViewerEditableTablePanel.class);
+
+
 	/* Menu for right-mouse-click when in cell editors */
 	TablePopupMenu cellPopupMenu = null;
 	
@@ -189,7 +196,8 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 			// IMPORTANT: this dialog is SYNCHRONOUS (ie. we do not proceed until
 			// user gives a response).  This is critical since this function provides
 			// a return value to its caller that depends on the user input.
-			int option = JOptionPane.showConfirmDialog(null, message, "Warning",
+			// i18n[baseDataSetViewerDestination.warning=Warning]
+			int option = JOptionPane.showConfirmDialog(null, message, s_stringMgr.getString("baseDataSetViewerDestination.warning"),
 				JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 			if ( option != JOptionPane.YES_OPTION)
 			{
@@ -208,7 +216,8 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 			// IMPORTANT: this dialog is SYNCHRONOUS (ie. we do not proceed until
 			// user gives a response).  This is critical since this function provides
 			// a return value to its caller that depends on the user input.
-			int option = JOptionPane.showConfirmDialog(null, message, "Warning",
+			// i18n[baseDataSetViewerDestination.warning2=Warning]
+			int option = JOptionPane.showConfirmDialog(null, message, s_stringMgr.getString("baseDataSetViewerDestination.warning2"),
 				JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 			if ( option != JOptionPane.YES_OPTION)
 			{
@@ -228,7 +237,8 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 
 		if (message != null) {
 			// tell user that there was a problem
-			JOptionPane.showMessageDialog(null, message, "Error",
+			// i18n[baseDataSetViewerDestination.error=Error]
+			JOptionPane.showMessageDialog(null, message, s_stringMgr.getString("baseDataSetViewerDestination.error"),
 				JOptionPane.ERROR_MESSAGE);
 
 			// tell caller that the underlying data was not updated
@@ -270,15 +280,25 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		// we tell user they should select something first
 		if (rows.length == 0) {
 			JOptionPane.showMessageDialog(null,
-			"You must select something in the table to delete.");
+			   // i18n[dataSetViewerEditableTablePanel.selectionNeeded=You must select something in the table to delete.]
+				s_stringMgr.getString("dataSetViewerEditableTablePanel.selectionNeeded"));
 			return;
 		}
-		
+
+
+		// i18n[dataSetViewerEditableTablePanel.deleteRosQuestion=Do you wish to delete {0} rows from this table?]
+		String msg = s_stringMgr.getString("dataSetViewerEditableTablePanel.deleteRosQuestion", new Integer(rows.length));
+
 		// Non-empty set of rows to delete.  Make sure user wants to delete
-		int option = JOptionPane.showConfirmDialog(null,
-			"Do you wish to delete "+ rows.length +
-			((rows.length==1)?" row":" rows") +" from this table?",
-			"Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+		int option = JOptionPane.showConfirmDialog(
+			null,
+			msg,
+			// i18n[dataSetViewerEditableTablePanel.warning=Warning]
+			s_stringMgr.getString("dataSetViewerEditableTablePanel.warning"),
+			JOptionPane.YES_NO_OPTION,
+			JOptionPane.WARNING_MESSAGE);
+
+
 		if ( option != JOptionPane.YES_OPTION)
 		{
 			return;	// no update done to underlying data
@@ -304,15 +324,20 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		// tell creator to delete from DB
 		String message = 
 			((IDataSetUpdateableTableModel)getUpdateableModel()).deleteRows(rowData, _colDefs);
-		if (message != null) {
+
+		if (message != null)
+		{
 			// tell user that there was a problem
 			JOptionPane.showMessageDialog(null,
-				message+"\nNo rows deleted from database.", "Error",
+				// i18n[dataSetViewerEditableTablePanel.noRowsDeleted={0}\nNo rows deleted from database.]
+				s_stringMgr.getString("dataSetViewerEditableTablePanel.noRowsDeleted", message),
+				// i18n[dataSetViewerEditableTablePanel.error=Error]
+				s_stringMgr.getString("dataSetViewerEditableTablePanel.error"),
 				JOptionPane.ERROR_MESSAGE);
 
 			return;
 		}
-		
+
 		// DB delete worked correctly, so now delete from table
 		//IMPORTANT: The user and the creator both work through the
 		// SortableTableModel, not the Actual model.  Thus the row
@@ -408,7 +433,8 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		if (message != null) {
 			// there was a problem inserting into the DB
 			JOptionPane.showMessageDialog(null,
-				message, "Error",
+				// i18n[dataSetViewereditableTablePanel.error2=Error]
+				message, s_stringMgr.getString("dataSetViewereditableTablePanel.error2"),
 				JOptionPane.ERROR_MESSAGE);
 				
 			return "Error";	// non-null return tells caller there was a problem

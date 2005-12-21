@@ -533,7 +533,8 @@ public class DataTypeUnknown
 		 */
 		// check box for whether to read contents during table load or not
 		private JCheckBox _showUnknownChk = new JCheckBox(
-			"Read contents when table is first loaded and display as string");
+			// i18n[dataTypeUnknown.readContentsOnLoad=Read contents when table is first loaded and display as string]
+			s_stringMgr.getString("dataTypeUnknown.readContentsOnLoad"));
 
 
 		public UnknownOkJPanel() {
@@ -547,7 +548,8 @@ public class DataTypeUnknown
 			 */
  		
 			setBorder(BorderFactory.createTitledBorder(
-				"Unknown DataTypes   (non-standard SQL type codes)"));
+				// i18n[dataTypeUnknown.unknownTypes=Unknown DataTypes   (non-standard SQL type codes)]
+				s_stringMgr.getString("dataTypeUnknown.unknownTypes")));
 
 			add(_showUnknownChk);
 

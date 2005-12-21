@@ -26,16 +26,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class JavabeanDataSet implements IDataSet
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(JavabeanDataSet.class);
+
+
 	private ILogger s_log =
 		LoggerController.createLogger(JavabeanDataSet.class);
 
-	private String _nameColumnName = "Property Name";
-	private String _valueColumnName = "Value";
+	// i18n[javaBeanDataSet.name=Property Name]
+	private String _nameColumnName = s_stringMgr.getString("javaBeanDataSet.name");
+	// i18n[javaBeanDataSet.value=Value]
+	private String _valueColumnName = s_stringMgr.getString("javaBeanDataSet.value");
 
 	// TODO: These 2 should be handled with an Iterator!!!
 	private int _iCurrent = -1;

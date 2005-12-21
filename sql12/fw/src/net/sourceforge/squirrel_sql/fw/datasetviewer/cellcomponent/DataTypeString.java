@@ -51,6 +51,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
 
 
 /**
@@ -82,6 +84,10 @@ import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 public class DataTypeString
 	implements IDataTypeComponent
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(DataTypeString.class);
+
+
 	/* the whole column definition */
 	private ColumnDisplayDefinition _colDef;
 
@@ -93,7 +99,7 @@ public class DataTypeString
 
 	/* table of which we are part (needed for creating popup dialog) */
 	private JTable _table;
-	
+
 	/* The JTextComponent that is being used for editing */
 	private IRestorableTextComponent _textComponent;
 
@@ -102,7 +108,7 @@ public class DataTypeString
 	//??
 	//?? IN FUTURE: change this to use a new instance of renederer
 	//?? for this data type.
-	private DefaultColumnRenderer _renderer = DefaultColumnRenderer.getInstance();	
+	private DefaultColumnRenderer _renderer = DefaultColumnRenderer.getInstance();
 
 	/**
 	 * default length of strings when truncated
@@ -129,7 +135,7 @@ public class DataTypeString
 	 * (i.e. they are thrown out by JTextField when it loads the text document behind the cell).
 	 */
 	private static boolean _makeNewlinesVisibleInCell = true;
-	
+
 	/**
 	 * If <tt>true</tt> then use the LONGVARCHAR data type in the WHERE clause,
 	 * otherwise do not include it.
@@ -142,20 +148,20 @@ public class DataTypeString
 	 * during the initial table load.
 	 */
 	private static boolean _limitRead = false;
-	
+
 	/**
 	 * If <tt>_limitRead</tt> is <tt>true</tt> then this is how many characters
 	 * to read during the initial table load.
 	 */
 	private static int _limitReadLength = DEFAULT_LIMIT_READ_LENGTH;
-	
+
 	/**
 	 * If <tt>_limitRead</tt> is <tt>true</tt> and
 	 * this is <tt>true</tt>, then only columns whose label is listed in
 	 * <tt>_limitReadColumnList</tt> are limited.
 	 */
 	private static boolean _limitReadOnSpecificColumns = false;
-	
+
 	/**
 	 * If <tt>_limitRead</tt> is <tt>true</tt> and
 	 * <tt>_limitReadOnSpecificColumns is <tt>true</tt>, then only columns whose label is listed here.
@@ -173,11 +179,11 @@ public class DataTypeString
 		_colDef = colDef;
 		_isNullable = colDef.isNullable();
 		_columnSize = colDef.getColumnSize();
-		
+
 		loadProperties();
 	}
-	
-	
+
+
 	/** Internal function to get the user-settable properties from the DTProperties,
 	 * if they exist, and to ensure that defaults are set if the properties have
 	 * not yet been created.
@@ -188,14 +194,14 @@ public class DataTypeString
 	 * the first time we are called.
 	 */
 	private static void loadProperties() {
-		
+
 		if (propertiesAlreadyLoaded == false) {
 			// get parameters previously set by user, or set default values
 			_makeNewlinesVisibleInCell = true;	// set to the default
 			String makeNewlinesVisibleString = DTProperties.get(thisClassName, "makeNewlinesVisibleInCell");
 			if (makeNewlinesVisibleString != null && makeNewlinesVisibleString.equals("false"))
 				_makeNewlinesVisibleInCell = false;
-			
+
 			_useLongInWhere = true;	// set to the default
 			String useLongInWhereString = DTProperties.get(thisClassName, "useLongInWhere");
 			if (useLongInWhereString != null && useLongInWhereString.equals("false"))
@@ -205,26 +211,26 @@ public class DataTypeString
 			String limitReadString = DTProperties.get(thisClassName, "limitRead");
 			if (limitReadString != null && limitReadString.equals("true"))
 				_limitRead = true;
-			
+
 			_limitReadLength = DEFAULT_LIMIT_READ_LENGTH;	// set to default
 			String limitReadLengthString = DTProperties.get(thisClassName, "limitReadLength");
 			if (limitReadLengthString != null)
 				_limitReadLength = Integer.parseInt(limitReadLengthString);
-			
+
 			_limitReadOnSpecificColumns = false;	// set to default
 			String limitReadOnSpecificColumnsString = DTProperties.get(thisClassName, "limitReadOnSpecificColumns");
 			if (limitReadOnSpecificColumnsString != null && limitReadOnSpecificColumnsString.equals("true"))
 				_limitReadOnSpecificColumns = true;
-			
+
 			// the list of specific column names is in comma-separated format
 			// with a comma in front of the first entry as well
 			_limitReadColumnNameMap.clear();	// empty the map of old values
-			
+
 			String nameString = DTProperties.get(thisClassName, "limitReadColumnNames");
 			int start = 0;
 			int end;
 			String name;
-			
+
 			while (nameString != null && start < nameString.length()) {
 				end = nameString.indexOf(',', start + 1);
 				if (end > -1) {
@@ -235,14 +241,14 @@ public class DataTypeString
 					name = nameString.substring(start+1);
 					start = nameString.length();
 				}
-				
+
 				_limitReadColumnNameMap.put(name, null);
 			}
-					
+
 			propertiesAlreadyLoaded = true;
 		}
 	}
-	
+
 	/**
 	 * Return the name of the java class used to hold this data type.
 	 */
@@ -257,13 +263,13 @@ public class DataTypeString
 	public boolean areEqual(Object obj1, Object obj2) {
 		return ((String)obj1).equals(obj2);
 	}
-	
+
 
 	/*
-	 * First we have the cell-related and Text-table operations.
-	 */
-	 
-	 	
+		 * First we have the cell-related and Text-table operations.
+		 */
+
+
 	/**
 	 * Render a value into text for this DataType.
 	 */
@@ -289,7 +295,7 @@ public class DataTypeString
 		}
 		return text;
 	}
-	
+
 	/**
 	 * This Data Type can be edited in a table cell.
 	 * <P>
@@ -302,7 +308,7 @@ public class DataTypeString
 	 */
 	public boolean isEditableInCell(Object originalValue) {
 		//			prevent editing if text contains newlines
- 		if (originalValue != null && ((String)originalValue).indexOf('\n') > -1)
+		 if (originalValue != null && ((String)originalValue).indexOf('\n') > -1)
 			 return false;
 		else return true;
 	}
@@ -318,43 +324,43 @@ public class DataTypeString
 		// if we are not limiting anything, return false
 		if (_limitRead == false)
 			return false;
-		
+
 		// if the value is null, then it was read ok
 		if (originalValue == null)
 			return false;
-		
+
 		// we are limiting some things.
 		// if the string we have is less than the limit, then we are ok
 		// and do not need to re-read (because we already have the whole thing).
 		if (((String)originalValue).length() < _limitReadLength)
 			return false;
-			
+
 		// if the data is longer than the limit, then we have previously
 		// re-read the contents and we do not need to re-read it again
 		if (((String)originalValue).length() > _limitReadLength)
 			return false;
-		
+
 		// if we are limiting all columns, then we need to re-read
 		// because we do not know if we have all the data or not
 		if (_limitReadOnSpecificColumns == false)
 			return true;
-		
+
 		// check for the case where we are limiting some columns
 		// but not limiting this particular column
 		if (_limitReadColumnNameMap.containsKey(_colDef.getLabel()))
 			return true;	// column is limited and length == limit, so need to re-read
 		else return false;	// column is not limited, so we have the whole thing
 	}
-		
+
 	/**
 	 * Return a JTextField usable in a CellEditor.
 	 */
 	public JTextField getJTextField() {
 		_textComponent = new RestorableJTextField();
-		
+
 		// special handling of operations while editing this data type
 		((RestorableJTextField)_textComponent).addKeyListener(new KeyTextHandler());
-				
+
 		//
 		// handle mouse events for double-click creation of popup dialog.
 		// This happens only in the JTextField, not the JTextArea, so we can
@@ -378,7 +384,7 @@ public class DataTypeString
 
 		return (JTextField)_textComponent;
 	}
-	
+
 	/**
 	 * Implement the interface for validating and converting to internal object.
 	 * Null is a valid successful return, so errors are indicated only by
@@ -409,14 +415,14 @@ public class DataTypeString
 	public boolean useBinaryEditingPanel() {
 		return false;
 	}
-	 
-	
-	
-	/*
-	 * Now define the Popup-related operations.
-	 */
 
-	
+
+
+	/*
+		 * Now define the Popup-related operations.
+		 */
+
+
 	/**
 	 * Returns true if data type may be edited in the popup,
 	 * false if not.
@@ -428,23 +434,23 @@ public class DataTypeString
 		// the data.
 		return ! needToReRead(originalValue);
 	}
-	
+
 	/*
-	 * Return a JTextArea usable in the CellPopupDialog.
-	 */
+		 * Return a JTextArea usable in the CellPopupDialog.
+		 */
 	 public JTextArea getJTextArea(Object value) {
 		_textComponent = new RestorableJTextArea();
-	
+
 		// value is a simple string representation of the data,
 		// but NOT the same one used in the Text and in-cell operations.
 		// The in-cell version may replace newline chars with "\n" while this version
 		// does not.  In other respects it is the same as the in-cell version because both
 		// use the _renderer object to do the rendering.
 		((RestorableJTextArea)_textComponent).setText((String)_renderer.renderObject(value));
-		
+
 		// special handling of operations while editing this data type
 		((RestorableJTextArea)_textComponent).addKeyListener(new KeyTextHandler());
-		
+
 		return (RestorableJTextArea)_textComponent;
 	 }
 
@@ -460,11 +466,11 @@ public class DataTypeString
 	 * The following is used by both in-cell and Popup operations.
 	 */
 
-	
+
 	/*
-	 * Internal class for handling key events during editing
-	 * of both JTextField and JTextArea.
-	 */
+		 * Internal class for handling key events during editing
+		 * of both JTextField and JTextArea.
+		 */
 	 private class KeyTextHandler extends KeyAdapter {
 		// special handling of operations while editing Strings
 		public void keyTyped(KeyEvent e) {
@@ -488,7 +494,7 @@ public class DataTypeString
 				// max size reached
 				e.consume();
 				_theComponent.getToolkit().beep();
-				
+
 				// Note: tabs and newlines are allowed in string fields, even though they are unusual.
 			}
 
@@ -544,19 +550,19 @@ public class DataTypeString
 	}
 
 
-	
-	
+
+
 	/*
-	 * DataBase-related functions
-	 */
-	 
+		 * DataBase-related functions
+		 */
+
 	 /**
 	  * On input from the DB, read the data from the ResultSet into the appropriate
 	  * type of object to be stored in the table cell.
 	  */
 	public Object readResultSet(ResultSet rs, int index, boolean limitDataRead)
 		throws java.sql.SQLException {
-		
+
 		String data = rs.getString(index);
 		if (rs.wasNull())
 			return null;
@@ -566,10 +572,10 @@ public class DataTypeString
 			// in which case we don't need to worry about it).
 			if (limitDataRead == true && _limitRead == true
 				&& data.length() >= _limitReadLength) {
-					
+
 				// data is longer than the limit, so we need to do more checking
 				if (_limitReadOnSpecificColumns == false ||
-					(_limitReadOnSpecificColumns == true && 
+					(_limitReadOnSpecificColumns == true &&
 						_limitReadColumnNameMap.containsKey(_colDef.getLabel()))) {
 					// this column is limited, so truncate the data
 					data = data.substring(0, _limitReadLength);
@@ -601,20 +607,20 @@ public class DataTypeString
 		if (_colDef.getSqlType() == Types.LONGVARCHAR &&
 			_useLongInWhere == false)
 			return "";	// this column cannot be used in a WHERE clause
-			
+
 		if (value == null || value.toString() == null )
 			return _colDef.getLabel() + " IS NULL";
 		else {
 			// We cannot use this data in the WHERE clause if it has been truncated.
 			// Since being truncated is the same as needing to re-read,
 			// only use this in the WHERE clause if we do not need to re-read
-			if ( ! needToReRead(value))		
+			if ( ! needToReRead(value))
 				return _colDef.getLabel() + "='" + escapeLine(value.toString(), databaseProductName) + "'";
 			else return "";	// value is truncated, so do not use in WHERE clause
 		}
 	}
-	
-	
+
+
 	/**
 	 * When updating the database, insert the appropriate datatype into the
 	 * prepared statment at the given variable position.
@@ -628,7 +634,7 @@ public class DataTypeString
 			pstmt.setString(position, ((String)value));
 		}
 	}
-	
+
 	/**
 	 * Get a default value for the table used to input data for a new row
 	 * to be inserted into the DB.
@@ -638,22 +644,22 @@ public class DataTypeString
 			// try to use the DB default value
 			StringBuffer mbuf = new StringBuffer();
 			Object newObject = validateAndConvert(dbDefaultValue, null, mbuf);
-			
+
 			// if there was a problem with converting, then just fall through
 			// and continue as if there was no default given in the DB.
 			// Otherwise, use the converted object
 			if (mbuf.length() == 0)
 				return newObject;
 		}
-	
+
 		// no default in DB.  If nullable, use null.
 		if (_isNullable)
 			return null;
-		
+
 		// field is not nullable, so create a reasonable default value
 		return "";
 	}
-	
+
 	/**
 	 * When strings are used in the WHERE clause, any single quote characters must be
 	 * "escaped" so that they are not confused with the "end of string"
@@ -677,21 +683,21 @@ public class DataTypeString
 		}
 		return DatabaseSpecificEscape.escapeSQL(retvalue, databaseProductName);
 	}
-	
+
 	/*
-	 * File IO related functions
-	 */
-	 
-	 
+		 * File IO related functions
+		 */
+
+
 	 /**
 	  * Say whether or not object can be exported to and imported from
 	  * a file.  We put both export and import together in one test
 	  * on the assumption that all conversions can be done both ways.
 	  */
 	 public boolean canDoFileIO() {
-	 	return true;
+		 return true;
 	 }
-	 
+
 	 /**
 	  * Read a file and construct a valid object from its contents.
 	  * Errors are returned by throwing an IOException containing the
@@ -710,42 +716,42 @@ public class DataTypeString
 	  * to user.
 	  */
 	public String importObject(FileInputStream inStream)
-	 	throws IOException {
-	 	
-	 	InputStreamReader inReader = new InputStreamReader(inStream);
-	 	
-	 	int fileSize = inStream.available();
-	 	
-	 	char charBuf[] = new char[fileSize];
-	 	
-	 	int count = inReader.read(charBuf, 0, fileSize);
-	 	
-	 	if (count != fileSize)
-	 		throw new IOException(
-	 			"Could read only "+ count +
-	 			" chars from a total file size of " + fileSize +
-	 			". Import failed.");
-	 	
-	 	// convert to string
-	 	// Special case: some systems tack a newline at the end of
-	 	// the text read.  Assume that if last char is a newline that
-	 	// we want everything else in the line.
-	 	String fileText;
-	 	if (charBuf[count-1] == KeyEvent.VK_ENTER)
-	 		fileText = new String(charBuf, 0, count-1);
-	 	else fileText = new String(charBuf);
-	 	
-	 	// data must fit into the column's max size
-	 	if (_columnSize > 0 && fileText.length() > _columnSize)
-	 		throw new IOException(
-	 			"File contains "+fileText.length()+
-	 			" characters which exceeds this column's limit of "+
-	 			_columnSize+".\nImport Aborted.");	 	
-	 	
-	 	return fileText;
+		 throws IOException {
+
+		 InputStreamReader inReader = new InputStreamReader(inStream);
+
+		 int fileSize = inStream.available();
+
+		 char charBuf[] = new char[fileSize];
+
+		 int count = inReader.read(charBuf, 0, fileSize);
+
+		 if (count != fileSize)
+			 throw new IOException(
+				 "Could read only "+ count +
+				 " chars from a total file size of " + fileSize +
+				 ". Import failed.");
+
+		 // convert to string
+		 // Special case: some systems tack a newline at the end of
+		 // the text read.  Assume that if last char is a newline that
+		 // we want everything else in the line.
+		 String fileText;
+		 if (charBuf[count-1] == KeyEvent.VK_ENTER)
+			 fileText = new String(charBuf, 0, count-1);
+		 else fileText = new String(charBuf);
+
+		 // data must fit into the column's max size
+		 if (_columnSize > 0 && fileText.length() > _columnSize)
+			 throw new IOException(
+				 "File contains "+fileText.length()+
+				 " characters which exceeds this column's limit of "+
+				 _columnSize+".\nImport Aborted.");
+
+		 return fileText;
 	}
 
-	 	 
+
 	 /**
 	  * Construct an appropriate external representation of the object
 	  * and write it to a file.
@@ -768,21 +774,21 @@ public class DataTypeString
 	  * to user.
 	  */
 	 public void exportObject(FileOutputStream outStream, String text)
-	 	throws IOException {
-	 	
-	 	OutputStreamWriter outWriter = new OutputStreamWriter(outStream);
+		 throws IOException {
 
-	 	// for string, just send the text to the output file
-	 	outWriter.write(text);
+		 OutputStreamWriter outWriter = new OutputStreamWriter(outStream);
+
+		 // for string, just send the text to the output file
+		 outWriter.write(text);
 		outWriter.flush();
 		outWriter.close();
-	 }	
+	 }
 
 
 	/*
-	 * Property change control panel
-	 */	  
-	 
+		 * Property change control panel
+		 */
+
 	 /**
 	  * Generate a JPanel containing controls that allow the user
 	  * to adjust the properties for this DataType.
@@ -800,28 +806,28 @@ public class DataTypeString
 	  * but the Interface does not seem to like static methods.
 	  */
 	 public static OkJPanel getControlPanel() {
-	 	
+
 		/*
-		 * If you add this method to one of the standard DataTypes in the
-		 * fw/datasetviewer/cellcomponent directory, you must also add the name
-		 * of that DataType class to the list in CellComponentFactory, method
-		 * getControlPanels, variable named initialClassNameList.
-		 * If the class is being registered with the factory using registerDataType,
-		 * then you should not include the class name in the list (it will be found
-		 * automatically), but if the DataType is part of the case statement in the
-		 * factory method getDataTypeObject, then it does need to be explicitly listed
-		 * in the getControlPanels method also.
-		 */
-		 
+				 * If you add this method to one of the standard DataTypes in the
+				 * fw/datasetviewer/cellcomponent directory, you must also add the name
+				 * of that DataType class to the list in CellComponentFactory, method
+				 * getControlPanels, variable named initialClassNameList.
+				 * If the class is being registered with the factory using registerDataType,
+				 * then you should not include the class name in the list (it will be found
+				 * automatically), but if the DataType is part of the case statement in the
+				 * factory method getDataTypeObject, then it does need to be explicitly listed
+				 * in the getControlPanels method also.
+				 */
+
 		 // if this panel is called before any instances of the class have been
 		 // created, we need to load the properties from the DTProperties.
 		 loadProperties();
-		 
+
 		return new ClobOkJPanel();
 	 }
-	 
-	 
-	 
+
+
+
 	 /**
 	  * Inner class that extends OkJPanel so that we can call the ok()
 	  * method to save the data when the user is happy with it.
@@ -831,67 +837,71 @@ public class DataTypeString
 		 * GUI components - need to be here because they need to be
 		 * accessible from the event handlers to alter each other's state.
 		 */
-		
+
 		// check box for whether to show newlines as "\n" for in-cell display
 		private JCheckBox _makeNewlinesVisibleInCellChk =
-			new JCheckBox("Show newlines as \\n within cells");
-		
+			// i18n[dataTypeString.newlines=Show newlines as \\n within cells]
+			new JCheckBox(s_stringMgr.getString("dataTypeString.newlines"));
+
 		// check box for whether to use LONGVARCHAR in WHERE clause
 		// (Oracle does not allow that type in WHERE clause)
 		private JCheckBox _useLongInWhereChk =
-			new JCheckBox("Allow LONGVARCHAR type to be used in WHERE clause");
-		
+			// i18n[dataTypeString.allowLongVarchar=Allow LONGVARCHAR type to be used in WHERE clause]
+			new JCheckBox(s_stringMgr.getString("dataTypeString.allowLongVarchar"));
+
 		// check box for whether to do any limiting of the data read during initial table load
 		private JCheckBox _limitReadChk =
-			new JCheckBox("Limit size of strings read during initial table load to max of:");
-			
+			// i18n[dataTypeString.limitSize=Limit size of strings read during initial table load to max of:]
+			new JCheckBox(s_stringMgr.getString("dataTypeString.limitSize"));
+
 		// check box for whether to show newlines as "\n" for in-cell display
 		private IntegerField _limitReadLengthTextField =
 			new IntegerField(5);
-		
+
 		// check box for whether to show newlines as "\n" for in-cell display
 		private JCheckBox _limitReadOnSpecificColumnsChk =
-			new JCheckBox("Limit read only on columns with these names:");
-		
+			// i18n[dataTypeString.limitReadOnly=Limit read only on columns with these names:]
+			new JCheckBox(s_stringMgr.getString("dataTypeString.limitReadOnly"));
+
 		// check box for whether to show newlines as "\n" for in-cell display
 		private JTextArea _limitReadColumnNameTextArea =
 			new JTextArea(5, 12);
-	   
+
 
 		public ClobOkJPanel() {
-		 	 
+
 			/* set up the controls */
-			
+
 			// checkbox for displaying newlines as \n in-cell
 			_makeNewlinesVisibleInCellChk.setSelected(_makeNewlinesVisibleInCell);
-			
+
 			// checkbox for using LONG in WHERE clause
 			_useLongInWhereChk.setSelected(_useLongInWhere);
 
 			// checkbox for limit/no-limit on data read during initial table load
 			_limitReadChk.setSelected(_limitRead);
 			_limitReadChk.addChangeListener(new ChangeListener(){
-				public void stateChanged(ChangeEvent e) {		
+				public void stateChanged(ChangeEvent e) {
 					_limitReadLengthTextField.setEnabled(_limitReadChk.isSelected());
 					_limitReadOnSpecificColumnsChk.setEnabled(_limitReadChk.isSelected());
 					_limitReadColumnNameTextArea.setEnabled(_limitReadChk.isSelected() &&
-						(_limitReadOnSpecificColumnsChk.isSelected()));	
+						(_limitReadOnSpecificColumnsChk.isSelected()));
 				}
 			});
 
 
 			// fill in the current limit length
 			_limitReadLengthTextField.setInt(_limitReadLength);
-			
+
 			// set the flag for whether or not to limit only on specific fields
 			_limitReadOnSpecificColumnsChk.setSelected(_limitReadOnSpecificColumns);
 			_limitReadOnSpecificColumnsChk.addChangeListener(new ChangeListener(){
-				public void stateChanged(ChangeEvent e) {		
+				public void stateChanged(ChangeEvent e) {
 					_limitReadColumnNameTextArea.setEnabled(
-						_limitReadOnSpecificColumnsChk.isSelected());	
+						_limitReadOnSpecificColumnsChk.isSelected());
 				}
 			});
-			
+
 			// fill in list of column names to check against
 			Iterator names = _limitReadColumnNameMap.keySet().iterator();
 			StringBuffer namesText = new StringBuffer();
@@ -911,11 +921,12 @@ public class DataTypeString
 			/*
 			 * Create the panel and add the GUI items to it
 			  */
-	 	  
+
 			setLayout(new GridBagLayout());
-	 	
+
 			setBorder(BorderFactory.createTitledBorder(
-				"CHAR, VARCHAR, LONGVARCHAR   (SQL types 1, 12, -1)"));
+				// i18n[dataTypeString.typeChar=CHAR, VARCHAR, LONGVARCHAR   (SQL types 1, 12, -1)]
+				s_stringMgr.getString("dataTypeString.typeChar")));
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
@@ -931,36 +942,36 @@ public class DataTypeString
 			gbc.gridy++;
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			add(_useLongInWhereChk, gbc);
-			
+
 			gbc.gridy++;
 			gbc.gridx = 0;
 			gbc.gridwidth = 1;
 			add(_limitReadChk, gbc);
-			
+
 			gbc.gridx++;
 			gbc.gridwidth = 1;
 			add(_limitReadLengthTextField, gbc);
-			
+
 			gbc.gridy++;
 			gbc.gridx = 0;
 			gbc.gridwidth = 1;
 			add(_limitReadOnSpecificColumnsChk, gbc);
-			
+
 			gbc.gridx++;
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			JScrollPane scrollPane = new JScrollPane();
 
-         // If we don't always show the scrollbars the whole DataTypePreferencesPanel is flickering like hell.
-         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+			// If we don't always show the scrollbars the whole DataTypePreferencesPanel is flickering like hell.
+			scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+			scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-         scrollPane.setViewportView(_limitReadColumnNameTextArea);
+			scrollPane.setViewportView(_limitReadColumnNameTextArea);
 			add(scrollPane, gbc);
-			
+
 
 		} // end of constructor for inner class
-	 
-	 
+
+
 		/**
 		  * User has clicked OK in the surrounding JPanel,
 		 * so save the current state of all variables
@@ -970,35 +981,35 @@ public class DataTypeString
 			_makeNewlinesVisibleInCell = _makeNewlinesVisibleInCellChk.isSelected();
 			DTProperties.put(thisClassName,
 				"makeNewlinesVisibleInCell", new Boolean(_makeNewlinesVisibleInCell).toString());
-			
+
 			_useLongInWhere = _useLongInWhereChk.isSelected();
 			DTProperties.put(thisClassName,
 				"useLongInWhere", new Boolean(_useLongInWhere).toString());
-			
+
 			_limitRead = _limitReadChk.isSelected();
 			DTProperties.put(thisClassName,
 				"limitRead", new Boolean(_limitRead).toString());
-			
+
 			_limitReadLength = _limitReadLengthTextField.getInt();
 			DTProperties.put(thisClassName,
 				"limitReadLength", Integer.toString(_limitReadLength));
-			
+
 			_limitReadOnSpecificColumns = _limitReadOnSpecificColumnsChk.isSelected();
 			DTProperties.put(thisClassName,
 				"limitReadOnSpecificColumns", new Boolean(_limitReadOnSpecificColumns).toString());
-			
+
 			// Handle list of column names
-			
+
 			// remove old name list from map
 			_limitReadColumnNameMap.clear();
 			// extract column names from text area
-			String columnNameText = _limitReadColumnNameTextArea.getText();			
+			String columnNameText = _limitReadColumnNameTextArea.getText();
 
 			int start = 0;
 			int end;
 			String name;
 			String propertyString = "";
-			
+
 			while (start < columnNameText.length()) {
 				// find the next name in the text
 				end = columnNameText.indexOf('\n', start+1);
@@ -1010,23 +1021,23 @@ public class DataTypeString
 					name = columnNameText.substring(start);
 					start = columnNameText.length();
 				}
-					
+
 				// cleanup and standardize the name, and add it to the map
 				name = name.trim().toUpperCase();
 				if (name.length() == 0)
 					continue;	// skip blank lines
-					
+
 				_limitReadColumnNameMap.put(name.trim().toUpperCase(), null);
-				
+
 				// add name to comma-separated string for saving in properties
 				propertyString += "," + name.trim().toUpperCase();
 			}	// end while
-			
+
 			DTProperties.put(thisClassName,
 				"limitReadColumnNames", propertyString);
-				
+
 		}	// end ok
-	 
+
 	 } // end of inner class
-	 
+
 }

@@ -547,7 +547,8 @@ public class DataTypeOther
 		 */
 		// check box for whether to read contents during table load or not
 		private JCheckBox _showSQLOtherChk = new JCheckBox(
-			"Read contents when table is first loaded and display as string");
+			// i18n[dataTypeOther.readContentsWhenLoaded=Read contents when table is first loaded and display as string]
+			s_stringMgr.getString("dataTypeOther.readContentsWhenLoaded"));
 
 
 		public SQLOtherOkJPanel() {
@@ -560,7 +561,8 @@ public class DataTypeOther
 			 * Create the panel and add the GUI items to it
 			 */
  		
-			setBorder(BorderFactory.createTitledBorder("SQL Other   (SQL type 1111)"));
+			// i18n[dataTypeOther.sqlOtherType=SQL Other   (SQL type 1111)]
+			setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("dataTypeOther.sqlOtherType")));
 
 			add(_showSQLOtherChk);
 

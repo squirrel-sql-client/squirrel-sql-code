@@ -54,6 +54,9 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
 /**
  * @author gwg
  *
@@ -84,6 +87,11 @@ import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
 public class DataTypeTimestamp
 	implements IDataTypeComponent
 {
+
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(DataTypeTimestamp.class);
+
+
 	/* the whole column definition */
 	private ColumnDisplayDefinition _colDef;
 
@@ -134,7 +142,7 @@ public class DataTypeTimestamp
 	 // The DateFormat object to use for all locale-dependent formatting.
 	 // This is reset each time the user changes the previous settings.
 	 private static DateFormat dateFormat =
-	 	DateFormat.getDateTimeInstance(localeFormat, localeFormat);
+		 DateFormat.getDateTimeInstance(localeFormat, localeFormat);
 
 	// values for how to use timestamps in WHERE clauses
 	 private static final int DO_NOT_USE = 0;
@@ -380,7 +388,7 @@ public class DataTypeTimestamp
 	 * of both JTextField and JTextArea.
 	 */
 	 private class KeyTextHandler extends KeyAdapter {
-	 	public void keyTyped(KeyEvent e) {
+		 public void keyTyped(KeyEvent e) {
 				char c = e.getKeyChar();
 
 				// as a coding convenience, create a reference to the text component
@@ -554,7 +562,7 @@ public class DataTypeTimestamp
 	  * on the assumption that all conversions can be done both ways.
 	  */
 	 public boolean canDoFileIO() {
-	 	return true;
+		 return true;
 	 }
 
 	 /**
@@ -573,45 +581,45 @@ public class DataTypeTimestamp
 	  * representing a value of this data type.
 	  */
 	public String importObject(FileInputStream inStream)
-	 	throws IOException {
+		 throws IOException {
 
-	 	InputStreamReader inReader = new InputStreamReader(inStream);
+		 InputStreamReader inReader = new InputStreamReader(inStream);
 
-	 	int fileSize = inStream.available();
+		 int fileSize = inStream.available();
 
-	 	char charBuf[] = new char[fileSize];
+		 char charBuf[] = new char[fileSize];
 
-	 	int count = inReader.read(charBuf, 0, fileSize);
+		 int count = inReader.read(charBuf, 0, fileSize);
 
-	 	if (count != fileSize)
-	 		throw new IOException(
-	 			"Could read only "+ count +
-	 			" chars from a total file size of " + fileSize +
-	 			". Import failed.");
+		 if (count != fileSize)
+			 throw new IOException(
+				 "Could read only "+ count +
+				 " chars from a total file size of " + fileSize +
+				 ". Import failed.");
 
-	 	// convert file text into a string
-	 	// Special case: some systems tack a newline at the end of
-	 	// the text read.  Assume that if last char is a newline that
-	 	// we want everything else in the line.
-	 	String fileText;
-	 	if (charBuf[count-1] == KeyEvent.VK_ENTER)
-	 		fileText = new String(charBuf, 0, count-1);
-	 	else fileText = new String(charBuf);
+		 // convert file text into a string
+		 // Special case: some systems tack a newline at the end of
+		 // the text read.  Assume that if last char is a newline that
+		 // we want everything else in the line.
+		 String fileText;
+		 if (charBuf[count-1] == KeyEvent.VK_ENTER)
+			 fileText = new String(charBuf, 0, count-1);
+		 else fileText = new String(charBuf);
 
-	 	// test that the string is valid by converting it into an
-	 	// object of this data type
-	 	StringBuffer messageBuffer = new StringBuffer();
-	 	validateAndConvertInPopup(fileText, null, messageBuffer);
-	 	if (messageBuffer.length() > 0) {
-	 		// convert number conversion issue into IO issue for consistancy
-	 		throw new IOException(
-	 			"Text does not represent data of type "+getClassName()+
-	 			".  Text was:\n"+fileText);
-	 	}
+		 // test that the string is valid by converting it into an
+		 // object of this data type
+		 StringBuffer messageBuffer = new StringBuffer();
+		 validateAndConvertInPopup(fileText, null, messageBuffer);
+		 if (messageBuffer.length() > 0) {
+			 // convert number conversion issue into IO issue for consistancy
+			 throw new IOException(
+				 "Text does not represent data of type "+getClassName()+
+				 ".  Text was:\n"+fileText);
+		 }
 
-	 	// return the text from the file since it does
-	 	// represent a valid data value
-	 	return fileText;
+		 // return the text from the file since it does
+		 // represent a valid data value
+		 return fileText;
 	}
 
 
@@ -635,19 +643,19 @@ public class DataTypeTimestamp
 	  * representing a value of this data type.
 	  */
 	 public void exportObject(FileOutputStream outStream, String text)
-	 	throws IOException {
+		 throws IOException {
 
-	 	OutputStreamWriter outWriter = new OutputStreamWriter(outStream);
+		 OutputStreamWriter outWriter = new OutputStreamWriter(outStream);
 
-	 	// check that the text is a valid representation
-	 	StringBuffer messageBuffer = new StringBuffer();
-	 	validateAndConvertInPopup(text, null, messageBuffer);
-	 	if (messageBuffer.length() > 0) {
-	 		// there was an error in the conversion
-	 		throw new IOException(new String(messageBuffer));
-	 	}
+		 // check that the text is a valid representation
+		 StringBuffer messageBuffer = new StringBuffer();
+		 validateAndConvertInPopup(text, null, messageBuffer);
+		 if (messageBuffer.length() > 0) {
+			 // there was an error in the conversion
+			 throw new IOException(new String(messageBuffer));
+		 }
 
-	 	// just send the text to the output file
+		 // just send the text to the output file
 		outWriter.write(text);
 		outWriter.flush();
 		outWriter.close();
@@ -701,14 +709,15 @@ public class DataTypeTimestamp
 	{
 		public DateFormatTypeCombo()
 		{
-			addItem("Full (" +
-				DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL).format(new java.util.Date()) + ")"  );
-			addItem("Long (" +
-				DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG).format(new java.util.Date()) + ")"  );
-			addItem("Medium (" +
-				DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new java.util.Date()) + ")"  );
-			addItem("Short (" +
-				DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(new java.util.Date()) + ")" );
+
+			// i18n[dataTypeTimestamp.full=Full ({0})]
+			addItem(s_stringMgr.getString("dataTypeTimestamp.full", DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL).format(new java.util.Date())));
+			// i18n[dataTypeTimestamp.long=Long ({0})]
+			addItem(s_stringMgr.getString("dataTypeTimestamp.long", DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG).format(new java.util.Date())));
+			// i18n[dataTypeTimestamp.medium=Medium ({0})]
+			addItem(s_stringMgr.getString("dataTypeTimestamp.medium", DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new java.util.Date())));
+			// i18n[dataTypeTimestamp.short=Short ({0})]
+			addItem(s_stringMgr.getString("dataTypeTimestamp.short", DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(new java.util.Date())));
 		}
 
 		public void setSelectedIndex(int option) {
@@ -744,29 +753,36 @@ public class DataTypeTimestamp
 		 */
 		// check box for whether to use Java Default or a Locale-dependent format
 		private JCheckBox useJavaDefaultFormatChk = new JCheckBox(
-			"Use default format (" +
-			new Timestamp(new java.util.Date().getTime()).toString() + ")");
+			// i18n[dateTypeTimestamp.defaultFormat=Use default format ({0})]
+			s_stringMgr.getString("dateTypeTimestamp.defaultFormat", new Timestamp(new java.util.Date().getTime()).toString()));
 
 		// label for the date format combo, used to enable/disable text
-		private RightLabel dateFormatTypeDropLabel = new RightLabel(" or locale-dependent format:");
+		// i18n[dateTypeTimestamp.orLocaleDependend= or locale-dependent format:]
+		private RightLabel dateFormatTypeDropLabel = new RightLabel(s_stringMgr.getString("dateTypeTimestamp.orLocaleDependend"));
 
 		// Combo box for read-all/read-part of blob
 		private DateFormatTypeCombo dateFormatTypeDrop = new DateFormatTypeCombo();
 
 		// checkbox for whether to interpret input leniently or not
-		private JCheckBox lenientChk = new JCheckBox("allow inexact format on input");
+		// i18n[dateTypeTimestamp.allowInexact=allow inexact format on input]
+		private JCheckBox lenientChk = new JCheckBox(s_stringMgr.getString("dateTypeTimestamp.allowInexact"));
 
 		// Objects needed to handle radio buttons
 		private JRadioButton doNotUseButton =
-			new JRadioButton("Do not use Timstamp in WHERE clause");
+			// i18n[dateTypeTimestamp.timestampInWhere=Do not use Timstamp in WHERE clause]
+			new JRadioButton(s_stringMgr.getString("dateTypeTimestamp.timestampInWhere"));
+
 		private JRadioButton useTimestampFormatButton =
-			new JRadioButton("Use JDBC standard escape format ( \"{ts '"+
-				new Timestamp(new Date().getTime()).toString() + "'}\")");
+			// i18n[dateTypeTimestamp.jdbcEscape=Use JDBC standard escape format ( {ts '{0}'} )]
+			new JRadioButton(s_stringMgr.getString("dateTypeTimestamp.jdbcEscape", new Timestamp(new Date().getTime()).toString()));
+
 		private JRadioButton useStringFormatButton =
-			new JRadioButton("Use String version of Timestamp ('"+
-				new Timestamp(new Date().getTime()).toString() + "')");
+			// i18n[dateTypeTimestamp.stringVersion=Use String version of Timestamp ( {ts '{0}'} )]
+			new JRadioButton(s_stringMgr.getString("dateTypeTimestamp.stringVersion", new Timestamp(new Date().getTime()).toString()));
+
 		// IMPORTANT: put the buttons into the array in same order as their
 		// associated values defined for whereClauseUsage.
+
 		private ButtonModel radioButtonModels[] = {
 			doNotUseButton.getModel(),
 			useTimestampFormatButton.getModel(),
@@ -812,7 +828,8 @@ public class DataTypeTimestamp
 
 			setLayout(new GridBagLayout());
 
-			setBorder(BorderFactory.createTitledBorder("Timestamp   (SQL type 93)"));
+			// i18n[dateTypeTimestamp.typeTimestamp=Timestamp   (SQL type 93)]
+			setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("dateTypeTimestamp.typeTimestamp")));
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
@@ -840,7 +857,9 @@ public class DataTypeTimestamp
 			gbc.gridx = 0;
 			++gbc.gridy;
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
-			add(new JLabel("For internally generated WHERE clauses:"), gbc);
+
+			// i18n[dateTypeTimestamp.generateWhereClause=For internally generated WHERE clauses:]
+			add(new JLabel(s_stringMgr.getString("dateTypeTimestamp.generateWhereClause")), gbc);
 
 			++gbc.gridy;
 			gbc.insets = new Insets(0,30,0,0);

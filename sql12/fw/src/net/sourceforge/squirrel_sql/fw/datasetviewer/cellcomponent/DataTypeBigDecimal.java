@@ -36,6 +36,8 @@ import java.sql.ResultSet;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 /**
  * @author gwg
@@ -67,6 +69,10 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 public class DataTypeBigDecimal
 	implements IDataTypeComponent
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(DataTypeBigDecimal.class);
+
+
 	/* the whole column definition */
 	private ColumnDisplayDefinition _colDef;
 
@@ -78,18 +84,18 @@ public class DataTypeBigDecimal
 
 	/* The total number of decimal digits allowed in the number */
 	private int _precision;
-	
+
 	/* the number of decimal digits allowed to the right of the decimal point
-	 * in the number
-	 */
+		 * in the number
+		 */
 	private int _scale;
 
 	/* table of which we are part (needed for creating popup dialog) */
 	private JTable _table;
-	
+
 	/* The JTextComponent that is being used for editing */
 	private IRestorableTextComponent _textComponent;
-	
+
 	/* The CellRenderer used for this data type */
 	//??? For now, use the same renderer as everyone else.
 	//??
@@ -109,7 +115,7 @@ public class DataTypeBigDecimal
 		_precision = colDef.getPrecision();
 		_scale = colDef.getScale();
 	}
-	
+
 	/**
 	 * Return the name of the java class used to hold this data type.
 	 */
@@ -128,19 +134,19 @@ public class DataTypeBigDecimal
 	/*
 	 * First we have the methods for in-cell and Text-table operations
 	 */
-	 
+
 	/**
 	 * Render a value into text for this DataType.
 	 */
 	public String renderObject(Object value) {
 		return (String)_renderer.renderObject(value);
 	}
-	
+
 	/**
 	 * This Data Type can be edited in a table cell.
 	 */
 	public boolean isEditableInCell(Object originalValue) {
-		return true;	
+		return true;
 	}
 
 	/**
@@ -155,16 +161,16 @@ public class DataTypeBigDecimal
 		// so there is no need to re-read the complete data later
 		return false;
 	}
-	
+
 	/**
 	 * Return a JTextField usable in a CellEditor.
 	 */
 	public JTextField getJTextField() {
 		_textComponent = new RestorableJTextField();
-		
+
 		// special handling of operations while editing this data type
 		((RestorableJTextField)_textComponent).addKeyListener(new KeyTextHandler());
-				
+
 		//
 		// handle mouse events for double-click creation of popup dialog.
 		// This happens only in the JTextField, not the JTextArea, so we can
@@ -194,23 +200,29 @@ public class DataTypeBigDecimal
 	 * Null is a valid successful return, so errors are indicated only by
 	 * existance or not of a message in the messageBuffer.
 	 */
-	public Object validateAndConvert(String value, Object originalValue, StringBuffer messageBuffer) {
+	public Object validateAndConvert(String value, Object originalValue, StringBuffer messageBuffer)
+	{
 		// handle null, which is shown as the special string "<null>"
 		if (value.equals("<null>") || value.equals(""))
 			return null;
 
 		// Do the conversion into the object in a safe manner
-		try {
+		try
+		{
 			BigDecimal obj = new BigDecimal(value);
 			// Some DBs give a negative number when they do not have a value for
 			// the scale.  Assume that if the _scale is 0 or positive that the DB really
 			// means for that to be the scale, but if it is negative then we do not check.
-			if (_scale >= 0 && obj.scale() > _scale) {
-				messageBuffer.append("Scale Exceeded: Number of digits to right of decimal place ("+
-					obj.scale()+")\nis greater than allowed in column ("+_scale+").");
+			if (_scale >= 0 && obj.scale() > _scale)
+			{
+				Object[] args = new Object[]{new Integer(obj.scale()), new Integer(_scale)};
+				// i18n[dataTypeBigDecimal.scaleEceeded=Scale Exceeded: Number of digits to right of decimal place ({0})\nis greater than allowed in column ({1}).]
+				String msg = s_stringMgr.getString("dataTypeBigDecimal.scaleEceeded", args);
+
+				messageBuffer.append(msg);
 				return null;
 			}
-			
+
 			// check the total number of digits in the number.
 			// Since the string version of the number is therepresentation of
 			// the digits in that number and including possibly a plus or minus
@@ -221,18 +233,23 @@ public class DataTypeBigDecimal
 				objPrecision--;
 			if (value.indexOf(".") > -1)
 				objPrecision--;
-			
+
 			// Some drivers (e.g. Oracle) give precision as 0 in some cases.
 			// When precision is 0, we cannot check the length, so do not try.
-			if (_precision > 0 && objPrecision > _precision) {
-				messageBuffer.append("Precision Exceeded: Number of digits in number ("+
-					objPrecision+")\nis greater than allowed in column ("+_precision+").");
+			if (_precision > 0 && objPrecision > _precision)
+			{
+				Object[] args = new Object[]{new Integer(objPrecision), new Integer(_precision)};
+				// i18n[dataTypeBigDecimal.precisionEceeded=Precision Exceeded: Number of digits in number ({0})\nis greater than allowed in column ({1})]
+				String msg = s_stringMgr.getString("dataTypeBigDecimal.precisionEceeded", args);
+
+				messageBuffer.append(msg);
 				return null;
 			}
 			return obj;
 		}
-		catch (Exception e) {
-			messageBuffer.append(e.toString()+"\n");
+		catch (Exception e)
+		{
+			messageBuffer.append(e.toString() + "\n");
 			//?? do we need the message also, or is it automatically part of the toString()?
 			//messageBuffer.append(e.getMessage());
 			return null;
@@ -255,12 +272,12 @@ public class DataTypeBigDecimal
 	public boolean useBinaryEditingPanel() {
 		return false;
 	}
-	 
+
 
 	/*
-	 * Now the functions for the Popup-related operations.
-	 */
-	
+		 * Now the functions for the Popup-related operations.
+		 */
+
 	/**
 	 * Returns true if data type may be edited in the popup,
 	 * false if not.
@@ -275,14 +292,14 @@ public class DataTypeBigDecimal
 	 */
 	 public JTextArea getJTextArea(Object value) {
 		_textComponent = new RestorableJTextArea();
-		
+
 		// value is a simple string representation of the data,
 		// the same one used in Text and in-cell operations.
 		((RestorableJTextArea)_textComponent).setText(renderObject(value));
-		
+
 		// special handling of operations while editing this data type
 		((RestorableJTextArea)_textComponent).addKeyListener(new KeyTextHandler());
-		
+
 		return (RestorableJTextArea)_textComponent;
 	 }
 
@@ -295,22 +312,22 @@ public class DataTypeBigDecimal
 
 	/*
 	 * The following is used in both cell and popup operations.
-	 */	
-	
-	/*
-	 * Internal class for handling key events during editing
-	 * of both JTextField and JTextArea.
 	 */
+
+	/*
+		 * Internal class for handling key events during editing
+		 * of both JTextField and JTextArea.
+		 */
 	 private class KeyTextHandler extends KeyAdapter {
-	 	public void keyTyped(KeyEvent e) {
+		 public void keyTyped(KeyEvent e) {
 				char c = e.getKeyChar();
-				
+
 				// as a coding convenience, create a reference to the text component
 				// that is typecast to JTextComponent.  this is not essential, as we
 				// could typecast every reference, but this makes the code cleaner
 				JTextComponent _theComponent = (JTextComponent)DataTypeBigDecimal.this._textComponent;
 				String text = _theComponent.getText();
-												
+
 				// tabs and newlines get put into the text before this check,
 				// so remove them
 				// This only applies to Popup editing since these chars are
@@ -395,19 +412,19 @@ public class DataTypeBigDecimal
 		}
 
 
-	
-	
+
+
 	/*
-	 * DataBase-related functions
-	 */
-	 
+		 * DataBase-related functions
+		 */
+
 	 /**
 	  * On input from the DB, read the data from the ResultSet into the appropriate
 	  * type of object to be stored in the table cell.
 	  */
 	public Object readResultSet(ResultSet rs, int index, boolean limitDataRead)
 		throws java.sql.SQLException {
-		
+
 		BigDecimal data = rs.getBigDecimal(index);
 		if (rs.wasNull())
 			return null;
@@ -433,8 +450,8 @@ public class DataTypeBigDecimal
 		else
 			return _colDef.getLabel() + "=" + value.toString();
 	}
-	
-	
+
+
 	/**
 	 * When updating the database, insert the appropriate datatype into the
 	 * prepared statment at the given variable position.
@@ -448,7 +465,7 @@ public class DataTypeBigDecimal
 			pstmt.setBigDecimal(position, (BigDecimal)value);
 		}
 	}
-	
+
 	/**
 	 * Get a default value for the table used to input data for a new row
 	 * to be inserted into the DB.
@@ -458,39 +475,39 @@ public class DataTypeBigDecimal
 			// try to use the DB default value
 			StringBuffer mbuf = new StringBuffer();
 			Object newObject = validateAndConvert(dbDefaultValue, null, mbuf);
-			
+
 			// if there was a problem with converting, then just fall through
 			// and continue as if there was no default given in the DB.
 			// Otherwise, use the converted object
 			if (mbuf.length() == 0)
 				return newObject;
 		}
-		
+
 		// no default in DB.  If nullable, use null.
 		if (_isNullable)
 			return null;
-		
+
 		// field is not nullable, so create a reasonable default value
 		return new BigDecimal(0);
 	}
-	
-	
-	
-	
+
+
+
+
 	/*
-	 * File IO related functions
-	 */
-	 
-	 
+		 * File IO related functions
+		 */
+
+
 	 /**
 	  * Say whether or not object can be exported to and imported from
 	  * a file.  We put both export and import together in one test
 	  * on the assumption that all conversions can be done both ways.
 	  */
 	 public boolean canDoFileIO() {
-	 	return true;
+		 return true;
 	 }
-	 
+
 	 /**
 	  * Read a file and construct a valid object from its contents.
 	  * Errors are returned by throwing an IOException containing the
@@ -507,48 +524,48 @@ public class DataTypeBigDecimal
 	  * representing a value of this data type.
 	  */
 	public String importObject(FileInputStream inStream)
-	 	throws IOException {
-	 	
-	 	InputStreamReader inReader = new InputStreamReader(inStream);
-	 	
-	 	int fileSize = inStream.available();
-	 	
-	 	char charBuf[] = new char[fileSize];
-	 	
-	 	int count = inReader.read(charBuf, 0, fileSize);
-	 	
-	 	if (count != fileSize)
-	 		throw new IOException(
-	 			"Could read only "+ count +
-	 			" chars from a total file size of " + fileSize +
-	 			". Import failed.");
-	 	
-	 	// convert file text into a string
-	 	// Special case: some systems tack a newline at the end of
-	 	// the text read.  Assume that if last char is a newline that
-	 	// we want everything else in the line.
-	 	String fileText;
-	 	if (charBuf[count-1] == KeyEvent.VK_ENTER)
-	 		fileText = new String(charBuf, 0, count-1);
-	 	else fileText = new String(charBuf);
-	 	
-	 	// test that the string is valid by converting it into an
-	 	// object of this data type
-	 	StringBuffer messageBuffer = new StringBuffer();
-	 	validateAndConvertInPopup(fileText, null, messageBuffer);
-	 	if (messageBuffer.length() > 0) {;
-	 		// convert number conversion issue into IO issue for consistancy
-	 		throw new IOException(
-	 			"Text does not represent data of type "+getClassName()+
-	 			".  Text was:\n"+fileText);
-	 	}
-	 	
-	 	// return the text from the file since it does
-	 	// represent a valid value of this data type
-	 	return fileText;
+		 throws IOException {
+
+		 InputStreamReader inReader = new InputStreamReader(inStream);
+
+		 int fileSize = inStream.available();
+
+		 char charBuf[] = new char[fileSize];
+
+		 int count = inReader.read(charBuf, 0, fileSize);
+
+		 if (count != fileSize)
+			 throw new IOException(
+				 "Could read only "+ count +
+				 " chars from a total file size of " + fileSize +
+				 ". Import failed.");
+
+		 // convert file text into a string
+		 // Special case: some systems tack a newline at the end of
+		 // the text read.  Assume that if last char is a newline that
+		 // we want everything else in the line.
+		 String fileText;
+		 if (charBuf[count-1] == KeyEvent.VK_ENTER)
+			 fileText = new String(charBuf, 0, count-1);
+		 else fileText = new String(charBuf);
+
+		 // test that the string is valid by converting it into an
+		 // object of this data type
+		 StringBuffer messageBuffer = new StringBuffer();
+		 validateAndConvertInPopup(fileText, null, messageBuffer);
+		 if (messageBuffer.length() > 0) {;
+			 // convert number conversion issue into IO issue for consistancy
+			 throw new IOException(
+				 "Text does not represent data of type "+getClassName()+
+				 ".  Text was:\n"+fileText);
+		 }
+
+		 // return the text from the file since it does
+		 // represent a valid value of this data type
+		 return fileText;
 	}
 
-	 	 
+
 	 /**
 	  * Construct an appropriate external representation of the object
 	  * and write it to a file.
@@ -569,19 +586,19 @@ public class DataTypeBigDecimal
 	  * representing a value of this data type.
 	  */
 	 public void exportObject(FileOutputStream outStream, String text)
-	 	throws IOException {
-	 	
-	 	OutputStreamWriter outWriter = new OutputStreamWriter(outStream);
-	 	
-	 	// check that the text is a valid representation
-	 	StringBuffer messageBuffer = new StringBuffer();
-	 	validateAndConvertInPopup(text, null, messageBuffer);
-	 	if (messageBuffer.length() > 0) {
-	 		// there was an error in the conversion
-	 		throw new IOException(new String(messageBuffer));
-	 	}
-	 	
-	 	// just send the text to the output file
+		 throws IOException {
+
+		 OutputStreamWriter outWriter = new OutputStreamWriter(outStream);
+
+		 // check that the text is a valid representation
+		 StringBuffer messageBuffer = new StringBuffer();
+		 validateAndConvertInPopup(text, null, messageBuffer);
+		 if (messageBuffer.length() > 0) {
+			 // there was an error in the conversion
+			 throw new IOException(new String(messageBuffer));
+		 }
+
+		 // just send the text to the output file
 		outWriter.write(text);
 		outWriter.flush();
 		outWriter.close();

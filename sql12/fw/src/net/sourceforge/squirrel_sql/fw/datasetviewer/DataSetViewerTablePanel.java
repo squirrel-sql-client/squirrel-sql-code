@@ -43,6 +43,8 @@ import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTextField;
 
@@ -60,6 +62,10 @@ import java.awt.Font;
 public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 				implements IDataSetTableControls, Printable
 {
+
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(DataSetViewerTablePanel.class);
+
 	private ILogger s_log = LoggerController.createLogger(DataSetViewerTablePanel.class);
 
 	private MyJTable _comp = null;
@@ -322,8 +328,8 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 				}
 
 		}
-	
-		
+
+
 		/*
 		 * When user leaves a cell after editing it, the contents of
 		 * that cell need to be converted from a string into an
@@ -334,34 +340,40 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		 * a text field that needs to be converted to an object, and
 		 * a non-string object has already been validated and converted.
 		 */
-		 public void setValueAt(Object newValueString, int row, int col) {
-		 	if (! (newValueString instanceof java.lang.String)) {
-		 		// data is an object - assume already validated
-		 		super.setValueAt(newValueString, row, col);
-		 		return;
-		 	}
-		 	
-		 	// data is a String, so we need to convert to real object
-		 	StringBuffer messageBuffer = new StringBuffer();
-		 	ColumnDisplayDefinition colDef = getColumnDefinitions()[col];
-		 	Object newValueObject = CellComponentFactory.validateAndConvert(
-		 		colDef, getValueAt(row, col), (String)newValueString, messageBuffer);
-		 	if (messageBuffer.length() > 0) {
-		 		// display error message and do not update the table
-				messageBuffer.insert(0,
-					"The given text cannot be converted into the internal object.\n"+
-					"The database has not been changed.\n"+
-					"The conversion error was:\n");
+		public void setValueAt(Object newValueString, int row, int col)
+		{
+			if (! (newValueString instanceof java.lang.String))
+			{
+				// data is an object - assume already validated
+				super.setValueAt(newValueString, row, col);
+				return;
+			}
+
+			// data is a String, so we need to convert to real object
+			StringBuffer messageBuffer = new StringBuffer();
+			ColumnDisplayDefinition colDef = getColumnDefinitions()[col];
+			Object newValueObject = CellComponentFactory.validateAndConvert(
+				colDef, getValueAt(row, col), (String) newValueString, messageBuffer);
+
+			if (messageBuffer.length() > 0)
+			{
+
+				// i18n[dataSetViewerTablePanel.textCantBeConverted=The given text cannot be converted into the internal object.\nThe database has not been changed.\nThe conversion error was:\n{0}]
+				String msg = s_stringMgr.getString("dataSetViewerTablePanel.textCantBeConverted", messageBuffer);
+
+				// display error message and do not update the table
 				JOptionPane.showMessageDialog(this,
-					messageBuffer,
-					"Conversion Error",
+					msg,
+					// i18n[dataSetViewerTablePanel.conversionError=Conversion Error]
+					s_stringMgr.getString("dataSetViewerTablePanel.conversionError"),
 					JOptionPane.ERROR_MESSAGE);
-		 	}
-		 	else {
-		 		// data converted ok, so update the table
-		 		super.setValueAt(newValueObject, row, col);
-		 	}
-		 }
+			}
+			else
+			{
+				// data converted ok, so update the table
+				super.setValueAt(newValueObject, row, col);
+			}
+		}
 
 
 		public void setColumnDefinitions(ColumnDisplayDefinition[] colDefs)

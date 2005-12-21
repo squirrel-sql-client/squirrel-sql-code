@@ -47,6 +47,8 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 /**
  * @author gwg
@@ -56,31 +58,35 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponent
  */
 public class RowDataInputFrame extends JInternalFrame
 	implements ActionListener {
-	
+
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(RowDataInputFrame.class);
+
 	// object that called us and that we want to return data to when done
 	DataSetViewerEditableTablePanel _caller;
-	
+
 	// the table containing the user's input
 	RowDataJTable table;
-	
+
 	/**
 	 * ctor.
 	 */
 	public RowDataInputFrame(ColumnDisplayDefinition[] colDefs,
-		Object[] initialValues,
-		DataSetViewerEditableTablePanel caller) {
-		
-		super("Input New Row Data", true, true, false, true);
-		
+									 Object[] initialValues,
+									 DataSetViewerEditableTablePanel caller) {
+
+		// i18n[rowDataInputFrame.propName=Input New Row Data]
+		super(s_stringMgr.getString("rowDataInputFrame.propName"), true, true, false, true);
+
 		// get the ConentPane into a variable for convenience
 		Container pane = getContentPane();
-		
+
 		// save data passed in to us	
 		_caller = caller;
-		
+
 		// set layout
 		pane.setLayout(new BorderLayout());
-		
+
 		// create the JTable for input and put in the top of window
 		table = new RowDataJTable(colDefs, initialValues);
 		// tell scrollpane to use table size with the height adjusted to leave
@@ -93,12 +99,14 @@ public class RowDataInputFrame extends JInternalFrame
 		// add row headers to help user understand what the second row is
 		JPanel rowHeaderPanel = new JPanel();
 		rowHeaderPanel.setLayout(new BorderLayout());
-		JTextArea r1 = new JTextArea("Data", 1, 10);
+		// i18n[rowDataInputFrame.data=Data]
+		JTextArea r1 = new JTextArea(s_stringMgr.getString("rowDataInputFrame.data"), 1, 10);
 		r1.setBackground(Color.lightGray);
 		r1.setBorder(BorderFactory.createLineBorder(Color.black));
 		r1.setEditable(false);
 		rowHeaderPanel.add(r1, BorderLayout.NORTH);
-		JTextArea r2 = new JTextArea("\nColumn\nDescription\n", 4, 10);
+		// i18n[rowDataInputFrame.colDescription=\nColumn\nDescription\n]
+		JTextArea r2 = new JTextArea(s_stringMgr.getString("rowDataInputFrame.colDescription"), 4, 10);
 		r2.setBackground(Color.lightGray);
 		r2.setBorder(BorderFactory.createLineBorder(Color.black));
 		r2.setEditable(false);
@@ -106,16 +114,19 @@ public class RowDataInputFrame extends JInternalFrame
 		scrollPane.setRowHeaderView(rowHeaderPanel);
 
 		pane.add(scrollPane, BorderLayout.NORTH);
-		
+
 		// create the buttons for input done and cancel
 		JPanel buttonPanel = new JPanel();
-		
-		JButton insertButton = new JButton("Insert");
+
+
+		// i18n[rowDataInputFrame.insert=Insert]
+		JButton insertButton = new JButton(s_stringMgr.getString("rowDataInputFrame.insert"));
 		buttonPanel.add(insertButton);
 		insertButton.setActionCommand("insert");
 		insertButton.addActionListener(this);
-		
-		JButton cancelButton = new JButton("Cancel");
+
+		// i18n[rowDataInputFrame.cancel=Cancel]
+		JButton cancelButton = new JButton(s_stringMgr.getString("rowDataInputFrame.cancel"));
 		buttonPanel.add(cancelButton);
 		cancelButton.setActionCommand("cancel");
 		cancelButton.addActionListener(this);
@@ -124,11 +135,11 @@ public class RowDataInputFrame extends JInternalFrame
 
 		// this frame should really go away when done
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		
+
 		// display the frame
 		pack();
 		show();
-		
+
 	}
 
 	/**
@@ -144,7 +155,7 @@ public class RowDataInputFrame extends JInternalFrame
 		else if ( ! e.getActionCommand().equals("insert")) {
 			return;	// do not recognize this button request
 		}
-		
+
 		// user said to insert, so collect all the data from the
 		// JTable and send it to the DataSetViewer for insertion
 		// into DB and on-screen tables
@@ -156,7 +167,7 @@ public class RowDataInputFrame extends JInternalFrame
 			int col = table.getEditingColumn();
 			table.getCellEditor(0, col).stopCellEditing();
 		}
-		
+
 		Object[] rowData = new Object[table.getModel().getColumnCount()];
 		for (int i=0; i< table.getModel().getColumnCount(); i++) {
 			rowData[i] = table.getValueAt(0, i);
@@ -172,28 +183,28 @@ public class RowDataInputFrame extends JInternalFrame
 			dispose();
 		}
 	}
-	
+
 	/**
 	 * JTable for use in creating data for insertion.
 	 */
 	class RowDataJTable extends JTable {
-		
+
 		private ColumnDisplayDefinition[] _colDefs = null;
-		
+
 		/**
 		 * constructor
 		 */
 		protected  RowDataJTable(ColumnDisplayDefinition[] colDefs, Object[] initalValues) {
-			
+
 			super();
-			setModel(new RowDataModel(colDefs, initalValues));		
-	
+			setModel(new RowDataModel(colDefs, initalValues));
+
 			// create column model
 
 			final String data = "THE QUICK BROWN FOX JUMPED OVER THE LAZY DOG";
 			final int _multiplier =
 				getFontMetrics(getFont()).stringWidth(data) / data.length();
-			
+
 			TableColumnModel cm = new DefaultTableColumnModel();
 			for (int i = 0; i < colDefs.length; ++i)
 			{
@@ -205,22 +216,22 @@ public class RowDataInputFrame extends JInternalFrame
 				}
 
 				TableColumn col = new TableColumn(i, colWidth,
-					CellComponentFactory.getTableCellRenderer(colDefs[i]), null);			
+					CellComponentFactory.getTableCellRenderer(colDefs[i]), null);
 				col.setHeaderValue(colDef.getLabel());
 				cm.addColumn(col);
 			}
 
 			setColumnModel(cm);
-			
+
 			_colDefs = colDefs;
-			
+
 			// set up cell editors on first row
 			for (int i=0; i< colDefs.length; i++) {
 				cm.getColumn(i).setCellEditor(
 					CellComponentFactory.getInCellEditor(this, _colDefs[i]));
 			}
-		
-			
+
+
 			// the second row contains a multi-line description,
 			// so make that row high enough to display it
 			setRowHeight(1, 60);
@@ -232,9 +243,9 @@ public class RowDataInputFrame extends JInternalFrame
 			getTableHeader().setReorderingAllowed(true);
 			setAutoCreateColumnsFromModel(false);
 			setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-			
+
 //?? Future: may want to create TablePopupMenu to allow cut/copy/paste operations
-		
+
 			// add mouse listener for Popup
 			MouseAdapter m = new MouseAdapter()
 			{
@@ -266,19 +277,19 @@ public class RowDataInputFrame extends JInternalFrame
 			};
 			addMouseListener(m);
 		}
-		
+
 		public boolean isCellEditable(int row, int col) {
 			if (row > 0)
 				return false;	// only the first row (containing data) is editable
 			return CellComponentFactory.isEditableInCell(_colDefs[col], getValueAt(row,col));
 		}
-			
+
 //		// set up editors and renderers
 //		public TableCellEditor getCellEditor(int row, int column) {
 //			// assume this is only called for the first row in the table
 //			return CellComponentFactory.getInCellEditor(this, _colDefs[column]);
 //		}
-			
+
 		public TableCellRenderer getCellRenderer(int row, int column) {
 			if (row == 0)
 				return CellComponentFactory.getTableCellRenderer(_colDefs[column]);
@@ -296,75 +307,79 @@ public class RowDataInputFrame extends JInternalFrame
 		 * a text field that needs to be converted to an object, and
 		 * a non-string object has already been validated and converted.
 		 */
-		 public void setValueAt(Object newValueString, int row, int col) {
-		 	if (! (newValueString instanceof java.lang.String)) {
-		 		// data is an object - assume already validated
-		 		super.setValueAt(newValueString, row, col);
-		 		return;
-		 	}
-		 	
-		 	// data is a String, so we need to convert to real object
-		 	StringBuffer messageBuffer = new StringBuffer();
-		 	ColumnDisplayDefinition colDef = _colDefs[col];
-		 	Object newValueObject = CellComponentFactory.validateAndConvert(
-		 		colDef, getValueAt(row, col), (String)newValueString, messageBuffer);
-		 	if (messageBuffer.length() > 0) {
-		 		// display error message and do not update the table
-				messageBuffer.insert(0,
-					"The given text cannot be converted into the internal object.\n"+
-					"The database has not been changed.\n"+
-					"The conversion error was:\n");
+		public void setValueAt(Object newValueString, int row, int col)
+		{
+			if (! (newValueString instanceof java.lang.String))
+			{
+				// data is an object - assume already validated
+				super.setValueAt(newValueString, row, col);
+				return;
+			}
+
+			// data is a String, so we need to convert to real object
+			StringBuffer messageBuffer = new StringBuffer();
+			ColumnDisplayDefinition colDef = _colDefs[col];
+			Object newValueObject = CellComponentFactory.validateAndConvert(
+				colDef, getValueAt(row, col), (String) newValueString, messageBuffer);
+			if (messageBuffer.length() > 0)
+			{
+				// display error message and do not update the table
+
+				// i18n[rowInputDataFrame.conversionToInternErr=The given text cannot be converted into the internal object.\nThe database has not been changed.\nThe conversion error was:\n{0}]
+				String msg = s_stringMgr.getString("rowInputDataFrame.conversionToInternErr", messageBuffer);
 				JOptionPane.showMessageDialog(this,
-					messageBuffer,
-					"Conversion Error",
+					msg,
+					// i18n[rowInputDataFrame.conversionErr=Conversion Error]
+					s_stringMgr.getString("rowInputDataFrame.conversionErr"),
 					JOptionPane.ERROR_MESSAGE);
-		 	}
-		 	else {
-		 		// data converted ok, so update the table
-		 		super.setValueAt(newValueObject, row, col);
-		 	}
-		 }
-			
-	
+			}
+			else
+			{
+				// data converted ok, so update the table
+				super.setValueAt(newValueObject, row, col);
+			}
+		}
+
+
 	}
-	
+
 	/**
 	 * Model for use by JTable in creating data for insertion.
 	 */
 	class RowDataModel extends DefaultTableModel {
-		
+
 		/**
 		 * ctor
 		 */
 		protected RowDataModel(ColumnDisplayDefinition[] colDefs, Object[] initalValues) {
 			super();
-			
+
 			// set up the list of column names and the data for the rows
 			String[] colNames = new String[colDefs.length];
 			Object[][] rowData = new Object[2][colDefs.length];
 			for (int i=0; i<colDefs.length; i++) {
 				colNames[i] = colDefs[i].getLabel();	// set column heading
 				rowData[0][i] = initalValues[i];	// set data in first row
-				
+
 				// put a description of the field in the following rows
 				rowData[1][i] = colDefs[i].getSqlTypeName() + "\n" +
 					((colDefs[i].isNullable()) ? "nullable" : "not nullable") + "\n" +
 					"mx size="+ colDefs[i].getPrecision() + "\n" +
 					"scale=" + colDefs[i].getScale();
 			}
-			
+
 			// put the data and header names into the model
 			setDataVector(rowData, colNames);
 		}
 	}
-	
+
 	/**
 	 * renderer to display multiple lines in one table cell
 	 */
 	class RowDataDescriptionRenderer implements TableCellRenderer {
-		
+
 		public Component getTableCellRendererComponent(JTable table,
-			Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+																	  Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 
 				JTextArea ta = new JTextArea((String)value, 4, 20);
 				ta.setBackground(Color.lightGray);
