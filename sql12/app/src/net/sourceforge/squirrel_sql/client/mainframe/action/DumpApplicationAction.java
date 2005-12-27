@@ -25,6 +25,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
+import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.ListMessageHandler;
@@ -97,7 +98,10 @@ public class DumpApplicationAction extends SquirrelAction
 				else
 				{
 					final String msg = s_stringMgr.getString("DumpApplicationAction.success", outFile.getAbsolutePath());
-					app.showErrorDialog(msg);	// TODO: Shouldn't be an error dialog.
+					ErrorDialog dlg = new ErrorDialog(getApplication().getMainFrame(), msg);
+					// i18n[DumpApplicationAction.titleSuccess=Dump successful]
+					dlg.setTitle(s_stringMgr.getString("DumpApplicationAction.titleSuccess"));
+					dlg.setVisible(true);
 				}
 			}
 			catch (Throwable ex)
