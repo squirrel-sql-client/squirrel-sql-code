@@ -34,7 +34,7 @@ public class Version
 	private static final String APP_NAME = s_stringMgr.getString("Version.appname");
 	private static final int MAJOR_VERSION = 2;
 	private static final int MINOR_VERSION = 1;
-	private static final String TYPE = " rc2";
+	private static final String TYPE = " final";
 	private static final int RELEASE = 0;
 
 	private static final String COPYRIGHT = s_stringMgr.getString("Version.copyright");
