@@ -24,10 +24,15 @@
 		    	    timezone="GMT"
 		    />
 		</tstamp>
-		<!-- We decided to drop the version from the snapshot build 
-		<property name="squirrel.version" value="${appversion}-${touch.time}"/>
+		<!-- We decided to drop the version from the snapshot build. So snapshot builds
+                     have a date/time stamp in their version. However, if we aren't configured to 
+                     replace the version file with a template that accepts the snapshot, then use
+                     the appversion property to set squirrel.version
 		-->
-		<property name="squirrel.version" value="Snapshot-${touch.time}"/>
+                <condition property="squirrel.version" value="Snapshot-${touch.time}" else = "${appversion}">
+                        <istrue value="${replace.version}"/>
+                </condition>
+
 		<property name="install.jar.file.dist" 
 		          value="${dist.dir}/${name}-${squirrel.version}-install.jar"/>
 		<property name="source.zip.file"
