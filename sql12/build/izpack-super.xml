@@ -164,6 +164,14 @@
 			<file targetdir="$INSTALL_PATH/plugins" 
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/sqlval/dist/sqlval"/>
 		</pack>				
+
+                <pack required="no" preselected="no" name="Optional Plugin - Internationalization ">
+                        <description>This optional plugin allows translators to quickly find missing translation files </description>
+                        <file targetdir="$INSTALL_PATH/plugins"
+                                  src="../../squirrel-sql-dist/squirrel-sql/plugins/i18n/dist/i18n.jar"/>
+                        <file targetdir="$INSTALL_PATH/plugins"
+                                  src="../../squirrel-sql-dist/squirrel-sql/plugins/i18n/dist/i18n"/>
+                </pack>
 		
 <!-- template that can be used for future optional plugins 
 
