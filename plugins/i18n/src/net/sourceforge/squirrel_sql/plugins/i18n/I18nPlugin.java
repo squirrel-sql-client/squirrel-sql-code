@@ -45,7 +45,7 @@ public class I18nPlugin extends DefaultSessionPlugin
 	 */
 	public String getVersion()
 	{
-		return "0.01";
+		return "1.0";
 	}
 
 	/**
@@ -102,7 +102,7 @@ public class I18nPlugin extends DefaultSessionPlugin
 	 */
 	public String getContributors()
 	{
-		return "";
+		return "Rob Manning";
 	}
 
 	/**
