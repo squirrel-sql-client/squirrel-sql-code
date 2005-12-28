@@ -4,6 +4,7 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+- Fixed Bug #757354 Aliases not reordering on change: Introduced sort button in Alias window tool bar.
 - Fixed bug #732696: Dump application success window title and Dump application file filter.
 - SQuirreL is ready for internationalization. The new I18n plugin supports translations.
   Put the Plugin in your Plugin path, restart SQuirreL and open the Global Preferences dialog.
