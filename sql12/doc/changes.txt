@@ -4,12 +4,16 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
-- Fixed bug #1386916 (Informix 3.0 JC3 is considered "not JDBC 2.1 compliant) The 
+- Fixed bug #732696: Dump application success window title and Dump application file filter.
+- SQuirreL is ready for internationalization. The new I18n plugin supports translations.
+  Put the Plugin in your Plugin path, restart SQuirreL and open the Global Preferences dialog.
+  There you'll find a new tab named I18n. Follow the instructions there.
+- Fixed bug #1386916 (Informix 3.0 JC3 is considered "not JDBC 2.1 compliant) The
   algorithm for detecting non-compliance incorrectly concluded non-compliance if the 
   database doesn't support save points.
-- Oracle Plugin: Added access to SYS schema in the object tree for non-privileged 
+- Oracle Plugin: Added access to SYS schema in the object tree for non-privileged
   users since this is where the user-oriented DDL information tables and views are located.
-- Fixed bug #1377304: Ant-built distributions do not preserve file permissions 
+- Fixed bug #1377304: Ant-built distributions do not preserve file permissions
   (Thanks to Charles Albrecht)
 - Fixed bug #1376981: SQL Scripts plugin fails to create table script for Axion DB.
 - Fixed *ugly* bug in editing SQL results:
