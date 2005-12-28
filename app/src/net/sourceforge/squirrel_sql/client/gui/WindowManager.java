@@ -49,17 +49,7 @@ import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.util.ThreadCheckingRepaintManager;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.CopyAliasAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.CopyDriverAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.CreateAliasAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.CreateDriverAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.DeleteAliasAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.DeleteDriverAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyAliasAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyDriverAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ViewAliasesAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ViewDriversAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.*;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -917,6 +907,7 @@ public class WindowManager
 		actions.add(new CopyAliasAction(_app, al));
 		actions.add(new ConnectToAliasAction(_app, al));
 		actions.add(new CreateAliasAction(_app));
+		actions.add(new SortAliasesAction(_app, al));
 
 		_aliasesListWindow = new AliasesListInternalFrame(_app, al);
 	}

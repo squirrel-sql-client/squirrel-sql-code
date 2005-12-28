@@ -40,12 +40,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
-import net.sourceforge.squirrel_sql.client.mainframe.action.CopyAliasAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.CreateAliasAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.DeleteAliasAction;
-import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.*;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 /**
  * This window shows all the database aliases defined in the system.
@@ -254,6 +249,8 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
 			_tb.add(actions.get(ModifyAliasAction.class));
 			_tb.add(actions.get(CopyAliasAction.class));
 			_tb.add(actions.get(DeleteAliasAction.class));
+			_tb.addSeparator();
+			_tb.add(actions.get(SortAliasesAction.class));
 		}
 	}
 }
