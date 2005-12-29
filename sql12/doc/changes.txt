@@ -1,8 +1,9 @@
 SQuirreL SQL Client Change Log
 ==============================
 
-Not yet released, available in CVS and probably in latest weekly build
-=======================================================================
+
+2.1 final
+=========
 
 - Fixed Bug #757354 Aliases not reordering on change: Introduced sort button in Alias window tool bar.
 - Fixed bug #732696: Dump application success window title and Dump application file filter.
@@ -23,7 +24,7 @@ Not yet released, available in CVS and probably in latest weekly build
   result would fail. The reason was that SQuirreL reuses result tabs but did not properly initialize
   them before reuse. Because of this editing could feel terribly instable when some results had been closed
   and SQuirreL began to reuse tabs.
-- Sizes of Properies and Prefrences windows are restored.
+- Sizes of Properies and Preferences windows are restored.
 - Made Syntax highlighting work for: Data Types, Functions, Operators, Identifiers, White Spaces
 - Fixed bug #1276957: Oracle protocol violation.
 - Oracle Plugin (v0.15) - If the user doesn't have the DBA privilege, then only loads the 
