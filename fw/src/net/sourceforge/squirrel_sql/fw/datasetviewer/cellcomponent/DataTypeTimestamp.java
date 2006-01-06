@@ -747,14 +747,15 @@ public class DataTypeTimestamp
 	  * method to save the data when the user is happy with it.
 	  */
 	 private static class BlobOkJPanel extends OkJPanel {
+         Timestamp ts = new Timestamp(new java.util.Date().getTime());
 		/*
 		 * GUI components - need to be here because they need to be
 		 * accessible from the event handlers to alter each other's state.
 		 */
 		// check box for whether to use Java Default or a Locale-dependent format
 		private JCheckBox useJavaDefaultFormatChk = new JCheckBox(
-			// i18n[dateTypeTimestamp.defaultFormat=Use default format ({0})]
-			s_stringMgr.getString("dateTypeTimestamp.defaultFormat", new Timestamp(new java.util.Date().getTime()).toString()));
+			// i18n[dateTypeTimestamp.defaultFormat=Use default format ]
+			s_stringMgr.getString("dateTypeTimestamp.defaultFormat") + "(" + ts + ")");
 
 		// label for the date format combo, used to enable/disable text
 		// i18n[dateTypeTimestamp.orLocaleDependend= or locale-dependent format:]
@@ -772,13 +773,17 @@ public class DataTypeTimestamp
 			// i18n[dateTypeTimestamp.timestampInWhere=Do not use Timstamp in WHERE clause]
 			new JRadioButton(s_stringMgr.getString("dateTypeTimestamp.timestampInWhere"));
 
-		private JRadioButton useTimestampFormatButton =
-			// i18n[dateTypeTimestamp.jdbcEscape=Use JDBC standard escape format ( {ts '{0}'} )]
-			new JRadioButton(s_stringMgr.getString("dateTypeTimestamp.jdbcEscape", new Timestamp(new Date().getTime()).toString()));
+        // i18n[dateTypeTimestamp.jdbcEscape=Use JDBC standard escape format ]
+        String jdbcEscapeMsg = s_stringMgr.getString("dateTypeTimestamp.jdbcEscape");
 
+		private JRadioButton useTimestampFormatButton =
+			new JRadioButton(jdbcEscapeMsg + "( \"{ts '" + ts + "'}\")");
+
+        // i18n[dateTypeTimestamp.stringVersion=Use String version of Timestamp ]
+        String stringVersionMsg = s_stringMgr.getString("dateTypeTimestamp.stringVersion");
+        
 		private JRadioButton useStringFormatButton =
-			// i18n[dateTypeTimestamp.stringVersion=Use String version of Timestamp ( {ts '{0}'} )]
-			new JRadioButton(s_stringMgr.getString("dateTypeTimestamp.stringVersion", new Timestamp(new Date().getTime()).toString()));
+			new JRadioButton(stringVersionMsg + "('"+ ts + "')");
 
 		// IMPORTANT: put the buttons into the array in same order as their
 		// associated values defined for whereClauseUsage.
