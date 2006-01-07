@@ -1,6 +1,11 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+Not yet released, available in CVS and probably in latest weekly build
+=======================================================================
+
+- Fixed Bug #1399254: Missing i18n strings
+
 
 2.1 final
 =========
