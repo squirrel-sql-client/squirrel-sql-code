@@ -542,24 +542,14 @@ public class SchemaInfo
 			// Extra _keywords that this DBMS supports.
 			if (dmd != null)
 			{
-				StringBuffer buf = new StringBuffer(1024);
 
-				try
+				String[] sqlKeywords = dmd.getSQLKeywords();
+
+				for (int i = 0; i < sqlKeywords.length; i++)
 				{
-					buf.append(dmd.getSQLKeywords());
-				}
-				catch (Throwable ex)
-				{
-					s_log.error("Error retrieving DBMS _keywords", ex);
+					_keywords.put(new CaseInsensitiveString(sqlKeywords[i]), sqlKeywords[i]);
 				}
 
-				StringTokenizer strtok = new StringTokenizer(buf.toString(), ",");
-
-				while (strtok.hasMoreTokens())
-				{
-					String keyword = strtok.nextToken().trim();
-					_keywords.put(new CaseInsensitiveString(keyword), keyword);
-				}
 
 				try
 				{
