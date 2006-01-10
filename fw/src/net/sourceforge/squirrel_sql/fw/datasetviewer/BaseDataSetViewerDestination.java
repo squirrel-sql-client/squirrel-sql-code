@@ -133,14 +133,16 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 		}
 
 		clear();
-		setColumnDefinitions(ds.getDataSetDefinition().getColumnDefinitions());
-		final int colCount = ds.getColumnCount();
-		while (ds.next(msgHandler))
-		{
-			addRow(ds, colCount);
-		}
-		allRowsAdded();
-		moveToTop();
+        if (ds.getDataSetDefinition() != null) {
+    		setColumnDefinitions(ds.getDataSetDefinition().getColumnDefinitions());
+    		final int colCount = ds.getColumnCount();
+    		while (ds.next(msgHandler))
+    		{
+    			addRow(ds, colCount);
+    		}
+    		allRowsAdded();
+    		moveToTop();
+        }
 	}
 
 
