@@ -39,4 +39,8 @@ public class CodeCompletionTableAliasInfo extends CodeCompletionTableInfo
 		return _aliasInfo.aliasName;
 	}
 
+    public int getStatBegin()
+    {
+        return _aliasInfo.statBegin;
+    }
 }
