@@ -73,6 +73,7 @@ public class StandardCompletorModel
 	CompletionCandidates getCompletionCandidates(String textTillCarret)
    {
       String stringToParse = getStringToParse(textTillCarret);
+      int stringToParsePosition = getStringToParsePosition ( textTillCarret );
 
       StringTokenizer st = new StringTokenizer(stringToParse, ".");
       Vector buf = new Vector();
@@ -135,7 +136,7 @@ public class StandardCompletorModel
             if(buf.size() > catAndSchemCount + 1)
             {
                String colNamePat2 = (String)buf.get(catAndSchemCount+1);
-               ret.addAll(Arrays.asList(getColumnsForName(catalog, schema, tableNamePat2, colNamePat2)));
+               ret.addAll(Arrays.asList(getColumnsForName(catalog, schema, tableNamePat2, colNamePat2, stringToParsePosition )));
             }
             else
             {
@@ -145,7 +146,7 @@ public class StandardCompletorModel
          }
          else
          {
-            ret.addAll(Arrays.asList(getColumnsForName(null, null, tableNamePat1, colNamePat1)));
+            ret.addAll(Arrays.asList(getColumnsForName(null, null, tableNamePat1, colNamePat1, stringToParsePosition )));
          }
       }
 
@@ -205,41 +206,95 @@ public class StandardCompletorModel
       return lastSeparatorIndex;
    }
 
+	private int getStringToParsePosition(String textTillCaret)
+	{
+
+		int lastIndexOfLineFeed = textTillCaret.lastIndexOf('\n');
+		String lineTillCaret;
+
+		if (-1 == lastIndexOfLineFeed)
+		{
+			lineTillCaret = textTillCaret;
+		}
+		else
+		{
+			lineTillCaret = textTillCaret.substring(lastIndexOfLineFeed);
+		}
+
+		int pos = lastIndexOfLineFeed + 1;
+		if (0 != lineTillCaret.length() && !Character.isWhitespace(lineTillCaret.charAt(lineTillCaret.length() - 1)))
+		{
+			int lastSeparatorIndex = getLastSeparatorIndex(lineTillCaret);
+			if (-1 != lastSeparatorIndex)
+			{
+				pos += lastSeparatorIndex;
+			}
+		}
+
+		return pos;
+	}
 
 
-
-	private CodeCompletionInfo[] getColumnsForName(String catalog, String schema, String name, String colNamePat)
+	private CodeCompletionInfo[] getColumnsForName(String catalog, String schema, String name, String colNamePat, int colPos)
 	{
 		CodeCompletionInfo[] infos = _codeCompletionInfos.getInfosStartingWith(catalog, schema, name);
 		String upperCaseTableNamePat = name.toUpperCase();
-		for(int i=0; i < infos.length; ++i)
+		CodeCompletionInfo toReturn = null;
+		if (colPos != -1)
 		{
-			if( infos[i].upperCaseCompletionStringEquals(upperCaseTableNamePat))
+			// First check aliases
+			for (int j = 0; j < infos.length; j++)
 			{
-				try
+				CodeCompletionInfo info = infos[j];
+				if (info instanceof CodeCompletionTableAliasInfo)
 				{
-					return infos[i].getColumns(_session.getSchemaInfo(), colNamePat);
+					if (info.upperCaseCompletionStringEquals(upperCaseTableNamePat))
+					{
+						// See if this is the same statement
+						CodeCompletionTableAliasInfo a = (CodeCompletionTableAliasInfo) info;
+						if (colPos >= a.getStatBegin())
+						{
+							toReturn = a;
+						}
+					}
 				}
-				catch(SQLException e)
+			}
+		}
+		if (toReturn == null)
+		{
+			for (int i = 0; i < infos.length; ++i)
+			{
+				if (infos[i].upperCaseCompletionStringEquals(upperCaseTableNamePat))
 				{
-					_log.error("Error retrieving columns", e);
+					toReturn = infos[i];
+					break;
 				}
+			}
+		}
+		if (toReturn != null)
+		{
+			try
+			{
+				return toReturn.getColumns(_session.getSchemaInfo(), colNamePat);
+			}
+			catch (SQLException e)
+			{
+				_log.error("Error retrieving columns", e);
 			}
 		}
 		return new CodeCompletionInfo[0];
 	}
 
 
+	private CodeCompletionInfo[] getColumnsFromLastSelectionStartingWith(String colNamePat)
+	{
+		if (null != _lastSelectedCompletionName)
+		{
+			return getColumnsForName(null, null, _lastSelectedCompletionName, colNamePat, -1);
+		}
 
-   private CodeCompletionInfo[] getColumnsFromLastSelectionStartingWith(String colNamePat)
-   {
-      if(null != _lastSelectedCompletionName)
-      {
-         return getColumnsForName(null, null, _lastSelectedCompletionName, colNamePat);
-      }
-
-      return new CodeCompletionInfo[0];
-   }
+		return new CodeCompletionInfo[0];
+	}
 
 
 	public SQLTokenListener getSQLTokenListener()

@@ -4,15 +4,17 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
-- Fixed Bug #1401672: NullPointerException when selecting Row IDs tab
-- Fixed Bug in Code Completion: Database product dependent keywords where missing
-- Fixed Bug #1399254: Missing i18n strings
+- Fixed bug: In code completion columns weren't shown correctly when the same table alias name was used in different
+  statements for different tables (Thanks to Abhishek Gupta)
+- Fixed bug #1401672: NullPointerException when selecting Row IDs tab
+- Fixed bug in Code Completion: Database product dependent keywords where missing
+- Fixed bug #1399254: Missing i18n strings
 
 
 2.1 final
 =========
 
-- Fixed Bug #757354 Aliases not reordering on change: Introduced sort button in Alias window tool bar.
+- Fixed bug #757354 Aliases not reordering on change: Introduced sort button in Alias window tool bar.
 - Fixed bug #732696: Dump application success window title and Dump application file filter.
 - SQuirreL is ready for internationalization. The new I18n plugin supports translations.
   Put the Plugin in your Plugin path, restart SQuirreL and open the Global Preferences dialog.
@@ -34,7 +36,7 @@ Not yet released, available in CVS and probably in latest weekly build
 - Sizes of Properies and Preferences windows are restored.
 - Made Syntax highlighting work for: Data Types, Functions, Operators, Identifiers, White Spaces
 - Fixed bug #1276957: Oracle protocol violation.
-- Oracle Plugin (v0.15) - If the user doesn't have the DBA privilege, then only loads the 
+- Oracle Plugin (v0.15) - If the user doesn't have the DBA privilege, then only loads the
   schemas in the object tree to which the user has been granted access.
 
 2.1 rc2
@@ -50,7 +52,7 @@ Not yet released, available in CVS and probably in latest weekly build
 2.1 rc1
 =======
 
-- Selecting a code completion with tab (instead of enter) will delete the string between the carret position and the next white space.  
+- Selecting a code completion with tab (instead of enter) will delete the string between the carret position and the next white space.
 - New Session properties to configure code completion for functions. Examples: {call myFun(<IN Integer myParam>} or plain myFun()
 
 - Fixed memory leaks. The memory panel in the status bar now tells which Session are garbage collected.
@@ -74,12 +76,12 @@ Not yet released, available in CVS and probably in latest weekly build
 - Made Swingset's Aqua Look and Feel available
 - Fixed bug: No line counter label on SQL Worksheet (opened by ctrl+n)
 - Fixed the following Exception on Sybase when the Object tab was used:
-  java.sql.SQLException: "..."."dbo"."..." not found 
+  java.sql.SQLException: "..."."dbo"."..." not found
   (Thanks to Gupta, Abhishek)
 - Added "cut/copy SQL to be executed" function to the editor. Since SQuirreL knows the concept
   of SQL text without selection (from caret position between previous and next empty line),
   these functions are short hands for the usual copy and cut which only work on selected text.
-- Fixed deleting rows from editable SQL result and from contents tab (ArrayIndexOutOfBounds) 
+- Fixed deleting rows from editable SQL result and from contents tab (ArrayIndexOutOfBounds)
 - Fixed bug #1331445: Line comments could change SQLs.
 - Patch #1326472 - Oracle plugin is smarter about accessing restricted tables as an unprivileged user
   (Thanks to Alexander Buloichik)
