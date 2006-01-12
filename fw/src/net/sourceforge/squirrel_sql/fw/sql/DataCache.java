@@ -154,38 +154,50 @@ public class DataCache
         saveSecure(file, SQL_ALIAS_IMPL);
     }
 
-    private void saveSecure(File file, Class forClass) throws IOException, XMLException
-    {
-        File tempFile = new File(file.getPath() + "~");
-        try { tempFile.delete();} catch (Exception e) {}
+	private void saveSecure(File file, Class forClass) throws IOException, XMLException
+	{
+		File tempFile = new File(file.getPath() + "~");
+		try
+		{
+			tempFile.delete();
+		}
+		catch (Exception e)
+		{
+		}
 
 
-        _cache.saveAllForClass(tempFile.getPath(), forClass);
-        if(false == tempFile.renameTo(file))
-        {
-            File doubleTemp = new File(file.getPath() + "~~");
-            try { doubleTemp.delete();} catch (Exception e) {}
-            File buf = new File(file.getPath());
+		_cache.saveAllForClass(tempFile.getPath(), forClass);
+		if (false == tempFile.renameTo(file))
+		{
+			File doubleTemp = new File(file.getPath() + "~~");
+			try
+			{
+				doubleTemp.delete();
+			}
+			catch (Exception e)
+			{
+			}
+			File buf = new File(file.getPath());
 
 
-            if(false == buf.renameTo(doubleTemp))
-            {
-                throw new IllegalStateException("Cannot rename file " + buf.getPath() + " to " + doubleTemp.getPath() + ". New File will not be saved.");
-            }
+			if (false == buf.renameTo(doubleTemp))
+			{
+				throw new IllegalStateException("Cannot rename file " + buf.getPath() + " to " + doubleTemp.getPath() + ". New File will not be saved.");
+			}
 
-            try
-            {
-                tempFile.renameTo(file);
-                doubleTemp.delete();
-            }
-            catch (Exception e)
-            {
-                doubleTemp.renameTo(file);
-            }
-        }
-    }
+			try
+			{
+				tempFile.renameTo(file);
+				doubleTemp.delete();
+			}
+			catch (Exception e)
+			{
+				doubleTemp.renameTo(file);
+			}
+		}
+	}
 
-    /**
+	/**
      * Retrieve the <TT>ISQLDriver</TT> for the passed identifier.
      *
      * @param	id	Identifier to retrieve driver for.
