@@ -1,9 +1,11 @@
 Microsoft SQL Server Assistant Plugin Change Log
 ================================================
 
-0.1
+
+0.3
 ===
-- Initial release.
+- Fixed bug #1403462 (MS SQLServer Plugin throws NPE)
+
 
 0.2
 ===
@@ -11,3 +13,8 @@ Microsoft SQL Server Assistant Plugin Change Log
 - Added Shrink Database File context action.
 - Improved Generate T-SQL Script.
 - Added Monitor pane to monitor the server.
+
+0.1
+===
+- Initial release.
+
