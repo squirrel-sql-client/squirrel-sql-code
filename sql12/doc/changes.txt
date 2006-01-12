@@ -4,6 +4,7 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+- Fixed bug #763347, Alias and Datasource loss on crash. Files are now written to a temp file first and then renamed.
 - Fixed bug #1403462: MS SQLServer Plugin throws NPE
 - Fixed bug: In code completion columns weren't shown correctly when the same table alias name was used in different
   statements for different tables (Thanks to Abhishek Gupta)
