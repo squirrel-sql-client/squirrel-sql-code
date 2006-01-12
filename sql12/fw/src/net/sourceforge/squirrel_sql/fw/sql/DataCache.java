@@ -129,7 +129,10 @@ public class DataCache
 		{
 			throw new IllegalArgumentException("File == null");
 		}
-		_cache.saveAllForClass(file.getPath(), SQL_DRIVER_IMPL);
+
+		File tempFile = new File(file.getPath() + "~");
+		_cache.saveAllForClass(tempFile.getPath(), SQL_DRIVER_IMPL);
+		tempFile.renameTo(file);
 	}
 
 	/**
@@ -150,7 +153,9 @@ public class DataCache
 		{
 			throw new IllegalArgumentException("File == null");
 		}
-		_cache.saveAllForClass(file.getPath(), SQL_ALIAS_IMPL);
+		File tempFile = new File(file.getPath() + "~");
+		_cache.saveAllForClass(tempFile.getPath(), SQL_ALIAS_IMPL);
+		tempFile.renameTo(file);
 	}
 
 	/**
