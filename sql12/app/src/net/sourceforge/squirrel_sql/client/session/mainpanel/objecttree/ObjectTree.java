@@ -35,9 +35,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
-import javax.swing.event.EventListenerList;
-import javax.swing.event.TreeExpansionEvent;
-import javax.swing.event.TreeExpansionListener;
+import javax.swing.event.*;
 import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
@@ -123,6 +121,17 @@ class ObjectTree extends JTree
 		setModel(_model);
 
 		addTreeExpansionListener(new NodeExpansionListener());
+
+		addTreeSelectionListener(new TreeSelectionListener()
+		{
+			public void valueChanged(TreeSelectionEvent e)
+			{
+				if(null != e.getNewLeadSelectionPath())
+				{
+					scrollPathToVisible(e.getNewLeadSelectionPath());
+				}
+			}
+		});
 
 		setShowsRootHandles(true);
 
