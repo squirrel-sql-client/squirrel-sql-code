@@ -4,6 +4,7 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+- Fixed bug #1403462: MS SQLServer Plugin throws NPE
 - Fixed bug: In code completion columns weren't shown correctly when the same table alias name was used in different
   statements for different tables (Thanks to Abhishek Gupta)
 - Fixed bug #1401672: NullPointerException when selecting Row IDs tab
