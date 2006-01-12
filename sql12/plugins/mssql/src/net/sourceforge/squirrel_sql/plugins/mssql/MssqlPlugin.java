@@ -18,6 +18,8 @@ package net.sourceforge.squirrel_sql.plugins.mssql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.sql.SQLException;
+
 import javax.swing.JMenu;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
@@ -30,9 +32,12 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
+import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -148,6 +153,7 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
 
 		_mssqlMenu = createFullMssqlMenu();
 		app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, _mssqlMenu);
+        app.getSessionManager().addSessionListener(new MssqlSessionListener());
     }
     
     public void load(net.sourceforge.squirrel_sql.client.IApplication iApplication) throws net.sourceforge.squirrel_sql.client.plugin.PluginException {
@@ -226,7 +232,7 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
     }
     
     public String getVersion() {
-        return new String("0.2");
+        return new String("0.3");
     }
     
     private void removeActionsOfType(ActionCollection coll,java.lang.Class classType) {
@@ -303,11 +309,11 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
 		final IDatabaseObjectInfo[] dbObjs = _treeAPI.getSelectedDatabaseObjects();
 
 		if (dbObjs.length != 1) {
-            System.err.println("iterateIndexes: more than one item is selected");
+            s_log.error("iterateIndexes: more than one item is selected");
             return;
         }
         if (dbObjs[0].getDatabaseObjectType() != DatabaseObjectType.TABLE) {
-            System.err.println("iterateIndexes: selected item isn't a table");
+            s_log.error("iterateIndexes: selected item isn't a table");
             return;
         }
         
@@ -331,7 +337,8 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
             }
         }
         catch (DataSetException ex) {
-            ex.printStackTrace();
+            s_log.error("Unable to show indices for table "+
+                        tableInfo.getSimpleName(), ex);
             // fine, don't show any indexes.
 			//throw new WrappedSQLException(ex);
         }
@@ -401,7 +408,7 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
                     }
                 }
                 catch (java.sql.SQLException ex) {
-                    ex.printStackTrace();
+                    s_log.error("Exception while attempting to shrink database file", ex);
                     // fine, don't add any data files.
                     //throw new WrappedSQLException(ex);
                 }
@@ -429,5 +436,51 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
         _resources.addToMenu(coll.get(ScriptProcedureExecAction.class),mssqlMenu);
 
 		return mssqlMenu;
+    }
+    
+    /**
+     * A listener that will determine whether or not the SQLSever Menu Item 
+     * should be enabled or disabled.  If the session that was just activated
+     * wasn't a SQL Server session, then disable the menu item.  Otherwise, 
+     * enable it.  We don't want to allow the user to do MS SQL Server specific
+     * things on a non-MS SQL Server database.
+     */
+    private class MssqlSessionListener extends SessionAdapter {
+        public void sessionActivated(SessionEvent evt) {
+            final ISession session = evt.getSession();
+            final boolean enable = isMssql(session); 
+            GUIUtils.processOnSwingEventThread(new Runnable() {
+                public void run() {
+                    _mssqlMenu.setEnabled(enable);
+                }
+            });
+        }
+    }
+    
+    /**
+     * Does the database product name indicate that it's from Microsoft.  If so,
+     * we say that it's MS SQL Server.
+     *  
+     * @param session
+     * @return
+     */
+    private boolean isMssql(ISession session) {
+        final String MICROSOFT = "microsoft";
+        String dbms = null;
+        try
+        {
+            SQLConnection con = session.getSQLConnection();
+            if (con != null) {
+                SQLDatabaseMetaData data = con.getSQLMetaData();
+                if (data != null) {
+                    dbms = data.getDatabaseProductName();
+                }
+            }
+        }
+        catch (SQLException ex)
+        {
+            s_log.debug("Unable to get the database product name", ex);
+        }
+        return dbms != null && dbms.toLowerCase().startsWith(MICROSOFT);        
     }
 }
