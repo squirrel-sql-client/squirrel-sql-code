@@ -20,16 +20,17 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.event.ActionEvent;
-
-import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
+import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 /**
- * @version 	$Id: DropSelectedTablesAction.java,v 1.9 2005-07-24 20:54:13 gerdwagner Exp $
+ * @version 	$Id: DropSelectedTablesAction.java,v 1.10 2006-01-13 16:21:53 manningr Exp $
  * @author		Johan Compagner
  */
 public class DropSelectedTablesAction extends SquirrelAction
@@ -77,8 +78,31 @@ public class DropSelectedTablesAction extends SquirrelAction
 				// JASON: Ideally this should center on the tree rather than the main panel
 				if (Dialogs.showYesNo(getApplication().getMainFrame(), MSG, TITLE))
 				{
-					new DropTablesCommand(_tree.getSession(), tables).execute();
-					_tree.removeNodes(nodes);
+                    DropTablesCommand command = 
+                        new DropTablesCommand(_tree.getSession(), tables);
+                    command.execute();
+                    
+                    if (command.getExceptionOccurred()) {
+                        // build a list of nodes that were successfully dropped
+                        // and should be removed from the object tree.
+                        ArrayList tmp = new ArrayList();
+                        HashMap resultMap = command.getResult();
+                        for (int i = 0; i < nodes.length; i++) {
+                            ObjectTreeNode node = nodes[i];
+                            IDatabaseObjectInfo dbObjInfo = 
+                                node.getDatabaseObjectInfo();
+                            DropTableResult dtr = (DropTableResult)resultMap.get(dbObjInfo);
+                            if (dtr.getResult()) {
+                                tmp.add(node);
+                            }
+                        }
+                        ObjectTreeNode[] nodesToRemove = 
+                            (ObjectTreeNode[])tmp.toArray(new ObjectTreeNode[tmp.size()]);
+                        _tree.removeNodes(nodesToRemove);                        
+                    } else {
+                        _tree.removeNodes(nodes);
+                    }
+                    
 				}
 			}
 		}
