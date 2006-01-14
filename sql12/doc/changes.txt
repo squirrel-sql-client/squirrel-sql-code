@@ -4,6 +4,7 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+- Fixed bug #1385270: Dropping multiple selected tables produces exceptions
 - Fixed bug #863673: cannot DROP TABLE
 - Fixed bug #887525: When Object Tree Nodes are the selected by keystrokes the selected node is scrolled to visible.
 - Fixed bug #763347: Alias and Datasource loss on crash. Files are now written to a temp file first and then renamed.
