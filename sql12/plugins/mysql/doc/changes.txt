@@ -1,6 +1,10 @@
 MySQL Plugin Change Log
 =======================
 
+0.33
+====
+- Fixed bug# 1385270 (Dropping multiple selected tables produces exceptions)
+
 0.32
 ====
 - Updated for SQuirreL 1.2beta6.
