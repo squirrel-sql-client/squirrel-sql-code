@@ -164,9 +164,8 @@ public class I18nProps extends Object
 
     public String getUnlocalizedPath(Locale loc)
     {
-        String path = getPath().substring(0, getPath().lastIndexOf(File.separator));
-        String name = getPath().substring(getPath().lastIndexOf(File.separator));
-
+        String path = getPath().substring(0,  new File(getPath()).getPath().lastIndexOf(File.separator));
+        String name = getPath().substring( new File(getPath()).getPath().lastIndexOf(File.separator));
         return path + name.replaceAll("_"+ loc.toString(), "");
     }
 
