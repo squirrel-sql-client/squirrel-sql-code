@@ -685,7 +685,7 @@ public class DataTypeTime
 		 // created, we need to load the properties from the DTProperties.
 		 loadProperties();
 
-		return new BlobOkJPanel();
+		return new TimeOkJPanel();
 	 }
 
 	// Class that displays the various formats available for dates
@@ -729,7 +729,7 @@ public class DataTypeTime
 	  * Inner class that extends OkJPanel so that we can call the ok()
 	  * method to save the data when the user is happy with it.
 	  */
-	 private static class BlobOkJPanel extends OkJPanel
+	 private static class TimeOkJPanel extends OkJPanel
 	 {
 		 /*
 		 * GUI components - need to be here because they need to be
@@ -754,7 +754,7 @@ public class DataTypeTime
 		 private JCheckBox lenientChk = new JCheckBox(s_stringMgr.getString("dataTypeTime.inexact"));
 
 
-		 public BlobOkJPanel()
+		 public TimeOkJPanel()
 		 {
 
 			 /* set up the controls */

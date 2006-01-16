@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.event.*;
+import java.awt.*;
 import java.math.BigDecimal;
 
 import java.io.FileInputStream;
@@ -26,18 +27,22 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.IOException;
 
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
 import javax.swing.text.JTextComponent;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Types;
+import java.text.NumberFormat;
+import java.text.DateFormat;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
+import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
 
 /**
  * @author gwg
@@ -66,7 +71,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  * handling and resetting the cell to the original value.
  */
 
-public class DataTypeBigDecimal
+public class DataTypeBigDecimal extends FloatingPointBase
 	implements IDataTypeComponent
 {
 	private static final StringManager s_stringMgr =
@@ -104,6 +109,10 @@ public class DataTypeBigDecimal
 	private DefaultColumnRenderer _renderer = DefaultColumnRenderer.getInstance();
 
 
+	// The NumberFormat object to use for all locale-dependent formatting.
+	private NumberFormat _numberFormat;
+
+
 	/**
 	 * Constructor - save the data needed by this data type.
 	 */
@@ -114,6 +123,11 @@ public class DataTypeBigDecimal
 		_isSigned = colDef.isSigned();
 		_precision = colDef.getPrecision();
 		_scale = colDef.getScale();
+
+		_numberFormat = NumberFormat.getInstance();
+		_numberFormat.setMaximumFractionDigits(_scale);
+		_numberFormat.setMinimumFractionDigits(0);
+
 	}
 
 	/**
@@ -128,7 +142,7 @@ public class DataTypeBigDecimal
 	 * Neither of the objects is null
 	 */
 	public boolean areEqual(Object obj1, Object obj2) {
-		return ((BigDecimal)obj1).equals(obj2);
+		return obj1.equals(obj2);
 	}
 
 	/*
@@ -139,7 +153,19 @@ public class DataTypeBigDecimal
 	 * Render a value into text for this DataType.
 	 */
 	public String renderObject(Object value) {
-		return (String)_renderer.renderObject(value);
+
+
+		//return (String)_renderer.renderObject(value);
+
+		if (value == null || useJavaDefaultFormat)
+		{
+			return (String)_renderer.renderObject(value);
+		}
+		else
+		{
+			return (String)_renderer.renderObject(_numberFormat.format(value));
+		}
+
 	}
 
 	/**
@@ -209,7 +235,18 @@ public class DataTypeBigDecimal
 		// Do the conversion into the object in a safe manner
 		try
 		{
-			BigDecimal obj = new BigDecimal(value);
+			BigDecimal obj;
+
+			if(useJavaDefaultFormat)
+			{
+				obj = new BigDecimal(value);
+			}
+			else
+			{
+				obj = new BigDecimal("" + _numberFormat.parse(value));
+			}
+
+
 			// Some DBs give a negative number when they do not have a value for
 			// the scale.  Assume that if the _scale is 0 or positive that the DB really
 			// means for that to be the scale, but if it is negative then we do not check.
@@ -335,15 +372,21 @@ public class DataTypeBigDecimal
 				if (c == KeyEvent.VK_TAB || c == KeyEvent.VK_ENTER) {
 					// remove all instances of the offending char
 					int index = text.indexOf(c);
-					if (index == text.length() -1) {
-						text = text.substring(0, text.length()-1);	// truncate string
+
+					if (-1 != index)
+					{
+						if (index == text.length() - 1)
+						{
+							text = text.substring(0, text.length() - 1);	// truncate string
+						}
+						else
+						{
+							text = text.substring(0, index) + text.substring(index + 1);
+						}
+						((IRestorableTextComponent) _theComponent).updateText(text);
+						_theComponent.getToolkit().beep();
+						e.consume();
 					}
-					else {
-						text = text.substring(0, index) + text.substring(index+1);
-					}
-					((IRestorableTextComponent)_theComponent).updateText( text);
-					_theComponent.getToolkit().beep();
-					e.consume();
 				}
 
 				if ( (c == '-' || c=='+') &&
@@ -355,7 +398,7 @@ public class DataTypeBigDecimal
 
 				if ( ! ( Character.isDigit(c) ||
 					(c == '-') || (c == '+') ||
-					(c == '.') ||
+					(c == '.') || (c == ',') ||  // several number formats use '.' as decimal separator, others use ','
 					(c == KeyEvent.VK_BACK_SPACE) ||
 					(c == KeyEvent.VK_DELETE) ) ) {
 					_theComponent.getToolkit().beep();

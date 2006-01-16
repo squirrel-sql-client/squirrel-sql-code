@@ -235,7 +235,7 @@ public class CellComponentFactory {
 	 * The base component of a DefaultTableCellRenderer is a JLabel.
 	 * @author gwg
 	 */
-	static private final class CellRenderer extends DefaultTableCellRenderer
+	static private final class CellRenderer extends DefaultTableCellRenderer implements SquirrelTableCellRenderer
 	{
 		private final IDataTypeComponent _dataTypeObject;
 
@@ -295,6 +295,18 @@ public class CellComponentFactory {
 			if (_dataTypeObject != null)
 				super.setValue(_dataTypeObject.renderObject(value));
 			else super.setValue(DefaultColumnRenderer.getInstance().renderObject(value));
+		}
+
+		public Object renderValue(Object value)
+		{
+			if (_dataTypeObject != null)
+			{
+				return _dataTypeObject.renderObject(value);
+			}
+			else
+			{
+				return DefaultColumnRenderer.getInstance().renderObject(value);
+			}
 		}
 	}
 
@@ -706,6 +718,7 @@ public class CellComponentFactory {
 			net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeDate.class.getName(),
 			net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeTime.class.getName(),
 			net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeTimestamp.class.getName(),			
+			net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.FloatingPointBase.class.getName(),			
 			 };
 
 
