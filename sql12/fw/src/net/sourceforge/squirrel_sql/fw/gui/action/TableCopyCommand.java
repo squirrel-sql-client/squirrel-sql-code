@@ -21,8 +21,10 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 
 import javax.swing.JTable;
+import javax.swing.table.TableCellRenderer;
 
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.SquirrelTableCellRenderer;
 
 public class TableCopyCommand implements ICommand
 {
@@ -33,8 +35,9 @@ public class TableCopyCommand implements ICommand
 	private final static String NULL_CELL = "<null>";
 
 	private JTable _table;
+	private boolean _withHeaders;
 
-	public TableCopyCommand(JTable table)
+	public TableCopyCommand(JTable table, boolean withHeaders)
 	{
 		super();
 		if (table == null)
@@ -42,6 +45,7 @@ public class TableCopyCommand implements ICommand
 			throw new IllegalArgumentException("JTable == null");
 		}
 		_table = table;
+		_withHeaders = withHeaders;
 	}
 
 	public void execute()
@@ -53,7 +57,8 @@ public class TableCopyCommand implements ICommand
 		if (selRows.length != 0 && selCols.length != 0)
 		{
 			StringBuffer buf = new StringBuffer();
-			if (nbrSelCols > 1 && nbrSelRows > 1)
+			//if (nbrSelCols > 1 && nbrSelRows > 1)
+			if (_withHeaders)
 			{
 				for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
 				{
@@ -69,7 +74,15 @@ public class TableCopyCommand implements ICommand
 			{
 				for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
 				{
+					TableCellRenderer cellRenderer = _table.getCellRenderer(selRows[rowIdx], selCols[colIdx]);
 					Object cellObj = _table.getValueAt(selRows[rowIdx], selCols[colIdx]);
+
+					if(cellRenderer instanceof SquirrelTableCellRenderer)
+					{
+						cellObj = ((SquirrelTableCellRenderer)cellRenderer).renderValue(cellObj);
+					}
+
+
 					buf.append(cellObj != null ? cellObj : NULL_CELL);
 					if (nbrSelCols > 1 && colIdx < nbrSelCols - 1)
 					{

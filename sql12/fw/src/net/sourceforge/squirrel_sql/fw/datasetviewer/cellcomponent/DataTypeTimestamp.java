@@ -33,7 +33,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.text.DateFormat;
-import java.util.Date;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -701,7 +700,7 @@ public class DataTypeTimestamp
 		 // created, we need to load the properties from the DTProperties.
 		 loadProperties();
 
-		return new BlobOkJPanel();
+		return new TimestampOkJPanel();
 	 }
 
 	// Class that displays the various formats available for dates
@@ -746,7 +745,7 @@ public class DataTypeTimestamp
 	  * Inner class that extends OkJPanel so that we can call the ok()
 	  * method to save the data when the user is happy with it.
 	  */
-	 private static class BlobOkJPanel extends OkJPanel {
+	 private static class TimestampOkJPanel extends OkJPanel {
          Timestamp ts = new Timestamp(new java.util.Date().getTime());
 		/*
 		 * GUI components - need to be here because they need to be
@@ -795,7 +794,7 @@ public class DataTypeTimestamp
 		private ButtonGroup whereClauseUsageGroup = new ButtonGroup();
 
 
-		public BlobOkJPanel() {
+		public TimestampOkJPanel() {
 
 			/* set up the controls */
 			// checkbox for Java default/non-default format

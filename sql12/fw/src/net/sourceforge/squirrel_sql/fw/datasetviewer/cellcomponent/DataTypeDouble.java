@@ -32,6 +32,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Types;
+import java.text.NumberFormat;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
@@ -65,7 +67,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
  * handling and resetting the cell to the original value.
  */
 
-public class DataTypeDouble
+public class DataTypeDouble extends FloatingPointBase
 	implements IDataTypeComponent
 {
 	/* the whole column definition */
@@ -93,6 +95,8 @@ public class DataTypeDouble
 	//?? for this data type.
 	private DefaultColumnRenderer _renderer = DefaultColumnRenderer.getInstance();
 
+	// The NumberFormat object to use for all locale-dependent formatting.
+	private NumberFormat _numberFormat;
 
 	/**
 	 * Constructor - save the data needed by this data type.
@@ -103,6 +107,16 @@ public class DataTypeDouble
 		_isNullable = colDef.isNullable();
 		_precision = colDef.getPrecision();
 		_scale = colDef.getScale();
+
+		_numberFormat = NumberFormat.getInstance();
+
+		// This is a bit hard coded but if we use _scale here
+		// some number displays go crazy.
+		_numberFormat.setMaximumFractionDigits(5);
+
+		_numberFormat.setMinimumFractionDigits(0);
+
+
 	}
 	
 	/**
@@ -117,7 +131,7 @@ public class DataTypeDouble
 	 * Neither of the objects is null
 	 */
 	public boolean areEqual(Object obj1, Object obj2) {
-		return ((Double)obj1).equals(obj2);
+		return obj1.equals(obj2);
 	}
 
 	/*
@@ -128,7 +142,18 @@ public class DataTypeDouble
 	 * Render a value into text for this DataType.
 	 */
 	public String renderObject(Object value) {
-		return (String)_renderer.renderObject(value);
+
+		//return (String)_renderer.renderObject(value);
+
+		if (value == null || useJavaDefaultFormat)
+		{
+			return (String)_renderer.renderObject(value);
+		}
+		else
+		{
+			return (String)_renderer.renderObject(_numberFormat.format(value));
+		}
+
 	}
 	
 	/**
@@ -195,12 +220,24 @@ public class DataTypeDouble
 			return null;
 
 		// Do the conversion into the object in a safe manner
-		try {
-			Object obj = new Double(value);
+		try
+		{
+			Double obj;
+
+			if(useJavaDefaultFormat)
+			{
+				obj = new Double(value);
+			}
+			else
+			{
+				obj = new Double("" + _numberFormat.parse(value));
+			}
+
 			return obj;
 		}
-		catch (Exception e) {
-			messageBuffer.append(e.toString()+"\n");
+		catch (Exception e)
+		{
+			messageBuffer.append(e.toString() + "\n");
 			//?? do we need the message also, or is it automatically part of the toString()?
 			//messageBuffer.append(e.getMessage());
 			return null;
@@ -303,7 +340,7 @@ public class DataTypeDouble
 					(c == 'e') || (c == 'E') ||
 					(c == 'f') || (c == 'F') ||
 					(c == 'd') || (c == 'D') ||
-					(c == '.') ||
+					(c == '.') || (c == ',') ||  // several number formats use '.' as decimal separator, others use ','
 					(c == KeyEvent.VK_BACK_SPACE) ||
 					(c == KeyEvent.VK_DELETE) ) ) {
 					_theComponent.getToolkit().beep();

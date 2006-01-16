@@ -21,8 +21,11 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 
 import javax.swing.JTable;
+import javax.swing.table.TableCellRenderer;
 
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.SquirrelTableCellRenderer;
+
 /**
  * This command gets the current selected text from a <TT>JTable</TT>
  * and formats it as HTML table and places it on the system clipboard.
@@ -77,8 +80,15 @@ public class TableCopyHtmlCommand implements ICommand
 				buf.append("<tr>");
 				for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
 				{
-					final Object cellObj = 	_table.getValueAt(selRows[rowIdx],
-															selCols[colIdx]);
+					TableCellRenderer cellRenderer = _table.getCellRenderer(selRows[rowIdx], selCols[colIdx]);
+					Object cellObj = _table.getValueAt(selRows[rowIdx], selCols[colIdx]);
+
+					if(cellRenderer instanceof SquirrelTableCellRenderer)
+					{
+						cellObj = ((SquirrelTableCellRenderer)cellRenderer).renderValue(cellObj);
+					}
+
+
 					buf.append("<td>");
 					if (cellObj == null)
 					{

@@ -20,11 +20,11 @@ package net.sourceforge.squirrel_sql.fw.gui;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.KeyEvent;
 
 import java.awt.print.PrinterJob;
 
-import javax.swing.JMenuItem;
-import javax.swing.JTable;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.fw.gui.action.*;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -39,21 +39,28 @@ public class TablePopupMenu extends BasePopupMenu
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(TablePopupMenu.class);
 
+
 	public interface IOptionTypes
 	{
 		int COPY = 0;
-		int COPY_HTML = 1;
-		int COPY_IN_STATEMENT = 2;
-		int SELECT_ALL = 3;
-		int LAST_ENTRY = 3;
+		int COPY_WITH_HEADERS = 1;
+		int COPY_HTML = 2;
+		int COPY_IN_STATEMENT = 3;
+		int SELECT_ALL = 4;
+		int LAST_ENTRY = 5;
 	}
+
+	private static final KeyStroke COPY_STROKE = KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK);
 
 	private final JMenuItem[] _menuItems = new JMenuItem[IOptionTypes.LAST_ENTRY + 1];
 
 	private JTable _table;
 
+
+
 	private CutAction _cut = new CutAction();
 	private CopyAction _copy = new CopyAction();
+	private CopyWithHeadersAction _copyWithHeaders = new CopyWithHeadersAction();
 	private CopyHtmlAction _copyHtml = new CopyHtmlAction();
 	private CopyInStatementAction _copyInStatement = new CopyInStatementAction();
 	private PasteAction _paste = new PasteAction();
@@ -93,6 +100,8 @@ public class TablePopupMenu extends BasePopupMenu
 
 		// add the menu items to the menu
 		_menuItems[IOptionTypes.COPY] = add(_copy);
+		_menuItems[IOptionTypes.COPY].setAccelerator(COPY_STROKE);
+		_menuItems[IOptionTypes.COPY_WITH_HEADERS] = add(_copyWithHeaders);
 		_menuItems[IOptionTypes.COPY_HTML] = add(_copyHtml);
 		_menuItems[IOptionTypes.COPY_IN_STATEMENT] = add(_copyInStatement);
 		if (allowEditing)
@@ -134,6 +143,7 @@ public class TablePopupMenu extends BasePopupMenu
 		_viewer = viewer;
 		
 		_table = table;
+		replaceStandardTableCopyAction();
 
 // Cut and Paste need to be worked on, so for now do not include them
 // Also, the copy operations do not seem to work right - we may need special
@@ -155,6 +165,15 @@ public class TablePopupMenu extends BasePopupMenu
 	public void setTable(JTable value)
 	{
 		_table = value;
+		replaceStandardTableCopyAction();
+	}
+
+	private void replaceStandardTableCopyAction()
+	{
+		_table.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(COPY_STROKE, "CopyAction");
+		_table.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(COPY_STROKE, "CopyAction");
+		_table.getInputMap(JComponent.WHEN_FOCUSED).put(COPY_STROKE, "CopyAction");
+		_table.getActionMap().put("CopyAction", _copy);
 	}
 
 	/**
@@ -240,10 +259,28 @@ public class TablePopupMenu extends BasePopupMenu
 		{
 			if (_table != null)
 			{
-				new TableCopyCommand(_table).execute();
+				new TableCopyCommand(_table, false).execute();
 			}
 		}
 	}
+
+	private class CopyWithHeadersAction extends BaseAction
+	{
+		CopyWithHeadersAction()
+		{
+			super(s_stringMgr.getString("TablePopupMenu.copyWithHeaders"));
+		}
+
+		public void actionPerformed(ActionEvent evt)
+		{
+			if (_table != null)
+			{
+				new TableCopyCommand(_table, true).execute();
+			}
+		}
+	}
+
+
 
 	private class CopyHtmlAction extends BaseAction
 	{
