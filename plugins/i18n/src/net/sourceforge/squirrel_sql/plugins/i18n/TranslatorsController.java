@@ -5,6 +5,8 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.*;
 import java.awt.event.*;
@@ -21,6 +23,9 @@ public class TranslatorsController
 {
    private static final StringManager s_stringMgr =
       StringManagerFactory.getStringManager(TranslatorsController.class);
+
+	private static ILogger logger = LoggerController.createLogger(TranslatorsController.class);
+
 
    private static final String PREF_KEY_WORK_DIR = "SquirrelSQL.i18n.workDir";
    private static final String PREF_KEY_EDITOR_COMMAND = "SquirrelSQL.i18n.editorCommand";
@@ -392,7 +397,7 @@ public class TranslatorsController
 
       for (int i = 0; i < sourceUrls.length; i++)
       {
-         File file = new File(sourceUrls[i].getFile());
+         File file = new File(sourceUrls[i].getFile().replaceAll("%20", " "));
 
          if(file.isDirectory())
          {
@@ -453,12 +458,12 @@ public class TranslatorsController
 
 		for (int i = 0; i < urls.length; i++)
 		{
-			File file = new File(urls[i].getFile());
-			if(file.equals(af.getSQuirrelJarFile()))
+			File file = new File(urls[i].getFile().replaceAll("%20", " "));
+			if(file.getName().equals(af.getSQuirrelJarFile().getName()))
 			{
 				ret.add(urls[i]);
 			}
-			else if(file.equals(af.getFwJarFile()))
+			else if(file.getName().equals(af.getFwJarFile().getName()))
 			{
 				ret.add(urls[i]);
 			}
@@ -523,9 +528,10 @@ public class TranslatorsController
 		}
 		catch (IOException e)
 		{
-			String msg = s_stringMgr.getString("I18n.failedToOpenZip", file.getAbsolutePath());
 			// i18n[I18n.failedToOpenZip=Failed to open zip/jar {0}]
+			String msg = s_stringMgr.getString("I18n.failedToOpenZip", file.getAbsolutePath());
 			_app.getMessageHandler().showMessage(msg);
+			logger.error(msg, e);
 		}
 
 	}
