@@ -321,7 +321,13 @@ public class ApplicationFiles
 
 	public File getSQuirrelJarFile()
 	{
-		return new File(_squirrelHomeDir.getPath() + File.separator + "lib" + File.separator + "squirrel-sql.jar");
+		File ret = new File(_squirrelHomeDir.getPath() + File.separator + "lib" + File.separator + "squirrel-sql.jar");
+
+		if(false == ret.exists())
+		{
+			ret = new File(_squirrelHomeDir.getPath() +  File.separator + "squirrel-sql.jar");
+		}
+		return ret;
 	}
 
 	public File getFwJarFile()

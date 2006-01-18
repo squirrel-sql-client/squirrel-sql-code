@@ -43,7 +43,7 @@ public class I18nProps extends Object
 
         for (int i = 0; i < sourceUrls.length; i++)
         {
-            String classPathEntry = (String) sourceUrls[i].getPath();
+            String classPathEntry = (String) sourceUrls[i].getPath().replaceAll("%20", " ");
             if(getPath().startsWith(classPathEntry))
             {
                 _name = getPath().substring(classPathEntry.length());
@@ -60,11 +60,11 @@ public class I18nProps extends Object
         {
             if(null != _file)
             {
-                return _file.toURL().getPath();
+                return _file.toURL().getPath().replaceAll("%20", " ");
             }
             else
             {
-                return new File(_zipFile.toString() + File.separator + _entryName).toURL().getPath();
+                return new File(_zipFile.toString() + File.separator + _entryName).toURL().getPath().replaceAll("%20", " ");
             }
         }
         catch (MalformedURLException e)
