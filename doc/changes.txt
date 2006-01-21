@@ -4,24 +4,28 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
-- Cleaned up copying form tables:
+- Cleaned up copying from tables:
   1. Control+c and copy in the right mouse menu now do the same: They copy data without column headers.
-  2. An new right mouse menu entry explicitly offers to copy data including column headers
+  2. A new right mouse menu entry ('Copy with headers') provides the ability to copy data including 
+     column headers
 
 - Fixed bugs #1043604 and #1043599: Unlocalized decimal separator caused problems when data was pasted
   for example to Open Office Calc. In the Global preferences the user is now able to chose
   if he wants to use the Java default format for floating point values or the localized form.
 
-- Fixed bug #1385270: Dropping multiple selected tables produces exceptions
-- Fixed bug #863673: cannot DROP TABLE
-- Fixed bug #887525: When Object Tree Nodes are the selected by keystrokes the selected node is scrolled to visible.
-- Fixed bug #763347: Alias and Datasource loss on crash. Files are now written to a temp file first and then renamed.
 - Fixed bug #1403462: MS SQLServer Plugin throws NPE
-- Fixed bug: In code completion columns weren't shown correctly when the same table alias name was used in different
-  statements for different tables (Thanks to Abhishek Gupta)
 - Fixed bug #1401672: NullPointerException when selecting Row IDs tab
-- Fixed bug in Code Completion: Database product dependent keywords where missing
 - Fixed bug #1399254: Missing i18n strings
+- Fixed bug #1385270: Dropping multiple selected tables produces exceptions
+- Fixed bug # 863673: cannot DROP TABLE
+- Fixed bug # 887525: When Object Tree Nodes are the selected by keystrokes the selected node is scrolled 
+                      to visible.
+- Fixed bug # 763347: Alias and Datasource loss on crash. Files are now written to a temp file first and 
+                      then renamed.
+
+- Fixed bug: In Code Completion, the database-dependent keywords where missing
+- Fixed bug: In code completion, columns weren't shown correctly when the same table alias name was used 
+             in different statements for different tables (Thanks to Abhishek Gupta)
 
 
 2.1 final
