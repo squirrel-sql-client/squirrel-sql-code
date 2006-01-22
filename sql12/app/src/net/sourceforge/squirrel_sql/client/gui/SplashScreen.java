@@ -17,9 +17,7 @@ package net.sourceforge.squirrel_sql.client.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.GridLayout;
+import java.awt.*;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -52,7 +50,7 @@ public class SplashScreen extends JWindow
 
 	private JProgressBar _progressBar;
 
-    private JLabel pluginLabel;
+    private JLabel _pluginLabel;
     
     SquirrelPreferences _prefs;
     
@@ -70,70 +68,98 @@ public class SplashScreen extends JWindow
 		createUserInterface(rsrc, progressBarSize);
 	}
 
-	private void createUserInterface(SquirrelResources rsrc, int progressBarSize)
-	{
-		final JPanel mainPnl = new JPanel(new BorderLayout());
-		final Color bgColor = new Color(SquirrelResources.S_SPLASH_IMAGE_BACKGROUND);
-		mainPnl.setBackground(bgColor);
+   private void createUserInterface(SquirrelResources rsrc, int progressBarSize)
+   {
+      final JPanel mainPnl = new JPanel(new GridBagLayout());
+      final Color bgColor = new Color(SquirrelResources.S_SPLASH_IMAGE_BACKGROUND);
+      mainPnl.setBackground(bgColor);
+      mainPnl.setBorder(BorderFactory.createRaisedBevelBorder());
 
-		Icon icon = rsrc.getIcon(SquirrelResources.IImageNames.SPLASH_SCREEN);
-		mainPnl.add(BorderLayout.NORTH, new JLabel(icon));
-		
-		MultipleLineLabel versionLbl = new MultipleLineLabel();
-		versionLbl.setOpaque(false);
-		versionLbl.append(Version.getVersion());
-		versionLbl.append("\n");
-		versionLbl.append(Version.getCopyrightStatement());
+      GridBagConstraints gbc;
 
-        _progressBar = new JProgressBar(0, progressBarSize);
-        _progressBar.setStringPainted(true);
-        _progressBar.setString("");
-        _progressBar.setBackground(bgColor);
-        _progressBar.setForeground(Color.blue);
-		
+      Icon icon = rsrc.getIcon(SquirrelResources.IImageNames.SPLASH_SCREEN);
 
-        if (_prefs.getShowPluginFilesInSplashScreen()) {
-            _progressBar.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-            versionLbl.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
-            JPanel centerPanel = new JPanel(new GridLayout(2,1));
-            centerPanel.setBackground(bgColor);
-            centerPanel.add(versionLbl);
-            pluginLabel = new JLabel();
-            pluginLabel.setForeground(new Color(71,73,139));
-            pluginLabel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-            centerPanel.add(pluginLabel);
-            mainPnl.add(BorderLayout.CENTER, centerPanel);
-        } else {
-            _progressBar.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-            versionLbl.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-            mainPnl.add(BorderLayout.CENTER, versionLbl);
-        }
+      gbc = new GridBagConstraints(0,0,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,5,5,5),0,0);
+      mainPnl.add(new JLabel(icon), gbc);
 
-		mainPnl.add(BorderLayout.SOUTH, _progressBar);
+      MultipleLineLabel versionLbl = new MultipleLineLabel();
+      versionLbl.setOpaque(false);
+      versionLbl.append(Version.getVersion());
+      versionLbl.append("\n");
+      versionLbl.append(Version.getCopyrightStatement());
 
-		mainPnl.setBorder(BorderFactory.createRaisedBevelBorder());
-		getContentPane().add(mainPnl);
+      _progressBar = new JProgressBar(0, progressBarSize);
+      _progressBar.setStringPainted(true);
+      _progressBar.setString("");
+      _progressBar.setBackground(bgColor);
+      _progressBar.setForeground(Color.blue);
 
-		pack();
+      if (_prefs.getShowPluginFilesInSplashScreen())
+      {
+//         _progressBar.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+//         versionLbl.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
 
-		GUIUtils.centerWithinScreen(this);
-		setVisible(true);
-	}
+//         JPanel centerPanel = new JPanel(new BorderLayout(5,0));
+//         centerPanel.setBackground(bgColor);
 
-    public void indicateLoadingFile(final String filename) {
+         _pluginLabel = new JLabel("Dummy");
+         _pluginLabel.setForeground(new Color(SquirrelResources.S_SPLASH_IMAGE_BACKGROUND));
+         //_pluginLabel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+
+//         centerPanel.add(_pluginLabel, BorderLayout.SOUTH);
+//
+//         mainPnl.add(BorderLayout.CENTER, centerPanel);
+
+         gbc = new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,5,5),0,0);
+         mainPnl.add(versionLbl, gbc);
+
+         gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,5,5),0,0);
+         mainPnl.add(_pluginLabel, gbc);
+
+         gbc = new GridBagConstraints(0,3,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,5,5),0,0);
+         mainPnl.add(_progressBar, gbc);
+
+      }
+      else
+      {
+//         versionLbl.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+//         mainPnl.add(BorderLayout.CENTER, versionLbl);
+
+         gbc = new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,5,5),0,0);
+         mainPnl.add(versionLbl, gbc);
+
+         gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,5,5),0,0);
+         mainPnl.add(_progressBar, gbc);
+      }
+
+      getContentPane().add(mainPnl);
+
+      //pack();
+      setSize(400,490);
+
+      GUIUtils.centerWithinScreen(this);
+      setVisible(true);
+   }
+
+   public void indicateLoadingFile(final String filename) {
         try
         {
             SwingUtilities.invokeAndWait(new Runnable()
             {
                 public void run()
                 {
-                    if (filename != null) {
-                        // i18n[SplashScreen.info.loadingfile=Loading file - ]
-                        pluginLabel.setText(s_stringMgr.getString("SplashScreen.info.loadingfile")+filename);
-                    } else {
-                        pluginLabel.setText("");
-                    }
-                    pluginLabel.validate();
+                   if (filename != null)
+                   {
+                      _pluginLabel.setForeground(new Color(71, 73, 139));
+                      // i18n[SplashScreen.info.loadingfile=Loading file - ]
+                      _pluginLabel.setText(s_stringMgr.getString("SplashScreen.info.loadingfile") + filename);
+                   }
+                   else
+                   {
+                      _pluginLabel.setForeground(new Color(SquirrelResources.S_SPLASH_IMAGE_BACKGROUND));
+                      _pluginLabel.setText("Dummy");
+                   }
+                   _pluginLabel.validate();
                 }
             });
         }
