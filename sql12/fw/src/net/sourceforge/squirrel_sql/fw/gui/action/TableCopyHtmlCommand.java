@@ -18,13 +18,22 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.SquirrelTableCellRenderer;
+import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * This command gets the current selected text from a <TT>JTable</TT>
@@ -37,6 +46,15 @@ public class TableCopyHtmlCommand implements ICommand
 	/** The table we are copying data from. */
 	private JTable _table;
 
+    private static HTMLSelection htmlSelection = null;
+    
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(TableCopyHtmlCommand.class);
+    
+    /** Logger for this class. */
+    private static ILogger s_log =
+        LoggerController.createLogger(TableCopyHtmlCommand.class);
+    
 	/**
 	 * Ctor specifying the <TT>JTable</TT> to get the data from.
 	 *
@@ -53,6 +71,15 @@ public class TableCopyHtmlCommand implements ICommand
 			throw new IllegalArgumentException("JTable == null");
 		}
 		_table = table;
+        if (htmlSelection == null) {
+            try {
+                htmlSelection = new HTMLSelection();
+            } catch (Exception e) {
+                String msg = 
+                    s_stringMgr.getString("TableCopyHtmlCommand.error.flavors");
+                s_log.error(msg, e);
+            }
+        }
 	}
 
 	/**
@@ -64,9 +91,10 @@ public class TableCopyHtmlCommand implements ICommand
 		int nbrSelCols = _table.getSelectedColumnCount();
 		int[] selRows = _table.getSelectedRows();
 		int[] selCols = _table.getSelectedColumns();
+        
 		if (selRows.length != 0 && selCols.length != 0)
 		{
-			StringBuffer buf = new StringBuffer(1024);
+            StringBuffer buf = new StringBuffer(1024);
 			buf.append("<table border=1><tr BGCOLOR=\"#CCCCFF\">");
 			for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
 			{
@@ -125,8 +153,10 @@ public class TableCopyHtmlCommand implements ICommand
 				buf.append("</tr>\n");
 			}
 			buf.append("</table>");
-			final StringSelection ss = new StringSelection(buf.toString());
-			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
+
+            htmlSelection.setData(buf.toString());
+            Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
+		    cb.setContents(htmlSelection, null);
 		}
 	}
 
@@ -158,4 +188,71 @@ public class TableCopyHtmlCommand implements ICommand
 		}
 		return buf.toString();
 	}
+    
+    /**
+     * A custom transferable that will inform the system clipboard that the 
+     * data being transferred "prefers" to be represented in HTML format / 
+     * MIME type is "text/html".  Will fallback to "text/plain" for applications
+     * that don't support "text/html". 
+     */
+    private static class HTMLSelection implements Transferable {
+
+        DataFlavor[] supportedFlavors = null;
+        String _data = null;
+        
+        /**
+         * Constructor.
+         * 
+         * @throws Exception if the "html" or "plain" flavors cannot be resolved. 
+         */
+        public HTMLSelection() throws Exception {
+            DataFlavor htmlFlavor = new DataFlavor("text/html");
+            DataFlavor plainFlavor = new DataFlavor("text/plain");
+            supportedFlavors = new DataFlavor[] { htmlFlavor, plainFlavor };
+        }
+        
+        /**
+         * Sets the data that will be transferred to the clipboard.
+         * 
+         * @param data the data to transfer.
+         */
+        public void setData(String data) {
+            _data = data;
+        }
+        
+        /* (non-Javadoc)
+         * @see java.awt.datatransfer.Transferable#getTransferDataFlavors()
+         */
+        public DataFlavor[] getTransferDataFlavors() {
+            return supportedFlavors;
+        }
+
+        /* (non-Javadoc)
+         * @see java.awt.datatransfer.Transferable#isDataFlavorSupported(java.awt.datatransfer.DataFlavor)
+         */
+        public boolean isDataFlavorSupported(DataFlavor flavor) {
+            boolean result = false;
+            for (int i = 0; i < supportedFlavors.length; i++) {
+                DataFlavor f = supportedFlavors[i];
+                if (f.getMimeType().equals(flavor.getMimeType())) {
+                    result = true;
+                }
+            }
+            return result;
+        }
+
+        /* (non-Javadoc)
+         * @see java.awt.datatransfer.Transferable#getTransferData(java.awt.datatransfer.DataFlavor)
+         */
+        public Object getTransferData(DataFlavor flavor)
+            throws UnsupportedFlavorException, IOException
+        {
+            if (isDataFlavorSupported(flavor)) {
+                return new ByteArrayInputStream(_data.getBytes());
+            } else {
+                throw new UnsupportedFlavorException(flavor);
+            }
+        }
+
+    }
 }
