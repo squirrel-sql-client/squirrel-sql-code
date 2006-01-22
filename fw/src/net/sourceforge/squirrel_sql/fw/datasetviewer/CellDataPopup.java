@@ -29,6 +29,7 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.*;
 
+import net.sourceforge.squirrel_sql.client.gui.AboutBoxDialog;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -61,9 +62,6 @@ public class CellDataPopup
 	private void createAndShowDialog(JTable table, MouseEvent evt,
 		ColumnDisplayDefinition colDef, boolean isModelEditable)
 	{
-
-		ILogger s_log = LoggerController.createLogger(CellDataPopup.class);
-
 		Point pt = evt.getPoint();
 		int row = table.rowAtPoint(pt);
 		int col = table.columnAtPoint(pt);
@@ -77,7 +75,13 @@ public class CellDataPopup
 			editor.cancelCellEditing();
 
 		Component comp = SwingUtilities.getRoot(table);
-		Component newComp = null;
+        Component newComp = null;
+        
+        // We don't care to popup a dialog for data in the About dialog table.
+        // This data is read only.
+        if (comp instanceof AboutBoxDialog) {
+            return;
+        }
 
 		// The following only works if SwingUtilities.getRoot(table) returns
 		// and instanceof BaseMDIParentFrame.
@@ -86,7 +90,7 @@ public class CellDataPopup
 		TextAreaInternalFrame taif =
 			new TextAreaInternalFrame(table.getColumnName(col), colDef, obj,
 				row, col, isModelEditable, table);
-		((IMainFrame)comp).addInternalFrame(taif, false);
+        ((IMainFrame)comp).addInternalFrame(taif, false);
 		taif.setLayer(JLayeredPane.POPUP_LAYER);
 		taif.pack();
 		newComp = taif;
