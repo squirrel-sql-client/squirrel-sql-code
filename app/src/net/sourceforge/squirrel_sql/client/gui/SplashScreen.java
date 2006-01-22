@@ -96,19 +96,8 @@ public class SplashScreen extends JWindow
 
       if (_prefs.getShowPluginFilesInSplashScreen())
       {
-//         _progressBar.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-//         versionLbl.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
-
-//         JPanel centerPanel = new JPanel(new BorderLayout(5,0));
-//         centerPanel.setBackground(bgColor);
-
          _pluginLabel = new JLabel("Dummy");
          _pluginLabel.setForeground(new Color(SquirrelResources.S_SPLASH_IMAGE_BACKGROUND));
-         //_pluginLabel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-
-//         centerPanel.add(_pluginLabel, BorderLayout.SOUTH);
-//
-//         mainPnl.add(BorderLayout.CENTER, centerPanel);
 
          gbc = new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,5,5),0,0);
          mainPnl.add(versionLbl, gbc);
@@ -122,9 +111,6 @@ public class SplashScreen extends JWindow
       }
       else
       {
-//         versionLbl.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-//         mainPnl.add(BorderLayout.CENTER, versionLbl);
-
          gbc = new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,5,5),0,0);
          mainPnl.add(versionLbl, gbc);
 
