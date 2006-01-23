@@ -33,19 +33,20 @@ public class FileManager
       _sqlPanelAPI = sqlPanelAPI;
    }
 
-   public void save()
+   public boolean save()
    {
-      saveIntern(false);
+      return saveIntern(false);
    }
 
-   public void saveAs()
+   public boolean saveAs()
    {
-      saveIntern(true);
+      return saveIntern(true);
    }
 
 
-   public void open()
+   public boolean open()
    {
+       boolean result = false;
       JFileChooser chooser = new JFileChooser();
       chooser.addChoosableFileFilter(new FileExtensionFilter("Text files", new String[]{".txt"}));
       chooser.addChoosableFileFilter(new FileExtensionFilter("SQL files", new String[]{".sql"}));
@@ -74,10 +75,12 @@ public class FileManager
       _sqlPanelAPI.getSession().selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
       if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
       {
+          result = true;
          File selectedFile = chooser.getSelectedFile();
          loadScript(selectedFile);
          prefs.setFilePreviousDir(selectedFile.getAbsolutePath());
       }
+      return result;
    }
 
    private void loadScript(File file)
@@ -126,8 +129,9 @@ public class FileManager
    }
 
 
-   public void saveIntern(boolean toNewFile)
+   public boolean saveIntern(boolean toNewFile)
    {
+       boolean result = false;
       if (toNewFile)
       {
          _toSaveTo = null;
@@ -175,12 +179,15 @@ public class FileManager
 
          if (null != _toSaveTo)
          {
-            saveScript(frame, _toSaveTo, false);
+             if (saveScript(frame, _toSaveTo, false)) {
+                 result = true;
+             }
             break;
          }
 
          if (chooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION)
          {
+             
             _toSaveTo = chooser.getSelectedFile();
 
             if (!_toSaveTo.exists() && null != fileAppenixes.get(chooser.getFileFilter()))
@@ -193,6 +200,7 @@ public class FileManager
 
             if (saveScript(frame, _toSaveTo, true))
             {
+               result = true;
                break;
             }
          }
@@ -201,6 +209,7 @@ public class FileManager
             break;
          }
       }
+      return result;
    }
 
    private boolean saveScript(JFrame frame, File file, boolean askReplace)
