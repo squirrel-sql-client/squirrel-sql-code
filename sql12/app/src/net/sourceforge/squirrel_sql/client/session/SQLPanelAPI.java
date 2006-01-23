@@ -79,7 +79,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 			throw new IllegalArgumentException("SQLPanel == null");
 		}
 		_panel = panel;
-        _panel.getSQLEntryPanel().addUndoableEditListener(new SQLEntryUndoListener());
+        //_panel.getSQLEntryPanel().addUndoableEditListener(new SQLEntryUndoListener());
       _toolsPopupController = new ToolsPopupController(getSession().getApplication(), _panel, getSession());
       getSession().getApplication().getSessionManager().addSessionListener(new MySessionListener());
       
