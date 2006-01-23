@@ -130,6 +130,24 @@ public class BaseSessionInternalFrame extends BaseInternalFrame
       setTitle(_titleWithoutFile);
    }
 
+   /**
+    * Toggles the "*" at the end of the filename based on the value of 
+    * unsavedEdits.  Just to provide the user with a visual hint that they may
+    * need to save their changes.
+    * 
+    * @param unsavedEdits
+    */
+   public void setUnsavedEdits(boolean unsavedEdits) {
+       String title = super.getTitle();
+       
+       if (unsavedEdits && !title.endsWith("*")) {
+           super.setTitle(title + "*");
+       }
+       if (!unsavedEdits && title.endsWith("*")) {
+           super.setTitle(title.substring(0, title.length() - 1));
+       }
+   }
+   
    public boolean hasSQLPanelAPI()
    {
       return false;
