@@ -20,19 +20,29 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import javax.swing.*;
+import javax.swing.Action;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
 
+import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.client.session.action.ToolsPopupAction;
+import net.sourceforge.squirrel_sql.client.session.action.ViewObjectAtCursorInObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
+import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
+import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
-import net.sourceforge.squirrel_sql.client.session.action.ViewObjectAtCursorInObjectTreeAction;
-import net.sourceforge.squirrel_sql.client.session.action.ToolsPopupAction;
-import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
-import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * This class is the API through which plugins can work with the SQL Panel.
  *
@@ -41,8 +51,8 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 public class SQLPanelAPI implements ISQLPanelAPI
 {
 	/** Internationalized strings for this class. */
-//	private static final StringManager s_stringMgr =
-//		StringManagerFactory.getStringManager(SQLPanelAPI.class);
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(SQLPanelAPI.class);
 
 	/** The SQL Panel. */
 	private SQLPanel _panel;
@@ -50,6 +60,9 @@ public class SQLPanelAPI implements ISQLPanelAPI
    private ToolsPopupController _toolsPopupController;
    private FileManager _fileManager = new FileManager(this);
 
+   private boolean fileOpened = false;
+    private boolean unsavedEdits = false;
+   
    /**
 	 * Ctor specifying the panel.
 	 *
@@ -66,7 +79,10 @@ public class SQLPanelAPI implements ISQLPanelAPI
 			throw new IllegalArgumentException("SQLPanel == null");
 		}
 		_panel = panel;
+        _panel.getSQLEntryPanel().addUndoableEditListener(new SQLEntryUndoListener());
       _toolsPopupController = new ToolsPopupController(getSession().getApplication(), _panel, getSession());
+      getSession().getApplication().getSessionManager().addSessionListener(new MySessionListener());
+      
       createStandardEntryAreaMenuItems();
 	}
 
@@ -98,17 +114,26 @@ public class SQLPanelAPI implements ISQLPanelAPI
 
    public void fileSave()
    {
-      _fileManager.save();
+      if (_fileManager.save()) {
+          unsavedEdits = false;
+          getSession().getActiveSessionWindow().setUnsavedEdits(false);
+      }
    }
 
    public void fileSaveAs()
    {
-      _fileManager.saveAs();
+      if (_fileManager.saveAs()) {
+          unsavedEdits = false;
+          getSession().getActiveSessionWindow().setUnsavedEdits(false);
+      }
    }
 
    public void fileOpen()
    {
-      _fileManager.open();
+      if (_fileManager.open()) {
+          fileOpened = true;
+          unsavedEdits = false;
+      }
    }
 
    public void showToolsPopup()
@@ -566,4 +591,58 @@ public class SQLPanelAPI implements ISQLPanelAPI
       return _panel.isInMainSessionWindow();
    }
 
+   /**
+    * A class to listen for events that indicate that the content in the 
+    * SQLEntryPanel has changed and could be lost.
+    */
+   private class SQLEntryUndoListener implements UndoableEditListener {
+
+    /* (non-Javadoc)
+     * @see javax.swing.event.UndoableEditListener#undoableEditHappened(javax.swing.event.UndoableEditEvent)
+     */
+    public void undoableEditHappened(UndoableEditEvent e) {
+        if (fileOpened) {
+            unsavedEdits = true;
+            getSession().getActiveSessionWindow().setUnsavedEdits(true);
+        }        
+    }
+       
+   }
+   
+   /**
+    * A session listener that will detect unsaved edits and prompt the user to 
+    * save them when the session is about to be closed.
+    */
+   private class MySessionListener extends SessionAdapter {
+       
+       /* (non-Javadoc)
+        * @see net.sourceforge.squirrel_sql.client.session.event.SessionAdapter#sessionClosing(net.sourceforge.squirrel_sql.client.session.event.SessionEvent)
+        */
+       public void sessionClosing(SessionEvent evt) {
+           if (evt.getSession().equals(_panel.getSession()) 
+                   && unsavedEdits)
+           {
+               String msg = s_stringMgr.getString("SQLPanelAPI.unsavedchanges");
+               String title = 
+                   s_stringMgr.getString("SQLPanelAPI.unsavedchangestitle");
+               showConfirmSaveDialog(msg, title);
+           }
+       }
+       
+       private void showConfirmSaveDialog(final String message, 
+                                          final String title) 
+       {
+           JFrame f = getSession().getApplication().getMainFrame();
+           int option = 
+               JOptionPane.showConfirmDialog(f, 
+                                             message, 
+                                             title, 
+                                             JOptionPane.YES_NO_OPTION);
+           if (option == JOptionPane.YES_OPTION) {
+               fileSaveAs();
+           }
+       }
+       
+   }
+   
 }
