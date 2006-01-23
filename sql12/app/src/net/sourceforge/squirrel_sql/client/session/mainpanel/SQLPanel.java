@@ -448,7 +448,7 @@ public class SQLPanel extends JPanel
 							WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 			_sqlEntry.setUndoActions(_undoAction, _redoAction);
 
-			_sqlEntry.addUndoableEditListener(_undoManager);
+			_sqlEntry.setUndoManager(_undoManager);
 		}
 
       fireSQLEntryAreaInstalled();
