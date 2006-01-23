@@ -18,27 +18,19 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.Font;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import javax.swing.Action;
 import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.JTextArea;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.BadLocationException;
+import javax.swing.undo.UndoManager;
 
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
-import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
-import net.sourceforge.squirrel_sql.client.session.action.ViewObjectAtCursorInObjectTreeAction;
 
 public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 {
@@ -372,4 +364,11 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 //			_pnl.removeMouseListener(_pnl._sqlEntryMouseListener);
 //		}
 	}
+
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel#setUndoManager(javax.swing.undo.UndoManager)
+     */
+    public void setUndoManager(UndoManager manager) {
+        // no support for undo
+    }
 }

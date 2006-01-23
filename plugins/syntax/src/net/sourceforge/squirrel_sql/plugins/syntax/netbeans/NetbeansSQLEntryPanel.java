@@ -34,6 +34,8 @@ import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
 import javax.swing.text.Element;
 import javax.swing.text.BadLocationException;
+import javax.swing.undo.UndoManager;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -326,7 +328,7 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void addUndoableEditListener(UndoableEditListener listener)
 	{
-		_textArea.setUndoManager(listener);
+		_textArea.addUndoableEditListener(listener);
 	}
 
 	/**
@@ -401,4 +403,12 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
       SQLKit kit = (SQLKit) _textArea.getEditorKit();
       kit.getActionByName(ExtKit.replaceAction).actionPerformed(evt);
    }
+
+
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel#setUndoManager(javax.swing.undo.UndoManager)
+     */
+    public void setUndoManager(UndoManager manager) {
+        _textArea.setUndoManager(manager);
+    }
 }

@@ -1,27 +1,32 @@
 package net.sourceforge.squirrel_sql.plugins.syntax.netbeans;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.event.ISessionListener;
-import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
-import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
-import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
-import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsAdapter;
-import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
-import net.sourceforge.squirrel_sql.plugins.syntax.KeyManager;
-import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPugin;
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-
-import javax.swing.*;
-import javax.swing.event.UndoableEditListener;
-import javax.swing.text.Document;
-
-import org.netbeans.editor.*;
-
+import java.awt.Event;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.event.ActionEvent;
-import java.awt.event.InputMethodListener;
-import java.awt.*;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JEditorPane;
+import javax.swing.KeyStroke;
+import javax.swing.event.UndoableEditListener;
+import javax.swing.text.Document;
+import javax.swing.undo.UndoManager;
+
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
+import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
+import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsAdapter;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.plugins.syntax.KeyManager;
+import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
+import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPugin;
+
+import org.netbeans.editor.BaseDocument;
+import org.netbeans.editor.BaseSettingsInitializer;
+import org.netbeans.editor.Settings;
 
 
 public class NetbeansSQLEditorPane extends JEditorPane
@@ -232,10 +237,14 @@ public class NetbeansSQLEditorPane extends JEditorPane
       return super.getText().replaceAll("\r\n", "\n");
    }
 
-   public void setUndoManager(UndoableEditListener um)
+   public void addUndoableEditListener(UndoableEditListener um) {
+       getDocument().addUndoableEditListener(um);
+   }
+   
+   public void setUndoManager(UndoManager manager)
    {
-      getDocument().addUndoableEditListener(um);
-      getDocument().putProperty( BaseDocument.UNDO_MANAGER_PROP, um );
+      getDocument().addUndoableEditListener(manager);
+      getDocument().putProperty( BaseDocument.UNDO_MANAGER_PROP, manager );
    }
 
    public IIdentifier getSqlEntryPanelIdentifier()

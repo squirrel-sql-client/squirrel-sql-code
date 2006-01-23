@@ -17,8 +17,6 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
-
 import java.awt.Font;
 import java.awt.event.MouseListener;
 
@@ -28,6 +26,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
+import javax.swing.undo.UndoManager;
+
+import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 
 public interface ISQLEntryPanel extends IHasIdentifier
 {
@@ -145,6 +146,8 @@ public interface ISQLEntryPanel extends IHasIdentifier
 
 	boolean hasOwnUndoableManager();
 
+    void setUndoManager(UndoManager manager);
+    
 	void addUndoableEditListener(UndoableEditListener listener);
 
 	void removeUndoableEditListener(UndoableEditListener listener);
@@ -158,4 +161,5 @@ public interface ISQLEntryPanel extends IHasIdentifier
 	void removeSQLTokenListener(SQLTokenListener tl);
 
 	void dispose();
+    
 }

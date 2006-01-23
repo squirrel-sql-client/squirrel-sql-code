@@ -31,6 +31,9 @@ import javax.swing.event.UndoableEditListener;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
 import javax.swing.text.PlainDocument;
+import javax.swing.undo.UndoManager;
+
+import org.netbeans.editor.BaseDocument;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -322,7 +325,14 @@ public class OsterSQLEntryPanel extends BaseSQLEntryPanel
 	}
 
 
-	/**
+	/* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel#setUndoManager(javax.swing.undo.UndoManager)
+     */
+    public void setUndoManager(UndoManager manager) {
+        // no support for undo
+    }
+
+    /**
 	 * @see ISQLEntryPanel#getCaretLineNumber()
 	 */
 	public int getCaretLineNumber()
