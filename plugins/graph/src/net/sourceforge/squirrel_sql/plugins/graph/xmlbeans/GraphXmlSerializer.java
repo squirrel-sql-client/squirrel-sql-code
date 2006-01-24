@@ -210,7 +210,7 @@ public class GraphXmlSerializer
       (new File(_graphFile)).delete();
 
 		String[] params = {_graphFile};
-		// i18n[graph.graphRemoved=Removed graph file "{1}"]
+		// i18n[graph.graphRemoved=Removed graph file "{0}"]
       _session.getMessageHandler().showMessage(s_stringMgr.getString("graph.graphRemoved", params));
 
    }
