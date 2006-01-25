@@ -20,21 +20,29 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.CellEditor;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JInternalFrame;
+import javax.swing.JLayeredPane;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 
-import net.sourceforge.squirrel_sql.client.gui.AboutBoxDialog;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
+//import net.sourceforge.squirrel_sql.client.gui.AboutBoxDialog;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 /**
  * Generate a popup window to display and manipulate the
@@ -79,9 +87,15 @@ public class CellDataPopup
         
         // We don't care to popup a dialog for data in the About dialog table.
         // This data is read only.
-        if (comp instanceof AboutBoxDialog) {
-            return;
-        }
+        //
+        // TODO: Should not create a reverse dependency on app module where 
+        // AboutBoxDialog lives.  Find a more generic - yet safe - way to tell 
+        // that the component isn't a IMainFrame to avoid the ClassCastException 
+        // below. RMM
+        //
+        //if (comp instanceof AboutBoxDialog) {
+        //    return;
+        //}
 
 		// The following only works if SwingUtilities.getRoot(table) returns
 		// and instanceof BaseMDIParentFrame.
