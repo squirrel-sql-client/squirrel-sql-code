@@ -45,12 +45,20 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
 /**
  * Edit Where Cols dialog gui.
  * JASON: Rename to EditWhereColsInternalFrame 
  */
 public class EditWhereColsSheet extends BaseSessionInternalFrame
 {
+
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(EditWhereColsSheet.class);
+
+
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
@@ -58,7 +66,8 @@ public class EditWhereColsSheet extends BaseSessionInternalFrame
 	private interface i18n
 	{
 		/** Title  */
-		String TITLE = "Edit 'WHERE' columns";
+		// i18n[editWhereColsSheet.editWhereColumns=Edit 'WHERE' columns]
+		String TITLE = s_stringMgr.getString("editWhereColsSheet.editWhereColumns");
 	}
 
 	/** Logger for this class. */
@@ -205,16 +214,17 @@ public class EditWhereColsSheet extends BaseSessionInternalFrame
 		try
 		{
 			final SQLConnection conn = session.getSQLConnection();
-            TableColumnInfo[] infos = conn.getSQLMetaData().getColumnInfo((ITableInfo)_objectInfo);
-            for (int i = 0; i < infos.length; i++) {
-                TableColumnInfo info = infos[i];
-                columnNames.add(info.getColumnName());
-            }
+				TableColumnInfo[] infos = conn.getSQLMetaData().getColumnInfo((ITableInfo)_objectInfo);
+				for (int i = 0; i < infos.length; i++) {
+					 TableColumnInfo info = infos[i];
+					 columnNames.add(info.getColumnName());
+				}
 		}
 		catch (SQLException ex)
 		{
 			session.getApplication().showErrorDialog(
-				"Unable to get list of columns, " + ex);
+				// i18n[editWhereColsSheet.unableToEdit=Unable to get list of columns, {0}]
+				s_stringMgr.getString("editWhereColsSheet.unableToEdit", ex));
 		}
 
 		_editWhereColsPanel =
@@ -224,7 +234,7 @@ public class EditWhereColsSheet extends BaseSessionInternalFrame
 		final JScrollPane sp = new JScrollPane(_editWhereColsPanel);
 		sp.setBorder(BorderFactory.createEmptyBorder());
 
-      _titleLbl.setText(getTitle() + ": " + _objectInfo.getSimpleName());
+		_titleLbl.setText(getTitle() + ": " + _objectInfo.getSimpleName());
 
 
 		final JPanel contentPane = new JPanel(new GridBagLayout());
@@ -253,11 +263,13 @@ public class EditWhereColsSheet extends BaseSessionInternalFrame
 		gbc.gridx = 0;
 		++gbc.gridy;
 		contentPane.add(
-			new JLabel("Limit the size of the WHERE clause used behind the scenes when editing cell contents."), gbc);
+			// i18n[editWhereColsSheet.limitSizeOfWhereClause=Limit the size of the WHERE clause used behind the scenes when editing cell contents.]
+			new JLabel(s_stringMgr.getString("editWhereColsSheet.limitSizeOfWhereClause")), gbc);
 		gbc.gridx = 0;
 		++gbc.gridy;
 		contentPane.add(
-			new JLabel("The 'use' window should include at least the primary keys for the table."), gbc);
+			// i18n[editWhereColsSheet.shouldIncludePKs=The 'use' window should include at least the primary keys for the table.]
+			new JLabel(s_stringMgr.getString("editWhereColsSheet.shouldIncludePKs")), gbc);
 
 		// leave a blank line just to make it look a bit nicer
 		gbc.gridx = 0;
@@ -287,7 +299,8 @@ public class EditWhereColsSheet extends BaseSessionInternalFrame
 	{
 		JPanel pnl = new JPanel();
 
-		JButton okBtn = new JButton("OK");
+		// i18n[editWherColsSheet.ok=OK]
+		JButton okBtn = new JButton(s_stringMgr.getString("editWherColsSheet.ok"));
 		okBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
@@ -295,7 +308,8 @@ public class EditWhereColsSheet extends BaseSessionInternalFrame
 				performOk();
 			}
 		});
-		JButton resetBtn = new JButton("Reset");
+		// i18n[editWherColsSheet.reset=Reset]
+		JButton resetBtn = new JButton(s_stringMgr.getString("editWherColsSheet.reset"));
 		resetBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
@@ -303,7 +317,8 @@ public class EditWhereColsSheet extends BaseSessionInternalFrame
 				performReset();
 			}
 		});
-		JButton closeBtn = new JButton("Close");
+		// i18n[editWherColsSheet.close=Close]
+		JButton closeBtn = new JButton(s_stringMgr.getString("editWherColsSheet.close"));
 		closeBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)

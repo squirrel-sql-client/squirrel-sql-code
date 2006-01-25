@@ -35,33 +35,55 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerEditableTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class GeneralSessionPropertiesPanel
 	implements INewSessionPropertiesPanel, ISessionPropertiesPanel
 {
+
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(GeneralSessionPropertiesPanel.class);
+
+
 	/**
 	 * This interface defines locale specific strings. This should be
 	 * replaced with a property file.
 	 */
 	interface GeneralSessionPropertiesPanelI18n
 	{
-		String HINT = "General settings for the current session";
-		String MAIN_TAB_PLACEMENT = "Main Tabs:";
-		String META_DATA = "Meta Data:";
-		String SHOW_TOOLBAR = "Show toolbar";
-		String OBJECT_TAB_PLACEMENT = "Object Tabs:";
-		String SQL_EXECUTION_TAB_PLACEMENT = "SQL Execution Tabs:";
-		String SQL_RESULTS = "SQL Results:";
-		String SQL_RESULTS_TAB_PLACEMENT= "SQL Results Tabs:";
-		String TITLE = "General";
-		String TABLE_CONTENTS = "Table Contents:";
+		// i18n[generalSessionPropertiesPanel.generalSettings=General settings for the current session]
+		String HINT = s_stringMgr.getString("generalSessionPropertiesPanel.generalSettings");
+		// i18n[generalSessionPropertiesPanel.mainTabs=Main Tabs:]
+		String MAIN_TAB_PLACEMENT = s_stringMgr.getString("generalSessionPropertiesPanel.mainTabs");
+		// i18n[generalSessionPropertiesPanel.metaData=Meta Data:]
+		String META_DATA = s_stringMgr.getString("generalSessionPropertiesPanel.metaData");
+		// i18n[generalSessionPropertiesPanel.showToolbar=Show toolbar]
+		String SHOW_TOOLBAR = s_stringMgr.getString("generalSessionPropertiesPanel.showToolbar");
+		// i18n[generalSessionPropertiesPanel.objectTabs=Object Tabs:]
+		String OBJECT_TAB_PLACEMENT = s_stringMgr.getString("generalSessionPropertiesPanel.objectTabs");
+		// i18n[generalSessionPropertiesPanel.sqlExecTabs=SQL Execution Tabs:]
+		String SQL_EXECUTION_TAB_PLACEMENT = s_stringMgr.getString("generalSessionPropertiesPanel.sqlExecTabs");
+		// i18n[generalSessionPropertiesPanel.sqlResults=SQL Results:]
+		String SQL_RESULTS = s_stringMgr.getString("generalSessionPropertiesPanel.sqlResults");
+		// i18n[generalSessionPropertiesPanel.sqlResultTabs=SQL Results Tabs:]
+		String SQL_RESULTS_TAB_PLACEMENT= s_stringMgr.getString("generalSessionPropertiesPanel.sqlResultTabs");
+		// i18n[generalSessionPropertiesPanel.general=General]
+		String TITLE = s_stringMgr.getString("generalSessionPropertiesPanel.general");
+		// i18n[generalSessionPropertiesPanel.tableContents=Table Contents:]
+		String TABLE_CONTENTS = s_stringMgr.getString("generalSessionPropertiesPanel.tableContents");
 
-		String TABLE = "Table";
-		String EDITABLE_TABLE = "Editable Table";
-		String TEXT = "Text";
-		
-		String DATA_TYPE1 = "Properties for the individual Data Types may be set in the";
-		String DATA_TYPE2 = "'General Preferences' window under the 'Data Type Controls' tab.";
+		// i18n[generalSessionPropertiesPanel.table=Table]
+		String TABLE = s_stringMgr.getString("generalSessionPropertiesPanel.table");
+		// i18n[generalSessionPropertiesPanel.editableTable=Editable Table]
+		String EDITABLE_TABLE = s_stringMgr.getString("generalSessionPropertiesPanel.editableTable");
+		// i18n[generalSessionPropertiesPanel.text=Text]
+		String TEXT = s_stringMgr.getString("generalSessionPropertiesPanel.text");
+
+		// i18n[generalSessionPropertiesPanel.dataTYpe1=Properties for the individual Data Types may be set in the]
+		String DATA_TYPE1 = s_stringMgr.getString("generalSessionPropertiesPanel.dataTYpe1");
+		// i18n[generalSessionPropertiesPanel.dataTYpe2='General Preferences' window under the 'Data Type Controls' tab.]
+		String DATA_TYPE2 = s_stringMgr.getString("generalSessionPropertiesPanel.dataTYpe2");
 	}
 
 	private SessionProperties _props;
@@ -252,7 +274,8 @@ public class GeneralSessionPropertiesPanel
 		private JPanel createAppearancePanel()
 		{
 			JPanel pnl = new JPanel(new GridBagLayout());
-			pnl.setBorder(BorderFactory.createTitledBorder("Appearance"));
+			// i18n[generalSessionPropertiesPanel.appearance=Appearance]
+			pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("generalSessionPropertiesPanel.appearance")));
 
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -300,7 +323,8 @@ public class GeneralSessionPropertiesPanel
 		private JPanel createOutputPanel()
 		{
 			JPanel pnl = new JPanel(new GridBagLayout());
-			pnl.setBorder(BorderFactory.createTitledBorder("Output"));
+			// i18n[editWherColsSheet.output=Output]
+			pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("editWherColsSheet.output")));
 
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -400,10 +424,14 @@ public class GeneralSessionPropertiesPanel
 
 	private static final class TabPlacement
 	{
-		static final TabPlacement TOP = new TabPlacement("Top", SwingConstants.TOP);
-		static final TabPlacement LEFT = new TabPlacement("Left", SwingConstants.LEFT);
-		static final TabPlacement BOTTOM = new TabPlacement("Bottom", SwingConstants.BOTTOM);
-		static final TabPlacement RIGHT = new TabPlacement("Right", SwingConstants.RIGHT);
+		// i18n[generalPropertiesPanel.top=Top]
+		static final TabPlacement TOP = new TabPlacement(s_stringMgr.getString("generalPropertiesPanel.top"), SwingConstants.TOP);
+		// i18n[generalPropertiesPanel.left=Left]
+		static final TabPlacement LEFT = new TabPlacement(s_stringMgr.getString("generalPropertiesPanel.left"), SwingConstants.LEFT);
+		// i18n[generalPropertiesPanel.bottom=Bottom]
+		static final TabPlacement BOTTOM = new TabPlacement(s_stringMgr.getString("generalPropertiesPanel.bottom"), SwingConstants.BOTTOM);
+		// i18n[generalPropertiesPanel.right=Right]
+		static final TabPlacement RIGHT = new TabPlacement(s_stringMgr.getString("generalPropertiesPanel.right"), SwingConstants.RIGHT);
 
 		private final String _name;
 		private final int _value;
