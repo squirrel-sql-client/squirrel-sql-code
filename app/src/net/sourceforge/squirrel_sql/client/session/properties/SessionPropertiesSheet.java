@@ -37,6 +37,8 @@ import javax.swing.JTabbedPane;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.NewSessionPropertiesSheet;
@@ -44,17 +46,22 @@ import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.SessionPluginInfo;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-// JASON: Move to package gui...something
-// JASON: Create thru WindowManager
+
 public class SessionPropertiesSheet extends BaseSessionInternalFrame
 {
-   /**
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(SessionPropertiesSheet.class);
+
+
+	/**
     * This interface defines locale specific strings. This should be
     * replaced with a property file.
     */
    private interface i18n
    {
-      String TITLE = "- Session Properties";
+
+		// i18n[sessionPropertiesSheet.sessionProperties=- Session Properties]
+		String TITLE = s_stringMgr.getString("sessionPropertiesSheet.sessionProperties");
    }
 
 	/** Logger for this class. */
@@ -230,7 +237,8 @@ public class SessionPropertiesSheet extends BaseSessionInternalFrame
 	{
 		JPanel pnl = new JPanel();
 
-		JButton okBtn = new JButton("OK");
+		// i18n[sessionPropertiesSheet.ok=OK]
+		JButton okBtn = new JButton(s_stringMgr.getString("sessionPropertiesSheet.ok"));
 		okBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
@@ -238,7 +246,9 @@ public class SessionPropertiesSheet extends BaseSessionInternalFrame
 				performOk();
 			}
 		});
-		JButton closeBtn = new JButton("Close");
+
+		// i18n[sessionPropertiesSheet.close=Close]
+		JButton closeBtn = new JButton(s_stringMgr.getString("sessionPropertiesSheet.close"));
 		closeBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)

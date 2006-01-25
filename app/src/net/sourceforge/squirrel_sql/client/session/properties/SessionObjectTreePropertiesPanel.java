@@ -38,6 +38,8 @@ import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPane
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 /**
  * This panel allows the user to tailor object tree settings for a session.
@@ -45,241 +47,255 @@ import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
 public class SessionObjectTreePropertiesPanel
-   implements INewSessionPropertiesPanel, ISessionPropertiesPanel
+	implements INewSessionPropertiesPanel, ISessionPropertiesPanel
 {
-   /** Application API. */
-   private final IApplication _app;
 
-   /** The actual GUI panel that allows user to do the maintenance. */
-   private final ObjectTreepropsPanel _myPanel;
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(SessionObjectTreePropertiesPanel.class);
 
-   /** Session properties object being maintained. */
-   private SessionProperties _props;
 
-   /**
-    * ctor specifying the Application API.
-    *
-    * @param	app	Application API.
-    *
-    * @throws	IllegalArgumentException
-    * 			Thrown if <tt>null</tt> <tt>IApplication</tt>
-    * 			passed.
-    */
-   public SessionObjectTreePropertiesPanel(IApplication app)
-      throws IllegalArgumentException
-   {
-      super();
-      if (app == null)
-      {
-         throw new IllegalArgumentException("Null IApplication passed");
-      }
-      _app = app;
-      _myPanel = new ObjectTreepropsPanel(app);
-   }
+	/** Application API. */
+	private final IApplication _app;
 
-   /**
-    * Initialize this panel with the "New Session" settings.
-    *
-    * @param	app	Application API.
-    */
-   public void initialize(IApplication app)
-   {
-      _props = _app.getSquirrelPreferences().getSessionProperties();
-      _myPanel.loadData(_props);
-   }
+	/** The actual GUI panel that allows user to do the maintenance. */
+	private final ObjectTreepropsPanel _myPanel;
 
-   public void initialize(IApplication app, ISession session)
-      throws IllegalArgumentException
-   {
-      if (session == null)
-      {
-         throw new IllegalArgumentException("Null ISession passed");
-      }
-      _props = session.getProperties();
-      _myPanel.loadData(_props);
-   }
+	/** Session properties object being maintained. */
+	private SessionProperties _props;
 
-   public Component getPanelComponent()
-   {
-      return _myPanel;
-   }
+	/**
+	 * ctor specifying the Application API.
+	 *
+	 * @param	app	Application API.
+	 *
+	 * @throws	IllegalArgumentException
+	 * 			Thrown if <tt>null</tt> <tt>IApplication</tt>
+	 * 			passed.
+	 */
+	public SessionObjectTreePropertiesPanel(IApplication app)
+		throws IllegalArgumentException
+	{
+		super();
+		if (app == null)
+		{
+			throw new IllegalArgumentException("Null IApplication passed");
+		}
+		_app = app;
+		_myPanel = new ObjectTreepropsPanel(app);
+	}
 
-   public String getTitle()
-   {
-      return ObjectTreepropsPanel.i18n.OBJECT_TREE;
-   }
+	/**
+	 * Initialize this panel with the "New Session" settings.
+	 *
+	 * @param	app	Application API.
+	 */
+	public void initialize(IApplication app)
+	{
+		_props = _app.getSquirrelPreferences().getSessionProperties();
+		_myPanel.loadData(_props);
+	}
 
-   public String getHint()
-   {
-      return ObjectTreepropsPanel.i18n.OBJECT_TREE;
-   }
+	public void initialize(IApplication app, ISession session)
+		throws IllegalArgumentException
+	{
+		if (session == null)
+		{
+			throw new IllegalArgumentException("Null ISession passed");
+		}
+		_props = session.getProperties();
+		_myPanel.loadData(_props);
+	}
 
-   public void applyChanges()
-   {
-      _myPanel.applyChanges(_props);
-   }
+	public Component getPanelComponent()
+	{
+		return _myPanel;
+	}
 
-   private static final class ObjectTreepropsPanel extends JPanel
-   {
-      /**
-       * This interface defines locale specific strings. This should be
-       * replaced with a property file.
-       */
-      interface i18n
-      {
-         String CATALOG_PREFIX = "Limit Catalog Objects using these comma-delimited prefixes:";
-         String LIMIT_ROWS_CONTENTS = "Contents - Limit rows";
-         String SCHEMA_PREFIX = "Limit Schema Objects using these comma-delimited prefixes:";
-         String SHOW_ROW_COUNT = "Show Row Count for Tables (can slow application)";
-         String OBJECT_TREE = "Object Tree";
-      }
+	public String getTitle()
+	{
+		return ObjectTreepropsPanel.i18n.OBJECT_TREE;
+	}
 
-      private IntegerField _contentsNbrRowsToShowField = new IntegerField(5);
-      private JCheckBox _contentsLimitRowsChk = new JCheckBox(i18n.LIMIT_ROWS_CONTENTS);
-      private JCheckBox _showRowCountChk = new JCheckBox(i18n.SHOW_ROW_COUNT);
-      private JTextField _schemaPrefixField = new JTextField(20);
-      private JTextField _catalogPrefixField = new JTextField(20);
-      private JTextField _objectFilterField = new JTextField(20);
-      private JCheckBox _loadSchemasCatalogsChk = new JCheckBox("Load Schemas/Catalogs into object tree");
+	public String getHint()
+	{
+		return ObjectTreepropsPanel.i18n.OBJECT_TREE;
+	}
 
-      /**
-       * This object will update the status of the GUI controls as the user
-       * makes changes.
-       */
-      private final ControlMediator _controlMediator = new ControlMediator();
+	public void applyChanges()
+	{
+		_myPanel.applyChanges(_props);
+	}
 
-      ObjectTreepropsPanel(IApplication app)
-      {
-         super();
-         createGUI();
-      }
+	private static final class ObjectTreepropsPanel extends JPanel
+	{
+		/**
+		 * This interface defines locale specific strings. This should be
+		 * replaced with a property file.
+		 */
+		interface i18n
+		{
+			// i18n[sessionPropertiesPanel.catalogPrefix=Limit Catalog Objects using these comma-delimited prefixes:]
+			String CATALOG_PREFIX = s_stringMgr.getString("sessionPropertiesPanel.catalogPrefix");
+			// i18n[sessionPropertiesPanel.limitRowsContents=Contents - Limit rows]
+			String LIMIT_ROWS_CONTENTS = s_stringMgr.getString("sessionPropertiesPanel.limitRowsContents");
+			// i18n[sessionPropertiesPanel.schemaPrefix=Limit Schema Objects using these comma-delimited prefixes:]
+			String SCHEMA_PREFIX = s_stringMgr.getString("sessionPropertiesPanel.schemaPrefix");
+			// i18n[sessionPropertiesPanel.showRowCount=Show Row Count for Tables (can slow application)]
+			String SHOW_ROW_COUNT = s_stringMgr.getString("sessionPropertiesPanel.showRowCount");
+			// i18n[sessionPropertiesPanel.objectTree=Object Tree]
+			String OBJECT_TREE = s_stringMgr.getString("sessionPropertiesPanel.objectTree");
+		}
 
-      void loadData(SessionProperties props)
-      {
-         _contentsNbrRowsToShowField.setInt(props.getContentsNbrRowsToShow());
-         _contentsLimitRowsChk.setSelected(props.getContentsLimitRows());
-         _showRowCountChk.setSelected(props.getShowRowCount());
-         _schemaPrefixField.setText(props.getSchemaPrefixList());
-         _catalogPrefixField.setText(props.getCatalogPrefixList());
-         if (props.getObjectFilter() != null)
-            _objectFilterField.setText(props.getObjectFilter());
-         _loadSchemasCatalogsChk.setSelected(props.getLoadSchemasCatalogs());
+		private IntegerField _contentsNbrRowsToShowField = new IntegerField(5);
+		private JCheckBox _contentsLimitRowsChk = new JCheckBox(i18n.LIMIT_ROWS_CONTENTS);
+		private JCheckBox _showRowCountChk = new JCheckBox(i18n.SHOW_ROW_COUNT);
+		private JTextField _schemaPrefixField = new JTextField(20);
+		private JTextField _catalogPrefixField = new JTextField(20);
+		private JTextField _objectFilterField = new JTextField(20);
+		// i18n[sessionPropertiesPanel.loadSchemasCatalogs=Load Schemas/Catalogs into object tree]
+		private JCheckBox _loadSchemasCatalogsChk = new JCheckBox(s_stringMgr.getString("sessionPropertiesPanel.loadSchemasCatalogs"));
 
-         updateControlStatus();
-      }
+		/**
+		 * This object will update the status of the GUI controls as the user
+		 * makes changes.
+		 */
+		private final ControlMediator _controlMediator = new ControlMediator();
 
-      void applyChanges(SessionProperties props)
-      {
-         props.setContentsNbrRowsToShow(_contentsNbrRowsToShowField.getInt());
-         props.setContentsLimitRows(_contentsLimitRowsChk.isSelected());
-         props.setShowRowCount(_showRowCountChk.isSelected());
-         props.setSchemaPrefixList(_schemaPrefixField.getText());
-         props.setCatalogPrefixList(_catalogPrefixField.getText());
-         props.setObjectFilter(_objectFilterField.getText());
-         props.setLoadSchemasCatalogs(_loadSchemasCatalogsChk.isSelected());
-      }
+		ObjectTreepropsPanel(IApplication app)
+		{
+			super();
+			createGUI();
+		}
 
-      private void updateControlStatus()
-      {
-         _contentsNbrRowsToShowField.setEnabled(_contentsLimitRowsChk.isSelected());
-      }
+		void loadData(SessionProperties props)
+		{
+			_contentsNbrRowsToShowField.setInt(props.getContentsNbrRowsToShow());
+			_contentsLimitRowsChk.setSelected(props.getContentsLimitRows());
+			_showRowCountChk.setSelected(props.getShowRowCount());
+			_schemaPrefixField.setText(props.getSchemaPrefixList());
+			_catalogPrefixField.setText(props.getCatalogPrefixList());
+			if (props.getObjectFilter() != null)
+				_objectFilterField.setText(props.getObjectFilter());
+			_loadSchemasCatalogsChk.setSelected(props.getLoadSchemasCatalogs());
 
-      private void createGUI()
-      {
-         setLayout(new GridBagLayout());
-         final GridBagConstraints gbc = new GridBagConstraints();
-         gbc.anchor = GridBagConstraints.WEST;
-         gbc.fill = GridBagConstraints.HORIZONTAL;
-         gbc.insets = new Insets(4, 4, 4, 4);
+			updateControlStatus();
+		}
 
-         gbc.gridx = 0;
-         gbc.gridy = 0;
-         add(createObjectTreePanel(), gbc);
+		void applyChanges(SessionProperties props)
+		{
+			props.setContentsNbrRowsToShow(_contentsNbrRowsToShowField.getInt());
+			props.setContentsLimitRows(_contentsLimitRowsChk.isSelected());
+			props.setShowRowCount(_showRowCountChk.isSelected());
+			props.setSchemaPrefixList(_schemaPrefixField.getText());
+			props.setCatalogPrefixList(_catalogPrefixField.getText());
+			props.setObjectFilter(_objectFilterField.getText());
+			props.setLoadSchemasCatalogs(_loadSchemasCatalogsChk.isSelected());
+		}
 
-         ++gbc.gridy;
-         add(createFilterPanel(), gbc);
-      }
+		private void updateControlStatus()
+		{
+			_contentsNbrRowsToShowField.setEnabled(_contentsLimitRowsChk.isSelected());
+		}
 
-      private JPanel createObjectTreePanel()
-      {
-         final JPanel pnl = new JPanel(new GridBagLayout());
-         pnl.setBorder(BorderFactory.createTitledBorder(i18n.OBJECT_TREE));
-         final GridBagConstraints gbc = new GridBagConstraints();
-         gbc.fill = GridBagConstraints.HORIZONTAL;
-         gbc.insets = new Insets(4, 4, 4, 4);
-         gbc.anchor = GridBagConstraints.CENTER;
+		private void createGUI()
+		{
+			setLayout(new GridBagLayout());
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.anchor = GridBagConstraints.WEST;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
+			gbc.insets = new Insets(4, 4, 4, 4);
 
-         _contentsLimitRowsChk.addChangeListener(_controlMediator);
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			add(createObjectTreePanel(), gbc);
 
-         _contentsNbrRowsToShowField.setColumns(5);
+			++gbc.gridy;
+			add(createFilterPanel(), gbc);
+		}
 
-         gbc.gridwidth = GridBagConstraints.REMAINDER;
-         gbc.gridx = 0;
-         gbc.gridy = 0;
-         pnl.add(_loadSchemasCatalogsChk, gbc);
+		private JPanel createObjectTreePanel()
+		{
+			final JPanel pnl = new JPanel(new GridBagLayout());
+			pnl.setBorder(BorderFactory.createTitledBorder(i18n.OBJECT_TREE));
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = GridBagConstraints.HORIZONTAL;
+			gbc.insets = new Insets(4, 4, 4, 4);
+			gbc.anchor = GridBagConstraints.CENTER;
 
-         ++gbc.gridy; // new line
-         gbc.gridx = 0;
-         pnl.add(_showRowCountChk, gbc);
+			_contentsLimitRowsChk.addChangeListener(_controlMediator);
 
-         ++gbc.gridy; // new line
-         gbc.gridx = 0;
-         gbc.gridwidth = 2;
-         pnl.add(_contentsLimitRowsChk, gbc);
-         gbc.gridwidth = 1;
-         gbc.gridx+=2;
-         pnl.add(_contentsNbrRowsToShowField, gbc);
-         ++gbc.gridx;
-         gbc.gridwidth = GridBagConstraints.REMAINDER;
-         pnl.add(new JLabel("rows"), gbc);
+			_contentsNbrRowsToShowField.setColumns(5);
 
-         return pnl;
-      }
-      private JPanel createFilterPanel()
-      {
-         final JPanel pnl = new JPanel(new GridBagLayout());
-         pnl.setBorder(BorderFactory.createTitledBorder("Filters"));
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			pnl.add(_loadSchemasCatalogsChk, gbc);
 
-         final GridBagConstraints gbc = new GridBagConstraints();
-         gbc.fill = GridBagConstraints.HORIZONTAL;
-         gbc.anchor = GridBagConstraints.WEST;
-         gbc.insets = new Insets(4, 4, 4, 4);
-         gbc.weightx = 1.0;
+			++gbc.gridy; // new line
+			gbc.gridx = 0;
+			pnl.add(_showRowCountChk, gbc);
 
-         gbc.gridx = 0;
-         gbc.gridy = 0;
-         pnl.add(new JLabel(i18n.SCHEMA_PREFIX, SwingConstants.RIGHT), gbc);
-         ++gbc.gridy;
-         pnl.add(_schemaPrefixField, gbc);
+			++gbc.gridy; // new line
+			gbc.gridx = 0;
+			gbc.gridwidth = 2;
+			pnl.add(_contentsLimitRowsChk, gbc);
+			gbc.gridwidth = 1;
+			gbc.gridx+=2;
+			pnl.add(_contentsNbrRowsToShowField, gbc);
+			++gbc.gridx;
+			gbc.gridwidth = GridBagConstraints.REMAINDER;
+			// i18n[generalPropertiesPanel.rows=rows]
+			pnl.add(new JLabel(s_stringMgr.getString("generalPropertiesPanel.rows")), gbc);
 
-         ++gbc.gridy;
-         pnl.add(new JLabel(i18n.CATALOG_PREFIX, SwingConstants.RIGHT), gbc);
-         ++gbc.gridy;
-         pnl.add(_catalogPrefixField, gbc);
-         ++gbc.gridy;
-         pnl.add(new MultipleLineLabel("Object Filter:\n\"%\" means match any substring of 0 or more characters\n\"_\" means match any one character"), gbc);
-         ++gbc.gridy;
-         pnl.add(_objectFilterField, gbc);
+			return pnl;
+		}
+		private JPanel createFilterPanel()
+		{
+			final JPanel pnl = new JPanel(new GridBagLayout());
+			// i18n[sessionObjectTreePropetiesPanel.filters=Filters]
+			pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("sessionObjectTreePropetiesPanel.filters")));
 
-         return pnl;
-      }
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = GridBagConstraints.HORIZONTAL;
+			gbc.anchor = GridBagConstraints.WEST;
+			gbc.insets = new Insets(4, 4, 4, 4);
+			gbc.weightx = 1.0;
 
-      /**
-       * This class will update the status of the GUI controls as the user
-       * makes changes.
-       */
-      private final class ControlMediator implements ChangeListener,
-                                             ActionListener
-      {
-         public void stateChanged(ChangeEvent evt)
-         {
-            updateControlStatus();
-         }
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			pnl.add(new JLabel(i18n.SCHEMA_PREFIX, SwingConstants.RIGHT), gbc);
+			++gbc.gridy;
+			pnl.add(_schemaPrefixField, gbc);
 
-         public void actionPerformed(ActionEvent evt)
-         {
-            updateControlStatus();
-         }
-      }
-   }
+			++gbc.gridy;
+			pnl.add(new JLabel(i18n.CATALOG_PREFIX, SwingConstants.RIGHT), gbc);
+			++gbc.gridy;
+			pnl.add(_catalogPrefixField, gbc);
+			++gbc.gridy;
+			// i18n[sessionPropertiesPanel.objectFilterMeans=Object Filter:\n"%" means match any substring of 0 or more characters\n"_" means match any one character]
+			pnl.add(new MultipleLineLabel(s_stringMgr.getString("sessionPropertiesPanel.objectFilterMeans")), gbc);
+			++gbc.gridy;
+			pnl.add(_objectFilterField, gbc);
+
+			return pnl;
+		}
+
+		/**
+		 * This class will update the status of the GUI controls as the user
+		 * makes changes.
+		 */
+		private final class ControlMediator implements ChangeListener,
+															ActionListener
+		{
+			public void stateChanged(ChangeEvent evt)
+			{
+				updateControlStatus();
+			}
+
+			public void actionPerformed(ActionEvent evt)
+			{
+				updateControlStatus();
+			}
+		}
+	}
 }

@@ -17,6 +17,9 @@ package net.sourceforge.squirrel_sql.client.session.properties;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
 import java.awt.Dimension;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -42,6 +45,10 @@ import javax.swing.JOptionPane;
  */
 public class EditWhereColsPanel extends JPanel
 {
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(EditWhereColsPanel.class);
+
+
 	/** The name of the database table the Where clause applies to. */
 	private String _tableName;
 	
@@ -67,8 +74,10 @@ public class EditWhereColsPanel extends JPanel
 	 * ?? this should be changed to use the I18N file mechanism.
 	 */
 	interface EditWhereColsPanelI18N {
-		String TITLE = "Limit Columns in Cell Edit";
-		String HINT = "Limit columns used in WHERE clause when editing table ";
+		// i18n[editWhereColsPanel.limitColsInCell=Limit Columns in Cell Edit]
+		String TITLE = s_stringMgr.getString("editWhereColsPanel.limitColsInCell");
+		// i18n[editWhereColsPanel.limitColsInCellHint=Limit columns used in WHERE clause when editing table]
+		String HINT = s_stringMgr.getString("editWhereColsPanel.limitColsInCellHint");
 	}
 	
 	/**
@@ -170,7 +179,8 @@ public class EditWhereColsPanel extends JPanel
 			// do not let user remove everything from the list
 			if (useColsModel.getSize() == 0) {
 				JOptionPane.showMessageDialog(this,
-					"You cannot remove all of the fields from the 'use columns' list.");
+					// i18n[editWhereColsPanel.cannotRemoveAllCols=You cannot remove all of the fields from the 'use columns' list.]
+					s_stringMgr.getString("editWhereColsPanel.cannotRemoveAllCols"));
 				return false;
 			}
 			
@@ -253,7 +263,8 @@ public class EditWhereColsPanel extends JPanel
 	{
 
 		JPanel useColsPanel = new JPanel(new BorderLayout());
-		useColsPanel.add(new JLabel("Use Columns"), BorderLayout.NORTH);
+		// i18n[editWhereColsPanel.useColumns=Use Columns]
+		useColsPanel.add(new JLabel(s_stringMgr.getString("editWhereColsPanel.useColumns")), BorderLayout.NORTH);
 		useColsList = new JList(initalUseColsArray);
 		JScrollPane scrollPane = new JScrollPane(useColsList);
 		scrollPane.setPreferredSize(new Dimension(200, 200));
@@ -286,7 +297,8 @@ public class EditWhereColsPanel extends JPanel
 		add(moveButtonsPanel);
 	  
 		JPanel notUseColsPanel = new JPanel(new BorderLayout());
-		notUseColsPanel.add(new JLabel("Not Use Columns"), BorderLayout.NORTH);
+		// i18n[editWhereColsPanel.notUseColumns=Not Use Columns]
+		notUseColsPanel.add(new JLabel(s_stringMgr.getString("editWhereColsPanel.notUseColumns")), BorderLayout.NORTH);
 		notUseColsList = new JList(initalNotUseColsArray);
  		JScrollPane notUseScrollPane = new JScrollPane(notUseColsList);
 		notUseScrollPane.setPreferredSize(new Dimension(200, 200));
