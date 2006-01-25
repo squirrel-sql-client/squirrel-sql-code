@@ -211,6 +211,12 @@
 		<echo message="Unzip your plugins here"
 			file="${core_dist_dir}/plugins/readme.txt">
 		</echo>
+		
+		<copy todir="${core_dist_lib_dir}">
+			<fileset dir="translations">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>		
 	</target>
 	
 	<!--
