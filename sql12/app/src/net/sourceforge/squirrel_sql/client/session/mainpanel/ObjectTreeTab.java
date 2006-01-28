@@ -20,7 +20,8 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
 import java.awt.Component;
 
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 /**
  * This is the tab that contains the object tree.
@@ -29,16 +30,10 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  */
 public class ObjectTreeTab extends BaseMainPanelTab
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n
-	{
-		String TAB_TITLE = "Objects";
-		String TAB_DESC = "Show database objects";
-	}
-
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(ObjectTreeTab.class);   
+    
 	/**
 	 * Default ctor.
 	 */
@@ -55,7 +50,8 @@ public class ObjectTreeTab extends BaseMainPanelTab
 	 */
 	public String getTitle()
 	{
-		return i18n.TAB_TITLE;
+        // i18n[ObjectTreeTab.title=Objects]
+		return s_stringMgr.getString("ObjectTreeTab.title");
 	}
 
 	/**
@@ -63,7 +59,8 @@ public class ObjectTreeTab extends BaseMainPanelTab
 	 */
 	public String getHint()
 	{
-		return i18n.TAB_DESC;
+        // i18n[ObjectTreeTab.hint=Show database objects]
+		return s_stringMgr.getString("ObjectTreeTab.hint");
 	}
 
 	/**
