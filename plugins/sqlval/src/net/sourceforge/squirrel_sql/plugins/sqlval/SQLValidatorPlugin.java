@@ -24,6 +24,8 @@ import java.util.Iterator;
 
 import javax.swing.JMenu;
 
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
@@ -59,6 +61,10 @@ public class SQLValidatorPlugin extends DefaultSessionPlugin
 	private static final ILogger s_log =
 		LoggerController.createLogger(SQLValidatorPlugin.class);
 
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(SQLValidatorPlugin.class);    
+        
 	private interface IMenuResourceKeys
 	{
 		String SQLVAL = "sqlval";
@@ -98,7 +104,8 @@ public class SQLValidatorPlugin extends DefaultSessionPlugin
 	 */
 	public String getDescriptiveName()
 	{
-		return "SQL Validator plugin";
+        // i18n[sqlval.descriptivename=SQL Validator plugin]
+		return s_stringMgr.getString("sqlval.descriptivename");
 	}
 
 	/**
@@ -218,11 +225,11 @@ public class SQLValidatorPlugin extends DefaultSessionPlugin
 	 */
 	public void sessionCreated(ISession session)
 	{
-		super.sessionCreated(session);
-		WebServiceSessionProperties props = new WebServiceSessionProperties(_prefs);
-		props.setSQLConnection(session.getSQLConnection());
-		session.putPluginObject(this, PREFS_KEY, props);
-	}
+        super.sessionCreated(session);
+        WebServiceSessionProperties props = new WebServiceSessionProperties(_prefs);
+        props.setSQLConnection(session.getSQLConnection());
+        session.putPluginObject(this, PREFS_KEY, props);
+    }
 
 	/**
 	 * Called when a session started.
