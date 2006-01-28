@@ -4,6 +4,9 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+- Installer now includes an optional Spanish translation package which provides native
+  labels and messages for use in a Spanish locale.
+
 - Cleaned up copying from tables:
   1. Control+c and copy in the right mouse menu now do the same: They copy data without column headers.
   2. A new right mouse menu entry ('Copy with headers') provides the ability to copy data including 
