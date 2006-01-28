@@ -103,12 +103,14 @@ public class DataTypePreferencesPanel implements  IGlobalPreferencesPanel
 
 	public String getTitle()
 	{
-		return DataTypePropertiesPanel.i18n.TITLE;
+        // i18n[DataTypePreferencesPanel.propsPanel.title=Data Type Controls]
+		return s_stringMgr.getString("DataTypePreferencesPanel.propsPanel.title");
 	}
 
 	public String getHint()
 	{
-		return DataTypePropertiesPanel.i18n.HINT;
+        // i18n[DataTypePreferencesPanel.propsPanel.hint=Set options for specific Data Types]
+		return s_stringMgr.getString("DataTypePreferencesPanel.propsPanel.hint");
 	}
 
 	public void applyChanges()
@@ -118,20 +120,6 @@ public class DataTypePreferencesPanel implements  IGlobalPreferencesPanel
 
 	private static final class DataTypePropertiesPanel extends JPanel
 	{
-		/**
-		 * This interface defines locale specific strings. This should be
-		 * replaced with a property file.
-		 */
-		interface i18n
-		{
-            // i18n[DataTypePreferencesPanel.propsPanel.hint=Set options for specific Data Types]
-			String HINT = 
-                s_stringMgr.getString("DataTypePreferencesPanel.propsPanel.hint");
-            
-            // i18n[DataTypePreferencesPanel.propsPanel.title=Data Type Controls]
-			String TITLE = 
-                s_stringMgr.getString("DataTypePreferencesPanel.propsPanel.title");
-		}
 		
 		/** List of OkJPanels containing controls for specific DataType info */
 		OkJPanel[] dataTypePanels;
