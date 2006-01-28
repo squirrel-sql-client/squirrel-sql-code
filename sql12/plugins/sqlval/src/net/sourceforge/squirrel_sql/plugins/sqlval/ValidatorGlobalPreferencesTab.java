@@ -25,6 +25,8 @@ import java.awt.Insets;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -37,6 +39,10 @@ public class ValidatorGlobalPreferencesTab implements IGlobalPreferencesPanel
 	private final static ILogger s_log =
 		LoggerController.createLogger(ValidatorGlobalPreferencesTab.class);
 
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(ValidatorGlobalPreferencesTab.class);
+    
 	/** Plugin preferences. */
 	private final WebServicePreferences _prefs;
 
@@ -45,7 +51,7 @@ public class ValidatorGlobalPreferencesTab implements IGlobalPreferencesPanel
 
 	/** Application API. */
 	private IApplication _app;
-
+    
 	/**
 	 * Ctor.
 	 *
@@ -117,7 +123,8 @@ public class ValidatorGlobalPreferencesTab implements IGlobalPreferencesPanel
 	 */
 	public String getTitle()
 	{
-		return "SQL Validator";
+        // i18n[ValidatorGlobalPreferencesTab.title=SQL Validator]
+		return s_stringMgr.getString("ValidatorGlobalPreferencesTab.title");
 	}
 
 	/**
@@ -127,7 +134,8 @@ public class ValidatorGlobalPreferencesTab implements IGlobalPreferencesPanel
 	 */
 	public String getHint()
 	{
-		return "Preferences for SQL validation";
+        // i18n[ValidatorGlobalPreferencesTab.hint=Preferences for SQL validation]
+		return s_stringMgr.getString("ValidatorGlobalPreferencesTab.hint");
 	}
 
 	static final class PrefsPanel extends JPanel
