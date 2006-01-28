@@ -231,20 +231,21 @@ public class OraclePlugin extends DefaultSessionPlugin
       return ret;
    }
 
-   /**
-         * Return a node expander for the object tree for a particular default node type.
-         * <p/> A plugin could return non null here if they wish to override the default node
-         * expander bahaviour. Most plugins should return null here.
-         */
-        public INodeExpander getDefaultNodeExpander(ISession session, DatabaseObjectType type) {
-          if ((type == IObjectTreeAPI.PROC_TYPE_DBO) && (isOracle(session))) {
-            return new ProcedureExpander();
-          }
-          if (type == IObjectTreeAPI.DATABASE_TYPE_DBO && isOracle(session)) {
-              return new DefaultDatabaseExpander(session); 
-          }
-          return null;
-        }
+    /**
+     * Return a node expander for the object tree for a particular default node type.
+     * <p/> A plugin could return non null here if they wish to override the default node
+     * expander bahaviour. Most plugins should return null here.
+     */
+    public INodeExpander getDefaultNodeExpander(ISession session, DatabaseObjectType type) {
+      boolean isOracle = isOracle(session);
+      if ((type == IObjectTreeAPI.PROC_TYPE_DBO) && isOracle) {
+          return new ProcedureExpander();
+      }
+      if (type == IObjectTreeAPI.DATABASE_TYPE_DBO && isOracle) {
+          return new DefaultDatabaseExpander(session); 
+      }
+      return null;
+    }
         
     /**
      * Adds the specified action to the session main frame tool bar in such a 
