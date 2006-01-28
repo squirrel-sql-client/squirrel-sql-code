@@ -58,6 +58,8 @@ import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.MemoryComboBox;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -82,7 +84,11 @@ public class SQLPanel extends JPanel
 	/** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(SQLPanel.class);
 
-	/** Used to separate lines in teh SQL entry area. */
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(SQLPanel.class);   
+    
+	/** Used to separate lines in the SQL entry area. */
 	private final static String LINE_SEPARATOR = "\n";
 
 	/**
@@ -96,7 +102,7 @@ public class SQLPanel extends JPanel
 
 	private SQLHistoryComboBox _sqlCombo;
 	private ISQLEntryPanel _sqlEntry;
-	private JCheckBox _limitRowsChk = new JCheckBox("Limit rows: ");
+	private JCheckBox _limitRowsChk;
 	private IntegerField _nbrRows = new IntegerField();
 
 	private JScrollPane _sqlEntryScroller;
@@ -800,6 +806,10 @@ public class SQLPanel extends JPanel
 			Box box = Box.createHorizontalBox();
 			box.add(new CopyLastButton(app));
 			box.add(Box.createHorizontalStrut(10));
+            // i18n[SQLPanel.limitrowscheckbox.hint=Limit rows: ]
+            String hint = 
+                s_stringMgr.getString("SQLPanel.limitrowscheckbox.label");
+            _limitRowsChk = new JCheckBox(hint);
 			box.add(_limitRowsChk);
 			box.add(Box.createHorizontalStrut(5));
 			box.add(_nbrRows);
@@ -998,7 +1008,9 @@ public class SQLPanel extends JPanel
 			final SquirrelResources rsrc = app.getResources();
 			final ImageIcon icon = rsrc.getIcon(SquirrelResources.IImageNames.COPY_SELECTED);
 			setIcon(icon);
-			setToolTipText("Copy current SQL history to entry area");
+            // i18n[SQLPanel.copylastbutton.hint=Copy current SQL history to entry area]
+			String hint = s_stringMgr.getString("SQLPanel.copylastbutton.hint");
+            setToolTipText(hint);
 			Dimension dm = getPreferredSize();
 			dm.setSize(dm.height, dm.height);
 			setPreferredSize(dm);

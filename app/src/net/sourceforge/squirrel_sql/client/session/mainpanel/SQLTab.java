@@ -24,18 +24,14 @@ import java.awt.Component;
 import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 public class SQLTab extends BaseMainPanelTab
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n
-	{
-		String TAB_TITLE = "SQL";
-		String TAB_DESC = "Execute SQL statements";
-	}
 
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(SQLTab.class);  
 
 	/** Component to be displayed. */
 	private SQLPanel _comp;
@@ -51,7 +47,8 @@ public class SQLTab extends BaseMainPanelTab
 	 */
 	public String getTitle()
 	{
-		return i18n.TAB_TITLE;
+        // i18n[SQLTab.title=SQL]
+		return s_stringMgr.getString("SQLTab.title");
 	}
 
 	/**
@@ -59,7 +56,8 @@ public class SQLTab extends BaseMainPanelTab
 	 */
 	public String getHint()
 	{
-		return i18n.TAB_DESC;
+        // i18n[SQLTab.hint=Execute SQL statements]
+		return s_stringMgr.getString("SQLTab.hint");
 	}
 
 	/**
