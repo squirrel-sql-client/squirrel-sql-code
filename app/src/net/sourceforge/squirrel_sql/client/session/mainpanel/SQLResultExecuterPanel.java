@@ -35,6 +35,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -62,8 +64,13 @@ public class SQLResultExecuterPanel extends JPanel
 									implements ISQLResultExecuter
 {
 	/** Logger for this class. */
-	private static final ILogger s_log = LoggerController.createLogger(SQLResultExecuterPanel.class);
+	private static final ILogger s_log = 
+        LoggerController.createLogger(SQLResultExecuterPanel.class);
 
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(SQLResultExecuterPanel.class);
+    
 	private ISession _session;
 
 	private MyPropertiesListener _propsListener;
@@ -94,8 +101,7 @@ public class SQLResultExecuterPanel extends JPanel
 	/** Factory for generating unique IDs for new <TT>ResultTab</TT> objects. */
 	private IntegerIdentifierFactory _idFactory = new IntegerIdentifierFactory();
    private ResultTab _stickyTab;
-
-   private ILogger _log = LoggerController.createLogger(SQLResultExecuterPanel.class);
+   
 
 
    /**
@@ -116,7 +122,8 @@ public class SQLResultExecuterPanel extends JPanel
 
 	public String getTitle()
 	{
-		return "Results";
+        // i18n[SQLResultExecuterPanel.title=Results]
+		return s_stringMgr.getString("SQLResultExecuterPanel.title");
 	}
 
 	public JComponent getComponent()
@@ -227,8 +234,10 @@ public class SQLResultExecuterPanel extends JPanel
 		}
 		else
 		{
-			_session.getMessageHandler().showErrorMessage(
-					"No SQL selected for execution.");
+            // i18n[SQLResultExecuterPanel.nosqlselected=No SQL selected for execution.]
+            String msg = 
+                s_stringMgr.getString("SQLResultExecuterPanel.nosqlselected");
+			_session.getMessageHandler().showErrorMessage(msg);
 		}
 	}
 
@@ -806,8 +815,9 @@ public class SQLResultExecuterPanel extends JPanel
    {
       final JPopupMenu popup = new JPopupMenu();
 
-
-      JMenuItem mnuClose = new JMenuItem("Close");
+      // i18n[SQLResultExecuterPanel.close=Close]
+      String closeLabel = s_stringMgr.getString("SQLResultExecuterPanel.close");
+      JMenuItem mnuClose = new JMenuItem(closeLabel);
       initAccelerator(CloseCurrentSQLResultTabAction.class, mnuClose);
       mnuClose.addActionListener(new ActionListener()
       {
@@ -818,7 +828,10 @@ public class SQLResultExecuterPanel extends JPanel
       });
       popup.add(mnuClose);
 
-      JMenuItem mnuCloseAllButThis = new JMenuItem("Close all but this");
+      // i18n[SQLResultExecuterPanel.closeAllButThis=Close all but this]
+      String cabtLabel = 
+          s_stringMgr.getString("SQLResultExecuterPanel.closeAllButThis");
+      JMenuItem mnuCloseAllButThis = new JMenuItem(cabtLabel);
       initAccelerator(CloseAllSQLResultTabsButCurrentAction.class, mnuCloseAllButThis);
       mnuCloseAllButThis.addActionListener(new ActionListener()
       {
@@ -829,8 +842,9 @@ public class SQLResultExecuterPanel extends JPanel
       });
       popup.add(mnuCloseAllButThis);
 
-
-      JMenuItem mnuCloseAll = new JMenuItem("Close all");
+      // i18n[SQLResultExecuterPanel.closeAll=Close all]
+      String caLabel = s_stringMgr.getString("SQLResultExecuterPanel.closeAll");
+      JMenuItem mnuCloseAll = new JMenuItem(caLabel);
       initAccelerator(CloseAllSQLResultTabsAction.class, mnuCloseAll);
       mnuCloseAll.addActionListener(new ActionListener()
       {
@@ -841,7 +855,10 @@ public class SQLResultExecuterPanel extends JPanel
       });
       popup.add(mnuCloseAll);
 
-      JMenuItem mnuToggleSticky = new JMenuItem("Toggle sticky");
+      // i18n[SQLResultExecuterPanel.toggleSticky=Toggle sticky]
+      String tsLabel = 
+          s_stringMgr.getString("SQLResultExecuterPanel.toggleSticky");
+      JMenuItem mnuToggleSticky = new JMenuItem(tsLabel);
       initAccelerator(ToggleCurrentSQLResultTabStickyAction.class, mnuToggleSticky);
       mnuToggleSticky.addActionListener(new ActionListener()
       {
@@ -912,14 +929,16 @@ public class SQLResultExecuterPanel extends JPanel
             public void run()
             {
                _cancelPanel.setSQL(StringUtilities.cleanString(sql));
-               _cancelPanel.setStatusLabel("Executing SQL...");
+               // i18n[SQLResultExecuterPanel.execStatus=Executing SQL...]
+               String status = 
+                   s_stringMgr.getString("SQLResultExecuterPanel.execStatus");
+               _cancelPanel.setStatusLabel(status);
             }
          });
 		}
 
 		public void sqlExecutionComplete(SQLExecutionInfo exInfo, int processedStatementCount, int statementCount)
 		{
-			// i18n
 			final NumberFormat nbrFmt = NumberFormat.getNumberInstance();
 			double executionLength = exInfo.getSQLExecutionElapsedMillis() / 1000.0;
 			double outputLength = exInfo.getResultsProcessingElapsedMillis() / 1000.0;
@@ -938,16 +957,22 @@ public class SQLResultExecuterPanel extends JPanel
 
 		public void sqlExecutionCancelled()
 		{
-			if (rsds != null)
+			if (rsds != null) {
 				rsds.cancelProcessing();
-			getSession().getMessageHandler().showMessage(
-					"Query execution cancelled by user.");
+            }
+            // i18n[SQLResultExecuterPanel.cancelled=Query execution cancelled by user.]
+            String canc = 
+                s_stringMgr.getString("SQLResultExecuterPanel.cancelled");
+			getSession().getMessageHandler().showMessage(canc);
 		}
 
 		public void sqlDataUpdated(int updateCount)
 		{
-			getSession().getMessageHandler().showMessage(
-					updateCount + " Rows Updated");
+            // i18n[SQLResultExecuterPanel.rowsUpdated={0} Rows Updated]
+            String rowsUpdated = 
+                s_stringMgr.getString("SQLResultExecuterPanel.rowsUpdated",
+                                      new Integer(updateCount));
+			getSession().getMessageHandler().showMessage(rowsUpdated);
 		}
 
 		/** Hold onto the current ResultDataSet so if the execution is
@@ -958,7 +983,10 @@ public class SQLResultExecuterPanel extends JPanel
 		public void sqlResultSetAvailable(ResultSet rs, SQLExecutionInfo info,
 				IDataSetUpdateableTableModel model)
 		{
-			_cancelPanel.setStatusLabel("Building output...");
+            // i18n[SQLResultExecuterPanel.outputStatus=Building output...]
+            String outputStatus = 
+                s_stringMgr.getString("SQLResultExecuterPanel.outputStatus");
+			_cancelPanel.setStatusLabel(outputStatus);
 			rsds = new ResultSetDataSet();
 			SessionProperties props = getSession().getProperties();
 			ResultSetMetaDataDataSet rsmdds = null;
@@ -1021,7 +1049,7 @@ public class SQLResultExecuterPanel extends JPanel
 
          if(getSession().getProperties().getWriteSQLErrorsToLog())
          {
-            _log.info(msg);   
+            s_log.info(msg);   
          }
 		}
 
@@ -1048,7 +1076,14 @@ public class SQLResultExecuterPanel extends JPanel
          {
             public void run()
             {
-               _tabbedResultsPanel.addTab("Executing SQL", null, panel,	"Press Cancel to Stop");
+                // i18n[SQLResultExecuterPanel.exec=Executing SQL]
+                String execMsg = 
+                    s_stringMgr.getString("SQLResultExecuterPanel.exec");
+                // i18n[SQLResultExecuterPanel.cancelMsg=Press Cancel to Stop]
+                String cancMsg = 
+                    s_stringMgr.getString("SQLResultExecuterPanel.cancelMsg");
+                
+               _tabbedResultsPanel.addTab(execMsg, null, panel,	cancMsg);
                _tabbedResultsPanel.setSelectedComponent(panel);
             }
          });
@@ -1070,7 +1105,10 @@ public class SQLResultExecuterPanel extends JPanel
 			{
 				super(new GridBagLayout());
 
-				JButton cancelBtn = new JButton("Cancel");
+                // i18n[SQLResultExecuterPanel.cancelButtonLabel=Cancel]
+                String label = 
+                    s_stringMgr.getString("SQLResultExecuterPanel.cancelButtonLabel");
+				JButton cancelBtn = new JButton(label);
 				cancelBtn.addActionListener(this);
 
 				GridBagConstraints gbc = new GridBagConstraints();
@@ -1080,7 +1118,10 @@ public class SQLResultExecuterPanel extends JPanel
 
 				gbc.gridx = 0;
 				gbc.gridy = 0;
-				add(new JLabel("SQL:"), gbc);
+                
+                // i18n[SQLResultExecuterPanel.sqlLabel=SQL:]
+                label = s_stringMgr.getString("SQLResultExecuterPanel.sqlLabel");
+				add(new JLabel(label), gbc);
 
 				gbc.weightx = 1;
 				++gbc.gridx;
@@ -1089,7 +1130,10 @@ public class SQLResultExecuterPanel extends JPanel
 				gbc.weightx = 0;
 				gbc.gridx = 0;
 				++gbc.gridy;
-				add(new JLabel("Status:"), gbc);
+                // i18n[SQLResultExecuterPanel.statusLabel=Status:]
+                label = 
+                    s_stringMgr.getString("SQLResultExecuterPanel.statusLabel");
+				add(new JLabel(label), gbc);
 
 				++gbc.gridx;
 				add(_currentStatusLbl, gbc);
@@ -1103,11 +1147,14 @@ public class SQLResultExecuterPanel extends JPanel
 			public void setSQL(String sql)
 			{
 				++_currentQueryIndex;
-				StringBuffer buf = new StringBuffer();
-				buf.append(String.valueOf(_currentQueryIndex)).append(" of ")
-						.append(String.valueOf(_queryCount)).append(" - ")
-						.append(sql);
-				_sqlLbl.setText(buf.toString());
+                
+                // i18n[SQLResultExecuterPanel.currentSQLLabel={0} of {1} - {2}]
+                String label = 
+                    s_stringMgr.getString("SQLResultExecuterPanel.currentSQLLabel",
+                                          new Object[] { String.valueOf(_currentQueryIndex),
+                                                         String.valueOf(_queryCount),
+                                                         sql} );                
+				_sqlLbl.setText(label);
 			}
 
 			public void setStatusLabel(String text)
