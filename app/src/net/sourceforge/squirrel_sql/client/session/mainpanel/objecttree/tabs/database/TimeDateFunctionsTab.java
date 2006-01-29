@@ -23,6 +23,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ObjectArrayDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseDataSetTab;
@@ -33,16 +35,10 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.Bas
  */
 public class TimeDateFunctionsTab extends BaseDataSetTab
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface I18n
-	{
-		String TITLE = "Time/Date Functions";
-		String HINT = "Show all the Time/Date functions available in DBMS";
-	}
-
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(TimeDateFunctionsTab.class);
+    
 	/**
 	 * Return the title for the tab.
 	 *
@@ -50,7 +46,8 @@ public class TimeDateFunctionsTab extends BaseDataSetTab
 	 */
 	public String getTitle()
 	{
-		return I18n.TITLE;
+        // i18n[TimeDateFunctionsTab.title=Time/Date Functions]
+		return s_stringMgr.getString("TimeDateFunctionsTab.title");
 	}
 
 	/**
@@ -60,7 +57,8 @@ public class TimeDateFunctionsTab extends BaseDataSetTab
 	 */
 	public String getHint()
 	{
-		return I18n.HINT;
+        // i18n[TimeDateFunctionsTab.hint=Show all the Time/Date functions available in DBMS]
+		return s_stringMgr.getString("TimeDateFunctionsTab.hint");
 	}
 
 	/**

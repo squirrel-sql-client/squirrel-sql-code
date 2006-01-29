@@ -21,6 +21,8 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseDataSetTab;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * This is the tab displaying the data types in the database.
  *
@@ -28,16 +30,11 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
  */
 public class DataTypesTab extends BaseDataSetTab
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface I18n
-	{
-		String TITLE = "Data Types";
-		String HINT = "Show all the data types available in DBMS";
-	}
-
+    
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(DataTypesTab.class);
+                
 	/**
 	 * Return the title for the tab.
 	 *
@@ -45,7 +42,8 @@ public class DataTypesTab extends BaseDataSetTab
 	 */
 	public String getTitle()
 	{
-		return I18n.TITLE;
+        // i18n[DataTypesTab.title=Data Types]
+		return s_stringMgr.getString("DataTypesTab.title");
 	}
 
 	/**
@@ -55,7 +53,8 @@ public class DataTypesTab extends BaseDataSetTab
 	 */
 	public String getHint()
 	{
-		return I18n.HINT;
+        // i18n[DataTypesTab.hint=Show all the data types available in DBMS]
+		return s_stringMgr.getString("DataTypesTab.hint");
 	}
 
 	/**
