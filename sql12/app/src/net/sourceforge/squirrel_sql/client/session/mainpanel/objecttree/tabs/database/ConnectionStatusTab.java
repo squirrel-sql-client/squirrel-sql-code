@@ -25,6 +25,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.JavabeanDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseDataSetTab;
@@ -36,16 +38,11 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.Bas
  */
 public class ConnectionStatusTab extends BaseDataSetTab
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface I18n
-	{
-		String TITLE = "Status";
-		String HINT = "Connection Status";
-	}
-
+    
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(ConnectionStatusTab.class);
+    
 	/**
 	 * Return the title for the tab.
 	 *
@@ -53,7 +50,8 @@ public class ConnectionStatusTab extends BaseDataSetTab
 	 */
 	public String getTitle()
 	{
-		return I18n.TITLE;
+        // i18n[ConnectionStatusTab.title=Status]
+		return s_stringMgr.getString("ConnectionStatusTab.title");
 	}
 
 	/**
@@ -63,7 +61,8 @@ public class ConnectionStatusTab extends BaseDataSetTab
 	 */
 	public String getHint()
 	{
-		return I18n.HINT;
+        // i18n[ConnectionStatusTab.hint=Connection Status]
+		return s_stringMgr.getString("ConnectionStatusTab.hint");
 	}
 
 	/**

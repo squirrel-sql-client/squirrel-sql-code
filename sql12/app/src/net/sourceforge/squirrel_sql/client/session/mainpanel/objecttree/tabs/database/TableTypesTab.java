@@ -23,6 +23,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ObjectArrayDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseDataSetTab;
@@ -33,16 +35,11 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.Bas
  */
 public class TableTypesTab extends BaseDataSetTab
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface I18n
-	{
-		String TITLE = "Table Types";
-		String HINT = "Show all the table types available in DBMS";
-	}
-
+    
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(TableTypesTab.class);
+                
 	/**
 	 * Return the title for the tab.
 	 *
@@ -50,7 +47,8 @@ public class TableTypesTab extends BaseDataSetTab
 	 */
 	public String getTitle()
 	{
-		return I18n.TITLE;
+        // i18n[TableTypesTab.title=Table Types]
+		return s_stringMgr.getString("TableTypesTab.title");
 	}
 
 	/**
@@ -60,7 +58,8 @@ public class TableTypesTab extends BaseDataSetTab
 	 */
 	public String getHint()
 	{
-		return I18n.HINT;
+        // i18n[TableTypesTab.hint=Show all the table types available in DBMS]
+		return s_stringMgr.getString("TableTypesTab.hint");
 	}
 
 	/**

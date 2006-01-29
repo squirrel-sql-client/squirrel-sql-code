@@ -23,6 +23,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ObjectArrayDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseDataSetTab;
@@ -33,16 +35,10 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.Bas
  */
 public class SystemFunctionsTab extends BaseDataSetTab
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface I18n
-	{
-		String TITLE = "System Functions";
-		String HINT = "Show all the system functions available in DBMS";
-	}
-
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(SystemFunctionsTab.class);   
+    
 	/**
 	 * Return the title for the tab.
 	 *
@@ -50,7 +46,8 @@ public class SystemFunctionsTab extends BaseDataSetTab
 	 */
 	public String getTitle()
 	{
-		return I18n.TITLE;
+        // i18n[SystemFunctionsTab.title=System Functions]
+		return s_stringMgr.getString("SystemFunctionsTab.title");
 	}
 
 	/**
@@ -60,7 +57,8 @@ public class SystemFunctionsTab extends BaseDataSetTab
 	 */
 	public String getHint()
 	{
-		return I18n.HINT;
+        // i18n[SystemFunctionsTab.hint=Show all the system functions available in DBMS]
+		return s_stringMgr.getString("SystemFunctionsTab.hint");
 	}
 
 	/**

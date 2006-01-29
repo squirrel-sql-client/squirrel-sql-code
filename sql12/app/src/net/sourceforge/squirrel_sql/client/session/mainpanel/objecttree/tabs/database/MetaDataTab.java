@@ -23,6 +23,8 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.Bas
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 /**
  * This is the tab displaying database metadata.
@@ -31,15 +33,10 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
  */
 public class MetaDataTab extends BaseDataSetTab
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface I18n
-	{
-		String TITLE = "Metadata";
-		String HINT = "Show database metadata";
-	}
+    
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(MetaDataTab.class);  
 
 	/**
 	 * Return the title for the tab.
@@ -48,7 +45,8 @@ public class MetaDataTab extends BaseDataSetTab
 	 */
 	public String getTitle()
 	{
-		return I18n.TITLE;
+        // i18n[MetaDataTab.title=Metadata]
+		return s_stringMgr.getString("MetaDataTab.title");
 	}
 
 	/**
@@ -58,7 +56,8 @@ public class MetaDataTab extends BaseDataSetTab
 	 */
 	public String getHint()
 	{
-		return I18n.HINT;
+        // i18n[MetaDataTab.hint=Show database metadata]
+		return s_stringMgr.getString("MetaDataTab.hint");
 	}
 
 	/**

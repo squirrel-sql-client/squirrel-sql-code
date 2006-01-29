@@ -23,6 +23,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ObjectArrayDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseDataSetTab;
@@ -33,16 +35,10 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.Bas
  */
 public class CatalogsTab extends BaseDataSetTab
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface I18n
-	{
-		String TITLE = "Catalogs";
-		String HINT = "Show all the catalogs";
-	}
-
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(CatalogsTab.class);
+                
 	/**
 	 * Return the title for the tab.
 	 *
@@ -50,7 +46,8 @@ public class CatalogsTab extends BaseDataSetTab
 	 */
 	public String getTitle()
 	{
-		return I18n.TITLE;
+        // i18n[CatalogsTab.title=Catalogs]
+		return s_stringMgr.getString("CatalogsTab.title");
 	}
 
 	/**
@@ -60,7 +57,8 @@ public class CatalogsTab extends BaseDataSetTab
 	 */
 	public String getHint()
 	{
-		return I18n.HINT;
+        // i18n[CatalogsTab.hint=Show all the catalogs]
+		return s_stringMgr.getString("CatalogsTab.hint");
 	}
 
 	/**
