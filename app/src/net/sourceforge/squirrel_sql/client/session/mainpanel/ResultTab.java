@@ -39,6 +39,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.*;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
@@ -93,6 +95,10 @@ public class ResultTab extends JPanel implements IHasIdentifier
    private boolean _allowEditing;
    private IDataSetUpdateableTableModel _creator;
    private ResultSetDataSet _rsds;
+   
+   /** Internationalized strings for this class. */
+   private static final StringManager s_stringMgr =
+       StringManagerFactory.getStringManager(ResultTab.class);
 
    /**
 	 * Ctor.
@@ -243,7 +249,12 @@ public class ResultTab extends JPanel implements IHasIdentifier
 			buf = buf.replaceAll("<", "&lt;");
 			buf = buf.replaceAll("<", "&gt;");
 			buf = buf.replaceAll("\"", "&quot;");
-			_currentSqlLbl.setText("<html><pre>&nbsp;Limited to <font color='red'>" + rowCount + "</font> rows;&nbsp;&nbsp;" + buf + "</pre></html>");
+            // i18n[ResultTab.limitMessage=Limited to <font color='red'> '{0}' </font> rows]
+            String limitMsg = 
+                s_stringMgr.getString("ResultTab.limitMessage", 
+                                      new Integer(rowCount));
+			_currentSqlLbl.setText("<html><pre>&nbsp;" + limitMsg +
+                                   ";&nbsp;&nbsp;" + buf + "</pre></html>");
 		}
 		else
 		{
@@ -366,7 +377,8 @@ public class ResultTab extends JPanel implements IHasIdentifier
             }
             else
             {
-               String msg = "This SQL can not be edited.";
+                // i18n[ResultTab.cannotedit=This SQL can not be edited.]
+               String msg = s_stringMgr.getString("ResultTab.cannotedit");
                JOptionPane.showMessageDialog(_session.getApplication().getMainFrame(), msg);
             }
          }
@@ -409,17 +421,29 @@ public class ResultTab extends JPanel implements IHasIdentifier
 		add(_tp, BorderLayout.CENTER);
 
       _resultSetSp.setBorder(BorderFactory.createEmptyBorder());
-      _tp.addTab("Results", _resultSetSp);
+      
+      // i18n[ResultTab.resultsTabTitle=Results]
+      String resultsTabTitle = 
+          s_stringMgr.getString("ResultTab.resultsTabTitle");
+      _tp.addTab(resultsTabTitle, _resultSetSp);
 
       if (_session.getProperties().getShowResultsMetaData())
       {
          _metaDataSp.setBorder(BorderFactory.createEmptyBorder());
-         _tp.addTab("MetaData", _metaDataSp);
+         
+         // i18n[ResultTab.metadataTabTitle=MetaData]
+         String metadataTabTitle = 
+             s_stringMgr.getString("ResultTab.metadataTabTitle");
+         _tp.addTab(metadataTabTitle, _metaDataSp);
       }
 
 		final JScrollPane sp = new JScrollPane(_queryInfoPanel);
 		sp.setBorder(BorderFactory.createEmptyBorder());
-		_tp.addTab("Info", sp);
+        
+        // i18n[ResultTab.infoTabTitle=Info]
+        String infoTabTitle = 
+            s_stringMgr.getString("ResultTab.infoTabTitle");
+		_tp.addTab(infoTabTitle, sp);
 	}
 
 	private final class TabButton extends JButton
@@ -496,14 +520,18 @@ public class ResultTab extends JPanel implements IHasIdentifier
 			final NumberFormat nbrFmt = NumberFormat.getNumberInstance();
 			double executionLength = exInfo.getSQLExecutionElapsedMillis() / 1000.0;
 			double outputLength = exInfo.getResultsProcessingElapsedMillis() / 1000.0;
-			StringBuffer buf = new StringBuffer();
-			buf.append("Total: ")
-				.append(nbrFmt.format(executionLength + outputLength))
-				.append(", SQL query: ")
-				.append(nbrFmt.format(executionLength))
-				.append(", Building output: ")
-				.append(nbrFmt.format(outputLength));
-			return buf.toString();
+            
+            String totalTime = nbrFmt.format(executionLength + outputLength);
+            String queryTime = nbrFmt.format(executionLength);
+            String outputTime = nbrFmt.format(outputLength);
+            
+            // i18n[ResultTab.elapsedTime=Total: {0}, SQL query: {1}, Building output: {2}]
+            String elapsedTime = 
+                s_stringMgr.getString("ResultTab.elapsedTime",
+                                      new String[] { totalTime, 
+                                                     queryTime,
+                                                     outputTime});
+			return elapsedTime;
 		}
 
 		private void createGUI()
@@ -519,16 +547,24 @@ public class ResultTab extends JPanel implements IHasIdentifier
 			gbc.gridy = 0;
 			gbc.insets = new Insets(5, 10, 5, 10);
 			gbc.fill = GridBagConstraints.HORIZONTAL;
-			add(new JLabel("Executed:", SwingConstants.RIGHT), gbc);
+            // i18n[ResultTab.executedLabel=Executed:]
+            String label = s_stringMgr.getString("ResultTab.executedLabel");
+			add(new JLabel(label, SwingConstants.RIGHT), gbc);
 
 			++gbc.gridy;
-			add(new JLabel("Row Count:", SwingConstants.RIGHT), gbc);
+            // i18n[ResultTab.rowCountLabel=Row Count:]
+            label = s_stringMgr.getString("ResultTab.rowCountLabel");
+			add(new JLabel(label, SwingConstants.RIGHT), gbc);
 
 			++gbc.gridy;
-			add(new JLabel("SQL:", SwingConstants.RIGHT), gbc);
+            // i18n[ResultTab.statementLabel=SQL:]
+            label = s_stringMgr.getString("ResultTab.statementLabel");            
+			add(new JLabel(label, SwingConstants.RIGHT), gbc);
 
 			++gbc.gridy;
-			add(new JLabel("Elapsed Time (seconds):", SwingConstants.RIGHT), gbc);
+            // i18n[ResultTab.elapsedTimeLabel=Elapsed Time (seconds):]
+            label = s_stringMgr.getString("ResultTab.statementLabel");            
+            add(new JLabel(label, SwingConstants.RIGHT), gbc);
 
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			gbc.weightx = 1;
