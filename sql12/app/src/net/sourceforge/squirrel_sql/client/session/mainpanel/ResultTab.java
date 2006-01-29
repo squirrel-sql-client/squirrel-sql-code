@@ -249,7 +249,7 @@ public class ResultTab extends JPanel implements IHasIdentifier
 			buf = buf.replaceAll("<", "&lt;");
 			buf = buf.replaceAll("<", "&gt;");
 			buf = buf.replaceAll("\"", "&quot;");
-            // i18n[ResultTab.limitMessage=Limited to <font color='red'> '{0}' </font> rows]
+            // i18n[ResultTab.limitMessage=Limited to <font color='red'> {0} </font> rows]
             String limitMsg = 
                 s_stringMgr.getString("ResultTab.limitMessage", 
                                       new Integer(rowCount));
