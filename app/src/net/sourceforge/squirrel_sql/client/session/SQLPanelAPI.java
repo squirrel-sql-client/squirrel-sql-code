@@ -61,6 +61,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
    private FileManager _fileManager = new FileManager(this);
 
    private boolean fileOpened = false;
+   private boolean fileSaved = false;
     private boolean unsavedEdits = false;
    
    /**
@@ -115,6 +116,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
    public void fileSave()
    {
       if (_fileManager.save()) {
+          fileSaved = true;
           unsavedEdits = false;
           getSession().getActiveSessionWindow().setUnsavedEdits(false);
       }
@@ -123,6 +125,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
    public void fileSaveAs()
    {
       if (_fileManager.saveAs()) {
+          fileSaved = true;
           unsavedEdits = false;
           getSession().getActiveSessionWindow().setUnsavedEdits(false);
       }
@@ -130,10 +133,14 @@ public class SQLPanelAPI implements ISQLPanelAPI
 
    public void fileOpen()
    {
-      if (_fileManager.open()) {
-          fileOpened = true;
-          unsavedEdits = false;
-      }
+       if (unsavedEdits) {
+           showConfirmSaveDialog();
+       }
+       if (_fileManager.open()) {
+           fileOpened = true;
+           fileSaved = false;
+           unsavedEdits = false;
+       }
    }
 
    public void showToolsPopup()
@@ -591,6 +598,23 @@ public class SQLPanelAPI implements ISQLPanelAPI
       return _panel.isInMainSessionWindow();
    }
 
+   private void showConfirmSaveDialog() 
+   {
+       String msg = s_stringMgr.getString("SQLPanelAPI.unsavedchanges");
+       String title = 
+           s_stringMgr.getString("SQLPanelAPI.unsavedchangestitle");
+       
+       JFrame f = getSession().getApplication().getMainFrame();
+       int option = 
+           JOptionPane.showConfirmDialog(f, 
+                                         msg, 
+                                         title, 
+                                         JOptionPane.YES_NO_OPTION);
+       if (option == JOptionPane.YES_OPTION) {
+           fileSaveAs();
+       }
+   }   
+   
    /**
     * A class to listen for events that indicate that the content in the 
     * SQLEntryPanel has changed and could be lost.
@@ -601,7 +625,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
      * @see javax.swing.event.UndoableEditListener#undoableEditHappened(javax.swing.event.UndoableEditEvent)
      */
     public void undoableEditHappened(UndoableEditEvent e) {
-        if (fileOpened) {
+        if (fileOpened || fileSaved) {
             unsavedEdits = true;
             getSession().getActiveSessionWindow().setUnsavedEdits(true);
         }        
@@ -622,27 +646,9 @@ public class SQLPanelAPI implements ISQLPanelAPI
            if (evt.getSession().equals(_panel.getSession()) 
                    && unsavedEdits)
            {
-               String msg = s_stringMgr.getString("SQLPanelAPI.unsavedchanges");
-               String title = 
-                   s_stringMgr.getString("SQLPanelAPI.unsavedchangestitle");
-               showConfirmSaveDialog(msg, title);
+               showConfirmSaveDialog();
            }
-       }
-       
-       private void showConfirmSaveDialog(final String message, 
-                                          final String title) 
-       {
-           JFrame f = getSession().getApplication().getMainFrame();
-           int option = 
-               JOptionPane.showConfirmDialog(f, 
-                                             message, 
-                                             title, 
-                                             JOptionPane.YES_NO_OPTION);
-           if (option == JOptionPane.YES_OPTION) {
-               fileSaveAs();
-           }
-       }
-       
+       }              
    }
    
 }
