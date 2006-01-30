@@ -57,6 +57,8 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
@@ -67,20 +69,18 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class SQLFilterSheet extends BaseSessionInternalFrame
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n
-	{
-		/** Title of the filter */
-		String TITLE = "SQL Filter";
-	}
 
 	/** Logger for this class. */
 	private static final ILogger s_log =
 		LoggerController.createLogger(SQLFilterSheet.class);
 
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(SQLFilterSheet.class);
+    
+    private static final String TITLE = 
+        s_stringMgr.getString("SQLFilterSheet.title");
+    
 	/** The object tree we are filtering. */
 	private final IObjectTreeAPI _objectTree;
 
@@ -115,7 +115,7 @@ public class SQLFilterSheet extends BaseSessionInternalFrame
 	public SQLFilterSheet(IObjectTreeAPI objectTree,
 							IDatabaseObjectInfo objectInfo)
 	{
-		super(objectTree.getSession(), i18n.TITLE, true);
+		super(objectTree.getSession(), TITLE, true);
 		if (objectInfo == null)
 		{
 			throw new IllegalArgumentException("IDatabaseObjectInfo == null");
@@ -146,8 +146,10 @@ public class SQLFilterSheet extends BaseSessionInternalFrame
 				if (tab == null)
 				{
 					reallyShow = false;
-					_objectTree.getSession().getMessageHandler().showMessage(
-						"You must have the Contents Tab selected to activate the SQL Filter");
+                    // i18n[SQLFilterSheet.contentsMsg=You must have the Contents Tab selected to activate the SQL Filter]
+                    String msg = 
+                        s_stringMgr.getString("SQLFilterSheet.contentsMsg");
+					_objectTree.getSession().getMessageHandler().showMessage(msg);
 				}
 				else
 				{
@@ -312,8 +314,11 @@ public class SQLFilterSheet extends BaseSessionInternalFrame
 		}
 		catch (SQLException ex)
 		{
-			getSession().getApplication().showErrorDialog(
-				"Unable to get list of columns, " + ex);
+            // i18n[SQLFilterSheet.error.columnList=Unable to get list of columns {0}]
+            String msg = 
+                s_stringMgr.getString("SQLFilterSheet.error.columnList",
+                                      ex);
+			getSession().getApplication().showErrorDialog(msg);
 		}
 
 		_whereClausePanel =
@@ -408,8 +413,9 @@ public class SQLFilterSheet extends BaseSessionInternalFrame
 	private JPanel createButtonsPanel()
 	{
 		JPanel pnl = new JPanel();
-
-		JButton okBtn = new JButton("OK");
+        // i18n[SQLFilterSheet.okButtonLabel=OK]
+		String okLabel = s_stringMgr.getString("SQLFilterSheet.okButtonLabel");
+		JButton okBtn = new JButton(okLabel);
 		okBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
@@ -417,7 +423,10 @@ public class SQLFilterSheet extends BaseSessionInternalFrame
 				performOk();
 			}
 		});
-		JButton closeBtn = new JButton("Close");
+        // i18n[SQLFilterSheet.closeButtonLabel=Close]
+        String closeLabel = 
+            s_stringMgr.getString("SQLFilterSheet.closeButtonLabel");
+		JButton closeBtn = new JButton(closeLabel);
 		closeBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
@@ -443,11 +452,16 @@ public class SQLFilterSheet extends BaseSessionInternalFrame
 	 */
 	private void setButtonLabel(int tabSelected)
 	{
-		_clearFilter.setText(
-			"Clear "
-				+ ((tabSelected == 0)
-					? _whereClausePanel.getTitle()
-					: _orderByClausePanel.getTitle()));
-		_tabSelected = tabSelected;
+        String title = null;
+        if (tabSelected == 0) {
+            title = _whereClausePanel.getTitle();
+        } else {
+            title = _orderByClausePanel.getTitle();
+        }
+        // i18n[SQLFilterSheet.clearButtonLabel=Clear {0}]
+        String label = 
+            s_stringMgr.getString("SQLFilterSheet.clearButtonLabel", title);
+        _clearFilter.setText(label);
+        _tabSelected = tabSelected;
 	}
 }
