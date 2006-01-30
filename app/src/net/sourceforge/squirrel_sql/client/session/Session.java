@@ -840,18 +840,14 @@ class Session implements ISession
         }
 
         if (!driverIs21Compliant && javaVersionIsAtLeast14) {
-            StringBuffer tmp = new StringBuffer();
-            tmp.append("The driver being used for alias '");
-            tmp.append(_alias.getName());
-            tmp.append("' is not JDBC 2.1 compliant.\n");
-            tmp.append("You should consider getting a more ");
-            tmp.append("recent version of this driver");
-            
-            String message = tmp.toString();
-            showMessageDialog(message, 
-                              "JRE/JDBC Version Mismatch", 
-                              JOptionPane.ERROR_MESSAGE);
-            s_log.error(message);
+            // i18n[Session.driverCompliance=The driver being used for alias ''{0}'' is not JDBC 2.1 compliant.\nYou should consider getting a more recent version of this driver]
+            String msg = 
+                s_stringMgr.getString("Session.driverCompliance", _alias.getName());
+            // i18n[Session.driverComplianceTitle=JRE/JDBC Version Mismatch]
+            String title = 
+                s_stringMgr.getString("Session.driverComplianceTitle");
+            showMessageDialog(msg, title, JOptionPane.ERROR_MESSAGE);
+            s_log.error(msg);
         }
     }
 
