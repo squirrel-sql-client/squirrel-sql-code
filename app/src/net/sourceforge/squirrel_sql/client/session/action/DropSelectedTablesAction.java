@@ -29,18 +29,26 @@ import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
- * @version 	$Id: DropSelectedTablesAction.java,v 1.10 2006-01-13 16:21:53 manningr Exp $
+ * @version 	$Id: DropSelectedTablesAction.java,v 1.11 2006-01-30 00:25:13 manningr Exp $
  * @author		Johan Compagner
  */
 public class DropSelectedTablesAction extends SquirrelAction
 										implements IObjectTreeAction
 {
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(DropSelectedTablesAction.class);   
+    
 	/** Title for confirmation dialog. */
-	private static final String TITLE = "Dropping table(s)/view(s)";
+	private static final String TITLE = 
+        s_stringMgr.getString("DropSelectedTablesAction.title");
 
 	/** Message for confirmation dialog. */
-	private static final String MSG = "Do you really want to drop the selected tables or views?";
+	private static final String MSG = 
+        s_stringMgr.getString("DropSelectedTablesAction.message");
 
 	/** API for the current tree. */
 	private IObjectTreeAPI _tree;
