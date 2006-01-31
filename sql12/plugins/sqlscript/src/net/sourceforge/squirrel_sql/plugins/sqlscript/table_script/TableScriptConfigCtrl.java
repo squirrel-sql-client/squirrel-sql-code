@@ -18,7 +18,7 @@ public class TableScriptConfigCtrl
 
    private boolean _constAndIndAtEnd = true;
    private boolean _constToTablesNotInScript = true;
-	private boolean _isOk = false;
+   private boolean _isOk = false;
 
 
 	public TableScriptConfigCtrl(JFrame mainFrame)
@@ -46,6 +46,16 @@ public class TableScriptConfigCtrl
          }
       });
 
+      _dlg.btnCancel.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+     		_dlg.setVisible(false);
+            _dlg.dispose();
+         }
+      });
+      
+      
       GUIUtils.centerWithinParent(_dlg);
 
       _dlg.setVisible(true);
