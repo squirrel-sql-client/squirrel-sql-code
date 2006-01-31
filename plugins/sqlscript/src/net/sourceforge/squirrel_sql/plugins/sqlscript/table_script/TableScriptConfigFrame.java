@@ -19,35 +19,53 @@ public class TableScriptConfigFrame extends JDialog
 	JRadioButton optConstAndIndAfterTable;
 	JCheckBox constToTablesNotInScript;
 	JButton btnOk;
+	JButton btnCancel;
 
 	public TableScriptConfigFrame(JFrame mainFrame)
 	{
 		// i18n[sqlscript.configMultiTableScript=Configuration of multi table scripts]
 		super(mainFrame, s_stringMgr.getString("sqlscript.configMultiTableScript"), true);
 
-		JPanel pnl = new JPanel(new GridLayout(5,1,5,0));
+		JPanel pnl = new JPanel(new GridBagLayout());
+		
+		GridBagConstraints gbc;
 
+		
 		// i18n[sqlscript.configYourMultiTableScript=Configure your multi table script:]
 		Label lbl = new Label(s_stringMgr.getString("sqlscript.configYourMultiTableScript"));
-		pnl.add(lbl);
+		gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+		pnl.add(lbl, gbc);
 
 		// i18n[sqlscript.configYourMultiTableScriptIxAtEnd=Constraints and indexes at end of script]
 		optConstAndIndAtEnd = new JRadioButton(s_stringMgr.getString("sqlscript.configYourMultiTableScriptIxAtEnd"));
-		pnl.add(optConstAndIndAtEnd);
+		gbc = new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5),0,0);
+		pnl.add(optConstAndIndAtEnd,gbc);
 
 		// i18n[sqlscript.configYourMultiTableScriptIxAfterEach=Constraints and indexes after each table]
 		optConstAndIndAfterTable = new JRadioButton(s_stringMgr.getString("sqlscript.configYourMultiTableScriptIxAfterEach"));
-		pnl.add(optConstAndIndAfterTable);
+		gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5),0,0);
+		pnl.add(optConstAndIndAfterTable,gbc);
 
 		// i18n[sqlscript.configYourMultiTableScriptConstr=Include constraints to tables not in selection]
 		constToTablesNotInScript = new JCheckBox(s_stringMgr.getString("sqlscript.configYourMultiTableScriptConstr"));
-		pnl.add(constToTablesNotInScript);
+		gbc = new GridBagConstraints(0,3,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5),0,0);
+		pnl.add(constToTablesNotInScript,gbc);
 
 
-		// i18n[sqlscript.configYourMultiTableScriptOk=OK]
-		btnOk = new JButton(s_stringMgr.getString("sqlscript.configYourMultiTableScriptOk"));
-		pnl.add(btnOk);
+		JPanel pnlButtons = new JPanel(new GridLayout(1,2,5,0));
 
+      // i18n[sqlscript.configYourMultiTableScriptOk=OK]
+      btnOk = new JButton(s_stringMgr.getString("sqlscript.configYourMultiTableScriptOk"));
+      pnlButtons.add(btnOk);
+      
+		// i18n[sqlscript.configYourMultiTableScriptCancel=Cancel]
+		btnCancel = new JButton(s_stringMgr.getString("sqlscript.configYourMultiTableScriptCancel"));
+		pnlButtons.add(btnCancel);
+
+		
+		gbc = new GridBagConstraints(0,4,1,1,0,0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0,5,5,5),0,0);
+		pnl.add(pnlButtons, gbc);
+		
 
 		ButtonGroup buttonGroup = new ButtonGroup();
 		buttonGroup.add(optConstAndIndAfterTable);
