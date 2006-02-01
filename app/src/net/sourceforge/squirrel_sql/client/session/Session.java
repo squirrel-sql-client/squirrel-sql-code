@@ -24,6 +24,7 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,6 +56,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnectionState;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -826,28 +828,45 @@ class Session implements ISession
         }
         // At this point we know that we have a 1.4 or higher java runtime
         boolean driverIs21Compliant = true;
- 
+        
+        // Since 1.4 implements interfaces that became available in JDBC 3.0, 
+        // let's warn the user if the driver doesn't support DatabaseMetaData
+        // methods that were added in JDBC 2.1 and JDBC 3.0 specifications. 
+        
+        SQLDatabaseMetaData md = _conn.getSQLMetaData();
         try {
-            if (!_conn.getSQLMetaData().supportsSavepoints()) {
-                // Database doesn't support save points. But the driver is 
-                // JDBC 2.1 compliant - at least as far as supportsSavePoints
-                // method goes.  This functionality could probably be a plugin 
-                // at some point.
-                driverIs21Compliant = true;
-            }
+            md.supportsResultSetType(ResultSet.TYPE_FORWARD_ONLY);
         } catch (Throwable e) {
             driverIs21Compliant = false;
         }
 
-        if (!driverIs21Compliant && javaVersionIsAtLeast14) {
+        if (!driverIs21Compliant) {
             // i18n[Session.driverCompliance=The driver being used for alias ''{0}'' is not JDBC 2.1 compliant.\nYou should consider getting a more recent version of this driver]
             String msg = 
                 s_stringMgr.getString("Session.driverCompliance", _alias.getName());
             // i18n[Session.driverComplianceTitle=JRE/JDBC Version Mismatch]
             String title = 
                 s_stringMgr.getString("Session.driverComplianceTitle");
-            showMessageDialog(msg, title, JOptionPane.ERROR_MESSAGE);
-            s_log.error(msg);
+            showMessageDialog(msg, title, JOptionPane.WARNING_MESSAGE);
+            s_log.info(msg);
+            return;
+        }
+        boolean driverIs30Compliant = true;
+        try {
+            md.supportsSavepoints();
+        } catch (Throwable e) {
+            driverIs30Compliant = false;
+        }
+
+        if (!driverIs30Compliant) {
+            // i18n[Session.driverCompliance3.0=The driver being used for alias ''{0}'' is not JDBC 3.0 compliant.\nYou should consider getting a more recent version of this driver]
+            String msg = 
+                s_stringMgr.getString("Session.driverCompliance3.0", _alias.getName());
+            // i18n[Session.driverComplianceTitle=JRE/JDBC Version Mismatch]
+            String title = 
+                s_stringMgr.getString("Session.driverComplianceTitle");
+            showMessageDialog(msg, title, JOptionPane.WARNING_MESSAGE);
+            s_log.info(msg);
         }
     }
 
