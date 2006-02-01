@@ -459,13 +459,14 @@ public class SQLDatabaseMetaData
 	}
 
     /**
-     * Retrieves whether this database supports savepoints.
+     * Retrieves whether this DBMS supports save points. Cached on first
+     * call.
+     *
+     * @return  <TT>true</TT> if DBMS supports save points.
      * 
-     * @return true if savepoints are supported; false otherwise
-     * 
-     * @throws SQLException if a database access error occurs
+     * @throws SQLException if an SQL error occurs.
      */
-    public boolean supportsSavepoints() throws SQLException {
+    public synchronized boolean supportsSavepoints() throws SQLException {
         
         final String key = "supportsSavepoints";
         Boolean value = (Boolean)_cache.get(key);
@@ -480,6 +481,33 @@ public class SQLDatabaseMetaData
         return value.booleanValue();        
     }
     
+    /**
+     * Retrieves whether this DBMS supports result sets of the specified type. 
+     * Cached on first call.
+     *
+     * @param type the type of the ResultSet.  There are constants defined in 
+     *             the ResultSet class that define the different types.
+     *             
+     * @return  <TT>true</TT> if DBMS supports this type of ResultSet.
+     * 
+     * @throws SQLException if an SQL error occurs.
+     */
+    public synchronized boolean supportsResultSetType(int type) 
+        throws SQLException
+    {
+        final String key = "supportsResultSetType";
+        Boolean value = (Boolean)_cache.get(key);
+        if (value != null)
+        {
+            return value.booleanValue();
+        }
+        value = new Boolean(privateGetJDBCMetaData().supportsResultSetType(type));
+
+        _cache.put(key, value);
+
+        return value.booleanValue();                
+    }
+        
     /**
      * Return a string array containing the names of all the catalogs in the
      * database. Cached on first call.
