@@ -66,8 +66,17 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 
 	}
 
-	public void addParserEventsListener(ParserEventsListener l){_listeners.add(l);}
-	public void removeParserEventsListener(ParserEventsListener l){_listeners.add(l);}
+	public void addParserEventsListener(ParserEventsListener l) {
+        if (_listeners != null && l != null) {
+            _listeners.add(l);
+        }
+    }
+    
+	public void removeParserEventsListener(ParserEventsListener l) {
+        if (_listeners != null && l != null) {
+            _listeners.add(l);
+        }
+    }
 
 	public void endProcessing()
 	{
