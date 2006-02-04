@@ -4,6 +4,9 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+- Added "Delete Records" menu item to the context menu for tables to delete all records
+  in one or more selected tables.
+
 - Installer now includes an optional Spanish translation package which provides native
   labels and messages for use in a Spanish locale.
 
@@ -19,6 +22,7 @@ Not yet released, available in CVS and probably in latest weekly build
 - Fixed bug #1399254: Missing i18n strings
 - Fixed bug #1370186: SQL Editor discards changes when session is closed
 - Fixed bug #1385270: Dropping multiple selected tables produces exceptions
+- Fixed bug #1256021: Refresh item on a table showing the row number does not update the row count
 - Fixed bugs #1043604 and #1043599: Unlocalized decimal separator caused problems when data was pasted
                       for example to Open Office Calc. In the Global preferences the user is now able 
                       to chose the Java default format for floating point values or the localized form.
