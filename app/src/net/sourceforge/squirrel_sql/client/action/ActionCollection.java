@@ -27,8 +27,6 @@ import java.util.Map;
 import javax.swing.Action;
 import javax.swing.JInternalFrame;
 import javax.swing.KeyStroke;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
@@ -60,6 +58,7 @@ import net.sourceforge.squirrel_sql.client.session.action.CloseSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
 import net.sourceforge.squirrel_sql.client.session.action.CopyQualifiedObjectNameAction;
 import net.sourceforge.squirrel_sql.client.session.action.CopySimpleObjectNameAction;
+import net.sourceforge.squirrel_sql.client.session.action.DeleteSelectedTablesAction;
 import net.sourceforge.squirrel_sql.client.session.action.DropSelectedTablesAction;
 import net.sourceforge.squirrel_sql.client.session.action.DumpSessionAction;
 import net.sourceforge.squirrel_sql.client.session.action.EditWhereColsAction;
@@ -484,6 +483,7 @@ public final class ActionCollection
 		add(new CopySimpleObjectNameAction(_app));
 		add(new DisplayPluginSummaryAction(_app));
 		add(new DropSelectedTablesAction(_app));
+        add(new DeleteSelectedTablesAction(_app));
 		add(new DumpApplicationAction(_app));
 		add(new DumpSessionAction(_app));
 		add(new ExecuteSqlAction(_app));

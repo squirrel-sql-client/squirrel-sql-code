@@ -27,25 +27,27 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
-import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
-import net.sourceforge.squirrel_sql.fw.sql.*;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
-
-import javax.swing.*;
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Vector;
-import java.util.regex.Pattern;
 
 /**
  * This class can be used to execute SQL.
@@ -85,6 +87,9 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
       _session = session;
       _sql = sql;
       _handler = handler;
+      if (_handler == null) {
+          _handler = new DefaultSQLExecuterHandler(session);
+      }
       _executionListeners = executionListeners;
       _dataSetUpdateableTableModel = new DataSetUpdateableTableModelImpl();
       _dataSetUpdateableTableModel.setSession(_session);
@@ -551,22 +556,28 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 		{
 			final SQLConnection conn = _session.getSQLConnection();
 			final SQLDatabaseMetaData md = conn.getSQLMetaData();
-//			final ITableInfo[] tables = md.getTables(null, null, "%", null);
+			//final ITableInfo[] tables = md.getTables(null, null, "%", null);
+            
 			final ITableInfo[] tables = md.getAllTables();
 
 			// filter the list of all DB objects looking for things with the given name
 			for (int i = 0; i < tables.length; ++i)
 			{
+                String catalog = tables[i].getCatalogName().toUpperCase();
+			    String schema = tables[i].getSchemaName().toUpperCase();
+                String tableName = tables[i].getSimpleName().toUpperCase();
+                
+                String simpleName = tableName;
+                String nameWithSchema = schema + "." + tableName;
+                String nameWithSchemaAndCatalog = catalog + "." + schema + "." + tableName;
+                if (schema == null) {
+                    nameWithSchemaAndCatalog = catalog + "." + tableName;
+                }
 
-            String simpleName = tables[i].getSimpleName().toUpperCase();
-            String nameWithSchema = (tables[i].getSchemaName() + "." + tables[i].getSimpleName()).toUpperCase();
-            String nameWithSchemaAndCatalog = (tables[i].getSchemaName() + "." + tables[i].getSchemaName() + "." + tables[i].getSimpleName()).toUpperCase();
-
-
-            if (   simpleName.equals(tableNameFromSQL)
-                || nameWithSchema.equals(tableNameFromSQL)
-                || nameWithSchemaAndCatalog.equals(tableNameFromSQL))
-            {
+                if (simpleName.equals(tableNameFromSQL)
+                        || nameWithSchema.equals(tableNameFromSQL)
+                        || nameWithSchemaAndCatalog.equals(tableNameFromSQL))
+                {
 					count++;
 					table = (TableInfo)tables[i];
 				}

@@ -19,7 +19,6 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
  */
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.KeyListener;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,6 +27,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.Action;
 import javax.swing.JMenu;
@@ -35,9 +35,26 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
-import javax.swing.event.*;
+import javax.swing.event.EventListenerList;
+import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeExpansionListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.CopyQualifiedObjectNameAction;
+import net.sourceforge.squirrel_sql.client.session.action.CopySimpleObjectNameAction;
+import net.sourceforge.squirrel_sql.client.session.action.DeleteSelectedTablesAction;
+import net.sourceforge.squirrel_sql.client.session.action.DropSelectedTablesAction;
+import net.sourceforge.squirrel_sql.client.session.action.EditWhereColsAction;
+import net.sourceforge.squirrel_sql.client.session.action.FilterObjectsAction;
+import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeAction;
+import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeItemAction;
+import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
+import net.sourceforge.squirrel_sql.client.session.action.SetDefaultCatalogAction;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -47,10 +64,6 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.EnumerationIterator;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.*;
 /**
  * This is the tree showing the structure of objects in the database.
  *
@@ -138,6 +151,7 @@ class ObjectTree extends JTree
 		// Add actions to the popup menu.
 		final ActionCollection actions = session.getApplication().getActionCollection();
 		addToPopup(DatabaseObjectType.TABLE, actions.get(DropSelectedTablesAction.class));
+        addToPopup(DatabaseObjectType.TABLE, actions.get(DeleteSelectedTablesAction.class));
 		addToPopup(DatabaseObjectType.VIEW, actions.get(DropSelectedTablesAction.class));
 
 		// Options for global popup menu.
@@ -305,10 +319,18 @@ class ObjectTree extends JTree
 			}
 		}
 		clearSelection();
-		nodes[0].removeAllChildren();
-		startExpandingTree(nodes[0], false, selectedPathNames);
-	}
 
+        DefaultMutableTreeNode parent = 
+            (DefaultMutableTreeNode)nodes[0].getParent();
+        if (parent != null) {
+            parent.removeAllChildren();
+            startExpandingTree((ObjectTreeNode)parent, false, selectedPathNames);
+        } else {
+            nodes[0].removeAllChildren();
+            startExpandingTree(nodes[0], false, selectedPathNames);
+        }
+	}
+    
 	/**
 	 * Adds a listener for changes in this cache entry.
 	 *
@@ -349,7 +371,7 @@ class ObjectTree extends JTree
 		}
 
 		final TreePath nodePath = new TreePath(node.getPath());
-		if (previouslySelectedTreePathNames.containsKey(nodePath.toString()))
+        if (matchKeyPrefix(previouslySelectedTreePathNames, node, nodePath.toString()))
 		{
 			selectedTreePaths.add(nodePath);
 		}
@@ -365,7 +387,7 @@ class ObjectTree extends JTree
 			final TreePath childPath = new TreePath(child.getPath());
 			final String childPathName = childPath.toString();
 
-			if (previouslySelectedTreePathNames.containsKey(childPathName))
+            if (matchKeyPrefix(previouslySelectedTreePathNames, child, childPathName))
 			{
 				selectedTreePaths.add(childPath);
 			}
@@ -377,6 +399,39 @@ class ObjectTree extends JTree
 		}
 	}
 
+    /**
+     * This is to handle the case where the user has enabled showRowCounts and 
+     * the table/view name as it appeared before is different only because the 
+     * number of rows has changed.
+     * 
+     * @param map
+     * @param pattern
+     * @return
+     */
+    private boolean matchKeyPrefix(Map map, ObjectTreeNode node, String path) {
+        if (!_session.getProperties().getShowRowCount()) {
+            return map.containsKey(path);
+        }
+        if (node.getDatabaseObjectType() != DatabaseObjectType.TABLE
+                && node.getDatabaseObjectType() != DatabaseObjectType.VIEW) 
+        {
+            return map.containsKey(path);
+        }
+        Set s = map.keySet();
+        Iterator i = s.iterator();
+        String pathPrefix = path.substring(0, path.lastIndexOf("("));
+        boolean result = false;
+        while (i.hasNext()) {
+            String key = (String)i.next();
+            String keyPrefix = key.substring(0, key.lastIndexOf("("));
+            if (keyPrefix.equals(pathPrefix)) {
+                result = true;
+                break;
+            }
+        }
+        return result;
+    }
+        
 	private void startExpandingTree(ObjectTreeNode node, boolean selectNode,
 										Map selectedPathNames)
 	{
@@ -585,7 +640,7 @@ class ObjectTree extends JTree
 		Arrays.sort(ar, new NodeComparator());
 		return ar;
 	}
-
+    
 	/**
 	 * Return an array of the currently selected database
 	 * objects.
