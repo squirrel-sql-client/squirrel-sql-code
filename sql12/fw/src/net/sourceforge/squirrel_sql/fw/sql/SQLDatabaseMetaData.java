@@ -87,10 +87,15 @@ public class SQLDatabaseMetaData
 	 */
 	private interface IDriverNames
 	{
-		String FREE_TDS = "InternetCDS Type 4 JDBC driver for MS SQLServer";
-		String JCONNECT = "jConnect (TM) for JDBC (TM)";
-		String OPTA2000 = "i-net OPTA 2000";
+        String FRONTBASE = "FBJDriver";
+        String FREE_TDS = "InternetCDS Type 4 JDBC driver for MS SQLServer";
+        String IBMDB2 = "IBM DB2";
+        String INGRES = "CA-Ingres JDBC Driver";
+        String JCONNECT = "jConnect (TM) for JDBC (TM)";
 		String JTDS = "jTDS Type 4 JDBC Driver for MS SQL Server and Sybase";
+        String OPTA2000 = "i-net OPTA 2000";
+        String ORACLE = "Oracle";
+        
 	}
 
 	/**
@@ -265,6 +270,35 @@ public class SQLDatabaseMetaData
 		return value;
 	}
 
+    /**
+     * Returns the "cascade" constraints clause which is supported by some 
+     * databases when performing a delete to removed child records in dependent
+     * tables which would otherwise be orphaned and make the delete fail.
+     *  
+     * @return the "cascade" clause.
+     * 
+     * @throws SQLException
+     */
+    public synchronized String getCascadeClause() throws SQLException {
+        final String key = "getCascadeClause";
+        String value = (String)_cache.get(key);
+        if (value == null)
+        {
+            final String driverName = getDriverName();
+            if (driverName.startsWith(IDriverNames.IBMDB2)
+                || driverName.startsWith(IDriverNames.ORACLE))
+            {
+                value = "CASCADE";
+            }
+            else
+            {
+                value = "";
+            }
+            _cache.put(key, value);
+        }
+        return value;
+    }
+    
     /**
      * Return a string array containing the names of all the schemas in the
      * database. Cached on first call.
