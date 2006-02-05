@@ -33,6 +33,9 @@
 		case 'plugins':
 			$pageFileName = 'plugins.html';
 			break;
+		case 'translations':
+			$pageFileName = 'translations.html';
+			break;
 		case 'screenshots':
 			$pageFileName = 'screenshots.html';
 			break;
