@@ -355,14 +355,15 @@ public class DataTypeBigDecimal extends FloatingPointBase
 		 * Internal class for handling key events during editing
 		 * of both JTextField and JTextArea.
 		 */
-	 private class KeyTextHandler extends KeyAdapter {
+	 private class KeyTextHandler extends BaseKeyTextHandler {
+         
 		 public void keyTyped(KeyEvent e) {
 				char c = e.getKeyChar();
 
 				// as a coding convenience, create a reference to the text component
 				// that is typecast to JTextComponent.  this is not essential, as we
 				// could typecast every reference, but this makes the code cleaner
-				JTextComponent _theComponent = (JTextComponent)DataTypeBigDecimal.this._textComponent;
+                JTextComponent _theComponent = (JTextComponent)DataTypeBigDecimal.this._textComponent;
 				String text = _theComponent.getText();
 
 				// tabs and newlines get put into the text before this check,
@@ -438,18 +439,7 @@ public class DataTypeBigDecimal extends FloatingPointBase
 				else {
 					// field is not nullable
 					//
-					// if the field is not allowed to have nulls, we need to let the
-					// user erase the entire contents of the field so that they can enter
-					// a brand-new value from scratch.  While the empty field is not a legal
-					// value, we cannot avoid allowing it.  This is the normal editing behavior,
-					// so we do not need to add anything special here except for the cyclic
-					// re-entering of the original data if user hits delete when field is empty
-					if (text.length() == 0 &&
-						(c==KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE)) {
-						// delete when null => original value
-						DataTypeBigDecimal.this._textComponent.restoreText();
-						e.consume();
-					}
+                    handleNotNullableField(text, c, e, _textComponent);
 				}
 			}
 		}

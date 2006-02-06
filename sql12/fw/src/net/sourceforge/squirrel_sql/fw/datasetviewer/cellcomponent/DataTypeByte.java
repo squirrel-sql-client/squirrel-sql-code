@@ -267,7 +267,7 @@ public class DataTypeByte
 	 * Internal class for handling key events during editing
 	 * of both JTextField and JTextArea.
 	 */
-	 private class KeyTextHandler extends KeyAdapter {
+	 private class KeyTextHandler extends BaseKeyTextHandler {
 	 	public void keyTyped(KeyEvent e) {
 				char c = e.getKeyChar();
 				
@@ -352,20 +352,9 @@ public class DataTypeByte
 					}
 				}
 				else {
-					// field is not nullable
-					//
-					// if the field is not allowed to have nulls, we need to let the
-					// user erase the entire contents of the field so that they can enter
-					// a brand-new value from scratch.  While the empty field is not a legal
-					// value, we cannot avoid allowing it.  This is the normal editing behavior,
-					// so we do not need to add anything special here except for the cyclic
-					// re-entering of the original data if user hits delete when field is empty
-					if (text.length() == 0 &&
-						(c==KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE)) {
-						// delete when null => original value
-						DataTypeByte.this._textComponent.restoreText();
-						e.consume();
-					}
+                    // field is not nullable
+                    //
+                    handleNotNullableField(text, c, e, _textComponent);
 				}
 			}
 		}
