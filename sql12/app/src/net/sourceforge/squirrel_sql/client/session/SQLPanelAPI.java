@@ -28,8 +28,10 @@ import javax.swing.JOptionPane;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 
+import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.client.session.action.FileSaveAction;
 import net.sourceforge.squirrel_sql.client.session.action.ToolsPopupAction;
 import net.sourceforge.squirrel_sql.client.session.action.ViewObjectAtCursorInObjectTreeAction;
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
@@ -119,27 +121,77 @@ public class SQLPanelAPI implements ISQLPanelAPI
           fileSaved = true;
           unsavedEdits = false;
           getSession().getActiveSessionWindow().setUnsavedEdits(false);
+          ActionCollection actions = 
+              getSession().getApplication().getActionCollection();
+          actions.enableAction(FileSaveAction.class, false);
       }
    }
-
+   
+   /* (non-Javadoc)
+    * @see net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI#fileAppend()
+    */
+   public void fileAppend() {
+       if (_fileManager.open(true)) {
+           fileOpened = true;
+           fileSaved = false;
+           unsavedEdits = false;
+           ActionCollection actions = 
+               getSession().getApplication().getActionCollection();
+           actions.enableAction(FileSaveAction.class, true);           
+       }
+   }
+   
+   
+   /* (non-Javadoc)
+    * @see net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI#fileClose()
+    */
+   public void fileClose() {
+       if (unsavedEdits) {
+           showConfirmSaveDialog();
+       }
+       setEntireSQLScript("");
+       getSession().getActiveSessionWindow().setSqlFile(null);
+       fileOpened = true;
+       fileSaved = false;
+       unsavedEdits = false;
+       ActionCollection actions = 
+           getSession().getApplication().getActionCollection();
+       actions.enableAction(FileSaveAction.class, false);
+   }
+   
+   
+   /* (non-Javadoc)
+    * @see net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI#fileNew()
+    */
+   public void fileNew() {
+       fileClose();
+   }
+   
+   
    public void fileSaveAs()
    {
-      if (_fileManager.saveAs()) {
-          fileSaved = true;
-          unsavedEdits = false;
-          getSession().getActiveSessionWindow().setUnsavedEdits(false);
-      }
+       if (_fileManager.saveAs()) {
+           fileSaved = true;
+           unsavedEdits = false;
+           getSession().getActiveSessionWindow().setUnsavedEdits(false);
+           ActionCollection actions = 
+               getSession().getApplication().getActionCollection();
+           actions.enableAction(FileSaveAction.class, false);         
+       }
    }
 
    public void fileOpen()
    {
        if (unsavedEdits) {
            showConfirmSaveDialog();
-       }
-       if (_fileManager.open()) {
+       }       
+       if (_fileManager.open(false)) {
            fileOpened = true;
            fileSaved = false;
            unsavedEdits = false;
+           ActionCollection actions = 
+               getSession().getApplication().getActionCollection();
+           actions.enableAction(FileSaveAction.class, false);           
        }
    }
 
@@ -628,6 +680,9 @@ public class SQLPanelAPI implements ISQLPanelAPI
         if (fileOpened || fileSaved) {
             unsavedEdits = true;
             getSession().getActiveSessionWindow().setUnsavedEdits(true);
+            ActionCollection actions = 
+                getSession().getApplication().getActionCollection();
+            actions.enableAction(FileSaveAction.class, true);
         }        
     }
        

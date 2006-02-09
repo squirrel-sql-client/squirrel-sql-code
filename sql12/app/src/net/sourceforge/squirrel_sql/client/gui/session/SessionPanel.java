@@ -511,10 +511,13 @@ public class SessionPanel extends JPanel
 //			actions.get(ExecuteSqlAction.class).setEnabled(false);
 			add(actions.get(SQLFilterAction.class));
 //			actions.get(SQLFilterAction.class).setEnabled(false);
-         addSeparator();
-         add(actions.get(FileOpenAction.class));
-         add(actions.get(FileSaveAction.class));
-         add(actions.get(FileSaveAsAction.class));
+            addSeparator();
+            add(actions.get(FileNewAction.class));
+            add(actions.get(FileOpenAction.class));
+            add(actions.get(FileAppendAction.class));
+            add(actions.get(FileSaveAction.class));
+            add(actions.get(FileSaveAsAction.class));
+            add(actions.get(FileCloseAction.class));
 		}
 
 		private void setupCatalogsCombo()

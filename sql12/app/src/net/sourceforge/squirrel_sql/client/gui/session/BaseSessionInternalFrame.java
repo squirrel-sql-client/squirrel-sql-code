@@ -126,8 +126,12 @@ public class BaseSessionInternalFrame extends BaseInternalFrame
 
    public void setSqlFile(File sqlFile)
    {
-      _sqlFilePath = sqlFile.getAbsolutePath();
-      setTitle(_titleWithoutFile);
+       if (sqlFile == null) {
+           _sqlFilePath = null;
+       } else {
+           _sqlFilePath = sqlFile.getAbsolutePath();
+       }
+       setTitle(_titleWithoutFile);
    }
 
    /**
