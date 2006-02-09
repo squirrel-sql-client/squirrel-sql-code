@@ -294,4 +294,8 @@ public class FileManager
       _sqlPanelAPI.getSession().getActiveSessionWindow().setSqlFile(file);
    }
 
+   public void clearCurrentFile()
+   {
+      _toSaveTo = null;
+   }
 }

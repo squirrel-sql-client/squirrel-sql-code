@@ -157,6 +157,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
        ActionCollection actions = 
            getSession().getApplication().getActionCollection();
        actions.enableAction(FileSaveAction.class, false);
+       _fileManager.clearCurrentFile();
    }
    
    
@@ -663,7 +664,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
                                          title, 
                                          JOptionPane.YES_NO_OPTION);
        if (option == JOptionPane.YES_OPTION) {
-           fileSaveAs();
+           fileSave();
        }
    }   
    
