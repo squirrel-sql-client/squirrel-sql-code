@@ -293,6 +293,12 @@ public interface ISQLPanelAPI
 
    void fileOpen();
 
+   void fileAppend();
+   
+   void fileClose();
+   
+   void fileNew();
+   
    void showToolsPopup();
 }
 

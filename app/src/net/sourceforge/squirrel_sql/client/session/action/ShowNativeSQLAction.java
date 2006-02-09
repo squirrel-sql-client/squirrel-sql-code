@@ -21,11 +21,10 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 /**
  * This <CODE>Action</CODE> will convert the current SQL into native
  * format and append it to the SQL entry area.

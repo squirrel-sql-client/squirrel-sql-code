@@ -42,9 +42,8 @@ public class FileManager
    {
       return saveIntern(true);
    }
-
-
-   public boolean open()
+      
+   public boolean open(boolean appendToExisting)
    {
        boolean result = false;
       JFileChooser chooser = new JFileChooser();
@@ -77,6 +76,9 @@ public class FileManager
       {
           result = true;
          File selectedFile = chooser.getSelectedFile();
+         if (!appendToExisting) {
+             _sqlPanelAPI.setEntireSQLScript("");
+         }
          loadScript(selectedFile);
          prefs.setFilePreviousDir(selectedFile.getAbsolutePath());
       }

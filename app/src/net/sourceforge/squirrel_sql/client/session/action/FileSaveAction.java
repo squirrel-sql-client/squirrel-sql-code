@@ -14,6 +14,7 @@ public class FileSaveAction extends SquirrelAction  implements ISQLPanelAction
    public FileSaveAction(IApplication app)
    {
       super(app);
+      setEnabled(false);
    }
 
    public void actionPerformed(ActionEvent e)
