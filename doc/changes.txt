@@ -4,6 +4,8 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+- Added New, Close and Append icons/actions to allow the SQL Panel to function more
+  like an editor.
 - Added "Delete Records" menu item to the context menu for tables to delete all records
   in one or more selected tables.
 
