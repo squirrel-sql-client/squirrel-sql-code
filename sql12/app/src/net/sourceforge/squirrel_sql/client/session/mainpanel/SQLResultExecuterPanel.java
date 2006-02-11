@@ -599,8 +599,7 @@ public class SQLResultExecuterPanel extends JPanel
 		ResultTabInfo tabInfo = (ResultTabInfo)_allTabs
 				.get(tab.getIdentifier());
 		tabInfo._resultFrame = frame;
-		_session.getApplication().getMainFrame().addInternalFrame(frame, true,
-				null);
+		_session.getApplication().getMainFrame().addInternalFrame(frame, true, null, JLayeredPane.PALETTE_LAYER);
 		fireTabTornOffEvent(tab);
 		frame.setVisible(true);
 
@@ -609,7 +608,8 @@ public class SQLResultExecuterPanel extends JPanel
 
 		frame.toFront();
 		frame.requestFocus();
-	}
+
+   }
 
 	/**
 	 * Return the passed tab back into the tabbed pane.
