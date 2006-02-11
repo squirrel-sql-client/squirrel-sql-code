@@ -4,8 +4,13 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+- Improved handling of detached result windows:
+  * By default result windows stay on top. A check box in the result window allows to change the default.
+  * Result windows show up in the window list of the Windows menu and can be navigated to by Alt+left/right arrow.
+
 - Added New, Close and Append icons/actions to allow the SQL Panel to function more
   like an editor.
+
 - Added "Delete Records" menu item to the context menu for tables to delete all records
   in one or more selected tables.
 

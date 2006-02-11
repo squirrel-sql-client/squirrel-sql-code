@@ -186,9 +186,12 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 		addInternalFrame(child, createMenuItem, null);
 	}
 
-	// JASON: Move code to Windowmanager
-	public void addInternalFrame(JInternalFrame child, boolean addToWindowMenu,
-									Action action)
+   public void addInternalFrame(JInternalFrame child, boolean addToWindowMenu, Action action)
+   {
+      addInternalFrame(child, addToWindowMenu, action, null);
+   }
+
+	public void addInternalFrame(JInternalFrame child, boolean addToWindowMenu, Action action, Integer layer)
 	{
       if (!GUIUtils.isToolWindow(child))
       {
@@ -205,7 +208,16 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
          throw new IllegalArgumentException("Null JInternalFrame added");
       }
 
-      _desktop.add(child);
+      if(null != layer)
+      {
+         _desktop.add(child, layer);
+      }
+      else
+      {
+         _desktop.add(child);
+      }
+
+
       if (!GUIUtils.isToolWindow(child))
       {
          positionNewInternalFrame(child);
