@@ -27,6 +27,8 @@ import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
@@ -44,7 +46,10 @@ public class ResultFrame extends BaseSessionInternalFrame
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(ResultFrame.class);
 
-	/** SQL Results. */
+       private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(ResultFrame.class);
+
+   /** SQL Results. */
 	private ResultTab _tab;
    private JCheckBox _chkOnTop;
 
@@ -77,7 +82,8 @@ public class ResultFrame extends BaseSessionInternalFrame
       gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,0,5), 0,0);
       pnlButtons.add(rtnBtn, gbc);
 
-      _chkOnTop = new JCheckBox("Stay on top");
+      // i18n[resultFrame.stayOnTop=Stay on top]
+      _chkOnTop = new JCheckBox(s_stringMgr.getString("resultFrame.stayOnTop"));
       gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,0,5), 0,0);
       pnlButtons.add(_chkOnTop, gbc);
       _chkOnTop.setSelected(true);
