@@ -4,6 +4,9 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+- Row numbers in SQL result and Object Tree tables tables:
+  Use the right mouse menu in SQL result tables or Object Tree tables to switch on row numbering.
+
 - Improved handling of detached result windows:
   * By default result windows stay on top. A check box in the result window allows to change the default.
   * Result windows show up in the window list of the Windows menu and can be navigated to by Alt+left/right arrow.

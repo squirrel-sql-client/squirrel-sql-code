@@ -28,8 +28,7 @@ import java.awt.event.MouseMotionListener;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JTable;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
+import javax.swing.event.*;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -38,8 +37,10 @@ import javax.swing.table.TableModel;
 import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
+
 /**
- * @version 	$Id: ButtonTableHeader.java,v 1.5 2005-01-02 19:07:29 gerdwagner Exp $
+ * @version 	$Id: ButtonTableHeader.java,v 1.6 2006-02-12 17:39:57 gerdwagner Exp $
  * @author		Johan Compagner
  */
 public class ButtonTableHeader extends JTableHeader
@@ -168,24 +169,44 @@ public class ButtonTableHeader extends JTableHeader
 		return retStr;
 	}
 
-   /**
-    * @return The currently sorted column index. If no column is sorted -1.
-    */
-   public int getCurrentlySortedColumnIdx()
-   {
-      return _currentlySortedColumnIdx;
-   }
+	/**
+	 * @return The currently sorted column index. If no column is sorted -1.
+	 */
+	public int getCurrentlySortedColumnIdx()
+	{
+		return _currentlySortedColumnIdx;
+	}
 
-   /**
-    *
-    * @return The direction of the currently sorted column. If no column is sorted false.
-    */
-   public boolean isAscending()
-   {
-      return _currentSortedColumnIcon == s_ascIcon;
-   }
+	/**
+	 *
+	 * @return The direction of the currently sorted column. If no column is sorted false.
+	 */
+	public boolean isAscending()
+	{
+		return _currentSortedColumnIcon == s_ascIcon;
+	}
 
-   private final class TableDataListener implements TableModelListener
+	public void columnIndexWillBeRemoved(int colIx)
+	{
+		if( colIx < _currentlySortedColumnIdx)
+		{
+			--_currentlySortedColumnIdx;
+		}
+		else if (colIx == _currentlySortedColumnIdx)
+		{
+			_currentlySortedColumnIdx = -1;
+		}
+	}
+
+	public void columnIndexWillBeAdded(int colIx)
+	{
+		if( colIx <= _currentlySortedColumnIdx)
+		{
+			++_currentlySortedColumnIdx;
+		}
+	}
+
+	private final class TableDataListener implements TableModelListener
 	{
 		public void tableChanged(TableModelEvent evt)
 		{
@@ -203,6 +224,11 @@ public class ButtonTableHeader extends JTableHeader
 		public void mousePressed(MouseEvent e)
 		{
 			_pressed = true;
+			if(RowNumberTableColumn.ROW_NUMBER_MODEL_INDEX == table.convertColumnIndexToModel(columnAtPoint(e.getPoint())))
+			{
+				return;
+			}
+
 			_pressedColumnIdx = columnAtPoint(e.getPoint());
 			repaint();
 		}
@@ -212,6 +238,13 @@ public class ButtonTableHeader extends JTableHeader
 		*/
 		public void mouseReleased(MouseEvent e)
 		{
+			if(RowNumberTableColumn.ROW_NUMBER_MODEL_INDEX == table.convertColumnIndexToModel(columnAtPoint(e.getPoint())))
+			{
+				_pressed = false;
+				_dragged = false;
+				return;
+			}
+
 			_pressed = false;
 			if (!_dragged)
 			{

@@ -62,7 +62,7 @@ public class CellDataPopup
 		ColumnDisplayDefinition colDef,
 		MouseEvent evt,
 		boolean isModelEditable)
-	{;
+	{
 		CellDataPopup popup = new CellDataPopup();
 		popup.createAndShowDialog(table, evt, colDef, isModelEditable);
 	}
