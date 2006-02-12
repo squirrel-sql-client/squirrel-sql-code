@@ -151,12 +151,12 @@ public class SQLPanelAPI implements ISQLPanelAPI
        }
        setEntireSQLScript("");
        getSession().getActiveSessionWindow().setSqlFile(null);
-       fileOpened = true;
+       fileOpened = false;
        fileSaved = false;
        unsavedEdits = false;
        ActionCollection actions = 
            getSession().getApplication().getActionCollection();
-       actions.enableAction(FileSaveAction.class, false);
+       actions.enableAction(FileSaveAction.class, true);
        _fileManager.clearCurrentFile();
    }
    
@@ -166,7 +166,8 @@ public class SQLPanelAPI implements ISQLPanelAPI
     */
    public void fileNew() {
        fileClose();
-   }
+		 fileOpened = true;
+	}
    
    
    public void fileSaveAs()

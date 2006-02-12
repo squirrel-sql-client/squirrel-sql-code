@@ -11,17 +11,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsAction;
-import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsButCurrentAction;
-import net.sourceforge.squirrel_sql.client.session.action.CloseCurrentSQLResultTabAction;
-import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
-import net.sourceforge.squirrel_sql.client.session.action.FileOpenAction;
-import net.sourceforge.squirrel_sql.client.session.action.FileSaveAction;
-import net.sourceforge.squirrel_sql.client.session.action.FileSaveAsAction;
-import net.sourceforge.squirrel_sql.client.session.action.GotoNextResultsTabAction;
-import net.sourceforge.squirrel_sql.client.session.action.GotoPreviousResultsTabAction;
-import net.sourceforge.squirrel_sql.client.session.action.ToggleCurrentSQLResultTabStickyAction;
-import net.sourceforge.squirrel_sql.client.session.action.ViewObjectAtCursorInObjectTreeAction;
+import net.sourceforge.squirrel_sql.client.session.action.*;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 import net.sourceforge.squirrel_sql.fw.completion.Completor;
@@ -68,6 +58,9 @@ public class ToolsPopupController
       addAction("fileopen", ac.get(FileOpenAction.class));
       addAction("filesave", ac.get(FileSaveAction.class));
       addAction("filesaveas", ac.get(FileSaveAsAction.class));
+		addAction("filenew", ac.get(FileNewAction.class));
+		addAction("fileappend", ac.get(FileAppendAction.class));
+		addAction("fileclose", ac.get(FileCloseAction.class));
 
       addAction("tabnext", ac.get(GotoNextResultsTabAction.class));
       addAction("tabprevious", ac.get(GotoPreviousResultsTabAction.class));
