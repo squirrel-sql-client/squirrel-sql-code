@@ -26,6 +26,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 
 import javax.swing.*;
 import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -81,6 +82,9 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		if (_colDefs == null)
 			return false;	// cannot edit something that we do not know anything about
 
+		if(RowNumberTableColumn.ROW_NUMBER_MODEL_INDEX == col)
+			return false;
+
 		// Cannot edit the rowID column, if present
 		if ( ((IDataSetUpdateableTableModel)getUpdateableModel()).getRowidCol() == col)
 			return false;
@@ -98,7 +102,6 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 	{
 		// we need to table column model to be able to add CellEditors to the
 		// individual columns
-		TableColumnModel columnModel = table.getColumnModel();
 		cellPopupMenu = new TablePopupMenu(getUpdateableModel(), this, table);
 		
 		for (int i=0; i < _colDefs.length; i++) {
@@ -127,10 +130,25 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 						}
 					}
 				});
-			columnModel.getColumn(i).setCellEditor(editor);
+
+			// We have to look for the modelindex because of the Row Number column
+			getColumnForModelIndex(i, table.getColumnModel()).setCellEditor(editor);
 		}
 	}
-	
+
+	private TableColumn getColumnForModelIndex(int modelIndex, TableColumnModel columnModel)
+	{
+		for (int i = 0; i < columnModel.getColumnCount(); i++)
+		{
+			if(columnModel.getColumn(i).getModelIndex() == modelIndex)
+			{
+				return columnModel.getColumn(i);
+			}
+		}
+
+		throw new IllegalArgumentException("No column for model index " + modelIndex);
+	}
+
 	/**
 	 * Call the underlaying object to update the data represented by the JTable.
 	 * Both the old and the new value are objects of the appropriate
@@ -168,7 +186,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		// not true.  So we avoid the problem by not updating the DB if the data has not
 		// been changed.  This can happen if user changes the cell contents, then changes
 		// them back before exiting the cell.
-		
+
 		// first look to see if they are identical objects, e.g. both null
 		if (newValue == oldValue)
 			return new int[0];	// the caller does not need to know that nothing happened
@@ -180,7 +198,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 			// ask the DataType object if the two values are the same
 			if (CellComponentFactory.areEqual( _colDefs[col], oldValue, newValue))
 				return new int[0];	// the caller does not need to know that nothing happened
-					
+
 			// if we reach this point, the value has been changed,
 			// so fall through to next section
 		}
@@ -247,25 +265,25 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		}
 
 
-      // No problems, so indicate a successful update of the underlying data.
-      // In case we are editing an SQL result that contains the edited colum
-      // more than once, we need to tell the caller to update all columns.
-      // Otherwise generation of where clauses for further editing will fail. 
-      ArrayList buf = new ArrayList();
-      for (int i = 0; i < _colDefs.length; i++)
-      {
-         if(_colDefs[i].getFullTableColumnName().equalsIgnoreCase(_colDefs[col].getFullTableColumnName()))
-         {
-            buf.add(new Integer(i));
-         }
-      }
+		// No problems, so indicate a successful update of the underlying data.
+		// In case we are editing an SQL result that contains the edited colum
+		// more than once, we need to tell the caller to update all columns.
+		// Otherwise generation of where clauses for further editing will fail.
+		ArrayList buf = new ArrayList();
+		for (int i = 0; i < _colDefs.length; i++)
+		{
+			if(_colDefs[i].getFullTableColumnName().equalsIgnoreCase(_colDefs[col].getFullTableColumnName()))
+			{
+				buf.add(new Integer(i));
+			}
+		}
 
-      int[] ret = new int[buf.size()];
+		int[] ret = new int[buf.size()];
 
-      for (int i = 0; i < ret.length; i++)
-      {
-         ret[i] = ((Integer)buf.get(i)).intValue();
-      }
+		for (int i = 0; i < ret.length; i++)
+		{
+			ret[i] = ((Integer)buf.get(i)).intValue();
+		}
 
 		return ret;
 	}

@@ -30,6 +30,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.MyTableModel;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
 
 public class SortableTableModel extends AbstractTableModel
 {
@@ -106,7 +107,14 @@ public class SortableTableModel extends AbstractTableModel
 	 */
 	public Object getValueAt(int row, int col)
 	{
-		return _actualModel.getValueAt(_indexes[row].intValue(), col);
+		if(RowNumberTableColumn.ROW_NUMBER_MODEL_INDEX == col)
+		{
+			return new Integer(row + 1);
+		}
+		else
+		{
+			return _actualModel.getValueAt(_indexes[row].intValue(), col);
+		}
 	}
 
 	/**
@@ -242,30 +250,30 @@ public class SortableTableModel extends AbstractTableModel
 		}
 	}
 
-   /**
-    * When the table is sorted table methods like getSelectedRow() return row indices that
-    * correspond to the view not to the model. This method transforms the view index to
-    * the model index.
-    * @param row The view row index.
-    * @return The model row index. -1 if no model index correspondig to row was found.
-    */
-   public int transfromToModelRow(int row)
-   {
-      if(0 > row || row >= _indexes.length)
-      {
-         return -1;
-      }
+	/**
+	 * When the table is sorted table methods like getSelectedRow() return row indices that
+	 * correspond to the view not to the model. This method transforms the view index to
+	 * the model index.
+	 * @param row The view row index.
+	 * @return The model row index. -1 if no model index correspondig to row was found.
+	 */
+	public int transfromToModelRow(int row)
+	{
+		if(0 > row || row >= _indexes.length)
+		{
+			return -1;
+		}
 
-      return _indexes[row].intValue();
-   }
+		return _indexes[row].intValue();
+	}
 
 
 	class TableModelComparator implements Comparator
 	{
 		private int _iColumn;
 		private int _iAscending;
- 		private final Collator _collator = Collator.getInstance();
- 		private boolean _allDataIsString = true;
+		 private final Collator _collator = Collator.getInstance();
+		 private boolean _allDataIsString = true;
 
 		public TableModelComparator(int iColumn)
 		{
@@ -283,18 +291,18 @@ public class SortableTableModel extends AbstractTableModel
 			{
 				_iAscending = -1;
 			}
- 			_collator.setStrength(Collator.PRIMARY);
- 			_collator.setStrength(Collator.TERTIARY);
+			 _collator.setStrength(Collator.PRIMARY);
+			 _collator.setStrength(Collator.TERTIARY);
 
- 			for (int i = 0, limit = _actualModel.getRowCount(); i < limit; ++i)
- 			{
- 				final Object data = _actualModel.getValueAt(i, _iColumn);
- 				if (!(data instanceof String))
- 				{
- 					_allDataIsString = false;
- 					break;
- 				}
- 			}
+			 for (int i = 0, limit = _actualModel.getRowCount(); i < limit; ++i)
+			 {
+				 final Object data = _actualModel.getValueAt(i, _iColumn);
+				 if (!(data instanceof String))
+				 {
+					 _allDataIsString = false;
+					 break;
+				 }
+			 }
 		}
 
 		/*
@@ -324,13 +332,13 @@ public class SortableTableModel extends AbstractTableModel
 //				Comparable c1 = (Comparable)data1;
 //				return c1.compareTo(data2) * _iAscending;
 
- 				if (!_allDataIsString)
- 				{
- 					final Comparable c1 = (Comparable)data1;
- 					return c1.compareTo(data2) * _iAscending;
- 				}
+				 if (!_allDataIsString)
+				 {
+					 final Comparable c1 = (Comparable)data1;
+					 return c1.compareTo(data2) * _iAscending;
+				 }
  //				return _collator.compare(data1.toString(), data2.toString()) * _iAscending;
- 				return _collator.compare((String)data1, (String)data2) * _iAscending;
+				 return _collator.compare((String)data1, (String)data2) * _iAscending;
 			}
 			catch (ClassCastException ex)
 			{

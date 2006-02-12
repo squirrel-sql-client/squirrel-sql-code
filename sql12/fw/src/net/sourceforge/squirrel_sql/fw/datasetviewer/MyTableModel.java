@@ -58,25 +58,40 @@ public final class MyTableModel extends AbstractTableModel
 		// The reverse is not true - if we succeed in reading the data, there may still
 		// be other reasons why we cannot edit it, so we need to check for it being editable
 		// after the read
-		if ( _creator.needToReRead(col, getValueAt(row, col))) {
+
+		if(col == RowNumberTableColumn.ROW_NUMBER_MODEL_INDEX)
+		{
+			return false;
+		}
+
+		if (_creator.needToReRead(col, getValueAt(row, col)))
+		{
 			StringBuffer message = new StringBuffer();
-			Object newValue = _creator.reReadDatum((Object[])_data.get(row), col, message);
-			if (message.length() > 0) {
+			Object newValue = _creator.reReadDatum((Object[]) _data.get(row), col, message);
+			if (message.length() > 0)
+			{
 				// there was a problem with the read
 				// It would be nice to report this to the user, but if we try we get in trouble
 				// in some cases where the data is continually re-read after the dialog
 				// goes away (because the cell is being re-painted).
 				return false;	// cell is not editable
 			}
-			((Object[])_data.get(row))[col] = newValue;
-		}	
-		
+			((Object[]) _data.get(row))[col] = newValue;
+		}
+
 		return _creator.isColumnEditable(col, getValueAt(row, col));
 	}
 
 	public Object getValueAt(int row, int col)
 	{
-		return ((Object[])_data.get(row))[col];
+		if(RowNumberTableColumn.ROW_NUMBER_MODEL_INDEX == col)
+		{
+			return new Integer(row + 1);
+		}
+		else
+		{
+			return ((Object[])_data.get(row))[col];
+		}
 	}
 
 	public int getRowCount()
@@ -91,7 +106,14 @@ public final class MyTableModel extends AbstractTableModel
 
 	public String getColumnName(int col)
 	{
-		return _colDefs != null ? _colDefs[col].getLabel() : super.getColumnName(col);
+		if(col == RowNumberTableColumn.ROW_NUMBER_MODEL_INDEX)
+		{
+			return RowNumberTableColumn.ROW_NUMBER_HEADER;
+		}
+		else
+		{
+			return _colDefs != null ? _colDefs[col].getLabel() : super.getColumnName(col);
+		}
 	}
 
 	public Class getColumnClass(int col)

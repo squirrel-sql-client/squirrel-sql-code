@@ -246,6 +246,12 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
          {
             handleError(ex, null);
          }
+
+			if(false == ex instanceof SQLException)
+			{
+				s_log.error("Unexpected exception when executing SQL: " + ex, ex);
+			}
+
 		}
 		finally
 		{
@@ -550,58 +556,48 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 	*/
 	public TableInfo getTableName(String tableNameFromSQL)
 	{
-		TableInfo table = null;
-		int count = 0;
+
 		try
 		{
 			final SQLConnection conn = _session.getSQLConnection();
 			final SQLDatabaseMetaData md = conn.getSQLMetaData();
 			//final ITableInfo[] tables = md.getTables(null, null, "%", null);
-            
+
 			final ITableInfo[] tables = md.getAllTables();
 
 			// filter the list of all DB objects looking for things with the given name
 			for (int i = 0; i < tables.length; ++i)
 			{
-                String catalog = tables[i].getCatalogName().toUpperCase();
-			    String schema = tables[i].getSchemaName().toUpperCase();
-                String tableName = tables[i].getSimpleName().toUpperCase();
-                
-                String simpleName = tableName;
-                String nameWithSchema = schema + "." + tableName;
-                String nameWithSchemaAndCatalog = catalog + "." + schema + "." + tableName;
-                if (schema == null) {
-                    nameWithSchemaAndCatalog = catalog + "." + tableName;
-                }
+				String simpleName = tables[i].getSimpleName().toUpperCase();
+				String nameWithSchema = simpleName;
+				String nameWithSchemaAndCatalog = simpleName;
 
-                if (simpleName.equals(tableNameFromSQL)
-                        || nameWithSchema.equals(tableNameFromSQL)
-                        || nameWithSchemaAndCatalog.equals(tableNameFromSQL))
-                {
-					count++;
-					table = (TableInfo)tables[i];
+				if (null != tables[i].getSchemaName() && 0 < tables[i].getSchemaName().length())
+				{
+					nameWithSchema = tables[i].getSchemaName().toUpperCase() + "." + nameWithSchema;
+					nameWithSchemaAndCatalog = nameWithSchema;
 				}
-/***
-				else {
-					tables[i] = null;
+
+				if (null != tables[i].getCatalogName() && 0 < tables[i].getCatalogName().length())
+				{
+					nameWithSchemaAndCatalog = tables[i].getCatalogName().toUpperCase() + "." + nameWithSchema;
 				}
-*****/
+
+				if (simpleName.equals(tableNameFromSQL)
+					|| nameWithSchema.equals(tableNameFromSQL)
+					|| nameWithSchemaAndCatalog.equals(tableNameFromSQL))
+				{
+					return (TableInfo) tables[i];
+				}
 			}
-
-		}
-		catch (Exception e) {
-			count = 0;
-		}
-
-		// if there are no objects with that name, we cannot edit.
-		// if there are multiple objects with that name, we cannot edit
-		//  because we do not know which object to work on.
-		if (count != 1)
 			return null;
+		}
+		catch (SQLException e)
+		{
+			throw new RuntimeException(e);
+		}
 
-		// we have the one and only table
-		return table;
-   }
+	}
 
 
    ////////////////////////////////////////////////////////

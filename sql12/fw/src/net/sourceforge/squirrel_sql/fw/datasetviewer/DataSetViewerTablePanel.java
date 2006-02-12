@@ -31,7 +31,6 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.JOptionPane;
 
@@ -68,7 +67,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 
 	private ILogger s_log = LoggerController.createLogger(DataSetViewerTablePanel.class);
 
-	private MyJTable _comp = null;
+	private MyJTable _table = null;
 	private MyTableModel _typedModel;
 	private IDataSetUpdateableModel _updateableModel;
 
@@ -79,7 +78,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 
 	public void init(IDataSetUpdateableModel updateableModel)
 	{
-		_comp = new MyJTable(this, updateableModel);
+		_table = new MyJTable(this, updateableModel);
 		_updateableModel = updateableModel;
 	}
 	
@@ -98,14 +97,14 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 	public void setColumnDefinitions(ColumnDisplayDefinition[] colDefs)
 	{
 		super.setColumnDefinitions(colDefs);
-		_comp.setColumnDefinitions(colDefs);
+		_table.setColumnDefinitions(colDefs);
 	}
 
 	public void moveToTop()
 	{
-		if (_comp.getRowCount() > 0)
+		if (_table.getRowCount() > 0)
 		{
-			_comp.setRowSelectionInterval(0, 0);
+			_table.setRowSelectionInterval(0, 0);
 		}
 	}
 
@@ -116,7 +115,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 	 */
 	public Component getComponent()
 	{
-		return _comp;
+		return _table;
 	}
 
 	/*
@@ -154,6 +153,11 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		return _typedModel.getRowCount();
 	}
 
+	public void setShowRowNumbers(boolean showRowNumbers)
+	{
+		_table.setShowRowNumbers(showRowNumbers);
+	}
+
 
 	/*
 	 * The JTable used for displaying all DB ResultSet info.
@@ -164,13 +168,14 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		private static final String data = "THE QUICK BROWN FOX JUMPED OVER THE LAZY DOG";
 
 		private TablePopupMenu _tablePopupMenu;
-		private ButtonTableHeader _bth;
 		private IDataSetTableControls _creator;
-      private Point _dragBeginPoint = null;
-      private Point _dragEndPoint = null;
+		private Point _dragBeginPoint = null;
+		private Point _dragEndPoint = null;
+		private RowNumberTableColumn _rntc;
+		private ButtonTableHeader _tableHeader = new ButtonTableHeader();
 
-      MyJTable(IDataSetTableControls creator,
-			IDataSetUpdateableModel updateableObject)
+		MyJTable(IDataSetTableControls creator,
+					IDataSetUpdateableModel updateableObject)
 		{
 			super(new SortableTableModel(new MyTableModel(creator)));
 			_creator = creator;
@@ -186,10 +191,10 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 			if (updateableObject != null && ! creator.isTableEditable())
 				allowUpdate = true;
 			createGUI(allowUpdate, updateableObject);
-			
+
 			// just in case table is editable, call creator to set up cell editors
 			_creator.setCellEditors(this);
-			
+
 			/*
 			 * TODO: When 1.4 is the earliest version supported, add the following line:
 			*		setSurrendersFocusOnKeystroke(true);
@@ -197,61 +202,61 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 			* to move through cells.
 			*/
 
-         addMouseListener(new MouseAdapter()
-         {
-            public void mousePressed(MouseEvent e)
-            {
-               _dragBeginPoint = e.getPoint();
-            }
+			addMouseListener(new MouseAdapter()
+			{
+				public void mousePressed(MouseEvent e)
+				{
+					_dragBeginPoint = e.getPoint();
+				}
 
-            public void mouseReleased(MouseEvent e)
-            {
-               _dragBeginPoint = null;
-               _dragEndPoint = null;
-               repaint();
-            }
-         });
+				public void mouseReleased(MouseEvent e)
+				{
+					_dragBeginPoint = null;
+					_dragEndPoint = null;
+					repaint();
+				}
+			});
 
-         addMouseMotionListener(new MouseMotionAdapter()
-         {
-            public void mouseDragged(MouseEvent e)
-            {
-               onMouseDragged(e);
-               repaint();
-            }
-         });
+			addMouseMotionListener(new MouseMotionAdapter()
+			{
+				public void mouseDragged(MouseEvent e)
+				{
+					onMouseDragged(e);
+					repaint();
+				}
+			});
 
 		}
 
-      private void onMouseDragged(MouseEvent e)
-      {
-         if(null == _dragBeginPoint)
-         {
-            _dragBeginPoint = e.getPoint();
-         }
+		private void onMouseDragged(MouseEvent e)
+		{
+			if(null == _dragBeginPoint)
+			{
+				_dragBeginPoint = e.getPoint();
+			}
 
-         _dragEndPoint = e.getPoint();
-      }
+			_dragEndPoint = e.getPoint();
+		}
 
-      public void paint(Graphics g)
-      {
-         super.paint(g);
+		public void paint(Graphics g)
+		{
+			super.paint(g);
 
-         if(null != _dragBeginPoint && null != _dragEndPoint && false == _dragBeginPoint.equals(_dragEndPoint))
-         {
-            int x = Math.min(_dragBeginPoint.x,  _dragEndPoint.x);
-            int y = Math.min(_dragBeginPoint.y,  _dragEndPoint.y);
-            int width = Math.abs(_dragBeginPoint.x - _dragEndPoint.x);
-            int heigh = Math.abs(_dragBeginPoint.y - _dragEndPoint.y);
+			if(null != _dragBeginPoint && null != _dragEndPoint && false == _dragBeginPoint.equals(_dragEndPoint))
+			{
+				int x = Math.min(_dragBeginPoint.x,  _dragEndPoint.x);
+				int y = Math.min(_dragBeginPoint.y,  _dragEndPoint.y);
+				int width = Math.abs(_dragBeginPoint.x - _dragEndPoint.x);
+				int heigh = Math.abs(_dragBeginPoint.y - _dragEndPoint.y);
 
-            Color colBuf = g.getColor();
-            g.setColor(getForeground());
-            g.drawRect(x,y,width,heigh);
-            g.setColor(colBuf);
-         }
-      }
+				Color colBuf = g.getColor();
+				g.setColor(getForeground());
+				g.drawRect(x,y,width,heigh);
+				g.setColor(colBuf);
+			}
+		}
 
-      public IDataSetTableControls getCreator() {
+		public IDataSetTableControls getCreator() {
 			return _creator;
 		}
 
@@ -267,8 +272,8 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 			currentCellEditor = (DefaultCellEditor)cellEditor;
 			return cellEditor;
 		}
-		
-		
+
+
 		/**
 		 * There are two special cases where we need to override the default behavior
 		 * when we begin cell editing.  For some reason, when you use the keyboard to
@@ -302,7 +307,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		 * 	  be caught.  They just won't be prevented.
 		 */
 		public void processKeyEvent(KeyEvent e) {
-			
+
 				// handle special case of delete with <null> contents
 				if (e.getKeyChar() == '\b' && getEditorComponent() != null &&
 						((RestorableJTextField)getEditorComponent()).getText().equals("<null>") ) {
@@ -314,7 +319,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 				// but there are some things (e.g. control chars) that are ignored, so let the
 				// normal processing do its thing
 				super.processKeyEvent(e);
-                
+
 				// now check to see if the original contents were <null>
 				// and we have actually added the input char to the end of it                                                              
 				if (getEditorComponent() != null) {
@@ -351,7 +356,9 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 
 			// data is a String, so we need to convert to real object
 			StringBuffer messageBuffer = new StringBuffer();
-			ColumnDisplayDefinition colDef = getColumnDefinitions()[col];
+
+			int modelIndex = getColumnModel().getColumn(col).getModelIndex();
+			ColumnDisplayDefinition colDef = getColumnDefinitions()[modelIndex];
 			Object newValueObject = CellComponentFactory.validateAndConvert(
 				colDef, getValueAt(row, col), (String) newValueString, messageBuffer);
 
@@ -384,6 +391,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 
 			// just in case table is editable, call creator to set up cell editors
 			_creator.setCellEditors(this);
+			_tablePopupMenu.reset();
 		}
 
 		MyTableModel getTypedModel()
@@ -402,9 +410,11 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 
 		private TableColumnModel createColumnModel(ColumnDisplayDefinition[] colDefs)
 		{
-
 			//_colDefs = hdgs;
 			TableColumnModel cm = new DefaultTableColumnModel();
+
+			_rntc = new RowNumberTableColumn();
+
 			for (int i = 0; i < colDefs.length; ++i)
 			{
 				ColumnDisplayDefinition colDef = colDefs[i];
@@ -415,20 +425,42 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 				}
 				else if (colWidth < MIN_COLUMN_WIDTH * _multiplier)
 				{
-			        colWidth = MIN_COLUMN_WIDTH * _multiplier;
+					  colWidth = MIN_COLUMN_WIDTH * _multiplier;
 				}
 
 				ExtTableColumn col = new ExtTableColumn(i, colWidth,
-					CellComponentFactory.getTableCellRenderer(colDefs[i]), null);			
+					CellComponentFactory.getTableCellRenderer(colDefs[i]), null);
 				col.setHeaderValue(colDef.getLabel());
-            col.setColumnDisplayDefinition(colDef);
+				col.setColumnDisplayDefinition(colDef);
 				cm.addColumn(col);
 			}
+
 			return cm;
 		}
 
-		private void createGUI(boolean allowUpdate, 
-			IDataSetUpdateableModel updateableObject)
+		void setShowRowNumbers(boolean show)
+		{
+			try
+			{
+				int rowNumColIx = getColumnModel().getColumnIndex(RowNumberTableColumn.ROW_NUMBER_COL_IDENTIFIER);
+				_tableHeader.columnIndexWillBeRemoved(rowNumColIx);
+			}
+			catch(IllegalArgumentException e)
+			{
+				// Column not in model
+			}
+
+			getColumnModel().removeColumn(_rntc);
+			if(show)
+			{
+				_tableHeader.columnIndexWillBeAdded(0);
+				getColumnModel().addColumn(_rntc);
+				getColumnModel().moveColumn(getColumnModel().getColumnCount()-1, 0);
+			}
+		}
+
+		private void createGUI(boolean allowUpdate,
+									  IDataSetUpdateableModel updateableObject)
 		{
 			setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 			setRowSelectionAllowed(false);
@@ -438,8 +470,8 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 			getTableHeader().setReorderingAllowed(true);
 			setAutoCreateColumnsFromModel(false);
 			setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-			_bth = new ButtonTableHeader();
-			setTableHeader(_bth);
+			setTableHeader(_tableHeader);
+			_tableHeader.setTable(this);
 
 			_tablePopupMenu = new TablePopupMenu(allowUpdate, updateableObject,
 				DataSetViewerTablePanel.this);
@@ -459,10 +491,18 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 						// so we can pass in the right column description
 
 						Point pt = evt.getPoint();
-						int col = MyJTable.this.columnAtPoint(pt);
-						ColumnDisplayDefinition colDefs[] = getColumnDefinitions();
-						CellDataPopup.showDialog(MyJTable.this, colDefs[col], evt,
-							MyJTable.this._creator.isTableEditable());
+						TableColumnModel cm = MyJTable.this.getColumnModel();
+						int columnIndexAtX = cm.getColumnIndexAtX(pt.x);
+						int modelIndex = cm.getColumn(columnIndexAtX).getModelIndex();
+
+
+
+						if(RowNumberTableColumn.ROW_NUMBER_MODEL_INDEX != modelIndex)
+						{
+							ColumnDisplayDefinition colDefs[] = getColumnDefinitions();
+							CellDataPopup.showDialog(MyJTable.this, colDefs[modelIndex], evt, MyJTable.this._creator.isTableEditable());
+
+						}
 					}
 				}
 				public void mouseReleased(MouseEvent evt)
@@ -643,16 +683,16 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 		fontHeight=(int)(g.getFontMetrics().getHeight() * scale);
 		fontDesent=(int)(g.getFontMetrics().getDescent() * scale);
  
-		tableHeader = _comp.getTableHeader();
+		tableHeader = _table.getTableHeader();
 		double headerWidth = tableHeader.getWidth() * scale;
-		headerHeight = tableHeader.getHeight() +_comp.getRowMargin() * scale;
+		headerHeight = tableHeader.getHeight() +_table.getRowMargin() * scale;
  
 		pageHeight = pageFormat.getImageableHeight();
 		pageWidth =  pageFormat.getImageableWidth();
  
-//		double tableWidth =_comp.getColumnModel().getTotalColumnWidth() * scale;
-		tableHeight = _comp.getHeight() * scale;
-		rowHeight = _comp.getRowHeight() + _comp.getRowMargin() * scale;
+//		double tableWidth =_table.getColumnModel().getTotalColumnWidth() * scale;
+		tableHeight = _table.getHeight() * scale;
+		rowHeight = _table.getRowHeight() + _table.getRowMargin() * scale;
  
 		tableHeightOnFullPage = (int)(pageHeight - headerHeight - fontHeight*2);
 		tableHeightOnFullPage = tableHeightOnFullPage/rowHeight * rowHeight;
@@ -736,7 +776,7 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
  
 		g2.setClip(pageLeft, (int)tableHeightOnFullPage*rowIndex, pageWidth, (int)clipHeight);
 		g2.scale(scale, scale);
-		_comp.paint(g2);
+		_table.paint(g2);
 		g2.scale(1/scale, 1/scale);
  
 		double pageTop =  tableHeightOnFullPage*rowIndex - headerHeight;

@@ -47,7 +47,8 @@ public class TablePopupMenu extends BasePopupMenu
 		int COPY_HTML = 2;
 		int COPY_IN_STATEMENT = 3;
 		int SELECT_ALL = 4;
-		int LAST_ENTRY = 5;
+		int SHOW_ROW_NUMBERS = 5;
+		int LAST_ENTRY = 6;
 	}
 
 	private static final KeyStroke COPY_STROKE = KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK);
@@ -56,15 +57,15 @@ public class TablePopupMenu extends BasePopupMenu
 
 	private JTable _table;
 
+	private JCheckBoxMenuItem showRowNumbersItem;
 
 
-	private CutAction _cut = new CutAction();
 	private CopyAction _copy = new CopyAction();
 	private CopyWithHeadersAction _copyWithHeaders = new CopyWithHeadersAction();
 	private CopyHtmlAction _copyHtml = new CopyHtmlAction();
 	private CopyInStatementAction _copyInStatement = new CopyInStatementAction();
-	private PasteAction _paste = new PasteAction();
-	//	private ClearAction _clear = new ClearAction();
+	private ShowRowNumbersAction _showRowNumbersAction = new ShowRowNumbersAction();
+
 	private MakeEditableAction _makeEditable = new MakeEditableAction();
 	private UndoMakeEditableAction _undoMakeEditable = new UndoMakeEditableAction();
 	private DeleteRowsAction _deleteRows = new DeleteRowsAction();
@@ -72,10 +73,11 @@ public class TablePopupMenu extends BasePopupMenu
 	private SelectAllAction _select = new SelectAllAction();
 	private PrintAction _print = new PrintAction();
 
+
 	// The following pointer is needed to allow the "Make Editable button
 	// to tell the application to set up an editable display panel
 	private IDataSetUpdateableModel _updateableModel = null;
-	
+
 	// pointer to the viewer
 	// This is needed for insert and delete operations
 	private DataSetViewerTablePanel _viewer = null;
@@ -88,13 +90,13 @@ public class TablePopupMenu extends BasePopupMenu
 	 * The caller needs to determine whether or not to allow a request for edit mode.
 	 */
 	public TablePopupMenu(boolean allowEditing,
-			IDataSetUpdateableModel updateableModel,
-			DataSetViewerTablePanel viewer)
+								 IDataSetUpdateableModel updateableModel,
+								 DataSetViewerTablePanel viewer)
 	{
 		super();
 		// save the pointer needed to enable editing of data on-demand
 		_updateableModel = updateableModel;
-		
+
 		// save the pointer needed for insert and delete operations
 		_viewer = viewer;
 
@@ -104,6 +106,12 @@ public class TablePopupMenu extends BasePopupMenu
 		_menuItems[IOptionTypes.COPY_WITH_HEADERS] = add(_copyWithHeaders);
 		_menuItems[IOptionTypes.COPY_HTML] = add(_copyHtml);
 		_menuItems[IOptionTypes.COPY_IN_STATEMENT] = add(_copyInStatement);
+
+		showRowNumbersItem = new JCheckBoxMenuItem();
+		showRowNumbersItem.setSelected(false);
+		showRowNumbersItem.setAction(_showRowNumbersAction);
+
+		_menuItems[IOptionTypes.SHOW_ROW_NUMBERS] = add(showRowNumbersItem);
 		if (allowEditing)
 		{
 			addSeparator();
@@ -124,24 +132,24 @@ public class TablePopupMenu extends BasePopupMenu
 			add(_insertRow);
 			add(_deleteRows);
 		}
-		
+
 		addSeparator();
 		add(_print);
 	}
-	
+
 	/**
 	 * Constructor used when creating menu for use in cell editor.
 	 */
 	public TablePopupMenu(IDataSetUpdateableModel updateableModel,
-			DataSetViewerTablePanel viewer, JTable table)
+								 DataSetViewerTablePanel viewer, JTable table)
 	{
 		super();
 		// save the pointer needed to enable editing of data on-demand
 		_updateableModel = updateableModel;
-		
+
 		// save the pointer needed for insert and delete operations
 		_viewer = viewer;
-		
+
 		_table = table;
 		replaceStandardTableCopyAction();
 
@@ -157,7 +165,7 @@ public class TablePopupMenu extends BasePopupMenu
 		addSeparator();
 		add(_insertRow);
 		add(_deleteRows);
-		
+
 		addSeparator();
 		add(_print);
 	}
@@ -167,6 +175,12 @@ public class TablePopupMenu extends BasePopupMenu
 		_table = value;
 		replaceStandardTableCopyAction();
 	}
+
+	public void reset()
+	{
+		showRowNumbersItem.setSelected(false);
+	}
+
 
 	private void replaceStandardTableCopyAction()
 	{
@@ -181,72 +195,14 @@ public class TablePopupMenu extends BasePopupMenu
 	 */
 	public void show(Component invoker, int x, int y)
 	{
-		updateActions();
 		super.show(invoker, x, y);
 	}
 
 	public void show(MouseEvent evt)
 	{
-		updateActions();
 		super.show(evt);
 	}
 
-/*
-	protected void setItemAction(int optionType, Action action)
-	{
-		if (optionType < 0 || optionType > IOptionTypes.LAST_ENTRY)
-		{
-			throw new IllegalArgumentException("Invalid option type: " + optionType);
-		}
-		if (action == null)
-		{
-			throw new IllegalArgumentException("Action == null");
-		}
-
-		final int idx = getComponentIndex(_menuItems[optionType]);
-		remove(idx);
-		insert(action, idx);
-		_menuItems[optionType] = (JMenuItem)getComponent(idx);
-	}
-*/
-
-	protected void updateActions()
-	{
-		final boolean isEditable = false;
-		_cut.setEnabled(isEditable);
-		_paste.setEnabled(isEditable);
-	}
-
-
-//	private class ClearAction extends BaseAction
-//	{
-//		ClearAction()
-//		{
-//			super(s_stringMgr.getString("TablePopupMenu.clear"));
-//		}
-//
-//		public void actionPerformed(ActionEvent evt)
-//		{
-//			if (_table != null)
-//			{
-//			}
-//		}
-//	}
-
-	private class CutAction extends BaseAction
-	{
-		CutAction()
-		{
-			super(s_stringMgr.getString("TablePopupMenu.cut"));
-		}
-
-		public void actionPerformed(ActionEvent evt)
-		{
-			if (_table != null)
-			{
-			}
-		}
-	}
 
 	private class CopyAction extends BaseAction
 	{
@@ -298,38 +254,40 @@ public class TablePopupMenu extends BasePopupMenu
 		}
 	}
 
-   private class CopyInStatementAction extends BaseAction
-   {
-      CopyInStatementAction()
-      {
-         super(s_stringMgr.getString("TablePopupMenu.copyasinstatement"));
-      }
-
-      public void actionPerformed(ActionEvent evt)
-      {
-         if (_table != null)
-         {
-            new TableCopyInStatementCommand(_table).execute();
-         }
-      }
-   }
-
-
-
-	private class PasteAction extends BaseAction
+	private class CopyInStatementAction extends BaseAction
 	{
-		PasteAction()
+		CopyInStatementAction()
 		{
-			super(s_stringMgr.getString("TablePopupMenu.paste"));
+			super(s_stringMgr.getString("TablePopupMenu.copyasinstatement"));
 		}
 
 		public void actionPerformed(ActionEvent evt)
 		{
 			if (_table != null)
 			{
+				new TableCopyInStatementCommand(_table).execute();
 			}
 		}
 	}
+
+	private class ShowRowNumbersAction extends BaseAction
+	{
+		ShowRowNumbersAction()
+		{
+			super(s_stringMgr.getString("TablePopupMenu.showRowNumbers"));
+		}
+
+		public void actionPerformed(ActionEvent evt)
+		{
+			if (_table != null)
+			{
+				JCheckBoxMenuItem mnu = (JCheckBoxMenuItem) evt.getSource();
+				new ShowRowNumbersCommand(_viewer, mnu.isSelected()).execute();
+			}
+		}
+	}
+
+
 
 	private class MakeEditableAction extends BaseAction
 	{
@@ -346,7 +304,7 @@ public class TablePopupMenu extends BasePopupMenu
 			}
 		}
 	}
-	
+
 
 	private class UndoMakeEditableAction extends BaseAction
 	{
@@ -375,14 +333,14 @@ public class TablePopupMenu extends BasePopupMenu
 			if (_table != null)
 			{
 				int selectedRows[] = _table.getSelectedRows();
-			
+
 				// Tell the DataSetViewer to delete the rows
 				// Note: rows are indexes in the SORTABLE model, not the ACTUAL model
 				_viewer.deleteRows(selectedRows);
 			}
 		}
 	}
-	
+
 	private class InsertRowAction extends BaseAction
 	{
 		InsertRowAction()
@@ -411,8 +369,8 @@ public class TablePopupMenu extends BasePopupMenu
 			}
 		}
 	}
-	
-	
+
+
 	private class PrintAction extends BaseAction
 	{
 		PrintAction()
@@ -425,11 +383,11 @@ public class TablePopupMenu extends BasePopupMenu
 			if (_table != null)
 			{
 				try {
-                                                                                
+
 					PrinterJob printerJob = PrinterJob.getPrinterJob();
-                                                                                
+
 					printerJob.setPrintable(_viewer);
-                                                                                
+
 					if (printerJob.printDialog()) {
 						printerJob.print();
 					}
