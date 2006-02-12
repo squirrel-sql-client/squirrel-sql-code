@@ -693,18 +693,16 @@ public class SQLPanelAPI implements ISQLPanelAPI
     * A session listener that will detect unsaved edits and prompt the user to 
     * save them when the session is about to be closed.
     */
-   private class MySessionListener extends SessionAdapter {
-       
-       /* (non-Javadoc)
-        * @see net.sourceforge.squirrel_sql.client.session.event.SessionAdapter#sessionClosing(net.sourceforge.squirrel_sql.client.session.event.SessionEvent)
-        */
-       public void sessionClosing(SessionEvent evt) {
-           if (evt.getSession().equals(_panel.getSession()) 
-                   && unsavedEdits)
-           {
-               showConfirmSaveDialog();
-           }
-       }              
-   }
-   
+	private class MySessionListener extends SessionAdapter
+	{
+		public void sessionClosing(SessionEvent evt)
+		{
+			if (evt.getSession().equals(_panel.getSession()) && unsavedEdits)
+			{
+				showConfirmSaveDialog();
+			}
+			getSession().getApplication().getSessionManager().removeSessionListener(this);
+		}
+	}
+
 }
