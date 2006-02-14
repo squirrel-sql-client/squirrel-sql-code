@@ -59,7 +59,10 @@ public class KeyManager
 
       keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Event.CTRL_MASK | Event.SHIFT_MASK);
       _textPane.getKeymap().removeKeyStrokeBinding(keyStroke);
-   }
+
+		keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, Event.CTRL_MASK);
+		_textPane.getKeymap().removeKeyStrokeBinding(keyStroke);
+	}
 
    private void registerKeyStrokes()
    {
@@ -105,9 +108,27 @@ public class KeyManager
          }
       };
       _textPane.getKeymap().addActionForKeyStroke(keyStroke,act);
+
+		keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, Event.CTRL_MASK);
+		act  = new AbstractAction()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				onCtrlBackSpace();
+			}
+
+		};
+		_textPane.getKeymap().addActionForKeyStroke(keyStroke,act);
    }
 
-   private void onLeftCtrlShift()
+	private void onCtrlBackSpace()
+	{
+		moveCtrlLeft(true);
+		_textPane.replaceSelection("");
+	}
+
+
+	private void onLeftCtrlShift()
    {
       moveCtrlLeft(true);
    }
