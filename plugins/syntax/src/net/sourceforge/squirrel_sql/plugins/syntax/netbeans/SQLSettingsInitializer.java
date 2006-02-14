@@ -179,8 +179,9 @@ public class SQLSettingsInitializer extends Settings.AbstractInitializer
    }
 
 
-   public static final MultiKeyBinding[] squirrelKeyBindings =
 
+
+	public static final MultiKeyBinding[] squirrelKeyBindings =
       new MultiKeyBinding[]
       {
          new MultiKeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_F, MENU_MASK),
@@ -193,6 +194,14 @@ public class SQLSettingsInitializer extends Settings.AbstractInitializer
             ExtKit.gotoAction),
          new MultiKeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
             ExtKit.escapeAction),
+
+			new MultiKeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK),
+				BaseKit.toUpperCaseAction),
+
+			new MultiKeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK),
+				BaseKit.toLowerCaseAction),
+
+
 //         new MultiKeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_OPEN_BRACKET, MENU_MASK),
 //            ExtKit.matchBraceAction),
 //         new MultiKeyBinding(KeyStroke.getKeyStroke(KeyEvent.VK_OPEN_BRACKET, MENU_MASK | InputEvent.SHIFT_MASK),
@@ -204,12 +213,13 @@ public class SQLSettingsInitializer extends Settings.AbstractInitializer
             KeyStroke.getKeyStroke(KeyEvent.VK_F7, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK),
             BaseKit.toggleHighlightSearchAction),
 
-         new MultiKeyBinding(
-            KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_MASK),
-            SQLKit.duplicateLineAction),
-
-
+//         new MultiKeyBinding(
+//            KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_MASK),
+//            SQLKit.duplicateLineAction),
       };
+
+	   public static final String ACCELERATOR_STRING_TO_UPPER_CASE = "ctrl shift u";
+	   public static final String ACCELERATOR_STRING_TO_LOWER_CASE = "ctrl shift l";
 
 
 

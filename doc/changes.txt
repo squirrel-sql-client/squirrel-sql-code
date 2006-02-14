@@ -4,6 +4,10 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+- SQL Editor: ctrl+backspace deletes word behind cursor.
+
+- SQL Editor: To upper/lower case function available in tools pop up or by short cut ctrl+shift+u/l
+
 - Row numbers in SQL result and Object Tree tables tables:
   Use the right mouse menu in SQL result tables or Object Tree tables to switch on row numbering.
 

@@ -9,7 +9,7 @@ import javax.swing.text.Document;
 public class SQLKit extends ExtKit
 {
    private SyntaxFactory _syntaxFactory;
-   public static final String duplicateLineAction = "duplicate-line-action";
+//   public static final String duplicateLineAction = "duplicate-line-action";
 
 
    public SQLKit(SyntaxFactory syntaxFactory)
