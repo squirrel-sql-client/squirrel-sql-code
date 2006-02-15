@@ -4,6 +4,10 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+ -Fixed bug #1194548 "ResultSet.getMetadata after ResultSet.close"
+  This bug turned as an error when executing SQL. It happened when a database
+  closes a ResultSet when it is iterated through, that is when res.next() returns false.
+
 - SQL Editor: ctrl+backspace deletes word behind cursor.
 
 - SQL Editor: To upper/lower case function available in tools pop up or by short cut ctrl+shift+u/l
