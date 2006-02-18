@@ -122,7 +122,11 @@ public class TranslatorsPanel extends JPanel
 			"6. To see your translations on next SQuirreL restart you need to:\n" +
 			"i. Edit the class path in your SQuirreL start batch or shell file to include your working directory.\n" +
 			"ii. If your machine is running with locale different from the one you are translating to edit your your SQuirreL start batch or shell to pass the right country to your Java Virtual Machine.\n" +
-			"In the shell or batch files you'll find further details about what to do.";
+			"In the shell or batch files you'll find further details about what to do.\n\n" +
+			"7. For non-latin1 encodings use the native2ascii tool included in JDK 1.4.x. For details see:\n" +
+			"http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/native2ascii.html\n\n" +
+			"8. For other translation issues or any further questions see our developer mailing list at " +
+         "squirrel-sql-develop@lists.sourceforge.net";
 
 
 }
