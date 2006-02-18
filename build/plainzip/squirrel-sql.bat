@@ -18,7 +18,7 @@ SET TMP_PARMS=--log-config-file "%SQUIRREL_SQL_HOME%\log4j.properties" --squirre
 @rem Run with a command window.
 @rem "%LOCAL_JAVA%" -cp %TMP_CP% net.sourceforge.squirrel_sql.client.Main %TMP_PARMS%
 
-@rem To add translation wirking directories to your classpath edit and uncomment this line:
+@rem To add translation working directories to your classpath edit and uncomment this line:
 @rem start "SQuirreL SQL Client" /B "%LOCAL_JAVA%w" -Xmx256m -cp %TMP_CP%;<your working dir here> net.sourceforge.squirrel_sql.client.Main %TMP_PARMS%
 
 @rem To change the language edit and uncomment this line:
