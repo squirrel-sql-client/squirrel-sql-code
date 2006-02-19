@@ -4,6 +4,12 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+- Introduced Oracle specific code to allow editing of tables in Oracle that contain Date columns.
+  Oracle stores time information in java.sql.Types.DATE columns. The where clauses that SQuirreL
+  used to create to update data after editing only contained the Date part of those columns. That's why
+  the where clause didn't match the database row and editing failed.
+
+
 - SQL Editor: ctrl+backspace deletes word behind cursor.
 
 - SQL Editor: To upper/lower case function available in tools pop up or by short cut ctrl+shift+u/l

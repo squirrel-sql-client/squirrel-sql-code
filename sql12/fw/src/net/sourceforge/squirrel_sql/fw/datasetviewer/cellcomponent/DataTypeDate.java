@@ -53,6 +53,7 @@ import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 
 /**
  * @author gwg
@@ -430,9 +431,9 @@ public class DataTypeDate
 					}
 				}
 				else {
-                    // field is not nullable
-                    //
-                    handleNotNullableField(text, c, e, _textComponent);
+						  // field is not nullable
+						  //
+						  handleNotNullableField(text, c, e, _textComponent);
 				}
 			}
 		}
@@ -470,11 +471,25 @@ public class DataTypeDate
 	 * 	"columnName is null"
 	 * or whatever is appropriate for this column in the database.
 	 */
-	public String getWhereClauseValue(Object value, String databaseProductName) {
+	public String getWhereClauseValue(Object value, String databaseProductName)
+	{
 		if (value == null || value.toString() == null || value.toString().length() == 0)
+		{
 			return _colDef.getLabel() + " IS NULL";
+		}
 		else
-			return _colDef.getLabel() + "={d '" + value.toString() +"'}";
+		{
+			if (SQLDatabaseMetaData.IDBMSProductNames.ORACLE.equalsIgnoreCase(databaseProductName))
+			{
+				// Oracle stores time infromation in java.sql.Types.Date columns
+				// This tells Oracle that we are only talking about the date part.
+				return "trunc(" + _colDef.getLabel() + ")={d '" + value.toString() + "'}";
+			}
+			else
+			{
+				return _colDef.getLabel() + "={d '" + value.toString() + "'}";
+			}
+		}
 	}
 
 

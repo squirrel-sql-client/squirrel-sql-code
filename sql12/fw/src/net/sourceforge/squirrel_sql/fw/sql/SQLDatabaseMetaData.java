@@ -102,7 +102,7 @@ public class SQLDatabaseMetaData
 	 * Full or partial names of various DBMS poducts that can be matched
 	 * to <tt>getDatabaseProductName()</tt>.
 	 */
-	private interface IDBMSProductNames
+	public interface IDBMSProductNames
 	{
 		String DB2 = "DB2";
 		String MYSQL = "mysql";
@@ -110,6 +110,7 @@ public class SQLDatabaseMetaData
 		String POSTGRESQL = "PostgreSQL";
 		String SYBASE = "Sybase SQL Server";
 		String SYBASE_OLD = "SQL Server";
+		String ORACLE = "Oracle";
 	}
 
 	/** Connection to database this class is supplying information for. */
