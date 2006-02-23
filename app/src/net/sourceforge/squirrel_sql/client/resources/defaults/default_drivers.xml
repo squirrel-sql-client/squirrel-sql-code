@@ -3,6 +3,39 @@
 <Beans>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		 <driverClassName>org.h2.Driver</driverClassName>
+		 <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			  <string>-35</string>
+		 </identifier>
+		 <jarFileName/>
+		 <jarFileNames Indexed="true"/>
+		 <name>H2 In-Memory</name>
+		 <url>jdbc:h2:mem:</url>
+	</Bean>	
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		 <driverClassName>org.h2.Driver</driverClassName>
+		 <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			  <string>-34</string>
+		 </identifier>
+		 <jarFileName/>
+		 <jarFileNames Indexed="true"/>
+		 <name>H2 Embedded</name>
+		 <url>jdbc:h2://&lt;db-name&gt;</url>
+	</Bean>	
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		 <driverClassName>org.h2.Driver</driverClassName>
+		 <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			  <string>-33</string>
+		 </identifier>
+		 <jarFileName/>
+		 <jarFileNames Indexed="true"/>
+		 <name>H2</name>
+		 <url>jdbc:h2://&lt;server&gt;:&lt;9092&gt;/&lt;db-name&gt;</url>
+	</Bean>	
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
 		 <driverClassName>COM.ibm.db2.jdbc.net.DB2Driver</driverClassName>
 		 <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
 			  <string>-32</string>
@@ -12,8 +45,6 @@
 		 <name>IBM DB2 Net Driver</name>
 		 <url>jdbc:db2://&lt;server&gt;:&lt;6789&gt;/&lt;db-name&gt;</url>
 	</Bean>
-
-
 
 	 <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
         <driverClassName>org.apache.derby.jdbc.ClientDriver</driverClassName>
@@ -44,7 +75,6 @@
        <name>Intersystems Cache</name>
        <url>jdbc:Cache://&lt;host&gt;:1972/&lt;database&gt;</url>
    </Bean>
-
 
     <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
         <driverClassName>org.firebirdsql.jdbc.FBDriver</driverClassName>
