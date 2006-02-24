@@ -134,6 +134,8 @@ class Session implements ISession
    private SessionInternalFrame _sessionInternalFrame;
    private Hashtable _parserEventsProcessorsByEntryPanelIdentifier = new Hashtable();
 
+   private String databaseProductName = null;
+   
    /**
 	 * Create a new session.
 	 *
@@ -151,7 +153,8 @@ class Session implements ISession
 					SQLConnection conn, String user, String password,
 					IIdentifier sessionId)
 	{
-		super();
+		super();  
+        cacheDatabaseProductName(conn);
 		_schemaInfo = new SchemaInfo(app);
 
 		if (app == null)
@@ -333,6 +336,7 @@ class Session implements ISession
 	 */
 	public SQLConnection getSQLConnection()
 	{
+        checkThread();
 		return _conn;
 	}
 
@@ -631,6 +635,15 @@ class Session implements ISession
 		return _title;
 	}
 
+    /**
+     * Returns the cached database product name
+     * 
+     * @return the value of DatabaseMetaData.getDatabaseProductName
+     */
+    public String getDatabaseProductName() {
+        return databaseProductName;
+    }
+    
 	public String toString()
 	{
 		return getTitle();
@@ -685,6 +698,18 @@ class Session implements ISession
 		_title = _id + " - " + title;
 	}
 
+    private void cacheDatabaseProductName(SQLConnection con) {
+        if (con != null) {
+            try {
+                databaseProductName = con.getSQLMetaData().getDatabaseProductName();
+            } catch (SQLException ex) {
+                // i18n[Session.error.getdbprodname=Unable to get database product name info]
+                String msg = s_stringMgr.getString("Session.error.getdbprodname");
+                s_log.error(msg, ex);
+            }
+        }
+    }
+    
    /**
     * The code in any SQLEditor is parsed in the background. You may attach a listener to the ParserEventsProcessor
     * to get to know about the results of parsing. The events are passed synchron with the event queue
@@ -885,6 +910,19 @@ class Session implements ISession
         });
     }
     
+    /**
+     * Check the thread of the caller to see if it is the event dispatch thread
+     * and if we are debugging print a debug log message with the call trace.
+     */
+    private void checkThread() {
+        if (s_log.isDebugEnabled() && SwingUtilities.isEventDispatchThread()) {
+            try {
+                throw new Exception("GUI Thread is doing database work");
+            } catch (Exception e) {
+                s_log.debug(e.getMessage(), e);
+            }
+        }
+    }
     
    private class SQLConnectionListener implements PropertyChangeListener
 	{

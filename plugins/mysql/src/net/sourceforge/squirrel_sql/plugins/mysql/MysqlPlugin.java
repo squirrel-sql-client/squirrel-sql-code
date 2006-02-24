@@ -21,6 +21,7 @@ import java.sql.SQLException;
 
 import javax.swing.JMenu;
 
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -225,47 +226,17 @@ public class MysqlPlugin extends DefaultSessionPlugin
 	 * @return	<TT>true</TT> if session is MySQL in which case this plugin
 	 * 			is interested in it.
 	 */
-	public PluginSessionCallback sessionStarted(ISession session)
+	public PluginSessionCallback sessionStarted(final ISession session)
 	{
       boolean isMysql = false;
       isMysql = isMysql(session);
       if (isMysql)
       {
-         _treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
-         final ActionCollection coll = getApplication().getActionCollection();
-
-         // Show users in the object tee.
-         _treeAPI.addExpander(DatabaseObjectType.SESSION, new SessionExpander());
-         _treeAPI.addExpander(IObjectTypes.USER_PARENT, new UserParentExpander(this));
-
-         // Tabs to add to the database node.
-         _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new DatabaseStatusTab());
-         _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ProcessesTab());
-         _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowVariablesTab());
-         _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowLogsTab());
-         _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowMasterStatusTab());
-         _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowMasterLogsTab());
-         _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowSlaveStatusTab());
-
-         // Tabs to add to the catalog nodes.
-         _treeAPI.addDetailTab(DatabaseObjectType.CATALOG, new OpenTablesTab());
-         _treeAPI.addDetailTab(DatabaseObjectType.CATALOG, new TableStatusTab());
-
-         // Tabs to add to the table nodes.
-         _treeAPI.addDetailTab(DatabaseObjectType.TABLE, new ShowColumnsTab());
-         _treeAPI.addDetailTab(DatabaseObjectType.TABLE, new ShowIndexesTab());
-
-         // Tabs to add to the user nodes.
-         _treeAPI.addDetailTab(DatabaseObjectType.USER, new UserGrantsTab());
-
-         // Options in popup menu.
-         _treeAPI.addToPopup(coll.get(CreateDatabaseAction.class));
-
-//				_treeAPI.addToPopup(DatabaseObjectType.SESSION, coll.get(CreateTableAction.class));
-//				_treeAPI.addToPopup(DatabaseObjectType.CATALOG, coll.get(CreateTableAction.class));
-         _treeAPI.addToPopup(DatabaseObjectType.CATALOG, coll.get(DropDatabaseAction.class));
-
-         _treeAPI.addToPopup(DatabaseObjectType.TABLE, createMysqlTableMenu());
+          GUIUtils.processOnSwingEventThread(new Runnable() {
+              public void run() {
+                  updateTreeApi(session);
+              }
+          });
       }
 
       if(isMysql)
@@ -292,6 +263,44 @@ public class MysqlPlugin extends DefaultSessionPlugin
       }
 	}
 
+    private void updateTreeApi(ISession session) {
+        _treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
+        final ActionCollection coll = getApplication().getActionCollection();
+
+        // Show users in the object tee.
+        _treeAPI.addExpander(DatabaseObjectType.SESSION, new SessionExpander());
+        _treeAPI.addExpander(IObjectTypes.USER_PARENT, new UserParentExpander(this));
+
+        // Tabs to add to the database node.
+        _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new DatabaseStatusTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ProcessesTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowVariablesTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowLogsTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowMasterStatusTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowMasterLogsTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ShowSlaveStatusTab());
+
+        // Tabs to add to the catalog nodes.
+        _treeAPI.addDetailTab(DatabaseObjectType.CATALOG, new OpenTablesTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.CATALOG, new TableStatusTab());
+
+        // Tabs to add to the table nodes.
+        _treeAPI.addDetailTab(DatabaseObjectType.TABLE, new ShowColumnsTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.TABLE, new ShowIndexesTab());
+
+        // Tabs to add to the user nodes.
+        _treeAPI.addDetailTab(DatabaseObjectType.USER, new UserGrantsTab());
+
+        // Options in popup menu.
+        _treeAPI.addToPopup(coll.get(CreateDatabaseAction.class));
+
+//              _treeAPI.addToPopup(DatabaseObjectType.SESSION, coll.get(CreateTableAction.class));
+//              _treeAPI.addToPopup(DatabaseObjectType.CATALOG, coll.get(CreateTableAction.class));
+        _treeAPI.addToPopup(DatabaseObjectType.CATALOG, coll.get(DropDatabaseAction.class));
+
+        _treeAPI.addToPopup(DatabaseObjectType.TABLE, createMysqlTableMenu());        
+    }
+    
 	/**
 	 * Create menu containing actions relevant for table nodes in the object
 	 * tree.

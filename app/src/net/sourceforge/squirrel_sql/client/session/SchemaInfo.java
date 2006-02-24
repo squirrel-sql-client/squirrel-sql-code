@@ -26,11 +26,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.StringTokenizer;
+
+import javax.swing.JProgressBar;
+import javax.swing.ProgressMonitor;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DataTypeInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -65,7 +68,7 @@ public class SchemaInfo
 	private ISession _session = null;
 	private IProcedureInfo[] _procInfos = new IProcedureInfo[0];
 	private HashMap _procedures = new HashMap();
-
+    private ProgressMonitor progress = null; 
 
 	/** Logger for this class. */
 	private static final ILogger s_log =
@@ -103,7 +106,10 @@ public class SchemaInfo
 
 	public void load(ISession session)
 	{
-		if (session == null)
+        long mstart = System.currentTimeMillis();
+        initProgressMonitor(session);
+        String msg = null;
+        if (session == null)
 		{
 			throw new IllegalArgumentException("Session == null");
 		}
@@ -113,17 +119,20 @@ public class SchemaInfo
 		{
 			_session = session;
 			SQLConnection conn = _session.getSQLConnection();
-
-
 			final SQLDatabaseMetaData sqlDmd = conn.getSQLMetaData();
-
 			_dmd = sqlDmd;
 
 			try
 			{
-				s_log.debug("Loading keywords");
+                // i18n[SchemaInfo.loadingKeywords=Loading keywords]
+                msg = s_stringMgr.getString("SchemaInfo.loadingKeywords");
+				s_log.debug(msg);
+                setNote(msg);
+                long start = System.currentTimeMillis();
 				loadKeywords(sqlDmd);
-				s_log.debug("Keywords loaded");
+                setProgress(1);
+                long finish = System.currentTimeMillis();
+				s_log.debug("Keywords loaded in "+(finish-start)+" ms");
 			}
 			catch (Exception ex)
 			{
@@ -132,9 +141,15 @@ public class SchemaInfo
 
 			try
 			{
-			    s_log.debug("Loading data types");
+                // i18n[SchemaInfo.loadingDataTypes=Loading data types]
+                msg = s_stringMgr.getString("SchemaInfo.loadingDataTypes");
+			    s_log.debug(msg);
+                setNote(msg);
+                long start = System.currentTimeMillis();
 				loadDataTypes(sqlDmd);
-				s_log.debug("Data types loaded");
+                setProgress(2);
+                long finish = System.currentTimeMillis();
+				s_log.debug("Data types loaded in "+(finish-start)+" ms");
 			}
 			catch (Exception ex)
 			{
@@ -143,9 +158,15 @@ public class SchemaInfo
 
 			try
 			{
-				s_log.debug("Loading functions");
+                // i18n[SchemaInfo.loadingFunctions=Loading functions]
+                msg = s_stringMgr.getString("SchemaInfo.loadingFunctions");
+				s_log.debug(msg);
+                setNote(msg);
+                long start = System.currentTimeMillis();
 				loadFunctions(sqlDmd);
-				s_log.debug("Functions loaded");
+                setProgress(3);
+                long finish = System.currentTimeMillis();
+				s_log.debug("Functions loaded in "+(finish-start)+" ms");
 			}
 			catch (Exception ex)
 			{
@@ -154,9 +175,15 @@ public class SchemaInfo
 
 			try
 			{
-				s_log.debug("Loading catalogs");
+                // i18n[SchemaInfo.loadingCatalogs=Loading catalogs]
+                msg = s_stringMgr.getString("SchemaInfo.loadingCatalogs");
+				s_log.debug(msg);
+                setNote(msg);
+                long start = System.currentTimeMillis();
 				loadCatalogs(sqlDmd);
-				s_log.debug("Catalogs loaded");
+                setProgress(4);
+                long finish = System.currentTimeMillis();
+				s_log.debug("Catalogs loaded in "+(finish-start)+" ms");
 			}
 			catch (Exception ex)
 			{
@@ -165,9 +192,15 @@ public class SchemaInfo
 
 			try
 			{
-				s_log.debug("Loading schemas");
+                // i18n[SchemaInfo.loadingSchemas=Loading schemas]
+                msg = s_stringMgr.getString("SchemaInfo.loadingSchemas");
+				s_log.debug(msg);
+                setNote(msg);
+                long start = System.currentTimeMillis();
 				loadSchemas(sqlDmd);
-				s_log.debug("Schemas loaded");
+                setProgress(5);
+                long finish = System.currentTimeMillis();
+				s_log.debug("Schemas loaded in "+(finish-start)+" ms");
 			}
 			catch (Exception ex)
 			{
@@ -177,9 +210,15 @@ public class SchemaInfo
 
 			try
 			{
-				s_log.debug("Loading tables");
+                // i18n[SchemaInfo.loadingTables=Loading tables]
+                msg = s_stringMgr.getString("SchemaInfo.loadingTables");
+				s_log.debug(msg);
+                setNote(msg);
+                long start = System.currentTimeMillis();
 				loadTables(sqlDmd);
-				s_log.debug("Tables loaded");
+                setProgress(6);
+                long finish = System.currentTimeMillis();
+				s_log.debug("Tables loaded in "+(finish-start)+" ms");
 			}
 			catch (Exception ex)
 			{
@@ -188,9 +227,15 @@ public class SchemaInfo
 
 			try
 			{
-				s_log.debug("Loading stored procedures");
-				loadStoredProcedures(sqlDmd);
-				s_log.debug("stored procedures loaded");
+                // i18n[SchemaInfo.loadingStoredProcedures=Loading stored procedures]
+                msg = s_stringMgr.getString("SchemaInfo.loadingStoredProcedures");
+				s_log.debug(msg);
+                setNote(msg);
+                long start = System.currentTimeMillis();
+                loadStoredProcedures(sqlDmd);
+                setProgress(7);
+                long finish = System.currentTimeMillis();
+				s_log.debug("stored procedures loaded in "+(finish-start)+" ms");
 			}
 			catch (Exception ex)
 			{
@@ -202,8 +247,43 @@ public class SchemaInfo
 			_loading = false;
 			_loaded = true;
 		}
+        long mfinish = System.currentTimeMillis();
+        s_log.debug("SchemaInfo.load took "+(mfinish-mstart)+" ms");
 	}
 
+    private void initProgressMonitor(final ISession session) {
+        GUIUtils.processOnSwingEventThread(new Runnable() {
+            public void run() {
+                String message = null;
+                String note = "note";
+                
+                progress = new ProgressMonitor(session.getApplication().getMainFrame(),
+                                               message,
+                                               note,
+                                               0,
+                                               7);
+                progress.setMillisToDecideToPopup(500);
+                progress.setMillisToPopup(500);                        
+            }
+        });
+    }
+    
+    private void setNote(final String note) {
+        GUIUtils.processOnSwingEventThread(new Runnable() {
+            public void run() {
+                progress.setNote(note);
+            }
+        });
+    }
+    
+    private void setProgress(final int nv) {
+        GUIUtils.processOnSwingEventThread(new Runnable() {
+            public void run() {
+                progress.setProgress(nv);
+            }
+        });        
+    }
+    
 	private void loadStoredProcedures(SQLDatabaseMetaData dmd)
 	{
 

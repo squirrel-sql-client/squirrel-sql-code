@@ -27,7 +27,9 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -85,14 +87,24 @@ public class CreateTableScriptCommand implements ICommand
    }
 
 
-   public void scriptTablesToSQLEntryArea(IDatabaseObjectInfo[] dbObjs)
+   public void scriptTablesToSQLEntryArea(final IDatabaseObjectInfo[] dbObjs)
    {
-      String script = createTableScriptString(dbObjs);
-		if(null != script)
-		{
-			FrameWorkAcessor.getSQLPanelAPI(_session, _plugin).appendSQLScript(script, true);
-			_session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
-		}
+       _session.getApplication().getThreadPool().addTask(new Runnable() {
+           public void run() {
+               final String script = createTableScriptString(dbObjs);
+                if(null != script)
+                {
+                    GUIUtils.processOnSwingEventThread(new Runnable() {
+                        public void run() {
+                            ISQLPanelAPI api = 
+                                FrameWorkAcessor.getSQLPanelAPI(_session, _plugin);
+                            api.appendSQLScript(script, true);
+                            _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);                            
+                        }
+                    });
+                }               
+           }
+       });
 	}
 
 

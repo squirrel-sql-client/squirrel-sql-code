@@ -22,6 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
 
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 
@@ -123,8 +124,13 @@ public class DataImportPlugin extends DefaultSessionPlugin {
      * @return  <TT>true</TT> to indicate that this plugin is
      *          applicable to passed session.
      */
-    public PluginSessionCallback sessionStarted(ISession session) {
-        session.addMainTab(new FileImportTab(session));
+    public PluginSessionCallback sessionStarted(final ISession session) {
+        GUIUtils.processOnSwingEventThread(new Runnable() {
+            public void run() {
+                session.addMainTab(new FileImportTab(session));        
+            }
+        });
+        
 
        return new PluginSessionCallback()
        {

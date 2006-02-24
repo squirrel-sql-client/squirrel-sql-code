@@ -51,6 +51,32 @@ public class UserGrantsTab extends BaseSQLTab
 	protected String getSQL()
 	{
 		final String db = getDatabaseObjectInfo().getQualifiedName();
-		return "show grants for " + db;
+        //String newdb = fixQuotes(db);
+        //System.out.println("show grants for "+newdb);
+		//return "show grants for "+newdb;
+        return "show grants for " + db;
 	}
+    
+    private static String fixQuotes(String user) {
+        String[] parts = user.split("\\@");
+        String first = "";
+        if (parts[0].length() > 1) {
+            first = parts[0] + "'";
+        } else {
+            first = "'%'";
+        }
+        String last = "";
+        if (parts[1].length() > 1) {
+            last = "'" + parts[1];
+        } else {
+            last = "'%'";
+        }
+        return first + "@" + last;
+        
+    }
+    
+    public static void main(String[] args) {
+        String newString = fixQuotes("'root@'");
+        System.out.println("fixQuotes(@localhost)="+newString);
+    }
 }

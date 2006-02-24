@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -176,25 +177,39 @@ public class GraphPlugin extends DefaultSessionPlugin
     * @return <TT>true</TT> to indicate that this plugin is
     *         applicable to passed session.
     */
-   public PluginSessionCallback sessionStarted(ISession session)
+   public PluginSessionCallback sessionStarted(final ISession session)
    {
-      GraphXmlSerializer[] serializers  = GraphXmlSerializer.getGraphXmSerializers(this, session);
-      GraphController[] controllers = new GraphController[serializers.length];
+      final GraphXmlSerializer[] serializers  = 
+          GraphXmlSerializer.getGraphXmSerializers(this, session);
+      final GraphController[] controllers = 
+          new GraphController[serializers.length];
 
       for (int i = 0; i < controllers.length; i++)
       {
-         controllers[i] = new GraphController(session, this, serializers[i]);
+          final int idx = i; 
+          GUIUtils.processOnSwingEventThread(new Runnable() {
+              public void run() {
+                  controllers[idx] = 
+                      new GraphController(session,  
+                                          GraphPlugin.this, 
+                                          serializers[idx]);
+              }
+          });         
       }
 
 
       _grapControllersBySessionID.put(session.getIdentifier(), controllers);
+      
+      final IObjectTreeAPI api = session.getSessionInternalFrame().getObjectTreeAPI();
+      final ActionCollection coll = getApplication().getActionCollection();
 
-
-      IObjectTreeAPI api = session.getSessionInternalFrame().getObjectTreeAPI();
-
-      ActionCollection coll = getApplication().getActionCollection();
-      api.addToPopup(DatabaseObjectType.TABLE, coll.get(AddToGraphAction.class));
-
+      GUIUtils.processOnSwingEventThread(new Runnable() {
+          public void run() {
+              api.addToPopup(DatabaseObjectType.TABLE, 
+                             coll.get(AddToGraphAction.class));
+          }
+      });
+      
       PluginSessionCallback ret = new PluginSessionCallback()
       {
          public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)

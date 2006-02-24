@@ -43,6 +43,7 @@ import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
@@ -273,6 +274,15 @@ public class OraclePlugin extends DefaultSessionPlugin
         if (oracleSessions.contains(session)) {
             return true;
         }
+        String prodName = session.getDatabaseProductName();
+        if (prodName != null) {
+            if (prodName.toLowerCase().startsWith(ORACLE)) {
+                oracleSessions.add(session);
+                return true;                
+            } else {
+                return false;
+            }
+        }
 		try
 		{
             SQLConnection con = session.getSQLConnection();
@@ -287,7 +297,11 @@ public class OraclePlugin extends DefaultSessionPlugin
 		{
 			s_log.debug("Error in getDatabaseProductName()", ex);
 		}
-		return dbms != null && dbms.toLowerCase().startsWith(ORACLE);
+        if (dbms != null && dbms.toLowerCase().startsWith(ORACLE)) {
+            oracleSessions.add(session);
+            return true;
+        }
+        return false;
 	}
 
     
@@ -304,9 +318,6 @@ public class OraclePlugin extends DefaultSessionPlugin
                   _newSGATraceWorksheet.setEnabled(enable);     
               }
           });
-          if (enable && !oracleSessions.contains(session)) {
-              oracleSessions.add(session);
-          }
         }
         
         public void sessionClosing(SessionEvent evt) {
@@ -331,91 +342,134 @@ public class OraclePlugin extends DefaultSessionPlugin
             }
         }
       }
-        /** This class listens to new frames as they are opened and adds
-         *  object from this plugins.
-         */
-        public class OraclePluginFactory extends InternalFrameAdapter {
-          public void internalFrameOpened(InternalFrameEvent e) {
+    /** This class listens to new frames as they are opened and adds
+     *  object from this plugins.
+     */
+    public class OraclePluginFactory extends InternalFrameAdapter {
+        public void internalFrameOpened(InternalFrameEvent e) {
+            
             if (e.getInternalFrame() instanceof ISQLInternalFrame) {
-              ISQLPanelAPI panel = ((ISQLInternalFrame)e.getInternalFrame()).getSQLPanelAPI();
-              ISession session = panel.getSession();
-              if (isOracle(session))
-                panel.addExecutor(new ExplainPlanExecuter(session, panel));
+                final ISQLPanelAPI panel = ((ISQLInternalFrame)e.getInternalFrame()).getSQLPanelAPI();
+                final ISession session = panel.getSession();
+                session.getApplication().getThreadPool().addTask(new Runnable() {
+                    public void run() {
+                        if (!isOracle(session)) {
+                            return;
+                        }                        
+                        GUIUtils.processOnSwingEventThread(new Runnable() {
+                            public void run() {
+                                panel.addExecutor(new ExplainPlanExecuter(session, panel));
+                            }
+                        });                      
+                    }
+                });
             }
             if (e.getInternalFrame() instanceof IObjectTreeInternalFrame) {
-              IObjectTreeAPI objTree = ((IObjectTreeInternalFrame)e.getInternalFrame()).getObjectTreeAPI();
-              ISession session = objTree.getSession();
-              if (isOracle(session)) {
-                objTree.addDetailTab(DatabaseObjectType.SESSION, new OptionsTab());
-                objTree.addDetailTab(IObjectTypes.CONSUMER_GROUP, new DatabaseObjectInfoTab());
-                objTree.addDetailTab(DatabaseObjectType.FUNCTION, new DatabaseObjectInfoTab());
-                objTree.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
-                objTree.addDetailTab(DatabaseObjectType.INDEX, new IndexColumnInfoTab());
-                objTree.addDetailTab(DatabaseObjectType.INDEX, new IndexDetailsTab());
-                objTree.addDetailTab(IObjectTypes.LOB, new DatabaseObjectInfoTab());
-                objTree.addDetailTab(DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
-                objTree.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
-                objTree.addDetailTab(IObjectTypes.TRIGGER_PARENT, new DatabaseObjectInfoTab());
-                objTree.addDetailTab(IObjectTypes.TYPE, new DatabaseObjectInfoTab());
-
-                // Expanders.
-                
-                objTree.addExpander(DatabaseObjectType.SESSION, new DatabaseExpander());
-                objTree.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander(OraclePlugin.this));
-                objTree.addExpander(DatabaseObjectType.TABLE, new TableExpander());
-                objTree.addExpander(IObjectTypes.PACKAGE, new PackageExpander());
-                objTree.addExpander(IObjectTypes.USER_PARENT, new UserParentExpander(session));
-                objTree.addExpander(IObjectTypes.SESSION_PARENT, new SessionParentExpander());
-                objTree.addExpander(IObjectTypes.INSTANCE_PARENT, new InstanceParentExpander(OraclePlugin.this));
-                objTree.addExpander(IObjectTypes.TRIGGER_PARENT, new TriggerParentExpander());
-
-                objTree.addDetailTab(DatabaseObjectType.PROCEDURE, new ObjectSourceTab("PROCEDURE", "Show stored procedure source"));
-                objTree.addDetailTab(DatabaseObjectType.FUNCTION, new ObjectSourceTab("FUNCTION", "Show function source"));
-                objTree.addDetailTab(IObjectTypes.PACKAGE, new ObjectSourceTab("PACKAGE", "Specification", "Show package specification"));
-                objTree.addDetailTab(IObjectTypes.PACKAGE, new ObjectSourceTab("PACKAGE BODY", "Body", "Show package body"));
-                objTree.addDetailTab(IObjectTypes.TYPE, new ObjectSourceTab("TYPE", "Specification", "Show type specification"));
-                objTree.addDetailTab(IObjectTypes.TYPE, new ObjectSourceTab("TYPE BODY", "Body", "Show type body"));
-                objTree.addDetailTab(IObjectTypes.INSTANCE, new InstanceDetailsTab());
-                objTree.addDetailTab(DatabaseObjectType.SEQUENCE, new SequenceDetailsTab());
-                objTree.addDetailTab(IObjectTypes.SESSION, new SessionDetailsTab());
-                objTree.addDetailTab(IObjectTypes.SESSION, new SessionStatisticsTab());
-                objTree.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
-                objTree.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab());
-                objTree.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerColumnInfoTab());
-                objTree.addDetailTab(DatabaseObjectType.USER, new UserDetailsTab(session));
-                
-                objTree.addDetailTab(DatabaseObjectType.VIEW, new ViewSourceTab());
-              }
+                final IObjectTreeAPI objTree = ((IObjectTreeInternalFrame)e.getInternalFrame()).getObjectTreeAPI();
+                final ISession session = objTree.getSession();
+                session.getApplication().getThreadPool().addTask(new Runnable() {
+                    public void run() {
+                        if (!isOracle(session)) {
+                            return;
+                        }
+                        // This will use the event dispatch thread where appropritate
+                        updateObjectTree(objTree);
+                    }
+                });
             }
-          }
         }
+    }
         
-        /**
-         * Check if we can run query. 
-         * 
-         * @param session session
-         * @param query query text
-         * @return true if query works fine
-         */
-        public static boolean checkObjectAccessible(final ISession session, final String query) {
-        	PreparedStatement pstmt = null;
-        	ResultSet rs = null;
-        	try {
-        		pstmt = session.getSQLConnection().prepareStatement(query);
-        		rs = pstmt.executeQuery();
-        		return true;
-        	} catch (SQLException ex) {
-        		return false;
-        	} finally {
-        		try {
-            		if (rs != null) {
-            			rs.close();
-            		}
-            		if (pstmt != null) {
-            			pstmt.close();
-            		}
-        		} catch (SQLException ex) {}
-        	}
+    /**
+     * Check if we can run query. 
+     * 
+     * @param session session
+     * @param query query text
+     * @return true if query works fine
+     */
+    public static boolean checkObjectAccessible(final ISession session, final String query) {
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            pstmt = session.getSQLConnection().prepareStatement(query);
+            rs = pstmt.executeQuery();
+            return true;
+        } catch (SQLException ex) {
+            return false;
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pstmt != null) {
+                    pstmt.close();
+                }
+            } catch (SQLException ex) {}
         }
+    }
+    
+    private void updateObjectTree(IObjectTreeAPI objTree) {
+        ISession session = objTree.getSession();
+        DatabaseObjectInfoTab dboit = new DatabaseObjectInfoTab();
+        addDetailTab(objTree, DatabaseObjectType.SESSION, new OptionsTab());
+        addDetailTab(objTree, IObjectTypes.CONSUMER_GROUP, dboit);
+        addDetailTab(objTree, DatabaseObjectType.FUNCTION, dboit);
+        addDetailTab(objTree, DatabaseObjectType.INDEX, dboit);
+        addDetailTab(objTree, DatabaseObjectType.INDEX, new IndexColumnInfoTab());
+        addDetailTab(objTree, DatabaseObjectType.INDEX, new IndexDetailsTab());
+        addDetailTab(objTree, IObjectTypes.LOB, dboit);
+        addDetailTab(objTree, DatabaseObjectType.SEQUENCE, dboit);
+        addDetailTab(objTree, DatabaseObjectType.TRIGGER, dboit);
+        addDetailTab(objTree, IObjectTypes.TRIGGER_PARENT, dboit);
+        addDetailTab(objTree, IObjectTypes.TYPE, dboit);
         
+        // Expanders.
+        addExpander(objTree, DatabaseObjectType.SESSION, new DatabaseExpander());
+        addExpander(objTree, DatabaseObjectType.SCHEMA, new SchemaExpander(OraclePlugin.this));
+        addExpander(objTree, DatabaseObjectType.TABLE, new TableExpander());
+        addExpander(objTree, IObjectTypes.PACKAGE, new PackageExpander());
+        addExpander(objTree, IObjectTypes.USER_PARENT, new UserParentExpander(session));
+        addExpander(objTree, IObjectTypes.SESSION_PARENT, new SessionParentExpander());
+        addExpander(objTree, IObjectTypes.INSTANCE_PARENT, new InstanceParentExpander(OraclePlugin.this));
+        addExpander(objTree, IObjectTypes.TRIGGER_PARENT, new TriggerParentExpander());
+        
+        addDetailTab(objTree, DatabaseObjectType.PROCEDURE, new ObjectSourceTab("PROCEDURE", "Show stored procedure source"));
+        addDetailTab(objTree, DatabaseObjectType.FUNCTION, new ObjectSourceTab("FUNCTION", "Show function source"));
+        addDetailTab(objTree, IObjectTypes.PACKAGE, new ObjectSourceTab("PACKAGE", "Specification", "Show package specification"));
+        addDetailTab(objTree, IObjectTypes.PACKAGE, new ObjectSourceTab("PACKAGE BODY", "Body", "Show package body"));
+        addDetailTab(objTree, IObjectTypes.TYPE, new ObjectSourceTab("TYPE", "Specification", "Show type specification"));
+        addDetailTab(objTree, IObjectTypes.TYPE, new ObjectSourceTab("TYPE BODY", "Body", "Show type body"));
+        addDetailTab(objTree, IObjectTypes.INSTANCE, new InstanceDetailsTab());
+        addDetailTab(objTree, DatabaseObjectType.SEQUENCE, new SequenceDetailsTab());
+        addDetailTab(objTree, IObjectTypes.SESSION, new SessionDetailsTab());
+        addDetailTab(objTree, IObjectTypes.SESSION, new SessionStatisticsTab());
+        addDetailTab(objTree, DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
+        addDetailTab(objTree, DatabaseObjectType.TRIGGER, new TriggerSourceTab());
+        addDetailTab(objTree, DatabaseObjectType.TRIGGER, new TriggerColumnInfoTab());
+        addDetailTab(objTree, DatabaseObjectType.USER, new UserDetailsTab(session));
+        
+        addDetailTab(objTree, DatabaseObjectType.VIEW, new ViewSourceTab());            
+    }
+    
+    private void addExpander(final IObjectTreeAPI objTree,
+                             final DatabaseObjectType dboType, 
+                             final INodeExpander exp) 
+    {
+        GUIUtils.processOnSwingEventThread(new Runnable() {
+            public void run() {
+                objTree.addExpander(dboType, exp);
+            }
+        });
+    }
+    
+    private void addDetailTab(final IObjectTreeAPI objTree,
+                              final DatabaseObjectType dboType,
+                              final IObjectTab tab)
+    {
+        GUIUtils.processOnSwingEventThread(new Runnable() {
+            public void run() {
+                objTree.addDetailTab(dboType, tab);
+            }
+        });
+    }
 }

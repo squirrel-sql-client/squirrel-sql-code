@@ -278,25 +278,37 @@ class ObjectTree extends JTree
 	 */
 	public void refresh()
 	{
-		// Clear cache in case metadata has changed.
-		_session.getSQLConnection().getSQLMetaData().clearCache();
+        _session.getApplication().getThreadPool().addTask(new Runnable() {
+            public void run() {
+                // Clear cache in case metadata has changed.
+                _session.getSQLConnection().getSQLMetaData().clearCache();
 
-		final TreePath[] selectedPaths = getSelectionPaths();
-		final Map selectedPathNames = new HashMap();
-		if (selectedPaths != null)
-		{
-			for (int i = 0; i < selectedPaths.length; ++i)
-			{
-				selectedPathNames.put(selectedPaths[i].toString(), null);
-			}
-		}
-		ObjectTreeNode root = _model.getRootObjectTreeNode();
-		root.removeAllChildren();
-		fireObjectTreeCleared();
-		startExpandingTree(root, false, selectedPathNames);
-		fireObjectTreeRefreshed();
+                GUIUtils.processOnSwingEventThread(new Runnable() {
+                    public void run() {
+                        refreshTree();
+                    }
+                });
+            }
+        });
 	}
 
+    private void refreshTree() {
+        final TreePath[] selectedPaths = getSelectionPaths();
+        final Map selectedPathNames = new HashMap();
+        if (selectedPaths != null)
+        {
+            for (int i = 0; i < selectedPaths.length; ++i)
+            {
+                selectedPathNames.put(selectedPaths[i].toString(), null);
+            }
+        }
+        ObjectTreeNode root = _model.getRootObjectTreeNode();
+        root.removeAllChildren();
+        fireObjectTreeCleared();
+        startExpandingTree(root, false, selectedPathNames);
+        fireObjectTreeRefreshed();        
+    }
+    
 	/**
 	 * Refresh the nodes currently selected in the object tree.
 	 * TODO: Make this work with multiple nodes. Currently multiple threads
@@ -867,7 +879,9 @@ class ObjectTree extends JTree
 					}
 					finally
 					{
-						_parentNode.remove(loadingNode);
+                        if (_parentNode.isNodeChild(loadingNode)){
+                            _parentNode.remove(loadingNode);
+                        }
 					}
 				}
 				finally

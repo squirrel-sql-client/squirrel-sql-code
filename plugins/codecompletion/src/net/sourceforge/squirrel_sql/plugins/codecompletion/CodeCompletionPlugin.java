@@ -27,6 +27,7 @@ import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPane
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
@@ -253,9 +254,15 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 
 		PluginSessionCallback ret = new PluginSessionCallback()
 		{
-			public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+			public void sqlInternalFrameOpened(final SQLInternalFrame sqlInternalFrame, 
+                                               final ISession sess)
 			{
-				initCodeCompletion(sqlInternalFrame.getSQLPanelAPI(), sess);
+                GUIUtils.processOnSwingEventThread(new Runnable() {
+                    public void run() {
+                        initCodeCompletion(sqlInternalFrame.getSQLPanelAPI(), sess);        
+                    }
+                });
+				
 			}
 
 			public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)

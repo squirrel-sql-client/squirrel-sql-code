@@ -31,6 +31,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
 import net.sourceforge.squirrel_sql.client.session.event.SQLPanelAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -167,9 +168,14 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 
       PluginSessionCallback ret = new PluginSessionCallback()
       {
-         public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+         public void sqlInternalFrameOpened(final SQLInternalFrame sqlInternalFrame, 
+                                            final ISession sess)
          {
-            initEditExtras(sqlInternalFrame.getSQLPanelAPI());
+             GUIUtils.processOnSwingEventThread(new Runnable() {
+                 public void run() {
+                     initEditExtras(sqlInternalFrame.getSQLPanelAPI());         
+                 }
+             });
          }
 
          public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)

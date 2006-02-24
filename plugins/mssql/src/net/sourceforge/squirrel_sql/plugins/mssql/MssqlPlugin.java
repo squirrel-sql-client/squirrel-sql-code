@@ -43,6 +43,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.mssql.action.GenerateSqlAction;
@@ -170,49 +171,34 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
         super.sessionEnding(iSession);
     }
     
-    public PluginSessionCallback sessionStarted(net.sourceforge.squirrel_sql.client.session.ISession iSession) {
-        boolean isMssql = false;
-        String productName;
-        try {
-            productName = iSession.getSQLConnection().getSQLMetaData().getDatabaseProductName();
+    public PluginSessionCallback sessionStarted(final ISession iSession) {
+        boolean isMssql = isMssql(iSession); 
+        if (isMssql) {
+            GUIUtils.processOnSwingEventThread(new Runnable() {
+                public void run() {
+                    updateTreeApi(iSession);
+                }
+            });
         }
-        catch (java.sql.SQLException ex) {
-            productName = "";
+        if (isMssql) {
+            return new MssqlPluginSessionCallback();
+        } else {
+            return null;
         }
-        isMssql = productName.equals("Microsoft SQL Server");
+    }
+    
+    private void updateTreeApi(ISession iSession) {
+        _treeAPI = iSession.getSessionInternalFrame().getObjectTreeAPI();
+
+        _treeAPI.addToPopup(DatabaseObjectType.CATALOG, addToMssqlCatalogMenu(null));
+        _treeAPI.addToPopup(DatabaseObjectType.TABLE, addToMssqlTableMenu(null));
+        _treeAPI.addToPopup(DatabaseObjectType.PROCEDURE, addToMssqlProcedureMenu(null));
+
+        _treeAPI.addDetailTab(DatabaseObjectType.VIEW, new ViewSourceTab());
+        _session = iSession;
         
-		if (isMssql) {
-            _treeAPI = iSession.getSessionInternalFrame().getObjectTreeAPI();
-            final ActionCollection coll = getApplication().getActionCollection();
-
-            _treeAPI.addToPopup(DatabaseObjectType.CATALOG, addToMssqlCatalogMenu(null));
-            _treeAPI.addToPopup(DatabaseObjectType.TABLE, addToMssqlTableMenu(null));
-            _treeAPI.addToPopup(DatabaseObjectType.PROCEDURE, addToMssqlProcedureMenu(null));
-
-            _treeAPI.addDetailTab(DatabaseObjectType.VIEW, new ViewSourceTab());
-            _session = iSession;
-            
-            MonitorPanel monitorPanel = new MonitorPanel();
-            iSession.addMainTab(monitorPanel);
-
-            PluginSessionCallback ret = new PluginSessionCallback()
-            {
-               public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
-               {
-                  // TODO
-                  // Plugin supports only the main session window
-               }
-
-               public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
-               {
-                  // TODO
-                  // Plugin supports only the main session window
-               }
-            };
-            return ret;
-		}
-
-        return null;
+        MonitorPanel monitorPanel = new MonitorPanel();
+        iSession.addMainTab(monitorPanel);        
     }
     
     public void unload() {
@@ -284,14 +270,7 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
                 final JMenu menu = (JMenu) e.getSource();
                 menu.removeAll();
                 removeActionsOfType(coll,IndexDefragAction.class);
-                iterateIndexes(new IndexIterationListener() {
-                    public void indexSpotted(final ITableInfo tableInfo, final String indexName) {
-                        final IndexDefragAction indexDefragAction = new IndexDefragAction(app,_resources,plugin,tableInfo,indexName);
-                        indexDefragAction.setSession(_session);
-                        coll.add(indexDefragAction);
-                        _resources.addToMenu(indexDefragAction,menu);
-                    }
-                });
+                app.getThreadPool().addTask(new IteratorIndexesTask(menu));
             }
             public void menuDeselected(MenuEvent e) { }
             public void menuCanceled(MenuEvent e) { }
@@ -303,6 +282,33 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
 
 		return mssqlMenu;
 	}
+
+    private class IteratorIndexesTask implements Runnable {
+        
+        JMenu _menu = null;
+        final IApplication app = getApplication();
+        final ActionCollection coll = app.getActionCollection();
+        final MssqlPlugin plugin = MssqlPlugin.this;
+        
+        public IteratorIndexesTask(JMenu menu) {
+            _menu = menu;
+        }
+        
+        public void run() {
+            iterateIndexes(new IndexIterationListener() {
+                public void indexSpotted(final ITableInfo tableInfo, final String indexName) {
+                    final IndexDefragAction indexDefragAction = new IndexDefragAction(app,_resources,plugin,tableInfo,indexName);
+                    indexDefragAction.setSession(_session);
+                    GUIUtils.processOnSwingEventThread(new Runnable() {
+                        public void run() {
+                            coll.add(indexDefragAction);
+                            _resources.addToMenu(indexDefragAction,_menu);                                
+                        }
+                    });
+                }
+            });            
+        }
+    }
     
     private void iterateIndexes(IndexIterationListener listener) {
         /* this should just bring back one table, i hope. */
@@ -448,12 +454,8 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
     private class MssqlSessionListener extends SessionAdapter {
         public void sessionActivated(SessionEvent evt) {
             final ISession session = evt.getSession();
-            final boolean enable = isMssql(session); 
-            GUIUtils.processOnSwingEventThread(new Runnable() {
-                public void run() {
-                    _mssqlMenu.setEnabled(enable);
-                }
-            });
+            EnableMenuTask task = new EnableMenuTask(session);
+            session.getApplication().getThreadPool().addTask(task);
         }
     }
     
@@ -482,5 +484,37 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
             s_log.debug("Unable to get the database product name", ex);
         }
         return dbms != null && dbms.toLowerCase().startsWith(MICROSOFT);        
+    }
+    
+    private class EnableMenuTask implements Runnable {
+        
+        private ISession _session = null;
+        
+        public EnableMenuTask(ISession session) {
+            _session = session;
+        }
+        
+        public void run() {
+            final boolean enable = isMssql(_session);
+            GUIUtils.processOnSwingEventThread(new Runnable() {
+                public void run() {
+                    _mssqlMenu.setEnabled(enable);
+                }
+            });            
+        }
+    }
+    
+    private class MssqlPluginSessionCallback implements PluginSessionCallback {
+        public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+        {
+           // TODO
+           // Plugin supports only the main session window
+        }
+
+        public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+        {
+           // TODO
+           // Plugin supports only the main session window
+        }        
     }
 }

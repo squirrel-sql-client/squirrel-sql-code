@@ -24,6 +24,7 @@ import java.util.Iterator;
 
 import javax.swing.JMenu;
 
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -223,12 +224,23 @@ public class SQLValidatorPlugin extends DefaultSessionPlugin
 	 *
 	 * @param	session	The session that is starting.
 	 */
-	public void sessionCreated(ISession session)
+	public void sessionCreated(final ISession session)
 	{
         super.sessionCreated(session);
-        WebServiceSessionProperties props = new WebServiceSessionProperties(_prefs);
-        props.setSQLConnection(session.getSQLConnection());
-        session.putPluginObject(this, PREFS_KEY, props);
+        final WebServiceSessionProperties props = 
+            new WebServiceSessionProperties(_prefs);
+        session.getApplication().getThreadPool().addTask(new Runnable() {
+            public void run() {
+                props.setSQLConnection(session.getSQLConnection());
+                GUIUtils.processOnSwingEventThread(new Runnable() {
+                    public void run() {
+                        session.putPluginObject(SQLValidatorPlugin.this, 
+                                                PREFS_KEY, 
+                                                props);
+                    }
+                });
+            }
+        });
     }
 
 	/**
