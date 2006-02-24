@@ -17,31 +17,6 @@ package net.sourceforge.squirrel_sql.plugins.syntax;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
-import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
-import net.sourceforge.squirrel_sql.client.plugin.PluginException;
-import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
-import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
-import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
-import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
-import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
-import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.*;
-import net.sourceforge.squirrel_sql.plugins.syntax.oster.OsterSQLEntryPanel;
-
-import javax.swing.*;
-import javax.swing.text.JTextComponent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -50,8 +25,44 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.awt.event.KeyEvent;
-import java.awt.event.InputEvent;
+
+import javax.swing.Action;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.text.JTextComponent;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
+import net.sourceforge.squirrel_sql.client.plugin.PluginException;
+import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
+import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
+import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
+import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.FindAction;
+import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.NetbeansSQLEditorPane;
+import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.NetbeansSQLEntryPanel;
+import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.ReplaceAction;
+import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.SQLKit;
+import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.SQLSettingsInitializer;
+import net.sourceforge.squirrel_sql.plugins.syntax.oster.OsterSQLEntryPanel;
 
 import org.netbeans.editor.BaseKit;
 
@@ -280,7 +291,7 @@ public class SyntaxPugin extends DefaultSessionPlugin
 	}
 
 
-	public PluginSessionCallback sessionStarted(ISession session)
+	public PluginSessionCallback sessionStarted(final ISession session)
 	{
 		PluginSessionCallback ret = new PluginSessionCallback()
 		{
@@ -293,49 +304,58 @@ public class SyntaxPugin extends DefaultSessionPlugin
 			{
 			}
 		};
-
-		ActionCollection coll = getApplication().getActionCollection();
-		session.addSeparatorToToolbar();
-		session.addToToolbar(coll.get(FindAction.class));
-		session.addToToolbar(coll.get(ReplaceAction.class));
-		session.addToToolbar(coll.get(ConfigureAutoCorrectAction.class));
-
-		session.getSessionInternalFrame().addToToolsPopUp("find" , coll.get(FindAction.class));
-		session.getSessionInternalFrame().addToToolsPopUp("replace" , coll.get(ReplaceAction.class));
-		session.getSessionInternalFrame().addToToolsPopUp("autocorr" , coll.get(ConfigureAutoCorrectAction.class));
-		session.getSessionInternalFrame().addToToolsPopUp("duplicateline" , coll.get(DuplicateLineAction.class));
-		session.getSessionInternalFrame().addToToolsPopUp("comment" , coll.get(CommentAction.class));
-		session.getSessionInternalFrame().addToToolsPopUp("uncomment" , coll.get(UncommentAction.class));
-
-
-
-		ISQLPanelAPI sqlPanelAPI = session.getSessionInternalFrame().getSQLPanelAPI();
-
-		new AutoCorrector((JTextComponent) sqlPanelAPI.getSQLEntryPanel().getTextComponent(), this);
-
-
-		if (sqlPanelAPI.getSQLEntryPanel().getTextComponent() instanceof NetbeansSQLEditorPane)
-		{
-			NetbeansSQLEditorPane nbEdit = (NetbeansSQLEditorPane) sqlPanelAPI.getSQLEntryPanel().getTextComponent();
-			Action toUpperAction = ((SQLKit) nbEdit.getEditorKit()).getActionByName(BaseKit.toUpperCaseAction);
-			toUpperAction.putValue(Resources.ACCELERATOR_STRING, SQLSettingsInitializer.ACCELERATOR_STRING_TO_UPPER_CASE);
-			session.getSessionInternalFrame().addToToolsPopUp("touppercase" , toUpperAction);
-
-			Action toLowerAction = ((SQLKit) nbEdit.getEditorKit()).getActionByName(BaseKit.toLowerCaseAction);
-			toLowerAction.putValue(Resources.ACCELERATOR_STRING, SQLSettingsInitializer.ACCELERATOR_STRING_TO_LOWER_CASE);
-			session.getSessionInternalFrame().addToToolsPopUp("tolowercase" , toLowerAction);
-		}
-
-		JMenuItem mnuComment = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(CommentAction.class));
-		JMenuItem mnuUncomment = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(UncommentAction.class));
-		_resources.configureMenuItem(coll.get(CommentAction.class), mnuComment);
-		_resources.configureMenuItem(coll.get(UncommentAction.class), mnuUncomment);
-
-
+		GUIUtils.processOnSwingEventThread(new Runnable() {
+		    public void run() {
+		        addActionsToPopup(session);
+		    }
+		});
 
 		return ret;
 	}
 
+    private void addActionsToPopup(ISession session) {
+        ActionCollection coll = getApplication().getActionCollection();
+        session.addSeparatorToToolbar();
+        session.addToToolbar(coll.get(FindAction.class));
+        session.addToToolbar(coll.get(ReplaceAction.class));
+        session.addToToolbar(coll.get(ConfigureAutoCorrectAction.class));
+
+        SessionInternalFrame sif = session.getSessionInternalFrame();
+        sif.addToToolsPopUp("find" , coll.get(FindAction.class));
+        sif.addToToolsPopUp("replace" , coll.get(ReplaceAction.class));
+        sif.addToToolsPopUp("autocorr" , coll.get(ConfigureAutoCorrectAction.class));
+        sif.addToToolsPopUp("duplicateline" , coll.get(DuplicateLineAction.class));
+        sif.addToToolsPopUp("comment" , coll.get(CommentAction.class));
+        sif.addToToolsPopUp("uncomment" , coll.get(UncommentAction.class));
+
+        ISQLPanelAPI sqlPanelAPI = sif.getSQLPanelAPI();
+        ISQLEntryPanel sep = sqlPanelAPI.getSQLEntryPanel();
+        JComponent septc = sep.getTextComponent();
+        
+        new AutoCorrector((JTextComponent) septc, this);
+
+
+        if (sep.getTextComponent() instanceof NetbeansSQLEditorPane)
+        {
+            NetbeansSQLEditorPane nbEdit = (NetbeansSQLEditorPane) septc;
+            SQLKit kit = (SQLKit) nbEdit.getEditorKit();
+            
+            Action toUpperAction = kit.getActionByName(BaseKit.toUpperCaseAction);
+            toUpperAction.putValue(Resources.ACCELERATOR_STRING, 
+                                   SQLSettingsInitializer.ACCELERATOR_STRING_TO_UPPER_CASE);
+            sif.addToToolsPopUp("touppercase" , toUpperAction);
+
+            Action toLowerAction = kit.getActionByName(BaseKit.toLowerCaseAction);
+            toLowerAction.putValue(Resources.ACCELERATOR_STRING, 
+                                   SQLSettingsInitializer.ACCELERATOR_STRING_TO_LOWER_CASE);
+            sif.addToToolsPopUp("tolowercase" , toLowerAction);
+        }
+
+        JMenuItem mnuComment = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(CommentAction.class));
+        JMenuItem mnuUncomment = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(UncommentAction.class));
+        _resources.configureMenuItem(coll.get(CommentAction.class), mnuComment);
+        _resources.configureMenuItem(coll.get(UncommentAction.class), mnuUncomment);        
+    }
 
 	private void initSyntax(ISession sess, SQLInternalFrame sqlInternalFrame)
 	{

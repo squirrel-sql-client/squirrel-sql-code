@@ -34,6 +34,7 @@ import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.plugin.*;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -265,23 +266,13 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin {
 	rebuildMenu();
     }
 
-   public PluginSessionCallback sessionStarted(ISession session)
+   public PluginSessionCallback sessionStarted(final ISession session)
    {
-
-      ActionCollection coll = getApplication().getActionCollection();
-      session.addSeparatorToToolbar();
-      session.addToToolbar(coll.get(AddBookmarkAction.class));
-      session.getSessionInternalFrame().addToToolsPopUp("bookmarkadd", coll.get(AddBookmarkAction.class));
-
-      ISQLPanelAPI sqlPaneAPI = session.getSessionInternalFrame().getSQLPanelAPI();
-      CompleteBookmarkAction cba = new CompleteBookmarkAction(session.getApplication(), resources, sqlPaneAPI.getSQLEntryPanel(), session, this);
-      JMenuItem item = sqlPaneAPI.addToSQLEntryAreaMenu(cba);
-      resources.configureMenuItem(cba, item);
-      JComponent comp = sqlPaneAPI.getSQLEntryPanel().getTextComponent();
-      comp.registerKeyboardAction(cba, resources.getKeyStroke(cba), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-      session.getSessionInternalFrame().addToToolsPopUp("bookmarkselect", cba);
-
-
+       GUIUtils.processOnSwingEventThread(new Runnable() {
+           public void run() {
+               addBookmarkAction(session);
+           }
+       });           
 
       PluginSessionCallback ret = new PluginSessionCallback()
       {
@@ -308,7 +299,29 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin {
       return ret;
    }
 
+   private void addBookmarkAction(ISession session) {
+       ActionCollection coll = getApplication().getActionCollection();
+       session.addSeparatorToToolbar();
+       session.addToToolbar(coll.get(AddBookmarkAction.class));
+       session.getSessionInternalFrame().addToToolsPopUp("bookmarkadd", 
+                                                         coll.get(AddBookmarkAction.class));
 
+       ISQLPanelAPI sqlPaneAPI = session.getSessionInternalFrame().getSQLPanelAPI();
+       CompleteBookmarkAction cba = 
+           new CompleteBookmarkAction(session.getApplication(), 
+                                      resources, 
+                                      sqlPaneAPI.getSQLEntryPanel(), 
+                                      session, 
+                                      SQLBookmarkPlugin.this);
+       JMenuItem item = sqlPaneAPI.addToSQLEntryAreaMenu(cba);
+       resources.configureMenuItem(cba, item);
+       JComponent comp = sqlPaneAPI.getSQLEntryPanel().getTextComponent();
+       comp.registerKeyboardAction(cba,  
+                                   resources.getKeyStroke(cba), 
+                                   JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+       session.getSessionInternalFrame().addToToolsPopUp("bookmarkselect", cba);                      
+   }
+   
     /**
      * Rebuild the Sessions->Bookmarks menu
      *

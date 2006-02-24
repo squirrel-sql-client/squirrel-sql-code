@@ -236,13 +236,13 @@ public class GraphController
 
 
       tfc.addTableFrameControllerListener(_tableFrameControllerListener);
-      _desktopController.addFrame(tfc.getFrame());
-      _openTableFrameCtrls.add(tfc);
 
       SwingUtilities.invokeLater(new Runnable()
       {
          public void run()
          {
+             _desktopController.addFrame(tfc.getFrame());
+             _openTableFrameCtrls.add(tfc);             
             initsAfterFrameAdded(tfc, refCascadeIndent, null == xmlBean);
          }
       });

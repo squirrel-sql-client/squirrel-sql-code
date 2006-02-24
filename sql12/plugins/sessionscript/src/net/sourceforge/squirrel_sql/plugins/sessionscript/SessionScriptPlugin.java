@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.plugins.sessionscript;
 import java.io.File;
 import java.io.IOException;
 
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -194,20 +195,29 @@ public class SessionScriptPlugin extends DefaultSessionPlugin
 		super.unload();
 	}
 
-	public PluginSessionCallback sessionStarted(ISession session)
+	public PluginSessionCallback sessionStarted(final ISession session)
 	{
 		boolean rc = false;
 
 		AliasScript script = (AliasScript)_cache.get(session.getAlias());
 		if (script != null)
 		{
-			String sql = script.getSQL();
+			final String sql = script.getSQL();
 			if (sql != null && sql.length() > 0)
 			{
 				rc = true;
-				ISQLPanelAPI api = session.getSessionInternalFrame().getSQLPanelAPI();
-				api.setEntireSQLScript(sql);
-				api.executeCurrentSQL();
+				final ISQLPanelAPI api = 
+                    session.getSessionInternalFrame().getSQLPanelAPI();
+                GUIUtils.processOnSwingEventThread(new Runnable() {
+                    public void run() {
+                        api.setEntireSQLScript(sql);
+                        session.getApplication().getThreadPool().addTask(new Runnable() {
+                            public void run() {
+                                api.executeCurrentSQL();
+                            }
+                        });
+                    }
+                });
 			}
 		}
 

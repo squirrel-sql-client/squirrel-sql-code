@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.plugins.oracle.tab;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -71,12 +72,17 @@ public class UserDetailsTab extends BasePreparedStatementTab
 			+ " where username = ?";
 
 	/** Is user can access to dba_users. */
-	final protected boolean isAdmin;
+	protected boolean isAdmin;
 	
 	public UserDetailsTab(final ISession session)
 	{
 		super(i18n.TITLE, i18n.HINT, true);
-		isAdmin=OraclePlugin.checkObjectAccessible(session, SQL_CHECK_ACCESS);
+        session.getApplication().getThreadPool().addTask(new Runnable() {
+            public void run() {
+                isAdmin=OraclePlugin.checkObjectAccessible(session, SQL_CHECK_ACCESS);
+            }
+        });
+		
 	}
 
 	protected PreparedStatement createStatement() throws SQLException

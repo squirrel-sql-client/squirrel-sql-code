@@ -17,27 +17,34 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+import java.io.File;
+import java.io.IOException;
+import java.util.Hashtable;
+
+import javax.swing.JMenu;
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.plugin.*;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
+import net.sourceforge.squirrel_sql.client.plugin.PluginException;
+import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
+import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
-import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.*;
-
-import javax.swing.*;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Hashtable;
-import java.util.Iterator;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptAction;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptOfCurrentSQLAction;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTableOfCurrentSQLAction;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTableScriptAction;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTemplateDataScriptAction;
 /**
  * The SQL Script plugin class.
  */
@@ -209,50 +216,59 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 	 * @return  <TT>true</TT> to indicate that this plugin is
 	 *		  applicable to passed session.
 	 */
-	public PluginSessionCallback sessionStarted(ISession session)
-   {
-		final ActionCollection coll = getApplication().getActionCollection();
+	public PluginSessionCallback sessionStarted(final ISession session)
+	{
+        GUIUtils.processOnSwingEventThread(new Runnable() {
+           public void run() {
+               addActionsToPopup(session);
+           }
+        });
+	    
+	    PluginSessionCallback ret = new PluginSessionCallback()
+	    {
+	        public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+	        {
+	            ActionCollection coll = sess.getApplication().getActionCollection();
+	            sqlInternalFrame.addSeparatorToToolbar();
+	            sqlInternalFrame.addToToolbar(coll.get(CreateTableOfCurrentSQLAction.class));
+	            
+	            sqlInternalFrame.addToToolsPopUp("sql2table", coll.get(CreateTableOfCurrentSQLAction.class));
+	            sqlInternalFrame.addToToolsPopUp("sql2ins", coll.get(CreateDataScriptOfCurrentSQLAction.class));
+	        }
+	        
+	        public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+	        {
+	            ActionCollection coll = sess.getApplication().getActionCollection();
+	            objectTreeInternalFrame.getObjectTreeAPI().addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTableScriptAction.class));
+	            objectTreeInternalFrame.getObjectTreeAPI().addToPopup(DatabaseObjectType.TABLE, coll.get(CreateDataScriptAction.class));
+	            objectTreeInternalFrame.getObjectTreeAPI().addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTemplateDataScriptAction.class));
+	        }
+	    };
+	    
+	    return ret;
+	}
 
-      //IObjectTreeAPI api = session.getObjectTreeAPI(this);
-      IObjectTreeAPI api = FrameWorkAcessor.getObjectTreeAPI(session, this);
-
-      api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTableScriptAction.class));
-		api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateDataScriptAction.class));
-		api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTemplateDataScriptAction.class));
+    private void addActionsToPopup(ISession session) {
+        ActionCollection coll = getApplication().getActionCollection();
+        
+        //IObjectTreeAPI api = session.getObjectTreeAPI(this);
+        IObjectTreeAPI api = FrameWorkAcessor.getObjectTreeAPI(session, this);
+        
+        api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTableScriptAction.class));
+        api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateDataScriptAction.class));
+        api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTemplateDataScriptAction.class));
         api.addToPopup(DatabaseObjectType.VIEW, coll.get(CreateTableScriptAction.class));
         api.addToPopup(DatabaseObjectType.VIEW, coll.get(CreateDataScriptAction.class));
         api.addToPopup(DatabaseObjectType.VIEW, coll.get(CreateTemplateDataScriptAction.class));
         
-
-      session.addSeparatorToToolbar();
-		session.addToToolbar(coll.get(CreateTableOfCurrentSQLAction.class));
-
-      session.getSessionInternalFrame().addToToolsPopUp("sql2table", coll.get(CreateTableOfCurrentSQLAction.class));
-      session.getSessionInternalFrame().addToToolsPopUp("sql2ins", coll.get(CreateDataScriptOfCurrentSQLAction.class));
-
-      PluginSessionCallback ret = new PluginSessionCallback()
-      {
-         public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
-         {
-            sqlInternalFrame.addSeparatorToToolbar();
-            sqlInternalFrame.addToToolbar(coll.get(CreateTableOfCurrentSQLAction.class));
-
-            sqlInternalFrame.addToToolsPopUp("sql2table", coll.get(CreateTableOfCurrentSQLAction.class));
-            sqlInternalFrame.addToToolsPopUp("sql2ins", coll.get(CreateDataScriptOfCurrentSQLAction.class));
-
-         }
-
-         public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
-         {
-            objectTreeInternalFrame.getObjectTreeAPI().addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTableScriptAction.class));
-            objectTreeInternalFrame.getObjectTreeAPI().addToPopup(DatabaseObjectType.TABLE, coll.get(CreateDataScriptAction.class));
-            objectTreeInternalFrame.getObjectTreeAPI().addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTemplateDataScriptAction.class));
-         }
-      };
-
-      return ret;
-	}
-
+        
+        session.addSeparatorToToolbar();
+        session.addToToolbar(coll.get(CreateTableOfCurrentSQLAction.class));
+        
+        session.getSessionInternalFrame().addToToolsPopUp("sql2table", coll.get(CreateTableOfCurrentSQLAction.class));
+        session.getSessionInternalFrame().addToToolsPopUp("sql2ins", coll.get(CreateDataScriptOfCurrentSQLAction.class));        
+    }
+    
    private void createMenu() {
 		IApplication app = getApplication();
 		ActionCollection coll = app.getActionCollection();

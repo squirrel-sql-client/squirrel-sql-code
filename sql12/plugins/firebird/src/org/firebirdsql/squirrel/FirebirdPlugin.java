@@ -4,6 +4,7 @@ import java.sql.SQLException;
 
 import javax.swing.JMenu;
 
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -174,61 +175,17 @@ public class FirebirdPlugin extends DefaultSessionPlugin {
      * @return  <TT>true</TT> if session is Oracle in which case this plugin
      *                          is interested in it.
      */
-    public PluginSessionCallback sessionStarted(ISession session)
+    public PluginSessionCallback sessionStarted(final ISession session)
     {
        boolean isFirebird = false;
        isFirebird = isFirebird(session);
        if (isFirebird)
        {
-          _treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
-//                _treeAPI.addObjectTreeListener(new FirebirdObjectTreeListener());
-
-          // Tabs to add to the database node.
-//                _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new OptionsTab());
-
-//                _treeAPI.addDetailTab(IObjectTypes.CONSUMER_GROUP, new DatabaseObjectInfoTab());
-//                _treeAPI.addDetailTab(DatabaseObjectType.FUNCTION, new DatabaseObjectInfoTab());
-//                _treeAPI.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
-//                _treeAPI.addDetailTab(IObjectTypes.LOB, new DatabaseObjectInfoTab());
-          _treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
-          _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
-          _treeAPI.addDetailTab(IObjectTypes.TRIGGER_PARENT, new DatabaseObjectInfoTab());
-          _treeAPI.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
-          _treeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexInfoTab());
-
-          //                _treeAPI.addDetailTab(IObjectTypes.TYPE, new DatabaseObjectInfoTab());
-
-          // Expanders.
-          _treeAPI.addExpander(IObjectTypes.INDEX_PARENT, new IndexParentExpander());
-
-          _treeAPI.addExpander(DatabaseObjectType.SESSION, new DatabaseExpander(this));
-//                _treeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander(this));
-          _treeAPI.addExpander(DatabaseObjectType.TABLE, new TableExpander(this));
-//                _treeAPI.addExpander(IObjectTypes.PACKAGE, new PackageExpander());
-//                _treeAPI.addExpander(IObjectTypes.USER_PARENT, new UserParentExpander(this));
-//                _treeAPI.addExpander(IObjectTypes.SESSION_PARENT, new SessionParentExpander(this));
-//                _treeAPI.addExpander(IObjectTypes.INSTANCE_PARENT, new InstanceParentExpander(this));
-//                _treeAPI.addExpander(IObjectTypes.TRIGGER_PARENT, new TriggerParentExpander(this));
-
-//                _treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, new ObjectSourceTab("PROCEDURE", "Show stored procedure source"));
-//                _treeAPI.addDetailTab(DatabaseObjectType.FUNCTION, new ObjectSourceTab("FUNCTION", "Show function source"));
-//                _treeAPI.addDetailTab(IObjectTypes.INSTANCE, new InstanceDetailsTab());
-          _treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new GeneratorDetailsTab());
-          _treeAPI.addDetailTab(DatabaseObjectType.DATATYPE, new DomainDetailsTab());
-//                _treeAPI.addDetailTab(IObjectTypes.SESSION, new SessionDetailsTab());
-//                _treeAPI.addDetailTab(IObjectTypes.SESSION, new SessionStatisticsTab());
-          _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
-			 // i18n[firebird.showTrigger=Show trigger source]
-			 _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab(s_stringMgr.getString("firebird.showTrigger")));
-			 // i18n[firebird.showProcedureSource=Show procedure source]
-			 _treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureSourceTab(s_stringMgr.getString("firebird.showProcedureSource")));
-			 // i18n[firebird.showView=Show view source]
-			 _treeAPI.addDetailTab(DatabaseObjectType.VIEW, new ViewSourceTab(s_stringMgr.getString("firebird.showView")));
-//                _treeAPI.addDetailTab(DatabaseObjectType.USER, new UserDetailsTab());
-
-          final ActionCollection coll = getApplication().getActionCollection();
-          _treeAPI.addToPopup(DatabaseObjectType.INDEX, coll.get(ActivateIndexAction.class));
-          _treeAPI.addToPopup(DatabaseObjectType.INDEX, coll.get(DeactivateIndexAction.class));
+           GUIUtils.processOnSwingEventThread(new Runnable() {
+               public void run() {
+                   updateTreeApi(session);
+               }
+           });
        }
        if (false == isFirebird)
        {
@@ -251,6 +208,40 @@ public class FirebirdPlugin extends DefaultSessionPlugin {
 
     }
 
+    private void updateTreeApi(ISession session) {
+        _treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
+
+        // Tabs to add to the database node.
+        _treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
+        _treeAPI.addDetailTab(IObjectTypes.TRIGGER_PARENT, new DatabaseObjectInfoTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexInfoTab());
+
+        // Expanders.
+        _treeAPI.addExpander(IObjectTypes.INDEX_PARENT, new IndexParentExpander());
+
+        _treeAPI.addExpander(DatabaseObjectType.SESSION, new DatabaseExpander(this));
+        _treeAPI.addExpander(DatabaseObjectType.TABLE, new TableExpander(this));
+        _treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new GeneratorDetailsTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.DATATYPE, new DomainDetailsTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
+        // i18n[firebird.showTrigger=Show trigger source]
+        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, 
+                new TriggerSourceTab(s_stringMgr.getString("firebird.showTrigger")));
+        // i18n[firebird.showProcedureSource=Show procedure source]
+        _treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, 
+                new ProcedureSourceTab(s_stringMgr.getString("firebird.showProcedureSource")));
+        // i18n[firebird.showView=Show view source]
+        _treeAPI.addDetailTab(DatabaseObjectType.VIEW, 
+                new ViewSourceTab(s_stringMgr.getString("firebird.showView")));
+
+
+        final ActionCollection coll = getApplication().getActionCollection();
+        _treeAPI.addToPopup(DatabaseObjectType.INDEX, coll.get(ActivateIndexAction.class));
+        _treeAPI.addToPopup(DatabaseObjectType.INDEX, coll.get(DeactivateIndexAction.class));        
+    }
+    
 	/**
 	 * Create menu containing all Firebird actions.
 	 *

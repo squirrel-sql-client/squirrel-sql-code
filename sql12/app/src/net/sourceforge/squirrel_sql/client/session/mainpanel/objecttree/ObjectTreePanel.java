@@ -158,19 +158,15 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 		addDetailTab(DatabaseObjectType.SESSION, new MetaDataTab());
 		addDetailTab(DatabaseObjectType.SESSION, new ConnectionStatusTab());
 
-		final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
-
         session.getApplication().getThreadPool().addTask(new Runnable() {
             public void run() {
                 try
                 {
+                    SQLDatabaseMetaData md = 
+                        _session.getSQLConnection().getSQLMetaData();
                     if (md.supportsCatalogs())
                     {
-                        SwingUtilities.invokeLater(new Runnable() {
-                            public void run() {
-                                addDetailTab(DatabaseObjectType.SESSION, new CatalogsTab());
-                            }
-                        });
+                        _addDetailTab(DatabaseObjectType.SESSION, new CatalogsTab());
                     }
                 }
                 catch (Throwable th)
@@ -184,51 +180,53 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
             public void run() {
                 try
                 {
+                    SQLDatabaseMetaData md = 
+                        _session.getSQLConnection().getSQLMetaData();
                     if (md.supportsSchemas())
                     {
-                        SwingUtilities.invokeLater(new Runnable() {
-                            public void run() {
-                                addDetailTab(DatabaseObjectType.SESSION, new SchemasTab());
-                            }
-                        });
-                        
+                        _addDetailTab(DatabaseObjectType.SESSION, new SchemasTab());                        
                     }
                 }
                 catch (Throwable th)
                 {
                     s_log.error("Error in supportsCatalogs()", th);
                 }
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        addDetailTab(DatabaseObjectType.SESSION, new TableTypesTab());
-                        addDetailTab(DatabaseObjectType.SESSION, new DataTypesTab());
-                        addDetailTab(DatabaseObjectType.SESSION, new NumericFunctionsTab());
-                        addDetailTab(DatabaseObjectType.SESSION, new StringFunctionsTab());
-                        addDetailTab(DatabaseObjectType.SESSION, new SystemFunctionsTab());
-                        addDetailTab(DatabaseObjectType.SESSION, new TimeDateFunctionsTab());
-                        addDetailTab(DatabaseObjectType.SESSION, new KeywordsTab());
-        
-                        // Register tabs to display in the details panel for catalog nodes.
-                        addDetailTab(DatabaseObjectType.CATALOG, new DatabaseObjectInfoTab());
-        
-                        // Register tabs to display in the details panel for schema nodes.
-                        addDetailTab(DatabaseObjectType.SCHEMA, new DatabaseObjectInfoTab());
-        
-                        addDetailTabForTableLikeObjects(DatabaseObjectType.TABLE);
-                        addDetailTabForTableLikeObjects(DatabaseObjectType.VIEW);
-        
-                        // Register tabs to display in the details panel for procedure nodes.
-                        addDetailTab(DatabaseObjectType.PROCEDURE, new DatabaseObjectInfoTab());
-                        addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureColumnsTab());
-        
-                        // Register tabs to display in the details panel for UDT nodes.
-                        addDetailTab(DatabaseObjectType.UDT, new DatabaseObjectInfoTab());
-                    }
-                });
+                _addDetailTab(DatabaseObjectType.SESSION, new TableTypesTab());
+                _addDetailTab(DatabaseObjectType.SESSION, new DataTypesTab());
+                _addDetailTab(DatabaseObjectType.SESSION, new NumericFunctionsTab());
+                _addDetailTab(DatabaseObjectType.SESSION, new StringFunctionsTab());
+                _addDetailTab(DatabaseObjectType.SESSION, new SystemFunctionsTab());
+                _addDetailTab(DatabaseObjectType.SESSION, new TimeDateFunctionsTab());
+                _addDetailTab(DatabaseObjectType.SESSION, new KeywordsTab());
+
+                // Register tabs to display in the details panel for catalog nodes.
+                _addDetailTab(DatabaseObjectType.CATALOG, new DatabaseObjectInfoTab());
+
+                // Register tabs to display in the details panel for schema nodes.
+                _addDetailTab(DatabaseObjectType.SCHEMA, new DatabaseObjectInfoTab());
+
+                _addDetailTabForTableLikeObjects(DatabaseObjectType.TABLE);
+                _addDetailTabForTableLikeObjects(DatabaseObjectType.VIEW);
+
+                // Register tabs to display in the details panel for procedure nodes.
+                _addDetailTab(DatabaseObjectType.PROCEDURE, new DatabaseObjectInfoTab());
+                _addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureColumnsTab());
+
+                // Register tabs to display in the details panel for UDT nodes.
+                _addDetailTab(DatabaseObjectType.UDT, new DatabaseObjectInfoTab());
             }
         });
    }
 
+    private void _addDetailTabForTableLikeObjects(final DatabaseObjectType type)
+    {
+        GUIUtils.processOnSwingEventThread(new Runnable() {
+           public void run() {
+               addDetailTabForTableLikeObjects(type);
+           }
+        });
+    }
+    
    private void addDetailTabForTableLikeObjects(DatabaseObjectType type)
    {
       // Register tabs to display in the details panel for table nodes.
@@ -332,6 +330,16 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 		_tree.getTypedModel().addExpander(dboType, expander);
 	}
 
+    private void _addDetailTab(final DatabaseObjectType dboType, 
+                               final IObjectTab tab) 
+    {
+        GUIUtils.processOnSwingEventThread(new Runnable() {
+            public void run() {
+                addDetailTab(dboType, tab);
+            }
+        });
+    }
+    
 	/**
 	 * Add a tab to be displayed in the detail panel for the passed
 	 * database object type type.

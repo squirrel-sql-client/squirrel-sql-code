@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -176,16 +177,21 @@ public class UserScriptPlugin extends DefaultSessionPlugin
     * @return <TT>true</TT> to indicate that this plugin is
     *         applicable to passed session.
     */
-   public PluginSessionCallback sessionStarted(ISession session)
+   public PluginSessionCallback sessionStarted(final ISession session)
    {
-      ActionCollection coll = getApplication().getActionCollection();
+      
 
-      //IObjectTreeAPI api = session.getObjectTreeAPI(this);
-      IObjectTreeAPI api = FrameWorkAcessor.getObjectTreeAPI(session, this);
+      GUIUtils.processOnSwingEventThread(new Runnable() {
+          public void run() {
+              ActionCollection coll = getApplication().getActionCollection();
+              IObjectTreeAPI api = 
+                  session.getSessionInternalFrame().getObjectTreeAPI();
 
-      api.addToPopup(DatabaseObjectType.TABLE, coll.get(UserScriptAction.class));
-      api.addToPopup(DatabaseObjectType.PROCEDURE, coll.get(UserScriptAction.class));
-      api.addToPopup(DatabaseObjectType.SESSION, coll.get(UserScriptAction.class));
+              api.addToPopup(DatabaseObjectType.TABLE, coll.get(UserScriptAction.class));
+              api.addToPopup(DatabaseObjectType.PROCEDURE, coll.get(UserScriptAction.class));
+              api.addToPopup(DatabaseObjectType.SESSION, coll.get(UserScriptAction.class));              
+          }
+      });
 
 
       UserScriptAdmin adm = new UserScriptAdmin(this, session);

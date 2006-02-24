@@ -42,6 +42,40 @@ public class SQLCatalogsComboBox extends JComboBox
 		super();
 	}
 
+    /**
+     * Sets the catalogs that should appear in the catalog drop-down menu.
+     * Clear control and places all the catalog names from the list in it in 
+     * alphabetic sequence. Selects the specified catalog; If the selectedCatalog
+     * is null, then selects the first catalog.
+     * 
+     * @param catalogs an array of catalogs names that should in the catalogs
+     *        drop-down menu.
+     *         
+     * @param selectedCatalog the catalog for the current connection that should
+     *        be selected.
+     */
+    public void setCatalogs(String[] catalogs, String selectedCatalog) {
+        super.removeAllItems();
+        if (catalogs != null)
+        {
+            final Map map = new TreeMap();
+            for (int i = 0; i < catalogs.length; ++i)
+            {
+                map.put(catalogs[i], catalogs[i]);
+            }
+            for (Iterator it = map.values().iterator(); it.hasNext();)
+            {
+                addItem(it.next());
+            }
+            if (selectedCatalog != null)
+            {
+                setSelectedCatalog(selectedCatalog);
+            }
+        }
+        setMaximumSize(getPreferredSize());
+        
+    }
+    
 	/**
 	 * Set the <TT>SQLConnection</TT> for this control. Clear control
 	 * and place all the catalog names from the connection in it in alphabetic
@@ -54,6 +88,10 @@ public class SQLCatalogsComboBox extends JComboBox
 	 *
 	 * @throws	SQLException
 	 * 			Thrown if an SQL exception occurs.
+     * 
+     * @deprecated This method has been deprecated because the view should not
+     *             have direct access to the model.  Use the setCatalogs method
+     *             instead.
 	 */
 	public void setConnection(SQLConnection conn) throws SQLException
 	{
@@ -61,32 +99,15 @@ public class SQLCatalogsComboBox extends JComboBox
 		{
 			throw new IllegalArgumentException("SQLConnection == null");
 		}
-
-		super.removeAllItems();
 		final SQLDatabaseMetaData md = conn.getSQLMetaData();
 		if (md.supportsCatalogs())
 		{
 			final String[] catalogs = md.getCatalogs();
 			if (catalogs != null)
 			{
-				final Map map = new TreeMap();
-				for (int i = 0; i < catalogs.length; ++i)
-				{
-					map.put(catalogs[i], catalogs[i]);
-				}
-				for (Iterator it = map.values().iterator(); it.hasNext();)
-				{
-					addItem(it.next());
-				}
-				final String selCatalog = conn.getCatalog();
-				if (selCatalog != null)
-				{
-					setSelectedCatalog(selCatalog);
-				}
+                setCatalogs(catalogs, conn.getCatalog());
 			}
 		}
-
-		setMaximumSize(getPreferredSize());
 	}
 
 	public String getSelectedCatalog()
