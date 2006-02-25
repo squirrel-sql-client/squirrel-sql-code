@@ -69,7 +69,10 @@ public class ToolsPopupController
       addAction("tabclosecur", ac.get(CloseCurrentSQLResultTabAction.class));
       addAction("tabsticky", ac.get(ToggleCurrentSQLResultTabStickyAction.class));
 
-      if(sqlPanel.isInMainSessionWindow())
+		addAction("sqlprevious", ac.get(PreviousSqlAction.class));
+		addAction("sqlnext", ac.get(NextSqlAction.class));
+
+		if(sqlPanel.isInMainSessionWindow())
       {
          addAction("viewinobjecttree", ac.get(ViewObjectAtCursorInObjectTreeAction.class));
       }

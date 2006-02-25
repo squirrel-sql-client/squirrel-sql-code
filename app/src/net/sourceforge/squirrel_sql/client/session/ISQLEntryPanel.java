@@ -100,6 +100,11 @@ public interface ISQLEntryPanel extends IHasIdentifier
 	String getSQLToBeExecuted();
    int[] getBoundsOfSQLToBeExecuted();
 
+	void moveCaretToPreviousSQLBegin();
+
+	void moveCaretToNextSQLBegin();
+
+
 
 	int getSelectionStart();
 	void setSelectionStart(int pos);
