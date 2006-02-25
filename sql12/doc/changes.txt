@@ -4,6 +4,11 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+- Improved performance of the Session window when connecting to a database
+  over a slow link (especially Oracle).  Instead of freezing the window, now
+  SQuirreL shows a dialog indicating the progress of the session connection 
+  and allows the user to perform other tasks in parallel.
+
 - Keyboard short cuts are shown in tool bar tool tips.
 
 - Navigation through SQLs in SQL Editor by tool bar or Alt up/down keys.
