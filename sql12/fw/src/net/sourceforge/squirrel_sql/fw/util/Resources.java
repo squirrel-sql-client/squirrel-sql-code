@@ -142,7 +142,9 @@ public abstract class Resources
 			}
 		}
 
-		item.setToolTipText((String) action.getValue(Action.SHORT_DESCRIPTION));
+		String toolTipText = getToolTipTextWithAccelerator(action, fullKey);
+
+		item.setToolTipText(toolTipText);
 
 		return item;
 	}
@@ -195,8 +197,18 @@ public abstract class Resources
 		final String actionClassName = action.getClass().getName();
 		final String key = Keys.ACTION + "." + actionClassName;
 		action.putValue(Action.NAME, getResourceString(key, ActionProperties.NAME));
-		action.putValue(Action.SHORT_DESCRIPTION,
-						getResourceString(key, ActionProperties.TOOLTIP));
+
+
+		String shortDescription = getResourceString(key, ActionProperties.TOOLTIP);
+
+		String acceleratorString = getAcceleratorString(action);
+		if(null != acceleratorString && 0 < acceleratorString.trim().length())
+		{
+			shortDescription += "  (" + acceleratorString + ")";
+
+		}
+
+		action.putValue(Action.SHORT_DESCRIPTION,	shortDescription );
 
       String accelerator = getAcceleratorString(action);
       if(null != accelerator)
@@ -323,9 +335,35 @@ public abstract class Resources
 			}
 		}
 
-		item.setToolTipText((String) action.getValue(Action.SHORT_DESCRIPTION));
+		String toolTipText = getToolTipTextWithAccelerator(action, fullKey);
+
+
+		item.setToolTipText(toolTipText);
 
 		item.setIcon(null);
+	}
+
+	private String getToolTipTextWithAccelerator(Action action, String fullKey)
+	{
+		String toolTipText = (String) action.getValue(Action.SHORT_DESCRIPTION);
+
+		if(null == toolTipText)
+		{
+			toolTipText = "";
+		}
+		try
+		{
+			String accel = getResourceString(fullKey, MenuItemProperties.ACCELERATOR);
+			if (null != accel && accel.length() > 0)
+			{
+			 	toolTipText += "  (" + accel + ")";
+			}
+		}
+		catch (MissingResourceException e)
+		{
+			// Some actions dont have accelerators
+		}
+		return toolTipText;
 	}
 
 	protected ResourceBundle getBundle()

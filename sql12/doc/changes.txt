@@ -4,6 +4,13 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+- Keyboard short cuts are shown in tool bar tool tips.
+
+- Navigation through SQLs in SQL Editor by tool bar or Alt up/down keys.
+  Note: The concept of an SQL in SQuirreL is the text between two empty lines. Many functions in SQuirreL use this concept.
+  This way the user often doesn't need to mark the text he wants to execute a function on.
+  The concept is especially convenient for the Run SQL function (control Enter).
+
 - Introduced Oracle specific code to allow editing of tables in Oracle that contain Date columns.
   Oracle stores time information in java.sql.Types.DATE columns. The where clauses that SQuirreL
   used to create to update data after editing only contained the Date part of those columns. That's why

@@ -328,6 +328,9 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, PreviousSessionAction.class, menu);
 		addToMenu(rsrc, NextSessionAction.class, menu);
 		menu.addSeparator();
+		addToMenu(rsrc, PreviousSqlAction.class, menu);
+		addToMenu(rsrc, NextSqlAction.class, menu);
+		menu.addSeparator();
 		addToMenu(rsrc, EditWhereColsAction.class, menu);
 		menu.addSeparator();
       addToMenu(rsrc, NewSQLWorksheetAction.class, menu);

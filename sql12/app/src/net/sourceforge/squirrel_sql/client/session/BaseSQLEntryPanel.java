@@ -10,7 +10,6 @@ import javax.swing.text.JTextComponent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
 
 /*
  * Copyright (C) 2001-2003 Colin Bell
@@ -123,6 +122,97 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
 
       return bounds;
    }
+
+	public void moveCaretToPreviousSQLBegin()
+	{
+		String sql = getText();
+
+		int iCaretPos = getCaretPosition() - 1;
+		int iLastIndex = sql.lastIndexOf(SQL_STMT_SEP, iCaretPos);
+
+		if(-1 == iLastIndex)
+		{
+			return;
+		}
+
+		iLastIndex = sql.lastIndexOf(SQL_STMT_SEP, iLastIndex - SQL_STMT_SEP.length() * getSepCount(iLastIndex, true, sql));
+
+		if(-1 < iLastIndex)
+		{
+			while(Character.isWhitespace(sql.charAt(iLastIndex)) && iLastIndex < sql.length())
+			{
+				++iLastIndex;
+			}
+			setCaretPosition(iLastIndex);
+		}
+		else if(false == sql.startsWith(SQL_STMT_SEP))
+		{
+			setCaretPosition(0);
+		}
+	}
+
+	private int getSepCount(int iFromIndex, boolean upwards, String sql)
+	{
+		if(upwards)
+		{
+			int count = 0;
+
+			int oldIx = iFromIndex;
+			int ix = sql.lastIndexOf(SQL_STMT_SEP, oldIx) - SQL_STMT_SEP.length();
+
+			while(-SQL_STMT_SEP.length() <= ix && oldIx - ix  == SQL_STMT_SEP.length())
+			{
+				++count;
+				oldIx = ix;
+				ix = sql.lastIndexOf(SQL_STMT_SEP, oldIx) - SQL_STMT_SEP.length();
+			}
+
+
+			return count;
+		}
+		else
+		{
+			int count = 0;
+
+			int oldIx = iFromIndex;
+			int ix = sql.indexOf(SQL_STMT_SEP, oldIx) + SQL_STMT_SEP.length();
+
+			while(SQL_STMT_SEP.length() <= ix && ix - oldIx  == SQL_STMT_SEP.length())
+			{
+				++count;
+				oldIx = ix;
+				ix = sql.indexOf(SQL_STMT_SEP, oldIx) + SQL_STMT_SEP.length();
+			}
+
+
+			return count;
+		}
+	}
+
+	public void moveCaretToNextSQLBegin()
+	{
+		String sql = getText();
+
+		int iCaretPos = getCaretPosition();
+		int iNextIndex = sql.indexOf(SQL_STMT_SEP, iCaretPos);
+
+		if(-1 == iNextIndex)
+		{
+			return;
+		}
+
+		iNextIndex += SQL_STMT_SEP.length() * (getSepCount(iNextIndex, false, sql));
+
+		if(sql.length() > iNextIndex + SQL_STMT_SEP.length())
+		{
+			while(Character.isWhitespace(sql.charAt(iNextIndex)) && iNextIndex < sql.length())
+			{
+				++iNextIndex;
+			}
+			setCaretPosition(iNextIndex);
+		}
+	}
+
 
 	/**
 	 * Add a hierarchical menu to the SQL Entry Area popup menu.
