@@ -116,7 +116,7 @@ public class DataTypeInteger
 	 * Neither of the objects is null
 	 */
 	public boolean areEqual(Object obj1, Object obj2) {
-		return ((Integer)obj1).equals(obj2);
+		return (obj1).equals(obj2);
 	}
 
 	/*
