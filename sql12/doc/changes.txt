@@ -4,6 +4,10 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+- When adding a new driver definition, SQuirreL will now look at the default 
+  driver list and determine if any driver defs are missing from the user's
+  personal list.  If so, SQuirreL will prompt the user to add them.
+
 - MSSQL plugin: Scripting of procedures now works on MSSQL 2005
 
 - Fixed bug #1230126: ClassCastException when editing table data for tables with short and long column
