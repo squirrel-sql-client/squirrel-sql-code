@@ -19,15 +19,20 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  */
 import java.awt.event.ActionEvent;
 import java.beans.PropertyVetoException;
-
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import java.io.IOException;
+import java.net.URL;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.db.DriversListInternalFrame;
+import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
+import net.sourceforge.squirrel_sql.fw.sql.DataCache;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 /**
  * This <CODE>Action</CODE> allows the user to create a new <TT>ISQLDriver</TT>.
  *
@@ -72,6 +77,37 @@ public class CreateDriverAction extends SquirrelAction
             //i18n[CreateDriverAction.error.selectingwindow=Error selecting window]
 			s_log.error(s_stringMgr.getString("CreateDriverAction.error.selectingwindow"), ex);
 		}
+            
+        try {
+            final URL url = app.getResources().getDefaultDriversUrl();
+            DataCache cache = _app.getDataCache();
+            ISQLDriver[] missingDrivers = cache.findMissingDefaultDrivers(url);
+            if (missingDrivers != null) {
+                String msg =
+                    s_stringMgr.getString("CreateDriverAction.confirm");
+                if (Dialogs.showYesNo(_app.getMainFrame(), msg)) {
+                    for (int i = 0; i < missingDrivers.length; i++) {
+                        try {
+                            cache.addDriver(missingDrivers[i], null);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    
+                }
+            }
+        } catch (XMLException e) {
+            // i18n[CreateDriverAction.error.loadDefaultDrivers]
+            String msg = 
+                s_stringMgr.getString("CreateDriverAction.error.loadDefaultDrivers");
+            s_log.error(msg, e);
+        } catch (IOException e) {
+            // i18n[CreateDriverAction.error.loadDefaultDrivers]
+            String msg = 
+                s_stringMgr.getString("CreateDriverAction.error.loadDefaultDrivers");
+            s_log.error(msg, e);
+        }
+
 		new CreateDriverCommand(app).execute();
 	}
 }
