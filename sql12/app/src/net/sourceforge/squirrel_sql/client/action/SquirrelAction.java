@@ -24,7 +24,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 
 public abstract class SquirrelAction extends BaseAction
 {
-	private IApplication _app;
+	protected IApplication _app;
 
 	protected SquirrelAction(IApplication app)
 	{
