@@ -376,16 +376,15 @@ public class SessionPanel extends JPanel
 							_toolBar = new MyToolBar(session);
 							for (int i = 0; i < _externallyAddedToolbarActionsAndSeparators.size(); i++)
 							{
-                        if(_externallyAddedToolbarActionsAndSeparators.get(i) instanceof Action)
-                        {
+							    if(_externallyAddedToolbarActionsAndSeparators.get(i) instanceof Action)
+							    {
 								   _toolBar.add((Action)_externallyAddedToolbarActionsAndSeparators.get(i));
-                        }
-                        else
-                        {
-                           _toolBar.addSeparator();
-                        }
+							    }
+							    else
+							    {
+							        _toolBar.addSeparator();
+							    }
 							}
-
 							add(_toolBar, BorderLayout.NORTH);
 						}
 					}
@@ -460,6 +459,7 @@ public class SessionPanel extends JPanel
                     GUIUtils.processOnSwingEventThread(new Runnable() {
                         public void run() {
                             createGUI(session, listener, catalogs, selected);
+                            _app.getWindowManager().sessionInitComplete(session);
                         }
                     });
                 }
