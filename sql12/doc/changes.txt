@@ -4,6 +4,8 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+- Fixed bug #1230126: ClassCastException when editing table data for tables with short and long column
+
 - Improved performance of the Session window when connecting to a database
   over a slow link (especially Oracle).  Instead of freezing the window, now
   SQuirreL shows a dialog indicating the progress of the session connection 

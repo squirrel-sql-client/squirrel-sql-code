@@ -448,7 +448,7 @@ public class SessionPanel extends JPanel
 		MyToolBar(final ISession session)
 		{
 			super();
-            session.getApplication().getThreadPool().addTask(new Runnable() {                
+            session.getApplication().getThreadPool().addTask(new Runnable() {
                 public void run() {
                     final String[] catalogs = getCatalogs(session);
                     final String selected = getCatalog(session);

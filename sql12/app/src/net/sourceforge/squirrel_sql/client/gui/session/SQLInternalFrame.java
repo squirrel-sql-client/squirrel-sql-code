@@ -198,6 +198,9 @@ public class SQLInternalFrame extends BaseSessionInternalFrame
 			add(actions.get(FileSaveAsAction.class));
 			add(actions.get(FileCloseAction.class));
 			addSeparator();
+			add(actions.get(PreviousSqlAction.class));
+			add(actions.get(NextSqlAction.class));
+			addSeparator();
 			add(actions.get(SQLFilterAction.class));
 			actions.get(SQLFilterAction.class).setEnabled(true);
 		}
