@@ -235,7 +235,9 @@ public class DataCache
 		{
 			throw new IllegalArgumentException("ISQLDriver == null");
 		}
-		registerDriver(sqlDriver, messageHandler, true);
+        if (messageHandler != null) {
+            registerDriver(sqlDriver, messageHandler, true);
+        }
 		_cache.add(sqlDriver);
 	}
 
@@ -386,6 +388,73 @@ public class DataCache
 		return new SQLDriver(id);
 	}
 
+    /**
+     * Tests the currently cached driver definitions to see if any default 
+     * drivers are missing and returns an array of ISQLDrivers that represent
+     * default drivers that were not found.
+     * 
+     * @param url the url of the file containing the default driver definitions.
+     * @return a list of default ISQLDriver instances if any or found; null is
+     *         returned otherwise.
+     *         
+     * @throws IOException
+     * @throws XMLException
+     */
+    public ISQLDriver[] findMissingDefaultDrivers(URL url) 
+        throws IOException, XMLException
+    {
+        ISQLDriver[] result = null;
+        InputStreamReader isr = new InputStreamReader(url.openStream());
+        ArrayList missingDrivers = new ArrayList();
+        try
+        {
+            XMLObjectCache tmp = new XMLObjectCache();
+            tmp.load(isr, null, true);
+            
+            for (Iterator iter = tmp.getAllForClass(SQL_DRIVER_IMPL); iter.hasNext();) {
+                ISQLDriver defaultDriver = (ISQLDriver) iter.next();
+                if (!containsDriver(defaultDriver)) {
+                    missingDrivers.add(defaultDriver);
+                }
+            }
+        }
+        catch (DuplicateObjectException ex)
+        {
+            // If this happens then this is a programming error as we said
+            // in the above call to ingore these errors.
+            s_log.error("Received an unexpected DuplicateObjectException", ex);
+        }
+        finally
+        {
+            isr.close();
+        }
+        if (missingDrivers.size() > 0) {
+            result = 
+                (ISQLDriver[])missingDrivers.toArray(
+                                        new ISQLDriver[missingDrivers.size()]);
+        }
+        return result;
+    }
+    
+    /**
+     * Returns a boolean value indicating whether or not the specified driver
+     * is contained in the cache.
+     * 
+     * @param driver the ISQLDriver to search for.
+     * @return true if the specified driver was found; false otherwise.
+     */
+    public boolean containsDriver(ISQLDriver driver) {
+        boolean result = false;
+        for (Iterator iter = _cache.getAllForClass(SQL_DRIVER_IMPL); iter.hasNext();) {
+            ISQLDriver cachedDriver = (ISQLDriver) iter.next();
+            if (cachedDriver.equals(driver)) {
+                result = true;
+                break;
+            }
+        }
+        return result;
+    }
+    
 	public void loadDefaultDrivers(URL url) throws IOException, XMLException
 	{
 		InputStreamReader isr = new InputStreamReader(url.openStream());
