@@ -4,11 +4,13 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+- MSSQL plugin: Scripting of procedures now works on MSSQL 2005
+
 - Fixed bug #1230126: ClassCastException when editing table data for tables with short and long column
 
 - Improved performance of the Session window when connecting to a database
   over a slow link (especially Oracle).  Instead of freezing the window, now
-  SQuirreL shows a dialog indicating the progress of the session connection 
+  SQuirreL shows a dialog indicating the progress of the session connection
   and allows the user to perform other tasks in parallel.
 
 - Keyboard short cuts are shown in tool bar tool tips.
@@ -46,7 +48,7 @@ Not yet released, available in CVS and probably in latest weekly build
 
 - Cleaned up copying from tables:
   1. Control+c and copy in the right mouse menu now do the same: They copy data without column headers.
-  2. A new right mouse menu entry ('Copy with headers') provides the ability to copy data including 
+  2. A new right mouse menu entry ('Copy with headers') provides the ability to copy data including
      column headers
 
 - Fixed bug #1424828: Not possible to clear Non-nullable fields using backspace
@@ -59,16 +61,16 @@ Not yet released, available in CVS and probably in latest weekly build
 - Fixed bug #1385270: Dropping multiple selected tables produces exceptions
 - Fixed bug #1256021: Refresh item on a table showing the row number does not update the row count
 - Fixed bugs #1043604 and #1043599: Unlocalized decimal separator caused problems when data was pasted
-                      for example to Open Office Calc. In the Global preferences the user is now able 
+                      for example to Open Office Calc. In the Global preferences the user is now able
                       to chose the Java default format for floating point values or the localized form.
 - Fixed bug # 863673: cannot DROP TABLE
-- Fixed bug # 887525: When Object Tree Nodes are the selected by keystrokes the selected node is scrolled 
+- Fixed bug # 887525: When Object Tree Nodes are the selected by keystrokes the selected node is scrolled
                       to visible.
-- Fixed bug # 763347: Alias and Datasource loss on crash. Files are now written to a temp file first and 
+- Fixed bug # 763347: Alias and Datasource loss on crash. Files are now written to a temp file first and
                       then renamed.
 
 - Fixed bug: In Code Completion, the database-dependent keywords where missing
-- Fixed bug: In code completion, columns weren't shown correctly when the same table alias name was used 
+- Fixed bug: In code completion, columns weren't shown correctly when the same table alias name was used
              in different statements for different tables (Thanks to Abhishek Gupta)
 
 
