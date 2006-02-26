@@ -75,7 +75,7 @@ public class ScriptProcedureExecCommand implements ICommand {
                      * the parameter information. */
 
                     String useThisName = MssqlIntrospector.getFixedVersionedObjectName(oi.getSimpleName());
-                    CallableStatement stmt = conn.prepareCall("{ call sp_help ? }");
+                    CallableStatement stmt = conn.prepareCall("{ call sp_help (?) }");
                     stmt.setString(1, useThisName);
                     ResultSet rs;
                     

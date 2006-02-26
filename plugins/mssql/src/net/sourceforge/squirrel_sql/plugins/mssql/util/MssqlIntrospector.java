@@ -247,7 +247,7 @@ public class MssqlIntrospector {
     public static String getHelpTextForObject(String objectName, Connection c) throws java.sql.SQLException {
         StringBuffer buf = new StringBuffer();
         
-        CallableStatement stmt = c.prepareCall("{ call sp_helptext ? }");
+        CallableStatement stmt = c.prepareCall("{ call sp_helptext (?) }");
         stmt.setString(1, objectName);
         
         ResultSet helpText = stmt.executeQuery();
