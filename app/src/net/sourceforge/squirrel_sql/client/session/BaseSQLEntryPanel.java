@@ -135,58 +135,35 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
 			return;
 		}
 
-		iLastIndex = sql.lastIndexOf(SQL_STMT_SEP, iLastIndex - SQL_STMT_SEP.length() * getSepCount(iLastIndex, true, sql));
+		iLastIndex = sql.lastIndexOf(SQL_STMT_SEP, iLastIndex - getWhiteSpaceCountBackwards(iLastIndex, sql));
 
-		if(-1 < iLastIndex)
+		if(-1 == iLastIndex)
 		{
-			while(Character.isWhitespace(sql.charAt(iLastIndex)) && iLastIndex < sql.length())
-			{
-				++iLastIndex;
-			}
-			setCaretPosition(iLastIndex);
+			iLastIndex = 0;
 		}
-		else if(false == sql.startsWith(SQL_STMT_SEP))
+
+		char c = sql.charAt(iLastIndex);
+		while(Character.isWhitespace(c) && iLastIndex < sql.length())
 		{
-			setCaretPosition(0);
+			++iLastIndex;
+			c = sql.charAt(iLastIndex);
+
 		}
+		setCaretPosition(iLastIndex);
 	}
 
-	private int getSepCount(int iFromIndex, boolean upwards, String sql)
+	private int getWhiteSpaceCountBackwards(int iStartIx, String sql)
 	{
-		if(upwards)
+
+		int count = 0;
+		while(0 < iStartIx && Character.isWhitespace(sql.charAt(iStartIx)))
 		{
-			int count = 0;
-
-			int oldIx = iFromIndex;
-			int ix = sql.lastIndexOf(SQL_STMT_SEP, oldIx) - SQL_STMT_SEP.length();
-
-			while(-SQL_STMT_SEP.length() <= ix && oldIx - ix  == SQL_STMT_SEP.length())
-			{
-				++count;
-				oldIx = ix;
-				ix = sql.lastIndexOf(SQL_STMT_SEP, oldIx) - SQL_STMT_SEP.length();
-			}
-
-
-			return count;
+			--iStartIx;
+			++count;
 		}
-		else
-		{
-			int count = 0;
 
-			int oldIx = iFromIndex;
-			int ix = sql.indexOf(SQL_STMT_SEP, oldIx) + SQL_STMT_SEP.length();
+		return count;
 
-			while(SQL_STMT_SEP.length() <= ix && ix - oldIx  == SQL_STMT_SEP.length())
-			{
-				++count;
-				oldIx = ix;
-				ix = sql.indexOf(SQL_STMT_SEP, oldIx) + SQL_STMT_SEP.length();
-			}
-
-
-			return count;
-		}
 	}
 
 	public void moveCaretToNextSQLBegin()
@@ -201,14 +178,13 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
 			return;
 		}
 
-		iNextIndex += SQL_STMT_SEP.length() * (getSepCount(iNextIndex, false, sql));
-
-		if(sql.length() > iNextIndex + SQL_STMT_SEP.length())
+		while(iNextIndex < sql.length() && Character.isWhitespace(sql.charAt(iNextIndex)))
 		{
-			while(Character.isWhitespace(sql.charAt(iNextIndex)) && iNextIndex < sql.length())
-			{
-				++iNextIndex;
-			}
+			++iNextIndex;
+		}
+
+		if(iNextIndex < sql.length())
+		{
 			setCaretPosition(iNextIndex);
 		}
 	}
