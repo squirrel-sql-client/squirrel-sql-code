@@ -36,12 +36,12 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.SplashScreen;
 import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.ClassLoaderListener;
 import net.sourceforge.squirrel_sql.fw.util.MyURLClassLoader;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -167,44 +167,61 @@ public class PluginManager
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> ISession</TT> passed.
 	 */
-	public synchronized void sessionStarted(ISession session)
+	public synchronized void sessionStarted(final ISession session)
 	{
 		if (session == null)
 		{
 			throw new IllegalArgumentException("ISession == null");
 		}
-		List plugins = new ArrayList();
+		final List plugins = new ArrayList();
 		_activeSessions.put(session.getIdentifier(), plugins);
 		for (Iterator it = _sessionPlugins.iterator(); it.hasNext();)
 		{
-			SessionPluginInfo spi = (SessionPluginInfo) it.next();
-			try
-			{
-            PluginSessionCallback pluginSessionCallback = spi.getSessionPlugin().sessionStarted(session);
-
-            if (null != pluginSessionCallback)
-				{
-               List list = (List) _pluginSessionCallbacksBySessionID.get(session.getIdentifier());
-               if(null == list)
-               {
-                  list = new ArrayList();
-                  _pluginSessionCallbacksBySessionID.put(session.getIdentifier(), list);
-               }
-               list.add(pluginSessionCallback);
-
-					plugins.add(spi);
-				}
-			}
-			catch (Throwable th)
-			{
-				String msg = s_stringMgr.getString("PluginManager.error.sessionstarted",
-								spi.getPlugin().getDescriptiveName());
-				s_log.error(msg, th);
-				_app.showErrorDialog(msg, th);
-			}
+		    final SessionPluginInfo spi = (SessionPluginInfo) it.next();
+            session.getApplication().getThreadPool().addTask(new Runnable() {
+                public void run() {
+                    sendSessionStarted(session, spi, plugins);        
+                }
+            });
+            
 		}
 	}
 
+    private void sendSessionStarted(ISession session, 
+                                    SessionPluginInfo spi,
+                                    List plugins) {
+        try
+        {
+            PluginSessionCallback pluginSessionCallback = spi.getSessionPlugin().sessionStarted(session);
+            
+            if (null != pluginSessionCallback)
+            {
+                List list = (List) _pluginSessionCallbacksBySessionID.get(session.getIdentifier());
+                if(null == list)
+                {
+                    list = new ArrayList();
+                    _pluginSessionCallbacksBySessionID.put(session.getIdentifier(), list);
+                }
+                list.add(pluginSessionCallback);
+                
+                plugins.add(spi);
+            }
+        }
+        catch (final Throwable th)
+        {
+            final String msg = 
+                s_stringMgr.getString("PluginManager.error.sessionstarted",
+                                      spi.getPlugin().getDescriptiveName());
+            s_log.error(msg, th);
+            GUIUtils.processOnSwingEventThread(new Runnable() {
+                public void run() {
+                    _app.showErrorDialog(msg, th);
+                }
+            });
+            
+        }        
+    }
+    
 	/**
 	 * A session is ending.
 	 *
