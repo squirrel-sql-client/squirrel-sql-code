@@ -277,6 +277,10 @@ public class SessionPanel extends JPanel
 		});
 	}
 
+    public String getStatusBarMessage() {
+        return _statusBar.getText();
+    }
+    
 	SQLPanel getSQLPanel()
 	{
 		return _mainTabPane.getSQLPanel();
