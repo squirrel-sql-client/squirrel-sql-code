@@ -47,6 +47,7 @@ import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.mainframe.action.OpenConnectionCommand;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
+import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsProcessor;
@@ -136,6 +137,12 @@ class Session implements ISession
 
    private String databaseProductName = null;
    
+   /** flag to track whether or not the table data has been loaded in the object tree */
+   private boolean _finishedLoading = false;
+   
+   /** flag to track whether or not the plugins have finished loading for this new session */
+   private boolean _pluginsFinishedLoading = false;
+   
    /**
 	 * Create a new session.
 	 *
@@ -202,6 +209,7 @@ class Session implements ISession
 			public void run()
 			{
 				loadTableInfo();
+                _finishedLoading = true;
 			}
 		});
 
@@ -947,4 +955,18 @@ class Session implements ISession
 		_app.getSessionManager().fireSessionFinalized(_id);
 
 	}
+
+    /**
+     * @param _finishedLoading The _finishedLoading to set.
+     */
+    public void setPluginsfinishedLoading(boolean pluginsFinishedLoading) {
+        this._pluginsFinishedLoading = pluginsFinishedLoading;
+    }
+
+    /**
+     * @return Returns the _finishedLoading.
+     */
+    public boolean isfinishedLoading() {
+        return _finishedLoading && _pluginsFinishedLoading;
+    }
 }
