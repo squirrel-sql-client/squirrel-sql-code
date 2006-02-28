@@ -100,7 +100,7 @@ public class PluginManager
 	 * each plugin.
 	 */
 	private final Map _pluginLoadInfoColl = new HashMap();
-
+    
    private HashMap _pluginSessionCallbacksBySessionID = new HashMap();
 
    /** The class that listens for notifications as archives are being loaded */
@@ -174,17 +174,17 @@ public class PluginManager
 			throw new IllegalArgumentException("ISession == null");
 		}
 		final List plugins = new ArrayList();
-		_activeSessions.put(session.getIdentifier(), plugins);
-		for (Iterator it = _sessionPlugins.iterator(); it.hasNext();)
-		{
-		    final SessionPluginInfo spi = (SessionPluginInfo) it.next();
-            session.getApplication().getThreadPool().addTask(new Runnable() {
-                public void run() {
-                    sendSessionStarted(session, spi, plugins);        
+        _activeSessions.put(session.getIdentifier(), plugins);
+        session.getApplication().getThreadPool().addTask(new Runnable() {
+            public void run() {
+                for (Iterator it = _sessionPlugins.iterator(); it.hasNext();)
+        		{
+        		    SessionPluginInfo spi = (SessionPluginInfo) it.next();
+                    sendSessionStarted(session, spi, plugins);
                 }
-            });
-            
-		}
+                session.setPluginsfinishedLoading(true);
+            }
+        });
 	}
 
     private void sendSessionStarted(ISession session, 
@@ -236,7 +236,7 @@ public class PluginManager
 		{
 			throw new IllegalArgumentException("ISession == null");
 		}
-
+        
 		List plugins = (List) _activeSessions.remove(session.getIdentifier());
 		if (plugins != null)
 		{
@@ -255,6 +255,7 @@ public class PluginManager
 					_app.showErrorDialog(msg, th);
 				}
 			}
+            
          _pluginSessionCallbacksBySessionID.remove(session.getIdentifier());
 		}
 	}
@@ -323,7 +324,7 @@ public class PluginManager
 		return (IPluginDatabaseObjectType[]) objTypesList.toArray(
 			new IPluginDatabaseObjectType[objTypesList.size()]);
 	}
-
+    
 	/**
 	 * Retrieve an array of all the <TT>URL</TT> objects that are
 	 * used to find plugin classes.
