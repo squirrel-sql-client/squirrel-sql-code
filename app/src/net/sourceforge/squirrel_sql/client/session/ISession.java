@@ -268,4 +268,14 @@ public interface ISession extends IHasIdentifier
     */
    IObjectTreeAPI getObjectTreeAPIOfActiveSessionWindow();
 
+   /**
+    * @return Returns the _finishedLoading.
+    */
+   public boolean isfinishedLoading();
+
+   /**
+    * @param _finishedLoading The _finishedLoading to set.
+    */
+   public void setPluginsfinishedLoading(boolean _finishedLoading);
+
 }
