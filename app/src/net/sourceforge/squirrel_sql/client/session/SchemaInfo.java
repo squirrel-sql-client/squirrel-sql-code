@@ -68,13 +68,14 @@ public class SchemaInfo
 	private ISession _session = null;
 	private IProcedureInfo[] _procInfos = new IProcedureInfo[0];
 	private HashMap _procedures = new HashMap();
-    private ProgressMonitor progress = null; 
 
 	/** Logger for this class. */
 	private static final ILogger s_log =
 				LoggerController.createLogger(SchemaInfo.class);
 	private SessionAdapter _sessionListener;
-
+    /** the status message that was written by the object tree to be restored */
+	private String _replacedStatusText = null;
+    
 	public SchemaInfo(IApplication app)
 	{
 		_sessionListener = new SessionAdapter()
@@ -107,7 +108,6 @@ public class SchemaInfo
 	public void load(ISession session)
 	{
         long mstart = System.currentTimeMillis();
-        initProgressMonitor(session);
         String msg = null;
         if (session == null)
 		{
@@ -130,7 +130,6 @@ public class SchemaInfo
                 setNote(msg);
                 long start = System.currentTimeMillis();
 				loadKeywords(sqlDmd);
-                setProgress(1);
                 long finish = System.currentTimeMillis();
 				s_log.debug("Keywords loaded in "+(finish-start)+" ms");
 			}
@@ -147,7 +146,6 @@ public class SchemaInfo
                 setNote(msg);
                 long start = System.currentTimeMillis();
 				loadDataTypes(sqlDmd);
-                setProgress(2);
                 long finish = System.currentTimeMillis();
 				s_log.debug("Data types loaded in "+(finish-start)+" ms");
 			}
@@ -164,7 +162,6 @@ public class SchemaInfo
                 setNote(msg);
                 long start = System.currentTimeMillis();
 				loadFunctions(sqlDmd);
-                setProgress(3);
                 long finish = System.currentTimeMillis();
 				s_log.debug("Functions loaded in "+(finish-start)+" ms");
 			}
@@ -181,7 +178,6 @@ public class SchemaInfo
                 setNote(msg);
                 long start = System.currentTimeMillis();
 				loadCatalogs(sqlDmd);
-                setProgress(4);
                 long finish = System.currentTimeMillis();
 				s_log.debug("Catalogs loaded in "+(finish-start)+" ms");
 			}
@@ -198,7 +194,6 @@ public class SchemaInfo
                 setNote(msg);
                 long start = System.currentTimeMillis();
 				loadSchemas(sqlDmd);
-                setProgress(5);
                 long finish = System.currentTimeMillis();
 				s_log.debug("Schemas loaded in "+(finish-start)+" ms");
 			}
@@ -216,7 +211,6 @@ public class SchemaInfo
                 setNote(msg);
                 long start = System.currentTimeMillis();
 				loadTables(sqlDmd);
-                setProgress(6);
                 long finish = System.currentTimeMillis();
 				s_log.debug("Tables loaded in "+(finish-start)+" ms");
 			}
@@ -233,7 +227,6 @@ public class SchemaInfo
                 setNote(msg);
                 long start = System.currentTimeMillis();
                 loadStoredProcedures(sqlDmd);
-                setProgress(7);
                 long finish = System.currentTimeMillis();
 				s_log.debug("stored procedures loaded in "+(finish-start)+" ms");
 			}
@@ -246,44 +239,32 @@ public class SchemaInfo
 		{
 			_loading = false;
 			_loaded = true;
+            if (_replacedStatusText != null) {
+                setNote(_replacedStatusText);
+            }
 		}
         long mfinish = System.currentTimeMillis();
         s_log.debug("SchemaInfo.load took "+(mfinish-mstart)+" ms");
 	}
-
-    private void initProgressMonitor(final ISession session) {
-        GUIUtils.processOnSwingEventThread(new Runnable() {
-            public void run() {
-                String message = null;
-                String note = "note";
-                
-                progress = new ProgressMonitor(session.getApplication().getMainFrame(),
-                                               message,
-                                               note,
-                                               0,
-                                               7);
-                progress.setMillisToDecideToPopup(500);
-                progress.setMillisToPopup(500);                        
-            }
-        });
-    }
     
     private void setNote(final String note) {
+        if (_session == null || _session.getSessionSheet() == null) {
+            return;
+        }
+        String msg = _session.getSessionSheet().getStatusBarMessage();
+        // Save the object tree status message to replace it when we are finished
+        // loading
+        if (msg != null && msg.startsWith("/")) {
+            _replacedStatusText = msg;
+        }
         GUIUtils.processOnSwingEventThread(new Runnable() {
             public void run() {
-                progress.setNote(note);
+                _session.getSessionSheet().setStatusBarMessage(note);
             }
         });
+        
     }
-    
-    private void setProgress(final int nv) {
-        GUIUtils.processOnSwingEventThread(new Runnable() {
-            public void run() {
-                progress.setProgress(nv);
-            }
-        });        
-    }
-    
+        
 	private void loadStoredProcedures(SQLDatabaseMetaData dmd)
 	{
 
