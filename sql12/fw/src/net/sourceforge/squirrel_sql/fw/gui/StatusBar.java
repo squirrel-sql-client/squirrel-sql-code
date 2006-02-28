@@ -100,6 +100,14 @@ public class StatusBar extends JPanel
 		}
 	}
 
+    /**
+     * Returns the text label's current value 
+     * @return
+     */
+    public synchronized String getText() {
+        return _textLbl.getText();
+    }
+    
 	public synchronized void clearText()
 	{
 		_textLbl.setText(_msgWhenEmpty);
