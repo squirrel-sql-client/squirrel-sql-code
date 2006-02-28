@@ -24,7 +24,9 @@ import java.awt.Window;
 import java.awt.event.FocusEvent;
 import java.beans.PropertyVetoException;
 
-import javax.swing.*;
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
@@ -42,7 +44,7 @@ public class SessionInternalFrame extends BaseSessionInternalFrame
 	private final IApplication _app;
 
 	private SessionPanel _sessionPanel;
-
+    
 	public SessionInternalFrame(ISession session)
 	{
 		super(session, session.getTitle(), true, true, true, true);
@@ -107,7 +109,7 @@ public class SessionInternalFrame extends BaseSessionInternalFrame
 		}
 	}
 
-	private void createGUI(ISession session)
+	private void createGUI(final ISession session)
 	{
 		setVisible(false);
 		setDefaultCloseOperation(SessionInternalFrame.DO_NOTHING_ON_CLOSE);
@@ -143,6 +145,9 @@ public class SessionInternalFrame extends BaseSessionInternalFrame
 			}
 			public void internalFrameClosing(InternalFrameEvent evt)
 			{
+                if (!session.isfinishedLoading()) {                         
+                    return;
+                }
 				final ISession mySession = getSession();
 				if (mySession != null)
 				{

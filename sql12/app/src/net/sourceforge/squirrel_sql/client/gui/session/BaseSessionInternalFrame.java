@@ -21,7 +21,6 @@ import java.io.File;
 
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
-import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -33,12 +32,11 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  *
  * @author <A HREF="mailto:jmheight@users.sourceforge.net">Jason Height</A>
  */
-public class BaseSessionInternalFrame extends BaseInternalFrame
-{
+public class BaseSessionInternalFrame extends BaseInternalFrame  {
 	private ISession _session;
    private String _titleWithoutFile = "";
    private String _sqlFilePath = null;
-
+   
    /** Internationalized strings for this class. */
    private static final StringManager s_stringMgr =
        StringManagerFactory.getStringManager(BaseSessionInternalFrame.class);        
@@ -159,6 +157,9 @@ public class BaseSessionInternalFrame extends BaseInternalFrame
 
 	public void closeFrame(boolean withEvents)
 	{
+        if (!_session.isfinishedLoading()) {
+            return;
+        }
 		if(withEvents)
 		{
 			fireInternalFrameEvent(InternalFrameEvent.INTERNAL_FRAME_CLOSING);
@@ -170,8 +171,8 @@ public class BaseSessionInternalFrame extends BaseInternalFrame
 			fireInternalFrameEvent(InternalFrameEvent.INTERNAL_FRAME_CLOSED);
 		}
 	}
-
-	/**
+    
+    /**
 	 * Sets the session behind this sheet to the active session when the
 	 * frame is activated
 	 */
