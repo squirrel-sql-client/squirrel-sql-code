@@ -23,6 +23,9 @@ package net.sourceforge.squirrel_sql.client;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.AWTEvent;
+import java.awt.EventQueue;
+import java.awt.Toolkit;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -35,10 +38,6 @@ import java.io.PrintWriter;
 import java.sql.DriverManager;
 import java.util.Calendar;
 import java.util.Iterator;
-import java.util.Date;
-import java.text.MessageFormat;
-import java.text.DateFormat;
-import java.awt.*;
 
 import javax.swing.Action;
 import javax.swing.JComponent;
@@ -75,6 +74,7 @@ import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.sql.DataCache;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
+import net.sourceforge.squirrel_sql.fw.util.BareBonesBrowserLaunch;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ClassLoaderListener;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
@@ -559,6 +559,15 @@ class Application implements IApplication
 		}
 	}
 
+    /**
+     * Launches the specified url in the system default web-browser
+     *  
+     * @param url the URL of the web page to display.
+     */
+    public void openURL(String url) {
+        BareBonesBrowserLaunch.openURL(url);
+    }
+    
 	/**
 	 * Execute the taks required to start SQuirreL. Each of these is displayed
 	 * as a message on the splash screen (if one is being used) in order to let the
