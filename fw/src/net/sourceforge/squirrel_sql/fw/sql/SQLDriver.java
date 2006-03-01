@@ -73,6 +73,9 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 	/** Object to handle property change events. */
 	private transient PropertyChangeReporter _propChgReporter;
 
+    /** Default Website URL for more info about the JDBC driver */
+    private String _websiteUrl;
+    
 	/**
 	 * Ctor specifying the identifier.
 	 *
@@ -86,6 +89,7 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 		_jarFileName = null;
 		_driverClassName = null;
 		_url = "";
+        _websiteUrl = "";
 	}
 
 	/**
@@ -114,6 +118,7 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 		setDriverClassName(rhs.getDriverClassName());
 		setUrl(rhs.getUrl());
 		setJDBCDriverClassLoaded(rhs.isJDBCDriverClassLoaded());
+        setWebSiteUrl(rhs.getWebSiteUrl());
 	}
 
 	/**
@@ -383,4 +388,28 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 		}
 		return _propChgReporter;
 	}
+
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDriver#getWebSiteUrl()
+     */
+    public String getWebSiteUrl() {
+        return _websiteUrl;
+    }
+
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDriver#setWebSiteUrl(java.lang.String)
+     */
+    public void setWebSiteUrl(String url) throws ValidationException { 
+        String data = getString(url);
+        if (!data.equals(_websiteUrl)) {
+            final String oldValue = _websiteUrl;
+            _websiteUrl = data;
+            PropertyChangeReporter pcr = getPropertyChangeReporter();
+            pcr.firePropertyChange(ISQLDriver.IPropertyNames.WEBSITE_URL,
+                                   oldValue,
+                                   _websiteUrl);            
+        }
+    }
+    
+    
 }
