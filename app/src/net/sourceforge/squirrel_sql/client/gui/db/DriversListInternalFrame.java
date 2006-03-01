@@ -44,6 +44,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.DeleteDriverAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.InstallDefaultDriversAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyDriverAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyDriverCommand;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ShowDriverWebsiteAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ShowLoadedDriversOnlyAction;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 /**
@@ -141,7 +142,8 @@ public class DriversListInternalFrame extends BaseListInternalFrame
 			_pm.addSeparator();
 			_pm.add(actions.get(ModifyDriverAction.class));
 			_pm.add(actions.get(CopyDriverAction.class));
-			_pm.addSeparator();
+            _pm.add(actions.get(ShowDriverWebsiteAction.class));
+            _pm.addSeparator();
 			_pm.add(actions.get(DeleteDriverAction.class));
 			_pm.addSeparator();
 		}
@@ -203,6 +205,7 @@ public class DriversListInternalFrame extends BaseListInternalFrame
 			actions.get(CopyDriverAction.class).setEnabled(enable);
 			actions.get(DeleteDriverAction.class).setEnabled(enable);
 			actions.get(ModifyDriverAction.class).setEnabled(enable);
+            actions.get(ShowDriverWebsiteAction.class).setEnabled(enable);
 		}
 
 		void setDriversListInternalFrame(DriversListInternalFrame tw)
@@ -243,6 +246,7 @@ public class DriversListInternalFrame extends BaseListInternalFrame
 			_tb.add(actions.get(CreateDriverAction.class));
 			_tb.add(actions.get(ModifyDriverAction.class));
 			_tb.add(actions.get(CopyDriverAction.class));
+            _tb.add(actions.get(ShowDriverWebsiteAction.class));
 			_tb.add(actions.get(DeleteDriverAction.class));
 			_tb.addSeparator();
 			_tb.add(actions.get(InstallDefaultDriversAction.class));
