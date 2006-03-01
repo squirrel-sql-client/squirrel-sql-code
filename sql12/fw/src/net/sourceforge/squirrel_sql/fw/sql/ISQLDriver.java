@@ -37,6 +37,7 @@ public interface ISQLDriver extends IHasIdentifier, Comparable
 		String JARFILE_NAMES = "jarFileNames";
 		String NAME = "name";
 		String URL = "url";
+        String WEBSITE_URL = "websiteUrl";
 	}
 
 	/**
@@ -99,4 +100,8 @@ public interface ISQLDriver extends IHasIdentifier, Comparable
 
 	void addPropertyChangeListener(PropertyChangeListener listener);
 	void removePropertyChangeListener(PropertyChangeListener listener);
+    
+    String getWebSiteUrl();
+    
+    void setWebSiteUrl(String url) throws ValidationException;
 }
