@@ -4,31 +4,36 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+- Added new property for drivers - website url - and a new menu item for 
+  drivers to launch the system default web browser and load the driver 
+  website url.
+
 - When adding a new driver definition, SQuirreL will now look at the default 
   driver list and determine if any driver defs are missing from the user's
   personal list.  If so, SQuirreL will prompt the user to add them.
 
 - MSSQL plugin: Scripting of procedures now works on MSSQL 2005
 
-- Fixed bug #1230126: ClassCastException when editing table data for tables with short and long column
-
 - Improved performance of the Session window when connecting to a database
   over a slow link (especially Oracle).  Instead of freezing the window, now
-  SQuirreL shows a dialog indicating the progress of the session connection
-  and allows the user to perform other tasks in parallel.
+  SQuirreL indicates the progress of the session connection in the session
+  frame status bar and allows the user to perform other tasks in parallel.
+  Note: The session frame close button is temporarily ignored when the session
+        is still loading and therefore not in a safe state to be closed. Once
+        the session has been loaded, the close button will be re-enabled.
 
 - Keyboard short cuts are shown in tool bar tool tips.
 
 - Navigation through SQLs in SQL Editor by tool bar or Alt up/down keys.
-  Note: The concept of an SQL in SQuirreL is the text between two empty lines. Many functions in SQuirreL use this concept.
-  This way the user often doesn't need to mark the text he wants to execute a function on.
-  The concept is especially convenient for the Run SQL function (control Enter).
+  Note: The concept of an SQL in SQuirreL is the text between two empty lines. Many 
+        functions in SQuirreL use this concept.  This way the user often doesn't 
+        need to mark the text he wants to execute a function on.
+        The concept is especially convenient for the Run SQL function (control Enter).
 
 - Introduced Oracle specific code to allow editing of tables in Oracle that contain Date columns.
   Oracle stores time information in java.sql.Types.DATE columns. The where clauses that SQuirreL
   used to create to update data after editing only contained the Date part of those columns. That's why
   the where clause didn't match the database row and editing failed.
-
 
 - SQL Editor: ctrl+backspace deletes word behind cursor.
 
@@ -64,6 +69,7 @@ Not yet released, available in CVS and probably in latest weekly build
 - Fixed bug #1370186: SQL Editor discards changes when session is closed
 - Fixed bug #1385270: Dropping multiple selected tables produces exceptions
 - Fixed bug #1256021: Refresh item on a table showing the row number does not update the row count
+- Fixed bug #1230126: ClassCastException when editing table data for tables with short and long column
 - Fixed bugs #1043604 and #1043599: Unlocalized decimal separator caused problems when data was pasted
                       for example to Open Office Calc. In the Global preferences the user is now able
                       to chose the Java default format for floating point values or the localized form.
