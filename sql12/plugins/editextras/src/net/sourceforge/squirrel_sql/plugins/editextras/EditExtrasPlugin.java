@@ -171,11 +171,7 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
          public void sqlInternalFrameOpened(final SQLInternalFrame sqlInternalFrame, 
                                             final ISession sess)
          {
-             GUIUtils.processOnSwingEventThread(new Runnable() {
-                 public void run() {
-                     initEditExtras(sqlInternalFrame.getSQLPanelAPI());         
-                 }
-             });
+             initEditExtras(sqlInternalFrame.getSQLPanelAPI());         
          }
 
          public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
