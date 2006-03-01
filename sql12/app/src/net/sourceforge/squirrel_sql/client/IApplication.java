@@ -205,4 +205,12 @@ public interface IApplication
 	 * Application shutdown processing.
 	 */
 	boolean shutdown();
+    
+    /**
+     * Launches the specified url in the system default web-browser
+     *  
+     * @param url the URL of the web page to display.
+     */
+	void openURL(String url);
+
 }
