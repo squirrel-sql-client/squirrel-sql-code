@@ -257,12 +257,7 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 			public void sqlInternalFrameOpened(final SQLInternalFrame sqlInternalFrame, 
                                                final ISession sess)
 			{
-                GUIUtils.processOnSwingEventThread(new Runnable() {
-                    public void run() {
-                        initCodeCompletion(sqlInternalFrame.getSQLPanelAPI(), sess);        
-                    }
-                });
-				
+                initCodeCompletion(sqlInternalFrame.getSQLPanelAPI(), sess);        				
 			}
 
 			public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
@@ -273,18 +268,31 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 		return ret;
 	}
 
-	private void initCodeCompletion(ISQLPanelAPI sqlPaneAPI, ISession session)
+	private void initCodeCompletion(final ISQLPanelAPI sqlPaneAPI, 
+                                    final ISession session)
 	{
-		CompleteCodeAction cca = new CompleteCodeAction(session.getApplication(), _resources, sqlPaneAPI.getSQLEntryPanel(), session, new CodeCompletionInfoCollection(session, this));
+        GUIUtils.processOnSwingEventThread(new Runnable() {
+            public void run() {
+                CodeCompletionInfoCollection c = 
+                    new CodeCompletionInfoCollection(session, CodeCompletionPlugin.this);
+                CompleteCodeAction cca = 
+                    new CompleteCodeAction(session.getApplication(), 
+                                           _resources, 
+                                           sqlPaneAPI.getSQLEntryPanel(), 
+                                           session, 
+                                           c);
 
-		JMenuItem item = sqlPaneAPI.addToSQLEntryAreaMenu(cca);
+                JMenuItem item = sqlPaneAPI.addToSQLEntryAreaMenu(cca);
 
-		_resources.configureMenuItem(cca, item);
+                _resources.configureMenuItem(cca, item);
 
-		JComponent comp = sqlPaneAPI.getSQLEntryPanel().getTextComponent();
-		comp.registerKeyboardAction(cca, _resources.getKeyStroke(cca), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+                JComponent comp = sqlPaneAPI.getSQLEntryPanel().getTextComponent();
+                comp.registerKeyboardAction(cca, _resources.getKeyStroke(cca), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-		sqlPaneAPI.addToToolsPopUp("completecode", cca);
+                sqlPaneAPI.addToToolsPopUp("completecode", cca);                
+            }
+            
+        });
 	}
 
 	/**
