@@ -186,19 +186,23 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
       return ret;
 	}
 
-   private void initEditExtras(ISQLPanelAPI sqlPanelAPI)
+   private void initEditExtras(final ISQLPanelAPI sqlPanelAPI)
    {
-      sqlPanelAPI.addSQLPanelListener(_lis);
-      createSQLEntryAreaPopMenuItems(sqlPanelAPI);
+       GUIUtils.processOnSwingEventThread(new Runnable() {
+           public void run() {
+               sqlPanelAPI.addSQLPanelListener(_lis);
+               createSQLEntryAreaPopMenuItems(sqlPanelAPI);
 
-      ActionCollection actions = getApplication().getActionCollection();
-      sqlPanelAPI.addToToolsPopUp("quote", actions.get(InQuotesAction.class));
-      sqlPanelAPI.addToToolsPopUp("unquote", actions.get(RemoveQuotesAction.class));
-      sqlPanelAPI.addToToolsPopUp("quotesb", actions.get(ConvertToStringBufferAction.class));
-      sqlPanelAPI.addToToolsPopUp("format", actions.get(FormatSQLAction.class));
-      sqlPanelAPI.addToToolsPopUp("date", actions.get(EscapeDateAction.class));
-      sqlPanelAPI.addToToolsPopUp("cutsql", actions.get(CutSqlAction.class));
-      sqlPanelAPI.addToToolsPopUp("copysql", actions.get(CopySqlAction.class));
+               ActionCollection actions = getApplication().getActionCollection();
+               sqlPanelAPI.addToToolsPopUp("quote", actions.get(InQuotesAction.class));
+               sqlPanelAPI.addToToolsPopUp("unquote", actions.get(RemoveQuotesAction.class));
+               sqlPanelAPI.addToToolsPopUp("quotesb", actions.get(ConvertToStringBufferAction.class));
+               sqlPanelAPI.addToToolsPopUp("format", actions.get(FormatSQLAction.class));
+               sqlPanelAPI.addToToolsPopUp("date", actions.get(EscapeDateAction.class));
+               sqlPanelAPI.addToToolsPopUp("cutsql", actions.get(CutSqlAction.class));
+               sqlPanelAPI.addToToolsPopUp("copysql", actions.get(CopySqlAction.class));               
+           }
+       });
    }
 
    /**
