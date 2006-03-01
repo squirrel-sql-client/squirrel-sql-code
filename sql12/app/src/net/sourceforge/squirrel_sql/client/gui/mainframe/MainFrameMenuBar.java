@@ -55,6 +55,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.MaximizeAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyAliasAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyDriverAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.NewSessionPropertiesAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ShowDriverWebsiteAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ShowLoadedDriversOnlyAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileHorizontalAction;
@@ -371,6 +372,7 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, ModifyDriverAction.class, menu);
 		addToMenu(rsrc, DeleteDriverAction.class, menu);
 		addToMenu(rsrc, CopyDriverAction.class, menu);
+        addToMenu(rsrc, ShowDriverWebsiteAction.class, menu);
 		menu.addSeparator();
 		addToMenu(rsrc, InstallDefaultDriversAction.class, menu);
 		menu.addSeparator();
