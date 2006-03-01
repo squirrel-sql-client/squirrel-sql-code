@@ -346,6 +346,7 @@ public class DataCache
 				else
 				{
 					fixupDrivers();
+                    mergeDefaultWebsites(dftDriversURL);
 				}
 			}
 			catch (FileNotFoundException ex)
@@ -577,6 +578,47 @@ public class DataCache
 		}
 	}
 
+    /**
+     * In 2.1 final(+), we introduced a new property for drivers which is the 
+     * website that hosts the driver and/or the relational database associated
+     * with a driver.  To populate existing driver definitions in SQLDrivers.xml
+     * with this value, it is necessary to read in the default defs, then scan 
+     * the currently loaded drivers and set the website url.  That is what this 
+     * method does.
+     */
+    private void mergeDefaultWebsites(URL defaultDriversUrl) 
+    {
+        InputStreamReader isr = null;
+        ArrayList missingDrivers = new ArrayList();
+        try
+        {
+            isr = new InputStreamReader(defaultDriversUrl.openStream());
+            XMLObjectCache tmp = new XMLObjectCache();
+            tmp.load(isr, null, true);
+            
+            for (Iterator iter = tmp.getAllForClass(SQL_DRIVER_IMPL); iter.hasNext();) {
+                
+                ISQLDriver defaultDriver = (ISQLDriver) iter.next();
+                ISQLDriver cachedDriver = getDriver(defaultDriver.getIdentifier());
+                if (cachedDriver != null) {
+                    if (cachedDriver.getWebSiteUrl() == null 
+                            || "".equals(cachedDriver.getWebSiteUrl())) 
+                    {
+                        if (defaultDriver.getWebSiteUrl() != null) {
+                            cachedDriver.setWebSiteUrl(defaultDriver.getWebSiteUrl());
+                        }
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            s_log.error("Received an unexpected Exception", ex);
+        } finally {
+            if (isr != null) {
+                try { isr.close(); } catch (Exception e) {/* Do Nothing */}
+            }
+        }        
+    }
+    
 	public void refreshDriver(ISQLDriver driver, IMessageHandler messageHandler)
 	{
 		registerDriver(driver, messageHandler, true);
