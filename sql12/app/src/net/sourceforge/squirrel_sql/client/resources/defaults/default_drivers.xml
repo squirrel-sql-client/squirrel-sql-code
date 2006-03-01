@@ -3,6 +3,19 @@
 <Beans>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		 <driverClassName>jdbc.FrontBase.FBJDriver</driverClassName>
+		 <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			  <string>-36</string>
+		 </identifier>
+		 <jarFileName/>
+		 <jarFileNames Indexed="true"/>
+		 <name>FrontBase</name>
+		 <url>jdbc:FrontBase://&lt;server&gt;/&lt;db-name&gt;</url>
+		 <websiteUrl>http://www.frontbase.com/cgi-bin/WebObjects/FrontBase</websiteUrl>
+	</Bean>	
+
+        
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
 		 <driverClassName>org.h2.Driver</driverClassName>
 		 <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
 			  <string>-35</string>
@@ -11,6 +24,7 @@
 		 <jarFileNames Indexed="true"/>
 		 <name>H2 In-Memory</name>
 		 <url>jdbc:h2:mem:</url>
+		 <websiteUrl>http://www.h2database.com</websiteUrl>
 	</Bean>	
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -22,6 +36,7 @@
 		 <jarFileNames Indexed="true"/>
 		 <name>H2 Embedded</name>
 		 <url>jdbc:h2://&lt;db-name&gt;</url>
+		 <websiteUrl>http://www.h2database.com</websiteUrl>		 
 	</Bean>	
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -33,6 +48,7 @@
 		 <jarFileNames Indexed="true"/>
 		 <name>H2</name>
 		 <url>jdbc:h2://&lt;server&gt;:&lt;9092&gt;/&lt;db-name&gt;</url>
+		 <websiteUrl>http://www.h2database.com</websiteUrl>		 
 	</Bean>	
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -44,6 +60,7 @@
 		 <jarFileNames Indexed="true"/>
 		 <name>IBM DB2 Net Driver</name>
 		 <url>jdbc:db2://&lt;server&gt;:&lt;6789&gt;/&lt;db-name&gt;</url>
+		 <websiteUrl>http://www-306.ibm.com/software/data/db2</websiteUrl>
 	</Bean>
 
 	 <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -54,6 +71,7 @@
         <jarFileNames Indexed="true"/>
         <name>Apache Derby Client</name>
         <url>jdbc:derby://&lt;server&gt;[:&lt;port&gt;]/&lt;databaseName&gt;[;&lt;URL attribute&gt;=&lt;value&gt;]</url>
+        <websiteUrl>http://db.apache.org/derby</websiteUrl>
     </Bean>
 
     <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -64,6 +82,7 @@
         <jarFileNames Indexed="true"/>
         <name>Apache Derby Embedded</name>
         <url>jdbc:derby:&lt;database&gt;[;create=true]</url>
+        <websiteUrl>http://db.apache.org/derby</websiteUrl>
     </Bean>
 
    <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -74,6 +93,7 @@
        <jarFileNames Indexed="true"/>
        <name>Intersystems Cache</name>
        <url>jdbc:Cache://&lt;host&gt;:1972/&lt;database&gt;</url>
+       <websiteUrl>http://www.intersystems.com/cache/index.html</websiteUrl>
    </Bean>
 
     <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -84,6 +104,7 @@
         <jarFileNames Indexed="true"/>
         <name>Firebird JayBird</name>
         <url>jdbc:firebirdsql:[//host[:port]/]&lt;database&gt;</url>
+		<websiteUrl>http://www.firebirdsql.org</websiteUrl>
     </Bean>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -95,6 +116,7 @@
 		<jarFileNames Indexed="true"/>
 		<driverClassName>com.mysql.jdbc.Driver</driverClassName>
 		<name>MySQL Driver</name>
+		<websiteUrl>http://dev.mysql.com</websiteUrl>
 	</Bean>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -106,6 +128,7 @@
 		<jarFileNames Indexed="true"/>
 		<name>jTDS Sybase</name>
 		<url>jdbc:jtds:sybase://&lt;hostname&gt;[:&lt;4100&gt;]/&lt;dbname&gt;[;&lt;property&gt;=&lt;value&gt;[;...]]</url>
+		<websiteUrl>http://jtds.sourceforge.net</websiteUrl>
 	</Bean>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -117,6 +140,7 @@
 		<jarFileNames Indexed="true"/>
 		<name>jTDS Microsoft SQL</name>
 		<url>jdbc:jtds:sqlserver://&lt;hostname&gt;[:&lt;1433&gt;]/&lt;dbname&gt;[;&lt;property&gt;=&lt;value&gt;[;...]]</url>
+		<websiteUrl>http://jtds.sourceforge.net</websiteUrl>
 	</Bean>
 
     <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -128,6 +152,7 @@
         <jarFileNames Indexed="true"/>
         <name>IBM DB2 App Driver</name>
         <url>jdbc:db2:&lt;dbname&gt;</url>
+        <websiteUrl>http://www-306.ibm.com/software/data/db2</websiteUrl>
     </Bean>
 
     <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -139,6 +164,7 @@
         <jarFileNames Indexed="true"/>
         <name>Pointbase Embedded</name>
         <url>jdbc:pointbase:embedded:&lt;dbname&gt;</url>
+        <websiteUrl>http://www.datamirror.com/products/pointbase</websiteUrl>
     </Bean>
 
     <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -150,6 +176,7 @@
         <jarFileNames Indexed="true"/>
         <name>Pointbase Server</name>
         <url>jdbc:pointbase:server://&lt;server_name&gt;/&lt;dbname&gt;</url>
+        <websiteUrl>http://www.datamirror.com/products/pointbase</websiteUrl>        
     </Bean>
 
     <Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -161,6 +188,7 @@
         <jarFileNames Indexed="true"/>
         <name>SAPDB</name>
         <url>jdbc:sapdb:[//host/]dbname[?name=value[&amp;name=value]*]</url>
+        <websiteUrl>http://www.sapdb.org/sap_db_jdbc.htm</websiteUrl>
     </Bean>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -172,6 +200,7 @@
 		<jarFileNames Indexed="true"/>
 		<name>HSQLDB In-Memory</name>
 		<url>jdbc:hsqldb:.</url>
+		<websiteUrl>http://www.hsqldb.org/</websiteUrl>
 	</Bean>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -183,6 +212,7 @@
 		<jarFileNames Indexed="true"/>
 		<name>HSQLDB Standalone</name>
 		<url>jdbc:hsqldb:&lt;databaseName&gt;</url>
+		<websiteUrl>http://www.hsqldb.org</websiteUrl>
 	</Bean>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -194,6 +224,7 @@
 		<jarFileNames Indexed="true"/>
 		<name>HSQLDB Server</name>
 		<url>jdbc:hsqldb:hsql://&lt;server&gt;[:&lt;1476&gt;]</url>
+		<websiteUrl>http://www.hsqldb.org</websiteUrl>
 	</Bean>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -205,6 +236,7 @@
 		<jarFileNames Indexed="true"/>
 		<name>HSQLDB Web Server</name>
 		<url>jdbc:hsqldb:http://&lt;server&gt;[:&lt;1476&gt;]</url>
+		<websiteUrl>http://www.hsqldb.org</websiteUrl>
 	</Bean>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -216,6 +248,7 @@
 		<jarFileNames Indexed="true"/>
 		<name>jTDS</name>
 		<url>jdbc:freetds:sqlserver://&lt;hostname&gt;[:&lt;4100&gt;]/&lt;dbname&gt;[;&lt;property&gt;=&lt;value&gt;[;...]]</url>
+	    <websiteUrl>http://jtds.sourceforge.net</websiteUrl>
 	</Bean>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -227,6 +260,7 @@
 		<jarFileNames Indexed="true"/>
 		<name>Mckoi</name>
 		<url>jdbc:mckoi://&lt;host&gt;[:9157][/&lt;schema&gt;]/</url>
+		<websiteUrl>http://www.mckoi.com/database</websiteUrl>
 	</Bean>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -238,6 +272,7 @@
 		<jarFileNames Indexed="true"/>
 		<name>ThinkSQL</name>
 		<url>jdbc:thinksql://&lt;server&gt;:&lt;9075&gt;</url>
+		<websiteUrl>http://www.thinksql.com</websiteUrl>
 	</Bean>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -249,6 +284,7 @@
 		<jarFileNames Indexed="true"/>
 		<name>Axion</name>
 		<url>jdbc:axiondb:&lt;database-name&gt;[:&lt;database-directory&gt;]</url>
+		<websiteUrl>http://axion.tigris.org</websiteUrl>
 	</Bean>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -260,6 +296,7 @@
 		<jarFileNames Indexed="true"/>
 		<name>Mimer SQL</name>
 		<url>jdbc:mimer:[//[&lt;user&gt;[:&lt;password&gt;]@]&lt;server&gt;[:&lt;1360&gt;]][/&lt;dbname&gt;][property-list]</url>
+		<websiteUrl>http://developer.mimer.com</websiteUrl>
 	</Bean>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -271,6 +308,7 @@
 		<jarFileNames Indexed="true"/>
 		<name>Microsoft MSSQL Server JDBC Driver</name>
 		<url>jdbc:microsoft:sqlserver://&lt;server_name&gt;:&lt;1433&gt;</url>
+		<websiteUrl>http://msdn.microsoft.com/sql</websiteUrl>
 	</Bean>
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
 		<driverClassName>com.sunopsis.jdbc.driver.xml.SnpsXmlDriver</driverClassName>
@@ -280,6 +318,7 @@
 		<jarFileNames Indexed="true"/>
 		<name>Sunopsis XML</name>
 		<url>jdbc:snps:xml?f=&lt;file-name&gt;&amp;s=&lt;schema-name&gt;</url>
+		<websiteUrl>http://www.sunopsis.com/corporate/us/products/jdbcforxml</websiteUrl>
 	</Bean>
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
 		<usesClassPath>true</usesClassPath>
@@ -290,6 +329,7 @@
 		</identifier>
 		<name>Sybase Adaptive Server Enterprise</name>
 		<driverClassName>com.sybase.jdbc2.jdbc.SybDriver</driverClassName>
+		<websiteUrl>http://www.sybase.com/products/middleware/jconnectforjdbc</websiteUrl>
 	</Bean>
 	
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -301,6 +341,7 @@
 		</identifier>
 		<name>Sybase Adaptive Server Anywhere</name>
 		<driverClassName>com.sybase.jdbc2.jdbc.SybDriver</driverClassName>
+		<websiteUrl>http://www.sybase.com/products/middleware/jconnectforjdbc</websiteUrl>		
 	</Bean>
 	
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -312,6 +353,7 @@
 		</identifier>
 		<name>PostgreSQL</name>
 		<driverClassName>org.postgresql.Driver</driverClassName>
+		<websiteUrl>http://jdbc.postgresql.org</websiteUrl>
 	</Bean>
 	
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -323,6 +365,7 @@
 		<jarFileNames Indexed="true"/>
 		<driverClassName>org.gjt.mm.mysql.Driver</driverClassName>
 		<name>MMMySQL Driver</name>
+	    <websiteUrl>http://dev.mysql.com</websiteUrl>
 	</Bean>
 	
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -334,6 +377,7 @@
 		<jarFileNames Indexed="true"/>
 		<driverClassName>org.enhydra.instantdb.jdbc.idbDriver</driverClassName>
 		<name>InstantDB</name>
+		<websiteUrl>http://www.instantdb.com</websiteUrl>
 	</Bean>
 	
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -345,6 +389,7 @@
 		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
 			<string>-4</string>
 		</identifier>
+		<websiteUrl>http://www.oracle.com/technology/tech/java/sqlj_jdbc/htdocs/jdbc_faq.htm</websiteUrl>
 	</Bean>
 	
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -356,6 +401,7 @@
 		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
 			<string>-3</string>
 		</identifier>
+		<websiteUrl>http://info.borland.com/devsupport/interbase/opensource</websiteUrl>
 	</Bean>
 	
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -367,6 +413,7 @@
 		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
 			<string>-2</string>
 		</identifier>
+		<websiteUrl>http://www.oracle.com/technology/tech/java/sqlj_jdbc/htdocs/jdbc_faq.htm</websiteUrl>
 	</Bean>
 	
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
@@ -378,5 +425,6 @@
 		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
 			<string>-1</string>
 		</identifier>
+		<websiteUrl>http://java.sun.com/j2se/1.3/docs/guide/jdbc/getstart/bridge.doc.html</websiteUrl>
 	</Bean>
 </Beans>
