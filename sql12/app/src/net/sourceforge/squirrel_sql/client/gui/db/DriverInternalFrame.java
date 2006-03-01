@@ -114,6 +114,8 @@ public class DriverInternalFrame extends BaseInternalFrame
 	/** Control for the <TT>ISQLDriver.IPropertyNames.URL</TT> property. */
 	private final JTextField _url = new JTextField();
 
+    private final JTextField _weburl = new JTextField();
+    
 	/** Listbox containing the Java class path. */
 	private final FileListBox _javaClassPathList = new FileListBox();
 
@@ -204,6 +206,7 @@ public class DriverInternalFrame extends BaseInternalFrame
 		_driverName.setText(_sqlDriver.getName());
 		_driverClassCmb.setSelectedItem(_sqlDriver.getDriverClassName());
 		_url.setText(_sqlDriver.getUrl());
+        _weburl.setText(_sqlDriver.getWebSiteUrl());
 
 		_extraClassPathList.removeAll();
 		String[] fileNames = _sqlDriver.getJarFileNames();
@@ -265,6 +268,7 @@ public class DriverInternalFrame extends BaseInternalFrame
 		_sqlDriver.setDriverClassName(driverClassName != null ? driverClassName.trim() : null);
 
 		_sqlDriver.setUrl(_url.getText().trim());
+        _sqlDriver.setWebSiteUrl(_weburl.getText().trim());
 	}
 
 	/**
@@ -412,6 +416,9 @@ public class DriverInternalFrame extends BaseInternalFrame
 		++gbc.gridy;
 		pnl.add(new JLabel(s_stringMgr.getString("DriverInternalFrame.egurl"), SwingConstants.RIGHT), gbc);
 
+        ++gbc.gridy;
+        pnl.add(new JLabel(s_stringMgr.getString("DriverInternalFrame.weburl"), SwingConstants.RIGHT), gbc);        
+        
 		gbc.weightx = 1.0;
 		gbc.gridy = 0;
 		++gbc.gridx;
@@ -420,6 +427,9 @@ public class DriverInternalFrame extends BaseInternalFrame
 		++gbc.gridy;
 		pnl.add(_url, gbc);
 
+        ++gbc.gridy;
+        pnl.add(_weburl, gbc);
+        
 		return pnl;
 	}
 
