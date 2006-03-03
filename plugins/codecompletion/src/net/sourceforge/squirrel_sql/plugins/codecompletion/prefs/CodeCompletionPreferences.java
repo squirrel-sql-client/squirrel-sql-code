@@ -32,3 +32,4 @@ public class CodeCompletionPreferences implements Serializable
 		this.prefixedConfigs = prefixedConfigs;
 	}
 }
+// Just a Test
