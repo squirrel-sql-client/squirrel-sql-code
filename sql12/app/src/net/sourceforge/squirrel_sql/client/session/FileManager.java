@@ -28,6 +28,8 @@ public class FileManager
    private static final StringManager s_stringMgr =
         StringManagerFactory.getStringManager(FileManager.class);
    
+   private JFileChooser fileChooser = null;
+   
    FileManager(ISQLPanelAPI sqlPanelAPI)
    {
       _sqlPanelAPI = sqlPanelAPI;
@@ -46,7 +48,7 @@ public class FileManager
    public boolean open(boolean appendToExisting)
    {
        boolean result = false;
-      JFileChooser chooser = new JFileChooser();
+      JFileChooser chooser = getFileChooser();
       chooser.addChoosableFileFilter(new FileExtensionFilter("Text files", new String[]{".txt"}));
       chooser.addChoosableFileFilter(new FileExtensionFilter("SQL files", new String[]{".sql"}));
       chooser.setAccessory(new ChooserPreviewer());
@@ -140,7 +142,7 @@ public class FileManager
       }
 
 
-      JFileChooser chooser = new JFileChooser();
+      JFileChooser chooser = getFileChooser();
 
       HashMap fileAppenixes = new HashMap();
       FileExtensionFilter filter;
@@ -294,8 +296,16 @@ public class FileManager
       _sqlPanelAPI.getSession().getActiveSessionWindow().setSqlFile(file);
    }
 
+   private JFileChooser getFileChooser() {
+       if (fileChooser == null) {
+           fileChooser = new JFileChooser();
+       }
+       return fileChooser;
+   }
+   
    public void clearCurrentFile()
    {
       _toSaveTo = null;
    }
+   
 }
