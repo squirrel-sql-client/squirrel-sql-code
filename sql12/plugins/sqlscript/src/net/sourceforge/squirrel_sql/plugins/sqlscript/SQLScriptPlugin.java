@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.Hashtable;
 
 import javax.swing.JMenu;
-import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
@@ -45,6 +44,7 @@ import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScr
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTableOfCurrentSQLAction;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTableScriptAction;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTemplateDataScriptAction;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.DropTableScriptAction;
 /**
  * The SQL Script plugin class.
  */
@@ -90,7 +90,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 	 * @return  the current version of this plugin.
 	 */
 	public String getVersion() {
-		return "1.0";
+		return "1.1";
 	}
 
 	/**
@@ -148,7 +148,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 	 */
 	public String getContributors()
 	{
-		return "Gerd Wagner, John Murga";
+		return "Gerd Wagner, John Murga, Rob Manning";
 	}
 
 	/**
@@ -192,10 +192,11 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 
 		ActionCollection coll = app.getActionCollection();
 		coll.add(new CreateTableScriptAction(app, _resources, this));
-		coll.add(new CreateDataScriptAction(app, _resources, this));
+        coll.add(new DropTableScriptAction(app, _resources, this));
+        coll.add(new CreateDataScriptAction(app, _resources, this));
 		coll.add(new CreateTemplateDataScriptAction(app, _resources, this));
 		coll.add(new CreateDataScriptOfCurrentSQLAction(app, _resources, this));
-      coll.add(new CreateTableOfCurrentSQLAction(app, _resources, this));
+		coll.add(new CreateTableOfCurrentSQLAction(app, _resources, this));
 		createMenu();
 	}
 
@@ -240,6 +241,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 	        {
 	            ActionCollection coll = sess.getApplication().getActionCollection();
 	            objectTreeInternalFrame.getObjectTreeAPI().addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTableScriptAction.class));
+                objectTreeInternalFrame.getObjectTreeAPI().addToPopup(DatabaseObjectType.TABLE, coll.get(DropTableScriptAction.class));
 	            objectTreeInternalFrame.getObjectTreeAPI().addToPopup(DatabaseObjectType.TABLE, coll.get(CreateDataScriptAction.class));
 	            objectTreeInternalFrame.getObjectTreeAPI().addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTemplateDataScriptAction.class));
 	        }
@@ -255,6 +257,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
         IObjectTreeAPI api = FrameWorkAcessor.getObjectTreeAPI(session, this);
         
         api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTableScriptAction.class));
+        api.addToPopup(DatabaseObjectType.TABLE, coll.get(DropTableScriptAction.class));
         api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateDataScriptAction.class));
         api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTemplateDataScriptAction.class));
         api.addToPopup(DatabaseObjectType.VIEW, coll.get(CreateTableScriptAction.class));
@@ -277,6 +280,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
 		_resources.addToMenu(coll.get(CreateDataScriptAction.class), menu);
 		_resources.addToMenu(coll.get(CreateTemplateDataScriptAction.class), menu);
 		_resources.addToMenu(coll.get(CreateTableScriptAction.class), menu);
+        _resources.addToMenu(coll.get(DropTableScriptAction.class), menu);
 		_resources.addToMenu(coll.get(CreateDataScriptOfCurrentSQLAction.class), menu);
       _resources.addToMenu(coll.get(CreateTableOfCurrentSQLAction.class), menu);
 
