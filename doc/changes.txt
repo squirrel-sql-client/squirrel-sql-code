@@ -4,6 +4,9 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+- Added menu item and supporting capability to the SQLScripts plugin to 
+  create a drop table script from the selected tables in the object tree.
+
 - Added new property for drivers - website url - and a new menu item for 
   drivers to launch the system default web browser and load the driver 
   website url.

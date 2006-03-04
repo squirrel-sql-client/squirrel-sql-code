@@ -1,5 +1,14 @@
 Change Log
 ==========
+
+1.1
+===
+- Added menu item and supporting files for creating a drop table script
+  from the selected tables.
+
+
+1.0
+===
 - Feature Request: [ 976569 ] SQL Scripts enhancements
   In right mouse menu of a table in the object tree there is a new entry 'Create Template Data Script'
 - Apostrophes in strings were escaped by "\'". The right way to escape is "''"
