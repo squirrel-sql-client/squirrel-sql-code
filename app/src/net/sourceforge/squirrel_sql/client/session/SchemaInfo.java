@@ -262,9 +262,13 @@ public class SchemaInfo
       }
       finally
       {
+         if (_session != null && _session.getSessionSheet() != null)
+         {
+            _session.getSessionSheet().setStatusBarProgressFinished();
+         }
+
          _loading = false;
          _loaded = true;
-         _session.getSessionSheet().setStatusBarProgressFinished();
       }
       long mfinish = System.currentTimeMillis();
       s_log.debug("SchemaInfo.load took " + (mfinish - mstart) + " ms");
