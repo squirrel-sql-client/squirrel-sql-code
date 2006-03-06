@@ -213,6 +213,11 @@ public class OraclePlugin extends DefaultSessionPlugin
 		super.unload();
 	}
 
+   public boolean allowsSessionStartedInBackground()
+   {
+      return true;
+   }
+
    public PluginSessionCallback sessionStarted(ISession session)
    {
       PluginSessionCallback ret = new PluginSessionCallback()

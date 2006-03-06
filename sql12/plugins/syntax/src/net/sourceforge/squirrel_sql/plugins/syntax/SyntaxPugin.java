@@ -48,7 +48,6 @@ import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -297,67 +296,65 @@ public class SyntaxPugin extends DefaultSessionPlugin
 		{
 			public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
 			{
-				initSyntax(sess, sqlInternalFrame);
+				initSqlInternalFrame(sess, sqlInternalFrame);
 			}
 
 			public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
 			{
 			}
 		};
-		GUIUtils.processOnSwingEventThread(new Runnable() {
-		    public void run() {
-		        addActionsToPopup(session);
-		    }
-		});
+
+      initSessionSheet(session);
 
 		return ret;
 	}
 
-    private void addActionsToPopup(ISession session) {
-        ActionCollection coll = getApplication().getActionCollection();
-        session.addSeparatorToToolbar();
-        session.addToToolbar(coll.get(FindAction.class));
-        session.addToToolbar(coll.get(ReplaceAction.class));
-        session.addToToolbar(coll.get(ConfigureAutoCorrectAction.class));
+   private void initSessionSheet(ISession session)
+   {
+      ActionCollection coll = getApplication().getActionCollection();
+      session.addSeparatorToToolbar();
+      session.addToToolbar(coll.get(FindAction.class));
+      session.addToToolbar(coll.get(ReplaceAction.class));
+      session.addToToolbar(coll.get(ConfigureAutoCorrectAction.class));
 
-        SessionInternalFrame sif = session.getSessionInternalFrame();
-        sif.addToToolsPopUp("find" , coll.get(FindAction.class));
-        sif.addToToolsPopUp("replace" , coll.get(ReplaceAction.class));
-        sif.addToToolsPopUp("autocorr" , coll.get(ConfigureAutoCorrectAction.class));
-        sif.addToToolsPopUp("duplicateline" , coll.get(DuplicateLineAction.class));
-        sif.addToToolsPopUp("comment" , coll.get(CommentAction.class));
-        sif.addToToolsPopUp("uncomment" , coll.get(UncommentAction.class));
+      SessionInternalFrame sif = session.getSessionInternalFrame();
+      sif.addToToolsPopUp("find", coll.get(FindAction.class));
+      sif.addToToolsPopUp("replace", coll.get(ReplaceAction.class));
+      sif.addToToolsPopUp("autocorr", coll.get(ConfigureAutoCorrectAction.class));
+      sif.addToToolsPopUp("duplicateline", coll.get(DuplicateLineAction.class));
+      sif.addToToolsPopUp("comment", coll.get(CommentAction.class));
+      sif.addToToolsPopUp("uncomment", coll.get(UncommentAction.class));
 
-        ISQLPanelAPI sqlPanelAPI = sif.getSQLPanelAPI();
-        ISQLEntryPanel sep = sqlPanelAPI.getSQLEntryPanel();
-        JComponent septc = sep.getTextComponent();
-        
-        new AutoCorrector((JTextComponent) septc, this);
+      ISQLPanelAPI sqlPanelAPI = sif.getSQLPanelAPI();
+      ISQLEntryPanel sep = sqlPanelAPI.getSQLEntryPanel();
+      JComponent septc = sep.getTextComponent();
+
+      new AutoCorrector((JTextComponent) septc, this);
 
 
-        if (sep.getTextComponent() instanceof NetbeansSQLEditorPane)
-        {
-            NetbeansSQLEditorPane nbEdit = (NetbeansSQLEditorPane) septc;
-            SQLKit kit = (SQLKit) nbEdit.getEditorKit();
-            
-            Action toUpperAction = kit.getActionByName(BaseKit.toUpperCaseAction);
-            toUpperAction.putValue(Resources.ACCELERATOR_STRING, 
-                                   SQLSettingsInitializer.ACCELERATOR_STRING_TO_UPPER_CASE);
-            sif.addToToolsPopUp("touppercase" , toUpperAction);
+      if (sep.getTextComponent() instanceof NetbeansSQLEditorPane)
+      {
+         NetbeansSQLEditorPane nbEdit = (NetbeansSQLEditorPane) septc;
+         SQLKit kit = (SQLKit) nbEdit.getEditorKit();
 
-            Action toLowerAction = kit.getActionByName(BaseKit.toLowerCaseAction);
-            toLowerAction.putValue(Resources.ACCELERATOR_STRING, 
-                                   SQLSettingsInitializer.ACCELERATOR_STRING_TO_LOWER_CASE);
-            sif.addToToolsPopUp("tolowercase" , toLowerAction);
-        }
+         Action toUpperAction = kit.getActionByName(BaseKit.toUpperCaseAction);
+         toUpperAction.putValue(Resources.ACCELERATOR_STRING,
+            SQLSettingsInitializer.ACCELERATOR_STRING_TO_UPPER_CASE);
+         sif.addToToolsPopUp("touppercase", toUpperAction);
 
-        JMenuItem mnuComment = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(CommentAction.class));
-        JMenuItem mnuUncomment = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(UncommentAction.class));
-        _resources.configureMenuItem(coll.get(CommentAction.class), mnuComment);
-        _resources.configureMenuItem(coll.get(UncommentAction.class), mnuUncomment);        
-    }
+         Action toLowerAction = kit.getActionByName(BaseKit.toLowerCaseAction);
+         toLowerAction.putValue(Resources.ACCELERATOR_STRING,
+            SQLSettingsInitializer.ACCELERATOR_STRING_TO_LOWER_CASE);
+         sif.addToToolsPopUp("tolowercase", toLowerAction);
+      }
 
-	private void initSyntax(ISession sess, SQLInternalFrame sqlInternalFrame)
+      JMenuItem mnuComment = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(CommentAction.class));
+      JMenuItem mnuUncomment = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(UncommentAction.class));
+      _resources.configureMenuItem(coll.get(CommentAction.class), mnuComment);
+      _resources.configureMenuItem(coll.get(UncommentAction.class), mnuUncomment);
+   }
+
+   private void initSqlInternalFrame(ISession sess, SQLInternalFrame sqlInternalFrame)
 	{
 		ActionCollection coll = getApplication().getActionCollection();
 		FindAction findAction = ((FindAction) coll.get(FindAction.class));

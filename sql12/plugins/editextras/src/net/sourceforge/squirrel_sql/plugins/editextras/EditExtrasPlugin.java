@@ -156,7 +156,12 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 		createMenu();
 	}
 
-	/**
+   public boolean allowsSessionStartedInBackground()
+   {
+      return true;
+   }
+
+   /**
 	 * Session has been started.
 	 * 
 	 * @param	session		Session that has started.

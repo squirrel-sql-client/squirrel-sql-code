@@ -165,7 +165,12 @@ public class FirebirdPlugin extends DefaultSessionPlugin {
         super.unload();
     }
 
-    /**
+   public boolean allowsSessionStartedInBackground()
+   {
+      return true;
+   }
+
+   /**
      * Session has been started. If this is an Oracle session then
      * register an extra expander for the Schema nodes to show
      * Oracle Packages.

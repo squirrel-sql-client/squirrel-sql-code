@@ -17,16 +17,9 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.*;
 
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 /**
@@ -45,7 +38,11 @@ public class StatusBar extends JPanel
 	/** Label showing the message in the statusbar. */
 	private final JLabel _textLbl = new JLabel();
 
-	/** Constraints used to add new controls to this statusbar. */
+   private final JProgressBar _progressBar = new JProgressBar();
+
+   private final JPanel _pnlLabelOrProgress = new JPanel();
+
+   /** Constraints used to add new controls to this statusbar. */
 	private final GridBagConstraints _gbc = new GridBagConstraints();
 
 	private Font _font;
@@ -156,14 +153,19 @@ public class StatusBar extends JPanel
 	{
 		clearText();
 
-		// The message area is on the right of the statusbar and takes
+      _progressBar.setStringPainted(true);
+
+      _pnlLabelOrProgress.setLayout(new GridLayout(1,1));
+      _pnlLabelOrProgress.add(_textLbl);
+
+      // The message area is on the right of the statusbar and takes
 		// up all available space.
 		_gbc.anchor = GridBagConstraints.WEST;
 		_gbc.weightx = 1.0;
 		_gbc.fill = GridBagConstraints.HORIZONTAL;
 		_gbc.gridy = 0;
 		_gbc.gridx = 0;
-		addJComponent(_textLbl);
+		addJComponent(_pnlLabelOrProgress);
 
 		// Any other components are on the right.
 		_gbc.weightx = 0.0;
@@ -184,11 +186,36 @@ public class StatusBar extends JPanel
 		}
 	}
 
-	public static class StatusBarLabel extends JLabel
-	{
-		public StatusBarLabel()
-		{
-			super();
-		}
-	}
+   public void setStatusBarProgress(String msg, int minimum, int maximum, int value)
+   {
+      if(false == _pnlLabelOrProgress.getComponent(0) instanceof JProgressBar)
+      {
+         _pnlLabelOrProgress.remove(0);
+         _pnlLabelOrProgress.add(_progressBar);
+         validate();
+      }
+
+      _progressBar.setMinimum(minimum);
+      _progressBar.setMaximum(maximum);
+      _progressBar.setValue(value);
+
+      if(null != msg)
+      {
+         _progressBar.setString(msg);
+      }
+      else
+      {
+         _progressBar.setString("");
+      }
+   }
+
+   public void setStatusBarProgressFinished()
+   {
+      if(_pnlLabelOrProgress.getComponent(0) instanceof JProgressBar)
+      {
+         _pnlLabelOrProgress.remove(0);
+         _pnlLabelOrProgress.add(_textLbl);
+         validate();
+      }
+   }
 }

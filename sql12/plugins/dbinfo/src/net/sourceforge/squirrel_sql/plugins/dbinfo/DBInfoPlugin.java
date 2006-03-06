@@ -125,6 +125,11 @@ public class DBInfoPlugin extends DefaultSessionPlugin {
         app.addToMenu(IApplication.IMenuIDs.PLUGINS_MENU, action);
     }
 
+   public boolean allowsSessionStartedInBackground()
+   {
+      return true;
+   }
+
    public PluginSessionCallback sessionStarted(ISession session)
    {
       PluginSessionCallback ret = new PluginSessionCallback()

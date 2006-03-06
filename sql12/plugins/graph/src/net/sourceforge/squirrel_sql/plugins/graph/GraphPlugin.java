@@ -179,37 +179,23 @@ public class GraphPlugin extends DefaultSessionPlugin
     */
    public PluginSessionCallback sessionStarted(final ISession session)
    {
-      final GraphXmlSerializer[] serializers  = 
-          GraphXmlSerializer.getGraphXmSerializers(this, session);
-      final GraphController[] controllers = 
-          new GraphController[serializers.length];
+      GraphXmlSerializer[] serializers  = GraphXmlSerializer.getGraphXmSerializers(this, session);
+      GraphController[] controllers = new GraphController[serializers.length];
 
       for (int i = 0; i < controllers.length; i++)
       {
-          final int idx = i; 
-          GUIUtils.processOnSwingEventThread(new Runnable() {
-              public void run() {
-                  controllers[idx] = 
-                      new GraphController(session,  
-                                          GraphPlugin.this, 
-                                          serializers[idx]);
-              }
-          });         
+         controllers[i] = new GraphController(session, this, serializers[i]);
       }
 
 
       _grapControllersBySessionID.put(session.getIdentifier(), controllers);
-      
-      final IObjectTreeAPI api = session.getSessionInternalFrame().getObjectTreeAPI();
-      final ActionCollection coll = getApplication().getActionCollection();
 
-      GUIUtils.processOnSwingEventThread(new Runnable() {
-          public void run() {
-              api.addToPopup(DatabaseObjectType.TABLE, 
-                             coll.get(AddToGraphAction.class));
-          }
-      });
-      
+
+      IObjectTreeAPI api = session.getSessionInternalFrame().getObjectTreeAPI();
+
+      ActionCollection coll = getApplication().getActionCollection();
+      api.addToPopup(DatabaseObjectType.TABLE, coll.get(AddToGraphAction.class));
+
       PluginSessionCallback ret = new PluginSessionCallback()
       {
          public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
@@ -218,7 +204,7 @@ public class GraphPlugin extends DefaultSessionPlugin
 
          public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
          {
-            // Graphs are only supported on the main session window.             
+            // Graphs are only supported on the main session window.
          }
       };
 

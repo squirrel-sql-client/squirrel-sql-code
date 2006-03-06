@@ -145,48 +145,24 @@ public class ObjectTreeInternalFrame extends BaseSessionInternalFrame
 	/** The class representing the toolbar at the top of a sql internal frame*/
 	private class ObjectTreeToolBar extends ToolBar
 	{
-		private SQLCatalogsComboBox _catalogsCmb;
 		/** Internationalized strings for this class. */
-		private final StringManager s_stringMgr = StringManagerFactory
-				.getStringManager(ObjectTreeToolBar.class);
-		private ILogger s_log = LoggerController
-				.createLogger(ObjectTreeToolBar.class);
+		private final StringManager s_stringMgr = StringManagerFactory.getStringManager(ObjectTreeToolBar.class);
+		private ILogger s_log = LoggerController.createLogger(ObjectTreeToolBar.class);
+      private CatalogsPanel _catalogsPanel;
 
-		ObjectTreeToolBar(ISession session, ObjectTreePanel panel)
-		{
-			super();
-			createGUI(session, panel);
-		}
+      ObjectTreeToolBar(ISession session, ObjectTreePanel panel)
+      {
+         super();
+         createGUI(session, panel);
+      }
 
 		private void createGUI(ISession session, ObjectTreePanel panel)
 		{
-			// If DBMS supports catalogs then place combo box of catalogs
-			// in toolbar.
-			try
-			{
-				SQLConnection conn = getSession().getSQLConnection();
-				if (conn.getSQLMetaData().supportsCatalogs())
-				{
-					_catalogsCmb = new SQLCatalogsComboBox();
-					_catalogsCmb.setConnection(conn);
-					add(new JLabel(s_stringMgr.getString("SessionPanel.catalog")));
-					add(_catalogsCmb);
-					addSeparator();
+         _catalogsPanel = new CatalogsPanel(session, this);
+         _catalogsPanel.addActionListener(new CatalogsComboListener());
+         add(_catalogsPanel);
 
-					// Listener for changes in the connection status.
-					conn.addPropertyChangeListener(new SQLConnectionListener(_catalogsCmb));
-
-					_catalogsCmb.addActionListener(new CatalogsComboListener());
-				}
-			}
-			catch (SQLException ex)
-			{
-				getSession().getMessageHandler().showErrorMessage(ex);
-                // i18n[ObjectTreeInternalFrame.error.retrievecatalog=Unable to retrieve catalog info]
-				s_log.error(s_stringMgr.getString("ObjectTreeInternalFrame.error.retrievecatalog"), ex);
-			}
-
-			ActionCollection actions = session.getApplication()
+         ActionCollection actions = session.getApplication()
 					.getActionCollection();
 			setUseRolloverButtons(true);
 			setFloatable(false);
@@ -218,65 +194,30 @@ public class ObjectTreeInternalFrame extends BaseSessionInternalFrame
 		}
 	}
 
-	private final class SQLConnectionListener implements PropertyChangeListener
-	{
-		private SQLCatalogsComboBox _cmb;
-
-		SQLConnectionListener(SQLCatalogsComboBox cmb)
-		{
-			super();
-			_cmb = cmb;
-		}
-
-		public void propertyChange(PropertyChangeEvent evt)
-		{
-			final String propName = evt.getPropertyName();
-			if (propName == null
-					|| propName.equals(SQLConnection.IPropertyNames.CATALOG))
-			{
-				if (_cmb != null)
-				{
-					final SQLConnection conn = getSession().getSQLConnection();
-					try
-					{
-						if (!StringUtilities.areStringsEqual(conn.getCatalog(), _cmb.getSelectedCatalog()))
-						{
-							_cmb.setSelectedCatalog(conn.getCatalog());
-						}
-					}
-					catch (SQLException ex)
-					{
-						getSession().getMessageHandler().showErrorMessage(ex);
-					}
-				}
-			}
-		}
-	}
-
-	/** JASON: this could be added to the objecttreepanel if the status bar was attached
-	 *  to the application
-	 */
-	private final class ObjectTreeSelectionListener
-			implements
-				TreeSelectionListener
-	{
-		public void valueChanged(TreeSelectionEvent evt)
-		{
-			final TreePath selPath = evt.getNewLeadSelectionPath();
-			if (selPath != null)
-			{
-				StringBuffer buf = new StringBuffer();
-				Object[] fullPath = selPath.getPath();
-				for (int i = 0; i < fullPath.length; ++i)
-				{
-					if (fullPath[i] instanceof ObjectTreeNode)
-					{
-						ObjectTreeNode node = (ObjectTreeNode)fullPath[i];
-						buf.append('/').append(node.toString());
-					}
-				}
-				//JASON: have a main application status bar setStatusBarMessage(buf.toString());
-			}
-		}
-	}
+   /** JASON: this could be added to the objecttreepanel if the status bar was attached
+    *  to the application
+    */
+   private final class ObjectTreeSelectionListener
+         implements
+            TreeSelectionListener
+   {
+      public void valueChanged(TreeSelectionEvent evt)
+      {
+         final TreePath selPath = evt.getNewLeadSelectionPath();
+         if (selPath != null)
+         {
+            StringBuffer buf = new StringBuffer();
+            Object[] fullPath = selPath.getPath();
+            for (int i = 0; i < fullPath.length; ++i)
+            {
+               if (fullPath[i] instanceof ObjectTreeNode)
+               {
+                  ObjectTreeNode node = (ObjectTreeNode)fullPath[i];
+                  buf.append('/').append(node.toString());
+               }
+            }
+            //JASON: have a main application status bar setStatusBarMessage(buf.toString());
+         }
+      }
+   }
 }

@@ -175,16 +175,46 @@ public class PluginManager
 		}
 		final List plugins = new ArrayList();
         _activeSessions.put(session.getIdentifier(), plugins);
-        session.getApplication().getThreadPool().addTask(new Runnable() {
-            public void run() {
-                for (Iterator it = _sessionPlugins.iterator(); it.hasNext();)
-        		{
-        		    SessionPluginInfo spi = (SessionPluginInfo) it.next();
-                    sendSessionStarted(session, spi, plugins);
-                }
-                session.setPluginsfinishedLoading(true);
-            }
-        });
+
+
+      ArrayList startInFG = new ArrayList();
+      final ArrayList startInBG = new ArrayList();
+		for (Iterator it = _sessionPlugins.iterator(); it.hasNext();)
+		{
+			SessionPluginInfo spi = (SessionPluginInfo) it.next();
+         if(spi.getSessionPlugin().allowsSessionStartedInBackground())
+         {
+            startInBG.add(spi);
+         }
+         else
+         {
+            startInFG.add(spi);
+         }
+
+      }
+		session.setPluginsfinishedLoading(true);
+
+
+
+		for (Iterator it = startInFG.iterator(); it.hasNext();)
+		{
+			SessionPluginInfo spi = (SessionPluginInfo) it.next();
+			sendSessionStarted(session, spi, plugins);
+		}
+
+
+		session.getApplication().getThreadPool().addTask(new Runnable()
+		{
+			public void run()
+			{
+				for (Iterator it = startInBG.iterator(); it.hasNext();)
+				{
+					SessionPluginInfo spi = (SessionPluginInfo) it.next();
+					sendSessionStarted(session, spi, plugins);
+				}
+				session.setPluginsfinishedLoading(true);
+			}
+		});
 	}
 
     private void sendSessionStarted(ISession session, 

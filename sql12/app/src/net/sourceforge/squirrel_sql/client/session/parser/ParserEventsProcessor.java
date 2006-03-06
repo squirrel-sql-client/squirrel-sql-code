@@ -25,33 +25,34 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 	private ISession _session;
    private ISQLPanelAPI _sqlPanelApi;
 	private KeyAdapter _triggerParserKeyListener;
+   private boolean _processingEnded;
 
-	public ParserEventsProcessor(ISQLPanelAPI sqlPanelApi, ISession session)
-	{
-		_session = session;
-		_sqlPanelApi = sqlPanelApi;
+   public ParserEventsProcessor(ISQLPanelAPI sqlPanelApi, ISession session)
+   {
+      _session = session;
+      _sqlPanelApi = sqlPanelApi;
 
-		ActionListener al = new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				onTimerStart();
-			}
-		};
-
-
-		_triggerParserKeyListener = new KeyAdapter()
-		{
-			public void keyTyped(KeyEvent e)
-			{
-				onKeyTyped(e);
-			}
-		};
+      ActionListener al = new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onTimerStart();
+         }
+      };
 
 
-		_parserTimer = new Timer(500, al);
-		_parserTimer.start();
-	}
+      _triggerParserKeyListener = new KeyAdapter()
+      {
+         public void keyTyped(KeyEvent e)
+         {
+            onKeyTyped(e);
+         }
+      };
+
+
+      _parserTimer = new Timer(500, al);
+      _parserTimer.start();
+   }
 
 
    private void onParserExitedOnException(final Throwable e)
@@ -80,7 +81,9 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 
 	public void endProcessing()
 	{
-		_sqlPanelApi.getSQLEntryPanel().getTextComponent().removeKeyListener(_triggerParserKeyListener);
+      _processingEnded = true;
+
+      _sqlPanelApi.getSQLEntryPanel().getTextComponent().removeKeyListener(_triggerParserKeyListener);
 
 		if (_parserTimer != null)
 		{
@@ -118,7 +121,12 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 
 	private void fireParsingFinished()
 	{
-		ParserEventsListener[] clone = (ParserEventsListener[]) _listeners.toArray(new ParserEventsListener[_listeners.size()]);
+      if(_processingEnded)
+      {
+         return;
+      }
+
+      ParserEventsListener[] clone = (ParserEventsListener[]) _listeners.toArray(new ParserEventsListener[_listeners.size()]);
 
 		TableAliasInfo[] aliasInfos = _parserThread.getTableAliasInfos();
 		ErrorInfo[] errorInfos = _parserThread.getErrorInfos();

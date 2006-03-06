@@ -42,7 +42,12 @@ public abstract class DefaultSessionPlugin extends DefaultPlugin
 		// Empty body.
 	}
 
-	/**
+   public boolean allowsSessionStartedInBackground()
+   {
+      return false;
+   }
+
+   /**
 	 * Called when a session shutdown.
 	 *
 	 * @param	session	The session that is ending.

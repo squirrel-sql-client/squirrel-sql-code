@@ -40,14 +40,24 @@ public interface ISessionPlugin extends IPlugin
 	 */
 	void sessionCreated(ISession session);
 
-	/**
+   /**
+    * Tells the PluginManager if this Plugins sessionStarted() method
+    * can be called in background
+    * @see ISessionPlugin.sessionStarted(ISession)
+    */
+   boolean allowsSessionStartedInBackground();
+
+   /**
 	 * Called when a session started.
 	 *
 	 * @param	session	The session that is starting.
 	 *
 	 * @return  An implementation of PluginSessionCallback that requires the plugin to
     * adequately work with multible session windows.
-    * Returning null tells the that the plugin is not applicable to this Session. 
+    * Returning null tells the that the plugin is not applicable to this Session.
+    *
+    * @see ISessionPlugin.sessionStarted(ISession)
+    *
 	 */
 	PluginSessionCallback sessionStarted(ISession session);
 
