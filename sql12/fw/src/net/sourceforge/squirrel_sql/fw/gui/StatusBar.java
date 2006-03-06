@@ -153,6 +153,10 @@ public class StatusBar extends JPanel
 	{
 		clearText();
 
+      Dimension progSize = _progressBar.getPreferredSize();
+      progSize.height = _textLbl.getPreferredSize().height;
+      _progressBar.setPreferredSize(progSize);
+
       _progressBar.setStringPainted(true);
 
       _pnlLabelOrProgress.setLayout(new GridLayout(1,1));
