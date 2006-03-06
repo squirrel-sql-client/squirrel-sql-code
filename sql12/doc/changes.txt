@@ -4,6 +4,9 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+- Feature request #1441563 Query script generation:
+  New entry for tables and views in the Objects tree's right mouse menu to create SELECT statements.  
+
 - Added menu item and supporting capability to the SQLScripts plugin to 
   create a drop table script from the selected tables in the object tree.
 

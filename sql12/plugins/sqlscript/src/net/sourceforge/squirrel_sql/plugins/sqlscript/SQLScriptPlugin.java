@@ -39,174 +39,178 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptAction;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptOfCurrentSQLAction;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTableOfCurrentSQLAction;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTableScriptAction;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTemplateDataScriptAction;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.DropTableScriptAction;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.*;
+
 /**
  * The SQL Script plugin class.
  */
 public class SQLScriptPlugin extends DefaultSessionPlugin {
-	private interface IMenuResourceKeys {
-		String SCRIPTS = "scripts";
-	}
+   private interface IMenuResourceKeys {
+      String SCRIPTS = "scripts";
+   }
 
-	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(SQLScriptPlugin.class);
+   /** Logger for this class. */
+   private static ILogger s_log = LoggerController.createLogger(SQLScriptPlugin.class);
 
    /** The app folder for this plugin. */
-	private File _pluginAppFolder;
+   private File _pluginAppFolder;
 
-	/** Folder to store user settings in. */
-	private File _userSettingsFolder;
+   /** Folder to store user settings in. */
+   private File _userSettingsFolder;
 
-	private PluginResources _resources;
+   private PluginResources _resources;
 
-	private Hashtable _saveAndLoadDelegates = new Hashtable();
+   private Hashtable _saveAndLoadDelegates = new Hashtable();
 
-	/**
-	 * Return the internal name of this plugin.
-	 *
-	 * @return  the internal name of this plugin.
-	 */
-	public String getInternalName() {
-		return "sqlscript";
-	}
+   /**
+    * Return the internal name of this plugin.
+    *
+    * @return  the internal name of this plugin.
+    */
+   public String getInternalName() {
+      return "sqlscript";
+   }
 
-	/**
-	 * Return the descriptive name of this plugin.
-	 *
-	 * @return  the descriptive name of this plugin.
-	 */
-	public String getDescriptiveName() {
-		return "SQL Scripts Plugin";
-	}
+   /**
+    * Return the descriptive name of this plugin.
+    *
+    * @return  the descriptive name of this plugin.
+    */
+   public String getDescriptiveName() {
+      return "SQL Scripts Plugin";
+   }
 
-	/**
-	 * Returns the current version of this plugin.
-	 *
-	 * @return  the current version of this plugin.
-	 */
-	public String getVersion() {
-		return "1.1";
-	}
+   /**
+    * Returns the current version of this plugin.
+    *
+    * @return  the current version of this plugin.
+    */
+   public String getVersion() {
+      return "1.1";
+   }
 
-	/**
-	 * Returns the authors name.
-	 *
-	 * @return  the authors name.
-	 */
-	public String getAuthor() {
-		return "Johan Compagner";
-	}
-
-
-
-	/**
-	 * Returns the name of the change log for the plugin. This should
-	 * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
-	 * directory.
-	 *
-	 * @return	the changelog file name or <TT>null</TT> if plugin doesn't have
-	 * 			a change log.
-	 */
-	public String getChangeLogFileName()
-	{
-		return "changes.txt";
-	}
-
-	/**
-	 * Returns the name of the Help file for the plugin. This should
-	 * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
-	 * directory.
-	 *
-	 * @return	the Help file name or <TT>null</TT> if plugin doesn't have
-	 * 			a help file.
-	 */
-	public String getHelpFileName()
-	{
-		return "readme.html";
-	}
-
-	/**
-	 * Returns the name of the Licence file for the plugin. This should
-	 * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
-	 * directory.
-	 *
-	 * @return	the Licence file name or <TT>null</TT> if plugin doesn't have
-	 * 			a licence file.
-	 */
-	public String getLicenceFileName()
-	{
-		return "licence.txt";
-	}
-
-	/**
-	 * @return	Comma separated list of contributors.
-	 */
-	public String getContributors()
-	{
-		return "Gerd Wagner, John Murga, Rob Manning";
-	}
-
-	/**
-	 * Create preferences panel for the Global Preferences dialog.
-	 *
-	 * @return  Preferences panel.
-	 */
-	public IGlobalPreferencesPanel[] getGlobalPreferencePanels() {
-		return new IGlobalPreferencesPanel[0];
-	}
-
-	/**
-	 * Initialize this plugin.
-	 */
-	public synchronized void initialize() throws PluginException {
-		super.initialize();
-		IApplication app = getApplication();
-
-		PluginManager pmgr = app.getPluginManager();
-
-		// Folder within plugins folder that belongs to this
-		// plugin.
-		try {
-			_pluginAppFolder = getPluginAppSettingsFolder();
-		} catch (IOException ex) {
-			throw new PluginException(ex);
-		}
-
-		// Folder to store user settings.
-		try {
-			_userSettingsFolder = getPluginUserSettingsFolder();
-		} catch (IOException ex) {
-			throw new PluginException(ex);
-		}
-
-		_resources =
-			new SQLPluginResources(
-				"net.sourceforge.squirrel_sql.plugins.sqlscript.sqlscript",
-				this);
+   /**
+    * Returns the authors name.
+    *
+    * @return  the authors name.
+    */
+   public String getAuthor() {
+      return "Johan Compagner";
+   }
 
 
-		ActionCollection coll = app.getActionCollection();
-		coll.add(new CreateTableScriptAction(app, _resources, this));
-        coll.add(new DropTableScriptAction(app, _resources, this));
-        coll.add(new CreateDataScriptAction(app, _resources, this));
-		coll.add(new CreateTemplateDataScriptAction(app, _resources, this));
-		coll.add(new CreateDataScriptOfCurrentSQLAction(app, _resources, this));
-		coll.add(new CreateTableOfCurrentSQLAction(app, _resources, this));
-		createMenu();
-	}
 
-	/**
-	 * Application is shutting down so save data.
-	 */
-	public void unload()
+   /**
+    * Returns the name of the change log for the plugin. This should
+    * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
+    * directory.
+    *
+    * @return	the changelog file name or <TT>null</TT> if plugin doesn't have
+    * 			a change log.
+    */
+   public String getChangeLogFileName()
    {
-		super.unload();
-	}
+      return "changes.txt";
+   }
+
+   /**
+    * Returns the name of the Help file for the plugin. This should
+    * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
+    * directory.
+    *
+    * @return	the Help file name or <TT>null</TT> if plugin doesn't have
+    * 			a help file.
+    */
+   public String getHelpFileName()
+   {
+      return "readme.html";
+   }
+
+   /**
+    * Returns the name of the Licence file for the plugin. This should
+    * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
+    * directory.
+    *
+    * @return	the Licence file name or <TT>null</TT> if plugin doesn't have
+    * 			a licence file.
+    */
+   public String getLicenceFileName()
+   {
+      return "licence.txt";
+   }
+
+   /**
+    * @return	Comma separated list of contributors.
+    */
+   public String getContributors()
+   {
+      return "Gerd Wagner, John Murga, Rob Manning";
+   }
+
+   /**
+    * Create preferences panel for the Global Preferences dialog.
+    *
+    * @return  Preferences panel.
+    */
+   public IGlobalPreferencesPanel[] getGlobalPreferencePanels() {
+      return new IGlobalPreferencesPanel[0];
+   }
+
+   /**
+    * Initialize this plugin.
+    */
+   public synchronized void initialize() throws PluginException
+   {
+      super.initialize();
+      IApplication app = getApplication();
+
+      PluginManager pmgr = app.getPluginManager();
+
+      // Folder within plugins folder that belongs to this
+      // plugin.
+      try
+      {
+         _pluginAppFolder = getPluginAppSettingsFolder();
+      }
+      catch (IOException ex)
+      {
+         throw new PluginException(ex);
+      }
+
+      // Folder to store user settings.
+      try
+      {
+         _userSettingsFolder = getPluginUserSettingsFolder();
+      }
+      catch (IOException ex)
+      {
+         throw new PluginException(ex);
+      }
+
+      _resources =
+         new SQLPluginResources(
+            "net.sourceforge.squirrel_sql.plugins.sqlscript.sqlscript",
+            this);
+
+
+      ActionCollection coll = app.getActionCollection();
+      coll.add(new CreateTableScriptAction(app, _resources, this));
+      coll.add(new CreateSelectScriptAction(app, _resources, this));
+      coll.add(new DropTableScriptAction(app, _resources, this));
+      coll.add(new CreateDataScriptAction(app, _resources, this));
+      coll.add(new CreateTemplateDataScriptAction(app, _resources, this));
+      coll.add(new CreateDataScriptOfCurrentSQLAction(app, _resources, this));
+      coll.add(new CreateTableOfCurrentSQLAction(app, _resources, this));
+      createMenu();
+   }
+
+   /**
+    * Application is shutting down so save data.
+    */
+   public void unload()
+   {
+      super.unload();
+   }
 
    public boolean allowsSessionStartedInBackground()
    {
@@ -214,83 +218,88 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
    }
 
    /**
-	 * Called when a session started. Add commands to popup menu
-	 * in object tree.
-	 *
-	 * @param   session	 The session that is starting.
-	 *
-	 * @return  <TT>true</TT> to indicate that this plugin is
-	 *		  applicable to passed session.
-	 */
-	public PluginSessionCallback sessionStarted(final ISession session)
-	{
+    * Called when a session started. Add commands to popup menu
+    * in object tree.
+    *
+    * @param   session	 The session that is starting.
+    *
+    * @return  <TT>true</TT> to indicate that this plugin is
+    *		  applicable to passed session.
+    */
+   public PluginSessionCallback sessionStarted(final ISession session)
+   {
         GUIUtils.processOnSwingEventThread(new Runnable() {
            public void run() {
                addActionsToPopup(session);
            }
         });
-	    
-	    PluginSessionCallback ret = new PluginSessionCallback()
-	    {
-	        public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
-	        {
-	            ActionCollection coll = sess.getApplication().getActionCollection();
-	            sqlInternalFrame.addSeparatorToToolbar();
-	            sqlInternalFrame.addToToolbar(coll.get(CreateTableOfCurrentSQLAction.class));
-	            
-	            sqlInternalFrame.addToToolsPopUp("sql2table", coll.get(CreateTableOfCurrentSQLAction.class));
-	            sqlInternalFrame.addToToolsPopUp("sql2ins", coll.get(CreateDataScriptOfCurrentSQLAction.class));
-	        }
-	        
-	        public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
-	        {
-	            ActionCollection coll = sess.getApplication().getActionCollection();
-	            objectTreeInternalFrame.getObjectTreeAPI().addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTableScriptAction.class));
+
+       PluginSessionCallback ret = new PluginSessionCallback()
+       {
+           public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+           {
+               ActionCollection coll = sess.getApplication().getActionCollection();
+               sqlInternalFrame.addSeparatorToToolbar();
+               sqlInternalFrame.addToToolbar(coll.get(CreateTableOfCurrentSQLAction.class));
+
+               sqlInternalFrame.addToToolsPopUp("sql2table", coll.get(CreateTableOfCurrentSQLAction.class));
+               sqlInternalFrame.addToToolsPopUp("sql2ins", coll.get(CreateDataScriptOfCurrentSQLAction.class));
+           }
+
+           public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+           {
+               ActionCollection coll = sess.getApplication().getActionCollection();
+               objectTreeInternalFrame.getObjectTreeAPI().addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTableScriptAction.class));
+               objectTreeInternalFrame.getObjectTreeAPI().addToPopup(DatabaseObjectType.TABLE, coll.get(CreateSelectScriptAction.class));
                 objectTreeInternalFrame.getObjectTreeAPI().addToPopup(DatabaseObjectType.TABLE, coll.get(DropTableScriptAction.class));
-	            objectTreeInternalFrame.getObjectTreeAPI().addToPopup(DatabaseObjectType.TABLE, coll.get(CreateDataScriptAction.class));
-	            objectTreeInternalFrame.getObjectTreeAPI().addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTemplateDataScriptAction.class));
-	        }
-	    };
-	    
-	    return ret;
-	}
+               objectTreeInternalFrame.getObjectTreeAPI().addToPopup(DatabaseObjectType.TABLE, coll.get(CreateDataScriptAction.class));
+               objectTreeInternalFrame.getObjectTreeAPI().addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTemplateDataScriptAction.class));
+           }
+       };
+
+       return ret;
+   }
 
     private void addActionsToPopup(ISession session) {
         ActionCollection coll = getApplication().getActionCollection();
-        
+
         //IObjectTreeAPI api = session.getObjectTreeAPI(this);
         IObjectTreeAPI api = FrameWorkAcessor.getObjectTreeAPI(session, this);
-        
+
         api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTableScriptAction.class));
+        api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateSelectScriptAction.class));
         api.addToPopup(DatabaseObjectType.TABLE, coll.get(DropTableScriptAction.class));
         api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateDataScriptAction.class));
         api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTemplateDataScriptAction.class));
         api.addToPopup(DatabaseObjectType.VIEW, coll.get(CreateTableScriptAction.class));
+        api.addToPopup(DatabaseObjectType.VIEW, coll.get(CreateSelectScriptAction.class));
         api.addToPopup(DatabaseObjectType.VIEW, coll.get(CreateDataScriptAction.class));
         api.addToPopup(DatabaseObjectType.VIEW, coll.get(CreateTemplateDataScriptAction.class));
-        
-        
+
+
         session.addSeparatorToToolbar();
         session.addToToolbar(coll.get(CreateTableOfCurrentSQLAction.class));
-        
-        session.getSessionInternalFrame().addToToolsPopUp("sql2table", coll.get(CreateTableOfCurrentSQLAction.class));
-        session.getSessionInternalFrame().addToToolsPopUp("sql2ins", coll.get(CreateDataScriptOfCurrentSQLAction.class));        
-    }
-    
-   private void createMenu() {
-		IApplication app = getApplication();
-		ActionCollection coll = app.getActionCollection();
 
-		JMenu menu = _resources.createMenu(IMenuResourceKeys.SCRIPTS);
-		_resources.addToMenu(coll.get(CreateDataScriptAction.class), menu);
-		_resources.addToMenu(coll.get(CreateTemplateDataScriptAction.class), menu);
-		_resources.addToMenu(coll.get(CreateTableScriptAction.class), menu);
-        _resources.addToMenu(coll.get(DropTableScriptAction.class), menu);
-		_resources.addToMenu(coll.get(CreateDataScriptOfCurrentSQLAction.class), menu);
+        session.getSessionInternalFrame().addToToolsPopUp("sql2table", coll.get(CreateTableOfCurrentSQLAction.class));
+        session.getSessionInternalFrame().addToToolsPopUp("sql2ins", coll.get(CreateDataScriptOfCurrentSQLAction.class));
+    }
+
+   private void createMenu()
+   {
+      IApplication app = getApplication();
+      ActionCollection coll = app.getActionCollection();
+
+      JMenu menu = _resources.createMenu(IMenuResourceKeys.SCRIPTS);
+      _resources.addToMenu(coll.get(CreateDataScriptAction.class), menu);
+      _resources.addToMenu(coll.get(CreateTemplateDataScriptAction.class), menu);
+      _resources.addToMenu(coll.get(CreateTableScriptAction.class), menu);
+      _resources.addToMenu(coll.get(CreateSelectScriptAction.class), menu);
+      _resources.addToMenu(coll.get(DropTableScriptAction.class), menu);
+      _resources.addToMenu(coll.get(CreateDataScriptOfCurrentSQLAction.class), menu);
       _resources.addToMenu(coll.get(CreateTableOfCurrentSQLAction.class), menu);
 
-		app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, menu);
-	}
+      app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, menu);
+   }
 
    public Object getExternalService()
    {
