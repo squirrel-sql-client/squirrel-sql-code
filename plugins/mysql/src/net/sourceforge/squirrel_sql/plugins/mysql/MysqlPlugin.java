@@ -217,7 +217,12 @@ public class MysqlPlugin extends DefaultSessionPlugin
 		super.unload();
 	}
 
-	/**
+   public boolean allowsSessionStartedInBackground()
+   {
+      return true;
+   }
+
+   /**
 	 * Session has been started. If this is a MySQL session
 	 * then setup MySQL tabs etc.
 	 *

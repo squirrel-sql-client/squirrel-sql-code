@@ -53,7 +53,7 @@ public class CodeCompletionInfoCollection
 		_plugin = plugin;
 	}
 
-	private void load(String catalog, String schema)
+	private void load(String catalog, String schema, boolean showLoadingMessage)
 	{
       String key = (catalog + "," + schema).toUpperCase();
 
@@ -61,10 +61,13 @@ public class CodeCompletionInfoCollection
 		{
 			if(!_session.getSchemaInfo().isLoaded())
 			{
-				// i18n[codecompletion.beingLoaded=Code competion infomation is still being loaded.\nTry again later.]
-				String msg = s_stringMgr.getString("codecompletion.beingLoaded");
-				JOptionPane.showMessageDialog(_session.getApplication().getMainFrame(), msg);
-				return;
+            if(showLoadingMessage)
+            {
+               // i18n[codecompletion.beingLoaded=Code competion infomation is still being loaded.\nTry again later.]
+               String msg = s_stringMgr.getString("codecompletion.beingLoaded");
+               JOptionPane.showMessageDialog(_session.getApplication().getMainFrame(), msg);
+            }
+            return;
 			}
 
          Vector completionInfos = new Vector();
@@ -184,7 +187,7 @@ public class CodeCompletionInfoCollection
 
 	public CodeCompletionInfo[] getInfosStartingWith(String catalog, String schema, String prefix)
    {
-		load(catalog, schema);
+		load(catalog, schema, true);
 
       Vector completionInfos = getCompletionInfos(catalog, schema);
 
@@ -252,7 +255,7 @@ public class CodeCompletionInfoCollection
 
       if(null == ret)
       {
-         load(catalog, schema);
+         load(catalog, schema, false);
       }
       ret = (Vector) _completionInfosByCataLogAndSchema.get(key);
 

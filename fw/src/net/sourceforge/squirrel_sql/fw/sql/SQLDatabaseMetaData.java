@@ -349,10 +349,8 @@ public class SQLDatabaseMetaData
 		}
 		finally
 		{
-            if (rs != null) {
-                rs.close();
-            }
-		}
+         close(rs);
+      }
 
 		// Some drivers for both MS SQL and Sybase don't return guest as
 		// a schema name.
@@ -575,9 +573,7 @@ public class SQLDatabaseMetaData
 		}
 		finally
 		{
-            if (rs != null) {
-                rs.close();
-            }
+         close(rs);
 		}
 
 		value = (String[])list.toArray(new String[list.size()]);
@@ -901,58 +897,90 @@ public class SQLDatabaseMetaData
 		}
 		finally
 		{
-            if (rs != null) {
-                rs.close();
-            }
-		}
+         close(rs);
+      }
 		return (DataTypeInfo[])list.toArray(new DataTypeInfo[list.size()]);
 	}
 
-    /**
-     * Retrieve information about the stored procedures in the system
-     *
-     * @param   catalog     The name of the catalog to retrieve procedures
-     *                      for. An empty string will return those without a
-     *                      catalog. <TT>null</TT> means that the catalog
-     *                      will not be used to narrow the search.
-     * @param   schemaPattern   The name of the schema to retrieve procedures
-     *                      for. An empty string will return those without a
-     *                      schema. <TT>null</TT> means that the schema
-     *                      will not be used to narrow the search.
-     * @param   procedureNamepattern    A procedure name pattern; must match the
-     *                                  procedure name as it is stored in the
-     *                                  database.
-     *
-     * @throws  SQLException    Thrown if an SQL error occurs.
-     */
-    public synchronized IProcedureInfo[] getProcedures(String catalog,
-				String schemaPattern, String procedureNamePattern)
-		throws SQLException
-	{
-		DatabaseMetaData md = privateGetJDBCMetaData();
-		ArrayList list = new ArrayList();
-		ResultSet rs = md.getProcedures(catalog, schemaPattern, procedureNamePattern);
-		try
-		{
-			final int[] cols = new int[] {1, 2, 3, 7, 8};
-			final ResultSetReader rdr = new ResultSetReader(rs, cols);
-			Object[] row = null;
-			while ((row = rdr.readRow()) != null)
-			{
-				final int type = ((Number)row[4]).intValue();
-				list.add(new ProcedureInfo(getAsString(row[0]), getAsString(row[1]),
-										getAsString(row[2]), getAsString(row[3]), type, this));
-			}
-		}
-		finally
-		{
-            if (rs != null) {
-                rs.close();
-            }
-			
-		}
-		return (IProcedureInfo[])list.toArray(new IProcedureInfo[list.size()]);
-	}
+   private void close(ResultSet rs)
+      throws SQLException
+   {
+      try
+      {
+         if (rs != null)
+         {
+            rs.close();
+         }
+      }
+      catch (Exception e)
+      {
+         s_log.info("closing resultset failed", e);
+      }
+   }
+
+   /**
+    * Retrieve information about the stored procedures in the system
+    *
+    * @param   catalog     The name of the catalog to retrieve procedures
+    *                      for. An empty string will return those without a
+    *                      catalog. <TT>null</TT> means that the catalog
+    *                      will not be used to narrow the search.
+    * @param   schemaPattern   The name of the schema to retrieve procedures
+    *                      for. An empty string will return those without a
+    *                      schema. <TT>null</TT> means that the schema
+    *                      will not be used to narrow the search.
+    * @param   procedureNamepattern    A procedure name pattern; must match the
+    *                                  procedure name as it is stored in the
+    *                                  database.
+    *
+    * @throws  SQLException    Thrown if an SQL error occurs.
+    */
+   public synchronized IProcedureInfo[] getProcedures(String catalog,
+                                                      String schemaPattern, String procedureNamePattern)
+      throws SQLException
+   {
+      return getProcedures(catalog, schemaPattern, procedureNamePattern, null);
+   }
+
+   public synchronized IProcedureInfo[] getProcedures(String catalog,
+                                                      String schemaPattern,
+                                                      String procedureNamePattern,
+                                                      ProgressCallBack progressCallBack)
+     throws SQLException
+  {
+     DatabaseMetaData md = privateGetJDBCMetaData();
+     ArrayList list = new ArrayList();
+     ResultSet rs = md.getProcedures(catalog, schemaPattern, procedureNamePattern);
+     int count = 0;
+     try
+     {
+        final int[] cols = new int[]{1, 2, 3, 7, 8};
+        final ResultSetReader rdr = new ResultSetReader(rs, cols);
+        Object[] row = null;
+        while ((row = rdr.readRow()) != null)
+        {
+           final int type = ((Number) row[4]).intValue();
+           ProcedureInfo pi = new ProcedureInfo(getAsString(row[0]), getAsString(row[1]),
+              getAsString(row[2]), getAsString(row[3]), type, this);
+
+           list.add(pi);
+
+           if (null != progressCallBack)
+           {
+              if(0 == count++ % 100 )
+              {
+                 progressCallBack.currentlyLoading(pi.getSimpleName());
+              }
+           }
+        }
+     }
+     finally
+     {
+        close(rs);
+
+     }
+     return (IProcedureInfo[]) list.toArray(new IProcedureInfo[list.size()]);
+  }
 
     /**
      * Return a string array containing the different types of tables in this
@@ -989,10 +1017,8 @@ public class SQLDatabaseMetaData
 			}
 			finally
 			{
-                if (rs != null) {
-                    rs.close();
-                }
-			}
+            close(rs);
+         }
 		}
 
 		final String dbProductName = getDatabaseProductName();
@@ -1044,8 +1070,18 @@ public class SQLDatabaseMetaData
 		}
 		return value;
 	}
-    
-    /**
+
+   public synchronized ITableInfo[] getTables(String catalog,
+                                              String schemaPattern,
+                                              String tableNamePattern,
+                                              String[] types)
+      throws SQLException
+   {
+      return getTables(catalog, schemaPattern, tableNamePattern, types, null);
+   }
+
+
+   /**
      * Retrieve information about the tables in the system.
      *
      * @param   catalog     The name of the catalog to retrieve tables
@@ -1066,7 +1102,8 @@ public class SQLDatabaseMetaData
     public synchronized ITableInfo[] getTables(String catalog, 
                                                String schemaPattern,
                                                String tableNamePattern, 
-                                               String[] types)
+                                               String[] types,
+                                               ProgressCallBack progressCallBack)
 		throws SQLException
 	{
 		final DatabaseMetaData md = privateGetJDBCMetaData();
@@ -1117,7 +1154,8 @@ public class SQLDatabaseMetaData
 
 			// store all plain table info we have.
 			tabResult = md.getTables(catalog, schemaPattern, tableNamePattern, types);
-			while (tabResult != null && tabResult.next())
+         int count = 0;
+         while (tabResult != null && tabResult.next())
 			{
 				ITableInfo tabInfo = new TableInfo(tabResult.getString(1),
 									tabResult.getString(2), tabResult.getString(3),
@@ -1128,7 +1166,15 @@ public class SQLDatabaseMetaData
 					nameMap.put(tabInfo.getSimpleName(), tabInfo);
 				}
 				list.add(tabInfo);
-			}
+
+            if(null != progressCallBack)
+            {
+               if(0 == count++ % 100 )
+               {
+                  progressCallBack.currentlyLoading(tabInfo.getSimpleName());
+               }
+            }
+         }
 
 			// re-order nodes if the tables are stored hierachically
 			if (nameMap != null)
@@ -1147,21 +1193,23 @@ public class SQLDatabaseMetaData
 						continue;
 					superInfo.addChild(tabInfo);
 					list.remove(tabInfo); // remove from toplevel.
-				}
+
+               if(null != progressCallBack)
+               {
+                  if(0 == count++ % 20 )
+                  {
+                     progressCallBack.currentlyLoading(tabInfo.getSimpleName());
+                  }
+               }
+            }
 				while (superTabResult.next());
 			}
 		}
 		finally
 		{
-			if(tabResult != null)
-			{
-				tabResult.close();
-			}
-			if (superTabResult != null)
-			{
-				superTabResult.close();
-			}
-		}
+         close(tabResult);
+         close(superTabResult);
+      }
 
 		return (ITableInfo[])list.toArray(new ITableInfo[list.size()]);
 	}
@@ -1206,10 +1254,8 @@ public class SQLDatabaseMetaData
 		}
 		finally
 		{
-            if (rs != null) {
-                rs.close();
-            }
-		}
+         close(rs);
+      }
 
 		return (IUDTInfo[])list.toArray(new IUDTInfo[list.size()]);
 	}
@@ -1548,10 +1594,8 @@ public class SQLDatabaseMetaData
 		}
 		finally
 		{
-            if (rs != null) {
-                rs.close();
-            }
-		}
+         close(rs);
+      }
 
 		final ForeignKeyInfo[] results = new ForeignKeyInfo[keys.size()];
 		Iterator it = keys.values().iterator();

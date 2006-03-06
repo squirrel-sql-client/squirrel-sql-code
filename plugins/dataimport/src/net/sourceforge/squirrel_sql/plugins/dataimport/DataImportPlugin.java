@@ -116,7 +116,12 @@ public class DataImportPlugin extends DefaultSessionPlugin {
         super.unload();
     }
 
-    /**
+   public boolean allowsSessionStartedInBackground()
+   {
+      return true;
+   }
+
+   /**
      * Called when a session started. Add File Import tab to session window.
      *
      * @param   session     The session that is starting.

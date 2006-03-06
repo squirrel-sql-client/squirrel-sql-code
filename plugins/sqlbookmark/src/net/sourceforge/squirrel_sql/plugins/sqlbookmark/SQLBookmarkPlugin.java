@@ -266,6 +266,11 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin {
 	rebuildMenu();
     }
 
+   public boolean allowsSessionStartedInBackground()
+   {
+      return true;
+   }
+
    public PluginSessionCallback sessionStarted(final ISession session)
    {
        GUIUtils.processOnSwingEventThread(new Runnable() {

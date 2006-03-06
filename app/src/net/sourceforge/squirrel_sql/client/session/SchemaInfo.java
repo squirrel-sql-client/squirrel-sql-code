@@ -27,20 +27,11 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
-import javax.swing.JProgressBar;
-import javax.swing.ProgressMonitor;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.DataTypeInfo;
-import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -73,248 +64,308 @@ public class SchemaInfo
 	private static final ILogger s_log =
 				LoggerController.createLogger(SchemaInfo.class);
 	private SessionAdapter _sessionListener;
-    /** the status message that was written by the object tree to be restored */
-	private String _replacedStatusText = null;
-    
-	public SchemaInfo(IApplication app)
-	{
-		_sessionListener = new SessionAdapter()
-		{
-			public void connectionClosedForReconnect(SessionEvent evt)
-			{
-				if(null != _session && _session.getIdentifier().equals(evt.getSession().getIdentifier()))
-				{
-					_dmd = null;
-				}
-			}
+   private static final int LOAD_METHODS_COUNT = 7;
+   private static final int MAX_PROGRESS = 100;
 
-			public void reconnected(SessionEvent evt)
-			{
-				if(null != _session && _session.getIdentifier().equals(evt.getSession().getIdentifier()))
-				{
-					_dmd = _session.getSQLConnection().getSQLMetaData();
-					if(null != _dmd)
-					{
-						s_log.info(s_stringMgr.getString("SchemaInfo.SuccessfullyRestoredDatabaseMetaData"));
-					}
-				}
-			}
-		};
-        if (app != null) {
-            app.getSessionManager().addSessionListener(_sessionListener);
+   /** the status message that was written by the object tree to be restored */
+
+  public SchemaInfo(IApplication app)
+  {
+     _sessionListener = new SessionAdapter()
+     {
+        public void connectionClosedForReconnect(SessionEvent evt)
+        {
+           if(null != _session && _session.getIdentifier().equals(evt.getSession().getIdentifier()))
+           {
+              _dmd = null;
+           }
         }
-	}
 
-	public void load(ISession session)
-	{
-        long mstart = System.currentTimeMillis();
-        String msg = null;
-        if (session == null)
-		{
-			throw new IllegalArgumentException("Session == null");
-		}
+        public void reconnected(SessionEvent evt)
+        {
+           if(null != _session && _session.getIdentifier().equals(evt.getSession().getIdentifier()))
+           {
+              _dmd = _session.getSQLConnection().getSQLMetaData();
+              if(null != _dmd)
+              {
+                 s_log.info(s_stringMgr.getString("SchemaInfo.SuccessfullyRestoredDatabaseMetaData"));
+              }
+           }
+        }
+     };
+       if (app != null) {
+           app.getSessionManager().addSessionListener(_sessionListener);
+       }
+  }
 
-		_loading = true;
-		try
-		{
-			_session = session;
-			SQLConnection conn = _session.getSQLConnection();
-			final SQLDatabaseMetaData sqlDmd = conn.getSQLMetaData();
-			_dmd = sqlDmd;
+   public void load(ISession session)
+   {
+      breathing();
 
-			try
-			{
-                // i18n[SchemaInfo.loadingKeywords=Loading keywords]
-                msg = s_stringMgr.getString("SchemaInfo.loadingKeywords");
-				s_log.debug(msg);
-                setNote(msg);
-                long start = System.currentTimeMillis();
-				loadKeywords(sqlDmd);
-                long finish = System.currentTimeMillis();
-				s_log.debug("Keywords loaded in "+(finish-start)+" ms");
-			}
-			catch (Exception ex)
-			{
-				s_log.error("Error loading keywords", ex);
-			}
+      long mstart = System.currentTimeMillis();
+      String msg = null;
+      if (session == null)
+      {
+         throw new IllegalArgumentException("Session == null");
+      }
 
-			try
-			{
-                // i18n[SchemaInfo.loadingDataTypes=Loading data types]
-                msg = s_stringMgr.getString("SchemaInfo.loadingDataTypes");
-			    s_log.debug(msg);
-                setNote(msg);
-                long start = System.currentTimeMillis();
-				loadDataTypes(sqlDmd);
-                long finish = System.currentTimeMillis();
-				s_log.debug("Data types loaded in "+(finish-start)+" ms");
-			}
-			catch (Exception ex)
-			{
-				s_log.error("Error loading data types", ex);
-			}
+      _loading = true;
+      try
+      {
+         _session = session;
+         SQLConnection conn = _session.getSQLConnection();
+         final SQLDatabaseMetaData sqlDmd = conn.getSQLMetaData();
+         _dmd = sqlDmd;
 
-			try
-			{
-                // i18n[SchemaInfo.loadingFunctions=Loading functions]
-                msg = s_stringMgr.getString("SchemaInfo.loadingFunctions");
-				s_log.debug(msg);
-                setNote(msg);
-                long start = System.currentTimeMillis();
-				loadFunctions(sqlDmd);
-                long finish = System.currentTimeMillis();
-				s_log.debug("Functions loaded in "+(finish-start)+" ms");
-			}
-			catch (Exception ex)
-			{
-				s_log.error("Error loading functions", ex);
-			}
+         int progress = 0;
 
-			try
-			{
-                // i18n[SchemaInfo.loadingCatalogs=Loading catalogs]
-                msg = s_stringMgr.getString("SchemaInfo.loadingCatalogs");
-				s_log.debug(msg);
-                setNote(msg);
-                long start = System.currentTimeMillis();
-				loadCatalogs(sqlDmd);
-                long finish = System.currentTimeMillis();
-				s_log.debug("Catalogs loaded in "+(finish-start)+" ms");
-			}
-			catch (Exception ex)
-			{
-				s_log.error("Error loading catalogs", ex);
-			}
+         try
+         {
+            // i18n[SchemaInfo.loadingKeywords=Loading keywords]
+            msg = s_stringMgr.getString("SchemaInfo.loadingKeywords");
+            s_log.debug(msg);
+            long start = System.currentTimeMillis();
 
-			try
-			{
-                // i18n[SchemaInfo.loadingSchemas=Loading schemas]
-                msg = s_stringMgr.getString("SchemaInfo.loadingSchemas");
-				s_log.debug(msg);
-                setNote(msg);
-                long start = System.currentTimeMillis();
-				loadSchemas(sqlDmd);
-                long finish = System.currentTimeMillis();
-				s_log.debug("Schemas loaded in "+(finish-start)+" ms");
-			}
-			catch (Exception ex)
-			{
-				s_log.error("Error loading schemas", ex);
-			}
+            int beginProgress = getLoadMethodProgress(progress++);
+            int endProgress = getLoadMethodProgress(progress);
+            setProgress(msg, beginProgress);
+            loadKeywords(sqlDmd, msg, beginProgress, endProgress);
+
+            long finish = System.currentTimeMillis();
+            s_log.debug("Keywords loaded in " + (finish - start) + " ms");
+         }
+         catch (Exception ex)
+         {
+            s_log.error("Error loading keywords", ex);
+         }
+
+         try
+         {
+            // i18n[SchemaInfo.loadingDataTypes=Loading data types]
+            msg = s_stringMgr.getString("SchemaInfo.loadingDataTypes");
+            s_log.debug(msg);
+            long start = System.currentTimeMillis();
+
+            int beginProgress = getLoadMethodProgress(progress++);
+            int endProgress = getLoadMethodProgress(progress);
+            setProgress(msg, beginProgress);
+            loadDataTypes(sqlDmd, msg, beginProgress, endProgress);
+
+            long finish = System.currentTimeMillis();
+            s_log.debug("Data types loaded in " + (finish - start) + " ms");
+         }
+         catch (Exception ex)
+         {
+            s_log.error("Error loading data types", ex);
+         }
+
+         try
+         {
+            // i18n[SchemaInfo.loadingFunctions=Loading functions]
+            msg = s_stringMgr.getString("SchemaInfo.loadingFunctions");
+            s_log.debug(msg);
+
+            long start = System.currentTimeMillis();
+            int beginProgress = getLoadMethodProgress(progress++);
+            int endProgress = getLoadMethodProgress(progress);
+            setProgress(msg, beginProgress);
+            loadFunctions(sqlDmd, msg, beginProgress, endProgress);
+
+            long finish = System.currentTimeMillis();
+            s_log.debug("Functions loaded in " + (finish - start) + " ms");
+         }
+         catch (Exception ex)
+         {
+            s_log.error("Error loading functions", ex);
+         }
+
+         try
+         {
+            // i18n[SchemaInfo.loadingCatalogs=Loading catalogs]
+            msg = s_stringMgr.getString("SchemaInfo.loadingCatalogs");
+            s_log.debug(msg);
+            long start = System.currentTimeMillis();
+
+            int beginProgress = getLoadMethodProgress(progress++);
+            int endProgress = getLoadMethodProgress(progress);
+            setProgress(msg, beginProgress);
+            loadCatalogs(sqlDmd, msg, beginProgress, endProgress);
+
+            long finish = System.currentTimeMillis();
+            s_log.debug("Catalogs loaded in " + (finish - start) + " ms");
+         }
+         catch (Exception ex)
+         {
+            s_log.error("Error loading catalogs", ex);
+         }
+
+         try
+         {
+            // i18n[SchemaInfo.loadingSchemas=Loading schemas]
+            msg = s_stringMgr.getString("SchemaInfo.loadingSchemas");
+            s_log.debug(msg);
+            long start = System.currentTimeMillis();
+
+            int beginProgress = getLoadMethodProgress(progress++);
+            int endProgress = getLoadMethodProgress(progress);
+            setProgress(msg, beginProgress);
+            loadSchemas(sqlDmd, msg, beginProgress, endProgress);
+
+            long finish = System.currentTimeMillis();
+            s_log.debug("Schemas loaded in " + (finish - start) + " ms");
+         }
+         catch (Exception ex)
+         {
+            s_log.error("Error loading schemas", ex);
+         }
 
 
-			try
-			{
-                // i18n[SchemaInfo.loadingTables=Loading tables]
-                msg = s_stringMgr.getString("SchemaInfo.loadingTables");
-				s_log.debug(msg);
-                setNote(msg);
-                long start = System.currentTimeMillis();
-				loadTables(sqlDmd);
-                long finish = System.currentTimeMillis();
-				s_log.debug("Tables loaded in "+(finish-start)+" ms");
-			}
-			catch (Exception ex)
-			{
-				s_log.error("Error loading tables", ex);
-			}
+         try
+         {
+            // i18n[SchemaInfo.loadingTables=Loading tables]
+            msg = s_stringMgr.getString("SchemaInfo.loadingTables");
+            s_log.debug(msg);
+            long start = System.currentTimeMillis();
 
-			try
-			{
-                // i18n[SchemaInfo.loadingStoredProcedures=Loading stored procedures]
-                msg = s_stringMgr.getString("SchemaInfo.loadingStoredProcedures");
-				s_log.debug(msg);
-                setNote(msg);
-                long start = System.currentTimeMillis();
-                loadStoredProcedures(sqlDmd);
-                long finish = System.currentTimeMillis();
-				s_log.debug("stored procedures loaded in "+(finish-start)+" ms");
-			}
-			catch (Exception ex)
-			{
-				s_log.error("Error loading stored procedures", ex);
-			}
-		}
-		finally
-		{
-			_loading = false;
-			_loaded = true;
-            if (_replacedStatusText != null) {
-                setNote(_replacedStatusText);
+            int beginProgress = getLoadMethodProgress(progress++);
+            int endProgress = getLoadMethodProgress(progress);
+            setProgress(msg, beginProgress);
+            loadTables(sqlDmd, msg, beginProgress, endProgress);
+
+            long finish = System.currentTimeMillis();
+            s_log.debug("Tables loaded in " + (finish - start) + " ms");
+         }
+         catch (Exception ex)
+         {
+            s_log.error("Error loading tables", ex);
+         }
+
+         try
+         {
+            // i18n[SchemaInfo.loadingStoredProcedures=Loading stored procedures]
+            msg = s_stringMgr.getString("SchemaInfo.loadingStoredProcedures");
+            s_log.debug(msg);
+            long start = System.currentTimeMillis();
+
+            int beginProgress = getLoadMethodProgress(progress++);
+            int endProgress = getLoadMethodProgress(progress);
+            setProgress(msg, beginProgress);
+            loadStoredProcedures(sqlDmd, msg, beginProgress, endProgress);
+
+            long finish = System.currentTimeMillis();
+            s_log.debug("stored procedures loaded in " + (finish - start) + " ms");
+         }
+         catch (Exception ex)
+         {
+            s_log.error("Error loading stored procedures", ex);
+         }
+      }
+      finally
+      {
+         _loading = false;
+         _loaded = true;
+         _session.getSessionSheet().setStatusBarProgressFinished();
+      }
+      long mfinish = System.currentTimeMillis();
+      s_log.debug("SchemaInfo.load took " + (mfinish - mstart) + " ms");
+   }
+
+   private int getLoadMethodProgress(int progress)
+   {
+      return (int)(((double)progress) / ((double)LOAD_METHODS_COUNT) * ((double)MAX_PROGRESS));
+   }
+
+   private void setProgress(final String note, final int value)
+   {
+      breathing();
+
+      if (_session == null || _session.getSessionSheet() == null)
+      {
+         return;
+      }
+
+     _session.getSessionSheet().setStatusBarProgress(note, 0, MAX_PROGRESS, value);
+   }
+
+   /**
+    * We found that the UI behaves much nicer at startup if
+    * loading schema info interupted for little moments.
+    */
+   private void breathing()
+   {
+      synchronized(this)
+      {
+         try
+         {
+            wait(100);
+         }
+         catch (InterruptedException e)
+         {
+            s_log.info("Interrupted", e);
+         }
+      }
+   }
+
+   private void loadStoredProcedures(SQLDatabaseMetaData dmd, final String msg, final int beginProgress, int endProgress)
+   {
+
+      final String objFilter = _session.getProperties().getObjectFilter();
+      try
+      {
+         s_log.debug("Loading stored procedures with filter "+objFilter);
+
+         ProgressCallBack pcb = new ProgressCallBack()
+         {
+            public void currentlyLoading(String simpleName)
+            {
+               setProgress(msg + " (" + simpleName + ")", beginProgress);
             }
-		}
-        long mfinish = System.currentTimeMillis();
-        s_log.debug("SchemaInfo.load took "+(mfinish-mstart)+" ms");
-	}
-    
-    private void setNote(final String note) {
-        if (_session == null || _session.getSessionSheet() == null) {
-            return;
-        }
-        String msg = _session.getSessionSheet().getStatusBarMessage();
-        // Save the object tree status message to replace it when we are finished
-        // loading
-        if (msg != null && msg.startsWith("/")) {
-            _replacedStatusText = msg;
-        }
-        GUIUtils.processOnSwingEventThread(new Runnable() {
-            public void run() {
-                _session.getSessionSheet().setStatusBarMessage(note);
+         };
+
+
+         _procInfos = dmd.getProcedures(null, null,objFilter != null && objFilter.length() > 0 ? objFilter :"%", pcb);
+
+         for (int i = 0; i < _procInfos.length; i++)
+         {
+            String proc = (String) _procInfos[i].getSimpleName();
+            if (proc.length() > 0)
+            {
+               _procedures.put(new CaseInsensitiveString(_procInfos[i].getSimpleName()) ,proc);
             }
-        });
-        
-    }
-        
-	private void loadStoredProcedures(SQLDatabaseMetaData dmd)
+
+         }
+
+      }
+      catch (Throwable th)
+      {
+         s_log.error("Failed to load stored procedures", th);
+      }
+
+   }
+
+	private void loadCatalogs(SQLDatabaseMetaData dmd, String msg, int beginProgress, int endProgress)
 	{
+      try
+      {
+         _catalogs.addAll(Arrays.asList(dmd.getCatalogs()));
+      }
+      catch (Throwable th)
+      {
+         s_log.error("failed to load catalog names", th);
+      }
+   }
 
-		final String objFilter = _session.getProperties().getObjectFilter();
-		try
-		{
-			s_log.debug("Loading stored procedures with filter "+objFilter);
-			_procInfos = dmd.getProcedures(null, null,objFilter != null && objFilter.length() > 0 ? objFilter :"%");
-
-			for (int i = 0; i < _procInfos.length; i++)
-			{
-				String proc = (String) _procInfos[i].getSimpleName();
-				if (proc.length() > 0)
-				{
-					_procedures.put(new CaseInsensitiveString(_procInfos[i].getSimpleName()) ,proc);
-				}
-
-			}
-
-		}
-		catch (Throwable th)
-		{
-			s_log.error("Failed to load stored procedures", th);
-		}
-
-	}
-
-	private void loadCatalogs(SQLDatabaseMetaData dmd)
+	private void loadSchemas(SQLDatabaseMetaData dmd, String msg, int beginProgress, int endProgress)
 	{
-		try
-		{
-            _catalogs.addAll(Arrays.asList(dmd.getCatalogs()));
-		}
-		catch (Throwable th)
-		{
-			s_log.error("failed to load catalog names", th);
-		}
-	}
-
-	private void loadSchemas(SQLDatabaseMetaData dmd)
-	{
-		try
-		{
-            _schemas.addAll(Arrays.asList(dmd.getSchemas()));
-		}
-		catch (Throwable th)
-		{
-			s_log.error("failed to load schema names", th);
-		}
-	}
+      try
+      {
+         _schemas.addAll(Arrays.asList(dmd.getSchemas()));
+      }
+      catch (Throwable th)
+      {
+         s_log.error("failed to load schema names", th);
+      }
+   }
 
 	public boolean isKeyword(String data)
 	{
@@ -452,11 +503,13 @@ public class SchemaInfo
 		return null;
 	}
 
-	private void loadKeywords(SQLDatabaseMetaData dmd)
+	private void loadKeywords(SQLDatabaseMetaData dmd, String msg, int beginProgress, int endProgress)
 	{
 		try
 		{
-			_keywords.put(new CaseInsensitiveString("ABSOLUTE"), "ABSOLUTE");
+         setProgress(msg + " (default keywords)", beginProgress);
+
+         _keywords.put(new CaseInsensitiveString("ABSOLUTE"), "ABSOLUTE");
 			_keywords.put(new CaseInsensitiveString("ACTION"), "ACTION");
 			_keywords.put(new CaseInsensitiveString("ADD"), "ADD");
 			_keywords.put(new CaseInsensitiveString("ALL"), "ALL");
@@ -604,6 +657,8 @@ public class SchemaInfo
 			if (dmd != null)
 			{
 
+            setProgress(msg + " (DB specific keywords)", beginProgress);
+
 				String[] sqlKeywords = dmd.getSQLKeywords();
 
 				for (int i = 0; i < sqlKeywords.length; i++)
@@ -646,29 +701,38 @@ public class SchemaInfo
 		}
 	}
 
-	private void loadDataTypes(SQLDatabaseMetaData dmd)
+	private void loadDataTypes(SQLDatabaseMetaData dmd, String msg, int beginProgress, int endProgress)
 	{
-		try
-		{
-            DataTypeInfo[] infos = dmd.getDataTypes();
-            for (int i = 0; i < infos.length; i++) {
-                String typeName = infos[i].getSimpleName();
-                _dataTypes.put(new CaseInsensitiveString(typeName), typeName);
-            }
-		}
-		catch (Throwable ex)
-		{
-			s_log.error("Error occured creating data types collection", ex);
-		}
-	}
+      try
+      {
 
-	private void loadFunctions(SQLDatabaseMetaData dmd)
+         DataTypeInfo[] infos = dmd.getDataTypes();
+         for (int i = 0; i < infos.length; i++)
+         {
+            String typeName = infos[i].getSimpleName();
+            _dataTypes.put(new CaseInsensitiveString(typeName), typeName);
+
+            if(0 == i % 100 )
+            {
+               setProgress(msg + " (" + typeName + ")", beginProgress);
+            }
+
+         }
+      }
+      catch (Throwable ex)
+      {
+         s_log.error("Error occured creating data types collection", ex);
+      }
+   }
+
+	private void loadFunctions(SQLDatabaseMetaData dmd, String msg, int beginProgress, int endProgress)
 	{
 		ArrayList buf = new ArrayList();
 
 		try
 		{
-			buf.addAll(Arrays.asList(dmd.getNumericFunctions()));
+         setProgress(msg + " (numeric functions)", beginProgress);
+         buf.addAll(Arrays.asList(dmd.getNumericFunctions()));
 		}
 		catch (Throwable ex)
 		{
@@ -677,6 +741,7 @@ public class SchemaInfo
 
 		try
 		{
+         setProgress(msg + " (string functions)", beginProgress);
 			buf.addAll(Arrays.asList((dmd.getStringFunctions())));
 		}
 		catch (Throwable ex)
@@ -686,6 +751,7 @@ public class SchemaInfo
 
 		try
 		{
+         setProgress(msg + " (time/date functions)", beginProgress);
 			buf.addAll(Arrays.asList(dmd.getTimeDateFunctions()));
 		}
 		catch (Throwable ex)
@@ -832,28 +898,41 @@ public class SchemaInfo
 		return _loaded;
 	}
 
-	private void loadTables(SQLDatabaseMetaData dmd)
+	private void loadTables(SQLDatabaseMetaData dmd, final String msg, final int beginProgress, int endProgress)
 	{
-		try
-		{
-			final String[] tabTypes = new String[] { "TABLE", "VIEW" };
-            ITableInfo[] infos = dmd.getTables(null, null, null, tabTypes);
-            for (int i = 0; i < infos.length; i++) {
-                String tableName = infos[i].getSimpleName();
-                _tables.put(new CaseInsensitiveString(tableName), tableName);
-                ExtendedTableInfo info = 
-                    new ExtendedTableInfo(tableName, 
-                                          infos[i].getType(), 
-                                          infos[i].getCatalogName(), 
-                                          infos[i].getSchemaName());
-                _extendedtableInfos.add(info);
-            }            
-		}
-		catch (Throwable th)
-		{
-			s_log.error("failed to load table names", th);
-		}
-	}
+      try
+      {
+         final String[] tabTypes = new String[]{"TABLE", "VIEW"};
+
+         ProgressCallBack pcb = new ProgressCallBack()
+         {
+            public void currentlyLoading(String simpleName)
+            {
+               setProgress(msg + " (" + simpleName + ")", beginProgress);
+            }
+         };
+
+
+         ITableInfo[] infos = dmd.getTables(null, null, null, tabTypes, pcb);
+         for (int i = 0; i < infos.length; i++)
+         {
+            String tableName = infos[i].getSimpleName();
+            _tables.put(new CaseInsensitiveString(tableName), tableName);
+
+            ExtendedTableInfo info =
+               new ExtendedTableInfo(tableName,
+                  infos[i].getType(),
+                  infos[i].getCatalogName(),
+                  infos[i].getSchemaName());
+
+            _extendedtableInfos.add(info);
+         }
+      }
+      catch (Throwable th)
+      {
+         s_log.error("failed to load table names", th);
+      }
+   }
 
 	private void loadColumns(final CaseInsensitiveString tableName)
 	{

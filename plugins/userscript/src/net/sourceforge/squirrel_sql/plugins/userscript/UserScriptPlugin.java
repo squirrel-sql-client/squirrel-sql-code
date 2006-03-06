@@ -169,6 +169,11 @@ public class UserScriptPlugin extends DefaultSessionPlugin
       super.unload();
    }
 
+   public boolean allowsSessionStartedInBackground()
+   {
+      return true;
+   }
+
    /**
     * Called when a session started. Add commands to popup menu
     * in object tree.

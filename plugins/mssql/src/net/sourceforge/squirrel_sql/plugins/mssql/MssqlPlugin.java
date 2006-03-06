@@ -170,8 +170,13 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
     public void sessionEnding(net.sourceforge.squirrel_sql.client.session.ISession iSession) {
         super.sessionEnding(iSession);
     }
-    
-    public PluginSessionCallback sessionStarted(final ISession iSession) {
+
+   public boolean allowsSessionStartedInBackground()
+   {
+      return true;
+   }
+
+   public PluginSessionCallback sessionStarted(final ISession iSession) {
         boolean isMssql = isMssql(iSession); 
         if (isMssql) {
             GUIUtils.processOnSwingEventThread(new Runnable() {

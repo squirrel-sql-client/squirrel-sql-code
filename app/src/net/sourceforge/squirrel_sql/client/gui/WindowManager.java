@@ -394,6 +394,7 @@ public class WindowManager
 		final SessionInternalFrame sif = new SessionInternalFrame(session);
 
 		session.setSessionInternalFrame(sif);
+		_app.getPluginManager().sessionStarted(session);
 		_app.getMainFrame().addInternalFrame(sif, true, null);
 
 		// If we don't invokeLater here no Short-Cut-Key is sent
@@ -411,19 +412,19 @@ public class WindowManager
 		return sif;
 	}
 
-    /**
-     * A callback method to allow the session we are creating to tell us it has
-     * finished it's initialization. It's important that the plugins are only
-     * notified that a session has been started, after the session window and 
-     * it's associated toolbar have been created, and populated with the core
-     * toolbar menu-items.
-     * 
-     * @param session the ISession whose SessionPanel has finished it's 
-     *                initialization.
-     */
-    public void sessionInitComplete(ISession session) {
-        _app.getPluginManager().sessionStarted(session);
-    }
+//    /**
+//     * A callback method to allow the session we are creating to tell us it has
+//     * finished it's initialization. It's important that the plugins are only
+//     * notified that a session has been started, after the session window and
+//     * it's associated toolbar have been created, and populated with the core
+//     * toolbar menu-items.
+//     *
+//     * @param session the ISession whose SessionPanel has finished it's
+//     *                initialization.
+//     */
+//    public void sessionInitComplete(ISession session) {
+//        _app.getPluginManager().sessionStarted(session);
+//    }
     
 	/**
 	 * Creates a new SQL View internal frame for the passed session.
