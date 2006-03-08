@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.client.gui.session;
 
 import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 
 import javax.swing.*;
 
@@ -51,8 +52,9 @@ public class ToolsPopupCompletionInfo extends CompletionInfo
             _description = "";
          }
 
-         if(   null != _action.getValue(Resources.ACCELERATOR_STRING)
-            && 0 != _action.getValue(Resources.ACCELERATOR_STRING).toString().trim().length())
+         if(    false == _action instanceof SquirrelAction  // SquirrelAction descriptions already contain the accelerator 
+             && null != _action.getValue(Resources.ACCELERATOR_STRING)
+             && 0 != _action.getValue(Resources.ACCELERATOR_STRING).toString().trim().length())
          {
             _description += " (" + _action.getValue(Resources.ACCELERATOR_STRING) + ")";
          }
