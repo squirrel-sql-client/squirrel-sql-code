@@ -60,6 +60,7 @@ public class ToolsPopupController
       addAction("filesaveas", ac.get(FileSaveAsAction.class));
 		addAction("filenew", ac.get(FileNewAction.class));
 		addAction("fileappend", ac.get(FileAppendAction.class));
+        addAction("fileprint", ac.get(FilePrintAction.class));
 		addAction("fileclose", ac.get(FileCloseAction.class));
 
       addAction("tabnext", ac.get(GotoNextResultsTabAction.class));
