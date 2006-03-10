@@ -431,6 +431,7 @@ final class MainFrameMenuBar extends JMenuBar
       addToMenu(rsrc, FileOpenAction.class, menu);
       addToMenu(rsrc, FileNewAction.class, menu);
       addToMenu(rsrc, FileAppendAction.class, menu);
+      addToMenu(rsrc, FilePrintAction.class, menu);
       addToMenu(rsrc, FileCloseAction.class, menu);
       return menu;
    }

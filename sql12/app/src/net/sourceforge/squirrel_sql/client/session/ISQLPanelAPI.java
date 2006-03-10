@@ -299,6 +299,8 @@ public interface ISQLPanelAPI
    
    void fileNew();
    
+   void filePrint();
+   
    void showToolsPopup();
 }
 

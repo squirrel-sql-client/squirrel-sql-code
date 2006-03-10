@@ -43,6 +43,7 @@ import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
+import net.sourceforge.squirrel_sql.client.util.PrintUtilities;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
@@ -169,7 +170,9 @@ public class SQLPanelAPI implements ISQLPanelAPI
 		 fileOpened = true;
 	}
    
-   
+   /* (non-Javadoc)
+    * @see net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI#fileSaveAs()
+    */
    public void fileSaveAs()
    {
        if (_fileManager.saveAs()) {
@@ -182,6 +185,9 @@ public class SQLPanelAPI implements ISQLPanelAPI
        }
    }
 
+   /* (non-Javadoc)
+    * @see net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI#fileOpen()
+    */
    public void fileOpen()
    {
        if (unsavedEdits) {
@@ -197,6 +203,20 @@ public class SQLPanelAPI implements ISQLPanelAPI
        }
    }
 
+   /* (non-Javadoc)
+    * @see net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI#filePrint()
+    */
+   public void filePrint() {
+       if (_panel == null) {
+           throw new IllegalStateException("_panel is null");
+       }
+       ISQLEntryPanel panel = _panel.getSQLEntryPanel();
+       if (panel == null) {
+           throw new IllegalStateException("_panel.getSQLEntryPanel() is null");
+       }
+       PrintUtilities.printComponent(panel.getTextComponent());
+   }       
+   
    public void showToolsPopup()
    {
       _toolsPopupController.showToolsPopup();
@@ -705,5 +725,4 @@ public class SQLPanelAPI implements ISQLPanelAPI
 			getSession().getApplication().getSessionManager().removeSessionListener(this);
 		}
 	}
-
 }
