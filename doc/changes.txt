@@ -4,6 +4,10 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+- There is now a printer icon in each SQL entry panel which will allow 
+  the current sql script to be send to a printer.  Syntax highlighting
+  is preserved.  SQL entry panel size is used to scale the font.
+
 - Feature request #1441563 Query script generation:
   New entry for tables and views in the Objects tree's right mouse menu to create SELECT statements.  
 
