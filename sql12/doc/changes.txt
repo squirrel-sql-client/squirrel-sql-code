@@ -70,6 +70,7 @@ Not yet released, available in CVS and probably in latest weekly build
   2. A new right mouse menu entry ('Copy with headers') provides the ability to copy data including
      column headers
 
+- Fixed bug #1448345: Canceling "Save As... " option (overwrites file anyway)
 - Fixed bug #1424828: Not possible to clear Non-nullable fields using backspace
 - Fixed bug #1423029: Session window will not close for Postgresql
 - Fixed bug #1409055: Copy as HTML in results tab does not set correct mime type
