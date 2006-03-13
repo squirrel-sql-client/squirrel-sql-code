@@ -206,6 +206,9 @@ public class FileManager
             {
                result = true;
                break;
+            } else {
+                result = false;
+                break;
             }
          }
          else
