@@ -37,11 +37,16 @@ public class TranslatorsController
    private BundlesTableModel _bundlesTableModel;
 
    private JPopupMenu _popUp = new JPopupMenu();
-   private JMenuItem _mnuGenerateTemplateComments = new JMenuItem(s_stringMgr.getString("I18n.generateTemplateComments"));
-   // i18n[I18n.generateTemplateComments=Generate template comments for missing translations]
 
-   private JMenuItem _mnuOpenInEditor = new JMenuItem(s_stringMgr.getString("I18n.openIOnEditor"));
+   // i18n[I18n.generateTemplateComments=Generate template comments for missing translations]
+   private JMenuItem _mnuGenerateTemplateComments = new JMenuItem(s_stringMgr.getString("I18n.generateTemplateComments"));
+
    // i18n[I18n.openIOnEditor=Open in Editor]
+   private JMenuItem _mnuOpenInEditor = new JMenuItem(s_stringMgr.getString("I18n.openIOnEditor"));
+
+   // i18n[I18n.ExecuteNativeToAscii=Execute nativeToAscii]
+   private JMenuItem _mnuExecuteNativeToAscii = new JMenuItem(s_stringMgr.getString("I18n.ExecuteNativeToAscii"));
+
 
    TranslatorsController(TranslatorsPanel panel)
    {
@@ -76,6 +81,15 @@ public class TranslatorsController
       });
 
 
+      _panel.btnChooseNativeToAsciiCommand.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onChooseNativeToAsciiCommand();
+         }
+      });
+
+
 
       _panel.tblBundels.addMouseListener(new MouseAdapter()
       {
@@ -92,6 +106,7 @@ public class TranslatorsController
 
       _popUp.add(_mnuGenerateTemplateComments);
       _popUp.add(_mnuOpenInEditor);
+      _popUp.add(_mnuExecuteNativeToAscii);
 
       _mnuGenerateTemplateComments.addActionListener(new ActionListener()
       {
@@ -106,6 +121,14 @@ public class TranslatorsController
          public void actionPerformed(ActionEvent e)
          {
             onOpenInEditor();
+         }
+      });
+
+      _mnuExecuteNativeToAscii.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onExecuteNativeToAscii();
          }
       });
 
@@ -186,9 +209,38 @@ public class TranslatorsController
       }
    }
 
+   private void onChooseNativeToAsciiCommand()
+   {
+      JFileChooser chooser = new JFileChooser(System.getProperties().getProperty("user.home"));
+      chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+      chooser.showOpenDialog(_app.getMainFrame());
+
+      if(null != chooser.getSelectedFile())
+      {
+         _panel.txtNativeToAsciiCommand.setText(chooser.getSelectedFile().getPath());
+      }
+   }
+
+   private void onExecuteNativeToAscii()
+   {
+      String nativeToAsciiCommmand = _panel.txtNativeToAsciiCommand.getText();
+
+      if(null == nativeToAsciiCommmand || 0 == nativeToAsciiCommmand.length())
+      {
+         // i18n[i18n.noNativeToAsciiCommand=Can not convert files without a nativeToAscii command.]
+         String msg = s_stringMgr.getString("i18n.noNativeToAsciiCommand");
+         JOptionPane.showMessageDialog(_app.getMainFrame(), msg);
+         return;
+      }
+
+
+      executeCommand(nativeToAsciiCommmand, true);
+   }
+
+
+
    private void onOpenInEditor()
    {
-      File workDir = getWorkDir(true);
 
       String editorCommmand = _panel.txtEditorCommand.getText();
 
@@ -197,7 +249,16 @@ public class TranslatorsController
          String msg = s_stringMgr.getString("i18n.noEditorCommand");
          // i18n[i18n.noEditorCommand=Can not open files withou an editor command.]
          JOptionPane.showMessageDialog(_app.getMainFrame(), msg);
+         return;
       }
+
+
+      executeCommand(editorCommmand, false);
+   }
+
+   private void executeCommand(String command, boolean nativeToAscii)
+   {
+      File workDir = getWorkDir(true);
 
       int[] selRows = _panel.tblBundels.getSelectedRows();
       I18nBundle[] selBundles = _bundlesTableModel.getBundlesForRows(selRows);
@@ -209,13 +270,27 @@ public class TranslatorsController
 
       boolean filesFound = false;
 
+      ArrayList commands = new ArrayList();
       for (int i = 0; i < selBundles.length; i++)
       {
          File f = selBundles[i].getPathInWorkDir(workDir);
 
          if(f.exists())
          {
-            editorCommmand += " " + f.getPath();
+            if(nativeToAscii)
+            {
+               commands.add(command + " " + f.getPath() + " " + f.getPath());
+            }
+            else
+            {
+               if(0 == commands.size())
+               {
+                  commands.add(command);
+               }
+               commands.add(commands.remove(0) + " " + f.getPath());
+            }
+
+
             filesFound = true;
          }
          else
@@ -234,18 +309,22 @@ public class TranslatorsController
          return;
       }
 
-      String msg = s_stringMgr.getString("i18n.executingCommand", editorCommmand);
-      // i18n[i18n.executingCommand=Executing command: {0}]
-      _app.getMessageHandler().showMessage(msg);
 
       try
       {
-         Runtime.getRuntime().exec(editorCommmand);
+         for (int i = 0; i < commands.size(); i++)
+         {
+            // i18n[i18n.executingCommand=Executing command: {0}]
+            String msg = s_stringMgr.getString("i18n.executingCommand", (String) commands.get(i));
+            _app.getMessageHandler().showMessage(msg);
+
+            Runtime.getRuntime().exec((String) commands.get(i));
+         }
       }
       catch (IOException e)
       {
-         msg = s_stringMgr.getString("i18n.executingCommandFailed", e.getMessage());
          // i18n[i18n.executingCommandFailed=Execution failed with error: {0}]
+         String msg = s_stringMgr.getString("i18n.executingCommandFailed", e.getMessage());
          _app.getMessageHandler().showMessage(msg);
          throw new RuntimeException(e);
 
