@@ -69,7 +69,7 @@ Not yet released, available in CVS and probably in latest weekly build
   1. Control+c and copy in the right mouse menu now do the same: They copy data without column headers.
   2. A new right mouse menu entry ('Copy with headers') provides the ability to copy data including
      column headers
-
+- Fixed bug #1450856: The "new" button has no icon  
 - Fixed bug #1448345: Canceling "Save As... " option (overwrites file anyway)
 - Fixed bug #1424828: Not possible to clear Non-nullable fields using backspace
 - Fixed bug #1423029: Session window will not close for Postgresql
