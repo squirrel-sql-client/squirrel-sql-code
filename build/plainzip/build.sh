@@ -38,3 +38,20 @@ mv "squirrel-sql-$VERSION-standard.tar.gz" ..
 cd ..
 
 rm -rf tmp
+mkdir tmp
+
+java -jar $INSTALL_JAR auto_install_optional.xml
+
+cp squirrel-sql.sh "tmp/SQuirreL SQL Client/"
+
+cd tmp
+
+tar -cvf squirrel-sql-$VERSION-optional.tar "SQuirreL SQL Client"
+
+gzip squirrel-sql-$VERSION-optional.tar
+
+mv "squirrel-sql-$VERSION-optional.tar.gz" ..
+
+cd ..
+
+rm -rf tmp
