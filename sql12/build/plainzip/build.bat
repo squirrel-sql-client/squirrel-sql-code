@@ -38,3 +38,18 @@ mv squirrel-sql-%VERSION%-standard.zip ..
 cd ..
 
 rm -rf tmp
+mkdir tmp
+
+java -jar %INSTALL_JAR% auto_install_optional.xml
+
+copy squirrel-sql.bat "tmp\SQuirreL SQL Client\"
+
+cd tmp
+
+jar -cvf squirrel-sql-%VERSION%-optional.zip "SQuirreL SQL Client"
+
+mv squirrel-sql-%VERSION%-optional.zip ..
+
+cd ..
+
+rm -rf tmp
