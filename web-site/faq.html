@@ -33,7 +33,7 @@
 	<PRE>
 	JRE/JDBC Version mismatch
 
-	The driver being used ... is not JDBC 2.1 compliant. 
+	The driver being used ... is not JDBC N.N compliant. 
 	You should consider getting a more recent version of this driver.
 	</PRE>
 					</ul>
@@ -95,6 +95,7 @@
 			working with the following:</p>
 			<UL>
 			<LI><A HREF="http://axion.tigris.org/">Axion Java RDBMS</A>.</LI>
+			<LI><A HREF="http://www.daffodildb.com/one-dollar-db.html">Daffofial (One$DB)</A></LI>
 			<LI><A HREF="http://db.apache.org/derby/">Apache Derby </A> (formerly Cloudscape) </LI>
 			<LI><A HREF="http://www.fujitsu-siemens.com/rl/products/software/sesamsql.html">Fujitsu Siemens SESAM/SQL-Server</A>
 						with the <A HREF="http://www.fujitsu-siemens.com/rl/products/software/sesamsqljdbc.html">SESAM/SQL</A> JDBC driver.
@@ -102,6 +103,7 @@
                         <LI><A HREF="http://www.frontbase.com/">FrontBase</A></LI>
 			<LI><A HREF="http://hsqldb.sourceforge.net/">HSQL</A>.</LI>
 			<LI><A HREF="http://hsql.sourceforge.net/">Hypersonic SQL</A>.</LI>
+			<LI><A HREF="http://www.h2database.com/">H2</A></LI>
 			<LI><A HREF="http://www.ibm.com/">IBM DB2</A> for Linux, OS/400 and Windows.</LI>
 			<LI><A HREF="http://www.informix.com/">Informix</A>.</LI>
 			<LI><A HREF="http://www.ingres.com/">CA Ingres</A> 2.6 SP2 with EDBC driver v1.8 (probably works with Caribou Lake driver too).</LI>
@@ -123,9 +125,10 @@
 					There are currently some issues with Sybase JConnect 5.5 and
 					SQuirreL 1.1 although JConnect 4.5 seems to work.</LI>
 			<LI><A HREF="http://www.sunopsis.com/corporate/us/products/jdbcforxml/">Sunopsis XML Driver (JDBC Edition)</A>.</LI>
+			<LI><A HREF="http://www.ncr.com/en/solutions/data_warehousing/dataware.htm">Teradata Warehouse</A></LI>
 			<LI><A HREF="http://www.thinksql.co.uk">ThinkSQL RDBMS</A>.</LI>
 			</UL>
-			<p class="answer">Please send us an <A HREF="mailto:colbell@users.sourceforge.net">email</A> if you have used SQuirreL
+			<p class="answer">Please send us an <A HREF="mailto:manningr@users.sourceforge.net">email</A> if you have used SQuirreL
 			successfully with other products.</p>
 			<p><A HREF="#top">Top</A><HR SIZE=1></HR></p>
 
@@ -168,7 +171,7 @@
 			<p><A HREF="#top">Top</A><HR SIZE=1></HR></P>
 
 			<h1 class="question"><A NAME="faq5">I get a &quot;NullPointerException&quot; at <TT>BaseSQLEntryPanel.java:23</TT></A></h1>
-			<p class="answer">This is a know problem with JDK1.3.0 on some platforms. Upgrade your Java version to 1.3.1 or better.</p>
+			<p class="answer">This is a known problem with JDK1.3.0 on some platforms. Upgrade your Java version to 1.3.1 or better.</p>
 
 			<p><A HREF="#top">Top</A><HR SIZE=1></HR></P>
 
@@ -192,7 +195,7 @@
 	<PRE>
 	JRE/JDBC Version mismatch
 
-	The driver being used ... is not JDBC 2.1 compliant. 
+	The driver being used ... is not JDBC N.N compliant. 
 	You should consider getting a more recent version of this driver.
 	</PRE>
 			<p class="answer">It's telling you that your JRE version is much newer than your driver's supported JDBC version. In general,
