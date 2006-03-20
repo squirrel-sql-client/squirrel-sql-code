@@ -1,8 +1,9 @@
 SQuirreL SQL Client Change Log
 ==============================
 
-Not yet released, available in CVS and probably in latest weekly build
-=======================================================================
+
+2.2 RC1
+=======
 
 - There is now a printer icon in each SQL entry panel which will allow 
   the current sql script to be send to a printer.  Syntax highlighting
