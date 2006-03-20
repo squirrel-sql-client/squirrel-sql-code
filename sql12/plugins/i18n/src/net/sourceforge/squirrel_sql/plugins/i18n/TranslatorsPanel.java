@@ -30,25 +30,28 @@ public class TranslatorsPanel extends JPanel
    JTextField txtNativeToAsciiCommand = new JTextField();
    JButton btnChooseEditorCommand;
 
+   JTextField txtNativeToAsciiOutDir = new JTextField();
+   JButton btnChooseNativeToAsciiOutDir;
+
 
    JTable tblBundels = new JTable();
 
 
-	public TranslatorsPanel(PluginResources resources)
-	{
-		setLayout(new GridLayout(1,1));
-		add(tabTranlators);
+   public TranslatorsPanel(PluginResources resources)
+   {
+      setLayout(new GridLayout(1,1));
+      add(tabTranlators);
 
 
-		JPanel translationsPanel = getTranslationsPanel(resources);
-		// i18n[I18n.tranlations=Translations]
-		tabTranlators.addTab(s_stringMgr.getString("I18n.tranlations"), translationsPanel);
+      JPanel translationsPanel = getTranslationsPanel(resources);
+      // i18n[I18n.tranlations=Translations]
+      tabTranlators.addTab(s_stringMgr.getString("I18n.tranlations"), translationsPanel);
 
-		// i18n[I18n.info=Info]
-		tabTranlators.addTab(s_stringMgr.getString("I18n.info"), new JScrollPane(new MultipleLineLabel(infoText)));
+      // i18n[I18n.info=Info]
+      tabTranlators.addTab(s_stringMgr.getString("I18n.info"), new JScrollPane(new MultipleLineLabel(infoText)));
 
 
-	}
+   }
 
 	private JPanel getTranslationsPanel(PluginResources resources)
 	{
@@ -81,6 +84,7 @@ public class TranslatorsPanel extends JPanel
 		ret.add(btnChooseWorkDir, gbc);
 
 
+
 		gbc = new GridBagConstraints(0, 2, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0);
 		// i18n[I18n.EditorCommand=Editor command]
 		ret.add(new JLabel(s_stringMgr.getString("I18n.EditorCommand")), gbc);
@@ -92,22 +96,38 @@ public class TranslatorsPanel extends JPanel
 		gbc = new GridBagConstraints(2, 2, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 0, 0, 5), 0, 0);
 		ret.add(btnChooseEditorCommand, gbc);
 
+
+
       gbc = new GridBagConstraints(0, 3, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0);
       // i18n[I18n.NativeToAscii=Path to native to Unicode converter (JDK's native2ascii)]
       ret.add(new MultipleLineLabel(s_stringMgr.getString("I18n.NativeToAscii")), gbc);
 
-      gbc = new GridBagConstraints(1, 3, 1, 1, 1, 0, GridBagConstraints.SOUTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 0, 5), 0, 0);
+      gbc = new GridBagConstraints(1, 3, 1, 1, 1, 0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 0, 5), 0, 0);
       ret.add(txtNativeToAsciiCommand, gbc);
 
       btnChooseNativeToAsciiCommand = new JButton(resources.getIcon("Open"));
-      gbc = new GridBagConstraints(2, 3, 1, 1, 0, 0, GridBagConstraints.SOUTHWEST, GridBagConstraints.NONE, new Insets(5, 0, 0, 5), 0, 0);
+      gbc = new GridBagConstraints(2, 3, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 0, 5), 0, 0);
       ret.add(btnChooseNativeToAsciiCommand, gbc);
 
-      gbc = new GridBagConstraints(0, 4, 3, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 0, 0, 5), 0, 0);
+
+      gbc = new GridBagConstraints(0, 4, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0);
+      // i18n[I18n.NativeToAsciiOutDir=native2Ascii output dir]
+      ret.add(new JLabel(s_stringMgr.getString("I18n.NativeToAsciiOutDir")), gbc);
+
+      gbc = new GridBagConstraints(1, 4, 1, 1, 1, 0, GridBagConstraints.SOUTHWEST, GridBagConstraints.BOTH, new Insets(5, 0, 0, 5), 0, 0);
+      ret.add(txtNativeToAsciiOutDir, gbc);
+
+      btnChooseNativeToAsciiOutDir = new JButton(resources.getIcon("Open"));
+      gbc = new GridBagConstraints(2, 4, 1, 1, 0, 0, GridBagConstraints.SOUTHWEST, GridBagConstraints.NONE, new Insets(5, 0, 0, 5), 0, 0);
+      ret.add(btnChooseNativeToAsciiOutDir, gbc);
+
+
+
+      gbc = new GridBagConstraints(0, 5, 3, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 0, 0, 5), 0, 0);
 		// i18n[I18n.bundles=Bundles]
 		ret.add(new JLabel(s_stringMgr.getString("I18n.bundles")), gbc);
 
-		gbc = new GridBagConstraints(0, 5, 3, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5, 0, 0, 5), 0, 0);
+		gbc = new GridBagConstraints(0, 6, 3, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5, 0, 0, 5), 0, 0);
 		ret.add(new JScrollPane(tblBundels), gbc);
 
 		return ret;

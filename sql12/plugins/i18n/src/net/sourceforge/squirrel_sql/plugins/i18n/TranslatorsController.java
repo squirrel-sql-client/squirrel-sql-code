@@ -30,6 +30,8 @@ public class TranslatorsController
    private static final String PREF_KEY_WORK_DIR = "SquirrelSQL.i18n.workDir";
    private static final String PREF_KEY_EDITOR_COMMAND = "SquirrelSQL.i18n.editorCommand";
    private static final String PREF_KEY_SELECTED_LOCALE = "SquirrelSQL.i18n.selectedLocale";
+   private static final String PREF_KEY_NATIVE2ASCII_COMMAND = "SquirrelSQL.i18n.native2AsciiCommand";
+   private static final String PREF_KEY_NATIVE2ASCII_OUT_DIR = "SquirrelSQL.i18n.native2AsciiOutDir";
 
 
    TranslatorsPanel _panel;
@@ -89,6 +91,13 @@ public class TranslatorsController
          }
       });
 
+      _panel.btnChooseNativeToAsciiOutDir.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onChooseNativeToAsciiOutDir();
+         }
+      });
 
 
       _panel.tblBundels.addMouseListener(new MouseAdapter()
@@ -172,6 +181,14 @@ public class TranslatorsController
       String editorCommand = Preferences.userRoot().get(PREF_KEY_EDITOR_COMMAND, null);
       _panel.txtEditorCommand.setText(editorCommand);
 
+
+      String nativeToAsciiCommand = Preferences.userRoot().get(PREF_KEY_NATIVE2ASCII_COMMAND, null);
+      _panel.txtNativeToAsciiCommand.setText(nativeToAsciiCommand);
+
+      String nativeToAsciiOutDir = Preferences.userRoot().get(PREF_KEY_NATIVE2ASCII_OUT_DIR, null);
+      _panel.txtNativeToAsciiOutDir.setText(nativeToAsciiOutDir);
+
+
    }
 
 
@@ -221,20 +238,53 @@ public class TranslatorsController
       }
    }
 
+   private void onChooseNativeToAsciiOutDir()
+   {
+      JFileChooser chooser = new JFileChooser(System.getProperties().getProperty("user.home"));
+      chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+      chooser.showOpenDialog(_app.getMainFrame());
+
+      if(null != chooser.getSelectedFile())
+      {
+         _panel.txtNativeToAsciiOutDir.setText(chooser.getSelectedFile().getPath());
+      }
+   }
+
+
    private void onExecuteNativeToAscii()
    {
       String nativeToAsciiCommmand = _panel.txtNativeToAsciiCommand.getText();
 
       if(null == nativeToAsciiCommmand || 0 == nativeToAsciiCommmand.length())
       {
-         // i18n[i18n.noNativeToAsciiCommand=Can not convert files without a nativeToAscii command.]
+         // i18n[i18n.noNativeToAsciiCommand=Cannot convert files without a native2Ascii command.]
          String msg = s_stringMgr.getString("i18n.noNativeToAsciiCommand");
          JOptionPane.showMessageDialog(_app.getMainFrame(), msg);
          return;
       }
 
+      String nativeToAsciiOutDir = _panel.txtNativeToAsciiOutDir.getText();
 
-      executeCommand(nativeToAsciiCommmand, true);
+      if(null == nativeToAsciiOutDir || 0 == nativeToAsciiOutDir.length())
+      {
+         // i18n[i18n.noNativeToAsciiOutDir=Cannot convert files without a native2Ascii output dir.]
+         String msg = s_stringMgr.getString("i18n.noNativeToAsciiOutDir");
+         JOptionPane.showMessageDialog(_app.getMainFrame(), msg);
+         return;
+      }
+
+      File outDir = new File(nativeToAsciiOutDir);
+      outDir.mkdirs();
+
+      if(false == outDir.isDirectory())
+      {
+         // i18n[i18n.noNativeToAsciiOutDirNoDir=native2Ascii output dir is not a directory. native2Ascii will not be executed.]
+         String msg = s_stringMgr.getString("i18n.noNativeToAsciiOutDirNoDir");
+         JOptionPane.showMessageDialog(_app.getMainFrame(), msg);
+         return;
+      }
+
+      executeCommand(nativeToAsciiCommmand, true, outDir);
    }
 
 
@@ -253,10 +303,10 @@ public class TranslatorsController
       }
 
 
-      executeCommand(editorCommmand, false);
+      executeCommand(editorCommmand, false, null);
    }
 
-   private void executeCommand(String command, boolean nativeToAscii)
+   private void executeCommand(String command, boolean nativeToAscii, File native2AsciiOutDir)
    {
       File workDir = getWorkDir(true);
 
@@ -273,13 +323,15 @@ public class TranslatorsController
       ArrayList commands = new ArrayList();
       for (int i = 0; i < selBundles.length; i++)
       {
-         File f = selBundles[i].getPathInWorkDir(workDir);
+         File f = selBundles[i].getPathRelativeTo(workDir);
 
          if(f.exists())
          {
             if(nativeToAscii)
             {
-               commands.add(command + " " + f.getPath() + " " + f.getPath());
+               File outFile = selBundles[i].getPathRelativeTo(native2AsciiOutDir);
+               outFile.getParentFile().mkdirs();
+               commands.add(command + " " + f.getPath() + " " + outFile.getPath());
             }
             else
             {
@@ -295,16 +347,16 @@ public class TranslatorsController
          }
          else
          {
+            // i18n[i18n.notGeneratedInWorkDir=File {0} has not been generated. Cannot continue.]
             String msg = s_stringMgr.getString("i18n.notGeneratedInWorkDir", f.getPath());
-            // i18n[i18n.notGeneratedInWorkDir=File {0} has not been generated and can not be opened.]
             _app.getMessageHandler().showMessage(msg);
          }
       }
 
       if(false == filesFound)
       {
+         // i18n[i18n.noFilesOpened=No file found.\nSee message panel for details.]
          String msg = s_stringMgr.getString("i18n.noFilesOpened");
-         // i18n[i18n.noFilesOpened=No file could be opened.\nSee message panel for details.]
          JOptionPane.showMessageDialog(_app.getMainFrame(), msg);
          return;
       }
@@ -334,9 +386,11 @@ public class TranslatorsController
 
    public void uninitialize()
    {
+      Preferences.userRoot().put(PREF_KEY_SELECTED_LOCALE, "" + _panel.cboLocales.getSelectedItem());
       Preferences.userRoot().put(PREF_KEY_WORK_DIR, _panel.txtWorkingDir.getText());
       Preferences.userRoot().put(PREF_KEY_EDITOR_COMMAND, _panel.txtEditorCommand.getText());
-      Preferences.userRoot().put(PREF_KEY_SELECTED_LOCALE, "" + _panel.cboLocales.getSelectedItem());
+      Preferences.userRoot().put(PREF_KEY_NATIVE2ASCII_COMMAND, _panel.txtNativeToAsciiCommand.getText());
+      Preferences.userRoot().put(PREF_KEY_NATIVE2ASCII_OUT_DIR, _panel.txtNativeToAsciiOutDir.getText());
    }
 
 

@@ -9,7 +9,6 @@ import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.io.IOException;
 import java.util.Properties;
-import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Arrays;
 import java.net.URL;
@@ -58,7 +57,7 @@ public class I18nBundle implements Comparable
 
 		if(null != _workDir)
 		{
-			File pathInWorkDir = getPathInWorkDir(_workDir);
+			File pathInWorkDir = getPathRelativeTo(_workDir);
 			if(pathInWorkDir.exists())
 			{
 				new I18nProps(pathInWorkDir, _sourceUrls).removeProps(buf);
@@ -96,7 +95,7 @@ public class I18nBundle implements Comparable
 		{
 			Properties propsToAppend = _defaultProps.getTranslateableProperties();
 
-			File toAppendTo = getPathInWorkDir(workDir);
+			File toAppendTo = getPathRelativeTo(workDir);
 			if(toAppendTo.exists())
 			{
 				new I18nProps(toAppendTo, _sourceUrls).removeProps(propsToAppend);
@@ -168,9 +167,9 @@ public class I18nBundle implements Comparable
 
 	}
 
-	File getPathInWorkDir(File workDir)
+	File getPathRelativeTo(File parentDir)
 	{
-		File toAppendTo = new File(workDir.getPath() + File.separator + getName());
+		File toAppendTo = new File(parentDir.getPath() + File.separator + getName());
 		String localizedFileName = _defaultProps.getLocalizedFileName(_locale);
 		toAppendTo = new File(toAppendTo.getParent() + File.separator + localizedFileName);
 		return toAppendTo;
