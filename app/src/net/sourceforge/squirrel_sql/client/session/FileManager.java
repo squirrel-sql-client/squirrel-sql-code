@@ -112,23 +112,14 @@ public class FileManager
       }
       finally
       {
-         try
-         {
-            if (bis != null)
-            {
-               bis.close();
-            }
-         }
-         catch (IOException ignore)
-         {
-         }
-         try
-         {
-            fis.close();
-         }
-         catch (IOException io)
-         {
-         }
+          if (bis != null)
+          {
+              try { bis.close(); } catch (IOException ignore) {}
+          }
+          if (fis != null) 
+          {
+              try { fis.close(); } catch (IOException ignore) {}
+          }
       }
    }
 
