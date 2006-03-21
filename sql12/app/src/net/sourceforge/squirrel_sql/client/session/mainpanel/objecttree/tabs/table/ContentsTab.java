@@ -384,7 +384,9 @@ public class ContentsTab extends BaseTableTab
                 if (info.isNullAllowed() == DatabaseMetaData.columnNoNulls) {
                     isNullable = false;
                 }
-                colDefs[i].setIsNullable(isNullable);
+                if (i < colDefs.length) {
+                    colDefs[i].setIsNullable(isNullable);
+                }
             }
 
             //?? remember which column is the rowID (if any) so we can
