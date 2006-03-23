@@ -481,12 +481,16 @@ public class SessionManager
 	{
 		if (!_app.getSquirrelPreferences().getConfirmSessionClose())
 		{
-			return true;
-		}
+            return session.confirmClose();
+        }
 
 		final String msg = s_stringMgr.getString("SessionManager.confirmClose",
 							session.getTitle());
-		return Dialogs.showYesNo(_app.getMainFrame(), msg);
+		if (!Dialogs.showYesNo(_app.getMainFrame(), msg)) {
+            return session.confirmClose();
+        } else {
+            return true;
+        }
 	}
 
 	protected void fireConnectionClosedForReconnect(Session session)

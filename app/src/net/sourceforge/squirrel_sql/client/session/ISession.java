@@ -277,5 +277,14 @@ public interface ISession extends IHasIdentifier
     * @param _finishedLoading The _finishedLoading to set.
     */
    public void setPluginsfinishedLoading(boolean _finishedLoading);
+   
+   /**
+    * Determine from the session whether or not it is ok to close it.  It might
+    * be the case that the session's SQLPanel has unsaved edits that require
+    * the user's approval to discard.
+    * 
+    * @return true if it's ok to close the session; false otherwise.
+    */
+   public boolean confirmClose();
 
 }
