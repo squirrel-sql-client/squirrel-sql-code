@@ -1,6 +1,15 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+Not yet released, available in CVS and probably in latest weekly build
+=======================================================================
+
+Fixed bug #1456463: update to allow the user to override the closing of a session in the event that 
+                    there are unsaved edits and they decide not to save them right away.  They can 
+                    always choose to not save and discard, closing the session immediately. This 
+                    change will make it so that if they choose to not discard, and something happens
+                    during the save that causes the edits not to get saved, the session will not be 
+                    closed.
 
 2.2 RC1
 =======
