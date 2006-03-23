@@ -38,8 +38,6 @@ import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
-import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
-import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
@@ -85,7 +83,6 @@ public class SQLPanelAPI implements ISQLPanelAPI
 		_panel = panel;
         _panel.getSQLEntryPanel().addUndoableEditListener(new SQLEntryUndoListener());
       _toolsPopupController = new ToolsPopupController(getSession().getApplication(), _panel, getSession());
-      getSession().getApplication().getSessionManager().addSessionListener(new MySessionListener());
       
       createStandardEntryAreaMenuItems();
 	}
@@ -116,7 +113,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
       _toolsPopupController.addAction(selectionString, action);
    }
 
-   public void fileSave()
+   public boolean fileSave()
    {
       if (_fileManager.save()) {
           fileSaved = true;
@@ -125,6 +122,9 @@ public class SQLPanelAPI implements ISQLPanelAPI
           ActionCollection actions = 
               getSession().getApplication().getActionCollection();
           actions.enableAction(FileSaveAction.class, false);
+          return true;
+      } else {
+          return false;
       }
    }
    
@@ -672,7 +672,14 @@ public class SQLPanelAPI implements ISQLPanelAPI
       return _panel.isInMainSessionWindow();
    }
 
-   private void showConfirmSaveDialog() 
+   public boolean confirmClose() {
+       if (unsavedEdits) {
+           return showConfirmSaveDialog();
+       }
+       return true;
+   }
+   
+   private boolean showConfirmSaveDialog() 
    {
        String msg = s_stringMgr.getString("SQLPanelAPI.unsavedchanges");
        String title = 
@@ -685,8 +692,9 @@ public class SQLPanelAPI implements ISQLPanelAPI
                                          title, 
                                          JOptionPane.YES_NO_OPTION);
        if (option == JOptionPane.YES_OPTION) {
-           fileSave();
+           return fileSave();
        }
+       return true;
    }   
    
    /**
@@ -699,8 +707,8 @@ public class SQLPanelAPI implements ISQLPanelAPI
      * @see javax.swing.event.UndoableEditListener#undoableEditHappened(javax.swing.event.UndoableEditEvent)
      */
     public void undoableEditHappened(UndoableEditEvent e) {
+        unsavedEdits = true;
         if (fileOpened || fileSaved) {
-            unsavedEdits = true;
             getSession().getActiveSessionWindow().setUnsavedEdits(true);
             ActionCollection actions = 
                 getSession().getApplication().getActionCollection();
@@ -708,21 +716,5 @@ public class SQLPanelAPI implements ISQLPanelAPI
         }        
     }
        
-   }
-   
-   /**
-    * A session listener that will detect unsaved edits and prompt the user to 
-    * save them when the session is about to be closed.
-    */
-	private class MySessionListener extends SessionAdapter
-	{
-		public void sessionClosing(SessionEvent evt)
-		{
-			if (evt.getSession().equals(_panel.getSession()) && unsavedEdits)
-			{
-				showConfirmSaveDialog();
-			}
-			getSession().getApplication().getSessionManager().removeSessionListener(this);
-		}
-	}
+   }   
 }
