@@ -270,19 +270,32 @@ public class ResultSetDataSet implements IDataSet
 				// Empty block
 			}
 
-			columnDefs[i] =
- 					new ColumnDisplayDefinition(
- 					computeWidths ? colWidths[i] : md.getColumnDisplaySize(idx),
-					fullTableName+":"+md.getColumnLabel(idx),
- 					md.getColumnLabel(idx),
- 					md.getColumnType(idx),
- 					md.getColumnTypeName(idx),
- 					isNullable,
- 					md.getColumnDisplaySize(idx),
- 					precis,
- 					md.getScale(idx),
- 					isSigned,
- 					md.isCurrency(idx));
+         boolean isCurrency = false;
+
+         try
+         {
+            // Matt Dahlman: this causes problems with the JDBC driver delivered with Teradata V2R05.00.00.11
+            isCurrency = md.isCurrency(idx);
+         }
+         catch (SQLException e)
+         {
+            s_log.error("Failed to call ResultSetMetaData.isCurrency()", e);
+         }
+
+
+         columnDefs[i] =
+                new ColumnDisplayDefinition(
+                computeWidths ? colWidths[i] : md.getColumnDisplaySize(idx),
+               fullTableName+":"+md.getColumnLabel(idx),
+                md.getColumnLabel(idx),
+                md.getColumnType(idx),
+                md.getColumnTypeName(idx),
+                isNullable,
+                md.getColumnDisplaySize(idx),
+                precis,
+                md.getScale(idx),
+                isSigned,
+                isCurrency);
 		}
 		return columnDefs;
 	}
