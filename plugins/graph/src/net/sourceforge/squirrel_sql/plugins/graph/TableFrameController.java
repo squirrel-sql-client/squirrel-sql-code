@@ -8,6 +8,8 @@ import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
@@ -25,6 +27,10 @@ public class TableFrameController
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(TableFrameController.class);
 
+    /** Logger for this class. */
+    private final static ILogger s_log =
+        LoggerController.createLogger(TableFrameController.class);
+    
    ////////////////////////////////////////
    // Serialized attributes
    private String _schema;
@@ -207,22 +213,31 @@ public class TableFrameController
       throws SQLException
    {
       DatabaseMetaData metaData = _session.getSQLConnection().getConnection().getMetaData();
-      ResultSet res;
+      ResultSet res = null;
       Hashtable constaintInfosByConstraintName = new Hashtable();
       Vector colInfosBuf = new Vector();
-      res = metaData.getColumns(_catalog, _schema, _tableName, null);
-      while(res.next())
-      {
-         String columnName = res.getString("COLUMN_NAME");
-         String columnType = res.getString("TYPE_NAME");
-         int columnSize = res.getInt("COLUMN_SIZE");
-         int decimalDigits = res.getInt("DECIMAL_DIGITS");
-         boolean nullable = "YES".equals(res.getString("IS_NULLABLE"));
-
-         ColumnInfo colInfo = new ColumnInfo(columnName, columnType, columnSize, decimalDigits,nullable);
-         colInfosBuf.add(colInfo);
+      if (s_log.isDebugEnabled()) {
+          s_log.debug("initFromDB: _catalog="+_catalog+" _schema="+_schema+
+                      " _tableName="+_tableName);
       }
-      res.close();
+      try {
+          res = metaData.getColumns(_catalog, _schema, _tableName, null);
+          while(res.next())
+          {
+             String columnName = res.getString("COLUMN_NAME");
+             String columnType = res.getString("TYPE_NAME");
+             int columnSize = res.getInt("COLUMN_SIZE");
+             int decimalDigits = res.getInt("DECIMAL_DIGITS");
+             boolean nullable = "YES".equals(res.getString("IS_NULLABLE"));
+    
+             ColumnInfo colInfo = new ColumnInfo(columnName, columnType, columnSize, decimalDigits,nullable);
+             colInfosBuf.add(colInfo);
+          }
+      } finally {
+          if (res != null) {
+              try { res.close(); } catch (SQLException e) {}
+          }
+      }
       _colInfos = (ColumnInfo[]) colInfosBuf.toArray(new ColumnInfo[colInfosBuf.size()]);
 
       if(0 == _colInfos.length)
@@ -231,36 +246,49 @@ public class TableFrameController
          return false;
       }
 
-      res = metaData.getPrimaryKeys(_catalog, _schema, _tableName);
-      while(res.next())
-      {
-         for (int i = 0; i < _colInfos.length; i++)
-         {
-            if(_colInfos[i].getName().equals(res.getString("COLUMN_NAME")))
-            {
-               _colInfos[i].markPrimaryKey();
-            }
-
-         }
+      try {
+          res = metaData.getPrimaryKeys(_catalog, _schema, _tableName);
+          while(res.next())
+          {
+             for (int i = 0; i < _colInfos.length; i++)
+             {
+                if(_colInfos[i].getName().equals(res.getString("COLUMN_NAME")))
+                {
+                   _colInfos[i].markPrimaryKey();
+                }
+             }
+          }
+      } catch (SQLException e) {
+          s_log.error("Unable to get Primary Key info", e);
+      } finally {
+          if (res != null) {
+              try { res.close(); } catch (SQLException e) {}
+          }
       }
-      res.close();
 
-      res = metaData.getImportedKeys(_catalog, _schema, _tableName);
-      while(res.next())
-      {
-         ColumnInfo colInfo = findColumnInfo(res.getString("FKCOLUMN_NAME"));
-         colInfo.setImportData(res.getString("PKTABLE_NAME"), res.getString("PKCOLUMN_NAME"), res.getString("FK_NAME"));
-
-         ConstraintData  constraintData = (ConstraintData) constaintInfosByConstraintName.get(res.getString("FK_NAME"));
-
-         if(null == constraintData)
-         {
-            constraintData = new ConstraintData(res.getString("PKTABLE_NAME"), _tableName, res.getString("FK_NAME"));
-            constaintInfosByConstraintName.put(res.getString("FK_NAME"), constraintData);
-         }
-         constraintData.addColumnInfo(colInfo);
+      try {
+          res = metaData.getImportedKeys(_catalog, _schema, _tableName);
+          while(res.next())
+          {
+             ColumnInfo colInfo = findColumnInfo(res.getString("FKCOLUMN_NAME"));
+             colInfo.setImportData(res.getString("PKTABLE_NAME"), res.getString("PKCOLUMN_NAME"), res.getString("FK_NAME"));
+    
+             ConstraintData  constraintData = (ConstraintData) constaintInfosByConstraintName.get(res.getString("FK_NAME"));
+    
+             if(null == constraintData)
+             {
+                constraintData = new ConstraintData(res.getString("PKTABLE_NAME"), _tableName, res.getString("FK_NAME"));
+                constaintInfosByConstraintName.put(res.getString("FK_NAME"), constraintData);
+             }
+             constraintData.addColumnInfo(colInfo);
+          }
+      } catch (SQLException e) {
+          s_log.error("Unable to get Foriegn Key info", e);
+      } finally {
+          if (res != null) {
+              try { res.close(); } catch (SQLException e) {}
+          }
       }
-      res.close();
 
       ConstraintData[] constraintData = (ConstraintData[]) constaintInfosByConstraintName.values().toArray(new ConstraintData[0]);
 
