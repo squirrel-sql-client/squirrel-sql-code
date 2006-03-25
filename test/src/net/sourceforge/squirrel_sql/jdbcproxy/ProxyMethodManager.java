@@ -46,9 +46,9 @@ public class ProxyMethodManager {
             methodsCalled.put(key, new Long(1));
         }
         if (_props.containsKey(key)) {
-            DriverPropertyInfo info = (DriverPropertyInfo)_props.get(key);
-            if (info.value != null && ! "".equals(info.value)) {
-                throw new SQLException(info.value);
+            String info = (String)_props.get(key);
+            if (info != null && ! "".equals(info)) {
+                throw new SQLException(info);
             }
         }
     }
@@ -67,8 +67,8 @@ public class ProxyMethodManager {
         boolean result = false;
         String key = ProxyDriver.TRACK_METHOD_CALLS_KEY;
         if (_props.containsKey(key)) {
-            DriverPropertyInfo info = (DriverPropertyInfo)_props.get(key);
-            if (info.value != null && "true".equalsIgnoreCase(info.value)) {
+            String info = (String)_props.get(key);
+            if (info != null && "true".equalsIgnoreCase(info)) {
                 result = true;
             }
         }
