@@ -143,21 +143,21 @@ public class ProxyConnection implements Connection {
 
     public Statement createStatement() throws SQLException {
         ProxyMethodManager.check("ProxyConnection","createStatement");
-        return _con.createStatement();
+        return new ProxyStatement(this, _con.createStatement());
     }
 
     public Statement createStatement(int resultSetType, int resultSetConcurrency)
             throws SQLException 
     {
         ProxyMethodManager.check("ProxyConnection", "createStatement");
-        return _con.createStatement(resultSetType, resultSetConcurrency);
+        return new ProxyStatement(this, _con.createStatement(resultSetType, resultSetConcurrency));
     }
 
     public Statement createStatement(int resultSetType,
             int resultSetConcurrency, int resultSetHoldability)
             throws SQLException {
         ProxyMethodManager.check("ProxyConnection", "createStatement");
-        return _con.createStatement(resultSetType, resultSetConcurrency, resultSetHoldability);
+        return new ProxyStatement(this, _con.createStatement(resultSetType, resultSetConcurrency, resultSetHoldability));
     }
 
     public Map getTypeMap() throws SQLException {
