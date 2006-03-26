@@ -36,18 +36,16 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Map;
 
-import net.sourceforge.squirrel_sql.ProxyResultSetMetaData;
-
 public class ProxyResultSet implements ResultSet {
     
     private ResultSet _rs = null;
     private ProxyStatement _stmt = null;
     private ProxyResultSetMetaData _rsmd = null;
     
-    public ProxyResultSet(ProxyStatement stmt, ResultSet rs) {
+    public ProxyResultSet(ProxyStatement stmt, ResultSet rs) throws SQLException {
         _rs = rs;
         _stmt = stmt;
-        _rsmd = new ProxyResultSetMetaData(this);
+        _rsmd = new ProxyResultSetMetaData(rs.getMetaData());
     }
     public int getConcurrency() throws SQLException {
 		ProxyMethodManager.check("ProxyResultSet", "getConcurrency");
@@ -447,7 +445,7 @@ public class ProxyResultSet implements ResultSet {
 	}
     public Statement getStatement() throws SQLException {
 		ProxyMethodManager.check("ProxyResultSet", "getStatement");
-		return _rs.getStatement();
+		return _stmt;
 	}
     public Time getTime(int columnIndex) throws SQLException {
 		ProxyMethodManager.check("ProxyResultSet", "getTime");
