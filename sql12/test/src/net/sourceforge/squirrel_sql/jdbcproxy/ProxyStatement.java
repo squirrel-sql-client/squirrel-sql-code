@@ -29,6 +29,8 @@ public class ProxyStatement implements Statement {
     Statement _stmt = null;
     ProxyConnection _con = null;
     
+    protected ProxyStatement() {}
+    
     public ProxyStatement(ProxyConnection con, Statement stmt) {
         _stmt = stmt;
         _con = con;
