@@ -123,6 +123,18 @@ public class ProxyDriver implements Driver {
         List mdMethods = getMethods("java.sql.DatabaseMetaData", "ProxyDatabaseMetaData");
         Collections.sort(mdMethods);
         list.addAll(mdMethods);
+        List psMethods = getMethods("java.sql.PreparedStatement", "ProxyPreparedStatement");
+        Collections.sort(psMethods);
+        list.addAll(psMethods);        
+        List rsMethods = getMethods("java.sql.ResultSet", "ProxyResultSet");
+        Collections.sort(rsMethods);
+        list.addAll(rsMethods);        
+        List rsmdMethods = getMethods("java.sql.ResultSetMetaData", "ProxyResultSetMetaData");
+        Collections.sort(rsmdMethods);
+        list.addAll(rsmdMethods);        
+        List stmtMethods = getMethods("java.sql.Statement", "ProxyStatement");
+        Collections.sort(stmtMethods);
+        list.addAll(stmtMethods);        
         DriverPropertyInfo[] ar = new DriverPropertyInfo[list.size()];
         return (DriverPropertyInfo[])list.toArray(ar);
     }
