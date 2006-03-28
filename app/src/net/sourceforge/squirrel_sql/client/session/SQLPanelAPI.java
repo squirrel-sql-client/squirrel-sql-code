@@ -707,8 +707,8 @@ public class SQLPanelAPI implements ISQLPanelAPI
      * @see javax.swing.event.UndoableEditListener#undoableEditHappened(javax.swing.event.UndoableEditEvent)
      */
     public void undoableEditHappened(UndoableEditEvent e) {
-        unsavedEdits = true;
         if (fileOpened || fileSaved) {
+            unsavedEdits = true;
             getSession().getActiveSessionWindow().setUnsavedEdits(true);
             ActionCollection actions = 
                 getSession().getApplication().getActionCollection();
