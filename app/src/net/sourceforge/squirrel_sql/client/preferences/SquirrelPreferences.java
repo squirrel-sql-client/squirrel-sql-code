@@ -79,7 +79,9 @@ public class SquirrelPreferences implements Serializable
       String FILE_OPEN_IN_SPECIFIED_DIR = "fileOpenInSpecifiedDir";
       String FILE_SPECIFIED_DIR = "fileSpecifiedDir";
       String FILE_PREVIOUS_DIR = "filePreviousdDir";
-        String WARN_JRE_JDBC_MISMATCH = "warnJreJdbcMismatch"; 
+        String WARN_JRE_JDBC_MISMATCH = "warnJreJdbcMismatch";
+        String WARN_FOR_UNSAVED_FILE_EDITS = "warnForUnsavedFileEdits";
+        String WARN_FOR_UNSAVED_BUFFER_EDITS = "warnForUnsavedBufferEdits";
    }
 
 	public interface IJdbcDebugTypes
@@ -182,6 +184,12 @@ public class SquirrelPreferences implements Serializable
 	/** Collection of <TT>PluginStatus</tt> objects. */
 	private final ArrayList _pluginStatusInfoColl = new ArrayList();
 
+    /** Warning when closing session if a file was edited but not saved. */
+    private boolean _warnForUnsavedFileEdits = true;
+
+    /** Warning when closing session if a buffer was edited but not saved. */
+    private boolean _warnForUnsavedBufferEdits = true;
+    
 	/**
 	 * Objects stored by plugins. Each element of this collection is a <TT>Map</TT>
 	 * keyed by the plugin's internal name and containing all objects for that
@@ -879,4 +887,46 @@ public class SquirrelPreferences implements Serializable
         return _warnJreJdbcMismatch;
     }
 
+    /**
+     * @param _warnForUnsavedFileEdits The _warnForUnsaveFileEdits to set.
+     */
+    public synchronized void setWarnForUnsavedFileEdits(boolean data) {
+        if (data != _warnForUnsavedFileEdits)
+        {
+            final boolean oldValue = _warnForUnsavedFileEdits;
+            _warnForUnsavedFileEdits = data;
+            getPropertyChangeReporter().firePropertyChange(
+                                        IPropertyNames.WARN_FOR_UNSAVED_FILE_EDITS,
+                                        oldValue, _warnForUnsavedFileEdits);
+        }
+    }
+
+    /**
+     * @return Returns the _warnForUnsaveFileEdits.
+     */
+    public boolean getWarnForUnsavedFileEdits() {
+        return _warnForUnsavedFileEdits;
+    }
+    
+    /**
+     * @param _warnForUnsavedBufferEdits The _warnForUnsavedBufferEdits to set.
+     */
+    public synchronized void setWarnForUnsavedBufferEdits(boolean data) {
+        if (data != _warnForUnsavedBufferEdits)
+        {
+            final boolean oldValue = _warnForUnsavedBufferEdits;
+            _warnForUnsavedBufferEdits = data;
+            getPropertyChangeReporter().firePropertyChange(
+                                        IPropertyNames.WARN_FOR_UNSAVED_BUFFER_EDITS,
+                                        oldValue, _warnForUnsavedBufferEdits);
+        }
+    }
+
+    /**
+     * @return Returns the _warnForUnsaveFileEdits.
+     */
+    public boolean getWarnForUnsavedBufferEdits() {
+        return _warnForUnsavedBufferEdits;
+    }
+    
 }
