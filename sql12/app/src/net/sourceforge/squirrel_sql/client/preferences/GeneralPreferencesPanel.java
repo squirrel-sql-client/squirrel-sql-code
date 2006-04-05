@@ -117,8 +117,10 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 		// Must have at least 1 blank otherwise width gets set to zero.
 		private JCheckBox _confirmSessionCloseChk = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.confirmSessionClose"));
         private JCheckBox _warnJreJdbcMismatch = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.warnJreJdbcMismatch"));
+        private JCheckBox _warnForUnsavedFileEdits = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.warnForUnsavedFileEdits"));
+        private JCheckBox _warnForUnsavedBufferEdits = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.warnForUnsavedBufferEdits"));
 
-		MyPanel()
+        MyPanel()
 		{
 			super(new GridBagLayout());
 			createUserInterface();
@@ -147,6 +149,8 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 
 			_confirmSessionCloseChk.setSelected(prefs.getConfirmSessionClose());
             _warnJreJdbcMismatch.setSelected(prefs.getWarnJreJdbcMismatch());
+            _warnForUnsavedFileEdits.setSelected(prefs.getWarnForUnsavedFileEdits());
+            _warnForUnsavedBufferEdits.setSelected(prefs.getWarnForUnsavedBufferEdits());
 		}
 
 		void applyChanges(SquirrelPreferences prefs)
@@ -163,6 +167,8 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
             prefs.setShowPluginFilesInSplashScreen(_showPluginFilesInSplashScreen.isSelected());
 			prefs.setConfirmSessionClose(_confirmSessionCloseChk.isSelected());
             prefs.setWarnJreJdbcMismatch(_warnJreJdbcMismatch.isSelected());
+            prefs.setWarnForUnsavedFileEdits(_warnForUnsavedFileEdits.isSelected());
+            prefs.setWarnForUnsavedBufferEdits(_warnForUnsavedBufferEdits.isSelected());
 		}
 
 		private void createUserInterface()
@@ -246,14 +252,18 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			gbc.gridy = 0;
 			gbc.weightx = 1;
 			pnl.add(_confirmSessionCloseChk, gbc);
-
-            final GridBagConstraints gbc2 = new GridBagConstraints();
-            gbc2.fill = GridBagConstraints.HORIZONTAL;
-            gbc2.insets = new Insets(2, 4, 2, 4);
-            gbc2.gridx = 0;
-            gbc2.gridy = 1;
-            gbc2.weightx = 1;
-            pnl.add(_warnJreJdbcMismatch, gbc2);
+            
+            gbc.gridx = 0;
+            gbc.gridy = 1;
+            pnl.add(_warnJreJdbcMismatch, gbc);
+            
+            gbc.gridx = 0;
+            gbc.gridy = 2;
+            pnl.add(_warnForUnsavedFileEdits, gbc);
+            
+            gbc.gridx = 0;
+            gbc.gridy = 3;
+            pnl.add(_warnForUnsavedBufferEdits, gbc);            
             
 			return pnl;
 		}

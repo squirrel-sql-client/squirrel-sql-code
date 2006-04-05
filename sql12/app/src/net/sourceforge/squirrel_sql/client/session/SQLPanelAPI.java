@@ -28,8 +28,10 @@ import javax.swing.JOptionPane;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
+import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.action.FileSaveAction;
 import net.sourceforge.squirrel_sql.client.session.action.ToolsPopupAction;
@@ -707,13 +709,20 @@ public class SQLPanelAPI implements ISQLPanelAPI
      * @see javax.swing.event.UndoableEditListener#undoableEditHappened(javax.swing.event.UndoableEditEvent)
      */
     public void undoableEditHappened(UndoableEditEvent e) {
+        IApplication app = getSession().getApplication();
+        SquirrelPreferences prefs = app.getSquirrelPreferences();
+        
         if (fileOpened || fileSaved) {
-            unsavedEdits = true;
+            if (prefs.getWarnForUnsavedFileEdits()) {
+                unsavedEdits = true;
+            }
             getSession().getActiveSessionWindow().setUnsavedEdits(true);
             ActionCollection actions = 
                 getSession().getApplication().getActionCollection();
             actions.enableAction(FileSaveAction.class, true);
-        }        
+        } else if (prefs.getWarnForUnsavedBufferEdits()) {
+            unsavedEdits = true;
+        }
     }
        
    }   

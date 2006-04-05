@@ -101,7 +101,12 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
                "getShowPluginFilesInSplashScreen", 
                "setShowPluginFilesInSplashScreen"),
             new PropertyDescriptor(WARN_JRE_JDBC_MISMATCH, CLS,
-               "getWarnJreJdbcMismatch", "setWarnJreJdbcMismatch")
+               "getWarnJreJdbcMismatch", "setWarnJreJdbcMismatch"),
+            new PropertyDescriptor(WARN_FOR_UNSAVED_FILE_EDITS, CLS,
+               "getWarnForUnsavedFileEdits", "setWarnForUnsavedFileEdits"),
+            new PropertyDescriptor(WARN_FOR_UNSAVED_BUFFER_EDITS, CLS,
+               "getWarnForUnsavedBufferEdits", "setWarnForUnsavedBufferEdits"),
+            
          };
       }
    }
