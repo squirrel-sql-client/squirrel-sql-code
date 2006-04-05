@@ -169,7 +169,6 @@ public class SQLPanelAPI implements ISQLPanelAPI
     */
    public void fileNew() {
        fileClose();
-		 fileOpened = true;
 	}
    
    /* (non-Javadoc)
