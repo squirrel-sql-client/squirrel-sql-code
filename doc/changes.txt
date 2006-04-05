@@ -4,6 +4,12 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+Fixed Bug #1447231 ESCAPE key should close dialogs
+
+Fixed Bug #1457811: Autocomplete does not work for views when tables and view names match.
+
+Fixed Bug for Teradata not showing SQL results. (Thanks to Matthew Dahlman)
+
 Fixed bug #1456463: update to allow the user to override the closing of a session in the event that 
                     there are unsaved edits and they decide not to save them right away.  They can 
                     always choose to not save and discard, closing the session immediately. This 

@@ -29,7 +29,7 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 public class ColumnsTab extends BaseTableTab
 {
     private static int[] columnIndices = 
-        new int[] { 4, 6, 7, 9, 18, 13, 12, 5, 8, 10, 11, 14, 15, 16, 17 };
+        new int[] { 4, 6, 18, 9, 7, 13, 12, 5, 8, 10, 11, 14, 15, 16, 17 };
     
 	/**
 	 * This interface defines locale specific strings. This should be

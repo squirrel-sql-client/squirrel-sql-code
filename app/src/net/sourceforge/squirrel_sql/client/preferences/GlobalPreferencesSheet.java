@@ -22,17 +22,13 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.prefs.Preferences;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
+import javax.swing.*;
 import javax.swing.event.InternalFrameListener;
 
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
@@ -346,7 +342,22 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 		++gbc.gridy;
 		gbc.weighty = 0;
 		contentPane.add(createButtonsPanel(), gbc);
-	}
+
+      AbstractAction closeAction = new AbstractAction()
+      {
+         public void actionPerformed(ActionEvent actionEvent)
+         {
+            performClose();
+         }
+      };
+      KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+      getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(escapeStroke, "CloseAction");
+      getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "CloseAction");
+      getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escapeStroke, "CloseAction");
+      getRootPane().getActionMap().put("CloseAction", closeAction);
+
+
+   }
 
 	/**
 	 * Create panel at bottom containing the buttons.

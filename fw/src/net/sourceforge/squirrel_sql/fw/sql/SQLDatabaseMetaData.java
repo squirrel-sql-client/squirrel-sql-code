@@ -1840,11 +1840,7 @@ public class SQLDatabaseMetaData
     }
     
     
-    /**
-     * @deprecated use getColumns that returns an IDataSet or a 
-     *             TableColumnInfo[] instead.
-     */
-	public ResultSet getColumns(ITableInfo ti)
+	private ResultSet getColumns(ITableInfo ti)
 		throws SQLException
 	{
 		return privateGetJDBCMetaData().getColumns(ti.getCatalogName(),
@@ -1893,30 +1889,47 @@ public class SQLDatabaseMetaData
                                                         String table) 
         throws SQLException 
     {
-        final Map columns = new TreeMap();
-        ResultSet rs = null;
-        try {
-            DatabaseMetaData md = privateGetJDBCMetaData();
-            rs = md.getColumns(catalog, schema, table, "%");
-            final ResultSetColumnReader rdr = new ResultSetColumnReader(rs);
-            while (rdr.next())
-            {
-                final TableColumnInfo tci = new TableColumnInfo(rdr.getString(1),
-                            rdr.getString(2), rdr.getString(3), rdr.getString(4),
-                            rdr.getLong(5).intValue(), rdr.getString(6),
-                            rdr.getLong(7).intValue(), rdr.getLong(9).intValue(),
-                            rdr.getLong(10).intValue(), rdr.getLong(11).intValue(),
-                            rdr.getString(12), rdr.getString(13),
-                            rdr.getLong(16).intValue(), rdr.getLong(17).intValue(),
-                            rdr.getString(18), this);
-                columns.put(new Integer(tci.getOrdinalPosition()), tci);
-            }
-            
-        } finally {
-            if (rs != null) try { rs.close(); } catch (SQLException e) {}
-        }
-        return (TableColumnInfo[])columns.values().toArray(
-                new TableColumnInfo[columns.size()]);        
+       ResultSet rs = null;
+       try
+       {
+          final Map columns = new TreeMap();
+          DatabaseMetaData md = privateGetJDBCMetaData();
+          rs = md.getColumns(catalog, schema, table, "%");
+          final ResultSetColumnReader rdr = new ResultSetColumnReader(rs);
+
+          int index = 0;
+          while (rdr.next())
+          {
+             final TableColumnInfo tci = new TableColumnInfo(rdr.getString(1),
+                rdr.getString(2), rdr.getString(3), rdr.getString(4),
+                rdr.getLong(5).intValue(), rdr.getString(6),
+                rdr.getLong(7).intValue(), rdr.getLong(9).intValue(),
+                rdr.getLong(10).intValue(), rdr.getLong(11).intValue(),
+                rdr.getString(12), rdr.getString(13),
+                rdr.getLong(16).intValue(), rdr.getLong(17).intValue(),
+                rdr.getString(18), this);
+
+             ////////////////////////////////////////////////////////////////////////////////////////////
+             // The index is needed in case this method is called with schema = null, catalog = null
+             // and two tables with the same name in different schemas/catalogs.
+             // Without the index the same ordinal position could only occur once.
+             ++index;
+             //
+             ////////////////////////////////////////////////////////////////////////////////////////////
+             columns.put(new Integer(10000 * tci.getOrdinalPosition()  + index), tci);
+          }
+
+          return (TableColumnInfo[]) columns.values().toArray(new TableColumnInfo[columns.size()]);
+
+       }
+       finally
+       {
+          if (rs != null) try
+          {
+             rs.close();
+          }
+          catch (SQLException e){}
+       }
     }
     
     /**

@@ -39,6 +39,9 @@
 		case 'screenshots':
 			$pageFileName = 'screenshots.html';
 			break;
+		case 'programing':
+			$pageFileName = 'programming.html';
+			break;
 		case 'faq':
 			$pageFileName = 'faq.html';
 			break;
