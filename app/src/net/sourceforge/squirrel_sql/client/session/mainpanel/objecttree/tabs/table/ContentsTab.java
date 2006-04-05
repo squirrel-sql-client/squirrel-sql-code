@@ -400,7 +400,7 @@ public class ContentsTab extends BaseTableTab
          }
          finally
          {
-            stmt.close();
+             if (stmt != null) try {stmt.close(); } catch (Exception e) {}
          }
 
       }
