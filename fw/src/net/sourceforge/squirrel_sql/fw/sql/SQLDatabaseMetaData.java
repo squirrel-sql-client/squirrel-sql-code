@@ -1900,15 +1900,23 @@ public class SQLDatabaseMetaData
           int index = 0;
           while (rdr.next())
           {
-             final TableColumnInfo tci = new TableColumnInfo(rdr.getString(1),
-                rdr.getString(2), rdr.getString(3), rdr.getString(4),
-                rdr.getLong(5).intValue(), rdr.getString(6),
-                rdr.getLong(7).intValue(), rdr.getLong(9).intValue(),
-                rdr.getLong(10).intValue(), rdr.getLong(11).intValue(),
-                rdr.getString(12), rdr.getString(13),
-                rdr.getLong(16).intValue(), rdr.getLong(17).intValue(),
-                rdr.getString(18), this);
-
+             final TableColumnInfo tci = 
+                 new TableColumnInfo(rdr.getString(1),           // TABLE_CAT
+                                     rdr.getString(2),           // TABLE_SCHEM
+                                     rdr.getString(3),           // TABLE_NAME
+                                     rdr.getString(4),           // COLUMN_NAME
+                                     rdr.getLong(5).intValue(),  // DATA_TYPE
+                                     rdr.getString(6),           // TYPE_NAME
+                                     rdr.getLong(7).intValue(),  // COLUMN_SIZE
+                                     rdr.getLong(9).intValue(),  // DECIMAL_DIGITS
+                                     rdr.getLong(10).intValue(), // NUM_PREC_RADIX
+                                     rdr.getLong(11).intValue(), // NULLABLE
+                                     rdr.getString(12),          // REMARKS
+                                     rdr.getString(13),          // COLUMN_DEF
+                                     rdr.getLong(16).intValue(), // CHAR_OCTET_LENGTH
+                                     rdr.getLong(17).intValue(), // ORDINAL_POSITION
+                                     rdr.getString(18),          // IS_NULLABLE
+                                     this);
              ////////////////////////////////////////////////////////////////////////////////////////////
              // The index is needed in case this method is called with schema = null, catalog = null
              // and two tables with the same name in different schemas/catalogs.
