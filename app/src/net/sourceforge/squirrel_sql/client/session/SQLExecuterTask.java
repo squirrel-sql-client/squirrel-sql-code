@@ -39,6 +39,7 @@ import javax.swing.SwingUtilities;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -283,6 +284,17 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 	public void cancel()
 	{
 		_stopExecution = true;
+        if (_handler != null) {
+            _handler.sqlExecutionCancelled();
+        }
+        if (_stmt != null) {
+            try { _stmt.cancel(); } catch (SQLException e) {}
+            finally {
+                if (_stmt != null) {
+                    try { _stmt.close(); } catch (SQLException e) {}
+                }
+            }
+        }
 	}
 
 	private boolean processQuery(String sql, int processedStatementCount, int statementCount) throws SQLException
@@ -419,8 +431,18 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 			return false;
 		}
 
-		if (_handler != null)
-			_handler.sqlResultSetAvailable(rs, exInfo, this);
+		if (_handler != null) {
+            try {
+                _handler.sqlResultSetAvailable(rs, exInfo, this);
+            } catch (DataSetException ex) {
+                if (_stopExecution) {
+                    return false;
+                } else {
+                    _session.getMessageHandler().showMessage(ex);
+                    s_log.error("Error reading ResultSet", ex);
+                }
+            }
+        }
 
 		handleResultSetWarnings(rs);
 

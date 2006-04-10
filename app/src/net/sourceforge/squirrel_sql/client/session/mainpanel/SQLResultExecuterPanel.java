@@ -981,7 +981,7 @@ public class SQLResultExecuterPanel extends JPanel
 		ResultSetDataSet rsds = null;
 
 		public void sqlResultSetAvailable(ResultSet rs, SQLExecutionInfo info,
-				IDataSetUpdateableTableModel model)
+				IDataSetUpdateableTableModel model) throws DataSetException
 		{
             // i18n[SQLResultExecuterPanel.outputStatus=Building output...]
             String outputStatus = 
@@ -990,19 +990,11 @@ public class SQLResultExecuterPanel extends JPanel
 			rsds = new ResultSetDataSet();
 			SessionProperties props = getSession().getProperties();
 			ResultSetMetaDataDataSet rsmdds = null;
-			try
-			{
             if (props.getShowResultsMetaData())
             {
                rsmdds = new ResultSetMetaDataDataSet(rs);
             }
-				rsds.setResultSet(rs);
-			}
-			catch (DataSetException ex)
-			{
-				getSession().getMessageHandler().showMessage(ex);
-				return;
-			}
+			rsds.setResultSet(rs);
 
 			addResultsTab(info, rsds, rsmdds, _cancelPanel, model);
 			rsds = null;
