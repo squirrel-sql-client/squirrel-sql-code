@@ -165,7 +165,10 @@ public class ResultSetDataSet implements IDataSet
 			}
 			catch (SQLException ex)
 			{
-				s_log.error("Error reading ResultSet", ex);
+				// Don't log an error message here. It is possible that the user
+                // interrupted the query because it was taking too long.  Just 
+                // throw the exception, and let the caller decide whether or not
+                // the exception should be logged.
 				throw new DataSetException(ex);
 			}
 		}
