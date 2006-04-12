@@ -24,12 +24,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -59,6 +54,7 @@ public class SessionObjectTreePropertiesPanel
 
 	/** The actual GUI panel that allows user to do the maintenance. */
 	private final ObjectTreepropsPanel _myPanel;
+	private final JScrollPane _scrolledMyPanel;
 
 	/** Session properties object being maintained. */
 	private SessionProperties _props;
@@ -82,7 +78,8 @@ public class SessionObjectTreePropertiesPanel
 		}
 		_app = app;
 		_myPanel = new ObjectTreepropsPanel(app);
-	}
+      _scrolledMyPanel = new JScrollPane(_myPanel);
+   }
 
 	/**
 	 * Initialize this panel with the "New Session" settings.
@@ -108,7 +105,7 @@ public class SessionObjectTreePropertiesPanel
 
 	public Component getPanelComponent()
 	{
-		return _myPanel;
+		return _scrolledMyPanel;
 	}
 
 	public String getTitle()

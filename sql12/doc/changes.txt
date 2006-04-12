@@ -4,7 +4,7 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
-
+- Fixed Bug #1467671 Session Properties / General / Appearance: "SQL Results Tabs" overwrites "SQL Execution Tabs" setting.
 
 - Added independently configurable options to warn when closing a session if there are any 
   unsaved edits (optional for File or Buffer).  If the "Confirm Session Close" option is 
@@ -15,7 +15,7 @@ Not yet released, available in CVS and probably in latest weekly build
 
 - Fixed Bug #1456423: Cannot cancel a query. Changed to allow the cancel operation to interrupt the 
                      fetching of results.  While resolving the "hanging" of a long-running this also 
-		     allows results that have been fetched so far to be displayed.  
+                     allows results that have been fetched so far to be displayed.  
                      This can help the user determine why the query was taking a long time to execute.
 - Fixed Bug #1447231 ESCAPE key should close dialogs
 - Fixed Bug #1457811: Autocomplete does not work for views when tables and view names match.

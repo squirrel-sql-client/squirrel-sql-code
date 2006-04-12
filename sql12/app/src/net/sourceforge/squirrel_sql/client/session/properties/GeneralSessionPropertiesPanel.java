@@ -22,12 +22,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
@@ -89,6 +84,7 @@ public class GeneralSessionPropertiesPanel
 	private SessionProperties _props;
 
 	private MyPanel _myPanel = new MyPanel();
+	private JScrollPane _scrolledMyPanel = new JScrollPane(_myPanel);
 
 	public GeneralSessionPropertiesPanel()
 	{
@@ -125,7 +121,7 @@ public class GeneralSessionPropertiesPanel
 
 	public Component getPanelComponent()
 	{
-		return _myPanel;
+		return _scrolledMyPanel;
 	}
 
 	public String getTitle()
