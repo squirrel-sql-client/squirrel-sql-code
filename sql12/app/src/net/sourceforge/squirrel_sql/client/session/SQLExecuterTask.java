@@ -575,7 +575,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 			final SQLDatabaseMetaData md = conn.getSQLMetaData();
 			//final ITableInfo[] tables = md.getTables(null, null, "%", null);
 
-			final ITableInfo[] tables = md.getAllTables();
+			ITableInfo[] tables = md.getAllTables();
 
 			// filter the list of all DB objects looking for things with the given name
 			for (int i = 0; i < tables.length; ++i)
@@ -602,6 +602,22 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 					return (TableInfo) tables[i];
 				}
 			}
+            // ok, that didn't work - let's see if the table looks fully qualified.
+            // if so, we'll split the name from the schema/catalog and try that.
+            String[] parts = tableNameFromSQL.split("\\.");
+            if (parts.length == 2) {
+                String catalog = parts[0];
+                String simpleName = parts[1];
+                tables = md.getTables(catalog, null, simpleName, null);
+                if (tables != null && tables.length > 0) {
+                    return (TableInfo) tables[0];
+                }
+                // Ok, maybe catalog was really a schema instead.
+                tables = md.getTables(null, catalog, simpleName, null);
+                if (tables != null && tables.length > 0) {
+                    return (TableInfo) tables[0];
+                }
+            }
 			return null;
 		}
 		catch (SQLException e)
