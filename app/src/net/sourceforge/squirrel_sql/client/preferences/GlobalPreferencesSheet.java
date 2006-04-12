@@ -28,20 +28,26 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.prefs.Preferences;
 
-import javax.swing.*;
-import javax.swing.event.InternalFrameListener;
+import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
+import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
-import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 /**
  * This sheet allows the user to maintain global preferences.
  * JASON: Rename to GlobalPreferencesInternalFrame
@@ -311,7 +317,7 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 			IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel) it.next();
 			String pnlTitle = pnl.getTitle();
 			String hint = pnl.getHint();
-			tabPane.addTab(pnlTitle, null, pnl.getPanelComponent(), hint);
+			tabPane.addTab(pnlTitle, null, new JScrollPane(pnl.getPanelComponent()), hint);
 		}
 
 		// This seems to be necessary to get background colours
