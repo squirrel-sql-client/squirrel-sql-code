@@ -202,7 +202,7 @@ public class SessionPropertiesSheet extends BaseSessionInternalFrame
 			ISessionPropertiesPanel pnl = (ISessionPropertiesPanel) it.next();
 			String pnlTitle = pnl.getTitle();
 			String hint = pnl.getHint();
-			_tabbedPane.addTab(pnlTitle, null, new JScrollPane(pnl.getPanelComponent()), hint);
+			_tabbedPane.addTab(pnlTitle, null, pnl.getPanelComponent(), hint);
 		}
 
 		final JPanel contentPane = new JPanel(new GridBagLayout());

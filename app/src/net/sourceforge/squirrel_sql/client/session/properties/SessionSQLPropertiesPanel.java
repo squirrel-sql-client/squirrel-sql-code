@@ -25,14 +25,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -64,6 +57,8 @@ public class SessionSQLPropertiesPanel
 	/** The actual GUI panel that allows user to do the maintenance. */
 	private final SQLPropertiesPanel _myPanel;
 
+   private final JScrollPane _scrolledMyPanel;
+
 	/** Session properties object being maintained. */
 	private SessionProperties _props;
 
@@ -85,7 +80,8 @@ public class SessionSQLPropertiesPanel
 		}
 		_app = app;
 		_myPanel = new SQLPropertiesPanel(app, newSessionProperties);
-	}
+      _scrolledMyPanel = new JScrollPane(_myPanel);
+   }
 
 
 	public void initialize(IApplication app)
@@ -107,7 +103,7 @@ public class SessionSQLPropertiesPanel
 
 	public Component getPanelComponent()
 	{
-		return _myPanel;
+		return _scrolledMyPanel;
 	}
 
 	public String getTitle()

@@ -407,7 +407,8 @@ public class ResultTab extends JPanel implements IHasIdentifier
 		//	final Resources rsrc = _session.getApplication().getResources();
 		setLayout(new BorderLayout());
 
-		_tp = UIFactory.getInstance().createTabbedPane(JTabbedPane.BOTTOM);
+      int sqlResultsTabPlacement = _session.getProperties().getSQLResultsTabPlacement();
+      _tp = UIFactory.getInstance().createTabbedPane(sqlResultsTabPlacement);
 
 		JPanel panel1 = new JPanel();
 		JPanel panel2 = new JPanel();

@@ -49,6 +49,8 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 /**
  * This class can be used to execute SQL.
@@ -61,27 +63,31 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 
 
    /** Logger for this class. */
-	private static final ILogger s_log = LoggerController.createLogger(SQLExecuterTask.class);
+   private static final ILogger s_log = LoggerController.createLogger(SQLExecuterTask.class);
 
-	/** The call back object*/
-	private ISQLExecuterHandler _handler;
+   private static final StringManager s_stringMgr =
+       StringManagerFactory.getStringManager(SQLExecuterTask.class);
 
-	/** Current session. */
-	private ISession _session;
 
-	/** SQL passed in to be executed. */
-	private String _sql;
-	private Statement _stmt;
-	private boolean _stopExecution = false;
+   /** The call back object*/
+   private ISQLExecuterHandler _handler;
 
-	private int _currentQueryIndex = 0;
+   /** Current session. */
+   private ISession _session;
+
+   /** SQL passed in to be executed. */
+   private String _sql;
+   private Statement _stmt;
+   private boolean _stopExecution = false;
+
+   private int _currentQueryIndex = 0;
    private ISQLExecutionListener[] _executionListeners;
    private DataSetUpdateableTableModelImpl _dataSetUpdateableTableModel;
 
    public SQLExecuterTask(ISession session, String sql,ISQLExecuterHandler handler)
-	{
+   {
       this(session, sql, handler, new ISQLExecutionListener[0]);
-	}
+   }
 
    public SQLExecuterTask(ISession session, String sql, ISQLExecuterHandler handler, ISQLExecutionListener[] executionListeners)
    {
@@ -97,68 +103,68 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
    }
 
    public void run()
-	{
+   {
       String lastExecutedStatement = null;
       int statementCount = 0;
       final SessionProperties props = _session.getProperties();
-		try
-		{
-			final SQLConnection conn = _session.getSQLConnection();
-			_stmt = conn.createStatement();
+      try
+      {
+         final SQLConnection conn = _session.getSQLConnection();
+         _stmt = conn.createStatement();
 
-			try
-			{
-				final boolean correctlySupportsMaxRows = conn.getSQLMetaData()
-						.correctlySupportsSetMaxRows();
-				if (correctlySupportsMaxRows && props.getSQLLimitRows())
-				{
-					try
-					{
-						_stmt.setMaxRows(props.getSQLNbrRowsToShow());
-					}
-					catch (Exception e)
-					{
-						s_log.error("Can't Set MaxRows", e);
-					}
-				}
+         try
+         {
+            final boolean correctlySupportsMaxRows = conn.getSQLMetaData()
+                  .correctlySupportsSetMaxRows();
+            if (correctlySupportsMaxRows && props.getSQLLimitRows())
+            {
+               try
+               {
+                  _stmt.setMaxRows(props.getSQLNbrRowsToShow());
+               }
+               catch (Exception e)
+               {
+                  s_log.error("Can't Set MaxRows", e);
+               }
+            }
 
-				// Retrieve all the statements to execute.
-				final QueryTokenizer qt =
-					new QueryTokenizer(
-						_sql,
-						props.getSQLStatementSeparator(),
-						props.getStartOfLineComment());
+            // Retrieve all the statements to execute.
+            final QueryTokenizer qt =
+               new QueryTokenizer(
+                  _sql,
+                  props.getSQLStatementSeparator(),
+                  props.getStartOfLineComment());
 
-				List queryStrings = new ArrayList();
-				boolean queriesFound = false;
+            List queryStrings = new ArrayList();
+            boolean queriesFound = false;
             while (qt.hasQuery())
-				{
+            {
                queriesFound = true;
-					queryStrings.add(qt.nextQuery());
-				}
+               queryStrings.add(qt.nextQuery());
+            }
             if(false == queriesFound)
             {
                throw new IllegalArgumentException("No SQL selected for execution.");
             }
 
-				_currentQueryIndex = 0;
+            _currentQueryIndex = 0;
 
-				// Process each individual query.
-				boolean maxRowsHasBeenSet = correctlySupportsMaxRows;
+            // Process each individual query.
+            boolean maxRowsHasBeenSet = correctlySupportsMaxRows;
             int processedStatementCount = 0;
             statementCount = queryStrings.size();
 
             _handler.sqlStatementCount(statementCount);
 
-				while (!queryStrings.isEmpty())
-				{
-					String querySql = (String)queryStrings.remove(0);
-					if (querySql != null)
-					{
+            while (!queryStrings.isEmpty())
+            {
+               String querySql = (String)queryStrings.remove(0);
+               if (querySql != null)
+               {
                   ++processedStatementCount;
-						if (_handler != null)
+                  if (_handler != null)
                   {
-							_handler.sqlToBeExecuted(querySql);
+                     _handler.sqlToBeExecuted(querySql);
                   }
 
                   // Some driver don't correctly support setMaxRows. In
@@ -221,24 +227,24 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
                         }
                      }
                   }
-					}
-				}
+               }
+            }
 
-			}
-			finally
-			{
-				try
-				{
-					_stmt.close();
-				}
-				finally
-				{
-					_stmt = null;
-				}
-			}
-		}
-		catch (Throwable ex)
-		{
+         }
+         finally
+         {
+            try
+            {
+               _stmt.close();
+            }
+            finally
+            {
+               _stmt = null;
+            }
+         }
+      }
+      catch (Throwable ex)
+      {
          if(props.getAbortOnError() && 1 < statementCount)
          {
             handleError(ex, "Error occured in:\n" + lastExecutedStatement);
@@ -248,78 +254,81 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
             handleError(ex, null);
          }
 
-			if(false == ex instanceof SQLException)
-			{
-				s_log.error("Unexpected exception when executing SQL: " + ex, ex);
-			}
+         if(false == ex instanceof SQLException)
+         {
+            s_log.error("Unexpected exception when executing SQL: " + ex, ex);
+         }
 
-		}
-		finally
-		{
-			if (_stopExecution)
-			{
-				if (_handler != null)
+      }
+      finally
+      {
+         if (_stopExecution)
+         {
+            if (_handler != null)
             {
-					_handler.sqlExecutionCancelled();
+               _handler.sqlExecutionCancelled();
             }
-				try
-				{
-					if (_stmt != null)
-					{
-						_stmt.cancel();
-					}
-				}
-				catch (Throwable th)
-				{
-					s_log.error("Error occured cancelling SQL", th);
-				}
-			}
+            try
+            {
+               if (_stmt != null)
+               {
+                  _stmt.cancel();
+               }
+            }
+            catch (Throwable th)
+            {
+               s_log.error("Error occured cancelling SQL", th);
+            }
+         }
          if (_handler != null)
          {
             _handler.sqlCloseExecutionHandler();
          }
-		}
-	}
+      }
+   }
 
-	public void cancel()
-	{
-		_stopExecution = true;
-        if (_handler != null) {
-            _handler.sqlExecutionCancelled();
-        }
-        if (_stmt != null) {
-            try { _stmt.cancel(); } catch (SQLException e) {}
-            finally {
-                if (_stmt != null) {
-                    try { _stmt.close(); } catch (SQLException e) {}
-                }
-            }
-        }
-	}
+   public void cancel()
+   {
+      if(_stopExecution)
+      {
+         return;
+      }
 
-	private boolean processQuery(String sql, int processedStatementCount, int statementCount) throws SQLException
-	{
-		++_currentQueryIndex;
+      // i18n[SQLResultExecuterPanel.canceleRequested=Query execution cancel requested by user.]
+      String msg = s_stringMgr.getString("SQLResultExecuterPanel.canceleRequested");
+      _session.getApplication().getMessageHandler().showMessage(msg);
 
-		final SQLExecutionInfo exInfo = new SQLExecutionInfo(	_currentQueryIndex, sql, _stmt.getMaxRows());
+      _stopExecution = true;
+      if (_stmt != null)
+      {
+         CancelStatementThread cst = new CancelStatementThread(_stmt, _session.getApplication().getMessageHandler(), 10000);
+         cst.tryCancel();
+      }
+   }
+
+   private boolean processQuery(String sql, int processedStatementCount, int statementCount) throws SQLException
+   {
+      ++_currentQueryIndex;
+
+      final SQLExecutionInfo exInfo = new SQLExecutionInfo(	_currentQueryIndex, sql, _stmt.getMaxRows());
       boolean firstResultIsResultSet = _stmt.execute(sql);
-		exInfo.sqlExecutionComplete();
+      exInfo.sqlExecutionComplete();
 
-		// Display any warnings generated by the SQL execution.
-		handleAllWarnings(_session.getSQLConnection(), _stmt);
+      // Display any warnings generated by the SQL execution.
+      handleAllWarnings(_session.getSQLConnection(), _stmt);
 
       boolean supportsMultipleResultSets = _session.getSQLConnection().getSQLMetaData().supportsMultipleResultSets();
       boolean inFirstLoop = true;
 
       // Loop while we either have a ResultSet to process or rows have
       // been updated/inserted/deleted.
-		while (true)
-		{
-			// User has cancelled the query execution.
-			if (_stopExecution)
-			{
-				return false;
-			}
+      while (true)
+      {
+         // User has cancelled the query execution.
+         if (_stopExecution)
+         {
+            return false;
+         }
 
 
          int updateCount = _stmt.getUpdateCount();
@@ -382,7 +391,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
             break;
          }
          inFirstLoop = false;
-		}
+      }
 
       fireExecutionListeners(sql);
 
@@ -405,8 +414,8 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
       }
 
 
-		return true;
-	}
+      return true;
+   }
 
    private void fireExecutionListeners(final String sql)
    {
@@ -425,13 +434,13 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
    }
 
    private boolean processResultSet(final ResultSet rs, final SQLExecutionInfo exInfo)
-	{
-		if (_stopExecution)
-		{
-			return false;
-		}
+   {
+      if (_stopExecution)
+      {
+         return false;
+      }
 
-		if (_handler != null) {
+      if (_handler != null) {
             try {
                 _handler.sqlResultSetAvailable(rs, exInfo, this);
             } catch (DataSetException ex) {
@@ -444,164 +453,164 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
             }
         }
 
-		handleResultSetWarnings(rs);
+      handleResultSetWarnings(rs);
 
-		try
-		{
-			rs.close();
-		}
-		catch (Throwable th)
-		{
-			s_log.error("Error closing ResultSet", th);
-		}
+      try
+      {
+         rs.close();
+      }
+      catch (Throwable th)
+      {
+         s_log.error("Error closing ResultSet", th);
+      }
 
-		return true;
-	}
+      return true;
+   }
 
-	private void handleAllWarnings(SQLConnection conn, Statement stmt)
-	{
-		// If SQL executing produced warnings then write them out to the session
-		// message handler. TODO: This is a pain. PostgreSQL sends "raise
-		// notice" messages to the connection, not to the statment so they will
-		// be mixed up with warnings from other statements.
-		synchronized (conn)
-		{
-			try
-			{
-				handleWarnings(conn.getWarnings());
-				conn.getConnection().clearWarnings();
-			}
-			catch (Throwable th)
-			{
-				s_log
-						.debug(
-								"Driver doesn't handle Connection.getWarnings()/clearWarnings()",
-								th);
-			}
-		}
+   private void handleAllWarnings(SQLConnection conn, Statement stmt)
+   {
+      // If SQL executing produced warnings then write them out to the session
+      // message handler. TODO: This is a pain. PostgreSQL sends "raise
+      // notice" messages to the connection, not to the statment so they will
+      // be mixed up with warnings from other statements.
+      synchronized (conn)
+      {
+         try
+         {
+            handleWarnings(conn.getWarnings());
+            conn.getConnection().clearWarnings();
+         }
+         catch (Throwable th)
+         {
+            s_log
+                  .debug(
+                        "Driver doesn't handle Connection.getWarnings()/clearWarnings()",
+                        th);
+         }
+      }
 
-		try
-		{
-			handleWarnings(stmt.getWarnings());
-			stmt.clearWarnings();
-		}
-		catch (Throwable th)
-		{
-			s_log
-					.debug(
-							"Driver doesn't handle Statement.getWarnings()/clearWarnings()",
-							th);
-		}
-	}
+      try
+      {
+         handleWarnings(stmt.getWarnings());
+         stmt.clearWarnings();
+      }
+      catch (Throwable th)
+      {
+         s_log
+               .debug(
+                     "Driver doesn't handle Statement.getWarnings()/clearWarnings()",
+                     th);
+      }
+   }
 
-	private void handleResultSetWarnings(ResultSet rs)
-	{
-		try
-		{
-			handleWarnings(rs.getWarnings());
-		}
-		catch (Throwable th)
-		{
-			s_log.error("Can't get warnings from ResultSet", th);
-			_session.getMessageHandler().showMessage(th);
-		}
-	}
+   private void handleResultSetWarnings(ResultSet rs)
+   {
+      try
+      {
+         handleWarnings(rs.getWarnings());
+      }
+      catch (Throwable th)
+      {
+         s_log.error("Can't get warnings from ResultSet", th);
+         _session.getMessageHandler().showMessage(th);
+      }
+   }
 
-	private void handleWarnings(SQLWarning sw)
-	{
-		if (_handler != null)
-		{
-			try
-			{
-				while (sw != null)
-				{
-					_handler.sqlExecutionWarning(sw);
-					sw = sw.getNextWarning();
-				}
-			}
-			catch (Throwable th)
-			{
-				s_log.debug("Driver/DBMS can't handle SQLWarnings", th);
-			}
-		}
-	}
+   private void handleWarnings(SQLWarning sw)
+   {
+      if (_handler != null)
+      {
+         try
+         {
+            while (sw != null)
+            {
+               _handler.sqlExecutionWarning(sw);
+               sw = sw.getNextWarning();
+            }
+         }
+         catch (Throwable th)
+         {
+            s_log.debug("Driver/DBMS can't handle SQLWarnings", th);
+         }
+      }
+   }
 
-	private void handleError(Throwable th, String postErrorString)
-	{
-		if (_handler != null)
-			_handler.sqlExecutionException(th, postErrorString);
-	}
-
-
+   private void handleError(Throwable th, String postErrorString)
+   {
+      if (_handler != null)
+         _handler.sqlExecutionException(th, postErrorString);
+   }
 
 
-	/*
-	 *
-	 *
-	 * Implement IDataSetUpdateableModel interface
-	 * and IDataSetUpdateableTableModel interface
-	 *
-	 * TODO: THIS CODE WAS COPIED FROM ContentsTab.  IT SHOULD PROBABLY
-	 * BE PUT INTO A COMMON LOCATION AND SHARED BY BOTH THIS
-	 * CLASS AND ContentsTab.
-	 *
-	 *
-	 */
+
+
+   /*
+     *
+     *
+     * Implement IDataSetUpdateableModel interface
+     * and IDataSetUpdateableTableModel interface
+     *
+     * TODO: THIS CODE WAS COPIED FROM ContentsTab.  IT SHOULD PROBABLY
+     * BE PUT INTO A COMMON LOCATION AND SHARED BY BOTH THIS
+     * CLASS AND ContentsTab.
+     *
+     *
+     */
 
 
    /**
-	* Get the full name info for the table that is being referred to in the
-	* SQL query.
-	* Since we do not know the catalog, schema, or the actual name used in
-	* this DB to refer to "table" types, we cannot filter the initial query on any of
-	* those criteria.  Thus the only thing we can do is get all of the names
-	* of everything in the DB, then scan for things matching the name of the
-	* table as entered by the user in the SQL query.  If there are no objects
-	* with that name or multiple objects with that name, we do not allow editing.
-	* This method was originally copied from TableTypeExpander.createChildren
-	* and heavilly modified.
-	*
-	* @param	tableNameInSQL	Name of the table as typed by the user in the SQL query.
-	*
-	* @return	A  <TT>TableInfo</TT> object for the only DB object
-	* 	with the given name, or null if there is none or more than one with that name.
-	*/
-	public TableInfo getTableName(String tableNameFromSQL)
-	{
+   * Get the full name info for the table that is being referred to in the
+   * SQL query.
+   * Since we do not know the catalog, schema, or the actual name used in
+   * this DB to refer to "table" types, we cannot filter the initial query on any of
+   * those criteria.  Thus the only thing we can do is get all of the names
+   * of everything in the DB, then scan for things matching the name of the
+   * table as entered by the user in the SQL query.  If there are no objects
+   * with that name or multiple objects with that name, we do not allow editing.
+   * This method was originally copied from TableTypeExpander.createChildren
+   * and heavilly modified.
+   *
+   * @param	tableNameInSQL	Name of the table as typed by the user in the SQL query.
+   *
+   * @return	A  <TT>TableInfo</TT> object for the only DB object
+   * 	with the given name, or null if there is none or more than one with that name.
+   */
+   public TableInfo getTableName(String tableNameFromSQL)
+   {
 
-		try
-		{
-			final SQLConnection conn = _session.getSQLConnection();
-			final SQLDatabaseMetaData md = conn.getSQLMetaData();
-			//final ITableInfo[] tables = md.getTables(null, null, "%", null);
+      try
+      {
+         final SQLConnection conn = _session.getSQLConnection();
+         final SQLDatabaseMetaData md = conn.getSQLMetaData();
+         //final ITableInfo[] tables = md.getTables(null, null, "%", null);
 
-			ITableInfo[] tables = md.getAllTables();
+         ITableInfo[] tables = md.getAllTables();
 
-			// filter the list of all DB objects looking for things with the given name
-			for (int i = 0; i < tables.length; ++i)
-			{
-				String simpleName = tables[i].getSimpleName().toUpperCase();
-				String nameWithSchema = simpleName;
-				String nameWithSchemaAndCatalog = simpleName;
+         // filter the list of all DB objects looking for things with the given name
+         for (int i = 0; i < tables.length; ++i)
+         {
+            String simpleName = tables[i].getSimpleName().toUpperCase();
+            String nameWithSchema = simpleName;
+            String nameWithSchemaAndCatalog = simpleName;
 
-				if (null != tables[i].getSchemaName() && 0 < tables[i].getSchemaName().length())
-				{
-					nameWithSchema = tables[i].getSchemaName().toUpperCase() + "." + nameWithSchema;
-					nameWithSchemaAndCatalog = nameWithSchema;
-				}
+            if (null != tables[i].getSchemaName() && 0 < tables[i].getSchemaName().length())
+            {
+               nameWithSchema = tables[i].getSchemaName().toUpperCase() + "." + nameWithSchema;
+               nameWithSchemaAndCatalog = nameWithSchema;
+            }
 
-				if (null != tables[i].getCatalogName() && 0 < tables[i].getCatalogName().length())
-				{
-					nameWithSchemaAndCatalog = tables[i].getCatalogName().toUpperCase() + "." + nameWithSchema;
-				}
+            if (null != tables[i].getCatalogName() && 0 < tables[i].getCatalogName().length())
+            {
+               nameWithSchemaAndCatalog = tables[i].getCatalogName().toUpperCase() + "." + nameWithSchema;
+            }
 
-				if (simpleName.equals(tableNameFromSQL)
-					|| nameWithSchema.equals(tableNameFromSQL)
-					|| nameWithSchemaAndCatalog.equals(tableNameFromSQL))
-				{
-					return (TableInfo) tables[i];
-				}
-			}
+            if (simpleName.equals(tableNameFromSQL)
+               || nameWithSchema.equals(tableNameFromSQL)
+               || nameWithSchemaAndCatalog.equals(tableNameFromSQL))
+            {
+               return (TableInfo) tables[i];
+            }
+         }
             // ok, that didn't work - let's see if the table looks fully qualified.
             // if so, we'll split the name from the schema/catalog and try that.
             String[] parts = tableNameFromSQL.split("\\.");
@@ -618,14 +627,14 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
                     return (TableInfo) tables[0];
                 }
             }
-			return null;
-		}
-		catch (SQLException e)
-		{
-			throw new RuntimeException(e);
-		}
+         return null;
+      }
+      catch (SQLException e)
+      {
+         throw new RuntimeException(e);
+      }
 
-	}
+   }
 
 
    ////////////////////////////////////////////////////////
