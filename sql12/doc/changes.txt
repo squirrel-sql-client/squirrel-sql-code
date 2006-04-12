@@ -26,7 +26,8 @@ Not yet released, available in CVS and probably in latest weekly build
                     change will make it so that if they choose to not discard, and something happens
                     during the save that causes the edits not to get saved, the session will not be 
                     closed.
-- Fixed Bug #1441169: error in removing a deleted row more than once
+- Fixed Bug #1441169: error in removing a deleted row more than once.
+- Fixed Bug #1250514: Mysql Error: Cannot edit table.
 
 2.2 RC1
 =======
