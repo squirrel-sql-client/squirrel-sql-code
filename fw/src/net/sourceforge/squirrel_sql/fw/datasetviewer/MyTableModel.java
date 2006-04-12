@@ -200,14 +200,16 @@ public final class MyTableModel extends AbstractTableModel
 		// list backwards.
 		for (int i=rows.length - 1; i>=0; i--) {
 			// delete the row from the table
-			_data.remove(rows[i]);
+            if (rows[i] < _data.size()) {
+                _data.remove(rows[i]);
+            }
 		}
 
 		// notify table that rows have changed
 		// The deleted rows may not be contiguous in the actual data model
 		// because the gui may be showing a version of the data sorted in
 		// some other order, so we cannot use fireRowsDeleted.
-
-		fireTableStructureChanged();
+		fireTableDataChanged();
+		
 	}
 }

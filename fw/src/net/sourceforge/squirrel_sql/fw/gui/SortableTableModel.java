@@ -113,7 +113,11 @@ public class SortableTableModel extends AbstractTableModel
 		}
 		else
 		{
-			return _actualModel.getValueAt(_indexes[row].intValue(), col);
+            if (row < _indexes.length) {
+                return _actualModel.getValueAt(_indexes[row].intValue(), col);
+            } else {
+                return null;
+            }
 		}
 	}
 
@@ -157,7 +161,9 @@ public class SortableTableModel extends AbstractTableModel
 		int[] actualRows = new int[rows.length];
 		for (int i=0; i< rows.length; ++i)
 		{
-			actualRows[i] = _indexes[rows[i]].intValue();
+            if (rows[i] < _indexes.length) {
+                actualRows[i] = _indexes[rows[i]].intValue();
+            }
 		}
 		((MyTableModel)_actualModel).deleteRows(actualRows);
 	}
