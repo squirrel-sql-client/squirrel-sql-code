@@ -21,6 +21,7 @@ public class CancelStatementThread extends Thread
    private IMessageHandler _messageHandler;
    private boolean _threadFinished;
    private boolean _cancelSucceeded;
+   private boolean _joinReturned;
 
    public CancelStatementThread(Statement stmt, IMessageHandler messageHandler)
    {
@@ -34,6 +35,8 @@ public class CancelStatementThread extends Thread
       {
          start();
          join(1000);
+         _joinReturned = true;
+
 
          if(false == _threadFinished)
          {
@@ -67,22 +70,29 @@ public class CancelStatementThread extends Thread
    {
       try
       {
-         if(null != _stmt)
-         {
-            // Code to simulate hanging calls to _stmt.cancel()
-            //synchronized(this)
-            //{
-            //   try
-            //   {
-            //      this.wait(5000);
-            //   }
-            //   catch (InterruptedException e)
-            //   {
-            //      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            //   }
-            //}
+         // Code to simulate hanging calls to _stmt.cancel()
+         //synchronized(this)
+         //{
+         //   try
+         //   {
+         //      this.wait(5000);
+         //   }
+         //   catch (InterruptedException e)
+         //   {
+         //      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+         //   }
+         //}
 
-            _stmt.cancel();
+         _stmt.cancel();
+
+         if(_joinReturned)
+         {
+            // i18n[CancelStatementThread.cancelSucceededLate=Canceling statement succeeded now. But took longer than one second.]
+            String msg = s_stringMgr.getString("CancelStatementThread.cancelSucceededLate");
+            _messageHandler.showMessage(msg);
+         }
+         else
+         {
             _cancelSucceeded = true;
          }
       }
