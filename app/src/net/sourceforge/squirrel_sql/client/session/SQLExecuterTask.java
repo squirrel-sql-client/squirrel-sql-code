@@ -301,7 +301,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
       _stopExecution = true;
       if (_stmt != null)
       {
-         CancelStatementThread cst = new CancelStatementThread(_stmt, _session.getApplication().getMessageHandler(), 10000);
+         CancelStatementThread cst = new CancelStatementThread(_stmt, _session.getApplication().getMessageHandler());
          cst.tryCancel();
       }
    }

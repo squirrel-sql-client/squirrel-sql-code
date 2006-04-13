@@ -19,15 +19,13 @@ public class CancelStatementThread extends Thread
 
    private Statement _stmt;
    private IMessageHandler _messageHandler;
-   private int _timeOutMillis;
    private boolean _threadFinished;
    private boolean _cancelSucceeded;
 
-   public CancelStatementThread(Statement stmt, IMessageHandler messageHandler, int timeOutMillis)
+   public CancelStatementThread(Statement stmt, IMessageHandler messageHandler)
    {
       _stmt = stmt;
       _messageHandler = messageHandler;
-      _timeOutMillis = timeOutMillis;
    }
 
    public boolean tryCancel()
@@ -35,11 +33,11 @@ public class CancelStatementThread extends Thread
       try
       {
          start();
-         join(_timeOutMillis);
+         join(1000);
 
          if(false == _threadFinished)
          {
-            // i18n[CancelStatementThread.cancelTimedOut=Failed to cancel statement. Timeout reached. See timeout settings in Global Preferences. Propably your driver/database does not support cancelling statements.]
+            // i18n[CancelStatementThread.cancelTimedOut=Failed to cancel statement within one second. Possibly your driver/database does not support cancelling statements. If cancelling succeeds later you'll get a further message.]
             String msg = s_stringMgr.getString("CancelStatementThread.cancelTimedOut");
             _messageHandler.showErrorMessage(msg);
             s_log.error(msg);
@@ -71,6 +69,19 @@ public class CancelStatementThread extends Thread
       {
          if(null != _stmt)
          {
+            // Code to simulate hanging calls to _stmt.cancel()
+            //synchronized(this)
+            //{
+            //   try
+            //   {
+            //      this.wait(5000);
+            //   }
+            //   catch (InterruptedException e)
+            //   {
+            //      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            //   }
+            //}
+
             _stmt.cancel();
             _cancelSucceeded = true;
          }
