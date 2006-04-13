@@ -19,6 +19,8 @@ package net.sourceforge.squirrel_sql.fw.util;
  */
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
+
 /**
  * This message handler stores msgs in 2 <TT>java.util.List</TT> objects. One
  * for exceptions and the other for strings.
@@ -27,103 +29,110 @@ import java.util.List;
  */
 public class ListMessageHandler implements IMessageHandler
 {
-	/** Stores msgs. */
-	private List _msgs = new ArrayList();
+   ///////////////////////////////////////////////////////////
+   // We use Vectors because a MessageHandler might be called from different threads.
 
-	/** Stores exceptions. */
-	private List _throwables = new ArrayList();
 
-	/** Stores error msgs. */
-	private List _errMsgs = new ArrayList();
+   /** Stores msgs. */
+   private List _msgs = new Vector();
 
-	/** Stores exceptions. */
-	private List _errThrowables = new ArrayList();
+   /** Stores exceptions. */
+   private List _throwables = new Vector();
 
-	/**
-	 * Ctor.
-	 */
-	public ListMessageHandler()
-	{
-		super();
-	}
+   /** Stores error msgs. */
+   private List _errMsgs = new Vector();
 
-	/**
-	 * Store this exception.
-	 * 
-	 * @param	th	Exception to be stored.
-	 */
-	public void showMessage(Throwable th)
-	{
-		_throwables.add(th);
-	}
+   /** Stores exceptions. */
+   private List _errThrowables = new Vector();
 
-	/**
-	 * Store this msg.
-	 * 
-	 * @param	msg	Message to be stored.
-	 */
-	public void showMessage(String msg)
-	{
-		_msgs.add(msg);
-	}
+   //
+   ///////////////////////////////////////////////////////////////////////////////////
 
-	/**
-	 * Store this msg.
-	 * 
-	 * @param	th		Exception.
-	 */
-	public void showErrorMessage(Throwable th)
-	{
-		_errThrowables.add(th);
-	}
+   /**
+    * Ctor.
+    */
+   public ListMessageHandler()
+   {
+      super();
+   }
 
-	/**
-	 * Store this exception.
-	 * 
-	 * @param	th		Exception.
-	 */
-	public void showErrorMessage(String msg)
-	{
-		_errMsgs.add(msg);
-	}
+   /**
+    * Store this exception.
+    *
+    * @param	th	Exception to be stored.
+    */
+   public void showMessage(Throwable th)
+   {
+      _throwables.add(th);
+   }
 
-	/**
-	 * Return array of stored exceptions.
-	 * 
-	 * @return	array of stored exceptions.
-	 */
-	public Throwable[] getExceptions()
-	{
-		return (Throwable[])_throwables.toArray(new Throwable[_throwables.size()]);
-	}
+   /**
+    * Store this msg.
+    *
+    * @param	msg	Message to be stored.
+    */
+   public void showMessage(String msg)
+   {
+      _msgs.add(msg);
+   }
 
-	/**
-	 * Return array of stored exceptionsfrom <TT>showErrorMessage(Throwable)</TT>..
-	 * 
-	 * @return	array of stored exceptions.
-	 */
-	public Throwable[] getErrorExceptions()
-	{
-		return (Throwable[])_errThrowables.toArray(new Throwable[_errThrowables.size()]);
-	}
+   /**
+    * Store this msg.
+    *
+    * @param	th		Exception.
+    */
+   public void showErrorMessage(Throwable th)
+   {
+      _errThrowables.add(th);
+   }
 
-	/**
-	 * Return array of stored messages.
-	 * 
-	 * @return	array of stored messages.
-	 */
-	public String[] getMessages()
-	{
-		return (String[])_msgs.toArray(new String[_msgs.size()]);
-	}
+   /**
+    * Store this exception.
+    *
+    * @param	th		Exception.
+    */
+   public void showErrorMessage(String msg)
+   {
+      _errMsgs.add(msg);
+   }
 
-	/**
-	 * Return array of stored messages from <TT>showErrorMessage(String)</TT>.
-	 * 
-	 * @return	array of stored messages.
-	 */
-	public String[] getErrorMessages()
-	{
-		return (String[])_errMsgs.toArray(new String[_errMsgs.size()]);
-	}
+   /**
+    * Return array of stored exceptions.
+    *
+    * @return	array of stored exceptions.
+    */
+   public Throwable[] getExceptions()
+   {
+      return (Throwable[])_throwables.toArray(new Throwable[_throwables.size()]);
+   }
+
+   /**
+    * Return array of stored exceptionsfrom <TT>showErrorMessage(Throwable)</TT>..
+    *
+    * @return	array of stored exceptions.
+    */
+   public Throwable[] getErrorExceptions()
+   {
+      return (Throwable[])_errThrowables.toArray(new Throwable[_errThrowables.size()]);
+   }
+
+   /**
+    * Return array of stored messages.
+    *
+    * @return	array of stored messages.
+    */
+   public String[] getMessages()
+   {
+      return (String[])_msgs.toArray(new String[_msgs.size()]);
+   }
+
+   /**
+    * Return array of stored messages from <TT>showErrorMessage(String)</TT>.
+    *
+    * @return	array of stored messages.
+    */
+   public String[] getErrorMessages()
+   {
+      return (String[])_errMsgs.toArray(new String[_errMsgs.size()]);
+   }
 }
