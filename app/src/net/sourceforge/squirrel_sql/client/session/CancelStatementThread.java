@@ -7,7 +7,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import java.sql.Statement;
-import java.sql.SQLException;
 
 public class CancelStatementThread extends Thread
 {
@@ -20,7 +19,6 @@ public class CancelStatementThread extends Thread
    private Statement _stmt;
    private IMessageHandler _messageHandler;
    private boolean _threadFinished;
-   private boolean _cancelSucceeded;
    private boolean _joinReturned;
 
    public CancelStatementThread(Statement stmt, IMessageHandler messageHandler)
@@ -29,34 +27,23 @@ public class CancelStatementThread extends Thread
       _messageHandler = messageHandler;
    }
 
-   public boolean tryCancel()
+   public void tryCancel()
    {
       try
       {
          start();
          join(1000);
-         _joinReturned = true;
 
-
-         if(false == _threadFinished)
+         synchronized (this)
          {
-            // i18n[CancelStatementThread.cancelTimedOut=Failed to cancel statement within one second. Possibly your driver/database does not support canceling statements. If cancelling succeeds later you'll get a further message.]
-            String msg = s_stringMgr.getString("CancelStatementThread.cancelTimedOut");
-            _messageHandler.showErrorMessage(msg);
-            s_log.error(msg);
-            return false;
-         }
-
-         if(_cancelSucceeded)
-         {
-            // i18n[CancelStatementThread.cancelSucceeded=The database has been asked to cancel the statment]
-            String msg = s_stringMgr.getString("CancelStatementThread.cancelSucceeded");
-            _messageHandler.showMessage(msg);
-            return true;
-         }
-         else
-         {
-            return false;
+            _joinReturned = true;
+            if(false == _threadFinished)
+            {
+               // i18n[CancelStatementThread.cancelTimedOut=Failed to cancel statement within one second. Possibly your driver/database does not support canceling statements. If cancelling succeeds later you'll get a further messages.]
+               String msg = s_stringMgr.getString("CancelStatementThread.cancelTimedOut");
+               _messageHandler.showErrorMessage(msg);
+               s_log.error(msg);
+            }
          }
       }
       catch (InterruptedException e)
@@ -68,44 +55,60 @@ public class CancelStatementThread extends Thread
 
    public void run()
    {
+      String msg;
+
+      boolean cancelSucceeded = false;
+      boolean closeSucceeded = false;
+
       try
       {
-         // Code to simulate hanging calls to _stmt.cancel()
-         //synchronized(this)
-         //{
-         //   try
-         //   {
-         //      this.wait(5000);
-         //   }
-         //   catch (InterruptedException e)
-         //   {
-         //      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-         //   }
-         //}
-
          _stmt.cancel();
-
-         if(_joinReturned)
-         {
-            // i18n[CancelStatementThread.cancelSucceededLate=Canceling statement succeeded now. But took longer than one second.]
-            String msg = s_stringMgr.getString("CancelStatementThread.cancelSucceededLate");
-            _messageHandler.showMessage(msg);
-         }
-         else
-         {
-            _cancelSucceeded = true;
-         }
+         cancelSucceeded = true;
       }
-      catch (SQLException e)
+      catch (Throwable t)
       {
          // i18n[CancelStatementThread.cancelFailed=Failed to cancel statement. Propably the driver/RDDBMS does not support canceling statements. See logs for further details ({0})]
-         String msg = s_stringMgr.getString("CancelStatementThread.cancelFailed", e);
+         msg = s_stringMgr.getString("CancelStatementThread.cancelFailed", t);
          _messageHandler.showErrorMessage(msg);
-         s_log.error(msg, e);
+         s_log.error(msg, t);
       }
-      finally
+
+
+      try
       {
+         _stmt.close();
+         closeSucceeded = true;
+      }
+      catch (Throwable t)
+      {
+         // i18n[CancelStatementThread.closeFailed=Failed to close statement. Propably the driver/RDDBMS does not support canceling statements. See logs for further details ({0})]
+         msg = s_stringMgr.getString("CancelStatementThread.closeFailed", t);
+         _messageHandler.showErrorMessage(msg);
+         s_log.error(msg, t);
+      }
+
+
+      synchronized (this)
+      {
+
+         if (cancelSucceeded && closeSucceeded)
+         {
+            if (_joinReturned)
+            {
+               // i18n[CancelStatementThread.cancelSucceededLate=Canceling statement succeeded now. But took longer than one second.]
+               msg = s_stringMgr.getString("CancelStatementThread.cancelSucceededLate");
+               _messageHandler.showMessage(msg);
+            }
+            else
+            {
+               // i18n[CancelStatementThread.cancelSucceeded=The database has been asked to cancel the statment.]
+               msg = s_stringMgr.getString("CancelStatementThread.cancelSucceeded");
+               _messageHandler.showMessage(msg);
+            }
+         }
+
          _threadFinished = true;
       }
+
    }
 }
