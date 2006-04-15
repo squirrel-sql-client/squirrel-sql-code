@@ -39,7 +39,7 @@ public class CancelStatementThread extends Thread
             _joinReturned = true;
             if(false == _threadFinished)
             {
-               // i18n[CancelStatementThread.cancelTimedOut=Failed to cancel statement within one second. Possibly your driver/database does not support canceling statements. If cancelling succeeds later you'll get a further messages.]
+               // i18n[CancelStatementThread.cancelTimedOut=Failed to cancel statement within one second. Perhaps your driver/database does not support cancelling statements. If cancelling succeeds later you'll get a further messages.]
                String msg = s_stringMgr.getString("CancelStatementThread.cancelTimedOut");
                _messageHandler.showErrorMessage(msg);
                s_log.error(msg);
@@ -67,7 +67,7 @@ public class CancelStatementThread extends Thread
       }
       catch (Throwable t)
       {
-         // i18n[CancelStatementThread.cancelFailed=Failed to cancel statement. Propably the driver/RDDBMS does not support canceling statements. See logs for further details ({0})]
+         // i18n[CancelStatementThread.cancelFailed=Failed to cancel statement. Perhaps the driver/RDDBMS does not support cancelling statements. See logs for further details ({0})]
          msg = s_stringMgr.getString("CancelStatementThread.cancelFailed", t);
          _messageHandler.showErrorMessage(msg);
          s_log.error(msg, t);
