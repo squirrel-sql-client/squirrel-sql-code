@@ -4,8 +4,11 @@ SQuirreL SQL Client Change Log
 2.2 Final
 =========
 
+
 - Fixed Bug #1467671: Session Properties / General / Appearance: "SQL Results Tabs" overwrites 
                      "SQL Execution Tabs" setting.
+
+- Fixed Bug #1464361: Windows bat file is location specific (Thanks to Bill Wallace)
 
 - Fixed Bug #1456423: Cannot cancel a query. Changed to allow the cancel operation to interrupt the 
                      fetching of results.  While resolving the "hanging" of a long-running this also 
