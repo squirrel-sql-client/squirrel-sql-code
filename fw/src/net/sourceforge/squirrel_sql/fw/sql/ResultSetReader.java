@@ -69,6 +69,9 @@ public class ResultSetReader
 	/** Metadata for the <TT>ResultSet</TT>. */
 	private ResultSetMetaData _rsmd;
 
+    /** whether or not the user requested to cancel the query */
+    private volatile boolean _stopExecution = false; 
+    
 	public ResultSetReader(ResultSet rs)
 		throws SQLException
 	{
@@ -172,7 +175,7 @@ public class ResultSetReader
 	private Object[] doRead()
 	{
 		Object[] row = new Object[_columnCount];
-		for (int i = 0; i < _columnCount; ++i)
+		for (int i = 0; i < _columnCount && !_stopExecution; ++i)
 		{
 			int idx = _columnIndices != null ? _columnIndices[i] : i + 1;
 			try
@@ -382,11 +385,15 @@ public class ResultSetReader
 			}
 			catch (Throwable th)
 			{
-				_errorOccured = true;
-				row[i] = s_stringMgr.getString("ResultSetReader.error");
-				StringBuffer msg = new StringBuffer("Error reading column data");
-				msg.append(", column index = ").append(idx);
-				s_log.error(msg.toString(), th);
+                // Don't bother the user with details about where the result fetch
+                // failed if they cancelled the query.
+                if (!_stopExecution) {
+                    _errorOccured = true;
+                    row[i] = s_stringMgr.getString("ResultSetReader.error");
+                    StringBuffer msg = new StringBuffer("Error reading column data");
+                    msg.append(", column index = ").append(idx);
+                    s_log.error(msg.toString(), th);
+                }
 			}
 		}
 
@@ -400,7 +407,7 @@ public class ResultSetReader
 	private Object[] doContentTabRead(ColumnDisplayDefinition colDefs[])
 	{
 		Object[] row = new Object[_columnCount];
-		for (int i = 0; i < _columnCount; ++i)
+		for (int i = 0; i < _columnCount && !_stopExecution; ++i)
 		{
 			int idx = _columnIndices != null ? _columnIndices[i] : i + 1;
 			try
@@ -469,12 +476,28 @@ public class ResultSetReader
 			{
 				_errorOccured = true;
 				row[i] = s_stringMgr.getString("ResultSetReader.error");
-				StringBuffer msg = new StringBuffer("Error reading column data");
-				msg.append(", column index = ").append(idx);
-				s_log.error(msg.toString(), th);
+                if (!_stopExecution) {
+                    StringBuffer msg = new StringBuffer("Error reading column data");
+                    msg.append(", column index = ").append(idx);
+                    s_log.error(msg.toString(), th);
+                }
 			}
 		}
 
 		return row;
 	}
+
+    /**
+     * @param _stopExecution The _stopExecution to set.
+     */
+    public void setStopExecution(boolean _stopExecution) {
+        this._stopExecution = _stopExecution;
+    }
+
+    /**
+     * @return Returns the _stopExecution.
+     */
+    public boolean isStopExecution() {
+        return _stopExecution;
+    }
 }

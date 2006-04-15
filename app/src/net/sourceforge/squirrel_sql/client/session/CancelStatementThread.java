@@ -32,7 +32,7 @@ public class CancelStatementThread extends Thread
       try
       {
          start();
-         join(1000);
+         join(1500);
 
          synchronized (this)
          {
@@ -76,6 +76,10 @@ public class CancelStatementThread extends Thread
 
       try
       {
+         // give the ResultSetReader some time to realize that the user requested
+         // cancel and stop fetching results.  This allows us to stop the query
+         // processing gracefully.
+         Thread.sleep(500);
          _stmt.close();
          closeSucceeded = true;
       }

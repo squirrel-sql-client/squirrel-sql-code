@@ -915,6 +915,11 @@ public class SQLResultExecuterPanel extends JPanel
 	{
 		private CancelPanel _cancelPanel = new CancelPanel();
 
+        /** Hold onto the current ResultDataSet so if the execution is
+         *  cancelled then this can be cancelled.
+         */
+        private ResultSetDataSet rsds = null;
+        
       public SQLExecutionHandler()
 		{
 			super();
@@ -973,11 +978,6 @@ public class SQLResultExecuterPanel extends JPanel
                                       new Integer(updateCount));
 			getSession().getMessageHandler().showMessage(rowsUpdated);
 		}
-
-		/** Hold onto the current ResultDataSet so if the execution is
-		 *  cancelled then this can be cancelled.
-		 */
-		ResultSetDataSet rsds = null;
 
 		public void sqlResultSetAvailable(ResultSet rs, SQLExecutionInfo info,
 				IDataSetUpdateableTableModel model) throws DataSetException
