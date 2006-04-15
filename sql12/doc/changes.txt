@@ -1,32 +1,36 @@
 SQuirreL SQL Client Change Log
 ==============================
 
-Not yet released, available in CVS and probably in latest weekly build
-=======================================================================
+2.2 Final
+=========
 
-- Fixed Bug #1467671 Session Properties / General / Appearance: "SQL Results Tabs" overwrites "SQL Execution Tabs" setting.
-
-- Added independently configurable options to warn when closing a session if there are any 
-  unsaved edits (optional for File or Buffer).  If the "Confirm Session Close" option is 
-  turned off, these can still be enabled so that unsaved edits are never lost merely by 
-  closing a session.  Previously it was very easy to lose changes made in the SQL edit
-  tab when the session was closed.  This previous behavior, if desired, is still available
-  via Global Preferences.
+- Fixed Bug #1467671: Session Properties / General / Appearance: "SQL Results Tabs" overwrites 
+                     "SQL Execution Tabs" setting.
 
 - Fixed Bug #1456423: Cannot cancel a query. Changed to allow the cancel operation to interrupt the 
                      fetching of results.  While resolving the "hanging" of a long-running this also 
                      allows results that have been fetched so far to be displayed.  
                      This can help the user determine why the query was taking a long time to execute.
-- Fixed Bug #1447231 ESCAPE key should close dialogs
+- Fixed Bug #1447231: ESCAPE key should close dialogs
+
 - Fixed Bug #1457811: Autocomplete does not work for views when tables and view names match.
+
 - Fixed Bug for Teradata not showing SQL results. (Thanks to Matthew Dahlman)
+
 - Fixed Bug #1456463: update to allow the user to override the closing of a session in the event that 
                     there are unsaved edits and they decide not to save them right away.  They can 
                     always choose to not save and discard, closing the session immediately. This 
                     change will make it so that if they choose to not discard, and something happens
                     during the save that causes the edits not to get saved, the session will not be 
-                    closed.
+                    closed.  Added independently configurable options to warn when closing a session 
+                    if there are any unsaved edits (optional for File or Buffer).  If the 
+                    "Confirm Session Close" option is turned off, these can still be enabled so that 
+                    unsaved edits are never lost merely by closing a session.  Previously it was very 
+                    easy to lose changes made in the SQL edit tab when the session was closed.  This 
+                    previous behavior, if desired, is still available via Global Preferences.
+
 - Fixed Bug #1441169: error in removing a deleted row more than once.
+
 - Fixed Bug #1250514: Mysql Error: Cannot edit table.
 
 2.2 RC1
