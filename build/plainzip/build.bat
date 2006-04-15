@@ -1,8 +1,8 @@
 set PLAIN_ZIP_DIR=c:\home\projects\squirrel-sql\sql12\build\plainzip
 
-set INSTALL_JAR=c:\tmp\squirrel-sql-2.2rc1-install.jar
+set INSTALL_JAR=c:\tmp\squirrel-sql-2.2final-install.jar
 
-set VERSION=2.2rc1
+set VERSION=2.2final
 
 
 rm -f *.zip
@@ -10,8 +10,6 @@ rm -rf tmp
 mkdir tmp
 
 java -jar %INSTALL_JAR% auto_install_base.xml
-
-copy squirrel-sql.bat "tmp\SQuirreL SQL Client\"
 
 cd tmp
 
@@ -27,8 +25,6 @@ mkdir tmp
 
 java -jar %INSTALL_JAR% auto_install_standard.xml
 
-copy squirrel-sql.bat "tmp\SQuirreL SQL Client\"
-
 cd tmp
 
 jar -cvf squirrel-sql-%VERSION%-standard.zip "SQuirreL SQL Client"
@@ -41,8 +37,6 @@ rm -rf tmp
 mkdir tmp
 
 java -jar %INSTALL_JAR% auto_install_optional.xml
-
-copy squirrel-sql.bat "tmp\SQuirreL SQL Client\"
 
 cd tmp
 
