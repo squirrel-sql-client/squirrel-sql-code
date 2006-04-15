@@ -44,8 +44,11 @@ public class ResultSetDataSet implements IDataSet
 	private List _alData;
 
 	/** If <TT>true</TT> cancel has been requested. */
-	private boolean _cancel = false;
+	private volatile boolean _cancel = false;
 
+    /** the result set reader, which we will notify of cancel requests */
+    private ResultSetReader rdr = null; 
+    
 	public ResultSetDataSet()
 	{
 		super();
@@ -123,7 +126,7 @@ public class ResultSetDataSet implements IDataSet
 				_dataSetDefinition = new DataSetDefinition(colDefs);
 
  				// Read the entire row, since some drivers complain if columns are read out of sequence
- 				ResultSetReader rdr = new ResultSetReader(rs, null);
+ 				rdr = new ResultSetReader(rs, null);
 				Object[] row = null;
 
 				while (true) {
@@ -210,6 +213,7 @@ public class ResultSetDataSet implements IDataSet
 
 	public void cancelProcessing()
 	{
+        rdr.setStopExecution(true);
 		_cancel = true;
 	}
 

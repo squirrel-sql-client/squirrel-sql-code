@@ -156,7 +156,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 
             _handler.sqlStatementCount(statementCount);
 
-            while (!queryStrings.isEmpty())
+            while (!queryStrings.isEmpty() && !_stopExecution)
             {
                String querySql = (String)queryStrings.remove(0);
                if (querySql != null)
@@ -211,20 +211,30 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
                   }
                   catch (SQLException ex)
                   {
-                     if (props.getAbortOnError())
-                     {
-                        throw ex;
-                     }
-                     else
-                     {
-                        if(1 < statementCount)
-                        {
-                           handleError(ex, "Error occured in:\n" + lastExecutedStatement);
-                        }
-                        else
-                        {
-                           handleError(ex, null);
-                        }
+                     // If the user has cancelled the query, don't bother logging 
+                     // an error message.  It is likely that the cancel request 
+                     // interfered with the attempt to fetch results from the 
+                     // ResultSet, which is to be expected when the Statement is
+                     // closed.  So, let's not bug the user with obvious error 
+                     // messages that we can do nothing about.
+                     if (_stopExecution) {
+                         break;
+                     } else {
+                         if (props.getAbortOnError())
+                         {
+                            throw ex;
+                         }
+                         else
+                         {
+                            if(1 < statementCount)
+                            {
+                               handleError(ex, "Error occured in:\n" + lastExecutedStatement);
+                            }
+                            else
+                            {
+                               handleError(ex, null);
+                            }
+                         }
                      }
                   }
                }
@@ -293,7 +303,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
       {
          return;
       }
-
+      _handler.sqlExecutionCancelled();
       // i18n[SQLResultExecuterPanel.canceleRequested=Query execution cancel requested by user.]
       String msg = s_stringMgr.getString("SQLResultExecuterPanel.canceleRequested");
       _session.getApplication().getMessageHandler().showMessage(msg);
