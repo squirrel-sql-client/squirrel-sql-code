@@ -3,7 +3,12 @@
 IF "%JAVA_HOME%"=="" SET LOCAL_JAVA=java
 IF NOT "%JAVA_HOME%"=="" SET LOCAL_JAVA=%JAVA_HOME%\bin\java
 
-set SQUIRREL_SQL_HOME=$INSTALL_PATH
+set basedir=%~f0
+:strip
+set removed=%basedir:~-1%
+set basedir=%basedir:~0,-1%
+if NOT "%removed%"=="\" goto strip
+set SQUIRREL_SQL_HOME=%basedir%
 
 @rem dir /b "%SQUIRREL_SQL_HOME%\squirrel-sql.jar" > temp.tmp
 @rem FOR /F %%I IN (temp.tmp) DO CALL "%SQUIRREL_SQL_HOME%\addpath.bat" "%SQUIRREL_SQL_HOME%\%%I"
