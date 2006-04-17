@@ -1,7 +1,13 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+
+Not yet released, available in CVS and probably in latest weekly build
+=======================================================================
+
 Fixed Bug in Graph Plugin: In zoomed graphs lines with folding points could not be selected. 
+
+
 
 2.2 Final
 =========
