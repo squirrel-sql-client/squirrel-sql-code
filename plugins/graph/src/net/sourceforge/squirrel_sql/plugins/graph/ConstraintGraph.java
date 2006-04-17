@@ -18,20 +18,20 @@ public class ConstraintGraph
    private Vector _foldingPoints = new Vector();
    private GraphLine _hitConnectLine;
    private boolean _isHitOnConnectLine;
-   private Point _hitFoldingPoint;
+   private FoldingPoint _hitFoldingPoint;
 
    public ConstraintGraph()
    {
    }
 
-   public ConstraintGraph(ConstraintGraphXmlBean constraintGraphXmlBean)
+   public ConstraintGraph(ConstraintGraphXmlBean constraintGraphXmlBean, Zoomer zoomer)
    {
       for (int i = 0; i < constraintGraphXmlBean.getFoldingPointXmlBeans().length; i++)
       {
          Point p = new Point();
          p.x = constraintGraphXmlBean.getFoldingPointXmlBeans()[i].getX();
          p.y = constraintGraphXmlBean.getFoldingPointXmlBeans()[i].getY();
-         _foldingPoints.add(p);
+         _foldingPoints.add(new FoldingPoint(p, zoomer));
       }
    }
 
@@ -42,10 +42,10 @@ public class ConstraintGraph
       FoldingPointXmlBean[] foldPointXmlBeans = new FoldingPointXmlBean[_foldingPoints.size()];
       for (int i = 0; i < _foldingPoints.size(); i++)
       {
-         Point point = (Point) _foldingPoints.elementAt(i);
+         FoldingPoint point = (FoldingPoint) _foldingPoints.elementAt(i);
          foldPointXmlBeans[i] = new FoldingPointXmlBean();
-         foldPointXmlBeans[i].setX(point.x);
-         foldPointXmlBeans[i].setY(point.y);
+         foldPointXmlBeans[i].setX(point.getUnZoomedPoint().x);
+         foldPointXmlBeans[i].setY(point.getUnZoomedPoint().y);
       }
       ret.setFoldingPointXmlBeans(foldPointXmlBeans);
 
@@ -95,19 +95,19 @@ public class ConstraintGraph
    {
       if(0 == _foldingPoints.size())
       {
-         return new GraphLine[]{new GraphLine(_fkGatherPoint, _pkGatherPoint, false, false)};
+         return new GraphLine[]{new GraphLine(_fkGatherPoint, _pkGatherPoint)};
       }
 
       GraphLine[] ret = new GraphLine[_foldingPoints.size() + 1];
 
-      ret[0] = new GraphLine(_fkGatherPoint, (Point) _foldingPoints.get(0), false, true);
+      ret[0] = new GraphLine(_fkGatherPoint, (FoldingPoint) _foldingPoints.get(0));
 
       for (int i = 0; i < _foldingPoints.size() - 1; i++)
       {
-         ret[i + 1] = new GraphLine((Point) _foldingPoints.get(i), (Point) _foldingPoints.get(i+1), true, true);
+         ret[i + 1] = new GraphLine((FoldingPoint) _foldingPoints.get(i), (FoldingPoint) _foldingPoints.get(i+1));
       }
 
-      ret[ret.length -1] = new GraphLine((Point) _foldingPoints.lastElement(), _pkGatherPoint, true, false);
+      ret[ret.length -1] = new GraphLine((FoldingPoint) _foldingPoints.lastElement(), _pkGatherPoint);
 
       return ret;
 
@@ -119,9 +119,9 @@ public class ConstraintGraph
       _isHitOnConnectLine = true;
    }
 
-   public void addFoldingPointToHitConnectLine(Point lastPopupClickPoint)
+   public void addFoldingPointToHitConnectLine(FoldingPoint lastPopupClickPoint)
    {
-      if(_fkGatherPoint.equals(_hitConnectLine.beg))
+      if(_fkGatherPoint.equals(_hitConnectLine.getBegin()))
       {
          _foldingPoints.insertElementAt(lastPopupClickPoint, 0);
          return;
@@ -129,7 +129,8 @@ public class ConstraintGraph
 
       for (int i = 0; i < _foldingPoints.size() - 1; i++)
       {
-         if(_hitConnectLine.beg.equals(_foldingPoints.get(i)))
+         FoldingPoint fp = (FoldingPoint) _foldingPoints.get(i);
+         if(_hitConnectLine.getBegin().equals(fp.getZoomedPoint()))
          {
             _foldingPoints.insertElementAt(lastPopupClickPoint, i+1);
             return;
@@ -145,7 +146,7 @@ public class ConstraintGraph
       return _foldingPoints;
    }
 
-   public void setHitFoldingPoint(Point foldingPoint)
+   public void setHitFoldingPoint(FoldingPoint foldingPoint)
    {
       _isHitOnConnectLine = false;
       _hitFoldingPoint = foldingPoint;
@@ -161,16 +162,16 @@ public class ConstraintGraph
       _foldingPoints.remove(_hitFoldingPoint);
    }
 
-   public void moveLastHitFoldingPointTo(Point point)
+   public void moveLastHitFoldingPointTo(FoldingPoint point)
    {
-      if(point.x < 0)
-      {
-         point.x = 0;
-      }
-      if(point.y < 0)
-      {
-         point.y = 0;
-      }
+//      if(point.x < 0)
+//      {
+//         point.x = 0;
+//      }
+//      if(point.y < 0)
+//      {
+//         point.y = 0;
+//      }
 
 
       _foldingPoints.indexOf(_hitFoldingPoint);
@@ -183,7 +184,7 @@ public class ConstraintGraph
       _foldingPoints.clear();
    }
 
-   public Point getFirstFoldingPoint()
+   public FoldingPoint getFirstFoldingPoint()
    {
       if(0 == _foldingPoints.size())
       {
@@ -191,11 +192,11 @@ public class ConstraintGraph
       }
       else
       {
-         return (Point) _foldingPoints.get(0);
+         return (FoldingPoint) _foldingPoints.get(0);
       }
    }
 
-   public Point getLastFoldingPoint()
+   public FoldingPoint getLastFoldingPoint()
    {
       if(0 == _foldingPoints.size())
       {
@@ -203,7 +204,7 @@ public class ConstraintGraph
       }
       else
       {
-         return (Point) _foldingPoints.get(_foldingPoints.size()-1);
+         return (FoldingPoint) _foldingPoints.get(_foldingPoints.size()-1);
       }
 
    }
@@ -212,11 +213,11 @@ public class ConstraintGraph
    {
       if(0 == _foldingPoints.size())
       {
-         return new GraphLine(_pkGatherPoint, _fkGatherPoint, false, false);
+         return new GraphLine(_pkGatherPoint, _fkGatherPoint);
       }
       else
       {
-         return new GraphLine((Point) _foldingPoints.get(0), _fkGatherPoint, true, false);
+         return new GraphLine((FoldingPoint) _foldingPoints.get(0), _fkGatherPoint);
       }
    }
 }

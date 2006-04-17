@@ -5,38 +5,82 @@ import java.awt.*;
 
 public class GraphLine
 {
-   public Point beg;
-   public Point end;
+   private Point _beg;
+   private Point _end;
+   private FoldingPoint _fpBeg;
+   private FoldingPoint _fpEnd;
 
-   public boolean begIsFoldingPoint;
-   public boolean endIsFoldingPoint;
 
-   public GraphLine(Point begin, Point end, boolean begIsFoldingPoint, boolean endIsFoldingPoint)
+   public GraphLine(Point begin, Point end)
    {
-      this.beg = begin;
-      this.end = end;
-      this.begIsFoldingPoint = begIsFoldingPoint;
-      this.endIsFoldingPoint = endIsFoldingPoint;
+      this._beg = begin;
+      this._end = end;
    }
 
-   public GraphLine(GraphLine line, double zoom)
+   public GraphLine(FoldingPoint begin, Point end)
    {
-      beg = new Point(line.beg);
-      end = new Point(line.end);
-      begIsFoldingPoint = line.begIsFoldingPoint;
-      endIsFoldingPoint = line.endIsFoldingPoint;
+      this._fpBeg = begin;
+      this._end = end;
+   }
 
-      if(line.begIsFoldingPoint)
-      {
-         beg.x = (int) (line.beg.x*zoom +0.5);
-         beg.y = (int) (line.beg.y*zoom +0.5);
-      }
-      if(line.endIsFoldingPoint)
-      {
-         end.x = (int) (line.beg.x*zoom +0.5);
-         end.y = (int) (line.beg.y*zoom +0.5);
-      }
+   public GraphLine(Point begin, FoldingPoint end)
+   {
+      this._beg = begin;
+      this._fpEnd = end;
+   }
+
+   public GraphLine(FoldingPoint begin, FoldingPoint end)
+   {
+      this._fpBeg = begin;
+      this._fpEnd = end;
    }
 
 
+
+   public GraphLine(GraphLine line)
+   {
+
+      if(null == line.getBegin())
+      {
+         _fpBeg = new FoldingPoint(line._fpBeg);
+      }
+      else
+      {
+         _beg = new Point(line._beg);
+      }
+
+      if(null == line.getEnd())
+      {
+         _fpEnd = new FoldingPoint(line._fpEnd);
+      }
+      else
+      {
+         _beg = new Point(line._end);
+      }
+   }
+
+
+   public Point getBegin()
+   {
+      if(null == _beg)
+      {
+         return _fpBeg.getZoomedPoint();
+      }
+      else
+      {
+         return _beg;
+      }
+   }
+
+   public Point getEnd()
+   {
+      if(null == _end)
+      {
+         return _fpEnd.getZoomedPoint();
+      }
+      else
+      {
+         return _end;
+      }
+   }
 }

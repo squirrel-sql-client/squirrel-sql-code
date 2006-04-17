@@ -846,7 +846,7 @@ public class TableFrameController
 
          _popUp.show(e.getComponent(), e.getX(), e.getY());
       }
-      else if(2 == e.getClickCount())
+      else if(2 == e.getClickCount() && e.getID() == MouseEvent.MOUSE_PRESSED)
       {
          ColumnInfo ci = getColumnInfoForPoint(e.getPoint());
          if(null != ci && null != ci.getImportedTableName())
@@ -1039,8 +1039,8 @@ public class TableFrameController
       {
          ColumnInfo[] colInfos = constraintView[i].getData().getColumnInfos();
 
-         Point firstFoldingPoint = constraintView[i].getFirstFoldingPoint();
-         Point lastFoldingPoint = constraintView[i].getLastFoldingPoint();
+         FoldingPoint firstFoldingPoint = constraintView[i].getFirstFoldingPoint();
+         FoldingPoint lastFoldingPoint = constraintView[i].getLastFoldingPoint();
 
          ConnectionPoints fkPoints = getConnectionPoints(colInfos, this, other, firstFoldingPoint);
 
@@ -1069,7 +1069,7 @@ public class TableFrameController
 
 
 
-   private static ConnectionPoints getConnectionPoints(ColumnInfo[] colInfos, TableFrameController me, TableFrameController other, Point myNextFoldingPoint)
+   private static ConnectionPoints getConnectionPoints(ColumnInfo[] colInfos, TableFrameController me, TableFrameController other, FoldingPoint myNextFoldingPoint)
    {
       int[] relPointHeights = me.calculateRelativeConnectionPointHeights(colInfos);
 
@@ -1097,7 +1097,7 @@ public class TableFrameController
          }
          else
          {
-            if(myBounds.x + myBounds.width / 2 < myNextFoldingPoint.x)
+            if(myBounds.x + myBounds.width / 2 < myNextFoldingPoint.getZoomedPoint().x)
             {
                ret.points[i] = new Point(myBounds.x + myBounds.width, myBounds.y + relPointHeights[i]);
                ret.pointsAreLeftOfWindow = false;
