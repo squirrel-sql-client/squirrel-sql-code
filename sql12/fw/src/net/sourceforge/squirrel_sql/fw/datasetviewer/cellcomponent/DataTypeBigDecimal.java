@@ -41,6 +41,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
 
@@ -77,8 +79,12 @@ public class DataTypeBigDecimal extends FloatingPointBase
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(DataTypeBigDecimal.class);
 
+   /** Logger for this class. */
+   private static ILogger s_log = LoggerController.createLogger(DataTypeBigDecimal.class);
 
-	/* the whole column definition */
+
+
+   /* the whole column definition */
 	private ColumnDisplayDefinition _colDef;
 
 	/* whether nulls are allowed or not */
@@ -111,24 +117,25 @@ public class DataTypeBigDecimal extends FloatingPointBase
 
 	// The NumberFormat object to use for all locale-dependent formatting.
 	private NumberFormat _numberFormat;
+   private boolean _renderExceptionHasBeenLogged;
 
 
-	/**
-	 * Constructor - save the data needed by this data type.
-	 */
-	public DataTypeBigDecimal(JTable table, ColumnDisplayDefinition colDef) {
-		_table = table;
-		_colDef = colDef;
-		_isNullable = colDef.isNullable();
-		_isSigned = colDef.isSigned();
-		_precision = colDef.getPrecision();
-		_scale = colDef.getScale();
+   /**
+    * Constructor - save the data needed by this data type.
+    */
+   public DataTypeBigDecimal(JTable table, ColumnDisplayDefinition colDef) {
+      _table = table;
+      _colDef = colDef;
+      _isNullable = colDef.isNullable();
+      _isSigned = colDef.isSigned();
+      _precision = colDef.getPrecision();
+      _scale = colDef.getScale();
 
-		_numberFormat = NumberFormat.getInstance();
-		_numberFormat.setMaximumFractionDigits(_scale);
-		_numberFormat.setMinimumFractionDigits(0);
+      _numberFormat = NumberFormat.getInstance();
+      _numberFormat.setMaximumFractionDigits(_scale);
+      _numberFormat.setMinimumFractionDigits(0);
 
-	}
+   }
 
 	/**
 	 * Return the name of the java class used to hold this data type.
@@ -163,8 +170,23 @@ public class DataTypeBigDecimal extends FloatingPointBase
 		}
 		else
 		{
-			return (String)_renderer.renderObject(_numberFormat.format(value));
-		}
+
+         try
+         {
+            return (String)_renderer.renderObject(_numberFormat.format(value));
+         }
+         catch (Exception e)
+         {
+            if(false == _renderExceptionHasBeenLogged)
+            {
+               _renderExceptionHasBeenLogged = true;
+               s_log.error("Could not format \"" + value + "\" as number type", e);
+            }
+            return (String) _renderer.renderObject(value);
+         }
+
+
+      }
 
 	}
 

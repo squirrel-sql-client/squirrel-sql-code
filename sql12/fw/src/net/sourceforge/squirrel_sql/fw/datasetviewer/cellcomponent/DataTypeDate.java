@@ -53,6 +53,8 @@ import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 
 /**
@@ -88,8 +90,11 @@ public class DataTypeDate
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(DataTypeDate.class);
 
+   /** Logger for this class. */
+   private static ILogger s_log = LoggerController.createLogger(DataTypeDate.class);
 
-	/* the whole column definition */
+
+   /* the whole column definition */
 	private ColumnDisplayDefinition _colDef;
 
 	/* whether nulls are allowed or not */
@@ -139,19 +144,19 @@ public class DataTypeDate
 	 // The DateFormat object to use for all locale-dependent formatting.
 	 // This is reset each time the user changes the previous settings.
 	 private static DateFormat dateFormat = DateFormat.getDateInstance(localeFormat);
+    private boolean _renderExceptionHasBeenLogged;
 
 
+   /**
+    * Constructor - save the data needed by this data type.
+    */
+   public DataTypeDate(JTable table, ColumnDisplayDefinition colDef) {
+      _table = table;
+      _colDef = colDef;
+      _isNullable = colDef.isNullable();
 
-	/**
-	 * Constructor - save the data needed by this data type.
-	 */
-	public DataTypeDate(JTable table, ColumnDisplayDefinition colDef) {
-		_table = table;
-		_colDef = colDef;
-		_isNullable = colDef.isNullable();
-
-		loadProperties();
-	}
+      loadProperties();
+   }
 
 	/** Internal function to get the user-settable properties from the DTProperties,
 	 * if they exist, and to ensure that defaults are set if the properties have
@@ -220,9 +225,28 @@ public class DataTypeDate
 
 		// use a date formatter
 		if (value == null)
-			return (String)_renderer.renderObject(value);
-		else return (String)_renderer.renderObject(dateFormat.format(value));
-	}
+      {
+         return (String)_renderer.renderObject(value);
+      }
+      else
+      {
+
+         try
+         {
+            return (String)_renderer.renderObject(dateFormat.format(value));
+         }
+         catch (Exception e)
+         {
+            if(false == _renderExceptionHasBeenLogged)
+            {
+               _renderExceptionHasBeenLogged = true;
+               s_log.error("Could not format \"" + value + "\" as date type", e);
+            }
+            return (String) _renderer.renderObject(value);
+         }
+
+      }
+   }
 
 	/**
 	 * This Data Type can be edited in a table cell.
