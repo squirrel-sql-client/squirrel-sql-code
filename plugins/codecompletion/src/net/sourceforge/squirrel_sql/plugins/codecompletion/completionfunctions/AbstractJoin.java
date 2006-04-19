@@ -90,12 +90,12 @@ public abstract class AbstractJoin extends CodeCompletionFunction
                {
                   catalog = _session.getSQLConnection().getCatalog();
                }
-               ITableInfo[] infos = 
-                   md.getTables(catalog, null, (String) tables.get(0), new String[]{"TABLE"});
-               for (int i = 0; i < infos.length; i++) {
+               ITableInfo[] infos = _session.getSchemaInfo().getITableInfos(catalog, null, (String) tables.get(0), new String[]{"TABLE"});
+               for (int i = 0; i < infos.length; i++)
+               {
                    String schemBuf = infos[i].getSchemaName();
                    schemas.put(schemBuf, schemBuf);
-               }               
+               }
             }
          }
 

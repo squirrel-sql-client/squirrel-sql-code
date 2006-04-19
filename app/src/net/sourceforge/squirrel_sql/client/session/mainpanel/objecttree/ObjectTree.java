@@ -211,7 +211,7 @@ class ObjectTree extends JTree
                     });
 
                   setCellRenderer(new ObjectTreeCellRenderer(_model, _session));
-                  ObjectTree.this.refresh();
+                  ObjectTree.this.refresh(false);
                   ObjectTree.this.setSelectionPath(ObjectTree.this.getPathForRow(0));
                 }
             });
@@ -275,75 +275,86 @@ class ObjectTree extends JTree
 
 	/**
 	 * Refresh tree.
-	 */
-	public void refresh()
+    * @param reloadSchemaInfo
+    */
+	public void refresh(final boolean reloadSchemaInfo)
 	{
-        _session.getApplication().getThreadPool().addTask(new Runnable() {
-            public void run() {
-                // Clear cache in case metadata has changed.
-                _session.getSQLConnection().getSQLMetaData().clearCache();
-
-                GUIUtils.processOnSwingEventThread(new Runnable() {
-                    public void run() {
-                        refreshTree();
-                    }
-                });
-            }
-        });
-	}
-
-    private void refreshTree() {
-        final TreePath[] selectedPaths = getSelectionPaths();
-        final Map selectedPathNames = new HashMap();
-        if (selectedPaths != null)
-        {
-            for (int i = 0; i < selectedPaths.length; ++i)
+      _session.getApplication().getThreadPool().addTask(new Runnable()
+      {
+         public void run()
+         {
+            if(reloadSchemaInfo)
             {
-                selectedPathNames.put(selectedPaths[i].toString(), null);
+               _session.getSchemaInfo().load(_session);
             }
-        }
-        ObjectTreeNode root = _model.getRootObjectTreeNode();
-        root.removeAllChildren();
-        fireObjectTreeCleared();
-        startExpandingTree(root, false, selectedPathNames);
-        fireObjectTreeRefreshed();        
-    }
-    
-	/**
-	 * Refresh the nodes currently selected in the object tree.
-	 * TODO: Make this work with multiple nodes. Currently multiple threads
-	 * will be created (one for each node selected) and it will be very
-	 * very very bad.
-	 */
-	public void refreshSelectedNodes()
-	{
-		// Clear cache in case metadata has changed.
-		_session.getSQLConnection().getSQLMetaData().clearCache();
 
-		final TreePath[] selectedPaths = getSelectionPaths();
-		ObjectTreeNode[] nodes = getSelectedNodes();
-		final Map selectedPathNames = new HashMap();
-		if (selectedPaths != null)
-		{
-			for (int i = 0; i < selectedPaths.length; ++i)
-			{
-				selectedPathNames.put(selectedPaths[i].toString(), null);
-			}
-		}
-		clearSelection();
 
-        DefaultMutableTreeNode parent = 
-            (DefaultMutableTreeNode)nodes[0].getParent();
-        if (parent != null) {
-            parent.removeAllChildren();
-            startExpandingTree((ObjectTreeNode)parent, false, selectedPathNames);
-        } else {
-            nodes[0].removeAllChildren();
-            startExpandingTree(nodes[0], false, selectedPathNames);
-        }
-	}
-    
-	/**
+            GUIUtils.processOnSwingEventThread(new Runnable()
+            {
+               public void run()
+               {
+                  refreshTree();
+               }
+            });
+         }
+      });
+   }
+
+   private void refreshTree()
+   {
+      final TreePath[] selectedPaths = getSelectionPaths();
+      final Map selectedPathNames = new HashMap();
+      if (selectedPaths != null)
+      {
+         for (int i = 0; i < selectedPaths.length; ++i)
+         {
+            selectedPathNames.put(selectedPaths[i].toString(), null);
+         }
+      }
+      ObjectTreeNode root = _model.getRootObjectTreeNode();
+      root.removeAllChildren();
+      fireObjectTreeCleared();
+      startExpandingTree(root, false, selectedPathNames, false);
+      fireObjectTreeRefreshed();
+   }
+
+   /**
+    * Refresh the nodes currently selected in the object tree.
+    * TODO: Make this work with multiple nodes. Currently multiple threads
+    * will be created (one for each node selected) and it will be very
+    * very very bad.
+    */
+   public void refreshSelectedNodes()
+   {
+
+      final TreePath[] selectedPaths = getSelectionPaths();
+      ObjectTreeNode[] nodes = getSelectedNodes();
+      final Map selectedPathNames = new HashMap();
+      if (selectedPaths != null)
+      {
+         for (int i = 0; i < selectedPaths.length; ++i)
+         {
+            selectedPathNames.put(selectedPaths[i].toString(), null);
+         }
+      }
+      clearSelection();
+
+
+      DefaultMutableTreeNode parent = (DefaultMutableTreeNode) nodes[0].getParent();
+
+      if (parent != null)
+      {
+         parent.removeAllChildren();
+         startExpandingTree((ObjectTreeNode) parent, false, selectedPathNames, true);
+      }
+      else
+      {
+         nodes[0].removeAllChildren();
+         startExpandingTree(nodes[0], false, selectedPathNames, true);
+      }
+   }
+
+   /**
 	 * Adds a listener for changes in this cache entry.
 	 *
 	 * @param	lis	a IObjectCacheChangeListener that will be notified when
@@ -444,10 +455,9 @@ class ObjectTree extends JTree
         return result;
     }
         
-	private void startExpandingTree(ObjectTreeNode node, boolean selectNode,
-										Map selectedPathNames)
+	private void startExpandingTree(ObjectTreeNode node, boolean selectNode, Map selectedPathNames, boolean refreshSchemaInfo)
 	{
-		ExpansionController exp = new ExpansionController(node, selectNode, selectedPathNames);
+		ExpansionController exp = new ExpansionController(node, selectNode, selectedPathNames, refreshSchemaInfo);
 		if (SwingUtilities.isEventDispatchThread())
 		{
 			_session.getApplication().getThreadPool().addTask(exp);
@@ -780,7 +790,7 @@ class ObjectTree extends JTree
 			final Object parentObj = path.getLastPathComponent();
 			if (parentObj instanceof ObjectTreeNode)
 			{
-				startExpandingTree((ObjectTreeNode)parentObj, false, null);
+				startExpandingTree((ObjectTreeNode)parentObj, false, null, false);
 				_expandedPathNames.put(path.toString(), null);
 			}
 		}
@@ -807,15 +817,16 @@ class ObjectTree extends JTree
 		private final ObjectTreeNode _node;
 		private final boolean _selectNode;
 		private final Map _selectedPathNames;
+      private boolean _refreshSchemaInfo;
 
-		ExpansionController(ObjectTreeNode node, boolean selectNode,
-					Map selectedPathNames)
-		{
-			super();
-			_node = node;
-			_selectNode = selectNode;
-			_selectedPathNames = selectedPathNames;
-		}
+      ExpansionController(ObjectTreeNode node, boolean selectNode, Map selectedPathNames, boolean refreshSchemaInfo)
+      {
+         super();
+         _node = node;
+         _selectNode = selectNode;
+         _selectedPathNames = selectedPathNames;
+         _refreshSchemaInfo = refreshSchemaInfo;
+      }
 
 		public void run()
 		{
@@ -825,7 +836,12 @@ class ObjectTree extends JTree
 				cursorChg.show();
 				try
 				{
-					expandNode(_node, _selectNode);
+               if(_refreshSchemaInfo && _node instanceof ObjectTreeNode)
+               {
+                  _session.getSchemaInfo().reloadCache(((ObjectTreeNode)_node).getDatabaseObjectInfo());                  
+               }
+
+               expandNode(_node, _selectNode);
 					if (_selectedPathNames != null)
 					{
 						final List newlySelectedTreepaths = new ArrayList();
@@ -834,9 +850,9 @@ class ObjectTree extends JTree
 						{
 							public void run()
 							{
-                                restoreExpansionState(_node, _selectedPathNames, newlySelectedTreepaths);
-								setSelectionPaths((TreePath[])newlySelectedTreepaths.toArray(new TreePath[newlySelectedTreepaths.size()]));
-							}
+                        restoreExpansionState(_node, _selectedPathNames, newlySelectedTreepaths);
+                        setSelectionPaths((TreePath[]) newlySelectedTreepaths.toArray(new TreePath[newlySelectedTreepaths.size()]));
+                     }
 						});
 					}
 				}

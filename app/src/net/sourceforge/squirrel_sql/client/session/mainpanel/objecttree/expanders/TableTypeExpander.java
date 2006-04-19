@@ -27,7 +27,6 @@ import java.util.List;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -66,21 +65,22 @@ public class TableTypeExpander implements INodeExpander
 		{
 			final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
 			final SQLConnection conn = session.getSQLConnection();
-			final SQLDatabaseMetaData md = conn.getSQLMetaData();
 			final String catalogName = parentDbinfo.getCatalogName();
 			final String schemaName = parentDbinfo.getSchemaName();
-         final String objFilter = session.getProperties().getObjectFilter();
          final String tableType = parentDbinfo.getSimpleName();
-//			final ITableInfo[] tables = md.getTables(catalogName, schemaName,
-//						"%", tableType != null ? new String[]{tableType} : null);
-         final ITableInfo[] tables = md.getTables(catalogName, schemaName,
- 						objFilter != null && objFilter.length() > 0 ? objFilter :"%", tableType != null ? new String[]{tableType} : null);
 
-         if (session.getProperties().getShowRowCount()) {
-				stmt = conn.createStatement();
-			}
 
-			for (int i = 0; i < tables.length; ++i)
+         final String objFilter = session.getProperties().getObjectFilter();
+         String tableNamePattern = objFilter != null && objFilter.length() > 0 ? objFilter : "%";
+         String[] types = tableType != null ? new String[]{tableType} : null;
+         final ITableInfo[] tables = session.getSchemaInfo().getITableInfos(catalogName, schemaName, tableNamePattern, types);
+
+         if (session.getProperties().getShowRowCount())
+         {
+            stmt = conn.createStatement();
+         }
+
+         for (int i = 0; i < tables.length; ++i)
 			{
 				ObjectTreeNode child = new ObjectTreeNode(session, tables[i]);
 				child.setUserObject(getNodeDisplayText(stmt, tables[i]));

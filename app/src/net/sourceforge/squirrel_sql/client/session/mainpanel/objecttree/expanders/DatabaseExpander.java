@@ -268,7 +268,7 @@ public class DatabaseExpander implements INodeExpander
 				{
 					IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName,
 													schemaName, _tableTypes[i],
-													IObjectTreeAPI.TABLE_TYPE_DBO, md);
+													DatabaseObjectType.TABLE_TYPE_DBO, md);
 					ObjectTreeNode child = new ObjectTreeNode(session, dbo);
 					list.add(child);
 				}
@@ -278,7 +278,7 @@ public class DatabaseExpander implements INodeExpander
 				s_log.debug("List of table types is empty so trying null table type to load all tables");
 				IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName,
 												schemaName, null,
-												IObjectTreeAPI.TABLE_TYPE_DBO, md);
+												DatabaseObjectType.TABLE_TYPE_DBO, md);
 				ObjectTreeNode child = new ObjectTreeNode(session, dbo);
 				child.setUserObject("TABLE");
 				list.add(child);
@@ -298,7 +298,7 @@ public class DatabaseExpander implements INodeExpander
 			{
 				IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName,
 													schemaName, "PROCEDURE",
-													IObjectTreeAPI.PROC_TYPE_DBO, md);
+													DatabaseObjectType.PROC_TYPE_DBO, md);
 				ObjectTreeNode child = new ObjectTreeNode(session, dbo);
 				list.add(child);
 			}
@@ -307,7 +307,7 @@ public class DatabaseExpander implements INodeExpander
 			{
 				IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName,
 											schemaName, "UDT",
-											IObjectTreeAPI.UDT_TYPE_DBO, md);
+											DatabaseObjectType.UDT_TYPE_DBO, md);
 				ObjectTreeNode child = new ObjectTreeNode(session, dbo);
 				list.add(child);
 			}

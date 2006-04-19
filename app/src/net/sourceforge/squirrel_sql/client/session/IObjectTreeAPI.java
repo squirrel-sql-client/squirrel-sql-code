@@ -42,36 +42,12 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IOb
  */
 public interface IObjectTreeAPI extends IHasIdentifier
 {
-	/**
-	 * Database object type for a "Table Type" node in the object tree. Some examples
-	 * are "TABLE", "SYSTEM TABLE", "VIEW" etc.
-	 */
-	DatabaseObjectType TABLE_TYPE_DBO = DatabaseObjectType.createNewDatabaseObjectType("Table Type");
-
-	/**
-	 * Database object type for a "Procedure Type" node in the object tree. There is
-	 * only one node of this type in the object tree and it says "PROCEDURE".
-	 */
-	DatabaseObjectType PROC_TYPE_DBO = DatabaseObjectType.createNewDatabaseObjectType("Stored Procedure Type");
-
-	/**
-	 * Database object type for a "UDT Type" node in the object tree. There is only one
-	 * node of this type in the object tree and it says "UDT".
-	 */
-	DatabaseObjectType UDT_TYPE_DBO = DatabaseObjectType.createNewDatabaseObjectType("UDT Type");
-
-    /**
-     * Datbase object type for a "Database" node in the object tree.  There is onle one
-     * node of this type in the object tree and it indicates the alias of the database. 
-     */
-    DatabaseObjectType DATABASE_TYPE_DBO = DatabaseObjectType.createNewDatabaseObjectType("Database Type");
-    
-	/**
-	 * Retrieves the session of associated with the tree.
-	 *
-	 * @return	Session associated with the tree.
-	 */
-	ISession getSession();
+   /**
+    * Retrieves the session of associated with the tree.
+    *
+    * @return	Session associated with the tree.
+    */
+   ISession getSession();
 
 	/**
 	 * Add an expander for the specified object tree node type.
@@ -226,7 +202,13 @@ public interface IObjectTreeAPI extends IHasIdentifier
 	 */
 	void refreshTree();
 
-	/**
+   /**
+    * Refresh the object tree.
+    */
+   void refreshTree(boolean reloadSchemaInfo);
+
+
+   /**
 	 * Refresh the nodes currently selected in the object tree.
 	 */
 	void refreshSelectedNodes();
@@ -241,20 +223,13 @@ public interface IObjectTreeAPI extends IHasIdentifier
 	 */
 	void removeNodes(ObjectTreeNode[] nodes);
 
-	/**
-	 * Create a new <TT>DatabaseObjectType</TT>
-	 *
-	 * @return	a new <TT>DatabaseObjectType</TT>
-	 */
-	DatabaseObjectType createNewDatabaseObjectType(String name);
-
-	/**
-	 * Retrieve details about all object types that can be in this
-	 * tree.
-	 *
-	 * @return	DatabaseObjectType[]	Array of object type info objects.
-	 */
-	DatabaseObjectType[] getDatabaseObjectTypes();
+   /**
+    * Retrieve details about all object types that can be in this
+    * tree.
+    *
+    * @return	DatabaseObjectType[]	Array of object type info objects.
+    */
+   DatabaseObjectType[] getDatabaseObjectTypes();
 
 	/**
 	 * Add a known database object type to the object tree.

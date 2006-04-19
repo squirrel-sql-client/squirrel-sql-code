@@ -549,20 +549,10 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 		_tree.addToPopup(menu);
 	}
 
-	/**
-	 * Create a new <TT>DatabaseObjectType</TT>
-	 *
-	 * @return a new <TT>DatabaseObjectType</TT>
-	 */
-	public DatabaseObjectType createNewDatabaseObjectType(String name)
-	{
-		return DatabaseObjectType.createNewDatabaseObjectType(name);
-	}
-
-	public ISession getSession()
-	{
-		return _session;
-	}
+   public ISession getSession()
+   {
+      return _session;
+   }
 
 	/**
 	 * Return an array of the currently selected nodes.
@@ -601,10 +591,15 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 	 */
 	public void refreshTree()
 	{
-		_tree.refresh();
-	}
+      refreshTree(false);
+   }
 
-	/**
+   public void refreshTree(boolean reloadSchemaInfo)
+   {
+      _tree.refresh(reloadSchemaInfo);
+   }
+
+   /**
 	 * Refresh the nodes currently selected in the object tree.
 	 */
 	public void refreshSelectedNodes()

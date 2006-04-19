@@ -17,10 +17,10 @@
  */
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
-import net.sourceforge.squirrel_sql.client.session.ExtendedTableInfo;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -72,19 +72,19 @@ public class CodeCompletionInfoCollection
 
          Vector completionInfos = new Vector();
 
-         ExtendedTableInfo[] tables = _session.getSchemaInfo().getExtendedTableInfos(catalog, schema);
+         ITableInfo[] tables = _session.getSchemaInfo().getITableInfos(catalog, schema);
 
          Hashtable completionInfoByUcTableName = new Hashtable();
          for (int i = 0; i < tables.length; i++)
          {
-            String ucTableName = tables[i].getTableName().toUpperCase();
+            String ucTableName = tables[i].getSimpleName().toUpperCase();
 
             CodeCompletionTableInfo dupl = (CodeCompletionTableInfo) completionInfoByUcTableName.get(ucTableName);
 
-            CodeCompletionTableInfo tableInfo = new CodeCompletionTableInfo(tables[i].getTableName(),
-                                                                            tables[i].getTableType(),
-                                                                            tables[i].getCatalog(),
-                                                                            tables[i].getSchema());
+            CodeCompletionTableInfo tableInfo = new CodeCompletionTableInfo(tables[i].getSimpleName(),
+                                                                            tables[i].getType(),
+                                                                            tables[i].getCatalogName(),
+                                                                            tables[i].getSchemaName());
 
             if(null != dupl)
             {

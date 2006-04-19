@@ -47,7 +47,6 @@ import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.mainframe.action.OpenConnectionCommand;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsProcessor;
@@ -204,17 +203,17 @@ class Session implements ISession
         checkDriverVersion();
         
 		// Start loading table/column info about the current database.
-		_app.getThreadPool().addTask(new Runnable()
-		{
-			public void run()
-			{
-				loadTableInfo();
-                _finishedLoading = true;
-			}
-		});
+      _app.getThreadPool().addTask(new Runnable()
+      {
+         public void run()
+         {
+            _schemaInfo.load(Session.this);
+            _finishedLoading = true;
+         }
+      });
 
-		_sessionCreated = true;
-	}
+      _sessionCreated = true;
+   }
 
 	/**
 	 * Close this session.
@@ -657,54 +656,46 @@ class Session implements ISession
 		return getTitle();
 	}
 
-	/**
-	 * Load table information about the current database.
-	 */
-	private void loadTableInfo()
-	{
-		_schemaInfo.load(this);
-	}
+   private void setupTitle()
+   {
+      String catalog = null;
+      try
+      {
+         catalog = getSQLConnection().getCatalog();
+      }
+      catch (SQLException ex)
+      {
+         s_log.error("Error occured retrieving current catalog from Connection", ex);
+      }
+      if (catalog == null)
+      {
+         catalog = "";
+      }
+      else
+      {
+         catalog = "(" + catalog + ")";
+      }
 
-	private void setupTitle()
-	{
-		String catalog = null;
-		try
-		{
-			catalog = getSQLConnection().getCatalog();
-		}
-		catch (SQLException ex)
-		{
-			s_log.error("Error occured retrieving current catalog from Connection", ex);
-		}
-		if (catalog == null)
-		{
-			catalog = "";
-		}
-		else
-		{
-			catalog = "(" + catalog + ")";
-		}
+      String title = null;
+      String user = _user != null ? _user : "";
+      if (user.length() > 0)
+      {
+         String[] args = new String[3];
+         args[0] = getAlias().getName();
+         args[1] = catalog;
+         args[2] = user;
+         title = s_stringMgr.getString("Session.title1", args);
+      }
+      else
+      {
+         String[] args = new String[2];
+         args[0] = getAlias().getName();
+         args[1] = catalog;
+         title = s_stringMgr.getString("Session.title0", args);
+      }
 
-		String title = null;
-		String user = _user != null ? _user : "";
-		if (user.length() > 0)
-		{
-			String[] args = new String[3];
-			args[0] = getAlias().getName();
-			args[1] = catalog;
-			args[2] = user;
-			title = s_stringMgr.getString("Session.title1", args);
-		}
-		else
-		{
-			String[] args = new String[2];
-			args[0] = getAlias().getName();
-			args[1] = catalog;
-			title = s_stringMgr.getString("Session.title0", args);
-		}
-
-		_title = _id + " - " + title;
-	}
+      _title = _id + " - " + title;
+   }
 
     private void cacheDatabaseProductName(SQLConnection con) {
         if (con != null) {
