@@ -119,6 +119,9 @@ public class SQLDatabaseMetaData
 	/**
 	 * Cache of commonly accessed metadata properties keyed by the method
 	 * name that attempts to retrieve them.
+    * Note, this cache should only be used for metadata that are not
+    * likely to be changed during an open Session.
+    * Meta data that is likely to be changed should be kept in SchemaInfo.
 	 */
 	private Map _cache = Collections.synchronizedMap(new HashMap());
 
@@ -903,7 +906,6 @@ public class SQLDatabaseMetaData
 	}
 
    private void close(ResultSet rs)
-      throws SQLException
    {
       try
       {
@@ -919,29 +921,10 @@ public class SQLDatabaseMetaData
    }
 
    /**
-    * Retrieve information about the stored procedures in the system
+    * NOTE: This method should only be used by SchemaInfo since this class should not and does not cache.
     *
-    * @param   catalog     The name of the catalog to retrieve procedures
-    *                      for. An empty string will return those without a
-    *                      catalog. <TT>null</TT> means that the catalog
-    *                      will not be used to narrow the search.
-    * @param   schemaPattern   The name of the schema to retrieve procedures
-    *                      for. An empty string will return those without a
-    *                      schema. <TT>null</TT> means that the schema
-    *                      will not be used to narrow the search.
-    * @param   procedureNamepattern    A procedure name pattern; must match the
-    *                                  procedure name as it is stored in the
-    *                                  database.
-    *
-    * @throws  SQLException    Thrown if an SQL error occurs.
+    * Retrieve information about the procedures in the system.
     */
-   public synchronized IProcedureInfo[] getProcedures(String catalog,
-                                                      String schemaPattern, String procedureNamePattern)
-      throws SQLException
-   {
-      return getProcedures(catalog, schemaPattern, procedureNamePattern, null);
-   }
-
    public synchronized IProcedureInfo[] getProcedures(String catalog,
                                                       String schemaPattern,
                                                       String procedureNamePattern,
@@ -967,7 +950,7 @@ public class SQLDatabaseMetaData
 
            if (null != progressCallBack)
            {
-              if(0 == count++ % 100 )
+              if(0 == count++ % 200 )
               {
                  progressCallBack.currentlyLoading(pi.getSimpleName());
               }
@@ -1058,163 +1041,130 @@ public class SQLDatabaseMetaData
 		return value;
 	}
 
-	public synchronized ITableInfo[] getAllTables()
-			throws SQLException
-	{
-		final String key = "getTables";
-		ITableInfo[] value = (ITableInfo[])_cache.get(key);
-		if (value == null)
-		{
-			value = getTables(null, null, "%", null);
-			_cache.put(key, value);
-		}
-		return value;
-	}
 
+   /**
+    * NOTE: This method should only be used by SchemaInfo since this class sholud not and does not cache.
+    *
+    * Retrieve information about the tables in the system.
+    */
    public synchronized ITableInfo[] getTables(String catalog,
                                               String schemaPattern,
                                               String tableNamePattern,
-                                              String[] types)
+                                              String[] types,
+                                              ProgressCallBack progressCallBack)
       throws SQLException
    {
-      return getTables(catalog, schemaPattern, tableNamePattern, types, null);
-   }
 
 
-   /**
-     * Retrieve information about the tables in the system.
-     *
-     * @param   catalog     The name of the catalog to retrieve tables
-     *                      for. An empty string will return those without a
-     *                      catalog. <TT>null</TT> means that the catalog
-     *                      will not be used to narrow the search.
-     * @param   schemaPattern   The name of the schema to retrieve tables
-     *                      for. An empty string will return those without a
-     *                      schema. <TT>null</TT> means that the schema
-     *                      will not be used to narrow the search.
-     * @param   tableNamepattern    A table name pattern; must match the
-     *                              table name as it is stored in the
-     *                              database.
-     * @param   types       List of table types to include; null returns all types.
-     *
-     * @throws  SQLException    Thrown if an SQL error occurs.
-     */
-    public synchronized ITableInfo[] getTables(String catalog, 
-                                               String schemaPattern,
-                                               String tableNamePattern, 
-                                               String[] types,
-                                               ProgressCallBack progressCallBack)
-		throws SQLException
-	{
-		final DatabaseMetaData md = privateGetJDBCMetaData();
-		final String dbDriverName = getDriverName();
-		Set list = new TreeSet();
+      final DatabaseMetaData md = privateGetJDBCMetaData();
+      final String dbDriverName = getDriverName();
+      Set list = new TreeSet();
 
-		if (dbDriverName.equals(IDriverNames.FREE_TDS) && schemaPattern == null)
-		{
-			schemaPattern = "dbo";
-		}
+      if (dbDriverName.equals(IDriverNames.FREE_TDS) && schemaPattern == null)
+      {
+         schemaPattern = "dbo";
+      }
 
-		Map nameMap = null;
-		ResultSet superTabResult = null;
-		ResultSet tabResult = null;
-		try
-		{
-			try
-			{
-				//TODO: remove reflection once we only support JDK1.4
-				//superTabResult = md.getSuperTables(catalog, schemaPattern,
-				//									tableNamePattern);
-				Class clazz = md.getClass();
-				Class[] p1 = new Class[] {String.class, String.class, String.class};
-				Method method = clazz.getMethod("getSuperTables", p1);
-				if (method != null)
-				{
-					Object[] p2 = new Object[] {catalog, schemaPattern, tableNamePattern};
-					try
-					{
-						superTabResult = (ResultSet)method.invoke(md, p2);
-					}
-					catch (InvocationTargetException ignore)
-					{
-						// unsupported by this driver.
-					}
-				}
-				// create a mapping of names if we have supertable info, since
-				// we need to find the ITableInfo again for re-ordering.
-				if (superTabResult != null && superTabResult.next())
-				{
-					nameMap = new HashMap();
-				}
-			}
-			catch (Throwable th)
-			{
-				s_log.debug("DBMS/Driver doesn't support getSupertables()", th);
-			}
+      Map nameMap = null;
+      ResultSet superTabResult = null;
+      ResultSet tabResult = null;
+      try
+      {
+         try
+         {
+            //TODO: remove reflection once we only support JDK1.4
+            //superTabResult = md.getSuperTables(catalog, schemaPattern,
+            //									tableNamePattern);
+            Class clazz = md.getClass();
+            Class[] p1 = new Class[]{String.class, String.class, String.class};
+            Method method = clazz.getMethod("getSuperTables", p1);
+            if (method != null)
+            {
+               Object[] p2 = new Object[]{catalog, schemaPattern, tableNamePattern};
+               try
+               {
+                  superTabResult = (ResultSet) method.invoke(md, p2);
+               }
+               catch (InvocationTargetException ignore)
+               {
+                  // unsupported by this driver.
+               }
+            }
+            // create a mapping of names if we have supertable info, since
+            // we need to find the ITableInfo again for re-ordering.
+            if (superTabResult != null && superTabResult.next())
+            {
+               nameMap = new HashMap();
+            }
+         }
+         catch (Throwable th)
+         {
+            s_log.debug("DBMS/Driver doesn't support getSupertables()", th);
+         }
 
-			// store all plain table info we have.
-			tabResult = md.getTables(catalog, schemaPattern, tableNamePattern, types);
+         // store all plain table info we have.
+         tabResult = md.getTables(catalog, schemaPattern, tableNamePattern, types);
          int count = 0;
          while (tabResult != null && tabResult.next())
-			{
-				ITableInfo tabInfo = new TableInfo(tabResult.getString(1),
-									tabResult.getString(2), tabResult.getString(3),
-									tabResult.getString(4), tabResult.getString(5),
-									this);
-				if (nameMap != null)
-				{
-					nameMap.put(tabInfo.getSimpleName(), tabInfo);
-				}
-				list.add(tabInfo);
-
-            if(null != progressCallBack)
+         {
+            ITableInfo tabInfo = new TableInfo(tabResult.getString(1),
+               tabResult.getString(2), tabResult.getString(3),
+               tabResult.getString(4), tabResult.getString(5),
+               this);
+            if (nameMap != null)
             {
-               if(0 == count++ % 100 )
+               nameMap.put(tabInfo.getSimpleName(), tabInfo);
+            }
+            list.add(tabInfo);
+
+            if (null != progressCallBack)
+            {
+               if (0 == count++ % 100)
                {
                   progressCallBack.currentlyLoading(tabInfo.getSimpleName());
                }
             }
          }
 
-			// re-order nodes if the tables are stored hierachically
-			if (nameMap != null)
-			{
-				do
-				{
-					String tabName = superTabResult.getString(3);
-					TableInfo tabInfo = (TableInfo) nameMap.get(tabName);
-					if (tabInfo == null)
-						continue;
-					String superTabName = superTabResult.getString(4);
-					if (superTabName == null)
-						continue;
-					TableInfo superInfo = (TableInfo) nameMap.get(superTabName);
-					if (superInfo == null)
-						continue;
-					superInfo.addChild(tabInfo);
-					list.remove(tabInfo); // remove from toplevel.
+         // re-order nodes if the tables are stored hierachically
+         if (nameMap != null)
+         {
+            do
+            {
+               String tabName = superTabResult.getString(3);
+               TableInfo tabInfo = (TableInfo) nameMap.get(tabName);
+               if (tabInfo == null)
+                  continue;
+               String superTabName = superTabResult.getString(4);
+               if (superTabName == null)
+                  continue;
+               TableInfo superInfo = (TableInfo) nameMap.get(superTabName);
+               if (superInfo == null)
+                  continue;
+               superInfo.addChild(tabInfo);
+               list.remove(tabInfo); // remove from toplevel.
 
-               if(null != progressCallBack)
+               if (null != progressCallBack)
                {
-                  if(0 == count++ % 20 )
+                  if (0 == count++ % 20)
                   {
                      progressCallBack.currentlyLoading(tabInfo.getSimpleName());
                   }
                }
             }
-				while (superTabResult.next());
-			}
-		}
-		finally
-		{
+            while (superTabResult.next());
+         }
+      }
+      finally
+      {
          close(tabResult);
          close(superTabResult);
       }
 
-		return (ITableInfo[])list.toArray(new ITableInfo[list.size()]);
-	}
+      return (ITableInfo[]) list.toArray(new ITableInfo[list.size()]);
+   }
 
-    /**
+   /**
      * Retrieve information about the UDTs in the system.
      *
      * @param   catalog     The name of the catalog to retrieve UDTs

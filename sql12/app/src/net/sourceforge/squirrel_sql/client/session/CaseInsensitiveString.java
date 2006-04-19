@@ -9,7 +9,7 @@ package net.sourceforge.squirrel_sql.client.session;
  * the usage of this class leads to better performance and
  * memory finger print.
  */
-public class CaseInsensitiveString
+public class CaseInsensitiveString implements Comparable
 {
 	private char[] value = new char[0];
 	private int offset = 0;
@@ -153,4 +153,48 @@ public class CaseInsensitiveString
 	{
 		return new String(value, offset, count);
 	}
+
+   public int compareTo(Object o)
+   {
+//      return this.toString().toLowerCase().compareTo(o.toString().toLowerCase());
+
+      CaseInsensitiveString anotherString = (CaseInsensitiveString) o;
+
+      int len1 = count;
+      int len2 = anotherString.count;
+      int n = Math.min(len1, len2);
+      char v1[] = value;
+      char v2[] = anotherString.value;
+      int i = offset;
+      int j = anotherString.offset;
+
+      if (i == j)
+      {
+         int k = i;
+         int lim = n + i;
+         while (k < lim)
+         {
+            char c1 = v1[k];
+            char c2 = v2[k];
+            if (Character.toLowerCase(c1) != Character.toLowerCase(c2))
+            {
+               return Character.toLowerCase(c1) - Character.toLowerCase(c2);
+            }
+            k++;
+         }
+      }
+      else
+      {
+         while (n-- != 0)
+         {
+            char c1 = v1[i++];
+            char c2 = v2[j++];
+            if (Character.toLowerCase(c1) != Character.toLowerCase(c2))
+            {
+               return Character.toLowerCase(c1) - Character.toLowerCase(c2);
+            }
+         }
+      }
+      return len1 - len2;
+   }
 }

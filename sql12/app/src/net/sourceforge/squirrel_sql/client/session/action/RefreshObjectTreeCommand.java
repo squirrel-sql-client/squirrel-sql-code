@@ -54,6 +54,6 @@ public class RefreshObjectTreeCommand implements ICommand
 	 */
 	public void execute()
 	{
-		_tree.refreshTree();
+		_tree.refreshTree(true);
 	}
 }

@@ -52,7 +52,15 @@ public class DatabaseObjectType implements IHasIdentifier
 	/** Database. */
 	public final static DatabaseObjectType SESSION = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.database"));
 
-	/** Standard datatype. */
+
+   /**
+    * Datbase object type for a "Database" node in the object tree.  There is onle one
+    * node of this type in the object tree and it indicates the alias of the database.
+    */
+   public final static DatabaseObjectType DATABASE_TYPE_DBO = DatabaseObjectType.createNewDatabaseObjectType("Database Type");
+
+
+   /** Standard datatype. */
 	public final static DatabaseObjectType DATATYPE = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.datatype"));
 
     /** Unique Key for a table. */
@@ -70,7 +78,15 @@ public class DatabaseObjectType implements IHasIdentifier
 	/** Stored procedure. */
 	public final static DatabaseObjectType PROCEDURE = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.storproc"));
 
-	/** Schema. */
+   /**
+    * Database object type for a "Procedure Type" node in the object tree. There is
+    * only one node of this type in the object tree and it says "PROCEDURE".
+    */
+   public final static DatabaseObjectType PROC_TYPE_DBO = DatabaseObjectType.createNewDatabaseObjectType("Stored Procedure Type");
+
+
+
+   /** Schema. */
 	public final static DatabaseObjectType SCHEMA = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.schema"));
 
 	/**
@@ -82,7 +98,15 @@ public class DatabaseObjectType implements IHasIdentifier
 	/** TABLE. */
 	public final static DatabaseObjectType TABLE = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.table"));
 
-   public static final DatabaseObjectType VIEW = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.view"));;
+   /**
+    * Database object type for a "Table Type" node in the object tree. Some examples
+    * are "TABLE", "SYSTEM TABLE", "VIEW" etc.
+    */
+   public final static DatabaseObjectType TABLE_TYPE_DBO = DatabaseObjectType.createNewDatabaseObjectType("Table Type");
+
+
+
+   public static final DatabaseObjectType VIEW = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.view"));
 
 	/** Trigger. */
 	public final static DatabaseObjectType TRIGGER = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.catalog"));
@@ -90,7 +114,16 @@ public class DatabaseObjectType implements IHasIdentifier
 	/** User defined type. */
 	public final static DatabaseObjectType UDT = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.udt"));
 
-	/** A database user. */
+   /**
+    * Database object type for a "UDT Type" node in the object tree. There is only one
+    * node of this type in the object tree and it says "UDT".
+    */
+   public final static DatabaseObjectType UDT_TYPE_DBO = DatabaseObjectType.createNewDatabaseObjectType("UDT Type");
+
+
+
+
+   /** A database user. */
 	public final static DatabaseObjectType USER = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.user"));
 
 	/** Uniquely identifies this Object. */

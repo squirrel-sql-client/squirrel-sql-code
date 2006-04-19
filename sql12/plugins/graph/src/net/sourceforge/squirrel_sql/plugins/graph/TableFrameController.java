@@ -576,14 +576,7 @@ public class TableFrameController
 
    ITableInfo getTableInfo()
    {
-      try
-      {
-         return _session.getSQLConnection().getSQLMetaData().getTables(_catalog, _schema, _tableName, new String[]{"TABLE"})[0];
-      }
-      catch (SQLException e)
-      {
-         throw new RuntimeException(e);
-      }
+      return _session.getSchemaInfo().getITableInfos(_catalog, _schema, _tableName, new String[]{"TABLE"})[0];
    }
 
 

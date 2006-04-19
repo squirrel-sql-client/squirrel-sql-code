@@ -244,10 +244,10 @@ public class OraclePlugin extends DefaultSessionPlugin
      */
     public INodeExpander getDefaultNodeExpander(ISession session, DatabaseObjectType type) {
       boolean isOracle = isOracle(session);
-      if ((type == IObjectTreeAPI.PROC_TYPE_DBO) && isOracle) {
+      if ((type == DatabaseObjectType.PROC_TYPE_DBO) && isOracle) {
           return new ProcedureExpander();
       }
-      if (type == IObjectTreeAPI.DATABASE_TYPE_DBO && isOracle) {
+      if (type == DatabaseObjectType.DATABASE_TYPE_DBO && isOracle) {
           return new DefaultDatabaseExpander(session); 
       }
       return null;

@@ -104,25 +104,25 @@ public class ObjectTreeModel extends DefaultTreeModel
                         for (Iterator pluginItr = pmgr.getSessionPluginIterator(); pluginItr.hasNext();)
                         {
                             ISessionPlugin p = ((SessionPluginInfo)pluginItr.next()).getSessionPlugin();
-                            INodeExpander tableExp = p.getDefaultNodeExpander(session, IObjectTreeAPI.TABLE_TYPE_DBO);
+                            INodeExpander tableExp = p.getDefaultNodeExpander(session, DatabaseObjectType.TABLE_TYPE_DBO);
                             if (tableExp != null)
                             {
                                 foundTableExp = true;
-                                addExpander(IObjectTreeAPI.TABLE_TYPE_DBO, tableExp);
+                                addExpander(DatabaseObjectType.TABLE_TYPE_DBO, tableExp);
                             }
-                            INodeExpander procExp = p.getDefaultNodeExpander(session, IObjectTreeAPI.PROC_TYPE_DBO);
+                            INodeExpander procExp = p.getDefaultNodeExpander(session, DatabaseObjectType.PROC_TYPE_DBO);
                             if (procExp != null)
                             {
                                 foundProcExp = true;
-                                addExpander(IObjectTreeAPI.PROC_TYPE_DBO, procExp);
+                                addExpander(DatabaseObjectType.PROC_TYPE_DBO, procExp);
                             }
-                            INodeExpander udtExp = p.getDefaultNodeExpander(session, IObjectTreeAPI.UDT_TYPE_DBO);
+                            INodeExpander udtExp = p.getDefaultNodeExpander(session, DatabaseObjectType.UDT_TYPE_DBO);
                             if (udtExp != null)
                             {
                                 foundUDTExp = true;
-                                addExpander(IObjectTreeAPI.UDT_TYPE_DBO, udtExp);
+                                addExpander(DatabaseObjectType.UDT_TYPE_DBO, udtExp);
                             }
-                            INodeExpander databaseExp = p.getDefaultNodeExpander(session, IObjectTreeAPI.DATABASE_TYPE_DBO);
+                            INodeExpander databaseExp = p.getDefaultNodeExpander(session, DatabaseObjectType.DATABASE_TYPE_DBO);
                             if (databaseExp != null) {
                                 foundDatabaseExp = true;
                                 addExpander(DatabaseObjectType.SESSION, databaseExp);
@@ -131,15 +131,15 @@ public class ObjectTreeModel extends DefaultTreeModel
 
                         if (!foundTableExp) 
                         {
-                            addExpander(IObjectTreeAPI.TABLE_TYPE_DBO, new TableTypeExpander());
+                            addExpander(DatabaseObjectType.TABLE_TYPE_DBO, new TableTypeExpander());
                         }
                         if (!foundProcExp)
                         {
-                            addExpander(IObjectTreeAPI.PROC_TYPE_DBO, new ProcedureTypeExpander());
+                            addExpander(DatabaseObjectType.PROC_TYPE_DBO, new ProcedureTypeExpander());
                         }
                         if (!foundUDTExp)
                         {
-                            addExpander(IObjectTreeAPI.UDT_TYPE_DBO, new UDTTypeExpander());
+                            addExpander(DatabaseObjectType.UDT_TYPE_DBO, new UDTTypeExpander());
                         }
                         if (!foundDatabaseExp) 
                         {

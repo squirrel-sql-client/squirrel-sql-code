@@ -588,61 +588,57 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
    public TableInfo getTableName(String tableNameFromSQL)
    {
 
-      try
+      final SQLConnection conn = _session.getSQLConnection();
+      //final SQLDatabaseMetaData md = conn.getSQLMetaData();
+      //final ITableInfo[] tables = md.getTables(null, null, "%", null);
+
+      ITableInfo[] tables = _session.getSchemaInfo().getITableInfos();
+
+      // filter the list of all DB objects looking for things with the given name
+      for (int i = 0; i < tables.length; ++i)
       {
-         final SQLConnection conn = _session.getSQLConnection();
-         final SQLDatabaseMetaData md = conn.getSQLMetaData();
-         //final ITableInfo[] tables = md.getTables(null, null, "%", null);
+         String simpleName = tables[i].getSimpleName().toUpperCase();
+         String nameWithSchema = simpleName;
+         String nameWithSchemaAndCatalog = simpleName;
 
-         ITableInfo[] tables = md.getAllTables();
-
-         // filter the list of all DB objects looking for things with the given name
-         for (int i = 0; i < tables.length; ++i)
+         if (null != tables[i].getSchemaName() && 0 < tables[i].getSchemaName().length())
          {
-            String simpleName = tables[i].getSimpleName().toUpperCase();
-            String nameWithSchema = simpleName;
-            String nameWithSchemaAndCatalog = simpleName;
-
-            if (null != tables[i].getSchemaName() && 0 < tables[i].getSchemaName().length())
-            {
-               nameWithSchema = tables[i].getSchemaName().toUpperCase() + "." + nameWithSchema;
-               nameWithSchemaAndCatalog = nameWithSchema;
-            }
-
-            if (null != tables[i].getCatalogName() && 0 < tables[i].getCatalogName().length())
-            {
-               nameWithSchemaAndCatalog = tables[i].getCatalogName().toUpperCase() + "." + nameWithSchema;
-            }
-
-            if (simpleName.equals(tableNameFromSQL)
-               || nameWithSchema.equals(tableNameFromSQL)
-               || nameWithSchemaAndCatalog.equals(tableNameFromSQL))
-            {
-               return (TableInfo) tables[i];
-            }
+            nameWithSchema = tables[i].getSchemaName().toUpperCase() + "." + nameWithSchema;
+            nameWithSchemaAndCatalog = nameWithSchema;
          }
-            // ok, that didn't work - let's see if the table looks fully qualified.
-            // if so, we'll split the name from the schema/catalog and try that.
-            String[] parts = tableNameFromSQL.split("\\.");
-            if (parts.length == 2) {
-                String catalog = parts[0];
-                String simpleName = parts[1];
-                tables = md.getTables(catalog, null, simpleName, null);
-                if (tables != null && tables.length > 0) {
-                    return (TableInfo) tables[0];
-                }
-                // Ok, maybe catalog was really a schema instead.
-                tables = md.getTables(null, catalog, simpleName, null);
-                if (tables != null && tables.length > 0) {
-                    return (TableInfo) tables[0];
-                }
-            }
-         return null;
+
+         if (null != tables[i].getCatalogName() && 0 < tables[i].getCatalogName().length())
+         {
+            nameWithSchemaAndCatalog = tables[i].getCatalogName().toUpperCase() + "." + nameWithSchema;
+         }
+
+         if (simpleName.equals(tableNameFromSQL)
+            || nameWithSchema.equals(tableNameFromSQL)
+            || nameWithSchemaAndCatalog.equals(tableNameFromSQL))
+         {
+            return (TableInfo) tables[i];
+         }
       }
-      catch (SQLException e)
+      // ok, that didn't work - let's see if the table looks fully qualified.
+      // if so, we'll split the name from the schema/catalog and try that.
+      String[] parts = tableNameFromSQL.split("\\.");
+      if (parts.length == 2)
       {
-         throw new RuntimeException(e);
+         String catalog = parts[0];
+         String simpleName = parts[1];
+         tables = _session.getSchemaInfo().getITableInfos(catalog, null, simpleName, null);
+         if (tables != null && tables.length > 0)
+         {
+            return (TableInfo) tables[0];
+         }
+         // Ok, maybe catalog was really a schema instead.
+         tables = _session.getSchemaInfo().getITableInfos(null, catalog, simpleName, null);
+         if (tables != null && tables.length > 0)
+         {
+            return (TableInfo) tables[0];
+         }
       }
+      return null;
 
    }
 

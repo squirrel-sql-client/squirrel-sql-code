@@ -66,15 +66,9 @@ public class PackageExpander implements INodeExpander
 		final List childNodes = new ArrayList();
 		IProcedureInfo[] procs = null;
 		final String objFilter = session.getProperties().getObjectFilter();
-		try
-		{
-			procs = md.getProcedures(catalogName, schemaName, objFilter != null && objFilter.length() > 0 ? objFilter :"%");
-		}
-		catch (SQLException ignore)
-		{
-			// Assume DBMS doesn't support procedures.
-			procs = new IProcedureInfo[0];
-		}
+      //procs = md.getProcedures(catalogName, schemaName, objFilter != null && objFilter.length() > 0 ? objFilter :"%");
+      String procNamePattern = objFilter != null && objFilter.length() > 0 ? objFilter : "%";
+      procs = session.getSchemaInfo().getStoredProceduresInfos(catalogName, schemaName, procNamePattern);
 		for (int i = 0; i < procs.length; ++i)
 		{
 			childNodes.add(new ObjectTreeNode(session, procs[i]));

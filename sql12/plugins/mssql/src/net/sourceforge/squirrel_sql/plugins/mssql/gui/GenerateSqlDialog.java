@@ -417,17 +417,18 @@ public class GenerateSqlDialog extends JDialog {
             int i;
 
             /* add the tables. */
-            ITableInfo[] tables = metaData.getTables(catalog,null,null,new String[] { "TABLE" });
+            ITableInfo[] tables = _session.getSchemaInfo().getITableInfos(catalog,null,null,new String[] { "TABLE" });
             for (i = 0; i < tables.length; i++)
                 model.addElement(tables[i]);
             
             /* add the views. */
-            ITableInfo[] views = metaData.getTables(catalog,null,null,new String[] { "VIEW" });
+            ITableInfo[] views = _session.getSchemaInfo().getITableInfos(catalog,null,null,new String[] { "VIEW" });
             for (i = 0; i < views.length; i++)
                 model.addElement(views[i]);
             
             /* add the procedures. */
-            IProcedureInfo[] procs = metaData.getProcedures(catalog,null,null);
+            //IProcedureInfo[] procs = metaData.getProcedures(catalog,null,null);
+            IProcedureInfo[] procs = _session.getSchemaInfo().getStoredProceduresInfos(catalog,null,null);
             for (i = 0; i < procs.length; i++)
                 if (!procs[i].getSimpleName().startsWith("dt_"))
                     model.addElement(procs[i]);
