@@ -22,7 +22,7 @@ public class SchemaInfoUpdateCheck
 {
    private static final Pattern PATTERN_CREATE_TABLE = Pattern.compile("CREATE\\s+TABLE\\s+([A-Z0-9_\\.\"]+)");
    private static final Pattern PATTERN_ALTER_TABLE = Pattern.compile("ALTER\\s+TABLE\\s+([A-Z0-9_\\.\"]+)");
-   private static final Pattern PATTERN_INSERT_INTO = Pattern.compile("INSERT\\s+INTO\\s+([A-Z0-9_\\.\"]+)");
+   private static final Pattern PATTERN_INSERT_INTO = Pattern.compile("SELECT\\s+INTO\\s+([A-Z0-9_\\.\"]+)");
 
    private static final Pattern PATTERN_CREATE_VIEW = Pattern.compile("CREATE\\s+VIEW\\s+([A-Z0-9_\\.\"]+)");
    private static final Pattern PATTERN_ALTER_VIEW = Pattern.compile("ALTER\\s+VIEW\\s+([A-Z0-9_\\.\"]+)");
@@ -136,7 +136,7 @@ public class SchemaInfoUpdateCheck
 
    void flush()
    {
-      if(30 < _updateDatabaseObjectInfos.size() + _dropTableSimpleNames.size() + _dropProcedureSimpleNames.size())
+      if(60 < _updateDatabaseObjectInfos.size() + _dropTableSimpleNames.size() + _dropProcedureSimpleNames.size())
       {
          // reload complete SchemaInfo
          SQLDatabaseMetaData dmd = _session.getSQLConnection().getSQLMetaData();
@@ -185,13 +185,18 @@ public class SchemaInfoUpdateCheck
 
       if (activeSessionWindow instanceof SQLInternalFrame)
       {
-         ((SQLInternalFrame) activeSessionWindow).getSQLPanelAPI().getSQLEntryPanel().getTextComponent().repaint();
+         ISQLEntryPanel sqlEntryPanel = ((SQLInternalFrame) activeSessionWindow).getSQLPanelAPI().getSQLEntryPanel();
+         sqlEntryPanel.getTextComponent().repaint();
+         _session.getParserEventsProcessor(sqlEntryPanel.getIdentifier()).triggerParser();
       }
 
       if (activeSessionWindow instanceof SessionInternalFrame)
       {
-         ((SessionInternalFrame) activeSessionWindow).getSQLPanelAPI().getSQLEntryPanel().getTextComponent().repaint();
+         ISQLEntryPanel sqlEntryPanel = ((SessionInternalFrame) activeSessionWindow).getSQLPanelAPI().getSQLEntryPanel();
+         sqlEntryPanel.getTextComponent().repaint();
+         _session.getParserEventsProcessor(sqlEntryPanel.getIdentifier()).triggerParser();
       }
+
    }
 
 
@@ -251,13 +256,15 @@ public class SchemaInfoUpdateCheck
       }
       else
       {
-         // For example DB2 stores all table names in upper case.
-         // That's why we may not find table as it was written in the create statement.
-         // So we try out the upper case name to.
+         // DB2 stores all names in upper case.
+         // PostgreSQL stores all names in lower case.
+         // That's why we may not find proc as it was written in the create statement.
+         // So we try out the upper and lower case names too.
          return new ProcedureInfo[]
             {
                new ProcedureInfo(null, null, simpleName, null, DatabaseMetaData.procedureResultUnknown, _dmd),
-               new ProcedureInfo(null, null, simpleName.toUpperCase(), null, DatabaseMetaData.procedureResultUnknown, _dmd)
+               new ProcedureInfo(null, null, simpleName.toUpperCase(), null, DatabaseMetaData.procedureResultUnknown, _dmd),
+               new ProcedureInfo(null, null, simpleName.toLowerCase(), null, DatabaseMetaData.procedureResultUnknown, _dmd)
             };
       }
    }
@@ -340,13 +347,15 @@ public class SchemaInfoUpdateCheck
       }
       else
       {
-         // For example DB2 stores all table names in upper case.
+         // DB2 stores all names in upper case.
+         // PostgreSQL stores table names in lower case.
          // That's why we may not find table as it was written in the create statement.
-         // So we try out the upper case name to.
+         // So we try out the upper and lower case names too.
          return new TableInfo[]
             {
                new TableInfo(null, null, simpleName, type, null, _dmd),
-               new TableInfo(null, null, simpleName.toUpperCase(), type, null, _dmd)
+               new TableInfo(null, null, simpleName.toUpperCase(), type, null, _dmd),
+               new TableInfo(null, null, simpleName.toLowerCase(), type, null, _dmd)
             };
       }
    }
