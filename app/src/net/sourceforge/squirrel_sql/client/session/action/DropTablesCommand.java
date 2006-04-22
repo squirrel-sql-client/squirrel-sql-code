@@ -39,7 +39,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
- * @version 	$Id: DropTablesCommand.java,v 1.8 2006-01-13 16:21:53 manningr Exp $
+ * @version 	$Id: DropTablesCommand.java,v 1.9 2006-04-22 15:27:04 gerdwagner Exp $
  * @author		Johan Compagner
  */
 public class DropTablesCommand implements ICommand
@@ -115,7 +115,7 @@ public class DropTablesCommand implements ICommand
                 dropSql.append(" CASCADE ");
             }
             DropTableResult dtr = new DropTableResult(ti, dropSql.toString());
-            resultMap.put(dropSql.toString(), dtr);
+            resultMap.put(dropSql.toString().trim(), dtr);
             buf.append(dropSql).append(sqlSep).append(" ").append('\n');
 		}
 
@@ -224,7 +224,7 @@ public class DropTablesCommand implements ICommand
             }
             
             // record the result of the drop sql statement in resultMap
-            DropTableResult dtr = (DropTableResult)resultMap.get(sql);
+            DropTableResult dtr = (DropTableResult)resultMap.get(sql.trim());
             if (dtr != null) {
                 dtr.setResult(true);
             } else {

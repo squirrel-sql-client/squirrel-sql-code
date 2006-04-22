@@ -83,6 +83,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
    private int _currentQueryIndex = 0;
    private ISQLExecutionListener[] _executionListeners;
    private DataSetUpdateableTableModelImpl _dataSetUpdateableTableModel;
+   private SchemaInfoUpdateCheck _schemaInfoUpdateCheck;
 
    public SQLExecuterTask(ISession session, String sql,ISQLExecuterHandler handler)
    {
@@ -92,6 +93,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
    public SQLExecuterTask(ISession session, String sql, ISQLExecuterHandler handler, ISQLExecutionListener[] executionListeners)
    {
       _session = session;
+      _schemaInfoUpdateCheck = new SchemaInfoUpdateCheck(_session);
       _sql = sql;
       _handler = handler;
       if (_handler == null) {
@@ -294,6 +296,15 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
          {
             _handler.sqlCloseExecutionHandler();
          }
+
+         try
+         {
+            _schemaInfoUpdateCheck.flush();
+         }
+         catch (Throwable t)
+         {
+            s_log.error("Could not update cache ", t);
+         }
       }
    }
 
@@ -412,7 +423,6 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 
       EditableSqlCheck edittableCheck = new EditableSqlCheck(exInfo);
 
-
       if (edittableCheck.allowsEditing())
       {
          TableInfo ti = getTableName(edittableCheck.getTableNameFromSQL());
@@ -423,6 +433,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
          _dataSetUpdateableTableModel.setTableInfo(null);
       }
 
+      _schemaInfoUpdateCheck.addExecutionInfo(exInfo);
 
       return true;
    }
@@ -626,13 +637,13 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
       {
          String catalog = parts[0];
          String simpleName = parts[1];
-         tables = _session.getSchemaInfo().getITableInfos(catalog, null, simpleName, null);
+         tables = _session.getSchemaInfo().getITableInfos(catalog, null, simpleName);
          if (tables != null && tables.length > 0)
          {
             return (TableInfo) tables[0];
          }
          // Ok, maybe catalog was really a schema instead.
-         tables = _session.getSchemaInfo().getITableInfos(null, catalog, simpleName, null);
+         tables = _session.getSchemaInfo().getITableInfos(null, catalog, simpleName);
          if (tables != null && tables.length > 0)
          {
             return (TableInfo) tables[0];
