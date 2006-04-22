@@ -20,6 +20,6 @@ package net.sourceforge.squirrel_sql.fw.sql;
 public interface IProcedureInfo extends IDatabaseObjectInfo
 {
 	String getRemarks();
-	int getType();
-	String getTypeDescription();
+	int getProcedureType();
+	String getProcedureTypeDescription();
 }

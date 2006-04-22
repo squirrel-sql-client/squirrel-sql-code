@@ -6,6 +6,12 @@ Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
 
+Syntax coloring and code completion for newly created tables, views, columns, procedures is available
+right after a DDL statement was run. This works as long as standard DDL statements are used.
+
+Fixed Bug #1465707: Programm slow with big Databases because reading Database Meta Data twice.
+                    Technical detail: The SchemaInfo class has become SQuirreL's central meta data cache. 
+
 Fixed Bug: SQuirreL crashed during building output of SQL results when errors occured in number-type or date-type fields.
 
 Fixed Bug in Graph Plugin: In zoomed graphs lines with folding points could not be selected.

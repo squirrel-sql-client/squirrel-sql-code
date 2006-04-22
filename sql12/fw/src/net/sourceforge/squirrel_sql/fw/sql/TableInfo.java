@@ -35,16 +35,32 @@ public class TableInfo extends DatabaseObjectInfo implements ITableInfo
 					 String tableType, String remarks,
 					 SQLDatabaseMetaData md)
 	{
-		super(catalog, schema, simpleName, tableType.equalsIgnoreCase("VIEW") ? DatabaseObjectType.VIEW : DatabaseObjectType.TABLE, md);
+		super(catalog, schema, simpleName, getTableType(tableType), md);
 		_remarks = remarks;
 		_tableType = tableType;
 	}
 
-	// TODO: Rename this to getTableType.
-	public String getType()
-	{
-		return _tableType;
-	}
+   private static DatabaseObjectType getTableType(String tableType)
+   {
+      if(null == tableType)
+      {
+         return DatabaseObjectType.TABLE_TYPE_DBO;
+      }
+      else if(false == tableType.equalsIgnoreCase("TABLE") && false == tableType.equalsIgnoreCase("VIEW"))
+      {
+         return DatabaseObjectType.TABLE_TYPE_DBO;
+      }
+      else
+      {
+         return tableType.equalsIgnoreCase("VIEW") ? DatabaseObjectType.VIEW : DatabaseObjectType.TABLE;
+      }
+   }
+
+   // TODO: Rename this to getTableType.
+   public String getType()
+   {
+      return _tableType;
+   }
 
 	public String getRemarks()
 	{

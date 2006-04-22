@@ -43,7 +43,7 @@ public class ProcedureInfo extends DatabaseObjectInfo implements IProcedureInfo
 	/** Procedure remarks. */
 	private final String _remarks;
 
-	ProcedureInfo(String catalog, String schema, String simpleName,
+	public ProcedureInfo(String catalog, String schema, String simpleName,
 							String remarks, int procType,
 							SQLDatabaseMetaData md)
 	{
@@ -52,8 +52,7 @@ public class ProcedureInfo extends DatabaseObjectInfo implements IProcedureInfo
 		_procType = procType;
 	}
 
-//TODO: Rename to getProcedureType().
-	public int getType()
+	public int getProcedureType()
 	{
 		return _procType;
 	}
@@ -63,8 +62,7 @@ public class ProcedureInfo extends DatabaseObjectInfo implements IProcedureInfo
 		return _remarks;
 	}
 
-//TODO: Rename to getProcedureTypeDescription().
-	public String getTypeDescription()
+	public String getProcedureTypeDescription()
 	{
 		switch (_procType)
 		{

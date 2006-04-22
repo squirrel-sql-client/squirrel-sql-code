@@ -70,46 +70,40 @@ public class CellDataPopup
 	private void createAndShowDialog(JTable table, MouseEvent evt,
 		ColumnDisplayDefinition colDef, boolean isModelEditable)
 	{
-		Point pt = evt.getPoint();
-		int row = table.rowAtPoint(pt);
-		int col = table.columnAtPoint(pt);
+      Point pt = evt.getPoint();
+      int row = table.rowAtPoint(pt);
+      int col = table.columnAtPoint(pt);
 
-		Object obj = table.getValueAt(row, col);
+      Object obj = table.getValueAt(row, col);
 
-		// since user is now using popup, stop editing
-		// using the in-cell editor, if any
-		CellEditor editor = table.getCellEditor(row, col);
-		if (editor != null)
-			editor.cancelCellEditing();
+      // since user is now using popup, stop editing
+      // using the in-cell editor, if any
+      CellEditor editor = table.getCellEditor(row, col);
+      if (editor != null)
+         editor.cancelCellEditing();
 
-		Component comp = SwingUtilities.getRoot(table);
-        Component newComp = null;
-        
-        // We don't care to popup a dialog for data in the About dialog table.
-        // This data is read only.
-        //
-        // TODO: Should not create a reverse dependency on app module where 
-        // AboutBoxDialog lives.  Find a more generic - yet safe - way to tell 
-        // that the component isn't a IMainFrame to avoid the ClassCastException 
-        // below. RMM
-        //
-        //if (comp instanceof AboutBoxDialog) {
-        //    return;
-        //}
+      Component comp = SwingUtilities.getRoot(table);
+      Component newComp = null;
 
-		// The following only works if SwingUtilities.getRoot(table) returns
-		// and instanceof BaseMDIParentFrame.
-		// If SwingTUilities.getRoot(table) returns and instance of Dialog or
-		// Frame, then other code must be used.
-		TextAreaInternalFrame taif =
-			new TextAreaInternalFrame(table.getColumnName(col), colDef, obj,
-				row, col, isModelEditable, table);
-        ((IMainFrame)comp).addInternalFrame(taif, false);
-		taif.setLayer(JLayeredPane.POPUP_LAYER);
-		taif.pack();
-		newComp = taif;
+      if (false == comp instanceof IMainFrame)
+      {
+         // Fixes ClassCastException, see below.
+         return;
+      }
 
-		Dimension dim = newComp.getSize();
+      // The following only works if SwingUtilities.getRoot(table) returns
+      // and instanceof BaseMDIParentFrame.
+      // If SwingTUilities.getRoot(table) returns and instance of Dialog or
+      // Frame, then other code must be used.
+      TextAreaInternalFrame taif =
+         new TextAreaInternalFrame(table.getColumnName(col), colDef, obj,
+            row, col, isModelEditable, table);
+      ((IMainFrame) comp).addInternalFrame(taif, false);
+      taif.setLayer(JLayeredPane.POPUP_LAYER);
+      taif.pack();
+      newComp = taif;
+
+      Dimension dim = newComp.getSize();
 		boolean dimChanged = false;
 		if (dim.width < 300)
 		{

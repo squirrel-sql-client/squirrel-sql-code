@@ -18,6 +18,7 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SchemaInfoUpdateListener;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -51,7 +52,15 @@ public class CodeCompletionInfoCollection
 	{
 		_session = session;
 		_plugin = plugin;
-	}
+
+      _session.getSchemaInfo().addSchemaInfoUpdateListener(new SchemaInfoUpdateListener()
+      {
+         public void schemaInfoUpdated()
+         {
+            _completionInfosByCataLogAndSchema = new Hashtable();
+         }
+      });
+   }
 
 	private void load(String catalog, String schema, boolean showLoadingMessage)
 	{
@@ -101,7 +110,7 @@ public class CodeCompletionInfoCollection
          {
             CodeCompletionStoredProcedureInfo buf =
                new CodeCompletionStoredProcedureInfo(storedProceduresInfos[i].getSimpleName(), 
-                                                     storedProceduresInfos[i].getType(),
+                                                     storedProceduresInfos[i].getProcedureType(),
                                                      _session,
 						                                   _plugin,
 																	  catalog,
