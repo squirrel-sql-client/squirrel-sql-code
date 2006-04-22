@@ -44,11 +44,11 @@ public class TableInfo extends DatabaseObjectInfo implements ITableInfo
    {
       if(null == tableType)
       {
-         return DatabaseObjectType.TABLE_TYPE_DBO;
+         return DatabaseObjectType.TABLE;
       }
       else if(false == tableType.equalsIgnoreCase("TABLE") && false == tableType.equalsIgnoreCase("VIEW"))
       {
-         return DatabaseObjectType.TABLE_TYPE_DBO;
+         return DatabaseObjectType.TABLE;
       }
       else
       {

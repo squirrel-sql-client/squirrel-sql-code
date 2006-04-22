@@ -192,7 +192,7 @@ public class SchemaInfo
 
          progress = loadSchemas(progress);
 
-         String[] tableTypesToPreload = getTableTypesToPreload();
+         String[] tableTypesToPreload = getTableTypesToCache();
          progress = loadTables(null, null, null, tableTypesToPreload, progress);
 
 
@@ -213,7 +213,7 @@ public class SchemaInfo
       s_log.debug("SchemaInfo.load took " + (mfinish - mstart) + " ms");
    }
 
-   private String[] getTableTypesToPreload()
+   private String[] getTableTypesToCache()
    {
       String typeTable = "TABLE";
       String typeView = "VIEW";
@@ -229,23 +229,21 @@ public class SchemaInfo
 
       if(containsType(availableTableTypes, typeTable))
       {
-         _schemaInfoCache.loadedTableTypes.put(typeTable, typeTable);
+         _schemaInfoCache.cachedTableTypes.put(typeTable, typeTable);
       }
 
       if (containsType(availableTableTypes, typeView))
       {
-         _schemaInfoCache.loadedTableTypes.put(typeView, typeView);
+         _schemaInfoCache.cachedTableTypes.put(typeView, typeView);
       }
 
       String typeSystemTable = "SYSTEM TABLE";
       if (containsType(availableTableTypes, typeSystemTable))
       {
-         _schemaInfoCache.loadedTableTypes.put(typeSystemTable, typeSystemTable);
+         _schemaInfoCache.cachedTableTypes.put(typeSystemTable, typeSystemTable);
       }
 
-
-      String[] types = new String[]{"TABLE", "VIEW"};
-      return types;
+      return (String[]) _schemaInfoCache.cachedTableTypes.keySet().toArray(new String[0]);
    }
 
    private int loadStoredProcedures(String catalog, String schema, String procNamePattern, int progress)
@@ -915,15 +913,17 @@ public class SchemaInfo
 
    public ITableInfo[] getITableInfos(String catalog, String schema, String simpleName)
    {
-      String[] types = (String[]) _schemaInfoCache.loadedTableTypes.keySet().toArray(new String[0]);
+      String[] types = (String[]) _schemaInfoCache.cachedTableTypes.keySet().toArray(new String[0]);
       return getITableInfos(catalog, schema, simpleName, types);
    }
 
    public ITableInfo[] getITableInfos(String catalog, String schema, String tableNamePattern, String[] types)
    {
-      loadTablesForMissingTypes(types);
+      ITableInfo[] tableInfosForUncachedTypes = getTableInfosForUncachedTypes(catalog, schema, tableNamePattern, types);
 
       ArrayList ret = new ArrayList();
+
+      ret.addAll(Arrays.asList(tableInfosForUncachedTypes));
 
       for(Iterator i=_schemaInfoCache.iTableInfos.keySet().iterator(); i.hasNext();)
       {
@@ -964,30 +964,47 @@ public class SchemaInfo
       return (ITableInfo[]) ret.toArray(new ITableInfo[ret.size()]);
    }
 
-   private void loadTablesForMissingTypes(String[] types)
+   private ITableInfo[] getTableInfosForUncachedTypes(String catalog, String schema, String tableNamePattern, String[] types)
    {
-      String[] loadedTypes = (String[]) _schemaInfoCache.loadedTableTypes.keySet().toArray(new String[0]);
-      ArrayList missingTypes = new ArrayList();
-      for (int i = 0; i < types.length; i++)
+      try
       {
-         if(false == containsType(loadedTypes, types[i]))
+         ArrayList missingTypes = new ArrayList();
+         for (int i = 0; i < types.length; i++)
          {
-            missingTypes.add(types[i]);
-            _schemaInfoCache.loadedTableTypes.put(types[i], types[i]);
+            if(false == _schemaInfoCache.cachedTableTypes.containsKey(types[i]))
+            {
+               missingTypes.add(types[i]);
+            }
          }
+
+         if(0 < missingTypes.size())
+         {
+            try
+            {
+               String[] buf = (String[]) missingTypes.toArray(new String[missingTypes.size()]);
+               ProgressCallBack pcb = new ProgressCallBack()
+               {
+                  public void currentlyLoading(String simpleName)
+                  {
+                     String msg = s_stringMgr.getString("SchemaInfo.loadingTables");
+                     setProgress(msg + " (" + simpleName + ")", 1);
+                  }
+               };
+               return _dmd.getTables(catalog, schema, tableNamePattern, buf, pcb);
+            }
+            finally
+            {
+               _session.getSessionSheet().setStatusBarProgressFinished();
+            }
+         }
+
       }
-      if(0 < missingTypes.size())
+      catch (SQLException e)
       {
-         String[] buf = (String[]) missingTypes.toArray(new String[missingTypes.size()]);
-         try
-         {
-            loadTables(null, null, null, buf, 1);
-         }
-         finally
-         {
-            _session.getSessionSheet().setStatusBarProgressFinished();
-         }
+         s_log.error("Error loading uncached tables", e);
       }
+
+      return new ITableInfo[0];
    }
 
    private boolean containsType(String[] types, String type)
@@ -1259,7 +1276,7 @@ public class SchemaInfo
             ITableInfo ti = (ITableInfo) doi;
             DatabaseObjectType dot = ti.getDatabaseObjectType();
 
-            String[] types = (String[]) _schemaInfoCache.loadedTableTypes.keySet().toArray(new String[0]);
+            String[] types = (String[]) _schemaInfoCache.cachedTableTypes.keySet().toArray(new String[0]);
             if(DatabaseObjectType.TABLE == dot)
             {
                types = new String[]{"TABLE"};
@@ -1279,7 +1296,7 @@ public class SchemaInfo
          else if(DatabaseObjectType.TABLE_TYPE_DBO == doi.getDatabaseObjectType())
          {
             // load all table types with catalog = doi.getCatalog() and schema = doi.getSchema()
-            String[] types = (String[]) _schemaInfoCache.loadedTableTypes.keySet().toArray(new String[0]);
+            String[] types = (String[]) _schemaInfoCache.cachedTableTypes.keySet().toArray(new String[0]);
             loadTables(doi.getCatalogName(), doi.getSchemaName(), null, types, 0);
          }
          else if(DatabaseObjectType.TABLE == doi.getDatabaseObjectType())
@@ -1300,7 +1317,7 @@ public class SchemaInfo
          {
             int progress = loadSchemas(1);
             // load tables with catalog = null
-            String[] types = (String[]) _schemaInfoCache.loadedTableTypes.keySet().toArray(new String[0]);
+            String[] types = (String[]) _schemaInfoCache.cachedTableTypes.keySet().toArray(new String[0]);
             progress = loadTables(null, doi.getSchemaName(), null, types, progress);
 
             // load procedures with catalog = null
@@ -1310,7 +1327,7 @@ public class SchemaInfo
          {
             int progress = loadCatalogs(1);
             // load tables with schema = null
-            String[] types = (String[]) _schemaInfoCache.loadedTableTypes.keySet().toArray(new String[0]);
+            String[] types = (String[]) _schemaInfoCache.cachedTableTypes.keySet().toArray(new String[0]);
             progress = loadTables(doi.getCatalogName(), null, null, types, progress);
 
             // load procedures with schema = null
@@ -1441,7 +1458,7 @@ public class SchemaInfo
    {
       final List catalogs = new ArrayList();
       final List schemas = new ArrayList();
-      final HashMap loadedTableTypes = new HashMap();
+      final HashMap cachedTableTypes = new HashMap();
 
       final TreeMap keywords = new TreeMap();
       final TreeMap dataTypes = new TreeMap();
