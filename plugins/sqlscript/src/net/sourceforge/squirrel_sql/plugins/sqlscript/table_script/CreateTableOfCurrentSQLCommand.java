@@ -37,11 +37,13 @@ import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
 
 public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
 {
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(CreateTableOfCurrentSQLCommand.class);
+   private static final StringManager s_stringMgr =
+      StringManagerFactory.getStringManager(CreateTableOfCurrentSQLCommand.class);
 
 
    /**
@@ -82,92 +84,96 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
          public void run()
          {
 
-            SQLConnection conn = _session.getSQLConnection();
+            doCreateTableOfCurrentSQL(sTable, scriptOnly, dropTable);
+         }
+      });
+      showAbortFrame();
+   }
 
-            String selectSQL = FrameWorkAcessor.getSQLPanelAPI(_session, _plugin).getSQLScriptToBeExecuted();
+   private void doCreateTableOfCurrentSQL(String sTable, final boolean scriptOnly, boolean dropTable)
+   {
+      SQLConnection conn = _session.getSQLConnection();
 
-            final StringBuffer sbCreate = new StringBuffer();
-            try
+      String selectSQL = FrameWorkAcessor.getSQLPanelAPI(_session, _plugin).getSQLScriptToBeExecuted();
+
+      final StringBuffer sbCreate = new StringBuffer();
+      try
+      {
+         final Statement stmt = conn.createStatement();
+         try
+         {
+            ResultSet srcResult = stmt.executeQuery(selectSQL);
+
+            genCreate(srcResult, sTable, sbCreate);
+
+            StringBuffer sbInsert = new StringBuffer();
+            genInserts(srcResult, sTable, sbInsert, true);
+            sbInsert.append('\n').append(selectSQL);
+
+            if(false == scriptOnly)
             {
-               final Statement stmt = conn.createStatement();
                try
                {
-                  ResultSet srcResult = stmt.executeQuery(selectSQL);
-
-                  genCreate(srcResult, sTable, sbCreate);
-
-                  StringBuffer sbInsert = new StringBuffer();
-                  genInserts(srcResult, sTable, sbInsert, true);
-                  sbInsert.append('\n').append(selectSQL);
-
-                  if(false == scriptOnly)
+                  if(dropTable)
                   {
-                     try
-                     {
-                        if(dropTable)
-                        {
-                           try
-                           {
-                              stmt.execute("DROP TABLE " + sTable);
-                           }
-                           catch(Exception e)
-                           {
-
-										// i18n[sqlscript.dropTableFailed=Drop table {0} failed:]
-										_session.getMessageHandler().showMessage(s_stringMgr.getString("sqlscript.dropTableFailed", sTable));
-                              _session.getMessageHandler().showMessage(e);
-                           }
-                        }
-
-                        stmt.execute(sbCreate.toString());
-                        stmt.execute(sbInsert.toString());
-                        hideAbortFrame();
-								// i18n[sqlscript.successCreate=Successfully created table {0}]
-                        _session.getMessageHandler().showMessage(s_stringMgr.getString("sqlscript.successCreate", sTable));
-                        return;
-                     }
-                     catch(Exception e)
-                     {
-                        _session.getMessageHandler().showErrorMessage(e);
-
-								// i18n[sqlscript.storeSqlInTableFailed=An error occured during storing SQL result in table {0}. See messages for details.\nI will create the copy script. You may correct errors and run it again.]
-								String msg = s_stringMgr.getString("sqlscript.storeSqlInTableFailed", sTable);
-								JOptionPane.showMessageDialog(_session.getApplication().getMainFrame(), msg);
-                     }
-
+                     String sql = "DROP TABLE " + sTable;
+                     SQLExecuterTask executer = new SQLExecuterTask(_session, sql, new DefaultSQLExecuterHandler(_session));
+                     executer.run();
                   }
 
                   String statSep = ScriptUtil.getStatementSeparator(_session);
                   sbCreate.append(statSep).append(sbInsert).append(statSep);
+
+
+                  SQLExecuterTask executer = new SQLExecuterTask(_session, sbCreate.toString(), new DefaultSQLExecuterHandler(_session));
+                  executer.run();
+
+                  // i18n[sqlscript.successCreate=Successfully created table {0}]
+                  _session.getMessageHandler().showMessage(s_stringMgr.getString("sqlscript.successCreate", sTable));
+                  return;
                }
-               finally
+               catch(Exception e)
                {
-                  try
-                  {
-                     stmt.close();
-                  }
-                  catch (Exception e)
-                  {
-                  }
+                  _session.getMessageHandler().showErrorMessage(e);
+
+                  // i18n[sqlscript.storeSqlInTableFailed=An error occured during storing SQL result in table {0}. See messages for details.\nI will create the copy script. You may correct errors and run it again.]
+                  String msg = s_stringMgr.getString("sqlscript.storeSqlInTableFailed", sTable);
+                  JOptionPane.showMessageDialog(_session.getApplication().getMainFrame(), msg);
                }
+
+            }
+         }
+         finally
+         {
+            try
+            {
+               stmt.close();
             }
             catch (Exception e)
             {
-               _session.getMessageHandler().showErrorMessage(e);
-               e.printStackTrace();
             }
-            SwingUtilities.invokeLater(new Runnable()
+         }
+      }
+      catch (Exception e)
+      {
+         _session.getMessageHandler().showErrorMessage(e);
+         e.printStackTrace();
+      }
+      finally
+      {
+         SwingUtilities.invokeLater(new Runnable()
+         {
+            public void run()
             {
-               public void run()
+               hideAbortFrame();
+               if(scriptOnly)
                {
                   FrameWorkAcessor.getSQLPanelAPI(_session, _plugin).appendSQLScript(sbCreate.toString(), true);
                   _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
-                  hideAbortFrame();
                }
-            });
-         }
-      });
-      showAbortFrame();
+            }
+         });
+      }
    }
 
    private void genCreate(ResultSet srcResult, String sTable, StringBuffer sbCreate)
