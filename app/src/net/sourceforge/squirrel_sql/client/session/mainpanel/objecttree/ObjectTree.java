@@ -151,7 +151,7 @@ class ObjectTree extends JTree
 		// Add actions to the popup menu.
 		final ActionCollection actions = session.getApplication().getActionCollection();
 		addToPopup(DatabaseObjectType.TABLE, actions.get(DropSelectedTablesAction.class));
-        addToPopup(DatabaseObjectType.TABLE, actions.get(DeleteSelectedTablesAction.class));
+      addToPopup(DatabaseObjectType.TABLE, actions.get(DeleteSelectedTablesAction.class));
 		addToPopup(DatabaseObjectType.VIEW, actions.get(DropSelectedTablesAction.class));
 
 		// Options for global popup menu.
@@ -159,8 +159,12 @@ class ObjectTree extends JTree
 		addToPopup(actions.get(RefreshObjectTreeItemAction.class));
 
 		addToPopup(DatabaseObjectType.TABLE, actions.get(EditWhereColsAction.class));
-		addToPopup(DatabaseObjectType.TABLE, actions.get(SQLFilterAction.class));
-		addToPopup(DatabaseObjectType.SESSION, actions.get(FilterObjectsAction.class));
+
+      addToPopup(DatabaseObjectType.TABLE, actions.get(SQLFilterAction.class));
+      addToPopup(DatabaseObjectType.VIEW, actions.get(SQLFilterAction.class));
+
+
+      addToPopup(DatabaseObjectType.SESSION, actions.get(FilterObjectsAction.class));
 
 
 		session.getApplication().getThreadPool().addTask(new Runnable() {
