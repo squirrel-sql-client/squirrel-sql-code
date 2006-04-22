@@ -141,9 +141,10 @@ public class SQLFilterSheet extends BaseSessionInternalFrame
 			if (!isVisible())
 			{
 				ContentsTab tab =(ContentsTab)_objectTree.getTabbedPaneIfSelected(
-						DatabaseObjectType.TABLE,
+						_objectInfo.getDatabaseObjectType(),
 						ContentsTab.TITLE);
-				if (tab == null)
+
+            if (tab == null)
 				{
 					reallyShow = false;
                     // i18n[SQLFilterSheet.contentsMsg=You must have the Contents Tab selected to activate the SQL Filter]
@@ -256,17 +257,10 @@ public class SQLFilterSheet extends BaseSessionInternalFrame
 		}
 		try
 		{
-//			ContentsTab cTab =
-//				(ContentsTab)getSession()
-//					.getSessionSheet()
-//					.getObjectTreePanel()
-//					.getTabbedPaneIfSelected(
-//						DatabaseObjectType.TABLE,
-//						ContentsTab.TITLE);
 			ContentsTab cTab =(ContentsTab)_objectTree.getTabbedPaneIfSelected(
-												DatabaseObjectType.TABLE,
+												_objectInfo.getDatabaseObjectType(),
 												ContentsTab.TITLE);
-			if (cTab != null)
+         if (cTab != null)
 			{
 				cTab.refreshComponent();
 			}

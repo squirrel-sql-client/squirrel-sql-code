@@ -5,6 +5,7 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+Fixed Bug #1472398: Content tab filters didn't work with views.
 
 Syntax coloring and code completion for newly created tables, views, columns, procedures is available
 right after a DDL statement was run. This works as long as standard DDL statements are used.

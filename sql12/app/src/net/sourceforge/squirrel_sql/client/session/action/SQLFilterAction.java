@@ -79,14 +79,13 @@ public class SQLFilterAction extends SquirrelAction implements IObjectTreeAction
 			final IDatabaseObjectInfo selObjs[] =	_tree.getSelectedDatabaseObjects();
 			final int objectTotal = selObjs.length;
 
-			if ((objectTotal > 0)
-				&& (selObjs[0].getDatabaseObjectType() == DatabaseObjectType.TABLE))
-			{
-//				ContentsTab cTab =(ContentsTab)_tree.getTabbedPaneIfSelected(
-//												DatabaseObjectType.TABLE,
-//												ContentsTab.TITLE);
-//				if (cTab != null)
-//				{
+			if ( (objectTotal > 0) &&
+              (
+                 (selObjs[0].getDatabaseObjectType() == DatabaseObjectType.TABLE) ||
+                 (selObjs[0].getDatabaseObjectType() == DatabaseObjectType.VIEW)
+              )
+            )
+         {
 					final IApplication app = getApplication();
 		
 					final CursorChanger cursorChg = new CursorChanger(app.getMainFrame());
@@ -99,12 +98,6 @@ public class SQLFilterAction extends SquirrelAction implements IObjectTreeAction
 					{
 						cursorChg.restore();
 					}
-//				}
-//				else
-//				{
-//					_tree.getSession().getMessageHandler().showMessage(
-//					"You must have the Contents Tab selected to activate the SQL Filter");
-//				}
 			}
 			else
 			{
