@@ -72,6 +72,13 @@ public class ObjectTreeTest extends TestCase {
         // Test to see that table(100) matches table(0).  It should since only
         // the row count is different.
         assertEquals(true, tree.matchKeyPrefix(map, node, "table(0)"));
+        
+        session.getProperties().setShowRowCount(true);
+        
+        // Test to see if we can fool matchKeyPrefix into assuming that there 
+        // will be '(' on the end of the path since row count is enabled.  Yet
+        // we'll send in a string that doesn't have this characteristic.
+        assertEquals(true, tree.matchKeyPrefix(map, node, "table"));
     }
 
 }
