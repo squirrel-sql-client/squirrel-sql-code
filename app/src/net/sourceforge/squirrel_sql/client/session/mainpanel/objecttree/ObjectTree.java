@@ -429,16 +429,20 @@ class ObjectTree extends JTree
     /**
      * This is to handle the case where the user has enabled showRowCounts and 
      * the table/view name as it appeared before is different only because the 
-     * number of rows has changed.
+     * number of rows has changed. For example, suppose a user deletes records
+     * in a table "foo" with 100 rows then refreshes the tree.  The tree node
+     * before the delete looks like foo(100) and after looks like foo(0).  We 
+     * want to strip off the (...) and test to see if the selected path "foo"
+     * is the same before the delete as after.  This way, when the user refreshes
+     * "foo(...)", then it is still selected after the refresh.
      * 
      * @param map
      * @param pattern
      * @return
      */
-    private boolean matchKeyPrefix(Map map, ObjectTreeNode node, String path) {
-        if (!_session.getProperties().getShowRowCount()) {
-            return map.containsKey(path);
-        }
+    protected boolean matchKeyPrefix(Map map, ObjectTreeNode node, String path) {
+        // We only show row counts for tables and views.  Other objects won't 
+        // be affected by changing row counts.
         if (node.getDatabaseObjectType() != DatabaseObjectType.TABLE
                 && node.getDatabaseObjectType() != DatabaseObjectType.VIEW) 
         {
@@ -446,11 +450,17 @@ class ObjectTree extends JTree
         }
         Set s = map.keySet();
         Iterator i = s.iterator();
-        String pathPrefix = path.substring(0, path.lastIndexOf("("));
+        String pathPrefix = path;
+        if (path.indexOf("(") != -1) {
+            pathPrefix = path.substring(0, path.lastIndexOf("("));
+        }
         boolean result = false;
         while (i.hasNext()) {
             String key = (String)i.next();
-            String keyPrefix = key.substring(0, key.lastIndexOf("("));
+            String keyPrefix = key;
+            if (key.indexOf("(") != -1) {
+                keyPrefix = key.substring(0, key.lastIndexOf("("));
+            }
             if (keyPrefix.equals(pathPrefix)) {
                 result = true;
                 break;
