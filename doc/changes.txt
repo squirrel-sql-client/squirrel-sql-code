@@ -5,6 +5,9 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+Make the status message for rows affected by executing an SQL statement in the SQL panel 
+take into account the type of SQL query issued.
+
 Fixed Bug #1472398: Content tab filters didn't work with views.
 
 Syntax coloring and code completion for newly created tables, views, columns, procedures is available
