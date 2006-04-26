@@ -920,6 +920,8 @@ public class SQLResultExecuterPanel extends JPanel
          */
         private ResultSetDataSet rsds = null;
         
+        private String sqlToBeExecuted = null;
+        
       public SQLExecutionHandler()
 		{
 			super();
@@ -932,7 +934,9 @@ public class SQLResultExecuterPanel extends JPanel
          {
             public void run()
             {
-               _cancelPanel.setSQL(StringUtilities.cleanString(sql));
+               sqlToBeExecuted = StringUtilities.cleanString(sql);
+               _cancelPanel.setSQL(sqlToBeExecuted);
+               
                // i18n[SQLResultExecuterPanel.execStatus=Executing SQL...]
                String status = 
                    s_stringMgr.getString("SQLResultExecuterPanel.execStatus");
@@ -972,11 +976,31 @@ public class SQLResultExecuterPanel extends JPanel
 
 		public void sqlDataUpdated(int updateCount)
 		{
-            // i18n[SQLResultExecuterPanel.rowsUpdated={0} Rows Updated]
-            String rowsUpdated = 
+            Integer count = new Integer(updateCount);
+
+            // i18n[SQLResultExecuterPanel.rowsUpdated={0} Row(s) Updated]
+            String msg = 
                 s_stringMgr.getString("SQLResultExecuterPanel.rowsUpdated",
-                                      new Integer(updateCount));
-			getSession().getMessageHandler().showMessage(rowsUpdated);
+                                      count);              
+
+            if (sqlToBeExecuted != null) {
+                if (sqlToBeExecuted.toLowerCase().startsWith("select")) {
+                    // i18n[SQLResultExecuterPanel.rowsUpdated={0} Row(s) Selected]
+                    msg = s_stringMgr.getString("SQLResultExecuterPanel.rowsSelected",
+                                                count);            
+                }
+                if (sqlToBeExecuted.toLowerCase().startsWith("insert")) {
+                    // i18n[SQLResultExecuterPanel.rowsUpdated={0} Row(s) Inserted]
+                    msg = s_stringMgr.getString("SQLResultExecuterPanel.rowsInserted",
+                                                count);            
+                }
+                if (sqlToBeExecuted.toLowerCase().startsWith("delete")) {
+                    // i18n[SQLResultExecuterPanel.rowsUpdated={0} Row(s) Deleted]
+                    msg = s_stringMgr.getString("SQLResultExecuterPanel.rowsDeleted",
+                                                count);            
+                }
+            }
+            getSession().getMessageHandler().showMessage(msg);
 		}
 
 		public void sqlResultSetAvailable(ResultSet rs, SQLExecutionInfo info,
