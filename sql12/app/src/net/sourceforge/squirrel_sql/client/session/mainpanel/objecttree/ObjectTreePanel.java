@@ -45,6 +45,7 @@ import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SchemaInfoUpdateListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.CatalogsTab;
@@ -152,80 +153,99 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 
 		_emptyTabPane = new ObjectTreeTabbedPane(_session);
 
-		CreateGUI();
+		createGUI();
 
-		// Register tabs to display in the details panel for database nodes.
-		addDetailTab(DatabaseObjectType.SESSION, new MetaDataTab());
-		addDetailTab(DatabaseObjectType.SESSION, new ConnectionStatusTab());
-
-        session.getApplication().getThreadPool().addTask(new Runnable() {
-            public void run() {
-                try
-                {
-                    SQLDatabaseMetaData md = 
-                        _session.getSQLConnection().getSQLMetaData();
-                    if (md.supportsCatalogs())
-                    {
-                        _addDetailTab(DatabaseObjectType.SESSION, new CatalogsTab());
-                    }
-                }
-                catch (Throwable th)
-                {
-                    s_log.error("Error in supportsCatalogs()", th);
-                }                
-            }
-        });
-
-        session.getApplication().getThreadPool().addTask(new Runnable() {
-            public void run() {
-                try
-                {
-                    SQLDatabaseMetaData md = 
-                        _session.getSQLConnection().getSQLMetaData();
-                    if (md.supportsSchemas())
-                    {
-                        _addDetailTab(DatabaseObjectType.SESSION, new SchemasTab());                        
-                    }
-                }
-                catch (Throwable th)
-                {
-                    s_log.error("Error in supportsCatalogs()", th);
-                }
-                _addDetailTab(DatabaseObjectType.SESSION, new TableTypesTab());
-                _addDetailTab(DatabaseObjectType.SESSION, new DataTypesTab());
-                _addDetailTab(DatabaseObjectType.SESSION, new NumericFunctionsTab());
-                _addDetailTab(DatabaseObjectType.SESSION, new StringFunctionsTab());
-                _addDetailTab(DatabaseObjectType.SESSION, new SystemFunctionsTab());
-                _addDetailTab(DatabaseObjectType.SESSION, new TimeDateFunctionsTab());
-                _addDetailTab(DatabaseObjectType.SESSION, new KeywordsTab());
-
-                // Register tabs to display in the details panel for catalog nodes.
-                _addDetailTab(DatabaseObjectType.CATALOG, new DatabaseObjectInfoTab());
-
-                // Register tabs to display in the details panel for schema nodes.
-                _addDetailTab(DatabaseObjectType.SCHEMA, new DatabaseObjectInfoTab());
-
-                _addDetailTabForTableLikeObjects(DatabaseObjectType.TABLE);
-                _addDetailTabForTableLikeObjects(DatabaseObjectType.VIEW);
-
-                // Register tabs to display in the details panel for procedure nodes.
-                _addDetailTab(DatabaseObjectType.PROCEDURE, new DatabaseObjectInfoTab());
-                _addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureColumnsTab());
-
-                // Register tabs to display in the details panel for UDT nodes.
-                _addDetailTab(DatabaseObjectType.UDT, new DatabaseObjectInfoTab());
-            }
-        });
+      session.getApplication().getThreadPool().addTask(new Runnable()
+      {
+         public void run()
+         {
+            doBackgroundInitializations();
+         }
+      });
    }
 
-    private void _addDetailTabForTableLikeObjects(final DatabaseObjectType type)
-    {
-        GUIUtils.processOnSwingEventThread(new Runnable() {
-           public void run() {
-               addDetailTabForTableLikeObjects(type);
-           }
-        });
-    }
+   private void doBackgroundInitializations()
+   {
+      try
+      {
+         // Register tabs to display in the details panel for database nodes.
+         addDetailTab(DatabaseObjectType.SESSION, new MetaDataTab());
+         addDetailTab(DatabaseObjectType.SESSION, new ConnectionStatusTab());
+
+         try
+         {
+            SQLDatabaseMetaData md =
+               _session.getSQLConnection().getSQLMetaData();
+            if (md.supportsCatalogs())
+            {
+               _addDetailTab(DatabaseObjectType.SESSION, new CatalogsTab());
+            }
+         }
+         catch (Throwable th)
+         {
+            s_log.error("Error in supportsCatalogs()", th);
+         }
+
+         try
+         {
+            SQLDatabaseMetaData md =
+               _session.getSQLConnection().getSQLMetaData();
+            if (md.supportsSchemas())
+            {
+               _addDetailTab(DatabaseObjectType.SESSION, new SchemasTab());
+            }
+         }
+         catch (Throwable th)
+         {
+            s_log.error("Error in supportsCatalogs()", th);
+         }
+         _addDetailTab(DatabaseObjectType.SESSION, new TableTypesTab());
+         _addDetailTab(DatabaseObjectType.SESSION, new DataTypesTab());
+         _addDetailTab(DatabaseObjectType.SESSION, new NumericFunctionsTab());
+         _addDetailTab(DatabaseObjectType.SESSION, new StringFunctionsTab());
+         _addDetailTab(DatabaseObjectType.SESSION, new SystemFunctionsTab());
+         _addDetailTab(DatabaseObjectType.SESSION, new TimeDateFunctionsTab());
+         _addDetailTab(DatabaseObjectType.SESSION, new KeywordsTab());
+
+         // Register tabs to display in the details panel for catalog nodes.
+         _addDetailTab(DatabaseObjectType.CATALOG, new DatabaseObjectInfoTab());
+
+         // Register tabs to display in the details panel for schema nodes.
+         _addDetailTab(DatabaseObjectType.SCHEMA, new DatabaseObjectInfoTab());
+
+         _addDetailTabForTableLikeObjects(DatabaseObjectType.TABLE);
+         _addDetailTabForTableLikeObjects(DatabaseObjectType.VIEW);
+
+         // Register tabs to display in the details panel for procedure nodes.
+         _addDetailTab(DatabaseObjectType.PROCEDURE, new DatabaseObjectInfoTab());
+         _addDetailTab(DatabaseObjectType.PROCEDURE, new ProcedureColumnsTab());
+
+         // Register tabs to display in the details panel for UDT nodes.
+         _addDetailTab(DatabaseObjectType.UDT, new DatabaseObjectInfoTab());
+
+         _session.getSchemaInfo().addSchemaInfoUpdateListener(new SchemaInfoUpdateListener()
+         {
+            public void schemaInfoUpdated()
+            {
+               refreshTree(false);
+            }
+         });
+
+      }
+      catch (Throwable th)
+      {
+         s_log.error("Error doing background initalization of Object tree" , th);
+      }
+   }
+
+   private void _addDetailTabForTableLikeObjects(final DatabaseObjectType type)
+   {
+       GUIUtils.processOnSwingEventThread(new Runnable() {
+          public void run() {
+              addDetailTabForTableLikeObjects(type);
+          }
+       });
+   }
     
    private void addDetailTabForTableLikeObjects(DatabaseObjectType type)
    {
@@ -807,7 +827,7 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 	/**
 	 * Create the user interface.
 	 */
-	private void CreateGUI()
+	private void createGUI()
 	{
 		setLayout(new BorderLayout());
 
