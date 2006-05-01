@@ -470,7 +470,7 @@ public final class ActionCollection
 		add(new NextSessionAction(_app));
 		add(new PreviousSessionAction(_app));
 		add(new ReconnectAction(_app));
-		add(new RefreshObjectTreeAction(_app));
+		add(new RefreshSchemaInfoAction(_app));
 		add(new RefreshObjectTreeItemAction(_app));
 		add(new RollbackAction(_app));
 		add(new SessionPropertiesAction(_app));

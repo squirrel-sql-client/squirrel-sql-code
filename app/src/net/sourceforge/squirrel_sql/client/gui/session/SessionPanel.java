@@ -34,10 +34,8 @@ import net.sourceforge.squirrel_sql.fw.gui.SQLCatalogsComboBox;
 import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -553,7 +551,7 @@ public class SessionPanel extends JPanel
          setUseRolloverButtons(true);
          setFloatable(false);
          add(actions.get(SessionPropertiesAction.class));
-         add(actions.get(RefreshObjectTreeAction.class));
+         add(actions.get(RefreshSchemaInfoAction.class));
          addSeparator();
          add(actions.get(ExecuteSqlAction.class));
          addSeparator();
