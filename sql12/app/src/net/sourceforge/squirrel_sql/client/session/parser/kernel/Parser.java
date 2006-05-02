@@ -191,7 +191,7 @@ public class Parser
 	private final void IndexColumnList()
 	{
 		IndexColumn();
-		while (t.kind == 101)
+		while (t.kind == ParsingConstants.KIND_COMMA)
 		{
 			ItemSeparator();
 			IndexColumn();
@@ -201,9 +201,9 @@ public class Parser
 	private final void IndexColumn()
 	{
 		SimpleColumnName();
-		if (t.kind == 50 || t.kind == 51)
+		if (t.kind == ParsingConstants.KW_DESC || t.kind == ParsingConstants.KW_ASC)
 		{
-			if (t.kind == 51)
+			if (t.kind == ParsingConstants.KW_ASC)
 			{
 				Get();
 			}
@@ -216,24 +216,24 @@ public class Parser
 
 	private final void DropPart()
 	{
-		Expect(96);
+		Expect(ParsingConstants.KW_DROP);
 		if (t.kind == 1)
 		{
 			SimpleColumnName();
 			CascadeRestrict();
 		}
-		else if (t.kind == 82)
+		else if (t.kind == ParsingConstants.KW_PRIMARY)
 		{
 			Get();
-			Expect(83);
+			Expect(ParsingConstants.KW_KEY);
 		}
-		else if (t.kind == 84)
+		else if (t.kind == ParsingConstants.KW_FOREIGN)
 		{
 			Get();
-			Expect(83);
+			Expect(ParsingConstants.KW_KEY);
 			RelationName();
 		}
-		else if (t.kind == 99)
+		else if (t.kind == ParsingConstants.KW_CONSTRAINT)
 		{
 			Get();
 			ConstraintName();
@@ -245,14 +245,14 @@ public class Parser
 
 	private final void Alter()
 	{
-		Expect(98);
+		Expect(ParsingConstants.KW_ALTER);
 		SimpleColumnName();
-		if (t.kind == 96)
+		if (t.kind == ParsingConstants.KW_DROP)
 		{
 			Get();
-			Expect(81);
+			Expect(ParsingConstants.KW_DEFAULT );
 		}
-		else if (t.kind == 13)
+		else if (t.kind == ParsingConstants.KW_SET)
 		{
 			Get();
 			ColumnDefault();
@@ -263,20 +263,20 @@ public class Parser
 
 	private final void Add()
 	{
-		Expect(97);
+		Expect(ParsingConstants.KW_ADD);
 		if (t.kind == 1)
 		{
 			ColumnDefList();
 		}
-		else if (t.kind == 82)
+		else if (t.kind == ParsingConstants.KW_PRIMARY)
 		{
 			PrimaryKey();
 		}
-		else if (t.kind == 84)
+		else if (t.kind == ParsingConstants.KW_CONSTRAINT)
 		{
-			ForeignKey();
+			ForeignKeyAdd();
 		}
-		else if (t.kind == 91)
+		else if (t.kind == ParsingConstants.KW_UNIQUE)
 		{
 			Unique();
 		}
@@ -290,15 +290,15 @@ public class Parser
 
 	private final void IndexAndName()
 	{
-		Expect(100);
+		Expect(ParsingConstants.KW_INDEX);
 		IndexName();
 	}
 
 	private final void DropTable()
 	{
-		Expect(94);
+		Expect(ParsingConstants.KW_TABLE);
 		QualifiedTable();
-		if (t.kind == 88 || t.kind == 95)
+		if (t.kind == ParsingConstants.KW_CASCADE || t.kind == ParsingConstants.KW_RESTRICT)
 		{
 			CascadeRestrict();
 		}
@@ -306,11 +306,11 @@ public class Parser
 
 	private final void CascadeRestrict()
 	{
-		if (t.kind == 88)
+		if (t.kind == ParsingConstants.KW_CASCADE)
 		{
 			Get();
 		}
-		else if (t.kind == 95)
+		else if (t.kind == ParsingConstants.KW_RESTRICT)
 		{
 			Get();
 		}
@@ -320,25 +320,25 @@ public class Parser
 
 	private final void CreateIndex()
 	{
-		if (t.kind == 91)
+		if (t.kind == ParsingConstants.KW_UNIQUE)
 		{
 			Get();
 		}
 		IndexAndName();
-		Expect(32);
+		Expect(ParsingConstants.KW_ON);
 		Table(null);
-		Expect(5);
+		Expect(ParsingConstants.KIND_OPENING_BRAKET);
 		IndexColumnList();
 		CloseParens();
 	}
 
 	private final void CreateTable()
 	{
-		Expect(94);
+		Expect(ParsingConstants.KW_TABLE);
 		Table(null);
-		Expect(5);
+		Expect(ParsingConstants.KIND_OPENING_BRAKET);
 		CreatePart();
-		while (t.kind == 101)
+		while (t.kind == ParsingConstants.KIND_COMMA)
 		{
 			ItemSeparator();
 			CreatePart();
@@ -352,15 +352,19 @@ public class Parser
 		{
 			ColumnDef();
 		}
-		else if (t.kind == 82)
+		else if (t.kind == ParsingConstants.KW_PRIMARY)
 		{
 			PrimaryKey();
 		}
-		else if (t.kind == 84)
+		else if (t.kind == ParsingConstants.KW_FOREIGN)
 		{
-			ForeignKey();
+			ForeignKeyCreatePart();
 		}
-		else if (t.kind == 91)
+      else if (t.kind == ParsingConstants.KW_CONSTRAINT)
+      {
+         Constraint();
+      }
+		else if (t.kind == ParsingConstants.KW_UNIQUE)
 		{
 			Unique();
 		}
@@ -375,66 +379,139 @@ public class Parser
 	private final void CheckConstraint()
 	{
 		Expect(92);
-		Expect(5);
+		Expect(ParsingConstants.KIND_OPENING_BRAKET);
 		Expression();
 		CloseParens();
 	}
 
 	private final void Unique()
 	{
-		Expect(91);
+		Expect(ParsingConstants.KW_UNIQUE);
 		SimpleColumnParam();
 	}
 
-	private final void ForeignKey()
+   private final void Constraint()
+   {
+   }
+
+   private final void ForeignKeyAdd()
+   {
+      Expect(ParsingConstants.KW_CONSTRAINT);
+      RelationName();
+      Expect(ParsingConstants.KW_FOREIGN);
+      Expect(ParsingConstants.KW_KEY);
+      SimpleColumnParam();
+      Expect(ParsingConstants.KW_REFERENCES);
+      Table(null);
+      if (t.kind == ParsingConstants.KW_MATCH)
+      {
+         Get();
+         if (t.kind == ParsingConstants.KW_FULL)
+         {
+            Get();
+         }
+         else if (t.kind == ParsingConstants.KW_PARTIAL)
+         {
+            Get();
+         }
+         else
+            Error(109);
+      }
+      while (t.kind == ParsingConstants.KW_ON || t.kind == ParsingConstants.KW_NO)
+      {
+         if (t.kind == ParsingConstants.KW_ON)
+         {
+            Get();
+            if (t.kind == ParsingConstants.KW_DELETE)
+            {
+               Get();
+            }
+            else if (t.kind == ParsingConstants.KW_UPDATE)
+            {
+               Get();
+            }
+            else
+               Error(110);
+            if (t.kind == ParsingConstants.KW_CASCADE)
+            {
+               Get();
+            }
+            else if (t.kind == ParsingConstants.KW_SET)
+            {
+               Get();
+               if (t.kind == ParsingConstants.KW_NULL)
+               {
+                  Get();
+               }
+               else if (t.kind == ParsingConstants.KW_DEFAULT )
+               {
+                  Get();
+               }
+               else
+                  Error(111);
+            }
+            else
+               Error(112);
+         }
+         else
+         {
+            Get();
+            Expect(ParsingConstants.KW_ACTION);
+         }
+      }
+
+   }
+
+
+   private final void ForeignKeyCreatePart()
 	{
-		Expect(84);
-		Expect(83);
+		Expect(ParsingConstants.KW_FOREIGN);
+		Expect(ParsingConstants.KW_KEY);
 		RelationName();
 		SimpleColumnParam();
-		Expect(85);
+		Expect(ParsingConstants.KW_REFERENCES);
 		Table(null);
-		if (t.kind == 86)
+		if (t.kind == ParsingConstants.KW_MATCH)
 		{
 			Get();
-			if (t.kind == 28)
+			if (t.kind == ParsingConstants.KW_FULL)
 			{
 				Get();
 			}
-			else if (t.kind == 87)
+			else if (t.kind == ParsingConstants.KW_PARTIAL)
 			{
 				Get();
 			}
 			else
 				Error(109);
 		}
-		while (t.kind == 32 || t.kind == 89)
+		while (t.kind == ParsingConstants.KW_ON || t.kind == ParsingConstants.KW_NO)
 		{
-			if (t.kind == 32)
+			if (t.kind == ParsingConstants.KW_ON)
 			{
 				Get();
-				if (t.kind == 18)
+				if (t.kind == ParsingConstants.KW_DELETE)
 				{
 					Get();
 				}
-				else if (t.kind == 12)
+				else if (t.kind == ParsingConstants.KW_UPDATE)
 				{
 					Get();
 				}
 				else
 					Error(110);
-				if (t.kind == 88)
+				if (t.kind == ParsingConstants.KW_CASCADE)
 				{
 					Get();
 				}
-				else if (t.kind == 13)
+				else if (t.kind == ParsingConstants.KW_SET)
 				{
 					Get();
-					if (t.kind == 49)
+					if (t.kind == ParsingConstants.KW_NULL)
 					{
 						Get();
 					}
-					else if (t.kind == 81)
+					else if (t.kind == ParsingConstants.KW_DEFAULT )
 					{
 						Get();
 					}
@@ -447,7 +524,7 @@ public class Parser
 			else
 			{
 				Get();
-				Expect(90);
+				Expect(ParsingConstants.KW_ACTION);
 			}
 		}
 	}
@@ -464,8 +541,8 @@ public class Parser
 
 	private final void PrimaryKey()
 	{
-		Expect(82);
-		Expect(83);
+		Expect(ParsingConstants.KW_PRIMARY);
+		Expect(ParsingConstants.KW_KEY);
 		SimpleColumnParam();
 	}
 
@@ -473,24 +550,29 @@ public class Parser
 	{
 		SimpleColumnName();
 		DataType();
-		while (t.kind == 54 || t.kind == 81)
+		while (t.kind == ParsingConstants.KW_NOT || t.kind == ParsingConstants.KW_DEFAULT || t.kind == ParsingConstants.KW_PRIMARY)
 		{
-			if (t.kind == 81)
+			if (t.kind == ParsingConstants.KW_DEFAULT )
 			{
 				ColumnDefault();
 			}
-			else
+			else if(t.kind == ParsingConstants.KW_NOT )
 			{
 				NotOperator();
-				Expect(49);
+				Expect(ParsingConstants.KW_NULL);
 			}
+         else
+         {
+            Expect(ParsingConstants.KW_PRIMARY);
+            Expect(ParsingConstants.KW_KEY);
+         }
 		}
 	}
 
 	private final void ColumnDefList()
 	{
 		ColumnDef();
-		while (t.kind == 101)
+		while (t.kind == ParsingConstants.KIND_COMMA)
 		{
 			ItemSeparator();
 			ColumnDef();
@@ -499,7 +581,7 @@ public class Parser
 
 	private final void ColumnDefault()
 	{
-		Expect(81);
+		Expect(ParsingConstants.KW_DEFAULT );
 		if (t.kind == 4)
 		{
 			Get();
@@ -523,7 +605,7 @@ public class Parser
 			case 72:
 			case 73:
 				{
-					if (t.kind == 72)
+					if (t.kind == ParsingConstants.KW_CHAR)
 					{
 						Get();
 					}
@@ -534,16 +616,16 @@ public class Parser
 					lenParam();
 					break;
 				}
-			case 74:
+			case ParsingConstants.KW_VARCHAR:
 				{
 					Get();
 					lenParam();
 					break;
 				}
-			case 75:
-			case 76:
+			case ParsingConstants.KW_INTEGER:
+			case ParsingConstants.KW_INT:
 				{
-					if (t.kind == 75)
+					if (t.kind == ParsingConstants.KW_INTEGER)
 					{
 						Get();
 					}
@@ -553,31 +635,31 @@ public class Parser
 					}
 					break;
 				}
-			case 77:
+			case ParsingConstants.KW_SMALLINT:
 				{
 					Get();
 					break;
 				}
-			case 78:
+			case ParsingConstants.KW_NUMERIC:
 				{
 					Get();
-					Expect(5);
+					Expect(ParsingConstants.KIND_OPENING_BRAKET);
 					precision();
 					CloseParens();
 					break;
 				}
-			case 79:
+			case ParsingConstants.KW_DATE:
 				{
 					Get();
 					break;
 				}
-			case 80:
+			case ParsingConstants.KW_TIME:
 				{
 					Get();
 					lenParam();
 					break;
 				}
-			case 40:
+			case ParsingConstants.KW_TIMESTAMP:
 				{
 					Get();
 					lenParam();
@@ -597,7 +679,7 @@ public class Parser
 
 	private final void lenParam()
 	{
-		Expect(5);
+		Expect(ParsingConstants.KIND_OPENING_BRAKET);
 		len();
 		CloseParens();
 	}
@@ -609,21 +691,21 @@ public class Parser
 
 	private final void BetweenExpr()
 	{
-		Expect(67);
+		Expect(ParsingConstants.KW_BETWEEN);
 		Field();
-		Expect(57);
+		Expect(ParsingConstants.KW_AND);
 		Field();
 	}
 
 	private final void InSetExpr()
 	{
-		Expect(68);
-		Expect(5);
+		Expect(ParsingConstants.KW_IN);
+		Expect(ParsingConstants.KIND_OPENING_BRAKET);
 		if (StartOf(1))
 		{
 			FieldList();
 		}
-		else if (t.kind == 20)
+		else if (t.kind == ParsingConstants.KW_SELECT)
 		{
 			SelectStmt();
 		}
@@ -634,17 +716,17 @@ public class Parser
 
 	private final void NullTest()
 	{
-		Expect(61);
-		if (t.kind == 54)
+		Expect(ParsingConstants.KW_IS);
+		if (t.kind == ParsingConstants.KW_NOT)
 		{
 			NotOperator();
 		}
-		Expect(49);
+		Expect(ParsingConstants.KW_NULL);
 	}
 
 	private final void LikeTest()
 	{
-		Expect(59);
+		Expect(ParsingConstants.KW_LIKE);
 		if (t.kind == 4)
 		{
 			Get();
@@ -655,7 +737,7 @@ public class Parser
 		}
 		else
 			Error(116);
-		if (t.kind == 60)
+		if (t.kind == ParsingConstants.KW_ESCAPE)
 		{
 			Get();
 			Expect(4);
@@ -664,11 +746,11 @@ public class Parser
 
 	private final void WordOperator()
 	{
-		if (t.kind == 57)
+		if (t.kind == ParsingConstants.KW_AND)
 		{
 			Get();
 		}
-		else if (t.kind == 58)
+		else if (t.kind == ParsingConstants.KW_OR)
 		{
 			Get();
 		}
@@ -700,25 +782,25 @@ public class Parser
 
 	private final void TestExpr()
 	{
-		if (t.kind == 61)
+		if (t.kind == ParsingConstants.KW_IS)
 		{
 			NullTest();
 		}
 		else if (StartOf(2))
 		{
-			if (t.kind == 54)
+			if (t.kind == ParsingConstants.KW_NOT)
 			{
 				NotOperator();
 			}
-			if (t.kind == 68)
+			if (t.kind == ParsingConstants.KW_IN)
 			{
 				InSetExpr();
 			}
-			else if (t.kind == 67)
+			else if (t.kind == ParsingConstants.KW_BETWEEN)
 			{
 				BetweenExpr();
 			}
-			else if (t.kind == 59)
+			else if (t.kind == ParsingConstants.KW_LIKE)
 			{
 				LikeTest();
 			}
@@ -735,7 +817,7 @@ public class Parser
 		{
 			MathOperator();
 		}
-		else if (t.kind == 57 || t.kind == 58)
+		else if (t.kind == ParsingConstants.KW_AND || t.kind == ParsingConstants.KW_OR)
 		{
 			WordOperator();
 		}
@@ -757,7 +839,7 @@ public class Parser
 				TestExpr();
 			}
 		}
-		else if (StartOf(5))
+		else if (StartOf(ParsingConstants.KIND_OPENING_BRAKET))
 		{
 			ColumnFunction();
 		}
@@ -765,14 +847,14 @@ public class Parser
 		{
 			FunctionExpr();
 		}
-		else if (t.kind == 5)
+		else if (t.kind == ParsingConstants.KIND_OPENING_BRAKET)
 		{
 			Get();
-			if (StartOf(7))
+			if (StartOf(ParsingConstants.KW_UNION))
 			{
 				Expression();
 			}
-			else if (t.kind == 20)
+			else if (t.kind == ParsingConstants.KW_SELECT)
 			{
 				SelectStmt();
 			}
@@ -786,7 +868,7 @@ public class Parser
 
 	private final void NotOperator()
 	{
-		Expect(54);
+		Expect(ParsingConstants.KW_NOT);
 	}
 
 	private final void Relation()
@@ -830,15 +912,15 @@ public class Parser
 
 	private final void SimpleExpression()
 	{
-		if (t.kind == 54)
+		if (t.kind == ParsingConstants.KW_NOT)
 		{
 			NotOperator();
 		}
 		Term();
-		while (StartOf(8))
+		while (StartOf(ParsingConstants.KW_EXCEPT))
 		{
 			Operator();
-			if (t.kind == 54)
+			if (t.kind == ParsingConstants.KW_NOT)
 			{
 				NotOperator();
 			}
@@ -858,9 +940,9 @@ public class Parser
 		}
 		else
 			Error(125);
-		if (t.kind == 50 || t.kind == 51)
+		if (t.kind == ParsingConstants.KW_DESC || t.kind == ParsingConstants.KW_ASC)
 		{
-			if (t.kind == 50)
+			if (t.kind == ParsingConstants.KW_DESC)
 			{
 				Get();
 			}
@@ -886,7 +968,7 @@ public class Parser
 					ColumnName();
 					break;
 				}
-			case 49:
+			case ParsingConstants.KW_NULL:
 				{
 					Get();
 					break;
@@ -918,7 +1000,7 @@ public class Parser
 
 	private final void SimpleColumnParam()
 	{
-		Expect(5);
+		Expect(ParsingConstants.KIND_OPENING_BRAKET);
 		SimpleColumnList();
 		CloseParens();
 	}
@@ -926,7 +1008,7 @@ public class Parser
 	private final void SimpleColumnList()
 	{
 		SimpleColumnName();
-		while (t.kind == 101)
+		while (t.kind == ParsingConstants.KIND_COMMA)
 		{
 			ItemSeparator();
 			SimpleColumnName();
@@ -940,36 +1022,36 @@ public class Parser
 
 	private final void ColumnFunction()
 	{
-		if (t.kind == 44)
+		if (t.kind == ParsingConstants.KW_COUNT)
 		{
 			Get();
 		}
-		else if (t.kind == 45)
+		else if (t.kind == ParsingConstants.KW_SUM)
 		{
 			Get();
 		}
-		else if (t.kind == 46)
+		else if (t.kind == ParsingConstants.KW_MAX)
 		{
 			Get();
 		}
-		else if (t.kind == 47)
+		else if (t.kind == ParsingConstants.KW_MIN)
 		{
 			Get();
 		}
-		else if (t.kind == 48)
+		else if (t.kind == ParsingConstants.KW_AVG)
 		{
 			Get();
 		}
 		else
 			Error(127);
-		Expect(5);
+		Expect(ParsingConstants.KIND_OPENING_BRAKET);
 		if (t.kind == 39)
 		{
 			Get();
 		}
-		else if (StartOf(9))
+		else if (StartOf(ParsingConstants.KW_INTERSECT))
 		{
-			if (t.kind == 21)
+			if (t.kind == ParsingConstants.KW_DISTINCT)
 			{
 				Get();
 			}
@@ -982,27 +1064,27 @@ public class Parser
 
 	private final void FunctionExpr()
 	{
-		if (t.kind == 40)
+		if (t.kind == ParsingConstants.KW_TIMESTAMP)
 		{
 			Get();
 		}
-		else if (t.kind == 41)
+		else if (t.kind == ParsingConstants.KW_UPPER)
 		{
 			Get();
 		}
-		else if (t.kind == 42)
+		else if (t.kind == ParsingConstants.KW_MONTH)
 		{
 			Get();
 		}
-		else if (t.kind == 43)
+		else if (t.kind == ParsingConstants.KW_YEAR)
 		{
 			Get();
 		}
 		else
 			Error(129);
-		Expect(5);
+		Expect(ParsingConstants.KIND_OPENING_BRAKET);
 		Expression();
-		while (t.kind == 101)
+		while (t.kind == ParsingConstants.KIND_COMMA)
 		{
 			ItemSeparator();
 			Expression();
@@ -1012,10 +1094,10 @@ public class Parser
 
 	private final void SelectField()
 	{
-		if (StartOf(7))
+		if (StartOf(ParsingConstants.KW_UNION))
 		{
 			Expression();
-			if (t.kind == 23)
+			if (t.kind == ParsingConstants.KW_AS)
 			{
 				Get();
 				Alias();
@@ -1032,7 +1114,7 @@ public class Parser
 	private final void OrderByFldList()
 	{
 		OrderByField();
-		while (t.kind == 101)
+		while (t.kind == ParsingConstants.KIND_COMMA)
 		{
 			ItemSeparator();
 			OrderByField();
@@ -1046,15 +1128,15 @@ public class Parser
 
 	private final void JoinExpr()
 	{
-		if (t.kind == 32)
+		if (t.kind == ParsingConstants.KW_ON)
 		{
 			Get();
 			Expression();
 		}
-		else if (t.kind == 33)
+		else if (t.kind == ParsingConstants.KW_USING)
 		{
 			Get();
-			Expect(5);
+			Expect(ParsingConstants.KIND_OPENING_BRAKET);
 			ColumnList();
 			CloseParens();
 		}
@@ -1064,21 +1146,21 @@ public class Parser
 
 	private final void JoinType()
 	{
-		if (t.kind == 26)
+		if (t.kind == ParsingConstants.KW_NATURAL)
 		{
 			Get();
 		}
-		if (t.kind == 27)
+		if (t.kind == ParsingConstants.KW_INNER)
 		{
 			Get();
 		}
-		else if (t.kind == 28 || t.kind == 29 || t.kind == 30)
+		else if (t.kind == ParsingConstants.KW_FULL || t.kind == ParsingConstants.KW_LEFT || t.kind == ParsingConstants.KW_RIGHT)
 		{
-			if (t.kind == 28)
+			if (t.kind == ParsingConstants.KW_FULL)
 			{
 				Get();
 			}
-			else if (t.kind == 29)
+			else if (t.kind == ParsingConstants.KW_LEFT)
 			{
 				Get();
 			}
@@ -1086,7 +1168,7 @@ public class Parser
 			{
 				Get();
 			}
-			if (t.kind == 31)
+			if (t.kind == ParsingConstants.KW_OUTER)
 			{
 				Get();
 			}
@@ -1097,8 +1179,8 @@ public class Parser
 
 	private final void CrossJoin()
 	{
-		Expect(25);
-		Expect(24);
+		Expect(ParsingConstants.KW_CROSS);
+		Expect(ParsingConstants.KW_JOIN);
 		QualifiedTable();
 	}
 
@@ -1109,19 +1191,19 @@ public class Parser
 
 	private final void JoinStmt()
 	{
-		if (t.kind == 25)
+		if (t.kind == ParsingConstants.KW_CROSS)
 		{
 			CrossJoin();
 		}
-		else if (StartOf(10))
+		else if (StartOf(ParsingConstants.KW_MINUS))
 		{
-			if (StartOf(11))
+			if (StartOf(ParsingConstants.KW_ALL))
 			{
 				JoinType();
 			}
-			Expect(24);
+			Expect(ParsingConstants.KW_JOIN);
 			QualifiedTable();
-			if (t.kind == 32 || t.kind == 33)
+			if (t.kind == ParsingConstants.KW_ON || t.kind == ParsingConstants.KW_USING)
 			{
 				JoinExpr();
 			}
@@ -1152,30 +1234,30 @@ public class Parser
 			Expect(1);
 			table.setName(token.str, token.pos);
 		}
-		if (t.kind == 1 || t.kind == 23)
+		if (t.kind == 1 || t.kind == ParsingConstants.KW_AS)
 		{
-			if (t.kind == 23)
+			if (t.kind == ParsingConstants.KW_AS)
 			{
 				Get();
 			}
 			table.setAlias(t.str, t.pos);
 			wasSet = true;
 			if (statement.setTable(table) == false)
-				SemError(10);
+				SemError(ParsingConstants.KW_MINUS);
 
 			Alias();
 		}
 		if (!wasSet && statement.setTable(table) == false)
-			SemError(10);
+			SemError(ParsingConstants.KW_MINUS);
 
 	}
 
 	private final void FromTableList()
 	{
 		QualifiedTable();
-		while (StartOf(12))
+		while (StartOf(ParsingConstants.KW_UPDATE))
 		{
-			if (t.kind == 101)
+			if (t.kind == ParsingConstants.KIND_COMMA)
 			{
 				ItemSeparator();
 				QualifiedTable();
@@ -1190,7 +1272,7 @@ public class Parser
 	private final void SelectFieldList()
 	{
 		SelectField();
-		while (t.kind == 101)
+		while (t.kind == ParsingConstants.KIND_COMMA)
 		{
 			ItemSeparator();
 			SelectField();
@@ -1202,13 +1284,13 @@ public class Parser
 		SQLSelectStatement statement = (SQLSelectStatement) getContext();
 		statement.setOrderByStart(scanner.pos);
 
-		while (!(t.kind == 0 || t.kind == 38))
+		while (!(t.kind == 0 || t.kind == ParsingConstants.KW_ORDER))
 		{
 			Error(134);
 			Get();
 		}
-		Expect(38);
-		Expect(36);
+		Expect(ParsingConstants.KW_ORDER);
+		Expect(ParsingConstants.KW_BY);
 		OrderByFldList();
 		statement.setOrderByEnd(t.pos);
 	}
@@ -1218,12 +1300,12 @@ public class Parser
 		SQLSelectStatement statement = (SQLSelectStatement) getContext();
 		statement.setHavingStart(scanner.pos);
 
-		while (!(t.kind == 0 || t.kind == 37))
+		while (!(t.kind == 0 || t.kind == ParsingConstants.KW_HAVING))
 		{
 			Error(135);
 			Get();
 		}
-		Expect(37);
+		Expect(ParsingConstants.KW_HAVING);
 		SearchCondition();
 		statement.setHavingEnd(t.pos);
 	}
@@ -1233,13 +1315,13 @@ public class Parser
 		SQLSelectStatement statement = (SQLSelectStatement) getContext();
 		statement.setGroupByStart(scanner.pos);
 
-		while (!(t.kind == 0 || t.kind == 35))
+		while (!(t.kind == 0 || t.kind == ParsingConstants.KW_GROUP))
 		{
 			Error(136);
 			Get();
 		}
-		Expect(35);
-		Expect(36);
+		Expect(ParsingConstants.KW_GROUP);
+		Expect(ParsingConstants.KW_BY);
 		FieldList();
 		statement.setGroupByEnd(t.pos);
 	}
@@ -1249,12 +1331,12 @@ public class Parser
 		SQLSelectStatement statement = (SQLSelectStatement) getContext();
 		statement.setFromStart(scanner.pos);
 
-		while (!(t.kind == 0 || t.kind == 19))
+		while (!(t.kind == 0 || t.kind == ParsingConstants.KW_FROM))
 		{
 			Error(137);
 			Get();
 		}
-		Expect(19);
+		Expect(ParsingConstants.KW_FROM);
 		FromTableList();
 		statement.setFromEnd(t.pos);
 	}
@@ -1264,15 +1346,15 @@ public class Parser
 		SQLSelectStatement statement = (SQLSelectStatement) getContext();
 		statement.setSelectListStart(scanner.pos);
 
-		while (!(t.kind == 0 || t.kind == 20))
+		while (!(t.kind == 0 || t.kind == ParsingConstants.KW_SELECT))
 		{
 			Error(138);
 			Get();
 		}
-		Expect(20);
-		if (t.kind == 11 || t.kind == 21)
+		Expect(ParsingConstants.KW_SELECT);
+		if (t.kind == ParsingConstants.KW_ALL || t.kind == ParsingConstants.KW_DISTINCT)
 		{
-			if (t.kind == 21)
+			if (t.kind == ParsingConstants.KW_DISTINCT)
 			{
 				Get();
 			}
@@ -1288,7 +1370,7 @@ public class Parser
 	private final void FieldList()
 	{
 		Field();
-		while (t.kind == 101)
+		while (t.kind == ParsingConstants.KIND_COMMA)
 		{
 			ItemSeparator();
 			Field();
@@ -1297,13 +1379,13 @@ public class Parser
 
 	private final void CloseParens()
 	{
-		ExpectWeak(102, 13);
+		ExpectWeak(ParsingConstants.KIND_CLOSING_BRAKET, ParsingConstants.KW_SET);
 	}
 
 	private final void ColumnList()
 	{
 		ColumnName();
-		while (t.kind == 101)
+		while (t.kind == ParsingConstants.KIND_COMMA)
 		{
 			ItemSeparator();
 			ColumnName();
@@ -1350,7 +1432,7 @@ public class Parser
 
 	private final void ItemSeparator()
 	{
-		ExpectWeak(101, 15);
+		ExpectWeak(ParsingConstants.KIND_COMMA, ParsingConstants.KW_INSERT);
 	}
 
 	private final void UpdateField()
@@ -1366,12 +1448,12 @@ public class Parser
 		SQLWhere where = new SQLWhere(statement, t.pos);
 		pushContext(where);
 
-		while (!(t.kind == 0 || t.kind == 34))
+		while (!(t.kind == 0 || t.kind == ParsingConstants.KW_WHERE))
 		{
 			Error(140);
 			Get();
 		}
-		Expect(34);
+		Expect(ParsingConstants.KW_WHERE);
 		SearchCondition();
 		where.setEndPosition(t.pos);
 		popContext();
@@ -1381,7 +1463,7 @@ public class Parser
 	private final void UpdateFieldList()
 	{
 		UpdateField();
-		while (t.kind == 101)
+		while (t.kind == ParsingConstants.KIND_COMMA)
 		{
 			ItemSeparator();
 			UpdateField();
@@ -1398,25 +1480,25 @@ public class Parser
 
 	private final void SetOperator()
 	{
-		if (t.kind == 7)
+		if (t.kind == ParsingConstants.KW_UNION)
 		{
 			Get();
 		}
-		else if (t.kind == 8)
+		else if (t.kind == ParsingConstants.KW_EXCEPT)
 		{
 			Get();
 		}
-		else if (t.kind == 9)
+		else if (t.kind == ParsingConstants.KW_INTERSECT)
 		{
 			Get();
 		}
-		else if (t.kind == 10)
+		else if (t.kind == ParsingConstants.KW_MINUS)
 		{
 			Get();
 		}
 		else
 			Error(141);
-		if (t.kind == 11)
+		if (t.kind == ParsingConstants.KW_ALL)
 		{
 			Get();
 		}
@@ -1437,19 +1519,19 @@ public class Parser
 
 		SelectClause();
 		FromClause();
-		if (t.kind == 34)
+		if (t.kind == ParsingConstants.KW_WHERE)
 		{
 			WhereClause();
 		}
-		if (t.kind == 35)
+		if (t.kind == ParsingConstants.KW_GROUP)
 		{
 			GroupByClause();
 		}
-		if (t.kind == 37)
+		if (t.kind == ParsingConstants.KW_HAVING)
 		{
 			HavingClause();
 		}
-		if (t.kind == 38)
+		if (t.kind == ParsingConstants.KW_ORDER)
 		{
 			OrderByClause();
 		}
@@ -1458,17 +1540,17 @@ public class Parser
 
 	private final void Transaction()
 	{
-		if (t.kind == 69)
+		if (t.kind == ParsingConstants.KW_COMMIT)
 		{
 			Get();
 		}
-		else if (t.kind == 70)
+		else if (t.kind == ParsingConstants.KW_ROLLBACK)
 		{
 			Get();
 		}
 		else
 			Error(142);
-		if (t.kind == 71)
+		if (t.kind == ParsingConstants.KW_WORK)
 		{
 			Get();
 		}
@@ -1476,18 +1558,18 @@ public class Parser
 
 	private final void AlterTable()
 	{
-		Expect(98);
-		Expect(94);
+		Expect(ParsingConstants.KW_ALTER);
+		Expect(ParsingConstants.KW_TABLE);
 		QualifiedTable();
-		if (t.kind == 97)
+		if (t.kind == ParsingConstants.KW_ADD)
 		{
 			Add();
 		}
-		else if (t.kind == 98)
+		else if (t.kind == ParsingConstants.KW_ALTER)
 		{
 			Alter();
 		}
-		else if (t.kind == 96)
+		else if (t.kind == ParsingConstants.KW_DROP)
 		{
 			DropPart();
 		}
@@ -1497,12 +1579,12 @@ public class Parser
 
 	private final void Drop()
 	{
-		Expect(96);
-		if (t.kind == 94)
+		Expect(ParsingConstants.KW_DROP);
+		if (t.kind == ParsingConstants.KW_TABLE)
 		{
 			DropTable();
 		}
-		else if (t.kind == 100)
+		else if (t.kind == ParsingConstants.KW_INDEX)
 		{
 			IndexAndName();
 		}
@@ -1512,12 +1594,12 @@ public class Parser
 
 	private final void CreateStmt()
 	{
-		Expect(93);
-		if (t.kind == 94)
+		Expect(ParsingConstants.KW_CREATE);
+		if (t.kind == ParsingConstants.KW_TABLE)
 		{
 			CreateTable();
 		}
-		else if (t.kind == 91 || t.kind == 100)
+		else if (t.kind == ParsingConstants.KW_UNIQUE || t.kind == ParsingConstants.KW_INDEX)
 		{
 			CreateIndex();
 		}
@@ -1530,14 +1612,14 @@ public class Parser
 		SQLModifyingStatement statement = new SQLModifyingStatement(t.pos);
 		pushContext(statement);
 
-		Expect(18);
+		Expect(ParsingConstants.KW_DELETE);
 		SQLTable table = new SQLTable(statement, scanner.pos + 1);
 		statement.addTable(table);
 
-		Expect(19);
+		Expect(ParsingConstants.KW_FROM);
 		table.setName(t.str, t.pos);
 		Table(table);
-		if (t.kind == 34)
+		if (t.kind == ParsingConstants.KW_WHERE)
 		{
 			WhereClause();
 		}
@@ -1553,14 +1635,14 @@ public class Parser
 		statement.addTable(table);
 		pushContext(statement);
 
-		Expect(12);
+		Expect(ParsingConstants.KW_UPDATE);
 		table.setName(t.str, t.pos);
 		Table(null);
 		statement.setUpdateListStart(t.pos + 4);
-		Expect(13);
+		Expect(ParsingConstants.KW_SET);
 		UpdateFieldList();
 		statement.setUpdateListEnd(token.pos);
-		if (t.kind == 34)
+		if (t.kind == ParsingConstants.KW_WHERE)
 		{
 			WhereClause();
 		}
@@ -1574,32 +1656,32 @@ public class Parser
 		SQLModifyingStatement statement = new SQLModifyingStatement(t.pos);
 		pushContext(statement);
 
-		Expect(15);
+		Expect(ParsingConstants.KW_INSERT);
 		SQLTable table = new SQLTable(statement, scanner.pos + 1);
 		statement.addTable(table);
 
-		Expect(16);
+		Expect(ParsingConstants.KW_INTO);
 		SQLColumn column = new SQLColumn(statement, scanner.pos + 2);
 		table.setName(t.str, t.pos);
 		column.setRepeatable(true);
 		statement.addColumn(column);
 
 		Table(table);
-		if (t.kind == 5)
+		if (t.kind == ParsingConstants.KIND_OPENING_BRAKET)
 		{
 			Get();
 			ColumnList();
 			CloseParens();
 		}
 		column.setEndPosition(token.pos);
-		if (t.kind == 17)
+		if (t.kind == ParsingConstants.KW_VALUES)
 		{
 			Get();
-			Expect(5);
+			Expect(ParsingConstants.KIND_OPENING_BRAKET);
 			FieldList();
 			CloseParens();
 		}
-		else if (t.kind == 20)
+		else if (t.kind == ParsingConstants.KW_SELECT)
 		{
 			SelectStmt();
 		}
@@ -1614,7 +1696,7 @@ public class Parser
 	{
 		pushContext(new SQLStatement(token.pos));
 		SimpleSelect();
-		while (StartOf(16))
+		while (StartOf(ParsingConstants.KW_INTO))
 		{
 			SetOperator();
 			SimpleSelect();
@@ -1627,43 +1709,43 @@ public class Parser
 		addRootStatement(new SQLStatement(token.pos));
 		switch (t.kind)
 		{
-			case 20:
+			case ParsingConstants.KW_SELECT:
 				{
 					SelectStmt();
 					break;
 				}
-			case 15:
+			case ParsingConstants.KW_INSERT:
 				{
 					InsertStmt();
 					break;
 				}
-			case 12:
+			case ParsingConstants.KW_UPDATE:
 				{
 					UpdateStmt();
 					break;
 				}
-			case 18:
+			case ParsingConstants.KW_DELETE:
 				{
 					DeleteStmt();
 					break;
 				}
-			case 93:
+			case ParsingConstants.KW_CREATE:
 				{
 					CreateStmt();
 					break;
 				}
-			case 96:
+			case ParsingConstants.KW_DROP:
 				{
 					Drop();
 					break;
 				}
-			case 98:
+			case ParsingConstants.KW_ALTER:
 				{
 					AlterTable();
 					break;
 				}
-			case 69:
-			case 70:
+			case ParsingConstants.KW_COMMIT:
+			case ParsingConstants.KW_ROLLBACK:
 				{
 					Transaction();
 					break;
@@ -1680,7 +1762,7 @@ public class Parser
 	private final void squirrelSQL()
 	{
 		SQLStatement();
-		while (StartOf(17))
+		while (StartOf(ParsingConstants.KW_VALUES))
 		{
 			SQLStatement();
 		}

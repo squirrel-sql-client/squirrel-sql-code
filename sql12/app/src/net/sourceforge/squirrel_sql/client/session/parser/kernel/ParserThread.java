@@ -18,7 +18,7 @@
  *
  * created by cse, 07.10.2002 11:57:54
  *
- * @version $Id: ParserThread.java,v 1.4 2004-12-05 14:17:30 gerdwagner Exp $
+ * @version $Id: ParserThread.java,v 1.5 2006-05-02 10:56:44 gerdwagner Exp $
  */
 package net.sourceforge.squirrel_sql.client.session.parser.kernel;
 
@@ -614,7 +614,7 @@ public class ParserThread extends Thread
 			{
 				switch (n)
 				{
-					case 10:
+					case ParsingConstants.KW_MINUS:
 						StoreError(n, line, col, "undefined table");
 						break;
 					default:
