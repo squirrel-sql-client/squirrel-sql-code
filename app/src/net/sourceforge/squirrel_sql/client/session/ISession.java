@@ -39,6 +39,7 @@ import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+
 /**
  * The current session.
  */
@@ -46,194 +47,194 @@ public interface ISession extends IHasIdentifier
 {
 
    public interface IMainPanelTabIndexes extends MainPanel.ITabIndexes
-	{
-		// Empty body.
-	}
+   {
+      // Empty body.
+   }
 
-	/**
-	 * Retrieve whether this session has been closed.
-	 *
-	 * @return	<TT>true</TT> if session closed else <TT>false</TT>.
-	 */
-	boolean isClosed();
+   /**
+    * Retrieve whether this session has been closed.
+    *
+    * @return	<TT>true</TT> if session closed else <TT>false</TT>.
+    */
+   boolean isClosed();
 
-	/**
-	 * Return the Application API object.
-	 *
-	 * @return the Application API object.
-	 */
-	IApplication getApplication();
+   /**
+    * Return the Application API object.
+    *
+    * @return the Application API object.
+    */
+   IApplication getApplication();
 
-	/**
-	 * Return the current SQL connection object.
-	 *
-	 * @return the current SQL connection object.
-	 */
-	SQLConnection getSQLConnection();
+   /**
+    * Return the current SQL connection object.
+    *
+    * @return the current SQL connection object.
+    */
+   SQLConnection getSQLConnection();
 
-	/**
-	 * Return the driver used to connect to the database.
-	 *
-	 * @return the driver used to connect to the database.
-	 */
-	ISQLDriver getDriver();
+   /**
+    * Return the driver used to connect to the database.
+    *
+    * @return the driver used to connect to the database.
+    */
+   ISQLDriver getDriver();
 
-	/**
-	 * Return the alias used to connect to the database.
-	 *
-	 * @return the alias used to connect to the database.
-	 */
-	ISQLAlias getAlias();
+   /**
+    * Return the alias used to connect to the database.
+    *
+    * @return the alias used to connect to the database.
+    */
+   ISQLAlias getAlias();
 
-	/**
-	 * Return the properties for this session.
-	 *
-	 * @return the properties for this session.
-	 */
-	SessionProperties getProperties();
+   /**
+    * Return the properties for this session.
+    *
+    * @return the properties for this session.
+    */
+   SessionProperties getProperties();
 
- 	/**
-	 * Commit the current SQL session.
-	 */
-	void commit();
+    /**
+    * Commit the current SQL session.
+    */
+   void commit();
 
-	/**
-	 * Rollback the current SQL session.
-	 */
-	void rollback();
+   /**
+    * Rollback the current SQL session.
+    */
+   void rollback();
 
-	/**
-	 * Close this session.
-	 *
-	 * @throws	SQLException
-	 * 			Thrown if an error closing the SQL connection. The session
-	 * 			will still be closed even though the connection may not have
-	 *			been.
-	 */
-	void close() throws SQLException;
+   /**
+    * Close this session.
+    *
+    * @throws	SQLException
+    * 			Thrown if an error closing the SQL connection. The session
+    * 			will still be closed even though the connection may not have
+    *			been.
+    */
+   void close() throws SQLException;
 
-	/**
-	 * Close the current connection to the database.
-	 *
-	 * @throws	SQLException	if an SQL error occurs.
-	 */
-	void closeSQLConnection() throws SQLException;
+   /**
+    * Close the current connection to the database.
+    *
+    * @throws	SQLException	if an SQL error occurs.
+    */
+   void closeSQLConnection() throws SQLException;
 
    void setSessionInternalFrame(SessionInternalFrame sif);
 
-	/**
-	 * Reconnect to the database.
-	 */
-	void reconnect();
+   /**
+    * Reconnect to the database.
+    */
+   void reconnect();
 
-	Object getPluginObject(IPlugin plugin, String key);
-	Object putPluginObject(IPlugin plugin, String key, Object obj);
-	void removePluginObject(IPlugin plugin, String key);
+   Object getPluginObject(IPlugin plugin, String key);
+   Object putPluginObject(IPlugin plugin, String key, Object obj);
+   void removePluginObject(IPlugin plugin, String key);
 
-	void setMessageHandler(IMessageHandler handler);
-	IMessageHandler getMessageHandler();
+   void setMessageHandler(IMessageHandler handler);
+   IMessageHandler getMessageHandler();
 
-	SessionPanel getSessionSheet();
+   SessionPanel getSessionSheet();
 
    SessionInternalFrame getSessionInternalFrame();
 
 // JASON:
 //	SQLFilterClauses getSQLFilterClauses();
 
-	/**
-	 * Retrieve the schema information object for this session.
-	 */
-	SchemaInfo getSchemaInfo();
+   /**
+    * Retrieve the schema information object for this session.
+    */
+   net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo getSchemaInfo();
 
    /**
-	 * Select a tab in the main tabbed pane.
-	 *
-	 * @param	tabIndex	The tab to select. @see #IMainTabIndexes
-	 *
-	 * @throws	IllegalArgumentException
-	 *			Thrown if an invalid <TT>tabIndex</TT> passed.
-	 */
-	void selectMainTab(int tabIndex) throws IllegalArgumentException;
+    * Select a tab in the main tabbed pane.
+    *
+    * @param	tabIndex	The tab to select. @see #IMainTabIndexes
+    *
+    * @throws	IllegalArgumentException
+    *			Thrown if an invalid <TT>tabIndex</TT> passed.
+    */
+   void selectMainTab(int tabIndex) throws IllegalArgumentException;
 
-	/**
-	 * Add a tab to the main tabbed panel.
-	 *
-	 * @param	tab	 The tab to be added.
-	 *
-	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>IMainPanelTab</TT> passed.
-	 */
-	void addMainTab(IMainPanelTab tab);
+   /**
+    * Add a tab to the main tabbed panel.
+    *
+    * @param	tab	 The tab to be added.
+    *
+    * @throws	IllegalArgumentException
+    *			Thrown if a <TT>null</TT> <TT>IMainPanelTab</TT> passed.
+    */
+   void addMainTab(IMainPanelTab tab);
 
-	/**
-	 * Add component to the session sheets status bar.
-	 *
-	 * @param	comp	Component to add.
-	 */
-	void addToStatusBar(JComponent comp);
+   /**
+    * Add component to the session sheets status bar.
+    *
+    * @param	comp	Component to add.
+    */
+   void addToStatusBar(JComponent comp);
 
-	/**
-	 * Remove component to the session sheets status bar.
-	 *
-	 * @param	comp	Component to remove.
-	 */
-	void removeFromStatusBar(JComponent comp);
+   /**
+    * Remove component to the session sheets status bar.
+    *
+    * @param	comp	Component to remove.
+    */
+   void removeFromStatusBar(JComponent comp);
 
-	/**
-	 * Add a listener to this session
-	 *
-	 * @param	lis		The listener to add.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> listener passed.
-	 */
+   /**
+    * Add a listener to this session
+    *
+    * @param	lis		The listener to add.
+    *
+    * @throws	IllegalArgumentException
+    * 			Thrown if a <TT>null</TT> listener passed.
+    */
 // JASON: Removed as part of patch
 //	void addSessionListener(ISessionListener lis);
 
-	/**
-	 * Remove a listener from this session
-	 *
-	 * @param	lis		The listener to remove.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if a <TT>null</TT> listener passed.
-	 */
+   /**
+    * Remove a listener from this session
+    *
+    * @param	lis		The listener to remove.
+    *
+    * @throws	IllegalArgumentException
+    * 			Thrown if a <TT>null</TT> listener passed.
+    */
 //	 JASON: Removed as part of patch
 //	void removeSessionListener(ISessionListener lis);
 
-	/**
-	 * Retrieve the descriptive title of this session.
-	 *
-	 * @return		The descriptive title of this session.
-	 */
-	String getTitle();
+   /**
+    * Retrieve the descriptive title of this session.
+    *
+    * @return		The descriptive title of this session.
+    */
+   String getTitle();
 
     /**
      * Returns the cached database product name
      * 
      * @return the value of DatabaseMetaData.getDatabaseProductName
      */
-	String getDatabaseProductName();
-    
+   String getDatabaseProductName();
+
    /**
-	 * Add the passed action to the toolbar of the sessions main window.
-	 *
-	 * @param	action	Action to be added.
-	 */
-	void addToToolbar(Action action);
+    * Add the passed action to the toolbar of the sessions main window.
+    *
+    * @param	action	Action to be added.
+    */
+   void addToToolbar(Action action);
 
    public void addSeparatorToToolbar();
 
-	/**
-	 * The code in any SQLEditor is parsed in the background. You may attach a listener to the ParserEventsProcessor
+   /**
+    * The code in any SQLEditor is parsed in the background. You may attach a listener to the ParserEventsProcessor
     * to get to know about the results of parsing. The events are passed synchron with the event queue
     * (via SwingUtils.invokeLater()). At the moment events are produced for errors in the SQLScript
     * which are highlighted in the syntax plugin and for aliases of table names which are used in the
     * code completion plugin.
     * <p>
     * If you want the ParserEventsProcessor to produce further events feel free to contact gerdwagner@users.sourceforge.net.
-	 */
-	IParserEventsProcessor getParserEventsProcessor(IIdentifier sqlEntryPanelIdentifier);
+    */
+   IParserEventsProcessor getParserEventsProcessor(IIdentifier sqlEntryPanelIdentifier);
 
    void setActiveSessionWindow(BaseSessionInternalFrame activeActiveSessionWindow);
 
@@ -277,7 +278,7 @@ public interface ISession extends IHasIdentifier
     * @param _finishedLoading The _finishedLoading to set.
     */
    public void setPluginsfinishedLoading(boolean _finishedLoading);
-   
+
    /**
     * Determine from the session whether or not it is ok to close it.  It might
     * be the case that the session's SQLPanel has unsaved edits that require

@@ -18,7 +18,6 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
 import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
-import net.sourceforge.squirrel_sql.client.session.SchemaInfo;
 
 import java.sql.SQLException;
 import java.util.Vector;
@@ -73,7 +72,7 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
       return _tableName;
    }
 
-   public CodeCompletionInfo[] getColumns(SchemaInfo schemaInfo, String colNamePattern)
+   public CodeCompletionInfo[] getColumns(net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo schemaInfo, String colNamePattern)
       throws SQLException
    {
       if(null == _colInfos)

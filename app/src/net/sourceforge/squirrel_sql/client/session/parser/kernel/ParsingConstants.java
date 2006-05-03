@@ -60,6 +60,7 @@ public interface ParsingConstants
    static final int KW_WHERE = 34;
    static final int KW_WORK = 71;
    static final int KW_YEAR = 43;
+
    static final int KW_ALL = 11;
    static final int KW_AS = 23;
    static final int KW_DISTINCT = 21;
@@ -85,8 +86,18 @@ public interface ParsingConstants
    static final int KW_SELECT = 20;
    static final int KW_VALUES = 17;
 
+   static final int KW_CASE = -1000;
+   static final int KW_WHEN = -1001;
+   static final int KW_THEN = -1002;
+   static final int KW_ELSE = -1003;
+   static final int KW_END = -1004;
+   static final int KW_VIEW = -1005;
+
 
    static final int KIND_CLOSING_BRAKET = 102;
    static final int KIND_OPENING_BRAKET = 5;
    static final int KIND_COMMA = 101;
+   static final int KIND_ASTERISK = 39;
+   static final int KIND_EQUALS = 14;
+
 }

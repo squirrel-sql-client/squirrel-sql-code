@@ -45,7 +45,6 @@ import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SchemaInfoUpdateListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.CatalogsTab;
@@ -223,7 +222,7 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
          // Register tabs to display in the details panel for UDT nodes.
          _addDetailTab(DatabaseObjectType.UDT, new DatabaseObjectInfoTab());
 
-         _session.getSchemaInfo().addSchemaInfoUpdateListener(new SchemaInfoUpdateListener()
+         _session.getSchemaInfo().addSchemaInfoUpdateListener(new net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoUpdateListener()
          {
             public void schemaInfoUpdated()
             {

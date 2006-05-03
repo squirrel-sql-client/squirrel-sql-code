@@ -147,7 +147,15 @@ public class Parser
 
 	private boolean StartOf(int s)
 	{
-		return set[s][t.kind];
+      if(   0 > s
+         || 0  > t.kind
+         || set.length <= s
+         || set[0].length <= t.kind)
+      {
+         return false;
+      }
+
+      return set[s][t.kind];
 	}
 
 	private void ExpectWeak(int n, int follow)
@@ -398,66 +406,75 @@ public class Parser
    {
       Expect(ParsingConstants.KW_CONSTRAINT);
       RelationName();
-      Expect(ParsingConstants.KW_FOREIGN);
-      Expect(ParsingConstants.KW_KEY);
-      SimpleColumnParam();
-      Expect(ParsingConstants.KW_REFERENCES);
-      Table(null);
-      if (t.kind == ParsingConstants.KW_MATCH)
+
+      if (t.kind == ParsingConstants.KW_FOREIGN)
       {
          Get();
-         if (t.kind == ParsingConstants.KW_FULL)
+         Expect(ParsingConstants.KW_KEY);
+         SimpleColumnParam();
+         Expect(ParsingConstants.KW_REFERENCES);
+         Table(null);
+         if (t.kind == ParsingConstants.KW_MATCH)
          {
             Get();
-         }
-         else if (t.kind == ParsingConstants.KW_PARTIAL)
-         {
-            Get();
-         }
-         else
-            Error(109);
-      }
-      while (t.kind == ParsingConstants.KW_ON || t.kind == ParsingConstants.KW_NO)
-      {
-         if (t.kind == ParsingConstants.KW_ON)
-         {
-            Get();
-            if (t.kind == ParsingConstants.KW_DELETE)
+            if (t.kind == ParsingConstants.KW_FULL)
             {
                Get();
             }
-            else if (t.kind == ParsingConstants.KW_UPDATE)
+            else if (t.kind == ParsingConstants.KW_PARTIAL)
             {
                Get();
             }
             else
-               Error(110);
-            if (t.kind == ParsingConstants.KW_CASCADE)
+               Error(109);
+         }
+         while (t.kind == ParsingConstants.KW_ON || t.kind == ParsingConstants.KW_NO)
+         {
+            if (t.kind == ParsingConstants.KW_ON)
             {
                Get();
-            }
-            else if (t.kind == ParsingConstants.KW_SET)
-            {
-               Get();
-               if (t.kind == ParsingConstants.KW_NULL)
+               if (t.kind == ParsingConstants.KW_DELETE)
                {
                   Get();
                }
-               else if (t.kind == ParsingConstants.KW_DEFAULT )
+               else if (t.kind == ParsingConstants.KW_UPDATE)
                {
                   Get();
                }
                else
-                  Error(111);
+                  Error(110);
+               if (t.kind == ParsingConstants.KW_CASCADE)
+               {
+                  Get();
+               }
+               else if (t.kind == ParsingConstants.KW_SET)
+               {
+                  Get();
+                  if (t.kind == ParsingConstants.KW_NULL)
+                  {
+                     Get();
+                  }
+                  else if (t.kind == ParsingConstants.KW_DEFAULT)
+                  {
+                     Get();
+                  }
+                  else
+                     Error(111);
+               }
+               else
+                  Error(112);
             }
             else
-               Error(112);
+            {
+               Get();
+               Expect(ParsingConstants.KW_ACTION);
+            }
          }
-         else
-         {
-            Get();
-            Expect(ParsingConstants.KW_ACTION);
-         }
+      }
+      else
+      {
+         Expect(ParsingConstants.KW_UNIQUE);
+         SimpleColumnParam();
       }
 
    }
@@ -760,7 +777,7 @@ public class Parser
 
 	private final void MathOperator()
 	{
-		if (t.kind == 39)
+		if (t.kind == ParsingConstants.KIND_ASTERISK)
 		{
 			Get();
 		}
@@ -875,7 +892,7 @@ public class Parser
 	{
 		switch (t.kind)
 		{
-			case 14:
+			case ParsingConstants.KIND_EQUALS:
 				{
 					Get();
 					break;
@@ -1045,7 +1062,7 @@ public class Parser
 		else
 			Error(127);
 		Expect(ParsingConstants.KIND_OPENING_BRAKET);
-		if (t.kind == 39)
+		if (t.kind == ParsingConstants.KIND_ASTERISK)
 		{
 			Get();
 		}
@@ -1103,23 +1120,84 @@ public class Parser
 				Alias();
 			}
 		}
-		else if (t.kind == 39)
+		else if (t.kind == ParsingConstants.KIND_ASTERISK)
 		{
 			Get();
 		}
-		else
+      else if (t.kind == ParsingConstants.KW_CASE)
+      {
+         CaseStatment();
+      }
+      else
 			Error(130);
 	}
 
-	private final void OrderByFldList()
-	{
-		OrderByField();
-		while (t.kind == ParsingConstants.KIND_COMMA)
-		{
-			ItemSeparator();
-			OrderByField();
-		}
-	}
+   private void CaseStatment()
+   {
+      Expect(ParsingConstants.KW_CASE);
+      if(t.kind == ParsingConstants.KW_WHEN)
+      {
+         Expect(ParsingConstants.KW_WHEN);
+         Expression();
+         Expect(ParsingConstants.KW_THEN);
+         Expression();
+
+         while(t.kind == ParsingConstants.KW_WHEN)
+         {
+            Get();
+            Expression();
+            Expect(ParsingConstants.KW_THEN);
+            Expression();
+         }
+
+         Expect(ParsingConstants.KW_ELSE);
+         Expression();
+         Expect(ParsingConstants.KW_END);
+
+         if (t.kind == ParsingConstants.KW_AS)
+         {
+            Get();
+            Alias();
+         }
+
+      }
+      else
+      {
+         ColumnName();
+         Expect(ParsingConstants.KW_WHEN);
+         Expression();
+         Expect(ParsingConstants.KW_THEN);
+         Expression();
+
+         while(t.kind == ParsingConstants.KW_WHEN)
+         {
+            Get();
+            Expression();
+            Expect(ParsingConstants.KW_THEN);
+            Expression();
+         }
+
+         Expect(ParsingConstants.KW_ELSE);
+         Expression();
+         Expect(ParsingConstants.KW_END);
+
+         if (t.kind == ParsingConstants.KW_AS)
+         {
+            Get();
+            Alias();
+         }
+      }
+   }
+
+   private final void OrderByFldList()
+   {
+      OrderByField();
+      while (t.kind == ParsingConstants.KIND_COMMA)
+      {
+         ItemSeparator();
+         OrderByField();
+      }
+   }
 
 	private final void SearchCondition()
 	{
@@ -1395,7 +1473,7 @@ public class Parser
 	private final void Expression()
 	{
 		SimpleExpression();
-		while (StartOf(14))
+		while (StartOf(ParsingConstants.KIND_EQUALS))
 		{
 			Relation();
 			SimpleExpression();
@@ -1421,7 +1499,7 @@ public class Parser
 				Get();
 				column.setColumn(token.str, token.pos);
 			}
-			else if (t.kind == 39)
+			else if (t.kind == ParsingConstants.KIND_ASTERISK)
 			{
 				Get();
 			}
@@ -1438,7 +1516,7 @@ public class Parser
 	private final void UpdateField()
 	{
 		ColumnName();
-		Expect(14);
+		Expect(ParsingConstants.KIND_EQUALS);
 		Expression();
 	}
 
@@ -1603,30 +1681,42 @@ public class Parser
 		{
 			CreateIndex();
 		}
+      else if (t.kind == ParsingConstants.KW_VIEW)
+      {
+         CreateView();
+      }
 		else
 			Error(145);
 	}
 
-	private final void DeleteStmt()
-	{
-		SQLModifyingStatement statement = new SQLModifyingStatement(t.pos);
-		pushContext(statement);
+   private void CreateView()
+   {
+      Expect(ParsingConstants.KW_VIEW);
+      Table(null);
+      Expect(ParsingConstants.KW_AS);
+      SelectStmt();
+   }
 
-		Expect(ParsingConstants.KW_DELETE);
-		SQLTable table = new SQLTable(statement, scanner.pos + 1);
-		statement.addTable(table);
+   private final void DeleteStmt()
+   {
+      SQLModifyingStatement statement = new SQLModifyingStatement(t.pos);
+      pushContext(statement);
 
-		Expect(ParsingConstants.KW_FROM);
-		table.setName(t.str, t.pos);
-		Table(table);
-		if (t.kind == ParsingConstants.KW_WHERE)
-		{
-			WhereClause();
-		}
-		statement.setEndPosition(token.pos);
-		popContext();
+      Expect(ParsingConstants.KW_DELETE);
+      SQLTable table = new SQLTable(statement, scanner.pos + 1);
+      statement.addTable(table);
 
-	}
+      Expect(ParsingConstants.KW_FROM);
+      table.setName(t.str, t.pos);
+      Table(table);
+      if (t.kind == ParsingConstants.KW_WHERE)
+      {
+         WhereClause();
+      }
+      statement.setEndPosition(token.pos);
+      popContext();
+
+   }
 
 	private final void UpdateStmt()
 	{
@@ -1784,42 +1874,24 @@ public class Parser
 	}
 
 	private static boolean[][] set = {
-		{T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, T, T, x, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x,
-		 x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
-		{x, T, T, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, x, x, x, T, x, x, x, x, x, x,
-		 x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
-		{x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, x, x, x, x, T,
-		 x, x, x, x, x, x, x, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
-		{x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, x, x, x, x, x, x, x, x, x, x, x, x, T, x, x, T, T, x, x, x,
-		 x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
-		{x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, x, x, x, x, T,
-		 x, T, x, x, x, x, x, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
-		{x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, T, T, T, T, x, x, x, x, x, x, x, x, x, x, x,
-		 x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
-		{x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, T, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x,
-		 x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
-		{x, T, T, T, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, T, T, T, T, T, T, T, T, T, x, x, T, T, T, x, x, x, x, x,
-		 x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
-		{x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, x, x, x, x, x, x, x, x, x, x, x, x, T, x, x, T, T, T, T, x,
-		 x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
-		{x, T, T, T, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, T, T, T, T, T, T, T, T, T, x, x, T, T, T, x, x, x, x, x,
-		 x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
-		{x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, x, T, T, T, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x,
-		 x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
-		{x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, T, T, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x,
-		 x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
-		{x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, T, T, T, T, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x,
-		 x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, x, x, x},
-		{T, x, x, x, x, x, T, T, T, T, T, x, T, x, T, T, x, T, T, T, T, x, x, T, T, T, T, T, T, T, T, x, x, x, T, T, x, T, T, T, x, x, x, x, x, x, x, x, x, x, x, x, T, x, T, T, T, T, T, x,
-		 x, x, T, T, T, T, T, x, x, T, T, x, x, x, x, x, x, x, x, x, x, T, x, x, x, T, x, x, x, x, x, x, x, T, x, x, T, x, T, x, x, T, T, x, x},
-		{x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x,
-		 x, x, T, T, T, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
-		{T, T, T, T, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, T, T, x, T, T, T, T, T, T, T, T, T, T, T, T, T, x, x, T, T, T, x, x, x, x, x,
-		 x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, x, T, x, x, x, x, x, x, T, T, x, x, x, x, x, x, x, x, x, x, x, x},
-		{x, x, x, x, x, x, x, T, T, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x,
-		 x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
-		{x, x, x, x, x, x, x, x, x, x, x, x, T, x, x, T, x, x, T, x, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x,
-		 x, x, x, x, x, x, x, x, x, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, x, x, T, x, T, x, x, x, x, x, x}
+		{T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, T, T, x, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
+		{x, T, T, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, x, x, x, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
+		{x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, x, x, x, x, T, x, x, x, x, x, x, x, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
+		{x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, x, x, x, x, x, x, x, x, x, x, x, x, T, x, x, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
+		{x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, x, x, x, x, T, x, T, x, x, x, x, x, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
+		{x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, T, T, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
+		{x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, T, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
+		{x, T, T, T, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, T, T, T, T, T, T, T, T, T, x, x, T, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
+		{x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, x, x, x, x, x, x, x, x, x, x, x, x, T, x, x, T, T, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
+		{x, T, T, T, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, T, T, T, T, T, T, T, T, T, x, x, T, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
+		{x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, x, T, T, T, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
+		{x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, T, T, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
+		{x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, T, T, T, T, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, x, x, x},
+		{T, x, x, x, x, x, T, T, T, T, T, x, T, x, T, T, x, T, T, T, T, x, x, T, T, T, T, T, T, T, T, x, x, x, T, T, x, T, T, T, x, x, x, x, x, x, x, x, x, x, x, x, T, x, T, T, T, T, T, x, x, x, T, T, T, T, T, x, x, T, T, x, x, x, x, x, x, x, x, x, x, T, x, x, x, T, x, x, x, x, x, x, x, T, x, x, T, x, T, x, x, T, T, x, x},
+		{x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, T, T, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
+		{T, T, T, T, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, T, T, x, T, T, T, T, T, T, T, T, T, T, T, T, T, x, x, T, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, x, T, x, x, x, x, x, x, T, T, x, x, x, x, x, x, x, x, x, x, x, x},
+		{x, x, x, x, x, x, x, T, T, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x},
+		{x, x, x, x, x, x, x, x, x, x, x, x, T, x, x, T, x, x, T, x, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, T, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, T, x, x, T, x, T, x, x, x, x, x, x}
 
 	};
 }
