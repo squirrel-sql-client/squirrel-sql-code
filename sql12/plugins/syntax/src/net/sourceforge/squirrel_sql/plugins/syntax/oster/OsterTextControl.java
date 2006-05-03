@@ -27,7 +27,7 @@ import com.Ostermiller.Syntax.Lexer.Token;
 import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
-import net.sourceforge.squirrel_sql.client.session.SchemaInfo;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsAdapter;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;

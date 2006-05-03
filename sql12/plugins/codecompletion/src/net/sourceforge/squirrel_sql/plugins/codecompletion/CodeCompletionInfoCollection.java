@@ -18,7 +18,7 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SchemaInfoUpdateListener;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoUpdateListener;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;

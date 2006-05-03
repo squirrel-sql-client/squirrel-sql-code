@@ -51,6 +51,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
@@ -121,7 +122,7 @@ class Session implements ISession
 	private IMessageHandler _msgHandler = NullMessageHandler.getInstance();
 
 	/** Xref info about the current connection. */
-	private final SchemaInfo _schemaInfo;
+	private final net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo _schemaInfo;
 
    /** Set to <TT>true</TT> once session closed. */
 	private boolean _closed;

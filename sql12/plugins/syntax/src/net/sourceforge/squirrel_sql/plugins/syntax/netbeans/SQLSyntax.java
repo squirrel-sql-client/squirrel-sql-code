@@ -2,7 +2,7 @@ package net.sourceforge.squirrel_sql.plugins.syntax.netbeans;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
-import net.sourceforge.squirrel_sql.client.session.CaseInsensitiveString;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.CaseInsensitiveString;
 import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsAdapter;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -10,7 +10,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import org.netbeans.editor.Syntax;
 import org.netbeans.editor.TokenID;
 
-import javax.swing.*;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -338,14 +337,7 @@ public class SQLSyntax extends Syntax
                if (!(Character.isJavaIdentifierPart(actChar)))
                {
                   state = INIT;
-                  TokenID tid = matchError(buffer, tokenOffset, offset - tokenOffset);
-                  tid = (tid != null) ? tid : matchKeyword(buffer, tokenOffset, offset - tokenOffset);
-                  tid = (tid != null) ? tid : matchTable(buffer, tokenOffset, offset - tokenOffset);
-                  tid = (tid != null) ? tid : matchFunction(buffer, tokenOffset, offset - tokenOffset);
-                  tid = (tid != null) ? tid : matchDataType(buffer, tokenOffset, offset - tokenOffset);
-                  tid = (tid != null) ? tid : matchStatementSeparator(buffer, tokenOffset, offset - tokenOffset);
-                  tid = (tid != null) ? tid : matchColumn(buffer, tokenOffset, offset - tokenOffset);
-                  return (tid != null) ? tid : SQLTokenContext.IDENTIFIER;
+                  return findMatchingTokenID();
                }
                break;
 
@@ -780,11 +772,7 @@ public class SQLSyntax extends Syntax
                return SQLTokenContext.WHITESPACE;
             case ISI_IDENTIFIER:
                state = INIT;
-               TokenID kwd = matchError(buffer, tokenOffset, offset - tokenOffset);
-               kwd = (kwd != null) ? kwd : matchKeyword(buffer, tokenOffset, offset - tokenOffset);
-               kwd = (kwd != null) ? kwd : matchTable(buffer, tokenOffset, offset - tokenOffset);
-               kwd = (kwd != null) ? kwd : matchColumn(buffer, tokenOffset, offset - tokenOffset);
-               return (kwd != null) ? kwd : SQLTokenContext.IDENTIFIER;
+               return findMatchingTokenID();
             case ISI_LINE_COMMENT:
                return SQLTokenContext.LINE_COMMENT; // stay in line-comment state
             case ISI_BLOCK_COMMENT:
@@ -880,77 +868,89 @@ public class SQLSyntax extends Syntax
       return null; // nothing found
    }
 
-	public String getStateName(int stateNumber)
-	{
-		switch (stateNumber)
-		{
-			case ISI_WHITESPACE:
-				return "ISI_WHITESPACE"; // NOI18N
-			case ISI_LINE_COMMENT:
-				return "ISI_LINE_COMMENT"; // NOI18N
-			case ISI_BLOCK_COMMENT:
-				return "ISI_BLOCK_COMMENT"; // NOI18N
-			case ISI_STRING:
-				return "ISI_STRING"; // NOI18N
-			case ISI_STRING_A_BSLASH:
-				return "ISI_STRING_A_BSLASH"; // NOI18N
-			case ISI_CHAR:
-				return "ISI_CHAR"; // NOI18N
-			case ISI_CHAR_A_BSLASH:
-				return "ISI_CHAR_A_BSLASH"; // NOI18N
-			case ISI_IDENTIFIER:
-				return "ISI_IDENTIFIER"; // NOI18N
-			case ISA_MINUS:
-				return "ISA_MINUS"; // NOI18N
-			case ISA_EQ:
-				return "ISA_EQ"; // NOI18N
-			case ISA_GT:
-				return "ISA_GT"; // NOI18N
-			case ISA_GTGT:
-				return "ISA_GTGT"; // NOI18N
-			case ISA_GTGTGT:
-				return "ISA_GTGTGT"; // NOI18N
-			case ISA_LT:
-				return "ISA_LT"; // NOI18N
-			case ISA_LTLT:
-				return "ISA_LTLT"; // NOI18N
-			case ISA_PLUS:
-				return "ISA_PLUS"; // NOI18N
-			case ISA_SLASH:
-				return "ISA_SLASH"; // NOI18N
-			case ISA_STAR:
-				return "ISA_STAR"; // NOI18N
-			case ISA_STAR_I_BLOCK_COMMENT:
-				return "ISA_STAR_I_BLOCK_COMMENT"; // NOI18N
-			case ISA_PIPE:
-				return "ISA_PIPE"; // NOI18N
-			case ISA_PERCENT:
-				return "ISA_PERCENT"; // NOI18N
-			case ISA_AND:
-				return "ISA_AND"; // NOI18N
-			case ISA_XOR:
-				return "ISA_XOR"; // NOI18N
-			case ISA_EXCLAMATION:
-				return "ISA_EXCLAMATION"; // NOI18N
-			case ISA_ZERO:
-				return "ISA_ZERO"; // NOI18N
-			case ISI_INT:
-				return "ISI_INT"; // NOI18N
-			case ISI_OCTAL:
-				return "ISI_OCTAL"; // NOI18N
-			case ISI_DOUBLE:
-				return "ISI_DOUBLE"; // NOI18N
-			case ISI_DOUBLE_EXP:
-				return "ISI_DOUBLE_EXP"; // NOI18N
-			case ISI_HEX:
-				return "ISI_HEX"; // NOI18N
-			case ISA_DOT:
-				return "ISA_DOT"; // NOI18N
+   private TokenID findMatchingTokenID()
+   {
+      TokenID tid = matchError(buffer, tokenOffset, offset - tokenOffset);
+      tid = (tid != null) ? tid : matchKeyword(buffer, tokenOffset, offset - tokenOffset);
+      tid = (tid != null) ? tid : matchTable(buffer, tokenOffset, offset - tokenOffset);
+      tid = (tid != null) ? tid : matchFunction(buffer, tokenOffset, offset - tokenOffset);
+      tid = (tid != null) ? tid : matchDataType(buffer, tokenOffset, offset - tokenOffset);
+      tid = (tid != null) ? tid : matchStatementSeparator(buffer, tokenOffset, offset - tokenOffset);
+      tid = (tid != null) ? tid : matchColumn(buffer, tokenOffset, offset - tokenOffset);
+      return (tid != null) ? tid : SQLTokenContext.IDENTIFIER;
+   }
 
-			default:
-				return super.getStateName(stateNumber);
-		}
-	}
+   public String getStateName(int stateNumber)
+   {
+      switch (stateNumber)
+      {
+         case ISI_WHITESPACE:
+            return "ISI_WHITESPACE"; // NOI18N
+         case ISI_LINE_COMMENT:
+            return "ISI_LINE_COMMENT"; // NOI18N
+         case ISI_BLOCK_COMMENT:
+            return "ISI_BLOCK_COMMENT"; // NOI18N
+         case ISI_STRING:
+            return "ISI_STRING"; // NOI18N
+         case ISI_STRING_A_BSLASH:
+            return "ISI_STRING_A_BSLASH"; // NOI18N
+         case ISI_CHAR:
+            return "ISI_CHAR"; // NOI18N
+         case ISI_CHAR_A_BSLASH:
+            return "ISI_CHAR_A_BSLASH"; // NOI18N
+         case ISI_IDENTIFIER:
+            return "ISI_IDENTIFIER"; // NOI18N
+         case ISA_MINUS:
+            return "ISA_MINUS"; // NOI18N
+         case ISA_EQ:
+            return "ISA_EQ"; // NOI18N
+         case ISA_GT:
+            return "ISA_GT"; // NOI18N
+         case ISA_GTGT:
+            return "ISA_GTGT"; // NOI18N
+         case ISA_GTGTGT:
+            return "ISA_GTGTGT"; // NOI18N
+         case ISA_LT:
+            return "ISA_LT"; // NOI18N
+         case ISA_LTLT:
+            return "ISA_LTLT"; // NOI18N
+         case ISA_PLUS:
+            return "ISA_PLUS"; // NOI18N
+         case ISA_SLASH:
+            return "ISA_SLASH"; // NOI18N
+         case ISA_STAR:
+            return "ISA_STAR"; // NOI18N
+         case ISA_STAR_I_BLOCK_COMMENT:
+            return "ISA_STAR_I_BLOCK_COMMENT"; // NOI18N
+         case ISA_PIPE:
+            return "ISA_PIPE"; // NOI18N
+         case ISA_PERCENT:
+            return "ISA_PERCENT"; // NOI18N
+         case ISA_AND:
+            return "ISA_AND"; // NOI18N
+         case ISA_XOR:
+            return "ISA_XOR"; // NOI18N
+         case ISA_EXCLAMATION:
+            return "ISA_EXCLAMATION"; // NOI18N
+         case ISA_ZERO:
+            return "ISA_ZERO"; // NOI18N
+         case ISI_INT:
+            return "ISI_INT"; // NOI18N
+         case ISI_OCTAL:
+            return "ISI_OCTAL"; // NOI18N
+         case ISI_DOUBLE:
+            return "ISI_DOUBLE"; // NOI18N
+         case ISI_DOUBLE_EXP:
+            return "ISI_DOUBLE_EXP"; // NOI18N
+         case ISI_HEX:
+            return "ISI_HEX"; // NOI18N
+         case ISA_DOT:
+            return "ISA_DOT"; // NOI18N
+
+         default:
+            return super.getStateName(stateNumber);
+      }
+   }
 
    private TokenID matchTable(char[] buffer, int offset, int len)
    {
@@ -1107,6 +1107,18 @@ public class SQLSyntax extends Syntax
             return SQLTokenContext.ERROR;
          }
 
+         if(absolutePosition == errInf.beginPos)
+         {
+            // Example:
+            // ALTER TABLE kvpos ADD CONSTRAINT kv_kvpos FOREIGN KEY (kvid) kv(kvid)
+            // -------------------------------------------------------------^ ("References" expected)
+            //
+            // kv will not be marked with the condition above, because
+            // errInf.endPos <= absolutePosition + len
+            // is never true.
+
+            return SQLTokenContext.ERROR;
+         }
       }
       return null;
    }

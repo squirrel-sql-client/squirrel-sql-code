@@ -54,7 +54,7 @@ public class ErrorStream {
 			case ParsingConstants.KW_ALL: {s = "\"ALL\" "+EXPECTED_STR; break;}
 			case ParsingConstants.KW_UPDATE: {s = "\"UPDATE\" "+EXPECTED_STR; break;}
 			case ParsingConstants.KW_SET: {s = "\"SET\" "+EXPECTED_STR; break;}
-			case 14: {s = "\"=\" "+EXPECTED_STR; break;}
+			case ParsingConstants.KIND_EQUALS: {s = "\"=\" "+EXPECTED_STR; break;}
 			case ParsingConstants.KW_INSERT: {s = "\"INSERT\" "+EXPECTED_STR; break;}
 			case ParsingConstants.KW_INTO: {s = "\"INTO\" "+EXPECTED_STR; break;}
 			case ParsingConstants.KW_VALUES: {s = "\"VALUES\" "+EXPECTED_STR; break;}
@@ -79,7 +79,7 @@ public class ErrorStream {
 			case ParsingConstants.KW_BY: {s = "\"BY\" "+EXPECTED_STR; break;}
 			case ParsingConstants.KW_HAVING: {s = "\"HAVING\" "+EXPECTED_STR; break;}
 			case ParsingConstants.KW_ORDER: {s = "\"ORDER\" "+EXPECTED_STR; break;}
-			case 39: {s = "\"*\" "+EXPECTED_STR; break;}
+			case ParsingConstants.KIND_ASTERISK: {s = "\"*\" "+EXPECTED_STR; break;}
 			case ParsingConstants.KW_TIMESTAMP: {s = "\"TIMESTAMP\" "+EXPECTED_STR; break;}
 			case ParsingConstants.KW_UPPER: {s = "\"UPPER\" "+EXPECTED_STR; break;}
 			case ParsingConstants.KW_MONTH: {s = "\"MONTH\" "+EXPECTED_STR; break;}
@@ -143,7 +143,13 @@ public class ErrorStream {
 			case ParsingConstants.KW_INDEX: {s = "\"INDEX\" "+EXPECTED_STR; break;}
 			case ParsingConstants.KIND_COMMA: {s = "\",\" "+EXPECTED_STR; break;}
 			case ParsingConstants.KIND_CLOSING_BRAKET: {s = "\")\" "+EXPECTED_STR; break;}
-			case 103: {s = NOT_EXPECTED_STR; break;}
+         case ParsingConstants.KW_CASE: {s = "\"CASE\" "+EXPECTED_STR; break;}
+         case ParsingConstants.KW_WHEN: {s = "\"WHEN\" "+EXPECTED_STR; break;}
+         case ParsingConstants.KW_THEN: {s = "\"THEN\" "+EXPECTED_STR; break;}
+         case ParsingConstants.KW_ELSE: {s = "\"ELSE\" "+EXPECTED_STR; break;}
+         case ParsingConstants.KW_END: {s = "\"END\" "+EXPECTED_STR; break;}
+         case ParsingConstants.KW_VIEW: {s = "\"VIEW\" "+EXPECTED_STR; break;}
+         case 103: {s = NOT_EXPECTED_STR; break;}
 			case 104: {s = INVALID_STR +" DropPart"; break;}
 			case 105: {s = INVALID_STR +" Alter"; break;}
 			case 106: {s = INVALID_STR +" Add"; break;}

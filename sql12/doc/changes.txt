@@ -5,6 +5,12 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+Fixed bugs in error and syntax highlighting:
+ - Error highlighting for "ALTER TABLE ADD CONSTRAINT ..."
+ - Error highlighting for "CREATE VIEW ..."
+ - Error and syntax highlighting for "CASE [...] WHEN ... THEN ... ELSE .. END"
+
+
 Centralized Database Meta Data caching. This brings along the following improvements:
 - When a DDL statement is run the Object Tree is updated immediately to reflect the change.
   This works as long as standard DDL statements are used.

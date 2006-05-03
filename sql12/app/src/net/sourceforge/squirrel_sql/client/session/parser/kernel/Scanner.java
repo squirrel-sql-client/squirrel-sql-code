@@ -76,7 +76,7 @@ public class Scanner
    private static final int[] start = {
     ParsingConstants.KW_AS,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
      0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-     0,  1,  4,  1,  1,  0,  0,  ParsingConstants.KIND_OPENING_BRAKET,  ParsingConstants.KW_UNION, 22, ParsingConstants.KW_ALL, ParsingConstants.KW_INSERT, ParsingConstants.KW_DISTINCT, ParsingConstants.KW_UPDATE,  2, 14,
+     0,  1,  4,  1,  1,  0,  0,  ParsingConstants.KIND_OPENING_BRAKET,  ParsingConstants.KW_UNION, 22, ParsingConstants.KW_ALL, ParsingConstants.KW_INSERT, ParsingConstants.KW_DISTINCT, ParsingConstants.KW_UPDATE,  2, ParsingConstants.KIND_EQUALS,
      ParsingConstants.KW_EXCEPT,  ParsingConstants.KW_EXCEPT,  ParsingConstants.KW_EXCEPT,  ParsingConstants.KW_EXCEPT,  ParsingConstants.KW_EXCEPT,  ParsingConstants.KW_EXCEPT,  ParsingConstants.KW_EXCEPT,  ParsingConstants.KW_EXCEPT,  ParsingConstants.KW_EXCEPT,  ParsingConstants.KW_EXCEPT, ParsingConstants.KW_SET,  ParsingConstants.KW_INTERSECT, ParsingConstants.KW_INTO, ParsingConstants.KW_MINUS, ParsingConstants.KW_FROM,  0,
      1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
      1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,
@@ -91,7 +91,7 @@ public class Scanner
       ignore.set(1); ignore.set(2); ignore.set(3); ignore.set(4);
       ignore.set(ParsingConstants.KIND_OPENING_BRAKET); ignore.set(6); ignore.set(ParsingConstants.KW_UNION); ignore.set(ParsingConstants.KW_EXCEPT);
       ignore.set(ParsingConstants.KW_INTERSECT); ignore.set(ParsingConstants.KW_MINUS); ignore.set(ParsingConstants.KW_ALL); ignore.set(ParsingConstants.KW_UPDATE);
-      ignore.set(ParsingConstants.KW_SET); ignore.set(14); ignore.set(ParsingConstants.KW_INSERT); ignore.set(ParsingConstants.KW_INTO);
+      ignore.set(ParsingConstants.KW_SET); ignore.set(ParsingConstants.KIND_EQUALS); ignore.set(ParsingConstants.KW_INSERT); ignore.set(ParsingConstants.KW_INTO);
       ignore.set(ParsingConstants.KW_VALUES); ignore.set(ParsingConstants.KW_DELETE); ignore.set(ParsingConstants.KW_FROM); ignore.set(ParsingConstants.KW_SELECT);
       ignore.set(ParsingConstants.KW_DISTINCT); ignore.set(22); ignore.set(ParsingConstants.KW_AS); ignore.set(ParsingConstants.KW_JOIN);
       ignore.set(ParsingConstants.KW_CROSS); ignore.set(ParsingConstants.KW_NATURAL); ignore.set(ParsingConstants.KW_INNER); ignore.set(ParsingConstants.KW_FULL);
@@ -224,6 +224,7 @@ public class Scanner
 				if (t.val.equals("CASCADE")) t.kind = ParsingConstants.KW_CASCADE;
 				else if (t.val.equals("CHAR")) t.kind = ParsingConstants.KW_CHAR;
 				else if (t.val.equals("CHARACTER")) t.kind = ParsingConstants.KW_CHARACTER;
+				else if (t.val.equals("CASE")) t.kind = ParsingConstants.KW_CASE;
 				else if (t.val.equals("CHECK")) t.kind = ParsingConstants.KW_CHECK;
 				else if (t.val.equals("COMMIT")) t.kind = ParsingConstants.KW_COMMIT;
 				else if (t.val.equals("CONSTRAINT")) t.kind = ParsingConstants.KW_CONSTRAINT;
@@ -240,7 +241,9 @@ public class Scanner
 				else if (t.val.equals("DROP")) t.kind = ParsingConstants.KW_DROP;
 				break;}
 			case 'E': {
-				if (t.val.equals("ESCAPE")) t.kind = ParsingConstants.KW_ESCAPE;
+            if (t.val.equals("ELSE")) t.kind = ParsingConstants.KW_ELSE;
+            else if (t.val.equals("END")) t.kind = ParsingConstants.KW_END;
+				else if (t.val.equals("ESCAPE")) t.kind = ParsingConstants.KW_ESCAPE;
 				else if (t.val.equals("EXCEPT")) t.kind = ParsingConstants.KW_EXCEPT;
 				break;}
 			case 'F': {
@@ -313,6 +316,7 @@ public class Scanner
 				break;}
 			case 'T': {
 				if (t.val.equals("TABLE")) t.kind = ParsingConstants.KW_TABLE;
+				else if (t.val.equals("THEN")) t.kind = ParsingConstants.KW_THEN;
 				else if (t.val.equals("TIME")) t.kind = ParsingConstants.KW_TIME;
 				else if (t.val.equals("TIMESTAMP")) t.kind = ParsingConstants.KW_TIMESTAMP;
 				break;}
@@ -326,9 +330,11 @@ public class Scanner
 			case 'V': {
 				if (t.val.equals("VALUES")) t.kind = ParsingConstants.KW_VALUES;
 				else if (t.val.equals("VARCHAR")) t.kind = ParsingConstants.KW_VARCHAR;
+				else if (t.val.equals("VIEW")) t.kind = ParsingConstants.KW_VIEW;
 				break;}
 			case 'W': {
 				if (t.val.equals("WHERE")) t.kind = ParsingConstants.KW_WHERE;
+				else if (t.val.equals("WHEN")) t.kind = ParsingConstants.KW_WHEN;
 				else if (t.val.equals("WORK")) t.kind = ParsingConstants.KW_WORK;
 				break;}
 			case 'Y': {
@@ -385,14 +391,14 @@ public class Scanner
 				case ParsingConstants.KW_INTERSECT:
 					{t.kind = 6; break loop;}
 				case ParsingConstants.KW_MINUS:
-					{t.kind = 14; break loop;}
+					{t.kind = ParsingConstants.KIND_EQUALS; break loop;}
 				case ParsingConstants.KW_ALL:
-					{t.kind = 39; break loop;}
+					{t.kind = ParsingConstants.KIND_ASTERISK; break loop;}
 				case ParsingConstants.KW_UPDATE:
 					{t.kind = 52; break loop;}
 				case ParsingConstants.KW_SET:
 					{t.kind = 53; break loop;}
-				case 14:
+				case ParsingConstants.KIND_EQUALS:
 					{t.kind = 55; break loop;}
 				case ParsingConstants.KW_INSERT:
 					{t.kind = 56; break loop;}
