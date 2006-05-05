@@ -32,6 +32,10 @@ public class SQLPanelAdapter implements ISQLPanelListener
 	 */
 	public void sqlEntryAreaInstalled(SQLPanelEvent evt)
 	{
-		// Empty body.
 	}
+
+   public void sqlEntryAreaClosed(SQLPanelEvent evt)
+   {
+
+   }
 }

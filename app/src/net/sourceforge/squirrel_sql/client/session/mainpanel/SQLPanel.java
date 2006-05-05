@@ -403,6 +403,9 @@ public class SQLPanel extends JPanel
 
    public void sessionWindowClosing()
    {
+
+      fireSQLEntryAreaClosed();
+
       if(_hasBeenVisible)
       {
          int dividerLoc = _splitPane.getDividerLocation();
@@ -415,7 +418,9 @@ public class SQLPanel extends JPanel
 		
 
 		_sqlEntry.dispose();
-	}
+
+
+   }
 
 
 	private void installSQLEntryPanel(ISQLEntryPanel pnl)
@@ -554,7 +559,7 @@ public class SQLPanel extends JPanel
 		return getSQLEntryPanel().addToSQLEntryAreaMenu(action);
 	}
 
-	protected void fireSQLEntryAreaInstalled()
+	private void fireSQLEntryAreaInstalled()
 	{
 		// Guaranteed to be non-null.
 		Object[] listeners = _listeners.getListenerList();
@@ -576,7 +581,29 @@ public class SQLPanel extends JPanel
 	}
 
 
-	protected void fireTabTornOffEvent(ResultTab tab)
+   private void fireSQLEntryAreaClosed()
+   {
+      // Guaranteed to be non-null.
+      Object[] listeners = _listeners.getListenerList();
+      // Process the listeners last to first, notifying
+      // those that are interested in this event.
+      SQLPanelEvent evt = null;
+      for (int i = listeners.length - 2; i >= 0; i -= 2)
+      {
+         if (listeners[i] == ISQLPanelListener.class)
+         {
+            // Lazily create the event:
+            if (evt == null)
+            {
+               evt = new SQLPanelEvent(_session, this);
+            }
+            ((ISQLPanelListener)listeners[i + 1]).sqlEntryAreaClosed(evt);
+         }
+      }
+   }
+
+
+   private void fireTabTornOffEvent(ResultTab tab)
 	{
 		// Guaranteed to be non-null.
 		Object[] listeners = _listeners.getListenerList();
@@ -597,7 +624,7 @@ public class SQLPanel extends JPanel
 		}
 	}
 
-	protected void fireTornOffResultTabReturned(ResultTab tab)
+	private void fireTornOffResultTabReturned(ResultTab tab)
 	{
 		// Guaranteed to be non-null.
 		Object[] listeners = _listeners.getListenerList();
@@ -618,7 +645,7 @@ public class SQLPanel extends JPanel
 		}
 	}
 
-   protected void fireExecuterTabAdded(ISQLResultExecuter exec)
+   private void fireExecuterTabAdded(ISQLResultExecuter exec)
 	{
 		// Guaranteed to be non-null.
 		Object[] listeners = _listeners.getListenerList();
@@ -639,7 +666,7 @@ public class SQLPanel extends JPanel
 		}
 	}
 
-	protected void fireExecuterTabActivated(ISQLResultExecuter exec)
+	private void fireExecuterTabActivated(ISQLResultExecuter exec)
 	{
 		// Guaranteed to be non-null.
 		Object[] listeners = _listeners.getListenerList();

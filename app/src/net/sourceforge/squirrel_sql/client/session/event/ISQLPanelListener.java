@@ -34,4 +34,6 @@ public interface ISQLPanelListener extends EventListener
 	 * @param evt	Object describing this event.
 	 */
 	void sqlEntryAreaInstalled(SQLPanelEvent evt);
+
+   void sqlEntryAreaClosed(SQLPanelEvent evt);
 }
