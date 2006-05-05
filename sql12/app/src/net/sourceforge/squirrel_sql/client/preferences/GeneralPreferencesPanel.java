@@ -22,11 +22,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
@@ -45,6 +41,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 
 	/** Panel to be displayed in preferences dialog. */
 	private MyPanel _myPanel;
+	private JScrollPane _myScrollPane;
 
 	/** Application API. */
 	private IApplication _app;
@@ -66,8 +63,10 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 
 		_app = app;
 
-		((MyPanel) getPanelComponent()).loadData(_app, _app.getSquirrelPreferences());
-	}
+		getPanelComponent();
+      _myPanel.loadData(_app, _app.getSquirrelPreferences());
+
+   }
 
    public void uninitialize(IApplication app)
    {
@@ -78,8 +77,9 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 		if (_myPanel == null)
 		{
 			_myPanel = new MyPanel();
-		}
-		return _myPanel;
+         _myScrollPane = new JScrollPane(_myPanel);
+      }
+		return _myScrollPane;
 	}
 
 	public void applyChanges()

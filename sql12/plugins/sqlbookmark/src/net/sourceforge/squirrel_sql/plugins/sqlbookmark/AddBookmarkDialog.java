@@ -10,6 +10,7 @@ public class AddBookmarkDialog extends JDialog
    private static final String BM_NAME = "dialog.add.name";
    private static final String BM_DESCRIPTION = "dialog.add.description";
    private static final String BM_ENTER_NAME = "dialog.add.entername";
+   private static final String BM_ENTER_DESCRIPTION = "dialog.add.enterdescription";
    public static final String BM_ACCESS_HINT = "dialog.add.accesshint";
 
    private JTextField txtName = new JTextField();
@@ -53,15 +54,39 @@ public class AddBookmarkDialog extends JDialog
 
    private void onOK()
    {
-      if(null == txtName.getText() || 0 == txtName.getText().trim().length())
+      String name = txtName.getText();
+      if(null == name || 0 == txtName.getText().trim().length() || containsWhiteSpaces(name))
       {
          JOptionPane.showMessageDialog(this, plugin.getResourceString(BM_ENTER_NAME));
          return;
       }
+
+      String description = txtDescription.getText();
+      if(null == description || 0 == txtDescription.getText().trim().length())
+      {
+         JOptionPane.showMessageDialog(this, plugin.getResourceString(BM_ENTER_DESCRIPTION));
+         return;
+      }
+
+
       ok = true;
 
       closeDialog();
    }
+
+   private boolean containsWhiteSpaces(String name)
+   {
+      for (int i = 0;  i < name.length(); ++i)
+      {
+         if(Character.isWhitespace(name.charAt(i)))
+         {
+            return true;
+         }
+      }
+      return false;
+
+   }
+
 
    private void closeDialog()
    {

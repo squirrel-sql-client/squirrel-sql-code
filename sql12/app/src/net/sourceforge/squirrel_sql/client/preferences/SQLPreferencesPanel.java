@@ -46,8 +46,9 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 
 	/** Panel to be displayed in preferences dialog. */
 	private SQLPrefsPanel _myPanel;
+   private JScrollPane _myScrollPane;
 
-	/** Application API. */
+   /** Application API. */
 	private IApplication _app;
    private MainFrame _mainFrame;
 
@@ -78,33 +79,33 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 
 		_app = app;
 
-		final SQLPrefsPanel pnl = (SQLPrefsPanel)getPanelComponent();
-		pnl.loadData(_app, _app.getSquirrelPreferences());
+		getPanelComponent();
+		_myPanel.loadData(_app, _app.getSquirrelPreferences());
 
-      pnl._fileOpenInPreviousDir.addActionListener(new ActionListener()
+      _myPanel._fileOpenInPreviousDir.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
          {
-            updateFilePanel(pnl);
+            updateFilePanel(_myPanel);
          }
       });
 
-      pnl._fileOpenInSpecifiedDir.addActionListener(new ActionListener()
+      _myPanel._fileOpenInSpecifiedDir.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
          {
-            updateFilePanel(pnl);
+            updateFilePanel(_myPanel);
          }
       });
 
-      updateFilePanel(pnl);
+      updateFilePanel(_myPanel);
 
 
-      pnl._fileChooseDir.addActionListener(new ActionListener()
+      _myPanel._fileChooseDir.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
          {
-            onChooseDir(pnl);
+            onChooseDir(_myPanel);
          }
       });
 
@@ -139,8 +140,9 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 		if (_myPanel == null)
 		{
 			_myPanel = new SQLPrefsPanel();
+			_myScrollPane = new JScrollPane(_myPanel);
 		}
-		return _myPanel;
+		return _myScrollPane;
 	}
 
 	public void applyChanges()

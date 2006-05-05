@@ -17,9 +17,7 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -76,53 +74,56 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 	 */
 	private List _panels = new ArrayList();
 
-	/** Sheet title. */
+   private JTabbedPane _tabPane;
+
+
+   /** Sheet title. */
 	private JLabel _titleLbl = new JLabel();
 
 	public static final String PREF_KEY_GLOBAL_PREFS_SHEET_WIDTH = "Squirrel.globalPrefsSheetWidth";
 	public static final String PREF_KEY_GLOBAL_PREFS_SHEET_HEIGHT = "Squirrel.globalPrefsSheetHeight";
 
 
-	/**
-	 * Ctor specifying the application API.
-	 *
-	 * @param	app		Application API.
-	 *
-	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>IApplication passed.
-	 */
-	private GlobalPreferencesSheet(IApplication app)
-	{
-		super(s_stringMgr.getString("GlobalPreferencesSheet.title"), true);
-		if (app == null)
-		{
-			throw new IllegalArgumentException("IApplication == null");
-		}
+   /**
+    * Ctor specifying the application API.
+    *
+    * @param	app		Application API.
+    *
+    * @throws	IllegalArgumentException
+    *			Thrown if a <TT>null</TT> <TT>IApplication passed.
+    */
+   private GlobalPreferencesSheet(IApplication app)
+   {
+      super(s_stringMgr.getString("GlobalPreferencesSheet.title"), true);
+      if (app == null)
+      {
+         throw new IllegalArgumentException("IApplication == null");
+      }
 
-		_app = app;
-		createGUI();
+      _app = app;
+      createGUI();
 
-		for (Iterator it = _panels.iterator(); it.hasNext();)
-		{
-			IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel) it.next();
-			try
-			{
-				pnl.initialize(_app);
-			}
-			catch (Throwable th)
-			{
-				final String msg = s_stringMgr.getString("GlobalPreferencesSheet.error.loading", pnl.getTitle());
-				s_log.error(msg, th);
-				_app.showErrorDialog(msg, th);
-			}
-		}
-		setSize(getDimension());
+      for (Iterator it = _panels.iterator(); it.hasNext();)
+      {
+         IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel) it.next();
+         try
+         {
+            pnl.initialize(_app);
+         }
+         catch (Throwable th)
+         {
+            final String msg = s_stringMgr.getString("GlobalPreferencesSheet.error.loading", pnl.getTitle());
+            s_log.error(msg, th);
+            _app.showErrorDialog(msg, th);
+         }
+      }
+      setSize(getDimension());
 
-		app.getMainFrame().addInternalFrame(this, true, null);
-		GUIUtils.centerWithinDesktop(this);
-		setVisible(true);
+      app.getMainFrame().addInternalFrame(this, true, null);
+      GUIUtils.centerWithinDesktop(this);
+      setVisible(true);
 
-	}
+   }
 
 	private Dimension getDimension()
 	{
@@ -141,7 +142,7 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>IApplication</TT> object passed.
 	 */
-	public static synchronized void showSheet(IApplication app)
+	public static synchronized void showSheet(IApplication app, Class componentClassOfTabToSelect)
 	{
 		if (s_instance == null)
 		{
@@ -149,28 +150,51 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 		}
 		else
 		{
-			s_instance.moveToFront();
+         s_instance.moveToFront();
 		}
-	}
 
-	public void dispose()
-	{
-		Dimension size = getSize();
-		Preferences.userRoot().putInt(PREF_KEY_GLOBAL_PREFS_SHEET_WIDTH, size.width);
-		Preferences.userRoot().putInt(PREF_KEY_GLOBAL_PREFS_SHEET_HEIGHT, size.height);
+      if(null != componentClassOfTabToSelect)
+      {
+         s_instance.selectTab(componentClassOfTabToSelect);
+      }
+   }
 
-		for (Iterator it = _panels.iterator(); it.hasNext();)
+   private void selectTab(Class componentClassofTabToSelect)
+   {
+      for (int i = 0; i < _tabPane.getTabCount(); i++)
+      {
+         Component comp = _tabPane.getComponentAt(i);
+         if(JScrollPane.class.equals(comp.getClass()))
+         {
+            comp = ((JScrollPane) comp).getViewport().getView();
+         }
+
+         if(componentClassofTabToSelect.equals(comp.getClass()))
+         {
+            _tabPane.setSelectedIndex(i);
+            return;
+         }
+      }
+   }
+
+   public void dispose()
+   {
+      Dimension size = getSize();
+      Preferences.userRoot().putInt(PREF_KEY_GLOBAL_PREFS_SHEET_WIDTH, size.width);
+      Preferences.userRoot().putInt(PREF_KEY_GLOBAL_PREFS_SHEET_HEIGHT, size.height);
+
+      for (Iterator it = _panels.iterator(); it.hasNext();)
       {
          IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel) it.next();
          pnl.uninitialize(_app);
       }
 
-		synchronized (getClass())
-		{
-			s_instance = null;
-		}
-		super.dispose();
-	}
+      synchronized (getClass())
+      {
+         s_instance = null;
+      }
+      super.dispose();
+   }
 
 
 	/**
@@ -311,13 +335,13 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 		}
 
 		// Add all panels to the tabbed pane.
-		JTabbedPane tabPane = UIFactory.getInstance().createTabbedPane();
+		_tabPane = UIFactory.getInstance().createTabbedPane();
 		for (Iterator it = _panels.iterator(); it.hasNext();)
 		{
 			IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel) it.next();
 			String pnlTitle = pnl.getTitle();
 			String hint = pnl.getHint();
-			tabPane.addTab(pnlTitle, null, new JScrollPane(pnl.getPanelComponent()), hint);
+			_tabPane.addTab(pnlTitle, null, pnl.getPanelComponent(), hint);
 		}
 
 		// This seems to be necessary to get background colours
@@ -343,7 +367,7 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 
 		++gbc.gridy;
 		gbc.weighty = 1;
-		contentPane.add(tabPane, gbc);
+		contentPane.add(_tabPane, gbc);
 
 		++gbc.gridy;
 		gbc.weighty = 0;
