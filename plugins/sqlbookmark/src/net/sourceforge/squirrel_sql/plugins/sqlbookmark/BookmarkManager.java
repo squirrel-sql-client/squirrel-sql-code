@@ -113,24 +113,28 @@ public class BookmarkManager implements ICompletorModel{
      * Save the bookmarks.
      *
      **/
-    protected void save() throws IOException {
-	try {
-	    XMLBeanWriter xmlout = new XMLBeanWriter();
-	    
-	    for (Iterator i = bookmarks.iterator(); i.hasNext(); ) {
-		Bookmark bookmark = (Bookmark) i.next();
-		
-		xmlout.addToRoot(bookmark);
-	    }
-	    
-	    xmlout.save(bookmarkFile);
-	}
-	catch (XMLException e) {
-	    // REMIND: decide what to do about this
-	}
+    protected void save()
+    {
+       try
+       {
+          XMLBeanWriter xmlout = new XMLBeanWriter();
+
+          for (Iterator i = bookmarks.iterator(); i.hasNext();)
+          {
+             Bookmark bookmark = (Bookmark) i.next();
+
+             xmlout.addToRoot(bookmark);
+          }
+
+          xmlout.save(bookmarkFile);
+       }
+       catch (Exception e)
+       {
+          throw new RuntimeException(e);
+       }
     }
 
-    protected Iterator iterator() {
+   protected Iterator iterator() {
 	return bookmarks.iterator();
     }
 

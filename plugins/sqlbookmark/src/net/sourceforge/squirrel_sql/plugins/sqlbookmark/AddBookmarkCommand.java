@@ -134,16 +134,13 @@ public class AddBookmarkCommand implements ICommand {
 
 
 	    Bookmark bookmark = new Bookmark(abd.getBookmarkName(), abd.getDescription(), sql);
-	    
-	    if (!plugin.getBookmarkManager().add(bookmark))
-		plugin.addBookmarkItem(bookmark);
 
-	    try {
-		plugin.getBookmarkManager().save();
-	    }
-	    catch (IOException e) {
-		logger.error("Problem saving bookmarks", e);
-	    }
+       if (!plugin.getBookmarkManager().add(bookmark))
+       {
+          plugin.addBookmarkItem(bookmark);
+       }
+
+       plugin.getBookmarkManager().save();
     }
 
 }
