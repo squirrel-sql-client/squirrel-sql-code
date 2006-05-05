@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.prefs.Preferences;
 
 import javax.swing.*;
@@ -60,6 +61,9 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
       StringManagerFactory.getStringManager(SQLBookmarkPlugin.class);
 
    private static final String PREF_KEY_DEFAULT_BOOKMARKS_LOADED = "Squirrel.sqlbookmark.defaultbookmarksloaded";
+
+   private ArrayList _sqlPanelAPIsListeningForBookmarks = new ArrayList();
+
 
    private interface IMenuResourceKeys
    {
@@ -425,5 +429,30 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
          new SQLBookmarkPreferencesController(this)
       };
    }
+
+   public void addSQLPanelAPIListeningForBookmarks(ISQLPanelAPI sqlApi)
+   {
+      if(false == _sqlPanelAPIsListeningForBookmarks.contains(sqlApi))
+      {
+         _sqlPanelAPIsListeningForBookmarks.add(sqlApi);
+      }
+   }
+
+   public void removeSQLPanelAPIListeningForBookmarks(ISQLPanelAPI sqlApi)
+   {
+      _sqlPanelAPIsListeningForBookmarks.remove(sqlApi);
+   }
+
+   public void removeALLSQLPanelsAPIListeningForBookmarks()
+   {
+      _sqlPanelAPIsListeningForBookmarks = new ArrayList();
+   }
+
+   public ISQLPanelAPI[] getSQLPanelAPIsListeningForBookmarks()
+   {
+      return (ISQLPanelAPI[]) _sqlPanelAPIsListeningForBookmarks.toArray(new ISQLPanelAPI[_sqlPanelAPIsListeningForBookmarks.size()]);
+   }
+
+
 }
     

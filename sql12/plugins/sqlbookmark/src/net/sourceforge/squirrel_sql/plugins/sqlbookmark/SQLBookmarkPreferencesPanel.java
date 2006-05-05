@@ -10,6 +10,7 @@ public class SQLBookmarkPreferencesPanel extends JPanel
    JButton btnAdd;
    JButton btnEdit;
    JButton btnDel;
+   JButton btnRun;
 
 
    private interface IPrefKeys
@@ -19,6 +20,7 @@ public class SQLBookmarkPreferencesPanel extends JPanel
       String BM_ADD = "button.add.title";
       String BM_EDIT = "button.edit.title";
       String BM_DEL = "button.del.title";
+      String BM_RUN = "button.run.title";
    }
 
 
@@ -40,27 +42,32 @@ public class SQLBookmarkPreferencesPanel extends JPanel
 
       GridBagConstraints gbc;
 
-      btnUp = new JButton(plugin.getResourceString(IPrefKeys.BM_UP));
+      btnRun = new JButton(plugin.getResourceString(IPrefKeys.BM_RUN));
       gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,1,1,1), 0, 0);
+      buttonPane.add(btnRun, gbc);
+
+
+      btnUp = new JButton(plugin.getResourceString(IPrefKeys.BM_UP));
+      gbc = new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,1,1,1), 0, 0);
       buttonPane.add(btnUp, gbc);
 
       btnDown = new JButton(plugin.getResourceString(IPrefKeys.BM_DOWN));
-      gbc = new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,1,1,1), 0, 0);
+      gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,1,1,1), 0, 0);
       buttonPane.add(btnDown, gbc);
 
       btnAdd = new JButton(plugin.getResourceString(IPrefKeys.BM_ADD));
-      gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,1,1,1), 0, 0);
+      gbc = new GridBagConstraints(0,3,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,1,1,1), 0, 0);
       buttonPane.add(btnAdd, gbc);
 
       btnEdit = new JButton(plugin.getResourceString(IPrefKeys.BM_EDIT));
-      gbc = new GridBagConstraints(0,3,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,1,1,1), 0, 0);
+      gbc = new GridBagConstraints(0,4,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,1,1,1), 0, 0);
       buttonPane.add(btnEdit, gbc);
 
       btnDel = new JButton(plugin.getResourceString(IPrefKeys.BM_DEL));
-      gbc = new GridBagConstraints(0,4,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,1,1,1), 0, 0);
+      gbc = new GridBagConstraints(0,5,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,1,1,1), 0, 0);
       buttonPane.add(btnDel, gbc);
 
-      gbc = new GridBagConstraints(0,5,1,1,0,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0);
+      gbc = new GridBagConstraints(0,6,1,1,0,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0);
       buttonPane.add(new JPanel(), gbc);
       
       add(buttonPane, BorderLayout.EAST);

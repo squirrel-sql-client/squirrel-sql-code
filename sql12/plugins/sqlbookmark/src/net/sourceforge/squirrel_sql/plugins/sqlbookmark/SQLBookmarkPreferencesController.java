@@ -30,6 +30,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 
 /**
  * Manage the bookmarks.
@@ -92,6 +93,14 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
          model.addElement(mark);
       }
 
+      _pnlPrefs.btnRun.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onRun();
+         }
+      });
+
 
       _pnlPrefs.btnAdd.addActionListener(new ActionListener()
       {
@@ -136,6 +145,7 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
 
    public void uninitialize(IApplication app)
    {
+      _plugin.removeALLSQLPanelsAPIListeningForBookmarks();
    }
 
    /**
@@ -195,6 +205,38 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
 
       return _pnlPrefs;
    }
+
+   private void onRun()
+   {
+      int selIx = _pnlPrefs.lstBookmarks.getSelectedIndex();
+      if (selIx < 0)
+      {
+         // i18n[sqlbookmark.noRunSelection=Please select the bookmark to run]
+         _app.getMessageHandler().showErrorMessage(s_stringMgr.getString("sqlbookmark.noRunSelection"));
+         return;
+      }
+
+
+
+      ISQLPanelAPI[] apis = _plugin.getSQLPanelAPIsListeningForBookmarks();
+
+      if(0 == apis.length)
+      {
+         // i18n[sqlbookmark.noSQLPanel=A bookmark can only be run when the bookmarks editor has been opened with the "Edit Bookmarks" toolbar button!]
+         JOptionPane.showMessageDialog(_app.getMainFrame(), s_stringMgr.getString("sqlbookmark.noSQLPanel"));
+         return;
+      }
+
+      Bookmark bm = (Bookmark) _pnlPrefs.lstBookmarks.getModel().getElementAt(selIx);
+
+      for (int i = 0; i < apis.length; i++)
+      {
+         ISQLPanelAPI api = apis[i];
+         new RunBookmarkCommand(_app.getMainFrame(), api.getSession(), bm, _plugin ,api.getSQLEntryPanel()).execute();
+      }
+
+   }
+
 
 
    public void onAdd()
