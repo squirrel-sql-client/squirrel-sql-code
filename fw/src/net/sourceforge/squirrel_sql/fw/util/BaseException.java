@@ -56,7 +56,7 @@ public class BaseException extends Exception
 	 */
 	public BaseException(Throwable wrapee)
 	{
-		super(getMessageFromException(wrapee));
+      super(wrapee);
 		_wrapee = wrapee;
 	}
 
