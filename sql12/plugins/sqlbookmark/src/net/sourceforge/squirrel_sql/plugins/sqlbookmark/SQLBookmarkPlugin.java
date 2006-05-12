@@ -19,11 +19,10 @@
 
 package net.sourceforge.squirrel_sql.plugins.sqlbookmark;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Properties;
 import java.util.prefs.Preferences;
 
 import javax.swing.*;
@@ -40,6 +39,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DTProperties;
 
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -60,10 +60,13 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
    private static final StringManager s_stringMgr =
       StringManagerFactory.getStringManager(SQLBookmarkPlugin.class);
 
-   private static final String PREF_KEY_DEFAULT_BOOKMARKS_LOADED = "Squirrel.sqlbookmark.defaultbookmarksloaded";
 
    private ArrayList _sqlPanelAPIsListeningForBookmarks = new ArrayList();
 
+
+   private static final String BOOKMARKS_PROPS_FILE = "bookmarks.properties";
+   static final String BOOKMARK_PROP_DEFAULT_MARKS_IN_POPUP = "squirrelMarksInPopup";
+   private Properties _boomarkProps;
 
    private interface IMenuResourceKeys
    {
@@ -81,10 +84,6 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
     */
    private File pluginAppFolder;
 
-   /**
-    * Folder to store user settings in.
-    */
-   protected File userSettingsFolder;
 
    private PluginResources resources;
 
@@ -240,55 +239,21 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
          throw new PluginException(ex);
       }
 
-      // Folder to store user settings.
-      try
-      {
-         userSettingsFolder = getPluginUserSettingsFolder();
-      }
-      catch (IOException ex)
-      {
-         throw new PluginException(ex);
-      }
-
       // Load resources such as menu items, etc...
       resources = new SQLBookmarkResources(RESOURCE_PATH, this);
 
-      bookmarkManager = new BookmarkManager(userSettingsFolder);
+      bookmarkManager = new BookmarkManager(this);
       // Load plugin preferences.
       try
       {
          bookmarkManager.load();
-
-         if (false == Preferences.userRoot().getBoolean(PREF_KEY_DEFAULT_BOOKMARKS_LOADED, false))
-         {
-            Bookmark[] defaultBookmarks = DefaultBookmarksFactory.getDefaultBookmarks();
-
-            for (int i = 0; i < defaultBookmarks.length; i++)
-            {
-               if (null == bookmarkManager.get(defaultBookmarks[i].getName()))
-               {
-                  bookmarkManager.add(defaultBookmarks[i]);
-               }
-               else
-               {
-                  String altName = defaultBookmarks[i].getName() + "_1";
-                  if (null == bookmarkManager.get(altName))
-                  {
-                     defaultBookmarks[i].setName(altName);
-                     bookmarkManager.add(defaultBookmarks[i]);
-                  }
-               }
-            }
-
-            Preferences.userRoot().putBoolean(PREF_KEY_DEFAULT_BOOKMARKS_LOADED, true);
-            // i18n[sqlbookmark.defaultsAdded=Default bookmarks have been added. See menu File --> Global Preferences --> Bookmarks]
-            getApplication().getMessageHandler().showMessage(s_stringMgr.getString("sqlbookmark.defaultsAdded"));
-         }
       }
       catch (IOException e)
       {
          if (!(e instanceof FileNotFoundException))
+         {
             logger.error("Problem loading bookmarkManager", e);
+         }
       }
 
       ActionCollection coll = app.getActionCollection();
@@ -385,7 +350,24 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
 
          addBookmarkItem(bookmark);
       }
+
+      String defaultMarksInPopup =
+         getBookmarkProperties().getProperty(SQLBookmarkPlugin.BOOKMARK_PROP_DEFAULT_MARKS_IN_POPUP, "" + false);
+
+      if(Boolean.valueOf(defaultMarksInPopup).booleanValue())
+      {
+         Bookmark[] defaultBookmarks = DefaultBookmarksFactory.getDefaultBookmarks();
+
+         for (int i = 0; i < defaultBookmarks.length; i++)
+         {
+            addBookmarkItem(defaultBookmarks[i]);
+         }
+      }
+
    }
+
+
+
 
    /**
     * Create the initial Sessions->Bookmark menu
@@ -452,6 +434,56 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
    {
       return (ISQLPanelAPI[]) _sqlPanelAPIsListeningForBookmarks.toArray(new ISQLPanelAPI[_sqlPanelAPIsListeningForBookmarks.size()]);
    }
+
+
+   Properties getBookmarkProperties()
+   {
+      try
+      {
+         if(null == _boomarkProps)
+         {
+            File usf = getPluginUserSettingsFolder();
+            File boomarkPropsFile = new File(usf, BOOKMARKS_PROPS_FILE);
+
+            if(false == boomarkPropsFile.exists())
+            {
+               _boomarkProps = new Properties();
+            }
+            else
+            {
+               FileInputStream fis = new FileInputStream(boomarkPropsFile);
+               _boomarkProps = new Properties();
+               _boomarkProps.load(fis);
+            }
+         }
+         return _boomarkProps;
+      }
+      catch (IOException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+   void saveBookmarkProperties()
+   {
+      try
+      {
+         if(null == _boomarkProps)
+         {
+            return;
+         }
+
+         File usf = getPluginUserSettingsFolder();
+         File boomarkPropsFile = new File(usf, BOOKMARKS_PROPS_FILE);
+         FileOutputStream fos = new FileOutputStream(boomarkPropsFile);
+         _boomarkProps.store(fos, "Bookmark properties");
+      }
+      catch (IOException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
 
 
 }

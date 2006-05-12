@@ -21,10 +21,12 @@ public class BookmarEditController
    private Bookmark _mark;
 
 
-   public BookmarEditController(Frame owner, Bookmark mark)
+   public BookmarEditController(Frame owner, Bookmark mark, boolean editable)
    {
       _mark = mark;
       _dlg = new BookmarkEditDialog(owner);
+
+      _dlg.btnOk.setEnabled(editable);
 
       if(null != _mark)
       {
