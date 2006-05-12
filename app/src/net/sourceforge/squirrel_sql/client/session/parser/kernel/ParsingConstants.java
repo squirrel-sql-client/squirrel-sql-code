@@ -2,6 +2,17 @@ package net.sourceforge.squirrel_sql.client.session.parser.kernel;
 
 public interface ParsingConstants
 {
+   //
+   //
+   // DO NOT CHANGE THE VALUES OF THIS CONSTANTS.
+   //
+   // These constants where introduced to make the parser
+   // code more readable. Care was taken. Still it can
+   // not be guaranteed that changing a value will
+   // not be harmful.
+   //
+
+
    static final int KW_ACTION = 90;
    static final int KW_ADD = 97;
    static final int KW_ALTER = 98;
