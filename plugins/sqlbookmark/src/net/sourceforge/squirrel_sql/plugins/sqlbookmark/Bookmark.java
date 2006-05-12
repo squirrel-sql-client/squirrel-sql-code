@@ -50,7 +50,7 @@ public class Bookmark
    {
       _name = name;
       _description = description;
-      _sql = sql;
+      setSql(sql);
       initToString();
    }
 
@@ -90,7 +90,15 @@ public class Bookmark
 
    public void setSql(String sql)
    {
-      this._sql = sql;
+      _sql = sql;
+//      if(null == sql )
+//      {
+//         _sql = null;
+//      }
+//      else
+//      {
+//         _sql = "\n" + sql.trim();
+//      }
    }
 
    public String toString()

@@ -36,107 +36,138 @@ import net.sourceforge.squirrel_sql.fw.completion.CompletionCandidates;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 
 /**
- * Manages the users bookmarks. Including loading and saving to 
+ * Manages the users bookmarks. Including loading and saving to
  * an XML file.
  *
- * @author      Joseph Mocker
- **/
-public class BookmarkManager implements ICompletorModel{
+ * @author Joseph Mocker
+ */
+public class BookmarkManager implements ICompletorModel
+{
 
-   /** The file to save/load bookmarks to/from */
-    private File bookmarkFile;
+   /**
+    * The file to save/load bookmarks to/from
+    */
+   private File bookmarkFile;
 
-    /** List of all the loaded bookmarks */
-    private ArrayList bookmarks = new ArrayList();
-    
-    /** Index of bookmark names to indexes in the bookmarks array */
-    private HashMap bookmarkIdx = new HashMap();
-    
-    public BookmarkManager(File settingsFolder) {
-	bookmarkFile = new File(settingsFolder, "bookmarks.xml");
-    }
+   /**
+    * List of all the loaded bookmarks
+    */
+   private ArrayList bookmarks = new ArrayList();
 
-    /**
-     * Add a new bookmark, or replace an existing bookmark.
-     *
-     * @param       bookmark bookmark to add/change.
-     * @return      true if a replacement, false if a new bookmark.
-     **/
-    protected boolean add(Bookmark bookmark) {
-	Integer idxInt = (Integer) bookmarkIdx.get(bookmark.getName());
-	if (idxInt != null) {
-	    bookmarks.set(idxInt.intValue(), bookmark);
-	    return true;
-	} else {
-	    bookmarks.add(bookmark);
-	    idxInt = new Integer(bookmarks.size() - 1);
-	    bookmarkIdx.put(bookmark.getName(), idxInt);
-	    return false;
-	}
-    }
+   /**
+    * Index of bookmark names to indexes in the bookmarks array
+    */
+   private HashMap bookmarkIdx = new HashMap();
+   private SQLBookmarkPlugin _plugin;
 
-    /**
-     * Retrieve a bookmark by name.
-     *
-     * @param       name Name of the bookmark.
-     * @return      the bookmark.
-     **/
-    protected Bookmark get(String name) {
-	Integer idxInt = (Integer) bookmarkIdx.get(name);
-	if (idxInt != null) 
-	    return (Bookmark) bookmarks.get(idxInt.intValue());
-	
-	return null;
-    }
+   public BookmarkManager(SQLBookmarkPlugin plugin)
+   {
+      try
+      {
+         _plugin = plugin;
+         bookmarkFile = new File(_plugin.getPluginUserSettingsFolder(), "bookmarks.xml");
+      }
+      catch (IOException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
 
-    /**
-     * Load the stored bookmarks.
-     *
-     **/
-    protected void load() throws IOException {
+   /**
+    * Add a new bookmark, or replace an existing bookmark.
+    *
+    * @param bookmark bookmark to add/change.
+    * @return true if a replacement, false if a new bookmark.
+    */
+   protected boolean add(Bookmark bookmark)
+   {
+      Integer idxInt = (Integer) bookmarkIdx.get(bookmark.getName());
+      if (idxInt != null)
+      {
+         bookmarks.set(idxInt.intValue(), bookmark);
+         return true;
+      }
+      else
+      {
+         bookmarks.add(bookmark);
+         idxInt = new Integer(bookmarks.size() - 1);
+         bookmarkIdx.put(bookmark.getName(), idxInt);
+         return false;
+      }
+   }
 
-	try {
-	    XMLBeanReader xmlin = new XMLBeanReader();
-	    xmlin.load(bookmarkFile, getClass().getClassLoader());
-	    for (Iterator i = xmlin.iterator(); i.hasNext(); ) {
-		Object bean = i.next();
-		if (bean instanceof Bookmark) 
-		    add((Bookmark) bean);
-	    }
-	}
-	catch (XMLException e) {
-	    // REMIND: decide what to do about this
-	}
-    }
+   /**
+    * Retrieve a bookmark by name.
+    *
+    * @param name Name of the bookmark.
+    * @return the bookmark.
+    */
+   protected Bookmark get(String name)
+   {
+      Integer idxInt = (Integer) bookmarkIdx.get(name);
+      if (idxInt != null)
+         return (Bookmark) bookmarks.get(idxInt.intValue());
 
-    /**
-     * Save the bookmarks.
-     *
-     **/
-    protected void save()
-    {
-       try
-       {
-          XMLBeanWriter xmlout = new XMLBeanWriter();
+      return null;
+   }
 
-          for (Iterator i = bookmarks.iterator(); i.hasNext();)
-          {
-             Bookmark bookmark = (Bookmark) i.next();
+   /**
+    * Load the stored bookmarks.
+    */
+   protected void load() throws IOException
+   {
 
-             xmlout.addToRoot(bookmark);
-          }
+      try
+      {
+         XMLBeanReader xmlin = new XMLBeanReader();
 
-          xmlout.save(bookmarkFile);
-       }
-       catch (Exception e)
-       {
-          throw new RuntimeException(e);
-       }
-    }
+         if (bookmarkFile.exists())
+         {
+            xmlin.load(bookmarkFile, getClass().getClassLoader());
+            for (Iterator i = xmlin.iterator(); i.hasNext();)
+            {
+               Object bean = i.next();
+               if (bean instanceof Bookmark)
+               {
+                  add((Bookmark) bean);
+               }
+            }
+         }
+      }
+      catch (XMLException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
 
-   protected Iterator iterator() {
-	return bookmarks.iterator();
-    }
+   /**
+    * Save the bookmarks.
+    */
+   protected void save()
+   {
+      try
+      {
+         XMLBeanWriter xmlout = new XMLBeanWriter();
+
+         for (Iterator i = bookmarks.iterator(); i.hasNext();)
+         {
+            Bookmark bookmark = (Bookmark) i.next();
+
+            xmlout.addToRoot(bookmark);
+         }
+
+         xmlout.save(bookmarkFile);
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+   protected Iterator iterator()
+   {
+      return bookmarks.iterator();
+   }
 
    public CompletionCandidates getCompletionCandidates(String bookmarkNameBegin)
    {
@@ -146,12 +177,33 @@ public class BookmarkManager implements ICompletorModel{
       for (int i = 0; i < bookmarks.size(); i++)
       {
          Bookmark bookmark = (Bookmark) bookmarks.get(i);
-         if(bookmark.getName().startsWith(bookmarkNameBegin))
+         if (bookmark.getName().startsWith(bookmarkNameBegin))
          {
             ret.add(new BookmarkCompletionInfo(bookmark));
             maxNameLen = Math.max(maxNameLen, bookmark.getName().length());
          }
       }
+
+      String defaultMarksInPopup =
+         _plugin.getBookmarkProperties().getProperty(SQLBookmarkPlugin.BOOKMARK_PROP_DEFAULT_MARKS_IN_POPUP, "" + false);
+
+      if(Boolean.valueOf(defaultMarksInPopup).booleanValue())
+      {
+         Bookmark[] defaultBookmarks = DefaultBookmarksFactory.getDefaultBookmarks();
+
+         for (int i = 0; i < defaultBookmarks.length; i++)
+         {
+            if (defaultBookmarks[i].getName().startsWith(bookmarkNameBegin))
+            {
+               ret.add(new BookmarkCompletionInfo(defaultBookmarks[i]));
+               maxNameLen = Math.max(maxNameLen, defaultBookmarks[i].getName().length());
+            }
+         }
+      }
+
+
+
+
 
       BookmarkCompletionInfo[] candidates = (BookmarkCompletionInfo[]) ret.toArray(new BookmarkCompletionInfo[ret.size()]);
 
