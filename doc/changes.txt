@@ -5,6 +5,12 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+Enhancements of the Bookmarks Plugin
+ - Bookmark preferences can be opened by the "Edit Bookmarks" button in the Session toolbar.
+ - Bookmarks can be run from within the Bookmark Preferences.
+ - Lots of "SQuirreL Bookmarks" which are templates for many common SQL/DDL statements.
+ - User can decide if he wants to see "SQuirreL Bookmarks" in the Bookmarks selection popup of the SQL Editor (ctrl j).
+
 Fixed bugs in error and syntax highlighting:
  - Error highlighting for "ALTER TABLE ADD CONSTRAINT ..."
  - Error highlighting for "CREATE VIEW ..."
