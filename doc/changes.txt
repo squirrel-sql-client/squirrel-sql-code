@@ -5,6 +5,9 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+Feature request #1441787 Quickly adopt column widths to column values
+  when table header is double clicked while the resize mouse pointer (<-->) is visible. (MS Excel like)  
+
 Enhancements of the Bookmarks Plugin
  - Bookmark preferences can be opened by the "Edit Bookmarks" button in the Session toolbar.
  - Bookmarks can be run from within the Bookmark Preferences.
