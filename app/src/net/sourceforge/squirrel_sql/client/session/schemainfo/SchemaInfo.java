@@ -406,7 +406,16 @@ public class SchemaInfo
             String proc = (String) procedures[i].getSimpleName();
             if (proc.length() > 0)
             {
-               _schemaInfoCache.procedureNames.put(new CaseInsensitiveString(procedures[i].getSimpleName()) ,proc);
+               CaseInsensitiveString ciProc = new CaseInsensitiveString(proc);
+               _schemaInfoCache.procedureNames.put(ciProc ,proc);
+
+               ArrayList aIProcInfos = (ArrayList) _schemaInfoCache.procedureInfosBySimpleName.get(ciProc);
+               if(null == aIProcInfos)
+               {
+                  aIProcInfos = new ArrayList();
+                  _schemaInfoCache.procedureInfosBySimpleName.put(ciProc, aIProcInfos);
+               }
+               aIProcInfos.add(procedures[i]);
             }
             _schemaInfoCache.iProcedureInfos.put(procedures[i], procedures[i]);
          }
@@ -1289,7 +1298,7 @@ public class SchemaInfo
       HashMap caseSensitiveProcNames = new HashMap();
 
       CaseInsensitiveString caseInsensitiveProcName = new CaseInsensitiveString(simpleProcName);
-      String caseSensitiveProcName = (String) _schemaInfoCache.tableNames.remove(caseInsensitiveProcName);
+      String caseSensitiveProcName = (String) _schemaInfoCache.procedureNames.remove(caseInsensitiveProcName);
 
       caseSensitiveProcNames.put(caseSensitiveProcName, caseSensitiveProcName);
 
