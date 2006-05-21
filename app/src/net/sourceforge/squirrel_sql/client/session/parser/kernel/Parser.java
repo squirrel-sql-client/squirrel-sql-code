@@ -875,7 +875,11 @@ public class Parser
 			{
 				SelectStmt();
 			}
-			else
+         else if (t.kind == ParsingConstants.KW_CASE)
+         {
+            CaseStatment();
+         }
+         else
 				Error(122);
 			CloseParens();
 		}
