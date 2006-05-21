@@ -18,7 +18,7 @@
  *
  * created by cse, 07.10.2002 11:57:54
  *
- * @version $Id: ParserThread.java,v 1.5 2006-05-02 10:56:44 gerdwagner Exp $
+ * @version $Id: ParserThread.java,v 1.6 2006-05-21 20:46:38 gerdwagner Exp $
  */
 package net.sourceforge.squirrel_sql.client.session.parser.kernel;
 
@@ -575,7 +575,12 @@ public class ParserThread extends Thread
 		{
 			return chars != null ? chars.getBeginIndex() : 0;
 		}
-	}
+
+      protected void setIndex(int position)
+      {
+         this.current = chars.setIndex(position);
+      }
+   }
 
 	/**
 	 * error stream which simply saves the error codes and line info
