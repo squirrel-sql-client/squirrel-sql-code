@@ -468,42 +468,14 @@ public class SessionPanel extends JPanel
       {
          super();
          createGUI(session);
-//			session.getApplication().getThreadPool().addTask(new Runnable()
-//			{
-//				public void run()
-//				{
-//					final String[] catalogs = getCatalogs(session);
-//					final String selected = getCatalog(session);
-//					final SQLConnectionListener listener = new SQLConnectionListener();
-//
-//					// Listener for changes in the connection status.
-//					session.getSQLConnection().addPropertyChangeListener(listener);
-
-//					GUIUtils.processOnSwingEventThread(new Runnable()
-//					{
-//						public void run()
-//						{
-//							_app.getWindowManager().sessionInitComplete(session);
-//						}
-//					});
-//				}
-//			});
       }
 
       public void addNotify()
       {
-//		super.setVisible(value);
          super.addNotify();
-//		if (!_hasBeenVisible && value == true)
          if (!_hasBeenVisible)
          {
             _hasBeenVisible = true;
-//			_msgSplit.setDividerLocation(0.9d);
-//			_msgSplit.setResizeWeight(1.0);
-
-            // Done this late so that plugins have time to register expanders
-            // with the object tree prior to it being built.
-//			getSession().getObjectTreeAPI(_app.getDummyAppPlugin()).refreshTree();
             _mainTabPane.getObjectTreePanel().refreshTree();
          }
       }
@@ -520,28 +492,6 @@ public class SessionPanel extends JPanel
 
       private void createGUI(ISession session)
       {
-//			try
-//			{
-//				SQLConnection conn = getSession().getSQLConnection();
-//				if (conn.getSQLMetaData().supportsCatalogs())
-//				{
-//					_catalogsCmb = new SQLCatalogsComboBox();
-//					add(new JLabel(s_stringMgr.getString("SessionPanel.catalog")));
-//					add(_catalogsCmb);
-//					addSeparator();
-//
-//					// Listener for changes in the connection status.
-//					conn.addPropertyChangeListener(new SQLConnectionListener(_catalogsCmb));
-//					_catalogsCmb.addActionListener(new CatalogsComboListener());
-//					setupCatalogsCombo();
-//				}
-//			}
-//			catch (SQLException ex)
-//			{
-//                // i18n[SessionPanel.error.retrievecatalog=Unable to retrieve catalog info]
-//				s_log.error(s_stringMgr.getString("SessionPanel.error.retrievecatalog"), ex);
-//			}
-
          _catalogsPanel = new CatalogsPanel(session, this);
          _catalogsPanel.addActionListener(new CatalogsComboListener());
 
@@ -569,98 +519,9 @@ public class SessionPanel extends JPanel
          addSeparator();
          add(actions.get(PreviousSqlAction.class));
          add(actions.get(NextSqlAction.class));
+         add(actions.get(SelectSqlAction.class));
 
       }
-
-//		private boolean supportsCatalogs(ISession session)
-//		{
-//			boolean result = false;
-//			try
-//			{
-//				result =
-//					session.getSQLConnection().getSQLMetaData().supportsCatalogs();
-//			}
-//			catch (SQLException ex)
-//			{
-//				// i18n[SessionPanel.error.retrievecatalog=Unable to retrieve catalog info]
-//				s_log.error(s_stringMgr.getString("SessionPanel.error.retrievecatalog"), ex);
-//			}
-//			return result;
-//		}
-
-//		private String[] getCatalogs(ISession session)
-//		{
-//			String[] result = null;
-//			if (!supportsCatalogs(session))
-//			{
-//				return null;
-//			}
-//			try
-//			{
-//				result = session.getSQLConnection().getSQLMetaData().getCatalogs();
-//			}
-//			catch (SQLException ex)
-//			{
-//				// i18n[SessionPanel.error.retrievecatalog=Unable to retrieve catalog info]
-//				s_log.error(s_stringMgr.getString("SessionPanel.error.retrievecatalog"), ex);
-//			}
-//			return result;
-//		}
-//
-//		private String getCatalog(ISession session)
-//		{
-//			String result = null;
-//			if (!supportsCatalogs(session))
-//			{
-//				return null;
-//			}
-//			try
-//			{
-//				result = session.getSQLConnection().getCatalog();
-//			}
-//			catch (SQLException ex)
-//			{
-//				// i18n[SessionPanel.error.retrievecatalog=Unable to retrieve catalog info]
-//				s_log.error(s_stringMgr.getString("SessionPanel.error.retrievecatalog"), ex);
-//			}
-//			return result;
-//		}
-
-//		private void setupCatalogsCombo()
-//		{
-//			try
-//			{
-//				final ISession session = getSession();
-//				_buildingListOfCatalogs = true;
-//				session.getApplication().getThreadPool().addTask(new Runnable()
-//				{
-//					public void run()
-//					{
-//						final String[] catalogs = getCatalogs(session);
-//						final String selected = getCatalog(session);
-//						GUIUtils.processOnSwingEventThread(new Runnable()
-//						{
-//							public void run()
-//							{
-//								try
-//								{
-//									_catalogsCmb.setCatalogs(catalogs, selected);
-//								}
-//								finally
-//								{
-//									_buildingListOfCatalogs = false;
-//								}
-//							}
-//						});
-//					}
-//				});
-//			}
-//			catch (Exception ex)
-//			{
-//				// i18n[SessionPanel.error.retrievecatalog=Unable to retrieve catalog info]
-//				s_log.error(s_stringMgr.getString("SessionPanel.error.retrievecatalog"), ex);
-//			}
-//		}
    }
 
 	private final class CatalogsComboListener implements ActionListener
@@ -683,50 +544,6 @@ public class SessionPanel extends JPanel
 		}
 	}
 
-//	private final class SQLConnectionListener implements PropertyChangeListener
-//	{
-//		private SQLCatalogsComboBox _cmb;
-//
-//        SQLConnectionListener()
-//        {
-//            super();
-//        }
-//
-//		SQLConnectionListener(SQLCatalogsComboBox cmb)
-//		{
-//			super();
-//			_cmb = cmb;
-//		}
-//
-//        public void setSQLCatalogsComboBox(SQLCatalogsComboBox cmb) {
-//            _cmb = cmb;
-//        }
-//
-//		public void propertyChange(PropertyChangeEvent evt)
-//		{
-//			final String propName = evt.getPropertyName();
-//			if (propName == null ||
-//				propName.equals(SQLConnection.IPropertyNames.CATALOG))
-//			{
-//				if (_cmb != null)
-//				{
-//					final SQLConnection conn = getSession().getSQLConnection();
-//					try
-//					{
-//						if (!StringUtilities.areStringsEqual(
-//							conn.getCatalog(), _cmb.getSelectedCatalog()))
-//						{
-//							_cmb.setSelectedCatalog(conn.getCatalog());
-//						}
-//					}
-//					catch (SQLException ex)
-//					{
-//						getSession().getMessageHandler().showErrorMessage(ex);
-//					}
-//				}
-//			}
-//		}
-//	}
 
 	private final class ObjectTreeSelectionListener implements TreeSelectionListener
 	{
