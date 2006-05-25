@@ -5,6 +5,11 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+New toolbar button: Select current SQL (control Shift S)
+ This function is based on SQuirreL's concept of 'current SQL': If there is no selected text the current SQL
+ is the text between the empty line in fornt of cursor position and the empty line after cursor position.
+ Any function that deals with SQL is aware of this concept.
+
 Installer now includes the following optional translation packages:
 - Brazilian Portuguese (contributed by Francis Martin)
 - Czech (contributed by Jan Kostrhun)

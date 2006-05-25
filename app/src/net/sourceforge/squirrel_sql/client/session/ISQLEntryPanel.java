@@ -104,6 +104,7 @@ public interface ISQLEntryPanel extends IHasIdentifier
 
 	void moveCaretToNextSQLBegin();
 
+   void selectCurrentSql();
 
 
 	int getSelectionStart();
@@ -166,5 +167,4 @@ public interface ISQLEntryPanel extends IHasIdentifier
 	void removeSQLTokenListener(SQLTokenListener tl);
 
 	void dispose();
-    
 }

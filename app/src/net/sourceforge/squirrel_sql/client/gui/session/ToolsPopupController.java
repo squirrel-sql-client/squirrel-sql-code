@@ -72,6 +72,7 @@ public class ToolsPopupController
 
 		addAction("sqlprevious", ac.get(PreviousSqlAction.class));
 		addAction("sqlnext", ac.get(NextSqlAction.class));
+		addAction("sqlselect", ac.get(SelectSqlAction.class));
 
 		if(sqlPanel.isInMainSessionWindow())
       {

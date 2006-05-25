@@ -200,8 +200,8 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
                sqlPanelAPI.addToToolsPopUp("quotesb", actions.get(ConvertToStringBufferAction.class));
                sqlPanelAPI.addToToolsPopUp("format", actions.get(FormatSQLAction.class));
                sqlPanelAPI.addToToolsPopUp("date", actions.get(EscapeDateAction.class));
-               sqlPanelAPI.addToToolsPopUp("cutsql", actions.get(CutSqlAction.class));
-               sqlPanelAPI.addToToolsPopUp("copysql", actions.get(CopySqlAction.class));               
+               sqlPanelAPI.addToToolsPopUp("sqlcut", actions.get(CutSqlAction.class));
+               sqlPanelAPI.addToToolsPopUp("sqlcopy", actions.get(CopySqlAction.class));
            }
        });
    }

@@ -93,64 +93,73 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
 
       if(bounds[0] == bounds[1])
       {
-         String sql = getText();
-         bounds[0] = 0;
-         bounds[1] = sql.length();
-
-         int iCaretPos = getCaretPosition() - 1;
-         if (iCaretPos < 0)
-         {
-            iCaretPos = 0;
-         }
-
-         int iIndex = sql.lastIndexOf(SQL_STMT_SEP, iCaretPos);
-         if (iIndex >= 0)
-         {
-            bounds[0] = iIndex + SQL_STMT_SEP.length();
-         }
-         iIndex = sql.indexOf(SQL_STMT_SEP, iCaretPos);
-         if (iIndex > 0)
-         {
-            bounds[1] = iIndex;
-         }
-
-         if(bounds[0] > bounds[1])
-         {
-            bounds[0] = bounds[1];
-         }
+         bounds = getSqlBoundsBySeparatorRule();
       }
 
       return bounds;
    }
 
-	public void moveCaretToPreviousSQLBegin()
-	{
-		String sql = getText();
+   private int[] getSqlBoundsBySeparatorRule()
+   {
+      int[] bounds = new int[2];
 
-		int iCaretPos = getCaretPosition() - 1;
-		int iLastIndex = sql.lastIndexOf(SQL_STMT_SEP, iCaretPos);
+      String sql = getText();
+      bounds[0] = 0;
+      bounds[1] = sql.length();
 
-		if(-1 == iLastIndex)
-		{
-			return;
-		}
+      int iCaretPos = getCaretPosition() - 1;
+      if (iCaretPos < 0)
+      {
+         iCaretPos = 0;
+      }
 
-		iLastIndex = sql.lastIndexOf(SQL_STMT_SEP, iLastIndex - getWhiteSpaceCountBackwards(iLastIndex, sql));
+      int iIndex = sql.lastIndexOf(SQL_STMT_SEP, iCaretPos);
+      if (iIndex >= 0)
+      {
+         bounds[0] = iIndex + SQL_STMT_SEP.length();
+      }
+      iIndex = sql.indexOf(SQL_STMT_SEP, iCaretPos);
+      if (iIndex > 0)
+      {
+         bounds[1] = iIndex;
+      }
 
-		if(-1 == iLastIndex)
-		{
-			iLastIndex = 0;
-		}
+      if(bounds[0] > bounds[1])
+      {
+         bounds[0] = bounds[1];
+      }
 
-		char c = sql.charAt(iLastIndex);
-		while(Character.isWhitespace(c) && iLastIndex < sql.length())
-		{
-			++iLastIndex;
-			c = sql.charAt(iLastIndex);
+      return bounds;
+   }
 
-		}
-		setCaretPosition(iLastIndex);
-	}
+   public void moveCaretToPreviousSQLBegin()
+   {
+      String sql = getText();
+
+      int iCaretPos = getCaretPosition() - 1;
+      int iLastIndex = sql.lastIndexOf(SQL_STMT_SEP, iCaretPos);
+
+      if(-1 == iLastIndex)
+      {
+         return;
+      }
+
+      iLastIndex = sql.lastIndexOf(SQL_STMT_SEP, iLastIndex - getWhiteSpaceCountBackwards(iLastIndex, sql));
+
+      if(-1 == iLastIndex)
+      {
+         iLastIndex = 0;
+      }
+
+      char c = sql.charAt(iLastIndex);
+      while(Character.isWhitespace(c) && iLastIndex < sql.length())
+      {
+         ++iLastIndex;
+         c = sql.charAt(iLastIndex);
+
+      }
+      setCaretPosition(iLastIndex);
+   }
 
 	private int getWhiteSpaceCountBackwards(int iStartIx, String sql)
 	{
@@ -189,8 +198,19 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
 		}
 	}
 
+   public void selectCurrentSql()
+   {
+      int[] boundsOfSQLToBeExecuted = getSqlBoundsBySeparatorRule();
 
-	/**
+      if(boundsOfSQLToBeExecuted[0] != boundsOfSQLToBeExecuted[1])
+      {
+         setSelectionStart(boundsOfSQLToBeExecuted[0]);
+         setSelectionEnd(boundsOfSQLToBeExecuted[1]);
+      }
+   }
+
+
+   /**
 	 * Add a hierarchical menu to the SQL Entry Area popup menu.
 	 *
 	 * @param	menu	The menu that will be added.

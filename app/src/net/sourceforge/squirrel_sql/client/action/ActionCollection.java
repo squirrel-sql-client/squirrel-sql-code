@@ -487,6 +487,7 @@ public final class ActionCollection
 		add(new ViewLogsAction(_app));
 		add(new PreviousSqlAction(_app));
 		add(new NextSqlAction(_app));
+		add(new SelectSqlAction(_app));
 	}
 
 }
