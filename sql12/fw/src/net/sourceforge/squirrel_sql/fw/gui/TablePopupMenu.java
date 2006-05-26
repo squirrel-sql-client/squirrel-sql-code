@@ -46,9 +46,10 @@ public class TablePopupMenu extends BasePopupMenu
 		int COPY_WITH_HEADERS = 1;
 		int COPY_HTML = 2;
 		int COPY_IN_STATEMENT = 3;
-		int SELECT_ALL = 4;
-		int SHOW_ROW_NUMBERS = 5;
-		int LAST_ENTRY = 6;
+		int COPY_EXPORT_CSV = 4;
+		int SELECT_ALL = 5;
+		int SHOW_ROW_NUMBERS = 6;
+		int LAST_ENTRY = 7;
 	}
 
 	private static final KeyStroke COPY_STROKE = KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK);
@@ -64,6 +65,7 @@ public class TablePopupMenu extends BasePopupMenu
 	private CopyWithHeadersAction _copyWithHeaders = new CopyWithHeadersAction();
 	private CopyHtmlAction _copyHtml = new CopyHtmlAction();
 	private CopyInStatementAction _copyInStatement = new CopyInStatementAction();
+	private ExportCsvAction _exportCvs = new ExportCsvAction();
 	private ShowRowNumbersAction _showRowNumbersAction = new ShowRowNumbersAction();
 
 	private MakeEditableAction _makeEditable = new MakeEditableAction();
@@ -106,6 +108,7 @@ public class TablePopupMenu extends BasePopupMenu
 		_menuItems[IOptionTypes.COPY_WITH_HEADERS] = add(_copyWithHeaders);
 		_menuItems[IOptionTypes.COPY_HTML] = add(_copyHtml);
 		_menuItems[IOptionTypes.COPY_IN_STATEMENT] = add(_copyInStatement);
+		_menuItems[IOptionTypes.COPY_IN_STATEMENT] = add(_exportCvs);
 
 		showRowNumbersItem = new JCheckBoxMenuItem();
 		showRowNumbersItem.setSelected(false);
@@ -270,7 +273,24 @@ public class TablePopupMenu extends BasePopupMenu
 		}
 	}
 
-	private class ShowRowNumbersAction extends BaseAction
+   private class ExportCsvAction extends BaseAction
+   {
+      ExportCsvAction()
+      {
+         super(s_stringMgr.getString("TablePopupMenu.exportCsv"));
+      }
+
+      public void actionPerformed(ActionEvent evt)
+      {
+         if (_table != null)
+         {
+            new TableExportCsvCommand(_table).execute();
+         }
+      }
+   }
+
+
+   private class ShowRowNumbersAction extends BaseAction
 	{
 		ShowRowNumbersAction()
 		{
@@ -371,33 +391,35 @@ public class TablePopupMenu extends BasePopupMenu
 	}
 
 
-	private class PrintAction extends BaseAction
-	{
-		PrintAction()
-		{
-			super(s_stringMgr.getString("TablePopupMenu.print"));
-		}
+   private class PrintAction extends BaseAction
+   {
+      PrintAction()
+      {
+         super(s_stringMgr.getString("TablePopupMenu.print"));
+      }
 
-		public void actionPerformed(ActionEvent evt)
-		{
-			if (_table != null)
-			{
-				try {
+      public void actionPerformed(ActionEvent evt)
+      {
+         if (_table != null)
+         {
+            try
+            {
 
-					PrinterJob printerJob = PrinterJob.getPrinterJob();
+               PrinterJob printerJob = PrinterJob.getPrinterJob();
 
-					printerJob.setPrintable(_viewer);
+               printerJob.setPrintable(_viewer);
 
-					if (printerJob.printDialog()) {
-						printerJob.print();
-					}
-				}
-				catch (Exception e) {
-					//?? What should we do if we see this?
-					//??System.out.println("Failed to print; exception="+e);
-				 }
-			}
-		}
-	}
+               if (printerJob.printDialog())
+               {
+                  printerJob.print();
+               }
+            }
+            catch (Exception e)
+            {
+               throw new RuntimeException(e);
+            }
+         }
+      }
+   }
 }
 

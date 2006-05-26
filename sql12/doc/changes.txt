@@ -5,6 +5,11 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+Feature request #1446675 Output tables to CSV files
+  All tables' right mouse menus have an 'Export CVS ...' item.
+  In the export dialog you may provide an application (like OpenOffice calc or MS Excel)
+  to open the CSV file immediately after creation.
+
 New toolbar button: Select current SQL (control Shift S)
  This function is based on SQuirreL's concept of 'current SQL': If there is no selected text the current SQL
  is the text between the empty line in fornt of cursor position and the empty line after cursor position.
