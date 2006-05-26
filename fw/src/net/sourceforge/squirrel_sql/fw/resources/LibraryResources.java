@@ -21,11 +21,17 @@ import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 public class LibraryResources extends Resources
 {
-	public interface IImageNames
-	{
-		String TABLE_ASCENDING = "table.ascending";
-		String TABLE_DESCENDING = "table.descending";
-	}
+   public void getIcon(Object keyName)
+   {
+      //To change body of created methods use File | Settings | File Templates.
+   }
+
+   public interface IImageNames
+   {
+      String TABLE_ASCENDING = "table.ascending";
+      String TABLE_DESCENDING = "table.descending";
+      String OPEN = "open";
+   }
 
 	public LibraryResources() throws IllegalArgumentException
 	{

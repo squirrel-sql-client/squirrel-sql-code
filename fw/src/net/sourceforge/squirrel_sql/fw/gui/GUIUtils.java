@@ -33,9 +33,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JButton;
-import javax.swing.JInternalFrame;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.fw.util.BaseRuntimeException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -51,33 +49,36 @@ public class GUIUtils
 	private static final ILogger s_log =
 		LoggerController.createLogger(GUIUtils.class);
 
-	/**
-	 * Centers <CODE>wind</CODE> within its parent. If it has no parent then
-	 * center within the screen. If centering would cause the title bar to go
-	 * above the parent (I.E. cannot see the titlebar and so cannot move the
-	 * window) then move the window down.
-	 *
-	 * @param	 wind	The Window to be centered.
-	 *
-	 * @throws IllegalArgumentException	 If <TT>wind</TT> is <TT>null</TT>.
-	 */
-	public static void centerWithinParent(Window wind)
-	{
-		if (wind == null)
-		{
-			throw new IllegalArgumentException("null Window passed");
-		}
-		final Container parent = wind.getParent();
-		if (parent != null && parent.isVisible())
-		{
-			center(wind, new Rectangle(parent.getLocationOnScreen(),
-					parent.getSize()));
-		}
-		else
-		{
-			centerWithinScreen(wind);
-		}
-	}
+
+   private static JFrame _mainFrame;
+
+   /**
+    * Centers <CODE>wind</CODE> within its parent. If it has no parent then
+    * center within the screen. If centering would cause the title bar to go
+    * above the parent (I.E. cannot see the titlebar and so cannot move the
+    * window) then move the window down.
+    *
+    * @param	 wind	The Window to be centered.
+    *
+    * @throws IllegalArgumentException	 If <TT>wind</TT> is <TT>null</TT>.
+    */
+   public static void centerWithinParent(Window wind)
+   {
+      if (wind == null)
+      {
+         throw new IllegalArgumentException("null Window passed");
+      }
+      final Container parent = wind.getParent();
+      if (parent != null && parent.isVisible())
+      {
+         center(wind, new Rectangle(parent.getLocationOnScreen(),
+               parent.getSize()));
+      }
+      else
+      {
+         centerWithinScreen(wind);
+      }
+   }
 
 	/**
 	 * Centers passed internal frame within its desktop area. If centering
@@ -371,12 +372,10 @@ public class GUIUtils
 				}
 				catch (InvocationTargetException ex)
 				{
-					// TODO: Should this be a checked exception?
 					throw new BaseRuntimeException(ex);
 				}
 				catch (InterruptedException ex)
 				{
-					// TODO: Should this be a checked exception?
 					throw new BaseRuntimeException(ex);
 				}
 			}
@@ -390,59 +389,6 @@ public class GUIUtils
             }
 		}
 	}
-
-	// From a comp.lang.java.programmer item by James White.
-	//	public static void showModally(JInternalFrame frame) {
-	//		frame.setVisible(true);
-	//
-	//		// Since all input will be blocked until this dialog is dismissed,
-	//		// make sure its parent containers are visible first (this component
-	//		// is tested below). This is necessary for JApplets, because
-	//		// because an applet normally isn't made visible until after its
-	//		// start() method returns -- if this method is called from start(),
-	//		// the applet will appear to hang while an invisible modal frame
-	//		// waits for input.
-	//		if (!frame.isShowing()) {
-	//			Container parent = frame.getParent();
-	//			while (parent != null) {
-	//				if (!parent.isVisible()) {
-	//					parent.setVisible(true);
-	//				}
-	//				parent = parent.getParent();
-	//			}
-	//		}
-	//
-	//		try {
-	//			if (SwingUtilities.isEventDispatchThread()) {
-	//				// System.err.println("Modal on dispatch thread.");
-	//				EventQueue theQueue =
-	//				frame.getToolkit().getSystemEventQueue();
-	//				while (frame.isShowing()) {
-	//					// This is essentially the body of EventDispatchThread
-	//					AWTEvent event = theQueue.getNextEvent();
-	//					Object src = event.getSource();
-	//					// can't call theQueue.dispatchEvent, so I pasted it's body here
-	//					/*if (event instanceof ActiveEvent) {
-	//						((ActiveEvent) event).dispatch();
-	//					} else */
-	//					if (src instanceof Component) {
-	//						((Component) src).dispatchEvent(event);
-	//					} else if (src instanceof MenuComponent) {
-	//						((MenuComponent) src).dispatchEvent(event);
-	//					} else {
-	////						System.err.println("unable to dispatch event: " + event);
-	//					}
-	//				}
-	//			} else {
-	//				// System.err.println("Modal on seperate thread.");
-	//				while (frame.isShowing()) {
-	//					frame.wait();
-	//				}
-	//			}
-	//		} catch(InterruptedException e) {
-	//		}
-	//		// System.err.println("Modal finished.");
-	//	}
 
 	/**
 	 * Centers <CODE>wind</CODE> within the passed rectangle.
@@ -469,4 +415,19 @@ public class GUIUtils
 		}
 		wind.setLocation(x, y);
 	}
+
+   /**
+    * To make the main window available to fw classes.
+    *
+    * This method is called during application start by WindowManager.
+    */
+   public static void setMainFrame(JFrame mainFrame)
+   {
+      _mainFrame = mainFrame;
+   }
+
+   public static JFrame  getMainFrame()
+   {
+      return _mainFrame;
+   }
 }

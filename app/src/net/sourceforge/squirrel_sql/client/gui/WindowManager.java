@@ -909,7 +909,8 @@ public class WindowManager
 	private void createMainFrame()
 	{
 		_mainFrame = new MainFrame(_app);
-	}
+      GUIUtils.setMainFrame(_mainFrame);
+   }
 
 	private void createAliasesListUI()
 	{
