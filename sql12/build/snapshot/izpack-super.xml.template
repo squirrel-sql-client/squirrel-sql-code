@@ -180,7 +180,7 @@
     </pack>
 
     <pack required="no" preselected="no" name="Optional Translation - Brazilian Portuguese">
-        <description>Provides native labels and user messages for use in a Brazilian locale (Francis Martin)</description>
+        <description>Provides native labels and user messages for use in a Brazilian locale (Francis Martins)</description>
     	<file	targetdir="$INSTALL_PATH/lib"
 	        	src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql_pt_BR.jar"/>
     </pack>
@@ -189,6 +189,13 @@
         <description>Provides native labels and user messages for use in a Czech locale (Jan Kostrhun)</description>
     	<file	targetdir="$INSTALL_PATH/lib"
 	        	src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql_cs_CZ.jar"/>
+    </pack>
+
+
+    <pack required="no" preselected="no" name="Optional Translation - Bulgarian">
+        <description>Provides native labels and user messages for use in a Bulgarian locale (Ivan Dimov)</description>
+        <file   targetdir="$INSTALL_PATH/lib"
+                        src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql_bg_BG.jar"/>
     </pack>
 
 <!-- template that can be used for future optional plugins 
