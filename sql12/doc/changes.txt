@@ -5,6 +5,8 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+Fixed bug #984527: Right mouse popup menu is now available in empty table. 
+
 Feature request #1446675 Output tables to CSV files
   All tables' right mouse menus have an 'Export CVS ...' item.
   In the export dialog you may provide an application (like OpenOffice calc or MS Excel)
