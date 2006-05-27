@@ -18,6 +18,7 @@ New toolbar button: Select current SQL (control Shift S)
 Installer now includes the following optional translation packages:
 - Brazilian Portuguese (contributed by Francis Martin)
 - Czech (contributed by Jan Kostrhun)
+- Bulgarian (contributed by Ivan Dimov)
 
 Feature request #1441787 Quickly adopt column widths to column values
   when table header is double clicked while the resize mouse pointer (<-->) is visible. (MS Excel like)  
