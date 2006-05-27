@@ -477,44 +477,48 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 				DataSetViewerTablePanel.this);
 			_tablePopupMenu.setTable(this);
 
-			addMouseListener(new MouseAdapter()
-			{
-				public void mousePressed(MouseEvent evt)
-				{
-					if (evt.isPopupTrigger())
-					{
-						MyJTable.this.displayPopupMenu(evt);
-					}
-					else if (evt.getClickCount() == 2)
-					{
-						// figure out which column the user clicked on
-						// so we can pass in the right column description
+         MouseAdapter mousePopupListener = new MouseAdapter()
+         {
+            public void mousePressed(MouseEvent evt)
+            {
+               if (evt.isPopupTrigger())
+               {
+                  MyJTable.this.displayPopupMenu(evt);
+               }
+               else if (evt.getClickCount() == 2)
+               {
+                  // figure out which column the user clicked on
+                  // so we can pass in the right column description
 
-						Point pt = evt.getPoint();
-						TableColumnModel cm = MyJTable.this.getColumnModel();
-						int columnIndexAtX = cm.getColumnIndexAtX(pt.x);
-						int modelIndex = cm.getColumn(columnIndexAtX).getModelIndex();
+                  Point pt = evt.getPoint();
+                  TableColumnModel cm = MyJTable.this.getColumnModel();
+                  int columnIndexAtX = cm.getColumnIndexAtX(pt.x);
+                  int modelIndex = cm.getColumn(columnIndexAtX).getModelIndex();
 
 
+                  if (RowNumberTableColumn.ROW_NUMBER_MODEL_INDEX != modelIndex)
+                  {
+                     ColumnDisplayDefinition colDefs[] = getColumnDefinitions();
+                     CellDataPopup.showDialog(MyJTable.this, colDefs[modelIndex], evt, MyJTable.this._creator.isTableEditable());
 
-						if(RowNumberTableColumn.ROW_NUMBER_MODEL_INDEX != modelIndex)
-						{
-							ColumnDisplayDefinition colDefs[] = getColumnDefinitions();
-							CellDataPopup.showDialog(MyJTable.this, colDefs[modelIndex], evt, MyJTable.this._creator.isTableEditable());
+                  }
+               }
+            }
 
-						}
-					}
-				}
-				public void mouseReleased(MouseEvent evt)
-				{
-					if (evt.isPopupTrigger())
-					{
-						MyJTable.this.displayPopupMenu(evt);
-					}
-				}
-			});
+            public void mouseReleased(MouseEvent evt)
+            {
+               if (evt.isPopupTrigger())
+               {
+                  MyJTable.this.displayPopupMenu(evt);
+               }
+            }
+         };
 
-		}
+         addMouseListener(mousePopupListener);
+
+         getTableHeader().addMouseListener(mousePopupListener);
+
+      }
 	}
 
 
