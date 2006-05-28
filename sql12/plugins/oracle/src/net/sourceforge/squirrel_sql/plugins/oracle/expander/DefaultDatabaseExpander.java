@@ -37,6 +37,9 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin;
+import net.sourceforge.squirrel_sql.plugins.oracle.IObjectTypes;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.InstanceDetailsTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.SessionDetailsTab;
 
 /**
  * This database expander limits the schemas that are displayed in the object
@@ -88,5 +91,46 @@ public class DefaultDatabaseExpander extends DatabaseExpander
       }
       return childNodes;
    }
+
+   public List createChildren(ISession session, ObjectTreeNode parentNode)
+   {
+      try
+      {
+         final List childNodes = super.createChildren(session, parentNode);
+
+         final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
+
+         // Users.
+         DatabaseObjectInfo dboInfo = new DatabaseObjectInfo(null, null, "USERS",
+            IObjectTypes.USER_PARENT, md);
+         ObjectTreeNode node = new ObjectTreeNode(session, dboInfo);
+         childNodes.add(node);
+
+         if (InstanceDetailsTab.isAccessible(session))
+         {
+            // Instances.
+            dboInfo = new DatabaseObjectInfo(null, null, "INSTANCES",
+               IObjectTypes.INSTANCE_PARENT, md);
+            node = new ObjectTreeNode(session, dboInfo);
+            childNodes.add(node);
+         }
+
+         if (SessionDetailsTab.isAccessible(session))
+         {
+            // Sessions.
+            dboInfo = new DatabaseObjectInfo(null, null, "SESSIONS",
+               IObjectTypes.SESSION_PARENT, md);
+            node = new ObjectTreeNode(session, dboInfo);
+            childNodes.add(node);
+         }
+
+         return childNodes;
+      }
+      catch (SQLException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
 
 }
