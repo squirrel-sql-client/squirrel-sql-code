@@ -477,49 +477,72 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 				DataSetViewerTablePanel.this);
 			_tablePopupMenu.setTable(this);
 
-         MouseAdapter mousePopupListener = new MouseAdapter()
+         addMouseListener(new MouseAdapter()
          {
             public void mousePressed(MouseEvent evt)
             {
-               if (evt.isPopupTrigger())
-               {
-                  MyJTable.this.displayPopupMenu(evt);
-               }
-               else if (evt.getClickCount() == 2)
-               {
-                  // figure out which column the user clicked on
-                  // so we can pass in the right column description
-
-                  Point pt = evt.getPoint();
-                  TableColumnModel cm = MyJTable.this.getColumnModel();
-                  int columnIndexAtX = cm.getColumnIndexAtX(pt.x);
-                  int modelIndex = cm.getColumn(columnIndexAtX).getModelIndex();
-
-
-                  if (RowNumberTableColumn.ROW_NUMBER_MODEL_INDEX != modelIndex)
-                  {
-                     ColumnDisplayDefinition colDefs[] = getColumnDefinitions();
-                     CellDataPopup.showDialog(MyJTable.this, colDefs[modelIndex], evt, MyJTable.this._creator.isTableEditable());
-
-                  }
-               }
+               onMousePressed(evt, false);
             }
 
             public void mouseReleased(MouseEvent evt)
             {
-               if (evt.isPopupTrigger())
-               {
-                  MyJTable.this.displayPopupMenu(evt);
-               }
+               onMouseReleased(evt);
             }
-         };
+         });
 
-         addMouseListener(mousePopupListener);
+         getTableHeader().addMouseListener(new MouseAdapter()
+         {
+            public void mousePressed(MouseEvent evt)
+            {
+               onMousePressed(evt, true);
+            }
 
-         getTableHeader().addMouseListener(mousePopupListener);
+            public void mouseReleased(MouseEvent evt)
+            {
+               onMouseReleased(evt);
+            }
+         });
 
       }
-	}
+
+      private void onMouseReleased(MouseEvent evt)
+      {
+         if (evt.isPopupTrigger())
+         {
+            this.displayPopupMenu(evt);
+         }
+      }
+
+      private void onMousePressed(MouseEvent evt, boolean clickedOnTableHeader)
+      {
+         if (evt.isPopupTrigger())
+         {
+            this.displayPopupMenu(evt);
+         }
+         else if (evt.getClickCount() == 2 && false == clickedOnTableHeader)
+         {
+            // If this was done when the header was clicked
+            // it prevents MS Excel like adopition of column
+            // sizes by double click. See class ButtonTableHeader.
+
+            // figure out which column the user clicked on
+            // so we can pass in the right column description
+            Point pt = evt.getPoint();
+            TableColumnModel cm = this.getColumnModel();
+            int columnIndexAtX = cm.getColumnIndexAtX(pt.x);
+
+            int modelIndex = cm.getColumn(columnIndexAtX).getModelIndex();
+
+
+            if (RowNumberTableColumn.ROW_NUMBER_MODEL_INDEX != modelIndex)
+            {
+               ColumnDisplayDefinition colDefs[] = getColumnDefinitions();
+               CellDataPopup.showDialog(this, colDefs[modelIndex], evt, this._creator.isTableEditable());
+
+            }
+         }
+      }
+   }
 
 
 	
