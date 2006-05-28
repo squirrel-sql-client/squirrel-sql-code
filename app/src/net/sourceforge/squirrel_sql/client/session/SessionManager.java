@@ -571,27 +571,32 @@ public class SessionManager
    public String[] getAllowedSchemas(ISession session)
    {
 
-      ArrayList buf = null;
+      HashMap uniqueAllowedSchemas = null;
       for (int i = 0; i < _allowedSchemaCheckers.size(); i++)
       {
          String[] allowedSchemas = ((IAllowedSchemaChecker)_allowedSchemaCheckers.get(i)).getAllowedSchemas(session);
          if(null != allowedSchemas)
          {
-            if(null == buf)
+            if(null == uniqueAllowedSchemas)
             {
-               buf = new ArrayList();
+               uniqueAllowedSchemas = new HashMap();
             }
-            buf.addAll(Arrays.asList(allowedSchemas));
+
+            for (int j = 0; j < allowedSchemas.length; j++)
+            {
+               String allowedSchema = allowedSchemas[j];
+               uniqueAllowedSchemas.put(allowedSchemas[j], null);
+            }
          }
       }
 
-      if(null == buf)
+      if(null == uniqueAllowedSchemas)
       {
          return null;
       }
       else
       {
-         return (String[]) buf.toArray(new String[buf.size()]);
+         return (String[]) uniqueAllowedSchemas.keySet().toArray(new String[uniqueAllowedSchemas.size()]);
       }
    }
 }

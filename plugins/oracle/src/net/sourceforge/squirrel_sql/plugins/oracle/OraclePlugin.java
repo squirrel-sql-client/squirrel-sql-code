@@ -298,7 +298,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 
          public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
          {
-            onObjectTreeInternalFrameOpened(objectTreeInternalFrame, sess);
+            onObjectTreeInternalFrameOpened(objectTreeInternalFrame);
          }
 
       };
@@ -324,7 +324,7 @@ public class OraclePlugin extends DefaultSessionPlugin
       panel.addExecutor(new ExplainPlanExecuter(session, panel));
    }
 
-   private void onObjectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, final ISession session)
+   private void onObjectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame)
    {
       final IObjectTreeAPI objTree = objectTreeInternalFrame.getObjectTreeAPI();
       updateObjectTree(objTree);
@@ -617,7 +617,6 @@ public class OraclePlugin extends DefaultSessionPlugin
         addDetailTab(objTree, IObjectTypes.TYPE, dboit);
 
         // Expanders.
-        addExpander(objTree, DatabaseObjectType.SESSION, new DatabaseExpander());
         addExpander(objTree, DatabaseObjectType.SCHEMA, new SchemaExpander(OraclePlugin.this));
         addExpander(objTree, DatabaseObjectType.TABLE, new TableExpander());
         addExpander(objTree, IObjectTypes.PACKAGE, new PackageExpander());

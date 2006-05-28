@@ -108,6 +108,8 @@ public class SchemaInfo
          }
 
          _loading = true;
+
+         _schemasAndCatalogsLoaded = false;
       }
 
       breathing();
@@ -136,13 +138,10 @@ public class SchemaInfo
 
          progress = loadSchemas(progress);
 
-         if (false == _schemasAndCatalogsLoaded)
+         _schemasAndCatalogsLoaded = true;
+         synchronized(this)
          {
-            _schemasAndCatalogsLoaded = true;
-            synchronized(this)
-            {
-               this.notifyAll();
-            }
+            this.notifyAll();
          }
 
 

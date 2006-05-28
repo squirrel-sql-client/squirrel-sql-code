@@ -28,12 +28,15 @@ public class SchemaInfoUpdateCheck
    private static final Pattern PATTERN_INSERT_INTO = Pattern.compile("SELECT\\s+INTO\\s+([A-Z0-9_\\.\"]+)");
 
    private static final Pattern PATTERN_CREATE_VIEW = Pattern.compile("CREATE\\s+VIEW\\s+([A-Z0-9_\\.\"]+)");
+   private static final Pattern PATTERN_CREATE_OR_REPLACE_VIEW = Pattern.compile("CREATE\\s+OR\\s+REPLACE\\s+VIEW\\s+([A-Z0-9_\\.\"]+)");
    private static final Pattern PATTERN_ALTER_VIEW = Pattern.compile("ALTER\\s+VIEW\\s+([A-Z0-9_\\.\"]+)");
 
    private static final Pattern PATTERN_CREATE_PROCEDURE = Pattern.compile("CREATE\\s+PROCEDURE\\s+([A-Z0-9_\\.\"]+)");
+   private static final Pattern PATTERN_CREATE_OR_REPLACE_PROCEDURE = Pattern.compile("CREATE\\s+OR\\s+REPLACE\\s+PROCEDURE\\s+([A-Z0-9_\\.\"]+)");
    private static final Pattern PATTERN_ALTER_PROCEDURE = Pattern.compile("ALTER\\s+PROCEDURE\\s+([A-Z0-9_\\.\"]+)");
 
    private static final Pattern PATTERN_CREATE_FUNCTION = Pattern.compile("CREATE\\s+FUNCTION\\s+([A-Z0-9_\\.\"]+)");
+   private static final Pattern PATTERN_CREATE_OR_REPLACE_FUNCTION = Pattern.compile("CREATE\\s+OR\\s+REPLACE\\s+FUNCTION\\s+([A-Z0-9_\\.\"]+)");
    private static final Pattern PATTERN_ALTER_FUNCTION = Pattern.compile("ALTER\\s+FUNCTION\\s+([A-Z0-9_\\.\"]+)");
 
 
@@ -146,6 +149,7 @@ public class SchemaInfoUpdateCheck
          DatabaseObjectInfo sessionOI = new DatabaseObjectInfo(null, null, "SessionDummy", DatabaseObjectType.SESSION, dmd);
          _session.getSchemaInfo().reloadCache(sessionOI);
 
+
       }
       else
       {
@@ -210,6 +214,12 @@ public class SchemaInfoUpdateCheck
 
       Matcher matcher;
 
+      matcher = PATTERN_CREATE_OR_REPLACE_PROCEDURE.matcher(upperSql);
+      if(matcher.find())
+      {
+         return createProcdureInfos(matcher, sql, false);
+      }
+
       matcher = PATTERN_CREATE_PROCEDURE.matcher(upperSql);
       if(matcher.find())
       {
@@ -220,6 +230,12 @@ public class SchemaInfoUpdateCheck
       if(matcher.find())
       {
          return createProcdureInfos(matcher, sql, true);
+      }
+
+      matcher = PATTERN_CREATE_OR_REPLACE_FUNCTION.matcher(upperSql);
+      if(matcher.find())
+      {
+         return createProcdureInfos(matcher, sql, false);
       }
 
       matcher = PATTERN_CREATE_FUNCTION.matcher(upperSql);
@@ -311,6 +327,12 @@ public class SchemaInfoUpdateCheck
       if(matcher.find())
       {
          return createTableInfos(matcher, sql, "TABLE", false);
+      }
+
+      matcher = PATTERN_CREATE_OR_REPLACE_VIEW.matcher(upperSql);
+      if(matcher.find())
+      {
+         return createTableInfos(matcher, sql, "VIEW", false);
       }
 
       matcher = PATTERN_CREATE_VIEW.matcher(upperSql);
