@@ -225,8 +225,10 @@ public class DatabaseExpander implements INodeExpander
 		final List childNodes = new ArrayList();
 		if (session.getProperties().getLoadSchemasCatalogs())
 		{
-			final String[] schemas = md.getSchemas();
-			final String[] schemaPrefixArray =
+         session.getSchemaInfo().waitTillSchemasAndCatalogsLoaded();
+         final String[] schemas = session.getSchemaInfo().getSchemas();
+
+         final String[] schemaPrefixArray =
 							session.getProperties().getSchemaPrefixArray();
 			for (int i = 0; i < schemas.length; ++i)
 			{

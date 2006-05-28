@@ -17,16 +17,6 @@ package net.sourceforge.squirrel_sql.plugins.oracle;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-
-import javax.swing.Action;
-import javax.swing.SwingUtilities;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
@@ -34,9 +24,9 @@ import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
+import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
+import net.sourceforge.squirrel_sql.client.session.IAllowedSchemaChecker;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeInternalFrame;
-import net.sourceforge.squirrel_sql.client.session.ISQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
@@ -48,36 +38,30 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
+import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
+import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 import net.sourceforge.squirrel_sql.plugins.oracle.SGAtrace.NewSGATraceWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.dboutput.NewDBOutputWorksheetAction;
-import net.sourceforge.squirrel_sql.plugins.oracle.expander.DatabaseExpander;
-import net.sourceforge.squirrel_sql.plugins.oracle.expander.DefaultDatabaseExpander;
-import net.sourceforge.squirrel_sql.plugins.oracle.expander.InstanceParentExpander;
-import net.sourceforge.squirrel_sql.plugins.oracle.expander.PackageExpander;
-import net.sourceforge.squirrel_sql.plugins.oracle.expander.ProcedureExpander;
-import net.sourceforge.squirrel_sql.plugins.oracle.expander.SchemaExpander;
-import net.sourceforge.squirrel_sql.plugins.oracle.expander.SessionParentExpander;
-import net.sourceforge.squirrel_sql.plugins.oracle.expander.TableExpander;
-import net.sourceforge.squirrel_sql.plugins.oracle.expander.TriggerParentExpander;
-import net.sourceforge.squirrel_sql.plugins.oracle.expander.UserParentExpander;
+import net.sourceforge.squirrel_sql.plugins.oracle.expander.*;
 import net.sourceforge.squirrel_sql.plugins.oracle.explainplan.ExplainPlanExecuter;
 import net.sourceforge.squirrel_sql.plugins.oracle.invalidobjects.NewInvalidObjectsWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.sessioninfo.NewSessionInfoWorksheetAction;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.IndexColumnInfoTab;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.IndexDetailsTab;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.InstanceDetailsTab;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.ObjectSourceTab;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.OptionsTab;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.SequenceDetailsTab;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.SessionDetailsTab;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.SessionStatisticsTab;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.TriggerColumnInfoTab;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.TriggerDetailsTab;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.TriggerSourceTab;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.UserDetailsTab;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.ViewSourceTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.*;
+
+import javax.swing.*;
+import java.io.File;
+import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Oracle plugin class.
@@ -86,8 +70,14 @@ import net.sourceforge.squirrel_sql.plugins.oracle.tab.ViewSourceTab;
  */
 public class OraclePlugin extends DefaultSessionPlugin
 {
-	/** Logger for this class. */
-	private final static ILogger s_log = LoggerController.createLogger(OraclePlugin.class);
+   /** Logger for this class. */
+   private final static ILogger s_log = LoggerController.createLogger(OraclePlugin.class);
+
+
+   /** Internationalized strings for this class. */
+   private static final StringManager s_stringMgr =
+       StringManagerFactory.getStringManager(OraclePlugin.class);
+
 
        private PluginResources _resources;
 
@@ -98,45 +88,58 @@ public class OraclePlugin extends DefaultSessionPlugin
 
        /** A list of Oracle sessions that are open so we'll know when none are left */
        private ArrayList oracleSessions = new ArrayList();
-	/**
-	 * Return the internal name of this plugin.
-	 *
-	 * @return	the internal name of this plugin.
-	 */
-	public String getInternalName()
-	{
-		return "oracle";
-	}
+   /** SQL to find schemas to which the logged in user has access */
+   private static String SCHEMA_ACCESS_SQL =
+       "SELECT DISTINCT OWNER FROM USER_TAB_PRIVS";
+   /** SQL to determine whether or not this account is a DBA account */
+   private static String DBA_ROLE_SQL =
+       "SELECT GRANTED_ROLE FROM USER_ROLE_PRIVS";
 
-	/**
-	 * Return the descriptive name of this plugin.
-	 *
-	 * @return	the descriptive name of this plugin.
-	 */
-	public String getDescriptiveName()
-	{
-		return "Oracle Plugin";
-	}
 
-	/**
-	 * Returns the current version of this plugin.
-	 *
-	 * @return	the current version of this plugin.
-	 */
-	public String getVersion()
-	{
-		return "0.16";
-	}
+   private HashMap _allowedSchemasBySessionID = new HashMap();
+   private static final String ORACLE_PREFS_FILE = "oraclePrefs.xml";
+   private OracleGlobalPrefs _oracleGlobalPrefs;
+   private OraclePrefsPanelController _oraclePrefsPanelController;
 
-	/**
-	 * Returns the authors name.
-	 *
-	 * @return	the authors name.
-	 */
-	public String getAuthor()
-	{
-		return "Colin Bell";
-	}
+   /**
+    * Return the internal name of this plugin.
+    *
+    * @return	the internal name of this plugin.
+    */
+   public String getInternalName()
+   {
+      return "oracle";
+   }
+
+   /**
+    * Return the descriptive name of this plugin.
+    *
+    * @return	the descriptive name of this plugin.
+    */
+   public String getDescriptiveName()
+   {
+      return "Oracle Plugin";
+   }
+
+   /**
+    * Returns the current version of this plugin.
+    *
+    * @return	the current version of this plugin.
+    */
+   public String getVersion()
+   {
+      return "0.16";
+   }
+
+   /**
+    * Returns the authors name.
+    *
+    * @return	the authors name.
+    */
+   public String getAuthor()
+   {
+      return "Colin Bell";
+   }
 
     /**
      * Returns a comma separated list of other contributors.
@@ -146,98 +149,194 @@ public class OraclePlugin extends DefaultSessionPlugin
     public String getContributors()
     {
         return "Alexander Buloichik, Rob Manning";
-    }    
-    
-	/**
-	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getChangeLogFileName()
-	 */
-	public String getChangeLogFileName()
-	{
-		return "changes.txt";
-	}
+    }
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getHelpFileName()
-	 */
-	public String getHelpFileName()
-	{
-		return "readme.html";
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getLicenceFileName()
-	 */
-	public String getLicenceFileName()
-	{
-		return "licence.txt";
-	}    
-    
-        public void initialize() throws PluginException
-	{
-                super.initialize();
-
-                final IApplication app = getApplication();
-
-                _resources = new OracleResources(
-                        "net.sourceforge.squirrel_sql.plugins.oracle.oracle",
-                        this);
-
-                app.getWindowManager().addSessionSheetListener(new OraclePluginFactory());
-
-                //Add the actions to the action bar.
-                _newDBOutputWorksheet = new NewDBOutputWorksheetAction(app, _resources);
-                _newDBOutputWorksheet.setEnabled(false);
-                addToToolBar(_newDBOutputWorksheet);
-
-                _newInvalidObjectsWorksheet = new NewInvalidObjectsWorksheetAction(app, _resources);
-                _newInvalidObjectsWorksheet.setEnabled(false);
-                addToToolBar(_newInvalidObjectsWorksheet);
-
-                _newSessionInfoWorksheet = new NewSessionInfoWorksheetAction(app, _resources);
-                _newSessionInfoWorksheet.setEnabled(false);
-                addToToolBar(_newSessionInfoWorksheet);
-
-                _newSGATraceWorksheet = new NewSGATraceWorksheetAction(app, _resources);
-                _newSGATraceWorksheet.setEnabled(false);
-                addToToolBar(_newSGATraceWorksheet);
-
-
-                app.getSessionManager().addSessionListener(new OraclePluginSessionListener());
-	}
-
-	/**
-	 * Application is shutting down so save preferences.
-	 */
-	public void unload() // throws PluginException
-		{
-		super.unload();
-	}
-
-   public boolean allowsSessionStartedInBackground()
+   /**
+    * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getChangeLogFileName()
+    */
+   public String getChangeLogFileName()
    {
-      return true;
+      return "changes.txt";
    }
 
-   public PluginSessionCallback sessionStarted(ISession session)
+   /**
+    * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getHelpFileName()
+    */
+   public String getHelpFileName()
    {
+      return "readme.html";
+   }
+
+   /**
+    * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getLicenceFileName()
+    */
+   public String getLicenceFileName()
+   {
+      return "licence.txt";
+   }
+
+   public void initialize() throws PluginException
+   {
+      try
+      {
+         super.initialize();
+
+         final IApplication app = getApplication();
+
+         _resources = new OracleResources(
+            "net.sourceforge.squirrel_sql.plugins.oracle.oracle",
+            this);
+
+         //Add the actions to the action bar.
+         _newDBOutputWorksheet = new NewDBOutputWorksheetAction(app, _resources);
+         _newDBOutputWorksheet.setEnabled(false);
+         addToToolBar(_newDBOutputWorksheet);
+
+         _newInvalidObjectsWorksheet = new NewInvalidObjectsWorksheetAction(app, _resources);
+         _newInvalidObjectsWorksheet.setEnabled(false);
+         addToToolBar(_newInvalidObjectsWorksheet);
+
+         _newSessionInfoWorksheet = new NewSessionInfoWorksheetAction(app, _resources);
+         _newSessionInfoWorksheet.setEnabled(false);
+         addToToolBar(_newSessionInfoWorksheet);
+
+         _newSGATraceWorksheet = new NewSGATraceWorksheetAction(app, _resources);
+         _newSGATraceWorksheet.setEnabled(false);
+         addToToolBar(_newSGATraceWorksheet);
+
+
+         app.getSessionManager().addSessionListener(new OraclePluginSessionListener());
+
+         app.getSessionManager().addAllowedSchemaChecker(new IAllowedSchemaChecker()
+         {
+            public String[] getAllowedSchemas(ISession session)
+            {
+               return onGetAllowedSchemas(session);
+            }
+         });
+
+         File f = getGlobalPrefsFile();
+
+         if(f.exists())
+         {
+            XMLBeanReader xbr = new XMLBeanReader();
+            xbr.load(f, getClass().getClassLoader());
+            _oracleGlobalPrefs = (OracleGlobalPrefs) xbr.iterator().next();
+         }
+         else
+         {
+            _oracleGlobalPrefs = new OracleGlobalPrefs();
+         }
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+   public void load(IApplication app) throws PluginException
+   {
+      super.load(app);
+   }
+
+   private File getGlobalPrefsFile()
+      throws IOException
+   {
+      return new File(getPluginUserSettingsFolder().getPath() + File.separator + ORACLE_PREFS_FILE);
+   }
+
+   public void unload()
+   {
+      try
+      {
+         File f = getGlobalPrefsFile();
+
+         XMLBeanWriter xbw = new XMLBeanWriter(_oracleGlobalPrefs);
+         xbw.save(f);
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
+
+   }
+
+
+   /**
+       * Create preferences panel for the Global Preferences dialog.
+       *
+       * @return  Preferences panel.
+       */
+      public IGlobalPreferencesPanel[] getGlobalPreferencePanels()
+      {
+         if(null == _oraclePrefsPanelController)
+         {
+            _oraclePrefsPanelController = new OraclePrefsPanelController(_oracleGlobalPrefs);
+         }
+
+         return
+            new OraclePrefsPanelController[]
+               {
+                  _oraclePrefsPanelController
+               };
+      }
+
+   public PluginSessionCallback sessionStarted(final ISession session)
+   {
+      if (!isOracle(session))
+      {
+         return null;
+      }
+
+
       PluginSessionCallback ret = new PluginSessionCallback()
       {
          public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
          {
-            // TODO
-            // Plugin supports only the main session window
+            onSQLInternaFrameOpened(sqlInternalFrame, sess);
          }
 
          public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
          {
-            // TODO
-            // Plugin supports only the main session window
+            onObjectTreeInternalFrameOpened(objectTreeInternalFrame, sess);
          }
+
       };
+
+      SwingUtilities.invokeLater(new Runnable()
+      {
+         public void run()
+         {
+            ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getSQLPaneAPI();
+            sqlPaneAPI.addExecutor(new ExplainPlanExecuter(session, sqlPaneAPI));
+            updateObjectTree(session.getSessionSheet().getObjectTreePanel());
+         }
+      });
+
+
       return ret;
    }
 
-    /**
+
+   private void onSQLInternaFrameOpened(SQLInternalFrame sqlInternalFrame, final ISession session)
+   {
+      final ISQLPanelAPI panel = sqlInternalFrame.getSQLPanelAPI();
+      panel.addExecutor(new ExplainPlanExecuter(session, panel));
+   }
+
+   private void onObjectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, final ISession session)
+   {
+      final IObjectTreeAPI objTree = objectTreeInternalFrame.getObjectTreeAPI();
+      updateObjectTree(objTree);
+   }
+
+
+   public void sessionEnding(ISession session)
+   {
+      _allowedSchemasBySessionID.remove(session.getIdentifier());
+   }
+
+   /**
      * Return a node expander for the object tree for a particular default node type.
      * <p/> A plugin could return non null here if they wish to override the default node
      * expander bahaviour. Most plugins should return null here.
@@ -248,11 +347,11 @@ public class OraclePlugin extends DefaultSessionPlugin
           return new ProcedureExpander();
       }
       if (type == DatabaseObjectType.DATABASE_TYPE_DBO && isOracle) {
-          return new DefaultDatabaseExpander(session); 
+          return new DefaultDatabaseExpander(session, this);
       }
       return null;
     }
-        
+
     /**
      * Adds the specified action to the session main frame tool bar in such a 
      * way that GUI work is done in the event dispatch thread.
@@ -268,14 +367,14 @@ public class OraclePlugin extends DefaultSessionPlugin
                     app.getMainFrame().addToToolBar(action);
                 }
             });
-        }        
+        }
     }
 
-        
-	private boolean isOracle(ISession session)
-	{
-		final String ORACLE = "oracle";
-		String dbms = null;
+
+   private boolean isOracle(ISession session)
+   {
+      final String ORACLE = "oracle";
+      String dbms = null;
         if (oracleSessions.contains(session)) {
             return true;
         }
@@ -283,13 +382,13 @@ public class OraclePlugin extends DefaultSessionPlugin
         if (prodName != null) {
             if (prodName.toLowerCase().startsWith(ORACLE)) {
                 oracleSessions.add(session);
-                return true;                
+                return true;
             } else {
                 return false;
             }
         }
-		try
-		{
+      try
+      {
             SQLConnection con = session.getSQLConnection();
             if (con != null) {
                 SQLDatabaseMetaData data = con.getSQLMetaData();
@@ -297,101 +396,190 @@ public class OraclePlugin extends DefaultSessionPlugin
                     dbms = data.getDatabaseProductName();
                 }
             }
-		}
-		catch (SQLException ex)
-		{
-			s_log.debug("Error in getDatabaseProductName()", ex);
-		}
+      }
+      catch (SQLException ex)
+      {
+         s_log.debug("Error in getDatabaseProductName()", ex);
+      }
         if (dbms != null && dbms.toLowerCase().startsWith(ORACLE)) {
             oracleSessions.add(session);
             return true;
         }
         return false;
-	}
+   }
 
-    
-    public class OraclePluginSessionListener extends SessionAdapter {
-        
-        public void sessionActivated(SessionEvent evt) {
-          final ISession session = evt.getSession();
-          final boolean enable = isOracle(session);
-          GUIUtils.processOnSwingEventThread(new Runnable() {
-              public void run() {
-                  _newDBOutputWorksheet.setEnabled(enable);
-                  _newInvalidObjectsWorksheet.setEnabled(enable);
-                  _newSessionInfoWorksheet.setEnabled(enable);
-                  _newSGATraceWorksheet.setEnabled(enable);     
-              }
-          });
-        }
-        
-        public void sessionClosing(SessionEvent evt) {
-            final ISession session = evt.getSession();
-            if (isOracle(session)) {
-                int idx = oracleSessions.indexOf(session);
-                if (idx != -1) {
-                    oracleSessions.remove(idx);
+   private String[] onGetAllowedSchemas(ISession session)
+   {
+      if(isOracle(session))
+      {
+         String[] ret = (String[]) _allowedSchemasBySessionID.get(session.getIdentifier());
+         if(null == ret)
+         {
+            ret = getAccessibleSchemas(session);
+            _allowedSchemasBySessionID.put(session.getIdentifier(), ret);
+         }
+
+         return ret;
+      }
+      else
+      {
+         return null;
+      }
+   }
+
+
+
+   /**
+    * Returns an array of schema names that represent schemas in which there
+    * exist tables that the user associated with the specified session has
+    * privilege to access.
+    *
+    * @param session the session to retrieve schemas for
+    * @return an array of strings representing the names of accessible schemas
+    */
+   public String[] getAccessibleSchemas(ISession session)
+   {
+      String[] result = null;
+      ResultSet rs = null;
+      Statement stmt = null;
+      SQLConnection con = session.getSQLConnection();
+      SQLDatabaseMetaData md = con.getSQLMetaData();
+      String currentUserName = null;
+      try
+      {
+         if (hasSystemPrivilege(session))
+         {
+            result = md.getSchemas();
+         }
+         else
+         {
+            currentUserName = md.getUserName();
+            stmt = con.getConnection().createStatement();
+            rs = stmt.executeQuery(SCHEMA_ACCESS_SQL);
+            ArrayList tmp = new ArrayList();
+            while (rs.next())
+            {
+               tmp.add(rs.getString(1));
+            }
+            if (currentUserName != null && !tmp.contains(currentUserName))
+            {
+               tmp.add(currentUserName);
+            }
+
+            tmp.remove("SYS");
+
+            if(_oracleGlobalPrefs.isLoadSysSchema())
+            {
+               tmp.add("SYS");
+            }
+
+            result = (String[]) tmp.toArray(new String[tmp.size()]);
+         }
+      }
+      catch (SQLException e)
+      {
+         // i18n[DefaultDatabaseExpander.error.retrieveschemaprivs=Unable to retrieve schema privileges]
+         String msg = s_stringMgr.getString("DefaultDatabaseExpander.error.retrieveschemaprivs");
+         s_log.error(msg, e);
+      }
+      finally
+      {
+         if (rs != null) try
+         {
+            rs.close();
+         }
+         catch (SQLException e)
+         {
+         }
+         if (stmt != null) try
+         {
+            stmt.close();
+         }
+         catch (SQLException e)
+         {
+         }
+      }
+      return result;
+   }
+
+   /**
+     * Checks whether or not the user associated with the specified session has
+     * been granted the DBA privilege.
+     *
+     * @param session the session to check
+     * @return true if the user has the DBA privilege; false otherwise.
+     */
+    private boolean hasSystemPrivilege(ISession session) {
+        boolean result = false;
+        Statement stmt = null;
+        ResultSet rs = null;
+        SQLConnection con = session.getSQLConnection();
+        try {
+            stmt = con.createStatement();
+            rs = stmt.executeQuery(DBA_ROLE_SQL);
+            while (rs.next()) {
+                String role = rs.getString(1);
+                if ("DBA".equalsIgnoreCase(role)) {
+                    result = true;
+                    break;
                 }
             }
-            // if the last oracle session is closing, then disable the 
-            // worksheets
-            if (oracleSessions.size() == 0) {
-                GUIUtils.processOnSwingEventThread(new Runnable() {
-                    public void run() {
-                        _newDBOutputWorksheet.setEnabled(false);
-                        _newInvalidObjectsWorksheet.setEnabled(false);
-                        _newSessionInfoWorksheet.setEnabled(false);
-                        _newSGATraceWorksheet.setEnabled(false);     
-                    }
-                });
-            }
+        } catch (SQLException e) {
+            // i18n[DefaultDatabaseExpander.error.retrieveuserroles=Unable to retrieve user roles]
+            String msg =
+                s_stringMgr.getString("DefaultDatabaseExpander.error.retrieveuserroles");
+            s_log.error(msg, e);
+        } finally {
+            if (rs != null) try { rs.close(); } catch (SQLException e) {}
+            if (stmt != null) try { stmt.close(); } catch (SQLException e) {}
         }
-      }
-    /** This class listens to new frames as they are opened and adds
-     *  object from this plugins.
-     */
-    public class OraclePluginFactory extends InternalFrameAdapter {
-        public void internalFrameOpened(InternalFrameEvent e) {
-            
-            if (e.getInternalFrame() instanceof ISQLInternalFrame) {
-                final ISQLPanelAPI panel = ((ISQLInternalFrame)e.getInternalFrame()).getSQLPanelAPI();
-                final ISession session = panel.getSession();
-                session.getApplication().getThreadPool().addTask(new Runnable() {
-                    public void run() {
-                        if (!isOracle(session)) {
-                            return;
-                        }                        
-                        GUIUtils.processOnSwingEventThread(new Runnable() {
-                            public void run() {
-                                panel.addExecutor(new ExplainPlanExecuter(session, panel));
-                            }
-                        });                      
-                    }
-                });
-            }
-            if (e.getInternalFrame() instanceof IObjectTreeInternalFrame) {
-                final IObjectTreeAPI objTree = ((IObjectTreeInternalFrame)e.getInternalFrame()).getObjectTreeAPI();
-                final ISession session = objTree.getSession();
-                session.getApplication().getThreadPool().addTask(new Runnable() {
-                    public void run() {
-                        if (!isOracle(session)) {
-                            return;
-                        }
-                        // This will use the event dispatch thread where appropritate
-                        updateObjectTree(objTree);
-                    }
-                });
-            }
-        }
+        return result;
     }
-        
-    /**
-     * Check if we can run query. 
-     * 
-     * @param session session
-     * @param query query text
-     * @return true if query works fine
-     */
+
+
+   public class OraclePluginSessionListener extends SessionAdapter
+   {
+
+      public void sessionActivated(SessionEvent evt)
+      {
+         final ISession session = evt.getSession();
+         final boolean enable = isOracle(session);
+         _newDBOutputWorksheet.setEnabled(enable);
+         _newInvalidObjectsWorksheet.setEnabled(enable);
+         _newSessionInfoWorksheet.setEnabled(enable);
+         _newSGATraceWorksheet.setEnabled(enable);
+      }
+
+      public void sessionClosing(SessionEvent evt)
+      {
+         final ISession session = evt.getSession();
+         if (isOracle(session))
+         {
+            int idx = oracleSessions.indexOf(session);
+            if (idx != -1)
+            {
+               oracleSessions.remove(idx);
+            }
+         }
+         // if the last oracle session is closing, then disable the
+         // worksheets
+         if (oracleSessions.size() == 0)
+         {
+            _newDBOutputWorksheet.setEnabled(false);
+            _newInvalidObjectsWorksheet.setEnabled(false);
+            _newSessionInfoWorksheet.setEnabled(false);
+            _newSGATraceWorksheet.setEnabled(false);
+         }
+      }
+   }
+
+/**
+* Check if we can run query.
+*
+* @param session session
+* @param query query text
+* @return true if query works fine
+*/
     public static boolean checkObjectAccessible(final ISession session, final String query) {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -412,7 +600,7 @@ public class OraclePlugin extends DefaultSessionPlugin
             } catch (SQLException ex) {}
         }
     }
-    
+
     private void updateObjectTree(IObjectTreeAPI objTree) {
         ISession session = objTree.getSession();
         DatabaseObjectInfoTab dboit = new DatabaseObjectInfoTab();
@@ -427,7 +615,7 @@ public class OraclePlugin extends DefaultSessionPlugin
         addDetailTab(objTree, DatabaseObjectType.TRIGGER, dboit);
         addDetailTab(objTree, IObjectTypes.TRIGGER_PARENT, dboit);
         addDetailTab(objTree, IObjectTypes.TYPE, dboit);
-        
+
         // Expanders.
         addExpander(objTree, DatabaseObjectType.SESSION, new DatabaseExpander());
         addExpander(objTree, DatabaseObjectType.SCHEMA, new SchemaExpander(OraclePlugin.this));
@@ -437,7 +625,7 @@ public class OraclePlugin extends DefaultSessionPlugin
         addExpander(objTree, IObjectTypes.SESSION_PARENT, new SessionParentExpander());
         addExpander(objTree, IObjectTypes.INSTANCE_PARENT, new InstanceParentExpander(OraclePlugin.this));
         addExpander(objTree, IObjectTypes.TRIGGER_PARENT, new TriggerParentExpander());
-        
+
         addDetailTab(objTree, DatabaseObjectType.PROCEDURE, new ObjectSourceTab("PROCEDURE", "Show stored procedure source"));
         addDetailTab(objTree, DatabaseObjectType.FUNCTION, new ObjectSourceTab("FUNCTION", "Show function source"));
         addDetailTab(objTree, IObjectTypes.PACKAGE, new ObjectSourceTab("PACKAGE", "Specification", "Show package specification"));
@@ -452,29 +640,21 @@ public class OraclePlugin extends DefaultSessionPlugin
         addDetailTab(objTree, DatabaseObjectType.TRIGGER, new TriggerSourceTab());
         addDetailTab(objTree, DatabaseObjectType.TRIGGER, new TriggerColumnInfoTab());
         addDetailTab(objTree, DatabaseObjectType.USER, new UserDetailsTab(session));
-        
-        addDetailTab(objTree, DatabaseObjectType.VIEW, new ViewSourceTab());            
+
+        addDetailTab(objTree, DatabaseObjectType.VIEW, new ViewSourceTab());
     }
-    
-    private void addExpander(final IObjectTreeAPI objTree,
-                             final DatabaseObjectType dboType, 
-                             final INodeExpander exp) 
-    {
-        GUIUtils.processOnSwingEventThread(new Runnable() {
-            public void run() {
-                objTree.addExpander(dboType, exp);
-            }
-        });
-    }
-    
-    private void addDetailTab(final IObjectTreeAPI objTree,
-                              final DatabaseObjectType dboType,
-                              final IObjectTab tab)
-    {
-        GUIUtils.processOnSwingEventThread(new Runnable() {
-            public void run() {
-                objTree.addDetailTab(dboType, tab);
-            }
-        });
-    }
+
+   private void addExpander(final IObjectTreeAPI objTree,
+                            final DatabaseObjectType dboType,
+                            final INodeExpander exp)
+   {
+      objTree.addExpander(dboType, exp);
+   }
+
+   private void addDetailTab(final IObjectTreeAPI objTree,
+                             final DatabaseObjectType dboType,
+                             final IObjectTab tab)
+   {
+      objTree.addDetailTab(dboType, tab);
+   }
 }
