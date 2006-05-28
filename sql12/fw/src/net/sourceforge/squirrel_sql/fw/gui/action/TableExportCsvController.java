@@ -47,7 +47,7 @@ public class TableExportCsvController
       _dlg.getRootPane().setDefaultButton(_dlg.btnOk);
       installEscapeClose();
 
-      _dlg.setSize(460, 315);
+      _dlg.setSize(460, 330);
 
       GUIUtils.centerWithinParent(_dlg);
 
