@@ -257,7 +257,7 @@ public class DumpSessionCommand implements ICommand
 			{
 				File tempFile = File.createTempFile(PREFIX, SUFFIX);
 				IDataSetViewer dest = new DataSetViewerTextFileDestination(tempFile);
-				dest.show(new ObjectArrayDataSet(md.getSchemas()));
+				dest.show(new ObjectArrayDataSet(_session.getSchemaInfo().getSchemas()));
 				files.add(tempFile);
 				titles.add("Schemas");
 			}

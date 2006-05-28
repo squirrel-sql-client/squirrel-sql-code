@@ -62,6 +62,7 @@ public class SchemaInfo
 
 
    private Vector _listeners = new Vector();
+   private boolean _schemasAndCatalogsLoaded;
 
    /** the status message that was written by the object tree to be restored */
 
@@ -130,6 +131,21 @@ public class SchemaInfo
 
          int progress = 0;
 
+
+         progress = loadCatalogs(progress);
+
+         progress = loadSchemas(progress);
+
+         if (false == _schemasAndCatalogsLoaded)
+         {
+            _schemasAndCatalogsLoaded = true;
+            synchronized(this)
+            {
+               this.notifyAll();
+            }
+         }
+
+
          try
          {
             // i18n[SchemaInfo.loadingKeywords=Loading keywords]
@@ -190,16 +206,11 @@ public class SchemaInfo
             s_log.error("Error loading functions", ex);
          }
 
-         progress = loadCatalogs(progress);
-
-         progress = loadSchemas(progress);
-
          String[] tableTypesToPreload = getTableTypesToCache();
          progress = loadTables(null, null, null, tableTypesToPreload, progress);
 
+         progress = loadStoredProcedures(null, null, null, progress);
 
-
-         loadStoredProcedures(null, null, null, progress);
       }
       finally
       {
@@ -399,27 +410,41 @@ public class SchemaInfo
             }
          };
 
-         IProcedureInfo[] procedures = _dmd.getProcedures(catalog, schema, procNamePattern, pcb);
 
-         for (int i = 0; i < procedures.length; i++)
+         String[] allowedSchemas = new String[]{schema};
+         if(null == allowedSchemas[0])
          {
-            String proc = (String) procedures[i].getSimpleName();
-            if (proc.length() > 0)
+            String[] buf = _session.getApplication().getSessionManager().getAllowedSchemas(_session);
+            if(null != buf)
             {
-               CaseInsensitiveString ciProc = new CaseInsensitiveString(proc);
-               _schemaInfoCache.procedureNames.put(ciProc ,proc);
-
-               ArrayList aIProcInfos = (ArrayList) _schemaInfoCache.procedureInfosBySimpleName.get(ciProc);
-               if(null == aIProcInfos)
-               {
-                  aIProcInfos = new ArrayList();
-                  _schemaInfoCache.procedureInfosBySimpleName.put(ciProc, aIProcInfos);
-               }
-               aIProcInfos.add(procedures[i]);
+               allowedSchemas = buf;
             }
-            _schemaInfoCache.iProcedureInfos.put(procedures[i], procedures[i]);
          }
 
+         for (int i = 0; i < allowedSchemas.length; i++)
+         {
+            IProcedureInfo[] procedures = _dmd.getProcedures(catalog, allowedSchemas[i], procNamePattern, pcb);
+
+            for (int j = 0; j < procedures.length; j++)
+            {
+               String proc = (String) procedures[j].getSimpleName();
+               if (proc.length() > 0)
+               {
+                  CaseInsensitiveString ciProc = new CaseInsensitiveString(proc);
+                  _schemaInfoCache.procedureNames.put(ciProc ,proc);
+
+                  ArrayList aIProcInfos = (ArrayList) _schemaInfoCache.procedureInfosBySimpleName.get(ciProc);
+                  if(null == aIProcInfos)
+                  {
+                     aIProcInfos = new ArrayList();
+                     _schemaInfoCache.procedureInfosBySimpleName.put(ciProc, aIProcInfos);
+                  }
+                  aIProcInfos.add(procedures[j]);
+               }
+               _schemaInfoCache.iProcedureInfos.put(procedures[j], procedures[j]);
+            }
+
+         }
       }
       catch (Throwable th)
       {
@@ -444,7 +469,16 @@ public class SchemaInfo
    {
       try
       {
-         _schemaInfoCache.schemas.addAll(Arrays.asList(_dmd.getSchemas()));
+         String[] allowedSchemas = _session.getApplication().getSessionManager().getAllowedSchemas(_session);
+
+         if(null == allowedSchemas)
+         {
+            _schemaInfoCache.schemas.addAll(Arrays.asList(_dmd.getSchemas()));
+         }
+         else
+         {
+            _schemaInfoCache.schemas.addAll(Arrays.asList(allowedSchemas));
+         }
       }
       catch (Throwable th)
       {
@@ -972,28 +1006,41 @@ public class SchemaInfo
          };
 
 
-         ITableInfo[] infos = _dmd.getTables(catalog, schema, tableNamePattern, types, pcb);
-         for (int i = 0; i < infos.length; i++)
+         String[] allowedSchemas = new String[]{schema};
+         if(null == allowedSchemas[0])
          {
-            String tableName = infos[i].getSimpleName();
-            CaseInsensitiveString ciTableName = new CaseInsensitiveString(tableName);
-
-            _schemaInfoCache.tableNames.put(ciTableName, tableName);
-            _schemaInfoCache.iTableInfos.put(infos[i], infos[i]);
-
-            ArrayList aITabInfos = (ArrayList) _schemaInfoCache.tableInfosBySimpleName.get(ciTableName);
-            if(null == aITabInfos)
+            String[] buf = _session.getApplication().getSessionManager().getAllowedSchemas(_session);
+            if(null != buf)
             {
-               aITabInfos = new ArrayList();
-               _schemaInfoCache.tableInfosBySimpleName.put(ciTableName, aITabInfos);
+               allowedSchemas = buf;
             }
-            aITabInfos.add(infos[i]);
+         }
 
-            _schemaInfoCache.extendedColumnInfosByTableName.remove(ciTableName);
+         for (int i = 0; i < allowedSchemas.length; i++)
+         {
+            ITableInfo[] infos = _dmd.getTables(catalog, allowedSchemas[i], tableNamePattern, types, pcb);
+            for (int j = 0; j < infos.length; j++)
+            {
+               String tableName = infos[j].getSimpleName();
+               CaseInsensitiveString ciTableName = new CaseInsensitiveString(tableName);
 
-            // Note: do not clear _schemaInfoCache.columnNames because the same column
-            // names might be used in more than one table.
-            // We live with a bit of inexact column names.
+               _schemaInfoCache.tableNames.put(ciTableName, tableName);
+               _schemaInfoCache.iTableInfos.put(infos[j], infos[j]);
+
+               ArrayList aITabInfos = (ArrayList) _schemaInfoCache.tableInfosBySimpleName.get(ciTableName);
+               if(null == aITabInfos)
+               {
+                  aITabInfos = new ArrayList();
+                  _schemaInfoCache.tableInfosBySimpleName.put(ciTableName, aITabInfos);
+               }
+               aITabInfos.add(infos[j]);
+
+               _schemaInfoCache.extendedColumnInfosByTableName.remove(ciTableName);
+
+               // Note: do not clear _schemaInfoCache.columnNames because the same column
+               // names might be used in more than one table.
+               // We live with a bit of inexact column names.
+            }
          }
       }
       catch (Throwable th)
@@ -1325,6 +1372,24 @@ public class SchemaInfo
       }
       //
       ////////////////////////////////////////////////////////////////////////
+   }
+
+   public void waitTillSchemasAndCatalogsLoaded()
+   {
+      try
+      {
+         if(false == _schemasAndCatalogsLoaded)
+         {
+            synchronized(this)
+            {
+               this.wait();
+            }
+         }
+      }
+      catch (InterruptedException e)
+      {
+         throw new RuntimeException(e);
+      }
    }
 
 

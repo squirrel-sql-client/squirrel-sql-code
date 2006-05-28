@@ -67,15 +67,6 @@ public class SchemasTab extends BaseDataSetTab
 	 */
 	protected IDataSet createDataSet() throws DataSetException
 	{
-		final ISession session = getSession();
-		try
-		{
-			final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
-			return new ObjectArrayDataSet(md.getSchemas());
-		}
-		catch (SQLException ex)
-		{
-			throw new DataSetException(ex);
-		}
+      return new ObjectArrayDataSet(getSession().getSchemaInfo().getSchemas());
 	}
 }
