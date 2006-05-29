@@ -2,15 +2,37 @@ package net.sourceforge.squirrel_sql.plugins.oracle;
 
 public class OracleGlobalPrefs
 {
-   private boolean _loadSysSchema = false;
+   private boolean _loadAccessibleSchemasExceptSYS = true;
+   private boolean _loadAccessibleSchemasAndSYS = false;
+   private boolean _loadAllSchemas = false;
 
-   public boolean isLoadSysSchema()
+   public boolean isLoadAccessibleSchemasExceptSYS()
    {
-      return _loadSysSchema;
+      return _loadAccessibleSchemasExceptSYS;
    }
 
-   public void setLoadSysSchema(boolean loadSysSchema)
+   public void setLoadAccessibleSchemasExceptSYS(boolean loadAccessibleSchemasExceptSYS)
    {
-      this._loadSysSchema = loadSysSchema;
+      this._loadAccessibleSchemasExceptSYS = loadAccessibleSchemasExceptSYS;
+   }
+
+   public boolean isLoadAccessibleSchemasAndSYS()
+   {
+      return _loadAccessibleSchemasAndSYS;
+   }
+
+   public void setLoadAccessibleSchemasAndSYS(boolean loadAccessibleSchemasAndSYS)
+   {
+      _loadAccessibleSchemasAndSYS = loadAccessibleSchemasAndSYS;
+   }
+
+   public boolean isLoadAllSchemas()
+   {
+      return _loadAllSchemas;
+   }
+
+   public void setLoadAllSchemas(boolean loadAllSchemas)
+   {
+      _loadAllSchemas = loadAllSchemas;
    }
 }

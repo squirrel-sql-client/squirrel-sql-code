@@ -8,8 +8,8 @@ Not yet released, available in CVS and probably in latest weekly build
 Improved startup performance for Oracle
   - The Oracle Plugin must be used for this feature to take effect. The Plugin now takes care that only
     Object are loaded the user has access to.
-  - The Oracle Plugin now has a Global Preferences Panel where the user can choose if the SYS Schema should be loaded.
-    This option is switched off by default. Not loading the SYS Schema may significantly improve startup performance.
+  - The Oracle Plugin now has a Global Preferences Panel where the user can configure Schema loading.
+    Changing the default configuration may sgnificantly slow down Session startup.     
 
 Fixed bug #984527: Right mouse popup menu is now available in empty table. 
 

@@ -24,7 +24,9 @@ public class OraclePrefsPanelController implements IGlobalPreferencesPanel
 
    public void initialize(IApplication app)
    {
-      _panel.chkLoadSysSchema.setSelected(_prefs.isLoadSysSchema());
+      _panel.radLoadAccessibleSchemasExceptSYS.setSelected(_prefs.isLoadAccessibleSchemasExceptSYS());
+      _panel.radLoadAccessibleSchemasAndSYS.setSelected(_prefs.isLoadAccessibleSchemasAndSYS());
+      _panel.radLoadAllSchemas.setSelected(_prefs.isLoadAllSchemas());
    }
 
    public void uninitialize(IApplication app)
@@ -33,7 +35,9 @@ public class OraclePrefsPanelController implements IGlobalPreferencesPanel
 
    public void applyChanges()
    {
-      _prefs.setLoadSysSchema(_panel.chkLoadSysSchema.isSelected());
+      _prefs.setLoadAccessibleSchemasExceptSYS(_panel.radLoadAccessibleSchemasExceptSYS.isSelected());
+      _prefs.setLoadAccessibleSchemasAndSYS(_panel.radLoadAccessibleSchemasAndSYS.isSelected());
+      _prefs.setLoadAllSchemas(_panel.radLoadAllSchemas.isSelected());
    }
 
    public String getTitle()
