@@ -49,47 +49,11 @@ import net.sourceforge.squirrel_sql.plugins.oracle.tab.SessionDetailsTab;
  */
 public class DefaultDatabaseExpander extends DatabaseExpander
 {
-   private OraclePlugin _oraclePlugin;
 
 
-   public DefaultDatabaseExpander(ISession session, OraclePlugin oraclePlugin)
+   public DefaultDatabaseExpander(ISession session)
    {
       super(session);
-      _oraclePlugin = oraclePlugin;
-   }
-
-   protected List createSchemaNodes(ISession session,
-                                    SQLDatabaseMetaData md,
-                                    String catalogName)
-      throws SQLException
-   {
-      final List childNodes = new ArrayList();
-      if (session.getProperties().getLoadSchemasCatalogs())
-      {
-         final String[] schemas = _oraclePlugin.getAccessibleSchemas(session);
-         final String[] schemaPrefixArray =
-            session.getProperties().getSchemaPrefixArray();
-         for (int i = 0; i < schemas.length; ++i)
-         {
-            boolean found = (schemaPrefixArray.length > 0) ? false : true;
-            for (int j = 0; j < schemaPrefixArray.length; ++j)
-            {
-               if (schemas[i].startsWith(schemaPrefixArray[j]))
-               {
-                  found = true;
-                  break;
-               }
-            }
-            if (found)
-            {
-               IDatabaseObjectInfo dbo = new DatabaseObjectInfo(catalogName, null,
-                  schemas[i],
-                  DatabaseObjectType.SCHEMA, md);
-               childNodes.add(new ObjectTreeNode(session, dbo));
-            }
-         }
-      }
-      return childNodes;
    }
 
    public List createChildren(ISession session, ObjectTreeNode parentNode)

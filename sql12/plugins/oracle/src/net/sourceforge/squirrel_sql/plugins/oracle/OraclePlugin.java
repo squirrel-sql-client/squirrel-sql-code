@@ -347,7 +347,7 @@ public class OraclePlugin extends DefaultSessionPlugin
           return new ProcedureExpander();
       }
       if (type == DatabaseObjectType.DATABASE_TYPE_DBO && isOracle) {
-          return new DefaultDatabaseExpander(session, this);
+          return new DefaultDatabaseExpander(session);
       }
       return null;
     }
@@ -410,7 +410,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 
    private String[] onGetAllowedSchemas(ISession session)
    {
-      if(isOracle(session))
+      if(isOracle(session) && false == _oracleGlobalPrefs.isLoadAllSchemas())
       {
          String[] ret = (String[]) _allowedSchemasBySessionID.get(session.getIdentifier());
          if(null == ret)
@@ -437,7 +437,7 @@ public class OraclePlugin extends DefaultSessionPlugin
     * @param session the session to retrieve schemas for
     * @return an array of strings representing the names of accessible schemas
     */
-   public String[] getAccessibleSchemas(ISession session)
+   private String[] getAccessibleSchemas(ISession session)
    {
       String[] result = null;
       ResultSet rs = null;
@@ -468,7 +468,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 
             tmp.remove("SYS");
 
-            if(_oracleGlobalPrefs.isLoadSysSchema())
+            if(_oracleGlobalPrefs.isLoadAccessibleSchemasAndSYS())
             {
                tmp.add("SYS");
             }

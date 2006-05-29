@@ -141,7 +141,7 @@ public class TableExportCsvController
 
       if(null != chooser.getSelectedFile())
       {
-         _dlg.txtFile.setText(chooser.getSelectedFile().getPath() + " %file");
+         _dlg.txtCommand.setText(chooser.getSelectedFile().getPath() + " %file");
       }
    }
 
