@@ -358,7 +358,15 @@ public class TableExportCsvController
    {
       if(_dlg.chkExecCommand.isSelected())
       {
-         return _dlg.txtCommand.getText().replaceAll("%file", _dlg.txtFile.getText());
+         // Copied from Java Doc Matcher.replaceAll:
+         //
+         // Note that backslashes (\) and dollar signs ($) in the replacement string
+         // may cause the results to be different than if it
+         // were being treated as a literal replacement string.
+         // Dollar signs may be treated as references to
+         // captured subsequences as described above, and
+         // backslashes are used to escape literal characters in the replacement string.
+         return _dlg.txtCommand.getText().replaceAll("%file", _dlg.txtFile.getText().replaceAll("\\\\","\\\\\\\\"));
       }
       else
       {
