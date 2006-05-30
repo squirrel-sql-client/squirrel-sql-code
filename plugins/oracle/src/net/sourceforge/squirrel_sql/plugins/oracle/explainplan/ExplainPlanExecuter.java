@@ -74,7 +74,6 @@ public class ExplainPlanExecuter
   private IntegerIdentifierFactory _idFactory = new IntegerIdentifierFactory();
 
   private JTreeTable treeTable;
-  private static final TreeTableModel emptyModel = createEmptyModel();
 
   /**
 	* Ctor.
@@ -89,10 +88,6 @@ public class ExplainPlanExecuter
 	 setSession(session);
 	 createGUI();
 	 sqlpanel.addExecuterTabListener(new MySqlExecuterTabListener());
-  }
-
-  private static TreeTableModel createEmptyModel() {
-	 return new ExplainPlanModel(null);
   }
 
 
@@ -346,7 +341,7 @@ public class ExplainPlanExecuter
 
   private void createGUI() {
 	 setLayout(new BorderLayout());
-	 add(new javax.swing.JScrollPane(createTreeTable(emptyModel)), BorderLayout.CENTER);
+	 add(new javax.swing.JScrollPane(createTreeTable( new ExplainPlanModel(null))), BorderLayout.CENTER);
   }
 
   /** Called when this executer is activated*/

@@ -5,6 +5,13 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+Bug fixes in Oracle Plugin:
+  - Explain Plan not visible in Results tab
+  - Object tree: Sessions, Users and Instances and nodes sometimes not visible
+  - Object tree: SYS Schema displayed twice for certain user rights
+  - Fixed Memory Leak (Session were not garbage collected when Oracle Plugin was used)
+
+
 Improved startup performance for Oracle
   - The Oracle Plugin must be used for this feature to take effect. The Plugin now takes care that only
     Object are loaded the user has access to.
