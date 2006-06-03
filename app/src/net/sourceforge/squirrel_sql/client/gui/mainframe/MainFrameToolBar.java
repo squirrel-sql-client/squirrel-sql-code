@@ -27,12 +27,12 @@ import java.util.Hashtable;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
+import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.SortedComboBoxModel;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
+import net.sourceforge.squirrel_sql.fw.gui.IToggleAction;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
 import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeEvent;
@@ -52,10 +52,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.TileVerticalAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
-import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
-import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
-import net.sourceforge.squirrel_sql.client.session.action.NewSQLWorksheetAction;
-import net.sourceforge.squirrel_sql.client.session.action.NewObjectTreeAction;
+import net.sourceforge.squirrel_sql.client.session.action.*;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 /**
@@ -72,214 +69,67 @@ class MainFrameToolBar extends ToolBar
 	/** Application API. */
 	private IApplication _app;
 
-	private CommitAction _sessionCommit;
-	private RollbackAction _sessionRollback;
+   private ToggleAutoCommitAction _toggleAutoCommitAction;
 
    private boolean _dontReactToSessionDropDownAction = false;
 
-	/**
-	 * ctor.
-	 *
-	 * @param	app		Application API
-	 *
-	 * @throws	IllegalArgumentException
-	 *			<TT>null</TT> <TT>IApplication</TT> or <TT>MainFrame</TT>
-	 *			passed.
-	 */
-	MainFrameToolBar(IApplication app)
-	{
-		super();
-		if (app == null)
-		{
-			throw new IllegalArgumentException("IApplication == null");
-		}
-		_app = app;
-		setUseRolloverButtons(true);
-		setFloatable(true);
+   /**
+    * ctor.
+    *
+    * @param	app		Application API
+    *
+    * @throws	IllegalArgumentException
+    *			<TT>null</TT> <TT>IApplication</TT> or <TT>MainFrame</TT>
+    *			passed.
+    */
+   MainFrameToolBar(IApplication app)
+   {
+      super();
+      if (app == null)
+      {
+         throw new IllegalArgumentException("IApplication == null");
+      }
+      _app = app;
+      setUseRolloverButtons(true);
+      setFloatable(true);
 
-		ActionCollection actions = _app.getActionCollection();
-		JLabel lbl = new JLabel(s_stringMgr.getString("MainFrameToolBar.connectTo"));
-		lbl.setAlignmentY(0.5f);
-		add(lbl);
-		AliasesDropDown drop = new AliasesDropDown(app);
-		drop.setAlignmentY(0.5f);
-		add(drop);
-		addSeparator();
-		add(actions.get(GlobalPreferencesAction.class));
-		add(actions.get(NewSessionPropertiesAction.class));
-		addSeparator();
-		add(actions.get(TileAction.class));
-		add(actions.get(TileHorizontalAction.class));
-		add(actions.get(TileVerticalAction.class));
-		add(actions.get(CascadeAction.class));
-		add(actions.get(MaximizeAction.class));
+      ActionCollection actions = _app.getActionCollection();
+      JLabel lbl = new JLabel(s_stringMgr.getString("MainFrameToolBar.connectTo"));
+      lbl.setAlignmentY(0.5f);
+      add(lbl);
+      AliasesDropDown drop = new AliasesDropDown(app);
+      drop.setAlignmentY(0.5f);
+      add(drop);
+      addSeparator();
+      add(actions.get(GlobalPreferencesAction.class));
+      add(actions.get(NewSessionPropertiesAction.class));
+      addSeparator();
+      add(actions.get(TileAction.class));
+      add(actions.get(TileHorizontalAction.class));
+      add(actions.get(TileVerticalAction.class));
+      add(actions.get(CascadeAction.class));
+      add(actions.get(MaximizeAction.class));
 
-		// JASON: New stuff
-		addSeparator();
-		JLabel lbl2 = new JLabel(" " + s_stringMgr.getString("MainFrameToolBar.activeSession") + " ");
-		lbl.setAlignmentY(0.5f);
-		add(lbl2);
-		SessionDropDown sessionDropDown = new SessionDropDown(app);
-		sessionDropDown.setAlignmentY(0.5f);
-		add(sessionDropDown);
+      addSeparator();
+      JLabel lbl2 = new JLabel(" " + s_stringMgr.getString("MainFrameToolBar.activeSession") + " ");
+      lbl.setAlignmentY(0.5f);
+      add(lbl2);
+      SessionDropDown sessionDropDown = new SessionDropDown(app);
+      sessionDropDown.setAlignmentY(0.5f);
+      add(sessionDropDown);
 
-		_sessionCommit = new CommitAction(_app);
-		_sessionCommit.setEnabled(false);
-		_sessionRollback = new RollbackAction(_app);
-		_sessionRollback.setEnabled(false);
-		add(_sessionCommit);
-		add(_sessionRollback);
-      _app.getSessionManager().addSessionListener(new TransactionEnabler());
+      addToggleAction((IToggleAction) actions.get(ToggleAutoCommitAction.class));
+      add(actions.get(CommitAction.class));
+      add(actions.get(RollbackAction.class));
 
+      addSeparator();
 
       add(actions.get(NewSQLWorksheetAction.class));
-      actions.get(NewSQLWorksheetAction.class).setEnabled(false);
       add(actions.get(NewObjectTreeAction.class));
-      actions.get(NewObjectTreeAction.class).setEnabled(false);
-      _app.getSessionManager().addSessionListener(new ExtraSessionWindowsEnabler());
-	}
-
-   /**
-    * This class listens to the session to enable/disable the toolbar buttons
-    * commit or rollback transactions.
-    */
-   private class TransactionEnabler  extends SessionAdapter
-   {
-      private ISession _currentSession;
-      private Hashtable _propListenerBySessionID = new Hashtable();
-
-      public void sessionClosed(SessionEvent e)
-      {
-         final ISession sess = e.getSession();
-         PropertyChangeListener pcl = (PropertyChangeListener) _propListenerBySessionID.remove(sess.getIdentifier());
-         
-         if(null != pcl)
-         {
-            sess.getProperties().removePropertyChangeListener(pcl);
-         }
-
-         if (sess == _currentSession)
-         {
-            GUIUtils.processOnSwingEventThread(new Runnable()
-            {
-               public void run()
-               {
-                  _currentSession = null;
-                  _sessionCommit.setSession(_currentSession);
-                  _sessionRollback.setSession(_currentSession);
-                  _sessionCommit.setEnabled(false);
-                  _sessionRollback.setEnabled(false);
-               }
-            });
-         }
-      }
-
-      public void sessionActivated(SessionEvent e)
-      {
-         final ISession sess = e.getSession();
-         _currentSession = sess;
-
-         PropertyChangeListener pcl = (PropertyChangeListener) _propListenerBySessionID.get(_currentSession.getIdentifier());
-         if(null == pcl)
-         {
-            pcl = new PropertyChangeListener()
-            {
-               public void propertyChange(PropertyChangeEvent evt)
-               {
-                  onPropertyChanged(evt, sess);
-               }
-            };
-            _currentSession.getProperties().addPropertyChangeListener(pcl);
-            _propListenerBySessionID.put(_currentSession.getIdentifier(), pcl);
-         }
-
-         enableTxButtons(sess);
-      }
-
-      private void enableTxButtons(final ISession sess)
-      {
-         GUIUtils.processOnSwingEventThread(new Runnable()
-         {
-            public void run()
-            {
-               _sessionCommit.setSession(sess);
-               _sessionRollback.setSession(sess);
-               if(false == sess.getProperties().getAutoCommit())
-               {
-                  _sessionCommit.setEnabled(true);
-                  _sessionRollback.setEnabled(true);
-               }
-               else
-               {
-                  _sessionCommit.setEnabled(false);
-                  _sessionRollback.setEnabled(false);
-               }
-            }
-         });
-      }
-
-      private void onPropertyChanged(PropertyChangeEvent evt, ISession sess)
-      {
-         if(SessionProperties.IPropertyNames.AUTO_COMMIT.equals(evt.getPropertyName()))
-         {
-            if(sess.getIdentifier().equals(_app.getSessionManager().getActiveSession().getIdentifier()))
-            {
-               enableTxButtons(sess);
-            }
-         }
-      }
    }
 
 
-
    /**
-    * This class listens to the session to enable/disable the toolbar buttons
-    * to open extra session windows.
-    */
-   private class ExtraSessionWindowsEnabler extends SessionAdapter
-   {
-      public void sessionClosing(SessionEvent evt)
-      {
-         GUIUtils.processOnSwingEventThread(new Runnable()
-         {
-            public void run()
-            {
-               final ActionCollection actions = _app.getActionCollection();
-               actions.get(NewSQLWorksheetAction.class).setEnabled(false);
-               actions.get(NewObjectTreeAction.class).setEnabled(false);
-            }
-         });
-      }
-
-      public void sessionActivated(SessionEvent evt)
-      {
-         GUIUtils.processOnSwingEventThread(new Runnable()
-         {
-            public void run()
-            {
-               ActionCollection actions = _app.getActionCollection();
-               actions.get(NewSQLWorksheetAction.class).setEnabled(true);
-               actions.get(NewObjectTreeAction.class).setEnabled(true);
-            }
-         });
-      }
-   }
-
-
-
-	/**
-	 * Add an action to the toolbar. Centre it vertically so that it lines up
-	 * with the dropdown.
-	 *
-	 * @param	action	<TT>Action</TT> to be added.
-	 */
-//	private void addAction(Action action)
-//	{
-//		JButton btn = add(action);
-//		btn.setAlignmentY(0.5f);
-//	}
-
-	/**
 	 * Dropdown holding all the current <TT>ISQLAlias</TT> objects. When one is
 	 * selected the user will be prompted to connect to it.
 	 */

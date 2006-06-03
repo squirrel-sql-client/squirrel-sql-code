@@ -457,7 +457,7 @@ public final class ActionCollection
 		add(new FileAppendAction(_app));
 		add(new FileSaveAction(_app));
 		add(new FileSaveAsAction(_app));
-        add(new FilePrintAction(_app));
+      add(new FilePrintAction(_app));
 		add(new FileCloseAction(_app));
 		add(new GlobalPreferencesAction(_app));
 		add(new GotoNextResultsTabAction(_app));
@@ -483,6 +483,7 @@ public final class ActionCollection
 		add(new TileAction(_app));
 		add(new TileHorizontalAction(_app));
 		add(new TileVerticalAction(_app));
+		add(new ToggleAutoCommitAction(_app));
 		add(new ViewHelpAction(_app));
 		add(new ViewLogsAction(_app));
 		add(new PreviousSqlAction(_app));

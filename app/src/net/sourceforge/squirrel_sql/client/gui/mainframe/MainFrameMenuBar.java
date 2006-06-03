@@ -28,6 +28,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 
 import net.sourceforge.squirrel_sql.fw.gui.action.IHasJDesktopPane;
+import net.sourceforge.squirrel_sql.fw.gui.IToggleAction;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.SystemProperties;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -293,12 +294,6 @@ final class MainFrameMenuBar extends JMenuBar
 		return menu;
 	}
 
-//	private JMenu createEditMenu(Resources rsrc)
-//	{
-//		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.EDIT);
-//		return menu;
-//	}
-
 	private JMenu createSessionMenu(Resources rsrc)
 	{
 		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.SESSION);
@@ -308,10 +303,9 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, ToolsPopupAction.class, menu);
 		addToMenu(rsrc, RefreshSchemaInfoAction.class, menu);
 		addToMenu(rsrc, ExecuteSqlAction.class, menu);
-		addToMenu(rsrc, CommitAction.class, menu);
-		addToMenu(rsrc, RollbackAction.class, menu);
-		addToMenu(rsrc, SQLFilterAction.class, menu);
-		menu.addSeparator();
+      menu.add(createTransactionMenu(rsrc));
+      addToMenu(rsrc, SQLFilterAction.class, menu);
+      menu.addSeparator();
       addToMenu(rsrc, ViewObjectAtCursorInObjectTreeAction.class, menu);
 		menu.addSeparator();
       menu.add(createFileMenu(rsrc));
@@ -345,12 +339,12 @@ final class MainFrameMenuBar extends JMenuBar
 
 
    private JMenu createPluginsMenu(Resources rsrc)
-	{
-		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.PLUGINS);
-		addToMenu(rsrc, DisplayPluginSummaryAction.class, menu);
-		menu.addSeparator();
-		return menu;
-	}
+   {
+      JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.PLUGINS);
+      addToMenu(rsrc, DisplayPluginSummaryAction.class, menu);
+      menu.addSeparator();
+      return menu;
+   }
 
 	private JMenu createAliasesMenu(Resources rsrc)
 	{
@@ -437,8 +431,18 @@ final class MainFrameMenuBar extends JMenuBar
       return menu;
    }
 
+   private Component createTransactionMenu(Resources rsrc)
+   {
+      JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.TRANSACTION);
+      addToMenuAsCheckBoxMenuItem(rsrc, ToggleAutoCommitAction.class, menu);
+      addToMenu(rsrc, CommitAction.class, menu);
+      addToMenu(rsrc, RollbackAction.class, menu);
+      return menu;
+   }
 
-	private Action addDesktopPaneActionToMenu(Resources rsrc, Class actionClass,
+
+
+   private Action addDesktopPaneActionToMenu(Resources rsrc, Class actionClass,
 											JMenu menu, JDesktopPane desktopPane)
 	{
 		Action act = addToMenu(rsrc, actionClass, menu);
@@ -475,18 +479,21 @@ final class MainFrameMenuBar extends JMenuBar
 		return act;
 	}
 
-	private JCheckBoxMenuItem addToMenuAsCheckBoxMenuItem(Resources rsrc,
-									Class actionClass, JMenu menu)
+	private JCheckBoxMenuItem addToMenuAsCheckBoxMenuItem(Resources rsrc, Class actionClass, JMenu menu)
 	{
 		Action act = _actions.get(actionClass);
 		if (act != null)
 		{
-			return rsrc.addToMenuAsCheckBoxMenuItem(act, menu);
+         JCheckBoxMenuItem mnu = rsrc.addToMenuAsCheckBoxMenuItem(act, menu);
+         if(act instanceof IToggleAction)
+         {
+            ((IToggleAction)act).getToggleComponentHolder().addToggleableComponent(mnu);
+         }
+         return mnu;
 		}
 		s_log.error("Could not retrieve instance of " + actionClass.getName()
 							+ ") in MainFrameMenuBar.addToMenu");
-
-		return null;
+      return null;
 	}
 
 	/**
