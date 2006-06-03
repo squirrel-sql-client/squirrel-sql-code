@@ -43,6 +43,7 @@ public class SquirrelResources extends Resources
 		String SESSION = "session";
 		String WINDOWS = "windows";
       String FILE = "file";
+      String TRANSACTION = "transaction";
    }
 
 	public interface IImageNames

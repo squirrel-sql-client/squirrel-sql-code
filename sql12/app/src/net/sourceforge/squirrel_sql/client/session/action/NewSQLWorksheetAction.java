@@ -27,24 +27,28 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  *
  * @author <A HREF="mailto:jmheight@users.sourceforge.net">Jason Height</A>
  */
-public class NewSQLWorksheetAction extends SquirrelAction
+public class NewSQLWorksheetAction extends SquirrelAction implements ISessionAction
 {
-	/**
-	 * Ctor.
-	 *
-	 * @param	app	 Application API.
-	 *
-	 * @throws		IllegalArgumentException
-	 *				Thrown if a <TT>null</TT> <TT>IApplication</TT> passed.
-	 */
-	public NewSQLWorksheetAction(IApplication app)
-	{
-		super(app);
-		if (app == null)
-		{
-			throw new IllegalArgumentException("Null IApplication passed");
-		}
-	}
+   private ISession _session;
+
+   /**
+    * Ctor.
+    *
+    * @param	app	 Application API.
+    *
+    * @throws		IllegalArgumentException
+    *				Thrown if a <TT>null</TT> <TT>IApplication</TT> passed.
+    */
+   public NewSQLWorksheetAction(IApplication app)
+   {
+      super(app);
+      if (app == null)
+      {
+         throw new IllegalArgumentException("Null IApplication passed");
+      }
+
+      setEnabled(false);
+   }
 
 	/**
 	 * Display a new worksheet.
@@ -53,14 +57,12 @@ public class NewSQLWorksheetAction extends SquirrelAction
 	 */
 	public void actionPerformed(ActionEvent evt)
 	{
-		final IApplication app = getApplication();
-		final ISession activeSession = app.getSessionManager().getActiveSession();
-		if (activeSession == null)
-		{
-			throw new IllegalArgumentException(
-					"This method should not be called with a null activeSession");
-		}
-
-		app.getWindowManager().createSQLInternalFrame(activeSession);
+		getApplication().getWindowManager().createSQLInternalFrame(_session);
 	}
+
+   public void setSession(ISession session)
+   {
+      _session = session;
+      setEnabled(null != _session);
+   }
 }

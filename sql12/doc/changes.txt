@@ -5,6 +5,8 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+Added toolbar button to toggle auto commit
+
 Bug fixes in Oracle Plugin:
   - Explain Plan not visible in Results tab
   - Object tree: Sessions, Users and Instances and nodes sometimes not visible
