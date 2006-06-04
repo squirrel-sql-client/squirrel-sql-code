@@ -305,7 +305,7 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
 
       if(0 == apis.length)
       {
-         // i18n[sqlbookmark.noSQLPanel=A bookmark can only be run when the bookmarks editor has been opened with the "Edit Bookmarks" toolbar button!]
+         // i18n[sqlbookmark.noSQLPanel=To run a bookmark you must open this window\nusing the "Edit Bookmarks" toolbar button of a Session window.\nThe bookmars SQL Code will then be written to the Session's SQL editor.]
          JOptionPane.showMessageDialog(_app.getMainFrame(), s_stringMgr.getString("sqlbookmark.noSQLPanel"));
          return;
       }
