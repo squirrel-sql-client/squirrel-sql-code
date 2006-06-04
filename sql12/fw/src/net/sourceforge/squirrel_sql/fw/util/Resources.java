@@ -340,7 +340,7 @@ public abstract class Resources
 
 		item.setToolTipText(toolTipText);
 
-		item.setIcon(null);
+		//item.setIcon(null);
 	}
 
 	private String getToolTipTextWithAccelerator(Action action, String fullKey)
