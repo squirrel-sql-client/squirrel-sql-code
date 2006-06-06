@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.gui.sql;
+package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
 /*
  * Copyright (C) 2002-2003 Colin Bell
  * colbell@users.sourceforge.net

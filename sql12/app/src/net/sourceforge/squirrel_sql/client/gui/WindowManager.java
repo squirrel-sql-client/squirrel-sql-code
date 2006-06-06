@@ -211,46 +211,25 @@ public class WindowManager
 		return new WindowState(_driversListWindow);
 	}
 
-	public void showConnectionInternalFrame(final ISQLAlias alias,
-							final ConnectionInternalFrame.IHandler handler)
-	{
-		if (alias == null)
-		{
-			throw new IllegalArgumentException("ISQLAlias == null");
-		}
+   /**
+    * Get a maintenance sheet for the passed alias. If a maintenance sheet already
+    * exists it will be brought to the front. If one doesn't exist it will be
+    * created.
+    *
+    * @param	alias	The alias that user has requested to modify.
+    *
+    * @throws	IllegalArgumentException
+    *			Thrown if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
+    */
+   public void showModifyAliasInternalFrame(final ISQLAlias alias)
+   {
+      if (alias == null)
+      {
+         throw new IllegalArgumentException("ISQLAlias == null");
+      }
 
-		GUIUtils.processOnSwingEventThread(new Runnable()
-		{
-			public void run()
-			{
-				ConnectionInternalFrame cif = new ConnectionInternalFrame(
-													_app, alias, handler);
-				_app.getMainFrame().addInternalFrame(cif, true, null);
-				GUIUtils.centerWithinDesktop(cif);
-				moveToFront(cif);
-			}
-		});
-	}
-
-	/**
-	 * Get a maintenance sheet for the passed alias. If a maintenance sheet already
-	 * exists it will be brought to the front. If one doesn't exist it will be
-	 * created.
-	 *
-	 * @param	alias	The alias that user has requested to modify.
-	 *
-	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
-	 */
-	public void showModifyAliasInternalFrame(final ISQLAlias alias)
-	{
-		if (alias == null)
-		{
-			throw new IllegalArgumentException("ISQLAlias == null");
-		}
-
-		_aliasWinMgr.showModifyAliasInternalFrame(alias);
-	}
+      _aliasWinMgr.showModifyAliasInternalFrame(alias);
+   }
 
 	/**
 	 * Create and show a new maintenance window to allow the user to create a
@@ -923,6 +902,7 @@ public class WindowManager
 		actions.add(new ConnectToAliasAction(_app, al));
 		actions.add(new CreateAliasAction(_app));
 		actions.add(new SortAliasesAction(_app, al));
+		actions.add(new AliasPropertiesAction(_app, al));
 
 		_aliasesListWindow = new AliasesListInternalFrame(_app, al);
 	}

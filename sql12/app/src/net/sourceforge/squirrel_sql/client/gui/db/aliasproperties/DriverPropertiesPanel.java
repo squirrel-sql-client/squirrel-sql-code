@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.gui.sql;
+package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
 /*
  * Copyright (C) 2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -21,11 +21,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
+import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -40,19 +36,22 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class DriverPropertiesPanel extends JPanel
+public class DriverPropertiesPanel extends JPanel 
 {
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(DriverPropertiesPanel.class);
 
-	private interface i18n
-	{
-		String INSTRUCTIONS = s_stringMgr.getString("DriverPropertiesPanel.instructions");
-	}
+   // i18n[DriverPropertiesPanel.useDriverProperties=Use driver properties]
+   JCheckBox chkUseDriverProperties = new JCheckBox(s_stringMgr.getString("DriverPropertiesPanel.useDriverProperties"));
+
+   private interface i18n
+   {
+      String INSTRUCTIONS = s_stringMgr.getString("DriverPropertiesPanel.instructions");
+   }
 
 	/** JTable containing the properties. */
-	private DriverPropertiesTable _tbl;
+	DriverPropertiesTable tbl;
 
 	/**
 	 * Display the description for the currently selected property in this
@@ -78,17 +77,17 @@ public class DriverPropertiesPanel extends JPanel
 	 */
 	public SQLDriverPropertyCollection getSQLDriverProperties()
 	{
-      TableCellEditor cellEditor = _tbl.getCellEditor();
+      TableCellEditor cellEditor = tbl.getCellEditor();
       if(null != cellEditor)
       {
          cellEditor.stopCellEditing();
       }
-		return _tbl.getTypedModel().getSQLDriverProperties();
+		return tbl.getTypedModel().getSQLDriverProperties();
 	}
 
 	private void createUserInterface(SQLDriverPropertyCollection props)
 	{
-		_tbl = new DriverPropertiesTable(props);
+		tbl = new DriverPropertiesTable(props);
 
 		final GridBagConstraints gbc = new GridBagConstraints();
 
@@ -96,12 +95,21 @@ public class DriverPropertiesPanel extends JPanel
 
 		gbc.anchor = GridBagConstraints.WEST;
 		gbc.insets = new Insets(2, 2, 2, 2);
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.weightx = 1.0;
+		gbc.fill = GridBagConstraints.NONE;
+		gbc.anchor = GridBagConstraints.NORTHWEST;
+		gbc.gridx = 0;
+      gbc.gridy = 0;
+      gbc.weightx = 0;
+      gbc.weighty = 0;
+      add(chkUseDriverProperties, gbc);
 
-		gbc.gridx = gbc.gridy = 0;
-		gbc.weighty = 1.0;
-		JScrollPane sp = new JScrollPane(_tbl);
+
+
+      gbc.fill = GridBagConstraints.BOTH;
+      gbc.weighty = 1.0;
+      gbc.weightx = 1.0;
+      ++gbc.gridy;
+		JScrollPane sp = new JScrollPane(tbl);
 		add(sp, gbc);
 
 		gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -109,17 +117,17 @@ public class DriverPropertiesPanel extends JPanel
 		++gbc.gridy;
 		add(createInfoPanel(), gbc);
 
-		_tbl.getSelectionModel().addListSelectionListener(new ListSelectionListener()
+		tbl.getSelectionModel().addListSelectionListener(new ListSelectionListener()
 		{
 			public void valueChanged(ListSelectionEvent evt)
 			{
-				updateDescription(_tbl.getSelectedRow());
+				updateDescription(tbl.getSelectedRow());
 			}
 		});
 
-		if (_tbl.getRowCount() > 0)
+		if (tbl.getRowCount() > 0)
 		{
-			_tbl.setRowSelectionInterval(0, 0);
+			tbl.setRowSelectionInterval(0, 0);
 		}
 	}
 
@@ -127,7 +135,7 @@ public class DriverPropertiesPanel extends JPanel
 	{
 		if (idx != -1)
 		{
-			String desc = (String)_tbl.getValueAt(idx, DriverPropertiesTableModel.IColumnIndexes.IDX_DESCRIPTION);
+			String desc = (String)tbl.getValueAt(idx, DriverPropertiesTableModel.IColumnIndexes.IDX_DESCRIPTION);
 			_descriptionLbl.setText(desc);
 		}
 		else

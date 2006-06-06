@@ -17,13 +17,10 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.*;
-import java.sql.Driver;
-import java.sql.DriverPropertyInfo;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -31,34 +28,25 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.sql.DriverPropertiesDialog;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
-import net.sourceforge.squirrel_sql.fw.sql.DataCache;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
-import net.sourceforge.squirrel_sql.fw.util.BaseException;
-import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
-import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
-import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeEvent;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.*;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
+import net.sourceforge.squirrel_sql.client.mainframe.action.AliasPropertiesCommand;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
@@ -133,14 +121,14 @@ public class AliasInternalFrame extends BaseInternalFrame
 	/** Connect at startup checkbox. */
 	private final JCheckBox _connectAtStartupChk = new JCheckBox(s_stringMgr.getString("AliasInternalFrame.connectatstartup"));
 
-	/** If checked use the extended driver properties. */
-	private final JCheckBox _useDriverPropsChk = new JCheckBox(s_stringMgr.getString("AliasInternalFrame.userdriverprops"));
+//	/** If checked use the extended driver properties. */
+//	private final JCheckBox _useDriverPropsChk = new JCheckBox(s_stringMgr.getString("AliasInternalFrame.userdriverprops"));
 
 	/** Button that brings up the driver properties dialog. */
-	private final JButton _driverPropsBtn = new JButton(s_stringMgr.getString("AliasInternalFrame.props"));
+	private final JButton _aliasPropsBtn = new JButton(s_stringMgr.getString("AliasInternalFrame.props"));
 
 	/** Collection of the driver properties. */
-	private SQLDriverPropertyCollection _sqlDriverProps;
+//	private SQLDriverPropertyCollection _sqlDriverProps;
 
 	/**
 	 * Ctor.
@@ -169,9 +157,9 @@ public class AliasInternalFrame extends BaseInternalFrame
 			|| maintType > IMaintenanceType.COPY)
 		{
             // i18n[AliasInternalFrame.illegalValue=Illegal value of {0} passed for Maintenance type]
-			final String msg = 
+			final String msg =
                 s_stringMgr.getString("AliasInternalFrame.illegalValue",
-                                      new Integer(maintType)); 
+                                      new Integer(maintType));
 			throw new IllegalArgumentException(msg);
 		}
 
@@ -223,7 +211,6 @@ public class AliasInternalFrame extends BaseInternalFrame
 	 */
 	private void loadData()
 	{
-		_driverPropsBtn.setEnabled(_sqlAlias.getUseDriverProperties());
 		_aliasName.setText(_sqlAlias.getName());
 		_userName.setText(_sqlAlias.getUserName());
 
@@ -231,13 +218,12 @@ public class AliasInternalFrame extends BaseInternalFrame
 
 		_autoLogonChk.setSelected(_sqlAlias.isAutoLogon());
 		_connectAtStartupChk.setSelected(_sqlAlias.isConnectAtStartup());
-		_useDriverPropsChk.setSelected(_sqlAlias.getUseDriverProperties());
+		//_useDriverPropsChk.setSelected(_sqlAlias.getUseDriverProperties());
 
 		if (_maintType != IMaintenanceType.NEW)
 		{
 			_drivers.setSelectedItem(_sqlAlias.getDriverIdentifier());
 			_url.setText(_sqlAlias.getUrl());
-			_sqlDriverProps = _sqlAlias.getDriverProperties();
 		}
 		else
 		{
@@ -246,7 +232,6 @@ public class AliasInternalFrame extends BaseInternalFrame
 			{
 				_url.setText(driver.getUrl());
 			}
-			_sqlDriverProps = new SQLDriverPropertyCollection();
 		}
 	}
 
@@ -299,8 +284,8 @@ public class AliasInternalFrame extends BaseInternalFrame
 
 		alias.setAutoLogon(_autoLogonChk.isSelected());
 		alias.setConnectAtStartup(_connectAtStartupChk.isSelected());
-		alias.setUseDriverProperties(_useDriverPropsChk.isSelected());
-		alias.setDriverProperties(_sqlDriverProps);
+//		alias.setUseDriverProperties(_useDriverPropsChk.isSelected());
+//		alias.setDriverProperties(_sqlDriverProps);
 	}
 
 	private void showNewDriverDialog()
@@ -312,22 +297,8 @@ public class AliasInternalFrame extends BaseInternalFrame
 	{
 		try
 		{
-			final Frame owner = _app.getMainFrame();
-			final ISQLDriver driver = _drivers.getSelectedDriver();
-			if (driver == null)
-			{
-				throw new BaseException(s_stringMgr.getString("AliasInternalFrame.error.noprops"));
-			}
-			final SQLDriverManager mgr = _app.getSQLDriverManager();
-			final Driver jdbcDriver = mgr.getJDBCDriver(driver.getIdentifier());
-			if (jdbcDriver == null)
-			{
-				throw new BaseException(s_stringMgr.getString("AliasInternalFrame.error.cannotloaddriver"));
-			}
-
-			DriverPropertyInfo[] infoAr = jdbcDriver.getPropertyInfo(_url.getText(), new Properties());
-			_sqlDriverProps.applyDriverPropertynfo(infoAr);
-			DriverPropertiesDialog.showDialog(owner, _sqlDriverProps);
+         applyFromDialog(_sqlAlias);
+         new AliasPropertiesCommand(_sqlAlias, _app).execute();
 		}
 		catch (Exception ex)
 		{
@@ -427,7 +398,7 @@ public class AliasInternalFrame extends BaseInternalFrame
 
 	private JPanel createDataEntryPanel()
 	{
-		_driverPropsBtn.addActionListener(new ActionListener()
+		_aliasPropsBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent evt)
 			{
@@ -436,31 +407,31 @@ public class AliasInternalFrame extends BaseInternalFrame
 
 		});
 
-		_useDriverPropsChk.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent evt)
-			{
-				_driverPropsBtn.setEnabled(_useDriverPropsChk.isSelected());
-			}
+//		_useDriverPropsChk.addActionListener(new ActionListener()
+//		{
+//			public void actionPerformed(ActionEvent evt)
+//			{
+//				_aliasPropsBtn.setEnabled(_useDriverPropsChk.isSelected());
+//			}
+//
+//		});
 
-		});
+		JPanel pnl = new JPanel(new GridBagLayout());
 
-		final JPanel pnl = new JPanel(new GridBagLayout());
+		GridBagConstraints gbc;
 
-		final GridBagConstraints gbc = new GridBagConstraints();
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.anchor = GridBagConstraints.WEST;
-		gbc.insets = new Insets(4, 4, 4, 4);
-		gbc.weightx = 1.0;
+      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      pnl.add(new JLabel(s_stringMgr.getString("AliasInternalFrame.name"), SwingConstants.RIGHT), gbc);
 
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		pnl.add(new JLabel(s_stringMgr.getString("AliasInternalFrame.name"), SwingConstants.RIGHT), gbc);
-
-		++gbc.gridx;
+      gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
 		pnl.add(_aliasName, gbc);
 
-		_drivers = new DriversCombo();
+
+      gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      pnl.add(new JLabel(s_stringMgr.getString("AliasInternalFrame.driver"), SwingConstants.RIGHT), gbc);
+
+
+      _drivers = new DriversCombo();
 		_drivers.addItemListener(new DriversComboItemListener());
 
 		final Box driverPnl = Box.createHorizontalBox();
@@ -476,52 +447,39 @@ public class AliasInternalFrame extends BaseInternalFrame
 		});
 		driverPnl.add(newDriverBtn);
 
-		gbc.gridx = 0;
-		++gbc.gridy;
-		pnl.add(new JLabel(s_stringMgr.getString("AliasInternalFrame.driver"), SwingConstants.RIGHT), gbc);
-
-		++gbc.gridx;
+      gbc = new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
 		pnl.add(driverPnl, gbc);
 
-		gbc.gridx = 0;
-		++gbc.gridy;
+      gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
 		pnl.add(new JLabel(s_stringMgr.getString("AliasInternalFrame.url"), SwingConstants.RIGHT), gbc);
 
-		++gbc.gridx;
+      gbc = new GridBagConstraints(1,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
 		pnl.add(_url, gbc);
 
-		gbc.gridx = 0;
-		++gbc.gridy;
+      gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
 		pnl.add(new JLabel(s_stringMgr.getString("AliasInternalFrame.username"), SwingConstants.RIGHT), gbc);
 
-		++gbc.gridx;
+      gbc = new GridBagConstraints(1,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
 		pnl.add(_userName, gbc);
 
-		gbc.gridx = 0;
-		++gbc.gridy;
+      gbc = new GridBagConstraints(0,4,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
 		pnl.add(new JLabel(s_stringMgr.getString("AliasInternalFrame.password"), SwingConstants.RIGHT), gbc);
 
-		++gbc.gridx;
+      gbc = new GridBagConstraints(1,4,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
 		pnl.add(_password, gbc);
 
-		gbc.gridx = 0;
-		++gbc.gridy;
+      gbc = new GridBagConstraints(0,5,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
 		pnl.add(_autoLogonChk, gbc);
 
-		++gbc.gridx;
+      gbc = new GridBagConstraints(1,5,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
 		pnl.add(_connectAtStartupChk, gbc);
 
-		final Box propsPnl = Box.createHorizontalBox();
-		propsPnl.add(_useDriverPropsChk);
-		propsPnl.add(Box.createHorizontalStrut(5));
-		propsPnl.add(_driverPropsBtn);
-		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		++gbc.gridy;
-		gbc.gridx = 0;
-		pnl.add(propsPnl, gbc);
 
-		gbc.gridx = 0;
-		++gbc.gridy;
+      gbc = new GridBagConstraints(0,6,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      _aliasPropsBtn.setIcon(_app.getResources().getIcon(SquirrelResources.IImageNames.ALIAS_PROPERTIES));
+      pnl.add(_aliasPropsBtn, gbc);
+
+      gbc = new GridBagConstraints(0,7,2,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
 		pnl.add(new JLabel(s_stringMgr.getString("AliasInternalFrame.cleartext")), gbc);
 
 		return pnl;
@@ -642,7 +600,7 @@ public class AliasInternalFrame extends BaseInternalFrame
 	}
 
 	private final class ConnectionCallBack
-		extends ConnectToAliasCommand.ClientCallback
+		extends ConnectToAliasCallBack
 	{
 		private ConnectionCallBack(IApplication app, ISQLAlias alias)
 		{

@@ -130,9 +130,9 @@ public interface ISQLAlias extends IHasIdentifier, IValidatable
 	void setConnectAtStartup(boolean value);
 
 	boolean getUseDriverProperties();
-	void setUseDriverProperties(boolean value) throws ValidationException;
+	void setUseDriverProperties(boolean value);
 
-	SQLDriverPropertyCollection getDriverProperties();
+	SQLDriverPropertyCollection getDriverPropertiesClone();
 	void setDriverProperties(SQLDriverPropertyCollection value);
 
 	void addPropertyChangeListener(PropertyChangeListener listener);

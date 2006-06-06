@@ -38,6 +38,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.ConnectionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.db.ConnectToAliasCallBack;
+import net.sourceforge.squirrel_sql.client.gui.db.ICompletionCallback;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
@@ -49,12 +51,6 @@ import net.sourceforge.squirrel_sql.client.session.SessionManager;
  */
 public class ConnectToAliasCommand implements ICommand
 {
-	public interface ICompletionCallback
-	{
-		void connected(SQLConnection conn);
-		void sessionCreated(ISession session);
-		void errorOccured(Throwable th);
-	}
 
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
@@ -119,7 +115,7 @@ public class ConnectToAliasCommand implements ICommand
 		_app = app;
 		_sqlAlias = sqlAlias;
 		_createSession = createSession;
-		_callback = callback != null ? callback : new ClientCallback(app, _sqlAlias);
+		_callback = callback != null ? callback : new ConnectToAliasCallBack(app, _sqlAlias);
 	}
 
 	/**
@@ -156,101 +152,101 @@ public class ConnectToAliasCommand implements ICommand
         sheet.setVisible(true);                        
     }
     
-	public static class ClientCallback implements ICompletionCallback
-	{
-		private final IApplication _app;
-		private final ISQLAlias _sqlAlias;
-
-		public ClientCallback(IApplication app, ISQLAlias alias)
-		{
-			super();
-			if (app == null)
-			{
-				throw new IllegalArgumentException("IApplication == null");
-			}
-			if (alias == null)
-			{
-				throw new IllegalArgumentException("ISQLAlias == null");
-			}
-			_app = app;
-			_sqlAlias = alias;
-		}
-
-		/**
-		 * @see CompletionCallback#connected(SQLConnection)
-		 */
-		public void connected(SQLConnection conn)
-		{
-			// Empty.
-		}
-
-		/**
-		 * @see CompletionCallback#sessionCreated(ISession)
-		 */
-		public void sessionCreated(ISession session)
-		{
-			// Empty.
-		}
-
-		/**
-		 * @see CompletionCallback#errorOccured(Throwable)
-		 */
-		public void errorOccured(Throwable th)
-		{
-			if (th instanceof WrappedSQLException)
-			{
-				th = ((WrappedSQLException)th).getSQLExeption();
-			}
-
-			if (th instanceof SQLException)
-			{
-				String msg = th.getMessage();
-				if (msg == null || msg.length() == 0)
-				{
-					msg = s_stringMgr.getString("ConnectToAliasCommand.error.cantopen");
-				}
-				msg = _sqlAlias.getName() + ": " + msg;
-				showErrorDialog(msg, th);
-			}
-			else if (th instanceof ClassNotFoundException)
-			{
-				String msg = s_stringMgr.getString("ConnectToAliasCommand.error.driver", _sqlAlias.getName());
-				showErrorDialog(msg, th);
-			}
-			else if (th instanceof NoClassDefFoundError)
-			{
-				String msg = s_stringMgr.getString("ConnectToAliasCommand.error.driver", _sqlAlias.getName());
-				s_log.error(msg, th);
-				showErrorDialog(msg, th);
-			}
-			else
-			{
-				String msg = s_stringMgr.getString("ConnectToAliasCommand.error.unexpected", _sqlAlias.getName());
-				s_log.debug(th.getClass().getName());
-				s_log.error(msg, th);
-				showErrorDialog(msg, th);
-			}
-		}
-
-		protected IApplication getApplication()
-		{
-			return _app;
-		}
-
-		protected void showErrorDialog(final String msg, final Throwable th)
-		{
-			synchronized (this)
-			{
-				SwingUtilities.invokeLater(new Runnable()
-				{
-					public void run()
-					{
-						new ErrorDialog(_app.getMainFrame(), msg, th).show();
-					}
-				});
-			}
-		}
-	}
+//	public static class ConnectToAliasCallBack implements ICompletionCallback
+//	{
+//		private final IApplication _app;
+//		private final ISQLAlias _sqlAlias;
+//
+//		public ConnectToAliasCallBack(IApplication app, ISQLAlias alias)
+//		{
+//			super();
+//			if (app == null)
+//			{
+//				throw new IllegalArgumentException("IApplication == null");
+//			}
+//			if (alias == null)
+//			{
+//				throw new IllegalArgumentException("ISQLAlias == null");
+//			}
+//			_app = app;
+//			_sqlAlias = alias;
+//		}
+//
+//		/**
+//		 * @see CompletionCallback#connected(SQLConnection)
+//		 */
+//		public void connected(SQLConnection conn)
+//		{
+//			// Empty.
+//		}
+//
+//		/**
+//		 * @see CompletionCallback#sessionCreated(ISession)
+//		 */
+//		public void sessionCreated(ISession session)
+//		{
+//			// Empty.
+//		}
+//
+//		/**
+//		 * @see CompletionCallback#errorOccured(Throwable)
+//		 */
+//		public void errorOccured(Throwable th)
+//		{
+//			if (th instanceof WrappedSQLException)
+//			{
+//				th = ((WrappedSQLException)th).getSQLExeption();
+//			}
+//
+//			if (th instanceof SQLException)
+//			{
+//				String msg = th.getMessage();
+//				if (msg == null || msg.length() == 0)
+//				{
+//					msg = s_stringMgr.getString("ConnectToAliasCommand.error.cantopen");
+//				}
+//				msg = _sqlAlias.getName() + ": " + msg;
+//				showErrorDialog(msg, th);
+//			}
+//			else if (th instanceof ClassNotFoundException)
+//			{
+//				String msg = s_stringMgr.getString("ConnectToAliasCommand.error.driver", _sqlAlias.getName());
+//				showErrorDialog(msg, th);
+//			}
+//			else if (th instanceof NoClassDefFoundError)
+//			{
+//				String msg = s_stringMgr.getString("ConnectToAliasCommand.error.driver", _sqlAlias.getName());
+//				s_log.error(msg, th);
+//				showErrorDialog(msg, th);
+//			}
+//			else
+//			{
+//				String msg = s_stringMgr.getString("ConnectToAliasCommand.error.unexpected", _sqlAlias.getName());
+//				s_log.debug(th.getClass().getName());
+//				s_log.error(msg, th);
+//				showErrorDialog(msg, th);
+//			}
+//		}
+//
+//		protected IApplication getApplication()
+//		{
+//			return _app;
+//		}
+//
+//		protected void showErrorDialog(final String msg, final Throwable th)
+//		{
+//			synchronized (this)
+//			{
+//				SwingUtilities.invokeLater(new Runnable()
+//				{
+//					public void run()
+//					{
+//						new ErrorDialog(_app.getMainFrame(), msg, th).show();
+//					}
+//				});
+//			}
+//		}
+//	}
 
 	/**
 	 * Handler used for connection internal frame actions.
