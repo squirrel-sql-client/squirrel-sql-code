@@ -26,7 +26,6 @@ import javax.swing.event.InternalFrameEvent;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
-import net.sourceforge.squirrel_sql.fw.sql.DataCache;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -130,7 +129,7 @@ class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
 	 */
 	public AliasInternalFrame getCreateSheet()
 	{
-		final DataCache cache = _app.getDataCache();
+		final net.sourceforge.squirrel_sql.client.gui.db.DataCache cache = _app.getDataCache();
 		final IIdentifierFactory factory = IdentifierFactory.getInstance();
 		final ISQLAlias alias = cache.createAlias(factory.createIdentifier());
 		final AliasInternalFrame sheet = new AliasInternalFrame(_app, alias, NEW);

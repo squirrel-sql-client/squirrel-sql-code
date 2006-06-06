@@ -18,51 +18,33 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.FlowLayout;
-import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.sql.Driver;
-import java.sql.DriverPropertyInfo;
-import java.util.Properties;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JRootPane;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
-
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.IOkClosePanelListener;
+import net.sourceforge.squirrel_sql.client.gui.OkClosePanel;
+import net.sourceforge.squirrel_sql.client.gui.OkClosePanelEvent;
+import net.sourceforge.squirrel_sql.client.mainframe.action.AliasPropertiesCommand;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.StatusBar;
-import net.sourceforge.squirrel_sql.fw.gui.sql.DriverPropertiesDialog;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
-import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.IOkClosePanelListener;
-import net.sourceforge.squirrel_sql.client.gui.OkClosePanel;
-import net.sourceforge.squirrel_sql.client.gui.OkClosePanelEvent;
+import javax.swing.*;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 /**
  * This internal frame allows the user to connect to an alias.
  *
@@ -121,7 +103,7 @@ public class ConnectionInternalFrame extends BaseInternalFrame
 	/** <TT>true</TT> means that an attempt is being made to connect to the alias.*/
 	private boolean _connecting;
 
-	private SQLDriverPropertyCollection _props = new SQLDriverPropertyCollection();
+//	private SQLDriverPropertyCollection _props = new SQLDriverPropertyCollection();
 
 	private IHandler _handler;
 
@@ -134,8 +116,8 @@ public class ConnectionInternalFrame extends BaseInternalFrame
 
 	private boolean _driverPropertiesLoaded = false;
 
-	/** If checked use the extended driver properties. */
-	private final JCheckBox _useDriverPropsChk = new JCheckBox(s_stringMgr.getString("ConnectionInternalFrame.userdriverprops"));
+//	/** If checked use the extended driver properties. */
+//	private final JCheckBox _useDriverPropsChk = new JCheckBox(s_stringMgr.getString("ConnectionInternalFrame.userdriverprops"));
 
 	/** Button that brings up the driver properties dialog. */
 	private final JButton _driverPropsBtn = new JButton(s_stringMgr.getString("ConnectionInternalFrame.props"));
@@ -265,42 +247,48 @@ public class ConnectionInternalFrame extends BaseInternalFrame
 		return pane;
 	}
 
-	/**
-	 * Load data about selected alias into the UI.
-	 */
-	private void loadData()
-	{
-        if (SwingUtilities.isEventDispatchThread()) {
-            _loadData();
-        } else {
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    _loadData();
-                }
-            });
-        }
-        loadDriverProperties();
+   /**
+    * Load data about selected alias into the UI.
+    */
+   private void loadData()
+   {
+      if (SwingUtilities.isEventDispatchThread())
+      {
+         _loadData();
+      }
+      else
+      {
+         SwingUtilities.invokeLater(new Runnable()
+         {
+            public void run()
+            {
+               _loadData();
+            }
+         });
+      }
+      //loadDriverProperties();
 
-	}
+   }
 
-    private void _loadData() {
-        String userName = _alias.getUserName();
-        String password = _alias.getPassword();        
-        _aliasName.setText(_alias.getName());
-        _driverName.setText(_sqlDriver.getName());
-        _url.setText(_alias.getUrl());
-        _user.setText(userName);
-        _password.setText(password);
-        _useDriverPropsChk.setSelected(_alias.getUseDriverProperties());
-        _driverPropsBtn.setEnabled(_useDriverPropsChk.isSelected());
-        // This is mainly for long URLs that cannot be fully
-        // displayed in the label.
-        _aliasName.setToolTipText(_aliasName.getText());
-        _driverName.setToolTipText(_driverName.getText());
-        _url.setToolTipText(_url.getText());        
-    }
-    
-	private void connect()
+   private void _loadData()
+   {
+      String userName = _alias.getUserName();
+      String password = _alias.getPassword();
+      _aliasName.setText(_alias.getName());
+      _driverName.setText(_sqlDriver.getName());
+      _url.setText(_alias.getUrl());
+      _user.setText(userName);
+      _password.setText(password);
+//      _useDriverPropsChk.setSelected(_alias.getUseDriverProperties());
+//      _driverPropsBtn.setEnabled(_useDriverPropsChk.isSelected());
+      // This is mainly for long URLs that cannot be fully
+      // displayed in the label.
+      _aliasName.setToolTipText(_aliasName.getText());
+      _driverName.setToolTipText(_driverName.getText());
+      _url.setToolTipText(_url.getText());
+   }
+
+   private void connect()
 	{
 		if (!_connecting)
 		{
@@ -309,11 +297,13 @@ public class ConnectionInternalFrame extends BaseInternalFrame
 			setStatusText(s_stringMgr.getString("ConnectionInternalFrame.connecting"));
 			_user.setEnabled(false);
 			_password.setEnabled(false);
-			if (!_useDriverPropsChk.isSelected())
-			{
-				_props.clear();
-			}
-			_handler.performOK(this, _user.getText(), _password.getText(), _props);
+
+         SQLDriverPropertyCollection driverProperties = _alias.getDriverPropertiesClone();
+         if (!_alias.getUseDriverProperties())
+         {
+            driverProperties.clear();
+         }
+			_handler.performOK(this, _user.getText(), _password.getText(), driverProperties);
 		}
 	}
 
@@ -404,10 +394,8 @@ public class ConnectionInternalFrame extends BaseInternalFrame
 		builder.add(_password, cc.xywh(3, y, 1, 1));
 
 		y += 2;
-		JPanel propsPnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		propsPnl.add(_useDriverPropsChk);
-		propsPnl.add(_driverPropsBtn);
-		builder.add(propsPnl, cc.xywh(1, y, 3, 1));
+      _driverPropsBtn.setIcon(_app.getResources().getIcon(SquirrelResources.IImageNames.ALIAS_PROPERTIES));
+      builder.add(_driverPropsBtn, cc.xywh(1, y, 1, 1));
 
 		y += 2;
 		builder.addLabel(s_stringMgr.getString("ConnectionInternalFrame.warningcapslock"),
@@ -420,18 +408,18 @@ public class ConnectionInternalFrame extends BaseInternalFrame
 		builder.add(_btnsPnl, cc.xywh(1, y, 3, 1));
 
 
-		_useDriverPropsChk.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent evt)
-			{
-				boolean useDriverProps = _useDriverPropsChk.isSelected();
-				_driverPropsBtn.setEnabled(useDriverProps);
-				if (useDriverProps)
-				{
-					loadDriverProperties();
-				}
-			}
-		});
+//		_useDriverPropsChk.addActionListener(new ActionListener()
+//		{
+//			public void actionPerformed(ActionEvent evt)
+//			{
+//				boolean useDriverProps = _useDriverPropsChk.isSelected();
+//				_driverPropsBtn.setEnabled(useDriverProps);
+//				if (useDriverProps)
+//				{
+//					loadDriverProperties();
+//				}
+//			}
+//		});
 
 		// Set focus to password control if default user name has been setup.
 		addInternalFrameListener(new InternalFrameAdapter()
@@ -468,40 +456,41 @@ public class ConnectionInternalFrame extends BaseInternalFrame
 
 	private void showDriverPropertiesDialog()
 	{
-		final Frame owner = _app.getMainFrame();
-		DriverPropertiesDialog.showDialog(owner, _props);
+      new AliasPropertiesCommand(_alias, _app).execute();
+//		final Frame owner = _app.getMainFrame();
+//		DriverPropertiesDialog.showDialog(owner, _props);
 	}
 
-	private void loadDriverProperties()
-	{
-		if (!_driverPropertiesLoaded)
-		{
-			if (_useDriverPropsChk.isSelected())
-			{
-				_driverPropertiesLoaded = true;
-				try
-				{
-					final SQLDriverManager mgr = _app.getSQLDriverManager();
-					final Driver jdbcDriver = mgr.getJDBCDriver(_sqlDriver.getIdentifier());
-					if (jdbcDriver == null)
-					{
-						throw new BaseException(s_stringMgr.getString("ConnectionInternalFrame.error.cannotloaddriver"));
-					}
-
-					_props = _alias.getDriverProperties();
-					DriverPropertyInfo[] infoAr = jdbcDriver.getPropertyInfo(_alias.getUrl(),
-																	new Properties());
-					_props.applyDriverPropertynfo(infoAr);
-				}
-				catch (Exception ex)
-				{
-					String msg = s_stringMgr.getString("ConnectionInternalFrame.error.driverprops");
-					s_log.error(msg, ex);
-					_app.showErrorDialog(msg, ex);
-				}
-			}
-		}
-	}
+//	private void loadDriverProperties()
+//	{
+//		if (!_driverPropertiesLoaded)
+//		{
+//			if (_useDriverPropsChk.isSelected())
+//			{
+//				_driverPropertiesLoaded = true;
+//				try
+//				{
+//					final SQLDriverManager mgr = _app.getSQLDriverManager();
+//					final Driver jdbcDriver = mgr.getJDBCDriver(_sqlDriver.getIdentifier());
+//					if (jdbcDriver == null)
+//					{
+//						throw new BaseException(s_stringMgr.getString("ConnectionInternalFrame.error.cannotloaddriver"));
+//					}
+//
+//					_props = _alias.getDriverPropertiesClone();
+//					DriverPropertyInfo[] infoAr = jdbcDriver.getPropertyInfo(_alias.getUrl(),
+//																	new Properties());
+//					_props.applyDriverPropertynfo(infoAr);
+//				}
+//				catch (Exception ex)
+//				{
+//					String msg = s_stringMgr.getString("ConnectionInternalFrame.error.driverprops");
+//					s_log.error(msg, ex);
+//					_app.showErrorDialog(msg, ex);
+//				}
+//			}
+//		}
+//	}
 
 	/**
 	 * Listener to handle button events in OK/Close panel.

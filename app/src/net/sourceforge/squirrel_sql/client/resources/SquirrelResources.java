@@ -66,6 +66,7 @@ public class SquirrelResources extends Resources
 		String RED_GEM = "red_gem";
 		String WHITE_GEM = "white_gem";
 		String LOGS = "logs";
+		String ALIAS_PROPERTIES = "aliasProperties";
 
 	}
 

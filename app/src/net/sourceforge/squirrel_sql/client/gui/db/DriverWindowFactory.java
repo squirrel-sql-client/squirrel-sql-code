@@ -26,7 +26,6 @@ import javax.swing.event.InternalFrameEvent;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
-import net.sourceforge.squirrel_sql.fw.sql.DataCache;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -128,7 +127,7 @@ class DriverWindowFactory implements AliasInternalFrame.IMaintenanceType
 	 */
 	public DriverInternalFrame getCreateSheet()
 	{
-		final DataCache cache = _app.getDataCache();
+		final net.sourceforge.squirrel_sql.client.gui.db.DataCache cache = _app.getDataCache();
 		final IIdentifierFactory factory = IdentifierFactory.getInstance();
 		final ISQLDriver driver = cache.createDriver(factory.createIdentifier());
 		final DriverInternalFrame sheet = new DriverInternalFrame(_app, driver, NEW);

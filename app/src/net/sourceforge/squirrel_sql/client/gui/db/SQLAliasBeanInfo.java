@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.sql;
+package net.sourceforge.squirrel_sql.client.gui.db;
 /*
  * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -17,6 +17,8 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.beans.SimpleBeanInfo;
@@ -28,7 +30,7 @@ import java.beans.SimpleBeanInfo;
 public class SQLAliasBeanInfo extends SimpleBeanInfo
 {
 	private static PropertyDescriptor[] s_desc;
-	private static Class CLAZZ = SQLAlias.class;
+	private static Class CLAZZ = net.sourceforge.squirrel_sql.client.gui.db.SQLAlias.class;
 
 	private interface IPropNames extends ISQLAlias.IPropertyNames
 	{
@@ -47,7 +49,7 @@ public class SQLAliasBeanInfo extends SimpleBeanInfo
 			s_desc[3] = new PropertyDescriptor(IPropNames.USER_NAME, CLAZZ, "getUserName", "setUserName");
 			s_desc[4] = new PropertyDescriptor(IPropNames.DRIVER, CLAZZ, "getDriverIdentifier", "setDriverIdentifier");
 			s_desc[5] = new PropertyDescriptor(IPropNames.USE_DRIVER_PROPERTIES, CLAZZ, "getUseDriverProperties", "setUseDriverProperties");
-			s_desc[6] = new PropertyDescriptor(IPropNames.DRIVER_PROPERTIES, CLAZZ, "getDriverProperties", "setDriverProperties");
+			s_desc[6] = new PropertyDescriptor(IPropNames.DRIVER_PROPERTIES, CLAZZ, "getDriverPropertiesClone", "setDriverProperties");
 			s_desc[7] = new PropertyDescriptor(IPropNames.PASSWORD, CLAZZ, "getPassword", "setPassword");
 			s_desc[8] = new PropertyDescriptor(IPropNames.AUTO_LOGON, CLAZZ, "isAutoLogon", "setAutoLogon");
 			s_desc[9] = new PropertyDescriptor(IPropNames.CONNECT_AT_STARTUP, CLAZZ, "isConnectAtStartup", "setConnectAtStartup");

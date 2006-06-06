@@ -17,20 +17,10 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyVetoException;
-import java.beans.VetoableChangeListener;
-import java.awt.event.FocusListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusAdapter;
-
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.SwingConstants;
-import javax.swing.event.InternalFrameListener;
-
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.mainframe.action.*;
+import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
@@ -38,10 +28,13 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.mainframe.action.*;
-import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
+import javax.swing.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyVetoException;
+import java.beans.VetoableChangeListener;
 /**
  * This window shows all the database aliases defined in the system.
  *
@@ -168,6 +161,8 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
 			_pm.addSeparator();
 			_pm.add(actions.get(ModifyAliasAction.class));
 			_pm.add(actions.get(CopyAliasAction.class));
+			_pm.add(actions.get(SortAliasesAction.class));
+			_pm.add(actions.get(AliasPropertiesAction.class));
 			_pm.addSeparator();
 			_pm.add(actions.get(DeleteAliasAction.class));
 			_pm.addSeparator();
@@ -249,6 +244,7 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
 			_tb.add(actions.get(ModifyAliasAction.class));
 			_tb.add(actions.get(CopyAliasAction.class));
 			_tb.add(actions.get(DeleteAliasAction.class));
+         _tb.add(actions.get(AliasPropertiesAction.class));
 			_tb.addSeparator();
 			_tb.add(actions.get(SortAliasesAction.class));
 		}

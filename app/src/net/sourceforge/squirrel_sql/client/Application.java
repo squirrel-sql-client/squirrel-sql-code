@@ -39,12 +39,7 @@ import java.sql.DriverManager;
 import java.util.Calendar;
 import java.util.Iterator;
 
-import javax.swing.Action;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.PopupFactory;
-import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
@@ -72,7 +67,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.CellImportExportInfoSaver;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DTProperties;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
-import net.sourceforge.squirrel_sql.fw.sql.DataCache;
+import net.sourceforge.squirrel_sql.client.gui.db.DataCache;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.BareBonesBrowserLaunch;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
@@ -628,7 +623,16 @@ class Application implements IApplication
 		// TODO: pass in a message handler so user gets error msgs.
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadingjdbc"));
 		final ApplicationFiles appFiles = new ApplicationFiles();
-		_cache = new DataCache(_driverMgr, appFiles.getDatabaseDriversFile(),
+
+      String errMsg = FileTransformer.transform(appFiles);
+      if(null != errMsg)
+      {
+         System.err.println(errMsg);
+         JOptionPane.showMessageDialog(null, errMsg, "SQuirreL failed to start", JOptionPane.ERROR_MESSAGE);
+         System.exit(-1);
+      }
+
+      _cache = new DataCache(_driverMgr, appFiles.getDatabaseDriversFile(),
 								appFiles.getDatabaseAliasesFile(),
 								_resources.getDefaultDriversUrl(), null);
 

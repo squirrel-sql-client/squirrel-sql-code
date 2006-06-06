@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.squirrel_sql.fw.sql.DataCache;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
@@ -60,7 +59,7 @@ public class ConnectToStartupAliasesCommand implements ICommand
 	public void execute()
 	{
 		final List aliases = new ArrayList();
-		final DataCache cache = _app.getDataCache();
+		final net.sourceforge.squirrel_sql.client.gui.db.DataCache cache = _app.getDataCache();
 		synchronized (cache)
 		{
 			for (Iterator it = cache.aliases(); it.hasNext();)

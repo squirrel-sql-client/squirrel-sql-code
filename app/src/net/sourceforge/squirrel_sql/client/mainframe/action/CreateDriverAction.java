@@ -26,7 +26,6 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.db.DriversListInternalFrame;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
-import net.sourceforge.squirrel_sql.fw.sql.DataCache;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -80,7 +79,7 @@ public class CreateDriverAction extends SquirrelAction
             
         try {
             final URL url = app.getResources().getDefaultDriversUrl();
-            DataCache cache = _app.getDataCache();
+            net.sourceforge.squirrel_sql.client.gui.db.DataCache cache = _app.getDataCache();
             ISQLDriver[] missingDrivers = cache.findMissingDefaultDrivers(url);
             if (missingDrivers != null) {
                 String msg =

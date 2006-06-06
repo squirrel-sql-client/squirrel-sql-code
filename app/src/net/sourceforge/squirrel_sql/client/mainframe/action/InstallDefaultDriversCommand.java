@@ -20,7 +20,7 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
 import java.io.IOException;
 import java.net.URL;
 
-import net.sourceforge.squirrel_sql.fw.sql.DataCache;
+import net.sourceforge.squirrel_sql.client.gui.db.DataCache;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
