@@ -25,7 +25,7 @@ public class FileTransformer
    private static String convertAliases_2_2_to_2_3(ApplicationFiles appFiles)
    {
       String prefKey = "SQUirreLSQL_FileTransformer_aliases_2_2_to_2_3";
-      if(Preferences.userRoot().getBoolean(prefKey, false))
+      if(Preferences.userRoot().get(prefKey, "").equals(appFiles.getDatabaseAliasesFile().getPath()))
       {
          return null;
       }
@@ -78,7 +78,7 @@ public class FileTransformer
          br.close();
          fr.close();
 
-         Preferences.userRoot().putBoolean(prefKey, true);
+         Preferences.userRoot().put(prefKey, appFiles.getDatabaseAliasesFile().getPath());
          return null;
       }
       catch (Exception e)
