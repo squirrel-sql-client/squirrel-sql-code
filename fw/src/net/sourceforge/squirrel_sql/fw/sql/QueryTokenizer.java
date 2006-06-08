@@ -114,7 +114,7 @@ public class QueryTokenizer
 					String newQuery = curQuery.toString().trim();
 					if(0 < newQuery.length())
 					{
-						_queries.add(curQuery.toString());
+						_queries.add(curQuery.toString().trim());
 					}
 				}
 				curQuery.setLength(0);
@@ -124,7 +124,7 @@ public class QueryTokenizer
 		String lastQuery = curQuery.toString().trim();
 		if(0 < lastQuery.length())
 		{
-			_queries.add(lastQuery.toString());
+			_queries.add(lastQuery.toString().trim());
 		}
 
 
