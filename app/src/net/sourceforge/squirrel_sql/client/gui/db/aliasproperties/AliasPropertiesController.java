@@ -14,12 +14,27 @@ import java.util.ArrayList;
 
 public class AliasPropertiesController
 {
+   private static AliasPropertiesController _currentlyOpenInstance;
+
    private AliasPropertiesInternalFrame _frame;
    private ArrayList _iAliasPropertiesPanelController = new ArrayList();
    private IApplication _app;
    private SQLAlias _alias;
 
-   public AliasPropertiesController(IApplication app, SQLAlias selectedAlias)
+   public static void showAliasProperties(IApplication app, SQLAlias selectedAlias)
+   {
+      if(null == _currentlyOpenInstance)
+      {
+         _currentlyOpenInstance = new AliasPropertiesController(app, selectedAlias);
+      }
+      else
+      {
+         GUIUtils.moveToFront(_currentlyOpenInstance._frame);
+      }
+
+   }
+
+   private AliasPropertiesController(IApplication app, SQLAlias selectedAlias)
    {
       _app = app;
       _alias = selectedAlias;
@@ -89,6 +104,7 @@ public class AliasPropertiesController
 
    private void performClose()
    {
+      _currentlyOpenInstance = null;
       _frame.dispose();
    }
 
