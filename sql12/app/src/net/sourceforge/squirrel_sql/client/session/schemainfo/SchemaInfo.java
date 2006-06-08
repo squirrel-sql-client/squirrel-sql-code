@@ -456,6 +456,7 @@ public class SchemaInfo
    {
       try
       {
+         _schemaInfoCache.catalogs.clear();
          _schemaInfoCache.catalogs.addAll(Arrays.asList(_dmd.getCatalogs()));
       }
       catch (Throwable th)
@@ -470,6 +471,7 @@ public class SchemaInfo
       {
          String[] allowedSchemas = _session.getApplication().getSessionManager().getAllowedSchemas(_session);
 
+         _schemaInfoCache.schemas.clear();
          if(null == allowedSchemas)
          {
             _schemaInfoCache.schemas.addAll(Arrays.asList(_dmd.getSchemas()));

@@ -18,7 +18,7 @@ public class AliasPropertiesCommand
 
    public void execute()
    {
-      // Cast is not so nice, but framework doesn't meet new requirements. TODO remove ISQLAlias some time
-      new AliasPropertiesController(_app, (SQLAlias)_selectedAlias);
+      // Cast is not so nice, but framework doesn't meet new requirements.
+      AliasPropertiesController.showAliasProperties(_app, (SQLAlias)_selectedAlias);
    }
 }
