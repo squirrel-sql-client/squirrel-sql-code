@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
-public class SQLAliasSchemaDetailProperties
+public class SQLAliasSchemaDetailProperties implements Comparable
 {
    private String _schemaName;
    private int _table ;
@@ -46,5 +46,11 @@ public class SQLAliasSchemaDetailProperties
    public void setFunction(int id)
    {
       _function = id;
+   }
+
+   public int compareTo(Object other)
+   {
+      SQLAliasSchemaDetailProperties buf = (SQLAliasSchemaDetailProperties) other;
+      return _schemaName.compareTo(buf._schemaName);
    }
 }

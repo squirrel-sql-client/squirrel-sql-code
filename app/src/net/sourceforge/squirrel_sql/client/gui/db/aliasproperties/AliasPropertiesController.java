@@ -4,17 +4,17 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.DriverPropertiesController;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class AliasPropertiesController
 {
-   private static AliasPropertiesController _currentlyOpenInstance;
+   private static HashMap _currentlyOpenInstancesByAliasID = new HashMap();
 
    private AliasPropertiesInternalFrame _frame;
    private ArrayList _iAliasPropertiesPanelController = new ArrayList();
@@ -23,13 +23,14 @@ public class AliasPropertiesController
 
    public static void showAliasProperties(IApplication app, SQLAlias selectedAlias)
    {
-      if(null == _currentlyOpenInstance)
+      AliasPropertiesController openProps = (AliasPropertiesController) _currentlyOpenInstancesByAliasID.get(selectedAlias.getIdentifier());
+      if(null == openProps)
       {
-         _currentlyOpenInstance = new AliasPropertiesController(app, selectedAlias);
+         _currentlyOpenInstancesByAliasID.put(selectedAlias.getIdentifier(), new AliasPropertiesController(app, selectedAlias));
       }
       else
       {
-         GUIUtils.moveToFront(_currentlyOpenInstance._frame);
+         GUIUtils.moveToFront(openProps._frame);
       }
 
    }
@@ -38,7 +39,7 @@ public class AliasPropertiesController
    {
       _app = app;
       _alias = selectedAlias;
-      _frame = new AliasPropertiesInternalFrame();
+      _frame = new AliasPropertiesInternalFrame(_alias.getName());
 
       _app.getMainFrame().addInternalFrame(_frame, false);
 
@@ -104,7 +105,7 @@ public class AliasPropertiesController
 
    private void performClose()
    {
-      _currentlyOpenInstance = null;
+      _currentlyOpenInstancesByAliasID.remove(_alias.getIdentifier());
       _frame.dispose();
    }
 

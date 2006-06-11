@@ -4,14 +4,16 @@ import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaDetailProperties
 
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class SchemaTableModel extends DefaultTableModel
 {
-  static final int IX_SCHEMA_NAME = 0;
-  static final int IX_TABLE = 1;
-  static final int IX_VIEW = 2;
-  static final int IX_FUNCTION = 3;
+   static final int IX_SCHEMA_NAME = 0;
+   static final int IX_TABLE = 1;
+   static final int IX_VIEW = 2;
+   static final int IX_FUNCTION = 3;
    private SQLAliasSchemaDetailProperties[] _schemaDetails;
+
 
 
    public SchemaTableModel(SQLAliasSchemaDetailProperties[] schemaDetails)
@@ -19,7 +21,7 @@ public class SchemaTableModel extends DefaultTableModel
       _schemaDetails = schemaDetails;
    }
 
-   
+
 
    public Object getValueAt(int row, int column)
    {
@@ -89,10 +91,36 @@ public class SchemaTableModel extends DefaultTableModel
       return _schemaDetails;
    }
 
-   public void updateSchemas(SQLAliasSchemaDetailProperties[] details)
+   public void updateSchemas(String[] schemaNames)
    {
-      // TODO keep old data
-      _schemaDetails = details;
+      ArrayList newDetails = new ArrayList();
+
+      for (int i = 0; i < schemaNames.length; i++)
+      {
+
+         boolean found = false;
+         for (int j = 0; j < _schemaDetails.length; j++)
+         {
+            if(_schemaDetails[j].getSchemaName().equalsIgnoreCase(schemaNames[i]))
+            {
+               newDetails.add(_schemaDetails[j]);
+               found = true;
+               break;
+            }
+         }
+
+         if(false == found)
+         {
+            SQLAliasSchemaDetailProperties buf = new SQLAliasSchemaDetailProperties();
+            buf.setSchemaName(schemaNames[i]);
+            newDetails.add(buf);
+         }
+
+      }
+
+      _schemaDetails = (SQLAliasSchemaDetailProperties[]) newDetails.toArray(new SQLAliasSchemaDetailProperties[newDetails.size()]);
+      Arrays.sort(_schemaDetails);
+
       fireTableDataChanged();
    }
 }

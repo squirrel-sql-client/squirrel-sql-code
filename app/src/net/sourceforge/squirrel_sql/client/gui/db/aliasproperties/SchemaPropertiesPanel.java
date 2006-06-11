@@ -61,7 +61,7 @@ public class SchemaPropertiesPanel extends JPanel
       bg.add(radSpecifySchemas);
 
 
-      // i18n[SchemaPropertiesPanel.refreshSchemas=Refresh schema table]
+      // i18n[SchemaPropertiesPanel.refreshSchemas=Connect database to refresh schema table]
       btnUpdateSchemas = new JButton(s_stringMgr.getString("SchemaPropertiesPanel.refreshSchemas"));
       gbc = new GridBagConstraints(0,4,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       add(btnUpdateSchemas, gbc);

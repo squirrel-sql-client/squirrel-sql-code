@@ -470,4 +470,9 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
       return _schemaProperties;      
    }
 
+   public void setSchemaProperties(SQLAliasSchemaProperties schemaProperties)
+   {
+      _schemaProperties = schemaProperties;
+   }
+
 }

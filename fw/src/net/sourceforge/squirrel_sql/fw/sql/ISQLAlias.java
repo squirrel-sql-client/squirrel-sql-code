@@ -46,6 +46,7 @@ public interface ISQLAlias extends IHasIdentifier, IValidatable
 		String URL = "url";
 		String USE_DRIVER_PROPERTIES = "useDriverProperties";
 		String USER_NAME = "userName";
+		String SCHEMA_PROPERTIES = "schemaProperties";
 	}
 
 	/**
