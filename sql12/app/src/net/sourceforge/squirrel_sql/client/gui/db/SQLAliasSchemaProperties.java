@@ -26,9 +26,9 @@ public class SQLAliasSchemaProperties
       return _globalState;
    }
 
-   public void setGlobalState(int _globalState)
+   public void setGlobalState(int globalState)
    {
-      this._globalState = _globalState;
+      this._globalState = globalState;
    }
 
 

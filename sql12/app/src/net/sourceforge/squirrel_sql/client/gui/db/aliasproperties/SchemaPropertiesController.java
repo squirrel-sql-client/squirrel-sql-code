@@ -101,7 +101,7 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
       {
          public void actionPerformed(ActionEvent e)
          {
-            onSpecifySchema();
+            updateEnabled();
          }
       });
 
@@ -109,25 +109,16 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
       {
          public void actionPerformed(ActionEvent e)
          {
-            onSpecifySchema();
+            onRefreshSchemaTable();
          }
       });
 
    }
 
-   private void onSpecifySchema()
+   private void onRefreshSchemaTable()
    {
       if(0 == _alias.getSchemaProperties().getSchemaDetails().length)
       {
-         IIdentifier drID = _alias.getDriverIdentifier();
-         final Driver jdbcDriver = _app.getSQLDriverManager().getJDBCDriver(drID);
-         if (jdbcDriver == null)
-         {
-            // I18n[DriverPropertiesController.loadingDriverFailed=Loading JDBC driver "{0}" failed.\nCan not load schemas.]
-            String errMsg = s_stringMgr.getString("DriverPropertiesController.loadingDriverFailed", _app.getDataCache().getDriver(drID).getName());
-            JOptionPane.showMessageDialog(_app.getMainFrame(), errMsg);
-         }
-
          ConnectToAliasCallBack cb = new ConnectToAliasCallBack(_app, _alias)
          {
             public void connected(SQLConnection conn)
@@ -142,21 +133,16 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
    }
 
 
-   private void onConnected(SQLConnection conn)
+   /**
+    * synchronized because the user may connect twice from within the Schema Properties Panel.
+    * @param conn
+    */
+   private synchronized void onConnected(SQLConnection conn)
    {
       try
       {
          String[] schemas = conn.getSQLMetaData().getSchemas();
-
-         SQLAliasSchemaDetailProperties[] details  = new SQLAliasSchemaDetailProperties[schemas.length];
-
-         for (int i = 0; i < details.length; i++)
-         {
-            details[i] = new SQLAliasSchemaDetailProperties();
-            details[i].setSchemaName(schemas[i]);
-         }
-
-         _schemaTableModel.updateSchemas(details);
+         _schemaTableModel.updateSchemas(schemas);
 
          updateEnabled();
       }
@@ -207,7 +193,22 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
 
    public void applyChanges()
    {
-      //To change body of implemented methods use File | Settings | File Templates.
+
+      if(_pnl.radLoadAllAndCacheNone.isSelected())
+      {
+         _alias.getSchemaProperties().setGlobalState(SQLAliasSchemaProperties.GLOBAL_STATE_LOAD_ALL_CACHE_NONE);
+      }
+      else if(_pnl.radLoadAndCacheAll.isSelected())
+      {
+         _alias.getSchemaProperties().setGlobalState(SQLAliasSchemaProperties.GLOBAL_STATE_LOAD_AND_CACHE_ALL);
+      }
+      else if(_pnl.radSpecifySchemas.isSelected())
+      {
+         _alias.getSchemaProperties().setGlobalState(SQLAliasSchemaProperties.GLOBAL_STATE_SPECIFY_SCHEMAS);
+      }
+
+      _alias.getSchemaProperties().setSchemaDetails(_schemaTableModel.getData());
+
    }
 
    public String getTitle()
