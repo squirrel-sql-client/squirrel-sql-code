@@ -106,10 +106,16 @@ public class ApplicationFiles
 	 */
 	public File getDatabaseAliasesFile()
 	{
-		return new File(_userSettingsDir + File.separator + "SQLAliases.xml");
+		return new File(_userSettingsDir + File.separator + "SQLAliases23.xml");
 	}
 
-	/**
+   public File getDatabaseAliasesFile_before_version_2_3()
+   {
+      return new File(_userSettingsDir + File.separator + "SQLAliases.xml");
+   }
+
+
+   /**
 	 * @return file that contains JDBC driver definitions.
 	 */
 	public File getDatabaseDriversFile()

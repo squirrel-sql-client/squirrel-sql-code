@@ -24,30 +24,22 @@ public class FileTransformer
 
    private static String convertAliases_2_2_to_2_3(ApplicationFiles appFiles)
    {
-      String prefKey = "SQUirreLSQL_FileTransformer_aliases_2_2_to_2_3";
-      if(Preferences.userRoot().get(prefKey, "").equals(appFiles.getDatabaseAliasesFile().getPath()))
+
+      if(appFiles.getDatabaseAliasesFile().exists())
       {
          return null;
       }
 
-      if(false == appFiles.getDatabaseAliasesFile().exists())
+
+      if(false == appFiles.getDatabaseAliasesFile_before_version_2_3().exists())
       {
          return null;
       }
 
-      File backupFile = new File(appFiles.getDatabaseAliasesFile().getPath() + "_2_2_to_2_3_conversion_backup");
-      if(false == appFiles.getDatabaseAliasesFile().renameTo(backupFile))
-      {
-         return "Conversion of Aliases file failed: Could not backup old file,\n" +
-            "You can not start this new version of SQuirreL using your existing Aliases.\n" +
-            "You may either continue to use your former version or remove file\n"
-            + appFiles.getDatabaseAliasesFile().getPath() + "\n\n" +
-            "Please contact us about this problem. Send a mail to squirrel-sql-users@lists.sourceforge.net.";
-      }
 
       try
       {
-         FileReader fr = new FileReader(backupFile);
+         FileReader fr = new FileReader(appFiles.getDatabaseAliasesFile_before_version_2_3());
          BufferedReader br = new BufferedReader(fr);
 
          FileWriter fw = new FileWriter(appFiles.getDatabaseAliasesFile());
@@ -78,17 +70,17 @@ public class FileTransformer
          br.close();
          fr.close();
 
-         Preferences.userRoot().put(prefKey, appFiles.getDatabaseAliasesFile().getPath());
          return null;
       }
       catch (Exception e)
       {
-         backupFile.renameTo(appFiles.getDatabaseAliasesFile());
-
-         return "Conversion of Aliases file failed: Could not write new Aliases file,\n" +
+         return "Conversion of Aliases file failed: Could not write new Aliases file named \n" +
+            appFiles.getDatabaseAliasesFile().getPath() + "\n" +
             "You can not start this new version of SQuirreL using your existing Aliases.\n" +
-            "You may either continue to use your former version or remove file\n"
-            + appFiles.getDatabaseAliasesFile().getPath() + "\n\n" +
+            "You may either continue to use your former SQuirreL version or remove file\n" +
+            appFiles.getDatabaseAliasesFile_before_version_2_3().getPath() + "\n" +
+            "for your first start of this SQuirreL version. SQuirreL will then try to create an empty Alias file named\n" +
+             appFiles.getDatabaseAliasesFile().getPath() + "\n" +
             "Please contact us about this problem. Send a mail to squirrel-sql-users@lists.sourceforge.net.";
       }
    }
