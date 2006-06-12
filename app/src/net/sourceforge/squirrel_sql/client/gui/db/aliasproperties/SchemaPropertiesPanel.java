@@ -22,6 +22,9 @@ public class SchemaPropertiesPanel extends JPanel
 
    JTable tblSchemas;
 
+   JComboBox cboSchemaTableUpdateWhat;
+   JComboBox cboSchemaTableUpdateTo;
+   JButton btnSchemaTableUpdateApply;
 
 
    public SchemaPropertiesPanel()
@@ -76,15 +79,48 @@ public class SchemaPropertiesPanel extends JPanel
       gbc = new GridBagConstraints(0,6,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,5,5,5), 0,0);
       add(new JScrollPane(tblSchemas), gbc);
 
+      gbc = new GridBagConstraints(0,7,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
+      add(createSchmeTableUpdatePanel(), gbc);
 
 
       // TODO do away
       JLabel lblDoAwy = new JLabel("Work in progress. GUI not yet functional.");
       lblDoAwy.setForeground(Color.red);
-      gbc = new GridBagConstraints(0,7,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
+      gbc = new GridBagConstraints(0,8,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
       add(lblDoAwy, gbc);
 
 
    }
+
+   private JPanel createSchmeTableUpdatePanel()
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
+      // i18n[SchemaPropertiesPanel.schemaTableUpdateLable1=Set]
+      ret.add(new JLabel(s_stringMgr.getString("SchemaPropertiesPanel.schemaTableUpdateLable1")), gbc);
+
+      cboSchemaTableUpdateWhat = new JComboBox();
+      gbc = new GridBagConstraints(1,0,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
+      ret.add(cboSchemaTableUpdateWhat, gbc);
+
+      gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
+      // i18n[SchemaPropertiesPanel.schemaTableUpdateLable2=in all Schemas to]
+      ret.add(new JLabel(s_stringMgr.getString("SchemaPropertiesPanel.schemaTableUpdateLable2")), gbc);
+
+      cboSchemaTableUpdateTo = new JComboBox();
+      gbc = new GridBagConstraints(3,0,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
+      ret.add(cboSchemaTableUpdateTo, gbc);
+
+      // i18n[SchemaPropertiesPanel.schemaTableUpdateApply=Apply]
+      btnSchemaTableUpdateApply = new JButton(s_stringMgr.getString("SchemaPropertiesPanel.schemaTableUpdateApply"));
+      gbc = new GridBagConstraints(4,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
+      ret.add(btnSchemaTableUpdateApply, gbc);
+
+      return ret;
+   }
+
 
 }
