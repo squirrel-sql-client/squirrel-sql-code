@@ -71,6 +71,8 @@ public class SessionPropertiesBeanInfo extends SimpleBeanInfo
                CLAZZ, "getSQLResultsOutputClassName", "setSQLResultsOutputClassName"),
             new PropertyDescriptor(IPropNames.SQL_START_OF_LINE_COMMENT,
                CLAZZ, "getStartOfLineComment", "setStartOfLineComment"),
+            new PropertyDescriptor(IPropNames.REMOVE_MULTI_LINE_COMMENT,
+               CLAZZ, "getRemoveMultiLineComment", "setRemoveMultiLineComment"),
             new PropertyDescriptor(IPropNames.LIMIT_SQL_ENTRY_HISTORY_SIZE,
                CLAZZ, "getLimitSQLEntryHistorySize", "setLimitSQLEntryHistorySize"),
             new PropertyDescriptor(IPropNames.SQL_ENTRY_HISTORY_SIZE,

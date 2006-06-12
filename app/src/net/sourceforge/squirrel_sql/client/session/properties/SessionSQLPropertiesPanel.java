@@ -132,6 +132,8 @@ public class SessionSQLPropertiesPanel
 		private JCheckBox _sqlLimitRowsChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.limitrows"));
 		private JTextField _stmtSepField = new JTextField(5);
 		private JTextField _solCommentField = new JTextField(2);
+      // i18n[SessionSQLPropertiesPanel.removeMultiLineComment=Remove multi line comment (/*...*/) from SQL before sending to database]
+      private JCheckBox _removeMultiLineComment = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.removeMultiLineComment"));
 
       private JCheckBox _limitSQLResultTabsChk = new JCheckBox(s_stringMgr.getString("SessionSQLPropertiesPanel.limitsqlresulttabs"));
       private IntegerField _limitSQLResultTabsField = new IntegerField(5);
@@ -173,8 +175,9 @@ public class SessionSQLPropertiesPanel
 			_sqlLimitRowsChk.setSelected(props.getSQLLimitRows());
 			_stmtSepField.setText(props.getSQLStatementSeparator());
 			_solCommentField.setText(props.getStartOfLineComment());
+         _removeMultiLineComment.setSelected(props.getRemoveMultiLineComment());
 
-			_shareSQLHistoryChk.setSelected(props.getSQLShareHistory());
+         _shareSQLHistoryChk.setSelected(props.getSQLShareHistory());
 			_limitSQLHistoryComboSizeChk.setSelected(props.getLimitSQLEntryHistorySize());
 			_limitSQLHistoryComboSizeField.setInt(props.getSQLEntryHistorySize());
 
@@ -205,6 +208,7 @@ public class SessionSQLPropertiesPanel
 			props.setSQLLimitRows(_sqlLimitRowsChk.isSelected());
 			props.setSQLStatementSeparator(_stmtSepField.getText());
 			props.setStartOfLineComment(_solCommentField.getText());
+         props.setRemoveMultiLineComment(_removeMultiLineComment.isSelected());
 
 			props.setFontInfo(_fontBtn.getFontInfo());
 
@@ -238,17 +242,6 @@ public class SessionSQLPropertiesPanel
 			// then disable the controls that relate to SQL History.
 			final boolean shareSQLHistory = _shareSQLHistoryChk.isSelected();
 
-//         if(_newSessionProperties)
-//         {
-//            _limitSQLHistoryComboSizeChk.setEnabled(true);
-//            _limitSQLHistoryComboSizeField.setEnabled(_limitSQLHistoryComboSizeChk.isSelected());
-//         }
-//         else
-//         {
-//            _limitSQLHistoryComboSizeChk.setEnabled(!shareSQLHistory);
-//            _limitSQLHistoryComboSizeField.setEnabled(!shareSQLHistory &&
-//                           _limitSQLHistoryComboSizeChk.isSelected());
-//         }
 		}
 
 		private void createGUI()
@@ -372,7 +365,13 @@ public class SessionSQLPropertiesPanel
 			++gbc.gridx;
 			pnl.add(_solCommentField, gbc);
 
-			return pnl;
+         ++gbc.gridy; // new line
+         gbc.gridx = 0;
+         gbc.gridwidth = 4;
+         pnl.add(_removeMultiLineComment, gbc);
+
+
+         return pnl;
 		}
 		private JPanel createFontPanel()
 		{

@@ -120,7 +120,7 @@ public class ValidateSQLAction extends SquirrelAction implements ISessionAction
 			final ValidationProps valProps = new ValidationProps(_prefs, wssProps,
 													_session.getMessageHandler(),
 													sql, stmtSep, solComment);
-			new Executor(_session.getApplication(), valProps).execute();
+			new Executor(_session.getApplication(), valProps, _session.getProperties()).execute();
 		}
 		else
 		{
@@ -157,20 +157,23 @@ public class ValidateSQLAction extends SquirrelAction implements ISessionAction
 	{
 		private final IApplication _app;
 		private final ValidationProps _valProps;
+      private SessionProperties _sessionProperties;
 
-		Executor(IApplication app, ValidationProps valProps)
-		{
-			super();
-			_app = app;
-			_valProps = valProps;
-		}
+      Executor(IApplication app, ValidationProps valProps, SessionProperties sessionProperties)
+      {
+         super();
+         _app = app;
+         _valProps = valProps;
+         _sessionProperties = sessionProperties;
+      }
 
 		public void execute()
 		{
 			ValidateSQLCommand cmd = new ValidateSQLCommand(_valProps._prefs,
 											_valProps._sessionProps,
 											_valProps._sql, _valProps._stmtSep,
-											_valProps._solComment);
+											_valProps._solComment,
+                                 _sessionProperties);
 			try
 			{
 				cmd.execute();
