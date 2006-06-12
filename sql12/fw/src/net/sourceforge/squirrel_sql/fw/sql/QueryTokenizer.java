@@ -26,7 +26,7 @@ public class QueryTokenizer
 	private Iterator _queryIterator;
 
 
-	public QueryTokenizer(String sql, String querySep, String lineCommentBegin)
+	public QueryTokenizer(String sql, String querySep, String lineCommentBegin, boolean removeMultiLineComment)
 	{
 		String MULTI_LINE_COMMENT_END = "*/";
 		String MULTI_LINE_COMMENT_BEGIN = "/*";
@@ -57,7 +57,7 @@ public class QueryTokenizer
 				}
 
 				// We look backwards
-				if(isInMultiLineComment && sql.startsWith("*/", i - MULTI_LINE_COMMENT_END.length()))
+				if(isInMultiLineComment && sql.startsWith(MULTI_LINE_COMMENT_END, i - MULTI_LINE_COMMENT_END.length()))
 				{
 					isInMultiLineComment = false;
 				}
@@ -70,7 +70,7 @@ public class QueryTokenizer
 					isInLineComment = sql.startsWith(lineCommentBegin, i);
 				}
 
-				if(isInMultiLineComment || isInLineComment)
+				if((isInMultiLineComment && removeMultiLineComment) || isInLineComment)
 				{
 					// This is responsible that comments are not in curQuery
 					continue;

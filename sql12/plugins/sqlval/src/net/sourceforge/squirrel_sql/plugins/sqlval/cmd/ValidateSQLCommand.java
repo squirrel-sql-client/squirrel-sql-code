@@ -29,6 +29,8 @@ import net.sourceforge.squirrel_sql.plugins.sqlval.WebServicePreferences;
 import net.sourceforge.squirrel_sql.plugins.sqlval.WebServiceSession;
 import net.sourceforge.squirrel_sql.plugins.sqlval.WebServiceSessionProperties;
 import net.sourceforge.squirrel_sql.plugins.sqlval.WebServiceValidator;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+
 /**
  * This <CODE>ICommand</CODE> will validate the passed SQL.
  *
@@ -36,68 +38,70 @@ import net.sourceforge.squirrel_sql.plugins.sqlval.WebServiceValidator;
  */
 public class ValidateSQLCommand implements ICommand
 {
-	private final WebServicePreferences _prefs;
-	private final WebServiceSessionProperties _sessionProps;
-	private final String _sql;
-	private final String _stmtSep;
-	private final String _solComment;
-	private String _results;
+   private final WebServicePreferences _prefs;
+   private final WebServiceSessionProperties _wsSessionProps;
+   private final String _sql;
+   private final String _stmtSep;
+   private final String _solComment;
+   private SessionProperties _sessionProperties;
+   private String _results;
 
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(ValidateSQLCommand.class);
+   /** Logger for this class. */
+   private final static ILogger s_log =
+      LoggerController.createLogger(ValidateSQLCommand.class);
 
-	public ValidateSQLCommand(WebServicePreferences prefs,
-				WebServiceSessionProperties sessionProps, String sql,
-				String stmtSep, String solComment)
-	{
-		super();
-		_prefs = prefs;
-		_sessionProps = sessionProps;
-		_sql = sql;
-		_stmtSep= stmtSep;
-		_solComment = solComment;
-	}
+   public ValidateSQLCommand(WebServicePreferences prefs,
+                             WebServiceSessionProperties wsSessionProps, String sql,
+                             String stmtSep, String solComment, SessionProperties sessionProperties)
+   {
+      super();
+      _prefs = prefs;
+      _wsSessionProps = wsSessionProps;
+      _sql = sql;
+      _stmtSep= stmtSep;
+      _solComment = solComment;
+      _sessionProperties = sessionProperties;
+   }
 
-	public void openSession(WebServiceSession info)
-	{
-		if (info == null)
-		{
-			throw new IllegalArgumentException("ValidationInfo == null");
-		}
-	}
+   public void openSession(WebServiceSession info)
+   {
+      if (info == null)
+      {
+         throw new IllegalArgumentException("ValidationInfo == null");
+      }
+   }
 
-	public String getResults()
-	{
-		return _results;
-	}
+   public String getResults()
+   {
+      return _results;
+   }
 
-	public void execute() throws BaseException
-	{
-		try
-		{
-			// Open connection to the webservice.
-			WebServiceSession wss = new WebServiceSession(_prefs,_sessionProps);
-			wss.open();
+   public void execute() throws BaseException
+   {
+      try
+      {
+         // Open connection to the webservice.
+         WebServiceSession wss = new WebServiceSession(_prefs,_wsSessionProps);
+         wss.open();
 
-			final WebServiceValidator val = new WebServiceValidator(wss, _sessionProps);
-			final QueryTokenizer qt = new QueryTokenizer(_sql, _stmtSep, _solComment);
+         final WebServiceValidator val = new WebServiceValidator(wss, _wsSessionProps);
+         final QueryTokenizer qt = new QueryTokenizer(_sql, _stmtSep, _solComment, _sessionProperties.getRemoveMultiLineComment());
 
-			final StringBuffer results = new StringBuffer(1024);
-			while (qt.hasQuery())
-			{
-				// TODO: When message are can have some text in red (error)
-				// and some normal then put out errors in red.
-				ValidatorResult rc = val.validate(qt.nextQuery());
-				results.append(rc.getData());
-			}
-			_results = results.toString().trim();
+         final StringBuffer results = new StringBuffer(1024);
+         while (qt.hasQuery())
+         {
+            // TODO: When message are can have some text in red (error)
+            // and some normal then put out errors in red.
+            ValidatorResult rc = val.validate(qt.nextQuery());
+            results.append(rc.getData());
+         }
+         _results = results.toString().trim();
 
-		}
-		catch (Throwable th)
-		{
-			throw new BaseException(th);
-		}
-	}
+      }
+      catch (Throwable th)
+      {
+         throw new BaseException(th);
+      }
+   }
 }
 

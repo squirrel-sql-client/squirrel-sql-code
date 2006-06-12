@@ -76,6 +76,7 @@ public class SessionProperties implements Cloneable, Serializable
       String SQL_STATEMENT_SEPARATOR_STRING = "sqlStatementSeparatorString";
       String TABLE_CONTENTS_OUTPUT_CLASS_NAME = "tableContentsOutputClassName";
       String LIMIT_SQL_RESULT_TABS = "limitSqlResultTabs";
+      String REMOVE_MULTI_LINE_COMMENT = "removeMultiLineComment";
    }
 
    private static final FontInfo DEFAULT_FONT_INFO =
@@ -148,6 +149,8 @@ public class SessionProperties implements Cloneable, Serializable
    /** Used to indicate a &quot;Start Of Line&quot; comment in SQL. */
    private String _solComment = "--";
 
+   private boolean _removeMultiLineComment = true;
+   
    /** Font information for the SQL entry area. */
    private FontInfo _fi = (FontInfo)DEFAULT_FONT_INFO.clone();
 
@@ -665,6 +668,7 @@ public class SessionProperties implements Cloneable, Serializable
       return _solComment;
    }
 
+
    /**
     * Set the string used to represent a Start of Line Comment in SQL.
     */
@@ -676,6 +680,22 @@ public class SessionProperties implements Cloneable, Serializable
                            IPropertyNames.SQL_START_OF_LINE_COMMENT,
                            oldValue, _solComment);
    }
+
+   public boolean getRemoveMultiLineComment()
+   {
+      return _removeMultiLineComment;
+   }
+
+   public synchronized void setRemoveMultiLineComment(boolean data)
+   {
+      final boolean oldValue = _removeMultiLineComment;
+      _removeMultiLineComment = data;
+      getPropertyChangeReporter().firePropertyChange(
+         IPropertyNames.REMOVE_MULTI_LINE_COMMENT,
+         oldValue, _removeMultiLineComment);
+   }
+
+
 
    public FontInfo getFontInfo()
    {
