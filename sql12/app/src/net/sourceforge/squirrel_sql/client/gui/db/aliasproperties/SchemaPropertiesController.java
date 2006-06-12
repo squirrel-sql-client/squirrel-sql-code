@@ -5,12 +5,10 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasComman
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaProperties;
 import net.sourceforge.squirrel_sql.client.gui.db.ConnectToAliasCallBack;
-import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaDetailProperties;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 
 import javax.swing.*;
@@ -19,7 +17,6 @@ import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.sql.Driver;
 import java.sql.SQLException;
 
 public class SchemaPropertiesController implements IAliasPropertiesPanelController
@@ -81,6 +78,26 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
       _pnl.radLoadAllAndCacheNone.setSelected(alias.getSchemaProperties().getGlobalState() == SQLAliasSchemaProperties.GLOBAL_STATE_LOAD_ALL_CACHE_NONE);
       _pnl.radLoadAndCacheAll.setSelected(alias.getSchemaProperties().getGlobalState() == SQLAliasSchemaProperties.GLOBAL_STATE_LOAD_AND_CACHE_ALL);
       _pnl.radSpecifySchemas.setSelected(alias.getSchemaProperties().getGlobalState() == SQLAliasSchemaProperties.GLOBAL_STATE_SPECIFY_SCHEMAS);
+
+
+      _pnl.cboSchemaTableUpdateWhat.addItem(SchemaTableUpdateWhatItem.TABLES);
+      _pnl.cboSchemaTableUpdateWhat.addItem(SchemaTableUpdateWhatItem.VIEWS);
+      _pnl.cboSchemaTableUpdateWhat.addItem(SchemaTableUpdateWhatItem.FUNCTIONS);
+
+      for (int i = 0; i < SchemaTableCboItem.items.length; i++)
+      {
+         _pnl.cboSchemaTableUpdateTo.addItem(SchemaTableCboItem.items[i]);
+      }
+
+
+      _pnl.btnSchemaTableUpdateApply.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onSchemaTableUpdateApply();
+         }
+      });
+
       updateEnabled();
 
       _pnl.radLoadAllAndCacheNone.addActionListener(new ActionListener()
@@ -132,6 +149,27 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
       }
    }
 
+   private void onSchemaTableUpdateApply()
+   {
+      SchemaTableUpdateWhatItem selWhatItem = (SchemaTableUpdateWhatItem) _pnl.cboSchemaTableUpdateWhat.getSelectedItem();
+
+      SchemaTableCboItem selToItem = (SchemaTableCboItem) _pnl.cboSchemaTableUpdateTo.getSelectedItem();
+
+      if(SchemaTableUpdateWhatItem.TABLES == selWhatItem)
+      {
+         _schemaTableModel.setColumnTo(SchemaTableModel.IX_TABLE, selToItem);
+      }
+      else if(SchemaTableUpdateWhatItem.VIEWS == selWhatItem)
+      {
+         _schemaTableModel.setColumnTo(SchemaTableModel.IX_VIEW, selToItem);
+      }
+      else if(SchemaTableUpdateWhatItem.FUNCTIONS == selWhatItem)
+      {
+         _schemaTableModel.setColumnTo(SchemaTableModel.IX_FUNCTION, selToItem);
+      }
+   }
+
+
 
    /**
     * synchronized because the user may connect twice from within the Schema Properties Panel.
@@ -164,6 +202,10 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
       _pnl.btnUpdateSchemas.setEnabled(_pnl.radSpecifySchemas.isSelected());
 
       _pnl.tblSchemas.setEnabled(_pnl.radSpecifySchemas.isSelected());
+
+      _pnl.cboSchemaTableUpdateWhat.setEnabled(_pnl.radSpecifySchemas.isSelected());
+      _pnl.cboSchemaTableUpdateTo.setEnabled(_pnl.radSpecifySchemas.isSelected());
+      _pnl.btnSchemaTableUpdateApply.setEnabled(_pnl.radSpecifySchemas.isSelected());
 
       if(_pnl.radSpecifySchemas.isSelected())
       {
@@ -227,4 +269,28 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
    {
       return _pnl;
    }
+
+   private static class SchemaTableUpdateWhatItem
+   {
+      // i18n[SchemaTableUpdateWhatItem.tables=Tables]
+      public static final SchemaTableUpdateWhatItem TABLES = new SchemaTableUpdateWhatItem(s_stringMgr.getString("SchemaTableUpdateWhatItem.tables"));
+      // i18n[SchemaTableUpdateWhatItem.views=Views]
+      public static final SchemaTableUpdateWhatItem VIEWS = new SchemaTableUpdateWhatItem(s_stringMgr.getString("SchemaTableUpdateWhatItem.views"));
+      // i18n[SchemaTableUpdateWhatItem.functions=Functions]
+      public static final SchemaTableUpdateWhatItem FUNCTIONS = new SchemaTableUpdateWhatItem(s_stringMgr.getString("SchemaTableUpdateWhatItem.functions"));
+
+      private String _name;
+
+      private SchemaTableUpdateWhatItem(String name)
+      {
+         _name = name;
+      }
+
+      public String toString()
+      {
+         return _name;
+      }
+   }
+
+
 }

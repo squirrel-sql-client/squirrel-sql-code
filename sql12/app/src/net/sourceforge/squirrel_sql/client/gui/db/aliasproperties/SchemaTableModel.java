@@ -123,4 +123,25 @@ public class SchemaTableModel extends DefaultTableModel
 
       fireTableDataChanged();
    }
+
+   public void setColumnTo(int modelIndex, SchemaTableCboItem toItem)
+   {
+      for (int i = 0; i < _schemaDetails.length; i++)
+      {
+         if(IX_TABLE == modelIndex)
+         {
+            _schemaDetails[i].setTable(toItem.getID());
+         }
+         else if(IX_VIEW == modelIndex)
+         {
+            _schemaDetails[i].setView(toItem.getID());
+         }
+         else if(IX_FUNCTION == modelIndex)
+         {
+            _schemaDetails[i].setFunction(toItem.getID());
+         }
+      }
+
+      fireTableDataChanged();
+   }
 }
