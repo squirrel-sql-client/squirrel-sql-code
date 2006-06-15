@@ -76,4 +76,9 @@ public class NullMessageHandler implements IMessageHandler
 	{
 		// Empty.
 	}
+
+   public void showWarningMessage(String msg)
+   {
+      // Empty.
+   }
 }

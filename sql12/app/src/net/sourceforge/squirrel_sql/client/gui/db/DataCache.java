@@ -385,7 +385,7 @@ public class DataCache
       }
    }
 
-   public ISQLAlias createAlias(IIdentifier id)
+   public SQLAlias createAlias(IIdentifier id)
    {
       return new SQLAlias(id);
    }

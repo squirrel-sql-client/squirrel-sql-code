@@ -45,6 +45,8 @@ public class ListMessageHandler implements IMessageHandler
    /** Stores exceptions. */
    private List _errThrowables = new Vector();
 
+   private List _warningMsgs = new Vector();
+
    //
    ///////////////////////////////////////////////////////////////////////////////////
 
@@ -96,6 +98,11 @@ public class ListMessageHandler implements IMessageHandler
       _errMsgs.add(msg);
    }
 
+   public void showWarningMessage(String msg)
+   {
+      _warningMsgs.add(msg);
+   }
+
    /**
     * Return array of stored exceptions.
     *
@@ -134,5 +141,10 @@ public class ListMessageHandler implements IMessageHandler
    public String[] getErrorMessages()
    {
       return (String[])_errMsgs.toArray(new String[_errMsgs.size()]);
+   }
+
+   public String[] getWarningMessages()
+   {
+      return (String[]) _warningMsgs.toArray(new String[_warningMsgs.size()]);
    }
 }

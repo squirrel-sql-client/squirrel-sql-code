@@ -1,6 +1,8 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
-public class SQLAliasSchemaDetailProperties implements Comparable
+import java.io.Serializable;
+
+public class SQLAliasSchemaDetailProperties implements Comparable, Serializable
 {
    private String _schemaName;
    private int _table ;

@@ -30,6 +30,8 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasesListInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.db.IAliasesList;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+
 /**
  * This <CODE>Action</CODE> allows the user to copy an <TT>ISQLAlias</TT>
  * and maintain the newly copied one.
@@ -38,61 +40,61 @@ import net.sourceforge.squirrel_sql.client.gui.db.IAliasesList;
  */
 public class CopyAliasAction extends SquirrelAction
 {
-	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(CopyAliasAction.class);
+   /** Logger for this class. */
+   private static ILogger s_log =
+      LoggerController.createLogger(CopyAliasAction.class);
 
     /** Internationalized strings for this class. */
     private static final StringManager s_stringMgr =
         StringManagerFactory.getStringManager(CopyAliasAction.class);
-    
-	/**
-	 * List of all the users aliases.
-	 */
-	private final IAliasesList _aliases;
 
-	/**
-	 * Ctor specifying the list of aliases.
-	 *
-	 * @param	app		Application API.
-	 * @param	list	List of <TT>ISQLAlias</TT> objects.
-	 *
-	 * @throws	IllegalArgumentException
-	 *			thrown if a <TT>null</TT> <TT>AliasesList</TT> passed.
-	 */
-	public CopyAliasAction(IApplication app, IAliasesList list)
-	{
-		super(app);
-		if (list == null)
-		{
-			throw new IllegalArgumentException("Null AliasesList passed");
-		}
-		_aliases = list;
-	}
+   /**
+    * List of all the users aliases.
+    */
+   private final IAliasesList _aliases;
 
-	/**
-	 * Perform this action. Use the <TT>CopyAliasCommand</TT>.
-	 *
-	 * @param	evt	The current event.
-	 */
-	public void actionPerformed(ActionEvent evt)
-	{
-		IApplication app = getApplication();
-		AliasesListInternalFrame tw = app.getWindowManager().getAliasesListInternalFrame();
-		tw.moveToFront();
-		try
-		{
-			tw.setSelected(true);
-		}
-		catch (PropertyVetoException ex)
-		{
+   /**
+    * Ctor specifying the list of aliases.
+    *
+    * @param	app		Application API.
+    * @param	list	List of <TT>ISQLAlias</TT> objects.
+    *
+    * @throws	IllegalArgumentException
+    *			thrown if a <TT>null</TT> <TT>AliasesList</TT> passed.
+    */
+   public CopyAliasAction(IApplication app, IAliasesList list)
+   {
+      super(app);
+      if (list == null)
+      {
+         throw new IllegalArgumentException("Null AliasesList passed");
+      }
+      _aliases = list;
+   }
+
+   /**
+    * Perform this action. Use the <TT>CopyAliasCommand</TT>.
+    *
+    * @param	evt	The current event.
+    */
+   public void actionPerformed(ActionEvent evt)
+   {
+      IApplication app = getApplication();
+      AliasesListInternalFrame tw = app.getWindowManager().getAliasesListInternalFrame();
+      tw.moveToFront();
+      try
+      {
+         tw.setSelected(true);
+      }
+      catch (PropertyVetoException ex)
+      {
             // i18n[CopyAliasAction.error.selectingwindow=Error selecting window]
-			s_log.error(s_stringMgr.getString("CopyAliasAction.error.selectingwindow"), ex);
-		}
-		ISQLAlias alias = _aliases.getSelectedAlias();
-		if (alias != null)
-		{
-			new CopyAliasCommand(getApplication(), alias).execute();
-		}
-	}
+         s_log.error(s_stringMgr.getString("CopyAliasAction.error.selectingwindow"), ex);
+      }
+      SQLAlias alias = _aliases.getSelectedAlias();
+      if (alias != null)
+      {
+         new CopyAliasCommand(getApplication(), alias).execute();
+      }
+   }
 }

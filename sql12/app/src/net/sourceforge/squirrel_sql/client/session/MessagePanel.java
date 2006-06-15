@@ -25,6 +25,8 @@ import java.awt.event.MouseEvent;
 import java.sql.DataTruncation;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -54,9 +56,10 @@ public class MessagePanel extends JTextPane implements IMessageHandler
 	/**
 	 * Attribute sets for error and last message.
 	 */
-	private SimpleAttributeSet _saSetLastMessage;
-	private SimpleAttributeSet _saSetLastMessageError;
+	private SimpleAttributeSet _saSetMessage;
+//	private SimpleAttributeSet _saSetErrorHistory;
 	private SimpleAttributeSet _saSetError;
+	private SimpleAttributeSet _saSetWarning;
 
 	/**
 	 * Save into these attributes the parameters of the last message being output.
@@ -67,78 +70,96 @@ public class MessagePanel extends JTextPane implements IMessageHandler
 	private String _lastMessage;
 	private SimpleAttributeSet _lastSASet;
 
-	/**
-	 * Default ctor.
-	 */
-	public MessagePanel()
-	{
-		super();
+   private HashMap _saSetHistoryBySaSet =new HashMap();
 
-		_popupMenu.setTextComponent(this);
+   /**
+    * Default ctor.
+    */
+   public MessagePanel()
+   {
+      super();
 
-		// Add mouse listener for displaying popup menu.
-		addMouseListener(new MouseAdapter()
-		{
-			public void mousePressed(MouseEvent evt)
-			{
-				if (evt.isPopupTrigger())
-				{
-					_popupMenu.show(evt);
-				}
-			}
-			public void mouseReleased(MouseEvent evt)
-			{
-				if (evt.isPopupTrigger())
-				{
-					_popupMenu.show(evt);
-				}
-			}
-		});
+      _popupMenu.setTextComponent(this);
 
-		// Initialize sttribute sets.
-		// Last message, no error.
-		_saSetLastMessage = new SimpleAttributeSet();
-		StyleConstants.setBackground(_saSetLastMessage, Color.green);
-		// Last message, error.
-		_saSetLastMessageError = new SimpleAttributeSet();
-		StyleConstants.setBackground(_saSetLastMessageError, Color.red);
-		// Message, with error.
-		_saSetError = new SimpleAttributeSet();
-		StyleConstants.setBackground(_saSetError, Color.pink);
-	}
+      // Add mouse listener for displaying popup menu.
+      addMouseListener(new MouseAdapter()
+      {
+         public void mousePressed(MouseEvent evt)
+         {
+            if (evt.isPopupTrigger())
+            {
+               _popupMenu.show(evt);
+            }
+         }
+         public void mouseReleased(MouseEvent evt)
+         {
+            if (evt.isPopupTrigger())
+            {
+               _popupMenu.show(evt);
+            }
+         }
+      });
 
-	/**
-	 * Show a message describing the passed throwable object.
-	 *
-	 * @param th	The throwable object.
-	 */
-	public synchronized void showMessage(final Throwable th)
-	{
-		if (th != null)
-		{
-			privateShowMessage(th, null);
-		}
-	}
+      ///////////////////////////////////////////////////////////////////
+      // Message
+      _saSetMessage = new SimpleAttributeSet();
+      StyleConstants.setBackground(_saSetMessage, Color.green);
+
+      SimpleAttributeSet saSetMessageHistory = new SimpleAttributeSet();
+      StyleConstants.setBackground(saSetMessageHistory, getBackground());
+      _saSetHistoryBySaSet.put(_saSetMessage, saSetMessageHistory);
+      //
+      ////////////////////////////////////////////////////////////////
+
+
+      ///////////////////////////////////////////////////////////////////
+      // Warning
+      _saSetWarning = new SimpleAttributeSet();
+      StyleConstants.setBackground(_saSetWarning, Color.yellow);
+
+      SimpleAttributeSet saSetWarningHistory = new SimpleAttributeSet();
+      StyleConstants.setBackground(saSetWarningHistory, new Color(255,255,210)); // a light yellow
+      _saSetHistoryBySaSet.put(_saSetWarning, saSetWarningHistory);
+      //
+      ////////////////////////////////////////////////////////////////
+
+
+      /////////////////////////////////////////////////////////////////
+      // Error
+      _saSetError = new SimpleAttributeSet();
+      StyleConstants.setBackground(_saSetError, Color.red);
+
+      SimpleAttributeSet saSetErrorHistory = new SimpleAttributeSet();
+      StyleConstants.setBackground(saSetErrorHistory, Color.pink);
+      _saSetHistoryBySaSet.put(_saSetError, saSetErrorHistory);
+      //
+      //////////////////////////////////////////////////////////////////
+
+
+   }
+
 
    public void addToMessagePanelPopup(Action act)
    {
       _popupMenu.add(act);   
    }
 
-	/**
-	 * Show a message.
-	 *
-	 * @param msg	The message to be shown.
-	 */
-	public synchronized void showMessage(final String msg)
-	{
-		if (msg != null)
-		{
-			privateShowMessage(msg, null);
-		}
-	}
 
-	/**
+   /**
+    * Show a message describing the passed throwable object.
+    *
+    * @param th	The throwable object.
+    */
+   public synchronized void showMessage(final Throwable th)
+   {
+      if (th != null)
+      {
+         privateShowMessage(th, _saSetMessage);
+      }
+   }
+   
+
+   /**
 	 * Show an error message describing the passed exception. The controls
 	 * background color will be changed to show it is an error msg.
 	 *
@@ -152,7 +173,29 @@ public class MessagePanel extends JTextPane implements IMessageHandler
 		}
 	}
 
-	/**
+
+   /**
+    * Show a message.
+    *
+    * @param msg	The message to be shown.
+    */
+   public synchronized void showMessage(final String msg)
+   {
+      if (msg != null)
+      {
+         privateShowMessage(msg, _saSetMessage);
+      }
+   }
+
+   public void showWarningMessage(String msg)
+   {
+      if (msg != null)
+      {
+         privateShowMessage(msg, _saSetWarning);
+      }
+   }
+
+   /**
 	 * Show an error message. The controls
 	 * background color will be changed to show it is an error msg.
 	 *
@@ -166,72 +209,73 @@ public class MessagePanel extends JTextPane implements IMessageHandler
 		}
 	}
 
-	/**
-	 * Private method, the real implementation of the corresponding show*Message methods.
-	 *
-	 * @param th	The throwable whose details shall be displayed.
-	 * @param saSet The SimpleAttributeSet to be used for message output.
-	 */
-	private void privateShowMessage(final Throwable th, SimpleAttributeSet saSet)
-	{
-		if (th != null)
-		{
-			if (th instanceof DataTruncation)
-			{
-				DataTruncation ex = (DataTruncation) th;
-				StringBuffer buf = new StringBuffer();
-				buf.append("Data Truncation error occured on")
-					.append(ex.getRead() ? " a read " : " a write ")
-					.append(" of column ")
-					.append(ex.getIndex())
-					.append("Data was ")
-					.append(ex.getDataSize())
-					.append(" bytes long and ")
-					.append(ex.getTransferSize())
-					.append(" bytes were transferred.");
-				privateShowMessage(buf.toString(), saSet);
-			}
-			else if (th instanceof SQLWarning)
-			{
-				SQLWarning ex = (SQLWarning) th;
-				while (ex != null)
-				{
-					StringBuffer buf = new StringBuffer();
-					buf.append("Warning:   ")
-						.append(ex.getMessage())
-						.append("\nSQLState:  ")
-						.append(ex.getSQLState())
-						.append("\nErrorCode: ")
-						.append(ex.getErrorCode());
-					s_log.debug("Warning shown in MessagePanel", th);
-					ex = ex.getNextWarning();
-					privateShowMessage(buf.toString(), saSet);
-				}
-			}
-			else if (th instanceof SQLException)
-			{
-				SQLException ex = (SQLException) th;
-				while (ex != null)
-				{
-					StringBuffer buf = new StringBuffer();
-					buf.append("Error:	 ")
-						.append(ex.getMessage())
-						.append("\nSQLState:  ")
-						.append(ex.getSQLState())
-						.append("\nErrorCode: ")
-						.append(ex.getErrorCode());
-					s_log.debug("Error", th);
-					ex = ex.getNextException();
-					privateShowMessage(buf.toString(), saSet);
-				}
-			}
-			else
-			{
-				privateShowMessage(th.toString(), saSet);
-				s_log.debug("Exception shown in MessagePanel", th);
-			}
-		}
-	}
+
+   /**
+    * Private method, the real implementation of the corresponding show*Message methods.
+    *
+    * @param th	The throwable whose details shall be displayed.
+    * @param saSet The SimpleAttributeSet to be used for message output.
+    */
+   private void privateShowMessage(final Throwable th, SimpleAttributeSet saSet)
+   {
+      if (th != null)
+      {
+         if (th instanceof DataTruncation)
+         {
+            DataTruncation ex = (DataTruncation) th;
+            StringBuffer buf = new StringBuffer();
+            buf.append("Data Truncation error occured on")
+               .append(ex.getRead() ? " a read " : " a write ")
+               .append(" of column ")
+               .append(ex.getIndex())
+               .append("Data was ")
+               .append(ex.getDataSize())
+               .append(" bytes long and ")
+               .append(ex.getTransferSize())
+               .append(" bytes were transferred.");
+            privateShowMessage(buf.toString(), saSet);
+         }
+         else if (th instanceof SQLWarning)
+         {
+            SQLWarning ex = (SQLWarning) th;
+            while (ex != null)
+            {
+               StringBuffer buf = new StringBuffer();
+               buf.append("Warning:   ")
+                  .append(ex.getMessage())
+                  .append("\nSQLState:  ")
+                  .append(ex.getSQLState())
+                  .append("\nErrorCode: ")
+                  .append(ex.getErrorCode());
+               s_log.debug("Warning shown in MessagePanel", th);
+               ex = ex.getNextWarning();
+               privateShowMessage(buf.toString(), saSet);
+            }
+         }
+         else if (th instanceof SQLException)
+         {
+            SQLException ex = (SQLException) th;
+            while (ex != null)
+            {
+               StringBuffer buf = new StringBuffer();
+               buf.append("Error:	 ")
+                  .append(ex.getMessage())
+                  .append("\nSQLState:  ")
+                  .append(ex.getSQLState())
+                  .append("\nErrorCode: ")
+                  .append(ex.getErrorCode());
+               s_log.debug("Error", th);
+               ex = ex.getNextException();
+               privateShowMessage(buf.toString(), saSet);
+            }
+         }
+         else
+         {
+            privateShowMessage(th.toString(), saSet);
+            s_log.debug("Exception shown in MessagePanel", th);
+         }
+      }
+   }
 
 	/**
 	 * Private method, the real implementation of the corresponding show*Message methods.
@@ -268,18 +312,22 @@ public class MessagePanel extends JTextPane implements IMessageHandler
 		Document document = getStyledDocument();
 		try
 		{
-			// Check if document was cleared or if this is the first message being output.
-			if (document.getLength() >= _lastLength && null != _lastMessage)
+         /////////////////////////////////////////////////////////////////////////////////
+         // Checks if the former message should be highlighted in a 'history' color.
+         if (document.getLength() >= _lastLength && null != _lastMessage)
 			{
-				document.remove(_lastLength, _lastMessage.length());
-				document.insertString(document.getLength(), _lastMessage, _lastSASet);
+            SimpleAttributeSet historySaSet = (SimpleAttributeSet) _saSetHistoryBySaSet.get(_lastSASet);
+            document.remove(_lastLength, _lastMessage.length());
+            document.insertString(document.getLength(), _lastMessage, historySaSet);
 			}
-			_lastLength = document.getLength();
+         //
+         ///////////////////////////////////////////////////////////////////////////////////
+
+         _lastLength = document.getLength();
 			_lastMessage = string;
 			_lastSASet = saSet;
 
-			document.insertString(document.getLength(), string,
-				saSet == _saSetError ? _saSetLastMessageError : _saSetLastMessage);
+			document.insertString(document.getLength(), string, saSet);
 		}
 		catch (BadLocationException ble)
 		{

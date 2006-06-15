@@ -147,7 +147,7 @@ class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
 	 */
-	public AliasInternalFrame getCopySheet(ISQLAlias alias)
+	public AliasInternalFrame getCopySheet(SQLAlias alias)
 	{
 		if (alias == null)
 		{
@@ -156,11 +156,19 @@ class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
 
 		final DataCache cache = _app.getDataCache();
 		final IIdentifierFactory factory = IdentifierFactory.getInstance();
-		ISQLAlias newAlias = cache.createAlias(factory.createIdentifier());
+		SQLAlias newAlias = cache.createAlias(factory.createIdentifier());
 		try
 		{
 			newAlias.assignFrom(alias);
-		}
+
+         if(SQLAliasSchemaProperties.GLOBAL_STATE_SPECIFY_SCHEMAS == newAlias.getSchemaProperties().getGlobalState())
+         {
+            // i18n[AliasWindowFactory.schemaPropsCopiedWarning=Warning: Your target Alias contains database specific Schema properties copied from the source Alias.\n
+            // Schema loading of the target Alias may be errorneous. Please check your target Alias's Schema properties.]
+            _app.getMessageHandler().showWarningMessage(s_stringMgr.getString("AliasWindowFactory.schemaPropsCopiedWarning"));
+         }
+
+      }
 		catch (ValidationException ex)
 		{
             // i18n[AliasWindowFactory.error.copyAlias=Error occured copying the alias]

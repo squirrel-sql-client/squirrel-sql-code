@@ -24,5 +24,5 @@ public interface IAliasesList
 	/**
 	 * Return the <TT>ISQLAlias</TT> that is currently selected.
 	 */
-	public ISQLAlias getSelectedAlias();
+	public SQLAlias getSelectedAlias();
 }

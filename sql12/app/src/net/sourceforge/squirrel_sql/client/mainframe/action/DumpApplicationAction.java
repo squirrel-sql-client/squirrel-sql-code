@@ -83,12 +83,17 @@ public class DumpApplicationAction extends SquirrelAction
 			{
 				cmd.execute();
 				String[] msgs = msgHandler.getMessages();
+            String[] warnings = msgHandler.getWarningMessages();
 				Throwable[] errors = msgHandler.getExceptions();
-				if (msgs.length > 0 || errors.length > 0)
+            if (msgs.length > 0 || errors.length > 0 || warnings.length > 0)
 				{
 					for (int i = 0; i < msgs.length; ++i)
 					{
 						app.showErrorDialog(msgs[i]);
+					}
+					for (int i = 0; i < warnings.length; ++i)
+					{
+						app.showErrorDialog(warnings[i]);
 					}
 					for (int i = 0; i < errors.length; ++i)
 					{

@@ -21,6 +21,8 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+
 /**
  * This <CODE>ICommand</CODE> allows the user to copy an existing
  * <TT>ISQLAlias</TT> to a new one and then maintain the new one.
@@ -29,40 +31,40 @@ import net.sourceforge.squirrel_sql.client.IApplication;
  */
 public class CopyAliasCommand implements ICommand
 {
-	/** Application API. */
-	private final IApplication _app;
+   /** Application API. */
+   private final IApplication _app;
 
-	/** <TT>ISQLAlias</TT> to be copied. */
-	private final ISQLAlias _sqlAlias;
+   /** <TT>ISQLAlias</TT> to be copied. */
+   private final SQLAlias _sqlAlias;
 
-	/**
-	 * Ctor.
-	 *
-	 * @param	app			Application API.
-	 * @param	sqlAlias	<TT>ISQLAlias</TT> to be copied.
-	 *
-	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>ISQLAlias</TT> or
-	 *			<tt>IApplication</tt> passed.
-	 */
-	public CopyAliasCommand(IApplication app, ISQLAlias sqlAlias)
-	{
-		super();
-		if (app == null)
-		{
-			throw new IllegalArgumentException("IApplication == null");
-		}
-		if (sqlAlias == null)
-		{
-			throw new IllegalArgumentException("Null ISQLAlias passed");
-		}
+   /**
+    * Ctor.
+    *
+    * @param	app			Application API.
+    * @param	sqlAlias	<TT>ISQLAlias</TT> to be copied.
+    *
+    * @throws	IllegalArgumentException
+    *			Thrown if a <TT>null</TT> <TT>ISQLAlias</TT> or
+    *			<tt>IApplication</tt> passed.
+    */
+   public CopyAliasCommand(IApplication app, SQLAlias sqlAlias)
+   {
+      super();
+      if (app == null)
+      {
+         throw new IllegalArgumentException("IApplication == null");
+      }
+      if (sqlAlias == null)
+      {
+         throw new IllegalArgumentException("Null ISQLAlias passed");
+      }
 
-		_app = app;
-		_sqlAlias = sqlAlias;
-	}
+      _app = app;
+      _sqlAlias = sqlAlias;
+   }
 
-	public void execute()
-	{
-		_app.getWindowManager().showCopyAliasInternalFrame(_sqlAlias);
-	}
+   public void execute()
+   {
+      _app.getWindowManager().showCopyAliasInternalFrame(_sqlAlias);
+   }
 }

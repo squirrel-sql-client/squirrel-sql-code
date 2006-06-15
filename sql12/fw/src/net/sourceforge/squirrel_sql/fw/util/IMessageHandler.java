@@ -50,4 +50,6 @@ public interface IMessageHandler
 	 * @param	th		Exception.
 	 */
 	void showErrorMessage(String msg);
+
+   void showWarningMessage(String msg);
 }

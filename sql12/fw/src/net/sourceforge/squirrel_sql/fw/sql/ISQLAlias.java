@@ -50,17 +50,6 @@ public interface ISQLAlias extends IHasIdentifier, IValidatable
 	}
 
 	/**
-	 * Assign data from the passed <CODE>ISQLAlias</CODE> to this one.
-	 *
-	 * @param	rhs	<CODE>ISQLAlias</CODE> to copy data from.
-	 *
-	 * @exception	ValidationException
-	 *				Thrown if an error occurs assigning data from
-	 *				<CODE>rhs</CODE>.
-	 */
-	void assignFrom(ISQLAlias rhs) throws ValidationException;
-
-	/**
 	 * Compare this <TT>ISQLAlias</TT> to another object. If the passed object
 	 * is a <TT>ISQLAlias</TT>, then the <TT>getName()</TT> functions of the two
 	 * <TT>ISQLAlias</TT> objects are used to compare them. Otherwise, it throws
