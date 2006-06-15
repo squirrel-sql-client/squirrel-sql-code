@@ -513,7 +513,7 @@ public class AliasInternalFrame extends BaseInternalFrame
 			{
 				final DataCache cache = _app.getDataCache();
 				final IIdentifierFactory factory = IdentifierFactory.getInstance();
-				final ISQLAlias testAlias = cache.createAlias(factory.createIdentifier());
+				final SQLAlias testAlias = cache.createAlias(factory.createIdentifier());
 				try
 				{
 					applyFromDialog(testAlias);

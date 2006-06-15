@@ -30,6 +30,8 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasesListInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.db.IAliasesList;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+
 /**
  * This <CODE>Action</CODE> allows the user to connect to an alias.
  *
@@ -37,55 +39,55 @@ import net.sourceforge.squirrel_sql.client.gui.db.IAliasesList;
  */
 public class ConnectToAliasAction extends SquirrelAction
 {
-	/** Logger for this class. */
-	private static ILogger s_log =
-		LoggerController.createLogger(ConnectToAliasAction.class);
+   /** Logger for this class. */
+   private static ILogger s_log =
+      LoggerController.createLogger(ConnectToAliasAction.class);
 
     /** Internationalized strings for this class. */
     private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(ConnectToAliasAction.class);   
-    
-	/**
-	 * List of all the users aliases.
-	 */
-	private final IAliasesList _aliases;
+        StringManagerFactory.getStringManager(ConnectToAliasAction.class);
 
-	/**
-	 * Ctor specifying the list of aliases.
-	 *
-	 * @param	app		Application API.
-	 * @param	list	List of <TT>ISQLAlias</TT> objects.
-	 */
-	public ConnectToAliasAction(IApplication app, IAliasesList list)
-	{
-		super(app);
-		_aliases = list;
-	}
+   /**
+    * List of all the users aliases.
+    */
+   private final IAliasesList _aliases;
 
-	/**
-	 * Perform this action. Retrieve the current alias from this list and
-	 * connect to it.
-	 *
-	 * @param	evt		The current event.
-	 */
-	public void actionPerformed(ActionEvent evt)
-	{
-		final IApplication app = getApplication();
-		final AliasesListInternalFrame tw = app.getWindowManager().getAliasesListInternalFrame();
-		tw.moveToFront();
-		try
-		{
-			tw.setSelected(true);
-		}
-		catch (PropertyVetoException ex)
-		{
+   /**
+    * Ctor specifying the list of aliases.
+    *
+    * @param	app		Application API.
+    * @param	list	List of <TT>ISQLAlias</TT> objects.
+    */
+   public ConnectToAliasAction(IApplication app, IAliasesList list)
+   {
+      super(app);
+      _aliases = list;
+   }
+
+   /**
+    * Perform this action. Retrieve the current alias from this list and
+    * connect to it.
+    *
+    * @param	evt		The current event.
+    */
+   public void actionPerformed(ActionEvent evt)
+   {
+      final IApplication app = getApplication();
+      final AliasesListInternalFrame tw = app.getWindowManager().getAliasesListInternalFrame();
+      tw.moveToFront();
+      try
+      {
+         tw.setSelected(true);
+      }
+      catch (PropertyVetoException ex)
+      {
             // i18n[ConnectToAliasAction.error.selectingwindow=Error selecting window]
-			s_log.error(s_stringMgr.getString("ConnectToAliasAction.error.selectingwindow"), ex);
-		}
-		final ISQLAlias alias = _aliases.getSelectedAlias();
-		if (alias != null)
-		{
-			new ConnectToAliasCommand(app, alias).execute();
-		}
-	}
+         s_log.error(s_stringMgr.getString("ConnectToAliasAction.error.selectingwindow"), ex);
+      }
+      final SQLAlias alias = _aliases.getSelectedAlias();
+      if (alias != null)
+      {
+         new ConnectToAliasCommand(app, alias).execute();
+      }
+   }
 }

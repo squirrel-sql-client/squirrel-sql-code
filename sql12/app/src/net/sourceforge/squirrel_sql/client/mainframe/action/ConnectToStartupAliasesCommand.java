@@ -26,6 +26,9 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.db.DataCache;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+
 /**
  * This <CODE>ICommand</CODE> connects to all aliases specified as "connect
  * at startup.
@@ -34,48 +37,48 @@ import net.sourceforge.squirrel_sql.client.IApplication;
  */
 public class ConnectToStartupAliasesCommand implements ICommand
 {
-	/** Application API. */
-	private final IApplication _app;
+   /** Application API. */
+   private final IApplication _app;
 
-	/**
-	 * Ctor.
-	 *
-	 * @param	app		Application API
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if <TT>null</TT> <TT>IApplication</TT> passed.
-	 */
-	public ConnectToStartupAliasesCommand(IApplication app)
-	{
-		super();
-		if (app == null)
-		{
-			throw new IllegalArgumentException("IApplication == null");
-		}
+   /**
+    * Ctor.
+    *
+    * @param	app		Application API
+    *
+    * @throws	IllegalArgumentException
+    * 			Thrown if <TT>null</TT> <TT>IApplication</TT> passed.
+    */
+   public ConnectToStartupAliasesCommand(IApplication app)
+   {
+      super();
+      if (app == null)
+      {
+         throw new IllegalArgumentException("IApplication == null");
+      }
 
-		_app = app;
-	}
+      _app = app;
+   }
 
-	public void execute()
-	{
-		final List aliases = new ArrayList();
-		final net.sourceforge.squirrel_sql.client.gui.db.DataCache cache = _app.getDataCache();
-		synchronized (cache)
-		{
-			for (Iterator it = cache.aliases(); it.hasNext();)
-			{
-				ISQLAlias alias = (ISQLAlias)it.next();
-				if (alias.isConnectAtStartup())
-				{
-					aliases.add(alias);
-				}
-			}
-		}
-		final Iterator it = aliases.iterator();
-		while (it.hasNext())
-		{
-			final ISQLAlias alias = (ISQLAlias)it.next();
-			new ConnectToAliasCommand(_app, alias).execute();
-		}
-	}
+   public void execute()
+   {
+      final List aliases = new ArrayList();
+      final DataCache cache = _app.getDataCache();
+      synchronized (cache)
+      {
+         for (Iterator it = cache.aliases(); it.hasNext();)
+         {
+            SQLAlias alias = (SQLAlias)it.next();
+            if (alias.isConnectAtStartup())
+            {
+               aliases.add(alias);
+            }
+         }
+      }
+      final Iterator it = aliases.iterator();
+      while (it.hasNext())
+      {
+         final SQLAlias alias = (SQLAlias)it.next();
+         new ConnectToAliasCommand(_app, alias).execute();
+      }
+   }
 }

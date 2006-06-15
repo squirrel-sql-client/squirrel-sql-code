@@ -128,7 +128,7 @@ public class SchemaInfo
          _dmd = conn.getSQLMetaData();
 
          _dmd.clearCache();
-         _schemaInfoCache = new SchemaInfoCache();
+         _schemaInfoCache = new SchemaInfoCache(session.getAlias());
 
 
          int progress = 0;
@@ -1392,29 +1392,4 @@ public class SchemaInfo
          throw new RuntimeException(e);
       }
    }
-
-
-   private static class SchemaInfoCache
-   {
-      final List catalogs = new ArrayList();
-      final List schemas = new ArrayList();
-      final HashMap cachedTableTypes = new HashMap();
-
-      final TreeMap keywords = new TreeMap();
-      final TreeMap dataTypes = new TreeMap();
-      final Map functions = Collections.synchronizedMap(new TreeMap());
-      final Map tableNames = Collections.synchronizedMap(new TreeMap());
-      final Map columnNames = Collections.synchronizedMap(new TreeMap());
-      final Map procedureNames = Collections.synchronizedMap(new TreeMap());
-
-      final Map extendedColumnInfosByTableName = Collections.synchronizedMap(new TreeMap());
-      final Map iTableInfos = Collections.synchronizedMap(new TreeMap());
-      final Map iProcedureInfos = Collections.synchronizedMap(new TreeMap());
-
-      final Hashtable tableInfosBySimpleName = new Hashtable();
-      final Hashtable procedureInfosBySimpleName = new Hashtable();
-
-   }
-
-
 }

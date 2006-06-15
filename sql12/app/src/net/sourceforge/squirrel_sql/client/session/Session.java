@@ -45,6 +45,7 @@ import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.mainframe.action.OpenConnectionCommand;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
@@ -102,7 +103,7 @@ class Session implements ISession
 	private ISQLDriver _driver;
 
 	/** Alias describing how to connect to database. */
-	private ISQLAlias _alias;
+	private SQLAlias _alias;
 
 	private final String _user;
 	private final String _password;
@@ -156,7 +157,7 @@ class Session implements ISession
 	 *
 	 * @throws IllegalArgumentException if any parameter is null.
 	 */
-	public Session(IApplication app, ISQLDriver driver, ISQLAlias alias,
+	public Session(IApplication app, ISQLDriver driver, SQLAlias alias,
 					SQLConnection conn, String user, String password,
 					IIdentifier sessionId)
 	{
@@ -359,7 +360,7 @@ class Session implements ISession
 	/**
 	 * @return <TT>ISQLAlias</TT> for this session.
 	 */
-	public ISQLAlias getAlias()
+	public SQLAlias getAlias()
 	{
 		return _alias;
 	}
