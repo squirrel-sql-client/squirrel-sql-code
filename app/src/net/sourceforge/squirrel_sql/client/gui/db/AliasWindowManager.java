@@ -101,7 +101,7 @@ public class AliasWindowManager
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
 	 */
-	public void showCopyAliasInternalFrame(final ISQLAlias alias)
+	public void showCopyAliasInternalFrame(final SQLAlias alias)
 	{
 		if (alias == null)
 		{

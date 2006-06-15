@@ -1,6 +1,8 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
-public class SQLAliasSchemaProperties
+import java.io.Serializable;
+
+public class SQLAliasSchemaProperties implements Serializable
 {
    SQLAliasSchemaDetailProperties[] _schemaDetails = new SQLAliasSchemaDetailProperties[0];
 

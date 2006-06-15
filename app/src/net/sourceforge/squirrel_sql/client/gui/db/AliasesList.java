@@ -152,9 +152,9 @@ public class AliasesList extends JList implements IAliasesList
 	/**
 	 * Return the <TT>ISQLAlias</TT> that is currently selected.
 	 */
-	public ISQLAlias getSelectedAlias()
+	public SQLAlias getSelectedAlias()
 	{
-		return (ISQLAlias)getSelectedValue();
+		return (SQLAlias)getSelectedValue();
 	}
 
 	/**

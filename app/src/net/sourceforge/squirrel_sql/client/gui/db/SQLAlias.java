@@ -25,6 +25,7 @@ import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverProperty;
@@ -121,7 +122,6 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
    }
 
    /**
-    * TODO: Replace with clone().
     * Assign data from the passed <CODE>ISQLAlias</CODE> to this one.
     *
     * @param	rhs	 <CODE>ISQLAlias</CODE> to copy data from.
@@ -130,7 +130,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
     *				Thrown if an error occurs assigning data from
     *				<CODE>rhs</CODE>.
     */
-   public synchronized void assignFrom(ISQLAlias rhs)
+   public synchronized void assignFrom(SQLAlias rhs)
       throws ValidationException
    {
       setName(rhs.getName());
@@ -141,6 +141,7 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
       setAutoLogon(rhs.isAutoLogon());
       setUseDriverProperties(rhs.getUseDriverProperties());
       setDriverProperties(rhs.getDriverPropertiesClone());
+      _schemaProperties = (SQLAliasSchemaProperties) Utilities.cloneObject(((SQLAlias)rhs)._schemaProperties, getClass().getClassLoader());
    }
 
    /**
@@ -158,23 +159,24 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
       return rc;
    }
 
-   /**
-    * Return a clone of this object.
-    */
-   public Object clone()
-   {
-      try
-      {
-         final SQLAlias alias = (SQLAlias)super.clone();
-         alias._propChgReporter = null;
-         alias.setDriverProperties(getDriverPropertiesClone());
-         return alias;
-      }
-      catch (CloneNotSupportedException ex)
-      {
-         throw new InternalError(ex.getMessage()); // Impossible.
-      }
-   }
+//   /**
+//    * Return a clone of this object.
+//    */
+//   public Object clone()
+//   {
+//      try
+//      {
+//         final SQLAlias alias = (SQLAlias)super.clone();
+//         alias._propChgReporter = null;
+//         alias.setDriverProperties(getDriverPropertiesClone());
+//         alias._schemaProperties = (SQLAliasSchemaProperties) Utilities.cloneObject(alias._schemaProperties, getClass().getClassLoader());
+//         return alias;
+//      }
+//      catch (CloneNotSupportedException ex)
+//      {
+//         throw new InternalError(ex.getMessage()); // Impossible.
+//      }
+//   }
 
    /**
     * Returns a hash code value for this object.

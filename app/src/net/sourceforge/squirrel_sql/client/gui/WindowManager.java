@@ -35,13 +35,7 @@ import javax.swing.event.InternalFrameListener;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.gui.db.AliasWindowManager;
-import net.sourceforge.squirrel_sql.client.gui.db.AliasesList;
-import net.sourceforge.squirrel_sql.client.gui.db.AliasesListInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.db.ConnectionInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.db.DriverWindowManager;
-import net.sourceforge.squirrel_sql.client.gui.db.DriversList;
-import net.sourceforge.squirrel_sql.client.gui.db.DriversListInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.db.*;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrameWindowState;
 import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
@@ -249,7 +243,7 @@ public class WindowManager
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ISQLAlias</TT> passed.
 	 */
-	public void showCopyAliasInternalFrame(final ISQLAlias alias)
+	public void showCopyAliasInternalFrame(final SQLAlias alias)
 	{
 		if (alias == null)
 		{
