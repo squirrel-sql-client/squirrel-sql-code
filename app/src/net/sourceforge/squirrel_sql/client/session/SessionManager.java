@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.session.event.ISessionListener;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
@@ -104,7 +105,7 @@ public class SessionManager
     * 			or SQLConnection is passed as null.
     */
    public synchronized ISession createSession(IApplication app,
-                                              ISQLDriver driver, ISQLAlias alias,
+                                              ISQLDriver driver, SQLAlias alias,
                                               SQLConnection conn, String user,
                                               String password)
    {

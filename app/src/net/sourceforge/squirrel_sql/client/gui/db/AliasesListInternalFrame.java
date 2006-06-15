@@ -191,7 +191,7 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
 		public ICommand getDoubleClickCommand()
 		{
 			ICommand cmd = null;
-			ISQLAlias alias = _aliasesList.getSelectedAlias();
+			SQLAlias alias = _aliasesList.getSelectedAlias();
 			if (alias != null)
 			{
 				cmd = new ConnectToAliasCommand(_app, alias);

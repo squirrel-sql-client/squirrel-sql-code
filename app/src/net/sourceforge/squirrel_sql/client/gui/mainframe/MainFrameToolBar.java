@@ -40,6 +40,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CascadeAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
@@ -175,9 +176,9 @@ class MainFrameToolBar extends ToolBar
 			try
 			{
 				Object obj = getSelectedItem();
-				if (obj instanceof ISQLAlias)
+				if (obj instanceof SQLAlias)
 				{
-					new ConnectToAliasCommand(_myApp, (ISQLAlias)obj).execute();
+					new ConnectToAliasCommand(_myApp, (SQLAlias)obj).execute();
 				}
 			}
 			finally

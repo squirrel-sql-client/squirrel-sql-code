@@ -40,6 +40,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.ConnectionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.db.ConnectToAliasCallBack;
 import net.sourceforge.squirrel_sql.client.gui.db.ICompletionCallback;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
@@ -64,7 +65,7 @@ public class ConnectToAliasCommand implements ICommand
 	private IApplication _app;
 
 	/** The <TT>ISQLAlias</TT> to connect to. */
-	private ISQLAlias _sqlAlias;
+	private SQLAlias _sqlAlias;
 
 	/** If <TT>true</TT> a session is to be created as well as connecting to database. */
 	private boolean _createSession;
@@ -82,7 +83,7 @@ public class ConnectToAliasCommand implements ICommand
 	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> or
 	 *			<TT>ISQLAlias</TT> passed.
 	 */
-	public ConnectToAliasCommand(IApplication app, ISQLAlias sqlAlias)
+	public ConnectToAliasCommand(IApplication app, SQLAlias sqlAlias)
 	{
 		this(app, sqlAlias, true, null);
 	}
@@ -100,7 +101,7 @@ public class ConnectToAliasCommand implements ICommand
 	 *			Thrown if a <TT>null</TT> <TT>IApplication</TT> or
 	 *			<TT>ISQLAlias</TT> passed.
 	 */
-	public ConnectToAliasCommand(IApplication app, ISQLAlias sqlAlias,
+	public ConnectToAliasCommand(IApplication app, SQLAlias sqlAlias,
 						boolean createSession, ICompletionCallback callback)
 	{
 		super();
@@ -165,7 +166,7 @@ public class ConnectToAliasCommand implements ICommand
 		private IApplication _app;
 
 		/** <TT>ISQLAlias</TT> to connect to. */
-		private ISQLAlias _alias;
+		private SQLAlias _alias;
 
 		/** If <TT>true</TT> a session is to be created as well as connecting to database. */
 		private boolean _createSession;
@@ -197,7 +198,7 @@ public class ConnectToAliasCommand implements ICommand
 		 * 			Thrown if <TT>null</TT>IApplication</TT>, <TT>ISQLAlias</TT>,
 		 * 			or <TT>ICompletionCallback</TT> passed.
 		 */
-		private SheetHandler(IApplication app, ISQLAlias alias, boolean createSession,
+		private SheetHandler(IApplication app, SQLAlias alias, boolean createSession,
 									ICompletionCallback callback)
 		{
 			super();
