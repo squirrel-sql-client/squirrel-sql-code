@@ -18,45 +18,46 @@ package net.sourceforge.squirrel_sql.fw.id;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.rmi.server.UID;
+import java.io.Serializable;
 
-public class UidIdentifier implements IIdentifier
+public class UidIdentifier implements IIdentifier, Serializable
 {
-	public interface IPropertyNames
-	{
-		String STRING = "string";
-	}
+   public interface IPropertyNames
+   {
+      String STRING = "string";
+   }
 
-	private String _id;
+   private String _id;
 
-	public UidIdentifier()
-	{
-		super();
-		_id = new UID().toString();
-	}
+   public UidIdentifier()
+   {
+      super();
+      _id = new UID().toString();
+   }
 
-	public boolean equals(Object rhs)
-	{
-		boolean rc = false;
-		if (rhs != null && rhs.getClass().equals(getClass()))
-		{
-			rc = ((UidIdentifier)rhs).toString().equals(toString());
-		}
-		return rc;
-	}
+   public boolean equals(Object rhs)
+   {
+      boolean rc = false;
+      if (rhs != null && rhs.getClass().equals(getClass()))
+      {
+         rc = ((UidIdentifier)rhs).toString().equals(toString());
+      }
+      return rc;
+   }
 
-	public synchronized int hashCode()
-	{
-		return toString().hashCode();
-	}
+   public synchronized int hashCode()
+   {
+      return toString().hashCode();
+   }
 
-	public String toString()
-	{
-		return _id;
-	}
+   public String toString()
+   {
+      return _id;
+   }
 
-	// Only for restoring from XML etc.
-	public void setString(String value)
-	{
-		_id = value;
-	}
+   // Only for restoring from XML etc.
+   public void setString(String value)
+   {
+      _id = value;
+   }
 }

@@ -11,7 +11,7 @@ public class SchemaTableModel extends DefaultTableModel
    static final int IX_SCHEMA_NAME = 0;
    static final int IX_TABLE = 1;
    static final int IX_VIEW = 2;
-   static final int IX_FUNCTION = 3;
+   static final int IX_PROCEDURE = 3;
    private SQLAliasSchemaDetailProperties[] _schemaDetails;
 
 
@@ -34,8 +34,8 @@ public class SchemaTableModel extends DefaultTableModel
             return SchemaTableCboItem.getItemForID(buf.getTable());
          case IX_VIEW:
             return SchemaTableCboItem.getItemForID(buf.getView());
-         case IX_FUNCTION:
-            return SchemaTableCboItem.getItemForID(buf.getFunction());
+         case IX_PROCEDURE:
+            return SchemaTableCboItem.getItemForID(buf.getProcedure());
          default:
             throw new IllegalArgumentException("Unkown column index " + column);
 
@@ -54,8 +54,8 @@ public class SchemaTableModel extends DefaultTableModel
          case IX_VIEW:
             buf.setView(((SchemaTableCboItem)aValue).getID());
             break;
-         case IX_FUNCTION:
-            buf.setFunction(((SchemaTableCboItem)aValue).getID());
+         case IX_PROCEDURE:
+            buf.setProcedure(((SchemaTableCboItem)aValue).getID());
             break;
          default:
             throw new IllegalArgumentException("Unkown column index " + column);
@@ -136,9 +136,9 @@ public class SchemaTableModel extends DefaultTableModel
          {
             _schemaDetails[i].setView(toItem.getID());
          }
-         else if(IX_FUNCTION == modelIndex)
+         else if(IX_PROCEDURE == modelIndex)
          {
-            _schemaDetails[i].setFunction(toItem.getID());
+            _schemaDetails[i].setProcedure(toItem.getID());
          }
       }
 

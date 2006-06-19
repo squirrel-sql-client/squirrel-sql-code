@@ -858,8 +858,6 @@ public class SQLDatabaseMetaData
     /**
      * Retrieve information about the data types in the database.
      *
-     * TODO: Any reason this is not cached?
-     *
      * @throws  SQLException    Thrown if an SQL error occurs.
      */
     public synchronized DataTypeInfo[] getDataTypes()

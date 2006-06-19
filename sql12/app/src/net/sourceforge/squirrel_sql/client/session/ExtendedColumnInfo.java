@@ -20,7 +20,9 @@ package net.sourceforge.squirrel_sql.client.session;
 
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
-public class ExtendedColumnInfo
+import java.io.Serializable;
+
+public class ExtendedColumnInfo implements Serializable
 {
    private String _columnName;
    private String _columnType;
@@ -29,32 +31,30 @@ public class ExtendedColumnInfo
    private boolean _nullable;
    private String _cat;
    private String _schem;
+   private String _simpleTableName;
+   private String _qualifiedName;
 
-   public ExtendedColumnInfo(String columnName, String columnType, int columnSize, int decimalDigits, boolean nullable, String cat, String schem)
+   public ExtendedColumnInfo(TableColumnInfo info, String simpleTableName)
    {
-      _columnName = columnName;
-      _columnType = columnType;
-      _columnSize = columnSize;
-      _decimalDigits = decimalDigits;
-      _nullable = nullable;
-      _cat = cat;
-      _schem = schem;
+      _columnName = info.getColumnName();
+      _columnType = info.getTypeName();
+      _columnSize = info.getColumnSize();
+      _decimalDigits = info.getDecimalDigits();
+      if ("YES".equals(info.isNullable()))
+      {
+         _nullable = true;
+      }
+      else
+      {
+         _nullable = false;
+      }
+      _cat = info.getCatalogName();
+      _schem = info.getSchemaName();
+      _simpleTableName = simpleTableName;
+
+      _qualifiedName = _cat + "." + _schem + "." + _simpleTableName + "." +_columnName;
    }
 
-   public ExtendedColumnInfo(TableColumnInfo info) {
-       _columnName = info.getColumnName();
-       _columnType = info.getTypeName();
-       _columnSize = info.getColumnSize();
-       _decimalDigits = info.getDecimalDigits();
-       if ("YES".equals(info.isNullable())) {
-           _nullable = true;
-       } else {
-           _nullable = false;
-       }
-       _cat = info.getCatalogName();
-       _schem = info.getSchemaName();
-   }
-   
    public String getColumnName()
    {
       return _columnName;
@@ -88,6 +88,24 @@ public class ExtendedColumnInfo
    public String getSchema()
    {
       return _schem;
+   }
+
+   public String getSimpleTableName()
+   {
+      return _simpleTableName;
+   }
+
+
+   public boolean equals(Object obj)
+   {
+      ExtendedColumnInfo other = (ExtendedColumnInfo)obj;
+
+      return _qualifiedName.equals(other._qualifiedName);
+   }
+
+   public int hashCode()
+   {
+      return _qualifiedName.hashCode();
    }
 
 }

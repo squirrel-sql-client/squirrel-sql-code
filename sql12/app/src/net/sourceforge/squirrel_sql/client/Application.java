@@ -59,6 +59,7 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoCacheSerializer;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
 import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
@@ -237,21 +238,24 @@ class Application implements IApplication
 	{
 		s_log.info(s_stringMgr.getString("Application.shutdown",
 									Calendar.getInstance().getTime()));
-		try {
-            if (!_sessionManager.closeAllSessions())
-    		{
-    			s_log.info(s_stringMgr.getString("Application.shutdownCancelled",
-    					Calendar.getInstance().getTime()));
-    			return false;
-    		}
-        } catch (Throwable t) {
-            String msg = 
-                s_stringMgr.getString("Application.error.closeAllSessions", 
-                                      t.getMessage());
-            s_log.error(msg, t);
-        }
+      try
+      {
+         if (!_sessionManager.closeAllSessions())
+         {
+            s_log.info(s_stringMgr.getString("Application.shutdownCancelled",
+               Calendar.getInstance().getTime()));
+            return false;
+         }
+      }
+      catch (Throwable t)
+      {
+         String msg =
+            s_stringMgr.getString("Application.error.closeAllSessions",
+               t.getMessage());
+         s_log.error(msg, t);
+      }
 
-		_pluginManager.unloadPlugins();
+      _pluginManager.unloadPlugins();
 
 		// Remember the currently selected entries in the
 		// aliases and drivers windows.
@@ -267,14 +271,17 @@ class Application implements IApplication
 
 		_prefs.save();
 
-        try {
-            FileViewerFactory.getInstance().closeAllViewers();
-        } catch (Throwable t) {
-            // i18n[Application.error.closeFileViewers=Unable to close all file viewers]
-            s_log.error(s_stringMgr.getString("Application.error.closeFileViewers"), t);
-        }
+      try
+      {
+         FileViewerFactory.getInstance().closeAllViewers();
+      }
+      catch (Throwable t)
+      {
+         // i18n[Application.error.closeFileViewers=Unable to close all file viewers]
+         s_log.error(s_stringMgr.getString("Application.error.closeFileViewers"), t);
+      }
 
-		final ApplicationFiles appFiles = new ApplicationFiles();
+      final ApplicationFiles appFiles = new ApplicationFiles();
 
 		try
 		{
@@ -331,7 +338,9 @@ class Application implements IApplication
 		// Save options selected for DataType-specific properties
 		saveDTProperties();
 
-		String msg = s_stringMgr.getString("Application.shutdowncomplete",
+      SchemaInfoCacheSerializer.waitTillStoringIsDone();
+
+      String msg = s_stringMgr.getString("Application.shutdowncomplete",
 										Calendar.getInstance().getTime());
 		s_log.info(msg);
 		LoggerController.shutdown();

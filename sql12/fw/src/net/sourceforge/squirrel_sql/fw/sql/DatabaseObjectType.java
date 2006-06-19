@@ -22,35 +22,38 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
+import java.io.Serializable;
+
 /**
  *
  * Defines the different types of database objects.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class DatabaseObjectType implements IHasIdentifier
+public class DatabaseObjectType implements IHasIdentifier, Serializable
 {
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(DatabaseObjectType.class);
+   /** Internationalized strings for this class. */
+   private static final StringManager s_stringMgr =
+      StringManagerFactory.getStringManager(DatabaseObjectType.class);
 
-	/** Factory to generate unique IDs for these objects. */
-	private final static IntegerIdentifierFactory s_idFactory = new IntegerIdentifierFactory();
+   /** Factory to generate unique IDs for these objects. */
+   private final static IntegerIdentifierFactory s_idFactory = new IntegerIdentifierFactory();
 
-	/** Other - general purpose. */
-	public final static DatabaseObjectType OTHER = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.other"));
+   /** Other - general purpose. */
+   public final static DatabaseObjectType OTHER = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.other"));
 
-	/** Catalog. */
-	public final static DatabaseObjectType BEST_ROW_ID = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.bestRowID"));
+   /** Catalog. */
+   public final static DatabaseObjectType BEST_ROW_ID = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.bestRowID"));
 
-	/** Catalog. */
-	public final static DatabaseObjectType CATALOG = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.catalog"));
+   /** Catalog. */
+   public final static DatabaseObjectType CATALOG = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.catalog"));
 
-	/** Column. */
-	public final static DatabaseObjectType COLUMN = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.column"));
+   /** Column. */
+   public final static DatabaseObjectType COLUMN = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.column"));
 
-	/** Database. */
-	public final static DatabaseObjectType SESSION = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.database"));
+   /** Database. */
+   public final static DatabaseObjectType SESSION = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.database"));
 
 
    /**
@@ -61,22 +64,22 @@ public class DatabaseObjectType implements IHasIdentifier
 
 
    /** Standard datatype. */
-	public final static DatabaseObjectType DATATYPE = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.datatype"));
+   public final static DatabaseObjectType DATATYPE = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.datatype"));
 
     /** Unique Key for a table. */
     public final static DatabaseObjectType PRIMARY_KEY = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.primarykey"));
-    
-	/** Foreign Key relationship. */
-	public final static DatabaseObjectType FOREIGN_KEY = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.foreignkey"));
 
-	/** Function. */
-	public final static DatabaseObjectType FUNCTION = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.function"));
+   /** Foreign Key relationship. */
+   public final static DatabaseObjectType FOREIGN_KEY = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.foreignkey"));
 
-	/** Index. */
-	public final static DatabaseObjectType INDEX = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.index"));
+   /** Function. */
+   public final static DatabaseObjectType FUNCTION = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.function"));
 
-	/** Stored procedure. */
-	public final static DatabaseObjectType PROCEDURE = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.storproc"));
+   /** Index. */
+   public final static DatabaseObjectType INDEX = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.index"));
+
+   /** Stored procedure. */
+   public final static DatabaseObjectType PROCEDURE = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.storproc"));
 
    /**
     * Database object type for a "Procedure Type" node in the object tree. There is
@@ -87,16 +90,16 @@ public class DatabaseObjectType implements IHasIdentifier
 
 
    /** Schema. */
-	public final static DatabaseObjectType SCHEMA = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.schema"));
+   public final static DatabaseObjectType SCHEMA = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.schema"));
 
-	/**
-	 * An object that generates uniques IDs for primary keys. E.G. an Oracle
-	 * sequence.
-	 */
-	public final static DatabaseObjectType SEQUENCE = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.sequence"));
+   /**
+    * An object that generates uniques IDs for primary keys. E.G. an Oracle
+    * sequence.
+    */
+   public final static DatabaseObjectType SEQUENCE = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.sequence"));
 
-	/** TABLE. */
-	public final static DatabaseObjectType TABLE = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.table"));
+   /** TABLE. */
+   public final static DatabaseObjectType TABLE = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.table"));
 
    /**
     * Database object type for a "Table Type" node in the object tree. Some examples
@@ -108,11 +111,11 @@ public class DatabaseObjectType implements IHasIdentifier
 
    public static final DatabaseObjectType VIEW = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.view"));
 
-	/** Trigger. */
-	public final static DatabaseObjectType TRIGGER = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.catalog"));
+   /** Trigger. */
+   public final static DatabaseObjectType TRIGGER = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.catalog"));
 
-	/** User defined type. */
-	public final static DatabaseObjectType UDT = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.udt"));
+   /** User defined type. */
+   public final static DatabaseObjectType UDT = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.udt"));
 
    /**
     * Database object type for a "UDT Type" node in the object tree. There is only one
@@ -124,51 +127,51 @@ public class DatabaseObjectType implements IHasIdentifier
 
 
    /** A database user. */
-	public final static DatabaseObjectType USER = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.user"));
+   public final static DatabaseObjectType USER = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.user"));
 
-	/** Uniquely identifies this Object. */
-	private final IIdentifier _id;
+   /** Uniquely identifies this Object. */
+   private final IIdentifier _id;
 
-	/** Describes this object type. */
-	private final String _name;
+   /** Describes this object type. */
+   private final String _name;
 
    /**
-	 * Default ctor.
-	 */
-	private DatabaseObjectType(String name)
-	{
-		super();
-		_id = s_idFactory.createIdentifier();
-		_name = name != null ? name : _id.toString();
-	}
+    * Default ctor.
+    */
+   private DatabaseObjectType(String name)
+   {
+      super();
+      _id = s_idFactory.createIdentifier();
+      _name = name != null ? name : _id.toString();
+   }
 
-	/**
-	 * Return the object that uniquely identifies this object.
-	 *
-	 * @return	Unique ID.
-	 */
-	public IIdentifier getIdentifier()
-	{
-		return _id;
-	}
+   /**
+    * Return the object that uniquely identifies this object.
+    *
+    * @return	Unique ID.
+    */
+   public IIdentifier getIdentifier()
+   {
+      return _id;
+   }
 
-	/**
-	 * Retrieve the descriptive name of this object.
-	 *
-	 * @return	The descriptive name of this object.
-	 */
-	public String getName()
-	{
-		return _name;
-	}
+   /**
+    * Retrieve the descriptive name of this object.
+    *
+    * @return	The descriptive name of this object.
+    */
+   public String getName()
+   {
+      return _name;
+   }
 
-	public String toString()
-	{
-		return getName();
-	}
+   public String toString()
+   {
+      return getName();
+   }
 
-	public static DatabaseObjectType createNewDatabaseObjectType(String name)
-	{
-		return new DatabaseObjectType(name);
-	}
+   public static DatabaseObjectType createNewDatabaseObjectType(String name)
+   {
+      return new DatabaseObjectType(name);
+   }
 }

@@ -159,7 +159,7 @@ class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
 		SQLAlias newAlias = cache.createAlias(factory.createIdentifier());
 		try
 		{
-			newAlias.assignFrom(alias);
+			newAlias.assignFrom(alias, false);
 
          if(SQLAliasSchemaProperties.GLOBAL_STATE_SPECIFY_SCHEMAS == newAlias.getSchemaProperties().getGlobalState())
          {

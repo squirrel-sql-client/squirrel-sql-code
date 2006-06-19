@@ -260,11 +260,19 @@ public class SessionObjectTreePropertiesPanel
 
 			gbc.gridx = 0;
 			gbc.gridy = 0;
+         gbc.insets = new Insets(4, 4, 0, 4);
 			pnl.add(new JLabel(i18n.SCHEMA_PREFIX, SwingConstants.RIGHT), gbc);
-			++gbc.gridy;
+         ++gbc.gridy;
+
+         // i18n[SessionObjectTreePropertiesPanel.schemaPrefixNote=(Note: This property only influences Schema display in the Object tree. To configure Schema loading use Alias properties.))
+         gbc.insets = new Insets(0, 4, 4, 4);
+         pnl.add(new MultipleLineLabel(s_stringMgr.getString("SessionObjectTreePropertiesPanel.schemaPrefixNote")), gbc);
+         ++gbc.gridy;
+
+         gbc.insets = new Insets(4, 4, 4, 4);
 			pnl.add(_schemaPrefixField, gbc);
 
-			++gbc.gridy;
+         ++gbc.gridy;
 			pnl.add(new JLabel(i18n.CATALOG_PREFIX, SwingConstants.RIGHT), gbc);
 			++gbc.gridy;
 			pnl.add(_catalogPrefixField, gbc);
