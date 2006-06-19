@@ -25,6 +25,8 @@ import java.sql.DatabaseMetaData;
 import java.util.*;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.db.SchemaLoadInfo;
+import net.sourceforge.squirrel_sql.client.gui.db.SchemaNameLoadInfo;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -49,10 +51,14 @@ public class SchemaInfo
    ISession _session = null;
 
 
-   /** Logger for this class. */
    private static final ILogger s_log = LoggerController.createLogger(SchemaInfo.class);
    private SessionAdapter _sessionListener;
+
+   /**
+    * The number of load methods
+    */
    private static final int LOAD_METHODS_COUNT = 7;
+
    private static final int MAX_PROGRESS = 100;
 
    final HashMap _tablesLoadingColsInBackground = new HashMap();
@@ -63,8 +69,6 @@ public class SchemaInfo
 
    private Vector _listeners = new Vector();
    private boolean _schemasAndCatalogsLoaded;
-
-   /** the status message that was written by the object tree to be restored */
 
    public SchemaInfo(IApplication app)
    {
@@ -89,6 +93,11 @@ public class SchemaInfo
                }
             }
          }
+
+         public void sessionClosing(SessionEvent evt)
+         {
+            SchemaInfoCacheSerializer.store(_session, _schemaInfoCache);
+         }
       };
 
       if (app != null)
@@ -98,7 +107,49 @@ public class SchemaInfo
    }
 
 
-   public void load(ISession session)
+   public void initialLoad(ISession session)
+   {
+      synchronized (this)
+      {
+         if (_loading || _loaded)
+         {
+            return;
+         }
+      }
+
+      _session = session;
+
+      breathing();
+      _schemaInfoCache = SchemaInfoCacheSerializer.load(_session);
+
+      try
+      {
+         privateLoadAll();
+      }
+      finally
+      {
+         _schemaInfoCache.initialLoadDone();
+      }
+   }
+
+
+   public void reloadAll()
+   {
+      synchronized (this)
+      {
+         if(_loading)
+         {
+            return;
+         }
+      }
+
+      _schemaInfoCache.clearAll();
+
+      privateLoadAll();
+   }
+
+
+   private void privateLoadAll()
    {
       synchronized (this)
       {
@@ -116,19 +167,13 @@ public class SchemaInfo
 
       long mstart = System.currentTimeMillis();
       String msg = null;
-      if (session == null)
-      {
-         throw new IllegalArgumentException("Session == null");
-      }
 
       try
       {
-         _session = session;
          SQLConnection conn = _session.getSQLConnection();
          _dmd = conn.getSQLMetaData();
 
          _dmd.clearCache();
-         _schemaInfoCache = new SchemaInfoCache(session.getAlias());
 
 
          int progress = 0;
@@ -205,8 +250,7 @@ public class SchemaInfo
             s_log.error("Error loading functions", ex);
          }
 
-         String[] tableTypesToPreload = getTableTypesToCache();
-         progress = loadTables(null, null, null, tableTypesToPreload, progress);
+         progress = loadTables(null, null, null, null, progress);
 
          progress = loadStoredProcedures(null, null, null, progress);
 
@@ -225,38 +269,6 @@ public class SchemaInfo
       s_log.debug("SchemaInfo.load took " + (mfinish - mstart) + " ms");
    }
 
-   private String[] getTableTypesToCache()
-   {
-      String typeTable = "TABLE";
-      String typeView = "VIEW";
-      String[] availableTableTypes = new String[]{typeTable, typeView};
-      try
-      {
-         availableTableTypes = _dmd.getTableTypes();
-      }
-      catch (SQLException e)
-      {
-         s_log.error("Could not get table types", e);
-      }
-
-      if(containsType(availableTableTypes, typeTable))
-      {
-         _schemaInfoCache.cachedTableTypes.put(typeTable, typeTable);
-      }
-
-      if (containsType(availableTableTypes, typeView))
-      {
-         _schemaInfoCache.cachedTableTypes.put(typeView, typeView);
-      }
-
-      String typeSystemTable = "SYSTEM TABLE";
-      if (containsType(availableTableTypes, typeSystemTable))
-      {
-         _schemaInfoCache.cachedTableTypes.put(typeSystemTable, typeSystemTable);
-      }
-
-      return (String[]) _schemaInfoCache.cachedTableTypes.keySet().toArray(new String[0]);
-   }
 
    private int loadStoredProcedures(String catalog, String schema, String procNamePattern, int progress)
    {
@@ -309,9 +321,9 @@ public class SchemaInfo
 
    private int loadSchemas(int progress)
    {
-      String msg;
       try
       {
+         String msg;
          // i18n[SchemaInfo.loadingSchemas=Loading schemas]
          msg = s_stringMgr.getString("SchemaInfo.loadingSchemas");
          s_log.debug(msg);
@@ -334,9 +346,9 @@ public class SchemaInfo
 
    private int loadCatalogs(int progress)
    {
-      String msg;
       try
       {
+         String msg;
          // i18n[SchemaInfo.loadingCatalogs=Loading catalogs]
          msg = s_stringMgr.getString("SchemaInfo.loadingCatalogs");
          s_log.debug(msg);
@@ -384,7 +396,7 @@ public class SchemaInfo
       {
          try
          {
-            wait(100);
+            wait(50);
          }
          catch (InterruptedException e)
          {
@@ -395,11 +407,8 @@ public class SchemaInfo
 
    private void privateLoadStoredProcedures(String catalog, String schema, String procNamePattern, final String msg, final int beginProgress)
    {
-
-      final String objFilter = _session.getProperties().getObjectFilter();
       try
       {
-         s_log.debug("Loading stored procedures with filter "+objFilter);
 
          ProgressCallBack pcb = new ProgressCallBack()
          {
@@ -410,39 +419,19 @@ public class SchemaInfo
          };
 
 
-         String[] allowedSchemas = new String[]{schema};
-         if(null == allowedSchemas[0])
-         {
-            String[] buf = _session.getApplication().getSessionManager().getAllowedSchemas(_session);
-            if(null != buf)
-            {
-               allowedSchemas = buf;
-            }
-         }
+         SchemaLoadInfo[] schemaLoadInfos = _schemaInfoCache.getMatchingSchemaLoadInfos(schema);
 
-         for (int i = 0; i < allowedSchemas.length; i++)
+         for (int i = 0; i < schemaLoadInfos.length; i++)
          {
-            IProcedureInfo[] procedures = _dmd.getProcedures(catalog, allowedSchemas[i], procNamePattern, pcb);
-
-            for (int j = 0; j < procedures.length; j++)
+            if(schemaLoadInfos[i].loadProcedures)
             {
-               String proc = (String) procedures[j].getSimpleName();
-               if (proc.length() > 0)
+               IProcedureInfo[] procedures = _dmd.getProcedures(catalog, schemaLoadInfos[i].schemaName, procNamePattern, pcb);
+
+               for (int j = 0; j < procedures.length; j++)
                {
-                  CaseInsensitiveString ciProc = new CaseInsensitiveString(proc);
-                  _schemaInfoCache.procedureNames.put(ciProc ,proc);
-
-                  ArrayList aIProcInfos = (ArrayList) _schemaInfoCache.procedureInfosBySimpleName.get(ciProc);
-                  if(null == aIProcInfos)
-                  {
-                     aIProcInfos = new ArrayList();
-                     _schemaInfoCache.procedureInfosBySimpleName.put(ciProc, aIProcInfos);
-                  }
-                  aIProcInfos.add(procedures[j]);
+                  _schemaInfoCache.writeToProcedureCache(procedures[j]);
                }
-               _schemaInfoCache.iProcedureInfos.put(procedures[j], procedures[j]);
             }
-
          }
       }
       catch (Throwable th)
@@ -456,6 +445,11 @@ public class SchemaInfo
    {
       try
       {
+         if(false == _schemaInfoCache.loadSchemaIndependentMetaData())
+         {
+            return;
+         }
+
          _schemaInfoCache.catalogs.clear();
          _schemaInfoCache.catalogs.addAll(Arrays.asList(_dmd.getCatalogs()));
       }
@@ -469,16 +463,29 @@ public class SchemaInfo
    {
       try
       {
-         String[] allowedSchemas = _session.getApplication().getSessionManager().getAllowedSchemas(_session);
+
+         SchemaNameLoadInfo schemaNameLoadInfo = _schemaInfoCache.getSchemaNameLoadInfo();
+
+         if(SchemaNameLoadInfo.STATE_DONT_REFERESH_SCHEMA_NAMES == schemaNameLoadInfo.state)
+         {
+            return;
+         }
 
          _schemaInfoCache.schemas.clear();
-         if(null == allowedSchemas)
+         if(SchemaNameLoadInfo.STATE_REFERESH_SCHEMA_NAMES_FROM_DB == schemaNameLoadInfo.state)
          {
             _schemaInfoCache.schemas.addAll(Arrays.asList(_dmd.getSchemas()));
          }
+         else if(SchemaNameLoadInfo.STATE_USES_PROVIDED_SCHEMA_NAMES == schemaNameLoadInfo.state)
+         {
+            for (int i = 0; i < schemaNameLoadInfo.schemaNames.length; i++)
+            {
+               _schemaInfoCache.schemas.add(schemaNameLoadInfo.schemaNames[i]);
+            }
+         }
          else
          {
-            _schemaInfoCache.schemas.addAll(Arrays.asList(allowedSchemas));
+            throw new IllegalArgumentException("Unknown SchemaNameLoadInfo.state = " + schemaNameLoadInfo.state);
          }
       }
       catch (Throwable th)
@@ -596,7 +603,7 @@ public class SchemaInfo
    {
       if (!_loading && data != null)
       {
-         return _schemaInfoCache.columnNames.containsKey(data);
+         return _schemaInfoCache.extColumnInfosByColumnName.containsKey(data);
       }
       return false;
    }
@@ -639,8 +646,14 @@ public class SchemaInfo
    {
       try
       {
+         if(false == _schemaInfoCache.loadSchemaIndependentMetaData())
+         {
+            return;
+         }
+
          setProgress(msg + " (default keywords)", beginProgress);
 
+         _schemaInfoCache.keywords.clear();
          for (int i = 0; i < DefaultKeywords.KEY_WORDS.length; i++)
          {
             String kw = DefaultKeywords.KEY_WORDS[i];
@@ -661,33 +674,14 @@ public class SchemaInfo
                _schemaInfoCache.keywords.put(new CaseInsensitiveString(sqlKeywords[i]), sqlKeywords[i]);
             }
 
+            String catalogTerm = _dmd.getCatalogTerm();
+            _schemaInfoCache.keywords.put(new CaseInsensitiveString(catalogTerm), catalogTerm);
 
-            try
-            {
-               addSingleKeyword(_dmd.getCatalogTerm());
-            }
-            catch (Throwable ex)
-            {
-               s_log.error("Error", ex);
-            }
+            String schemaTerm = _dmd.getSchemaTerm();
+            _schemaInfoCache.keywords.put(new CaseInsensitiveString(schemaTerm), schemaTerm);
 
-            try
-            {
-               addSingleKeyword(_dmd.getSchemaTerm());
-            }
-            catch (Throwable ex)
-            {
-               s_log.error("Error", ex);
-            }
-
-            try
-            {
-               addSingleKeyword(_dmd.getProcedureTerm());
-            }
-            catch (Throwable ex)
-            {
-               s_log.error("Error", ex);
-            }
+            String procedureTerm = _dmd.getProcedureTerm();
+            _schemaInfoCache.keywords.put(new CaseInsensitiveString(procedureTerm), procedureTerm);
          }
       }
       catch (Throwable ex)
@@ -700,7 +694,13 @@ public class SchemaInfo
    {
       try
       {
+         if(false == _schemaInfoCache.loadSchemaIndependentMetaData())
+         {
+            return;
+         }
 
+
+         _schemaInfoCache.dataTypes.clear();
          DataTypeInfo[] infos = _dmd.getDataTypes();
          for (int i = 0; i < infos.length; i++)
          {
@@ -722,6 +722,11 @@ public class SchemaInfo
 
    private void loadFunctions(String msg, int beginProgress)
    {
+      if(false == _schemaInfoCache.loadSchemaIndependentMetaData())
+      {
+         return;
+      }
+
       ArrayList buf = new ArrayList();
 
       try
@@ -754,6 +759,7 @@ public class SchemaInfo
          s_log.error("Error", ex);
       }
 
+      _schemaInfoCache.functions.clear();
       for (int i = 0; i < buf.size(); i++)
       {
          String func = (String) buf.get(i);
@@ -766,18 +772,6 @@ public class SchemaInfo
    }
 
 
-   private void addSingleKeyword(String keyword)
-   {
-      if (keyword != null)
-      {
-         keyword = keyword.trim();
-
-         if (keyword.length() > 0)
-         {
-            _schemaInfoCache.keywords.put(new CaseInsensitiveString(keyword), keyword);
-         }
-      }
-   }
 
    public String[] getKeywords()
    {
@@ -822,17 +816,18 @@ public class SchemaInfo
 
    public ITableInfo[] getITableInfos(String catalog, String schema, String simpleName)
    {
-      String[] types = (String[]) _schemaInfoCache.cachedTableTypes.keySet().toArray(new String[0]);
-      return getITableInfos(catalog, schema, simpleName, types);
+      return getITableInfos(catalog, schema, simpleName, null);
    }
 
    public ITableInfo[] getITableInfos(String catalog, String schema, String tableNamePattern, String[] types)
    {
-      ITableInfo[] tableInfosForUncachedTypes = getTableInfosForUncachedTypes(catalog, schema, tableNamePattern, types);
-
       ArrayList ret = new ArrayList();
-
-      ret.addAll(Arrays.asList(tableInfosForUncachedTypes));
+      if (null != types)
+      {
+         // By default null == types we return only cached types
+         ITableInfo[] tableInfosForUncachedTypes = getTableInfosForUncachedTypes(catalog, schema, tableNamePattern, types);
+         ret.addAll(Arrays.asList(tableInfosForUncachedTypes));
+      }
 
       for(Iterator i=_schemaInfoCache.iTableInfos.keySet().iterator(); i.hasNext();)
       {
@@ -848,7 +843,7 @@ public class SchemaInfo
             continue;
          }
 
-         if(false == containsType(types, iTableInfo.getType()))
+         if(false == SchemaInfoCache.containsType(types, iTableInfo.getType()))
          {
             continue;
          }
@@ -880,7 +875,7 @@ public class SchemaInfo
          ArrayList missingTypes = new ArrayList();
          for (int i = 0; i < types.length; i++)
          {
-            if(false == _schemaInfoCache.cachedTableTypes.containsKey(types[i]))
+            if(false == _schemaInfoCache.isCachedTableType(types[i]))
             {
                missingTypes.add(types[i]);
             }
@@ -916,17 +911,6 @@ public class SchemaInfo
       return new ITableInfo[0];
    }
 
-   private boolean containsType(String[] types, String type)
-   {
-      for (int i = 0; i < types.length; i++)
-      {
-         if(type.equals(types[i]))
-         {
-            return true;
-         }
-      }
-      return false;
-   }
 
 
    public IProcedureInfo[] getStoredProceduresInfos()
@@ -1006,41 +990,14 @@ public class SchemaInfo
             }
          };
 
+         SchemaLoadInfo[] schemaLoadInfos = _schemaInfoCache.getMatchingSchemaLoadInfos(schema, types);
 
-         String[] allowedSchemas = new String[]{schema};
-         if(null == allowedSchemas[0])
+         for (int i = 0; i < schemaLoadInfos.length; i++)
          {
-            String[] buf = _session.getApplication().getSessionManager().getAllowedSchemas(_session);
-            if(null != buf)
-            {
-               allowedSchemas = buf;
-            }
-         }
-
-         for (int i = 0; i < allowedSchemas.length; i++)
-         {
-            ITableInfo[] infos = _dmd.getTables(catalog, allowedSchemas[i], tableNamePattern, types, pcb);
+            ITableInfo[] infos = _dmd.getTables(catalog, schemaLoadInfos[i].schemaName, tableNamePattern, schemaLoadInfos[i].tableTypes, pcb);
             for (int j = 0; j < infos.length; j++)
             {
-               String tableName = infos[j].getSimpleName();
-               CaseInsensitiveString ciTableName = new CaseInsensitiveString(tableName);
-
-               _schemaInfoCache.tableNames.put(ciTableName, tableName);
-               _schemaInfoCache.iTableInfos.put(infos[j], infos[j]);
-
-               ArrayList aITabInfos = (ArrayList) _schemaInfoCache.tableInfosBySimpleName.get(ciTableName);
-               if(null == aITabInfos)
-               {
-                  aITabInfos = new ArrayList();
-                  _schemaInfoCache.tableInfosBySimpleName.put(ciTableName, aITabInfos);
-               }
-               aITabInfos.add(infos[j]);
-
-               _schemaInfoCache.extendedColumnInfosByTableName.remove(ciTableName);
-
-               // Note: do not clear _schemaInfoCache.columnNames because the same column
-               // names might be used in more than one table.
-               // We live with a bit of inexact column names.
+               _schemaInfoCache.writeToTableCache(infos[j]);
             }
          }
       }
@@ -1111,22 +1068,9 @@ public class SchemaInfo
       TableInfo ti =
          new TableInfo(null, null, name, "TABLE", null, _dmd);
       TableColumnInfo[] infos = _dmd.getColumnInfo(ti);
-      ArrayList result = new ArrayList();
-      for (int i = 0; i < infos.length; i++)
-      {
-         ExtendedColumnInfo buf = new ExtendedColumnInfo(infos[i]);
-         result.add(buf);
-         _schemaInfoCache.columnNames.put(new CaseInsensitiveString(buf.getColumnName()), buf.getColumnName());
-
-      }
-
-
-      // Note: A CaseInsensitiveString can be a mutable string.
-      // In fact it is a mutable string here because this is usually called from
-      // within Syntax coloring which uses a mutable string.
-      CaseInsensitiveString imutableString = new CaseInsensitiveString(tableName.toString());
-      _schemaInfoCache.extendedColumnInfosByTableName.put(imutableString, result);
+      _schemaInfoCache.writeColumsToCache(infos, tableName);
    }
+
 
    public ExtendedColumnInfo[] getExtendedColumnInfos(String tableName)
    {
@@ -1189,7 +1133,7 @@ public class SchemaInfo
       return _schemaInfoCache.procedureNames.containsKey(data);
    }
 
-   public void reloadCache(IDatabaseObjectInfo doi)
+   public void reload(IDatabaseObjectInfo doi)
    {
       try
       {
@@ -1198,7 +1142,7 @@ public class SchemaInfo
             ITableInfo ti = (ITableInfo) doi;
             DatabaseObjectType dot = ti.getDatabaseObjectType();
 
-            String[] types = (String[]) _schemaInfoCache.cachedTableTypes.keySet().toArray(new String[0]);
+            String[] types = null;
             if(DatabaseObjectType.TABLE == dot)
             {
                types = new String[]{"TABLE"};
@@ -1208,56 +1152,63 @@ public class SchemaInfo
                types = new String[]{"VIEW"};
             }
 
+            _schemaInfoCache.clearTables(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName(), types);
             loadTables(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName(), types, 1);
          }
          else if(doi instanceof IProcedureInfo)
          {
             IProcedureInfo pi = (IProcedureInfo) doi;
+            _schemaInfoCache.clearStoredProcedures(pi.getCatalogName(), pi.getSchemaName(), pi.getSimpleName());
             loadStoredProcedures(pi.getCatalogName(), pi.getSchemaName(), pi.getSimpleName(), 1);
          }
          else if(DatabaseObjectType.TABLE_TYPE_DBO == doi.getDatabaseObjectType())
          {
             // load all table types with catalog = doi.getCatalog() and schema = doi.getSchema()
-            String[] types = (String[]) _schemaInfoCache.cachedTableTypes.keySet().toArray(new String[0]);
-            loadTables(doi.getCatalogName(), doi.getSchemaName(), null, types, 0);
+            _schemaInfoCache.clearTables(doi.getCatalogName(), doi.getSchemaName(), null, null);
+            loadTables(doi.getCatalogName(), doi.getSchemaName(), null, null, 0);
          }
          else if(DatabaseObjectType.TABLE == doi.getDatabaseObjectType())
          {
             // load tables with catalog = doi.getCatalog() and schema = doi.getSchema()
+            _schemaInfoCache.clearTables(doi.getCatalogName(), doi.getSchemaName(), null, new String[]{"TABLE"});
             loadTables(doi.getCatalogName(), doi.getSchemaName(), null, new String[]{"TABLE"}, 1);
          }
          else if(DatabaseObjectType.VIEW == doi.getDatabaseObjectType())
          {
             // load views with catalog = doi.getCatalog() and schema = doi.getSchema()
+            _schemaInfoCache.clearTables(doi.getCatalogName(), doi.getSchemaName(), null, new String[]{"VIEW"});
             loadTables(doi.getCatalogName(), doi.getSchemaName(), null, new String[]{"VIEW"}, 1);
          }
          else if(DatabaseObjectType.PROCEDURE == doi.getDatabaseObjectType() || DatabaseObjectType.PROC_TYPE_DBO == doi.getDatabaseObjectType())
          {
+            _schemaInfoCache.clearStoredProcedures(doi.getCatalogName(), doi.getSchemaName(), null);
             loadStoredProcedures(doi.getCatalogName(), doi.getSchemaName(), null, 1);
          }
          else if(DatabaseObjectType.SCHEMA == doi.getDatabaseObjectType())
          {
             int progress = loadSchemas(1);
             // load tables with catalog = null
-            String[] types = (String[]) _schemaInfoCache.cachedTableTypes.keySet().toArray(new String[0]);
-            progress = loadTables(null, doi.getSchemaName(), null, types, progress);
+            _schemaInfoCache.clearTables(null, doi.getSchemaName(), null, null);
+            progress = loadTables(null, doi.getSchemaName(), null, null, progress);
 
             // load procedures with catalog = null
+            _schemaInfoCache.clearStoredProcedures(null, doi.getSchemaName(), null);
             loadStoredProcedures(null, doi.getSchemaName(), null, progress);
          }
          else if(DatabaseObjectType.CATALOG == doi.getDatabaseObjectType())
          {
             int progress = loadCatalogs(1);
             // load tables with schema = null
-            String[] types = (String[]) _schemaInfoCache.cachedTableTypes.keySet().toArray(new String[0]);
-            progress = loadTables(doi.getCatalogName(), null, null, types, progress);
+            _schemaInfoCache.clearTables(doi.getCatalogName(), null, null, null);
+            progress = loadTables(doi.getCatalogName(), null, null, null, progress);
 
             // load procedures with schema = null
+            _schemaInfoCache.clearStoredProcedures(doi.getCatalogName(), null, null);
             loadStoredProcedures(doi.getCatalogName(), null, null, progress);
          }
          else if(DatabaseObjectType.SESSION == doi.getDatabaseObjectType())
          {
-            load(_session);
+            reloadAll();
          }
 
          fireSchemaInfoUpdate();
@@ -1296,36 +1247,14 @@ public class SchemaInfo
       _listeners.remove(l);
    }
 
-   public void cleanAndReloadCacheForSimpleTableName(String simpleTableName)
+   public void refershCacheForSimpleTableName(String simpleTableName)
    {
-      /////////////////////////////////////////////////////////////////////////////////////////
-      // Remove all matching table types from cache
       HashMap caseSensitiveTableNames = new HashMap();
 
       CaseInsensitiveString caseInsensitiveTableName = new CaseInsensitiveString(simpleTableName);
-      String caseSensitiveTableName = (String) _schemaInfoCache.tableNames.remove(caseInsensitiveTableName);
+      String caseSensitiveTableName = (String) _schemaInfoCache.tableNames.get(caseInsensitiveTableName);
 
       caseSensitiveTableNames.put(caseSensitiveTableName, caseSensitiveTableName);
-
-      ArrayList iTableInfos = (ArrayList) _schemaInfoCache.tableInfosBySimpleName.remove(caseInsensitiveTableName);
-
-      for (int i = 0; i < iTableInfos.size(); i++)
-      {
-         ITableInfo iTableInfo = (ITableInfo) iTableInfos.get(i);
-         _schemaInfoCache.iTableInfos.remove(iTableInfo);
-         caseSensitiveTableNames.put(iTableInfo.getSimpleName(), iTableInfo.getSimpleName());
-      }
-
-      _schemaInfoCache.extendedColumnInfosByTableName.remove(caseInsensitiveTableName);
-
-      // Note: do not clear _schemaInfoCache.columnNames because the same column
-      // names might be used in more than one table.
-      // We live with a bit of inexact column names.
-
-      //
-      /////////////////////////////////////////////////////////////////////
-
-
 
       ////////////////////////////////////////////////////////////////////////
       // Reload  all matching table types
@@ -1333,16 +1262,14 @@ public class SchemaInfo
       {
          String buf = (String) i.next();
          TableInfo ti = new TableInfo(null, null, buf, null, null, _dmd);
-         reloadCache(ti);
+         reload(ti);
       }
       //
       ////////////////////////////////////////////////////////////////////////
    }
 
-   public void cleanAndReloadCacheForSimpleProcedureName(String simpleProcName)
+   public void refreshCacheForSimpleProcedureName(String simpleProcName)
    {
-      /////////////////////////////////////////////////////////////////////////////////////////
-      // Remove all matching procedures from cache
       HashMap caseSensitiveProcNames = new HashMap();
 
       CaseInsensitiveString caseInsensitiveProcName = new CaseInsensitiveString(simpleProcName);
@@ -1350,26 +1277,13 @@ public class SchemaInfo
 
       caseSensitiveProcNames.put(caseSensitiveProcName, caseSensitiveProcName);
 
-      ArrayList iProcInfos = (ArrayList) _schemaInfoCache.procedureInfosBySimpleName.remove(caseInsensitiveProcName);
-
-      for (int i = 0; i < iProcInfos.size(); i++)
-      {
-         IProcedureInfo iProcInfo = (IProcedureInfo) iProcInfos.get(i);
-         _schemaInfoCache.iProcedureInfos.remove(iProcInfo);
-         caseSensitiveProcNames.put(iProcInfo.getSimpleName(), iProcInfo.getSimpleName());
-      }
-      //
-      /////////////////////////////////////////////////////////////////////
-
-
-
       ////////////////////////////////////////////////////////////////////////
       // Reload  all matching procedure types
       for(Iterator i=caseSensitiveProcNames.keySet().iterator(); i.hasNext();)
       {
          String buf = (String) i.next();
          ProcedureInfo pi = new ProcedureInfo(null, null, buf, null, DatabaseMetaData.procedureResultUnknown, _dmd);
-         reloadCache(pi);
+         reload(pi);
       }
       //
       ////////////////////////////////////////////////////////////////////////

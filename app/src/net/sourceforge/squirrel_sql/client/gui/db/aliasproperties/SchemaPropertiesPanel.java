@@ -27,6 +27,9 @@ public class SchemaPropertiesPanel extends JPanel
    JButton btnSchemaTableUpdateApply;
 
 
+   JCheckBox chkCacheSchemaIndepndentMetaData;
+
+
    public SchemaPropertiesPanel()
    {
       setLayout(new GridBagLayout());
@@ -83,13 +86,10 @@ public class SchemaPropertiesPanel extends JPanel
       add(createSchmeTableUpdatePanel(), gbc);
 
 
-      // TODO do away
-      JLabel lblDoAwy = new JLabel("Work in progress. GUI not yet functional.");
-      lblDoAwy.setForeground(Color.red);
-      gbc = new GridBagConstraints(0,8,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
-      add(lblDoAwy, gbc);
-
-
+      // i18n[SchemaPropertiesPanel.CacheSchemaIndependentMetaData=Cache Schema independent meta data (Catalogs, Keywords, Data types, Global functions)]
+      chkCacheSchemaIndepndentMetaData = new JCheckBox(s_stringMgr.getString("SchemaPropertiesPanel.CacheSchemaIndependentMetaData"));
+      gbc = new GridBagConstraints(0,8,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10,5,5,5), 0,0);
+      add(chkCacheSchemaIndepndentMetaData, gbc);
    }
 
    private JPanel createSchmeTableUpdatePanel()

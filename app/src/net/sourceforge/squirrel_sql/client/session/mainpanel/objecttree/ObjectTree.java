@@ -291,7 +291,7 @@ class ObjectTree extends JTree
          {
             if(reloadSchemaInfo)
             {
-               _session.getSchemaInfo().load(_session);
+               _session.getSchemaInfo().reloadAll();
             }
 
 
@@ -863,7 +863,7 @@ class ObjectTree extends JTree
 				{
                if(_refreshSchemaInfo && _node instanceof ObjectTreeNode)
                {
-                  _session.getSchemaInfo().reloadCache(((ObjectTreeNode)_node).getDatabaseObjectInfo());                  
+                  _session.getSchemaInfo().reload(((ObjectTreeNode)_node).getDatabaseObjectInfo());
                }
 
                expandNode(_node, _selectNode);

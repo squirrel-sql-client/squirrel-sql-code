@@ -143,19 +143,20 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 
 	public void dispose()
 	{
-        boolean shouldDispose = true;
-		if (!_app.shutdown()) {
-            String msg = s_stringMgr.getString("MainFrame.errorOnClose");
-            shouldDispose = Dialogs.showYesNo(_app.getMainFrame(), msg);
-        }
-        if (shouldDispose) {
-            closeAllToolWindows();
-            super.dispose();
-            System.exit(0);     
-        }
-	}
+      boolean shouldDispose = true;
+      if (!_app.shutdown())
+      {
+         String msg = s_stringMgr.getString("MainFrame.errorOnClose");
+         shouldDispose = Dialogs.showYesNo(_app.getMainFrame(), msg);
+      }
+      if (shouldDispose)
+      {
+         closeAllToolWindows();
+         super.dispose();
+         System.exit(0);
+      }
+   }
 
-	// TODO: Why?
 	public void pack()
 	{
 		// Don't call super. Packing this frame causes problems.

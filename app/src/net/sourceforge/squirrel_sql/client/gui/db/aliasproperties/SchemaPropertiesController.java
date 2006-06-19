@@ -14,6 +14,7 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import javax.swing.*;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableCellEditor;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -69,9 +70,9 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
       tc.setCellEditor(new DefaultCellEditor(initCbo(_cboView)));
       cm.addColumn(tc);
 
-      tc = new TableColumn(SchemaTableModel.IX_FUNCTION);
-      // i18n[SchemaPropertiesController.tableHeader.functions=Functions]
-      tc.setHeaderValue(s_stringMgr.getString("SchemaPropertiesController.tableHeader.functions"));
+      tc = new TableColumn(SchemaTableModel.IX_PROCEDURE);
+      // i18n[SchemaPropertiesController.tableHeader.procedures=Procedures]
+      tc.setHeaderValue(s_stringMgr.getString("SchemaPropertiesController.tableHeader.procedures"));
       tc.setCellEditor(new DefaultCellEditor(initCbo(_cboFunction)));
       cm.addColumn(tc);
 
@@ -79,10 +80,12 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
       _pnl.radLoadAndCacheAll.setSelected(alias.getSchemaProperties().getGlobalState() == SQLAliasSchemaProperties.GLOBAL_STATE_LOAD_AND_CACHE_ALL);
       _pnl.radSpecifySchemas.setSelected(alias.getSchemaProperties().getGlobalState() == SQLAliasSchemaProperties.GLOBAL_STATE_SPECIFY_SCHEMAS);
 
+      _pnl.chkCacheSchemaIndepndentMetaData.setSelected(alias.getSchemaProperties().isCacheSchemaIndependentMetaData());
+
 
       _pnl.cboSchemaTableUpdateWhat.addItem(SchemaTableUpdateWhatItem.TABLES);
       _pnl.cboSchemaTableUpdateWhat.addItem(SchemaTableUpdateWhatItem.VIEWS);
-      _pnl.cboSchemaTableUpdateWhat.addItem(SchemaTableUpdateWhatItem.FUNCTIONS);
+      _pnl.cboSchemaTableUpdateWhat.addItem(SchemaTableUpdateWhatItem.PROCEDURES);
 
       for (int i = 0; i < SchemaTableCboItem.items.length; i++)
       {
@@ -134,23 +137,27 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
 
    private void onRefreshSchemaTable()
    {
-      if(0 == _alias.getSchemaProperties().getSchemaDetails().length)
+      ConnectToAliasCallBack cb = new ConnectToAliasCallBack(_app, _alias)
       {
-         ConnectToAliasCallBack cb = new ConnectToAliasCallBack(_app, _alias)
+         public void connected(SQLConnection conn)
          {
-            public void connected(SQLConnection conn)
-            {
-               onConnected(conn);
-            }
-         };
+            onConnected(conn);
+         }
+      };
 
-         ConnectToAliasCommand cmd = new ConnectToAliasCommand(_app, _alias, false, cb);
-         cmd.execute();
-      }
+      ConnectToAliasCommand cmd = new ConnectToAliasCommand(_app, _alias, false, cb);
+      cmd.execute();
    }
 
    private void onSchemaTableUpdateApply()
    {
+      TableCellEditor cellEditor = _pnl.tblSchemas.getCellEditor();
+      if(null != cellEditor)
+      {
+         cellEditor.stopCellEditing();
+      }
+
+
       SchemaTableUpdateWhatItem selWhatItem = (SchemaTableUpdateWhatItem) _pnl.cboSchemaTableUpdateWhat.getSelectedItem();
 
       SchemaTableCboItem selToItem = (SchemaTableCboItem) _pnl.cboSchemaTableUpdateTo.getSelectedItem();
@@ -163,9 +170,9 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
       {
          _schemaTableModel.setColumnTo(SchemaTableModel.IX_VIEW, selToItem);
       }
-      else if(SchemaTableUpdateWhatItem.FUNCTIONS == selWhatItem)
+      else if(SchemaTableUpdateWhatItem.PROCEDURES == selWhatItem)
       {
-         _schemaTableModel.setColumnTo(SchemaTableModel.IX_FUNCTION, selToItem);
+         _schemaTableModel.setColumnTo(SchemaTableModel.IX_PROCEDURE, selToItem);
       }
    }
 
@@ -236,6 +243,13 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
    public void applyChanges()
    {
 
+      TableCellEditor cellEditor = _pnl.tblSchemas.getCellEditor();
+      if(null != cellEditor)
+      {
+         cellEditor.stopCellEditing();
+      }
+      
+
       if(_pnl.radLoadAllAndCacheNone.isSelected())
       {
          _alias.getSchemaProperties().setGlobalState(SQLAliasSchemaProperties.GLOBAL_STATE_LOAD_ALL_CACHE_NONE);
@@ -250,6 +264,8 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
       }
 
       _alias.getSchemaProperties().setSchemaDetails(_schemaTableModel.getData());
+
+      _alias.getSchemaProperties().setCacheSchemaIndependentMetaData(_pnl.chkCacheSchemaIndepndentMetaData.isSelected());
 
    }
 
@@ -276,8 +292,8 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
       public static final SchemaTableUpdateWhatItem TABLES = new SchemaTableUpdateWhatItem(s_stringMgr.getString("SchemaTableUpdateWhatItem.tables"));
       // i18n[SchemaTableUpdateWhatItem.views=Views]
       public static final SchemaTableUpdateWhatItem VIEWS = new SchemaTableUpdateWhatItem(s_stringMgr.getString("SchemaTableUpdateWhatItem.views"));
-      // i18n[SchemaTableUpdateWhatItem.functions=Functions]
-      public static final SchemaTableUpdateWhatItem FUNCTIONS = new SchemaTableUpdateWhatItem(s_stringMgr.getString("SchemaTableUpdateWhatItem.functions"));
+      // i18n[SchemaTableUpdateWhatItem.procedures=Procedures]
+      public static final SchemaTableUpdateWhatItem PROCEDURES = new SchemaTableUpdateWhatItem(s_stringMgr.getString("SchemaTableUpdateWhatItem.procedures"));
 
       private String _name;
 

@@ -5,6 +5,10 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+Session startup performance
+  New Alias properties allow to configure loading and caching of Schemas.
+
+
 Fixed bug #1504123: Oracle hints losts
   By default SQuirreL treads /*...*/ as comments and removes them before sending a SQL to a database.
   This default may now be changed in the (New) Session Properties. See Menu File --> New Session Properties --> Tab SQL.

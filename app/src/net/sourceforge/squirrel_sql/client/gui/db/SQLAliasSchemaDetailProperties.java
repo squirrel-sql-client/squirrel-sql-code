@@ -4,10 +4,14 @@ import java.io.Serializable;
 
 public class SQLAliasSchemaDetailProperties implements Comparable, Serializable
 {
+   public static final int SCHEMA_LOADING_ID_LOAD_DONT_CACHE = 0;
+   public static final int SCHEMA_LOADING_ID_LOAD_AND_CACHE = 1;
+   public static final int SCHEMA_LOADING_ID_DONT_LOAD = 2;
+
    private String _schemaName;
    private int _table ;
    private int _view;
-   private int _function;
+   private int _procedure;
 
    public String getSchemaName()
    {
@@ -30,9 +34,9 @@ public class SQLAliasSchemaDetailProperties implements Comparable, Serializable
       return _view;
    }
 
-   public int getFunction()
+   public int getProcedure()
    {
-      return _function;
+      return _procedure;
    }
 
    public void setTable(int id)
@@ -45,9 +49,9 @@ public class SQLAliasSchemaDetailProperties implements Comparable, Serializable
       _view = id;
    }
 
-   public void setFunction(int id)
+   public void setProcedure(int id)
    {
-      _function = id;
+      _procedure = id;
    }
 
    public int compareTo(Object other)

@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  */
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
+import java.io.File;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
@@ -42,9 +43,6 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
    /** Internationalized strings for this class. */
    private static final StringManager s_stringMgr =
       StringManagerFactory.getStringManager(SQLAlias.class);
-   public static final int SCHEMA_ID_LOAD_DONT_CACHE = 0;
-   public static final int SCHEMA_ID_LOAD_AND_CACHE = 1;
-   public static final int SCHEMA_ID_DONT_LOAD = 2;
 
 
    private interface IStrings
@@ -124,15 +122,23 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
    /**
     * Assign data from the passed <CODE>ISQLAlias</CODE> to this one.
     *
+    * This Alias becomes a clone of rhs.
+    *
     * @param	rhs	 <CODE>ISQLAlias</CODE> to copy data from.
     *
+    * @param b
     * @exception	ValidationException
     *				Thrown if an error occurs assigning data from
     *				<CODE>rhs</CODE>.
     */
-   public synchronized void assignFrom(SQLAlias rhs)
+   public synchronized void assignFrom(SQLAlias rhs, boolean withIdentifier)
       throws ValidationException
    {
+      if(withIdentifier)
+      {
+         setIdentifier(rhs.getIdentifier());
+      }
+      
       setName(rhs.getName());
       setDriverIdentifier(rhs.getDriverIdentifier());
       setUrl(rhs.getUrl());

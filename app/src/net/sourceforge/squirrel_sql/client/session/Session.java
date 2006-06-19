@@ -54,7 +54,6 @@ import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnectionState;
@@ -65,6 +64,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
+
 /**
  * Think of a session as being the users view of the database. IE it includes
  * the database connection and the UI.
@@ -73,143 +74,155 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 class Session implements ISession
 {
-	/** Logger for this class. */
-	private static final ILogger s_log =
-		LoggerController.createLogger(Session.class);
+   /** Logger for this class. */
+   private static final ILogger s_log =
+      LoggerController.createLogger(Session.class);
 
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(Session.class);
+   /** Internationalized strings for this class. */
+   private static final StringManager s_stringMgr =
+      StringManagerFactory.getStringManager(Session.class);
 
-	/** Factory used to generate unique IDs for sessions.
-	/** Descriptive title for session. */
-	private String _title = "";
+   /** Factory used to generate unique IDs for sessions.
+   /** Descriptive title for session. */
+   private String _title = "";
 
-	private SessionPanel _sessionSheet;
+   private SessionPanel _sessionSheet;
 
-	//JASON: What was this used for?
-	private boolean _sessionCreated = false;
+   //JASON: What was this used for?
+   private boolean _sessionCreated = false;
 
-	/** The <TT>IIdentifier</TT> that uniquely identifies this object. */
-	private final IIdentifier _id;
+   /** The <TT>IIdentifier</TT> that uniquely identifies this object. */
+   private final IIdentifier _id;
 
-	/** Application API. */
-	private IApplication _app;
+   /** Application API. */
+   private IApplication _app;
 
-	/** Connection to database. */
-	private SQLConnection _conn;
+   /** Connection to database. */
+   private SQLConnection _conn;
 
-	/** Driver used to connect to database. */
-	private ISQLDriver _driver;
+   /** Driver used to connect to database. */
+   private ISQLDriver _driver;
 
-	/** Alias describing how to connect to database. */
-	private SQLAlias _alias;
+   /** Alias describing how to connect to database. */
+   private SQLAlias _alias;
 
-	private final String _user;
-	private final String _password;
+   private final String _user;
+   private final String _password;
 
-	/** Properties for this session. */
-	private SessionProperties _props;
+   /** Properties for this session. */
+   private SessionProperties _props;
 
 //	private SQLFilterClauses _sqlFilterClauses;
 
-	/**
-	 * Objects stored in session. Each entry is a <TT>Map</TT>
-	 * keyed by <TT>IPlugin.getInternalName()</TT>. Each <TT>Map</TT>
-	 * contains the objects saved for the plugin.
-	 */
-	private final Map _pluginObjects = new HashMap();
+   /**
+    * Objects stored in session. Each entry is a <TT>Map</TT>
+    * keyed by <TT>IPlugin.getInternalName()</TT>. Each <TT>Map</TT>
+    * contains the objects saved for the plugin.
+    */
+   private final Map _pluginObjects = new HashMap();
 
-	private IMessageHandler _msgHandler = NullMessageHandler.getInstance();
+   private IMessageHandler _msgHandler = NullMessageHandler.getInstance();
 
-	/** Xref info about the current connection. */
-	private final net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo _schemaInfo;
+   /** Xref info about the current connection. */
+   private final net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo _schemaInfo;
 
    /** Set to <TT>true</TT> once session closed. */
-	private boolean _closed;
+   private boolean _closed;
 
-	private List _statusBarToBeAdded = new ArrayList();
+   private List _statusBarToBeAdded = new ArrayList();
 
-	private SQLConnectionListener _connLis = null;
+   private SQLConnectionListener _connLis = null;
 
    private BaseSessionInternalFrame _activeActiveSessionWindow;
    private SessionInternalFrame _sessionInternalFrame;
    private Hashtable _parserEventsProcessorsByEntryPanelIdentifier = new Hashtable();
 
    private String databaseProductName = null;
-   
+
    /** flag to track whether or not the table data has been loaded in the object tree */
    private boolean _finishedLoading = false;
-   
+
    /** flag to track whether or not the plugins have finished loading for this new session */
    private boolean _pluginsFinishedLoading = false;
-   
+
    /**
-	 * Create a new session.
-	 *
-	 * @param	app			Application API.
-	 * @param	driver		JDBC driver for session.
-	 * @param	alias		Defines URL to database.
-	 * @param	conn		Connection to database.
-	 * @param	user		User name connected with.
-	 * @param	password	Password for <TT>user</TT>
-	 * @param	sessionId	ID that uniquely identifies this session.
-	 *
-	 * @throws IllegalArgumentException if any parameter is null.
-	 */
-	public Session(IApplication app, ISQLDriver driver, SQLAlias alias,
-					SQLConnection conn, String user, String password,
-					IIdentifier sessionId)
-	{
-		super();  
+    * Create a new session.
+    *
+    * @param	app			Application API.
+    * @param	driver		JDBC driver for session.
+    * @param	alias		Defines URL to database.
+    * @param	conn		Connection to database.
+    * @param	user		User name connected with.
+    * @param	password	Password for <TT>user</TT>
+    * @param	sessionId	ID that uniquely identifies this session.
+    *
+    * @throws IllegalArgumentException if any parameter is null.
+    */
+   public Session(IApplication app, ISQLDriver driver, SQLAlias alias,
+                  SQLConnection conn, String user, String password,
+                  IIdentifier sessionId)
+   {
+      super();
         cacheDatabaseProductName(conn);
-		_schemaInfo = new SchemaInfo(app);
+      _schemaInfo = new SchemaInfo(app);
 
-		if (app == null)
-		{
-			throw new IllegalArgumentException("null IApplication passed");
-		}
-		if (driver == null)
-		{
-			throw new IllegalArgumentException("null ISQLDriver passed");
-		}
-		if (alias == null)
-		{
-			throw new IllegalArgumentException("null ISQLAlias passed");
-		}
-		if (conn == null)
-		{
-			throw new IllegalArgumentException("null SQLConnection passed");
-		}
-		if (sessionId == null)
-		{
-			throw new IllegalArgumentException("sessionId == null");
-		}
+      if (app == null)
+      {
+         throw new IllegalArgumentException("null IApplication passed");
+      }
+      if (driver == null)
+      {
+         throw new IllegalArgumentException("null ISQLDriver passed");
+      }
+      if (alias == null)
+      {
+         throw new IllegalArgumentException("null ISQLAlias passed");
+      }
+      if (conn == null)
+      {
+         throw new IllegalArgumentException("null SQLConnection passed");
+      }
+      if (sessionId == null)
+      {
+         throw new IllegalArgumentException("sessionId == null");
+      }
 
-		_app = app;
-		_driver = driver;
-		_alias = alias;
-		_conn = conn;
-		_user = user;
-		_password = password;
-		_id = sessionId;
+      _app = app;
+      _driver = driver;
 
-		setupTitle();
+      _alias = new SQLAlias();
 
-		_props = (SessionProperties)_app.getSquirrelPreferences().getSessionProperties().clone();
+      try
+      {
+         _alias.assignFrom(alias, true);
+      }
+      catch (ValidationException e)
+      {
+         throw new RuntimeException(e);
+      }
+
+
+      _conn = conn;
+      _user = user;
+      _password = password;
+      _id = sessionId;
+
+      setupTitle();
+
+      _props = (SessionProperties)_app.getSquirrelPreferences().getSessionProperties().clone();
 //		_sqlFilterClauses = new SQLFilterClauses();
 
-		_connLis = new SQLConnectionListener();
-		_conn.addPropertyChangeListener(_connLis);
+      _connLis = new SQLConnectionListener();
+      _conn.addPropertyChangeListener(_connLis);
 
         checkDriverVersion();
-        
-		// Start loading table/column info about the current database.
+
+      // Start loading table/column info about the current database.
       _app.getThreadPool().addTask(new Runnable()
       {
          public void run()
          {
-            _schemaInfo.load(Session.this);
+            _schemaInfo.initialLoad(Session.this);
             _finishedLoading = true;
          }
       });
@@ -217,22 +230,22 @@ class Session implements ISession
       _sessionCreated = true;
    }
 
-	/**
-	 * Close this session.
-	 *
-	 * @throws	SQLException
-	 * 			Thrown if an error closing the SQL connection. The session
-	 * 			will still be closed even though the connection may not have
-	 *			been.
-	 */
-	public void close() throws SQLException
-	{
-		if (!_closed)
-		{
-			s_log.debug("Closing session: " + _id);
+   /**
+    * Close this session.
+    *
+    * @throws	SQLException
+    * 			Thrown if an error closing the SQL connection. The session
+    * 			will still be closed even though the connection may not have
+    *			been.
+    */
+   public void close() throws SQLException
+   {
+      if (!_closed)
+      {
+         s_log.debug("Closing session: " + _id);
 
-			_conn.removePropertyChangeListener(_connLis);
-			_connLis = null;
+         _conn.removePropertyChangeListener(_connLis);
+         _connLis = null;
 
 
          ParserEventsProcessor[] procs =
@@ -251,161 +264,161 @@ class Session implements ISession
             }
          }
 
-			_schemaInfo.dispose();
+         _schemaInfo.dispose();
 
 
-			try
-			{
-				closeSQLConnection();
-			}
-			finally
-			{
-				// This is set here as SessionPanel.dispose() will attempt
-				// to close the session.
-				_closed = true;
+         try
+         {
+            closeSQLConnection();
+         }
+         finally
+         {
+            // This is set here as SessionPanel.dispose() will attempt
+            // to close the session.
+            _closed = true;
 
-				if (_sessionSheet != null)
-				{
-					_sessionSheet.sessionHasClosed();
-					_sessionSheet = null;
-				}
-			}
-			s_log.debug("Successfully closed session: " + _id);
-		}
-	}
+            if (_sessionSheet != null)
+            {
+               _sessionSheet.sessionHasClosed();
+               _sessionSheet = null;
+            }
+         }
+         s_log.debug("Successfully closed session: " + _id);
+      }
+   }
 
-	/**
-	 * Commit the current SQL transaction.
-	 */
-	public synchronized void commit()
-	{
-		try
-		{
-			getSQLConnection().commit();
-			// JASON: Wrong class name in key
-			final String msg = s_stringMgr.getString("SQLPanelAPI.commit");
-			getMessageHandler().showMessage(msg);
-		}
-		catch (Throwable ex)
-		{
-			getMessageHandler().showErrorMessage(ex);
-		}
-	}
+   /**
+    * Commit the current SQL transaction.
+    */
+   public synchronized void commit()
+   {
+      try
+      {
+         getSQLConnection().commit();
+         // JASON: Wrong class name in key
+         final String msg = s_stringMgr.getString("SQLPanelAPI.commit");
+         getMessageHandler().showMessage(msg);
+      }
+      catch (Throwable ex)
+      {
+         getMessageHandler().showErrorMessage(ex);
+      }
+   }
 
-	/**
-	 * Rollback the current SQL transaction.
-	 */
-	public synchronized void rollback()
-	{
-		try
-		{
-			getSQLConnection().rollback();
-			// JASON: Wrong class name in key
-			final String msg = s_stringMgr.getString("SQLPanelAPI.rollback");
-			getMessageHandler().showMessage(msg);
-		}
-		catch (Exception ex)
-		{
-			getMessageHandler().showErrorMessage(ex);
-		}
-	}
+   /**
+    * Rollback the current SQL transaction.
+    */
+   public synchronized void rollback()
+   {
+      try
+      {
+         getSQLConnection().rollback();
+         // JASON: Wrong class name in key
+         final String msg = s_stringMgr.getString("SQLPanelAPI.rollback");
+         getMessageHandler().showMessage(msg);
+      }
+      catch (Exception ex)
+      {
+         getMessageHandler().showErrorMessage(ex);
+      }
+   }
 
-	/**
-	 * Return the unique identifier for this session.
-	 *
-	 * @return the unique identifier for this session.
-	 */
-	public IIdentifier getIdentifier()
-	{
-		return _id;
-	}
+   /**
+    * Return the unique identifier for this session.
+    *
+    * @return the unique identifier for this session.
+    */
+   public IIdentifier getIdentifier()
+   {
+      return _id;
+   }
 
-	/**
-	 * Retrieve whether this session has been closed.
-	 *
-	 * @return <TT>true</TT> if session closed else <TT>false</TT>.
-	 */
-	public boolean isClosed()
-	{
-		return _closed;
-	}
+   /**
+    * Retrieve whether this session has been closed.
+    *
+    * @return <TT>true</TT> if session closed else <TT>false</TT>.
+    */
+   public boolean isClosed()
+   {
+      return _closed;
+   }
 
-	/**
-	 * Return the Application API object.
-	 *
-	 * @return	the Application API object.
-	 */
-	public IApplication getApplication()
-	{
-		return _app;
-	}
+   /**
+    * Return the Application API object.
+    *
+    * @return	the Application API object.
+    */
+   public IApplication getApplication()
+   {
+      return _app;
+   }
 
-	/**
-	 * @return <TT>SQLConnection</TT> for this session.
-	 */
-	public SQLConnection getSQLConnection()
-	{
+   /**
+    * @return <TT>SQLConnection</TT> for this session.
+    */
+   public SQLConnection getSQLConnection()
+   {
         checkThread();
-		return _conn;
-	}
+      return _conn;
+   }
 
-	/**
-	 * @return <TT>ISQLDriver</TT> for this session.
-	 */
-	public ISQLDriver getDriver()
-	{
-		return _driver;
-	}
+   /**
+    * @return <TT>ISQLDriver</TT> for this session.
+    */
+   public ISQLDriver getDriver()
+   {
+      return _driver;
+   }
 
-	/**
-	 * @return <TT>ISQLAlias</TT> for this session.
-	 */
-	public SQLAlias getAlias()
-	{
-		return _alias;
-	}
+   /**
+    * @return <TT>ISQLAlias</TT> for this session.
+    */
+   public SQLAlias getAlias()
+   {
+      return _alias;
+   }
 
-	public SessionProperties getProperties()
-	{
-		return _props;
-	}
+   public SessionProperties getProperties()
+   {
+      return _props;
+   }
 
-	/**
-	 * Retrieve the schema information object for this session.
-	 */
-	public SchemaInfo getSchemaInfo()
-	{
-		return _schemaInfo;
-	}
+   /**
+    * Retrieve the schema information object for this session.
+    */
+   public SchemaInfo getSchemaInfo()
+   {
+      return _schemaInfo;
+   }
 
-	public synchronized Object getPluginObject(IPlugin plugin, String key)
-	{
-		if (plugin == null)
-		{
-			throw new IllegalArgumentException("Null IPlugin passed");
-		}
-		if (key == null)
-		{
-			throw new IllegalArgumentException("Null key passed");
-		}
-		Map map = (Map) _pluginObjects.get(plugin.getInternalName());
-		if (map == null)
-		{
-			map = new HashMap();
-			_pluginObjects.put(plugin.getInternalName(), map);
-		}
-		return map.get(key);
-	}
+   public synchronized Object getPluginObject(IPlugin plugin, String key)
+   {
+      if (plugin == null)
+      {
+         throw new IllegalArgumentException("Null IPlugin passed");
+      }
+      if (key == null)
+      {
+         throw new IllegalArgumentException("Null key passed");
+      }
+      Map map = (Map) _pluginObjects.get(plugin.getInternalName());
+      if (map == null)
+      {
+         map = new HashMap();
+         _pluginObjects.put(plugin.getInternalName(), map);
+      }
+      return map.get(key);
+   }
 
-	/**
-	 * Add the passed action to the session toolbar.
-	 *
-	 * @param	action	Action to be added.
-	 */
-	public void addToToolbar(Action action)
-	{
-		_sessionSheet.addToToolbar(action);
-	}
+   /**
+    * Add the passed action to the session toolbar.
+    *
+    * @param	action	Action to be added.
+    */
+   public void addToToolbar(Action action)
+   {
+      _sessionSheet.addToToolbar(action);
+   }
 
    public void addSeparatorToToolbar()
    {
@@ -413,135 +426,135 @@ class Session implements ISession
    }
 
 
-	public synchronized Object putPluginObject(IPlugin plugin, String key,
-												Object value)
-	{
-		if (plugin == null)
-		{
-			throw new IllegalArgumentException("Null IPlugin passed");
-		}
-		if (key == null)
-		{
-			throw new IllegalArgumentException("Null key passed");
-		}
-		Map map = (Map) _pluginObjects.get(plugin.getInternalName());
-		if (map == null)
-		{
-			map = new HashMap();
-			_pluginObjects.put(plugin.getInternalName(), map);
-		}
-		return map.put(key, value);
-	}
+   public synchronized Object putPluginObject(IPlugin plugin, String key,
+                                              Object value)
+   {
+      if (plugin == null)
+      {
+         throw new IllegalArgumentException("Null IPlugin passed");
+      }
+      if (key == null)
+      {
+         throw new IllegalArgumentException("Null key passed");
+      }
+      Map map = (Map) _pluginObjects.get(plugin.getInternalName());
+      if (map == null)
+      {
+         map = new HashMap();
+         _pluginObjects.put(plugin.getInternalName(), map);
+      }
+      return map.put(key, value);
+   }
 
-	public synchronized void removePluginObject(IPlugin plugin, String key)
-	{
-		if (plugin == null)
-		{
-			throw new IllegalArgumentException("Null IPlugin passed");
-		}
-		if (key == null)
-		{
-			throw new IllegalArgumentException("Null key passed");
-		}
-		Map map = (Map) _pluginObjects.get(plugin.getInternalName());
-		if (map != null)
-		{
-			map.remove(key);
-		}
-	}
+   public synchronized void removePluginObject(IPlugin plugin, String key)
+   {
+      if (plugin == null)
+      {
+         throw new IllegalArgumentException("Null IPlugin passed");
+      }
+      if (key == null)
+      {
+         throw new IllegalArgumentException("Null key passed");
+      }
+      Map map = (Map) _pluginObjects.get(plugin.getInternalName());
+      if (map != null)
+      {
+         map.remove(key);
+      }
+   }
 
    public synchronized void closeSQLConnection() throws SQLException
-	{
-		if (_conn != null)
-		{
-			try
-			{
-				_conn.close();
-			}
-			finally
-			{
-				_conn = null;
-			}
-		}
-	}
+   {
+      if (_conn != null)
+      {
+         try
+         {
+            _conn.close();
+         }
+         finally
+         {
+            _conn = null;
+         }
+      }
+   }
 
    /**
-	 * Reconnect to the database.
-	 */
-	public void reconnect()
-	{
-		SQLConnectionState connState = null;
-		if (_conn != null)
-		{
-			connState = new SQLConnectionState();
-			try
-			{
-				connState.saveState(_conn, _msgHandler);
-			}
-			catch (SQLException ex)
-			{
-				s_log.error("Unexpected SQLException", ex);
-			}
-		}
-		OpenConnectionCommand cmd = new OpenConnectionCommand(_app, _alias,
-											_user, _password, connState.getConnectionProperties());
-		try
-		{
-			closeSQLConnection();
-			_app.getSessionManager().fireConnectionClosedForReconnect(this);
-		}
-		catch (SQLException ex)
-		{
-			final String msg = s_stringMgr.getString("Session.error.connclose");
-			s_log.error(msg, ex);
-			_msgHandler.showErrorMessage(msg);
-			_msgHandler.showErrorMessage(ex);
-		}
-		try
-		{
-			cmd.execute();
-			_conn = cmd.getSQLConnection();
-			if (connState != null)
-			{
-				connState.restoreState(_conn, _msgHandler);
-				getProperties().setAutoCommit(connState.getAutoCommit());
-			}
-			final String msg = s_stringMgr.getString("Session.reconn", _alias.getName());
-			_msgHandler.showMessage(msg);
-			_app.getSessionManager().fireReconnected(this);
-		}
-		catch (Throwable t)
-		{
-			final String msg = s_stringMgr.getString("Session.reconnError", _alias.getName());
-			_msgHandler.showErrorMessage(msg +"\n" + t.toString());
-			s_log.error(msg, t);
-			_app.getSessionManager().fireReconnectFailed(this);
-		}
-	}
+    * Reconnect to the database.
+    */
+   public void reconnect()
+   {
+      SQLConnectionState connState = null;
+      if (_conn != null)
+      {
+         connState = new SQLConnectionState();
+         try
+         {
+            connState.saveState(_conn, _msgHandler);
+         }
+         catch (SQLException ex)
+         {
+            s_log.error("Unexpected SQLException", ex);
+         }
+      }
+      OpenConnectionCommand cmd = new OpenConnectionCommand(_app, _alias,
+                                 _user, _password, connState.getConnectionProperties());
+      try
+      {
+         closeSQLConnection();
+         _app.getSessionManager().fireConnectionClosedForReconnect(this);
+      }
+      catch (SQLException ex)
+      {
+         final String msg = s_stringMgr.getString("Session.error.connclose");
+         s_log.error(msg, ex);
+         _msgHandler.showErrorMessage(msg);
+         _msgHandler.showErrorMessage(ex);
+      }
+      try
+      {
+         cmd.execute();
+         _conn = cmd.getSQLConnection();
+         if (connState != null)
+         {
+            connState.restoreState(_conn, _msgHandler);
+            getProperties().setAutoCommit(connState.getAutoCommit());
+         }
+         final String msg = s_stringMgr.getString("Session.reconn", _alias.getName());
+         _msgHandler.showMessage(msg);
+         _app.getSessionManager().fireReconnected(this);
+      }
+      catch (Throwable t)
+      {
+         final String msg = s_stringMgr.getString("Session.reconnError", _alias.getName());
+         _msgHandler.showErrorMessage(msg +"\n" + t.toString());
+         s_log.error(msg, t);
+         _app.getSessionManager().fireReconnectFailed(this);
+      }
+   }
 
-	public IMessageHandler getMessageHandler()
-	{
-		return _msgHandler;
-	}
+   public IMessageHandler getMessageHandler()
+   {
+      return _msgHandler;
+   }
 
-	public void setMessageHandler(IMessageHandler handler)
-	{
-		_msgHandler = handler != null ? handler : NullMessageHandler.getInstance();
-	}
+   public void setMessageHandler(IMessageHandler handler)
+   {
+      _msgHandler = handler != null ? handler : NullMessageHandler.getInstance();
+   }
 
-	public synchronized void setSessionSheet(SessionPanel child)
-	{
-		_sessionSheet = child;
-		if (_sessionSheet != null)
-		{
-			final ListIterator it = _statusBarToBeAdded.listIterator();
-			while (it.hasNext())
-			{
-				addToStatusBar((JComponent)it.next());
-				it.remove();
-			}
-		}
-	}
+   public synchronized void setSessionSheet(SessionPanel child)
+   {
+      _sessionSheet = child;
+      if (_sessionSheet != null)
+      {
+         final ListIterator it = _statusBarToBeAdded.listIterator();
+         while (it.hasNext())
+         {
+            addToStatusBar((JComponent)it.next());
+            it.remove();
+         }
+      }
+   }
 
    public synchronized void setSessionInternalFrame(SessionInternalFrame sif)
    {
@@ -564,85 +577,85 @@ class Session implements ISession
       return _sessionInternalFrame;
    }
 
-	public SessionPanel getSessionSheet()
-	{
-		return _sessionSheet;
-	}
+   public SessionPanel getSessionSheet()
+   {
+      return _sessionSheet;
+   }
 
-	/**
-	 * Select a tab in the main tabbed pane.
-	 *
-	 * @param	tabIndex	The tab to select. @see ISession.IMainTabIndexes
-	 *
-	 * @throws	IllegalArgumentException
-	 *			Thrown if an invalid <TT>tabId</TT> passed.
-	 */
-	public void selectMainTab(int tabIndex)
-	{
-		_sessionSheet.selectMainTab(tabIndex);
-	}
+   /**
+    * Select a tab in the main tabbed pane.
+    *
+    * @param	tabIndex	The tab to select. @see ISession.IMainTabIndexes
+    *
+    * @throws	IllegalArgumentException
+    *			Thrown if an invalid <TT>tabId</TT> passed.
+    */
+   public void selectMainTab(int tabIndex)
+   {
+      _sessionSheet.selectMainTab(tabIndex);
+   }
 
-	/**
-	 * Add a tab to the main tabbed panel.
-	 *
-	 * @param	tab	 The tab to be added.
-	 *
-	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>IMainPanelTab</TT> passed.
-	 */
-	public void addMainTab(IMainPanelTab tab)
-	{
-		_sessionSheet.addMainTab(tab);
-	}
+   /**
+    * Add a tab to the main tabbed panel.
+    *
+    * @param	tab	 The tab to be added.
+    *
+    * @throws	IllegalArgumentException
+    *			Thrown if a <TT>null</TT> <TT>IMainPanelTab</TT> passed.
+    */
+   public void addMainTab(IMainPanelTab tab)
+   {
+      _sessionSheet.addMainTab(tab);
+   }
 
-	/**
-	 * Add component to the session sheets status bar.
-	 *
-	 * @param	comp	Component to add.
-	 */
-	public synchronized void addToStatusBar(JComponent comp)
-	{
-		if (_sessionSheet != null)
-		{
-			_sessionSheet.addToStatusBar(comp);
-		}
-		else
-		{
-			_statusBarToBeAdded.add(comp);
-		}
-	}
+   /**
+    * Add component to the session sheets status bar.
+    *
+    * @param	comp	Component to add.
+    */
+   public synchronized void addToStatusBar(JComponent comp)
+   {
+      if (_sessionSheet != null)
+      {
+         _sessionSheet.addToStatusBar(comp);
+      }
+      else
+      {
+         _statusBarToBeAdded.add(comp);
+      }
+   }
 
-	/**
-	 * Remove component from the session sheets status bar.
-	 *
-	 * @param	comp	Component to remove.
-	 */
-	public synchronized void removeFromStatusBar(JComponent comp)
-	{
-		if (_sessionSheet != null)
-		{
-			_sessionSheet.removeFromStatusBar(comp);
-		}
-		else
-		{
-			_statusBarToBeAdded.remove(comp);
-		}
-	}
+   /**
+    * Remove component from the session sheets status bar.
+    *
+    * @param	comp	Component to remove.
+    */
+   public synchronized void removeFromStatusBar(JComponent comp)
+   {
+      if (_sessionSheet != null)
+      {
+         _sessionSheet.removeFromStatusBar(comp);
+      }
+      else
+      {
+         _statusBarToBeAdded.remove(comp);
+      }
+   }
 
 //	public SQLFilterClauses getSQLFilterClauses()
 //	{
 //		return _sqlFilterClauses;
 //	}
 
-	/**
-	 * Retrieve the descriptive title of this session.
-	 *
-	 * @return		The descriptive title of this session.
-	 */
-	public String getTitle()
-	{
-		return _title;
-	}
+   /**
+    * Retrieve the descriptive title of this session.
+    *
+    * @return		The descriptive title of this session.
+    */
+   public String getTitle()
+   {
+      return _title;
+   }
 
     /**
      * Returns the cached database product name
@@ -652,11 +665,11 @@ class Session implements ISession
     public String getDatabaseProductName() {
         return databaseProductName;
     }
-    
-	public String toString()
-	{
-		return getTitle();
-	}
+
+   public String toString()
+   {
+      return getTitle();
+   }
 
    private void setupTitle()
    {
@@ -710,7 +723,7 @@ class Session implements ISession
             }
         }
     }
-    
+
    /**
     * The code in any SQLEditor is parsed in the background. You may attach a listener to the ParserEventsProcessor
     * to get to know about the results of parsing. The events are passed synchron with the event queue
@@ -720,8 +733,8 @@ class Session implements ISession
     * <p>
     * If you want the ParserEventsProcessor to produce further events feel free to contact gerdwagner@users.sourceforge.net.
     */
-	public IParserEventsProcessor getParserEventsProcessor(IIdentifier entryPanelIdentifier)
-	{
+   public IParserEventsProcessor getParserEventsProcessor(IIdentifier entryPanelIdentifier)
+   {
       ParserEventsProcessor pep = (ParserEventsProcessor) _parserEventsProcessorsByEntryPanelIdentifier.get(entryPanelIdentifier);
 
       if(null == pep)
@@ -730,7 +743,7 @@ class Session implements ISession
          _parserEventsProcessorsByEntryPanelIdentifier.put(entryPanelIdentifier, pep);
       }
       return pep;
-	}
+   }
 
    private ISQLPanelAPI getSqlPanelApi(IIdentifier entryPanelIdentifier)
    {
@@ -840,11 +853,11 @@ class Session implements ISession
             return;
         }
         String javaVersion = System.getProperty("java.vm.version");
-        boolean javaVersionIsAtLeast14 = true; 
+        boolean javaVersionIsAtLeast14 = true;
         if (javaVersion != null) {
-            if (javaVersion.startsWith("1.1") 
-                    || javaVersion.startsWith("1.2") 
-                    || javaVersion.startsWith("1.3")) 
+            if (javaVersion.startsWith("1.1")
+                    || javaVersion.startsWith("1.2")
+                    || javaVersion.startsWith("1.3"))
             {
                 javaVersionIsAtLeast14 = false;
             }
@@ -854,11 +867,11 @@ class Session implements ISession
         }
         // At this point we know that we have a 1.4 or higher java runtime
         boolean driverIs21Compliant = true;
-        
+
         // Since 1.4 implements interfaces that became available in JDBC 3.0, 
         // let's warn the user if the driver doesn't support DatabaseMetaData
         // methods that were added in JDBC 2.1 and JDBC 3.0 specifications. 
-        
+
         SQLDatabaseMetaData md = _conn.getSQLMetaData();
         try {
             md.supportsResultSetType(ResultSet.TYPE_FORWARD_ONLY);
@@ -868,10 +881,10 @@ class Session implements ISession
 
         if (!driverIs21Compliant) {
             // i18n[Session.driverCompliance=The driver being used for alias ''{0}'' is not JDBC 2.1 compliant.\nYou should consider getting a more recent version of this driver]
-            String msg = 
+            String msg =
                 s_stringMgr.getString("Session.driverCompliance", _alias.getName());
             // i18n[Session.driverComplianceTitle=JRE/JDBC Version Mismatch]
-            String title = 
+            String title =
                 s_stringMgr.getString("Session.driverComplianceTitle");
             showMessageDialog(msg, title, JOptionPane.WARNING_MESSAGE);
             s_log.info(msg);
@@ -886,31 +899,31 @@ class Session implements ISession
 
         if (!driverIs30Compliant) {
             // i18n[Session.driverCompliance3.0=The driver being used for alias ''{0}'' is not JDBC 3.0 compliant.\nYou should consider getting a more recent version of this driver]
-            String msg = 
+            String msg =
                 s_stringMgr.getString("Session.driverCompliance3.0", _alias.getName());
             // i18n[Session.driverComplianceTitle=JRE/JDBC Version Mismatch]
-            String title = 
+            String title =
                 s_stringMgr.getString("Session.driverComplianceTitle");
             showMessageDialog(msg, title, JOptionPane.WARNING_MESSAGE);
             s_log.info(msg);
         }
     }
 
-    private void showMessageDialog(final String message, 
-                                   final String title, 
-                                   final int messageType) 
+    private void showMessageDialog(final String message,
+                                   final String title,
+                                   final int messageType)
     {
         final JFrame f = _app.getMainFrame();
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                JOptionPane.showMessageDialog(f, 
-                        message, 
-                        title, 
+                JOptionPane.showMessageDialog(f,
+                        message,
+                        title,
                         messageType);
             }
         });
     }
-    
+
     /**
      * Check the thread of the caller to see if it is the event dispatch thread
      * and if we are debugging print a debug log message with the call trace.
@@ -924,30 +937,30 @@ class Session implements ISession
             }
         }
     }
-    
+
    private class SQLConnectionListener implements PropertyChangeListener
-	{
-		public void propertyChange(PropertyChangeEvent evt)
-		{
-			final String propName = evt.getPropertyName();
-			if (propName == null || propName == SQLConnection.IPropertyNames.CATALOG)
-			{
-				setupTitle();
-			}
-		}
-	}
+   {
+      public void propertyChange(PropertyChangeEvent evt)
+      {
+         final String propName = evt.getPropertyName();
+         if (propName == null || propName == SQLConnection.IPropertyNames.CATALOG)
+         {
+            setupTitle();
+         }
+      }
+   }
 
 
-	protected void finalize() throws Throwable
-	{
+   protected void finalize() throws Throwable
+   {
 //		System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 //		System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 //		System.out.println("+ Finalize " + getClass() + ". Hash code:" + hashCode());
 //		System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 //		System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-		_app.getSessionManager().fireSessionFinalized(_id);
+      _app.getSessionManager().fireSessionFinalized(_id);
 
-	}
+   }
 
     /**
      * @param _finishedLoading The _finishedLoading to set.
@@ -971,8 +984,8 @@ class Session implements ISession
             return true;
         } else {
             return false;
-        }        
+        }
     }
-    
-    
+
+
 }
