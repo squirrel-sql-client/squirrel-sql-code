@@ -88,7 +88,7 @@ public class SQLAliasSchemaProperties implements Serializable
             SQLAliasSchemaDetailProperties cachedDetailProp =
                getMatchingDetail(_schemaDetails[i].getSchemaName(), schemaPropsCacheIsBasedOn._schemaDetails);
 
-            SchemaLoadInfo buf = new SchemaLoadInfo();
+            SchemaLoadInfo buf = new SchemaLoadInfo(addStringArrays(tableTypes, viewTypes));
             buf.schemaName = _schemaDetails[i].getSchemaName();
 
             ArrayList tableTypesToLoad = new ArrayList();
@@ -128,7 +128,7 @@ public class SQLAliasSchemaProperties implements Serializable
          GLOBAL_STATE_LOAD_AND_CACHE_ALL== _globalState)
       {
          // Means load all Schemas from database.
-         return new SchemaLoadInfo[]{new SchemaLoadInfo()};
+         return new SchemaLoadInfo[]{new SchemaLoadInfo(addStringArrays(tableTypes, viewTypes))};
 
       }
       else if(SQLAliasSchemaProperties.GLOBAL_STATE_SPECIFY_SCHEMAS == _globalState)
@@ -144,7 +144,7 @@ public class SQLAliasSchemaProperties implements Serializable
                continue;
             }
 
-            SchemaLoadInfo schemaLoadInfo = new SchemaLoadInfo();
+            SchemaLoadInfo schemaLoadInfo = new SchemaLoadInfo(addStringArrays(tableTypes, viewTypes));
             schemaLoadInfo.schemaName = _schemaDetails[i].getSchemaName();
             schemaLoadInfo.tableTypes = new String[0];
 
@@ -161,6 +161,11 @@ public class SQLAliasSchemaProperties implements Serializable
             if(SQLAliasSchemaDetailProperties.SCHEMA_LOADING_ID_DONT_LOAD !=_schemaDetails[i].getProcedure())
             {
                schemaLoadInfo.loadProcedures = true;
+            }
+            else
+            {
+               schemaLoadInfo.loadProcedures = false;
+
             }
 
             schemaLoadInfos.add(schemaLoadInfo);

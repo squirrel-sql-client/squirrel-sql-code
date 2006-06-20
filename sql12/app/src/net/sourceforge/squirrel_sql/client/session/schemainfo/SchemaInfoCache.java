@@ -90,8 +90,11 @@ public class SchemaInfoCache implements Serializable
 
       for (int i = 0; i < schemaLoadInfos.length; i++)
       {
-         if(schemaLoadInfos[i].schemaName.equals(schemaName))
+         if(null == schemaLoadInfos[i].schemaName || schemaLoadInfos[i].schemaName.equals(schemaName))
          {
+            // null == schemaLoadInfos[0].schemaName is the case when there are no schemas specified
+            // schemaLoadInfos.length will then be 1.
+            schemaLoadInfos[i].schemaName = schemaName;
             if(null != tableTypes)
             {
                SchemaLoadInfo buf = (SchemaLoadInfo) Utilities.cloneObject(schemaLoadInfos[i], getClass().getClassLoader());
@@ -108,23 +111,6 @@ public class SchemaInfoCache implements Serializable
 
 
 
-//   public String[] getAllAvailabelTypesInDatabase()
-//   {
-//      return availableTypesInDataBase;
-//   }
-
-//   public String[] getAllCachedTableTypes()
-//   {
-//      ArrayList ret = new ArrayList();
-//
-//      ret.addAll(Arrays.asList(_tabelTableTypesCacheable));
-//      ret.addAll(Arrays.asList(_viewTableTypesCacheable));
-//
-//      return (String[]) ret.toArray(new String[ret.size()]);
-//
-//
-//   }
-
 
    private void initTypes()
    {
@@ -135,7 +121,6 @@ public class SchemaInfoCache implements Serializable
       ArrayList viewTypeCandidates = new ArrayList();
       viewTypeCandidates.add("VIEW");
 
-//      String[] availableTypesInDataBase = new String[]{"TABLE", "VIEW"};
       try
       {
          ArrayList availableBuf = new ArrayList();
@@ -359,12 +344,14 @@ public class SchemaInfoCache implements Serializable
       procedureNames.clear();
       iProcedureInfos.clear();
       procedureInfosBySimpleName.clear();
+
+      schemas.clear();
+
    }
 
    private void clearSchemaIndependentData()
    {
       catalogs.clear();
-      schemas.clear();
 
       keywords.clear();
       dataTypes.clear();
