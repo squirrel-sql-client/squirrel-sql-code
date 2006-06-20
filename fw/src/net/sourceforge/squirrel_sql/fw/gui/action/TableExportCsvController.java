@@ -168,7 +168,7 @@ public class TableExportCsvController
       }
 
 
-      chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+      chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
       // i18n[TableExportCsvController.fileChooserTitel=Choose export file]
       chooser.setDialogTitle(s_stringMgr.getString("TableExportCsvController.fileChooserTitel"));
