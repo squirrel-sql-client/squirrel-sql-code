@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.IOException;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.IAliasPropertiesPanelController;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
 /**
@@ -132,7 +134,27 @@ public interface IPlugin
 	 */
 	IGlobalPreferencesPanel[] getGlobalPreferencePanels();
 
-	/**
+
+   /**
+    * Creates Alias Prefs Controllers for this Plugin. 
+    */
+   IAliasPropertiesPanelController[] getAliasPropertiesPanelControllers(SQLAlias alias);
+
+   /**
+    * Called when an Alias is copied. Should be overridden by Plugins
+    * that work with Alias properties.
+    */
+   void aliasCopied(SQLAlias source, SQLAlias target);
+
+   /**
+    * Called when an Alias is removed. Should be overridden by Plugins 
+    * that work with Alias properties.
+    */
+   void aliasRemoved(SQLAlias alias);
+
+
+
+   /**
 	 * Create panels for the New Session Properties dialog.
 	 *
 	 * @return	Array of <TT>INewSessionPropertiesPanel</TT> objects. Return
@@ -182,6 +204,5 @@ public interface IPlugin
     * @see PluginManager.bindExternalPluginService();
     */
    Object getExternalService();
-   
 
 }

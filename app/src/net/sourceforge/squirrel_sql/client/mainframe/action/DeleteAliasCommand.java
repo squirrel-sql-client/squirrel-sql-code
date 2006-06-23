@@ -26,6 +26,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+
 /**
  * This <CODE>ICommand</CODE> allows the user to delete an existing
  * <TT>ISQLAlias</TT>.
@@ -34,56 +36,55 @@ import net.sourceforge.squirrel_sql.client.IApplication;
  */
 public class DeleteAliasCommand implements ICommand
 {
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(DeleteAliasCommand.class);
+   /** Internationalized strings for this class. */
+   private static final StringManager s_stringMgr =
+      StringManagerFactory.getStringManager(DeleteAliasCommand.class);
 
-	/** Application API. */
-	private final IApplication _app;
+   /** Application API. */
+   private final IApplication _app;
 
-	/** Owner of the maintenance dialog. */
-	private Frame _frame;
+   /** Owner of the maintenance dialog. */
+   private Frame _frame;
 
-	/** <TT>ISQLAlias</TT> to be deleted. */
-	private ISQLAlias _sqlAlias;
+   /** <TT>SQLAlias</TT> to be deleted. */
+   private SQLAlias _sqlAlias;
 
-	/**
-	 * Ctor.
-	 *
-	 * @param	app			Application API.
-	 * @param	frame		Owning <TT>Frame</TT>.
-	 * @param	sqlAlias	<ISQLAlias</TT> to be deleted.
-	 *
-	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>ISQLAlias</TT> or
-	 *			<TT>IApplication</TT> passed.
-	 */
-	public DeleteAliasCommand(IApplication app, Frame frame,
-								ISQLAlias sqlAlias)
-	{
-		super();
-		if (app == null)
-		{
-			throw new IllegalArgumentException("Null IApplication passed");
-		}
-		if (sqlAlias == null)
-		{
-			throw new IllegalArgumentException("Null ISQLAlias passed");
-		}
+   /**
+    * Ctor.
+    *
+    * @param	app			Application API.
+    * @param	frame		Owning <TT>Frame</TT>.
+    * @param	sqlAlias	<ISQLAlias</TT> to be deleted.
+    *
+    * @throws	IllegalArgumentException
+    *			Thrown if a <TT>null</TT> <TT>ISQLAlias</TT> or
+    *			<TT>IApplication</TT> passed.
+    */
+   public DeleteAliasCommand(IApplication app, Frame frame, SQLAlias sqlAlias)
+   {
+      super();
+      if (app == null)
+      {
+         throw new IllegalArgumentException("Null IApplication passed");
+      }
+      if (sqlAlias == null)
+      {
+         throw new IllegalArgumentException("Null ISQLAlias passed");
+      }
 
-		_app = app;
-		_frame = frame;
-		_sqlAlias = sqlAlias;
-	}
+      _app = app;
+      _frame = frame;
+      _sqlAlias = sqlAlias;
+   }
 
-	/**
-	 * Delete the current <TT>ISQLAlias</TT> after confirmation.
-	 */
-	public void execute()
-	{
-		if (Dialogs.showYesNo(_frame, s_stringMgr.getString("DeleteAliasCommand.confirm", _sqlAlias.getName())))
-		{
-			_app.getDataCache().removeAlias(_sqlAlias);
-		}
-	}
+   /**
+    * Delete the current <TT>ISQLAlias</TT> after confirmation.
+    */
+   public void execute()
+   {
+      if (Dialogs.showYesNo(_frame, s_stringMgr.getString("DeleteAliasCommand.confirm", _sqlAlias.getName())))
+      {
+         _app.getDataCache().removeAlias(_sqlAlias);
+      }
+   }
 }

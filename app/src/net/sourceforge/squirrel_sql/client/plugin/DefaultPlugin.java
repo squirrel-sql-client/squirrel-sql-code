@@ -22,6 +22,8 @@ import java.io.IOException;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Version;
+import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.IAliasPropertiesPanelController;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.preferences.INewSessionPropertiesPanel;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
@@ -239,7 +241,21 @@ public abstract class DefaultPlugin implements IPlugin
 		return null;
 	}
 
-	/**
+   public IAliasPropertiesPanelController[] getAliasPropertiesPanelControllers(SQLAlias alias)
+   {
+      return null;
+   }
+
+   public void aliasCopied(SQLAlias source, SQLAlias target)
+   {
+   }
+
+   public void aliasRemoved(SQLAlias alias)
+   {
+   }
+
+
+   /**
 	 * Create panels for the New Session Properties dialog.
 	 *
 	 * @return	<TT>null</TT>to indicate that this plugin doesn't require

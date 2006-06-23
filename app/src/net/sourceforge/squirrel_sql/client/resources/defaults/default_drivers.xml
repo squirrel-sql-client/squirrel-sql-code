@@ -300,7 +300,7 @@
 	</Bean>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
-		<driverClassName>com.microsoft.jdbc.sqlserver.SQLServerDriver</driverClassName>
+		<driverClassName>com.microsoft.sqlserver.jdbc.SQLServerDriver</driverClassName>
 		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
 			<string>-11</string>
 		</identifier>

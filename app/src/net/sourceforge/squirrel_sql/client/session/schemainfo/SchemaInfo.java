@@ -474,7 +474,8 @@ public class SchemaInfo
          _schemaInfoCache.schemas.clear();
          if(SchemaNameLoadInfo.STATE_REFERESH_SCHEMA_NAMES_FROM_DB == schemaNameLoadInfo.state)
          {
-            _schemaInfoCache.schemas.addAll(Arrays.asList(_dmd.getSchemas()));
+            String[] allowedSchemas = _session.getApplication().getSessionManager().getAllowedSchemas(_session);
+            _schemaInfoCache.schemas.addAll(Arrays.asList(allowedSchemas));
          }
          else if(SchemaNameLoadInfo.STATE_USES_PROVIDED_SCHEMA_NAMES == schemaNameLoadInfo.state)
          {

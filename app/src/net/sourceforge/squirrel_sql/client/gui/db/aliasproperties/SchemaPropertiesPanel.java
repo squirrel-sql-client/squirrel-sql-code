@@ -36,9 +36,9 @@ public class SchemaPropertiesPanel extends JPanel
 
       GridBagConstraints gbc;
 
-      // i18n[SchemaPropertiesPanel.hint=Here you may pecify which schemas to be loaded and displayed in a Session's Object tree.
+      // i18n[SchemaPropertiesPanel.hint=Here you may pecify which Schemas to be loaded and displayed in a Session's Object tree.
       // Code completion and Syntax highlighting will work only for loaded schemas.
-      // If schemas take a long time to load you may cache them on your hard disk.
+      // If Schemas take a long time to load you may cache them on your hard disk.
       // Then loading will take long only when you open a Session for the first time.
       // You can always refesh the cache either by using the Session's 'Refresh all' toolbar button
       // or by using the 'Refresh Item' right mouse menu on an Object tree node.]
@@ -46,17 +46,17 @@ public class SchemaPropertiesPanel extends JPanel
       gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5), 0,0);
       add(lblHint, gbc);
 
-      // i18n[SchemaPropertiesPanel.loadAllAndCacheNone=Load all schemas, cache none]
+      // i18n[SchemaPropertiesPanel.loadAllAndCacheNone=Load all Schemas, cache none]
       radLoadAllAndCacheNone = new JRadioButton(s_stringMgr.getString("SchemaPropertiesPanel.loadAllAndCacheNone"));
       gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       add(radLoadAllAndCacheNone, gbc);
 
-      // i18n[SchemaPropertiesPanel.loadAndCacheAll=Load all and cache all schemas]
+      // i18n[SchemaPropertiesPanel.loadAndCacheAll=Load all and cache all Schemas]
       radLoadAndCacheAll= new JRadioButton(s_stringMgr.getString("SchemaPropertiesPanel.loadAndCacheAll"));
       gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
       add(radLoadAndCacheAll, gbc);
 
-      // i18n[SchemaPropertiesPanel.specifySchemas=Specify schema loading and caching]
+      // i18n[SchemaPropertiesPanel.specifySchemas=Specify Schema loading and caching]
       radSpecifySchemas= new JRadioButton(s_stringMgr.getString("SchemaPropertiesPanel.specifySchemas"));
       gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
       add(radSpecifySchemas, gbc);
@@ -67,7 +67,7 @@ public class SchemaPropertiesPanel extends JPanel
       bg.add(radSpecifySchemas);
 
 
-      // i18n[SchemaPropertiesPanel.refreshSchemas=Connect database to refresh schema table]
+      // i18n[SchemaPropertiesPanel.refreshSchemas=Connect database to refresh Schema table]
       btnUpdateSchemas = new JButton(s_stringMgr.getString("SchemaPropertiesPanel.refreshSchemas"));
       gbc = new GridBagConstraints(0,4,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       add(btnUpdateSchemas, gbc);

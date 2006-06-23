@@ -11,13 +11,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Arrays;
 
 public class AliasPropertiesController
 {
    private static HashMap _currentlyOpenInstancesByAliasID = new HashMap();
 
    private AliasPropertiesInternalFrame _frame;
-   private ArrayList _iAliasPropertiesPanelController = new ArrayList();
+   private ArrayList _iAliasPropertiesPanelControllers = new ArrayList();
    private IApplication _app;
    private SQLAlias _alias;
 
@@ -85,22 +86,24 @@ public class AliasPropertiesController
 
    private void loadTabs()
    {
-      _iAliasPropertiesPanelController.add(new SchemaPropertiesController());
-      _iAliasPropertiesPanelController.add(new DriverPropertiesController());
+      _iAliasPropertiesPanelControllers.add(new SchemaPropertiesController(_alias, _app));
+      _iAliasPropertiesPanelControllers.add(new DriverPropertiesController(_alias, _app));
+
+      IAliasPropertiesPanelController[] pluginAliasPropertiesPanelControllers =
+         _app.getPluginManager().getAliasPropertiesPanelControllers(_alias);
+
+      _iAliasPropertiesPanelControllers.addAll(Arrays.asList(pluginAliasPropertiesPanelControllers));
 
 
-      for (int i = 0; i < _iAliasPropertiesPanelController.size(); i++)
+      for (int i = 0; i < _iAliasPropertiesPanelControllers.size(); i++)
       {
-         IAliasPropertiesPanelController aliasPropertiesController = (IAliasPropertiesPanelController) _iAliasPropertiesPanelController.get(i);
-         aliasPropertiesController.initialize(_alias, _app);
+         IAliasPropertiesPanelController aliasPropertiesController = (IAliasPropertiesPanelController) _iAliasPropertiesPanelControllers.get(i);
 
          int index = _frame.tabPane.getTabCount();
          _frame.tabPane.add(aliasPropertiesController.getTitle(), aliasPropertiesController.getPanelComponent());
          _frame.tabPane.setToolTipTextAt(index, aliasPropertiesController.getHint());
 
       }
-
-
    }
 
    private void performClose()
@@ -111,9 +114,9 @@ public class AliasPropertiesController
 
    private void onOK()
    {
-      for (int i = 0; i < _iAliasPropertiesPanelController.size(); i++)
+      for (int i = 0; i < _iAliasPropertiesPanelControllers.size(); i++)
       {
-         IAliasPropertiesPanelController aliasPropertiesController = (IAliasPropertiesPanelController) _iAliasPropertiesPanelController.get(i);
+         IAliasPropertiesPanelController aliasPropertiesController = (IAliasPropertiesPanelController) _iAliasPropertiesPanelControllers.get(i);
          aliasPropertiesController.applyChanges();
       }
       performClose();

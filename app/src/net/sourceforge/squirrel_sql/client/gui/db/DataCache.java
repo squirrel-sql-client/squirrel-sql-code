@@ -43,6 +43,8 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoCacheSerializer;
+import net.sourceforge.squirrel_sql.client.IApplication;
 
 /**
  * XML cache of JDBC drivers and aliases.
@@ -71,6 +73,8 @@ public class DataCache
    /** Cache that contains data. */
    private final XMLObjectCache _cache = new XMLObjectCache();
 
+   private IApplication _app;
+
    /**
     * Ctor. Loads drivers and aliases from the XML document.
     *
@@ -84,9 +88,11 @@ public class DataCache
     *			Thrown if null <TT>SQLDriverManager</TT>, <TT>driversFile</TT>,
     *			<TT>aliasesFile</TT> or <TT>dftDriversURL</TT> passed.
     */
-   public DataCache(SQLDriverManager driverMgr, File driversFile,
-                    File aliasesFile, URL dftDriversURL,
-                    IMessageHandler msgHandler)
+   public DataCache(SQLDriverManager driverMgr,
+                    File driversFile,
+                    File aliasesFile,
+                    URL dftDriversURL,
+                    IApplication app)
    {
       super();
       if (driverMgr == null)
@@ -108,13 +114,10 @@ public class DataCache
 
       _driverMgr = driverMgr;
 
-      IMessageHandler myMsgHandler = msgHandler;
-      if (myMsgHandler == null)
-      {
-         myMsgHandler = NullMessageHandler.getInstance();
-      }
-      loadDrivers(driversFile, dftDriversURL, myMsgHandler);
-      loadAliases(aliasesFile, myMsgHandler);
+      _app = app;
+
+      loadDrivers(driversFile, dftDriversURL, NullMessageHandler.getInstance());
+      loadAliases(aliasesFile, NullMessageHandler.getInstance());
    }
 
    /**
@@ -283,8 +286,10 @@ public class DataCache
       _cache.add(alias);
    }
 
-   public void removeAlias(ISQLAlias alias)
+   public void removeAlias(SQLAlias alias)
    {
+      SchemaInfoCacheSerializer.aliasRemoved(alias);
+      _app.getPluginManager().aliasRemoved(alias);
       _cache.remove(SQL_ALIAS_IMPL, alias.getIdentifier());
    }
 

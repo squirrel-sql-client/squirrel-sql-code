@@ -20,11 +20,12 @@ package net.sourceforge.squirrel_sql.plugins.oracle;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.IAliasPropertiesPanelController;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
-import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IAllowedSchemaChecker;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
@@ -34,17 +35,17 @@ import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
-import net.sourceforge.squirrel_sql.fw.xml.XMLException;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.plugins.oracle.SGAtrace.NewSGATraceWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.dboutput.NewDBOutputWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.*;
@@ -56,12 +57,10 @@ import net.sourceforge.squirrel_sql.plugins.oracle.tab.*;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
 
 /**
  * Oracle plugin class.
@@ -70,36 +69,44 @@ import java.util.HashMap;
  */
 public class OraclePlugin extends DefaultSessionPlugin
 {
-   /** Logger for this class. */
+   /**
+    * Logger for this class.
+    */
    private final static ILogger s_log = LoggerController.createLogger(OraclePlugin.class);
 
 
-   /** Internationalized strings for this class. */
+   /**
+    * Internationalized strings for this class.
+    */
    private static final StringManager s_stringMgr =
-       StringManagerFactory.getStringManager(OraclePlugin.class);
+      StringManagerFactory.getStringManager(OraclePlugin.class);
 
 
-       private PluginResources _resources;
+   private PluginResources _resources;
 
-       private NewDBOutputWorksheetAction _newDBOutputWorksheet;
-       private NewInvalidObjectsWorksheetAction _newInvalidObjectsWorksheet;
-       private NewSessionInfoWorksheetAction _newSessionInfoWorksheet;
-       private NewSGATraceWorksheetAction _newSGATraceWorksheet;
+   private NewDBOutputWorksheetAction _newDBOutputWorksheet;
+   private NewInvalidObjectsWorksheetAction _newInvalidObjectsWorksheet;
+   private NewSessionInfoWorksheetAction _newSessionInfoWorksheet;
+   private NewSGATraceWorksheetAction _newSGATraceWorksheet;
 
-       /** A list of Oracle sessions that are open so we'll know when none are left */
-       private ArrayList oracleSessions = new ArrayList();
-   /** SQL to find schemas to which the logged in user has access */
+   /**
+    * A list of Oracle sessions that are open so we'll know when none are left
+    */
+   private ArrayList oracleSessions = new ArrayList();
+   /**
+    * SQL to find schemas to which the logged in user has access
+    */
    private static String SCHEMA_ACCESS_SQL =
-       "SELECT DISTINCT OWNER FROM USER_TAB_PRIVS";
-   /** SQL to determine whether or not this account is a DBA account */
+      "SELECT DISTINCT OWNER FROM USER_TAB_PRIVS";
+   /**
+    * SQL to determine whether or not this account is a DBA account
+    */
    private static String DBA_ROLE_SQL =
-       "SELECT GRANTED_ROLE FROM USER_ROLE_PRIVS";
+      "SELECT GRANTED_ROLE FROM USER_ROLE_PRIVS";
 
 
-   private HashMap _allowedSchemasBySessionID = new HashMap();
-   private static final String ORACLE_PREFS_FILE = "oraclePrefs.xml";
-   private OracleGlobalPrefs _oracleGlobalPrefs;
-   private OraclePrefsPanelController _oraclePrefsPanelController;
+   private static final String ORACLE_ALIAS_PREFS_FILE = "oracleAliasPrefs.xml";
+   private Hashtable _oracleAliasPrefsByAliasIdentifier = new Hashtable();
 
    /**
     * Return the internal name of this plugin.
@@ -209,9 +216,9 @@ public class OraclePlugin extends DefaultSessionPlugin
 
          app.getSessionManager().addAllowedSchemaChecker(new IAllowedSchemaChecker()
          {
-            public String[] getAllowedSchemas(ISession session)
+            public String[] getAllowedSchemas(SQLConnection con, SQLAlias alias)
             {
-               return onGetAllowedSchemas(session);
+               return onGetAllowedSchemas(con, alias);
             }
          });
 
@@ -221,11 +228,17 @@ public class OraclePlugin extends DefaultSessionPlugin
          {
             XMLBeanReader xbr = new XMLBeanReader();
             xbr.load(f, getClass().getClassLoader());
-            _oracleGlobalPrefs = (OracleGlobalPrefs) xbr.iterator().next();
+
+            for(Iterator i=xbr.iterator(); i.hasNext();)
+            {
+               OracleAliasPrefs buf = (OracleAliasPrefs) i.next();
+               _oracleAliasPrefsByAliasIdentifier.put(buf.getAliasIdentifier(), buf);
+            }
+
          }
          else
          {
-            _oracleGlobalPrefs = new OracleGlobalPrefs();
+            _oracleAliasPrefsByAliasIdentifier = new Hashtable();
          }
       }
       catch (Exception e)
@@ -242,7 +255,7 @@ public class OraclePlugin extends DefaultSessionPlugin
    private File getGlobalPrefsFile()
       throws IOException
    {
-      return new File(getPluginUserSettingsFolder().getPath() + File.separator + ORACLE_PREFS_FILE);
+      return new File(getPluginUserSettingsFolder().getPath() + File.separator + ORACLE_ALIAS_PREFS_FILE);
    }
 
    public void unload()
@@ -251,7 +264,11 @@ public class OraclePlugin extends DefaultSessionPlugin
       {
          File f = getGlobalPrefsFile();
 
-         XMLBeanWriter xbw = new XMLBeanWriter(_oracleGlobalPrefs);
+         XMLBeanWriter xbw = new XMLBeanWriter();
+
+         xbw.addToRoot(_oracleAliasPrefsByAliasIdentifier.values().iterator());
+
+
          xbw.save(f);
       }
       catch (Exception e)
@@ -263,30 +280,58 @@ public class OraclePlugin extends DefaultSessionPlugin
 
 
    /**
-       * Create preferences panel for the Global Preferences dialog.
-       *
-       * @return  Preferences panel.
-       */
-      public IGlobalPreferencesPanel[] getGlobalPreferencePanels()
+    * Create Alias prefs panel.
+    */
+   public IAliasPropertiesPanelController[] getAliasPropertiesPanelControllers(SQLAlias alias)
+   {
+      if(false == isOracle(alias))
       {
-         if(null == _oraclePrefsPanelController)
-         {
-            _oraclePrefsPanelController = new OraclePrefsPanelController(_oracleGlobalPrefs);
-         }
-
-         return
-            new OraclePrefsPanelController[]
-               {
-                  _oraclePrefsPanelController
-               };
+         return new IAliasPropertiesPanelController[0];
       }
+
+      OracleAliasPrefs aliasPrefs = (OracleAliasPrefs) _oracleAliasPrefsByAliasIdentifier.get(alias.getIdentifier());
+
+      if (null == aliasPrefs)
+      {
+         aliasPrefs = new OracleAliasPrefs();
+         aliasPrefs.setAliasIdentifier(alias.getIdentifier());
+         _oracleAliasPrefsByAliasIdentifier.put(alias.getIdentifier(), aliasPrefs);
+      }
+
+      return new OracleAliasPrefsPanelController[]{new OracleAliasPrefsPanelController(aliasPrefs)};
+   }
+
+   public void aliasCopied(SQLAlias source, SQLAlias target)
+   {
+      if(false == isOracle(source) || false == isOracle(target))
+      {
+         return;
+      }
+
+      OracleAliasPrefs sourcePrefs = (OracleAliasPrefs) _oracleAliasPrefsByAliasIdentifier.get(source.getIdentifier());
+
+      if(null != sourcePrefs)
+      {
+         OracleAliasPrefs targetPrefs = (OracleAliasPrefs) Utilities.cloneObject(sourcePrefs, getClass().getClassLoader());
+         targetPrefs.setAliasIdentifier(target.getIdentifier());
+         _oracleAliasPrefsByAliasIdentifier.put(targetPrefs.getAliasIdentifier(), targetPrefs);
+      }
+   }
+
+   public void aliasRemoved(SQLAlias alias)
+   {
+      _oracleAliasPrefsByAliasIdentifier.remove(alias.getIdentifier());
+   }
+
 
    public PluginSessionCallback sessionStarted(final ISession session)
    {
-      if (!isOracle(session))
+      if (!isOracle(session.getAlias()))
       {
          return null;
       }
+
+      oracleSessions.add(session);
 
 
       PluginSessionCallback ret = new PluginSessionCallback()
@@ -331,10 +376,6 @@ public class OraclePlugin extends DefaultSessionPlugin
    }
 
 
-   public void sessionEnding(ISession session)
-   {
-      _allowedSchemasBySessionID.remove(session.getIdentifier());
-   }
 
    /**
      * Return a node expander for the object tree for a particular default node type.
@@ -342,7 +383,7 @@ public class OraclePlugin extends DefaultSessionPlugin
      * expander bahaviour. Most plugins should return null here.
      */
     public INodeExpander getDefaultNodeExpander(ISession session, DatabaseObjectType type) {
-      boolean isOracle = isOracle(session);
+      boolean isOracle = isOracle(session.getAlias());
       if ((type == DatabaseObjectType.PROC_TYPE_DBO) && isOracle) {
           return new ProcedureExpander();
       }
@@ -371,55 +412,33 @@ public class OraclePlugin extends DefaultSessionPlugin
     }
 
 
-   private boolean isOracle(ISession session)
+   private boolean isOracle(SQLAlias alias)
    {
-      final String ORACLE = "oracle";
-      String dbms = null;
-        if (oracleSessions.contains(session)) {
-            return true;
-        }
-        String prodName = session.getDatabaseProductName();
-        if (prodName != null) {
-            if (prodName.toLowerCase().startsWith(ORACLE)) {
-                oracleSessions.add(session);
-                return true;
-            } else {
-                return false;
-            }
-        }
-      try
+      IIdentifier driverIdentifier = alias.getDriverIdentifier();
+      Driver jdbcDriver = getApplication().getSQLDriverManager().getJDBCDriver(driverIdentifier);
+
+      if(null == jdbcDriver)
       {
-            SQLConnection con = session.getSQLConnection();
-            if (con != null) {
-                SQLDatabaseMetaData data = con.getSQLMetaData();
-                if (data != null) {
-                    dbms = data.getDatabaseProductName();
-                }
-            }
+         return false;
       }
-      catch (SQLException ex)
-      {
-         s_log.debug("Error in getDatabaseProductName()", ex);
-      }
-        if (dbms != null && dbms.toLowerCase().startsWith(ORACLE)) {
-            oracleSessions.add(session);
-            return true;
-        }
-        return false;
+
+      return jdbcDriver.getClass().getName().startsWith("oracle.");
    }
 
-   private String[] onGetAllowedSchemas(ISession session)
+   private String[] onGetAllowedSchemas(SQLConnection con, SQLAlias alias)
    {
-      if(isOracle(session) && false == _oracleGlobalPrefs.isLoadAllSchemas())
+      if(isOracle(alias))
       {
-         String[] ret = (String[]) _allowedSchemasBySessionID.get(session.getIdentifier());
-         if(null == ret)
+         OracleAliasPrefs prefs = (OracleAliasPrefs)_oracleAliasPrefsByAliasIdentifier.get(alias.getIdentifier());
+
+         if(null == prefs)
          {
-            ret = getAccessibleSchemas(session);
-            _allowedSchemasBySessionID.put(session.getIdentifier(), ret);
+            prefs = new OracleAliasPrefs();
+            prefs.setAliasIdentifier(alias.getIdentifier());
+            _oracleAliasPrefsByAliasIdentifier.put(prefs.getAliasIdentifier(), prefs);
          }
 
-         return ret;
+         return getAccessibleSchemas(prefs, con);
       }
       else
       {
@@ -435,19 +454,19 @@ public class OraclePlugin extends DefaultSessionPlugin
     * privilege to access.
     *
     * @param session the session to retrieve schemas for
+    * @param con
     * @return an array of strings representing the names of accessible schemas
     */
-   private String[] getAccessibleSchemas(ISession session)
+   private String[] getAccessibleSchemas(OracleAliasPrefs aliasPrefs, SQLConnection con)
    {
       String[] result = null;
       ResultSet rs = null;
       Statement stmt = null;
-      SQLConnection con = session.getSQLConnection();
       SQLDatabaseMetaData md = con.getSQLMetaData();
       String currentUserName = null;
       try
       {
-         if (hasSystemPrivilege(session))
+         if (hasSystemPrivilege(con) || aliasPrefs.isLoadAllSchemas())
          {
             result = md.getSchemas();
          }
@@ -468,7 +487,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 
             tmp.remove("SYS");
 
-            if(_oracleGlobalPrefs.isLoadAccessibleSchemasAndSYS())
+            if(aliasPrefs.isLoadAccessibleSchemasAndSYS())
             {
                tmp.add("SYS");
             }
@@ -503,38 +522,57 @@ public class OraclePlugin extends DefaultSessionPlugin
    }
 
    /**
-     * Checks whether or not the user associated with the specified session has
-     * been granted the DBA privilege.
-     *
-     * @param session the session to check
-     * @return true if the user has the DBA privilege; false otherwise.
-     */
-    private boolean hasSystemPrivilege(ISession session) {
-        boolean result = false;
-        Statement stmt = null;
-        ResultSet rs = null;
-        SQLConnection con = session.getSQLConnection();
-        try {
-            stmt = con.createStatement();
-            rs = stmt.executeQuery(DBA_ROLE_SQL);
-            while (rs.next()) {
-                String role = rs.getString(1);
-                if ("DBA".equalsIgnoreCase(role)) {
-                    result = true;
-                    break;
-                }
+    * Checks whether or not the user associated with the specified session has
+    * been granted the DBA privilege.
+    *
+    * @param session the session to check
+    * @return true if the user has the DBA privilege; false otherwise.
+    */
+   private boolean hasSystemPrivilege(SQLConnection con)
+   {
+      boolean result = false;
+      Statement stmt = null;
+      ResultSet rs = null;
+      try
+      {
+         stmt = con.createStatement();
+         rs = stmt.executeQuery(DBA_ROLE_SQL);
+         while (rs.next())
+         {
+            String role = rs.getString(1);
+            if ("DBA".equalsIgnoreCase(role))
+            {
+               result = true;
+               break;
             }
-        } catch (SQLException e) {
-            // i18n[DefaultDatabaseExpander.error.retrieveuserroles=Unable to retrieve user roles]
-            String msg =
-                s_stringMgr.getString("DefaultDatabaseExpander.error.retrieveuserroles");
-            s_log.error(msg, e);
-        } finally {
-            if (rs != null) try { rs.close(); } catch (SQLException e) {}
-            if (stmt != null) try { stmt.close(); } catch (SQLException e) {}
-        }
-        return result;
-    }
+         }
+      }
+      catch (SQLException e)
+      {
+         // i18n[DefaultDatabaseExpander.error.retrieveuserroles=Unable to retrieve user roles]
+         String msg =
+            s_stringMgr.getString("DefaultDatabaseExpander.error.retrieveuserroles");
+         s_log.error(msg, e);
+      }
+      finally
+      {
+         if (rs != null) try
+         {
+            rs.close();
+         }
+         catch (SQLException e)
+         {
+         }
+         if (stmt != null) try
+         {
+            stmt.close();
+         }
+         catch (SQLException e)
+         {
+         }
+      }
+      return result;
+   }
 
 
    public class OraclePluginSessionListener extends SessionAdapter
@@ -543,7 +581,7 @@ public class OraclePlugin extends DefaultSessionPlugin
       public void sessionActivated(SessionEvent evt)
       {
          final ISession session = evt.getSession();
-         final boolean enable = isOracle(session);
+         final boolean enable = isOracle(session.getAlias());
          _newDBOutputWorksheet.setEnabled(enable);
          _newInvalidObjectsWorksheet.setEnabled(enable);
          _newSessionInfoWorksheet.setEnabled(enable);
@@ -553,7 +591,7 @@ public class OraclePlugin extends DefaultSessionPlugin
       public void sessionClosing(SessionEvent evt)
       {
          final ISession session = evt.getSession();
-         if (isOracle(session))
+         if (isOracle(session.getAlias()))
          {
             int idx = oracleSessions.indexOf(session);
             if (idx != -1)
@@ -573,33 +611,45 @@ public class OraclePlugin extends DefaultSessionPlugin
       }
    }
 
-/**
-* Check if we can run query.
-*
-* @param session session
-* @param query query text
-* @return true if query works fine
-*/
-    public static boolean checkObjectAccessible(final ISession session, final String query) {
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        try {
-            pstmt = session.getSQLConnection().prepareStatement(query);
-            rs = pstmt.executeQuery();
-            return true;
-        } catch (SQLException ex) {
-            return false;
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (pstmt != null) {
-                    pstmt.close();
-                }
-            } catch (SQLException ex) {}
-        }
-    }
+   /**
+    * Check if we can run query.
+    *
+    * @param session session
+    * @param query   query text
+    * @return true if query works fine
+    */
+   public static boolean checkObjectAccessible(final ISession session, final String query)
+   {
+      PreparedStatement pstmt = null;
+      ResultSet rs = null;
+      try
+      {
+         pstmt = session.getSQLConnection().prepareStatement(query);
+         rs = pstmt.executeQuery();
+         return true;
+      }
+      catch (SQLException ex)
+      {
+         return false;
+      }
+      finally
+      {
+         try
+         {
+            if (rs != null)
+            {
+               rs.close();
+            }
+            if (pstmt != null)
+            {
+               pstmt.close();
+            }
+         }
+         catch (SQLException ex)
+         {
+         }
+      }
+   }
 
     private void updateObjectTree(IObjectTreeAPI objTree) {
         ISession session = objTree.getSession();

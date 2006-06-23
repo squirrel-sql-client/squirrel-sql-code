@@ -168,6 +168,8 @@ class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
             _app.getMessageHandler().showWarningMessage(s_stringMgr.getString("AliasWindowFactory.schemaPropsCopiedWarning"));
          }
 
+         _app.getPluginManager().aliasCopied(alias, newAlias);
+
       }
 		catch (ValidationException ex)
 		{

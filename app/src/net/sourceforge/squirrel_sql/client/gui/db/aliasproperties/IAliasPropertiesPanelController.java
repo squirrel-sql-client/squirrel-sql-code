@@ -8,5 +8,4 @@ import net.sourceforge.squirrel_sql.client.util.IOptionPanel;
 
 public interface IAliasPropertiesPanelController extends IOptionPanel
 {
-   void initialize(SQLAlias alias, IApplication app);
 }

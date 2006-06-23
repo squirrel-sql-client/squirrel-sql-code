@@ -70,6 +70,7 @@ public class SessionManager
    /** Factory used to generate session IDs. */
    private final IntegerIdentifierFactory _idFactory = new IntegerIdentifierFactory(1);
    private ArrayList _allowedSchemaCheckers = new ArrayList();
+   private Hashtable _allowedSchemasBySessionID = new Hashtable();
 
    /**
     * Ctor.
@@ -293,8 +294,6 @@ public class SessionManager
             // active session has closed.
             if (session == _activeSession)
             {
-               // JASON: This isn't right? Next/last?
-      //			ISession nextSession = null;
                if (!_sessionsList.isEmpty())
                {
                   setActiveSession((ISession)_sessionsList.getLast());
@@ -304,6 +303,8 @@ public class SessionManager
                   _activeSession = null;
                }
             }
+
+            _allowedSchemasBySessionID.remove(session.getIdentifier());
 
             return true;
          }
@@ -568,36 +569,63 @@ public class SessionManager
       _allowedSchemaCheckers.add(allowedSchemaChecker);
    }
 
-
    public String[] getAllowedSchemas(ISession session)
    {
-
-      HashMap uniqueAllowedSchemas = null;
-      for (int i = 0; i < _allowedSchemaCheckers.size(); i++)
+      String[] allowedSchemas = (String[])_allowedSchemasBySessionID.get(session.getIdentifier());
+      if(null == allowedSchemas)
       {
-         String[] allowedSchemas = ((IAllowedSchemaChecker)_allowedSchemaCheckers.get(i)).getAllowedSchemas(session);
-         if(null != allowedSchemas)
+         allowedSchemas = getAllowedSchemas(session.getSQLConnection(), session.getAlias());
+         _allowedSchemasBySessionID.put(session.getIdentifier(), allowedSchemas);
+      }
+
+      return allowedSchemas;
+
+   }
+
+
+   /**
+    * Note: This Method does not cache allowed Schemas.
+    * It is preferable to use getAllowedSchemas(ISession) is a Session ist avaialable.
+    */
+   public String[] getAllowedSchemas(SQLConnection con, SQLAlias alias)
+   {
+      try
+      {
+         HashMap uniqueAllowedSchemas = new HashMap();
+         for (int i = 0; i < _allowedSchemaCheckers.size(); i++)
          {
-            if(null == uniqueAllowedSchemas)
+            String[] allowedSchemas = null;
+            try
             {
-               uniqueAllowedSchemas = new HashMap();
+               allowedSchemas = ((IAllowedSchemaChecker)_allowedSchemaCheckers.get(i)).getAllowedSchemas(con, alias);
+            }
+            catch (Exception e)
+            {
+               s_log.error("Failed to get allowed Schemas from Plugin", e);
             }
 
-            for (int j = 0; j < allowedSchemas.length; j++)
+            if(null != allowedSchemas)
             {
-               String allowedSchema = allowedSchemas[j];
-               uniqueAllowedSchemas.put(allowedSchemas[j], null);
+               for (int j = 0; j < allowedSchemas.length; j++)
+               {
+                  uniqueAllowedSchemas.put(allowedSchemas[j], null);
+               }
             }
          }
-      }
 
-      if(null == uniqueAllowedSchemas)
-      {
-         return null;
+         if(null == uniqueAllowedSchemas)
+         {
+            return con.getSQLMetaData().getSchemas();
+         }
+         else
+         {
+            return (String[]) uniqueAllowedSchemas.keySet().toArray(new String[uniqueAllowedSchemas.size()]);
+         }
       }
-      else
+      catch (Exception e)
       {
-         return (String[]) uniqueAllowedSchemas.keySet().toArray(new String[uniqueAllowedSchemas.size()]);
+         s_log.error("Failed to get allowed Schemas", e);
+         return new String[0];
       }
    }
 }

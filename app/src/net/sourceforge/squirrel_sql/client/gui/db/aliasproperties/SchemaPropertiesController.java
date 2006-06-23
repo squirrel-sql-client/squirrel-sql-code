@@ -41,7 +41,7 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
    private SchemaTableModel _schemaTableModel;
 
 
-   public void initialize(SQLAlias alias, IApplication app)
+   public SchemaPropertiesController(SQLAlias alias, IApplication app)
    {
       _alias = alias;
       _app = app;
@@ -186,12 +186,13 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
    {
       try
       {
-         String[] schemas = conn.getSQLMetaData().getSchemas();
+         String[] schemas = _app.getSessionManager().getAllowedSchemas(conn, _alias);
+
          _schemaTableModel.updateSchemas(schemas);
 
          updateEnabled();
       }
-      catch (SQLException e)
+      catch (Exception e)
       {
          s_log.error("Failed to load Schemas", e);
       }

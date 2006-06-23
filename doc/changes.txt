@@ -6,7 +6,9 @@ Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
 Session startup performance
-  New Alias properties allow to configure loading and caching of Schemas.
+  General: New Alias properties allow to configure loading and caching of Schemas.
+  Oracle: When the Oracle Plugin ist used an Oracle tab in Alias properties enables you
+          to allow an Alias's Sessions only to see Schemas the user has access to.
 
 
 Fixed bug #1504123: Oracle hints losts
@@ -22,12 +24,6 @@ Bug fixes in Oracle Plugin:
   - Object tree: SYS Schema displayed twice for certain user rights
   - Fixed Memory Leak (Session were not garbage collected when Oracle Plugin was used)
 
-
-Improved startup performance for Oracle
-  - The Oracle Plugin must be used for this feature to take effect. The Plugin now takes care that only
-    Object are loaded the user has access to.
-  - The Oracle Plugin now has a Global Preferences Panel where the user can configure Schema loading.
-    Changing the default configuration may sgnificantly slow down Session startup.     
 
 Fixed bug #984527: Right mouse popup menu is now available in empty table. 
 
