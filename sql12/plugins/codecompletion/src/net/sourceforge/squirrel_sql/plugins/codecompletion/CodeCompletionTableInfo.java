@@ -27,7 +27,7 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
    private String _tableName;
    private String _tableType;
    private CodeCompletionColumnInfo[] _colInfos;
-   private String _toString;
+   String _toString;
    private String _catalog;
    private String _schema;
 

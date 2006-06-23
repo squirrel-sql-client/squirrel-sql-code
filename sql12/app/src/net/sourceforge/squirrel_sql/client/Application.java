@@ -641,9 +641,11 @@ class Application implements IApplication
          System.exit(-1);
       }
 
-      _cache = new DataCache(_driverMgr, appFiles.getDatabaseDriversFile(),
-								appFiles.getDatabaseAliasesFile(),
-								_resources.getDefaultDriversUrl(), null);
+      _cache = new DataCache(_driverMgr, 
+                             appFiles.getDatabaseDriversFile(),
+                             appFiles.getDatabaseAliasesFile(),
+                             _resources.getDefaultDriversUrl(),
+                             this);
 
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.createWindowManager"));
 		_windowManager = new WindowManager(this);

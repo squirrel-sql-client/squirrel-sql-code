@@ -42,7 +42,7 @@ public class DriverPropertiesController implements IAliasPropertiesPanelControll
    String _errMsg;
    private Color _origTblColor;
 
-   public void initialize(SQLAlias alias, IApplication app)
+   public DriverPropertiesController(SQLAlias alias, IApplication app)
    {
       _alias = alias;
       _app = app;

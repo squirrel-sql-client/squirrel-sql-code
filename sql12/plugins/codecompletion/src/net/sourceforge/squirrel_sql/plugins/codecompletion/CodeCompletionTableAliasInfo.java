@@ -23,10 +23,13 @@ public class CodeCompletionTableAliasInfo extends CodeCompletionTableInfo
 {
 	private TableAliasInfo _aliasInfo;
 
-	public CodeCompletionTableAliasInfo(TableAliasInfo aliasInfo)
+   private String _toString;
+
+   public CodeCompletionTableAliasInfo(TableAliasInfo aliasInfo)
 	{
 		super(aliasInfo.tableName, "TABLE", null, null);
 		_aliasInfo = aliasInfo;
+      _toString = _aliasInfo.aliasName + " (Alias for " + _aliasInfo.tableName + ")";
 	}
 
 	public String getCompareString()
@@ -36,7 +39,7 @@ public class CodeCompletionTableAliasInfo extends CodeCompletionTableInfo
 
 	public String toString()
 	{
-		return _aliasInfo.aliasName;
+      return _toString;
 	}
 
     public int getStatBegin()

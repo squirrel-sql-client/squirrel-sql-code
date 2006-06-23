@@ -210,12 +210,6 @@ public interface ISession extends IHasIdentifier
     */
    String getTitle();
 
-    /**
-     * Returns the cached database product name
-     * 
-     * @return the value of DatabaseMetaData.getDatabaseProductName
-     */
-   String getDatabaseProductName();
 
    /**
     * Add the passed action to the toolbar of the sessions main window.

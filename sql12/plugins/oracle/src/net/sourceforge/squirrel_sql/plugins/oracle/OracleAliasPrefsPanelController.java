@@ -1,36 +1,38 @@
 package net.sourceforge.squirrel_sql.plugins.oracle;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
+import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.IAliasPropertiesPanelController;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
-public class OraclePrefsPanelController implements IGlobalPreferencesPanel
+public class OracleAliasPrefsPanelController implements IAliasPropertiesPanelController
 {
    private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(OraclePrefsPanelController.class);
+      StringManagerFactory.getStringManager(OracleAliasPrefsPanelController.class);
 
-   private OraclePrefsPanel _panel;
-   private OracleGlobalPrefs _prefs;
+   private OracleAliasPrefsPanel _panel;
+   private OracleAliasPrefs _prefs;
 
-   OraclePrefsPanelController(OracleGlobalPrefs prefs)
+   OracleAliasPrefsPanelController(OracleAliasPrefs prefs)
    {
-      _panel = new OraclePrefsPanel();
+      _panel = new OracleAliasPrefsPanel();
       _prefs = prefs;
-   }
 
-
-   public void initialize(IApplication app)
-   {
       _panel.radLoadAccessibleSchemasExceptSYS.setSelected(_prefs.isLoadAccessibleSchemasExceptSYS());
       _panel.radLoadAccessibleSchemasAndSYS.setSelected(_prefs.isLoadAccessibleSchemasAndSYS());
       _panel.radLoadAllSchemas.setSelected(_prefs.isLoadAllSchemas());
-   }
 
-   public void uninitialize(IApplication app)
-   {
+
+      _panel.btnApplyNow.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            applyChanges();
+         }
+      });
    }
 
    public void applyChanges()
@@ -56,6 +58,5 @@ public class OraclePrefsPanelController implements IGlobalPreferencesPanel
    {
       return _panel;
    }
-
 
 }

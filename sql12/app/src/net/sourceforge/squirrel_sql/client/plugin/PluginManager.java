@@ -25,11 +25,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.swing.JInternalFrame;
 import javax.swing.event.InternalFrameAdapter;
@@ -39,6 +35,8 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.IAliasPropertiesPanelController;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -685,5 +683,38 @@ public class PluginManager
       return Proxy.newProxyInstance(_pluginsClassLoader, new Class[]{toBindTo}, ih);
    }
 
+   public IAliasPropertiesPanelController[] getAliasPropertiesPanelControllers(SQLAlias alias)
+   {
+      ArrayList ret = new ArrayList();
+      for(Iterator i = _loadedPlugins.values().iterator();i.hasNext();)
+      {
+         IPlugin plugin = (IPlugin) i.next();
 
+         IAliasPropertiesPanelController[] ctrls = plugin.getAliasPropertiesPanelControllers(alias);
+         if(null != ctrls)
+         {
+            ret.addAll(Arrays.asList(ctrls));
+         }
+      }
+
+      return (IAliasPropertiesPanelController[]) ret.toArray(new IAliasPropertiesPanelController[ret.size()]);
+   }
+
+   public void aliasCopied(SQLAlias source, SQLAlias target)
+   {
+      for(Iterator i = _loadedPlugins.values().iterator();i.hasNext();)
+      {
+         IPlugin plugin = (IPlugin) i.next();
+         plugin.aliasCopied(source, target);
+      }
+   }
+
+   public void aliasRemoved(SQLAlias alias)
+   {
+      for(Iterator i = _loadedPlugins.values().iterator();i.hasNext();)
+      {
+         IPlugin plugin = (IPlugin) i.next();
+         plugin.aliasRemoved(alias);
+      }
+   }
 }

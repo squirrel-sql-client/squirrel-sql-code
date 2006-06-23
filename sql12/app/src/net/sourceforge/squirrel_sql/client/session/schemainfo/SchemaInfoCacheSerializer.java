@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.client.session.schemainfo;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -26,7 +27,7 @@ public class SchemaInfoCacheSerializer
 
    private static SchemaInfoCache privateLoad(ISession session)
    {
-      File schemaCacheFile = getSchemaCacheFile(session);
+      File schemaCacheFile = getSchemaCacheFile(session.getAlias());
 
       if(false == session.getAlias().getSchemaProperties().getExpectsSomeCachedData())
       {
@@ -101,7 +102,7 @@ public class SchemaInfoCacheSerializer
 
          schemaInfoCache.prepareSerialization();
 
-         FileOutputStream fos = new FileOutputStream(getSchemaCacheFile(session));
+         FileOutputStream fos = new FileOutputStream(getSchemaCacheFile(session.getAlias()));
          ObjectOutputStream oOut = new ObjectOutputStream(fos);
          oOut.writeObject(schemaInfoCache);
          oOut.close();
@@ -145,9 +146,9 @@ public class SchemaInfoCacheSerializer
    }
 
 
-   private static File getSchemaCacheFile(ISession session)
+   private static File getSchemaCacheFile(SQLAlias alias)
    {
-      String uniquePrefix = session.getAlias().getIdentifier().toString();
+      String uniquePrefix = alias.getIdentifier().toString();
 
       uniquePrefix = uniquePrefix.replace(':', '_').replace(File.separatorChar, '-');
 
@@ -161,4 +162,12 @@ public class SchemaInfoCacheSerializer
 
    }
 
+   public static void aliasRemoved(SQLAlias alias)
+   {
+      File schemaCacheFile = getSchemaCacheFile(alias);
+      if(schemaCacheFile.exists())
+      {
+         schemaCacheFile.delete();
+      }
+   }
 }

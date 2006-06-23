@@ -137,7 +137,6 @@ class Session implements ISession
    private SessionInternalFrame _sessionInternalFrame;
    private Hashtable _parserEventsProcessorsByEntryPanelIdentifier = new Hashtable();
 
-   private String databaseProductName = null;
 
    /** flag to track whether or not the table data has been loaded in the object tree */
    private boolean _finishedLoading = false;
@@ -163,7 +162,6 @@ class Session implements ISession
                   IIdentifier sessionId)
    {
       super();
-        cacheDatabaseProductName(conn);
       _schemaInfo = new SchemaInfo(app);
 
       if (app == null)
@@ -657,14 +655,6 @@ class Session implements ISession
       return _title;
    }
 
-    /**
-     * Returns the cached database product name
-     * 
-     * @return the value of DatabaseMetaData.getDatabaseProductName
-     */
-    public String getDatabaseProductName() {
-        return databaseProductName;
-    }
 
    public String toString()
    {
@@ -712,17 +702,6 @@ class Session implements ISession
       _title = _id + " - " + title;
    }
 
-    private void cacheDatabaseProductName(SQLConnection con) {
-        if (con != null) {
-            try {
-                databaseProductName = con.getSQLMetaData().getDatabaseProductName();
-            } catch (SQLException ex) {
-                // i18n[Session.error.getdbprodname=Unable to get database product name info]
-                String msg = s_stringMgr.getString("Session.error.getdbprodname");
-                s_log.error(msg, ex);
-            }
-        }
-    }
 
    /**
     * The code in any SQLEditor is parsed in the background. You may attach a listener to the ParserEventsProcessor

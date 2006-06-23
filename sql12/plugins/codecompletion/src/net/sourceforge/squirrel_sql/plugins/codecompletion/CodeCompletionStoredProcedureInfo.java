@@ -20,23 +20,28 @@ public class CodeCompletionStoredProcedureInfo extends CodeCompletionInfo
    private String _schema;
 	private int _moveCarretBackCount = 0;
 
-	private String _params = null;
+   private String _toString;
+   
+   private String _params = null;
 
 	/**
 	 * This Sessions prefs. Note it is just a reference. Contents change when user changes Session properties.
 	 */
 	private CodeCompletionPreferences _prefs;
 
-	public CodeCompletionStoredProcedureInfo(String procName, int procType, ISession session, CodeCompletionPlugin plugin, String catalog, String schema)
-	{
-		_procName = procName;
-		_procType = procType;
-		_session = session;
-		_plugin = plugin;
-		_prefs = (CodeCompletionPreferences) _session.getPluginObject(_plugin, CodeCompletionPlugin.PLUGIN_OBJECT_PREFS_KEY);
-		_catalog = catalog;
-		_schema = schema;
-	}
+   public CodeCompletionStoredProcedureInfo(String procName, int procType, ISession session, CodeCompletionPlugin plugin, String catalog, String schema)
+   {
+      _procName = procName;
+      _procType = procType;
+      _session = session;
+      _plugin = plugin;
+      _prefs = (CodeCompletionPreferences) _session.getPluginObject(_plugin, CodeCompletionPlugin.PLUGIN_OBJECT_PREFS_KEY);
+      _catalog = catalog;
+      _schema = schema;
+
+      _toString = _procName + " (SP)";
+
+   }
 
    public String getCompareString()
    {
@@ -182,7 +187,7 @@ public class CodeCompletionStoredProcedureInfo extends CodeCompletionInfo
 
    public String toString()
    {
-      return _procName + "(SP)";
+      return _toString;
    }
 
 	/**
