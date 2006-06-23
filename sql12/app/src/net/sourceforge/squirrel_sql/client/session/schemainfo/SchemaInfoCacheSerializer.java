@@ -146,7 +146,7 @@ public class SchemaInfoCacheSerializer
    }
 
 
-   private static File getSchemaCacheFile(SQLAlias alias)
+   public static File getSchemaCacheFile(SQLAlias alias)
    {
       String uniquePrefix = alias.getIdentifier().toString();
 

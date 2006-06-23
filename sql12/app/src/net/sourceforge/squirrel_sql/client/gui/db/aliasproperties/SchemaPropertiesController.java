@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.gui.db.aliasproperties;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoCacheSerializer;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaProperties;
@@ -18,7 +19,7 @@ import javax.swing.table.TableCellEditor;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.sql.SQLException;
+import java.io.File;
 
 public class SchemaPropertiesController implements IAliasPropertiesPanelController
 {
@@ -133,6 +134,70 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
          }
       });
 
+      _pnl.btnPrintCacheFileLocation.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onPrintCacheFileLocation();
+         }
+      });
+
+      _pnl.btnDeleteCache.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onDeleteCache();
+         }
+      });
+
+   }
+
+   private void onDeleteCache()
+   {
+      File schemaCacheFile = SchemaInfoCacheSerializer.getSchemaCacheFile(_alias);
+
+      String aliasName = null == _alias.getName() || 0 == _alias.getName().trim().length() ? "<unnamed>" : _alias.getName();
+
+      if(schemaCacheFile.exists())
+      {
+         if(schemaCacheFile.delete())
+         {
+            // i18n[SchemaPropertiesController.cacheDeleted=Deleted {0}]
+            _app.getMessageHandler().showMessage(s_stringMgr.getString("SchemaPropertiesController.cacheDeleted", schemaCacheFile.getPath()));
+         }
+         else
+         {
+            // i18n[SchemaPropertiesController.cacheDeleteFailed=Could not delete {0}]
+            _app.getMessageHandler().showWarningMessage(s_stringMgr.getString("SchemaPropertiesController.cacheDeleteFailed", schemaCacheFile.getPath()));
+         }
+
+      }
+      else
+      {
+         // i18n[SchemaPropertiesController.cacheToDelNotExists=Cache file for Alias "{0}" does not exist. No file was deleted]
+         _app.getMessageHandler().showWarningMessage(s_stringMgr.getString("SchemaPropertiesController.cacheToDelNotExists", aliasName));
+      }
+
+   }
+
+
+   private void onPrintCacheFileLocation()
+   {
+      File schemaCacheFile = SchemaInfoCacheSerializer.getSchemaCacheFile(_alias);
+
+      String aliasName = null == _alias.getName() || 0 == _alias.getName().trim().length() ? "<unnamed>" : _alias.getName();
+      String[] params = new String[]{aliasName, schemaCacheFile.getPath()};
+
+      if(schemaCacheFile.exists())
+      {
+         // i18n[SchemaPropertiesController.cacheFilePath=Cache file path for Alias "{0}": {1}]
+         _app.getMessageHandler().showMessage(s_stringMgr.getString("SchemaPropertiesController.cacheFilePath", params));
+      }
+      else
+      {
+         // i18n[SchemaPropertiesController.cacheFilePathNotExists=Cache file for Alias "{0}" does not exist. If it existed the path would be: {1}]
+         _app.getMessageHandler().showMessage(s_stringMgr.getString("SchemaPropertiesController.cacheFilePathNotExists", params));
+      }
    }
 
    private void onRefreshSchemaTable()
@@ -249,7 +314,7 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
       {
          cellEditor.stopCellEditing();
       }
-      
+
 
       if(_pnl.radLoadAllAndCacheNone.isSelected())
       {

@@ -29,6 +29,9 @@ public class SchemaPropertiesPanel extends JPanel
 
    JCheckBox chkCacheSchemaIndepndentMetaData;
 
+   JButton btnPrintCacheFileLocation;
+   JButton btnDeleteCache;
+
 
    public SchemaPropertiesPanel()
    {
@@ -83,16 +86,42 @@ public class SchemaPropertiesPanel extends JPanel
       add(new JScrollPane(tblSchemas), gbc);
 
       gbc = new GridBagConstraints(0,7,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
-      add(createSchmeTableUpdatePanel(), gbc);
+      add(createSchemaTableUpdatePanel(), gbc);
 
 
       // i18n[SchemaPropertiesPanel.CacheSchemaIndependentMetaData=Cache Schema independent meta data (Catalogs, Keywords, Data types, Global functions)]
       chkCacheSchemaIndepndentMetaData = new JCheckBox(s_stringMgr.getString("SchemaPropertiesPanel.CacheSchemaIndependentMetaData"));
       gbc = new GridBagConstraints(0,8,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10,5,5,5), 0,0);
       add(chkCacheSchemaIndepndentMetaData, gbc);
+
+
+      gbc = new GridBagConstraints(0,9,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10,5,5,5), 0,0);
+      add(createCacheFilePanel(), gbc);
+
    }
 
-   private JPanel createSchmeTableUpdatePanel()
+   private JPanel createCacheFilePanel()
+   {
+      JPanel ret = new JPanel();
+
+      ret.setLayout(new GridBagLayout());
+      GridBagConstraints gbc;
+
+      // i18n[SchemaPropertiesPanel.printCacheFileLocation=Print cache file path to message panel]
+      btnPrintCacheFileLocation = new JButton(s_stringMgr.getString("SchemaPropertiesPanel.printCacheFileLocation"));
+      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,5,5), 0,0);
+      ret.add(btnPrintCacheFileLocation, gbc);
+
+      // i18n[SchemaPropertiesPanel.deleteCache=Delete cache file]
+      btnDeleteCache = new JButton(s_stringMgr.getString("SchemaPropertiesPanel.deleteCache"));
+      gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
+      ret.add(btnDeleteCache, gbc);
+
+      return ret;
+   }
+
+
+   private JPanel createSchemaTableUpdatePanel()
    {
       JPanel ret = new JPanel(new GridBagLayout());
 

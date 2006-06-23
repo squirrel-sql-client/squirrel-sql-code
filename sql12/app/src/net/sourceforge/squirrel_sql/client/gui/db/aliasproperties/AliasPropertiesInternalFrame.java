@@ -58,7 +58,7 @@ public class AliasPropertiesInternalFrame extends BaseInternalFrame
    private Dimension getDimension()
    {
       return new Dimension(
-         Preferences.userRoot().getInt(PREF_KEY_ALIAS_PROPS_SHEET_WIDTH, 500),
+         Preferences.userRoot().getInt(PREF_KEY_ALIAS_PROPS_SHEET_WIDTH, 600),
          Preferences.userRoot().getInt(PREF_KEY_ALIAS_PROPS_SHEET_HEIGHT, 600)
       );
    }
