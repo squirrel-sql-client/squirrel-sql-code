@@ -27,6 +27,7 @@ import java.util.*;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.SchemaLoadInfo;
 import net.sourceforge.squirrel_sql.client.gui.db.SchemaNameLoadInfo;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaProperties;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -69,6 +70,9 @@ public class SchemaInfo
 
    private Vector _listeners = new Vector();
    private boolean _schemasAndCatalogsLoaded;
+   private boolean _inInitialLoad;
+   private long _initalLoadBeginTime;
+   private boolean _sessionStartupTimeHintShown;
 
    public SchemaInfo(IApplication app)
    {
@@ -124,10 +128,13 @@ public class SchemaInfo
 
       try
       {
+         _inInitialLoad = true;
+         _initalLoadBeginTime = System.currentTimeMillis();
          privateLoadAll();
       }
       finally
       {
+         _inInitialLoad = false;
          _schemaInfoCache.initialLoadDone();
       }
    }
@@ -240,7 +247,7 @@ public class SchemaInfo
             int beginProgress = getLoadMethodProgress(progress++);
             int endProgress = getLoadMethodProgress(progress);
             setProgress(msg, beginProgress);
-            loadFunctions(msg, beginProgress);
+            loadGlobalFunctions(msg, beginProgress);
 
             long finish = System.currentTimeMillis();
             s_log.debug("Functions loaded in " + (finish - start) + " ms");
@@ -384,6 +391,23 @@ public class SchemaInfo
       }
 
      _session.getSessionSheet().setStatusBarProgress(note, 0, MAX_PROGRESS, value);
+
+      if(_inInitialLoad
+         && false == _sessionStartupTimeHintShown
+         && false == _session.getAlias().getSchemaProperties().isCacheSchemaIndependentMetaData()
+         && SQLAliasSchemaProperties.GLOBAL_STATE_LOAD_ALL_CACHE_NONE == _session.getAlias().getSchemaProperties().getGlobalState()
+         && _session.getApplication().getSquirrelPreferences().getShowSessionStartupTimeHint()
+         && System.currentTimeMillis() - _initalLoadBeginTime > 3000)
+      {
+         _sessionStartupTimeHintShown = true;
+         SwingUtilities.invokeLater(new Runnable()
+         {
+            public void run()
+            {
+               new SessionStartupTimeHintController(_session);
+            }
+         });
+      }
    }
 
    /**
@@ -721,7 +745,7 @@ public class SchemaInfo
       }
    }
 
-   private void loadFunctions(String msg, int beginProgress)
+   private void loadGlobalFunctions(String msg, int beginProgress)
    {
       if(false == _schemaInfoCache.loadSchemaIndependentMetaData())
       {

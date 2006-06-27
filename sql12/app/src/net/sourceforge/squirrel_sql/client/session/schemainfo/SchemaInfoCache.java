@@ -276,7 +276,7 @@ public class SchemaInfoCache implements Serializable
    }
 
 
-   public void initialLoadDone()
+   void initialLoadDone()
    {
       /**
        * When _schemaPropsCacheIsBasedOn is null all loading will be done like there was no cache.

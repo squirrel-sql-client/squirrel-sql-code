@@ -100,76 +100,80 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 	private static final class MyPanel extends JPanel
 	{
 
-		private JCheckBox _showAliasesToolBar = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showaliasestoolbar"));
-		private JCheckBox _showDriversToolBar = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showdriverstoolbar"));
-		private JCheckBox _showMainStatusBar = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showmainwinstatusbar"));
-		private JCheckBox _showMainToolBar = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showmainwintoolbar"));
-		private JCheckBox _showContents = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showwindowcontents"));
-		private JCheckBox _showToolTips = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showtooltips"));
-		private JCheckBox _useScrollableTabbedPanes = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.usescrolltabs"));
-		private JCheckBox _maximimizeSessionSheet = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.maxonopen"));
+      private JCheckBox _showAliasesToolBar = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showaliasestoolbar"));
+      private JCheckBox _showDriversToolBar = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showdriverstoolbar"));
+      private JCheckBox _showMainStatusBar = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showmainwinstatusbar"));
+      private JCheckBox _showMainToolBar = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showmainwintoolbar"));
+      private JCheckBox _showContents = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showwindowcontents"));
+      private JCheckBox _showToolTips = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showtooltips"));
+      private JCheckBox _useScrollableTabbedPanes = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.usescrolltabs"));
+      private JCheckBox _maximimizeSessionSheet = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.maxonopen"));
 
-		private JCheckBox _showColoriconsInToolbar = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showcoloricons"));
-        private JCheckBox _showPluginFilesInSplashScreen = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showpluginfiles"));
-		private JLabel _executionLogFileNameLbl = new OutputLabel(" ");
-		// Must have at least 1 blank otherwise width gets set to zero.
-		private JLabel _logConfigFileNameLbl = new OutputLabel(" ");
-		// Must have at least 1 blank otherwise width gets set to zero.
-		private JCheckBox _confirmSessionCloseChk = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.confirmSessionClose"));
-        private JCheckBox _warnJreJdbcMismatch = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.warnJreJdbcMismatch"));
-        private JCheckBox _warnForUnsavedFileEdits = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.warnForUnsavedFileEdits"));
-        private JCheckBox _warnForUnsavedBufferEdits = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.warnForUnsavedBufferEdits"));
+      private JCheckBox _showColoriconsInToolbar = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showcoloricons"));
+      private JCheckBox _showPluginFilesInSplashScreen = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showpluginfiles"));
+      private JLabel _executionLogFileNameLbl = new OutputLabel(" ");
+      // Must have at least 1 blank otherwise width gets set to zero.
+      private JLabel _logConfigFileNameLbl = new OutputLabel(" ");
+      // Must have at least 1 blank otherwise width gets set to zero.
+      private JCheckBox _confirmSessionCloseChk = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.confirmSessionClose"));
+      private JCheckBox _warnJreJdbcMismatch = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.warnJreJdbcMismatch"));
+      private JCheckBox _warnForUnsavedFileEdits = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.warnForUnsavedFileEdits"));
+      private JCheckBox _warnForUnsavedBufferEdits = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.warnForUnsavedBufferEdits"));
+      private JCheckBox _showSessionStartupTimeHint = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showSessionStartupTimeHint"));
 
-        MyPanel()
+
+      MyPanel()
 		{
 			super(new GridBagLayout());
 			createUserInterface();
 		}
 
-		void loadData(IApplication app, SquirrelPreferences prefs)
+      void loadData(IApplication app, SquirrelPreferences prefs)
+      {
+         final ApplicationFiles appFiles = new ApplicationFiles();
+
+         _showContents.setSelected(prefs.getShowContentsWhenDragging());
+         _showToolTips.setSelected(prefs.getShowToolTips());
+         _useScrollableTabbedPanes.setSelected(prefs.useScrollableTabbedPanes());
+         _showMainStatusBar.setSelected(prefs.getShowMainStatusBar());
+         _showMainToolBar.setSelected(prefs.getShowMainToolBar());
+         _showAliasesToolBar.setSelected(prefs.getShowAliasesToolBar());
+         _showDriversToolBar.setSelected(prefs.getShowDriversToolBar());
+         _maximimizeSessionSheet.setSelected(prefs.getMaximizeSessionSheetOnOpen());
+         _showColoriconsInToolbar.setSelected(prefs.getShowColoriconsInToolbar());
+         _showPluginFilesInSplashScreen.setSelected(prefs.getShowPluginFilesInSplashScreen());
+         _executionLogFileNameLbl.setText(appFiles.getExecutionLogFile().getPath());
+
+         String configFile = ApplicationArguments.getInstance().getLoggingConfigFileName();
+         _logConfigFileNameLbl.setText(
+            configFile != null ? configFile
+               : s_stringMgr.getString("GeneralPreferencesPanel.unspecified"));
+
+         _confirmSessionCloseChk.setSelected(prefs.getConfirmSessionClose());
+         _warnJreJdbcMismatch.setSelected(prefs.getWarnJreJdbcMismatch());
+         _warnForUnsavedFileEdits.setSelected(prefs.getWarnForUnsavedFileEdits());
+         _warnForUnsavedBufferEdits.setSelected(prefs.getWarnForUnsavedBufferEdits());
+         _showSessionStartupTimeHint.setSelected(prefs.getShowSessionStartupTimeHint());
+      }
+
+      void applyChanges(SquirrelPreferences prefs)
 		{
-			final ApplicationFiles appFiles = new ApplicationFiles();
-
-			_showContents.setSelected(prefs.getShowContentsWhenDragging());
-			_showToolTips.setSelected(prefs.getShowToolTips());
-			_useScrollableTabbedPanes.setSelected(prefs.useScrollableTabbedPanes());
-			_showMainStatusBar.setSelected(prefs.getShowMainStatusBar());
-			_showMainToolBar.setSelected(prefs.getShowMainToolBar());
-			_showAliasesToolBar.setSelected(prefs.getShowAliasesToolBar());
-			_showDriversToolBar.setSelected(prefs.getShowDriversToolBar());
-			_maximimizeSessionSheet.setSelected(prefs.getMaximizeSessionSheetOnOpen());
-			_showColoriconsInToolbar.setSelected(prefs.getShowColoriconsInToolbar());
-            _showPluginFilesInSplashScreen.setSelected(prefs.getShowPluginFilesInSplashScreen());
-			_executionLogFileNameLbl.setText(appFiles.getExecutionLogFile().getPath());
-
-			String configFile = ApplicationArguments.getInstance().getLoggingConfigFileName();
-			_logConfigFileNameLbl.setText(
-				configFile != null	? configFile
-									: s_stringMgr.getString("GeneralPreferencesPanel.unspecified"));
-
-			_confirmSessionCloseChk.setSelected(prefs.getConfirmSessionClose());
-            _warnJreJdbcMismatch.setSelected(prefs.getWarnJreJdbcMismatch());
-            _warnForUnsavedFileEdits.setSelected(prefs.getWarnForUnsavedFileEdits());
-            _warnForUnsavedBufferEdits.setSelected(prefs.getWarnForUnsavedBufferEdits());
-		}
-
-		void applyChanges(SquirrelPreferences prefs)
-		{
-			prefs.setShowContentsWhenDragging(_showContents.isSelected());
-			prefs.setShowToolTips(_showToolTips.isSelected());
-			prefs.setUseScrollableTabbedPanes(_useScrollableTabbedPanes.isSelected());
-			prefs.setShowMainStatusBar(_showMainStatusBar.isSelected());
-			prefs.setShowMainToolBar(_showMainToolBar.isSelected());
-			prefs.setShowAliasesToolBar(_showAliasesToolBar.isSelected());
-			prefs.setShowDriversToolBar(_showDriversToolBar.isSelected());
-			prefs.setMaximizeSessionSheetOnOpen(_maximimizeSessionSheet.isSelected());
-			prefs.setShowColoriconsInToolbar(_showColoriconsInToolbar.isSelected());
-            prefs.setShowPluginFilesInSplashScreen(_showPluginFilesInSplashScreen.isSelected());
-			prefs.setConfirmSessionClose(_confirmSessionCloseChk.isSelected());
-            prefs.setWarnJreJdbcMismatch(_warnJreJdbcMismatch.isSelected());
-            prefs.setWarnForUnsavedFileEdits(_warnForUnsavedFileEdits.isSelected());
-            prefs.setWarnForUnsavedBufferEdits(_warnForUnsavedBufferEdits.isSelected());
-		}
+         prefs.setShowContentsWhenDragging(_showContents.isSelected());
+         prefs.setShowToolTips(_showToolTips.isSelected());
+         prefs.setUseScrollableTabbedPanes(_useScrollableTabbedPanes.isSelected());
+         prefs.setShowMainStatusBar(_showMainStatusBar.isSelected());
+         prefs.setShowMainToolBar(_showMainToolBar.isSelected());
+         prefs.setShowAliasesToolBar(_showAliasesToolBar.isSelected());
+         prefs.setShowDriversToolBar(_showDriversToolBar.isSelected());
+         prefs.setMaximizeSessionSheetOnOpen(_maximimizeSessionSheet.isSelected());
+         prefs.setShowColoriconsInToolbar(_showColoriconsInToolbar.isSelected());
+         prefs.setShowPluginFilesInSplashScreen(_showPluginFilesInSplashScreen.isSelected());
+         prefs.setConfirmSessionClose(_confirmSessionCloseChk.isSelected());
+         prefs.setWarnJreJdbcMismatch(_warnJreJdbcMismatch.isSelected());
+         prefs.setWarnForUnsavedFileEdits(_warnForUnsavedFileEdits.isSelected());
+         prefs.setWarnForUnsavedBufferEdits(_warnForUnsavedBufferEdits.isSelected());
+         prefs.setShowSessionStartupTimeHint(_showSessionStartupTimeHint.isSelected());
+      }
 
 		private void createUserInterface()
 		{
@@ -245,27 +249,31 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 											"GeneralPreferencesPanel.general")));
 			pnl.setLayout(new GridBagLayout());
 
-			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.fill = GridBagConstraints.HORIZONTAL;
-			gbc.insets = new Insets(2, 4, 2, 4);
-			gbc.gridx = 0;
-			gbc.gridy = 0;
-			gbc.weightx = 1;
-			pnl.add(_confirmSessionCloseChk, gbc);
-            
-            gbc.gridx = 0;
-            gbc.gridy = 1;
-            pnl.add(_warnJreJdbcMismatch, gbc);
-            
-            gbc.gridx = 0;
-            gbc.gridy = 2;
-            pnl.add(_warnForUnsavedFileEdits, gbc);
-            
-            gbc.gridx = 0;
-            gbc.gridy = 3;
-            pnl.add(_warnForUnsavedBufferEdits, gbc);            
-            
-			return pnl;
+         final GridBagConstraints gbc = new GridBagConstraints();
+         gbc.fill = GridBagConstraints.HORIZONTAL;
+         gbc.insets = new Insets(2, 4, 2, 4);
+         gbc.gridx = 0;
+         gbc.gridy = 0;
+         gbc.weightx = 1;
+         pnl.add(_confirmSessionCloseChk, gbc);
+
+         gbc.gridx = 0;
+         gbc.gridy = 1;
+         pnl.add(_warnJreJdbcMismatch, gbc);
+
+         gbc.gridx = 0;
+         gbc.gridy = 2;
+         pnl.add(_warnForUnsavedFileEdits, gbc);
+
+         gbc.gridx = 0;
+         gbc.gridy = 3;
+         pnl.add(_warnForUnsavedBufferEdits, gbc);
+
+         gbc.gridx = 0;
+         gbc.gridy = 4;
+         pnl.add(_showSessionStartupTimeHint, gbc);
+
+         return pnl;
 		}
 
 
