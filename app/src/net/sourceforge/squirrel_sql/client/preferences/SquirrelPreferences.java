@@ -50,41 +50,42 @@ public class SquirrelPreferences implements Serializable
 {
 
    public interface IPropertyNames
-	{
-		String ACTION_KEYS = "actionKeys";
-		String ALIASES_SELECTED_INDEX = "aliasesSelectdIndex";
-		String CONFIRM_SESSION_CLOSE = "confirmSessionClose";
-		String DRIVERS_SELECTED_INDEX = "driversSelectdIndex";
- 		String FIRST_RUN = "firstRun";
-		String JDBC_DEBUG_TYPE = "jdbcDebugtype";
-		String LOGIN_TIMEOUT = "loginTimeout";
-		String MAIN_FRAME_STATE = "mainFrameWindowState";
-		String MAXIMIMIZE_SESSION_SHEET_ON_OPEN = "maximizeSessionSheetOnOpen";
-		String NEW_SESSION_VIEW = "newSessionView";
-		String PLUGIN_OBJECTS = "pluginObjects";
-		String PLUGIN_STATUSES = "pluginStatuses";
-		String PROXY = "proxyPerferences";
-		String SCROLLABLE_TABBED_PANES = "useScrollableTabbedPanes";
-		String SESSION_PROPERTIES = "sessionProperties";
+   {
+      String ACTION_KEYS = "actionKeys";
+      String ALIASES_SELECTED_INDEX = "aliasesSelectdIndex";
+      String CONFIRM_SESSION_CLOSE = "confirmSessionClose";
+      String DRIVERS_SELECTED_INDEX = "driversSelectdIndex";
+      String FIRST_RUN = "firstRun";
+      String JDBC_DEBUG_TYPE = "jdbcDebugtype";
+      String LOGIN_TIMEOUT = "loginTimeout";
+      String MAIN_FRAME_STATE = "mainFrameWindowState";
+      String MAXIMIMIZE_SESSION_SHEET_ON_OPEN = "maximizeSessionSheetOnOpen";
+      String NEW_SESSION_VIEW = "newSessionView";
+      String PLUGIN_OBJECTS = "pluginObjects";
+      String PLUGIN_STATUSES = "pluginStatuses";
+      String PROXY = "proxyPerferences";
+      String SCROLLABLE_TABBED_PANES = "useScrollableTabbedPanes";
+      String SESSION_PROPERTIES = "sessionProperties";
       String SHOW_ALIASES_TOOL_BAR = "showAliasesToolBar";
-		String SHOW_CONTENTS_WHEN_DRAGGING = "showContentsWhenDragging";
-		String SHOW_DRIVERS_TOOL_BAR = "showDriversToolBar";
-		String SHOW_LOADED_DRIVERS_ONLY = "showLoadedDriversOnly";
-		String SHOW_MAIN_STATUS_BAR = "showMainStatusBar";
-		String SHOW_MAIN_TOOL_BAR = "showMainToolBar";
-		String SHOW_TOOLTIPS = "showToolTips";
-		String SHOW_COLOR_ICONS_IN_TOOLBAR="showColorIconsInToolbars";
-        String SHOW_PLUGIN_FILES_IN_SPLASH_SCREEN="showPluginFilesInSplashScreen";
+      String SHOW_CONTENTS_WHEN_DRAGGING = "showContentsWhenDragging";
+      String SHOW_DRIVERS_TOOL_BAR = "showDriversToolBar";
+      String SHOW_LOADED_DRIVERS_ONLY = "showLoadedDriversOnly";
+      String SHOW_MAIN_STATUS_BAR = "showMainStatusBar";
+      String SHOW_MAIN_TOOL_BAR = "showMainToolBar";
+      String SHOW_TOOLTIPS = "showToolTips";
+      String SHOW_COLOR_ICONS_IN_TOOLBAR = "showColorIconsInToolbars";
+      String SHOW_PLUGIN_FILES_IN_SPLASH_SCREEN = "showPluginFilesInSplashScreen";
       String FILE_OPEN_IN_PREVIOUS_DIR = "fileOpenInPreviousDir";
       String FILE_OPEN_IN_SPECIFIED_DIR = "fileOpenInSpecifiedDir";
       String FILE_SPECIFIED_DIR = "fileSpecifiedDir";
       String FILE_PREVIOUS_DIR = "filePreviousdDir";
-        String WARN_JRE_JDBC_MISMATCH = "warnJreJdbcMismatch";
-        String WARN_FOR_UNSAVED_FILE_EDITS = "warnForUnsavedFileEdits";
-        String WARN_FOR_UNSAVED_BUFFER_EDITS = "warnForUnsavedBufferEdits";
+      String WARN_JRE_JDBC_MISMATCH = "warnJreJdbcMismatch";
+      String WARN_FOR_UNSAVED_FILE_EDITS = "warnForUnsavedFileEdits";
+      String WARN_FOR_UNSAVED_BUFFER_EDITS = "warnForUnsavedBufferEdits";
+      String SHOW_SESSION_STARTUP_TIME_HINT = "showSessionStartupTimeHint";
    }
 
-	public interface IJdbcDebugTypes
+   public interface IJdbcDebugTypes
 	{
 		int NONE = 0;
 		int TO_STREAM = 1;
@@ -189,8 +190,12 @@ public class SquirrelPreferences implements Serializable
 
     /** Warning when closing session if a buffer was edited but not saved. */
     private boolean _warnForUnsavedBufferEdits = true;
-    
-	/**
+
+
+   /** Hint to Alias Schema Properties when Session startup takes considerable time */
+   private boolean _showSessionStartupTimeHint = true;
+
+   /**
 	 * Objects stored by plugins. Each element of this collection is a <TT>Map</TT>
 	 * keyed by the plugin's internal name and containing all objects for that
 	 * plugin.
@@ -928,5 +933,31 @@ public class SquirrelPreferences implements Serializable
     public boolean getWarnForUnsavedBufferEdits() {
         return _warnForUnsavedBufferEdits;
     }
-    
+
+
+
+   /**
+    * @param _warnForUnsavedBufferEdits The _warnForUnsavedBufferEdits to set.
+    */
+   public synchronized void setShowSessionStartupTimeHint(boolean data)
+   {
+      if (data != _showSessionStartupTimeHint)
+      {
+         final boolean oldValue = _showSessionStartupTimeHint;
+         _showSessionStartupTimeHint = data;
+         getPropertyChangeReporter().firePropertyChange(
+            IPropertyNames.SHOW_SESSION_STARTUP_TIME_HINT,
+            oldValue, _showSessionStartupTimeHint);
+      }
+   }
+
+   /**
+    * @return Returns the _warnForUnsaveFileEdits.
+    */
+   public boolean getShowSessionStartupTimeHint()
+   {
+      return _showSessionStartupTimeHint;
+   }
+
+
 }
