@@ -591,7 +591,9 @@ public class SessionManager
    {
       try
       {
-         HashMap uniqueAllowedSchemas = new HashMap();
+         // Do not do new HashMap() here.
+         HashMap uniqueAllowedSchemas = null;
+
          for (int i = 0; i < _allowedSchemaCheckers.size(); i++)
          {
             String[] allowedSchemas = null;
@@ -606,6 +608,11 @@ public class SessionManager
 
             if(null != allowedSchemas)
             {
+               if(null == uniqueAllowedSchemas)
+               {
+                  uniqueAllowedSchemas = new HashMap();
+               }
+
                for (int j = 0; j < allowedSchemas.length; j++)
                {
                   uniqueAllowedSchemas.put(allowedSchemas[j], null);
