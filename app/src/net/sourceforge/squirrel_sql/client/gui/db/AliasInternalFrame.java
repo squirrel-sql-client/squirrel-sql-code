@@ -602,7 +602,7 @@ public class AliasInternalFrame extends BaseInternalFrame
 	private final class ConnectionCallBack
 		extends ConnectToAliasCallBack
 	{
-		private ConnectionCallBack(IApplication app, ISQLAlias alias)
+		private ConnectionCallBack(IApplication app, SQLAlias alias)
 		{
 			super(app, alias);
 		}
@@ -623,7 +623,16 @@ public class AliasInternalFrame extends BaseInternalFrame
 				_app.showErrorDialog(msg + ": " + th.toString());
 			}
 			Dialogs.showOk(AliasInternalFrame.this, s_stringMgr.getString("AliasInternalFrame.connsuccess"));
-		}
+
+         if(getAlias().isAutoLogon())
+         {
+            // If Auto Logon is true in ConnectToAliasCommand user name/password
+            // of the Alias definiton may have changed.
+            // Here we transfere this information back into the controls.
+            _userName.setText(getAlias().getUserName());
+            _password.setText(getAlias().getPassword());
+         }
+      }
 
 		/**
 		 * @see CompletionCallback#sessionCreated(ISession)
