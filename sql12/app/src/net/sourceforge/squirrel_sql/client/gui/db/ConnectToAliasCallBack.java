@@ -25,9 +25,9 @@ public class ConnectToAliasCallBack implements ICompletionCallback
 
 
    private final IApplication _app;
-   private final ISQLAlias _sqlAlias;
+   private final SQLAlias _sqlAlias;
 
-   public ConnectToAliasCallBack(IApplication app, ISQLAlias alias)
+   public ConnectToAliasCallBack(IApplication app, SQLAlias alias)
    {
       super();
       if (app == null)
@@ -117,5 +117,10 @@ public class ConnectToAliasCallBack implements ICompletionCallback
       }
    }
 
+
+   public SQLAlias getAlias()
+   {
+      return _sqlAlias;
+   }
 
 }

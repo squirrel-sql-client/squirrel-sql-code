@@ -281,7 +281,19 @@ public class ConnectToAliasCommand implements ICommand
 				OpenConnectionCommand cmd = new OpenConnectionCommand(_app,
 								_alias, _user, _password, _props);
 				cmd.execute();
-				conn = cmd.getSQLConnection();
+
+            if(_alias.isAutoLogon())
+            {
+               // If the user checked Auto Logon but gave wrong username/password
+               // in the Alias definition. He will be asked to enter username/password again in an extra dialog.
+               // Here for convenience we transfer these data back into the Alias.
+               // Note: Don't do this when Auto Logon is false.
+               _alias.setUserName(_user);
+               _alias.setPassword(_password);
+            }
+
+
+            conn = cmd.getSQLConnection();
 				synchronized (this)
 				{
 					if (_stopConnection)
