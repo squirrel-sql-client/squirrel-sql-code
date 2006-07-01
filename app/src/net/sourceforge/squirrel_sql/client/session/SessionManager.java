@@ -19,6 +19,17 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.Map;
+
+import javax.swing.SwingUtilities;
+import javax.swing.event.EventListenerList;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.session.event.ISessionListener;
@@ -26,18 +37,12 @@ import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.event.EventListenerList;
-import javax.swing.*;
-import java.sql.SQLException;
-import java.util.*;
 
 /**
  * This class manages sessions.
@@ -626,7 +631,9 @@ public class SessionManager
          }
          else
          {
-            return (String[]) uniqueAllowedSchemas.keySet().toArray(new String[uniqueAllowedSchemas.size()]);
+            ArrayList list = new ArrayList(uniqueAllowedSchemas.keySet());
+            Collections.sort(list);
+            return (String[]) list.toArray(new String[list.size()]);
          }
       }
       catch (Exception e)
