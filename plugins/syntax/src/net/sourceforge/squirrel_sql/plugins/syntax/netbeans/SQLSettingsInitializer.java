@@ -1,23 +1,20 @@
 package net.sourceforge.squirrel_sql.plugins.syntax.netbeans;
 
+import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
+import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPugin;
 import org.netbeans.editor.*;
-import org.netbeans.editor.ext.ExtSettingsNames;
-import org.netbeans.editor.ext.ExtSettingsDefaults;
 import org.netbeans.editor.ext.ExtKit;
+import org.netbeans.editor.ext.ExtSettingsDefaults;
+import org.netbeans.editor.ext.ExtSettingsNames;
 import org.netbeans.editor.ext.java.JavaLayerTokenContext;
 import org.netbeans.editor.ext.java.JavaSettingsDefaults;
 import org.netbeans.editor.ext.java.JavaSettingsNames;
 
-import java.util.Map;
-import java.awt.event.KeyEvent;
-import java.awt.event.InputEvent;
-import java.awt.*;
-
-import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.SQLSettingsDefaults;
-import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
-import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPugin;
-
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.util.Map;
 
 
 public class SQLSettingsInitializer extends Settings.AbstractInitializer
@@ -109,6 +106,13 @@ public class SQLSettingsInitializer extends Settings.AbstractInitializer
             ExtSettingsDefaults.defaultHighlightCaretRowColoring);
          SettingsUtil.setColoring(settingsMap, ExtSettingsNames.HIGHLIGHT_MATCH_BRACE_COLORING,
             ExtSettingsDefaults.defaultHighlightMatchBraceColoring);
+
+
+         settingsMap.put(SettingsNames.TEXT_LIMIT_LINE_VISIBLE, Boolean.valueOf(_syntaxPreferences.isTextLimitLineVisible()));
+
+         settingsMap.put(SettingsNames.LINE_NUMBER_VISIBLE, Boolean.valueOf(true));
+
+         settingsMap.put(SettingsNames.TEXT_LIMIT_WIDTH, new Integer(_syntaxPreferences.getTextLimitLineWidth()));
 
 
          settingsMap.put(SettingsNames.ABBREV_MAP, SQLSettingsDefaults.getAbbrevMap(_plugin));

@@ -18,7 +18,7 @@
  *
  * created by cse, 07.10.2002 11:57:54
  *
- * @version $Id: ParserThread.java,v 1.6 2006-05-21 20:46:38 gerdwagner Exp $
+ * @version $Id: ParserThread.java,v 1.7 2006-07-05 04:44:32 gerdwagner Exp $
  */
 package net.sourceforge.squirrel_sql.client.session.parser.kernel;
 
@@ -94,12 +94,17 @@ public class ParserThread extends Thread
 		_lastErrEnd = getTokenEnd(errPos);
       _nextStatBegin = predictNextStatementBegin(errPos);
 
+      if(_lastErrEnd > _nextStatBegin)
+      {
+         return;
+      }
+
       int beginPos = _lastParserRunOffset + errPos;
       int endPos = _lastParserRunOffset + _lastErrEnd;
 
       if(beginPos < endPos)
       {
-         _workingErrorInfos.add(new ErrorInfo(message, _lastParserRunOffset + errPos-1 , _lastParserRunOffset + _lastErrEnd-1));
+         _workingErrorInfos.add(new ErrorInfo(message, _lastParserRunOffset + errPos , _lastParserRunOffset + _lastErrEnd-1));
       }
 	}
 
@@ -227,16 +232,18 @@ public class ParserThread extends Thread
 
    private boolean startsWithIgnoreCase(int ret, String keyWord)
    {
-      int beginPos;
+      int beginPos = ret;
       int endPos;
 
       if(ret == 0)
       {
+         // Either are at teh beginning ...
          beginPos = 0;
       }
-      else if(Character.isWhitespace(_workingString.charAt(ret)))
+      else if(Character.isWhitespace(_workingString.charAt(ret-1)))
       {
-         beginPos = ret + 1;
+         // or a white space must be in front of the keyword.  
+         beginPos = ret;
       }
       else
       {
@@ -275,16 +282,13 @@ public class ParserThread extends Thread
 	{
 		int ix = 0;
 
-		///////////////////////////////////////////
-		// find the place where the error occured
 		for (int i = 0; i < line-1; i++)
 		{
 			ix =_workingString.indexOf('\n', ix) + 1;
 		}
 		ix += column;
-		//
-		///////////////////////////////////////////
-		return ix;
+
+		return ix - 1; // -1 because column starts with 1 put pos with 0
 	}
 
 	public void notifyParser(String sqlText)
