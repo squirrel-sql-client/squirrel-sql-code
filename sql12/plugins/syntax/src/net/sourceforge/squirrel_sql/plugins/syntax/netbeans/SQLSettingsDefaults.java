@@ -203,7 +203,7 @@ public class SQLSettingsDefaults extends ExtSettingsDefaults
 
       // We do abrevs ourselfs in the DocumentListener in NetbeansSQLEntryPanel.
       // We don't use the Netbeans implementation mainly because it is case sensitive.
-      // If we accounter a performance problem one day we can still try to use this.
+      // If we come across a performance problem one day we can still try to use this.
 
       //Hashtable autoCorrects = plugin.getAutoCorrectProviderImpl().getAutoCorrects();
       //javaAbbrevMap.putAll(autoCorrects);

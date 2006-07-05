@@ -59,7 +59,7 @@ public class AutoCorrector
 
          final String insertChar = e.getDocument().getText(e.getOffset(), 1);
 
-         if (Character.isWhitespace(insertChar.charAt(0)))
+         if (' ' == insertChar.charAt(0))
          {
             String autoCorrCandidate = getStringBeforeWhiteSpace(e.getOffset()).toUpperCase();
             final String corr = (String) _plugin.getAutoCorrectProviderImpl().getAutoCorrects().get(autoCorrCandidate);

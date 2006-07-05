@@ -251,7 +251,7 @@ public class Parser
 			Error(104);
 	}
 
-	private final void Alter()
+	private final void AlterPart()
 	{
 		Expect(ParsingConstants.KW_ALTER);
 		SimpleColumnName();
@@ -269,7 +269,7 @@ public class Parser
 			Error(105);
 	}
 
-	private final void Add()
+	private final void AddPart()
 	{
 		Expect(ParsingConstants.KW_ADD);
 		if (t.kind == 1)
@@ -1645,11 +1645,11 @@ public class Parser
 		QualifiedTable();
 		if (t.kind == ParsingConstants.KW_ADD)
 		{
-			Add();
+			AddPart();
 		}
 		else if (t.kind == ParsingConstants.KW_ALTER)
 		{
-			Alter();
+			AlterPart();
 		}
 		else if (t.kind == ParsingConstants.KW_DROP)
 		{

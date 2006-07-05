@@ -18,6 +18,8 @@ package net.sourceforge.squirrel_sql.plugins.syntax;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -175,14 +177,23 @@ public class SyntaxPreferencesPanel
 			String OSTER = s_stringMgr.getString("syntax.prefUseOster");
 			// i18n[syntax.prefUsePlain=Use plain editor]
          String PLAIN = s_stringMgr.getString("syntax.prefUsePlain");
+
+         // i18n[syntax.textLimitLineVisible=Show text limit line]
+         String TEXT_LIMIT_LINE_VISIBLE = s_stringMgr.getString("syntax.textLimitLineVisible");
+         // i18n[syntax.textLimitLineWidth=Text limit line width]
+         String TEXT_LIMIT_LINE_WIDTH = s_stringMgr.getString("syntax.textLimitLineWidth");
+
       }
 
       private final JRadioButton _netbeansActiveOpt  = new JRadioButton(i18n.NETBEANS);
 		private final JRadioButton _osterActiveOpt = new JRadioButton(i18n.OSTER);
       private final JRadioButton _plainActiveOpt  = new JRadioButton(i18n.PLAIN);
 
+      private final JCheckBox _chkTextLimitLineVisible = new JCheckBox(i18n.TEXT_LIMIT_LINE_VISIBLE);
+      private final JTextField _txtTextLimitLineWidth = new JTextField();
 
-		private StylesListSelectionListener _listLis;
+
+      private StylesListSelectionListener _listLis;
 
 
 		private final StylesList _stylesList = new StylesList();
@@ -228,13 +239,18 @@ public class SyntaxPreferencesPanel
          _netbeansActiveOpt.setSelected(prefs.getUseNetbeansTextControl());
          _plainActiveOpt.setSelected(prefs.getUsePlainTextControl());
 
-			_stylesList.loadData(prefs);
+         _chkTextLimitLineVisible.setSelected(prefs.isTextLimitLineVisible());
+
+         _txtTextLimitLineWidth.setText("" + prefs.getTextLimitLineWidth());
+
+         _stylesList.loadData(prefs);
 			_styleMaintPnl.setStyle(_stylesList.getSelectedSyntaxStyle());
 
 			updateControlStatus();
 		}
 
-		void applyChanges(SyntaxPreferences prefs)
+
+      void applyChanges(SyntaxPreferences prefs)
 		{
          boolean oldUseNetbeansTextControl = prefs.getUseNetbeansTextControl();
          boolean oldUseOsterTextControl = prefs.getUseOsterTextControl();
@@ -252,6 +268,30 @@ public class SyntaxPreferencesPanel
             prefs.setUseOsterTextControl(oldUseOsterTextControl);
             prefs.setUsePlainTextControl(oldUsePlainTextControl);
          }
+
+         prefs.setTextLimitLineVisible(_chkTextLimitLineVisible.isSelected());
+
+         int limit = 80;
+
+         try
+         {
+            int buf = Integer.parseInt(_txtTextLimitLineWidth.getText());
+
+            if(0 < buf && buf < 1000)
+            {
+               limit = buf;
+            }
+            else
+            {
+               s_log.error("Invalid text limit widht: " + _txtTextLimitLineWidth.getText());
+            }
+         }
+         catch (NumberFormatException e)
+         {
+            s_log.error("Invalid text limit widht: " + _txtTextLimitLineWidth.getText(), e);
+         }
+
+         prefs.setTextLimitLineWidth(limit);
 
          prefs.setColumnStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.COLUMNS));
 			prefs.setCommentStyle(_stylesList.getSyntaxStyleAt(StylesList.IStylesListIndices.COMMENTS));
@@ -275,16 +315,21 @@ public class SyntaxPreferencesPanel
 
 			_stylesList.setEnabled(useOsterControl || useNetbeansControl);
 			_styleMaintPnl.setEnabled(useOsterControl || useNetbeansControl);
-		}
+
+         _chkTextLimitLineVisible.setEnabled(useNetbeansControl);
+         _txtTextLimitLineWidth.setEnabled(useNetbeansControl);
+
+         if(useNetbeansControl)
+         {
+            _txtTextLimitLineWidth.setEnabled(_chkTextLimitLineVisible.isSelected());
+         }
+      }
 
 		private void createUserInterface(SyntaxPreferences prefs,
 											SyntaxPluginResources rsrc)
 		{
 			setLayout(new GridBagLayout());
-			final GridBagConstraints gbc = new GridBagConstraints();
-			gbc.anchor = GridBagConstraints.WEST;
-			gbc.fill = GridBagConstraints.HORIZONTAL;
-			gbc.insets = new Insets(4, 4, 4, 4);
+			GridBagConstraints gbc;
 
          ButtonGroup bg = new ButtonGroup();
          bg.add(_netbeansActiveOpt);
@@ -315,7 +360,15 @@ public class SyntaxPreferencesPanel
             }
          });
 
-         JPanel pnlLeft = new JPanel(new BorderLayout(4,0));
+         _chkTextLimitLineVisible.addActionListener(new ActionListener()
+         {
+            public void actionPerformed(ActionEvent e)
+            {
+               updateControlStatus();
+            }
+         });
+
+
 
 			// i18n[syntax.osterExplain=Note: The preferable editor is the Netbeans editor. The Netbeans editor\n
 			//- is less memory consuming,\n
@@ -330,40 +383,67 @@ public class SyntaxPreferencesPanel
 			// As soon as this bug is fixed
 			// the Oster editor will be removed.]
 			String text = s_stringMgr.getString("syntax.osterExplain");
+         gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5), 0,0);
+         add(new MultipleLineLabel(text), gbc);
 
-         pnlLeft.add(new MultipleLineLabel(text));
+         gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,0,5,5), 0,0);
+         add(createOptionsPanel(), gbc);
 
-
-         JPanel pnlOpt = new JPanel(new GridLayout(3,1,4,0));
-         pnlOpt.add(_netbeansActiveOpt);
-         pnlOpt.add(_osterActiveOpt);
-         pnlOpt.add(_plainActiveOpt);
-         pnlLeft.add(pnlOpt, BorderLayout.SOUTH);
-
-
-			gbc.gridx = 0;
-			gbc.gridy = 0;
-			add(pnlLeft, gbc);
-
-         gbc.gridy = 0;
-			++gbc.gridx;
+         gbc = new GridBagConstraints(1,0,1,2,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
 			add(createStylePanel(rsrc), gbc);
+
+         gbc = new GridBagConstraints(0,2,2,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0);
+			add(new JPanel(), gbc);
+
 		}
 
+      private JPanel createOptionsPanel()
+      {
+         JPanel pnlRet = new JPanel(new GridBagLayout());
 
-		private JPanel createStylePanel(SyntaxPluginResources rsrc)
-		{
-			JPanel pnl = new JPanel(new BorderLayout());
-			// i18n[syntax.styles=Syntax Styles]
-			pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("syntax.styles")));
+         GridBagConstraints gbc;
 
-			_styleMaintPnl = new StyleMaintenancePanel(_stylesList, rsrc);
+         gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+         pnlRet.add(_netbeansActiveOpt, gbc);
 
-			pnl.add(_styleMaintPnl, BorderLayout.NORTH);
-			pnl.add(_stylesList, BorderLayout.CENTER);
+         gbc = new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
+         pnlRet.add(_osterActiveOpt, gbc);
 
-			return pnl;
-		}
+         gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
+         pnlRet.add(_plainActiveOpt, gbc);
+
+         JPanel pnlLineLimit = new JPanel(new GridBagLayout());
+         gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+         pnlRet.add(pnlLineLimit, gbc);
+
+
+         gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,5,5), 0,0);
+         pnlLineLimit.add(_chkTextLimitLineVisible, gbc);
+
+         gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,5,5), 0,0);
+         pnlLineLimit.add(new JLabel(i18n.TEXT_LIMIT_LINE_WIDTH), gbc);
+
+         _txtTextLimitLineWidth.setColumns(3);
+         gbc = new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,5,5), 0,0);
+         pnlLineLimit.add(_txtTextLimitLineWidth, gbc);
+
+         return pnlRet;
+      }
+
+
+      private JPanel createStylePanel(SyntaxPluginResources rsrc)
+      {
+         JPanel pnl = new JPanel(new BorderLayout());
+         // i18n[syntax.styles=Syntax Styles]
+         pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("syntax.styles")));
+
+         _styleMaintPnl = new StyleMaintenancePanel(_stylesList, rsrc);
+
+         pnl.add(_styleMaintPnl, BorderLayout.NORTH);
+         pnl.add(_stylesList, BorderLayout.CENTER);
+
+         return pnl;
+      }
 
 
 		/**

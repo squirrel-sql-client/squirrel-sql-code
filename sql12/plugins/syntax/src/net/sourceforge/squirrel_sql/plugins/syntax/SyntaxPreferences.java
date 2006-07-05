@@ -31,34 +31,36 @@ import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 public class SyntaxPreferences implements Serializable, Cloneable
 {
    public interface IPropertyNames
-	{
+   {
 //		String BLINK_CARET = "blinkCaret";
 //		String BLOCK_CARET_ENABLED = "blockCaretEnabled";
 //		String BRACKET_HIGHLIGHTING = "bracketHighlighting";
 //		String BRACKET_HIGHLIGHT_COLOR = "bracketHighlightColor";
 //		String CARET_COLOR = "caretColor";
-		String COLUMN_STYLE = "columnStyle";
-		String COMMENT_STYLE = "commentStyle";
+      String COLUMN_STYLE = "columnStyle";
+      String COMMENT_STYLE = "commentStyle";
 //		String CURRENT_LINE_HIGHLIGHTING = "currentLineHighlighting";
 //		String CURRENT_LINE_HIGHLIGHT_COLOR = "currentLineHighlightColor";
-		String DATA_TYPE_STYLE = "dataTypeStyle";
+      String DATA_TYPE_STYLE = "dataTypeStyle";
 //		String EOL_MARKERS = "eolMarkers";
 //		String EOL_MARKER_COLOR = "eolMarkerColor";
-		String ERROR_STYLE = "errorStyle";
-		String FUNCTION_STYLE = "functionStyle";
-		String IDENTIFIER_STYLE = "identifierStyle";
-		String LITERAL_STYLE = "literalStyle";
-		String OPERATOR_STYLE = "operatorStyle";
-		String RESERVED_WORD_STYLE = "reservedWordStyle";
-		String SEPARATOR_STYLE = "separatorStyle";
+      String ERROR_STYLE = "errorStyle";
+      String FUNCTION_STYLE = "functionStyle";
+      String IDENTIFIER_STYLE = "identifierStyle";
+      String LITERAL_STYLE = "literalStyle";
+      String OPERATOR_STYLE = "operatorStyle";
+      String RESERVED_WORD_STYLE = "reservedWordStyle";
+      String SEPARATOR_STYLE = "separatorStyle";
 //		String LINE_NUMBER_COLOR = "lineNumberColor";
 //		String SELECTION_COLOR = "selectionColor";
 //		String SHOW_LINE_NBRS = "showLineNumbers";
-		String TABLE_STYLE = "tableStyle";
-		String USE_OSTER_CONTROL = "useOsterControl";
+      String TABLE_STYLE = "tableStyle";
+      String USE_OSTER_CONTROL = "useOsterControl";
       String USE_NETBEANS_CONTROL = "useNetbeansControl";
-      String USE_PLAIN_CONTROL = "usePlainControl";;
-		String WHITE_SPACE_STYLE = "whiteSpaceStyle";
+      String USE_PLAIN_CONTROL = "usePlainControl";
+      String WHITE_SPACE_STYLE = "whiteSpaceStyle";
+      String TEXT_LIMIT_LINE_VISIBLE = "textLimitLineVisible";
+      String TEXT_LIMIT_LINE_WIDTH = "textLimitLineWidth";
    }
 
 	/** Object to handle property change events. */
@@ -107,7 +109,12 @@ public class SyntaxPreferences implements Serializable, Cloneable
 //	private int _bracketHighlightRGB = Color.black.getRGB();
 //	private int _lineNumberRGB = Color.black.getRGB();
 
-	public SyntaxPreferences()
+   private boolean _textLimitLineVisible = false;
+   private int _textLimitLineWidth = 80;
+
+
+
+   public SyntaxPreferences()
 	{
 		super();
 
@@ -361,7 +368,41 @@ public class SyntaxPreferences implements Serializable, Cloneable
 //		}
 //	}
 
-	public SyntaxStyle getCommentStyle()
+   public boolean isTextLimitLineVisible()
+   {
+      return _textLimitLineVisible;
+   }
+
+   public void setTextLimitLineVisible(boolean data)
+   {
+      if (_textLimitLineVisible != data)
+      {
+         final Boolean oldValue = Boolean.valueOf(_textLimitLineVisible);
+         _textLimitLineVisible = data;
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.TEXT_LIMIT_LINE_VISIBLE,
+            oldValue, Boolean.valueOf(_textLimitLineVisible));
+      }
+   }
+
+   public int getTextLimitLineWidth()
+   {
+      return _textLimitLineWidth;
+   }
+
+   public void setTextLimitLineWidth(int data)
+   {
+      if (_textLimitLineWidth != data)
+      {
+         final Integer oldValue = new Integer(_textLimitLineWidth);
+         _textLimitLineWidth = data;
+         getPropertyChangeReporter().firePropertyChange(IPropertyNames.TEXT_LIMIT_LINE_WIDTH,
+            oldValue, new Integer(_textLimitLineWidth));
+      }
+
+   }
+
+
+   public SyntaxStyle getCommentStyle()
 	{
 		return _commentStyle;
 	}
