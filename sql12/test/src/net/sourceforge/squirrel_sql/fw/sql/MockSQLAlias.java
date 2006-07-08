@@ -111,8 +111,7 @@ public class MockSQLAlias implements ISQLAlias {
         return false;
     }
 
-    public void setUseDriverProperties(boolean value)
-            throws ValidationException {
+    public void setUseDriverProperties(boolean value) {
         // TODO Auto-generated method stub
 
     }
@@ -145,6 +144,14 @@ public class MockSQLAlias implements ISQLAlias {
     public boolean isValid() {
         // TODO Auto-generated method stub
         return false;
+    }
+
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLAlias#getDriverPropertiesClone()
+     */
+    public SQLDriverPropertyCollection getDriverPropertiesClone() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

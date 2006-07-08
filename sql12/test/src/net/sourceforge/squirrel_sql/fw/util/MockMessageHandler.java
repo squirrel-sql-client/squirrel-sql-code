@@ -40,4 +40,12 @@ public class MockMessageHandler implements IMessageHandler {
 
     }
 
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.util.IMessageHandler#showWarningMessage(java.lang.String)
+     */
+    public void showWarningMessage(String msg) {
+        // TODO Auto-generated method stub
+        
+    }
+
 }
