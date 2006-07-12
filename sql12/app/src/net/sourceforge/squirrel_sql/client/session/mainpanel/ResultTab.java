@@ -99,47 +99,49 @@ public class ResultTab extends JPanel implements IHasIdentifier
    /** Internationalized strings for this class. */
    private static final StringManager s_stringMgr =
        StringManagerFactory.getStringManager(ResultTab.class);
+   private ResultTabListener _resultTabListener;
 
    /**
-	 * Ctor.
-	 *
-	 * @param	session		Current session.
-	 * @param	sqlPanel	<TT>SQLResultExecuterPanel</TT> that this tab is
-	 *						showing results for.
-	 * @param	id			Unique ID for this object.
-	 *
-	 * @thrown	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>ISession</TT>,
-	 *			<<TT>SQLResultExecuterPanel</TT> or <TT>IIdentifier</TT> passed.
-	 */
-	public ResultTab(ISession session, SQLResultExecuterPanel sqlPanel,
-						IIdentifier id, SQLExecutionInfo exInfo,
-						IDataSetUpdateableTableModel creator)
-		throws IllegalArgumentException
-	{
-		super();
-		if (session == null)
-		{
-			throw new IllegalArgumentException("Null ISession passed");
-		}
-		if (sqlPanel == null)
-		{
-			throw new IllegalArgumentException("Null SQLPanel passed");
-		}
-		if (id == null)
-		{
-			throw new IllegalArgumentException("Null IIdentifier passed");
-		}
+    * Ctor.
+    *
+    * @param	session		Current session.
+    * @param	sqlPanel	<TT>SQLResultExecuterPanel</TT> that this tab is
+    *						showing results for.
+    * @param	id			Unique ID for this object.
+    *
+    * @thrown	IllegalArgumentException
+    *			Thrown if a <TT>null</TT> <TT>ISession</TT>,
+    *			<<TT>SQLResultExecuterPanel</TT> or <TT>IIdentifier</TT> passed.
+    */
+   public ResultTab(ISession session, SQLResultExecuterPanel sqlPanel,
+                    IIdentifier id, SQLExecutionInfo exInfo,
+                    IDataSetUpdateableTableModel creator, ResultTabListener resultTabListener)
+      throws IllegalArgumentException
+   {
+      super();
+      _resultTabListener = resultTabListener;
+      if (session == null)
+      {
+         throw new IllegalArgumentException("Null ISession passed");
+      }
+      if (sqlPanel == null)
+      {
+         throw new IllegalArgumentException("Null SQLPanel passed");
+      }
+      if (id == null)
+      {
+         throw new IllegalArgumentException("Null IIdentifier passed");
+      }
 
-		_session = session;
-		_sqlPanel = sqlPanel;
-		_id = id;
-		reInit(creator, exInfo);
+      _session = session;
+      _sqlPanel = sqlPanel;
+      _id = id;
+      reInit(creator, exInfo);
 
 
-		createGUI();
-		propertiesHaveChanged(null);
-	}
+      createGUI();
+      propertiesHaveChanged(null);
+   }
 
 	public void reInit(IDataSetUpdateableTableModel creator, SQLExecutionInfo exInfo)
 	{
@@ -412,7 +414,8 @@ public class ResultTab extends JPanel implements IHasIdentifier
 
 		JPanel panel1 = new JPanel();
 		JPanel panel2 = new JPanel();
-		panel2.setLayout(new GridLayout(1, 2, 0, 0));
+		panel2.setLayout(new GridLayout(1, 3, 0, 0));
+      panel2.add(new TabButton(new RerunAction(_session.getApplication())));
 		panel2.add(new TabButton(new CreateResultTabFrameAction(_session.getApplication())));
 		panel2.add(new TabButton(new CloseAction()));
 		panel1.setLayout(new BorderLayout());
@@ -486,7 +489,21 @@ public class ResultTab extends JPanel implements IHasIdentifier
 		}
 	}
 
-	/**
+   public class RerunAction  extends SquirrelAction
+   {
+      RerunAction(IApplication app)
+      {
+         super(app, app.getResources());
+      }
+
+      public void actionPerformed(ActionEvent evt)
+      {
+         _resultTabListener.rerunSQL(_exInfo.getSQL(), ResultTab.this);   
+      }
+   }
+
+
+   /**
 	 * @see IHasIdentifier#getIdentifier()
 	 */
 	public IIdentifier getIdentifier()
