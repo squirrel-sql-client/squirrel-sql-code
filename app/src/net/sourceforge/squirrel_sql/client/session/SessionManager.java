@@ -32,6 +32,7 @@ import javax.swing.event.EventListenerList;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.session.event.ISessionListener;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
@@ -592,7 +593,7 @@ public class SessionManager
     * Note: This Method does not cache allowed Schemas.
     * It is preferable to use getAllowedSchemas(ISession) is a Session ist avaialable.
     */
-   public String[] getAllowedSchemas(SQLConnection con, SQLAlias alias)
+   public String[] getAllowedSchemas(SQLConnection con, ISQLAliasExt alias)
    {
       try
       {

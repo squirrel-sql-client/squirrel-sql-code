@@ -21,19 +21,19 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.TestCase;
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.session.MockSession;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import junit.framework.TestCase;
 
 public class ObjectTreeTest extends TestCase {
 
     ObjectTree tree = null;
     MockSession session = null;
-    
+
     public static void main(String[] args) {
         ApplicationArguments.initialize(new String[0]);
         junit.textui.TestRunner.run(ObjectTreeTest.class);
@@ -59,22 +59,22 @@ public class ObjectTreeTest extends TestCase {
         String tableKey = "table(100)";
         map.put(tableKey, null);
         SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
-        IDatabaseObjectInfo dbInfo = 
+        IDatabaseObjectInfo dbInfo =
             new DatabaseObjectInfo("catalog",
-                                   "schema", 
-                                   "table", 
-                                   DatabaseObjectType.TABLE, 
+                                   "schema",
+                                   "table",
+                                   DatabaseObjectType.TABLE,
                                    md);
         ObjectTreeNode node = new ObjectTreeNode(session, dbInfo);
-        
+
         session.getProperties().setShowRowCount(true);
-        
+
         // Test to see that table(100) matches table(0).  It should since only
         // the row count is different.
         assertEquals(true, tree.matchKeyPrefix(map, node, "table(0)"));
-        
+
         session.getProperties().setShowRowCount(true);
-        
+
         // Test to see if we can fool matchKeyPrefix into assuming that there 
         // will be '(' on the end of the path since row count is enabled.  Yet
         // we'll send in a string that doesn't have this characteristic.

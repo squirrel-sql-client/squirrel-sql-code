@@ -22,8 +22,10 @@ import java.beans.PropertyChangeListener;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
+import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaProperties;
 
-public class MockSQLAlias implements ISQLAlias {
+public class MockSQLAlias implements ISQLAliasExt {
 
     public void assignFrom(ISQLAlias rhs) throws ValidationException {
         // TODO Auto-generated method stub
@@ -146,12 +148,15 @@ public class MockSQLAlias implements ISQLAlias {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLAlias#getDriverPropertiesClone()
-     */
-    public SQLDriverPropertyCollection getDriverPropertiesClone() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+   public SQLDriverPropertyCollection getDriverPropertiesClone() {
+      return null;  //To change body of implemented methods use File | Settings | File Templates.
+   }
 
+   public SQLAliasSchemaProperties getSchemaProperties()  {
+      return null;  //To change body of implemented methods use File | Settings | File Templates.
+   }
+
+   public void setSchemaProperties(SQLAliasSchemaProperties schemaProperties)  {
+      //To change body of implemented methods use File | Settings | File Templates.
+   }
 }

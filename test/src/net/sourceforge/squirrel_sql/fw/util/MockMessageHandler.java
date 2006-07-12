@@ -45,7 +45,7 @@ public class MockMessageHandler implements IMessageHandler {
      */
     public void showWarningMessage(String msg) {
         // TODO Auto-generated method stub
-        
+
     }
 
 }

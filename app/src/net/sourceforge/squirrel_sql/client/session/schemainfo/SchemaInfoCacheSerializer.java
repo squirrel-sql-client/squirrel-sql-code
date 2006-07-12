@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.client.session.schemainfo;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -146,7 +147,7 @@ public class SchemaInfoCacheSerializer
    }
 
 
-   public static File getSchemaCacheFile(SQLAlias alias)
+   public static File getSchemaCacheFile(ISQLAliasExt alias)
    {
       String uniquePrefix = alias.getIdentifier().toString();
 
