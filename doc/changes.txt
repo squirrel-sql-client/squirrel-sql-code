@@ -5,8 +5,13 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+SQL result tabs offer to rerun their SQL query to update their data.
 
 Text limit line of Netbeans editor can now be positioned or switched off in Session Properties.
+
+2.3 rc1
+=========
+
 
 If an Alias is configured to Auto Logon but has wrong user name/password
   on connecting the user gets an error dialog and has to correct user name/password.

@@ -244,19 +244,26 @@ public class SQLResultExecuterPanel extends JPanel
 	/** Reference to the executor so that it can be called from the CancelPanel*/
 	private SQLExecuterTask _executer;
 
-	private void executeSQL(String sql)
+	public void executeSQL(String sql)
 	{
 		if (sql != null && sql.trim().length() > 0)
 		{
 			sql = fireSQLToBeExecutedEvent(sql);
          ISQLExecutionListener[] executionListeners =
             (ISQLExecutionListener[]) _listeners.getListeners(ISQLExecutionListener.class);
-         _executer = new SQLExecuterTask(_session, sql, new SQLExecutionHandler(), executionListeners);
+         _executer = new SQLExecuterTask(_session, sql, new SQLExecutionHandler(null), executionListeners);
 			_session.getApplication().getThreadPool().addTask(_executer);
 		}
 	}
 
-	/**
+   private void onRerunSQL(String sql, ResultTab resultTab)
+   {
+      _executer = new SQLExecuterTask(_session, sql, new SQLExecutionHandler(resultTab), new ISQLExecutionListener[0]);
+      _session.getApplication().getThreadPool().addTask(_executer);
+   }
+
+
+   /**
 	 * Close all the Results frames.
 	 */
 	public synchronized void closeAllSQLResultFrames()
@@ -322,7 +329,7 @@ public class SQLResultExecuterPanel extends JPanel
          else
          {
             // remove old sticky tab
-            int indexOfStickyTab = getIndexOfStickyTab();
+            int indexOfStickyTab = getIndexOfTab(_stickyTab);
             if(-1 != indexOfStickyTab)
             {
                _tabbedExecutionsPanel.setIconAt(indexOfStickyTab, null);
@@ -354,21 +361,20 @@ public class SQLResultExecuterPanel extends JPanel
       return icon;
    }
 
-   private int getIndexOfStickyTab()
+   private int getIndexOfTab(ResultTab resultTab)
    {
-      if(null == _stickyTab)
+      if(null == resultTab)
       {
          return -1;
       }
 
       for (int i = 0; i < _tabbedExecutionsPanel.getTabCount(); i++)
       {
-         if (_stickyTab.equals(_tabbedExecutionsPanel.getComponentAt(i)))
+         if (resultTab.equals(_tabbedExecutionsPanel.getComponentAt(i)))
          {
             return i;
          }
       }
-      _stickyTab = null;
       return -1;
    }
 
@@ -633,16 +639,19 @@ public class SQLResultExecuterPanel extends JPanel
 				.get(tab.getIdentifier());
 		if (tabInfo._resultFrame != null)
 		{
-			addResultsTab(tab);
+			addResultsTab(tab, null);
 			fireTornOffResultTabReturned(tab);
 			tabInfo._resultFrame = null;
 		}
 	}
 
 
-	void addResultsTab(SQLExecutionInfo exInfo, ResultSetDataSet rsds,
-					ResultSetMetaDataDataSet mdds, final JPanel cancelPanel,
-					IDataSetUpdateableTableModel creator)
+	private void addResultsTab(SQLExecutionInfo exInfo,
+                              ResultSetDataSet rsds,
+                              ResultSetMetaDataDataSet mdds,
+                              final JPanel cancelPanel,
+                              IDataSetUpdateableTableModel creator,
+                              final ResultTab resultTabToReplace)
 	{
 		final ResultTab tab;
 		if (_availableTabs.size() > 0)
@@ -656,7 +665,15 @@ public class SQLResultExecuterPanel extends JPanel
 		}
 		else
 		{
-			tab = new ResultTab(_session, this, _idFactory.createIdentifier(), exInfo, creator);
+         ResultTabListener resultTabListener = new ResultTabListener()
+         {
+            public void rerunSQL(String sql, ResultTab resultTab)
+            {
+               onRerunSQL(sql, resultTab);
+            }
+         };
+
+         tab = new ResultTab(_session, this, _idFactory.createIdentifier(), exInfo, creator, resultTabListener);
 			ResultTabInfo ti = new ResultTabInfo(tab);
 			_allTabs.put(tab.getIdentifier(), ti);
 			_usedTabs.add(ti);
@@ -672,7 +689,7 @@ public class SQLResultExecuterPanel extends JPanel
 				public void run()
 				{
 					_tabbedExecutionsPanel.remove(cancelPanel);
-					addResultsTab(tab);
+					addResultsTab(tab, resultTabToReplace);
 					_tabbedExecutionsPanel.setSelectedComponent(tab);
 					fireTabAddedEvent(tab);
 				}
@@ -684,28 +701,48 @@ public class SQLResultExecuterPanel extends JPanel
 		}
 	}
 
-	private void addResultsTab(ResultTab tab)
+	private void addResultsTab(ResultTab tab, ResultTab resultTabToReplace)
 	{
-      if(null == _stickyTab)
+      if(null == resultTabToReplace && null == _stickyTab)
       {
    		_tabbedExecutionsPanel.addTab(tab.getTitle(), null, tab, tab.getViewableSqlString());
          checkResultTabLimit();
       }
       else
       {
-         int indexOfSticky = getIndexOfStickyTab();
+         int indexToReplace = -1;
+         ImageIcon tabIcon = null;
 
-         if(-1 == indexOfSticky)
+         // Either resultTabToReplace or _stickyTab must be not null here
+         if(null != resultTabToReplace && _stickyTab != resultTabToReplace)
          {
-            // sticky tab was closed
-            _stickyTab = null;
-            addResultsTab(tab);
+            indexToReplace = getIndexOfTab(resultTabToReplace);
+         }
+         else
+         {
+            indexToReplace = getIndexOfTab(_stickyTab);
+            if(-1 == indexToReplace)
+            {
+               // sticky tab was closed
+               _stickyTab = null;
+            }
+            else
+            {
+               tabIcon = getStickyIcon();
+               _stickyTab = tab;
+            }
+         }
+
+
+         if(-1 == indexToReplace)
+         {
+            // Just add the tab
+            addResultsTab(tab, null);
             return;
          }
 
-         closeResultTabAt(indexOfSticky);
-         _tabbedExecutionsPanel.insertTab(tab.getTitle(), getStickyIcon(), tab, tab.getViewableSqlString(), indexOfSticky);
-         _stickyTab = tab;
+         closeResultTabAt(indexToReplace);
+         _tabbedExecutionsPanel.insertTab(tab.getTitle(), tabIcon, tab, tab.getViewableSqlString(), indexToReplace);
       }
 	}
 
@@ -913,22 +950,25 @@ public class SQLResultExecuterPanel extends JPanel
 	 */
 	private class SQLExecutionHandler implements ISQLExecuterHandler
 	{
-		private CancelPanel _cancelPanel = new CancelPanel();
+      private CancelPanel _cancelPanel = new CancelPanel();
 
-        /** Hold onto the current ResultDataSet so if the execution is
-         *  cancelled then this can be cancelled.
-         */
-        private ResultSetDataSet rsds = null;
-        
-        private String sqlToBeExecuted = null;
-        
-      public SQLExecutionHandler()
-		{
-			super();
-			setCancelPanel(_cancelPanel);
-		}
+      /**
+       * Hold onto the current ResultDataSet so if the execution is
+       * cancelled then this can be cancelled.
+       */
+      private ResultSetDataSet rsds = null;
 
-		public void sqlToBeExecuted(final String sql)
+      private String sqlToBeExecuted = null;
+      private ResultTab _resultTabToReplace;
+
+      public SQLExecutionHandler(ResultTab resultTabToReplace)
+      {
+         super();
+         _resultTabToReplace = resultTabToReplace;
+         setCancelPanel(_cancelPanel);
+      }
+
+      public void sqlToBeExecuted(final String sql)
 		{
          SwingUtilities.invokeLater(new Runnable()
          {
@@ -1019,7 +1059,7 @@ public class SQLResultExecuterPanel extends JPanel
             }
 			rsds.setResultSet(rs);
 
-			addResultsTab(info, rsds, rsmdds, _cancelPanel, model);
+			addResultsTab(info, rsds, rsmdds, _cancelPanel, model, _resultTabToReplace);
 			rsds = null;
 		}
 
@@ -1076,10 +1116,20 @@ public class SQLResultExecuterPanel extends JPanel
             public void run()
             {
                _tabbedExecutionsPanel.remove(cancelPanel);
-               int indexOfSticky = getIndexOfStickyTab();
-               if(-1 != indexOfSticky)
+
+               int indexToSelect = -1;
+               if(null == _resultTabToReplace)
                {
-                  _tabbedExecutionsPanel.setSelectedIndex(indexOfSticky);
+                  indexToSelect = getIndexOfTab(_stickyTab);
+               }
+               else
+               {
+                  indexToSelect = getIndexOfTab(_resultTabToReplace);
+               }
+
+               if(-1 != indexToSelect)
+               {
+                  _tabbedExecutionsPanel.setSelectedIndex(indexToSelect);
                }
 
             }
