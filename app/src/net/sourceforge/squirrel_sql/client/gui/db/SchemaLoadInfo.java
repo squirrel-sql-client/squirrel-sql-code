@@ -1,9 +1,11 @@
 package net.sourceforge.squirrel_sql.client.gui.db;
 
+import java.io.Serializable;
+
 /**
  * new SchemaLoadInfo(<all types that may be cached>) creates an object that says: load everything
  */
-public class SchemaLoadInfo
+public class SchemaLoadInfo implements Serializable
 {
    public SchemaLoadInfo(String[] tableTypes)
    {
