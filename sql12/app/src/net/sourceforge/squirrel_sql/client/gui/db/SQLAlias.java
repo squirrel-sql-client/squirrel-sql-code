@@ -38,7 +38,7 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDriverProperty;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SQLAlias implements Cloneable, Serializable, ISQLAlias, Comparable
+public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparable
 {
    /** Internationalized strings for this class. */
    private static final StringManager s_stringMgr =

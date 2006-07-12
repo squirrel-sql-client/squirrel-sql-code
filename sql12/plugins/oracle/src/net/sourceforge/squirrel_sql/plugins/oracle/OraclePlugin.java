@@ -21,6 +21,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.IAliasPropertiesPanelController;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
@@ -216,7 +217,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 
          app.getSessionManager().addAllowedSchemaChecker(new IAllowedSchemaChecker()
          {
-            public String[] getAllowedSchemas(SQLConnection con, SQLAlias alias)
+            public String[] getAllowedSchemas(SQLConnection con, ISQLAliasExt alias)
             {
                return onGetAllowedSchemas(con, alias);
             }
@@ -412,7 +413,7 @@ public class OraclePlugin extends DefaultSessionPlugin
     }
 
 
-   private boolean isOracle(SQLAlias alias)
+   private boolean isOracle(ISQLAliasExt alias)
    {
       IIdentifier driverIdentifier = alias.getDriverIdentifier();
       Driver jdbcDriver = getApplication().getSQLDriverManager().getJDBCDriver(driverIdentifier);
@@ -425,7 +426,7 @@ public class OraclePlugin extends DefaultSessionPlugin
       return jdbcDriver.getClass().getName().startsWith("oracle.");
    }
 
-   private String[] onGetAllowedSchemas(SQLConnection con, SQLAlias alias)
+   private String[] onGetAllowedSchemas(SQLConnection con, ISQLAliasExt alias)
    {
       if(isOracle(alias))
       {
