@@ -69,10 +69,13 @@ public class SchemaInfo
 
 
    private Vector _listeners = new Vector();
-   private boolean _schemasAndCatalogsLoaded;
    private boolean _inInitialLoad;
    private long _initalLoadBeginTime;
    private boolean _sessionStartupTimeHintShown;
+
+   private boolean _schemasAndCatalogsLoaded;
+   private boolean _tablesLoaded;
+   private boolean _storedProceduresLoaded;
 
    public SchemaInfo(IApplication app)
    {
@@ -113,14 +116,6 @@ public class SchemaInfo
 
    public void initialLoad(ISession session)
    {
-      synchronized (this)
-      {
-         if (_loading || _loaded)
-         {
-            return;
-         }
-      }
-
       _session = session;
 
       breathing();
@@ -142,16 +137,6 @@ public class SchemaInfo
 
    public void reloadAll()
    {
-      synchronized (this)
-      {
-         if(_loading)
-         {
-            return;
-         }
-      }
-
-      _schemaInfoCache.clearAll();
-
       privateLoadAll();
    }
 
@@ -168,9 +153,14 @@ public class SchemaInfo
          _loading = true;
 
          _schemasAndCatalogsLoaded = false;
+         _tablesLoaded = false;
+         _storedProceduresLoaded = false;
       }
 
       breathing();
+
+      _schemaInfoCache.clearAll();
+
 
       long mstart = System.currentTimeMillis();
       String msg = null;
@@ -190,11 +180,7 @@ public class SchemaInfo
 
          progress = loadSchemas(progress);
 
-         _schemasAndCatalogsLoaded = true;
-         synchronized(this)
-         {
-            this.notifyAll();
-         }
+         notifySchemasAndCatalogsLoad();
 
 
          try
@@ -258,8 +244,11 @@ public class SchemaInfo
          }
 
          progress = loadTables(null, null, null, null, progress);
+         notifyTablesLoaded();
+
 
          progress = loadStoredProcedures(null, null, null, progress);
+         notifyStoredProceduresLoaded();
 
       }
       finally
@@ -274,6 +263,33 @@ public class SchemaInfo
       }
       long mfinish = System.currentTimeMillis();
       s_log.debug("SchemaInfo.load took " + (mfinish - mstart) + " ms");
+   }
+
+   private void notifyStoredProceduresLoaded()
+   {
+      synchronized(this)
+      {
+         _storedProceduresLoaded = true;
+         this.notifyAll();
+      }
+   }
+
+   private void notifyTablesLoaded()
+   {
+      synchronized(this)
+      {
+         _tablesLoaded = true;
+         this.notifyAll();
+      }
+   }
+
+   private void notifySchemasAndCatalogsLoad()
+   {
+      synchronized(this)
+      {
+         _schemasAndCatalogsLoaded = true;
+         this.notifyAll();
+      }
    }
 
 
@@ -474,8 +490,7 @@ public class SchemaInfo
             return;
          }
 
-         _schemaInfoCache.catalogs.clear();
-         _schemaInfoCache.catalogs.addAll(Arrays.asList(_dmd.getCatalogs()));
+         _schemaInfoCache.writeCatalogs(_dmd.getCatalogs());
       }
       catch (Throwable th)
       {
@@ -495,29 +510,28 @@ public class SchemaInfo
             return;
          }
 
-         _schemaInfoCache.schemas.clear();
+         String[] schemasToWrite;
          if(SchemaNameLoadInfo.STATE_REFERESH_SCHEMA_NAMES_FROM_DB == schemaNameLoadInfo.state)
          {
-            String[] allowedSchemas = _session.getApplication().getSessionManager().getAllowedSchemas(_session);
-            _schemaInfoCache.schemas.addAll(Arrays.asList(allowedSchemas));
+            schemasToWrite = _session.getApplication().getSessionManager().getAllowedSchemas(_session);
          }
          else if(SchemaNameLoadInfo.STATE_USES_PROVIDED_SCHEMA_NAMES == schemaNameLoadInfo.state)
          {
-            for (int i = 0; i < schemaNameLoadInfo.schemaNames.length; i++)
-            {
-               _schemaInfoCache.schemas.add(schemaNameLoadInfo.schemaNames[i]);
-            }
+            schemasToWrite = schemaNameLoadInfo.schemaNames;
          }
          else
          {
             throw new IllegalArgumentException("Unknown SchemaNameLoadInfo.state = " + schemaNameLoadInfo.state);
          }
+
+         _schemaInfoCache.writeSchemas(schemasToWrite);
       }
       catch (Throwable th)
       {
          s_log.error("failed to load schema names", th);
       }
    }
+
 
    public boolean isKeyword(String data)
    {
@@ -535,7 +549,7 @@ public class SchemaInfo
    {
       if (!_loading && data != null)
       {
-         return _schemaInfoCache.keywords.containsKey(data);
+         return _schemaInfoCache.getKeywordsForReadOnly().containsKey(data);
       }
       return false;
    }
@@ -558,7 +572,7 @@ public class SchemaInfo
    {
       if (!_loading && data != null)
       {
-         return _schemaInfoCache.dataTypes.containsKey(data);
+         return _schemaInfoCache.getDataTypesForReadOnly().containsKey(data);
       }
       return false;
    }
@@ -580,7 +594,7 @@ public class SchemaInfo
    {
       if (!_loading && data != null)
       {
-         return _schemaInfoCache.functions.containsKey(data);
+         return _schemaInfoCache.getFunctionsForReadOnly().containsKey(data);
       }
       return false;
    }
@@ -601,7 +615,7 @@ public class SchemaInfo
    {
       if (!_loading && data != null)
       {
-         if(_schemaInfoCache.tableNames.containsKey(data))
+         if(_schemaInfoCache.getTableNamesForReadOnly().containsKey(data))
          {
             loadColumns(data);
             return true;
@@ -628,7 +642,7 @@ public class SchemaInfo
    {
       if (!_loading && data != null)
       {
-         return _schemaInfoCache.extColumnInfosByColumnName.containsKey(data);
+         return _schemaInfoCache.getExtColumnInfosByColumnNameForReadOnly().containsKey(data);
       }
       return false;
    }
@@ -650,7 +664,7 @@ public class SchemaInfo
    {
       if (!_loading && data != null)
       {
-         return (String) _schemaInfoCache.tableNames.get(new CaseInsensitiveString(data));
+         return (String) _schemaInfoCache.getTableNamesForReadOnly().get(new CaseInsensitiveString(data));
       }
       return null;
    }
@@ -659,7 +673,7 @@ public class SchemaInfo
    {
       if (!_loading && data != null)
       {
-         return (String) _schemaInfoCache.procedureNames.get(new CaseInsensitiveString(data));
+         return (String) _schemaInfoCache.getProcedureNamesForReadOnly().get(new CaseInsensitiveString(data));
       }
       return null;
    }
@@ -678,11 +692,12 @@ public class SchemaInfo
 
          setProgress(msg + " (default keywords)", beginProgress);
 
-         _schemaInfoCache.keywords.clear();
+         Hashtable keywordsBuf = new Hashtable();
+
          for (int i = 0; i < DefaultKeywords.KEY_WORDS.length; i++)
          {
             String kw = DefaultKeywords.KEY_WORDS[i];
-            _schemaInfoCache.keywords.put(new CaseInsensitiveString(kw), kw);
+            keywordsBuf.put(new CaseInsensitiveString(kw), kw);
          }
 
 
@@ -696,18 +711,20 @@ public class SchemaInfo
 
             for (int i = 0; i < sqlKeywords.length; i++)
             {
-               _schemaInfoCache.keywords.put(new CaseInsensitiveString(sqlKeywords[i]), sqlKeywords[i]);
+               _schemaInfoCache.getKeywordsForReadOnly().put(new CaseInsensitiveString(sqlKeywords[i]), sqlKeywords[i]);
             }
 
             String catalogTerm = _dmd.getCatalogTerm();
-            _schemaInfoCache.keywords.put(new CaseInsensitiveString(catalogTerm), catalogTerm);
+            keywordsBuf.put(new CaseInsensitiveString(catalogTerm), catalogTerm);
 
             String schemaTerm = _dmd.getSchemaTerm();
-            _schemaInfoCache.keywords.put(new CaseInsensitiveString(schemaTerm), schemaTerm);
+            keywordsBuf.put(new CaseInsensitiveString(schemaTerm), schemaTerm);
 
             String procedureTerm = _dmd.getProcedureTerm();
-            _schemaInfoCache.keywords.put(new CaseInsensitiveString(procedureTerm), procedureTerm);
+            keywordsBuf.put(new CaseInsensitiveString(procedureTerm), procedureTerm);
          }
+
+         _schemaInfoCache.writeKeywords(keywordsBuf);
       }
       catch (Throwable ex)
       {
@@ -724,13 +741,13 @@ public class SchemaInfo
             return;
          }
 
+         Hashtable dataTypesBuf = new Hashtable();
 
-         _schemaInfoCache.dataTypes.clear();
          DataTypeInfo[] infos = _dmd.getDataTypes();
          for (int i = 0; i < infos.length; i++)
          {
             String typeName = infos[i].getSimpleName();
-            _schemaInfoCache.dataTypes.put(new CaseInsensitiveString(typeName), typeName);
+            dataTypesBuf.put(new CaseInsensitiveString(typeName), typeName);
 
             if(0 == i % 100 )
             {
@@ -738,6 +755,8 @@ public class SchemaInfo
             }
 
          }
+
+         _schemaInfoCache.writeDataTypes(dataTypesBuf);
       }
       catch (Throwable ex)
       {
@@ -784,48 +803,50 @@ public class SchemaInfo
          s_log.error("Error", ex);
       }
 
-      _schemaInfoCache.functions.clear();
+      Hashtable functionsBuf = new Hashtable();
       for (int i = 0; i < buf.size(); i++)
       {
          String func = (String) buf.get(i);
          if (func.length() > 0)
          {
-            _schemaInfoCache.functions.put(new CaseInsensitiveString(func) ,func);
+            functionsBuf.put(new CaseInsensitiveString(func) ,func);
          }
 
       }
+
+      _schemaInfoCache.writeFunctions(functionsBuf);
    }
 
 
 
    public String[] getKeywords()
    {
-      return (String[]) _schemaInfoCache.keywords.values().toArray(new String[_schemaInfoCache.keywords.size()]);
+      return (String[]) _schemaInfoCache.getKeywordsForReadOnly().values().toArray(new String[_schemaInfoCache.getKeywordsForReadOnly().size()]);
    }
 
    public String[] getDataTypes()
    {
-      return (String[]) _schemaInfoCache.dataTypes.values().toArray(new String[_schemaInfoCache.dataTypes.size()]);
+      return (String[]) _schemaInfoCache.getDataTypesForReadOnly().values().toArray(new String[_schemaInfoCache.getDataTypesForReadOnly().size()]);
    }
 
    public String[] getFunctions()
    {
-      return (String[]) _schemaInfoCache.functions.values().toArray(new String[_schemaInfoCache.functions.size()]);
+      return (String[]) _schemaInfoCache.getFunctionsForReadOnly().values().toArray(new String[_schemaInfoCache.getFunctionsForReadOnly().size()]);
    }
 
    public String[] getTables()
    {
-      return (String[]) _schemaInfoCache.tableNames.values().toArray(new String[_schemaInfoCache.tableNames.size()]);
+      return (String[]) _schemaInfoCache.getTableNamesForReadOnly().values().toArray(new String[_schemaInfoCache.getTableNamesForReadOnly().size()]);
    }
 
    public String[] getCatalogs()
    {
-      return (String[]) _schemaInfoCache.catalogs.toArray(new String[_schemaInfoCache.catalogs.size()]);
+      return (String[]) _schemaInfoCache.getCatalogsForReadOnly().toArray(new String[_schemaInfoCache.getCatalogsForReadOnly().size()]);
    }
 
    public String[] getSchemas()
    {
-      return (String[]) _schemaInfoCache.schemas.toArray(new String[_schemaInfoCache.schemas.size()]);
+      return (String[]) _schemaInfoCache.getSchemasForReadOnly().toArray(new String[_schemaInfoCache.getSchemasForReadOnly().size()]);
    }
 
    public ITableInfo[] getITableInfos()
@@ -854,7 +875,7 @@ public class SchemaInfo
          ret.addAll(Arrays.asList(tableInfosForUncachedTypes));
       }
 
-      for(Iterator i=_schemaInfoCache.iTableInfos.keySet().iterator(); i.hasNext();)
+      for(Iterator i=_schemaInfoCache.getITableInfosForReadOnly().keySet().iterator(); i.hasNext();)
       {
          ITableInfo iTableInfo = (ITableInfo) i.next();
 
@@ -938,11 +959,6 @@ public class SchemaInfo
 
 
 
-   public IProcedureInfo[] getStoredProceduresInfos()
-   {
-      return getStoredProceduresInfos(null, null);
-   }
-
    public IProcedureInfo[] getStoredProceduresInfos(String catalog, String schema)
    {
       return getStoredProceduresInfos(catalog, schema, null);
@@ -953,7 +969,7 @@ public class SchemaInfo
    {
       ArrayList ret = new ArrayList();
 
-      for (Iterator i = _schemaInfoCache.iProcedureInfos.keySet().iterator(); i.hasNext();)
+      for (Iterator i = _schemaInfoCache.getIProcedureInfosForReadOnly().keySet().iterator(); i.hasNext();)
       {
 
          IProcedureInfo iProcInfo = (IProcedureInfo) i.next();
@@ -1036,7 +1052,7 @@ public class SchemaInfo
    {
       try
       {
-         if(_schemaInfoCache.extendedColumnInfosByTableName.containsKey(tableName))
+         if(_schemaInfoCache.getExtendedColumnInfosByTableNameForReadOnly().containsKey(tableName))
          {
             return;
          }
@@ -1106,7 +1122,7 @@ public class SchemaInfo
    {
       CaseInsensitiveString cissTableName = new CaseInsensitiveString(tableName);
       loadColumns(cissTableName);
-      ArrayList extColInfo = (ArrayList) _schemaInfoCache.extendedColumnInfosByTableName.get(cissTableName);
+      ArrayList extColInfo = (ArrayList) _schemaInfoCache.getExtendedColumnInfosByTableNameForReadOnly().get(cissTableName);
 
       if (null == extColInfo)
       {
@@ -1155,20 +1171,36 @@ public class SchemaInfo
 
    public boolean isProcedure(CaseInsensitiveString data)
    {
-      return _schemaInfoCache.procedureNames.containsKey(data);
+      return _schemaInfoCache.getProcedureNamesForReadOnly().containsKey(data);
    }
 
    public void reload(IDatabaseObjectInfo doi)
    {
+      boolean doReloadAll = false;
+
       try
       {
-         if(doi instanceof ITableInfo)
+         synchronized (this)
+         {
+            if(_loading)
+            {
+               return;
+            }
+            _loading = true;
+            _schemasAndCatalogsLoaded = false;
+            _tablesLoaded = false;
+            _storedProceduresLoaded = false;
+
+         }
+
+
+         if (doi instanceof ITableInfo)
          {
             ITableInfo ti = (ITableInfo) doi;
             DatabaseObjectType dot = ti.getDatabaseObjectType();
 
             String[] types = null;
-            if(DatabaseObjectType.TABLE == dot)
+            if (DatabaseObjectType.TABLE == dot)
             {
                types = new String[]{"TABLE"};
             }
@@ -1233,7 +1265,7 @@ public class SchemaInfo
          }
          else if(DatabaseObjectType.SESSION == doi.getDatabaseObjectType())
          {
-            reloadAll();
+            doReloadAll = true;
          }
 
          fireSchemaInfoUpdate();
@@ -1241,6 +1273,18 @@ public class SchemaInfo
       finally
       {
          _session.getSessionSheet().setStatusBarProgressFinished();
+         _loading = false;
+         _schemasAndCatalogsLoaded = true;
+         _tablesLoaded = true;
+         _storedProceduresLoaded = true;
+         notifySchemasAndCatalogsLoad();
+         notifyTablesLoaded();
+         notifyStoredProceduresLoaded();
+
+         if(doReloadAll)
+         {
+            reloadAll();
+         }
       }
    }
 
@@ -1277,7 +1321,7 @@ public class SchemaInfo
       HashMap caseSensitiveTableNames = new HashMap();
 
       CaseInsensitiveString caseInsensitiveTableName = new CaseInsensitiveString(simpleTableName);
-      String caseSensitiveTableName = (String) _schemaInfoCache.tableNames.get(caseInsensitiveTableName);
+      String caseSensitiveTableName = (String) _schemaInfoCache.getTableNamesForReadOnly().get(caseInsensitiveTableName);
 
       caseSensitiveTableNames.put(caseSensitiveTableName, caseSensitiveTableName);
 
@@ -1298,7 +1342,7 @@ public class SchemaInfo
       HashMap caseSensitiveProcNames = new HashMap();
 
       CaseInsensitiveString caseInsensitiveProcName = new CaseInsensitiveString(simpleProcName);
-      String caseSensitiveProcName = (String) _schemaInfoCache.procedureNames.remove(caseInsensitiveProcName);
+      String caseSensitiveProcName = (String) _schemaInfoCache.getProcedureNamesForReadOnly().remove(caseInsensitiveProcName);
 
       caseSensitiveProcNames.put(caseSensitiveProcName, caseSensitiveProcName);
 
@@ -1318,9 +1362,9 @@ public class SchemaInfo
    {
       try
       {
-         if(false == _schemasAndCatalogsLoaded)
+         synchronized (this)
          {
-            synchronized(this)
+            while (false == _schemasAndCatalogsLoaded)
             {
                this.wait();
             }
@@ -1331,4 +1375,42 @@ public class SchemaInfo
          throw new RuntimeException(e);
       }
    }
+
+   public void waitTillTablesLoaded()
+   {
+      try
+      {
+         synchronized (this)
+         {
+            while (false == _tablesLoaded)
+            {
+               this.wait();
+            }
+         }
+      }
+      catch (InterruptedException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+   public void waitTillStoredProceduresLoaded()
+   {
+      try
+      {
+         synchronized (this)
+         {
+            while (false == _storedProceduresLoaded)
+            {
+               this.wait();
+            }
+         }
+      }
+      catch (InterruptedException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+
 }
