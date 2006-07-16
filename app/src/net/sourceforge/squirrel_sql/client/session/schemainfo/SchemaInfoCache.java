@@ -21,32 +21,30 @@ public class SchemaInfoCache implements Serializable
 {
    private static final ILogger s_log = LoggerController.createLogger(SchemaInfoCache.class);
 
-   List catalogs = new ArrayList();
-   List schemas = new ArrayList();
+   private List _catalogs = new ArrayList();
+   private List _schemas = new ArrayList();
 
-   TreeMap keywords = new TreeMap();
-   TreeMap dataTypes = new TreeMap();
-   Map functions = Collections.synchronizedMap(new TreeMap());
+   private TreeMap _keywords = new TreeMap();
+   private TreeMap _dataTypes = new TreeMap();
+   private Map _functions = Collections.synchronizedMap(new TreeMap());
 
    /////////////////////////////////////////////////////////////////////////////
    // Schema dependent data.
    // Are changed only in this class
    //
-   Map tableNames = Collections.synchronizedMap(new TreeMap());
-   Map iTableInfos = Collections.synchronizedMap(new TreeMap());
-   Hashtable tableInfosBySimpleName = new Hashtable();
+   private Map _tableNames = Collections.synchronizedMap(new TreeMap());
+   private Map _iTableInfos = Collections.synchronizedMap(new TreeMap());
+   private Hashtable _tableInfosBySimpleName = new Hashtable();
 
-   Map extendedColumnInfosByTableName = Collections.synchronizedMap(new TreeMap());
-   Map extColumnInfosByColumnName = Collections.synchronizedMap(new TreeMap());
+   private Map _extendedColumnInfosByTableName = Collections.synchronizedMap(new TreeMap());
+   private Map _extColumnInfosByColumnName = Collections.synchronizedMap(new TreeMap());
 
 
-   Map procedureNames = Collections.synchronizedMap(new TreeMap());
-   Map iProcedureInfos = Collections.synchronizedMap(new TreeMap());
-   Hashtable procedureInfosBySimpleName = new Hashtable();
+   private Map _procedureNames = Collections.synchronizedMap(new TreeMap());
+   private Map _iProcedureInfos = Collections.synchronizedMap(new TreeMap());
+   private Hashtable _procedureInfosBySimpleName = new Hashtable();
    //
    ///////////////////////////////////////////////////////////////////////////
-
-   private java.util.Date _lastCacheRefershDate = new Date();
 
    private SQLAliasSchemaProperties _schemaPropsCacheIsBasedOn;
 
@@ -64,22 +62,22 @@ public class SchemaInfoCache implements Serializable
    }
 
 
-   public boolean loadSchemaIndependentMetaData()
+   boolean loadSchemaIndependentMetaData()
    {
       return _session.getAlias().getSchemaProperties().loadSchemaIndependentMetaData(_schemaPropsCacheIsBasedOn);
    }
 
-   public SchemaLoadInfo[] getAllSchemaLoadInfos()
+   private SchemaLoadInfo[] getAllSchemaLoadInfos()
    {
       return _session.getAlias().getSchemaProperties().getSchemaLoadInfos(_schemaPropsCacheIsBasedOn, _tabelTableTypesCacheable, _viewTableTypesCacheable);
    }
 
-   public SchemaLoadInfo[] getMatchingSchemaLoadInfos(String schemaName)
+   SchemaLoadInfo[] getMatchingSchemaLoadInfos(String schemaName)
    {
       return getMatchingSchemaLoadInfos(schemaName, null);
    }
 
-   public SchemaLoadInfo[] getMatchingSchemaLoadInfos(String schemaName, String[] tableTypes)
+   SchemaLoadInfo[] getMatchingSchemaLoadInfos(String schemaName, String[] tableTypes)
    {
       if(null == schemaName)
       {
@@ -92,7 +90,7 @@ public class SchemaInfoCache implements Serializable
       {
          if(null == schemaLoadInfos[i].schemaName || schemaLoadInfos[i].schemaName.equals(schemaName))
          {
-            // null == schemaLoadInfos[0].schemaName is the case when there are no schemas specified
+            // null == schemaLoadInfos[0].schemaName is the case when there are no _schemas specified
             // schemaLoadInfos.length will then be 1.
             schemaLoadInfos[i].schemaName = schemaName;
             if(null != tableTypes)
@@ -108,9 +106,6 @@ public class SchemaInfoCache implements Serializable
 
       throw new IllegalArgumentException("Unknown Schema " + schemaName);
    }
-
-
-
 
    private void initTypes()
    {
@@ -202,22 +197,16 @@ public class SchemaInfoCache implements Serializable
       String tableName = info.getSimpleName();
       CaseInsensitiveString ciTableName = new CaseInsensitiveString(tableName);
 
-      tableNames.put(ciTableName, tableName);
-      iTableInfos.put(info, info);
+      _tableNames.put(ciTableName, tableName);
+      _iTableInfos.put(info, info);
 
-      ArrayList aITabInfos = (ArrayList) tableInfosBySimpleName.get(ciTableName);
+      ArrayList aITabInfos = (ArrayList) _tableInfosBySimpleName.get(ciTableName);
       if(null == aITabInfos)
       {
          aITabInfos = new ArrayList();
-         tableInfosBySimpleName.put(ciTableName, aITabInfos);
+         _tableInfosBySimpleName.put(ciTableName, aITabInfos);
       }
       aITabInfos.add(info);
-
-      if(null == _schemaPropsCacheIsBasedOn)
-      {
-         // We are not in initial load, so set refresh date
-         _lastCacheRefershDate = new Date();
-      }
 
    }
 
@@ -228,25 +217,17 @@ public class SchemaInfoCache implements Serializable
       if (proc.length() > 0)
       {
          CaseInsensitiveString ciProc = new CaseInsensitiveString(proc);
-         procedureNames.put(ciProc ,proc);
+         _procedureNames.put(ciProc ,proc);
 
-         ArrayList aIProcInfos = (ArrayList) procedureInfosBySimpleName.get(ciProc);
+         ArrayList aIProcInfos = (ArrayList) _procedureInfosBySimpleName.get(ciProc);
          if(null == aIProcInfos)
          {
             aIProcInfos = new ArrayList();
-            procedureInfosBySimpleName.put(ciProc, aIProcInfos);
+            _procedureInfosBySimpleName.put(ciProc, aIProcInfos);
          }
          aIProcInfos.add(procedure);
       }
-      iProcedureInfos.put(procedure, procedure);
-
-      if(null == _schemaPropsCacheIsBasedOn)
-      {
-         // We are not in initial load, so set refresh date
-         _lastCacheRefershDate = new Date();
-      }
-
-
+      _iProcedureInfos.put(procedure, procedure);
    }
 
 
@@ -259,11 +240,11 @@ public class SchemaInfoCache implements Serializable
          ecisInTable.add(eci);
 
          CaseInsensitiveString ciColName = new CaseInsensitiveString(eci.getColumnName());
-         ArrayList ecisInColName = (ArrayList) extColumnInfosByColumnName.get(ciColName);
+         ArrayList ecisInColName = (ArrayList) _extColumnInfosByColumnName.get(ciColName);
          if(null == ecisInColName)
          {
             ecisInColName = new ArrayList();
-            extColumnInfosByColumnName.put(ciColName, ecisInColName);
+            _extColumnInfosByColumnName.put(ciColName, ecisInColName);
          }
          ecisInColName.add(eci);
       }
@@ -272,7 +253,7 @@ public class SchemaInfoCache implements Serializable
       // In fact it is a mutable string here because this is usually called from
       // within Syntax coloring which uses a mutable string.
       CaseInsensitiveString imutableString = new CaseInsensitiveString(simpleTableName.toString());
-      extendedColumnInfosByTableName.put(imutableString, ecisInTable);
+      _extendedColumnInfosByTableName.put(imutableString, ecisInTable);
    }
 
 
@@ -322,7 +303,7 @@ public class SchemaInfoCache implements Serializable
 
    }
 
-   public void clearAll()
+   void clearAll()
    {
       clearSchemaIndependentData();
 
@@ -333,34 +314,34 @@ public class SchemaInfoCache implements Serializable
 
    private void clearAllSchemaDependentData()
    {
-      tableNames.clear();
-      iTableInfos.clear();
-      tableInfosBySimpleName.clear();
+      _tableNames.clear();
+      _iTableInfos.clear();
+      _tableInfosBySimpleName.clear();
 
-      extColumnInfosByColumnName.clear();
-      extendedColumnInfosByTableName.clear();
+      _extColumnInfosByColumnName.clear();
+      _extendedColumnInfosByTableName.clear();
 
 
-      procedureNames.clear();
-      iProcedureInfos.clear();
-      procedureInfosBySimpleName.clear();
+      _procedureNames.clear();
+      _iProcedureInfos.clear();
+      _procedureInfosBySimpleName.clear();
 
-      schemas.clear();
+      _schemas.clear();
 
    }
 
    private void clearSchemaIndependentData()
    {
-      catalogs.clear();
+      _catalogs.clear();
 
-      keywords.clear();
-      dataTypes.clear();
-      functions.clear();
+      _keywords.clear();
+      _dataTypes.clear();
+      _functions.clear();
    }
 
-   public void clearTables(String catalogName, String schemaName, String simpleName, String[] types)
+   void clearTables(String catalogName, String schemaName, String simpleName, String[] types)
    {
-      for(Iterator i = iTableInfos.keySet().iterator(); i.hasNext();)
+      for(Iterator i = _iTableInfos.keySet().iterator(); i.hasNext();)
       {
          ITableInfo ti = (ITableInfo) i.next();
 
@@ -389,15 +370,15 @@ public class SchemaInfoCache implements Serializable
             i.remove();
 
             CaseInsensitiveString ciSimpleName = new CaseInsensitiveString(ti.getSimpleName());
-            ArrayList tableInfos = (ArrayList) tableInfosBySimpleName.get(ciSimpleName);
+            ArrayList tableInfos = (ArrayList) _tableInfosBySimpleName.get(ciSimpleName);
             tableInfos.remove(ti);
             if(0 == tableInfos.size())
             {
-               tableInfosBySimpleName.remove(ciSimpleName);
-               tableNames.remove(ciSimpleName);
+               _tableInfosBySimpleName.remove(ciSimpleName);
+               _tableNames.remove(ciSimpleName);
             }
 
-            ArrayList ecisInTable = (ArrayList) extendedColumnInfosByTableName.get(ciSimpleName);
+            ArrayList ecisInTable = (ArrayList) _extendedColumnInfosByTableName.get(ciSimpleName);
 
             if(null == ecisInTable)
             {
@@ -417,27 +398,27 @@ public class SchemaInfoCache implements Serializable
                }
 
                CaseInsensitiveString ciColName = new CaseInsensitiveString(eci.getColumnName());
-               ArrayList ecisInColumn = (ArrayList) extColumnInfosByColumnName.get(ciColName);
+               ArrayList ecisInColumn = (ArrayList) _extColumnInfosByColumnName.get(ciColName);
                ecisInColumn.remove(eci);
 
                if(0 == ecisInColumn.size())
                {
-                  extColumnInfosByColumnName.remove(ciColName);
+                  _extColumnInfosByColumnName.remove(ciColName);
                }
             }
 
             if(0 == ecisInTable.size())
             {
-               extendedColumnInfosByTableName.remove(ciSimpleName);
+               _extendedColumnInfosByTableName.remove(ciSimpleName);
             }
          }
       }
 
    }
 
-   public void clearStoredProcedures(String catalogName, String schemaName, String simpleName)
+   void clearStoredProcedures(String catalogName, String schemaName, String simpleName)
    {
-      for(Iterator i = iProcedureInfos.keySet().iterator(); i.hasNext();)
+      for(Iterator i = _iProcedureInfos.keySet().iterator(); i.hasNext();)
       {
          IProcedureInfo pi = (IProcedureInfo) i.next();
 
@@ -452,12 +433,12 @@ public class SchemaInfoCache implements Serializable
             i.remove();
 
             CaseInsensitiveString ciSimpleName = new CaseInsensitiveString(pi.getSimpleName());
-            ArrayList procedureInfos = (ArrayList) procedureInfosBySimpleName.get(ciSimpleName);
+            ArrayList procedureInfos = (ArrayList) _procedureInfosBySimpleName.get(ciSimpleName);
             procedureInfos.remove(pi);
             if(0 == procedureInfos.size())
             {
-               procedureInfosBySimpleName.remove(ciSimpleName);
-               procedureNames.remove(ciSimpleName);
+               _procedureInfosBySimpleName.remove(ciSimpleName);
+               _procedureNames.remove(ciSimpleName);
             }
 
          }
@@ -475,13 +456,101 @@ public class SchemaInfoCache implements Serializable
       return s.equals(toCheck);
    }
 
-   public boolean loadSchemaNames()
-   {
-      return _session.getAlias().getSchemaProperties().loadSchemaNames(_schemaPropsCacheIsBasedOn);
-   }
-
-   public SchemaNameLoadInfo getSchemaNameLoadInfo()
+   SchemaNameLoadInfo getSchemaNameLoadInfo()
    {
       return _session.getAlias().getSchemaProperties().getSchemaNameLoadInfo(_schemaPropsCacheIsBasedOn);
    }
+
+   void writeCatalogs(String[] catalogs)
+   {
+      this._catalogs.clear();
+      this._catalogs.addAll(Arrays.asList(catalogs));
+   }
+
+   void writeSchemas(String[] schemasToWrite)
+   {
+      _schemas.clear();
+      _schemas.addAll(Arrays.asList(schemasToWrite));
+   }
+
+
+   void writeKeywords(Hashtable keywordsBuf)
+   {
+      _keywords.clear();
+      _keywords.putAll(keywordsBuf);
+   }
+
+
+   void writeDataTypes(Hashtable dataTypesBuf)
+   {
+      _dataTypes.clear();
+      _dataTypes.putAll(dataTypesBuf);
+   }
+
+   void writeFunctions(Hashtable functionsBuf)
+   {
+      _functions.clear();
+      _functions.putAll(functionsBuf);
+   }
+
+   List getCatalogsForReadOnly()
+   {
+      return _catalogs;
+   }
+
+   List getSchemasForReadOnly()
+   {
+      return _schemas;
+   }
+
+   TreeMap getKeywordsForReadOnly()
+   {
+      return _keywords;
+   }
+
+   TreeMap getDataTypesForReadOnly()
+   {
+      return _dataTypes;
+   }
+
+   Map getFunctionsForReadOnly()
+   {
+      return _functions;
+   }
+
+   Map getTableNamesForReadOnly()
+   {
+      return _tableNames;
+   }
+
+   Map getITableInfosForReadOnly()
+   {
+      return _iTableInfos;
+   }
+
+   Hashtable getTableInfosBySimpleNameForReadOnly()
+   {
+      return _tableInfosBySimpleName;
+   }
+
+   Map getExtendedColumnInfosByTableNameForReadOnly()
+   {
+      return _extendedColumnInfosByTableName;
+   }
+
+   Map getExtColumnInfosByColumnNameForReadOnly()
+   {
+      return _extColumnInfosByColumnName;
+   }
+
+   Map getProcedureNamesForReadOnly()
+   {
+      return _procedureNames;
+   }
+
+   Map getIProcedureInfosForReadOnly()
+   {
+      return _iProcedureInfos;
+   }
+
 }

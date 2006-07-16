@@ -69,6 +69,7 @@ public class ProcedureTypeExpander implements INodeExpander
 		//procs = md.getProcedures(catalogName, schemaName, objFilter != null && objFilter.length() > 0 ? objFilter :"%");
 
       String procedureNamePattern = objFilter != null && objFilter.length() > 0 ? objFilter : "%";
+      session.getSchemaInfo().waitTillStoredProceduresLoaded();
       procs = session.getSchemaInfo().getStoredProceduresInfos(catalogName, schemaName, procedureNamePattern);
 
       for (int i = 0; i < procs.length; ++i)

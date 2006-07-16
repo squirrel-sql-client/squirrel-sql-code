@@ -73,6 +73,7 @@ public class TableTypeExpander implements INodeExpander
          final String objFilter = session.getProperties().getObjectFilter();
          String tableNamePattern = objFilter != null && objFilter.length() > 0 ? objFilter : "%";
          String[] types = tableType != null ? new String[]{tableType} : null;
+         session.getSchemaInfo().waitTillTablesLoaded();
          final ITableInfo[] tables = session.getSchemaInfo().getITableInfos(catalogName, schemaName, tableNamePattern, types);
 
          if (session.getProperties().getShowRowCount())
