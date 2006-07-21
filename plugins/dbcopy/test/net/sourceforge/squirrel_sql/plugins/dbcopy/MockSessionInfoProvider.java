@@ -146,7 +146,7 @@ public class MockSessionInfoProvider implements SessionInfoProvider {
     private String[] getAllTables(ISession sourceSession) throws SQLException {
         SQLConnection sourceConn = sourceSession.getSQLConnection();
         SQLDatabaseMetaData data = sourceConn.getSQLMetaData(); 
-        ITableInfo[] tableInfos = data.getTables(null, sourceSchema, "%", null);
+        ITableInfo[] tableInfos = data.getTables(null, sourceSchema, "%", null, null);
         
         ArrayList tableNames = new ArrayList();
         for (int i = 0; i < tableInfos.length; i++) {
