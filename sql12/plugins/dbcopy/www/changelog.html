@@ -1,0 +1,654 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns:st1="urn:schemas-microsoft-com:office:smarttags"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 11">
+<meta name=Originator content="Microsoft Word 11">
+<link rel=File-List href="changelog_files/filelist.xml">
+<title>DBCopy Change Log</title>
+<o:SmartTagType namespaceuri="urn:schemas-microsoft-com:office:smarttags"
+ name="City"/>
+<o:SmartTagType namespaceuri="urn:schemas-microsoft-com:office:smarttags"
+ name="place"/>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:LastAuthor> </o:LastAuthor>
+  <o:Revision>2</o:Revision>
+  <o:TotalTime>1</o:TotalTime>
+  <o:Created>2005-11-05T20:14:00Z</o:Created>
+  <o:LastSaved>2005-11-05T20:14:00Z</o:LastSaved>
+  <o:Pages>1</o:Pages>
+  <o:Words>1149</o:Words>
+  <o:Characters>6550</o:Characters>
+  <o:Company>CollabraSpace</o:Company>
+  <o:Lines>54</o:Lines>
+  <o:Paragraphs>15</o:Paragraphs>
+  <o:CharactersWithSpaces>7684</o:CharactersWithSpaces>
+  <o:Version>11.5606</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:SpellingState>Clean</w:SpellingState>
+  <w:GrammarState>Clean</w:GrammarState>
+  <w:PunctuationKerning/>
+  <w:ValidateAgainstSchemas/>
+  <w:SaveIfXMLInvalid>false</w:SaveIfXMLInvalid>
+  <w:IgnoreMixedContent>false</w:IgnoreMixedContent>
+  <w:AlwaysShowPlaceholderText>false</w:AlwaysShowPlaceholderText>
+  <w:Compatibility>
+   <w:BreakWrappedTables/>
+   <w:SnapToGridInCell/>
+   <w:WrapTextWithPunct/>
+   <w:UseAsianBreakRules/>
+   <w:DontGrowAutofit/>
+  </w:Compatibility>
+  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
+ </w:WordDocument>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:LatentStyles DefLockedState="false" LatentStyleCount="156">
+ </w:LatentStyles>
+</xml><![endif]--><!--[if !mso]><object
+ classid="clsid:38481807-CA0E-42D2-BF39-B33AF135CC4D" id=ieooui></object>
+<style>
+st1\:*{behavior:url(#ieooui) }
+</style>
+<![endif]-->
+<style>
+<!--
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoPlainText, li.MsoPlainText, div.MsoPlainText
+	{margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Courier New";
+	mso-fareast-font-family:"Times New Roman";}
+span.SpellE
+	{mso-style-name:"";
+	mso-spl-e:yes;}
+span.GramE
+	{mso-style-name:"";
+	mso-gram-e:yes;}
+@page Section1
+	{size:11.0in 8.5in;
+	mso-page-orientation:landscape;
+	margin:66.25pt 1.0in 66.25pt 1.0in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+-->
+</style>
+<!--[if gte mso 10]>
+<style>
+ /* Style Definitions */
+ table.MsoNormalTable
+	{mso-style-name:"Table Normal";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-noshow:yes;
+	mso-style-parent:"";
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-para-margin:0in;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-ansi-language:#0400;
+	mso-fareast-language:#0400;
+	mso-bidi-language:#0400;}
+</style>
+<![endif]-->
+</head>
+
+<body lang=EN-US style='tab-interval:.5in'>
+
+<div class=Section1>
+
+<p class=MsoPlainText><span class=SpellE>DBCopy</span> Change Log</p>
+
+<p class=MsoPlainText>=================</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>0.19 (11/04/2005)</p>
+
+<p class=MsoPlainText>====</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Performance increase due to a reduction in the number
+of data-type queries on the source</p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>and</span> destination databases (Thanks to Dan <span class=SpellE>Dragut</span>)</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Fixed table analysis progress monitor dialog so that it
+goes away when the copy operation</p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>is</span> complete.</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Examined data types for the other dialects (Firebird, <span
+class=SpellE>HyperSonic</span>, <span class=SpellE>Pointbase</span>, etc.)</p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>currently</span> supported and explicitly set them for the
+appropriate java type.<span style='mso-spacerun:yes'>  </span>Tested each type </p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>against</span> the corresponding database for usage and
+compatibility.</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Added custom type mappings for <span class=SpellE>McKoi</span>,
+<st1:City w:st="on"><st1:place w:st="on">Derby</st1:place></st1:City> and
+Sybase</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Fixed bug which caused multiple dialogs to appear when <span
+class=SpellE>cancelling</span> a copy operation.</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Fixed bug that would create a temporary file to store
+the blob in if the blob column</p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>value</span> is null.</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Fixed bug 1344224 (When auto-commit is disabled,
+committing the source session)</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>0.18 (10/22/2005)</p>
+
+<p class=MsoPlainText>====</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Added table analysis of source tables prior to
+attempting to create the tables in the </p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>destination</span> database.<span style='mso-spacerun:yes'> 
+</span>Analysis consists of creating a test table with one column </p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>in</span> it for each column of the table.<span
+style='mso-spacerun:yes'>  </span>This can be turned off, but it gives a better
+description</p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>of</span> what happened in the event that a column name isn't allowed
+in the destination database.</p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span>Additionally,
+this will be done for all tables in the copy set before making any changes in
+the </p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>destination</span> database. If the source and destination
+databases are the same, this analysis is </p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>skipped</span>.</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Updated for <span class=SpellE>SQuirreL</span> <span
+class=SpellE>plugin</span> interface changes to be compatible with latest <span
+class=SpellE>SQuirreL</span> (&gt; 2.0 final)</p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span>This version of
+the <span class=SpellE>plugin</span> is still compatible with previous versions
+of <span class=SpellE>SQuirreL</span> (2.0RC1, 2.0Final)</p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>as</span> the interface change added new members and did not change
+any existing members.</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Examined data types for the major dialects currently
+supported and explicitly set them for the </p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>appropriate</span> java type.<span style='mso-spacerun:yes'> 
+</span>Tested each type against the corresponding database for usage and</p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>compatibility</span>.<span style='mso-spacerun:yes'>  </span>This
+should hopefully make the default data type mappings used sufficiently </p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>robust</span> for compatibility between databases.(See </p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'> 
+</span>http://dbcopyplugin.sourceforge.net/dbcopydatatypemapping.html for more
+detail regarding how</p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>the</span> <span class=SpellE>plugin</span> maps data types between
+different databases)</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Fixed a bug that resulted in the following error
+message - &quot;Copy failed: 0&quot;.<span style='mso-spacerun:yes'> 
+</span>Behind the scenes</p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>an</span> <span class=SpellE>ArrayIndexOutOfBoundsException</span>
+was encountered when getting information about the newly created</p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>table</span> in the destination schema, if the case of the table
+name didn't match.</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>0.17 (8/26/2005)</p>
+
+<p class=MsoPlainText>====</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Added configuration item for column name keyword
+checking in destination database.</p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span>This feature uses
+the &quot;keywords&quot; reported by the JDBC driver to find column names</p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>in</span> the source table copy set that cannot be used as column
+names in the destination</p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>database</span>.<span style='mso-spacerun:yes'>  </span>However,
+this is too aggressive in some cases as some databases (like DB2)</p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>report</span> keywords that can also be used as column names.<span
+style='mso-spacerun:yes'>  </span>So, now this checking can be</p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>disabled</span>. The configuration is available in </p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span>&quot;File&quot;
+-&gt; &quot;Global Preferences&quot; -&gt; &quot;<span class=SpellE>DBCopy</span>&quot;
+-&gt; &quot;Column Type Mapping&quot;</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>0.16 (8/21/2005)</p>
+
+<p class=MsoPlainText>====</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Added custom column type mappings for IBM DB2. (Tested
+against DB2 PE for Windows)</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Added new configuration option to disable
+auto-detection of destination </p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span>database<span
+class=GramE>.(</span>This causes the Hibernate dialect chooser to always appear
+when </p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>copying</span> to a new database session.<span
+style='mso-spacerun:yes'>  </span>Dialect choices are cached for existing</p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>sessions</span>).<span style='mso-spacerun:yes'>  </span>The
+configuration is available in </p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span>&quot;File&quot;
+-&gt; &quot;Global Preferences&quot; -&gt; &quot;<span class=SpellE>DBCopy</span>&quot;
+-&gt; &quot;Column Type Mapping&quot;</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Fixed bug which would cause destination copy sessions
+to linger in memory even </p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>after</span> being closed.</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Changed Oracle type mapping for LONGVARCHAR to use CLOB
+instead of LONG since </p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span>LONG is
+deprecated and multiple LONG columns for a single table aren't supported</p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>whereas</span> multiple CLOB columns for a single table are.</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Massive <span class=SpellE>refactoring</span> to
+provide a framework for external application integration.</p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span>(For the most part,
+this facilitates writing a driver that automates regression</p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>   </span><span
+class=GramE>testing</span>, but might be useful for other 3rd-party
+integrations)</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>0.15 (8/13/2005)</p>
+
+<p class=MsoPlainText>====</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Added support for turning off auto-commit and
+committing </p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>after</span> a configurable number of records.</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Added support for turning on/off the copy of foreign
+keys, </p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>table</span> records and index <span class=SpellE>defintions</span>.</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Added ability to detect and ignore duplicate index <span
+class=SpellE>defintions</span>.</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Fixed bug which resulted from using the wrong string
+function to query </p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>max</span> length for a column - this is database-dependent and the
+code was </p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>assuming</span> that all databases have a &quot;length&quot;
+function.</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>0.14 (8/5/2005)</p>
+
+<p class=MsoPlainText>====</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Added support for caching <span class=SpellE>BLOBs</span>
+to disk during transfer to prevent </p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>the</span> client from running out of memory on large <span
+class=SpellE>BLOBs</span>. Transfer buffer</p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>size</span> is configurable.</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Added DB Copy tab to Global Preferences section of <span
+class=SpellE>SQuirreL</span> to configure </p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>preferences</span> for the DB Copy <span class=SpellE>Plugin</span>.</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Truncate can now be used for databases that support it,
+instead of &quot;delete&quot;.</p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span>This can be
+turned on/off for all databases in the preferences.<span
+style='mso-spacerun:yes'>  </span>If enabled</p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>it</span> will be attempted, and if not supported, delete will be
+used instead.</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- When truncating/deleting records for tables that exist
+in the destination</p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>database</span>, the dialog that prompts for record deletion now
+has a &quot;Yes to all&quot;</p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>button</span> to apply record deletion to all destination tables.</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Added support for choosing additional Hibernate
+dialects if destination</p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>database</span> vendor couldn't be determined. (DB2, <st1:City
+w:st="on"><st1:place w:st="on">Derby</st1:place></st1:City>, <span
+class=SpellE>FrontBase</span>, Informix, </p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=SpellE>Ingres</span>, <span class=SpellE>Interbase</span>, <span
+class=SpellE>McKoi</span> and <span class=SpellE>TimesTen</span>)</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>0.13 (7/30/2005)</p>
+
+<p class=MsoPlainText>==== </p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Added support for copying index definitions along with
+the tables </p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>that</span> are being copied.</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Altered destination table truncation to use &quot;delete
+from&quot; instead of</p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>the</span> less standard &quot;truncate table&quot;.<span
+style='mso-spacerun:yes'>  </span>Will add support for this back </p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>in</span> on some databases in the next release.</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Added check for if column is a keyword when copying
+data from one </p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>table</span> to another (In the case where the data is copied
+without creating </p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>the</span> table). </p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- If an <span class=SpellE>SQLException</span> is
+encountered during record copy, show <span class=GramE>it's</span> message </p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>to</span> the user (instead of simply printing the stack trace).</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Fixed source files <span class=SpellE>eol</span>
+chars.<span style='mso-spacerun:yes'>  </span></p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>0.12 (7/13/2005) First Beta Release</p>
+
+<p class=MsoPlainText>====</p>
+
+<p class=MsoPlainText>- Added support for internationalizing the <span
+class=SpellE>the</span> user dialog messages.</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Bug fixes (moved GUI work onto event dispatch thread)</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Added support for checking if source database column
+names are in fact </p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>keywords</span> in the destination database.</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- When records exist in the destination table, the delete
+dialog now indicates</p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>the</span> name of the table when asking the user if it should
+truncate the table.</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Added custom type mappings for MS <span class=SpellE>SQLServer</span></p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Added ability to auto-determine when destination
+database is MS <span class=SpellE>SQLServer</span>.</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Tested this version's MS <span class=SpellE>SQLServer</span>
+dialect against MS <span class=SpellE>SQLServer</span> 2005(CTP)</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>0.11 (6/30/2005)</p>
+
+<p class=MsoPlainText>====</p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'> </span></p>
+
+<p class=MsoPlainText>- Added copying table constraints (Primary Key and
+Foreign Key).</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Added dialog to allow user to select a hibernate
+dialect for the destination </p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>database</span>, if one couldn't be determined automatically.</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Asks user to truncate records in destination table, if
+records already exist.</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Fixed packaging to place hibernate and commons-logging
+jars in subdirectory</p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+class=GramE>space</span> of <span class=SpellE>dbcopy</span> <span
+class=SpellE>plugin</span>.</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Supported Hibernate dialects are now: </p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+style='mso-tab-count:1'>    </span>Firebird, Oracle, Sybase, MS <span
+class=SpellE>SQLServer</span>, </p>
+
+<p class=MsoPlainText><span style='mso-spacerun:yes'>  </span><span
+style='mso-tab-count:1'>    </span><span class=SpellE>MySQL</span>, <span
+class=SpellE>HyperSonic</span>, <span class=SpellE>Pointbase</span>, <span
+class=SpellE>PostgreSQL</span>.</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Bug fixes.<span style='mso-spacerun:yes'>  </span><span
+class=GramE>Actually tested this release a bit.</span></p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>0.10 (6/24/2005)</p>
+
+<p class=MsoPlainText>====</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=MsoPlainText>- Initial release.</p>
+
+<p class=MsoPlainText><o:p>&nbsp;</o:p></p>
+
+</div>
+
+</body>
+
+</html>

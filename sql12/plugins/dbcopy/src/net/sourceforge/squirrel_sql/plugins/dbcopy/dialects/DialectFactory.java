@@ -1,0 +1,398 @@
+/*
+ * Copyright (C) 2005 Rob Manning
+ * manningr@users.sourceforge.net
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+package net.sourceforge.squirrel_sql.plugins.dbcopy.dialects;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.StringTokenizer;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.plugins.dbcopy.UserCancelledOperationException;
+import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.DBCopyPreferenceBean;
+import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.PreferencesManager;
+
+/**
+ * This class maps ISession instances to their corresponding Hibernate dialect.  
+ */
+public class DialectFactory {
+
+    /** this is used to indicate that the sesion is being copied from */
+    public static final int SOURCE_TYPE = 0;
+    
+    /** this is used to indicate that the sesion is being copied to */
+    public static final int DEST_TYPE = 1;
+    
+    private static final AxionDialect axionDialect = new AxionDialect();
+    
+    private static final DB2Dialect db2Dialect = new DB2Dialect();
+    
+    // TODO: subclass these hibernate dialects to provide the "canPasteTo" 
+    //       api method in HibernateDialect interface.
+    //private static final DB2390Dialect db2390Dialect = new DB2390Dialect();
+    
+    //private static final DB2400Dialect db2400Dialect = new DB2400Dialect();
+    
+    private static final DaffodilDialect daffodilDialect = new DaffodilDialect();
+    
+    private static final DerbyDialect derbyDialect = new DerbyDialect();
+    
+    private static final FirebirdDialect firebirdDialect = new FirebirdDialect();
+    
+    private static final FrontBaseDialect frontbaseDialect = new FrontBaseDialect();
+    
+    private static final H2Dialect h2Dialect = new H2Dialect();
+    
+    private static final HSQLDialect hsqlDialect = new HSQLDialect();
+    
+    private static final InformixDialect informixDialect = new InformixDialect();
+    
+    private static final InterbaseDialect interbaseDialect = new InterbaseDialect();
+    
+    private static final IngresDialect ingresDialect = new IngresDialect();
+    
+    private static final MAXDBDialect maxDbDialect = new MAXDBDialect();
+    
+    private static final McKoiDialect mckoiDialect = new McKoiDialect();
+    
+    private static final MySQLDialect mysqlDialect = new MySQLDialect();
+    
+    private static final Oracle9iDialect oracle9iDialect = new Oracle9iDialect();
+    
+    private static final PointbaseDialect pointbaseDialect = 
+                                                         new PointbaseDialect();
+    
+    private static final PostgreSQLDialect postgreSQLDialect = 
+                                                        new PostgreSQLDialect();
+
+    private static final ProgressDialect progressDialect = new ProgressDialect();
+    
+    private static final SybaseDialect sybaseDialect = new SybaseDialect();
+    
+    private static final SQLServerDialect sqlserverDialect = new SQLServerDialect();
+    
+    private static final TimesTenDialect timestenDialect = new TimesTenDialect();
+    
+    private static HashMap dbNameDialectMap = new HashMap();
+    
+    private static DBCopyPreferenceBean prefs = 
+                                            PreferencesManager.getPreferences();
+    
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+                  StringManagerFactory.getStringManager(DialectFactory.class);
+    
+    /** 
+     * The keys to dbNameDialectMap are displayed to the user in the dialect
+     * chooser widget, so be sure to use something that is intelligable to 
+     * an end user 
+     */
+    static {
+        dbNameDialectMap.put("Axion", axionDialect);
+        dbNameDialectMap.put("DB2", db2Dialect);
+        //dbNameDialectMap.put("DB2/390", db2390Dialect);
+        //dbNameDialectMap.put("DB2/400", db2400Dialect);
+        dbNameDialectMap.put("Daffodil", daffodilDialect);
+        dbNameDialectMap.put("Derby", derbyDialect);
+        dbNameDialectMap.put("Firebird", firebirdDialect);
+        dbNameDialectMap.put("FrontBase", frontbaseDialect);
+        dbNameDialectMap.put("HyperSonic", hsqlDialect);
+        dbNameDialectMap.put("H2", h2Dialect);
+        dbNameDialectMap.put("Informix", informixDialect);
+        dbNameDialectMap.put("Ingres", ingresDialect);
+        dbNameDialectMap.put("Interbase", interbaseDialect);
+        dbNameDialectMap.put("MaxDB", maxDbDialect);
+        dbNameDialectMap.put("McKoi", mckoiDialect);
+        dbNameDialectMap.put("MS SQLServer", sqlserverDialect);
+        dbNameDialectMap.put("MySQL", mysqlDialect);
+        dbNameDialectMap.put("Oracle", oracle9iDialect);
+        dbNameDialectMap.put("Pointbase", pointbaseDialect);
+        dbNameDialectMap.put("PostgreSQL", postgreSQLDialect);
+        dbNameDialectMap.put("Progress", progressDialect);
+        dbNameDialectMap.put("Sybase", sybaseDialect);
+        dbNameDialectMap.put("TimesTen", timestenDialect);
+    }
+    
+    /** cache previous decisions about which dialect to use */
+    private static HashMap sessionDialectMap = new HashMap();
+    
+    public static boolean isAxionSession(ISession session) {
+        return testDriverName(session, prefs.getAxionDriverClass());
+    }
+    
+    public static boolean isDaffodilSession(ISession session) {
+        return testDriverName(session, prefs.getDaffodilDriverClass());
+    }
+    
+    public static boolean isDB2Session(ISession session) {
+        return testDriverName(session, prefs.getDb2DriverClass());
+    }
+
+    public static boolean isDerbySession(ISession session) {
+        return testDriverName(session, prefs.getDerbyDriverClass());
+    }    
+    
+    public static boolean isFirebirdSession(ISession session) {
+        return testDriverName(session, prefs.getFirebirdDriverClass());        
+    }
+    
+    public static boolean isFrontBaseSession(ISession session) {
+        return testDriverName(session, prefs.getFrontbaseDriverClass());
+    }
+    
+    public static boolean isH2Dialect(ISession session) {
+        return testDriverName(session, prefs.getH2DriverClass());
+    }
+    
+    public static boolean isHSQLSession(ISession session) {
+        return testDriverName(session, prefs.getHypersonicDriverClass());
+    }    
+    
+    public static boolean isIngresSession(ISession session) {
+        return testDriverName(session, prefs.getIngresDriverClass());
+    }
+    
+    public static boolean isMaxDBSession(ISession session) {
+        return testDriverName(session, prefs.getMaxDbDriverClass());
+    }
+    
+    public static boolean isMcKoiSession(ISession session) {
+        return testDriverName(session, prefs.getMckoiDriverClass());
+    }
+
+    public static boolean isMSSQLServerSession(ISession session) {
+        return testDriverName(session, prefs.getMssqlserverDriverClass());
+    }            
+    
+    public static boolean isMySQLSession(ISession session) {
+        return testDriverName(session, prefs.getMysqlDriverClass());
+    }        
+    
+    public static boolean isOracleSession(ISession session) {
+        return testDriverName(session, prefs.getOracleDriverClass());
+    }
+    
+    public static boolean isPointbase(ISession session) {
+        return testDriverName(session, prefs.getPointbaseDriverClass());
+    }
+
+    public static boolean isPostgreSQL(ISession session) {
+        return testDriverName(session, prefs.getPostgresqlDriverClass());
+    }    
+    
+    public static boolean isProgressSQL(ISession session) {
+        return testDriverName(session, prefs.getProgressDriverClass());
+    }
+    
+    public static boolean isSyBaseSession(ISession session) {
+        return testDriverName(session, prefs.getSybaseDriverClass());
+    }
+    
+    /**
+     * Examines the driver class name from the specified session to see if it
+     * begins with any of the space-delimited string tokens in the specified 
+     * nameToMatch.
+     *  
+     * @param session the ISession to check
+     * @param nameToMatch a space-delimited string of driver class package 
+     *                    prefixes 
+     * @return true if there is a match of any string in the nameToMatch and 
+     *              the ISession's driver class name; false otherwise.
+     */
+    private static boolean testDriverName(ISession session, String nameToMatch) {
+        boolean result = false;
+        if (session != null && nameToMatch != null) {
+            ISQLDriver driver = session.getDriver();
+            if (driver != null) {
+                String driverClassName = driver.getDriverClassName();
+                if (driverClassName != null) {
+                    String driverClassNameLC = driverClassName.toLowerCase();
+                    StringTokenizer st = new StringTokenizer(nameToMatch);
+                    while (st.hasMoreTokens()) {
+                        String token = st.nextToken();
+                        if (driverClassNameLC.startsWith(token.toLowerCase())) {
+                            result = true;
+                            break;
+                        }
+                    }
+                    
+                }
+            }
+        }
+        return result;
+    }
+    
+    public static HibernateDialect getDialect(ISession session, int sessionType) 
+        throws UserCancelledOperationException 
+    {
+        HibernateDialect result = null;
+        if (sessionDialectMap.containsKey(session)) {
+            result = (HibernateDialect)sessionDialectMap.get(session);
+        } else {
+            result = _getDialect(session, sessionType);
+            sessionDialectMap.put(session, result);
+        }        
+        return result;
+    }
+    
+    private static HibernateDialect _getDialect(ISession session,
+                                                int sessionType) 
+        throws UserCancelledOperationException 
+    {
+        // User doesn't wish for us to try to auto-detect the dest db.
+        if (prefs.isPromptForDialect()) {
+            return showDialectDialog(session, sessionType);
+        }
+        // TODO: Perhaps we would rather use Hibernate's method for determining
+        // what dialect should be used (DialectFactory.buildDialect() - but for
+        // this we need product name and version.  For instance, Oracle 8 has
+        // a different dialect then Oracle 9.  So in this case it's wrong to 
+        // return the oracle9Dialect for Oracle version 8.
+        if (isAxionSession(session)) {
+            return axionDialect;
+        }
+        if (isDaffodilSession(session)) {
+            return daffodilDialect;
+        }
+        if (isDB2Session(session)) {
+            return db2Dialect;
+        }
+        if (isDerbySession(session)) {
+            return derbyDialect;
+        }
+        if (isFirebirdSession(session)) {
+            return firebirdDialect;
+        }
+        if (isFrontBaseSession(session)) {
+            return frontbaseDialect;
+        }
+        if (isH2Dialect(session)) {
+            return h2Dialect;
+        }
+        if (isHSQLSession(session)) {
+            return hsqlDialect;
+        }
+        if (isIngresSession(session)) {
+            return ingresDialect;
+        }
+        if (isMaxDBSession(session)) {
+            return maxDbDialect;
+        }
+        if (isMcKoiSession(session)) {
+            return mckoiDialect;
+        }
+        if (isMySQLSession(session)) {
+            return mysqlDialect;
+        }
+        if (isMSSQLServerSession(session)) {
+            return sqlserverDialect;
+        }
+        if (isOracleSession(session)) {
+            return oracle9iDialect;
+        }
+        if (isPointbase(session)) {
+            return pointbaseDialect;
+        }
+        if (isPostgreSQL(session)) {
+            return postgreSQLDialect;
+        }
+        if (isProgressSQL(session)) {
+            return progressDialect;
+        }
+        if (isSyBaseSession(session)) {
+            return sybaseDialect;
+        }
+        // Failed to detect the dialect that should be used.  Ask the user.
+        return showDialectDialog(session, sessionType);
+    }
+
+    /**
+     * Shows the user a dialog explaining that we failed to detect the dialect
+     * of the destination database, and we are offering the user the 
+     * opportunity to pick one from our supported dialects list.  If the user
+     * cancels this dialog, null is returned to indicate that the user doesn't
+     * wish to continue the paste operation.
+     * 
+     * @param destSession
+     * @param sessionType TODO
+     * @return
+     */
+    private static HibernateDialect showDialectDialog(ISession destSession, 
+                                                      int sessionType) 
+        throws UserCancelledOperationException 
+    {
+        JFrame f = destSession.getApplication().getMainFrame();
+        Object[] dbNames = getDbNames();
+        String chooserTitle = s_stringMgr.getString("dialectChooseTitle");
+        String typeStr = null;
+        if (sessionType == SOURCE_TYPE) {
+            typeStr = s_stringMgr.getString("sourceSessionTypeName");
+        }
+        if (sessionType == DEST_TYPE) {
+            typeStr = s_stringMgr.getString("destSessionTypeName");
+        }
+        String message = 
+            s_stringMgr.getString("dialectDetectFailedMessage", typeStr);
+        if (prefs.isPromptForDialect()) {
+            message = s_stringMgr.getString("autoDetectDisabledMessage", typeStr);
+        } 
+        String dbName = 
+            (String)JOptionPane.showInputDialog(f,
+                                                message,
+                                                chooserTitle,
+                                                JOptionPane.INFORMATION_MESSAGE, 
+                                                null, 
+                                                dbNames, 
+                                                dbNames[0]);
+        if (dbName == null || "".equals(dbName)) {
+            throw new UserCancelledOperationException();
+        }
+        return (HibernateDialect)dbNameDialectMap.get(dbName);
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    private static Object[] getDbNames() {
+        Set keyset = dbNameDialectMap.keySet();
+        Object[] keys = keyset.toArray();
+        Arrays.sort(keys);
+        return keys;
+    }
+    
+    /**
+     * When a session is closed, it's important to not hold onto it for GC
+     * purposes.
+     * 
+     * @param session
+     */
+    public static void removeSession(ISession session) {
+        if (sessionDialectMap.containsKey(session)) {
+            sessionDialectMap.remove(session);
+        }
+    }
+    
+}

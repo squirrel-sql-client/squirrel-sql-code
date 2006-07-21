@@ -1,0 +1,20 @@
+<AutomatedInstallation langpack="eng">
+    <com.izforge.izpack.panels.HelloPanel/>
+    <com.izforge.izpack.panels.HTMLInfoPanel/>
+    <com.izforge.izpack.panels.LicencePanel/>
+    <com.izforge.izpack.panels.TargetPanel>
+        <installpath>C:\tmp\squirreltest</installpath>
+    </com.izforge.izpack.panels.TargetPanel>
+    <com.izforge.izpack.panels.PacksPanel>
+        <selected>
+            <pack index="0"/>
+            <pack index="1"/>
+        </selected>
+    </com.izforge.izpack.panels.PacksPanel>
+    <com.izforge.izpack.panels.InstallPanel/>
+    <com.izforge.izpack.panels.ShortcutPanel>
+        <programGroup name="SQuirreL SQL Client"/>
+        <shortcut name="SQuirreL SQL Client" initialState="1" commandLine="" workingDirectory="C:\tmp\squirreltest" target="C:\tmp\squirreltest\squirrel-sql.bat" type="1" icon="C:\tmp\squirreltest\icons\acorn.ico" group="true" description="An ISQL tool" iconIndex="0"/>
+    </com.izforge.izpack.panels.ShortcutPanel>
+    <com.izforge.izpack.panels.FinishPanel/>
+</AutomatedInstallation>

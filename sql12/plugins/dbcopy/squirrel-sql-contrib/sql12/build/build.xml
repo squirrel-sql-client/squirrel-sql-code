@@ -1,0 +1,681 @@
+<?xml version="1.0"?>
+
+<!--
+	This is an Apache Ant build file for Squirrel SQL Client.
+-->
+<project name="Squirrel-SQL-Client" default="help" basedir="../">
+	<!--
+	===================================================================
+	Initialization target
+	No parameters.
+	===================================================================
+	-->
+	<target name="init">
+		<tstamp/>
+		<property file="${basedir}/build/build.properties"/>
+		<property name="dist_dir" value="${basedir}/../squirrel-sql-dist/${name}"/>
+		<property name="core_dist_dir" value="${dist_dir}/core/dist"/>
+		<property name="core_work_dir" value="${dist_dir}/core/work"/>
+		<property name="core_obj_dir" value="${core_work_dir}/obj"/>
+		<property name="core_dist_lib_dir" value="${core_dist_dir}/lib"/>
+		<property name="core_dist_doc_dir" value="${core_dist_dir}/doc"/>
+		<property name="core_jws_dir" value="${dist_dir}/core/jws"/>
+		<property name="plugins_src_dir" value="${basedir}/plugins"/>
+		<property name="plugins_dist_dir" value="${dist_dir}/plugins"/>
+
+		<property name="plugin_build_file_name" value="plugin_build.xml"/>
+		<property name="plugin_build_target_name" value="build"/>
+
+		<property name="debug" value="on"/>
+		<property name="optimize" value="off"/>
+		<property name="deprecation" value="on"/>
+
+		<property environment="env"/>
+		<echo message="ANT HOME: ${env.ANT_HOME}"/>
+		<echo message="JAVA HOME: ${env.JAVA_HOME}"/>
+	</target>
+
+	<!--
+	==================================================================
+	Help on command usage.
+	No parameters.
+	==================================================================
+	-->
+	<target name="help" depends="init">
+		<echo message=""/>
+		<echo message="${name} Build tool"/>
+		<echo message="-------------------------------------------------------"/>
+		<echo message=" Usage:"/>
+		<echo message="   build &lt;target&gt;"/>
+		<echo message=""/>
+		<echo message=" Available targets are:"/>
+		<echo message=""/>
+		<echo message="	compile_fw:   Compiles the base framework classes to:"/>
+		<echo message="				  ${core_obj_dir}"/>
+		<echo message=""/>
+		<echo message="	compile_app:  Compiles the SQuirreL client app to:"/>
+		<echo message="				  ${core_obj_dir}"/>
+		<echo message="				  after building compile_fw."/>
+		<echo message=""/>
+		<echo message="	compile_plugins: Compiles all plugins to:"/>
+		<echo message="					 ${plugins_dist_dir}"/>
+		<echo message="					 after building compile_app."/>
+		<echo message=""/>
+		<echo message="	jar_source: Jars the source for the framework and application to:"/>
+		<echo message="					 ${core_dist_dir}/src}"/>
+		<echo message=""/>
+		<echo message=" javadoc: Compiles the javadoc from the app/ and fw/ sources."/>
+		<echo message=""/>
+		<echo message="	make_dist:  Executes jar_source."/>
+		<echo message="				Eventually this should run an Ant Task to generate the IzPack JAR."/>
+		<echo message=""/>
+		<echo message=" make_jws:   Creates Java WebStart version."/>
+		<echo message=""/>
+		<echo message="	clean:  Removes class files, old versions of source etc."/>
+		<echo message="--------------------------------------------------------"/>
+		<echo message=""/>
+	</target>
+
+	<!--
+	==================================================================
+	Setup
+	==================================================================
+	-->
+	<target name="setup" depends="init">
+		<mkdir dir="${core_obj_dir}"/>
+		<mkdir dir="${core_jws_dir}"/>
+		<mkdir dir="${core_dist_lib_dir}"/>
+		<mkdir dir="${core_dist_doc_dir}"/>
+		<mkdir dir="${core_dist_dir}/src"/>
+		<mkdir dir="${core_dist_dir}/plugins"/>
+	</target>
+
+	<!--
+	==================================================================
+	Compile the framework classes.
+	No parameters.
+	==================================================================
+	-->
+	<target name="compile_fw" depends="setup">
+		<echo message="---------------- Framework ----------------"/>
+		<javac	srcdir="fw/src"
+				destdir="${core_obj_dir}"
+				deprecation="${deprecation}"
+				debug="${debug}"
+				optimize="${optimize}"
+				includeJavaRuntime="yes">
+			<classpath>
+				<fileset dir="fw/lib">
+					<include name="**/*.*"/>
+				</fileset>
+			</classpath>
+		</javac>
+
+		<copy todir="${core_obj_dir}" >
+			<fileset dir="fw/src" >
+				<include name="**/*.gif"/>
+				<include name="**/*.jpg"/>
+				<include name="**/*.jpeg"/>
+				<include name="**/*.png"/>
+				<include name="**/*.html"/>
+			    <include name="**/*.xml"/>
+				<include name="**/*.properties"/>
+			</fileset>
+		</copy>
+
+		<copy todir="${core_dist_lib_dir}">
+			<fileset dir="fw/lib">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+
+		<jar jarfile="${core_dist_lib_dir}/fw.jar" compress="false">
+			<fileset dir="${core_obj_dir}">
+				<include name="com/**/*.*"/>
+				<include name="net/sourceforge/squirrel_sql/fw/**/*.*"/>
+			</fileset>
+		</jar>
+	</target>
+
+	<!--
+	==================================================================
+	Compile the client app classes.
+	No parameters.
+	==================================================================
+	-->
+	<target name="compile_app" depends="compile_fw">
+		<echo message="---------------- ${name} ----------------"/>
+		<javac	srcdir="app/src"
+				destdir="${core_obj_dir}"
+				deprecation="${deprecation}"
+				debug="${debug}"
+				optimize="${optimize}"
+				includeJavaRuntime="yes">
+			<classpath>
+				<fileset dir="fw/lib">
+					<include name="**/*.*"/>
+				</fileset>
+				<fileset dir="app/lib">
+					<include name="**/*.*"/>
+				</fileset>
+			</classpath>
+		</javac>
+		<copy todir="${core_obj_dir}" >
+			<fileset dir="app/src" >
+				<include name="**/*.gif"/>
+				<include name="**/*.jpg"/>
+				<include name="**/*.jpeg"/>
+				<include name="**/*.png"/>
+				<include name="**/*.html"/>
+				<include name="**/*.xml"/>
+				<include name="**/*.properties"/>
+				<include name="**/*.txt"/>
+			</fileset>
+		</copy>
+
+		<copy todir="${core_dist_lib_dir}">
+			<fileset dir="app/lib">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+
+		<jar jarfile="${core_dist_lib_dir}/${name}.jar" compress="false"
+				manifest="build/MANIFEST.MF">
+			<fileset dir="${core_obj_dir}">
+				<include name="net/sourceforge/squirrel_sql/client/**/*.*"/>
+			</fileset>
+		</jar>
+
+		<copy todir="${core_dist_dir}" >
+			<fileset dir="app/cmd" >
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+		<chmod file="${core_dist_dir}/*.sh" perm="ugo+rx"/>
+
+		<copy todir="${core_dist_doc_dir}" >
+			<fileset dir="doc" >
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+
+		<copy todir="${core_dist_dir}/icons" >
+			<fileset dir="app/icons" >
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+
+		<echo message="Unzip your plugins here"
+			file="${core_dist_dir}/plugins/readme.txt">
+		</echo>
+	</target>
+
+	<target name="deploy" depends="init">
+		<copy todir="${squirrel.home.dir}" >
+			<fileset dir="${core_dist_lib_dir}" >
+				<include name="squirrel-sql.jar"/>
+			</fileset>
+		</copy>	
+		<copy todir="${squirrel.home.dir}/lib" >
+			<fileset dir="${core_dist_lib_dir}" >
+				<include name="fw.jar"/>
+			</fileset>
+		</copy>	
+		<copy todir="${squirrel.home.dir}/plugins" >
+			<fileset dir="${plugins_dist_dir}/codecompletion/dist" >
+				<include name="codecompletion.jar"/>
+			</fileset>			
+			<fileset dir="${plugins_dist_dir}/dataimport/dist" >
+				<include name="dataimport.jar"/>
+			</fileset>			
+			<fileset dir="${plugins_dist_dir}/dbcopy/dist" >
+				<include name="dbcopy.jar"/>
+			</fileset>
+			<fileset dir="${plugins_dist_dir}/dbinfo/dist" >
+				<include name="dbinfo.jar"/>
+			</fileset>
+			<fileset dir="${plugins_dist_dir}/editextras/dist" >
+				<include name="editextras.jar"/>
+			</fileset>			
+			<fileset dir="${plugins_dist_dir}/exportconfig/dist" >
+				<include name="exportconfig.jar"/>
+			</fileset>			
+			<fileset dir="${plugins_dist_dir}/favs/dist" >
+				<include name="favs.jar"/>
+			</fileset>						
+			<fileset dir="${plugins_dist_dir}/firebird/dist" >
+				<include name="firebird.jar"/>
+			</fileset>						
+			<fileset dir="${plugins_dist_dir}/graph/dist" >
+				<include name="graph.jar"/>
+			</fileset>	
+			<fileset dir="${plugins_dist_dir}/isqlj/dist" >
+				<include name="isqlj.jar"/>
+			</fileset>									
+			<fileset dir="${plugins_dist_dir}/laf/dist" >
+				<include name="laf.jar"/>
+			</fileset>												
+			<fileset dir="${plugins_dist_dir}/mssql/dist" >
+				<include name="mssql.jar"/>
+			</fileset>
+			<fileset dir="${plugins_dist_dir}/mysql/dist" >
+				<include name="mysql.jar"/>
+			</fileset>																
+			<fileset dir="${plugins_dist_dir}/oracle/dist" >
+				<include name="oracle.jar"/>
+			</fileset>																
+			<fileset dir="${plugins_dist_dir}/sessionscript/dist" >
+				<include name="sessionscript.jar"/>
+			</fileset>																
+			<fileset dir="${plugins_dist_dir}/sqlbookmark/dist" >
+				<include name="sqlbookmark.jar"/>
+			</fileset>																
+			<fileset dir="${plugins_dist_dir}/sqlscript/dist" >
+				<include name="sqlscript.jar"/>
+			</fileset>																
+			<fileset dir="${plugins_dist_dir}/sqlval/dist" >
+				<include name="sqlval.jar"/>
+			</fileset>																
+			<fileset dir="${plugins_dist_dir}/syntax/dist" >
+				<include name="syntax.jar"/>
+			</fileset>																
+			<fileset dir="${plugins_dist_dir}/userscript/dist" >
+				<include name="userscript.jar"/>
+			</fileset>																
+				
+		</copy>			
+	</target>	
+	
+	<!--
+	==================================================================
+	Build the JavaDoc
+	No parameters
+	==================================================================
+	-->
+	<target name="javadoc">
+		<mkdir dir="${basedir}/../javadoc"/>
+		<javadoc	packagenames="net.sourceforge.squirrel_sql.*"
+					sourcepath="${basedir}/app/src;${basedir}/fw/src"
+					destdir="${basedir}/../javadoc">
+			<classpath>
+				<fileset dir="fw/lib">
+					<include name="**/*.*"/>
+				</fileset>
+				<fileset dir="app/lib">
+					<include name="**/*.*"/>
+				</fileset>
+			</classpath>
+		</javadoc>
+	</target>
+
+	<!--
+	==================================================================
+	Compile the plugins.
+	No parameters.
+	==================================================================
+	-->
+	<target name="compile_plugins" depends="compile_app">
+
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="codecompletion"/>
+			<param name="p_rebuild" value="${rebuild.plugin.codecompletion}"/>
+		</antcall>
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="dataimport"/>
+			<param name="p_rebuild" value="${rebuild.plugin.dataimport}"/>	
+		</antcall>
+	    <antcall target="build_plugin">
+		    <param name="p_internal_name" value="dbcopy"/>
+	        <param name="p_rebuild" value="${rebuild.plugin.dbcopy}"/>
+		</antcall>
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="dbinfo"/>
+        	<param name="p_rebuild" value="${rebuild.plugin.dbinfo}"/>
+		</antcall>
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="editextras"/>
+			<param name="p_rebuild" value="${rebuild.plugin.editextras}"/>
+		</antcall>
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="exportconfig"/>
+			<param name="p_rebuild" value="${rebuild.plugin.exportconfig}"/>
+		</antcall>			
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="favs"/>
+			<param name="p_rebuild" value="${rebuild.plugin.favs}"/>
+		</antcall>
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="firebird"/>
+			<param name="p_rebuild" value="${rebuild.plugin.firebird}"/>
+		</antcall>
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="graph"/>
+			<param name="p_rebuild" value="${rebuild.plugin.graph}"/>
+		</antcall>
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="isqlj"/>
+			<param name="p_rebuild" value="${rebuild.plugin.isqlj}"/>			
+		</antcall>		
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="jedit"/>
+			<param name="p_rebuild" value="${rebuild.plugin.jedit}"/>
+		</antcall>
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="laf"/>
+			<param name="p_rebuild" value="${rebuild.plugin.laf}"/>
+		</antcall>
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="macosx"/>
+			<param name="p_rebuild" value="${rebuild.plugin.macosx}"/>
+		</antcall>
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="mssql"/>
+			<param name="p_rebuild" value="${rebuild.plugin.mssql}"/>
+		</antcall>
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="mysql"/>
+			<param name="p_rebuild" value="${rebuild.plugin.mysql}"/>
+		</antcall>
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="oracle"/>
+			<param name="p_rebuild" value="${rebuild.plugin.oracle}"/>
+		</antcall>
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="sessionscript"/>
+			<param name="p_rebuild" value="${rebuild.plugin.sessionscript}"/>
+		</antcall>
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="sqlbookmark"/>
+			<param name="p_rebuild" value="${rebuild.plugin.sqlbookmark}"/>
+		</antcall>
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="sqlscript"/>
+			<param name="p_rebuild" value="${rebuild.plugin.sqlscript}"/>
+		</antcall>
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="sqlval"/>
+			<param name="p_rebuild" value="${rebuild.plugin.sqlval}"/>
+		</antcall>
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="syntax"/>
+			<param name="p_rebuild" value="${rebuild.plugin.syntax}"/>
+		</antcall>
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="userscript"/>
+			<param name="p_rebuild" value="${rebuild.plugin.userscript}"/>
+		</antcall>		
+	</target>
+
+	<!--
+	==================================================================
+	Jar up the FW and client source.
+	No parameters.
+	==================================================================
+	-->
+	<target name="jar_source" depends="setup">
+		<jar jarfile="${core_dist_dir}/src/fw-src.jar" compress="false">
+			<fileset dir="fw/src">
+				<include name="**/*.*"/>
+			</fileset>
+		</jar>
+
+		<jar jarfile="${core_dist_dir}/src/client-src.jar" compress="false">
+			<fileset dir="app/src">
+				<include name="**/*.*"/>
+			</fileset>
+		</jar>
+
+		<jar jarfile="${core_dist_dir}/src/build.jar" compress="false">
+			<fileset dir="build">
+				<include name="**/*.*"/>
+				<exclude name="test.jar"/>
+			</fileset>
+		</jar>
+
+		<copy todir="${core_dist_dir}/src" >
+			<fileset dir="." >
+				<include name="build.xml"/>
+				<include name="izpack.bat"/>
+				<include name="izpack.xml"/>
+			</fileset>
+		</copy>
+
+		<zip zipfile="${dist_dir}/${name}-src.zip" compress="true">
+			<fileset dir="${core_dist_dir}/src">
+				<include name="**/*.*"/>
+			</fileset>
+		</zip>
+
+		<tar tarfile="${dist_dir}/${name}-src.tar">
+			<tarfileset dir="${core_dist_dir}/src">
+				<include name="**/*.*"/>
+			</tarfileset>
+		</tar>
+		<gzip zipfile="${dist_dir}/${name}-src.tar.gz"
+			src="${dist_dir}/${name}-src.tar">
+		</gzip>
+		<delete file="${dist_dir}/${name}-src.tar"/>
+
+	</target>
+
+	<!--
+	==================================================================
+	Make the distribution.
+	No parameters.
+	==================================================================
+	-->
+	<target name="make_dist" depends="compile_app,jar_source">
+	</target>
+
+	<!--
+	==================================================================
+	Make the install jar.  Need to have IzPack installed and build 
+	property izpack.home.dir should be set in build.properties to it's
+	location
+	
+	No parameters.
+	==================================================================
+	-->
+	<target name="make_install_jar" depends="clean, compile_app, compile_plugins, jar_source">
+		<java jar="${izpack.home.dir}/lib/compiler.jar"
+	          fork="true"
+	          failonerror="true"
+	          maxmemory="128m"
+	    >
+
+	        <arg value="-HOME"/>
+	        <arg value="${izpack.home.dir}"/>
+		    
+			<arg value="${basedir}/build/izpack-squirrel-with-plugins.xml"/>
+		    <arg value="-b"/>
+		    <arg value="${basedir}/build"/>
+		    <arg value="-k"/>
+		    <arg value="standard-kunststoff"/>
+		    <arg value="-o"/>
+		    <arg value="${basedir}/../squirrel-sql-dist/${name}-${version}-install.jar"/>
+
+		    <classpath>
+		        <pathelement location="${izpack.home.dir}/lib/compiler.jar"/>
+		        <pathelement path="${java.class.path}"/>
+		    </classpath>
+	    </java>		
+	</target>		
+
+	
+	<!--
+	==================================================================
+	Clean up.
+	No parameters.
+	==================================================================
+	-->
+	<target name="clean" depends="init">
+		<delete includeEmptyDirs="true">
+			<fileset dir="." defaultexcludes="no">
+				<exclude name="eclipse-bin/**/*"/>
+			    <include name="**/*~"/>
+			</fileset>
+			<fileset dir="." defaultexcludes="no">
+				<exclude name="eclipse-bin/**/*"/>
+				<include name="**/#*#"/>
+			</fileset>
+			<fileset dir="." defaultexcludes="no">
+				<exclude name="eclipse-bin/**/*"/>
+				<include name="**/*.class"/>
+				<include name="**/*.bak"/>
+			</fileset>
+		</delete>
+		<delete includeEmptyDirs="true" quiet="true">
+			<fileset dir="${dist_dir}">
+				<exclude name="*.jar"/>
+				<exclude name="*.zip"/>
+				<exclude name="*.gz"/>
+			</fileset>
+		</delete>
+	</target>
+	<target name="build_plugin">
+		<condition property="rebuild.plugin">
+			<istrue value="${p_rebuild}"/>
+		</condition>
+		<antcall target="_build_plugin">
+			<param name="p_internal_name" value="${p_internal_name}"/>
+		</antcall>		
+	</target>	
+
+	
+	<!--
+	==================================================================
+	Internal Target.
+	Build a plugin.
+	p_internal_name		- internal name of plugin to be build.
+	==================================================================
+	-->
+	<target name="_build_plugin" if="rebuild.plugin">
+		<property name="lcl_this_plugin_src_dir" value="${plugins_src_dir}/${p_internal_name}"/>
+		<property name="lcl_this_plugin_dist_dir" value="${plugins_dist_dir}/${p_internal_name}"/>
+
+		<mkdir dir="${lcl_this_plugin_dist_dir}/work"/>
+		<mkdir dir="${lcl_this_plugin_dist_dir}/dist/${p_internal_name}"/>
+		<ant	inheritAll="false" dir="${lcl_this_plugin_src_dir}"
+				antfile="${plugins_src_dir}/${p_internal_name}/${plugin_build_file_name}"
+				target="${plugin_build_target_name}">
+			<property name="p_plugin.work_dir" value="${lcl_this_plugin_dist_dir}/work"/>
+			<property name="p_plugin.dist_dir" value="${lcl_this_plugin_dist_dir}/dist"/>
+			<property name="p_plugin.core_libs_dir" value="${core_dist_lib_dir}"/>
+		</ant>
+
+		<zip zipfile="${dist_dir}/${p_internal_name}.zip" compress="true">
+			<fileset dir="${lcl_this_plugin_dist_dir}/dist">
+				<include name="**/*.*"/>
+			</fileset>
+		</zip>
+
+		<tar tarfile="${dist_dir}/${p_internal_name}.tar">
+			<tarfileset dir="${lcl_this_plugin_dist_dir}/dist">
+				<include name="**/*.*"/>
+			</tarfileset>
+		</tar>
+		<gzip zipfile="${dist_dir}/${p_internal_name}.tar.gz"
+			src="${dist_dir}/${p_internal_name}.tar">
+		</gzip>
+		<delete file="${dist_dir}/${p_internal_name}.tar"/>
+
+	</target>
+
+	<target name="make_jws" depends="compile_app">
+		<echo message="${core_jws_dir}"/>
+		<copy todir="${core_jws_dir}">
+			<fileset dir="${core_dist_lib_dir}">
+				<include name="**/*.jar"/>
+			</fileset>
+		</copy>
+		<copy file="doc/images/logo.jpg" todir="${core_jws_dir}"/>
+		<copy file="web-site/jws/squirrel.jnlp" todir="${core_jws_dir}"/>
+<!-- TODO: Get latest version of ant and install on rory -->
+<!--		<signjar alias="squirrel" storepass="password" keystore="build/keystore"> -->
+<!--			<fileset dir="${core_jws_dir}"> -->
+<!--				<include name="**/*.jar"/> -->
+<!--			</fileset> -->
+<!--		</signjar> -->
+		<signjar	alias="squirrel" storepass="password" keystore="build/keystore"
+					jar="${core_jws_dir}/fw.jar">
+		</signjar>
+		<signjar	alias="squirrel" storepass="password" keystore="build/keystore"
+					jar="${core_jws_dir}/log4j.jar">
+		</signjar>
+		<signjar	alias="squirrel" storepass="password" keystore="build/keystore"
+					jar="${core_jws_dir}/nanoxml-2.1.jar">
+		</signjar>
+		<signjar	alias="squirrel" storepass="password" keystore="build/keystore"
+					jar="${core_jws_dir}/squirrel-sql.jar">
+		</signjar>
+	</target>
+
+	<!--
+	==================================================================
+	Build a MAC distribution
+	No parameters
+	==================================================================
+	-->
+	<target name="mac_dist" depends="compile_app">
+		<mkdir dir="${dist_dir}/mac"/>
+		<mkdir dir="${dist_dir}/mac/SquirrelSQL"/>
+		<delete includeEmptyDirs="true" failonerror="false">
+			<fileset dir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app">
+			</fileset>
+		</delete>
+		<mkdir dir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app"/>
+		<copy todir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app">
+			<fileset dir="${basedir}/mac">
+				<include name="**/*"/>
+				<exclude name="**/Info.plist"/>
+                                <exclude name="**/README"/>
+			</fileset>
+		</copy>
+                <copy todir="${dist_dir}/mac/SquirrelSQL">
+                        <fileset dir="${basedir}/mac">
+                               <include name="**/README"/>
+                        </fileset>
+                </copy>
+		<!--<filter token="SquirrelVersion" value="${version}"/>-->
+
+		<copy todir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app" filtering="true">
+			<fileset dir="${basedir}/mac">
+				<include name="**/Info.plist"/>
+			</fileset>
+		</copy>
+		<chmod file="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app/Contents/MacOS/JavaApplicationStub" perm="ugo+rx"/>
+		<copy todir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/lib">
+			<fileset dir="${core_dist_lib_dir}">
+				<include name="**/*"/>
+				<exclude name="**/squirrel-sql.jar"/>
+			</fileset>
+		</copy>
+		<copy todir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java">
+			<fileset dir="${core_dist_lib_dir}">
+				<include name="**/squirrel-sql.jar"/>
+			</fileset>
+		</copy>
+                <copy todir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/plugins">
+                        <fileset dir="${basedir}/plugins/macosx/deliver">
+                                <include name="**/macosx.jar"/>
+                        </fileset>
+                </copy>
+                <copy todir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/plugins/macosx">
+                        <fileset dir="${basedir}/plugins/macosx/doc">
+                                <include name="**/*.txt"/>
+                        </fileset>
+                </copy>
+                <copy todir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/doc">
+                        <fileset dir="${core_dist_doc_dir}">
+                                <include name="**/*"/>
+                        </fileset>
+                </copy>
+                <copy todir="${dist_dir}/mac/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/doc">
+                        <fileset dir="${basedir}/web-site">
+                                <include name="**/faq.html"/>
+                        </fileset>
+                </copy>
+		<tar tarfile="${dist_dir}/SquirrelSQLMac.tar" basedir="${dist_dir}/mac"/>
+		<gzip zipfile="${dist_dir}/SquirrelSQLMac.tar.gz" src="${dist_dir}/SquirrelSQLMac.tar"/>
+	</target>
+</project>

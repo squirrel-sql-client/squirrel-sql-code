@@ -1,0 +1,16 @@
+<Beans>
+    <Bean Class="net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.DBCopyPreferenceBean">
+        <clientName>SQuirreL SQL Client/DBCopy Plugin</clientName>
+        <clientVersion> @SNAPSHOT_VERSION@/0.13</clientVersion>
+        <copyOnlyTableDefs>false</copyOnlyTableDefs>
+        <copyPrimaryKeys>false</copyPrimaryKeys>
+        <copyForeignKeys>false</copyForeignKeys>
+        <fileCacheBufferSize>8192</fileCacheBufferSize>
+        <useFileCaching>false</useFileCaching>
+        <useTruncate>true</useTruncate>
+        <tableDelayMillis>1000</tableDelayMillis>        
+        <testColumnNames>false</testColumnNames>
+        <delayBetweenObjects>false</delayBetweenObjects>
+        <recordDelayMillis>5</recordDelayMillis>
+    </Bean>
+</Beans>

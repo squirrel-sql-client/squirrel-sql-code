@@ -1,0 +1,47 @@
+
+In the source code for each supported dialect below, you will see calls to registerColumnType(type, String).
+The type is a java.sql.Types constant, and String can represent the supported database type for the database. 
+Additionally, you may see calls to registerColumnType(type, int, String) where the int is a maximum length for 
+this mapping.  When no maximum length is specified this is the "default" mapping.  If a source database contains
+a field whose length exceeds any destination type mapping, the "default" mapping is used.
+
+<p>
+
+<a href="http://cvs.sourceforge.net/viewcvs.py/dbcopyplugin/src/net/sourceforge/squirrel_sql/plugins/dbcopy/dialects/AxionDialect.java?rev=HEAD&view=markup" target="window">Axion</a>
+<br>
+<a href="http://cvs.sourceforge.net/viewcvs.py/dbcopyplugin/src/net/sourceforge/squirrel_sql/plugins/dbcopy/dialects/DB2Dialect.java?rev=HEAD&view=markup" target="window">DB2</a>
+<br>
+<a href="http://cvs.sourceforge.net/viewcvs.py/dbcopyplugin/src/net/sourceforge/squirrel_sql/plugins/dbcopy/dialects/DerbyDialect.java?rev=HEAD&view=markup" target="window">Derby</a>
+<br>
+<a href="http://cvs.sourceforge.net/viewcvs.py/dbcopyplugin/src/net/sourceforge/squirrel_sql/plugins/dbcopy/dialects/FirebirdDialect.java?rev=HEAD&view=markup" target="window">Firebird</a>
+<br>
+<a href="http://cvs.sourceforge.net/viewcvs.py/dbcopyplugin/src/net/sourceforge/squirrel_sql/plugins/dbcopy/dialects/FrontBaseDialect.java?rev=HEAD&view=markup" target="window">Frontbase</a>
+<br>
+<a href="http://cvs.sourceforge.net/viewcvs.py/dbcopyplugin/src/net/sourceforge/squirrel_sql/plugins/dbcopy/dialects/HSQLDialect.java?rev=HEAD&view=markup" target="window">HyperSonic</a>
+<br>
+<!--
+<a href="http://cvs.sourceforge.net/viewcvs.py/dbcopyplugin/src/net/sourceforge/squirrel_sql/plugins/dbcopy/dialects/FrontBaseDialect.java?rev=HEAD&view=markup" target="window">Informix</a>
+<br>
+-->
+<a href="http://cvs.sourceforge.net/viewcvs.py/dbcopyplugin/src/net/sourceforge/squirrel_sql/plugins/dbcopy/dialects/IngresDialect.java?rev=HEAD&view=markup" target="window">Ingres</a>
+<br>
+<!--
+<a href="http://cvs.sourceforge.net/viewcvs.py/dbcopyplugin/src/net/sourceforge/squirrel_sql/plugins/dbcopy/dialects/FrontBaseDialect.java?rev=HEAD&view=markup" target="window">Interbase</a>
+<br> 
+-->
+<a href="http://cvs.sourceforge.net/viewcvs.py/dbcopyplugin/src/net/sourceforge/squirrel_sql/plugins/dbcopy/dialects/McKoiDialect.java?rev=HEAD&view=markup" target="window">McKoi</a>
+<br>
+<a href="http://cvs.sourceforge.net/viewcvs.py/dbcopyplugin/src/net/sourceforge/squirrel_sql/plugins/dbcopy/dialects/MySQLDialect.java?rev=HEAD&view=markup" target="window">MySQL</a>
+<br>
+<a href="http://cvs.sourceforge.net/viewcvs.py/dbcopyplugin/src/net/sourceforge/squirrel_sql/plugins/dbcopy/dialects/Oracle9iDialect.java?rev=HEAD&view=markup" target="window">Oracle</a>
+<br>
+<a href="http://cvs.sourceforge.net/viewcvs.py/dbcopyplugin/src/net/sourceforge/squirrel_sql/plugins/dbcopy/dialects/PointbaseDialect.java?rev=HEAD&view=markup" target="window">Pointbase</a>
+<br>
+<a href="http://cvs.sourceforge.net/viewcvs.py/dbcopyplugin/src/net/sourceforge/squirrel_sql/plugins/dbcopy/dialects/PostgreSQLDialect.java?rev=HEAD&view=markup" target="window">PostgreSQL</a>
+<br>
+<a href="http://cvs.sourceforge.net/viewcvs.py/dbcopyplugin/src/net/sourceforge/squirrel_sql/plugins/dbcopy/dialects/SQLServerDialect.java?rev=HEAD&view=markup" target="window">MS SQL-Server</a>
+<br>
+<!--
+<a href="http://cvs.sourceforge.net/viewcvs.py/dbcopyplugin/src/net/sourceforge/squirrel_sql/plugins/dbcopy/dialects/TimesTenDialect.java?rev=HEAD&view=markup" target="window">TimeTen</a>
+<br>
+-->
