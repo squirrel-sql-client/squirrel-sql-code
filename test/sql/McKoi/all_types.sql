@@ -35,7 +35,7 @@ CREATE TABLE bit_type_table
 );
 CREATE TABLE blob_type_table
 (
-   blob_column blob
+   blob_column blob(2000000000)
 );
 CREATE TABLE boolean_type_table
 (
@@ -47,7 +47,7 @@ CREATE TABLE char_type_table
 );
 CREATE TABLE clob_type_table
 (
-   clob_column CLOB
+   clob_column CLOB(1000000000)
 );
 CREATE TABLE date_type_table
 (
@@ -103,10 +103,10 @@ CREATE TABLE tinyint_type_table
 );
 CREATE TABLE varbinary_type_table
 (
-   varbinary_column VARBINARY(8000)
+   varbinary_column VARBINARY(8192)
 );
 CREATE TABLE varchar_type_table
 (
-   varchar_column VARCHAR(8000)
+   varchar_column VARCHAR(8192)
 );
 
