@@ -1,0 +1,71 @@
+
+This plugin provides
+
+- Copy and Paste tables from one session to another (Can be different database
+  types (MySQL -> Oracle, SyBase->MySQL, etc...)
+
+- Includes Primary Key and Foreign Key constraints for tables copied.
+
+- Uses Hibernate 3.0 internally to perform database object type mappings.
+  Supported Hibernate dialects are: 
+  	Firebird, Oracle, Sybase, MS SQLServer, 
+  	MySQL, HyperSonic, Pointbase, PostgreSQL.
+
+- Allows the user to select a hibernate dialect for the destination 
+  database, if one couldn't be determined automatically.
+
+- Asks user to truncate records in destination table, if records already exist.
+
+- A progress dialog is displayed during copy which allows the user to cancel
+  the operation and shows progress for records on top and tables on the bottom.
+
+
+The "Copy Table" and "Paste Table" functions are accessible through 
+the context-sensitive (right-click) menu of the Object Tree. See
+readme.html for example usage.
+
+INSTALLATION HINTS:
+
+1. The plugin requires JDK 1.4.x and Squirrel SQL Client 2.0 RC1 or higher
+
+2. Extract the contents of dbcopy-0.10.zip to the plugins directory of Squirrel SQL Client.
+
+3. Squirrel SQL Client needs to be restarted in order to load the plugin.
+
+4. When running SQuirrel check the plugins dialog (Menu Plugins --> Summary)
+   to see if there is an entry named "DBCopy Plugin". If not check that you have
+   extracted to the contents of the release archive into the "Plugins location" 
+   directory that is named at the top of the dialog.  If the dbcopy plugin is 
+   found in the Plugins Summary dialog, but the "Copy Table"/"Paste Table" menus 
+   don't appear, please submit a bug report here (Please attach your 
+   squirrel-sql.log file which can be found in {user.home}/.squirrel-sql/logs): 
+
+      http://sourceforge.net/projects/dbcopyplugin
+
+Requests for enhancement and other questions can be submitted at the above 
+URL as well.
+
+
+KNOWN ISSUES:
+
+- When copying from an Oracle session tables that have BLOB, FLOAT and possibly 
+  other column types result in an error message saying "No Dialect mapping for 
+  JDBC type: 1111". This is due to the unfortunate fact that Oracle's driver 
+  chooses to report it's extended types as type "OTHER", which means it's 
+  database-specific and can be mapped to possible many unequivalent types.  I've
+  yet to figure out how best to map database dependent types to the java.sql.Types
+  constants.
+
+- Sometimes an error message saying "No Dialect mapping for JDBC type: NNN" where 
+  NNN is some integer.  This is a failing of the Hibernate dialect that was used.
+  Hibernate doesn't provide a mapping for every type code in java.sql.Types. While
+  I've attempted to provide the missing ones for dialects I've subclassed, I 
+  have by no means address all types for all dialects, let alone all databases. 
+  
+  
+(manningr at users dot sourceforge dot net)
+  
+
+
+
+

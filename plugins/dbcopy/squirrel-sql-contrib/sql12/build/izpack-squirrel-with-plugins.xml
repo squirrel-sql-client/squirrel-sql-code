@@ -1,0 +1,155 @@
+<installation version="1.0">
+
+	<variables>
+		<variable name="sqsc-version" value="2.0 final"/>
+	</variables>
+	
+	<info>
+		<appname>SQuirreL SQL Client</appname>
+		<appversion>2.0 final</appversion>
+		<authors>
+			<author email="colbell@users.sourceforge.net" name="Colin Bell"/>
+		</authors>
+		<url>http://www.squirrelsql.org</url>
+		<uninstaller write="yes"/>
+	</info>
+
+	<guiprefs height="480" resizable="yes" width="640"/>
+
+	<locale>
+		<langpack iso3="eng"/>
+	</locale>
+
+	<resources>
+		<res	src="../../squirrel-sql-dist/squirrel-sql/core/dist/doc/licences/squirrel_licence.txt"
+				id="LicencePanel.licence"/>
+		<res	src="installer-readme.html"
+				id="HTMLInfoPanel.info"/>
+		<res	src="shortcutSpec.xml"
+				id="shortcutSpec.xml"/>
+	</resources>
+
+	<panels>
+		<panel classname="HelloPanel"/>
+		<panel classname="HTMLInfoPanel"/>
+		<panel classname="LicencePanel"/>
+		<panel classname="TargetPanel"/>
+		<panel classname="PacksPanel"/>
+		<panel classname="InstallPanel"/>
+		<panel classname="ShortcutPanel"/>
+		<panel classname="FinishPanel"/>
+	</panels>
+
+	<native type="izpack" name="ShellLink.dll"/>
+
+	<packs>
+		<pack name="Base" required="yes">
+			<description>SQL Client</description>
+			<file	targetdir="$INSTALL_PATH"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/plugins"/>
+			<file	targetdir="$INSTALL_PATH"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/doc"/>
+			<file	targetdir="$INSTALL_PATH/doc"
+					src="../../sql12/web-site/faq.html"/>
+			<file	targetdir="$INSTALL_PATH"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/icons"/>
+			<file	targetdir="$INSTALL_PATH"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/squirrel-sql.bat"/>
+			<file	targetdir="$INSTALL_PATH"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/addpath.bat"/>
+			<file	targetdir="$INSTALL_PATH"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/squirrel-sql.sh"/>
+			<file	targetdir="$INSTALL_PATH"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/log4j.properties"/>
+			<file	targetdir="$INSTALL_PATH"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql.jar"/>
+			<file	targetdir="$INSTALL_PATH/lib"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/fw.jar"/>
+			<file	targetdir="$INSTALL_PATH/lib"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/log4j.jar"/>
+			<file	targetdir="$INSTALL_PATH/lib"
+					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/nanoxml-2.1.jar"/>
+			<file	targetdir="$INSTALL_PATH/lib"
+				src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/commons-cli.jar"/>
+			<file	targetdir="$INSTALL_PATH/lib"
+				src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/forms.jar"/>
+
+			<parsable targetfile="$INSTALL_PATH/squirrel-sql.bat"/>
+			<parsable targetfile="$INSTALL_PATH/squirrel-sql.sh" type="shell"/>
+
+			<!-- Make Unix script executable. -->
+			<executable	targetfile="$INSTALL_PATH/squirrel-sql.sh" stage="never"/>
+
+		</pack>
+		<pack required="no" name="Plugin - DB Copy">
+			<description>This plugin provides a way to copy database objects between different schemas.</description>
+			<file targetdir="$INSTALL_PATH/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/dbcopy.jar"/>
+			<file targetdir="$INSTALL_PATH/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/dbcopy/lib/hibernate3.jar"/>
+			<file targetdir="$INSTALL_PATH/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/dbcopy/lib/commons-logging-1.0.4.jar"/>
+			<file targetdir="$INSTALL_PATH/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/dbcopy"/>
+		</pack>				
+		<pack required="no" name="Plugin - SQL Entry Code Completion">
+			<description>This plugin offers code completion in much the same way as modern IDEs do. You use code completion through the standard ctrl space key.</description>
+			<file targetdir="$INSTALL_PATH/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/codecompletion/dist/codecompletion.jar"/>
+			<file targetdir="$INSTALL_PATH/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/codecompletion/dist/codecompletion"/>
+		</pack>				
+		<pack required="no" name="Plugin - Edit Extras">
+			<description>This plugin provides search and replace functionality, adding and removing Java quoting around SQL and formatting of SQL in the SQL entry area.</description>
+			<file targetdir="$INSTALL_PATH/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/editextras/dist/editextras.jar"/>
+			<file targetdir="$INSTALL_PATH/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/editextras/dist/editextras"/>
+		</pack>						
+		<pack required="no" name="Plugin - Export Config">
+			<description>This plugin allows you to export the Database Driver definitions, the Database Alias definitions and the Application Settings to files on the file system. This lets you setup your defintions once and put them on as many other PCs as you want to.</description>
+			<file targetdir="$INSTALL_PATH/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/exportconfig/dist/exportconfig.jar"/>
+			<file targetdir="$INSTALL_PATH/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/exportconfig/dist/exportconfig"/>
+		</pack>						
+		<pack required="no" name="Plugin - Graph">
+			<description>This plugin allows you to create graphs of database tables.</description>
+			<file targetdir="$INSTALL_PATH/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/graph/dist/graph.jar"/>
+			<file targetdir="$INSTALL_PATH/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/graph/dist/graph"/>
+		</pack>						
+		<pack required="no" name="Plugin - Oracle">
+			<description>The Oracle plugin adds Oracle specific functionality to SQuirreL SQL Client.</description>
+			<file targetdir="$INSTALL_PATH/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/oracle/dist/oracle.jar"/>
+			<file targetdir="$INSTALL_PATH/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/oracle/dist/treetable.jar"/>
+			<file targetdir="$INSTALL_PATH/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/oracle/dist/oracle"/>
+		</pack>						
+		<pack required="no" name="Plugin - Session Scripts">
+			<description>This plugin allows you to specify SQL statements to be executed when you first connect to a database.</description>
+			<file targetdir="$INSTALL_PATH/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/sessionscript/dist/sessionscript.jar"/>
+			<file targetdir="$INSTALL_PATH/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/sessionscript/dist/sessionscript"/>
+		</pack>				
+		<pack required="no" name="Plugin - SQL Bookmarks">
+			<description>This plugin allows you to manage commonly used SQL code for easy reuse. The plugin also provides a simple syntax for parameter replacement within the bookmarked SQL. As the SQL is reloaded, the user is prompted to enter values for any embedded parameters, after which the SQL is loaded into the edit buffer for execution.</description>
+			<file targetdir="$INSTALL_PATH/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/sqlbookmark/dist/sqlbookmark.jar"/>
+			<file targetdir="$INSTALL_PATH/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/sqlbookmark/dist/sqlbookmark"/>
+		</pack>				
+		<pack required="no" name="Plugin - SQL Scripts">
+			<description>The SQL Scripts plugin allows you to save and restore SQL scripts from a text file. It will also allow you to generate CREATE TABLE and INSERT scripts for existing tables in your database.</description>
+			<file targetdir="$INSTALL_PATH/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/sqlscript/dist/sqlscript.jar"/>
+			<file targetdir="$INSTALL_PATH/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/sqlscript/dist/sqlscript"/>
+		</pack>		
+		
+	</packs>
+</installation>

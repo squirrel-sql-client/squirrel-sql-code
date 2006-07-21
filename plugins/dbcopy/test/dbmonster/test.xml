@@ -1,0 +1,179 @@
+<?xml version="1.0"?>
+<!DOCTYPE dbmonster-schema PUBLIC "-//kernelpanic.pl//DBMonster Database Schema DTD 1.1//EN" "http://dbmonster.kernelpanic.pl/dtd/dbmonster-schema-1.1.dtd">
+<dbmonster-schema>
+  <name>public</name>
+  <table name="bigint_type_table" rows="100">
+    <column name="bigint_column" databaseDefault="false">
+        <generator type="pl.kernelpanic.dbmonster.generator.NumberGenerator">
+        <property name="maxValue" value="9999999999999999"/>
+        <property name="minValue" value="1111111111111111"/>
+        <property name="nulls" value="10"/>
+        <property name="returnedType" value="numeric"/>
+        <property name="scale" value="0"/>
+        </generator>
+    </column>
+  </table>
+  <table name="boolean_type_table" rows="100">
+    <column name="boolean_column">
+        <generator type="pl.kernelpanic.dbmonster.generator.BooleanGenerator">
+          <property name="nulls" value="10"/>
+        </generator>
+    </column>
+  </table>
+  <table name="char_type_table" rows="100">
+    <column name="char_column">
+        <generator type="pl.kernelpanic.dbmonster.generator.StringGenerator">
+            <property name="minLength" value="100"/>
+            <property name="maxLength" value="6000"/>
+            <property name="nulls" value="1"/>
+        </generator>
+    </column>
+  </table>
+  <table name="clob_type_table" rows="100">
+    <column name="clob_column">
+        <generator type="pl.kernelpanic.dbmonster.generator.StringGenerator">
+            <property name="minLength" value="100"/>
+            <property name="maxLength" value="2000"/>
+            <property name="nulls" value="10"/>
+        </generator>
+    </column>
+  </table>
+  <table name="date_type_table" rows="100">
+    <column name="date_column">
+        <generator type="pl.kernelpanic.dbmonster.generator.DateTimeGenerator">
+            <property name="nulls" value="10"/>
+            <property name="returnedType" value="date"/>
+            <property name="startDate" value="1970-02-01 03:30:59.0 GMT"/>
+			<property name="endDate" value="2005-02-01 03:30:59.0 GMT"/>
+        </generator>
+    </column>
+  </table>
+  <table name="decimal_type_table" rows="100">
+  	<column name="decimal_column">
+		<generator type="pl.kernelpanic.dbmonster.generator.NumberGenerator">
+			<property name="minValue" value="0"/>
+			<property name="maxValue" value="1000000.99"/>
+			<property name="returnedType" value="numeric"/>
+			<property name="scale" value="2"/>
+			<property name="nulls" value="10"/>
+		</generator>
+	</column>
+  </table>
+  <table name="double_type_table" rows="100">
+  	<column name="double_column">
+		<generator type="pl.kernelpanic.dbmonster.generator.NumberGenerator">
+			<property name="minValue" value="0"/>
+			<property name="maxValue" value="1000000"/>
+			<property name="returnedType" value="double"/>
+			<property name="scale" value="5"/>
+			<property name="nulls" value="10"/>
+		</generator>
+	</column>
+  </table>
+  <table name="float_type_table" rows="100">
+  	<column name="float_column">
+		<generator type="pl.kernelpanic.dbmonster.generator.NumberGenerator">
+			<property name="minValue" value="0"/>
+			<property name="maxValue" value="1000000"/>
+			<property name="returnedType" value="float"/>
+			<property name="scale" value="5"/>
+			<property name="nulls" value="10"/>
+		</generator>
+	</column>
+  </table>
+  <table name="integer_type_table" rows="100">
+  	<column name="integer_column">
+		<generator type="pl.kernelpanic.dbmonster.generator.NumberGenerator">
+			<property name="minValue" value="0"/>
+			<property name="maxValue" value="1000000"/>
+			<property name="returnedType" value="integer"/>
+			<property name="scale" value="0"/>
+			<property name="nulls" value="10"/>
+		</generator>
+	</column>
+  </table>
+  
+  <table name="longvarchar_type_table" rows="100">
+    <column name="longvarchar_column">
+        <generator type="pl.kernelpanic.dbmonster.generator.StringGenerator">
+            <property name="minLength" value="100"/>
+            <property name="maxLength" value="2000"/>
+            <property name="nulls" value="10"/>
+        </generator>
+    </column>
+  </table>
+  <table name="numeric_type_table" rows="100">
+  	<column name="numeric_column">
+		<generator type="pl.kernelpanic.dbmonster.generator.NumberGenerator">
+			<property name="minValue" value="0"/>
+			<property name="maxValue" value="1000000"/>
+			<property name="returnedType" value="numeric"/>
+			<property name="scale" value="0"/>
+			<property name="nulls" value="10"/>
+		</generator>
+	</column>
+  </table>
+  <table name="real_type_table" rows="100">
+  	<column name="real_column">
+		<generator type="pl.kernelpanic.dbmonster.generator.NumberGenerator">
+			<property name="minValue" value="0"/>
+			<property name="maxValue" value="1000000"/>
+			<property name="returnedType" value="float"/>
+			<property name="scale" value="5"/>
+			<property name="nulls" value="10"/>
+		</generator>
+	</column>
+  </table>
+  <table name="smallint_type_table" rows="100">
+  	<column name="smallint_column">
+		<generator type="pl.kernelpanic.dbmonster.generator.NumberGenerator">
+			<property name="minValue" value="0"/>
+			<property name="maxValue" value="32767"/>
+			<property name="returnedType" value="integer"/>
+			<property name="scale" value="0"/>
+			<property name="nulls" value="10"/>
+		</generator>
+	</column>
+  </table>
+  <table name="time_type_table" rows="100">
+    <column name="time_column">
+        <generator type="pl.kernelpanic.dbmonster.generator.DateTimeGenerator">
+            <property name="nulls" value="10"/>
+            <property name="returnedType" value="time"/>
+            <property name="startDate" value="1970-02-01 03:30:59.0 GMT"/>
+			<property name="endDate" value="2005-02-01 03:30:59.0 GMT"/>
+        </generator>
+    </column>
+  </table>
+
+  <table name="timestamp_type_table" rows="100">
+    <column name="timestamp_column">
+        <generator type="pl.kernelpanic.dbmonster.generator.DateTimeGenerator">
+            <property name="nulls" value="10"/>
+            <property name="returnedType" value="timestamp"/>
+            <property name="startDate" value="1970-02-01 03:30:59.0 GMT"/>
+			<property name="endDate" value="2005-02-01 03:30:59.0 GMT"/>
+        </generator>
+    </column>
+  </table>
+  <table name="tinyint_type_table" rows="100">
+  	<column name="tinyint_column">
+		<generator type="pl.kernelpanic.dbmonster.generator.NumberGenerator">
+			<property name="minValue" value="0"/>
+			<property name="maxValue" value="255"/>
+			<property name="returnedType" value="integer"/>
+			<property name="scale" value="0"/>
+			<property name="nulls" value="10"/>
+		</generator>
+	</column>
+  </table>
+  <table name="varchar_type_table" rows="100">
+    <column name="varchar_column">
+        <generator type="pl.kernelpanic.dbmonster.generator.StringGenerator">
+            <property name="minLength" value="100"/>
+            <property name="maxLength" value="2000"/>
+            <property name="nulls" value="10"/>
+        </generator>
+    </column>
+  </table>
+</dbmonster-schema>

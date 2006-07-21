@@ -1,0 +1,187 @@
+<?xml version="1.0"?>
+
+<!--
+	This is an Apache Ant build file for Squirrel SQL Client (Weekly Builds)
+	This script's weeekly build target will fetch the latest source from SF
+	(either update or fresh checkout), build the application and installer, run
+	the installer using the autoconfigure option, then launch the installed 
+	application for manual build verification testing.
+-->
+
+<project name="Squirrel-SQL-Client-WeeklyBuild" default="weeklybuild" basedir=".">
+
+	<!-- Suck in the properties from the properties file -->
+	<target name="init">
+		<property file="${basedir}/build-weekly.properties"/>
+		<property name="dist.dir" value="${cvs.dest.dir}/squirrel-sql-dist"/>
+		<property name="install.jar.file" 
+			      value="${dist.dir}/${name}-${appversion}-install.jar"/>
+		
+		<tstamp>
+		    <format property="touch.time" pattern="yyyyMMdd_hhmm"/>
+		</tstamp>		
+		<property name="install.jar.file.dist" 
+		          value="${dist.dir}/${name}-${appversion}-${touch.time}-install.jar"/>
+	</target>
+
+	<target name="test" depends="init"/>
+	
+	<!-- This deletes the files that are in the cvs.dest.dir/project.module/build
+	     directory, then updates the entire source tree, and performs an
+	     "ant clean" -->
+	<target name="cvsupdate" depends="init" if="targettest">
+		<delete includeEmptyDirs="true" quiet="true">
+			<fileset dir="${cvs.dest.dir}/${project.module}/build">
+				<exclude name="CVS/**/*"/>
+			</fileset>
+		</delete>		
+		<cvs command="update -A -C -P -d"
+		     compressionlevel="3"
+			 cvsroot="${project.cvsroot}" 
+			 dest="${cvs.dest.dir}" 
+			 package="${project.module}"
+		/>		
+		<ant antfile="${build.file.dest.dir}/build.xml" 
+			 target="clean"
+			 inheritAll="false"
+		     dir="${cvs.dest.dir}/${project.module}"
+	    />		
+	</target>
+	
+	<!-- this deletes the files underneath cvs.dest.dir, then checks out the 
+	     distribution from the CVS repository -->
+	<target name="cvsco" depends="init" if="targettest">
+		<delete includeEmptyDirs="true" quiet="true">
+			<fileset dir="${cvs.dest.dir}" defaultexcludes="no">
+			</fileset>
+		</delete>
+	    <mkdir dir="${cvs.dest.dir}/${project.module}"/>
+		<cvs reallyquiet="true"
+		     compressionlevel="3"
+			 cvsroot="${project.cvsroot}" 
+			 dest="${cvs.dest.dir}" 
+			 package="${project.module}"
+		/>	
+	</target>
+	
+	<!-- 
+	  * Allows conditional call of a target based on true/false value of some
+	  * property. If propertyvalue is true, then targettocall is called with 
+	  * "targettest" property undefined.
+	  *
+	  * @param propertyvalue the property whose true/false value should 
+	  *                      determine whether or not the targettocall should
+	  *                      execute.
+	  * @param targettocall the target that should be called.  This target 
+	  *                     should have if="targettest" to allow it to be 
+	  *                     turned on or off based on the true/false value of 
+	  *                     targettocall.
+	 -->
+	<target name="testtrue">
+		<condition property="targettest">
+			<istrue value="${propertyvalue}"/>
+		</condition>
+		<antcall target="${targettocall}">
+		</antcall>		
+	</target>	
+
+	<!-- 
+	  * Allows conditional call of a target based on true/false value of some
+	  * property. If propertyvalue is false, then targettocall is called with 
+	  * "targettest" property undefined.
+	  *
+	  * @param propertyvalue the property whose true/false value should 
+	  *                      determine whether or not the targettocall should
+	  *                      execute.
+	  * @param targettocall the target that should be called.  This target 
+	  *                     should have if="targettest" to allow it to be 
+	  *                     turned on or off based on the true/false value of 
+	  *                     targettocall.
+	 -->	
+	<target name="testfalse">
+		<condition property="targettest">
+			<isfalse value="${propertyvalue}"/>
+		</condition>
+		<antcall target="${targettocall}">
+		</antcall>		
+	</target>		
+	
+	<!-- This does the work of checking out or updating the source, building the
+	     distribution and the install jar. -->
+	<target name="weeklybuild" depends="init">
+
+		<antcall target="testtrue">
+			<param name="targettocall" value="cvsco"/>
+			<param name="propertyvalue" value="${delete.dest.dir}"/>
+		</antcall>	
+		
+		<antcall target="testfalse">
+			<param name="targettocall" value="cvsupdate"/>
+			<param name="propertyvalue" value="${delete.dest.dir}"/>
+		</antcall>	
+		
+		<!-- TODO: Get Gerd to replace the main build.xml with this one -->
+		<copy file="build_trunk_plus_plugins.xml" 
+			  tofile="${build.file.dest.dir}/build.xml"/>
+		
+		<mkdir dir="${dist.dir}"/>
+		
+		<echo message="Executing build file ${build.file.dest.dir}/build.xml target=${build.target}" />
+		<ant antfile="${build.file.dest.dir}/build.xml" 
+			 target="${build.target}"
+			 inheritAll="false"
+		     dir="${cvs.dest.dir}/${project.module}"
+	    />
+		
+		<echo message="Creating the installer with izpack" />
+		<java jar="${izpack.home.dir}/lib/compiler.jar"
+	          fork="true"
+	          failonerror="true"
+	          maxmemory="128m"
+	    >
+
+	        <arg value="-HOME"/>
+	        <arg value="${izpack.home.dir}"/>
+		    
+			<arg value="${cvs.dest.dir}/${project.module}/build/${izpack.config.file}"/>
+		    <arg value="-b"/>
+		    <arg value="${cvs.dest.dir}/${project.module}/build"/>
+		    <arg value="-k"/>
+		    <arg value="standard-kunststoff"/>
+		    <arg value="-o"/>
+		    <arg value="${install.jar.file}"/>
+
+		    <classpath>
+		        <pathelement location="${izpack.home.dir}/lib/compiler.jar"/>
+		        <pathelement path="${java.class.path}"/>
+		    </classpath>
+	    </java>				
+
+		<antcall target="runinstaller"/>
+		
+		<antcall target="launchsquirrel"/>
+		
+		<move file="${install.jar.file}" toFile="${install.jar.file.dist}"/>
+
+	</target>
+	
+	<!-- Runs the installer, feeding it the autoconfigure script -->
+	<target name="runinstaller">
+		<delete includeEmptyDirs="true" quiet="true">
+			<fileset dir="${bv.install.dir}" defaultexcludes="no">
+			</fileset>
+		</delete>		
+		<java jar="${install.jar.file}"
+		      fork="true"
+			  failonerror="true"
+			  maxmemory="128m"
+	    >
+			<arg value="${auto.install.file}"/>
+	    </java>
+	</target>
+	
+	<!-- Launches the application for manual build verification testing -->
+	<target name="launchsquirrel">
+		<exec executable="${launch.file}"/>
+	</target>
+</project>

@@ -1,0 +1,121 @@
+
+<body>
+<h2>Configuration</h2>
+<p>
+The default configuration should work fine with most databases.  However, it 
+may be necessary to change some settings to optimize the performance of the 
+copy operation.  Below is a screenshot of the Global Preferences dialog that
+is used to configure the DBCopy plugin.  To access this dialog, choose 
+File -> Global Preferences. Depending upon which plugins you have installed,
+you may have more or less tabs than shown in the screenshot below.		
+<p>
+<center>
+<img src="prefs_top.JPG">
+</center>
+<hr>
+<center>
+<img src="prefs_bottom.JPG">
+</center>
+<p>
+The following is a description of what each configuration item does: <br>
+<ul>
+    <li> <b>Transfer Options</b> </li>
+    <p>
+    <ul> 
+        <li> <b>Use truncate command instead of delete where possible</b> - if checked, and records exist
+             in the destination table, an attempt will be made to issue a "truncate" command instead of
+	     "delete".  This may only be of use when the destination database is Oracle and there are a 
+	     large number of records to be removed from existing tables in the database. The truncate
+	     command avoids the use of rollback segments in Oracle and runs substantially faster.  Delete
+             will be used if truncate command fails, so it is safe to leave this checked.</li>
+	<p>
+	<li> <b>Copy the records from source to destination table</b> - If checked, records from the source
+	        database table will be copied to the destination database.  If unchecked, records will be 
+		skipped, but tables will be created.  This is useful for testing the validity of the table
+		definitions created by DBCopy without waiting for all the records to be copied.</li>
+        <ul>
+             <p>
+             <li> <b>ResultSet fetch size</b> - the number of records to be fetched in one trip to the 
+                  database for selects.  A small number should conserve memory and reduce performance.  A
+                  large number should increase performance and memory consumption.</li>
+        </ul>
+	<p>
+        <li> <b>Copy foreign key definitions</b> - if checked, foreign keys for tables being copied 
+                will be created in the destination database.  It is important that the set of tables 
+                being copied do not make reference by foreign key to tables that aren't being copied
+                and don't exist in the destination database.</li>
+        <p>
+        <ul>
+	    <li> <b>Ignore index defs for columns already indexed</b> - some databases don't allow 
+                 multiple indexes to be created using the same column.  If this is enabled, 
+                 an index will be skipped if it uses a column that is covered by another index</li>
+	</ul>
+        <p>
+	<li> <b>Use a file buffer instead of memory for copying BLOBs</b> - </li>
+        <ul>
+	    <p>
+            <li> <b>Copy buffer size</b> - This option is only available when not using a file buffer to 
+	            copy BLOBs. This is the number of bytes to read from the database stream and 
+		    write to the temporary file at one time.</b></li>
+        </ul>
+        <p>
+	<li> <b>Auto-Commit</b> - If checked every SQL statement is committed in it's own transaction. </li>
+        <p>
+	<ul>
+            <li> <b>Commit after creating table</b> - This option is available when Auto-Commit is unchecked.  If checked
+	         a commit will be performed after each table is created, prior to inserting any records.
+		 Some databases (like Firebird) don't allow record insertion to occur in the same transaction that 
+		 the table the records are inserted into is being created.</li>
+	    <p>
+	    <li> <b>Commit count</b> - This option is available when Auto-Commit is unchecked.
+	         How many records to insert before committing the transaction.</li>
+	</ul>
+	<p>
+	<li> <b>Delay time in between copying database objects(ms)</b> - When enabled, this option allows the user
+                to insert a time delay into the copy operation at two different points.  The delay is taken to be 
+                in milliseconds and the points are 1) in between copying tables 2) in between copying records.  A
+                delay of 0 or less is effectively the same as disabling delay time for the insertion point.  This 
+                option can be used to conserve CPU and I/O on the client which is running SQuirreL, and the database
+                server(s).
+        </li>
+	<p>
+        <ul>
+	<li> <b>Tables</b> - delay is inserted between tables.  </li>
+	<p>
+	<li> <b>Records</b> - delay is inserted between tables.  Care should be taken as this will have a greater impact 
+                       for many records.
+	</ul>
+        <p>
+	<li> <b>Write script file containing SQL statements executed</b> - a script file approximating the 
+	     SQL statements issued during the copy operation will be created if this is checked.  Only
+	     statements that actually create database objects or insert records will be added to the file.
+	     The file can be located in the &lt;user.home&gt;/.squirrel-sql/plugins/dbcopy/scripts directory.
+	     The file will be called &lt;source_db_user&gt;_to_&lt;dest_db_user&gt;.sql.  Binary columns are
+	     problematic as there isn't a portable way to insert BLOBs into a database from a script.</li>
+	<p>
+    </ul>
+    <li> <b>Column Type Mapping</b> </li>
+    <p>
+    <ul>
+        <li> <b>Always prompt to choose the Hibernate Dialect for the destination database</b> - If checked, DBCopy plugin
+	        will not attempt to detect the dialect to use for the destination database.  The user will be prompted to
+		choose the dialect.</li>
+	<p>
+	<li> <b>Check column names in copied tables for keywords in destination database</b> - If checked, the list of keywords
+	        from the JDBC driver for the destination database will be consulted to ensure that column names of the source
+		tables to be copied are legal column names in the destination database.  All tables in the copy set will be 
+		checked before any changes are made to the destination database.  The copy operation will be halted if a keyword
+		is detected.  This checking is too aggressive for some databases that report valid column names as keywords (e.g. DB2) 
+		</li>
+	<p>
+	<li> <b>Test column names in copied tables to see if they are valid for the destination database</b> - If checked, this 
+	        will cause a test table to be created in the destination database for every column of every table in the copy set
+		of the source database.  This will slow the copy operation quite a bit, but can be useful for determining why a 
+		copy operation is failing - sometimes the database error gives no hint that an invalid column name appeared in 
+		the create table statement.</li>
+    </ul>
+</ul>
+
+</body>
+
+
