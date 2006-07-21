@@ -1,0 +1,35 @@
+Files that need to change to make the latest DBCopy plugin work with SQuirreL 1.2beta6:
+
+DBCopyPlugin.java
+PasteTableAction.java
+CopyTableCommand.java
+PasteTableCommand.java
+
+The branch to look at for changes to be made is called sqsc1_2beta6
+
+Each new release will need to have a branch tag of the form version-<version>-compat-1_2beta6
+
+So release DBCopy-0.22 would have a branch tag of the form version-0_21-compat-1_2beta6
+
+cvs update -A -d -P -C
+
+cvs tag -b version-0_22-compat-1_2beta6
+
+cvs update -r version-0_22-compat-1_2beta6
+
+
+The cvs command to merge the changes from the branch in the current version of DBCopyPlugin.java is:
+
+cvs update -j 1.27 -j 1.27.2.1 DBCopyPlugin.java
+
+The cvs command to merge the changes from the branch in the current version of PasteTableAction.java is:
+
+cvs update -j 1.5 -j 1.5.2.1 PasteTableAction.java
+
+The cvs command to merge the changes from the branch in the current version of CopyTableCommand.java is:
+
+cvs update -j 1.3 -j 1.3.10.1 CopyTableCommand.java
+
+The cvs command to merge the changes from the branch in the current version of PasteTableCommand.java is:
+
+cvs update -j 1.5 -j 1.5.8.1 PasteTableCommand.java

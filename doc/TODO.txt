@@ -1,0 +1,25 @@
+
+Tasks (Not necessarily in priority order)
+
+1. Find a more reliable way to determine which Hibernate dialect to use for 
+   a given JDBC driver (Right now, classname of the driver class is 
+   hard-linked to the Hibernate dialect class).
+   
+2. Allow the user to append records to destination table, if it already has 
+   records (Alternatively, allow user to specify tables are always truncated
+   prior to copying records).
+   
+3. Allow user to override type mappings for table columns with a configuration 
+   dialog.
+   
+4. Provide a way to "undo" the changes made to the destination database session
+   during the copy operation.
+   
+5. Capture the state of the copy operation to allow a user to "continue" when 
+   recovering from a failed copy operation (After they fix the problem themselves
+   let them start copying again from the point where the copy failed).
+
+6. Copy views (if the destination database supports them - MySQL 4.x doesn't)
+
+7. Add rename column feature for table column names in source database that are
+   keywords in the destination database.

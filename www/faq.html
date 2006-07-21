@@ -1,0 +1,218 @@
+<font size="+2">Frequently Asked Questions </font><br> 
+<em>(Ok, no one has asked, but I figured I should write them down anyway ;)</em>
+<p>
+<ol>
+<li><a href="faq.html#xtocid1">
+    I get "Copy Failed" when copying to a FireBird database
+    </a> 
+</li>
+<p>
+<li><a href="faq.html#xtocid2">
+    I get an error message stating "Source database table <table_name> has a column defined (<column_name>) that is a <br>
+    reserved word in the destination database. How do I resolve this?
+    </a> 
+</li>
+<p>
+<li><a href="faq.html#xtocid3">
+    How does the DBCopy Plugin determine the column type to use when copying a <br>
+	table to a database session for a different database type when the table <br>
+	isnt already defined.
+    </a>
+</li>
+<p>
+<li><a href="faq.html#xtocid4">
+    I get "Copy Failed" when I attempt to copy to PostgreSQL
+    </a>
+</li>
+<p>
+<li><a href="faq.html#xtocid5">
+    I get "Copy Failed" when I attempt to copy to Axion
+    </a>
+</li>
+<p>
+<li><a href="faq.html#xtocid6">
+	When copying tables from Axion to another database that doesn't already have <br>
+the tables defined I get a "getImportedKeys() is not supported" error message
+	</a>
+</li>
+<p>
+<li><a href="faq.html#xtocid6">
+	When copying tables from Axion to another database that doesn't already have <br> 
+the tables defined I get a "getPrimaryKeys() is not supported" error message
+	</a>
+</li>
+</ol>
+<p>
+<hr>
+<p>
+<b>Q:</b><a name="xtocid1"> I get "Copy Failed" when copying to a FireBird database with the following error message:
+
+<br>
+
+<pre>
+Copy Failed: GDS Exception. 335544569. Dynamic SQL Error
+SQL error code = -204
+Table unknown
+ACCOUNTS
+At line 1, column 13.(SQL Error code = 335544569)
+</pre>
+
+How to address this?
+
+<p>
+
+<B>A:</B> <em>Firebird needs the table definition transaction committed before it will allow
+insert statements to occur.  To fix this, make sure that </em>"commit table transaction
+before inserts" <em> is checked in the Global Preferences section.</em>
+
+<p>
+<hr>
+<p>
+
+<b>Q:</b><a name="xtocid2"> I get an error message stating "Source database table <table_name> has a column 
+defined (<column_name>) that is a reserved word in the destination database. <br> How
+do I resolve this?
+
+<p>
+
+<B>A:</B><em> This feature called "keyword-checking" uses the "keywords" reported by the JDBC driver 
+   to find column names in the source table copy set that cannot be used as column names in the destination
+  database.  However, this is too aggressive in some cases as some databases (like DB2)
+  report keywords that can also be used as column names.  So, now this checking can be
+  disabled. The configuration is available in </em> 
+
+<pre>
+  "File" -> "Global Preferences" -> "DBCopy" -> "Column Type Mapping"
+</pre>
+
+<p>
+<hr>
+<p>
+
+<b>Q:</b><a name="xtocid3"> How does the DBCopy Plugin determine the column type to create when copying a table to a 
+          database session for a different database type when the table isnt already defined.
+<p>
+<b>A:</b><em> See the following data-type mapping 
+<a href="http://dbcopyplugin.sourceforge.net/index.php?page=datatypemappings">table</a>. A future version of DBCopy plugin 
+will allow these mappings to be customized.  Hoewever, currently they are hard-coded.</em>
+
+<p>
+<hr>
+</p>
+
+<b>Q:</b><a name="xtocid4"> I get the following error message when I attempt to copy to PostgreSQL :<br>
+<p>
+<pre>
+Copy Failed: ERROR: current transaction is aborted, command ignored until end of transaction block(SQL Error Code=0)
+</pre>
+<p> 
+And the following stack trace in the squirrel-sql.log
+<pre>
+265625 [Thread-7] ERROR net.sourceforge.squirrel_sql.plugins.dbcopy.CopyExecutor  - handleError: exception=ERROR: current transaction is aborted, commands ignored until end of transaction block
+java.sql.SQLException: ERROR: current transaction is aborted, commands ignored until end of transaction block
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:1471)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:1256)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:175)
+	at org.postgresql.jdbc2.AbstractJdbc2Statement.execute(AbstractJdbc2Statement.java:389)
+	at org.postgresql.jdbc2.AbstractJdbc2Statement.executeWithFlags(AbstractJdbc2Statement.java:314)
+	at org.postgresql.jdbc2.AbstractJdbc2Statement.executeUpdate(AbstractJdbc2Statement.java:264)
+	at net.sourceforge.squirrel_sql.plugins.dbcopy.util.DBUtil.executeUpdate(DBUtil.java:234)
+	at net.sourceforge.squirrel_sql.plugins.dbcopy.CopyExecutor.createTable(CopyExecutor.java:625)
+	at net.sourceforge.squirrel_sql.plugins.dbcopy.CopyExecutor._execute(CopyExecutor.java:155)
+	at net.sourceforge.squirrel_sql.plugins.dbcopy.CopyExecutor.access$000(CopyExecutor.java:53)
+	at net.sourceforge.squirrel_sql.plugins.dbcopy.CopyExecutor$1.run(CopyExecutor.java:116)
+	at java.lang.Thread.run(Unknown Source)
+</pre>
+<p>
+<b>A:</b> <em>PostgreSQL doesn't appear to handle table creation and record insertion well if Auto-Commit is disabled - even 
+when committing after the table is created before records are inserted.  However, if the table already exists, it appears
+to be safe to disable Auto-Commit.  So, ensure that Auto-Commit is enabled when copying to a PostgreSQL database if the table
+definitions need to be created as part of the copy operation.</em>
+
+<p>
+<hr>
+<p>
+<b>Q:</b><a name="xtocid5"> I get the following error message when I attempt to copy to Axion :<br>
+<p>
+<pre>
+Copy Failed: org.axiondb.parser.ParseException: Parse error at line 8, column 9.  Encountered: LINK
+</pre>
+<p> 
+And the following stack trace in the squirrel-sql.log
+<pre>
+java.sql.SQLException: org.axiondb.parser.ParseException: Parse error at line 8, column 9.  Encountered: LINK
+	at org.axiondb.util.ExceptionConverter.convert(ExceptionConverter.java:68)
+	at org.axiondb.jdbc.BaseAxionStatement.parseCommand(BaseAxionStatement.java:153)
+	at org.axiondb.jdbc.AxionStatement.executeUpdate(AxionStatement.java:137)
+	at net.sourceforge.squirrel_sql.plugins.dbcopy.util.DBUtil.executeUpdate(DBUtil.java:234)
+	at net.sourceforge.squirrel_sql.plugins.dbcopy.CopyExecutor.createTable(CopyExecutor.java:629)
+	at net.sourceforge.squirrel_sql.plugins.dbcopy.CopyExecutor._execute(CopyExecutor.java:155)
+	at net.sourceforge.squirrel_sql.plugins.dbcopy.CopyExecutor.access$000(CopyExecutor.java:53)
+	at net.sourceforge.squirrel_sql.plugins.dbcopy.CopyExecutor$1.run(CopyExecutor.java:116)
+	at java.lang.Thread.run(Unknown Source)
+</pre>
+<p>
+<b>A:</b> <em> The word after "Encountered: " probably indicates a column name that is not a valid name for a 
+column in an Axion table.  Rename the column in the source database and try again.  Also, be sure to turn on
+"Test column names in copied tables to see if they are valid for the destination database" in the 
+"Global Preferences : DBCopy" tab</em>
+
+<p>
+<hr>
+<p>
+
+<b>Q:</b><a name="xtocid6"> When copying tables from Axion to another database that doesn't already have 
+the tables defined I get a "getImportedKeys() is not supported" error message:<br>
+<p>
+<pre>
+Copy failed: getImportedKeys() is not supported(SQL Error Code=0)
+</pre>
+<p>
+And the following stack trace in the squirrel-sql.log
+<pre>
+362547 [Thread-12] ERROR net.sourceforge.squirrel_sql.plugins.dbcopy.CopyExecutor  - handleError: exception=getImportedKeys() is not supported
+java.sql.SQLException: getImportedKeys() is not supported
+	at org.axiondb.jdbc.AxionDatabaseMetaData.getImportedKeys(AxionDatabaseMetaData.java:1079)
+	at net.sourceforge.squirrel_sql.plugins.dbcopy.util.DBUtil.getForeignKeySQL(DBUtil.java:166)
+	at net.sourceforge.squirrel_sql.plugins.dbcopy.CopyExecutor.copyConstraints(CopyExecutor.java:601)
+	at net.sourceforge.squirrel_sql.plugins.dbcopy.CopyExecutor._execute(CopyExecutor.java:186)
+	at net.sourceforge.squirrel_sql.plugins.dbcopy.CopyExecutor.access$000(CopyExecutor.java:54)
+	at net.sourceforge.squirrel_sql.plugins.dbcopy.CopyExecutor$1.run(CopyExecutor.java:117)
+	at java.lang.Thread.run(Unknown Source)
+</pre>
+<p>
+<b>A:</b> <em>The Axion JDBC driver doesn't support inspecting it's table's foreign keys.  
+              Turn off "Copy foreign key definitions" in the "Global Preferences : DBCopy" tab.</em>
+			  
+<p>
+<hr>
+<p>
+
+<b>Q:</b><a name="xtocid7"> When copying tables from Axion to another database that doesn't 
+already have the tables defined I get a "getPrimaryKeys() is not supported" error message :<br>
+<p>
+<pre>
+Copy failed: getImportedKeys() is not supported(SQL Error Code=0)
+</pre>
+<p>
+And the following stack trace in the squirrel-sql.log
+<pre>
+637422 [Thread-16] ERROR net.sourceforge.squirrel_sql.plugins.dbcopy.CopyExecutor  - handleError: exception=getPrimaryKeys() is not supported
+java.sql.SQLException: getPrimaryKeys() is not supported
+	at org.axiondb.jdbc.AxionDatabaseMetaData.getPrimaryKeys(AxionDatabaseMetaData.java:906)
+	at net.sourceforge.squirrel_sql.plugins.dbcopy.util.DBUtil.getPKColumnList(DBUtil.java:138)
+	at net.sourceforge.squirrel_sql.plugins.dbcopy.util.DBUtil.getPKColumnString(DBUtil.java:107)
+	at net.sourceforge.squirrel_sql.plugins.dbcopy.util.DBUtil.getCreateTableSql(DBUtil.java:882)
+	at net.sourceforge.squirrel_sql.plugins.dbcopy.CopyExecutor.createTable(CopyExecutor.java:640)
+	at net.sourceforge.squirrel_sql.plugins.dbcopy.CopyExecutor._execute(CopyExecutor.java:156)
+	at net.sourceforge.squirrel_sql.plugins.dbcopy.CopyExecutor.access$000(CopyExecutor.java:54)
+	at net.sourceforge.squirrel_sql.plugins.dbcopy.CopyExecutor$1.run(CopyExecutor.java:117)
+	at java.lang.Thread.run(Unknown Source)
+</pre>
+<p>
+<b>A:</b> <em>The Axion JDBC driver doesn't support inspecting it's table's primary keys.  
+              Turn off "Copy primary key definitions" in the "Global Preferences : DBCopy" tab.</em>
+			  
+<p>
+<hr>
+<p>

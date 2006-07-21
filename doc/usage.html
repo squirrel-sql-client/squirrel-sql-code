@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=windows-1252">
+	<TITLE></TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 1.9.104  (Win32)">
+	<META NAME="CREATED" CONTENT="20050606;22314500">
+	<META NAME="CHANGED" CONTENT="20050623;19543301">
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<P>
+<h2>Usage</h2></P>
+<P STYLE="font-weight: medium">This plugin provides the ability to:</P>
+<UL>
+	<LI><P STYLE="font-weight: medium">Copy database tables between
+	sessions</P>
+</UL>
+<P STYLE="font-weight: medium">There are two new menu items available
+by right-clicking on certain database objects in the object tree. 
+They are &ldquo;Copy Table&rdquo; and &ldquo;Paste Table&rdquo;. 
+They are accessed as follows:</P>
+<OL>
+	<LI><P STYLE="font-weight: medium">Open two session windows (same or
+	different database types)</P>
+	<LI><P STYLE="font-weight: medium">Select a schema/user in the
+	object tree of one session and click on TABLE to expose the tables
+	in that schema. 
+	</P>
+	<LI><P STYLE="font-weight: medium">Select one or more tables in that
+	object tree.</P>
+	<LI><P STYLE="font-weight: medium">Right-click on the hightlighted
+	tables and choose &ldquo;Copy Table&rdquo;.</P>
+
+<P><IMG SRC="copy_small.JPG"><P>
+
+	<LI><P STYLE="font-weight: medium">Bring the other session window
+	into focus and select a schema/user to copy the table(s) into.</P>
+	<LI><P STYLE="font-weight: medium">Right-click on the selection and
+	choose &ldquo;Paste Table&rdquo;</P>
+
+<P><IMG SRC="paste_small.JPG"><P>
+
+	<LI><P STYLE="font-weight: medium">A Progress dialog will be
+	displayed with two bars.  The top bar indicates which records are
+	being copied from the current table.  The bottom bar indicates which
+	table is being copied and the overall progress of the copy
+	operation.</P>
+
+<P><IMG SRC="progress_small.JPG"><P>
+
+	<LI><P STYLE="font-weight: medium">A dialog is then displayed in the
+	event that the copy operation succeeded or failed.</P>
+
+<P><IMG SRC="success_dialog.JPG"><P>
+</OL>
+<P STYLE="font-weight: medium"><BR><BR>
+</P>
+<P><BR><BR>
+</P>
+</BODY>
+</HTML>
