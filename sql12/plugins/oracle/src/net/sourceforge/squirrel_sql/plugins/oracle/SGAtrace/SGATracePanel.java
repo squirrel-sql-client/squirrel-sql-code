@@ -201,8 +201,8 @@ public class SGATracePanel extends JPanel
           tm.addColumn(s_stringMgr.getString("oracle.sortsPerExec"));
 			  // i18n[oracle.diskReadsPerRow=Disk Reads per Row]
           tm.addColumn(s_stringMgr.getString("oracle.diskReadsPerRow"));
-			  // i18n[oracle.buffer getsPerRow=Buffer Gets per Row]
-          tm.addColumn(s_stringMgr.getString("oracle.buffer getsPerRow"));
+			  // i18n[oracle.buffer.getsPerRow=Buffer Gets per Row]
+          tm.addColumn(s_stringMgr.getString("oracle.buffer.getsPerRow"));
           return tm;
         }
 
