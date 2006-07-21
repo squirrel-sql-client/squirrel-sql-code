@@ -49,16 +49,27 @@
 	<!-- Creates the squirrel installer using izpack -->
 	<target name="createinstaller">
 		<echo message="Creating the installer with izpack" />
-		<java jar="${izpack.home.dir}/lib/compiler.jar"
-	          fork="true"
-	          failonerror="true"
-	          maxmemory="128m"
-	    >
 
-	        <arg value="-HOME"/>
-	        <arg value="${izpack.home.dir}"/>
-		    
-			<arg value="${cvs.dest.dir}/${project.module}/build/${izpack.config.file}"/>
+                <copy file="${cvs.dest.dir}/${project.module}/build/snapshot/${izpack.config.file.template}" 
+                      toFile="${cvs.dest.dir}/${project.module}/build/snapshot/${izpack.config.file}">
+                        <filterchain>
+                                <filterreader classname="org.apache.tools.ant.filters.ReplaceTokens">
+                                        <param type="token"
+                                               name="squirrel.version"
+                                               value="${squirrel.version}"/>
+                                </filterreader>
+                        </filterchain>
+                </copy>
+
+		<java jar="${izpack.home.dir}/lib/compiler.jar"
+	              fork="true"
+	              failonerror="true"
+	              maxmemory="128m"
+	        >
+
+	            <arg value="-HOME"/>
+	            <arg value="${izpack.home.dir}"/>
+		    <arg value="${cvs.dest.dir}/${project.module}/build/snapshot/${izpack.config.file}"/>
 		    <arg value="-b"/>
 		    <arg value="${cvs.dest.dir}/${project.module}/build"/>
 		    <arg value="-k"/>
@@ -70,7 +81,7 @@
 		        <pathelement location="${izpack.home.dir}/lib/compiler.jar"/>
 		        <pathelement path="${java.class.path}"/>
 		    </classpath>
-	    </java>					
+	        </java>					
 	</target>
 	
 	<!-- Creates the autoinstall.xml file from the template file 
@@ -105,7 +116,7 @@
 				<exclude name="CVS/**/*"/>
 			</fileset>
 		</delete>		
-		<cvs command="update -A -C -P -d -r ${cvs.tag}"
+		<cvs command="update -A  -P -d -r ${cvs.tag}"
 		     compressionlevel="3"
 			 cvsroot="${project.cvsroot}" 
 			 dest="${cvs.dest.dir}" 
