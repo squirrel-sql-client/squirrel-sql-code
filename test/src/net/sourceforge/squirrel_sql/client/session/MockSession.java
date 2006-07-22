@@ -25,20 +25,20 @@ import javax.swing.JComponent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.MockApplication;
+import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
-import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.MockSQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.MockMessageHandler;
 import net.sourceforge.squirrel_sql.mo.sql.MockDatabaseMetaData;
@@ -47,7 +47,8 @@ import com.mockobjects.sql.MockConnection2;
 
 public class MockSession implements ISession {
 
-    MockSQLAlias sqlAlias = null;
+    ISQLAliasExt sqlAlias = null;
+    ISQLDriver sqlDriver = null;
     SQLConnection con = null;
     MockConnection2 mcon = null;
     MockDatabaseMetaData mdata = null;
@@ -55,8 +56,10 @@ public class MockSession implements ISession {
     SessionProperties props = null;
     IMessageHandler messageHandler = null;
     
+    
     public MockSession() {
         sqlAlias = new MockSQLAlias();
+        sqlDriver = new SQLDriver();
         app = new MockApplication();
         mcon = new MockConnection2();
         mdata = new MockDatabaseMetaData();
@@ -156,6 +159,9 @@ public class MockSession implements ISession {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.client.session.ISession#getSchemaInfo()
+     */
     public SchemaInfo getSchemaInfo() {
         // TODO Auto-generated method stub
         return null;
