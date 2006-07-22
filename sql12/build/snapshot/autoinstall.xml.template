@@ -16,6 +16,7 @@
             <pack index="6"/>
             <pack index="7"/>
             <pack index="8"/>
+	    <pack index="9"/>
         </selected>
     </com.izforge.izpack.panels.PacksPanel>
     <com.izforge.izpack.panels.InstallPanel/>
