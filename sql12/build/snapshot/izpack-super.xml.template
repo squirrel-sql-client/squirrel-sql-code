@@ -126,7 +126,7 @@
 			<file targetdir="$INSTALL_PATH/plugins"
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/dbcopy/lib/hibernate3.jar" />
                         <file targetdir="$INSTALL_PATH/plugins"
-                                  src="../../squirrel-sql-dist/squirrel-sql/plugins/oracle/dist/dbcopy"/>
+                                  src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/dbcopy"/>
                 </pack>
 
 		<pack required="no" preselected="no" name="Optional Plugin - Firebird ">
