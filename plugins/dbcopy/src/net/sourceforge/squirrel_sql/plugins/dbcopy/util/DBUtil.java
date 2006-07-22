@@ -48,7 +48,6 @@ import java.util.List;
 import java.util.Vector;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
@@ -1077,11 +1076,7 @@ public class DBUtil extends I18NBaseObject {
      * @return
      */
     public static boolean isKeyword(ISession session, String data) {
-        SchemaInfo info = session.getSchemaInfo();
-        if (info.isKeyword(data)) {
-            return true;
-        }
-        return false;
+        return session.getSchemaInfo().isKeyword(data);
     }
     
     /**
