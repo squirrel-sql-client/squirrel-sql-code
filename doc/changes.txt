@@ -1,6 +1,11 @@
 DBCopy Change Log
 =================
 
+0.24 (??/??/????)
+====
+
+- Fixed bug #1468056 (Missing i18n string argument)
+
 0.23 (04/07/2006)
 ====
 
