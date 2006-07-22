@@ -18,8 +18,6 @@
  */
 package net.sourceforge.squirrel_sql.plugins.dbcopy.dialects;
 
-import java.sql.Types;
-
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
 /**
@@ -124,4 +122,29 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect
     public String getDisplayName() {
         return "Informix";
     }
+    
+    /**
+     * Returns boolean value indicating whether or not this dialect supports the
+     * specified database product/version.
+     * 
+     * @param databaseProductName the name of the database as reported by 
+     * 							  DatabaseMetaData.getDatabaseProductName()
+     * @param databaseProductVersion the version of the database as reported by
+     *                              DatabaseMetaData.getDatabaseProductVersion()
+     * @return true if this dialect can be used for the specified product name
+     *              and version; false otherwise.
+     */
+    public boolean supportsProduct(String databaseProductName, 
+								   String databaseProductVersion) 
+	{
+    	if (databaseProductName == null) {
+    		return false;
+    	}
+    	if (databaseProductName.trim().startsWith("Informix")) {
+    		// We don't yet have the need to discriminate by version.
+    		return true;
+    	}
+		return false;
+	}    
+    
 }

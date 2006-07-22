@@ -18,19 +18,22 @@
  */
 package net.sourceforge.squirrel_sql.plugins.dbcopy.dialects;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.DBCopyPreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.PreferencesManager;
@@ -45,6 +48,10 @@ public class DialectFactory {
     
     /** this is used to indicate that the sesion is being copied to */
     public static final int DEST_TYPE = 1;
+    
+    /** Logger for this class. */
+    private final static ILogger s_log = 
+        LoggerController.createLogger(DialectFactory.class);  
     
     private static final AxionDialect axionDialect = new AxionDialect();
     
@@ -140,92 +147,92 @@ public class DialectFactory {
     private static HashMap sessionDialectMap = new HashMap();
     
     public static boolean isAxionSession(ISession session) {
-        return testDriverName(session, prefs.getAxionDriverClass())
+        return dialectSupportsProduct(session, axionDialect)
                 || testSessionDialect(session, AxionDialect.class);
     }
     
     public static boolean isDaffodilSession(ISession session) {
-        return testDriverName(session, prefs.getDaffodilDriverClass())
+        return dialectSupportsProduct(session, daffodilDialect)
                 || testSessionDialect(session, DaffodilDialect.class);
     }
     
     public static boolean isDB2Session(ISession session) {
-        return testDriverName(session, prefs.getDb2DriverClass())
+        return dialectSupportsProduct(session, db2Dialect)
                 || testSessionDialect(session, DB2Dialect.class);
     }
 
     public static boolean isDerbySession(ISession session) {
-        return testDriverName(session, prefs.getDerbyDriverClass())
+        return dialectSupportsProduct(session, derbyDialect)
                 || testSessionDialect(session, DerbyDialect.class);
     }    
     
     public static boolean isFirebirdSession(ISession session) {
-        return testDriverName(session, prefs.getFirebirdDriverClass())
+        return dialectSupportsProduct(session, firebirdDialect)
                 || testSessionDialect(session, FirebirdDialect.class);
     }
     
     public static boolean isFrontBaseSession(ISession session) {
-        return testDriverName(session, prefs.getFrontbaseDriverClass())
+        return dialectSupportsProduct(session, frontbaseDialect)
                 || testSessionDialect(session, FrontBaseDialect.class);
     }
     
     public static boolean isH2Dialect(ISession session) {
-        return testDriverName(session, prefs.getH2DriverClass())
+        return dialectSupportsProduct(session, h2Dialect)
                 || testSessionDialect(session, H2Dialect.class);
     }
     
     public static boolean isHSQLSession(ISession session) {
-        return testDriverName(session, prefs.getHypersonicDriverClass())
+        return dialectSupportsProduct(session, hsqlDialect)
                 || testSessionDialect(session, HSQLDialect.class);
     }    
     
     public static boolean isIngresSession(ISession session) {
-        return testDriverName(session, prefs.getIngresDriverClass())
+        return dialectSupportsProduct(session, ingresDialect)
                 || testSessionDialect(session, IngresDialect.class);
     }
     
     public static boolean isMaxDBSession(ISession session) {
-        return testDriverName(session, prefs.getMaxDbDriverClass())
+        return dialectSupportsProduct(session, maxDbDialect)
                 || testSessionDialect(session, MAXDBDialect.class);
     }
     
     public static boolean isMcKoiSession(ISession session) {
-        return testDriverName(session, prefs.getMckoiDriverClass())
+        return dialectSupportsProduct(session, mckoiDialect)
                 || testSessionDialect(session, McKoiDialect.class);        
     }
 
     public static boolean isMSSQLServerSession(ISession session) {
-        return testDriverName(session, prefs.getMssqlserverDriverClass())
+        return dialectSupportsProduct(session, sqlserverDialect)
                 || testSessionDialect(session, SQLServerDialect.class);
     }            
     
     public static boolean isMySQLSession(ISession session) {
-        return testDriverName(session, prefs.getMysqlDriverClass())
+        return dialectSupportsProduct(session, mysqlDialect)
                 || testSessionDialect(session, MySQLDialect.class);
     }        
     
     public static boolean isOracleSession(ISession session) {
-        return testDriverName(session, prefs.getOracleDriverClass())
+        return dialectSupportsProduct(session, oracle9iDialect)
                 || testSessionDialect(session, Oracle9iDialect.class);        
     }
     
     public static boolean isPointbase(ISession session) {
-        return testDriverName(session, prefs.getPointbaseDriverClass())
+        return dialectSupportsProduct(session, pointbaseDialect)
                 || testSessionDialect(session, PointbaseDialect.class);        
     }
 
     public static boolean isPostgreSQL(ISession session) {
-        return testDriverName(session, prefs.getPostgresqlDriverClass())
+        return dialectSupportsProduct(session, postgreSQLDialect)
                 || testSessionDialect(session, PostgreSQLDialect.class);        
     }    
     
     public static boolean isProgressSQL(ISession session) {
-        return testDriverName(session, prefs.getProgressDriverClass())
+        return dialectSupportsProduct(session, progressDialect)
                 || testSessionDialect(session, ProgressDialect.class);        
     }
     
     public static boolean isSyBaseSession(ISession session) {
-        return testDriverName(session, prefs.getSybaseDriverClass())
+        return dialectSupportsProduct(session, sybaseDialect)
                 || testSessionDialect(session, SybaseDialect.class);        
     }
     
@@ -240,25 +247,27 @@ public class DialectFactory {
      * @return true if there is a match of any string in the nameToMatch and 
      *              the ISession's driver class name; false otherwise.
      */
-    private static boolean testDriverName(ISession session, String nameToMatch) {
+    private static boolean dialectSupportsProduct(ISession session, 
+    											  HibernateDialect dialect) 
+    {
         boolean result = false;
-        if (session != null && nameToMatch != null) {
-            ISQLDriver driver = session.getDriver();
-            if (driver != null) {
-                String driverClassName = driver.getDriverClassName();
-                if (driverClassName != null) {
-                    String driverClassNameLC = driverClassName.toLowerCase();
-                    StringTokenizer st = new StringTokenizer(nameToMatch);
-                    while (st.hasMoreTokens()) {
-                        String token = st.nextToken();
-                        if (driverClassNameLC.startsWith(token.toLowerCase())) {
-                            result = true;
-                            break;
-                        }
-                    }
-                    
-                }
-            }
+        if (session != null && dialect != null) {
+        	SQLDatabaseMetaData data = session.getSQLConnection().getSQLMetaData();
+        	try {
+        		String productName = data.getDatabaseProductName();
+        		String productVersion = data.getDatabaseProductVersion();
+        		result = dialect.supportsProduct(productName, productVersion);
+        	} catch (Exception e) {
+        		s_log.error(
+        		    "Encountered unexpected exception while attempting to " +
+        		    "determine database product name/version: "+e.getMessage());
+        		if (s_log.isDebugEnabled()) {
+        			StringWriter s = new StringWriter();
+        			PrintWriter p = new PrintWriter(s);
+        			e.printStackTrace(p);
+        			s_log.debug(s.getBuffer().toString());
+        		}
+        	}
         }
         return result;
     }
