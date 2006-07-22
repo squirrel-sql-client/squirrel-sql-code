@@ -28,10 +28,10 @@ public class H2Dialect extends Dialect implements HibernateDialect {
 
         registerColumnType(Types.BIGINT, "bigint");
         registerColumnType(Types.BINARY, "binary");
-        registerColumnType(Types.BIT, "bit");
+        registerColumnType(Types.BIT, "boolean");
         registerColumnType(Types.BOOLEAN, "boolean");
         registerColumnType(Types.BLOB, "blob");
-        registerColumnType(Types.CHAR, "char($l)");
+        registerColumnType(Types.CHAR, "varchar($l)");
         registerColumnType(Types.CLOB, "clob");
         registerColumnType(Types.DATE, "date");
         registerColumnType(Types.DECIMAL, "decimal($p,$s)");
@@ -339,6 +339,16 @@ public class H2Dialect extends Dialect implements HibernateDialect {
     public int getColumnLength(int columnSize, int dataType) {
         return columnSize;
     }
-    
+ 
+    /**
+     * The string which identifies this dialect in the dialect chooser.
+     * 
+     * @return a descriptive name that tells the user what database this dialect
+     *         is design to work with.
+     */
+    public String getDisplayName() {
+        return "H2";
+    }
+
 }
 

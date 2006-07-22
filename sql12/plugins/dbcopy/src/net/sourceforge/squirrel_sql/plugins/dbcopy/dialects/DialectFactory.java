@@ -19,6 +19,7 @@
 package net.sourceforge.squirrel_sql.plugins.dbcopy.dialects;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -110,104 +111,122 @@ public class DialectFactory {
      * an end user 
      */
     static {
-        dbNameDialectMap.put("Axion", axionDialect);
-        dbNameDialectMap.put("DB2", db2Dialect);
+        dbNameDialectMap.put(axionDialect.getDisplayName(), axionDialect);
+        dbNameDialectMap.put(db2Dialect.getDisplayName(), db2Dialect);
         //dbNameDialectMap.put("DB2/390", db2390Dialect);
         //dbNameDialectMap.put("DB2/400", db2400Dialect);
-        dbNameDialectMap.put("Daffodil", daffodilDialect);
-        dbNameDialectMap.put("Derby", derbyDialect);
-        dbNameDialectMap.put("Firebird", firebirdDialect);
-        dbNameDialectMap.put("FrontBase", frontbaseDialect);
-        dbNameDialectMap.put("HyperSonic", hsqlDialect);
-        dbNameDialectMap.put("H2", h2Dialect);
-        dbNameDialectMap.put("Informix", informixDialect);
-        dbNameDialectMap.put("Ingres", ingresDialect);
-        dbNameDialectMap.put("Interbase", interbaseDialect);
-        dbNameDialectMap.put("MaxDB", maxDbDialect);
-        dbNameDialectMap.put("McKoi", mckoiDialect);
-        dbNameDialectMap.put("MS SQLServer", sqlserverDialect);
-        dbNameDialectMap.put("MySQL", mysqlDialect);
-        dbNameDialectMap.put("Oracle", oracle9iDialect);
-        dbNameDialectMap.put("Pointbase", pointbaseDialect);
-        dbNameDialectMap.put("PostgreSQL", postgreSQLDialect);
-        dbNameDialectMap.put("Progress", progressDialect);
-        dbNameDialectMap.put("Sybase", sybaseDialect);
-        dbNameDialectMap.put("TimesTen", timestenDialect);
+        dbNameDialectMap.put(daffodilDialect.getDisplayName(), daffodilDialect);
+        dbNameDialectMap.put(derbyDialect.getDisplayName(), derbyDialect);
+        dbNameDialectMap.put(firebirdDialect.getDisplayName(), firebirdDialect);
+        dbNameDialectMap.put(frontbaseDialect.getDisplayName(), frontbaseDialect);
+        dbNameDialectMap.put(hsqlDialect.getDisplayName(), hsqlDialect);
+        dbNameDialectMap.put(h2Dialect.getDisplayName(), h2Dialect);
+        dbNameDialectMap.put(informixDialect.getDisplayName(), informixDialect);
+        dbNameDialectMap.put(ingresDialect.getDisplayName(), ingresDialect);
+        dbNameDialectMap.put(interbaseDialect.getDisplayName(), interbaseDialect);
+        dbNameDialectMap.put(maxDbDialect.getDisplayName(), maxDbDialect);
+        dbNameDialectMap.put(mckoiDialect.getDisplayName(), mckoiDialect);
+        dbNameDialectMap.put(sqlserverDialect.getDisplayName(), sqlserverDialect);
+        dbNameDialectMap.put(mysqlDialect.getDisplayName(), mysqlDialect);
+        dbNameDialectMap.put(oracle9iDialect.getDisplayName(), oracle9iDialect);
+        dbNameDialectMap.put(pointbaseDialect.getDisplayName(), pointbaseDialect);
+        dbNameDialectMap.put(postgreSQLDialect.getDisplayName(), postgreSQLDialect);
+        dbNameDialectMap.put(progressDialect.getDisplayName(), progressDialect);
+        dbNameDialectMap.put(sybaseDialect.getDisplayName(), sybaseDialect);
+        dbNameDialectMap.put(timestenDialect.getDisplayName(), timestenDialect);
     }
     
     /** cache previous decisions about which dialect to use */
     private static HashMap sessionDialectMap = new HashMap();
     
     public static boolean isAxionSession(ISession session) {
-        return testDriverName(session, prefs.getAxionDriverClass());
+        return testDriverName(session, prefs.getAxionDriverClass())
+                || testSessionDialect(session, AxionDialect.class);
     }
     
     public static boolean isDaffodilSession(ISession session) {
-        return testDriverName(session, prefs.getDaffodilDriverClass());
+        return testDriverName(session, prefs.getDaffodilDriverClass())
+                || testSessionDialect(session, DaffodilDialect.class);
     }
     
     public static boolean isDB2Session(ISession session) {
-        return testDriverName(session, prefs.getDb2DriverClass());
+        return testDriverName(session, prefs.getDb2DriverClass())
+                || testSessionDialect(session, DB2Dialect.class);
     }
 
     public static boolean isDerbySession(ISession session) {
-        return testDriverName(session, prefs.getDerbyDriverClass());
+        return testDriverName(session, prefs.getDerbyDriverClass())
+                || testSessionDialect(session, DerbyDialect.class);
     }    
     
     public static boolean isFirebirdSession(ISession session) {
-        return testDriverName(session, prefs.getFirebirdDriverClass());        
+        return testDriverName(session, prefs.getFirebirdDriverClass())
+                || testSessionDialect(session, FirebirdDialect.class);
     }
     
     public static boolean isFrontBaseSession(ISession session) {
-        return testDriverName(session, prefs.getFrontbaseDriverClass());
+        return testDriverName(session, prefs.getFrontbaseDriverClass())
+                || testSessionDialect(session, FrontBaseDialect.class);
     }
     
     public static boolean isH2Dialect(ISession session) {
-        return testDriverName(session, prefs.getH2DriverClass());
+        return testDriverName(session, prefs.getH2DriverClass())
+                || testSessionDialect(session, H2Dialect.class);
     }
     
     public static boolean isHSQLSession(ISession session) {
-        return testDriverName(session, prefs.getHypersonicDriverClass());
+        return testDriverName(session, prefs.getHypersonicDriverClass())
+                || testSessionDialect(session, HSQLDialect.class);
     }    
     
     public static boolean isIngresSession(ISession session) {
-        return testDriverName(session, prefs.getIngresDriverClass());
+        return testDriverName(session, prefs.getIngresDriverClass())
+                || testSessionDialect(session, IngresDialect.class);
     }
     
     public static boolean isMaxDBSession(ISession session) {
-        return testDriverName(session, prefs.getMaxDbDriverClass());
+        return testDriverName(session, prefs.getMaxDbDriverClass())
+                || testSessionDialect(session, MAXDBDialect.class);
     }
     
     public static boolean isMcKoiSession(ISession session) {
-        return testDriverName(session, prefs.getMckoiDriverClass());
+        return testDriverName(session, prefs.getMckoiDriverClass())
+                || testSessionDialect(session, McKoiDialect.class);        
     }
 
     public static boolean isMSSQLServerSession(ISession session) {
-        return testDriverName(session, prefs.getMssqlserverDriverClass());
+        return testDriverName(session, prefs.getMssqlserverDriverClass())
+                || testSessionDialect(session, SQLServerDialect.class);
     }            
     
     public static boolean isMySQLSession(ISession session) {
-        return testDriverName(session, prefs.getMysqlDriverClass());
+        return testDriverName(session, prefs.getMysqlDriverClass())
+                || testSessionDialect(session, MySQLDialect.class);
     }        
     
     public static boolean isOracleSession(ISession session) {
-        return testDriverName(session, prefs.getOracleDriverClass());
+        return testDriverName(session, prefs.getOracleDriverClass())
+                || testSessionDialect(session, Oracle9iDialect.class);        
     }
     
     public static boolean isPointbase(ISession session) {
-        return testDriverName(session, prefs.getPointbaseDriverClass());
+        return testDriverName(session, prefs.getPointbaseDriverClass())
+                || testSessionDialect(session, PointbaseDialect.class);        
     }
 
     public static boolean isPostgreSQL(ISession session) {
-        return testDriverName(session, prefs.getPostgresqlDriverClass());
+        return testDriverName(session, prefs.getPostgresqlDriverClass())
+                || testSessionDialect(session, PostgreSQLDialect.class);        
     }    
     
     public static boolean isProgressSQL(ISession session) {
-        return testDriverName(session, prefs.getProgressDriverClass());
+        return testDriverName(session, prefs.getProgressDriverClass())
+                || testSessionDialect(session, ProgressDialect.class);        
     }
     
     public static boolean isSyBaseSession(ISession session) {
-        return testDriverName(session, prefs.getSybaseDriverClass());
+        return testDriverName(session, prefs.getSybaseDriverClass())
+                || testSessionDialect(session, SybaseDialect.class);        
     }
     
     /**
@@ -238,6 +257,30 @@ public class DialectFactory {
                         }
                     }
                     
+                }
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * 
+     * @param session
+     * @param dialectClass
+     * @return
+     */
+    private static boolean testSessionDialect(ISession session, 
+                                              Class dialectClass) 
+    {
+        boolean result = false;
+        if (sessionDialectMap.containsKey(session)) {
+            HibernateDialect dialect = 
+                (HibernateDialect)sessionDialectMap.get(session);
+            if (dialect != null) {
+                String sessionDialectClassName = dialect.getClass().getName();
+                String dialectClassName = dialectClass.getName();
+                if (sessionDialectClassName.equals(dialectClassName)) { 
+                    result = true;
                 }
             }
         }
@@ -376,11 +419,22 @@ public class DialectFactory {
      * 
      * @return
      */
-    private static Object[] getDbNames() {
+    public static Object[] getDbNames() {
         Set keyset = dbNameDialectMap.keySet();
         Object[] keys = keyset.toArray();
         Arrays.sort(keys);
         return keys;
+    }
+    
+    /**
+     * Returns an array of HibernateDialect instances, one for each supported 
+     * dialect.
+     * 
+     * @return
+     */
+    public static Object[] getSupportedDialects() {
+        Collection c = dbNameDialectMap.values();
+        return c.toArray();
     }
     
     /**

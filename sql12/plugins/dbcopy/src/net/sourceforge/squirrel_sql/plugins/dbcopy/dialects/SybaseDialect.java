@@ -124,5 +124,15 @@ public class SybaseDialect extends org.hibernate.dialect.SybaseDialect
     public int getColumnLength(int columnSize, int dataType) {
         return columnSize;
     }
+
+    /**
+     * The string which identifies this dialect in the dialect chooser.
+     * 
+     * @return a descriptive name that tells the user what database this dialect
+     *         is design to work with.
+     */
+    public String getDisplayName() {
+        return "Sybase";
+    }    
     
 }

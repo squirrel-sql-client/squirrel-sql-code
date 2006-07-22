@@ -126,4 +126,14 @@ public class SQLServerDialect extends org.hibernate.dialect.SQLServerDialect
         return columnSize;
     }
     
+    /**
+     * The string which identifies this dialect in the dialect chooser.
+     * 
+     * @return a descriptive name that tells the user what database this dialect
+     *         is design to work with.
+     */
+    public String getDisplayName() {
+        return "MS SQLServer";
+    }    
+    
 }
