@@ -150,4 +150,14 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect
         return columnSize;
     }
 
+    /**
+     * The string which identifies this dialect in the dialect chooser.
+     * 
+     * @return a descriptive name that tells the user what database this dialect
+     *         is design to work with.
+     */
+    public String getDisplayName() {
+        return "DB2";
+    }
+
 }

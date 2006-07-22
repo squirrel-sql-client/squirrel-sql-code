@@ -61,6 +61,10 @@ public class Oracle9iDialect extends Oracle9Dialect
         registerColumnType(Types.VARBINARY, "blob");
         registerColumnType(Types.VARCHAR, 4000, "varchar2(4000)");
         registerColumnType(Types.VARCHAR, "clob");
+        // Total Hack!  Type OTHER(1111) can be other types as well?
+        registerColumnType(Types.OTHER, 4000, "varchar2(4000)");
+        registerColumnType(Types.OTHER, "clob");
+        
     }
 
     /* (non-Javadoc)
@@ -129,5 +133,15 @@ public class Oracle9iDialect extends Oracle9Dialect
     public int getColumnLength(int columnSize, int dataType) {
         return columnSize;
     }
+
+    /**
+     * The string which identifies this dialect in the dialect chooser.
+     * 
+     * @return a descriptive name that tells the user what database this dialect
+     *         is design to work with.
+     */
+    public String getDisplayName() {
+        return "Oracle";
+    }    
     
 }
