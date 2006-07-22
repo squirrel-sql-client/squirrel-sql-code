@@ -24,6 +24,7 @@ import java.sql.SQLException;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -110,20 +111,8 @@ public class Compat {
     public static IObjectTreeAPI getIObjectTreeAPI(ISession session, 
                                                    IPlugin plugin) {
         IObjectTreeAPI result = null;
-        Class c = null;
-        
-        // Need to use the interface since the implementation passed in as 
-        // ISession might not be a public class.
-        Class[] classes = session.getClass().getInterfaces();
-        for (int i = 0; i < classes.length; i++) {
-            Class class1 = classes[i];
-            if (class1.getName().endsWith("ISession")) {
-                c = class1;
-            }
-        }
+        Class c = getISessionInterface(session);
         if (c == null) {
-            s_log.error("Failed to find the public interface ISession for " +
-                        " the specified argument session");
             return null;
         }
         Method getObjectTreeAPIMethod = null;
@@ -165,6 +154,53 @@ public class Compat {
     }
     
     /**
+     * Reloads the specified db object using the specified Session.
+     * @param session
+     * @param info
+     */
+    public static void reloadSchema(ISession session, 
+    								IDatabaseObjectInfo info) 
+    {
+        Class c = getISessionInterface(session);
+        if (c == null) {
+            return;
+        }
+        Method[] methods = c.getDeclaredMethods();
+        Object schemaInfoObj = null;
+        for (int i = 0; i < methods.length; i++) {
+            Method method = methods[i];
+            String methodName = method.getName();
+            if (methodName.equals("getSchemaInfo")) {
+            	try {
+            		schemaInfoObj = method.invoke(session, null);
+            	} catch (Exception e) {
+                    s_log.error("Encountered reflection exception when " +
+                            "attempting to invoke method " + methodName +
+                            " of Session", e);
+            	}
+            	break;
+            }
+        }
+        if (schemaInfoObj != null) {
+        	methods = schemaInfoObj.getClass().getDeclaredMethods();
+        	for (int i = 0; i < methods.length; i++) {
+        		Method method = methods[i];
+        		String methodName = method.getName();
+        		if (methodName.equals("reload")) {
+        			try {
+        				method.invoke(schemaInfoObj, info);
+        			} catch (Exception e) {
+                        s_log.error("Encountered reflection exception when " +
+                                "attempting to invoke method " + methodName +
+                                " of SchemaInfo", e);        				
+        			}
+        		}
+        	}
+        }
+    	
+    }
+    
+    /**
      * Test to see if the specified className is available using the current 
      * ClassLoader.   
      * 
@@ -182,4 +218,21 @@ public class Compat {
         return result;
     }
     
+    private static Class getISessionInterface(ISession session) {
+        Class result = null;
+    	// Need to use the interface since the implementation passed in as 
+        // ISession might not be a public class.
+        Class[] classes = session.getClass().getInterfaces();
+        for (int i = 0; i < classes.length; i++) {
+            Class class1 = classes[i];
+            if (class1.getName().endsWith("ISession")) {
+                result = class1;
+            }
+        }    	
+        if (result == null) {
+            s_log.error("Failed to find the public interface ISession for " +
+                        " the specified argument session");
+        }
+        return result;
+    }
 }
