@@ -120,11 +120,11 @@
                         <file targetdir="$INSTALL_PATH/plugins"
                                   src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/dbcopy.jar"/>
                         <file targetdir="$INSTALL_PATH/plugins"
-                                  src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/antlr-2.7.5H3.jar"/>
+                                  src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/dbcopy/lib/antlr-2.7.5H3.jar"/>
 			<file targetdir="$INSTALL_PATH/plugins"
-				  src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/commons-logging-1.0.4.jqr" />
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/dbcopy/lib/commons-logging-1.0.4.jqr" />
 			<file targetdir="$INSTALL_PATH/plugins"
-				  src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/hibernate3.jar" />
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/dbcopy/lib/hibernate3.jar" />
                         <file targetdir="$INSTALL_PATH/plugins"
                                   src="../../squirrel-sql-dist/squirrel-sql/plugins/oracle/dist/dbcopy"/>
                 </pack>
