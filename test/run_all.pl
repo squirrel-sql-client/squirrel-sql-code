@@ -11,12 +11,12 @@ open (RESULTS, "> $resultsfile") or
 
 
 @defaultFrom = ('postgres', 'axion', 'db2', 'derby', 'daffodil',
-                'firebird', 'frontbase', 'h2', 'hsql', 'ingres', 'mckoi',
-                'mysql', 'oracle', 'pointbase', 'sqlserver', 'sybase' );
+                'firebird', 'frontbase', 'h2', 'hsql', 'ingres', 'maxdb', 
+                'mckoi', 'mysql', 'oracle', 'pointbase', 'sqlserver');
 
 @defaultTo = ( 'postgres', 'axion', 'db2', 'derby', 'daffodil',
-               'firebird', 'frontbase', 'h2', 'hsql', 'ingres', 'mckoi',
-               'mysql', 'oracle', 'pointbase', 'sqlserver', 'sybase' );
+               'firebird', 'frontbase', 'h2', 'hsql', 'ingres', 'maxdb',
+               'mckoi', 'mysql', 'oracle', 'pointbase', 'sqlserver');
 
 $arg1 = shift (@ARGV);
 $arg2 = shift (@ARGV);
@@ -212,17 +212,16 @@ sub runCopy {
 	#print "CLASSPATH=$classpath\n";
 	$cmd="java -cp $classpath $mainclass $propsfile 2>&1";
 	#print "Running command cmd=$cmd\n";
-	if (!defined $arg1) {
-		open(LOG, "> $logfile");
-	}
+
+	open(LOG, "> $logfile");
+
 	$copytime = '';
 	open(CMDOUT, "$cmd|") or die "Can't run the cmd - \n$cmd \nReason: $!\n";
 	while (<CMDOUT>) {
-		if (! defined $arg1) {
-			print LOG "$_";
-		} else {
+		if (defined $arg1 || defined $arg2) {
 			print "$_";
-		}
+		} 
+		print LOG "$_";
 		if ($_ =~ /Copy\soperation\sfinished\sin\s/) {
 			@parts = split /in\s/, $_;
 			@parts = split /\s/, $parts[1];
@@ -237,9 +236,9 @@ sub runCopy {
 		print "$copytime seconds\n";
 		$copyresulttimes{$from}{$to} = $copytime;
 	}
-	if (!defined $arg1) {
-		close(LOG);
-	}
+	
+	close(LOG);
+	
 }
 
 sub runTests {
