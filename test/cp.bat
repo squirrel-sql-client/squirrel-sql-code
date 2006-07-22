@@ -32,6 +32,7 @@ set FRONTBASE_JAR=C:\tools\FrontBaseJDBC-2.5.2\frontbasejdbc.jar
 set H2_JAR=C:\tools\H2\bin\h2.jar
 set HSQLDB_JAR=C:\tools\hsqldb-1_8_0_2\lib\hsqldb.jar
 set INGRES_JAR=C:\tools\Ingres\ingres\lib\iijdbc.jar
+set MAXDB_JAR=C:\tools\SAP_7.6_JDBC_Driver\sapdbc-7_6_00_16_4753.jar
 set MCKOI_JAR=C:\tools\mckoi1.0.3\mkjdbc.jar
 set MSSQL_JAR=C:\tools\Microsoft_SQL_Server_2005_JDBC_Driver\sqljdbc_1.0\enu\sqljdbc.jar
 set MYSQL_JAR=C:\tools\mysql-connector-java-3.1.8\mysql-connector-java-3.1.8-bin.jar
@@ -41,7 +42,7 @@ set POSTGRES_JAR=C:\tools\PostgreSQL\8.0\jdbc\postgresql-8.0-311.jdbc3.jar
 set SQLSERVER_JAR=C:\tools\Microsoft_SQL_Server_2005_JDBC_Driver\sqljdbc_1.0\enu\sqljdbc.jar
 set SYBASE_JAR=C:\tools\sybase\jConnect-6_0\classes\jconn3.jar;C:\tools\sybase\jConnect-6_0\classes\jTDS3.jar
 
-set CLASSPATH=%DBCOPY_JAR%;%SQUIRREL_JAR%;%DBCOPY_TEST%;%COMMONS_COLLECTIONS%;%COMMONS_PRIMITIVES%;%DBCOPY_HOME%;%DBCOPY_TMP%;%ECLIPSE_CLASSES%;%ORACLE_JAR%;%MSSQL_JAR%;%COMMONS_CLI%;%LOG4J%
+set CLASSPATH=%DBCOPY_JAR%;%SQUIRREL_JAR%;%DBCOPY_TEST%;%COMMONS_COLLECTIONS%;%COMMONS_PRIMITIVES%;%DBCOPY_HOME%;%DBCOPY_TMP%;%ECLIPSE_CLASSES%;%ORACLE_JAR%;%MAXDB_JAR%;%MSSQL_JAR%;%COMMONS_CLI%;%LOG4J%
 set CLASSPATH=%CLASSPATH%;%NANO%;%HIBERNATE%;%ANTLR%;%DB2_JAR%;%COMMONS_LOGGING%;%COMMONS_LOGGING_API%;%POSTGRES_JAR%;%AXION_JAR%
 set CLASSPATH=%CLASSPATH%;%DERBY_JAR%;%FIREBIRD_JAR%;%FRONTBASE_JAR%;%H2_JAR%;%HSQLDB_JAR%;%INGRES_JAR%;%MCKOI_JAR%
 set CLASSPATH=%CLASSPATH%;%MYSQL_JAR%;%POINTBASE_JAR%;%SQLSERVER%;%SYBASE_JAR%;%DAFFODIL_JAR%
