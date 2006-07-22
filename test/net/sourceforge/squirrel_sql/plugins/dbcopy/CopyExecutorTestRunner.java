@@ -22,6 +22,7 @@ import java.util.ResourceBundle;
 
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
+import net.sourceforge.squirrel_sql.client.plugin.MockPlugin;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.DBCopyPreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.PreferencesManager;
 
@@ -50,7 +51,7 @@ public class CopyExecutorTestRunner  {
         prov = provider;
         copyExecutor = new CopyExecutor(prov);
         listener = new MockCopyTableListener();
-        listener.setShowSqlStatements(true);
+        //listener.setShowSqlStatements(true);
         uiCallbacks = new MockUICallbacks();
         copyExecutor.addListener(listener);
         copyExecutor.setPref(uiCallbacks);
