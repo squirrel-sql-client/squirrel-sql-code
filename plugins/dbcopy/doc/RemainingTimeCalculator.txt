@@ -1,0 +1,30 @@
+
+secondsElapsed = 26789
+
+
+hoursRemaining = secondsElapsed / 3600
+               = 26789 / 3600 
+               =    7
+ 
+hoursRemainder = secondsElapsed - ( hoursRemaining * 3600 ) 
+               = 26789 - ( 7 * 3600 ) 
+               = 26789 - 25200
+               =     1589
+
+
+minutesRemaining = hoursRemainder / 60
+                 =     1589       / 60 
+                 =           26
+
+secondsRemaining = hoursRemainder - ( minutesRemaining * 60 ) 
+                 =     1589       - (        26        * 60 )
+                 =     1589       -         1560 
+                 =                29
+
+
+secondsElapsed = (hoursRemaining * 3600) + (minutesRemaining * 60 ) + secondsRemaining
+               = (    7          * 3600) + (     26          * 60 ) +     29
+               =          25200          +            1560          +     29
+               =        26789
+
+
