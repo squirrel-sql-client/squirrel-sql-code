@@ -115,6 +115,20 @@
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/plugins/syntax.jar"/>
 		</pack>
 
+                <pack required="no" preselected="no" name="Optional Plugin - DBCopy">
+                        <description>This optional plugin allows database objects to be copied from one database session to another </description>
+                        <file targetdir="$INSTALL_PATH/plugins"
+                                  src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/dbcopy.jar"/>
+                        <file targetdir="$INSTALL_PATH/plugins"
+                                  src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/antlr-2.7.5H3.jar"/>
+			<file targetdir="$INSTALL_PATH/plugins"
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/commons-logging-1.0.4.jqr
+			<file targetdir="$INSTALL_PATH/plugins"
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/hibernate3.jar
+                        <file targetdir="$INSTALL_PATH/plugins"
+                                  src="../../squirrel-sql-dist/squirrel-sql/plugins/oracle/dist/dbcopy"/>
+                </pack>
+
 		<pack required="no" preselected="no" name="Optional Plugin - Firebird ">
 			<description>This optional plugin adds functionality that is specific to the Firebird DBMS  </description>
 			<file targetdir="$INSTALL_PATH/plugins" 
