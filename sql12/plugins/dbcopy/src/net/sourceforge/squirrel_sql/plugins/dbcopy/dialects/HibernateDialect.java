@@ -154,4 +154,17 @@ public interface HibernateDialect {
      */
     int getColumnLength(int columnSize, int dataType);
     
+    /**
+     * Returns boolean value indicating whether or not this dialect supports the
+     * specified database product/version.
+     * 
+     * @param databaseProductName the name of the database as reported by 
+     * 							  DatabaseMetaData.getDatabaseProductName()
+     * @param databaseProductVersion the version of the database as reported by
+     *                              DatabaseMetaData.getDatabaseProductVersion()
+     * @return true if this dialect can be used for the specified product name
+     *              and version; false otherwise.
+     */
+    boolean supportsProduct(String databaseProductName, 
+    					    String databaseProductVersion);
 }
