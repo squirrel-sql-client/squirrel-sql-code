@@ -118,4 +118,13 @@ public class HSQLDialect extends org.hibernate.dialect.HSQLDialect
         return columnSize;
     }
     
+    /**
+     * The string which identifies this dialect in the dialect chooser.
+     * 
+     * @return a descriptive name that tells the user what database this dialect
+     *         is design to work with.
+     */
+    public String getDisplayName() {
+        return "HyperSonic";
+    }
 }
