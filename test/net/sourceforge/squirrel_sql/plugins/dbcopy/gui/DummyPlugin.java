@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.IOException;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.IAliasPropertiesPanelController;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
@@ -152,5 +154,17 @@ public class DummyPlugin implements IPlugin {
     public String getVersion() {
         return "0.13";
     }
+	public void aliasCopied(SQLAlias source, SQLAlias target) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void aliasRemoved(SQLAlias alias) {
+		// TODO Auto-generated method stub
+		
+	}
+	public IAliasPropertiesPanelController[] getAliasPropertiesPanelControllers(SQLAlias alias) {
+		// TODO Auto-generated method stub
+		return null;
+	}
     
 }
