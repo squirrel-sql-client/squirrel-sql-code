@@ -26,6 +26,7 @@ import javax.swing.Action;
 import javax.swing.JComponent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
@@ -33,13 +34,13 @@ import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SchemaInfo;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
+import net.sourceforge.squirrel_sql.fw.sql.MockSQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
@@ -67,7 +68,7 @@ public class MockSession implements ISession {
         con = new SQLConnection(c, col);
         _props = new SessionProperties();
         schemaInfo = new SchemaInfo(null);
-        schemaInfo.load(this);
+        schemaInfo.initialLoad(this);
     }
     
     public boolean isClosed() {
@@ -90,7 +91,7 @@ public class MockSession implements ISession {
         return driver;
     }
 
-    public ISQLAlias getAlias() {
+    public ISQLAliasExt getAlias() {
         // TODO Auto-generated method stub
         System.err.println("MockSession.getAlias: stub not yet implemented");
         return null;
@@ -269,6 +270,14 @@ public class MockSession implements ISession {
     public void setPluginsfinishedLoading(boolean _finishedLoading) {
         // TODO Auto-generated method stub
         
+    }
+
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.client.session.ISession#confirmClose()
+     */
+    public boolean confirmClose() {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 }
