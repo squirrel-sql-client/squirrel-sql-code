@@ -6,3 +6,7 @@ from information_schema.views v, information_schema.view_table_usage u
 where view_definition is not null
 and v.table_name = u.view_name
 
+# MySQL (5.0+ : MySQL 4.x doesn't support views)
+
+select table_name as view_name, view_definition as view_def from information_schema.views
+
