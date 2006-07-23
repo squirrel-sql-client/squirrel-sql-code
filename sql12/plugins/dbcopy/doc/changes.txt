@@ -6,7 +6,7 @@ DBCopy Change Log
 
 - Fixed bug #1468056 (Missing i18n string argument)
 
-- No longer use class names of the jdbc drive to decide which dialect 
+- No longer use class names of the jdbc driver to decide which dialect 
   to use.  Now we use database product name and version.  This should be
   a more accurate method for determining which dialect to use for source 
   and destination sessions, prompting the user less often.
