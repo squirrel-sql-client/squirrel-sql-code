@@ -395,7 +395,7 @@ public class ConnectionInternalFrame extends BaseInternalFrame
 
 		y += 2;
       _driverPropsBtn.setIcon(_app.getResources().getIcon(SquirrelResources.IImageNames.ALIAS_PROPERTIES));
-      builder.add(_driverPropsBtn, cc.xywh(1, y, 1, 1));
+      builder.add(_driverPropsBtn, cc.xywh(3, y, 1, 1));
 
 		y += 2;
 		builder.addLabel(s_stringMgr.getString("ConnectionInternalFrame.warningcapslock"),

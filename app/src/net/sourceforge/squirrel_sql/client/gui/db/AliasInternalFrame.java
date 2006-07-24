@@ -475,7 +475,7 @@ public class AliasInternalFrame extends BaseInternalFrame
 		pnl.add(_connectAtStartupChk, gbc);
 
 
-      gbc = new GridBagConstraints(0,6,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      gbc = new GridBagConstraints(1,6,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       _aliasPropsBtn.setIcon(_app.getResources().getIcon(SquirrelResources.IImageNames.ALIAS_PROPERTIES));
       pnl.add(_aliasPropsBtn, gbc);
 
