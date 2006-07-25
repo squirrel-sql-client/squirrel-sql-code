@@ -17,6 +17,7 @@ public class TableExportCsvController
    private static final String PREF_KEY_SEPERATOR_TAB = "SquirrelSQL.csvexport.sepearatorTab";
    private static final String PREF_KEY_SEPERATOR_CHAR = "SquirrelSQL.csvexport.sepearatorChar";
    private static final String PREF_KEY_EXPORT_COMPLETE = "SquirrelSQL.csvexport.exportcomplete";
+   private static final String PREF_KEY_USE_GLOBAL_PREFS_FORMATING = "SquirrelSQL.csvexport.useGlobalPrefsFomating";
    private static final String PREF_KEY_EXECUTE_COMMAND = "SquirrelSQL.csvexport.executeCommand";
    private static final String PREF_KEY_COMMAND = "SquirrelSQL.csvexport.commandString";
 
@@ -47,7 +48,7 @@ public class TableExportCsvController
       _dlg.getRootPane().setDefaultButton(_dlg.btnOk);
       installEscapeClose();
 
-      _dlg.setSize(460, 340);
+      _dlg.pack();
 
       GUIUtils.centerWithinParent(_dlg);
 
@@ -249,6 +250,7 @@ public class TableExportCsvController
       Preferences.userRoot().putBoolean(PREF_KEY_SEPERATOR_TAB, _dlg.chkSeparatorTab.isSelected());
       Preferences.userRoot().put(PREF_KEY_SEPERATOR_CHAR, _dlg.txtSeparatorChar.getText());
       Preferences.userRoot().putBoolean(PREF_KEY_EXPORT_COMPLETE, _dlg.radComplete.isSelected());
+      Preferences.userRoot().putBoolean(PREF_KEY_USE_GLOBAL_PREFS_FORMATING, _dlg.radUseGlobalPrefsFormating.isSelected());
       Preferences.userRoot().putBoolean(PREF_KEY_EXECUTE_COMMAND, _dlg.chkExecCommand.isSelected());
       Preferences.userRoot().put(PREF_KEY_COMMAND, _dlg.txtCommand.getText());
    }
@@ -274,6 +276,16 @@ public class TableExportCsvController
       {
          _dlg.radSelection.setSelected(true);
       }
+
+      if(Preferences.userRoot().getBoolean(PREF_KEY_USE_GLOBAL_PREFS_FORMATING, true))
+      {
+         _dlg.radUseGlobalPrefsFormating.setSelected(true);
+      }
+      else
+      {
+         _dlg.radUseDefaultFormating.setSelected(true);
+      }
+
 
       _dlg.chkExecCommand.setSelected(Preferences.userRoot().getBoolean(PREF_KEY_EXECUTE_COMMAND, false));
       onChkExecCommand();
@@ -352,6 +364,11 @@ public class TableExportCsvController
    boolean exportComplete()
    {
       return _dlg.radComplete.isSelected();
+   }
+
+   boolean useGloablPrefsFormatting()
+   {
+      return _dlg.radUseGlobalPrefsFormating.isSelected();
    }
 
    String getCommand()
