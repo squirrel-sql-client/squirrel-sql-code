@@ -5,6 +5,8 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+Export CVS allows to choose whether to use fromating from Global Prefs or default formatting.
+
 Added new optional plugin (DBCopy) to the installer which allows database tables
 and their content to be copied from one session to another inside of SQuirreL
 using Copy/Paste menu items.

@@ -21,6 +21,8 @@ public class TableExportCsvDlg extends JDialog
    JTextField txtSeparatorChar;
    JRadioButton radComplete;
    JRadioButton radSelection;
+   JRadioButton radUseGlobalPrefsFormating;
+   JRadioButton radUseDefaultFormating;
    JCheckBox chkExecCommand;
    JTextField txtCommand;
    JButton btnCommandFile;
@@ -58,21 +60,53 @@ public class TableExportCsvDlg extends JDialog
       gbc = new GridBagConstraints(0, 5, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(15, 5, 5, 5), 0, 0);
       getContentPane().add(getSelelectionPanel(), gbc);
 
+      gbc = new GridBagConstraints(0, 6, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(15, 5, 5, 5), 0, 0);
+      getContentPane().add(getFormatingPanel(), gbc);
 
-      chkExecCommand = new JCheckBox(s_stringMgr.getString("TableExportCsvDlg.executeCommand"));
-      gbc = new GridBagConstraints(0, 6, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(15, 5, 5, 5), 0, 0);
+
       // i18n[TableExportCsvDlg.executeCommand=Execute command (%file will be replaced by export file name)]
+      chkExecCommand = new JCheckBox(s_stringMgr.getString("TableExportCsvDlg.executeCommand"));
+      gbc = new GridBagConstraints(0, 7, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(15, 5, 5, 5), 0, 0);
       getContentPane().add(chkExecCommand, gbc);
 
-      gbc = new GridBagConstraints(0, 7, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 5, 5), 0, 0);
+      gbc = new GridBagConstraints(0, 8, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 5, 5), 0, 0);
       getContentPane().add(getCommandPanel(), gbc);
 
 
-      gbc = new GridBagConstraints(0, 8, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(15, 5, 5, 5), 0, 0);
+      gbc = new GridBagConstraints(0, 9, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(15, 5, 5, 5), 0, 0);
       getContentPane().add(getButtonPanel(), gbc);
 
-      gbc = new GridBagConstraints(0, 9, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0);
+      gbc = new GridBagConstraints(0, 10, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0);
       getContentPane().add(new JPanel(), gbc);
+   }
+
+   private Component getFormatingPanel()
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      // i18n[TableExportCsvDlg.useGlobalPrefsFormating=Use formating as configured in Global Prefs]
+      radUseGlobalPrefsFormating = new JRadioButton(s_stringMgr.getString("TableExportCsvDlg.useGlobalPrefsFormating"));
+      gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 5), 0, 0);
+      ret.add(radUseGlobalPrefsFormating, gbc);
+
+      // i18n[TableExportCsvDlg.useDefaultFormating=Use default formating]
+      radUseDefaultFormating = new JRadioButton(s_stringMgr.getString("TableExportCsvDlg.useDefaultFormating"));
+      gbc = new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
+      ret.add(radUseDefaultFormating, gbc);
+
+      gbc = new GridBagConstraints(1, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
+      ret.add(new JPanel(), gbc);
+
+
+      ButtonGroup bg = new ButtonGroup();
+      bg.add(radUseGlobalPrefsFormating);
+      bg.add(radUseDefaultFormating);
+
+      return ret;
+
+
    }
 
    private Component getButtonPanel()

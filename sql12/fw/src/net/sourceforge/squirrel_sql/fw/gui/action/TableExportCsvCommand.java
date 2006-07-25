@@ -5,6 +5,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 
 import javax.swing.*;
 import java.io.BufferedWriter;
@@ -136,9 +138,23 @@ public class TableExportCsvCommand
          {
             for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
             {
-               Object cellObj = _table.getValueAt(selRows[rowIdx], selCols[colIdx]);
+               Object cellObj;
+               if(ctrl.useGloablPrefsFormatting() && _table.getColumnModel().getColumn(colIdx) instanceof ExtTableColumn)
+               {
+                  ExtTableColumn col = (ExtTableColumn) _table.getColumnModel().getColumn(colIdx);
+                  cellObj = _table.getValueAt(selRows[rowIdx], selCols[colIdx]);
 
+                  if(null != cellObj)
+                  {
+                     cellObj = CellComponentFactory.renderObject(cellObj, col.getColumnDisplayDefinition());
+                  }
+               }
+               else
+               {
+                  cellObj = _table.getValueAt(selRows[rowIdx], selCols[colIdx]);
+               }
                bw.write(getData(separator, cellObj));
+
                if(nbrSelCols -1 > colIdx)
                {
                   bw.write(separator);
