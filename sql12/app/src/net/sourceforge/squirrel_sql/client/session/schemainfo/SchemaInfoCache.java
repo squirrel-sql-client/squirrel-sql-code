@@ -392,16 +392,17 @@ public class SchemaInfoCache implements Serializable
 
                String qn1 = ti.getCatalogName() + "." + ti.getSchemaName() + "." + ti.getSimpleName();
                String qn2 = eci.getCatalog() + "." + eci.getSchema() + "." + eci.getSimpleTableName();
-               if(qn1.equals(qn2))
+               if(new CaseInsensitiveString(qn1).equals(new CaseInsensitiveString(qn2)))
                {
                   j.remove();
                }
 
                CaseInsensitiveString ciColName = new CaseInsensitiveString(eci.getColumnName());
                ArrayList ecisInColumn = (ArrayList) _extColumnInfosByColumnName.get(ciColName);
+
                ecisInColumn.remove(eci);
 
-               if(0 == ecisInColumn.size())
+               if (0 == ecisInColumn.size())
                {
                   _extColumnInfosByColumnName.remove(ciColName);
                }
