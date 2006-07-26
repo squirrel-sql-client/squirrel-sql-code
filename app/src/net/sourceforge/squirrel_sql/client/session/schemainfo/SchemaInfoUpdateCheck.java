@@ -175,6 +175,8 @@ public class SchemaInfoUpdateCheck
 
       if(0 < _updateDatabaseObjectInfos.size()  + _dropTableSimpleNames.size() + _dropProcedureSimpleNames.size())
       {
+
+         _session.getSchemaInfo().fireSchemaInfoUpdate();
          SwingUtilities.invokeLater(new Runnable()
          {
             public void run()

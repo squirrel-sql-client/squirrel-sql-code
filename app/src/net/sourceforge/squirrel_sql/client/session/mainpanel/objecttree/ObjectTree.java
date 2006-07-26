@@ -285,11 +285,11 @@ class ObjectTree extends JTree
     */
 	public void refresh(final boolean reloadSchemaInfo)
 	{
-      _session.getApplication().getThreadPool().addTask(new Runnable()
+      Runnable task = new Runnable()
       {
          public void run()
          {
-            if(reloadSchemaInfo)
+            if (reloadSchemaInfo)
             {
                _session.getSchemaInfo().reloadAll();
             }
@@ -303,7 +303,17 @@ class ObjectTree extends JTree
                }
             });
          }
-      });
+      };
+
+      if(reloadSchemaInfo)
+      {
+         _session.getApplication().getThreadPool().addTask(task);
+      }
+      else
+      {
+         // No need to this in background when SchemaInfo  is not reloaded.
+         task.run();
+      }
    }
 
    private void refreshTree()
