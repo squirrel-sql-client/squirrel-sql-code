@@ -1268,7 +1268,9 @@ public class SchemaInfo
             doReloadAll = true;
          }
 
-         fireSchemaInfoUpdate();
+         // If called here it is called far to often and restoring selection in the
+         // Object tree doesn't work.
+         //fireSchemaInfoUpdate();
       }
       finally
       {
@@ -1288,7 +1290,7 @@ public class SchemaInfo
       }
    }
 
-   private void fireSchemaInfoUpdate()
+   public void fireSchemaInfoUpdate()
    {
       SwingUtilities.invokeLater(new Runnable()
       {
@@ -1335,6 +1337,7 @@ public class SchemaInfo
       }
       //
       ////////////////////////////////////////////////////////////////////////
+      fireSchemaInfoUpdate();
    }
 
    public void refreshCacheForSimpleProcedureName(String simpleProcName)
@@ -1356,6 +1359,7 @@ public class SchemaInfo
       }
       //
       ////////////////////////////////////////////////////////////////////////
+      fireSchemaInfoUpdate();
    }
 
    public void waitTillSchemasAndCatalogsLoaded()
