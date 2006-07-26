@@ -42,6 +42,12 @@ import javax.swing.*;
 
 public class SchemaInfo
 {
+   public static final int TABLE_EXT_NOT_A_TABLE = 0;
+   public static final int TABLE_EXT_COLS_LOADED_IN_THIS_CALL = 1;
+   public static final int TABLE_EXT_COLS_LOADED_BEFORE = 2;
+
+
+
    private static final StringManager s_stringMgr =
       StringManagerFactory.getStringManager(SchemaInfo.class);
 
@@ -604,24 +610,38 @@ public class SchemaInfo
       return isTable(new CaseInsensitiveString(data));
    }
 
+
+   public boolean isTable(CaseInsensitiveString data)
+   {
+      int tableExtRes = isTableExt(data);
+      return TABLE_EXT_COLS_LOADED_IN_THIS_CALL == tableExtRes || TABLE_EXT_COLS_LOADED_BEFORE == tableExtRes;
+
+   }
+
    /**
-    * Retrieve whether the passed string is a table.
+    * Retrieve whether the passed string is a table and wether this table's colums where loaded before this call.
     *
     * @param	keyword		String to check.
     *
     * @return	<TT>true</TT> if a table.
     */
-   public boolean isTable(CaseInsensitiveString data)
+   public int isTableExt(CaseInsensitiveString data)
    {
       if (!_loading && data != null)
       {
          if(_schemaInfoCache.getTableNamesForReadOnly().containsKey(data))
          {
-            loadColumns(data);
-            return true;
+            if (loadColumns(data))
+            {
+               return TABLE_EXT_COLS_LOADED_IN_THIS_CALL;
+            }
+            else
+            {
+               return TABLE_EXT_COLS_LOADED_BEFORE;
+            }
          }
       }
-      return false;
+      return TABLE_EXT_NOT_A_TABLE;
    }
 
 
@@ -1048,13 +1068,17 @@ public class SchemaInfo
       }
    }
 
-   private void loadColumns(final CaseInsensitiveString tableName)
+   /**
+    *
+    * @return true only when the table's columns are loaded within this call.
+    */
+   private boolean loadColumns(final CaseInsensitiveString tableName)
    {
       try
       {
          if(_schemaInfoCache.getExtendedColumnInfosByTableNameForReadOnly().containsKey(tableName))
          {
-            return;
+            return false;
          }
 
 
@@ -1062,7 +1086,7 @@ public class SchemaInfo
          {
             if(_tablesLoadingColsInBackground.containsKey(tableName))
             {
-               return;
+               return false;
             }
 
             // Note: A CaseInsensitiveString can be a mutable string.
@@ -1095,6 +1119,8 @@ public class SchemaInfo
       {
          s_log.error("failed to load table names", th);
       }
+
+      return true;
    }
 
    private void accessDbToLoadColumns(CaseInsensitiveString tableName)

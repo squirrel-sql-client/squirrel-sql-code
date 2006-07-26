@@ -2,9 +2,10 @@ package net.sourceforge.squirrel_sql.plugins.syntax.netbeans;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
-import net.sourceforge.squirrel_sql.client.session.schemainfo.CaseInsensitiveString;
 import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsAdapter;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.CaseInsensitiveString;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import org.netbeans.editor.Syntax;
@@ -20,12 +21,12 @@ import java.util.Vector;
 
 public class SQLSyntax extends Syntax
 {
-	/** Logger for this class. */
-	private static ILogger s_log = LoggerController.createLogger(SQLSyntax.class);
+   /** Logger for this class. */
+   private static ILogger s_log = LoggerController.createLogger(SQLSyntax.class);
 
 
 
-	// Internal states
+   // Internal states
    private static final int ISI_WHITESPACE = 2; // inside white space
    private static final int ISI_LINE_COMMENT = 4; // inside line comment //
    private static final int ISI_BLOCK_COMMENT = 5; // inside block comment /* ... */
@@ -65,14 +66,14 @@ public class SQLSyntax extends Syntax
    private boolean _parsingInitialized;
    private Vector _sqlTokenListeners = new Vector();
 
-	private CaseInsensitiveString _caseInsensitiveStringBuffer = new CaseInsensitiveString();
+   private CaseInsensitiveString _caseInsensitiveStringBuffer = new CaseInsensitiveString();
 
-	public SQLSyntax(ISession sess, NetbeansSQLEditorPane editorPane)
+   public SQLSyntax(ISession sess, NetbeansSQLEditorPane editorPane)
    {
       _sess = sess;
       _editorPane = editorPane;
       tokenContextPath = SQLTokenContext.contextPath;
-	}
+   }
 
    private void initParsing()
    {
@@ -122,7 +123,7 @@ public class SQLSyntax extends Syntax
 
    protected TokenID parseToken()
    {
-		initParsing();
+      initParsing();
 
       char actChar;
 
@@ -954,20 +955,27 @@ public class SQLSyntax extends Syntax
 
    private TokenID matchTable(char[] buffer, int offset, int len)
    {
-		_caseInsensitiveStringBuffer.setCharBuffer(buffer, offset, len);
+      _caseInsensitiveStringBuffer.setCharBuffer(buffer, offset, len);
 
-		// No new here, method is called very often
-		//if(_sess.getSchemaInfo().isTable(s))
+      // No new here, method is called very often
+      //if(_sess.getSchemaInfo().isTable(s))
 
-		if(_sess.getSchemaInfo().isTable(_caseInsensitiveStringBuffer))
+      int tableExtRes = _sess.getSchemaInfo().isTableExt(_caseInsensitiveStringBuffer);
+      if(SchemaInfo.TABLE_EXT_COLS_LOADED_BEFORE == tableExtRes || SchemaInfo.TABLE_EXT_COLS_LOADED_IN_THIS_CALL == tableExtRes)
       {
-			String table = (String) _knownTables.get(_caseInsensitiveStringBuffer);
-			if(null == table)
-			{
-				_editorPane.repaint();
-				table = new String(buffer, offset, len);
-				_knownTables.put(new CaseInsensitiveString(table), table);
-			}
+               
+         // _knownTables is just a cache to prevent creating a new String each time
+         String table = (String) _knownTables.get(_caseInsensitiveStringBuffer);
+         if(null == table)
+         {
+            table = new String(buffer, offset, len);
+            _knownTables.put(new CaseInsensitiveString(table), table);
+         }
+
+         if(SchemaInfo.TABLE_EXT_COLS_LOADED_IN_THIS_CALL == tableExtRes)
+         {
+            _editorPane.repaint();
+         }
 
          fireTableOrViewFound(table);
 
@@ -976,62 +984,62 @@ public class SQLSyntax extends Syntax
       return null;
    }
 
-	private TokenID matchFunction(char[] buffer, int offset, int len)
-	{
-		_caseInsensitiveStringBuffer.setCharBuffer(buffer, offset, len);
+   private TokenID matchFunction(char[] buffer, int offset, int len)
+   {
+      _caseInsensitiveStringBuffer.setCharBuffer(buffer, offset, len);
 
 
-		if(_sess.getSchemaInfo().isFunction(_caseInsensitiveStringBuffer))
+      if(_sess.getSchemaInfo().isFunction(_caseInsensitiveStringBuffer))
       {
          return SQLTokenContext.FUNCTION;
       }
-		if(_sess.getSchemaInfo().isProcedure(_caseInsensitiveStringBuffer))
+      if(_sess.getSchemaInfo().isProcedure(_caseInsensitiveStringBuffer))
       {
          return SQLTokenContext.FUNCTION;
       }
 
 
       return null;
-	}
+   }
 
-	private TokenID matchDataType(char[] buffer, int offset, int len)
-	{
-		_caseInsensitiveStringBuffer.setCharBuffer(buffer, offset, len);
+   private TokenID matchDataType(char[] buffer, int offset, int len)
+   {
+      _caseInsensitiveStringBuffer.setCharBuffer(buffer, offset, len);
 
 
-		if(_sess.getSchemaInfo().isDataType(_caseInsensitiveStringBuffer))
+      if(_sess.getSchemaInfo().isDataType(_caseInsensitiveStringBuffer))
       {
          return SQLTokenContext.DATA_TYPE;
       }
       return null;
-	}
+   }
 
-	private TokenID matchStatementSeparator(char[] buffer, int offset, int len)
-	{
-		_caseInsensitiveStringBuffer.setCharBuffer(buffer, offset, len);
+   private TokenID matchStatementSeparator(char[] buffer, int offset, int len)
+   {
+      _caseInsensitiveStringBuffer.setCharBuffer(buffer, offset, len);
 
-		String statSep = _sess.getProperties().getSQLStatementSeparator();
+      String statSep = _sess.getProperties().getSQLStatementSeparator();
 
-		if(statSep.length() != len)
-		{
-			return null;
-		}
+      if(statSep.length() != len)
+      {
+         return null;
+      }
 
-		// no new here, method is called very often.
-		for(int i=0; i < statSep.length(); ++i)
-		{
-			if(buffer[offset +i] != statSep.charAt(i))
-			{
-				return null;
-			}
-		}
+      // no new here, method is called very often.
+      for(int i=0; i < statSep.length(); ++i)
+      {
+         if(buffer[offset +i] != statSep.charAt(i))
+         {
+            return null;
+         }
+      }
 
       return SQLTokenContext.STATEMENT_SEPARATOR;
-	}
+   }
 
 
 
-	private void fireTableOrViewFound(String tableOrViewName)
+   private void fireTableOrViewFound(String tableOrViewName)
    {
       for (int i = 0; i < _sqlTokenListeners.size(); i++)
       {
@@ -1043,12 +1051,12 @@ public class SQLSyntax extends Syntax
 
    private TokenID matchColumn(char[] buffer, int offset, int len)
    {
-		// No new here, method is called very often
-		//String s = new String(buffer, offset, len);
+      // No new here, method is called very often
+      //String s = new String(buffer, offset, len);
 
-		_caseInsensitiveStringBuffer.setCharBuffer(buffer, offset, len);
+      _caseInsensitiveStringBuffer.setCharBuffer(buffer, offset, len);
 
-		if(_sess.getSchemaInfo().isColumn(_caseInsensitiveStringBuffer))
+      if(_sess.getSchemaInfo().isColumn(_caseInsensitiveStringBuffer))
       {
          return SQLTokenContext.COLUMN;
       }
@@ -1058,10 +1066,10 @@ public class SQLSyntax extends Syntax
 
    private TokenID matchKeyword(char[] buffer, int offset, int len)
    {
-		// No new here, method is called very often
-		// String s = new String(buffer, offset, len);
+      // No new here, method is called very often
+      // String s = new String(buffer, offset, len);
 
-		_caseInsensitiveStringBuffer.setCharBuffer(buffer, offset, len);
+      _caseInsensitiveStringBuffer.setCharBuffer(buffer, offset, len);
       if(_sess.getSchemaInfo().isKeyword(_caseInsensitiveStringBuffer))
       {
          return SQLTokenContext.PACKAGE;
