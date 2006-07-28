@@ -118,7 +118,7 @@ public class DBCopyPlugin extends DefaultSessionPlugin
      * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getVersion()
      */
     public String getVersion() {
-        return "0.24";
+        return "0.25";
     }
 
     /**
@@ -223,7 +223,11 @@ public class DBCopyPlugin extends DefaultSessionPlugin
     }
     
     private void addToPopup(IObjectTreeAPI api, ActionCollection coll) {
-        // Copy action object tree types
+
+        api.addToPopup(DatabaseObjectType.TABLE_TYPE_DBO,
+ 			           coll.get(CopyTableAction.class));
+    	
+    	// Copy action object tree types
         api.addToPopup(DatabaseObjectType.TABLE, 
                        coll.get(CopyTableAction.class));
                           
@@ -236,7 +240,8 @@ public class DBCopyPlugin extends DefaultSessionPlugin
                        coll.get(PasteTableAction.class));      
         
         api.addToPopup(DatabaseObjectType.SESSION, 
-                       coll.get(PasteTableAction.class));        
+                       coll.get(PasteTableAction.class));
+        
     }
         
     private class DBCopyPluginResources extends PluginResources {
