@@ -21,7 +21,9 @@ package net.sourceforge.squirrel_sql.plugins.dbcopy.commands;
 
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.DBCopyPlugin;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.util.Compat;
@@ -57,6 +59,17 @@ public class CopyTableCommand implements ICommand
         IObjectTreeAPI api = Compat.getIObjectTreeAPI(_session, _plugin);
         if (api != null) {
             IDatabaseObjectInfo[] dbObjs = api.getSelectedDatabaseObjects();
+            if (dbObjs[0].getDatabaseObjectType() == DatabaseObjectType.TABLE_TYPE_DBO) {
+            	String catalog = dbObjs[0].getCatalogName();
+            	String schema = dbObjs[0].getSchemaName();
+            	System.out.println("catalog="+catalog);
+            	System.out.println("schema="+schema);
+            	dbObjs = _session.getSchemaInfo().getITableInfos(catalog, schema);
+            	for (int i = 0; i < dbObjs.length; i++) {
+            		ITableInfo info = (ITableInfo)dbObjs[i];
+					System.out.println("dbObj["+i+"] = "+info.getSimpleName());
+				}
+            }
             _plugin.setCopySourceSession(_session);
             _plugin.setSelectedDatabaseObjects(dbObjs);
             _plugin.setPasteMenuEnabled(true);
