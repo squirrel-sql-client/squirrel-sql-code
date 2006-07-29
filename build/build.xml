@@ -99,7 +99,8 @@
 	No parameters.
 	==================================================================
 	-->
-	<target name="compile_fw" depends="setup">
+	<target name="compile_fw" depends="setup"
+		    description="Compiles the framework classes that the app depends on">
 		<echo message="---------------- Framework ----------------"/>
 		<javac	srcdir="fw/src"
 				destdir="${core_obj_dir}"
@@ -146,7 +147,8 @@
 	No parameters.
 	==================================================================
 	-->
-	<target name="compile_app" depends="compile_fw">
+	<target name="compile_app" depends="compile_fw"
+		    description="Compiles the application but doesn't compile any plugins">
 		<echo message="---------------- ${name} ----------------"/>
 		<javac	srcdir="app/src"
 				destdir="${core_obj_dir}"
@@ -247,7 +249,8 @@
 	No parameters.
 	==================================================================
 	-->
-	<target name="compile_plugins" depends="compile_app">
+	<target name="compile_plugins" depends="compile_app"
+			description="Compiles all configured plugins (see build.xml)">
 
 		<antcall target="build_plugin">
 			<param name="p_internal_name" value="codecompletion"/>
