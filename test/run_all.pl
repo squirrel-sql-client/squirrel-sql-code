@@ -1,3 +1,4 @@
+#! /usr/bin/perl
 
 use Benchmark;
 use File::Spec::Functions;
@@ -10,13 +11,19 @@ open (RESULTS, "> $resultsfile") or
 	die "Couldn't open results file ($resultsfile) for writing: $!\n";
 
 
-@defaultFrom = ('postgres', 'axion', 'db2', 'derby', 'daffodil',
-                'firebird', 'frontbase', 'h2', 'hsql', 'ingres', 'maxdb', 
-                'mckoi', 'mysql', 'oracle', 'pointbase', 'sqlserver');
+#@defaultFrom = ('postgres', 'axion', 'db2', 'derby', 'daffodil',
+#                'firebird', 'frontbase', 'h2', 'hsql', 'ingres', 'maxdb', 
+#                'mckoi', 'mysql', 'oracle', 'pointbase', 'sqlserver');
 
-@defaultTo = ( 'postgres', 'axion', 'db2', 'derby', 'daffodil',
-               'firebird', 'frontbase', 'h2', 'hsql', 'ingres', 'maxdb',
-               'mckoi', 'mysql', 'oracle', 'pointbase', 'sqlserver');
+@defaultFrom = ('postgres', 'axion', 'db2', 'derby', 
+                'firebird', 'h2', 'mysql', 'oracle');
+
+#@defaultTo = ( 'postgres', 'axion', 'db2', 'derby', 'daffodil',
+#               'firebird', 'frontbase', 'h2', 'hsql', 'ingres', 'maxdb',
+#               'mckoi', 'mysql', 'oracle', 'pointbase', 'sqlserver');
+
+@defaultTo = ( 'postgres', 'axion', 'db2', 'derby',
+                'firebird', 'h2', 'mysql', 'oracle');
 
 $arg1 = shift (@ARGV);
 $arg2 = shift (@ARGV);
@@ -63,6 +70,8 @@ $mainclass = 'net.sourceforge.squirrel_sql.plugins.dbcopy.CopyExecutorTestRunner
 
 $classpath = buildClasspath();
 
+print "Using CLASSPATH=$classpath\n";
+
 #$ENV{CLASSPATH}=$classpath;
 
 ####################
@@ -83,21 +92,27 @@ print "The script total run time was:",timestr($td),"\n";
 # routines below
 
 sub buildClasspath {
-	open(FILE, 'cp.bat');
+    if ($^O =~ /linux/) {
+        print "Opening cp.conf.unix\n";
+        open(FILE, 'cp.conf.unix');
+        $pathsep = ":";  
+1   } else {
+        open(FILE, 'cp.conf');    
+        $pathsep = ";";
+    }
 	@lines = <FILE>;
 	close(FILE);
-	my $returnval;
 	foreach $line (@lines) {
-		next if $line =~ /^rem/;
-		next if $line =~ /CLASSPATH/;
-		if ($line =~ /^set/) {
-			($set, $keyvalue) = split /\s/, $line;
-			($key, $value) = split /\=/, $keyvalue;
-			$returnval .= $value . ';';
-		}
+		next if $line =~ /^#/;		
+        next if $line =~ /^$/;
+        $value = $line;
+        $value =~ s/\n//;
+        push @resultarr, $value;
 	}
-	print "Using CLASSPATH=$returnval\n";
-	return $returnval;
+	#print "Using CLASSPATH = | $result |\n";
+	$cpath = join ':', @resultarr;
+    print "cpath= $cpath\n";
+    return $cpath;
 }
 
 sub createPropsFile {
