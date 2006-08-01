@@ -96,7 +96,8 @@ sub buildClasspath {
         print "Opening cp.conf.unix\n";
         open(FILE, 'cp.conf.unix');
         $pathsep = ":";  
-1   } else {
+    } else {
+        print "Opening cp.conf\n";    
         open(FILE, 'cp.conf');    
         $pathsep = ";";
     }
@@ -109,9 +110,8 @@ sub buildClasspath {
         $value =~ s/\n//;
         push @resultarr, $value;
 	}
-	#print "Using CLASSPATH = | $result |\n";
-	$cpath = join ':', @resultarr;
-    print "cpath= $cpath\n";
+	$cpath = join $pathsep, @resultarr;
+    #print "cpath= $cpath\n";
     return $cpath;
 }
 
