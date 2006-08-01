@@ -1,0 +1,80 @@
+
+# DBCopy plugin
+/usr/local/squirrel/plugins/dbcopy.jar
+/usr/local/squirrel/plugins/dbcopy/lib/antlr-2.7.5H3.jar
+/usr/local/squirrel/plugins/dbcopy/lib/commons-logging-1.0.4.jar
+/usr/local/squirrel/plugins/dbcopy/lib/hibernate3.jar
+
+# SQuirreL
+/usr/local/squirrel
+/usr/local/squirrel/squirrel-sql.jar
+/usr/local/squirrel/lib/commons-cli.jar
+/usr/local/squirrel/lib/forms.jar
+/usr/local/squirrel/lib/fw.jar
+/usr/local/squirrel/lib/nanoxml-2.1.jar
+
+# JUnit test classes
+/home/manningr/projects/squirrel_snapshots/sql12/eclipse-classes
+
+# Axion
+/opt/axion/bin/axion-1.0-M3-dev.jar
+/opt/axion/lib/commons-collections.jar
+/opt/axion/lib/commons-primitives.jar
+/opt/axion/lib/commons-logging.jar
+/opt/axion/lib/commons-codec.jar
+/opt/axion/lib/log4j-client.jar
+/opt/axion/lib/log4j.jar
+
+# Daffodil
+#C:\tools\OneDollarDB4_0\lib\DaffodilDB_Client.jar
+
+# Derby
+/opt/derby/lib/derbyclient.jar
+
+# DB2
+/opt/db2/V9.0/java/db2jcc.jar
+/opt/db2/V9.0/java/db2jcc_license_cu.jar
+
+# Firebird
+/opt/firebird/jdbc/jaybird-full-2.0.1.jar
+/opt/firebird/jdbc/mini-j2ee.jar
+
+# Frontbase
+#C:\tools\FrontBaseJManager0_505\frontbasejdbc.jar
+#C:\tools\FrontBaseJDBC-2.5.2\frontbasejdbc.jar
+
+# H2
+/opt/h2/bin/h2.jar
+
+# HSQL
+/opt/hsqldb/lib/hsqldb.jar
+
+# Ingres
+/opt/Ingres/IngresII/ingres/lib/iijdbc.jar
+
+# MaxDB
+#C:\tools\SAP_7.6_JDBC_Driver\sapdbc-7_6_00_16_4753.jar
+
+# McKoi
+#C:\tools\mckoi1.0.3\mkjdbc.jar
+
+# MS - SQLServer
+#C:\tools\Microsoft_SQL_Server_2005_JDBC_Driver\sqljdbc_1.0\enu\sqljdbc.jar
+
+# MySQL
+/usr/local/jdbc/MySQL/mysql-connector-java-3.1.8-bin.jar
+
+# Oracle
+/usr/local/jdbc/Oracle/ojdbc14.jar
+
+# Pointbase
+#C:\bea\weblogic81\common\eval\pointbase\lib\pbclient44.jar
+
+# PostgreSQL
+/usr/local/jdbc/PostgreSQL/postgresql-8.0-311.jdbc3.jar
+
+# Sybase
+#C:\tools\sybase\jConnect-6_0\classes\jconn3.jar;C:\tools\sybase\jConnect-6_0\classes\jTDS3.jar
+
+
+
