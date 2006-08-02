@@ -22,8 +22,6 @@ import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 
-import net.sourceforge.squirrel_sql.client.FontInfoStore;
-import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.WindowManager;
 import net.sourceforge.squirrel_sql.client.gui.db.DataCache;
@@ -33,10 +31,13 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
+import net.sourceforge.squirrel_sql.client.session.MockSQLEntryPanelFactory;
+import net.sourceforge.squirrel_sql.client.session.MockSessionManager;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.MockMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 
 public class MockApplication implements IApplication {
@@ -46,6 +47,11 @@ public class MockApplication implements IApplication {
     ActionCollection actions = null;
     SquirrelResources resource = null;
     SquirrelPreferences prefs = null;
+    SQLHistory history = null;
+    MockSQLEntryPanelFactory sqlEntryPanelFactory = null;
+    IMessageHandler messageHandler = null;
+    MockSessionManager sessionHandler = null;
+    FontInfoStore fontInfoStore = null;
     
     public MockApplication() {
         resource = 
@@ -54,10 +60,20 @@ public class MockApplication implements IApplication {
         threadPool = new TaskThreadPool();
         pluginManager = new PluginManager(this);
         actions = new ActionCollection(this);
+        history = new SQLHistory();
+        sqlEntryPanelFactory = new MockSQLEntryPanelFactory();
+        messageHandler = new MockMessageHandler();
+        sessionHandler = new MockSessionManager(this);
+        fontInfoStore = new FontInfoStore();
+    }
+    
+    public MockSessionManager getMockSessionManager() {
+    	return sessionHandler;
     }
     
     public IPlugin getDummyAppPlugin() {
         // TODO Auto-generated method stub
+    	System.err.println("MockApplication.getDummyAppPlugin: stub not yet implemented");
         return null;
     }
 
@@ -67,6 +83,7 @@ public class MockApplication implements IApplication {
 
     public WindowManager getWindowManager() {
         // TODO Auto-generated method stub
+    	System.err.println("MockApplication.getWindowManager: stub not yet implemented");    	
         return null;
     }
 
@@ -76,11 +93,13 @@ public class MockApplication implements IApplication {
 
     public SQLDriverManager getSQLDriverManager() {
         // TODO Auto-generated method stub
+    	System.err.println("MockApplication.getSQLDriverManager: stub not yet implemented");    	
         return null;
     }
 
     public DataCache getDataCache() {
         // TODO Auto-generated method stub
+    	System.err.println("MockApplication.getDataCache: stub not yet implemented");
         return null;
     }
 
@@ -93,13 +112,11 @@ public class MockApplication implements IApplication {
     }
 
     public IMessageHandler getMessageHandler() {
-        // TODO Auto-generated method stub
-        return null;
+        return messageHandler;
     }
 
     public SessionManager getSessionManager() {
-        // TODO Auto-generated method stub
-        return null;
+        return sessionHandler;
     }
 
     public void showErrorDialog(String msg) {
@@ -127,18 +144,15 @@ public class MockApplication implements IApplication {
     }
 
     public FontInfoStore getFontInfoStore() {
-        // TODO Auto-generated method stub
-        return null;
+        return fontInfoStore;
     }
 
     public ISQLEntryPanelFactory getSQLEntryPanelFactory() {
-        // TODO Auto-generated method stub
-        return null;
+        return sqlEntryPanelFactory;
     }
 
     public SQLHistory getSQLHistory() {
-        // TODO Auto-generated method stub
-        return null;
+    	return history;
     }
 
     public void setSQLEntryPanelFactory(ISQLEntryPanelFactory factory) {

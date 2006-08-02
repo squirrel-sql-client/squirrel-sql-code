@@ -27,12 +27,14 @@ import javax.swing.JComponent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.MockApplication;
+import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
+import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
@@ -40,11 +42,9 @@ import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.UidIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
-import net.sourceforge.squirrel_sql.fw.sql.MockSQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.MockSQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriver;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.MockMessageHandler;
 import net.sourceforge.squirrel_sql.mo.sql.MockDatabaseMetaData;
@@ -62,20 +62,19 @@ public class MockSession implements ISession {
     SessionProperties props = null;
     IMessageHandler messageHandler = null;
     SchemaInfo schemaInfo = null;
-    private ISQLDriver driver = null;
+    SessionPanel sessionPanel = null;
+    SquirrelPreferences prefs = null;
+    UidIdentifier id = null;
     boolean closed;
         
     public MockSession() {
     	mcon2 = new MockConnection2();    	
-        sqlAlias = new MockSQLAlias();
+    	init();
         sqlDriver = new SQLDriver();
-        app = new MockApplication();
         mdata = new MockDatabaseMetaData();
         mdata.setupDriverName("junit");
         mcon2.setupMetaData(mdata);
         con = new SQLConnection(mcon2, null);
-        props = new SessionProperties();
-        messageHandler = new MockMessageHandler();
     }
     
     public MockSession(String className, 
@@ -87,16 +86,31 @@ public class MockSession implements ISession {
     	System.out.println("Attempting to load class="+className);
     	Class.forName(className);
     	Connection c = DriverManager.getConnection(jdbcUrl, u, p);
-    	SQLDriverPropertyCollection col = null;
-    	driver = new MockSQLDriver(className, jdbcUrl);
-    	app = new MockApplication();
-    	con = new SQLConnection(c, col);
-    	props = new SessionProperties();
-    	schemaInfo = new SchemaInfo(null);
-    	schemaInfo.initialLoad(this);
-    	sqlAlias = new SQLAlias(new UidIdentifier());
+    	sqlDriver = new MockSQLDriver(className, jdbcUrl);
+    	con = new SQLConnection(c, null);
+    	init();
     }
     
+    private void init() {
+    	id = new UidIdentifier();
+    	messageHandler = new MockMessageHandler();
+    	props = new SessionProperties();
+    	props.setLoadSchemasCatalogs(false);
+    	app = new MockApplication();
+    	app.getMockSessionManager().setSession(this);
+    	sqlAlias = new SQLAlias(new UidIdentifier());
+    	schemaInfo = new SchemaInfo(app);
+    	schemaInfo.initialLoad(this);
+    	prefs = app.getSquirrelPreferences();
+    	try {
+    		UIFactory.initialize(prefs, app);
+    	} catch (Throwable e) {
+    		
+    	}
+    	sessionPanel = new SessionPanel(this);
+    	
+    	
+    }
     
     public boolean isClosed() {
     	return closed;
@@ -111,7 +125,7 @@ public class MockSession implements ISession {
     }
 
     public ISQLDriver getDriver() {
-    	return driver;
+    	return sqlDriver;
     }
 
     public ISQLAliasExt getAlias() {
@@ -172,7 +186,7 @@ public class MockSession implements ISession {
 
     public void removePluginObject(IPlugin plugin, String key) {
         // TODO Auto-generated method stub
-
+    	System.err.println("MockSession.removePluginObject: stub not yet implemented");
     }
 
     public void setMessageHandler(IMessageHandler handler) {
@@ -184,12 +198,12 @@ public class MockSession implements ISession {
     }
 
     public SessionPanel getSessionSheet() {
-        // TODO Auto-generated method stub
-        return null;
+        return sessionPanel;
     }
 
     public SessionInternalFrame getSessionInternalFrame() {
         // TODO Auto-generated method stub
+    	System.err.println("MockSession.getSessionInternalFrame: stub not yet implemented");    	
         return null;
     }
 
@@ -202,26 +216,27 @@ public class MockSession implements ISession {
 
     public void selectMainTab(int tabIndex) throws IllegalArgumentException {
         // TODO Auto-generated method stub
-
+    	System.err.println("MockSession.selectMainTab: stub not yet implemented");
     }
 
     public void addMainTab(IMainPanelTab tab) {
         // TODO Auto-generated method stub
-
+    	System.err.println("MockSession.addMainTab: stub not yet implemented");
     }
 
     public void addToStatusBar(JComponent comp) {
         // TODO Auto-generated method stub
-
+    	System.err.println("MockSession.addToStatusBar: stub not yet implemented");
     }
 
     public void removeFromStatusBar(JComponent comp) {
         // TODO Auto-generated method stub
-
+    	System.err.println("MockSession.removeFromStatusBar: stub not yet implemented");
     }
 
     public String getTitle() {
         // TODO Auto-generated method stub
+    	System.err.println("MockSession.getTitle: stub not yet implemented");
         return null;
     }
 
@@ -237,59 +252,65 @@ public class MockSession implements ISession {
 
     public void addToToolbar(Action action) {
         // TODO Auto-generated method stub
-
+    	System.err.println("MockSession.addToToolbar: stub not yet implemented");
     }
 
     public void addSeparatorToToolbar() {
         // TODO Auto-generated method stub
-
+    	System.err.println("MockSession.addSeparatorToToolbar: stub not yet implemented");
     }
 
     public IParserEventsProcessor getParserEventsProcessor(
-            IIdentifier sqlEntryPanelIdentifier) {
+            							    IIdentifier sqlEntryPanelIdentifier) 
+    {
         // TODO Auto-generated method stub
+    	System.err.println("MockSession.getParserEventsProcessor: stub not yet implemented");
         return null;
     }
 
     public void setActiveSessionWindow(
             BaseSessionInternalFrame activeActiveSessionWindow) {
         // TODO Auto-generated method stub
-
+    	System.err.println("MockSession.setActiveSessionWindow: stub not yet implemented");
     }
 
     public BaseSessionInternalFrame getActiveSessionWindow() {
         // TODO Auto-generated method stub
+    	System.err.println("MockSession.getActiveSessionWindow: stub not yet implemented");
         return null;
     }
 
     public ISQLPanelAPI getSQLPanelAPIOfActiveSessionWindow() {
         // TODO Auto-generated method stub
+    	System.err.println("MockSession.getSQLPanelAPIOfActiveSessionWindow: stub not yet implemented");
         return null;
     }
 
     public IObjectTreeAPI getObjectTreeAPIOfActiveSessionWindow() {
         // TODO Auto-generated method stub
+    	System.err.println("MockSession.getObjectTreeAPIOfActiveSessionWindow: stub not yet implemented");
         return null;
     }
 
     public boolean isfinishedLoading() {
         // TODO Auto-generated method stub
-        return false;
+    	System.err.println("MockSession.isfinishedLoading: stub not yet implemented");
+        return true;
     }
 
     public void setPluginsfinishedLoading(boolean _finishedLoading) {
         // TODO Auto-generated method stub
-
+    	System.err.println("MockSession.setPluginsfinishedLoading: stub not yet implemented");
     }
 
     public boolean confirmClose() {
         // TODO Auto-generated method stub
+    	System.err.println("MockSession.confirmClose: stub not yet implemented");
         return false;
     }
 
     public IIdentifier getIdentifier() {
-        // TODO Auto-generated method stub
-        return null;
+        return id;
     }
 
 }
