@@ -86,6 +86,9 @@ public class MockSessionInfoProvider implements SessionInfoProvider {
         String[] tableNames = getTableNames(sourceSession);
         String destSchema = fixCase(bundle.getString("destSchema"), 
                                     destSession);
+        if (tableNames.length == 0) {
+        	throw new SQLException("No tables found to copy");
+        }
         for (int i = 0; i < tableNames.length; i++) {
             String sourceTable = fixCase(tableNames[i], sourceSession);
             // Hack to deal with Ingres IIE* meta tables.
