@@ -18,6 +18,8 @@
  */
 package net.sourceforge.squirrel_sql.client.session;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import javax.swing.Action;
@@ -26,6 +28,7 @@ import javax.swing.JComponent;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.MockApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
@@ -35,10 +38,13 @@ import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.id.UidIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.MockSQLAlias;
+import net.sourceforge.squirrel_sql.fw.sql.MockSQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriver;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.MockMessageHandler;
 import net.sourceforge.squirrel_sql.mo.sql.MockDatabaseMetaData;
@@ -50,29 +56,50 @@ public class MockSession implements ISession {
     ISQLAliasExt sqlAlias = null;
     ISQLDriver sqlDriver = null;
     SQLConnection con = null;
-    MockConnection2 mcon = null;
+    MockConnection2 mcon2 = null;
     MockDatabaseMetaData mdata = null;
     MockApplication app = null;
     SessionProperties props = null;
     IMessageHandler messageHandler = null;
-    
-    
+    SchemaInfo schemaInfo = null;
+    private ISQLDriver driver = null;
+    boolean closed;
+        
     public MockSession() {
+    	mcon2 = new MockConnection2();    	
         sqlAlias = new MockSQLAlias();
         sqlDriver = new SQLDriver();
         app = new MockApplication();
-        mcon = new MockConnection2();
         mdata = new MockDatabaseMetaData();
         mdata.setupDriverName("junit");
-        mcon.setupMetaData(mdata);
-        con = new SQLConnection(mcon, null);
+        mcon2.setupMetaData(mdata);
+        con = new SQLConnection(mcon2, null);
         props = new SessionProperties();
         messageHandler = new MockMessageHandler();
     }
     
+    public MockSession(String className, 
+    				   String jdbcUrl, 
+    				   String u, 
+    				   String p) 
+    	throws Exception 
+    {
+    	System.out.println("Attempting to load class="+className);
+    	Class.forName(className);
+    	Connection c = DriverManager.getConnection(jdbcUrl, u, p);
+    	SQLDriverPropertyCollection col = null;
+    	driver = new MockSQLDriver(className, jdbcUrl);
+    	app = new MockApplication();
+    	con = new SQLConnection(c, col);
+    	props = new SessionProperties();
+    	schemaInfo = new SchemaInfo(null);
+    	schemaInfo.initialLoad(this);
+    	sqlAlias = new SQLAlias(new UidIdentifier());
+    }
+    
+    
     public boolean isClosed() {
-        // TODO Auto-generated method stub
-        return false;
+    	return closed;
     }
 
     public IApplication getApplication() {
@@ -80,12 +107,11 @@ public class MockSession implements ISession {
     }
 
     public SQLConnection getSQLConnection() {
-        return con;
+    	return con;
     }
 
     public ISQLDriver getDriver() {
-        // TODO Auto-generated method stub
-        return null;
+    	return driver;
     }
 
     public ISQLAliasExt getAlias() {
@@ -97,42 +123,50 @@ public class MockSession implements ISession {
     }
 
     public void commit() {
-        // TODO Auto-generated method stub
-
+        try {
+            con.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void rollback() {
-        // TODO Auto-generated method stub
-
+        try {
+            con.rollback();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void close() throws SQLException {
-        // TODO Auto-generated method stub
-
+    	if (!closed) {
+    		con.close();
+    	}
     }
 
     public void closeSQLConnection() throws SQLException {
-        // TODO Auto-generated method stub
-
+    	con.close();
     }
 
     public void setSessionInternalFrame(SessionInternalFrame sif) {
         // TODO Auto-generated method stub
-
+        System.err.println("MockSession.setSessionInternalFrame: stub not yet implemented");
     }
 
     public void reconnect() {
         // TODO Auto-generated method stub
-
+        System.err.println("MockSession.reconnect: stub not yet implemented");
     }
 
     public Object getPluginObject(IPlugin plugin, String key) {
         // TODO Auto-generated method stub
+        System.err.println("MockSession.getPluginObject: stub not yet implemented");
         return null;
     }
 
     public Object putPluginObject(IPlugin plugin, String key, Object obj) {
         // TODO Auto-generated method stub
+        System.err.println("MockSession.putPluginObject: stub not yet implemented");
         return null;
     }
 
@@ -163,8 +197,7 @@ public class MockSession implements ISession {
      * @see net.sourceforge.squirrel_sql.client.session.ISession#getSchemaInfo()
      */
     public SchemaInfo getSchemaInfo() {
-        // TODO Auto-generated method stub
-        return null;
+    	return schemaInfo;
     }
 
     public void selectMainTab(int tabIndex) throws IllegalArgumentException {
@@ -193,8 +226,13 @@ public class MockSession implements ISession {
     }
 
     public String getDatabaseProductName() {
-        // TODO Auto-generated method stub
-        return null;
+        String result = null;
+        try {
+        	result = con.getSQLMetaData().getDatabaseProductName();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     public void addToToolbar(Action action) {
