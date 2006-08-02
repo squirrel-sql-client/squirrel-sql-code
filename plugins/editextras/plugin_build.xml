@@ -12,7 +12,8 @@
         <property name="debug" value="on"/>
         <property name="optimize" value="off"/>
         <property name="deprecation" value="on"/>
-
+		<property name="targetVM" value="1.4"/>
+    	
         <echo message="---------------- ${internal_name} ${version} ----------------"/>
         
         <property environment="env"/>

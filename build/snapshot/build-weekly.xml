@@ -5,7 +5,13 @@
 	This script's weeekly build target will fetch the latest source from SF
 	(either update or fresh checkout), build the application and installer, run
 	the installer using the autoconfigure option, then launch the installed 
-	application for manual build verification testing.
+	application for manual build verification testing. When build testing is 
+	complete, manually shutdown the SQuirreL instance launched by this script
+	and a src zip archive will be produced from cvs export of SQuirreL.  If the
+	manual build verification yields results that indicate that the build has 
+	critical issues that need to be resolved, simply type Ctrl-C in the console
+	window that is running the build to skip the cvs export and subsequent 
+	building of the source zip archive.
 -->
 
 <project name="Squirrel-SQL-Client-WeeklyBuild" default="weeklybuild" basedir=".">
@@ -24,14 +30,19 @@
 		    	    timezone="GMT"
 		    />
 		</tstamp>
-		<!-- We decided to drop the version from the snapshot build. So snapshot builds
-                     have a date/time stamp in their version. However, if we aren't configured to 
-                     replace the version file with a template that accepts the snapshot, then use
-                     the appversion property to set squirrel.version
+		<!-- 
+		We decided to drop the version from the snapshot build. So snapshot builds
+		have a date/time stamp in their version. However, if we aren't configured to 
+        replace the version file with a template that accepts the snapshot, then use
+        the appversion property to set squirrel.version
 		-->
-                <condition property="squirrel.version" value="Snapshot-${touch.time}" else = "${appversion}">
-                        <istrue value="${replace.version}"/>
-                </condition>
+        <condition property="squirrel.version" 
+        		   value="Snapshot-${touch.time}" 
+        	       else = "${appversion}">
+        	
+            <istrue value="${replace.version}"/>
+        
+        </condition>
 
 		<property name="install.jar.file.dist" 
 		          value="${dist.dir}/${name}-${squirrel.version}-install.jar"/>
