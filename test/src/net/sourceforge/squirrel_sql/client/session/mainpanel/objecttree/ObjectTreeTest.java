@@ -35,12 +35,13 @@ public class ObjectTreeTest extends TestCase {
     MockSession session = null;
 
     public static void main(String[] args) {
-        ApplicationArguments.initialize(new String[0]);
+        
         junit.textui.TestRunner.run(ObjectTreeTest.class);
     }
 
     protected void setUp() throws Exception {
         super.setUp();
+        ApplicationArguments.initialize(new String[0]);
         session = new MockSession();
         tree = new ObjectTree(session);
     }
