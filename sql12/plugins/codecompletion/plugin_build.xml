@@ -44,7 +44,8 @@
                 debug="${debug}"
                 optimize="${optimize}"
                 includeJavaRuntime="yes"
-        		target="${targetVM}">
+				source="${targetVM}"
+				target="${targetVM}">
         	
             <classpath>
                 <fileset dir="${p_plugin.core_libs_dir}">
