@@ -46,6 +46,7 @@
 				debug="${debug}"
 				optimize="${optimize}"
 				includeJavaRuntime="yes"
+				source="${targetVM}"
 				target="${targetVM}">
 			
 			<classpath>

@@ -109,6 +109,7 @@
 				debug="${debug}"
 				optimize="${optimize}"
 				includeJavaRuntime="yes"
+				source="${targetVM}"
 			    target="${targetVM}">
 			<classpath>
 				<fileset dir="fw/lib">
@@ -158,6 +159,7 @@
 				debug="${debug}"
 				optimize="${optimize}"
 				includeJavaRuntime="yes"
+				source="${targetVM}"
 				target="${targetVM}">
 			
 			<classpath>

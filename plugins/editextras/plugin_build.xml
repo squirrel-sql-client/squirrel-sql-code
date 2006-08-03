@@ -42,7 +42,10 @@
                 deprecation="${deprecation}"
                 debug="${debug}"
                 optimize="${optimize}"
-                includeJavaRuntime="yes">
+                includeJavaRuntime="yes"
+	        	source="${targetVM}"
+        		target="${targetVM}">
+        	
             <classpath>
                 <fileset dir="${p_plugin.core_libs_dir}">
                     <include name="**/*.*"/>
