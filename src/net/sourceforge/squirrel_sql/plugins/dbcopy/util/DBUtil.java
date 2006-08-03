@@ -271,21 +271,6 @@ public class DBUtil extends I18NBaseObject {
      * 
      * @param con
      * @param sql
-     * @return
-     * @throws Exception
-     */
-    public static ResultSet executeQuery(SQLConnection sqlcon, 
-                                         String sql) 
-        throws SQLException 
-    { 
-        return executeQuery(sqlcon, sql, false);
-    }   
-    /**
-     * Executes the specified sql statement on the specified connection and 
-     * returns the ResultSet.
-     * 
-     * @param con
-     * @param sql
      * @param mysqlBigResultFix if true, provides a work-around which is useful
      *        in the case that the connection is to a MySQL database.  If the 
      *        number of rows is large this will prevent the driver from reading
@@ -294,11 +279,11 @@ public class DBUtil extends I18NBaseObject {
      * @return
      * @throws Exception
      */
-    public static ResultSet executeQuery(SQLConnection sqlcon, 
-                                         String sql,
-                                         boolean mysqlBigResultFix) 
+    public static ResultSet executeQuery(ISession session, 
+                                         String sql) 
         throws SQLException 
     {
+    	SQLConnection sqlcon = session.getSQLConnection(); 
         if (sqlcon == null || sql == null) {
             return null;
         }
@@ -307,11 +292,23 @@ public class DBUtil extends I18NBaseObject {
 
         Connection con = sqlcon.getConnection();
         
-        if (mysqlBigResultFix) {
+        if (DialectFactory.isMySQLSession(session)) {
             stmt = con.createStatement(ResultSet.TYPE_FORWARD_ONLY,
                                        ResultSet.CONCUR_READ_ONLY);
         
-            stmt.setFetchSize(Integer.MIN_VALUE);        
+            stmt.setFetchSize(Integer.MIN_VALUE);
+        } else if (DialectFactory.isTimesTen(session)) {
+        	stmt = con.createStatement();
+        	int fetchSize = _prefs.getSelectFetchSize();
+        	// TimesTen allows a maximum fetch size of 128. 
+        	if (fetchSize > 128) {
+        		log.info(
+        			"executeQuery: TimesTen allows a maximum fetch size of " +
+        			"128.  Altering preferred fetch size from "+fetchSize+
+        			" to 128.");
+        		fetchSize = 128;
+        	}
+        	stmt.setFetchSize(fetchSize);
         } else { 
             stmt = con.createStatement();
             stmt.setFetchSize(_prefs.getSelectFetchSize());
@@ -370,12 +367,12 @@ public class DBUtil extends I18NBaseObject {
      * @return -1 if the table does not exist, otherwise the record count is
      *         returned.
      */    
-    private static int getTableCount(SQLConnection con, String tableName) {
+    private static int getTableCount(ISession session, String tableName) {
         int result = -1;
         ResultSet rs = null;
         try {
             String sql = "select count(*) from "+tableName;            
-            rs = executeQuery(con, sql);
+            rs = executeQuery(session, sql);
             if (rs.next()) {
                 result = rs.getInt(1);
             }
@@ -402,12 +399,11 @@ public class DBUtil extends I18NBaseObject {
                                     int sessionType) 
         throws UserCancelledOperationException
     {
-        SQLConnection con = session.getSQLConnection();
         String table = getQualifiedTableName(session, 
                                              schema, 
                                              tableName,
                                              sessionType);
-        return getTableCount(con, table);
+        return getTableCount(session, table);
     }
     
     public static ITableInfo getTableInfo(ISession session,
@@ -1194,7 +1190,15 @@ public class DBUtil extends I18NBaseObject {
                     result.append(",\n");
                 }
             }
-            if (_prefs.isCopyPrimaryKeys()) {
+            
+            // If the user wants the primary key copied and the source session
+            // isn't Axion (Axion throws SQLException for getPrimaryKeys())
+            
+            // TODO: Perhaps we can tell the user when they click "Copy Table"
+            // if the source session is Axion and they want primary keys that 
+            // it's not possible.
+            if (_prefs.isCopyPrimaryKeys()
+            		&& !DialectFactory.isAxionSession(sourceSession)) {
                 String pkString = DBUtil.getPKColumnString(sourceCon, ti);
                 if (pkString != null) {
                     result.append(",\n\tPRIMARY KEY ");
@@ -1451,19 +1455,36 @@ public class DBUtil extends I18NBaseObject {
                                                int sessionType) 
         throws UserCancelledOperationException
     {
-        if (schemaName == null) {
-            return tableName;
+    	String schema = schemaName;
+    	String table = tableName;
+    	if (Compat.storesUpperCaseIdentifiers(session)) {
+    		if (schema != null) {
+    			schema = schema.toUpperCase();
+    		}
+    		if (table != null) {
+    			table = table.toUpperCase();
+    		}
+    	} else {
+    		if (schema != null) {
+    			schema = schema.toLowerCase();
+    		}
+    		if (table != null) {
+    			table = table.toLowerCase();
+    		}
+    	}
+        if (schema == null) {
+            return table;
         }
         HibernateDialect dialect = 
             DialectFactory.getDialect(session, sessionType);
 
         if (!dialect.supportsSchemasInTableDefinition()) {
-            return tableName;
+            return table;
         } else {
-            if (tableName.startsWith(schemaName + ".")) {
-                return tableName;
+            if (table.startsWith(schema + ".")) {
+                return table;
             } else {
-                return schemaName + "." + tableName;
+                return schema + "." + table;
             }
         }
 
