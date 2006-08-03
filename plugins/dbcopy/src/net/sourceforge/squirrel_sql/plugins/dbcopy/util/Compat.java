@@ -19,6 +19,7 @@
 package net.sourceforge.squirrel_sql.plugins.dbcopy.util;
 
 import java.lang.reflect.Method;
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
@@ -188,7 +189,7 @@ public class Compat {
         		String methodName = method.getName();
         		if (methodName.equals("reload")) {
         			try {
-        				method.invoke(schemaInfoObj, info);
+        				method.invoke(schemaInfoObj, new Object[] {info});
         			} catch (Exception e) {
                         s_log.error("Encountered reflection exception when " +
                                 "attempting to invoke method " + methodName +
@@ -200,6 +201,37 @@ public class Compat {
     	
     }
     
+    /**
+     * Retrieves whether this session treats mixed case unquoted SQL 
+     * identifiers as case insensitive and stores them in upper case.
+	 *
+     * @param session
+     * @return true if so; false otherwise
+     * @throws SQLException
+     */
+    public static boolean storesUpperCaseIdentifiers(ISession session) 
+    {
+    	boolean result = false;
+    	SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
+    	try {
+    		Method m = 
+    			md.getClass().getDeclaredMethod("storesUpperCaseIdentifiers", null);
+    		Boolean invResult = (Boolean)m.invoke(md, null);
+    		result = invResult.booleanValue();
+    	} catch (Exception e) {
+    		try {
+    			DatabaseMetaData dbmd = 
+    				session.getSQLConnection().getConnection().getMetaData();
+    			result = dbmd.storesUpperCaseIdentifiers();
+    		} catch (Exception ex) {
+    			s_log.debug(
+    				"Unable to determine if the session "+session.getTitle()+
+    				" stores uppercase identifiers: "+ex.getMessage());
+    		}
+    	}
+    	return result;
+    }
+        
     /**
      * Test to see if the specified className is available using the current 
      * ClassLoader.   
