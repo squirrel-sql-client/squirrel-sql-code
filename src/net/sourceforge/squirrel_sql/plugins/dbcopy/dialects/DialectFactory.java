@@ -236,6 +236,11 @@ public class DialectFactory {
                 || testSessionDialect(session, SybaseDialect.class);        
     }
     
+    public static boolean isTimesTen(ISession session) {
+        return dialectSupportsProduct(session, timestenDialect)
+        	|| testSessionDialect(session, TimesTenDialect.class);            	
+    }
+    
     /**
      * Examines the driver class name from the specified session to see if it
      * begins with any of the space-delimited string tokens in the specified 
@@ -375,6 +380,9 @@ public class DialectFactory {
         }
         if (isSyBaseSession(session)) {
             return sybaseDialect;
+        }
+        if (isTimesTen(session)) {
+        	return timestenDialect;
         }
         // Failed to detect the dialect that should be used.  Ask the user.
         return showDialectDialog(session, sessionType);
