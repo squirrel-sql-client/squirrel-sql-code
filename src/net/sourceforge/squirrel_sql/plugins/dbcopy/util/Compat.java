@@ -184,6 +184,7 @@ public class Compat {
         }
         if (schemaInfoObj != null) {
         	methods = schemaInfoObj.getClass().getDeclaredMethods();
+        	Method fireSchemaInfoUpdateMethod = null;
         	for (int i = 0; i < methods.length; i++) {
         		Method method = methods[i];
         		String methodName = method.getName();
@@ -196,6 +197,19 @@ public class Compat {
                                 " of SchemaInfo", e);        				
         			}
         		}
+        		if (methodName.equals("fireSchemaInfoUpdate")) {
+        			fireSchemaInfoUpdateMethod = method;
+        		}
+        	}
+        	if (fireSchemaInfoUpdateMethod != null) {
+	        	try {
+	        		fireSchemaInfoUpdateMethod.invoke(schemaInfoObj, 
+	        										  (Object[]) null);
+	        	} catch (Exception e) {
+	                s_log.error("Encountered reflection exception when " +
+	                        "attempting to invoke method fireSchemaInfoUpdate "+
+	                        " of SchemaInfo", e);        				
+				}
         	}
         }
     	
