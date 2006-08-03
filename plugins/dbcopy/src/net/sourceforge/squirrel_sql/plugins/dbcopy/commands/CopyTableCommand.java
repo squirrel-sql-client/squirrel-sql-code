@@ -25,6 +25,8 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.DBCopyPlugin;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.util.Compat;
 
@@ -39,6 +41,10 @@ public class CopyTableCommand implements ICommand
      * Current plugin.
      */
     private final DBCopyPlugin _plugin;
+    
+    /** Logger for this class. */
+    private final static ILogger log = 
+                         LoggerController.createLogger(CopyTableCommand.class);
     
     /**
      * Ctor specifying the current session.
@@ -62,12 +68,16 @@ public class CopyTableCommand implements ICommand
             if (dbObjs[0].getDatabaseObjectType() == DatabaseObjectType.TABLE_TYPE_DBO) {
             	String catalog = dbObjs[0].getCatalogName();
             	String schema = dbObjs[0].getSchemaName();
-            	System.out.println("catalog="+catalog);
-            	System.out.println("schema="+schema);
+            	if (log.isDebugEnabled()) {
+	            	log.debug("CopyTableCommand.execute: catalog="+catalog);
+	            	log.debug("CopyTableCommand.execute: schema="+schema);
+            	}
             	dbObjs = _session.getSchemaInfo().getITableInfos(catalog, schema);
             	for (int i = 0; i < dbObjs.length; i++) {
             		ITableInfo info = (ITableInfo)dbObjs[i];
-					System.out.println("dbObj["+i+"] = "+info.getSimpleName());
+            		if (log.isDebugEnabled()) {
+            			log.debug("dbObj["+i+"] = "+info.getSimpleName());
+            		}
 				}
             }
             _plugin.setCopySourceSession(_session);
