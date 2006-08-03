@@ -39,6 +39,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DatabaseTypesDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.TableColumnsDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -1813,9 +1814,7 @@ public class SQLDatabaseMetaData
         ResultSet rs = null;
         try {
             rs = getColumns(ti);
-            ResultSetDataSet rsds = new ResultSetDataSet();
-            rsds.setResultSet(rs, columnIndices, computeWidths);
-            result = rsds;
+            result = new TableColumnsDataSet(rs, columnIndices);
         } catch (SQLException e) { 
             throw new DataSetException(e);
         } finally {
@@ -1940,6 +1939,32 @@ public class SQLDatabaseMetaData
 
 		return value.booleanValue();
 	}
+
+    /**
+     * Retrieves whether this database treats mixed case unquoted SQL 
+     * identifiers as case insensitive and stores them in upper case. 
+     * Cached on first call.
+     *
+     * @return  <tt>true</tt> if driver stores upper case identifiers
+     *          else <tt>false</tt>.
+     *
+     * @throws  SQLException    Thrown if an SQL error occurs.
+     */
+	public synchronized boolean storesUpperCaseIdentifiers()
+		throws SQLException
+	{
+		final String key = "storesUpperCaseIdentifiers";
+		Boolean value = (Boolean)_cache.get(key);
+		if (value != null)
+		{
+			return value.booleanValue();
+		}
+
+		value = new Boolean(privateGetJDBCMetaData().storesUpperCaseIdentifiers());
+		_cache.put(key, value);
+
+		return value.booleanValue();
+	}	
 
     /**
      * Clear cache of commonly accessed metadata properties.
