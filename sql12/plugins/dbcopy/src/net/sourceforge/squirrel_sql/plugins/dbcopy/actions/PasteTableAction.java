@@ -25,7 +25,11 @@ import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -85,11 +89,34 @@ public class PasteTableAction extends SquirrelAction
         IDatabaseObjectInfo[] dbObjs = api.getSelectedDatabaseObjects();
         if (dbObjs.length > 1) {
             sessionInfoProv.setDestSelectedDatabaseObject(null);
-            // i18n[PasteTableAction.error.multischemapaste=The paste operation may only be applied to one schema at a time]
-            app.showErrorDialog(s_stringMgr.getString("PasteTableAction.error.multischemapaste"));            
+            //i18n[PasteTableAction.error.multischemapaste=The paste 
+            //operation may only be applied to one schema at a time]
+            String msg =
+            	s_stringMgr.getString("PasteTableAction.error.multischemapaste");
+            app.showErrorDialog(msg);
+            		            
             return;
         } else {
-            sessionInfoProv.setDestSelectedDatabaseObject(dbObjs[0]);
+        	// When the user pastes on a TABLE label which is located under a 
+        	// schema/catalog, build the schema DatabaseObjectInfo.
+        	if (dbObjs[0].getDatabaseObjectType() == DatabaseObjectType.TABLE_TYPE_DBO) {
+        		IDatabaseObjectInfo tableLabelInfo = dbObjs[0];
+        		SQLConnection destCon = destSession.getSQLConnection();
+        		SQLDatabaseMetaData md = null;
+        		if (destCon != null) {
+        			md = destCon.getSQLMetaData();
+        		}
+        		IDatabaseObjectInfo schema = 
+        			new DatabaseObjectInfo(null, 
+        								   tableLabelInfo.getSchemaName(),
+        								   tableLabelInfo.getSchemaName(),
+        								   DatabaseObjectType.SCHEMA,
+        								   md);
+        		sessionInfoProv.setDestSelectedDatabaseObject(schema);
+        	} else {
+        		sessionInfoProv.setDestSelectedDatabaseObject(dbObjs[0]);
+        	}
+            
         }
         
         try {
