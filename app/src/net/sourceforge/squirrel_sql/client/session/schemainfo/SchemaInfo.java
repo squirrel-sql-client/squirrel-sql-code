@@ -735,13 +735,19 @@ public class SchemaInfo
             }
 
             String catalogTerm = _dmd.getCatalogTerm();
-            keywordsBuf.put(new CaseInsensitiveString(catalogTerm), catalogTerm);
+            if (catalogTerm != null) {
+            	keywordsBuf.put(new CaseInsensitiveString(catalogTerm), catalogTerm);
+            }
 
             String schemaTerm = _dmd.getSchemaTerm();
-            keywordsBuf.put(new CaseInsensitiveString(schemaTerm), schemaTerm);
+            if (schemaTerm != null) {
+            	keywordsBuf.put(new CaseInsensitiveString(schemaTerm), schemaTerm);
+            }
 
             String procedureTerm = _dmd.getProcedureTerm();
-            keywordsBuf.put(new CaseInsensitiveString(procedureTerm), procedureTerm);
+            if (procedureTerm != null) {
+            	keywordsBuf.put(new CaseInsensitiveString(procedureTerm), procedureTerm);
+            }
          }
 
          _schemaInfoCache.writeKeywords(keywordsBuf);

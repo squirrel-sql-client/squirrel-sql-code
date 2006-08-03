@@ -5,6 +5,10 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+1533824: (NPE when loading keywords from DatabaseMetaData) Check the values 
+returned for null before attempting to parse and store them (DB2 driver 
+returns null for getCatalogTerm())
+
 Export CVS allows to choose whether to use fromating from Global Prefs or default formatting.
 
 Added new optional plugin (DBCopy) to the installer which allows database tables
