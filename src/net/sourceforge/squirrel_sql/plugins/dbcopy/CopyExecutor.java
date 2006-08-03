@@ -544,11 +544,7 @@ public class CopyExecutor extends I18NBaseObject {
                         
             boolean foundBinaryType = false;
             // Loop through source records...
-            if (DialectFactory.isMySQLSession(prov.getCopySourceSession())) {
-                rs = DBUtil.executeQuery(sourceConn, selectSQL, true);
-            } else {
-                rs = DBUtil.executeQuery(sourceConn, selectSQL);
-            }
+            rs = DBUtil.executeQuery(prov.getCopySourceSession(), selectSQL);
             while (rs.next() && !cancelled) {
                 // MySQL driver gets unhappy when we use the same 
                 // PreparedStatement to bind null and non-null blob variables
@@ -665,7 +661,8 @@ public class CopyExecutor extends I18NBaseObject {
     /**
      * Copies the foreign key constraints.  Primary keys are created in the table
      * create statement, since some databases don't support adding primary keys
-     * after table creation.
+     * after table creation. This will have no effect when using Axion as the 
+     * source database.
      *  
      * @param sourceConn
      * @param destConn
@@ -675,7 +672,8 @@ public class CopyExecutor extends I18NBaseObject {
     private void copyConstraints(IDatabaseObjectInfo[] dbObjs) 
         throws SQLException, UserCancelledOperationException 
     {
-        if (!prefs.isCopyForeignKeys()) {
+        if (!prefs.isCopyForeignKeys() 
+        		|| DialectFactory.isAxionSession(prov.getCopySourceSession())) {
             return;
         }
         SQLConnection destConn = prov.getCopyDestSession().getSQLConnection();
