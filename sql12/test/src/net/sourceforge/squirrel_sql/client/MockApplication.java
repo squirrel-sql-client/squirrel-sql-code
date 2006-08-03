@@ -121,21 +121,22 @@ public class MockApplication implements IApplication {
 
     public void showErrorDialog(String msg) {
         // TODO Auto-generated method stub
-
+    	System.err.println("MockApplication.showErrorDialog(String): stub not yet implemented");
     }
 
     public void showErrorDialog(Throwable th) {
         // TODO Auto-generated method stub
-
+    	System.err.println("MockApplication.showErrorDialog(Throwable): stub not yet implemented");
     }
 
     public void showErrorDialog(String msg, Throwable th) {
         // TODO Auto-generated method stub
-
+    	System.err.println("MockApplication.showErrorDialog(String, Throwable): stub not yet implemented");
     }
 
     public MainFrame getMainFrame() {
         // TODO Auto-generated method stub
+    	System.err.println("MockApplication.getMainFrame: stub not yet implemented");
         return null;
     }
 
@@ -157,42 +158,43 @@ public class MockApplication implements IApplication {
 
     public void setSQLEntryPanelFactory(ISQLEntryPanelFactory factory) {
         // TODO Auto-generated method stub
-
+    	System.err.println("MockApplication.setSQLEntryPanelFactory: stub not yet implemented");
     }
 
     public void addToMenu(int menuId, JMenu menu) {
         // TODO Auto-generated method stub
-
+    	System.err.println("MockApplication.addToMenu(int, JMenu): stub not yet implemented");
     }
 
     public void addToMenu(int menuId, Action action) {
         // TODO Auto-generated method stub
-
+    	System.err.println("MockApplication.addToMenu(int, Action): stub not yet implemented");
     }
 
     public void addToStatusBar(JComponent comp) {
         // TODO Auto-generated method stub
-
+    	System.err.println("MockApplication.addToStatusBar: stub not yet implemented");
     }
 
     public void removeFromStatusBar(JComponent comp) {
         // TODO Auto-generated method stub
-
+    	System.err.println("MockApplication.removeFromStatusBar: stub not yet implemented");
     }
 
     public void startup() {
         // TODO Auto-generated method stub
-
+    	System.err.println("MockApplication.startup: stub not yet implemented");
     }
 
     public boolean shutdown() {
         // TODO Auto-generated method stub
+    	System.err.println("MockApplication.shutdown: stub not yet implemented");
         return false;
     }
 
     public void openURL(String url) {
         // TODO Auto-generated method stub
-
+    	System.err.println("MockApplication.openURL: stub not yet implemented");
     }
 
 }

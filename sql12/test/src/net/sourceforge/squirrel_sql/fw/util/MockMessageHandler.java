@@ -22,22 +22,22 @@ public class MockMessageHandler implements IMessageHandler {
 
     public void showMessage(Throwable th) {
         // TODO Auto-generated method stub
-
+    	System.err.println("MockMessageHandler.showMessage(Throwable): stub not yet implemented");
     }
 
     public void showMessage(String msg) {
         // TODO Auto-generated method stub
-
+    	System.err.println("MockMessageHandler.showMessage(String): stub not yet implemented");
     }
 
     public void showErrorMessage(Throwable th) {
         // TODO Auto-generated method stub
-
+    	System.err.println("MockMessageHandler.showErrorMessage(Throwable): stub not yet implemented");
     }
 
     public void showErrorMessage(String msg) {
         // TODO Auto-generated method stub
-
+    	System.err.println("MockMessageHandler.showErrorMessage(String): stub not yet implemented");
     }
 
     /* (non-Javadoc)
@@ -45,7 +45,7 @@ public class MockMessageHandler implements IMessageHandler {
      */
     public void showWarningMessage(String msg) {
         // TODO Auto-generated method stub
-
+    	System.err.println("MockMessageHandler.showWarningMessage: stub not yet implemented");
     }
 
 }
