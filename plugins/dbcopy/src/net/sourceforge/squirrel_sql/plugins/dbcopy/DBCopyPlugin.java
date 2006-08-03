@@ -226,7 +226,10 @@ public class DBCopyPlugin extends DefaultSessionPlugin
 
         api.addToPopup(DatabaseObjectType.TABLE_TYPE_DBO,
  			           coll.get(CopyTableAction.class));
-    	
+
+        api.addToPopup(DatabaseObjectType.TABLE_TYPE_DBO,
+		           coll.get(PasteTableAction.class));
+
     	// Copy action object tree types
         api.addToPopup(DatabaseObjectType.TABLE, 
                        coll.get(CopyTableAction.class));
