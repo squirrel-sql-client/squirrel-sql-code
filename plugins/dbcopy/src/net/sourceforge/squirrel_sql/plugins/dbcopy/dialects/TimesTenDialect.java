@@ -18,6 +18,8 @@
  */
 package net.sourceforge.squirrel_sql.plugins.dbcopy.dialects;
 
+import java.sql.Types;
+
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
 /**
@@ -29,32 +31,37 @@ public class TimesTenDialect extends org.hibernate.dialect.TimesTenDialect
     
     public TimesTenDialect() {
         super();
-        /*
-         * TODO: hookup with times ten spec and adjust these as necessary.
-         * 
-        registerColumnType(Types.BIGINT, "integer");
-        registerColumnType(Types.BINARY, 2000000000,"bit varying($l)");
-        registerColumnType(Types.BIT, "bit(1)");
+        registerColumnType(Types.BIGINT, "bigint");
+        registerColumnType(Types.BINARY, 8300,"binary($l)");
+        registerColumnType(Types.BINARY, 4194304,"varbinary($l)");
+        registerColumnType(Types.BINARY, "varbinary(4194304)");
+        registerColumnType(Types.BIT, "tinyint");
         registerColumnType(Types.BLOB, 2000000000, "bit varying($l)");
-        registerColumnType(Types.BOOLEAN, "bit(1)");
-        registerColumnType(Types.CHAR, 2000000000, "char($l)");
-        registerColumnType(Types.CLOB, 2000000000, "varchar($l)");
+        registerColumnType(Types.BOOLEAN, "tinyint");
+        registerColumnType(Types.CHAR, 8300, "char($l)");
+        registerColumnType(Types.CHAR, 4194304, "varchar($l)");
+        registerColumnType(Types.CLOB, "varchar(4194304)");
+        registerColumnType(Types.CLOB, 4194304, "varchar($l)");
+        registerColumnType(Types.CLOB, "varchar(4194304)");
         registerColumnType(Types.DATE, "date");
-        registerColumnType(Types.DECIMAL, "decimal(36,2");
-        registerColumnType(Types.DOUBLE, "double precision");
-        registerColumnType(Types.FLOAT, 15, "float($l)");
+        registerColumnType(Types.DECIMAL, "decimal($p,$s)");
+        registerColumnType(Types.DOUBLE, "double");
+        registerColumnType(Types.FLOAT, "float");
         registerColumnType(Types.INTEGER, "integer");        
-        registerColumnType(Types.LONGVARBINARY, 2000000000, "bit varying($l)");
-        registerColumnType(Types.LONGVARCHAR, 31995, "varchar($l)");
-        registerColumnType(Types.NUMERIC, "numeric(17,2)");
-        registerColumnType(Types.REAL, "real");
+        registerColumnType(Types.LONGVARBINARY, 4194304,"varbinary($l)");
+        registerColumnType(Types.LONGVARBINARY, 4194304,"varbinary(4194304)");
+        registerColumnType(Types.LONGVARCHAR, 4194304, "varchar($l)");
+        registerColumnType(Types.LONGVARCHAR, "varchar(4194304)");
+        registerColumnType(Types.NUMERIC, "numeric($p,$s)");
+        registerColumnType(Types.REAL, "float");
         registerColumnType(Types.SMALLINT, "smallint");
-        registerColumnType(Types.TIME, "date");
+        registerColumnType(Types.TIME, "time");
         registerColumnType(Types.TIMESTAMP, "timestamp");
         registerColumnType(Types.TINYINT, "tinyint");
         registerColumnType(Types.VARBINARY, 31995, "bit varying($l)");
-        registerColumnType(Types.VARCHAR, 2000000000,"varchar($l)");  
-        */      
+        registerColumnType(Types.VARCHAR, 4194304,"varchar($l)");
+        registerColumnType(Types.VARCHAR, "varchar(4194304)");
+      
     }    
     
     /* (non-Javadoc)
@@ -89,7 +96,14 @@ public class TimesTenDialect extends org.hibernate.dialect.TimesTenDialect
      * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getMaxPrecision(int)
      */
     public int getMaxPrecision(int dataType) {
-        return Integer.MAX_VALUE;
+    	int result = Integer.MAX_VALUE;
+    	if (dataType == Types.DECIMAL || dataType == Types.NUMERIC) {
+    		result = 40;
+    	}
+    	if (dataType == Types.FLOAT) {
+    		result = 53;
+    	}
+    	return result;
     }
 
     /* (non-Javadoc)
