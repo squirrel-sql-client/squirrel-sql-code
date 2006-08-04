@@ -65,20 +65,9 @@ public class ColTypeMapper {
     {
         int colJdbcType = colInfo.getDataType();
 
-        if (colJdbcType == java.sql.Types.OTHER) {
-            String typeName = colInfo.getTypeName().toUpperCase();
-            int parenIndex = typeName.indexOf("(");
-            if (parenIndex != -1) {
-                typeName = typeName.substring(0,parenIndex);
-            }
-            colJdbcType = JDBCTypeMapper.getJdbcType(typeName);
-            if (colJdbcType == Types.NULL) {
-                throw new MappingException(
-                        "Encoutered jdbc type OTHER (1111) and couldn't map "+
-                        "the database-specific type name ("+typeName+
-                        ") to a jdbc type");
-            }
-        }     
+        // If source column is type 1111 (OTHER), try to use the 
+        // column type name to find a type that isn't 1111.        
+        colJdbcType = DBUtil.replaceOtherDataType(colInfo);
         
         // Oracle can only store DECIMAL type numbers.  Since regular non-decimal
         // numbers appear as "decimal", Oracle's decimal numbers can be rather 
