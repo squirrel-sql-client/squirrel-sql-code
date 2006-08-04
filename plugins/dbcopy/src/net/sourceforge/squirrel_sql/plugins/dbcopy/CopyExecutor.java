@@ -542,15 +542,15 @@ public class CopyExecutor extends I18NBaseObject {
             int columnCount = destInfos.length;
             String[] bindVarVals = new String[columnCount];
                         
-            boolean foundBinaryType = false;
+            boolean foundLOBType = false;
             // Loop through source records...
             rs = DBUtil.executeQuery(prov.getCopySourceSession(), selectSQL);
             while (rs.next() && !cancelled) {
                 // MySQL driver gets unhappy when we use the same 
-                // PreparedStatement to bind null and non-null blob variables
+                // PreparedStatement to bind null and non-null LOB variables
                 // without clearing the parameters first.
                 if (DialectFactory.isMySQLSession(destSession) 
-                        && foundBinaryType) 
+                        && foundLOBType) 
                 {
                     insertStmt.clearParameters();
                 }
@@ -558,18 +558,18 @@ public class CopyExecutor extends I18NBaseObject {
 
                     int sourceColType = sourceInfos[i].getDataType();
                     int destColType   = destInfos[i].getDataType();
-
+                    // If source column is type 1111 (OTHER), try to use the 
+                    // column type name to find a type that isn't 1111.
+                    sourceColType = DBUtil.replaceOtherDataType(sourceInfos[i]);
+                    
                     String bindVal = DBUtil.bindVariable(insertStmt,
                                                          sourceColType,
                                                          destColType,
                                                          i+1,
                                                          rs);
                     bindVarVals[i] = bindVal;
-                    if (sourceColType == Types.BLOB 
-                            || sourceColType == Types.LONGVARBINARY
-                            || sourceColType == Types.BINARY) 
-                    {
-                        foundBinaryType = true;
+                    if (isLOBType(destColType)) {
+                    	foundLOBType = true;
                     }
                 }                
                 sendStatementEvent(insertSQL, bindVarVals);
@@ -590,6 +590,24 @@ public class CopyExecutor extends I18NBaseObject {
                 commitConnection(destConn);
             }
         }
+    }
+    
+    /**
+     * Returns a boolean value indicating whether or not the specific column
+     * type is a binary or LOB column.
+     * @param columnType the JDBC type.
+     * 
+     * @return true if the specified type is LOB; false otherwise.
+     */
+    private boolean isLOBType(int columnType) {
+        if (columnType == Types.BLOB 
+        		|| columnType == Types.CLOB
+                || columnType == Types.LONGVARBINARY
+                || columnType == Types.BINARY) 
+        {
+            return true;
+        }
+        return false;
     }
     
     /**
