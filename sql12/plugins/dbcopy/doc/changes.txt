@@ -16,7 +16,6 @@ DBCopy Change Log
   the user's preference for these settings, since it is not possible to honor 
   them with Axion and complete the copy operation.
   
-
 - When selecting tables to copy, the user can now select the "TABLES" folder
   which will mark all tables contained in that schema for copy.  Previously, 
   the user would have to expand the tables folder and select all tables 
@@ -26,6 +25,18 @@ DBCopy Change Log
 - Added support for TimesTen 6.0 (Note: fetch size for TimesTen is max 128.
   If the preference is set to larger than this, 128 will be used)
 
+- Bugfix: In getting the qualified name of a table (schema.table) where if the
+  schema was an empty string, the qualified name would appear to be ".table"
+
+- Bugfix: Added CLOB type to the list of types for which clearParameters must
+  be called prior to setting parameters when null and non-null values are used
+  for MySQL driver.
+  
+- Bugfix: Use the same logic to determine the source column type for "OTHER" 
+  type when inserting records into destination, as is used to determine what 
+  types to use for creating the table in the destination database.  Previously,
+  the "OTHER" type resolution was only being done for table creation and not 
+  for record insertiion.
 
 0.24 (07/23/2006)
 ====
