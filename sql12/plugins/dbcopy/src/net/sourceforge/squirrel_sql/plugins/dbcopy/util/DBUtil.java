@@ -49,6 +49,7 @@ import java.util.Vector;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
@@ -516,6 +517,36 @@ public class DBUtil extends I18NBaseObject {
             result = true;
         }
         return result;
+    }
+    
+    /**
+     * Takes the specified colInfo, gets the data type to see if it is 
+     * 1111(OTHER).  If so then get the type name and try to match a jdbc type
+     * with the same name to get it's type code.
+     * 
+     * @param colInfo
+     * @return
+     * @throws MappingException
+     */
+    public static int replaceOtherDataType(TableColumnInfo colInfo) 
+    	throws MappingException 
+    {
+    	int colJdbcType = colInfo.getDataType();
+        if (colJdbcType == java.sql.Types.OTHER) {
+            String typeName = colInfo.getTypeName().toUpperCase();
+            int parenIndex = typeName.indexOf("(");
+            if (parenIndex != -1) {
+                typeName = typeName.substring(0,parenIndex);
+            }
+            colJdbcType = JDBCTypeMapper.getJdbcType(typeName);
+            if (colJdbcType == Types.NULL) {
+                throw new MappingException(
+                        "Encoutered jdbc type OTHER (1111) and couldn't map "+
+                        "the database-specific type name ("+typeName+
+                        ") to a jdbc type");
+            }
+        }
+        return colJdbcType;
     }
     
     /**
@@ -1472,7 +1503,7 @@ public class DBUtil extends I18NBaseObject {
     			table = table.toLowerCase();
     		}
     	}
-        if (schema == null) {
+        if (schema == null || schema.equals("")) {
             return table;
         }
         HibernateDialect dialect = 
