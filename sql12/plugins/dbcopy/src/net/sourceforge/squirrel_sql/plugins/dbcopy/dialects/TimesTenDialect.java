@@ -36,11 +36,12 @@ public class TimesTenDialect extends org.hibernate.dialect.TimesTenDialect
         registerColumnType(Types.BINARY, 4194304,"varbinary($l)");
         registerColumnType(Types.BINARY, "varbinary(4194304)");
         registerColumnType(Types.BIT, "tinyint");
-        registerColumnType(Types.BLOB, 2000000000, "bit varying($l)");
+        registerColumnType(Types.BLOB, 4194304, "varbinary($l)");
+        registerColumnType(Types.BLOB, "varbinary(4194304)");
         registerColumnType(Types.BOOLEAN, "tinyint");
         registerColumnType(Types.CHAR, 8300, "char($l)");
         registerColumnType(Types.CHAR, 4194304, "varchar($l)");
-        registerColumnType(Types.CLOB, "varchar(4194304)");
+        registerColumnType(Types.CHAR, "varchar(4194304)");        
         registerColumnType(Types.CLOB, 4194304, "varchar($l)");
         registerColumnType(Types.CLOB, "varchar(4194304)");
         registerColumnType(Types.DATE, "date");
@@ -49,7 +50,7 @@ public class TimesTenDialect extends org.hibernate.dialect.TimesTenDialect
         registerColumnType(Types.FLOAT, "float");
         registerColumnType(Types.INTEGER, "integer");        
         registerColumnType(Types.LONGVARBINARY, 4194304,"varbinary($l)");
-        registerColumnType(Types.LONGVARBINARY, 4194304,"varbinary(4194304)");
+        registerColumnType(Types.LONGVARBINARY, "varbinary(4194304)");
         registerColumnType(Types.LONGVARCHAR, 4194304, "varchar($l)");
         registerColumnType(Types.LONGVARCHAR, "varchar(4194304)");
         registerColumnType(Types.NUMERIC, "numeric($p,$s)");
@@ -58,7 +59,8 @@ public class TimesTenDialect extends org.hibernate.dialect.TimesTenDialect
         registerColumnType(Types.TIME, "time");
         registerColumnType(Types.TIMESTAMP, "timestamp");
         registerColumnType(Types.TINYINT, "tinyint");
-        registerColumnType(Types.VARBINARY, 31995, "bit varying($l)");
+        registerColumnType(Types.VARBINARY, 4194304, "varbinary($l)");
+        registerColumnType(Types.VARBINARY, "varbinary(4194304)");
         registerColumnType(Types.VARCHAR, 4194304,"varchar($l)");
         registerColumnType(Types.VARCHAR, "varchar(4194304)");
       
