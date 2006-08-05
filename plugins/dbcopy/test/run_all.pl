@@ -2,6 +2,7 @@
 
 use Benchmark;
 use File::Spec::Functions;
+use Cwd;
 
 $startrun = new Benchmark;
 
@@ -16,14 +17,14 @@ open (RESULTS, "> $resultsfile") or
 #                'mckoi', 'mysql', 'oracle', 'pointbase', 'sqlserver');
 
 @defaultFrom = ('postgres', 'axion', 'db2', 'derby', 
-                'firebird', 'h2', 'mysql', 'oracle');
+                'firebird', 'h2', 'mckoi', 'mysql', 'oracle', 'timesten');
 
 #@defaultTo = ( 'postgres', 'axion', 'db2', 'derby', 'daffodil',
 #               'firebird', 'frontbase', 'h2', 'hsql', 'ingres', 'maxdb',
 #               'mckoi', 'mysql', 'oracle', 'pointbase', 'sqlserver');
 
-@defaultTo = ( 'postgres', 'axion', 'db2', 'derby',
-                'firebird', 'h2', 'mysql', 'oracle');
+@defaultTo = ('postgres', 'axion', 'db2', 'derby',
+              'firebird', 'h2', 'mckoi', 'mysql', 'oracle', 'timesten');
 
 $arg1 = shift (@ARGV);
 $arg2 = shift (@ARGV);
@@ -88,6 +89,7 @@ $endrun = new Benchmark;
 $td = timediff($endrun, $startrun);
 print "The script total run time was:",timestr($td),"\n";
 
+system("gnumeric $resultsfile &");
 
 # routines below
 
@@ -111,7 +113,6 @@ sub buildClasspath {
         push @resultarr, $value;
 	}
 	$cpath = join $pathsep, @resultarr;
-    #print "cpath= $cpath\n";
     return $cpath;
 }
 
@@ -135,7 +136,8 @@ sub createPropsFile {
 	print OUTPROPS "showSqlStatements=true\n";
 	print OUTPROPS "\n";
 	print OUTPROPS '#' . " the directory where the DBCopy preferences file (prefs.xml) is stored.\n";
-	print OUTPROPS "prefsDir=C:/home/projects/squirrel-sql/sql12/plugins/dbcopy/test\n";	
+	$prefsDir = getcwd;
+	print OUTPROPS "prefsDir=$prefsDir\n";	
 	
 	close(OUTPROPS);
 }
