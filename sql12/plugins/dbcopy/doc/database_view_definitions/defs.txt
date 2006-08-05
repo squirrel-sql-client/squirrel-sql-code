@@ -10,3 +10,6 @@ and v.table_name = u.view_name
 
 select table_name as view_name, view_definition as view_def from information_schema.views
 
+# TimesTen
+
+select name as view_name, sql as view_def from SYS.VIEWS
