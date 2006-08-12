@@ -39,7 +39,6 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DatabaseTypesDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.TableColumnsDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -1814,7 +1813,9 @@ public class SQLDatabaseMetaData
         ResultSet rs = null;
         try {
             rs = getColumns(ti);
-            result = new TableColumnsDataSet(rs, columnIndices);
+            ResultSetDataSet rsds = new ResultSetDataSet();
+            rsds.setResultSet(rs, columnIndices, computeWidths);
+            result = rsds;
         } catch (SQLException e) { 
             throw new DataSetException(e);
         } finally {
