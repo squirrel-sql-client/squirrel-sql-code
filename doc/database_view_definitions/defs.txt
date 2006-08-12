@@ -1,4 +1,9 @@
 
+# HSQLDB
+select table_name as view_name, view_definition as view_def
+from information_schema.system_views
+where table_name = ?
+
 # PostgreSQL
 
 select v.table_name as view_name, v.view_definition as view_def, u.table_name as base_table
