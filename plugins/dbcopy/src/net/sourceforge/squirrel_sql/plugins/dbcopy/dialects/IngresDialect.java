@@ -173,7 +173,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect
     	if (databaseProductName == null) {
     		return false;
     	}
-    	if (databaseProductName.trim().toLowerCase().startsWith("informix")) {
+    	if (databaseProductName.trim().toLowerCase().startsWith("ingres")) {
     		// We don't yet have the need to discriminate by version.
     		return true;
     	}
