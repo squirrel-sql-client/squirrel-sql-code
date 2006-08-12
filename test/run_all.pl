@@ -16,18 +16,21 @@ open (RESULTS, "> $resultsfile") or
 #                'firebird', 'frontbase', 'h2', 'hsql', 'ingres', 'maxdb', 
 #                'mckoi', 'mysql', 'oracle', 'pointbase', 'sqlserver');
 
-@defaultFrom = ('postgres', 'axion', 'db2', 'derby', 
-                'firebird', 'h2', 'mckoi', 'mysql', 'oracle', 'timesten');
+@defaultFrom = ('postgres', 'axion', 'daffodil', 'db2', 'derby', 
+                'firebird', 'h2', 'hsql', 'ingres', 'mckoi', 
+                'mysql', 'oracle', 'timesten');
 
 #@defaultTo = ( 'postgres', 'axion', 'db2', 'derby', 'daffodil',
 #               'firebird', 'frontbase', 'h2', 'hsql', 'ingres', 'maxdb',
 #               'mckoi', 'mysql', 'oracle', 'pointbase', 'sqlserver');
 
-@defaultTo = ('postgres', 'axion', 'db2', 'derby',
-              'firebird', 'h2', 'mckoi', 'mysql', 'oracle', 'timesten');
+@defaultTo = ('postgres', 'axion', 'daffodil', 'db2', 'derby',
+              'firebird', 'h2', 'hsql', 'ingres', 'mckoi', 
+              'mysql', 'oracle', 'timesten');
 
 $arg1 = shift (@ARGV);
 $arg2 = shift (@ARGV);
+$showgnumeric = 1;
 
 if (defined $arg1 && defined $arg2) {
 	if ($arg1 eq "*") {
@@ -39,6 +42,9 @@ if (defined $arg1 && defined $arg2) {
 		@to = @defaultTo;
 	} else {
 		@to =  ( $arg2 );
+	}
+	if ($arg1 ne "*" && $arg2 ne "*") {
+		$showgnumeric = 0;
 	}
 } else {
 	@from = @defaultFrom;
@@ -89,9 +95,15 @@ $endrun = new Benchmark;
 $td = timediff($endrun, $startrun);
 print "The script total run time was:",timestr($td),"\n";
 
-system("gnumeric $resultsfile &");
+if ($showgnumeric) {
+	# launch gnumeric to display the results summary, but only if it has 
+	# more than one cell.
+	system("gnumeric $resultsfile &");
+}
 
+####################
 # routines below
+####################
 
 sub buildClasspath {
     if ($^O =~ /linux/) {
@@ -191,12 +203,14 @@ sub printResults {
 }
 
 sub readPropertyFiles {
-	foreach $db (@from) {
-		readPropertyFile($db);
-	}
-	foreach $db (@to) {
-		readPropertyFile($db);	
-	}
+	my @all = (@from, @to);
+	%seen = ();
+	foreach $db (@all) {
+		unless ($seen{$db}) {
+			$seen{$db} = 1;
+			readPropertyFile($db);
+		}
+	}	 
 }
 
 sub readPropertyFile {
