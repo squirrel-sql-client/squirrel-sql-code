@@ -1,7 +1,7 @@
 DBCopy Change Log
 =================
 
-0.25 (08/13/2006)
+0.25 (??/??/????)
 ====
 
 - Previously, when copying from Axion and "Copy Primary Keys" or 
