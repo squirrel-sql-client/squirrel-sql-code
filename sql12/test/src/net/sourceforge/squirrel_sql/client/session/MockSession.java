@@ -68,13 +68,7 @@ public class MockSession implements ISession {
     boolean closed;
         
     public MockSession() {
-    	mcon2 = new MockConnection2();    	
     	init();
-        sqlDriver = new SQLDriver();
-        mdata = new MockDatabaseMetaData();
-        mdata.setupDriverName("junit");
-        mcon2.setupMetaData(mdata);
-        con = new SQLConnection(mcon2, null);
     }
     
     public MockSession(String className, 
@@ -92,6 +86,12 @@ public class MockSession implements ISession {
     }
     
     private void init() {
+    	mcon2 = new MockConnection2();
+        sqlDriver = new SQLDriver();
+        mdata = new MockDatabaseMetaData();
+        mdata.setupDriverName("junit");
+        mcon2.setupMetaData(mdata);
+        con = new SQLConnection(mcon2, null);
     	id = new UidIdentifier();
     	messageHandler = new MockMessageHandler();
     	props = new SessionProperties();
