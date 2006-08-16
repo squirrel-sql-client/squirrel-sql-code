@@ -17,23 +17,23 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.*;
-
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.IOException;
-
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
-import javax.swing.text.JTextComponent;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Types;
 import java.text.NumberFormat;
+
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.text.JTextComponent;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
@@ -346,14 +346,16 @@ public class DataTypeDouble extends FloatingPointBase
             if (c == KeyEvent.VK_TAB || c == KeyEvent.VK_ENTER) {
                // remove all instances of the offending char
                int index = text.indexOf(c);
-               if (index == text.length() -1) {
-                  text = text.substring(0, text.length()-1);	// truncate string
+               if (index != -1) {
+	               if (index == text.length() -1) {
+	                  text = text.substring(0, text.length()-1);	// truncate string
+	               }
+	               else {
+	                  text = text.substring(0, index) + text.substring(index+1);
+	               }
+	               ((IRestorableTextComponent)_theComponent).updateText( text);
+	               _theComponent.getToolkit().beep();
                }
-               else {
-                  text = text.substring(0, index) + text.substring(index+1);
-               }
-               ((IRestorableTextComponent)_theComponent).updateText( text);
-               _theComponent.getToolkit().beep();
                e.consume();
             }
 
