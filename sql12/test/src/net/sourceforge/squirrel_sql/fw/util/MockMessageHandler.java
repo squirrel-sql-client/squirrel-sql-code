@@ -18,34 +18,101 @@
  */
 package net.sourceforge.squirrel_sql.fw.util;
 
+/**
+ * An IMessageHandler implementation that can be used as a test fixture where
+ * needed.
+ * 
+ * @author manningr
+ */
 public class MockMessageHandler implements IMessageHandler {
 
+	private boolean showMessages = false;
+	
+	private boolean showWarningMessages = false;
+	
+	private boolean showErrorMessages = false;
+	
     public void showMessage(Throwable th) {
-        // TODO Auto-generated method stub
-    	System.err.println("MockMessageHandler.showMessage(Throwable): stub not yet implemented");
+    	if (showMessages) {
+    		System.out.println(
+    			"MockMessageHandler.showMessage(Throwable): th.getMessage="+
+    			th.getMessage());
+    	}
     }
 
     public void showMessage(String msg) {
-        // TODO Auto-generated method stub
-    	System.err.println("MockMessageHandler.showMessage(String): stub not yet implemented");
+    	if (showMessages) {
+    		System.out.println(
+    			"MockMessageHandler.showMessage(Throwable): msg="+msg);
+    	}
     }
 
     public void showErrorMessage(Throwable th) {
-        // TODO Auto-generated method stub
-    	System.err.println("MockMessageHandler.showErrorMessage(Throwable): stub not yet implemented");
+    	if (showErrorMessages) {
+    		System.out.println(
+    			"MockMessageHandler.showErrorMessage(Throwable): th.getMessage="+
+    			th.getMessage());
+    	}
     }
 
     public void showErrorMessage(String msg) {
-        // TODO Auto-generated method stub
-    	System.err.println("MockMessageHandler.showErrorMessage(String): stub not yet implemented");
+    	if (showErrorMessages) {
+    		System.out.println(
+    			"MockMessageHandler.showErrorMessage(String): msg="+msg);
+    	}
     }
 
     /* (non-Javadoc)
      * @see net.sourceforge.squirrel_sql.fw.util.IMessageHandler#showWarningMessage(java.lang.String)
      */
     public void showWarningMessage(String msg) {
-        // TODO Auto-generated method stub
-    	System.err.println("MockMessageHandler.showWarningMessage: stub not yet implemented");
+    	if (showWarningMessages) {
+    		System.out.println(
+    			"MockMessageHandler.showWarningMessage(String): msg="+msg);
+    	}
     }
+
+	/**
+	 * @param showMessages the showMessages to set
+	 */
+	public void setShowMessages(boolean showMessages) {
+		this.showMessages = showMessages;
+	}
+
+	/**
+	 * @return the showMessages
+	 */
+	public boolean isShowMessages() {
+		return showMessages;
+	}
+
+	/**
+	 * @param showWarningMessages the showWarningMessages to set
+	 */
+	public void setShowWarningMessages(boolean showWarningMessages) {
+		this.showWarningMessages = showWarningMessages;
+	}
+
+	/**
+	 * @return the showWarningMessages
+	 */
+	public boolean isShowWarningMessages() {
+		return showWarningMessages;
+	}
+
+	/**
+	 * @param showErrorMessages the showErrorMessages to set
+	 */
+	public void setShowErrorMessages(boolean showErrorMessages) {
+		this.showErrorMessages = showErrorMessages;
+	}
+
+	/**
+	 * @return the showErrorMessages
+	 */
+	public boolean isShowErrorMessages() {
+		return showErrorMessages;
+	}
+
 
 }
