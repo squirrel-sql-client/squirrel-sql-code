@@ -5,7 +5,9 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
-A new translation was added to the installer: Simplified Chinese (Thanks to xpdz)
+Two new translations were added to the installer: 
+	Simplified Chinese (Thanks to xpdz)
+	German (Thanks to Andreas Oswald)
 
 1541154: (ArrayIndexOutOfBoundsException in DataTypeDouble)
 

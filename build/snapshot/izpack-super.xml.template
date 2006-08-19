@@ -211,6 +211,12 @@
 	        	src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql_zh_CN.jar"/>
     </pack>
 
+    <pack required="no" preselected="no" name="Optional Translation - German">
+        <description>Provides native labels and user messages for use in a German locale (Andreas Oswald)</description>
+    	<file	targetdir="$INSTALL_PATH/lib"
+	        	src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql_de_DE.jar"/>
+    </pack>
+
     <pack required="no" preselected="no" name="Optional Translation - Spanish">
         <description>Provides native labels and user messages for use in a Spanish locale (Diego Schulz)</description>
     	<file	targetdir="$INSTALL_PATH/lib"
