@@ -19,16 +19,17 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+
 /**
- * JUnit test for DataTypeDouble class.
+ * JUnit test for DataTypeBigDecimal class.
  * 
  * @author manningr
  */
-public class DataTypeDoubleTest extends AbstractDataTypeTest {
+public class DataTypeBigDecimalTest extends AbstractDataTypeTest {
 
 	public void setUp() throws Exception {
 		super.setUp();
-		iut = new DataTypeDouble(null, getColDef());
+		iut = new DataTypeBigDecimal(null, getColDef());
 	}
 
 	public void testTextComponents() {

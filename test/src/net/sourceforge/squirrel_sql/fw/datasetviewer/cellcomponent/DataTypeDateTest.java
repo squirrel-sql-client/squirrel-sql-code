@@ -20,15 +20,15 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  */
 
 /**
- * JUnit test for DataTypeDouble class.
+ * JUnit test for DataTypeDate class.
  * 
  * @author manningr
  */
-public class DataTypeDoubleTest extends AbstractDataTypeTest {
+public class DataTypeDateTest extends AbstractDataTypeTest {
 
 	public void setUp() throws Exception {
 		super.setUp();
-		iut = new DataTypeDouble(null, getColDef());
+		iut = new DataTypeDate(null, getColDef());
 	}
 
 	public void testTextComponents() {
