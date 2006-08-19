@@ -21,13 +21,39 @@ package net.sourceforge.squirrel_sql.mo.sql;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+
 import com.mockobjects.sql.MockSingleRowResultSet;
 
 
 
 public class MockDatabaseMetaData extends
         com.mockobjects.sql.MockDatabaseMetaData {
-
+	
+	private MockResultSet catalogs = null;
+	private MockResultSet schemas = null;
+	private String keywords = null;
+	private MockResultSet typeInfo = null;
+	private MockResultSet procedures = null;
+	
+	private String catalog = "aCatalog";
+	private String schema = "aSchema";
+	
+	private String catalogTerm = "CATALOG";
+	private String schemaTerm = "SCHEMA";
+	private String procedureTerm = "PROCEDURE";
+	
+	public MockDatabaseMetaData() {
+		
+	}
+	
+	public MockDatabaseMetaData(String currentCatalog,
+								String currentSchema) 
+	{
+		catalog = currentCatalog;
+		schema = currentSchema;
+	}	
+	
     /* (non-Javadoc)
      * @see com.mockobjects.sql.MockDatabaseMetaData#getIdentifierQuoteString()
      */
@@ -810,6 +836,108 @@ public class MockDatabaseMetaData extends
         return false;
     }
 
+	public ResultSet getCatalogs() throws SQLException {
+		return catalogs;
+	}
 
+	public void setCatalogs(String[] catalogNames) {
+		catalogs = new MockResultSet(null);
+		for (int i = 0; i < catalogNames.length; i++) {
+			catalogs.addRow(new Object[] {catalogNames[i]});
+		}
+	}
+
+	public ResultSet getSchemas() throws SQLException {
+		return schemas;
+	}
+
+	public void setSchemas(String[] schemaNames) {
+		schemas = new MockResultSet(null);
+		for (int i = 0; i < schemaNames.length; i++) {
+			schemas.addRow(new Object[] {schemaNames[i]});
+		}
+	}
     
+	public String getSQLKeywords() throws SQLException {
+		return "";
+	}
+	
+	public void setSQLKeywords(String[] someKeywords) {
+		StringBuffer tmp = new StringBuffer();
+		for (int i = 0; i < someKeywords.length; i++) {
+			tmp.append(someKeywords[i]);
+		}
+		keywords = tmp.toString();
+	}
+	
+	public ResultSet getTypeInfo() throws SQLException {
+		return new MockResultSet(null);
+	}
+	
+	public ResultSet getProcedures(String catalog, 
+								   String schemaPattern, 
+								   String procedureNamrPattern) 
+		throws SQLException
+	{
+		return new MockResultSet(null);
+	}
+	
+	public String getNumericFunctions() throws SQLException {
+		return "";
+	}
+
+	public String getStringFunctions() throws SQLException {
+		return "";
+	}
+
+	public ResultSet getTables(String aCatalog, 
+							   String schemaPattern, 
+							   String tableNamePattern, 
+							   String[] types) 
+		throws SQLException 
+	{
+		return new MockResultSet(null);
+	}
+
+	public String getTimeDateFunctions() throws SQLException {
+		return "";
+	}
+	
+	public void setCatalogTerm(String aCatalogTerm) {
+		catalogTerm = aCatalogTerm;
+	}
+	
+	public String getCatalogTerm() {
+		return catalogTerm;
+	}
+
+	/**
+	 * @param schemaTerm the schemaTerm to set
+	 */
+	public void setSchemaTerm(String schemaTerm) {
+		this.schemaTerm = schemaTerm;
+	}
+
+	/**
+	 * @return the schemaTerm
+	 */
+	public String getSchemaTerm() {
+		return schemaTerm;
+	}
+
+	/**
+	 * @param procedureTerm the procedureTerm to set
+	 */
+	public void setProcedureTerm(String procedureTerm) {
+		this.procedureTerm = procedureTerm;
+	}
+
+	/**
+	 * @return the procedureTerm
+	 */
+	public String getProcedureTerm() {
+		return procedureTerm;
+	}	
+
+	
 }
