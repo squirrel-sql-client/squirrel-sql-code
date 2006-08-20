@@ -426,21 +426,21 @@ public class DBUtil extends I18NBaseObject {
             catalog = schema;
             schema = null;
         }
-        ITableInfo[] tis = Compat.getTables(data, catalog, schema, tableName);
+        ITableInfo[] tis = Compat.getTables(session, catalog, schema, tableName);
         if (tis == null || tis.length == 0) {
             if (Character.isUpperCase(tableName.charAt(0))) {
                 tableName = tableName.toLowerCase();
             } else {
                 tableName = tableName.toUpperCase();
             }
-            tis = Compat.getTables(data, null, schema, tableName);
+            tis = Compat.getTables(session, null, schema, tableName);
             if (tis.length == 0) {
                 if (Character.isUpperCase(tableName.charAt(0))) {
                     tableName = tableName.toLowerCase();
                 } else {
                     tableName = tableName.toUpperCase();
                 }
-                tis = Compat.getTables(data, null, schema, tableName);
+                tis = Compat.getTables(session, null, schema, tableName);
             }
         }
         if (tis.length == 0) {
@@ -451,6 +451,14 @@ public class DBUtil extends I18NBaseObject {
                                       new String[] { tableName,
                                                      schema });
             throw new MappingException(msg);
+        }
+        if (tis.length > 1) {
+        	if (log.isDebugEnabled()) {
+        		log.debug(
+        			"DBUtil.getTableInfo: found "+tis.length+" that matched "+
+        			"catalog="+catalog+" schema="+schema+" tableName="+
+        			tableName);
+        	}
         }
         return tis[0];
     }

@@ -18,13 +18,18 @@
  */
 package net.sourceforge.squirrel_sql.plugins.dbcopy.util;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
+import javax.swing.Action;
+
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
@@ -35,7 +40,14 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * A utility class which seeks to provide "version-aware" implementations of 
  * SQuirreL API methods.  The idea here is to limit the number of different
  * compatibility versions that the DBCopy plugin needs to support it's use in 
- * most versions of SQuirreL.
+ * most versions of SQuirreL. Currently, this allows there to be just two 
+ * versions of the DBCopy plugin that are compatible for use with 1.2beta6 and
+ * 2.x.  The only reason that there must be a version for 1.2beta6 at this point
+ * is due to the plugin interface change which makes implementatios of the 
+ * ISessionPlugin (which is how SQuirreL's plugin manager finds plugins) 
+ * incompatible for use with all versions of SQuirreL.  Someday I'd like to 
+ * either get everyone off of 1.2beta6 (fat chance), or figure out a way to 
+ * get both versions PluginManager's to detect a single version of this plugin.  
  */
 public class Compat {
 
@@ -58,20 +70,104 @@ public class Compat {
      * @return
      * @throws SQLException
      */
-    public static ITableInfo[] getTables(SQLDatabaseMetaData data, 
+    public static ITableInfo[] getTables(ISession session, 
                                           String catalog, 
                                           String schema, 
                                           String tableName) 
-        throws SQLException 
     {
         ITableInfo[] result = new ITableInfo[0];
-        Class c = data.getClass();
+        
+        Object[] args = null;
+        Method m = null;
+
+        Object schemaInfo = null;
+        Class schemaInfoClass = 
+        	safeForName("net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo");
+        if (schemaInfoClass != null) {
+        	Class[] params = 
+        		new Class[] {String.class, String.class, String.class };
+        	m = safeGetMethod(schemaInfoClass, "getITableInfos", params);
+        	// The following is quivalent to:
+        	// SchemaInfo schemaInfo = session.getSchemaInfo()
+        	//
+        	schemaInfo = safeGetObject(session, "getSchemaInfo", null);
+        } 
+        if (m != null) {
+	        try {
+	        	// The following is quivalent to: 
+	        	// ITableInfo[] result = schemaInfo.getITableInfos(catalog, schema, tableName)
+	        	//
+	        	args = new Object[] { catalog, schema, tableName };
+	            result = (ITableInfo[])m.invoke(schemaInfo, args);
+	        } catch (Exception e) {
+	            s_log.error("Encountered unexpected exception when attempting to "+
+	                        "call SQLDatabaseMetaData.getTables with args = "+args);
+	        }
+        } 
+        if (result == null || result.length == 0) {
+        	// Fallback to the old method, going directly to the database.
+        	SQLDatabaseMetaData d = session.getSQLConnection().getSQLMetaData();
+        	result = getTables(d, catalog, schema, tableName);
+        }
+        
+        return result;
+    }
+
+    private static Object safeGetObject(Object object, 
+    								    String method, 
+    								    Class[] parameterTypes) 
+    {
+    	Object result = null;
+    	try {
+    		Method m = object.getClass().getMethod(method, parameterTypes);
+    		m.setAccessible(true);
+    		result = m.invoke(object, parameterTypes);
+    	} catch (Exception e) {
+    		s_log.debug("Compat.safeGetObject: unable to execute method " +
+    				    "called "+method+" on class "+
+    				    object.getClass().getName());
+    	}
+    	return result;
+    }
+    
+    private static Method safeGetMethod(Class c, 
+    								    String methodName, 
+    								    Class[] parameterTypes) {
+    	Method result = null;
+    	try {
+    		result = c.getMethod(methodName, parameterTypes);
+    	} catch (Exception e) {
+    		String className = c.getName();
+    		s_log.debug("Compat.safeGetMethod: No method called "+
+    					methodName+" with parameters ("+parameterTypes+") " +
+    					"was located in class "+className);
+    	}
+    	return result;
+    }
+    
+    /**
+     * Older, pre-2.3 SQuirreL method of getting ITableInfos for the specified 
+     * parameters.
+     * 
+     * @param data
+     * @param catalog
+     * @param schema
+     * @param tableName
+     * @return
+     */
+    private static ITableInfo[] getTables(SQLDatabaseMetaData data,
+            							  String catalog, 
+            							  String schema, 
+            							  String tableName) 
+    { 
+        ITableInfo[] result = new ITableInfo[0];
         Class progressCallBackClass = 
             safeForName("net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack");
         
         Object[] args = null;
         Method m = null;
         Class[] argTypes = null;
+        
         if (progressCallBackClass != null)  
         {
             argTypes = new Class[] { String.class, 
@@ -92,6 +188,7 @@ public class Compat {
         }
 
         try {
+            Class c = data.getClass();        	
             m = c.getDeclaredMethod("getTables", argTypes);
             result = (ITableInfo[])m.invoke(data, args);
         } catch (Exception e) {
@@ -99,8 +196,8 @@ public class Compat {
                         "call SQLDatabaseMetaData.getTables with args = "+args);
         }
         return result;
-    }
-
+    }								
+    
     /**
      * Figures out which method of ISession that gets the IObjectTreeAPI is 
      * available and invokes it, returning the result.
@@ -245,6 +342,60 @@ public class Compat {
     	}
     	return result;
     }
+    
+    public static void addToPopupForTableFolder(IObjectTreeAPI api, 
+    										    Action action) 
+    {
+    	Class dboClass = DatabaseObjectType.class;
+    	Field[] fields = dboClass.getDeclaredFields();
+    	Object dboObj = null;
+    	for (int i = 0; i < fields.length; i++) {
+			Field field = fields[i];
+			String fieldName = field.getName();
+			if (fieldName.equals("TABLE_TYPE_DBO")) {
+				try {
+					dboObj = field.get(null);
+				} catch (IllegalAccessException e) {
+					s_log.debug(
+						"Unable to get the TABLE_TYPE_DBO field of " +
+						"DatabaseObjectType: "+e.getMessage());
+				}
+			}
+		}
+    	if (dboObj != null) {
+    		Class apiClass = api.getClass();
+    		Class[] params = 
+    			new Class[] {DatabaseObjectType.class, Action.class};
+    		Method m = null;
+    		try {
+				m = apiClass.getMethod("addToPopup", params);
+			} catch (SecurityException e) {
+				s_log.debug(
+					"Unable to get addToPopup method from IObjectTreeAPI " +
+					"class: "+e.getMessage());
+			} catch (NoSuchMethodException e) {
+				s_log.debug(
+					"Unable to get addToPopup method from IObjectTreeAPI " +
+					"class: "+e.getMessage());
+			}
+
+			try {
+				m.invoke(api, new Object[] { dboObj, action });
+			} catch (IllegalArgumentException e) {
+				s_log.debug(
+					"Unable to invoke addToPopup method from IObjectTreeAPI " +
+					"class: "+e.getMessage());
+			} catch (IllegalAccessException e) {
+				s_log.debug(
+					"Unable to invoke addToPopup method from IObjectTreeAPI " +
+					"class: "+e.getMessage());
+			} catch (InvocationTargetException e) {
+				s_log.debug(
+					"Unable to invoke addToPopup method from IObjectTreeAPI " +
+					"class: "+e.getMessage());
+			}
+    	}
+    }
         
     /**
      * Test to see if the specified className is available using the current 
@@ -258,8 +409,16 @@ public class Compat {
         Class result = null;
         try {
             result = Class.forName(className);
+            if (s_log.isDebugEnabled()) {
+            	s_log.debug("Compat.safeForName: found class "+className);
+            }
         } catch (ClassNotFoundException e) {
             // Class doesn't exist in this release
+        	if (s_log.isDebugEnabled()) {
+        		s_log.debug(
+        			"Compat.safeForName: class "+className+
+        			" could not be located");
+        	}
         }
         return result;
     }

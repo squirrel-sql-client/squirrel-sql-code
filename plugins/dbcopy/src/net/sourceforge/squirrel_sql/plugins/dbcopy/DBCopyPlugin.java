@@ -224,16 +224,21 @@ public class DBCopyPlugin extends DefaultSessionPlugin
     
     private void addToPopup(IObjectTreeAPI api, ActionCollection coll) {
 
-        api.addToPopup(DatabaseObjectType.TABLE_TYPE_DBO,
- 			           coll.get(CopyTableAction.class));
-
-        api.addToPopup(DatabaseObjectType.TABLE_TYPE_DBO,
-		           coll.get(PasteTableAction.class));
-
+        //api.addToPopup(DatabaseObjectType.TABLE_TYPE_DBO,
+		//           coll.get(CopyTableAction.class));
+    	Compat.addToPopupForTableFolder(api, coll.get(CopyTableAction.class));
+    	
+        //api.addToPopup(DatabaseObjectType.TABLE_TYPE_DBO,
+	    //       coll.get(PasteTableAction.class));
+        Compat.addToPopupForTableFolder(api, coll.get(PasteTableAction.class));
+        
     	// Copy action object tree types
         api.addToPopup(DatabaseObjectType.TABLE, 
                        coll.get(CopyTableAction.class));
-                          
+
+        api.addToPopup(DatabaseObjectType.TABLE,
+		           coll.get(PasteTableAction.class));        
+        
         // Paste action object tree types
         api.addToPopup(DatabaseObjectType.SCHEMA, 
                        coll.get(PasteTableAction.class));
