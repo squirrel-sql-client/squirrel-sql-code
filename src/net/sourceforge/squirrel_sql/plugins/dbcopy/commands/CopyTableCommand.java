@@ -71,8 +71,8 @@ public class CopyTableCommand implements ICommand
             	if (log.isDebugEnabled()) {
 	            	log.debug("CopyTableCommand.execute: catalog="+catalog);
 	            	log.debug("CopyTableCommand.execute: schema="+schema);
-            	}
-            	dbObjs = _session.getSchemaInfo().getITableInfos(catalog, schema);
+            	}	
+            	dbObjs = Compat.getTables(_session, catalog, schema, null);
             	for (int i = 0; i < dbObjs.length; i++) {
             		ITableInfo info = (ITableInfo)dbObjs[i];
             		if (log.isDebugEnabled()) {
