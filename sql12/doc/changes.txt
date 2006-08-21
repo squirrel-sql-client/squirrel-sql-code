@@ -5,14 +5,25 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
-Two new translations were added to the installer: 
+Bug fix in Alias properties for Oracle:
+  Note: This bug took effect when default Alias properties were used.
+        So this fix probably increases Session startup performance for Oracle users
+        who use the Oracle plugin but do not care for Alias properties.
+  Bug: When an Alias was configured to load all Schemas and cache non
+       but the Oracle Alias properties didn't allow to load all schemas
+       SQuirreL still did load all tables and procedures from the database.
+       Though the unallowed tables and procedures did not show up in the Object tree
+       they still caused bad startup perfomance.
+  Fix: Now only tables and procedures for allowed schemas are loaded.
+
+Two new translations were added to the installer:
 	Simplified Chinese (Thanks to xpdz)
 	German (Thanks to Andreas Oswald)
 
 1541154: (ArrayIndexOutOfBoundsException in DataTypeDouble)
 
-1533824: (NPE when loading keywords from DatabaseMetaData) Check the values 
-returned for null before attempting to parse and store them (DB2 driver 
+1533824: (NPE when loading keywords from DatabaseMetaData) Check the values
+returned for null before attempting to parse and store them (DB2 driver
 returns null for getCatalogTerm())
 
 Export CVS allows to choose whether to use fromating from Global Prefs or default formatting.
