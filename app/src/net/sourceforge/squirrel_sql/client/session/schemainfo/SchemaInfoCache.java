@@ -69,7 +69,32 @@ public class SchemaInfoCache implements Serializable
 
    private SchemaLoadInfo[] getAllSchemaLoadInfos()
    {
-      return _session.getAlias().getSchemaProperties().getSchemaLoadInfos(_schemaPropsCacheIsBasedOn, _tabelTableTypesCacheable, _viewTableTypesCacheable);
+      SchemaLoadInfo[] schemaLoadInfos = _session.getAlias().getSchemaProperties().getSchemaLoadInfos(_schemaPropsCacheIsBasedOn, _tabelTableTypesCacheable, _viewTableTypesCacheable);
+
+      if(   1 == schemaLoadInfos.length
+         && null == schemaLoadInfos[0].schemaName
+         && false == _session.getApplication().getSessionManager().areAllSchemasAllowed(_session))
+      {
+         if(false == _session.getApplication().getSessionManager().areAllSchemasAllowed(_session))
+         {
+            String[] allowedSchemas = _session.getApplication().getSessionManager().getAllowedSchemas(_session);
+
+            ArrayList ret = new ArrayList();
+
+            for (int i = 0; i < allowedSchemas.length; i++)
+            {
+               SchemaLoadInfo buf = (SchemaLoadInfo) Utilities.cloneObject(schemaLoadInfos[0], getClass().getClassLoader());
+               buf.schemaName = allowedSchemas[i];
+               
+               ret.add(buf);
+            }
+
+            schemaLoadInfos = (SchemaLoadInfo[]) ret.toArray(new SchemaLoadInfo[ret.size()]);
+         }
+      }
+
+
+      return schemaLoadInfos;
    }
 
    SchemaLoadInfo[] getMatchingSchemaLoadInfos(String schemaName)

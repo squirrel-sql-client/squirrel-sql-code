@@ -575,6 +575,23 @@ public class SessionManager
       _allowedSchemaCheckers.add(allowedSchemaChecker);
    }
 
+
+   public boolean areAllSchemasAllowed(ISession session)
+   {
+      try
+      {
+         String[] allowedSchemas = getAllowedSchemas(session);
+         String[] schemas = session.getSQLConnection().getSQLMetaData().getSchemas();
+
+         return allowedSchemas.length == schemas.length;
+      }
+      catch (SQLException e)
+      {
+         s_log.error("Failed to check allowed Schemas", e);
+         return true;
+      }
+   }
+
    public String[] getAllowedSchemas(ISession session)
    {
       String[] allowedSchemas = (String[])_allowedSchemasBySessionID.get(session.getIdentifier());
@@ -591,7 +608,7 @@ public class SessionManager
 
    /**
     * Note: This Method does not cache allowed Schemas.
-    * It is preferable to use getAllowedSchemas(ISession) is a Session ist avaialable.
+    * It is preferable to use getAllowedSchemas(ISession) if a Session is avaialable.
     */
    public String[] getAllowedSchemas(SQLConnection con, ISQLAliasExt alias)
    {
