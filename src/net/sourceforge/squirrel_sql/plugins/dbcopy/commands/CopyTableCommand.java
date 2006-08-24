@@ -65,7 +65,7 @@ public class CopyTableCommand implements ICommand
         IObjectTreeAPI api = Compat.getIObjectTreeAPI(_session, _plugin);
         if (api != null) {
             IDatabaseObjectInfo[] dbObjs = api.getSelectedDatabaseObjects();
-            if (dbObjs[0].getDatabaseObjectType() == DatabaseObjectType.TABLE_TYPE_DBO) {
+            if (Compat.isTableTypeDBO(dbObjs[0].getDatabaseObjectType())) {
             	String catalog = dbObjs[0].getCatalogName();
             	String schema = dbObjs[0].getSchemaName();
             	if (log.isDebugEnabled()) {
