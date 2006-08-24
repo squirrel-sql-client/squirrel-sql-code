@@ -56,7 +56,6 @@ public class MockSession implements ISession {
     ISQLAliasExt sqlAlias = null;
     ISQLDriver sqlDriver = null;
     SQLConnection con = null;
-    MockConnection2 mcon2 = null;
     MockDatabaseMetaData mdata = null;
     MockApplication app = null;
     SessionProperties props = null;
@@ -68,7 +67,7 @@ public class MockSession implements ISession {
     boolean closed;
         
     public MockSession() {
-    	init();
+    	init(true);
     }
     
     public MockSession(String className, 
@@ -82,16 +81,13 @@ public class MockSession implements ISession {
     	Connection c = DriverManager.getConnection(jdbcUrl, u, p);
     	sqlDriver = new MockSQLDriver(className, jdbcUrl);
     	con = new SQLConnection(c, null);
-    	init();
+    	init(false);
     }
     
-    private void init() {
-    	mcon2 = new MockConnection2();
-        sqlDriver = new SQLDriver();
-        mdata = new MockDatabaseMetaData();
-        mdata.setupDriverName("junit");
-        mcon2.setupMetaData(mdata);
-        con = new SQLConnection(mcon2, null);
+    private void init(boolean initConnection) {
+    	if (initConnection) {
+    		con = new SQLConnection(getMockConnection(), null);
+    	}
     	id = new UidIdentifier();
     	messageHandler = new MockMessageHandler();
     	props = new SessionProperties();
@@ -108,8 +104,15 @@ public class MockSession implements ISession {
     		
     	}
     	sessionPanel = new SessionPanel(this);
-    	
-    	
+    }
+    
+    private MockConnection2 getMockConnection() {
+    	MockConnection2 result = new MockConnection2();
+        sqlDriver = new SQLDriver();
+        mdata = new MockDatabaseMetaData();
+        mdata.setupDriverName("junit");
+        result.setupMetaData(mdata);    
+        return result;
     }
     
     public boolean isClosed() {
@@ -313,4 +316,7 @@ public class MockSession implements ISession {
         return id;
     }
 
+    public MockDatabaseMetaData getMockDatabaseMetaData() {
+    	return mdata;
+    }
 }
