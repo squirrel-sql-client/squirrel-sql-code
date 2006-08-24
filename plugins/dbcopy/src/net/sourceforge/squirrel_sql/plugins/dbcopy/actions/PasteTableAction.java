@@ -99,7 +99,7 @@ public class PasteTableAction extends SquirrelAction
         } else {
         	// When the user pastes on a TABLE label which is located under a 
         	// schema/catalog, build the schema DatabaseObjectInfo.
-        	if (dbObjs[0].getDatabaseObjectType() == DatabaseObjectType.TABLE_TYPE_DBO) {
+        	if (Compat.isTableTypeDBO(dbObjs[0].getDatabaseObjectType())) {
         		IDatabaseObjectInfo tableLabelInfo = dbObjs[0];
         		SQLConnection destCon = destSession.getSQLConnection();
         		SQLDatabaseMetaData md = null;
