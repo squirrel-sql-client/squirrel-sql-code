@@ -55,6 +55,12 @@ public class Compat {
     private final static ILogger s_log =
         LoggerController.createLogger(Compat.class);
     
+    private static final String PRE_2_3_SCHEMAINFO_LOCATION = 
+    	"net.sourceforge.squirrel_sql.client.session.SchemaInfo";
+    
+    private static final String POST_2_3_SCHEMAINFO_LOCATION = 
+    	"net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo";
+    
     /**
      * This method normalizes the various versions of SQuirreL with regard to 
      * getting tables with the specified characteristics using the specified 
@@ -312,6 +318,35 @@ public class Compat {
     	
     }
     
+    public static boolean isKeyword(ISession session, String data) {
+    	boolean result = false;
+    	Class schemaInfoClass = safeForName(PRE_2_3_SCHEMAINFO_LOCATION);
+    	if (schemaInfoClass == null) {
+    		schemaInfoClass = safeForName(POST_2_3_SCHEMAINFO_LOCATION);
+    	}
+    	if (schemaInfoClass == null) {
+    		s_log.error("isKeyword: couldn't locate SchemaInfo class");
+    		return false;
+    	}
+    	try {
+			Method isKeyword = 
+				schemaInfoClass.getDeclaredMethod("isKeyword", 
+											 new Class[] { String.class });
+			Method getSchemaInfo = 
+				session.getClass().getDeclaredMethod("getSchemaInfo", null);
+			
+			Object schemaInfo = getSchemaInfo.invoke(session, null);
+			
+			Object isKeywordResult = isKeyword.invoke(schemaInfo, 
+													  new Object[] { data });
+			result = ((Boolean)isKeywordResult).booleanValue();
+		} catch (Exception e) {
+			s_log.error(
+				"isKeyword: Unexpected exception: "+e.getMessage(), e);
+		}    
+		return result;
+    }
+        
     /**
      * Retrieves whether this session treats mixed case unquoted SQL 
      * identifiers as case insensitive and stores them in upper case.
@@ -343,25 +378,38 @@ public class Compat {
     	return result;
     }
     
+    public static boolean isTableTypeDBO(Object o) {
+    	Object dboObj = safeGetField(DatabaseObjectType.class, "TABLE_TYPE_DBO");
+    	if (dboObj != null && dboObj.equals(o)) {
+    		return true;
+    	}
+    	return false;
+    }
+    
+    private static Object safeGetField(Class fieldClass, String aFieldName) {
+    	Object result = null;
+    	Field[] fields = fieldClass.getDeclaredFields();
+    	for (int i = 0; i < fields.length; i++) {
+			Field field = fields[i];
+			String fieldName = field.getName();
+			if (fieldName.equals(aFieldName)) {
+				try {
+					result = field.get(null);
+				} catch (IllegalAccessException e) {
+					s_log.debug(
+						"Unable to get the "+aFieldName+" field of class " +
+						fieldClass.getName()+": "+e.getMessage());
+				}
+			}
+		}    	
+    	return result;
+    }
+    
     public static void addToPopupForTableFolder(IObjectTreeAPI api, 
     										    Action action) 
     {
     	Class dboClass = DatabaseObjectType.class;
-    	Field[] fields = dboClass.getDeclaredFields();
-    	Object dboObj = null;
-    	for (int i = 0; i < fields.length; i++) {
-			Field field = fields[i];
-			String fieldName = field.getName();
-			if (fieldName.equals("TABLE_TYPE_DBO")) {
-				try {
-					dboObj = field.get(null);
-				} catch (IllegalAccessException e) {
-					s_log.debug(
-						"Unable to get the TABLE_TYPE_DBO field of " +
-						"DatabaseObjectType: "+e.getMessage());
-				}
-			}
-		}
+    	Object dboObj = safeGetField(dboClass, "TABLE_TYPE_DBO");
     	if (dboObj != null) {
     		Class apiClass = api.getClass();
     		Class[] params = 
