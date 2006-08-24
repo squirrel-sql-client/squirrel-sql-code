@@ -866,6 +866,9 @@ public class MockDatabaseMetaData extends
 		StringBuffer tmp = new StringBuffer();
 		for (int i = 0; i < someKeywords.length; i++) {
 			tmp.append(someKeywords[i]);
+			if (i < someKeywords.length) {
+				tmp.append(",");
+			}
 		}
 		keywords = tmp.toString();
 	}
