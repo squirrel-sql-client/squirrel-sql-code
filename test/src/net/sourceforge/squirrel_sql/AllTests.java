@@ -10,6 +10,7 @@ public class AllTests extends TestCase {
 		TestSuite result = new TestSuite("squirrel_sql tests");
 		result.addTest(net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.AllTests.suite());
 		result.addTest(net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.AllTests.suite());
+		result.addTest(net.sourceforge.squirrel_sql.plugins.dbcopy.util.AllTests.suite());
 		return result;
 	}
 }
