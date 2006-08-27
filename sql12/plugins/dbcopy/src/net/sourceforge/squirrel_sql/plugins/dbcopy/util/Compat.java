@@ -61,6 +61,27 @@ public class Compat {
     private static final String POST_2_3_SCHEMAINFO_LOCATION = 
     	"net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo";
     
+    /** Once we find the class, we don't need to search for it up again. */
+    private static Class schemaInfoClass = null;
+    
+    /** Once we find the method, we don't need to search for it up again. */
+    private static Method isKeywordMethod = null;
+    
+    /** ProgressCallBack interface didn't exist prior to version 2.2 */
+    private static final Class[] PRE_2_2_GET_TABLES_METHOD_ARG_TYPES =   
+    										new Class[] { String.class, 
+        												  String.class, 
+        												  String.class,
+        												  String[].class };
+    
+    /** The null gets set to ProgressCallBack interface later if it's available. */
+    private static final Class[] POST_2_2_GET_TABLES_METHOD_ARG_TYPES =
+    										new Class[] { String.class, 
+        												  String.class, 
+        												  String.class,
+        												  String[].class,
+        												  null };
+    
     /**
      * This method normalizes the various versions of SQuirreL with regard to 
      * getting tables with the specified characteristics using the specified 
@@ -111,7 +132,8 @@ public class Compat {
 	        }
         } 
         if (result == null || result.length == 0) {
-        	// Fallback to the old method, going directly to the database.
+        	// Fallback to the old method, going directly to the database instead
+        	// of using SchemaInfo, since SchemaInfo didn't have it.
         	SQLDatabaseMetaData d = session.getSQLConnection().getSQLMetaData();
         	result = getTables(d, catalog, schema, tableName);
         }
@@ -119,37 +141,6 @@ public class Compat {
         return result;
     }
 
-    private static Object safeGetObject(Object object, 
-    								    String method, 
-    								    Class[] parameterTypes) 
-    {
-    	Object result = null;
-    	try {
-    		Method m = object.getClass().getMethod(method, parameterTypes);
-    		m.setAccessible(true);
-    		result = m.invoke(object, parameterTypes);
-    	} catch (Exception e) {
-    		s_log.debug("Compat.safeGetObject: unable to execute method " +
-    				    "called "+method+" on class "+
-    				    object.getClass().getName());
-    	}
-    	return result;
-    }
-    
-    private static Method safeGetMethod(Class c, 
-    								    String methodName, 
-    								    Class[] parameterTypes) {
-    	Method result = null;
-    	try {
-    		result = c.getMethod(methodName, parameterTypes);
-    	} catch (Exception e) {
-    		String className = c.getName();
-    		s_log.debug("Compat.safeGetMethod: No method called "+
-    					methodName+" with parameters ("+parameterTypes+") " +
-    					"was located in class "+className);
-    	}
-    	return result;
-    }
     
     /**
      * Older, pre-2.3 SQuirreL method of getting ITableInfos for the specified 
@@ -176,19 +167,12 @@ public class Compat {
         
         if (progressCallBackClass != null)  
         {
-            argTypes = new Class[] { String.class, 
-                                     String.class, 
-                                     String.class,
-                                     String[].class,
-                                     progressCallBackClass };
+        	POST_2_2_GET_TABLES_METHOD_ARG_TYPES[4] = progressCallBackClass;
+        	argTypes = POST_2_2_GET_TABLES_METHOD_ARG_TYPES;
             args = new Object[]{catalog, schema, tableName, null, null };
             s_log.debug("Compat.getTables found ProgressCallBack interface");
         } else {
-            argTypes = new Class[] { String.class, 
-                                     String.class, 
-                                     String.class,
-                                     String[].class };
-            
+            argTypes = PRE_2_2_GET_TABLES_METHOD_ARG_TYPES;
             args = new Object[]{catalog, schema, tableName, null };
             s_log.debug("Compat.getTables didn't find ProgressCallBack interface");
         }
@@ -318,26 +302,33 @@ public class Compat {
     	
     }
     
+    /**
+     * Whether the specified session's database considers the specified string
+     * to be a keyword.
+     * 
+     * @param session
+     * @param data
+     * @return
+     */
     public static boolean isKeyword(ISession session, String data) {
     	boolean result = false;
-    	Class schemaInfoClass = safeForName(PRE_2_3_SCHEMAINFO_LOCATION);
+    	initSchemaInfoClass();
     	if (schemaInfoClass == null) {
-    		schemaInfoClass = safeForName(POST_2_3_SCHEMAINFO_LOCATION);
+	    	s_log.error("isKeyword: couldn't locate SchemaInfo class");
+	    	return false;
     	}
-    	if (schemaInfoClass == null) {
-    		s_log.error("isKeyword: couldn't locate SchemaInfo class");
-    		return false;
+    	initIsKeywordMethod();
+    	if (isKeywordMethod == null) {
+	    	s_log.error("isKeyword: couldn't locate isKeyword method");
+	    	return false;    		
     	}
     	try {
-			Method isKeyword = 
-				schemaInfoClass.getDeclaredMethod("isKeyword", 
-											 new Class[] { String.class });
 			Method getSchemaInfo = 
 				session.getClass().getDeclaredMethod("getSchemaInfo", null);
 			
 			Object schemaInfo = getSchemaInfo.invoke(session, null);
 			
-			Object isKeywordResult = isKeyword.invoke(schemaInfo, 
+			Object isKeywordResult = isKeywordMethod.invoke(schemaInfo, 
 													  new Object[] { data });
 			result = ((Boolean)isKeywordResult).booleanValue();
 		} catch (Exception e) {
@@ -346,7 +337,7 @@ public class Compat {
 		}    
 		return result;
     }
-        
+     
     /**
      * Retrieves whether this session treats mixed case unquoted SQL 
      * identifiers as case insensitive and stores them in upper case.
@@ -385,26 +376,7 @@ public class Compat {
     	}
     	return false;
     }
-    
-    private static Object safeGetField(Class fieldClass, String aFieldName) {
-    	Object result = null;
-    	Field[] fields = fieldClass.getDeclaredFields();
-    	for (int i = 0; i < fields.length; i++) {
-			Field field = fields[i];
-			String fieldName = field.getName();
-			if (fieldName.equals(aFieldName)) {
-				try {
-					result = field.get(null);
-				} catch (IllegalAccessException e) {
-					s_log.debug(
-						"Unable to get the "+aFieldName+" field of class " +
-						fieldClass.getName()+": "+e.getMessage());
-				}
-			}
-		}    	
-    	return result;
-    }
-    
+        
     public static void addToPopupForTableFolder(IObjectTreeAPI api, 
     										    Action action) 
     {
@@ -487,5 +459,80 @@ public class Compat {
                         " the specified argument session");
         }
         return result;
+    }
+    
+    private static Object safeGetObject(Object object, 
+    									String method, 
+    									Class[] parameterTypes) 
+    {
+    	Object result = null;
+    	try {
+    		Method m = object.getClass().getMethod(method, parameterTypes);
+    		m.setAccessible(true);
+    		result = m.invoke(object, parameterTypes);
+    	} catch (Exception e) {
+    		s_log.debug("Compat.safeGetObject: unable to execute method " +
+    				"called "+method+" on class "+
+    				object.getClass().getName());
+    	}
+    	return result;
+    }
+
+    private static Method safeGetMethod(Class c, 
+    									String methodName, 
+    									Class[] parameterTypes) {
+    	Method result = null;
+    	try {
+    		result = c.getMethod(methodName, parameterTypes);
+    	} catch (Exception e) {
+    		String className = c.getName();
+    		s_log.debug("Compat.safeGetMethod: No method called "+
+    				methodName+" with parameters ("+parameterTypes+") " +
+    				"was located in class "+className);
+    	}
+    	return result;
+    }
+    
+    private static Object safeGetField(Class fieldClass, String aFieldName) {
+    	Object result = null;
+    	Field[] fields = fieldClass.getDeclaredFields();
+    	for (int i = 0; i < fields.length; i++) {
+			Field field = fields[i];
+			String fieldName = field.getName();
+			if (fieldName.equals(aFieldName)) {
+				try {
+					result = field.get(null);
+				} catch (IllegalAccessException e) {
+					s_log.debug(
+						"Unable to get the "+aFieldName+" field of class " +
+						fieldClass.getName()+": "+e.getMessage());
+				}
+			}
+		}    	
+    	return result;
+    }
+
+    private static void initSchemaInfoClass() {
+    	if (schemaInfoClass == null) {
+	    	schemaInfoClass = safeForName(PRE_2_3_SCHEMAINFO_LOCATION);
+	    	if (schemaInfoClass == null) {
+	    		schemaInfoClass = safeForName(POST_2_3_SCHEMAINFO_LOCATION);
+	    	}
+    	}
+    }
+        
+    private static void initIsKeywordMethod() {
+    	if (isKeywordMethod == null) {
+    		try {
+    			isKeywordMethod = 
+    				schemaInfoClass.getDeclaredMethod("isKeyword", 
+											 new Class[] { String.class });
+    		} catch (Exception e) {
+    			s_log.error(
+    				"initIsKeywordMethod: Unexpected exception: "+
+    				e.getMessage(), e);
+    			
+    		}
+    	}
     }
 }
