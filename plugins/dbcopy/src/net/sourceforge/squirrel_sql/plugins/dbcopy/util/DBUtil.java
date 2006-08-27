@@ -1111,7 +1111,7 @@ public class DBUtil extends I18NBaseObject {
      * @return
      */
     public static boolean isKeyword(ISession session, String data) {
-        return session.getSchemaInfo().isKeyword(data);
+        return Compat.isKeyword(session, data);
     }
     
     /**
