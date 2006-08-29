@@ -53,7 +53,7 @@ public class ProcedureExpander implements INodeExpander
    {
       final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
       final String schemaName = parentDbinfo.getSchemaName();
-      return createProcedureNodes(session, "", schemaName);
+      return createProcedureNodes(session, null, schemaName);
    }
 
    private List createProcedureNodes(ISession session, String catalogName,

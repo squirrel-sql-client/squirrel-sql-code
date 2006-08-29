@@ -5,6 +5,11 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+Bug fix: Stored procedures where not shown in Object Tree when the Oracle Plugin was used.
+
+Bug fix: When a Schema was created and the Object Tree was refreshed the new Schema was not shown. 
+
+
 Bug fix in Alias properties for Oracle:
   Note: This bug took effect when default Alias properties were used.
         So this fix probably increases Session startup performance for Oracle users

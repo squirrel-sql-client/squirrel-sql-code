@@ -313,12 +313,12 @@ public class SQLDatabaseMetaData
      */
 	public synchronized String[] getSchemas() throws SQLException
 	{
-		final String key = "getSchemas";
-		String[] value = (String[])_cache.get(key);
-		if (value != null)
-		{
-			return value;
-		}
+//		final String key = "getSchemas";
+//		String[] value = (String[])_cache.get(key);
+//		if (value != null)
+//		{
+//			return value;
+//		}
 
 		boolean hasGuest = false;
 		boolean hasSysFun = false;
@@ -369,10 +369,10 @@ public class SQLDatabaseMetaData
 			list.add("SYSFUN");
 		}
 
-		value = (String[])list.toArray(new String[list.size()]);
-		_cache.put(key, value);
+//		value = (String[])list.toArray(new String[list.size()]);
+//		_cache.put(key, value);
 
-		return value;
+		return (String[])list.toArray(new String[list.size()]);
 	}
 
     /**
@@ -554,12 +554,12 @@ public class SQLDatabaseMetaData
      */
     public synchronized String[] getCatalogs() throws SQLException
 	{
-		final String key = "getCatalogs";
-		String[] value = (String[])_cache.get(key);
-		if (value != null)
-		{
-			return value;
-		}
+//		final String key = "getCatalogs";
+//		String[] value = (String[])_cache.get(key);
+//		if (value != null)
+//		{
+//			return value;
+//		}
 
 		final ArrayList list = new ArrayList();
 		ResultSet rs = privateGetJDBCMetaData().getCatalogs();
@@ -579,10 +579,10 @@ public class SQLDatabaseMetaData
          close(rs);
 		}
 
-		value = (String[])list.toArray(new String[list.size()]);
-		_cache.put(key, value);
+//		value = (String[])list.toArray(new String[list.size()]);
+//		_cache.put(key, value);
 
-		return value;
+		return (String[])list.toArray(new String[list.size()]);
 	}
 
     /**
@@ -1942,8 +1942,8 @@ public class SQLDatabaseMetaData
 	}
 
     /**
-     * Retrieves whether this database treats mixed case unquoted SQL 
-     * identifiers as case insensitive and stores them in upper case. 
+     * Retrieves whether this database treats mixed case unquoted SQL
+     * identifiers as case insensitive and stores them in upper case.
      * Cached on first call.
      *
      * @return  <tt>true</tt> if driver stores upper case identifiers
@@ -1965,7 +1965,8 @@ public class SQLDatabaseMetaData
 		_cache.put(key, value);
 
 		return value.booleanValue();
-	}	
+	}
+
 
     /**
      * Clear cache of commonly accessed metadata properties.
