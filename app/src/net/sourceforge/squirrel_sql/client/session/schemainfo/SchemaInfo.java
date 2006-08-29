@@ -509,6 +509,8 @@ public class SchemaInfo
       try
       {
 
+         _session.getApplication().getSessionManager().clearAllowedSchemaCache(_session);
+
          SchemaNameLoadInfo schemaNameLoadInfo = _schemaInfoCache.getSchemaNameLoadInfo();
 
          if(SchemaNameLoadInfo.STATE_DONT_REFERESH_SCHEMA_NAMES == schemaNameLoadInfo.state)
@@ -1275,10 +1277,10 @@ public class SchemaInfo
          }
          else if(DatabaseObjectType.SCHEMA == doi.getDatabaseObjectType())
          {
-            int progress = loadSchemas(1);
+            //int progress = loadSchemas(1);
             // load tables with catalog = null
             _schemaInfoCache.clearTables(null, doi.getSchemaName(), null, null);
-            progress = loadTables(null, doi.getSchemaName(), null, null, progress);
+            int progress = loadTables(null, doi.getSchemaName(), null, null, 1);
 
             // load procedures with catalog = null
             _schemaInfoCache.clearStoredProcedures(null, doi.getSchemaName(), null);
@@ -1286,10 +1288,10 @@ public class SchemaInfo
          }
          else if(DatabaseObjectType.CATALOG == doi.getDatabaseObjectType())
          {
-            int progress = loadCatalogs(1);
+            //int progress = loadCatalogs(1);
             // load tables with schema = null
             _schemaInfoCache.clearTables(doi.getCatalogName(), null, null, null);
-            progress = loadTables(doi.getCatalogName(), null, null, null, progress);
+            int progress = loadTables(doi.getCatalogName(), null, null, null, 1);
 
             // load procedures with schema = null
             _schemaInfoCache.clearStoredProcedures(doi.getCatalogName(), null, null);

@@ -660,4 +660,9 @@ public class SessionManager
          return new String[0];
       }
    }
+
+   public void clearAllowedSchemaCache(ISession session)
+   {
+      _allowedSchemasBySessionID.remove(session.getIdentifier());
+   }
 }
