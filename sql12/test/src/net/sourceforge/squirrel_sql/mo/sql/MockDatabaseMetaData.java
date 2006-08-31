@@ -20,7 +20,9 @@ package net.sourceforge.squirrel_sql.mo.sql;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 import com.mockobjects.sql.MockSingleRowResultSet;
@@ -840,22 +842,64 @@ public class MockDatabaseMetaData extends
 		return catalogs;
 	}
 
-	public void setCatalogs(String[] catalogNames) {
-		catalogs = new MockResultSet(null);
+	public void setCatalogs(String[] catalogNames, SQLDatabaseMetaData md) {
+		catalogs = new MockResultSet();
+		ArrayList list = new ArrayList();
 		for (int i = 0; i < catalogNames.length; i++) {
 			catalogs.addRow(new Object[] {catalogNames[i]});
+			list.add(new TableColumnInfo(catalogNames[i], // catalog 
+										 "aSchema",       // schema
+										 "",              // tableName
+										 "",              // columnName
+										 1,               // dataType
+										 "", // typeName 
+										 0,  // columnSize
+										 0,  // decimalDigits
+										 0,  // radix
+										 0,  // isNullAllowed
+										 "",
+										 "", // defaultValue
+										 0, 
+										 0, 
+										 "", // isNullable 
+										 md));			
 		}
+		TableColumnInfo[] array = 
+			(TableColumnInfo[])list.toArray(new TableColumnInfo[list.size()]);
+		MockResultSetMetaData rsmd = new MockResultSetMetaData(array); 
+		catalogs.setTableColumnInfos(array);
 	}
 
 	public ResultSet getSchemas() throws SQLException {
 		return schemas;
 	}
 
-	public void setSchemas(String[] schemaNames) {
+	public void setSchemas(String[] schemaNames, SQLDatabaseMetaData md) {
 		schemas = new MockResultSet(null);
+		ArrayList list = new ArrayList();
 		for (int i = 0; i < schemaNames.length; i++) {
 			schemas.addRow(new Object[] {schemaNames[i]});
+			list.add(new TableColumnInfo("aCatalog", // catalog 
+					 				     "aSchema",       // schema
+					 				     "",              // tableName
+					 				     "",              // columnName
+					 				     1,               // dataType
+					 				     "", // typeName 
+					 				     0,  // columnSize
+					 				     0,  // decimalDigits
+					 				     0,  // radix
+					 				     0,  // isNullAllowed
+					 				     "",
+					 				     "", // defaultValue
+					 				     0, 
+										 0, 
+										 "", // isNullable 
+										 md));		
 		}
+		TableColumnInfo[] array = 
+			(TableColumnInfo[])list.toArray(new TableColumnInfo[list.size()]);
+		MockResultSetMetaData rsmd = new MockResultSetMetaData(array);
+		schemas.setTableColumnInfos(array);
 	}
     
 	public String getSQLKeywords() throws SQLException {
@@ -940,6 +984,10 @@ public class MockDatabaseMetaData extends
 	 */
 	public String getProcedureTerm() {
 		return procedureTerm;
+	}
+
+	public String getDriverName() throws SQLException {
+		return "MockDatabaseDriver";
 	}	
 
 	

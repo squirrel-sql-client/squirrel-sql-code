@@ -54,7 +54,7 @@ public class MockResultSetMetaData implements ResultSetMetaData {
 	}
 
 	public int getColumnType(int arg0) throws SQLException {
-		if (_infos == null || _infos.length <= 0) {
+		if (_infos == null || _infos.length <= 0 || arg0 >= _infos.length) {
 			return 0;
 		}
 		return _infos[arg0].getDataType();

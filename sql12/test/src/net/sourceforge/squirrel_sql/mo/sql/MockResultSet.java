@@ -51,12 +51,20 @@ public class MockResultSet implements ResultSet {
 	 */
 	int cursorIndex = -1;
 	
+	public MockResultSet() {
+	}
+	
 	/**
 	 * 
 	 * @param infos an array of TableColumnInfo items that describe the columns
 	 *              of the result set.
 	 */
 	public MockResultSet(TableColumnInfo[] infos) {
+		_infos = infos;
+		rsmd = new MockResultSetMetaData(infos);
+	}
+	
+	public void setTableColumnInfos(TableColumnInfo[] infos) {
 		_infos = infos;
 		rsmd = new MockResultSetMetaData(infos);
 	}
@@ -777,15 +785,34 @@ public class MockResultSet implements ResultSet {
 		return false;
 	}
 	
-	private String getStringValue(int colIdx) {
-		return String.valueOf((currentRow())[colIdx]);
+	/**
+	 * JDBC numbers it's columns starting at 1.  Since we use an array
+	 * to represent columns, and the array has first element at index 0, 
+	 * be sure to subtract 1 from the specific JDBC colIdx to look in our
+	 * array.
+	 * 
+	 * @param colIdx
+	 * @return
+	 * @throws SQLException
+	 */
+	private String getStringValue(int colIdx) throws SQLException {
+		Object[] currentRow = currentRow();
+		if (colIdx-1 < currentRow.length) {
+			return String.valueOf(currentRow[colIdx-1]);
+		} else {
+			throw new SQLException(
+				"Error: requested value for non-existant column with index="+
+				colIdx);
+		}
 	}
 	
-	private int getIntValue(int colIdx) {
+	private int getIntValue(int colIdx) throws SQLException {
+		String value = getStringValue(colIdx);
 		return Integer.parseInt(getStringValue(colIdx));
 	}
 
-	private long getLongValue(int colIdx) {
+	private long getLongValue(int colIdx) throws SQLException {
+		String value = getStringValue(colIdx);
 		return Long.parseLong(getStringValue(colIdx));
 	}	
 	
