@@ -1,6 +1,8 @@
 
 /home/manningr/projects/squirrel_snapshots/sql12/eclipse-classes
-
+/home/manningr/projects/squirrel_snapshots/sql12/test/lib/mockobjects-jdk1.4-0.09.jar
+/home/manningr/projects/squirrel_snapshots/sql12/test/lib/mockobjects-core-0.09.jar
+/home/manningr/projects/squirrel_snapshots/sql12/test/lib/junit.jar
 
 # DBCopy plugin
 #/usr/local/squirrel/plugins/dbcopy.jar
