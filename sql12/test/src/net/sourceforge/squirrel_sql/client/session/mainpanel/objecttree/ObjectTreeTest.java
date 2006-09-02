@@ -21,13 +21,13 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.squirrel_sql.client.ApplicationArguments;
+import junit.framework.TestCase;
+import net.sourceforge.squirrel_sql.client.ApplicationManager;
 import net.sourceforge.squirrel_sql.client.session.MockSession;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import junit.framework.TestCase;
 
 public class ObjectTreeTest extends TestCase {
 
@@ -41,7 +41,7 @@ public class ObjectTreeTest extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-        ApplicationArguments.initialize(new String[0]);
+        ApplicationManager.initApplication();
         session = new MockSession();
         tree = new ObjectTree(session);
     }
