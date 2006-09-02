@@ -15,7 +15,9 @@
 		<property file="${basedir}/build/build.properties"/>
 		<property name="name" value="squirrel-sql"/>
 		<property name="dist_dir" value="${basedir}/../squirrel-sql-dist/${name}"/>
-		<property name="core_dist_dir" value="${dist_dir}/core/dist"/>
+		<property name="test_dir" value="${dist_dir}/test"/>
+		<property name="html_summary_file" value="${test_dir}/results/summary/junit-noframes.html"/>
+	    <property name="core_dist_dir" value="${dist_dir}/core/dist"/>
 		<property name="core_work_dir" value="${dist_dir}/core/work"/>
 		<property name="core_obj_dir" value="${core_work_dir}/obj"/>
 		<property name="core_dist_lib_dir" value="${core_dist_dir}/lib"/>
@@ -32,6 +34,8 @@
 		<property name="deprecation" value="on"/>
 		<property name="targetVM" value="1.4"/>
 
+		<available property="htmlsummary.present" file="${html_summary_file}"/>
+		
 		<property environment="env"/>
 		<echo message="ANT HOME: ${env.ANT_HOME}"/>
 		<echo message="JAVA HOME: ${env.JAVA_HOME}"/>	
@@ -76,6 +80,8 @@
 		<echo message=" make_jws:   Creates Java WebStart version."/>
 		<echo message=""/>
 		<echo message="	clean:  Removes class files, old versions of source etc."/>
+		<echo message=""/>		
+		<echo message="	test:  Run the JUnit tests."/>
 		<echo message="--------------------------------------------------------"/>
 		<echo message=""/>
 	</target>
@@ -658,5 +664,123 @@
 				<exclude name="**/JavaApplicationStub" />
 			</tarfileset>
 		</tar>		
+	</target>
+	
+	<!--
+	==================================================================
+	Compiles and runs the JUnit tests against the currently built code
+	placing the result (TEST-net.sourceforge.squirrel_sql.AllTests.txt)
+	in squirrel-sql-dist/squirrel-sql/test/results.
+	
+	No parameters.
+	==================================================================
+	-->		
+	<target name="test" 
+			description="Compiles and runs the JUnit tests" 
+		 	depends="init">
+		
+		<mkdir dir="${test_dir}"/>
+		
+		<!-- Build the test code -->
+		<javac	srcdir="test/src"
+				destdir="${test_dir}"
+				deprecation="${deprecation}"
+				debug="${debug}"
+				optimize="${optimize}"
+				includeJavaRuntime="yes"
+				source="${targetVM}"
+				target="${targetVM}">
+			
+			<classpath>
+				<fileset dir="fw/lib">
+					<include name="**/*.*"/>
+				</fileset>
+				<fileset dir="app/lib">
+					<include name="**/*.*"/>
+				</fileset>
+				<fileset dir="test/lib">
+					<include name="**/*.*"/>
+				</fileset>
+				<fileset dir="${core_dist_lib_dir}">
+					<include name="**/*.*"/>
+				</fileset>
+				<fileset dir="${core_dist_dir}/plugins">
+					<include name="**/*.jar"/>
+				</fileset>
+				<fileset dir="/home/manningr/projects/squirrel_snapshots/sql12/../squirrel-sql-dist/squirrel-sql/core/dist/lib">
+					<include name="junit.jar"/>				
+				</fileset>
+			</classpath>
+		</javac>
+
+		<mkdir dir="${test_dir}/results"/>
+		
+		<!-- Run AllTests using the test code -->
+		<junit printsummary="true" fork="yes" dir="${test_dir}">
+			<classpath>
+				<fileset dir="fw/lib">
+					<include name="**/*.*"/>
+				</fileset>
+				<fileset dir="app/lib">
+					<include name="**/*.*"/>
+				</fileset>
+				<fileset dir="test/lib">
+					<include name="**/*.*"/>
+				</fileset>
+				<fileset dir="${core_dist_lib_dir}">
+					<include name="**/*.*"/>
+				</fileset>
+				<fileset dir="${core_dist_dir}/plugins">
+					<include name="**/*.jar"/>
+				</fileset>	
+				<pathelement path="${test_dir}"/>			
+			</classpath>
+			<formatter type="plain"/>
+			<formatter type="xml"/>
+			
+			<test todir="${test_dir}/results" 
+				  name="net.sourceforge.squirrel_sql.AllTests"/>
+						
+	 	</junit>
+    </target>
+	
+	<!--
+	==================================================================
+	Compiles an HTML summary and places it in 
+	squirrel-sql-dist/squirrel-sql/test/results/summary using the output
+	of the test target's xml formatted test results in 
+	TEST-net.sourceforge.squirrel_sql.AllTests.xml.
+	
+	No parameters.
+	==================================================================
+	-->			
+	<target name="compile_report" depends="test">
+		<mkdir dir="${test_dir}/results/summary"/>
+		
+		<junitreport todir="${test_dir}/results/summary">
+			<fileset dir="${test_dir}/results" includes="*TEST-*.xml"/>
+			<report format="noframes" 
+					styledir="${env.ANT_HOME}/etc"
+					todir="${test_dir}/results/summary"/>
+		</junitreport>		
+	</target>
+	
+	<!--
+	==================================================================
+	Display the HTML summary report of the outcome of running the JUnit
+	tests.  Need to have 'browser' proeprty pointing to a the program file
+	for the browser in build.properties.
+	
+	No parameters.
+	==================================================================
+	-->	
+	<target name="show_test_report" 
+			description="Show html summary in browser"
+			depends="compile_report">
+		
+		<exec executable="${browser}">
+			<arg line="${html_summary_file}"/>
+		</exec>			
+		
 	</target>
 </project>
