@@ -101,7 +101,7 @@ public class DropTableScriptCommand implements ICommand {
                 }
                 ITableInfo ti = (ITableInfo) dbObjs[k];
 
-                String sTable = ti.getSimpleName();
+                String sTable = ScriptUtil.getTableName(ti);
                 sbScript.append("DROP TABLE ");
                 sbScript.append(sTable);
                 sbScript.append(ScriptUtil.getStatementSeparator(_session));

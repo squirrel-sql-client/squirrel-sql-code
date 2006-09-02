@@ -130,7 +130,7 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
                      {
                         if (_bStop) break;
                         ITableInfo ti = (ITableInfo) dbObjs[k];
-                        String sTable = ti.getSimpleName();
+                        String sTable = ScriptUtil.getTableName(ti);
                         ResultSet srcResult = stmt.executeQuery("select * from " + ti.getQualifiedName());
                         genInserts(srcResult, sTable, sbRows, false);
                      }

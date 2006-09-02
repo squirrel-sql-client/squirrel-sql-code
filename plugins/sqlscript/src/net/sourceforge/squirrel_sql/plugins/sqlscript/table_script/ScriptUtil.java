@@ -1,12 +1,19 @@
 package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
-
 import java.util.Hashtable;
+
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferenceBean;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferencesManager;
 
 
 public class ScriptUtil
 {
+	
+   private static SQLScriptPreferenceBean prefs = 
+	   							SQLScriptPreferencesManager.getPreferences();
+    
    Hashtable _uniqueColNames = new Hashtable();
 
    /**
@@ -99,5 +106,23 @@ public class ScriptUtil
       return statementSeparator;
    }
 
+   /**
+    * Use specified preferences to decide whether or not to "qualify" the 
+    * specified table with it's schema/catalog.  If schema is not available then
+    * catalog will be used. If neither is available, then only the table name 
+    * will be used.
+    * 
+    * @param prefs
+    * @param ti
+    * @return
+    */
+   public static String getTableName(ITableInfo ti) 
+   {
+	   String result = ti.getSimpleName();
+	   if (prefs.isQualifyTableNames()) { 
+		   result = ti.getQualifiedName();
+	   }
+	   return result;
+   }
 
 }
