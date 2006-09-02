@@ -5,6 +5,11 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+1544447: (Generated SQL script Table names are not fully Qualified, it should
+		 be "SCHEMA"."TABLE_NAME")  Added a new global preference panel and 
+		 checkbox to make this alternative behavior configurable.  The default
+		 now is to qualify table names with their schema name.
+
 Bug fix: Stored procedures where not shown in Object Tree when the Oracle Plugin was used.
 
 Bug fix: When a Schema was created and the Object Tree was refreshed the new Schema was not shown. 

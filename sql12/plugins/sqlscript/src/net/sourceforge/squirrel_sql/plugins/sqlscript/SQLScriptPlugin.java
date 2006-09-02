@@ -39,7 +39,15 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.*;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferencesTab;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferencesManager;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptAction;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptOfCurrentSQLAction;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateSelectScriptAction;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTableOfCurrentSQLAction;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTableScriptAction;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateTemplateDataScriptAction;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.DropTableScriptAction;
 
 /**
  * The SQL Script plugin class.
@@ -86,7 +94,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
     * @return  the current version of this plugin.
     */
    public String getVersion() {
-      return "1.1";
+      return "1.2";
    }
 
    /**
@@ -153,9 +161,10 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
     * @return  Preferences panel.
     */
    public IGlobalPreferencesPanel[] getGlobalPreferencePanels() {
-      return new IGlobalPreferencesPanel[0];
+       SQLScriptPreferencesTab tab = new SQLScriptPreferencesTab();
+       return new IGlobalPreferencesPanel[] {tab};
    }
-
+   
    /**
     * Initialize this plugin.
     */
@@ -202,6 +211,8 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
       coll.add(new CreateDataScriptOfCurrentSQLAction(app, _resources, this));
       coll.add(new CreateTableOfCurrentSQLAction(app, _resources, this));
       createMenu();
+      
+      SQLScriptPreferencesManager.initialize(this);
    }
 
    /**
@@ -210,6 +221,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
    public void unload()
    {
       super.unload();
+      SQLScriptPreferencesManager.unload();
    }
 
    public boolean allowsSessionStartedInBackground()

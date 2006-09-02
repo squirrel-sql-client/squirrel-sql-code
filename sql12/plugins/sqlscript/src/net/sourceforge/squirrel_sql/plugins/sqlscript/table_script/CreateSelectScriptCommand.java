@@ -109,7 +109,7 @@ public class CreateSelectScriptCommand implements ICommand
               sbScript.append(infos[i].getColumnName());
            }
 
-           sbScript.append(" FROM ").append(ti.getSimpleName());
+           sbScript.append(" FROM ").append(ScriptUtil.getTableName(ti));
            sbScript.append(ScriptUtil.getStatementSeparator(_session)).append('\n');
 
          }

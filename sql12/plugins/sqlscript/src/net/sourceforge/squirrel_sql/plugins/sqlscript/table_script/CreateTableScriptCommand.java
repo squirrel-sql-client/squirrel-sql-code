@@ -141,7 +141,7 @@ public class CreateTableScriptCommand implements ICommand
            }
            ITableInfo ti = (ITableInfo) dbObjs[k];
 
-           String sTable = ti.getSimpleName();
+           String sTable = ScriptUtil.getTableName(ti);
            sbScript.append("CREATE TABLE ");
            sbScript.append(sTable);
            sbScript.append("\n(");

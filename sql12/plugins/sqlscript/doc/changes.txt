@@ -1,6 +1,14 @@
 Change Log
 ==========
 
+1.2
+===
+
+1544447: (Generated SQL script Table names are not fully Qualified, it should
+		 be "SCHEMA"."TABLE_NAME")  Added a new global preference panel and 
+		 checkbox to make this alternative behavior configurable.  The default
+		 now is to qualify table names with their schema name.
+
 1.1
 ===
 - Added menu item and supporting files for creating a drop table script
