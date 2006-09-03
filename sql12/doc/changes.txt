@@ -5,6 +5,8 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+Bug fix in Oracle Plugin: Avoided open cursors when viewing database output ( dbms_output.put_line() ).
+
 1544447: (Generated SQL script Table names are not fully Qualified, it should
 		 be "SCHEMA"."TABLE_NAME")  Added a new global preference panel and 
 		 checkbox to make this alternative behavior configurable.  The default
