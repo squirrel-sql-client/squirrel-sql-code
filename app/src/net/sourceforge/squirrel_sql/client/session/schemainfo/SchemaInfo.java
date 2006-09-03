@@ -143,6 +143,7 @@ public class SchemaInfo
 
    public void reloadAll()
    {
+      _schemaInfoCache.clearAll();
       privateLoadAll();
    }
 
@@ -165,11 +166,10 @@ public class SchemaInfo
 
       breathing();
 
-      _schemaInfoCache.clearAll();
 
 
       long mstart = System.currentTimeMillis();
-      String msg = null;
+      String msg;
 
       try
       {
