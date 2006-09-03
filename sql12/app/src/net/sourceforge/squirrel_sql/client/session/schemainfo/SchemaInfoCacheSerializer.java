@@ -6,6 +6,9 @@ import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 
 import java.io.*;
@@ -13,9 +16,12 @@ import java.util.Hashtable;
 
 public class SchemaInfoCacheSerializer
 {
+   private static final StringManager s_stringMgr =
+      StringManagerFactory.getStringManager(SchemaInfoCacheSerializer.class);
+
+
    private static final ILogger s_log = LoggerController.createLogger(SchemaInfoCacheSerializer.class);
    private static Hashtable _storingSessionIDs = new Hashtable();
-   private static boolean _waitingForStoring = false;
 
 
    public static SchemaInfoCache load(ISession session)
@@ -101,18 +107,30 @@ public class SchemaInfoCacheSerializer
             return;
          }
 
+         IMessageHandler msgHandler = session.getApplication().getMessageHandler();
+         File schemaCacheFile = getSchemaCacheFile(session.getAlias());
+
+
+         String params[] = {session.getAlias().getName(),  schemaCacheFile.getPath()};
+         // i18n[SchemaInfoCacheSerializer.beginStore=Starting to write schema cache for Alias {0}. file: {1}]
+         msgHandler.showMessage(s_stringMgr.getString("SchemaInfoCacheSerializer.beginStore", params));
+
+
          schemaInfoCache.prepareSerialization();
 
-         FileOutputStream fos = new FileOutputStream(getSchemaCacheFile(session.getAlias()));
+         FileOutputStream fos = new FileOutputStream(schemaCacheFile);
          ObjectOutputStream oOut = new ObjectOutputStream(fos);
          oOut.writeObject(schemaInfoCache);
          oOut.close();
          fos.close();
 
+         // i18n[SchemaInfoCacheSerializer.endStore=Finished writing schema cache for Alias{0}. file: {1}]
+         msgHandler.showMessage(s_stringMgr.getString("SchemaInfoCacheSerializer.endStore", params));
+
       }
       catch (Exception e)
       {
-         s_log.error("Failed to write Schema cache.", e);
+         s_log.error("Failed to write Schema cache file ", e);
       }
       finally
       {
