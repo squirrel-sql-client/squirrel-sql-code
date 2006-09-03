@@ -154,6 +154,7 @@ public class DBOutputPanel extends JPanel
                 buf.append("\n");
               }
             }
+            c.close();
             if (buf.length() > 0) {
               final JTextArea store = _textArea;
               SwingUtilities.invokeLater(new Runnable() {
