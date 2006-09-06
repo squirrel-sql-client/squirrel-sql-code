@@ -5,6 +5,9 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+Bug fix: When doing a complete refresh (F5) or a refresh item in the Object tree (see right mouse menu)
+         code completion was not refreshed. 
+
 Bug fix in Oracle Plugin: Avoided open cursors when viewing database output ( dbms_output.put_line() ).
 
 1544447: (Generated SQL script Table names are not fully Qualified, it should

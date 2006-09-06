@@ -145,6 +145,7 @@ public class SchemaInfo
    {
       _schemaInfoCache.clearAll();
       privateLoadAll();
+      fireSchemaInfoUpdate();
    }
 
 
@@ -1316,6 +1317,9 @@ public class SchemaInfo
          notifySchemasAndCatalogsLoad();
          notifyTablesLoaded();
          notifyStoredProceduresLoaded();
+
+         fireSchemaInfoUpdate();
+
 
          if(doReloadAll)
          {
