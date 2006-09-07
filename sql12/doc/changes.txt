@@ -31,8 +31,9 @@ Bug fix in Alias properties for Oracle:
        they still caused bad startup perfomance.
   Fix: Now only tables and procedures for allowed schemas are loaded.
 
-Two new translations were added to the installer:
+Three new translations were added to the installer:
 	Simplified Chinese (Thanks to xpdz)
+	French (Thanks to Erwan Duroselle)
 	German (Thanks to Andreas Oswald)
 
 1541154: (ArrayIndexOutOfBoundsException in DataTypeDouble)
