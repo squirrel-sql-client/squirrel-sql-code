@@ -156,7 +156,7 @@ class MetalLookAndFeelController extends AbstractPlasticController
 		{
 			try
 			{
-				Class clazz = cl.loadClass(_extraThemeClassNames[i]);
+				Class clazz = Class.forName(_extraThemeClassNames[i], false, cl);
 				ret.add((MetalTheme)clazz.newInstance());
 
 				if(null != _defaultMetalTheme && _extraThemeClassNames[i].equals(_defaultMetalTheme.getClass().getName()))

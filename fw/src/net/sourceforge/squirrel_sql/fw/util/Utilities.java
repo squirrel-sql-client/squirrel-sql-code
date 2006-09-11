@@ -337,7 +337,7 @@ public class Utilities
             {
                protected Class resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException
                {
-                  return classLoader.loadClass(desc.getName());	 //To change body of overridden methods use File | Settings | File Templates.
+            	   return Class.forName(desc.getName(), false, classLoader);
                }
             };
             bIn.close();

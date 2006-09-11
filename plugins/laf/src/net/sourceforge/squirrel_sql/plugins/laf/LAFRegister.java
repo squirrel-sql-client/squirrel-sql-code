@@ -383,7 +383,7 @@ class LAFRegister
 			for (Iterator it = lafs.keySet().iterator(); it.hasNext();)
 			{
 				String className = (String)it.next(); 
-				Class lafClass = _lafClassLoader.loadClass(className);
+				Class lafClass = Class.forName(className, false, _lafClassLoader);
 				try
 				{
 					LookAndFeel laf = (LookAndFeel)lafClass.newInstance();

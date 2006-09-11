@@ -85,7 +85,8 @@ class PlasticLookAndFeelController extends AbstractPlasticController
             _prefs = new PlasticThemePreferences();
 
             ClassLoader cl = getLAFRegister().getLookAndFeelClassLoader();
-            Class clazz = cl.loadClass(AbstractPlasticController.DEFAULT_PLASTIC_THEME_CLASS_NAME);
+            Class clazz = 
+            	Class.forName(AbstractPlasticController.DEFAULT_PLASTIC_THEME_CLASS_NAME, false, cl);
             MetalTheme theme = (MetalTheme) clazz.newInstance();
             _prefs.setThemeName(theme.getName());
 
@@ -134,7 +135,7 @@ class PlasticLookAndFeelController extends AbstractPlasticController
 			Class themeBaseClass;
 			try
 			{
-				themeBaseClass = cl.loadClass(THEME_BASE_CLASS);
+				themeBaseClass = Class.forName(THEME_BASE_CLASS, false, cl);
 			}
 			catch (Throwable th)
 			{

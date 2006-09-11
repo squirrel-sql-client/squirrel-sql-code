@@ -124,7 +124,7 @@ public class MyURLClassLoader extends URLClassLoader
 					{
 						try
 						{
-							cls = loadClass(className);
+							cls = Class.forName(className, false, this);
 						}
 						catch (Throwable th)
 						{
