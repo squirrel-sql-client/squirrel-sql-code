@@ -132,30 +132,18 @@
 			successfully with other products.</p>
 			<p><A HREF="#top">Top</A><HR SIZE=1></HR></p>
 
-			<h1 class="question"><A NAME="faq1">What version of the JVM is SQuirreL compatible with?</A></h1>
+			<h1 class="question"><A NAME="faq1">Which version of the JVM is SQuirreL compatible with?</A></h1>
 			<p class="answer">Different versions of SQuirreL have different minimum JVM version requirements.
 			The following table provides a summary of the version requirements:<nr/>
 			<table align="center" border="2" cellpadding="5">
-			<th>SQuirreL Version</th><th>JVM Version</th>
+			<th>SQuirreL Version</th><th>Minimum JVM Version</th>
 			<tr align="center">
-				<td>2.x </td><td>1.4.2+</td>
+				<td>2.x </td><td>1.4.2</td>
 			</tr>
 			<tr align="center">
-				<td>1.1 Final</td><td>1.3.1+</td>
+				<td>1.1 Final</td><td>1.3.1</td>
 			</tr>
 			</table>
-			</p>
-			<p class="answer">
-			Note: We've received numerous reports that the current Java SE 6 release candidate (Mustang) isn't
-			compatible with the latest version of SQuirrel. We checked it out and indeed it's true (See Sun Bugs 
-			<a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6446627">6446627</a> and 
-			<a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6434149">6434149</a>).  We rely on 
-			a feature of the ClassLoader to do deep copies of objects dynamically without having to maintain 
-			methods which contain hard-coded references to fields that must be copied. We may consider providing
-			a work-around if Sun decides not to fix this in the offical release of Java 6.  Until then we 
-			recommend that you use the latest version of Java 5 (a.k.a 1.5).  If you care enough to vote for 
-			this bug (that is, increase it's chance of getting fixed soon) then go 
-			<a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6434149">here</a> and vote for it.
 			</p>
 			<p><A HREF="#top">Top</A><HR SIZE=1></HR></p>
 
