@@ -68,7 +68,8 @@ public class SchemaInfoCacheSerializer
          {
             protected Class resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException
             {
-               return SchemaInfoCache.class.getClassLoader().loadClass(desc.getName());
+               ClassLoader loader = SchemaInfoCache.class.getClassLoader();
+               return Class.forName(desc.getName(), false, loader);
             }
          };
          SchemaInfoCache ret = (SchemaInfoCache) ois.readObject();

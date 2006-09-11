@@ -116,7 +116,8 @@ public class OyoahaLookAndFeelController extends DefaultLookAndFeelController
 				if (themePackFile.exists())
 				{
 					ClassLoader cl = lafRegister.getLookAndFeelClassLoader();
-					Class oyLafClass = cl.loadClass(OA_LAF_CLASS_NAME);
+					Class oyLafClass = 
+						Class.forName(OA_LAF_CLASS_NAME, false, cl);
 					Method setTheme =
 						oyLafClass.getMethod("setOyoahaTheme",
 									new Class[] { File.class });

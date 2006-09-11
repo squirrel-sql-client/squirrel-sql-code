@@ -128,7 +128,9 @@ abstract class AbstractPlasticController extends DefaultLookAndFeelController
 		{
 			try
 			{
-				Class clazz = cl.loadClass(PLASTIC_THEME_CLASS_NAMES[i]);
+				
+				Class clazz = 
+					Class.forName(PLASTIC_THEME_CLASS_NAMES[i], false, cl);
 				MetalTheme theme = (MetalTheme)clazz.newInstance();
 				_themes.put(theme.getName(), theme); 
 			}

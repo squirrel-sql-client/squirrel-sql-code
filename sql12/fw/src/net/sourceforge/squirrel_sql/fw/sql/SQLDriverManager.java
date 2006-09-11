@@ -70,7 +70,8 @@ public class SQLDriverManager
 		unregisterSQLDriver(sqlDriver);
 		sqlDriver.addPropertyChangeListener(_myDriverListener);
 		ClassLoader loader = new SQLDriverClassLoader(sqlDriver);
-		Class driverClass = loader.loadClass(sqlDriver.getDriverClassName());
+		Class driverClass = 
+			Class.forName(sqlDriver.getDriverClassName(), false, loader);
 		_driverInfo.put(sqlDriver.getIdentifier(), driverClass.newInstance());
 		_classLoaders.put(sqlDriver.getIdentifier(), loader);
 		sqlDriver.setJDBCDriverClassLoaded(true);
@@ -119,7 +120,8 @@ public class SQLDriverManager
 			s_log.debug("Loading driver that wasn't registered: " +
 							sqlDriver.getDriverClassName());
 			ClassLoader loader = new SQLDriverClassLoader(sqlDriver);
-			Class driverCls = loader.loadClass(sqlDriver.getDriverClassName());
+			Class driverCls = 
+				Class.forName(sqlDriver.getDriverClassName(), false, loader);
 			driver = (Driver)driverCls.newInstance();
 		}
 		Connection jdbcConn = driver.connect(alias.getUrl(), myProps);

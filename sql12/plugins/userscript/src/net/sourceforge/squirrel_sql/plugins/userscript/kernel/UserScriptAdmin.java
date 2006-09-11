@@ -222,7 +222,10 @@ public class UserScriptAdmin
 
 		try
 		{
-			Object scriptInst = m_plugin.getUserScriptClassLoader().loadClass(script.getScriptClass()).newInstance();
+			ClassLoader loader = m_plugin.getUserScriptClassLoader();
+			Class scriptClass = 
+				Class.forName(script.getScriptClass(), false, loader);
+			Object scriptInst = scriptClass.newInstance();
 
 			Field f = scriptInst.getClass().getField("environment");
 			f.set(scriptInst, env);

@@ -119,8 +119,10 @@ public class SkinLookAndFeelController extends DefaultLookAndFeelController
 				if (themePackFile.exists())
 				{
 					ClassLoader cl = lafRegister.getLookAndFeelClassLoader();
-					Class skinLafClass = cl.loadClass(SKINNABLE_LAF_CLASS_NAME);
-					Class skinClass = cl.loadClass(SKIN_CLASS_NAME);
+					Class skinLafClass = 
+						Class.forName(SKINNABLE_LAF_CLASS_NAME, false, cl);
+					Class skinClass = 
+						Class.forName(SKIN_CLASS_NAME, false, cl);
 
 					Method loadThemePack =
 						skinLafClass.getMethod("loadThemePack",
