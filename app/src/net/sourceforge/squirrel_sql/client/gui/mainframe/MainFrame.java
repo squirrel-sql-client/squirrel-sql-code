@@ -424,10 +424,9 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
       _msgPnl.addToMessagePanelPopup(splitDividerLocAction);
 
       //i18n[MainFrame.restoreSize=Restore saved size]
-      key = s_stringMgr.getString("MainFrame.restoreSize=Restore saved size");
+      key = s_stringMgr.getString("MainFrame.restoreSize");
       
-      Action setSplitDividerLocAction = 
-          new AbstractAction(s_stringMgr.getString("MainFrame.restoreSize"))
+      Action setSplitDividerLocAction = new AbstractAction(key)
       {
          public void actionPerformed(ActionEvent e)
          {
