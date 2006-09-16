@@ -21,6 +21,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * This tab shows the table privilege info for the currently selected table.
  *
@@ -28,16 +30,11 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
  */
 public class TablePriviligesTab extends BaseTableTab
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n
-	{
-		String TITLE = "Privileges";
-		String HINT = "Show access rights for table";
-	}
-
+	
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(TablePriviligesTab.class);
+        		
     private int[] columnIndices = new int[] { 5, 6, 7, 4 };
     
 	/**
@@ -47,7 +44,8 @@ public class TablePriviligesTab extends BaseTableTab
 	 */
 	public String getTitle()
 	{
-		return i18n.TITLE;
+		//i18n[TablePriviligesTab.title=Privileges]
+		return s_stringMgr.getString("TablePriviligesTab.title");
 	}
 
 	/**
@@ -57,7 +55,8 @@ public class TablePriviligesTab extends BaseTableTab
 	 */
 	public String getHint()
 	{
-		return i18n.HINT;
+		//i18n[TablePriviligesTab.hint=Show access rights for the selected table]
+		return s_stringMgr.getString("TablePriviligesTab.hint");
 	}
 
 	/**

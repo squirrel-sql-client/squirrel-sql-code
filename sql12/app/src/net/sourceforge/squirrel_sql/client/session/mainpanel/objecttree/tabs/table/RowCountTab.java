@@ -25,6 +25,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * This tab shows the number of rows in the table.
  *
@@ -32,16 +34,11 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
  */
 public class RowCountTab extends BaseTableTab
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n
-	{
-		String TITLE = "Row Count";
-		String HINT = "Number of rows in table";
-	}
-
+	
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(RowCountTab.class);
+    
 	/**
 	 * Return the title for the tab.
 	 *
@@ -49,7 +46,8 @@ public class RowCountTab extends BaseTableTab
 	 */
 	public String getTitle()
 	{
-		return i18n.TITLE;
+		//i18n[RowCountTab.title=Row Count]
+		return s_stringMgr.getString("RowCountTab.title");
 	}
 
 	/**
@@ -59,7 +57,8 @@ public class RowCountTab extends BaseTableTab
 	 */
 	public String getHint()
 	{
-		return i18n.HINT;
+		//i18n[RowCountTab.hint=Number of rows in the selected table] 
+		return s_stringMgr.getString("RowCountTab.hint");
 	}
 
 	/**

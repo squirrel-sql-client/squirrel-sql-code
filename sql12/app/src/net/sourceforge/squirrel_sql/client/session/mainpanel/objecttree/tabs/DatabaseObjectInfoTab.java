@@ -20,6 +20,8 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.JavabeanDataSet;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * This is the tab displaying information about a database object.
  *
@@ -27,16 +29,11 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.JavabeanDataSet;
  */
 public class DatabaseObjectInfoTab extends BaseDataSetTab
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface TableInfoi18n
-	{
-		String TITLE = "Info";
-		String HINT = "Basic information";
-	}
-
+	
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(DatabaseObjectInfoTab.class);
+	
 	/**
 	 * Return the title for the tab.
 	 *
@@ -44,7 +41,8 @@ public class DatabaseObjectInfoTab extends BaseDataSetTab
 	 */
 	public String getTitle()
 	{
-		return TableInfoi18n.TITLE;
+		//i18n[DatabaseObjectInfoTab.title=Info]
+		return s_stringMgr.getString("DatabaseObjectInfoTab.title");
 	}
 
 	/**
@@ -54,7 +52,8 @@ public class DatabaseObjectInfoTab extends BaseDataSetTab
 	 */
 	public String getHint()
 	{
-		return TableInfoi18n.HINT;
+		//i18n[DatabaseObjectInfoTab.hint=Basic information] 
+		return s_stringMgr.getString("DatabaseObjectInfoTab.hint");
 	}
 
 	protected IDataSet createDataSet() throws DataSetException

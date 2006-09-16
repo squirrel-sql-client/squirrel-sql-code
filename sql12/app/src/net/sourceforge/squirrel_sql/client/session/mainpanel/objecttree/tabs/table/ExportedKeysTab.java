@@ -20,6 +20,8 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.ta
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * This tab shows the columns in the currently selected table.
  *
@@ -27,16 +29,11 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
  */
 public class ExportedKeysTab extends BaseTableTab
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n
-	{
-		String TITLE = "Exported Keys";
-		String HINT = "Show tables that reference this table";
-	}
-
+	
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(ExportedKeysTab.class);
+	
 	/**
 	 * Return the title for the tab.
 	 *
@@ -44,7 +41,8 @@ public class ExportedKeysTab extends BaseTableTab
 	 */
 	public String getTitle()
 	{
-		return i18n.TITLE;
+		//i18n[ExportedKeysTab.title=Exported Keys]
+		return s_stringMgr.getString("ExportedKeysTab.title");
 	}
 
 	/**
@@ -54,7 +52,8 @@ public class ExportedKeysTab extends BaseTableTab
 	 */
 	public String getHint()
 	{
-		return i18n.HINT;
+		//i18n[ExportedKeysTab.hint=Show tables that reference the selected table] 
+		return s_stringMgr.getString("ExportedKeysTab.hint");
 	}
 
 	/**

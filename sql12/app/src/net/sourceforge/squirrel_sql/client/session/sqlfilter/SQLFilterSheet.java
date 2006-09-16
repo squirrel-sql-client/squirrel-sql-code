@@ -51,7 +51,6 @@ import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ContentsTab;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
@@ -140,9 +139,10 @@ public class SQLFilterSheet extends BaseSessionInternalFrame
 		{
 			if (!isVisible())
 			{
-				ContentsTab tab =(ContentsTab)_objectTree.getTabbedPaneIfSelected(
-						_objectInfo.getDatabaseObjectType(),
-						ContentsTab.TITLE);
+				ContentsTab tab =
+					(ContentsTab)_objectTree.getTabbedPaneIfSelected(
+											_objectInfo.getDatabaseObjectType(),
+											ContentsTab.getContentsTabTitle());
 
             if (tab == null)
 				{
@@ -257,9 +257,10 @@ public class SQLFilterSheet extends BaseSessionInternalFrame
 		}
 		try
 		{
-			ContentsTab cTab =(ContentsTab)_objectTree.getTabbedPaneIfSelected(
-												_objectInfo.getDatabaseObjectType(),
-												ContentsTab.TITLE);
+			ContentsTab cTab =
+				(ContentsTab)_objectTree.getTabbedPaneIfSelected(
+											_objectInfo.getDatabaseObjectType(),
+											 ContentsTab.getContentsTabTitle());
          if (cTab != null)
 			{
 				cTab.refreshComponent();

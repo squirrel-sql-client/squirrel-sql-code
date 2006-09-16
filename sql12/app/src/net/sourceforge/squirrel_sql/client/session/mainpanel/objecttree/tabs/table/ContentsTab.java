@@ -47,6 +47,8 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -60,7 +62,9 @@ public class ContentsTab extends BaseTableTab
 {
    private DataSetUpdateableTableModelImpl _dataSetUpdateableTableModel = new DataSetUpdateableTableModelImpl();
 
-	public static String TITLE = i18n.TITLE;
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(ContentsTab.class);  
 
 	/**
 	 * Name of the table that this tab displayed last time it was loaded.
@@ -74,25 +78,12 @@ public class ContentsTab extends BaseTableTab
    private SQLFilterClauses _sqlFilterClauses = new SQLFilterClauses();
 
 
-   /**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n
-	{
-		String TITLE = "Content";
-		String HINT = "Sample Contents";
-	}
-
 	/** Logger for this class. */
 	private static final ILogger s_log =
 		LoggerController.createLogger(ContentsTab.class);
 
 
-   public ContentsTab()
-   {
-      System.out.println("");
-   }
+   public ContentsTab() { }
 
 	/**
 	 * Return the title for the tab.
@@ -101,9 +92,21 @@ public class ContentsTab extends BaseTableTab
 	 */
 	public String getTitle()
 	{
-		return i18n.TITLE;
+		return getContentsTabTitle();
 	}
 
+	/**
+	 * Return the title for the tab.
+	 *
+	 * @return	The title for the tab.
+	 */
+	public static String getContentsTabTitle()
+	{
+		// i18n[ContentsTab.title=Content]
+		return s_stringMgr.getString("ContentsTab.title");
+	}
+	
+	
 	/**
 	 * Return the hint for the tab.
 	 *
@@ -111,7 +114,8 @@ public class ContentsTab extends BaseTableTab
 	 */
 	public String getHint()
 	{
-		return i18n.HINT;
+		// i18n[ContentsTab.hint=View the contents of the selected table]
+		return s_stringMgr.getString("ContentsTab.hint");
 	}
 	
 	/**
