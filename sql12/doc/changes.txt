@@ -2,13 +2,28 @@ SQuirreL SQL Client Change Log
 ==============================
 
 
-Not yet released, available in CVS and probably in latest weekly build
-=======================================================================
+2.3 rc2
+=========
 
-Feature Request #1556226: New menu itmes in the right mouse menu of tables:
-   "Adopt all column widths": Adopts all columns widhts of current table to header/data
-   "Always adopt all column widths" (check box): Widths are automatically adopted for all tables opened in the future.
+    New Features/Enhancements:
 
+Feature Request #1556226: New menu items in the right mouse menu of tables -
+   "Adopt all column widths" - Adopts all columns widths of current table to 
+                               header/data.
+   "Always adopt all column widths" (check box) - Widths are automatically 
+                                                  adopted for all tables opened 
+                                                  in the future.
+
+New menu-item "Export CSV" in context menu of table contents spreadsheet allows 
+the user to choose whether to use formatting from Global Prefs or default 
+formatting.
+
+SQL result tabs offer to rerun their SQL query to update their data.
+
+Text limit line of Netbeans editor can now be positioned or switched off in 
+Session Properties.
+
+    Bug Fixes:
 
 1448738: (JDK 6.0 regression) This appeared to be a bug in the Java 6 SE, but it
          turned out that we weren't using the correct method to load classes from
@@ -16,53 +31,58 @@ Feature Request #1556226: New menu itmes in the right mouse menu of tables:
          we were using previously so that it no longer worked as it did in 1.4 
          and 1.5.  For details see:
          http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6446627
-
-Bug fix: When doing a complete refresh (F5) or a refresh item in the Object tree (see right mouse menu)
-         code completion was not refreshed. 
-
-Bug fix in Oracle Plugin: Avoided open cursors when viewing database output ( dbms_output.put_line() ).
+         We rectified the problem in SQuirreL by following Sun's suggestions 
+         regarding which API methods are being called.
 
 1544447: (Generated SQL script Table names are not fully Qualified, it should
 		 be "SCHEMA"."TABLE_NAME")  Added a new global preference panel and 
 		 checkbox to make this alternative behavior configurable.  The default
 		 now is to qualify table names with their schema name.
 
-Bug fix: Stored procedures where not shown in Object Tree when the Oracle Plugin was used.
+1541154: (ArrayIndexOutOfBoundsException in DataTypeDouble)
 
-Bug fix: When a Schema was created and the Object Tree was refreshed the new Schema was not shown. 
+1533824: (NPE when loading keywords from DatabaseMetaData) Check the values
+         returned for null before attempting to parse and store them 
+         (DB2 driver returns null for getCatalogTerm())
 
+Bug fix: When doing a complete refresh (F5) or a refresh item in the Object tree 
+         (see right mouse menu) code completion was not refreshed. 
 
-Bug fix in Alias properties for Oracle:
+Bug fix: In Oracle Plugin - Avoided open cursors when viewing database output 
+						    ( dbms_output.put_line() ).
+
+Bug fix: Stored procedures where not shown in Object Tree when the 
+         Oracle Plugin was used.
+
+Bug fix: When a Schema was created and the Object Tree was refreshed the new 
+         Schema was not shown. 
+
+Bug fix: In Alias properties for Oracle - 
   Note: This bug took effect when default Alias properties were used.
-        So this fix probably increases Session startup performance for Oracle users
-        who use the Oracle plugin but do not care for Alias properties.
+        So this fix probably increases Session startup performance for Oracle 
+        users who use the Oracle plugin but do not care for Alias properties.
   Bug: When an Alias was configured to load all Schemas and cache non
        but the Oracle Alias properties didn't allow to load all schemas
        SQuirreL still did load all tables and procedures from the database.
-       Though the unallowed tables and procedures did not show up in the Object tree
-       they still caused bad startup perfomance.
+       Though the unallowed tables and procedures did not show up in the Object 
+       tree they still caused bad startup perfomance.
   Fix: Now only tables and procedures for allowed schemas are loaded.
+
+Bug fix: Object tree table tab titles were not being internationalized as 
+         their values were hard-coded and not available in 
+         I18NStrings.properties files.  Now they are.
+
+    Installer Changes:
 
 Three new translations were added to the installer:
 	Simplified Chinese (Thanks to xpdz)
 	French (Thanks to Erwan Duroselle)
 	German (Thanks to Andreas Oswald)
 
-1541154: (ArrayIndexOutOfBoundsException in DataTypeDouble)
-
-1533824: (NPE when loading keywords from DatabaseMetaData) Check the values
-returned for null before attempting to parse and store them (DB2 driver
-returns null for getCatalogTerm())
-
-Export CVS allows to choose whether to use fromating from Global Prefs or default formatting.
-
 Added new optional plugin (DBCopy) to the installer which allows database tables
 and their content to be copied from one session to another inside of SQuirreL
 using Copy/Paste menu items.
 
-SQL result tabs offer to rerun their SQL query to update their data.
-
-Text limit line of Netbeans editor can now be positioned or switched off in Session Properties.
 
 2.3 rc1
 =========
