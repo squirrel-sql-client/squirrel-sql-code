@@ -411,7 +411,9 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 
       _splitPn.setResizeWeight(1);
 
-      Action splitDividerLocAction = new AbstractAction("Save size")
+      //i18n[MainFrame.saveSize=Save size]
+      String key = s_stringMgr.getString("MainFrame.saveSize");
+      Action splitDividerLocAction = new AbstractAction(key)
       {
          public void actionPerformed(ActionEvent e)
          {
@@ -421,7 +423,11 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
       };
       _msgPnl.addToMessagePanelPopup(splitDividerLocAction);
 
-      Action setSplitDividerLocAction = new AbstractAction("Restore saved size")
+      //i18n[MainFrame.restoreSize=Restore saved size]
+      key = s_stringMgr.getString("MainFrame.restoreSize=Restore saved size");
+      
+      Action setSplitDividerLocAction = 
+          new AbstractAction(s_stringMgr.getString("MainFrame.restoreSize"))
       {
          public void actionPerformed(ActionEvent e)
          {
