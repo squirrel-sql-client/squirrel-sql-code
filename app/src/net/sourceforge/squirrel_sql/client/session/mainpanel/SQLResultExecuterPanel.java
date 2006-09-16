@@ -990,17 +990,21 @@ public class SQLResultExecuterPanel extends JPanel
 			final NumberFormat nbrFmt = NumberFormat.getNumberInstance();
 			double executionLength = exInfo.getSQLExecutionElapsedMillis() / 1000.0;
 			double outputLength = exInfo.getResultsProcessingElapsedMillis() / 1000.0;
-			StringBuffer buf = new StringBuffer();
-			buf.append("Query ")
-            .append(processedStatementCount)
-            .append(" of ").append(statementCount)
-            .append(" elapsed time (seconds) - Total: ")
-				.append(nbrFmt.format(executionLength + outputLength))
-				.append(", SQL query: ").append(
-							nbrFmt.format(executionLength)).append(
-							", Building output: ").append(
-							nbrFmt.format(outputLength));
-			getSession().getMessageHandler().showMessage(buf.toString());
+            
+            Object[] args = new Object[] {new Integer(processedStatementCount),
+                                          new Integer(statementCount),
+                                          nbrFmt.format(executionLength + outputLength),
+                                          nbrFmt.format(executionLength),
+                                          nbrFmt.format(outputLength)};
+
+            //i18n[SQLResultExecuterPanel.queryStatistics=Query {0} of {1} 
+            //elapsed time (seconds) - Total: {2}, SQL query: {3}, 
+            //Building output: {4}]
+            String stats = 
+                s_stringMgr.getString("SQLResultExecuterPanel.queryStatistics", 
+                                      args);
+            
+			getSession().getMessageHandler().showMessage(stats);
 		}
 
 		public void sqlExecutionCancelled()
