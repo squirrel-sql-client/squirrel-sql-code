@@ -22,6 +22,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import java.io.*;
 import java.text.NumberFormat;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * General purpose utilities functions.
@@ -34,6 +36,13 @@ public class Utilities
    private static ILogger s_log =
       LoggerController.createLogger(Utilities.class);
 
+	private static Pattern spanStartPattern = Pattern.compile(".*\\<span\\>.*");
+	private static Pattern spanStartSplitPattern = Pattern.compile("\\<span\\>");
+	private static Pattern spanEndPattern = Pattern.compile(".*<\\/span\\>.*");
+	private static Pattern spanEndSplitPattern = Pattern.compile("<\\/span\\>");
+	
+   
+   
    /**
     * Ctor. <TT>private</TT> as all methods are static.
     */
@@ -354,4 +363,57 @@ public class Utilities
       }
    }
 
+	/**
+	 * Internationalizes a line with an embedded I18n key in it.  Suppose that 
+	 * the line looks like:
+	 * 
+	 *  This is a line with a <span>embeddedKey</span> in it. 
+	 *  
+	 * Further suppose the our I18NStrings.properties has the line:
+	 * 
+	 *   embeddedKey=(string that all would like to read)
+	 * 
+	 * This method will return the value:
+	 * 
+	 * This is a line with a (string that all would like to read) in it.
+	 *  
+	 * Note: This method cannot currently handle more than one embedded I18n 
+	 *       string in the specified line at this time.  Please put multiple 
+	 *       keys on separate lines. Otherwise, truncation of the specified 
+	 *       line could result!  
+	 * 
+	 * @param line the line to internationalize
+	 * @param s_stringMgr the StringManager to use to lookup I18N keys.
+	 * 
+	 * @return an internationalized replacement for this line
+	 */
+	public static String replaceI18NSpanLine(String line, 
+											 StringManager s_stringMgr) {
+		String result = line;
+		Matcher start = spanStartPattern.matcher(line);
+		Matcher end = spanEndPattern.matcher(line);
+		if (start.matches() && end.matches()) {
+			// line should look like :
+			//
+			// This is a line with an <span>embedded key</span> in it. 
+			//
+			StringBuffer tmp = new StringBuffer();
+			String[] startparts = spanStartSplitPattern.split(line);
+			
+			tmp.append(startparts[0]);
+			
+			// startparts[1] contains our I18n string key followed by </span>
+			String[] endparts = spanEndSplitPattern.split(startparts[1]);
+			
+			String key = endparts[0];
+			
+			String value = s_stringMgr.getString(key);
+			tmp.append(value);
+			tmp.append(endparts[1]);
+			
+			result = tmp.toString();
+		}
+		return result;
+	}
+   
 }
