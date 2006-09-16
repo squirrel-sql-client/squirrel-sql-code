@@ -28,10 +28,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.TreeMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -47,8 +44,11 @@ import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Version;
+import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
+import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.HashtableDataSet;
@@ -60,11 +60,7 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.Version;
-import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
-import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
-import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
 /**
  * About box dialog.
  *
@@ -119,7 +115,7 @@ public class AboutBoxDialog extends JDialog
 		{
 			s_instance = new AboutBoxDialog(app);
 		}
-		s_instance.show();
+		s_instance.setVisible(true);
 	}
 
 	private void createGUI(IApplication app)
@@ -254,6 +250,7 @@ public class AboutBoxDialog extends JDialog
 
 	private static final class CreditsPanel extends JScrollPane
 	{
+		
 		CreditsPanel(IApplication app)
 		{
 			super();
@@ -317,7 +314,9 @@ public class AboutBoxDialog extends JDialog
 						String line = null;
 						while ((line = rdr.readLine()) != null)
 						{
-							buf.append(line);
+							String internationalizedLine = 
+								Utilities.replaceI18NSpanLine(line, s_stringMgr);
+							buf.append(internationalizedLine);
 						}
 					}
 					finally
@@ -344,6 +343,7 @@ public class AboutBoxDialog extends JDialog
 			}
 			return buf.toString();
 		}
+				
 	}
 
 	private static final class AboutPanel extends JPanel
