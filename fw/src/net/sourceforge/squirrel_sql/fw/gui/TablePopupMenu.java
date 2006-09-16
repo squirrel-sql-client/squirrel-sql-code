@@ -48,9 +48,11 @@ public class TablePopupMenu extends BasePopupMenu
 		int COPY_IN_STATEMENT = 3;
 		int COPY_EXPORT_CSV = 4;
 		int SELECT_ALL = 5;
-		int SHOW_ROW_NUMBERS = 6;
-		int LAST_ENTRY = 7;
-	}
+      int ADOPT_ALL_COL_WIDTHS_ACTION = 6;
+      int ALWAYS_ADOPT_ALL_COL_WIDTHS_ACTION = 7;
+      int SHOW_ROW_NUMBERS = 8;
+		int LAST_ENTRY = 9;
+   }
 
 	private static final KeyStroke COPY_STROKE = KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK);
 
@@ -58,7 +60,8 @@ public class TablePopupMenu extends BasePopupMenu
 
 	private JTable _table;
 
-	private JCheckBoxMenuItem showRowNumbersItem;
+	private JCheckBoxMenuItem _alwaysAdoptAllColWidtshActionItem;
+	private JCheckBoxMenuItem _showRowNumbersItem;
 
 
 	private CopyAction _copy = new CopyAction();
@@ -66,7 +69,9 @@ public class TablePopupMenu extends BasePopupMenu
 	private CopyHtmlAction _copyHtml = new CopyHtmlAction();
 	private CopyInStatementAction _copyInStatement = new CopyInStatementAction();
 	private ExportCsvAction _exportCvs = new ExportCsvAction();
-	private ShowRowNumbersAction _showRowNumbersAction = new ShowRowNumbersAction();
+   private AdoptAllColWidthsAction _adoptAllColWidthsAction = new AdoptAllColWidthsAction();
+	private AlwaysAdoptAllColWidthsAction _alwaysAdoptAllColWidthsAction = new AlwaysAdoptAllColWidthsAction();
+   private ShowRowNumbersAction _showRowNumbersAction = new ShowRowNumbersAction();
 
 	private MakeEditableAction _makeEditable = new MakeEditableAction();
 	private UndoMakeEditableAction _undoMakeEditable = new UndoMakeEditableAction();
@@ -109,12 +114,22 @@ public class TablePopupMenu extends BasePopupMenu
 		_menuItems[IOptionTypes.COPY_HTML] = add(_copyHtml);
 		_menuItems[IOptionTypes.COPY_IN_STATEMENT] = add(_copyInStatement);
 		_menuItems[IOptionTypes.COPY_IN_STATEMENT] = add(_exportCvs);
+      addSeparator();
+      _menuItems[IOptionTypes.ADOPT_ALL_COL_WIDTHS_ACTION] = add(_adoptAllColWidthsAction);
 
-		showRowNumbersItem = new JCheckBoxMenuItem();
-		showRowNumbersItem.setSelected(false);
-		showRowNumbersItem.setAction(_showRowNumbersAction);
+      _alwaysAdoptAllColWidtshActionItem = new JCheckBoxMenuItem();
+		_alwaysAdoptAllColWidtshActionItem.setSelected(ButtonTableHeader.isAlwaysAdoptAllColWidths());
+		_alwaysAdoptAllColWidtshActionItem.setAction(_alwaysAdoptAllColWidthsAction);
+      _menuItems[IOptionTypes.ALWAYS_ADOPT_ALL_COL_WIDTHS_ACTION] = add(_alwaysAdoptAllColWidtshActionItem);
 
-		_menuItems[IOptionTypes.SHOW_ROW_NUMBERS] = add(showRowNumbersItem);
+      addSeparator();
+      
+      _showRowNumbersItem = new JCheckBoxMenuItem();
+		_showRowNumbersItem.setSelected(false);
+		_showRowNumbersItem.setAction(_showRowNumbersAction);
+		_menuItems[IOptionTypes.SHOW_ROW_NUMBERS] = add(_showRowNumbersItem);
+
+
 		if (allowEditing)
 		{
 			addSeparator();
@@ -181,7 +196,7 @@ public class TablePopupMenu extends BasePopupMenu
 
 	public void reset()
 	{
-		showRowNumbersItem.setSelected(false);
+		_showRowNumbersItem.setSelected(false);
 	}
 
 
@@ -289,6 +304,43 @@ public class TablePopupMenu extends BasePopupMenu
       }
    }
 
+
+   private class AdoptAllColWidthsAction extends BaseAction
+	{
+		AdoptAllColWidthsAction()
+		{
+			super(s_stringMgr.getString("TablePopupMenu.adoptAllColWidthsAction"));
+		}
+
+		public void actionPerformed(ActionEvent evt)
+		{
+			if (_table != null)
+			{
+            if(_table.getTableHeader() instanceof ButtonTableHeader)
+            {
+               ((ButtonTableHeader)_table.getTableHeader()).adoptAllColWidths(true);
+            }
+         }
+		}
+	}
+
+
+   private class AlwaysAdoptAllColWidthsAction extends BaseAction
+	{
+		AlwaysAdoptAllColWidthsAction()
+		{
+			super(s_stringMgr.getString("TablePopupMenu.alwaysAdoptAllColWiths"));
+		}
+
+		public void actionPerformed(ActionEvent evt)
+		{
+         ButtonTableHeader.setAlwaysAdoptAllColWidths(_alwaysAdoptAllColWidtshActionItem.isSelected());
+         if (_table != null && _alwaysAdoptAllColWidtshActionItem.isSelected())
+			{
+            ((ButtonTableHeader)_table.getTableHeader()).adoptAllColWidths(true);
+			}
+		}
+	}
 
    private class ShowRowNumbersAction extends BaseAction
 	{

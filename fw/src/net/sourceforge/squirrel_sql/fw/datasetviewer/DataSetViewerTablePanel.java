@@ -143,7 +143,8 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 	protected void allRowsAdded()
 	{
 		_typedModel.fireTableStructureChanged();
-	}
+      _table.initColWidths();
+   }
 
 	/*
 	 * @see IDataSetViewer#getRowCount()
@@ -541,6 +542,11 @@ public class DataSetViewerTablePanel extends BaseDataSetViewerDestination
 
             }
          }
+      }
+
+      public void initColWidths()
+      {
+         _tableHeader.initColWidths();
       }
    }
 
