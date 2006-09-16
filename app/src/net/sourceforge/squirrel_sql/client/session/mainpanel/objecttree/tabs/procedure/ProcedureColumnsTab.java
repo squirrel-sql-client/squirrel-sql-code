@@ -20,6 +20,8 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.pr
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * This tab shows the columns in the currently selected stored procedure.
  *
@@ -27,16 +29,10 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
  */
 public class ProcedureColumnsTab extends BaseProcedureTab
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n
-	{
-		String TITLE = "Columns";
-		String HINT = "Show columns for procedure";
-	}
-
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(ProcedureColumnsTab.class);
+	
 	/**
 	 * Return the title for the tab.
 	 *
@@ -44,7 +40,8 @@ public class ProcedureColumnsTab extends BaseProcedureTab
 	 */
 	public String getTitle()
 	{
-		return i18n.TITLE;
+		//i18n[ProcedureColumnsTab.title=Columns]
+		return s_stringMgr.getString("ProcedureColumnsTab.title");
 	}
 
 	/**
@@ -54,7 +51,8 @@ public class ProcedureColumnsTab extends BaseProcedureTab
 	 */
 	public String getHint()
 	{
-		return i18n.HINT;
+		//i18n[ProcedureColumnsTab.hint=Show columns for the selected procedure] 
+		return s_stringMgr.getString("ProcedureColumnsTab.hint");
 	}
 
 	/**

@@ -17,14 +17,12 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.ta
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.SQLException;
-
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ObjectArrayDataSet;
-import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * This tab shows the primary key info for the currently selected table.
  *
@@ -32,16 +30,11 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
  */
 public class PrimaryKeyTab extends BaseTableTab
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n
-	{
-		String TITLE = "Primary Key";
-		String HINT = "Show primary key for table";
-	}
-
+	
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(PrimaryKeyTab.class);
+    
 	/**
 	 * Return the title for the tab.
 	 *
@@ -49,7 +42,8 @@ public class PrimaryKeyTab extends BaseTableTab
 	 */
 	public String getTitle()
 	{
-		return i18n.TITLE;
+		//i18n[PrimaryKeyTab.title=Primary Key]
+		return s_stringMgr.getString("PrimaryKeyTab.title");
 	}
 
 	/**
@@ -59,7 +53,8 @@ public class PrimaryKeyTab extends BaseTableTab
 	 */
 	public String getHint()
 	{
-		return i18n.HINT;
+		//i18n[PrimaryKeyTab.hint=Show primary key for the selected table] 
+		return s_stringMgr.getString("PrimaryKeyTab.hint");
 	}
 
 	/**

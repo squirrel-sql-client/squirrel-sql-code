@@ -20,6 +20,8 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.ta
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * This tab shows the version info for the currently selected table.
  *
@@ -27,16 +29,11 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
  */
 public class VersionColumnsTab extends BaseTableTab
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n
-	{
-		String TITLE = "Versions";
-		String HINT = "Show columns that are automatically updated when row updated";
-	}
-
+	
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(VersionColumnsTab.class);
+    
 	/**
 	 * Return the title for the tab.
 	 *
@@ -44,7 +41,8 @@ public class VersionColumnsTab extends BaseTableTab
 	 */
 	public String getTitle()
 	{
-		return i18n.TITLE;
+		//i18n[VersionColumnsTab.title=Versions]
+		return s_stringMgr.getString("VersionColumnsTab.title");
 	}
 
 	/**
@@ -54,7 +52,9 @@ public class VersionColumnsTab extends BaseTableTab
 	 */
 	public String getHint()
 	{
-		return i18n.HINT;
+		//i18n[VersionColumnsTab.hint=Show columns that are automatically 
+		//updated when the row is updated]
+		return s_stringMgr.getString("VersionColumnsTab.hint");
 	}
 
 	/**

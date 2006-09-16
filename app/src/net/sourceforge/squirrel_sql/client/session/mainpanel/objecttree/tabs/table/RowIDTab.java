@@ -27,6 +27,8 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.dbobj.adapter.AdapterFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * This tab shows the primary key info for the currently selected table.
  *
@@ -34,16 +36,11 @@ import net.sourceforge.squirrel_sql.fw.sql.dbobj.adapter.AdapterFactory;
  */
 public class RowIDTab extends BaseTableTab
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n
-	{
-		String TITLE = "Row IDs";
-		String HINT = "Show columns that uniquely identify a row";
-	}
-
+	
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(RowIDTab.class);
+    
 	/**
 	 * Return the title for the tab.
 	 *
@@ -51,7 +48,8 @@ public class RowIDTab extends BaseTableTab
 	 */
 	public String getTitle()
 	{
-		return i18n.TITLE;
+		//i18n[RowIDTab.title=Row IDs]
+		return s_stringMgr.getString("RowIDTab.title");
 	}
 
 	/**
@@ -61,7 +59,8 @@ public class RowIDTab extends BaseTableTab
 	 */
 	public String getHint()
 	{
-		return i18n.HINT;
+		//i18n[RowIDTab.hint=Show columns that uniquely identify a row]
+		return s_stringMgr.getString("RowIDTab.hint");
 	}
 
 	/**

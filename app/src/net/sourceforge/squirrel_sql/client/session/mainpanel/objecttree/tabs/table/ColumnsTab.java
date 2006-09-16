@@ -21,6 +21,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * This tab shows the columns in the currently selected table.
  *
@@ -31,16 +33,10 @@ public class ColumnsTab extends BaseTableTab
     private static int[] columnIndices = 
         new int[] { 4, 6, 18, 9, 7, 13, 12, 5, 8, 10, 11, 14, 15, 16, 17 };
     
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n
-	{
-		String TITLE = "Columns";
-		String HINT = "Show columns for table";
-	}
-
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(ColumnsTab.class);    
+    
 	/**
 	 * Return the title for the tab.
 	 *
@@ -48,7 +44,8 @@ public class ColumnsTab extends BaseTableTab
 	 */
 	public String getTitle()
 	{
-		return i18n.TITLE;
+		//i18n[ColumnsTab.title=Columns]
+		return s_stringMgr.getString("ColumnsTab.title");
 	}
 
 	/**
@@ -58,7 +55,8 @@ public class ColumnsTab extends BaseTableTab
 	 */
 	public String getHint()
 	{
-		return i18n.HINT;
+		//i18n[ColumnsTab.hint=Show columns for the selected table] 
+		return s_stringMgr.getString("ColumnsTab.hint");
 	}
 
 	/**

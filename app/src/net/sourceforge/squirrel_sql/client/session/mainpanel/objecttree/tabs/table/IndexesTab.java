@@ -23,6 +23,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * This tab shows the columns in the currently selected table.
  *
@@ -30,16 +32,11 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
  */
 public class IndexesTab extends BaseTableTab
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n
-	{
-		String TITLE = "Indexes";
-		String HINT = "Show indexes";
-	}
-
+	
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(IndexesTab.class);
+	
     private static final int[] indexIndices = 
                                 new int[] {5, 6, 8, 9, 10, 4, 7, 11, 12, 13 };
     
@@ -50,7 +47,8 @@ public class IndexesTab extends BaseTableTab
 	 */
 	public String getTitle()
 	{
-		return i18n.TITLE;
+		//i18n[IndexesTab.title=Indexes]
+		return s_stringMgr.getString("IndexesTab.title");
 	}
 
 	/**
@@ -60,7 +58,8 @@ public class IndexesTab extends BaseTableTab
 	 */
 	public String getHint()
 	{
-		return i18n.HINT;
+		//i18n[IndexesTab.hint=Show indexes for the selected table] 
+		return s_stringMgr.getString("IndexesTab.hint");
 	}
 
 	/**
