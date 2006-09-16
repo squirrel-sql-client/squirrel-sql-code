@@ -22,10 +22,9 @@ import java.awt.geom.Rectangle2D;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.util.prefs.Preferences;
 
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JTable;
+import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
@@ -39,7 +38,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.SquirrelTableCellRenderer;
 
 /**
- * @version 	$Id: ButtonTableHeader.java,v 1.7 2006-05-16 11:07:38 gerdwagner Exp $
+ * @version 	$Id: ButtonTableHeader.java,v 1.8 2006-09-16 21:08:43 gerdwagner Exp $
  * @author		Johan Compagner
  */
 public class ButtonTableHeader extends JTableHeader
@@ -47,6 +46,9 @@ public class ButtonTableHeader extends JTableHeader
    /** Logger for this class. */
    private static ILogger s_log =
       LoggerController.createLogger(ButtonTableHeader.class);
+
+
+   private static final String PREF_KEY_ALWAYS_ADOPT_ALL_COLUMN_HEADERS = "Squirrel.alwaysAdoptAllColumnHeaders";
 
    /** Icon for "Sorted ascending". */
    private static Icon s_ascIcon;
@@ -205,6 +207,38 @@ public class ButtonTableHeader extends JTableHeader
       }
    }
 
+   public void adoptAllColWidths(boolean includeColHeaders)
+   {
+      for(int i=0; i < getTable().getColumnModel().getColumnCount(); ++i)
+      {
+         adoptColWidth(i, includeColHeaders);
+      }
+   }
+
+   public static boolean isAlwaysAdoptAllColWidths()
+   {
+      return Preferences.userRoot().getBoolean(PREF_KEY_ALWAYS_ADOPT_ALL_COLUMN_HEADERS, false);
+   }
+
+   public static void setAlwaysAdoptAllColWidths(boolean b)
+   {
+      Preferences.userRoot().putBoolean(PREF_KEY_ALWAYS_ADOPT_ALL_COLUMN_HEADERS, b);
+   }
+
+   public void initColWidths()
+   {
+      if (isAlwaysAdoptAllColWidths())
+      {
+         SwingUtilities.invokeLater(new Runnable()
+         {
+            public void run()
+            {
+               adoptAllColWidths(true);
+            }
+         });
+      }
+   }
+
    private final class TableDataListener implements TableModelListener
    {
       public void tableChanged(TableModelEvent evt)
@@ -214,6 +248,76 @@ public class ButtonTableHeader extends JTableHeader
       }
 
    }
+
+
+   private void adoptColWidth(int colIx, boolean includeColHeaders)
+   {
+      int modelIx = getTable().convertColumnIndexToModel(colIx);
+
+      int rowCount = getTable().getModel().getRowCount();
+
+
+      int newWidth = 20;
+
+      if(includeColHeaders)
+      {
+         TableColumn column = getTable().getColumnModel().getColumn(colIx);
+         TableCellRenderer headerRenderer = column.getHeaderRenderer();
+         if(null == headerRenderer)
+         {
+            headerRenderer = getTable().getTableHeader().getDefaultRenderer();
+         }
+
+         Component headerComp = headerRenderer.getTableCellRendererComponent(getTable(), null, false, false, 0, colIx);
+         FontMetrics headerFontMetrics = headerComp.getFontMetrics(headerComp.getFont());
+
+         Rectangle2D bounds = headerFontMetrics.getStringBounds("" + column.getHeaderValue(), headerComp.getGraphics());
+
+         newWidth = Math.max(newWidth, bounds.getBounds().width);
+      }
+
+
+
+      if(0 == rowCount)
+      {
+         if(includeColHeaders)
+         {
+            getColumnModel().getColumn(colIx).setPreferredWidth(newWidth + 10);
+            //getTable().doLayout();
+         }
+
+         return;
+      }
+
+
+      TableCellRenderer cellRenderer = getTable().getCellRenderer(0, colIx);
+      Component cellComp = cellRenderer.getTableCellRendererComponent(getTable(), null, false, false, rowCount - 1, colIx);
+      FontMetrics cellFontMetrics = cellComp.getFontMetrics(cellComp.getFont());
+
+
+      for (int i = 0; i < rowCount; i++)
+      {
+         Object value = getTable().getModel().getValueAt(i, modelIx);
+
+         String stringVal = "";
+         if( getTable().getCellRenderer(i,colIx) instanceof SquirrelTableCellRenderer)
+         {
+            stringVal += ((SquirrelTableCellRenderer)getTable().getCellRenderer(i,colIx)).renderValue(value);
+         }
+         else
+         {
+            stringVal += value;
+         }
+
+         Rectangle2D bounds = cellFontMetrics.getStringBounds(stringVal, cellComp.getGraphics());
+
+         newWidth = Math.max(newWidth, bounds.getBounds().width);
+      }
+
+      getColumnModel().getColumn(colIx).setPreferredWidth(newWidth + 10);
+      //getTable().doLayout();
+   }
+
 
    class HeaderListener extends MouseAdapter implements MouseMotionListener
    {
@@ -252,45 +356,10 @@ public class ButtonTableHeader extends JTableHeader
             }
 
 
-            int modelIx = getTable().convertColumnIndexToModel(colIx);
-
-            int rowCount = getTable().getModel().getRowCount();
-
-
-            if(0 == rowCount)
-            {
-               return;
-            }
-
-            TableCellRenderer cellRenderer = getTable().getCellRenderer(0, colIx);
-            Component comp = cellRenderer.getTableCellRendererComponent(getTable(), null, false, false, rowCount - 1, colIx);
-            FontMetrics fontMetrics = comp.getFontMetrics(comp.getFont());
-
-            int newWidth = 20;
-            for (int i = 0; i < rowCount; i++)
-            {
-               Object value = getTable().getModel().getValueAt(i, modelIx);
-
-               String stringVal = "";
-               if( getTable().getCellRenderer(i,colIx) instanceof SquirrelTableCellRenderer)
-               {
-                  stringVal += ((SquirrelTableCellRenderer)getTable().getCellRenderer(i,colIx)).renderValue(value);
-               }
-               else
-               {
-                  stringVal += value;
-               }
-
-               Rectangle2D bounds = fontMetrics.getStringBounds(stringVal, comp.getGraphics());
-
-               newWidth = Math.max(newWidth, bounds.getBounds().width);
-            }
-
-
-            getColumnModel().getColumn(colIx).setPreferredWidth(newWidth + 10);
-            //getTable().doLayout();
+            adoptColWidth(colIx, true);
          }
       }
+
 
       /*
 		* @see MouseListener#mouseReleased(MouseEvent)
@@ -361,6 +430,8 @@ public class ButtonTableHeader extends JTableHeader
       }
 
    }
+
+
    protected class ButtonTableRenderer implements TableCellRenderer
    {
       JButton _buttonRaised;

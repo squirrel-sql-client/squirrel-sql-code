@@ -5,6 +5,11 @@ SQuirreL SQL Client Change Log
 Not yet released, available in CVS and probably in latest weekly build
 =======================================================================
 
+Feature Request #1556226: New menu itmes in the right mouse menu of tables:
+   "Adopt all column widths": Adopts all columns widhts of current table to header/data
+   "Always adopt all column widths" (check box): Widths are automatically adopted for all tables opened in the future.
+
+
 1448738: (JDK 6.0 regression) This appeared to be a bug in the Java 6 SE, but it
          turned out that we weren't using the correct method to load classes from
          the ClassLoader.  Sun "fixed" the method (ClassLoader.loadClass) that 
