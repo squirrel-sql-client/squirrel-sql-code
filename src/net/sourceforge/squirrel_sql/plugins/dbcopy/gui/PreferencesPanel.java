@@ -133,7 +133,10 @@ public class PreferencesPanel extends JPanel  {
     
     private JPanel createTopPanel() {
         JPanel result = new JPanel(new GridBagLayout());
-        result.setBorder(getTitledBorder("Transfer Options"));
+        //i18n[PreferencesPanel.transferOptionsBorderLabel=Transfer Options]
+        String tranferOptionsBorderLabel = 
+            s_stringMgr.getString("PreferencesPanel.transferOptionsBorderLabel");
+        result.setBorder(getTitledBorder(tranferOptionsBorderLabel));
         String cbLabel = 
             s_stringMgr.getString("PreferencesPanel.truncateLabel");
         truncateCheckBox = new JCheckBox(cbLabel);
@@ -450,7 +453,9 @@ public class PreferencesPanel extends JPanel  {
         c.anchor = GridBagConstraints.WEST;
         commitRecordCountTextField = new JTextField(10);
         commitRecordCountTextField.setHorizontalAlignment(JTextField.RIGHT);
-        commitRecordCountTextField.setToolTipText("How many statements to commit at a time.");
+        String commitlabelToolTipText = 
+            s_stringMgr.getString("PreferencesPanel.commitRecordCountToolTip");
+        commitRecordCountTextField.setToolTipText(commitlabelToolTipText);
         panel.add(commitRecordCountTextField, c);                
     }
     
@@ -531,8 +536,12 @@ public class PreferencesPanel extends JPanel  {
     
     private JPanel createBottomPanel() {
         JPanel result = new JPanel(new GridBagLayout());
-        result.setBorder(getTitledBorder("Column Type Mapping"));
+
+        //i18n[PreferencesPanel.colTypeMappingBorderLabel=Column Type Mapping]
+        String colTypeMappingBorderLabel = 
+            s_stringMgr.getString("PreferencesPanel.colTypeMappingBorderLabel");
         
+        result.setBorder(getTitledBorder(colTypeMappingBorderLabel));        
         
         addPromptForHibernateCheckBox(result, 0, 0);
         
