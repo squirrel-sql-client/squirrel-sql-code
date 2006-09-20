@@ -68,7 +68,9 @@ public class SQLScriptPreferencesPanel extends JPanel  {
     
     private JPanel createBottomPanel() {
         JPanel result = new JPanel(new GridBagLayout());
-        result.setBorder(getTitledBorder("SQL Script Preferences"));
+        //i18n[SQLScriptPreferencesPanel.borderTitle=SQL Script Preferences]
+        String borderTitle = s_stringMgr.getString("SQLScriptPreferencesPanel.borderTitle");
+        result.setBorder(getTitledBorder(borderTitle));
         addQualifyTableNamesCheckBox(result, 0, 0);        
         return result;
     }

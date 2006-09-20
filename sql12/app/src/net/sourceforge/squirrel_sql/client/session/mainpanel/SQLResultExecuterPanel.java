@@ -340,7 +340,11 @@ public class SQLResultExecuterPanel extends JPanel
 
       if(false == _tabbedExecutionsPanel.getSelectedComponent() instanceof ResultTab)
       {
-         JOptionPane.showMessageDialog(_session.getApplication().getMainFrame(), "Cannot make a cancel panel sticky");
+          //i18n[SQLResultExecuterPanel.nonStickyPanel=Cannot make a cancel panel sticky]
+          String msg = 
+              s_stringMgr.getString("SQLResultExecuterPanel.nonStickyPanel");
+         JOptionPane.showMessageDialog(_session.getApplication().getMainFrame(), 
+                                       msg);
          return;
       }
 
