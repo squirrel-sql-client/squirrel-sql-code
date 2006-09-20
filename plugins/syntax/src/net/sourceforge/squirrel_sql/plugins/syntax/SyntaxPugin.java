@@ -80,7 +80,7 @@ public class SyntaxPugin extends DefaultSessionPlugin
     private static interface i18n {
         //i18n[SyntaxPlugin.touppercase=touppercase]
         String TO_UPPER_CASE = 
-            s_stringMgr.getString("SyntaxPlugin.tolowercase");    
+            s_stringMgr.getString("SyntaxPlugin.touppercase");    
         //i18n[SyntaxPlugin.tolowercase=tolowercase]
         String TO_LOWER_CASE = 
             s_stringMgr.getString("SyntaxPlugin.tolowercase");        
