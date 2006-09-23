@@ -25,7 +25,10 @@ Session Properties.
 
     Bug Fixes:
     
-1563613:  Alias property window dies when URL is malformed
+    
+1563613:  Alias property window dies when URL is malformed.
+
+1561293:  Show Loaded Drivers Only" does not work in "Add Alias" dialog.
 
 1448738: (JDK 6.0 regression) This appeared to be a bug in the Java 6 SE, but it
          turned out that we weren't using the correct method to load classes from
