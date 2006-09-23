@@ -39,6 +39,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * This panel allows the user to change the where clause for a Contents tab query.
  *
@@ -46,6 +49,10 @@ import javax.swing.JTextField;
  */
 public class WhereClausePanel implements ISQLFilterPanel
 {
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(WhereClausePanel.class);    
+    
 	/** A class containing the information about the SQL filters. */
 	private SQLFilterClauses _sqlFilterClauses;
 
@@ -143,18 +150,35 @@ public class WhereClausePanel implements ISQLFilterPanel
 		 */
 		interface WhereClauseSubPanelI18n
 		{
-			String COLUMNS = "Columns";
-			String OPERATORS = "Operators";
-			String VALUE = "Value";
-			String WHERE_CLAUSE = "Where Clause";
-			String HINT = "Where clause for the selected table";
-			String ADD = "Add";
-			String AND = "AND";
-			String OR = "OR";
-			String LIKE = "LIKE";
-			String IN = "IN";
-			String IS_NULL = "IS NULL";
-			String IS_NOT_NULL = "IS NOT NULL";
+		    //i18n[WhereClausePanel.columnLabel=Columns]
+		    String COLUMNS = 
+		        s_stringMgr.getString("WhereClausePanel.columnLabel");
+		    //i18n[WhereClausePanel.operatorsLabel=Operators]
+		    String OPERATORS = 
+		        s_stringMgr.getString("WhereClausePanel.operatorsLabel");
+		    //i18n[WhereClausePanel.valueLabel=Value]            
+		    String VALUE = s_stringMgr.getString("WhereClausePanel.valueLabel");
+		    //i18n[WhereClausePanel.whereClauseLabel=Where Clause]            
+		    String WHERE_CLAUSE = 
+		        s_stringMgr.getString("WhereClausePanel.whereClauseLabel");
+		    //i18n[WhereClausePanel.hint=Where clause for the selected table]            
+		    String HINT = s_stringMgr.getString("WhereClausePanel.hint");
+		    //i18n[WhereClausePanel.addLabel=Add]            
+		    String ADD = s_stringMgr.getString("WhereClausePanel.addLabel");
+		    //i18n[WhereClausePanel.andLabel=AND]            
+		    String AND = s_stringMgr.getString("WhereClausePanel.andLabel");
+		    //i18n[WhereClausePanel.orLabel=OR]            
+		    String OR = s_stringMgr.getString("WhereClausePanel.orLabel");
+		    //i18n[WhereClausePanel.likeLabel=LIKE]            
+		    String LIKE = s_stringMgr.getString("WhereClausePanel.likeLabel");
+		    //i18n[WhereClausePanel.inLabel=IN]            
+		    String IN = s_stringMgr.getString("WhereClausePanel.inLabel");
+		    //i18n[WhereClausePanel.isNullLabel=IS NULL]            
+		    String IS_NULL = 
+		        s_stringMgr.getString("WhereClausePanel.isNullLabel");
+		    //i18n[WhereClausePanel.isNotNullLabel=IS NOT NULL]            
+		    String IS_NOT_NULL = 
+		        s_stringMgr.getString("WhereClausePanel.isNotNullLabel");
 		}
 
 		/**
