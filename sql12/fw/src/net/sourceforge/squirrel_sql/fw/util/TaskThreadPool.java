@@ -23,10 +23,12 @@ package net.sourceforge.squirrel_sql.fw.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.*;
 
 public class TaskThreadPool
 {
@@ -34,6 +36,10 @@ public class TaskThreadPool
 	private static ILogger s_log =
 		LoggerController.createLogger(TaskThreadPool.class);
 
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(TaskThreadPool.class);
+    
 	// Count of available or free threads.
 	private int _iFree;
 
@@ -114,7 +120,14 @@ public class TaskThreadPool
          {
             public void run()
             {
-               JOptionPane.showMessageDialog(_parentForMessages, "Error ocured during task execution:\n" + th.getMessage());
+               //i18n[TaskThreadPool.errorDuringTaskExecMsg=Error ocured during task execution:]
+               StringBuffer msg = 
+                   new StringBuffer(
+                       s_stringMgr.getString(
+                                      "TaskThreadPool.errorDuringTaskExecMsg"));
+               msg.append("\n");
+               msg.append(th.getMessage());
+               JOptionPane.showMessageDialog(_parentForMessages, msg.toString());
                throw new RuntimeException(th);
             }
          });
