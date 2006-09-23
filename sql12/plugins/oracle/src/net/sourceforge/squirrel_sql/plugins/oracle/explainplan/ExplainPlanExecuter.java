@@ -424,14 +424,23 @@ public class ExplainPlanExecuter
 
   public static class ExplainPlanModel extends AbstractTreeTableModel {
 		// Names of the columns.
-		private final String[]  cNames = {"#",
-														 "Operation",
-														 "Options",
-														 "Object Name",
-														 "Mode",
-														 "Cost",
-														 "Bytes",
-														 "Cardinality",
+		private final String[]  cNames = {
+                                        //i18n[explainplanexecuter.enumeration=#]
+                                        s_stringMgr.getString("explainplanexecuter.enumeration"),
+                                        //i18n[explainplanexecuter.operation=Operation]
+                                        s_stringMgr.getString("explainplanexecuter.operation"),
+                                        //i18n[explainplanexecuter.options=Options]
+                                        s_stringMgr.getString("explainplanexecuter.options"),
+                                        //i18n[explainplanexecuter.objectName=Object Name]
+                                        s_stringMgr.getString("explainplanexecuter.objectName"),
+                                        //i18n[explainplanexecuter.mode=Mode]
+                                        s_stringMgr.getString("explainplanexecuter.mode"),
+                                        //i18n[explainplanexecuter.cost=Cost]
+                                        s_stringMgr.getString("explainplanexecuter.cost"),
+                                        //i18n[explainplanexecuter.bytes=Bytes]
+                                        s_stringMgr.getString("explainplanexecuter.bytes"),
+                                        //i18n[explainplanexecuter.cardinality=Cardinality]
+                                        s_stringMgr.getString("explainplanexecuter.cardinality"),
 														};
 
 		// Types of the columns.
