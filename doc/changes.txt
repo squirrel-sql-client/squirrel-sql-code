@@ -26,6 +26,7 @@ Session Properties.
     Bug Fixes:
     
     
+    
 1563613:  Alias property window dies when URL is malformed.
 
 1561293:  Show Loaded Drivers Only" does not work in "Add Alias" dialog.
@@ -49,6 +50,10 @@ Session Properties.
 1533824: (NPE when loading keywords from DatabaseMetaData) Check the values
          returned for null before attempting to parse and store them 
          (DB2 driver returns null for getCatalogTerm())
+
+1250855: (Oracle DATE does not display correctly) Added a new configuration
+         item to Global Preferences -> Date Type Controls -> Date Section
+		 which allows the user to "Interpret DATE columns as TIMESTAMP".
 
 Bug Fix: Fix for issue where the SGA Trace view wasn't displaying data in the 
 	     "Buffer Gets per Row" column.
