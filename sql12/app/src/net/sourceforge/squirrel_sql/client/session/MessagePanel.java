@@ -25,10 +25,11 @@ import java.awt.event.MouseEvent;
 import java.sql.DataTruncation;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
-import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.swing.*;
+import javax.swing.Action;
+import javax.swing.JTextPane;
+import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.SimpleAttributeSet;
@@ -37,6 +38,8 @@ import javax.swing.text.StyleConstants;
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
@@ -49,6 +52,10 @@ public class MessagePanel extends JTextPane implements IMessageHandler
 	/** Logger for this class. */
 	private static final ILogger s_log =
 		LoggerController.createLogger(MessagePanel.class);
+
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(MessagePanel.class);
 
 	/** Popup menu for this component. */
 	private final TextPopupMenu _popupMenu = new MessagePanelPopupMenu();
@@ -72,6 +79,11 @@ public class MessagePanel extends JTextPane implements IMessageHandler
 
    private HashMap _saSetHistoryBySaSet =new HashMap();
 
+   private static interface I18N {
+       //i18n[MessagePanel.clearLabel=Clear]
+       String CLEAR_LABEL = s_stringMgr.getString("MessagePanel.clearLabel");
+   }
+   
    /**
     * Default ctor.
     */
@@ -373,16 +385,16 @@ public class MessagePanel extends JTextPane implements IMessageHandler
 		{
 			protected ClearAction()
 			{
-				super("Clear");
+				super(I18N.CLEAR_LABEL);
 			}
 
 			public void actionPerformed(ActionEvent evt)
 			{
 				try
 				{
-					Document doc = MessagePanel.this.getDocument();
-					doc.remove(0, doc.getLength());
-               _lastMessage = null;
+				    Document doc = MessagePanel.this.getDocument();
+				    doc.remove(0, doc.getLength());
+				    _lastMessage = null;
 				}
 				catch (BadLocationException ex)
 				{
