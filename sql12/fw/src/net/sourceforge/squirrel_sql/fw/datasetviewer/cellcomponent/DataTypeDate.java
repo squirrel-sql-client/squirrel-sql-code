@@ -140,7 +140,7 @@ public class DataTypeDate
 	 private static boolean lenient = true;
 
      // Whether or not to read date type columns with rs.getTimestamp() 
-     private static boolean readDateAsTimestamp = true;
+     private static boolean readDateAsTimestamp = false;
      
 	 // The DateFormat object to use for all locale-dependent formatting.
 	 // This is reset each time the user changes the previous settings.
