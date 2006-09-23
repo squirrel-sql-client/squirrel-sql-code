@@ -18,13 +18,15 @@
  *
  * created by cse, 07.10.2002 11:57:54
  *
- * @version $Id: ParserThread.java,v 1.7 2006-07-05 04:44:32 gerdwagner Exp $
+ * @version $Id: ParserThread.java,v 1.8 2006-09-23 21:57:43 gerdwagner Exp $
  */
 package net.sourceforge.squirrel_sql.client.session.parser.kernel;
 
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.completions.ErrorListener;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.completions.SQLSelectStatementListener;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.completions.SQLStatement;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
@@ -41,7 +43,12 @@ import java.util.Vector;
  */
 public class ParserThread extends Thread
 {
-	public static final String PARSER_THREAD_NM = "SQLParserThread";
+   private static final StringManager s_stringMgr =
+      StringManagerFactory.getStringManager(ParserThread.class);
+
+
+
+   public static final String PARSER_THREAD_NM = "SQLParserThread";
 
 	private String _pendingString;
 	private Errors _errors;
@@ -624,7 +631,8 @@ public class ParserThread extends Thread
 				switch (n)
 				{
 					case ParsingConstants.KW_MINUS:
-						StoreError(n, line, col, "undefined table");
+						//i18n[parserthread.undefinedTable=undefined table]
+                  StoreError(n, line, col, s_stringMgr.getString("parserthread.undefinedTable"));
 						break;
 					default:
 						super.SemErr(n, line, col);
