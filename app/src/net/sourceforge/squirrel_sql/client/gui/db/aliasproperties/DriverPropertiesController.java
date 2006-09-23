@@ -46,6 +46,7 @@ public class DriverPropertiesController implements IAliasPropertiesPanelControll
    {
       _alias = alias;
       _app = app;
+      String aliasUrl = alias.getUrl();
 
       IIdentifier driverIdentifier = alias.getDriverIdentifier();
       if (driverIdentifier == null)
@@ -62,6 +63,26 @@ public class DriverPropertiesController implements IAliasPropertiesPanelControll
          _errMsg = s_stringMgr.getString("DriverPropertiesController.loadingDriverFailed", app.getDataCache().getDriver(driverIdentifier).getName());
          _app.getMessageHandler().showErrorMessage(_errMsg);
          return;
+      } else {
+          try {
+              if (!jdbcDriver.acceptsURL( aliasUrl )) {
+                  String driverName = 
+                      app.getDataCache().getDriver(driverIdentifier).getName();
+                  //I18n[DriverPropertiesController.invalidUrl=According to 
+                  //the driver "{0}", the url "{1}" is invalid.]
+                  _errMsg = 
+                      s_stringMgr.getString(
+                              "DriverPropertiesController.invalidUrl", 
+                              new String[] {driverName, aliasUrl});
+                  _app.getMessageHandler().showErrorMessage(_errMsg);
+                  return;
+              }
+          } catch (Exception e) {
+              // I18n[DriverPropertiesController.loadingDriverFailed=Loading JDBC driver "{0}" failed.\nCan not load driver properties tab.]
+              _errMsg = s_stringMgr.getString("DriverPropertiesController.loadingDriverFailed", app.getDataCache().getDriver(driverIdentifier).getName());
+              _app.getMessageHandler().showErrorMessage(_errMsg);
+              return;
+          }
       }
 
       DriverPropertyInfo[] infoAr;
