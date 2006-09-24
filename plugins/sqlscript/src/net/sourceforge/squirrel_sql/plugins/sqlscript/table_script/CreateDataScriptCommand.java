@@ -273,7 +273,8 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
                         prefixNulls(calendar.get(Calendar.DAY_OF_MONTH), 2) + " " +
                         prefixNulls(calendar.get(Calendar.HOUR_OF_DAY), 2) + ":" +
                         prefixNulls(calendar.get(Calendar.MINUTE), 2) + ":" +
-                        prefixNulls(calendar.get(Calendar.SECOND), 2) + "'}";
+                        prefixNulls(calendar.get(Calendar.SECOND), 2) + "." +
+                        prefixNulls(calendar.get(Calendar.MILLISECOND), 3) + "'}";
                      esc = fromResultSet ? esc : esc + getNullableComment(metaData, i+1);
                      sbValues.append(esc);
                   }
