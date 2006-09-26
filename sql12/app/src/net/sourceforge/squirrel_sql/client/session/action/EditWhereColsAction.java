@@ -81,7 +81,7 @@ public class EditWhereColsAction extends SquirrelAction
 			IDatabaseObjectInfo selectedObjects[] =	_tree.getSelectedDatabaseObjects();
 			int objectTotal = selectedObjects.length;
 
-			if ((objectTotal > 0)
+			if ((objectTotal == 1)
 				&& (selectedObjects[0].getDatabaseObjectType()
 					== DatabaseObjectType.TABLE))
 			{
