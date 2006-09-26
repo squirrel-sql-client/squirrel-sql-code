@@ -23,14 +23,14 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ContentsTab;
+import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * SQLFilterAction.java
  *
@@ -44,6 +44,10 @@ public class SQLFilterAction extends SquirrelAction implements IObjectTreeAction
 {
 	private IObjectTreeAPI _tree;
 
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(SQLFilterAction.class);
+    
 	/** The SQuirreL application instance. */
 	private IApplication _app;
 
@@ -80,29 +84,32 @@ public class SQLFilterAction extends SquirrelAction implements IObjectTreeAction
 			final int objectTotal = selObjs.length;
 
 			if ( (objectTotal > 0) &&
-              (
-                 (selObjs[0].getDatabaseObjectType() == DatabaseObjectType.TABLE) ||
-                 (selObjs[0].getDatabaseObjectType() == DatabaseObjectType.VIEW)
-              )
-            )
-         {
-					final IApplication app = getApplication();
-		
-					final CursorChanger cursorChg = new CursorChanger(app.getMainFrame());
-					cursorChg.show();
-					try
-					{
-						new SQLFilterCommand(_tree, selObjs[0]).execute();
-					}
-					finally
-					{
-						cursorChg.restore();
-					}
+			        (
+			                (selObjs[0].getDatabaseObjectType() == DatabaseObjectType.TABLE) ||
+			                (selObjs[0].getDatabaseObjectType() == DatabaseObjectType.VIEW)
+			        )
+			)
+			{
+			    final IApplication app = getApplication();
+
+			    final CursorChanger cursorChg = new CursorChanger(app.getMainFrame());
+			    cursorChg.show();
+			    try
+			    {
+			        new SQLFilterCommand(_tree, selObjs[0]).execute();
+			    }
+			    finally
+			    {
+			        cursorChg.restore();
+			    }
 			}
 			else
 			{
-				_tree.getSession().getMessageHandler().showMessage(
-					"You must have a single table or view selected to activate the SQL Filter");
+                //i18n[SQLFilterAction.singleObjectMessage=You must have a 
+                //single table or view selected to activate the SQL Filter]
+                String msg = 
+                    s_stringMgr.getString("SQLFilterAction.singleObjectMessage");
+			    _tree.getSession().getMessageHandler().showMessage(msg);
 			}
 		}
 	}
