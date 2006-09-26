@@ -165,20 +165,14 @@ public class WhereClausePanel implements ISQLFilterPanel
 		    String HINT = s_stringMgr.getString("WhereClausePanel.hint");
 		    //i18n[WhereClausePanel.addLabel=Add]            
 		    String ADD = s_stringMgr.getString("WhereClausePanel.addLabel");
-		    //i18n[WhereClausePanel.andLabel=AND]            
-		    String AND = s_stringMgr.getString("WhereClausePanel.andLabel");
-		    //i18n[WhereClausePanel.orLabel=OR]            
-		    String OR = s_stringMgr.getString("WhereClausePanel.orLabel");
-		    //i18n[WhereClausePanel.likeLabel=LIKE]            
-		    String LIKE = s_stringMgr.getString("WhereClausePanel.likeLabel");
-		    //i18n[WhereClausePanel.inLabel=IN]            
-		    String IN = s_stringMgr.getString("WhereClausePanel.inLabel");
-		    //i18n[WhereClausePanel.isNullLabel=IS NULL]            
-		    String IS_NULL = 
-		        s_stringMgr.getString("WhereClausePanel.isNullLabel");
-		    //i18n[WhereClausePanel.isNotNullLabel=IS NOT NULL]            
-		    String IS_NOT_NULL = 
-		        s_stringMgr.getString("WhereClausePanel.isNotNullLabel");
+            // The following strings are SQL tokens and should therefore *not*
+            // be internationalized
+		    String AND = "AND";                 // No I18N
+		    String OR = "OR";                   // No I18N            
+		    String LIKE = "LIKE";               // No I18N            
+		    String IN = "IN";                   // No I18N            
+		    String IS_NULL = "IS NULL";         // No I18N             
+		    String IS_NOT_NULL = "IS NOT NULL"; // No I18N
 		}
 
 		/**
