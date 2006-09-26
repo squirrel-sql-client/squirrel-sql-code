@@ -527,7 +527,7 @@ public class DataTypeDate
             // if value contains ":" it probably has a time component
             boolean hasTimeComponent = (value.toString().indexOf(":") != -1);
             
-            // if value contains ":" it probably has a date component
+            // if value contains "-" it probably has a date component
             boolean hasDateComponent = (value.toString().indexOf("-") != -1);
             
             if (hasTimeComponent && hasDateComponent) {
