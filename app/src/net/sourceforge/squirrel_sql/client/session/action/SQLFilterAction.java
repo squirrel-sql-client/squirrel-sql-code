@@ -83,7 +83,7 @@ public class SQLFilterAction extends SquirrelAction implements IObjectTreeAction
 			final IDatabaseObjectInfo selObjs[] =	_tree.getSelectedDatabaseObjects();
 			final int objectTotal = selObjs.length;
 
-			if ( (objectTotal > 0) &&
+			if ( (objectTotal == 1) &&
 			        (
 			                (selObjs[0].getDatabaseObjectType() == DatabaseObjectType.TABLE) ||
 			                (selObjs[0].getDatabaseObjectType() == DatabaseObjectType.VIEW)
