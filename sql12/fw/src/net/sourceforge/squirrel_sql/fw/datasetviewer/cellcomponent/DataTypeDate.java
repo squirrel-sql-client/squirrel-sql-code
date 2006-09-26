@@ -524,16 +524,30 @@ public class DataTypeDate
 		}
 		else
 		{
-			if (SQLDatabaseMetaData.IDBMSProductNames.ORACLE.equalsIgnoreCase(databaseProductName))
-			{
-				// Oracle stores time infromation in java.sql.Types.Date columns
-				// This tells Oracle that we are only talking about the date part.
-				return "trunc(" + _colDef.getLabel() + ")={d '" + value.toString() + "'}";
-			}
-			else
-			{
-				return _colDef.getLabel() + "={d '" + value.toString() + "'}";
-			}
+            // if value contains ":" it probably has a time component
+            boolean hasTimeComponent = (value.toString().indexOf(":") != -1);
+            
+            // if value contains ":" it probably has a date component
+            boolean hasDateComponent = (value.toString().indexOf("-") != -1);
+            
+            if (hasTimeComponent && hasDateComponent) {
+                // treat it like a timestamp
+                return _colDef.getLabel() + "={ts '" + value.toString() + "'}";
+            } else if (hasTimeComponent) {
+                // treat it like a time - no date component
+                return _colDef.getLabel() + "={t '" + value.toString() + "'}";
+            } else {
+                // treat it like a date - no time component
+                String oracleProductName = 
+                    SQLDatabaseMetaData.IDBMSProductNames.ORACLE;
+                if (oracleProductName.equalsIgnoreCase(databaseProductName)) {
+                    // Oracle stores time information in java.sql.Types.Date columns
+                    // This tells Oracle that we are only talking about the date part.                    
+                    return "trunc(" + _colDef.getLabel() + ")={d '" + value.toString() + "'}";
+                } else {
+                    return _colDef.getLabel() + "={d '" + value.toString() + "'}";
+                }
+            }               
 		}
 	}
 
