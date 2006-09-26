@@ -438,6 +438,10 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       // get WHERE clause using original value
       String whereClause = getWhereClause(values, colDefs, col, oldValue);
 
+      if (s_log.isDebugEnabled()) {
+          s_log.debug("updateTableComponent: whereClause = "+whereClause);
+      }
+      
       final ISession session = _session;
       final SQLConnection conn = session.getSQLConnection();
 
