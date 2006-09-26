@@ -6,10 +6,15 @@ Not yet released, available in CVS and probably in latest weekly build
 
 Bug Fixes:
 
-1563613:  Alias property window dies when URL is malformed.
+1563613: Alias property window dies when URL is malformed.
 
-1561293:  Show Loaded Drivers Only" does not work in "Add Alias" dialog.
+1563603: ORA-01830 error: Date format
 
+1561293: Show Loaded Drivers Only" does not work in "Add Alias" dialog.
+
+1426012: PLAN_TABLE not found - look for PLAN_TABLE in other schemas and allow
+         user to choose one.
+         
 1250855: (Oracle DATE does not display correctly) Added a new configuration
          item to Global Preferences -> Date Type Controls -> Date Section
 		 which allows the user to "Interpret DATE columns as TIMESTAMP".
