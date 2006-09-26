@@ -138,12 +138,12 @@ public class OrderByClausePanel implements ISQLFilterPanel
 		 */
 		interface OrderByClausePanelI18n
 		{
-		    //[i18n[OrderByClausePanel.ascendingLabel=ASC]
-		    String ASC = 
-                s_stringMgr.getString("OrderByClausePanel.ascendingLabel");
-		    //[i18n[OrderByClausePanel.descendingLabel=DESC]            
-		    String DESC = 
-                s_stringMgr.getString("OrderByClausePanel.descendingLabel");
+
+            // These must not be internationalized since SQL tokens must be in 
+            // English
+		    String ASC = "ASC";   //No I18N
+		    String DESC = "DESC"; //No I18N
+
 		    //[i18n[OrderByClausePanel.addLabel=Add]
 		    String ADD = s_stringMgr.getString("OrderByClausePanel.addLabel");
 		    //[i18n[OrderByClausePanel.columnsLabel=Columns]            
