@@ -14,6 +14,8 @@ Bug Fixes:
 
 1426012: PLAN_TABLE not found - look for PLAN_TABLE in other schemas and allow
          user to choose one.
+
+1371587: Not possible to edit data after SQL query
          
 1250855: (Oracle DATE does not display correctly) Added a new configuration
          item to Global Preferences -> Date Type Controls -> Date Section
