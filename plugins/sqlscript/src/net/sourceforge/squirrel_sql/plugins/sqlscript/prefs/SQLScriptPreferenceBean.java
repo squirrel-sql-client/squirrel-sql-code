@@ -36,6 +36,27 @@ public class SQLScriptPreferenceBean implements Cloneable,
      *  scripts*/
     private boolean qualifyTableNames = true;
     
+    public static final int NO_ACTION = 0;
+    
+    public static final int CASCADE_DELETE = 1;
+    
+    public static final int SET_DEFAULT = 2;
+    
+    public static final int SET_NULL = 3;
+    
+    private int deleteAction = NO_ACTION;
+    
+    private int updateAction = NO_ACTION;
+    
+    /**
+     * whether or not to append the delete referential action to FK defs.
+     */
+    private boolean deleteRefAction = false;
+    
+    /**
+     * whether or not to append the update referential action to FK defs.
+     */
+    private boolean updateRefAction = false;
     
 	public SQLScriptPreferenceBean() {
 		super();
@@ -110,6 +131,52 @@ public class SQLScriptPreferenceBean implements Cloneable,
         return qualifyTableNames;
     }
 
+    public void setDeleteRefAction(boolean deleteRefAction) {
+        this.deleteRefAction = deleteRefAction;
+    }
+
+    public boolean isDeleteRefAction() {
+        return deleteRefAction;
+    }
+
+    public void setDeleteAction(int action) {
+        this.deleteAction = action;
+    }
+
+    public int getDeleteAction() {
+        return deleteAction;
+    }
+
+    public void setUpdateAction(int updateAction) {
+        this.updateAction = updateAction;
+    }
+
+    public int getUpdateAction() {
+        return updateAction;
+    }
+
+    public void setUpdateRefAction(boolean updateRefAction) {
+        this.updateRefAction = updateRefAction;
+    }
+
+    public boolean isUpdateRefAction() {
+        return updateRefAction;
+    }
+
+    public String getRefActionByType(int type) {
+        switch (type) {
+            case NO_ACTION:
+                return "NO ACTION";
+            case CASCADE_DELETE:
+                return "CASCADE";
+            case SET_DEFAULT:
+                return "SET DEFAULT";
+            case SET_NULL:
+                return "SET NULL";
+            default:
+                return "NO ACTION";
+        }
+    }
  
 }
 

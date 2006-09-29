@@ -43,6 +43,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferenceBean;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferencesManager;
 
 public class CreateTableScriptCommand implements ICommand
 {
@@ -63,6 +65,8 @@ public class CreateTableScriptCommand implements ICommand
     private static final StringManager s_stringMgr =
         StringManagerFactory.getStringManager(CreateTableScriptCommand.class);
 
+    private static SQLScriptPreferenceBean prefs = 
+            SQLScriptPreferencesManager.getPreferences();
     
     
    /**
@@ -494,8 +498,18 @@ public class CreateTableScriptCommand implements ICommand
                }
             }
          }
-
-         sbToAppend.append(")").append(ScriptUtil.getStatementSeparator(_session)).append("\n");
+        
+         sbToAppend.append(")");
+         
+         if (prefs.isDeleteRefAction()) {
+             sbToAppend.append(" ON DELETE ");
+             sbToAppend.append(prefs.getRefActionByType(prefs.getDeleteAction()));
+         }
+         if (prefs.isUpdateRefAction()) {
+             sbToAppend.append(" ON UPDATE ");
+             sbToAppend.append(prefs.getRefActionByType(prefs.getUpdateAction()));             
+         }         
+         sbToAppend.append(ScriptUtil.getStatementSeparator(_session)).append("\n");
       }
 
       return sbToAppend.toString();
