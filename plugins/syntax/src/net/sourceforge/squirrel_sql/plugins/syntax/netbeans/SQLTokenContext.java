@@ -18,7 +18,8 @@ public class SQLTokenContext extends TokenContext
    public static final int IDENTIFIER_ID = WHITESPACE_ID + 1;
 
    public static final int TABLE_ID = IDENTIFIER_ID + 1;
-   public static final int COLUMN_ID = TABLE_ID + 1;
+   public static final int SEQUENCE_ID = TABLE_ID + 1;
+   public static final int COLUMN_ID = SEQUENCE_ID + 1;
    public static final int ERROR_ID = COLUMN_ID + 1;
    public static final int FUNCTION_ID = ERROR_ID + 1;
 	public static final int DATA_TYPE_ID = FUNCTION_ID + 1;
@@ -198,6 +199,9 @@ public class SQLTokenContext extends TokenContext
    public static final BaseTokenID TABLE
       = new BaseTokenID("table", TABLE_ID); // NOI18N
 
+   public static final BaseTokenID SEQUENCE
+   = new BaseTokenID("sequence", SEQUENCE_ID); // NOI18N
+   
    public static final BaseTokenID COLUMN
       = new BaseTokenID("column", COLUMN_ID); // NOI18N
 
