@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class PointbaseBLOBTest {
+public class HSQLBigDecimalTest {
 
     String jdbcUrl = "jdbc:hsqldb:file:/tools/hsqldb-1_8_0_2/data/dbcopydest";
     
@@ -24,7 +24,7 @@ public class PointbaseBLOBTest {
         "select nr from test";
 
     
-    public PointbaseBLOBTest() throws Exception {
+    public HSQLBigDecimalTest() throws Exception {
         init();
     }
     
