@@ -17,7 +17,10 @@ package net.sourceforge.squirrel_sql.client.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.*;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -27,11 +30,9 @@ import javax.swing.JProgressBar;
 import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.squirrel_sql.client.Version;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.ClassLoaderListener;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -82,12 +83,6 @@ public class SplashScreen extends JWindow
       gbc = new GridBagConstraints(0,0,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,5,5,5),0,0);
       mainPnl.add(new JLabel(icon), gbc);
 
-      MultipleLineLabel versionLbl = new MultipleLineLabel();
-      versionLbl.setOpaque(false);
-      versionLbl.append(Version.getVersion());
-      versionLbl.append("\n");
-      versionLbl.append(Version.getCopyrightStatement());
-
       _progressBar = new JProgressBar(0, progressBarSize);
       _progressBar.setStringPainted(true);
       _progressBar.setString("");
@@ -99,29 +94,44 @@ public class SplashScreen extends JWindow
          _pluginLabel = new JLabel("Dummy");
          _pluginLabel.setForeground(new Color(SquirrelResources.S_SPLASH_IMAGE_BACKGROUND));
 
-         gbc = new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,5,5),0,0);
-         mainPnl.add(versionLbl, gbc);
+         gbc = new GridBagConstraints(0,1,1,1,0,0, 
+                                      GridBagConstraints.NORTHWEST, 
+                                      GridBagConstraints.HORIZONTAL, 
+                                      new Insets(0,5,0,5),0,0);
+         mainPnl.add(new VersionPane(false), gbc);
 
-         gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,5,5),0,0);
+         gbc = new GridBagConstraints(0,2,1,1,0,0, 
+                                      GridBagConstraints.NORTHWEST, 
+                                      GridBagConstraints.HORIZONTAL, 
+                                      new Insets(0,5,3,5),0,0);
          mainPnl.add(_pluginLabel, gbc);
 
-         gbc = new GridBagConstraints(0,3,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,5,5),0,0);
+         gbc = new GridBagConstraints(0,3,1,1,0,0, 
+                                      GridBagConstraints.NORTHWEST, 
+                                      GridBagConstraints.HORIZONTAL, 
+                                      new Insets(0,5,3,5),0,0);
          mainPnl.add(_progressBar, gbc);
 
       }
       else
       {
-         gbc = new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,5,5),0,0);
-         mainPnl.add(versionLbl, gbc);
+         gbc = new GridBagConstraints(0,1,1,1,0,0, 
+                                      GridBagConstraints.NORTHWEST, 
+                                      GridBagConstraints.HORIZONTAL, 
+                                      new Insets(0,5,7,5),0,0);
+         mainPnl.add(new VersionPane(false), gbc);
 
-         gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,5,5),0,0);
+         gbc = new GridBagConstraints(0,2,1,1,0,0, 
+                                      GridBagConstraints.NORTHWEST, 
+                                      GridBagConstraints.HORIZONTAL, 
+                                      new Insets(0,5,5,5),0,0);
          mainPnl.add(_progressBar, gbc);
       }
 
       getContentPane().add(mainPnl);
 
-      //pack();
-      setSize(400,490);
+      pack();
+      setSize(400,500);
 
       GUIUtils.centerWithinScreen(this);
       setVisible(true);

@@ -39,13 +39,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
 import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.Version;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
@@ -357,16 +355,10 @@ public class AboutBoxDialog extends JDialog
 			setBackground(new Color(SquirrelResources.S_SPLASH_IMAGE_BACKGROUND));
 			Icon icon = rsrc.getIcon(SquirrelResources.IImageNames.SPLASH_SCREEN);
 			add(BorderLayout.CENTER, new JLabel(icon));
-			JTextArea ta = new JTextArea();
-			ta.setEditable(false);
-			ta.setOpaque(false);
-			ta.append(Version.getVersion());
-			ta.append("\n");
-			ta.append(Version.getCopyrightStatement());
-			ta.append("\n");
-			ta.append(Version.getWebSite());
-			ta.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-			add(BorderLayout.SOUTH, ta);
+            
+            VersionPane versionPane = new VersionPane(true);
+            versionPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+            add(BorderLayout.SOUTH, versionPane);
 		}
 	}
 
