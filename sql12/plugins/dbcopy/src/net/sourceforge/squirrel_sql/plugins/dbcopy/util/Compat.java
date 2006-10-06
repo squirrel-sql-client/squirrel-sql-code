@@ -23,6 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 import javax.swing.Action;
 
@@ -128,7 +129,8 @@ public class Compat {
 	            result = (ITableInfo[])m.invoke(schemaInfo, args);
 	        } catch (Exception e) {
 	            s_log.error("Encountered unexpected exception when attempting to "+
-	                        "call SQLDatabaseMetaData.getTables with args = "+args);
+	                        "call SQLDatabaseMetaData.getTables with args = "+
+                            Arrays.toString(args));
 	        }
         } 
         if (result == null || result.length == 0) {
@@ -183,7 +185,8 @@ public class Compat {
             result = (ITableInfo[])m.invoke(data, args);
         } catch (Exception e) {
             s_log.error("Encountered unexpected exception when attempting to "+
-                        "call SQLDatabaseMetaData.getTables with args = "+args);
+                        "call SQLDatabaseMetaData.getTables with args = "+
+                        Arrays.toString(args));
         }
         return result;
     }								
@@ -400,7 +403,9 @@ public class Compat {
 			}
 
 			try {
-				m.invoke(api, new Object[] { dboObj, action });
+                if (m != null) {
+                    m.invoke(api, new Object[] { dboObj, action });
+                }
 			} catch (IllegalArgumentException e) {
 				s_log.debug(
 					"Unable to invoke addToPopup method from IObjectTreeAPI " +
@@ -487,7 +492,8 @@ public class Compat {
     	} catch (Exception e) {
     		String className = c.getName();
     		s_log.debug("Compat.safeGetMethod: No method called "+
-    				methodName+" with parameters ("+parameterTypes+") " +
+    				methodName+" with parameters ("+
+                    Arrays.toString(parameterTypes)+") " +
     				"was located in class "+className);
     	}
     	return result;
@@ -523,11 +529,11 @@ public class Compat {
         
     private static void initIsKeywordMethod() {
     	if (isKeywordMethod == null) {
-    		try {
+            try {
     			isKeywordMethod = 
     				schemaInfoClass.getDeclaredMethod("isKeyword", 
 											 new Class[] { String.class });
-    		} catch (Exception e) {
+    		} catch (NoSuchMethodException e) {
     			s_log.error(
     				"initIsKeywordMethod: Unexpected exception: "+
     				e.getMessage(), e);
