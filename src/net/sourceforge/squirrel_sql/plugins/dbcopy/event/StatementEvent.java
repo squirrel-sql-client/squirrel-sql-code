@@ -24,14 +24,14 @@ package net.sourceforge.squirrel_sql.plugins.dbcopy.event;
 public class StatementEvent {
     
     /** the type that indicates a create table statement */
-    public static int CREATE_TABLE_TYPE = 0;
+    public static final int CREATE_TABLE_TYPE = 0;
 
     /** the type that indicates a create index statement */
-    public static int CREATE_INDEX_TYPE = 1;
+    public static final int CREATE_INDEX_TYPE = 1;
     
-    public static int CREATE_FOREIGN_KEY_TYPE = 2;
+    public static final int CREATE_FOREIGN_KEY_TYPE = 2;
     
-    public static int INSERT_RECORD_TYPE = 3;
+    public static final int INSERT_RECORD_TYPE = 3;
     
     /** the statement */
     private String statement = null;
