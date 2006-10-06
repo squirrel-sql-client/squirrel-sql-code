@@ -18,6 +18,7 @@ public class DevelopersPanel extends JPanel
    JTextField txtSourceDir = new JTextField();
    JButton btnChooseSourceDir;
    JButton btnAppendI18nInCode;
+   JCheckBox cbxIncludeTimestamp;
 
 
    public DevelopersPanel(PluginResources resources)
@@ -59,8 +60,14 @@ public class DevelopersPanel extends JPanel
       btnAppendI18nInCode = new JButton(s_stringMgr.getString("I18n.appendI18nStringsProps"));
       add(btnAppendI18nInCode, gbc);
 
+      gbc = new GridBagConstraints(0,3,3,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+        // i18n[I18n.includeTimestamp=Include timestamp in modified properties file]
+      cbxIncludeTimestamp = new JCheckBox(s_stringMgr.getString("I18n.includeTimestamp"));
+      add(cbxIncludeTimestamp, gbc);
+      
+      
       JPanel pnlDist = new JPanel();
-      gbc = new GridBagConstraints(0,3,3,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5),0,0);
+      gbc = new GridBagConstraints(0,4,3,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5),0,0);
       add(pnlDist, gbc);
 
    }
