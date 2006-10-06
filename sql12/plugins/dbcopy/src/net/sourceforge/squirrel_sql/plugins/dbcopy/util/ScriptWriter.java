@@ -118,12 +118,7 @@ public class ScriptWriter {
         if (!prefs.isWriteScript() || out == null) {
             return;
         }
-        try {
-            out.close();
-        } catch (Exception e) {
-            s_log.error("", e);
-            e.printStackTrace();            
-        }
+        out.close();
     }
     
     private static String constructFilename(ISession source, ISession dest) {
