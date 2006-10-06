@@ -51,7 +51,6 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -292,27 +291,35 @@ public class DBUtil extends I18NBaseObject {
         ResultSet rs = null;
 
         Connection con = sqlcon.getConnection();
-        
-        if (DialectFactory.isMySQLSession(session)) {
-            stmt = con.createStatement(ResultSet.TYPE_FORWARD_ONLY,
-                                       ResultSet.CONCUR_READ_ONLY);
-        
-            stmt.setFetchSize(Integer.MIN_VALUE);
-        } else if (DialectFactory.isTimesTen(session)) {
-        	stmt = con.createStatement();
-        	int fetchSize = _prefs.getSelectFetchSize();
-        	// TimesTen allows a maximum fetch size of 128. 
-        	if (fetchSize > 128) {
-        		log.info(
-        			"executeQuery: TimesTen allows a maximum fetch size of " +
-        			"128.  Altering preferred fetch size from "+fetchSize+
-        			" to 128.");
-        		fetchSize = 128;
-        	}
-        	stmt.setFetchSize(fetchSize);
-        } else { 
-            stmt = con.createStatement();
-            stmt.setFetchSize(_prefs.getSelectFetchSize());
+        try {
+            if (DialectFactory.isMySQLSession(session)) {
+                stmt = con.createStatement(ResultSet.TYPE_FORWARD_ONLY,
+                                           ResultSet.CONCUR_READ_ONLY);
+            
+                stmt.setFetchSize(Integer.MIN_VALUE);
+            } else if (DialectFactory.isTimesTen(session)) {
+            	stmt = con.createStatement();
+            	int fetchSize = _prefs.getSelectFetchSize();
+            	// TimesTen allows a maximum fetch size of 128. 
+            	if (fetchSize > 128) {
+            		log.info(
+            			"executeQuery: TimesTen allows a maximum fetch size of " +
+            			"128.  Altering preferred fetch size from "+fetchSize+
+            			" to 128.");
+            		fetchSize = 128;
+            	}
+            	stmt.setFetchSize(fetchSize);
+            } else { 
+                stmt = con.createStatement();
+                stmt.setFetchSize(_prefs.getSelectFetchSize());
+            }
+        } catch(SQLException e) {
+            // Only close the statement if SQLException - otherwise it has to 
+            // remain open until the ResultSet is read through by the caller.
+            if (stmt != null) { 
+                try {stmt.close();} catch (SQLException ex) { /* Do Nothing */}
+            }
+            throw e;
         }
         if (log.isDebugEnabled()) {
             //i18n[DBUtil.info.executequery=executeQuery: Running SQL:\n '{0}']
@@ -320,7 +327,16 @@ public class DBUtil extends I18NBaseObject {
                 s_stringMgr.getString("DBUtil.info.executequery", sql);
             log.debug(msg);
         }
-        rs = stmt.executeQuery(sql);
+        try {
+            rs = stmt.executeQuery(sql);
+        } catch (SQLException e) {
+            // Only close the statement if SQLException - otherwise it has to 
+            // remain open until the ResultSet is read through by the caller.
+            if (stmt != null) { 
+                try {stmt.close();} catch (SQLException ex) { /* Do Nothing */}
+            }
+            throw e;            
+        }
  
         return rs;
     }    
@@ -413,7 +429,6 @@ public class DBUtil extends I18NBaseObject {
         throws SQLException, MappingException, UserCancelledOperationException 
     {
         SQLConnection con = session.getSQLConnection();
-        SQLDatabaseMetaData data = con.getSQLMetaData();
         // Currently, as of milestone 3, Axion doesn't support "schemas" like 
         // other databases.  So, set the schema to emtpy string if we detect 
         // an Axion session.
@@ -748,7 +763,7 @@ public class DBUtil extends I18NBaseObject {
                         Double.parseDouble(testValue);
                         double numberValue = rs.getDouble(index);
                         ps.setDouble(index, numberValue);                    
-                    } catch (Exception e) {
+                    } catch (SQLException e) {
                         byte[] otherValue = rs.getBytes(index);
                         result = getValue(otherValue);
                         ps.setBytes(index, otherValue);    
@@ -822,7 +837,7 @@ public class DBUtil extends I18NBaseObject {
                 //i18n[DBUtil.error.unknowntype=Unknown Java SQL column type: '{0}']
                 String msg =
                     s_stringMgr.getString("DBUtil.error.unknowntype",
-                                          new Integer(sourceColType));
+                                          Integer.valueOf(sourceColType));
                 log.error(msg);
                 // We still have to bind a value, or else the PS will throw
                 // an exception.
@@ -898,7 +913,7 @@ public class DBUtil extends I18NBaseObject {
         if (log.isDebugEnabled() && clobValue != null) {
             // i18n[DBUtil.info.bindclobmem=bindClobVarInMemory: binding '{0}' bytes]
             String msg = s_stringMgr.getString("DBUtil.info.bindclobmem",
-                                               new Integer(clobValue.length()));
+                                               Integer.valueOf(clobValue.length()));
             log.debug(msg);
         }
         ps.setString(index, clobValue);
@@ -920,7 +935,7 @@ public class DBUtil extends I18NBaseObject {
             //i18n[DBUtil.info.bindblobmem=bindBlobVarInMemory: binding '{0}' bytes]
             String msg = 
                 s_stringMgr.getString("DBUtil.info.bindblobmem",
-                                      new Integer(blobValue.length));
+                                      Integer.valueOf(blobValue.length));
             log.debug(msg);
         }
         ps.setBytes(index, blobValue);
@@ -961,7 +976,7 @@ public class DBUtil extends I18NBaseObject {
                 //i18n[DBUtil.info.bindcloblength=bindClobVarInFile: writing '{0}' bytes.]
                 String msg =
                     s_stringMgr.getString("DBUtil.info.bindcloblength",
-                                          new Integer(length));
+                                          Integer.valueOf(length));
                 log.debug(msg);
             }
             fos.write(buf, 0, length);
@@ -1009,7 +1024,7 @@ public class DBUtil extends I18NBaseObject {
                 //i18n[DBUtil.info.bindbloblength=bindBlobVarInFile: writing '{0}' bytes.]
                 String msg =
                     s_stringMgr.getString("DBUtil.info.bindbloblength",
-                                          new Integer(length));
+                                          Integer.valueOf(length));
                 log.debug(msg);
             }
             fos.write(buf, 0, length);
