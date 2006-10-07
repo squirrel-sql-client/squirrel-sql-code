@@ -5,6 +5,11 @@ SQuirreL SQL Client Change Log
 2.3 Final
 =========
 
+Enhancements:
+
+An Italian translation of SQuirreL labels/messages is now available in the 
+installer (Thanks to Ivo Neri)
+
 Bug Fixes:
 
 1563613: Alias property window dies when URL is malformed.
