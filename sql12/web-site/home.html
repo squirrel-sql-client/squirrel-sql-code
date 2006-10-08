@@ -68,15 +68,15 @@
 	<tr>
       <td class="body_left_border">&nbsp;</td>
       <td width='100%' class="body" bgcolor="white" valign="top">
-         <h1 class="body"><A name="newfeatures">2.3 rc2 Highlights:</A></h1>
+         <h1 class="body"><A name="newfeatures">2.3 final Highlights:</A></h1>
          <ul>
             <li>Enhancements </li>
             <UL>
                <li>Centralized Database Meta Data caching provides the following improvements:
                   <UL>
                      <li>
-                        When a DDL statement is run the Object Tree is updated immediately to reflect the change.
-                        This works as long as standard DDL statements are used.
+                        The Object Tree is now updated immediately to reflect the DDL statements
+                        executed in the SQL Editor. This works as long as standard DDL statements are used.
                      </li>
                      <li>
                         Syntax coloring and code completion for newly created tables, views, columns, procedures is
@@ -91,17 +91,15 @@
 
                <li>Session startup performance
                   <ul>
-                     <li>General: New Alias properties allow to configure loading and caching of Schemas.</li>
+                     <li>General: New Alias properties allow to configure the loading and caching of Schemas.</li>
                      <li>Oracle: When the Oracle Plugin is used the user is able to configure Schema loading
-                        according to
-                        his access privileges.
+                         according tohis access privileges.
                         <br>
-                        <a  style="color: red">Note: By default only those Schemas are loaded the user has access
-                        to.</a></li>
+                        <a  style="color: red">Note: By default only those Schemas that the user has access to are loaded.</a></li>
                   </ul>
                </li>
-               <li>Output displayed tables to CSV files. Allows to immediately open table contents in another application
-                  like Open Office Calc or MS Excel.
+               <li>Output displayed tables to CSV files. The user can choose to immediately 
+                   open table contents in another application like Open Office Calc or MS Excel.
                </li>
 
                <li>Enhancements of the Bookmarks Plugin
@@ -112,12 +110,11 @@
                         Bookmarks can be run from within the Bookmark Preferences.
                      </li>
                      <li>
-                        Lots of "SQuirreL Bookmarks" which are templates for many common SQL/DDL statements.
+                        Many additional "SQuirreL Bookmarks" which are templates for many common SQL/DDL statements.
                      </li>
                      <li>
-                        User can decide if he wants to see "SQuirreL Bookmarks" in the Bookmarks selection popup of the
-                        SQL
-                        Editor (ctrl j).
+                        Users can choose to see "SQuirreL Bookmarks" in the Bookmarks 
+                        selection popup of the SQL Editor (ctrl j).
                      </li>
                   </ul>
                </li>
@@ -128,8 +125,8 @@
                <li>New tool bar button to quickly toggle auto commit.</li>
                
                <li>Optional internationalization jars have been added to the 
-                   installer(Simplified Chinese (xpdz), French (Erwan Duroselle)
-				   and German (Andreas Oswald)</li>
+                   installer(Simplified Chinese (xpdz), French (Erwan Duroselle), 
+                   German (Andreas Oswald) and Italian (Ivo Neri)</li>
                    
 			   <li>DBCopy plugin which allows tables (definition and data) to be 
 			       easily copied from one session to another (can be different 
@@ -220,7 +217,7 @@
 			<p>Susan Cline graciously took the time to document the 
 				<a href="http://db.apache.org/derby/integrate/SQuirreL_Derby.html">steps</a> 
 				she followed to setup an <a href="http://db.apache.org/">Apache Derby</a> 
-				database from scratch and use SQuirreL SQL 2.2 Final to explore it.
+				database from scratch and use the SQuirreL SQL Client to explore it.
 
 			<p>Quite some time ago Kulvir Singh Bhogal wrote a great
 			<a href="http://www-106.ibm.com/developerworks/db2/library/techarticle/dm-0312bhogal/index.html">tutorial</a>
@@ -280,11 +277,15 @@
 			<h2>The most important <U>downloads</U> are:</h2>
 
          <UL>
-            <LI><B><a href="http://prdownloads.sourceforge.net/squirrel-sql/squirrel-sql-2.3rc2-install.jar?download">Install jar of SQuirreL 2.3 rc2 for Windows/Linux/others</a></B></LI>
-            <LI><B><a href="http://prdownloads.sourceforge.net/squirrel-sql/squirrel-sql-2.2final-install.jar?download">Install jar of SQuirreL 2.2 final for Windows/Linux/others</a></B></LI>
+            <!-- 
+            <LI><B><a href="http://prdownloads.sourceforge.net/squirrel-sql/squirrel-sql-2.4rc1-install.jar?download">Install jar of SQuirreL 2.4 rc1 for Windows/Linux/others</a></B></LI>
+            -->
+            <LI><B><a href="http://prdownloads.sourceforge.net/squirrel-sql/squirrel-sql-2.3final-install.jar?download">Install jar of SQuirreL 2.3 final for Windows/Linux/others</a></B></LI>
             <LI><B><a href="http://sourceforge.net/project/showfiles.php?group_id=28383&package_id=158128">Install jars of weekly snapshots for Windows/Linux/others</a></B></LI>
-            <LI><B><a href="http://sourceforge.net/project/showfiles.php?group_id=28383&package_id=22079&release_id=447988">Plain zip format of SQuirreL 2.3 rc2</a></B></LI>
-	        <LI><B><a href="http://sourceforge.net/project/showfiles.php?group_id=28383&package_id=29193&release_id=410064">Plain zip format of SQuirreL 2.2 final</a></B></LI>
+			<!-- 
+            <LI><B><a href="">Plain zip format of SQuirreL 2.4 rc1</a></B></LI>
+            -->
+	        <LI><B><a href="http://sourceforge.net/project/showfiles.php?group_id=28383&package_id=29193&release_id=453704">Plain zip format of SQuirreL 2.3 final</a></B></LI>
             <LI><B><a href="http://sourceforge.net/project/showfiles.php?group_id=28383">Overview of all available downloads</a></B></LI>
          </UL>
 
