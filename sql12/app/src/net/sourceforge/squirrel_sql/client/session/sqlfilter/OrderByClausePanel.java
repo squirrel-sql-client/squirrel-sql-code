@@ -35,6 +35,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * This panel allows the user to change the where clause for a Contents tab query.
  *
@@ -42,6 +45,10 @@ import javax.swing.JTextArea;
  */
 public class OrderByClausePanel implements ISQLFilterPanel
 {
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(OrderByClausePanel.class);
+    
 	/** A class containing the information about the SQL filters. */
 	private SQLFilterClauses _sqlFilterClauses;
 
@@ -131,15 +138,25 @@ public class OrderByClausePanel implements ISQLFilterPanel
 		 */
 		interface OrderByClausePanelI18n
 		{
-			String ASC = "ASC";
-			String DESC = "DESC";
 
-			String ADD = "Add";
-			String COLUMNS = "Columns";
-			String ORDER_DIRECTION = "Order Direction";
+            // These must not be internationalized since SQL tokens must be in 
+            // English
+		    String ASC = "ASC";   //No I18N
+		    String DESC = "DESC"; //No I18N
 
-			String ORDER_BY_CLAUSE = "Order By Clause";
-			String HINT = "Order by clause for the selected table";
+		    //[i18n[OrderByClausePanel.addLabel=Add]
+		    String ADD = s_stringMgr.getString("OrderByClausePanel.addLabel");
+		    //[i18n[OrderByClausePanel.columnsLabel=Columns]            
+		    String COLUMNS = 
+                s_stringMgr.getString("OrderByClausePanel.columnsLabel");
+		    //[i18n[OrderByClausePanel.orderDirectionLabel=Order Direction]
+		    String ORDER_DIRECTION = 
+                s_stringMgr.getString("OrderByClausePanel.orderDirectionLabel");
+		    //[i18n[OrderByClausePanel.orderByClauseLabel=Order By Clause]
+		    String ORDER_BY_CLAUSE = 
+                s_stringMgr.getString("OrderByClausePanel.orderByClauseLabel");
+		    //[i18n[OrderByClausePanel.hint=Order by clause for the selected table]            
+		    String HINT = s_stringMgr.getString("OrderByClausePanel.hint");
 		}
 
 		/** A label to identify the column combo box. */

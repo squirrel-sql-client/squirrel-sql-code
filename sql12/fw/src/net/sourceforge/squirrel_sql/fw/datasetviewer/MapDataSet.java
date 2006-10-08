@@ -21,88 +21,99 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class MapDataSet implements IDataSet
 {
-	private interface i18n
-	{
-		String UNSUPPORTED = "<Unsupported>";
-		String NAME_COLUMN = "Key";
-		String VALUE_COLUMN = "Value";
-	}
 
-	/** Number of columns in <TT>DataSet</TT>. */
-	private final static int s_columnCount = 2;
+   /** Internationalized strings for this class. */
+   private static final StringManager s_stringMgr =
+      StringManagerFactory.getStringManager(MapDataSet.class);
 
-	private final static String[] s_hdgs = new String[]
-	{
-		i18n.NAME_COLUMN, i18n.VALUE_COLUMN
-	};
 
-	/** The <TT>Map</TT> over which this <TT>DataSet</TT> is built. */
-	private final Map _src;
+   private interface i18n
+   {
+      // i18n[mapdataset.unsupported=<Unsupported>]
+      String UNSUPPORTED = s_stringMgr.getString("hashtabledataset.unsupported");
+      // i18n[mapdataset.key=Key]
+      String NAME_COLUMN = s_stringMgr.getString("hashtabledataset.key");
+      // i18n[mapdataset.value=Value]
+      String VALUE_COLUMN = s_stringMgr.getString("mapdataset.value");
+   }
 
-	private DataSetDefinition _dsDef;
+   /** Number of columns in <TT>DataSet</TT>. */
+   private final static int s_columnCount = 2;
 
-	private final static int[] s_hdgLens = new int[] { 30, 100 };
+   private final static String[] s_hdgs = new String[]
+   {
+      i18n.NAME_COLUMN, i18n.VALUE_COLUMN
+   };
 
-	/** Iterator used when iterating through using <TT>IDataSet.next()</TT>. */
-	private Iterator _rowKeys;
+   /** The <TT>Map</TT> over which this <TT>DataSet</TT> is built. */
+   private final Map _src;
 
-	/** Current row used when iterating through using <TT>IDataSet.next()</TT>. */
-	private Object[] _curRow = new Object[2];
+   private DataSetDefinition _dsDef;
 
-	public MapDataSet(Map src) throws DataSetException
-	{
-		super();
-		if (src == null)
-		{
-			throw new IllegalArgumentException("Map == null");
-		}
+   private final static int[] s_hdgLens = new int[] { 30, 100 };
 
-		_src = src;
-		_dsDef = new DataSetDefinition(createColumnDefinitions());
-		_rowKeys = _src.keySet().iterator();
-	}
+   /** Iterator used when iterating through using <TT>IDataSet.next()</TT>. */
+   private Iterator _rowKeys;
 
-	public final int getColumnCount()
-	{
-		return s_columnCount;
-	}
+   /** Current row used when iterating through using <TT>IDataSet.next()</TT>. */
+   private Object[] _curRow = new Object[2];
 
-	public DataSetDefinition getDataSetDefinition()
-	{
-		return _dsDef;
-	}
+   public MapDataSet(Map src) throws DataSetException
+   {
+      super();
+      if (src == null)
+      {
+         throw new IllegalArgumentException("Map == null");
+      }
 
-	public synchronized boolean next(IMessageHandler msgHandler)
-	{
-		_curRow[0] = null;
-		_curRow[1] = null;
-		if (_rowKeys.hasNext())
-		{
-			_curRow[0] = _rowKeys.next();
-		}
-		if (_curRow[0] != null)
-		{
-			_curRow[1] = _src.get(_curRow[0]);
-		}
-		return _curRow[0] != null;
-	}
+      _src = src;
+      _dsDef = new DataSetDefinition(createColumnDefinitions());
+      _rowKeys = _src.keySet().iterator();
+   }
 
-	public Object get(int columnIndex)
-	{
-		return _curRow[columnIndex];
-	}
+   public final int getColumnCount()
+   {
+      return s_columnCount;
+   }
 
-	private ColumnDisplayDefinition[] createColumnDefinitions()
-	{
-		final int columnCount = getColumnCount();
-		ColumnDisplayDefinition[] columnDefs = new ColumnDisplayDefinition[columnCount];
-		for (int i = 0; i < columnCount; ++i)
-		{
-			columnDefs[i] = new ColumnDisplayDefinition(s_hdgLens[i], s_hdgs[i]);
-		}
-		return columnDefs;
-	}
+   public DataSetDefinition getDataSetDefinition()
+   {
+      return _dsDef;
+   }
+
+   public synchronized boolean next(IMessageHandler msgHandler)
+   {
+      _curRow[0] = null;
+      _curRow[1] = null;
+      if (_rowKeys.hasNext())
+      {
+         _curRow[0] = _rowKeys.next();
+      }
+      if (_curRow[0] != null)
+      {
+         _curRow[1] = _src.get(_curRow[0]);
+      }
+      return _curRow[0] != null;
+   }
+
+   public Object get(int columnIndex)
+   {
+      return _curRow[columnIndex];
+   }
+
+   private ColumnDisplayDefinition[] createColumnDefinitions()
+   {
+      final int columnCount = getColumnCount();
+      ColumnDisplayDefinition[] columnDefs = new ColumnDisplayDefinition[columnCount];
+      for (int i = 0; i < columnCount; ++i)
+      {
+         columnDefs[i] = new ColumnDisplayDefinition(s_hdgLens[i], s_hdgs[i]);
+      }
+      return columnDefs;
+   }
 }

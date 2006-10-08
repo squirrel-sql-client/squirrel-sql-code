@@ -17,45 +17,43 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.*;
-import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
-
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.IOException;
-
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JTextArea;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.SwingUtilities;
-import javax.swing.text.JTextComponent;
-import javax.swing.BorderFactory;
-
-
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Date;
-
+import java.sql.Timestamp;
 import java.text.DateFormat;
 
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.text.JTextComponent;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 
 /**
  * @author gwg
@@ -141,6 +139,9 @@ public class DataTypeDate
 	 // Whether to force user to enter dates in exact format or use heuristics to guess it
 	 private static boolean lenient = true;
 
+     // Whether or not to read date type columns with rs.getTimestamp() 
+     private static boolean readDateAsTimestamp = false;
+     
 	 // The DateFormat object to use for all locale-dependent formatting.
 	 // This is reset each time the user changes the previous settings.
 	 private static DateFormat dateFormat = DateFormat.getDateInstance(localeFormat);
@@ -193,6 +194,15 @@ public class DataTypeDate
 				thisClassName, "lenient");
 			if (lenientString != null && lenientString.equals("false"))
 				lenient =false;
+            
+            readDateAsTimestamp = true;
+            String readDateAsTimestampString = 
+                DTProperties.get(thisClassName, "readDateAsTimestamp");
+            if (readDateAsTimestampString != null && 
+                    readDateAsTimestampString.equals("false")) 
+            {
+                readDateAsTimestamp = false;
+            }
 		}
 	}
 
@@ -477,11 +487,20 @@ public class DataTypeDate
 	  */
 	public Object readResultSet(ResultSet rs, int index, boolean limitDataRead)
 		throws java.sql.SQLException {
-
-		Date data = rs.getDate(index);
-		if (rs.wasNull())
+	    
+        Object data = null;
+        
+        if (readDateAsTimestamp) {
+            data = rs.getTimestamp(index);
+        } else {
+            data = rs.getDate(index);
+        }
+		
+		if (rs.wasNull()) {
 			return null;
-		else return data;
+        } else {
+            return data;
+        }
 	}
 
 	/**
@@ -505,16 +524,30 @@ public class DataTypeDate
 		}
 		else
 		{
-			if (SQLDatabaseMetaData.IDBMSProductNames.ORACLE.equalsIgnoreCase(databaseProductName))
-			{
-				// Oracle stores time infromation in java.sql.Types.Date columns
-				// This tells Oracle that we are only talking about the date part.
-				return "trunc(" + _colDef.getLabel() + ")={d '" + value.toString() + "'}";
-			}
-			else
-			{
-				return _colDef.getLabel() + "={d '" + value.toString() + "'}";
-			}
+            // if value contains ":" it probably has a time component
+            boolean hasTimeComponent = (value.toString().indexOf(":") != -1);
+            
+            // if value contains "-" it probably has a date component
+            boolean hasDateComponent = (value.toString().indexOf("-") != -1);
+            
+            if (hasTimeComponent && hasDateComponent) {
+                // treat it like a timestamp
+                return _colDef.getLabel() + "={ts '" + value.toString() + "'}";
+            } else if (hasTimeComponent) {
+                // treat it like a time - no date component
+                return _colDef.getLabel() + "={t '" + value.toString() + "'}";
+            } else {
+                // treat it like a date - no time component
+                String oracleProductName = 
+                    SQLDatabaseMetaData.IDBMSProductNames.ORACLE;
+                if (oracleProductName.equalsIgnoreCase(databaseProductName)) {
+                    // Oracle stores time information in java.sql.Types.Date columns
+                    // This tells Oracle that we are only talking about the date part.                    
+                    return "trunc(" + _colDef.getLabel() + ")={d '" + value.toString() + "'}";
+                } else {
+                    return _colDef.getLabel() + "={d '" + value.toString() + "'}";
+                }
+            }               
 		}
 	}
 
@@ -774,6 +807,11 @@ public class DataTypeDate
 		 // i18n[dataTypeDate.allowInexact=allow inexact format on input]
 		 private JCheckBox lenientChk = new JCheckBox(s_stringMgr.getString("dataTypeDate.allowInexact"));
 
+         // whether or not to read date type columns with rs.getTimestamp()
+         // i18n[dataTypeDate.readDateAsTimestamp=Interpret DATE columns as TIMESTAMP]
+         private JCheckBox readdDateAsTimestampChk = 
+             new JCheckBox(s_stringMgr.getString("dataTypeDate.readDateAsTimestamp"));
+         
 		 public DateOkJPanel()
 		 {
 
@@ -796,15 +834,18 @@ public class DataTypeDate
 
 			 // lenient checkbox
 			 lenientChk.setSelected(lenient);
+             
+             // readdDateAsTimestamp checkbox
+             readdDateAsTimestampChk.setSelected(readDateAsTimestamp);
 
 			 // handle cross-connection between fields
 			 dateFormatTypeDrop.setEnabled(! useJavaDefaultFormatChk.isSelected());
 			 dateFormatTypeDropLabel.setEnabled(! useJavaDefaultFormatChk.isSelected());
 			 lenientChk.setEnabled(! useJavaDefaultFormatChk.isSelected());
 
-			 /*
-										* Create the panel and add the GUI items to it
-									  */
+             /*
+              * Create the panel and add the GUI items to it
+              */
 
 			 setLayout(new GridBagLayout());
 
@@ -833,6 +874,9 @@ public class DataTypeDate
 			 ++gbc.gridy;
 			 add(lenientChk, gbc);
 
+             gbc.gridx = 0;
+             ++gbc.gridy;
+             add(readdDateAsTimestampChk, gbc);             
 		 } // end of constructor for inner class
 
 
@@ -860,6 +904,11 @@ public class DataTypeDate
 			 DTProperties.put(
 				 thisClassName,
 				 "lenient", new Boolean(lenient).toString());
+             
+             readDateAsTimestamp = readdDateAsTimestampChk.isSelected();
+             DTProperties.put(thisClassName,
+                              "readDateAsTimestamp",
+                              new Boolean(readDateAsTimestamp).toString());
 		 }
 
 	 } // end of inner class

@@ -137,7 +137,7 @@ public class CopyProgressMonitor extends I18NBaseObject
         DualProgressBarDialog.dispose();
         String title = getMessage("CopyProgressMonitor.successTitle");
         String message = getMessage("CopyProgressMonitor.successMessage",
-                                    new Long(seconds));
+                                    Long.valueOf(seconds));
         showMessageDialog(message, title, JOptionPane.INFORMATION_MESSAGE);
     }
 
@@ -310,7 +310,9 @@ public class CopyProgressMonitor extends I18NBaseObject
                     }
                 });
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(
+                        "showConfirmDeleteDialog: encountered unexpected exception ",
+                        e);
             }
         }
         return result.option;
@@ -322,7 +324,7 @@ public class CopyProgressMonitor extends I18NBaseObject
                                        final Icon icon,
                                        final Object initialValue) {
         
-        final StringBuffer result = null;
+        final StringBuffer result = new StringBuffer();
         if (SwingUtilities.isEventDispatchThread()) {
             String tmp = (String)JOptionPane.showInputDialog(parent, 
                                                              message, 
@@ -348,7 +350,9 @@ public class CopyProgressMonitor extends I18NBaseObject
                     }
                 });
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(
+                    "showTextInputDialog: encountered unexpected exception ",
+                    e);
             }
         }
         return result.toString();

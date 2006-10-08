@@ -77,6 +77,28 @@ public class SyntaxPugin extends DefaultSessionPlugin
 		StringManagerFactory.getStringManager(SyntaxPugin.class);
 
 
+    private static interface i18n {
+        //i18n[SyntaxPlugin.touppercase=touppercase]
+        String TO_UPPER_CASE = 
+            s_stringMgr.getString("SyntaxPlugin.touppercase");    
+        //i18n[SyntaxPlugin.tolowercase=tolowercase]
+        String TO_LOWER_CASE = 
+            s_stringMgr.getString("SyntaxPlugin.tolowercase");        
+        //i18n[SyntaxPlugin.find=find]
+        String FIND = s_stringMgr.getString("SyntaxPlugin.find");
+        //i18n[SyntaxPlugin.replace=replace]
+        String REPLACE = s_stringMgr.getString("SyntaxPlugin.replace");
+        //i18n[SyntaxPlugin.autocorr=autocorr]
+        String AUTO_CORR = s_stringMgr.getString("SyntaxPlugin.autocorr");
+        //i18n[SyntaxPlugin.duplicateline=duplicateline]
+        String DUP_LINE = s_stringMgr.getString("SyntaxPlugin.duplicateline");
+        //i18n[SyntaxPlugin.comment=comment]
+        String COMMENT = s_stringMgr.getString("SyntaxPlugin.comment");
+        //i18n[SyntaxPlugin.uncomment=uncomment]
+        String UNCOMMENT = s_stringMgr.getString("SyntaxPlugin.uncomment");
+        
+    }
+    
 	/** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(SyntaxPugin.class);
 
@@ -318,12 +340,12 @@ public class SyntaxPugin extends DefaultSessionPlugin
       session.addToToolbar(coll.get(ConfigureAutoCorrectAction.class));
 
       SessionInternalFrame sif = session.getSessionInternalFrame();
-      sif.addToToolsPopUp("find", coll.get(FindAction.class));
-      sif.addToToolsPopUp("replace", coll.get(ReplaceAction.class));
-      sif.addToToolsPopUp("autocorr", coll.get(ConfigureAutoCorrectAction.class));
-      sif.addToToolsPopUp("duplicateline", coll.get(DuplicateLineAction.class));
-      sif.addToToolsPopUp("comment", coll.get(CommentAction.class));
-      sif.addToToolsPopUp("uncomment", coll.get(UncommentAction.class));
+      sif.addToToolsPopUp(i18n.FIND, coll.get(FindAction.class));
+      sif.addToToolsPopUp(i18n.REPLACE, coll.get(ReplaceAction.class));
+      sif.addToToolsPopUp(i18n.AUTO_CORR, coll.get(ConfigureAutoCorrectAction.class));
+      sif.addToToolsPopUp(i18n.DUP_LINE, coll.get(DuplicateLineAction.class));
+      sif.addToToolsPopUp(i18n.COMMENT, coll.get(CommentAction.class));
+      sif.addToToolsPopUp(i18n.UNCOMMENT, coll.get(UncommentAction.class));
 
       ISQLPanelAPI sqlPanelAPI = sif.getSQLPanelAPI();
       ISQLEntryPanel sep = sqlPanelAPI.getSQLEntryPanel();
@@ -340,12 +362,12 @@ public class SyntaxPugin extends DefaultSessionPlugin
          Action toUpperAction = kit.getActionByName(BaseKit.toUpperCaseAction);
          toUpperAction.putValue(Resources.ACCELERATOR_STRING,
             SQLSettingsInitializer.ACCELERATOR_STRING_TO_UPPER_CASE);
-         sif.addToToolsPopUp("touppercase", toUpperAction);
+         sif.addToToolsPopUp(i18n.TO_UPPER_CASE, toUpperAction);
 
          Action toLowerAction = kit.getActionByName(BaseKit.toLowerCaseAction);
          toLowerAction.putValue(Resources.ACCELERATOR_STRING,
             SQLSettingsInitializer.ACCELERATOR_STRING_TO_LOWER_CASE);
-         sif.addToToolsPopUp("tolowercase", toLowerAction);
+         sif.addToToolsPopUp(i18n.TO_LOWER_CASE, toLowerAction);
       }
 
       JMenuItem mnuComment = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(CommentAction.class));
@@ -365,12 +387,12 @@ public class SyntaxPugin extends DefaultSessionPlugin
 		sqlInternalFrame.addToToolbar(replaceAction);
 		sqlInternalFrame.addToToolbar(coll.get(ConfigureAutoCorrectAction.class));
 
-		sqlInternalFrame.addToToolsPopUp("find" , coll.get(FindAction.class));
-		sqlInternalFrame.addToToolsPopUp("replace" , coll.get(ReplaceAction.class));
-		sqlInternalFrame.addToToolsPopUp("autocorr" , coll.get(ConfigureAutoCorrectAction.class));
-		sqlInternalFrame.addToToolsPopUp("duplicateline" , coll.get(DuplicateLineAction.class));
-		sqlInternalFrame.addToToolsPopUp("comment" , coll.get(CommentAction.class));
-		sqlInternalFrame.addToToolsPopUp("uncomment" , coll.get(UncommentAction.class));
+		sqlInternalFrame.addToToolsPopUp(i18n.FIND , coll.get(FindAction.class));
+		sqlInternalFrame.addToToolsPopUp(i18n.REPLACE , coll.get(ReplaceAction.class));
+		sqlInternalFrame.addToToolsPopUp(i18n.AUTO_CORR , coll.get(ConfigureAutoCorrectAction.class));
+		sqlInternalFrame.addToToolsPopUp(i18n.DUP_LINE , coll.get(DuplicateLineAction.class));
+		sqlInternalFrame.addToToolsPopUp(i18n.COMMENT , coll.get(CommentAction.class));
+		sqlInternalFrame.addToToolsPopUp(i18n.UNCOMMENT , coll.get(UncommentAction.class));
 
 		ISQLPanelAPI sqlPanelAPI = sqlInternalFrame.getSQLPanelAPI();
 
@@ -381,11 +403,11 @@ public class SyntaxPugin extends DefaultSessionPlugin
 			NetbeansSQLEditorPane nbEdit = (NetbeansSQLEditorPane) sqlPanelAPI.getSQLEntryPanel().getTextComponent();
 			Action toUpperAction = ((SQLKit) nbEdit.getEditorKit()).getActionByName(BaseKit.toUpperCaseAction);
 			toUpperAction.putValue(Resources.ACCELERATOR_STRING, SQLSettingsInitializer.ACCELERATOR_STRING_TO_UPPER_CASE);
-			sqlInternalFrame.addToToolsPopUp("touppercase", toUpperAction);
+			sqlInternalFrame.addToToolsPopUp(i18n.TO_UPPER_CASE, toUpperAction);
 
 			Action toLowerAction = ((SQLKit) nbEdit.getEditorKit()).getActionByName(BaseKit.toLowerCaseAction);
 			toLowerAction.putValue(Resources.ACCELERATOR_STRING, SQLSettingsInitializer.ACCELERATOR_STRING_TO_LOWER_CASE);
-			sqlInternalFrame.addToToolsPopUp("tolowercase", toLowerAction);
+			sqlInternalFrame.addToToolsPopUp(i18n.TO_LOWER_CASE, toLowerAction);
 		}
 
 

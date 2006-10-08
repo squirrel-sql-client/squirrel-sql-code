@@ -25,15 +25,13 @@ import javax.swing.JMenu;
 import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionListener;
 
-import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.IObjectTreeListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
+import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 /**
  * This interface defines the API through which plugins can work with the object
  * tree.
@@ -255,4 +253,11 @@ public interface IObjectTreeAPI extends IHasIdentifier
     * Selects the root node of the tree.
     */
    void selectRoot();
+   
+   /**
+    * Expands the specified tree node.
+    * 
+    * @param node the tree node to expand
+    */
+   void expandNode(ObjectTreeNode node);
 }

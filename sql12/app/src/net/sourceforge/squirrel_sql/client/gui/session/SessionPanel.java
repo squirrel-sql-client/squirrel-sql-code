@@ -19,15 +19,48 @@ package net.sourceforge.squirrel_sql.client.gui.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.sql.SQLException;
+import java.util.Vector;
+
+import javax.swing.Action;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreePath;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.*;
+import net.sourceforge.squirrel_sql.client.session.action.ExecuteSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.FileAppendAction;
+import net.sourceforge.squirrel_sql.client.session.action.FileCloseAction;
+import net.sourceforge.squirrel_sql.client.session.action.FileNewAction;
+import net.sourceforge.squirrel_sql.client.session.action.FileOpenAction;
+import net.sourceforge.squirrel_sql.client.session.action.FilePrintAction;
+import net.sourceforge.squirrel_sql.client.session.action.FileSaveAction;
+import net.sourceforge.squirrel_sql.client.session.action.FileSaveAsAction;
+import net.sourceforge.squirrel_sql.client.session.action.NextSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.PreviousSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.RefreshSchemaInfoAction;
+import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
+import net.sourceforge.squirrel_sql.client.session.action.SelectSqlAction;
+import net.sourceforge.squirrel_sql.client.session.action.SessionPropertiesAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.*;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.IObjectTreeListener;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.SQLCatalogsComboBox;
@@ -38,18 +71,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.*;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.TreePath;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.sql.SQLException;
-import java.util.Vector;
 
 public class SessionPanel extends JPanel
 {
@@ -533,7 +554,9 @@ public class SessionPanel extends JPanel
 			{
 				try
 				{
-					getSession().getSQLConnection().setCatalog(selectedCatalog);
+                    ISession session = getSession();
+					session.getSQLConnection().setCatalog(selectedCatalog);
+                    expandTablesForCatalog(session, selectedCatalog);
 				}
 				catch (SQLException ex)
 				{
@@ -542,6 +565,31 @@ public class SessionPanel extends JPanel
 				}
 			}
 		}
+        
+        /**
+         * Since the catalog has changed, it is necessary to reload the schema
+         * info and expand the tables node in the tree.  Saves the user a few
+         * clicks.
+         * 
+         * @param session the session whose ObjectTreePanel should be updated
+         * @param selectedCatalog the catalog that was selected.
+         */
+        private void expandTablesForCatalog(ISession session, 
+                                            String selectedCatalog) {
+            IObjectTreeAPI api = 
+                session.getObjectTreeAPIOfActiveSessionWindow();
+            api.refreshTree(true);
+            if (api.selectInObjectTree(selectedCatalog, null, "TABLE")) {
+                ObjectTreeNode[] nodes = api.getSelectedNodes();
+                
+                if (nodes.length > 0) {
+                    ObjectTreeNode tableNode = nodes[0];
+                    
+                    // send a tree expansion event to the object tree
+                    api.expandNode(tableNode);
+                }                        
+            }            
+        }
 	}
 
 

@@ -23,10 +23,11 @@ import java.awt.event.ActionEvent;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * EditWhereColsAction.java
  *
@@ -38,6 +39,11 @@ public class EditWhereColsAction extends SquirrelAction
 	/** The object tree which this Action applies. */
 	private IObjectTreeAPI _tree;
 
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(EditWhereColsAction.class);
+
+    
 	/**
 	 * Ctor.
 	 *
@@ -75,7 +81,7 @@ public class EditWhereColsAction extends SquirrelAction
 			IDatabaseObjectInfo selectedObjects[] =	_tree.getSelectedDatabaseObjects();
 			int objectTotal = selectedObjects.length;
 
-			if ((objectTotal > 0)
+			if ((objectTotal == 1)
 				&& (selectedObjects[0].getDatabaseObjectType()
 					== DatabaseObjectType.TABLE))
 			{
@@ -92,8 +98,12 @@ public class EditWhereColsAction extends SquirrelAction
 			}
 			else
 			{
-				_tree.getSession().getMessageHandler().showMessage(
-					"You must have a single table selected to limit the colums used in the Edit WHERE clause");
+                //i18n[EditWhereColsAction.singleObjectMessage=You must have a 
+                //single table selected to limit the colums used in the Edit 
+                //WHERE clause]
+                String msg = 
+                    s_stringMgr.getString("EditWhereColsAction.singleObjectMessage");
+				_tree.getSession().getMessageHandler().showMessage(msg);
 			}
 		}
 	}

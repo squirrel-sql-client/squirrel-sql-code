@@ -19,19 +19,26 @@ package net.sourceforge.squirrel_sql.client.session.action;
  */
 import java.awt.event.ActionEvent;
 
-import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class ReconnectAction extends SquirrelAction
 {
-	private interface i18n
+    
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(ReconnectAction.class);
+
+    
+	private static interface i18n
 	{
-		String MSG = "Close the current connection to the database and open a new one?";
+        //i18n[ReconnectAction.confirmReconnect=Close the current connection 
+        //to the database and open a new one?]
+		String MSG = s_stringMgr.getString("ReconnectAction.confirmReconnect");
 	}
 
 	/**

@@ -39,6 +39,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * This panel allows the user to change the where clause for a Contents tab query.
  *
@@ -46,6 +49,10 @@ import javax.swing.JTextField;
  */
 public class WhereClausePanel implements ISQLFilterPanel
 {
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(WhereClausePanel.class);    
+    
 	/** A class containing the information about the SQL filters. */
 	private SQLFilterClauses _sqlFilterClauses;
 
@@ -143,18 +150,29 @@ public class WhereClausePanel implements ISQLFilterPanel
 		 */
 		interface WhereClauseSubPanelI18n
 		{
-			String COLUMNS = "Columns";
-			String OPERATORS = "Operators";
-			String VALUE = "Value";
-			String WHERE_CLAUSE = "Where Clause";
-			String HINT = "Where clause for the selected table";
-			String ADD = "Add";
-			String AND = "AND";
-			String OR = "OR";
-			String LIKE = "LIKE";
-			String IN = "IN";
-			String IS_NULL = "IS NULL";
-			String IS_NOT_NULL = "IS NOT NULL";
+		    //i18n[WhereClausePanel.columnLabel=Columns]
+		    String COLUMNS = 
+		        s_stringMgr.getString("WhereClausePanel.columnLabel");
+		    //i18n[WhereClausePanel.operatorsLabel=Operators]
+		    String OPERATORS = 
+		        s_stringMgr.getString("WhereClausePanel.operatorsLabel");
+		    //i18n[WhereClausePanel.valueLabel=Value]            
+		    String VALUE = s_stringMgr.getString("WhereClausePanel.valueLabel");
+		    //i18n[WhereClausePanel.whereClauseLabel=Where Clause]            
+		    String WHERE_CLAUSE = 
+		        s_stringMgr.getString("WhereClausePanel.whereClauseLabel");
+		    //i18n[WhereClausePanel.hint=Where clause for the selected table]            
+		    String HINT = s_stringMgr.getString("WhereClausePanel.hint");
+		    //i18n[WhereClausePanel.addLabel=Add]            
+		    String ADD = s_stringMgr.getString("WhereClausePanel.addLabel");
+            // The following strings are SQL tokens and should therefore *not*
+            // be internationalized
+		    String AND = "AND";                 // No I18N
+		    String OR = "OR";                   // No I18N            
+		    String LIKE = "LIKE";               // No I18N            
+		    String IN = "IN";                   // No I18N            
+		    String IS_NULL = "IS NULL";         // No I18N             
+		    String IS_NOT_NULL = "IS NOT NULL"; // No I18N
 		}
 
 		/**

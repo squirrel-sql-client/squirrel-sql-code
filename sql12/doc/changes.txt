@@ -2,6 +2,44 @@ SQuirreL SQL Client Change Log
 ==============================
 
 
+2.3 Final
+=========
+
+Enhancements:
+
+An Italian translation of SQuirreL labels/messages is now available in the 
+installer (Thanks to Ivo Neri)
+
+Bug Fixes:
+
+1563613: Alias property window dies when URL is malformed.
+
+1563610: (Only connection specified DB schema loaded regardless)
+         Enhanced the catalog selection so that changing the catalog 
+		 updates the schema info and expands the TABLES node in the tree
+		 for the selected catalog.
+
+1563603: ORA-01830 error: Date format
+
+1561293: Show Loaded Drivers Only" does not work in "Add Alias" dialog.
+
+1558509: 'create sequence' rejected as invalid SQL
+
+1520156: (Reverse Engineering Foreign Key Cascade Missing).  Added 
+		 configuration for referential actions clause of FK constraints.
+
+1426012: PLAN_TABLE not found - look for PLAN_TABLE in other schemas and allow
+         user to choose one.
+
+1371587: Not possible to edit data after SQL query
+         
+1250855: (Oracle DATE does not display correctly) Added a new configuration
+         item to Global Preferences -> Date Type Controls -> Date Section
+		 which allows the user to "Interpret DATE columns as TIMESTAMP".
+
+Bug Fix: Fix for issue where the SGA Trace view wasn't displaying data in the 
+	     "Buffer Gets per Row" column.
+
 2.3 rc2
 =========
 
