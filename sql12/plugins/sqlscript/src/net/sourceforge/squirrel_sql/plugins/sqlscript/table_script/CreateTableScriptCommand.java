@@ -405,7 +405,16 @@ public class CreateTableScriptCommand implements ICommand
             String pkTable = importedKeys.getString("PKTABLE_NAME");
             fkCols.add(importedKeys.getString("FKCOLUMN_NAME"));
             pkCols.add(importedKeys.getString("PKCOLUMN_NAME"));
-            buf.put(fkName, new ConstraintInfo(fkTable, pkTable, fkName, fkCols, pkCols));
+            short deleteRule = importedKeys.getShort("DELETE_RULE");
+            short updateRule = importedKeys.getShort("UPDATE_RULE");
+            ci = new ConstraintInfo(fkTable, 
+                                    pkTable, 
+                                    fkName, 
+                                    fkCols, 
+                                    pkCols,
+                                    deleteRule,
+                                    updateRule);
+            buf.put(fkName, ci);
          }
          else
          {
@@ -504,11 +513,41 @@ public class CreateTableScriptCommand implements ICommand
          if (prefs.isDeleteRefAction()) {
              sbToAppend.append(" ON DELETE ");
              sbToAppend.append(prefs.getRefActionByType(prefs.getDeleteAction()));
+         } else {
+             switch (cis[i].deleteRule) {
+                 case DatabaseMetaData.importedKeyCascade:
+                     sbToAppend.append(" ON DELETE CASCADE");
+                     break;
+                 case DatabaseMetaData.importedKeySetNull:
+                     sbToAppend.append(" ON DELETE SET NULL");
+                     break;
+                 case DatabaseMetaData.importedKeySetDefault:
+                     sbToAppend.append(" ON DELETE SET DEFAULT");
+                 case DatabaseMetaData.importedKeyRestrict:
+                 case DatabaseMetaData.importedKeyNoAction:
+                 default:
+                     sbToAppend.append(" ON DELETE NO ACTION");
+             }
          }
          if (prefs.isUpdateRefAction()) {
              sbToAppend.append(" ON UPDATE ");
              sbToAppend.append(prefs.getRefActionByType(prefs.getUpdateAction()));             
-         }         
+         } else {
+             switch (cis[i].updateRule) {
+                 case DatabaseMetaData.importedKeyCascade:
+                     sbToAppend.append(" ON UPDATE CASCADE");
+                     break;
+                 case DatabaseMetaData.importedKeySetNull:
+                     sbToAppend.append(" ON UPDATE SET NULL");
+                     break;
+                 case DatabaseMetaData.importedKeySetDefault:
+                     sbToAppend.append(" ON UPDATE SET DEFAULT");
+                 case DatabaseMetaData.importedKeyRestrict:
+                 case DatabaseMetaData.importedKeyNoAction:
+                 default:
+                     sbToAppend.append(" ON UPDATE NO ACTION");
+             }             
+         }
          sbToAppend.append(ScriptUtil.getStatementSeparator(_session)).append("\n");
       }
 
