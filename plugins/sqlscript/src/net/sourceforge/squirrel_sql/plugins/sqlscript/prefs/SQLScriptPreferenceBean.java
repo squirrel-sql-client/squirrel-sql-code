@@ -49,12 +49,12 @@ public class SQLScriptPreferenceBean implements Cloneable,
     private int updateAction = NO_ACTION;
     
     /**
-     * whether or not to append the delete referential action to FK defs.
+     * whether or not to override the delete referential action for FK defs.
      */
     private boolean deleteRefAction = false;
     
     /**
-     * whether or not to append the update referential action to FK defs.
+     * whether or not to override the update referential action for FK defs.
      */
     private boolean updateRefAction = false;
     
