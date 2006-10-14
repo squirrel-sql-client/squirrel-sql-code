@@ -2039,6 +2039,10 @@ public class SQLDatabaseMetaData
      * and if we are debugging print a debug log message with the call trace.
      */
     private void checkThread() {
+        /* This is extremely useful when trying to track down Swing UI freezing.
+         * However, it currently fills the log which obscures other debug 
+         * messages even though UI performance is acceptable, so it is commented 
+         * out until it is needed later. 
         if (s_log.isDebugEnabled() && SwingUtilities.isEventDispatchThread()) {
             try {
                 throw new Exception("GUI Thread is doing database work");
@@ -2046,6 +2050,7 @@ public class SQLDatabaseMetaData
                 s_log.debug(e.getMessage(), e);
             }
         }
+        */
     }
 }
 
