@@ -425,11 +425,17 @@ public class SchemaInfoCache implements Serializable
                CaseInsensitiveString ciColName = new CaseInsensitiveString(eci.getColumnName());
                ArrayList ecisInColumn = (ArrayList) _extColumnInfosByColumnName.get(ciColName);
 
-               ecisInColumn.remove(eci);
-
-               if (0 == ecisInColumn.size())
-               {
-                  _extColumnInfosByColumnName.remove(ciColName);
+               if (ecisInColumn != null) {
+                   ecisInColumn.remove(eci);
+    
+                   if (0 == ecisInColumn.size())
+                   {
+                      _extColumnInfosByColumnName.remove(ciColName);
+                   }
+               } else {
+                   s_log.debug(
+                       "clearTables: no entries in " +
+                       "_extColumnInfosByColumnName for column - "+ciColName);
                }
             }
 
