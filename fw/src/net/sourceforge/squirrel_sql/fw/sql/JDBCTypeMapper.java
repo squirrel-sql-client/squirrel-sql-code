@@ -17,9 +17,42 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.sql.Types;
+import java.util.ArrayList;
 
 public class JDBCTypeMapper {
 
+    public static String[] getJdbcTypeList() {
+        ArrayList result = new ArrayList();
+        result.add(getJdbcTypeName(Types.ARRAY));
+        result.add(getJdbcTypeName(Types.BOOLEAN));
+        result.add(getJdbcTypeName(Types.BIGINT));
+        result.add(getJdbcTypeName(Types.BIT));
+        result.add(getJdbcTypeName(Types.BLOB));
+        result.add(getJdbcTypeName(Types.CHAR));
+        result.add(getJdbcTypeName(Types.CLOB));
+        result.add(getJdbcTypeName(Types.DATALINK));
+        result.add(getJdbcTypeName(Types.DATE));
+        result.add(getJdbcTypeName(Types.DISTINCT));
+        result.add(getJdbcTypeName(Types.DOUBLE));
+        result.add(getJdbcTypeName(Types.FLOAT));
+        result.add(getJdbcTypeName(Types.INTEGER));
+        result.add(getJdbcTypeName(Types.JAVA_OBJECT));
+        result.add(getJdbcTypeName(Types.LONGVARBINARY));
+        result.add(getJdbcTypeName(Types.LONGVARCHAR));
+        result.add(getJdbcTypeName(Types.NULL));
+        result.add(getJdbcTypeName(Types.OTHER));
+        result.add(getJdbcTypeName(Types.REAL));
+        result.add(getJdbcTypeName(Types.REF));
+        result.add(getJdbcTypeName(Types.SMALLINT));
+        result.add(getJdbcTypeName(Types.STRUCT));
+        result.add(getJdbcTypeName(Types.TIME));
+        result.add(getJdbcTypeName(Types.TIMESTAMP));
+        result.add(getJdbcTypeName(Types.TINYINT));
+        result.add(getJdbcTypeName(Types.VARBINARY));
+        result.add(getJdbcTypeName(Types.VARCHAR));
+        return (String[])result.toArray(new String[result.size()]);
+    }
+    
 	public static String getJdbcTypeName(int jdbcType) {
 		String typeName = "";
 		switch (jdbcType) {
@@ -178,6 +211,22 @@ public class JDBCTypeMapper {
 		}
 		return type;
 	}
+    
+    public static boolean isNumberType(int jdbcType) {
+        boolean result = false;
+        switch (jdbcType) {
+            case Types.BIGINT:
+            case Types.DECIMAL:
+            case Types.DOUBLE:
+            case Types.FLOAT:
+            case Types.NUMERIC:
+                result = true;
+                break;
+            default:
+                result = false;
+        }
+        return result;
+    }
 }
 
 

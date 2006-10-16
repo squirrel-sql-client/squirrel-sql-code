@@ -73,6 +73,17 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
       _dboType = dboType;
    }
 
+   /**
+    * Default constructor for using instances of this class to contain 
+    * information about new objects that will be created soon.
+    */
+   public DatabaseObjectInfo(String catalog, String schema, String simpleName) {
+       _catalog = catalog;
+       _schema = schema;
+       _simpleName = simpleName;
+       _qualifiedName = simpleName;
+   }
+   
    public String toString()
    {
       return getSimpleName();
