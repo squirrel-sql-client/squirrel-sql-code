@@ -46,6 +46,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.plugins.oracle.SGAtrace.NewSGATraceWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.dboutput.NewDBOutputWorksheetAction;
@@ -583,10 +584,14 @@ public class OraclePlugin extends DefaultSessionPlugin
       {
          final ISession session = evt.getSession();
          final boolean enable = isOracle(session.getAlias());
-         _newDBOutputWorksheet.setEnabled(enable);
-         _newInvalidObjectsWorksheet.setEnabled(enable);
-         _newSessionInfoWorksheet.setEnabled(enable);
-         _newSGATraceWorksheet.setEnabled(enable);
+         GUIUtils.processOnSwingEventThread(new Runnable() {
+             public void run() {
+                 _newDBOutputWorksheet.setEnabled(enable);
+                 _newInvalidObjectsWorksheet.setEnabled(enable);
+                 _newSessionInfoWorksheet.setEnabled(enable);
+                 _newSGATraceWorksheet.setEnabled(enable);                 
+             }
+         });
       }
 
       public void sessionClosing(SessionEvent evt)
