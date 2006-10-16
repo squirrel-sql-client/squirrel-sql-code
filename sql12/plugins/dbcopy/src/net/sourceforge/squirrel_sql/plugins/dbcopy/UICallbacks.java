@@ -18,6 +18,8 @@
  */
 package net.sourceforge.squirrel_sql.plugins.dbcopy;
 
+import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
+
 /**
  * An interface that should be implemented to provide information to the 
  * CopyExecutor about choices that should be made during the copy operation. 

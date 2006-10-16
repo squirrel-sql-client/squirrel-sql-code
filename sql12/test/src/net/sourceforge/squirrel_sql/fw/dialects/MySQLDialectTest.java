@@ -16,15 +16,22 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.plugins.dbcopy.dialects;
+package net.sourceforge.squirrel_sql.fw.dialects;
 
+import java.sql.Types;
 
-public class PointbaseDialectTest extends DialectTestCase {
+import junit.framework.TestCase;
 
-    private PointbaseDialect dialect = new PointbaseDialect();
+import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
+
+import org.hibernate.MappingException;
+
+public class MySQLDialectTest extends DialectTestCase {
+
+    private MySQLDialect dialect = new MySQLDialect();
     
     public static void main(String[] args) {
-        junit.textui.TestRunner.run(PointbaseDialectTest.class);
+        junit.textui.TestRunner.run(MySQLDialectTest.class);
     }
 
     /*

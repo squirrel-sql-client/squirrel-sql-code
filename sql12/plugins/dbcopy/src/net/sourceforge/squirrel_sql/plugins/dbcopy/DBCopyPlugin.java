@@ -32,13 +32,13 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.actions.CopyTableAction;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.actions.PasteTableAction;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.gui.DBCopyGlobalPreferencesTab;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.PreferencesManager;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.util.Compat;
@@ -118,7 +118,7 @@ public class DBCopyPlugin extends DefaultSessionPlugin
      * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getVersion()
      */
     public String getVersion() {
-        return "1.0";
+        return "1.1";
     }
 
     /**
