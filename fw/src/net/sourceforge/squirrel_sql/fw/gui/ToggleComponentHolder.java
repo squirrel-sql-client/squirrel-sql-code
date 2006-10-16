@@ -18,11 +18,16 @@ public class ToggleComponentHolder
    public void setSelected(boolean b)
    {
       _selected = b;
-
+      
       for (int i = 0; i < _toggleables.size(); i++)
       {
-         AbstractButton abstractButton = (AbstractButton) _toggleables.get(i);
-         abstractButton.setSelected(_selected);
+         final AbstractButton abstractButton = 
+             (AbstractButton) _toggleables.get(i);
+         GUIUtils.processOnSwingEventThread(new Runnable() {
+             public void run() {
+                 abstractButton.setSelected(_selected);
+             }
+         });
       }
    }
 
