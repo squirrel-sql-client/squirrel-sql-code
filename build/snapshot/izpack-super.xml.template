@@ -172,9 +172,9 @@
 		<pack required="no" preselected="no" name="Optional Plugin - Refactoring">
 			<description>This plugin allows you to refactor your database using database refactoring patterns</description>
 			<file targetdir="$INSTALL_PATH/plugins" 
-				  src="../../squirrel-sql-dist/squirrel-sql/plugins/sessionscript/dist/refactoring.jar"/>
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/refactoring/dist/refactoring.jar"/>
 			<file targetdir="$INSTALL_PATH/plugins" 
-				  src="../../squirrel-sql-dist/squirrel-sql/plugins/sessionscript/dist/refactoring"/>
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/refactoring/dist/refactoring"/>
 		</pack>				
 				
 		<pack required="no" preselected="no" name="Optional Plugin - Session Scripts">
