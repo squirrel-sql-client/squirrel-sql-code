@@ -16,7 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.fw.dialects;
+package net.sourceforge.squirrel_sql.client.db.dialects;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -34,6 +34,28 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.dialects.AxionDialect;
+import net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect;
+import net.sourceforge.squirrel_sql.fw.dialects.DaffodilDialect;
+import net.sourceforge.squirrel_sql.fw.dialects.DerbyDialect;
+import net.sourceforge.squirrel_sql.fw.dialects.FirebirdDialect;
+import net.sourceforge.squirrel_sql.fw.dialects.FrontBaseDialect;
+import net.sourceforge.squirrel_sql.fw.dialects.H2Dialect;
+import net.sourceforge.squirrel_sql.fw.dialects.HSQLDialect;
+import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
+import net.sourceforge.squirrel_sql.fw.dialects.InformixDialect;
+import net.sourceforge.squirrel_sql.fw.dialects.IngresDialect;
+import net.sourceforge.squirrel_sql.fw.dialects.InterbaseDialect;
+import net.sourceforge.squirrel_sql.fw.dialects.MAXDBDialect;
+import net.sourceforge.squirrel_sql.fw.dialects.McKoiDialect;
+import net.sourceforge.squirrel_sql.fw.dialects.MySQLDialect;
+import net.sourceforge.squirrel_sql.fw.dialects.Oracle9iDialect;
+import net.sourceforge.squirrel_sql.fw.dialects.PointbaseDialect;
+import net.sourceforge.squirrel_sql.fw.dialects.PostgreSQLDialect;
+import net.sourceforge.squirrel_sql.fw.dialects.ProgressDialect;
+import net.sourceforge.squirrel_sql.fw.dialects.SQLServerDialect;
+import net.sourceforge.squirrel_sql.fw.dialects.SybaseDialect;
+import net.sourceforge.squirrel_sql.fw.dialects.TimesTenDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 
 /**
