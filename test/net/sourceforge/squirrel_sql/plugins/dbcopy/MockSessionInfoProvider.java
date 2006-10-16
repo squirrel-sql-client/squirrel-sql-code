@@ -25,6 +25,8 @@ import java.util.ResourceBundle;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.MockSession;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -32,7 +34,6 @@ import net.sourceforge.squirrel_sql.fw.sql.MockDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.MockTableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.util.DBUtil;
 
 public class MockSessionInfoProvider implements SessionInfoProvider {

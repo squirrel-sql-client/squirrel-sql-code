@@ -23,12 +23,13 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
+import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.DialectFactory;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.util.DBUtil;
 
 import org.hibernate.MappingException;

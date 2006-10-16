@@ -28,6 +28,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
@@ -35,7 +37,6 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.event.AnalysisEvent;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.event.CopyEvent;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.event.CopyTableListener;
