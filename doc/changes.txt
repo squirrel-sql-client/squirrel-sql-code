@@ -1,6 +1,13 @@
 DBCopy Change Log
 =================
 
+1.1 (??/??/????)
+===
+- Relocated dialect framework to SQuirreL's fw module so that it can be re-used
+  (namely in the refactoring plugin).  This breaks backward compatibility with
+  previous versions of SQuirreL.  However, it means SQuirreL can be enhanced to
+  take session dialects into consideration for doing all manner of operations.
+
 1.0 (10/07/2006)
 ===
 
