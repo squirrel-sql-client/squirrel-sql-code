@@ -235,6 +235,10 @@ public class SQLConnection
 
 	public Connection getConnection()
 	{
+        /* This is extremely useful when trying to track down Swing UI freezing.
+         * However, it currently fills the log which obscures other debug 
+         * messages even though UI performance is acceptable, so it is commented 
+         * out until it is needed later.         
         if (s_log.isDebugEnabled()) {
             try {
                 if (SwingUtilities.isEventDispatchThread() ) {
@@ -244,6 +248,7 @@ public class SQLConnection
                 s_log.debug("GUI thread doing database work", e);
             }
         }
+        */
 		return _conn;
 	}
 
