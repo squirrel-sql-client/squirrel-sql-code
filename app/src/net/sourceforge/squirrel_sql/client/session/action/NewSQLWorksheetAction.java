@@ -22,6 +22,7 @@ import java.awt.event.ActionEvent;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 /**
  * This <CODE>Action</CODE> displays a new SQL Worksheet.
  *
@@ -63,6 +64,10 @@ public class NewSQLWorksheetAction extends SquirrelAction implements ISessionAct
    public void setSession(ISession session)
    {
       _session = session;
-      setEnabled(null != _session);
+      GUIUtils.processOnSwingEventThread(new Runnable() {
+          public void run() {
+              setEnabled(null != _session);
+          }
+      });
    }
 }

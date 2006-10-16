@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.IToggleAction;
 import net.sourceforge.squirrel_sql.fw.gui.ToggleComponentHolder;
 
@@ -60,9 +61,13 @@ public class ToggleAutoCommitAction extends SquirrelAction implements ISessionAc
       }
       else
       {
-         setEnabled(true);
-         _session.getProperties().addPropertyChangeListener(_propertyListener);
-         _toogleComponentHolder.setSelected(_session.getProperties().getAutoCommit());
+          GUIUtils.processOnSwingEventThread(new Runnable() {
+              public void run() {
+                  setEnabled(true);
+                  _session.getProperties().addPropertyChangeListener(_propertyListener);
+                  _toogleComponentHolder.setSelected(_session.getProperties().getAutoCommit());              
+              }
+          });
       }
 
    }
