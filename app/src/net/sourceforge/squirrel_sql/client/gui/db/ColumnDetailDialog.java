@@ -57,6 +57,8 @@ import net.sourceforge.squirrel_sql.client.db.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 /**
  * A dialog that can be used to get column info from the user for adding new 
@@ -64,6 +66,10 @@ import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
  */
 public class ColumnDetailDialog extends JDialog {
 
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(ColumnDetailDialog.class);
+    
     private JLabel tableNameLabel = null;
     private JTextField tableNameTextField = null;
     private JLabel columnNameLabel = null;
@@ -90,10 +96,48 @@ public class ColumnDetailDialog extends JDialog {
     private JButton cancelButton = null;
     
     private interface i18n {
-        String ADD_BUTTON_LABEL = "Add Column";
-        String CANCEL_BUTTON_LABEL = "Cancel";
-        String COMMENT_LABEL = "Comment: ";
-        String SHOW_BUTTON_LABEL = "Show SQL";
+        //i18n[ColumnDetailsDialog.addButtonLabel=Add Column]
+        String ADD_BUTTON_LABEL = 
+            s_stringMgr.getString("ColumnDetailsDialog.addButtonLabel");
+        //i18n[ColumnDetailsDialog.cancelButtonLabel=Cancel]
+        String CANCEL_BUTTON_LABEL = 
+            s_stringMgr.getString("ColumnDetailsDialog.cancelButtonLabel");
+        //i18n[ColumnDetailsDialog.columnNameLabel=Column Name: ]
+        String COLUMN_NAME_LABEL=
+            s_stringMgr.getString("ColumnDetailsDialog.columnNameLabel");
+        //i18n[ColumnDetailsDialog.commentLabel=Comment: ]        
+        String COMMENT_LABEL = 
+            s_stringMgr.getString("ColumnDetailsDialog.commentLabel");
+        //i18n[ColumnDetailsDialog.defaultValueLabel=Default Value: ]
+        String DEFAULT_VALUE_LABEL = 
+            s_stringMgr.getString("ColumnDetailsDialog.defaultValueLabel");
+        //i18n[ColumnDetailsDialog.dialectLabel=Dialect: ]
+        String DIALECT_LABEL = 
+            s_stringMgr.getString("ColumnDetailsDialog.dialectLabel");
+        //i18n[ColumnDetailsDialog.lengthLabel=Length: ]
+        String LENGTH_LABEL = 
+            s_stringMgr.getString("ColumnDetailsDialog.lengthLabel");
+        //i18n[ColumnDetailsDialog.nullableLabel=Nullable: ]
+        String NULLABLE_LABEL = 
+            s_stringMgr.getString("ColumnDetailsDialog.nullableLabel");
+        //i18n[ColumnDetailsDialog.newColumnValue=NewColumn]
+        String NEW_COLUMN_VALUE = 
+            s_stringMgr.getString("ColumnDetailsDialog.newColumnValue");
+        //i18n[ColumnDetailsDialog.precisionLabel=Precision: ]
+        String PRECISION_LABEL = 
+            s_stringMgr.getString("ColumnDetailsDialog.precisionLabel");
+        //i18n[ColumnDetailsDialog.scaleLabel=Scale: ]
+        String SCALE_LABEL = 
+            s_stringMgr.getString("ColumnDetailsDialog.scaleLabel");
+        //i18n[ColumnDetailsDialog.showButtonLabel=Show SQL]
+        String SHOW_BUTTON_LABEL = 
+            s_stringMgr.getString("ColumnDetailsDialog.showButtonLabel");
+        //i18n[ColumnDetailsDialog.tableNameLabel=Table Name: ]
+        String TABLE_NAME_LABEL = 
+            s_stringMgr.getString("ColumnDetailsDialog.tableNameLabel");
+        //i18n[ColumnDetailsDialog.typeLabel=Type: ]
+        String TYPE_LABEL =
+            s_stringMgr.getString("ColumnDetailsDialog.typeLabel");
     }
     
     /**
@@ -268,7 +312,7 @@ public class ColumnDetailDialog extends JDialog {
         c.gridy = -1;
 
         // Table name
-        tableNameLabel = getBorderedLabel("Table Name: ", border);
+        tableNameLabel = getBorderedLabel(i18n.TABLE_NAME_LABEL, border);
         pane.add(tableNameLabel, getLabelConstraints(c));
         
         tableNameTextField = new JTextField();
@@ -277,11 +321,11 @@ public class ColumnDetailDialog extends JDialog {
         pane.add(tableNameTextField, getFieldConstraints(c));
         
         // Column name
-        columnNameLabel = getBorderedLabel("Column Name: ", border);
+        columnNameLabel = getBorderedLabel(i18n.COLUMN_NAME_LABEL, border);
         pane.add(columnNameLabel, getLabelConstraints(c));
         
         columnNameTextField = getSizedTextField(mediumField);
-        columnNameTextField.setText("NewColumn");
+        columnNameTextField.setText(i18n.NEW_COLUMN_VALUE);
         columnNameTextField.addKeyListener(new KeyAdapter() {
             public void keyTyped(KeyEvent e) {
                 if (columnNameTextField.getText().length() == 0) {
@@ -296,7 +340,7 @@ public class ColumnDetailDialog extends JDialog {
         pane.add(columnNameTextField, getFieldConstraints(c));
         
         // Dialect list
-        dialectLabel = getBorderedLabel("Dialect: ", border);
+        dialectLabel = getBorderedLabel(i18n.DIALECT_LABEL, border);
         pane.add(dialectLabel, getLabelConstraints(c));
         
         Object[] dbNames = DialectFactory.getDbNames();
@@ -306,7 +350,7 @@ public class ColumnDetailDialog extends JDialog {
         pane.add(dialectList, getFieldConstraints(c));        
         
         // Type list
-        typeLabel = getBorderedLabel("Type: ", border);
+        typeLabel = getBorderedLabel(i18n.TYPE_LABEL, border);
         pane.add(typeLabel, getLabelConstraints(c));
         
         String[] jdbcTypes = JDBCTypeMapper.getJdbcTypeList();
@@ -316,7 +360,7 @@ public class ColumnDetailDialog extends JDialog {
         pane.add(typeList, getFieldConstraints(c));
         
         // Length
-        lengthLabel = getBorderedLabel("Length: ", border);
+        lengthLabel = getBorderedLabel(i18n.LENGTH_LABEL, border);
         pane.add(lengthLabel, getLabelConstraints(c));
         
         lengthSpinner = new JSpinner();
@@ -330,7 +374,7 @@ public class ColumnDetailDialog extends JDialog {
         lengthSpinner.setPreferredSize(mediumField);
         pane.add(lengthSpinner, getFieldConstraints(c));
         
-        precisionLabel = new JLabel("Precision: ");
+        precisionLabel = new JLabel(i18n.PRECISION_LABEL);
         precisionLabel.setBorder(border);
         pane.add(precisionLabel, getLabelConstraints(c));
 
@@ -348,7 +392,7 @@ public class ColumnDetailDialog extends JDialog {
         pane.add(precisionSpinner, getFieldConstraints(c));        
 
         // Scale
-        scaleLabel = new JLabel("Scale: ");
+        scaleLabel = new JLabel(i18n.SCALE_LABEL);
         scaleLabel.setBorder(border);
         pane.add(scaleLabel, getLabelConstraints(c));
 
@@ -365,7 +409,7 @@ public class ColumnDetailDialog extends JDialog {
         pane.add(scaleSpinner, getFieldConstraints(c));        
         
         // Default value
-        defaultLabel = new JLabel("Default Value: ");
+        defaultLabel = new JLabel(i18n.DEFAULT_VALUE_LABEL);
         defaultLabel.setBorder(border);
         pane.add(defaultLabel, getLabelConstraints(c));
         
@@ -374,7 +418,7 @@ public class ColumnDetailDialog extends JDialog {
         pane.add(defaultTextField, getFieldConstraints(c));
 
         // Nullable
-        nullableLabel = new JLabel("Nullable: ");
+        nullableLabel = new JLabel(i18n.NULLABLE_LABEL);
         nullableLabel.setBorder(border);
         pane.add(nullableLabel, getLabelConstraints(c));        
         
@@ -472,7 +516,13 @@ public class ColumnDetailDialog extends JDialog {
             HibernateDialect dialect = DialectFactory.getDialect(dbName);
             if (!dialect.supportsColumnComment()) {
                 commentTextArea.setEditable(false);
-                commentTextArea.setToolTipText(dbName+" does not support column comments");
+                //i18n[ColumnDetailsDialog.columnCommentLabel={0} does not 
+                //support column comments]
+                String noColumnSupportMsg =
+                    s_stringMgr.getString(
+                            "ColumnDetailsDialog.columnCommentLabel",
+                            dbName);
+                commentTextArea.setToolTipText(noColumnSupportMsg);
             } else {
                 commentTextArea.setEditable(true);
                 commentTextArea.setToolTipText("");
