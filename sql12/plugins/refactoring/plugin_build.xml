@@ -56,9 +56,6 @@
 				target="${targetVM}">
 			
 			<classpath>
-				<fileset dir="lib">
-					<include name="**/*.*"/>
-				</fileset>
 				<fileset dir="${p_plugin.core_libs_dir}">
 					<include name="**/*.*"/>
 				</fileset>
@@ -79,7 +76,7 @@
 				<include name="**/*.*"/>
 			</fileset>
 		</jar>
-		
+		<!--
 		<copy todir="${p_plugin.dist_dir}/${internal_name}" >
 			<fileset dir="doc" >
 				<include name="*.*"/>
@@ -91,7 +88,7 @@
 				<include name="**/*.*"/>
 			</fileset>
 		</copy>
-
+		-->
 		<jar jarfile="${p_plugin.dist_dir}/${internal_name}/src.jar" compress="false">
 			<fileset dir=".">
 				<include name="src/**/*.*"/>
