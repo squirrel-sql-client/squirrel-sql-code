@@ -25,6 +25,9 @@ import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
+import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -37,10 +40,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.DBCopyPlugin;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.SessionInfoProvider;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.commands.PasteTableCommand;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.DialectFactory;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.util.Compat;
 
 
