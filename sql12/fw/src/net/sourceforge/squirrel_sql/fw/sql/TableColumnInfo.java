@@ -55,6 +55,28 @@ public class TableColumnInfo extends DatabaseObjectInfo
 		_isNullable = isNullable;
 	}
 
+    public TableColumnInfo(String catalog, String schema, String tableName,
+            String columnName, int dataType, String typeName,
+            int columnSize, int decimalDigits, int radix,
+            int isNullAllowed, String remarks, String defaultValue,
+            int octetLength, int ordinalPosition,
+            String isNullable)
+    {
+        super(catalog, schema, tableName);
+        _columnName = columnName;
+        _dataType = dataType;
+        _typeName = typeName;
+        _columnSize = columnSize;
+        _decimalDigits = decimalDigits;
+        _radix = radix;
+        _isNullAllowed = isNullAllowed;
+        _remarks = remarks;
+        _defaultValue = defaultValue;
+        _octetLength = octetLength;
+        _ordinalPosition = ordinalPosition;
+        _isNullable = isNullable;
+    }
+    
 	public String getColumnName()
 	{
 		return _columnName;
