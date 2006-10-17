@@ -227,6 +227,20 @@ public class JDBCTypeMapper {
         }
         return result;
     }
+    
+    public static boolean isDateType(int jdbcType) {
+        boolean result = false;
+        switch (jdbcType) {
+            case Types.DATE:
+            case Types.TIME:
+            case Types.TIMESTAMP:
+                result = true;
+                break;
+            default:
+                result = false;
+        }        
+        return result;
+    }
 }
 
 
