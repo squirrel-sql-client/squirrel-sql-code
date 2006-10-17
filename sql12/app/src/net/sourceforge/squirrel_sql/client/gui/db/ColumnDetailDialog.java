@@ -502,9 +502,15 @@ public class ColumnDetailDialog extends JDialog {
                 scaleSpinner.setEnabled(true);
                 lengthSpinner.setEnabled(false);
             } else {
-                precisionSpinner.setEnabled(false);
-                scaleSpinner.setEnabled(false);
-                lengthSpinner.setEnabled(true);                
+                if (JDBCTypeMapper.isDateType(jdbcType)) {
+                    precisionSpinner.setEnabled(false);
+                    scaleSpinner.setEnabled(false);
+                    lengthSpinner.setEnabled(false);                                
+                } else {
+                    precisionSpinner.setEnabled(false);
+                    scaleSpinner.setEnabled(false);
+                    lengthSpinner.setEnabled(true);                                    
+                }
             }
         }
         
