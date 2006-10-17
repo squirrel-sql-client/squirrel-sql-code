@@ -238,7 +238,7 @@ public class AddColumnCommand implements ICommand
                 }
                 
                 ErrorDialog sqldialog = 
-                    new ErrorDialog(mainFrame, script.toString());
+                    new ErrorDialog(dialog, script.toString());
                 //i18n[AddColumnCommand.sqlDialogTitle=Add column SQL]
                 String title = 
                     s_stringMgr.getString("AddColumnCommand.sqlDialogTitle");
