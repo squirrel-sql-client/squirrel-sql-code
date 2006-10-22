@@ -1,8 +1,22 @@
 SQuirreL SQL Client Change Log
 ==============================
 
-Not yet release - available in the latest snapshot, or at least checked into CVS.
+Not yet released - available in the latest snapshot, or at least checked into CVS.
 =========
+
+    New Features/Enhancements:
+
+Re-organized the table and view context menus so that the SQLScripts 
+plugin menu items now appear under the "Scripts" menu item and in the
+same order that they appear in the session menu "Scripts" menu item.
+
+Introduced new refactoring plugin which currently allows users to alter
+tables by adding or dropping columns.  Uses the Hibernate dialect 
+framework to derive SQL which is syntactically correct for the database
+being modified.
+
+
+	Bug-Fixes:
 
 1577254: Trigger details tabs aren't rendered
 
