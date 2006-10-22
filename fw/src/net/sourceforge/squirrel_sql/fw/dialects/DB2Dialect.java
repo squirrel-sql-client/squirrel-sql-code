@@ -22,6 +22,7 @@ import java.sql.Types;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 /**
@@ -195,9 +196,49 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect
      * @throws UnsupportedOperationException if the database doesn't support 
      *         adding columns after a table has already been created.
      */
-    public String[] getColumnAddSQL(String tableName, TableColumnInfo info) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("This database dialect doesn't support adding columns to tables");
-    }
+    public String[] getColumnAddSQL(String tableName, TableColumnInfo info) 
+        throws UnsupportedOperationException 
+    {
+        StringBuffer addColumn = new StringBuffer();
+        addColumn.append("ALTER TABLE ");
+        addColumn.append(tableName);
+        addColumn.append(" ADD ");
+        addColumn.append(info.getColumnName());
+        addColumn.append(" ");
+        addColumn.append(getTypeName(info.getDataType(), 
+                                  info.getColumnSize(), 
+                                  info.getColumnSize(), 
+                                  info.getDecimalDigits()));
+        if (info.getDefaultValue() != null) {
+            addColumn.append(" WITH DEFAULT ");
+            if (JDBCTypeMapper.isNumberType(info.getDataType())) {
+                addColumn.append(info.getDefaultValue());
+            } else {
+                addColumn.append("'");
+                addColumn.append(info.getDefaultValue());
+                addColumn.append("'");                
+            }
+        }
+        
+        if (info.isNullable() == "NO") {
+        // ALTER TABLE <TABLENAME> ADD CONSTRAINT NULL_FIELD CHECK (<FIELD> IS NOT
+        //NULL)
+            StringBuffer notnull = new StringBuffer();
+            notnull.append("ALTER TABLE ");
+            notnull.append(info.getTableName());
+            notnull.append(" ADD CONSTRAINT ");
+            notnull.append(info.getColumnName());
+            notnull.append(" CHECK (");
+            notnull.append(info.getColumnName());
+            notnull.append(" IS NOT NULL)");
+            
+            return new String[] {addColumn.toString(), notnull.toString()};
+        } else {
+            return new String[] {addColumn.toString()};
+        }
+        
+        
+     }
 
     /**
      * Returns a boolean value indicating whether or not this dialect supports
@@ -206,7 +247,7 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect
      * @return true if column comments are supported; false otherwise.
      */
     public boolean supportsColumnComment() {
-        return false;
+        return true;
     }    
     
     /**
@@ -220,8 +261,61 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect
      * @throws UnsupportedOperationException if the database doesn't support 
      *         annotating columns with a comment.
      */
-    public String getColumnCommentAlterSQL(String tableName, String columnName, String comment) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("This database dialect doesn't support adding comments to columns");
+    public String getColumnCommentAlterSQL(String tableName, 
+                                           String columnName, 
+                                           String comment) 
+        throws UnsupportedOperationException 
+    {
+        return DialectUtils.getColumnCommentAlterSQL(tableName, 
+                                                     columnName, 
+                                                     comment);
+    }
+
+    /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports dropping columns from tables.
+     * 
+     * @return true if the database supports dropping columns; false otherwise.
+     */
+    public boolean supportsDropColumn() {
+        // TODO: Need to verify this
+        return false;
+    }
+    
+    /**
+     * Returns the SQL that forms the command to drop the specified colum in the
+     * specified table.
+     * 
+     * @param tableName the name of the table that has the column
+     * @param columnName the name of the column to drop.
+     * @return
+     * @throws UnsupportedOperationException if the database doesn't support 
+     *         dropping columns. 
+     */
+    public String getColumnDropSQL(String tableName, String columnName) {
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(tableName);
+        result.append(" DROP COLUMN ");
+        result.append(columnName);
+        return result.toString();
+    }
+    
+    /**
+     * Returns the SQL that forms the command to drop the specified table.  If
+     * cascade contraints is supported by the dialect and cascadeConstraints is
+     * true, then a drop statement with cascade constraints clause will be 
+     * formed.
+     * 
+     * @param tableName the table to drop
+     * @param cascadeConstraints whether or not to drop any FKs that may 
+     * reference the specified table.
+     * 
+     * @return the drop SQL command.
+     */
+    public String getTableDropSQL(String tableName, boolean cascadeConstraints){
+        // TODO: Need to verify this
+        return DialectUtils.getTableDropSQL(tableName, false, cascadeConstraints);
     }
     
 }

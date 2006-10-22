@@ -19,6 +19,7 @@
 
 package net.sourceforge.squirrel_sql.fw.dialects;
 
+import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 import org.hibernate.HibernateException;
@@ -64,22 +65,28 @@ public class DialectUtils {
                                                 info.getColumnSize(), 
                                                 info.getColumnSize(), 
                                                 info.getDecimalDigits()));
+
+        if (addDefaultClause) {
+            if (info.getDefaultValue() != null 
+                    && !"".equals(info.getDefaultValue())) 
+            {
+                result.append(" DEFAULT ");
+                if (JDBCTypeMapper.isNumberType(info.getDataType())) {
+                    result.append(info.getDefaultValue());
+                } else {
+                    result.append("'");
+                    result.append(info.getDefaultValue());
+                    result.append("'");                
+                }
+            }            
+        }
+        
         if (info.isNullable().equals("NO")) {
             result.append(" NOT NULL ");
         } else {
             if (supportsNullQualifier) {
                 result.append(" NULL ");
             }
-        }
-        if (addDefaultClause) {
-            if (info.getDefaultValue() != null 
-                    && !"".equals(info.getDefaultValue())) 
-            {
-                result.append(" DEFAULT '");
-                // Should we be quoting ('') this value??
-                result.append(info.getDefaultValue());
-                result.append("'");
-            }            
         }
         return result.toString();
     }
@@ -116,12 +123,39 @@ public class DialectUtils {
      * @param columnName
      * @return
      */
-    public static String getColumnDropSQL(String tableName, String columnName) {
+    public static String getColumnDropSQL(String tableName, 
+                                          String columnName) {
         StringBuffer result = new StringBuffer();
         result.append("ALTER TABLE ");
         result.append(tableName);
         result.append(" DROP ");
         result.append(columnName);
+        return result.toString();
+    }
+    
+    /**
+     * Returns the SQL that forms the command to drop the specified table.  If
+     * cascade contraints is supported by the dialect and cascadeConstraints is
+     * true, then a drop statement with cascade constraints clause will be 
+     * formed.
+     * 
+     * @param tableName the table to drop
+     * @param supportsCascade whether or not the cascade clause should be added.
+     * @param cascadeValue whether or not to drop any FKs that may 
+     * reference the specified table.
+     * 
+     * @return the drop SQL command.
+     */
+    public static String getTableDropSQL(String tableName, 
+                                         boolean supportsCascade, 
+                                         boolean cascadeValue) 
+    {
+        StringBuffer result = new StringBuffer();
+        result.append("DROP TABLE ");
+        result.append(tableName);
+        if (supportsCascade && cascadeValue) {
+            result.append(" CASCADE ");
+        }
         return result.toString();
     }
 }

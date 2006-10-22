@@ -95,10 +95,24 @@ public class ColumnDetailDialog extends JDialog {
     private JButton showSQLButton = null;
     private JButton cancelButton = null;
     
+    public static final int ADD_MODE = 0;
+    public static final int MODIFY_MODE = 1;
+    
+    private int _mode = ADD_MODE;
+    
     private interface i18n {
         //i18n[ColumnDetailsDialog.addButtonLabel=Add Column]
         String ADD_BUTTON_LABEL = 
             s_stringMgr.getString("ColumnDetailsDialog.addButtonLabel");
+        //i18n[ColumnDetailsDialog.addColumnTitle=Add Column]
+        String ADD_COLUMN_TITLE = 
+            s_stringMgr.getString("ColumnDetailsDialog.addColumnTitle");        
+        //i18n[ColumnDetailsDialog.modifyButtonLabel=Modify Column]
+        String MODIFY_BUTTON_LABEL = 
+            s_stringMgr.getString("ColumnDetailsDialog.modifyButtonLabel");
+        //i18n[ColumnDetailsDialog.modifyColumnTitle=Modify Column]
+        String MODIFY_COLUMN_TITLE = 
+            s_stringMgr.getString("ColumnDetailsDialog.modifyColumnTitle");
         //i18n[ColumnDetailsDialog.cancelButtonLabel=Cancel]
         String CANCEL_BUTTON_LABEL = 
             s_stringMgr.getString("ColumnDetailsDialog.cancelButtonLabel");
@@ -117,6 +131,9 @@ public class ColumnDetailDialog extends JDialog {
         //i18n[ColumnDetailsDialog.lengthLabel=Length: ]
         String LENGTH_LABEL = 
             s_stringMgr.getString("ColumnDetailsDialog.lengthLabel");
+        //i18n[ColumnDetailsDialog.modifyColumnTitle=Modify Column]
+        String MODIFY_TITLE = 
+            s_stringMgr.getString("ColumnDetailsDialog.modifyColumnTitle");
         //i18n[ColumnDetailsDialog.nullableLabel=Nullable: ]
         String NULLABLE_LABEL = 
             s_stringMgr.getString("ColumnDetailsDialog.nullableLabel");
@@ -144,8 +161,16 @@ public class ColumnDetailDialog extends JDialog {
      * 
      * @param tableName
      */
-    public ColumnDetailDialog(String title) { 
-        init(title);
+    public ColumnDetailDialog(int mode) {
+        setMode(mode);
+        init();
+    }
+    
+    public void setMode(int mode) {
+        if (mode != ADD_MODE && mode != MODIFY_MODE) {
+            throw new IllegalArgumentException("Invalid mode - "+mode);
+        }
+        _mode = mode;
     }
     
     /**
@@ -169,7 +194,19 @@ public class ColumnDetailDialog extends JDialog {
     }
     
     public void setExistingColumnInfo(TableColumnInfo info) {
+        tableNameTextField.setText(info.getTableName());
         columnNameTextField.setText(info.getColumnName());
+        String dataType = JDBCTypeMapper.getJdbcTypeName(info.getDataType());
+        typeList.setSelectedItem(dataType);
+        nullableCheckBox.setSelected(info.isNullable().equals("YES"));
+        
+        if (JDBCTypeMapper.isNumberType(info.getDataType())) {
+            precisionSpinner.setValue(new Integer(info.getColumnSize()));
+        } else {
+            lengthSpinner.setValue(new Integer(info.getColumnSize()));
+        }   
+        commentTextArea.setText(info.getRemarks());
+        defaultTextField.setText(info.getDefaultValue());
     }
     
     public String getSelectedTypeName() {
@@ -295,9 +332,14 @@ public class ColumnDetailDialog extends JDialog {
     /**
      * Creates the UI for this dialog.
      */
-    private void init(String title) {
-        super.setModal(true);        
-        setTitle(title);
+    private void init() {
+        super.setModal(true);
+        if (_mode == ADD_MODE) {
+            setTitle(i18n.ADD_COLUMN_TITLE);
+        } else {
+            setTitle(i18n.MODIFY_COLUMN_TITLE);
+        }
+        
         setSize(350, 400);
         EmptyBorder border = new EmptyBorder(new Insets(5,5,5,5));
         Dimension mediumField = new Dimension(126, 20);
@@ -369,7 +411,7 @@ public class ColumnDetailDialog extends JDialog {
         double min = 1;
         double max = Long.MAX_VALUE; 
         double step = 1; 
-        SpinnerNumberModel model = new SpinnerNumberModel(value, min, max, step); 
+        SpinnerNumberModel model = new SpinnerNumberModel(value, min, max, step);
         lengthSpinner.setModel(model);
         lengthSpinner.setPreferredSize(mediumField);
         pane.add(lengthSpinner, getFieldConstraints(c));
@@ -452,7 +494,11 @@ public class ColumnDetailDialog extends JDialog {
     
     private JPanel getButtonPanel() {
         JPanel result = new JPanel();
-        addButton = new JButton(i18n.ADD_BUTTON_LABEL);
+        if (_mode == ADD_MODE) {
+            addButton = new JButton(i18n.ADD_BUTTON_LABEL);
+        } else {
+            addButton = new JButton(i18n.MODIFY_BUTTON_LABEL);
+        }
         showSQLButton = new JButton(i18n.SHOW_BUTTON_LABEL);
         cancelButton = new JButton(i18n.CANCEL_BUTTON_LABEL);
         cancelButton.addActionListener(new ActionListener() {
@@ -471,7 +517,7 @@ public class ColumnDetailDialog extends JDialog {
      */
     public static void main(String[] args) {
         ApplicationArguments.initialize(new String[] {});
-        final ColumnDetailDialog c = new ColumnDetailDialog("Add New Column");
+        final ColumnDetailDialog c = new ColumnDetailDialog(ADD_MODE);
         c.setTableName("FooTable");
         c.addComponentListener(new ComponentListener() {
             public void componentHidden(ComponentEvent e) {}

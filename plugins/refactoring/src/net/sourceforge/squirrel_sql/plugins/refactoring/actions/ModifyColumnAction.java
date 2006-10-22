@@ -28,7 +28,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.plugins.refactoring.commands.AddColumnCommand;
+import net.sourceforge.squirrel_sql.plugins.refactoring.commands.ModifyColumnCommand;
 
 public class ModifyColumnAction extends SquirrelAction
                                      implements ISessionAction {
@@ -49,12 +49,11 @@ public class ModifyColumnAction extends SquirrelAction
 
     public void actionPerformed(ActionEvent evt) {
         if (_session != null) {
-            IDatabaseObjectInfo info = null;
             IObjectTreeAPI api = 
                 _session.getObjectTreeAPIOfActiveSessionWindow();
             IDatabaseObjectInfo[] infos = api.getSelectedDatabaseObjects();
             if (infos.length == 1) {
-                new AddColumnCommand(_session, info).execute();
+                new ModifyColumnCommand(_session, infos[0]).execute();
             } else {
                 //i18n[ModifyColumnAction.singleObjectMessage=You must have a 
                 //single table selected in order to modify a column]

@@ -32,6 +32,7 @@ public class JDBCTypeMapper {
         result.add(getJdbcTypeName(Types.CLOB));
         result.add(getJdbcTypeName(Types.DATALINK));
         result.add(getJdbcTypeName(Types.DATE));
+        result.add(getJdbcTypeName(Types.DECIMAL));
         result.add(getJdbcTypeName(Types.DISTINCT));
         result.add(getJdbcTypeName(Types.DOUBLE));
         result.add(getJdbcTypeName(Types.FLOAT));
@@ -219,6 +220,7 @@ public class JDBCTypeMapper {
             case Types.DECIMAL:
             case Types.DOUBLE:
             case Types.FLOAT:
+            case Types.INTEGER:
             case Types.NUMERIC:
                 result = true;
                 break;
