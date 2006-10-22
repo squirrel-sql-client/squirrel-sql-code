@@ -10,6 +10,8 @@ Re-organized the table and view context menus so that the SQLScripts
 plugin menu items now appear under the "Scripts" menu item and in the
 same order that they appear in the session menu "Scripts" menu item.
 
+Updated Spanish translation strings (Thanks to Diego Schulz)
+
 Introduced new refactoring plugin which currently allows users to alter
 tables by adding or dropping columns.  Uses the Hibernate dialect 
 framework to derive SQL which is syntactically correct for the database
