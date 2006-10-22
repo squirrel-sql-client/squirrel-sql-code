@@ -25,16 +25,16 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.client.db.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.client.gui.db.ColumnDetailDialog;
 import net.sourceforge.squirrel_sql.client.gui.db.ColumnListDialog;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
-import net.sourceforge.squirrel_sql.fw.dialects.DialectUtils;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -50,7 +50,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * @author rmmannin
  *
  */
-public class RemoveColumnCommand implements ICommand
+public class ModifyColumnCommand implements ICommand
 {
     /**
      * Current session.
@@ -70,14 +70,19 @@ public class RemoveColumnCommand implements ICommand
     private static final StringManager s_stringMgr =
         StringManagerFactory.getStringManager(RemoveColumnCommand.class);
     
-    private ColumnListDialog dialog = null;
+    private ColumnListDialog listDialog = null;
+    
+    private ColumnDetailDialog detailDialog = null;
     
     private MainFrame mainFrame = null;    
     
+    private TableColumnInfo[] columns = null;
+    
+    private HibernateDialect dialect = null;    
     /**
      * Ctor specifying the current session.
      */
-    public RemoveColumnCommand(ISession session, IDatabaseObjectInfo info)
+    public ModifyColumnCommand(ISession session, IDatabaseObjectInfo info)
     {
         super();
         _session = session;
@@ -95,35 +100,8 @@ public class RemoveColumnCommand implements ICommand
         }
         try {
             ITableInfo ti = (ITableInfo)_info;
-            TableColumnInfo[] columns = 
+            columns = 
                 _session.getSQLConnection().getSQLMetaData().getColumnInfo(ti);
-
-            try {
-                HibernateDialect dialect =  
-                    DialectFactory.getDialect(_session, DialectFactory.DEST_TYPE);
-                if (!dialect.supportsDropColumn()) {
-                    //i18n[RemoveColumnAction.removeColumnNotSupported=This
-                    //database ({0}) does not support dropping columns]
-                    String msg = 
-                        s_stringMgr.getString("RemoveColumnAction.removeColumnNotSupported",
-                                              dialect.getDisplayName());
-                    _session.getMessageHandler().showErrorMessage(msg);
-                    return;                    
-                }
-            } catch (UserCancelledOperationException e) {
-                log.info("User cancelled add column request");
-                return;
-            }        
-
-            
-            if (columns.length < 2) {
-                //i18n[RemoveColumnAction.singleObjectMessage=The table's only 
-                //column cannot be removed - a table must have a least one column]
-                String msg = 
-                    s_stringMgr.getString("RemoveColumnAction.singleColumnMessage");
-                _session.getMessageHandler().showErrorMessage(msg);
-                return;
-            }
             
             //Show the user a dialog with a list of columns and ask them to select
             // one or more columns to drop
@@ -132,16 +110,19 @@ public class RemoveColumnCommand implements ICommand
                 TableColumnInfo info = columns[i];
                 tmp.add(info.getColumnName());
             }
-            if (dialog == null) {
-                dialog = 
-                    new ColumnListDialog((String[])tmp.toArray(new String[tmp.size()]), 0);
-                dialog.addColumnSelectionListener(new DropActionListener());
+            if (listDialog == null) {
+                String[] tableColumns = 
+                    (String[])tmp.toArray(new String[tmp.size()]);
+                listDialog = 
+                    new ColumnListDialog(tableColumns, 
+                                         ColumnListDialog.MODIFY_COLUMN_MODE);
+                listDialog.addColumnSelectionListener(new ColumnListSelectionActionListener());
                 mainFrame = _session.getApplication().getMainFrame();
-                dialog.setLocationRelativeTo(mainFrame);  
-                dialog.setMultiSelection();
+                listDialog.setLocationRelativeTo(mainFrame);
+                listDialog.setSingleSelection();
             }
-            dialog.setTableName(ti.getSimpleName());
-            dialog.setVisible(true);
+            listDialog.setTableName(ti.getSimpleName());
+            listDialog.setVisible(true);
         } catch (SQLException e) {
             log.error("Unexpected exception "+e.getMessage(), e);
         }
@@ -149,30 +130,54 @@ public class RemoveColumnCommand implements ICommand
         
     }
 
-    private class DropActionListener implements ActionListener {
+    private class ColumnListSelectionActionListener implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
-            if (dialog == null) {
+            if (listDialog == null) {
                 System.err.println("dialog was null");
                 return;
             }
-            HibernateDialect dialect = null;
-            try {
-                dialect =  
-                    DialectFactory.getDialect(_session, DialectFactory.DEST_TYPE);
-            } catch (UserCancelledOperationException ex) {
-                log.info("User cancelled add column request");
-                return;                
+            ModifyColumnExecHandler handler = new ModifyColumnExecHandler(_session);
+            String tableName = listDialog.getTableName();
+            Object[] columnNames = listDialog.getSelectedColumnList();
+            if (columnNames == null || columnNames.length != 1) {
+                System.err.println("Exactly one column must be selected to modify");
+                return;
             }
-            
-            DropColumnExecHandler handler = new DropColumnExecHandler(_session);
-            String tableName = dialog.getTableName();
-            // For each column that the user selected, issue the correct drop column
-            // statement.  This may be db-specific
-            Object[] columnNames = dialog.getSelectedColumnList();
+            String selectedColumn = (String)columnNames[0];
+            int foundIdx = -1;
+            for (int i = 0; i < columns.length; i++) {
+                TableColumnInfo tcinfo = columns[i];
+                if (tcinfo.getColumnName().equals(selectedColumn)) {
+                    foundIdx = i;
+                    break;
+                }
+            }
+            if (foundIdx != -1) {
+                try {
+                    dialect =  
+                        DialectFactory.getDialect(_session, DialectFactory.DEST_TYPE);
+                    String dbName = dialect.getDisplayName();                
+                    detailDialog = 
+                        new ColumnDetailDialog(ColumnDetailDialog.MODIFY_MODE);
+                    detailDialog.setExistingColumnInfo(columns[foundIdx]);
+                    
+                    mainFrame = _session.getApplication().getMainFrame();
+                    detailDialog.setLocationRelativeTo(mainFrame);
+                    detailDialog.setSelectedDialect(dbName);
+                    detailDialog.setVisible(true);
+                } catch (UserCancelledOperationException ex) {
+                    ex.printStackTrace();
+                }
+            } else {
+                System.err.println("Didn't find TableColumnInfo");
+            }
+            //TableColumnInfo colInfo = 
+            /*
             for (int i = 0; i < columnNames.length; i++) {
                 String columnName = (String)columnNames[i];
-                String dropSQL = dialect.getColumnDropSQL(tableName, columnName);
+                String dropSQL = 
+                    DialectUtils.getColumnDropSQL(tableName, columnName);
                 log.info("AddColumnCommand: executing SQL - "+dropSQL);
                 SQLExecuterTask executer = 
                     new SQLExecuterTask(_session, 
@@ -188,15 +193,16 @@ public class RemoveColumnCommand implements ICommand
                 }
                 
             }
-            dialog.setVisible(false);
+            */
+            listDialog.setVisible(false);
         }
         
     }
     
-    private class DropColumnExecHandler extends DefaultSQLExecuterHandler {
+    private class ModifyColumnExecHandler extends DefaultSQLExecuterHandler {
         private boolean exceptionEncountered = false;
         
-        public DropColumnExecHandler(ISession session) {
+        public ModifyColumnExecHandler(ISession session) {
             super(session);
         }
 

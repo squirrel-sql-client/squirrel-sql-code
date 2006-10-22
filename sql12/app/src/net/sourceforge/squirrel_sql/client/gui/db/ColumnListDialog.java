@@ -32,12 +32,14 @@ import java.awt.event.ComponentListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
@@ -45,9 +47,11 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 /**
- * A dialog that can be used to get columns to drop from the user 
+ * A dialog that can be used to get column(s) selected by the user 
  */
 public class ColumnListDialog extends JDialog {
 
@@ -56,20 +60,56 @@ public class ColumnListDialog extends JDialog {
     private JLabel columnListLabel = null;
     private JList columnList = null;
     
-    private JButton dropButton = null;
+    private JButton selectColumnButton = null;
     private JButton cancelButton = null;
     
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(ColumnListDialog.class);
+    
     private interface i18n {
-        String DROP_BUTTON_LABEL = "Drop Column(s)";
-        String CANCEL_BUTTON_LABEL = "Cancel";
-        String TITLE = "Select Column(s) To Drop";
+        //i18n[ColumnListDialog.cancelButtonLabel=Cancel]
+        String CANCEL_BUTTON_LABEL = 
+            s_stringMgr.getString("ColumnListDialog.cancelButtonLabel");
+        //i18n[ColumnListDialog.columnNameLabel=Column: ]
+        String COLUMN_NAME_LABEL = 
+            s_stringMgr.getString("ColumnListDialog.columnNameLabel");
+        //i18n[ColumnListDialog.dropButtonLabel=Drop Column(s)]
+        String DROP_BUTTON_LABEL = 
+            s_stringMgr.getString("ColumnListDialog.dropButtonLabel");
+        //i18n[ColumnListDialog.dropErrorMessage=Can't drop all columns - a 
+        //table must have at least one column
+        String DROP_ERROR_MESSAGE = 
+            s_stringMgr.getString("ColumnListDialog.dropErrorMessage");
+        //i18n[ColumnListDialog.dropErrorTitle=Too Many Columns Selected]
+        String DROP_ERROR_TITLE = 
+            s_stringMgr.getString("Too Many Columns Selected");
+        //i18n[ColumnListDialog.dropTitle=Select Column(s) To Drop]
+        String DROP_TITLE = 
+            s_stringMgr.getString("ColumnListDialog.dropTitle");
+        //i18n[ColumnListDialog.modifyButtonLabel=Modify Column]
+        String MODIFY_BUTTON_LABEL = 
+            s_stringMgr.getString("ColumnListDialog.modifyButtonLabel");
+        //i18n[ColumnListDialog.modifyTitle=Select Column To Modify]
+        String MODIFY_TITLE = 
+            s_stringMgr.getString("ColumnListDialog.modifyTitle");
+        //i18n[ColumnListDialog.tableNameLabel=Table Name: ]
+        String TABLE_NAME_LABEL = 
+            s_stringMgr.getString("ColumnListDialog.tableNameLabel"); 
     }
+    
+    public static final int DROP_COLUMN_MODE = 0;
+    public static final int MODIFY_COLUMN_MODE = 1;
+    
+    private int _mode = DROP_COLUMN_MODE;
     
     /**
      * 
+     * @param mode TODO
      * @param tableName
      */
-    public ColumnListDialog(String[] columnNames) { 
+    public ColumnListDialog(String[] columnNames, int mode) { 
+        _mode = mode;
         init(columnNames);
     }
             
@@ -89,17 +129,20 @@ public class ColumnListDialog extends JDialog {
         return tableNameTextField.getText();
     }
         
-    public Object[] getColumnsToDropList() {
+    public Object[] getSelectedColumnList() {
         return columnList.getSelectedValues();
     }
     
-    public void addDropListener(ActionListener listener) {
-        dropButton.addActionListener(listener);
+    public void addColumnSelectionListener(ActionListener listener) {
+        selectColumnButton.addActionListener(listener);
     }
     
-    public void setVisible(boolean visible) {
-        super.setVisible(visible);
-        //columnNameTextField.requestFocus();                
+    public void setMultiSelection() {
+        columnList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+    }
+    
+    public void setSingleSelection() {
+        columnList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     }
     
     private GridBagConstraints getLabelConstraints(GridBagConstraints c) {
@@ -115,8 +158,8 @@ public class ColumnListDialog extends JDialog {
     private GridBagConstraints getFieldConstraints(GridBagConstraints c) {
         c.gridx++;
         c.anchor = GridBagConstraints.NORTHWEST;   
-        c.weightx = 1;
-        c.weighty = 1;
+        c.weightx = 0;
+        c.weighty = 0;
         c.fill = GridBagConstraints.HORIZONTAL;
         return c;
     }
@@ -134,7 +177,11 @@ public class ColumnListDialog extends JDialog {
      */
     private void init(String[] columnNames) {
         super.setModal(true);        
-        setTitle(i18n.TITLE);
+        if (_mode == DROP_COLUMN_MODE) {
+            setTitle(i18n.DROP_TITLE);
+        } else {
+            setTitle(i18n.MODIFY_TITLE);
+        }
         setSize(300, 250);
         EmptyBorder border = new EmptyBorder(new Insets(5,5,5,5));
         Dimension mediumField = new Dimension(126, 20);
@@ -148,7 +195,7 @@ public class ColumnListDialog extends JDialog {
         c.gridy = -1;
 
         // Table name
-        tableNameLabel = getBorderedLabel("Table Name: ", border);
+        tableNameLabel = getBorderedLabel(i18n.TABLE_NAME_LABEL, border);
         pane.add(tableNameLabel, getLabelConstraints(c));
         
         tableNameTextField = new JTextField();
@@ -156,17 +203,21 @@ public class ColumnListDialog extends JDialog {
         tableNameTextField.setEditable(false);
         pane.add(tableNameTextField, getFieldConstraints(c));
                 
-        // Dialect list
-        columnListLabel = getBorderedLabel("Column: ", border);
+        // Dialect list        
+        columnListLabel = getBorderedLabel(i18n.COLUMN_NAME_LABEL, border);
         columnListLabel.setVerticalAlignment(JLabel.NORTH);
         pane.add(columnListLabel, getLabelConstraints(c));
         
         columnList = new JList(columnNames);
         columnList.setPreferredSize(mediumField);
         columnList.addListSelectionListener(new ColumnListSelectionListener());
-        JScrollPane sp = new JScrollPane();
-        sp.getViewport().add(columnList);
-        pane.add(sp, getFieldConstraints(c));        
+
+        JScrollPane sp = new JScrollPane(columnList);
+        c = getFieldConstraints(c);
+        c.weightx = 1;
+        c.weighty = 1;        
+        c.fill=GridBagConstraints.BOTH;
+        pane.add(sp, c);
                 
         Container contentPane = super.getContentPane();
         contentPane.setLayout(new BorderLayout());
@@ -177,15 +228,20 @@ public class ColumnListDialog extends JDialog {
     
     private JPanel getButtonPanel() {
         JPanel result = new JPanel();
-        dropButton = new JButton(i18n.DROP_BUTTON_LABEL);
-        dropButton.setEnabled(false);
+        if (_mode == DROP_COLUMN_MODE) {
+            selectColumnButton = new JButton(i18n.DROP_BUTTON_LABEL);    
+        } else {
+            selectColumnButton = new JButton(i18n.MODIFY_BUTTON_LABEL);
+        }
+        
+        selectColumnButton.setEnabled(false);
         cancelButton = new JButton(i18n.CANCEL_BUTTON_LABEL);
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
             }
         });
-        result.add(dropButton);
+        result.add(selectColumnButton);
         result.add(cancelButton);
         return result;
     }
@@ -195,7 +251,14 @@ public class ColumnListDialog extends JDialog {
      */
     public static void main(String[] args) {
         ApplicationArguments.initialize(new String[] {});
-        final ColumnListDialog c = new ColumnListDialog(new String [] {"A_Really_Long_Nasty_Column_Called_ColumnA", "ColumnB"});
+        String[] data = 
+            new String [] {"A_Really_Long_Nasty_Column_Called_ColumnA", 
+                           "ColumnB","ColumnC","ColumnD","ColumnE","ColumnF",
+                           "ColumnG","ColumnH","ColumnI","ColumnJ","ColumnK",
+                           "ColumnL","ColumnM","ColumnN","ColumnO","ColumnP",
+                           "ColumnP","ColumnQ","ColumnR","ColumnS","ColumnT"};
+        final ColumnListDialog c = new ColumnListDialog(data, 0);
+        c.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         c.setTableName("FooTable");
         c.addComponentListener(new ComponentListener() {
             public void componentHidden(ComponentEvent e) {}
@@ -218,17 +281,18 @@ public class ColumnListDialog extends JDialog {
 
         public void valueChanged(ListSelectionEvent e) {
             int[] selected = columnList.getSelectedIndices();
-            if (selected != null 
+            if (selected != null
+                    && _mode == DROP_COLUMN_MODE
                     && selected.length == columnList.getModel().getSize())
             {
                 JOptionPane.showMessageDialog(ColumnListDialog.this, 
-                                "Can't select all columns - a table must have at least one column", 
-                                "Too Many Columns Selected", 
+                                i18n.DROP_ERROR_MESSAGE, 
+                                i18n.DROP_ERROR_TITLE, 
                                 JOptionPane.ERROR_MESSAGE);
                 columnList.clearSelection();
-                dropButton.setEnabled(false);
+                selectColumnButton.setEnabled(false);
             } else {
-                dropButton.setEnabled(true);
+                selectColumnButton.setEnabled(true);
             }
             
         }

@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.fw.sql;
  */
 public class TableColumnInfo extends DatabaseObjectInfo
 {
+    private final String _tableName;
 	private final String _columnName;
 	private final int _dataType;
 	private final String _typeName;
@@ -41,6 +42,7 @@ public class TableColumnInfo extends DatabaseObjectInfo
 	{
 		super(catalog, schema, tableName + '.' + columnName,
 				DatabaseObjectType.COLUMN, md);
+        _tableName = tableName;
 		_columnName = columnName;
 		_dataType = dataType;
 		_typeName = typeName;
@@ -63,6 +65,7 @@ public class TableColumnInfo extends DatabaseObjectInfo
             String isNullable)
     {
         super(catalog, schema, tableName);
+        _tableName = tableName;
         _columnName = columnName;
         _dataType = dataType;
         _typeName = typeName;
@@ -75,6 +78,10 @@ public class TableColumnInfo extends DatabaseObjectInfo
         _octetLength = octetLength;
         _ordinalPosition = ordinalPosition;
         _isNullable = isNullable;
+    }
+    
+    public String getTableName() {
+        return _tableName;
     }
     
 	public String getColumnName()

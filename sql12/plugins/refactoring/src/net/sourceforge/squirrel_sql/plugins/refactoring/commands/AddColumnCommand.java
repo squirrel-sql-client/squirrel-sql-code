@@ -98,7 +98,7 @@ public class AddColumnCommand implements ICommand
             String dbName = dialect.getDisplayName();
             String title = 
                 s_stringMgr.getString("AddColumnCommand.addColumnDialogTitle");
-            dialog = new ColumnDetailDialog(title);
+            dialog = new ColumnDetailDialog(ColumnDetailDialog.ADD_MODE);
             dialog.setTableName(tableName);
             dialog.addOKListener(new AddButtonListener());
             dialog.addShowSQLListener(new ShowSQLButtonListener());

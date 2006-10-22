@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 import java.sql.Types;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 /**
@@ -172,6 +173,7 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
         result.append(tableName);
         result.append(" ADD COLUMN ");
         result.append(info.getColumnName());
+        result.append(" ");
         result.append(getTypeName(info.getDataType(), 
                                   info.getColumnSize(), 
                                   info.getColumnSize(), 
@@ -185,15 +187,23 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
                 && !"".equals(info.getDefaultValue())) 
         {
             result.append(" DEFAULT ");
-            result.append(info.getDefaultValue());
+            if (JDBCTypeMapper.isNumberType(info.getDataType())) {
+                result.append(info.getDefaultValue());                
+            } else {
+                result.append("'");
+                result.append(info.getDefaultValue());
+                result.append("'");
+            }
         }
-/*        if (info.getRemarks() != null && 
+        if (info.getRemarks() != null && 
                 !"".equals(info.getRemarks())) 
         {
             result.append(" COMMENT ");
+            result.append("'");
             result.append(info.getRemarks());
+            result.append("'");
         }
-*/
+
         return new String[] { result.toString() };
     }
 
@@ -232,6 +242,49 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
         result.append(comment);
         result.append("'");
         return result.toString();
+    }
+    
+    /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports dropping columns from tables.
+     * 
+     * @return true if the database supports dropping columns; false otherwise.
+     */
+    public boolean supportsDropColumn() {
+        // TODO: need to verify this
+        return true;
+    }
+
+    /**
+     * Returns the SQL that forms the command to drop the specified colum in the
+     * specified table.
+     * 
+     * @param tableName the name of the table that has the column
+     * @param columnName the name of the column to drop.
+     * @return
+     * @throws UnsupportedOperationException if the database doesn't support 
+     *         dropping columns. 
+     */
+    public String getColumnDropSQL(String tableName, String columnName) {
+        // TODO: Need to verify this        
+        return DialectUtils.getColumnDropSQL(tableName, columnName);
+    }
+    
+    /**
+     * Returns the SQL that forms the command to drop the specified table.  If
+     * cascade contraints is supported by the dialect and cascadeConstraints is
+     * true, then a drop statement with cascade constraints clause will be 
+     * formed.
+     * 
+     * @param tableName the table to drop
+     * @param cascadeConstraints whether or not to drop any FKs that may 
+     * reference the specified table.
+     * 
+     * @return the drop SQL command.
+     */
+    public String getTableDropSQL(String tableName, boolean cascadeConstraints){
+        // TODO: Need to verify this
+        return DialectUtils.getTableDropSQL(tableName, true, cascadeConstraints);
     }
     
 }
