@@ -39,8 +39,8 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferencesTab;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferencesManager;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.prefs.SQLScriptPreferencesTab;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptAction;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptOfCurrentSQLAction;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateSelectScriptAction;
@@ -278,16 +278,10 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
         //IObjectTreeAPI api = session.getObjectTreeAPI(this);
         IObjectTreeAPI api = FrameWorkAcessor.getObjectTreeAPI(session, this);
 
-        api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTableScriptAction.class));
-        api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateSelectScriptAction.class));
-        api.addToPopup(DatabaseObjectType.TABLE, coll.get(DropTableScriptAction.class));
-        api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateDataScriptAction.class));
-        api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTemplateDataScriptAction.class));
-        api.addToPopup(DatabaseObjectType.VIEW, coll.get(CreateTableScriptAction.class));
-        api.addToPopup(DatabaseObjectType.VIEW, coll.get(CreateSelectScriptAction.class));
-        api.addToPopup(DatabaseObjectType.VIEW, coll.get(CreateDataScriptAction.class));
-        api.addToPopup(DatabaseObjectType.VIEW, coll.get(CreateTemplateDataScriptAction.class));
-
+        JMenu menu = _resources.createMenu(IMenuResourceKeys.SCRIPTS);
+        
+        api.addToPopup(DatabaseObjectType.TABLE, getTableMenu(true));
+        api.addToPopup(DatabaseObjectType.VIEW, getTableMenu(false));
 
         session.addSeparatorToToolbar();
         session.addToToolbar(coll.get(CreateTableOfCurrentSQLAction.class));
@@ -300,18 +294,39 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
    {
       IApplication app = getApplication();
       ActionCollection coll = app.getActionCollection();
-
-      JMenu menu = _resources.createMenu(IMenuResourceKeys.SCRIPTS);
-      _resources.addToMenu(coll.get(CreateDataScriptAction.class), menu);
-      _resources.addToMenu(coll.get(CreateTemplateDataScriptAction.class), menu);
-      _resources.addToMenu(coll.get(CreateTableScriptAction.class), menu);
-      _resources.addToMenu(coll.get(CreateSelectScriptAction.class), menu);
-      _resources.addToMenu(coll.get(DropTableScriptAction.class), menu);
-      _resources.addToMenu(coll.get(CreateDataScriptOfCurrentSQLAction.class), menu);
-      _resources.addToMenu(coll.get(CreateTableOfCurrentSQLAction.class), menu);
-
-      app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, menu);
+      
+      app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, getSessionMenu());
    }
+
+   private JMenu getSessionMenu() {
+       IApplication app = getApplication();
+       ActionCollection coll = app.getActionCollection();       
+       
+       JMenu menu = _resources.createMenu(IMenuResourceKeys.SCRIPTS);
+       _resources.addToMenu(coll.get(CreateDataScriptAction.class), menu);
+       _resources.addToMenu(coll.get(CreateTemplateDataScriptAction.class), menu);
+       _resources.addToMenu(coll.get(CreateTableScriptAction.class), menu);
+       _resources.addToMenu(coll.get(CreateSelectScriptAction.class), menu);
+       _resources.addToMenu(coll.get(DropTableScriptAction.class), menu);
+       _resources.addToMenu(coll.get(CreateDataScriptOfCurrentSQLAction.class), menu);
+       _resources.addToMenu(coll.get(CreateTableOfCurrentSQLAction.class), menu);
+       return menu;
+   }
+
+   private JMenu getTableMenu(boolean includeDrop) {
+       IApplication app = getApplication();
+       ActionCollection coll = app.getActionCollection();       
+       
+       JMenu menu = _resources.createMenu(IMenuResourceKeys.SCRIPTS);
+       _resources.addToMenu(coll.get(CreateDataScriptAction.class), menu);
+       _resources.addToMenu(coll.get(CreateTemplateDataScriptAction.class), menu);
+       _resources.addToMenu(coll.get(CreateTableScriptAction.class), menu);
+       _resources.addToMenu(coll.get(CreateSelectScriptAction.class), menu);
+       if (includeDrop) {
+           _resources.addToMenu(coll.get(DropTableScriptAction.class), menu);
+       }
+       return menu;
+   }   
 
    public Object getExternalService()
    {
