@@ -20,6 +20,14 @@ being modified.
 
 	Bug-Fixes:
 
+1584283: (DBCopy plugin - Copying LOBs from Oracle to Oracle fails)
+If destination column type is Types.OTHER (1111), try to get 
+the type name and map it to a valid java SQL type (such as 
+Types.BLOB or Types.CLOB).  This only works when the database column
+type name as reported by the JDBC driver is a standard type such as 
+BLOB, VARCHAR, CLOB, CHAR, etc... A mapping exception is thrown 
+otherwise.
+
 1577254: Trigger details tabs aren't rendered
 
 1520156: changed the function of the configurable ref actions checkboxes for 
