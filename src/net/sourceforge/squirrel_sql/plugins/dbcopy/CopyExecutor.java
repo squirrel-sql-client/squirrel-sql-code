@@ -558,10 +558,15 @@ public class CopyExecutor extends I18NBaseObject {
                 for (int i = 0; i < columnCount; i++) {
 
                     int sourceColType = sourceInfos[i].getDataType();
-                    int destColType   = destInfos[i].getDataType();
                     // If source column is type 1111 (OTHER), try to use the 
                     // column type name to find a type that isn't 1111.
                     sourceColType = DBUtil.replaceOtherDataType(sourceInfos[i]);
+
+                    int destColType   = destInfos[i].getDataType();
+                    // If source column is type 1111 (OTHER), try to use the 
+                    // column type name to find a type that isn't 1111.
+                    destColType = DBUtil.replaceOtherDataType(destInfos[i]);
+
                     
                     String bindVal = DBUtil.bindVariable(insertStmt,
                                                          sourceColType,
