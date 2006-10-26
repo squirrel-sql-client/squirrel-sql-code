@@ -76,6 +76,8 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
    public void setTableInfo(ITableInfo ti)
    {
       this.ti = ti;
+      // re-calculate fullTablename the next time it's requested.
+      fullTableName = null;
    }
 
    public void setSession(ISession session)
@@ -106,7 +108,8 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
             fullTableName = getUnambiguousTableName(_session, name);
          }
          catch (Exception e) {
-               // not sure what to do with this exception???
+            s_log.error(
+                "getFullTableName: Unexpected exception - "+e.getMessage(), e);
          }
       }
       return fullTableName;
