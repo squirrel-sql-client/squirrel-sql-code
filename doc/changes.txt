@@ -28,6 +28,10 @@ type name as reported by the JDBC driver is a standard type such as
 BLOB, VARCHAR, CLOB, CHAR, etc... A mapping exception is thrown 
 otherwise.
 
+1584260: (DBCopy plugin - Fix for issue where the same table is found in 
+multiple schemas/catalogs that the user has access to.  Now we specify catalog 
+or schema if the driver claims to support them.)
+
 1577254: Trigger details tabs aren't rendered
 
 1520156: changed the function of the configurable ref actions checkboxes for 
@@ -39,6 +43,7 @@ the database.  Now we do, by default)
 Bug Fix: Editing data in multiple tables would sometimes fail erroneously with
 an error message like "This row in the Database has changed since you 
 refreshed the data. No rows will be updated by this operation".
+
 
 2.3 Final
 =========
