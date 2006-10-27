@@ -1,8 +1,21 @@
 DBCopy Change Log
 =================
 
-1.1 (??/??/????)
+1.1 (Not yet released)
 ===
+
+1584283: (DBCopy plugin - Copying LOBs from Oracle to Oracle fails)
+If destination column type is Types.OTHER (1111), try to get 
+the type name and map it to a valid java SQL type (such as 
+Types.BLOB or Types.CLOB).  This only works when the database column
+type name as reported by the JDBC driver is a standard type such as 
+BLOB, VARCHAR, CLOB, CHAR, etc... A mapping exception is thrown 
+otherwise.
+
+1584260: (DBCopy plugin - Fix for issue where the same table is found in 
+multiple schemas/catalogs that the user has access to.  Now we specify catalog 
+or schema if the driver claims to support them.)
+
 - Relocated dialect framework to SQuirreL's fw module so that it can be re-used
   (namely in the refactoring plugin).  This breaks backward compatibility with
   previous versions of SQuirreL.  However, it means SQuirreL can be enhanced to
