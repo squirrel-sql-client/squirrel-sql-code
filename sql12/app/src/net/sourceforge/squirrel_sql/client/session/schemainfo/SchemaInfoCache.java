@@ -208,7 +208,7 @@ public class SchemaInfoCache implements Serializable
 
       for (int i = 0; i < types.length; i++)
       {
-         if(type.equals(types[i]))
+         if(type.trim().equalsIgnoreCase(types[i]))
          {
             return true;
          }
