@@ -25,7 +25,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Set;
 
 import net.sourceforge.squirrel_sql.client.db.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -703,7 +703,7 @@ public class CopyExecutor extends I18NBaseObject {
         SQLConnection destConn = prov.getCopyDestSession().getSQLConnection();
         for (int i = 0; i < dbObjs.length; i++) {
             ITableInfo ti = (ITableInfo) dbObjs[i];
-            List fkStmts = 
+            Set fkStmts = 
                 DBUtil.getForeignKeySQL(prov, ti, selectedTableInfos);
             Iterator it = fkStmts.iterator();
             while (it.hasNext()) {
