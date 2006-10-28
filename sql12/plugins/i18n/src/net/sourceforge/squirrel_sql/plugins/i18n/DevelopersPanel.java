@@ -1,13 +1,18 @@
 package net.sourceforge.squirrel_sql.plugins.i18n;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
-import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-
-import javax.swing.*;
-import java.awt.*;
 
 public class DevelopersPanel extends JPanel
 {
@@ -18,7 +23,6 @@ public class DevelopersPanel extends JPanel
    JTextField txtSourceDir = new JTextField();
    JButton btnChooseSourceDir;
    JButton btnAppendI18nInCode;
-   JCheckBox cbxIncludeTimestamp;
 
 
    public DevelopersPanel(PluginResources resources)
@@ -53,21 +57,13 @@ public class DevelopersPanel extends JPanel
 		MultipleLineLabel lblDescription = new MultipleLineLabel(s_stringMgr.getString("I18n.appendCodeDescription"));
       add(lblDescription, gbc);
 
-
-
       gbc = new GridBagConstraints(0,2,3,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
 		// i18n[I18n.appendI18nStringsProps=Create/Append I18nString.properties files]
       btnAppendI18nInCode = new JButton(s_stringMgr.getString("I18n.appendI18nStringsProps"));
-      add(btnAppendI18nInCode, gbc);
-
-      gbc = new GridBagConstraints(0,3,3,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
-        // i18n[I18n.includeTimestamp=Include timestamp in modified properties file]
-      cbxIncludeTimestamp = new JCheckBox(s_stringMgr.getString("I18n.includeTimestamp"));
-      add(cbxIncludeTimestamp, gbc);
-      
+      add(btnAppendI18nInCode, gbc);      
       
       JPanel pnlDist = new JPanel();
-      gbc = new GridBagConstraints(0,4,3,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5),0,0);
+      gbc = new GridBagConstraints(0,3,3,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5),0,0);
       add(pnlDist, gbc);
 
    }

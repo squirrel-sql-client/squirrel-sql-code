@@ -32,6 +32,7 @@ public class TranslatorsController
    private static final String PREF_KEY_SELECTED_LOCALE = "SquirrelSQL.i18n.selectedLocale";
    private static final String PREF_KEY_NATIVE2ASCII_COMMAND = "SquirrelSQL.i18n.native2AsciiCommand";
    private static final String PREF_KEY_NATIVE2ASCII_OUT_DIR = "SquirrelSQL.i18n.native2AsciiOutDir";
+   private static final String PREF_KEY_INCLUDE_TIMESTAMP = "SquirrelSQL.i18n.includeTimestamp";
 
 
    TranslatorsPanel _panel;
@@ -58,6 +59,14 @@ public class TranslatorsController
 
       _panel.tblBundels.setModel(_bundlesTableModel);
 
+      _panel.cbxIncludeTimestamp.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+              String includeTimestamp = 
+                  Boolean.valueOf(_panel.cbxIncludeTimestamp.isSelected()).toString();
+              Preferences.userRoot().put(PREF_KEY_INCLUDE_TIMESTAMP, includeTimestamp);
+          }          
+      });
+      
       _panel.btnChooseWorkDir.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
@@ -700,4 +709,5 @@ public class TranslatorsController
    {
       _app = app;
    }
+      
 }
