@@ -44,6 +44,9 @@ Bug Fix: Editing data in multiple tables would sometimes fail erroneously with
 an error message like "This row in the Database has changed since you 
 refreshed the data. No rows will be updated by this operation".
 
+Bug Fix: Solved issue where tables were not appearing in the object tree for
+Sun HADB (High-Availability Database).  Special thanks to Lars Heill of Sun
+Microsystems, Inc. for technical assistance with installing/configuring HADB.
 
 2.3 Final
 =========
