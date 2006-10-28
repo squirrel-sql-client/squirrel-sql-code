@@ -1,13 +1,25 @@
 package net.sourceforge.squirrel_sql.plugins.i18n;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.util.prefs.Preferences;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+
+import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
-import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
-import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-
-import javax.swing.*;
-import java.awt.*;
 
 public class TranslatorsPanel extends JPanel
 {
@@ -36,6 +48,9 @@ public class TranslatorsPanel extends JPanel
 
    JTable tblBundels = new JTable();
 
+   JCheckBox cbxIncludeTimestamp = null;
+   
+   private static final String PREF_KEY_INCLUDE_TIMESTAMP = "SquirrelSQL.i18n.includeTimestamp";
 
    public TranslatorsPanel(PluginResources resources)
    {
@@ -51,6 +66,10 @@ public class TranslatorsPanel extends JPanel
       tabTranlators.addTab(s_stringMgr.getString("I18n.info"), new JScrollPane(new MultipleLineLabel(infoText)));
 
 
+      String includeTimestamp = 
+          Preferences.userRoot().get(PREF_KEY_INCLUDE_TIMESTAMP, "true");
+      
+      cbxIncludeTimestamp.setSelected(includeTimestamp.equals("true"));
    }
 
 	private JPanel getTranslationsPanel(PluginResources resources)
@@ -121,13 +140,23 @@ public class TranslatorsPanel extends JPanel
       gbc = new GridBagConstraints(2, 4, 1, 1, 0, 0, GridBagConstraints.SOUTHWEST, GridBagConstraints.NONE, new Insets(5, 0, 0, 5), 0, 0);
       ret.add(btnChooseNativeToAsciiOutDir, gbc);
 
+      gbc = new GridBagConstraints(1,5,1,1,0,0, GridBagConstraints.SOUTHWEST, GridBagConstraints.NONE, new Insets(5,0,0,5),0,0);
+      // i18n[I18n.includeTimestamp=Include timestamp in modified properties file]
+      cbxIncludeTimestamp = new JCheckBox(s_stringMgr.getString("I18n.includeTimestamp"));
+      ret.add(cbxIncludeTimestamp, gbc);
 
 
-      gbc = new GridBagConstraints(0, 5, 3, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 0, 0, 5), 0, 0);
+/*      gbc = new GridBagConstraints(1,5,1,1,0,0, GridBagConstraints.SOUTHWEST, GridBagConstraints.NONE, new Insets(5,0,0,5),0,0);
+      // i18n[I18n.includeTimestamp=Include timestamp in modified properties file]
+      JLabel timestampLabel = new JLabel(s_stringMgr.getString("I18n.includeTimestamp"));
+      ret.add(timestampLabel, gbc);
+*/      
+      
+      gbc = new GridBagConstraints(0, 6, 3, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 0, 0, 5), 0, 0);
 		// i18n[I18n.bundles=Bundles]
 		ret.add(new JLabel(s_stringMgr.getString("I18n.bundles")), gbc);
 
-		gbc = new GridBagConstraints(0, 6, 3, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5, 0, 0, 5), 0, 0);
+		gbc = new GridBagConstraints(0, 7, 3, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5, 0, 0, 5), 0, 0);
 		ret.add(new JScrollPane(tblBundels), gbc);
 
 		return ret;
