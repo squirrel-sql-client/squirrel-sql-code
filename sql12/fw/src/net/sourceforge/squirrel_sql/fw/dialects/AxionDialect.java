@@ -174,7 +174,9 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect
      *         adding columns after a table has already been created.
      */
     public String[] getColumnAddSQL(String tableName, TableColumnInfo info) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("This database dialect doesn't support adding columns to tables");
+        return new String[] {
+            DialectUtils.getColumnAddSQL(tableName, info, this, false, false)
+        };
     }
 
     /**
@@ -209,7 +211,6 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect
      * @return true if the database supports dropping columns; false otherwise.
      */
     public boolean supportsDropColumn() {
-        // TODO: Need to verify this
         return true;
     }
     
@@ -223,8 +224,7 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect
      * @throws UnsupportedOperationException if the database doesn't support 
      *         dropping columns. 
      */
-    public String getColumnDropSQL(String tableName, String columnName) {
-        // TODO: Need to verify this        
+    public String getColumnDropSQL(String tableName, String columnName) {   
         return DialectUtils.getColumnDropSQL(tableName, columnName);
     }
     
@@ -241,8 +241,7 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect
      * @return the drop SQL command.
      */
     public String getTableDropSQL(String tableName, boolean cascadeConstraints){
-        // TODO: Need to verify this
-        return DialectUtils.getTableDropSQL(tableName, true, cascadeConstraints);
+        return DialectUtils.getTableDropSQL(tableName, false, cascadeConstraints);
     }
     
 }
