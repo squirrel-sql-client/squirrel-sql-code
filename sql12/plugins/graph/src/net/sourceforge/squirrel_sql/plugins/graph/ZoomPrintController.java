@@ -4,23 +4,23 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.FormatXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.PrintXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ZoomerXmlBean;
+import net.sourceforge.squirrel_sql.plugins.graph.graphtofiles.GraphToFilesCtrlr;
+import net.sourceforge.squirrel_sql.plugins.graph.graphtofiles.SaveToFilePageFormat;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
-import java.awt.print.PrinterJob;
-import java.awt.print.PageFormat;
-import java.awt.print.Paper;
+import java.awt.print.*;
+import java.awt.image.BufferedImage;
+import java.awt.*;
+import java.util.ArrayList;
 
 
 public class ZoomPrintController
 {
-   ZoomPrintPanel _panel = new ZoomPrintPanel();
-
    Zoomer _zoomer;
    private boolean _dontReactToSliderChanges = false;
    private ISession _session;
@@ -30,10 +30,15 @@ public class ZoomPrintController
    private GraphPlugin _plugin;
    private GraphPrintable _printable;
 
+   ZoomPrintPanel _panel = null;
+
+
    public ZoomPrintController(ZoomerXmlBean zoomerXmlBean, PrintXmlBean printXmlBean, EdgesListener edgesListener, GraphPrintable printable, ISession session, GraphPlugin plugin)
    {
       _printable = printable;
       _plugin = plugin;
+
+      _panel = new ZoomPrintPanel(new GraphPluginResources(_plugin));
 
       initZoom(session, zoomerXmlBean);
       initPrint(printXmlBean, edgesListener);
@@ -105,6 +110,14 @@ public class ZoomPrintController
          }
       });
 
+      _panel.btnSaveImages.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onSaveImages();
+         }
+      });
+
       _panel.cboFormat.addItemListener(new ItemListener()
       {
          public void itemStateChanged(ItemEvent e)
@@ -154,21 +167,9 @@ public class ZoomPrintController
 
    private void onPrint()
    {
-      FormatXmlBean format = (FormatXmlBean)_panel.cboFormat.getSelectedItem();
-
-      _printable.initPrint(format.getWidth(), format.getHeight(), _panel.sldEdges.getValue() / 100.0);
-
       PrinterJob printJob = PrinterJob.getPrinterJob();
-      PageFormat pf = new PageFormat();
 
-      if(format.isLandscape())
-      {
-         pf.setOrientation(PageFormat.LANDSCAPE);
-      }
-      else
-      {
-         pf.setOrientation(PageFormat.PORTRAIT);
-      }
+      PageFormat pf = initPrint(false);
 
       printJob.setPrintable(_printable, pf);
       if (printJob.printDialog())
@@ -183,6 +184,65 @@ public class ZoomPrintController
          }
       }
    }
+
+   private void onSaveImages()
+   {
+      try
+      {
+         PageFormat pf = initPrint(true);
+
+         ArrayList images = new ArrayList();
+
+         FormatXmlBean format = (FormatXmlBean)_panel.cboFormat.getSelectedItem();
+
+         PixelCalculater pc = new PixelCalculater(format);
+
+         for(int pageIndex = 0;; ++pageIndex)
+         {
+            BufferedImage img = new BufferedImage(pc.getPixelWidth(), pc.getPixelHeight(), BufferedImage.TYPE_INT_RGB);
+            img.getGraphics().setColor(Color.white);
+            img.getGraphics().fillRect(0,0,pc.getPixelWidth(), pc.getPixelHeight());
+            img.getGraphics().setColor(Color.black);
+            int pageState = _printable.print(img.getGraphics(), pf, pageIndex);
+
+            if(Printable.NO_SUCH_PAGE == pageState)
+            {
+               break;
+            }
+
+            images.add(img);
+         }
+
+         new GraphToFilesCtrlr(
+            (BufferedImage[]) images.toArray(new BufferedImage[images.size()]),
+            _session.getApplication().getMainFrame());
+      }
+      catch (PrinterException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+   private PageFormat initPrint(boolean isSaveToFile)
+   {
+      FormatXmlBean format = (FormatXmlBean)_panel.cboFormat.getSelectedItem();
+      _printable.initPrint(format.getWidth(), format.getHeight(), _panel.sldEdges.getValue() / 100.0);
+
+      PageFormat pf = isSaveToFile ? new SaveToFilePageFormat(format) : new PageFormat();
+
+      if(format.isLandscape())
+      {
+         pf.setOrientation(PageFormat.LANDSCAPE);
+      }
+      else
+      {
+         pf.setOrientation(PageFormat.PORTRAIT);
+      }
+
+
+      return pf;
+   }
+
 
    private void fireEdgesGraphComponentChanged(boolean showEdges)
    {

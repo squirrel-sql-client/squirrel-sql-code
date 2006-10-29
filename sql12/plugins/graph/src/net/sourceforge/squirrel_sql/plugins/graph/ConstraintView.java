@@ -243,6 +243,10 @@ public class ConstraintView implements GraphComponent
 
    public void paint(Graphics g, boolean isPrinting)
    {
+      Color colBuf = g.getColor();
+
+      g.setColor(Color.black);
+
       GraphLine[] lines = _constraintGraph.getAllLines();
       for (int i = 0; i < lines.length; i++)
       {
@@ -271,6 +275,8 @@ public class ConstraintView implements GraphComponent
             drawFoldingPoint(g, (FoldingPoint) foldingPoints.get(i));
          }
       }
+
+      g.setColor(colBuf);
    }
 
    private void drawConstraintNameOnLine(Graphics g, GraphLine line)
