@@ -711,9 +711,6 @@
 				<fileset dir="${core_dist_dir}/plugins">
 					<include name="**/*.jar"/>
 				</fileset>
-				<fileset dir="/home/manningr/projects/squirrel_snapshots/sql12/../squirrel-sql-dist/squirrel-sql/core/dist/lib">
-					<include name="junit.jar"/>				
-				</fileset>
 			</classpath>
 		</javac>
 
