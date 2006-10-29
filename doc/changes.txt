@@ -6,6 +6,15 @@ Not yet released - available in the latest snapshot, or at least checked into CV
 
     New Features/Enhancements:
 
+Schema refresh on catalog combo box change:
+Schemas are refreshed automatically, when the user switches to another catalog.
+On systems that support Catalogs like Sybase or MSSQL, Schemas within a Catalog only
+become accessible when the catalog combo box is switched to the their Catalog.
+To make Schemas available in the Object Tree, Code completion etc. after a Catalog switch
+Schemas are now automatically refreshed.
+(Thanks to Stan Berka for this patch)
+
+
 Graph Plugin:
 The Graph plugin now allows to save jpg images to files instead of printing them.
 The image files are an exact copy of what would be sent to a printer and
