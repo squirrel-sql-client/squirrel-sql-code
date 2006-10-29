@@ -18,7 +18,6 @@ package net.sourceforge.squirrel_sql.plugins.mssql.action;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -29,17 +28,13 @@ import javax.swing.JFileChooser;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverProperty;
 import net.sourceforge.squirrel_sql.fw.sql.WrappedSQLException;
-import net.sourceforge.squirrel_sql.fw.util.BaseException;
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.*;
 
 import net.sourceforge.squirrel_sql.plugins.mssql.MssqlPlugin;
 import net.sourceforge.squirrel_sql.plugins.mssql.gui.GenerateSqlDialog;
-import net.sourceforge.squirrel_sql.plugins.mssql.util.ExtensionFilter;
+import net.sourceforge.squirrel_sql.fw.util.ExtensionFilter;
 import net.sourceforge.squirrel_sql.plugins.mssql.util.MssqlIntrospector;
 
 public class GenerateSqlCommand implements ICommand {

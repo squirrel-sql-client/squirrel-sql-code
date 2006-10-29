@@ -17,15 +17,15 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+
 import java.io.File;
 import java.sql.DatabaseMetaData;
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 /**
  * A simple decorator of MetaDataDataSet which adds two additional properties - 
@@ -44,8 +44,6 @@ public class MetaDataDecoratorDataSet extends MetaDataDataSet {
        StringManagerFactory.getStringManager(MetaDataDecoratorDataSet.class);
     
     boolean finishedLocalRows = false;
-    
-    ISession _session = null;
     
     Iterator iter = null;
     ArrayList data = new ArrayList();
@@ -66,19 +64,18 @@ public class MetaDataDecoratorDataSet extends MetaDataDataSet {
     
     /**
      * 
-     * @param session
      * @param md
+     * @param driverClassName
+     * @param jarFileNames
      */
-    public MetaDataDecoratorDataSet(ISession session, DatabaseMetaData  md) 
+    public MetaDataDecoratorDataSet(DatabaseMetaData md, String driverClassName, String[] jarFileNames) 
     {
         super(md, null);
-        _session = session;
-        Object[] className = 
-            new Object[] {i18n.CLASS_NAME_LABEL, 
-                          _session.getDriver().getDriverClassName()};
+        Object[] className =
+            new Object[] {i18n.CLASS_NAME_LABEL, driverClassName};
         
         data.add(className);
-        String[] classPathFiles = _session.getDriver().getJarFileNames();
+        String[] classPathFiles = jarFileNames;
         StringBuffer classPathBuffer = new StringBuffer();
         if (classPathFiles.length == 0) {
             classPathBuffer.append(i18n.NO_JAR_FILES);
