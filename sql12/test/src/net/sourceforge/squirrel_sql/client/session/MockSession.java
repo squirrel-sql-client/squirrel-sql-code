@@ -78,6 +78,7 @@ public class MockSession implements ISession {
     {
     	System.out.println("Attempting to load class="+className);
     	Class.forName(className);
+        System.out.println("Getting connection for url="+jdbcUrl);
     	Connection c = DriverManager.getConnection(jdbcUrl, u, p);
     	sqlDriver = new MockSQLDriver(className, jdbcUrl);
     	con = new SQLConnection(c, null);
