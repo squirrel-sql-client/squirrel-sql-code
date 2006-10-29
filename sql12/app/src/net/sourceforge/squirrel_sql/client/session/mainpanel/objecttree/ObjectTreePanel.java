@@ -671,7 +671,6 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
     *
     * @param catalog null means any catalog
     * @param schema null means any schema
-    * @param table, view, ... but not a table or view column
     * @return true if the Object was found and selected.
     */
    public boolean selectInObjectTree(String catalog, String schema, String object)
@@ -765,8 +764,6 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 	/**
 	 * Set the panel in the data area to that passed.
 	 *
-	 * @param	comp	Component to be displayed. If <TT>null</TT> use an empty
-	 * 					panel.
 	 */
 	private void setSelectedObjectPanel(ObjectTreeTabbedPane pane)
 	{

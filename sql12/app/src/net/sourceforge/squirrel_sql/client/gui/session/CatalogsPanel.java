@@ -13,12 +13,13 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 import java.sql.SQLException;
 import java.util.Vector;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 
-public class CatalogsPanel extends JPanel
+public class CatalogsPanel extends JPanel implements ActionListener
 {
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
@@ -30,7 +31,6 @@ public class CatalogsPanel extends JPanel
 	private ISession _session;
 	private JComponent _parent;
 	private SQLCatalogsComboBox _catalogsCmb;
-	private Vector m_listeners = new Vector();
 	private PropertyChangeListener _connectionPropetryListener;
 
 	public CatalogsPanel(ISession session, JComponent parent)
@@ -71,7 +71,7 @@ public class CatalogsPanel extends JPanel
 		}
 		catch (SQLException e)
 		{
-			s_log.error("Error processing Propety ChangeEvent", e);
+            s_log.error("Error processing Property ChangeEvent", e);
 		}
 	}
 
@@ -129,16 +129,12 @@ public class CatalogsPanel extends JPanel
 
 		_catalogsCmb.setCatalogs(catalogs, selected);
 
-		for (int i = 0; i < m_listeners.size(); i++)
-		{
-			_catalogsCmb.addActionListener((ActionListener) m_listeners.get(i));
-		}
+      addActionListener(this);
 
 		Dimension prefSize = getPreferredSize();
 		prefSize.width = lblCatalogs.getPreferredSize().width + _catalogsCmb.getPreferredSize().width + 20;
 		setPreferredSize(prefSize);
 		setMaximumSize(prefSize);
-
 
 		setVisible(true);
 
@@ -147,7 +143,6 @@ public class CatalogsPanel extends JPanel
 
 	public void addActionListener(ActionListener catalogsComboListener)
 	{
-		m_listeners.add(catalogsComboListener);
 		if(null != _catalogsCmb)
 		{
 			_catalogsCmb.addActionListener(catalogsComboListener);
@@ -156,7 +151,6 @@ public class CatalogsPanel extends JPanel
 
 	public void removeActionListener(ActionListener catalogsComboListener)
 	{
-		m_listeners.remove(catalogsComboListener);
 		if(null != _catalogsCmb)
 		{
 			_catalogsCmb.addActionListener(catalogsComboListener);
@@ -180,4 +174,18 @@ public class CatalogsPanel extends JPanel
 	{
 		return (String) _catalogsCmb.getSelectedItem();
 	}
+
+
+    public void actionPerformed(ActionEvent e) {
+        // Catalog has changed.  Refresh the tree (in bckgrnd or it keeps the
+        // drop-down from rolling back until the tree refreshing is done.
+
+        _session.getApplication().getThreadPool().addTask(new Runnable()
+        {
+            public void run()
+            {
+                _session.getSchemaInfo().reloadAll();
+            }
+        });
+    }
 }

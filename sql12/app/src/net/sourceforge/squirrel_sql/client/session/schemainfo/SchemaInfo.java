@@ -1348,6 +1348,7 @@ public class SchemaInfo
 
    public void addSchemaInfoUpdateListener(SchemaInfoUpdateListener l)
    {
+      _listeners.remove(l);
       _listeners.add(l);
    }
 
