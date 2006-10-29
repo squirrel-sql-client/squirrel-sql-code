@@ -246,8 +246,7 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect
      * @return the drop SQL command.
      */
     public String getTableDropSQL(String tableName, boolean cascadeConstraints){
-        // TODO: Need to verify this
-        return DialectUtils.getTableDropSQL(tableName, true, cascadeConstraints);
+        return DialectUtils.getTableDropSQL(tableName, false, cascadeConstraints);
     }
     
 }

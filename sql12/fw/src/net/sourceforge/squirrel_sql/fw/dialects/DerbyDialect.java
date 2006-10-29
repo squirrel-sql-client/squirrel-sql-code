@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 import java.sql.Types;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 /**
@@ -178,6 +179,19 @@ public class DerbyDialect extends DB2Dialect
         if (info.isNullable().equals("NO")) {
             result.append(" NOT NULL ");
         }        
+        if (info.getDefaultValue() != null 
+                && !info.getDefaultValue().equals("")) 
+        {
+            if (JDBCTypeMapper.isNumberType(info.getDataType())) {
+                result.append(" DEFAULT ");
+                result.append(info.getDefaultValue());
+            } else {
+                result.append(" DEFAULT ");
+                result.append("'");
+                result.append(info.getDefaultValue());
+                result.append("'");
+            }
+        }
         return new String[] { result.toString() };
     }
 
@@ -203,7 +217,7 @@ public class DerbyDialect extends DB2Dialect
      *         annotating columns with a comment.
      */
     public String getColumnCommentAlterSQL(String tableName, String columnName, String comment) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("This database dialect doesn't support adding comments to columns");
+        throw new UnsupportedOperationException("Derby doesn't support adding comments to columns");
     }
 
     /**
@@ -213,8 +227,7 @@ public class DerbyDialect extends DB2Dialect
      * @return true if the database supports dropping columns; false otherwise.
      */
     public boolean supportsDropColumn() {
-        // TODO: Need to verify this
-        return true;
+        return false;
     }
 
     /**
@@ -228,8 +241,7 @@ public class DerbyDialect extends DB2Dialect
      *         dropping columns. 
      */
     public String getColumnDropSQL(String tableName, String columnName) {
-        // TODO: Need to verify this        
-        return DialectUtils.getColumnDropSQL(tableName, columnName);
+        throw new UnsupportedOperationException("Derby doesn't support dropping columns");
     }
     
     /**
@@ -245,8 +257,7 @@ public class DerbyDialect extends DB2Dialect
      * @return the drop SQL command.
      */
     public String getTableDropSQL(String tableName, boolean cascadeConstraints){
-        // TODO: Need to verify this
-        return DialectUtils.getTableDropSQL(tableName, true, cascadeConstraints);
+        return DialectUtils.getTableDropSQL(tableName, false, cascadeConstraints);
     }
     
 }
