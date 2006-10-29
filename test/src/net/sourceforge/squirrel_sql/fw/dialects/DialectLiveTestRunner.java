@@ -4,7 +4,10 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.ResourceBundle;
+import java.util.StringTokenizer;
 
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.db.dialects.DialectFactory;
@@ -22,7 +25,7 @@ import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
  */
 public class DialectLiveTestRunner {
 
-    ISession[] sessions = null;
+    ArrayList sessions = new ArrayList();
     ResourceBundle bundle = null;
     
     
@@ -34,31 +37,44 @@ public class DialectLiveTestRunner {
     }
     
     private void initSessions() throws Exception {
-        String jdbcPropCount = bundle.getString("jdbcPropCount");
-        int count = Integer.parseInt(jdbcPropCount);
-        sessions = new ISession[count];
-        for (int i=0; i < count; i++) {
-            String url = bundle.getString("jdbcUrl_"+i);
-            String user = bundle.getString("jdbcUser_"+i);
-            String pass = bundle.getString("jdbcPass_"+i);
-            String driver = bundle.getString("jdbcDriver_"+i);
-            sessions[i] = new MockSession(driver, url, user, pass);
-        }        
+        String dbsToTest = bundle.getString("dbsToTest");
+        StringTokenizer st = new StringTokenizer(dbsToTest, ",");
+        ArrayList dbs = new ArrayList();
+        while (st.hasMoreTokens()) {
+            String db = st.nextToken().trim();
+            dbs.add(db);
+        }
+        for (Iterator iter = dbs.iterator(); iter.hasNext();) {
+            String db = (String) iter.next();
+            String url = bundle.getString(db+"_jdbcUrl");
+            String user = bundle.getString(db+"_jdbcUser");
+            String pass = bundle.getString(db+"_jdbcPass");
+            String driver = bundle.getString(db+"_jdbcDriver");
+            sessions.add(new MockSession(driver, url, user, pass));            
+        }
     }
     
     private void runTests() throws Exception {
-        for (int i = 0; i < sessions.length; i++) {
-            ISession session = sessions[i];
+
+        for (Iterator iter = sessions.iterator(); iter.hasNext();) {
+            ISession session = (ISession) iter.next();
             HibernateDialect dialect = getDialect(session);
             createTestTable(session);
             TableColumnInfo firstCol = 
                 getIntegerColumn("nullint", true, "0", "An int comment");
+            TableColumnInfo secondCol =
+                getIntegerColumn("notnullint", false, "0", "An int comment");
+            TableColumnInfo thirdCol =
+                getVarcharColumn("nullvc", true, "defVal", "A varchar comment");
+            TableColumnInfo fourthCol =
+                getVarcharColumn("notnullvc", false, "defVal", "A varchar comment");
             addColumn(session, firstCol);
-            addColumn(session, getIntegerColumn("notnullint", false, "0", "An int comment"));
-            addColumn(session, getVarcharColumn("nullvc", true, "defVal", "A varchar comment"));
-            addColumn(session, getVarcharColumn("notnullvc", false, "defVal", "A varchar comment"));
+            addColumn(session, secondCol);
+            addColumn(session, thirdCol);
+            addColumn(session, fourthCol);
             if (dialect.supportsDropColumn()) {
                 dropColumn(session, firstCol);
+                dropColumn(session, secondCol);
             }
         }
     }
@@ -69,7 +85,7 @@ public class DialectLiveTestRunner {
         try {
             runSQL(session, dialect.getTableDropSQL("test", true));
         } catch (SQLException e) {
-            // Don't care if table doesn't exist
+            e.printStackTrace();
         }
         runSQL(session, "create table test ( mychar char(10))");
     }
