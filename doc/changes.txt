@@ -6,6 +6,9 @@ Not yet released - available in the latest snapshot, or at least checked into CV
 
     New Features/Enhancements:
 
+Graph Plugin:
+Saving jpg images of a graph instead of printing. (Feature requested by David Karr)
+
 Re-organized the table and view context menus so that the SQLScripts 
 plugin menu items now appear under the "Scripts" menu item and in the
 same order that they appear in the session menu "Scripts" menu item.
