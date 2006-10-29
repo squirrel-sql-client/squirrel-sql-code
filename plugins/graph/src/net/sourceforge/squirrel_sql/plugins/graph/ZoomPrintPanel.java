@@ -25,15 +25,16 @@ public class ZoomPrintPanel extends JPanel
    JSlider sldEdges;
    JCheckBox chkShowEdges;
    JButton btnPrint;
+   JButton btnSaveImages;
 
-   public ZoomPrintPanel()
+   public ZoomPrintPanel(GraphPluginResources rsrc)
    {
       setLayout(new GridLayout(1,2, 20, 0));
       add(createZoomPanel());
-      add(createPrintPanel());
+      add(createPrintPanel(rsrc));
    }
 
-   private JPanel createPrintPanel()
+   private JPanel createPrintPanel(GraphPluginResources rsrc)
    {
       JPanel ret = new JPanel(new BorderLayout());
 
@@ -60,10 +61,27 @@ public class ZoomPrintPanel extends JPanel
 
       ret.add(sldEdges, BorderLayout.CENTER);
 
-      // TODO use a label
-		// i18n[graph.print=Print]
-		btnPrint = new JButton(s_stringMgr.getString("graph.print"));
-      ret.add(btnPrint, BorderLayout.EAST);
+
+
+
+      btnPrint = new JButton(rsrc.getIcon(GraphPluginResources.IKeys.PRINT_IMAGE));
+      Dimension printBtnPrefSize = btnPrint.getPreferredSize();
+      printBtnPrefSize.width -=10;
+      btnPrint.setPreferredSize(printBtnPrefSize);
+      // i18n[graph.printGraph=Print graph]
+      btnPrint.setToolTipText(s_stringMgr.getString("graph.printGraph"));
+
+      btnSaveImages = new JButton(rsrc.getIcon(GraphPluginResources.IKeys.SAVE_IMAGES_TO_FILE));
+      Dimension btnCopyToClipPrefSize = btnPrint.getPreferredSize();
+      btnCopyToClipPrefSize.width -=10;
+      btnSaveImages.setPreferredSize(btnCopyToClipPrefSize);
+      // i18n[graph.saveGraphImagesToFile=Copy graph to clipboard]
+      btnSaveImages.setToolTipText(s_stringMgr.getString("graph.saveGraphImagesToFile"));
+
+      JPanel pnlButtons = new JPanel(new GridLayout(1,2));
+      pnlButtons.add(btnSaveImages);
+      pnlButtons.add(btnPrint);
+      ret.add(pnlButtons, BorderLayout.EAST);
 
 
       return ret;

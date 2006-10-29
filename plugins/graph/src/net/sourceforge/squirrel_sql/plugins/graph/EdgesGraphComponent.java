@@ -34,11 +34,10 @@ public class EdgesGraphComponent implements GraphComponent
          return;
       }
 
+      PixelCalculater pc = new PixelCalculater(_format, _sldValue);
 
-      int pixelByCm = (int) (Toolkit.getDefaultToolkit().getScreenResolution() * CM_BY_INCH + 0.5);
-
-      int stepWitdth = (int)(_format.getWidth() * pixelByCm * _sldValue + 0.5);
-      int stepHeight = (int)(_format.getHeight() * pixelByCm * _sldValue + 0.5);
+      int stepWitdth = pc.getPixelWidth();
+      int stepHeight = pc.getPixelHeight();
 
       Color oldColor = g.getColor();
       try
