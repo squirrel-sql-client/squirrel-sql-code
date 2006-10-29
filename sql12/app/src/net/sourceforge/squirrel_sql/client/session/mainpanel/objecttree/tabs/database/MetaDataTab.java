@@ -71,7 +71,7 @@ public class MetaDataTab extends BaseDataSetTab
 		try
 		{
             DatabaseMetaData md = conn.getSQLMetaData().getJDBCMetaData();
-			return new MetaDataDecoratorDataSet(getSession(), md);
+			return new MetaDataDecoratorDataSet(md, getSession().getDriver().getDriverClassName(), getSession().getDriver().getJarFileNames());
 		}
 		catch (SQLException ex)
 		{

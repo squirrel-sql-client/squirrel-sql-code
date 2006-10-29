@@ -3,7 +3,7 @@ package net.sourceforge.squirrel_sql.plugins.graph.graphtofiles;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.plugins.mssql.util.ExtensionFilter;
+import net.sourceforge.squirrel_sql.fw.util.ExtensionFilter;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

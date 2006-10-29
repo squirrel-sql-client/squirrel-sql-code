@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.mssql.util;
+package net.sourceforge.squirrel_sql.fw.util;
 
 /*
  * Copyright (C) 2004 Ryan Walberg <generalpf@yahoo.com>
