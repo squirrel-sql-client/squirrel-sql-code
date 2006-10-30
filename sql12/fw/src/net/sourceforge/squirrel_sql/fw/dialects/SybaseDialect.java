@@ -209,7 +209,6 @@ public class SybaseDialect extends org.hibernate.dialect.SybaseDialect
      * @return true if the database supports dropping columns; false otherwise.
      */
     public boolean supportsDropColumn() {
-        // TODO: need to verify this
         return true;
     }
 
@@ -224,7 +223,6 @@ public class SybaseDialect extends org.hibernate.dialect.SybaseDialect
      *         dropping columns. 
      */
     public String getColumnDropSQL(String tableName, String columnName) {
-        // TODO: Need to verify this        
         return DialectUtils.getColumnDropSQL(tableName, columnName);
     }
     
@@ -241,8 +239,7 @@ public class SybaseDialect extends org.hibernate.dialect.SybaseDialect
      * @return the drop SQL command.
      */
     public String getTableDropSQL(String tableName, boolean cascadeConstraints){
-        // TODO: Need to verify this
-        return DialectUtils.getTableDropSQL(tableName, true, cascadeConstraints);
+        return DialectUtils.getTableDropSQL(tableName, false, cascadeConstraints);
     }
     
 }
