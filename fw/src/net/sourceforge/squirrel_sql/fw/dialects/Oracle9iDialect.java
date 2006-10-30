@@ -238,8 +238,12 @@ public class Oracle9iDialect extends Oracle9Dialect
      *         dropping columns. 
      */
     public String getColumnDropSQL(String tableName, String columnName) {
-        // TODO: Need to verify this        
-        return DialectUtils.getColumnDropSQL(tableName, columnName);
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(tableName);
+        result.append(" DROP COLUMN ");
+        result.append(columnName);
+        return result.toString();
     }
     
     /**
@@ -255,8 +259,14 @@ public class Oracle9iDialect extends Oracle9Dialect
      * @return the drop SQL command.
      */
     public String getTableDropSQL(String tableName, boolean cascadeConstraints){
-        // TODO: Need to verify this
-        return DialectUtils.getTableDropSQL(tableName, true, cascadeConstraints);
+        StringBuffer result = new StringBuffer();
+        result.append("DROP TABLE ");
+        result.append(tableName);
+        
+        if (cascadeConstraints) {
+            result.append(" CASCADE CONSTRAINTS");
+        }
+        return result.toString();
     }
     
 }

@@ -177,7 +177,9 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect
      *         adding columns after a table has already been created.
      */
     public String[] getColumnAddSQL(String tableName, TableColumnInfo info) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("This database dialect doesn't support adding columns to tables");
+        return new String[] {
+            DialectUtils.getColumnAddSQL(tableName, info, this, true, false)
+        };
     }
 
     /**
@@ -212,7 +214,6 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect
      * @return true if the database supports dropping columns; false otherwise.
      */
     public boolean supportsDropColumn() {
-        // TODO: need to verify this
         return true;
     }
 
@@ -226,8 +227,7 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect
      * @throws UnsupportedOperationException if the database doesn't support 
      *         dropping columns. 
      */
-    public String getColumnDropSQL(String tableName, String columnName) {
-        // TODO: Need to verify this        
+    public String getColumnDropSQL(String tableName, String columnName) {   
         return DialectUtils.getColumnDropSQL(tableName, columnName);
     }
     
