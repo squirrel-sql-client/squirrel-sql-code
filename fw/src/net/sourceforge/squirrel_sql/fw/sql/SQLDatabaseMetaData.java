@@ -87,6 +87,7 @@ public class SQLDatabaseMetaData
 	 */
 	private interface IDriverNames
 	{
+        String AS400 = "AS/400 Toolbox for Java JDBC Driver";
         String FRONTBASE = "FBJDriver";
         String FREE_TDS = "InternetCDS Type 4 JDBC driver for MS SQLServer";
         String IBMDB2 = "IBM DB2";
@@ -1061,6 +1062,10 @@ public class SQLDatabaseMetaData
       if (dbDriverName.equals(IDriverNames.FREE_TDS) && schemaPattern == null)
       {
          schemaPattern = "dbo";
+      }
+      if (dbDriverName.equals(IDriverNames.AS400) && schemaPattern == null)
+      {
+          schemaPattern = "*ALLUSR";
       }
 
       Map nameMap = null;
