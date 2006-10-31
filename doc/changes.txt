@@ -52,6 +52,10 @@ or schema if the driver claims to support them.)
 
 1577254: Trigger details tabs aren't rendered
 
+1532857: (DB2 on AS400 table list not shown) Incorporated Colin Bell's patch 
+to address this issue which causes SQuirreL to give '*ALLUSR' for the schema
+value when calling DatabaseMetaData.getTables.
+
 1520156: changed the function of the configurable ref actions checkboxes for 
 SQLScript plugin.  Now, they will override what is contained in the 
 DatabaseMetaData if checked.  If not checked, we now use whatever the database 
