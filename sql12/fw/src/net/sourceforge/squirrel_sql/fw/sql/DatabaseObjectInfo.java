@@ -20,6 +20,8 @@ package net.sourceforge.squirrel_sql.fw.sql;
 import java.sql.SQLException;
 import java.io.Serializable;
 
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
 public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
 {
    /** Property names for this bean. */
@@ -143,17 +145,25 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
       {
          // Ignore.
       }
+      
       try
       {
-         if (supportsCatalogsInDataManipulation)
-         {
+//         if (supportsCatalogsInDataManipulation)
+//         {
             catSep = md.getCatalogSeparator();
-         }
+//         }
       }
       catch (SQLException ignore)
       {
          // Ignore.
       }
+      
+      
+      if (StringUtilities.isEmpty(catSep))
+      {
+          catSep = ".";
+      }
+    		  
       try
       {
          identifierQuoteString = md.getIdentifierQuoteString();
@@ -169,10 +179,12 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
       }
 
       StringBuffer buf = new StringBuffer();
-      if (catSep != null
-         && catSep.length() > 0
-         && _catalog != null
-         && _catalog.length() > 0)
+      //if (catSep != null
+      //   && catSep.length() > 0
+      //&& _catalog != null
+      //&& _catalog.length() > 0)
+      if (supportsCatalogsInDataManipulation
+    	&& !StringUtilities.isEmpty(_catalog))	  
       {
          if (identifierQuoteString != null)
          {
@@ -198,7 +210,8 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
          {
             buf.append(identifierQuoteString);
          }
-         buf.append(".");
+         //buf.append(".");
+         buf.append(catSep);
       }
 
       if (identifierQuoteString != null)

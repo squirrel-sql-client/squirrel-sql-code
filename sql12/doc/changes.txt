@@ -6,6 +6,8 @@ Not yet released - available in the latest snapshot, or at least checked into CV
 
     New Features/Enhancements:
 
+1015274 -  DB2/400 system naming support
+
 Schema refresh on catalog combo box change:
 Schemas are refreshed automatically, when the user switches to another catalog.
 On systems that support Catalogs like Sybase or MSSQL, Schemas within a Catalog only
