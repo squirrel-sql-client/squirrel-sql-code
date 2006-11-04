@@ -40,6 +40,16 @@ get this information.
 
 	Bug-Fixes:
 
+1554175: (Aliases lost on close) 
+1532997: (NullPointerException when trying to save alias)
+1522229: (Error occured saving Alias Definitions java.lang.NullPointer)
+Many people complained about this one.  At first we determined this was low 
+priority since it didn't seem to be reproducable on all jvms. We inadvertantly 
+changed the SQLDriverPropertyCollectionBeanInfo such that it no longer 
+accurately described the bean SQLDriverPropertyCollection.  in 1.4.2_05 this 
+triggered an NPE bug in the jvm code (Introspector.addPropertyDescriptor) which 
+caused the SQLAlias persistence to fail, leaving the user with no aliases.
+
 1584283: (DBCopy plugin - Copying LOBs from Oracle to Oracle fails)
 If destination column type is Types.OTHER (1111), try to get 
 the type name and map it to a valid java SQL type (such as 
