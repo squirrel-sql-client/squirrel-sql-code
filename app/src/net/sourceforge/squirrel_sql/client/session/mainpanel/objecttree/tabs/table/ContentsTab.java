@@ -155,7 +155,27 @@ public class ContentsTab extends BaseTableTab
 //							if (evt.isPopupTrigger() || (evt.getButton()==3 && evt.getClickCount() == 1))
 							if (evt.isPopupTrigger() || (((evt.getModifiers() & MouseEvent.BUTTON3_MASK) != 0) && evt.getClickCount() == 1))
 							{
-								new ContentsTabPopupMenu(viewer).show(evt);
+								new EditableContentsTabPopupMenu(viewer).show(evt);
+							}
+						}
+					});
+				}
+				else
+				{
+					c.addMouseListener(new MouseAdapter()
+					{
+						public void mousePressed(MouseEvent evt)
+						{
+							// in theory, we should only need to check the PopupTrigger, but
+							// at least one user had a problem where they clicked on the right
+							// mouse button and the event was not classified as the PopupTrigger.
+							// It is unknown why that occured, but we needed to add the second
+							// test (button3&&clickcount=1) to resolve that issue.
+// TODO: Put back in when JDK1.4 is minimum supported version.
+//							if (evt.isPopupTrigger() || (evt.getButton()==3 && evt.getClickCount() == 1))
+							if (evt.isPopupTrigger() || (((evt.getModifiers() & MouseEvent.BUTTON3_MASK) != 0) && evt.getClickCount() == 1))
+							{
+								new UneditableContentsTabPopupMenu(viewer).show(evt);
 							}
 						}
 					});
@@ -516,12 +536,25 @@ public class ContentsTab extends BaseTableTab
 	 * This inner class defines a pop-up menu with only one item, "insert", which
 	 * allows the user to add a new row to an empty table.
 	 */
-	class ContentsTabPopupMenu extends TablePopupMenu
+	class EditableContentsTabPopupMenu extends TablePopupMenu
 	{
-		public ContentsTabPopupMenu(DataSetViewerTablePanel viewer) {
+		public EditableContentsTabPopupMenu(DataSetViewerTablePanel viewer) {
 			super(viewer.isTableEditable(), ContentsTab.this, viewer);
 			removeAll();	// the normal constructor creates a bunch of entries we do not want
 			add(_insertRow);
+		}
+	}
+
+	/**
+	 * This inner class defines a pop-up menu with only one item, "make editable", which
+	 * allows the user to put an empty table into editable mode.
+	 */
+	class UneditableContentsTabPopupMenu extends TablePopupMenu
+	{
+		public UneditableContentsTabPopupMenu(DataSetViewerTablePanel viewer) {
+			super(viewer.isTableEditable(), ContentsTab.this, viewer);
+			removeAll();	// the normal constructor creates a bunch of entries we do not want
+			add(_makeEditable);
 		}
 	}
 
