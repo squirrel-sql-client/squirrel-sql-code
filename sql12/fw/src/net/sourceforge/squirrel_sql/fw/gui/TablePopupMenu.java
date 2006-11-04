@@ -73,7 +73,7 @@ public class TablePopupMenu extends BasePopupMenu
 	private AlwaysAdoptAllColWidthsAction _alwaysAdoptAllColWidthsAction = new AlwaysAdoptAllColWidthsAction();
    private ShowRowNumbersAction _showRowNumbersAction = new ShowRowNumbersAction();
 
-	private MakeEditableAction _makeEditable = new MakeEditableAction();
+    protected MakeEditableAction _makeEditable = new MakeEditableAction();
 	private UndoMakeEditableAction _undoMakeEditable = new UndoMakeEditableAction();
 	private DeleteRowsAction _deleteRows = new DeleteRowsAction();
 	protected InsertRowAction _insertRow = new InsertRowAction();
