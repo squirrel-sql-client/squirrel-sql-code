@@ -1,7 +1,9 @@
 Look and Feel Plugin Change Log
 ===============================
+
 0.40
 ====
+
 Enhancements
 ------------
 - JGoodies Looks upgraded to 2.1pre4.
@@ -10,33 +12,44 @@ Enhancements
 - Nimrod Look and Feel 0.94 added.
 - Tonic Look and Feel 1.0.5 added.
 
+
 0.32
+
 ====
+
 Enhancements
 ------------
 - Kunststoff Look and Feel upgraded to 2.0.2.
 - Skin Look and Feel upgraded to 1.2.9.
 - JGoodies Plastic replaced by JGoodies Look and Feel 1.1.3.
 
+
+
 Bug Fixes
 ---------
 - Upgrading the Skin Look and Feel to 1.2.9 fixed a problem with SQuirreL
   sometimes locking when started up using the Skin Look and Feel.
 
+
 0.31
 ====
+
 Bug Fixes
 ---------
 - the default Metal Theme (Steel) can now be specified.
 
+
 0.30
 ====
+
 Enhancements
 ------------
 - Improved plugin startup time.
 - Skin Look and Feel updated to 1.2.3.
 - Now supports themes for the Metal Look and Feel.
 - Plastic Look and Feel added.
+
+
 
 Bug Fixes
 ---------
@@ -47,18 +60,24 @@ Bug Fixes
   a new Look and Feel is actually selected in
   the preferences dialog.
 
+
 Other
 -----
 - Display the licences for all the supplied Look and Feel
   implementations in the Licence menu option.
 
+
 0.22
 ====
+
 Other
 -----
 - Updated for SQuirreL 1.1beta6.
+
+
 0.21
 ====
+
 
 Enhancements
 ------------
@@ -66,11 +85,14 @@ Enhancements
 - Can now select themes for the OYOAHA Look and Feel.
 - Only show Skin Look and Feel configuration controls in the
   preferences panel if the Skin Look and Feel is selected.
+
 Bug Fixes
 ---------
 - Add missing Gradient theme file for the Oyoaha L&F.
+
 0.12
 ====
+
 Enhancements
 ------------
 - Can now select font for status bars.
@@ -79,22 +101,31 @@ Enhancements
 - OYOAHA Look and Feel added.
 - Font info split off into its own tab.
 
+
 Bug Fixes
 ---------
 - Update all frames when Look and Feel changed.
 
 
+
+
+
 0.11
 ====
+
 
 Bug Fixes
 ---------
 - Skin Look and Feel jar placed in correct directory.
+
+
 Other
 -----
 - All Skin Look and Feel theme packs are now placed in the
   subdirectory skinlf-theme-packs instead of theme_packs.
 
+
 0.1
 ===
 - Initial release
+
