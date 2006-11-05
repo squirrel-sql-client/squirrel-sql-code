@@ -25,7 +25,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Set;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -557,10 +557,15 @@ public class CopyExecutor extends I18NBaseObject {
                 for (int i = 0; i < columnCount; i++) {
 
                     int sourceColType = sourceInfos[i].getDataType();
-                    int destColType   = destInfos[i].getDataType();
                     // If source column is type 1111 (OTHER), try to use the 
                     // column type name to find a type that isn't 1111.
                     sourceColType = DBUtil.replaceOtherDataType(sourceInfos[i]);
+
+                    int destColType   = destInfos[i].getDataType();
+                    // If source column is type 1111 (OTHER), try to use the 
+                    // column type name to find a type that isn't 1111.
+                    destColType = DBUtil.replaceOtherDataType(destInfos[i]);
+
                     
                     String bindVal = DBUtil.bindVariable(insertStmt,
                                                          sourceColType,
@@ -697,7 +702,7 @@ public class CopyExecutor extends I18NBaseObject {
         SQLConnection destConn = prov.getCopyDestSession().getSQLConnection();
         for (int i = 0; i < dbObjs.length; i++) {
             ITableInfo ti = (ITableInfo) dbObjs[i];
-            List fkStmts = 
+            Set fkStmts = 
                 DBUtil.getForeignKeySQL(prov, ti, selectedTableInfos);
             Iterator it = fkStmts.iterator();
             while (it.hasNext()) {

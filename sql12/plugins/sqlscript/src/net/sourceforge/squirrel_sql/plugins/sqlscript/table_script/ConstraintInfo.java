@@ -10,13 +10,23 @@ public class ConstraintInfo extends Object
   String fkName;
   Vector fkCols;
   Vector pkCols;
+  short updateRule;
+  short deleteRule;
 
-   public ConstraintInfo(String fkTable, String pkTable, String fkName, Vector fkCols, Vector pkCols)
+   public ConstraintInfo(String fkTable, 
+                         String pkTable, 
+                         String fkName, 
+                         Vector fkCols, 
+                         Vector pkCols,
+                         short deleteRule,
+                         short updateRule)
    {
       this.fkTable = fkTable;
       this.pkTable = pkTable;
       this.fkName = fkName;
       this.fkCols = fkCols;
       this.pkCols = pkCols;
+      this.deleteRule = deleteRule;
+      this.updateRule = updateRule;
    }
 }

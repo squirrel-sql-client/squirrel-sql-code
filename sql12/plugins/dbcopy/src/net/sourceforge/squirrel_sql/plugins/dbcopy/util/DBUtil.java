@@ -42,9 +42,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -136,7 +138,14 @@ public class DBUtil extends I18NBaseObject {
     {
         ArrayList pkColumns = new ArrayList();
         DatabaseMetaData md = sourceConn.getConnection().getMetaData();
-        ResultSet rs = md.getPrimaryKeys(null, null, ti.getSimpleName());
+        ResultSet rs = null;
+        if (md.supportsCatalogsInTableDefinitions()) {
+            rs = md.getPrimaryKeys(ti.getCatalogName(), null, ti.getSimpleName());
+        } else if (md.supportsSchemasInTableDefinitions()) {
+            rs = md.getPrimaryKeys(null, ti.getSchemaName(), ti.getSimpleName());
+        } else {
+            rs = md.getPrimaryKeys(null, null, ti.getSimpleName());
+        }
         while (rs.next()) {
             String keyColumn = rs.getString(4);
             if (keyColumn != null) {
@@ -156,18 +165,27 @@ public class DBUtil extends I18NBaseObject {
      * 
      * @param sourceConn
      * @param ti
-     * @return
+     * @return Set a set of SQL statements that can be used to create foreign
+     *             key constraints.
      * @throws SQLException
      */
-    public static List getForeignKeySQL(SessionInfoProvider prov,  
+    public static Set getForeignKeySQL(SessionInfoProvider prov,  
                                         ITableInfo ti,
                                         ArrayList selectedTableInfos) 
         throws SQLException , UserCancelledOperationException
     {
         SQLConnection sourceConn = prov.getCopySourceSession().getSQLConnection();
         DatabaseMetaData md = sourceConn.getConnection().getMetaData();
-        ResultSet rs = md.getImportedKeys(null, null, ti.getSimpleName());
-        ArrayList result = new ArrayList();
+        ResultSet rs = null;
+        if (md.supportsCatalogsInTableDefinitions()) {
+            rs = md.getImportedKeys(ti.getCatalogName(), null, ti.getSimpleName());
+        } else if (md.supportsSchemasInTableDefinitions()) {
+            rs = md.getImportedKeys(null, ti.getSchemaName(), ti.getSimpleName());
+        } else {
+            rs = md.getImportedKeys(null, null, ti.getSimpleName());
+        }
+        
+        HashSet result = new HashSet();
         while (rs.next()) {
             StringBuffer sb = new StringBuffer();
             String pkTableName = rs.getString(3);

@@ -127,9 +127,12 @@ public class SQLDriverPropertyCollection
 
 	public synchronized void applyDriverPropertynfo(DriverPropertyInfo[] infoAr)
 	{
-		if (infoAr == null)
+		if (infoAr == null || infoAr.length == 0)
 		{
-			infoAr = new DriverPropertyInfo[0];
+			infoAr = new DriverPropertyInfo[1];
+            infoAr[0] = new DriverPropertyInfo("remarksReporting", "true");
+            infoAr[0].required = false;
+            infoAr[0].description = "Set to true in order to table/column comments";
 		}
 		for (int i = 0; i < infoAr.length; ++i)
 		{
