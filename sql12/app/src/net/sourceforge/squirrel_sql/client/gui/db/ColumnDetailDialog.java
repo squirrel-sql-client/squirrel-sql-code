@@ -490,6 +490,21 @@ public class ColumnDetailDialog extends JDialog {
         contentPane.add(pane, BorderLayout.CENTER);
         
         contentPane.add(getButtonPanel(), BorderLayout.SOUTH);
+        
+        // TODO: remove when modify is implemented for the fields below
+        if (_mode == MODIFY_MODE) {
+            typeList.setEnabled(false);
+            typeList.setToolTipText("Modifying column type is not yet supported");
+            lengthSpinner.setEnabled(false);
+            lengthSpinner.setToolTipText("Modifying column length is not yet supported");
+            precisionSpinner.setEnabled(false);
+            precisionSpinner.setToolTipText("Modifying column precision is not yet supported");
+            scaleSpinner.setEnabled(false);
+            scaleSpinner.setToolTipText("Modifying column scale is not yet supported");
+            defaultTextField.setEnabled(false);
+            defaultTextField.setToolTipText("Modifying column default is not yet supported");            
+        }
+        
     }
     
     private JPanel getButtonPanel() {
@@ -541,6 +556,10 @@ public class ColumnDetailDialog extends JDialog {
             if (precisionSpinner == null) {
                 return;
             }
+            // TODO: remove this when modifying column size is supported
+            if (_mode == MODIFY_MODE) {
+                return;
+            }
             String columnType = (String)typeList.getSelectedItem();
             int jdbcType = JDBCTypeMapper.getJdbcType(columnType);
             if (JDBCTypeMapper.isNumberType(jdbcType)) {
@@ -577,7 +596,7 @@ public class ColumnDetailDialog extends JDialog {
                 commentTextArea.setToolTipText(noColumnSupportMsg);
             } else {
                 commentTextArea.setEditable(true);
-                commentTextArea.setToolTipText("");
+                commentTextArea.setToolTipText(null);
             }
         }
     }
