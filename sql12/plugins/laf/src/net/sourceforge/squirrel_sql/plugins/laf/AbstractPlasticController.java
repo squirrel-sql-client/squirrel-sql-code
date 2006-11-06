@@ -121,7 +121,7 @@ abstract class AbstractPlasticController extends DefaultLookAndFeelController
 		
 		for (int i = 0; i < extras.length; ++i)
 		{
-			_themes.put(extras[i].getName(), extras[i]);;
+			_themes.put(extras[i].getName(), extras[i]);
 		}
 
 		for (int i = 0; i < PLASTIC_THEME_CLASS_NAMES.length; ++i)
