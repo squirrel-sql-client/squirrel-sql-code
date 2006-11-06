@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
 
 /*
- * Copyright (C) 2005 Rob Manning
+ * Copyright (C) 2006 Rob Manning
  * manningr@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -30,7 +30,6 @@ import javax.swing.JOptionPane;
 import net.sourceforge.squirrel_sql.client.db.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.client.gui.db.ColumnDetailDialog;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
-import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
@@ -40,7 +39,6 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -51,7 +49,7 @@ import org.hibernate.HibernateException;
 
 
 
-public class AddColumnCommand implements ICommand
+public class AddColumnCommand extends AbstractRefactoringCommand
 {
     
     /** Internationalized strings for this class. */
@@ -61,12 +59,6 @@ public class AddColumnCommand implements ICommand
     /** Logger for this class. */
     private final static ILogger log = 
                       LoggerController.createLogger(AddColumnCommand.class);
-    
-    /** Current session */
-    private ISession _session;
-    
-    /** Selected table */
-    private final IDatabaseObjectInfo _info;
     
     
     private ColumnDetailDialog dialog = null;
@@ -80,9 +72,7 @@ public class AddColumnCommand implements ICommand
      */
     public AddColumnCommand(ISession session, IDatabaseObjectInfo info)
     {
-        super();
-        _session = session;
-        _info = info;
+        super(session, info);
     }
     
     /**
@@ -96,8 +86,6 @@ public class AddColumnCommand implements ICommand
             dialect =  
                 DialectFactory.getDialect(_session, DialectFactory.DEST_TYPE);
             String dbName = dialect.getDisplayName();
-            String title = 
-                s_stringMgr.getString("AddColumnCommand.addColumnDialogTitle");
             dialog = new ColumnDetailDialog(ColumnDetailDialog.ADD_MODE);
             dialog.setTableName(tableName);
             dialog.addOKListener(new AddButtonListener());
@@ -118,9 +106,7 @@ public class AddColumnCommand implements ICommand
         TableColumnInfo info = dialog.getColumnInfo();
         String[] result = null;
         try {
-            result = DBUtil.getAlterSQLForColumnAddition(dialog.getTableName(), 
-                                                         info, 
-                                                         dialect);
+            result = DBUtil.getAlterSQLForColumnAddition(info, dialect);
         } catch (HibernateException e1) {
             String dataType = dialog.getSelectedTypeName();
             JOptionPane.showMessageDialog(
@@ -138,8 +124,7 @@ public class AddColumnCommand implements ICommand
             _session.getMessageHandler().showMessage(msg);
 
         }
-        return result;
-        
+        return result;        
     }
     
     private class AddButtonListener implements ActionListener {
@@ -156,10 +141,10 @@ public class AddColumnCommand implements ICommand
                 return;
             }
             String[] sqls = getSQLFromDialog();
-            if (sqls == null) {
+            if (sqls == null || sqls.length == 0) {
                 return;
             }
-            AddColumnExecHandler handler = new AddColumnExecHandler(_session);            
+            CommandExecHandler handler = new CommandExecHandler(_session);            
             // TODO: execute SQL.  Maybe should put it on the SQLEditor first?
             // No, that should be configurable.
 
@@ -176,7 +161,7 @@ public class AddColumnCommand implements ICommand
                 // Execute the sql synchronously
                 executer.run();                
                 
-                if (handler.exceptionEncountered) {
+                if (handler.exceptionEncountered()) {
                     // Stop processing statements
                     break;
                 }
@@ -206,22 +191,6 @@ public class AddColumnCommand implements ICommand
                 log.error("Unexpected exception - "+e.getMessage(), e);
             }
             return result;
-        }
-    }
-
-    private class AddColumnExecHandler extends DefaultSQLExecuterHandler {
-        private boolean exceptionEncountered = false;
-        
-        public AddColumnExecHandler(ISession session) {
-            super(session);
-        }
-
-        /* (non-Javadoc)
-         * @see net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler#sqlExecutionException(java.lang.Throwable, java.lang.String)
-         */
-        public void sqlExecutionException(Throwable th, String postErrorString) {
-            super.sqlExecutionException(th, postErrorString);
-            exceptionEncountered = true;
         }
     }
     

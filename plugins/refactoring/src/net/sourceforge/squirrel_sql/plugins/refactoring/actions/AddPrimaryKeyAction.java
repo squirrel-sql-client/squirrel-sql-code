@@ -24,33 +24,33 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.plugins.refactoring.commands.ModifyColumnCommand;
+import net.sourceforge.squirrel_sql.plugins.refactoring.commands.AddPrimaryKeyCommand;
 
-public class ModifyColumnAction extends AbstractRefactoringAction
+public class AddPrimaryKeyAction extends AbstractRefactoringAction
                                      implements ISessionAction {
 
     /** Internationalized strings for this class. */
     private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(ModifyColumnAction.class);
+        StringManagerFactory.getStringManager(AddColumnAction.class);
     
     private static interface i18n {
-        ///i18n[AddColumnAction.addColumnPart=add a column]
+        ///i18n[AddPrimaryKeyAction.addPrimaryKeyPart=add a primary key]
         String columnPart = 
-            s_stringMgr.getString("AddColumnAction.addColumnPart");
+            s_stringMgr.getString("AddPrimaryKeyAction.addPrimaryKeyPart");
         //i18n[Shared.singleObjectMessage=You must have a single table selected
         //in order to {0}]
         String singleObjectMessage = 
             s_stringMgr.getString("Shared.singleObjectMessage", columnPart); 
     }
     
-    public ModifyColumnAction(IApplication app, 
-                           Resources rsrc) 
+    public AddPrimaryKeyAction(IApplication app, 
+                               Resources rsrc) 
     {
         super(app, rsrc); 
     }
 
     protected ICommand getCommand(IDatabaseObjectInfo info) {
-        return new ModifyColumnCommand(_session, info);
+        return new AddPrimaryKeyCommand(_session, info);
     }
     
     protected String getErrorMessage() {

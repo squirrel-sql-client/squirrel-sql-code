@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.refactoring.actions;
 /*
- * Copyright (C) 20056 Rob Manning
+ * Copyright (C) 2006 Rob Manning
  * manningr@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -17,29 +17,32 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.actions;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.event.ActionEvent;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.refactoring.commands.RemoveColumnCommand;
 
-public class RemoveColumnAction extends SquirrelAction
-                                     implements ISessionAction {
-
-	/** Current session. */
-    private ISession _session;
+public class RemoveColumnAction extends AbstractRefactoringAction
+                                        implements ISessionAction {
 
     /** Internationalized strings for this class. */
     private static final StringManager s_stringMgr =
         StringManagerFactory.getStringManager(RemoveColumnAction.class);
     
+    
+    private static interface i18n {
+        ///i18n[AddColumnAction.removeColumnPart=remove a column]
+        String columnPart = 
+            s_stringMgr.getString("AddColumnAction.removeColumnPart");
+        //i18n[Shared.singleObjectMessage=You must have a single table selected
+        //in order to {0}]
+        String singleObjectMessage = 
+            s_stringMgr.getString("Shared.singleObjectMessage", columnPart); 
+    }    
     
     public RemoveColumnAction(IApplication app, 
                                Resources rsrc) 
@@ -47,46 +50,18 @@ public class RemoveColumnAction extends SquirrelAction
         super(app, rsrc);
     }
 
-    public void actionPerformed(ActionEvent evt) {
-        
-        if (_session != null) {
-            IObjectTreeAPI api = _session.getObjectTreeAPIOfActiveSessionWindow();
-            if (api != null) {
-                IDatabaseObjectInfo[] dbObjs = api.getSelectedDatabaseObjects();
-
-                if (dbObjs.length != 1) {
-                    //i18n[RemoveColumnAction.singleObjectMessage=You must have 
-                    //a single table selected to drop a column]
-                    String msg = 
-                        s_stringMgr.getString("RemoveColumnAction.singleObjectMessage");
-                    _session.getMessageHandler().showErrorMessage(msg);
-                } else {
-                    new RemoveColumnCommand(_session, dbObjs[0]).execute();
-                }           
-            }
-        }
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.plugins.refactoring.actions.AbstractRefactoringAction#getCommand(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
+     */
+    protected ICommand getCommand(IDatabaseObjectInfo info) {
+        return new RemoveColumnCommand(_session, info);
     }
 
-	/**
-	 * Set the current session.
-	 * 
-	 * @param	session		The current session.
-	 */
-    public void setSession(ISession session) {
-        _session = session;
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.plugins.refactoring.actions.AbstractRefactoringAction#getErrorMessage()
+     */
+    protected String getErrorMessage() {
+        return i18n.singleObjectMessage;
     }
-    
-    public void setObjectTree(IObjectTreeAPI tree)
-    {
-       if(null != tree)
-       {
-          _session = tree.getSession();
-       }
-       else
-       {
-          _session = null;
-       }
-       setEnabled(null != _session);
-    }    
     
 }

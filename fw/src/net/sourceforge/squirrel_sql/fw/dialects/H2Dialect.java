@@ -378,18 +378,17 @@ public class H2Dialect extends Dialect implements HibernateDialect {
     /**
      * Returns the SQL statement to use to add a column to the specified table
      * using the information about the new column specified by info.
-     * 
-     * @param tableName the name of the table to create the SQL for.
      * @param info information about the new column such as type, name, etc.
+     * 
      * @return
      * @throws UnsupportedOperationException if the database doesn't support 
      *         adding columns after a table has already been created.
      */
-    public String[] getColumnAddSQL(String tableName, TableColumnInfo info) 
+    public String[] getColumnAddSQL(TableColumnInfo info) 
         throws UnsupportedOperationException 
     {
         return new String[] {
-            DialectUtils.getColumnAddSQL(tableName, info, this, true, true)
+            DialectUtils.getColumnAddSQL(info, this, true, true)
         };
     }
 
@@ -402,22 +401,7 @@ public class H2Dialect extends Dialect implements HibernateDialect {
     public boolean supportsColumnComment() {
         return false;
     }    
-    
-    /**
-     * Returns the SQL statement to use to add a comment to the specified 
-     * column of the specified table.
-     * 
-     * @param tableName the name of the table to create the SQL for.
-     * @param columnName the name of the column to create the SQL for.
-     * @param comment the comment to add.
-     * @return
-     * @throws UnsupportedOperationException if the database doesn't support 
-     *         annotating columns with a comment.
-     */
-    public String getColumnCommentAlterSQL(String tableName, String columnName, String comment) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("This database dialect doesn't support adding comments to columns");
-    }
-    
+        
     /**
      * Returns a boolean value indicating whether or not this database dialect
      * supports dropping columns from tables.
@@ -458,6 +442,62 @@ public class H2Dialect extends Dialect implements HibernateDialect {
     public String getTableDropSQL(String tableName, boolean cascadeConstraints){
         // TODO: Need to verify this
         return DialectUtils.getTableDropSQL(tableName, true, cascadeConstraints);
+    }
+    
+    /**
+     * Returns the SQL that forms the command to add a primary key to the 
+     * specified table composed of the given column names.
+     * 
+     * @param pkName the name of the constraint
+     * @param columnNames the columns that form the key
+     * @return
+     */
+    public String[] getAddPrimaryKeySQL(String pkName, 
+                                      TableColumnInfo[] columnNames) 
+    {
+        // TODO: implement
+        throw new UnsupportedOperationException("getAddPrimaryKeySQL not implemented");
+    }
+    
+    /**
+     * Returns the SQL statement to use to add a comment to the specified 
+     * column of the specified table.
+     * @param info information about the column such as type, name, etc.
+     * @return
+     * @throws UnsupportedOperationException if the database doesn't support 
+     *         annotating columns with a comment.
+     */
+    public String getColumnCommentAlterSQL(TableColumnInfo info) 
+        throws UnsupportedOperationException
+    {
+        // TODO: implement when the database supports changing comments       
+        throw new UnsupportedOperationException("This database dialect doesn't support adding comments to columns");
+    }
+ 
+    /**
+     * Returns the SQL used to alter the specified column to not allow null 
+     * values
+     * 
+     * @param info the column to modify
+     * @return the SQL to execute
+     */
+    public String getColumnNullableAlterSQL(TableColumnInfo info) {
+        // TODO: implement
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    /**
+     * Returns the SQL that is used to change the column name.
+     * 
+     * 
+     * @param from the TableColumnInfo as it is
+     * @param to the TableColumnInfo as it wants to be
+     * 
+     * @return the SQL to make the change
+     */
+    public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to) {
+        // TODO: implement
+        throw new UnsupportedOperationException("Not yet implemented");
     }
     
 }

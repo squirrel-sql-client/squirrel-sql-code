@@ -180,17 +180,15 @@ public interface HibernateDialect {
     /**
      * Returns the SQL statement to use to add a column to the specified table
      * using the information about the new column specified by info.
-     * 
-     * @param tableName the name of the table to create the SQL for.
      * @param info information about the new column such as type, name, etc.
+     * 
      * @return
      * @throws UnsupportedOperationException if the database doesn't support 
      *         adding columns after a table has already been created.
      * @throws HibernateException if the type in the specified info isn't 
      *         supported by this dialect.
      */
-    String[] getColumnAddSQL(String tableName,
-                             TableColumnInfo info) 
+    String[] getColumnAddSQL(TableColumnInfo info) 
         throws HibernateException, UnsupportedOperationException;
     
     /**
@@ -204,17 +202,12 @@ public interface HibernateDialect {
     /**
      * Returns the SQL statement to use to add a comment to the specified 
      * column of the specified table.
-     * 
-     * @param tableName the name of the table to create the SQL for.
-     * @param columnName the name of the column to create the SQL for.
-     * @param comment the comment to add.
+     * @param info information about the column such as type, name, etc.
      * @return
      * @throws UnsupportedOperationException if the database doesn't support 
      *         annotating columns with a comment.
      */
-    String getColumnCommentAlterSQL(String tableName, 
-                                    String columnName, 
-                                    String comment) throws UnsupportedOperationException;        
+    public String getColumnCommentAlterSQL(TableColumnInfo info) throws UnsupportedOperationException; 
     
 
     /**
@@ -235,7 +228,7 @@ public interface HibernateDialect {
      * @throws UnsupportedOperationException if the database doesn't support 
      *         dropping columns. 
      */
-    public String getColumnDropSQL(String tableName, String columnName)
+    String getColumnDropSQL(String tableName, String columnName)
         throws UnsupportedOperationException;
     
     /**
@@ -250,5 +243,41 @@ public interface HibernateDialect {
      * 
      * @return the drop SQL command.
      */
-    public String getTableDropSQL(String tableName, boolean cascadeConstraints);
+    String getTableDropSQL(String tableName, boolean cascadeConstraints);
+    
+    /**
+     * Returns the SQL that forms the command to add a primary key to the 
+     * specified table composed of the given column names.
+     * 
+     * @param pkName the name of the constraint
+     * @param columnNames the columns that form the key
+     * @return
+     */
+    String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] colInfos);
+ 
+    /**
+     * Returns the SQL fragment for adding a column in an alter table statment.
+     * @return
+     */
+    String getAddColumnString();
+    
+    /**
+     * Returns the SQL used to alter the specified column to not allow null 
+     * values
+     * 
+     * @param info the column to modify
+     * @return the SQL to execute
+     */
+    String getColumnNullableAlterSQL(TableColumnInfo info);
+        
+    /**
+     * Returns the SQL that is used to change the column name.
+     * 
+     * @param from the TableColumnInfo as it is
+     * @param to the TableColumnInfo as it wants to be
+     * 
+     * @return the SQL to make the change
+     */
+    String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to);
+    
 }

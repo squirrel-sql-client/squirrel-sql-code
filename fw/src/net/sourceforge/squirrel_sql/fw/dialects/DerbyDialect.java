@@ -21,7 +21,6 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 import java.sql.Types;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 /**
@@ -158,18 +157,20 @@ public class DerbyDialect extends DB2Dialect
     /**
      * Returns the SQL statement to use to add a column to the specified table
      * using the information about the new column specified by info.
-     * 
-     * @param tableName the name of the table to create the SQL for.
      * @param info information about the new column such as type, name, etc.
+     * 
      * @return
      * @throws UnsupportedOperationException if the database doesn't support 
      *         adding columns after a table has already been created.
      */
-    public String[] getColumnAddSQL(String tableName, TableColumnInfo info) throws UnsupportedOperationException {
+    public String[] getColumnAddSQL(TableColumnInfo info) throws UnsupportedOperationException {
+        /*
         StringBuffer result = new StringBuffer();
         result.append("ALTER TABLE ");
-        result.append(tableName);
-        result.append(" ADD COLUMN ");
+        result.append(info.getTableName());
+        result.append(" ");
+        result.append(getAddColumnString().toUpperCase());
+        result.append(" ");
         result.append(info.getColumnName());
         result.append(" ");
         result.append(getTypeName(info.getDataType(), 
@@ -179,20 +180,12 @@ public class DerbyDialect extends DB2Dialect
         if (info.isNullable().equals("NO")) {
             result.append(" NOT NULL ");
         }        
-        if (info.getDefaultValue() != null 
-                && !info.getDefaultValue().equals("")) 
-        {
-            if (JDBCTypeMapper.isNumberType(info.getDataType())) {
-                result.append(" DEFAULT ");
-                result.append(info.getDefaultValue());
-            } else {
-                result.append(" DEFAULT ");
-                result.append("'");
-                result.append(info.getDefaultValue());
-                result.append("'");
-            }
-        }
+        DialectUtils.appendDefaultClause(info, result);
         return new String[] { result.toString() };
+        */
+        return new String[] {
+            DialectUtils.getColumnAddSQL(info, this, true, false)
+        };
     }
 
     /**
@@ -258,6 +251,62 @@ public class DerbyDialect extends DB2Dialect
      */
     public String getTableDropSQL(String tableName, boolean cascadeConstraints){
         return DialectUtils.getTableDropSQL(tableName, false, cascadeConstraints);
+    }
+   
+    /**
+     * Returns the SQL that forms the command to add a primary key to the 
+     * specified table composed of the given column names.
+     * 
+     * @param pkName the name of the constraint
+     * @param columnNames the columns that form the key
+     * @return
+     */
+    public String[] getAddPrimaryKeySQL(String pkName, 
+                                      TableColumnInfo[] columnNames) 
+    {
+        // TODO: implement
+        throw new UnsupportedOperationException("getAddPrimaryKeySQL not implemented");
+    }
+    
+    /**
+     * Returns the SQL statement to use to add a comment to the specified 
+     * column of the specified table.
+     * @param info information about the column such as type, name, etc.
+     * @return
+     * @throws UnsupportedOperationException if the database doesn't support 
+     *         annotating columns with a comment.
+     */
+    public String getColumnCommentAlterSQL(TableColumnInfo info) 
+        throws UnsupportedOperationException
+    {
+        // TODO: implement        
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+    
+    /**
+     * Returns the SQL used to alter the specified column to not allow null 
+     * values
+     * 
+     * @param info the column to modify
+     * @return the SQL to execute
+     */
+    public String getColumnNullableAlterSQL(TableColumnInfo info) {
+        // TODO: implement
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+    
+    /**
+     * Returns the SQL that is used to change the column name.
+     * 
+     * 
+     * @param from the TableColumnInfo as it is
+     * @param to the TableColumnInfo as it wants to be
+     * 
+     * @return the SQL to make the change
+     */
+    public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to) {
+        // TODO: implement
+        throw new UnsupportedOperationException("Not yet implemented");
     }
     
 }

@@ -35,11 +35,13 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.DropSelectedTablesAction;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.AddColumnAction;
+import net.sourceforge.squirrel_sql.plugins.refactoring.actions.AddPrimaryKeyAction;
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.ModifyColumnAction;
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.RemoveColumnAction;
 
@@ -202,17 +204,7 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
       coll.add(new AddColumnAction(app, _resources));
       coll.add(new ModifyColumnAction(app, _resources));
       coll.add(new RemoveColumnAction(app, _resources));
-/*
-      coll.add(new CreateSelectScriptAction(app, _resources, this));
-      coll.add(new DropTableScriptAction(app, _resources, this));
-      coll.add(new CreateDataScriptAction(app, _resources, this));
-      coll.add(new CreateTemplateDataScriptAction(app, _resources, this));
-      coll.add(new CreateDataScriptOfCurrentSQLAction(app, _resources, this));
-      coll.add(new CreateTableOfCurrentSQLAction(app, _resources, this));
-      createMenu();
-      
-      SQLScriptPreferencesManager.initialize(this);
-      */
+      coll.add(new AddPrimaryKeyAction(app, _resources));
    }
 
    /**
@@ -221,7 +213,6 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
    public void unload()
    {
       super.unload();
-      //SQLScriptPreferencesManager.unload();
    }
 
    public boolean allowsSessionStartedInBackground()
@@ -279,7 +270,8 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
         IObjectTreeAPI api = session.getObjectTreeAPIOfActiveSessionWindow();
 
         //session.getApplication().addToMenu(MainFrameMenuBar, menu)
-        JMenu tableMenu = _resources.createMenu(IMenuResourceKeys.REFACTORING);
+        JMenu tableObjectMenu = _resources.createMenu(IMenuResourceKeys.REFACTORING);
+        JMenu columnMenu = new JMenu("Column"); 
         JMenuItem addColItem = new JMenuItem("Add Column");
         addColItem.setAction(coll.get(AddColumnAction.class));
         JMenuItem removeColItem = new JMenuItem("Drop Column");
@@ -287,11 +279,39 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
         JMenuItem modifyMenuItem = new JMenuItem("Modify Column");
         modifyMenuItem.setAction(coll.get(ModifyColumnAction.class));
         
-        tableMenu.add(addColItem);
-        tableMenu.add(modifyMenuItem);
-        tableMenu.add(removeColItem);
+        columnMenu.add(addColItem);
+        columnMenu.add(modifyMenuItem);
+        columnMenu.add(removeColItem);
         
-        api.addToPopup(DatabaseObjectType.TABLE, tableMenu);
+        JMenuItem dropTableItem = new JMenuItem("Drop Table");
+        dropTableItem.setAction(coll.get(DropSelectedTablesAction.class));
+        JMenuItem addIndexItem = new JMenuItem("Add Index");
+        JMenuItem dropIndexItem = new JMenuItem("Drop Index");
+        JMenuItem addPrimaryKeyItem = new JMenuItem("Add Primary Key");
+        addPrimaryKeyItem.setAction(coll.get(AddPrimaryKeyAction.class));
+        JMenuItem dropPrimaryKeyItem = new JMenuItem("Drop Primary Key");
+        JMenuItem addForeignKeyItem = new JMenuItem("Add Foreign Key");
+        JMenuItem dropForeignKeyItem = new JMenuItem("Drop Foreign Key");
+        JMenuItem enableConstraintsItem = new JMenuItem("Enable Constraints");
+        JMenuItem disableConstraintsItem = new JMenuItem("Disable Constraints");
+        
+        
+        JMenu tableMenu = new JMenu("Table");
+        
+        tableMenu.add(dropTableItem);
+        tableMenu.add(addIndexItem);
+        tableMenu.add(dropIndexItem);
+        tableMenu.add(addPrimaryKeyItem);
+        tableMenu.add(dropPrimaryKeyItem);
+        tableMenu.add(addForeignKeyItem);
+        tableMenu.add(dropForeignKeyItem);
+        tableMenu.add(enableConstraintsItem);
+        tableMenu.add(disableConstraintsItem);
+        
+        tableObjectMenu.add(tableMenu);
+        tableObjectMenu.add(columnMenu);
+        
+        api.addToPopup(DatabaseObjectType.TABLE, tableObjectMenu);
         /*
         api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTableScriptAction.class));
         api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateSelectScriptAction.class));

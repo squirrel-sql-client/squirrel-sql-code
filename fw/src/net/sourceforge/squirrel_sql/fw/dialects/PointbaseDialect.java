@@ -169,16 +169,15 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect
     /**
      * Returns the SQL statement to use to add a column to the specified table
      * using the information about the new column specified by info.
-     * 
-     * @param tableName the name of the table to create the SQL for.
      * @param info information about the new column such as type, name, etc.
+     * 
      * @return
      * @throws UnsupportedOperationException if the database doesn't support 
      *         adding columns after a table has already been created.
      */
-    public String[] getColumnAddSQL(String tableName, TableColumnInfo info) throws UnsupportedOperationException {
+    public String[] getColumnAddSQL(TableColumnInfo info) throws UnsupportedOperationException {
         return new String[] {
-            DialectUtils.getColumnAddSQL(tableName, info, this, true, false)
+            DialectUtils.getColumnAddSQL(info, this, true, false)
         };
     }
 
@@ -246,6 +245,62 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect
     public String getTableDropSQL(String tableName, boolean cascadeConstraints){
         // TODO: Need to verify this
         return DialectUtils.getTableDropSQL(tableName, true, cascadeConstraints);
+    }
+    
+    /**
+     * Returns the SQL that forms the command to add a primary key to the 
+     * specified table composed of the given column names.
+     * 
+     * @param pkName the name of the constraint
+     * @param columnNames the columns that form the key
+     * @return
+     */
+    public String[] getAddPrimaryKeySQL(String pkName, 
+                                      TableColumnInfo[] columnNames) 
+    {
+        // TODO: implement
+        throw new UnsupportedOperationException("getAddPrimaryKeySQL not implemented");
+    }
+    
+    /**
+     * Returns the SQL statement to use to add a comment to the specified 
+     * column of the specified table.
+     * @param info information about the column such as type, name, etc.
+     * @return
+     * @throws UnsupportedOperationException if the database doesn't support 
+     *         annotating columns with a comment.
+     */
+    public String getColumnCommentAlterSQL(TableColumnInfo info) 
+        throws UnsupportedOperationException
+    {
+        // TODO: implement        
+        throw new UnsupportedOperationException("getColumnCommentAlterSQL Not yet implemented");
+    }
+    
+    /**
+     * Returns the SQL used to alter the specified column to not allow null 
+     * values
+     * 
+     * @param info the column to modify
+     * @return the SQL to execute
+     */
+    public String getColumnNullableAlterSQL(TableColumnInfo info) {
+        // TODO: implement
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+    
+    /**
+     * Returns the SQL that is used to change the column name.
+     * 
+     * 
+     * @param from the TableColumnInfo as it is
+     * @param to the TableColumnInfo as it wants to be
+     * 
+     * @return the SQL to make the change
+     */
+    public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to) {
+        // TODO: implement
+        throw new UnsupportedOperationException("Not yet implemented");
     }
     
 }

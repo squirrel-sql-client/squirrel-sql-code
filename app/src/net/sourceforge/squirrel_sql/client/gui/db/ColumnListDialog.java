@@ -27,12 +27,10 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -47,6 +45,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -61,6 +60,7 @@ public class ColumnListDialog extends JDialog {
     private JList columnList = null;
     
     private JButton selectColumnButton = null;
+    private JButton showSQLButton = null;
     private JButton cancelButton = null;
     
     /** Internationalized strings for this class. */
@@ -68,6 +68,9 @@ public class ColumnListDialog extends JDialog {
         StringManagerFactory.getStringManager(ColumnListDialog.class);
     
     private interface i18n {
+        //i18n[ColumnListDialog.addPrimaryKeyButtonLabel=Add Primary Key]
+        String ADD_PRIMARY_KEY_BUTTON_LABEL =
+            s_stringMgr.getString("ColumnListDialog.addPrimaryKeyButtonLabel");
         //i18n[ColumnListDialog.cancelButtonLabel=Cancel]
         String CANCEL_BUTTON_LABEL = 
             s_stringMgr.getString("ColumnListDialog.cancelButtonLabel");
@@ -83,7 +86,7 @@ public class ColumnListDialog extends JDialog {
             s_stringMgr.getString("ColumnListDialog.dropErrorMessage");
         //i18n[ColumnListDialog.dropErrorTitle=Too Many Columns Selected]
         String DROP_ERROR_TITLE = 
-            s_stringMgr.getString("Too Many Columns Selected");
+            s_stringMgr.getString("ColumnListDialog.dropErrorTitle");
         //i18n[ColumnListDialog.dropTitle=Select Column(s) To Drop]
         String DROP_TITLE = 
             s_stringMgr.getString("ColumnListDialog.dropTitle");
@@ -93,6 +96,12 @@ public class ColumnListDialog extends JDialog {
         //i18n[ColumnListDialog.modifyTitle=Select Column To Modify]
         String MODIFY_TITLE = 
             s_stringMgr.getString("ColumnListDialog.modifyTitle");
+        //i18n[ColumnListDialog.primaryKeyTitle=Choose column(s) for primary key] 
+        String PRIMARY_KEY_TITLE =
+            s_stringMgr.getString("ColumnListDialog.primaryKeyTitle");
+        //i18n[ColumnListDialog.showSQLButtonLabel=Show SQL]
+        String SHOWSQL_BUTTON_LABEL = 
+            s_stringMgr.getString("ColumnListDialog.showSQLButtonLabel");
         //i18n[ColumnListDialog.tableNameLabel=Table Name: ]
         String TABLE_NAME_LABEL = 
             s_stringMgr.getString("ColumnListDialog.tableNameLabel"); 
@@ -100,24 +109,34 @@ public class ColumnListDialog extends JDialog {
     
     public static final int DROP_COLUMN_MODE = 0;
     public static final int MODIFY_COLUMN_MODE = 1;
+    public static final int ADD_PRIMARY_KEY_MODE = 2;
     
     private int _mode = DROP_COLUMN_MODE;
+    
+    private TableColumnInfo[] colInfos = null;
     
     /**
      * 
      * @param mode TODO
      * @param tableName
      */
-    public ColumnListDialog(String[] columnNames, int mode) { 
+    public ColumnListDialog(TableColumnInfo[] columnInfos, int mode) { 
         _mode = mode;
-        init(columnNames);
+        setColumnList(columnInfos);
     }
             
-    public void setColumnList(String[] columnNames) {
+    public void setColumnList(TableColumnInfo[] columnInfos) {
+        colInfos = columnInfos;
+        ArrayList tmp = new ArrayList();
+        for (int i = 0; i < colInfos.length; i++) {
+            TableColumnInfo info = colInfos[i];
+            tmp.add(info.getColumnName());
+        }
+        String[] cols = (String[])tmp.toArray(new String[tmp.size()]);
         if (columnList != null) {
-            columnList.setListData(columnNames);
+            columnList.setListData(cols);
         } else {
-            init(columnNames);
+            init(cols);
         }
     }
     
@@ -129,12 +148,38 @@ public class ColumnListDialog extends JDialog {
         return tableNameTextField.getText();
     }
         
-    public Object[] getSelectedColumnList() {
-        return columnList.getSelectedValues();
+    public TableColumnInfo[] getSelectedColumnList() {
+        ArrayList result = new ArrayList();
+        Object[] selectedColNames = columnList.getSelectedValues();
+        for (int i = 0; i < selectedColNames.length; i++) {
+            String columnName = (String)selectedColNames[i];
+            result.add(getColInfoByName(columnName));
+        }
+        return (TableColumnInfo[])result.toArray(new TableColumnInfo[result.size()]);
+    }
+    
+    private TableColumnInfo getColInfoByName(String columnName) {
+        for (int i = 0; i < colInfos.length; i++) {
+            TableColumnInfo colInfo = colInfos[i];
+            if (colInfo.getColumnName().equals(columnName)) {
+                return colInfo;
+            }
+        }
+        return null;
     }
     
     public void addColumnSelectionListener(ActionListener listener) {
+        if (listener == null) {
+            throw new IllegalArgumentException("listener cannot be null");
+        }
         selectColumnButton.addActionListener(listener);
+    }
+    
+    public void addShowSQLListener(ActionListener listener) {
+        if (listener == null) {
+            throw new IllegalArgumentException("listener cannot be null");
+        }
+        showSQLButton.addActionListener(listener);
     }
     
     public void setMultiSelection() {
@@ -179,8 +224,12 @@ public class ColumnListDialog extends JDialog {
         super.setModal(true);        
         if (_mode == DROP_COLUMN_MODE) {
             setTitle(i18n.DROP_TITLE);
-        } else {
+        } 
+        if (_mode == MODIFY_COLUMN_MODE) {
             setTitle(i18n.MODIFY_TITLE);
+        }
+        if (_mode == ADD_PRIMARY_KEY_MODE) {
+            setTitle(i18n.PRIMARY_KEY_TITLE);
         }
         setSize(300, 250);
         EmptyBorder border = new EmptyBorder(new Insets(5,5,5,5));
@@ -230,9 +279,13 @@ public class ColumnListDialog extends JDialog {
         JPanel result = new JPanel();
         if (_mode == DROP_COLUMN_MODE) {
             selectColumnButton = new JButton(i18n.DROP_BUTTON_LABEL);    
-        } else {
+        } 
+        if (_mode == MODIFY_COLUMN_MODE) {
             selectColumnButton = new JButton(i18n.MODIFY_BUTTON_LABEL);
         }
+        if (_mode == ADD_PRIMARY_KEY_MODE) {
+            selectColumnButton = new JButton(i18n.ADD_PRIMARY_KEY_BUTTON_LABEL);
+        }        
         
         selectColumnButton.setEnabled(false);
         cancelButton = new JButton(i18n.CANCEL_BUTTON_LABEL);
@@ -242,6 +295,11 @@ public class ColumnListDialog extends JDialog {
             }
         });
         result.add(selectColumnButton);
+        if (_mode == DROP_COLUMN_MODE 
+                || _mode == ADD_PRIMARY_KEY_MODE) {
+            showSQLButton = new JButton(i18n.SHOWSQL_BUTTON_LABEL);
+            result.add(showSQLButton);
+        }
         result.add(cancelButton);
         return result;
     }
@@ -257,6 +315,7 @@ public class ColumnListDialog extends JDialog {
                            "ColumnG","ColumnH","ColumnI","ColumnJ","ColumnK",
                            "ColumnL","ColumnM","ColumnN","ColumnO","ColumnP",
                            "ColumnP","ColumnQ","ColumnR","ColumnS","ColumnT"};
+        /*
         final ColumnListDialog c = new ColumnListDialog(data, 0);
         c.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         c.setTableName("FooTable");
@@ -274,6 +333,7 @@ public class ColumnListDialog extends JDialog {
             }
         });
         c.setVisible(true);
+        */
         
     }
     

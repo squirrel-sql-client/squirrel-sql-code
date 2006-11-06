@@ -19,9 +19,9 @@
 package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.sql.Types;
+import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 /**
@@ -160,41 +160,23 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
     /**
      * Returns the SQL statement to use to add a column to the specified table
      * using the information about the new column specified by info.
-     * 
-     * @param tableName the name of the table to create the SQL for.
      * @param info information about the new column such as type, name, etc.
+     * 
      * @return
      * @throws UnsupportedOperationException if the database doesn't support 
      *         adding columns after a table has already been created.
      */
-    public String[] getColumnAddSQL(String tableName, TableColumnInfo info) throws UnsupportedOperationException {
+    public String[] getColumnAddSQL(TableColumnInfo info) throws UnsupportedOperationException {
+        ArrayList returnVal = new ArrayList();
         StringBuffer result = new StringBuffer();
         result.append("ALTER TABLE ");
-        result.append(tableName);
+        result.append(info.getTableName());
         result.append(" ADD COLUMN ");
         result.append(info.getColumnName());
         result.append(" ");
-        result.append(getTypeName(info.getDataType(), 
-                                  info.getColumnSize(), 
-                                  info.getColumnSize(), 
-                                  info.getDecimalDigits()));
-        if (info.isNullable().equals("NO")) {
-            result.append(" NOT NULL ");
-        } else {
-            result.append(" NULL ");
-        }
-        if (info.getDefaultValue() != null 
-                && !"".equals(info.getDefaultValue())) 
-        {
-            result.append(" DEFAULT ");
-            if (JDBCTypeMapper.isNumberType(info.getDataType())) {
-                result.append(info.getDefaultValue());                
-            } else {
-                result.append("'");
-                result.append(info.getDefaultValue());
-                result.append("'");
-            }
-        }
+        result.append(DialectUtils.getTypeName(info, this));
+        result.append(" ");
+        DialectUtils.appendDefaultClause(info, result);
         if (info.getRemarks() != null && 
                 !"".equals(info.getRemarks())) 
         {
@@ -203,10 +185,46 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
             result.append(info.getRemarks());
             result.append("'");
         }
-
-        return new String[] { result.toString() };
+        returnVal.add(result.toString());
+        if (info.isNullable().equals("NO")) {
+            String setNullSQL = 
+                getModifyColumnNullabilitySQL(info.getTableName(), info, false);
+            returnVal.add(setNullSQL);
+        } 
+        // Sometimes, MySQL omits the change for COMMENT, so explicitly add
+        // it in a separate alter statement as well
+        returnVal.add(getColumnCommentAlterSQL(info));
+        
+        // Sometimes, MySQL omits the change for DEFAULT, so explicitly add
+        // it in a separate alter statement as well
+        //returnVal.add()
+        if (info.getDefaultValue() != null 
+                && !"".equals(info.getDefaultValue()))
+        {
+            returnVal.add(getColumnDefaultAlterSQL(info));
+        }   
+        
+        return (String[])returnVal.toArray(new String[returnVal.size()]);
     }
 
+    public String getModifyColumnNullabilitySQL(String tableName, 
+                                            TableColumnInfo info,
+                                            boolean nullable) {
+        StringBuffer result = new StringBuffer();
+        result.append(" ALTER TABLE ");
+        result.append(tableName);
+        result.append(" MODIFY ");
+        result.append(info.getColumnName());
+        result.append(" ");
+        result.append(DialectUtils.getTypeName(info, this));
+        if (nullable) {
+            result.append(" NULL ");
+        } else {
+            result.append(" NOT NULL ");
+        }
+        return result.toString();
+    }
+    
     /**
      * Returns a boolean value indicating whether or not this dialect supports
      * adding comments to columns.
@@ -218,28 +236,47 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
     }
     
     /**
+     * Returns SQL statement used to add the default value of the specified 
+     * column.
+     * 
+     * @param info
+     * @return
+     * @throws UnsupportedOperationException
+     */
+    public String getColumnDefaultAlterSQL(TableColumnInfo info)
+        throws UnsupportedOperationException 
+    {   
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(info.getTableName());
+        result.append(" MODIFY ");
+        result.append(info.getColumnName());
+        result.append(" ");
+        result.append(DialectUtils.getTypeName(info, this));
+        DialectUtils.appendDefaultClause(info, result);
+        return result.toString();
+    }
+    
+    /**
      * Returns the SQL statement to use to add a comment to the specified 
      * column of the specified table.
-     * 
-     * @param tableName the name of the table to create the SQL for.
-     * @param columnName the name of the column to create the SQL for.
-     * @param comment the comment to add.
+     * @param info information about the column such as type, name, etc.
      * @return
      * @throws UnsupportedOperationException if the database doesn't support 
      *         annotating columns with a comment.
      */
-    public String getColumnCommentAlterSQL(String tableName, 
-                                           String columnName, 
-                                           String comment) 
+    public String getColumnCommentAlterSQL(TableColumnInfo info) 
         throws UnsupportedOperationException 
     {
         StringBuffer result = new StringBuffer();
         result.append("ALTER TABLE ");
-        result.append(tableName);
-        result.append(" MODIFY COLUMN ");
-        result.append(columnName);
+        result.append(info.getTableName());
+        result.append(" MODIFY ");
+        result.append(info.getColumnName());
+        result.append(" ");
+        result.append(DialectUtils.getTypeName(info, this));
         result.append(" COMMENT '");
-        result.append(comment);
+        result.append(info.getRemarks());
         result.append("'");
         return result.toString();
     }
@@ -251,7 +288,6 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
      * @return true if the database supports dropping columns; false otherwise.
      */
     public boolean supportsDropColumn() {
-        // TODO: need to verify this
         return true;
     }
 
@@ -265,8 +301,7 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
      * @throws UnsupportedOperationException if the database doesn't support 
      *         dropping columns. 
      */
-    public String getColumnDropSQL(String tableName, String columnName) {
-        // TODO: Need to verify this        
+    public String getColumnDropSQL(String tableName, String columnName) {        
         return DialectUtils.getColumnDropSQL(tableName, columnName);
     }
     
@@ -283,8 +318,82 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
      * @return the drop SQL command.
      */
     public String getTableDropSQL(String tableName, boolean cascadeConstraints){
-        // TODO: Need to verify this
         return DialectUtils.getTableDropSQL(tableName, true, cascadeConstraints);
+    }
+    
+    /**
+     * Returns the SQL that forms the command to add a primary key to the 
+     * specified table composed of the given column names.
+     * 
+     * @param tableName the table to add a Primary Key to.
+     * @param columnNames the columns that form the key
+     * @return
+     */
+    public String[] getAddPrimaryKeySQL(String pkName, 
+                                        TableColumnInfo[] colInfos) 
+    {
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(colInfos[0].getTableName());
+        result.append(" ADD CONSTRAINT ");
+        result.append(pkName);
+        result.append(" PRIMARY KEY (");
+        for (int i = 0; i < colInfos.length; i++) {
+            result.append(colInfos[i].getColumnName());
+            if (i + 1 < colInfos.length) {
+                result.append(", ");
+            }
+        }
+        result.append(")");
+        return new String[] { result.toString() };
+    }
+    
+    /**
+     * Returns the SQL used to alter the specified column to not allow null 
+     * values
+     * 
+     * ALTER TABLE testdate MODIFY mydate date NOT NULL;
+     * 
+     * @param info the column to modify
+     * @return the SQL to execute
+     */
+    public String getColumnNullableAlterSQL(TableColumnInfo info) {
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(info.getTableName());
+        result.append(" MODIFY ");
+        result.append(info.getColumnName());
+        result.append(" ");
+        result.append(DialectUtils.getTypeName(info, this));
+        if (info.isNullable().equalsIgnoreCase("YES")) {
+            result.append(" NULL");
+        } else {
+            result.append(" NOT NULL");
+        }
+        return result.toString();
+    }
+
+    /**
+     * Returns the SQL that is used to change the column name.
+     * 
+     * ALTER TABLE t1 CHANGE a b INTEGER;
+     * 
+     * @param from the TableColumnInfo as it is
+     * @param to the TableColumnInfo as it wants to be
+     * 
+     * @return the SQL to make the change
+     */
+    public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to) {
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(from.getTableName());
+        result.append(" CHANGE ");
+        result.append(from.getColumnName());
+        result.append(" ");
+        result.append(to.getColumnName());
+        result.append(" ");
+        result.append(DialectUtils.getTypeName(from, this));
+        return result.toString();
     }
     
 }

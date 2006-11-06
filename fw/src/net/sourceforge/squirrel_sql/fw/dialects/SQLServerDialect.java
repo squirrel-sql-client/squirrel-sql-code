@@ -19,6 +19,7 @@
 package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.sql.Types;
+import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -164,16 +165,15 @@ public class SQLServerDialect extends org.hibernate.dialect.SQLServerDialect
     /**
      * Returns the SQL statement to use to add a column to the specified table
      * using the information about the new column specified by info.
-     * 
-     * @param tableName the name of the table to create the SQL for.
      * @param info information about the new column such as type, name, etc.
+     * 
      * @return
      * @throws UnsupportedOperationException if the database doesn't support 
      *         adding columns after a table has already been created.
      */
-    public String[] getColumnAddSQL(String tableName, TableColumnInfo info) throws UnsupportedOperationException {
+    public String[] getColumnAddSQL(TableColumnInfo info) throws UnsupportedOperationException {
         return new String[] {
-            DialectUtils.getColumnAddSQL(tableName, info, this, true, true)
+            DialectUtils.getColumnAddSQL(info, this, true, true)
         };
     }
 
@@ -186,22 +186,21 @@ public class SQLServerDialect extends org.hibernate.dialect.SQLServerDialect
     public boolean supportsColumnComment() {
         return false;
     }
-    
+     
     /**
      * Returns the SQL statement to use to add a comment to the specified 
      * column of the specified table.
-     * 
-     * @param tableName the name of the table to create the SQL for.
-     * @param columnName the name of the column to create the SQL for.
-     * @param comment the comment to add.
+     * @param info information about the column such as type, name, etc.
      * @return
      * @throws UnsupportedOperationException if the database doesn't support 
      *         annotating columns with a comment.
      */
-    public String getColumnCommentAlterSQL(String tableName, String columnName, String comment) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("This database dialect doesn't support adding comments to columns");
+    public String getColumnCommentAlterSQL(TableColumnInfo info) 
+        throws UnsupportedOperationException
+    {   
+        throw new UnsupportedOperationException("SQL-Server doesn't support column comments");
     }
-    
+        
     /**
      * Returns a boolean value indicating whether or not this database dialect
      * supports dropping columns from tables.
@@ -209,7 +208,6 @@ public class SQLServerDialect extends org.hibernate.dialect.SQLServerDialect
      * @return true if the database supports dropping columns; false otherwise.
      */
     public boolean supportsDropColumn() {
-        // TODO: need to verify this
         return true;
     }
 
@@ -225,7 +223,7 @@ public class SQLServerDialect extends org.hibernate.dialect.SQLServerDialect
      */
     public String getColumnDropSQL(String tableName, String columnName) {
         // TODO: Need to verify this        
-        return DialectUtils.getColumnDropSQL(tableName, columnName);
+        return DialectUtils.getColumnDropSQL(tableName, columnName, "DROP COLUMN");
     }
     
     /**
@@ -241,8 +239,80 @@ public class SQLServerDialect extends org.hibernate.dialect.SQLServerDialect
      * @return the drop SQL command.
      */
     public String getTableDropSQL(String tableName, boolean cascadeConstraints){
-        // TODO: Need to verify this
-        return DialectUtils.getTableDropSQL(tableName, true, cascadeConstraints);
+        return DialectUtils.getTableDropSQL(tableName, false, cascadeConstraints);
     }
+    
+    /**
+     * Returns the SQL that forms the command to add a primary key to the 
+     * specified table composed of the given column names.
+     * 
+     * alter table test alter column mycol integer not null
+     * alter table test add primary key (mycol)
+     *  
+     * @param pkName the name of the constraint
+     * @param colInfos the columns that form the key
+     * @return
+     */
+    public String[] getAddPrimaryKeySQL(String pkName, 
+                                        TableColumnInfo[] colInfos) 
+    {
+        ArrayList result = new ArrayList();
+        
+        // convert all columns in key to not null - this doesn't hurt if they 
+        // are already null.
+        for (int i = 0; i < colInfos.length; i++) {
+            StringBuffer notNullSQL = new StringBuffer();
+            notNullSQL.append("ALTER TABLE ");
+            notNullSQL.append(colInfos[i].getTableName());
+            notNullSQL.append(" ALTER COLUMN ");
+            notNullSQL.append(colInfos[i].getColumnName());
+            notNullSQL.append(" ");
+            notNullSQL.append(DialectUtils.getTypeName(colInfos[i], this));
+            notNullSQL.append(" NOT NULL");
+            result.add(notNullSQL.toString());
+        }
+        
+        StringBuffer pkSQL = new StringBuffer();
+        pkSQL.append("ALTER TABLE ");
+        pkSQL.append(colInfos[0].getTableName());
+        pkSQL.append(" ADD PRIMARY KEY (");
+        for (int i = 0; i < colInfos.length; i++) {
+            pkSQL.append(colInfos[i].getColumnName());
+            if (i + 1 < colInfos.length) {
+                pkSQL.append(", ");
+            }
+        }
+        pkSQL.append(")");
+        result.add(pkSQL.toString());
+        
+        return (String[])result.toArray(new String[result.size()]);
+    }
+    
+    /**
+     * Returns the SQL used to alter the specified column to not allow null 
+     * values
+     * 
+     * @param info the column to modify
+     * @return the SQL to execute
+     */
+    public String getColumnNullableAlterSQL(TableColumnInfo info) {
+        // TODO: implement
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+    
+    /**
+     * Returns the SQL that is used to change the column name.
+     * 
+     * 
+     * @param from the TableColumnInfo as it is
+     * @param to the TableColumnInfo as it wants to be
+     * 
+     * @return the SQL to make the change
+     */
+    public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to) {
+        // TODO: implement
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+    
     
 }
