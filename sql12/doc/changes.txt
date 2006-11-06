@@ -6,6 +6,9 @@ Not yet released - available in the latest snapshot, or at least checked into CV
 
     New Features/Enhancements:
 
+Completion Popup (Code Completion ctrl+space, Tools Popup ctrl+t, Bookmarks Popup ctrl+j):
+When the beginning/end of the pop up list is reached another arrow up/down jumps to the last/first entry. 
+
 1015274 -  DB2/400 system naming support
 
 Schema refresh on catalog combo box change:
@@ -39,6 +42,10 @@ it is not necessary to open the driver definition for the current session to
 get this information.
 
 	Bug-Fixes:
+
+Look and Feel Plugin: Plastic Look and Feels (JGoodies) weren't available anymore.
+
+"Make Editable" on single table SQL did not work when SELECT list contained new lines.
 
 1554175: (Aliases lost on close) 
 1532997: (NullPointerException when trying to save alias)
