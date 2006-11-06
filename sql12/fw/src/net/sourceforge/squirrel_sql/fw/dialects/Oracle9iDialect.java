@@ -60,7 +60,7 @@ public class Oracle9iDialect extends Oracle9Dialect
         registerColumnType(Types.TIMESTAMP, "timestamp");
         registerColumnType(Types.TINYINT, "smallint");
         registerColumnType(Types.VARBINARY, "blob");
-        registerColumnType(Types.VARCHAR, 4000, "varchar2(4000)");
+        registerColumnType(Types.VARCHAR, 4000, "varchar2($l)");
         registerColumnType(Types.VARCHAR, "clob");
         // Total Hack!  Type OTHER(1111) can be other types as well?
         registerColumnType(Types.OTHER, 4000, "varchar2(4000)");
@@ -337,6 +337,33 @@ public class Oracle9iDialect extends Oracle9Dialect
         result.append(from.getColumnName());
         result.append(" TO ");
         result.append(to.getColumnName());
+        return result.toString();
+    }
+
+    /**
+     * Returns the SQL that is used to change the column type.
+     * 
+     * alter table test modify (mycol varchar(100))
+     * 
+     * @param from the TableColumnInfo as it is
+     * @param to the TableColumnInfo as it wants to be
+     * 
+     * @return the SQL to make the change
+     * @throw UnsupportedOperationException if the database doesn't support 
+     *         modifying column types. 
+     */
+    public String getColumnTypeAlterSQL(TableColumnInfo from, 
+                                        TableColumnInfo to)
+        throws UnsupportedOperationException
+    {
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(from.getTableName());
+        result.append(" MODIFY (");
+        result.append(from.getColumnName());
+        result.append(" ");
+        result.append(DialectUtils.getTypeName(to, this));
+        result.append(")");
         return result.toString();
     }
     

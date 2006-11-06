@@ -493,8 +493,6 @@ public class ColumnDetailDialog extends JDialog {
         
         // TODO: remove when modify is implemented for the fields below
         if (_mode == MODIFY_MODE) {
-            typeList.setEnabled(false);
-            typeList.setToolTipText("Modifying column type is not yet supported");
             lengthSpinner.setEnabled(false);
             lengthSpinner.setToolTipText("Modifying column length is not yet supported");
             precisionSpinner.setEnabled(false);
@@ -554,10 +552,6 @@ public class ColumnDetailDialog extends JDialog {
 
         public void itemStateChanged(ItemEvent e) {
             if (precisionSpinner == null) {
-                return;
-            }
-            // TODO: remove this when modifying column size is supported
-            if (_mode == MODIFY_MODE) {
                 return;
             }
             String columnType = (String)typeList.getSelectedItem();

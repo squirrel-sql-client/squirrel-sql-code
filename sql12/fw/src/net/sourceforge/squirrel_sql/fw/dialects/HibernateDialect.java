@@ -225,7 +225,7 @@ public interface HibernateDialect {
      * @param tableName the name of the table that has the column
      * @param columnName the name of the column to drop.
      * @return
-     * @throws UnsupportedOperationException if the database doesn't support 
+     * @throw UnsupportedOperationException if the database doesn't support 
      *         dropping columns. 
      */
     String getColumnDropSQL(String tableName, String columnName)
@@ -279,5 +279,18 @@ public interface HibernateDialect {
      * @return the SQL to make the change
      */
     String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to);
+    
+    /**
+     * Returns the SQL that is used to change the column type.
+     * 
+     * @param from the TableColumnInfo as it is
+     * @param to the TableColumnInfo as it wants to be
+     * 
+     * @return the SQL to make the change
+     * @throw UnsupportedOperationException if the database doesn't support 
+     *         modifying column types. 
+     */
+    String getColumnTypeAlterSQL(TableColumnInfo from, TableColumnInfo to)
+        throws UnsupportedOperationException;
     
 }
