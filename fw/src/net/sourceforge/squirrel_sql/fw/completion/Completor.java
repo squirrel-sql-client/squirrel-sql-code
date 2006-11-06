@@ -157,6 +157,12 @@ public class Completor
 				_completionList.setSelectionInterval(newSelIx, newSelIx);
 				_completionList.ensureIndexIsVisible(newSelIx);
 			}
+         else
+         {
+            int lastIx = _completionList.getModel().getSize() - 1;
+            _completionList.setSelectionInterval(lastIx, lastIx);
+            _completionList.ensureIndexIsVisible(lastIx);
+         }
 		}
 		else if(e.getKeyCode() == KeyEvent.VK_DOWN)
 		{
@@ -166,7 +172,12 @@ public class Completor
 				_completionList.setSelectionInterval(newSelIx, newSelIx);
 				_completionList.ensureIndexIsVisible(newSelIx);
 			}
-		}
+         else
+         {
+            _completionList.setSelectionInterval(0, 0);
+            _completionList.ensureIndexIsVisible(0);
+         }
+      }
       else if(e.getKeyCode() == KeyEvent.VK_PAGE_UP)
       {
          if(0 < _completionList.getSelectedIndex() - MAX_ITEMS_IN_COMPLETION_LIST)
