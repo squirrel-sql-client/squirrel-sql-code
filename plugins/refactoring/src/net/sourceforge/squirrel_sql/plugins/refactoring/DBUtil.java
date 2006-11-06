@@ -54,7 +54,22 @@ public class DBUtil {
         if (commentSQL != null) {
             result.add(commentSQL);
         }
+        String typeSQL = getTypeAlterSQL(from, to, dialect);
+        if (typeSQL != null) {
+            result.add(typeSQL);
+        }
+        
         return (String[])result.toArray(new String[result.size()]);
+    }
+    
+    public static String getTypeAlterSQL(TableColumnInfo from, 
+                                         TableColumnInfo to,
+                                         HibernateDialect dialect)
+    {
+        if (from.getDataType() == to.getDataType()) {
+            return null;
+        }
+        return dialect.getColumnTypeAlterSQL(from, to);
     }
     
     public static String getColumnNameAlterSQL(TableColumnInfo from, 

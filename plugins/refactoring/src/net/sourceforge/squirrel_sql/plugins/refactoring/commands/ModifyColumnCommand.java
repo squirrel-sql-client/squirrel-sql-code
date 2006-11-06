@@ -235,6 +235,7 @@ public class ModifyColumnCommand extends AbstractRefactoringCommand
         public void actionPerformed(ActionEvent e) {
             String[] sqls = getSQLFromDialog();
             if (sqls == null || sqls.length == 0) {
+//              TODO: tell the user no changes
                 return;
             }
 

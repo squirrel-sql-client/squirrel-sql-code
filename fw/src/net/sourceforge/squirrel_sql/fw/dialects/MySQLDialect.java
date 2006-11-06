@@ -396,4 +396,33 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
         return result.toString();
     }
     
+    /**
+     * Returns the SQL that is used to change the column type.
+     * 
+     * ALTER TABLE t1 CHANGE b b BIGINT NOT NULL;
+     * 
+     * @param from the TableColumnInfo as it is
+     * @param to the TableColumnInfo as it wants to be
+     * 
+     * @return the SQL to make the change
+     * @throw UnsupportedOperationException if the database doesn't support 
+     *         modifying column types. 
+     */
+    public String getColumnTypeAlterSQL(TableColumnInfo from, 
+                                        TableColumnInfo to)
+        throws UnsupportedOperationException
+    {
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(from.getTableName());
+        result.append(" CHANGE ");
+        // Always use "to" column name since name changes happen first
+        result.append(to.getColumnName());
+        result.append(" ");
+        result.append(to.getColumnName());
+        result.append(" ");
+        result.append(DialectUtils.getTypeName(to, this));
+        return result.toString();
+    }
+    
 }

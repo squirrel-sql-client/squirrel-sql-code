@@ -298,4 +298,22 @@ public class McKoiDialect extends org.hibernate.dialect.HSQLDialect
         throw new UnsupportedOperationException("Not yet implemented");
     }
     
+    /**
+     * Returns the SQL that is used to change the column type.
+     * 
+     * @param from the TableColumnInfo as it is
+     * @param to the TableColumnInfo as it wants to be
+     * 
+     * @return the SQL to make the change
+     * @throw UnsupportedOperationException if the database doesn't support 
+     *         modifying column types. 
+     */
+    public String getColumnTypeAlterSQL(TableColumnInfo from, 
+                                        TableColumnInfo to)
+        throws UnsupportedOperationException
+    {
+        // TODO: implement
+        throw new UnsupportedOperationException("Not Yet Implemented");
+    }
+    
 }
