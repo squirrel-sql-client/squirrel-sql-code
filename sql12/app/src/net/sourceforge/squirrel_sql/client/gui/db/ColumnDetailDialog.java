@@ -227,9 +227,9 @@ public class ColumnDetailDialog extends JDialog {
         
         SpinnerNumberModel sizeModel = null;
         if (JDBCTypeMapper.isNumberType(dataType)) {
-            sizeModel = (SpinnerNumberModel)lengthSpinner.getModel();
-        } else {
             sizeModel = (SpinnerNumberModel)precisionSpinner.getModel();
+        } else {
+            sizeModel = (SpinnerNumberModel)lengthSpinner.getModel();
         }   
         int columnSize = sizeModel.getNumber().intValue();
         SpinnerNumberModel scaleModel = 

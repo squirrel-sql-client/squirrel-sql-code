@@ -22,25 +22,28 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
-import java.util.ArrayList;
+
+import javax.swing.JOptionPane;
 
 import net.sourceforge.squirrel_sql.client.db.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.client.gui.db.ColumnDetailDialog;
 import net.sourceforge.squirrel_sql.client.gui.db.ColumnListDialog;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
-import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
+import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.refactoring.DBUtil;
+
+import org.hibernate.HibernateException;
 
 /**
  * Implements showing a list of columns for a selected table to the 
@@ -50,17 +53,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * @author rmmannin
  *
  */
-public class ModifyColumnCommand implements ICommand
+public class ModifyColumnCommand extends AbstractRefactoringCommand
 {
-    /**
-     * Current session.
-     */
-    private ISession _session;
-    
-    /**
-     * Currently selected 
-     */
-    private final IDatabaseObjectInfo _info;
     
     /** Logger for this class. */
     private final static ILogger log = 
@@ -76,7 +70,7 @@ public class ModifyColumnCommand implements ICommand
     
     private MainFrame mainFrame = null;    
     
-    private TableColumnInfo[] columns = null;
+    private TableColumnInfo columnToModify = null;
     
     private HibernateDialect dialect = null;    
     /**
@@ -84,9 +78,7 @@ public class ModifyColumnCommand implements ICommand
      */
     public ModifyColumnCommand(ISession session, IDatabaseObjectInfo info)
     {
-        super();
-        _session = session;
-        _info = info;
+        super(session, info);
     }
     
     /**
@@ -98,25 +90,27 @@ public class ModifyColumnCommand implements ICommand
         if (! (_info instanceof ITableInfo)) {
             return;
         }
+        //Show the user a dialog with a list of columns and ask them to select
+        // one or more columns to drop
         try {
             ITableInfo ti = (ITableInfo)_info;
-            columns = 
+            TableColumnInfo[] columns = 
                 _session.getSQLConnection().getSQLMetaData().getColumnInfo(ti);
             
-            //Show the user a dialog with a list of columns and ask them to select
-            // one or more columns to drop
-            ArrayList tmp = new ArrayList();
-            for (int i = 0; i < columns.length; i++) {
-                TableColumnInfo info = columns[i];
-                tmp.add(info.getColumnName());
+            // Don't show columns dialog if only one column exists to be modified
+            if (columns.length == 1) {
+                columnToModify = columns[0];
+                showColumnDetailsDialog();
+                return;
             }
+            
             if (listDialog == null) {
-                String[] tableColumns = 
-                    (String[])tmp.toArray(new String[tmp.size()]);
                 listDialog = 
-                    new ColumnListDialog(tableColumns, 
+                    new ColumnListDialog(columns, 
                                          ColumnListDialog.MODIFY_COLUMN_MODE);
-                listDialog.addColumnSelectionListener(new ColumnListSelectionActionListener());
+                ActionListener listener = 
+                    new ColumnListSelectionActionListener();
+                listDialog.addColumnSelectionListener(listener);
                 mainFrame = _session.getApplication().getMainFrame();
                 listDialog.setLocationRelativeTo(mainFrame);
                 listDialog.setSingleSelection();
@@ -126,10 +120,54 @@ public class ModifyColumnCommand implements ICommand
         } catch (SQLException e) {
             log.error("Unexpected exception "+e.getMessage(), e);
         }
-        
-        
     }
 
+    private String[] getSQLFromDialog() {
+        TableColumnInfo to = detailDialog.getColumnInfo();
+        String dbName = detailDialog.getSelectedDBName();
+        HibernateDialect dialect = DialectFactory.getDialect(dbName);
+        
+        String[] result = null;
+        try {
+            result = DBUtil.getAlterSQLForColumnChange(columnToModify, to, dialect);
+        } catch (HibernateException e1) {
+            String dataType = detailDialog.getSelectedTypeName();
+            // TODO: I18N
+            JOptionPane.showMessageDialog(detailDialog, 
+                    "The "+dialect.getDisplayName()+" dialect doesn't support the type "+dataType, 
+                    "Missing Dialect Type Mapping", 
+                    JOptionPane.ERROR_MESSAGE);            
+        } catch (UnsupportedOperationException e2) {
+            //i18n[ModifyColumnCommand.unsupportedOperationMsg=The {0} dialect
+            //doesn's support modifying columns]
+            String msg = 
+                s_stringMgr.getString("ModifyColumnCommand.unsupportedOperationMsg",
+                                      dbName);
+            _session.getMessageHandler().showMessage(msg);
+        }
+        return result;
+        
+    }
+    
+    private void showColumnDetailsDialog() {
+        try {
+            dialect =  
+                DialectFactory.getDialect(_session, DialectFactory.DEST_TYPE);
+            String dbName = dialect.getDisplayName();                
+            detailDialog = 
+                new ColumnDetailDialog(ColumnDetailDialog.MODIFY_MODE);
+            detailDialog.setExistingColumnInfo(columnToModify);
+            detailDialog.addShowSQLListener(new ShowSQLButtonListener());
+            detailDialog.addOKListener(new OKButtonListener());
+            mainFrame = _session.getApplication().getMainFrame();
+            detailDialog.setLocationRelativeTo(mainFrame);
+            detailDialog.setSelectedDialect(dbName);
+            detailDialog.setVisible(true);
+        } catch (UserCancelledOperationException ex) {
+            ex.printStackTrace();
+        }        
+    }
+    
     private class ColumnListSelectionActionListener implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
@@ -137,82 +175,84 @@ public class ModifyColumnCommand implements ICommand
                 System.err.println("dialog was null");
                 return;
             }
-            ModifyColumnExecHandler handler = new ModifyColumnExecHandler(_session);
-            String tableName = listDialog.getTableName();
-            Object[] columnNames = listDialog.getSelectedColumnList();
-            if (columnNames == null || columnNames.length != 1) {
-                System.err.println("Exactly one column must be selected to modify");
+            listDialog.setVisible(false);
+            TableColumnInfo[] colInfos = listDialog.getSelectedColumnList();
+            if (colInfos == null || colInfos.length != 1) {
+                // TODO I18N
+                _session.getMessageHandler().showMessage("Exactly one column must be selected to modify");
                 return;
             }
-            String selectedColumn = (String)columnNames[0];
-            int foundIdx = -1;
-            for (int i = 0; i < columns.length; i++) {
-                TableColumnInfo tcinfo = columns[i];
-                if (tcinfo.getColumnName().equals(selectedColumn)) {
-                    foundIdx = i;
-                    break;
-                }
-            }
-            if (foundIdx != -1) {
-                try {
-                    dialect =  
-                        DialectFactory.getDialect(_session, DialectFactory.DEST_TYPE);
-                    String dbName = dialect.getDisplayName();                
-                    detailDialog = 
-                        new ColumnDetailDialog(ColumnDetailDialog.MODIFY_MODE);
-                    detailDialog.setExistingColumnInfo(columns[foundIdx]);
-                    
-                    mainFrame = _session.getApplication().getMainFrame();
-                    detailDialog.setLocationRelativeTo(mainFrame);
-                    detailDialog.setSelectedDialect(dbName);
-                    detailDialog.setVisible(true);
-                } catch (UserCancelledOperationException ex) {
-                    ex.printStackTrace();
-                }
-            } else {
-                System.err.println("Didn't find TableColumnInfo");
-            }
-            //TableColumnInfo colInfo = 
-            /*
-            for (int i = 0; i < columnNames.length; i++) {
-                String columnName = (String)columnNames[i];
-                String dropSQL = 
-                    DialectUtils.getColumnDropSQL(tableName, columnName);
-                log.info("AddColumnCommand: executing SQL - "+dropSQL);
+            columnToModify = colInfos[0];
+            showColumnDetailsDialog();
+        }
+    }
+        
+    private class OKButtonListener implements ActionListener {
+
+        /* (non-Javadoc)
+         * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+         */
+        public void actionPerformed(ActionEvent e) {
+            String[] sqls = getSQLFromDialog();
+            CommandExecHandler handler = new CommandExecHandler(_session);
+            
+            if (sqls == null || sqls.length == 0) {
+                // TODO: tell the user no changes
+                return;
+            }            
+            // TODO: execute SQL.  Maybe should put it on the SQLEditor first?
+            // No, that should be configurable.
+
+            for (int i = 0; i < sqls.length; i++) {
+                String sql = sqls[i];
+                
+                log.info("ModifyColumnCommand: executing SQL - "+sql);
+                
                 SQLExecuterTask executer = 
                     new SQLExecuterTask(_session, 
-                                        dropSQL, 
+                                        sql, 
                                         handler);
     
                 // Execute the sql synchronously
                 executer.run();                
                 
-                if (handler.exceptionEncountered) {
+                if (handler.exceptionEncountered()) {
                     // Stop processing statements
                     break;
                 }
-                
             }
-            */
-            listDialog.setVisible(false);
+            detailDialog.setVisible(false);
+            
         }
         
     }
-    
-    private class ModifyColumnExecHandler extends DefaultSQLExecuterHandler {
-        private boolean exceptionEncountered = false;
-        
-        public ModifyColumnExecHandler(ISession session) {
-            super(session);
-        }
+
+    private class ShowSQLButtonListener implements ActionListener {
 
         /* (non-Javadoc)
-         * @see net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler#sqlExecutionException(java.lang.Throwable, java.lang.String)
+         * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
          */
-        public void sqlExecutionException(Throwable th, String postErrorString) {
-            super.sqlExecutionException(th, postErrorString);
-            exceptionEncountered = true;
+        public void actionPerformed(ActionEvent e) {
+            String[] sqls = getSQLFromDialog();
+            if (sqls == null || sqls.length == 0) {
+                return;
+            }
+
+            StringBuffer script = new StringBuffer();
+            for (int i = 0; i < sqls.length; i++) {
+                script.append(sqls[i]);
+                script.append(";\n\n");
+            }
+            
+            ErrorDialog sqldialog = 
+                new ErrorDialog(detailDialog, script.toString());
+            //i18n[ModifyColumnCommand.sqlDialogTitle=Modify column SQL]
+            String title = 
+                s_stringMgr.getString("ModifyColumnCommand.sqlDialogTitle");
+            sqldialog.setTitle(title);
+            sqldialog.setVisible(true);                
         }
+        
     }
     
 }

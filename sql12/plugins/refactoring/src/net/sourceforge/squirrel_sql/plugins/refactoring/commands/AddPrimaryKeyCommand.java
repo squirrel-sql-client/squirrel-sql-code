@@ -24,6 +24,7 @@ import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.client.db.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.client.gui.db.ColumnListDialog;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
@@ -38,14 +39,13 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * Implements showing a list of columns for a selected table to the 
- * user and dropping the ones that are selected when the user presses the 
- * drop column(s) button.
+ * user and making the ones that are selected become the primary key for
+ * the table
  * 
  * @author rmmannin
  *
  */
-public class RemoveColumnCommand extends AbstractRefactoringCommand
-{
+public class AddPrimaryKeyCommand extends AbstractRefactoringCommand {
     
     /** Logger for this class. */
     private final static ILogger log = 
@@ -53,12 +53,12 @@ public class RemoveColumnCommand extends AbstractRefactoringCommand
     
     /** Internationalized strings for this class. */
     private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(RemoveColumnCommand.class);
-    
+        StringManagerFactory.getStringManager(AddPrimaryKeyCommand.class);
+        
     /**
      * Ctor specifying the current session.
      */
-    public RemoveColumnCommand(ISession session, IDatabaseObjectInfo info)
+    public AddPrimaryKeyCommand(ISession session, IDatabaseObjectInfo info)
     {
         super(session, info);
     }
@@ -71,59 +71,27 @@ public class RemoveColumnCommand extends AbstractRefactoringCommand
         if (! (_info instanceof ITableInfo)) {
             return;
         }
+        // TODO: make sure the table doesn't already have a PK
         try {
-            ITableInfo ti = (ITableInfo)_info;
-            TableColumnInfo[] columns = 
-                _session.getSQLConnection().getSQLMetaData().getColumnInfo(ti);
-
-            if (columns.length < 2) {
-                //i18n[RemoveColumnAction.singleObjectMessage=The table's only 
-                //column cannot be removed - a table must have a least one column]
-                String msg = 
-                    s_stringMgr.getString("RemoveColumnAction.singleColumnMessage");
-                _session.getMessageHandler().showErrorMessage(msg);
-                return;
-            }
-            
-            try {
-                HibernateDialect dialect =  
-                    DialectFactory.getDialect(_session, DialectFactory.DEST_TYPE);
-                if (!dialect.supportsDropColumn()) {
-                    //i18n[RemoveColumnAction.removeColumnNotSupported=This
-                    //database ({0}) does not support dropping columns]
-                    String msg = 
-                        s_stringMgr.getString("RemoveColumnAction.removeColumnNotSupported",
-                                              dialect.getDisplayName());
-                    _session.getMessageHandler().showErrorMessage(msg);
-                    return;                    
-                }
-            } catch (UserCancelledOperationException e) {
-                log.info("User cancelled add column request");
-                return;
-            }        
-            
-            //Show the user a dialog with a list of columns and ask them to select
-            // one or more columns to drop
-            super.showColumnListDialog(new DropActionListener(), 
-                                       new DropSQLActionListener(), 0);
-        } catch (SQLException e) {
+            super.showColumnListDialog(new AddPrimaryKeyActionListener(), 
+                                       new ShowSQLListener(), 
+                                       ColumnListDialog.ADD_PRIMARY_KEY_MODE);
+        } catch (Exception e) {
             log.error("Unexpected exception "+e.getMessage(), e);
         }
         
         
     }
 
-    private class DropSQLActionListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
+    private class ShowSQLListener implements ActionListener {
+        public void actionPerformed( ActionEvent e) {
             
         }
     }
     
-    private class DropActionListener implements ActionListener {
+    private class AddPrimaryKeyActionListener implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
-            // TODO: should probably be using the ActionEvent and not directly
-            // referencing the columnListDialog.
             if (columnListDialog == null) {
                 System.err.println("dialog was null");
                 return;
@@ -138,29 +106,25 @@ public class RemoveColumnCommand extends AbstractRefactoringCommand
             }
             
             CommandExecHandler handler = new CommandExecHandler(_session);
+            String tableName = columnListDialog.getTableName();
             // For each column that the user selected, issue the correct drop column
             // statement.  This may be db-specific
-            TableColumnInfo[] columns = columnListDialog.getSelectedColumnList();
-            for (int i = 0; i < columns.length; i++) {
-                TableColumnInfo column = (TableColumnInfo)columns[i];
-                String dropSQL = 
-                    dialect.getColumnDropSQL(column.getTableName(), 
-                                             column.getColumnName());
-                log.info("AddColumnCommand: executing SQL - "+dropSQL);
+            TableColumnInfo[] columnInfos= columnListDialog.getSelectedColumnList();
+            
+            // TODO: Let the user choose the name for the primary key
+            String[] addPKSQLs = 
+                dialect.getAddPrimaryKeySQL("PK_"+tableName.toUpperCase(), 
+                                            columnInfos);
+            for (int i = 0; i < addPKSQLs.length; i++) {
+                String addPKSQL = addPKSQLs[i];
+                log.info("AddPrimaryKeyCommand: executing SQL - "+addPKSQL);
                 SQLExecuterTask executer = 
-                    new SQLExecuterTask(_session, 
-                                        dropSQL, 
-                                        handler);
-    
-                // Execute the sql synchronously
-                executer.run();                
-                
-                if (handler.exceptionEncountered()) {
-                    // Stop processing statements
-                    break;
-                }
-                
+                    new SQLExecuterTask(_session, addPKSQL, handler);
+                executer.run();
             }
+            
+            
+            
             columnListDialog.setVisible(false);
         }
         

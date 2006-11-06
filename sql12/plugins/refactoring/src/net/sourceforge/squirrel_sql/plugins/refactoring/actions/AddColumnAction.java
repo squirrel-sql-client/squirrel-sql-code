@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.refactoring.actions;
 /*
- * Copyright (C) 20056 Rob Manning
+ * Copyright (C) 2006 Rob Manning
  * manningr@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -17,29 +17,31 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.actions;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.awt.event.ActionEvent;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.refactoring.commands.AddColumnCommand;
 
-public class AddColumnAction extends SquirrelAction
+public class AddColumnAction extends AbstractRefactoringAction
                                      implements ISessionAction {
-
-	/** Current session. */
-    private ISession _session;
 
     /** Internationalized strings for this class. */
     private static final StringManager s_stringMgr =
         StringManagerFactory.getStringManager(AddColumnAction.class);
     
+    private static interface i18n {
+        ///i18n[AddColumnAction.addColumnPart=add a column]
+        String columnPart = 
+            s_stringMgr.getString("AddColumnAction.addColumnPart");
+        //i18n[Shared.singleObjectMessage=You must have a single table selected
+        //in order to {0}]
+        String singleObjectMessage = 
+            s_stringMgr.getString("Shared.singleObjectMessage", columnPart); 
+    }
     
     public AddColumnAction(IApplication app, 
                            Resources rsrc) 
@@ -47,42 +49,11 @@ public class AddColumnAction extends SquirrelAction
         super(app, rsrc); 
     }
 
-    public void actionPerformed(ActionEvent evt) {
-        if (_session != null) {
-            IObjectTreeAPI api = 
-                _session.getObjectTreeAPIOfActiveSessionWindow();
-            IDatabaseObjectInfo[] infos = api.getSelectedDatabaseObjects();
-            if (infos.length == 1) {
-                new AddColumnCommand(_session, infos[0]).execute();
-            } else {
-                //i18n[AddColumnAction.singleObjectMessage=You must have a 
-                //single table selected in order to add a column]
-                String msg = 
-                    s_stringMgr.getString("AddColumnAction.singleObjectMessage");
-                _session.getMessageHandler().showMessage(msg);
-            }
-        }
+    protected ICommand getCommand(IDatabaseObjectInfo info) {
+        return new AddColumnCommand(_session, info);
     }
-
-	/**
-	 * Set the current session.
-	 * 
-	 * @param	session		The current session.
-	 */
-    public void setSession(ISession session) {
-        _session = session;
-    }
-
-    public void setObjectTree(IObjectTreeAPI tree)
-    {
-       if(null != tree)
-       {
-          _session = tree.getSession();
-       }
-       else
-       {
-          _session = null;
-       }
-       setEnabled(null != _session);
+    
+    protected String getErrorMessage() {
+        return i18n.singleObjectMessage;
     }    
 }

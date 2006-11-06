@@ -172,16 +172,15 @@ public class Oracle9iDialect extends Oracle9Dialect
     /**
      * Returns the SQL statement to use to add a column to the specified table
      * using the information about the new column specified by info.
-     * 
-     * @param tableName the name of the table to create the SQL for.
      * @param info information about the new column such as type, name, etc.
+     * 
      * @return
      * @throws UnsupportedOperationException if the database doesn't support 
      *         adding columns after a table has already been created.
      */
-    public String[] getColumnAddSQL(String tableName, TableColumnInfo info) throws UnsupportedOperationException {
+    public String[] getColumnAddSQL(TableColumnInfo info) throws UnsupportedOperationException {
         return new String[] {
-            DialectUtils.getColumnAddSQL(tableName, info, this, false, true)
+            DialectUtils.getColumnAddSQL(info, this, false, true)
         };
     }
 
@@ -198,22 +197,19 @@ public class Oracle9iDialect extends Oracle9Dialect
     /**
      * Returns the SQL statement to use to add a comment to the specified 
      * column of the specified table.
-     * 
+     * @param info information about the column such as type, name, etc.
      * @param tableName the name of the table to create the SQL for.
-     * @param columnName the name of the column to create the SQL for.
-     * @param comment the comment to add.
+     * 
      * @return
      * @throws UnsupportedOperationException if the database doesn't support 
      *         annotating columns with a comment.
      */
-    public String getColumnCommentAlterSQL(String tableName, 
-                                           String columnName, 
-                                           String comment) 
+    public String getColumnCommentAlterSQL(TableColumnInfo info) 
         throws UnsupportedOperationException 
     {
-        return DialectUtils.getColumnCommentAlterSQL(tableName, 
-                                                     columnName, 
-                                                     comment);
+        return DialectUtils.getColumnCommentAlterSQL(info.getTableName(), 
+                                                     info.getColumnName(), 
+                                                     info.getRemarks());
     }
     
     /**
@@ -223,7 +219,6 @@ public class Oracle9iDialect extends Oracle9Dialect
      * @return true if the database supports dropping columns; false otherwise.
      */
     public boolean supportsDropColumn() {
-        // TODO: need to verify this
         return true;
     }
     
@@ -266,6 +261,82 @@ public class Oracle9iDialect extends Oracle9Dialect
         if (cascadeConstraints) {
             result.append(" CASCADE CONSTRAINTS");
         }
+        return result.toString();
+    }
+    
+    /**
+     * Returns the SQL that forms the command to add a primary key to the 
+     * specified table composed of the given column names.
+     * @param columns the columns that form the key
+     * 
+     * @return
+     */
+    public String[] getAddPrimaryKeySQL(String pkName,
+                                        TableColumnInfo[] columns) {
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(columns[0].getTableName());
+        result.append(" ADD CONSTRAINT ");
+        result.append(pkName);
+        result.append(" PRIMARY KEY (");
+        for (int i = 0; i < columns.length; i++) {
+            result.append(columns[i].getColumnName());
+            if (i + 1 < columns.length) {
+                result.append(", ");
+            }
+        }
+        result.append(")");
+        return new String[] { result.toString() };
+    }
+    
+    public String getDropPrimaryKeySQL(String tableName) {
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(tableName);
+        result.append(" DROP PRIMARY KEY CASCADE");
+        return result.toString();
+    }
+    
+    /**
+     * Returns the SQL used to alter the specified column to allow/disallow null 
+     * values, based on the value of isNullable.
+     * 
+     * alter table test modify mycol not null
+     * 
+     * @param info the column to modify
+     * @return the SQL to execute
+     */
+    public String getColumnNullableAlterSQL(TableColumnInfo info) {
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(info.getTableName());
+        result.append(" MODIFY ");
+        result.append(info.getColumnName());
+        if (info.isNullable().equals("YES")) {
+            result.append(" NULL");
+        } else {
+            result.append(" NOT NULL");
+        }
+        return result.toString();
+    }
+    
+    /**
+     * Returns the SQL that is used to change the column name.
+     * 
+     * @param from the TableColumnInfo as it is
+     * @param to the TableColumnInfo as it wants to be
+     * 
+     * @return the SQL to make the change
+     */
+    public String getColumnNameAlterSQL(TableColumnInfo from, 
+                                        TableColumnInfo to) {
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(from.getTableName());
+        result.append(" RENAME COLUMN ");
+        result.append(from.getColumnName());
+        result.append(" TO ");
+        result.append(to.getColumnName());
         return result.toString();
     }
     

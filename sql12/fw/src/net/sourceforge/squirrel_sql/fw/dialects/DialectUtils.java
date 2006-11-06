@@ -37,8 +37,6 @@ public class DialectUtils {
     /**
      * Returns the SQL statement to use to add a column to the specified table
      * using the information about the new column specified by info.
-     * 
-     * @param tableName the name of the table to create the SQL for.
      * @param info information about the new column such as type, name, etc.
      * @param dialect the HibernateDialect to use to resolve the type
      * @param addDefaultClause whether or not the dialect's SQL supports a 
@@ -48,17 +46,18 @@ public class DialectUtils {
      * @throws UnsupportedOperationException if the database doesn't support 
      *         adding columns after a table has already been created.
      */
-    public static String getColumnAddSQL(String tableName, 
-                                  TableColumnInfo info,
-                                  HibernateDialect dialect,
-                                  boolean addDefaultClause,
-                                  boolean supportsNullQualifier) 
+    public static String getColumnAddSQL(TableColumnInfo info, 
+                                         HibernateDialect dialect,
+                                         boolean addDefaultClause,
+                                         boolean supportsNullQualifier) 
         throws UnsupportedOperationException, HibernateException 
     {
         StringBuffer result = new StringBuffer();
         result.append("ALTER TABLE ");
-        result.append(tableName);
-        result.append(" ADD ");
+        result.append(info.getTableName());
+        result.append(" ");
+        result.append(dialect.getAddColumnString().toUpperCase());
+        result.append(" ");
         result.append(info.getColumnName());
         result.append(" ");
         result.append(dialect.getTypeName(info.getDataType(), 
@@ -67,18 +66,7 @@ public class DialectUtils {
                                                 info.getDecimalDigits()));
 
         if (addDefaultClause) {
-            if (info.getDefaultValue() != null 
-                    && !"".equals(info.getDefaultValue())) 
-            {
-                result.append(" DEFAULT ");
-                if (JDBCTypeMapper.isNumberType(info.getDataType())) {
-                    result.append(info.getDefaultValue());
-                } else {
-                    result.append("'");
-                    result.append(info.getDefaultValue());
-                    result.append("'");                
-                }
-            }            
+            appendDefaultClause(info, result);
         }
         
         if (info.isNullable().equals("NO")) {
@@ -89,6 +77,24 @@ public class DialectUtils {
             }
         }
         return result.toString();
+    }
+    
+    public static String appendDefaultClause(TableColumnInfo info, 
+                                             StringBuffer buffer) {
+
+        if (info.getDefaultValue() != null 
+                && !"".equals(info.getDefaultValue())) 
+        {
+            buffer.append(" DEFAULT ");
+            if (JDBCTypeMapper.isNumberType(info.getDataType())) {
+                buffer.append(info.getDefaultValue());
+            } else {
+                buffer.append("'");
+                buffer.append(info.getDefaultValue());
+                buffer.append("'");                
+            }
+        }                    
+        return buffer.toString();
     }
     
     /**
@@ -112,7 +118,9 @@ public class DialectUtils {
         result.append(".");
         result.append(columnName);
         result.append(" IS '");
-        result.append(comment);
+        if (comment != null && !"".equals(comment)) {
+            result.append(comment);
+        }
         result.append("'");
         return result.toString();
     }
@@ -125,10 +133,24 @@ public class DialectUtils {
      */
     public static String getColumnDropSQL(String tableName, 
                                           String columnName) {
+        return getColumnDropSQL(tableName, columnName, "DROP");
+    }
+
+    /**
+     * 
+     * @param tableName
+     * @param columnName
+     * @return
+     */
+    public static String getColumnDropSQL(String tableName, 
+                                          String columnName,
+                                          String dropClause) {
         StringBuffer result = new StringBuffer();
         result.append("ALTER TABLE ");
         result.append(tableName);
-        result.append(" DROP ");
+        result.append(" ");
+        result.append(dropClause);
+        result.append(" ");
         result.append(columnName);
         return result.toString();
     }
@@ -157,5 +179,14 @@ public class DialectUtils {
             result.append(" CASCADE ");
         }
         return result.toString();
+    }
+    
+    public static String getTypeName(TableColumnInfo info, 
+                                     HibernateDialect dialect) 
+    {
+        return dialect.getTypeName(info.getDataType(), 
+                                   info.getColumnSize(), 
+                                   info.getColumnSize(), 
+                                   info.getDecimalDigits());
     }
 }

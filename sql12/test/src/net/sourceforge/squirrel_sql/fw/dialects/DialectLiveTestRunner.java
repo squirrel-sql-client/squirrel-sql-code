@@ -68,13 +68,32 @@ public class DialectLiveTestRunner {
                 getVarcharColumn("nullvc", true, "defVal", "A varchar comment");
             TableColumnInfo fourthCol =
                 getVarcharColumn("notnullvc", false, "defVal", "A varchar comment");
+            TableColumnInfo dropCol =
+                getVarcharColumn("dropCol", true, null, "A varchar comment");
+            
             addColumn(session, firstCol);
             addColumn(session, secondCol);
             addColumn(session, thirdCol);
             addColumn(session, fourthCol);
+            addColumn(session, dropCol);
+            if (dialect.supportsColumnComment()) {
+                alterColumnComment(session, firstCol);
+                alterColumnComment(session, secondCol);
+                alterColumnComment(session, thirdCol);
+                alterColumnComment(session, fourthCol);
+            }
+            // Convert the thirdCol to not null 
+            TableColumnInfo notNullThirdCol = 
+                getVarcharColumn("nullvc", false, "defVal", "A varchar comment");
+            String notNullSQL = 
+                dialect.getColumnNullableAlterSQL(notNullThirdCol);
+            runSQL(session, notNullSQL);
+            
+            // then make it the PK
+            addPrimaryKey(session, new TableColumnInfo[] {thirdCol});
+            
             if (dialect.supportsDropColumn()) {
-                dropColumn(session, firstCol);
-                dropColumn(session, secondCol);
+                dropColumn(session, dropCol);
             }
         }
     }
@@ -87,7 +106,12 @@ public class DialectLiveTestRunner {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        runSQL(session, "create table test ( mychar char(10))");
+        if (DialectFactory.isIngresSession(session)) {
+            // alterations fail for some reason unless you do this...
+            runSQL(session, "create table test ( mychar char(10)) with page_size=4096");
+        } else {
+            runSQL(session, "create table test ( mychar char(10))");
+        }
     }
     
     private void addColumn(ISession session,    
@@ -97,7 +121,7 @@ public class DialectLiveTestRunner {
         HibernateDialect dialect = 
             DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);
        
-        String[] sqls = dialect.getColumnAddSQL("test", info);
+        String[] sqls = dialect.getColumnAddSQL(info);
         for (int i = 0; i < sqls.length; i++) {
             String sql = sqls[i];
             runSQL(session, sql);
@@ -105,6 +129,48 @@ public class DialectLiveTestRunner {
         
     }
 
+    private void alterColumnComment(ISession session,    
+                                    TableColumnInfo info) 
+        throws Exception    
+    {
+        HibernateDialect dialect = 
+            DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);
+        String commentSQL = dialect.getColumnCommentAlterSQL(info);
+        if (commentSQL != null && !commentSQL.equals("")) {
+            runSQL(session, commentSQL);
+        }
+    }
+    
+    private void alterColumnNullable(ISession session,    
+                                     TableColumnInfo info) 
+        throws Exception    
+    {
+        HibernateDialect dialect = 
+            DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);
+        String nullSQL = dialect.getColumnCommentAlterSQL(info);
+        if (nullSQL != null && !nullSQL.equals("")) {
+            runSQL(session, nullSQL);
+        }
+    }
+    
+    private void addPrimaryKey(ISession session,
+                               TableColumnInfo[] colInfos) 
+        throws Exception 
+    {
+        HibernateDialect dialect = 
+            DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);
+
+        String tableName = colInfos[0].getTableName();
+        
+        String[] pkSQLs = 
+            dialect.getAddPrimaryKeySQL(tableName.toUpperCase()+"_PK", colInfos);
+        
+        for (int i = 0; i < pkSQLs.length; i++) {
+            String pkSQL = pkSQLs[i];
+            runSQL(session, pkSQL);
+        }
+    }
+    
     private void dropColumn(ISession session,    
                             TableColumnInfo info) 
     throws Exception 
@@ -198,6 +264,4 @@ public class DialectLiveTestRunner {
         DialectLiveTestRunner runner = new DialectLiveTestRunner();
         runner.runTests();
     }
-
-    
 }
