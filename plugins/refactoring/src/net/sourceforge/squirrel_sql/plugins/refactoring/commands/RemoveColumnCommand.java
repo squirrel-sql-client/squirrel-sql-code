@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
+import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
@@ -35,6 +36,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.refactoring.DBUtil;
 
 /**
  * Implements showing a list of columns for a selected table to the 
@@ -113,9 +115,58 @@ public class RemoveColumnCommand extends AbstractRefactoringCommand
         
     }
 
+    private String[] getSQLFromDialog() {
+        TableColumnInfo[] columns = columnListDialog.getSelectedColumnList();
+        HibernateDialect dialect = null; 
+            
+        
+        String[] result = new String[columns.length];
+        try {
+            dialect = DialectFactory.getDialect(_session, DialectFactory.DEST_TYPE);
+            for (int i = 0; i < columns.length; i++) {
+                TableColumnInfo info = columns[i];
+                result[i] = DBUtil.getAlterSQLForColumnRemoval(info.getTableName(), 
+                                                               info, 
+                                                               dialect);
+            }
+                                        
+        } catch (UnsupportedOperationException e2) {
+            //i18n[RemoveColumnCommand.unsupportedOperationMsg=The {0} dialect
+            //doesn's support dropping columns]
+            String msg = 
+                s_stringMgr.getString("RemoveColumnCommand.unsupportedOperationMsg", 
+                                      dialect.getDisplayName());
+                                      
+            _session.getMessageHandler().showMessage(msg);
+        } catch (UserCancelledOperationException e) {
+            // user cancelled selecting a dialog. do nothing?
+        }
+        return result;
+        
+    }
+    
+    
     private class DropSQLActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
+            String[] sqls = getSQLFromDialog();
+            if (sqls == null || sqls.length == 0) {
+//              TODO: tell the user no changes
+                return;
+            }
+
+            StringBuffer script = new StringBuffer();
+            for (int i = 0; i < sqls.length; i++) {
+                script.append(sqls[i]);
+                script.append(";\n\n");
+            }
             
+            ErrorDialog sqldialog = 
+                new ErrorDialog(columnListDialog, script.toString());
+            //i18n[RemoveColumnCommand.sqlDialogTitle=Remove Column SQL]
+            String title = 
+                s_stringMgr.getString("RemoveColumnCommand.sqlDialogTitle");
+            sqldialog.setTitle(title);
+            sqldialog.setVisible(true);                            
         }
     }
     
