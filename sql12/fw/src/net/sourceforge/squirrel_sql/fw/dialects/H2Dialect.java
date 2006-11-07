@@ -399,7 +399,7 @@ public class H2Dialect extends Dialect implements HibernateDialect {
      * @return true if column comments are supported; false otherwise.
      */
     public boolean supportsColumnComment() {
-        return false;
+        return true;
     }    
         
     /**
@@ -423,8 +423,7 @@ public class H2Dialect extends Dialect implements HibernateDialect {
      *         dropping columns. 
      */
     public String getColumnDropSQL(String tableName, String columnName) {
-        // TODO: Need to verify this        
-        return DialectUtils.getColumnDropSQL(tableName, columnName);
+        return DialectUtils.getColumnDropSQL(tableName, columnName, "DROP COLUMN");
     }
     
     /**
@@ -469,9 +468,11 @@ public class H2Dialect extends Dialect implements HibernateDialect {
      */
     public String getColumnCommentAlterSQL(TableColumnInfo info) 
         throws UnsupportedOperationException
-    {
-        // TODO: implement when the database supports changing comments       
-        throw new UnsupportedOperationException("This database dialect doesn't support adding comments to columns");
+    {       
+        // TODO: verify
+        return DialectUtils.getColumnCommentAlterSQL(info.getTableName(), 
+                                                     info.getColumnName(), 
+                                                     info.getRemarks());
     }
  
     /**
