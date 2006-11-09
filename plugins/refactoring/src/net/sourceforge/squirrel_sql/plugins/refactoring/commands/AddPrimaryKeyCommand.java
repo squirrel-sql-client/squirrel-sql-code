@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
+import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
@@ -36,6 +37,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.refactoring.DBUtil;
 
 /**
  * Implements showing a list of columns for a selected table to the 
@@ -83,8 +85,56 @@ public class AddPrimaryKeyCommand extends AbstractRefactoringCommand {
         
     }
 
+    private String[] getSQLFromDialog() {
+        TableColumnInfo[] columns = columnListDialog.getSelectedColumnList();
+        HibernateDialect dialect = null; 
+            
+        
+        String[] result = null;
+        try {
+            dialect = DialectFactory.getDialect(_session, DialectFactory.DEST_TYPE);
+            
+            // TODO: allow user to specify the name of the PK
+            String pkName = "PK_"+columns[0].getTableName().toUpperCase();
+
+            result = dialect.getAddPrimaryKeySQL(pkName, columns);
+        } catch (UnsupportedOperationException e2) {
+            //i18n[RemoveColumnCommand.unsupportedOperationMsg=The {0} dialect
+            //doesn's support dropping columns]
+            String msg = 
+                s_stringMgr.getString("RemoveColumnCommand.unsupportedOperationMsg", 
+                                      dialect.getDisplayName());
+                                      
+            _session.getMessageHandler().showMessage(msg);
+        } catch (UserCancelledOperationException e) {
+            // user cancelled selecting a dialog. do nothing?
+        }
+        return result;
+        
+    }
+    
+    
     private class ShowSQLListener implements ActionListener {
         public void actionPerformed( ActionEvent e) {
+            String[] addPKSQLs = getSQLFromDialog();
+            if (addPKSQLs == null || addPKSQLs.length == 0) {
+//              TODO: tell the user no changes
+                return;
+            }
+
+            StringBuffer script = new StringBuffer();
+            for (int i = 0; i < addPKSQLs.length; i++) {
+                script.append(addPKSQLs[i]);
+                script.append(";\n\n");
+            }
+            
+            ErrorDialog sqldialog = 
+                new ErrorDialog(columnListDialog, script.toString());
+            //i18n[AddPrimaryKeyCommand.sqlDialogTitle=Add Primary Key SQL]
+            String title = 
+                s_stringMgr.getString("AddPrimaryKeyCommand.sqlDialogTitle");
+            sqldialog.setTitle(title);
+            sqldialog.setVisible(true);                
             
         }
     }
@@ -96,25 +146,11 @@ public class AddPrimaryKeyCommand extends AbstractRefactoringCommand {
                 System.err.println("dialog was null");
                 return;
             }
-            HibernateDialect dialect = null;
-            try {
-                dialect =  
-                    DialectFactory.getDialect(_session, DialectFactory.DEST_TYPE);
-            } catch (UserCancelledOperationException ex) {
-                log.info("User cancelled add column request");
-                return;                
-            }
             
             CommandExecHandler handler = new CommandExecHandler(_session);
-            String tableName = columnListDialog.getTableName();
-            // For each column that the user selected, issue the correct drop column
-            // statement.  This may be db-specific
-            TableColumnInfo[] columnInfos= columnListDialog.getSelectedColumnList();
             
-            // TODO: Let the user choose the name for the primary key
-            String[] addPKSQLs = 
-                dialect.getAddPrimaryKeySQL("PK_"+tableName.toUpperCase(), 
-                                            columnInfos);
+            String[] addPKSQLs = getSQLFromDialog();
+            
             for (int i = 0; i < addPKSQLs.length; i++) {
                 String addPKSQL = addPKSQLs[i];
                 log.info("AddPrimaryKeyCommand: executing SQL - "+addPKSQL);

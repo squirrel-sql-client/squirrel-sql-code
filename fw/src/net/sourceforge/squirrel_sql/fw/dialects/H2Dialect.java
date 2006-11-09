@@ -5,6 +5,7 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -447,15 +448,35 @@ public class H2Dialect extends Dialect implements HibernateDialect {
      * Returns the SQL that forms the command to add a primary key to the 
      * specified table composed of the given column names.
      * 
+     * alter table test alter column mychar char(10) not null 
+     * 
+     * alter table test add primary key (mychar)
+     * 
      * @param pkName the name of the constraint
-     * @param columnNames the columns that form the key
+     * @param columns the columns that form the key
      * @return
      */
     public String[] getAddPrimaryKeySQL(String pkName, 
-                                      TableColumnInfo[] columnNames) 
+                                        TableColumnInfo[] columns) 
     {
-        // TODO: implement
-        throw new UnsupportedOperationException("getAddPrimaryKeySQL not implemented");
+        ArrayList result = new ArrayList();
+        StringBuffer addPKSQL = new StringBuffer();
+        addPKSQL.append("ALTER TABLE ");
+        addPKSQL.append(columns[0].getTableName());
+        addPKSQL.append(" ADD PRIMARY KEY (");
+        for (int i = 0; i < columns.length; i++) {
+            TableColumnInfo info = columns[i];
+            if (info.isNullable().equals("YES")) {
+                result.add(getColumnNullableAlterSQL(info, false));
+            }
+            addPKSQL.append(info.getColumnName());
+            if (i + 1 < columns.length) {
+                addPKSQL.append(", ");
+            }
+        }
+        addPKSQL.append(")");
+        result.add(addPKSQL.toString());
+        return (String[]) result.toArray(new String[result.size()]);
     }
     
     /**
@@ -469,27 +490,50 @@ public class H2Dialect extends Dialect implements HibernateDialect {
     public String getColumnCommentAlterSQL(TableColumnInfo info) 
         throws UnsupportedOperationException
     {       
-        // TODO: verify
         return DialectUtils.getColumnCommentAlterSQL(info.getTableName(), 
                                                      info.getColumnName(), 
                                                      info.getRemarks());
     }
  
     /**
-     * Returns the SQL used to alter the specified column to not allow null 
-     * values
+     * Returns the SQL used to alter the nullability of the specified column 
+     * 
+     * ALTER TABLE tableName ALTER COLUMN columnName 
+     * dataType [DEFAULT expression] [NOT [NULL]]
      * 
      * @param info the column to modify
      * @return the SQL to execute
      */
     public String getColumnNullableAlterSQL(TableColumnInfo info) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not yet implemented");
+        String nullable = info.isNullable();
+        return getColumnNullableAlterSQL(info, 
+                                         nullable.equalsIgnoreCase("YES"));
     }
 
+    private String getColumnNullableAlterSQL(TableColumnInfo info, 
+                                             boolean isNullable) 
+    {
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(info.getTableName());
+        result.append(" ALTER COLUMN ");
+        result.append(info.getColumnName());
+        result.append(" ");
+        result.append(DialectUtils.getTypeName(info, this));
+        if (isNullable) {
+            result.append(" NULL ");
+        } else {
+            result.append(" NOT NULL ");
+        }
+        return result.toString();        
+        
+    }
+    
     /**
      * Returns the SQL that is used to change the column name.
      * 
+     * ALTER TABLE tableName ALTER COLUMN columnName 
+     * RENAME TO name
      * 
      * @param from the TableColumnInfo as it is
      * @param to the TableColumnInfo as it wants to be
@@ -497,12 +541,20 @@ public class H2Dialect extends Dialect implements HibernateDialect {
      * @return the SQL to make the change
      */
     public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not yet implemented");
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(to.getTableName());
+        result.append(" ALTER COLUMN ");
+        result.append(from.getColumnName());
+        result.append(" RENAME TO ");
+        result.append(to.getColumnName());
+        return result.toString();
     }
     
     /**
      * Returns the SQL that is used to change the column type.
+     * 
+     * ALTER TABLE TEST ALTER COLUMN NAME CLOB 
      * 
      * @param from the TableColumnInfo as it is
      * @param to the TableColumnInfo as it wants to be
@@ -515,8 +567,14 @@ public class H2Dialect extends Dialect implements HibernateDialect {
                                         TableColumnInfo to)
         throws UnsupportedOperationException
     {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not Yet Implemented");
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(to.getTableName());
+        result.append(" ALTER COLUMN ");
+        result.append(to.getColumnName());
+        result.append(" ");
+        result.append(DialectUtils.getTypeName(to, this));
+        return result.toString();
     }
     
 }
