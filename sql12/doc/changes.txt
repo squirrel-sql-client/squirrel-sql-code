@@ -1,6 +1,56 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+2.3.1 (Stable bug-fix release)
+=========
+
+	Bug-Fixes:
+
+Look and Feel Plugin: Plastic Look and Feels (JGoodies) weren't available anymore.
+
+"Make Editable" on single table SQL did not work when SELECT list contained new lines.
+
+1554175: (Aliases lost on close) 
+1532997: (NullPointerException when trying to save alias)
+1522229: (Error occured saving Alias Definitions java.lang.NullPointer)
+Many people complained about this one.  At first we determined this was low 
+priority since it didn't seem to be reproducable on all jvms. We inadvertantly 
+changed the SQLDriverPropertyCollectionBeanInfo such that it no longer 
+accurately described the bean SQLDriverPropertyCollection.  in 1.4.2_05 this 
+triggered an NPE bug in the jvm code (Introspector.addPropertyDescriptor) which 
+caused the SQLAlias persistence to fail, leaving the user with no aliases.
+
+1584283: (DBCopy plugin - Copying LOBs from Oracle to Oracle fails)
+If destination column type is Types.OTHER (1111), try to get 
+the type name and map it to a valid java SQL type (such as 
+Types.BLOB or Types.CLOB).  This only works when the database column
+type name as reported by the JDBC driver is a standard type such as 
+BLOB, VARCHAR, CLOB, CHAR, etc... A mapping exception is thrown 
+otherwise.
+
+1584260: (DBCopy plugin - Fix for issue where the same table is found in 
+multiple schemas/catalogs that the user has access to.  Now we specify catalog 
+or schema if the driver claims to support them.)
+
+1577254: Trigger details tabs aren't rendered
+
+1532857: (DB2 on AS400 table list not shown) Incorporated Colin Bell's patch 
+to address this issue which causes SQuirreL to give '*ALLUSR' for the schema
+value when calling DatabaseMetaData.getTables.
+
+1520156: changed the function of the configurable ref actions checkboxes for 
+SQLScript plugin.  Now, they will override what is contained in the 
+DatabaseMetaData if checked.  If not checked, we now use whatever the database 
+tells us the ref action is (before we weren't bothering to check the with 
+the database.  Now we do, by default)
+
+Bug Fix: Editing data in multiple tables would sometimes fail erroneously with
+an error message like "This row in the Database has changed since you 
+refreshed the data. No rows will be updated by this operation".
+
+Bug Fix: Solved issue where tables were not appearing in the object tree for
+Sun HADB (High-Availability Database).  Special thanks to Lars Heill of Sun
+Microsystems, Inc. for technical assistance with installing/configuring HADB.
 
 2.3 Final
 =========
