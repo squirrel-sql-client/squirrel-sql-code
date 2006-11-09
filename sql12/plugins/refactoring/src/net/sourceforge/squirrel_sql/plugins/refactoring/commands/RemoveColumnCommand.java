@@ -141,8 +141,7 @@ public class RemoveColumnCommand extends AbstractRefactoringCommand
         } catch (UserCancelledOperationException e) {
             // user cancelled selecting a dialog. do nothing?
         }
-        return result;
-        
+        return result;        
     }
     
     

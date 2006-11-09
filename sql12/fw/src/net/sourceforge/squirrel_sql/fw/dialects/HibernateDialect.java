@@ -262,8 +262,7 @@ public interface HibernateDialect {
     String getAddColumnString();
     
     /**
-     * Returns the SQL used to alter the specified column to not allow null 
-     * values
+     * Returns the SQL used to alter the nullability of the specified column 
      * 
      * @param info the column to modify
      * @return the SQL to execute
