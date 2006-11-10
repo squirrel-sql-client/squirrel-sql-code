@@ -43,6 +43,10 @@ get this information.
 
 	Bug-Fixes:
 
+Added logic to prevent the MacOS X plugin from loading if not on the mac 
+platform.  It causes the Global Preferences menu item to disappear when it is 
+loaded and the platform isn't Mac
+
 Look and Feel Plugin: Plastic Look and Feels (JGoodies) weren't available anymore.
 
 "Make Editable" on single table SQL did not work when SELECT list contained new lines.
