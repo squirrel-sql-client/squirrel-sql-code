@@ -154,14 +154,6 @@
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/oracle/dist/oracle"/>
 		</pack>				
 
-		<pack required="no" preselected="no" name="Optional Plugin - Refactoring">
-			<description>This plugin allows you to refactor your database using database refactoring patterns</description>
-			<file targetdir="$INSTALL_PATH/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/plugins" 
-				  src="../../squirrel-sql-dist/squirrel-sql/plugins/refactoring/dist/refactoring.jar"/>
-			<file targetdir="$INSTALL_PATH/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/plugins" 
-				  src="../../squirrel-sql-dist/squirrel-sql/plugins/refactoring/dist/refactoring"/>
-		</pack>				
-				
 		<pack required="no" preselected="no" name="Optional Plugin - Session Scripts">
 			<description>This plugin allows you to specify SQL statements to be executed when you first connect to a database.</description>
 			<file targetdir="$INSTALL_PATH/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/plugins" 
