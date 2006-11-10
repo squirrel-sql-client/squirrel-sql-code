@@ -393,6 +393,8 @@ public class PluginManager
 	{
 		List pluginUrls = new ArrayList();
 		File dir = new ApplicationFiles().getPluginsDirectory();
+        boolean isMac = 
+            System.getProperty("os.name").toLowerCase().startsWith("mac");
 		if (dir.isDirectory())
 		{
 			final Map pluginStatuses = new HashMap();
@@ -423,7 +425,13 @@ public class PluginManager
 								final String fullFilePath = file.getAbsolutePath();
 								final String internalName = Utilities.removeFileNameSuffix(file.getName());
 								final PluginStatus ps = (PluginStatus)pluginStatuses.get(internalName);
-								if (ps == null || ps.isLoadAtStartup())
+                                boolean shouldLoad = true;
+                                if (!isMac && internalName.startsWith("macosx")) 
+                                {
+                                    s_log.info("Detected MacOS X plugin on non-Mac platform - skipping");
+                                    shouldLoad = false;
+                                }
+								if (shouldLoad && (ps == null || ps.isLoadAtStartup()))
 								{
 									pluginUrls.add(file.toURL());
 
