@@ -67,12 +67,6 @@
 			<file	targetdir="$INSTALL_PATH/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/lib"
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/nanoxml-2.1.jar"/>
 			<file	targetdir="$INSTALL_PATH/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/lib"
-					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/hibernate3.jar"/>
-			<file	targetdir="$INSTALL_PATH/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/lib"
-					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/antlr-2.7.5H3.jar"/>					
-			<file	targetdir="$INSTALL_PATH/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/lib"
-					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/commons-logging-1.0.4.jar"/>					
-			<file	targetdir="$INSTALL_PATH/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/lib"
 				src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/commons-cli.jar"/>
 			<file	targetdir="$INSTALL_PATH/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/lib"
 				src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/forms.jar"/>
@@ -113,6 +107,13 @@
 
         <pack required="no" preselected="no" name="Optional Plugin - DBCopy">
                 <description>This optional plugin allows database objects to be copied from one database session to another </description>
+                        <file targetdir="$INSTALL_PATH/plugins"
+                                  src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/dbcopy/lib/antlr-2.7.5H3.jar"/>
+                        <file targetdir="$INSTALL_PATH/plugins"
+                                  src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/dbcopy/lib/commons-logging-1.0.4.jar" />
+                        <file targetdir="$INSTALL_PATH/plugins"
+                                  src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/dbcopy/lib/hibernate3.jar" />
+
                 <file targetdir="$INSTALL_PATH/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/plugins"
                           src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/dbcopy.jar"/>
                 <file targetdir="$INSTALL_PATH/plugins"
