@@ -46,6 +46,8 @@
 	<packs>
 		<pack name="Base" required="yes">
 			<description>SQL Client</description>
+                        <singlefile     target="$INSTALL_PATH/SquirrelSQL/SquirrelSQL.app/Contents/MacOS"
+                                        src="../../squirrel-sql-dist/squirrel-sql/mac/SquirrelSQL/SquirrelSQL.app/Contents/MacOS/JavaApplicationStub"/>
 			<singlefile	target="$INSTALL_PATH/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/plugins/readme.txt"
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/plugins/readme.txt"/>
 			<file	targetdir="$INSTALL_PATH/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java"
@@ -107,17 +109,11 @@
 
         <pack required="no" preselected="no" name="Optional Plugin - DBCopy">
                 <description>This optional plugin allows database objects to be copied from one database session to another </description>
-                        <file targetdir="$INSTALL_PATH/plugins"
-                                  src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/dbcopy/lib/antlr-2.7.5H3.jar"/>
-                        <file targetdir="$INSTALL_PATH/plugins"
-                                  src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/dbcopy/lib/commons-logging-1.0.4.jar" />
-                        <file targetdir="$INSTALL_PATH/plugins"
-                                  src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/dbcopy/lib/hibernate3.jar" />
 
-                <file targetdir="$INSTALL_PATH/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/plugins"
-                          src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/dbcopy.jar"/>
                 <file targetdir="$INSTALL_PATH/plugins"
                           src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/dbcopy"/>
+                <file targetdir="$INSTALL_PATH/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/plugins"
+                          src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/dbcopy.jar"/>
         </pack>
 
 		<pack required="no" preselected="no" name="Optional Plugin - Firebird ">
