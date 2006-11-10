@@ -46,7 +46,7 @@
 	<packs>
 		<pack name="Base" required="yes">
 			<description>SQL Client</description>
-                        <singlefile     target="$INSTALL_PATH/SquirrelSQL/SquirrelSQL.app/Contents/MacOS"
+                        <singlefile     target="$INSTALL_PATH/SquirrelSQL/SquirrelSQL.app/Contents/MacOS/JavaApplicationStub"
                                         src="../../squirrel-sql-dist/squirrel-sql/mac/SquirrelSQL/SquirrelSQL.app/Contents/MacOS/JavaApplicationStub"/>
 			<singlefile	target="$INSTALL_PATH/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/plugins/readme.txt"
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/plugins/readme.txt"/>
@@ -110,7 +110,7 @@
         <pack required="no" preselected="no" name="Optional Plugin - DBCopy">
                 <description>This optional plugin allows database objects to be copied from one database session to another </description>
 
-                <file targetdir="$INSTALL_PATH/plugins"
+                <file targetdir="$INSTALL_PATH/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/plugins"
                           src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/dbcopy"/>
                 <file targetdir="$INSTALL_PATH/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/plugins"
                           src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/dbcopy.jar"/>
