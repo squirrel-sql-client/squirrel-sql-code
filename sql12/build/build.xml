@@ -594,7 +594,7 @@
 	No parameters
 	==================================================================
 	-->
-	<target name="mac_dist" depends="compile_app">
+	<target name="mac_dist" depends="compile_plugins">
 		<mkdir dir="${dist_dir}/mac"/>
 		<mkdir dir="${dist_dir}/mac/SquirrelSQL"/>
 		<delete includeEmptyDirs="true" failonerror="false">
