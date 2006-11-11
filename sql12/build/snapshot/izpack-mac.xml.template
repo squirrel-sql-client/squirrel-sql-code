@@ -77,8 +77,6 @@
 				src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/commons-cli.jar"/>
 			<file	targetdir="$INSTALL_PATH/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/lib"
 				src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/forms.jar"/>
-                        <file   targetdir="$INSTALL_PATH/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/plugins"
-                                src="../../squirrel-sql-dist/squirrel-sql/core/dist/plugins/macosx"/>
 			<file   targetdir="$INSTALL_PATH/SquirrelSQL/SquirrelSQL.app/Contents/Resources/Java/plugins"
                                         src="../../squirrel-sql-dist/squirrel-sql/core/dist/plugins/macosx.jar"/>
 
