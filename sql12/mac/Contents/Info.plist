@@ -11,7 +11,7 @@
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
-    <string>SquirrelSQL</string>
+    <string>SQuirreLSQL</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
@@ -35,7 +35,7 @@
             <key>apple.laf.useScreenMenuBar</key>
             <string>true</string>
             <key>com.apple.mrj.application.apple.menu.about.name</key>
-            <string>Squirrel SQL</string>
+            <string>SQuirreL SQL</string>
         </dict>
         <key>Arguments</key>
         <string>--native-laf</string>
