@@ -117,7 +117,7 @@ public class AlterTableCommand implements ICommand
 			AlterTableDialog dlog = new AlterTableDialog(_session, _plugin, _ti);
 			dlog.pack();
 			GUIUtils.centerWithinParent(dlog);
-			dlog.show();
+			dlog.setVisible(true);
 		}
 		catch (SQLException ex)
 		{

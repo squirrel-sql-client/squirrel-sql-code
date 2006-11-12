@@ -421,7 +421,7 @@ class Application implements IApplication
 	 */
 	public void showErrorDialog(String msg)
 	{
-		new ErrorDialog(getMainFrame(), msg).show();
+		new ErrorDialog(getMainFrame(), msg).setVisible(true);
 	}
 
 	/**
@@ -431,7 +431,7 @@ class Application implements IApplication
 	 */
 	public void showErrorDialog(Throwable th)
 	{
-		new ErrorDialog(getMainFrame(), th).show();
+		new ErrorDialog(getMainFrame(), th).setVisible(true);
 	}
 
 	/**
@@ -442,7 +442,7 @@ class Application implements IApplication
 	 */
 	public void showErrorDialog(String msg, Throwable th)
 	{
-		new ErrorDialog(getMainFrame(), msg, th).show();
+		new ErrorDialog(getMainFrame(), msg, th).setVisible(true);
 	}
 
 	/**

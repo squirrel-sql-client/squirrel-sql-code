@@ -63,7 +63,7 @@ public class DisplayPluginSummaryCommand
 	{
 		try
 		{
-			new PluginSummaryDialog(_app, _frame).show();
+			new PluginSummaryDialog(_app, _frame).setVisible(true);
 		}
 		catch (DataSetException ex)
 		{

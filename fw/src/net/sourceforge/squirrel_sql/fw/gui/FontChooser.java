@@ -190,7 +190,7 @@ public class FontChooser extends JDialog
 			_italicChk.setSelected(false);
 		}
 		setupPreviewLabel();
-		show();
+		setVisible(true);
 		return _font;
 	}
 
