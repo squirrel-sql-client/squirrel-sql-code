@@ -79,6 +79,10 @@ public abstract class BasePreparedStatementTab extends BaseObjectTab {
 
     public Component getComponent()
     {
+        if (_comp == null)
+        {
+            _comp = new DataSetScrollingPanel();
+        }
         return _comp;
     }
 
@@ -102,8 +106,7 @@ public abstract class BasePreparedStatementTab extends BaseObjectTab {
 //                    final LargeResultSetObjectInfo rsoi = props.getLargeResultSetObjectInfo();
 //                    final IDataSet ds = createDataSetFromResultSet(rs, rsoi);
                   final IDataSet ds = createDataSetFromResultSet(rs);
-                    _comp = new DataSetScrollingPanel(destClassName, null);
-                    _comp.getViewer().show(ds);
+                    _comp.load(ds, destClassName);
                 }
                     finally
                 {
