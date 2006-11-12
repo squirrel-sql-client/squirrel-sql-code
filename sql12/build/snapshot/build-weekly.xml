@@ -21,8 +21,7 @@
 	<target name="init">
 		<property file="${basedir}/build-weekly.properties"/>
 		<property name="dist.dir" value="${cvs.dest.dir}/squirrel-sql-dist"/>
-		<property name="install.jar.file" 
-			      value="${dist.dir}/${name}-${appversion}-install.jar"/>
+
 		<tstamp>
 		    <format property="touch.time" 
 		    	    pattern="yyyyMMdd_kkmm"
@@ -52,8 +51,10 @@
         
         </condition>
 
+		<!--
 		<property name="install.jar.file.dist" 
 		          value="${dist.dir}/${name}-${squirrel.version}-install.jar"/>
+		          -->
 		<property name="source.zip.file"
 		          value="${dist.dir}/${name}-${squirrel.version}-src.zip"/>
 
@@ -68,41 +69,45 @@
 	<!-- Creates the squirrel installer using izpack -->
 	<target name="createinstaller">
 		<echo message="Creating the installer with izpack" />
+		<echo message="config file template= ${izpack.config.file.template}" />
+		<echo message="config file = ${izpack.config.file}" />
+		
+        <copy file="${cvs.dest.dir}/${project.module}/build/snapshot/${izpack.config.file.template}" 
+              toFile="${cvs.dest.dir}/${project.module}/build/snapshot/${izpack.config.file}">
+            <filterchain>
+                <filterreader classname="org.apache.tools.ant.filters.ReplaceTokens">
+                        <param type="token"
+                               name="squirrel.version"
+                               value="${squirrel.version}"/>
+                </filterreader>
+            </filterchain>
+        </copy>
 
-                <copy file="${cvs.dest.dir}/${project.module}/build/snapshot/${izpack.config.file.template}" 
-                      toFile="${cvs.dest.dir}/${project.module}/build/snapshot/${izpack.config.file}">
-                        <filterchain>
-                                <filterreader classname="org.apache.tools.ant.filters.ReplaceTokens">
-                                        <param type="token"
-                                               name="squirrel.version"
-                                               value="${squirrel.version}"/>
-                                </filterreader>
-                        </filterchain>
-                </copy>
-
+		<!-- This works with the latest version of IzPack - currently 3.9.0 
+		     The arguments are not correct for older versions such as 3.7.0 -->
 		<java jar="${izpack.home.dir}/lib/compiler.jar"
 	              fork="true"
 	              failonerror="true"
 	              maxmemory="128m"
 	        >
-
-	            <arg value="-HOME"/>
-	            <arg value="${izpack.home.dir}"/>
 		    <arg value="${cvs.dest.dir}/${project.module}/build/snapshot/${izpack.config.file}"/>
-		    <arg value="-b"/>
+			<arg value="-h"/>
+	        <arg value="${izpack.home.dir}"/>
+			<arg value="-b"/>
 		    <arg value="${cvs.dest.dir}/${project.module}/build"/>
 		    <arg value="-k"/>
-		    <arg value="standard-kunststoff"/>
+		    <arg value="standard-kunstoff"/>
 		    <arg value="-o"/>
 		    <arg value="${install.jar.file}"/>
-
+		    <arg value="-l"/>
+		    <arg value="5"/>
 		    <classpath>
 		        <pathelement location="${izpack.home.dir}/lib/compiler.jar"/>
 		        <pathelement path="${java.class.path}"/>
 		    </classpath>
 	        </java>					
 	</target>
-	
+
 	<!-- Creates the autoinstall.xml file from the template file 
 	     autoinstall.xml.template -->
 	<target name="createinstallscript">
@@ -296,6 +301,23 @@
 		</antcall>		
 	</target>		
 	
+	<target name="createMacInstaller" depends="init">
+		<antcall target="createinstaller">
+			<param name="izpack.config.file.template" value="${macosx.izpack.config.file.template}"/>
+			<param name="izpack.config.file" value="${macosx.izpack.config.file}"/>
+			<param name="install.jar.file" value="${dist.dir}/${name}-${squirrel.version}-MacOSX-install.jar"/>			
+		</antcall>	
+	</target>
+	
+	<target name="createOtherInstaller" depends="init">
+		<antcall target="createinstaller">
+			<param name="izpack.config.file.template" value="${other.izpack.config.file.template}"/>
+			<param name="izpack.config.file" value="${other.izpack.config.file}"/>
+		    <param name="install.jar.file" value="${dist.dir}/${name}-${squirrel.version}-install.jar"/>						
+		</antcall>	
+	</target>
+	
+	
 	<!-- This does the work of checking out or updating the source, building the
 	     distribution and the install jar. -->
 	<target name="weeklybuild" depends="init">
@@ -317,17 +339,22 @@
 		</antcall>			
 		
 		<antcall target="executebuild"/>
-			
-		<antcall target="createinstaller"/>
+		
+		<!-- Create the installer for mac -->
+		<antcall target="createMacInstaller"/>
+
+		<!-- Create the installer for Windows/Linux -->
+		<antcall target="createOtherInstaller"/>
 		
 		<antcall target="createinstallscript"/>
 		
-		<antcall target="runinstaller"/>
+		<!-- Run the Windows/Linux installer -->
+		<antcall target="runinstaller">
+			<param name="install.jar.file" value="${dist.dir}/${name}-${squirrel.version}-install.jar"/>
+		</antcall>
 		
 		<antcall target="launchsquirrel"/>
-		
-		<move file="${install.jar.file}" toFile="${install.jar.file.dist}"/>
-		
+				
 		<antcall target="createsourcearchive"/>
 		
 		<antcall target="releaseNotes"/>
