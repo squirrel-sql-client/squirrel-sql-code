@@ -111,7 +111,7 @@ public class ConnectToAliasCallBack implements ICompletionCallback
          {
             public void run()
             {
-               new ErrorDialog(_app.getMainFrame(), msg, th).show();
+               new ErrorDialog(_app.getMainFrame(), msg, th).setVisible(true);
             }
          });
       }

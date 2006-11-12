@@ -726,7 +726,7 @@ public class GenerateSqlDialog extends JDialog {
         okButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                _wasCompleted = true;
-               dlg.hide();
+               dlg.setVisible(false);
             }
         });
 		builder.addGridded(okButton);
@@ -738,7 +738,7 @@ public class GenerateSqlDialog extends JDialog {
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 _wasCompleted = false;
-                dlg.hide();
+                dlg.setVisible(false);
             }
         });
         builder.addGridded(cancelButton);
@@ -834,7 +834,7 @@ public class GenerateSqlDialog extends JDialog {
     }
     
     public boolean showGeneralSqlDialog() {
-        this.show();
+        this.setVisible(true);
         return _wasCompleted;
     }
     
