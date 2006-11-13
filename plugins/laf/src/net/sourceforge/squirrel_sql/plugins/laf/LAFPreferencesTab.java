@@ -180,7 +180,10 @@ public class LAFPreferencesTab implements IGlobalPreferencesPanel
 			String TAB_HINT = s_stringMgr.getString("laf.settings");
 			// i18n[laf.jars=L & F jars:]
 			String LAF_LOC = s_stringMgr.getString("laf.jars");
-		}
+         // i18n[laf.lafPerformanceWarning=Also note: Some Look and Feels may cause performance problems.
+         // If you think your selected Look and Feel slows down SQuirreL switch to a Metal or Plastic Look and Feel.]
+         String LAF_PERFROMANCE_WARNING = s_stringMgr.getString("laf.lafPerformanceWarning");
+      }
 
 		private LookAndFeelComboBox _lafCmb = new LookAndFeelComboBox();
 
@@ -270,6 +273,11 @@ public class LAFPreferencesTab implements IGlobalPreferencesPanel
 			gbc.gridx = 0;
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			add(new MultipleLineLabel(LAFPreferencesPanelI18n.LAF_WARNING), gbc);
+
+         ++gbc.gridy;
+         gbc.gridx = 0;
+         gbc.gridwidth = GridBagConstraints.REMAINDER;
+         add(new MultipleLineLabel(LAFPreferencesPanelI18n.LAF_PERFROMANCE_WARNING), gbc);
 		}
 
 		private JPanel createLookAndFeelPanel()
