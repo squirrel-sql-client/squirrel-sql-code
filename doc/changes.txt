@@ -6,6 +6,10 @@ Not yet released - available in the latest snapshot, or at least checked into CV
 
     New Features/Enhancements:
 
+SQuirreL paths (-home, -user) are shown in Global Preferences
+
+LAF Plugin: Added Napkin Look and Feel (JDK 1.5 only)
+
 Completion Popup (Code Completion ctrl+space, Tools Popup ctrl+t, Bookmarks Popup ctrl+j):
 When the beginning/end of the pop up list is reached another arrow up/down jumps to the last/first entry. 
 
