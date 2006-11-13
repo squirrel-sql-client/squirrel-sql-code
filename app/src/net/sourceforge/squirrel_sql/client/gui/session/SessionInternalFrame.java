@@ -36,6 +36,7 @@ import net.sourceforge.squirrel_sql.client.session.IObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.Version;
 
 public class SessionInternalFrame extends BaseSessionInternalFrame
 					implements ISQLInternalFrame, IObjectTreeInternalFrame
@@ -97,15 +98,20 @@ public class SessionInternalFrame extends BaseSessionInternalFrame
 		// Without this when using alt left/right to move
 		// between sessions the focus is left in the SQL
 		// entry area of the previous session.
-		if (selected)
-		{
-			SwingUtilities.invokeLater(new Runnable()
-			{
-				public void run()
-				{
-					_sessionPanel.getSQLEntryPanel().requestFocus();
-				}
-			});
+		// TODO: Once Java 5 is minimum supported
+		// we don't need this,
+        if (Version.isJDK14())
+        {
+        	if (selected)
+        	{
+        		SwingUtilities.invokeLater(new Runnable()
+        		{
+        			public void run()
+        			{
+        				_sessionPanel.getSQLEntryPanel().requestFocus();
+        			}
+        		});
+        	}
 		}
 	}
 
