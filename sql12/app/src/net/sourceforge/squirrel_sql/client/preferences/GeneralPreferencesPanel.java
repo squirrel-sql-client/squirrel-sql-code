@@ -111,10 +111,10 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 
       private JCheckBox _showColoriconsInToolbar = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showcoloricons"));
       private JCheckBox _showPluginFilesInSplashScreen = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showpluginfiles"));
-      private JLabel _executionLogFileNameLbl = new OutputLabel(" ");
-      // Must have at least 1 blank otherwise width gets set to zero.
-      private JLabel _logConfigFileNameLbl = new OutputLabel(" ");
-      // Must have at least 1 blank otherwise width gets set to zero.
+//      private JLabel _executionLogFileNameLbl = new OutputLabel(" ");
+//      // Must have at least 1 blank otherwise width gets set to zero.
+//      private JLabel _logConfigFileNameLbl = new OutputLabel(" ");
+//      // Must have at least 1 blank otherwise width gets set to zero.
       private JCheckBox _confirmSessionCloseChk = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.confirmSessionClose"));
       private JCheckBox _warnJreJdbcMismatch = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.warnJreJdbcMismatch"));
       private JCheckBox _warnForUnsavedFileEdits = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.warnForUnsavedFileEdits"));
@@ -142,12 +142,6 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
          _maximimizeSessionSheet.setSelected(prefs.getMaximizeSessionSheetOnOpen());
          _showColoriconsInToolbar.setSelected(prefs.getShowColoriconsInToolbar());
          _showPluginFilesInSplashScreen.setSelected(prefs.getShowPluginFilesInSplashScreen());
-         _executionLogFileNameLbl.setText(appFiles.getExecutionLogFile().getPath());
-
-         String configFile = ApplicationArguments.getInstance().getLoggingConfigFileName();
-         _logConfigFileNameLbl.setText(
-            configFile != null ? configFile
-               : s_stringMgr.getString("GeneralPreferencesPanel.unspecified"));
 
          _confirmSessionCloseChk.setSelected(prefs.getConfirmSessionClose());
          _warnJreJdbcMismatch.setSelected(prefs.getWarnJreJdbcMismatch());
@@ -191,6 +185,10 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			++gbc.gridy;
 			gbc.gridwidth = 2;
 			add(createLoggingPanel(), gbc);
+         gbc.gridx = 0;
+         ++gbc.gridy;
+         gbc.gridwidth = 2;
+         add(createPathsPanel(), gbc);
 		}
 
 		private JPanel createAppearancePanel()
@@ -285,25 +283,88 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			pnl.setLayout(new GridBagLayout());
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = GridBagConstraints.HORIZONTAL;
-			gbc.insets = new Insets(2, 4, 2, 4);
+         gbc.fill = GridBagConstraints.NONE;
+         gbc.insets = new Insets(2, 4, 2, 4);
+         gbc.anchor = GridBagConstraints.NORTHWEST;
 
-			gbc.gridx = 0;
+         ApplicationFiles appFiles = new ApplicationFiles();
+         String execLogFile = appFiles.getExecutionLogFile().getPath();
+         String configFile = ApplicationArguments.getInstance().getLoggingConfigFileName();
+         configFile = null == configFile ? s_stringMgr.getString("GeneralPreferencesPanel.unspecified") :configFile;
+
+         gbc.gridx = 0;
 			gbc.gridy = 0;
-			pnl.add(new JLabel(s_stringMgr.getString("GeneralPreferencesPanel.execlogfile"), SwingConstants.RIGHT), gbc);
+         JTextField execLogFileField = new JTextField(s_stringMgr.getString("GeneralPreferencesPanel.execlogfileNew", execLogFile));
+         execLogFileField.setEditable(false);
+         execLogFileField.setBackground(pnl.getBackground());
+         execLogFileField.setBorder(null);
+         pnl.add(execLogFileField, gbc);
 
 			++gbc.gridy;
-			pnl.add(new JLabel(s_stringMgr.getString("GeneralPreferencesPanel.configfile"), SwingConstants.RIGHT), gbc);
+         JTextField configFileField = new JTextField(s_stringMgr.getString("GeneralPreferencesPanel.configfileNew", configFile));
+         configFileField.setEditable(false);
+         configFileField.setBackground(pnl.getBackground());
+         configFileField.setBorder(null);
+         pnl.add(configFileField, gbc);
 
-			gbc.weightx = 1.0;
+         gbc.weightx = 1.0;
 
-			gbc.gridy = 0;
-			++gbc.gridx;
-			pnl.add(_executionLogFileNameLbl, gbc);
+         gbc.gridy = 0;
+         ++gbc.gridx;
+         pnl.add(new JPanel(), gbc);
 
-			++gbc.gridy;
-			pnl.add(_logConfigFileNameLbl, gbc);
+         ++gbc.gridy;
+         pnl.add(new JPanel(), gbc);
 
-			return pnl;
+         return pnl;
 		}
-	}
+
+      private JPanel createPathsPanel()
+      {
+         final JPanel pnl = new JPanel();
+         // i18n[GeneralPreferencesPanel.paths=SQuirreL paths]
+         pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("GeneralPreferencesPanel.paths")));
+
+         pnl.setLayout(new GridBagLayout());
+         final GridBagConstraints gbc = new GridBagConstraints();
+         gbc.fill = GridBagConstraints.NONE;
+         gbc.insets = new Insets(2, 4, 2, 4);
+         gbc.anchor = GridBagConstraints.NORTHWEST; 
+
+         ApplicationFiles appFiles = new ApplicationFiles();
+         String userDir = appFiles.getUserSettingsDirectory().getPath();
+         String homeDir = appFiles.getSquirrelHomeDir().getPath();
+
+
+         gbc.gridx = 0;
+         gbc.gridy = 0;
+         // i18n[GeneralPreferencesPanel.squirrelHomePath=Home directory: -home {0}]
+         JTextField homePathField = new JTextField(s_stringMgr.getString("GeneralPreferencesPanel.squirrelHomePath", homeDir));
+         homePathField.setEditable(false);
+         homePathField.setBackground(pnl.getBackground());
+         homePathField.setBorder(null);
+         pnl.add(homePathField, gbc);
+
+         ++gbc.gridy;
+         // i18n[GeneralPreferencesPanel.squirrelUserPath=User directory: -user {0}]
+         JTextField userPathField = new JTextField(s_stringMgr.getString("GeneralPreferencesPanel.squirrelUserPath", userDir));
+         userPathField.setEditable(false);
+         userPathField.setBackground(pnl.getBackground());
+         userPathField.setBorder(null);
+         pnl.add(userPathField, gbc);
+
+         gbc.weightx = 1.0;
+
+         gbc.gridy = 0;
+         ++gbc.gridx;
+         pnl.add(new JPanel(), gbc);
+
+         ++gbc.gridy;
+         pnl.add(new JPanel(), gbc);
+
+         return pnl;
+      }
+
+
+   }
 }
