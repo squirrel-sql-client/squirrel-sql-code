@@ -66,7 +66,9 @@ public class DBUtil {
                                          TableColumnInfo to,
                                          HibernateDialect dialect)
     {
-        if (from.getDataType() == to.getDataType()) {
+        if (from.getDataType() == to.getDataType()
+                && from.getColumnSize() == to.getColumnSize()) 
+        {
             return null;
         }
         return dialect.getColumnTypeAlterSQL(from, to);
@@ -98,10 +100,13 @@ public class DBUtil {
     {
         String oldComment = from.getRemarks();
         String newComment = to.getRemarks();
-        if ((oldComment == null && newComment != null)
-                || (oldComment != null && newComment == null) 
-                || (!oldComment.equals(newComment))) 
-        {
+        if (!dialect.supportsColumnComment()) {
+            return null;
+        }
+        if (oldComment == null || newComment == null) {
+            return null;
+        }
+        if (!oldComment.equals(newComment)) {
             return dialect.getColumnCommentAlterSQL(to);
         }
         return null;        
