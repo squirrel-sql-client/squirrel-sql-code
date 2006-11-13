@@ -140,10 +140,13 @@ public class ModifyColumnCommand extends AbstractRefactoringCommand
         } catch (UnsupportedOperationException e2) {
             //i18n[ModifyColumnCommand.unsupportedOperationMsg=The {0} dialect
             //doesn's support modifying columns]
+            /*
             String msg = 
                 s_stringMgr.getString("ModifyColumnCommand.unsupportedOperationMsg",
                                       dbName);
-            _session.getMessageHandler().showMessage(msg);
+                                      */
+            // Better to use exception message as it contains more info
+            _session.getMessageHandler().showMessage(e2.getMessage());
         }
         return result;
         

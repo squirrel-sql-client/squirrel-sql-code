@@ -19,6 +19,7 @@
 package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.sql.Types;
+import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
@@ -199,21 +200,6 @@ public class DerbyDialect extends DB2Dialect
     }
     
     /**
-     * Returns the SQL statement to use to add a comment to the specified 
-     * column of the specified table.
-     * 
-     * @param tableName the name of the table to create the SQL for.
-     * @param columnName the name of the column to create the SQL for.
-     * @param comment the comment to add.
-     * @return
-     * @throws UnsupportedOperationException if the database doesn't support 
-     *         annotating columns with a comment.
-     */
-    public String getColumnCommentAlterSQL(String tableName, String columnName, String comment) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("Derby doesn't support adding comments to columns");
-    }
-
-    /**
      * Returns a boolean value indicating whether or not this database dialect
      * supports dropping columns from tables.
      * 
@@ -227,6 +213,8 @@ public class DerbyDialect extends DB2Dialect
      * Returns the SQL that forms the command to drop the specified colum in the
      * specified table.
      * 
+     * ALTER TABLE table-Name DROP [ COLUMN ] column-name [ CASCADE | RESTRICT ]
+     * 
      * @param tableName the name of the table that has the column
      * @param columnName the name of the column to drop.
      * @return
@@ -234,6 +222,14 @@ public class DerbyDialect extends DB2Dialect
      *         dropping columns. 
      */
     public String getColumnDropSQL(String tableName, String columnName) {
+        /*
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(tableName);
+        result.append(" DROP COLUMN ");
+        result.append(columnName);
+        return result.toString();
+        */
         throw new UnsupportedOperationException("Derby doesn't support dropping columns");
     }
     
@@ -258,14 +254,26 @@ public class DerbyDialect extends DB2Dialect
      * specified table composed of the given column names.
      * 
      * @param pkName the name of the constraint
-     * @param columnNames the columns that form the key
+     * @param columnInfos the columns that form the key
      * @return
      */
     public String[] getAddPrimaryKeySQL(String pkName, 
-                                      TableColumnInfo[] columnNames) 
+                                        TableColumnInfo[] colInfos) 
     {
-        // TODO: implement
-        throw new UnsupportedOperationException("getAddPrimaryKeySQL not implemented");
+        ArrayList result = new ArrayList();
+        String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
+        
+        // convert each column that will be a member key to non-null - this 
+        // doesn't hurt if they are already null.        
+        DialectUtils.getMultiColNotNullSQL(colInfos, 
+                                           this, 
+                                           alterClause, 
+                                           false, 
+                                           result);
+        
+        result.add(DialectUtils.getAddPrimaryKeySQL(pkName, colInfos));
+        
+        return (String[])result.toArray(new String[result.size()]);
     }
     
     /**
@@ -278,26 +286,31 @@ public class DerbyDialect extends DB2Dialect
      */
     public String getColumnCommentAlterSQL(TableColumnInfo info) 
         throws UnsupportedOperationException
-    {
-        // TODO: implement        
-        throw new UnsupportedOperationException("Not yet implemented");
+    {        
+        throw new UnsupportedOperationException("Derby doesn't support column comments");
     }
     
     /**
      * Returns the SQL used to alter the specified column to not allow null 
      * values
      * 
+     * ALTER TABLE table-Name ALTER [ COLUMN ] column-name [ NOT ] NULL
+     * 
      * @param info the column to modify
      * @return the SQL to execute
      */
     public String getColumnNullableAlterSQL(TableColumnInfo info) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not yet implemented");
+        String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
+        return DialectUtils.getColumnNullableAlterSQL(info, 
+                                                      this, 
+                                                      alterClause, 
+                                                      false);
     }
     
     /**
      * Returns the SQL that is used to change the column name.
      * 
+     * RENAME COLUMN table-Name.simple-Column-Name TO simple-Column-Name
      * 
      * @param from the TableColumnInfo as it is
      * @param to the TableColumnInfo as it wants to be
@@ -305,12 +318,24 @@ public class DerbyDialect extends DB2Dialect
      * @return the SQL to make the change
      */
     public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not yet implemented");
+        StringBuffer result = new StringBuffer();
+        result.append("RENAME COLUMN ");
+        result.append(from.getQualifiedName());
+        result.append(" TO ");
+        result.append(to.getColumnName());
+        return result.toString();
     }
     
     /**
      * Returns the SQL that is used to change the column type.
+     * 
+     * ALTER [ COLUMN ] column-Name SET DATA TYPE VARCHAR(integer)
+     * 
+     * Note: Only allowed to increase size of existing varchar as long as it is
+     *       not a member of a PK that is a parent of a FK.  Also not allowed to
+     *       change the type to anything else.  Oh, and only during a full moon
+     *       while chanting - sheesh!  I think I'll need a dozen or so methods
+     *       to describe all of those restrictions.
      * 
      * @param from the TableColumnInfo as it is
      * @param to the TableColumnInfo as it wants to be
@@ -323,8 +348,23 @@ public class DerbyDialect extends DB2Dialect
                                         TableColumnInfo to)
         throws UnsupportedOperationException
     {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not Yet Implemented");
+        if (from.getDataType() != to.getDataType()) {
+            throw new UnsupportedOperationException("Derby doesn't allow the column type to be altered");
+        }
+        if (from.getDataType() != Types.VARCHAR) {
+            throw new UnsupportedOperationException("Derby only allows varchar columns to be altered");
+        }
+        if (from.getColumnSize() > to.getColumnSize()) {
+            throw new UnsupportedOperationException("Derby only allows varchar column length to be increased");
+        }
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(to.getTableName());
+        result.append(" ALTER COLUMN ");
+        result.append(to.getColumnName());
+        result.append(" SET DATA TYPE ");
+        result.append(DialectUtils.getTypeName(to, this));
+        return result.toString();
     }
     
 }

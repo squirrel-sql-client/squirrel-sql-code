@@ -19,6 +19,8 @@
 
 package net.sourceforge.squirrel_sql.fw.dialects;
 
+import java.util.ArrayList;
+
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
@@ -34,6 +36,10 @@ import org.hibernate.HibernateException;
  */
 public class DialectUtils {
 
+    public static final String ALTER_COLUMN_CLAUSE = "ALTER COLUMN";
+    
+    public static final String MODIFY_COLUMN_CLAUSE = "MODIFY COLUMN";
+    
     /**
      * Returns the SQL statement to use to add a column to the specified table
      * using the information about the new column specified by info.
@@ -188,5 +194,98 @@ public class DialectUtils {
                                    info.getColumnSize(), 
                                    info.getColumnSize(), 
                                    info.getDecimalDigits());
+    }
+    
+    /**
+     * Returns the SQL used to alter the specified column to not allow null 
+     * values
+     * 
+     * @param info the column to modify
+     * @param dialect the HibernateDialect representing the target database.
+     * @param alterClause the alter column clause (e.g. ALTER COLUMN )
+     * @param specifyType whether or not the column type needs to be specified
+     * 
+     * @return the SQL to execute
+     */
+    public static String getColumnNullableAlterSQL(TableColumnInfo info, 
+                                                   HibernateDialect dialect,
+                                                   String alterClause,
+                                                   boolean specifyType) {
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(info.getTableName());
+        result.append(" ");
+        result.append(alterClause);
+        result.append(" ");
+        result.append(info.getColumnName());
+        if (specifyType) {
+            result.append(" ");
+            result.append(getTypeName(info, dialect));
+            result.append(" ");
+        }
+        if (info.isNullable().equalsIgnoreCase("YES")) { 
+            result.append(" NULL");
+        } else {
+            result.append(" NOT NULL");
+        }
+        return result.toString();
+    }
+    
+    /**
+     * Populates the specified ArrayList with SQL statement(s) required to 
+     * convert each of the columns to not null.  This is typically needed in 
+     * some databases when adding a primary key (some dbs do this step 
+     * automatically)
+     * 
+     * @param colInfos the columns to be made not null
+     * @param dialect 
+     * @param result
+     */
+    public static void getMultiColNotNullSQL(TableColumnInfo[] colInfos,  
+                                             HibernateDialect dialect,
+                                             String alterClause,
+                                             boolean specifyType,
+                                             ArrayList result) 
+    {
+        for (int i = 0; i < colInfos.length; i++) {
+            StringBuffer notNullSQL = new StringBuffer();
+            notNullSQL.append("ALTER TABLE ");
+            notNullSQL.append(colInfos[i].getTableName());
+            notNullSQL.append(" ");
+            notNullSQL.append(alterClause);
+            notNullSQL.append(" ");
+            notNullSQL.append(colInfos[i].getColumnName());
+            if (specifyType) {
+                notNullSQL.append(" ");
+                notNullSQL.append(DialectUtils.getTypeName(colInfos[i], dialect));
+            }
+            notNullSQL.append(" NOT NULL");
+            result.add(notNullSQL.toString());
+        }
+    }
+    
+    /**
+     * Returns the SQL for creating a primary key consisting of the specified 
+     * colInfos.
+     *  
+     * @param colInfos
+     * @return
+     */
+    public static String getAddPrimaryKeySQL(String pkName, 
+                                             TableColumnInfo[] colInfos) {
+        StringBuffer pkSQL = new StringBuffer();
+        pkSQL.append("ALTER TABLE ");
+        pkSQL.append(colInfos[0].getTableName());
+        pkSQL.append(" ADD CONSTRAINT ");
+        pkSQL.append(pkName);
+        pkSQL.append(" PRIMARY KEY (");
+        for (int i = 0; i < colInfos.length; i++) {
+            pkSQL.append(colInfos[i].getColumnName());
+            if (i + 1 < colInfos.length) {
+                pkSQL.append(", ");
+            }
+        }
+        pkSQL.append(")");
+        return pkSQL.toString();
     }
 }

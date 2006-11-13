@@ -29,11 +29,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.dialects.AxionDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect;
 import net.sourceforge.squirrel_sql.fw.dialects.DaffodilDialect;
@@ -41,6 +36,7 @@ import net.sourceforge.squirrel_sql.fw.dialects.DerbyDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.FirebirdDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.FrontBaseDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.H2Dialect;
+import net.sourceforge.squirrel_sql.fw.dialects.HADBDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.HSQLDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.InformixDialect;
@@ -57,6 +53,11 @@ import net.sourceforge.squirrel_sql.fw.dialects.SQLServerDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.SybaseDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.TimesTenDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * This class maps ISession instances to their corresponding Hibernate dialect.  
@@ -90,6 +91,8 @@ public class DialectFactory {
     private static final FirebirdDialect firebirdDialect = new FirebirdDialect();
     
     private static final FrontBaseDialect frontbaseDialect = new FrontBaseDialect();
+    
+    private static final HADBDialect hadbDialect = new HADBDialect();
     
     private static final H2Dialect h2Dialect = new H2Dialect();
     
@@ -145,6 +148,7 @@ public class DialectFactory {
         dbNameDialectMap.put(derbyDialect.getDisplayName(), derbyDialect);
         dbNameDialectMap.put(firebirdDialect.getDisplayName(), firebirdDialect);
         dbNameDialectMap.put(frontbaseDialect.getDisplayName(), frontbaseDialect);
+        dbNameDialectMap.put(hadbDialect.getDisplayName(), hadbDialect);
         dbNameDialectMap.put(hsqlDialect.getDisplayName(), hsqlDialect);
         dbNameDialectMap.put(h2Dialect.getDisplayName(), h2Dialect);
         dbNameDialectMap.put(informixDialect.getDisplayName(), informixDialect);
@@ -194,6 +198,11 @@ public class DialectFactory {
         return dialectSupportsProduct(session, frontbaseDialect)
                 || testSessionDialect(session, FrontBaseDialect.class);
     }
+
+    public static boolean isHADBDialect(ISession session) {
+        return dialectSupportsProduct(session, hadbDialect)
+                || testSessionDialect(session, HADBDialect.class);
+    }    
     
     public static boolean isH2Dialect(ISession session) {
         return dialectSupportsProduct(session, h2Dialect)
@@ -345,11 +354,6 @@ public class DialectFactory {
         if (isPromptForDialect) {
             return showDialectDialog(session, sessionType);
         }
-        // TODO: Perhaps we would rather use Hibernate's method for determining
-        // what dialect should be used (DialectFactory.buildDialect() - but for
-        // this we need product name and version.  For instance, Oracle 8 has
-        // a different dialect then Oracle 9.  So in this case it's wrong to 
-        // return the oracle9Dialect for Oracle version 8.
         if (isAxionSession(session)) {
             return axionDialect;
         }
@@ -367,6 +371,9 @@ public class DialectFactory {
         }
         if (isFrontBaseSession(session)) {
             return frontbaseDialect;
+        }
+        if (isHADBDialect(session)) {
+            return hadbDialect;
         }
         if (isH2Dialect(session)) {
             return h2Dialect;

@@ -95,6 +95,23 @@ public class DialectLiveTestRunner {
             if (dialect.supportsDropColumn()) {
                 dropColumn(session, dropCol);
             }
+            
+            //convert nullint into a varchar(100)
+            /*
+             * This won't work on Derby where non-varchar columns cannot be 
+             * altered among other restrictions.
+             * 
+            TableColumnInfo nullintVC = 
+                getVarcharColumn("nullint", true, "defVal", "A varchar comment");
+            String alterColTypeSQL = dialect.getColumnTypeAlterSQL(firstCol, nullintVC);
+            runSQL(session, alterColTypeSQL);
+            */
+            
+            // convert thirdCol to varchar(1000) from varchar(100)
+            TableColumnInfo thirdColLonger = 
+                getVarcharColumn("nullvc", true, "defVal", "A varchar comment", 1000);
+            String alterColLengthSQL = dialect.getColumnTypeAlterSQL(thirdCol, thirdColLonger);
+            runSQL(session, alterColLengthSQL);
         }
     }
     
@@ -208,6 +225,23 @@ public class DialectLiveTestRunner {
                          10, 
                          0);
     }
+
+    private TableColumnInfo getVarcharColumn(String name,
+                                             boolean nullable, 
+                                             String defaultVal,
+                                             String comment,
+                                             int size)
+    {
+        return getColumn(java.sql.Types.VARCHAR,
+                "VARCHAR",
+                name,
+                nullable, 
+                defaultVal, 
+                comment, 
+                size, 
+                0);
+    }
+    
     
     private TableColumnInfo getVarcharColumn(String name,
                                              boolean nullable, 

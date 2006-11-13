@@ -358,6 +358,12 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
      * @return the SQL to execute
      */
     public String getColumnNullableAlterSQL(TableColumnInfo info) {
+        String alterClause = DialectUtils.MODIFY_COLUMN_CLAUSE;
+        return DialectUtils.getColumnNullableAlterSQL(info, 
+                                                      this, 
+                                                      alterClause, 
+                                                      true); 
+        /*
         StringBuffer result = new StringBuffer();
         result.append("ALTER TABLE ");
         result.append(info.getTableName());
@@ -371,6 +377,7 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
             result.append(" NOT NULL");
         }
         return result.toString();
+        */
     }
 
     /**

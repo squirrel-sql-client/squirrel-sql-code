@@ -257,20 +257,10 @@ public class SQLServerDialect extends org.hibernate.dialect.SQLServerDialect
                                         TableColumnInfo[] colInfos) 
     {
         ArrayList result = new ArrayList();
-        
+        String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
         // convert all columns in key to not null - this doesn't hurt if they 
-        // are already null.
-        for (int i = 0; i < colInfos.length; i++) {
-            StringBuffer notNullSQL = new StringBuffer();
-            notNullSQL.append("ALTER TABLE ");
-            notNullSQL.append(colInfos[i].getTableName());
-            notNullSQL.append(" ALTER COLUMN ");
-            notNullSQL.append(colInfos[i].getColumnName());
-            notNullSQL.append(" ");
-            notNullSQL.append(DialectUtils.getTypeName(colInfos[i], this));
-            notNullSQL.append(" NOT NULL");
-            result.add(notNullSQL.toString());
-        }
+        // are already null.        
+        DialectUtils.getMultiColNotNullSQL(colInfos, this, alterClause, true, result);
         
         StringBuffer pkSQL = new StringBuffer();
         pkSQL.append("ALTER TABLE ");
