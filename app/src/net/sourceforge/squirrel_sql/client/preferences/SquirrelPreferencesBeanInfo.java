@@ -108,6 +108,12 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
                "getWarnForUnsavedBufferEdits", "setWarnForUnsavedBufferEdits"),
             new PropertyDescriptor(SHOW_SESSION_STARTUP_TIME_HINT, CLS,
                "getShowSessionStartupTimeHint", "setShowSessionStartupTimeHint"),
+           new PropertyDescriptor(SHOW_DEBUG_LOG_MESSAGES, CLS,
+                   "getShowDebugLogMessages", "getShowDebugLogMessages"),               
+           new PropertyDescriptor(SHOW_INFO_LOG_MESSAGES, CLS,
+                   "getShowInfoLogMessages", "getShowInfoLogMessages"),
+           new PropertyDescriptor(SHOW_ERROR_LOG_MESSAGES, CLS,
+                   "getShowErrorLogMessages", "getShowErrorLogMessages"),
 
          };
       }
