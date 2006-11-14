@@ -83,6 +83,9 @@ public class SquirrelPreferences implements Serializable
       String WARN_FOR_UNSAVED_FILE_EDITS = "warnForUnsavedFileEdits";
       String WARN_FOR_UNSAVED_BUFFER_EDITS = "warnForUnsavedBufferEdits";
       String SHOW_SESSION_STARTUP_TIME_HINT = "showSessionStartupTimeHint";
+      String SHOW_DEBUG_LOG_MESSAGES = "showDebugLogMessages";
+      String SHOW_INFO_LOG_MESSAGES = "showInfoLogMessages";
+      String SHOW_ERROR_LOG_MESSAGES = "showErrorLogMessages";
    }
 
    public interface IJdbcDebugTypes
@@ -195,6 +198,15 @@ public class SquirrelPreferences implements Serializable
    /** Hint to Alias Schema Properties when Session startup takes considerable time */
    private boolean _showSessionStartupTimeHint = true;
 
+   /** Show DEBUG log messages in the log viewer */
+   private boolean _showDebugLogMessages = true;
+   
+   /** Show INFO log messages in the log viewer */
+   private boolean _showInfoLogMessages = true;
+   
+   /** Show ERROR log messages in the log viewer */
+   private boolean _showErrorLogMessages = true;
+   
    /**
 	 * Objects stored by plugins. Each element of this collection is a <TT>Map</TT>
 	 * keyed by the plugin's internal name and containing all objects for that
@@ -959,5 +971,70 @@ public class SquirrelPreferences implements Serializable
       return _showSessionStartupTimeHint;
    }
 
+   /**
+    * @param _warnForUnsavedBufferEdits The _warnForUnsavedBufferEdits to set.
+    */
+   public synchronized void setShowDebugLogMessages(boolean data)
+   {
+      if (data != _showDebugLogMessages)
+      {
+         final boolean oldValue = _showDebugLogMessages;
+         _showDebugLogMessages = data;
+         getPropertyChangeReporter().firePropertyChange(
+            IPropertyNames.SHOW_DEBUG_LOG_MESSAGES,
+            oldValue, _showDebugLogMessages);
+      }
+   }
 
+   /**
+    * @return Returns the _warnForUnsaveFileEdits.
+    */
+   public boolean getShowDebugLogMessage()
+   {
+      return _showDebugLogMessages;
+   }
+
+ 
+
+/**
+    * @param _showInfoLogMessages the _showInfoLogMessages to set
+    */
+   public void setShowInfoLogMessages(boolean data) {
+       if (data != _showInfoLogMessages)
+       {
+          final boolean oldValue = _showInfoLogMessages;
+          _showInfoLogMessages = data;
+          getPropertyChangeReporter().firePropertyChange(
+             IPropertyNames.SHOW_INFO_LOG_MESSAGES,
+             oldValue, _showInfoLogMessages);
+       }
+   }
+
+   /**
+    * @return the _showInfoLogMessages
+    */
+   public boolean getShowInfoLogMessages() {
+       return _showInfoLogMessages;
+   }
+
+   /**
+    * @param _showErrorLogMessages the _showErrorLogMessages to set
+    */
+   public void setShowErrorLogMessages(boolean data) {
+       if (data != _showErrorLogMessages)
+       {
+          final boolean oldValue = _showErrorLogMessages;
+          _showErrorLogMessages = data;
+          getPropertyChangeReporter().firePropertyChange(
+             IPropertyNames.SHOW_ERROR_LOG_MESSAGES,
+             oldValue, _showErrorLogMessages);
+       }
+   }
+
+   /**
+    * @return the _showErrorLogMessages
+    */
+   public boolean getShowErrorLogMessages() {
+       return _showErrorLogMessages;
+   }   
 }

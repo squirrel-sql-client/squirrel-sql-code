@@ -28,6 +28,7 @@ import java.io.FilenameFilter;
 import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.DirectoryListComboBox;
@@ -59,6 +60,9 @@ public class ViewLogsSheet extends BaseInternalFrame
 
 	/** Application API. */
 	private final IApplication _app;
+    
+    /** Preferences */
+    private final SquirrelPreferences _prefs;
 
 	/** Combo box containing all the log files. */
 	private final LogsComboBox _logDirCmb = new LogsComboBox();
@@ -69,6 +73,10 @@ public class ViewLogsSheet extends BaseInternalFrame
 	/** Button that refreshes the log contents. */
 	private final JButton _refreshBtn = new JButton(s_stringMgr.getString("ViewLogsSheet.refresh"));
 
+    private final JCheckBox _errorChkbox = new JCheckBox("Errors");
+    private final JCheckBox _debugChkbox = new JCheckBox("Debug");
+    private final JCheckBox _infoChkbox = new JCheckBox("Info");
+    
 	/** Directory containing the log files. */
 	private final File _logDir;
 
@@ -77,7 +85,7 @@ public class ViewLogsSheet extends BaseInternalFrame
 
 	/** If <TT>true</TT> log is being refreshed. */
 	private boolean _refreshing = false;
-
+    
 	/**
 	 * Ctor specifying the application API.
 	 *
@@ -95,6 +103,7 @@ public class ViewLogsSheet extends BaseInternalFrame
 		}
 
 		_app = app;
+        _prefs = _app.getSquirrelPreferences();
 		_logDir = new ApplicationFiles().getExecutionLogFile().getParentFile();
 		createUserInterface();
 	}
@@ -234,7 +243,9 @@ public class ViewLogsSheet extends BaseInternalFrame
 								}
 								else
 								{
-									chunk.append(line).append('\n');
+                                    if (shouldAppendLineToChunk(line)) {
+                                        chunk.append(line).append('\n');
+                                    }                                    
 								}
 							}
 
@@ -306,6 +317,29 @@ public class ViewLogsSheet extends BaseInternalFrame
 		}
 	}
 
+    private boolean shouldAppendLineToChunk(String line) {
+        boolean result = false;
+        if (line == null || line.length() == 0) {
+            return false;
+        }
+        String[] parts = line.split("\\s+");
+        if (parts.length >= 3) {
+            String level = parts[2];
+            if (_errorChkbox.isSelected() && level.equals("ERROR")) {
+                result = true;
+            }
+            if (_debugChkbox.isSelected() && level.equals("DEBUG")) {
+                result = true;
+            }
+            if (_infoChkbox.isSelected() && level.equals("INFO")) {
+                result = true;
+            }
+        } else {
+            result = true;
+        }
+        return result;
+    }
+    
 	/**
 	 * Create user interface.
 	 */
@@ -356,7 +390,7 @@ public class ViewLogsSheet extends BaseInternalFrame
 	 */
 	private JPanel createMainPanel()
 	{
-		_logContentsTxt.setEditable(false);
+		//_logContentsTxt.setEditable(false);
 		final TextPopupMenu pop = new TextPopupMenu();
 		pop.setTextComponent(_logContentsTxt);
 		_logContentsTxt.addMouseListener(new MouseAdapter()
@@ -425,6 +459,28 @@ public class ViewLogsSheet extends BaseInternalFrame
 		});
 		pnl.add(closeBtn);
 
+        _errorChkbox.setSelected(_prefs.getShowErrorLogMessages());
+        _errorChkbox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                _prefs.setShowErrorLogMessages(_errorChkbox.isSelected());
+            }
+        }); 
+        _infoChkbox.setSelected(_prefs.getShowInfoLogMessages());
+        _infoChkbox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                _prefs.setShowInfoLogMessages(_infoChkbox.isSelected());
+            }
+        }); 
+        _debugChkbox.setSelected(_prefs.getShowDebugLogMessage());
+        _debugChkbox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                _prefs.setShowDebugLogMessages(_debugChkbox.isSelected());
+            }
+        }); 
+        pnl.add(_errorChkbox);
+        pnl.add(_infoChkbox);
+        pnl.add(_debugChkbox);
+                
 		GUIUtils.setJButtonSizesTheSame(new JButton[] {closeBtn, _refreshBtn});
 		getRootPane().setDefaultButton(closeBtn);
 
