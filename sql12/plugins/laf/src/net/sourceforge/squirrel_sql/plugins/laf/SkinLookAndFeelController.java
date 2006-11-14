@@ -231,7 +231,10 @@ public class SkinLookAndFeelController extends DefaultLookAndFeelController
 		{
 			super.applyChanges();
 			_ctrl._prefs.setThemePackName((String)_themePackCmb.getSelectedItem());
-			return false;
+			
+			// Force the LAF to be set even if Skin is the current one. This
+			// allows a change in theme to take affect.
+			return true;
 		}
 	}
 

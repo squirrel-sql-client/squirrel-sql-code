@@ -1,8 +1,8 @@
 Look and Feel Plugin Change Log
 ===============================
 
-0.40
-====
+1.1
+===
 
 Enhancements
 ------------
@@ -11,6 +11,12 @@ Enhancements
 - InfoNode Look and Feel 1.4 added.
 - Nimrod Look and Feel 0.94 added.
 - Tonic Look and Feel 1.0.5 added.
+- Napkin Look and Feel 1.0 added.
+- More Skin theme packs added.
+
+Bug Fixes
+---------
+- 1596651 - Changing a Skin LAF theme required a restart of SQuirreL
 
 
 0.32
