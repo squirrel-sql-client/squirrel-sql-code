@@ -1,6 +1,10 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+Not release yet - on the 2.3 final branch:
+
+Removed dependency on Java 5 from the DBCopy plugin.
+
 2.3.1 (Stable bug-fix release)
 =========
 
