@@ -6,6 +6,7 @@ Look and Feel Plugin Change Log
 
 Enhancements
 ------------
+- New setting to allow a Look and Feel to set the window border and titlebar.
 - JGoodies Looks upgraded to 2.1pre4.
 - Skin Look and Feel upgraded to 6.7.
 - InfoNode Look and Feel 1.4 added.

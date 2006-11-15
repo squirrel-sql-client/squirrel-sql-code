@@ -25,6 +25,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -57,7 +58,7 @@ public class LAFPreferencesTab implements IGlobalPreferencesPanel
 	private LAFPlugin _plugin;
 
 	/** Plugin preferences object. */
-	private LAFPreferences _prefs;
+	//private LAFPreferences _prefs;
 
 	/** Look and Feel register. */
 	private LAFRegister _lafRegister;
@@ -66,7 +67,7 @@ public class LAFPreferencesTab implements IGlobalPreferencesPanel
 	private LAFPreferencesPanel _myPanel;
 
 	/** Application API. */
-	private IApplication _app;
+	//private IApplication _app;
 
 	/**
 	 * Ctor.
@@ -89,7 +90,7 @@ public class LAFPreferencesTab implements IGlobalPreferencesPanel
 			throw new IllegalArgumentException("Null LAFRegister passed");
 		}
 		_plugin = plugin;
-		_prefs = plugin.getLAFPreferences();
+		//_prefs = plugin.getLAFPreferences();
 		_lafRegister = lafRegister;
 	}
 
@@ -107,7 +108,7 @@ public class LAFPreferencesTab implements IGlobalPreferencesPanel
 		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
-		_app = app;
+		//_app = app;
 		((LAFPreferencesPanel)getPanelComponent()).loadData();
 	}
 
@@ -186,6 +187,8 @@ public class LAFPreferencesTab implements IGlobalPreferencesPanel
       }
 
 		private LookAndFeelComboBox _lafCmb = new LookAndFeelComboBox();
+		private JCheckBox _allowSetBorder = new JCheckBox(s_stringMgr.getString("laf.allowsetborder"));
+
 
 		private LAFPlugin _plugin;
 		private LAFRegister _lafRegister;
@@ -233,6 +236,7 @@ public class LAFPreferencesTab implements IGlobalPreferencesPanel
 		void loadData()
 		{
 			final String selLafClassName = _prefs.getLookAndFeelClassName();
+			_allowSetBorder.setSelected(_prefs.getCanLAFSetBorder());
 			_lafCmb.setSelectedLookAndFeelClassName(selLafClassName);
 
 			updateLookAndFeelConfigControl();
@@ -240,7 +244,10 @@ public class LAFPreferencesTab implements IGlobalPreferencesPanel
 
 		void applyChanges()
 		{
+			_prefs.setCanLAFSetBorder(_allowSetBorder.isSelected());
 			_prefs.setLookAndFeelClassName(_lafCmb.getSelectedLookAndFeel().getClassName());
+			
+			_lafRegister.applyPreferences();
 
 			boolean forceChange = false;
 			if (_curLAFConfigComp != null)
@@ -265,8 +272,11 @@ public class LAFPreferencesTab implements IGlobalPreferencesPanel
 			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.insets = new Insets(4, 4, 4, 4);
 
-			gbc.gridx = 0;
 			gbc.gridy = 0;
+			gbc.gridx = 0;
+			add(createSettingsPanel(), gbc);
+
+			++gbc.gridy;
 			add(createLookAndFeelPanel(), gbc);
 
 			++gbc.gridy;
@@ -307,6 +317,25 @@ public class LAFPreferencesTab implements IGlobalPreferencesPanel
 			_lafPnl.add(new OutputLabel(_plugin.getLookAndFeelFolder().getAbsolutePath()), gbc);
 
 			return _lafPnl;
+		}
+
+		private JPanel createSettingsPanel()
+		{
+			JPanel pnl  = new JPanel(new GridBagLayout());
+			pnl.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("laf.general")));
+
+			final GridBagConstraints gbc = new GridBagConstraints();
+			gbc.weightx = 1;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
+			gbc.insets = new Insets(4, 4, 4, 4);
+			gbc.anchor = GridBagConstraints.WEST;
+
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			pnl.add(_allowSetBorder, gbc);
+
+
+			return pnl;
 		}
 
 		private void updateLookAndFeelConfigControl()

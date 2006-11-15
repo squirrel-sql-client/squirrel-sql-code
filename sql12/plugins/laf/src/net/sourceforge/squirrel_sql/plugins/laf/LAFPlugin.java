@@ -22,6 +22,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
 
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 
@@ -108,7 +110,7 @@ public class LAFPlugin extends DefaultPlugin
 	 */
 	public String getVersion()
 	{
-		return "1.0";
+		return "1.1";
 	}
 
 	/**
