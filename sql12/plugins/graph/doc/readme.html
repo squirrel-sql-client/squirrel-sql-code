@@ -20,7 +20,16 @@ the 'Add to graph' item in the right mouse menu. Right mouse click
 tables, constraints as well as the background to find out what
 functions the Graph provides. To open a table a foreign key points to
 just double click on the foreign key column. The plugin supports
-browsing through the table structure.</P>
+browsing through the table structure.
+Note: A Graph uses foreign keys to render dependency lines between fields in the tables.
+So, a child column which is a member of a foreign key to a parent
+primary key column in a different table will be shown on the graph
+when both tables are added in such a way that the child column has a
+line with an arrow pointing to the parent column.  So, if you want to
+have the graph plugin show relationships visually, you must - for the
+foreseeable future - define foreign keys using regular SQL in
+SQuirreL.
+</P>
 <P>To distribute and print a graph to several sheets of paper click
 the 'Zoom/Print' item in the backgrounds right mouse menu. The
 control panel at the bottom of the Graph enables you to scale the
