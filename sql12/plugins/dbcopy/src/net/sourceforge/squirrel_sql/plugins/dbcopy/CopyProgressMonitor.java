@@ -137,7 +137,7 @@ public class CopyProgressMonitor extends I18NBaseObject
         DualProgressBarDialog.dispose();
         String title = getMessage("CopyProgressMonitor.successTitle");
         String message = getMessage("CopyProgressMonitor.successMessage",
-                                    Long.valueOf(seconds));
+                                    new Long(seconds));
         showMessageDialog(message, title, JOptionPane.INFORMATION_MESSAGE);
     }
 
