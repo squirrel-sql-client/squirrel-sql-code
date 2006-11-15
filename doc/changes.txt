@@ -47,6 +47,8 @@ get this information.
 
 	Bug-Fixes:
 
+Removed needless dependency on Java 5 from the DBCopy plugin. 
+
 1595913: Cannot select SQL dropdown under java 6.
 
 Added logic to prevent the MacOS X plugin from loading if not on the mac 
