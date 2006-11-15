@@ -32,9 +32,7 @@ public class Version
 
 	private static final String APP_NAME = s_stringMgr.getString("Version.appname");
 	private static final int MAJOR_VERSION = 2;
-	private static final int MINOR_VERSION = 3;
-    // TYPE should be " final", " rc1", " rc2", etc... Note the space prefix
-	private static final String TYPE = " final";
+	private static final int MINOR_VERSION = 4;
 	private static final int RELEASE = 0;
 
 	private static final String COPYRIGHT = s_stringMgr.getString("Version.copyright");
@@ -50,11 +48,12 @@ public class Version
 	{
 		StringBuffer buf = new StringBuffer();
 		buf.append(MAJOR_VERSION)
-			.append('.')
-			.append(MINOR_VERSION)
-			.append(TYPE);
+			.append(".")
+			.append(MINOR_VERSION);
+			
 		if (RELEASE != 0)
 		{
+            buf.append(".");
 			buf.append(RELEASE);
 		}
 		return buf.toString();
