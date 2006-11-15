@@ -31,6 +31,8 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Properties;
 
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIDefaults;
@@ -166,6 +168,7 @@ class LAFRegister
 		installLookAndFeelControllers(plugin);
 		try
 		{
+			applyPreferences();
 			setLookAndFeel(true);
 		}
 		catch (Throwable ex)
@@ -282,6 +285,12 @@ class LAFRegister
 
 			updateAllFrames();
 		}
+	}
+	void applyPreferences()
+	{
+		final LAFPreferences prefs = _plugin.getLAFPreferences();
+		JFrame.setDefaultLookAndFeelDecorated(prefs.getCanLAFSetBorder());
+		JDialog.setDefaultLookAndFeelDecorated(prefs.getCanLAFSetBorder());
 	}
 
 	/**
