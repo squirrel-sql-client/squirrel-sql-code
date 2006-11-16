@@ -31,7 +31,20 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
 import java.util.prefs.Preferences;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultDesktopManager;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JDesktopPane;
+import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
+import javax.swing.JMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.fw.gui.CascadeInternalFramePositioner;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
@@ -41,13 +54,11 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IMainFrame;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Version;
 import net.sourceforge.squirrel_sql.client.gui.ScrollableDesktopPane;
-import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.MessagePanel;
@@ -535,6 +546,7 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 		{
 			setLocation(new Point(10, 10));
 		}
+		setExtendedState(ws.getFrameExtendedState());
 	}
 
    private void positionNewInternalFrame(JInternalFrame child)

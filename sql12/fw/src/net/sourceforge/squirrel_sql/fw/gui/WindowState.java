@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 /*
- * Copyright (C) 2001-2004 Colin Bell
+ * Copyright (C) 2001-20064 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.Window;
 
@@ -32,26 +33,36 @@ import net.sourceforge.squirrel_sql.fw.xml.IXMLAboutToBeWritten;
 public class WindowState implements IXMLAboutToBeWritten
 {
 	/**
-	 * Window whose state is being stored. Only one of <TT>_window</TT>
-	 * and <TT>_internalFrame</TT> can be non-null.
+	 * Window whose state is being stored. Only one of <TT>_window</TT>,
+	 * <TT>_frame</tt> and <TT>_internalFrame</TT> can be non-null.
 	 */
 	private Window _window;
 
 	/**
-	 * JInternalFrame whose state is being stored. Only one of <TT>_window</TT>
-	 * and <TT>_internalFrame</TT> can be non-null.
+	 * JInternalFrame whose state is being stored. Only one of <TT>_window</TT>,
+	 * <TT>_frame</tt> and <TT>_internalFrame</TT> can be non-null.
 	 */
 	private JInternalFrame _internalFrame;
+
+	/**
+	 * Frame whose state is being stored. Only one of <TT>_window</TT>,
+	 * <TT>_frame</tt> and <TT>_internalFrame</TT> can be non-null.
+	 */
+	private Frame _frame;
 
 	/** Window bounds. */
 	private RectangleWrapper _bounds = new RectangleWrapper(new Rectangle(600, 400));
 
 	/** Was the window visible. */
 	private boolean _visible = true;
+	
+	/** Extended state for frame only. */
+	private int _frameExtendedState = 0;
 
 	public interface IPropertyNames
 	{
 		String BOUNDS = "bounds";
+		String FRAME_EXTENDED_STATE = "frameExtendedState";
 		String VISIBLE = "visible";
 	}
 
@@ -86,6 +97,17 @@ public class WindowState implements IXMLAboutToBeWritten
 	}
 
 	/**
+	 * Ctor storing the state of the passed <CODE>Frame</CODE>.
+	 *
+	 * @param	frame	frame to store the state of.
+	 */
+	public WindowState(Frame frame)
+	{
+		super();
+		_frame = frame;
+	}
+
+	/**
 	 * Set this objects state to that of the passed object. Think of this as
 	 * being like an assignment operator
 	 *
@@ -103,6 +125,7 @@ public class WindowState implements IXMLAboutToBeWritten
 
 		setBounds(obj.getBounds());
 		setVisible(obj.isVisible());
+		setFrameExtendedState(obj.getFrameExtendedState());
 	}
 
 	/**
@@ -138,6 +161,17 @@ public class WindowState implements IXMLAboutToBeWritten
 		_visible = value;
 	}
 
+	public int getFrameExtendedState()
+	{
+		refresh();
+		return _frameExtendedState;
+	}
+
+	public void setFrameExtendedState(int value)
+	{
+		_frameExtendedState = value;
+	}
+
 	private void refresh()
 	{
 		Rectangle windRc = null;
@@ -150,6 +184,12 @@ public class WindowState implements IXMLAboutToBeWritten
 		{
 			windRc = _internalFrame.getBounds();
 			_visible = _internalFrame.isVisible();
+		}
+		else if (_frame != null)
+		{
+			windRc = _frame.getBounds();
+			_visible = _frame.isVisible();
+			_frameExtendedState = _frame.getExtendedState();
 		}
 
 		if (windRc != null)

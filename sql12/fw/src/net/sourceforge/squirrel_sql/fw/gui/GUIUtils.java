@@ -22,6 +22,9 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Frame;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -31,9 +34,13 @@ import java.awt.geom.Rectangle2D;
 import java.beans.PropertyVetoException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
+import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.fw.util.BaseRuntimeException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -325,6 +332,7 @@ public class GUIUtils
 			throw new IllegalArgumentException("Null Component passed");
 		}
 
+		Rectangle windowBounds = wind.getBounds();
 		Component parent = wind.getParent();
 		Rectangle parentRect = null;
 		if (parent != null)
@@ -333,19 +341,70 @@ public class GUIUtils
 		}
 		else
 		{
-			parentRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
+			//parentRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
+			parentRect = getScreenBoundsFor(windowBounds);
 		}
-		Rectangle windowBounds = wind.getBounds();
-		if (windowBounds.x > (parentRect.width - 20)
-			|| windowBounds.y > (parentRect.height - 20)
-			|| (windowBounds.x + windowBounds.width) < 20
-			|| (windowBounds.y + windowBounds.height) < 20)
+		
+		//if (windowBounds.x > (parentRect.width - 20)
+//			|| windowBounds.y > (parentRect.height - 20)
+			//|| (windowBounds.x + windowBounds.width) < 20
+			//|| (windowBounds.y + windowBounds.height) < 20)
+		//{
+			//return false;
+		//}
+		if (windowBounds.x < (parentRect.x - 20)
+				|| windowBounds.y < (parentRect.y - 20))
 		{
 			return false;
 		}
 		return true;
 	}
 
+	public static Rectangle getScreenBoundsFor(Rectangle rc)
+	{
+        final GraphicsDevice[] gds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+        final List configs = new ArrayList();
+
+        for (int i = 0; i < gds.length; i++)
+        {
+            GraphicsConfiguration gc = gds[i].getDefaultConfiguration();
+            if (rc.intersects(gc.getBounds()))
+            {
+            	configs.add(gc);
+            }
+        }
+        
+        GraphicsConfiguration selected = null;
+        if (configs.size() > 0)
+        {
+            for (Iterator it = configs.iterator(); it.hasNext();)
+            {
+            	GraphicsConfiguration gcc = (GraphicsConfiguration)it.next();
+                if (selected == null)
+                    selected = gcc;
+                else
+                {
+                    if (gcc.getBounds().contains(rc.x + 20, rc.y + 20))
+                    {
+                    	selected = gcc;
+                    	break;
+                    }
+                }
+            }
+        }
+        else
+        {
+            selected = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+        }
+
+        int x = selected.getBounds().x;
+        int y = selected.getBounds().y;
+        int w = selected.getBounds().width;
+        int h = selected.getBounds().height;
+        
+        return new Rectangle(x,y,w,h); 
+	}
+	
 	public static void processOnSwingEventThread(Runnable todo)
 	{
 		processOnSwingEventThread(todo, false);
