@@ -99,10 +99,10 @@ public class AddPrimaryKeyCommand extends AbstractRefactoringCommand {
 
             result = dialect.getAddPrimaryKeySQL(pkName, columns);
         } catch (UnsupportedOperationException e2) {
-            //i18n[RemoveColumnCommand.unsupportedOperationMsg=The {0} dialect
-            //doesn's support dropping columns]
+            //i18n[AddPrimaryKeyCommand.unsupportedOperationMsg=The {0} 
+            //dialect doesn't support adding primary keys to tables]
             String msg = 
-                s_stringMgr.getString("RemoveColumnCommand.unsupportedOperationMsg", 
+                s_stringMgr.getString("AddPrimaryKeyCommand.unsupportedOperationMsg", 
                                       dialect.getDisplayName());
                                       
             _session.getMessageHandler().showMessage(msg);
