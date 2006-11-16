@@ -855,7 +855,7 @@ public class DBUtil extends I18NBaseObject {
                 //i18n[DBUtil.error.unknowntype=Unknown Java SQL column type: '{0}']
                 String msg =
                     s_stringMgr.getString("DBUtil.error.unknowntype",
-                                          Integer.valueOf(sourceColType));
+                                          new Integer(sourceColType));
                 log.error(msg);
                 // We still have to bind a value, or else the PS will throw
                 // an exception.
@@ -931,7 +931,7 @@ public class DBUtil extends I18NBaseObject {
         if (log.isDebugEnabled() && clobValue != null) {
             // i18n[DBUtil.info.bindclobmem=bindClobVarInMemory: binding '{0}' bytes]
             String msg = s_stringMgr.getString("DBUtil.info.bindclobmem",
-                                               Integer.valueOf(clobValue.length()));
+                                               new Integer(clobValue.length()));
             log.debug(msg);
         }
         ps.setString(index, clobValue);
@@ -953,7 +953,7 @@ public class DBUtil extends I18NBaseObject {
             //i18n[DBUtil.info.bindblobmem=bindBlobVarInMemory: binding '{0}' bytes]
             String msg = 
                 s_stringMgr.getString("DBUtil.info.bindblobmem",
-                                      Integer.valueOf(blobValue.length));
+                                      new Integer(blobValue.length));
             log.debug(msg);
         }
         ps.setBytes(index, blobValue);
@@ -994,7 +994,7 @@ public class DBUtil extends I18NBaseObject {
                 //i18n[DBUtil.info.bindcloblength=bindClobVarInFile: writing '{0}' bytes.]
                 String msg =
                     s_stringMgr.getString("DBUtil.info.bindcloblength",
-                                          Integer.valueOf(length));
+                                          new Integer(length));
                 log.debug(msg);
             }
             fos.write(buf, 0, length);
@@ -1042,7 +1042,7 @@ public class DBUtil extends I18NBaseObject {
                 //i18n[DBUtil.info.bindbloblength=bindBlobVarInFile: writing '{0}' bytes.]
                 String msg =
                     s_stringMgr.getString("DBUtil.info.bindbloblength",
-                                          Integer.valueOf(length));
+                                          new Integer(length));
                 log.debug(msg);
             }
             fos.write(buf, 0, length);
