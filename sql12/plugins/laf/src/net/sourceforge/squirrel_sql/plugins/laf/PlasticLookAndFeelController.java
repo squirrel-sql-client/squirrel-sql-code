@@ -17,14 +17,12 @@ package net.sourceforge.squirrel_sql.plugins.laf;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Constructor;
+//import java.lang.reflect.Method;
 import java.util.Iterator;
 
 import javax.swing.LookAndFeel;
-import javax.swing.plaf.metal.MetalTheme;
 import javax.swing.plaf.metal.MetalLookAndFeel;
+import javax.swing.plaf.metal.MetalTheme;
 
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
@@ -154,18 +152,19 @@ class PlasticLookAndFeelController extends AbstractPlasticController
 
 
          // Note: which jar is used is specified in LAFPluginResources.properties
-         try
-         {
-            // This works for the old looks-1.3.1.jar
-            Method method = laf.getClass().getMethod("setMyCurrentTheme", new Class[] { themeBaseClass });
-            Object[] parms = new Object[] { theme };
-            method.invoke(laf, parms);
-         }
-         catch (NoSuchMethodException e)
-         {
-            // This works for the newer looks.jar
-            MetalLookAndFeel.setCurrentTheme(theme);
-         }
+//         try
+//         {
+//            // This works for the old looks-1.3.1.jar
+//            Method method = laf.getClass().getMethod("setMyCurrentTheme", new Class[] { themeBaseClass });
+//            Object[] parms = new Object[] { theme };
+//            method.invoke(laf, parms);
+//         }
+//         catch (NoSuchMethodException e)
+//         {
+//            // This works for the newer looks.jar
+//            MetalLookAndFeel.setCurrentTheme(theme);
+//         }
+          MetalLookAndFeel.setCurrentTheme(theme);
       }
 		catch (Throwable th)
 		{
