@@ -13,6 +13,7 @@ Enhancements
 - Nimrod Look and Feel 0.94 added.
 - Tonic Look and Feel 1.0.5 added.
 - Napkin Look and Feel 1.0 added.
+- Tiny Look and Feel 1.3.04 added.
 - More Skin theme packs added.
 
 Bug Fixes
