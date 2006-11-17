@@ -117,7 +117,7 @@ public class LogPanel extends JPanel
 			public void error(Class source, Object message)
 			{
 				_statistics.setErrorCount(_statistics._errorCount + 1);
-				addLog(LOG_TYPE_ERROR, source, message, null);
+				addLog(LOG_TYPE_ERROR, source, message, message instanceof Throwable ? (Throwable)message:null);
 			}
 
 			public void error(Class source, Object message, Throwable th)

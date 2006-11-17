@@ -317,7 +317,7 @@ public class SessionManager
       }
       catch (Throwable ex)
       {
-         s_log.error(ex);
+         s_log.error("Error closing Session", ex);
          session.getMessageHandler().showErrorMessage(s_stringMgr.getString("SessionManager.ErrorClosingSession", ex));
       }
 
