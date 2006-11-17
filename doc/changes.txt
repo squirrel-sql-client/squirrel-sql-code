@@ -6,6 +6,18 @@ Not yet released - available in the latest snapshot, or at least checked into CV
 
     New Features/Enhancements:
 
+Oracle Plugin:
+   Windows for
+    - DB Output, 
+    - Session Info,
+    - SGA Trace,
+    - Invalid Objects
+   where worked over:
+   - Tool bar buttons are not in the main frame tool bar any more but in the Session tool bar.
+   - Each window has its own tool bar icon.
+   - All windows restore their last size and position.
+   - All windows provide a "Stay on top" check box.
+
 SQuirreL paths (-home, -user) are shown in Global Preferences
 
 LAF Plugin: Added Napkin Look and Feel (JDK 1.5 only)
