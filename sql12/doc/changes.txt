@@ -1,8 +1,13 @@
 SQuirreL SQL Client Change Log
 ==============================
 
-Applied 1595913: Cannot select SQL dropdown under java 6 from HEAD
 Not release yet - on the 2.3 final branch:
+
+Applied 1598162 - Under Java 6 you have to click the Connect button twice when
+the app is frist started.
+
+Applied 1595913: Cannot select SQL dropdown under java 6 from HEAD
+
 
 Removed dependency on Java 5 from the DBCopy plugin.
 
