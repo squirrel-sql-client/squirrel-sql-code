@@ -244,23 +244,22 @@ abstract class BaseListInternalFrame extends BaseInternalFrame
 			}
 		});
 
-		// When this window is activated give focus to the list box.
 		// When window opened ensure it is wide enough to display the toolbar.
 		// There is a bug in JDK1.2 where internalFrameOpened() doesn't get
 		// called so we've used a workaround. The workaround doesn't work in
 		// JDK1.3.
 		addInternalFrameListener(new InternalFrameAdapter()
 		{
-			private boolean _hasBeenActivated = false;
-			public void internalFrameActivated(InternalFrameEvent evt)
-			{
-				if (!_hasBeenActivated)
-				{
-					_hasBeenActivated = true;
-					privateResize();
-				}
-				list.requestFocus();
-			}
+			//private boolean _hasBeenActivated = false;
+			//public void internalFrameActivated(InternalFrameEvent evt)
+			//{
+				//if (!_hasBeenActivated)
+				//{
+				////	_hasBeenActivated = true;
+				//	privateResize();
+				//}
+				//list.requestFocus();
+			//}
 
 			public void internalFrameOpened(InternalFrameEvent evt)
 			{

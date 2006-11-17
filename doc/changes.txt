@@ -60,6 +60,8 @@ get this information.
 
 	Bug-Fixes:
 
+1598162 - Under Java 6 you have to click the Connect button twice when
+the app is frist started.
 
 1597463  - Maximized and multimonitor window size not saved
 
