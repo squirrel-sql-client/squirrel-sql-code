@@ -220,15 +220,19 @@ public class DBUtil extends I18NBaseObject {
             sb.append("ALTER TABLE ");
             ISession destSession = prov.getCopyDestSession();
             String schema = prov.getDestSelectedDatabaseObject().getSimpleName();
-            String table = getQualifiedTableName(destSession,  
+            String fkTable = getQualifiedTableName(destSession,  
                                                  schema, 
                                                  ti.getSimpleName(), 
                                                  DialectFactory.DEST_TYPE);
-            sb.append(table);
+            String pkTable = getQualifiedTableName(destSession, 
+                                                   schema, 
+                                                   pkTableName, 
+                                                   DialectFactory.DEST_TYPE);  
+            sb.append(fkTable);
             sb.append(" ADD FOREIGN KEY (");
             sb.append(fkTableCol);
             sb.append(") REFERENCES ");
-            sb.append(pkTableName);
+            sb.append(pkTable);
             sb.append("(");
             sb.append(pkTableCol);
             sb.append(")");
