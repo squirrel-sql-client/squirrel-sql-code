@@ -22,7 +22,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JPopupMenu;
 
-import com.ice.util.JFCUtilities;
+//import com.ice.util.JFCUtilities;
 
 // TODO: Once we're happy that JFCUtilities is no longer required
 // then remove it and this class.
@@ -37,8 +37,8 @@ public class BasePopupMenu extends JPopupMenu
 	 */
 	public void show(MouseEvent evt)
 	{
-		Point pt = JFCUtilities.computePopupLocation(evt, evt.getComponent(), this);
-//		Point pt = new Point( evt.getX(), evt.getY() );
+//		Point pt = JFCUtilities.computePopupLocation(evt, evt.getComponent(), this);
+		Point pt = new Point( evt.getX(), evt.getY() );
 		show(evt.getComponent(), pt.x, pt.y);
 	}
 }
