@@ -408,71 +408,9 @@ public class PluginManager
 			File[] files = dir.listFiles();
 			for (int i = 0; i < files.length; ++i)
 			{
-				final File file = files[i];
-				if (file.isFile())
+				if (files[i].isFile())
 				{
-					final String fileName = file.getAbsolutePath();
-					if (fileName.toLowerCase().endsWith(".zip") || fileName.toLowerCase().endsWith(".jar"))
-					{
-						try
-						{
-							if (fileName.toLowerCase().endsWith("jedit.jar"))
-							{
-								_app.showErrorDialog(s_stringMgr.getString("PluginManager.error.jedit"));
-							}
-							else
-							{
-								final String fullFilePath = file.getAbsolutePath();
-								final String internalName = Utilities.removeFileNameSuffix(file.getName());
-								final PluginStatus ps = (PluginStatus)pluginStatuses.get(internalName);
-                                boolean shouldLoad = true;
-                                if (!isMac && internalName.startsWith("macosx")) 
-                                {
-                                    s_log.info("Detected MacOS X plugin on non-Mac platform - skipping");
-                                    shouldLoad = false;
-                                }
-								if (shouldLoad && (ps == null || ps.isLoadAtStartup()))
-								{
-									pluginUrls.add(file.toURL());
-
-									// See if plugin has any jars in lib dir.
-									final String pluginDirName = Utilities.removeFileNameSuffix(fullFilePath);
-									final File libDir = new File(pluginDirName, "lib");
-									if (libDir.exists() && libDir.isDirectory())
-									{
-										File[] libDirFiles = libDir.listFiles();
-										for (int j = 0; j < libDirFiles.length; ++j)
-										{
-											if (libDirFiles[j].isFile())
-											{
-												final String fn = libDirFiles[j].getAbsolutePath();
-												if (fn.toLowerCase().endsWith(".zip") ||
-														fn.toLowerCase().endsWith(".jar"))
-												{
-													try
-													{
-														pluginUrls.add(libDirFiles[j].toURL());
-													}
-													catch (IOException ex)
-													{
-														String msg = s_stringMgr.getString("PluginManager.error.loadlib", fn);
-														s_log.error(msg, ex);
-														_app.showErrorDialog(msg, ex);
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-						catch (IOException ex)
-						{
-							String msg = s_stringMgr.getString("PluginManager.error.loadplugin", fileName);
-							s_log.error(msg, ex);
-							_app.showErrorDialog(msg, ex);
-						}
-					}
+					checkPlugin(files[i], pluginStatuses, pluginUrls, isMac);
 				}
 			}
 		}
@@ -485,6 +423,9 @@ public class PluginManager
 				s_log.debug("Plugin class loader URL[" + i + "] = " + urls[i]);
 			}
 		}
+		
+        loadPluginInfoCache();
+
 		_pluginsClassLoader = new MyURLClassLoader(urls);
         _pluginsClassLoader.addClassLoaderListener(classLoaderListener);
 		Class[] classes = _pluginsClassLoader.getAssignableClasses(IPlugin.class, s_log);
@@ -505,6 +446,81 @@ public class PluginManager
 		}
 	}
 
+	private void checkPlugin(File pluginFile, Map pluginStatuses, List pluginUrls, boolean isMac)
+	{
+		final String fileName = pluginFile.getAbsolutePath();
+		if (fileName.toLowerCase().endsWith(".zip") || fileName.toLowerCase().endsWith(".jar"))
+		{
+			try
+			{
+				if (fileName.toLowerCase().endsWith("jedit.jar"))
+				{
+					_app.showErrorDialog(s_stringMgr.getString("PluginManager.error.jedit"));
+					return;
+				}
+
+				final String fullFilePath = pluginFile.getAbsolutePath();
+				final String internalName = Utilities.removeFileNameSuffix(pluginFile.getName());
+				final PluginStatus ps = (PluginStatus)pluginStatuses.get(internalName);
+				if (!isMac && internalName.startsWith("macosx")) 
+				{
+					s_log.info("Detected MacOS X plugin on non-Mac platform - skipping");
+					return;
+				}
+				if (ps == null || ps.isLoadAtStartup())
+				{
+					pluginUrls.add(pluginFile.toURL());
+
+					// See if plugin has any jars in lib dir.
+					final String pluginDirName = Utilities.removeFileNameSuffix(fullFilePath);
+					final File libDir = new File(pluginDirName, "lib");
+					addPluginLibraries(libDir, pluginUrls);
+				}
+			}
+			catch (IOException ex)
+			{
+				String msg = s_stringMgr.getString("PluginManager.error.loadplugin", fileName);
+				s_log.error(msg, ex);
+				_app.showErrorDialog(msg, ex);
+			}
+		}
+	}
+
+    private void loadPluginInfoCache()
+    {
+    
+    }
+
+    private void addPluginLibraries(File libDir, List pluginUrls)
+    {
+    	if (libDir.exists() && libDir.isDirectory())
+    	{
+    		File[] libDirFiles = libDir.listFiles();
+    		for (int j = 0; j < libDirFiles.length; ++j)
+    		{
+    			if (libDirFiles[j].isFile())
+    			{
+    				final String fn = libDirFiles[j].getAbsolutePath();
+    				if (fn.toLowerCase().endsWith(".zip") ||
+    						fn.toLowerCase().endsWith(".jar"))
+    				{
+    					try
+    					{
+    						pluginUrls.add(libDirFiles[j].toURL());
+    					}
+    					catch (IOException ex)
+    					{
+    						String msg = s_stringMgr.getString("PluginManager.error.loadlib", fn);
+    						s_log.error(msg, ex);
+    						_app.showErrorDialog(msg, ex);
+    					}
+    				}
+    			}
+    		}
+    	}
+
+    }
+    
 	/**
 	 * Initialize plugins.
 	 */
