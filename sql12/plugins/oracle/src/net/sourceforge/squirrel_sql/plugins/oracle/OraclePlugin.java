@@ -17,12 +17,14 @@ package net.sourceforge.squirrel_sql.plugins.oracle;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.IAliasPropertiesPanelController;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
-import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
-import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.IAliasPropertiesPanelController;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
@@ -36,6 +38,8 @@ import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
@@ -46,8 +50,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.plugins.oracle.SGAtrace.NewSGATraceWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.dboutput.NewDBOutputWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.*;
@@ -196,25 +198,13 @@ public class OraclePlugin extends DefaultSessionPlugin
             "net.sourceforge.squirrel_sql.plugins.oracle.oracle",
             this);
 
-         //Add the actions to the action bar.
-         _newDBOutputWorksheet = new NewDBOutputWorksheetAction(app, _resources);
-         _newDBOutputWorksheet.setEnabled(false);
-         addToToolBar(_newDBOutputWorksheet);
 
-         _newInvalidObjectsWorksheet = new NewInvalidObjectsWorksheetAction(app, _resources);
-         _newInvalidObjectsWorksheet.setEnabled(false);
-         addToToolBar(_newInvalidObjectsWorksheet);
+         ActionCollection coll = app.getActionCollection();
+         coll.add(new NewDBOutputWorksheetAction(app, _resources));
+         coll.add(new NewInvalidObjectsWorksheetAction(app, _resources));
+         coll.add(new NewSessionInfoWorksheetAction(app, _resources));
+         coll.add(new NewSGATraceWorksheetAction(app, _resources));
 
-         _newSessionInfoWorksheet = new NewSessionInfoWorksheetAction(app, _resources);
-         _newSessionInfoWorksheet.setEnabled(false);
-         addToToolBar(_newSessionInfoWorksheet);
-
-         _newSGATraceWorksheet = new NewSGATraceWorksheetAction(app, _resources);
-         _newSGATraceWorksheet.setEnabled(false);
-         addToToolBar(_newSGATraceWorksheet);
-
-
-         app.getSessionManager().addSessionListener(new OraclePluginSessionListener());
 
          app.getSessionManager().addAllowedSchemaChecker(new IAllowedSchemaChecker()
          {
@@ -333,6 +323,16 @@ public class OraclePlugin extends DefaultSessionPlugin
          return null;
       }
 
+      GUIUtils.processOnSwingEventThread(new Runnable()
+      {
+         public void run()
+         {
+            addActions(session);
+         }
+      });
+
+
+
       oracleSessions.add(session);
 
 
@@ -364,6 +364,23 @@ public class OraclePlugin extends DefaultSessionPlugin
       return ret;
    }
 
+   private void addActions(ISession session)
+   {
+      ActionCollection coll = getApplication().getActionCollection();
+      session.addSeparatorToToolbar();
+      session.addToToolbar(coll.get(NewDBOutputWorksheetAction.class));
+      session.addToToolbar(coll.get(NewInvalidObjectsWorksheetAction.class));
+      session.addToToolbar(coll.get(NewSessionInfoWorksheetAction.class));
+      session.addToToolbar(coll.get(NewSGATraceWorksheetAction.class));
+
+
+      session.getSessionInternalFrame().addToToolsPopUp("oracleoutput", coll.get(NewDBOutputWorksheetAction.class));
+      session.getSessionInternalFrame().addToToolsPopUp("oracleinvalid", coll.get(NewInvalidObjectsWorksheetAction.class));
+      session.getSessionInternalFrame().addToToolsPopUp("oracleinfo", coll.get(NewSessionInfoWorksheetAction.class));
+      session.getSessionInternalFrame().addToToolsPopUp("oraclesga", coll.get(NewSGATraceWorksheetAction.class));
+
+   }
+
 
    private void onSQLInternaFrameOpened(SQLInternalFrame sqlInternalFrame, final ISession session)
    {
@@ -393,24 +410,6 @@ public class OraclePlugin extends DefaultSessionPlugin
           return new DefaultDatabaseExpander(session);
       }
       return null;
-    }
-
-    /**
-     * Adds the specified action to the session main frame tool bar in such a 
-     * way that GUI work is done in the event dispatch thread.
-     * @param action
-     */
-    public void addToToolBar(final Action action) {
-        final IApplication app = getApplication();
-        if (SwingUtilities.isEventDispatchThread()) {
-            app.getMainFrame().addToToolBar(action);
-        } else {
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    app.getMainFrame().addToToolBar(action);
-                }
-            });
-        }
     }
 
 
@@ -576,46 +575,6 @@ public class OraclePlugin extends DefaultSessionPlugin
       return result;
    }
 
-
-   public class OraclePluginSessionListener extends SessionAdapter
-   {
-
-      public void sessionActivated(SessionEvent evt)
-      {
-         final ISession session = evt.getSession();
-         final boolean enable = isOracle(session.getAlias());
-         GUIUtils.processOnSwingEventThread(new Runnable() {
-             public void run() {
-                 _newDBOutputWorksheet.setEnabled(enable);
-                 _newInvalidObjectsWorksheet.setEnabled(enable);
-                 _newSessionInfoWorksheet.setEnabled(enable);
-                 _newSGATraceWorksheet.setEnabled(enable);                 
-             }
-         });
-      }
-
-      public void sessionClosing(SessionEvent evt)
-      {
-         final ISession session = evt.getSession();
-         if (isOracle(session.getAlias()))
-         {
-            int idx = oracleSessions.indexOf(session);
-            if (idx != -1)
-            {
-               oracleSessions.remove(idx);
-            }
-         }
-         // if the last oracle session is closing, then disable the
-         // worksheets
-         if (oracleSessions.size() == 0)
-         {
-            _newDBOutputWorksheet.setEnabled(false);
-            _newInvalidObjectsWorksheet.setEnabled(false);
-            _newSessionInfoWorksheet.setEnabled(false);
-            _newSGATraceWorksheet.setEnabled(false);
-         }
-      }
-   }
 
    /**
     * Check if we can run query.

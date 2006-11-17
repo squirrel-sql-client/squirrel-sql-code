@@ -964,12 +964,22 @@ class Session implements ISession
     /* (non-Javadoc)
      * @see net.sourceforge.squirrel_sql.client.session.ISession#confirmCloseWithUnsavedEdits()
      */
-    public boolean confirmClose() {
-        if (getSQLPanelAPIOfActiveSessionWindow().confirmClose()) {
-            return true;
-        } else {
-            return false;
-        }
+    public boolean confirmClose()
+    {
+       if(getActiveSessionWindow() instanceof SQLInternalFrame || getActiveSessionWindow() instanceof SessionInternalFrame)
+       {
+          if (getSQLPanelAPIOfActiveSessionWindow().confirmClose())
+          {
+             return true;
+          }
+          else
+          {
+             return false;
+          }
+       }
+       
+       return true;
+
     }
 
 
