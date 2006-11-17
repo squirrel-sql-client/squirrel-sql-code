@@ -12,7 +12,7 @@ Oracle Plugin:
     - Session Info,
     - SGA Trace,
     - Invalid Objects
-   where worked over:
+   were changed in the following ways:
    - Tool bar buttons are not in the main frame tool bar any more but in the Session tool bar.
    - Each window has its own tool bar icon.
    - All windows restore their last size and position.
@@ -59,6 +59,11 @@ it is not necessary to open the driver definition for the current session to
 get this information.
 
 	Bug-Fixes:
+
+DBCopy plugin: Fixed bug in copying FK constraints where the primary key table 
+name wasn't fully qualified the schema of the destination database.  This was 
+most noticeable when copying tables with FKs into a schema which was not the 
+default schema for that session.
 
 1598162 - Under Java 6 you have to click the Connect button twice when
 the app is frist started.
