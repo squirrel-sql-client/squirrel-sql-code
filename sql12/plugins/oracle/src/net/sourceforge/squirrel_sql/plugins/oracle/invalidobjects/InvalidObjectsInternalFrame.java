@@ -17,93 +17,111 @@ package net.sourceforge.squirrel_sql.plugins.oracle.invalidobjects;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.BorderLayout;
-
-
-import javax.swing.Icon;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
-
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
+import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.plugins.oracle.OracleInternalFrame;
+import net.sourceforge.squirrel_sql.plugins.oracle.OracleInternalFrameCallback;
 
-public class InvalidObjectsInternalFrame extends BaseSessionInternalFrame
+import javax.swing.*;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
+import java.awt.*;
+
+public class InvalidObjectsInternalFrame extends OracleInternalFrame
 {
-        /** Application API. */
-        private final IApplication _app;
 
-        /** ID of the session for this window. */
-        private IIdentifier _sessionId;
+   private static final String PREF_PART_INVALID_FRAME = "InvalidFrame";
 
-        private InvalidObjectsPanel _invalidObjectsPanel;
-        /** Toolbar for window. */
-        private InvalidObjectsToolBar _toolBar;
 
-        private Resources _resources;
+   private static final StringManager s_stringMgr =
+      StringManagerFactory.getStringManager(InvalidObjectsInternalFrame.class);
 
-        public InvalidObjectsInternalFrame(ISession session, Resources resources)
-        {
-                super(session, session.getTitle(), true, true, true, true);
-                _app = session.getApplication();
-                _resources = resources;
-                _sessionId = session.getIdentifier();
-                setVisible(false);
-                createGUI(session);
-        }
+   private InvalidObjectsPanel _invalidObjectsPanel;
+   /**
+    * Toolbar for window.
+    */
+   private InvalidObjectsToolBar _toolBar;
 
-        public InvalidObjectsPanel getDBOutputPanel()
-        {
-                return _invalidObjectsPanel;
-        }
+   private Resources _resources;
 
-        private void createGUI(ISession session)
-        {
-                setVisible(false);
+   public InvalidObjectsInternalFrame(ISession session, Resources resources)
+   {
 
-                Icon icon = _resources.getIcon(getClass(), "frameIcon"); //i18n
-                if (icon != null)
-                {
-                        setFrameIcon(icon);
-                }
+      // I18n[oracle.invalidTitle=Oracle invalid objects for: {0}]
+      super(session, s_stringMgr.getString("oracle.invalidTitle", session.getTitle()));
+      _resources = resources;
+      createGUI(session);
+   }
 
-                _invalidObjectsPanel = new InvalidObjectsPanel(getSession());
-                _toolBar = new InvalidObjectsToolBar(getSession());
-                JPanel contentPanel = new JPanel(new BorderLayout());
-                contentPanel.add(_toolBar, BorderLayout.NORTH);
-                contentPanel.add(_invalidObjectsPanel, BorderLayout.CENTER);
-                setContentPane(contentPanel);
-                validate();
-        }
+   public InvalidObjectsPanel getDBOutputPanel()
+   {
+      return _invalidObjectsPanel;
+   }
 
-        /** The class representing the toolbar at the top of a invalid objects internal frame*/
-        private class InvalidObjectsToolBar extends ToolBar
-        {
-                InvalidObjectsToolBar(ISession session)
-                {
-                        super();
-                        createGUI(session);
-                }
+   private void createGUI(ISession session)
+   {
 
-                private void createGUI(ISession session)
-                {
-                        IApplication app = session.getApplication();
-                        setUseRolloverButtons(true);
-                        setFloatable(false);
-                        add(new GetInvalidObjectsAction(app, _resources, _invalidObjectsPanel));
-                }
-        }
+      addInternalFrameListener(new InternalFrameAdapter()
+      {
+         public void internalFrameClosing(InternalFrameEvent e)
+         {
+            InvalidObjectsInternalFrame.super.internalFrameClosing(_toolBar.isStayOnTop(), 0);
+         }
+      });
+
+
+      Icon icon = _resources.getIcon(getClass(), "frameIcon"); //i18n
+      if (icon != null)
+      {
+         setFrameIcon(icon);
+      }
+
+      OracleInternalFrameCallback cb = new OracleInternalFrameCallback()
+      {
+
+         public void createPanelAndToolBar(boolean stayOnTop, int autoRefeshPeriod)
+         {
+
+            _invalidObjectsPanel = new InvalidObjectsPanel(getSession());
+            _toolBar = new InvalidObjectsToolBar(getSession(), stayOnTop);
+            JPanel contentPanel = new JPanel(new BorderLayout());
+            contentPanel.add(_toolBar, BorderLayout.NORTH);
+            contentPanel.add(_invalidObjectsPanel, BorderLayout.CENTER);
+            setContentPane(contentPanel);
+
+         }
+      };
+
+
+      initFromPrefs(PREF_PART_INVALID_FRAME, cb);
+   }
+
+
+   
+
+   /**
+    * The class representing the toolbar at the top of a invalid objects internal frame
+    */
+   private class InvalidObjectsToolBar extends OracleToolBar
+   {
+      InvalidObjectsToolBar(ISession session, boolean stayOnTop)
+      {
+         super();
+         createGUI(session, stayOnTop);
+      }
+
+      private void createGUI(ISession session, boolean stayOnTop)
+      {
+         IApplication app = session.getApplication();
+         setUseRolloverButtons(true);
+         setFloatable(false);
+         add(new GetInvalidObjectsAction(app, _resources, _invalidObjectsPanel));
+
+         addStayOnTop(stayOnTop);
+      }
+   }
 }

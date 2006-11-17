@@ -17,129 +17,144 @@ package net.sourceforge.squirrel_sql.plugins.oracle.sessioninfo;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.BorderLayout;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.plugins.oracle.OracleInternalFrame;
+import net.sourceforge.squirrel_sql.plugins.oracle.OracleInternalFrameCallback;
+import net.sourceforge.squirrel_sql.plugins.oracle.dboutput.DBOutputPanel;
 
-import javax.swing.Icon;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
-
-public class SessionInfoInternalFrame extends BaseSessionInternalFrame
+public class SessionInfoInternalFrame extends OracleInternalFrame
 {
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(SessionInfoInternalFrame.class);
+
+   private static final String PREF_PART_INFO_FRAME = "InfoFrame";
 
 
-        /** Application API. */
-        private final IApplication _app;
-
-        /** ID of the session for this window. */
-        private IIdentifier _sessionId;
-
-        private SessionInfoPanel _sessionInfoPanel;
-        /** Toolbar for window. */
-        private SessionInfoToolBar _toolBar;
-
-        private Resources _resources;
-
-        public SessionInfoInternalFrame(ISession session, Resources resources)
-        {
-                super(session, session.getTitle(), true, true, true, true);
-                _app = session.getApplication();
-                _resources = resources;
-                _sessionId = session.getIdentifier();
-                setVisible(false);
-                createGUI(session);
-        }
-
-        public SessionInfoPanel getDBOutputPanel()
-        {
-                return _sessionInfoPanel;
-        }
-
-        private void createGUI(ISession session)
-        {
-                setVisible(false);
-
-                addInternalFrameListener(new InternalFrameAdapter() {
-                  public void internalFrameClosing(InternalFrameEvent e) {
-                    //Turn off auto refresh when we are shutting down.
-                    _sessionInfoPanel.setAutoRefresh(false);
-                  }
-                });
+   private static final StringManager s_stringMgr =
+      StringManagerFactory.getStringManager(SessionInfoInternalFrame.class);
 
 
-                Icon icon = _resources.getIcon(getClass(), "frameIcon"); //i18n
-                if (icon != null)
-                {
-                        setFrameIcon(icon);
-                }
 
-                _sessionInfoPanel = new SessionInfoPanel(getSession());
-                _toolBar = new SessionInfoToolBar(getSession());
-                JPanel contentPanel = new JPanel(new BorderLayout());
-                contentPanel.add(_toolBar, BorderLayout.NORTH);
-                contentPanel.add(_sessionInfoPanel, BorderLayout.CENTER);
-                setContentPane(contentPanel);
-                validate();
-        }
+   private SessionInfoPanel _sessionInfoPanel;
+   /**
+    * Toolbar for window.
+    */
+   private SessionInfoToolBar _toolBar;
 
-        /** The class representing the toolbar at the top of a session info internal frame*/
-        private class SessionInfoToolBar extends ToolBar
-        {
-                SessionInfoToolBar(ISession session)
-                {
-                        super();
-                        createGUI(session);
-                }
+   private Resources _resources;
 
-                private void createGUI(ISession session)
-                {
-                        IApplication app = session.getApplication();
-                        setUseRolloverButtons(true);
-                        setFloatable(false);
-                        add(new GetSessionInfoAction(app, _resources, _sessionInfoPanel));
+   public SessionInfoInternalFrame(ISession session, Resources resources)
+   {
+      // I18n[oracle.infoTitle=Oracle Session info for: {0}]
+      super(session, s_stringMgr.getString("oracle.infoTitle", session.getTitle()));
+      _resources = resources;
+      createGUI(session);
+   }
 
-                        //Create checkbox for enabling auto refresh
-      					   // i18n[oracle.auotRefresh2=Enable auto refresh]
-								final JCheckBox autoRefresh = new JCheckBox(s_stringMgr.getString("oracle.auotRefresh2"), false);
-                        autoRefresh.addActionListener(new ActionListener() {
-                          public void actionPerformed(ActionEvent e) {
-                            _sessionInfoPanel.setAutoRefresh(autoRefresh.isSelected());
-                          }
-                        });
-                        add(autoRefresh);
+   public SessionInfoPanel getDBOutputPanel()
+   {
+      return _sessionInfoPanel;
+   }
 
-                        //Create spinner for update period
-                        final SpinnerNumberModel model = new SpinnerNumberModel(10, 1, 60, 5);
-                        final JSpinner refreshRate = new JSpinner(model);
-                        refreshRate.addChangeListener(new ChangeListener() {
-                          public void stateChanged(ChangeEvent e) {
-                            _sessionInfoPanel.setAutoRefreshPeriod(model.getNumber().intValue());
-                          }
-                        });
-                        add(refreshRate);
-						 		// i18n[oracle.secons3=(seconds)]
-								add(new JLabel(s_stringMgr.getString("oracle.secons3")));
-                }
-        }
+   private void createGUI(ISession session)
+   {
+
+      addInternalFrameListener(new InternalFrameAdapter()
+      {
+         public void internalFrameClosing(InternalFrameEvent e)
+         {
+            SessionInfoInternalFrame.super.internalFrameClosing(_toolBar.isStayOnTop(), _sessionInfoPanel.getAutoRefreshPeriod());
+            _sessionInfoPanel.setAutoRefresh(false);
+         }
+      });
+
+
+      Icon icon = _resources.getIcon(getClass(), "frameIcon"); //i18n
+      if (icon != null)
+      {
+         setFrameIcon(icon);
+      }
+
+
+      OracleInternalFrameCallback cb = new OracleInternalFrameCallback()
+      {
+
+         public void createPanelAndToolBar(boolean stayOnTop, int autoRefeshPeriod)
+         {
+            _sessionInfoPanel = new SessionInfoPanel(getSession(), autoRefeshPeriod);
+            _toolBar = new SessionInfoToolBar(getSession(), stayOnTop, autoRefeshPeriod);
+            JPanel contentPanel = new JPanel(new BorderLayout());
+            contentPanel.add(_toolBar, BorderLayout.NORTH);
+            contentPanel.add(_sessionInfoPanel, BorderLayout.CENTER);
+            setContentPane(contentPanel);
+
+            _sessionInfoPanel.setAutoRefreshPeriod(autoRefeshPeriod);
+         }
+      };
+
+      initFromPrefs(PREF_PART_INFO_FRAME, cb);
+   }
+
+   /**
+    * The class representing the toolbar at the top of a session info internal frame
+    */
+   private class SessionInfoToolBar extends OracleToolBar
+   {
+      SessionInfoToolBar(ISession session, boolean stayOnTop, int autoRefeshPeriod)
+      {
+         super();
+         createGUI(session, stayOnTop, autoRefeshPeriod);
+      }
+
+      private void createGUI(ISession session, boolean stayOnTop, int autoRefeshPeriod)
+      {
+         IApplication app = session.getApplication();
+         setUseRolloverButtons(true);
+         setFloatable(false);
+         add(new GetSessionInfoAction(app, _resources, _sessionInfoPanel));
+
+         addStayOnTop(stayOnTop);
+
+         //Create checkbox for enabling auto refresh
+         // i18n[oracle.auotRefresh2=Enable auto refresh]
+         final JCheckBox autoRefresh = new JCheckBox(s_stringMgr.getString("oracle.auotRefresh2"), false);
+         autoRefresh.addActionListener(new ActionListener()
+         {
+            public void actionPerformed(ActionEvent e)
+            {
+               _sessionInfoPanel.setAutoRefresh(autoRefresh.isSelected());
+            }
+         });
+         add(autoRefresh);
+
+         //Create spinner for update period
+         final SpinnerNumberModel model = new SpinnerNumberModel(autoRefeshPeriod, 1, 60, 5);
+         final JSpinner refreshRate = new JSpinner(model);
+         refreshRate.addChangeListener(new ChangeListener()
+         {
+            public void stateChanged(ChangeEvent e)
+            {
+               _sessionInfoPanel.setAutoRefreshPeriod(model.getNumber().intValue());
+            }
+         });
+         add(refreshRate);
+         // i18n[oracle.secons3=(seconds)]
+         add(new JLabel(s_stringMgr.getString("oracle.secons3")));
+      }
+   }
 }
