@@ -213,7 +213,6 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect
      * @return true if the database supports dropping columns; false otherwise.
      */
     public boolean supportsDropColumn() {
-        // Need to verify this
         return true;
     }
 
@@ -227,8 +226,7 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect
      * @throws UnsupportedOperationException if the database doesn't support 
      *         dropping columns. 
      */
-    public String getColumnDropSQL(String tableName, String columnName) {
-        // TODO: Need to verify this        
+    public String getColumnDropSQL(String tableName, String columnName) {      
         return DialectUtils.getColumnDropSQL(tableName, columnName);
     }
     
@@ -251,6 +249,8 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect
     /**
      * Returns the SQL that forms the command to add a primary key to the 
      * specified table composed of the given column names.
+     * 
+     * ALTER TABLE table_name ADD CONSTRAINT constraint_name PRIMARY KEY (column_name);
      * 
      * @param pkName the name of the constraint
      * @param columnNames the columns that form the key
@@ -286,13 +286,25 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect
      * @return the SQL to execute
      */
     public String getColumnNullableAlterSQL(TableColumnInfo info) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not yet implemented");
+        throw new UnsupportedOperationException("Firebird doesn't support altering a column's nullability");
     }
+    
+    /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports renaming columns.
+     * 
+     * @return true if the database supports changing the name of columns;  
+     *         false otherwise.
+     */
+    public boolean supportsRenameColumn() {
+        // TODO: need to verify this
+        return true;
+    }    
     
     /**
      * Returns the SQL that is used to change the column name.
      * 
+     * ALTER TABLE table ALTER [COLUMN] column_name TO new_col_name
      * 
      * @param from the TableColumnInfo as it is
      * @param to the TableColumnInfo as it wants to be
@@ -300,12 +312,15 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect
      * @return the SQL to make the change
      */
     public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not yet implemented");
+        String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
+        String renameToClause = DialectUtils.TO_CLAUSE;
+        return DialectUtils.getColumnNameAlterSQL(from, to, alterClause, renameToClause);
     }
 
     /**
      * Returns the SQL that is used to change the column type.
+     * 
+     * alter table table_name alter column column_name type varchar(10)
      * 
      * @param from the TableColumnInfo as it is
      * @param to the TableColumnInfo as it wants to be
@@ -318,8 +333,49 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect
                                         TableColumnInfo to)
         throws UnsupportedOperationException
     {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not Yet Implemented");
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(from.getTableName());
+        result.append(" ALTER COLUMN ");
+        result.append(from.getColumnName());
+        result.append(" TYPE ");
+        result.append(DialectUtils.getTypeName(to, this));
+        return result.toString();
+    }
+
+    /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports changing a column from null to not-null and vice versa.
+     * 
+     * @return true if the database supports dropping columns; false otherwise.
+     */    
+    public boolean supportsAlterColumnNull() {
+        // Firebird doesn't natively support altering a columns nullable 
+        // property.  Will have to simulate in a future release.
+        return false;
+    }
+    
+    /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports changing a column's default value.
+     * 
+     * @return true if the database supports modifying column defaults; false 
+     *         otherwise
+     */
+    public boolean supportsAlterColumnDefault() {
+        // TODO Need to verify this
+        return true;
+    }
+    
+    /**
+     * Returns the SQL command to change the specified column's default value
+     * 
+     * @param info the column to modify and it's default value.
+     * @return SQL to make the change
+     */
+    public String getColumnDefaultAlterSQL(TableColumnInfo info) {
+        // TODO need to implement or change the message
+        throw new UnsupportedOperationException("Not yet implemented");
     }
     
 }

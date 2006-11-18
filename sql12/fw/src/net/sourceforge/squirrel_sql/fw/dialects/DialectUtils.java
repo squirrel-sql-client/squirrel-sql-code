@@ -40,6 +40,12 @@ public class DialectUtils {
     
     public static final String MODIFY_COLUMN_CLAUSE = "MODIFY COLUMN";
     
+    public static final String RENAME_COLUMN_CLAUSE = "RENAME COLUMN";
+    
+    public static final String RENAME_TO_CLAUSE = "RENAME TO";
+    
+    public static final String TO_CLAUSE = "TO";
+    
     /**
      * Returns the SQL statement to use to add a column to the specified table
      * using the information about the new column specified by info.
@@ -231,6 +237,8 @@ public class DialectUtils {
         return result.toString();
     }
     
+    
+    
     /**
      * Populates the specified ArrayList with SQL statement(s) required to 
      * convert each of the columns to not null.  This is typically needed in 
@@ -288,4 +296,33 @@ public class DialectUtils {
         pkSQL.append(")");
         return pkSQL.toString();
     }
+    
+    /**
+     * Returns the SQL that is used to change the column name.
+     * 
+     * 
+     * @param from the TableColumnInfo as it is
+     * @param to the TableColumnInfo as it wants to be
+     * 
+     * @return the SQL to make the change
+     */
+    public static String getColumnNameAlterSQL(TableColumnInfo from, 
+                                               TableColumnInfo to,
+                                               String alterCaluse,
+                                               String renameToClause) 
+    {
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(from.getTableName());
+        result.append(" ");
+        result.append(alterCaluse);
+        result.append(" ");
+        result.append(from.getColumnName());
+        result.append(" ");
+        result.append(renameToClause);
+        result.append(" ");
+        result.append(to.getColumnName());
+        return result.toString();
+    }
+    
 }

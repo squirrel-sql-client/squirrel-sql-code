@@ -499,8 +499,6 @@ public class ColumnDetailDialog extends JDialog {
             precisionSpinner.setToolTipText("Modifying column precision is not yet supported");
             scaleSpinner.setEnabled(false);
             scaleSpinner.setToolTipText("Modifying column scale is not yet supported");
-            defaultTextField.setEnabled(false);
-            defaultTextField.setToolTipText("Modifying column default is not yet supported");            
         }
         
     }
@@ -576,6 +574,7 @@ public class ColumnDetailDialog extends JDialog {
     }
     
     private class DialectTypeListListener implements ItemListener {
+        
         public void itemStateChanged(ItemEvent e) {
             String dbName = (String)dialectList.getSelectedItem();
             HibernateDialect dialect = DialectFactory.getDialect(dbName);
@@ -585,12 +584,38 @@ public class ColumnDetailDialog extends JDialog {
                 //support column comments]
                 String noColumnSupportMsg =
                     s_stringMgr.getString(
-                            "ColumnDetailsDialog.columnCommentLabel",
+                            "ColumnDetailsDialog.columnCommentToolTip",
                             dbName);
                 commentTextArea.setToolTipText(noColumnSupportMsg);
             } else {
                 commentTextArea.setEditable(true);
                 commentTextArea.setToolTipText(null);
+            }
+            if (_mode == MODIFY_MODE) {
+                if (!dialect.supportsAlterColumnNull()) {
+                    nullableCheckBox.setEnabled(false);
+                    //i18n[ColumnDetailsDialog.columnNullLabel={0} does not 
+                    //support altering column nullability
+                    String noColumnSupportMsg = 
+                        s_stringMgr.getString("ColumnDetailsDialog.columnNullToolTip",
+                                              dbName);
+                    nullableCheckBox.setToolTipText(noColumnSupportMsg);
+                } else {
+                    nullableCheckBox.setEnabled(true);
+                    nullableCheckBox.setToolTipText(null);
+                }
+                if (!dialect.supportsRenameColumn()) {
+                    //i18n[ColumnDetailsDialog.columnNameTootTip={0} does not 
+                    //support altering column name
+                    String noColNameChange = 
+                        s_stringMgr.getString("ColumnDetailsDialog.columnNameTootTip", 
+                                              dbName);
+                    columnNameTextField.setEditable(false);
+                    columnNameTextField.setToolTipText(noColNameChange);
+                } else {
+                    columnNameTextField.setEditable(true);
+                    columnNameTextField.setToolTipText(null);                    
+                }
             }
         }
     }

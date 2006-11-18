@@ -308,6 +308,17 @@ public class DerbyDialect extends DB2Dialect
     }
     
     /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports renaming columns.
+     * 
+     * @return true if the database supports changing the name of columns;  
+     *         false otherwise.
+     */
+    public boolean supportsRenameColumn() {
+        return false;
+    }    
+    
+    /**
      * Returns the SQL that is used to change the column name.
      * 
      * RENAME COLUMN table-Name.simple-Column-Name TO simple-Column-Name
@@ -318,12 +329,7 @@ public class DerbyDialect extends DB2Dialect
      * @return the SQL to make the change
      */
     public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to) {
-        StringBuffer result = new StringBuffer();
-        result.append("RENAME COLUMN ");
-        result.append(from.getQualifiedName());
-        result.append(" TO ");
-        result.append(to.getColumnName());
-        return result.toString();
+        throw new UnsupportedOperationException("Derby doesn't support altering the name of columns");
     }
     
     /**
@@ -365,6 +371,38 @@ public class DerbyDialect extends DB2Dialect
         result.append(" SET DATA TYPE ");
         result.append(DialectUtils.getTypeName(to, this));
         return result.toString();
+    }
+
+    /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports changing a column from null to not-null and vice versa.
+     * 
+     * @return true if the database supports dropping columns; false otherwise.
+     */
+    public boolean supportsAlterColumnNull() {
+        return true;
+    }
+    
+    /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports changing a column's default value.
+     * 
+     * @return true if the database supports modifying column defaults; false 
+     *         otherwise
+     */
+    public boolean supportsAlterColumnDefault() {
+        return false;
+    }
+    
+    /**
+     * Returns the SQL command to change the specified column's default value
+     *   
+     * @param info the column to modify and it's default value.
+     * @return SQL to make the change
+     */
+    public String getColumnDefaultAlterSQL(TableColumnInfo info) {
+        // TODO need to implement or change the message
+        throw new UnsupportedOperationException("Derby doesn't support changing column default values");
     }
     
 }

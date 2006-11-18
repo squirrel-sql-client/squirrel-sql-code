@@ -217,6 +217,15 @@ public interface HibernateDialect {
      * @return true if the database supports dropping columns; false otherwise.
      */
     boolean supportsDropColumn();
+
+    /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports changing a column from null to not-null and vice versa.
+     * 
+     * @return true if the database supports dropping columns; false otherwise.
+     */
+    boolean supportsAlterColumnNull();
+    
     
     /**
      * Returns the SQL that forms the command to drop the specified colum in the
@@ -270,6 +279,15 @@ public interface HibernateDialect {
     String getColumnNullableAlterSQL(TableColumnInfo info);
         
     /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports renaming columns.
+     * 
+     * @return true if the database supports changing the name of columns;  
+     *         false otherwise.
+     */
+    boolean supportsRenameColumn();    
+    
+    /**
      * Returns the SQL that is used to change the column name.
      * 
      * @param from the TableColumnInfo as it is
@@ -291,5 +309,22 @@ public interface HibernateDialect {
      */
     String getColumnTypeAlterSQL(TableColumnInfo from, TableColumnInfo to)
         throws UnsupportedOperationException;
+    
+    /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports changing a column's default value.
+     * 
+     * @return true if the database supports modifying column defaults; false 
+     *         otherwise
+     */
+    boolean supportsAlterColumnDefault();
+    
+    /**
+     * Returns the SQL command to change the specified column's default value
+     *   
+     * @param info the column to modify and it's default value.
+     * @return SQL to make the change
+     */
+    String getColumnDefaultAlterSQL(TableColumnInfo info);
     
 }

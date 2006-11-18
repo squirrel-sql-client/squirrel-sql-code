@@ -23,6 +23,7 @@ import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 /**
@@ -172,9 +173,16 @@ public class SQLServerDialect extends org.hibernate.dialect.SQLServerDialect
      *         adding columns after a table has already been created.
      */
     public String[] getColumnAddSQL(TableColumnInfo info) throws UnsupportedOperationException {
-        return new String[] {
-            DialectUtils.getColumnAddSQL(info, this, true, true)
-        };
+        if (info.getDefaultValue() != null) {
+            return new String[] {
+                    DialectUtils.getColumnAddSQL(info, this, false, true),
+                    getColumnDefaultAlterSQL(info)
+                };            
+        } else {
+            return new String[] {
+                    DialectUtils.getColumnAddSQL(info, this, false, true),
+                };                        
+        }
     }
 
     /**
@@ -279,20 +287,49 @@ public class SQLServerDialect extends org.hibernate.dialect.SQLServerDialect
     }
     
     /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports changing a column from null to not-null and vice versa.
+     * 
+     * @return true if the database supports dropping columns; false otherwise.
+     */    
+    public boolean supportsAlterColumnNull() {
+        // TODO verify this
+        return true;
+    }
+    
+    /**
      * Returns the SQL used to alter the specified column to not allow null 
      * values
+     * 
+     * alter table mytest alter column mycol integer not null
      * 
      * @param info the column to modify
      * @return the SQL to execute
      */
     public String getColumnNullableAlterSQL(TableColumnInfo info) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not yet implemented");
+        String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
+        return DialectUtils.getColumnNullableAlterSQL(info, 
+                                                      this, 
+                                                      alterClause, 
+                                                      true);
+    }
+    
+    /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports renaming columns.
+     * 
+     * @return true if the database supports changing the name of columns;  
+     *         false otherwise.
+     */
+    public boolean supportsRenameColumn() {
+        // TODO: need to verify this
+        return true;
     }
     
     /**
      * Returns the SQL that is used to change the column name.
      * 
+     * exec sp_rename 'test.renameCol', newNameCol, 'COLUMN'
      * 
      * @param from the TableColumnInfo as it is
      * @param to the TableColumnInfo as it wants to be
@@ -300,12 +337,23 @@ public class SQLServerDialect extends org.hibernate.dialect.SQLServerDialect
      * @return the SQL to make the change
      */
     public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not yet implemented");
+        StringBuffer result = new StringBuffer();
+        result.append("exec sp_rename ");
+        result.append("'");
+        result.append(from.getTableName());
+        result.append(".");
+        result.append(from.getColumnName());
+        result.append("'");
+        result.append(", ");
+        result.append(to.getColumnName());
+        result.append(", 'COLUMN'");
+        return result.toString();
     }
     
     /**
      * Returns the SQL that is used to change the column type.
+     * 
+     * ALTER TABLE doc_exy ALTER COLUMN column_a DECIMAL (5, 2)
      * 
      * @param from the TableColumnInfo as it is
      * @param to the TableColumnInfo as it wants to be
@@ -318,8 +366,54 @@ public class SQLServerDialect extends org.hibernate.dialect.SQLServerDialect
                                         TableColumnInfo to)
         throws UnsupportedOperationException
     {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not Yet Implemented");
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(from.getTableName());
+        result.append(" ALTER COLUMN ");
+        result.append(from.getColumnName());
+        result.append(" ");
+        result.append(DialectUtils.getTypeName(to, this));
+        return result.toString();
     }
     
+    /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports changing a column's default value.
+     * 
+     * @return true if the database supports modifying column defaults; false 
+     *         otherwise
+     */
+    public boolean supportsAlterColumnDefault() {
+        return true;
+    }
+    
+    /**
+     * Returns the SQL command to change the specified column's default value
+     *
+     *  ALTER TABLE table ADD CONSTRAINT table_c_def DEFAULT 50 FOR column_b ;
+     *   
+     * @param info the column to modify and it's default value.
+     * @return SQL to make the change
+     */
+    public String getColumnDefaultAlterSQL(TableColumnInfo info) {
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(info.getTableName());
+        result.append(" ADD CONSTRAINT ");
+        result.append(info.getTableName())
+              .append("_")
+              .append(info.getColumnName())
+              .append("_default");
+        result.append(" DEFAULT ");
+        if (JDBCTypeMapper.isNumberType(info.getDataType())) {
+            result.append(info.getDefaultValue());
+        } else {
+            result.append("'");
+            result.append(info.getDefaultValue());
+            result.append("'");
+        }
+        result.append(" FOR ");
+        result.append(info.getColumnName());
+        return result.toString();
+    }
 }
