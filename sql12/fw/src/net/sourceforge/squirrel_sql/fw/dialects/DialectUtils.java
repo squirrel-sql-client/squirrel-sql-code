@@ -308,14 +308,14 @@ public class DialectUtils {
      */
     public static String getColumnNameAlterSQL(TableColumnInfo from, 
                                                TableColumnInfo to,
-                                               String alterCaluse,
+                                               String alterClause,
                                                String renameToClause) 
     {
         StringBuffer result = new StringBuffer();
         result.append("ALTER TABLE ");
         result.append(from.getTableName());
         result.append(" ");
-        result.append(alterCaluse);
+        result.append(alterClause);
         result.append(" ");
         result.append(from.getColumnName());
         result.append(" ");
