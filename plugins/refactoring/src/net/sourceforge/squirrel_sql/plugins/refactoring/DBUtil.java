@@ -58,7 +58,10 @@ public class DBUtil {
         if (typeSQL != null) {
             result.add(typeSQL);
         }
-        
+        String defaultSQL = getAlterSQLForColumnDefault(from, to, dialect);
+        if (defaultSQL != null) {
+            result.add(defaultSQL);
+        }
         return (String[])result.toArray(new String[result.size()]);
     }
     
@@ -110,6 +113,27 @@ public class DBUtil {
             return dialect.getColumnCommentAlterSQL(to);
         }
         return null;        
+    }
+    
+    public static String getAlterSQLForColumnDefault(TableColumnInfo from,
+                                                     TableColumnInfo to,
+                                                     HibernateDialect dialect) 
+    {
+        String oldDefault = from.getDefaultValue();
+        String newDefault = to.getDefaultValue();
+        if (!dialect.supportsAlterColumnDefault()) {
+            return null;
+        }
+        if (oldDefault == null && newDefault != null) {
+            return dialect.getColumnDefaultAlterSQL(to);
+        }
+        if (newDefault == null && oldDefault != null) {
+            return dialect.getColumnDefaultAlterSQL(to);
+        }        
+        if (!oldDefault.equals(newDefault)) {
+            return dialect.getColumnDefaultAlterSQL(to);
+        }
+        return null;
     }
     
     public static String getAlterSQLForColumnRemoval(String tableName,

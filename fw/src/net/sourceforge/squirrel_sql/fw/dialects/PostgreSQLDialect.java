@@ -22,6 +22,7 @@ import java.sql.Types;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 /**
@@ -202,28 +203,7 @@ public class PostgreSQLDialect
     public boolean supportsColumnComment() {
         return true;
     }    
-    
-    /**
-     * Returns the SQL statement to use to add a comment to the specified 
-     * column of the specified table.
-     * 
-     * @param tableName the name of the table to create the SQL for.
-     * @param columnName the name of the column to create the SQL for.
-     * @param comment the comment to add.
-     * @return
-     * @throws UnsupportedOperationException if the database doesn't support 
-     *         annotating columns with a comment.
-     */
-    public String getColumnCommentAlterSQL(String tableName, 
-                                           String columnName, 
-                                           String comment) 
-        throws UnsupportedOperationException 
-    {
-        return DialectUtils.getColumnCommentAlterSQL(tableName, 
-                                                     columnName, 
-                                                     comment);
-    }
-    
+        
     /**
      * Returns a boolean value indicating whether or not this database dialect
      * supports dropping columns from tables.
@@ -231,7 +211,6 @@ public class PostgreSQLDialect
      * @return true if the database supports dropping columns; false otherwise.
      */
     public boolean supportsDropColumn() {
-        // TODO: need to verify this
         return true;
     }
 
@@ -245,8 +224,7 @@ public class PostgreSQLDialect
      * @throws UnsupportedOperationException if the database doesn't support 
      *         dropping columns. 
      */
-    public String getColumnDropSQL(String tableName, String columnName) {
-        // TODO: Need to verify this        
+    public String getColumnDropSQL(String tableName, String columnName) {      
         return DialectUtils.getColumnDropSQL(tableName, columnName);
     }
     
@@ -276,10 +254,11 @@ public class PostgreSQLDialect
      * @return
      */
     public String[] getAddPrimaryKeySQL(String pkName, 
-                                      TableColumnInfo[] columnNames) 
+                                      TableColumnInfo[] colInfos) 
     {
-        // TODO: implement
-        throw new UnsupportedOperationException("getAddPrimaryKeySQL not implemented");
+        return new String[] { 
+            DialectUtils.getAddPrimaryKeySQL(pkName, colInfos)
+        };
     }
     
     /**
@@ -293,25 +272,53 @@ public class PostgreSQLDialect
     public String getColumnCommentAlterSQL(TableColumnInfo info) 
         throws UnsupportedOperationException
     {
-        // TODO: implement        
-        throw new UnsupportedOperationException("Not yet implemented");
+        return DialectUtils.getColumnCommentAlterSQL(info.getTableName(), 
+                                                     info.getColumnName(), 
+                                                     info.getRemarks());
+
     }
     
     /**
      * Returns the SQL used to alter the specified column to not allow null 
      * values
+     *
+     * ALTER TABLE products ALTER COLUMN product_no SET NOT NULL
+     * 
+     * ALTER TABLE products ALTER COLUMN product_no DROP NOT NULL
      * 
      * @param info the column to modify
      * @return the SQL to execute
      */
     public String getColumnNullableAlterSQL(TableColumnInfo info) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not yet implemented");
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(info.getTableName());
+        result.append(" ALTER COLUMN ");
+        result.append(info.getColumnName());
+        if (info.isNullable().equalsIgnoreCase("YES")) {
+            result.append(" DROP NOT NULL");
+        } else {
+            result.append(" SET NOT NULL");
+        }
+        return result.toString();
     }
 
     /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports renaming columns.
+     * 
+     * @return true if the database supports changing the name of columns;  
+     *         false otherwise.
+     */
+    public boolean supportsRenameColumn() {
+        // TODO: need to verify this
+        return true;
+    }
+    
+    /**
      * Returns the SQL that is used to change the column name.
      * 
+     * ALTER TABLE a RENAME COLUMN x TO y
      * 
      * @param from the TableColumnInfo as it is
      * @param to the TableColumnInfo as it wants to be
@@ -319,12 +326,15 @@ public class PostgreSQLDialect
      * @return the SQL to make the change
      */
     public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not yet implemented");
+        String alterClause = DialectUtils.RENAME_COLUMN_CLAUSE;        
+        String toClause = DialectUtils.TO_CLAUSE;
+        return DialectUtils.getColumnNameAlterSQL(from, to, alterClause, toClause);
     }
     
     /**
      * Returns the SQL that is used to change the column type.
+     * 
+     * ALTER TABLE products ALTER COLUMN price TYPE numeric(10,2);
      * 
      * @param from the TableColumnInfo as it is
      * @param to the TableColumnInfo as it wants to be
@@ -337,8 +347,64 @@ public class PostgreSQLDialect
                                         TableColumnInfo to)
         throws UnsupportedOperationException
     {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not Yet Implemented");
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(from.getTableName());
+        result.append(" ALTER COLUMN ");
+        result.append(to.getColumnName());
+        result.append(" TYPE ");
+        result.append(DialectUtils.getTypeName(to, this));
+        return result.toString();
     }
 
+    /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports changing a column from null to not-null and vice versa.
+     * 
+     * @return true if the database supports dropping columns; false otherwise.
+     */    
+    public boolean supportsAlterColumnNull() {
+        return true;
+    }
+    
+    /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports changing a column's default value.
+     * 
+     * @return true if the database supports modifying column defaults; false 
+     *         otherwise
+     */
+    public boolean supportsAlterColumnDefault() {
+        return true;
+    }
+    
+    
+    /**
+     * Returns the SQL command to change the specified column's default value
+     *   
+     * @param info the column to modify and it's default value.
+     * @return SQL to make the change
+     */
+    public String getColumnDefaultAlterSQL(TableColumnInfo info) {
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(info.getTableName());
+        result.append(" ALTER COLUMN ");
+        result.append(info.getColumnName());
+        String defVal = info.getDefaultValue();
+        if (defVal == null || "".equals(defVal)) {
+            result.append(" DROP DEFAULT");
+        } else {
+            result.append(" SET DEFAULT ");
+            if (JDBCTypeMapper.isNumberType(info.getDataType())) {
+                result.append(defVal);
+            } else {
+                result.append("'");
+                result.append(defVal);
+                result.append("'");
+            }
+        }
+        return result.toString();
+    }
 }
+

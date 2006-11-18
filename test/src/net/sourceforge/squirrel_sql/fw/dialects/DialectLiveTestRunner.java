@@ -28,7 +28,15 @@ public class DialectLiveTestRunner {
     ArrayList sessions = new ArrayList();
     ResourceBundle bundle = null;
     
-    
+    TableColumnInfo firstCol = null;
+    TableColumnInfo secondCol = null;
+    TableColumnInfo thirdCol = null;
+    TableColumnInfo fourthCol = null;
+    TableColumnInfo dropCol = null;
+    TableColumnInfo noDefaultValueVarcharCol = null;
+    TableColumnInfo noDefaultValueIntegerCol = null;
+    TableColumnInfo renameCol = null;
+    TableColumnInfo pkCol = null;
     
     public DialectLiveTestRunner() throws Exception {
         ApplicationArguments.initialize(new String[] {});
@@ -54,64 +62,151 @@ public class DialectLiveTestRunner {
         }
     }
     
+    private void init(ISession session) throws Exception {
+        createTestTable(session);
+        firstCol = getIntegerColumn("nullint", true, "0", "An int comment");
+        secondCol = getIntegerColumn("notnullint", false, "0", "An int comment");
+        thirdCol = getVarcharColumn("nullvc", true, "defVal", "A varchar comment");
+        fourthCol = getVarcharColumn("notnullvc", false, "defVal", "A varchar comment");
+        noDefaultValueVarcharCol = 
+            getVarcharColumn("noDefaultVarcharCol", true, null, "A varchar column with no default value"); 
+        dropCol = getVarcharColumn("dropCol", true, null, "A varchar comment");        
+        noDefaultValueIntegerCol = 
+            getIntegerColumn("noDefaultIntgerCol", true, null, "An integer column with no default value");
+        renameCol = getVarcharColumn("renameCol", true, null, "A column to be renamed");
+        pkCol = getIntegerColumn("pkCol", false, "0", "primary key column");
+    }
+    
     private void runTests() throws Exception {
 
         for (Iterator iter = sessions.iterator(); iter.hasNext();) {
             ISession session = (ISession) iter.next();
-            HibernateDialect dialect = getDialect(session);
-            createTestTable(session);
-            TableColumnInfo firstCol = 
-                getIntegerColumn("nullint", true, "0", "An int comment");
-            TableColumnInfo secondCol =
-                getIntegerColumn("notnullint", false, "0", "An int comment");
-            TableColumnInfo thirdCol =
-                getVarcharColumn("nullvc", true, "defVal", "A varchar comment");
-            TableColumnInfo fourthCol =
-                getVarcharColumn("notnullvc", false, "defVal", "A varchar comment");
-            TableColumnInfo dropCol =
-                getVarcharColumn("dropCol", true, null, "A varchar comment");
-            
-            addColumn(session, firstCol);
-            addColumn(session, secondCol);
-            addColumn(session, thirdCol);
-            addColumn(session, fourthCol);
-            addColumn(session, dropCol);
-            if (dialect.supportsColumnComment()) {
-                alterColumnComment(session, firstCol);
-                alterColumnComment(session, secondCol);
-                alterColumnComment(session, thirdCol);
-                alterColumnComment(session, fourthCol);
+            init(session);
+            testAddColumn(session);
+            testDropColumn(session);
+            testAlterDefaultValue(session);
+            testColumnComment(session);
+            testAlterNull(session);
+            testAlterName(session);
+            testAlterColumnlength(session);
+            testAddPrimaryKey(session, new TableColumnInfo[] {pkCol});
+        }
+    }
+    
+    private void testAlterName(ISession session) throws Exception {
+        HibernateDialect dialect = 
+            DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);  
+
+        TableColumnInfo newNameCol = 
+            getVarcharColumn("newNameCol", true, null, "A column to be renamed");
+        if (dialect.supportsRenameColumn()) {
+            String sql = dialect.getColumnNameAlterSQL(renameCol, newNameCol);
+            runSQL(session, sql);
+        } else {
+            try {
+                dialect.getColumnNameAlterSQL(renameCol, newNameCol);
+            } catch (UnsupportedOperationException e) {
+                // this is expected
+                System.err.println(e.getMessage());
             }
-            // Convert the thirdCol to not null 
-            TableColumnInfo notNullThirdCol = 
-                getVarcharColumn("nullvc", false, "defVal", "A varchar comment");
+        }
+    }
+    
+    private void testDropColumn(ISession session) throws Exception {
+        HibernateDialect dialect = 
+            DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);  
+        
+        if (dialect.supportsDropColumn()) {
+            dropColumn(session, dropCol);
+        } else {
+            try {
+                dropColumn(session, dropCol);
+                throw new IllegalStateException(
+                        "Expected dialect to fail to provide SQL for dropping a column");
+            } catch (UnsupportedOperationException e) {
+                // This is what we expect
+                System.err.println(e.getMessage());
+            }
+        }        
+    }
+    
+    private void testAlterColumnlength(ISession session) throws Exception {
+        HibernateDialect dialect = 
+            DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);  
+        
+        
+        //convert nullint into a varchar(100)
+        /*
+         * This won't work on Derby where non-varchar columns cannot be 
+         * altered among other restrictions.
+         * 
+        TableColumnInfo nullintVC = 
+            getVarcharColumn("nullint", true, "defVal", "A varchar comment");
+        String alterColTypeSQL = dialect.getColumnTypeAlterSQL(firstCol, nullintVC);
+        runSQL(session, alterColTypeSQL);
+        */
+        
+        TableColumnInfo thirdColLonger = 
+            getVarcharColumn("nullvc", true, "defVal", "A varchar comment", 1000);
+        String alterColLengthSQL = 
+            dialect.getColumnTypeAlterSQL(thirdCol, thirdColLonger);
+        runSQL(session, alterColLengthSQL);        
+    }
+    
+    private void testAlterDefaultValue(ISession session) throws Exception {
+        HibernateDialect dialect = 
+            DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);  
+        
+        TableColumnInfo varcharColWithDefaultValue = 
+            getVarcharColumn("noDefaultVarcharCol", 
+                             true, 
+                             "Default Value", 
+                             "A column with a default value");
+        
+        TableColumnInfo integerColWithDefaultVal = 
+            getIntegerColumn("noDefaultIntgerCol", 
+                             true, 
+                             "0", 
+                             "An integer column with a default value");
+        
+        if (dialect.supportsAlterColumnDefault()) {
+            String defaultValSQL = 
+                dialect.getColumnDefaultAlterSQL(varcharColWithDefaultValue);
+            runSQL(session, defaultValSQL);
+            
+            defaultValSQL = 
+                dialect.getColumnDefaultAlterSQL(integerColWithDefaultVal);
+            runSQL(session, defaultValSQL);
+        } else {
+            try {
+                dialect.getColumnDefaultAlterSQL(noDefaultValueVarcharCol);
+                throw new IllegalStateException(
+                        "Expected dialect to fail to provide SQL for column default alter");
+            } catch (UnsupportedOperationException e) {
+                // This is what we expect.
+                System.err.println(e.getMessage());
+            }
+        }        
+    }
+    
+    private void testAlterNull(ISession session) throws Exception {
+        HibernateDialect dialect = 
+            DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);  
+        TableColumnInfo notNullThirdCol = 
+            getVarcharColumn("nullvc", false, "defVal", "A varchar comment");        
+        if (dialect.supportsAlterColumnNull()) {
             String notNullSQL = 
                 dialect.getColumnNullableAlterSQL(notNullThirdCol);
             runSQL(session, notNullSQL);
-            
-            // then make it the PK
-            addPrimaryKey(session, new TableColumnInfo[] {thirdCol});
-            
-            if (dialect.supportsDropColumn()) {
-                dropColumn(session, dropCol);
+        } else {
+            try {
+                dialect.getColumnNullableAlterSQL(notNullThirdCol);     
+                throw new IllegalStateException(
+                        "Expected dialect to fail to provide SQL for column nullable alter");
+            } catch (UnsupportedOperationException e) {
+                // this is expected
+                System.err.println(e.getMessage());
             }
-            
-            //convert nullint into a varchar(100)
-            /*
-             * This won't work on Derby where non-varchar columns cannot be 
-             * altered among other restrictions.
-             * 
-            TableColumnInfo nullintVC = 
-                getVarcharColumn("nullint", true, "defVal", "A varchar comment");
-            String alterColTypeSQL = dialect.getColumnTypeAlterSQL(firstCol, nullintVC);
-            runSQL(session, alterColTypeSQL);
-            */
-            
-            // convert thirdCol to varchar(1000) from varchar(100)
-            TableColumnInfo thirdColLonger = 
-                getVarcharColumn("nullvc", true, "defVal", "A varchar comment", 1000);
-            String alterColLengthSQL = dialect.getColumnTypeAlterSQL(thirdCol, thirdColLonger);
-            runSQL(session, alterColLengthSQL);
         }
     }
     
@@ -131,6 +226,20 @@ public class DialectLiveTestRunner {
         }
     }
     
+    private void testAddColumn(ISession session) 
+        throws Exception 
+    {
+        addColumn(session, firstCol);
+        addColumn(session, secondCol);
+        addColumn(session, thirdCol);
+        addColumn(session, fourthCol);
+        addColumn(session, dropCol);      
+        addColumn(session, noDefaultValueVarcharCol);
+        addColumn(session, noDefaultValueIntegerCol);
+        addColumn(session, renameCol);
+        addColumn(session, pkCol);
+    }
+    
     private void addColumn(ISession session,    
                            TableColumnInfo info) 
         throws Exception 
@@ -146,6 +255,23 @@ public class DialectLiveTestRunner {
         
     }
 
+    private void testColumnComment(ISession session) throws Exception {
+        HibernateDialect dialect = getDialect(session);
+        if (dialect.supportsColumnComment()) {
+            alterColumnComment(session, firstCol);
+            alterColumnComment(session, secondCol);
+            alterColumnComment(session, thirdCol);
+            alterColumnComment(session, fourthCol);
+        } else {
+            try {
+                alterColumnComment(session, firstCol);    
+            } catch (UnsupportedOperationException e) {
+                // This is expected
+                System.err.println(e.getMessage());
+            }
+        }
+    }
+    
     private void alterColumnComment(ISession session,    
                                     TableColumnInfo info) 
         throws Exception    
@@ -157,20 +283,8 @@ public class DialectLiveTestRunner {
             runSQL(session, commentSQL);
         }
     }
-    
-    private void alterColumnNullable(ISession session,    
-                                     TableColumnInfo info) 
-        throws Exception    
-    {
-        HibernateDialect dialect = 
-            DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);
-        String nullSQL = dialect.getColumnCommentAlterSQL(info);
-        if (nullSQL != null && !nullSQL.equals("")) {
-            runSQL(session, nullSQL);
-        }
-    }
-    
-    private void addPrimaryKey(ISession session,
+        
+    private void testAddPrimaryKey(ISession session,
                                TableColumnInfo[] colInfos) 
         throws Exception 
     {

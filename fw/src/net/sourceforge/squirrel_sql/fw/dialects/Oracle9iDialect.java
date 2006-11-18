@@ -22,6 +22,7 @@ import java.sql.Types;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 import org.hibernate.dialect.Oracle9Dialect;
@@ -321,6 +322,18 @@ public class Oracle9iDialect extends Oracle9Dialect
     }
     
     /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports renaming columns.
+     * 
+     * @return true if the database supports changing the name of columns;  
+     *         false otherwise.
+     */
+    public boolean supportsRenameColumn() {
+        // TODO: need to verify this
+        return true;
+    }    
+    
+    /**
      * Returns the SQL that is used to change the column name.
      * 
      * @param from the TableColumnInfo as it is
@@ -364,6 +377,54 @@ public class Oracle9iDialect extends Oracle9Dialect
         result.append(" ");
         result.append(DialectUtils.getTypeName(to, this));
         result.append(")");
+        return result.toString();
+    }
+    
+    /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports changing a column from null to not-null and vice versa.
+     * 
+     * @return true if the database supports dropping columns; false otherwise.
+     */    
+    public boolean supportsAlterColumnNull() {
+        return true;
+    }
+    
+    /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports changing a column's default value.
+     * 
+     * @return true if the database supports modifying column defaults; false 
+     *         otherwise
+     */
+    public boolean supportsAlterColumnDefault() {
+        return true;
+    }
+    
+    /**
+     * Returns the SQL command to change the specified column's default value
+     *
+     * alter table test modify mychar default 'foo'
+     * 
+     * alter table test modify nullint default 0   
+     *   
+     * @param info the column to modify and it's default value.
+     * @return SQL to make the change
+     */
+    public String getColumnDefaultAlterSQL(TableColumnInfo info) {
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(info.getTableName());
+        result.append(" MODIFY ");
+        result.append(info.getColumnName());
+        result.append(" DEFAULT ");
+        if (JDBCTypeMapper.isNumberType(info.getDataType())) {
+            result.append(info.getDefaultValue());
+        } else {
+            result.append("'");
+            result.append(info.getDefaultValue());
+            result.append("'");
+        }
         return result.toString();
     }
     

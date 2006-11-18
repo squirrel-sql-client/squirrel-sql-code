@@ -381,6 +381,18 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
     }
 
     /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports renaming columns.
+     * 
+     * @return true if the database supports changing the name of columns;  
+     *         false otherwise.
+     */
+    public boolean supportsRenameColumn() {
+        // TODO: need to verify this
+        return true;
+    }
+    
+    /**
      * Returns the SQL that is used to change the column name.
      * 
      * ALTER TABLE t1 CHANGE a b INTEGER;
@@ -432,4 +444,26 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
         return result.toString();
     }
     
+    /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports changing a column from null to not-null and vice versa.
+     * 
+     * @return true if the database supports dropping columns; false otherwise.
+     */    
+    public boolean supportsAlterColumnNull() {
+        return true;
+    }
+    
+    /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports changing a column's default value.
+     * 
+     * @return true if the database supports modifying column defaults; false 
+     *         otherwise
+     */
+    public boolean supportsAlterColumnDefault() {
+        // TODO Need to verify this
+        return true;
+    }
+        
 }

@@ -310,6 +310,18 @@ public class DaffodilDialect extends GenericDialect
     }
     
     /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports renaming columns.
+     * 
+     * @return true if the database supports changing the name of columns;  
+     *         false otherwise.
+     */
+    public boolean supportsRenameColumn() {
+        // TODO: need to verify this
+        return true;
+    }    
+    
+    /**
      * Returns the SQL that is used to change the column name.
      * 
      * 
@@ -339,6 +351,34 @@ public class DaffodilDialect extends GenericDialect
     {
         // TODO: implement
         throw new UnsupportedOperationException("Not Yet Implemented");
+    }
+
+    public boolean supportsAlterColumnNull() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+    
+    /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports changing a column's default value.
+     * 
+     * @return true if the database supports modifying column defaults; false 
+     *         otherwise
+     */
+    public boolean supportsAlterColumnDefault() {
+        // TODO Need to verify this
+        return true;
+    }
+    
+    /**
+     * Returns the SQL command to change the specified column's default value
+     *   
+     * @param info the column to modify and it's default value.
+     * @return SQL to make the change
+     */
+    public String getColumnDefaultAlterSQL(TableColumnInfo info) {
+        // TODO need to implement or change the message
+        throw new UnsupportedOperationException("Not yet implemented");
     }
     
 }

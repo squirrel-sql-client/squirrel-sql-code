@@ -22,6 +22,7 @@ import java.sql.Types;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 /**
@@ -173,14 +174,18 @@ public class HSQLDialect extends org.hibernate.dialect.HSQLDialect
                                                      false, 
                                                      true);
         StringBuffer defaultSQL = new StringBuffer();
-        defaultSQL.append("alter table ");
+        defaultSQL.append("ALTER TABLE ");
         defaultSQL.append(info.getTableName());
-        defaultSQL.append(" alter column ");
+        defaultSQL.append(" ALTER COLUMN ");
         defaultSQL.append(info.getColumnName());
-        defaultSQL.append(" set default '");
-        defaultSQL.append(info.getDefaultValue());
-        defaultSQL.append("'");
-
+        defaultSQL.append(" SET DEFAULT ");
+        if (JDBCTypeMapper.isNumberType(info.getDataType())) {
+            defaultSQL.append(info.getDefaultValue());
+        } else {
+            defaultSQL.append("'");
+            defaultSQL.append(info.getDefaultValue());
+            defaultSQL.append("'");
+        }
         return new String[] { addSQL, defaultSQL.toString() };
     }
 
@@ -191,7 +196,8 @@ public class HSQLDialect extends org.hibernate.dialect.HSQLDialect
      * @return true if column comments are supported; false otherwise.
      */
     public boolean supportsColumnComment() {
-        return false;
+        // TODO: Need to verify
+        return true;
     }    
     
     /**
@@ -295,6 +301,18 @@ public class HSQLDialect extends org.hibernate.dialect.HSQLDialect
     }
 
     /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports renaming columns.
+     * 
+     * @return true if the database supports changing the name of columns;  
+     *         false otherwise.
+     */
+    public boolean supportsRenameColumn() {
+        // TODO: need to verify this
+        return true;
+    }   
+    
+    /**
      * Returns the SQL that is used to change the column name.
      * 
      * 
@@ -324,6 +342,51 @@ public class HSQLDialect extends org.hibernate.dialect.HSQLDialect
     {
         // TODO: implement
         throw new UnsupportedOperationException("Not Yet Implemented");
+    }
+    
+    /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports changing a column from null to not-null and vice versa.
+     * 
+     * @return true if the database supports dropping columns; false otherwise.
+     */    
+    public boolean supportsAlterColumnNull() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports changing a column's default value.
+     * 
+     * @return true if the database supports modifying column defaults; false 
+     *         otherwise
+     */
+    public boolean supportsAlterColumnDefault() {
+        return true;
+    }
+    
+    /**
+     * Returns the SQL command to change the specified column's default value
+     *   
+     * @param info the column to modify and it's default value.
+     * @return SQL to make the change
+     */
+    public String getColumnDefaultAlterSQL(TableColumnInfo info) {
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(info.getTableName());
+        result.append(" ALTER COLUMN ");
+        result.append(info.getColumnName());
+        result.append(" SET DEFAULT ");
+        if (JDBCTypeMapper.isNumberType(info.getDataType())) {
+            result.append(info.getDefaultValue());
+        } else {
+            result.append("'");
+            result.append(info.getDefaultValue());
+            result.append("'");
+        }
+        return result.toString();
     }
     
 }
