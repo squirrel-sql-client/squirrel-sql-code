@@ -173,20 +173,24 @@ public class HSQLDialect extends org.hibernate.dialect.HSQLDialect
                                                      this, 
                                                      false, 
                                                      true);
-        StringBuffer defaultSQL = new StringBuffer();
-        defaultSQL.append("ALTER TABLE ");
-        defaultSQL.append(info.getTableName());
-        defaultSQL.append(" ALTER COLUMN ");
-        defaultSQL.append(info.getColumnName());
-        defaultSQL.append(" SET DEFAULT ");
-        if (JDBCTypeMapper.isNumberType(info.getDataType())) {
-            defaultSQL.append(info.getDefaultValue());
+        if (info.getDefaultValue() != null) {
+            StringBuffer defaultSQL = new StringBuffer();
+            defaultSQL.append("ALTER TABLE ");
+            defaultSQL.append(info.getTableName());
+            defaultSQL.append(" ALTER COLUMN ");
+            defaultSQL.append(info.getColumnName());
+            defaultSQL.append(" SET DEFAULT ");
+            if (JDBCTypeMapper.isNumberType(info.getDataType())) {
+                defaultSQL.append(info.getDefaultValue());
+            } else {
+                defaultSQL.append("'");
+                defaultSQL.append(info.getDefaultValue());
+                defaultSQL.append("'");
+            }
+            return new String[] { addSQL, defaultSQL.toString() };
         } else {
-            defaultSQL.append("'");
-            defaultSQL.append(info.getDefaultValue());
-            defaultSQL.append("'");
+            return new String[] { addSQL };
         }
-        return new String[] { addSQL, defaultSQL.toString() };
     }
 
     /**
@@ -196,8 +200,7 @@ public class HSQLDialect extends org.hibernate.dialect.HSQLDialect
      * @return true if column comments are supported; false otherwise.
      */
     public boolean supportsColumnComment() {
-        // TODO: Need to verify
-        return true;
+        return false;
     }    
     
     /**
@@ -212,7 +215,7 @@ public class HSQLDialect extends org.hibernate.dialect.HSQLDialect
      *         annotating columns with a comment.
      */
     public String getColumnCommentAlterSQL(String tableName, String columnName, String comment) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("This database dialect doesn't support adding comments to columns");
+        throw new UnsupportedOperationException("HSQLDB doesn't support adding comments to columns");
     }
     
     /**
@@ -262,15 +265,29 @@ public class HSQLDialect extends org.hibernate.dialect.HSQLDialect
      * Returns the SQL that forms the command to add a primary key to the 
      * specified table composed of the given column names.
      * 
+     * ALTER TABLE <tablename> ADD [CONSTRAINT <constraintname>] PRIMARY KEY (<column list>);
+     * 
      * @param pkName the name of the constraint
      * @param columnNames the columns that form the key
      * @return
      */
     public String[] getAddPrimaryKeySQL(String pkName, 
-                                      TableColumnInfo[] columnNames) 
+                                        TableColumnInfo[] columns) 
     {
-        // TODO: implement
-        throw new UnsupportedOperationException("getAddPrimaryKeySQL not implemented");
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(columns[0].getTableName());
+        result.append(" ADD CONSTRAINT ");
+        result.append(pkName);
+        result.append(" PRIMARY KEY (");
+        for (int i = 0; i < columns.length; i++) {
+            result.append(columns[i].getColumnName());
+            if (i + 1 < columns.length) {
+                result.append(", ");
+            }
+        }
+        result.append(")");
+        return new String[] { result.toString() };
     }
     
     /**
@@ -285,19 +302,41 @@ public class HSQLDialect extends org.hibernate.dialect.HSQLDialect
         throws UnsupportedOperationException
     {
         // TODO: implement        
-        throw new UnsupportedOperationException("Not yet implemented");
+        throw new UnsupportedOperationException("HSQLDB doesn't support column comments");
     }
  
     /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports changing a column from null to not-null and vice versa.
+     * 
+     * @return true if the database supports dropping columns; false otherwise.
+     */    
+    public boolean supportsAlterColumnNull() {
+        return true;
+    }
+    
+    /**
      * Returns the SQL used to alter the specified column to not allow null 
      * values
+     * 
+     * ALTER TABLE <tablename> ALTER COLUMN <columnname> SET [NOT] NULL
      * 
      * @param info the column to modify
      * @return the SQL to execute
      */
     public String getColumnNullableAlterSQL(TableColumnInfo info) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not yet implemented");
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(info.getTableName());
+        result.append(" ALTER COLUMN ");
+        result.append(info.getColumnName());
+        result.append(" SET ");
+        if (info.isNullable().equalsIgnoreCase("YES")) {
+            result.append(" NULL");
+        } else {
+            result.append(" NOT NULL");
+        }
+        return result.toString();
     }
 
     /**
@@ -308,13 +347,13 @@ public class HSQLDialect extends org.hibernate.dialect.HSQLDialect
      *         false otherwise.
      */
     public boolean supportsRenameColumn() {
-        // TODO: need to verify this
         return true;
     }   
     
     /**
      * Returns the SQL that is used to change the column name.
      * 
+     * ALTER TABLE <tablename> ALTER COLUMN <columnname> RENAME TO <newname> 
      * 
      * @param from the TableColumnInfo as it is
      * @param to the TableColumnInfo as it wants to be
@@ -322,12 +361,16 @@ public class HSQLDialect extends org.hibernate.dialect.HSQLDialect
      * @return the SQL to make the change
      */
     public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not yet implemented");
+        String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
+        String renameToClause = DialectUtils.RENAME_TO_CLAUSE;
+        return DialectUtils.getColumnNameAlterSQL(from, to, alterClause, renameToClause);
+    
     }
     
     /**
      * Returns the SQL that is used to change the column type.
+     * 
+     * ALTER TABLE <tablename> ALTER COLUMN <columnDefinition>;
      * 
      * @param from the TableColumnInfo as it is
      * @param to the TableColumnInfo as it wants to be
@@ -340,21 +383,16 @@ public class HSQLDialect extends org.hibernate.dialect.HSQLDialect
                                         TableColumnInfo to)
         throws UnsupportedOperationException
     {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not Yet Implemented");
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(from.getTableName());
+        result.append(" ALTER COLUMN ");
+        result.append(from.getColumnName());
+        result.append(" ");
+        result.append(DialectUtils.getTypeName(to, this));
+        return result.toString();
     }
     
-    /**
-     * Returns a boolean value indicating whether or not this database dialect
-     * supports changing a column from null to not-null and vice versa.
-     * 
-     * @return true if the database supports dropping columns; false otherwise.
-     */    
-    public boolean supportsAlterColumnNull() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
     /**
      * Returns a boolean value indicating whether or not this database dialect
      * supports changing a column's default value.
