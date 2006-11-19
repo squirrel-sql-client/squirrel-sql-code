@@ -130,7 +130,7 @@ public class Compat {
 	        } catch (Exception e) {
 	            s_log.error("Encountered unexpected exception when attempting to "+
 	                        "call SQLDatabaseMetaData.getTables with args = "+
-                            Arrays.toString(args));
+                  arrayToString(args));
 	        }
         } 
         if (result == null || result.length == 0) {
@@ -143,8 +143,31 @@ public class Compat {
         return result;
     }
 
-    
-    /**
+   private static String arrayToString(Object[] args)
+   {
+      if(null == args)
+      {
+         return "" + null;
+      }
+
+      String ret = "";
+
+      for (int i = 0; i < args.length; i++)
+      {
+         if(0 < ret.length())
+         {
+            ret += ",";
+         }
+
+         ret += "[" + args[i] + "]";
+
+      }
+
+      return ret;
+   }
+
+
+   /**
      * Older, pre-2.3 SQuirreL method of getting ITableInfos for the specified 
      * parameters.
      * 
@@ -186,7 +209,7 @@ public class Compat {
         } catch (Exception e) {
             s_log.error("Encountered unexpected exception when attempting to "+
                         "call SQLDatabaseMetaData.getTables with args = "+
-                        Arrays.toString(args));
+               arrayToString(args));
         }
         return result;
     }								
@@ -493,7 +516,7 @@ public class Compat {
     		String className = c.getName();
     		s_log.debug("Compat.safeGetMethod: No method called "+
     				methodName+" with parameters ("+
-                    Arrays.toString(parameterTypes)+") " +
+             arrayToString(parameterTypes) +") " +
     				"was located in class "+className);
     	}
     	return result;
