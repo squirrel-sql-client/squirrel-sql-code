@@ -225,7 +225,6 @@ public class HSQLDialect extends org.hibernate.dialect.HSQLDialect
      * @return true if the database supports dropping columns; false otherwise.
      */
     public boolean supportsDropColumn() {
-        // TODO: need to verify this
         return true;
     }
     
@@ -239,8 +238,7 @@ public class HSQLDialect extends org.hibernate.dialect.HSQLDialect
      * @throws UnsupportedOperationException if the database doesn't support 
      *         dropping columns. 
      */
-    public String getColumnDropSQL(String tableName, String columnName) {
-        // TODO: Need to verify this        
+    public String getColumnDropSQL(String tableName, String columnName) {     
         return DialectUtils.getColumnDropSQL(tableName, columnName);
     }
     
@@ -257,7 +255,6 @@ public class HSQLDialect extends org.hibernate.dialect.HSQLDialect
      * @return the drop SQL command.
      */
     public String getTableDropSQL(String tableName, boolean cascadeConstraints){
-        // TODO: Need to verify this
         return DialectUtils.getTableDropSQL(tableName, true, cascadeConstraints);
     }
    
@@ -301,7 +298,6 @@ public class HSQLDialect extends org.hibernate.dialect.HSQLDialect
     public String getColumnCommentAlterSQL(TableColumnInfo info) 
         throws UnsupportedOperationException
     {
-        // TODO: implement        
         throw new UnsupportedOperationException("HSQLDB doesn't support column comments");
     }
  
@@ -411,20 +407,8 @@ public class HSQLDialect extends org.hibernate.dialect.HSQLDialect
      * @return SQL to make the change
      */
     public String getColumnDefaultAlterSQL(TableColumnInfo info) {
-        StringBuffer result = new StringBuffer();
-        result.append("ALTER TABLE ");
-        result.append(info.getTableName());
-        result.append(" ALTER COLUMN ");
-        result.append(info.getColumnName());
-        result.append(" SET DEFAULT ");
-        if (JDBCTypeMapper.isNumberType(info.getDataType())) {
-            result.append(info.getDefaultValue());
-        } else {
-            result.append("'");
-            result.append(info.getDefaultValue());
-            result.append("'");
-        }
-        return result.toString();
+        String defaultClause = DialectUtils.SET_DEFAULT_CLAUSE;
+        return DialectUtils.getColumnDefaultAlterSQL(info, defaultClause);
     }
     
 }

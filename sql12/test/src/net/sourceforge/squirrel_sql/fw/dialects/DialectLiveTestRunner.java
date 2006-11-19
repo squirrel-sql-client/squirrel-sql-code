@@ -37,6 +37,11 @@ public class DialectLiveTestRunner {
     TableColumnInfo noDefaultValueIntegerCol = null;
     TableColumnInfo renameCol = null;
     TableColumnInfo pkCol = null;
+    // This column is created in the create script abd unused unless testing DB2 
+    TableColumnInfo db2pkCol = null;
+    TableColumnInfo notNullIntegerCol = null;
+    
+    private static final String DB2_PK_COLNAME = "db2pkCol";
     
     public DialectLiveTestRunner() throws Exception {
         ApplicationArguments.initialize(new String[] {});
@@ -75,10 +80,33 @@ public class DialectLiveTestRunner {
             getIntegerColumn("noDefaultIntgerCol", true, null, "An integer column with no default value");
         renameCol = getVarcharColumn("renameCol", true, null, "A column to be renamed");
         pkCol = getIntegerColumn("pkCol", false, "0", "primary key column");
+        notNullIntegerCol = getIntegerColumn("notNullIntegerCol", false, "0", "potential pk column");
+        db2pkCol = getIntegerColumn(DB2_PK_COLNAME, false, "0", "A DB2 Primary Key column");
     }
     
+    private void createTestTable(ISession session) throws Exception {
+        HibernateDialect dialect = 
+            DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);
+        try {
+            runSQL(session, dialect.getTableDropSQL("test", true));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        if (DialectFactory.isIngresSession(session)) {
+            // alterations fail for some reason unless you do this...
+            runSQL(session, "create table test ( mychar char(10)) with page_size=4096");
+        } else if (DialectFactory.isDB2Session(session)) {
+            // db2pkCol is used to create a PK when using DB2.  DB2 doesn't allow
+            // you to add a PK to a table after it has been constructed unless the
+            // column(s) that comprise the PK were originally there when created
+            // *and* created not null.
+            runSQL(session, "create table test ( mychar char(10), "+DB2_PK_COLNAME+" integer not null)");        
+        } else {
+            runSQL(session, "create table test ( mychar char(10))");
+        }
+    }    
+    
     private void runTests() throws Exception {
-
         for (Iterator iter = sessions.iterator(); iter.hasNext();) {
             ISession session = (ISession) iter.next();
             init(session);
@@ -89,7 +117,17 @@ public class DialectLiveTestRunner {
             testAlterNull(session);
             testAlterName(session);
             testAlterColumnlength(session);
-            testAddPrimaryKey(session, new TableColumnInfo[] {pkCol});
+            // DB2 cannot alter a column's null attribute directly (only 
+            // through constraints).  Not only that, but it's apparently not a
+            // valid thing to do to create a primary key using a column that has
+            // been made "not null" via a check constraint.  Therefore, the only
+            // columns that qualify to be made PKs are those that were declared
+            // not null at the time of table creation.
+            if (DialectFactory.isDB2Session(session)) {
+                testAddPrimaryKey(session, new TableColumnInfo[] {db2pkCol});
+            } else {
+                testAddPrimaryKey(session, new TableColumnInfo[] {notNullIntegerCol});   
+            }
         }
     }
     
@@ -208,23 +246,7 @@ public class DialectLiveTestRunner {
                 System.err.println(e.getMessage());
             }
         }
-    }
-    
-    private void createTestTable(ISession session) throws Exception {
-        HibernateDialect dialect = 
-            DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);
-        try {
-            runSQL(session, dialect.getTableDropSQL("test", true));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        if (DialectFactory.isIngresSession(session)) {
-            // alterations fail for some reason unless you do this...
-            runSQL(session, "create table test ( mychar char(10)) with page_size=4096");
-        } else {
-            runSQL(session, "create table test ( mychar char(10))");
-        }
-    }
+    }    
     
     private void testAddColumn(ISession session) 
         throws Exception 
@@ -238,6 +260,7 @@ public class DialectLiveTestRunner {
         addColumn(session, noDefaultValueIntegerCol);
         addColumn(session, renameCol);
         addColumn(session, pkCol);
+        addColumn(session, notNullIntegerCol);
     }
     
     private void addColumn(ISession session,    
