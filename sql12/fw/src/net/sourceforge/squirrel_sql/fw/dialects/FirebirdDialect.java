@@ -252,15 +252,31 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect
      * 
      * ALTER TABLE table_name ADD CONSTRAINT constraint_name PRIMARY KEY (column_name);
      * 
+     * ALTER TABLE test2 ADD CONSTRAINT test2_pk PRIMARY KEY (pkCol)
+     * 
+     * alter table test2 drop constraint test2_pk
+     * 
      * @param pkName the name of the constraint
      * @param columnNames the columns that form the key
      * @return
      */
     public String[] getAddPrimaryKeySQL(String pkName, 
-                                      TableColumnInfo[] columnNames) 
+                                      TableColumnInfo[] columns) 
     {
-        // TODO: implement
-        throw new UnsupportedOperationException("getAddPrimaryKeySQL not implemented");
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(columns[0].getTableName());
+        result.append(" ADD CONSTRAINT ");
+        result.append(pkName);
+        result.append(" PRIMARY KEY (");
+        for (int i = 0; i < columns.length; i++) {
+            result.append(columns[i].getColumnName());
+            if (i + 1 < columns.length) {
+                result.append(", ");
+            }
+        }        
+        result.append(")");
+        return new String[] { result.toString() };
     }
     
     /**
@@ -274,8 +290,7 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect
     public String getColumnCommentAlterSQL(TableColumnInfo info) 
         throws UnsupportedOperationException
     {
-        // TODO: implement        
-        throw new UnsupportedOperationException("Not yet implemented");
+        throw new UnsupportedOperationException("Firebird doesn't support changing column comments");
     }
     
     /**
@@ -297,7 +312,6 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect
      *         false otherwise.
      */
     public boolean supportsRenameColumn() {
-        // TODO: need to verify this
         return true;
     }    
     
@@ -363,8 +377,7 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect
      *         otherwise
      */
     public boolean supportsAlterColumnDefault() {
-        // TODO Need to verify this
-        return true;
+        return false;
     }
     
     /**
@@ -374,8 +387,7 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect
      * @return SQL to make the change
      */
     public String getColumnDefaultAlterSQL(TableColumnInfo info) {
-        // TODO need to implement or change the message
-        throw new UnsupportedOperationException("Not yet implemented");
+        throw new UnsupportedOperationException("Firebird doesn't support changing a column's default value");
     }
     
 }
