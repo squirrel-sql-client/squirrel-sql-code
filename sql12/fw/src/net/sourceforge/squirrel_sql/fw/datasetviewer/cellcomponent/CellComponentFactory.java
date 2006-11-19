@@ -922,7 +922,13 @@ public class CellComponentFactory {
 					dataTypeComponent = new DataTypeOther(table, colDef);
 					break;
 
-				default:
+               //Add begin
+            case Types.JAVA_OBJECT:
+               dataTypeComponent = new DataTypeJavaObject(table, colDef);
+               break;
+               //Add end
+
+            default:
 					// data type is unknown to us.
 					// It may be an unusual type like "JAVA OBJECT" or "ARRAY",
 					// or it may be a DBMS-specific type

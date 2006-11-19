@@ -19,9 +19,7 @@ package net.sourceforge.squirrel_sql.fw.sql;
  */
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -93,13 +91,28 @@ public class SQLDatabaseMetaData
         String IBMDB2 = "IBM DB2";
         String INGRES = "CA-Ingres JDBC Driver";
         String JCONNECT = "jConnect (TM) for JDBC (TM)";
-		String JTDS = "jTDS Type 4 JDBC Driver for MS SQL Server and Sybase";
+		  String JTDS = "jTDS Type 4 JDBC Driver for MS SQL Server and Sybase";
         String OPTA2000 = "i-net OPTA 2000";
         String ORACLE = "Oracle";
-        
+
 	}
 
-	/**
+   public static class DriverMatch
+   {
+      private static final String COM_HTTX_DRIVER_PREFIX = "com.hxtt.sql.";
+
+      public static boolean isComHttxDriver(SQLConnection con)
+      {
+         if(null == con)
+         {
+            return false;
+         }
+         return con.getSQLDriver().getDriverClassName().startsWith(COM_HTTX_DRIVER_PREFIX);
+      }
+   }
+
+
+   /**
 	 * Full or partial names of various DBMS poducts that can be matched
 	 * to <tt>getDatabaseProductName()</tt>.
 	 */
@@ -1067,6 +1080,27 @@ public class SQLDatabaseMetaData
       {
           schemaPattern = "*ALLUSR";
       }
+
+      //Add begin
+      if (catalog == null && DriverMatch.isComHttxDriver(_conn))
+      {
+          String[] catalogs=getCatalogs();
+          if (catalogs != null) {
+            for (int i = 0; i < catalogs.length; i++) {
+              ITableInfo[] tables = getTables(catalogs[i],
+                                              schemaPattern,
+                                              tableNamePattern,
+                                              types,
+                                              progressCallBack);
+              for(int j=0;j<tables.length;j++){
+                list.add(tables[j]);
+              }
+            }
+            return (ITableInfo[]) list.toArray(new ITableInfo[list.size()]);
+          }
+      }
+      //Add end
+
 
       Map nameMap = null;
       ResultSet superTabResult = null;

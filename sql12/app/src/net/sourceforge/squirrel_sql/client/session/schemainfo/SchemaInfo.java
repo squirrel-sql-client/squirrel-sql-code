@@ -908,7 +908,10 @@ public class SchemaInfo
       {
          ITableInfo iTableInfo = (ITableInfo) i.next();
 
-         if(null != catalog && false == catalog.equalsIgnoreCase(iTableInfo.getCatalogName()) )
+         if(null != catalog &&
+            false == catalog.equalsIgnoreCase(iTableInfo.getCatalogName()) &&
+            false == fulfillsPlatformDependendMatches(iTableInfo, catalog)
+            )
          {
             continue;
          }
@@ -941,6 +944,20 @@ public class SchemaInfo
       }
 
       return (ITableInfo[]) ret.toArray(new ITableInfo[ret.size()]);
+   }
+
+   private boolean fulfillsPlatformDependendMatches(ITableInfo iTableInfo, String catalog)
+   {
+      if(SQLDatabaseMetaData.DriverMatch.isComHttxDriver(_session.getSQLConnection()))
+      {
+         return ( iTableInfo.getCatalogName()==null && "\".\"".equals(catalog));
+      }
+      else
+      {
+         return false;
+      }
+
+
    }
 
    private ITableInfo[] getTableInfosForUncachedTypes(String catalog, String schema, String tableNamePattern, String[] types)

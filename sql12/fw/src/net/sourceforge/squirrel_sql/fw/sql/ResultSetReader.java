@@ -70,8 +70,8 @@ public class ResultSetReader
 	private ResultSetMetaData _rsmd;
 
     /** whether or not the user requested to cancel the query */
-    private volatile boolean _stopExecution = false; 
-    
+   private volatile boolean _stopExecution = false; 
+
 	public ResultSetReader(ResultSet rs)
 		throws SQLException
 	{
@@ -335,7 +335,7 @@ public class ResultSetReader
 						// by Squirrel, so just tell the user that it is a BLOB and that it
 						// has data.
 
-                  row[i] = DataTypeBlob.staticReadResultSet(_rs, idx); 
+                  row[i] = DataTypeBlob.staticReadResultSet(_rs, idx);
 
 						break;
 
@@ -344,11 +344,22 @@ public class ResultSetReader
 						// never see a CLOB. However, if we do we assume that
 						// it is printable text and that the user wants to see it, so
 						// read in the entire thing.
-                  row[i] = DataTypeClob.staticReadResultSet(_rs, idx); 
+                  row[i] = DataTypeClob.staticReadResultSet(_rs, idx);
 
 						break;
 
-					case Types.OTHER:
+                  //Add begin
+               case Types.JAVA_OBJECT:
+                  row[i] = _rs.getObject(idx);
+                  if (_rs.wasNull())
+                  {
+                     row[i] = null;
+                  }
+                  break;
+                  //Add end
+
+
+               case Types.OTHER:
 						// Since we are reading Meta-data, there really should never be
 						// a field with SQL type Other (1111).
 						// If there is, we REALLY do not know how to handle it,

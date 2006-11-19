@@ -2,6 +2,151 @@
 
 <Beans>
 
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<driverClassName>com.hxtt.sql.excel.ExcelDriver</driverClassName>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-48</string>
+		</identifier>
+		<jarFileName/>
+		<jarFileNames Indexed="true"/>
+		<name>HXTT Excel Embedded</name>
+		<url>jdbc:excel:///&lt;databaseName&gt;</url>
+		<websiteUrl>http://www.hxtt.com/excel.html</websiteUrl>
+	</Bean>
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<driverClassName>com.hxtt.sql.excel.ExcelDriver</driverClassName>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-47</string>
+		</identifier>
+		<jarFileName/>
+		<jarFileNames Indexed="true"/>
+		<name>HXTT Excel Client</name>
+		<url>jdbc:excel://&lt;server:port&gt;/&lt;databaseName&gt;</url>
+		<websiteUrl>http://www.hxtt.com/excel.html</websiteUrl>
+	</Bean>
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<driverClassName>com.hxtt.sql.access.AccessDriver</driverClassName>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-46</string>
+		</identifier>
+		<jarFileName/>
+		<jarFileNames Indexed="true"/>
+		<name>HXTT Access Embedded</name>
+		<url>jdbc:access:///&lt;databaseName&gt;</url>
+		<websiteUrl>http://www.hxtt.com/access.html</websiteUrl>
+	</Bean>
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<driverClassName>com.hxtt.sql.access.AccessDriver</driverClassName>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-45</string>
+		</identifier>
+		<jarFileName/>
+		<jarFileNames Indexed="true"/>
+		<name>HXTT Access Client</name>
+		<url>jdbc:access://&lt;server:port&gt;/&lt;databaseName&gt;</url>
+		<websiteUrl>http://www.hxtt.com/access.html</websiteUrl>
+	</Bean>
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<driverClassName>com.hxtt.sql.paradox.ParadoxDriver</driverClassName>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-44</string>
+		</identifier>
+		<jarFileName/>
+		<jarFileNames Indexed="true"/>
+		<name>HXTT Paradox Embedded</name>
+		<url>jdbc:paradox:///&lt;databaseName&gt;</url>
+		<websiteUrl>http://www.hxtt.com/paradox.html</websiteUrl>
+	</Bean>
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<driverClassName>com.hxtt.sql.paradox.ParadoxDriver</driverClassName>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-43</string>
+		</identifier>
+		<jarFileName/>
+		<jarFileNames Indexed="true"/>
+		<name>HXTT Paradox Client</name>
+		<url>jdbc:paradox://&lt;server:port&gt;/&lt;databaseName&gt;</url>
+		<websiteUrl>http://www.hxtt.com/paradox.html</websiteUrl>
+	</Bean>
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<driverClassName>com.hxtt.sql.text.TextDriver</driverClassName>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-42</string>
+		</identifier>
+		<jarFileName/>
+		<jarFileNames Indexed="true"/>
+		<name>HXTT Text Embedded</name>
+		<url>jdbc:text:///&lt;databaseName&gt;</url>
+		<websiteUrl>http://www.hxtt.com/text.html</websiteUrl>
+	</Bean>
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<driverClassName>com.hxtt.sql.text.TextDriver</driverClassName>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-41</string>
+		</identifier>
+		<jarFileName/>
+		<jarFileNames Indexed="true"/>
+		<name>HXTT Text Client</name>
+		<url>jdbc:text://&lt;server:port&gt;/&lt;databaseName&gt;</url>
+		<websiteUrl>http://www.hxtt.com/text.html</websiteUrl>
+	</Bean>
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<driverClassName>com.hxtt.sql.text.TextDriver</driverClassName>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-40</string>
+		</identifier>
+		<jarFileName/>
+		<jarFileNames Indexed="true"/>
+		<name>HXTT CSV Embedded</name>
+		<url>jdbc:csv:///&lt;databaseName&gt;</url>
+		<websiteUrl>http://www.hxtt.com/text.html</websiteUrl>
+	</Bean>
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<driverClassName>com.hxtt.sql.text.TextDriver</driverClassName>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-39</string>
+		</identifier>
+		<jarFileName/>
+		<jarFileNames Indexed="true"/>
+		<name>HXTT CSV Client</name>
+		<url>jdbc:csv://&lt;server:port&gt;/&lt;databaseName&gt;</url>
+		<websiteUrl>http://www.hxtt.com/text.html</websiteUrl>
+	</Bean>
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<driverClassName>com.hxtt.sql.dbf.DBFDriver</driverClassName>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-38</string>
+		</identifier>
+		<jarFileName/>
+		<jarFileNames Indexed="true"/>
+		<name>HXTT DBF Embedded</name>
+		<url>jdbc:dbf:///&lt;databaseName&gt;</url>
+		<websiteUrl>http://www.hxtt.com/dbf.html</websiteUrl>
+	</Bean>
+
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<driverClassName>com.hxtt.sql.dbf.DBFDriver</driverClassName>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-37</string>
+		</identifier>
+		<jarFileName/>
+		<jarFileNames Indexed="true"/>
+		<name>HXTT DBF Client</name>
+		<url>jdbc:dbf://&lt;server:port&gt;/&lt;databaseName&gt;</url>
+		<websiteUrl>http://www.hxtt.com/dbf.html</websiteUrl>
+	</Bean>
+
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
 		 <driverClassName>jdbc.FrontBase.FBJDriver</driverClassName>
 		 <identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
