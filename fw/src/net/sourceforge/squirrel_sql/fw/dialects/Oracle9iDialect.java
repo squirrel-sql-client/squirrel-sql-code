@@ -208,9 +208,7 @@ public class Oracle9iDialect extends Oracle9Dialect
     public String getColumnCommentAlterSQL(TableColumnInfo info) 
         throws UnsupportedOperationException 
     {
-        return DialectUtils.getColumnCommentAlterSQL(info.getTableName(), 
-                                                     info.getColumnName(), 
-                                                     info.getRemarks());
+        return DialectUtils.getColumnCommentAlterSQL(info);
     }
     
     /**

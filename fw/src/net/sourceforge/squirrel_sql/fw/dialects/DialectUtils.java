@@ -46,6 +46,10 @@ public class DialectUtils {
     
     public static final String TO_CLAUSE = "TO";
     
+    public static final String DEFAULT_CLAUSE = "DEFAULT";
+    
+    public static final String SET_DEFAULT_CLAUSE = "SET DEFAULT";
+    
     /**
      * Returns the SQL statement to use to add a column to the specified table
      * using the information about the new column specified by info.
@@ -136,6 +140,24 @@ public class DialectUtils {
         result.append("'");
         return result.toString();
     }
+    
+    /**
+     * Returns the SQL statement to use to add a comment to the specified 
+     * column of the specified table.
+     * 
+     * @param tableName the name of the table to create the SQL for.
+     * @param columnName the name of the column to create the SQL for.
+     * @param comment the comment to add.
+     * @return
+     * @throws UnsupportedOperationException if the database doesn't support 
+     *         annotating columns with a comment.
+     */
+    public static String getColumnCommentAlterSQL(TableColumnInfo info) {
+        return getColumnCommentAlterSQL(info.getTableName(), 
+                                        info.getColumnName(), 
+                                        info.getRemarks());
+    }
+   
     
     /**
      * 
@@ -322,6 +344,31 @@ public class DialectUtils {
         result.append(renameToClause);
         result.append(" ");
         result.append(to.getColumnName());
+        return result.toString();
+    }
+    
+    /**
+     * Returns the SQL command to change the specified column's default value
+     *   
+     * @param info the column to modify and it's default value.
+     * @return SQL to make the change
+     */
+    public static String getColumnDefaultAlterSQL(TableColumnInfo info, String defaultClause) {
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(info.getTableName());
+        result.append(" ALTER COLUMN ");
+        result.append(info.getColumnName());
+        result.append(" ");
+        result.append(defaultClause);
+        result.append(" ");
+        if (JDBCTypeMapper.isNumberType(info.getDataType())) {
+            result.append(info.getDefaultValue());
+        } else {
+            result.append("'");
+            result.append(info.getDefaultValue());
+            result.append("'");
+        }
         return result.toString();
     }
     

@@ -240,16 +240,6 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect
      }
 
     /**
-     * Returns a boolean value indicating whether or not this dialect supports
-     * adding comments to columns.
-     * 
-     * @return true if column comments are supported; false otherwise.
-     */
-    public boolean supportsColumnComment() {
-        return true;
-    }    
-    
-    /**
      * Returns the SQL statement to use to add a comment to the specified 
      * column of the specified table.
      * 
@@ -277,7 +267,6 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect
      * @return true if the database supports dropping columns; false otherwise.
      */
     public boolean supportsDropColumn() {
-        // TODO: Need to verify this
         return false;
     }
     
@@ -292,12 +281,7 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect
      *         dropping columns. 
      */
     public String getColumnDropSQL(String tableName, String columnName) {
-        StringBuffer result = new StringBuffer();
-        result.append("ALTER TABLE ");
-        result.append(tableName);
-        result.append(" DROP COLUMN ");
-        result.append(columnName);
-        return result.toString();
+        throw new UnsupportedOperationException("DB2 doesn't support dropping columns");
     }
     
     /**
@@ -313,7 +297,6 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect
      * @return the drop SQL command.
      */
     public String getTableDropSQL(String tableName, boolean cascadeConstraints){
-        // TODO: Need to verify this
         return DialectUtils.getTableDropSQL(tableName, false, cascadeConstraints);
     }
     
@@ -321,16 +304,29 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect
      * Returns the SQL that forms the command to add a primary key to the 
      * specified table composed of the given column names.
      * 
+     *    ALTER TABLE table_name ADD CONSTRAINT contraint_name PRIMARY KEY (column_name)
+     * 
      * @param pkName the name of the constraint
      * @param columnNames the columns that form the key
      * @return
      */
     public String[] getAddPrimaryKeySQL(String pkName, 
-                                      TableColumnInfo[] columnNames) 
+                                        TableColumnInfo[] columns) 
     {
-        // TODO: implement
-        throw new UnsupportedOperationException("getAddPrimaryKeySQL not implemented");
+        return new String[] {
+            DialectUtils.getAddPrimaryKeySQL(pkName, columns)
+        };
     }
+    
+    /**
+     * Returns a boolean value indicating whether or not this dialect supports
+     * adding comments to columns.
+     * 
+     * @return true if column comments are supported; false otherwise.
+     */
+    public boolean supportsColumnComment() {
+        return true;
+    }    
     
     /**
      * Returns the SQL statement to use to add a comment to the specified 
@@ -343,20 +339,48 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect
     public String getColumnCommentAlterSQL(TableColumnInfo info) 
         throws UnsupportedOperationException
     {
-        // TODO: implement        
-        throw new UnsupportedOperationException("Not yet implemented");
+        return DialectUtils.getColumnCommentAlterSQL(info);
     }
+    
+    /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports changing a column from null to not-null and vice versa.
+     * 
+     * @return true if the database supports dropping columns; false otherwise.
+     */
+    public boolean supportsAlterColumnNull() {
+        return false;
+    }    
     
     /**
      * Returns the SQL used to alter the specified column to not allow null 
      * values
      * 
+     * This appears to work:
+     * 
+     * ALTER TABLE table_name ADD CONSTRAINT constraint_name CHECK (column_name IS NOT NULL)
+     * 
+     * However, the jdbc driver still reports the column as nullable - which means
+     * I can't reliably display the correct value for this attribute in the UI.
+     *  
+     * I tried this alternate syntax and it fails with an exception:
+     * 
+     * ALTER TABLE table_name ALTER COLUMN column_name SET NOT NULL
+     * 
+     * Error: com.ibm.db2.jcc.b.SqlException: DB2 SQL error: 
+     * SQLCODE: -104, 
+     * SQLSTATE: 42601, 
+     * SQLERRMC: NOT;ER COLUMN mychar SET;DEFAULT, 
+     * SQL State: 42601, Error Code: -104
+     * 
+     * I don't see how I can practically support changing column nullability 
+     * in DB2.
+     * 
      * @param info the column to modify
      * @return the SQL to execute
      */
     public String getColumnNullableAlterSQL(TableColumnInfo info) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not yet implemented");
+        throw new UnsupportedOperationException("No support for changing column null attribute for DB2");
     }
     
     /**
@@ -367,8 +391,7 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect
      *         false otherwise.
      */
     public boolean supportsRenameColumn() {
-        // TODO: need to verify this
-        return true;
+        return false;
     }    
     
     /**
@@ -381,12 +404,13 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect
      * @return the SQL to make the change
      */
     public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not yet implemented");
+        throw new UnsupportedOperationException("DB2 doesn't support changing column names");
     }
     
     /**
      * Returns the SQL that is used to change the column type.
+     * 
+     * ALTER TABLE table_name ALTER COLUMN column_name SET DATA TYPE DECIMAL(6,2)
      * 
      * @param from the TableColumnInfo as it is
      * @param to the TableColumnInfo as it wants to be
@@ -399,20 +423,16 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect
                                         TableColumnInfo to)
         throws UnsupportedOperationException
     {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not Yet Implemented");
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(from.getTableName());
+        result.append(" ALTER COLUMN ");
+        result.append(from.getColumnName());
+        result.append(" SET DATA TYPE ");
+        result.append(DialectUtils.getTypeName(to, this));
+        return result.toString();
     }
 
-    /**
-     * Returns a boolean value indicating whether or not this database dialect
-     * supports changing a column from null to not-null and vice versa.
-     * 
-     * @return true if the database supports dropping columns; false otherwise.
-     */
-    public boolean supportsAlterColumnNull() {
-        return true;
-    }
-    
     /**
      * Returns a boolean value indicating whether or not this database dialect
      * supports changing a column's default value.
@@ -421,19 +441,20 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect
      *         otherwise
      */
     public boolean supportsAlterColumnDefault() {
-        // TODO Need to verify this
         return true;
     }
     
     /**
      * Returns the SQL command to change the specified column's default value
      *   
+     * ALTER TABLE EMPLOYEE ALTER COLUMN WORKDEPTSET SET DEFAULT '123' 
+     *   
      * @param info the column to modify and it's default value.
      * @return SQL to make the change
      */
     public String getColumnDefaultAlterSQL(TableColumnInfo info) {
-        // TODO need to implement or change the message
-        throw new UnsupportedOperationException("Not yet implemented");
+        String defaultClause = DialectUtils.SET_DEFAULT_CLAUSE;
+        return DialectUtils.getColumnDefaultAlterSQL(info, defaultClause);
     }
     
 }
