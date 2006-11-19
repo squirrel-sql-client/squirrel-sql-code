@@ -42,7 +42,10 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class SQLConnection
 {
-	public interface IPropertyNames
+   private ISQLDriver _sqlDriver;
+
+
+   public interface IPropertyNames
 	{
 		String AUTO_COMMIT = "autocommit";
 		String CATALOG = "catalog";
@@ -72,10 +75,11 @@ public class SQLConnection
 
     private SQLDatabaseMetaData metaData = null;
     
-	public SQLConnection(Connection conn, SQLDriverPropertyCollection connProps)
+	public SQLConnection(Connection conn, SQLDriverPropertyCollection connProps, ISQLDriver sqlDriver)
 	{
 		super();
-		if (conn == null)
+      _sqlDriver = sqlDriver;
+      if (conn == null)
 		{
 			throw new IllegalArgumentException("SQLConnection == null");
 		}
@@ -364,4 +368,12 @@ public class SQLConnection
 		}
 		return str;
 	}
+
+   public ISQLDriver getSQLDriver()
+   {
+      return _sqlDriver;
+   }
+
+
+
 }

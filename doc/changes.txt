@@ -6,6 +6,9 @@ Not yet released - available in the latest snapshot, or at least checked into CV
 
     New Features/Enhancements:
 
+Made SQuirreL work with hxtt drivers. See www.hxtt.com. Thanks to Yonghong Zhao the patches.
+
+
 Oracle Plugin:
    Windows for
     - DB Output, 

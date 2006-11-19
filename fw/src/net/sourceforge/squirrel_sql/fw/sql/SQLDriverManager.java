@@ -129,7 +129,7 @@ public class SQLDriverManager
 		{
 			throw new SQLException(s_stringMgr.getString("SQLDriverManager.error.noconnection"));
 		}
-		return new SQLConnection(jdbcConn, props);
+		return new SQLConnection(jdbcConn, props, sqlDriver);
 	}
 
 	/**
