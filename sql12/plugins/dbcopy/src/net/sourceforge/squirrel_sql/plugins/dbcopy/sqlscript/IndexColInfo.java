@@ -9,7 +9,7 @@ import java.util.Comparator;
 public class IndexColInfo
 {
    private String _colName;
-   private Integer _ordinalPosition = Integer.valueOf(0);
+   private Integer _ordinalPosition = new Integer(0);
 
    public static final NameComparator NAME_COMPARATOR = new NameComparator();
    public static final OrdinalPositionComparator ORDINAL_POSITION_COMPARATOR = new OrdinalPositionComparator();
@@ -23,7 +23,7 @@ public class IndexColInfo
    {
 
       _colName = colName;
-      _ordinalPosition = Integer.valueOf(ordinalPosition);
+      _ordinalPosition = new Integer(ordinalPosition);
    }
 
    public boolean equals(Object obj)
