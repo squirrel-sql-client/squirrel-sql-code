@@ -440,7 +440,6 @@ public class H2Dialect extends Dialect implements HibernateDialect {
      * @return the drop SQL command.
      */
     public String getTableDropSQL(String tableName, boolean cascadeConstraints){
-        // TODO: Need to verify this
         return DialectUtils.getTableDropSQL(tableName, true, cascadeConstraints);
     }
     
@@ -490,9 +489,7 @@ public class H2Dialect extends Dialect implements HibernateDialect {
     public String getColumnCommentAlterSQL(TableColumnInfo info) 
         throws UnsupportedOperationException
     {       
-        return DialectUtils.getColumnCommentAlterSQL(info.getTableName(), 
-                                                     info.getColumnName(), 
-                                                     info.getRemarks());
+        return DialectUtils.getColumnCommentAlterSQL(info);
     }
  
     /**
@@ -505,11 +502,29 @@ public class H2Dialect extends Dialect implements HibernateDialect {
      * @return the SQL to execute
      */
     public String getColumnNullableAlterSQL(TableColumnInfo info) {
-        String nullable = info.isNullable();
-        return getColumnNullableAlterSQL(info, 
-                                         nullable.equalsIgnoreCase("YES"));
+        String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
+        return DialectUtils.getColumnNullableAlterSQL(info, 
+                                                      this, 
+                                                      alterClause, 
+                                                      true);
     }
 
+    /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports changing a column from null to not-null and vice versa.
+     * 
+     * @return true if the database supports dropping columns; false otherwise.
+     */    
+    public boolean supportsAlterColumnNull() {
+        return true;
+    }
+
+    /**
+     * Returns the SQL used to alter the nullability of the specified column 
+     * 
+     * @param info the column to modify
+     * @return the SQL to execute
+     */    
     private String getColumnNullableAlterSQL(TableColumnInfo info, 
                                              boolean isNullable) 
     {
@@ -537,7 +552,6 @@ public class H2Dialect extends Dialect implements HibernateDialect {
      *         false otherwise.
      */
     public boolean supportsRenameColumn() {
-        // TODO: need to verify this
         return true;
     }    
     
@@ -553,14 +567,12 @@ public class H2Dialect extends Dialect implements HibernateDialect {
      * @return the SQL to make the change
      */
     public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to) {
-        StringBuffer result = new StringBuffer();
-        result.append("ALTER TABLE ");
-        result.append(to.getTableName());
-        result.append(" ALTER COLUMN ");
-        result.append(from.getColumnName());
-        result.append(" RENAME TO ");
-        result.append(to.getColumnName());
-        return result.toString();
+        String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
+        String renameToClause = DialectUtils.RENAME_TO_CLAUSE;
+        return DialectUtils.getColumnNameAlterSQL(from, 
+                                                  to, 
+                                                  alterClause, 
+                                                  renameToClause);
     }
     
     /**
@@ -579,24 +591,14 @@ public class H2Dialect extends Dialect implements HibernateDialect {
                                         TableColumnInfo to)
         throws UnsupportedOperationException
     {
-        StringBuffer result = new StringBuffer();
-        result.append("ALTER TABLE ");
-        result.append(to.getTableName());
-        result.append(" ALTER COLUMN ");
-        result.append(to.getColumnName());
-        result.append(" ");
-        result.append(DialectUtils.getTypeName(to, this));
-        return result.toString();
-    }
-    
-    /**
-     * Returns a boolean value indicating whether or not this database dialect
-     * supports changing a column from null to not-null and vice versa.
-     * 
-     * @return true if the database supports dropping columns; false otherwise.
-     */    
-    public boolean supportsAlterColumnNull() {
-        return true;
+        String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
+        String setClause = "";
+        return DialectUtils.getColumnTypeAlterSQL(this, 
+                                                  alterClause, 
+                                                  setClause, 
+                                                  false, 
+                                                  from, 
+                                                  to);
     }
     
     /**
@@ -607,19 +609,20 @@ public class H2Dialect extends Dialect implements HibernateDialect {
      *         otherwise
      */
     public boolean supportsAlterColumnDefault() {
-        // TODO Need to verify this
         return true;
     }
     
     /**
      * Returns the SQL command to change the specified column's default value
+     *
+     * ALTER TABLE table_name ALTER COLUMN column_name SET DEFAULT 'default value'
      *   
      * @param info the column to modify and it's default value.
      * @return SQL to make the change
      */
     public String getColumnDefaultAlterSQL(TableColumnInfo info) {
-        // TODO need to implement or change the message
-        throw new UnsupportedOperationException("Not yet implemented");
+        String defaultClause = DialectUtils.SET_DEFAULT_CLAUSE;
+        return DialectUtils.getColumnDefaultAlterSQL(info, defaultClause);
     }
     
 }

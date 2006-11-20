@@ -339,6 +339,7 @@ public class DialectUtils {
     /**
      * Returns the SQL that is used to change the column name.
      * 
+     * ALTER TABLE table_name [alterClause] column_name [renameToClause] column_name
      * 
      * @param from the TableColumnInfo as it is
      * @param to the TableColumnInfo as it wants to be
