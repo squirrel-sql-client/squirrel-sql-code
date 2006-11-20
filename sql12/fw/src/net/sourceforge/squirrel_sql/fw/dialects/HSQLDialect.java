@@ -366,7 +366,7 @@ public class HSQLDialect extends org.hibernate.dialect.HSQLDialect
     /**
      * Returns the SQL that is used to change the column type.
      * 
-     * ALTER TABLE <tablename> ALTER COLUMN <columnDefinition>;
+     * ALTER TABLE table_name ALTER COLUMN column_name data_type;
      * 
      * @param from the TableColumnInfo as it is
      * @param to the TableColumnInfo as it wants to be
@@ -379,14 +379,14 @@ public class HSQLDialect extends org.hibernate.dialect.HSQLDialect
                                         TableColumnInfo to)
         throws UnsupportedOperationException
     {
-        StringBuffer result = new StringBuffer();
-        result.append("ALTER TABLE ");
-        result.append(from.getTableName());
-        result.append(" ALTER COLUMN ");
-        result.append(from.getColumnName());
-        result.append(" ");
-        result.append(DialectUtils.getTypeName(to, this));
-        return result.toString();
+        String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
+        String setClause = "";
+        return DialectUtils.getColumnTypeAlterSQL(this, 
+                                                  alterClause, 
+                                                  setClause, 
+                                                  false, 
+                                                  from, 
+                                                  to);
     }
     
     /**
