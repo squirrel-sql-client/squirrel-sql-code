@@ -220,6 +220,7 @@ public class StatusBar extends JPanel
          _pnlLabelOrProgress.remove(0);
          _pnlLabelOrProgress.add(_textLbl);
          validate();
+         repaint();
       }
    }
 }
