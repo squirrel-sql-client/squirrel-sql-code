@@ -44,6 +44,8 @@ public class DialectUtils {
     
     public static final String MODIFY_CLAUSE = "MODIFY";
     
+    public static final String COLUMN_CLAUSE = "COLUMN";
+    
     // alter name clauses
     
     public static final String RENAME_COLUMN_CLAUSE = "RENAME COLUMN";
@@ -57,6 +59,10 @@ public class DialectUtils {
     public static final String DEFAULT_CLAUSE = "DEFAULT";
     
     public static final String SET_DEFAULT_CLAUSE = "SET DEFAULT";
+    
+    public static final String ADD_DEFAULT_CLAUSE = "ADD DEFAULT";
+    
+    public static final String DROP_DEFAULT_CLAUSE = "DROP DEFAULT";
     
     // alter type clauses
     
@@ -315,6 +321,8 @@ public class DialectUtils {
      * Returns the SQL for creating a primary key consisting of the specified 
      * colInfos.
      *  
+     * ALTER TABLE table_name ADD CONSTRAINT constraint_name PRIMARY KEY (col,...); 
+     *  
      * @param colInfos
      * @return
      */
@@ -375,12 +383,15 @@ public class DialectUtils {
      * @param info the column to modify and it's default value.
      * @return SQL to make the change
      */
-    public static String getColumnDefaultAlterSQL(TableColumnInfo info, 
+    public static String getColumnDefaultAlterSQL(TableColumnInfo info,
+                                                  String alterClause,
                                                   String defaultClause) {
         StringBuffer result = new StringBuffer();
         result.append("ALTER TABLE ");
         result.append(info.getTableName());
-        result.append(" ALTER COLUMN ");
+        result.append(" ");
+        result.append(alterClause);
+        result.append(" ");
         result.append(info.getColumnName());
         result.append(" ");
         result.append(defaultClause);
@@ -436,4 +447,27 @@ public class DialectUtils {
         result.append(getTypeName(to, dialect));
         return result.toString();
     }    
+    
+    /**
+     * Returns the SQL that is used to change the column name.
+     * 
+     * RENAME COLUMN table_name.column_name TO new_column_name
+     * 
+     * @param from the TableColumnInfo as it is
+     * @param to the TableColumnInfo as it wants to be
+     * 
+     * @return the SQL to make the change
+     */
+    public static String getColumnRenameSQL(TableColumnInfo from, 
+                                            TableColumnInfo to) {
+        StringBuffer result = new StringBuffer();
+        result.append("RENAME COLUMN ");
+        result.append(from.getTableName());
+        result.append(".");
+        result.append(from.getColumnName());
+        result.append(" TO ");
+        result.append(to.getColumnName());
+        return result.toString();
+    }
+    
 }
