@@ -185,7 +185,7 @@ public class DialectLiveTestRunner {
         */
         
         TableColumnInfo thirdColLonger = 
-            getVarcharColumn("nullvc", true, "defVal", "A varchar comment", 1000);
+            getVarcharColumn("nullvc", true, "defVal", "A varchar comment", 200);
         String alterColLengthSQL = 
             dialect.getColumnTypeAlterSQL(thirdCol, thirdColLonger);
         runSQL(session, alterColLengthSQL);        
