@@ -407,8 +407,11 @@ public class HSQLDialect extends org.hibernate.dialect.HSQLDialect
      * @return SQL to make the change
      */
     public String getColumnDefaultAlterSQL(TableColumnInfo info) {
+        String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
         String defaultClause = DialectUtils.SET_DEFAULT_CLAUSE;
-        return DialectUtils.getColumnDefaultAlterSQL(info, defaultClause);
+        return DialectUtils.getColumnDefaultAlterSQL(info, 
+                                                     alterClause, 
+                                                     defaultClause);
     }
     
 }

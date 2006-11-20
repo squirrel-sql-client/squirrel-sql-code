@@ -19,6 +19,7 @@
 package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.sql.Types;
+import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -155,44 +156,12 @@ public class MAXDBDialect extends SAPDBDialect
     }
 
     /**
-     * Returns a boolean value indicating whether or not this dialect supports
-     * adding comments to columns.
-     * 
-     * @return true if column comments are supported; false otherwise.
-     */
-    public boolean supportsColumnComment() {
-        return true;
-    }    
-    
-    /**
-     * Returns the SQL statement to use to add a comment to the specified 
-     * column of the specified table.
-     * 
-     * @param tableName the name of the table to create the SQL for.
-     * @param columnName the name of the column to create the SQL for.
-     * @param comment the comment to add.
-     * @return
-     * @throws UnsupportedOperationException if the database doesn't support 
-     *         annotating columns with a comment.
-     */
-    public String getColumnCommentAlterSQL(String tableName, 
-                                           String columnName, 
-                                           String comment) 
-        throws UnsupportedOperationException 
-    {
-        return DialectUtils.getColumnCommentAlterSQL(tableName, 
-                                                     columnName, 
-                                                     comment);
-    }
-    
-    /**
      * Returns a boolean value indicating whether or not this database dialect
      * supports dropping columns from tables.
      * 
      * @return true if the database supports dropping columns; false otherwise.
      */
     public boolean supportsDropColumn() {
-        // TODO: need to verify this
         return true;
     }
 
@@ -206,8 +175,7 @@ public class MAXDBDialect extends SAPDBDialect
      * @throws UnsupportedOperationException if the database doesn't support 
      *         dropping columns. 
      */
-    public String getColumnDropSQL(String tableName, String columnName) {
-        // TODO: Need to verify this        
+    public String getColumnDropSQL(String tableName, String columnName) {    
         return DialectUtils.getColumnDropSQL(tableName, columnName);
     }
 
@@ -224,7 +192,6 @@ public class MAXDBDialect extends SAPDBDialect
      * @return the drop SQL command.
      */
     public String getTableDropSQL(String tableName, boolean cascadeConstraints){
-        // TODO: Need to verify this
         return DialectUtils.getTableDropSQL(tableName, true, cascadeConstraints);
     }
     
@@ -232,17 +199,34 @@ public class MAXDBDialect extends SAPDBDialect
      * Returns the SQL that forms the command to add a primary key to the 
      * specified table composed of the given column names.
      * 
+     * ALTER TABLE test ADD constraint test_pk PRIMARY KEY (notnullint)
+     * 
      * @param pkName the name of the constraint
      * @param columnNames the columns that form the key
      * @return
      */
     public String[] getAddPrimaryKeySQL(String pkName, 
-                                      TableColumnInfo[] columnNames) 
+                                        TableColumnInfo[] columns) 
     {
-        // TODO: implement
-        throw new UnsupportedOperationException("getAddPrimaryKeySQL not implemented");
+        ArrayList result = new ArrayList();
+        for (int i = 0; i < columns.length; i++) {
+            TableColumnInfo info = columns[i];
+            result.add(getColumnNullableAlterSQL(info, false));
+        }
+        result.add(DialectUtils.getAddPrimaryKeySQL(pkName, columns));
+        return (String[])result.toArray(new String[result.size()]);
     }
     
+    /**
+     * Returns a boolean value indicating whether or not this dialect supports
+     * adding comments to columns.
+     * 
+     * @return true if column comments are supported; false otherwise.
+     */
+    public boolean supportsColumnComment() {
+        return true;
+    }    
+                
     /**
      * Returns the SQL statement to use to add a comment to the specified 
      * column of the specified table.
@@ -254,21 +238,63 @@ public class MAXDBDialect extends SAPDBDialect
     public String getColumnCommentAlterSQL(TableColumnInfo info) 
         throws UnsupportedOperationException
     {
-        // TODO: implement        
-        throw new UnsupportedOperationException("Not yet implemented");
+        return DialectUtils.getColumnCommentAlterSQL(info);
+    }
+    
+    /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports changing a column from null to not-null and vice versa.
+     * 
+     * @return true if the database supports dropping columns; false otherwise.
+     */    
+    public boolean supportsAlterColumnNull() {
+        return true;
     }
     
     /**
      * Returns the SQL used to alter the specified column to not allow null 
      * values
      * 
+     * ALTER TABLE table_name COLUMN column_name DEFAULT NULL
+     * 
+     * ALTER TABLE table_name COLUMN column_name NOT NULL
+     * 
      * @param info the column to modify
      * @return the SQL to execute
      */
     public String getColumnNullableAlterSQL(TableColumnInfo info) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not yet implemented");
+        boolean nullable = info.isNullable().equalsIgnoreCase("YES");
+        return getColumnNullableAlterSQL(info, nullable);
     }
+    
+    /**
+     * Returns the SQL used to alter the specified column to not allow null 
+     * values
+     * 
+     * ALTER TABLE table_name COLUMN column_name DEFAULT NULL
+     * 
+     * ALTER TABLE table_name COLUMN column_name NOT NULL
+     * 
+     * @param info the column to modify
+     * @param nullable whether or not the column should allow nulls
+     * 
+     * @return the SQL to execute
+     */
+    public String getColumnNullableAlterSQL(TableColumnInfo info, 
+                                            boolean nullable) {
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(info.getTableName());
+        result.append(" COLUMN ");
+        result.append(info.getColumnName());
+        if (nullable) {
+            result.append(" DEFAULT NULL");
+        } else {
+            result.append(" NOT NULL");
+        }
+        return result.toString();
+    }
+    
     
     /**
      * Returns a boolean value indicating whether or not this database dialect
@@ -278,13 +304,13 @@ public class MAXDBDialect extends SAPDBDialect
      *         false otherwise.
      */
     public boolean supportsRenameColumn() {
-        // TODO: need to verify this
         return true;
     }    
     
     /**
      * Returns the SQL that is used to change the column name.
      * 
+     * RENAME COLUMN table_name.column_name TO new_column_name
      * 
      * @param from the TableColumnInfo as it is
      * @param to the TableColumnInfo as it wants to be
@@ -292,8 +318,7 @@ public class MAXDBDialect extends SAPDBDialect
      * @return the SQL to make the change
      */
     public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not yet implemented");
+        return DialectUtils.getColumnRenameSQL(from, to);
     }
     
     /**
@@ -310,21 +335,15 @@ public class MAXDBDialect extends SAPDBDialect
                                         TableColumnInfo to)
         throws UnsupportedOperationException
     {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not Yet Implemented");
+        String alterClause = DialectUtils.MODIFY_CLAUSE;
+        return DialectUtils.getColumnTypeAlterSQL(this, 
+                                                  alterClause, 
+                                                  "", 
+                                                  false, 
+                                                  from, 
+                                                  to);
     }
     
-    /**
-     * Returns a boolean value indicating whether or not this database dialect
-     * supports changing a column from null to not-null and vice versa.
-     * 
-     * @return true if the database supports dropping columns; false otherwise.
-     */    
-    public boolean supportsAlterColumnNull() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
     /**
      * Returns a boolean value indicating whether or not this database dialect
      * supports changing a column's default value.
@@ -333,18 +352,30 @@ public class MAXDBDialect extends SAPDBDialect
      *         otherwise
      */
     public boolean supportsAlterColumnDefault() {
-        // TODO Need to verify this
         return true;
     }
     
     /**
      * Returns the SQL command to change the specified column's default value
+     *  
+     * alter table test column mychar drop default
+     * 
+     * alter table test column mychar add default 'a default'
      *   
      * @param info the column to modify and it's default value.
      * @return SQL to make the change
      */
     public String getColumnDefaultAlterSQL(TableColumnInfo info) {
-        // TODO need to implement or change the message
-        throw new UnsupportedOperationException("Not yet implemented");
+        String alterClause = DialectUtils.COLUMN_CLAUSE;
+        String newDefault = info.getDefaultValue();
+        String defaultClause = null;
+        if (newDefault != null && !"".equals(newDefault)) {
+            defaultClause = DialectUtils.ADD_DEFAULT_CLAUSE;
+        } else {
+            defaultClause = DialectUtils.DROP_DEFAULT_CLAUSE;
+        }
+        return DialectUtils.getColumnDefaultAlterSQL(info, 
+                alterClause, 
+                defaultClause);
     }
 }
