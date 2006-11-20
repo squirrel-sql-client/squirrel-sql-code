@@ -566,7 +566,7 @@ public class H2Dialect extends Dialect implements HibernateDialect {
     /**
      * Returns the SQL that is used to change the column type.
      * 
-     * ALTER TABLE TEST ALTER COLUMN NAME CLOB 
+     * ALTER TABLE table_name ALTER COLUMN column_name data_type 
      * 
      * @param from the TableColumnInfo as it is
      * @param to the TableColumnInfo as it wants to be

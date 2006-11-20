@@ -36,9 +36,15 @@ import org.hibernate.HibernateException;
  */
 public class DialectUtils {
 
+    // alter column clauses
+    
     public static final String ALTER_COLUMN_CLAUSE = "ALTER COLUMN";
     
     public static final String MODIFY_COLUMN_CLAUSE = "MODIFY COLUMN";
+    
+    public static final String MODIFY_CLAUSE = "MODIFY";
+    
+    // alter name clauses
     
     public static final String RENAME_COLUMN_CLAUSE = "RENAME COLUMN";
     
@@ -46,10 +52,17 @@ public class DialectUtils {
     
     public static final String TO_CLAUSE = "TO";
     
+    // alter default clauses
+    
     public static final String DEFAULT_CLAUSE = "DEFAULT";
     
     public static final String SET_DEFAULT_CLAUSE = "SET DEFAULT";
     
+    // alter type clauses
+    
+    public static final String TYPE_CLAUSE = "TYPE";
+    
+    public static final String SET_DATA_TYPE_CLAUSE = "SET DATA TYPE";
     /**
      * Returns the SQL statement to use to add a column to the specified table
      * using the information about the new column specified by info.
@@ -225,8 +238,12 @@ public class DialectUtils {
     }
     
     /**
-     * Returns the SQL used to alter the specified column to not allow null 
-     * values
+     * Returns the SQL used to alter the specified column to allow/disallow null 
+     * values.
+     * <br>
+     * ALTER TABLE table_name &lt;alterClause&gt; column_name TYPE NULL | NOT NULL
+     * <br>
+     * ALTER TABLE table_name &lt;alterClause&gt; column_name NULL | NOT NULL
      * 
      * @param info the column to modify
      * @param dialect the HibernateDialect representing the target database.
@@ -350,10 +367,15 @@ public class DialectUtils {
     /**
      * Returns the SQL command to change the specified column's default value
      *   
+     * ALTER TABLE table_name ALTER COLUMN column_name [defaultClause] 'defaultVal'  
+     * 
+     * ALTER TABLE table_name ALTER COLUMN column_name [defaultClause] 1234
+     *   
      * @param info the column to modify and it's default value.
      * @return SQL to make the change
      */
-    public static String getColumnDefaultAlterSQL(TableColumnInfo info, String defaultClause) {
+    public static String getColumnDefaultAlterSQL(TableColumnInfo info, 
+                                                  String defaultClause) {
         StringBuffer result = new StringBuffer();
         result.append("ALTER TABLE ");
         result.append(info.getTableName());
@@ -372,4 +394,45 @@ public class DialectUtils {
         return result.toString();
     }
     
+    /**
+     * Returns the SQL that is used to change the column type.
+     * 
+     * ALTER TABLE table_name alter_clause column_name [setClause] data_type
+     *  
+     * ALTER TABLE table_name alter_clause column_name column_name [setClause] data_type
+     * 
+     * @param from the TableColumnInfo as it is
+     * @param to the TableColumnInfo as it wants to be
+     * 
+     * @return the SQL to make the change
+     * @throw UnsupportedOperationException if the database doesn't support 
+     *         modifying column types. 
+     */
+    public static String getColumnTypeAlterSQL(HibernateDialect dialect,
+                                               String alterClause,
+                                               String setClause,
+                                               boolean repeatColumn,
+                                               TableColumnInfo from, 
+                                               TableColumnInfo to)
+        throws UnsupportedOperationException
+    {
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(to.getTableName());
+        result.append(" ");
+        result.append(alterClause);
+        result.append(" ");
+        if (repeatColumn) {
+            result.append(to.getColumnName());
+            result.append(" ");
+        }
+        result.append(to.getColumnName());
+        result.append(" ");
+        if (setClause != null && !"".equals(setClause)) {
+            result.append(setClause);
+            result.append(" ");
+        }
+        result.append(getTypeName(to, dialect));
+        return result.toString();
+    }    
 }

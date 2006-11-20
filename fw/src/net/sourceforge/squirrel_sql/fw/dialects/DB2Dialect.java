@@ -410,7 +410,7 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect
     /**
      * Returns the SQL that is used to change the column type.
      * 
-     * ALTER TABLE table_name ALTER COLUMN column_name SET DATA TYPE DECIMAL(6,2)
+     * ALTER TABLE table_name ALTER COLUMN column_name SET DATA TYPE data_type
      * 
      * @param from the TableColumnInfo as it is
      * @param to the TableColumnInfo as it wants to be
