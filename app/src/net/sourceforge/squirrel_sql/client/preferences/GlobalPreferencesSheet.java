@@ -419,10 +419,10 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 			}
 		});
 
-		GUIUtils.setJButtonSizesTheSame(new JButton[] { okBtn, closeBtn });
+		GUIUtils.setJButtonSizesTheSame(new JButton[] { okBtn, saveBtn, closeBtn });
 
 		pnl.add(okBtn);
-        pnl.add(saveBtn);
+      pnl.add(saveBtn);
 		pnl.add(closeBtn);
 
 		getRootPane().setDefaultButton(okBtn);
