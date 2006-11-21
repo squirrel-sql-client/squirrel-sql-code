@@ -9,7 +9,7 @@
 	<META NAME="CHANGED" CONTENT="20050606;23172900">
 </HEAD>
 <BODY LANG="en-US" DIR="LTR">
-<P><B>Look and Feel Plugin 1.0 </B><SPAN STYLE="font-weight: medium">-
+<P><B>Look and Feel Plugin</B><SPAN STYLE="font-weight: medium">-
 Colin Bell</SPAN></P>
 <P>This plugin allows you to select a Look and Feel other than the
 default Java one and to specify the fonts for the different GUI
@@ -58,6 +58,8 @@ controls. It ships with the following Look and Feel implementations:</P>
 	<LI>The SwingSet theme - See the SwingSet demo of JDK 1.4.x</P>
 </UL>
 
+<p>The Oyoaha and Metouia Look &amp; Feels do not work under Java 6 and
+later.</p>
 
 <p>
 The &quot;Allow L&amp;F to set tilebar and window borders &quot;
@@ -95,7 +97,10 @@ specifies the name of the jar (or zip) file that contains the Look
 and Feel. Replace X with 0 for the first Look and Feel specified, 1
 for the second etc.</P>
 <P>Here is an example:</P>
-<P>classname0=com.incors.plaf.kunststoff.KunststoffLookAndFeel</P>
-<P>jar0=kunststoff.jar</P>
+
+<pre>
+classname0=com.incors.plaf.kunststoff.KunststoffLookAndFeel
+jar0=kunststoff.jar
+</pre>
 </BODY>
 </HTML>
