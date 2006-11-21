@@ -4,27 +4,46 @@ import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.FormatXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.PixelCalculater;
 
 import java.awt.print.PageFormat;
+import java.awt.*;
 
 public class SaveToFilePageFormat extends PageFormat
 {
-   private FormatXmlBean _format;
    private PixelCalculater _pc;
+   private Dimension _graphPixelSize;
 
    public SaveToFilePageFormat(FormatXmlBean format)
    {
-      _format = format;
       _pc = new PixelCalculater(format);
 
    }
 
+   public SaveToFilePageFormat(Dimension graphPixelSize)
+   {
+      _graphPixelSize = graphPixelSize;
+   }
+
    public double getImageableHeight()
    {
-      return _pc.getPixelHeight();
+      if(null == _pc)
+      {
+         return _graphPixelSize.height;
+      }
+      else
+      {
+         return _pc.getPixelHeight();
+      }
    }
 
    public double getImageableWidth()
    {
-      return _pc.getPixelWidth();
+      if(null == _pc)
+      {
+         return _graphPixelSize.width;
+      }
+      else
+      {
+         return _pc.getPixelWidth();
+      }
    }
 
    public double getImageableX()

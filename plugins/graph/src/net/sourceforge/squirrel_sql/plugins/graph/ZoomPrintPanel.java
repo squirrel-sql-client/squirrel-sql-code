@@ -66,14 +66,14 @@ public class ZoomPrintPanel extends JPanel
 
       btnPrint = new JButton(rsrc.getIcon(GraphPluginResources.IKeys.PRINT_IMAGE));
       Dimension printBtnPrefSize = btnPrint.getPreferredSize();
-      printBtnPrefSize.width -=10;
+      //printBtnPrefSize.width -=10;
       btnPrint.setPreferredSize(printBtnPrefSize);
       // i18n[graph.printGraph=Print graph]
       btnPrint.setToolTipText(s_stringMgr.getString("graph.printGraph"));
 
       btnSaveImages = new JButton(rsrc.getIcon(GraphPluginResources.IKeys.SAVE_IMAGES_TO_FILE));
       Dimension btnCopyToClipPrefSize = btnPrint.getPreferredSize();
-      btnCopyToClipPrefSize.width -=10;
+      //btnCopyToClipPrefSize.width -=10;
       btnSaveImages.setPreferredSize(btnCopyToClipPrefSize);
       // i18n[graph.saveGraphImagesToFile=Copy graph to clipboard]
       btnSaveImages.setToolTipText(s_stringMgr.getString("graph.saveGraphImagesToFile"));

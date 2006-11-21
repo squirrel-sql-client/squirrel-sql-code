@@ -8,8 +8,7 @@ import net.sourceforge.squirrel_sql.fw.util.ExtensionFilter;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.prefs.Preferences;
@@ -40,6 +39,23 @@ public class GraphToFilesCtrlr
             onSaveToFile();
          }
       });
+
+      m_dlg.addWindowListener(new WindowAdapter()
+      {
+
+         public void windowClosing(WindowEvent e)
+         {
+            onClosing();
+         }
+      });
+   }
+
+   private void onClosing()
+   {
+      for (int i = 0; i < _images.length; i++)
+      {
+         _images[i].flush();
+      }
    }
 
    private void onSaveToFile()
