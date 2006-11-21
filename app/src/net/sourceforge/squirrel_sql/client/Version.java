@@ -120,4 +120,19 @@ public class Version
          return false;
       }
    }
+   
+   public static boolean isJDK16OrAbove()
+   {
+      String vmVer = System.getProperty("java.vm.version").substring(0, 3);
+
+      if(vmVer.compareTo("1.6") >= 0)
+      {
+         return true;
+      }
+      else
+      {
+         return false;
+      }
+   }
+
 }
