@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.laf;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2006 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -46,6 +46,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.Version;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 /**
  * Register of Look and Feels.
@@ -57,7 +58,6 @@ class LAFRegister
 	private final static int FONT_KEYS_ARRAY_OTHER = 0;
 	private final static int FONT_KEYS_ARRAY_MENU = 1;
 	private final static int FONT_KEYS_ARRAY_STATIC = 2;
-
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(LAFRegister.class);
 
@@ -501,6 +501,15 @@ class LAFRegister
 				{
 					break;
 				}
+				// Some LAFs don't work under Java 6 or later.
+				if (Version.isJDK16OrAbove()&&
+						(jarName.equalsIgnoreCase("metouia.jar") ||
+								jarName.equalsIgnoreCase("oalnf.jar")))
+				{
+					continue;
+				}
+				
+				
 				File file = new File(stdLafJarDir, jarName);
 				try
 				{

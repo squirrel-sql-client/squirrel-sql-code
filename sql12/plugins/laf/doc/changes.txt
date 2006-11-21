@@ -6,6 +6,7 @@ Look and Feel Plugin Change Log
 
 Enhancements
 ------------
+- Metouia and OYOAHA disabled under Java 6 and later as they don't work.
 - New setting to allow a Look and Feel to set the window border and titlebar.
 - JGoodies Looks upgraded to 2.1pre4.
 - Skin Look and Feel upgraded to 6.7.
