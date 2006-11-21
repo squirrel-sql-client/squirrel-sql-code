@@ -189,26 +189,43 @@ public class ZoomPrintController
    {
       try
       {
-         PageFormat pf = initPrint(true);
 
          ArrayList images = new ArrayList();
 
-         FormatXmlBean format = (FormatXmlBean)_panel.cboFormat.getSelectedItem();
 
-         PixelCalculater pc = new PixelCalculater(format);
-
-         for(int pageIndex = 0;; ++pageIndex)
+         if (_panel.chkShowEdges.isSelected())
          {
-            BufferedImage img = new BufferedImage(pc.getPixelWidth(), pc.getPixelHeight(), BufferedImage.TYPE_INT_RGB);
-            img.getGraphics().setColor(Color.white);
-            img.getGraphics().fillRect(0,0,pc.getPixelWidth(), pc.getPixelHeight());
-            img.getGraphics().setColor(Color.black);
-            int pageState = _printable.print(img.getGraphics(), pf, pageIndex);
 
-            if(Printable.NO_SUCH_PAGE == pageState)
+            PageFormat pf = initPrint(true);
+
+            FormatXmlBean format = (FormatXmlBean) _panel.cboFormat.getSelectedItem();
+
+            PixelCalculater pc = new PixelCalculater(format);
+
+            for (int pageIndex = 0; ; ++pageIndex)
             {
-               break;
+               int pxWidth = pc.getPixelWidth();
+               int pxHeight = pc.getPixelHeight();
+               BufferedImage img = prepareImage(pxWidth, pxHeight);
+               int pageState = _printable.print(img.getGraphics(), pf, pageIndex);
+
+               if (Printable.NO_SUCH_PAGE == pageState)
+               {
+                  break;
+               }
+
+               images.add(img);
             }
+         }
+         else
+         {
+            // No paper edges. We print the Graph as it is to a single image.
+
+            Dimension graphPixelSize = _printable.initPrintNoScaleSinglePage();
+            SaveToFilePageFormat pf = new SaveToFilePageFormat(graphPixelSize);
+
+            BufferedImage img = prepareImage(graphPixelSize.width, graphPixelSize.height);
+            _printable.print(img.getGraphics(), pf, 0);
 
             images.add(img);
          }
@@ -216,11 +233,21 @@ public class ZoomPrintController
          new GraphToFilesCtrlr(
             (BufferedImage[]) images.toArray(new BufferedImage[images.size()]),
             _session.getApplication().getMainFrame());
+
       }
       catch (PrinterException e)
       {
          throw new RuntimeException(e);
       }
+   }
+
+   private BufferedImage prepareImage(int pxWidth, int pxHeight)
+   {
+      BufferedImage img = new BufferedImage(pxWidth, pxHeight, BufferedImage.TYPE_INT_RGB);
+      img.getGraphics().setColor(Color.white);
+      img.getGraphics().fillRect(0, 0, pxWidth, pxHeight);
+      img.getGraphics().setColor(Color.black);
+      return img;
    }
 
    private PageFormat initPrint(boolean isSaveToFile)

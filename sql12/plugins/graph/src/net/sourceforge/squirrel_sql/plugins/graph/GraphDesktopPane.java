@@ -19,8 +19,8 @@ public class GraphDesktopPane extends ScrollableDesktopPane implements GraphPrin
 
    /////////////////////////////////////////////////////////
    // Printing
-   private double _formatWidth;
-   private double _formatHeight;
+   private double _formatWidthInPixel;
+   private double _formatHeightInPixel;
    private double _formatScale;
    private boolean _isPrinting;
    //
@@ -114,19 +114,30 @@ public class GraphDesktopPane extends ScrollableDesktopPane implements GraphPrin
 
    ////////////////////////////////////////////////////////////////////////////////////////
    // Printing
-   public void initPrint(double formatWidth, double formatHeight, double formatScale)
+   public void initPrint(double formatWidthInCm, double formatHeightInCm, double formatScale)
    {
-      _formatWidth = formatWidth;
-      _formatHeight = formatHeight;
+      int pixelByCm = (int) (Toolkit.getDefaultToolkit().getScreenResolution() * EdgesGraphComponent.CM_BY_INCH + 0.5);
+      _formatWidthInPixel = formatWidthInCm * pixelByCm;
+      _formatHeightInPixel = formatHeightInCm * pixelByCm;
       _formatScale = formatScale;
+   }
+
+   public Dimension initPrintNoScaleSinglePage()
+   {
+      Dimension size = getSize();
+      _formatWidthInPixel = size.width;
+      _formatHeightInPixel = size.height;
+      _formatScale = 1;
+
+      return size;
+
    }
 
 
    public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException
    {
-      int pixelByCm = (int) (Toolkit.getDefaultToolkit().getScreenResolution() * EdgesGraphComponent.CM_BY_INCH + 0.5);
-      double edgesWitdthInPixel = _formatWidth * pixelByCm * _formatScale;
-      double edgesHeightInPixel = _formatHeight * pixelByCm * _formatScale;
+      double edgesWitdthInPixel = _formatWidthInPixel * _formatScale;
+      double edgesHeightInPixel = _formatHeightInPixel * _formatScale;
 
 
       int pageCountHorizontal = getPageCountHorizontal(edgesWitdthInPixel);
