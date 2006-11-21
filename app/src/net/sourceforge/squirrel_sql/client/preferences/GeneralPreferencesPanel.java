@@ -24,7 +24,6 @@ import java.awt.Insets;
 
 import javax.swing.*;
 
-import net.sourceforge.squirrel_sql.fw.gui.OutputLabel;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -134,7 +133,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 
          _showContents.setSelected(prefs.getShowContentsWhenDragging());
          _showToolTips.setSelected(prefs.getShowToolTips());
-         _useScrollableTabbedPanes.setSelected(prefs.useScrollableTabbedPanes());
+         _useScrollableTabbedPanes.setSelected(prefs.getUseScrollableTabbedPanes());
          _showMainStatusBar.setSelected(prefs.getShowMainStatusBar());
          _showMainToolBar.setSelected(prefs.getShowMainToolBar());
          _showAliasesToolBar.setSelected(prefs.getShowAliasesToolBar());

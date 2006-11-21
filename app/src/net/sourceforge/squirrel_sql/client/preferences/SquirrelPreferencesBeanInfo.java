@@ -64,7 +64,7 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
             new PropertyDescriptor(SHOW_TOOLTIPS, CLS,
                "getShowToolTips", "setShowToolTips"),
             new PropertyDescriptor(SCROLLABLE_TABBED_PANES, CLS,
-               "useScrollableTabbedPanes", "setUseScrollableTabbedPanes"),
+               "getUseScrollableTabbedPanes", "setUseScrollableTabbedPanes"),
             new IndexedPropertyDescriptor(ACTION_KEYS, CLS,
                "getActionKeys", "setActionKeys",
                "getActionKeys", "setActionKeys"),

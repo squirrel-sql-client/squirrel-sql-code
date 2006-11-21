@@ -64,7 +64,7 @@ public class SquirrelPreferences implements Serializable
       String PLUGIN_OBJECTS = "pluginObjects";
       String PLUGIN_STATUSES = "pluginStatuses";
       String PROXY = "proxyPerferences";
-      String SCROLLABLE_TABBED_PANES = "useScrollableTabbedPanes";
+      String SCROLLABLE_TABBED_PANES = "getUseScrollableTabbedPanes";
       String SESSION_PROPERTIES = "sessionProperties";
       String SHOW_ALIASES_TOOL_BAR = "showAliasesToolBar";
       String SHOW_CONTENTS_WHEN_DRAGGING = "showContentsWhenDragging";
@@ -451,7 +451,7 @@ public class SquirrelPreferences implements Serializable
 		}
 	}
 
-	public boolean useScrollableTabbedPanes()
+	public boolean getUseScrollableTabbedPanes()
 	{
 		return _useScrollableTabbedPanes;
 	}
