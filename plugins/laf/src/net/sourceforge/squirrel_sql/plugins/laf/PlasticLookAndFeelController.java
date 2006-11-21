@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.laf;
 /*
- * Copyright (C) 2003 Colin Bell
+ * Copyright (C) 2003-2006 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -17,7 +17,6 @@ package net.sourceforge.squirrel_sql.plugins.laf;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-//import java.lang.reflect.Method;
 import java.util.Iterator;
 
 import javax.swing.LookAndFeel;
@@ -50,11 +49,7 @@ class PlasticLookAndFeelController extends AbstractPlasticController
 		"com.jgoodies.looks.plastic.PlasticXPLookAndFeel",
 	};
 
-   public static final String DEFAULT_LOOK_AND_FEEL_CLASS_NAME = LAF_CLASS_NAMES[1];
-
-
-	/** Name of package that contains Plastic Themes. */
-	private static final String THEME_PACKAGE = "com.jgoodies.looks.plastic.theme";
+	public static final String DEFAULT_LOOK_AND_FEEL_CLASS_NAME = LAF_CLASS_NAMES[1];
 
 	/** Base class for all Plastic themes. */
 	private static final String THEME_BASE_CLASS = "com.jgoodies.looks.plastic.PlasticTheme";

@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Properties;
-
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.LookAndFeel;
@@ -39,12 +38,10 @@ import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.UIManager.LookAndFeelInfo;
-
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.util.MyURLClassLoader;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.Version;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
@@ -60,13 +57,10 @@ class LAFRegister
 	private final static int FONT_KEYS_ARRAY_STATIC = 2;
 	/** Logger for this class. */
 	private static ILogger s_log = LoggerController.createLogger(LAFRegister.class);
-
-	// What about these
+	// TODO: What about these
 	// Viewport.font, ColorChooser.font, InternalFrame.font,
 	// OptionPane.font, "Panel.font",
 	// ScrollPane.font, DesktopIcon.font
-	// 
-
 	private final static String[][] FONT_KEYS = {
 		// Editable Text
 		{
@@ -80,7 +74,6 @@ class LAFRegister
 			"TextPane.font",
 			"Tree.font",
 		},
-
 		// Menus
 		{
 			"CheckBoxMenuItem.acceleratorFont",
@@ -94,7 +87,6 @@ class LAFRegister
 			"RadioButtonMenuItem.acceleratorFont",
 			"RadioButtonMenuItem.font",
 		},
-
 		// Static text
 		{
 			"Button.font",
@@ -111,31 +103,24 @@ class LAFRegister
 			"ToolTip.font",
 		},
 	};
-
 	/** Application API. */
 	private IApplication _app;
-
 	/** Look and Feel plugin. */
 	private LAFPlugin _plugin;
-
 	/** Classloader for Look and Feel classes. */
 	private MyURLClassLoader _lafClassLoader;
-
 	/**
 	 * Collection of <TT>ILookAndFeelController</TT> objects keyed by
 	 * the Look and Feel class name.
 	 */
 	private Map _lafControllers = new HashMap();
-
 	/**
 	 * Default LAF controller. Used if a specialised one isn't available for
      * the LAF in _lafControllers.
      */
 	private ILookAndFeelController _dftLAFController = new DefaultLookAndFeelController();
-
 	/** <UI defaults prior to us modifying them. */
 	private UIDefaults _origUIDefaults;
-
 	/**
 	 * Ctor. Load all Look and Feels from the Look and Feel folder. Set the
 	 * current Look and Feel to that specified in the application preferences.
@@ -157,13 +142,10 @@ class LAFRegister
 		{
 			throw new IllegalArgumentException("Null LAFPlugin passed");
 		}
-
 		_app = app;
 		_plugin = plugin;
-
 		// Save the current UI defaults.
 		_origUIDefaults = (UIDefaults)UIManager.getDefaults().clone();
-
 		installLookAndFeels();
 		installLookAndFeelControllers(plugin);
 		try
@@ -184,12 +166,10 @@ class LAFRegister
 			s_log.error("Error updating application fonts", ex);
 		}
 	}
-
 	LAFPlugin getPlugin()
 	{
 		return _plugin;
 	}
-
 	/**
 	 * Return the class loader used to load the Look and Feels.
 	 * 
@@ -199,7 +179,6 @@ class LAFRegister
 	{
 		return _lafClassLoader;
 	}
-
 	/**
 	 * Get a Look and Feel Controller for the passed L&F class name.
 	 * 
@@ -216,7 +195,6 @@ class LAFRegister
 		{
 			throw new IllegalArgumentException("lafClassName == null");
 		}
-
 		ILookAndFeelController ctrl = (ILookAndFeelController)_lafControllers.get(lafClassName);
 		if (ctrl == null)
 		{
@@ -224,7 +202,6 @@ class LAFRegister
 		}
 		return ctrl;
 	}
-
 	/**
 	 * Set the font that the application uses for statusbars.
 	 */
@@ -236,7 +213,6 @@ class LAFRegister
 				_plugin.getLAFPreferences().getStatusBarFontInfo());
 		}
 	}
-
 	/**
 	 * Set the current Look and Feel to that specified in the app preferences.
 	 */
@@ -246,7 +222,6 @@ class LAFRegister
 	{
 		final LAFPreferences prefs = _plugin.getLAFPreferences();
 		final String lafClassName = prefs.getLookAndFeelClassName();
-
 		// Get Look and Feel class object.
 		Class lafClass = null;
 		if (_lafClassLoader != null)
@@ -257,10 +232,8 @@ class LAFRegister
 		{
 			lafClass = Class.forName(lafClassName);
 		}
-
 		// Get the new Look and Feel object.
 		final LookAndFeel laf = (LookAndFeel)lafClass.newInstance();
-
 		// If a different LAF to the current one has been requested then
 		// change to the requested LAF.
 		LookAndFeel curLaf = UIManager.getLookAndFeel();
@@ -282,7 +255,6 @@ class LAFRegister
 			}
 	
 			lafCont.hasBeenInstalled(this, laf);
-
 			updateAllFrames();
 		}
 	}
@@ -292,14 +264,12 @@ class LAFRegister
 		JFrame.setDefaultLookAndFeelDecorated(prefs.getCanLAFSetBorder());
 		JDialog.setDefaultLookAndFeelDecorated(prefs.getCanLAFSetBorder());
 	}
-
 	/**
 	 * Update the applications fonts.
 	 */
 	void updateApplicationFonts()
 	{
 		final LAFPreferences prefs = _plugin.getLAFPreferences();
-
 		FontInfo fi = prefs.getMenuFontInfo();
 		String[] keys = FONT_KEYS[FONT_KEYS_ARRAY_MENU];
 		for (int i = 0; i < keys.length; ++i)
@@ -316,7 +286,6 @@ class LAFRegister
 				UIManager.put(keys[i], _origUIDefaults.getFont(keys[i]));
 			}
 		}
-
 		fi = prefs.getStaticFontInfo();
 		keys = FONT_KEYS[FONT_KEYS_ARRAY_STATIC];
 		for (int i = 0; i < keys.length; ++i)
@@ -333,7 +302,6 @@ class LAFRegister
 				UIManager.put(keys[i], _origUIDefaults.getFont(keys[i]));
 			}
 		}
-
 		fi = prefs.getOtherFontInfo();
 		keys = FONT_KEYS[FONT_KEYS_ARRAY_OTHER];
 		for (int i = 0; i < keys.length; ++i)
@@ -351,7 +319,6 @@ class LAFRegister
 			}
 		}
 	}
-
 	/**
 	 * Update all open frames for the new Look and Feel info.
 	 */
@@ -367,7 +334,6 @@ class LAFRegister
 			}
 		}
 	}
-
 	/**
 	 * Install Look and Feels from their jars.
 	 */
@@ -375,14 +341,12 @@ class LAFRegister
 	{
 		// Map of JAR file URLs containing LAFs keyed by the LAF class name.
 		final Map lafs = loadInstallProperties();
-
 		// Retrieve URLs of all the Look and Feel jars and store in lafUrls.
 		final List lafUrls = new ArrayList();
 		for (Iterator it = lafs.values().iterator(); it.hasNext();)
 		{
 			lafUrls.add(it.next());
 		}
-
 		// Create a ClassLoader for all the LAF jars. Install all Look and Feels
 		// into the UIManager.
 		try
@@ -412,9 +376,7 @@ class LAFRegister
 		{
 			s_log.error("Error occured trying to load Look and Feel classes", th);
 		}
-
 	}
-
 	/**
 	 * Install the controllers for those LAFs that require them.
 	 * 
@@ -430,7 +392,6 @@ class LAFRegister
 		{
 			s_log.error("Error installing SkinLookAndFeelController", ex);
 		}
-
 		try
 		{
 			_lafControllers.put(OyoahaLookAndFeelController.OA_LAF_CLASS_NAME, new OyoahaLookAndFeelController(plugin));
@@ -439,7 +400,6 @@ class LAFRegister
 		{
 			s_log.error("Error installing OyoahaLookAndFeelController", ex);
 		}
-
 		try
 		{
 			PlasticLookAndFeelController ctrl = new PlasticLookAndFeelController(plugin, this);
@@ -453,7 +413,6 @@ class LAFRegister
 		{
 			s_log.error("Error installing PlasticLookAndFeelController", ex);
 		}
-
 		try
 		{
 			MetalLookAndFeelController ctrl = new MetalLookAndFeelController(plugin, this);
@@ -463,14 +422,12 @@ class LAFRegister
 		{
 			s_log.error("Error installing PlasticLookAndFeelController", ex);
 		}
-
 		// Initialize all the LAF controllers.
 		for (Iterator it = _lafControllers.values().iterator(); it.hasNext();)
 		{
 			((ILookAndFeelController)it.next()).initialize();
 		}
 	}
-
 	/**
 	 * Load the installation properties and return a <TT>Map</TT>
 	 * keyed by the class name of the LAF and containing a URL to the jar file
@@ -481,10 +438,8 @@ class LAFRegister
 	private Map loadInstallProperties()
 	{
 		Map lafs = new HashMap();
-
 		// Directory containing the standard LAF jar files.
 		final File stdLafJarDir = _plugin.getLookAndFeelFolder();
-
 		// Load info about the standard LAFs that come with this plugin.
 		PluginResources rsrc = _plugin.getResources();
 		for (int i = 0; /* forever */; ++i)
@@ -501,6 +456,7 @@ class LAFRegister
 				{
 					break;
 				}
+				
 				// Some LAFs don't work under Java 6 or later.
 				if (Version.isJDK16OrAbove()&&
 						(jarName.equalsIgnoreCase("metouia.jar") ||
@@ -508,8 +464,7 @@ class LAFRegister
 				{
 					continue;
 				}
-				
-				
+		
 				File file = new File(stdLafJarDir, jarName);
 				try
 				{
@@ -530,7 +485,6 @@ class LAFRegister
 				break;
 			}
 		}
-
 		// Load info about any extra LAFs supplied by the user.
 		try
 		{
@@ -578,7 +532,6 @@ class LAFRegister
 		{
 			s_log.error("Error occured loading extra LAFs property file", ex);
 		}
-
 		return lafs;
 	}
 }
