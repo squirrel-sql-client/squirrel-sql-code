@@ -422,6 +422,14 @@ class LAFRegister
 		{
 			s_log.error("Error installing PlasticLookAndFeelController", ex);
 		}
+		try
+		{
+			_lafControllers.put(TonicLookAndFeelController.TONIC_LAF_CLASS_NAME, new TonicLookAndFeelController(plugin));
+		}
+		catch (Throwable ex)
+		{
+			s_log.error("Error installing SkinLookAndFeelController", ex);
+		}
 		// Initialize all the LAF controllers.
 		for (Iterator it = _lafControllers.values().iterator(); it.hasNext();)
 		{
