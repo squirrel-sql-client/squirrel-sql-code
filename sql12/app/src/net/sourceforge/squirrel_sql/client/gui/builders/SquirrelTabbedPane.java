@@ -19,13 +19,10 @@ package net.sourceforge.squirrel_sql.client.gui.builders;
  */
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 import javax.swing.*;
 
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
-import net.sourceforge.squirrel_sql.client.Version;
 import net.sourceforge.squirrel_sql.client.IApplication;
 
 class SquirrelTabbedPane extends JTabbedPane
@@ -54,7 +51,7 @@ class SquirrelTabbedPane extends JTabbedPane
 		_prefs = prefs;
       _app = app;
 
-      int tabLayoutPolicy = _prefs.useScrollableTabbedPanes() ? JTabbedPane.SCROLL_TAB_LAYOUT : JTabbedPane.WRAP_TAB_LAYOUT;
+      int tabLayoutPolicy = _prefs.getUseScrollableTabbedPanes() ? JTabbedPane.SCROLL_TAB_LAYOUT : JTabbedPane.WRAP_TAB_LAYOUT;
       setTabLayoutPolicy(tabLayoutPolicy);
 	}
 
@@ -88,7 +85,7 @@ class SquirrelTabbedPane extends JTabbedPane
 	{
 		if (propName == null || propName.equals(IAppPrefPropertynames.SCROLLABLE_TABBED_PANES))
 		{
-         int tabLayoutPolicy = _prefs.useScrollableTabbedPanes() ? JTabbedPane.SCROLL_TAB_LAYOUT : JTabbedPane.WRAP_TAB_LAYOUT;
+         int tabLayoutPolicy = _prefs.getUseScrollableTabbedPanes() ? JTabbedPane.SCROLL_TAB_LAYOUT : JTabbedPane.WRAP_TAB_LAYOUT;
          setTabLayoutPolicy(tabLayoutPolicy);
 		}
 	}
