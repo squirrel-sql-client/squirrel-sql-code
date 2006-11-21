@@ -35,7 +35,7 @@ public class Version
 	private static final int MINOR_VERSION = 3;
     // TYPE should be " final", " rc1", " rc2", etc... Note the space prefix
 	private static final String TYPE = ".";
-	private static final int RELEASE = 1;
+	private static final int RELEASE = 2;
 
 	private static final String COPYRIGHT = s_stringMgr.getString("Version.copyright");
 
