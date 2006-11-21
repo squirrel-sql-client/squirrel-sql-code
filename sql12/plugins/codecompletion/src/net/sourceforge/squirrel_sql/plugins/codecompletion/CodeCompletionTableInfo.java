@@ -17,10 +17,11 @@
  */
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
-import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
-
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.Vector;
+
+import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
 
 public class CodeCompletionTableInfo extends CodeCompletionInfo
 {
@@ -81,6 +82,7 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
 
 
          Vector colInfosBuf = new Vector();
+         HashSet uniqCols = new HashSet();
          for (int i = 0; i < schemColInfos.length; i++)
          {
             if(   (null == _catalog || ("" + _catalog).equals("" + schemColInfos[i].getCatalog()))
@@ -92,7 +94,11 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
                int decimalDigits = schemColInfos[i].getDecimalDigits();
                boolean nullable = schemColInfos[i].isNullable();
                CodeCompletionColumnInfo buf = new CodeCompletionColumnInfo(columnName, columnType, columnSize, decimalDigits, nullable);
-               colInfosBuf.add(buf);
+               String bufStr = buf.toString();
+               if (!uniqCols.contains(bufStr)) {
+                   uniqCols.add(bufStr);
+                   colInfosBuf.add(buf);
+               }
             }
          }
 
