@@ -3,6 +3,10 @@ SQuirreL SQL Client Change Log
 
 Not release yet - on the 2.3 final branch:
 
+1508503 (Double entry for each column fields): Don't add the column to the
+list if it is already there - uses the fully qualified version of the column,
+so may still see duplicate columns with different types.
+
 DBCopy plugin: Fixed bug in copying FK constraints where the primary key table 
 name wasn't fully qualified the schema of the destination database.  This was 
 most noticeable when copying tables with FKs into a schema which was not the 
