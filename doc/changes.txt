@@ -119,6 +119,10 @@ DatabaseMetaData if checked.  If not checked, we now use whatever the database
 tells us the ref action is (before we weren't bothering to check the with 
 the database.  Now we do, by default)
 
+1508503: (Double entry for each column fields): Don't add the column to the 
+list if it is already there - uses the fully qualified version of the column, 
+so may still see duplicate columns with different types.
+
 Bug Fix: Editing data in multiple tables would sometimes fail erroneously with
 an error message like "This row in the Database has changed since you 
 refreshed the data. No rows will be updated by this operation".
