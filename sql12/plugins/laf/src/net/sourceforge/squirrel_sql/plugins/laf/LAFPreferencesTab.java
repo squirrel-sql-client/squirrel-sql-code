@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.laf;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2006 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -65,9 +65,6 @@ public class LAFPreferencesTab implements IGlobalPreferencesPanel
 
 	/** LAF panel to display in the Global preferences dialog. */
 	private LAFPreferencesPanel _myPanel;
-
-	/** Application API. */
-	//private IApplication _app;
 
 	/**
 	 * Ctor.

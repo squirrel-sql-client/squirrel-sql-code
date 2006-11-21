@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.laf;
 /*
- * Copyright (C) 2003 Colin Bell
+ * Copyright (C) 2003-2006 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -19,14 +19,12 @@ package net.sourceforge.squirrel_sql.plugins.laf;
  */
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
-
 public final class LAFPluginResources extends PluginResources
 {
 	LAFPluginResources(IPlugin plugin)
 	{
 		super(LAFPluginResources.class.getName(), plugin);
 	}
-
 	interface IKeys
 	{
 		String CLASSNAME = "classname";

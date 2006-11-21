@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.laf;
 /*
- * Copyright (C) 2002-2003 Colin Bell
+ * Copyright (C) 2002-2006 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -29,17 +29,14 @@ public interface ILookAndFeelController
 	 * Initialization.
 	 */
 	void initialize();
-
 	/**
 	 * This Look and Feel is about to be installed.
 	 */
 	void aboutToBeInstalled(LAFRegister lafRegister, LookAndFeel laf);
-
 	/**
 	 * This Look and Feel has just been installed.
 	 */
 	void hasBeenInstalled(LAFRegister lafRegister, LookAndFeel laf);
-
 	/**
 	 * Return the component to display in the Look and Feel Preferences
 	 * panel to configure this Look and Feel. Return <TT>null</TT> if no

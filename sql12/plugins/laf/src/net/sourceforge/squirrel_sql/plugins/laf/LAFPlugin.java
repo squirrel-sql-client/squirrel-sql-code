@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.laf;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2006 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -22,10 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
 
-import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
-import javax.swing.UIManager;
 
 import com.jgoodies.looks.Options;
 

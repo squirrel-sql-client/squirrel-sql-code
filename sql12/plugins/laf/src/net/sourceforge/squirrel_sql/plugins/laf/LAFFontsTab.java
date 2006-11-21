@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.laf;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2006 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -61,7 +61,7 @@ class LAFFontsTab implements IGlobalPreferencesPanel
 	private LAFPlugin _plugin;
 
 	/** Plugin preferences object. */
-	private LAFPreferences _prefs;
+	//private LAFPreferences _prefs;
 
 	/** Look and Feel register. */
 	private LAFRegister _lafRegister;
@@ -70,7 +70,7 @@ class LAFFontsTab implements IGlobalPreferencesPanel
 	private FontSelectionPanel _myPanel;
 
 	/** Application API. */
-	private IApplication _app;
+	//private IApplication _app;
 
 	/**
 	 * Ctor.
@@ -93,7 +93,7 @@ class LAFFontsTab implements IGlobalPreferencesPanel
 			throw new IllegalArgumentException("Null LAFRegister passed");
 		}
 		_plugin = plugin;
-		_prefs = plugin.getLAFPreferences();
+		//_prefs = plugin.getLAFPreferences();
 		_lafRegister = lafRegister;
 	}
 
@@ -111,8 +111,8 @@ class LAFFontsTab implements IGlobalPreferencesPanel
 		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
-		_app = app;
-		((FontSelectionPanel) getPanelComponent()).loadData();
+		//_app = app;
+		((FontSelectionPanel)getPanelComponent()).loadData();
 	}
 
    public void uninitialize(IApplication app)

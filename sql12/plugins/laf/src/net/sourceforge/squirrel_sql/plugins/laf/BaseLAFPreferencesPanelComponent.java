@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.laf;
 /*
- * Copyright (C) 2002 Colin Bell
+ * Copyright (C) 2002-2006 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -18,7 +18,6 @@ package net.sourceforge.squirrel_sql.plugins.laf;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.awt.LayoutManager;
-
 import javax.swing.JPanel;
 /**
  * Base class for any LAF Controller component to be placed in the
@@ -32,19 +31,16 @@ abstract class BaseLAFPreferencesPanelComponent extends JPanel
 	{
 		super();
 	}
-
 	BaseLAFPreferencesPanelComponent(LayoutManager lmgr)
 	{
 		super(lmgr);
 	}
-
 	/**
 	 * Called when this Look and Feel is specified in the preferences panel.
 	 */
 	public void loadPreferencesPanel()
 	{
 	}
-
 	/**
 	 * Called when this Look and Feel is specified in the preferences panel
 	 * and save is requested. Returing <TT>true</TT> will cause the LAF
