@@ -15,7 +15,7 @@ import java.util.prefs.Preferences;
 
 public class GraphToFilesCtrlr
 {
-   GraphToFilesDlg m_dlg;
+   GraphToFilesDlg _dlg;
 
    private static final String PREF_KEY_LAST_IMAGE_DIR = "SquirrelSQL.graph.lastImageDir";
 
@@ -29,10 +29,20 @@ public class GraphToFilesCtrlr
    {
       _images = images;
       _mainFrame = mainFrame;
-      m_dlg = new GraphToFilesDlg(mainFrame, images);
+      _dlg = new GraphToFilesDlg(mainFrame, images);
+
+      _dlg.btnClose.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onClosing();
+            _dlg.setVisible(false);
+            _dlg.dispose();
+         }
+      });
 
 
-      m_dlg.btnSaveToFile.addActionListener(new ActionListener()
+      _dlg.btnSaveToFile.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
          {
@@ -40,7 +50,7 @@ public class GraphToFilesCtrlr
          }
       });
 
-      m_dlg.addWindowListener(new WindowAdapter()
+      _dlg.addWindowListener(new WindowAdapter()
       {
 
          public void windowClosing(WindowEvent e)
