@@ -301,6 +301,10 @@
 			<param name="p_rebuild" value="${rebuild.plugin.graph}"/>
 		</antcall>
 		<antcall target="build_plugin">
+			<param name="p_internal_name" value="informix"/>
+			<param name="p_rebuild" value="${rebuild.plugin.informix}"/>			
+		</antcall>		
+		<antcall target="build_plugin">
 			<param name="p_internal_name" value="isqlj"/>
 			<param name="p_rebuild" value="${rebuild.plugin.isqlj}"/>			
 		</antcall>		
