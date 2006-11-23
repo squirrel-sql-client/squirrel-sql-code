@@ -290,7 +290,13 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void requestFocus()
 	{
-		_textArea.requestFocus();
+      SwingUtilities.invokeLater(new Runnable()
+      {
+         public void run()
+         {
+            _textArea.requestFocus();
+         }
+      });
 	}
 
 
