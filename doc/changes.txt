@@ -63,6 +63,9 @@ get this information.
 
 	Bug-Fixes:
 
+Bugfix: Added support for Informix way of referring to database objects within 
+catalog and schema as catalog:"schema".objectname.
+
 DBCopy plugin: Fixed bug in copying FK constraints where the primary key table 
 name wasn't fully qualified the schema of the destination database.  This was 
 most noticeable when copying tables with FKs into a schema which was not the 
