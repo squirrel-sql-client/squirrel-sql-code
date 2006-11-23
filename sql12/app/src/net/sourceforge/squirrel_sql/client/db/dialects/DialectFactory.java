@@ -213,6 +213,11 @@ public class DialectFactory {
         return dialectSupportsProduct(session, hsqlDialect)
                 || testSessionDialect(session, HSQLDialect.class);
     }    
+
+    public static boolean isInformixSession(ISession session) {
+        return dialectSupportsProduct(session, informixDialect)
+                || testSessionDialect(session, InformixDialect.class);
+    }    
     
     public static boolean isIngresSession(ISession session) {
         return dialectSupportsProduct(session, ingresDialect)
@@ -380,6 +385,9 @@ public class DialectFactory {
         }
         if (isHSQLSession(session)) {
             return hsqlDialect;
+        }
+        if (isInformixSession(session)) {
+            return informixDialect;
         }
         if (isIngresSession(session)) {
             return ingresDialect;

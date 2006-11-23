@@ -18,6 +18,8 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
+import java.sql.Types;
+
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
@@ -30,32 +32,32 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect
     
     public InformixDialect() {
         super();
-        /*
-         * TODO: hookup with informix spec and adjust these as necessary.
-         * 
-        registerColumnType(Types.BIGINT, "int8");
-        registerColumnType(Types.BINARY, 2000000000,"bit varying($l)");
-        registerColumnType(Types.BIT, "bit(1)");
-        registerColumnType(Types.BLOB, 2000000000, "blob");
-        registerColumnType(Types.BOOLEAN, "bit");
-        registerColumnType(Types.CHAR, 2000000000, "char($l)");
-        registerColumnType(Types.CLOB, 2000000000, "clob");
+        registerColumnType(Types.BIGINT, "integer");
+        registerColumnType(Types.BINARY, "byte");
+        registerColumnType(Types.BIT, "byte");
+        registerColumnType(Types.BLOB, "byte");
+        registerColumnType(Types.BOOLEAN, "smallint");
+        registerColumnType(Types.CHAR, 32511, "char($l)");
+        registerColumnType(Types.CHAR, "char(32511)");
+        registerColumnType(Types.CLOB, "text");
         registerColumnType(Types.DATE, "date");
-        registerColumnType(Types.DECIMAL, "money");
-        registerColumnType(Types.DOUBLE, "double precision");
+        registerColumnType(Types.DECIMAL, "decimal($p,$s)");
+        registerColumnType(Types.DOUBLE, 15, "float($l)");
+        registerColumnType(Types.DOUBLE, "float(15)");
         registerColumnType(Types.FLOAT, 15, "float($l)");
+        registerColumnType(Types.FLOAT, "float(15)");
         registerColumnType(Types.INTEGER, "integer");        
-        registerColumnType(Types.LONGVARBINARY, 2000000000, "byte");
-        registerColumnType(Types.LONGVARCHAR, 31995, "test");
-        registerColumnType(Types.NUMERIC, "numeric(17,2)");
-        registerColumnType(Types.REAL, "smallfloat");
-        registerColumnType(Types.SMALLINT, "smallint");
+        registerColumnType(Types.LONGVARBINARY, "byte");
+        registerColumnType(Types.LONGVARCHAR, "text");
+        registerColumnType(Types.NUMERIC, "numeric($p,$s)");
+        registerColumnType(Types.REAL, "real");
+        registerColumnType(Types.SMALLINT, "smallint"); 
         registerColumnType(Types.TIME, "datetime hour to second");
-        registerColumnType(Types.TIMESTAMP, "datetime year to second");
-        registerColumnType(Types.TINYINT, "tinyint");
-        registerColumnType(Types.VARBINARY, 31995, "bit varying($l)");
-        registerColumnType(Types.VARCHAR, 2000000000,"lvarchar($l)");  
-        */      
+        registerColumnType(Types.TIMESTAMP, "datetime");
+        registerColumnType(Types.TINYINT, "smallint");
+        registerColumnType(Types.VARBINARY, "byte");
+        registerColumnType(Types.VARCHAR, 255, "varchar($l)");
+        registerColumnType(Types.VARCHAR, "text");
     }    
     
     /* (non-Javadoc)
@@ -90,7 +92,13 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect
      * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getMaxPrecision(int)
      */
     public int getMaxPrecision(int dataType) {
-        return 0;
+        if (dataType == Types.DECIMAL || dataType == Types.NUMERIC) {
+            return 32;
+        }
+        if (dataType == Types.DOUBLE || dataType == Types.DOUBLE) {
+            return 16;
+        }
+        return 32;
     }
 
     /* (non-Javadoc)
@@ -158,34 +166,11 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect
      *         adding columns after a table has already been created.
      */
     public String[] getColumnAddSQL(TableColumnInfo info) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("This database dialect doesn't support adding columns to tables");
+        return new String[] {
+            DialectUtils.getColumnAddSQL(info, this, true, false)
+        };
     }
 
-    /**
-     * Returns a boolean value indicating whether or not this dialect supports
-     * adding comments to columns.
-     * 
-     * @return true if column comments are supported; false otherwise.
-     */
-    public boolean supportsColumnComment() {
-        return false;
-    }    
-    
-    /**
-     * Returns the SQL statement to use to add a comment to the specified 
-     * column of the specified table.
-     * 
-     * @param tableName the name of the table to create the SQL for.
-     * @param columnName the name of the column to create the SQL for.
-     * @param comment the comment to add.
-     * @return
-     * @throws UnsupportedOperationException if the database doesn't support 
-     *         annotating columns with a comment.
-     */
-    public String getColumnCommentAlterSQL(String tableName, String columnName, String comment) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("This database dialect doesn't support adding comments to columns");
-    }
-    
     /**
      * Returns a boolean value indicating whether or not this database dialect
      * supports dropping columns from tables.
@@ -193,7 +178,6 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect
      * @return true if the database supports dropping columns; false otherwise.
      */
     public boolean supportsDropColumn() {
-        // TODO: need to verify this
         return true;
     }
 
@@ -208,7 +192,6 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect
      *         dropping columns. 
      */
     public String getColumnDropSQL(String tableName, String columnName) {
-        // TODO: Need to verify this        
         return DialectUtils.getColumnDropSQL(tableName, columnName);
     }
 
@@ -225,25 +208,39 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect
      * @return the drop SQL command.
      */
     public String getTableDropSQL(String tableName, boolean cascadeConstraints){
-        // TODO: Need to verify this
-        return DialectUtils.getTableDropSQL(tableName, true, cascadeConstraints);
+        return DialectUtils.getTableDropSQL(tableName, 
+                                            true, 
+                                            cascadeConstraints);
     }
     
     /**
      * Returns the SQL that forms the command to add a primary key to the 
      * specified table composed of the given column names.
      * 
+     * alter table table_name add constraint primary key (column_names) constraint pkName
+     * 
      * @param pkName the name of the constraint
      * @param columnNames the columns that form the key
      * @return
      */
     public String[] getAddPrimaryKeySQL(String pkName, 
-                                      TableColumnInfo[] columnNames) 
+                                        TableColumnInfo[] columns) 
     {
-        // TODO: implement
-        throw new UnsupportedOperationException("getAddPrimaryKeySQL not implemented");
+        return new String[] {
+            DialectUtils.getAddPrimaryKeySQL(pkName, columns, true)
+        };
     }
     
+    /**
+     * Returns a boolean value indicating whether or not this dialect supports
+     * adding comments to columns.
+     * 
+     * @return true if column comments are supported; false otherwise.
+     */
+    public boolean supportsColumnComment() {
+        return false;
+    }    
+                
     /**
      * Returns the SQL statement to use to add a comment to the specified 
      * column of the specified table.
@@ -254,9 +251,20 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect
      */
     public String getColumnCommentAlterSQL(TableColumnInfo info) 
         throws UnsupportedOperationException
-    {
-        // TODO: implement        
-        throw new UnsupportedOperationException("Not yet implemented");
+    {     
+        int featureId = DialectUtils.COLUMN_COMMENT_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);
+    }
+    
+    /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports changing a column from null to not-null and vice versa.
+     * 
+     * @return true if the database supports dropping columns; false otherwise.
+     */    
+    public boolean supportsAlterColumnNull() {
+        return true;
     }
     
     /**
@@ -267,8 +275,11 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect
      * @return the SQL to execute
      */
     public String getColumnNullableAlterSQL(TableColumnInfo info) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not yet implemented");
+        String alterClause = DialectUtils.MODIFY_CLAUSE;
+        return DialectUtils.getColumnNullableAlterSQL(info, 
+                                                      this, 
+                                                      alterClause, 
+                                                      true);
     }
 
     /**
@@ -279,7 +290,6 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect
      *         false otherwise.
      */
     public boolean supportsRenameColumn() {
-        // TODO: need to verify this
         return true;
     }    
     
@@ -293,12 +303,13 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect
      * @return the SQL to make the change
      */
     public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not yet implemented");
+        return DialectUtils.getColumnRenameSQL(from, to);
     }
     
     /**
      * Returns the SQL that is used to change the column type.
+     * 
+     * alter table table_name modify column_name datatype
      * 
      * @param from the TableColumnInfo as it is
      * @param to the TableColumnInfo as it wants to be
@@ -311,21 +322,16 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect
                                         TableColumnInfo to)
         throws UnsupportedOperationException
     {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not Yet Implemented");
+        String alterClause = DialectUtils.MODIFY_CLAUSE;
+        String setClause = null;
+        return DialectUtils.getColumnTypeAlterSQL(this, 
+                                                  alterClause, 
+                                                  setClause, 
+                                                  false, 
+                                                  from, 
+                                                  to);
     }
    
-    /**
-     * Returns a boolean value indicating whether or not this database dialect
-     * supports changing a column from null to not-null and vice versa.
-     * 
-     * @return true if the database supports dropping columns; false otherwise.
-     */    
-    public boolean supportsAlterColumnNull() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
     /**
      * Returns a boolean value indicating whether or not this database dialect
      * supports changing a column's default value.
@@ -334,7 +340,6 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect
      *         otherwise
      */
     public boolean supportsAlterColumnDefault() {
-        // TODO Need to verify this
         return true;
     }
     
@@ -345,8 +350,13 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect
      * @return SQL to make the change
      */
     public String getColumnDefaultAlterSQL(TableColumnInfo info) {
-        // TODO need to implement or change the message
-        throw new UnsupportedOperationException("Not yet implemented");
+        String alterClause = DialectUtils.MODIFY_CLAUSE;
+        String defaultClause = DialectUtils.DEFAULT_CLAUSE;
+        return DialectUtils.getColumnDefaultAlterSQL(this, 
+                                                     info, 
+                                                     alterClause, 
+                                                     true, 
+                                                     defaultClause);
     }
     
 }

@@ -257,7 +257,7 @@ public class PostgreSQLDialect
                                       TableColumnInfo[] colInfos) 
     {
         return new String[] { 
-            DialectUtils.getAddPrimaryKeySQL(pkName, colInfos)
+            DialectUtils.getAddPrimaryKeySQL(pkName, colInfos, false)
         };
     }
     

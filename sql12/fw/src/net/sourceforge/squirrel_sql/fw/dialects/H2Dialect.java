@@ -623,9 +623,9 @@ public class H2Dialect extends Dialect implements HibernateDialect {
     public String getColumnDefaultAlterSQL(TableColumnInfo info) {
         String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
         String defaultClause = DialectUtils.SET_DEFAULT_CLAUSE;
-        return DialectUtils.getColumnDefaultAlterSQL(info, 
-                                                     alterClause, 
-                                                     defaultClause);
+        return DialectUtils.getColumnDefaultAlterSQL(this, 
+                                                     info, 
+                                                     alterClause, false, defaultClause);
     }
     
 }
