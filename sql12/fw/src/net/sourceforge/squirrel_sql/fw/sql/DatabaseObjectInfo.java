@@ -160,8 +160,8 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
            result.append(_schema);
            result.append("\"");
            result.append(".");
-           result.append(_simpleName);
        }
+       result.append(_simpleName);
        return result.toString();
    }
    
