@@ -187,11 +187,7 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
       }
       try
       {
-          if (md.getDatabaseProductName().toLowerCase().startsWith("informix")) {
-              supportsSchemasInDataManipulation = false;
-          } else {
-              supportsCatalogsInDataManipulation = md.supportsCatalogsInDataManipulation();
-          }
+          supportsCatalogsInDataManipulation = md.supportsCatalogsInDataManipulation();
       }
       catch (SQLException ignore)
       {
@@ -263,7 +259,7 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
             buf.append(identifierQuoteString);
          }
          
-         buf.append(".");
+         //buf.append(".");
          buf.append(catSep);
       }
 
