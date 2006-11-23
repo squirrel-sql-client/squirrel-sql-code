@@ -213,7 +213,7 @@ public class MAXDBDialect extends SAPDBDialect
             TableColumnInfo info = columns[i];
             result.add(getColumnNullableAlterSQL(info, false));
         }
-        result.add(DialectUtils.getAddPrimaryKeySQL(pkName, columns));
+        result.add(DialectUtils.getAddPrimaryKeySQL(pkName, columns, false));
         return (String[])result.toArray(new String[result.size()]);
     }
     
@@ -374,8 +374,8 @@ public class MAXDBDialect extends SAPDBDialect
         } else {
             defaultClause = DialectUtils.DROP_DEFAULT_CLAUSE;
         }
-        return DialectUtils.getColumnDefaultAlterSQL(info, 
-                alterClause, 
-                defaultClause);
+        return DialectUtils.getColumnDefaultAlterSQL(this, 
+                info, 
+                alterClause, false, defaultClause);
     }
 }

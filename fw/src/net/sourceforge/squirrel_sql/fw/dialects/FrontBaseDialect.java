@@ -27,12 +27,6 @@ import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 /**
  * An extension to the standard Hibernate dialect
  * 
- * TODO: Progress specification says that the sum of all column lengths of a 
- *       table row may not exceed 31960.  Need to add an interface method to 
- *       the HibernateDialect interface that takes an array of lengths and 
- *       and checks the sum of columns for a row.  This maximum number may be 
- *       different across databases so this check method needs to be 
- *       implemented by each dialect.
  */
 public class FrontBaseDialect extends org.hibernate.dialect.FrontBaseDialect 
                              implements HibernateDialect {
@@ -275,7 +269,6 @@ public class FrontBaseDialect extends org.hibernate.dialect.FrontBaseDialect
      * @return the drop SQL command.
      */
     public String getTableDropSQL(String tableName, boolean cascadeConstraints){
-        // TODO: Need to verify this
         return DialectUtils.getTableDropSQL(tableName, true, cascadeConstraints);
     }
     

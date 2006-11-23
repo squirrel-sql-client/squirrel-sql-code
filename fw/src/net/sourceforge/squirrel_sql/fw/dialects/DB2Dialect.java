@@ -281,7 +281,9 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect
      *         dropping columns. 
      */
     public String getColumnDropSQL(String tableName, String columnName) {
-        throw new UnsupportedOperationException("DB2 doesn't support dropping columns");
+        int featureId = DialectUtils.COLUMN_DROP_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);        
     }
     
     /**
@@ -314,7 +316,7 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect
                                         TableColumnInfo[] columns) 
     {
         return new String[] {
-            DialectUtils.getAddPrimaryKeySQL(pkName, columns)
+            DialectUtils.getAddPrimaryKeySQL(pkName, columns, false)
         };
     }
     
@@ -380,7 +382,9 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect
      * @return the SQL to execute
      */
     public String getColumnNullableAlterSQL(TableColumnInfo info) {
-        throw new UnsupportedOperationException("No support for changing column null attribute for DB2");
+        int featureId = DialectUtils.COLUMN_NULL_ALTER_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);
     }
     
     /**
@@ -403,8 +407,12 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect
      * 
      * @return the SQL to make the change
      */
-    public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to) {
-        throw new UnsupportedOperationException("DB2 doesn't support changing column names");
+    public String getColumnNameAlterSQL(TableColumnInfo from, 
+                                        TableColumnInfo to) 
+    {
+        int featureId = DialectUtils.COLUMN_NAME_ALTER_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);
     }
     
     /**
@@ -455,8 +463,10 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect
     public String getColumnDefaultAlterSQL(TableColumnInfo info) {
         String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
         String defaultClause = DialectUtils.SET_DEFAULT_CLAUSE;
-        return DialectUtils.getColumnDefaultAlterSQL(info, 
+        return DialectUtils.getColumnDefaultAlterSQL(this, 
+                                                     info, 
                                                      alterClause, 
+                                                     false, 
                                                      defaultClause);
     }
     

@@ -208,8 +208,9 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
     }
 
     public String getModifyColumnNullabilitySQL(String tableName, 
-                                            TableColumnInfo info,
-                                            boolean nullable) {
+                                                TableColumnInfo info,
+                                                boolean nullable) 
+    {
         StringBuffer result = new StringBuffer();
         result.append(" ALTER TABLE ");
         result.append(tableName);
@@ -226,12 +227,13 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
     }
     
     /**
-     * Returns a boolean value indicating whether or not this dialect supports
-     * adding comments to columns.
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports changing a column's default value.
      * 
-     * @return true if column comments are supported; false otherwise.
+     * @return true if the database supports modifying column defaults; false 
+     *         otherwise
      */
-    public boolean supportsColumnComment() {
+    public boolean supportsAlterColumnDefault() {
         return true;
     }
     
@@ -255,6 +257,16 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
         result.append(DialectUtils.getTypeName(info, this));
         DialectUtils.appendDefaultClause(info, result);
         return result.toString();
+    }
+    
+    /**
+     * Returns a boolean value indicating whether or not this dialect supports
+     * adding comments to columns.
+     * 
+     * @return true if column comments are supported; false otherwise.
+     */
+    public boolean supportsColumnComment() {
+        return true;
     }
     
     /**
@@ -349,6 +361,16 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
     }
     
     /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports changing a column from null to not-null and vice versa.
+     * 
+     * @return true if the database supports dropping columns; false otherwise.
+     */    
+    public boolean supportsAlterColumnNull() {
+        return true;
+    }
+        
+    /**
      * Returns the SQL used to alter the specified column to not allow null 
      * values
      * 
@@ -363,21 +385,6 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
                                                       this, 
                                                       alterClause, 
                                                       true); 
-        /*
-        StringBuffer result = new StringBuffer();
-        result.append("ALTER TABLE ");
-        result.append(info.getTableName());
-        result.append(" MODIFY ");
-        result.append(info.getColumnName());
-        result.append(" ");
-        result.append(DialectUtils.getTypeName(info, this));
-        if (info.isNullable().equalsIgnoreCase("YES")) {
-            result.append(" NULL");
-        } else {
-            result.append(" NOT NULL");
-        }
-        return result.toString();
-        */
     }
 
     /**
@@ -388,7 +395,6 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
      *         false otherwise.
      */
     public boolean supportsRenameColumn() {
-        // TODO: need to verify this
         return true;
     }
     
@@ -443,27 +449,4 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
         result.append(DialectUtils.getTypeName(to, this));
         return result.toString();
     }
-    
-    /**
-     * Returns a boolean value indicating whether or not this database dialect
-     * supports changing a column from null to not-null and vice versa.
-     * 
-     * @return true if the database supports dropping columns; false otherwise.
-     */    
-    public boolean supportsAlterColumnNull() {
-        return true;
-    }
-    
-    /**
-     * Returns a boolean value indicating whether or not this database dialect
-     * supports changing a column's default value.
-     * 
-     * @return true if the database supports modifying column defaults; false 
-     *         otherwise
-     */
-    public boolean supportsAlterColumnDefault() {
-        // TODO Need to verify this
-        return true;
-    }
-        
 }

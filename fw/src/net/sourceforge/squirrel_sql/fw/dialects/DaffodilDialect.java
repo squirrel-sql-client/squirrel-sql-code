@@ -175,6 +175,10 @@ public class DaffodilDialect extends GenericDialect
 		return false;
 	}    
 
+    public String getAddColumnString() {
+        return "ADD COLUMN";
+    }
+    
     /**
      * Returns the SQL statement to use to add a column to the specified table
      * using the information about the new column specified by info.
@@ -216,7 +220,9 @@ public class DaffodilDialect extends GenericDialect
                                            String comment) 
         throws UnsupportedOperationException 
     {
-        throw new UnsupportedOperationException("This database dialect doesn't support adding comments to columns");
+        int featureId = DialectUtils.COLUMN_COMMENT_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);
     }
     
     /**
@@ -377,8 +383,13 @@ public class DaffodilDialect extends GenericDialect
      * @return SQL to make the change
      */
     public String getColumnDefaultAlterSQL(TableColumnInfo info) {
-        // TODO need to implement or change the message
-        throw new UnsupportedOperationException("Not yet implemented");
+        String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
+        String defaultClause = DialectUtils.SET_DEFAULT_CLAUSE;
+        return DialectUtils.getColumnDefaultAlterSQL(this, 
+                                                     info, 
+                                                     alterClause, 
+                                                     false, 
+                                                     defaultClause);
     }
     
 }

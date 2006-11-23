@@ -23,6 +23,8 @@ import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 /**
  * An extension to the standard Derby dialect
@@ -30,6 +32,26 @@ import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 public class DerbyDialect extends DB2Dialect 
                           implements HibernateDialect {
 
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(DerbyDialect.class);   
+    
+    private static interface i18n {
+        //i18n[DerbyDialect.typeMessage=Derby doesn't allow the column type to 
+        //be altered]
+        String TYPE_MESSAGE = s_stringMgr.getString("DerbyDialect.typeMessage"); 
+        
+        //i18n[DerbyDialect.varcharMessage=Derby only allows varchar columns 
+        //to be altered]
+        String VARCHAR_MESSAGE = 
+            s_stringMgr.getString("DerbyDialect.varcharMessage");
+        
+        //i18n[DerbyDialect.columnLengthMessage=Derby only allows varchar 
+        //column length to be increased]
+        String COLUMN_LENGTH_MESSAGE = 
+            s_stringMgr.getString("DerbyDialect.columnLengthMessage");
+    }
+    
     public DerbyDialect() {
         super();        
         registerColumnType(Types.BIGINT, "bigint");
@@ -165,40 +187,11 @@ public class DerbyDialect extends DB2Dialect
      *         adding columns after a table has already been created.
      */
     public String[] getColumnAddSQL(TableColumnInfo info) throws UnsupportedOperationException {
-        /*
-        StringBuffer result = new StringBuffer();
-        result.append("ALTER TABLE ");
-        result.append(info.getTableName());
-        result.append(" ");
-        result.append(getAddColumnString().toUpperCase());
-        result.append(" ");
-        result.append(info.getColumnName());
-        result.append(" ");
-        result.append(getTypeName(info.getDataType(), 
-                                        info.getColumnSize(), 
-                                        info.getColumnSize(), 
-                                        info.getDecimalDigits()));
-        if (info.isNullable().equals("NO")) {
-            result.append(" NOT NULL ");
-        }        
-        DialectUtils.appendDefaultClause(info, result);
-        return new String[] { result.toString() };
-        */
         return new String[] {
             DialectUtils.getColumnAddSQL(info, this, true, false)
         };
     }
 
-    /**
-     * Returns a boolean value indicating whether or not this dialect supports
-     * adding comments to columns.
-     * 
-     * @return true if column comments are supported; false otherwise.
-     */
-    public boolean supportsColumnComment() {
-        return false;
-    }
-    
     /**
      * Returns a boolean value indicating whether or not this database dialect
      * supports dropping columns from tables.
@@ -222,15 +215,9 @@ public class DerbyDialect extends DB2Dialect
      *         dropping columns. 
      */
     public String getColumnDropSQL(String tableName, String columnName) {
-        /*
-        StringBuffer result = new StringBuffer();
-        result.append("ALTER TABLE ");
-        result.append(tableName);
-        result.append(" DROP COLUMN ");
-        result.append(columnName);
-        return result.toString();
-        */
-        throw new UnsupportedOperationException("Derby doesn't support dropping columns");
+        int featureId = DialectUtils.COLUMN_DROP_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);        
     }
     
     /**
@@ -271,10 +258,20 @@ public class DerbyDialect extends DB2Dialect
                                            false, 
                                            result);
         
-        result.add(DialectUtils.getAddPrimaryKeySQL(pkName, colInfos));
+        result.add(DialectUtils.getAddPrimaryKeySQL(pkName, colInfos, false));
         
         return (String[])result.toArray(new String[result.size()]);
     }
+    
+    /**
+     * Returns a boolean value indicating whether or not this dialect supports
+     * adding comments to columns.
+     * 
+     * @return true if column comments are supported; false otherwise.
+     */
+    public boolean supportsColumnComment() {
+        return false;
+    }    
     
     /**
      * Returns the SQL statement to use to add a comment to the specified 
@@ -287,9 +284,21 @@ public class DerbyDialect extends DB2Dialect
     public String getColumnCommentAlterSQL(TableColumnInfo info) 
         throws UnsupportedOperationException
     {        
-        throw new UnsupportedOperationException("Derby doesn't support column comments");
+        int featureId = DialectUtils.COLUMN_COMMENT_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);        
     }
     
+    /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports changing a column from null to not-null and vice versa.
+     * 
+     * @return true if the database supports dropping columns; false otherwise.
+     */
+    public boolean supportsAlterColumnNull() {
+        return true;
+    }
+        
     /**
      * Returns the SQL used to alter the specified column to not allow null 
      * values
@@ -329,7 +338,9 @@ public class DerbyDialect extends DB2Dialect
      * @return the SQL to make the change
      */
     public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to) {
-        throw new UnsupportedOperationException("Derby doesn't support altering the name of columns");
+        int featureId = DialectUtils.COLUMN_NAME_ALTER_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);        
     }
     
     /**
@@ -355,13 +366,13 @@ public class DerbyDialect extends DB2Dialect
         throws UnsupportedOperationException
     {
         if (from.getDataType() != to.getDataType()) {
-            throw new UnsupportedOperationException("Derby doesn't allow the column type to be altered");
+            throw new UnsupportedOperationException(i18n.TYPE_MESSAGE);
         }
         if (from.getDataType() != Types.VARCHAR) {
-            throw new UnsupportedOperationException("Derby only allows varchar columns to be altered");
+            throw new UnsupportedOperationException(i18n.VARCHAR_MESSAGE);
         }
         if (from.getColumnSize() > to.getColumnSize()) {
-            throw new UnsupportedOperationException("Derby only allows varchar column length to be increased");
+            throw new UnsupportedOperationException(i18n.COLUMN_LENGTH_MESSAGE);
         }
         StringBuffer result = new StringBuffer();
         result.append("ALTER TABLE ");
@@ -373,16 +384,6 @@ public class DerbyDialect extends DB2Dialect
         return result.toString();
     }
 
-    /**
-     * Returns a boolean value indicating whether or not this database dialect
-     * supports changing a column from null to not-null and vice versa.
-     * 
-     * @return true if the database supports dropping columns; false otherwise.
-     */
-    public boolean supportsAlterColumnNull() {
-        return true;
-    }
-    
     /**
      * Returns a boolean value indicating whether or not this database dialect
      * supports changing a column's default value.
@@ -401,8 +402,9 @@ public class DerbyDialect extends DB2Dialect
      * @return SQL to make the change
      */
     public String getColumnDefaultAlterSQL(TableColumnInfo info) {
-        // TODO need to implement or change the message
-        throw new UnsupportedOperationException("Derby doesn't support changing column default values");
+        int featureId = DialectUtils.COLUMN_DEFAULT_ALTER_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);        
     }
     
 }

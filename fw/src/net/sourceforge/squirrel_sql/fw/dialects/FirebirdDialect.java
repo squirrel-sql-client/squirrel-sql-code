@@ -182,31 +182,6 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect
     }
 
     /**
-     * Returns a boolean value indicating whether or not this dialect supports
-     * adding comments to columns.
-     * 
-     * @return true if column comments are supported; false otherwise.
-     */
-    public boolean supportsColumnComment() {
-        return false;
-    }
-    
-    /**
-     * Returns the SQL statement to use to add a comment to the specified 
-     * column of the specified table.
-     * 
-     * @param tableName the name of the table to create the SQL for.
-     * @param columnName the name of the column to create the SQL for.
-     * @param comment the comment to add.
-     * @return
-     * @throws UnsupportedOperationException if the database doesn't support 
-     *         annotating columns with a comment.
-     */
-    public String getColumnCommentAlterSQL(String tableName, String columnName, String comment) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("This database dialect doesn't support adding comments to columns");
-    }
-    
-    /**
      * Returns a boolean value indicating whether or not this database dialect
      * supports dropping columns from tables.
      * 
@@ -280,6 +255,16 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect
     }
     
     /**
+     * Returns a boolean value indicating whether or not this dialect supports
+     * adding comments to columns.
+     * 
+     * @return true if column comments are supported; false otherwise.
+     */
+    public boolean supportsColumnComment() {
+        return false;
+    }
+        
+    /**
      * Returns the SQL statement to use to add a comment to the specified 
      * column of the specified table.
      * @param info information about the column such as type, name, etc.
@@ -290,8 +275,22 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect
     public String getColumnCommentAlterSQL(TableColumnInfo info) 
         throws UnsupportedOperationException
     {
-        throw new UnsupportedOperationException("Firebird doesn't support changing column comments");
+        int featureId = DialectUtils.COLUMN_COMMENT_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);
     }
+    
+    /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports changing a column from null to not-null and vice versa.
+     * 
+     * @return true if the database supports dropping columns; false otherwise.
+     */    
+    public boolean supportsAlterColumnNull() {
+        // Firebird doesn't natively support altering a columns nullable 
+        // property.  Will have to simulate in a future release.
+        return false;
+    }    
     
     /**
      * Returns the SQL used to alter the specified column to not allow null 
@@ -301,7 +300,9 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect
      * @return the SQL to execute
      */
     public String getColumnNullableAlterSQL(TableColumnInfo info) {
-        throw new UnsupportedOperationException("Firebird doesn't support altering a column's nullability");
+        int featureId = DialectUtils.COLUMN_NULL_ALTER_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);        
     }
     
     /**
@@ -359,18 +360,6 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect
 
     /**
      * Returns a boolean value indicating whether or not this database dialect
-     * supports changing a column from null to not-null and vice versa.
-     * 
-     * @return true if the database supports dropping columns; false otherwise.
-     */    
-    public boolean supportsAlterColumnNull() {
-        // Firebird doesn't natively support altering a columns nullable 
-        // property.  Will have to simulate in a future release.
-        return false;
-    }
-    
-    /**
-     * Returns a boolean value indicating whether or not this database dialect
      * supports changing a column's default value.
      * 
      * @return true if the database supports modifying column defaults; false 
@@ -387,7 +376,9 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect
      * @return SQL to make the change
      */
     public String getColumnDefaultAlterSQL(TableColumnInfo info) {
-        throw new UnsupportedOperationException("Firebird doesn't support changing a column's default value");
+        int featureId = DialectUtils.COLUMN_DEFAULT_ALTER_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);
     }
     
 }

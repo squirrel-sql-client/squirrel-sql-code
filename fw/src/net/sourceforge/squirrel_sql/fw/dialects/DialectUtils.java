@@ -23,6 +23,8 @@ import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import org.hibernate.HibernateException;
 
@@ -36,6 +38,10 @@ import org.hibernate.HibernateException;
  */
 public class DialectUtils {
 
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(DialectUtils.class);
+    
     // alter column clauses
     
     public static final String ALTER_COLUMN_CLAUSE = "ALTER COLUMN";
@@ -69,6 +75,18 @@ public class DialectUtils {
     public static final String TYPE_CLAUSE = "TYPE";
     
     public static final String SET_DATA_TYPE_CLAUSE = "SET DATA TYPE";
+    
+    
+    // features
+    
+    public static final int COLUMN_COMMENT_TYPE = 0;
+    public static final int COLUMN_DEFAULT_ALTER_TYPE = 1;
+    public static final int COLUMN_DROP_TYPE = 2;
+    public static final int COLUMN_NAME_ALTER_TYPE = 3;
+    public static final int COLUMN_NULL_ALTER_TYPE = 4;
+    
+    
+    
     /**
      * Returns the SQL statement to use to add a column to the specified table
      * using the information about the new column specified by info.
@@ -321,18 +339,28 @@ public class DialectUtils {
      * Returns the SQL for creating a primary key consisting of the specified 
      * colInfos.
      *  
-     * ALTER TABLE table_name ADD CONSTRAINT constraint_name PRIMARY KEY (col,...); 
+     * ALTER TABLE table_name ADD CONSTRAINT pkName PRIMARY KEY (col,...);
+     * 
+     * or
+     * 
+     * ALTER TABLE table_name ADD CONSTRAINT PRIMARY KEY (col,...) CONSTRAINT pkName;
      *  
      * @param colInfos
+     * @param appendConstraintName whether or not the pkName (constraint name) 
+     *                             should be placed at the end of the statement.
+     *  
      * @return
      */
     public static String getAddPrimaryKeySQL(String pkName, 
-                                             TableColumnInfo[] colInfos) {
+                                             TableColumnInfo[] colInfos, 
+                                             boolean appendConstraintName) {
         StringBuffer pkSQL = new StringBuffer();
         pkSQL.append("ALTER TABLE ");
         pkSQL.append(colInfos[0].getTableName());
         pkSQL.append(" ADD CONSTRAINT ");
-        pkSQL.append(pkName);
+        if (!appendConstraintName) {
+            pkSQL.append(pkName);
+        }
         pkSQL.append(" PRIMARY KEY (");
         for (int i = 0; i < colInfos.length; i++) {
             pkSQL.append(colInfos[i].getColumnName());
@@ -341,6 +369,10 @@ public class DialectUtils {
             }
         }
         pkSQL.append(")");
+        if (appendConstraintName) {
+            pkSQL.append(" CONSTRAINT ");
+            pkSQL.append(pkName);
+        }
         return pkSQL.toString();
     }
     
@@ -379,12 +411,16 @@ public class DialectUtils {
      * ALTER TABLE table_name ALTER COLUMN column_name [defaultClause] 'defaultVal'  
      * 
      * ALTER TABLE table_name ALTER COLUMN column_name [defaultClause] 1234
-     *   
+     * @param dialect TODO
      * @param info the column to modify and it's default value.
+     * @param specifyType TODO
+     *   
      * @return SQL to make the change
      */
-    public static String getColumnDefaultAlterSQL(TableColumnInfo info,
-                                                  String alterClause,
+    public static String getColumnDefaultAlterSQL(HibernateDialect dialect,
+                                                  TableColumnInfo info,
+                                                  String alterClause, 
+                                                  boolean specifyType, 
                                                   String defaultClause) {
         StringBuffer result = new StringBuffer();
         result.append("ALTER TABLE ");
@@ -393,6 +429,10 @@ public class DialectUtils {
         result.append(alterClause);
         result.append(" ");
         result.append(info.getColumnName());
+        result.append(" ");
+        if (specifyType) {
+            result.append(getTypeName(info, dialect));
+        }
         result.append(" ");
         result.append(defaultClause);
         result.append(" ");
@@ -470,4 +510,46 @@ public class DialectUtils {
         return result.toString();
     }
     
+    public static String getUnsupportedMessage(HibernateDialect dialect,
+                                               int featureId) 
+        throws UnsupportedOperationException
+    {
+        String msg = null;
+        switch (featureId) {
+            case COLUMN_COMMENT_TYPE:
+                //i18n[DialectUtils.columnCommentUnsupported={0} doesn''t support
+                //column comments]
+                msg = s_stringMgr.getString("DialectUtils.columnCommentUnsupported",
+                                            dialect.getDisplayName());
+                break;
+            case COLUMN_DEFAULT_ALTER_TYPE:
+                //i18n[DialectUtils.columnDefaultUnsupported={0} doesn''t support
+                //altering a column''s default value]
+                msg = s_stringMgr.getString("DialectUtils.columnDefaultUnsupported",
+                                            dialect.getDisplayName());
+                break;                
+                
+            case COLUMN_DROP_TYPE:
+                //i18n[DialectUtils.columnDropUnsupported={0} doesn''t support
+                //dropping a column]
+                msg = s_stringMgr.getString("DialectUtils.columnDropUnsupported",
+                                            dialect.getDisplayName());
+                break;                                
+            case COLUMN_NAME_ALTER_TYPE:
+                //i18n[DialectUtils.columnNameUnsupported={0} doesn''t support 
+                //altering a column''s name]
+                msg = s_stringMgr.getString("DialectUtils.columnNameUnsupported",
+                                            dialect.getDisplayName());
+                break;                                
+            case COLUMN_NULL_ALTER_TYPE:
+                //i18n[DialectUtils.columnNullUnsupported={0} doesn''t support
+                //altering a column's nullable attribute]
+                msg = s_stringMgr.getString("DialectUtils.columnCommentUnsupported",
+                                            dialect.getDisplayName());
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown featureId: "+featureId);
+        }
+        return msg;
+    }
 }

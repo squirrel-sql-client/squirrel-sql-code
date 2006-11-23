@@ -230,7 +230,7 @@ public class SybaseDialect extends org.hibernate.dialect.SybaseDialect
                                         TableColumnInfo[] columns) 
     {
         return new String[] {
-            DialectUtils.getAddPrimaryKeySQL(pkName, columns)
+            DialectUtils.getAddPrimaryKeySQL(pkName, columns, false)
         };
     }
     
@@ -255,7 +255,9 @@ public class SybaseDialect extends org.hibernate.dialect.SybaseDialect
     public String getColumnCommentAlterSQL(TableColumnInfo info) 
         throws UnsupportedOperationException
     {
-        throw new UnsupportedOperationException("Sybase doesn't support adding comments to columns");
+        int featureId = DialectUtils.COLUMN_COMMENT_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);        
     }
     
     /**
@@ -365,7 +367,9 @@ public class SybaseDialect extends org.hibernate.dialect.SybaseDialect
      * @return SQL to make the change
      */
     public String getColumnDefaultAlterSQL(TableColumnInfo info) {
-        throw new UnsupportedOperationException("Sybase doesn't support modifying a column's default value");
+        int featureId = DialectUtils.COLUMN_DEFAULT_ALTER_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);        
     }
     
 }
