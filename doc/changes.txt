@@ -64,6 +64,9 @@ get this information.
 
 	Bug-Fixes:
 
+
+1601610 - Bug while editing integer/long columns
+
 Bugfix: Added support for Informix way of referring to database objects within 
 catalog and schema as catalog:"schema".objectname.
 

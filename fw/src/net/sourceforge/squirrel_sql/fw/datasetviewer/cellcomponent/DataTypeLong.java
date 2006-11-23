@@ -411,7 +411,8 @@ public class DataTypeLong
 			pstmt.setNull(position, _colDef.getSqlType());
 		}
 		else {
-			pstmt.setInt(position, ((Long)value).intValue());
+			long val = ((Long)value).intValue();
+			pstmt.setLong(position, ((Long)value).longValue());
 		}
 	}
 	
