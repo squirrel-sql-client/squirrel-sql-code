@@ -134,6 +134,14 @@
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/firebird/dist/firebird"/>
 		</pack>				
 
+		<pack required="no" preselected="no" name="Optional Plugin - Informix ">
+			<description>This optional plugin adds functionality that is specific to the Informix DBMS  </description>
+			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/informix/dist/informix.jar"/>
+			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/informix/dist/informix"/>
+		</pack>	
+
 		<pack required="no" preselected="no" name="Optional Plugin - Microsoft SQL Server ">
 			<description>This optional plugin allows you to performs MSSQL-specific commands with a few clicks </description>
 			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" 
