@@ -122,6 +122,49 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
       return generateQualifiedName(conn.getSQLMetaData());
    }
 
+   private boolean isInformix(SQLDatabaseMetaData md) {
+       boolean result = false;
+       try {
+           if (md.getDatabaseProductName().toLowerCase().startsWith("informix")) {
+               result = true;
+           } 
+       } catch (SQLException e) {
+           // Ignore
+       }
+       return result;
+   }
+   
+   /**
+    * Informix represents database objects in catalogs *and* schemas.  So a table
+    * called <table> might be found in the <databasename> catalog, which lives in 
+    * the <schemaname> schema and is addressed as:
+    * 
+    * <databasename>:"<schemaname>".<table>
+    * 
+    * It may also be referred to as simply <table>
+    * 
+    * This method returns a qualifed name that meets this criteria. 
+    * 
+    * @param md
+    * @return a valid Informix qualified name - if catalog *and* schema are not
+    *         null/empty, this returns the database object name such as
+    *         catalog:schema.simpleName.  However, if either catalog or schema
+    *         (or both) are null, this simply returns the simpleName
+    */
+   private String getInformixQualifiedName(SQLDatabaseMetaData md) {
+       StringBuffer result = new StringBuffer();
+       if (_catalog != null && _schema != null) {
+           result.append(_catalog);
+           result.append(":");
+           result.append("\"");
+           result.append(_schema);
+           result.append("\"");
+           result.append(".");
+           result.append(_simpleName);
+       }
+       return result.toString();
+   }
+   
    protected String generateQualifiedName(SQLDatabaseMetaData md)
    {
       String catSep = null;
@@ -129,6 +172,11 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
       boolean supportsSchemasInDataManipulation = false;
       boolean supportsCatalogsInDataManipulation = false;
 
+      // check for Informix - it has very "special" qualified names
+      if (isInformix(md)) {
+          return getInformixQualifiedName(md);
+      }
+      
       try
       {
          supportsSchemasInDataManipulation = md.supportsSchemasInDataManipulation();
@@ -139,7 +187,11 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
       }
       try
       {
-         supportsCatalogsInDataManipulation = md.supportsCatalogsInDataManipulation();
+          if (md.getDatabaseProductName().toLowerCase().startsWith("informix")) {
+              supportsSchemasInDataManipulation = false;
+          } else {
+              supportsCatalogsInDataManipulation = md.supportsCatalogsInDataManipulation();
+          }
       }
       catch (SQLException ignore)
       {
@@ -210,7 +262,8 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
          {
             buf.append(identifierQuoteString);
          }
-         //buf.append(".");
+         
+         buf.append(".");
          buf.append(catSep);
       }
 
