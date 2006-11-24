@@ -81,13 +81,13 @@ public class MockSession implements ISession {
         System.out.println("Getting connection for url="+jdbcUrl);
     	Connection c = DriverManager.getConnection(jdbcUrl, u, p);
     	sqlDriver = new MockSQLDriver(className, jdbcUrl);
-    	con = new SQLConnection(c, null);
+    	con = new SQLConnection(c, null, null);
     	init(false);
     }
     
     private void init(boolean initConnection) {
     	if (initConnection) {
-    		con = new SQLConnection(getMockConnection(), null);
+    		con = new SQLConnection(getMockConnection(), null, null);
     	}
     	id = new UidIdentifier();
     	messageHandler = new MockMessageHandler();

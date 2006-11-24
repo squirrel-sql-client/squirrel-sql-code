@@ -42,7 +42,7 @@ public class SQLDatabaseMetaDataTest extends TestCase {
 		con = new MockConnection2();
 		md = new MockDatabaseMetaData("aCatalog", "aSchema");
 		con.setupMetaData(md);
-		SQLConnection scon = new SQLConnection(con, null);
+		SQLConnection scon = new SQLConnection(con, null, null);
 		iut = new SQLDatabaseMetaData(scon);
 		md.setCatalogs(new String[] {"aCatalog"}, iut);
 		md.setSchemas(new String[] {"aSchema"}, iut);
