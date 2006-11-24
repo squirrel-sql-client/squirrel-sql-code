@@ -3,7 +3,7 @@ package net.sourceforge.squirrel_sql.client.action;
 import java.awt.event.KeyEvent;
 
 /*
- * Copyright (C) 2001 - 2002 Colin Bell
+ * Copyright (C) 2001 - 2006 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or

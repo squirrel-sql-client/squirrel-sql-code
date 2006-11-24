@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.gui;
 /*
- * Copyright (C) 2003-2004 Colin Bell
+ * Copyright (C) 2003-2006 Colin Bell
  * colbell@users.sourceforge.net
  *
  * Modifications Copyright (C) 2003-2004 Jason Height

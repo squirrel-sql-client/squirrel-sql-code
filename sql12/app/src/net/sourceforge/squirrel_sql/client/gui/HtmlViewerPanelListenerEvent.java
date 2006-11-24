@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.gui;
 /*
- * Copyright (C) 2003 Colin Bell
+ * Copyright (C) 2003 -2006 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -27,7 +27,6 @@ public class HtmlViewerPanelListenerEvent extends EventObject
 {
 	/** The <CODE>HtmlViewerPanel</CODE> involved. */
 	private HtmlViewerPanel _pnl;
-
 	/**
 	 * Ctor.
 	 *
@@ -42,7 +41,6 @@ public class HtmlViewerPanelListenerEvent extends EventObject
 		super(checkParams(source));
 		_pnl = source;
 	}
-
 	/**
 	 * Return the <CODE>HtmlViewerPanel</CODE>.
 	 */
@@ -50,7 +48,6 @@ public class HtmlViewerPanelListenerEvent extends EventObject
 	{
 		return _pnl;
 	}
-
 	private static HtmlViewerPanel checkParams(HtmlViewerPanel source)
 	{
 		if (source == null)

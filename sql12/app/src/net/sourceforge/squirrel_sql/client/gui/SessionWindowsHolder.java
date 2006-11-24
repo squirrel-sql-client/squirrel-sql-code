@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2005 Gerd Wagner
+ * Copyright (C) 2003-2006 Gerd Wagner
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
