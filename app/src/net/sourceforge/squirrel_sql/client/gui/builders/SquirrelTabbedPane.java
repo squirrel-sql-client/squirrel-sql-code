@@ -30,8 +30,8 @@ class SquirrelTabbedPane extends JTabbedPane
 	private SquirrelPreferences _prefs;
 
 	private PropsListener _prefsListener;
-   private IApplication _app;
-   private static boolean _jdk14SrollWarningWasIssued = false;
+   //private IApplication _app;
+   //private static boolean _jdk14SrollWarningWasIssued = false;
 
    /** Convenient way to refer to Application Preferences property names. */
 	private interface IAppPrefPropertynames
@@ -49,7 +49,7 @@ class SquirrelTabbedPane extends JTabbedPane
 			throw new IllegalArgumentException("SquirrelPreferences == null");
 		}
 		_prefs = prefs;
-      _app = app;
+      //_app = app;
 
       int tabLayoutPolicy = _prefs.getUseScrollableTabbedPanes() ? JTabbedPane.SCROLL_TAB_LAYOUT : JTabbedPane.WRAP_TAB_LAYOUT;
       setTabLayoutPolicy(tabLayoutPolicy);

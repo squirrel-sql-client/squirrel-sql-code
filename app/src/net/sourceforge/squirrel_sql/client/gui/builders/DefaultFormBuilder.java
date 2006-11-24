@@ -26,24 +26,18 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE 
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
- */
-
-package net.sourceforge.squirrel_sql.client.gui.builders;
-
+ */package net.sourceforge.squirrel_sql.client.gui.builders;
 import java.awt.Component;
 import java.util.ResourceBundle;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ConstantSize;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
-
-/**
- * Provides a means to build consistent form-oriented panels quickly
+/** * Provides a means to build consistent form-oriented panels quickly
  * using the {@link FormLayout}. This builder combines frequently used
  * panel building steps: add a new row, add a label, proceed to the next 
  * data column, then add a component.
@@ -114,34 +108,26 @@ import com.jgoodies.forms.layout.RowSpec;
  * @see	com.jgoodies.forms.layout.FormLayout
  */
 public final class DefaultFormBuilder extends I15dPanelBuilder {
-
     /**
      * Holds the row specification that is reused to describe
      * the constant gaps between component lines.
      */
     private RowSpec lineGapSpec = FormFactory.LINE_GAP_ROWSPEC;
-
     /**
      * Holds the row specification that describes the constant gaps 
      * between paragraphs.
      */
     private RowSpec paragraphGapSpec = FormFactory.PARAGRAPH_GAP_ROWSPEC;
-    
     /**
      * Holds the offset of the leading column - often 0 or 1.
      */
     private int leadingColumnOffset = 0;
-    
     /**
      * Determines wether new data rows are being grouped or not. 
      */
     private boolean rowGroupingEnabled = false;
-    
-
     // Instance Creation ****************************************************
-
-    /**
-     * Constructs an instance of <code>DefaultFormBuilder</code> for the given
+    /**     * Constructs an instance of <code>DefaultFormBuilder</code> for the given
      * layout.
      * 
      * @param layout	the <code>FormLayout</code> to be used
@@ -149,7 +135,6 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
     public DefaultFormBuilder(FormLayout layout) {
         this(new JPanel(), layout);
     }
-    
     /**
      * Constructs an instance of <code>DefaultFormBuilder</code> for the given
      * panel and layout.
@@ -160,7 +145,6 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
     public DefaultFormBuilder(JPanel panel, FormLayout layout) {
         this(panel, layout, null);
     }
-    
     /**
      * Constructs an instance of <code>DefaultFormBuilder</code> for the given
      * layout and resource bundle.
@@ -172,7 +156,6 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
     public DefaultFormBuilder(FormLayout layout, ResourceBundle bundle) {
         this(new JPanel(), layout, bundle);
     }
-    
     /**
      * Constructs an instance of <code>DefaultFormBuilder</code> for the given
      * panel, layout and resource bundle.
@@ -185,10 +168,7 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
     public DefaultFormBuilder(JPanel panel, FormLayout layout, ResourceBundle bundle) {
         super(panel, layout, bundle);
     }
-    
-    
     // Settings Gap Sizes ***************************************************
-
     /**
      * Sets the size of gaps between component lines using the given 
      * constant size.
@@ -200,7 +180,6 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
         RowSpec rowSpec = FormFactory.createGapRowSpec(lineGapSize);
         this.lineGapSpec = rowSpec.asUnmodifyable();
     }
-    
     /**
      * Returns the row specification that is used to separate component lines.
      *  
@@ -209,7 +188,6 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
     public RowSpec getLineGapSpec() {
         return lineGapSpec;
     }
-    
     /**
      * Sets the size of gaps between paragraphs using the given 
      * constant size.
@@ -221,7 +199,6 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
         RowSpec rowSpec = FormFactory.createGapRowSpec(paragraphGapSize);
         this.paragraphGapSpec = rowSpec.asUnmodifyable();
     }
-    
     /**
      * Returns the offset of the leading column, often 0 or 1.
      * 
@@ -230,7 +207,6 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
     public int getLeadingColumnOffset() {
         return leadingColumnOffset;
     }
-    
     /**
      * Sets the offset of the leading column, often 0 or 1.
      * 
@@ -239,7 +215,6 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
     public void setLeadingColumnOffset(int columnOffset) {
         this.leadingColumnOffset = columnOffset;
     }
-    
     /**
      * Returns whether new data rows are being grouped or not.
      * 
@@ -248,7 +223,6 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
     public boolean isRowGroupingEnabled() {
         return rowGroupingEnabled;
     }
-    
     /**
      * Enables or disables the grouping of new data rows.
      * 
@@ -257,10 +231,7 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
     public void setRowGroupingEnabled(boolean enabled) {
         rowGroupingEnabled = enabled;
     }
-    
-
     // Filling Columns ******************************************************
-    
     /**
      * Adds a component to the panel using the default constraints.
      * Proceeds to the next data column.
@@ -270,7 +241,6 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
     public void append(Component component) {
         append(component, 1);
     }
-    
     /**
      * Adds a component to the panel using the default constraints with
      * the given columnSpan. Proceeds to the next data column.
@@ -282,13 +252,11 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
         ensureCursorColumnInGrid();
         ensureHasGapRow(lineGapSpec);
         ensureHasComponentLine();
-        
         setColumnSpan(columnSpan);
         add(component);
         setColumnSpan(1);
         nextColumn(columnSpan + 1);
     }
-
     /**
      * Adds two components to the panel; each component will span a single
      * data column. Proceeds to the next data column.
@@ -300,7 +268,6 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
         append(c1);
         append(c2);
     }
-
     /**
      * Adds three components to the panel; each component will span a single
      * data column. Proceeds to the next data column.
@@ -314,10 +281,7 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
         append(c2);
         append(c3);
     }
-
-
     // Appending Labels with optional components ------------------------------
-
     /**
      * Adds a text label to the panel and proceeds to the next column.
      * 
@@ -329,7 +293,6 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
         append(label);
         return label;
     }
-
     /**
      * Adds a text label and component to the panel. 
      * Then proceeds to the next data column.
@@ -341,7 +304,6 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
     public JLabel append(String textWithMnemonic, Component component) {
         return append(textWithMnemonic, component, 1);
     }
-
     /**
      * Adds a text label and component to the panel; the component will span
      * the specified number columns. Proceeds to the next data column.
@@ -361,7 +323,6 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
         append(c, columnSpan);
         return label;
     }
-
     /**
      * Adds a text label and two components to the panel; each component
      * will span a single column. Proceeds to the next data column.
@@ -376,7 +337,6 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
         append(c2);
         return label;
     }
-
     /**
      * Adds a text label and two components to the panel; each component
      * will span a single column. Proceeds to the next data column.
@@ -390,7 +350,6 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
         append(textWithMnemonic, c1);
         append(c2, colSpan);
     }
-
     /**
      * Adds a text label and three components to the panel; each component
      * will span a single column. Proceeds to the next data column.
@@ -406,7 +365,6 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
         append(c3);
         return label;
     }
-    
     /**
      * Adds a text label and four components to the panel; each component
      * will span a single column. Proceeds to the next data column.
@@ -423,10 +381,7 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
         append(c4);
         return label;
     }
-    
-    
     // Appending internationalized labels with optional components ------------
-
     /**
      * Adds an internationalized (i15d) text label to the panel using 
      * the given resource key and proceeds to the next column.
@@ -437,7 +392,6 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
     public JLabel appendI15d(String resourceKey) {
         return append(getI15dString(resourceKey));
     }
-
     /**
      * Adds an internationalized (i15d) text label to the panel using the given resource key; 
      * then proceeds to the next data column and adds a component with 
@@ -453,7 +407,6 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
         append(c, columnSpan);
         return label;
     }
-
     /**
      * Adds an internationalized (i15d) text label and component to the panel. 
      * Then proceeds to the next data column.
@@ -465,7 +418,6 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
     public JLabel appendI15d(String resourceKey, Component component) {
         return appendI15d(resourceKey, component, 1);
     }
-
     /**
      * Adds an internationalized (i15d) text label and component to the panel. 
      * Then proceeds to the next data column.
@@ -483,7 +435,6 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
         }
         return label;
     }
-
     /**
      * Adds an internationalized (i15d) text label and two components to the panel; each component
      * will span a single column. Proceeds to the next data column.
@@ -498,7 +449,6 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
         append(c2);
         return label;
     }
-
     /**
      * Adds an internationalized (i15d) text label and two components to the panel; each component
      * will span a single column. Proceeds to the next data column.
@@ -514,7 +464,6 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
         append(c2, colSpan);
         return label;
     }
-
     /**
      * Adds an internationalized (i15d) text label and three components to the panel; each component
      * will span a single column. Proceeds to the next data column.
@@ -530,7 +479,6 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
         append(c3);
         return label;
     }
-
     /**
      * Adds an internationalized (i15d) text label and four components to the panel; 
      * each component will span a single column. Proceeds to the next data column.
@@ -547,10 +495,7 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
         append(c4);
         return label;
     }
-
-
     // Adding Titles ----------------------------------------------------------
-     
     /**
      * Adds a title label to the panel and proceeds to the next column.
      * 
@@ -562,7 +507,6 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
         append(titleLabel);
         return titleLabel;
     }
-     
     /**
      * Adds an internationalized title label to the panel and 
      * proceeds to the next column.
@@ -573,10 +517,7 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
     public JLabel appendI15dTitle(String resourceKey) {
         return appendTitle(getI15dString(resourceKey));
     }
-     
-
     // Appending Separators ---------------------------------------------------
-
     /**
      * Adds a separator without text that spans all columns.
      * 
@@ -585,7 +526,6 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
     public JComponent appendSeparator() {
         return appendSeparator("");
     }
-
     /**
      * Adds a separator with the given text that spans all columns.
      * 
@@ -596,7 +536,6 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
         ensureCursorColumnInGrid();
         ensureHasGapRow(paragraphGapSpec);
         ensureHasComponentLine();
-        
         setColumn(super.getLeadingColumn());
         int columnSpan = getColumnCount();
         setColumnSpan(getColumnCount());
@@ -605,7 +544,6 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
         nextColumn(columnSpan);
         return titledSeparator;
     }
-
     /**
      * Appends an internationalized titled separator for 
      * the given resource key that spans all columns.
@@ -615,10 +553,7 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
     public void appendI15dSeparator(String resourceKey) {
         appendSeparator(getI15dString(resourceKey));
     }
-    
-
     // Overriding Superclass Behavior ***************************************
-    
     /**
      * Returns the leading column. Unlike the superclass we take a 
      * column offset into account.
@@ -629,10 +564,7 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
         int column = super.getLeadingColumn();
         return column + getLeadingColumnOffset() * getColumnIncrementSign();
     }
-    
-    
     // Adding Rows **********************************************************
-    
     /**
      * Ensures that the cursor is in the grid. In case it's beyond the 
      * form's right hand side, the cursor is moved to the leading column
@@ -643,7 +575,6 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
             nextLine();
         }
     }
-    
     /**
      * Ensures that we have a gap row before the next component row.
      * Checks if the current row is the given <code>RowSpec</code>
@@ -654,7 +585,6 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
     private void ensureHasGapRow(RowSpec gapRowSpec) {
         if ((getRow() == 1) || (getRow() <= getRowCount()))
             return;
-        
         if (getRow() <= getRowCount()) {
             RowSpec rowSpec = getCursorRowSpec();
             if ((rowSpec == gapRowSpec))
@@ -663,7 +593,6 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
         appendRow(gapRowSpec);
         nextLine();
     }
-    
     /**
      * Ensures that the form has a component row. Adds a component row
      * if the cursor is beyond the form's bottom.
@@ -675,7 +604,6 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
             getLayout().addGroupedRow(getRow());
         }      
     }
-    
     /**
      * Looks up and answers the row specification of the current row.
      *  
@@ -684,6 +612,4 @@ public final class DefaultFormBuilder extends I15dPanelBuilder {
     private RowSpec getCursorRowSpec() {
         return getLayout().getRowSpec(getRow());
     }
-
-
 }

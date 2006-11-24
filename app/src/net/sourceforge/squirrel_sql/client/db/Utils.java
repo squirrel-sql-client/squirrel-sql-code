@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.client.db;
 /*
- * Copyright (C) 2001-2003 Colin Bell
+ * Copyright (C) 2001-2006 Colin Bell
  * colbell@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -22,7 +22,6 @@ import java.sql.DatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 // TODO: move to fw
-// i18n
 public class Utils
 {
 	/** Internationalized strings for this class. */

@@ -909,8 +909,6 @@ public class SQLResultExecuterPanel extends JPanel
       });
       popup.add(mnuToggleSticky);
 
-
-
       _tabbedExecutionsPanel.addMouseListener(new MouseAdapter()
       {
          public void mousePressed(MouseEvent e)
