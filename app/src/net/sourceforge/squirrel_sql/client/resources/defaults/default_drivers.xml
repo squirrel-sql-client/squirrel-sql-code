@@ -2,6 +2,17 @@
 
 <Beans>
 
+	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
+		<driverClassName>com.informix.jdbc.IfxDriver</driverClassName>
+		<identifier Class="net.sourceforge.squirrel_sql.fw.id.UidIdentifier">
+			<string>-49</string>
+		</identifier>
+		<jarFileName/>
+		<jarFileNames Indexed="true"/>
+		<name>Informix</name>
+		<url>jdbc:informix-sqli://&lt;host_name&gt;:&lt;port_number>/&lt;database_name&gt;:INFORMIXSERVER=&lt;server_name&gt;</url>
+		<websiteUrl>http://www.informix.com</websiteUrl>
+	</Bean>
 
 	<Bean Class="net.sourceforge.squirrel_sql.fw.sql.SQLDriver">
 		<driverClassName>com.hxtt.sql.excel.ExcelDriver</driverClassName>
