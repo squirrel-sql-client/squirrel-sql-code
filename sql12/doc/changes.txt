@@ -66,6 +66,8 @@ get this information.
 
 	Bug-Fixes:
 
+Bugfix: Oracle plugin - Fixed the rendering of details/source tabs for indexes
+sequences and triggers.
 
 1601610 - Bug while editing integer/long columns
 
