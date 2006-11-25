@@ -6,6 +6,8 @@ Not yet released - available in the latest snapshot, or at least checked into CV
 
     New Features/Enhancements:
 
+1602255: 'Interpret DATE columns as TIMESTAMP' also in SQL view.  
+
 Informix Plugin: Provides a Source tab for Stored Procedure and View objects.
 
 Made SQuirreL work with hxtt drivers. See www.hxtt.com. Thanks to Yonghong Zhao the patches.
