@@ -20,21 +20,20 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.math.BigDecimal;
-import java.sql.Blob;
-import java.sql.Clob;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
 
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeBlob;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeClob;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeDate;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeClob;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeBlob;
 
 public class ResultSetReader
 {
@@ -221,11 +220,7 @@ public class ResultSetReader
 						break;
 
 					case Types.DATE :
-//						row[i] = _rs.getDate(idx);
-						// Use getObject(int) rather than getDate(int) as
-						// Oracle stores a TimeStamp in Date columns rather
-						// than a Date object.
-						row[i] = _rs.getObject(idx);
+						row[i] = DataTypeDate.staticReadResultSet(_rs, idx, false);
 						break;
 
 					case Types.TIMESTAMP :
@@ -335,7 +330,7 @@ public class ResultSetReader
 						// by Squirrel, so just tell the user that it is a BLOB and that it
 						// has data.
 
-                  row[i] = DataTypeBlob.staticReadResultSet(_rs, idx);
+                        row[i] = DataTypeBlob.staticReadResultSet(_rs, idx);
 
 						break;
 
@@ -344,7 +339,7 @@ public class ResultSetReader
 						// never see a CLOB. However, if we do we assume that
 						// it is printable text and that the user wants to see it, so
 						// read in the entire thing.
-                  row[i] = DataTypeClob.staticReadResultSet(_rs, idx);
+                        row[i] = DataTypeClob.staticReadResultSet(_rs, idx);
 
 						break;
 

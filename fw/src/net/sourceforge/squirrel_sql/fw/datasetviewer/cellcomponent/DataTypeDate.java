@@ -31,7 +31,6 @@ import java.io.OutputStreamWriter;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Timestamp;
 import java.text.DateFormat;
 
 import javax.swing.BorderFactory;
@@ -174,6 +173,7 @@ public class DataTypeDate
 		// Note: this may have already been done by another instance of
 		// this DataType created to handle a different column.
 		if (propertiesAlreadyLoaded == false) {
+            propertiesAlreadyLoaded = true;
 			// get parameters previously set by user, or set default values
 			useJavaDefaultFormat =true;	// set to use the Java default
 			String useJavaDefaultFormatString = DTProperties.get(
@@ -486,23 +486,35 @@ public class DataTypeDate
 	  * type of object to be stored in the table cell.
 	  */
 	public Object readResultSet(ResultSet rs, int index, boolean limitDataRead)
-		throws java.sql.SQLException {
+		throws java.sql.SQLException 
+    {
 	    
+	    return staticReadResultSet(rs, index, limitDataRead);
+    }
+
+     /**
+      * On input from the DB, read the data from the ResultSet into the appropriate
+      * type of object to be stored in the table cell.
+      */
+    public static Object staticReadResultSet(ResultSet rs, int index, boolean limitDataRead)
+        throws java.sql.SQLException 
+    {
+        loadProperties();
         Object data = null;
-        
+
         if (readDateAsTimestamp) {
             data = rs.getTimestamp(index);
         } else {
             data = rs.getDate(index);
         }
-		
-		if (rs.wasNull()) {
-			return null;
+
+        if (rs.wasNull()) {
+            return null;
         } else {
             return data;
         }
-	}
-
+    }
+    
 	/**
 	 * When updating the database, generate a string form of this object value
 	 * that can be used in the WHERE clause to match the value in the database.
