@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.informix.util;
 /*
- * Copyright (C) 2004 Colin Bell
- * colbell@users.sourceforge.net
+ * Copyright (C) 2006 Rob Manning
+ * manningr@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,22 +17,36 @@ package net.sourceforge.squirrel_sql.plugins.informix.util;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.plugins.informix.IObjectTypes;
 
-
 /**
- * This class stores information about a Index parent. This just
- * stores info about the object that the index relates to.
+ * This class is used to provide schema and table information to any child
+ * index nodes.
  *
- * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
+ * @author manningr
  */
-public class IndexParentInfo extends RelatedObjectInfo
+public class IndexParentInfo extends DatabaseObjectInfo
 {
-    public IndexParentInfo(IDatabaseObjectInfo relatedObjInfo,
-                                SQLDatabaseMetaData md)
+    
+    private final IDatabaseObjectInfo _tableInfo;
+    
+    public IndexParentInfo(IDatabaseObjectInfo tableInfo,
+                           SQLDatabaseMetaData md)
     {
-        super(relatedObjInfo, "INDEX", IObjectTypes.INDEX_PARENT, md);
+        super(tableInfo.getCatalogName(), 
+              tableInfo.getSchemaName(),
+              "INDEX",
+              IObjectTypes.INDEX_PARENT,
+              md);    
+        _tableInfo = tableInfo;
     }
+    
+    public IDatabaseObjectInfo getTableInfo()
+    {
+        return _tableInfo;
+    }
+    
 }
