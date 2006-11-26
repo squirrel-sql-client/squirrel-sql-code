@@ -35,13 +35,21 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.informix.exp.SchemaExpander;
 import net.sourceforge.squirrel_sql.plugins.informix.exp.TableExpander;
+import net.sourceforge.squirrel_sql.plugins.informix.tab.IndexDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.informix.tab.ProcedureSourceTab;
+import net.sourceforge.squirrel_sql.plugins.informix.tab.SequenceDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.informix.tab.TriggerDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.informix.tab.TriggerSourceTab;
 import net.sourceforge.squirrel_sql.plugins.informix.tab.ViewSourceTab;
 
 
+/**
+ * The main controller class for the Informix plugin.
+ * 
+ * @author manningr
+ */
 public class InformixPlugin extends DefaultSessionPlugin {
     
 	private static final StringManager s_stringMgr =
@@ -211,14 +219,22 @@ public class InformixPlugin extends DefaultSessionPlugin {
         _treeAPI.addDetailTab(DatabaseObjectType.VIEW, 
                               new ViewSourceTab(i18n.SHOW_VIEW_SOURCE));
         
+        
+        _treeAPI.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexDetailsTab());
         _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
         _treeAPI.addDetailTab(IObjectTypes.TRIGGER_PARENT, new DatabaseObjectInfoTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new SequenceDetailsTab());        
         
-        // Expanders
+        // Expanders - trigger and index expanders are added inside the table
+        // expander
+        _treeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander());        
         _treeAPI.addExpander(DatabaseObjectType.TABLE, new TableExpander());
         
         _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
         _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab("The source of the trigger"));
+        
     }
     
     private boolean isInformix(ISession session)

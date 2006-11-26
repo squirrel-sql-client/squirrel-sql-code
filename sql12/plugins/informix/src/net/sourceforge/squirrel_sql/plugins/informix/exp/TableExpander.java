@@ -29,13 +29,13 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.informix.InformixPlugin;
+import net.sourceforge.squirrel_sql.plugins.informix.util.IndexParentInfo;
 
 
 
 /**
- * This class is an expander for the table nodes. It will add various Object
- * Type nodes to the table node.
+ * This class is an expander for the table nodes. It will add TRIGGER and INDEX
+ * Object Type nodes to the table node.
  * 
  * @author manningr
  */
@@ -75,11 +75,18 @@ public class TableExpander implements INodeExpander {
         final String schemaName = parentDbinfo.getSchemaName();
 
         
-        IDatabaseObjectInfo dbinfo = new TriggerParentInfo(parentDbinfo,
-                schemaName, md);
-        ObjectTreeNode child = new ObjectTreeNode(session, dbinfo);
-        child.addExpander(new TriggerParentExpander());
-        childNodes.add(child);
+        IDatabaseObjectInfo triggerParentInfo = 
+            new TriggerParentInfo(parentDbinfo, schemaName, md);
+        ObjectTreeNode triggerChild = new ObjectTreeNode(session, triggerParentInfo);
+        triggerChild.addExpander(new TriggerParentExpander());
+        
+        IDatabaseObjectInfo indexParentInfo = 
+            new IndexParentInfo(parentDbinfo, md);
+        ObjectTreeNode indexChild = new ObjectTreeNode(session, indexParentInfo);
+        indexChild.addExpander(new IndexParentExpander());
+        
+        childNodes.add(indexChild);
+        childNodes.add(triggerChild);
         
         return childNodes;
     }

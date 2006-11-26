@@ -46,35 +46,12 @@ import net.sourceforge.squirrel_sql.plugins.informix.util.IndexParentInfo;
  */
 public class IndexParentExpander implements INodeExpander
 {
-    private static final String STD_INDICES_SQL = "";
-        /*
-        "SELECT " +
-            SystemTables.IIndexTable.COL_NAME + "," +
-            SystemTables.IIndexTable.COL_RELATION_NAME +
-        " FROM " +
-            SystemTables.IIndexTable.TABLE_NAME;
-            */
-
-    /** SQL used to load all indices in database. */
-    private static final String ALL_INDICES_SQL = "";
-        /*
-        STD_INDICES_SQL +
-        " ORDER BY " +
-            SystemTables.IIndexTable.COL_NAME;
-        */
-
-    /**
-     * SQL used to load only those indices related to a single object in
-     * the database.
-     */
-    private static final String RELATED_INDICES_SQL = "";
-        /*
-        STD_INDICES_SQL +
-        " WHERE " +
-            SystemTables.IIndexTable.COL_RELATION_NAME + " = ?" +
-        " ORDER BY " +
-            SystemTables.IIndexTable.COL_NAME;
-        */
+    private static final String SQL = 
+        "SELECT  T1.idxname " +
+        "FROM sysindices AS T1, systables AS T2 " +
+        "WHERE T1.tabid = T2.tabid " +
+        "and t1.owner = ? "+
+        "and T2.tabname = ? ";
         
     /** Logger for this class. */
     private static final ILogger s_log =
@@ -103,40 +80,45 @@ public class IndexParentExpander implements INodeExpander
      *            Thrown if an SQL error occurs.
      */
     public List createChildren(ISession session, ObjectTreeNode parentNode)
-        throws SQLException
     {
         final List childNodes = new ArrayList();
+        final IDatabaseObjectInfo parentDbinfo = 
+            parentNode.getDatabaseObjectInfo();
         final SQLConnection conn = session.getSQLConnection();
-        final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
-        final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
-        final IDatabaseObjectInfo roi = ((IndexParentInfo)parentDbinfo).getRelatedObjectInfo();
-
-        PreparedStatement pstmt;
-        if (roi == null)
-        {
-            pstmt = conn.prepareStatement(ALL_INDICES_SQL);
-        }
-        else
-        {
-            pstmt = conn.prepareStatement(RELATED_INDICES_SQL);
-            pstmt.setString(1, roi.getSimpleName());
-        }
-
-        try
-        {
-            final ResultSet rs = pstmt.executeQuery();
-            while (rs.next())
-            {
-                IDatabaseObjectInfo doi = new DatabaseObjectInfo(null, null,
-                                            rs.getString(1),
-                                            DatabaseObjectType.INDEX, md);
+        final SQLDatabaseMetaData md = 
+            session.getSQLConnection().getSQLMetaData();
+        final String schemaName = parentDbinfo.getSchemaName();
+        final String catalogName = parentDbinfo.getCatalogName();
+        final IDatabaseObjectInfo tableInfo = 
+            ((IndexParentInfo) parentDbinfo).getTableInfo();
+        String tableName = tableInfo.getSimpleName();
+        PreparedStatement pstmt = null;
+        try {
+            if (s_log.isDebugEnabled()) {
+                s_log.debug("Running SQL: "+SQL);
+                s_log.debug("SchemaName="+schemaName);
+                s_log.debug("TableName="+tableName);
+            }
+            pstmt = conn.prepareStatement(SQL);
+            pstmt.setString(1, schemaName);
+            pstmt.setString(2, tableName);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                DatabaseObjectInfo doi = 
+                    new DatabaseObjectInfo(catalogName, 
+                                           schemaName, 
+                                           rs.getString(1),
+                                           DatabaseObjectType.INDEX, md);
                 childNodes.add(new ObjectTreeNode(session, doi));
             }
+        } catch (SQLException e) {
+            session.getMessageHandler().showErrorMessage(e);
+        } finally {
+            if (pstmt != null) {
+                try { pstmt.close(); } catch (SQLException e) {}
+            }
         }
-        finally
-        {
-            pstmt.close();
-        }
+
         return childNodes;
     }
 }
