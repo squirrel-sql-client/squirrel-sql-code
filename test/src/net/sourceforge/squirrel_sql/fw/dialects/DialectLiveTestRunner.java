@@ -128,6 +128,7 @@ public class DialectLiveTestRunner {
             } else {
                 testAddPrimaryKey(session, new TableColumnInfo[] {notNullIntegerCol});   
             }
+            testDropPrimaryKey(session, "test");
         }
     }
     
@@ -306,7 +307,22 @@ public class DialectLiveTestRunner {
             runSQL(session, commentSQL);
         }
     }
-        
+     
+    private String getPKName(String tableName) {
+        return tableName.toUpperCase()+"_PK";
+    }
+   
+    
+    private void testDropPrimaryKey(ISession session, String tableName) 
+        throws Exception 
+    {
+        HibernateDialect dialect = 
+            DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);
+        String pkName = getPKName(tableName);
+        String sql = dialect.getDropPrimaryKeySQL(pkName, tableName);
+        runSQL(session, sql);
+    }
+    
     private void testAddPrimaryKey(ISession session,
                                TableColumnInfo[] colInfos) 
         throws Exception 
@@ -317,7 +333,7 @@ public class DialectLiveTestRunner {
         String tableName = colInfos[0].getTableName();
         
         String[] pkSQLs = 
-            dialect.getAddPrimaryKeySQL(tableName.toUpperCase()+"_PK", colInfos);
+            dialect.getAddPrimaryKeySQL(getPKName(tableName), colInfos);
         
         for (int i = 0; i < pkSQLs.length; i++) {
             String pkSQL = pkSQLs[i];
