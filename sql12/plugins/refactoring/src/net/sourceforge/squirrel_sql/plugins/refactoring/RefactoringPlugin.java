@@ -42,6 +42,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.AddColumnAction;
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.AddPrimaryKeyAction;
+import net.sourceforge.squirrel_sql.plugins.refactoring.actions.DropPrimaryKeyAction;
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.ModifyColumnAction;
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.RemoveColumnAction;
 
@@ -205,6 +206,7 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
       coll.add(new ModifyColumnAction(app, _resources));
       coll.add(new RemoveColumnAction(app, _resources));
       coll.add(new AddPrimaryKeyAction(app, _resources));
+      coll.add(new DropPrimaryKeyAction(app, _resources));
    }
 
    /**
@@ -290,6 +292,7 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
         JMenuItem addPrimaryKeyItem = new JMenuItem("Add Primary Key");
         addPrimaryKeyItem.setAction(coll.get(AddPrimaryKeyAction.class));
         JMenuItem dropPrimaryKeyItem = new JMenuItem("Drop Primary Key");
+        dropPrimaryKeyItem.setAction(coll.get(DropPrimaryKeyAction.class));
         JMenuItem addForeignKeyItem = new JMenuItem("Add Foreign Key");
         JMenuItem dropForeignKeyItem = new JMenuItem("Drop Foreign Key");
         JMenuItem enableConstraintsItem = new JMenuItem("Enable Constraints");
