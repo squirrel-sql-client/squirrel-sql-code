@@ -36,6 +36,11 @@ public class PrimaryKeyInfo extends DatabaseObjectInfo
     private short keySequence;
     
     /**
+     * The table that has this primary key constraint
+     */
+    private String tableName = null;
+    
+    /**
      * @deprecated use the version of the constructor that accepts args to 
      *             provide complete information about this key.
      */
@@ -57,6 +62,7 @@ public class PrimaryKeyInfo extends DatabaseObjectInfo
      */
 	PrimaryKeyInfo(String catalog, 
                    String schema,
+                   String aTableName,
                    String aColumnName, 
                    short aKeySequence, 
                    String aPrimaryKeyName,
@@ -64,6 +70,7 @@ public class PrimaryKeyInfo extends DatabaseObjectInfo
 	{
 		super(catalog, schema, aPrimaryKeyName, DatabaseObjectType.PRIMARY_KEY, md);
         columnName = aColumnName;
+        tableName = aTableName;
         keySequence = aKeySequence;
 	}
 
@@ -95,4 +102,24 @@ public class PrimaryKeyInfo extends DatabaseObjectInfo
         return keySequence;
     }
 
+    /**
+     * @param tableName the tableName to set
+     */
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
+    }
+
+    /**
+     * @return the tableName
+     */
+    public String getTableName() {
+        return tableName;
+    }
+
+    public String getQualifiedColumnName() {
+        if (tableName != null && !"".equals(tableName)) {
+            return tableName + "." + columnName;
+        }
+        return columnName;
+    }
 }
