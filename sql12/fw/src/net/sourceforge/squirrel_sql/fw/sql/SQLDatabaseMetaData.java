@@ -1697,6 +1697,7 @@ public class SQLDatabaseMetaData
                 PrimaryKeyInfo pkInfo = 
                     new PrimaryKeyInfo(rs.getString(1),  // catalog
                                        rs.getString(2),  // schema
+                                       rs.getString(3),  // tableName
                                        rs.getString(4),  // columnName
                                        rs.getShort(5),   // keySequence
                                        rs.getString(6),  // pkName
