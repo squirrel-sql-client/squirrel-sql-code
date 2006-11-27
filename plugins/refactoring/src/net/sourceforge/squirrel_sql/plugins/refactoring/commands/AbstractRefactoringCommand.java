@@ -10,6 +10,8 @@ import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
@@ -22,6 +24,8 @@ public abstract class AbstractRefactoringCommand implements ICommand {
     protected final IDatabaseObjectInfo _info;
 
     protected ColumnListDialog columnListDialog = null;
+    
+    protected String pkName = null;
     
     public AbstractRefactoringCommand(ISession session, 
                                       IDatabaseObjectInfo info) 
@@ -37,18 +41,19 @@ public abstract class AbstractRefactoringCommand implements ICommand {
     {
 
         ITableInfo ti = (ITableInfo)_info;
-        TableColumnInfo[] columns = 
-            _session.getSQLConnection().getSQLMetaData().getColumnInfo(ti);
+        TableColumnInfo[] columns = getTableColumns(ti, mode);
+
         
         //Show the user a dialog with a list of columns and ask them to select
         // one or more columns to drop
+        /*
         ArrayList tmp = new ArrayList();
         for (int i = 0; i < columns.length; i++) {
             TableColumnInfo info = columns[i];
             tmp.add(info.getColumnName());
         }
+        */
         if (columnListDialog == null) {
-
             columnListDialog = new ColumnListDialog(columns, mode);
             columnListDialog.addColumnSelectionListener(oklistener);
             columnListDialog.addShowSQLListener(showSqlListener);
@@ -58,6 +63,38 @@ public abstract class AbstractRefactoringCommand implements ICommand {
         }
         columnListDialog.setTableName(ti.getSimpleName());
         columnListDialog.setVisible(true);
+    }
+
+    protected void setPKName(String pkName) {
+        this.pkName = pkName;
+    }
+    
+    protected String getPKName() {
+        return this.pkName;
+    }
+    
+    private TableColumnInfo[] getTableColumns(ITableInfo ti, int mode) 
+    throws SQLException 
+    {
+        SQLDatabaseMetaData md = _session.getSQLConnection().getSQLMetaData();
+        if (mode == ColumnListDialog.DROP_PRIMARY_KEY_MODE) {
+            ArrayList result= new ArrayList();
+            PrimaryKeyInfo[] pkCols = md.getPrimaryKey(ti);
+            TableColumnInfo[] colInfos = md.getColumnInfo(ti);
+            for (int i = 0; i < pkCols.length; i++) {
+                PrimaryKeyInfo pkInfo = pkCols[i];
+                setPKName(pkInfo.getSimpleName());
+                String pkColName = pkInfo.getQualifiedColumnName();
+                for (int j = 0; j < colInfos.length; j++) {
+                    TableColumnInfo colInfo = colInfos[j];
+                    if (colInfo.getSimpleName().equals(pkColName)) {
+                        result.add(colInfo);
+                    }
+                }
+            }
+            return (TableColumnInfo[])result.toArray(new TableColumnInfo[result.size()]);
+        } 
+        return _session.getSQLConnection().getSQLMetaData().getColumnInfo(ti);        
     }
     
     protected class CommandExecHandler extends DefaultSQLExecuterHandler {
