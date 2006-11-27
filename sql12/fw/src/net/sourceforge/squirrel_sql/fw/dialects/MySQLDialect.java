@@ -449,4 +449,17 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
         result.append(DialectUtils.getTypeName(to, this));
         return result.toString();
     }
+    
+    /**
+     * Returns the SQL command to drop the specified table's primary key.
+     * 
+     * @param pkName the name of the primary key that should be dropped
+     * @param tableName the name of the table whose primary key should be 
+     *                  dropped
+     * @return
+     */
+    public String getDropPrimaryKeySQL(String pkName, String tableName) {
+        return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false);
+    }
+    
 }

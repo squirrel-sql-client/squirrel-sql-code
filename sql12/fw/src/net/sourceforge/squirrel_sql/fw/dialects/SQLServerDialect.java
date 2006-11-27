@@ -269,19 +269,9 @@ public class SQLServerDialect extends org.hibernate.dialect.SQLServerDialect
         // convert all columns in key to not null - this doesn't hurt if they 
         // are already null.        
         DialectUtils.getMultiColNotNullSQL(colInfos, this, alterClause, true, result);
-        
-        StringBuffer pkSQL = new StringBuffer();
-        pkSQL.append("ALTER TABLE ");
-        pkSQL.append(colInfos[0].getTableName());
-        pkSQL.append(" ADD PRIMARY KEY (");
-        for (int i = 0; i < colInfos.length; i++) {
-            pkSQL.append(colInfos[i].getColumnName());
-            if (i + 1 < colInfos.length) {
-                pkSQL.append(", ");
-            }
-        }
-        pkSQL.append(")");
-        result.add(pkSQL.toString());
+
+        String pkSQL = DialectUtils.getAddPrimaryKeySQL(pkName, colInfos, false);
+        result.add(pkSQL);
         
         return (String[])result.toArray(new String[result.size()]);
     }
@@ -293,7 +283,6 @@ public class SQLServerDialect extends org.hibernate.dialect.SQLServerDialect
      * @return true if the database supports dropping columns; false otherwise.
      */    
     public boolean supportsAlterColumnNull() {
-        // TODO verify this
         return true;
     }
     
@@ -322,7 +311,6 @@ public class SQLServerDialect extends org.hibernate.dialect.SQLServerDialect
      *         false otherwise.
      */
     public boolean supportsRenameColumn() {
-        // TODO: need to verify this
         return true;
     }
     
@@ -416,4 +404,18 @@ public class SQLServerDialect extends org.hibernate.dialect.SQLServerDialect
         result.append(info.getColumnName());
         return result.toString();
     }
+    
+    /**
+     * Returns the SQL command to drop the specified table's primary key.
+     * 
+     * @param pkName the name of the primary key that should be dropped
+     * @param tableName the name of the table whose primary key should be 
+     *                  dropped
+     * @return
+     */
+    public String getDropPrimaryKeySQL(String pkName, String tableName) {
+        return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true);
+    }
+    
 }
+

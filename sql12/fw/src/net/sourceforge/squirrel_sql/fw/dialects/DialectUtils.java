@@ -552,4 +552,35 @@ public class DialectUtils {
         }
         return msg;
     }
+    
+    /**
+     * Returns the SQL command to drop the specified table's primary key.
+     * 
+     * alter table table_name drop primary key
+     * 
+     * or 
+     * 
+     * alter table table_name drop constraint [pkName]
+     * 
+     * @param pkName the name of the primary key that should be dropped
+     * @param tableName the name of the table whose primary key should be 
+     *                  dropped
+     * @param useConstraintName TODO
+     * @return
+     */
+    public static String getDropPrimaryKeySQL(String pkName, 
+                                              String tableName, 
+                                              boolean useConstraintName) {
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER TABLE ");
+        result.append(tableName);
+        if (useConstraintName) {
+            result.append(" DROP CONSTRAINT ");
+            result.append(pkName);
+        } else {
+            result.append(" DROP PRIMARY KEY");
+        }
+        return result.toString();
+    }
+    
 }

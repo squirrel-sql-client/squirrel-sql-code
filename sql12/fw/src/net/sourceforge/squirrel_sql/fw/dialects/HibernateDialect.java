@@ -327,4 +327,14 @@ public interface HibernateDialect {
      */
     String getColumnDefaultAlterSQL(TableColumnInfo info);
     
+
+    /**
+     * Returns the SQL command to drop the specified table's primary key.
+     * 
+     * @param pkName the name of the primary key that should be dropped
+     * @param tableName the name of the table whose primary key should be 
+     *                  dropped
+     * @return
+     */
+    String getDropPrimaryKeySQL(String pkName, String tableName);
 }
