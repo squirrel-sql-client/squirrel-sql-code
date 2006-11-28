@@ -35,7 +35,7 @@ public class ProcedureSourceTab extends BaseSourceTab
 {
 	/** SQL that retrieves the source of a stored procedure. */
 	private static String SQL =
-        "SELECT data " +
+        "SELECT T1.procid, data " +
         "FROM sysprocedures AS T1, sysprocbody AS T2 " +
         "WHERE procname = ? " +
         "AND T2.procid = T1.procid " +
@@ -48,6 +48,7 @@ public class ProcedureSourceTab extends BaseSourceTab
 	public ProcedureSourceTab(String hint)
 	{
 		super(hint);
+        sourceType = STORED_PROC_TYPE;
 	}
 
 	protected PreparedStatement createStatement() throws SQLException
