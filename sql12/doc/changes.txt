@@ -8,7 +8,10 @@ Not yet released - available in the latest snapshot, or at least checked into CV
 
 1602255: 'Interpret DATE columns as TIMESTAMP' also in SQL view.  
 
-Informix Plugin: Provides a Source tab for Stored Procedure and View objects.
+Informix Plugin: Lets the user view source for stored procedure, trigger and 
+View objects. Also provides Informix-specific details for indexes and triggers.
+Special thanks goes to Doug Lawry for help setting up an Informix instance for 
+developing the plugin.
 
 Made SQuirreL work with hxtt drivers. See www.hxtt.com. Thanks to Yonghong Zhao the patches.
 
