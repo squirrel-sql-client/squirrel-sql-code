@@ -49,6 +49,7 @@ public class TriggerSourceTab extends BaseSourceTab
 	public TriggerSourceTab(String hint)
 	{
 		super(hint);
+        sourceType = TRIGGER_TYPE;
 	}
 
 	protected PreparedStatement createStatement() throws SQLException
@@ -56,6 +57,10 @@ public class TriggerSourceTab extends BaseSourceTab
 		final ISession session = getSession();
 		final IDatabaseObjectInfo doi = getDatabaseObjectInfo();
 
+        if (s_log.isDebugEnabled()) {
+            s_log.debug("Running SQL: "+SQL);
+            s_log.debug("trigname="+doi.getSimpleName());
+        }
 		SQLConnection conn = session.getSQLConnection();
 		PreparedStatement pstmt = conn.prepareStatement(SQL);
 		pstmt.setString(1, doi.getSimpleName());
