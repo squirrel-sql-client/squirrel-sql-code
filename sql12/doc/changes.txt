@@ -11,7 +11,8 @@ Not yet released - available in the latest snapshot, or at least checked into CV
 Informix Plugin: Lets the user view source for stored procedure, trigger and 
 View objects. Also provides Informix-specific details for indexes and triggers.
 Special thanks goes to Doug Lawry for help setting up an Informix instance for 
-developing the plugin.
+developing the plugin, and providing the system catalog queries necessary for
+the object information provided by this plugin.
 
 Made SQuirreL work with hxtt drivers. See www.hxtt.com. Thanks to Yonghong Zhao the patches.
 
