@@ -45,6 +45,14 @@ public abstract class BaseSourceTab extends BaseObjectTab {
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(BaseSourceTab.class);
 
+    
+    public static final int VIEW_TYPE = 0;
+    
+    public static final int STORED_PROC_TYPE = 1;
+    
+    
+    
+    protected int sourceType = VIEW_TYPE;
 
     /**
      * This interface defines locale specific strings. This should be
@@ -162,10 +170,26 @@ public abstract class BaseSourceTab extends BaseObjectTab {
             {
                 ResultSet rs = stmt.executeQuery();
                 StringBuffer buf = new StringBuffer(4096);
+                int lastProcId = -1;
                 while (rs.next())
                 {
-                    buf.append(rs.getString(1));
-                    buf.append("\n");
+                    if (sourceType == STORED_PROC_TYPE) {
+                        int tmpProcId = rs.getInt(1);
+                        String tmpProcData = rs.getString(2);
+                        if (lastProcId != tmpProcId) {
+                            // First time through, skip the double spacing 
+                            if (lastProcId != -1) {
+                                // double space since this is a new version of 
+                                // the stored procedure (overloading name with
+                                // different parameters)
+                                buf.append("\n\n");
+                            }
+                            lastProcId = tmpProcId;
+                        }
+                        buf.append(tmpProcData);
+                    } else {
+                        buf.append(rs.getString(1));                        
+                    }
                 }
                 _ta.setText(buf.toString());
                 _ta.setCaretPosition(0);
