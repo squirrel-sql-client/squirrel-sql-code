@@ -47,9 +47,8 @@ public abstract class BaseSourceTab extends BaseObjectTab {
 
     
     public static final int VIEW_TYPE = 0;
-    
     public static final int STORED_PROC_TYPE = 1;
-    
+    public static final int TRIGGER_TYPE = 2;
     
     
     protected int sourceType = VIEW_TYPE;
@@ -187,7 +186,12 @@ public abstract class BaseSourceTab extends BaseObjectTab {
                             lastProcId = tmpProcId;
                         }
                         buf.append(tmpProcData);
-                    } else {
+                    } 
+                    if (sourceType == TRIGGER_TYPE) {
+                        String data = rs.getString(1);
+                        buf.append(data.trim() + " ");
+                    }
+                    if (sourceType == VIEW_TYPE) {
                         buf.append(rs.getString(1));                        
                     }
                 }
