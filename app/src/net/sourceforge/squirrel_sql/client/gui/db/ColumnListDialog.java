@@ -87,6 +87,9 @@ public class ColumnListDialog extends JDialog {
         //i18n[ColumnListDialog.dropErrorTitle=Too Many Columns Selected]
         String DROP_ERROR_TITLE = 
             s_stringMgr.getString("ColumnListDialog.dropErrorTitle");
+        //i18n[ColumnListDialog.dropPrimaryKeyButtonLabel=Drop Primary Key]        
+        String DROP_PRIMARY_KEY_BUTTON_LABEL = 
+            s_stringMgr.getString("ColumnListDialog.dropPrimaryKeyButtonLabel");
         //i18n[ColumnListDialog.dropTitle=Select Column(s) To Drop]
         String DROP_TITLE = 
             s_stringMgr.getString("ColumnListDialog.dropTitle");
@@ -110,6 +113,7 @@ public class ColumnListDialog extends JDialog {
     public static final int DROP_COLUMN_MODE = 0;
     public static final int MODIFY_COLUMN_MODE = 1;
     public static final int ADD_PRIMARY_KEY_MODE = 2;
+    public static final int DROP_PRIMARY_KEY_MODE = 3;
     
     private int _mode = DROP_COLUMN_MODE;
     
@@ -137,6 +141,9 @@ public class ColumnListDialog extends JDialog {
             columnList.setListData(cols);
         } else {
             init(cols);
+        }
+        if (_mode == DROP_PRIMARY_KEY_MODE) {
+            columnList.setEnabled(false);
         }
     }
     
@@ -286,8 +293,12 @@ public class ColumnListDialog extends JDialog {
         if (_mode == ADD_PRIMARY_KEY_MODE) {
             selectColumnButton = new JButton(i18n.ADD_PRIMARY_KEY_BUTTON_LABEL);
         }        
-        
-        selectColumnButton.setEnabled(false);
+        if (_mode == DROP_PRIMARY_KEY_MODE) {
+            selectColumnButton = new JButton(i18n.DROP_PRIMARY_KEY_BUTTON_LABEL);
+        }
+        if (_mode != DROP_PRIMARY_KEY_MODE) {
+            selectColumnButton.setEnabled(false);
+        }
         cancelButton = new JButton(i18n.CANCEL_BUTTON_LABEL);
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -296,8 +307,13 @@ public class ColumnListDialog extends JDialog {
         });
         result.add(selectColumnButton);
         if (_mode == DROP_COLUMN_MODE 
-                || _mode == ADD_PRIMARY_KEY_MODE) {
+                || _mode == ADD_PRIMARY_KEY_MODE
+                || _mode == DROP_PRIMARY_KEY_MODE) 
+        {
             showSQLButton = new JButton(i18n.SHOWSQL_BUTTON_LABEL);
+            if (_mode != DROP_PRIMARY_KEY_MODE) {
+                showSQLButton.setEnabled(false);
+            }
             result.add(showSQLButton);
         }
         result.add(cancelButton);
@@ -351,10 +367,18 @@ public class ColumnListDialog extends JDialog {
                                 JOptionPane.ERROR_MESSAGE);
                 columnList.clearSelection();
                 selectColumnButton.setEnabled(false);
+                showSQLButton.setEnabled(false);
             } else {
                 selectColumnButton.setEnabled(true);
+                showSQLButton.setEnabled(true);
             }
-            
+            if (selected == null || selected.length == 0) {
+                selectColumnButton.setEnabled(false);
+                showSQLButton.setEnabled(false);
+            } else {
+                selectColumnButton.setEnabled(true);
+                showSQLButton.setEnabled(true);                
+            }
         }
         
     }
