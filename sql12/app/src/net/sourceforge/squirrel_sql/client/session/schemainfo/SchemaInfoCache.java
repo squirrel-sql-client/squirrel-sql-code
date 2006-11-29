@@ -208,7 +208,7 @@ public class SchemaInfoCache implements Serializable
 
       for (int i = 0; i < types.length; i++)
       {
-         if(type.equals(types[i]))
+         if(type.trim().equalsIgnoreCase(types[i]))
          {
             return true;
          }
@@ -425,11 +425,19 @@ public class SchemaInfoCache implements Serializable
                CaseInsensitiveString ciColName = new CaseInsensitiveString(eci.getColumnName());
                ArrayList ecisInColumn = (ArrayList) _extColumnInfosByColumnName.get(ciColName);
 
-               ecisInColumn.remove(eci);
-
-               if (0 == ecisInColumn.size())
-               {
-                  _extColumnInfosByColumnName.remove(ciColName);
+               if (ecisInColumn != null) {
+                   ecisInColumn.remove(eci);
+    
+                   if (0 == ecisInColumn.size())
+                   {
+                      _extColumnInfosByColumnName.remove(ciColName);
+                   }
+               } else {
+                   if (s_log.isDebugEnabled()) {
+                       s_log.debug(
+                           "clearTables: no entries in " +
+                           "_extColumnInfosByColumnName for column - "+ciColName);
+                   }
                }
             }
 
