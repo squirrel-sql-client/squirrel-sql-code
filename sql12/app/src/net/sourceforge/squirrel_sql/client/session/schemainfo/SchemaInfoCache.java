@@ -433,9 +433,11 @@ public class SchemaInfoCache implements Serializable
                       _extColumnInfosByColumnName.remove(ciColName);
                    }
                } else {
-                   s_log.debug(
-                       "clearTables: no entries in " +
-                       "_extColumnInfosByColumnName for column - "+ciColName);
+                   if (s_log.isDebugEnabled()) {
+                       s_log.debug(
+                           "clearTables: no entries in " +
+                           "_extColumnInfosByColumnName for column - "+ciColName);
+                   }
                }
             }
 
