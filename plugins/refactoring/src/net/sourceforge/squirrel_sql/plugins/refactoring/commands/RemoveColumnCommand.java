@@ -115,7 +115,7 @@ public class RemoveColumnCommand extends AbstractRefactoringCommand
         
     }
 
-    private String[] getSQLFromDialog() {
+    protected String[] getSQLFromDialog() {
         TableColumnInfo[] columns = columnListDialog.getSelectedColumnList();
         HibernateDialect dialect = null; 
             

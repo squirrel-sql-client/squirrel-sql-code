@@ -70,8 +70,17 @@ public class DropPrimaryKeyCommand extends AbstractRefactoringCommand {
         if (! (_info instanceof ITableInfo)) {
             return;
         }
+        ITableInfo ti = (ITableInfo)_info;
         try {
-            // TODO: ensure that the table has a primary key
+            if (!tableHasPrimaryKey()) {
+                //i18n[DropPrimaryKeyCommand.noKeyToDrop=Table {0} does not 
+                //have a primary key to drop]
+                String msg = 
+                    s_stringMgr.getString("DropPrimaryKeyCommand.noKeyToDrop",
+                                          ti.getSimpleName());
+                _session.getMessageHandler().showErrorMessage(msg);
+                return;
+            }
             super.showColumnListDialog(new DropPrimaryKeyActionListener(), 
                                        new ShowSQLListener(), 
                                        ColumnListDialog.DROP_PRIMARY_KEY_MODE);
@@ -82,7 +91,7 @@ public class DropPrimaryKeyCommand extends AbstractRefactoringCommand {
         
     }
 
-    private String getSQLFromDialog() {
+    protected String[] getSQLFromDialog() {
         HibernateDialect dialect = null; 
         
         String result = null;
@@ -102,21 +111,23 @@ public class DropPrimaryKeyCommand extends AbstractRefactoringCommand {
         } catch (UserCancelledOperationException e) {
             // user cancelled selecting a dialog. do nothing?
         }
-        return result;
+        return new String[] { result };
         
     }
     
     
     private class ShowSQLListener implements ActionListener {
         public void actionPerformed( ActionEvent e) {
-            String sql = getSQLFromDialog();
-            if (sql == null || sql.equals("")) {
+            String[] sql = getSQLFromDialog();
+            if (sql.length == 0) {
 //              TODO: tell the user no changes
                 return;
             }
             StringBuffer script = new StringBuffer();
-            script.append(sql);
-            script.append(";\n\n");
+            for (int i = 0; i < sql.length; i++) {
+                script.append(sql[i]);
+                script.append(";\n\n");                
+            }
 
             ErrorDialog sqldialog = 
                 new ErrorDialog(columnListDialog, script.toString());
@@ -138,13 +149,14 @@ public class DropPrimaryKeyCommand extends AbstractRefactoringCommand {
             
             CommandExecHandler handler = new CommandExecHandler(_session);
             
-            String sql = getSQLFromDialog();
-
-            log.info("DropPrimaryKeyCommand: executing SQL - "+sql);
-            SQLExecuterTask executer = 
-                new SQLExecuterTask(_session, sql, handler);
-            executer.run();            
-            
+            String[] sqls = getSQLFromDialog();
+            for (int i = 0; i < sqls.length; i++) {
+                String sql = sqls[i];
+                log.info("DropPrimaryKeyCommand: executing SQL - "+sql);
+                SQLExecuterTask executer = 
+                    new SQLExecuterTask(_session, sql, handler);
+                executer.run();                            
+            }
             columnListDialog.setVisible(false);
         }
         

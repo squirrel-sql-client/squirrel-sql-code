@@ -21,7 +21,6 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.client.db.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.client.gui.db.ColumnListDialog;
@@ -32,12 +31,12 @@ import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.refactoring.DBUtil;
 
 /**
  * Implements showing a list of columns for a selected table to the 
@@ -73,19 +72,32 @@ public class AddPrimaryKeyCommand extends AbstractRefactoringCommand {
         if (! (_info instanceof ITableInfo)) {
             return;
         }
-        // TODO: make sure the table doesn't already have a PK
+        
+        
         try {
+            ITableInfo ti = (ITableInfo)_info;    
+            if (tableHasPrimaryKey()) {
+                //i18n[AddPrimaryKeyCommand.primaryKeyExists=Table {0} already 
+                //has a primary key]
+                String msg = 
+                    s_stringMgr.getString("AddPrimaryKeyCommand.primaryKeyExists", 
+                                           ti.getSimpleName());
+                _session.getMessageHandler().showErrorMessage(msg);
+                return;
+            }
+            
             super.showColumnListDialog(new AddPrimaryKeyActionListener(), 
                                        new ShowSQLListener(), 
                                        ColumnListDialog.ADD_PRIMARY_KEY_MODE);
         } catch (Exception e) {
+            _session.getMessageHandler().showErrorMessage(e);
             log.error("Unexpected exception "+e.getMessage(), e);
         }
         
         
     }
 
-    private String[] getSQLFromDialog() {
+    protected String[] getSQLFromDialog() {
         TableColumnInfo[] columns = columnListDialog.getSelectedColumnList();
         HibernateDialect dialect = null; 
             

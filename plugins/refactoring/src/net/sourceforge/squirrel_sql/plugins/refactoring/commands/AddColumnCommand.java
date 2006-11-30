@@ -60,9 +60,6 @@ public class AddColumnCommand extends AbstractRefactoringCommand
     private final static ILogger log = 
                       LoggerController.createLogger(AddColumnCommand.class);
     
-    
-    private ColumnDetailDialog dialog = null;
-    
     private HibernateDialect dialect = null;
     
     private MainFrame mainFrame = null;
@@ -86,15 +83,16 @@ public class AddColumnCommand extends AbstractRefactoringCommand
             dialect =  
                 DialectFactory.getDialect(_session, DialectFactory.DEST_TYPE);
             String dbName = dialect.getDisplayName();
-            dialog = new ColumnDetailDialog(ColumnDetailDialog.ADD_MODE);
-            dialog.setTableName(tableName);
-            dialog.addOKListener(new AddButtonListener());
-            dialog.addShowSQLListener(new ShowSQLButtonListener());
-            dialog.addDialectListListener(new DialectListListener());
+            columnDetailDialog = new ColumnDetailDialog(ColumnDetailDialog.ADD_MODE);
+            columnDetailDialog.setTableName(tableName);
+            columnDetailDialog.addExecuteListener(new AddButtonListener());
+            columnDetailDialog.addEditSQLListener(new EditSQLListener());
+            columnDetailDialog.addShowSQLListener(new ShowSQLButtonListener());
+            columnDetailDialog.addDialectListListener(new DialectListListener());
             mainFrame = _session.getApplication().getMainFrame();
-            dialog.setLocationRelativeTo(mainFrame);
-            dialog.setSelectedDialect(dbName);
-            dialog.setVisible(true);
+            columnDetailDialog.setLocationRelativeTo(mainFrame);
+            columnDetailDialog.setSelectedDialect(dbName);
+            columnDetailDialog.setVisible(true);
         } catch (UserCancelledOperationException e) {
             log.info("User cancelled add column request");
             return;
@@ -102,15 +100,15 @@ public class AddColumnCommand extends AbstractRefactoringCommand
         
     }
 
-    private String[] getSQLFromDialog() {
-        TableColumnInfo info = dialog.getColumnInfo();
+    protected String[] getSQLFromDialog() {
+        TableColumnInfo info = columnDetailDialog.getColumnInfo();
         String[] result = null;
         try {
             result = DBUtil.getAlterSQLForColumnAddition(info, dialect);
         } catch (HibernateException e1) {
-            String dataType = dialog.getSelectedTypeName();
+            String dataType = columnDetailDialog.getSelectedTypeName();
             JOptionPane.showMessageDialog(
-                    dialog, 
+                    columnDetailDialog, 
                     "The "+dialect.getDisplayName()+" dialect doesn't support the type "+dataType, 
                     "Missing Dialect Type Mapping", 
                     JOptionPane.ERROR_MESSAGE);            
@@ -130,11 +128,11 @@ public class AddColumnCommand extends AbstractRefactoringCommand
     private class AddButtonListener implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
-            String columnName = dialog.getColumnInfo().getColumnName();
-            String tableName = dialog.getTableName();
+            String columnName = columnDetailDialog.getColumnInfo().getColumnName();
+            String tableName = columnDetailDialog.getTableName();
             if (!isColumnNameUnique(columnName)) {
                 JOptionPane.showMessageDialog(
-                        dialog, 
+                        columnDetailDialog, 
                         "Table "+tableName+" already has a column called "+columnName, 
                         "Problem", 
                         JOptionPane.ERROR_MESSAGE);
@@ -145,8 +143,6 @@ public class AddColumnCommand extends AbstractRefactoringCommand
                 return;
             }
             CommandExecHandler handler = new CommandExecHandler(_session);            
-            // TODO: execute SQL.  Maybe should put it on the SQLEditor first?
-            // No, that should be configurable.
 
             for (int i = 0; i < sqls.length; i++) {
                 String sql = sqls[i];
@@ -166,7 +162,7 @@ public class AddColumnCommand extends AbstractRefactoringCommand
                     break;
                 }
             }
-            dialog.setVisible(false);
+            columnDetailDialog.setVisible(false);
         }
         
         /**
@@ -207,7 +203,7 @@ public class AddColumnCommand extends AbstractRefactoringCommand
                 }
                 
                 ErrorDialog sqldialog = 
-                    new ErrorDialog(dialog, script.toString());
+                    new ErrorDialog(columnDetailDialog, script.toString());
                 //i18n[AddColumnCommand.sqlDialogTitle=Add column SQL]
                 String title = 
                     s_stringMgr.getString("AddColumnCommand.sqlDialogTitle");
@@ -221,7 +217,7 @@ public class AddColumnCommand extends AbstractRefactoringCommand
     private class DialectListListener implements ItemListener {
 
         public void itemStateChanged(ItemEvent e) {
-            String dbName = dialog.getSelectedDBName();
+            String dbName = columnDetailDialog.getSelectedDBName();
             dialect = DialectFactory.getDialect(dbName);
         }
     }
