@@ -17,10 +17,6 @@ package net.sourceforge.squirrel_sql.plugins.refactoring;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.io.File;
-import java.io.IOException;
-import java.util.Hashtable;
-
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
@@ -30,7 +26,6 @@ import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
-import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
@@ -57,15 +52,9 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
    /** Logger for this class. */
    private static ILogger s_log = LoggerController.createLogger(RefactoringPlugin.class);
 
-   /** The app folder for this plugin. */
-   private File _pluginAppFolder;
-
-   /** Folder to store user settings in. */
-   private File _userSettingsFolder;
-
    private PluginResources _resources;
 
-   private Hashtable _saveAndLoadDelegates = new Hashtable();
+   
 
    /**
     * Return the internal name of this plugin.
@@ -172,34 +161,10 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
       super.initialize();
       IApplication app = getApplication();
 
-      PluginManager pmgr = app.getPluginManager();
-
-      // Folder within plugins folder that belongs to this
-      // plugin.
-      try
-      {
-         _pluginAppFolder = getPluginAppSettingsFolder();
-      }
-      catch (IOException ex)
-      {
-         throw new PluginException(ex);
-      }
-
-      // Folder to store user settings.
-      try
-      {
-         _userSettingsFolder = getPluginUserSettingsFolder();
-      }
-      catch (IOException ex)
-      {
-         throw new PluginException(ex);
-      }
-
       _resources =
          new SQLPluginResources(
             "net.sourceforge.squirrel_sql.plugins.refactoring.refactoring",
             this);
-
 
       ActionCollection coll = app.getActionCollection();
       coll.add(new AddColumnAction(app, _resources));
@@ -207,14 +172,6 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
       coll.add(new RemoveColumnAction(app, _resources));
       coll.add(new AddPrimaryKeyAction(app, _resources));
       coll.add(new DropPrimaryKeyAction(app, _resources));
-   }
-
-   /**
-    * Application is shutting down so save data.
-    */
-   public void unload()
-   {
-      super.unload();
    }
 
    public boolean allowsSessionStartedInBackground()
@@ -244,7 +201,7 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
        {
            public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
            {
-               ActionCollection coll = sess.getApplication().getActionCollection();
+               //ActionCollection coll = sess.getApplication().getActionCollection();
                //sqlInternalFrame.addSeparatorToToolbar();
                //sqlInternalFrame.addToToolbar(coll.get(CreateTableOfCurrentSQLAction.class));
 
@@ -293,10 +250,11 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
         addPrimaryKeyItem.setAction(coll.get(AddPrimaryKeyAction.class));
         JMenuItem dropPrimaryKeyItem = new JMenuItem("Drop Primary Key");
         dropPrimaryKeyItem.setAction(coll.get(DropPrimaryKeyAction.class));
-        JMenuItem addForeignKeyItem = new JMenuItem("Add Foreign Key");
-        JMenuItem dropForeignKeyItem = new JMenuItem("Drop Foreign Key");
-        JMenuItem enableConstraintsItem = new JMenuItem("Enable Constraints");
-        JMenuItem disableConstraintsItem = new JMenuItem("Disable Constraints");
+        // Not yet implemented
+        //JMenuItem addForeignKeyItem = new JMenuItem("Add Foreign Key");
+        //JMenuItem dropForeignKeyItem = new JMenuItem("Drop Foreign Key");
+        //JMenuItem enableConstraintsItem = new JMenuItem("Enable Constraints");
+        //JMenuItem disableConstraintsItem = new JMenuItem("Disable Constraints");
         
         
         JMenu tableMenu = new JMenu("Table");
@@ -306,52 +264,16 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
         tableMenu.add(dropIndexItem);
         tableMenu.add(addPrimaryKeyItem);
         tableMenu.add(dropPrimaryKeyItem);
-        tableMenu.add(addForeignKeyItem);
-        tableMenu.add(dropForeignKeyItem);
-        tableMenu.add(enableConstraintsItem);
-        tableMenu.add(disableConstraintsItem);
+        // Not yet implemented
+        //tableMenu.add(addForeignKeyItem);
+        //tableMenu.add(dropForeignKeyItem);
+        //tableMenu.add(enableConstraintsItem);
+        //tableMenu.add(disableConstraintsItem);
         
         tableObjectMenu.add(tableMenu);
         tableObjectMenu.add(columnMenu);
         
         api.addToPopup(DatabaseObjectType.TABLE, tableObjectMenu);
-        /*
-        api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTableScriptAction.class));
-        api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateSelectScriptAction.class));
-        api.addToPopup(DatabaseObjectType.TABLE, coll.get(DropTableScriptAction.class));
-        api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateDataScriptAction.class));
-        api.addToPopup(DatabaseObjectType.TABLE, coll.get(CreateTemplateDataScriptAction.class));
-        api.addToPopup(DatabaseObjectType.VIEW, coll.get(CreateTableScriptAction.class));
-        api.addToPopup(DatabaseObjectType.VIEW, coll.get(CreateSelectScriptAction.class));
-        api.addToPopup(DatabaseObjectType.VIEW, coll.get(CreateDataScriptAction.class));
-        api.addToPopup(DatabaseObjectType.VIEW, coll.get(CreateTemplateDataScriptAction.class));
-    
-
-        session.addSeparatorToToolbar();
-        session.addToToolbar(coll.get(CreateTableOfCurrentSQLAction.class));
-
-        session.getSessionInternalFrame().addToToolsPopUp("sql2table", coll.get(CreateTableOfCurrentSQLAction.class));
-        session.getSessionInternalFrame().addToToolsPopUp("sql2ins", coll.get(CreateDataScriptOfCurrentSQLAction.class));
-        */
     }
-
-   private void createMenu(ISession session)
-   {
-      IApplication app = getApplication();
-      ActionCollection coll = app.getActionCollection();
-
-      JMenu menu = _resources.createMenu(IMenuResourceKeys.REFACTORING);
-      app.addToMenu(IApplication.IMenuIDs.PLUGINS_MENU, menu);
-
-      //_resources.addToMenu(coll.get(CreateDataScriptAction.class), menu);
-      //_resources.addToMenu(coll.get(CreateTemplateDataScriptAction.class), menu);
-      //_resources.addToMenu(coll.get(CreateTableScriptAction.class), menu);
-      //_resources.addToMenu(coll.get(CreateSelectScriptAction.class), menu);
-      //_resources.addToMenu(coll.get(DropTableScriptAction.class), menu);
-      //_resources.addToMenu(coll.get(CreateDataScriptOfCurrentSQLAction.class), menu);
-      //_resources.addToMenu(coll.get(CreateTableOfCurrentSQLAction.class), menu);
-
-      //app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, menu);
-   }
 
 }
