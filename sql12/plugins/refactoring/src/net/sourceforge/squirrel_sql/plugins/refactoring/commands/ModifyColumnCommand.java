@@ -66,8 +66,6 @@ public class ModifyColumnCommand extends AbstractRefactoringCommand
     
     private ColumnListDialog listDialog = null;
     
-    private ColumnDetailDialog detailDialog = null;
-    
     private MainFrame mainFrame = null;    
     
     private TableColumnInfo columnToModify = null;
@@ -122,18 +120,18 @@ public class ModifyColumnCommand extends AbstractRefactoringCommand
         }
     }
 
-    private String[] getSQLFromDialog() {
-        TableColumnInfo to = detailDialog.getColumnInfo();
-        String dbName = detailDialog.getSelectedDBName();
+    protected String[] getSQLFromDialog() {
+        TableColumnInfo to = columnDetailDialog.getColumnInfo();
+        String dbName = columnDetailDialog.getSelectedDBName();
         HibernateDialect dialect = DialectFactory.getDialect(dbName);
         
         String[] result = null;
         try {
             result = DBUtil.getAlterSQLForColumnChange(columnToModify, to, dialect);
         } catch (HibernateException e1) {
-            String dataType = detailDialog.getSelectedTypeName();
+            String dataType = columnDetailDialog.getSelectedTypeName();
             // TODO: I18N
-            JOptionPane.showMessageDialog(detailDialog, 
+            JOptionPane.showMessageDialog(columnDetailDialog, 
                     "The "+dialect.getDisplayName()+" dialect doesn't support the type "+dataType, 
                     "Missing Dialect Type Mapping", 
                     JOptionPane.ERROR_MESSAGE);            
@@ -157,15 +155,16 @@ public class ModifyColumnCommand extends AbstractRefactoringCommand
             dialect =  
                 DialectFactory.getDialect(_session, DialectFactory.DEST_TYPE);
             String dbName = dialect.getDisplayName();                
-            detailDialog = 
+            columnDetailDialog = 
                 new ColumnDetailDialog(ColumnDetailDialog.MODIFY_MODE);
-            detailDialog.setExistingColumnInfo(columnToModify);
-            detailDialog.addShowSQLListener(new ShowSQLButtonListener());
-            detailDialog.addOKListener(new OKButtonListener());
+            columnDetailDialog.setExistingColumnInfo(columnToModify);
+            columnDetailDialog.addShowSQLListener(new ShowSQLButtonListener());
+            columnDetailDialog.addEditSQLListener(new EditSQLListener());
+            columnDetailDialog.addExecuteListener(new OKButtonListener());
             mainFrame = _session.getApplication().getMainFrame();
-            detailDialog.setLocationRelativeTo(mainFrame);
-            detailDialog.setSelectedDialect(dbName);
-            detailDialog.setVisible(true);
+            columnDetailDialog.setLocationRelativeTo(mainFrame);
+            columnDetailDialog.setSelectedDialect(dbName);
+            columnDetailDialog.setVisible(true);
         } catch (UserCancelledOperationException ex) {
             ex.printStackTrace();
         }        
@@ -224,7 +223,7 @@ public class ModifyColumnCommand extends AbstractRefactoringCommand
                     break;
                 }
             }
-            detailDialog.setVisible(false);
+            columnDetailDialog.setVisible(false);
             
         }
         
@@ -249,7 +248,7 @@ public class ModifyColumnCommand extends AbstractRefactoringCommand
             }
             
             ErrorDialog sqldialog = 
-                new ErrorDialog(detailDialog, script.toString());
+                new ErrorDialog(columnDetailDialog, script.toString());
             //i18n[ModifyColumnCommand.sqlDialogTitle=Modify column SQL]
             String title = 
                 s_stringMgr.getString("ModifyColumnCommand.sqlDialogTitle");

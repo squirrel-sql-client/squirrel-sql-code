@@ -1,9 +1,11 @@
 package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
 
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import net.sourceforge.squirrel_sql.client.gui.db.ColumnDetailDialog;
 import net.sourceforge.squirrel_sql.client.gui.db.ColumnListDialog;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
@@ -24,6 +26,8 @@ public abstract class AbstractRefactoringCommand implements ICommand {
     protected final IDatabaseObjectInfo _info;
 
     protected ColumnListDialog columnListDialog = null;
+    
+    protected ColumnDetailDialog columnDetailDialog = null;
     
     protected String pkName = null;
     
@@ -56,6 +60,7 @@ public abstract class AbstractRefactoringCommand implements ICommand {
         if (columnListDialog == null) {
             columnListDialog = new ColumnListDialog(columns, mode);
             columnListDialog.addColumnSelectionListener(oklistener);
+            columnListDialog.addEditSQLListener(new EditSQLListener());
             columnListDialog.addShowSQLListener(showSqlListener);
             MainFrame mainFrame = _session.getApplication().getMainFrame();
             columnListDialog.setLocationRelativeTo(mainFrame);  
@@ -127,4 +132,49 @@ public abstract class AbstractRefactoringCommand implements ICommand {
         }
     }
     
+    /**
+     * The subclass should implement this so that the action listeners can get
+     * the SQL 
+     * @return
+     */
+    protected abstract String[] getSQLFromDialog();
+    
+    /**
+     *                      
+     *                      
+     *
+     */
+    protected class EditSQLListener implements ActionListener {
+
+        public void actionPerformed(ActionEvent e) {
+            String[] sqls = getSQLFromDialog();
+            StringBuffer sql = new StringBuffer();
+            for (int i = 0; i < sqls.length; i++) {
+                sql.append(sqls[i]);
+                if (i < sqls.length) {
+                    sql.append("\n\n");
+                }
+            }
+            if (columnListDialog != null) {
+                columnListDialog.setVisible(false);
+            }
+            if (columnDetailDialog != null) {
+                columnDetailDialog.setVisible(false);
+            }
+            _session.getSQLPanelAPIOfActiveSessionWindow().appendSQLScript(sql.toString(), true);
+            _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
+        }
+        
+    }
+    
+    protected boolean tableHasPrimaryKey() throws SQLException {
+        if (! (_info instanceof ITableInfo)) {
+            return false;
+        }
+        ITableInfo ti = (ITableInfo)_info;
+        SQLDatabaseMetaData md = _session.getSQLConnection().getSQLMetaData();
+        PrimaryKeyInfo[] pks = md.getPrimaryKey(ti);
+        return (pks != null && pks.length > 0);
+    }
+
 }
