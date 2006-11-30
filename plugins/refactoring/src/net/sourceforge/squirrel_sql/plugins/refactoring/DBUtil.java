@@ -124,12 +124,15 @@ public class DBUtil {
         if (!dialect.supportsAlterColumnDefault()) {
             return null;
         }
-        if (oldDefault == null && newDefault != null) {
-            return dialect.getColumnDefaultAlterSQL(to);
+        // empty string ('') seems to be represented as null in some drivers. 
+        // Not sure if this is the best thing to do here, but it fixes an issue
+        // where SQL returns is set default to '', when it is already null.
+        if (oldDefault == null) {
+            oldDefault = "";
         }
-        if (newDefault == null && oldDefault != null) {
-            return dialect.getColumnDefaultAlterSQL(to);
-        }        
+        if (newDefault == null) {
+            newDefault = "";
+        }
         if (!oldDefault.equals(newDefault)) {
             return dialect.getColumnDefaultAlterSQL(to);
         }

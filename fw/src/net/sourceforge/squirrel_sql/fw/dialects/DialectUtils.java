@@ -361,19 +361,34 @@ public class DialectUtils {
         if (!appendConstraintName) {
             pkSQL.append(pkName);
         }
-        pkSQL.append(" PRIMARY KEY (");
-        for (int i = 0; i < colInfos.length; i++) {
-            pkSQL.append(colInfos[i].getColumnName());
-            if (i + 1 < colInfos.length) {
-                pkSQL.append(", ");
-            }
-        }
-        pkSQL.append(")");
+        pkSQL.append(" PRIMARY KEY ");
+        pkSQL.append(getColumnList(colInfos));
         if (appendConstraintName) {
             pkSQL.append(" CONSTRAINT ");
             pkSQL.append(pkName);
         }
         return pkSQL.toString();
+    }
+    
+    /**
+     * Returns:
+     * 
+     *  (column1, column2, ...)
+     * 
+     * @param colInfos
+     * @return
+     */
+    private static String getColumnList(TableColumnInfo[] colInfos) {
+        StringBuffer result = new StringBuffer();
+        result.append("(");
+        for (int i = 0; i < colInfos.length; i++) {
+            result.append(colInfos[i].getColumnName());
+            if (i + 1 < colInfos.length) {
+                result.append(", ");
+            }
+        }
+        result.append(")");
+        return result.toString();
     }
     
     /**
@@ -411,6 +426,7 @@ public class DialectUtils {
      * ALTER TABLE table_name ALTER COLUMN column_name [defaultClause] 'defaultVal'  
      * 
      * ALTER TABLE table_name ALTER COLUMN column_name [defaultClause] 1234
+     * 
      * @param dialect TODO
      * @param info the column to modify and it's default value.
      * @param specifyType TODO
@@ -580,6 +596,32 @@ public class DialectUtils {
         } else {
             result.append(" DROP PRIMARY KEY");
         }
+        return result.toString();
+    }
+    
+    /**
+     * CREATE UNIQUE INDEX indexName ON tableName (columns);
+     * 
+     * @param indexName
+     * @param tableName
+     * @param columns
+     * @return
+     */
+    public static String getAddIndexSQL(String indexName,
+                                        boolean unique,
+                                        TableColumnInfo[] columns) 
+    {
+        StringBuffer result = new StringBuffer();
+        if (unique) {
+            result.append("CREATE UNIQUE INDEX ");
+        } else {
+            result.append("CREATE INDEX ");
+        }
+        result.append(indexName);
+        result.append(" ON ");
+        result.append(columns[0].getTableName());
+        result.append(" ");
+        result.append(getColumnList(columns));
         return result.toString();
     }
     
