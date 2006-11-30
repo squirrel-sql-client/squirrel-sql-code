@@ -317,21 +317,29 @@ public class ViewLogsSheet extends BaseInternalFrame
 		}
 	}
 
+    /**
+       199828 [Foo Thread] message 
+     * @param line
+     * @return
+     */
     private boolean shouldAppendLineToChunk(String line) {
         boolean result = false;
         if (line == null || line.length() == 0) {
             return false;
         }
-        String[] parts = line.split("\\s+");
-        if (parts.length >= 3) {
-            String level = parts[2];
-            if (_errorChkbox.isSelected() && level.equals("ERROR")) {
+        int threadNameEndIdx = line.indexOf("]");
+        if (threadNameEndIdx > -1) {
+            char levelChar = line.charAt(threadNameEndIdx+2);
+            if (_errorChkbox.isSelected() && levelChar == 'E') {
                 result = true;
             }
-            if (_debugChkbox.isSelected() && level.equals("DEBUG")) {
+            if (_debugChkbox.isSelected() && levelChar == 'D') {
                 result = true;
             }
-            if (_infoChkbox.isSelected() && level.equals("INFO")) {
+            if (_infoChkbox.isSelected() && levelChar == 'I') {
+                result = true;
+            }
+            if (levelChar != 'E' && levelChar != 'D' && levelChar != 'I') {
                 result = true;
             }
         } else {
