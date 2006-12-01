@@ -6,15 +6,21 @@ Not yet released - available in the latest snapshot, or at least checked into CV
 
     New Features/Enhancements:
 
-1602255: 'Interpret DATE columns as TIMESTAMP' also in SQL view.  
+DBCopy Plugin: Added support for Informix and HADB
 
-Informix Plugin: Lets the user view source for stored procedure, trigger and 
-View objects. Also provides Informix-specific details for indexes and triggers.
-Special thanks goes to Doug Lawry for help setting up an Informix instance for 
-developing the plugin, and providing the system catalog queries necessary for
-the object information provided by this plugin.
+1602255: 'Interpret DATE columns as TIMESTAMP' also in SQL view.  When this 
+configuration item is checked, any SQL query result that contains a DATE column
+will show the DATE values as TIMESTAMP values (This is useful with Oracle where
+DATE columns also contain TIME components)
 
-Made SQuirreL work with hxtt drivers. See www.hxtt.com. Thanks to Yonghong Zhao the patches.
+Informix Plugin: This new plugin allows the user view source for stored 
+procedure, trigger and view objects. Also provides Informix-specific details 
+for indexes and triggers.  Special thanks goes to Doug Lawry for help setting 
+up an Informix instance for developing the plugin, and providing the system 
+catalog queries necessary for the object information provided by this plugin.
+
+Made SQuirreL work with hxtt drivers. See www.hxtt.com. Thanks to Yonghong Zhao 
+the patches.
 
 Oracle Plugin:
    Windows for
@@ -23,7 +29,8 @@ Oracle Plugin:
     - SGA Trace,
     - Invalid Objects
    were changed in the following ways:
-   - Tool bar buttons are not in the main frame tool bar any more but in the Session tool bar.
+   - Tool bar buttons are not in the main frame tool bar any more but in the 
+     Session tool bar.
    - Each window has its own tool bar icon.
    - All windows restore their last size and position.
    - All windows provide a "Stay on top" check box.
@@ -35,7 +42,6 @@ LAF Plugin: Added Napkin Look and Feel (JDK 1.5 only)
 Completion Popup (Code Completion ctrl+space, Tools Popup ctrl+t, Bookmarks Popup ctrl+j):
 When the beginning/end of the pop up list is reached another arrow up/down jumps to the last/first entry. 
 
-
 1015274 -  DB2/400 system naming support
 
 Schema refresh on catalog combo box change:
@@ -45,7 +51,6 @@ become accessible when the catalog combo box is switched to the their Catalog.
 To make Schemas available in the Object Tree, Code completion etc. after a Catalog switch
 Schemas are now automatically refreshed.
 (Thanks to Stan Berka for this patch)
-
 
 Graph Plugin:
 The Graph plugin now allows to save jpg images to files instead of printing them.
@@ -59,10 +64,10 @@ same order that they appear in the session menu "Scripts" menu item.
 
 Updated Spanish translation strings (Thanks to Diego Schulz)
 
-Introduced new refactoring plugin which currently allows users to alter
-tables by adding or dropping columns.  Uses the Hibernate dialect 
-framework to derive SQL which is syntactically correct for the database
-being modified.
+Refactoring Plugin: Introduced new plugin which currently allows users to alter
+tables by adding, modifying and dropping columns as well as adding/dropping 
+Primary Keys.  Uses an extended Hibernate dialect framework to derive SQL which 
+is syntactically correct for the database being modified.
 
 Added JDBC driver CLASSNAME and CLASSPATH to the Metadata tab so that
 it is not necessary to open the driver definition for the current session to 
