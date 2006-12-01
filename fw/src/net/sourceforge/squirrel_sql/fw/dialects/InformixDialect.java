@@ -53,7 +53,7 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect
         registerColumnType(Types.REAL, "real");
         registerColumnType(Types.SMALLINT, "smallint");
         registerColumnType(Types.TIME, "datetime hour to second");
-        registerColumnType(Types.TIMESTAMP, "datetime");
+        registerColumnType(Types.TIMESTAMP, "datetime year to fraction");
         registerColumnType(Types.TINYINT, "smallint");
         registerColumnType(Types.VARBINARY, "byte");
         registerColumnType(Types.VARCHAR, 255, "varchar($l)");
