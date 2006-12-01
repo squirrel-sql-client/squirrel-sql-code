@@ -49,6 +49,7 @@ import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
+
 /**
  * A dialog that can be used to get column(s) selected by the user 
  */
@@ -59,7 +60,8 @@ public class ColumnListDialog extends JDialog {
     private JLabel columnListLabel = null;
     private JList columnList = null;
     
-    private JButton selectColumnButton = null;
+    private JButton executeButton = null;
+    private JButton editSQLButton = null;
     private JButton showSQLButton = null;
     private JButton cancelButton = null;
     
@@ -68,18 +70,15 @@ public class ColumnListDialog extends JDialog {
         StringManagerFactory.getStringManager(ColumnListDialog.class);
     
     private interface i18n {
-        //i18n[ColumnListDialog.addPrimaryKeyButtonLabel=Add Primary Key]
-        String ADD_PRIMARY_KEY_BUTTON_LABEL =
-            s_stringMgr.getString("ColumnListDialog.addPrimaryKeyButtonLabel");
+        //i18n[ColumnListDialog.executeButtonLabel=Execute]
+        String EXECUTE_BUTTON_LABEL =
+            s_stringMgr.getString("ColumnListDialog.executeButtonLabel");
         //i18n[ColumnListDialog.cancelButtonLabel=Cancel]
         String CANCEL_BUTTON_LABEL = 
             s_stringMgr.getString("ColumnListDialog.cancelButtonLabel");
         //i18n[ColumnListDialog.columnNameLabel=Column: ]
         String COLUMN_NAME_LABEL = 
             s_stringMgr.getString("ColumnListDialog.columnNameLabel");
-        //i18n[ColumnListDialog.dropButtonLabel=Drop Column(s)]
-        String DROP_BUTTON_LABEL = 
-            s_stringMgr.getString("ColumnListDialog.dropButtonLabel");
         //i18n[ColumnListDialog.dropErrorMessage=Can't drop all columns - a 
         //table must have at least one column
         String DROP_ERROR_MESSAGE = 
@@ -87,15 +86,15 @@ public class ColumnListDialog extends JDialog {
         //i18n[ColumnListDialog.dropErrorTitle=Too Many Columns Selected]
         String DROP_ERROR_TITLE = 
             s_stringMgr.getString("ColumnListDialog.dropErrorTitle");
-        //i18n[ColumnListDialog.dropPrimaryKeyButtonLabel=Drop Primary Key]        
-        String DROP_PRIMARY_KEY_BUTTON_LABEL = 
-            s_stringMgr.getString("ColumnListDialog.dropPrimaryKeyButtonLabel");
+        //i18n[ColumnListDialog.dropPrimaryKeyTitle=Drop Primary Key]        
+        String DROP_PRIMARY_KEY_TITLE = 
+            s_stringMgr.getString("ColumnListDialog.dropPrimaryKeyTitle");
         //i18n[ColumnListDialog.dropTitle=Select Column(s) To Drop]
         String DROP_TITLE = 
             s_stringMgr.getString("ColumnListDialog.dropTitle");
-        //i18n[ColumnListDialog.modifyButtonLabel=Modify Column]
+        //i18n[ColumnDetailsDialog.modifyButtonLabel=Modify Column]
         String MODIFY_BUTTON_LABEL = 
-            s_stringMgr.getString("ColumnListDialog.modifyButtonLabel");
+            s_stringMgr.getString("ColumnDetailsDialog.modifyButtonLabel");        
         //i18n[ColumnListDialog.modifyTitle=Select Column To Modify]
         String MODIFY_TITLE = 
             s_stringMgr.getString("ColumnListDialog.modifyTitle");
@@ -107,7 +106,10 @@ public class ColumnListDialog extends JDialog {
             s_stringMgr.getString("ColumnListDialog.showSQLButtonLabel");
         //i18n[ColumnListDialog.tableNameLabel=Table Name: ]
         String TABLE_NAME_LABEL = 
-            s_stringMgr.getString("ColumnListDialog.tableNameLabel"); 
+            s_stringMgr.getString("ColumnListDialog.tableNameLabel");
+        //i18n[ColumnListDialog.editSQLButtonLabel=Edit SQL]
+        String EDIT_BUTTON_LABEL = 
+            s_stringMgr.getString("ColumnListDialog.editSQLButtonLabel");
     }
     
     public static final int DROP_COLUMN_MODE = 0;
@@ -179,7 +181,7 @@ public class ColumnListDialog extends JDialog {
         if (listener == null) {
             throw new IllegalArgumentException("listener cannot be null");
         }
-        selectColumnButton.addActionListener(listener);
+        executeButton.addActionListener(listener);
     }
     
     public void addShowSQLListener(ActionListener listener) {
@@ -188,6 +190,13 @@ public class ColumnListDialog extends JDialog {
         }
         showSQLButton.addActionListener(listener);
     }
+
+    public void addEditSQLListener(ActionListener listener) {
+        if (listener == null) {
+            throw new IllegalArgumentException("listener cannot be null");
+        }
+        editSQLButton.addActionListener(listener);
+    }    
     
     public void setMultiSelection() {
         columnList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -238,7 +247,10 @@ public class ColumnListDialog extends JDialog {
         if (_mode == ADD_PRIMARY_KEY_MODE) {
             setTitle(i18n.PRIMARY_KEY_TITLE);
         }
-        setSize(300, 250);
+        if (_mode == DROP_PRIMARY_KEY_MODE) {
+            setTitle(i18n.DROP_PRIMARY_KEY_TITLE);
+        }
+        setSize(425, 250);
         EmptyBorder border = new EmptyBorder(new Insets(5,5,5,5));
         Dimension mediumField = new Dimension(126, 20);
         
@@ -284,20 +296,18 @@ public class ColumnListDialog extends JDialog {
     
     private JPanel getButtonPanel() {
         JPanel result = new JPanel();
-        if (_mode == DROP_COLUMN_MODE) {
-            selectColumnButton = new JButton(i18n.DROP_BUTTON_LABEL);    
-        } 
         if (_mode == MODIFY_COLUMN_MODE) {
-            selectColumnButton = new JButton(i18n.MODIFY_BUTTON_LABEL);
-        }
-        if (_mode == ADD_PRIMARY_KEY_MODE) {
-            selectColumnButton = new JButton(i18n.ADD_PRIMARY_KEY_BUTTON_LABEL);
+            executeButton = new JButton(i18n.MODIFY_BUTTON_LABEL);
+        } else {
+            executeButton = new JButton(i18n.EXECUTE_BUTTON_LABEL);
         }        
-        if (_mode == DROP_PRIMARY_KEY_MODE) {
-            selectColumnButton = new JButton(i18n.DROP_PRIMARY_KEY_BUTTON_LABEL);
-        }
-        if (_mode != DROP_PRIMARY_KEY_MODE) {
-            selectColumnButton.setEnabled(false);
+        result.add(executeButton);
+        
+        if (_mode != MODIFY_COLUMN_MODE) {
+            editSQLButton = new JButton(i18n.EDIT_BUTTON_LABEL);
+            result.add(editSQLButton);
+            showSQLButton = new JButton(i18n.SHOWSQL_BUTTON_LABEL);
+            result.add(showSQLButton);
         }
         cancelButton = new JButton(i18n.CANCEL_BUTTON_LABEL);
         cancelButton.addActionListener(new ActionListener() {
@@ -305,18 +315,14 @@ public class ColumnListDialog extends JDialog {
                 setVisible(false);
             }
         });
-        result.add(selectColumnButton);
-        if (_mode == DROP_COLUMN_MODE 
-                || _mode == ADD_PRIMARY_KEY_MODE
-                || _mode == DROP_PRIMARY_KEY_MODE) 
-        {
-            showSQLButton = new JButton(i18n.SHOWSQL_BUTTON_LABEL);
-            if (_mode != DROP_PRIMARY_KEY_MODE) {
+        result.add(cancelButton);
+        if (_mode != DROP_PRIMARY_KEY_MODE) {
+            executeButton.setEnabled(false);
+            if (_mode != MODIFY_COLUMN_MODE) {
+                editSQLButton.setEnabled(false);
                 showSQLButton.setEnabled(false);
             }
-            result.add(showSQLButton);
         }
-        result.add(cancelButton);
         return result;
     }
     
@@ -353,33 +359,59 @@ public class ColumnListDialog extends JDialog {
         
     }
     
+    private void enable(JButton button) {
+        if (button != null) {
+            button.setEnabled(true);
+        }
+    }
+
+    private void disable(JButton button) {        
+        if (button != null) {
+            button.setEnabled(false);
+        }
+    }
+    
     private class ColumnListSelectionListener implements ListSelectionListener {
 
+        /**
+         * Rules to handle enabling/disabling the buttons in this dialog.  Handle
+         * all cases where buttons should be disable first; if every rule passes
+         * then enable.
+         */
         public void valueChanged(ListSelectionEvent e) {
             int[] selected = columnList.getSelectedIndices();
-            if (selected != null
-                    && _mode == DROP_COLUMN_MODE
+            
+            // If no columns are selected, and we're not dropping the PK, then
+            // there is nothing to do.
+            if (_mode != DROP_PRIMARY_KEY_MODE) { 
+                if (selected == null || selected.length == 0) {
+                    disable(executeButton);
+                    disable(editSQLButton);
+                    disable(showSQLButton);
+                    return;
+                }
+            } 
+            
+            // User cannot be allowed to drop all columns from a table
+            if (_mode == DROP_COLUMN_MODE
                     && selected.length == columnList.getModel().getSize())
             {
                 JOptionPane.showMessageDialog(ColumnListDialog.this, 
-                                i18n.DROP_ERROR_MESSAGE, 
-                                i18n.DROP_ERROR_TITLE, 
-                                JOptionPane.ERROR_MESSAGE);
+                                              i18n.DROP_ERROR_MESSAGE, 
+                                              i18n.DROP_ERROR_TITLE, 
+                                              JOptionPane.ERROR_MESSAGE);
                 columnList.clearSelection();
-                selectColumnButton.setEnabled(false);
-                showSQLButton.setEnabled(false);
-            } else {
-                selectColumnButton.setEnabled(true);
-                showSQLButton.setEnabled(true);
-            }
-            if (selected == null || selected.length == 0) {
-                selectColumnButton.setEnabled(false);
-                showSQLButton.setEnabled(false);
-            } else {
-                selectColumnButton.setEnabled(true);
-                showSQLButton.setEnabled(true);                
-            }
+                disable(executeButton);
+                disable(editSQLButton);
+                disable(showSQLButton);
+                return;
+            } 
+            
+            // All rules passed, so enable the buttons.
+            enable(executeButton);
+            enable(editSQLButton);
+            enable(showSQLButton);                
         }
         
-    }
+    }    
 }

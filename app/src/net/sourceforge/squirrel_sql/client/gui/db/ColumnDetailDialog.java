@@ -91,7 +91,8 @@ public class ColumnDetailDialog extends JDialog {
     private JLabel nullableLabel = null;
     private JCheckBox nullableCheckBox = null;    
     
-    private JButton addButton = null;
+    private JButton executeButton = null;
+    private JButton editSQLButton = null;
     private JButton showSQLButton = null;
     private JButton cancelButton = null;
     
@@ -101,15 +102,15 @@ public class ColumnDetailDialog extends JDialog {
     private int _mode = ADD_MODE;
     
     private interface i18n {
-        //i18n[ColumnDetailsDialog.addButtonLabel=Add Column]
-        String ADD_BUTTON_LABEL = 
-            s_stringMgr.getString("ColumnDetailsDialog.addButtonLabel");
+        //i18n[ColumnDetailsDialog.editButtonLabel=Edit SQL]        
+        String EDIT_BUTTON_LABEL = 
+            s_stringMgr.getString("ColumnDetailsDialog.editButtonLabel");
+        //i18n[ColumnDetailsDialog.executeButtonLabel=Execute]
+        String EXECUTE_BUTTON_LABEL = 
+            s_stringMgr.getString("ColumnDetailsDialog.executeButtonLabel");
         //i18n[ColumnDetailsDialog.addColumnTitle=Add Column]
         String ADD_COLUMN_TITLE = 
-            s_stringMgr.getString("ColumnDetailsDialog.addColumnTitle");        
-        //i18n[ColumnDetailsDialog.modifyButtonLabel=Modify Column]
-        String MODIFY_BUTTON_LABEL = 
-            s_stringMgr.getString("ColumnDetailsDialog.modifyButtonLabel");
+            s_stringMgr.getString("ColumnDetailsDialog.addColumnTitle");  
         //i18n[ColumnDetailsDialog.modifyColumnTitle=Modify Column]
         String MODIFY_COLUMN_TITLE = 
             s_stringMgr.getString("ColumnDetailsDialog.modifyColumnTitle");
@@ -278,10 +279,14 @@ public class ColumnDetailDialog extends JDialog {
         return result;
     }
     
-    public void addOKListener(ActionListener listener) {
-        addButton.addActionListener(listener);
+    public void addExecuteListener(ActionListener listener) {
+        executeButton.addActionListener(listener);
     }
-    
+
+    public void addEditSQLListener(ActionListener listener) {
+        editSQLButton.addActionListener(listener);
+    }
+
     public void addShowSQLListener(ActionListener listener) {
         showSQLButton.addActionListener(listener);
     }
@@ -371,10 +376,10 @@ public class ColumnDetailDialog extends JDialog {
         columnNameTextField.addKeyListener(new KeyAdapter() {
             public void keyTyped(KeyEvent e) {
                 if (columnNameTextField.getText().length() == 0) {
-                    addButton.setEnabled(false);
+                    executeButton.setEnabled(false);
                     showSQLButton.setEnabled(false);
                 } else {
-                    addButton.setEnabled(true);
+                    executeButton.setEnabled(true);
                     showSQLButton.setEnabled(true);
                 }
             }
@@ -505,11 +510,9 @@ public class ColumnDetailDialog extends JDialog {
     
     private JPanel getButtonPanel() {
         JPanel result = new JPanel();
-        if (_mode == ADD_MODE) {
-            addButton = new JButton(i18n.ADD_BUTTON_LABEL);
-        } else {
-            addButton = new JButton(i18n.MODIFY_BUTTON_LABEL);
-        }
+        executeButton = new JButton(i18n.EXECUTE_BUTTON_LABEL);
+
+        editSQLButton = new JButton(i18n.EDIT_BUTTON_LABEL);
         showSQLButton = new JButton(i18n.SHOW_BUTTON_LABEL);
         cancelButton = new JButton(i18n.CANCEL_BUTTON_LABEL);
         cancelButton.addActionListener(new ActionListener() {
@@ -517,7 +520,8 @@ public class ColumnDetailDialog extends JDialog {
                 setVisible(false);
             }
         });
-        result.add(addButton);
+        result.add(executeButton);
+        result.add(editSQLButton);
         result.add(showSQLButton);
         result.add(cancelButton);
         return result;
