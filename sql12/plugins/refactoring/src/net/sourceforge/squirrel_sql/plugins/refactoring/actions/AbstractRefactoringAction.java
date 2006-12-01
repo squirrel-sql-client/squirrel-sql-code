@@ -49,7 +49,7 @@ public abstract class AbstractRefactoringAction extends SquirrelAction
                 try {
                     getCommand(infos[0]).execute();
                 } catch (Exception e) {
-                    _session.getMessageHandler().showMessage(e.getMessage());
+                    _session.getMessageHandler().showMessage(e);
                 }
             } else {
                 _session.getMessageHandler().showMessage(getErrorMessage());
