@@ -3,6 +3,9 @@ SQuirreL SQL Client Change Log
 
 Not release yet - on the 2.3 final branch:
 
+OraclePlugin bug: Use a new info tab instead of re-using.  Otherwise, 
+the tabs will not display properly
+
 Fixed an NullPointerException that occurs occassionally when an object in 
 the object tree (like a table) is refereshed.
 
