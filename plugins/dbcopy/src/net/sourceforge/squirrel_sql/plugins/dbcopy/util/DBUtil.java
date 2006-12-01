@@ -463,6 +463,8 @@ public class DBUtil extends I18NBaseObject {
             catalog = schema;
             schema = null;
         }
+        // trim the table name in case of HADB
+        tableName = tableName.trim();
         ITableInfo[] tis = Compat.getTables(session, catalog, schema, tableName);
         if (tis == null || tis.length == 0) {
             if (Character.isUpperCase(tableName.charAt(0))) {
