@@ -647,12 +647,14 @@ public class CopyExecutor extends I18NBaseObject {
         
         for (int sourceIdx = 0; sourceIdx < sourceInfos.length; sourceIdx++) {
             TableColumnInfo sourceInfo = sourceInfos[sourceIdx];
+            // trim the column name in case of HADB
+            String sourceColumnName = sourceInfo.getColumnName().trim();
             boolean found = false;
             int destIdx = 0;
             while (!found && destIdx < destInfos.length) {
                 TableColumnInfo destInfo = destInfos[destIdx];
-                String destColumnName = destInfo.getColumnName();
-                String sourceColumnName = sourceInfo.getColumnName();
+                // trim the column name in case of HADB
+                String destColumnName = destInfo.getColumnName().trim();
                 if (destColumnName.equalsIgnoreCase(sourceColumnName)) {
                     result.add(destInfo);
                     found = true;
