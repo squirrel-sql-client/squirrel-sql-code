@@ -654,18 +654,17 @@ public class OraclePlugin extends DefaultSessionPlugin
 
     private void updateObjectTree(IObjectTreeAPI objTree) {
         ISession session = objTree.getSession();
-        DatabaseObjectInfoTab dboit = new DatabaseObjectInfoTab();
         addDetailTab(objTree, DatabaseObjectType.SESSION, new OptionsTab());
-        addDetailTab(objTree, IObjectTypes.CONSUMER_GROUP, dboit);
-        addDetailTab(objTree, DatabaseObjectType.FUNCTION, dboit);
-        addDetailTab(objTree, DatabaseObjectType.INDEX, dboit);
+        addDetailTab(objTree, IObjectTypes.CONSUMER_GROUP, new DatabaseObjectInfoTab());
+        addDetailTab(objTree, DatabaseObjectType.FUNCTION, new DatabaseObjectInfoTab());
+        addDetailTab(objTree, DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
         addDetailTab(objTree, DatabaseObjectType.INDEX, new IndexColumnInfoTab());
         addDetailTab(objTree, DatabaseObjectType.INDEX, new IndexDetailsTab());
-        addDetailTab(objTree, IObjectTypes.LOB, dboit);
-        addDetailTab(objTree, DatabaseObjectType.SEQUENCE, dboit);
-        addDetailTab(objTree, DatabaseObjectType.TRIGGER, dboit);
-        addDetailTab(objTree, IObjectTypes.TRIGGER_PARENT, dboit);
-        addDetailTab(objTree, IObjectTypes.TYPE, dboit);
+        addDetailTab(objTree, IObjectTypes.LOB, new DatabaseObjectInfoTab());
+        addDetailTab(objTree, DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
+        addDetailTab(objTree, DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
+        addDetailTab(objTree, IObjectTypes.TRIGGER_PARENT, new DatabaseObjectInfoTab());
+        addDetailTab(objTree, IObjectTypes.TYPE, new DatabaseObjectInfoTab());
 
         // Expanders.
         addExpander(objTree, DatabaseObjectType.SCHEMA, new SchemaExpander(OraclePlugin.this));
