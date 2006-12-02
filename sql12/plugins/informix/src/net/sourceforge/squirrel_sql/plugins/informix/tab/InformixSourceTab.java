@@ -18,151 +18,57 @@ package net.sourceforge.squirrel_sql.plugins.informix.tab;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourcePanel;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseObjectTab;
 
 /**
  * 
  * @author manningr
  *
  */
-public abstract class BaseSourceTab extends BaseObjectTab {
+public abstract class InformixSourceTab extends BaseSourceTab {
 
 	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(BaseSourceTab.class);
+		StringManagerFactory.getStringManager(InformixSourceTab.class);
 
-    
     public static final int VIEW_TYPE = 0;
     public static final int STORED_PROC_TYPE = 1;
     public static final int TRIGGER_TYPE = 2;
     
-    
     protected int sourceType = VIEW_TYPE;
-
-    /**
-     * This interface defines locale specific strings. This should be
-     * replaced with a property file.
-     */
-    private interface i18n
-    {
-		 // i18n[BaseSourceTab.source=Source]
-		  String TITLE = s_stringMgr.getString("BaseSourceTab.source");
-    }
-
-    /** Hint to display for tab. */
-    private final String _hint;
-
-    /** Component to display in tab. */
-    private BaseSourcePanel _comp;
-
-    /** Scrolling pane for <TT>_comp. */
-    private JScrollPane _scroller;
 
     /** Logger for this class. */
     private final static ILogger s_log =
-        LoggerController.createLogger(BaseSourceTab.class);
+        LoggerController.createLogger(InformixSourceTab.class);
 
-    public BaseSourceTab(String hint)
+    public InformixSourceTab(String hint)
     {
-        super();
-        _hint = hint != null ? hint : i18n.TITLE;
-
+        super(hint);
+        super.setSourcePanel(new InformixSourcePanel());
     }
 
-    /**
-     * Return the title for the tab.
-     *
-     * @return  The title for the tab.
-     */
-    public String getTitle()
-    {
-        return i18n.TITLE;
-    }
-
-    /**
-     * Return the hint for the tab.
-     *
-     * @return  The hint for the tab.
-     */
-    public String getHint()
-    {
-        return _hint;
-    }
-
-    public void clear()
-    {
-    }
-
-    public Component getComponent()
-    {
-        if (_comp == null)
-        {
-            _comp = new BaseSourcePanel();
-            _scroller = new JScrollPane(_comp);
-        }
-        return _scroller;
-    }
-
-    protected void refreshComponent()
-    {
-        ISession session = getSession();
-        if (session == null)
-        {
-            throw new IllegalStateException("Null ISession");
-        }
-        try
-        {
-            PreparedStatement pstmt = createStatement();
-            try
-            {
-                _comp.load(getSession(), pstmt);
-            }
-            finally
-            {
-                try
-                {
-                    pstmt.close();
-                }
-                catch (SQLException ex)
-                {
-                    s_log.error(ex);
-                }
-            }
-        }
-        catch (SQLException ex)
-        {
-            s_log.error(ex);
-            session.getMessageHandler().showErrorMessage(ex);
-        }
-    }
-
-    protected abstract PreparedStatement createStatement() throws SQLException;
-
-    private final class BaseSourcePanel extends JPanel
+    private final class InformixSourcePanel extends BaseSourcePanel
     {
         private JTextArea _ta;
 
-        BaseSourcePanel()
+        InformixSourcePanel()
         {
             super(new BorderLayout());
             createUserInterface();
         }
 
-        void load(ISession session, PreparedStatement stmt)
+        public void load(ISession session, PreparedStatement stmt)
         {
             _ta.setText("");
             try

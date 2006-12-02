@@ -31,7 +31,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  *
  * @author manningr
  */
-public class ViewSourceTab extends BaseSourceTab
+public class ViewSourceTab extends InformixSourceTab
 {
 	/** SQL that retrieves the source of a stored procedure. */
 	private static String SQL =

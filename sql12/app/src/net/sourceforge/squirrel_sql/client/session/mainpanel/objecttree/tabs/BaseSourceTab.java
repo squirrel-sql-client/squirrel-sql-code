@@ -1,4 +1,5 @@
-package net.sourceforge.squirrel_sql.plugins.mssql.tab;
+package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs;
+
 /*
  * Copyright (C) 2002 Colin Bell
  * colbell@users.sourceforge.net
@@ -23,31 +24,30 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseObjectTab;
-
-abstract class BaseSourceTab extends BaseObjectTab
+public abstract class BaseSourceTab extends BaseObjectTab
 {
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n
-	{
-		String TITLE = "Source";
-	}
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(BaseSourceTab.class);
+	
+	/** Logger for this class. */
+	private final static ILogger s_log =
+		LoggerController.createLogger(BaseSourceTab.class);
 
 	/** Hint to display for tab. */
 	private final String _hint;
 
-        private String _title;
+	/** Title of the tab */
+    private String _title;
 
 	/** Component to display in tab. */
 	private BaseSourcePanel _comp;
@@ -55,22 +55,22 @@ abstract class BaseSourceTab extends BaseObjectTab
 	/** Scrolling pane for <TT>_comp. */
 	private JScrollPane _scroller;
 
-	/** Logger for this class. */
-	private final static ILogger s_log =
-		LoggerController.createLogger(BaseSourceTab.class);
-
 	public BaseSourceTab(String hint)
 	{
-		super();
-		_hint = hint != null ? hint : i18n.TITLE;
-                _title = i18n.TITLE;
-
+		this(null, hint);
 	}
 
-        public BaseSourceTab(String title, String hint) {
-          this(hint);
-          _title = title != null ? title : i18n.TITLE;
-        }
+	public BaseSourceTab(String title, String hint) {
+  		super();
+  		if (title != null) {
+  			_title = title;
+  		} else {
+  		    //i18n[BaseSourceTab.title=Source]
+  			_title = s_stringMgr.getString("BaseSourceTab.title");
+  		}
+  		
+  		_hint = hint != null ? hint : _title;
+    }
 
 	/**
 	 * Return the title for the tab.
@@ -98,17 +98,27 @@ abstract class BaseSourceTab extends BaseObjectTab
 
 	public Component getComponent()
 	{
-		if (_comp == null)
-		{
-			_comp = new BaseSourcePanel();
-			_scroller = new JScrollPane(_comp);
-
-                        LineNumber lineNumber = new LineNumber( _comp );
-                        _scroller.setRowHeaderView( lineNumber );                        
-		}
+        if (_scroller == null) {
+    		if (_comp == null) {
+    			_comp = new DefaultSourcePanel();
+    		}
+            _scroller = new JScrollPane(_comp);
+            LineNumber lineNumber = new LineNumber( _comp );
+            _scroller.setRowHeaderView( lineNumber );
+        }
 		return _scroller;
 	}
-
+    
+    /**
+     * Subclasses can use this to override the default behavior provided by the
+     * DefaultSourcePanel, with a subclass of BaseSourcePanel.
+     * 
+     * @param panel
+     */
+    public void setSourcePanel(BaseSourcePanel panel) {
+        _comp = panel;
+    }
+    
 	protected void refreshComponent()
 	{
 		ISession session = getSession();
@@ -144,17 +154,17 @@ abstract class BaseSourceTab extends BaseObjectTab
 
 	protected abstract PreparedStatement createStatement() throws SQLException;
 
-	private final class BaseSourcePanel extends JPanel
+	private final class DefaultSourcePanel extends BaseSourcePanel
 	{
 		private JTextArea _ta;
 
-		BaseSourcePanel()
+        DefaultSourcePanel()
 		{
 			super(new BorderLayout());
 			createUserInterface();
 		}
 
-		void load(ISession session, PreparedStatement stmt)
+		public void load(ISession session, PreparedStatement stmt)
 		{
 			_ta.setText("");
 			try
