@@ -31,7 +31,6 @@ import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -105,10 +104,9 @@ public class AddPrimaryKeyCommand extends AbstractRefactoringCommand {
         String[] result = null;
         try {
             dialect = DialectFactory.getDialect(_session, DialectFactory.DEST_TYPE);
-            
-            // TODO: allow user to specify the name of the PK
-            String pkName = "PK_"+columns[0].getTableName().toUpperCase();
 
+            String pkName = columnListDialog.getPrimaryKeyName();
+            
             result = dialect.getAddPrimaryKeySQL(pkName, columns);
         } catch (UnsupportedOperationException e2) {
             //i18n[AddPrimaryKeyCommand.unsupportedOperationMsg=The {0} 

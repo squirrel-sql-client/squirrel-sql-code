@@ -56,6 +56,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 public class ColumnListDialog extends JDialog {
 
     private JLabel tableNameLabel = null;
+    private JLabel primaryKeyNameLabel = null;
     private JTextField tableNameTextField = null;
     private JLabel columnListLabel = null;
     private JList columnList = null;
@@ -64,6 +65,7 @@ public class ColumnListDialog extends JDialog {
     private JButton editSQLButton = null;
     private JButton showSQLButton = null;
     private JButton cancelButton = null;
+    private JTextField primaryKeyNameTF = null;
     
     /** Internationalized strings for this class. */
     private static final StringManager s_stringMgr =
@@ -101,6 +103,11 @@ public class ColumnListDialog extends JDialog {
         //i18n[ColumnListDialog.primaryKeyTitle=Choose column(s) for primary key] 
         String PRIMARY_KEY_TITLE =
             s_stringMgr.getString("ColumnListDialog.primaryKeyTitle");
+        
+        //i18n[ColumnListDialog.primaryKeyNameLabel=Primary Key Name: ]
+        String PRIMARY_KEY_NAME_LABEL =
+            s_stringMgr.getString("ColumnListDialog.primaryKeyNameLabel");
+        
         //i18n[ColumnListDialog.showSQLButtonLabel=Show SQL]
         String SHOWSQL_BUTTON_LABEL = 
             s_stringMgr.getString("ColumnListDialog.showSQLButtonLabel");
@@ -122,9 +129,8 @@ public class ColumnListDialog extends JDialog {
     private TableColumnInfo[] colInfos = null;
     
     /**
-     * 
-     * @param mode TODO
-     * @param tableName
+     * @param columnInfos the list of columns to display
+     * @param mode the mode in which the dialog is acting.
      */
     public ColumnListDialog(TableColumnInfo[] columnInfos, int mode) { 
         _mode = mode;
@@ -157,6 +163,14 @@ public class ColumnListDialog extends JDialog {
         return tableNameTextField.getText();
     }
         
+    public void setPrimaryKeyName(String primaryKeyName) {
+        primaryKeyNameTF.setText(primaryKeyName);
+    }
+    
+    public String getPrimaryKeyName() {
+        return primaryKeyNameTF.getText();
+    }
+    
     public TableColumnInfo[] getSelectedColumnList() {
         ArrayList result = new ArrayList();
         Object[] selectedColNames = columnList.getSelectedValues();
@@ -271,7 +285,23 @@ public class ColumnListDialog extends JDialog {
         tableNameTextField.setEditable(false);
         pane.add(tableNameTextField, getFieldConstraints(c));
                 
-        // Dialect list        
+        // Primary Key name
+        if (_mode == ADD_PRIMARY_KEY_MODE
+                || _mode == DROP_PRIMARY_KEY_MODE) {
+            primaryKeyNameLabel = new JLabel(i18n.PRIMARY_KEY_NAME_LABEL);
+            pane.add(primaryKeyNameLabel, getLabelConstraints(c));
+            
+            primaryKeyNameTF = new JTextField();
+            primaryKeyNameTF.setPreferredSize(mediumField);
+            if (_mode == ADD_PRIMARY_KEY_MODE) {
+                primaryKeyNameTF.setEditable(true);
+            } else {
+                primaryKeyNameTF.setEditable(false);
+            }
+            pane.add(primaryKeyNameTF, getFieldConstraints(c));
+        }
+        
+        // Column list        
         columnListLabel = getBorderedLabel(i18n.COLUMN_NAME_LABEL, border);
         columnListLabel.setVerticalAlignment(JLabel.NORTH);
         pane.add(columnListLabel, getLabelConstraints(c));
