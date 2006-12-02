@@ -5,22 +5,229 @@
 </HEAD>
 
 <BODY>
+<center><h1>Informix Plugin</h1></center>
 
 <H2>Introduction</H2>
 
-<P>The Informix plugin adds Informix-specific functionality to SQuirreL SQL
+<P>The Informix plugin adds Informix-specific functionality to the SQuirreL SQL
 Client. Read access is required to the following system views in order for this
-additional functionality to work correctly.</P>
-
+additional functionality to work correctly:
 <UL>
+<li>sysfragments</li>
+<li>sysindices</li>
+<li>sysmaster:sysptnhdr</li>
+<li>sysprocbody</li>
+<li>sysprocedures</li>
 <LI>systables</LI>
+<li>systriggers</li>
+<li>systrigbody</li>
 <LI>sysviews</LI>
 </UL>
 
 <H2>New Tabs</H2>
 
-<P>Stored Procedures and Views now have a &quot;Source&quot; tab which 
-displays the source of the selected object.
+<P>Stored Procedures, Triggers and Views are shown in the object tree and have 
+a &quot;Source&quot; tab which displays the source of the selected object and 
+a &quot;Details&quot; tab which gives Informix-specific information about the 
+object.  Sequences and Indexes are also shown in the object tree and have a 
+details tab giving Informix-specific information about them.  
+
+<!-- INDEX -->
+
+<h2>Index Details Tab</h2>
+The index details tab can be accessed by navigating the object tree to the INDEX
+folder beneath any table that has one or multiple indexes.  The index(es) will 
+be listed by name under the table folder, and selecting one will place a 
+details tab in the right-hand view of the session window.
+<p/>
+<center>
+<img src="images/index_details.jpg">
+</center>
+<p/>
+The information provided by the details tab for indexes is derived by the 
+following query:
+<p>
+<pre>
+	SELECT T1.owner     AS index_owner, 
+	       T1.idxname   AS index_name, 
+	       T2.owner     AS table_owner, 
+	       T2.tabname   AS table_name, 
+	       case T1.clustered 
+	       when 'C' then 'CLUSTERED' 
+	       else 'NON-CLUSTERED' 
+	       end AS index_type, 
+	       case T1.idxtype 
+	         when 'U' then 'UNIQUE' 
+	         else 'NON-UNIQUE' 
+	         end AS uniqueness, 
+	       T3.dbspace   AS table_space, 
+	       T4.fextsiz   AS first_extent, 
+	       T4.nextsiz   AS next_extent, 
+	      ( 
+	           SELECT  COUNT(*) 
+	           FROM    sysmaster:sysptnext 
+	           WHERE   pe_partnum = T3.partn 
+	       ) AS num_extents, 
+	       T4.nptotal   AS pages_total, 
+	       T4.npused    AS pages_used 
+	FROM    sysindices   AS T1, 
+	       systables    AS T2, 
+	       sysfragments AS T3, 
+	       sysmaster:sysptnhdr AS T4 
+	WHERE   T1.tabid     >  99 
+	AND     T2.tabid     = T1.tabid 
+	AND     T3.tabid     = T1.tabid 
+	AND     T3.indexname = T1.idxname 
+	AND     T4.partnum   = T3.partn 
+	AND     T1.owner = ? 
+	AND     T1.idxname = ? 
+	ORDER   BY 2 
+</pre>
+<p/>
+
+<!-- STORED PROC SOURCE -->
+
+<h2>Stored Procedure Source Tab</h2>
+The Stored Procedure Source tab can be accessed by navigating to a catalog, 
+then to a schema and finally to the PROCEDURE folder beneath the schema.  In 
+the following picture, the catalog is &quot;dbcopy&quot; and the schema is 
+&quot;informix&quot;
+<p/>
+<center>
+<img src="images/procedure_source.jpg">
+</center>
+<p/>
+The source code for stored procedures is derived by the following query:
+<p>
+<pre>
+	SELECT T1.procid, data 
+	FROM sysprocedures AS T1, sysprocbody AS T2 
+	WHERE procname = ? 
+	AND T2.procid = T1.procid 
+	AND datakey = 'T' 
+</pre>
+
+<!-- SEQUENCE -->
+
+<h2>Sequence Details Tab</h2>
+Sequences will appear in the object tree under the SCHEMA folder. The details 
+tab for sequences displays information about the selected sequence according 
+to the system catalog. An example of this is shown in the following picture:
+<p/>
+<center>
+<img src="images/sequence_details.jpg">
+</center>
+<p/>
+The information in the details tab for a sequence is derived from the following
+query:
+<p>
+<pre>
+	SELECT T2.owner     AS sequence_owner, 
+	       T2.tabname   AS sequence_name, 
+	       T1.min_val   AS min_value, 
+	       T1.max_val   AS max_value, 
+	       T1.inc_val   AS increment_by, 
+	       case T1.cycle 
+	         when '0' then 'NOCYCLE' 
+	         else 'CYCLE' 
+	       end AS cycle_flag, 
+	       case T1.order 
+	         when '0' then 'NOORDER' 
+	         else 'ORDER' 
+	        end AS order_flag, 
+	       T1.cache     AS cache_size 
+	FROM    syssequences AS T1, 
+	       systables    AS T2 
+	WHERE   T2.tabid     = T1.tabid 
+	and T2.owner = ? 
+	and T2.tabname = ? 
+</pre>
+
+<!-- TRIGGER SOURCE -->
+
+<h2>Trigger Source Tab</h2>
+The source tab for triggers displays the source for a table trigger and can
+be accessed by navigating to the &quot;TRIGGER&quot; folder beneath a table 
+object in the object tree.  An example of this is shown in the following 
+picture:
+<p/>
+<center>
+<img src="images/trigger_source.jpg">
+</center>
+<p/>
+The source code for triggers is derived from the following query:
+<p>
+<pre>
+	SELECT  data 
+	FROM    systriggers AS T1, systrigbody AS T2 
+	WHERE   trigname = ? 
+	AND     T2.trigid = T1.trigid 
+	AND     datakey IN ('D', 'A') 
+	ORDER   BY datakey DESC, seqno
+</pre>
+<p>
+
+<!-- TRIGGER DETAILS -->
+
+<h2>Trigger Details Tab</h2>
+The details tab for triggers displays information about the selected trigger 
+according to the system catalog. An example of this is shown in the following 
+picture:
+<p/>
+<center>
+<img src="images/trigger_details.jpg">
+</center>
+<p/>
+The information in the details tab for a trigger is derived from the following
+query:
+<p>
+<pre>
+	SELECT T1.owner     AS trigger_owner, 
+	       T1.trigname  AS trigger_name, 
+	       case T1.event  
+	         when 'I' then 'INSERT' 
+	         when 'U' then 'UPDATE' 
+	         when 'D' then 'DELETE' 
+	         when 'S' then 'SELECT' 
+	         else T1.event 
+	       end AS triggering_event, 
+	       T2.owner     AS table_owner, 
+	       T2.tabname   AS table_name, 
+	       case T2.tabtype 
+	         when 'T' then 'TABLE' 
+	         when 'V' then 'VIEW' 
+	         else T2.tabtype 
+	       end AS table_type, 
+	       T1.old       AS reference_before, 
+	       T1.new       AS reference_after 
+	FROM    systriggers  AS T1, 
+	       systables    AS T2 
+	WHERE   T2.tabid     = T1.tabid 
+	and T1.trigname = ? 
+</pre>
+
+<!-- VIEW SOURCE -->
+
+<h2>View Source Tab</h2>
+The source tab for views displays the source for a view and can
+be accessed by navigating to the &quot;VIEW&quot; folder beneath a schema 
+object in the object tree.  An example of this is shown in the following 
+picture:
+<p/>
+<center>
+<img src="images/view_source.jpg">
+</center>
+<p/>
+The source code for views is derived from the following query:
+<p>
+<pre>
+	SELECT viewtext 
+	FROM systables AS T1, sysviews AS T2 
+	WHERE tabname = ? 
+	AND T2.tabid = T1.tabid 
+</pre>
+<p>
+
 
 </BODY>
 </HTML>
