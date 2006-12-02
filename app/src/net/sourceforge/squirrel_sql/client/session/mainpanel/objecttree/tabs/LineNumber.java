@@ -1,9 +1,19 @@
-package net.sourceforge.squirrel_sql.plugins.mssql.tab;
+package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs;
 
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.text.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Rectangle;
+
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
 
 //JH: sources freely available without restriction from 
 //http://www.discoverteenergy.com/files/LineNumber.java

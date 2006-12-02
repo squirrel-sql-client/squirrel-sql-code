@@ -20,10 +20,10 @@ package net.sourceforge.squirrel_sql.plugins.oracle.tab;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
  * This class will display the source for an Oracle object.
  *
