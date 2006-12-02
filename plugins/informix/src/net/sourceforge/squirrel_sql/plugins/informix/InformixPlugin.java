@@ -113,6 +113,15 @@ public class InformixPlugin extends DefaultSessionPlugin {
     }
 
     /**
+     * Returns a comma separated list of other contributors.
+     *
+     * @return  Contributors names.
+     */    
+    public String getContributors() {
+        return "Doug Lawry";
+    }    
+    
+    /**
      * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getChangeLogFileName()
      */
     public String getChangeLogFileName()
