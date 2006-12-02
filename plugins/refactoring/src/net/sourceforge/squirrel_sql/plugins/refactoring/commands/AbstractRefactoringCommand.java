@@ -50,13 +50,6 @@ public abstract class AbstractRefactoringCommand implements ICommand {
         
         //Show the user a dialog with a list of columns and ask them to select
         // one or more columns to drop
-        /*
-        ArrayList tmp = new ArrayList();
-        for (int i = 0; i < columns.length; i++) {
-            TableColumnInfo info = columns[i];
-            tmp.add(info.getColumnName());
-        }
-        */
         if (columnListDialog == null) {
             columnListDialog = new ColumnListDialog(columns, mode);
             columnListDialog.addColumnSelectionListener(oklistener);
@@ -67,6 +60,17 @@ public abstract class AbstractRefactoringCommand implements ICommand {
             columnListDialog.setMultiSelection();
         }
         columnListDialog.setTableName(ti.getSimpleName());
+        if (mode == ColumnListDialog.ADD_PRIMARY_KEY_MODE) {
+            // Set a default primary key name based on the name of the table
+            String pkName = "PK_"+columns[0].getTableName().toUpperCase();
+            columnListDialog.setPrimaryKeyName(pkName);
+        }
+        if (mode == ColumnListDialog.DROP_PRIMARY_KEY_MODE) {
+            SQLDatabaseMetaData md = _session.getSQLConnection().getSQLMetaData();
+            PrimaryKeyInfo[] infos = md.getPrimaryKey(ti);
+            String pkName = infos[0].getSimpleName();
+            columnListDialog.setPrimaryKeyName(pkName);
+        }
         columnListDialog.setVisible(true);
     }
 
