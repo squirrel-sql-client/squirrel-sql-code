@@ -4,6 +4,9 @@ DBCopy Change Log
 1.1 (Not yet released)
 ===
 
+Added support for IBM Informix Dynamic Server (10.0) and Sun Java System 
+High-Availability Database (HADB).
+
 1584283: (DBCopy plugin - Copying LOBs from Oracle to Oracle fails)
 If destination column type is Types.OTHER (1111), try to get 
 the type name and map it to a valid java SQL type (such as 
