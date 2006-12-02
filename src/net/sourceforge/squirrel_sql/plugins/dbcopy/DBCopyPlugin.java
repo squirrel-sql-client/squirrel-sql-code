@@ -134,6 +134,19 @@ public class DBCopyPlugin extends DefaultSessionPlugin
        return "readme.html";
     }    
     
+    /**
+     * Returns the name of the change log for the plugin. This should
+     * be a text or HTML file residing in the <TT>getPluginAppSettingsFolder</TT>
+     * directory.
+     *
+     * @return  the changelog file name or <TT>null</TT> if plugin doesn't have
+     *          a change log.
+     */
+    public String getChangeLogFileName()
+    {
+        return "changes.txt";
+    }
+    
     public void initialize() throws PluginException {
         super.initialize();
         //md = new MemoryDiagnostics();
