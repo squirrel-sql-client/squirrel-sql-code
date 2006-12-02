@@ -98,7 +98,17 @@ public abstract class InformixSourceTab extends BaseSourceTab {
                         buf.append(data.trim() + " ");
                     }
                     if (sourceType == VIEW_TYPE) {
-                        buf.append(rs.getString(1));                        
+                        String line = rs.getString(1);
+                        if (line.indexOf(" as ") != -1) {
+                            line = line.replaceFirst("\\sas\\s", "\nas\n");
+                        }
+                        if (line.indexOf(" from ") != 1) {
+                            line = line.replaceFirst("\\sfrom\\s", "\nfrom");
+                        }
+                        if (line.indexOf(" where ") != 1) {
+                            line = line.replaceFirst("\\swhere\\s", "\nwhere");
+                        }                        
+                        buf.append(line);                        
                     }
                 }
                 _ta.setText(buf.toString());
