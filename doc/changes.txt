@@ -6,6 +6,9 @@ Not yet released - available in the latest snapshot, or at least checked into CV
 
     New Features/Enhancements:
 
+Syntax plugins: Corrections/Abreviations allow new lines. Use \n to create a new line.
+Note: Note: Bookmarks are more powerful than abreviations.
+
 DBCopy Plugin: Added support for Informix and HADB
 
 1602255: 'Interpret DATE columns as TIMESTAMP' also in SQL view.  When this 
