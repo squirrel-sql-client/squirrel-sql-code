@@ -35,7 +35,11 @@ public class AutoCorrectController
          String error = (String) e.nextElement();
          Vector row = new Vector();
          row.add(error);
-         row.add(autoCorrectData.getAutoCorrectsHash().get(error));
+         String corr = (String) autoCorrectData.getAutoCorrectsHash().get(error);
+
+         corr = corr.replaceAll("\n","\\\\n");
+
+         row.add(corr);
          data.add(row);
       }
 
@@ -100,6 +104,21 @@ public class AutoCorrectController
       });
 
 
+      _dlg.btnClose.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onClose();
+         }
+      });
+
+
+   }
+
+   private void onClose()
+   {
+      _dlg.setVisible(false);
+      _dlg.dispose();
    }
 
    private void onRemoveRows()
@@ -139,13 +158,13 @@ public class AutoCorrectController
 
          if(null != error && null != corr && 0 != error.trim().length() && 0 != corr.trim().length() && false == error.equals(corr))
          {
+            corr = corr.replaceAll("\\\\n", "\n");
             newAutoCorrects.put(error.trim().toUpperCase(), corr);
          }
       }
 
       _syntaxPugin.getAutoCorrectProviderImpl().setAutoCorrects(newAutoCorrects, _dlg.chkEnable.isSelected());
 
-      System.out.println(_dlg.getSize());
 
 
    }

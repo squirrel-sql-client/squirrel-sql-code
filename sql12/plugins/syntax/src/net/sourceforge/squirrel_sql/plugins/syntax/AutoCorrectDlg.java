@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.plugins.syntax;
 
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,11 +17,14 @@ public class AutoCorrectDlg extends JDialog
 		StringManagerFactory.getStringManager(AutoCorrectDlg.class);
 
 
-   JTable tblAutoCorrects;
    JCheckBox chkEnable;
+   JTable tblAutoCorrects;
+   MultipleLineLabel lblNewLineNote;
+
    JButton btnApply;
    JButton btnAddRow;
    JButton btnRemoveRows;
+   JButton btnClose;
 
 
    public AutoCorrectDlg(JFrame parent)
@@ -39,24 +43,36 @@ public class AutoCorrectDlg extends JDialog
       getContentPane().add(chkEnable, gbc);
 
       tblAutoCorrects = new JTable();
-      gbc = new GridBagConstraints(0,1,3,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5),0,0);
+      gbc = new GridBagConstraints(0,1,4,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5,5,5,5),0,0);
       getContentPane().add(new JScrollPane(tblAutoCorrects), gbc);
 
+      //i8n[syntax.abrevNewLineNote=Use \n in corrections for line break. Note: Bookmarks are more powerful than abreviations.]
+      lblNewLineNote = new MultipleLineLabel(s_stringMgr.getString("syntax.abrevNewLineNote"));
+      lblNewLineNote.setForeground(Color.red);
+      gbc = new GridBagConstraints(0,2,4,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5),0,0);
+      getContentPane().add(lblNewLineNote, gbc);
 
-		// i18n[syntax.autoCorrApply=Apply]
+
+      // i18n[syntax.autoCorrApply=Apply]
       btnApply = new JButton(s_stringMgr.getString("syntax.autoCorrApply"));
-      gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
       getContentPane().add(btnApply, gbc);
 
 		// i18n[syntax.addRow=Add row]
       btnAddRow = new JButton(s_stringMgr.getString("syntax.addRow"));
-      gbc = new GridBagConstraints(1,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      gbc = new GridBagConstraints(1,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
       getContentPane().add(btnAddRow, gbc);
 
 		// i18n[syntax.removeRows=remove selected rows]
       btnRemoveRows = new JButton(s_stringMgr.getString("syntax.removeRows"));
-      gbc = new GridBagConstraints(2,2,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      gbc = new GridBagConstraints(2,3,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
       getContentPane().add(btnRemoveRows, gbc);
+
+      // i18n[syntax.abrevclose=Close]
+      btnClose = new JButton(s_stringMgr.getString("syntax.abrevclose"));
+      gbc = new GridBagConstraints(3,3,1,1,0,0,GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      getContentPane().add(btnClose, gbc);
+
 
       getRootPane().setDefaultButton(btnApply);
 
@@ -73,7 +89,6 @@ public class AutoCorrectDlg extends JDialog
       getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "CloseAction");
       getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escapeStroke, "CloseAction");
       getRootPane().getActionMap().put("CloseAction", closeAction);
-
    }
 
 }
