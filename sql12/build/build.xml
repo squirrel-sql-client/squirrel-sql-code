@@ -272,7 +272,11 @@
 			<param name="p_internal_name" value="dataimport"/>
 			<param name="p_rebuild" value="${rebuild.plugin.dataimport}"/>	
 		</antcall>
-	    <antcall target="build_plugin">
+		<antcall target="build_plugin">
+			<param name="p_internal_name" value="derby"/>
+			<param name="p_rebuild" value="${rebuild.plugin.derby}"/>	
+		</antcall>
+		<antcall target="build_plugin">
 		    <param name="p_internal_name" value="dbcopy"/>
 	        <param name="p_rebuild" value="${rebuild.plugin.dbcopy}"/>
 		</antcall>
