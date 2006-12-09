@@ -184,7 +184,7 @@ public class CopyExecutor extends I18NBaseObject {
                 
                 copyTable(ti, counts[i]);
                 
-                if (i == dbObjs.length - 1) {
+                if (i == dbObjs.length - 1 && !cancelled) {
                     // We just copied the last table.  Now it is safe to copy the
                     // constraints.(Well, that is, if all FK dependencies are met
                     // in the group of tables being copied. 
@@ -193,8 +193,10 @@ public class CopyExecutor extends I18NBaseObject {
                     // those missing tables to the list.
                     copyConstraints(dbObjs);
                 }
-                sendTableCopyFinished(ti, i+1);
-                sleep(prefs.getTableDelayMillis());
+                if (!cancelled) {
+                    sendTableCopyFinished(ti, i+1);
+                    sleep(prefs.getTableDelayMillis());
+                }
             } catch (SQLException e) {
                 encounteredException = true;
                 sendErrorEvent(ErrorEvent.SQL_EXCEPTION_TYPE, e);
