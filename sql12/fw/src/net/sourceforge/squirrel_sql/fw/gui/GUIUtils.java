@@ -489,4 +489,48 @@ public class GUIUtils
    {
       return _mainFrame;
    }
+   
+   /**
+    * Inserts newlines at or before lineLength at spaces or commas. If no space 
+    * or comma can be found, the resultant line will not be broken up by 
+    * newlines.
+    * 
+    * @param line the line to word-wrap
+    * @param lineLength the maximum length any segment should be. 
+    * @return a line with newlines inserted
+    */
+   public static String getWrappedLine(String line, int lineLength) {
+       if (line.length() <= lineLength) {
+           return line;
+       }
+       StringBuffer result = new StringBuffer();
+       char[] lineChars = line.toCharArray();
+       int lastBreakCharIdx = -1;
+       ArrayList breakPoints = new ArrayList();
+       
+       // look for places to break the string
+       for (int i = 0; i < lineChars.length; i++) {
+           char curr = lineChars[i];
+           if (curr == ' ' || curr == ',') {
+               lastBreakCharIdx = i;
+           }
+           if (i > 0 && (i % lineLength == 0) && lastBreakCharIdx != -1) {
+               breakPoints.add(new Integer(lastBreakCharIdx));
+           }
+       }
+       if (lastBreakCharIdx != lineChars.length) {
+           breakPoints.add(new Integer(lineChars.length));
+       }
+       int lastBreakPointIdx = 0;
+       for (Iterator iter = breakPoints.iterator(); iter.hasNext();) {
+           int breakPointIdx = ((Integer) iter.next()).intValue() + 1;
+           if (breakPointIdx > line.length()) {
+               breakPointIdx = line.length();
+           }
+           result.append(line.substring(lastBreakPointIdx, breakPointIdx));
+           result.append("\n");
+           lastBreakPointIdx = breakPointIdx;
+       }
+       return result.toString();
+   }
 }
