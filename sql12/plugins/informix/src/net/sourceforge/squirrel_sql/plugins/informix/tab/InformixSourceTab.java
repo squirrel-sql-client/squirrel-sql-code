@@ -27,6 +27,7 @@ import javax.swing.JTextArea;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourcePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -71,6 +72,7 @@ public abstract class InformixSourceTab extends BaseSourceTab {
         public void load(ISession session, PreparedStatement stmt)
         {
             _ta.setText("");
+            _ta.setWrapStyleWord(true);
             try
             {
                 ResultSet rs = stmt.executeQuery();
@@ -99,19 +101,10 @@ public abstract class InformixSourceTab extends BaseSourceTab {
                     }
                     if (sourceType == VIEW_TYPE) {
                         String line = rs.getString(1);
-                        if (line.indexOf(" as ") != -1) {
-                            line = line.replaceFirst("\\sas\\s", "\nas\n");
-                        }
-                        if (line.indexOf(" from ") != 1) {
-                            line = line.replaceFirst("\\sfrom\\s", "\nfrom");
-                        }
-                        if (line.indexOf(" where ") != 1) {
-                            line = line.replaceFirst("\\swhere\\s", "\nwhere");
-                        }                        
-                        buf.append(line);                        
+                        buf.append(line.trim() + " ");                        
                     }
                 }
-                _ta.setText(buf.toString());
+                _ta.setText(GUIUtils.getWrappedLine(buf.toString(), 80));
                 _ta.setCaretPosition(0);
             }
             catch (SQLException ex)
