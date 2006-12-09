@@ -4,8 +4,18 @@ DBCopy Change Log
 1.1 (Not yet released)
 ===
 
-Added support for IBM Informix Dynamic Server (10.0) and Sun Java System 
-High-Availability Database (HADB).
+- Fixed bug in copying FK constraints where the primary key table 
+  name wasn't fully qualified the schema of the destination database.  This was 
+  most noticeable when copying tables with FKs into a schema which was not the 
+  default schema for that session.
+
+- Fixed bug where cancelling the copy operation during table data transfer 
+  did not also cancel the transfer of table constraints.
+
+- Removed needless dependency on Java 5 from the DBCopy plugin. 
+
+- Added support for IBM Informix Dynamic Server (10.0) and Sun Java System 
+  High-Availability Database (HADB).
 
 1584283: (DBCopy plugin - Copying LOBs from Oracle to Oracle fails)
 If destination column type is Types.OTHER (1111), try to get 
