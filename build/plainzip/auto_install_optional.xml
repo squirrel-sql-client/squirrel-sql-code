@@ -3,7 +3,7 @@
     <com.izforge.izpack.panels.HTMLInfoPanel/>
     <com.izforge.izpack.panels.LicencePanel/>
     <com.izforge.izpack.panels.TargetPanel>
-        <installpath>C:\tmp\squirreltest</installpath>
+        <installpath>C:\home\projects\squirrel-sql\sql12\build\plainzip\tmp\SQuirreL SQL Client</installpath>
     </com.izforge.izpack.panels.TargetPanel>
     <com.izforge.izpack.panels.PacksPanel>
         <pack name="Base" index="0" selected="true"/>

@@ -3,27 +3,10 @@
     <com.izforge.izpack.panels.HTMLInfoPanel/>
     <com.izforge.izpack.panels.LicencePanel/>
     <com.izforge.izpack.panels.TargetPanel>
-        <installpath>C:\tmp\squirreltest</installpath>
+        <installpath>C:\home\projects\squirrel-sql\sql12\build\plainzip\tmp\SQuirreL SQL Client</installpath>
     </com.izforge.izpack.panels.TargetPanel>
     <com.izforge.izpack.panels.PacksPanel>
         <pack name="Base" index="0" selected="true"/>
-        <pack name="Standard" index="1" selected="false"/>
-        <pack name="Optional Plugin - DBCopy" index="2" selected="false"/>
-        <pack name="Optional Plugin - Firebird " index="3" selected="false"/>
-        <pack name="Optional Plugin - Microsoft SQL Server " index="4" selected="false"/>
-        <pack name="Optional Plugin - MySQL " index="5" selected="false"/>
-        <pack name="Optional Plugin - Oracle" index="6" selected="false"/>
-        <pack name="Optional Plugin - Session Scripts" index="7" selected="false"/>
-        <pack name="Optional Plugin - SQL Validator " index="8" selected="false"/>
-        <pack name="Optional Plugin - Internationalization " index="9" selected="false"/>
-        <pack name="Optional Translation - Brazilian Portuguese" index="10" selected="false"/>
-        <pack name="Optional Translation - Bulgarian" index="11" selected="false"/>
-        <pack name="Optional Translation - Czech" index="12" selected="false"/>
-        <pack name="Optional Translation - Simplified Chinese" index="13" selected="false"/>
-        <pack name="Optional Translation - French" index="14" selected="false"/>
-        <pack name="Optional Translation - German" index="15" selected="false"/>
-        <pack name="Optional Translation - Italian" index="16" selected="false"/>
-        <pack name="Optional Translation - Spanish" index="17" selected="false"/>
     </com.izforge.izpack.panels.PacksPanel>
     <com.izforge.izpack.panels.InstallPanel/>
     <com.izforge.izpack.panels.ShortcutPanel/>
