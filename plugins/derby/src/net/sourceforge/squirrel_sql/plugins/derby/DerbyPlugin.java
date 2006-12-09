@@ -75,7 +75,7 @@ public class DerbyPlugin extends DefaultSessionPlugin {
      */
     public String getInternalName()
     {
-        return "Derby";
+        return "derby";
     }
 
     /**
