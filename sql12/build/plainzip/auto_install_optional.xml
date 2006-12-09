@@ -3,26 +3,29 @@
     <com.izforge.izpack.panels.HTMLInfoPanel/>
     <com.izforge.izpack.panels.LicencePanel/>
     <com.izforge.izpack.panels.TargetPanel>
-        <installpath>./tmp/SQuirreL SQL Client</installpath>
+        <installpath>C:\tmp\squirreltest</installpath>
     </com.izforge.izpack.panels.TargetPanel>
     <com.izforge.izpack.panels.PacksPanel>
-        <selected>
-            <pack index="0"/>
-            <pack index="1"/>
-            <pack index="2"/>
-            <pack index="3"/>
-            <pack index="4"/>
-            <pack index="5"/>
-            <pack index="6"/>
-            <pack index="7"/>
-            <pack index="8"/>			
-            <pack index="9"/>            
-        </selected>
+        <pack name="Base" index="0" selected="true"/>
+        <pack name="Standard" index="1" selected="true"/>
+        <pack name="Optional Plugin - DBCopy" index="2" selected="true"/>
+        <pack name="Optional Plugin - Firebird " index="3" selected="true"/>
+        <pack name="Optional Plugin - Microsoft SQL Server " index="4" selected="true"/>
+        <pack name="Optional Plugin - MySQL " index="5" selected="true"/>
+        <pack name="Optional Plugin - Oracle" index="6" selected="true"/>
+        <pack name="Optional Plugin - Session Scripts" index="7" selected="true"/>
+        <pack name="Optional Plugin - SQL Validator " index="8" selected="true"/>
+        <pack name="Optional Plugin - Internationalization " index="9" selected="true"/>
+        <pack name="Optional Translation - Brazilian Portuguese" index="10" selected="true"/>
+        <pack name="Optional Translation - Bulgarian" index="11" selected="true"/>
+        <pack name="Optional Translation - Czech" index="12" selected="true"/>
+        <pack name="Optional Translation - Simplified Chinese" index="13" selected="true"/>
+        <pack name="Optional Translation - French" index="14" selected="true"/>
+        <pack name="Optional Translation - German" index="15" selected="true"/>
+        <pack name="Optional Translation - Italian" index="16" selected="true"/>
+        <pack name="Optional Translation - Spanish" index="17" selected="true"/>
     </com.izforge.izpack.panels.PacksPanel>
     <com.izforge.izpack.panels.InstallPanel/>
-    <com.izforge.izpack.panels.ShortcutPanel>
-        <programGroup name="SQuirreL SQL Client"/>
-        <shortcut name="SQuirreL SQL Client" initialState="1" commandLine="" workingDirectory="./tmp/SQuirreL SQL Client" target="./tmp/SQuirreL SQL Client/squirrel-sql.sh" type="1" icon="./tmp/SQuirreL SQL Client/icons/acorn.ico" group="true" description="An ISQL tool" iconIndex="0"/>
-    </com.izforge.izpack.panels.ShortcutPanel>
+    <com.izforge.izpack.panels.ShortcutPanel/>
     <com.izforge.izpack.panels.FinishPanel/>
 </AutomatedInstallation>
