@@ -5,22 +5,20 @@ Not yet released - available in the latest snapshot, or at least checked into CV
 =========
 
     New Features/Enhancements:
+    
+Derby Plugin: A new plugin which allows the user to view source for triggers and
+views.  Also, detailed information about triggers is available.
 
-Syntax plugins: Corrections/Abreviations allow new lines. Use \n to create a new line.
-Note: Note: Bookmarks are more powerful than abreviations.
-
-DBCopy Plugin: Added support for Informix and HADB
-
-1602255: 'Interpret DATE columns as TIMESTAMP' also in SQL view.  When this 
-configuration item is checked, any SQL query result that contains a DATE column
-will show the DATE values as TIMESTAMP values (This is useful with Oracle where
-DATE columns also contain TIME components)
-
-Informix Plugin: This new plugin allows the user view source for stored 
+Informix Plugin: A new plugin which allows the user to view source for stored 
 procedure, trigger and view objects. Also provides Informix-specific details 
 for indexes and triggers.  Special thanks goes to Doug Lawry for help setting 
 up an Informix instance for developing the plugin, and providing the system 
 catalog queries necessary for the object information provided by this plugin.
+
+Refactoring Plugin: A new plugin which currently allows users to alter
+tables by adding, modifying and dropping columns as well as adding/dropping 
+Primary Keys.  Uses an extended Hibernate dialect framework to derive SQL which 
+is syntactically correct for the database being modified.
 
 Made SQuirreL work with hxtt drivers. See www.hxtt.com. Thanks to Yonghong Zhao 
 the patches.
@@ -38,21 +36,30 @@ Oracle Plugin:
    - All windows restore their last size and position.
    - All windows provide a "Stay on top" check box.
 
+Syntax plugin: Corrections/Abreviations allow new lines. Use \n to create a 
+new line. Note: Bookmarks are more powerful than abreviations.
+
 SQuirreL paths (-home, -user) are shown in Global Preferences
 
 LAF Plugin: Added Napkin Look and Feel (JDK 1.5 only)
 
-Completion Popup (Code Completion ctrl+space, Tools Popup ctrl+t, Bookmarks Popup ctrl+j):
-When the beginning/end of the pop up list is reached another arrow up/down jumps to the last/first entry. 
+Completion Popup (Code Completion ctrl+space, Tools Popup ctrl+t, 
+Bookmarks Popup ctrl+j): When the beginning/end of the pop up list is reached 
+another arrow up/down jumps to the last/first entry. 
 
-1015274 -  DB2/400 system naming support
+1015274: Provided better DB2/400 system naming support
+
+1602255: 'Interpret DATE columns as TIMESTAMP' also in SQL view.  When this 
+configuration item is checked, any SQL query result that contains a DATE column
+will show the DATE values as TIMESTAMP values (This is useful with Oracle where
+DATE columns also contain TIME components)
 
 Schema refresh on catalog combo box change:
 Schemas are refreshed automatically, when the user switches to another catalog.
-On systems that support Catalogs like Sybase or MSSQL, Schemas within a Catalog only
-become accessible when the catalog combo box is switched to the their Catalog.
-To make Schemas available in the Object Tree, Code completion etc. after a Catalog switch
-Schemas are now automatically refreshed.
+On systems that support Catalogs like Sybase or MSSQL, Schemas within a Catalog 
+only become accessible when the catalog combo box is switched to the their 
+Catalog. To make Schemas available in the Object Tree, Code completion etc. 
+after a Catalog switch Schemas are now automatically refreshed.
 (Thanks to Stan Berka for this patch)
 
 Graph Plugin:
@@ -61,16 +68,13 @@ The image files are an exact copy of what would be sent to a printer and
 can easily be used within other applications.
 (Feature requested by David Karr)
 
+DBCopy Plugin: Added support for Informix and HADB
+
 Re-organized the table and view context menus so that the SQLScripts 
 plugin menu items now appear under the "Scripts" menu item and in the
 same order that they appear in the session menu "Scripts" menu item.
 
 Updated Spanish translation strings (Thanks to Diego Schulz)
-
-Refactoring Plugin: Introduced new plugin which currently allows users to alter
-tables by adding, modifying and dropping columns as well as adding/dropping 
-Primary Keys.  Uses an extended Hibernate dialect framework to derive SQL which 
-is syntactically correct for the database being modified.
 
 Added JDBC driver CLASSNAME and CLASSPATH to the Metadata tab so that
 it is not necessary to open the driver definition for the current session to 
@@ -78,25 +82,29 @@ get this information.
 
 	Bug-Fixes:
 
-Bugfix: Oracle plugin - Fixed the rendering of details/source tabs for indexes
+Oracle plugin: Fixed the rendering of details/source tabs for indexes
 sequences and triggers.
 
-1601610 - Bug while editing integer/long columns
-
-Bugfix: Added support for Informix way of referring to database objects within 
+Added support for Informix way of referring to database objects within 
 catalog and schema as catalog:"schema".objectname.
 
-DBCopy plugin: Fixed bug in copying FK constraints where the primary key table 
-name wasn't fully qualified the schema of the destination database.  This was 
-most noticeable when copying tables with FKs into a schema which was not the 
-default schema for that session.
+DBCopy plugin:
+  - Fixed bug in copying FK constraints where the primary key table 
+  name wasn't fully qualified the schema of the destination database.  This was 
+  most noticeable when copying tables with FKs into a schema which was not the 
+  default schema for that session.
 
-1598162 - Under Java 6 you have to click the Connect button twice when
-the app is frist started.
+  - Fixed bug where cancelling the copy operation during table data transfer 
+    did not also cancel the transfer of table constraints.
 
-1597463  - Maximized and multimonitor window size not saved
+  - Removed needless dependency on Java 5 from the DBCopy plugin. 
 
-Removed needless dependency on Java 5 from the DBCopy plugin. 
+1601610 - Bug while editing integer/long columns
+  
+1598162: Fixed the issue when using Java 6 you had to click the Connect button 
+twice when the app is first started.
+
+1597463: Maximized and multimonitor window size not saved
 
 1595913: Cannot select SQL dropdown under java 6.
 
