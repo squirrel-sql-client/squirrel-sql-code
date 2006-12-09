@@ -1,7 +1,10 @@
 SQuirreL SQL Client Change Log
 ==============================
 
-Not release yet - on the 2.3 final branch:
+2.3.2 (Stable bug-fix release)
+=========
+
+	Bug-Fixes:
 
 OraclePlugin bug: Use a new info tab instead of re-using.  Otherwise, 
 the tabs will not display properly
