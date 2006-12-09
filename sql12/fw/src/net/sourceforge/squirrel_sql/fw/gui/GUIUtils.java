@@ -527,8 +527,11 @@ public class GUIUtils
            if (breakPointIdx > line.length()) {
                breakPointIdx = line.length();
            }
-           result.append(line.substring(lastBreakPointIdx, breakPointIdx));
-           result.append("\n");
+           String part = line.substring(lastBreakPointIdx, breakPointIdx);
+           result.append(part.trim());
+           if (!part.trim().endsWith("\\n")) { 
+               result.append("\n");
+           }
            lastBreakPointIdx = breakPointIdx;
        }
        return result.toString();
