@@ -5,6 +5,10 @@ Not yet released - available in the latest snapshot, or at least checked into CV
 =========
 
     New Features/Enhancements:
+
+Graph Plugin: New right mouse menu item for tables: "View table in Object tree"
+  CAUTION: First use of JDK 1.5 specific code in SQuirreL's core, will compile only JDK 1.5 or higher
+
     
 Derby Plugin: A new plugin which allows the user to view source for triggers and
 views.  Also, detailed information about triggers is available.
@@ -81,6 +85,10 @@ it is not necessary to open the driver definition for the current session to
 get this information.
 
 	Bug-Fixes:
+
+SQL editor function "View Object at cursor in Object tree" (ctrl+B) now works
+for fully qualified object names with leading and trailing quotation marks and slashes.
+  CAUTION: First use of JDK 1.5 specific code in SQuirreL's core, will compile only JDK 1.5 or higher.
 
 Oracle plugin: Fixed the rendering of details/source tabs for indexes
 sequences and triggers.
