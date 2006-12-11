@@ -345,7 +345,7 @@ public class ColumnDetailDialog extends JDialog {
             setTitle(i18n.MODIFY_COLUMN_TITLE);
         }
         
-        setSize(350, 400);
+        setSize(375, 400);
         EmptyBorder border = new EmptyBorder(new Insets(5,5,5,5));
         Dimension mediumField = new Dimension(126, 20);
         Dimension largeField = new Dimension(126, 60);
@@ -599,7 +599,7 @@ public class ColumnDetailDialog extends JDialog {
                 if (!dialect.supportsAlterColumnNull()) {
                     nullableCheckBox.setEnabled(false);
                     //i18n[ColumnDetailsDialog.columnNullLabel={0} does not 
-                    //support altering column nullability
+                    //support altering column nullability]
                     String noColumnSupportMsg = 
                         s_stringMgr.getString("ColumnDetailsDialog.columnNullToolTip",
                                               dbName);
@@ -610,7 +610,7 @@ public class ColumnDetailDialog extends JDialog {
                 }
                 if (!dialect.supportsRenameColumn()) {
                     //i18n[ColumnDetailsDialog.columnNameTootTip={0} does not 
-                    //support altering column name
+                    //support altering column name]
                     String noColNameChange = 
                         s_stringMgr.getString("ColumnDetailsDialog.columnNameTootTip", 
                                               dbName);
@@ -619,6 +619,27 @@ public class ColumnDetailDialog extends JDialog {
                 } else {
                     columnNameTextField.setEditable(true);
                     columnNameTextField.setToolTipText(null);                    
+                }
+                if (!dialect.supportsAlterColumnType()) {
+                    //i18n[ColumnDetailsDialog.columnTypeTootTip={0} does not 
+                    //support altering column type]     
+                    String noColTypeChange = 
+                        s_stringMgr.getString("ColumnDetailsDialog.columnTypeTootTip",
+                                              dbName);
+                    typeList.setEnabled(false);
+                    typeList.setToolTipText(noColTypeChange);
+                    precisionSpinner.setEnabled(false);
+                    precisionSpinner.setToolTipText(noColTypeChange);
+                    lengthSpinner.setEnabled(false);
+                    lengthSpinner.setToolTipText(noColTypeChange);
+                    scaleSpinner.setEnabled(false);
+                    scaleSpinner.setToolTipText(noColTypeChange);
+                } else {
+                    typeList.setEnabled(true);
+                    typeList.setToolTipText(null);
+                    precisionSpinner.setToolTipText(null);
+                    lengthSpinner.setToolTipText(null);
+                    scaleSpinner.setToolTipText(null);
                 }
             }
         }
