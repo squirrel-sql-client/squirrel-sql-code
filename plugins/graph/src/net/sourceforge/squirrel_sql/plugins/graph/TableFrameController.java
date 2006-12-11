@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.ObjectTreeSearch;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ColumnInfoXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ConstraintViewXmlBean;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.TableFrameControllerXmlBean;
@@ -63,6 +64,7 @@ public class TableFrameController
    private JMenuItem _mnuAddAllRelatedTables;
    private JMenuItem _mnuRefreshTable;
    private JMenuItem _mnuScriptTable;
+   private JMenuItem _mnuViewTableInObjectTree;
    private JCheckBoxMenuItem _mnuOrderByName;
    private JCheckBoxMenuItem _mnuPksAndConstraintsOnTop;
    private JCheckBoxMenuItem _mnuDbOrder;
@@ -496,6 +498,16 @@ public class TableFrameController
          }
       });
 
+		// i18n[graph.viewTableInObjectTree=View table in Object tree]
+		_mnuViewTableInObjectTree = new JMenuItem(s_stringMgr.getString("graph.viewTableInObjectTree"));
+      _mnuViewTableInObjectTree.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onViewTableInObjectTree();
+         }
+      });
+
 		// i18n[graph.dbOrder=db order]
 		_mnuDbOrder = new JCheckBoxMenuItem(s_stringMgr.getString("graph.dbOrder"));
       _mnuDbOrder.addActionListener(new ActionListener()
@@ -546,6 +558,7 @@ public class TableFrameController
       _popUp.add(new JSeparator());
       _popUp.add(_mnuRefreshTable);
       _popUp.add(_mnuScriptTable);
+      _popUp.add(_mnuViewTableInObjectTree);
       _popUp.add(new JSeparator());
       _popUp.add(_mnuDbOrder);
       _popUp.add(_mnuOrderByName);
@@ -567,6 +580,11 @@ public class TableFrameController
       });
 
 
+   }
+
+   private void onViewTableInObjectTree()
+   {
+      new ObjectTreeSearch().viewObjectInObjectTree(getTableInfo().getQualifiedName(), _session);
    }
 
    private void onScriptTable()
