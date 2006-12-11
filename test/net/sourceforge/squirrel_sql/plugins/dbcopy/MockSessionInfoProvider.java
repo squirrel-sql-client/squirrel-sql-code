@@ -133,9 +133,9 @@ public class MockSessionInfoProvider implements SessionInfoProvider {
     {
         String destTable = fixCase(tableName, destSession);
         if (DialectFactory.isFrontBaseSession(destSession)) {
-            DBUtil.dropTable(destTable, schema, destSession, true, DialectFactory.DEST_TYPE);
+            DBUtil.dropTable(destTable, schema, null, destSession, true, DialectFactory.DEST_TYPE);
         } else {
-            DBUtil.dropTable(destTable, schema, destSession, false, DialectFactory.DEST_TYPE);
+            DBUtil.dropTable(destTable, schema, null, destSession, false, DialectFactory.DEST_TYPE);
         }
     }
     
