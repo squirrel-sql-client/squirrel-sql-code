@@ -275,7 +275,7 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect
     public String getColumnCommentAlterSQL(TableColumnInfo info) 
         throws UnsupportedOperationException
     {
-        int featureId = DialectUtils.COLUMN_COMMENT_TYPE;
+        int featureId = DialectUtils.COLUMN_COMMENT_ALTER_TYPE;
         String msg = DialectUtils.getUnsupportedMessage(this, featureId);
         throw new UnsupportedOperationException(msg);
     }
@@ -332,6 +332,16 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect
         return DialectUtils.getColumnNameAlterSQL(from, to, alterClause, renameToClause);
     }
 
+    /**
+     * Returns a boolean value indicating whether or not this dialect supports 
+     * modifying a columns type.
+     * 
+     * @return true if supported; false otherwise
+     */
+    public boolean supportsAlterColumnType() {
+        return true;
+    }
+    
     /**
      * Returns the SQL that is used to change the column type.
      * 
@@ -392,7 +402,7 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect
      * @return
      */
     public String getDropPrimaryKeySQL(String pkName, String tableName) {
-        return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true);
+        return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true, false);
     }
     
 }

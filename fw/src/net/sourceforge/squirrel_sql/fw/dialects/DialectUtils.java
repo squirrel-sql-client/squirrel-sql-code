@@ -25,6 +25,8 @@ import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import org.hibernate.HibernateException;
 
@@ -38,6 +40,10 @@ import org.hibernate.HibernateException;
  */
 public class DialectUtils {
 
+    /** Logger for this class. */
+    private static final ILogger log = 
+        LoggerController.createLogger(DialectUtils.class);    
+    
     /** Internationalized strings for this class. */
     private static final StringManager s_stringMgr =
         StringManagerFactory.getStringManager(DialectUtils.class);
@@ -79,11 +85,12 @@ public class DialectUtils {
     
     // features
     
-    public static final int COLUMN_COMMENT_TYPE = 0;
+    public static final int COLUMN_COMMENT_ALTER_TYPE = 0;
     public static final int COLUMN_DEFAULT_ALTER_TYPE = 1;
     public static final int COLUMN_DROP_TYPE = 2;
     public static final int COLUMN_NAME_ALTER_TYPE = 3;
     public static final int COLUMN_NULL_ALTER_TYPE = 4;
+    public static final int COLUMN_TYPE_ALTER_TYPE = 5;
     
     
     
@@ -532,7 +539,7 @@ public class DialectUtils {
     {
         String msg = null;
         switch (featureId) {
-            case COLUMN_COMMENT_TYPE:
+            case COLUMN_COMMENT_ALTER_TYPE:
                 //i18n[DialectUtils.columnCommentUnsupported={0} doesn''t support
                 //column comments]
                 msg = s_stringMgr.getString("DialectUtils.columnCommentUnsupported",
@@ -563,6 +570,12 @@ public class DialectUtils {
                 msg = s_stringMgr.getString("DialectUtils.columnCommentUnsupported",
                                             dialect.getDisplayName());
                 break;
+            case COLUMN_TYPE_ALTER_TYPE:
+                //i18n[DialectUtils.columnTypeUnsupported={0} doesn''t support
+                //altering a column's type attribute]
+                msg = s_stringMgr.getString("DialectUtils.columnTypeUnsupported",
+                                            dialect.getDisplayName());
+                break;
             default:
                 throw new IllegalArgumentException("Unknown featureId: "+featureId);
         }
@@ -581,12 +594,16 @@ public class DialectUtils {
      * @param pkName the name of the primary key that should be dropped
      * @param tableName the name of the table whose primary key should be 
      *                  dropped
-     * @param useConstraintName TODO
+     * @param useConstraintName if true, the constraint name is used - like 
+     *                          'DROP CONSTRAINT pkName'; otherwise
+     *                          a generic 'DROP PRIMARY KEY' is used instead.
+     * @param cascadeConstraints whether or not to append 'CASCADE' to the end.
      * @return
      */
     public static String getDropPrimaryKeySQL(String pkName, 
                                               String tableName, 
-                                              boolean useConstraintName) {
+                                              boolean useConstraintName, 
+                                              boolean cascadeConstraints) {
         StringBuffer result = new StringBuffer();
         result.append("ALTER TABLE ");
         result.append(tableName);
@@ -595,6 +612,9 @@ public class DialectUtils {
             result.append(pkName);
         } else {
             result.append(" DROP PRIMARY KEY");
+        }
+        if (cascadeConstraints) {
+            result.append(" CASCADE");
         }
         return result.toString();
     }
@@ -624,5 +644,5 @@ public class DialectUtils {
         result.append(getColumnList(columns));
         return result.toString();
     }
-    
+   
 }

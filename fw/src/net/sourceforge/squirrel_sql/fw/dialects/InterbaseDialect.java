@@ -297,6 +297,16 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect
         throw new UnsupportedOperationException("Not yet implemented");
     }
     
+    /**
+     * Returns a boolean value indicating whether or not this dialect supports 
+     * modifying a columns type.
+     * 
+     * @return true if supported; false otherwise
+     */
+    public boolean supportsAlterColumnType() {
+        // TODO: verify this
+        return true;
+    }
     
     /**
      * Returns the SQL that is used to change the column type.
@@ -359,7 +369,7 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect
      * @return
      */
     public String getDropPrimaryKeySQL(String pkName, String tableName) {
-        return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false);
+        return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false);
     }
     
 }
