@@ -298,6 +298,15 @@ public interface HibernateDialect {
     String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to);
     
     /**
+     * Returns a boolean value indicating whether or not this dialect supports 
+     * modifying a columns type.
+     * 
+     * @return true if supported; false otherwise
+     */
+    boolean supportsAlterColumnType();
+    
+    
+    /**
      * Returns the SQL that is used to change the column type.
      * 
      * @param from the TableColumnInfo as it is
@@ -337,4 +346,5 @@ public interface HibernateDialect {
      * @return
      */
     String getDropPrimaryKeySQL(String pkName, String tableName);
+    
 }

@@ -339,6 +339,16 @@ public class SQLServerDialect extends org.hibernate.dialect.SQLServerDialect
     }
     
     /**
+     * Returns a boolean value indicating whether or not this dialect supports 
+     * modifying a columns type.
+     * 
+     * @return true if supported; false otherwise
+     */
+    public boolean supportsAlterColumnType() {
+        return true;
+    }
+    
+    /**
      * Returns the SQL that is used to change the column type.
      * 
      * ALTER TABLE doc_exy ALTER COLUMN column_a DECIMAL (5, 2)
@@ -414,7 +424,7 @@ public class SQLServerDialect extends org.hibernate.dialect.SQLServerDialect
      * @return
      */
     public String getDropPrimaryKeySQL(String pkName, String tableName) {
-        return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true);
+        return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true, false);
     }
     
 }

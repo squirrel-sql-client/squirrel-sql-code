@@ -220,7 +220,7 @@ public class DaffodilDialect extends GenericDialect
                                            String comment) 
         throws UnsupportedOperationException 
     {
-        int featureId = DialectUtils.COLUMN_COMMENT_TYPE;
+        int featureId = DialectUtils.COLUMN_COMMENT_ALTER_TYPE;
         String msg = DialectUtils.getUnsupportedMessage(this, featureId);
         throw new UnsupportedOperationException(msg);
     }
@@ -269,7 +269,6 @@ public class DaffodilDialect extends GenericDialect
      * @return the drop SQL command.
      */
     public String getTableDropSQL(String tableName, boolean cascadeConstraints){
-        // TODO: Need to verify this
         return DialectUtils.getTableDropSQL(tableName, true, cascadeConstraints);
     }
 
@@ -277,15 +276,18 @@ public class DaffodilDialect extends GenericDialect
      * Returns the SQL that forms the command to add a primary key to the 
      * specified table composed of the given column names.
      * 
+     * alter table test add constraint pkName primary key (<PK COLS>)
+     * 
      * @param pkName the name of the constraint
      * @param columnNames the columns that form the key
      * @return
      */
     public String[] getAddPrimaryKeySQL(String pkName, 
-                                      TableColumnInfo[] columnNames) 
+                                        TableColumnInfo[] columns) 
     {
-        // TODO: implement
-        throw new UnsupportedOperationException("getAddPrimaryKeySQL not implemented");
+        return new String[] {
+            DialectUtils.getAddPrimaryKeySQL(pkName, columns, false)
+        };
     }
     
     /**
@@ -299,8 +301,19 @@ public class DaffodilDialect extends GenericDialect
     public String getColumnCommentAlterSQL(TableColumnInfo info) 
         throws UnsupportedOperationException
     {
-        // TODO: implement        
-        throw new UnsupportedOperationException("Not yet implemented");
+        int featureId = DialectUtils.COLUMN_COMMENT_ALTER_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);
+    }
+
+    /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports changing a column from null to not-null and vice versa.
+     * 
+     * @return true if the database supports dropping columns; false otherwise.
+     */    
+    public boolean supportsAlterColumnNull() {
+        return false;
     }
     
     /**
@@ -311,8 +324,9 @@ public class DaffodilDialect extends GenericDialect
      * @return the SQL to execute
      */
     public String getColumnNullableAlterSQL(TableColumnInfo info) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not yet implemented");
+        int featureId = DialectUtils.COLUMN_NULL_ALTER_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);
     }
     
     /**
@@ -323,8 +337,7 @@ public class DaffodilDialect extends GenericDialect
      *         false otherwise.
      */
     public boolean supportsRenameColumn() {
-        // TODO: need to verify this
-        return true;
+        return false;
     }    
     
     /**
@@ -337,8 +350,19 @@ public class DaffodilDialect extends GenericDialect
      * @return the SQL to make the change
      */
     public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not yet implemented");
+        int featureId = DialectUtils.COLUMN_NAME_ALTER_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);
+    }
+    
+    /**
+     * Returns a boolean value indicating whether or not this dialect supports 
+     * modifying a columns type.
+     * 
+     * @return true if supported; false otherwise
+     */
+    public boolean supportsAlterColumnType() {
+        return false;
     }
     
     /**
@@ -355,15 +379,11 @@ public class DaffodilDialect extends GenericDialect
                                         TableColumnInfo to)
         throws UnsupportedOperationException
     {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not Yet Implemented");
+        int featureId = DialectUtils.COLUMN_TYPE_ALTER_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);
     }
 
-    public boolean supportsAlterColumnNull() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-    
     /**
      * Returns a boolean value indicating whether or not this database dialect
      * supports changing a column's default value.
@@ -372,7 +392,6 @@ public class DaffodilDialect extends GenericDialect
      *         otherwise
      */
     public boolean supportsAlterColumnDefault() {
-        // TODO Need to verify this
         return true;
     }
     
@@ -395,13 +414,15 @@ public class DaffodilDialect extends GenericDialect
     /**
      * Returns the SQL command to drop the specified table's primary key.
      * 
+     * alter table test drop constraint pk_test cascade
+     * 
      * @param pkName the name of the primary key that should be dropped
      * @param tableName the name of the table whose primary key should be 
      *                  dropped
      * @return
      */
     public String getDropPrimaryKeySQL(String pkName, String tableName) {
-        return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false);
+        return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true, true);
     }
     
 }

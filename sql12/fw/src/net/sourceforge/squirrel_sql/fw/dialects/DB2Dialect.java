@@ -416,6 +416,16 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect
     }
     
     /**
+     * Returns a boolean value indicating whether or not this dialect supports 
+     * modifying a columns type.
+     * 
+     * @return true if supported; false otherwise
+     */
+    public boolean supportsAlterColumnType() {
+        return true;
+    }
+    
+    /**
      * Returns the SQL that is used to change the column type.
      * 
      * ALTER TABLE table_name ALTER COLUMN column_name SET DATA TYPE data_type
@@ -479,7 +489,7 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect
      * @return
      */
     public String getDropPrimaryKeySQL(String pkName, String tableName) {
-        return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false);
+        return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false);
     }
     
 }

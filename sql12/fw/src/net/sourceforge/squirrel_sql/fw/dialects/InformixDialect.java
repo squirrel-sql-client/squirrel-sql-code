@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.sql.Types;
 
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
@@ -66,7 +67,11 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect
      * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType)
      */
     public boolean canPasteTo(IDatabaseObjectInfo info) {
-        return true;
+        if (info.getDatabaseObjectType() == DatabaseObjectType.SCHEMA) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /*
@@ -257,6 +262,9 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect
      * @return
      */
     public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns) {
+        
+        // TODO: should also make sure that each of the columns is made "NOT NULL"
+        
         return new String[] { 
             DialectUtils.getAddIndexSQL(pkName, true, columns),
             DialectUtils.getAddPrimaryKeySQL(pkName, columns, true) 
@@ -287,7 +295,7 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect
     public String getColumnCommentAlterSQL(TableColumnInfo info)
         throws UnsupportedOperationException 
     {
-        int featureId = DialectUtils.COLUMN_COMMENT_TYPE;
+        int featureId = DialectUtils.COLUMN_COMMENT_ALTER_TYPE;
         String msg = DialectUtils.getUnsupportedMessage(this, featureId);
         throw new UnsupportedOperationException(msg);
     }
@@ -344,6 +352,16 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect
         return DialectUtils.getColumnRenameSQL(from, to);
     }
 
+    /**
+     * Returns a boolean value indicating whether or not this dialect supports 
+     * modifying a columns type.
+     * 
+     * @return true if supported; false otherwise
+     */
+    public boolean supportsAlterColumnType() {
+        return true;
+    }
+    
     /**
      * Returns the SQL that is used to change the column type.
      * 
@@ -408,7 +426,7 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect
      * @return
      */
     public String getDropPrimaryKeySQL(String pkName, String tableName) {
-        return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true);
+        return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true, false);
     }
 
 }

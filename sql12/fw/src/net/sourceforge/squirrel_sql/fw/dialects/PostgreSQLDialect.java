@@ -332,6 +332,16 @@ public class PostgreSQLDialect
     }
     
     /**
+     * Returns a boolean value indicating whether or not this dialect supports 
+     * modifying a columns type.
+     * 
+     * @return true if supported; false otherwise
+     */
+    public boolean supportsAlterColumnType() {
+        return true;
+    }
+    
+    /**
      * Returns the SQL that is used to change the column type.
      * 
      * ALTER TABLE products ALTER COLUMN price TYPE numeric(10,2);
@@ -416,7 +426,7 @@ public class PostgreSQLDialect
      * @return
      */
     public String getDropPrimaryKeySQL(String pkName, String tableName) {
-        return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true);
+        return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true, false);
     }
 }
 
