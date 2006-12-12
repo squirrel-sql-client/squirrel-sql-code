@@ -292,7 +292,8 @@ public class TablePopupMenu extends BasePopupMenu
    {
       ExportCsvAction()
       {
-         super(s_stringMgr.getString("TablePopupMenu.exportCsv"));
+         // i18n[TablePopupMenu.export=Export CSV / MS Excel ...]
+         super(s_stringMgr.getString("TablePopupMenu.export"));
       }
 
       public void actionPerformed(ActionEvent evt)

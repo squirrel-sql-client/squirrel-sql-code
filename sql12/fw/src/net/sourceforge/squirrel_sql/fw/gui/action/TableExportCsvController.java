@@ -20,6 +20,8 @@ public class TableExportCsvController
    private static final String PREF_KEY_USE_GLOBAL_PREFS_FORMATING = "SquirrelSQL.csvexport.useGlobalPrefsFomating";
    private static final String PREF_KEY_EXECUTE_COMMAND = "SquirrelSQL.csvexport.executeCommand";
    private static final String PREF_KEY_COMMAND = "SquirrelSQL.csvexport.commandString";
+   private static final String PREF_KEY_FORMAT_CSV = "SquirrelSQL.csvexport.formatCSV";
+   private static final String PREF_KEY_FORMAT_XLS = "SquirrelSQL.csvexport.formatXLS";
 
    private static final StringManager s_stringMgr =
       StringManagerFactory.getStringManager(TableExportCsvController.class);
@@ -28,6 +30,8 @@ public class TableExportCsvController
 
    private TableExportCsvDlg _dlg;
    private boolean _ok = false;
+   public static final int EXPORT_FORMAT_CSV = 0;
+   public static final int EXPORT_FORMAT_XLS = 1;
 
    TableExportCsvController()
    {
@@ -91,11 +95,28 @@ public class TableExportCsvController
          }
       });
 
+      _dlg.radFormatCSV.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onFormat(true);
+         }
+      });
+
+      _dlg.radFormatXLS.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onFormat(true);
+         }
+      });
+
+
       _dlg.chkSeparatorTab.addActionListener(new ActionListener()
       {
          public void actionPerformed(ActionEvent e)
          {
-            onChkSeparatorTab();
+            onFormat(false);
          }
       });
 
@@ -124,6 +145,91 @@ public class TableExportCsvController
             onCommandFile();
          }
       });
+   }
+
+   private void onFormat(boolean replaceEnding)
+   {
+
+      if (_dlg.radFormatCSV.isSelected())
+      {
+         _dlg.lblSeparator.setEnabled(true);
+         _dlg.chkSeparatorTab.setEnabled(true);
+         _dlg.txtSeparatorChar.setEnabled(true);
+
+         if(_dlg.chkSeparatorTab.isSelected())
+         {
+            _dlg.txtSeparatorChar.setText(null);
+            _dlg.txtSeparatorChar.setEnabled(false);
+         }
+         else
+         {
+            _dlg.txtSeparatorChar.setEnabled(true);
+         }
+
+         if(replaceEnding)
+         {
+            replaceFileEnding();
+         }
+      }
+      else if (_dlg.radFormatXLS.isSelected())
+      {
+         _dlg.lblSeparator.setEnabled(false);
+         _dlg.chkSeparatorTab.setEnabled(false);
+         _dlg.txtSeparatorChar.setEnabled(false);
+         if(replaceEnding)
+         {
+            replaceFileEnding();
+         }
+      }
+      else
+      {
+         throw new IllegalStateException("No valid output format");
+      }
+   }
+
+   private void replaceFileEnding()
+   {
+      String newEnding;
+
+      if (_dlg.radFormatCSV.isSelected())
+      {
+         newEnding = "csv";
+      }
+      else if (_dlg.radFormatXLS.isSelected())
+      {
+         newEnding = "xls";
+      }
+      else
+      {
+         throw new IllegalStateException("No valid output format");
+      }
+
+      String file = _dlg.txtFile.getText();
+      if(null == file ||
+         0 == file.trim().length() ||
+         file.toUpperCase().endsWith("." + newEnding.toUpperCase()))
+      {
+         return;
+      }
+
+      file = file.trim();
+
+      String newFile;
+
+      if(-1 == file.lastIndexOf(".") || file.lastIndexOf(".") < file.lastIndexOf(File.separator))
+      {
+         newFile = file + "." + newEnding;
+      }
+      else if(file.lastIndexOf(".") > file.lastIndexOf(File.separator))
+      {
+         newFile = file.substring(0, file.lastIndexOf(".")) + "." + newEnding;
+      }
+      else
+      {
+         newFile = file;
+      }
+      
+      _dlg.txtFile.setText(newFile);
    }
 
    private void onCommandFile()
@@ -247,6 +353,8 @@ public class TableExportCsvController
    {
       Preferences.userRoot().put(PREF_KEY_CSV_FILE, _dlg.txtFile.getText());
       Preferences.userRoot().putBoolean(PREF_KEY_WITH_HEADERS, _dlg.chkWithHeaders.isSelected());
+      Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_CSV, _dlg.radFormatCSV.isSelected());
+      Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_XLS, _dlg.radFormatXLS.isSelected());
       Preferences.userRoot().putBoolean(PREF_KEY_SEPERATOR_TAB, _dlg.chkSeparatorTab.isSelected());
       Preferences.userRoot().put(PREF_KEY_SEPERATOR_CHAR, _dlg.txtSeparatorChar.getText());
       Preferences.userRoot().putBoolean(PREF_KEY_EXPORT_COMPLETE, _dlg.radComplete.isSelected());
@@ -261,12 +369,31 @@ public class TableExportCsvController
       _dlg.txtFile.setText(Preferences.userRoot().get(PREF_KEY_CSV_FILE, null));
       _dlg.chkWithHeaders.setSelected(Preferences.userRoot().getBoolean(PREF_KEY_WITH_HEADERS, true));
 
+
       _dlg.chkSeparatorTab.setSelected(Preferences.userRoot().getBoolean(PREF_KEY_SEPERATOR_TAB, false));
-      onChkSeparatorTab();
+
       if(false == _dlg.chkSeparatorTab.isSelected())
       {
          _dlg.txtSeparatorChar.setText(Preferences.userRoot().get(PREF_KEY_SEPERATOR_CHAR, ","));
       }
+
+      if(Preferences.userRoot().getBoolean(PREF_KEY_FORMAT_CSV, true))
+      {
+         _dlg.radFormatCSV.setSelected(true);
+      }
+      else if(Preferences.userRoot().getBoolean(PREF_KEY_FORMAT_XLS, false))
+      {
+         _dlg.radFormatXLS.setSelected(true);
+      }
+      else
+      {
+         _dlg.radFormatCSV.setSelected(true);
+      }
+
+
+      onFormat(false);
+
+
 
       if(Preferences.userRoot().getBoolean(PREF_KEY_EXPORT_COMPLETE, true))
       {
@@ -299,18 +426,6 @@ public class TableExportCsvController
       _dlg.btnCommandFile.setEnabled(_dlg.chkExecCommand.isSelected());
    }
 
-   private void onChkSeparatorTab()
-   {
-      if(_dlg.chkSeparatorTab.isSelected())
-      {
-         _dlg.txtSeparatorChar.setText(null);
-         _dlg.txtSeparatorChar.setEnabled(false);
-      }
-      else
-      {
-         _dlg.txtSeparatorChar.setEnabled(true);
-      }
-   }
 
    private void installEscapeClose()
    {
@@ -389,5 +504,22 @@ public class TableExportCsvController
       {
          return null;
       }
+   }
+
+   public int getExportFormat()
+   {
+      if(_dlg.radFormatCSV.isSelected())
+      {
+         return EXPORT_FORMAT_CSV;
+      }
+      else if(_dlg.radFormatXLS.isSelected())
+      {
+         return EXPORT_FORMAT_XLS;
+      }
+      else
+      {
+         throw new IllegalStateException("No valid output format");
+      }
+
    }
 }

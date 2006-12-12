@@ -17,8 +17,11 @@ public class TableExportCsvDlg extends JDialog
    JTextField txtFile;
    JButton btnFile;
    JCheckBox chkWithHeaders;
-   JCheckBox chkSeparatorTab;
+   JRadioButton radFormatXLS;
+   JRadioButton radFormatCSV;
+   JLabel lblSeparator;
    JTextField txtSeparatorChar;
+   JCheckBox chkSeparatorTab;
    JRadioButton radComplete;
    JRadioButton radSelection;
    JRadioButton radUseGlobalPrefsFormating;
@@ -33,8 +36,8 @@ public class TableExportCsvDlg extends JDialog
    {
       super(GUIUtils.getMainFrame(), true);
 
-      // i18n[TableExportCsvDlg.exportCsvTitle=CSV export]
-      setTitle(s_stringMgr.getString("TableExportCsvDlg.exportCsvTitle"));
+      // i18n[TableExportCSVDlg.exportTitleNew=CSV / MS Excel export]
+      setTitle(s_stringMgr.getString("TableExportCSVDlg.exportTitleNew"));
 
       getContentPane().setLayout(new GridBagLayout());
       GridBagConstraints gbc;
@@ -52,32 +55,60 @@ public class TableExportCsvDlg extends JDialog
       gbc = new GridBagConstraints(0, 3, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(15, 5, 5, 5), 0, 0);
       getContentPane().add(chkWithHeaders, gbc);
 
-
       gbc = new GridBagConstraints(0, 4, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(15, 5, 5, 5), 0, 0);
+      getContentPane().add(getExportFormatPanel(), gbc);
+
+      gbc = new GridBagConstraints(0, 5, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5), 0, 0);
       getContentPane().add(getSeparatorPanel(), gbc);
 
-
-      gbc = new GridBagConstraints(0, 5, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(15, 5, 5, 5), 0, 0);
+      gbc = new GridBagConstraints(0, 6, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(15, 5, 5, 5), 0, 0);
       getContentPane().add(getSelelectionPanel(), gbc);
 
-      gbc = new GridBagConstraints(0, 6, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(15, 5, 5, 5), 0, 0);
+      gbc = new GridBagConstraints(0, 7, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(15, 5, 5, 5), 0, 0);
       getContentPane().add(getFormatingPanel(), gbc);
 
 
       // i18n[TableExportCsvDlg.executeCommand=Execute command (%file will be replaced by export file name)]
       chkExecCommand = new JCheckBox(s_stringMgr.getString("TableExportCsvDlg.executeCommand"));
-      gbc = new GridBagConstraints(0, 7, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(15, 5, 5, 5), 0, 0);
+      gbc = new GridBagConstraints(0, 8, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(15, 5, 5, 5), 0, 0);
       getContentPane().add(chkExecCommand, gbc);
 
-      gbc = new GridBagConstraints(0, 8, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 5, 5), 0, 0);
+      gbc = new GridBagConstraints(0, 9, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 5, 5), 0, 0);
       getContentPane().add(getCommandPanel(), gbc);
 
 
-      gbc = new GridBagConstraints(0, 9, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(15, 5, 5, 5), 0, 0);
+      gbc = new GridBagConstraints(0, 10, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(15, 5, 5, 5), 0, 0);
       getContentPane().add(getButtonPanel(), gbc);
 
-      gbc = new GridBagConstraints(0, 10, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0);
+      gbc = new GridBagConstraints(0, 11, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0);
       getContentPane().add(new JPanel(), gbc);
+   }
+
+   private JPanel getExportFormatPanel()
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      // i18n[TableExportCsvDlg.formatCSV=Export CSV file]
+      radFormatCSV = new JRadioButton(s_stringMgr.getString("TableExportCsvDlg.formatCSV"));
+      gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 5), 0, 0);
+      ret.add(radFormatCSV, gbc);
+
+      // i18n[TableExportCsvDlg.formatXLS=Export MS Excel (XLS) file]
+      radFormatXLS = new JRadioButton(s_stringMgr.getString("TableExportCsvDlg.formatXLS"));
+      gbc = new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
+      ret.add(radFormatXLS, gbc);
+
+      gbc = new GridBagConstraints(1, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
+      ret.add(new JPanel(), gbc);
+
+
+      ButtonGroup bg = new ButtonGroup();
+      bg.add(radFormatCSV);
+      bg.add(radFormatXLS);
+
+      return ret;
    }
 
    private Component getFormatingPanel()
@@ -186,7 +217,8 @@ public class TableExportCsvDlg extends JDialog
 
       gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 5), 0, 0);
       // i18n[TableExportCsvDlg.separator=Separator:]
-      ret.add(new JLabel(s_stringMgr.getString("TableExportCsvDlg.separator")), gbc);
+      lblSeparator = new JLabel(s_stringMgr.getString("TableExportCsvDlg.separator"));
+      ret.add(lblSeparator, gbc);
 
 
       txtSeparatorChar = new JTextField(1);
