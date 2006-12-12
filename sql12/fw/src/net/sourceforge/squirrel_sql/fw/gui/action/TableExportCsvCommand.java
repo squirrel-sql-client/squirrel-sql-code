@@ -127,7 +127,7 @@ public class TableExportCsvCommand
          }
          else if(TableExportCsvController.EXPORT_FORMAT_XLS == ctrl.getExportFormat())
          {
-            return writeXLSExport(file, includeHeaders, nbrSelCols, selCols, nbrSelRows, ctrl, selRows);
+            return writeXLS(file, includeHeaders, nbrSelCols, selCols, nbrSelRows, ctrl, selRows);
          }
          else
          {
@@ -160,7 +160,7 @@ public class TableExportCsvCommand
    }
 
 
-   private boolean writeXLSExport(File file, boolean includeHeaders, int nbrSelCols, int[] selCols, int nbrSelRows, TableExportCsvController ctrl, int[] selRows)
+   private boolean writeXLS(File file, boolean includeHeaders, int nbrSelCols, int[] selCols, int nbrSelRows, TableExportCsvController ctrl, int[] selRows)
       throws IOException, WriteException
    {
       WritableWorkbook workbook = Workbook.createWorkbook(file);
