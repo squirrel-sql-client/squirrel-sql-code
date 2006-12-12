@@ -184,12 +184,21 @@ public class DialectLiveTestRunner {
         String alterColTypeSQL = dialect.getColumnTypeAlterSQL(firstCol, nullintVC);
         runSQL(session, alterColTypeSQL);
         */
-        
         TableColumnInfo thirdColLonger = 
             getVarcharColumn("nullvc", true, "defVal", "A varchar comment", 200);
-        String alterColLengthSQL = 
-            dialect.getColumnTypeAlterSQL(thirdCol, thirdColLonger);
-        runSQL(session, alterColLengthSQL);        
+        if (dialect.supportsAlterColumnType()) {
+            String alterColLengthSQL = 
+                dialect.getColumnTypeAlterSQL(thirdCol, thirdColLonger);
+            runSQL(session, alterColLengthSQL);     
+        } else {
+            try {
+                dialect.getColumnTypeAlterSQL(thirdCol, thirdColLonger);
+                throw new IllegalStateException(
+                    "Expected dialect to fail to provide SQL for altering column type");
+            } catch (UnsupportedOperationException e) {
+                // this is expected
+            }
+        }
     }
     
     private void testAlterDefaultValue(ISession session) throws Exception {
