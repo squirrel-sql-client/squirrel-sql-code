@@ -145,34 +145,37 @@ public class CopyExecutor extends I18NBaseObject {
             return;
         }
         setupAutoCommit(destConn);
-        IDatabaseObjectInfo[] dbObjs = prov.getSourceSelectedDatabaseObjects();
+        IDatabaseObjectInfo[] sourceObjs = prov.getSourceSelectedDatabaseObjects();
         int[] counts = getTableCounts();
         sendCopyStarted(counts);
         String destSchema = prov.getDestSelectedDatabaseObject().getSimpleName();
-        for (int i = 0; i < dbObjs.length; i++) {
-            if (false == dbObjs[i] instanceof ITableInfo) {
+        String destCatalog = prov.getDestSelectedDatabaseObject().getCatalogName();
+        for (int i = 0; i < sourceObjs.length; i++) {
+            if (false == sourceObjs[i] instanceof ITableInfo) {
                 continue;
             }
-            ITableInfo ti = (ITableInfo)dbObjs[i];
-            sendTableCopyStarted(ti, i+1);
+            ITableInfo sourceTI = (ITableInfo)sourceObjs[i];
+            sendTableCopyStarted(sourceTI, i+1);
             try {
-                int destTableCount = DBUtil.getTableCount(destSession, 
+                int destTableCount = DBUtil.getTableCount(destSession,
+                                                          destCatalog,
                                                           destSchema, 
-                                                          ti.getSimpleName(),
+                                                          sourceTI.getSimpleName(),
                                                           DialectFactory.DEST_TYPE);
                 if (destTableCount == -1) {
-                    createTable(ti);
+                    createTable(sourceTI);
                 } 
                 if (destTableCount > 0) {
                     try {
-                        String t = ti.getSimpleName();
+                        String t = sourceTI.getSimpleName();
                         if (pref.appendRecordsToExisting(t)) {
                             /* Do nothing */
-                        } else if (pref.deleteTableData(ti.getSimpleName())) {
+                        } else if (pref.deleteTableData(sourceTI.getSimpleName())) {
                             // Yes || Yes to all
                             DBUtil.deleteDataInExistingTable(destSession,
+                                                             destCatalog,
                                                              destSchema,
-                                                             ti.getSimpleName());
+                                                             sourceTI.getSimpleName());
                         } else {
                             continue; // skip this table, try the next.
                         }
@@ -183,19 +186,19 @@ public class CopyExecutor extends I18NBaseObject {
                     }
                 } 
                 
-                copyTable(ti, counts[i]);
+                copyTable(sourceTI, counts[i]);
                 
-                if (i == dbObjs.length - 1 && !cancelled) {
+                if (i == sourceObjs.length - 1 && !cancelled) {
                     // We just copied the last table.  Now it is safe to copy the
                     // constraints.(Well, that is, if all FK dependencies are met
                     // in the group of tables being copied. 
                     // TODO: new feature could be to examine table list for FK's 
                     // in tables not in the list then prompt the user to add 
                     // those missing tables to the list.
-                    copyConstraints(dbObjs);
+                    copyConstraints(sourceObjs);
                 }
                 if (!cancelled) {
-                    sendTableCopyFinished(ti, i+1);
+                    sendTableCopyFinished(sourceTI, i+1);
                     sleep(prefs.getTableDelayMillis());
                 }
             } catch (SQLException e) {
@@ -359,6 +362,7 @@ public class CopyExecutor extends I18NBaseObject {
                     //result[i] = DBUtil.getTableCount(con, ti.getSimpleName());
                     result[i] = 
                         DBUtil.getTableCount(sourceSession,
+                                             ti.getCatalogName(),
                                              ti.getSchemaName(),
                                              ti.getSimpleName(),
                                              DialectFactory.SOURCE_TYPE);
