@@ -8,6 +8,7 @@ Not yet released - available in the latest snapshot, or at least checked into CV
 
 MS Excel export of displayed tables:
   Besides the exporting tables displayed in SQuirreL to CSV files it is now possible to export to MS Excel files.
+  Thanks to André Schild for the patch.
 
 Graph Plugin: New right mouse menu item for tables: "View table in Object tree"
   CAUTION: First use of JDK 1.5 specific code in SQuirreL's core, will compile only with JDK 1.5 or higher.
