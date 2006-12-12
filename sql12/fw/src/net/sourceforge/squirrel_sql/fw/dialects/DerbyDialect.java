@@ -344,6 +344,16 @@ public class DerbyDialect extends DB2Dialect
     }
     
     /**
+     * Returns a boolean value indicating whether or not this dialect supports 
+     * modifying a columns type.
+     * 
+     * @return true if supported; false otherwise
+     */
+    public boolean supportsAlterColumnType() {
+        return true;
+    }    
+        
+    /**
      * Returns the SQL that is used to change the column type.
      * 
      * ALTER [ COLUMN ] column-Name SET DATA TYPE VARCHAR(integer)
@@ -394,16 +404,6 @@ public class DerbyDialect extends DB2Dialect
     public boolean supportsAlterColumnDefault() {
         return false;
     }
-    
-    /**
-     * Returns a boolean value indicating whether or not this dialect supports 
-     * modifying a columns type.
-     * 
-     * @return true if supported; false otherwise
-     */
-    public boolean supportsAlterColumnType() {
-        return true;
-    }    
     
     /**
      * Returns the SQL command to change the specified column's default value
