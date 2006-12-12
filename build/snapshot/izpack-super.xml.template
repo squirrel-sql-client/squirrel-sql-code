@@ -11,6 +11,7 @@
 		</authors>
 		<url>http://www.squirrelsql.org</url>
 		<uninstaller write="yes"/>
+		<javaversion>1.5</javaversion>
 	</info>
 
 	<guiprefs height="480" resizable="yes" width="640"/>
@@ -30,11 +31,18 @@
             id="Unix_shortcutSpec.xml"/>
 	</resources>
 
+        <variables>
+		<variable name="JDKPathPanel.minVersion"  value="1.5.0" />	
+		<variable name="JDKPathPanel.maxVersion"  value="1.6.0" />
+		<variable name="JDKPathPanel.skipIfValid" value="no" />
+	</variables>
+
 	<panels>
 		<panel classname="HelloPanel"/>
 		<panel classname="HTMLInfoPanel"/>
 		<panel classname="LicencePanel"/>
 		<panel classname="TargetPanel"/>
+                <panel classname="JDKPathPanel"/>
 		<panel classname="PacksPanel"/>
 		<panel classname="InstallPanel"/>
 		<panel classname="ShortcutPanel"/>
