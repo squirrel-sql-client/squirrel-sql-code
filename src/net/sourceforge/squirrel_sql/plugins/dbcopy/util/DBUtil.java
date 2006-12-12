@@ -53,9 +53,11 @@ import net.sourceforge.squirrel_sql.client.db.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -219,15 +221,18 @@ public class DBUtil extends I18NBaseObject {
             }
             sb.append("ALTER TABLE ");
             ISession destSession = prov.getCopyDestSession();
-            String schema = prov.getDestSelectedDatabaseObject().getSimpleName();
-            String fkTable = getQualifiedTableName(destSession,  
-                                                 schema, 
-                                                 ti.getSimpleName(), 
-                                                 DialectFactory.DEST_TYPE);
-            String pkTable = getQualifiedTableName(destSession, 
-                                                   schema, 
-                                                   pkTableName, 
-                                                   DialectFactory.DEST_TYPE);  
+            String destSchema = prov.getDestSelectedDatabaseObject().getSimpleName();
+            String destCatalog = prov.getDestSelectedDatabaseObject().getCatalogName();
+            String fkTable = getQualifiedObjectName(destSession,  
+                                                    destCatalog, 
+                                                    destSchema, 
+                                                    ti.getSimpleName(), 
+                                                    DialectFactory.DEST_TYPE);
+            String pkTable = getQualifiedObjectName(destSession, 
+                                                    destCatalog, 
+                                                    destSchema, 
+                                                    pkTableName, 
+                                                    DialectFactory.DEST_TYPE);  
             sb.append(fkTable);
             sb.append(" ADD FOREIGN KEY (");
             sb.append(fkTableCol);
@@ -433,15 +438,17 @@ public class DBUtil extends I18NBaseObject {
      *         returned.
      */
     public static int getTableCount(ISession session, 
+                                    String catalog,
                                     String schema, 
                                     String tableName,
                                     int sessionType) 
         throws UserCancelledOperationException
     {
-        String table = getQualifiedTableName(session, 
-                                             schema, 
-                                             tableName,
-                                             sessionType);
+        String table = getQualifiedObjectName(session, 
+                                              catalog, 
+                                              schema,
+                                              tableName, 
+                                              sessionType);
         return getTableCount(session, table);
     }
     
@@ -1164,6 +1171,7 @@ public class DBUtil extends I18NBaseObject {
      * @throws SQLException
      */
     public static void deleteDataInExistingTable(ISession session,
+                                                 String catalogName,
                                                  String schemaName, 
                                                  String tableName) 
         throws SQLException, UserCancelledOperationException
@@ -1171,10 +1179,11 @@ public class DBUtil extends I18NBaseObject {
         SQLConnection con = session.getSQLConnection();
         boolean useTrunc = PreferencesManager.getPreferences().isUseTruncate();
         String fullTableName = 
-            getQualifiedTableName(session, 
-                                  schemaName, 
-                                  tableName, 
-                                  DialectFactory.DEST_TYPE);
+            getQualifiedObjectName(session, 
+                                   catalogName, 
+                                   schemaName, 
+                                   tableName, 
+                                   DialectFactory.DEST_TYPE);
         String truncSQL = "TRUNCATE TABLE "+fullTableName;
         String deleteSQL = "DELETE FROM "+fullTableName;
         try {
@@ -1230,16 +1239,21 @@ public class DBUtil extends I18NBaseObject {
         ISession sourceSession = prov.getCopySourceSession();
         String sourceSchema = 
             prov.getSourceSelectedDatabaseObjects()[0].getSchemaName();
-        String sourceTableName = getQualifiedTableName(sourceSession, 
-                                                       sourceSchema, 
-                                                       ti.getSimpleName(),
-                                                       DialectFactory.SOURCE_TYPE);
+        String sourceCatalog = 
+            prov.getSourceSelectedDatabaseObjects()[0].getCatalogName();
+        String sourceTableName = getQualifiedObjectName(sourceSession, 
+                                                        sourceCatalog, 
+                                                        sourceSchema,
+                                                        ti.getSimpleName(), 
+                                                        DialectFactory.SOURCE_TYPE);
         ISession destSession = prov.getCopyDestSession();
         String destSchema = prov.getDestSelectedDatabaseObject().getSimpleName();
-        String destinationTableName = getQualifiedTableName(destSession, 
-                                                            destSchema, 
-                                                            ti.getSimpleName(),
-                                                            DialectFactory.DEST_TYPE); 
+        String destCatalog = prov.getDestSelectedDatabaseObject().getCatalogName();
+        String destinationTableName = getQualifiedObjectName(destSession, 
+                                                             destCatalog, 
+                                                             destSchema,
+                                                             ti.getSimpleName(), 
+                                                             DialectFactory.DEST_TYPE); 
         StringBuffer result = new StringBuffer("CREATE TABLE ");
         result.append(destinationTableName);
         result.append(" ( ");
@@ -1438,8 +1452,9 @@ public class DBUtil extends I18NBaseObject {
         result.append(" from ");
         ISession sourceSession = prov.getCopySourceSession();
         
-        String sourceSchema = null;
+        //String sourceSchema = null;
         // MySQL uses catalogs instead of schemas
+        /*
         if (DialectFactory.isMySQLSession(sourceSession)) {
             if (log.isDebugEnabled()) {
                 String catalog = 
@@ -1455,10 +1470,12 @@ public class DBUtil extends I18NBaseObject {
             sourceSchema = 
                 prov.getSourceSelectedDatabaseObjects()[0].getSchemaName();
         }
-        String tableName = getQualifiedTableName(sourceSession, 
-                                                 sourceSchema, 
-                                                 ti.getSimpleName(), 
-                                                 DialectFactory.SOURCE_TYPE);
+        */
+        String tableName = getQualifiedObjectName(sourceSession, 
+                                                  ti.getCatalogName(), 
+                                                  ti.getSchemaName(), 
+                                                  ti.getSimpleName(), 
+                                                  DialectFactory.SOURCE_TYPE);
         result.append(tableName);
         return result.toString();
     }
@@ -1480,12 +1497,14 @@ public class DBUtil extends I18NBaseObject {
     {
         StringBuffer result = new StringBuffer();
         result.append("insert into ");
-        String schema = prov.getDestSelectedDatabaseObject().getSimpleName();
+        String destSchema = prov.getDestSelectedDatabaseObject().getSimpleName();
+        String destCatalog = prov.getDestSelectedDatabaseObject().getCatalogName();
         ISession destSession = prov.getCopyDestSession();
-        result.append(getQualifiedTableName(destSession, 
-                                            schema, 
-                                            ti.getSimpleName(),
-                                            DialectFactory.DEST_TYPE));
+        result.append(getQualifiedObjectName(destSession, 
+                                             destCatalog, 
+                                             destSchema,
+                                             ti.getSimpleName(), 
+                                             DialectFactory.DEST_TYPE));
         result.append(" ( ");
         result.append(columnList);
         result.append(" ) values ( ");
@@ -1513,7 +1532,7 @@ public class DBUtil extends I18NBaseObject {
             result = true;
         }
         return result;
-    }    
+    }  
     
     /**
      * Decide whether or not the session specified needs fully qualified table
@@ -1522,51 +1541,72 @@ public class DBUtil extends I18NBaseObject {
      * (Axion, Hypersonic)
      * 
      * @param session
+     * @param catalogName
      * @param schemaName
-     * @param tableName
+     * @param objectName
      * @return
      * @throws UserCancelledOperationException
      */
-    public static String getQualifiedTableName(ISession session,
-                                               String schemaName,
-                                               String tableName,
-                                               int sessionType) 
+    public static String getQualifiedObjectName(ISession session,
+                                                String catalogName,
+                                                String schemaName,
+                                                String objectName, 
+                                                int sessionType) 
         throws UserCancelledOperationException
     {
-    	String schema = schemaName;
-    	String table = tableName;
-    	if (Compat.storesUpperCaseIdentifiers(session)) {
-    		if (schema != null) {
-    			schema = schema.toUpperCase();
-    		}
-    		if (table != null) {
-    			table = table.toUpperCase();
-    		}
-    	} else {
-    		if (schema != null) {
-    			schema = schema.toLowerCase();
-    		}
-    		if (table != null) {
-    			table = table.toLowerCase();
-    		}
-    	}
-        if (schema == null || schema.equals("")) {
-            return table;
-        }
-        HibernateDialect dialect = 
-            DialectFactory.getDialect(session, sessionType);
+        String catalog = fixCase(session, catalogName);
+        String schema = fixCase(session, schemaName);
+        String object = fixCase(session, objectName);
+        
 
-        if (!dialect.supportsSchemasInTableDefinition()) {
-            return table;
-        } else {
-            if (table.startsWith(schema + ".")) {
-                return table;
-            } else {
-                return schema + "." + table;
-            }
+        if ((catalog == null || catalog.equals("")) && 
+                (schema == null || schema.equals(""))) {
+            return object;
         }
-
+        StringBuffer result = new StringBuffer();
+        if (catalog != null && !catalog.equals("")) {
+            result.append(catalog);
+            result.append(getCatSep(session));
+        }
+        if (schema != null && !schema.equals("")) {
+            result.append(schema);
+            result.append(".");
+        }
+        result.append(object);
+        return result.toString();
     }    
+    
+    public static String getCatSep(ISession session) {
+        String catsep = ".";
+        try {
+            SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
+            catsep = md.getCatalogSeparator();
+        } catch (SQLException e) {
+            log.error("getCatSep: Unexpected Exception - "+e.getMessage(), e);
+        }
+        return catsep;
+    }
+    
+    public static String fixCase(ISession session, String identifier)  
+    {
+        if (identifier == null || identifier.equals("")) {
+            return identifier;
+        }
+        SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
+        try {
+            if (md.storesUpperCaseIdentifiers()) {
+                return identifier.toUpperCase();
+            } else {
+                return identifier.toLowerCase();
+            }
+        } catch (SQLException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("fixCase: unexpected exception: "+e.getMessage());
+            }
+            return identifier;
+        }
+    }    
+        
     /**
      * Generates a string of question marks which are used for creating 
      * PreparedStatements.  The question marks are delimited by commas.
@@ -1635,9 +1675,12 @@ public class DBUtil extends I18NBaseObject {
         throws SQLException, UserCancelledOperationException 
     {
       
-        ISession session = prov.getCopySourceSession();
-        SQLConnection con = session.getSQLConnection();
+        ISession sourceSession = prov.getCopySourceSession();
+        ISession destSession = prov.getCopyDestSession();
+        SQLConnection con = sourceSession.getSQLConnection();
         String destSchema = prov.getDestSelectedDatabaseObject().getSimpleName();
+        String destCatalog = prov.getDestSelectedDatabaseObject().getCatalogName();                
+
         ArrayList result = new ArrayList();
         Vector pkCols = new Vector();
         
@@ -1709,10 +1752,11 @@ public class DBUtil extends I18NBaseObject {
             sbToAppend.append("INDEX ");
             sbToAppend.append(ixs[i].ixName);
             sbToAppend.append(" ON ");
-            String table = getQualifiedTableName(session, 
-                                                 destSchema, 
-                                                 ixs[i].table, 
-                                                 DialectFactory.DEST_TYPE);
+            String table = getQualifiedObjectName(destSession, 
+                                                  destCatalog, 
+                                                  destSchema, 
+                                                  ixs[i].table, 
+                                                  DialectFactory.DEST_TYPE);
             sbToAppend.append(table);
             StringBuffer indexMapKey = new StringBuffer(ixs[i].table);
             StringBuffer columnBuffer = new StringBuffer();
@@ -1780,11 +1824,15 @@ public class DBUtil extends I18NBaseObject {
         }
         for (int colIdx = 0; colIdx < colInfoArr.length; colIdx++) {
             TableColumnInfo colInfo = colInfoArr[colIdx];
-            String schema = prov.getDestSelectedDatabaseObject().getSimpleName();
-            String tableName = getQualifiedTableName(destSession, 
-                                                     schema, 
-                                                     "dbcopytest",
-                                                     DialectFactory.DEST_TYPE); 
+            IDatabaseObjectInfo selectedDestObj = 
+                prov.getDestSelectedDatabaseObject();
+            String schema = selectedDestObj.getSimpleName();
+            String catalog = selectedDestObj.getCatalogName(); 
+            String tableName = getQualifiedObjectName(destSession, 
+                                                      catalog, 
+                                                      schema,
+                                                      "dbcopytest", 
+                                                      DialectFactory.DEST_TYPE); 
             
             StringBuffer sql = 
                 new StringBuffer("CREATE TABLE ");
@@ -1796,9 +1844,9 @@ public class DBUtil extends I18NBaseObject {
             try {
                 dropTable(tableName, 
                           schema, 
+                          catalog, 
                           destSession, 
-                          cascade, 
-                          DialectFactory.DEST_TYPE);
+                          cascade, DialectFactory.DEST_TYPE);
                 DBUtil.executeUpdate(con, sql.toString(), false);
             } catch (SQLException e) {
                 String message = getMessage("DBUtil.mappingErrorKeyword",
@@ -1809,9 +1857,9 @@ public class DBUtil extends I18NBaseObject {
             } finally {
                 dropTable(tableName, 
                           schema, 
+                          catalog, 
                           destSession, 
-                          cascade, 
-                          DialectFactory.DEST_TYPE);
+                          cascade, DialectFactory.DEST_TYPE);
             }
             
         }        
@@ -1819,17 +1867,17 @@ public class DBUtil extends I18NBaseObject {
     
     public static boolean dropTable(String tableName,
                                     String schemaName,
+                                    String catalogName,
                                     ISession session,
-                                    boolean cascade,
-                                    int sessionType) 
+                                    boolean cascade, int sessionType) 
         throws UserCancelledOperationException
     {
         boolean result = false;
         SQLConnection con = session.getSQLConnection();
-        String table = getQualifiedTableName(session, 
-                                             schemaName, 
-                                             tableName,
-                                             sessionType);
+        String table = getQualifiedObjectName(session, 
+                                             null, 
+                                             schemaName,
+                                             tableName, sessionType);
         String dropsql = "DROP TABLE "+table;
         if (cascade) {
             dropsql += " CASCADE";
@@ -1881,7 +1929,7 @@ public class DBUtil extends I18NBaseObject {
         String maxFunction = dialect.getMaxFunction();
         if (maxFunction == null) {
             log.error("Max function is null for dialect="+
-                      dialect.getClass().getName()+" Using 'max'");
+                      dialect.getClass().getName()+". Using 'max'");
             maxFunction = "max";
         }
         result.append("select ");
@@ -1891,10 +1939,11 @@ public class DBUtil extends I18NBaseObject {
         result.append("(");
         result.append(colInfo.getColumnName());
         result.append(")) from ");
-        String table = getQualifiedTableName(sourceSession, 
-                                             colInfo.getSchemaName(), 
-                                             tableName,
-                                             DialectFactory.SOURCE_TYPE); 
+        String table = getQualifiedObjectName(sourceSession, 
+                                              colInfo.getCatalogName(), 
+                                              colInfo.getSchemaName(),
+                                              tableName, 
+                                              DialectFactory.SOURCE_TYPE); 
         result.append(table);
         return result.toString();
     }
