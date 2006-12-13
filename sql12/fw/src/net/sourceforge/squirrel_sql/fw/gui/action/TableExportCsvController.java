@@ -160,10 +160,12 @@ public class TableExportCsvController
          {
             _dlg.txtSeparatorChar.setText(null);
             _dlg.txtSeparatorChar.setEnabled(false);
+            _dlg.lblSeparator.setEnabled(false);
          }
          else
          {
             _dlg.txtSeparatorChar.setEnabled(true);
+            _dlg.lblSeparator.setEnabled(true);
          }
 
          if(replaceEnding)
