@@ -141,7 +141,7 @@ public class TableExportCsvCommand
 
          Object[] params = new Object[]{file, e.getMessage()};
          // i18n[TableExportCsvCommand.failedToWriteFile=Failed to write file\n{0}\nError message\n{1}\nSee last log entry for details.]
-         String msg = s_stringMgr.getString("TableExportCsvCommand.failedToWriteCsvFile", params);
+         String msg = s_stringMgr.getString("TableExportCsvCommand.failedToWriteFile", params);
          s_log.error(msg, e);
          JOptionPane.showMessageDialog(GUIUtils.getMainFrame(), msg);
          return false;
