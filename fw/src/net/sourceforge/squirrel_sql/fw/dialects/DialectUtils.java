@@ -91,6 +91,8 @@ public class DialectUtils {
     public static final int COLUMN_NAME_ALTER_TYPE = 3;
     public static final int COLUMN_NULL_ALTER_TYPE = 4;
     public static final int COLUMN_TYPE_ALTER_TYPE = 5;
+    public static final int ADD_PRIMARY_KEY_TYPE = 6;
+    public static final int DROP_PRIMARY_KEY_TYPE = 7;
     
     
     
@@ -574,6 +576,18 @@ public class DialectUtils {
                 //i18n[DialectUtils.columnTypeUnsupported={0} doesn''t support
                 //altering a column's type attribute]
                 msg = s_stringMgr.getString("DialectUtils.columnTypeUnsupported",
+                                            dialect.getDisplayName());
+                break;
+            case ADD_PRIMARY_KEY_TYPE:
+                //i18n[DialectUtils.addPrimaryKeyUnsupported={0} doesn''t 
+                //support adding primary keys]
+                msg = s_stringMgr.getString("DialectUtils.addPrimaryKeyUnsupported",
+                                            dialect.getDisplayName());
+                break;
+            case DROP_PRIMARY_KEY_TYPE:
+                //i18n[DialectUtils.dropPrimaryKeyUnsupported={0} doesn''t 
+                //support dropping primary keys]
+                msg = s_stringMgr.getString("DialectUtils.dropPrimaryKeyUnsupported",
                                             dialect.getDisplayName());
                 break;
             default:
