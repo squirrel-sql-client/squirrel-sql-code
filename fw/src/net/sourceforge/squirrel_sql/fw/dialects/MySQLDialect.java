@@ -177,9 +177,7 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
         result.append(DialectUtils.getTypeName(info, this));
         result.append(" ");
         DialectUtils.appendDefaultClause(info, result);
-        if (info.getRemarks() != null && 
-                !"".equals(info.getRemarks())) 
-        {
+        if (info.getRemarks() != null && !"".equals(info.getRemarks())) {
             result.append(" COMMENT ");
             result.append("'");
             result.append(info.getRemarks());
@@ -193,8 +191,10 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
         } 
         // Sometimes, MySQL omits the change for COMMENT, so explicitly add
         // it in a separate alter statement as well
-        returnVal.add(getColumnCommentAlterSQL(info));
-        
+        if (info.getRemarks() != null && !"".equals(info.getRemarks())) 
+        {
+            returnVal.add(getColumnCommentAlterSQL(info));
+        }        
         // Sometimes, MySQL omits the change for DEFAULT, so explicitly add
         // it in a separate alter statement as well
         //returnVal.add()
