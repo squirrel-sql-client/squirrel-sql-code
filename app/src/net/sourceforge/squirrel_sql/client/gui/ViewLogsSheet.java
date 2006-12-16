@@ -327,6 +327,12 @@ public class ViewLogsSheet extends BaseInternalFrame
         if (line == null || line.length() == 0) {
             return false;
         }
+        if (_errorChkbox.isSelected() 
+                && _debugChkbox.isSelected() 
+                && _infoChkbox.isSelected()) 
+        {
+            return true;
+        }
         int threadNameEndIdx = line.indexOf("]");
         if (threadNameEndIdx > -1) {
             char levelChar = line.charAt(threadNameEndIdx+2);
