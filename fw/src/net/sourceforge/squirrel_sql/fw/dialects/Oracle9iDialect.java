@@ -181,7 +181,7 @@ public class Oracle9iDialect extends Oracle9Dialect
      */
     public String[] getColumnAddSQL(TableColumnInfo info) throws UnsupportedOperationException {
         return new String[] {
-            DialectUtils.getColumnAddSQL(info, this, false, true)
+            DialectUtils.getColumnAddSQL(info, this, true, true)
         };
     }
 
