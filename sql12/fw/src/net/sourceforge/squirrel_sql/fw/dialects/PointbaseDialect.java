@@ -182,31 +182,6 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect
     }
 
     /**
-     * Returns a boolean value indicating whether or not this dialect supports
-     * adding comments to columns.
-     * 
-     * @return true if column comments are supported; false otherwise.
-     */
-    public boolean supportsColumnComment() {
-        return false;
-    }    
-    
-    /**
-     * Returns the SQL statement to use to add a comment to the specified 
-     * column of the specified table.
-     * 
-     * @param tableName the name of the table to create the SQL for.
-     * @param columnName the name of the column to create the SQL for.
-     * @param comment the comment to add.
-     * @return
-     * @throws UnsupportedOperationException if the database doesn't support 
-     *         annotating columns with a comment.
-     */
-    public String getColumnCommentAlterSQL(String tableName, String columnName, String comment) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("This database dialect doesn't support adding comments to columns");
-    }
-    
-    /**
      * Returns a boolean value indicating whether or not this database dialect
      * supports dropping columns from tables.
      * 
@@ -250,18 +225,31 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect
     /**
      * Returns the SQL that forms the command to add a primary key to the 
      * specified table composed of the given column names.
+     *
+     * alter table pktest add constraint pk_pktest primary key (pkcol)
      * 
      * @param pkName the name of the constraint
      * @param columnNames the columns that form the key
      * @return
      */
     public String[] getAddPrimaryKeySQL(String pkName, 
-                                      TableColumnInfo[] columnNames) 
+                                      TableColumnInfo[] columns) 
     {
-        // TODO: implement
-        throw new UnsupportedOperationException("getAddPrimaryKeySQL not implemented");
+        return new String[] {
+            DialectUtils.getAddPrimaryKeySQL(pkName, columns, false)
+        };
     }
     
+    /**
+     * Returns a boolean value indicating whether or not this dialect supports
+     * adding comments to columns.
+     * 
+     * @return true if column comments are supported; false otherwise.
+     */
+    public boolean supportsColumnComment() {
+        return false;
+    }    
+        
     /**
      * Returns the SQL statement to use to add a comment to the specified 
      * column of the specified table.
@@ -273,8 +261,19 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect
     public String getColumnCommentAlterSQL(TableColumnInfo info) 
         throws UnsupportedOperationException
     {
-        // TODO: implement        
-        throw new UnsupportedOperationException("getColumnCommentAlterSQL Not yet implemented");
+        int featureId = DialectUtils.COLUMN_COMMENT_ALTER_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);        
+    }
+    
+    /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports changing a column from null to not-null and vice versa.
+     * 
+     * @return true if the database supports dropping columns; false otherwise.
+     */    
+    public boolean supportsAlterColumnNull() {
+        return false;
     }
     
     /**
@@ -285,8 +284,9 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect
      * @return the SQL to execute
      */
     public String getColumnNullableAlterSQL(TableColumnInfo info) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not yet implemented");
+        int featureId = DialectUtils.COLUMN_NULL_ALTER_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);        
     }
     
     /**
@@ -297,8 +297,7 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect
      *         false otherwise.
      */
     public boolean supportsRenameColumn() {
-        // TODO: need to verify this
-        return true;
+        return false;
     }    
     
     /**
@@ -311,8 +310,9 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect
      * @return the SQL to make the change
      */
     public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not yet implemented");
+        int featureId = DialectUtils.COLUMN_NAME_ALTER_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);                
     }
     
     /**
@@ -322,8 +322,7 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect
      * @return true if supported; false otherwise
      */
     public boolean supportsAlterColumnType() {
-        // TODO: verify this
-        return true;
+        return false;
     }
     
     /**
@@ -340,21 +339,11 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect
                                         TableColumnInfo to)
         throws UnsupportedOperationException
     {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not Yet Implemented");
+        int featureId = DialectUtils.COLUMN_TYPE_ALTER_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);        
     }
    
-    /**
-     * Returns a boolean value indicating whether or not this database dialect
-     * supports changing a column from null to not-null and vice versa.
-     * 
-     * @return true if the database supports dropping columns; false otherwise.
-     */    
-    public boolean supportsAlterColumnNull() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
     /**
      * Returns a boolean value indicating whether or not this database dialect
      * supports changing a column's default value.
@@ -363,8 +352,7 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect
      *         otherwise
      */
     public boolean supportsAlterColumnDefault() {
-        // TODO Need to verify this
-        return true;
+        return false;
     }
     
     /**
@@ -374,12 +362,15 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect
      * @return SQL to make the change
      */
     public String getColumnDefaultAlterSQL(TableColumnInfo info) {
-        // TODO need to implement or change the message
-        throw new UnsupportedOperationException("Not yet implemented");
+        int featureId = DialectUtils.COLUMN_DEFAULT_ALTER_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);        
     }
     
     /**
      * Returns the SQL command to drop the specified table's primary key.
+     * 
+     * alter table <tableName> drop constraint <pkName>
      * 
      * @param pkName the name of the primary key that should be dropped
      * @param tableName the name of the table whose primary key should be 
@@ -387,7 +378,7 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect
      * @return
      */
     public String getDropPrimaryKeySQL(String pkName, String tableName) {
-        return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false);
+        return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true, false);
     }
     
 }
