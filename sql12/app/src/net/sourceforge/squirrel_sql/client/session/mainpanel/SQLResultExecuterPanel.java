@@ -103,6 +103,9 @@ public class SQLResultExecuterPanel extends JPanel
    private ResultTab _stickyTab;
    
 
+	/** Reference to the executor so that it can be called from the CancelPanel*/
+	private SQLExecuterTask _executer;
+
 
    /**
 	 * Ctor.
@@ -240,9 +243,6 @@ public class SQLResultExecuterPanel extends JPanel
 			_session.getMessageHandler().showErrorMessage(msg);
 		}
 	}
-
-	/** Reference to the executor so that it can be called from the CancelPanel*/
-	private SQLExecuterTask _executer;
 
 	public void executeSQL(String sql)
 	{
@@ -1082,6 +1082,7 @@ public class SQLResultExecuterPanel extends JPanel
       public void sqlCloseExecutionHandler()
       {
          removeCancelPanel(_cancelPanel);
+         _executer = null;
       }
 
       public void sqlExecutionException(Throwable th, String postErrorString)
