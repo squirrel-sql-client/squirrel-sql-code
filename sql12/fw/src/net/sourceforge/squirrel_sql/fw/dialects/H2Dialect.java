@@ -389,7 +389,7 @@ public class H2Dialect extends Dialect implements HibernateDialect {
         throws UnsupportedOperationException 
     {
         return new String[] {
-            DialectUtils.getColumnAddSQL(info, this, true, true)
+            DialectUtils.getColumnAddSQL(info, this, true, true, true)
         };
     }
 

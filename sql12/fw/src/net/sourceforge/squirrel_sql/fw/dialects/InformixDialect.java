@@ -195,7 +195,7 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect
     public String[] getColumnAddSQL(TableColumnInfo info)
             throws UnsupportedOperationException {
         return new String[] { DialectUtils.getColumnAddSQL(info, this, true,
-                false) };
+                false, true) };
     }
 
     /**

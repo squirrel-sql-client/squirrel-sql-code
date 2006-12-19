@@ -103,7 +103,7 @@ public class DialectUtils {
      * @param dialect the HibernateDialect to use to resolve the type
      * @param addDefaultClause whether or not the dialect's SQL supports a 
      *        DEFAULT clause for columns.  
-     * 
+     * @param addNullClause TODO
      * @return
      * @throws UnsupportedOperationException if the database doesn't support 
      *         adding columns after a table has already been created.
@@ -111,7 +111,8 @@ public class DialectUtils {
     public static String getColumnAddSQL(TableColumnInfo info, 
                                          HibernateDialect dialect,
                                          boolean addDefaultClause,
-                                         boolean supportsNullQualifier) 
+                                         boolean supportsNullQualifier, 
+                                         boolean addNullClause) 
         throws UnsupportedOperationException, HibernateException 
     {
         StringBuffer result = new StringBuffer();
@@ -130,12 +131,13 @@ public class DialectUtils {
         if (addDefaultClause) {
             appendDefaultClause(info, result);
         }
-        
-        if (info.isNullable().equals("NO")) {
-            result.append(" NOT NULL ");
-        } else {
-            if (supportsNullQualifier) {
-                result.append(" NULL ");
+        if (addNullClause) {
+            if (info.isNullable().equals("NO")) {
+                result.append(" NOT NULL ");
+            } else {
+                if (supportsNullQualifier) {
+                    result.append(" NULL ");
+                }
             }
         }
         return result.toString();

@@ -172,7 +172,7 @@ public class SybaseDialect extends org.hibernate.dialect.SybaseDialect
      */
     public String[] getColumnAddSQL(TableColumnInfo info) throws UnsupportedOperationException {
         return new String[] {
-            DialectUtils.getColumnAddSQL(info, this, true, true)
+            DialectUtils.getColumnAddSQL(info, this, true, true, true)
         };
     }
 

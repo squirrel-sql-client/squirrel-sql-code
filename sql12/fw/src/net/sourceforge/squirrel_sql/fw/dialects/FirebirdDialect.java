@@ -177,7 +177,7 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect
         throws UnsupportedOperationException 
     {
         return new String[] {
-            DialectUtils.getColumnAddSQL(info, this, true, false)
+            DialectUtils.getColumnAddSQL(info, this, true, false, true)
         };
     }
 
