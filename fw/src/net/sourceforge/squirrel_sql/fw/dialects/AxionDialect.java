@@ -174,7 +174,7 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect
      */
     public String[] getColumnAddSQL(TableColumnInfo info) throws UnsupportedOperationException {
         return new String[] {
-            DialectUtils.getColumnAddSQL(info, this, false, false)
+            DialectUtils.getColumnAddSQL(info, this, false, false, true)
         };
     }
 

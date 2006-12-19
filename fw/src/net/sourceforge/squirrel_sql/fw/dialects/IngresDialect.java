@@ -19,9 +19,11 @@
 package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.sql.Types;
+import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 /**
@@ -184,16 +186,31 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect
     /**
      * Returns the SQL statement to use to add a column to the specified table
      * using the information about the new column specified by info.
-     * @param info information about the new column such as type, name, etc.
      * 
+     * ALTER TABLE tableName ADD COLUMN columnName type
+     *
+     * alter table tableName alter column columnName type default defVal
+     *
+     * alter table tableName alter column columnName type not null
+     *
+     * @param info information about the new column such as type, name, etc. 
      * @return
      * @throws UnsupportedOperationException if the database doesn't support 
      *         adding columns after a table has already been created.
      */
     public String[] getColumnAddSQL(TableColumnInfo info) throws UnsupportedOperationException {
-        return new String[] {
-            DialectUtils.getColumnAddSQL(info, this, false, false)
-        };
+        ArrayList result = new ArrayList();
+        
+        result.add(DialectUtils.getColumnAddSQL(info, this, false, false, false));
+        
+        // Ingres requires that columns that are to become not null must have a
+        // default value.  
+        if (info.isNullable().equals("NO")) {
+            result.add(getColumnDefaultAlterSQL(info));
+            result.add(getColumnNullableAlterSQL(info));
+        }
+        
+        return (String[])result.toArray(new String[result.size()]);
     }
 
     /**
@@ -296,15 +313,27 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect
     }
     
     /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports changing a column from null to not-null and vice versa.
+     * 
+     * @return true if the database supports dropping columns; false otherwise.
+     */    
+    public boolean supportsAlterColumnNull() {
+        return true;
+    }    
+    
+    /**
      * Returns the SQL used to alter the specified column to not allow null 
      * values
+     * 
+     * alter table test alter column notnullint integer not null
      * 
      * @param info the column to modify
      * @return the SQL to execute
      */
     public String getColumnNullableAlterSQL(TableColumnInfo info) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not yet implemented");
+        String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
+        return DialectUtils.getColumnNullableAlterSQL(info, this, alterClause, true);
     }
 
     /**
@@ -363,36 +392,31 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect
     
     /**
      * Returns a boolean value indicating whether or not this database dialect
-     * supports changing a column from null to not-null and vice versa.
-     * 
-     * @return true if the database supports dropping columns; false otherwise.
-     */    
-    public boolean supportsAlterColumnNull() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-   
-    /**
-     * Returns a boolean value indicating whether or not this database dialect
      * supports changing a column's default value.
      * 
      * @return true if the database supports modifying column defaults; false 
      *         otherwise
      */
     public boolean supportsAlterColumnDefault() {
-        // TODO Need to verify this
         return true;
     }
     
     /**
      * Returns the SQL command to change the specified column's default value
      *   
+     *   alter table test2 alter column mycol char(10) default 'foo'
+     *   
      * @param info the column to modify and it's default value.
      * @return SQL to make the change
      */
     public String getColumnDefaultAlterSQL(TableColumnInfo info) {
-        // TODO need to implement or change the message
-        throw new UnsupportedOperationException("Not yet implemented");
+        String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
+        String defaultClause = DialectUtils.DEFAULT_CLAUSE;
+        return DialectUtils.getColumnDefaultAlterSQL(this, 
+                                                     info, 
+                                                     alterClause, 
+                                                     true, 
+                                                     defaultClause);
     }
     
     /**

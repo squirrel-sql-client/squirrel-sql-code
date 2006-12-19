@@ -175,12 +175,12 @@ public class SQLServerDialect extends org.hibernate.dialect.SQLServerDialect
     public String[] getColumnAddSQL(TableColumnInfo info) throws UnsupportedOperationException {
         if (info.getDefaultValue() != null) {
             return new String[] {
-                    DialectUtils.getColumnAddSQL(info, this, false, true),
+                    DialectUtils.getColumnAddSQL(info, this, false, true, true),
                     getColumnDefaultAlterSQL(info)
                 };            
         } else {
             return new String[] {
-                    DialectUtils.getColumnAddSQL(info, this, false, true),
+                    DialectUtils.getColumnAddSQL(info, this, false, true, true),
                 };                        
         }
     }
