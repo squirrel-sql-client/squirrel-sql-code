@@ -172,8 +172,10 @@ public class HSQLDialect extends org.hibernate.dialect.HSQLDialect
         String addSQL = DialectUtils.getColumnAddSQL(info, 
                                                      this, 
                                                      false, 
-                                                     true);
-        if (info.getDefaultValue() != null) {
+                                                     true, true);
+        if (info.getDefaultValue() != null 
+                && !"".equals(info.getDefaultValue()))
+        {
             StringBuffer defaultSQL = new StringBuffer();
             defaultSQL.append("ALTER TABLE ");
             defaultSQL.append(info.getTableName());
