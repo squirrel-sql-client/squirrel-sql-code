@@ -117,17 +117,17 @@ public class TableExportCsvDlg extends JDialog
 
       GridBagConstraints gbc;
 
-      // i18n[TableExportCsvDlg.useGlobalPrefsFormating=Use formating as configured in Global Prefs]
-      radUseGlobalPrefsFormating = new JRadioButton(s_stringMgr.getString("TableExportCsvDlg.useGlobalPrefsFormating"));
-      gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 5), 0, 0);
+      // i18n[TableExportCsvDlg.useGlobalPrefsFormatingExcel=Use formating as configured in Global Prefs (recommended for MS Excel)]
+      radUseGlobalPrefsFormating = new JRadioButton(s_stringMgr.getString("TableExportCsvDlg.useGlobalPrefsFormatingExcel"));
+      gbc = new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 2, 0), 0, 0);
       ret.add(radUseGlobalPrefsFormating, gbc);
 
       // i18n[TableExportCsvDlg.useDefaultFormating=Use default formating]
       radUseDefaultFormating = new JRadioButton(s_stringMgr.getString("TableExportCsvDlg.useDefaultFormating"));
-      gbc = new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
+      gbc = new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
       ret.add(radUseDefaultFormating, gbc);
 
-      gbc = new GridBagConstraints(1, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
+      gbc = new GridBagConstraints(1, 0, 1, 2, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
       ret.add(new JPanel(), gbc);
 
 
