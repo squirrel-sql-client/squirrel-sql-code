@@ -3,6 +3,8 @@ DBCopy Change Log
 
 1.1 (Not yet released)
 ===
+- Removed reflective code used for backward compatibility which was causing 
+IllegalAccessExceptions when the keyword test was applied to column names.
 
 - Fixed bug in copying FK constraints which left cursors open by not properly 
 closing ResultSets when they were no longer needed.

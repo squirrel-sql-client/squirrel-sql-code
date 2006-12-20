@@ -337,31 +337,7 @@ public class Compat {
      * @return
      */
     public static boolean isKeyword(ISession session, String data) {
-    	boolean result = false;
-    	initSchemaInfoClass();
-    	if (schemaInfoClass == null) {
-	    	s_log.error("isKeyword: couldn't locate SchemaInfo class");
-	    	return false;
-    	}
-    	initIsKeywordMethod();
-    	if (isKeywordMethod == null) {
-	    	s_log.error("isKeyword: couldn't locate isKeyword method");
-	    	return false;    		
-    	}
-    	try {
-			Method getSchemaInfo = 
-				session.getClass().getDeclaredMethod("getSchemaInfo", null);
-			
-			Object schemaInfo = getSchemaInfo.invoke(session, null);
-			
-			Object isKeywordResult = isKeywordMethod.invoke(schemaInfo, 
-													  new Object[] { data });
-			result = ((Boolean)isKeywordResult).booleanValue();
-		} catch (Exception e) {
-			s_log.error(
-				"isKeyword: Unexpected exception: "+e.getMessage(), e);
-		}    
-		return result;
+        return session.getSchemaInfo().isKeyword(data);
     }
      
     /**
