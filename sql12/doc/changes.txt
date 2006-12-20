@@ -90,6 +90,9 @@ get this information.
 
 	Bug-Fixes:
 
+MySQL Plugin: Fixed bug which caused the MySQL all of the tabs to appear with no
+content.
+
 SQL editor function "View Object at cursor in Object tree" (ctrl+B) now works
 for fully qualified object names with leading and trailing quotation marks and slashes.
   CAUTION: First use of JDK 1.5 specific code in SQuirreL's core, will compile only with JDK 1.5 or higher.
