@@ -104,6 +104,9 @@ Added support for Informix way of referring to database objects within
 catalog and schema as catalog:"schema".objectname.
 
 DBCopy plugin:
+  - Removed reflective code used for backward compatibility which was causing 
+  IllegalAccessExceptions when the keyword test was applied to column names.
+
   - Fixed bug in copying FK constraints which left cursors open by not properly 
   closing ResultSets when they were no longer needed.
 

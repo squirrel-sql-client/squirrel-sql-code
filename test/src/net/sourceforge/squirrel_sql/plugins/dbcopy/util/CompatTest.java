@@ -36,6 +36,7 @@ public class CompatTest extends TestCase {
 		super.setUp();
 		ApplicationManager.initApplication();
 		session = new MockSession();
+        
 		mdata = session.getMockDatabaseMetaData();
 	}
 

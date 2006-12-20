@@ -87,7 +87,8 @@ public class MockSession implements ISession {
     
     private void init(boolean initConnection) {
     	if (initConnection) {
-    		con = new SQLConnection(getMockConnection(), null, null);
+            MockConnection2 mockCon = getMockConnection();
+    		con = new SQLConnection(getMockConnection(), null, sqlDriver);
     	}
     	id = new UidIdentifier();
     	messageHandler = new MockMessageHandler();
@@ -104,12 +105,18 @@ public class MockSession implements ISession {
     	} catch (Throwable e) {
     		
     	}
-    	sessionPanel = new SessionPanel(this);
+        // If we are connecting to a database, then this is fine.  However, when
+        // using MockObjects, this is problematic since there are many 
+        // unimplemented methods in the MockObjects implementation that are 
+        // required by this.
+        if (!initConnection) {
+            sessionPanel = new SessionPanel(this);
+        }
     }
     
     private MockConnection2 getMockConnection() {
     	MockConnection2 result = new MockConnection2();
-        sqlDriver = new SQLDriver();
+        sqlDriver = new MockSQLDriver("JUnitTestClassName", "JUnitJDBCURL");
         mdata = new MockDatabaseMetaData();
         mdata.setupDriverName("junit");
         result.setupMetaData(mdata);    
