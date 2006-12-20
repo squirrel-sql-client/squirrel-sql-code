@@ -1,24 +1,27 @@
 package net.sourceforge.squirrel_sql.fw.gui.action;
 
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import jxl.Workbook;
+import jxl.write.WritableCell;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
+import jxl.write.WriteException;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.*;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-
-import jxl.write.WriteException;
-import jxl.write.WritableWorkbook;
-import jxl.write.WritableSheet;
-import jxl.write.WritableCell;
-import jxl.Workbook;
+import java.math.BigDecimal;
+import java.sql.Types;
+import java.util.Calendar;
 
 public class TableExportCsvCommand
 {
@@ -45,7 +48,7 @@ public class TableExportCsvCommand
       }
 
 
-      if(writeCsvFile(ctrl))
+      if(writeFile(ctrl))
       {
          String command = ctrl.getCommand();
 
@@ -72,7 +75,7 @@ public class TableExportCsvCommand
       }
    }
 
-   private boolean writeCsvFile(TableExportCsvController ctrl)
+   private boolean writeFile(TableExportCsvController ctrl)
    {
       File file = null;
       try
@@ -184,24 +187,18 @@ public class TableExportCsvCommand
       {
          for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
          {
-            Object cellObj;
+            WritableCell xlsCell;
             if(ctrl.useGloablPrefsFormatting() && _table.getColumnModel().getColumn(colIdx) instanceof ExtTableColumn)
             {
                ExtTableColumn col = (ExtTableColumn) _table.getColumnModel().getColumn(colIdx);
-               cellObj = _table.getValueAt(selRows[rowIdx], selCols[colIdx]);
-
-               if(null != cellObj)
-               {
-                  cellObj = CellComponentFactory.renderObject(cellObj, col.getColumnDisplayDefinition());
-               }
+               xlsCell = getXlsCell(col, colIdx, curRow, _table.getValueAt(selRows[rowIdx], selCols[colIdx]));
             }
             else
             {
-               cellObj = _table.getValueAt(selRows[rowIdx], selCols[colIdx]);
+               xlsCell = getXlsCell(null, colIdx, curRow, _table.getValueAt(selRows[rowIdx], selCols[colIdx]));
             }
-            WritableCell xlsCell= null;
-            xlsCell = new jxl.write.Label(colIdx, curRow, getDataXLS(cellObj));
             sheet.addCell(xlsCell);
+
          }
          curRow++;
       }
@@ -212,6 +209,101 @@ public class TableExportCsvCommand
 
       return true;
    }
+
+   private WritableCell getXlsCell(ExtTableColumn col, int colIdx, int curRow, Object cellObj)
+   {
+      if(null == cellObj)
+      {
+         return new jxl.write.Label(colIdx, curRow, getDataXLSAsString(cellObj));         
+      }
+
+      if(null == col)
+      {
+         return new jxl.write.Label(colIdx, curRow, getDataXLSAsString(cellObj));
+      }
+
+
+      WritableCell ret;
+      ColumnDisplayDefinition colDef = col.getColumnDisplayDefinition();
+      int colType = colDef.getSqlType();
+      switch (colType)
+      {
+         case Types.BIT:
+         case Types.BOOLEAN:
+            ret = new jxl.write.Boolean(colIdx, curRow, (Boolean) cellObj);
+            break;
+         case Types.INTEGER:
+            ret = new jxl.write.Number(colIdx, curRow, (float) (Integer) cellObj);
+            break;
+         case Types.SMALLINT:
+         case Types.TINYINT:
+            ret = new jxl.write.Number(colIdx, curRow, (float) (Short) cellObj);
+            break;
+         case Types.DECIMAL:
+            ret = new jxl.write.Number(colIdx, curRow, (float) (Integer) cellObj);
+            break;
+         case Types.NUMERIC:
+            ret = new jxl.write.Number(colIdx, curRow, ((BigDecimal) cellObj).floatValue());
+            break;
+         case Types.FLOAT:
+            ret = new jxl.write.Number(colIdx, curRow, (float) (Integer) cellObj);
+            break;
+         case Types.DOUBLE:
+            ret = new jxl.write.Number(colIdx, curRow, new Float((Double) cellObj));
+            break;
+         case Types.REAL:
+            ret = new jxl.write.Number(colIdx, curRow, (Float) cellObj);
+            break;
+         case Types.BIGINT:
+            ret = new jxl.write.Number(colIdx, curRow, (float) (Integer) cellObj);
+            break;
+         case Types.DATE:
+         case Types.TIMESTAMP:
+            /* Work arround some UTC and Daylight saving offsets */
+            long time = (((java.sql.Timestamp) cellObj).getTime());
+
+            Calendar cal = Calendar.getInstance();
+            cal.setTime((java.sql.Timestamp) cellObj);
+
+            int offset = (cal.get(Calendar.ZONE_OFFSET) + cal.get(Calendar.DST_OFFSET));
+            java.util.Date xlsUTCDate = new java.util.Date(time - offset);
+            ret = new jxl.write.DateTime(colIdx, curRow, xlsUTCDate, jxl.write.DateTime.GMT);
+            break;
+         case Types.CHAR:
+         case Types.VARCHAR:
+         case Types.LONGVARCHAR:
+            cellObj =
+               CellComponentFactory.renderObject(cellObj,
+                  col.getColumnDisplayDefinition());
+            ret = new jxl.write.Label(colIdx, curRow, getDataXLSAsString(cellObj));
+            break;
+         default:
+            Class c = cellObj.getClass();
+            String s = c.getName();
+            s_log.warn("Coldef class: " + colDef.getClassName());
+            s_log.warn("Colvalue Type: " + s + "  : colType: " + colType);
+            s_log.warn("Colvalue Value: " + cellObj.toString());
+            cellObj =
+               CellComponentFactory.renderObject(cellObj,
+                  col.getColumnDisplayDefinition());
+            ret = new jxl.write.Label(colIdx, curRow, getDataXLSAsString(cellObj));
+      }
+      return ret;
+   }
+
+
+   private String getDataXLSAsString(Object cellObj)
+   {
+      if (cellObj == null)
+      {
+         return "";
+      }
+      else
+      {
+         return  cellObj.toString().trim();
+      }
+   }
+
 
 
    private boolean writeCSV(File file, TableExportCsvController ctrl, boolean includeHeaders, int nbrSelCols, int[] selCols, int nbrSelRows, int[] selRows)
@@ -294,17 +386,5 @@ public class TableExportCsvCommand
       }
    }
 
-   private String getDataXLS(Object cellObj)
-   {
-      if (cellObj == null)
-      {
-         return "";
-      }
-      else
-      {
-         String ret = cellObj.toString().trim();
-         return ret;
-      }
-   }
 
 }
