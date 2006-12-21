@@ -154,7 +154,10 @@ public class SybaseDialect extends org.hibernate.dialect.SybaseDialect
     		return false;
     	}
     	String lname = databaseProductName.trim().toLowerCase();
-    	if (lname.startsWith("sybase") || lname.startsWith("adaptive")) {
+    	if (lname.startsWith("sybase") 
+                || lname.startsWith("adaptive")
+                || lname.startsWith("sql server")) 
+        {
     		// We don't yet have the need to discriminate by version.
     		return true;
     	}
