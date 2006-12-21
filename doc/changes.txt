@@ -90,6 +90,11 @@ get this information.
 
 	Bug-Fixes:
 
+When reconnecting a Session with the current connection dead
+SQuirreL always switched to Autocommit = false state. Now the Sessions
+Autocommit state is preserved.
+
+
 MySQL Plugin: Fixed bug which caused the MySQL all of the tabs to appear with no
 content.
 

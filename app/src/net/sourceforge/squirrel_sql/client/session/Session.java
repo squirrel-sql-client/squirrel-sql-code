@@ -488,7 +488,7 @@ class Session implements ISession
          connState = new SQLConnectionState();
          try
          {
-            connState.saveState(_conn, _msgHandler);
+            connState.saveState(_conn, getProperties(), _msgHandler);
          }
          catch (SQLException ex)
          {
