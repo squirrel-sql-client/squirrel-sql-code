@@ -259,14 +259,15 @@ public class TableExportCsvCommand
             break;
          case Types.DATE:
          case Types.TIMESTAMP:
+         case Types.TIME:
             /* Work arround some UTC and Daylight saving offsets */
-            long time = (((java.sql.Timestamp) cellObj).getTime());
+            long time = (((java.util.Date) cellObj).getTime());
 
             Calendar cal = Calendar.getInstance();
-            cal.setTime((java.sql.Timestamp) cellObj);
+            cal.setTime((java.util.Date) cellObj);
 
             int offset = (cal.get(Calendar.ZONE_OFFSET) + cal.get(Calendar.DST_OFFSET));
-            java.util.Date xlsUTCDate = new java.util.Date(time - offset);
+            java.util.Date xlsUTCDate = new java.util.Date(time + offset);
             ret = new jxl.write.DateTime(colIdx, curRow, xlsUTCDate, jxl.write.DateTime.GMT);
             break;
          case Types.CHAR:
