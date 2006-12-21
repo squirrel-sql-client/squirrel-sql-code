@@ -22,6 +22,8 @@ import java.sql.SQLException;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+
 /**
  * This class will save the state of an <TT>SQLConnection</TT> and
  * can apply the saved state to another <TT>SQLConnection</TT>. 
@@ -43,12 +45,7 @@ public class SQLConnectionState
 		super();
 	}
 
-	public void saveState(SQLConnection conn) throws SQLException
-	{
-		saveState(conn, null);
-	}
-
-	public void saveState(SQLConnection conn, IMessageHandler msgHandler)
+   public void saveState(SQLConnection conn, SessionProperties sessionProperties, IMessageHandler msgHandler)
 		throws SQLException
 	{
 		if (conn == null)
@@ -96,7 +93,11 @@ public class SQLConnectionState
 
 		try
 		{
-			_autoCommit = conn.getAutoCommit();
+         // In case the connection won't be able to tell its Auto Commit state,
+         // this is the best default we have.
+         _autoCommit = sessionProperties.getAutoCommit();
+
+         _autoCommit = conn.getAutoCommit();
 		}
 		catch (SQLException ex)
 		{
