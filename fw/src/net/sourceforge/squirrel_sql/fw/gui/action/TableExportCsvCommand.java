@@ -281,12 +281,7 @@ public class TableExportCsvCommand
          default:
             Class c = cellObj.getClass();
             String s = c.getName();
-            s_log.warn("Coldef class: " + colDef.getClassName());
-            s_log.warn("Colvalue Type: " + s + "  : colType: " + colType);
-            s_log.warn("Colvalue Value: " + cellObj.toString());
-            cellObj =
-               CellComponentFactory.renderObject(cellObj,
-                  col.getColumnDisplayDefinition());
+            cellObj = CellComponentFactory.renderObject(cellObj, col.getColumnDisplayDefinition());
             ret = new jxl.write.Label(colIdx, curRow, getDataXLSAsString(cellObj));
       }
       return ret;
