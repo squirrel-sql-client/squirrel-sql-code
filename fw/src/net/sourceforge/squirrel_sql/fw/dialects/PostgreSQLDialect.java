@@ -142,6 +142,10 @@ public class PostgreSQLDialect
      * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getColumnLength(int, int)
      */
     public int getColumnLength(int columnSize, int dataType) {
+        if (dataType == Types.VARCHAR && columnSize == -1) { 
+            // PostgreSQL 8.0 reports length as -1 sometimes. Why??
+            return 2000;
+        } 
         return columnSize;
     }
 
