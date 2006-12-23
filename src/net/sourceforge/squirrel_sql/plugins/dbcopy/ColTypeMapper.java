@@ -241,7 +241,10 @@ public class ColTypeMapper {
     {
         int length = defaultLength;
         String sql = 
-            DBUtil.getMaxColumnLengthSQL(sourceSession, colInfo, tableName);
+            DBUtil.getMaxColumnLengthSQL(sourceSession, 
+                                         colInfo, 
+                                         tableName, 
+                                         true);
         ResultSet rs = null;
         try {
             rs = DBUtil.executeQuery(sourceSession, sql);
@@ -252,7 +255,7 @@ public class ColTypeMapper {
                 length = defaultLength;
             }
         } catch (SQLException e) {
-            s_log.error("ColTypeMapper.getColumnLength: encountered " +
+            s_log.error("ColTypeMapper.getColumnLengthBruteForce: encountered " +
                         "unexpected SQLException - "+e.getMessage());
         } finally {
             DBUtil.closeResultSet(rs);
