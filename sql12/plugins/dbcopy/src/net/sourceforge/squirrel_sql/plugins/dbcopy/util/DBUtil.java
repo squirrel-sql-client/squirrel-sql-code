@@ -1914,11 +1914,13 @@ public class DBUtil extends I18NBaseObject {
      * @param sourceSession
      * @param colInfo
      * @param tableName
+     * @param tableNameIsQualified TODO
      * @return
      */
     public static String getMaxColumnLengthSQL(ISession sourceSession, 
                                                TableColumnInfo colInfo,
-                                               String tableName)
+                                               String tableName, 
+                                               boolean tableNameIsQualified)
         throws UserCancelledOperationException
     {
         StringBuffer result = new StringBuffer();
@@ -1943,11 +1945,14 @@ public class DBUtil extends I18NBaseObject {
         result.append("(");
         result.append(colInfo.getColumnName());
         result.append(")) from ");
-        String table = getQualifiedObjectName(sourceSession, 
+        String table = tableName;
+        if (!tableNameIsQualified) {
+            table = getQualifiedObjectName(sourceSession, 
                                               colInfo.getCatalogName(), 
                                               colInfo.getSchemaName(),
                                               tableName, 
-                                              DialectFactory.SOURCE_TYPE); 
+                                              DialectFactory.SOURCE_TYPE);
+        }
         result.append(table);
         return result.toString();
     }
