@@ -26,6 +26,7 @@ public class JDBCTypeMapper {
         result.add(getJdbcTypeName(Types.ARRAY));
         result.add(getJdbcTypeName(Types.BOOLEAN));
         result.add(getJdbcTypeName(Types.BIGINT));
+        result.add(getJdbcTypeName(Types.BINARY));
         result.add(getJdbcTypeName(Types.BIT));
         result.add(getJdbcTypeName(Types.BLOB));
         result.add(getJdbcTypeName(Types.CHAR));
@@ -40,6 +41,7 @@ public class JDBCTypeMapper {
         result.add(getJdbcTypeName(Types.JAVA_OBJECT));
         result.add(getJdbcTypeName(Types.LONGVARBINARY));
         result.add(getJdbcTypeName(Types.LONGVARCHAR));
+        result.add(getJdbcTypeName(Types.NUMERIC));
         result.add(getJdbcTypeName(Types.NULL));
         result.add(getJdbcTypeName(Types.OTHER));
         result.add(getJdbcTypeName(Types.REAL));
