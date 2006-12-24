@@ -20,9 +20,10 @@ package net.sourceforge.squirrel_sql.fw.sql;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import net.sourceforge.squirrel_sql.fw.util.ISessionProperties;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+
 
 /**
  * This class will save the state of an <TT>SQLConnection</TT> and
@@ -45,7 +46,7 @@ public class SQLConnectionState
 		super();
 	}
 
-   public void saveState(SQLConnection conn, SessionProperties sessionProperties, IMessageHandler msgHandler)
+   public void saveState(SQLConnection conn, ISessionProperties sessionProperties, IMessageHandler msgHandler)
 		throws SQLException
 	{
 		if (conn == null)

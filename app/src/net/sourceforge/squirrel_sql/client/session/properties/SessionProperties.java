@@ -17,23 +17,25 @@ package net.sourceforge.squirrel_sql.client.session.properties;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.Font;
+import java.beans.PropertyChangeListener;
+import java.io.Serializable;
+
+import javax.swing.SwingConstants;
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerEditableTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextPanel;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
+import net.sourceforge.squirrel_sql.fw.util.ISessionProperties;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
-
-import javax.swing.*;
-import java.awt.*;
-import java.beans.PropertyChangeListener;
-import java.io.Serializable;
 /**
  * This class represents the settings for a session.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SessionProperties implements Cloneable, Serializable
+public class SessionProperties implements Cloneable, Serializable, ISessionProperties
 {
    public interface IDataSetDestinations
    {
