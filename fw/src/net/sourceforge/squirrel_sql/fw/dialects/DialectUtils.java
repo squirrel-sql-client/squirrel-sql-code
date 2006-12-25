@@ -72,6 +72,8 @@ public class DialectUtils {
     
     public static final String SET_DEFAULT_CLAUSE = "SET DEFAULT";
     
+    public static final String SET_CLAUSE = "SET";
+    
     public static final String ADD_DEFAULT_CLAUSE = "ADD DEFAULT";
     
     public static final String DROP_DEFAULT_CLAUSE = "DROP DEFAULT";
@@ -82,6 +84,11 @@ public class DialectUtils {
     
     public static final String SET_DATA_TYPE_CLAUSE = "SET DATA TYPE";
     
+    // drop column clauses
+    
+    public static final String DROP_CLAUSE = "DROP";
+    
+    public static final String DROP_COLUMN_CLAUSE = "DROP COLUMN";
     
     // features
     
@@ -215,18 +222,22 @@ public class DialectUtils {
      */
     public static String getColumnDropSQL(String tableName, 
                                           String columnName) {
-        return getColumnDropSQL(tableName, columnName, "DROP");
+        return getColumnDropSQL(tableName, columnName, "DROP", false, null);
     }
 
     /**
      * 
      * @param tableName
      * @param columnName
+     * @param addConstraintClause TODO
+     * @param constraintClause TODO
      * @return
      */
     public static String getColumnDropSQL(String tableName, 
                                           String columnName,
-                                          String dropClause) {
+                                          String dropClause, 
+                                          boolean addConstraintClause, 
+                                          String constraintClause) {
         StringBuffer result = new StringBuffer();
         result.append("ALTER TABLE ");
         result.append(tableName);
@@ -234,6 +245,10 @@ public class DialectUtils {
         result.append(dropClause);
         result.append(" ");
         result.append(columnName);
+        if (addConstraintClause) {
+            result.append(" ");
+            result.append(constraintClause);
+        }
         return result.toString();
     }
     
@@ -290,7 +305,37 @@ public class DialectUtils {
     public static String getColumnNullableAlterSQL(TableColumnInfo info, 
                                                    HibernateDialect dialect,
                                                    String alterClause,
-                                                   boolean specifyType) {
+                                                   boolean specifyType) 
+    {
+        boolean nullable = info.isNullable().equalsIgnoreCase("YES");
+        return getColumnNullableAlterSQL(info, 
+                                         nullable, 
+                                         dialect, 
+                                         alterClause, 
+                                         specifyType);
+    }
+    
+    /**
+     * Returns the SQL used to alter the specified column to allow/disallow null 
+     * values.
+     * <br>
+     * ALTER TABLE table_name &lt;alterClause&gt; column_name TYPE NULL | NOT NULL
+     * <br>
+     * ALTER TABLE table_name &lt;alterClause&gt; column_name NULL | NOT NULL
+     * 
+     * @param info the column to modify
+     * @param dialect the HibernateDialect representing the target database.
+     * @param alterClause the alter column clause (e.g. ALTER COLUMN )
+     * @param specifyType whether or not the column type needs to be specified
+     * 
+     * @return the SQL to execute
+     */
+    public static String getColumnNullableAlterSQL(TableColumnInfo info,
+                                                   boolean nullable,
+                                                   HibernateDialect dialect,
+                                                   String alterClause,
+                                                   boolean specifyType) 
+    {
         StringBuffer result = new StringBuffer();
         result.append("ALTER TABLE ");
         result.append(info.getTableName());
@@ -303,15 +348,13 @@ public class DialectUtils {
             result.append(getTypeName(info, dialect));
             result.append(" ");
         }
-        if (info.isNullable().equalsIgnoreCase("YES")) { 
+        if (nullable) { 
             result.append(" NULL");
         } else {
             result.append(" NOT NULL");
         }
         return result.toString();
     }
-    
-    
     
     /**
      * Populates the specified ArrayList with SQL statement(s) required to 
