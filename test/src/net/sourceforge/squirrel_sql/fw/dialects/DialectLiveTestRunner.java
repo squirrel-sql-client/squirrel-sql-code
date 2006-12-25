@@ -69,40 +69,77 @@ public class DialectLiveTestRunner {
     
     private void init(ISession session) throws Exception {
         createTestTable(session);
-        firstCol = getIntegerColumn("nullint", true, "0", "An int comment");
-        secondCol = getIntegerColumn("notnullint", false, "0", "An int comment");
-        thirdCol = getVarcharColumn("nullvc", true, "defVal", "A varchar comment");
-        fourthCol = getVarcharColumn("notnullvc", false, "defVal", "A varchar comment");
+        firstCol = getIntegerColumn("nullint", "test1", true, "0", "An int comment");
+        secondCol = getIntegerColumn("notnullint", "test2", false, "0", "An int comment");
+        thirdCol = getVarcharColumn("nullvc", "test3", true, "defVal", "A varchar comment");
+        fourthCol = getVarcharColumn("notnullvc", "test4", false, "defVal", "A varchar comment");
         noDefaultValueVarcharCol = 
-            getVarcharColumn("noDefaultVarcharCol", true, null, "A varchar column with no default value"); 
-        dropCol = getVarcharColumn("dropCol", true, null, "A varchar comment");        
+            getVarcharColumn("noDefaultVarcharCol", "test", true, null, "A varchar column with no default value"); 
+        dropCol = getVarcharColumn("dropCol", "test5", true, null, "A varchar comment");        
         noDefaultValueIntegerCol = 
-            getIntegerColumn("noDefaultIntgerCol", true, null, "An integer column with no default value");
-        renameCol = getVarcharColumn("renameCol", true, null, "A column to be renamed");
-        pkCol = getIntegerColumn("pkCol", false, "0", "primary key column");
-        notNullIntegerCol = getIntegerColumn("notNullIntegerCol", false, "0", "potential pk column");
-        db2pkCol = getIntegerColumn(DB2_PK_COLNAME, false, "0", "A DB2 Primary Key column");
+            getIntegerColumn("noDefaultIntgerCol", "test5", true, null, "An integer column with no default value");
+        renameCol = getVarcharColumn("renameCol", "test", true, null, "A column to be renamed");
+        pkCol = getIntegerColumn("pkCol", "test", false, "0", "primary key column");
+        notNullIntegerCol = getIntegerColumn("notNullIntegerCol", "test5", false, "0", "potential pk column");
+        db2pkCol = getIntegerColumn(DB2_PK_COLNAME, "test", false, "0", "A DB2 Primary Key column");
     }
     
-    private void createTestTable(ISession session) throws Exception {
+    private void dropTable(ISession session, String tableName) throws Exception {
         HibernateDialect dialect = 
-            DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);
+            DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);        
         try {
-            runSQL(session, dialect.getTableDropSQL("test", true));
+            runSQL(session, dialect.getTableDropSQL(tableName, true));
         } catch (SQLException e) {
-            e.printStackTrace();
+            // Nothing
         }
+    }
+    
+    /**
+     * Setup the test tables.  This used to be only one table but it grew due
+     * primarily to Ingres' inability to have a table with more than 5-10 
+     * columns.
+     * 
+     * @param session
+     * @throws Exception
+     */
+    private void createTestTable(ISession session) throws Exception {
+        dropTable(session, "test");
+        dropTable(session, "test1");
+        dropTable(session, "test2");
+        dropTable(session, "test3");
+        dropTable(session, "test4");
+        dropTable(session, "test5");
+
         if (DialectFactory.isIngresSession(session)) {
             // alterations fail for some reason unless you do this...
             runSQL(session, "create table test ( mychar char(10)) with page_size=4096");
+            
+            // add some point, can no longer add columns because we exceed max row length
+            // So just create a table for each test
+            runSQL(session, "create table test1 ( mychar char(10)) with page_size=4096");
+            runSQL(session, "create table test2 ( mychar char(10)) with page_size=4096");
+            runSQL(session, "create table test3 ( mychar char(10)) with page_size=4096");
+            runSQL(session, "create table test4 ( mychar char(10)) with page_size=4096");
+            runSQL(session, "create table test5 ( mychar char(10)) with page_size=4096");
         } else if (DialectFactory.isDB2Session(session)) {
             // db2pkCol is used to create a PK when using DB2.  DB2 doesn't allow
             // you to add a PK to a table after it has been constructed unless the
             // column(s) that comprise the PK were originally there when created
             // *and* created not null.
-            runSQL(session, "create table test ( mychar char(10), "+DB2_PK_COLNAME+" integer not null)");        
+            runSQL(session, "create table test ( mychar char(10), "+DB2_PK_COLNAME+" integer not null)");
+            runSQL(session, "create table test1 ( mychar char(10))");
+            runSQL(session, "create table test2 ( mychar char(10))");
+            runSQL(session, "create table test3 ( mychar char(10))");
+            runSQL(session, "create table test4 ( mychar char(10))");
+            runSQL(session, "create table test5 ( mychar char(10))");
+            
         } else {
             runSQL(session, "create table test ( mychar char(10))");
+            runSQL(session, "create table test1 ( mychar char(10))");
+            runSQL(session, "create table test2 ( mychar char(10))");
+            runSQL(session, "create table test3 ( mychar char(10))");
+            runSQL(session, "create table test4 ( mychar char(10))");
+            runSQL(session, "create table test5 ( mychar char(10))");            
         }
     }    
     
@@ -125,10 +162,12 @@ public class DialectLiveTestRunner {
             // not null at the time of table creation.
             if (DialectFactory.isDB2Session(session)) {
                 testAddPrimaryKey(session, new TableColumnInfo[] {db2pkCol});
+                testDropPrimaryKey(session, db2pkCol.getTableName());
             } else {
-                testAddPrimaryKey(session, new TableColumnInfo[] {notNullIntegerCol});   
+                testAddPrimaryKey(session, new TableColumnInfo[] {notNullIntegerCol});
+                testDropPrimaryKey(session, notNullIntegerCol.getTableName());
             }
-            testDropPrimaryKey(session, "test");
+            
         }
     }
     
@@ -137,7 +176,7 @@ public class DialectLiveTestRunner {
             DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);  
 
         TableColumnInfo newNameCol = 
-            getVarcharColumn("newNameCol", true, null, "A column to be renamed");
+            getVarcharColumn("newNameCol", "test", true, null, "A column to be renamed");
         if (dialect.supportsRenameColumn()) {
             String sql = dialect.getColumnNameAlterSQL(renameCol, newNameCol);
             runSQL(session, sql);
@@ -185,7 +224,7 @@ public class DialectLiveTestRunner {
         runSQL(session, alterColTypeSQL);
         */
         TableColumnInfo thirdColLonger = 
-            getVarcharColumn("nullvc", true, "defVal", "A varchar comment", 200);
+            getVarcharColumn("nullvc", "test3", true, "defVal", "A varchar comment", 30);
         if (dialect.supportsAlterColumnType()) {
             String alterColLengthSQL = 
                 dialect.getColumnTypeAlterSQL(thirdCol, thirdColLonger);
@@ -206,13 +245,15 @@ public class DialectLiveTestRunner {
             DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);  
         
         TableColumnInfo varcharColWithDefaultValue = 
-            getVarcharColumn("noDefaultVarcharCol", 
+            getVarcharColumn("noDefaultVarcharCol",
+                             noDefaultValueVarcharCol.getTableName(),
                              true, 
                              "Default Value", 
                              "A column with a default value");
         
         TableColumnInfo integerColWithDefaultVal = 
-            getIntegerColumn("noDefaultIntgerCol", 
+            getIntegerColumn("noDefaultIntgerCol",
+                             noDefaultValueIntegerCol.getTableName(),
                              true, 
                              "0", 
                              "An integer column with a default value");
@@ -241,7 +282,7 @@ public class DialectLiveTestRunner {
         HibernateDialect dialect = 
             DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);  
         TableColumnInfo notNullThirdCol = 
-            getVarcharColumn("nullvc", false, "defVal", "A varchar comment");        
+            getVarcharColumn("nullvc", "test3", false, "defVal", "A varchar comment");        
         if (dialect.supportsAlterColumnNull()) {
             String notNullSQL = 
                 dialect.getColumnNullableAlterSQL(notNullThirdCol);
@@ -357,7 +398,7 @@ public class DialectLiveTestRunner {
         HibernateDialect dialect = 
             DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);
 
-        String sql = dialect.getColumnDropSQL("test", info.getColumnName());
+        String sql = dialect.getColumnDropSQL(info.getTableName(), info.getColumnName());
         runSQL(session, sql);
     }
     
@@ -374,6 +415,7 @@ public class DialectLiveTestRunner {
     }
     
     private TableColumnInfo getIntegerColumn(String name,
+                                             String tableName,
                                              boolean nullable, 
                                              String defaultVal,
                                              String comment) 
@@ -381,6 +423,7 @@ public class DialectLiveTestRunner {
         return getColumn(java.sql.Types.INTEGER, 
                          "INTEGER", 
                          name, 
+                         tableName,
                          nullable, 
                          defaultVal, 
                          comment, 
@@ -389,6 +432,7 @@ public class DialectLiveTestRunner {
     }
 
     private TableColumnInfo getVarcharColumn(String name,
+                                             String tableName,
                                              boolean nullable, 
                                              String defaultVal,
                                              String comment,
@@ -397,6 +441,7 @@ public class DialectLiveTestRunner {
         return getColumn(java.sql.Types.VARCHAR,
                 "VARCHAR",
                 name,
+                tableName,
                 nullable, 
                 defaultVal, 
                 comment, 
@@ -406,6 +451,7 @@ public class DialectLiveTestRunner {
     
     
     private TableColumnInfo getVarcharColumn(String name,
+                                             String tableName,
                                              boolean nullable, 
                                              String defaultVal,
                                              String comment)
@@ -413,16 +459,18 @@ public class DialectLiveTestRunner {
         return getColumn(java.sql.Types.VARCHAR,
                          "VARCHAR",
                          name,
+                         tableName,
                          nullable, 
                          defaultVal, 
                          comment, 
-                         100, 
+                         20, 
                          0);
     }
     
     private TableColumnInfo getColumn(int dataType,
                                       String dataTypeName,
                                       String name,
+                                      String tableName,
                                       boolean nullable, 
                                       String defaultVal,
                                       String comment,
@@ -438,7 +486,7 @@ public class DialectLiveTestRunner {
         TableColumnInfo result = 
             new TableColumnInfo("testCatalog",          // catalog 
                                 "testSchema",           // schema
-                                "test",                 // tableName
+                                tableName,              // tableName
                                 name,                   // columnName
                                 dataType,               // dataType
                                 dataTypeName,           // typeName 
