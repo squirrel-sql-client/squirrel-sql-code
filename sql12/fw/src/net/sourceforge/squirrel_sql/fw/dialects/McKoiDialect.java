@@ -59,7 +59,13 @@ public class McKoiDialect extends org.hibernate.dialect.HSQLDialect
         registerColumnType(Types.SMALLINT, "smallint");
         registerColumnType(Types.TIME, "time");
         registerColumnType(Types.TIMESTAMP, "timestamp");
-        registerColumnType(Types.TINYINT, "tinyint");
+        // Don't use tinyint for now, even though Mckoi "supports" it.  It's 
+        // notion of tinyint is 7-bit (not 8-bit) so it is not compatible with 
+        // other DBs and leads to overflow (resulting in negative values which 
+        // are a corruption of the actual value inserted/updated).  This is not
+        // a great work-around.  I filed a bug report on the mailing list; 
+        // hopefully it will get fixed soon. 
+        registerColumnType(Types.TINYINT, "smallint");
         registerColumnType(Types.VARBINARY, 2000000000, "varbinary($l)");
         registerColumnType(Types.VARBINARY, "varbinary(2000000000)");
         registerColumnType(Types.VARCHAR, 1000000000, "varchar($l)");
