@@ -424,7 +424,7 @@ public class H2Dialect extends Dialect implements HibernateDialect {
      *         dropping columns. 
      */
     public String getColumnDropSQL(String tableName, String columnName) {
-        return DialectUtils.getColumnDropSQL(tableName, columnName, "DROP COLUMN");
+        return DialectUtils.getColumnDropSQL(tableName, columnName, "DROP COLUMN", false, null);
     }
     
     /**

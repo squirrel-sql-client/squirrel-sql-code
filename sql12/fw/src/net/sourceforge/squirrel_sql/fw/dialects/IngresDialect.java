@@ -214,40 +214,12 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect
     }
 
     /**
-     * Returns a boolean value indicating whether or not this dialect supports
-     * adding comments to columns.
-     * 
-     * @return true if column comments are supported; false otherwise.
-     */
-    public boolean supportsColumnComment() {
-        return true;
-    }    
-    
-    /**
-     * Returns the SQL statement to use to add a comment to the specified 
-     * column of the specified table.
-     * 
-     * @param tableName the name of the table to create the SQL for.
-     * @param columnName the name of the column to create the SQL for.
-     * @param comment the comment to add.
-     * @return
-     * @throws UnsupportedOperationException if the database doesn't support 
-     *         annotating columns with a comment.
-     */
-    public String getColumnCommentAlterSQL(String tableName, String columnName, String comment) throws UnsupportedOperationException {
-        return DialectUtils.getColumnCommentAlterSQL(tableName, 
-                                                     columnName, 
-                                                     comment);
-    }
- 
-    /**
      * Returns a boolean value indicating whether or not this database dialect
      * supports dropping columns from tables.
      * 
      * @return true if the database supports dropping columns; false otherwise.
      */
     public boolean supportsDropColumn() {
-        // TODO: need to verify this
         return true;
     }
 
@@ -262,8 +234,15 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect
      *         dropping columns. 
      */
     public String getColumnDropSQL(String tableName, String columnName) {
-        // TODO: Need to verify this        
-        return DialectUtils.getColumnDropSQL(tableName, columnName);
+        String dropClause = DialectUtils.DROP_COLUMN_CLAUSE;
+        // TODO: Need to allow user to specify this
+        String constraintClause = "CASCADE";
+        
+        return DialectUtils.getColumnDropSQL(tableName, 
+                                             columnName, 
+                                             dropClause, 
+                                             true,
+                                             constraintClause);
     }
   
     /**
@@ -286,17 +265,44 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect
      * Returns the SQL that forms the command to add a primary key to the 
      * specified table composed of the given column names.
      * 
+     * 
+     * alter table test alter column pkcol integer not null
+     * 
+     * alter table test add constraint pk_test primary key (pkcol)
+     * 
      * @param pkName the name of the constraint
      * @param columnNames the columns that form the key
      * @return
      */
     public String[] getAddPrimaryKeySQL(String pkName, 
-                                      TableColumnInfo[] columnNames) 
+                                        TableColumnInfo[] columns) 
     {
-        // TODO: implement
-        throw new UnsupportedOperationException("getAddPrimaryKeySQL not implemented");
+        ArrayList result = new ArrayList();
+        String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
+        for (int i = 0; i < columns.length; i++) {
+            TableColumnInfo info = columns[i];
+            String notNullSQL = 
+                DialectUtils.getColumnNullableAlterSQL(info, 
+                                                       false, 
+                                                       this, 
+                                                       alterClause, 
+                                                       true);
+            result.add(notNullSQL);
+        }
+        result.add(DialectUtils.getAddPrimaryKeySQL(pkName, columns, false));
+        return (String[])result.toArray(new String[result.size()]);
     }
     
+    /**
+     * Returns a boolean value indicating whether or not this dialect supports
+     * adding comments to columns.
+     * 
+     * @return true if column comments are supported; false otherwise.
+     */
+    public boolean supportsColumnComment() {
+        return true;
+    }    
+         
     /**
      * Returns the SQL statement to use to add a comment to the specified 
      * column of the specified table.
@@ -308,8 +314,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect
     public String getColumnCommentAlterSQL(TableColumnInfo info) 
         throws UnsupportedOperationException
     {
-        // TODO: implement        
-        throw new UnsupportedOperationException("Not yet implemented");
+        return DialectUtils.getColumnCommentAlterSQL(info);
     }
     
     /**
@@ -344,8 +349,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect
      *         false otherwise.
      */
     public boolean supportsRenameColumn() {
-        // TODO: need to verify this
-        return true;
+        return false;
     }
     
     /**
@@ -358,8 +362,9 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect
      * @return the SQL to make the change
      */
     public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not yet implemented");
+        int featureId = DialectUtils.COLUMN_NAME_ALTER_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);        
     }
     
     /**
@@ -375,6 +380,8 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect
     /**
      * Returns the SQL that is used to change the column type.
      * 
+     * alter table tableName alter column columnName columnTypeSpec
+     * 
      * @param from the TableColumnInfo as it is
      * @param to the TableColumnInfo as it wants to be
      * 
@@ -386,8 +393,14 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect
                                         TableColumnInfo to)
         throws UnsupportedOperationException
     {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not Yet Implemented");
+        String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
+        String setClause = "";
+        return DialectUtils.getColumnTypeAlterSQL(this, 
+                                                  alterClause, 
+                                                  setClause, 
+                                                  false, 
+                                                  from, 
+                                                  to);
     }
     
     /**
@@ -428,7 +441,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect
      * @return
      */
     public String getDropPrimaryKeySQL(String pkName, String tableName) {
-        return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false);
+        return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true, true);
     }
     
 }

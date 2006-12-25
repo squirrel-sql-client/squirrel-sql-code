@@ -231,7 +231,7 @@ public class SQLServerDialect extends org.hibernate.dialect.SQLServerDialect
      */
     public String getColumnDropSQL(String tableName, String columnName) {
         // TODO: Need to verify this        
-        return DialectUtils.getColumnDropSQL(tableName, columnName, "DROP COLUMN");
+        return DialectUtils.getColumnDropSQL(tableName, columnName, "DROP COLUMN", false, null);
     }
     
     /**
