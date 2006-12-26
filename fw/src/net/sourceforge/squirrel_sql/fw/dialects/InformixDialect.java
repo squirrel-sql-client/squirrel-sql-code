@@ -35,7 +35,7 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect
         super();
         registerColumnType(Types.BIGINT, "integer");
         registerColumnType(Types.BINARY, "byte");
-        registerColumnType(Types.BIT, "byte");
+        registerColumnType(Types.BIT, "smallint");
         registerColumnType(Types.BLOB, "byte");
         registerColumnType(Types.BOOLEAN, "smallint");
         registerColumnType(Types.CHAR, 32511, "char($l)");
