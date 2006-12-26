@@ -92,6 +92,8 @@ public class DBUtil extends I18NBaseObject {
         StringManagerFactory.getStringManager(DBUtil.class);    
     
     
+    private static final String TEST_TABLE_NAME = "dbcopytest";
+    
     /**
      * Returns a string that looks like:
      * 
@@ -1591,13 +1593,34 @@ public class DBUtil extends I18NBaseObject {
         return catsep;
     }
     
+    /**
+     * Uppercase / Lowercase / Mixedcase identifiers are a big problem.  Some 
+     * databases support mixing case (like McKoi) others force identifier case
+     * to all uppercase or all lowercase.  Some (like MySQL) can be configured
+     * to care or not care about case as well as depending on the platform the 
+     * database is on.  This method attempt to use the metadata from the driver 
+     * to "fix" the case of the identifier to be acceptable for the specified 
+     * session. 
+     * 
+     * @param session the session whose disposition on case we care about. 
+     * @param identifier
+     * @return
+     */
     public static String fixCase(ISession session, String identifier)  
     {
         if (identifier == null || identifier.equals("")) {
             return identifier;
         }
-        SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
         try {
+            DatabaseMetaData md = 
+            	session.getSQLConnection().getConnection().getMetaData();
+        	
+        	// Don't change the case of the identifier if database allows mixed
+        	// case. 
+        	if (md.storesMixedCaseIdentifiers()) {
+        		return identifier;
+        	}
+        	// Fix the case according to what the database tells us.
             if (md.storesUpperCaseIdentifiers()) {
                 return identifier.toUpperCase();
             } else {
@@ -1835,7 +1858,7 @@ public class DBUtil extends I18NBaseObject {
             String tableName = getQualifiedObjectName(destSession, 
                                                       catalog, 
                                                       schema,
-                                                      "dbcopytest", 
+                                                      TEST_TABLE_NAME, 
                                                       DialectFactory.DEST_TYPE); 
             
             StringBuffer sql = 
@@ -1846,11 +1869,12 @@ public class DBUtil extends I18NBaseObject {
             sql.append(" CHAR(10) )");
             boolean cascade = DialectFactory.isFrontBaseSession(destSession);
             try {
-                dropTable(tableName, 
+                dropTable(TEST_TABLE_NAME, 
                           schema, 
                           catalog, 
                           destSession, 
-                          cascade, DialectFactory.DEST_TYPE);
+                          cascade, 
+                          DialectFactory.DEST_TYPE);
                 DBUtil.executeUpdate(con, sql.toString(), false);
             } catch (SQLException e) {
                 String message = getMessage("DBUtil.mappingErrorKeyword",
@@ -1879,7 +1903,7 @@ public class DBUtil extends I18NBaseObject {
         boolean result = false;
         SQLConnection con = session.getSQLConnection();
         String table = getQualifiedObjectName(session, 
-                                             null, 
+                                             catalogName, 
                                              schemaName,
                                              tableName, sessionType);
         String dropsql = "DROP TABLE "+table;
