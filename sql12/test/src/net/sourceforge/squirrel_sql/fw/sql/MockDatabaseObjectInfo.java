@@ -87,4 +87,14 @@ public class MockDatabaseObjectInfo implements IDatabaseObjectInfo {
         return 0;
     }
 
+    public String toString() {
+    	StringBuffer result = new StringBuffer();
+    	result.append("catalog=");
+        result.append(catalogName);
+        result.append(" schema=");
+        result.append(schemaName);
+        result.append(" simpleName=");
+        result.append(simpleName);
+    	return result.toString();
+    }
 }
