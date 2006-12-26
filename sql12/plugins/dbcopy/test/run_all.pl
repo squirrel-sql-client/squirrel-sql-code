@@ -6,6 +6,8 @@ use Cwd;
 
 $startrun = new Benchmark;
 
+$currDir = getcwd();
+
 $resultsfile = 'results_' . getTime() . '.xls';
 $resultsfile = catfile ('summary', $resultsfile);
 open (RESULTS, "> $resultsfile") or 
@@ -16,17 +18,17 @@ open (RESULTS, "> $resultsfile") or
 #                'firebird', 'frontbase', 'h2', 'hsql', 'ingres', 'maxdb', 
 #                'mckoi', 'mysql', 'oracle', 'pointbase', 'sqlserver');
 
-@defaultFrom = ('postgres', 'axion', 'daffodil', 'db2', 'derby', 
-                'firebird', 'h2', 'hsql', 'ingres', 'mckoi', 
-                'mysql', 'oracle', 'timesten');
+# Cannot use Sybase 11.0 on Linux because it doesn't support nullable columns
+@defaultFrom = ('firebird', 'postgres', 'daffodil', 'derby', 'h2', 'hsql', 'mckoi', 
+                'mysql', 'sybase', 'sqlserver', 'timesten');
+
 
 #@defaultTo = ( 'postgres', 'axion', 'db2', 'derby', 'daffodil',
 #               'firebird', 'frontbase', 'h2', 'hsql', 'ingres', 'maxdb',
 #               'mckoi', 'mysql', 'oracle', 'pointbase', 'sqlserver');
 
-@defaultTo = ('postgres', 'axion', 'daffodil', 'db2', 'derby',
-              'firebird', 'h2', 'hsql', 'ingres', 'mckoi', 
-              'mysql', 'oracle', 'timesten');
+@defaultTo = ('firebird', 'postgres', 'daffodil', 'derby', 'h2', 'hsql', 'mckoi', 
+              'mysql', 'sybase', 'sqlserver', 'timesten');
 
 $arg1 = shift (@ARGV);
 $arg2 = shift (@ARGV);
@@ -60,11 +62,11 @@ if (defined $arg1 && defined $arg2) {
 # Set autoflush to true
 $| = 0;
 
-@sourcepropkeys = ( 'sourceDriver', 'sourceJdbcUrl', 
+@sourcepropkeys = ( 'sourceDriver', 'sourceJdbcUrl', 'sourceCatalog',
                     'sourceSchema', 'sourceUser', 'sourcePass' );
 					
-@destpropkeys = ( 'destDriver', 'destJdbcUrl', 'destSchema', 
-                  'destUser', 'destPass');
+@destpropkeys = ( 'destDriver', 'destJdbcUrl', 'destCatalog',  
+				  'destSchema', 'destUser', 'destPass');
 
 $mainclass = 'net.sourceforge.squirrel_sql.plugins.dbcopy.CopyExecutorTestRunner';
 
@@ -148,7 +150,7 @@ sub createPropsFile {
 	print OUTPROPS "showSqlStatements=true\n";
 	print OUTPROPS "\n";
 	print OUTPROPS '#' . " the directory where the DBCopy preferences file (prefs.xml) is stored.\n";
-	$prefsDir = getcwd;
+	$prefsDir = $currDir;
 	print OUTPROPS "prefsDir=$prefsDir\n";	
 	
 	close(OUTPROPS);
@@ -261,7 +263,8 @@ sub runCopy {
 	}
 	close(CMDOUT);
 	if ($copytime eq '') {
-		print "failed\n";
+		$abslogfile = catfile($currDir, $logfile);
+		print "failed ( $abslogfile )\n";
 		$copyresulttimes{$from}{$to} = 'fail';
 	} else {
 		print "$copytime seconds\n";
