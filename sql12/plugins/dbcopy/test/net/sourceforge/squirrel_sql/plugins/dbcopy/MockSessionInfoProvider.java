@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.plugins.dbcopy;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import net.sourceforge.squirrel_sql.client.db.dialects.DialectFactory;
@@ -31,9 +32,9 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.MockDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.MockTableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.util.DBUtil;
 
 public class MockSessionInfoProvider implements SessionInfoProvider {
@@ -42,17 +43,23 @@ public class MockSessionInfoProvider implements SessionInfoProvider {
     
     ISession destSession = null;
     
-    ArrayList selectedDatabaseObjects = new ArrayList();
+    ArrayList<ITableInfo> selectedDatabaseObjects = new ArrayList<ITableInfo>();
     
     IDatabaseObjectInfo destSelectedDatabaseObject = null;
     
     ResourceBundle bundle = null;
     
     String sourceSchema = null;
+    String sourceCatalog = null;
+    String destSchema=null;
+    String destCatalog = null;
     
     boolean dropOnly = false;
     
-    public MockSessionInfoProvider(String propertyFile, boolean dropOnly) throws Exception {
+    public MockSessionInfoProvider(String propertyFile, 
+    							   boolean dropOnly) 
+    	throws Exception 
+    {
         this.dropOnly = dropOnly;
         initialize(propertyFile);
     }
@@ -70,6 +77,8 @@ public class MockSessionInfoProvider implements SessionInfoProvider {
                                         sourcePass);
         sourceSchema = fixCase(bundle.getString("sourceSchema"),
                                sourceSession);
+        sourceCatalog = fixCase(bundle.getString("sourceCatalog"),
+                				sourceSession);
         String destDriver = bundle.getString("destDriver");
         String destJdbcUrl = bundle.getString("destJdbcUrl"); 
         String destUser = bundle.getString("destUser");
@@ -78,47 +87,34 @@ public class MockSessionInfoProvider implements SessionInfoProvider {
                                       destJdbcUrl,
                                       destUser,
                                       destPass);
+        destCatalog = fixCase(bundle.getString("destCatalog"),
+				  		      destSession);
+        destSchema = fixCase(bundle.getString("destSchema"),
+				  			 destSession);
         initializeDBObjs();
     }
     
     private void initializeDBObjs() 
         throws SQLException, UserCancelledOperationException 
     {
-        String[] tableNames = getTableNames(sourceSession);
+        List<ITableInfo> tables = getTableNames(sourceSession);
         String destSchema = fixCase(bundle.getString("destSchema"), 
                                     destSession);
-        if (tableNames.length == 0) {
+        if (tables.size() == 0) {
         	throw new SQLException("No tables found to copy");
         }
-        for (int i = 0; i < tableNames.length; i++) {
-            String sourceTable = fixCase(tableNames[i], sourceSession);
-            // Hack to deal with Ingres IIE* meta tables.
-            if (sourceTable.startsWith("IIE") 
-                    || sourceTable.startsWith("iie")) 
-            {
-                continue;
-            }
-            // Hack to deal with Axion AXION_* tables.
-            if (sourceTable.startsWith("AXION") 
-                    || sourceTable.startsWith("axion")) 
-            {
-                continue;
-            }
-            // Hack to deal with Firebird's RDB meta tables.
-            if (sourceTable.startsWith("RDB$")) {
-                continue;
-            }
-            MockTableInfo info = null;
-            if (DialectFactory.isMySQLSession(sourceSession)) {
-                info = new MockTableInfo(sourceTable, null, sourceSchema);
-            } else {
-                info = new MockTableInfo(sourceTable, sourceSchema, null);
-            }
+        
+        for (ITableInfo info : tables) {
+        	String sourceTable = fixCase(info.getSimpleName(), sourceSession);
+        	if (!shouldIncludeTable(sourceTable)) {
+        		continue;
+        	}
             dropDestinationTable(sourceTable, destSchema);
             if (!dropOnly) {
-                selectedDatabaseObjects.add(info);
+            	selectedDatabaseObjects.add(info);
             }
-        }
+		}
+        /*
         if (DialectFactory.isMySQLSession(sourceSession)) {
             destSelectedDatabaseObject = 
                 new MockDatabaseObjectInfo(destSchema, null, destSchema);
@@ -126,6 +122,35 @@ public class MockSessionInfoProvider implements SessionInfoProvider {
             destSelectedDatabaseObject = 
                 new MockDatabaseObjectInfo(destSchema, destSchema, null);            
         }
+        */
+        destSelectedDatabaseObject = new MockDatabaseObjectInfo(destSchema, destSchema, destCatalog);
+        System.out.println("destSelectedDatabaseObject: "+destSelectedDatabaseObject);
+    }
+    
+    private boolean shouldIncludeTable(String tableName) {
+    	boolean result = true;
+        // Hack to deal with Ingres IIE* meta tables.
+        if (tableName.startsWith("IIE") 
+                || tableName.startsWith("iie")) 
+        {
+            result = false;
+        }
+        // Hack to deal with Axion AXION_* tables.
+        if (tableName.startsWith("AXION") 
+                || tableName.startsWith("axion")) 
+        {
+        	result = false;
+        }
+        // Hack to deal with Firebird's RDB meta tables.
+        if (tableName.startsWith("RDB$")) {
+        	result = false;
+        }
+        // Hack to deal with Sybase's sys tables
+        if (tableName.startsWith("sys")) {
+        	//result = false;
+        }
+
+    	return result;
     }
     
     private void dropDestinationTable(String tableName, String schema) 
@@ -139,23 +164,35 @@ public class MockSessionInfoProvider implements SessionInfoProvider {
         }
     }
     
-    private String[] getTableNames(ISession sourceSession) throws SQLException {
-        String[] result = null;
+    private List<ITableInfo> getTableNames(ISession sourceSession) throws SQLException {
+        List<ITableInfo> result = null;
         String tableStr = bundle.getString("tablesToCopy");
         if ("*".equals(tableStr)) {
             result = getAllTables(sourceSession);
         } else {
-            result = tableStr.split(",");
+        	result = new ArrayList<ITableInfo>();
+            String[] tableNames = tableStr.split(",");
+            for (int i = 0; i < tableNames.length; i++) {
+				String tableName = tableNames[i];
+				TableInfo info = new TableInfo(sourceCatalog, 
+											   sourceSchema,
+											   tableName,
+											   "TABLE",
+											   "",
+											   null);
+											   
+				result.add(info);
+			}
         }
         return result;
     }
     
-    private String[] getAllTables(ISession sourceSession) throws SQLException {
+    private List<ITableInfo> getAllTables(ISession sourceSession) throws SQLException {
         SQLConnection sourceConn = sourceSession.getSQLConnection();
         SQLDatabaseMetaData data = sourceConn.getSQLMetaData(); 
-        ITableInfo[] tableInfos = data.getTables(null, sourceSchema, "%", null, null);
+        ITableInfo[] tableInfos = data.getTables(sourceCatalog, sourceSchema, "%", new String[] {"TABLE"}, null);
         
-        ArrayList tableNames = new ArrayList();
+        ArrayList<ITableInfo> tables = new ArrayList<ITableInfo>();
         for (int i = 0; i < tableInfos.length; i++) {
             String tiSchema = tableInfos[i].getSchemaName();
             if (sourceSchema.equals(tiSchema)
@@ -163,17 +200,11 @@ public class MockSessionInfoProvider implements SessionInfoProvider {
             {
                 if (tableInfos[i].getDatabaseObjectType() == DatabaseObjectType.TABLE) {
                     System.out.println("Adding table "+tableInfos[i].getSimpleName());
-                    tableNames.add(tableInfos[i].getSimpleName());
+                    tables.add(tableInfos[i]);
                 }
             }
         }
-        String[] result = new String[tableNames.size()];
-        Iterator i = tableNames.iterator();
-        int idx = 0;
-        while (i.hasNext()) {
-            result[idx++] = (String)i.next();
-        }
-        return result;
+        return tables;
     }
     
     private String fixCase(String identifier, ISession session) 
