@@ -46,13 +46,13 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
         registerColumnType(Types.CHAR, "longtext");
         registerColumnType(Types.CLOB, "longtext");
         registerColumnType(Types.DATE, "date");
-        registerColumnType(Types.DECIMAL, "decimal($p)");
+        registerColumnType(Types.DECIMAL, "decimal($p,$s)");
         registerColumnType(Types.DOUBLE, "double");
         registerColumnType(Types.FLOAT, "float($p)");
         registerColumnType(Types.INTEGER, "int");        
         registerColumnType(Types.LONGVARBINARY, "longblob");
         registerColumnType(Types.LONGVARCHAR, "longtext");
-        registerColumnType(Types.NUMERIC, "numeric");
+        registerColumnType(Types.NUMERIC, "numeric($p,$s)");
         registerColumnType(Types.REAL, "real");
         registerColumnType(Types.SMALLINT, "smallint");
         registerColumnType(Types.TIME, "time");
