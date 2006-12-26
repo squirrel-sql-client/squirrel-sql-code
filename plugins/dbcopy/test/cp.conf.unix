@@ -1,4 +1,5 @@
 
+
 /home/manningr/projects/squirrel_snapshots/sql12/eclipse-classes
 /home/manningr/projects/squirrel_snapshots/sql12/test/lib/mockobjects-jdk1.4-0.09.jar
 /home/manningr/projects/squirrel_snapshots/sql12/test/lib/mockobjects-core-0.09.jar
@@ -41,18 +42,24 @@
 /opt/db2/java/db2jcc_license_cu.jar
 
 # Firebird
-/opt/firebird/jdbc/jaybird-full-2.0.1.jar
-/opt/firebird/jdbc/mini-j2ee.jar
+/opt/jdbc/Firebird_jaybird_2_1_1/jaybird-full-2.1.1.jar
 
 # Frontbase
-#C:\tools\FrontBaseJManager0_505\frontbasejdbc.jar
-#C:\tools\FrontBaseJDBC-2.5.2\frontbasejdbc.jar
+/opt/jdbc/Frontbase/frontbasejdbc.jar
 
 # H2
 /opt/h2/bin/h2.jar
 
 # HSQL
 /opt/hsqldb/lib/hsqldb.jar
+
+# Informix 
+/opt/informix_jdbc_3_0_0/lib/ifxjdbc.jar
+/opt/informix_jdbc_3_0_0/lib/ifxjdbcx.jar
+/opt/informix_jdbc_3_0_0/lib/ifxlang.jar
+/opt/informix_jdbc_3_0_0/lib/ifxlsupp.jar
+/opt/informix_jdbc_3_0_0/lib/ifxsqlj.jar
+/opt/informix_jdbc_3_0_0/lib/ifxtools.jar
 
 # Ingres
 /opt/Ingres/IngresII/ingres/lib/iijdbc.jar
@@ -64,24 +71,26 @@
 /opt/mckoi/mkjdbc.jar
 
 # MS - SQLServer
-#C:\tools\Microsoft_SQL_Server_2005_JDBC_Driver\sqljdbc_1.0\enu\sqljdbc.jar
+/opt/jdbc/MSSQL/sqljdbc.jar
 
 # MySQL
-/usr/local/jdbc/MySQL/mysql-connector-java-3.1.8-bin.jar
+/opt/jdbc/MySQL/mysql-connector-java-5.0.4/mysql-connector-java-5.0.4-bin.jar
 
 # Oracle
-/usr/local/jdbc/Oracle/ojdbc14.jar
+/opt/jdbc/Oracle/ojdbc14.jar
 
 # Pointbase
 #C:\bea\weblogic81\common\eval\pointbase\lib\pbclient44.jar
 
 # PostgreSQL
-/usr/local/jdbc/PostgreSQL/postgresql-8.1-407.jdbc3.jar
+/opt/jdbc/PostgreSQL/postgresql-8.1-407.jdbc3.jar
 
 # Sybase
-#C:\tools\sybase\jConnect-6_0\classes\jconn3.jar;C:\tools\sybase\jConnect-6_0\classes\jTDS3.jar
+/opt/jdbc/Sybase/jConnect-6_0/jconn3.jar
 
 # TimesTen
 /opt/TimesTen/csuite/lib/classes14.jar
+/opt/TimesTen/csuite/lib/libttJdbc.so
+/opt/TimesTen/csuite/lib/libttJdbcCS.so
 
 
