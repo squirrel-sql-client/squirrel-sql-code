@@ -201,44 +201,20 @@ public class FrontBaseDialect extends org.hibernate.dialect.FrontBaseDialect
     }
 
     /**
-     * Returns a boolean value indicating whether or not this dialect supports
-     * adding comments to columns.
-     * 
-     * @return true if column comments are supported; false otherwise.
-     */
-    public boolean supportsColumnComment() {
-        return false;
-    }    
-    
-    /**
-     * Returns the SQL statement to use to add a comment to the specified 
-     * column of the specified table.
-     * 
-     * @param tableName the name of the table to create the SQL for.
-     * @param columnName the name of the column to create the SQL for.
-     * @param comment the comment to add.
-     * @return
-     * @throws UnsupportedOperationException if the database doesn't support 
-     *         annotating columns with a comment.
-     */
-    public String getColumnCommentAlterSQL(String tableName, String columnName, String comment) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("This database dialect doesn't support adding comments to columns");
-    }
-    
-    /**
      * Returns a boolean value indicating whether or not this database dialect
      * supports dropping columns from tables.
      * 
      * @return true if the database supports dropping columns; false otherwise.
      */
     public boolean supportsDropColumn() {
-        // Need to verify this
         return true;
     }
 
     /**
      * Returns the SQL that forms the command to drop the specified colum in the
      * specified table.
+     * 
+     * alter table tableName drop column columnName cascade
      * 
      * @param tableName the name of the table that has the column
      * @param columnName the name of the column to drop.
@@ -247,13 +223,12 @@ public class FrontBaseDialect extends org.hibernate.dialect.FrontBaseDialect
      *         dropping columns. 
      */
     public String getColumnDropSQL(String tableName, String columnName) {
-        StringBuffer result = new StringBuffer();
-        result.append("ALTER TABLE ");
-        result.append(tableName);
-        result.append(" DROP ");
-        result.append(columnName);
-        result.append(" CASCADE ");
-        return result.toString();
+        String dropClause = DialectUtils.DROP_COLUMN_CLAUSE;
+        return DialectUtils.getColumnDropSQL(tableName, 
+                                             columnName, 
+                                             dropClause, 
+                                             true, 
+                                             "CASCADE");
     }
 
     /**
@@ -261,6 +236,7 @@ public class FrontBaseDialect extends org.hibernate.dialect.FrontBaseDialect
      * cascade contraints is supported by the dialect and cascadeConstraints is
      * true, then a drop statement with cascade constraints clause will be 
      * formed.
+     * 
      * 
      * @param tableName the table to drop
      * @param cascadeConstraints whether or not to drop any FKs that may 
@@ -283,10 +259,21 @@ public class FrontBaseDialect extends org.hibernate.dialect.FrontBaseDialect
     public String[] getAddPrimaryKeySQL(String pkName, 
                                       TableColumnInfo[] columnNames) 
     {
-        // TODO: implement
-        throw new UnsupportedOperationException("getAddPrimaryKeySQL not implemented");
+        int featureId = DialectUtils.ADD_PRIMARY_KEY_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);                
     }
     
+    /**
+     * Returns a boolean value indicating whether or not this dialect supports
+     * adding comments to columns.
+     * 
+     * @return true if column comments are supported; false otherwise.
+     */
+    public boolean supportsColumnComment() {
+        return false;
+    }    
+        
     /**
      * Returns the SQL statement to use to add a comment to the specified 
      * column of the specified table.
@@ -298,8 +285,19 @@ public class FrontBaseDialect extends org.hibernate.dialect.FrontBaseDialect
     public String getColumnCommentAlterSQL(TableColumnInfo info) 
         throws UnsupportedOperationException
     {
-        // TODO: implement        
-        throw new UnsupportedOperationException("Not yet implemented");
+        int featureId = DialectUtils.COLUMN_COMMENT_ALTER_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);                
+    }
+    
+    /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports changing a column from null to not-null and vice versa.
+     * 
+     * @return true if the database supports dropping columns; false otherwise.
+     */    
+    public boolean supportsAlterColumnNull() {
+        return false;
     }
     
     /**
@@ -310,8 +308,9 @@ public class FrontBaseDialect extends org.hibernate.dialect.FrontBaseDialect
      * @return the SQL to execute
      */
     public String getColumnNullableAlterSQL(TableColumnInfo info) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not yet implemented");
+        int featureId = DialectUtils.COLUMN_NULL_ALTER_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);                
     }
 
     /**
@@ -322,8 +321,7 @@ public class FrontBaseDialect extends org.hibernate.dialect.FrontBaseDialect
      *         false otherwise.
      */
     public boolean supportsRenameColumn() {
-        // TODO: need to verify this
-        return true;
+        return false;
     }
     
     /**
@@ -336,8 +334,9 @@ public class FrontBaseDialect extends org.hibernate.dialect.FrontBaseDialect
      * @return the SQL to make the change
      */
     public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not yet implemented");
+        int featureId = DialectUtils.COLUMN_NAME_ALTER_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);                
     }
     
     /**
@@ -347,12 +346,13 @@ public class FrontBaseDialect extends org.hibernate.dialect.FrontBaseDialect
      * @return true if supported; false otherwise
      */
     public boolean supportsAlterColumnType() {
-        // TODO: verify this
         return true;
     }
     
     /**
      * Returns the SQL that is used to change the column type.
+     * 
+     * alter column "test"."foo" to char(11)
      * 
      * @param from the TableColumnInfo as it is
      * @param to the TableColumnInfo as it wants to be
@@ -365,21 +365,16 @@ public class FrontBaseDialect extends org.hibernate.dialect.FrontBaseDialect
                                         TableColumnInfo to)
         throws UnsupportedOperationException
     {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not Yet Implemented");
+        StringBuffer result = new StringBuffer();
+        result.append("ALTER COLUMN ");
+        result.append(from.getTableName());
+        result.append(".");
+        result.append(from.getColumnName());
+        result.append(" TO ");
+        result.append(DialectUtils.getTypeName(to, this));
+        return result.toString();
     }
-    
-    /**
-     * Returns a boolean value indicating whether or not this database dialect
-     * supports changing a column from null to not-null and vice versa.
-     * 
-     * @return true if the database supports dropping columns; false otherwise.
-     */    
-    public boolean supportsAlterColumnNull() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-    
+        
     /**
      * Returns a boolean value indicating whether or not this database dialect
      * supports changing a column's default value.
@@ -388,19 +383,25 @@ public class FrontBaseDialect extends org.hibernate.dialect.FrontBaseDialect
      *         otherwise
      */
     public boolean supportsAlterColumnDefault() {
-        // TODO Need to verify this
         return true;
     }
     
     /**
      * Returns the SQL command to change the specified column's default value
      *   
+     *   alter table test alter column foo set default 'foo'
+     *   
      * @param info the column to modify and it's default value.
      * @return SQL to make the change
      */
     public String getColumnDefaultAlterSQL(TableColumnInfo info) {
-        // TODO need to implement or change the message
-        throw new UnsupportedOperationException("Not yet implemented");
+        String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
+        String defaultClause = DialectUtils.SET_DEFAULT_CLAUSE;
+        return DialectUtils.getColumnDefaultAlterSQL(this, 
+                                                     info, 
+                                                     alterClause, 
+                                                     false, 
+                                                     defaultClause);
     }
     
     /**
@@ -412,7 +413,9 @@ public class FrontBaseDialect extends org.hibernate.dialect.FrontBaseDialect
      * @return
      */
     public String getDropPrimaryKeySQL(String pkName, String tableName) {
-        return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false);
+        int featureId = DialectUtils.DROP_PRIMARY_KEY_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);                
     }
     
 }
