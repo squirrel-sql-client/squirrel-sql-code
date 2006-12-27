@@ -1,0 +1,354 @@
+<HTML>
+
+<HEAD>
+    <TITLE>Refactoring Plugin</TITLE>
+</HEAD>
+
+<BODY>
+
+<font size="+2"><b>Refactoring Plugin</b></font><font size="+1"> - Rob Manning</font>
+
+
+<H3>Introduction</H3>
+
+<P>The Refactoring plugin adds the ability to easily change the definition or 
+structure of tables / columns in a database.  Changes can be made or the SQL for
+any particular refactoring can be viewed and/or edited.  The SQL that is 
+generated is crafted specifically for the database that SQuirreL is connected to
+and is made with the help of an extended Hibernate dialect framework.  You can
+choose from the following extended Hibernate dialects:
+
+<p>
+
+<center>
+<table>
+<tr>
+<td align="center">
+Apache Derby
+</td>
+<td align="center">
+Axion
+</td>
+<td align="center">
+Daffodil
+</td>
+<td align="center">
+DB2
+</td>
+<td align="center">
+Firebird
+</td>
+<td align="center">
+FrontBase
+</td>
+<td align="center">
+H2
+</td>
+<td align="center">
+HSQLDB
+</td>
+<td align="center">
+Informix
+</td>
+</tr>
+<tr>
+<td align="center">
+CA OpenIngres
+</td>
+<td align="center">
+MaxDB
+</td>
+<td align="center">
+Mckoi
+</td>
+<td align="center">
+MS-SQLServer
+</td>
+<td align="center">
+MySQL
+</td>
+<td align="center">
+Oracle
+</td>
+<td align="center">
+Pointbase
+</td>
+<td align="center">
+Postgres
+</td>
+<td align="center">
+Sybase ASE 12/15
+</td>
+</tr><tr>
+<td align="center">
+TimesTen
+</td>
+</tr>
+</table>
+</center>
+
+<p>
+
+The following refactorings are supported*: <br>
+<ul>
+<li>Add/Drop Primary Key</li>
+<li>Add/Drop Column</li>
+<li>Modify column (type, length, default value, comment, null/not null)</li>
+</ul>
+
+* Note: If the database doesn't support the refactoring directly with SQL, 
+then the refactoring will be unavailable for that database.  A future release 
+of the refactoring plugin will provide implementations of all refactorings on 
+databases that don't support them directly.
+<p>
+The following table summarizes the refactorings and their availability on 
+each supported database:
+<p>
+<table border="1"> 
+ <tr>
+  <td width="60" align="center"></td>
+  <td width="60" align="center">Add <br>Column</td>
+  <td width="60" align="center">Drop <br>Column</td>
+  <td width="60" align="center">Default<br> Value</td>
+  <td width="60" align="center">Column<br>Comment</td>
+  <td width="60" align="center">Column <br>Nullable</td>
+  <td width="60" align="center">Column <br>Name</td>
+  <td width="60" align="center">Column <br>Type</td>
+  <td width="60" align="center">Add<br> PK</td>
+  <td width="60" align="center">Drop <br>PK</td>
+ </tr>
+ <tr>
+  <td align="center">axion</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">-</td>
+  <td align="center">-</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">-</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+ </tr>
+ <tr>
+  <td align="center">daffodil</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">-</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">-</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+ </tr>
+ <tr>
+  <td align="center">db2</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">-</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">-</td>
+  <td align="center">-</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+ </tr>
+ <tr>
+  <td align="center">derby</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">-</td>
+  <td align="center">-</td>
+  <td align="center">-</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">-</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+ </tr>
+ <tr>
+  <td align="center">firebird</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">-</td>
+  <td align="center">-</td>
+  <td align="center">-</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+ </tr>
+ <tr>
+  <td align="center">frontbase</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">-</td>
+  <td align="center">-</td>
+  <td align="center">-</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">-</td>
+  <td align="center">-</td>
+ </tr>
+ <tr>
+  <td align="center">h2</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+ </tr>
+ <tr>
+  <td align="center">hsqldb</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">-</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+ </tr>
+ <tr>
+  <td align="center">informix</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">-</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+ </tr>
+ <tr>
+  <td align="center">ingres</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">-</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+ </tr>
+ <tr>
+  <td align="center">maxdb</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+ </tr>
+ <tr>
+  <td align="center">mckoi</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">-</td>
+  <td align="center">-</td>
+  <td align="center">-</td>
+  <td align="center">-</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+ </tr>
+ <tr>
+  <td align="center">mssql</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">-</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+ </tr>
+ <tr>
+  <td align="center">mysql</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+ </tr>
+ <tr>
+  <td align="center">oracle</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+ </tr>
+ <tr>
+  <td align="center">pointbase</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">-</td>
+  <td align="center">-</td>
+  <td align="center">-</td>
+  <td align="center">-</td>
+  <td align="center">-</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+ </tr>
+ <tr>
+  <td align="center">postgres</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+ </tr>
+ <tr>
+  <td align="center">sybase</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">-</td>
+  <td align="center">-</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+ </tr>
+ <tr>
+  <td align="center">timesten</td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">-</td>
+  <td align="center">-</td>
+  <td align="center">-</td>
+  <td align="center">-</td>
+  <td align="center">-</td>
+  <td align="center">-</td>
+  <td align="center">-</td>
+ </tr>
+</table>
+
+<h3>Add Primary Key</h3>
+
+</BODY>
+</HTML>
+
