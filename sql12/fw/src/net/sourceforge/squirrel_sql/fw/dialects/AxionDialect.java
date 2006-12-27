@@ -40,9 +40,9 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect
         // data exception: numeric value out of range
         // Can someone please tell me why Axion expects big integers to be limited
         // to 20 precision and 10 scale?(Integers should have scale == 0, right?)
-        // So an Axion bigint is limited to just 10 digits to the left of the 
+        // So an Axion bigint is limited to just 20 digits to the left of the 
         // decimal point.
-        // TODO: conside filing a bug report against Axion build M3.
+        // TODO: consider filing a bug report against Axion build M3.
         // 38 is the maximum precision for Axion's numeric type.
         registerColumnType(Types.BIGINT, "numeric($p,0)");
         registerColumnType(Types.BINARY, "binary($l)");
@@ -64,6 +64,8 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect
         // column can potentially be larger than what the column claims to support.
         // This will be a problem for other databases that pay attention to the 
         // column size.
+        // TODO: Perhaps re-introduce the REAL type, but use the new 
+        // getPrecisionDigits to max out the precision. 
         registerColumnType(Types.REAL, "numeric($p,$s)");
         registerColumnType(Types.SMALLINT, "smallint");
         registerColumnType(Types.TIME, "time");
@@ -177,31 +179,6 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect
             DialectUtils.getColumnAddSQL(info, this, false, false, true)
         };
     }
-
-    /**
-     * Returns a boolean value indicating whether or not this dialect supports
-     * adding comments to columns.
-     * 
-     * @return true if column comments are supported; false otherwise.
-     */
-    public boolean supportsColumnComment() {
-        return false;
-    }    
-    
-    /**
-     * Returns the SQL statement to use to add a comment to the specified 
-     * column of the specified table.
-     * 
-     * @param tableName the name of the table to create the SQL for.
-     * @param columnName the name of the column to create the SQL for.
-     * @param comment the comment to add.
-     * @return
-     * @throws UnsupportedOperationException if the database doesn't support 
-     *         annotating columns with a comment.
-     */
-    public String getColumnCommentAlterSQL(String tableName, String columnName, String comment) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("This database dialect doesn't support adding comments to columns");
-    }
     
     /**
      * Returns a boolean value indicating whether or not this database dialect
@@ -247,17 +224,33 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect
      * Returns the SQL that forms the command to add a primary key to the 
      * specified table composed of the given column names.
      * 
+     * alter table tableName add constraint constraintName 
+     * primary key (column [,column])
+     * 
      * @param pkName the name of the constraint
      * @param columnNames the columns that form the key
      * @return
      */
     public String[] getAddPrimaryKeySQL(String pkName, 
-                                      TableColumnInfo[] columnNames) 
+                                      TableColumnInfo[] columns) 
     {
-        // TODO: implement
-        throw new UnsupportedOperationException("getAddPrimaryKeySQL not implemented");
+        // Axion doesn't allow column alterations of the nullable attribute.  
+        // Fortunately, it doesn't require this to add a primary key.
+        return new String[] {
+            DialectUtils.getAddPrimaryKeySQL(pkName, columns, false)
+        };
     }
     
+    /**
+     * Returns a boolean value indicating whether or not this dialect supports
+     * adding comments to columns.
+     * 
+     * @return true if column comments are supported; false otherwise.
+     */
+    public boolean supportsColumnComment() {
+        return false;
+    }    
+
     /**
      * Returns the SQL statement to use to add a comment to the specified 
      * column of the specified table.
@@ -269,8 +262,19 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect
     public String getColumnCommentAlterSQL(TableColumnInfo info) 
         throws UnsupportedOperationException
     {
-        // TODO: implement        
-        throw new UnsupportedOperationException("Not yet implemented");
+        int featureId = DialectUtils.COLUMN_COMMENT_ALTER_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);
+    }
+    
+    /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports changing a column from null to not-null and vice versa.
+     * 
+     * @return true if the database supports dropping columns; false otherwise.
+     */    
+    public boolean supportsAlterColumnNull() {
+        return false;
     }
     
     /**
@@ -281,8 +285,9 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect
      * @return the SQL to execute
      */
     public String getColumnNullableAlterSQL(TableColumnInfo info) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not yet implemented");
+        int featureId = DialectUtils.COLUMN_NULL_ALTER_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);        
     }
 
     /**
@@ -293,22 +298,26 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect
      *         false otherwise.
      */
     public boolean supportsRenameColumn() {
-        // TODO: need to verify this
         return true;
     }
     
     /**
      * Returns the SQL that is used to change the column name.
      * 
-     * 
+     * alter table tableName alter column oldColumnName rename to newColumnName
+     *  
      * @param from the TableColumnInfo as it is
      * @param to the TableColumnInfo as it wants to be
      * 
      * @return the SQL to make the change
      */
     public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not yet implemented");
+        String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
+        String renameToClause = DialectUtils.RENAME_TO_CLAUSE;
+        return DialectUtils.getColumnNameAlterSQL(from, 
+                                                  to, 
+                                                  alterClause, 
+                                                  renameToClause);
     }
 
     /**
@@ -318,8 +327,7 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect
      * @return true if supported; false otherwise
      */
     public boolean supportsAlterColumnType() {
-        // TODO: verify this
-        return true;
+        return false;
     }
     
     /**
@@ -336,21 +344,11 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect
                                         TableColumnInfo to)
         throws UnsupportedOperationException
     {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not Yet Implemented");
+        int featureId = DialectUtils.COLUMN_TYPE_ALTER_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);                
     }
 
-    /**
-     * Returns a boolean value indicating whether or not this database dialect
-     * supports changing a column from null to not-null and vice versa.
-     * 
-     * @return true if the database supports dropping columns; false otherwise.
-     */    
-    public boolean supportsAlterColumnNull() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-    
     /**
      * Returns a boolean value indicating whether or not this database dialect
      * supports changing a column's default value.
@@ -359,23 +357,31 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect
      *         otherwise
      */
     public boolean supportsAlterColumnDefault() {
-        // TODO Need to verify this
         return true;
     }
     
     /**
      * Returns the SQL command to change the specified column's default value
      *   
+     * alter table test alter column PKCOL2 set default 0
+     *   
      * @param info the column to modify and it's default value.
      * @return SQL to make the change
      */
     public String getColumnDefaultAlterSQL(TableColumnInfo info) {
-        // TODO need to implement or change the message
-        throw new UnsupportedOperationException("Not yet implemented");
+        String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
+        String defaultClause = DialectUtils.SET_DEFAULT_CLAUSE;
+        return DialectUtils.getColumnDefaultAlterSQL(this, 
+                                                     info, 
+                                                     alterClause, 
+                                                     false, 
+                                                     defaultClause);
     }
    
     /**
      * Returns the SQL command to drop the specified table's primary key.
+     * 
+     * alter table tableName drop primary key
      * 
      * @param pkName the name of the primary key that should be dropped
      * @param tableName the name of the table whose primary key should be 
@@ -383,7 +389,10 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect
      * @return
      */
     public String getDropPrimaryKeySQL(String pkName, String tableName) {
-        return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false);
+        return DialectUtils.getDropPrimaryKeySQL(pkName, 
+                                                 tableName, 
+                                                 false, 
+                                                 false);
     }
     
 }
