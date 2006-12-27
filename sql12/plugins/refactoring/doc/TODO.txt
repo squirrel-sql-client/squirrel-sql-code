@@ -1,0 +1,20 @@
+
+Refactoring TODO list:
+
+Immediate:
+
+- Fix all of the TODOs involving user notification
+- Figure out why the column list dialog doesn't have a scrollbar
+
+Short Term:
+
+- For dropping columns allow the user to specify cascade / restrict for dbs that
+  support it (like derby)
+
+Long Term:
+
+- Table refactorings
+- The rest of the dialects.
+- support operations that aren't directly support by the database (e.g. HADB
+can't add/drop columns - simulate by creating new table and copying data - maybe
+using dbcopy?)
