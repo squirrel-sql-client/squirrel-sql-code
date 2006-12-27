@@ -260,11 +260,11 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
         JMenu tableMenu = new JMenu("Table");
         
         tableMenu.add(dropTableItem);
-        tableMenu.add(addIndexItem);
-        tableMenu.add(dropIndexItem);
         tableMenu.add(addPrimaryKeyItem);
         tableMenu.add(dropPrimaryKeyItem);
         // Not yet implemented
+        //tableMenu.add(addIndexItem);
+        //tableMenu.add(dropIndexItem);
         //tableMenu.add(addForeignKeyItem);
         //tableMenu.add(dropForeignKeyItem);
         //tableMenu.add(enableConstraintsItem);
