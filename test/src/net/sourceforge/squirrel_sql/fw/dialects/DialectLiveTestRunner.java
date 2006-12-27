@@ -164,8 +164,16 @@ public class DialectLiveTestRunner {
                 testAddPrimaryKey(session, new TableColumnInfo[] {db2pkCol});
                 testDropPrimaryKey(session, db2pkCol.getTableName());
             } else {
-                testAddPrimaryKey(session, new TableColumnInfo[] {notNullIntegerCol});
-                testDropPrimaryKey(session, notNullIntegerCol.getTableName());
+                try {
+                    testAddPrimaryKey(session, new TableColumnInfo[] {notNullIntegerCol});
+                } catch (UnsupportedOperationException e) {
+                    System.err.println("doesn't support adding primary keys");
+                }
+                try {
+                    testDropPrimaryKey(session, notNullIntegerCol.getTableName());
+                } catch (UnsupportedOperationException e) {
+                    System.err.println("doesn't support dropping primary keys");
+                }
             }
             
         }
