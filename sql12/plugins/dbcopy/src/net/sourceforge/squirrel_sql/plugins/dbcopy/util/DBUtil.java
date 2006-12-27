@@ -1563,18 +1563,34 @@ public class DBUtil extends I18NBaseObject {
         String catalog = fixCase(session, catalogName);
         String schema = fixCase(session, schemaName);
         String object = fixCase(session, objectName);
-        
-
+        SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
+        boolean useSchema = true;
+        boolean useCatalog = true;
+        try {
+        	useCatalog = md.supportsCatalogsInTableDefinitions();
+        } catch (SQLException e) {
+        	log.info("Encountered unexpected exception while attempting to " +
+        			"determine if catalogs are used in table definitions");
+        }
+        try {        
+        	useSchema = md.supportsSchemasInTableDefinitions();
+        } catch (SQLException e) {
+        	log.info("Encountered unexpected exception while attempting to " +
+        			"determine if schemas are used in table definitions");
+        }
+        if (!useCatalog && !useSchema) {
+        	return object;
+        }
         if ((catalog == null || catalog.equals("")) && 
                 (schema == null || schema.equals(""))) {
             return object;
         }
         StringBuffer result = new StringBuffer();
-        if (catalog != null && !catalog.equals("")) {
+        if (useCatalog && catalog != null && !catalog.equals("")) {
             result.append(catalog);
             result.append(getCatSep(session));
         }
-        if (schema != null && !schema.equals("")) {
+        if (useSchema && schema != null && !schema.equals("")) {
             result.append(schema);
             result.append(".");
         }
@@ -1775,8 +1791,10 @@ public class DBUtil extends I18NBaseObject {
             
             StringBuffer sbToAppend = new StringBuffer();
             sbToAppend.append("CREATE");
-            sbToAppend.append(unique ? " UNIQUE ": " ");
-            sbToAppend.append("INDEX ");
+            if (!DialectFactory.isDaffodilSession(destSession)) {
+            	sbToAppend.append(unique ? " UNIQUE ": " ");
+            }
+            sbToAppend.append(" INDEX ");
             sbToAppend.append(ixs[i].ixName);
             sbToAppend.append(" ON ");
             String table = getQualifiedObjectName(destSession, 
