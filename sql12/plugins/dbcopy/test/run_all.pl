@@ -265,6 +265,7 @@ sub runCopy {
 	if ($copytime eq '') {
 		$abslogfile = catfile($currDir, $logfile);
 		print "failed ( $abslogfile )\n";
+		system("gedit $abslogfile &");
 		$copyresulttimes{$from}{$to} = 'fail';
 	} else {
 		print "$copytime seconds\n";
