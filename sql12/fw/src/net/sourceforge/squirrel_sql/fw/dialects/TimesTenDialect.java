@@ -174,32 +174,9 @@ public class TimesTenDialect extends org.hibernate.dialect.TimesTenDialect
      *         adding columns after a table has already been created.
      */
     public String[] getColumnAddSQL(TableColumnInfo info) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("This database dialect doesn't support adding columns to tables");
-    }
-
-    /**
-     * Returns a boolean value indicating whether or not this dialect supports
-     * adding comments to columns.
-     * 
-     * @return true if column comments are supported; false otherwise.
-     */
-    public boolean supportsColumnComment() {
-        return false;
-    }
-    
-    /**
-     * Returns the SQL statement to use to add a comment to the specified 
-     * column of the specified table.
-     * 
-     * @param tableName the name of the table to create the SQL for.
-     * @param columnName the name of the column to create the SQL for.
-     * @param comment the comment to add.
-     * @return
-     * @throws UnsupportedOperationException if the database doesn't support 
-     *         annotating columns with a comment.
-     */
-    public String getColumnCommentAlterSQL(String tableName, String columnName, String comment) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("This database dialect doesn't support adding comments to columns");
+    	return new String[] {
+    		DialectUtils.getColumnAddSQL(info, this, true, false, false)
+    	};
     }
 
     /**
@@ -209,7 +186,6 @@ public class TimesTenDialect extends org.hibernate.dialect.TimesTenDialect
      * @return true if the database supports dropping columns; false otherwise.
      */
     public boolean supportsDropColumn() {
-        // TODO: need to verify this
         return true;
     }
 
@@ -223,8 +199,7 @@ public class TimesTenDialect extends org.hibernate.dialect.TimesTenDialect
      * @throws UnsupportedOperationException if the database doesn't support 
      *         dropping columns. 
      */
-    public String getColumnDropSQL(String tableName, String columnName) {
-        // TODO: Need to verify this        
+    public String getColumnDropSQL(String tableName, String columnName) {     
         return DialectUtils.getColumnDropSQL(tableName, columnName);
     }
     
@@ -241,7 +216,6 @@ public class TimesTenDialect extends org.hibernate.dialect.TimesTenDialect
      * @return the drop SQL command.
      */
     public String getTableDropSQL(String tableName, boolean cascadeConstraints){
-        // TODO: Need to verify this
         return DialectUtils.getTableDropSQL(tableName, true, cascadeConstraints);
     }
     
@@ -256,10 +230,21 @@ public class TimesTenDialect extends org.hibernate.dialect.TimesTenDialect
     public String[] getAddPrimaryKeySQL(String pkName, 
                                       TableColumnInfo[] columnNames) 
     {
-        // TODO: implement
-        throw new UnsupportedOperationException("getAddPrimaryKeySQL not implemented");
+        int featureId = DialectUtils.ADD_PRIMARY_KEY_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);            	
     }
     
+    /**
+     * Returns a boolean value indicating whether or not this dialect supports
+     * adding comments to columns.
+     * 
+     * @return true if column comments are supported; false otherwise.
+     */
+    public boolean supportsColumnComment() {
+        return false;
+    }
+        
     /**
      * Returns the SQL statement to use to add a comment to the specified 
      * column of the specified table.
@@ -271,10 +256,21 @@ public class TimesTenDialect extends org.hibernate.dialect.TimesTenDialect
     public String getColumnCommentAlterSQL(TableColumnInfo info) 
         throws UnsupportedOperationException
     {
-        // TODO: implement        
-        throw new UnsupportedOperationException("Not yet implemented");
+        int featureId = DialectUtils.COLUMN_COMMENT_ALTER_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);        
     }
     
+    /**
+     * Returns a boolean value indicating whether or not this database dialect
+     * supports changing a column from null to not-null and vice versa.
+     * 
+     * @return true if the database supports dropping columns; false otherwise.
+     */    
+    public boolean supportsAlterColumnNull() {
+        return false;
+    }
+        
     /**
      * Returns the SQL used to alter the specified column to not allow null 
      * values
@@ -283,8 +279,9 @@ public class TimesTenDialect extends org.hibernate.dialect.TimesTenDialect
      * @return the SQL to execute
      */
     public String getColumnNullableAlterSQL(TableColumnInfo info) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not yet implemented");
+        int featureId = DialectUtils.COLUMN_NULL_ALTER_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);            	
     }
 
     /**
@@ -295,8 +292,7 @@ public class TimesTenDialect extends org.hibernate.dialect.TimesTenDialect
      *         false otherwise.
      */
     public boolean supportsRenameColumn() {
-        // TODO: need to verify this
-        return true;
+        return false;
     }
     
     /**
@@ -309,8 +305,9 @@ public class TimesTenDialect extends org.hibernate.dialect.TimesTenDialect
      * @return the SQL to make the change
      */
     public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not yet implemented");
+        int featureId = DialectUtils.COLUMN_NAME_ALTER_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);        
     }
  
     /**
@@ -320,8 +317,7 @@ public class TimesTenDialect extends org.hibernate.dialect.TimesTenDialect
      * @return true if supported; false otherwise
      */
     public boolean supportsAlterColumnType() {
-        // TODO: verify this
-        return true;
+        return false;
     }
     
     /**
@@ -338,19 +334,9 @@ public class TimesTenDialect extends org.hibernate.dialect.TimesTenDialect
                                         TableColumnInfo to)
         throws UnsupportedOperationException
     {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not Yet Implemented");
-    }
-    
-    /**
-     * Returns a boolean value indicating whether or not this database dialect
-     * supports changing a column from null to not-null and vice versa.
-     * 
-     * @return true if the database supports dropping columns; false otherwise.
-     */    
-    public boolean supportsAlterColumnNull() {
-        // TODO Auto-generated method stub
-        return false;
+        int featureId = DialectUtils.COLUMN_TYPE_ALTER_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);        
     }
     
     /**
@@ -361,8 +347,7 @@ public class TimesTenDialect extends org.hibernate.dialect.TimesTenDialect
      *         otherwise
      */
     public boolean supportsAlterColumnDefault() {
-        // TODO Need to verify this
-        return true;
+        return false;
     }
     
     /**
@@ -372,8 +357,30 @@ public class TimesTenDialect extends org.hibernate.dialect.TimesTenDialect
      * @return SQL to make the change
      */
     public String getColumnDefaultAlterSQL(TableColumnInfo info) {
-        // TODO need to implement or change the message
-        throw new UnsupportedOperationException("Not yet implemented");
+    	/* 
+    	 * TimesTen reference claims this is a supported operation, but it 
+    	 * yields an exception for me: 
+    	 * 
+    	 * ALTER TABLE test MODIFY noDefaultVarcharCol  DEFAULT 'Default Value'
+    	 * 
+    	 *  Exception in thread "main" 
+    	 *  java.sql.SQLException: [TimesTen][TimesTen 6.0.1 ODBC Driver][TimesTen]TT1001: 
+    	 *  Syntax error in SQL statement before or at: "NODEFAULTVARCHARCOL", 
+    	 *  character position: 26 -- file "ptSqlY.y", lineno 1940, procedure "sbPtParseSql()"
+    	 *  
+    	String alterClause = DialectUtils.MODIFY_CLAUSE;
+    	String defaultClause = DialectUtils.DEFAULT_CLAUSE;
+    	return DialectUtils.getColumnDefaultAlterSQL(this, 
+    											     info, 
+    											     alterClause, 
+    											     false, 
+    											     defaultClause);
+    											     
+		So, for now, just throw an exception:
+    	 */
+        int featureId = DialectUtils.COLUMN_DEFAULT_ALTER_TYPE;
+        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+        throw new UnsupportedOperationException(msg);            	    	
     }
     
     /**
