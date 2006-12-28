@@ -209,7 +209,9 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect
             result.add(getColumnDefaultAlterSQL(info));
             result.add(getColumnNullableAlterSQL(info));
         }
-        
+        if (info.getRemarks() != null && !"".equals(info.getRemarks())) {
+            result.add(getColumnCommentAlterSQL(info));
+        }        
         return (String[])result.toArray(new String[result.size()]);
     }
 

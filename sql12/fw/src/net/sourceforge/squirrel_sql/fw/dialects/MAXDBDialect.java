@@ -149,10 +149,15 @@ public class MAXDBDialect extends SAPDBDialect
      * @throws UnsupportedOperationException if the database doesn't support 
      *         adding columns after a table has already been created.
      */
-    public String[] getColumnAddSQL(TableColumnInfo info) throws UnsupportedOperationException {
-        return new String[] {
-            DialectUtils.getColumnAddSQL(info, this, true, false, true)
-        };
+    public String[] getColumnAddSQL(TableColumnInfo info) 
+        throws UnsupportedOperationException 
+    {
+        ArrayList result = new ArrayList();
+        result.add(DialectUtils.getColumnAddSQL(info, this, true, false, true));
+        if (info.getRemarks() != null && !"".equals(info.getRemarks())) {
+            result.add(getColumnCommentAlterSQL(info));
+        }
+        return (String[])result.toArray(new String[result.size()]);
     }
 
     /**

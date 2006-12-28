@@ -19,6 +19,7 @@
 package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.sql.Types;
+import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -192,10 +193,15 @@ public class PostgreSQLDialect
      * @throws UnsupportedOperationException if the database doesn't support 
      *         adding columns after a table has already been created.
      */
-    public String[] getColumnAddSQL(TableColumnInfo info) throws UnsupportedOperationException {
-        return new String[] { 
-                DialectUtils.getColumnAddSQL(info, this, true, true, true)
-        };
+    public String[] getColumnAddSQL(TableColumnInfo info) 
+        throws UnsupportedOperationException 
+    {
+        ArrayList result = new ArrayList();
+        result.add(DialectUtils.getColumnAddSQL(info, this, true, true, true));
+        if (info.getRemarks() != null && !"".equals(info.getRemarks())) {
+            result.add(getColumnCommentAlterSQL(info));
+        }
+        return (String[])result.toArray(new String[result.size()]);
     }
 
     /**
