@@ -19,6 +19,7 @@
 package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.sql.Types;
+import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -198,6 +199,8 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect
     public String[] getColumnAddSQL(TableColumnInfo info) 
         throws UnsupportedOperationException 
     {
+        ArrayList result = new ArrayList();
+        
         StringBuffer addColumn = new StringBuffer();
         addColumn.append("ALTER TABLE ");
         addColumn.append(info.getTableName());
@@ -218,6 +221,7 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect
                 addColumn.append("'");                
             }
         }
+        result.add(addColumn.toString());
         
         if (info.isNullable() == "NO") {
         // ALTER TABLE <TABLENAME> ADD CONSTRAINT NULL_FIELD CHECK (<FIELD> IS NOT
@@ -229,13 +233,15 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect
             notnull.append(info.getColumnName());
             notnull.append(" CHECK (");
             notnull.append(info.getColumnName());
-            notnull.append(" IS NOT NULL)");
-            
-            return new String[] {addColumn.toString(), notnull.toString()};
-        } else {
-            return new String[] {addColumn.toString()};
+            notnull.append(" IS NOT NULL)");            
+            result.add(notnull.toString());
+        } 
+        
+        if (info.getRemarks() != null && !"".equals(info.getRemarks())) {
+            result.add(getColumnCommentAlterSQL(info));
         }
         
+        return (String[])result.toArray(new String[result.size()]);
         
      }
 
