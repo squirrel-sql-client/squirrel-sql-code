@@ -21,7 +21,7 @@ choose from the following extended Hibernate dialects:
 <p>
 
 <center>
-<table cellspacing="5">
+<table cellspacing="10" cellpadding="5">
 <tr>
 <td align="center">
 Apache Derby
@@ -75,7 +75,7 @@ Oracle
 </tr>
 <tr>
 <td align="center">
-Pointbase 4.4
+Pointbase
 </td>
 <td align="center">
 PostgreSQL
@@ -100,9 +100,20 @@ The following refactorings are supported*: <br>
 </ul>
 
 * Note: If the database doesn't support the refactoring directly with SQL, 
-then the refactoring will be unavailable for that database.  A future release 
-of the refactoring plugin will provide implementations of all refactorings on 
-databases that don't support them directly.
+then the refactoring will be unavailable for that database.  For example, 
+when this document was written, Apache Derby (10.2.1.6) allowed you 
+to add a new column to an existing table using a SQL statement like :
+<p>
+'ALTER TABLE ... ADD COLUMN ...'
+<p>
+yet it didn't provide a way to drop an existing column via some SQL statement 
+such as :
+<p>
+'ALTER TABLE ... DROP COLUMN ...' 
+<p>
+like many other databases do. A future release of the refactoring plugin will 
+provide implementations of all refactorings on databases that don't support 
+them directly.
 <p>
 The following table summarizes the refactorings and their availability on 
 each supported database:
@@ -351,9 +362,14 @@ each supported database:
  </tr>
 </table>
 </center>
+<p>
+If you find that a supported database has been updated to support an operation
+directly via SQL, I would appreciate an email to let me know so that I can 
+update the refactoring plugin.(manningr [at] users [dot] sourceforge [dot] net)
+<p>
 <h3>Add Primary Key</h3>
 
-A table which doesn't already have a Primary Key defined can be altered to 
+A table that doesn't already have a Primary Key defined can be altered to 
 specify one.  A primary key uniquely identifies each row in the table, and as
 such must consist only of one or more "non-null" columns.  For some databases 
 defining a primary key after table creation implicitly creates constraints 
@@ -377,7 +393,9 @@ refactoring menus.
 </center>
 <p>
 You will see a dialog displaying all of the columns from the selected table that 
-are available for use in the new primary key.
+are available for use in the new primary key.  You may also change the name of
+the constraint that is used to enforce the primary key by changing the 
+"Primary Key Name", which by default is set to PK_&lt;Table Name&gt;
 <p>
 <center>
 <img src="images/add_pk/3_choose_pk_dialog_slected.jpg"><br>
@@ -406,7 +424,6 @@ When you are satisfied that you want to apply the refactoring to the selected
 table, click the "Execute" button to apply the change. You can click "Cancel"
 at any time and the refactoring will not be applied.
 <p>
-</center>
 <h3>Drop Primary Key</h3>
 
 A table which has a Primary Key defined can be altered to remove it.
@@ -424,7 +441,8 @@ showing the column(s) defined in the Primary Key for the selected table.
 <b><i> Figure 7. The Drop Primary Key dialog</i></b>
 </center>
 <h3>Add Column</h3>
-Columns can be added to an existing table.  
+For most databases, columns can be added to an existing table without dropping 
+the table and re-creating it.
 <p>
 <center>
 <img src="images/add_column/1_add_column_menu.jpg"><br>
@@ -441,12 +459,25 @@ different dialect (the SQL generated will be according to the dialect chosen -
 the dialect of the connected database is selected by default)  The type of the
 column can be chosen from the type list (the types are standard JDBC types which
 get mapped to vendor-specific types by the dialect specified in the dialect 
-list.  The other fields represent allowable attributes of columns in most 
-databases and should be self-explanatory.
+list).  The other fields represent allowable attributes of columns in most 
+databases and should be self-explanatory.  One thing to note regarding types and
+length / precision and scale - precision and scale only apply to number types, 
+such as NUMERIC, DECIMAL, FLOAT, etc.  The length attribute only applies to 
+character and byte types such as VARCHAR, CHAR, BINARY, etc.  In most databases
+when using BLOB and CLOB types, these attributes are ignored since large objects
+have length that is variable and high-capacity (2GB).
 <p>
 <center>
 <img src="images/add_column/2_add_column_dialog.jpg"><br>
 <b><i> Figure 9. The add column dialog</i></b>
+</center>
+<p>
+The same options that were available for adding primary keys are also available
+for adding columns (Execute, Show SQL and Edit SQL).
+<p>
+<center>
+<img src="images/add_column/3_add_column_show_sql.jpg"><br>
+<b><i> Figure 10. The SQL for the new column addition</i></b>
 </center>
 <p>
 <h3>Modify Column</h3>
