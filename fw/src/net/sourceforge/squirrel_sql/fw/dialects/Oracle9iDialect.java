@@ -180,9 +180,16 @@ public class Oracle9iDialect extends Oracle9Dialect
      *         adding columns after a table has already been created.
      */
     public String[] getColumnAddSQL(TableColumnInfo info) throws UnsupportedOperationException {
-        return new String[] {
-            DialectUtils.getColumnAddSQL(info, this, true, true, true)
-        };
+        if (info.getRemarks() != null && !"".equals(info.getRemarks())) {
+            return new String[] {
+                DialectUtils.getColumnAddSQL(info, this, true, true, true),
+                DialectUtils.getColumnCommentAlterSQL(info)
+            };            
+        } else {
+            return new String[] {
+                DialectUtils.getColumnAddSQL(info, this, true, true, true)
+            };            
+        }
     }
 
     /**
