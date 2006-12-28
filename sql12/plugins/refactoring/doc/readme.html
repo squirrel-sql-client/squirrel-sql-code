@@ -21,7 +21,7 @@ choose from the following extended Hibernate dialects:
 <p>
 
 <center>
-<table>
+<table cellspacing="5">
 <tr>
 <td align="center">
 Apache Derby
@@ -38,6 +38,8 @@ DB2
 <td align="center">
 Firebird
 </td>
+</tr>
+<tr>
 <td align="center">
 FrontBase
 </td>
@@ -50,11 +52,11 @@ HSQLDB
 <td align="center">
 Informix
 </td>
+<td align="center">
+CA Ingres
+</td>
 </tr>
 <tr>
-<td align="center">
-CA OpenIngres
-</td>
 <td align="center">
 MaxDB
 </td>
@@ -70,16 +72,17 @@ MySQL
 <td align="center">
 Oracle
 </td>
+</tr>
+<tr>
 <td align="center">
-Pointbase
+Pointbase 4.4
 </td>
 <td align="center">
-Postgres
+PostgreSQL
 </td>
 <td align="center">
 Sybase ASE 12/15
 </td>
-</tr><tr>
 <td align="center">
 TimesTen
 </td>
@@ -104,6 +107,7 @@ databases that don't support them directly.
 The following table summarizes the refactorings and their availability on 
 each supported database:
 <p>
+<center>
 <table border="1"> 
  <tr>
   <td width="60" align="center"></td>
@@ -118,225 +122,225 @@ each supported database:
   <td width="60" align="center">Drop <br>PK</td>
  </tr>
  <tr>
-  <td align="center">axion</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">Axion</td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
   <td align="center">-</td>
   <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
   <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
  </tr>
  <tr>
-  <td align="center">daffodil</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">Daffodil</td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
   <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
   <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
  </tr>
  <tr>
-  <td align="center">db2</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">DB2</td>
+  <td align="center"><img src="images/checkmark.gif"></td>
   <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
   <td align="center">-</td>
   <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
  </tr>
  <tr>
-  <td align="center">derby</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">Apache Derby</td>
+  <td align="center"><img src="images/checkmark.gif"></td>
   <td align="center">-</td>
   <td align="center">-</td>
   <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
   <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
  </tr>
  <tr>
-  <td align="center">firebird</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">Firebird</td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
   <td align="center">-</td>
   <td align="center">-</td>
   <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
  </tr>
  <tr>
-  <td align="center">frontbase</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">FrontBase</td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
   <td align="center">-</td>
   <td align="center">-</td>
   <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
   <td align="center">-</td>
   <td align="center">-</td>
  </tr>
  <tr>
-  <td align="center">h2</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">H2</td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
  </tr>
  <tr>
-  <td align="center">hsqldb</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">HSQLDB</td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
   <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
  </tr>
  <tr>
-  <td align="center">informix</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">Informix</td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
   <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
  </tr>
  <tr>
-  <td align="center">ingres</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">CA Ingres</td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
   <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
  </tr>
  <tr>
-  <td align="center">maxdb</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">MaxDB</td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
  </tr>
  <tr>
-  <td align="center">mckoi</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">Mckoi</td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
   <td align="center">-</td>
   <td align="center">-</td>
   <td align="center">-</td>
   <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
  </tr>
  <tr>
-  <td align="center">mssql</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">MS-SQLServer</td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
   <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
  </tr>
  <tr>
-  <td align="center">mysql</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">MySQL</td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
  </tr>
  <tr>
-  <td align="center">oracle</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">Oracle</td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
  </tr>
  <tr>
-  <td align="center">pointbase</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">Pointbase</td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
   <td align="center">-</td>
   <td align="center">-</td>
   <td align="center">-</td>
   <td align="center">-</td>
   <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
  </tr>
  <tr>
-  <td align="center">postgres</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">PostgreSQL</td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
  </tr>
  <tr>
-  <td align="center">sybase</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">Sybase</td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
   <td align="center">-</td>
   <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
  </tr>
  <tr>
-  <td align="center">timesten</td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
-  <td align="center"><img src="images/checkmark.gif"/></td>
+  <td align="center">TimesTen</td>
+  <td align="center"><img src="images/checkmark.gif"></td>
+  <td align="center"><img src="images/checkmark.gif"></td>
   <td align="center">-</td>
   <td align="center">-</td>
   <td align="center">-</td>
@@ -346,8 +350,134 @@ each supported database:
   <td align="center">-</td>
  </tr>
 </table>
-
+</center>
 <h3>Add Primary Key</h3>
+
+A table which doesn't already have a Primary Key defined can be altered to 
+specify one.  A primary key uniquely identifies each row in the table, and as
+such must consist only of one or more "non-null" columns.  For some databases 
+defining a primary key after table creation implicitly creates constraints 
+which check for "non-null" property, while others require explicit SQL to add
+these constraints manually.  The add primary key feature of the refactoring 
+plugin takes this into consideration for each supported database when generating
+the SQL necessary to make this change.  The following screenshots illustrate 
+adding a primary key to an existing table.
+<p>
+<center>
+<img src="images/add_pk/1_add_pk_menu.jpg"><br>
+<b><i> Figure 1. Right-click to access the context menu for adding a Primary Key</i></b>
+</center>
+<p>
+First, choose a table to add a primary key to and right-click to access the 
+refactoring menus.
+<p>
+<center>
+<img src="images/add_pk/2_choose_pk_dialog_unslected.jpg"><br>
+<b><i> Figure 2. Dialog displaying columns available for PK in the selected table</i></b>
+</center>
+<p>
+You will see a dialog displaying all of the columns from the selected table that 
+are available for use in the new primary key.
+<p>
+<center>
+<img src="images/add_pk/3_choose_pk_dialog_slected.jpg"><br>
+<b><i> Figure 3. Choosing a single column to be the Primary Key</i></b>
+</center>
+<p>
+Next, choose the column (or columns) that will form the new primary key for the 
+selected table.
+<p>
+<center>
+<img src="images/add_pk/4_add_pk_sql.jpg"><br>
+<b><i> Figure 4. Showing the SQL for adding a PK to the table</i></b>
+</center>
+<p>
+You can display the SQL that will be executed by clicking on the "Show SQL" 
+button.  Alternatively, you can click the "Edit SQL" button and the refactoring
+SQL will be placed into the SQL editor tab for you to inspect/customize before
+executing.
+<p>
+<center>
+<img src="images/add_pk/5_add_pk_after_execute.jpg"><br>
+<b><i> Figure 5. After clicking the "Execute" button the change is applied</i></b>
+</center>
+<p>
+When you are satisfied that you want to apply the refactoring to the selected
+table, click the "Execute" button to apply the change. You can click "Cancel"
+at any time and the refactoring will not be applied.
+<p>
+</center>
+<h3>Drop Primary Key</h3>
+
+A table which has a Primary Key defined can be altered to remove it.
+First, access the "Drop Primary Key" menu by right-clicking on a selected table.
+<center>
+<p>
+<img src="images/drop_pk/1_drop_pk_menu.jpg"><br>
+<b><i> Figure 6. Right-click to access the context menu for dropping a Primary Key</i></b>
+<p>
+</center>
+Next, choose "Drop Primary Key" and the drop primary key dialog will appear 
+showing the column(s) defined in the Primary Key for the selected table.
+<center>
+<img src="images/drop_pk/2_drop_pk_dialog.jpg"><br>
+<b><i> Figure 7. The Drop Primary Key dialog</i></b>
+</center>
+<h3>Add Column</h3>
+Columns can be added to an existing table.  
+<p>
+<center>
+<img src="images/add_column/1_add_column_menu.jpg"><br>
+<b><i> Figure 8. Right-click to access the context menu for adding a column</i></b>
+</center>
+<p>
+The add column dialog allows you to specify the definition of the new column to 
+be added to the selected table.  Some attributes may be read-only in the case 
+where the database doesn't support the attribute (for example, column comments) , 
+or else don't allow them to be used when adding columns.  In this case, the 
+dialog field that corresponds to an unavailable attribute will be disabled.  The
+"Dialect" drop-down list allows you to see the effect on the SQL when using a 
+different dialect (the SQL generated will be according to the dialect chosen - 
+the dialect of the connected database is selected by default)  The type of the
+column can be chosen from the type list (the types are standard JDBC types which
+get mapped to vendor-specific types by the dialect specified in the dialect 
+list.  The other fields represent allowable attributes of columns in most 
+databases and should be self-explanatory.
+<p>
+<center>
+<img src="images/add_column/2_add_column_dialog.jpg"><br>
+<b><i> Figure 9. The add column dialog</i></b>
+</center>
+<p>
+<h3>Modify Column</h3>
+Existing columns can be modified in most databases, although with many more 
+restrictions on supported attributes than adding a new column.  
+<p>
+<center>
+<img src="images/modify_column/1_modify_column_menu.jpg"><br>
+<b><i> Figure 10. Right-click to access the context menu for modifying a column</i></b>
+</center>
+<p>
+Only one column at a time may be modified in the selected table.
+<p>
+<center>
+<img src="images/modify_column/2_modify_column_dialog.jpg"><br>
+<b><i> Figure 11. Choose a column to modify</i></b>
+</center>
+<p>
+The attributes of the column to be modified appear in the modify column dialog
+populated with the current values.  Similar to adding columns, attributes that
+are immutable on existing columns in the specified dialect are disable 
+(read-only).
+<p>
+<center>
+<img src="images/modify_column/3_modify_column_dialog.jpg"><br>
+<b><i> Figure 12. Modify attributes of the selected column</i></b>
+</center>
+
+<h3>Drop Column</h3>
+
+
 
 </BODY>
 </HTML>

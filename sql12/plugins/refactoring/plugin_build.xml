@@ -76,13 +76,13 @@
 				<include name="**/*.*"/>
 			</fileset>
 		</jar>
-		<!--
+
 		<copy todir="${p_plugin.dist_dir}/${internal_name}" >
 			<fileset dir="doc" >
-				<include name="*.*"/>
+				<include name="**/*.*"/>
 			</fileset>
 		</copy>
-
+		<!--
 		<copy todir="${p_plugin.dist_dir}/${internal_name}/lib" >
 			<fileset dir="lib" >
 				<include name="**/*.*"/>
