@@ -59,7 +59,7 @@ public abstract class AbstractRefactoringCommand implements ICommand {
             columnListDialog.setLocationRelativeTo(mainFrame);  
             columnListDialog.setMultiSelection();
         }
-        columnListDialog.setTableName(ti.getSimpleName());
+        columnListDialog.setTableName(ti.getQualifiedName());
         if (mode == ColumnListDialog.ADD_PRIMARY_KEY_MODE) {
             // Set a default primary key name based on the name of the table
             String pkName = "PK_"+columns[0].getTableName().toUpperCase();

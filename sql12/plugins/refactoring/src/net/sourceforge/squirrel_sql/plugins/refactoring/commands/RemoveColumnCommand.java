@@ -125,7 +125,7 @@ public class RemoveColumnCommand extends AbstractRefactoringCommand
             dialect = DialectFactory.getDialect(_session, DialectFactory.DEST_TYPE);
             for (int i = 0; i < columns.length; i++) {
                 TableColumnInfo info = columns[i];
-                result[i] = DBUtil.getAlterSQLForColumnRemoval(info.getTableName(), 
+                result[i] = DBUtil.getAlterSQLForColumnRemoval(_info.getQualifiedName(), 
                                                                info, 
                                                                dialect);
             }

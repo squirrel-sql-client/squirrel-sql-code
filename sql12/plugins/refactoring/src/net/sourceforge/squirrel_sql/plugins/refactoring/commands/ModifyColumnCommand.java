@@ -158,6 +158,7 @@ public class ModifyColumnCommand extends AbstractRefactoringCommand
             columnDetailDialog = 
                 new ColumnDetailDialog(ColumnDetailDialog.MODIFY_MODE);
             columnDetailDialog.setExistingColumnInfo(columnToModify);
+            columnDetailDialog.setTableName(_info.getQualifiedName());
             columnDetailDialog.addShowSQLListener(new ShowSQLButtonListener());
             columnDetailDialog.addEditSQLListener(new EditSQLListener());
             columnDetailDialog.addExecuteListener(new OKButtonListener());

@@ -78,7 +78,7 @@ public class AddColumnCommand extends AbstractRefactoringCommand
      */
     public void execute()
     {
-        String tableName = _info.getSimpleName();
+        String tableName = _info.getQualifiedName();
         try {
             dialect =  
                 DialectFactory.getDialect(_session, DialectFactory.DEST_TYPE);
