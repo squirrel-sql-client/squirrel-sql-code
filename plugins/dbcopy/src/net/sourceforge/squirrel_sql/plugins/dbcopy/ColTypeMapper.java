@@ -117,7 +117,7 @@ public class ColTypeMapper {
             s_log.debug(
                     "ColTypeMapper.mapColType: using dialect type: "+
                     destDialect.getClass().getName()+" to find name for column "+
-                    colInfo.getColumnName()+"in table "+destTableName+
+                    colInfo.getColumnName()+" in table "+destTableName+
                     " with type id="+colJdbcType+" ("+
                     JDBCTypeMapper.getJdbcTypeName(colJdbcType)+")");
         }
