@@ -1,19 +1,21 @@
 SQuirreL SQL Client Change Log
 ==============================
 
-Not yet released - available in the latest snapshot, or at least checked into CVS.
-=========
+2.4 (12/31/2006)
+================
 
     New Features/Enhancements:
 
+Note: This is the first release of SQuirreL that specifically requires JDK 1.5 
+or higher to compile and run. The build scripts and the installer now check for 
+at least 1.5 before proceeding.
+
 MS Excel export of displayed tables:
-  Besides the exporting tables displayed in SQuirreL to CSV files it is now possible to export to MS Excel files.
-  Thanks to André Schild for the patch.
+  Besides the exporting tables displayed in SQuirreL to CSV files it is now 
+  possible to export to MS Excel files. Thanks to Andrï¿½ Schild for the patch.
 
 Graph Plugin: New right mouse menu item for tables: "View table in Object tree"
-  CAUTION: First use of JDK 1.5 specific code in SQuirreL's core, will compile only with JDK 1.5 or higher.
 
-    
 Derby Plugin: A new plugin which allows the user to view source for triggers and
 views.  Also, detailed information about triggers is available.
 
@@ -29,7 +31,7 @@ Primary Keys.  Uses an extended Hibernate dialect framework to derive SQL which
 is syntactically correct for the database being modified.
 
 Made SQuirreL work with hxtt drivers. See www.hxtt.com. Thanks to Yonghong Zhao 
-the patches.
+for patches.
 
 Oracle Plugin:
    Windows for
@@ -76,7 +78,9 @@ The image files are an exact copy of what would be sent to a printer and
 can easily be used within other applications.
 (Feature requested by David Karr)
 
-DBCopy Plugin: Added support for Informix and HADB
+DBCopy Plugin: Added support for Informix and HADB.  Relocated dialect framework
+to core to allow other plugins to use (Refactoring) - this version is now no 
+longer compatible or supported for previous versions of SQuirreL.
 
 Re-organized the table and view context menus so that the SQLScripts 
 plugin menu items now appear under the "Scripts" menu item and in the
@@ -99,8 +103,8 @@ MySQL Plugin: Fixed bug which caused the MySQL all of the tabs to appear with no
 content.
 
 SQL editor function "View Object at cursor in Object tree" (ctrl+B) now works
-for fully qualified object names with leading and trailing quotation marks and slashes.
-  CAUTION: First use of JDK 1.5 specific code in SQuirreL's core, will compile only with JDK 1.5 or higher.
+for fully qualified object names with leading and trailing quotation marks and 
+slashes.
 
 Oracle plugin: Fixed the rendering of details/source tabs for indexes
 sequences and triggers.
@@ -122,8 +126,6 @@ DBCopy plugin:
 
   - Fixed bug where cancelling the copy operation during table data transfer 
     did not also cancel the transfer of table constraints.
-
-  - Removed needless dependency on Java 5 from the DBCopy plugin. 
 
 1601610 - Bug while editing integer/long columns
   
