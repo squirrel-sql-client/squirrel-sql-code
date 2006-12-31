@@ -68,69 +68,73 @@
 	<tr>
       <td class="body_left_border">&nbsp;</td>
       <td width='100%' class="body" bgcolor="white" valign="top">
-         <h1 class="body"><A name="newfeatures">2.3.x Highlights:</A></h1>
+         <h1 class="body"><A name="newfeatures">2.4 Highlights:</A></h1>
          <ul>
+            <li> Note: This is the first release of SQuirreL that specifically 
+            requires JDK 1.5 or higher to compile and run. The build scripts and 
+            the installer now check for at least Java 1.5 before proceeding.
+            
+            </li>
             <li>Enhancements </li>
             <UL>
-               <li>Centralized Database Meta Data caching provides the following improvements:
+               <li>New plugins provide enhanced capabilities:
                   <UL>
                      <li>
-                        The Object Tree is now updated immediately to reflect the DDL statements
-                        executed in the SQL Editor. This works as long as standard DDL statements are used.
+                     Derby Plugin: Shows source SQL for views and triggers as 
+                     well as further details about triggers
                      </li>
                      <li>
-                        Syntax coloring and code completion for newly created tables, views, columns, procedures is
-                        available
-                        right after a DDL statement was run. This works as long as standard DDL statements are used.
+                     Informix Plugin: Shows source SQL for Stored Procedures, 
+                     Triggers and Views as well as details for Sequences and 
+                     Indexes. (Special thanks to Doug Lawry for data dictionary 
+                     queries)
                      </li>
                      <li>
-                        The refresh button updates the Object tree as well as syntax highlighting and code completion.
+                     Refactoring Plugin: Allows you to view SQL alterations for
+                     several refactorings or apply them directly to existing 
+                     tables.  Refactorings supported are Add/Modify/Drop columns
+                     and Add/Drop Primary Key.
                      </li>
                   </UL>
                </li>
 
-               <li>Session startup performance
-                  <ul>
-                     <li>General: New Alias properties allow to configure the loading and caching of Schemas.</li>
-                     <li>Oracle: When the Oracle Plugin is used the user is able to configure Schema loading
-                         according tohis access privileges.
-                        <br>
-                        <a  style="color: red">Note: By default only those Schemas that the user has access to are loaded.</a></li>
-                  </ul>
+               <li>MS Excel export of displayed tables - thanks to André Schild
+                   for the patch
                </li>
-               <li>Output displayed tables to CSV files. The user can choose to immediately 
-                   open table contents in another application like Open Office Calc or MS Excel.
+               <li>Enhancements to the Graph Plugin
+                  <ul> 
+                  	<li> Allows graphs to be saved as jpg images files instead of printing them </li>
+                  	<li> New right mouse menu item for tables: "View table in Object tree" </li>
+            	  </ul>   
                </li>
-
-               <li>Enhancements of the Bookmarks Plugin
-                  <ul>
-                     <li>Bookmark preferences can be opened by the new "Edit Bookmarks" button in the Session tool
-                        bar.</li>
-                     <li>
-                        Bookmarks can be run from within the Bookmark Preferences.
-                     </li>
-                     <li>
-                        Many additional "SQuirreL Bookmarks" which are templates for many common SQL/DDL statements.
-                     </li>
-                     <li>
-                        Users can choose to see "SQuirreL Bookmarks" in the Bookmarks 
-                        selection popup of the SQL Editor (ctrl j).
-                     </li>
-                  </ul>
+			
+               <li>Made SQuirreL work with hxtt drivers. 
+               See <a href="http://www.hxtt.com">www.hxtt.com</a>. 
+               (Thanks to Yonghong Zhao for this patch)
                </li>
-
-               <li>Quickly adopt column widths to column values when table header is double clicked while the resize
-                  mouse pointer (<-->) is visible (like Open Office Calc or MS Excel).</li>
-
-               <li>New tool bar button to quickly toggle auto commit.</li>
-               
-               <li>Optional internationalization jars have been added to the 
-                   installer(Simplified Chinese (xpdz), French (Erwan Duroselle), 
-                   German (Andreas Oswald) and Italian (Ivo Neri)</li>
-                   
-			   <li>DBCopy plugin which allows tables (definition and data) to be 
-			       easily copied from one session to another (can be different 
-			       databases)</li>
+               <li> DBCopy Plugin: 
+               	<ul>
+               	    <li> Added support for Informix and HADB. Special 
+                    thanks goes to Lars Heill (Sun HADB) and Doug Lawry (IBM Informix) 
+                    for help with installation/configuration and technical guidance
+                    regarding data types.
+                    </li>
+                    <li> Promoted dialect framework to core to allow other plugins 
+                    to use (Refactoring) - this version of DBCopy plugin (1.1) 
+                    is now no longer compatible or supported for previous 
+                    versions of SQuirreL.
+                    </li>
+                 </ul>
+				</li>
+				<li> Schema refresh on catalog combo box change:
+				Schemas are refreshed automatically, when the user switches to 
+				another catalog. On systems that support Catalogs like Sybase 
+				or MSSQL, Schemas within a Catalog only become accessible when 
+				the catalog combo box is switched to the their Catalog. To make 
+				Schemas available in the Object Tree, Code completion etc. after 
+				a Catalog switch Schemas are now automatically refreshed.
+				(Thanks to Stan Berka for this patch)		
+				</li>		
             </UL>
             <li>Many bug fixes</li>
          </ul>
@@ -197,7 +201,7 @@
 			<p>SQuirreL SQL Client is a graphical Java program that will
 			allow you to view the structure of a JDBC compliant
 			database, browse the data in tables, issue SQL commands etc, see <a href="index.php?page=screenshots">Introduction</a>.
-			The minimum version of Java supported is 1.4.x. We recommend 1.5.x. See the
+			The minimum version of Java supported is 1.5.x. See the
 			<a href="index.php?page=old">Old Versions</a> 
 			page for versions of SQuirreL that will work with older
 			versions of Java.
