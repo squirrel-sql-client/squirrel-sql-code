@@ -76,7 +76,8 @@ public class Version
          || vmVer.startsWith("1.0")
          || vmVer.startsWith("1.1")
          || vmVer.startsWith("1.2")
-         || vmVer.startsWith("1.3"))
+         || vmVer.startsWith("1.3")
+         || vmVer.startsWith("1.4"))
       {
          return false;
       }
