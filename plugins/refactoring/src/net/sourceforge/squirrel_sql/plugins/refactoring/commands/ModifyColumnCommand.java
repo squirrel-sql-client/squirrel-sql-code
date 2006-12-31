@@ -113,7 +113,7 @@ public class ModifyColumnCommand extends AbstractRefactoringCommand
                 listDialog.setLocationRelativeTo(mainFrame);
                 listDialog.setSingleSelection();
             }
-            listDialog.setTableName(ti.getSimpleName());
+            listDialog.setTableName(ti.getQualifiedName());
             listDialog.setVisible(true);
         } catch (SQLException e) {
             log.error("Unexpected exception "+e.getMessage(), e);

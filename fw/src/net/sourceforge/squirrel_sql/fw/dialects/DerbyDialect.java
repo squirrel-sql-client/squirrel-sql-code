@@ -22,6 +22,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -245,7 +246,8 @@ public class DerbyDialect extends DB2Dialect
      * @return
      */
     public String[] getAddPrimaryKeySQL(String pkName, 
-                                        TableColumnInfo[] colInfos) 
+                                        TableColumnInfo[] colInfos, 
+                                        ITableInfo ti) 
     {
         ArrayList result = new ArrayList();
         String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
@@ -258,7 +260,7 @@ public class DerbyDialect extends DB2Dialect
                                            false, 
                                            result);
         
-        result.add(DialectUtils.getAddPrimaryKeySQL(pkName, colInfos, false));
+        result.add(DialectUtils.getAddPrimaryKeySQL(ti, pkName, colInfos, false));
         
         return (String[])result.toArray(new String[result.size()]);
     }

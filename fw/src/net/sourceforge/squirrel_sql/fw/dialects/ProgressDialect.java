@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 import java.sql.Types;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 /**
@@ -246,7 +247,7 @@ public class ProgressDialect extends org.hibernate.dialect.Dialect
      * @return
      */
     public String[] getAddPrimaryKeySQL(String pkName, 
-                                      TableColumnInfo[] columnNames) 
+                                      TableColumnInfo[] columnNames, ITableInfo ti) 
     {
         // TODO: implement
         throw new UnsupportedOperationException("Not yet implemented");

@@ -22,6 +22,7 @@ import java.sql.Types;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
@@ -274,14 +275,13 @@ public class Oracle9iDialect extends Oracle9Dialect
      * Returns the SQL that forms the command to add a primary key to the 
      * specified table composed of the given column names.
      * @param columns the columns that form the key
-     * 
      * @return
      */
     public String[] getAddPrimaryKeySQL(String pkName,
-                                        TableColumnInfo[] columns) {
+                                        TableColumnInfo[] columns, ITableInfo ti) {
         StringBuffer result = new StringBuffer();
         result.append("ALTER TABLE ");
-        result.append(columns[0].getTableName());
+        result.append(ti.getQualifiedName());
         result.append(" ADD CONSTRAINT ");
         result.append(pkName);
         result.append(" PRIMARY KEY (");

@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 import java.sql.Types;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 /**
@@ -227,20 +228,17 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect
      * 
      * ALTER TABLE table_name ADD CONSTRAINT constraint_name PRIMARY KEY (column_name);
      * 
-     * ALTER TABLE test2 ADD CONSTRAINT test2_pk PRIMARY KEY (pkCol)
-     * 
-     * alter table test2 drop constraint test2_pk
-     * 
      * @param pkName the name of the constraint
      * @param columnNames the columns that form the key
      * @return
      */
     public String[] getAddPrimaryKeySQL(String pkName, 
-                                      TableColumnInfo[] columns) 
+                                      TableColumnInfo[] columns, 
+                                      ITableInfo ti) 
     {
         StringBuffer result = new StringBuffer();
         result.append("ALTER TABLE ");
-        result.append(columns[0].getTableName());
+        result.append(ti.getQualifiedName());
         result.append(" ADD CONSTRAINT ");
         result.append(pkName);
         result.append(" PRIMARY KEY (");

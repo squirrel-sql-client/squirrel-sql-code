@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 import org.hibernate.Hibernate;
@@ -454,18 +455,23 @@ public class H2Dialect extends Dialect implements HibernateDialect {
      * 
      * alter table test add primary key (mychar)
      * 
+     * alter table pktest add constraint pk_pktest primary key (pkcol)
+     * 
      * @param pkName the name of the constraint
      * @param columns the columns that form the key
      * @return
      */
     public String[] getAddPrimaryKeySQL(String pkName, 
-                                        TableColumnInfo[] columns) 
+                                        TableColumnInfo[] columns, 
+                                        ITableInfo ti) 
     {
         ArrayList result = new ArrayList();
         StringBuffer addPKSQL = new StringBuffer();
         addPKSQL.append("ALTER TABLE ");
-        addPKSQL.append(columns[0].getTableName());
-        addPKSQL.append(" ADD PRIMARY KEY (");
+        addPKSQL.append(ti.getQualifiedName());
+        addPKSQL.append(" ADD CONSTRAINT ");
+        addPKSQL.append(pkName);
+        addPKSQL.append(" PRIMARY KEY (");
         for (int i = 0; i < columns.length; i++) {
             TableColumnInfo info = columns[i];
             if (info.isNullable().equals("YES")) {

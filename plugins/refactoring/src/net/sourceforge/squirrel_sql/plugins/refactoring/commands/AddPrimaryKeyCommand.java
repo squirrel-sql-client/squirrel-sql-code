@@ -107,7 +107,7 @@ public class AddPrimaryKeyCommand extends AbstractRefactoringCommand {
 
             String pkName = columnListDialog.getPrimaryKeyName();
             
-            result = dialect.getAddPrimaryKeySQL(pkName, columns);
+            result = dialect.getAddPrimaryKeySQL(pkName, columns, (ITableInfo)_info);
         } catch (UnsupportedOperationException e2) {
             //i18n[AddPrimaryKeyCommand.unsupportedOperationMsg=The {0} 
             //dialect doesn't support adding primary keys to tables]
@@ -115,7 +115,7 @@ public class AddPrimaryKeyCommand extends AbstractRefactoringCommand {
                 s_stringMgr.getString("AddPrimaryKeyCommand.unsupportedOperationMsg", 
                                       dialect.getDisplayName());
                                       
-            _session.getMessageHandler().showMessage(msg);
+            _session.getMessageHandler().showErrorMessage(msg);
         } catch (UserCancelledOperationException e) {
             // user cancelled selecting a dialog. do nothing?
         }
@@ -160,17 +160,15 @@ public class AddPrimaryKeyCommand extends AbstractRefactoringCommand {
             CommandExecHandler handler = new CommandExecHandler(_session);
             
             String[] addPKSQLs = getSQLFromDialog();
-            
-            for (int i = 0; i < addPKSQLs.length; i++) {
-                String addPKSQL = addPKSQLs[i];
-                log.info("AddPrimaryKeyCommand: executing SQL - "+addPKSQL);
-                SQLExecuterTask executer = 
-                    new SQLExecuterTask(_session, addPKSQL, handler);
-                executer.run();
+            if (addPKSQLs != null) {
+                for (int i = 0; i < addPKSQLs.length; i++) {
+                    String addPKSQL = addPKSQLs[i];
+                    log.info("AddPrimaryKeyCommand: executing SQL - "+addPKSQL);
+                    SQLExecuterTask executer = 
+                        new SQLExecuterTask(_session, addPKSQL, handler);
+                    executer.run();
+                }
             }
-            
-            
-            
             columnListDialog.setVisible(false);
         }
         

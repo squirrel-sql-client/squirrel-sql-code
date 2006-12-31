@@ -23,6 +23,7 @@ import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 import org.hibernate.dialect.SAPDBDialect;
@@ -211,14 +212,14 @@ public class MAXDBDialect extends SAPDBDialect
      * @return
      */
     public String[] getAddPrimaryKeySQL(String pkName, 
-                                        TableColumnInfo[] columns) 
+                                        TableColumnInfo[] columns, ITableInfo ti) 
     {
         ArrayList result = new ArrayList();
         for (int i = 0; i < columns.length; i++) {
             TableColumnInfo info = columns[i];
             result.add(getColumnNullableAlterSQL(info, false));
         }
-        result.add(DialectUtils.getAddPrimaryKeySQL(pkName, columns, false));
+        result.add(DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false));
         return (String[])result.toArray(new String[result.size()]);
     }
     
