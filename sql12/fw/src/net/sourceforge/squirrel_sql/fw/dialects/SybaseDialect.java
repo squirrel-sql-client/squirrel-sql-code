@@ -51,7 +51,7 @@ public class SybaseDialect extends org.hibernate.dialect.SybaseDialect
         registerColumnType(Types.NUMERIC, "numeric($p)");
         registerColumnType(Types.REAL, "real");
         registerColumnType(Types.SMALLINT, "smallint");
-        registerColumnType(Types.TIME, "datetime");
+        registerColumnType(Types.TIME, "time");
         registerColumnType(Types.TIMESTAMP, "datetime");
         registerColumnType(Types.TINYINT, "tinyint");
         registerColumnType(Types.VARBINARY, "image");
