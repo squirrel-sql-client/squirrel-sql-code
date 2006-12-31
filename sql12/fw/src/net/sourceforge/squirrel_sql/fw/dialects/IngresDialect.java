@@ -23,7 +23,7 @@ import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 /**
@@ -277,7 +277,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect
      * @return
      */
     public String[] getAddPrimaryKeySQL(String pkName, 
-                                        TableColumnInfo[] columns) 
+                                        TableColumnInfo[] columns, ITableInfo ti) 
     {
         ArrayList result = new ArrayList();
         String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
@@ -291,7 +291,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect
                                                        true);
             result.add(notNullSQL);
         }
-        result.add(DialectUtils.getAddPrimaryKeySQL(pkName, columns, false));
+        result.add(DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false));
         return (String[])result.toArray(new String[result.size()]);
     }
     

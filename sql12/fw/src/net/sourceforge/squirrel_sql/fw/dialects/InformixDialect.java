@@ -22,6 +22,7 @@ import java.sql.Types;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 /**
@@ -261,13 +262,15 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect
      *            the columns that form the key
      * @return
      */
-    public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns) {
-        
+    public String[] getAddPrimaryKeySQL(String pkName, 
+                                        TableColumnInfo[] columns, 
+                                        ITableInfo ti) 
+    {
         // TODO: should also make sure that each of the columns is made "NOT NULL"
         
         return new String[] { 
             DialectUtils.getAddIndexSQL(pkName, true, columns),
-            DialectUtils.getAddPrimaryKeySQL(pkName, columns, true) 
+            DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, true) 
         };
     }
 

@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.util.ArrayList;
 
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -398,19 +399,20 @@ public class DialectUtils {
      * or
      * 
      * ALTER TABLE table_name ADD CONSTRAINT PRIMARY KEY (col,...) CONSTRAINT pkName;
-     *  
+     * @param ti TODO
      * @param colInfos
      * @param appendConstraintName whether or not the pkName (constraint name) 
      *                             should be placed at the end of the statement.
      *  
      * @return
      */
-    public static String getAddPrimaryKeySQL(String pkName, 
+    public static String getAddPrimaryKeySQL(ITableInfo ti, 
+                                             String pkName, 
                                              TableColumnInfo[] colInfos, 
                                              boolean appendConstraintName) {
         StringBuffer pkSQL = new StringBuffer();
         pkSQL.append("ALTER TABLE ");
-        pkSQL.append(colInfos[0].getTableName());
+        pkSQL.append(ti.getQualifiedName());
         pkSQL.append(" ADD CONSTRAINT ");
         if (!appendConstraintName) {
             pkSQL.append(pkName);

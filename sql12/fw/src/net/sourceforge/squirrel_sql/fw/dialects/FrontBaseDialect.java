@@ -22,6 +22,7 @@ import java.sql.Types;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 /**
@@ -257,7 +258,7 @@ public class FrontBaseDialect extends org.hibernate.dialect.FrontBaseDialect
      * @return
      */
     public String[] getAddPrimaryKeySQL(String pkName, 
-                                      TableColumnInfo[] columnNames) 
+                                      TableColumnInfo[] columnNames, ITableInfo ti) 
     {
         int featureId = DialectUtils.ADD_PRIMARY_KEY_TYPE;
         String msg = DialectUtils.getUnsupportedMessage(this, featureId);

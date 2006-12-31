@@ -22,6 +22,7 @@ import java.sql.Types;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
@@ -271,11 +272,11 @@ public class HSQLDialect extends org.hibernate.dialect.HSQLDialect
      * @return
      */
     public String[] getAddPrimaryKeySQL(String pkName, 
-                                        TableColumnInfo[] columns) 
+                                        TableColumnInfo[] columns, ITableInfo ti) 
     {
         StringBuffer result = new StringBuffer();
         result.append("ALTER TABLE ");
-        result.append(columns[0].getTableName());
+        result.append(ti.getQualifiedName());
         result.append(" ADD CONSTRAINT ");
         result.append(pkName);
         result.append(" PRIMARY KEY (");

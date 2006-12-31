@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 import java.sql.Types;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 /**
@@ -232,12 +233,13 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect
      * @return
      */
     public String[] getAddPrimaryKeySQL(String pkName, 
-                                      TableColumnInfo[] columns) 
+                                      TableColumnInfo[] columns, 
+                                      ITableInfo ti) 
     {
         // Axion doesn't allow column alterations of the nullable attribute.  
         // Fortunately, it doesn't require this to add a primary key.
         return new String[] {
-            DialectUtils.getAddPrimaryKeySQL(pkName, columns, false)
+            DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false)
         };
     }
     

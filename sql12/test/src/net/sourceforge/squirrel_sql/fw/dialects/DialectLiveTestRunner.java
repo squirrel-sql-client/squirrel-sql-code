@@ -13,7 +13,10 @@ import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.db.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.MockSession;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 
 /**
  * The purpose of this class is to hookup to the database(s) specified in 
@@ -40,6 +43,10 @@ public class DialectLiveTestRunner {
     // This column is created in the create script abd unused unless testing DB2 
     TableColumnInfo db2pkCol = null;
     TableColumnInfo notNullIntegerCol = null;
+    
+    // two columns to represent a Primary key in the pktest table
+    TableColumnInfo doubleColumnPKOne = null;
+    TableColumnInfo doubleColumnPKTwo = null;
     
     private static final String DB2_PK_COLNAME = "db2pkCol";
     
@@ -68,7 +75,7 @@ public class DialectLiveTestRunner {
     }
     
     private void init(ISession session) throws Exception {
-        createTestTable(session);
+        createTestTables(session);
         firstCol = getIntegerColumn("nullint", "test1", true, "0", "An int comment");
         secondCol = getIntegerColumn("notnullint", "test2", false, "0", "An int comment");
         thirdCol = getVarcharColumn("nullvc", "test3", true, "defVal", "A varchar comment");
@@ -82,6 +89,14 @@ public class DialectLiveTestRunner {
         pkCol = getIntegerColumn("pkCol", "test", false, "0", "primary key column");
         notNullIntegerCol = getIntegerColumn("notNullIntegerCol", "test5", false, "0", "potential pk column");
         db2pkCol = getIntegerColumn(DB2_PK_COLNAME, "test", false, "0", "A DB2 Primary Key column");
+        
+        // These two columns will be the only ones in the pktest table.  They will 
+        // start out being nullable, and we will test that the dialect correctly
+        // converts them to non-null then applies the PK constraint to them.
+        // This test shall not be run against any database dialect that claims not
+        // to support changing the nullability of a column.
+        doubleColumnPKOne = getIntegerColumn("pk_col_1", "pktest", true, null, "an initially nullable field to be made part of a PK");
+        doubleColumnPKTwo = getIntegerColumn("pk_col_2", "pktest", true, null, "an initially nullable field to be made part of a PK");
     }
     
     private void dropTable(ISession session, String tableName) throws Exception {
@@ -102,50 +117,52 @@ public class DialectLiveTestRunner {
      * @param session
      * @throws Exception
      */
-    private void createTestTable(ISession session) throws Exception {
+    private void createTestTables(ISession session) throws Exception {
+        HibernateDialect dialect = 
+            DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);  
+
         dropTable(session, "test");
         dropTable(session, "test1");
         dropTable(session, "test2");
         dropTable(session, "test3");
         dropTable(session, "test4");
         dropTable(session, "test5");
+        dropTable(session, "pktest");
 
+        String pageSizeClause = "";
+        
         if (DialectFactory.isIngresSession(session)) {
             // alterations fail for some reason unless you do this...
-            runSQL(session, "create table test ( mychar char(10)) with page_size=4096");
-            
-            // add some point, can no longer add columns because we exceed max row length
-            // So just create a table for each test
-            runSQL(session, "create table test1 ( mychar char(10)) with page_size=4096");
-            runSQL(session, "create table test2 ( mychar char(10)) with page_size=4096");
-            runSQL(session, "create table test3 ( mychar char(10)) with page_size=4096");
-            runSQL(session, "create table test4 ( mychar char(10)) with page_size=4096");
-            runSQL(session, "create table test5 ( mychar char(10)) with page_size=4096");
-        } else if (DialectFactory.isDB2Session(session)) {
+            pageSizeClause = " with page_size=4096";
+        } 
+        
+        if (DialectFactory.isDB2Session(session)) {
             // db2pkCol is used to create a PK when using DB2.  DB2 doesn't allow
             // you to add a PK to a table after it has been constructed unless the
             // column(s) that comprise the PK were originally there when created
             // *and* created not null.
             runSQL(session, "create table test ( mychar char(10), "+DB2_PK_COLNAME+" integer not null)");
-            runSQL(session, "create table test1 ( mychar char(10))");
-            runSQL(session, "create table test2 ( mychar char(10))");
-            runSQL(session, "create table test3 ( mychar char(10))");
-            runSQL(session, "create table test4 ( mychar char(10))");
-            runSQL(session, "create table test5 ( mychar char(10))");
-            
         } else {
-            runSQL(session, "create table test ( mychar char(10))");
-            runSQL(session, "create table test1 ( mychar char(10))");
-            runSQL(session, "create table test2 ( mychar char(10))");
-            runSQL(session, "create table test3 ( mychar char(10))");
-            runSQL(session, "create table test4 ( mychar char(10))");
-            runSQL(session, "create table test5 ( mychar char(10))");            
+            runSQL(session, "create table test ( mychar char(10))"+pageSizeClause);
+        }
+        
+        runSQL(session, "create table test1 ( mychar char(10))"+pageSizeClause);
+        runSQL(session, "create table test2 ( mychar char(10))"+pageSizeClause);
+        runSQL(session, "create table test3 ( mychar char(10))"+pageSizeClause);
+        runSQL(session, "create table test4 ( mychar char(10))"+pageSizeClause);
+        runSQL(session, "create table test5 ( mychar char(10))"+pageSizeClause);
+        
+        if (dialect.supportsAlterColumnNull()) {
+            runSQL(session, "create table pktest ( pk_col_1 integer, pk_col_2 integer )"+pageSizeClause);
         }
     }    
     
-    private void runTests() throws Exception {
-        for (Iterator iter = sessions.iterator(); iter.hasNext();) {
+    private void runTests() throws Exception {        
+        for (Iterator iter = sessions.iterator(); iter.hasNext();) {            
             ISession session = (ISession) iter.next();
+            HibernateDialect dialect = 
+                DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);  
+
             init(session);
             testAddColumn(session);
             testDropColumn(session);
@@ -173,6 +190,18 @@ public class DialectLiveTestRunner {
                     testDropPrimaryKey(session, notNullIntegerCol.getTableName());
                 } catch (UnsupportedOperationException e) {
                     System.err.println("doesn't support dropping primary keys");
+                }
+                
+                // Test whether or not the dialect correctly converts nullable
+                // columns to not-null before applying the primary key - if 
+                // necessary
+                if (dialect.supportsAlterColumnNull()) {
+                    try {
+                        TableColumnInfo[] infos = new TableColumnInfo[] {doubleColumnPKOne, doubleColumnPKTwo}; 
+                        testAddPrimaryKey(session, infos);
+                    } catch (UnsupportedOperationException e) {
+                        System.err.println("doesn't support adding primary keys");
+                    } 
                 }
             }
             
@@ -390,8 +419,31 @@ public class DialectLiveTestRunner {
 
         String tableName = colInfos[0].getTableName();
         
+        if (session.getSQLConnection().getSQLMetaData().storesUpperCaseIdentifiers()) {
+            tableName = tableName.toUpperCase();
+        }
+        
+        SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
+        String catalog = "";
+        String schemaPattern = "";
+        
+        ITableInfo[] infos = null;
+        try {
+            md.getTables(catalog, schemaPattern, tableName, new String[] {"TABLE"}, null);
+        } catch (SQLException e) {
+            // Do nothing
+        }
+        
+        ITableInfo ti = null;
+        if (infos != null && infos.length > 0) {
+            ti = infos[0];
+        } else {
+            // Couldn't locate the table - just try to fake it.
+            ti = new TableInfo("", "", tableName, "TABLE", "", md);
+        }
+        
         String[] pkSQLs = 
-            dialect.getAddPrimaryKeySQL(getPKName(tableName), colInfos);
+            dialect.getAddPrimaryKeySQL(getPKName(tableName), colInfos, ti);
         
         for (int i = 0; i < pkSQLs.length; i++) {
             String pkSQL = pkSQLs[i];

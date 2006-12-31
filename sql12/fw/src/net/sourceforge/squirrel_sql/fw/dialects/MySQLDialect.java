@@ -22,6 +22,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 /**
@@ -336,17 +337,17 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
     /**
      * Returns the SQL that forms the command to add a primary key to the 
      * specified table composed of the given column names.
-     * 
      * @param tableName the table to add a Primary Key to.
      * @param columnNames the columns that form the key
+     * 
      * @return
      */
     public String[] getAddPrimaryKeySQL(String pkName, 
-                                        TableColumnInfo[] colInfos) 
+                                        TableColumnInfo[] colInfos, ITableInfo ti) 
     {
         StringBuffer result = new StringBuffer();
         result.append("ALTER TABLE ");
-        result.append(colInfos[0].getTableName());
+        result.append(ti.getQualifiedName());
         result.append(" ADD CONSTRAINT ");
         result.append(pkName);
         result.append(" PRIMARY KEY (");

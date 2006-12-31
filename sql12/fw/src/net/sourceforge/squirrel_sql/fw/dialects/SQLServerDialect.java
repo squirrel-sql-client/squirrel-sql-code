@@ -23,6 +23,7 @@ import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
@@ -262,7 +263,8 @@ public class SQLServerDialect extends org.hibernate.dialect.SQLServerDialect
      * @return
      */
     public String[] getAddPrimaryKeySQL(String pkName, 
-                                        TableColumnInfo[] colInfos) 
+                                        TableColumnInfo[] colInfos, 
+                                        ITableInfo ti) 
     {
         ArrayList result = new ArrayList();
         String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
@@ -270,7 +272,7 @@ public class SQLServerDialect extends org.hibernate.dialect.SQLServerDialect
         // are already null.        
         DialectUtils.getMultiColNotNullSQL(colInfos, this, alterClause, true, result);
 
-        String pkSQL = DialectUtils.getAddPrimaryKeySQL(pkName, colInfos, false);
+        String pkSQL = DialectUtils.getAddPrimaryKeySQL(ti, pkName, colInfos, false);
         result.add(pkSQL);
         
         return (String[])result.toArray(new String[result.size()]);

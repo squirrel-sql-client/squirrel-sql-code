@@ -19,6 +19,7 @@
 package net.sourceforge.squirrel_sql.fw.dialects;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 import org.hibernate.HibernateException;
@@ -259,10 +260,11 @@ public interface HibernateDialect {
      * specified table composed of the given column names.
      * 
      * @param pkName the name of the constraint
+     * @param ti TODO
      * @param columnNames the columns that form the key
      * @return
      */
-    String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] colInfos);
+    String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] colInfos, ITableInfo ti);
  
     /**
      * Returns the SQL fragment for adding a column in an alter table statment.

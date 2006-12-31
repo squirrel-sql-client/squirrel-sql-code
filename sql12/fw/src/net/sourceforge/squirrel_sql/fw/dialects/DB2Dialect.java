@@ -23,6 +23,7 @@ import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
@@ -319,10 +320,11 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect
      * @return
      */
     public String[] getAddPrimaryKeySQL(String pkName, 
-                                        TableColumnInfo[] columns) 
+                                        TableColumnInfo[] columns, 
+                                        ITableInfo ti) 
     {
         return new String[] {
-            DialectUtils.getAddPrimaryKeySQL(pkName, columns, false)
+            DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false)
         };
     }
     

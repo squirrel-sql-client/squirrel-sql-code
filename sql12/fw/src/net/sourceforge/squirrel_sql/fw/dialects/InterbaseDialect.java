@@ -19,6 +19,7 @@
 package net.sourceforge.squirrel_sql.fw.dialects;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 /**
@@ -238,7 +239,7 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect
      * @return
      */
     public String[] getAddPrimaryKeySQL(String pkName, 
-                                      TableColumnInfo[] columnNames) 
+                                      TableColumnInfo[] columnNames, ITableInfo ti) 
     {
         // TODO: implement
         throw new UnsupportedOperationException("getAddPrimaryKeySQL not implemented");

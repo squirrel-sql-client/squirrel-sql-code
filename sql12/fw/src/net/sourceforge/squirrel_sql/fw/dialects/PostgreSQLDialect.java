@@ -23,6 +23,7 @@ import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
@@ -264,10 +265,11 @@ public class PostgreSQLDialect
      * @return
      */
     public String[] getAddPrimaryKeySQL(String pkName, 
-                                      TableColumnInfo[] colInfos) 
+                                        TableColumnInfo[] colInfos, 
+                                        ITableInfo ti) 
     {
         return new String[] { 
-            DialectUtils.getAddPrimaryKeySQL(pkName, colInfos, false)
+            DialectUtils.getAddPrimaryKeySQL(ti, pkName, colInfos, false)
         };
     }
     

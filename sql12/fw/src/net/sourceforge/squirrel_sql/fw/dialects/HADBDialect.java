@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 import java.sql.Types;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 import org.hibernate.HibernateException;
@@ -57,7 +58,7 @@ public class HADBDialect extends GenericDialect implements HibernateDialect {
     }
 
     public String[] getAddPrimaryKeySQL(String pkName,
-            TableColumnInfo[] colInfos) {
+            TableColumnInfo[] colInfos, ITableInfo ti) {
         // TODO Auto-generated method stub
         return null;
     }
