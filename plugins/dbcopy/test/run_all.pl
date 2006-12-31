@@ -19,16 +19,18 @@ open (RESULTS, "> $resultsfile") or
 #                'mckoi', 'mysql', 'oracle', 'pointbase', 'sqlserver');
 
 # Cannot use Sybase 11.0 on Linux because it doesn't support nullable columns
-@defaultFrom = ('firebird', 'postgres', 'daffodil', 'derby', 'h2', 'hsql', 'mckoi', 
-                'mysql', 'sybase', 'sqlserver', 'timesten');
+@defaultFrom = ('axion', 'daffodil', 'db2', 'derby', 'firebird', 'frontbase', 
+				'h2', 'hsql', 'informix', 'mckoi', 'mysql', 'oracle', 'pointbase',
+				'postgres', 'sybase', 'sqlserver', 'timesten');
 
 
 #@defaultTo = ( 'postgres', 'axion', 'db2', 'derby', 'daffodil',
 #               'firebird', 'frontbase', 'h2', 'hsql', 'ingres', 'maxdb',
 #               'mckoi', 'mysql', 'oracle', 'pointbase', 'sqlserver');
 
-@defaultTo = ('firebird', 'postgres', 'daffodil', 'derby', 'h2', 'hsql', 'mckoi', 
-              'mysql', 'sybase', 'sqlserver', 'timesten');
+@defaultTo = ('axion', 'daffodil', 'db2', 'derby', 'firebird', 'frontbase', 'h2', 
+			  'hsql', 'informix', 'mckoi', 'mysql', 'oracle', 'pointbase', 'postgres', 
+			  'sybase', 'sqlserver', 'timesten');
 
 $arg1 = shift (@ARGV);
 $arg2 = shift (@ARGV);
@@ -79,7 +81,7 @@ $mainclass = 'net.sourceforge.squirrel_sql.plugins.dbcopy.CopyExecutorTestRunner
 
 $classpath = buildClasspath();
 
-print "Using CLASSPATH=$classpath\n";
+#print "Using CLASSPATH=$classpath\n";
 
 #$ENV{CLASSPATH}=$classpath;
 
@@ -243,7 +245,7 @@ sub runCopy {
 	print "Running $from -> $to...";
 	$logfile = catfile('logs', $from,  $from . "_to_" . $to . '.log');
 	#print "CLASSPATH=$classpath\n";
-	$cmd="java -cp $classpath $mainclass $propsfile 2>&1";
+	$cmd="/opt/java/bin/dbcopy -cp $classpath $mainclass $propsfile 2>&1";
 	#print "Running command cmd=$cmd\n";
 
 	open(LOG, "> $logfile");
