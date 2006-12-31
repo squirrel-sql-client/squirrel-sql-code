@@ -1,3 +1,5 @@
+# log4j.properties
+/home/manningr/projects/squirrel_snapshots/sql12/plugins/dbcopy/test
 
 
 /home/manningr/projects/squirrel_snapshots/sql12/eclipse-classes
@@ -54,12 +56,12 @@
 /opt/hsqldb/lib/hsqldb.jar
 
 # Informix 
-/opt/informix_jdbc_3_0_0/lib/ifxjdbc.jar
-/opt/informix_jdbc_3_0_0/lib/ifxjdbcx.jar
-/opt/informix_jdbc_3_0_0/lib/ifxlang.jar
-/opt/informix_jdbc_3_0_0/lib/ifxlsupp.jar
-/opt/informix_jdbc_3_0_0/lib/ifxsqlj.jar
-/opt/informix_jdbc_3_0_0/lib/ifxtools.jar
+/opt/jdbc/informix_jdbc_3_0_0/lib/ifxjdbc.jar
+/opt/jdbc/informix_jdbc_3_0_0/lib/ifxjdbcx.jar
+/opt/jdbc/informix_jdbc_3_0_0/lib/ifxlang.jar
+/opt/jdbc/informix_jdbc_3_0_0/lib/ifxlsupp.jar
+/opt/jdbc/informix_jdbc_3_0_0/lib/ifxsqlj.jar
+/opt/jdbc/informix_jdbc_3_0_0/lib/ifxtools.jar
 
 # Ingres
 /opt/Ingres/IngresII/ingres/lib/iijdbc.jar
@@ -80,7 +82,7 @@
 /opt/jdbc/Oracle/ojdbc14.jar
 
 # Pointbase
-#C:\bea\weblogic81\common\eval\pointbase\lib\pbclient44.jar
+/opt/pointbase/lib/pbclient44.jar
 
 # PostgreSQL
 /opt/jdbc/PostgreSQL/postgresql-8.1-407.jdbc3.jar
