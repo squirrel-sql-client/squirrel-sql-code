@@ -30,6 +30,7 @@ import javax.swing.SwingUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -92,13 +93,29 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
 
    private void doCreateTableOfCurrentSQL(final String sTable, final boolean scriptOnly, final boolean dropTable)
    {
-      SQLConnection conn = _session.getSQLConnection();
-
-      String selectSQL = FrameWorkAcessor.getSQLPanelAPI(_session, _plugin).getSQLScriptToBeExecuted();
 
       final StringBuffer sbScript = new StringBuffer();
       try
       {
+
+         QueryTokenizer qt = new QueryTokenizer(FrameWorkAcessor.getSQLPanelAPI(_session, _plugin).getSQLScriptToBeExecuted(),
+            _session.getProperties().getSQLStatementSeparator(),
+            _session.getProperties().getStartOfLineComment(),
+            _session.getProperties().getRemoveMultiLineComment());
+
+
+         if(false == qt.hasQuery())
+         {
+            // i18n[CreateTableOfCurrentSQLCommand.noQuery=No query found to create the script from.]
+            _session.getMessageHandler().showErrorMessage(s_stringMgr.getString("CreateTableOfCurrentSQLCommand.noQuery"));
+            return;
+         }
+
+
+
+         SQLConnection conn = _session.getSQLConnection();
+
+
 
          Statement stmt = null;
          try
@@ -108,13 +125,16 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
             StringBuffer sbDrop = new StringBuffer();
             String statSep = ScriptUtil.getStatementSeparator(_session);
 
+
+
             stmt = conn.createStatement();
-            ResultSet srcResult = stmt.executeQuery(selectSQL);
+            String sql = qt.nextQuery();
+            ResultSet srcResult = stmt.executeQuery(sql);
 
             genCreate(srcResult, sTable, sbCreate);
 
             genInserts(srcResult, sTable, sbInsert, true);
-            sbInsert.append('\n').append(selectSQL);
+            sbInsert.append('\n').append(sql);
 
             sbDrop.append("DROP TABLE " + sTable);
 
@@ -166,7 +186,7 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
             public void run()
             {
                hideAbortFrame();
-               if (scriptOnly)
+               if (scriptOnly && 0 < sbScript.toString().trim().length())
                {
                   FrameWorkAcessor.getSQLPanelAPI(_session, _plugin).appendSQLScript(sbScript.toString(), true);
                   _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
