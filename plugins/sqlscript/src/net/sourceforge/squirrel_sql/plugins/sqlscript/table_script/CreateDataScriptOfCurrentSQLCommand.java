@@ -29,7 +29,10 @@ import javax.swing.SwingUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
 
@@ -37,6 +40,11 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
 {
+
+   private static final StringManager s_stringMgr =
+      StringManagerFactory.getStringManager(CreateDataScriptOfCurrentSQLCommand.class);
+
+
    /**
     * Current plugin.
     */
@@ -60,25 +68,42 @@ public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
       {
          public void run()
          {
-            SQLConnection conn = _session.getSQLConnection();
-
-            //String selectSQL = _session.getSQLPanelAPI(_plugin).getSQLScriptToBeExecuted();
-            String selectSQL = FrameWorkAcessor.getSQLPanelAPI(_session, _plugin).getSQLScriptToBeExecuted();
 
             final StringBuffer sbRows = new StringBuffer(1000);
+
             try
             {
+
+               QueryTokenizer qt = new QueryTokenizer(FrameWorkAcessor.getSQLPanelAPI(_session, _plugin).getSQLScriptToBeExecuted(),
+                  _session.getProperties().getSQLStatementSeparator(),
+                  _session.getProperties().getStartOfLineComment(),
+                  _session.getProperties().getRemoveMultiLineComment());
+
+               if(false == qt.hasQuery())
+               {
+                  // i18n[CreateDataScriptOfCurrentSQLCommand.noQuery=No query found to create the script from.]
+                  _session.getMessageHandler().showErrorMessage(s_stringMgr.getString("CreateTableOfCurrentSQLCommand.noQuery"));
+                  return;
+               }
+
+
+
+               SQLConnection conn = _session.getSQLConnection();
+
+
                final Statement stmt = conn.createStatement();
                try
                {
-                  ResultSet srcResult = stmt.executeQuery(selectSQL);
+                  String sql = qt.nextQuery();
+
+                  ResultSet srcResult = stmt.executeQuery(sql);
                   ResultSetMetaData metaData = srcResult.getMetaData();
                   String sTable = metaData.getTableName(1);
                   if (sTable == null || sTable.equals(""))
                   {
 
-                     int iFromIndex = getTokenBeginIndex(selectSQL, "from");
-                     sTable = getNextToken(selectSQL, iFromIndex + "from".length());
+                     int iFromIndex = getTokenBeginIndex(sql, "from");
+                     sTable = getNextToken(sql, iFromIndex + "from".length());
                   }
                   genInserts(srcResult, sTable, sbRows, false);
                }
@@ -97,20 +122,22 @@ public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
             {
                _session.getMessageHandler().showErrorMessage(e);
             }
-            SwingUtilities.invokeLater(new Runnable()
+            finally
             {
-               public void run()
+               SwingUtilities.invokeLater(new Runnable()
                {
-                  if (sbRows.length() > 0)
+                  public void run()
                   {
-                     //_session.getSQLPanelAPI(_plugin).appendSQLScript(sbRows.toString(), true);
-                     FrameWorkAcessor.getSQLPanelAPI(_session, _plugin).appendSQLScript(sbRows.toString(), true);
+                     if (sbRows.length() > 0)
+                     {
+                        FrameWorkAcessor.getSQLPanelAPI(_session, _plugin).appendSQLScript(sbRows.toString(), true);
 
-                     _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
+                        _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
+                     }
+                     hideAbortFrame();
                   }
-                  hideAbortFrame();
-               }
-            });
+               });
+            }
          }
       });
       showAbortFrame();
