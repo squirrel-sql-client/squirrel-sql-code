@@ -21,6 +21,9 @@ import net.sourceforge.squirrel_sql.fw.gui.action.SelectInternalFrameAction;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.AliasesListInternalFrame;
+
+import java.awt.event.ActionEvent;
+
 /**
  * This <CODE>Action</CODE> displays the Aliases Tool Window.
  *
@@ -28,7 +31,9 @@ import net.sourceforge.squirrel_sql.client.gui.db.AliasesListInternalFrame;
  */
 public class ViewAliasesAction extends SelectInternalFrameAction
 {
-	/**
+   private AliasesListInternalFrame m_window;
+
+   /**
 	 * Ctor specifying the Aliases Tool Window.
 	 *
 	 * @throws	IllegalArgumentException
@@ -41,6 +46,19 @@ public class ViewAliasesAction extends SelectInternalFrameAction
 		{
 			throw new IllegalArgumentException("null AliasesToolWindow passed");
 		}
-		app.getResources().setupAction(this, app.getSquirrelPreferences().getShowColoriconsInToolbar());
+      m_window = window;
+
+      app.getResources().setupAction(this, app.getSquirrelPreferences().getShowColoriconsInToolbar());
 	}
+
+
+   public void actionPerformed(ActionEvent evt)
+   {
+      super.actionPerformed(evt);
+
+      if(null != m_window)
+      {
+         m_window.nowVisible(true);
+      }
+   }
 }

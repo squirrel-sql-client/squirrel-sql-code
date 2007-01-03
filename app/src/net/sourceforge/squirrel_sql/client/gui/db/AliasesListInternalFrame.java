@@ -23,12 +23,14 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.*;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
+import javax.swing.event.InternalFrameEvent;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.beans.PropertyChangeEvent;
@@ -71,13 +73,23 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
          {
             if(IS_CLOSED_PROPERTY.equals(evt.getPropertyName()) && Boolean.TRUE.equals(evt.getNewValue()))
             {
+               nowVisible(true);
                 // i18n[AliasesListInternalFrame.error.ctrlF4key=Probably closed by the ctrl F4 key. See BasicDesktopPaneUi.CloseAction]
                throw new PropertyVetoException(s_stringMgr.getString("AliasesListInternalFrame.error.ctrlF4key"), evt);
             }
          }
       });
 
-		_app.getSquirrelPreferences().addPropertyChangeListener(new PropertyChangeListener()
+      addInternalFrameListener(new InternalFrameAdapter()
+      {
+         public void internalFrameClosing(InternalFrameEvent e)
+         {
+            nowVisible(false);
+         }
+      });
+
+
+      _app.getSquirrelPreferences().addPropertyChangeListener(new PropertyChangeListener()
 		{
 			public void propertyChange(PropertyChangeEvent evt)
 			{
@@ -110,7 +122,8 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
       });
 	}
 
-	/**
+
+   /**
 	 * Retrieve the index of the currently selected alias.
 	 *
 	 * @return	index of currently selected alias.
@@ -125,7 +138,12 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
 		return _uiFactory._aliasesList;
 	}
 
-	private static final class UserInterfaceFactory
+   public void nowVisible(boolean b)
+   {
+      _app.getMainFrame().setEnabledAliasesMenu(b);
+   }
+
+   private static final class UserInterfaceFactory
 		implements BaseListInternalFrame.IUserInterfaceFactory
 	{
 		private IApplication _app;
