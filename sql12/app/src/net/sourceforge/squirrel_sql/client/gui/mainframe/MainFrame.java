@@ -559,6 +559,21 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 		return ((MainFrameMenuBar)getJMenuBar()).getWindowsMenu();
 	}
 
+   public void setEnabledAliasesMenu(boolean b)
+   {
+      MainFrameMenuBar mainFrameMenuBar = (MainFrameMenuBar) getJMenuBar();
+      mainFrameMenuBar.setEnabledAliasesMenu(b);
+   }
+
+   public void setEnabledDriversMenu(boolean b)
+   {
+      MainFrameMenuBar mainFrameMenuBar = (MainFrameMenuBar) getJMenuBar();
+      mainFrameMenuBar.setEnabledDriversMenu(b);
+   }
+
+
+
+
    public void addToToolBar(Action act)
    {
       _toolBar.add(act);

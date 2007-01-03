@@ -21,6 +21,9 @@ import net.sourceforge.squirrel_sql.fw.gui.action.SelectInternalFrameAction;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.DriversListInternalFrame;
+
+import java.awt.event.ActionEvent;
+
 /**
  * This <CODE>Action</CODE> displays the Drivers Tool Window.
  *
@@ -28,7 +31,9 @@ import net.sourceforge.squirrel_sql.client.gui.db.DriversListInternalFrame;
  */
 public class ViewDriversAction extends SelectInternalFrameAction
 {
-	/**
+   private DriversListInternalFrame m_window;
+
+   /**
 	 * Ctor.
 	 *
 	 * @throws	IllegalArgumentException
@@ -46,6 +51,19 @@ public class ViewDriversAction extends SelectInternalFrameAction
 		{
 			throw new IllegalArgumentException("null DriversToolWindow passed");
 		}
-		app.getResources().setupAction(this, app.getSquirrelPreferences().getShowColoriconsInToolbar());
+
+      m_window = window;
+      app.getResources().setupAction(this, app.getSquirrelPreferences().getShowColoriconsInToolbar());
 	}
+
+   public void actionPerformed(ActionEvent evt)
+   {
+      super.actionPerformed(evt);
+
+      if(null != m_window)
+      {
+         m_window.nowVisible(true);
+      }
+   }
+
 }

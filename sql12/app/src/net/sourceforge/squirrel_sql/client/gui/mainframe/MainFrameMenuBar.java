@@ -50,7 +50,8 @@ import net.sourceforge.squirrel_sql.client.session.action.*;
  */
 final class MainFrameMenuBar extends JMenuBar
 {
-	public interface IMenuIDs
+
+   public interface IMenuIDs
 	{
 		int PLUGINS_MENU = 1;
 		int SESSION_MENU = 2;
@@ -65,7 +66,11 @@ final class MainFrameMenuBar extends JMenuBar
 	private final JMenu _pluginsMenu;
 	private final JMenu _sessionMenu;
 	private final JMenu _windowsMenu;
-	private final ActionCollection _actions;
+
+   private JMenu _aliasesMenu;
+   private JMenu _driversMenu;
+   
+   private final ActionCollection _actions;
 
 	private JCheckBoxMenuItem _showLoadedDriversOnlyItem;
 
@@ -108,9 +113,8 @@ final class MainFrameMenuBar extends JMenuBar
 		_osxPluginLoaded = isOsxPluginLoaded();
 
 		add(createOsxFileMenu(rsrc));
-//		add(_editMenu = createEditMenu(rsrc));
-		add(createDriversMenu(rsrc));
-		add(createAliasesMenu(rsrc));
+      add(_driversMenu = createDriversMenu(rsrc));
+      add(_aliasesMenu = createAliasesMenu(rsrc));
 		add(_pluginsMenu = createPluginsMenu(rsrc));
 		add(_sessionMenu = createSessionMenu(rsrc));
 		add(_windowsMenu = createWindowsMenu(rsrc, desktopPane));
@@ -267,7 +271,19 @@ final class MainFrameMenuBar extends JMenuBar
 		return menu;
 	}
 
-	private JMenu createSessionMenu(Resources rsrc)
+   public void setEnabledAliasesMenu(boolean b)
+   {
+      _aliasesMenu.setEnabled(b);
+   }
+
+   public void setEnabledDriversMenu(boolean b)
+   {
+      _driversMenu.setEnabled(b);
+   }
+
+
+
+   private JMenu createSessionMenu(Resources rsrc)
 	{
 		JMenu menu = rsrc.createMenu(SquirrelResources.IMenuResourceKeys.SESSION);
 		addToMenu(rsrc, SessionPropertiesAction.class, menu);

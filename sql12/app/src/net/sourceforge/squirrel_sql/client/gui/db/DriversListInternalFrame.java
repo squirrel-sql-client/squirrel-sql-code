@@ -28,6 +28,8 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
 
 import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
@@ -91,8 +93,17 @@ public class DriversListInternalFrame extends BaseListInternalFrame
          }
       });
 
+      addInternalFrameListener(new InternalFrameAdapter()
+      {
+         public void internalFrameClosing(InternalFrameEvent e)
+         {
+            nowVisible(false);
+         }
+      });
 
-		_app.getSquirrelPreferences().addPropertyChangeListener(new PropertyChangeListener()
+
+
+      _app.getSquirrelPreferences().addPropertyChangeListener(new PropertyChangeListener()
 		{
 			public void propertyChange(PropertyChangeEvent evt)
 			{
@@ -102,7 +113,14 @@ public class DriversListInternalFrame extends BaseListInternalFrame
 		});
 	}
 
-	/**
+
+   public void nowVisible(boolean b)
+   {
+      _app.getMainFrame().setEnabledDriversMenu(b);
+   }
+
+
+   /**
 	 * Retrieve the index of the currently selected driver.
 	 *
 	 * @return	index of currently selected driver.
