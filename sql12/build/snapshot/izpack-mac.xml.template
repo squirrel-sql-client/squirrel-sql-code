@@ -76,6 +76,8 @@
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/antlr-2.7.5H3.jar"/> 
 			<file   targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/commons-logging-1.0.4.jar"/> 		
+                        <file   targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
+                                        src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/jxl.jar"/>
 				
 		    <!-- MacOS X plugin always gets installed since this is the MacOS X installer -->
 			<file   targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins"
