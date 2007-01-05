@@ -81,6 +81,8 @@
 				src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/commons-cli.jar"/>
 			<file	targetdir="$INSTALL_PATH/lib"
 				src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/forms.jar"/>
+                        <file   targetdir="$INSTALL_PATH/lib"
+                                src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/jxl.jar"/>
 
 			<parsable targetfile="$INSTALL_PATH/squirrel-sql.bat"/>
 			<parsable targetfile="$INSTALL_PATH/squirrel-sql.sh" type="shell"/>
