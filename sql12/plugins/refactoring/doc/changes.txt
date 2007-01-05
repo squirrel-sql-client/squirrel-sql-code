@@ -2,6 +2,11 @@ Refactoring Plugin Change Log
 =============================
 
 
+0.11
+====
+
+- Fixed column list dialog to that it is now a scrollable list.
+
 0.10
 ====
 

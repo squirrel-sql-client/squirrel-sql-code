@@ -27,10 +27,13 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -307,7 +310,6 @@ public class ColumnListDialog extends JDialog {
         pane.add(columnListLabel, getLabelConstraints(c));
         
         columnList = new JList(columnNames);
-        columnList.setPreferredSize(mediumField);
         columnList.addListSelectionListener(new ColumnListSelectionListener());
 
         JScrollPane sp = new JScrollPane(columnList);
@@ -367,8 +369,28 @@ public class ColumnListDialog extends JDialog {
                            "ColumnG","ColumnH","ColumnI","ColumnJ","ColumnK",
                            "ColumnL","ColumnM","ColumnN","ColumnO","ColumnP",
                            "ColumnP","ColumnQ","ColumnR","ColumnS","ColumnT"};
-        /*
-        final ColumnListDialog c = new ColumnListDialog(data, 0);
+        
+        TableColumnInfo[] infos = new TableColumnInfo[data.length];
+        
+        for (int i = 0; i < infos.length; i++) {
+            infos[i] = new TableColumnInfo("aCat", 
+                                          "aSchem", 
+                                          "aTab", 
+                                          data[i], 
+                                          java.sql.Types.CHAR,
+                                          "character",
+                                          10,
+                                          0, 
+                                          0,
+                                          0,
+                                          "a comment",
+                                          "defVal",
+                                          0,
+                                          0,
+                                          "YES");      
+        }
+        
+        final ColumnListDialog c = new ColumnListDialog(infos, 0);
         c.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         c.setTableName("FooTable");
         c.addComponentListener(new ComponentListener() {
@@ -385,7 +407,7 @@ public class ColumnListDialog extends JDialog {
             }
         });
         c.setVisible(true);
-        */
+        
         
     }
     

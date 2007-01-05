@@ -80,7 +80,7 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
     * @return  the current version of this plugin.
     */
    public String getVersion() {
-      return "0.1";
+      return "0.11";
    }
 
    /**
