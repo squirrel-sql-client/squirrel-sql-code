@@ -4,6 +4,12 @@ SQuirreL SQL Client Change Log
 Not yet release - available from CVS or in the latest snapshot:
 --------------------------------------------------------------
 
+Enhancements:
+
+DBCopy Plugin 
+  - The error message for SQLExceptions now includes the SQL statement that was 
+    last executed (including bind variable values if it was a PreparedStatement)
+
 Bug-Fixes:
 
 Refactoring Plugin - The scrollbar in the column list dialog now appears, where
