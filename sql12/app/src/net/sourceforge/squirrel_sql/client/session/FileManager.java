@@ -30,6 +30,8 @@ public class FileManager
    
    private JFileChooser fileChooser = null;
    
+   private HashMap fileAppenixes = new HashMap();
+   
    FileManager(ISQLPanelAPI sqlPanelAPI)
    {
       _sqlPanelAPI = sqlPanelAPI;
@@ -49,8 +51,6 @@ public class FileManager
    {
        boolean result = false;
       JFileChooser chooser = getFileChooser();
-      chooser.addChoosableFileFilter(new FileExtensionFilter("Text files", new String[]{".txt"}));
-      chooser.addChoosableFileFilter(new FileExtensionFilter("SQL files", new String[]{".sql"}));
       chooser.setAccessory(new ChooserPreviewer());
 
       SquirrelPreferences prefs = _sqlPanelAPI.getSession().getApplication().getSquirrelPreferences();
@@ -132,18 +132,7 @@ public class FileManager
          _toSaveTo = null;
       }
 
-
       JFileChooser chooser = getFileChooser();
-
-      HashMap fileAppenixes = new HashMap();
-      FileExtensionFilter filter;
-      filter = new FileExtensionFilter("Text files", new String[]{".txt"});
-      chooser.addChoosableFileFilter(filter);
-      fileAppenixes.put(filter, ".txt");
-
-      filter = new FileExtensionFilter("SQL files", new String[]{".sql"});
-      chooser.addChoosableFileFilter(filter);
-      fileAppenixes.put(filter, ".sql");
 
       SquirrelPreferences prefs = _sqlPanelAPI.getSession().getApplication().getSquirrelPreferences();
       MainFrame frame = _sqlPanelAPI.getSession().getApplication().getMainFrame();
@@ -293,6 +282,13 @@ public class FileManager
    private JFileChooser getFileChooser() {
        if (fileChooser == null) {
            fileChooser = new JFileChooser();
+           FileExtensionFilter filter = 
+               new FileExtensionFilter("Text files", new String[]{".txt"});
+           fileChooser.addChoosableFileFilter(filter);
+           fileAppenixes.put(filter, ".txt");
+           filter = new FileExtensionFilter("SQL files", new String[]{".sql"});
+           fileChooser.addChoosableFileFilter(filter);
+           fileAppenixes.put(filter, ".sql");
        }
        return fileChooser;
    }
