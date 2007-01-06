@@ -1,7 +1,12 @@
 DBCopy Change Log
 =================
 
-1.1 (Not yet released)
+1.11 (??/??/??)
+====
+The error message for SQLExceptions now includes the SQL statement that was 
+last executed (including bind variable values if it was a PreparedStatement)
+
+1.1 (12/31/2006)
 ===
 - Removed reflective code used for backward compatibility which was causing 
 IllegalAccessExceptions when the keyword test was applied to column names.
