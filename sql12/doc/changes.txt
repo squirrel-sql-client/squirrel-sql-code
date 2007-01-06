@@ -6,6 +6,11 @@ Not yet released - available from CVS (squirrel-2_4-branch) or in the latest sna
 
 Bug-Fixes:
 
+Fixed a bug which caused the JFileChooser used for opening/saving files in the 
+SQL Editor to display copies of the "sql" and "txt" file types in the file type 
+dropdown.  Each time the JFileChooser was re-opened another set of "sql" and 
+"txt" list items were being added erroneously.
+
 Refactoring Plugin - The scrollbar in the column list dialog now appears, where
 previously it did not, making tables with many columns difficult to work with 
 for Add/Modify/Drop column. 
