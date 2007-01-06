@@ -35,6 +35,8 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.event.AnalysisEvent;
@@ -82,6 +84,10 @@ public class CopyExecutor extends I18NBaseObject {
     /** Logger for this class. */
     private final static ILogger log = 
                          LoggerController.createLogger(CopyExecutor.class);
+    
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(CopyExecutor.class);
     
     /** the list of ITableInfos that represent the user's last selection. */
     private ArrayList selectedTableInfos = null;    
@@ -551,7 +557,9 @@ public class CopyExecutor extends I18NBaseObject {
                         
             boolean foundLOBType = false;
             // Loop through source records...
+            DBUtil.setLastStatement(selectSQL);
             rs = DBUtil.executeQuery(prov.getCopySourceSession(), selectSQL);
+            DBUtil.setLastStatement(insertSQL);
             while (rs.next() && !cancelled) {
                 // MySQL driver gets unhappy when we use the same 
                 // PreparedStatement to bind null and non-null LOB variables
@@ -561,6 +569,8 @@ public class CopyExecutor extends I18NBaseObject {
                 {
                     insertStmt.clearParameters();
                 }
+                StringBuffer lastStmtBuffer = new StringBuffer(insertSQL);
+                lastStmtBuffer.append("\n(Bind variable values: ");
                 for (int i = 0; i < columnCount; i++) {
 
                     int sourceColType = sourceInfos[i].getDataType();
@@ -580,10 +590,16 @@ public class CopyExecutor extends I18NBaseObject {
                                                          i+1,
                                                          rs);
                     bindVarVals[i] = bindVal;
+                    lastStmtBuffer.append(bindVal);
+                    if (i + 1 < columnCount) {
+                        lastStmtBuffer.append(", ");
+                    }
                     if (isLOBType(destColType)) {
                     	foundLOBType = true;
                     }
                 }                
+                lastStmtBuffer.append(")");
+                DBUtil.setLastStatement(lastStmtBuffer.toString());
                 sendStatementEvent(insertSQL, bindVarVals);
                 insertStmt.executeUpdate();
                 sendRecordEvent(count, sourceTableCount);
@@ -641,12 +657,16 @@ public class CopyExecutor extends I18NBaseObject {
         throws MappingException 
     {
         if (sourceInfos.length != destInfos.length) {
+            //i18n[CopyExecutor.tablecolmismatch=Column count for table {0} in 
+            //source database is {1}, but column count for table {2} in 
+            //destination database is {3}
             String msg = 
-                "Table "+sourceTableName+" in source " +
-                "database has "+sourceInfos.length+" columns, but table "+
-                destTableName+" in destination database "+
-                "has "+destInfos.length+" columns";
-                
+                s_stringMgr.getString("CopyExecutor.tablecolmismatch",
+                                      new Object[] {
+                                              sourceTableName,
+                                              new Integer(sourceInfos.length),
+                                              destTableName,
+                                              new Integer(destInfos.length)});
             throw new MappingException(msg);
         }
         ArrayList result = new ArrayList();
