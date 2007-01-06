@@ -40,6 +40,7 @@ import net.sourceforge.squirrel_sql.plugins.dbcopy.event.RecordEvent;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.event.StatementEvent;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.event.TableEvent;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.gui.DualProgressBarDialog;
+import net.sourceforge.squirrel_sql.plugins.dbcopy.util.DBUtil;
 
 /**
  * A description of this class goes here...
@@ -142,6 +143,29 @@ public class CopyProgressMonitor extends I18NBaseObject
         showMessageDialog(message, title, JOptionPane.INFORMATION_MESSAGE);
     }
 
+    private String wordWrap(String data, int length) {
+        String result = "";
+        if (data.length() > length) {
+            String[] parts = data.split("\\s");
+            StringBuffer tmp = new StringBuffer();
+            int count = 0;
+            for (int i = 0; i < parts.length; i++) {
+                count += parts[i].length();
+                if (count > length) {
+                    count = 0;
+                    tmp.append("\n");
+                } else {
+                    tmp.append(" ");
+                }
+                tmp.append(parts[i]);
+            }
+            result = tmp.toString();
+        } else {
+            result = data;
+        }
+        return result;
+    }
+    
     /* (non-Javadoc)
      * @see net.sourceforge.squirrel_sql.plugins.dbcopy.event.CopyTableListener#handleError(net.sourceforge.squirrel_sql.plugins.dbcopy.event.ErrorEvent)
      */
@@ -175,11 +199,13 @@ public class CopyProgressMonitor extends I18NBaseObject
             showMessageDialog(message, title, messageType);                                  
         }
         if (e.getType() == ErrorEvent.SQL_EXCEPTION_TYPE) {
-            String exMessage = e.getException().getMessage();
+            String exMessage = wordWrap(e.getException().getMessage(), 80);
+            
             int errorCode = ((SQLException)e.getException()).getErrorCode();
             log.error("SQL Error code = "+errorCode,e.getException());
             String message = getMessage("CopyProgressMonitor.sqlErrorMessage",
-                                        new String[]{exMessage, ""+errorCode});
+                                        new String[]{exMessage, ""+errorCode,
+                                        DBUtil.getLastStatement()});
             String title = getMessage("CopyProgressMonitor.sqlErrorTitle");
             showMessageDialog(message, title, JOptionPane.ERROR_MESSAGE);
         }
@@ -220,10 +246,14 @@ public class CopyProgressMonitor extends I18NBaseObject
         String message = "";
         if (e.getMessage().indexOf(":") != -1) {
             String[] parts = e.getMessage().split(":");
-            int typeCode = Integer.parseInt(parts[1].trim());
-            String typeName = JDBCTypeMapper.getJdbcTypeName(typeCode);
-            message = getMessage("CopyProgressMonitor.mappingErrorMessage",
-                                 new String[]{e.getMessage(), typeName});
+            try {
+                int typeCode = Integer.parseInt(parts[1].trim());
+                String typeName = JDBCTypeMapper.getJdbcTypeName(typeCode);
+                message = getMessage("CopyProgressMonitor.mappingErrorMessage",
+                                     new String[]{e.getMessage(), typeName});
+            } catch (NumberFormatException nfe) {
+                message = e.getMessage();
+            }
         } else {
             message = e.getMessage();
         }                
