@@ -1,6 +1,16 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+Not yet released - available from CVS (squirrel-2_4-branch) or in the latest snapshot:
+-------------------------------------------------------------------------------------
+
+Bug-Fixes:
+
+Refactoring Plugin - The scrollbar in the column list dialog now appears, where
+previously it did not, making tables with many columns difficult to work with 
+for Add/Modify/Drop column. 
+
+
 2.4 (12/31/2006)
 ================
 
