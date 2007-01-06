@@ -307,7 +307,6 @@ public class ColumnListDialog extends JDialog {
         pane.add(columnListLabel, getLabelConstraints(c));
         
         columnList = new JList(columnNames);
-        columnList.setPreferredSize(mediumField);
         columnList.addListSelectionListener(new ColumnListSelectionListener());
 
         JScrollPane sp = new JScrollPane(columnList);
