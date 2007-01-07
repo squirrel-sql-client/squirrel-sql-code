@@ -1,6 +1,13 @@
 Derby Plugin Change Log
 ==========================
 
+0.11
+====
+
+Fixed a bug that occurred when the same view name is used in multiple 
+schemas - the view definitions for all views by the same name appeared in 
+the source tab for views.
+
 
 0.10
 ====
