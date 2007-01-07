@@ -72,6 +72,7 @@ public class TriggerDetailsTab extends BasePreparedStatementTab
         "       t.TABLENAME AS TABLENAME " +
         "from SYS.SYSTRIGGERS tr, SYS.SYSSCHEMAS sc, SYS.SYSTABLES t " +
         "where TRIGGERNAME = ? " +
+        "and sc.SCHEMANAME = ? " +
         "and tr.SCHEMAID = sc.SCHEMAID " +
         "and tr.TABLEID = t.TABLEID ";
     
@@ -91,9 +92,11 @@ public class TriggerDetailsTab extends BasePreparedStatementTab
         if (s_log.isDebugEnabled()) {
             s_log.debug("Trigger details SQL: "+SQL);
             s_log.debug("Trigger name: "+doi.getSimpleName());
+            s_log.debug("Trigger schema: "+doi.getSchemaName());
         }
 		PreparedStatement pstmt = session.getSQLConnection().prepareStatement(SQL);
 		pstmt.setString(1, doi.getSimpleName());
+        pstmt.setString(2, doi.getSchemaName());
 		return pstmt;
 	}
 }

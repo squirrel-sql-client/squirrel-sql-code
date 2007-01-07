@@ -47,9 +47,11 @@ public class TriggerParentExpander implements INodeExpander {
 
     private static String SQL = 
         "select tr.TRIGGERNAME " +
-        "from SYS.SYSTRIGGERS tr, SYS.SYSTABLES t " +
+        "from SYS.SYSTRIGGERS tr, SYS.SYSTABLES t, SYS.SYSSCHEMAS s " +
         "where tr.TABLEID = t.TABLEID " +
-        "and t.TABLENAME = ? "; 
+        "and s.SCHEMAID = t.SCHEMAID " +
+        "and t.TABLENAME = ? " +
+        "and s.SCHEMANAME = ? ";
     
     /**
      * Ctor.
@@ -84,9 +86,11 @@ public class TriggerParentExpander implements INodeExpander {
         final String catalogName = parentDbinfo.getCatalogName();
         final IDatabaseObjectInfo tableInfo = ((TriggerParentInfo) parentDbinfo)
                 .getTableInfo();
-        PreparedStatement pstmt = conn.prepareStatement(SQL);
+        PreparedStatement pstmt = null;
         try {
+            pstmt = conn.prepareStatement(SQL);
             pstmt.setString(1, tableInfo.getSimpleName());
+            pstmt.setString(2, tableInfo.getSchemaName());
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 DatabaseObjectInfo doi = 
@@ -97,7 +101,7 @@ public class TriggerParentExpander implements INodeExpander {
                 childNodes.add(new ObjectTreeNode(session, doi));
             }
         } finally {
-            pstmt.close();
+            if (pstmt != null) try { pstmt.close(); } catch (SQLException e){}
         }
 
         return childNodes;
