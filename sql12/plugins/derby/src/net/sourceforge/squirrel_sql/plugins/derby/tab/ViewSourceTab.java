@@ -27,7 +27,7 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
- * This class will display the source for an Informix view.
+ * This class will display the source for an Derby view.
  *
  * @author manningr
  */
@@ -57,6 +57,11 @@ public class ViewSourceTab extends BaseSourceTab
 		final IDatabaseObjectInfo doi = getDatabaseObjectInfo();
 
 		SQLConnection conn = session.getSQLConnection();
+        if (s_log.isDebugEnabled()) {
+            s_log.debug("Running View Source SQL: "+SQL);
+            s_log.debug("View Name="+doi.getSimpleName());
+            s_log.debug("Schema Name="+doi.getSchemaName());
+        }        
 		PreparedStatement pstmt = conn.prepareStatement(SQL);
 		pstmt.setString(1, doi.getSimpleName()); // view name
         pstmt.setString(2, doi.getSchemaName()); // schema name
