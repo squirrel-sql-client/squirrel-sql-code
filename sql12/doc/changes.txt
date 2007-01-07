@@ -14,9 +14,10 @@ DBCopy Plugin
 
 Bug-Fixes:
 
-Derby Plugin - Fixed a bug that occurred when the same view name is used in 
-multiple schemas - the view definitions for all views by the same name appeared
-in the source tab for views.
+Derby Plugin - Transformed trigger source tab contents into valid SQL that can 
+be used to re-create the trigger.  Fixed multiple bugs that occurred when the 
+same view/trigger name is used in multiple schemas.
+
 
 Refactoring Plugin - The scrollbar in the column list dialog now appears, where
 previously it did not, making tables with many columns difficult to work with 
