@@ -35,10 +35,12 @@ public class ViewSourceTab extends BaseSourceTab
 {
 	/** SQL that retrieves the source of a stored procedure. */
 	private static String SQL =
-        "select v.viewdefinition " +
-        "from sys.SYSVIEWS v, sys.SYSTABLES t " +
+        "select v.VIEWDEFINITION " +
+        "from sys.SYSVIEWS v, sys.SYSTABLES t, sys.SYSSCHEMAS s " +
         "where v.TABLEID = t.TABLEID " +
-        "and t.TABLENAME = ? ";
+        "and s.SCHEMAID = t.SCHEMAID " +
+        "and t.TABLENAME = ? " +
+        "and s.SCHEMANAME = ? ";
     
 	/** Logger for this class. */
 	private final static ILogger s_log =
@@ -56,7 +58,8 @@ public class ViewSourceTab extends BaseSourceTab
 
 		SQLConnection conn = session.getSQLConnection();
 		PreparedStatement pstmt = conn.prepareStatement(SQL);
-		pstmt.setString(1, doi.getSimpleName());
+		pstmt.setString(1, doi.getSimpleName()); // view name
+        pstmt.setString(2, doi.getSchemaName()); // schema name
 		return pstmt;
 	}
 }
