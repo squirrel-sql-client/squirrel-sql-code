@@ -6,6 +6,10 @@ Not yet release - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+New Plugin for Sybase ASE
+  The plugin allows to script the code of Views and Stored Procedures of the Sybase ASE DB.
+
+
 DBCopy Plugin 
   - The error message for SQLExceptions now includes the SQL statement that was 
     last executed (including bind variable values if it was a PreparedStatement)
