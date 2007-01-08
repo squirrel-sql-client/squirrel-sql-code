@@ -37,7 +37,7 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class PluginSummaryDialog extends JFrame
+public class PluginSummaryDialog extends JDialog
 {
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
@@ -50,7 +50,7 @@ public class PluginSummaryDialog extends JFrame
 	public PluginSummaryDialog(IApplication app, Frame owner)
 		throws DataSetException
 	{
-		super(s_stringMgr.getString("PluginSummaryDialog.title"));
+		super(owner, s_stringMgr.getString("PluginSummaryDialog.title"));
 		_app = app;
 		createGUI();
 	}
@@ -66,10 +66,10 @@ public class PluginSummaryDialog extends JFrame
 
 		final SquirrelResources rsrc = _app.getResources();
 		final ImageIcon icon = rsrc.getIcon(SquirrelResources.IImageNames.PLUGINS);
-		if (icon != null)
-		{
-			setIconImage(icon.getImage());
-		}
+//		if (icon != null)
+//		{
+//			setIconImage(icon.getImage());
+//		}
 
 		final Container contentPane = getContentPane();
 		contentPane.setLayout(new BorderLayout());
