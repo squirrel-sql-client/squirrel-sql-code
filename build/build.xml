@@ -353,6 +353,10 @@
 			<param name="p_rebuild" value="${rebuild.plugin.sqlval}"/>
 		</antcall>
 		<antcall target="build_plugin">
+			<param name="p_internal_name" value="sybase"/>
+			<param name="p_rebuild" value="${rebuild.plugin.sybase}"/>
+		</antcall>
+		<antcall target="build_plugin">
 			<param name="p_internal_name" value="syntax"/>
 			<param name="p_rebuild" value="${rebuild.plugin.syntax}"/>
 		</antcall>
