@@ -18,15 +18,16 @@
         <pack name="Optional Plugin - Refactoring" index="9" selected="true"/>        
         <pack name="Optional Plugin - Session Scripts" index="10" selected="true"/>
         <pack name="Optional Plugin - SQL Validator " index="11" selected="true"/>
-        <pack name="Optional Plugin - Internationalization " index="12" selected="true"/>
-        <pack name="Optional Translation - Brazilian Portuguese" index="13" selected="true"/>
-        <pack name="Optional Translation - Bulgarian" index="14" selected="true"/>
-        <pack name="Optional Translation - Czech" index="15" selected="true"/>
-        <pack name="Optional Translation - Simplified Chinese" index="16" selected="true"/>
-        <pack name="Optional Translation - French" index="17" selected="true"/>
-        <pack name="Optional Translation - German" index="18" selected="true"/>
-        <pack name="Optional Translation - Italian" index="19" selected="true"/>
-        <pack name="Optional Translation - Spanish" index="20" selected="true"/>
+        <pack name="Optional Plugin - Sybase " index="12" selected="true"/>        
+        <pack name="Optional Plugin - Internationalization " index="13" selected="true"/>
+        <pack name="Optional Translation - Brazilian Portuguese" index="14" selected="true"/>
+        <pack name="Optional Translation - Bulgarian" index="15" selected="true"/>
+        <pack name="Optional Translation - Czech" index="16" selected="true"/>
+        <pack name="Optional Translation - Simplified Chinese" index="17" selected="true"/>
+        <pack name="Optional Translation - French" index="18" selected="true"/>
+        <pack name="Optional Translation - German" index="19" selected="true"/>
+        <pack name="Optional Translation - Italian" index="20" selected="true"/>
+        <pack name="Optional Translation - Spanish" index="21" selected="true"/>
     </com.izforge.izpack.panels.PacksPanel>
     <com.izforge.izpack.panels.InstallPanel/>
     <com.izforge.izpack.panels.ShortcutPanel/>
