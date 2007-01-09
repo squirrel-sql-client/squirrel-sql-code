@@ -213,6 +213,14 @@
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/sqlval/dist/sqlval"/>
 		</pack>				
 
+		<pack required="no" preselected="no" name="Optional Plugin - Sybase ">
+			<description>This optional plugin adds functionality that is specific to the Sybase ASE DBMS</description>
+			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/sybase/dist/sybase.jar"/>
+			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/sybase/dist/sybase"/>
+		</pack>				
+
         <pack required="no" preselected="no" name="Optional Plugin - Internationalization ">
             <description>Allows translators to quickly find missing translation files </description>
             <file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins"
