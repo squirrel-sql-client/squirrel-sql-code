@@ -176,7 +176,7 @@
 		</pack>				
 
 		<pack required="no" preselected="no" name="Optional Plugin - MySQL ">
-			<description>This optional plugin adds MySQL specific functionality  </description>
+			<description>This optional plugin adds MySQL-specific functionality  </description>
 			<file targetdir="$INSTALL_PATH/plugins" 
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/mysql/dist/mysql.jar"/>
 			<file targetdir="$INSTALL_PATH/plugins" 
@@ -215,6 +215,14 @@
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/sqlval/dist/sqlval.jar"/>
 			<file targetdir="$INSTALL_PATH/plugins" 
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/sqlval/dist/sqlval"/>
+		</pack>				
+
+		<pack required="no" preselected="no" name="Optional Plugin - Sybase ">
+			<description>This optional plugin adds functionality that is specific to the Sybase ASE DBMS</description>
+			<file targetdir="$INSTALL_PATH/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/sybase/dist/sybase.jar"/>
+			<file targetdir="$INSTALL_PATH/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/sybase/dist/sybase"/>
 		</pack>				
 
         <pack required="no" preselected="no" name="Optional Plugin - Internationalization ">
