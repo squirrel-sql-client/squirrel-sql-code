@@ -66,6 +66,11 @@ public class MockSession implements ISession {
     UidIdentifier id = null;
     boolean closed;
         
+    // These tell the Dialect test runner where tables that is creates can be 
+    // found.
+    private String defaultCatalog = "";
+    private String defaultSchema = "";
+    
     public MockSession() {
     	init(true);
     }
@@ -326,5 +331,33 @@ public class MockSession implements ISession {
 
     public MockDatabaseMetaData getMockDatabaseMetaData() {
     	return mdata;
+    }
+
+    /**
+     * @param defaultCatalog the defaultCatalog to set
+     */
+    public void setDefaultCatalog(String defaultCatalog) {
+        this.defaultCatalog = defaultCatalog;
+    }
+
+    /**
+     * @return the defaultCatalog
+     */
+    public String getDefaultCatalog() {
+        return defaultCatalog;
+    }
+
+    /**
+     * @param defaultSchema the defaultSchema to set
+     */
+    public void setDefaultSchema(String defaultSchema) {
+        this.defaultSchema = defaultSchema;
+    }
+
+    /**
+     * @return the defaultSchema
+     */
+    public String getDefaultSchema() {
+        return defaultSchema;
     }
 }

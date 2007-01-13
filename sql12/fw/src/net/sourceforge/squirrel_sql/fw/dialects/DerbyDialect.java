@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 import java.sql.Types;
 import java.util.ArrayList;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
@@ -227,14 +228,13 @@ public class DerbyDialect extends DB2Dialect
      * true, then a drop statement with cascade constraints clause will be 
      * formed.
      * 
-     * @param tableName the table to drop
+     * @param iTableInfo the table to drop
      * @param cascadeConstraints whether or not to drop any FKs that may 
      * reference the specified table.
-     * 
      * @return the drop SQL command.
      */
-    public String getTableDropSQL(String tableName, boolean cascadeConstraints){
-        return DialectUtils.getTableDropSQL(tableName, false, cascadeConstraints);
+    public String getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints, ISession session){
+        return DialectUtils.getTableDropSQL(iTableInfo, false, cascadeConstraints, false, DialectUtils.CASCADE_CLAUSE, false);
     }
    
     /**

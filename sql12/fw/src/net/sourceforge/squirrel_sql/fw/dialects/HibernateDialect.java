@@ -18,6 +18,7 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
@@ -247,13 +248,13 @@ public interface HibernateDialect {
      * true, then a drop statement with cascade constraints clause will be 
      * formed.
      * 
-     * @param tableName the table to drop
+     * @param iTableInfo the table to drop
      * @param cascadeConstraints whether or not to drop any FKs that may 
      * reference the specified table.
-     * 
+     * @param session TODO
      * @return the drop SQL command.
      */
-    String getTableDropSQL(String tableName, boolean cascadeConstraints);
+    String getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints, ISession session);
     
     /**
      * Returns the SQL that forms the command to add a primary key to the 

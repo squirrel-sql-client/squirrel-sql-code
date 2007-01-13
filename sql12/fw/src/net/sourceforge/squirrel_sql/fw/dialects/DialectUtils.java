@@ -91,6 +91,12 @@ public class DialectUtils {
     
     public static final String DROP_COLUMN_CLAUSE = "DROP COLUMN";
     
+    // cascade constraint clauses
+    
+    public static final String CASCADE_CLAUSE = "CASCADE";
+    
+    public static final String CASCADE_CONSTRAINTS_CLAUSE = "CASCADE CONSTRAINTS";
+    
     // features
     
     public static final int COLUMN_COMMENT_ALTER_TYPE = 0;
@@ -259,22 +265,32 @@ public class DialectUtils {
      * true, then a drop statement with cascade constraints clause will be 
      * formed.
      * 
-     * @param tableName the table to drop
+     * @param iTableInfo the table to drop
      * @param supportsCascade whether or not the cascade clause should be added.
      * @param cascadeValue whether or not to drop any FKs that may 
      * reference the specified table.
-     * 
+     * @param supportsMatViews TODO
+     * @param cascadeClause TODO
+     * @param isMatView TODO
      * @return the drop SQL command.
      */
-    public static String getTableDropSQL(String tableName, 
+    public static String getTableDropSQL(ITableInfo iTableInfo, 
                                          boolean supportsCascade, 
-                                         boolean cascadeValue) 
+                                         boolean cascadeValue, 
+                                         boolean supportsMatViews, 
+                                         String cascadeClause, 
+                                         boolean isMatView) 
     {
         StringBuffer result = new StringBuffer();
-        result.append("DROP TABLE ");
-        result.append(tableName);
+        if (supportsMatViews && isMatView) {
+            result.append("DROP MATERIALIZED VIEW ");
+        } else {
+            result.append("DROP TABLE ");
+        }
+        result.append(iTableInfo.getQualifiedName());
         if (supportsCascade && cascadeValue) {
-            result.append(" CASCADE ");
+            result.append(" ");
+            result.append(cascadeClause);
         }
         return result.toString();
     }
