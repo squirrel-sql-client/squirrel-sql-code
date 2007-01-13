@@ -18,6 +18,7 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
@@ -219,15 +220,14 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect
      * true, then a drop statement with cascade constraints clause will be 
      * formed.
      * 
-     * @param tableName the table to drop
+     * @param iTableInfo the table to drop
      * @param cascadeConstraints whether or not to drop any FKs that may 
      * reference the specified table.
-     * 
      * @return the drop SQL command.
      */
-    public String getTableDropSQL(String tableName, boolean cascadeConstraints){
+    public String getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints, ISession session){
         // TODO: Need to verify this
-        return DialectUtils.getTableDropSQL(tableName, true, cascadeConstraints);
+        return DialectUtils.getTableDropSQL(iTableInfo, true, cascadeConstraints, false, DialectUtils.CASCADE_CLAUSE, false);
     }
     
     /**

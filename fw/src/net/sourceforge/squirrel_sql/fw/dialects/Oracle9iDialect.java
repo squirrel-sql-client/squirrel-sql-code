@@ -18,8 +18,12 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Types;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -249,26 +253,73 @@ public class Oracle9iDialect extends Oracle9Dialect
     }
     
     /**
+     * Returns a boolean value indicating whether or not the specified table 
+     * info is not only a table, but also a materialized view.
+     * 
+     * @param ti
+     * @param session
+     * @return
+     */
+    public boolean isMaterializedView(ITableInfo ti,
+                                      ISession session)
+    {
+        boolean result = false;
+        // There is no good way using JDBC metadata to tell if the table is a 
+        // materialized view.  So, we need to query the data dictionary to find
+        // that out.
+        String sql = 
+            "SELECT COMMENTS FROM ALL_TAB_COMMENTS " +
+            "where TABLE_NAME  = ? " +
+            "and OWNER = ? ";
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            stmt = session.getSQLConnection().prepareStatement(sql);
+            // Oracle always stores object names in uppercase
+            stmt.setString(1, ti.getSimpleName().toUpperCase());
+            stmt.setString(2, ti.getSchemaName().toUpperCase());
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                String comments = rs.getString(1);
+                if (!rs.wasNull() && comments.startsWith("snapshot")) {
+                    result = true;
+                }
+            }
+        } catch (SQLException e) {
+            if (rs != null) try { rs.close(); } catch (SQLException ex) {}
+            if (stmt != null) try { stmt.close(); } catch (SQLException ex) {}
+        }
+        return result;
+    }
+    
+    /**
      * Returns the SQL that forms the command to drop the specified table.  If
      * cascade contraints is supported by the dialect and cascadeConstraints is
      * true, then a drop statement with cascade constraints clause will be 
      * formed.
      * 
-     * @param tableName the table to drop
+     * @param ti the table to drop
      * @param cascadeConstraints whether or not to drop any FKs that may 
      * reference the specified table.
-     * 
      * @return the drop SQL command.
      */
-    public String getTableDropSQL(String tableName, boolean cascadeConstraints){
-        StringBuffer result = new StringBuffer();
-        result.append("DROP TABLE ");
-        result.append(tableName);
+    public String getTableDropSQL(ITableInfo ti, 
+                                  boolean cascadeConstraints, 
+                                  ISession session)
+    {
         
-        if (cascadeConstraints) {
-            result.append(" CASCADE CONSTRAINTS");
+        boolean isMatView = isMaterializedView(ti, session);
+        String cascadeClause = "";
+        if (!isMatView) {
+            cascadeClause = DialectUtils.CASCADE_CONSTRAINTS_CLAUSE;            
         }
-        return result.toString();
+
+        return DialectUtils.getTableDropSQL(ti,  
+                                            true, 
+                                            cascadeConstraints, 
+                                            true, 
+                                            cascadeClause, 
+                                            isMatView);
     }
     
     /**
@@ -334,7 +385,6 @@ public class Oracle9iDialect extends Oracle9Dialect
      *         false otherwise.
      */
     public boolean supportsRenameColumn() {
-        // TODO: need to verify this
         return true;
     }    
     
@@ -365,7 +415,6 @@ public class Oracle9iDialect extends Oracle9Dialect
      * @return true if supported; false otherwise
      */
     public boolean supportsAlterColumnType() {
-        // TODO: verify this
         return true;
     }
     

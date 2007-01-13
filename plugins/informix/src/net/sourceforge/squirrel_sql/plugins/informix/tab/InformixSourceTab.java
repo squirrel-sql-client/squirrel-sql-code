@@ -104,7 +104,13 @@ public abstract class InformixSourceTab extends BaseSourceTab {
                         buf.append(line.trim() + " ");                        
                     }
                 }
-                _ta.setText(GUIUtils.getWrappedLine(buf.toString(), 80));
+                // Stored Procedures can have comments embedded in them, so 
+                // don't line-wrap them.
+                if (sourceType == VIEW_TYPE) {
+                    _ta.setText(GUIUtils.getWrappedLine(buf.toString(), 80));
+                } else {
+                    _ta.setText(buf.toString());
+                }
                 _ta.setCaretPosition(0);
             }
             catch (SQLException ex)

@@ -70,42 +70,78 @@ public class DialectLiveTestRunner {
             String user = bundle.getString(db+"_jdbcUser");
             String pass = bundle.getString(db+"_jdbcPass");
             String driver = bundle.getString(db+"_jdbcDriver");
-            sessions.add(new MockSession(driver, url, user, pass));            
+            String catalog = bundle.getString(db+"_catalog");
+            String schema = bundle.getString(db+"_schema");
+            MockSession session = new MockSession(driver, url, user, pass);
+            session.setDefaultCatalog(catalog);
+            session.setDefaultSchema(schema);
+            sessions.add(session);            
         }
     }
     
     private void init(ISession session) throws Exception {
         createTestTables(session);
-        firstCol = getIntegerColumn("nullint", "test1", true, "0", "An int comment");
-        secondCol = getIntegerColumn("notnullint", "test2", false, "0", "An int comment");
-        thirdCol = getVarcharColumn("nullvc", "test3", true, "defVal", "A varchar comment");
-        fourthCol = getVarcharColumn("notnullvc", "test4", false, "defVal", "A varchar comment");
+        firstCol = getIntegerColumn("nullint", fixTableName(session, "test1"), true, "0", "An int comment");
+        secondCol = getIntegerColumn("notnullint", fixTableName(session,"test2"), false, "0", "An int comment");
+        thirdCol = getVarcharColumn("nullvc", fixTableName(session,"test3"), true, "defVal", "A varchar comment");
+        fourthCol = getVarcharColumn("notnullvc", fixTableName(session,"test4"), false, "defVal", "A varchar comment");
         noDefaultValueVarcharCol = 
-            getVarcharColumn("noDefaultVarcharCol", "test", true, null, "A varchar column with no default value"); 
-        dropCol = getVarcharColumn("dropCol", "test5", true, null, "A varchar comment");        
+            getVarcharColumn("noDefaultVarcharCol", fixTableName(session,"test"), true, null, "A varchar column with no default value"); 
+        dropCol = getVarcharColumn("dropCol", fixTableName(session,"test5"), true, null, "A varchar comment");        
         noDefaultValueIntegerCol = 
-            getIntegerColumn("noDefaultIntgerCol", "test5", true, null, "An integer column with no default value");
-        renameCol = getVarcharColumn("renameCol", "test", true, null, "A column to be renamed");
-        pkCol = getIntegerColumn("pkCol", "test", false, "0", "primary key column");
-        notNullIntegerCol = getIntegerColumn("notNullIntegerCol", "test5", false, "0", "potential pk column");
-        db2pkCol = getIntegerColumn(DB2_PK_COLNAME, "test", false, "0", "A DB2 Primary Key column");
+            getIntegerColumn("noDefaultIntgerCol", fixTableName(session,"test5"), true, null, "An integer column with no default value");
+        renameCol = getVarcharColumn("renameCol", fixTableName(session,"test"), true, null, "A column to be renamed");
+        pkCol = getIntegerColumn("pkCol", fixTableName(session,"test"), false, "0", "primary key column");
+        notNullIntegerCol = getIntegerColumn("notNullIntegerCol", fixTableName(session,"test5"), false, "0", "potential pk column");
+        db2pkCol = getIntegerColumn(DB2_PK_COLNAME, fixTableName(session,"test"), false, "0", "A DB2 Primary Key column");
         
         // These two columns will be the only ones in the pktest table.  They will 
         // start out being nullable, and we will test that the dialect correctly
         // converts them to non-null then applies the PK constraint to them.
         // This test shall not be run against any database dialect that claims not
         // to support changing the nullability of a column.
-        doubleColumnPKOne = getIntegerColumn("pk_col_1", "pktest", true, null, "an initially nullable field to be made part of a PK");
-        doubleColumnPKTwo = getIntegerColumn("pk_col_2", "pktest", true, null, "an initially nullable field to be made part of a PK");
+        doubleColumnPKOne = getIntegerColumn("pk_col_1", fixTableName(session,"pktest"), true, null, "an initially nullable field to be made part of a PK");
+        doubleColumnPKTwo = getIntegerColumn("pk_col_2", fixTableName(session,"pktest"), true, null, "an initially nullable field to be made part of a PK");
+    }
+    
+    private ITableInfo getTableInfo(ISession session, String tableName) 
+        throws Exception 
+    {
+        SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData(); 
+        String catalog = ((MockSession)session).getDefaultCatalog();
+        String schema = ((MockSession)session).getDefaultSchema();
+        if (md.storesUpperCaseIdentifiers()) {
+            tableName = tableName.toUpperCase();
+        } else {
+            tableName = tableName.toLowerCase();
+        }
+        //System.out.println("Looking for table with catalog="+catalog+" schema="+schema+" tableName="+tableName);
+        ITableInfo[] infos = 
+            md.getTables(catalog, schema, tableName, new String[] { "TABLE" }, null);
+        if (infos.length > 1) {
+            throw new IllegalStateException("Found more than one table matching name="+tableName);
+            
+        } 
+        if (infos.length == 0) {    
+            return null;
+        }
+        
+        return infos[0];
+
     }
     
     private void dropTable(ISession session, String tableName) throws Exception {
         HibernateDialect dialect = 
             DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);        
         try {
-            runSQL(session, dialect.getTableDropSQL(tableName, true));
+            ITableInfo ti = getTableInfo(session, tableName);
+            if (ti == null) {    
+                System.out.println("Table "+tableName+" couldn't be dropped - doesn't exist");
+                return;
+            }
+            runSQL(session, dialect.getTableDropSQL(ti, true, session));
         } catch (SQLException e) {
-            // Nothing
+            // Do Nothing
         }
     }
     
@@ -121,13 +157,16 @@ public class DialectLiveTestRunner {
         HibernateDialect dialect = 
             DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);  
 
-        dropTable(session, "test");
-        dropTable(session, "test1");
-        dropTable(session, "test2");
-        dropTable(session, "test3");
-        dropTable(session, "test4");
-        dropTable(session, "test5");
-        dropTable(session, "pktest");
+        dropTable(session, fixTableName(session,"test"));
+        dropTable(session, fixTableName(session,"test1"));
+        dropTable(session, fixTableName(session,"test2"));
+        dropTable(session, fixTableName(session,"test3"));
+        dropTable(session, fixTableName(session,"test4"));
+        dropTable(session, fixTableName(session,"test5"));
+        dropTable(session, fixTableName(session,"pktest"));
+        if (DialectFactory.isOracleSession(session)) {
+            dropTable(session, fixTableName(session,"matview"));
+        }
 
         String pageSizeClause = "";
         
@@ -141,19 +180,19 @@ public class DialectLiveTestRunner {
             // you to add a PK to a table after it has been constructed unless the
             // column(s) that comprise the PK were originally there when created
             // *and* created not null.
-            runSQL(session, "create table test ( mychar char(10), "+DB2_PK_COLNAME+" integer not null)");
+            runSQL(session, "create table "+fixTableName(session,"test")+" ( mychar char(10), "+DB2_PK_COLNAME+" integer not null)");
         } else {
-            runSQL(session, "create table test ( mychar char(10))"+pageSizeClause);
+            runSQL(session, "create table "+fixTableName(session,"test")+" ( mychar char(10))"+pageSizeClause);
         }
         
-        runSQL(session, "create table test1 ( mychar char(10))"+pageSizeClause);
-        runSQL(session, "create table test2 ( mychar char(10))"+pageSizeClause);
-        runSQL(session, "create table test3 ( mychar char(10))"+pageSizeClause);
-        runSQL(session, "create table test4 ( mychar char(10))"+pageSizeClause);
-        runSQL(session, "create table test5 ( mychar char(10))"+pageSizeClause);
+        runSQL(session, "create table "+fixTableName(session,"test1")+" ( mychar char(10))"+pageSizeClause);
+        runSQL(session, "create table "+fixTableName(session,"test2")+" ( mychar char(10))"+pageSizeClause);
+        runSQL(session, "create table "+fixTableName(session,"test3")+" ( mychar char(10))"+pageSizeClause);
+        runSQL(session, "create table "+fixTableName(session,"test4")+" ( mychar char(10))"+pageSizeClause);
+        runSQL(session, "create table "+fixTableName(session,"test5")+" ( mychar char(10))"+pageSizeClause);
         
         if (dialect.supportsAlterColumnNull()) {
-            runSQL(session, "create table pktest ( pk_col_1 integer, pk_col_2 integer )"+pageSizeClause);
+            runSQL(session, "create table "+fixTableName(session,"pktest")+" ( pk_col_1 integer, pk_col_2 integer )"+pageSizeClause);
         }
     }    
     
@@ -204,9 +243,43 @@ public class DialectLiveTestRunner {
                     } 
                 }
             }
-            
+            testDropMatView(session);
         }
     }
+
+    /**
+        CREATE MATERIALIZED VIEW matview2
+            REFRESH COMPLETE
+            NEXT  SYSDATE + 1
+            WITH PRIMARY KEY 
+            AS SELECT * FROM TEST;
+
+     * @param session
+     * @throws Exception
+     */
+    private void testDropMatView(ISession session) throws Exception {
+        if (!DialectFactory.isOracleSession(session)) return;
+        HibernateDialect dialect = 
+            DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);          
+        
+        testAddPrimaryKey(session, new TableColumnInfo[] { pkCol } );
+        String createMatViewSQL = 
+            "CREATE MATERIALIZED VIEW MATVIEW " +
+            "       REFRESH COMPLETE " +
+            "   NEXT  SYSDATE + 1 " +
+            "   WITH PRIMARY KEY " +
+            "   AS SELECT * FROM TEST ";
+        runSQL(session, createMatViewSQL);
+        MockSession msession = (MockSession)session;
+        String cat = msession.getDefaultCatalog();
+        String schema = msession.getDefaultSchema();
+        SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
+        ITableInfo info = new TableInfo(cat, schema, "MATVIEW", "TABLE", "", md);
+        String dropSQL = dialect.getTableDropSQL(info, true, session);
+        runSQL(session, dropSQL);
+    }
+    
+    
     
     private void testAlterName(ISession session) throws Exception {
         HibernateDialect dialect = 
@@ -424,12 +497,12 @@ public class DialectLiveTestRunner {
         }
         
         SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
-        String catalog = "";
-        String schemaPattern = "";
+        String catalog = ((MockSession)session).getDefaultCatalog();
+        String schema = ((MockSession)session).getDefaultSchema();
         
         ITableInfo[] infos = null;
         try {
-            md.getTables(catalog, schemaPattern, tableName, new String[] {"TABLE"}, null);
+            md.getTables(catalog, schema, tableName, new String[] {"TABLE"}, null);
         } catch (SQLException e) {
             // Do nothing
         }
@@ -439,7 +512,7 @@ public class DialectLiveTestRunner {
             ti = infos[0];
         } else {
             // Couldn't locate the table - just try to fake it.
-            ti = new TableInfo("", "", tableName, "TABLE", "", md);
+            ti = new TableInfo(catalog, schema, tableName, "TABLE", "", md);
         }
         
         String[] pkSQLs = 
@@ -561,6 +634,18 @@ public class DialectLiveTestRunner {
                                 isNullable);            // isNullable 
         return result;
     }
+    
+    private String fixTableName(ISession session, String table) throws Exception {
+        String result = null;
+        SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
+        if (md.storesUpperCaseIdentifiers()) {
+            result = table.toUpperCase();
+        } else {
+            result = table.toLowerCase();
+        }
+        return result;
+    }
+    
     /**
      * @param args
      */
