@@ -135,8 +135,8 @@ public class MyURLClassLoader extends URLClassLoader
 
 							// During assignable checks many classes can't be loaded but don't cause problems either.
 							// So we just issue an info.
-							Object[] args = new Object[]{className, type.getName(), th.toString()};
-							// i18n[MyURLClassLoader.noAssignCheck=Failed to load {0} to check if it is assignable to {1}. Reason: {2}]
+							Object[] args = new Object[]{className, file.getAbsolutePath(), type.getName(), th.toString()};
+							// i18n[MyURLClassLoader.noAssignCheck=Failed to load {0} in {1} to check if it is assignable to {2}. Reason: {3}]
 							String msg = s_stringMgr.getString("MyURLClassLoader.noAssignCheck", args);
 							logger.info(msg);
 						}
