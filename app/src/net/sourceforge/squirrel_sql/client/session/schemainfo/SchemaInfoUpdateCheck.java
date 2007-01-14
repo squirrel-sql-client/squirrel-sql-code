@@ -28,6 +28,7 @@ public class SchemaInfoUpdateCheck
    private static final Pattern PATTERN_INSERT_INTO = Pattern.compile("SELECT\\s+INTO\\s+([A-Z0-9_\\.\"]+)");
 
    private static final Pattern PATTERN_CREATE_VIEW = Pattern.compile("CREATE\\s+VIEW\\s+([A-Z0-9_\\.\"]+)");
+   private static final Pattern PATTERN_CREATE_MATERIALIZED_VIEW = Pattern.compile("CREATE\\s+MATERIALIZED\\s+VIEW\\s+([A-Z0-9_\\.\"]+)");
    private static final Pattern PATTERN_CREATE_OR_REPLACE_VIEW = Pattern.compile("CREATE\\s+OR\\s+REPLACE\\s+VIEW\\s+([A-Z0-9_\\.\"]+)");
    private static final Pattern PATTERN_ALTER_VIEW = Pattern.compile("ALTER\\s+VIEW\\s+([A-Z0-9_\\.\"]+)");
 
@@ -350,6 +351,12 @@ public class SchemaInfoUpdateCheck
          return createTableInfos(matcher, sql, "VIEW", false);
       }
 
+      matcher = PATTERN_CREATE_MATERIALIZED_VIEW.matcher(upperSql);
+      if(matcher.find())
+      {
+         return createTableInfos(matcher, sql, "TABLE", false);
+      }
+      
       matcher = PATTERN_ALTER_VIEW.matcher(upperSql);
       if(matcher.find())
       {
