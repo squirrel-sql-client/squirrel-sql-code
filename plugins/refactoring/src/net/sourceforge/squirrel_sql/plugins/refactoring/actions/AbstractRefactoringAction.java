@@ -33,6 +33,10 @@ public abstract class AbstractRefactoringAction extends SquirrelAction
 
 	/** Current session. */
     protected ISession _session;
+    
+    /** API for the current tree. */
+    protected IObjectTreeAPI _tree;
+    
         
     public AbstractRefactoringAction(IApplication app, 
                                      Resources rsrc) 
@@ -45,19 +49,21 @@ public abstract class AbstractRefactoringAction extends SquirrelAction
             IObjectTreeAPI api = 
                 _session.getObjectTreeAPIOfActiveSessionWindow();
             IDatabaseObjectInfo[] infos = api.getSelectedDatabaseObjects();
-            if (infos.length == 1) {
+            if (infos.length > 1 && !isMultipleObjectAction()) {
+                _session.getMessageHandler().showMessage(getErrorMessage());
+            } else {
                 try {
-                    getCommand(infos[0]).execute();
+                    getCommand(infos).execute();
                 } catch (Exception e) {
                     _session.getMessageHandler().showMessage(e);
-                }
-            } else {
-                _session.getMessageHandler().showMessage(getErrorMessage());
+                }            
             }
         }
     }
 
-    protected abstract ICommand getCommand(IDatabaseObjectInfo info);
+    protected abstract ICommand getCommand(IDatabaseObjectInfo[] info);
+    
+    protected abstract boolean isMultipleObjectAction();
     
     protected abstract String getErrorMessage();
 
@@ -71,6 +77,7 @@ public abstract class AbstractRefactoringAction extends SquirrelAction
        {
           _session = null;
        }
+       _tree = tree;
        setEnabled(null != _session);
     }    
     

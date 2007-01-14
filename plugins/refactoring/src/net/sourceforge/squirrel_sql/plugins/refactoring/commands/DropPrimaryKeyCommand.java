@@ -57,7 +57,7 @@ public class DropPrimaryKeyCommand extends AbstractRefactoringCommand {
     /**
      * Ctor specifying the current session.
      */
-    public DropPrimaryKeyCommand(ISession session, IDatabaseObjectInfo info)
+    public DropPrimaryKeyCommand(ISession session, IDatabaseObjectInfo[] info)
     {
         super(session, info);
     }
@@ -67,10 +67,10 @@ public class DropPrimaryKeyCommand extends AbstractRefactoringCommand {
      */
     public void execute()
     {
-        if (! (_info instanceof ITableInfo)) {
+        if (! (_info[0] instanceof ITableInfo)) {
             return;
         }
-        ITableInfo ti = (ITableInfo)_info;
+        ITableInfo ti = (ITableInfo)_info[0];
         try {
             if (!tableHasPrimaryKey()) {
                 //i18n[DropPrimaryKeyCommand.noKeyToDrop=Table {0} does not 
@@ -109,7 +109,7 @@ public class DropPrimaryKeyCommand extends AbstractRefactoringCommand {
                                       
             _session.getMessageHandler().showMessage(msg);
         } catch (UserCancelledOperationException e) {
-            // user cancelled selecting a dialog. do nothing?
+            // user cancelled selecting a dialect. do nothing?
         }
         return new String[] { result };
         

@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.sql.Types;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
@@ -217,7 +216,7 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect
      * reference the specified table.
      * @return the drop SQL command.
      */
-    public String getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints, ISession session){
+    public String getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints, boolean isMaterializedView){
         String cascadeClause = DialectUtils.CASCADE_CLAUSE;
         return DialectUtils.getTableDropSQL(iTableInfo, 
                                             false, 

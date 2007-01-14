@@ -74,7 +74,7 @@ public class ModifyColumnCommand extends AbstractRefactoringCommand
     /**
      * Ctor specifying the current session.
      */
-    public ModifyColumnCommand(ISession session, IDatabaseObjectInfo info)
+    public ModifyColumnCommand(ISession session, IDatabaseObjectInfo[] info)
     {
         super(session, info);
     }
@@ -85,13 +85,13 @@ public class ModifyColumnCommand extends AbstractRefactoringCommand
      */
     public void execute()
     {
-        if (! (_info instanceof ITableInfo)) {
+        if (! (_info[0] instanceof ITableInfo)) {
             return;
         }
         //Show the user a dialog with a list of columns and ask them to select
         // one or more columns to drop
         try {
-            ITableInfo ti = (ITableInfo)_info;
+            ITableInfo ti = (ITableInfo)_info[0];
             TableColumnInfo[] columns = 
                 _session.getSQLConnection().getSQLMetaData().getColumnInfo(ti);
             
@@ -158,7 +158,7 @@ public class ModifyColumnCommand extends AbstractRefactoringCommand
             columnDetailDialog = 
                 new ColumnDetailDialog(ColumnDetailDialog.MODIFY_MODE);
             columnDetailDialog.setExistingColumnInfo(columnToModify);
-            columnDetailDialog.setTableName(_info.getQualifiedName());
+            columnDetailDialog.setTableName(_info[0].getQualifiedName());
             columnDetailDialog.addShowSQLListener(new ShowSQLButtonListener());
             columnDetailDialog.addEditSQLListener(new EditSQLListener());
             columnDetailDialog.addExecuteListener(new OKButtonListener());

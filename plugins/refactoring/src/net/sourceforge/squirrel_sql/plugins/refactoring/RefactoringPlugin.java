@@ -30,7 +30,6 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.DropSelectedTablesAction;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -38,6 +37,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.AddColumnAction;
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.AddPrimaryKeyAction;
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.DropPrimaryKeyAction;
+import net.sourceforge.squirrel_sql.plugins.refactoring.actions.DropSelectedTablesAction;
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.ModifyColumnAction;
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.RemoveColumnAction;
 
@@ -172,6 +172,7 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
       coll.add(new RemoveColumnAction(app, _resources));
       coll.add(new AddPrimaryKeyAction(app, _resources));
       coll.add(new DropPrimaryKeyAction(app, _resources));
+      coll.add(new DropSelectedTablesAction(app, _resources));
    }
 
    public boolean allowsSessionStartedInBackground()
@@ -244,8 +245,9 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
         
         JMenuItem dropTableItem = new JMenuItem("Drop Table");
         dropTableItem.setAction(coll.get(DropSelectedTablesAction.class));
-        JMenuItem addIndexItem = new JMenuItem("Add Index");
-        JMenuItem dropIndexItem = new JMenuItem("Drop Index");
+        // Not yet implemented
+        //JMenuItem addIndexItem = new JMenuItem("Add Index");
+        //JMenuItem dropIndexItem = new JMenuItem("Drop Index");
         JMenuItem addPrimaryKeyItem = new JMenuItem("Add Primary Key");
         addPrimaryKeyItem.setAction(coll.get(AddPrimaryKeyAction.class));
         JMenuItem dropPrimaryKeyItem = new JMenuItem("Drop Primary Key");

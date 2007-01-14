@@ -10,30 +10,42 @@ import net.sourceforge.squirrel_sql.client.gui.db.ColumnListDialog;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.plugins.refactoring.gui.DropTableDialog;
 
 public abstract class AbstractRefactoringCommand implements ICommand {
 
     /** Current session */
     protected ISession _session;
     
-    /** Selected table */
-    protected final IDatabaseObjectInfo _info;
+    /** Selected table(s) */
+    protected final IDatabaseObjectInfo[] _info;
 
     protected ColumnListDialog columnListDialog = null;
     
     protected ColumnDetailDialog columnDetailDialog = null;
     
+    protected DropTableDialog dropTableDialog = null;
+    
     protected String pkName = null;
     
     public AbstractRefactoringCommand(ISession session, 
-                                      IDatabaseObjectInfo info) 
+                                      IDatabaseObjectInfo[] info) 
     {
+        if (session == null)
+        {
+            throw new IllegalArgumentException("ISession cannot be null");
+        }
+        if (info == null)
+        {
+            throw new IllegalArgumentException("IDatabaseObjectInfo[] cannot be null");
+        }        
         _session = session;
         _info = info;
     }
@@ -44,7 +56,7 @@ public abstract class AbstractRefactoringCommand implements ICommand {
         throws SQLException 
     {
 
-        ITableInfo ti = (ITableInfo)_info;
+        ITableInfo ti = (ITableInfo)_info[0];
         TableColumnInfo[] columns = getTableColumns(ti, mode);
 
         
@@ -74,6 +86,23 @@ public abstract class AbstractRefactoringCommand implements ICommand {
         columnListDialog.setVisible(true);
     }
 
+    protected void showDropTableDialog(ActionListener oklistener, 
+                                       ActionListener showSqlListener) {
+        if (dropTableDialog == null) {
+            ITableInfo[] tableInfos = new ITableInfo[_info.length];
+            for (int i = 0; i < tableInfos.length; i++) {
+                tableInfos[i] = (ITableInfo)_info[i];
+            }
+            dropTableDialog = new DropTableDialog(tableInfos);
+            dropTableDialog.addExecuteListener(oklistener);
+            dropTableDialog.addShowSQLListener(showSqlListener);
+            dropTableDialog.addEditSQLListener(new EditSQLListener());
+            MainFrame mainFrame = _session.getApplication().getMainFrame();
+            dropTableDialog.setLocationRelativeTo(mainFrame);              
+        }
+        dropTableDialog.setVisible(true);
+    }
+    
     protected void setPKName(String pkName) {
         this.pkName = pkName;
     }
@@ -165,6 +194,9 @@ public abstract class AbstractRefactoringCommand implements ICommand {
             if (columnDetailDialog != null) {
                 columnDetailDialog.setVisible(false);
             }
+            if (dropTableDialog != null) {
+                dropTableDialog.setVisible(false);
+            }
             _session.getSQLPanelAPIOfActiveSessionWindow().appendSQLScript(sql.toString(), true);
             _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
         }
@@ -172,10 +204,10 @@ public abstract class AbstractRefactoringCommand implements ICommand {
     }
     
     protected boolean tableHasPrimaryKey() throws SQLException {
-        if (! (_info instanceof ITableInfo)) {
+        if (! (_info[0] instanceof ITableInfo)) {
             return false;
         }
-        ITableInfo ti = (ITableInfo)_info;
+        ITableInfo ti = (ITableInfo)_info[0];
         SQLDatabaseMetaData md = _session.getSQLConnection().getSQLMetaData();
         PrimaryKeyInfo[] pks = md.getPrimaryKey(ti);
         return (pks != null && pks.length > 0);

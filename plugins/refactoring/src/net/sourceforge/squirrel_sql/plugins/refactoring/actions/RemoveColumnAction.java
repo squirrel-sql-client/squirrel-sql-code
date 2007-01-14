@@ -53,7 +53,7 @@ public class RemoveColumnAction extends AbstractRefactoringAction
     /* (non-Javadoc)
      * @see net.sourceforge.squirrel_sql.plugins.refactoring.actions.AbstractRefactoringAction#getCommand(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
      */
-    protected ICommand getCommand(IDatabaseObjectInfo info) {
+    protected ICommand getCommand(IDatabaseObjectInfo[] info) {
         return new RemoveColumnCommand(_session, info);
     }
 
@@ -62,6 +62,12 @@ public class RemoveColumnAction extends AbstractRefactoringAction
      */
     protected String getErrorMessage() {
         return i18n.singleObjectMessage;
+    }
+
+    @Override
+    protected boolean isMultipleObjectAction() {
+        // Can only remove columns from one table at a time
+        return false;
     }
     
 }

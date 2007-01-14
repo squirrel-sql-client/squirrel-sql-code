@@ -49,11 +49,17 @@ public class DropPrimaryKeyAction extends AbstractRefactoringAction
         super(app, rsrc); 
     }
 
-    protected ICommand getCommand(IDatabaseObjectInfo info) {
+    protected ICommand getCommand(IDatabaseObjectInfo[] info) {
         return new DropPrimaryKeyCommand(_session, info);
     }
     
     protected String getErrorMessage() {
         return i18n.singleObjectMessage;
+    }
+
+    @Override
+    protected boolean isMultipleObjectAction() {
+        // Can only drop a primary key from one table at a time.
+        return false;
     }    
 }

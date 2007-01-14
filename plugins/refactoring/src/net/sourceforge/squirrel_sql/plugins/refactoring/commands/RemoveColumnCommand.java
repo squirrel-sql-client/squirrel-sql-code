@@ -60,7 +60,7 @@ public class RemoveColumnCommand extends AbstractRefactoringCommand
     /**
      * Ctor specifying the current session.
      */
-    public RemoveColumnCommand(ISession session, IDatabaseObjectInfo info)
+    public RemoveColumnCommand(ISession session, IDatabaseObjectInfo[] info)
     {
         super(session, info);
     }
@@ -70,11 +70,11 @@ public class RemoveColumnCommand extends AbstractRefactoringCommand
      */
     public void execute()
     {
-        if (! (_info instanceof ITableInfo)) {
+        if (! (_info[0] instanceof ITableInfo)) {
             return;
         }
         try {
-            ITableInfo ti = (ITableInfo)_info;
+            ITableInfo ti = (ITableInfo)_info[0];
             TableColumnInfo[] columns = 
                 _session.getSQLConnection().getSQLMetaData().getColumnInfo(ti);
 
@@ -125,7 +125,7 @@ public class RemoveColumnCommand extends AbstractRefactoringCommand
             dialect = DialectFactory.getDialect(_session, DialectFactory.DEST_TYPE);
             for (int i = 0; i < columns.length; i++) {
                 TableColumnInfo info = columns[i];
-                result[i] = DBUtil.getAlterSQLForColumnRemoval(_info.getQualifiedName(), 
+                result[i] = DBUtil.getAlterSQLForColumnRemoval(_info[0].getQualifiedName(), 
                                                                info, 
                                                                dialect);
             }

@@ -49,11 +49,17 @@ public class AddColumnAction extends AbstractRefactoringAction
         super(app, rsrc); 
     }
 
-    protected ICommand getCommand(IDatabaseObjectInfo info) {
+    protected ICommand getCommand(IDatabaseObjectInfo[] info) {
         return new AddColumnCommand(_session, info);
     }
     
     protected String getErrorMessage() {
         return i18n.singleObjectMessage;
+    }
+
+    @Override
+    protected boolean isMultipleObjectAction() {
+        // Can only add a column to one table at a time
+        return false;
     }    
 }

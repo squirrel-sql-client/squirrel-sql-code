@@ -49,11 +49,18 @@ public class ModifyColumnAction extends AbstractRefactoringAction
         super(app, rsrc); 
     }
 
-    protected ICommand getCommand(IDatabaseObjectInfo info) {
+    protected ICommand getCommand(IDatabaseObjectInfo[] info) {
         return new ModifyColumnCommand(_session, info);
     }
     
     protected String getErrorMessage() {
         return i18n.singleObjectMessage;
-    }    
+    }
+
+    @Override
+    protected boolean isMultipleObjectAction() {
+        // Can only modify a column in one table at a time
+        return false;
+    }
+
 }

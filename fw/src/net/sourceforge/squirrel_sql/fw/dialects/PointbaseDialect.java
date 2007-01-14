@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.sql.Types;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -218,7 +217,7 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect
      * reference the specified table.
      * @return the drop SQL command.
      */
-    public String getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints, ISession session){
+    public String getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints, boolean isMaterializedView){
         // TODO: Need to verify this
         return DialectUtils.getTableDropSQL(iTableInfo, true, cascadeConstraints, false, DialectUtils.CASCADE_CLAUSE, false);
     }
