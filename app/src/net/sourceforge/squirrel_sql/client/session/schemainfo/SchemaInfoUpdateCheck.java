@@ -42,6 +42,7 @@ public class SchemaInfoUpdateCheck
 
    private static final Pattern PATTERN_DROP_TABLE = Pattern.compile("DROP\\s+TABLE\\s+([A-Z0-9_\\.\"]+)");
    private static final Pattern PATTERN_DROP_VIEW = Pattern.compile("DROP\\s+VIEW\\s+([A-Z0-9_\\.\"]+)");
+   private static final Pattern PATTERN_DROP_MATERIALIZED_VIEW = Pattern.compile("DROP\\s+MATERIALIZED\\s+VIEW\\s+([A-Z0-9_\\.\"]+)");   
 
    private static final Pattern PATTERN_DROP_PROCEDURE = Pattern.compile("DROP\\s+PROCEDURE\\s+([A-Z0-9_\\.\"]+)");
    private static final Pattern PATTERN_DROP_FUNCTION = Pattern.compile("DROP\\s+FUNCTION\\s+([A-Z0-9_\\.\"]+)");
@@ -130,6 +131,12 @@ public class SchemaInfoUpdateCheck
          return createTableInfos(matcher, sql, "TABLE", true)[0].getSimpleName();
       }
 
+      matcher = PATTERN_DROP_MATERIALIZED_VIEW.matcher(upperSql);
+      if(matcher.find())
+      {
+         return createTableInfos(matcher, sql, "TABLE", true)[0].getSimpleName();
+      }
+      
       matcher = PATTERN_DROP_VIEW.matcher(upperSql);
       if(matcher.find())
       {
