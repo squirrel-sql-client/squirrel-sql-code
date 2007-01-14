@@ -67,7 +67,7 @@ public class AddColumnCommand extends AbstractRefactoringCommand
     /**
      * Ctor specifying the current session.
      */
-    public AddColumnCommand(ISession session, IDatabaseObjectInfo info)
+    public AddColumnCommand(ISession session, IDatabaseObjectInfo[] info)
     {
         super(session, info);
     }
@@ -78,7 +78,7 @@ public class AddColumnCommand extends AbstractRefactoringCommand
      */
     public void execute()
     {
-        String tableName = _info.getQualifiedName();
+        String tableName = _info[0].getQualifiedName();
         try {
             dialect =  
                 DialectFactory.getDialect(_session, DialectFactory.DEST_TYPE);
@@ -174,7 +174,7 @@ public class AddColumnCommand extends AbstractRefactoringCommand
             boolean result = true;
             SQLDatabaseMetaData d = _session.getSQLConnection().getSQLMetaData();
             try {
-            TableColumnInfo[] columnInfos = d.getColumnInfo((ITableInfo)_info);
+            TableColumnInfo[] columnInfos = d.getColumnInfo((ITableInfo)_info[0]);
                 for (int i = 0; i < columnInfos.length; i++) {
                     TableColumnInfo columnInfo = columnInfos[i];
                     String existingColumnName = columnInfo.getColumnName();

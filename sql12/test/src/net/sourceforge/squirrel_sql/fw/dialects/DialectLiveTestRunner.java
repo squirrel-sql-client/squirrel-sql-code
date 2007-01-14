@@ -139,7 +139,7 @@ public class DialectLiveTestRunner {
                 System.out.println("Table "+tableName+" couldn't be dropped - doesn't exist");
                 return;
             }
-            runSQL(session, dialect.getTableDropSQL(ti, true, session));
+            runSQL(session, dialect.getTableDropSQL(ti, true, false));
         } catch (SQLException e) {
             // Do Nothing
         }
@@ -275,7 +275,7 @@ public class DialectLiveTestRunner {
         String schema = msession.getDefaultSchema();
         SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
         ITableInfo info = new TableInfo(cat, schema, "MATVIEW", "TABLE", "", md);
-        String dropSQL = dialect.getTableDropSQL(info, true, session);
+        String dropSQL = dialect.getTableDropSQL(info, true, false);
         runSQL(session, dropSQL);
     }
     

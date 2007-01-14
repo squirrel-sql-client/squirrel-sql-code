@@ -48,7 +48,6 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.CopyQualifiedObjectNameAction;
 import net.sourceforge.squirrel_sql.client.session.action.CopySimpleObjectNameAction;
 import net.sourceforge.squirrel_sql.client.session.action.DeleteSelectedTablesAction;
-import net.sourceforge.squirrel_sql.client.session.action.DropSelectedTablesAction;
 import net.sourceforge.squirrel_sql.client.session.action.EditWhereColsAction;
 import net.sourceforge.squirrel_sql.client.session.action.FilterObjectsAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshSchemaInfoAction;
@@ -163,8 +162,6 @@ class ObjectTree extends JTree
       addToPopup(DatabaseObjectType.VIEW, actions.get(SQLFilterAction.class));
 
       addToPopup(DatabaseObjectType.TABLE, actions.get(DeleteSelectedTablesAction.class));
-      addToPopup(DatabaseObjectType.TABLE, actions.get(DropSelectedTablesAction.class));
-      addToPopup(DatabaseObjectType.VIEW, actions.get(DropSelectedTablesAction.class));
 
       addToPopup(DatabaseObjectType.SESSION, actions.get(FilterObjectsAction.class));
 

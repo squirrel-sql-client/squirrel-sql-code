@@ -22,26 +22,55 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 
 public class MockTableInfo extends MockDatabaseObjectInfo implements ITableInfo {
 
+    private String type = null;
+    private String remarks = null;
+    private ITableInfo[] childTables = null;
+    
     public MockTableInfo(String aSimpleName, String aSchemaName, String aCatalog) {
         super(aSimpleName, aSchemaName, aCatalog);
+    }
+
+    /**
+     * @param type the type to set
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    /**
+     * @return the type
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * @param remarks the remarks to set
+     */
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
+
+    /**
+     * @return the remarks
+     */
+    public String getRemarks() {
+        return remarks;
+    }
+
+    /**
+     * @param childTables the childTables to set
+     */
+    public void setChildTables(ITableInfo[] childTables) {
+        this.childTables = childTables;
+    }
+
+    /**
+     * @return the childTables
+     */
+    public ITableInfo[] getChildTables() {
+        return childTables;
     }    
     
-    public String getType() {
-        // TODO Auto-generated method stub
-        System.err.println("MockTableInfo.getType: stub not yet implemented");
-        return null;
-    }
-
-    public String getRemarks() {
-        // TODO Auto-generated method stub
-        System.err.println("MockTableInfo.getRemarks: stub not yet implemented");        
-        return null;
-    }
-
-    public ITableInfo[] getChildTables() {
-        // TODO Auto-generated method stub
-        System.err.println("MockTableInfo.getChildTables: stub not yet implemented");
-        return null;
-    }
 
 }

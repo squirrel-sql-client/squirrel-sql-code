@@ -18,7 +18,6 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
@@ -225,7 +224,7 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect
      * reference the specified table.
      * @return the drop SQL command.
      */
-    public String getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints, ISession session){
+    public String getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints, boolean isMaterializedView){
         // TODO: Need to verify this
         return DialectUtils.getTableDropSQL(iTableInfo, true, cascadeConstraints, false, DialectUtils.CASCADE_CLAUSE, false);
     }

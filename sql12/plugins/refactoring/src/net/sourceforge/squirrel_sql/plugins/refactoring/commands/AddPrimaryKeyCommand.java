@@ -58,7 +58,7 @@ public class AddPrimaryKeyCommand extends AbstractRefactoringCommand {
     /**
      * Ctor specifying the current session.
      */
-    public AddPrimaryKeyCommand(ISession session, IDatabaseObjectInfo info)
+    public AddPrimaryKeyCommand(ISession session, IDatabaseObjectInfo[] info)
     {
         super(session, info);
     }
@@ -68,13 +68,13 @@ public class AddPrimaryKeyCommand extends AbstractRefactoringCommand {
      */
     public void execute()
     {
-        if (! (_info instanceof ITableInfo)) {
+        if (! (_info[0] instanceof ITableInfo)) {
             return;
         }
         
         
         try {
-            ITableInfo ti = (ITableInfo)_info;    
+            ITableInfo ti = (ITableInfo)_info[0];    
             if (tableHasPrimaryKey()) {
                 //i18n[AddPrimaryKeyCommand.primaryKeyExists=Table {0} already 
                 //has a primary key]
@@ -107,7 +107,7 @@ public class AddPrimaryKeyCommand extends AbstractRefactoringCommand {
 
             String pkName = columnListDialog.getPrimaryKeyName();
             
-            result = dialect.getAddPrimaryKeySQL(pkName, columns, (ITableInfo)_info);
+            result = dialect.getAddPrimaryKeySQL(pkName, columns, (ITableInfo)_info[0]);
         } catch (UnsupportedOperationException e2) {
             //i18n[AddPrimaryKeyCommand.unsupportedOperationMsg=The {0} 
             //dialect doesn't support adding primary keys to tables]

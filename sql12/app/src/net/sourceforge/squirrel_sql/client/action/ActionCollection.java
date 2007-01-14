@@ -446,7 +446,7 @@ public final class ActionCollection
 		add(new CopyQualifiedObjectNameAction(_app));
 		add(new CopySimpleObjectNameAction(_app));
 		add(new DisplayPluginSummaryAction(_app));
-		add(new DropSelectedTablesAction(_app));
+		//add(new DropSelectedTablesAction(_app));
 		add(new DeleteSelectedTablesAction(_app));
 		add(new DumpApplicationAction(_app));
 		add(new DumpSessionAction(_app));
