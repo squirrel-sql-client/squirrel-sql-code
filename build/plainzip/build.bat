@@ -4,6 +4,7 @@ set INSTALL_JAR=c:\tmp\squirrel-sql-2.4-install.jar
 
 set VERSION=2.4
 
+cd %PLAIN_ZIP_DIR%
 
 rm -f *.zip
 rm -rf tmp
