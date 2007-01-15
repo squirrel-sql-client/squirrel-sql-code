@@ -16,14 +16,12 @@ package net.sourceforge.squirrel_sql.plugins.editextras;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import net.sourceforge.squirrel_sql.fw.util.BaseException;
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
-
-import net.sourceforge.squirrel_sql.plugins.editextras.codereformat.CodeReformator;
-import net.sourceforge.squirrel_sql.plugins.editextras.codereformat.CommentSpec;
-
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.codereformat.CodeReformator;
+import net.sourceforge.squirrel_sql.fw.codereformat.CommentSpec;
+import net.sourceforge.squirrel_sql.fw.util.BaseException;
+import net.sourceforge.squirrel_sql.fw.util.ICommand;
 /**
  * This command will &quot;quote&quot; an SQL string.
  *
