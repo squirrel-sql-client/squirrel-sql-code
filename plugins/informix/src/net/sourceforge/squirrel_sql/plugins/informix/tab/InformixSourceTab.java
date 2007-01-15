@@ -27,7 +27,8 @@ import javax.swing.JTextArea;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourcePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.codereformat.CodeReformator;
+import net.sourceforge.squirrel_sql.fw.codereformat.CommentSpec;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -53,6 +54,16 @@ public abstract class InformixSourceTab extends BaseSourceTab {
     private final static ILogger s_log =
         LoggerController.createLogger(InformixSourceTab.class);
 
+    private static CommentSpec[] commentSpecs =
+          new CommentSpec[]
+          {
+              new CommentSpec("/*", "*/"),
+              new CommentSpec("--", "\n")
+          };
+    
+    private static CodeReformator formatter = 
+        new CodeReformator(";", commentSpecs);
+    
     public InformixSourceTab(String hint)
     {
         super(hint);
@@ -107,7 +118,11 @@ public abstract class InformixSourceTab extends BaseSourceTab {
                 // Stored Procedures can have comments embedded in them, so 
                 // don't line-wrap them.
                 if (sourceType == VIEW_TYPE) {
-                    _ta.setText(GUIUtils.getWrappedLine(buf.toString(), 80));
+                    if (s_log.isDebugEnabled()) {
+                        s_log.debug("View source before formatting: "+
+                                    buf.toString());
+                    }
+                    _ta.setText(formatter.reformat(buf.toString()));
                 } else {
                     _ta.setText(buf.toString());
                 }
