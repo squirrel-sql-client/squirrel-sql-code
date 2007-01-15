@@ -10,6 +10,12 @@ New Plugin for Sybase ASE by Ken McCullough
   The plugin allows to script the code of Views and Stored Procedures of the Sybase ASE DB.
 
 
+Informix Plugin
+  - Is now using the code reformatter for formatting the Source Tab for views 
+    The code reformatter was written by Gerd Wagner and previoously located in 
+    the EditExtras plugin.  It has been moved to core so that other plugins can 
+    take advantage of this capability.
+
 DBCopy Plugin 
   - The error message for SQLExceptions now includes the SQL statement that was 
     last executed (including bind variable values if it was a PreparedStatement)
@@ -25,7 +31,6 @@ well as being able to see the SQL that will be executed.
 Derby Plugin - Transformed trigger source tab contents into valid SQL that can 
 be used to re-create the trigger.  Fixed multiple bugs that occurred when the 
 same view/trigger name is used in multiple schemas.
-
 
 Refactoring Plugin - The scrollbar in the column list dialog now appears, where
 previously it did not, making tables with many columns difficult to work with 
