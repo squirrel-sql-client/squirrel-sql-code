@@ -285,6 +285,10 @@
         	<param name="p_rebuild" value="${rebuild.plugin.dbinfo}"/>
 		</antcall>
 		<antcall target="build_plugin">
+			<param name="p_internal_name" value="db2"/>
+        	<param name="p_rebuild" value="${rebuild.plugin.db2}"/>
+		</antcall>		
+		<antcall target="build_plugin">
 			<param name="p_internal_name" value="editextras"/>
 			<param name="p_rebuild" value="${rebuild.plugin.editextras}"/>
 		</antcall>

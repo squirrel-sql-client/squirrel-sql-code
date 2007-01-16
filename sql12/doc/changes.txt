@@ -6,9 +6,13 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
-New Plugin for Sybase ASE by Ken McCullough
-  The plugin allows to script the code of Views and Stored Procedures of the Sybase ASE DB.
+New Plugin for DB2
+	This plugin provides source tabs for stored procedures, views and triggers.
+	It also provides details tab for sequences and triggers
 
+New Plugin for Sybase ASE by Ken McCullough
+  	The plugin allows to script the code of Views and Stored Procedures of the 
+  	Sybase ASE DB.
 
 Informix Plugin
   - Is now using the code reformatter for formatting the Source Tab for views 
