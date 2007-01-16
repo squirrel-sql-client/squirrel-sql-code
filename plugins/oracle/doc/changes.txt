@@ -1,6 +1,13 @@
 Oracle Change Log
 =================
 
+0.17
+====
+
+- Added the schema name to the SID for session nodes - it's easier now to 
+  find the session you are looking for.
+
+
 0.16
 ====
 
