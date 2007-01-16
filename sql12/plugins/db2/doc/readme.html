@@ -14,11 +14,19 @@
 
 <H2>Introduction</H2>
 
-<P>The Informix plugin adds Informix-specific functionality to the SQuirreL SQL
+<P>The DB2 plugin adds DB2-specific functionality to the SQuirreL SQL
 Client. Read access is required to the following system views in order for this
 additional functionality to work correctly:
 <UL>
+<li>SYSCAT.DATATYPES</li>
+<li>SYSCAT.INDEXES</li>
+<li>SYSCAT.PROCEDURES</li>
+<li>SYSCAT.SEQUENCES</li>
+<li>SYSCAT.TABLES</li>
+<li>SYSCAT.TABLESPACES</li>
+<li>SYSCAT.TRIGGERS</li>
 <li>SYSCAT.VIEWS</li>
+
 
 </UL>
 
@@ -26,9 +34,9 @@ additional functionality to work correctly:
 
 <P>Stored Procedures, Triggers and Views are shown in the object tree and have 
 a &quot;Source&quot; tab which displays the source of the selected object and 
-a &quot;Details&quot; tab which gives Informix-specific information about the 
+a &quot;Details&quot; tab which gives DB2-specific information about the 
 object.  Sequences and Indexes are also shown in the object tree and have a 
-details tab giving Informix-specific information about them.  
+details tab giving DB2-specific information about them.  
 
 <!-- INDEX -->
 
@@ -46,40 +54,43 @@ The information provided by the details tab for indexes is derived by the
 following query:
 <p>
 <pre>
-	SELECT T1.owner     AS index_owner, 
-	       T1.idxname   AS index_name, 
-	       T2.owner     AS table_owner, 
-	       T2.tabname   AS table_name, 
-	       case T1.clustered 
-	       when 'C' then 'CLUSTERED' 
-	       else 'NON-CLUSTERED' 
+	SELECT T1.IID as index_identifier, 
+	       T1.DEFINER AS index_owner, 
+	       T1.INDNAME AS index_name, 
+	       T2.DEFINER AS table_owner, 
+	       T2.TABNAME AS table_name, 
+	       T3.TBSPACE AS table_space, 
+	       case T1.INDEXTYPE 
+	         when 'BLOK' then 'Block Index' 
+	         when 'CLUS' then 'Clustering Index' 
+	         when 'DIM' then 'Dimension Block Index' 
+	         when 'REG' then 'Regular Index' 
+	         when 'XPTH' then 'XML Path Index' 
+	         when 'XRGN' then 'XML Region Index' 
+	         when 'XVIL' then 'Index over XML column (Logical)' 
+	         when 'XVIP' then 'Index over XML column (Physical)' 
 	       end AS index_type, 
-	       case T1.idxtype 
+	       case T1.UNIQUERULE 
 	         when 'U' then 'UNIQUE' 
-	         else 'NON-UNIQUE' 
-	         end AS uniqueness, 
-	       T3.dbspace   AS table_space, 
-	       T4.fextsiz   AS first_extent, 
-	       T4.nextsiz   AS next_extent, 
-	      ( 
-	           SELECT  COUNT(*) 
-	           FROM    sysmaster:sysptnext 
-	           WHERE   pe_partnum = T3.partn 
-	       ) AS num_extents, 
-	       T4.nptotal   AS pages_total, 
-	       T4.npused    AS pages_used 
-	FROM    sysindices   AS T1, 
-	       systables    AS T2, 
-	       sysfragments AS T3, 
-	       sysmaster:sysptnhdr AS T4 
-	WHERE   T1.tabid     >  99 
-	AND     T2.tabid     = T1.tabid 
-	AND     T3.tabid     = T1.tabid 
-	AND     T3.indexname = T1.idxname 
-	AND     T4.partnum   = T3.partn 
-	AND     T1.owner = ? 
-	AND     T1.idxname = ? 
-	ORDER   BY 2 
+	         when 'D' then 'NON-UNIQUE' 
+	         when 'I' then 'UNIQUE (Implements PK)' 
+	       end AS uniqueness, 
+	       T1.NLEAF AS number_of_leaf_pages, 
+	       T1.NLEVELS AS number_of_levels, 
+	       T1.CREATE_TIME, 
+	       T1.STATS_TIME AS last_statistics_update, 
+	       case T1.REVERSE_SCANS 
+	         when 'Y' then 'Supported' 
+	         when 'N' then 'Not Supported' 
+	       end AS reverse_scans 
+	FROM    SYSCAT.INDEXES   AS T1, 
+	        SYSCAT.TABLES    AS T2, 
+	        SYSCAT.TABLESPACES as T3 
+	WHERE  T3.TBSPACEID = T1.TBSPACEID 
+	and T2.TABNAME = T1.TABNAME 
+	and T2.TABSCHEMA = T1.TABSCHEMA 
+	AND     T1.TABSCHEMA = ? 
+	AND     T1.INDNAME = ? 
 </pre>
 <p>
 
@@ -88,8 +99,7 @@ following query:
 <h2>Stored Procedure Source Tab</h2>
 The Stored Procedure Source tab can be accessed by navigating to a catalog, 
 then to a schema and finally to the PROCEDURE folder beneath the schema.  In 
-the following picture, the catalog is &quot;dbcopy&quot; and the schema is 
-&quot;informix&quot;
+the following picture, the schema is &quot;dbcopy&quot;
 <p>
 <center>
 <img src="images/procedure_source.jpg">
@@ -98,11 +108,10 @@ the following picture, the catalog is &quot;dbcopy&quot; and the schema is
 The source code for stored procedures is derived by the following query:
 <p>
 <pre>
-	SELECT T1.procid, data 
-	FROM sysprocedures AS T1, sysprocbody AS T2 
-	WHERE procname = ? 
-	AND T2.procid = T1.procid 
-	AND datakey = 'T' 
+	select text 
+	from SYSCAT.PROCEDURES 
+	where PROCSCHEMA = ? 
+	and PROCNAME = ? 
 </pre>
 
 <!-- SEQUENCE -->
@@ -120,25 +129,34 @@ The information in the details tab for a sequence is derived from the following
 query:
 <p>
 <pre>
-	SELECT T2.owner     AS sequence_owner, 
-	       T2.tabname   AS sequence_name, 
-	       T1.min_val   AS min_value, 
-	       T1.max_val   AS max_value, 
-	       T1.inc_val   AS increment_by, 
-	       case T1.cycle 
-	         when '0' then 'NOCYCLE' 
-	         else 'CYCLE' 
+	SELECT  T1.OWNER     AS sequence_owner, 
+	        T1.DEFINER   AS sequence_definer, 
+	       T1.SEQNAME   AS sequence_name, 
+	       T2.TYPENAME AS data_type, 
+	       T1.MINVALUE   AS min_value, 
+	       T1.MAXVALUE   AS max_value, 
+	       T1.INCREMENT   AS increment_by, 
+	       case T1.CYCLE 
+	         when 'Y' then 'CYCLE' 
+	         else 'NOCYCLE' 
 	       end AS cycle_flag, 
-	       case T1.order 
-	         when '0' then 'NOORDER' 
-	         else 'ORDER' 
+	       case T1.ORDER 
+	         when 'Y' then 'ORDERED' 
+	         else 'UNORDERED' 
 	        end AS order_flag, 
-	       T1.cache     AS cache_size 
-	FROM    syssequences AS T1, 
-	       systables    AS T2 
-	WHERE   T2.tabid     = T1.tabid 
-	and T2.owner = ? 
-	and T2.tabname = ? 
+	       T1.CACHE AS cache_size, 
+	       T1.CREATE_TIME AS create_time, 
+	       T1.ALTER_TIME AS last_alter_time, 
+	       case T1.ORIGIN 
+	         when 'U' then 'User' 
+	         when 'S' then 'System' 
+	       end AS origin, 
+	       T1.REMARKS AS comment 
+	FROM    SYSCAT.SEQUENCES AS T1, 
+	        SYSCAT.DATATYPES AS T2 
+	WHERE T1.DATATYPEID = T2.TYPEID 
+	and T1.SEQSCHEMA = ? 
+	and T1.SEQNAME = ? 
 </pre>
 
 <!-- TRIGGER SOURCE -->
@@ -156,12 +174,9 @@ picture:
 The source code for triggers is derived from the following query:
 <p>
 <pre>
-	SELECT  data 
-	FROM    systriggers AS T1, systrigbody AS T2 
-	WHERE   trigname = ? 
-	AND     T2.trigid = T1.trigid 
-	AND     datakey IN ('D', 'A') 
-	ORDER   BY datakey DESC, seqno
+	select TEXT from SYSCAT.TRIGGERS 
+	where TABSCHEMA = ? 
+	and TRIGNAME = ?
 </pre>
 <p>
 
@@ -180,27 +195,43 @@ The information in the details tab for a trigger is derived from the following
 query:
 <p>
 <pre>
-	SELECT T1.owner     AS trigger_owner, 
+	SELECT  T1.DEFINER     AS trigger_definer, 
 	       T1.trigname  AS trigger_name, 
-	       case T1.event  
+	       case T1.TRIGTIME 
+	         when 'A' then 'AFTER' 
+	         when 'B' then 'BEFORE' 
+	         when 'I' then 'INSTEAD OF' 
+	       end AS trigger_time, 
+	       case T1.TRIGEVENT 
 	         when 'I' then 'INSERT' 
 	         when 'U' then 'UPDATE' 
 	         when 'D' then 'DELETE' 
 	         when 'S' then 'SELECT' 
-	         else T1.event 
+	         else T1.TRIGEVENT 
 	       end AS triggering_event, 
-	       T2.owner     AS table_owner, 
-	       T2.tabname   AS table_name, 
-	       case T2.tabtype 
+	       T2.DEFINER     AS table_definer, 
+	       T2.TABNAME   AS table_name, 
+	       case T2.TYPE 
 	         when 'T' then 'TABLE' 
 	         when 'V' then 'VIEW' 
-	         else T2.tabtype 
+	         else T2.TYPE 
 	       end AS table_type, 
-	       T1.old       AS reference_before, 
-	       T1.new       AS reference_after 
-	FROM    systriggers  AS T1, 
-	       systables    AS T2 
-	WHERE   T2.tabid     = T1.tabid 
+	       case T1.GRANULARITY 
+	         when 'R' then 'ROW' 
+	         when 'S' then 'STATEMENT' 
+	       else T1.GRANULARITY 
+	       end AS granularity, 
+	       case T1.VALID 
+	         when 'Y' THEN 'VALID' 
+	         when 'N' THEN 'INVALID' 
+	         when 'X' THEN 'INOPERATIVE' 
+	       end AS validity, 
+	       T1.REMARKS comment 
+	FROM    SYSCAT.TRIGGERS  AS T1, 
+	       SYSCAT.TABLES    AS T2 
+	WHERE   T2.TABNAME = T1.TABNAME 
+	and T2.TABSCHEMA = T1.TABSCHEMA 
+	and T1.TRIGSCHEMA = ? 
 	and T1.trigname = ? 
 </pre>
 
@@ -219,10 +250,10 @@ picture:
 The source code for views is derived from the following query:
 <p>
 <pre>
-	SELECT viewtext 
-	FROM systables AS T1, sysviews AS T2 
-	WHERE tabname = ? 
-	AND T2.tabid = T1.tabid 
+	SELECT TEXT 
+	FROM SYSCAT.VIEWS 
+	WHERE VIEWSCHEMA = ? 
+	AND VIEWNAME = ? 
 </pre>
 <p>
 </BODY>
