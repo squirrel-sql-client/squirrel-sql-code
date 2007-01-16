@@ -20,12 +20,11 @@ package net.sourceforge.squirrel_sql.plugins.oracle.tab;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin;
 /**
  * This class will display the details for an Oracle session.
  *
@@ -75,7 +74,8 @@ public class SessionDetailsTab extends BasePreparedStatementTab
 		ISession session = getSession();
 		PreparedStatement pstmt = session.getSQLConnection().prepareStatement(SQL);
 		IDatabaseObjectInfo doi = getDatabaseObjectInfo();
-		pstmt.setLong(1, Long.parseLong(doi.getSimpleName()));
+        String[] parts = doi.getSimpleName().split("\\s+");
+		pstmt.setLong(1, Long.parseLong(parts[0]));
 		return pstmt;
 	}
 	
