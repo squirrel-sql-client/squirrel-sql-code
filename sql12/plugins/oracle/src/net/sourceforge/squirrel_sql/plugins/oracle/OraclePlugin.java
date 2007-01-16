@@ -139,7 +139,7 @@ public class OraclePlugin extends DefaultSessionPlugin
     */
    public String getVersion()
    {
-      return "0.16";
+      return "0.17";
    }
 
    /**
