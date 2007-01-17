@@ -255,7 +255,7 @@ public class TableExportCsvCommand
             ret = new jxl.write.Number(colIdx, curRow, (Float) cellObj);
             break;
          case Types.BIGINT:
-            ret = new jxl.write.Number(colIdx, curRow, (float) (Integer) cellObj);
+            ret = new jxl.write.Number(colIdx, curRow, (float) Long.parseLong(cellObj.toString()));
             break;
          case Types.DATE:
          case Types.TIMESTAMP:
