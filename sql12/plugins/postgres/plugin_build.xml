@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<!--
+    This is an Apache Ant build file to build the SQL script plugin
+    for distribution.
+-->
+<project name="plugin-postgres" default="build" basedir=".">
+    <target name="init">
+        <tstamp/>
+        <property name="internal_name" value="postgres"/>
+        <property name="version" value="0.01"/>
+
+        <property name="debug" value="on"/>
+        <property name="optimize" value="off"/>
+        <property name="deprecation" value="on"/>
+	    <property name="targetVM" value="1.5"/>
+
+        <echo message="---------------- ${internal_name} ${version} ----------------"/>
+        
+        <property environment="env"/>
+    </target>
+    <target name="initdirs" unless="p_plugin.work_dir">
+    	<property name="dist_dir" value="../../../squirrel-sql-dist/squirrel-sql"/>
+    	<property name="plugins_dist_dir" value="${dist_dir}/plugins"/>
+        <property name="p_plugin.work_dir" value="${plugins_dist_dir}/${internal_name}/work"/>
+        <property name="p_plugin.core_libs_dir" value="${dist_dir}/core/dist/lib"/>
+        <property name="p_plugin.dist_dir" value="${dist_dir}/core/dist/plugins"/>
+    </target>
+	<!--
+    ==================================================================
+    Compile the plugin.
+    No parameters.
+    ==================================================================
+    -->
+    <target name="build" depends="init, initdirs">
+        <property name="obj_dir" value="${p_plugin.work_dir}/obj"/>
+        
+        <mkdir dir="${obj_dir}"/>
+    	<mkdir dir="${p_plugin.dist_dir}"/>
+
+        <javac  srcdir="src"
+                destdir="${obj_dir}"
+                deprecation="${deprecation}"
+                debug="${debug}"
+                optimize="${optimize}"
+                includeJavaRuntime="yes"
+        		source="${targetVM}"
+        		target="${targetVM}">
+	
+            <classpath>
+                <fileset dir="${p_plugin.core_libs_dir}">
+                    <include name="**/*.*"/>
+                </fileset>
+            </classpath>
+        </javac>
+        <copy todir="${obj_dir}" >
+            <fileset dir="src" >
+                <include name="**/*.gif"/>
+                <include name="**/*.jpg"/>
+                <include name="**/*.jpeg"/>
+                <include name="**/*.xml"/>
+					<include name="**/*.xsl"/>
+                <include name="**/*.properties"/>
+            </fileset>
+        </copy>
+
+        <jar jarfile="${p_plugin.dist_dir}/${internal_name}.jar" compress="false">
+            <fileset dir="${obj_dir}">
+                <include name="**/*.*"/>
+            </fileset>
+        </jar>
+
+		<copy todir="${p_plugin.dist_dir}/${internal_name}" >
+			<fileset dir="doc" >
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+
+
+        <jar jarfile="${p_plugin.dist_dir}/${internal_name}/src.jar" compress="false">
+            <fileset dir=".">
+                <include name="src/**/*.*"/>
+                <include name="plugin_build.xml"/>
+            </fileset>
+        </jar>
+    </target>
+
+</project>
+
