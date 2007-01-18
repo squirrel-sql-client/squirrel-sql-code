@@ -29,7 +29,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
- * This class will display the details for an DB2 trigger.
+ * This class will display the details for an PostgreSQL trigger.
  *
  * @author manningr
  */

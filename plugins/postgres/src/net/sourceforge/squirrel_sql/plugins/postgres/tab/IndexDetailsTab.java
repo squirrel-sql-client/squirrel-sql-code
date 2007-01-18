@@ -26,7 +26,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
- * This class will display the details for an DB2 index.
+ * This class will display the details for an PostgreSQL index.
  *
  */
 public class IndexDetailsTab extends BasePreparedStatementTab
