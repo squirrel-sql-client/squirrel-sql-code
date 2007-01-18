@@ -34,10 +34,9 @@ public class ProcedureSourceTab extends PostgresSourceTab
 {
 	/** SQL that retrieves the source of a stored procedure. */
 	private static String SQL =
-        "select text " +
-        "from SYSCAT.PROCEDURES " +
-        "where PROCSCHEMA = ? " +
-        "and PROCNAME = ? ";
+        "SELECT p.prosrc " +
+        "FROM pg_proc p " +
+        "where p.proname = ? ";
     
 	/** Logger for this class. */
 	private final static ILogger s_log =
@@ -62,8 +61,10 @@ public class ProcedureSourceTab extends PostgresSourceTab
         
 		SQLConnection conn = session.getSQLConnection();
 		PreparedStatement pstmt = conn.prepareStatement(SQL);
-        pstmt.setString(1, doi.getSchemaName());
-		pstmt.setString(2, doi.getSimpleName());
+        // Postgres pg_proc table doesn't appear to have schema.  I couldn't
+        // locate another table to join with to get this info either.
+        //pstmt.setString(1, doi.getSchemaName());
+		pstmt.setString(1, doi.getSimpleName());
 		return pstmt;
 	}
 }
