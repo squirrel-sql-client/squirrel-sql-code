@@ -337,6 +337,10 @@
 			<param name="p_rebuild" value="${rebuild.plugin.oracle}"/>
 		</antcall>
 		<antcall target="build_plugin">
+			<param name="p_internal_name" value="postgres"/>
+			<param name="p_rebuild" value="${rebuild.plugin.postgres}"/>
+		</antcall>
+		<antcall target="build_plugin">
 			<param name="p_internal_name" value="refactoring"/>
 			<param name="p_rebuild" value="${rebuild.plugin.refactoring}"/>
 		</antcall>
