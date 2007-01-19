@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.postgres.tab;
 /*
- * Copyright (C) 2006 Rob Manning
+ * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -26,7 +26,7 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
- * This class will display the source for an DB2 trigger.
+ * This class will display the source for an PostgreSQL trigger.
  *
  * @author manningr
  */
@@ -34,9 +34,10 @@ public class ProcedureSourceTab extends PostgresSourceTab
 {
 	/** SQL that retrieves the source of a stored procedure. */
 	private static String SQL =
-        "SELECT p.prosrc " +
-        "FROM pg_proc p " +
-        "where p.proname = ? ";
+        "SELECT p.prosrc FROM pg_proc p, pg_namespace n " +
+        "where p.pronamespace = n.oid " +
+        "and n.nspname = ? " +
+        "and p.proname = ? ";
     
 	/** Logger for this class. */
 	private final static ILogger s_log =
@@ -63,8 +64,8 @@ public class ProcedureSourceTab extends PostgresSourceTab
 		PreparedStatement pstmt = conn.prepareStatement(SQL);
         // Postgres pg_proc table doesn't appear to have schema.  I couldn't
         // locate another table to join with to get this info either.
-        //pstmt.setString(1, doi.getSchemaName());
-		pstmt.setString(1, doi.getSimpleName());
+        pstmt.setString(1, doi.getSchemaName());
+		pstmt.setString(2, doi.getSimpleName());
 		return pstmt;
 	}
 }
