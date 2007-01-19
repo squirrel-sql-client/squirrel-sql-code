@@ -105,7 +105,7 @@ public abstract class PostgresSourceTab extends BaseSourceTab {
                 }
                 // Stored Procedures can have comments embedded in them, so 
                 // don't line-wrap them.
-                if (sourceType == VIEW_TYPE) {
+                if (sourceType == VIEW_TYPE || sourceType == TRIGGER_TYPE) {
                     if (s_log.isDebugEnabled()) {
                         s_log.debug("View source before formatting: "+
                                     buf.toString());
