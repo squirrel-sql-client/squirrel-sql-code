@@ -1,11 +1,11 @@
 <HTML>
 
 <HEAD>
-    <TITLE>DB2 Plugin</TITLE>
+    <TITLE>PostgreSQL Plugin</TITLE>
 </HEAD>
 
 <BODY>
-<center><h1>DB2 Plugin</h1></center>
+<center><h1>PostgreSQL Plugin</h1></center>
 
 <h2>Author</h2>
 <ul>
@@ -14,27 +14,39 @@
 
 <H2>Introduction</H2>
 
-<P>The DB2 plugin adds DB2-specific functionality to the SQuirreL SQL
+<P>The PostgreSQL plugin adds PostgreSQL-specific functionality to the SQuirreL SQL
 Client. Read access is required to the following system views in order for this
 additional functionality to work correctly:
 <UL>
-<li>SYSCAT.DATATYPES</li>
-<li>SYSCAT.INDEXES</li>
-<li>SYSCAT.PROCEDURES</li>
-<li>SYSCAT.SEQUENCES</li>
-<li>SYSCAT.TABLES</li>
-<li>SYSCAT.TABLESPACES</li>
-<li>SYSCAT.TRIGGERS</li>
-<li>SYSCAT.VIEWS</li>
-
-
+<li>information_schema.triggers</li>
+<li>information_schema.views</li>
+<li>pg_catalog.pg_stat_all_indexes</li>
+<li>pg_catalog.pg_index</li>
+<li>pg_catalog.pg_proc</li>
+<li>pg_catalog.pg_namespace</li>
 </UL>
+Note: Some statistical counts are only available when statistics collection 
+is enabled.  The statistics collector must be configured to be launched before 
+the server is started by setting stats_start_collector to true in postgresql.conf.
+(This is the default setting) Additionally, statistics need to be sent to the 
+collector with a few more configuration items which can be made at runtime.  To 
+change these for a session the user needs to be a superuser.  This can be done 
+in postgresql.conf or on a per-session basis with the following commands:<p>
+
+<pre>
+set stats_block_level to on 
+
+set stats_row_level to on 
+</pre>
+
+Be aware that these settings will add overhead to query execution (which is why
+they are disabled by default)
 
 <H2>New Tabs</H2>
 
 <P>Stored Procedures, Triggers and Views are shown in the object tree and have 
 a &quot;Source&quot; tab which displays the source of the selected object and 
-a &quot;Details&quot; tab which gives DB2-specific information about the 
+a &quot;Details&quot; tab which gives PostgreSQL-specific information about the 
 object.  Sequences and Indexes are also shown in the object tree and have a 
 details tab giving DB2-specific information about them.  
 
@@ -54,52 +66,49 @@ The information provided by the details tab for indexes is derived by the
 following query:
 <p>
 <pre>
-	SELECT T1.IID as index_identifier, 
-	       T1.DEFINER AS index_owner, 
-	       T1.INDNAME AS index_name, 
-	       T2.DEFINER AS table_owner, 
-	       T2.TABNAME AS table_name, 
-	       T3.TBSPACE AS table_space, 
-	       case T1.INDEXTYPE 
-	         when 'BLOK' then 'Block Index' 
-	         when 'CLUS' then 'Clustering Index' 
-	         when 'DIM' then 'Dimension Block Index' 
-	         when 'REG' then 'Regular Index' 
-	         when 'XPTH' then 'XML Path Index' 
-	         when 'XRGN' then 'XML Region Index' 
-	         when 'XVIL' then 'Index over XML column (Logical)' 
-	         when 'XVIP' then 'Index over XML column (Physical)' 
-	       end AS index_type, 
-	       case T1.UNIQUERULE 
-	         when 'U' then 'UNIQUE' 
-	         when 'D' then 'NON-UNIQUE' 
-	         when 'I' then 'UNIQUE (Implements PK)' 
-	       end AS uniqueness, 
-	       T1.NLEAF AS number_of_leaf_pages, 
-	       T1.NLEVELS AS number_of_levels, 
-	       T1.CREATE_TIME, 
-	       T1.STATS_TIME AS last_statistics_update, 
-	       case T1.REVERSE_SCANS 
-	         when 'Y' then 'Supported' 
-	         when 'N' then 'Not Supported' 
-	       end AS reverse_scans 
-	FROM    SYSCAT.INDEXES   AS T1, 
-	        SYSCAT.TABLES    AS T2, 
-	        SYSCAT.TABLESPACES as T3 
-	WHERE  T3.TBSPACEID = T1.TBSPACEID 
-	and T2.TABNAME = T1.TABNAME 
-	and T2.TABSCHEMA = T1.TABSCHEMA 
-	AND     T1.TABSCHEMA = ? 
-	AND     T1.INDNAME = ? 
+	select inds.schemaname as schemaname, 
+	       inds.relname as tablename, 
+	       i.indisunique as is_unique, 
+	       i.indisprimary as is_primary_key, 
+	       i.indisclustered as is_clustered, 
+	       inds.idx_scan as num_index_scans, 
+	       inds.idx_tup_read as num_index_entries_returned, 
+	       inds.idx_tup_fetch as num_table_rows_fetched 
+	from pg_catalog.pg_index i, pg_catalog.pg_stat_all_indexes inds 
+	where i.indexrelid = inds.indexrelid 
+	and inds.schemaname = ? 
+	and inds.indexrelname = ?  
 </pre>
 <p>
+
+
+<h2>Index Source Tab</h2>
+The index source tab can be accessed by navigating the object tree as above and
+selecting the "Source" tab which is adjacent to the "Details" tab. An example
+is shown below:
+<p>
+<center>
+<img src="images/index_source.jpg">
+</center>
+<p>
+The information provided by the source tab for indexes is derived by the 
+following query:
+<p>
+<pre>
+	select indexdef 
+	from pg_indexes 
+	where schemaname = ? 
+	and indexname = ? 
+</pre>
+<p>
+
 
 <!-- STORED PROC SOURCE -->
 
 <h2>Stored Procedure Source Tab</h2>
-The Stored Procedure Source tab can be accessed by navigating to a catalog, 
-then to a schema and finally to the PROCEDURE folder beneath the schema.  In 
-the following picture, the schema is &quot;dbcopy&quot;
+The Stored Procedure Source tab can be accessed by navigating to a schema and 
+then to the PROCEDURE folder beneath the schema.  In the following picture, 
+the schema is &quot;dbcopydest&quot;
 <p>
 <center>
 <img src="images/procedure_source.jpg">
@@ -108,10 +117,10 @@ the following picture, the schema is &quot;dbcopy&quot;
 The source code for stored procedures is derived by the following query:
 <p>
 <pre>
-	select text 
-	from SYSCAT.PROCEDURES 
-	where PROCSCHEMA = ? 
-	and PROCNAME = ? 
+	SELECT p.prosrc FROM pg_proc p, pg_namespace n 
+	where p.pronamespace = n.oid 
+	and n.nspname = ? 
+	and p.proname = ? 
 </pre>
 
 <!-- SEQUENCE -->
@@ -129,34 +138,8 @@ The information in the details tab for a sequence is derived from the following
 query:
 <p>
 <pre>
-	SELECT  T1.OWNER     AS sequence_owner, 
-	        T1.DEFINER   AS sequence_definer, 
-	       T1.SEQNAME   AS sequence_name, 
-	       T2.TYPENAME AS data_type, 
-	       T1.MINVALUE   AS min_value, 
-	       T1.MAXVALUE   AS max_value, 
-	       T1.INCREMENT   AS increment_by, 
-	       case T1.CYCLE 
-	         when 'Y' then 'CYCLE' 
-	         else 'NOCYCLE' 
-	       end AS cycle_flag, 
-	       case T1.ORDER 
-	         when 'Y' then 'ORDERED' 
-	         else 'UNORDERED' 
-	        end AS order_flag, 
-	       T1.CACHE AS cache_size, 
-	       T1.CREATE_TIME AS create_time, 
-	       T1.ALTER_TIME AS last_alter_time, 
-	       case T1.ORIGIN 
-	         when 'U' then 'User' 
-	         when 'S' then 'System' 
-	       end AS origin, 
-	       T1.REMARKS AS comment 
-	FROM    SYSCAT.SEQUENCES AS T1, 
-	        SYSCAT.DATATYPES AS T2 
-	WHERE T1.DATATYPEID = T2.TYPEID 
-	and T1.SEQSCHEMA = ? 
-	and T1.SEQNAME = ? 
+SELECT last_value, max_value, min_value, cache_value, increment_by, is_cycled 
+FROM  &lt;schema.sequencename&gt;
 </pre>
 
 <!-- TRIGGER SOURCE -->
@@ -174,9 +157,12 @@ picture:
 The source code for triggers is derived from the following query:
 <p>
 <pre>
-	select TEXT from SYSCAT.TRIGGERS 
-	where TABSCHEMA = ? 
-	and TRIGNAME = ?
+	select 'create trigger ' || trigger_name || ' ' || condition_timing 
+           || ' ' || event_manipulation || ' on ' || event_object_table 
+           || ' for each ' || action_orientation || ' ' || action_statement 
+	from information_schema.triggers 
+	where trigger_schema = ? 
+	and trigger_name = ? 
 </pre>
 <p>
 
@@ -195,44 +181,13 @@ The information in the details tab for a trigger is derived from the following
 query:
 <p>
 <pre>
-	SELECT  T1.DEFINER     AS trigger_definer, 
-	       T1.trigname  AS trigger_name, 
-	       case T1.TRIGTIME 
-	         when 'A' then 'AFTER' 
-	         when 'B' then 'BEFORE' 
-	         when 'I' then 'INSTEAD OF' 
-	       end AS trigger_time, 
-	       case T1.TRIGEVENT 
-	         when 'I' then 'INSERT' 
-	         when 'U' then 'UPDATE' 
-	         when 'D' then 'DELETE' 
-	         when 'S' then 'SELECT' 
-	         else T1.TRIGEVENT 
-	       end AS triggering_event, 
-	       T2.DEFINER     AS table_definer, 
-	       T2.TABNAME   AS table_name, 
-	       case T2.TYPE 
-	         when 'T' then 'TABLE' 
-	         when 'V' then 'VIEW' 
-	         else T2.TYPE 
-	       end AS table_type, 
-	       case T1.GRANULARITY 
-	         when 'R' then 'ROW' 
-	         when 'S' then 'STATEMENT' 
-	       else T1.GRANULARITY 
-	       end AS granularity, 
-	       case T1.VALID 
-	         when 'Y' THEN 'VALID' 
-	         when 'N' THEN 'INVALID' 
-	         when 'X' THEN 'INOPERATIVE' 
-	       end AS validity, 
-	       T1.REMARKS comment 
-	FROM    SYSCAT.TRIGGERS  AS T1, 
-	       SYSCAT.TABLES    AS T2 
-	WHERE   T2.TABNAME = T1.TABNAME 
-	and T2.TABSCHEMA = T1.TABSCHEMA 
-	and T1.TRIGSCHEMA = ? 
-	and T1.trigname = ? 
+	select condition_timing AS trigger_time, 
+	       event_manipulation AS triggering_event, 
+	       action_orientation AS granularity, 
+	       event_object_table AS table_name 
+	from information_schema.triggers 
+	where trigger_schema = ? 
+	and trigger_name = ? 
 </pre>
 
 <!-- VIEW SOURCE -->
@@ -250,10 +205,10 @@ picture:
 The source code for views is derived from the following query:
 <p>
 <pre>
-	SELECT TEXT 
-	FROM SYSCAT.VIEWS 
-	WHERE VIEWSCHEMA = ? 
-	AND VIEWNAME = ? 
+	select view_definition 
+	from information_schema.views 
+	where table_schema = ? 
+	and table_name = ? 
 </pre>
 <p>
 </BODY>
