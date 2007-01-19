@@ -33,7 +33,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  */
 public class IndexSourceTab extends PostgresSourceTab
 {
-	/** SQL that retrieves the source of a stored procedure. */
+	/** SQL that retrieves the source of an index. */
 	private static String SQL =
         "select indexdef " +
         "from pg_indexes " +
