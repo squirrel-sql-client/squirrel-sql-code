@@ -27,7 +27,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
- * This class will display the source for an DB2 trigger.
+ * This class will display the source for an PostgreSQL trigger.
  *
  * @author manningr
  */
