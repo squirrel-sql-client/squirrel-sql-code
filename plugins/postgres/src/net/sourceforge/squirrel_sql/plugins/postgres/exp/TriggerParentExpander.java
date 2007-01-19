@@ -46,11 +46,13 @@ public class TriggerParentExpander implements INodeExpander {
             .createLogger(TriggerParentExpander.class);
 
     private static String SQL = 
-        "select trigger_name " +
-        "from information_schema.triggers " +
-        //"where trigger_catalog = ? " +
-        "where trigger_schema = ? " +
-        "and event_object_table = ? ";
+        "select tr.tgname " +
+        "from pg_catalog.pg_trigger tr, pg_catalog.pg_proc p, pg_class c, pg_namespace n " +
+        "where tr.tgfoid  =  p.oid " +
+        "and tr.tgrelid = c.oid " +
+        "and c.relnamespace = n.oid " +
+        "and n.nspname = ? " +
+        "and c.relname = ? ";
     
     /**
      * 
@@ -92,7 +94,6 @@ public class TriggerParentExpander implements INodeExpander {
                 s_log.debug("Schema: "+tableInfo.getSchemaName());
             }
             pstmt = conn.prepareStatement(SQL);
-            //pstmt.setString(1, tableInfo.getCatalogName());
             pstmt.setString(1, tableInfo.getSchemaName());
             pstmt.setString(2, tableInfo.getSimpleName());
             ResultSet rs = pstmt.executeQuery();
