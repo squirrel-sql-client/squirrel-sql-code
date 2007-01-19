@@ -19,7 +19,9 @@ package net.sourceforge.squirrel_sql.fw.sql;
  */
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.sql.*;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,8 +32,6 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.TreeSet;
-
-import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DatabaseTypesDataSet;
@@ -1038,14 +1038,26 @@ public class SQLDatabaseMetaData
 		{
 			if (nbrTableTypes == 0 || nbrTableTypes == 1)
 			{
+                if (s_log.isDebugEnabled()) {
+                    s_log.debug("Detected PostgreSQL and "+nbrTableTypes+
+                                " table types - overriding to 4 table types");
+                }
 				tableTypes.clear();
 				tableTypes.add("TABLE");
 				tableTypes.add("SYSTEM TABLE");
 				tableTypes.add("VIEW");
-				tableTypes.add("INDEX");
-				tableTypes.add("SYSTEM INDEX");
-				tableTypes.add("SEQUENCE");
+                tableTypes.add("SYSTEM VIEW");
 			}
+            // Treating indexes as tables interferes with the operation of the
+            // PostgreSQL plugin
+            if (tableTypes.contains("INDEX")) {
+                tableTypes.remove("INDEX");
+            }
+            // Treating sequences as tables interferes with the operation of the
+            // PostgreSQL plugin            
+            if (tableTypes.contains("SEQUENCE")) {
+                tableTypes.remove("SEQUENCE");
+            }
 		}
 
 		value = (String[])tableTypes.toArray(new String[tableTypes.size()]);
