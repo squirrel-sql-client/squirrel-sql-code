@@ -139,6 +139,14 @@
                       src="../../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/dbcopy.jar"/>
         </pack>
 
+        <pack required="no" preselected="no" name="Optional Plugin - DB2">
+            <description>This optional plugin adds functionality that is specific to the DB2 DBMS </description>
+            <file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins"
+                  src="../../squirrel-sql-dist/squirrel-sql/plugins/db2/dist/db2.jar"/>
+            <file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins"
+                  src="../../squirrel-sql-dist/squirrel-sql/plugins/db2/dist/db2"/>
+        </pack>
+
         <pack required="no" preselected="no" name="Optional Plugin - Derby">
             <description>This optional plugin adds functionality that is specific to the Derby DBMS </description>
             <file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins"
@@ -187,6 +195,14 @@
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/oracle/dist/treetable.jar"/>
 			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" 
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/oracle/dist/oracle"/>
+		</pack>				
+
+		<pack required="no" preselected="no" name="Optional Plugin - PostgreSQL ">
+			<description>This optional plugin adds PostgreSQL-specific functionality  </description>
+			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/postgres/dist/postgres.jar"/>
+			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/postgres/dist/postgres"/>
 		</pack>				
 
 		<pack required="no" preselected="no" name="Optional Plugin - Refactoring">
