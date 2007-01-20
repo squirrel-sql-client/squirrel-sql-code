@@ -6,6 +6,10 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+New Plugin for PostgreSQL
+	This plugin provides source tabs for stored procedures, views and triggers.
+	It also provides details tab for sequences and triggers	
+
 New Plugin for DB2
 	This plugin provides source tabs for stored procedures, views and triggers.
 	It also provides details tab for sequences and triggers
