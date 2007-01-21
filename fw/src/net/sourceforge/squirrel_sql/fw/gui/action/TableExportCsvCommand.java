@@ -233,26 +233,26 @@ public class TableExportCsvCommand
             ret = new jxl.write.Boolean(colIdx, curRow, (Boolean) cellObj);
             break;
          case Types.INTEGER:
-            ret = new jxl.write.Number(colIdx, curRow, (float) (Integer) cellObj);
+            ret = new jxl.write.Number(colIdx, curRow, ((Number) cellObj).floatValue());
             break;
          case Types.SMALLINT:
          case Types.TINYINT:
-            ret = new jxl.write.Number(colIdx, curRow, (float) (Short) cellObj);
+            ret = new jxl.write.Number(colIdx, curRow, ((Number) cellObj).floatValue() ) ;
             break;
          case Types.DECIMAL:
-            ret = new jxl.write.Number(colIdx, curRow, (float) (Integer) cellObj);
+            ret = new jxl.write.Number(colIdx, curRow, ((Number) cellObj).floatValue());
             break;
          case Types.NUMERIC:
-            ret = new jxl.write.Number(colIdx, curRow, ((BigDecimal) cellObj).floatValue());
+            ret = new jxl.write.Number(colIdx, curRow, ((Number) cellObj).floatValue());
             break;
          case Types.FLOAT:
-            ret = new jxl.write.Number(colIdx, curRow, (float) (Integer) cellObj);
+            ret = new jxl.write.Number(colIdx, curRow, ((Number) cellObj).floatValue());
             break;
          case Types.DOUBLE:
-            ret = new jxl.write.Number(colIdx, curRow, new Float((Double) cellObj));
+            ret = new jxl.write.Number(colIdx, curRow, ((Number) cellObj).floatValue());
             break;
          case Types.REAL:
-            ret = new jxl.write.Number(colIdx, curRow, (Float) cellObj);
+            ret = new jxl.write.Number(colIdx, curRow, ((Number) cellObj).floatValue());
             break;
          case Types.BIGINT:
             ret = new jxl.write.Number(colIdx, curRow, (float) Long.parseLong(cellObj.toString()));
