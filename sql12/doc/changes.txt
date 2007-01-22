@@ -6,13 +6,9 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
-New Plugin for PostgreSQL
-	This plugin provides source tabs for stored procedures, views and triggers.
-	It also provides details tab for sequences and triggers	
-
-New Plugin for DB2
-	This plugin provides source tabs for stored procedures, views and triggers.
-	It also provides details tab for sequences and triggers
+New Plugins for H2, PostgreSQL and DB2
+	These plugins provide source tabs for stored procedures, views and triggers.
+	They also provide details tab for sequences and triggers	
 
 New Plugin for Sybase ASE by Ken McCullough
   	The plugin allows to script the code of Views and Stored Procedures of the 
