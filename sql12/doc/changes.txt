@@ -6,6 +6,10 @@ Not yet released - available from CVS (squirrel-2_4-branch) or in the latest sna
 
 Bug-Fixes:
 
+1639680 (Cannot export smallint and decimal to excel)
+1635259 (Session menu has two items with mnemonic "t")
+1639662 (Block comments can be ended prematurely)
+
 Fixed a bug which caused the JFileChooser used for opening/saving files in the 
 SQL Editor to display copies of the "sql" and "txt" file types in the file type 
 dropdown.  Each time the JFileChooser was re-opened another set of "sql" and 
