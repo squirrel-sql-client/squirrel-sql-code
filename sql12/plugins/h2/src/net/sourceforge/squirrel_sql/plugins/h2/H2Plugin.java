@@ -92,7 +92,7 @@ public class H2Plugin extends DefaultSessionPlugin {
      */
     public String getDescriptiveName()
     {
-        return "Postgres Plugin";
+        return "H2 Plugin";
     }
 
     /**
