@@ -68,6 +68,12 @@ public class QueryTokenizer
 					// We look forward
 					isInMultiLineComment = sql.startsWith(MULTI_LINE_COMMENT_BEGIN, i);
 					isInLineComment = sql.startsWith(lineCommentBegin, i);
+
+					if(isInMultiLineComment)
+					{
+						// skip ahead so the cursor is now immediately after the begin comment string
+						i+=MULTI_LINE_COMMENT_BEGIN.length()+1;
+					}
 				}
 
 				if((isInMultiLineComment && removeMultiLineComment) || isInLineComment)
