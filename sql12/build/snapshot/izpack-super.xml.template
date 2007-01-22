@@ -167,6 +167,14 @@
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/firebird/dist/firebird"/>
 		</pack>				
 
+		<pack required="no" preselected="no" name="Optional Plugin - H2 ">
+			<description>This optional plugin adds functionality that is specific to the H2 DBMS  </description>
+			<file targetdir="$INSTALL_PATH/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/h2/dist/h2.jar"/>
+			<file targetdir="$INSTALL_PATH/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/h2/dist/h2"/>
+		</pack>				
+
 		<pack required="no" preselected="no" name="Optional Plugin - Informix ">
 			<description>This optional plugin adds functionality that is specific to the Informix DBMS  </description>
 			<file targetdir="$INSTALL_PATH/plugins" 

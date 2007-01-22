@@ -309,6 +309,10 @@
 			<param name="p_rebuild" value="${rebuild.plugin.graph}"/>
 		</antcall>
 		<antcall target="build_plugin">
+			<param name="p_internal_name" value="h2"/>
+			<param name="p_rebuild" value="${rebuild.plugin.h2}"/>
+		</antcall>		
+		<antcall target="build_plugin">
 			<param name="p_internal_name" value="informix"/>
 			<param name="p_rebuild" value="${rebuild.plugin.informix}"/>			
 		</antcall>		
