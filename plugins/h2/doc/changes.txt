@@ -1,0 +1,8 @@
+H2 Plugin Change Log
+=====================
+
+
+0.10
+====
+
+- Initial release.
