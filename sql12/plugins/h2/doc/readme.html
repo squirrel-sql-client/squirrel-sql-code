@@ -1,0 +1,156 @@
+<HTML>
+
+<HEAD>
+    <TITLE>H2 Plugin</TITLE>
+</HEAD>
+
+<BODY>
+<center><h1>H2 Plugin</h1></center>
+
+<h2>Author</h2>
+<ul>
+<li>Rob Manning</li>
+</ul>
+
+<H2>Introduction</H2>
+
+<P>The H2 plugin adds H2-specific functionality to the SQuirreL SQL
+Client. Read access is required to the following system views in order for this
+additional functionality to work correctly:
+<UL>
+<li>INFORMATION_SCHEMA.INDEXES</li>
+<li>INFORMATION_SCHEMA.SEQUENCES</li>
+<li>INFORMATION_SCHEMA.TRIGGERS</li>
+<li>INFORMATION_SCHEMA.VIEWS</li>
+</UL>
+
+<H2>New Tabs</H2>
+
+<P>Indexes and Views are shown in the object tree and have 
+a &quot;Source&quot; tab which displays the source of the selected object and 
+a &quot;Details&quot; tab which gives H2-specific information about the 
+object.  Sequences and Indexes are also shown in the object tree and have a 
+details tab giving H2-specific information about them.  
+
+<!-- INDEX -->
+
+<h2>Index Details Tab</h2>
+The index details tab can be accessed by navigating the object tree to the INDEX
+folder beneath any table that has one or multiple indexes.  The index(es) will 
+be listed by name under the table folder, and selecting one will place a 
+details tab in the right-hand view of the session window.
+<p>
+<center>
+<img src="images/index_details.jpg">
+</center>
+<p>
+The information provided by the details tab for indexes is derived by the 
+following query:
+<p>
+<pre>
+	SELECT TABLE_CATALOG,TABLE_SCHEMA,TABLE_NAME, 
+	NON_UNIQUE,ORDINAL_POSITION,COLUMN_NAME, 
+	CARDINALITY,PRIMARY_KEY,INDEX_TYPE_NAME, 
+	IS_GENERATED,INDEX_TYPE,ASC_OR_DESC,PAGES, 
+	FILTER_CONDITION,REMARKS 
+	FROM INFORMATION_SCHEMA.INDEXES 
+	WHERE TABLE_SCHEMA = ? 
+	AND INDEX_NAME = ? 
+</pre>
+<p>
+
+
+<h2>Index Source Tab</h2>
+The index source tab can be accessed by navigating the object tree as above and
+selecting the "Source" tab which is adjacent to the "Details" tab. An example
+is shown below:
+<p>
+<center>
+<img src="images/index_source.jpg">
+</center>
+<p>
+The information provided by the source tab for indexes is derived by the 
+following query:
+<p>
+<pre>
+	select 
+	'create '||index_type_name||' '||index_name||' ON '||table_name||'('||column_name||')' 
+	from INFORMATION_SCHEMA.INDEXES 
+	where table_schema = ? 
+	and index_name = ? 
+</pre>
+<p>
+
+
+
+<!-- SEQUENCE -->
+
+<h2>Sequence Details Tab</h2>
+Sequences will appear in the object tree under the SCHEMA folder. The details 
+tab for sequences displays information about the selected sequence according 
+to the system catalog. An example of this is shown in the following picture:
+<p>
+<center>
+<img src="images/sequence_details.jpg">
+</center>
+<p>
+The information in the details tab for a sequence is derived from the following
+query:
+<p>
+<pre>
+	SELECT SEQUENCE_CATALOG,SEQUENCE_SCHEMA, 
+	CURRENT_VALUE,INCREMENT,IS_GENERATED,REMARKS 
+	FROM INFORMATION_SCHEMA.SEQUENCES 
+	WHERE SEQUENCE_SCHEMA = ? 
+	AND SEQUENCE_NAME = ? 
+</pre>
+
+<p>
+
+<!-- TRIGGER DETAILS -->
+
+<h2>Trigger Details Tab</h2>
+The details tab for triggers displays information about the selected trigger 
+according to the system catalog. An example of this is shown in the following 
+picture:
+<p>
+<center>
+<img src="images/trigger_details.jpg">
+</center>
+<p>
+The information in the details tab for a trigger is derived from the following
+query:
+<p>
+<pre>
+	SELECT TRIGGER_CATALOG,TRIGGER_SCHEMA,TRIGGER_NAME, 
+	TRIGGER_TYPE,TABLE_CATALOG,TABLE_SCHEMA,TABLE_NAME, 
+	BEFORE,JAVA_CLASS,QUEUE_SIZE,NO_WAIT,REMARKS,SQL 
+	FROM INFORMATION_SCHEMA.TRIGGERS 
+	WHERE TABLE_SCHEMA = ? 
+	AND TRIGGER_NAME = ? 
+</pre>
+
+<!-- VIEW SOURCE -->
+
+<h2>View Source Tab</h2>
+The source tab for views displays the source for a view and can
+be accessed by navigating to the &quot;VIEW&quot; folder beneath a schema 
+object in the object tree.  An example of this is shown in the following 
+picture:
+<p>
+<center>
+<img src="images/view_source.jpg">
+</center>
+<p>
+The source code for views is derived from the following query:
+<p>
+<pre>
+	select view_definition 
+	from information_schema.views 
+	where table_schema = ? 
+	and table_name = ? 
+</pre>
+<p>
+</BODY>
+</HTML>
+
