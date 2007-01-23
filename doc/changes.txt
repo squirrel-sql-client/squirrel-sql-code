@@ -31,6 +31,15 @@ DBCopy Plugin
 
 Bug-Fixes:
 
+1617839 Two new lines with white spaces in between do not separate SQLs when SQLs are executed without selection.
+
+1639680 Cannot export smallint and decimal to MS Excel
+
+1635259 Session menu has two items with mnemonic "T"
+
+1639662 Block comments can be ended prematurely
+   Thanks to Sam Polak for the patch
+
 1631392 (Dropping materialized views) - The 'Drop' menu item has been replaced
 by a 'Drop Table(s)' menu item available with the Refactoring Plugin.  The new
 menu item allows the user to specify whether or not to cascade constraints as 
