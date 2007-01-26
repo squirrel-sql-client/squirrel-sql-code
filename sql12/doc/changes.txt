@@ -6,6 +6,7 @@ Not yet released - available from CVS (squirrel-2_4-branch) or in the latest sna
 
 Bug-Fixes:
 
+1617839 (Line with spaces does not separate SQLs)
 1639680 (Cannot export smallint and decimal to excel)
 1635259 (Session menu has two items with mnemonic "t")
 1639662 (Block comments can be ended prematurely)
