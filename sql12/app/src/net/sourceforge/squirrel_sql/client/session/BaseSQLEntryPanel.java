@@ -99,38 +99,87 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
       return bounds;
    }
 
+   /**
+    * The non selection separator is two new lines. Two new lines with white spaces in between
+    * is counted as separator too. 
+    * @return
+    */
    private int[] getSqlBoundsBySeparatorRule()
    {
       int[] bounds = new int[2];
 
       String sql = getText();
-      bounds[0] = 0;
-      bounds[1] = sql.length();
+      int iCaretPos = getCaretPosition();
 
-      int iCaretPos = getCaretPosition() - 1;
-      if (iCaretPos < 0)
-      {
-         iCaretPos = 0;
-      }
-
-      int iIndex = sql.lastIndexOf(SQL_STMT_SEP, iCaretPos);
-      if (iIndex >= 0)
-      {
-         bounds[0] = iIndex + SQL_STMT_SEP.length();
-      }
-      iIndex = sql.indexOf(SQL_STMT_SEP, iCaretPos);
-      if (iIndex > 0)
-      {
-         bounds[1] = iIndex;
-      }
-
-      if(bounds[0] > bounds[1])
-      {
-         bounds[0] = bounds[1];
-      }
+      bounds[0] = lastIndexOfStateSep(sql, iCaretPos);
+      bounds[1] = indexOfStateSep(sql, iCaretPos);
 
       return bounds;
+
    }
+
+
+   private static int indexOfStateSep(String sql, int pos)
+   {
+      int ix = pos;
+
+      int newLinteCount = 0;
+      for(;;)
+      {
+         if(sql.length() == ix)
+         {
+            return sql.length();
+         }
+
+         if(false == Character.isWhitespace(sql.charAt(ix)))
+         {
+            newLinteCount = 0;
+         }
+
+         if('\n' == sql.charAt(ix))
+         {
+            ++newLinteCount;
+            if(2 == newLinteCount)
+            {
+               return ix;
+            }
+         }
+
+         ++ix;
+      }
+   }
+
+   private static int lastIndexOfStateSep(String sql, int pos)
+   {
+      int ix = pos;
+
+      int newLinteCount = 0;
+      for(;;)
+      {
+         if(0 == ix)
+         {
+            return 0;
+         }
+
+         if(false == Character.isWhitespace(sql.charAt(ix)))
+         {
+            newLinteCount = 0;
+         }
+
+
+         if('\n' == sql.charAt(ix))
+         {
+            ++newLinteCount;
+            if(2 == newLinteCount)
+            {
+               return ix;
+            }
+         }
+
+         --ix;
+      }
+   }
+
 
    public void moveCaretToPreviousSQLBegin()
    {
