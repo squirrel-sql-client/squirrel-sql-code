@@ -34,6 +34,8 @@ DBCopy Plugin
 
 Bug-Fixes:
 
+Updated French translation strings (Thanks to Erwan Duroselle)
+
 1617839 Two new lines with white spaces in between do not separate SQLs when 
         SQLs are executed without selection.
 
