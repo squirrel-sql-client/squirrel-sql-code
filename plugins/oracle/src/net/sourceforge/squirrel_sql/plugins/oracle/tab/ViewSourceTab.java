@@ -4,12 +4,11 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-public class ViewSourceTab extends BaseSourceTab
+public class ViewSourceTab extends OracleSourceTab
 {
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(ViewSourceTab.class);
@@ -27,10 +26,10 @@ public class ViewSourceTab extends BaseSourceTab
 
 	/** SQL that retrieves the data. */
 	private static final String SQL =
-		"SELECT TEXT "
-			+ "FROM SYS.ALL_VIEWS "
-			+ "WHERE OWNER = ? AND VIEW_NAME = ?";
-
+        "select  'CREATE OR REPLACE VIEW ' || VIEW_NAME ||' AS ', TEXT " +
+        "FROM SYS.ALL_VIEWS " +
+        "WHERE OWNER = ? AND VIEW_NAME = ? ";
+    
 	public ViewSourceTab()
 	{
 		super(i18n.HINT);
