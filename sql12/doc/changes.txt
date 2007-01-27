@@ -1,8 +1,9 @@
 SQuirreL SQL Client Change Log
 ==============================
 
-Not yet released - available from CVS (squirrel-2_4-branch) or in the latest snapshot:
--------------------------------------------------------------------------------------
+
+2.4.1 (??/??/??)
+================
 
 Bug-Fixes:
 
@@ -15,6 +16,16 @@ Fixed a bug which caused the JFileChooser used for opening/saving files in the
 SQL Editor to display copies of the "sql" and "txt" file types in the file type 
 dropdown.  Each time the JFileChooser was re-opened another set of "sql" and 
 "txt" list items were being added erroneously.
+
+DBCopy Plugin 
+ - If the source/dest database is Oracle, and the type of column being copied
+  is DATE, then treat it like a TIMESTAMP for reading or writing the value.  Oracle
+  stores a time component in date columns and this prevents this time component
+  value from being lost if the destination database can also store a time
+  component in DATE columns.
+
+- The error message for SQLExceptions now includes the SQL statement that was
+  last executed (including bind variable values if it was a PreparedStatement)
 
 Refactoring Plugin - The scrollbar in the column list dialog now appears, where
 previously it did not, making tables with many columns difficult to work with 
