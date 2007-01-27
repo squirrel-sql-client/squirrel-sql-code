@@ -3,6 +3,12 @@ DBCopy Change Log
 
 1.11 (??/??/??)
 ====
+If the source/dest database is Oracle, and the type of column being copied is 
+DATE, then treat it like a TIMESTAMP for reading or writing the value.  Oracle 
+stores a time component in date columns and this prevents this time component 
+value from being lost if the destination database can also store a time 
+component in DATE columns.
+
 The error message for SQLExceptions now includes the SQL statement that was 
 last executed (including bind variable values if it was a PreparedStatement)
 
