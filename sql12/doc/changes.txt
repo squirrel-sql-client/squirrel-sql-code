@@ -49,6 +49,13 @@ Bug-Fixes:
         The new menu item allows the user to specify whether or not to cascade 
         constraints as well as being able to see the SQL that will be executed.
 
+DBCopy Plugin 
+  - If the source/dest database is Oracle, and the type of column being copied 
+    is DATE, then treat it like a TIMESTAMP for reading or writing the value.  
+    Oracle stores a time component in date columns and this prevents this 
+    time component value from being lost if the destination database can also 
+    store a time component in DATE columns.
+
 Derby Plugin - Transformed trigger source tab contents into valid SQL that can 
 be used to re-create the trigger.  Fixed multiple bugs that occurred when the 
 same view/trigger name is used in multiple schemas.
