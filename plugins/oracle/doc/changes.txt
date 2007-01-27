@@ -6,7 +6,10 @@ Oracle Change Log
 
 - Added the schema name to the SID for session nodes - it's easier now to 
   find the session you are looking for.
-
+  
+- Source tab for views now presents source code that is formatted and 
+  correctly formed to allow it to be used as an SQL statement to replicate 
+  the view.
 
 0.16
 ====
