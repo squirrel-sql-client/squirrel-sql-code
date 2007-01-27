@@ -560,12 +560,15 @@ public class CopyExecutor extends I18NBaseObject {
             DBUtil.setLastStatement(selectSQL);
             rs = DBUtil.executeQuery(prov.getCopySourceSession(), selectSQL);
             DBUtil.setLastStatement(insertSQL);
+            boolean isMysql = DialectFactory.isMySQLSession(destSession);
+            boolean isSourceOracle = 
+                DialectFactory.isOracleSession(sourceSession);
+            boolean isDestOracle = DialectFactory.isOracleSession(destSession);
             while (rs.next() && !cancelled) {
                 // MySQL driver gets unhappy when we use the same 
                 // PreparedStatement to bind null and non-null LOB variables
                 // without clearing the parameters first.
-                if (DialectFactory.isMySQLSession(destSession) 
-                        && foundLOBType) 
+                if (isMysql && foundLOBType) 
                 {
                     insertStmt.clearParameters();
                 }
@@ -577,12 +580,15 @@ public class CopyExecutor extends I18NBaseObject {
                     // If source column is type 1111 (OTHER), try to use the 
                     // column type name to find a type that isn't 1111.
                     sourceColType = DBUtil.replaceOtherDataType(sourceInfos[i]);
-
+                    sourceColType = getDateReplacement(sourceColType, 
+                                                       isSourceOracle);
+                    
                     int destColType   = destInfos[i].getDataType();
                     // If source column is type 1111 (OTHER), try to use the 
                     // column type name to find a type that isn't 1111.
                     destColType = DBUtil.replaceOtherDataType(destInfos[i]);
-
+                    destColType = getDateReplacement(destColType, isDestOracle);
+                    
                     
                     String bindVal = DBUtil.bindVariable(insertStmt,
                                                          sourceColType,
@@ -618,6 +624,25 @@ public class CopyExecutor extends I18NBaseObject {
                 commitConnection(destConn);
             }
         }
+    }
+    
+    /**
+     * This will return a TIMESTAMP type when the specified type is a DATE and 
+     * isOracle is true.  This is done so that Oracle dates that have a time 
+     * component, will have the time component copied correctly.
+     *  
+     * @param session
+     * @param type
+     * @param isOracle
+     * @return
+     */
+    private int getDateReplacement(int type, boolean isOracle) 
+    {
+        int result = type;
+        if (isOracle && type == java.sql.Types.DATE) {
+            result = java.sql.Types.TIMESTAMP;
+        }
+        return result;
     }
     
     /**
