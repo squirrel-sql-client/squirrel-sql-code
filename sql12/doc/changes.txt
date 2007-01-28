@@ -62,6 +62,12 @@ Derby Plugin - Transformed trigger source tab contents into valid SQL that can
 be used to re-create the trigger.  Fixed multiple bugs that occurred when the 
 same view/trigger name is used in multiple schemas.
 
+Informix Plugin 
+  - Fixed ordering segements within the body of Stored Procedures.  
+  - Applied code formatting to triggers and view source.  
+  - Fixed erroneous inclusion of extra whitespace which for some definitions 
+    made the SQL invalid.
+
 Refactoring Plugin - The scrollbar in the column list dialog now appears, where
 previously it did not, making tables with many columns difficult to work with 
 for Add/Modify/Drop column. 
