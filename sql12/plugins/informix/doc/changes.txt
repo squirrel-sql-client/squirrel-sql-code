@@ -2,7 +2,14 @@ Informix Plugin Change Log
 ==========================
 
 
-0.10
+0.02
+====
+- Fixed ordering segements within the body of Stored Procedures.  
+- Applied code formatting to triggers and view source.  
+- Fixed erroneous inclusion of extra whitespace which for some definitions made
+the SQL invalid.
+
+0.01
 ====
 
 - Initial release.

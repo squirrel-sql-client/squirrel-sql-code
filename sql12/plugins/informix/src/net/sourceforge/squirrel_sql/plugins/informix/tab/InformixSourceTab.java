@@ -108,23 +108,31 @@ public abstract class InformixSourceTab extends BaseSourceTab {
                     } 
                     if (sourceType == TRIGGER_TYPE) {
                         String data = rs.getString(1);
-                        buf.append(data.trim() + " ");
+                        buf.append(data);
                     }
                     if (sourceType == VIEW_TYPE) {
                         String line = rs.getString(1);
-                        buf.append(line.trim() + " ");                        
+                        buf.append(line);                        
                     }
                 }
-                // Stored Procedures can have comments embedded in them, so 
-                // don't line-wrap them.
+                String trimmedSource = buf.toString().trim();
                 if (sourceType == VIEW_TYPE) {
                     if (s_log.isDebugEnabled()) {
                         s_log.debug("View source before formatting: "+
-                                    buf.toString());
+                                    trimmedSource);
                     }
-                    _ta.setText(formatter.reformat(buf.toString()));
+                    _ta.setText(formatter.reformat(trimmedSource));
+                } else if (sourceType == TRIGGER_TYPE) {
+                    if (s_log.isDebugEnabled()) {
+                        s_log.debug("Trigger source before formatting: "+
+                                    trimmedSource);
+                    }
+                    _ta.setText(formatter.reformat(trimmedSource));
                 } else {
-                    _ta.setText(buf.toString());
+                    // Skip formatting for Stored Procedures - They can have 
+                    // comments embedded in them, and I'm presently not sure 
+                    // how the formatter handles this.
+                    _ta.setText(trimmedSource);
                 }
                 _ta.setCaretPosition(0);
             }
