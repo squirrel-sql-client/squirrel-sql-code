@@ -39,7 +39,8 @@ public class ProcedureSourceTab extends InformixSourceTab
         "FROM sysprocedures AS T1, sysprocbody AS T2 " +
         "WHERE procname = ? " +
         "AND T2.procid = T1.procid " +
-        "AND datakey = 'T' ";
+        "AND datakey = 'T' " +
+        "ORDER BY T2.seqno ";
     
 	/** Logger for this class. */
 	private final static ILogger s_log =
