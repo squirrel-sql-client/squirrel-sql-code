@@ -27,7 +27,8 @@ import javax.swing.JTextArea;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourcePanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.codereformat.CodeReformator;
+import net.sourceforge.squirrel_sql.fw.codereformat.CommentSpec;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -53,6 +54,16 @@ public abstract class InformixSourceTab extends BaseSourceTab {
     private final static ILogger s_log =
         LoggerController.createLogger(InformixSourceTab.class);
 
+    private static CommentSpec[] commentSpecs =
+          new CommentSpec[]
+          {
+              new CommentSpec("/*", "*/"),
+              new CommentSpec("--", "\n")
+          };
+    
+    private static CodeReformator formatter = 
+        new CodeReformator(";", commentSpecs);
+    
     public InformixSourceTab(String hint)
     {
         super(hint);
@@ -97,14 +108,32 @@ public abstract class InformixSourceTab extends BaseSourceTab {
                     } 
                     if (sourceType == TRIGGER_TYPE) {
                         String data = rs.getString(1);
-                        buf.append(data.trim() + " ");
+                        buf.append(data);
                     }
                     if (sourceType == VIEW_TYPE) {
                         String line = rs.getString(1);
-                        buf.append(line.trim() + " ");                        
+                        buf.append(line);                        
                     }
                 }
-                _ta.setText(GUIUtils.getWrappedLine(buf.toString(), 80));
+                String trimmedSource = buf.toString().trim();
+                if (sourceType == VIEW_TYPE) {
+                    if (s_log.isDebugEnabled()) {
+                        s_log.debug("View source before formatting: "+
+                                    trimmedSource);
+                    }
+                    _ta.setText(formatter.reformat(trimmedSource));
+                } else if (sourceType == TRIGGER_TYPE) {
+                    if (s_log.isDebugEnabled()) {
+                        s_log.debug("Trigger source before formatting: "+
+                                    trimmedSource);
+                    }
+                    _ta.setText(formatter.reformat(trimmedSource));
+                } else {
+                    // Skip formatting for Stored Procedures - They can have 
+                    // comments embedded in them, and I'm presently not sure 
+                    // how the formatter handles this.
+                    _ta.setText(trimmedSource);
+                }
                 _ta.setCaretPosition(0);
             }
             catch (SQLException ex)
