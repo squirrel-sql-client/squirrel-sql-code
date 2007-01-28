@@ -17,16 +17,29 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class QueryTokenizer
 {
 	private ArrayList _queries = new ArrayList();
 	private Iterator _queryIterator;
 
-
-	public QueryTokenizer(String sql, String querySep, String lineCommentBegin, boolean removeMultiLineComment)
+    /** Logger for this class. */
+    private final static ILogger s_log =
+        LoggerController.createLogger(QueryTokenizer.class);
+    
+	public QueryTokenizer(String sql, 
+                          String querySep, 
+                          String lineCommentBegin, 
+                          boolean removeMultiLineComment)
 	{
 		String MULTI_LINE_COMMENT_END = "*/";
 		String MULTI_LINE_COMMENT_BEGIN = "/*";
@@ -133,7 +146,10 @@ public class QueryTokenizer
 			_queries.add(lastQuery.toString().trim());
 		}
 
+        expandFileIncludes(querySep, lineCommentBegin, removeMultiLineComment);
 
+        joinProcedureFragments();
+        
 		_queryIterator = _queries.iterator();
 	}
 
@@ -198,8 +214,121 @@ public class QueryTokenizer
 			return -1;
 		}
 	}
-
-
+    
+    /** 
+     * This uses statements that begin with "@" to indicate that the following
+     * text is a file containing SQL statements that should be loaded.
+     * 
+     * @param querySep
+     * @param lineCommentBegin
+     * @param removeMultiLineComment
+     */
+    private void expandFileIncludes(String querySep, 
+                                    String lineCommentBegin,     
+                                    boolean removeMultiLineComment) {
+        ArrayList tmp = new ArrayList();
+        for (Iterator iter = _queries.iterator(); iter.hasNext();) {
+            String sql = (String) iter.next();
+            // TODO: make this configurable
+            if (sql.startsWith("@")) {
+                try {
+                    List fileSQL = 
+                        getStatementsFromIncludeFile(sql.substring(1),
+                                                     querySep,
+                                                     lineCommentBegin,
+                                                     removeMultiLineComment);
+                    tmp.addAll(fileSQL);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                
+            } else {
+                tmp.add(sql);
+            }
+        }
+        _queries = tmp;
+    }
+    
+    private List getStatementsFromIncludeFile(String filename,
+                                              String querySep, 
+                                              String lineCommentBegin,     
+                                              boolean removeMultiLineComment) 
+        throws Exception 
+    {
+        ArrayList result = new ArrayList();
+        System.out.println("Attemping to open file '"+filename+"'");
+        File f = new File(filename);
+        /*
+        if (f.canRead()) {
+        */
+            StringBuffer fileLines = new StringBuffer();
+            try {
+                BufferedReader reader = new BufferedReader(new FileReader(f));
+                String next = reader.readLine();
+                while (next != null) {
+                    fileLines.append(next);
+                    next = reader.readLine();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (fileLines.toString().length() > 0) {
+                QueryTokenizer qt = new QueryTokenizer(fileLines.toString(),
+                                                       querySep,
+                                                       lineCommentBegin,
+                                                       removeMultiLineComment);
+                for (Iterator iter = qt._queryIterator; iter.hasNext();) {
+                    String sql = (String) iter.next();
+                    result.add(sql);
+                }
+            }
+            /*
+        } else {
+            s_log.error("Unable to open file: "+filename+" for reading");
+        }
+        */
+        return result;
+    }    
+    
+    /**
+     * This will scan the _queries list looking for CREATE PROCEDURE fragments
+     * and will combine successive queries until the "/" is indicating the end
+     * of the procedure.
+     */
+    private void joinProcedureFragments() {
+        
+        boolean inProcedure = false;
+        StringBuffer collector = null;
+        ArrayList tmp = new ArrayList();
+        for (Iterator iter = _queries.iterator(); iter.hasNext();) {
+            String next = (String) iter.next();
+            if (next.toUpperCase().startsWith("CREATE PROCEDURE")) {
+                inProcedure = true;
+                collector = new StringBuffer(next);
+                collector.append(";");
+                continue;
+            }
+            // TODO: make "/" configurable
+            if (next.startsWith("/")) {
+                inProcedure = false;
+                tmp.add(collector.toString());
+                // Since "/" isn't the statement separator, check to see if this 
+                // statement is more than just "/" and add the rest.
+                if (next.length() > 1) {
+                    tmp.add(next.substring(1));
+                }
+                continue;
+            }
+            if (inProcedure) {
+                collector.append(next);
+                collector.append(";");
+                continue;
+            } 
+            tmp.add(next);
+        }
+        _queries = tmp;
+    }
+    
 	public boolean hasQuery()
 	{
 		return _queryIterator.hasNext();
@@ -211,17 +340,19 @@ public class QueryTokenizer
 	}
 
 
-//	public static void main(String[] args)
-//	{
-//		//String sql = "A'''' sss ;  GO ;; GO'";
-//		String sql = "A\n--x\n--y\n/*\n*/B";
-//		//String sql = "GO GO";
-//
-//		QueryTokenizer qt = new QueryTokenizer(sql, "GO", "--");
-//
-//		while(qt.hasQuery())
-//		{
-//			System.out.println(">" + qt.nextQuery() + "<");
-//		}
-//	}
+	public static void main(String[] args)
+	{
+		//String sql = "A'''' sss ;  GO ;; GO'";
+		//String sql = "A\n--x\n--y\n/*\nB";
+		//String sql = "GO GO";
+	    String sql = "@c:\\tools\\sql\\file.sql";
+        
+        
+		QueryTokenizer qt = new QueryTokenizer(sql, "GO", "--", true);
+
+		while(qt.hasQuery())
+		{
+			System.out.println(">" + qt.nextQuery() + "<");
+		}
+	}
 }
