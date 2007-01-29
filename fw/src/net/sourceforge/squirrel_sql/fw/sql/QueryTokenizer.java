@@ -153,11 +153,6 @@ public class QueryTokenizer
 			_queries.add(lastQuery.toString().trim());
 		}
 
-        expandFileIncludes(querySep, 
-                           lineCommentBegin, 
-                           removeMultiLineComment, 
-                           isOracle);
-
         if (isOracle) {
             // Oracle allows statement separators in PL/SQL blocks.  The process
             // of tokenizing above renders these procedure blocks as separate 
@@ -167,7 +162,12 @@ public class QueryTokenizer
             joinProcedureFragments();
         }
         
-		_queryIterator = _queries.iterator();
+        expandFileIncludes(querySep, 
+                           lineCommentBegin, 
+                           removeMultiLineComment, 
+                           isOracle);
+
+        _queryIterator = _queries.iterator();
 	}
 
 
@@ -293,10 +293,13 @@ public class QueryTokenizer
                 String next = reader.readLine();
                 while (next != null) {
                     fileLines.append(next);
+                    fileLines.append("\n");
                     next = reader.readLine();
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                s_log.error(
+                    "Unexpected exception while reading lines from file " +
+                    "("+filename+")", e);
             }
             if (fileLines.toString().length() > 0) {
                 QueryTokenizer qt = new QueryTokenizer(fileLines.toString(),
