@@ -429,7 +429,7 @@ public class ColumnDetailDialog extends JDialog {
         precisionSpinner = new JSpinner();
         precisionSpinner.setPreferredSize(mediumField);
         value = 8; 
-        min = 1;
+        min = 0;
         max = Long.MAX_VALUE; 
         step = 1; 
         SpinnerNumberModel precisionModel = 
@@ -446,7 +446,7 @@ public class ColumnDetailDialog extends JDialog {
         scaleSpinner = new JSpinner();
         scaleSpinner.setPreferredSize(mediumField);
         value = 8; 
-        min = 1;
+        min = 0;
         max = Long.MAX_VALUE; 
         step = 1; 
         SpinnerNumberModel scaleModel = 
