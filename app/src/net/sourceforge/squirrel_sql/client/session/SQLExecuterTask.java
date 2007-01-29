@@ -36,6 +36,7 @@ import java.util.List;
 
 import javax.swing.SwingUtilities;
 
+import net.sourceforge.squirrel_sql.client.db.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoUpdateCheck;
@@ -136,7 +137,8 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
                   _sql,
                   props.getSQLStatementSeparator(),
                   props.getStartOfLineComment(),
-                  props.getRemoveMultiLineComment());
+                  props.getRemoveMultiLineComment(),
+                  DialectFactory.isOracleSession(_session));
 
             List queryStrings = new ArrayList();
             boolean queriesFound = false;
