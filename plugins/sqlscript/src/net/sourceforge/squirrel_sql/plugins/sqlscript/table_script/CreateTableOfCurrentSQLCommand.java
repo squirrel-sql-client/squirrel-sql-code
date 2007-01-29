@@ -37,6 +37,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
 
+import net.sourceforge.squirrel_sql.client.db.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
@@ -101,7 +102,8 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
          QueryTokenizer qt = new QueryTokenizer(FrameWorkAcessor.getSQLPanelAPI(_session, _plugin).getSQLScriptToBeExecuted(),
             _session.getProperties().getSQLStatementSeparator(),
             _session.getProperties().getStartOfLineComment(),
-            _session.getProperties().getRemoveMultiLineComment());
+            _session.getProperties().getRemoveMultiLineComment(),
+            DialectFactory.isOracleSession(_session));
 
 
          if(false == qt.hasQuery())

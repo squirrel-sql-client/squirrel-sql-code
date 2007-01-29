@@ -119,7 +119,7 @@ public class ValidateSQLAction extends SquirrelAction implements ISessionAction
 			final String solComment = sessionProps.getStartOfLineComment();
 			final ValidationProps valProps = new ValidationProps(_prefs, wssProps,
 													_session.getMessageHandler(),
-													sql, stmtSep, solComment);
+													sql, stmtSep, solComment, _session);
 			new Executor(_session.getApplication(), valProps, _session.getProperties()).execute();
 		}
 		else
@@ -137,11 +137,12 @@ public class ValidateSQLAction extends SquirrelAction implements ISessionAction
 		final String _sql;
 		final String _stmtSep;
 		final String _solComment;
+        final ISession _session;
 
 		ValidationProps(WebServicePreferences prefs,
 						WebServiceSessionProperties sessionProps,
 						IMessageHandler msgHandler, String sql, String stmtSep,
-						String solComment)
+						String solComment, ISession session)
 		{
 			super();
 			_prefs = prefs;
@@ -150,6 +151,7 @@ public class ValidateSQLAction extends SquirrelAction implements ISessionAction
 			_sql = sql;
 			_stmtSep= stmtSep;
 			_solComment = solComment;
+            _session = session;
 		}
 	}
 
@@ -173,7 +175,8 @@ public class ValidateSQLAction extends SquirrelAction implements ISessionAction
 											_valProps._sessionProps,
 											_valProps._sql, _valProps._stmtSep,
 											_valProps._solComment,
-                                 _sessionProperties);
+											_sessionProperties,
+                                            _valProps._session);
 			try
 			{
 				cmd.execute();
