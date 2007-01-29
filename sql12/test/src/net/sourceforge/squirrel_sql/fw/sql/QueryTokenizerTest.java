@@ -10,9 +10,7 @@ import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 
 public class QueryTokenizerTest extends TestCase implements OracleSQL {
 
-    static String nullSQL = null;
-    static String sql3 =  "update test set /*PARAM1*/ thing /*C*/ = 'default value' /*/PARAM1*/;";
-       
+    static String nullSQL = null;       
     static String tmpFilename = null;
     static boolean removeMultilineComment = true;
     static {
@@ -43,16 +41,11 @@ public class QueryTokenizerTest extends TestCase implements OracleSQL {
         qt = new QueryTokenizer(CREATE_OR_REPLACE_STORED_PROC, ";", "--", removeMultilineComment, true);
         checkQueryTokenizer(qt, 1);
     }
-
-    public void testCreateOrReplaceStoredProcedure2() {
-        qt = new QueryTokenizer(CREATE_OR_REPLACE_STORED_PROC2, ";", "--", removeMultilineComment, true);
-        checkQueryTokenizer(qt, 1);
-    }
     
     public void testHasQueryFromFile() {
         String fileSQL = "@" + tmpFilename + ";\n";
         qt = new QueryTokenizer(fileSQL, ";", "--", removeMultilineComment, true);
-        checkQueryTokenizer(qt, 3);
+        checkQueryTokenizer(qt, 5);
     }
     
     private void checkQueryTokenizer(QueryTokenizer qt, int stmtCount) {
@@ -65,27 +58,26 @@ public class QueryTokenizerTest extends TestCase implements OracleSQL {
     }
     
     private static void createSQLFile() throws IOException {
+        tmpFilename  = "C:\\DOCUME~1\\robert\\LOCALS~1\\Temp\\test3622.sql";
         if (tmpFilename != null) {
             return;
         }
         File f = File.createTempFile("test", ".sql");
-        f.deleteOnExit();
+        //f.deleteOnExit();
         PrintWriter out = new PrintWriter(new FileWriter(f));
-        out.print(SELECT_DUAL);
+        out.println(SELECT_DUAL);
         out.println();
-        out.print(SELECT_DUAL);
+        out.print(UPDATE_TEST);
         out.println();
-        out.print(sql3);
+        out.println(CREATE_STORED_PROC);
         out.println();
-        out.print(CREATE_STORED_PROC);
+        out.println(CREATE_OR_REPLACE_STORED_PROC);
         out.println();
-        out.print(CREATE_OR_REPLACE_STORED_PROC);
-        out.print(";");
+        out.println(SELECT_DUAL);
         out.println();
-        
         out.close();
         tmpFilename = f.getAbsolutePath();
-        //System.out.println("tmpFilename="+tmpFilename);
+        System.out.println("tmpFilename="+tmpFilename);
     }
     
 }
