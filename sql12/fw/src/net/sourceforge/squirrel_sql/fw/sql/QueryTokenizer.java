@@ -23,6 +23,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -36,10 +37,16 @@ public class QueryTokenizer
     private final static ILogger s_log =
         LoggerController.createLogger(QueryTokenizer.class);
     
+    private static final String pattern = 
+        "^\\s*CREATE\\s+PROCEDURE.*|^\\s*CREATE\\s+OR\\s+REPLACE\\s+PROCEDURE\\s+.*";
+    
+    private Pattern procPattern = Pattern.compile(pattern, Pattern.DOTALL);
+    
 	public QueryTokenizer(String sql, 
                           String querySep, 
                           String lineCommentBegin, 
-                          boolean removeMultiLineComment)
+                          boolean removeMultiLineComment,
+                          boolean isOracle)
 	{
 		String MULTI_LINE_COMMENT_END = "*/";
 		String MULTI_LINE_COMMENT_BEGIN = "/*";
@@ -146,9 +153,19 @@ public class QueryTokenizer
 			_queries.add(lastQuery.toString().trim());
 		}
 
-        expandFileIncludes(querySep, lineCommentBegin, removeMultiLineComment);
+        expandFileIncludes(querySep, 
+                           lineCommentBegin, 
+                           removeMultiLineComment, 
+                           isOracle);
 
-        joinProcedureFragments();
+        if (isOracle) {
+            // Oracle allows statement separators in PL/SQL blocks.  The process
+            // of tokenizing above renders these procedure blocks as separate 
+            // statements, which is invalid for Oracle.  Since "/" is the way 
+            // in SQL-Plus to denote the end of a procedure, re-assemble any 
+            // create procedure statements that we find.
+            joinProcedureFragments();
+        }
         
 		_queryIterator = _queries.iterator();
 	}
@@ -217,7 +234,9 @@ public class QueryTokenizer
     
     /** 
      * This uses statements that begin with "@" to indicate that the following
-     * text is a file containing SQL statements that should be loaded.
+     * text is a file containing SQL statements that should be loaded.  This 
+     * should eventually be made to work with other dbs like MySQL which uses
+     * "source" or "\." to indicate an include file. 
      * 
      * @param querySep
      * @param lineCommentBegin
@@ -225,7 +244,8 @@ public class QueryTokenizer
      */
     private void expandFileIncludes(String querySep, 
                                     String lineCommentBegin,     
-                                    boolean removeMultiLineComment) {
+                                    boolean removeMultiLineComment,
+                                    boolean isOracle) {
         ArrayList tmp = new ArrayList();
         for (Iterator iter = _queries.iterator(); iter.hasNext();) {
             String sql = (String) iter.next();
@@ -236,10 +256,13 @@ public class QueryTokenizer
                         getStatementsFromIncludeFile(sql.substring(1),
                                                      querySep,
                                                      lineCommentBegin,
-                                                     removeMultiLineComment);
+                                                     removeMultiLineComment,
+                                                     isOracle);
                     tmp.addAll(fileSQL);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    s_log.error(
+                       "Unexpected error while attempting to include file " +
+                       "from "+sql, e);
                 }
                 
             } else {
@@ -252,11 +275,14 @@ public class QueryTokenizer
     private List getStatementsFromIncludeFile(String filename,
                                               String querySep, 
                                               String lineCommentBegin,     
-                                              boolean removeMultiLineComment) 
+                                              boolean removeMultiLineComment,
+                                              boolean isOracle) 
         throws Exception 
     {
         ArrayList result = new ArrayList();
-        System.out.println("Attemping to open file '"+filename+"'");
+        if (s_log.isDebugEnabled()) {
+            s_log.debug("Attemping to open file '"+filename+"'");
+        }
         File f = new File(filename);
         /*
         if (f.canRead()) {
@@ -276,7 +302,8 @@ public class QueryTokenizer
                 QueryTokenizer qt = new QueryTokenizer(fileLines.toString(),
                                                        querySep,
                                                        lineCommentBegin,
-                                                       removeMultiLineComment);
+                                                       removeMultiLineComment,
+                                                       isOracle);
                 for (Iterator iter = qt._queryIterator; iter.hasNext();) {
                     String sql = (String) iter.next();
                     result.add(sql);
@@ -293,7 +320,8 @@ public class QueryTokenizer
     /**
      * This will scan the _queries list looking for CREATE PROCEDURE fragments
      * and will combine successive queries until the "/" is indicating the end
-     * of the procedure.
+     * of the procedure.  This is Oracle-specific.  Eventually this code should
+     * be relocated to the Oracle plugin.
      */
     private void joinProcedureFragments() {
         
@@ -302,20 +330,27 @@ public class QueryTokenizer
         ArrayList tmp = new ArrayList();
         for (Iterator iter = _queries.iterator(); iter.hasNext();) {
             String next = (String) iter.next();
-            if (next.toUpperCase().startsWith("CREATE PROCEDURE")) {
+            if (procPattern.matcher(next.toUpperCase()).matches()) {
                 inProcedure = true;
                 collector = new StringBuffer(next);
                 collector.append(";");
                 continue;
-            }
-            // TODO: make "/" configurable
+            } 
             if (next.startsWith("/")) {
                 inProcedure = false;
-                tmp.add(collector.toString());
-                // Since "/" isn't the statement separator, check to see if this 
-                // statement is more than just "/" and add the rest.
-                if (next.length() > 1) {
-                    tmp.add(next.substring(1));
+                if (collector != null) {
+                    tmp.add(collector.toString());
+                    // Since "/" isn't the statement separator, check to see if this 
+                    // statement is more than just "/" and add the rest.
+                    if (next.length() > 1) {
+                        tmp.add(next.substring(1));
+                    }
+                    collector = null;
+                } else {
+                    // Stray "/" - or we failed to find "CREATE PROCEDURE ..."
+                    if (s_log.isDebugEnabled()) {
+                        s_log.debug("Detected stray slash(/) char. Skipping");
+                    }
                 }
                 continue;
             }
@@ -348,7 +383,7 @@ public class QueryTokenizer
 	    String sql = "@c:\\tools\\sql\\file.sql";
         
         
-		QueryTokenizer qt = new QueryTokenizer(sql, "GO", "--", true);
+		QueryTokenizer qt = new QueryTokenizer(sql, "GO", "--", true, true);
 
 		while(qt.hasQuery())
 		{

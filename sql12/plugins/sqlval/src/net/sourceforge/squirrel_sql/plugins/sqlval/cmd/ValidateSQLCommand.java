@@ -17,19 +17,20 @@ package net.sourceforge.squirrel_sql.plugins.sqlval.cmd;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import com.mimer.ws.validateSQL.ValidatorResult;
-
+import net.sourceforge.squirrel_sql.client.db.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import net.sourceforge.squirrel_sql.plugins.sqlval.WebServicePreferences;
 import net.sourceforge.squirrel_sql.plugins.sqlval.WebServiceSession;
 import net.sourceforge.squirrel_sql.plugins.sqlval.WebServiceSessionProperties;
 import net.sourceforge.squirrel_sql.plugins.sqlval.WebServiceValidator;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+
+import com.mimer.ws.validateSQL.ValidatorResult;
 
 /**
  * This <CODE>ICommand</CODE> will validate the passed SQL.
@@ -45,14 +46,17 @@ public class ValidateSQLCommand implements ICommand
    private final String _solComment;
    private SessionProperties _sessionProperties;
    private String _results;
-
+   private final ISession _session;
+   
    /** Logger for this class. */
    private final static ILogger s_log =
       LoggerController.createLogger(ValidateSQLCommand.class);
 
    public ValidateSQLCommand(WebServicePreferences prefs,
                              WebServiceSessionProperties wsSessionProps, String sql,
-                             String stmtSep, String solComment, SessionProperties sessionProperties)
+                             String stmtSep, String solComment, 
+                             SessionProperties sessionProperties,
+                             ISession session)
    {
       super();
       _prefs = prefs;
@@ -61,6 +65,7 @@ public class ValidateSQLCommand implements ICommand
       _stmtSep= stmtSep;
       _solComment = solComment;
       _sessionProperties = sessionProperties;
+      _session = session;
    }
 
    public void openSession(WebServiceSession info)
@@ -85,7 +90,11 @@ public class ValidateSQLCommand implements ICommand
          wss.open();
 
          final WebServiceValidator val = new WebServiceValidator(wss, _wsSessionProps);
-         final QueryTokenizer qt = new QueryTokenizer(_sql, _stmtSep, _solComment, _sessionProperties.getRemoveMultiLineComment());
+         final QueryTokenizer qt = new QueryTokenizer(_sql, 
+                                                      _stmtSep, 
+                                                      _solComment, 
+                                                      _sessionProperties.getRemoveMultiLineComment(),
+                                                      DialectFactory.isOracleSession(_session));
 
          final StringBuffer results = new StringBuffer(1024);
          while (qt.hasQuery())
