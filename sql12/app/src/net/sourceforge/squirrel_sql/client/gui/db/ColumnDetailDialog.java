@@ -429,7 +429,7 @@ public class ColumnDetailDialog extends JDialog {
         precisionSpinner = new JSpinner();
         precisionSpinner.setPreferredSize(mediumField);
         value = 8; 
-        min = 1;
+        min = 0;
         max = Long.MAX_VALUE; 
         step = 1; 
         SpinnerNumberModel precisionModel = 
@@ -446,7 +446,7 @@ public class ColumnDetailDialog extends JDialog {
         scaleSpinner = new JSpinner();
         scaleSpinner.setPreferredSize(mediumField);
         value = 8; 
-        min = 1;
+        min = 0;
         max = Long.MAX_VALUE; 
         step = 1; 
         SpinnerNumberModel scaleModel = 
@@ -495,17 +495,7 @@ public class ColumnDetailDialog extends JDialog {
         contentPane.add(pane, BorderLayout.CENTER);
         
         contentPane.add(getButtonPanel(), BorderLayout.SOUTH);
-        
-        // TODO: remove when modify is implemented for the fields below
-        if (_mode == MODIFY_MODE) {
-            lengthSpinner.setEnabled(false);
-            lengthSpinner.setToolTipText("Modifying column length is not yet supported");
-            precisionSpinner.setEnabled(false);
-            precisionSpinner.setToolTipText("Modifying column precision is not yet supported");
-            scaleSpinner.setEnabled(false);
-            scaleSpinner.setToolTipText("Modifying column scale is not yet supported");
-        }
-        
+                
     }
     
     private JPanel getButtonPanel() {

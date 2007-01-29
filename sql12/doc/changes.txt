@@ -35,7 +35,9 @@ Informix Plugin
 - Fixed erroneous inclusion of extra whitespace which for some definitions
   made the SQL invalid.
 
-Refactoring Plugin - The scrollbar in the column list dialog now appears, where
+Refactoring Plugin 
+- Now allows precision and scale for new or modified columns to be set to 0.
+- The scrollbar in the column list dialog now appears, where
 previously it did not, making tables with many columns difficult to work with 
 for Add/Modify/Drop column. 
 
