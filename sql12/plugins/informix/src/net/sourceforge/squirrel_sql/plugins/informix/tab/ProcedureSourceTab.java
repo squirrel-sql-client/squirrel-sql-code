@@ -40,7 +40,7 @@ public class ProcedureSourceTab extends InformixSourceTab
         "WHERE procname = ? " +
         "AND T2.procid = T1.procid " +
         "AND datakey = 'T' " +
-        "ORDER BY T2.seqno ";
+        "ORDER BY T1.procid, T2.seqno ";
     
 	/** Logger for this class. */
 	private final static ILogger s_log =
