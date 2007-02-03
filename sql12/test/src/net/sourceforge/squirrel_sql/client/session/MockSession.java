@@ -41,10 +41,11 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.UidIdentifier;
+import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.MockSQLDriver;
+import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.MockMessageHandler;
 import net.sourceforge.squirrel_sql.mo.sql.MockDatabaseMetaData;
@@ -360,4 +361,12 @@ public class MockSession implements ISession {
     public String getDefaultSchema() {
         return defaultSchema;
     }
+    
+    public IQueryTokenizer getQueryTokenizer() {
+        return new QueryTokenizer(";", "--", true);
+    }
+
+    public void setQueryTokenizer(IQueryTokenizer tokenizer) {
+        // TODO Auto-generated method stub
+    }    
 }

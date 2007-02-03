@@ -18,6 +18,19 @@ package net.sourceforge.squirrel_sql.plugins.oracle;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.sql.Driver;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Iterator;
+
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
@@ -33,8 +46,6 @@ import net.sourceforge.squirrel_sql.client.session.IAllowedSchemaChecker;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
-import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
@@ -52,19 +63,32 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.plugins.oracle.SGAtrace.NewSGATraceWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.dboutput.NewDBOutputWorksheetAction;
-import net.sourceforge.squirrel_sql.plugins.oracle.expander.*;
+import net.sourceforge.squirrel_sql.plugins.oracle.expander.DefaultDatabaseExpander;
+import net.sourceforge.squirrel_sql.plugins.oracle.expander.InstanceParentExpander;
+import net.sourceforge.squirrel_sql.plugins.oracle.expander.PackageExpander;
+import net.sourceforge.squirrel_sql.plugins.oracle.expander.ProcedureExpander;
+import net.sourceforge.squirrel_sql.plugins.oracle.expander.SchemaExpander;
+import net.sourceforge.squirrel_sql.plugins.oracle.expander.SessionParentExpander;
+import net.sourceforge.squirrel_sql.plugins.oracle.expander.TableExpander;
+import net.sourceforge.squirrel_sql.plugins.oracle.expander.TriggerParentExpander;
+import net.sourceforge.squirrel_sql.plugins.oracle.expander.UserParentExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.explainplan.ExplainPlanExecuter;
 import net.sourceforge.squirrel_sql.plugins.oracle.invalidobjects.NewInvalidObjectsWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.sessioninfo.NewSessionInfoWorksheetAction;
-import net.sourceforge.squirrel_sql.plugins.oracle.tab.*;
-
-import javax.swing.*;
-import java.io.File;
-import java.io.IOException;
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Iterator;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.IndexColumnInfoTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.IndexDetailsTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.InstanceDetailsTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.ObjectSourceTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.OptionsTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.SequenceDetailsTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.SessionDetailsTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.SessionStatisticsTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.TriggerColumnInfoTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.TriggerDetailsTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.TriggerSourceTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.UserDetailsTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.ViewSourceTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tokenizer.OracleQueryTokenizer;
 
 /**
  * Oracle plugin class.
@@ -322,7 +346,7 @@ public class OraclePlugin extends DefaultSessionPlugin
       {
          return null;
       }
-
+      session.setQueryTokenizer(new OracleQueryTokenizer());
       GUIUtils.processOnSwingEventThread(new Runnable()
       {
          public void run()

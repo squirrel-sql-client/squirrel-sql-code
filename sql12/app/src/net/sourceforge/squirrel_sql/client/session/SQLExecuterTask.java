@@ -36,7 +36,6 @@ import java.util.List;
 
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.squirrel_sql.client.db.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoUpdateCheck;
@@ -44,14 +43,14 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
+import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * This class can be used to execute SQL.
@@ -132,14 +131,9 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
             }
 
             // Retrieve all the statements to execute.
-            final QueryTokenizer qt =
-               new QueryTokenizer(
-                  _sql,
-                  props.getSQLStatementSeparator(),
-                  props.getStartOfLineComment(),
-                  props.getRemoveMultiLineComment(),
-                  DialectFactory.isOracleSession(_session));
-
+            final IQueryTokenizer qt = _session.getQueryTokenizer();
+            qt.setScriptToTokenize(_sql);
+            
             List queryStrings = new ArrayList();
             boolean queriesFound = false;
             while (qt.hasQuery())

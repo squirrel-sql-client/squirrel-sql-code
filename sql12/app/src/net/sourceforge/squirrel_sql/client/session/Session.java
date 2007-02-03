@@ -40,13 +40,13 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
-import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
-import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.mainframe.action.OpenConnectionCommand;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
@@ -55,7 +55,10 @@ import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
+import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
+import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnectionState;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
@@ -65,7 +68,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 
 /**
  * Think of a session as being the users view of the database. IE it includes
@@ -89,9 +91,6 @@ class Session implements ISession
 
    private SessionPanel _sessionSheet;
 
-   //JASON: What was this used for?
-   private boolean _sessionCreated = false;
-
    /** The <TT>IIdentifier</TT> that uniquely identifies this object. */
    private final IIdentifier _id;
 
@@ -112,8 +111,6 @@ class Session implements ISession
 
    /** Properties for this session. */
    private SessionProperties _props;
-
-//	private SQLFilterClauses _sqlFilterClauses;
 
    /**
     * Objects stored in session. Each entry is a <TT>Map</TT>
@@ -145,6 +142,8 @@ class Session implements ISession
    /** flag to track whether or not the plugins have finished loading for this new session */
    private boolean _pluginsFinishedLoading = false;
 
+   private IQueryTokenizer tokenizer = null;
+   
    /**
     * Create a new session.
     *
@@ -209,7 +208,6 @@ class Session implements ISession
       setupTitle();
 
       _props = (SessionProperties)_app.getSquirrelPreferences().getSessionProperties().clone();
-//		_sqlFilterClauses = new SQLFilterClauses();
 
       _connLis = new SQLConnectionListener();
       _conn.addPropertyChangeListener(_connLis);
@@ -226,7 +224,6 @@ class Session implements ISession
          }
       });
 
-      _sessionCreated = true;
    }
 
    /**
@@ -294,8 +291,7 @@ class Session implements ISession
       try
       {
          getSQLConnection().commit();
-         // JASON: Wrong class name in key
-         final String msg = s_stringMgr.getString("SQLPanelAPI.commit");
+         final String msg = s_stringMgr.getString("Session.commit");
          getMessageHandler().showMessage(msg);
       }
       catch (Throwable ex)
@@ -312,8 +308,7 @@ class Session implements ISession
       try
       {
          getSQLConnection().rollback();
-         // JASON: Wrong class name in key
-         final String msg = s_stringMgr.getString("SQLPanelAPI.rollback");
+         final String msg = s_stringMgr.getString("Session.rollback");
          getMessageHandler().showMessage(msg);
       }
       catch (Exception ex)
@@ -980,6 +975,34 @@ class Session implements ISession
        
        return true;
 
+    }
+
+    /**
+     * Returns the IQueryTokenizer implementation to use for tokenizing scripts
+     * statements that should be sent to the server.
+     * 
+     * @return an implementation of IQueryTokenizer
+     */    
+    public IQueryTokenizer getQueryTokenizer() {
+        if (tokenizer == null) {
+            // No tokenizer has been set by any installed plugin.  Go ahead and
+            // give the default tokenizer.
+            tokenizer = new QueryTokenizer(_props.getSQLStatementSeparator(),
+                                           _props.getStartOfLineComment(),
+                                           _props.getRemoveMultiLineComment());
+        }
+        return tokenizer;
+    }
+
+    /**
+     * Sets the IQueryTokenizer implementation to use for this session.
+     * 
+     * @param tokenizer
+     */    
+    public void setQueryTokenizer(IQueryTokenizer aTokenizer) {
+        if (aTokenizer != null) {
+            tokenizer = aTokenizer;
+        }
     }
 
 

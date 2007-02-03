@@ -15,6 +15,10 @@ New Plugin for Sybase ASE by Ken McCullough
   	Sybase ASE DB.
 
 Oracle Plugin
+  - Added support for executing create procedure and create function blocks 
+    delimited by a single "/" such as is supported in SQL-Plus.  Also, added 
+    support for the "@" construct which is used to specify a script file to be 
+    included.
   - Source tab for views now presents source code that is formatted and 
     correctly formed to allow it to be used as an SQL statement to replicate 
     the view.
@@ -58,9 +62,11 @@ DBCopy Plugin
     time component value from being lost if the destination database can also 
     store a time component in DATE columns.
 
-Derby Plugin - Transformed trigger source tab contents into valid SQL that can 
-be used to re-create the trigger.  Fixed multiple bugs that occurred when the 
-same view/trigger name is used in multiple schemas.
+Derby Plugin  
+  - Transformed trigger source tab contents into valid SQL that can be used 
+    to re-create the trigger.  
+  - Fixed multiple bugs that occurred in the source tab when the same 
+    view/trigger name is used in multiple schemas.
 
 Informix Plugin 
   - Fixed ordering segements within the body of Stored Procedures.  

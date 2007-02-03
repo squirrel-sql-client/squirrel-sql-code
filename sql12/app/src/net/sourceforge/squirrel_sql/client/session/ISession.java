@@ -21,26 +21,25 @@ package net.sourceforge.squirrel_sql.client.session;
  */
 import java.sql.SQLException;
 
-import javax.swing.*;
-
-import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
-import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
+import javax.swing.Action;
+import javax.swing.JComponent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.session.MainPanel;
-import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
-import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
+import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.MainPanel;
+import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
+import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 /**
  * The current session.
@@ -284,4 +283,21 @@ public interface ISession extends IHasIdentifier
     */
    public boolean confirmClose();
 
+   
+   /**
+    * Sets the IQueryTokenizer implementation to use for this session.
+    * 
+    * @param tokenizer
+    */
+   public void setQueryTokenizer(IQueryTokenizer tokenizer);
+   
+   /**
+    * Returns the IQueryTokenizer implementation to use for tokenizing scripts
+    * statements that should be sent to the server.
+    * 
+    * @return an implementation of IQueryTokenizer
+    */
+   public IQueryTokenizer getQueryTokenizer();
+       
+   
 }
