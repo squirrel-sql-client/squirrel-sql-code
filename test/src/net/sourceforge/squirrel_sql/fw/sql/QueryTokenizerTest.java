@@ -28,23 +28,31 @@ public class QueryTokenizerTest extends TestCase implements OracleSQL {
     }
     
     public void testHasQuery() {
-        qt = new QueryTokenizer(SELECT_DUAL, ";", "--", removeMultilineComment, true);
+        qt = new QueryTokenizer(";", "--", removeMultilineComment);
+        qt.setScriptToTokenize(SELECT_DUAL);
         checkQueryTokenizer(qt, 1);
+        
+        qt = new QueryTokenizer(";", "--", removeMultilineComment);
+        qt.setScriptToTokenize(SELECT_DUAL_2);
+        checkQueryTokenizer(qt, 1);        
     }
 
     public void testCreateStoredProcedure() {
-        qt = new QueryTokenizer(CREATE_STORED_PROC, ";", "--", removeMultilineComment, true);
+        qt = new QueryTokenizer(";", "--", removeMultilineComment);
+        qt.setScriptToTokenize(CREATE_STORED_PROC);
         checkQueryTokenizer(qt, 1);
     }
 
     public void testCreateOrReplaceStoredProcedure() {
-        qt = new QueryTokenizer(CREATE_OR_REPLACE_STORED_PROC, ";", "--", removeMultilineComment, true);
+        qt = new QueryTokenizer(";", "--", removeMultilineComment);
+        qt.setScriptToTokenize(CREATE_OR_REPLACE_STORED_PROC);
         checkQueryTokenizer(qt, 1);
     }
     
     public void testHasQueryFromFile() {
         String fileSQL = "@" + tmpFilename + ";\n";
-        qt = new QueryTokenizer(fileSQL, ";", "--", removeMultilineComment, true);
+        qt = new QueryTokenizer(";", "--", removeMultilineComment);
+        qt.setScriptToTokenize(fileSQL);
         checkQueryTokenizer(qt, 5);
     }
     

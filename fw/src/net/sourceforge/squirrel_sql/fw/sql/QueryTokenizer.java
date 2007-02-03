@@ -23,153 +23,53 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-public class QueryTokenizer
+public class QueryTokenizer implements IQueryTokenizer
 {
-	private ArrayList _queries = new ArrayList();
-	private Iterator _queryIterator;
+	protected ArrayList _queries = new ArrayList();
+    
+	protected Iterator _queryIterator;
 
+    protected String _querySep = null;
+    
+    protected String _lineCommentBegin = null;
+    
+    protected boolean _removeMultiLineComment = true;
+
+    protected ITokenizerFactory _tokenizerFactory = null;
+    
     /** Logger for this class. */
     private final static ILogger s_log =
-        LoggerController.createLogger(QueryTokenizer.class);
+        LoggerController.createLogger(QueryTokenizer.class); 
     
-    private static final String pattern = 
-        "^\\s*CREATE\\s+PROCEDURE.*|^\\s*CREATE\\s+OR\\s+REPLACE\\s+PROCEDURE\\s+.*";
+    public QueryTokenizer() {}
     
-    private Pattern procPattern = Pattern.compile(pattern, Pattern.DOTALL);
-    
-	public QueryTokenizer(String sql, 
-                          String querySep, 
+	public QueryTokenizer(String querySep, 
                           String lineCommentBegin, 
-                          boolean removeMultiLineComment,
-                          boolean isOracle)
+                          boolean removeMultiLineComment)
 	{
-		String MULTI_LINE_COMMENT_END = "*/";
-		String MULTI_LINE_COMMENT_BEGIN = "/*";
-
-		sql = sql.replace('\r', ' ');
-
-		StringBuffer curQuery = new StringBuffer();
-
-		boolean isInLiteral = false;
-		boolean isInMultiLineComment = false;
-		boolean isInLineComment = false;
-		int literalSepCount = 0;
-
-
-		for (int i = 0; i < sql.length(); ++i)
-		{
-			char c = sql.charAt(i);
-
-			if(false == isInLiteral)
-			{
-				///////////////////////////////////////////////////////////
-				// Handling of comments
-
-				// We look backwards
-				if(isInLineComment && sql.startsWith("\n", i - "\n".length()))
-				{
-					isInLineComment = false;
-				}
-
-				// We look backwards
-				if(isInMultiLineComment && sql.startsWith(MULTI_LINE_COMMENT_END, i - MULTI_LINE_COMMENT_END.length()))
-				{
-					isInMultiLineComment = false;
-				}
-
-
-				if(false == isInLineComment && false == isInMultiLineComment)
-				{
-					// We look forward
-					isInMultiLineComment = sql.startsWith(MULTI_LINE_COMMENT_BEGIN, i);
-					isInLineComment = sql.startsWith(lineCommentBegin, i);
-
-					if(isInMultiLineComment)
-					{
-						// skip ahead so the cursor is now immediately after the begin comment string
-						i+=MULTI_LINE_COMMENT_BEGIN.length()+1;
-					}
-				}
-
-				if((isInMultiLineComment && removeMultiLineComment) || isInLineComment)
-				{
-					// This is responsible that comments are not in curQuery
-					continue;
-				}
-				//
-				////////////////////////////////////////////////////////////
-			}
-
-			curQuery.append(c);
-
-			if ('\'' == c)
-			{
-				if(false == isInLiteral)
-				{
-					isInLiteral = true;
-				}
-				else
-				{
-					++literalSepCount;
-				}
-			}
-			else
-			{
-				if(0 != literalSepCount % 2)
-				{
-					isInLiteral = false;
-				}
-				literalSepCount = 0;
-			}
-
-
-			int querySepLen = getLenOfQuerySepIfAtLastCharOfQuerySep(sql, i, querySep,isInLiteral);
-
-			if(-1 < querySepLen)
-			{
-				int newLength = curQuery.length() - querySepLen;
-				if(-1 < newLength && curQuery.length() > newLength)
-				{
-					curQuery.setLength(newLength);
-
-					String newQuery = curQuery.toString().trim();
-					if(0 < newQuery.length())
-					{
-						_queries.add(curQuery.toString().trim());
-					}
-				}
-				curQuery.setLength(0);
-			}
-		}
-
-		String lastQuery = curQuery.toString().trim();
-		if(0 < lastQuery.length())
-		{
-			_queries.add(lastQuery.toString().trim());
-		}
-
-        if (isOracle) {
-            // Oracle allows statement separators in PL/SQL blocks.  The process
-            // of tokenizing above renders these procedure blocks as separate 
-            // statements, which is invalid for Oracle.  Since "/" is the way 
-            // in SQL-Plus to denote the end of a procedure, re-assemble any 
-            // create procedure statements that we find.
-            joinProcedureFragments();
-        }
-        
-        expandFileIncludes(querySep, 
-                           lineCommentBegin, 
-                           removeMultiLineComment, 
-                           isOracle);
-
-        _queryIterator = _queries.iterator();
+        _querySep = querySep;
+        _lineCommentBegin = lineCommentBegin;
+        _removeMultiLineComment = removeMultiLineComment;
+        setFactory();
 	}
 
+    /**
+     * Sets the ITokenizerFactory which is used to create additional instances
+     * of the IQueryTokenizer - this is used for handling file includes
+     * recursively.  
+     */
+    protected void setFactory() {
+        _tokenizerFactory = new ITokenizerFactory() {
+            public IQueryTokenizer getTokenizer() {
+                return new QueryTokenizer();
+            }
+        };
+    }
+    
 
 	private int getLenOfQuerySepIfAtLastCharOfQuerySep(String sql, int i, String querySep, boolean inLiteral)
 	{
@@ -232,32 +132,209 @@ public class QueryTokenizer
 		}
 	}
     
+	public boolean hasQuery()
+	{
+		return _queryIterator.hasNext();
+	}
+
+	public String nextQuery()
+	{
+		return (String) _queryIterator.next();
+	}
+
+    public void setScriptToTokenize(String script) {
+        _queries.clear();
+        
+        String MULTI_LINE_COMMENT_END = "*/";
+        String MULTI_LINE_COMMENT_BEGIN = "/*";
+
+        script = script.replace('\r', ' ');
+
+        StringBuffer curQuery = new StringBuffer();
+
+        boolean isInLiteral = false;
+        boolean isInMultiLineComment = false;
+        boolean isInLineComment = false;
+        int literalSepCount = 0;
+
+
+        for (int i = 0; i < script.length(); ++i)
+        {
+            char c = script.charAt(i);
+
+            if(false == isInLiteral)
+            {
+                ///////////////////////////////////////////////////////////
+                // Handling of comments
+
+                // We look backwards
+                if(isInLineComment && script.startsWith("\n", i - "\n".length()))
+                {
+                    isInLineComment = false;
+                }
+
+                // We look backwards
+                if(isInMultiLineComment && script.startsWith(MULTI_LINE_COMMENT_END, i - MULTI_LINE_COMMENT_END.length()))
+                {
+                    isInMultiLineComment = false;
+                }
+
+
+                if(false == isInLineComment && false == isInMultiLineComment)
+                {
+                    // We look forward
+                    isInMultiLineComment = script.startsWith(MULTI_LINE_COMMENT_BEGIN, i);
+                    isInLineComment = script.startsWith(_lineCommentBegin, i);
+
+                    if(isInMultiLineComment)
+                    {
+                        // skip ahead so the cursor is now immediately after the begin comment string
+                        i+=MULTI_LINE_COMMENT_BEGIN.length()+1;
+                    }
+                }
+
+                if((isInMultiLineComment && _removeMultiLineComment) || isInLineComment)
+                {
+                    // This is responsible that comments are not in curQuery
+                    continue;
+                }
+                //
+                ////////////////////////////////////////////////////////////
+            }
+
+            curQuery.append(c);
+
+            if ('\'' == c)
+            {
+                if(false == isInLiteral)
+                {
+                    isInLiteral = true;
+                }
+                else
+                {
+                    ++literalSepCount;
+                }
+            }
+            else
+            {
+                if(0 != literalSepCount % 2)
+                {
+                    isInLiteral = false;
+                }
+                literalSepCount = 0;
+            }
+
+
+            int querySepLen = 
+                getLenOfQuerySepIfAtLastCharOfQuerySep(script, i, _querySep, isInLiteral);
+
+            if(-1 < querySepLen)
+            {
+                int newLength = curQuery.length() - querySepLen;
+                if(-1 < newLength && curQuery.length() > newLength)
+                {
+                    curQuery.setLength(newLength);
+
+                    String newQuery = curQuery.toString().trim();
+                    if(0 < newQuery.length())
+                    {
+                        _queries.add(curQuery.toString().trim());
+                    }
+                }
+                curQuery.setLength(0);
+            }
+        }
+
+        String lastQuery = curQuery.toString().trim();
+        if(0 < lastQuery.length())
+        {
+            _queries.add(lastQuery.toString().trim());
+        }
+
+        _queryIterator = _queries.iterator();
+    }
+    
+    public static void main(String[] args)
+    {
+        //String sql = "A'''' sss ;  GO ;; GO'";
+        //String sql = "A\n--x\n--y\n/*\nB";
+        //String sql = "GO GO";
+        String sql = "@c:\\tools\\sql\\file.sql";
+        
+        
+        QueryTokenizer qt = new QueryTokenizer("GO", "--", true);
+
+        qt.setScriptToTokenize(sql);
+        
+        while(qt.hasQuery())
+        {
+            System.out.println(">" + qt.nextQuery() + "<");
+        }
+    }
+
+    /**
+     * @return the query statement separator
+     */
+    public String getQuerySep() {
+        return _querySep;
+    }
+
+    /**
+     * @param sep the value to use for the query statement separator
+     */
+    public void setQuerySep(String sep) {
+        _querySep = sep;
+    }
+
+    /**
+     * @return the _lineCommentBegin
+     */
+    public String getLineCommentBegin() {
+        return _lineCommentBegin;
+    }
+
+    /**
+     * @param commentBegin the _lineCommentBegin to set
+     */
+    public void setLineCommentBegin(String commentBegin) {
+        _lineCommentBegin = commentBegin;
+    }
+
+    /**
+     * @return the _removeMultiLineComment
+     */
+    public boolean isRemoveMultiLineComment() {
+        return _removeMultiLineComment;
+    }
+
+    /**
+     * @param multiLineComment the _removeMultiLineComment to set
+     */
+    public void setRemoveMultiLineComment(boolean multiLineComment) {
+        _removeMultiLineComment = multiLineComment;
+    }
+    
     /** 
-     * This uses statements that begin with "@" to indicate that the following
-     * text is a file containing SQL statements that should be loaded.  This 
-     * should eventually be made to work with other dbs like MySQL which uses
-     * "source" or "\." to indicate an include file. 
+     * This uses statements that begin with scriptIncludePrefix to indicate 
+     * that the following text is a filename containing SQL statements that 
+     * should be loaded.   
      * 
-     * @param querySep
+     * @param scriptIncludePrefix the 
      * @param lineCommentBegin
      * @param removeMultiLineComment
      */
-    private void expandFileIncludes(String querySep, 
-                                    String lineCommentBegin,     
-                                    boolean removeMultiLineComment,
-                                    boolean isOracle) {
+    protected void expandFileIncludes(String scriptIncludePrefix) {
+        if (scriptIncludePrefix == null) {
+            s_log.error("scriptIncludePrefix cannot be null ");
+            return;
+        }
         ArrayList tmp = new ArrayList();
         for (Iterator iter = _queries.iterator(); iter.hasNext();) {
             String sql = (String) iter.next();
-            // TODO: make this configurable
-            if (sql.startsWith("@")) {
+            if (sql.startsWith(scriptIncludePrefix)) {
                 try {
-                    List fileSQL = 
-                        getStatementsFromIncludeFile(sql.substring(1),
-                                                     querySep,
-                                                     lineCommentBegin,
-                                                     removeMultiLineComment,
-                                                     isOracle);
+                    String filename = sql.substring(1);
+                    List fileSQL = getStatementsFromIncludeFile(filename);
                     tmp.addAll(fileSQL);
                 } catch (Exception e) {
                     s_log.error(
@@ -272,11 +349,7 @@ public class QueryTokenizer
         _queries = tmp;
     }
     
-    private List getStatementsFromIncludeFile(String filename,
-                                              String querySep, 
-                                              String lineCommentBegin,     
-                                              boolean removeMultiLineComment,
-                                              boolean isOracle) 
+    protected List getStatementsFromIncludeFile(String filename) 
         throws Exception 
     {
         ArrayList result = new ArrayList();
@@ -302,13 +375,17 @@ public class QueryTokenizer
                     "("+filename+")", e);
             }
             if (fileLines.toString().length() > 0) {
-                QueryTokenizer qt = new QueryTokenizer(fileLines.toString(),
-                                                       querySep,
-                                                       lineCommentBegin,
-                                                       removeMultiLineComment,
-                                                       isOracle);
-                for (Iterator iter = qt._queryIterator; iter.hasNext();) {
-                    String sql = (String) iter.next();
+                IQueryTokenizer qt = null;
+                if (_tokenizerFactory != null) {
+                    qt = _tokenizerFactory.getTokenizer();
+                } else {
+                    qt = new QueryTokenizer(_querySep, 
+                                            _lineCommentBegin, 
+                                            _removeMultiLineComment);
+                }
+                qt.setScriptToTokenize(fileLines.toString());
+                while (qt.hasQuery()) {
+                    String sql = (String) qt.nextQuery();
                     result.add(sql);
                 }
             }
@@ -320,77 +397,4 @@ public class QueryTokenizer
         return result;
     }    
     
-    /**
-     * This will scan the _queries list looking for CREATE PROCEDURE fragments
-     * and will combine successive queries until the "/" is indicating the end
-     * of the procedure.  This is Oracle-specific.  Eventually this code should
-     * be relocated to the Oracle plugin.
-     */
-    private void joinProcedureFragments() {
-        
-        boolean inProcedure = false;
-        StringBuffer collector = null;
-        ArrayList tmp = new ArrayList();
-        for (Iterator iter = _queries.iterator(); iter.hasNext();) {
-            String next = (String) iter.next();
-            if (procPattern.matcher(next.toUpperCase()).matches()) {
-                inProcedure = true;
-                collector = new StringBuffer(next);
-                collector.append(";");
-                continue;
-            } 
-            if (next.startsWith("/")) {
-                inProcedure = false;
-                if (collector != null) {
-                    tmp.add(collector.toString());
-                    // Since "/" isn't the statement separator, check to see if this 
-                    // statement is more than just "/" and add the rest.
-                    if (next.length() > 1) {
-                        tmp.add(next.substring(1));
-                    }
-                    collector = null;
-                } else {
-                    // Stray "/" - or we failed to find "CREATE PROCEDURE ..."
-                    if (s_log.isDebugEnabled()) {
-                        s_log.debug("Detected stray slash(/) char. Skipping");
-                    }
-                }
-                continue;
-            }
-            if (inProcedure) {
-                collector.append(next);
-                collector.append(";");
-                continue;
-            } 
-            tmp.add(next);
-        }
-        _queries = tmp;
-    }
-    
-	public boolean hasQuery()
-	{
-		return _queryIterator.hasNext();
-	}
-
-	public String nextQuery()
-	{
-		return (String) _queryIterator.next();
-	}
-
-
-	public static void main(String[] args)
-	{
-		//String sql = "A'''' sss ;  GO ;; GO'";
-		//String sql = "A\n--x\n--y\n/*\nB";
-		//String sql = "GO GO";
-	    String sql = "@c:\\tools\\sql\\file.sql";
-        
-        
-		QueryTokenizer qt = new QueryTokenizer(sql, "GO", "--", true, true);
-
-		while(qt.hasQuery())
-		{
-			System.out.println(">" + qt.nextQuery() + "<");
-		}
-	}
 }

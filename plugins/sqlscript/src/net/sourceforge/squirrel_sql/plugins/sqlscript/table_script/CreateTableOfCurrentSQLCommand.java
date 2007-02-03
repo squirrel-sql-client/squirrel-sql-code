@@ -21,26 +21,22 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.Statement;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
-
-import net.sourceforge.squirrel_sql.client.db.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
-import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
+import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 
 public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
 {
@@ -98,14 +94,14 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
       final StringBuffer sbScript = new StringBuffer();
       try
       {
-
-         QueryTokenizer qt = new QueryTokenizer(FrameWorkAcessor.getSQLPanelAPI(_session, _plugin).getSQLScriptToBeExecuted(),
-            _session.getProperties().getSQLStatementSeparator(),
-            _session.getProperties().getStartOfLineComment(),
-            _session.getProperties().getRemoveMultiLineComment(),
-            DialectFactory.isOracleSession(_session));
-
-
+          ISQLPanelAPI api = 
+              FrameWorkAcessor.getSQLPanelAPI(_session, _plugin);
+          
+          String script = api.getSQLScriptToBeExecuted();
+          
+         IQueryTokenizer qt = _session.getQueryTokenizer();
+         qt.setScriptToTokenize(script);
+         
          if(false == qt.hasQuery())
          {
             // i18n[CreateTableOfCurrentSQLCommand.noQuery=No query found to create the script from.]
@@ -113,12 +109,7 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
             return;
          }
 
-
-
          SQLConnection conn = _session.getSQLConnection();
-
-
-
          Statement stmt = null;
          try
          {
