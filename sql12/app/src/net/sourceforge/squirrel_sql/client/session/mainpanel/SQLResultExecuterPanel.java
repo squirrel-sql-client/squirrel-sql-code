@@ -1031,7 +1031,7 @@ public class SQLResultExecuterPanel extends JPanel
 
             if (sqlToBeExecuted != null) {
                 if (sqlToBeExecuted.toLowerCase().startsWith("select")) {
-                    // i18n[SQLResultExecuterPanel.rowsUpdated={0} Row(s) Selected]
+                    // i18n[SQLResultExecuterPanel.rowsSelected={0} Row(s) Selected]
                     msg = s_stringMgr.getString("SQLResultExecuterPanel.rowsSelected",
                                                 count);            
                 }
@@ -1041,7 +1041,7 @@ public class SQLResultExecuterPanel extends JPanel
                                                 count);            
                 }
                 if (sqlToBeExecuted.toLowerCase().startsWith("delete")) {
-                    // i18n[SQLResultExecuterPanel.rowsUpdated={0} Row(s) Deleted]
+                    // i18n[SQLResultExecuterPanel.rowsDeleted={0} Row(s) Deleted]
                     msg = s_stringMgr.getString("SQLResultExecuterPanel.rowsDeleted",
                                                 count);            
                 }
