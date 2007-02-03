@@ -461,7 +461,11 @@ public class CellComponentFactory {
 		// returns true, then we would have executed the return statement above.
 		// Assume that the value can be represented as a string.
 		RestorableJTextArea textArea = new RestorableJTextArea();
-		textArea.setText(value.toString());
+        if (value != null) {
+            textArea.setText(value.toString());
+        } else {
+            textArea.setText("");
+        }
 		return textArea;
 	}
 	
@@ -739,7 +743,7 @@ public class CellComponentFactory {
 				Method panelMethod =
 					Class.forName(className).getMethod("getControlPanel", parameterTypes);
 					
-				OkJPanel panel = (OkJPanel)panelMethod.invoke(null, null);
+				OkJPanel panel = (OkJPanel)panelMethod.invoke(null, (Object[])null);
 				panelList.add(panel);
 			}
 			catch (Exception e) {
