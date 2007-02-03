@@ -117,8 +117,7 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
       return bounds;
 
    }
-
-
+   
    private static int indexOfStateSep(String sql, int pos)
    {
       int ix = pos;
@@ -160,7 +159,11 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
          {
             return 0;
          }
-
+         
+         if (ix >= sql.length()) {
+             return ix;
+         }
+         
          if(false == Character.isWhitespace(sql.charAt(ix)))
          {
             newLinteCount = 0;
