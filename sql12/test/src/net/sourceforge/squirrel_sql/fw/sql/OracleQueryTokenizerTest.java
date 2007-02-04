@@ -31,37 +31,37 @@ public class OracleQueryTokenizerTest extends TestCase
     }
     
     public void testHasQuery() {
-        qt = new OracleQueryTokenizer();
+        qt = new OracleQueryTokenizer(removeMultilineComment);
         qt.setScriptToTokenize(SELECT_DUAL);
         SQLUtil.checkQueryTokenizer(qt, 1);
         
-        qt = new OracleQueryTokenizer();
+        qt = new OracleQueryTokenizer(removeMultilineComment);
         qt.setScriptToTokenize(SELECT_DUAL_2);
         SQLUtil.checkQueryTokenizer(qt, 1);        
     }
 
     public void testGenericSQL() {
         String script = SQLUtil.getGenericSQLScript();
-        qt = new OracleQueryTokenizer();
+        qt = new OracleQueryTokenizer(removeMultilineComment);
         qt.setScriptToTokenize(script);
         SQLUtil.checkQueryTokenizer(qt, SQLUtil.getGenericSQLCount());
     }
     
     public void testCreateStoredProcedure() {
-        qt = new OracleQueryTokenizer();
+        qt = new OracleQueryTokenizer(removeMultilineComment);
         qt.setScriptToTokenize(CREATE_STORED_PROC);
         SQLUtil.checkQueryTokenizer(qt, 1);
     }
 
     public void testCreateOrReplaceStoredProcedure() {
-        qt = new OracleQueryTokenizer();
+        qt = new OracleQueryTokenizer(removeMultilineComment);
         qt.setScriptToTokenize(CREATE_OR_REPLACE_STORED_PROC);
         SQLUtil.checkQueryTokenizer(qt, 1);
     }
     
     public void testHasQueryFromFile() {
         String fileSQL = "@" + tmpFilename + ";\n";
-        qt = new OracleQueryTokenizer();
+        qt = new OracleQueryTokenizer(removeMultilineComment);
         qt.setScriptToTokenize(fileSQL);
         SQLUtil.checkQueryTokenizer(qt, 6);
     }
