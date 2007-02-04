@@ -954,6 +954,10 @@ public class MockDatabaseMetaData extends
 		catalogTerm = aCatalogTerm;
 	}
 	
+    public String getCatalogSeparator() {
+        return ".";
+    }
+    
 	public String getCatalogTerm() {
 		return catalogTerm;
 	}

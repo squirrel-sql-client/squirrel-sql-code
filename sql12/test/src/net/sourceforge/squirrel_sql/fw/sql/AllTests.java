@@ -8,6 +8,8 @@ public class AllTests extends TestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite("SQL framework tests");
 		suite.addTestSuite(SQLDatabaseMetaDataTest.class);
+        suite.addTestSuite(QueryTokenizerTest.class);
+        suite.addTestSuite(OracleQueryTokenizerTest.class);
 		return suite;
 	}
 }

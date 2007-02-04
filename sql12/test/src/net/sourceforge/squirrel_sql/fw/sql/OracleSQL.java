@@ -35,4 +35,12 @@ public interface OracleSQL {
     public final static String UPDATE_TEST =  
         "update test " +
         "set /*PARAM1*/ thing /*C*/ = 'default value' /*/PARAM1*/;";
+    
+    public final static String STUDENTS_NOT_TAKING_CS112 = 
+        "select s.sno, s.sname, s.age " +
+        "from student s, take t " +
+        "where s.SNO = t.SNO (+) " +
+        "group by s.sno, s.SNAME, s.AGE " +
+        "having max(case when t.cno = 'CS112' " +
+        "                then 1 else 0 end) = 0; ";        
 }
