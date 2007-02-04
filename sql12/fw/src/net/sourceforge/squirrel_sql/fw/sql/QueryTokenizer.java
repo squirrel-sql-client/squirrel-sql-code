@@ -186,7 +186,7 @@ public class QueryTokenizer implements IQueryTokenizer
                     isInMultiLineComment = script.startsWith(MULTI_LINE_COMMENT_BEGIN, i);
                     isInLineComment = script.startsWith(_lineCommentBegin, i);
 
-                    if(isInMultiLineComment)
+                    if(isInMultiLineComment && _removeMultiLineComment)
                     {
                         // skip ahead so the cursor is now immediately after the begin comment string
                         i+=MULTI_LINE_COMMENT_BEGIN.length()+1;

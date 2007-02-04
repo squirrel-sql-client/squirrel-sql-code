@@ -346,7 +346,9 @@ public class OraclePlugin extends DefaultSessionPlugin
       {
          return null;
       }
-      session.setQueryTokenizer(new OracleQueryTokenizer());
+      boolean removeComment = 
+          session.getProperties().getRemoveMultiLineComment();
+      session.setQueryTokenizer(new OracleQueryTokenizer(removeComment));
       GUIUtils.processOnSwingEventThread(new Runnable()
       {
          public void run()
