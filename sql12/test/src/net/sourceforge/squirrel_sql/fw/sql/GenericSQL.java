@@ -42,5 +42,24 @@ public interface GenericSQL {
         "from student " +
         "where sno not in (select sno " +
         "                  from take " +
-        "                  where cno = 'CS112'); ";        
+        "                  where cno = 'CS112'); ";       
+    
+    public final static String ANSI_SQL_92_PROCEDURE =
+        "CREATE PROCEDURE TRANSFER (:FROM CHAR(7),:TO CHAR(7),:AMOUNT DECIMAL(7,2)) BEGIN /* remove the amount from FROM account */ UPDATE ACCOUNTS SET BALANCE = BALANCE - :AMOUNT WHERE ACCOUNT_ID = :FROM ; /* add the amount to TO account */ UPDATE ACCOUNTS SET BALANCE = BALANCE + AMOUNT WHERE ACCOUNT_ID = :TO ; END; ";
+    
+    public final static String ANSI_SQL_92_PROCEDURE_READABLE =
+        "CREATE PROCEDURE TRANSFER ( :FROM    CHAR(7), " +
+        "                            :TO      CHAR(7), " +
+        "                            :AMOUNT  DECIMAL(7,2) ) " +
+        "    BEGIN " +
+        "        /* remove the amount from FROM account */ " +
+        "        UPDATE ACCOUNTS " +
+        "        SET BALANCE = BALANCE - :AMOUNT " +
+        "        WHERE ACCOUNT_ID = :FROM ; " +
+        " " +
+        "        /* add the amount to TO account */ " +
+        "        UPDATE ACCOUNTS " +
+        "        SET BALANCE = BALANCE + AMOUNT " +
+        "        WHERE ACCOUNT_ID = :TO ; " +
+        "    END; ";        
 }
