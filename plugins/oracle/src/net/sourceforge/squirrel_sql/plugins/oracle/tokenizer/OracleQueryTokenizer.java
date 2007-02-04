@@ -51,9 +51,9 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
     
     private static final String ORACLE_SCRIPT_INCLUDE_PREFIX = "@";
     
-	public OracleQueryTokenizer()
+	public OracleQueryTokenizer(boolean removeMultiLineComments)
 	{
-        super(";", "--", true);
+        super(";", "--", removeMultiLineComments);
 	}
 
     public void setScriptToTokenize(String script) {
@@ -93,7 +93,7 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
 	protected void setFactory() {
 	    _tokenizerFactory = new ITokenizerFactory() {
 	        public IQueryTokenizer getTokenizer() {
-	            return new OracleQueryTokenizer();
+	            return new OracleQueryTokenizer(_removeMultiLineComment);
             }
         };
     }
