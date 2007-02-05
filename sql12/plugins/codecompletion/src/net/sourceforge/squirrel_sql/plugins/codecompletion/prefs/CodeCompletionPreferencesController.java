@@ -24,9 +24,9 @@ public class CodeCompletionPreferencesController
 
 	private CodeCompletionPreferencesPanel _panel;
 
-	public CodeCompletionPreferencesController(CodeCompletionPreferences prefs)
+   public CodeCompletionPreferencesController(CodeCompletionPreferences prefs, boolean inNewSessionProps)
 	{
-		_panel = new CodeCompletionPreferencesPanel();
+      _panel = new CodeCompletionPreferencesPanel();
 		_prefs = prefs;
 
 		switch(_prefs.getGeneralCompletionConfig())
@@ -67,7 +67,12 @@ public class CodeCompletionPreferencesController
 		_panel.tblPrefixes.addColumn(tcCompletionConfig);
 
 
-		_panel.btnNewRow.addActionListener(new ActionListener()
+      _panel.txtMaxLastSelectedCompletionNamesPanel.setText("" + _prefs.getMaxLastSelectedCompletionNames());
+
+      _panel.txtMaxLastSelectedCompletionNamesPanel.setEnabled(inNewSessionProps);
+
+
+      _panel.btnNewRow.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
@@ -153,7 +158,19 @@ public class CodeCompletionPreferencesController
 		PrefixesTableModel tm = (PrefixesTableModel) _panel.tblPrefixes.getModel();
 
 		_prefs.setPrefixedConfigs(tm.getData());
-	}
+
+
+      try
+      {
+         _prefs.setMaxLastSelectedCompletionNames(Math.max(0, Integer.parseInt(_panel.txtMaxLastSelectedCompletionNamesPanel.getText())));
+      }
+      catch (NumberFormatException e)
+      {
+
+      }
+
+
+   }
 
 	private void stopEditing()
 	{

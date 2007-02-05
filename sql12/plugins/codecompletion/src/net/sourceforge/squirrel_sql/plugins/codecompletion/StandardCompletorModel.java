@@ -27,11 +27,10 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionCandidates;
+import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.CodeCompletionPreferences;
 
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.StringTokenizer;
-import java.util.Vector;
+import java.util.*;
 
 
 public class StandardCompletorModel
@@ -42,9 +41,10 @@ public class StandardCompletorModel
    private ILogger _log = LoggerController.createLogger(CodeCompletorModel.class);
    private CodeCompletionInfoCollection _codeCompletionInfos;
 
-	private String _lastSelectedCompletionName;
+	private ArrayList<String> _lastSelectedCompletionNames = new ArrayList<String>();
+   private int _maxLastSelectedCompletionNames = 1;
 
-   StandardCompletorModel(ISession session, CodeCompletionInfoCollection codeCompletionInfos, IIdentifier sqlEntryPanelIdentifier)
+   StandardCompletorModel(ISession session, CodeCompletionPlugin plugin, CodeCompletionInfoCollection codeCompletionInfos, IIdentifier sqlEntryPanelIdentifier)
    {
       try
       {
@@ -58,6 +58,10 @@ public class StandardCompletorModel
 					onAliasesFound(aliasInfos);
 				}
 			});
+
+       CodeCompletionPreferences prefs = (CodeCompletionPreferences) _session.getPluginObject(plugin, CodeCompletionPlugin.PLUGIN_OBJECT_PREFS_KEY);
+       _maxLastSelectedCompletionNames = prefs.getMaxLastSelectedCompletionNames();         
+
       }
       catch(Exception e)
       {
@@ -76,7 +80,7 @@ public class StandardCompletorModel
       int stringToParsePosition = getStringToParsePosition ( textTillCarret );
 
       StringTokenizer st = new StringTokenizer(stringToParse, ".");
-      Vector buf = new Vector();
+      ArrayList<String> buf = new ArrayList<String>();
       while(st.hasMoreTokens())
       {
          buf.add(st.nextToken());
@@ -87,9 +91,9 @@ public class StandardCompletorModel
          buf.add("");
       }
 
-      String stringToReplace = (String) buf.lastElement();
+      String stringToReplace = buf.get(buf.size() - 1);
 
-      Vector ret = new Vector();
+      ArrayList<CodeCompletionInfo> ret = new ArrayList<CodeCompletionInfo>();
 
       if(1 == buf.size())
       {
@@ -97,7 +101,7 @@ public class StandardCompletorModel
          ///////////////////////////////////////////////////////////////////////////////
          // The colums of the last completed table/view that match the tableNamePat
          // will be returned on top of the collection
-         ret.addAll( Arrays.asList(getColumnsFromLastSelectionStartingWith((String)buf.get(0))) );
+         ret.addAll( getColumnsFromLastSelectionStartingWith((String)buf.get(0)) );
          //
          //////////////////////////////////////////////////////////////////////////////
 
@@ -136,7 +140,7 @@ public class StandardCompletorModel
             if(buf.size() > catAndSchemCount + 1)
             {
                String colNamePat2 = (String)buf.get(catAndSchemCount+1);
-               ret.addAll(Arrays.asList(getColumnsForName(catalog, schema, tableNamePat2, colNamePat2, stringToParsePosition )));
+               ret.addAll( getColumnsForName(catalog, schema, tableNamePat2, colNamePat2, stringToParsePosition) );
             }
             else
             {
@@ -146,7 +150,7 @@ public class StandardCompletorModel
          }
          else
          {
-            ret.addAll(Arrays.asList(getColumnsForName(null, null, tableNamePat1, colNamePat1, stringToParsePosition )));
+            ret.addAll( getColumnsForName(null, null, tableNamePat1, colNamePat1, stringToParsePosition) );
          }
       }
 
@@ -235,7 +239,7 @@ public class StandardCompletorModel
 	}
 
 
-	private CodeCompletionInfo[] getColumnsForName(String catalog, String schema, String name, String colNamePat, int colPos)
+	private ArrayList<CodeCompletionInfo> getColumnsForName(String catalog, String schema, String name, String colNamePat, int colPos)
 	{
 		CodeCompletionInfo[] infos = _codeCompletionInfos.getInfosStartingWith(catalog, schema, name);
 		String upperCaseTableNamePat = name.toUpperCase();
@@ -282,18 +286,20 @@ public class StandardCompletorModel
 				_log.error("Error retrieving columns", e);
 			}
 		}
-		return new CodeCompletionInfo[0];
+		return new ArrayList<CodeCompletionInfo>();
 	}
 
 
-	private CodeCompletionInfo[] getColumnsFromLastSelectionStartingWith(String colNamePat)
+	private ArrayList<CodeCompletionInfo> getColumnsFromLastSelectionStartingWith(String colNamePat)
 	{
-		if (null != _lastSelectedCompletionName)
-		{
-			return getColumnsForName(null, null, _lastSelectedCompletionName, colNamePat, -1);
-		}
+      ArrayList<CodeCompletionInfo> ret = new ArrayList<CodeCompletionInfo>();
 
-		return new CodeCompletionInfo[0];
+      for (String lastSelectedCompletionName : _lastSelectedCompletionNames)
+      {
+         ret.addAll(getColumnsForName(null, null, lastSelectedCompletionName, colNamePat, -1));
+      }
+
+		return ret;
 	}
 
 
@@ -309,41 +315,21 @@ public class StandardCompletorModel
 
 	private void performTableOrViewFound(String name)
 	{
-   	_lastSelectedCompletionName = name;
-	}
+      if(_lastSelectedCompletionNames.contains(name))
+      {
+         return;
+      }
+
+      _lastSelectedCompletionNames.add(0, name);
+
+      if(_maxLastSelectedCompletionNames < _lastSelectedCompletionNames.size())
+      {
+         _lastSelectedCompletionNames.remove(_lastSelectedCompletionNames.size()-1);
+      }
+   }
 
    public CodeCompletionInfoCollection getCodeCompletionInfoCollection()
    {
       return _codeCompletionInfos;
    }
-   
-
-
-////////////////////////////////////////////////////////////
-// TEST ONLY
-///////////////////////////////////////////////////////////
-
-
-//   Vector _data = null;
-//   String[] getCompletionStrings(String beginning)
-//   {
-//      if(null == _data)
-//      {
-//         _data = new Vector();
-//         for(int i=0; i < 20; ++i)
-//         {
-//            _data.add("Birgit" + i);
-//            _data.add("Sara" + i);
-//            _data.add("Anna" + i);
-//            _data.add("Gerd" + i);
-//         }
-//      }
-//      return (String[])_data.toArray(new String[0]);
-//   }
-//
-//   String getCompletionStringAt(int index)
-//   {
-//      return (String)_data.get(index);
-//   }
-
 }

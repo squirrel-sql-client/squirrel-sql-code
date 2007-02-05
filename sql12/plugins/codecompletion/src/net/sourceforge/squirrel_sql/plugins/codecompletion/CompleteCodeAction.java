@@ -37,12 +37,16 @@ public class CompleteCodeAction extends SquirrelAction
 
 
 
-	public CompleteCodeAction(IApplication app, PluginResources rsrc, ISQLEntryPanel sqlEntryPanel, ISession session, CodeCompletionInfoCollection codeCompletionInfos)
+	public CompleteCodeAction(IApplication app,
+                             CodeCompletionPlugin plugin,
+                             ISQLEntryPanel sqlEntryPanel,
+                             ISession session,
+                             CodeCompletionInfoCollection codeCompletionInfos)
 	{
-		super(app, rsrc);
+		super(app, plugin.getResources());
 		_sqlEntryPanel = sqlEntryPanel;
 
-		CodeCompletorModel model = new CodeCompletorModel(session, codeCompletionInfos, sqlEntryPanel.getIdentifier());
+		CodeCompletorModel model = new CodeCompletorModel(session, plugin, codeCompletionInfos, sqlEntryPanel.getIdentifier());
 		_cc = new Completor((JTextComponent)_sqlEntryPanel.getTextComponent(), model);
 		_sqlEntryPanel.addSQLTokenListener(model.getSQLTokenListener());
 

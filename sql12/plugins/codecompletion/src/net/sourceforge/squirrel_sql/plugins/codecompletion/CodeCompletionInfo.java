@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.plugins.codecompletion;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 
 public abstract class CodeCompletionInfo extends CompletionInfo
@@ -10,9 +11,9 @@ public abstract class CodeCompletionInfo extends CompletionInfo
    /**
     * Default implementation
     */
-   public CodeCompletionInfo[] getColumns(net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo schemaInfo, String colNamePattern) throws SQLException
+   public ArrayList<CodeCompletionInfo> getColumns(net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo schemaInfo, String colNamePattern) throws SQLException
    {
-      return new CodeCompletionInfo[0];
+      return new ArrayList<CodeCompletionInfo>();
    }
 
 
