@@ -16,7 +16,6 @@ package net.sourceforge.squirrel_sql.plugins.codecompletion;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
@@ -59,7 +58,7 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 	private CodeCompletionPreferences _newSessionPrefs;
 	public static final String PLUGIN_OBJECT_PREFS_KEY = "codecompletionprefs";
 
-	/**
+   /**
 	 * Return the internal name of this plugin.
 	 *
 	 * @return  the internal name of this plugin.
@@ -215,7 +214,7 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 	{
 		return new INewSessionPropertiesPanel[]
 		{
-			new CodeCompletionPreferencesController(_newSessionPrefs)
+			new CodeCompletionPreferencesController(_newSessionPrefs, true)
 		};
 	}
 
@@ -230,7 +229,7 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 
 		return new ISessionPropertiesPanel[]
 		{
-			new CodeCompletionPreferencesController(sessionPrefs)
+			new CodeCompletionPreferencesController(sessionPrefs, false)
 		};
 	}
 
@@ -259,10 +258,9 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 
 		PluginSessionCallback ret = new PluginSessionCallback()
 		{
-			public void sqlInternalFrameOpened(final SQLInternalFrame sqlInternalFrame, 
-                                               final ISession sess)
+			public void sqlInternalFrameOpened(final SQLInternalFrame sqlInternalFrame, final ISession sess)
 			{
-                initCodeCompletion(sqlInternalFrame.getSQLPanelAPI(), sess);        				
+            initCodeCompletion(sqlInternalFrame.getSQLPanelAPI(), sess);
 			}
 
 			public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
@@ -273,32 +271,33 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 		return ret;
 	}
 
-	private void initCodeCompletion(final ISQLPanelAPI sqlPaneAPI, 
-                                    final ISession session)
+	private void initCodeCompletion(final ISQLPanelAPI sqlPaneAPI, final ISession session)
 	{
-        GUIUtils.processOnSwingEventThread(new Runnable() {
-            public void run() {
-                CodeCompletionInfoCollection c = 
-                    new CodeCompletionInfoCollection(session, CodeCompletionPlugin.this);
-                CompleteCodeAction cca = 
-                    new CompleteCodeAction(session.getApplication(), 
-                                           _resources, 
-                                           sqlPaneAPI.getSQLEntryPanel(), 
-                                           session, 
-                                           c);
+      GUIUtils.processOnSwingEventThread(new Runnable()
+      {
+         public void run()
+         {
+            CodeCompletionInfoCollection c = new CodeCompletionInfoCollection(session, CodeCompletionPlugin.this);
 
-                JMenuItem item = sqlPaneAPI.addToSQLEntryAreaMenu(cca);
+            CompleteCodeAction cca =
+               new CompleteCodeAction(session.getApplication(),
+                  CodeCompletionPlugin.this,
+                  sqlPaneAPI.getSQLEntryPanel(),
+                  session,
+                  c);
 
-                _resources.configureMenuItem(cca, item);
+            JMenuItem item = sqlPaneAPI.addToSQLEntryAreaMenu(cca);
 
-                JComponent comp = sqlPaneAPI.getSQLEntryPanel().getTextComponent();
-                comp.registerKeyboardAction(cca, _resources.getKeyStroke(cca), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+            _resources.configureMenuItem(cca, item);
 
-                sqlPaneAPI.addToToolsPopUp("completecode", cca);                
-            }
-            
-        });
-	}
+            JComponent comp = sqlPaneAPI.getSQLEntryPanel().getTextComponent();
+            comp.registerKeyboardAction(cca, _resources.getKeyStroke(cca), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+            sqlPaneAPI.addToToolsPopUp("completecode", cca);
+         }
+
+      });
+   }
 
 	/**
 	 * Retrieve plugins resources.

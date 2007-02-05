@@ -11,8 +11,9 @@ public class CodeCompletionPreferences implements Serializable
 
 	private int generalCompletionConfig = CONFIG_SP_WITH_PARARMS;
 	private PrefixedConfig[] prefixedConfigs = new PrefixedConfig[0];
+   private int maxLastSelectedCompletionNames = 1;
 
-	public int getGeneralCompletionConfig()
+   public int getGeneralCompletionConfig()
 	{
 		return generalCompletionConfig;
 	}
@@ -31,5 +32,15 @@ public class CodeCompletionPreferences implements Serializable
 	{
 		this.prefixedConfigs = prefixedConfigs;
 	}
+
+   public int getMaxLastSelectedCompletionNames()
+   {
+      return maxLastSelectedCompletionNames;
+   }
+
+   public void setMaxLastSelectedCompletionNames(int maxLastSelectedCompletionNames)
+   {
+      this.maxLastSelectedCompletionNames = maxLastSelectedCompletionNames;
+   }
 }
 // Just a Test

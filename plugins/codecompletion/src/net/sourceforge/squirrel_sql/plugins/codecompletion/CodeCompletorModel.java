@@ -30,10 +30,10 @@ public class CodeCompletorModel implements ICompletorModel
    private CompletionFunctionsModel _completionFunctionsModel;
    private boolean _functionsAdded;
 
-   CodeCompletorModel(ISession session, CodeCompletionInfoCollection codeCompletionInfos, IIdentifier sqlEntryPanelIdentifier)
+   CodeCompletorModel(ISession session, CodeCompletionPlugin plugin, CodeCompletionInfoCollection codeCompletionInfos, IIdentifier sqlEntryPanelIdentifier)
    {
       _completionFunctionsModel = new CompletionFunctionsModel(session);
-      _standardCompletorModel = new StandardCompletorModel(session, codeCompletionInfos, sqlEntryPanelIdentifier);
+      _standardCompletorModel = new StandardCompletorModel(session, plugin, codeCompletionInfos, sqlEntryPanelIdentifier);
 
    }
 

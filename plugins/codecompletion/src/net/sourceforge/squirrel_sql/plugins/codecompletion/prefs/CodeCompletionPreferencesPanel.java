@@ -1,12 +1,12 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion.prefs;
 
-import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.text.NumberFormat;
 
 public class CodeCompletionPreferencesPanel extends JPanel
 {
@@ -23,10 +23,10 @@ public class CodeCompletionPreferencesPanel extends JPanel
 
 	JButton btnNewRow;
 	JButton btnDeleteRows;
+   JTextField txtMaxLastSelectedCompletionNamesPanel;
 
 
-
-	public CodeCompletionPreferencesPanel()
+   public CodeCompletionPreferencesPanel()
 	{
 		setLayout(new GridBagLayout());
 
@@ -80,22 +80,62 @@ public class CodeCompletionPreferencesPanel extends JPanel
 		add(new JScrollPane(tblPrefixes), gbc);
 
 
-		JPanel pnlButtons = new JPanel(new GridBagLayout());
-
-		// i18n[codeCompletion.prefixConfig.newRow=Add new row]
-		btnNewRow = new JButton(s_stringMgr.getString("codeCompletion.prefixConfig.newRow"));
-		gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,5,5),0,0);
-		pnlButtons.add(btnNewRow, gbc);
-
-		// i18n[codeCompletion.prefixConfig.deleteSelRows=Delete selected rows]
-		btnDeleteRows = new JButton(s_stringMgr.getString("codeCompletion.prefixConfig.deleteSelRows"));
-		gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5),0,0);
-		pnlButtons.add(btnDeleteRows, gbc);
-
-		gbc = new GridBagConstraints(0,8,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,15,5),0,0 );
-		add(pnlButtons,gbc);
+		gbc = new GridBagConstraints(0,8,1,1,0,0,GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5),0,0 );
+		add( createButtonsPanel(), gbc);
 
 
+      gbc = new GridBagConstraints(0,9,1,1,1,0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(15,5,5,5),0,0 );
+      add(createMaxLastSelectedCompletionNamesPanel(),gbc);
+   }
 
-	}
+
+   private JPanel createMaxLastSelectedCompletionNamesPanel()
+   {
+      JPanel ret = new JPanel();
+
+      ret.setLayout(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      // i18n[CodeCompletionPreferencesPanel.maxLastSelectedCompletionNames=If you call code completion without being in the scope of a table,
+      //for which number of tables the parser last found would you like to see colums on top of the completion list?]
+      MultipleLineLabel lbl = new MultipleLineLabel(s_stringMgr.getString("CodeCompletionPreferencesPanel.maxLastSelectedCompletionNames"));
+      //JLabel lbl = new JLabel(s_stringMgr.getString("CodeCompletionPreferencesPanel.maxLastSelectedCompletionNames"));
+      gbc = new GridBagConstraints(0, 0, 2, 1, 1, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 5, 5), 0, 0);
+      ret.add(lbl, gbc);
+
+      gbc = new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0);
+      NumberFormat format = NumberFormat.getIntegerInstance();
+      txtMaxLastSelectedCompletionNamesPanel = new JFormattedTextField(format);
+      txtMaxLastSelectedCompletionNamesPanel.setPreferredSize(new Dimension(30, txtMaxLastSelectedCompletionNamesPanel.getPreferredSize().height));
+
+      ret.add(txtMaxLastSelectedCompletionNamesPanel, gbc);
+
+      // i18n[CodeCompletionPreferencesPanel.numberOfTables=number of tables]
+      gbc = new GridBagConstraints(1, 1, 1, 1, 0, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 5, 5), 0, 0);
+      ret.add(new JLabel(s_stringMgr.getString("CodeCompletionPreferencesPanel.numberOfTables")), gbc);
+
+      ret.setBorder(BorderFactory.createEtchedBorder());
+
+      return ret;
+   }
+
+
+   private JPanel createButtonsPanel()
+   {
+      GridBagConstraints gbc;
+      JPanel pnlButtons = new JPanel(new GridBagLayout());
+
+      // i18n[codeCompletion.prefixConfig.newRow=Add new row]
+      btnNewRow = new JButton(s_stringMgr.getString("codeCompletion.prefixConfig.newRow"));
+      gbc = new GridBagConstraints(0,0,1,1,1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,0,5,5),0,0);
+      pnlButtons.add(btnNewRow, gbc);
+
+      // i18n[codeCompletion.prefixConfig.deleteSelRows=Delete selected rows]
+      btnDeleteRows = new JButton(s_stringMgr.getString("codeCompletion.prefixConfig.deleteSelRows"));
+      gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5),0,0);
+      pnlButtons.add(btnDeleteRows, gbc);
+      return pnlButtons;
+   }
+
 }

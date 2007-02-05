@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.plugins.codecompletion;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Vector;
+import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
 
@@ -27,7 +28,7 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
 {
    private String _tableName;
    private String _tableType;
-   private CodeCompletionColumnInfo[] _colInfos;
+   private ArrayList<CodeCompletionInfo> _colInfos;
    String _toString;
    private String _catalog;
    private String _schema;
@@ -73,7 +74,7 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
       return _tableName;
    }
 
-   public CodeCompletionInfo[] getColumns(net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo schemaInfo, String colNamePattern)
+   public ArrayList<CodeCompletionInfo> getColumns(net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo schemaInfo, String colNamePattern)
       throws SQLException
    {
       if(null == _colInfos)
@@ -81,7 +82,7 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
          ExtendedColumnInfo[] schemColInfos = schemaInfo.getExtendedColumnInfos(_catalog, _schema, _tableName);
 
 
-         Vector colInfosBuf = new Vector();
+         ArrayList<CodeCompletionInfo> colInfosBuf = new ArrayList<CodeCompletionInfo>();
          HashSet uniqCols = new HashSet();
          for (int i = 0; i < schemColInfos.length; i++)
          {
@@ -95,14 +96,15 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
                boolean nullable = schemColInfos[i].isNullable();
                CodeCompletionColumnInfo buf = new CodeCompletionColumnInfo(columnName, columnType, columnSize, decimalDigits, nullable);
                String bufStr = buf.toString();
-               if (!uniqCols.contains(bufStr)) {
-                   uniqCols.add(bufStr);
-                   colInfosBuf.add(buf);
+               if (!uniqCols.contains(bufStr))
+               {
+                  uniqCols.add(bufStr);
+                  colInfosBuf.add(buf);
                }
             }
          }
 
-         _colInfos = (CodeCompletionColumnInfo[]) colInfosBuf.toArray(new CodeCompletionColumnInfo[colInfosBuf.size()]);
+         _colInfos = colInfosBuf;
       }
 
       String upperCaseColNamePattern = colNamePattern.toUpperCase().trim();
@@ -112,16 +114,18 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
          return _colInfos;
       }
 
-      Vector ret = new Vector();
-      for(int i=0; i < _colInfos.length; ++i)
+      ArrayList<CodeCompletionInfo> ret = new ArrayList<CodeCompletionInfo>();
+
+      for (CodeCompletionInfo colInfo : _colInfos)
       {
-         if(_colInfos[i].upperCaseCompletionStringStartsWith(upperCaseColNamePattern))
+         if(colInfo.upperCaseCompletionStringStartsWith(upperCaseColNamePattern))
          {
-            ret.add(_colInfos[i]);
+            ret.add(colInfo);
          }
+         
       }
 
-      return (CodeCompletionInfo[])ret.toArray(new CodeCompletionInfo[0]);
+      return ret;
    }
 
    public boolean hasColumns()
