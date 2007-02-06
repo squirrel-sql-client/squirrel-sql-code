@@ -42,10 +42,11 @@ public class StandardCompletorModel
    private CodeCompletionInfoCollection _codeCompletionInfos;
 
 	private ArrayList<String> _lastSelectedCompletionNames = new ArrayList<String>();
-   private int _maxLastSelectedCompletionNames = 1;
+   private CodeCompletionPlugin _plugin;
 
    StandardCompletorModel(ISession session, CodeCompletionPlugin plugin, CodeCompletionInfoCollection codeCompletionInfos, IIdentifier sqlEntryPanelIdentifier)
    {
+      _plugin = plugin;
       try
       {
          _session = session;
@@ -58,10 +59,6 @@ public class StandardCompletorModel
 					onAliasesFound(aliasInfos);
 				}
 			});
-
-       CodeCompletionPreferences prefs = (CodeCompletionPreferences) _session.getPluginObject(plugin, CodeCompletionPlugin.PLUGIN_OBJECT_PREFS_KEY);
-       _maxLastSelectedCompletionNames = prefs.getMaxLastSelectedCompletionNames();         
-
       }
       catch(Exception e)
       {
@@ -315,14 +312,16 @@ public class StandardCompletorModel
 
 	private void performTableOrViewFound(String name)
 	{
-      if(_lastSelectedCompletionNames.contains(name))
-      {
-         return;
-      }
+      // Makes sure that the last name is always in top of the list.
+      _lastSelectedCompletionNames.remove(name);
 
       _lastSelectedCompletionNames.add(0, name);
 
-      if(_maxLastSelectedCompletionNames < _lastSelectedCompletionNames.size())
+
+      CodeCompletionPreferences prefs = (CodeCompletionPreferences) _session.getPluginObject(_plugin, CodeCompletionPlugin.PLUGIN_OBJECT_PREFS_KEY);
+      int maxLastSelectedCompletionNames = prefs.getMaxLastSelectedCompletionNames();
+      
+      if(maxLastSelectedCompletionNames < _lastSelectedCompletionNames.size())
       {
          _lastSelectedCompletionNames.remove(_lastSelectedCompletionNames.size()-1);
       }

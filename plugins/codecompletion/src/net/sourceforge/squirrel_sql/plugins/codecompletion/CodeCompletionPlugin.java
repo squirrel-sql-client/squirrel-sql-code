@@ -214,7 +214,7 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 	{
 		return new INewSessionPropertiesPanel[]
 		{
-			new CodeCompletionPreferencesController(_newSessionPrefs, true)
+			new CodeCompletionPreferencesController(_newSessionPrefs)
 		};
 	}
 
@@ -229,7 +229,7 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 
 		return new ISessionPropertiesPanel[]
 		{
-			new CodeCompletionPreferencesController(sessionPrefs, false)
+			new CodeCompletionPreferencesController(sessionPrefs)
 		};
 	}
 
