@@ -24,7 +24,7 @@ public class CodeCompletionPreferencesController
 
 	private CodeCompletionPreferencesPanel _panel;
 
-   public CodeCompletionPreferencesController(CodeCompletionPreferences prefs, boolean inNewSessionProps)
+   public CodeCompletionPreferencesController(CodeCompletionPreferences prefs)
 	{
       _panel = new CodeCompletionPreferencesPanel();
 		_prefs = prefs;
@@ -68,8 +68,6 @@ public class CodeCompletionPreferencesController
 
 
       _panel.txtMaxLastSelectedCompletionNamesPanel.setText("" + _prefs.getMaxLastSelectedCompletionNames());
-
-      _panel.txtMaxLastSelectedCompletionNamesPanel.setEnabled(inNewSessionProps);
 
 
       _panel.btnNewRow.addActionListener(new ActionListener()
