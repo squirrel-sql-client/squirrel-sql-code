@@ -7,6 +7,7 @@ SQuirreL SQL Client Change Log
 
 Bug-Fixes:
 
+Updated Simplified Chinese translation strings (Thanks to xpdz)
 Updated French translation strings (Thanks to Erwan Duroselle)
 
 1659412 TIMESTAMP WITH TIME ZONE shows as <Unknown (-101)> - Support was added
