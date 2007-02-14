@@ -9,6 +9,8 @@ Bug-Fixes:
 
 Updated French translation strings (Thanks to Erwan Duroselle)
 
+1659412 TIMESTAMP WITH TIME ZONE shows as <Unknown (-101)> - Support was added
+        for rendering values of columns with this Oracle-specific type.
 1617839 (Line with spaces does not separate SQLs)
 1639680 (Cannot export smallint and decimal to excel)
 1635259 (Session menu has two items with mnemonic "t")
