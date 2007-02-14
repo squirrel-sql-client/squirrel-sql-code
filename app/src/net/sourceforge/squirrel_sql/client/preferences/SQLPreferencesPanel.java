@@ -51,7 +51,7 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
    /** Application API. */
 	private IApplication _app;
    private MainFrame _mainFrame;
-
+   
    /**
 	 * Default ctor.
     * @param mainFrame
@@ -164,6 +164,7 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 	{
 
 		private IntegerField _loginTimeout = new IntegerField();
+        private IntegerField _largeScriptStmtCount = new IntegerField();
 //		private JCheckBox _debugJdbc = new JCheckBox(s_stringMgr.getString("SQLPreferencesPanel.jdbcdebug"));
 		private JRadioButton _debugJdbcDont = new JRadioButton(s_stringMgr.getString("SQLPreferencesPanel.jdbcdebugdont"));
 		private JRadioButton _debugJdbcStream = new JRadioButton(s_stringMgr.getString("SQLPreferencesPanel.jdbcdebugstream"));
@@ -184,6 +185,7 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 		{
 			final ApplicationFiles appFiles = new ApplicationFiles();
 			_loginTimeout.setInt(prefs.getLoginTimeout());
+            _largeScriptStmtCount.setInt(prefs.getLargeScriptStmtCount());
 			_debugJdbcStream.setSelected(prefs.isJdbcDebugToStream());
 			_debugJdbcWriter.setSelected(prefs.isJdbcDebugToWriter());
 			_debugJdbcDont.setSelected(prefs.isJdbcDebugDontDebug());
@@ -196,6 +198,7 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 		void applyChanges(SquirrelPreferences prefs)
 		{
 			prefs.setLoginTimeout(_loginTimeout.getInt());
+            prefs.setLargeScriptStmtCount(_largeScriptStmtCount.getInt());
 			if (_debugJdbcStream.isSelected())
 			{
 				prefs.doJdbcDebugToStream();
@@ -239,7 +242,7 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 
 			_loginTimeout.setColumns(4);
 
-			final GridBagConstraints gbc = new GridBagConstraints();
+			GridBagConstraints gbc = new GridBagConstraints();
 			gbc.anchor = GridBagConstraints.WEST;
 			gbc.fill = GridBagConstraints.NONE;
 			gbc.insets = new Insets(4, 4, 4, 4);
@@ -255,6 +258,21 @@ public class SQLPreferencesPanel implements IGlobalPreferencesPanel
 			gbc.weightx = 1;
 			pnl.add(new JLabel(s_stringMgr.getString("SQLPreferencesPanel.zerounlimited")), gbc);
 
+            _largeScriptStmtCount.setColumns(4);
+            
+            gbc = new GridBagConstraints();
+            gbc.anchor = GridBagConstraints.WEST;
+            gbc.fill = GridBagConstraints.NONE;
+            gbc.insets = new Insets(4, 4, 4, 4);
+
+            gbc.gridx = 0;
+            gbc.gridy = 1;
+            // i18n[SQLPreferencesPanel.largeScriptStmtCount=Large Script Statement Count: ]
+            pnl.add(new JLabel(s_stringMgr.getString("SQLPreferencesPanel.largeScriptStmtCount")), gbc);
+            
+            ++gbc.gridx;
+            pnl.add(_largeScriptStmtCount, gbc);
+            
 			return pnl;
 		}
 

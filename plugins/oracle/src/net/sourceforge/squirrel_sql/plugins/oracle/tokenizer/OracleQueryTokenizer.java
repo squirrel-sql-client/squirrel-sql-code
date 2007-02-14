@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ITokenizerFactory;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.oracle.prefs.OraclePreferenceBean;
 
 public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokenizer
 {
@@ -41,19 +42,20 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
     private static final String FUNCTION_PATTERN = 
         "^\\s*CREATE\\s+FUNCTION.*|^\\s*CREATE\\s+OR\\s+REPLACE\\s+FUNCTION\\s+.*";    
     
-    private static final String NEWLINE_PATTERN = ".*\\n.*";
-    
     private Pattern procPattern = Pattern.compile(PROCEDURE_PATTERN, Pattern.DOTALL);
     
     private Pattern funcPattern = Pattern.compile(FUNCTION_PATTERN, Pattern.DOTALL);
     
-    private Pattern nlPattern = Pattern.compile(NEWLINE_PATTERN, Pattern.DOTALL);
-    
     private static final String ORACLE_SCRIPT_INCLUDE_PREFIX = "@";
     
-	public OracleQueryTokenizer(boolean removeMultiLineComments)
+    private OraclePreferenceBean _prefs = null;
+    
+	public OracleQueryTokenizer(OraclePreferenceBean prefs)
 	{
-        super(";", "--", removeMultiLineComments);
+        super(prefs.getStatementSeparator(),
+              prefs.getLineComment(), 
+              prefs.isRemoveMultiLineComments());
+        _prefs = prefs;
 	}
 
     public void setScriptToTokenize(String script) {
@@ -84,7 +86,7 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
         
         _queryIterator = _queries.iterator();
     }
-
+    
     /**
      * Sets the ITokenizerFactory which is used to create additional instances
      * of the IQueryTokenizer - this is used for handling file includes
@@ -93,7 +95,7 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
 	protected void setFactory() {
 	    _tokenizerFactory = new ITokenizerFactory() {
 	        public IQueryTokenizer getTokenizer() {
-	            return new OracleQueryTokenizer(_removeMultiLineComment);
+	            return new OracleQueryTokenizer(_prefs);
             }
         };
     }
@@ -109,13 +111,14 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
      */
     private void breakApartNewLines() {
         ArrayList tmp = new ArrayList();
+        String sep = _prefs.getProcedureSeparator();
         for (Iterator iter = _queries.iterator(); iter.hasNext();) {
             String next = (String) iter.next();
-            if (next.startsWith("/")) {
-                tmp.add("/");
-                String[] parts = next.split("/\\n+");
+            if (next.startsWith(sep)) {
+                tmp.add(sep);
+                String[] parts = next.split(sep+"\\n+");
                 for (int i = 0; i < parts.length; i++) {
-                    if (!"".equals(parts[i]) && !"/".equals(parts[i])) {
+                    if (!"".equals(parts[i]) && !sep.equals(parts[i])) {
                         tmp.add(parts[i]);
                     }
                 }
@@ -140,6 +143,7 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
         boolean inMultiSQLStatement = false;
         StringBuffer collector = null;
         ArrayList tmp = new ArrayList();
+        String sep = _prefs.getProcedureSeparator();
         for (Iterator iter = _queries.iterator(); iter.hasNext();) {
             String next = (String) iter.next();
             if (pattern.matcher(next.toUpperCase()).matches()) {
@@ -148,16 +152,16 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
                 collector.append(";");
                 continue;
             } 
-            if (next.startsWith("/")) {
+            if (next.startsWith(sep)) {
                 inMultiSQLStatement = false;
                 if (collector != null) {
                     tmp.add(collector.toString());
                     collector = null;
                 } else {
                     if (skipStraySlash) {
-                        // Stray "/" - or we failed to find pattern
+                        // Stray sep - or we failed to find pattern
                         if (s_log.isDebugEnabled()) {
-                            s_log.debug("Detected stray slash(/) char. Skipping");
+                            s_log.debug("Detected stray proc separator("+sep+"). Skipping");
                         }
                     } else {
                         tmp.add(next);

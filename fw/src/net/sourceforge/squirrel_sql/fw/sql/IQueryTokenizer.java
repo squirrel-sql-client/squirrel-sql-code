@@ -35,4 +35,10 @@ public interface IQueryTokenizer {
      */
     void setScriptToTokenize(String script);
     
+    /**
+     * Returns the number of queries that the tokenizer found in the script 
+     * given in the last call to setScriptToTokenize, or 0 if 
+     * setScriptToTokenize has not yet been called.
+     */
+    int getQueryCount();
 }

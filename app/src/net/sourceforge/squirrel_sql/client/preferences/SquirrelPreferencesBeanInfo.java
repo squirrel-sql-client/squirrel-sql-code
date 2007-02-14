@@ -51,6 +51,8 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
                "getShowContentsWhenDragging", "setShowContentsWhenDragging"),
             new PropertyDescriptor(LOGIN_TIMEOUT, CLS,
                "getLoginTimeout", "setLoginTimeout"),
+            new PropertyDescriptor(LARGE_SCRIPT_STMT_COUNT, CLS,
+               "getLargeScriptStmtCount", "setLargeScriptStmtCount"),
             new PropertyDescriptor(JDBC_DEBUG_TYPE, CLS,
                "getJdbcDebugType", "setJdbcDebugType"),
             new PropertyDescriptor(SHOW_MAIN_STATUS_BAR, CLS,

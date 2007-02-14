@@ -42,6 +42,7 @@ import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
+import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IAllowedSchemaChecker;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
@@ -73,7 +74,10 @@ import net.sourceforge.squirrel_sql.plugins.oracle.expander.TableExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.TriggerParentExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.UserParentExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.explainplan.ExplainPlanExecuter;
+import net.sourceforge.squirrel_sql.plugins.oracle.gui.OracleGlobalPreferencesTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.invalidobjects.NewInvalidObjectsWorksheetAction;
+import net.sourceforge.squirrel_sql.plugins.oracle.prefs.OraclePreferenceBean;
+import net.sourceforge.squirrel_sql.plugins.oracle.prefs.PreferencesManager;
 import net.sourceforge.squirrel_sql.plugins.oracle.sessioninfo.NewSessionInfoWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.IndexColumnInfoTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.IndexDetailsTab;
@@ -210,6 +214,17 @@ public class OraclePlugin extends DefaultSessionPlugin
       return "licence.txt";
    }
 
+   /**
+    * Create panel for the Global Properties dialog.
+    * 
+    * @return  properties panel.
+    */
+   public IGlobalPreferencesPanel[] getGlobalPreferencePanels() {
+       OracleGlobalPreferencesTab tab = new OracleGlobalPreferencesTab();
+       return new IGlobalPreferencesPanel[] { tab };
+   }
+   
+   
    public void initialize() throws PluginException
    {
       try
@@ -256,6 +271,7 @@ public class OraclePlugin extends DefaultSessionPlugin
          {
             _oracleAliasPrefsByAliasIdentifier = new Hashtable();
          }
+         PreferencesManager.initialize(this);
       }
       catch (Exception e)
       {
@@ -346,9 +362,8 @@ public class OraclePlugin extends DefaultSessionPlugin
       {
          return null;
       }
-      boolean removeComment = 
-          session.getProperties().getRemoveMultiLineComment();
-      session.setQueryTokenizer(new OracleQueryTokenizer(removeComment));
+      OraclePreferenceBean _prefs = PreferencesManager.getPreferences();
+      session.setQueryTokenizer(new OracleQueryTokenizer(_prefs));
       GUIUtils.processOnSwingEventThread(new Runnable()
       {
          public void run()

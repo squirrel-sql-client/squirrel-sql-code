@@ -7,6 +7,8 @@ import java.io.PrintWriter;
 
 import junit.framework.TestCase;
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
+import net.sourceforge.squirrel_sql.plugins.oracle.prefs.OraclePreferenceBean;
+import net.sourceforge.squirrel_sql.plugins.oracle.prefs.PreferencesManager;
 import net.sourceforge.squirrel_sql.plugins.oracle.tokenizer.OracleQueryTokenizer;
 
 public class OracleQueryTokenizerTest extends TestCase
@@ -31,37 +33,42 @@ public class OracleQueryTokenizerTest extends TestCase
     }
     
     public void testHasQuery() {
-        qt = new OracleQueryTokenizer(removeMultilineComment);
+        OraclePreferenceBean _prefs = PreferencesManager.getPreferences(); 
+        qt = new OracleQueryTokenizer(_prefs);
         qt.setScriptToTokenize(SELECT_DUAL);
         SQLUtil.checkQueryTokenizer(qt, 1);
         
-        qt = new OracleQueryTokenizer(removeMultilineComment);
+        qt = new OracleQueryTokenizer(_prefs);
         qt.setScriptToTokenize(SELECT_DUAL_2);
         SQLUtil.checkQueryTokenizer(qt, 1);        
     }
 
     public void testGenericSQL() {
+        OraclePreferenceBean _prefs = PreferencesManager.getPreferences();
         String script = SQLUtil.getGenericSQLScript();
-        qt = new OracleQueryTokenizer(removeMultilineComment);
+        qt = new OracleQueryTokenizer(_prefs);
         qt.setScriptToTokenize(script);
         SQLUtil.checkQueryTokenizer(qt, SQLUtil.getGenericSQLCount());
     }
     
     public void testCreateStoredProcedure() {
-        qt = new OracleQueryTokenizer(removeMultilineComment);
+        OraclePreferenceBean _prefs = PreferencesManager.getPreferences();
+        qt = new OracleQueryTokenizer(_prefs);
         qt.setScriptToTokenize(CREATE_STORED_PROC);
         SQLUtil.checkQueryTokenizer(qt, 1);
     }
 
     public void testCreateOrReplaceStoredProcedure() {
-        qt = new OracleQueryTokenizer(removeMultilineComment);
+        OraclePreferenceBean _prefs = PreferencesManager.getPreferences();
+        qt = new OracleQueryTokenizer(_prefs);
         qt.setScriptToTokenize(CREATE_OR_REPLACE_STORED_PROC);
         SQLUtil.checkQueryTokenizer(qt, 1);
     }
     
     public void testHasQueryFromFile() {
+        OraclePreferenceBean _prefs = PreferencesManager.getPreferences();
         String fileSQL = "@" + tmpFilename + ";\n";
-        qt = new OracleQueryTokenizer(removeMultilineComment);
+        qt = new OracleQueryTokenizer(_prefs);
         qt.setScriptToTokenize(fileSQL);
         SQLUtil.checkQueryTokenizer(qt, 6);
     }

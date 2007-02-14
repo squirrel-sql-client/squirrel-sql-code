@@ -281,4 +281,16 @@ public class ColumnDisplayDefinition
 		_isSigned = isSigned;
 		_isCurrency = isCurrency;
 	}
+    
+    public String toString() {
+        StringBuffer result = new StringBuffer();
+        result.append("[ sqlType=");
+        result.append(_sqlType);
+        result.append(", sqlTypeName=");
+        result.append(_sqlTypeName);
+        result.append(", className=");
+        result.append(getClassName());
+        result.append(" ]");
+        return result.toString();
+    }
 }

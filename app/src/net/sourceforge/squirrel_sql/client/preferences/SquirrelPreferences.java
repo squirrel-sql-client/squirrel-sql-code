@@ -58,6 +58,7 @@ public class SquirrelPreferences implements Serializable
       String FIRST_RUN = "firstRun";
       String JDBC_DEBUG_TYPE = "jdbcDebugtype";
       String LOGIN_TIMEOUT = "loginTimeout";
+      String LARGE_SCRIPT_STMT_COUNT = "largeScriptStmtCount";
       String MAIN_FRAME_STATE = "mainFrameWindowState";
       String MAXIMIMIZE_SESSION_SHEET_ON_OPEN = "maximizeSessionSheetOnOpen";
       String NEW_SESSION_VIEW = "newSessionView";
@@ -130,6 +131,11 @@ public class SquirrelPreferences implements Serializable
 	/** Login timeout (seconds). */
 	private int _loginTimeout = 30;
 
+    /** How many statements before we should consider using UI optimizations for
+     *  large script execution
+     */
+    private int _largeScriptStmtCount = 200;
+    
 	/** The View to start when a new session is created. */
 	// JASON: What are its valid values?
 	private String _newSessionView;
@@ -413,6 +419,21 @@ public class SquirrelPreferences implements Serializable
 		}
 	}
 
+    public int getLargeScriptStmtCount() {
+        return _largeScriptStmtCount;
+    }
+    
+    public synchronized void setLargeScriptStmtCount(int count) {
+        if (count != _largeScriptStmtCount) {
+            final int oldValue = _largeScriptStmtCount;
+            _largeScriptStmtCount = count;
+            getPropertyChangeReporter().firePropertyChange(
+                                        IPropertyNames.LARGE_SCRIPT_STMT_COUNT,
+                                        oldValue, 
+                                        _largeScriptStmtCount);
+        }
+    }
+    
 	public int getJdbcDebugType()
 	{
 		return _jdbcDebugType;
