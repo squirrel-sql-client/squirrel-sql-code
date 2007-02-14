@@ -224,6 +224,8 @@ public class ResultSetReader
 						break;
 
 					case Types.TIMESTAMP :
+                    case -101 : // Oracle's 'TIMESTAMP WITH TIME ZONE' == -101  
+                    case -102 : // Oracle's 'TIMESTAMP WITH LOCAL TIME ZONE' == -102
 						row[i] = _rs.getTimestamp(idx);
 						break;
 
@@ -343,36 +345,36 @@ public class ResultSetReader
 
 						break;
 
-                  //Add begin
-               case Types.JAVA_OBJECT:
-                  row[i] = _rs.getObject(idx);
-                  if (_rs.wasNull())
-                  {
-                     row[i] = null;
-                  }
-                  break;
-                  //Add end
+						//Add begin
+					case Types.JAVA_OBJECT:
+					    row[i] = _rs.getObject(idx);
+					    if (_rs.wasNull())
+					    {
+					        row[i] = null;
+					    }
+					    break;
+					    //Add end
 
 
-               case Types.OTHER:
-						// Since we are reading Meta-data, there really should never be
-						// a field with SQL type Other (1111).
-						// If there is, we REALLY do not know how to handle it,
-						// so do not attempt to read.
-//??						if (_largeObjInfo.getReadSQLOther())
-//??						{
-//??							// Running getObject on a java class attempts
-//??							// to load the class in memory which we don't want.
-//??							// getString() just gets the value without loading
-//??							// the class (at least under PostgreSQL).
-//??							//row[i] = _rs.getObject(idx);
-//??							row[i] = _rs.getString(idx);
-//??						}
-//??						else
-//??						{
-							row[i] = s_stringMgr.getString("ResultSetReader.other");
-//??						}
-						break;
+					case Types.OTHER:
+					    // Since we are reading Meta-data, there really should never be
+					    // a field with SQL type Other (1111).
+					    // If there is, we REALLY do not know how to handle it,
+					    // so do not attempt to read.
+//					    ??						if (_largeObjInfo.getReadSQLOther())
+//					    ??						{
+//					    ??							// Running getObject on a java class attempts
+//					    ??							// to load the class in memory which we don't want.
+//					    ??							// getString() just gets the value without loading
+//					    ??							// the class (at least under PostgreSQL).
+//					    ??							//row[i] = _rs.getObject(idx);
+//					    ??							row[i] = _rs.getString(idx);
+//					    ??						}
+//					    ??						else
+//					    ??						{
+					    row[i] = s_stringMgr.getString("ResultSetReader.other");
+//					    ??						}
+					    break;
 
 					default:
 						// Since we are reading Meta-data, there should never be a

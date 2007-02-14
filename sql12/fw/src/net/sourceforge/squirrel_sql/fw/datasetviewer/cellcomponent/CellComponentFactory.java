@@ -860,6 +860,8 @@ public class CellComponentFactory {
 					break;
 
 				case Types.TIMESTAMP :
+                case -101 : // Oracle's 'TIMESTAMP WITH TIME ZONE' == -101  
+                case -102 : // Oracle's 'TIMESTAMP WITH LOCAL TIME ZONE' == -102
 					dataTypeComponent = new DataTypeTimestamp(table, colDef);
 					break;
 
