@@ -461,7 +461,11 @@ public class CellComponentFactory {
 		// returns true, then we would have executed the return statement above.
 		// Assume that the value can be represented as a string.
 		RestorableJTextArea textArea = new RestorableJTextArea();
-		textArea.setText(value.toString());
+        if (value != null) {
+            textArea.setText(value.toString());
+        } else {
+            textArea.setText("");
+        }
 		return textArea;
 	}
 	
@@ -739,7 +743,7 @@ public class CellComponentFactory {
 				Method panelMethod =
 					Class.forName(className).getMethod("getControlPanel", parameterTypes);
 					
-				OkJPanel panel = (OkJPanel)panelMethod.invoke(null, null);
+				OkJPanel panel = (OkJPanel)panelMethod.invoke(null, (Object[])null);
 				panelList.add(panel);
 			}
 			catch (Exception e) {
@@ -856,6 +860,8 @@ public class CellComponentFactory {
 					break;
 
 				case Types.TIMESTAMP :
+                case -101 : // Oracle's 'TIMESTAMP WITH TIME ZONE' == -101  
+                case -102 : // Oracle's 'TIMESTAMP WITH LOCAL TIME ZONE' == -102
 					dataTypeComponent = new DataTypeTimestamp(table, colDef);
 					break;
 
