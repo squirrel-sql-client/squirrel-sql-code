@@ -17,9 +17,50 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.Action;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.event.EventListenerList;
+
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
-import net.sourceforge.squirrel_sql.client.session.*;
+import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.ISQLExecuterHandler;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsAction;
 import net.sourceforge.squirrel_sql.client.session.action.CloseAllSQLResultTabsButCurrentAction;
 import net.sourceforge.squirrel_sql.client.session.action.CloseCurrentSQLResultTabAction;
@@ -40,22 +81,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.*;
-import javax.swing.event.EventListenerList;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.text.NumberFormat;
-import java.util.*;
-import java.util.List;
 /**
  * This is the panel where SQL scripts are executed and results presented.
  *
@@ -102,11 +127,12 @@ public class SQLResultExecuterPanel extends JPanel
 	private IntegerIdentifierFactory _idFactory = new IntegerIdentifierFactory();
    private ResultTab _stickyTab;
    
+   private SquirrelPreferences _prefs = null;
 
 	/** Reference to the executor so that it can be called from the CancelPanel*/
 	private SQLExecuterTask _executer;
 
-
+    private static enum SQLType { INSERT, SELECT, UPDATE, DELETE, UNKNOWN };
    /**
 	 * Ctor.
 	 *
@@ -150,6 +176,7 @@ public class SQLResultExecuterPanel extends JPanel
 		}
 		sessionClosing();
 		_session = session;
+        _prefs = _session.getApplication().getSquirrelPreferences();
 		_propsListener = new MyPropertiesListener();
 		_session.getProperties().addPropertyChangeListener(_propsListener);
 	}
@@ -248,11 +275,19 @@ public class SQLResultExecuterPanel extends JPanel
 	{
 		if (sql != null && sql.trim().length() > 0)
 		{
-			sql = fireSQLToBeExecutedEvent(sql);
-         ISQLExecutionListener[] executionListeners =
-            (ISQLExecutionListener[]) _listeners.getListeners(ISQLExecutionListener.class);
-         _executer = new SQLExecuterTask(_session, sql, new SQLExecutionHandler(null), executionListeners);
-			_session.getApplication().getThreadPool().addTask(_executer);
+	        sql = fireSQLToBeExecutedEvent(sql);
+            ISQLExecutionListener[] executionListeners =
+              (ISQLExecutionListener[]) _listeners.getListeners(ISQLExecutionListener.class);
+            SQLExecutionHandler handler = new SQLExecutionHandler(null);
+            _executer = new SQLExecuterTask(_session, sql, handler, executionListeners);
+	        
+            if (_prefs.getLargeScriptStmtCount() > 0 
+                    && _executer.getQueryCount() > _prefs.getLargeScriptStmtCount()) {
+                _executer.setExecutionListeners(new ISQLExecutionListener[0]);
+                handler.setLargeScript(true);
+            }
+            
+            _session.getApplication().getThreadPool().addTask(_executer);
 		}
 	}
 
@@ -947,6 +982,23 @@ public class SQLResultExecuterPanel extends JPanel
       }
    }
 
+   private SQLType getSQLType(String sql) {
+       SQLType result = SQLType.UNKNOWN;
+       if (sql.toLowerCase().startsWith("insert")) {
+           result = SQLType.INSERT;
+       }
+       if (sql.toLowerCase().startsWith("update")) {
+           result = SQLType.UPDATE;
+       }
+       if (sql.toLowerCase().startsWith("select")) {
+           result = SQLType.SELECT;
+       }
+       if (sql.toLowerCase().startsWith("delete")) {
+           result = SQLType.DELETE;
+       }
+       return result;
+   }
+   
    /** This class is the handler for the execution of sql against the SQLExecuterPanel
 	 *
 	 */
@@ -961,8 +1013,17 @@ public class SQLResultExecuterPanel extends JPanel
       private ResultSetDataSet rsds = null;
 
       private String sqlToBeExecuted = null;
+      private SQLType sqlType = null;
       private ResultTab _resultTabToReplace;
-
+      private boolean _largeScript = false;
+      private double _scriptTotalTime = 0;
+      private double _scriptQueryTime = 0;
+      private double _scriptOutptutTime = 0;
+      private int _scriptRowsInserted = 0;
+      private int _scriptRowsSelected = 0;
+      private int _scriptRowsUpdated = 0;
+      private int _scriptRowsDeleted = 0;
+      
       public SQLExecutionHandler(ResultTab resultTabToReplace)
       {
          super();
@@ -970,32 +1031,157 @@ public class SQLResultExecuterPanel extends JPanel
          setCancelPanel(_cancelPanel);
       }
 
+      /**
+       * Set whether or not the script is large.  If the script is large, then
+       * do some performance optimizations with the GUI so that it remains 
+       * responsive.  If the UI is not responsive, then the user is not able
+       * to see what is happening, nor are they able to control it (cancelling
+       * becomes ineffective)
+       * 
+       * @param aBoolean whether or not the script is large.
+       */
+      public void setLargeScript(boolean aBoolean) {
+          _largeScript = aBoolean;
+      }
+      
+      /**
+       * Determines whether or not the current statement SQL should be rendered.
+       * Since too many statements can cause the UI to stop rendering the 
+       * statements, we back off rendering after many statements so that the UI 
+       * can continue to provide feedback to the user. 
+       * 
+       * @param current
+       * @param total
+       * @return
+       */
+      private boolean shouldRenderSQL(int current, int total) {
+          if (!_largeScript) {
+              return true;
+          }
+          boolean result = true;
+          // Back-off a bit after a hundred updates to allow the UI to update
+          if (total > 200 && current > 100 && current % 10 != 0) {
+              result = false;
+          }
+          if (total > 1000 && current > 500 && current % 50 != 0) {
+              result = false;
+          }
+          if (total > 2000 && current > 1000 && current % 100 != 0) {
+              result = false;
+          }
+          return result;
+      }
+      
       public void sqlToBeExecuted(final String sql)
-		{
-         SwingUtilities.invokeLater(new Runnable()
-         {
-            public void run()
-            {
-               sqlToBeExecuted = StringUtilities.cleanString(sql);
-               _cancelPanel.setSQL(sqlToBeExecuted);
+      {
+          _cancelPanel.incCurrentQueryIndex();
+          int currentStmtCount = _cancelPanel.getCurrentQueryIndex();
+          if (!shouldRenderSQL(currentStmtCount,_cancelPanel.getTotalCount())) {
+              return;
+          }
+          final String cleanSQL = StringUtilities.cleanString(sql);
+          sqlToBeExecuted = cleanSQL;
+          sqlType = getSQLType(cleanSQL);
+          
+          SwingUtilities.invokeLater(new Runnable() {
+              public void run() {
+                  _cancelPanel.setSQL(cleanSQL);
                
-               // i18n[SQLResultExecuterPanel.execStatus=Executing SQL...]
-               String status = 
-                   s_stringMgr.getString("SQLResultExecuterPanel.execStatus");
-               _cancelPanel.setStatusLabel(status);
-            }
-         });
+                  // i18n[SQLResultExecuterPanel.execStatus=Executing SQL...]
+                  String status = 
+                     s_stringMgr.getString("SQLResultExecuterPanel.execStatus");
+                  _cancelPanel.setStatusLabel(status);
+              }
+          });
 		}
 
-		public void sqlExecutionComplete(SQLExecutionInfo exInfo, int processedStatementCount, int statementCount)
+        /**
+         * This will - depending on the size of the script - print a message 
+         * indicating the time that it took to execute one or more queries.  
+         * When executing a large script (as defined by the user, but default is
+         * > 200 statements) we don't want to keep sending messages to the 
+         * message panel, otherwise the UI will get behind and slow the execution
+         * of the script and prevent the user from cancelling the operation.  So
+         * this method will track the total time when executing a large script, 
+         * otherwise for small scripts it puts out a message for every statement.
+         */
+		public void sqlExecutionComplete(SQLExecutionInfo exInfo, 
+                                         int processedStatementCount, 
+                                         int statementCount)
 		{
-			final NumberFormat nbrFmt = NumberFormat.getNumberInstance();
-			double executionLength = exInfo.getSQLExecutionElapsedMillis() / 1000.0;
-			double outputLength = exInfo.getResultsProcessingElapsedMillis() / 1000.0;
+            double executionLength = ((double)exInfo.getSQLExecutionElapsedMillis())/1000d;
+            double outputLength = ((double)exInfo.getResultsProcessingElapsedMillis())/1000d;            
+            double totalLength = executionLength + outputLength;
+            
+            if (_largeScript) {
+                // Track the time in aggregate for the script.
+                _scriptQueryTime += executionLength;
+                _scriptOutptutTime += outputLength;
+                _scriptTotalTime += totalLength;
+
+                // When we get to the last statement, if the script is large,
+                // show the user the total execution time.                 
+                if (statementCount == processedStatementCount) {
+                    printScriptExecDetails(statementCount,
+                                           _scriptQueryTime,
+                                           _scriptOutptutTime,
+                                           _scriptTotalTime);
+                }
+            } else {
+                printStatementExecTime(processedStatementCount,
+                                       statementCount,
+                                       executionLength,
+                                       outputLength,
+                                       totalLength);
+            }
+		}
+
+        private void printScriptExecDetails(int statementCount, 
+                                            double executionLength,
+                                            double outputLength,
+                                            double totalLength) 
+        {
+            final NumberFormat nbrFmt = NumberFormat.getNumberInstance();
+            
+            Object[] args = new Object[] {new Integer(statementCount),
+                                          nbrFmt.format(totalLength),
+                                          nbrFmt.format(executionLength),
+                                          nbrFmt.format(outputLength)};
+
+            //i18n[SQLResultExecuterPanel.scriptQueryStatistics=Executed {0} 
+            //queries; elapsed time (seconds) - Total: {1}, SQL query: {2}, 
+            //Building output: {3}]
+            String stats = 
+                s_stringMgr.getString(
+                        "SQLResultExecuterPanel.scriptQueryStatistics", 
+                        args);
+            
+            String[] counts = 
+                new String[] {Integer.toString(_scriptRowsInserted),
+                              Integer.toString(_scriptRowsSelected),
+                              Integer.toString(_scriptRowsUpdated),
+                              Integer.toString(_scriptRowsDeleted)};
+            
+            //i18n[SQLResultExecuterPanel.scriptStmtCounts=Row update 
+            //counts: {0} Inserts, {1} Selects, {2} Updates, {3} Deletes
+            String msg = 
+                s_stringMgr.getString("SQLResultExecuterPanel.scriptStmtCounts",
+                                      counts);
+            getSession().getMessageHandler().showMessage(msg);
+            getSession().getMessageHandler().showMessage(stats);
+        }
+        
+        private void printStatementExecTime(int processedStatementCount, 
+                                            int statementCount,
+                                            double executionLength,
+                                            double outputLength,
+                                            double totalLength)
+        {
+            final NumberFormat nbrFmt = NumberFormat.getNumberInstance();
             
             Object[] args = new Object[] {new Integer(processedStatementCount),
                                           new Integer(statementCount),
-                                          nbrFmt.format(executionLength + outputLength),
+                                          nbrFmt.format(totalLength),
                                           nbrFmt.format(executionLength),
                                           nbrFmt.format(outputLength)};
 
@@ -1006,9 +1192,9 @@ public class SQLResultExecuterPanel extends JPanel
                 s_stringMgr.getString("SQLResultExecuterPanel.queryStatistics", 
                                       args);
             
-			getSession().getMessageHandler().showMessage(stats);
-		}
-
+            getSession().getMessageHandler().showMessage(stats);            
+        }
+        
 		public void sqlExecutionCancelled()
 		{
 			if (rsds != null) {
@@ -1022,29 +1208,49 @@ public class SQLResultExecuterPanel extends JPanel
 
 		public void sqlDataUpdated(int updateCount)
 		{
+            
             Integer count = new Integer(updateCount);
-
-            // i18n[SQLResultExecuterPanel.rowsUpdated={0} Row(s) Updated]
-            String msg = 
-                s_stringMgr.getString("SQLResultExecuterPanel.rowsUpdated",
-                                      count);              
-
-            if (sqlToBeExecuted != null) {
-                if (sqlToBeExecuted.toLowerCase().startsWith("select")) {
-                    // i18n[SQLResultExecuterPanel.rowsSelected={0} Row(s) Selected]
-                    msg = s_stringMgr.getString("SQLResultExecuterPanel.rowsSelected",
-                                                count);            
-                }
-                if (sqlToBeExecuted.toLowerCase().startsWith("insert")) {
-                    // i18n[SQLResultExecuterPanel.rowsUpdated={0} Row(s) Inserted]
-                    msg = s_stringMgr.getString("SQLResultExecuterPanel.rowsInserted",
-                                                count);            
-                }
-                if (sqlToBeExecuted.toLowerCase().startsWith("delete")) {
-                    // i18n[SQLResultExecuterPanel.rowsDeleted={0} Row(s) Deleted]
-                    msg = s_stringMgr.getString("SQLResultExecuterPanel.rowsDeleted",
-                                                count);            
-                }
+            String msg = "";
+            
+            switch (sqlType) {
+                case INSERT:
+                    if (_largeScript) {
+                        _scriptRowsInserted++;
+                    } else {
+                        // i18n[SQLResultExecuterPanel.rowsUpdated={0} Row(s) Inserted]
+                        msg = s_stringMgr.getString("SQLResultExecuterPanel.rowsInserted",
+                                                    count);                               
+                    }
+                    break;
+                case SELECT:
+                    if (_largeScript) {
+                        _scriptRowsSelected++;
+                    } else {
+                        // i18n[SQLResultExecuterPanel.rowsSelected={0} Row(s) Selected]
+                        msg = s_stringMgr.getString("SQLResultExecuterPanel.rowsSelected",
+                                                    count);
+                    }
+                    break;
+                case UPDATE:
+                    if (_largeScript) {
+                        _scriptRowsUpdated++;
+                    } else {
+                        // i18n[SQLResultExecuterPanel.rowsUpdated={0} Row(s) Updated]
+                        msg = s_stringMgr.getString("SQLResultExecuterPanel.rowsUpdated",
+                                                  count);
+                    }
+                case DELETE:
+                    if (_largeScript) {
+                        _scriptRowsDeleted++;
+                    } else {
+                        // i18n[SQLResultExecuterPanel.rowsDeleted={0} Row(s) Deleted]
+                        msg = s_stringMgr.getString("SQLResultExecuterPanel.rowsDeleted",
+                                                    count);                                                        
+                    }
+                    break;
+            }            
+            if (_largeScript) {
+                return;
             }
             getSession().getMessageHandler().showMessage(msg);
 		}
@@ -1160,7 +1366,7 @@ public class SQLResultExecuterPanel extends JPanel
             }
          });
       }
-
+      
       private final class CancelPanel extends JPanel
 										implements ActionListener
 		{
@@ -1216,10 +1422,12 @@ public class SQLResultExecuterPanel extends JPanel
 				add(cancelBtn, gbc);
 			}
 
+            public void incCurrentQueryIndex() {
+                ++_currentQueryIndex;
+            }
+            
 			public void setSQL(String sql)
 			{
-				++_currentQueryIndex;
-                
                 // i18n[SQLResultExecuterPanel.currentSQLLabel={0} of {1} - {2}]
                 String label = 
                     s_stringMgr.getString("SQLResultExecuterPanel.currentSQLLabel",
@@ -1240,11 +1448,22 @@ public class SQLResultExecuterPanel extends JPanel
 				_currentQueryIndex = 0;
 			}
 
+            public int getTotalCount() {
+                return _queryCount;
+            }
+            
+            public int getCurrentQueryIndex() {
+                return _currentQueryIndex;
+            }
+           
+            
 			public void actionPerformed(ActionEvent event)
 			{
 				try
 				{
-					_executer.cancel();
+                    if (_executer != null){
+                        _executer.cancel();
+                    }
 				}
 				catch (Throwable th)
 				{

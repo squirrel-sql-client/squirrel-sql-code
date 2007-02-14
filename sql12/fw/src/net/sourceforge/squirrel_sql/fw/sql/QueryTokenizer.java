@@ -29,7 +29,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class QueryTokenizer implements IQueryTokenizer
 {
-	protected ArrayList _queries = new ArrayList();
+	protected ArrayList<String> _queries = new ArrayList<String>();
     
 	protected Iterator _queryIterator;
 
@@ -254,6 +254,20 @@ public class QueryTokenizer implements IQueryTokenizer
         _queryIterator = _queries.iterator();
     }
     
+    /**
+     * Returns the number of queries that the tokenizer found in the script 
+     * given in the last call to setScriptToTokenize, or 0 if 
+     * setScriptToTokenize has not yet been called.
+     */
+    public int getQueryCount() {
+        if (_queries == null) {
+            return 0;
+        }
+        return _queries.size();
+    }
+    
+    
+    
     public static void main(String[] args)
     {
         //String sql = "A'''' sss ;  GO ;; GO'";
@@ -328,13 +342,13 @@ public class QueryTokenizer implements IQueryTokenizer
             s_log.error("scriptIncludePrefix cannot be null ");
             return;
         }
-        ArrayList tmp = new ArrayList();
+        ArrayList<String> tmp = new ArrayList<String>();
         for (Iterator iter = _queries.iterator(); iter.hasNext();) {
             String sql = (String) iter.next();
             if (sql.startsWith(scriptIncludePrefix)) {
                 try {
                     String filename = sql.substring(1);
-                    List fileSQL = getStatementsFromIncludeFile(filename);
+                    List<String> fileSQL = getStatementsFromIncludeFile(filename);
                     tmp.addAll(fileSQL);
                 } catch (Exception e) {
                     s_log.error(
@@ -349,10 +363,10 @@ public class QueryTokenizer implements IQueryTokenizer
         _queries = tmp;
     }
     
-    protected List getStatementsFromIncludeFile(String filename) 
+    protected List<String> getStatementsFromIncludeFile(String filename) 
         throws Exception 
     {
-        ArrayList result = new ArrayList();
+        ArrayList<String> result = new ArrayList<String>();
         if (s_log.isDebugEnabled()) {
             s_log.debug("Attemping to open file '"+filename+"'");
         }

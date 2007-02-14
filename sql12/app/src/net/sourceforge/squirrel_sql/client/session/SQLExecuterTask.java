@@ -31,8 +31,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.SwingUtilities;
 
@@ -84,6 +82,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
    private ISQLExecutionListener[] _executionListeners;
    private DataSetUpdateableTableModelImpl _dataSetUpdateableTableModel;
    private SchemaInfoUpdateCheck _schemaInfoUpdateCheck;
+   private IQueryTokenizer _tokenizer = null;
 
    public SQLExecuterTask(ISession session, String sql,ISQLExecuterHandler handler)
    {
@@ -95,6 +94,8 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
       _session = session;
       _schemaInfoUpdateCheck = new SchemaInfoUpdateCheck(_session);
       _sql = sql;
+      _tokenizer = _session.getQueryTokenizer();
+      _tokenizer.setScriptToTokenize(_sql);
       _handler = handler;
       if (_handler == null) {
           _handler = new DefaultSQLExecuterHandler(session);
@@ -103,7 +104,19 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
       _dataSetUpdateableTableModel = new DataSetUpdateableTableModelImpl();
       _dataSetUpdateableTableModel.setSession(_session);
    }
-
+   
+   public void setExecutionListeners(ISQLExecutionListener[] executionListeners) {
+       _executionListeners = executionListeners;
+   }
+   
+   /**
+    * Returns the number of queries that the tokenizer found in _sql.
+    * @return
+    */
+   public int getQueryCount() {
+       return _tokenizer.getQueryCount();
+   }
+   
    public void run()
    {
       String lastExecutedStatement = null;
@@ -129,19 +142,8 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
                   s_log.error("Can't Set MaxRows", e);
                }
             }
-
-            // Retrieve all the statements to execute.
-            final IQueryTokenizer qt = _session.getQueryTokenizer();
-            qt.setScriptToTokenize(_sql);
             
-            List queryStrings = new ArrayList();
-            boolean queriesFound = false;
-            while (qt.hasQuery())
-            {
-               queriesFound = true;
-               queryStrings.add(qt.nextQuery());
-            }
-            if(false == queriesFound)
+            if(_tokenizer.getQueryCount() == 0)
             {
                throw new IllegalArgumentException("No SQL selected for execution.");
             }
@@ -151,13 +153,13 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
             // Process each individual query.
             boolean maxRowsHasBeenSet = correctlySupportsMaxRows;
             int processedStatementCount = 0;
-            statementCount = queryStrings.size();
+            statementCount = _tokenizer.getQueryCount();
 
             _handler.sqlStatementCount(statementCount);
 
-            while (!queryStrings.isEmpty() && !_stopExecution)
+            while (_tokenizer.hasQuery() && !_stopExecution)
             {
-               String querySql = (String)queryStrings.remove(0);
+               String querySql = _tokenizer.nextQuery();
                if (querySql != null)
                {
                   ++processedStatementCount;
@@ -595,11 +597,6 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
    */
    public TableInfo getTableName(String tableNameFromSQL)
    {
-
-      final SQLConnection conn = _session.getSQLConnection();
-      //final SQLDatabaseMetaData md = conn.getSQLMetaData();
-      //final ITableInfo[] tables = md.getTables(null, null, "%", null);
-
       ITableInfo[] tables = _session.getSchemaInfo().getITableInfos();
 
       // filter the list of all DB objects looking for things with the given name
