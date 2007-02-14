@@ -62,7 +62,9 @@ public class CancelStatementThread extends Thread
 
       try
       {
-         _stmt.cancel();
+          if (_stmt != null) {
+              _stmt.cancel();
+          }
          cancelSucceeded = true;
       }
       catch (Throwable t)
@@ -80,7 +82,9 @@ public class CancelStatementThread extends Thread
          // cancel and stop fetching results.  This allows us to stop the query
          // processing gracefully.
          Thread.sleep(500);
-         _stmt.close();
+         if (_stmt != null) {
+             _stmt.close();
+         }
          closeSucceeded = true;
       }
       catch (Throwable t)
