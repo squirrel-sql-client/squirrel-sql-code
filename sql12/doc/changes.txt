@@ -6,6 +6,21 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+- Added better support for executing large scripts (by default, a script is 
+  considered large if it has > 200 SQL statements selected for execution in the
+  script).  Now, only one message is written in the message panel at the bottom
+  of the session window at the end of running many statements summarizing the 
+  details of execution (timing, statement type and count, etc).  The message
+  "SQL Statement x of y <some sql...>" is still displayed in the results panel to 
+  indicate progress. Also, the history bar isn't updated during large script 
+  execution. The "200 SQL statement" default is configurable in Global 
+  Preferences under 'SQL' tab and all of this new functionality can be disabled 
+  by using '0' (zero) as the value of large script statement count.  This 
+  dramatically improves UI responsiveness for large scripts (especially those 
+  with statement counts in the thousands) and makes it possible to cancel the 
+  execution using the cancel button - which is otherwise effectively disabled 
+  while the UI attempts to keep up with all of the UI updates in a large script.
+
 Code Completion:
    The number of table columns that should be displayed on top of the completion list
    when completion is called outside of the scope of a table/view is now configurable
@@ -20,6 +35,8 @@ New Plugin for Sybase ASE by Ken McCullough
   	Sybase ASE DB.
 
 Oracle Plugin
+  - Added configuration panel for Oracle plugin in Global Preferences to allow 
+    configuration of new custom Oracle query tokenizer.
   - Added support for executing create procedure and create function blocks 
     delimited by a single "/" such as is supported in SQL-Plus.  Also, added 
     support for the "@" construct which is used to specify a script file to be 
