@@ -6,15 +6,16 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
-- Certain plugins (Oracle, Sybase, ...) now have configuration tabs (in Global 
-  Preferences) to allow for configuration of the statement separator for scripts
-  independently from the Session properties configuration.  For example, this 
-  means that now when you switch between session windows that use different 
-  statement separators (Oracle = ';' / Sybase = 'GO'), you no longer have to 
-  change the global statement separator for all sessions to get the correct one
-  for script execution. As long as you have the plugin installed which 
-  corresponds to the type of database that a session is accessing, a reasonable
-  default is supplied to make this configuration unnecessary in most cases.
+- Certain plugins (Oracle, Sybase, MS SQL-Server) now have configuration tabs 
+  (in Global Preferences) to allow for configuration of the statement separator 
+  for scripts independently from the Session properties configuration.  For 
+  example, this means that now when you switch between session windows that use 
+  different statement separators (Oracle = ';' / Sybase = 'GO'), you no longer 
+  have to change the global statement separator for all sessions to get the 
+  correct one for script execution. As long as you have the plugin installed 
+  which corresponds to the type of database that a session is accessing, a 
+  reasonable default is supplied to make this configuration unnecessary in most 
+  cases.
 
 - Added better support for executing large scripts (by default, a script is 
   considered large if it has > 200 SQL statements selected for execution in the
