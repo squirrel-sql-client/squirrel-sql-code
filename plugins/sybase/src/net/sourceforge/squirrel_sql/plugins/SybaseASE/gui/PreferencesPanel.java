@@ -85,7 +85,7 @@ public class PreferencesPanel extends JPanel  {
     
     private JPanel createTopPanel() {
         JPanel result = new JPanel(new GridBagLayout());
-        //i18n[PreferencesPanel.borderLabel=Oracle Script Settings]
+        //i18n[PreferencesPanel.borderLabel=Sybase Script Settings]
         String borderLabel = 
             s_stringMgr.getString("PreferencesPanel.borderLabel");
         result.setBorder(getTitledBorder(borderLabel));
