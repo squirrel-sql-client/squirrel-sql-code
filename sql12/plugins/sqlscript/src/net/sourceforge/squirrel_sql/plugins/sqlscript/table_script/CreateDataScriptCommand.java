@@ -19,7 +19,11 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.sql.*;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
 import java.util.Calendar;
 
 import javax.swing.JInternalFrame;
@@ -28,17 +32,17 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
-
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 
 public class CreateDataScriptCommand implements ICommand, InternalFrameListener
 {
@@ -131,7 +135,13 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
                         if (_bStop) break;
                         ITableInfo ti = (ITableInfo) dbObjs[k];
                         String sTable = ScriptUtil.getTableName(ti);
-                        ResultSet srcResult = stmt.executeQuery("select * from " + ti.getQualifiedName());
+                        StringBuffer sql = new StringBuffer();
+                        sql.append("select * from ");
+                        sql.append(ti.getQualifiedName());
+                        sql.append(" order by ");
+                        sql.append(getFirstColumnName(ti));
+                        sql.append(" asc ");
+                        ResultSet srcResult = stmt.executeQuery(sql.toString());
                         genInserts(srcResult, sTable, sbRows, false);
                      }
                   }
@@ -171,6 +181,12 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
       showAbortFrame();
    }
 
+   protected String getFirstColumnName(ITableInfo ti) throws SQLException {
+       TableColumnInfo[] infos = 
+           _session.getSQLConnection().getSQLMetaData().getColumnInfo(ti);
+       return infos[0].getColumnName();
+   }
+   
    protected void genInserts(ResultSet srcResult, String sTable, StringBuffer sbRows, boolean headerOnly)
       throws SQLException
    {
