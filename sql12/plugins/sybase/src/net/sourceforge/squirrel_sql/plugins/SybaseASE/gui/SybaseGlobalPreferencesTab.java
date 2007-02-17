@@ -60,16 +60,16 @@ public class SybaseGlobalPreferencesTab implements IGlobalPreferencesPanel {
      * @see net.sourceforge.squirrel_sql.client.util.IOptionPanel#getTitle()
      */
     public String getTitle() {
-        //i18n[OracleGlobalPreferencesTab.title=Oracle]
-        return s_stringMgr.getString("OracleGlobalPreferencesTab.title");
+        //i18n[SybaseGlobalPreferencesTab.title=Sybase]
+        return s_stringMgr.getString("SybaseGlobalPreferencesTab.title");
     }
 
     /* (non-Javadoc)
      * @see net.sourceforge.squirrel_sql.client.util.IOptionPanel#getHint()
      */
     public String getHint() {
-        // i18n[OracleGlobalPreferencesTab.hint=Preferences for Oracle]
-        return s_stringMgr.getString("OracleGlobalPreferencesTab.hint"); 
+        // i18n[SybaseGlobalPreferencesTab.hint=Preferences for Sybase]
+        return s_stringMgr.getString("SybaseGlobalPreferencesTab.hint"); 
     }
 
     public Component getPanelComponent() {

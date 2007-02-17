@@ -208,7 +208,7 @@ public class PreferencesPanel extends JPanel  {
         procedureSeparatorTextField = new JTextField(10);
         procedureSeparatorTextField.setHorizontalAlignment(JTextField.RIGHT);
         String commitlabelToolTipText = 
-            s_stringMgr.getString("PreferencesPanel.commitRecordCountToolTip");
+            s_stringMgr.getString("PreferencesPanel.procedureSeparatorToolTip");
         procedureSeparatorTextField.setToolTipText(commitlabelToolTipText);
         panel.add(procedureSeparatorTextField, c);                
     }
