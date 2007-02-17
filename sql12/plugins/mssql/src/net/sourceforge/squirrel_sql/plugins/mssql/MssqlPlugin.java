@@ -30,6 +30,7 @@ import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
+import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
@@ -43,7 +44,6 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.mssql.action.GenerateSqlAction;
@@ -56,10 +56,14 @@ import net.sourceforge.squirrel_sql.plugins.mssql.action.ShrinkDatabaseFileActio
 import net.sourceforge.squirrel_sql.plugins.mssql.action.TruncateLogAction;
 import net.sourceforge.squirrel_sql.plugins.mssql.action.UpdateStatisticsAction;
 import net.sourceforge.squirrel_sql.plugins.mssql.event.IndexIterationListener;
+import net.sourceforge.squirrel_sql.plugins.mssql.gui.MSSQLGlobalPreferencesTab;
 import net.sourceforge.squirrel_sql.plugins.mssql.gui.MonitorPanel;
+import net.sourceforge.squirrel_sql.plugins.mssql.prefs.MSSQLPreferenceBean;
+import net.sourceforge.squirrel_sql.plugins.mssql.prefs.PreferencesManager;
 import net.sourceforge.squirrel_sql.plugins.mssql.sql.dbfile.DatabaseFile;
 import net.sourceforge.squirrel_sql.plugins.mssql.sql.dbfile.DatabaseFileInfo;
 import net.sourceforge.squirrel_sql.plugins.mssql.tab.ViewSourceTab;
+import net.sourceforge.squirrel_sql.plugins.mssql.tokenizer.MSSQLQueryTokenizer;
 import net.sourceforge.squirrel_sql.plugins.mssql.util.MssqlIntrospector;
 
 public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin {
@@ -83,10 +87,8 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
     }
     
     public net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel[] getGlobalPreferencePanels() {
-        net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel[] retValue;
-        
-        retValue = super.getGlobalPreferencePanels();
-        return retValue;
+        MSSQLGlobalPreferencesTab tab = new MSSQLGlobalPreferencesTab();
+        return new IGlobalPreferencesPanel[] { tab };
     }
     
     public String getHelpFileName() {
@@ -141,7 +143,7 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
     
     public void initialize() throws net.sourceforge.squirrel_sql.client.plugin.PluginException {
         super.initialize();
-
+        PreferencesManager.initialize(this);
 		final IApplication app = getApplication();
 		final ActionCollection coll = app.getActionCollection();
         
@@ -179,6 +181,8 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
    public PluginSessionCallback sessionStarted(final ISession iSession) {
         boolean isMssql = isMssql(iSession); 
         if (isMssql) {
+            MSSQLPreferenceBean _prefs = PreferencesManager.getPreferences();
+            iSession.setQueryTokenizer(new MSSQLQueryTokenizer(_prefs));
             GUIUtils.processOnSwingEventThread(new Runnable() {
                 public void run() {
                     updateTreeApi(iSession);
