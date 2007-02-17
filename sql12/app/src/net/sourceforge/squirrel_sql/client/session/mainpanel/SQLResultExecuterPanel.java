@@ -1239,6 +1239,7 @@ public class SQLResultExecuterPanel extends JPanel
                         msg = s_stringMgr.getString("SQLResultExecuterPanel.rowsUpdated",
                                                   count);
                     }
+                    break;
                 case DELETE:
                     if (_largeScript) {
                         _scriptRowsDeleted++;
