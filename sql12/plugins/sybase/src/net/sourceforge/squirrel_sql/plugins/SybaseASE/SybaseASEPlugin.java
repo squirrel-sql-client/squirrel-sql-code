@@ -1,6 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.SybaseASE;
 
-import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
@@ -11,6 +10,10 @@ import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.plugins.SybaseASE.gui.SybaseGlobalPreferencesTab;
+import net.sourceforge.squirrel_sql.plugins.SybaseASE.prefs.PreferencesManager;
+import net.sourceforge.squirrel_sql.plugins.SybaseASE.prefs.SybasePreferenceBean;
+import net.sourceforge.squirrel_sql.plugins.SybaseASE.tokenizer.SybaseQueryTokenizer;
 
 /**
  * The Example plugin class.
@@ -113,15 +116,17 @@ public class SybaseASEPlugin extends DefaultSessionPlugin
 	 */
 	public IGlobalPreferencesPanel[] getGlobalPreferencePanels()
 	{
-		return new IGlobalPreferencesPanel[0];
+        SybaseGlobalPreferencesTab tab = new SybaseGlobalPreferencesTab();
+        return new IGlobalPreferencesPanel[] { tab };
 	}
-
+    
 	/**
 	 * Initialize this plugin.
 	 */
 	public synchronized void initialize() throws PluginException
 	{
 		_resources = new PluginResources("net.sourceforge.squirrel_sql.plugins.SybaseASE.SybaseASE", this);
+        PreferencesManager.initialize(this);
 	}
 
 
@@ -145,7 +150,8 @@ public class SybaseASEPlugin extends DefaultSessionPlugin
             // So if it's not a DB2 Session we tell SQuirreL the Plugin should not be used.
             return null;
          }
-
+         SybasePreferenceBean _prefs = PreferencesManager.getPreferences();
+         session.setQueryTokenizer(new SybaseQueryTokenizer(_prefs));
          // Add context menu items to the object tree's view and procedure nodes.
          IObjectTreeAPI otApi = session.getSessionInternalFrame().getObjectTreeAPI();
          otApi.addToPopup(DatabaseObjectType.VIEW, new ScriptSybaseASEViewAction(getApplication(), _resources, session));
