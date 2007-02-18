@@ -28,6 +28,8 @@ import javax.swing.JOptionPane;
 import javax.swing.ProgressMonitor;
 import javax.swing.SwingUtilities;
 
+import net.sourceforge.squirrel_sql.fw.codereformat.CodeReformator;
+import net.sourceforge.squirrel_sql.fw.codereformat.CommentSpec;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -66,6 +68,17 @@ public class CopyProgressMonitor extends I18NBaseObject
                          LoggerController.createLogger(CopyExecutor.class);
     
     private ProgressMonitor pm = null;
+    
+    private static CommentSpec[] commentSpecs =
+        new CommentSpec[]
+        {
+            new CommentSpec("/*", "*/"),
+            new CommentSpec("--", "\n")
+        };
+  
+  private static CodeReformator formatter = 
+      new CodeReformator(";", commentSpecs);
+  
     
     public CopyProgressMonitor(SessionInfoProvider provider) {
         prov = provider;
@@ -199,13 +212,15 @@ public class CopyProgressMonitor extends I18NBaseObject
             showMessageDialog(message, title, messageType);                                  
         }
         if (e.getType() == ErrorEvent.SQL_EXCEPTION_TYPE) {
-            String exMessage = wordWrap(e.getException().getMessage(), 80);
             
+            String exMessage = wordWrap(e.getException().getMessage(), 80);
+            String sql = formatter.reformat(DBUtil.getLastStatement());
+            String sqlAndValues = sql + DBUtil.getLastStatementValues();
             int errorCode = ((SQLException)e.getException()).getErrorCode();
             log.error("SQL Error code = "+errorCode,e.getException());
             String message = getMessage("CopyProgressMonitor.sqlErrorMessage",
                                         new String[]{exMessage, ""+errorCode,
-                                        DBUtil.getLastStatement()});
+                                        sqlAndValues});
             String title = getMessage("CopyProgressMonitor.sqlErrorTitle");
             showMessageDialog(message, title, JOptionPane.ERROR_MESSAGE);
         }

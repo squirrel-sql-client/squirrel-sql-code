@@ -97,6 +97,8 @@ public class DBUtil extends I18NBaseObject {
     /** The last statement executed that we'll show to the user if error  */
     private static String lastStatement = null;
     
+    private static String lastStatementValues = null;
+    
     /**
      * Returns a string that looks like:
      * 
@@ -2016,5 +2018,13 @@ public class DBUtil extends I18NBaseObject {
      */
     public static String getLastStatement() {
         return lastStatement;
+    }
+    
+    public static void setLastStatementValues(String values) {
+        lastStatementValues = values;
+    }
+    
+    public static String getLastStatementValues() {
+        return lastStatementValues;
     }
 }

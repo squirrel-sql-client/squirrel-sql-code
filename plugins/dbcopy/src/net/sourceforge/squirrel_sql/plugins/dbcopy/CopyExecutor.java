@@ -572,8 +572,8 @@ public class CopyExecutor extends I18NBaseObject {
                 {
                     insertStmt.clearParameters();
                 }
-                StringBuffer lastStmtBuffer = new StringBuffer(insertSQL);
-                lastStmtBuffer.append("\n(Bind variable values: ");
+                StringBuffer lastStmtValuesBuffer = new StringBuffer();
+                lastStmtValuesBuffer.append("\n(Bind variable values: ");
                 for (int i = 0; i < columnCount; i++) {
 
                     int sourceColType = sourceInfos[i].getDataType();
@@ -596,16 +596,16 @@ public class CopyExecutor extends I18NBaseObject {
                                                          i+1,
                                                          rs);
                     bindVarVals[i] = bindVal;
-                    lastStmtBuffer.append(bindVal);
+                    lastStmtValuesBuffer.append(bindVal);
                     if (i + 1 < columnCount) {
-                        lastStmtBuffer.append(", ");
+                        lastStmtValuesBuffer.append(", ");
                     }
                     if (isLOBType(destColType)) {
                     	foundLOBType = true;
                     }
                 }                
-                lastStmtBuffer.append(")");
-                DBUtil.setLastStatement(lastStmtBuffer.toString());
+                lastStmtValuesBuffer.append(")");
+                DBUtil.setLastStatementValues(lastStmtValuesBuffer.toString());
                 sendStatementEvent(insertSQL, bindVarVals);
                 insertStmt.executeUpdate();
                 sendRecordEvent(count, sourceTableCount);
@@ -761,6 +761,7 @@ public class CopyExecutor extends I18NBaseObject {
             Iterator it = fkStmts.iterator();
             while (it.hasNext()) {
                 String fkSQL = (String)it.next();
+                DBUtil.setLastStatementValues("");
                 DBUtil.executeUpdate(destConn, fkSQL, true);
             }           
         }
