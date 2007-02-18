@@ -26,6 +26,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.Action;
@@ -78,6 +79,7 @@ import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -596,6 +598,16 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 		return _tree.getSelectedNodes();
 	}
 
+    /**
+     * Return a type-safe list of the currently selected database tables
+     *
+     * @return  list of <TT>ITableInfo</TT> objects.
+     */
+    public List<ITableInfo> getSelectedTables() {
+        return _tree.getSelectedTables();
+    }
+    
+    
 	/**
 	 * Return an array of the currently selected database
 	 * objects. This is guaranteed to be non-null.

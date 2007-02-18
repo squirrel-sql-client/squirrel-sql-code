@@ -50,8 +50,8 @@ import net.sourceforge.squirrel_sql.client.session.action.CopySimpleObjectNameAc
 import net.sourceforge.squirrel_sql.client.session.action.DeleteSelectedTablesAction;
 import net.sourceforge.squirrel_sql.client.session.action.EditWhereColsAction;
 import net.sourceforge.squirrel_sql.client.session.action.FilterObjectsAction;
-import net.sourceforge.squirrel_sql.client.session.action.RefreshSchemaInfoAction;
 import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeItemAction;
+import net.sourceforge.squirrel_sql.client.session.action.RefreshSchemaInfoAction;
 import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
 import net.sourceforge.squirrel_sql.client.session.action.SetDefaultCatalogAction;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
@@ -60,6 +60,7 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.EnumerationIterator;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -712,6 +713,25 @@ class ObjectTree extends JTree
 		return dbObjects;
 	}
 
+    /**
+     * Return a type-safe list of the currently selected database tables
+     *
+     * @return  list of <TT>ITableInfo</TT> objects.
+     */
+    List<ITableInfo> getSelectedTables()
+    {
+        ObjectTreeNode[] nodes = getSelectedNodes();
+        ArrayList<ITableInfo> result = new ArrayList<ITableInfo>(); 
+        for (int i = 0; i < nodes.length; ++i)
+        {
+            if (nodes[i].getDatabaseObjectType() == DatabaseObjectType.TABLE) {
+                result.add((ITableInfo)nodes[i].getDatabaseObjectInfo());
+            }
+        }
+        return result;
+    }
+    
+    
 	/**
 	 * Get the appropriate popup menu for the currently selected nodes
 	 * in the object tree and display it.

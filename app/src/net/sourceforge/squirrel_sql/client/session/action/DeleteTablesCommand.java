@@ -18,26 +18,20 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.List;
 
-import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
-import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
- * @version 	$Id: DeleteTablesCommand.java,v 1.1 2006-02-04 16:05:55 manningr Exp $
+ * @version 	$Id: DeleteTablesCommand.java,v 1.2 2007-02-18 22:44:19 manningr Exp $
  * @author		Rob Manning
  */
 public class DeleteTablesCommand implements ICommand
@@ -53,8 +47,8 @@ public class DeleteTablesCommand implements ICommand
     /** Current session. */
 	private final ISession _session;
 
-	/** Tables to be deleted. */
-	private final IDatabaseObjectInfo[] _tables;
+	/** Tables that have records to be deleted. */
+	private final List<ITableInfo> _tables;
     
 	/**
 	 * Ctor.
@@ -66,7 +60,7 @@ public class DeleteTablesCommand implements ICommand
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
 	 */
-	public DeleteTablesCommand(ISession session, IDatabaseObjectInfo[] tables)
+	public DeleteTablesCommand(ISession session, List<ITableInfo> tables)
 	{
 		super();
 		if (session == null)
@@ -83,25 +77,30 @@ public class DeleteTablesCommand implements ICommand
 	}
 
 	/**
-	 * Drop selected tables in the object tree.
+	 * Delete records from the selected tables in the object tree.
 	 */
 	public void execute()
 	{
 		final String sqlSep = _session.getProperties().getSQLStatementSeparator();
         final SQLDatabaseMetaData md = _session.getSQLConnection().getSQLMetaData();
+        List<ITableInfo> orderedTables = _tables;
+        String cascadeClause = null;
+        try {
+            orderedTables = SQLUtilities.getDeletionOrder(md, _tables);
+        } catch (SQLException e) {
+            s_log.error("Unexpected exception while attempting to order tables", e);
+        }
+        try {
+            cascadeClause = md.getCascadeClause();
+        } catch (SQLException e) {
+            s_log.error("Unexpected exception while attempting to get cascade clause", e);
+        }
 		final StringBuffer buf = new StringBuffer();
-        for (int i = 0; i < _tables.length; i++)
+        for (ITableInfo ti : orderedTables)
 		{
-			final ITableInfo ti = (ITableInfo)_tables[i];
             buf.append("DELETE FROM ").append(ti.getQualifiedName());
-            try {
-                buf.append(" ").append(md.getCascadeClause());
-            } catch (SQLException e) {
-                s_log.error(
-                    "DeleteTablesCommand.execute: Enountered SQLException " +
-                    "while attempting to find to the cascade clause for " +
-                    "delete statements - "+e.getMessage());
-                return;
+            if (cascadeClause != null && !cascadeClause.equals("")) {
+                buf.append(" ").append(cascadeClause);
             }
             buf.append(sqlSep).append(" ").append('\n');
 		}
@@ -113,5 +112,5 @@ public class DeleteTablesCommand implements ICommand
         
 		// Use this to run asynch
 		// _session.getApplication().getThreadPool().addTask(executer);
-	}    
+	}        
 }
