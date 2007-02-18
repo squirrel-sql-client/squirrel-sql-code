@@ -19,11 +19,16 @@ package net.sourceforge.squirrel_sql.plugins.dbcopy.commands;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -80,10 +85,27 @@ public class CopyTableCommand implements ICommand
             		}
 				}
             }
-            _plugin.setCopySourceSession(_session);
-            _plugin.setSelectedDatabaseObjects(dbObjs);
-            _plugin.setPasteMenuEnabled(true);
+            try {
+                _plugin.setCopySourceSession(_session);
+                _plugin.setSelectedDatabaseObjects(getInsertionOrder(dbObjs));
+                _plugin.setPasteMenuEnabled(true);
+            } catch (SQLException e) {
+                log.error("Unexected exception: ", e);
+            }
         } 
+    }
+    
+    private IDatabaseObjectInfo[] getInsertionOrder(IDatabaseObjectInfo[] dbObjs) 
+        throws SQLException
+    {
+        SQLDatabaseMetaData md = _session.getSQLConnection().getSQLMetaData();
+        IDatabaseObjectInfo[] result = new IDatabaseObjectInfo[dbObjs.length];
+        List<ITableInfo> selectedTables = new ArrayList<ITableInfo>();
+        for (int i = 0; i < dbObjs.length; i++) {
+            selectedTables.add((ITableInfo)dbObjs[i]);
+        }
+        selectedTables = SQLUtilities.getInsertionOrder(md, selectedTables);
+        return selectedTables.toArray(new IDatabaseObjectInfo[dbObjs.length]);
     }
 
 }
