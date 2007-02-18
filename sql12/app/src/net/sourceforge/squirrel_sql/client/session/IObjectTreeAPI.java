@@ -20,6 +20,8 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.util.List;
+
 import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.event.TreeModelListener;
@@ -32,6 +34,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IOb
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 /**
  * This interface defines the API through which plugins can work with the object
  * tree.
@@ -195,6 +198,13 @@ public interface IObjectTreeAPI extends IHasIdentifier
 	 */
 	IDatabaseObjectInfo[] getSelectedDatabaseObjects();
 
+    /**
+     * Return a type-safe list of the currently selected database tables
+     *
+     * @return  list of <TT>ITableInfo</TT> objects.
+     */
+    List<ITableInfo> getSelectedTables();
+    
 	/**
 	 * Refresh the object tree.
 	 */

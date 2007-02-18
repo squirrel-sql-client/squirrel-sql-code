@@ -18,19 +18,17 @@ package net.sourceforge.squirrel_sql.client.session.action;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.event.ActionEvent;
-
-import javax.swing.tree.TreePath;
+import java.util.List;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
- * @version 	$Id: DeleteSelectedTablesAction.java,v 1.1 2006-02-04 16:05:55 manningr Exp $
+ * @version 	$Id: DeleteSelectedTablesAction.java,v 1.2 2007-02-18 22:44:19 manningr Exp $
  * @author		Rob Manning
  */
 public class DeleteSelectedTablesAction extends SquirrelAction
@@ -77,8 +75,8 @@ public class DeleteSelectedTablesAction extends SquirrelAction
 	{
 		if (_tree != null)
 		{
-			IDatabaseObjectInfo[] tables = _tree.getSelectedDatabaseObjects();
-			if (tables.length > 0)
+			List<ITableInfo> tables = _tree.getSelectedTables();
+			if (tables.size() > 0)
 			{
 				if (Dialogs.showYesNo(getApplication().getMainFrame(), MSG, TITLE))
 				{
