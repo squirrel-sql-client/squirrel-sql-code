@@ -17,15 +17,14 @@ public class SQLUtilities {
      * @return
      * @throws SQLException
      */
-    public static List<ITableInfo> getDeletionOrder(SQLDatabaseMetaData md, 
-                                                    List<ITableInfo> tables)
+    public static List<ITableInfo> getDeletionOrder(List<ITableInfo> tables)
         throws SQLException
     {
-        List<ITableInfo> insertionOrder = getInsertionOrder(md, tables);
+        List<ITableInfo> insertionOrder = getInsertionOrder(tables);
         Collections.reverse(insertionOrder);
         return insertionOrder;
     }
-    
+        
     /**
      * Returns the specified list of tables in an order such that insertions into
      * all tables will satisfy any foreign key constraints. This will not 
@@ -37,11 +36,11 @@ public class SQLUtilities {
      * 
      * @param md
      * @param tables
+     * @param listener
      * @return
      * @throws SQLException
      */
-    public static List<ITableInfo> getInsertionOrder(SQLDatabaseMetaData md, 
-                                                     List<ITableInfo> tables) 
+    public static List<ITableInfo> getInsertionOrder(List<ITableInfo> tables) 
         throws SQLException                                                     
     {
         List<ITableInfo> result = new ArrayList<ITableInfo>();
@@ -52,12 +51,12 @@ public class SQLUtilities {
         // tables that have at least one child table
         List<ITableInfo> parents = new ArrayList<ITableInfo>();
         // tables that have at least one child table and have a least one parent table
-        List<TableDependInfo> sandwiches = new ArrayList<TableDependInfo>();
+        List<ITableInfo> sandwiches = new ArrayList<ITableInfo>();
         
         
         for (ITableInfo table : tables) {
-            ForeignKeyInfo[] importedKeys = md.getImportedKeysInfo(table);
-            ForeignKeyInfo[] exportedKeys = md.getExportedKeysInfo(table);
+            ForeignKeyInfo[] importedKeys = table.getImportedKeys();
+            ForeignKeyInfo[] exportedKeys = table.getExportedKeys();
             
             if (importedKeys.length == 0 && exportedKeys.length == 0)  {
                 unattached.add(table);
@@ -65,10 +64,7 @@ public class SQLUtilities {
             }
             if (exportedKeys.length > 0) {
                 if (importedKeys.length > 0) {
-                    sandwiches.add(new TableDependInfo(table, 
-                                                       md, 
-                                                       exportedKeys, 
-                                                       importedKeys));
+                    sandwiches.add(table);
                 } else {
                     parents.add(table);
                 }
@@ -95,16 +91,16 @@ public class SQLUtilities {
         return result;
     }
     
-    private static void reorderTables(List<TableDependInfo> sandwiches) 
+    private static void reorderTables(List<ITableInfo> sandwiches) 
     {
         Collections.sort(sandwiches, new TableComparator());
     }
     
-    private static class TableComparator implements Comparator<TableDependInfo> {
+    private static class TableComparator implements Comparator<ITableInfo> {
         
               
-        public int compare(TableDependInfo t1, TableDependInfo t2) {
-            ForeignKeyInfo[] t1ImportedKeys = t1.importedKeys;
+        public int compare(ITableInfo t1, ITableInfo t2) {
+            ForeignKeyInfo[] t1ImportedKeys = t1.getImportedKeys();
             for (int i = 0; i < t1ImportedKeys.length; i++) {
                 ForeignKeyInfo info = t1ImportedKeys[i];
                 if (info.getPrimaryKeyTableName().equals(t2.getSimpleName())) {
@@ -112,7 +108,7 @@ public class SQLUtilities {
                     return 1;
                 }
             }
-            ForeignKeyInfo[] t2ImportedKeys = t2.importedKeys;
+            ForeignKeyInfo[] t2ImportedKeys = t2.getImportedKeys();
             for (int i = 0; i < t2ImportedKeys.length; i++) {
                 ForeignKeyInfo info = t2ImportedKeys[i];
                 if (info.getPrimaryKeyTableName().equals(t1.getSimpleName())) {
@@ -120,10 +116,10 @@ public class SQLUtilities {
                     return -1;
                 }
             }
-            if (t1.importedKeys.length > t2ImportedKeys.length) {
+            if (t1.getImportedKeys().length > t2ImportedKeys.length) {
                 return 1;
             }
-            if (t1.importedKeys.length < t2ImportedKeys.length) {
+            if (t1.getImportedKeys().length < t2ImportedKeys.length) {
                 return -1;
             }
             return 0;
@@ -198,7 +194,7 @@ public class SQLUtilities {
         }
         return result;
     }
-    
+    /*
     private static class TableDependInfo extends TableInfo {
         
         ForeignKeyInfo[] exportedKeys = null;
@@ -244,5 +240,6 @@ public class SQLUtilities {
         
         
         
-    }
+    } */
+
 }

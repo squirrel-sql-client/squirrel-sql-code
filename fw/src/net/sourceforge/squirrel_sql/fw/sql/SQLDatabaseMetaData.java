@@ -17,8 +17,6 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -139,6 +137,12 @@ public class SQLDatabaseMetaData
 	 */
 	private Map _cache = Collections.synchronizedMap(new HashMap());
 
+    /**
+     * If previous attempts to getSuperTables fail, then this will be set to 
+     * false, and prevent further attempts.
+     */
+    private boolean supportsSuperTables = true;
+    
 	/**
 	 * ctor specifying the connection that we are retrieving metadata for.
 	 *
@@ -1119,38 +1123,26 @@ public class SQLDatabaseMetaData
       ResultSet tabResult = null;
       try
       {
-         try
-         {
-            //TODO: remove reflection once we only support JDK1.4
-            //superTabResult = md.getSuperTables(catalog, schemaPattern,
-            //									tableNamePattern);
-            Class clazz = md.getClass();
-            Class[] p1 = new Class[]{String.class, String.class, String.class};
-            Method method = clazz.getMethod("getSuperTables", p1);
-            if (method != null)
-            {
-               Object[] p2 = new Object[]{catalog, schemaPattern, tableNamePattern};
-               try
-               {
-                  superTabResult = (ResultSet) method.invoke(md, p2);
-               }
-               catch (InvocationTargetException ignore)
-               {
-                  // unsupported by this driver.
-               }
-            }
-            // create a mapping of names if we have supertable info, since
-            // we need to find the ITableInfo again for re-ordering.
-            if (superTabResult != null && superTabResult.next())
-            {
-               nameMap = new HashMap();
-            }
+         if (supportsSuperTables) {
+             try
+             {
+                superTabResult = md.getSuperTables(catalog, 
+                                                   schemaPattern,
+                								   tableNamePattern);
+                // create a mapping of names if we have supertable info, since
+                // we need to find the ITableInfo again for re-ordering.
+                if (superTabResult != null && superTabResult.next())
+                {
+                   nameMap = new HashMap();
+                }
+             }
+             catch (Throwable th)
+             {
+                s_log.debug("DBMS/Driver doesn't support getSupertables(): "+
+                            th.getMessage());
+                supportsSuperTables = false;
+             }
          }
-         catch (Throwable th)
-         {
-            s_log.debug("DBMS/Driver doesn't support getSupertables()", th);
-         }
-
          // store all plain table info we have.
          tabResult = md.getTables(catalog, schemaPattern, tableNamePattern, types);
          int count = 0;
@@ -1160,6 +1152,8 @@ public class SQLDatabaseMetaData
                tabResult.getString(2), tabResult.getString(3),
                tabResult.getString(4), tabResult.getString(5),
                this);
+            tabInfo.setExportedKeys(this.getExportedKeysInfo(tabInfo));
+            tabInfo.setImportedKeys(this.getImportedKeysInfo(tabInfo));
             if (nameMap != null)
             {
                nameMap.put(tabInfo.getSimpleName(), tabInfo);
@@ -1212,7 +1206,7 @@ public class SQLDatabaseMetaData
 
       return (ITableInfo[]) list.toArray(new ITableInfo[list.size()]);
    }
-
+   
    /**
      * Retrieve information about the UDTs in the system.
      *

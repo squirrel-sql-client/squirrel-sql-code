@@ -22,7 +22,7 @@ import java.util.TreeSet;
 
 public class TableInfo extends DatabaseObjectInfo implements ITableInfo
 {
-	/** Table Type. */
+    /** Table Type. */
 	private final String _tableType;
 
 	/** Table remarks. */
@@ -31,6 +31,9 @@ public class TableInfo extends DatabaseObjectInfo implements ITableInfo
 	private SortedSet _childList; // build up datastructure.
 	private ITableInfo[] _childs; // final cache.
 
+    ForeignKeyInfo[] exportedKeys = null;
+    ForeignKeyInfo[] importedKeys = null;
+    
 	public TableInfo(String catalog, String schema, String simpleName,
 					 String tableType, String remarks,
 					 SQLDatabaseMetaData md)
@@ -106,6 +109,28 @@ public class TableInfo extends DatabaseObjectInfo implements ITableInfo
 	}
 
 
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ITableInfo#getExportedKeys()
+     */
+    public ForeignKeyInfo[] getExportedKeys() {
+        return exportedKeys;
+    }
+
+    public void setExportedKeys(ForeignKeyInfo[] foreignKeys) {
+        exportedKeys = foreignKeys;
+    }
+    
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ITableInfo#getImportedKeys()
+     */
+    public ForeignKeyInfo[] getImportedKeys() {
+        return importedKeys;
+    }
+
+    public void setImportedKeys(ForeignKeyInfo[] foreignKeys) {
+        importedKeys = foreignKeys;
+    }
+    
 
 
 }
