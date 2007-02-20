@@ -6,6 +6,10 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+- 'Delete Records' action now orders the selected tables in order to satisfy any
+  FK dependencies.  Previously, this operation would fail if PK tables preceded
+  (by name alphabetically) FK tables in the object tree list.
+
 - Certain plugins (Oracle, Sybase, MS SQL-Server) now have configuration tabs 
   (in Global Preferences) to allow for configuration of the statement separator 
   for scripts independently from the Session properties configuration.  For 
@@ -69,6 +73,10 @@ Informix Plugin
     take advantage of this capability.
 
 DBCopy Plugin 
+  - Analyzes FKs to be copied and skips them if they already exist in 
+    destination database. 
+  - Now the plugin reorders source tables to satisfy FK dependencies when 
+    copying data into existing tables with similar constraints.
   - The error message for SQLExceptions now includes the SQL statement that was 
     last executed (including bind variable values if it was a PreparedStatement)
 
