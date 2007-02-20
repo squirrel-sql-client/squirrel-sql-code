@@ -31,7 +31,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
- * @version 	$Id: DeleteTablesCommand.java,v 1.2 2007-02-18 22:44:19 manningr Exp $
+ * @version 	$Id: DeleteTablesCommand.java,v 1.3 2007-02-20 00:05:47 manningr Exp $
  * @author		Rob Manning
  */
 public class DeleteTablesCommand implements ICommand
@@ -86,7 +86,7 @@ public class DeleteTablesCommand implements ICommand
         List<ITableInfo> orderedTables = _tables;
         String cascadeClause = null;
         try {
-            orderedTables = SQLUtilities.getDeletionOrder(md, _tables);
+            orderedTables = SQLUtilities.getDeletionOrder(_tables);
         } catch (SQLException e) {
             s_log.error("Unexpected exception while attempting to order tables", e);
         }

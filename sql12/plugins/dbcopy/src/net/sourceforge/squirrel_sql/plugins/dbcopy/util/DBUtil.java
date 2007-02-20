@@ -53,6 +53,7 @@ import net.sourceforge.squirrel_sql.client.db.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
+import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
@@ -183,89 +184,154 @@ public class DBUtil extends I18NBaseObject {
                                         ArrayList selectedTableInfos) 
         throws SQLException , UserCancelledOperationException
     {
-        SQLConnection sourceConn = prov.getCopySourceSession().getSQLConnection();
-        DatabaseMetaData md = sourceConn.getConnection().getMetaData();
-        ResultSet rs = null;
-        HashSet result = new HashSet();
-        try {
-            if (md.supportsCatalogsInTableDefinitions()) {
-                rs = md.getImportedKeys(ti.getCatalogName(), null, ti.getSimpleName());
-            } else if (md.supportsSchemasInTableDefinitions()) {
-                rs = md.getImportedKeys(null, ti.getSchemaName(), ti.getSimpleName());
-            } else {
-                rs = md.getImportedKeys(null, null, ti.getSimpleName());
+        HashSet<String> result = new HashSet<String>();
+        for (ForeignKeyInfo fkInfo : ti.getImportedKeys()) {
+            String pkTableName = fkInfo.getPrimaryKeyTableName();
+            String pkTableCol = fkInfo.getPrimaryKeyColumnName();
+            String fkTableName = fkInfo.getForeignKeyTableName();
+            String fkTableCol = fkInfo.getForeignKeyColumnName();
+            // TODO: Is giving a FK constraint a name universally supported
+            // and done the same way on every database?
+            String fkName = fkInfo.getForeignKeyName();
+        
+
+            //alter table ti.getSimpleName() 
+            //add foreign key (fkTableCol) 
+            //references pkTableName(pkTableCol);
+            if (!containsTable(selectedTableInfos, pkTableName)) {
+                // TODO: Maybe someday we could inform the user that the imported
+                // key can't be created because the list of tables they've 
+                // selected, doesn't include the table that this foreign key
+                // depends upon.  For now, just log a warning and skip it.
+                if (log.isDebugEnabled()) {
+                    //i18n[DBUtil.error.missingtable=getForeignKeySQL: table 
+                    //'{0}' has a column '{1}' that references table '{2}' 
+                    //column '{3}'. However, that table is not being copied. 
+                    //Skipping this foreign key.]
+                    String msg = 
+                        s_stringMgr.getString("DBUtil.error.missingtable",
+                                              new String[] { fkTableName,
+                                                             fkTableCol,
+                                                             pkTableName,
+                                                             pkTableCol });
+                                           
+                    log.debug(msg);
+                }                    
+                continue;
+            }
+
+            ISession destSession = prov.getCopyDestSession();
+            String destSchema = prov.getDestSelectedDatabaseObject().getSimpleName();
+            String destCatalog = prov.getDestSelectedDatabaseObject().getCatalogName();
+            if (tableHasForeignKey(destCatalog, 
+                                   destSchema, 
+                                   ti.getSimpleName(),
+                                   fkInfo,
+                                   prov))
+            {
+                if (log.isInfoEnabled()) {
+                    log.info(
+                        "Skipping FK ("+fkName+") - table "+ti.getSimpleName()+
+                        " seems to already have it defined.");
+                }
+                continue;
             }
             
-            while (rs.next()) {
-                StringBuffer sb = new StringBuffer();
-                String pkTableName = rs.getString(3);
-                String pkTableCol = rs.getString(4);
-                String fkTableName = rs.getString(7);
-                String fkTableCol = rs.getString(8);
-                String fkName = rs.getString(12);
-                //alter table ti.getSimpleName() 
-                //add foreign key (fkTableCol) 
-                //references pkTableName(pkTableCol);
-                if (!containsTable(selectedTableInfos, pkTableName)) {
-                    // TODO: Maybe someday we could inform the user that the imported
-                    // key can't be created because the list of tables they've 
-                    // selected, doesn't include the table that this foreign key
-                    // depends upon.  For now, just log a warning and skip it.
-                    if (log.isDebugEnabled()) {
-                        //i18n[DBUtil.error.missingtable=getForeignKeySQL: table 
-                        //'{0}' has a column '{1}' that references table '{2}' 
-                        //column '{3}'. However, that table is not being copied. 
-                        //Skipping this foreign key.]
-                        String msg = 
-                            s_stringMgr.getString("DBUtil.error.missingtable",
-                                                  new String[] { fkTableName,
-                                                                 fkTableCol,
-                                                                 pkTableName,
-                                                                 pkTableCol });
-                                               
-                        log.debug(msg);
-                    }                    
-                    continue;
-                }
-                sb.append("ALTER TABLE ");
-                ISession destSession = prov.getCopyDestSession();
-                String destSchema = prov.getDestSelectedDatabaseObject().getSimpleName();
-                String destCatalog = prov.getDestSelectedDatabaseObject().getCatalogName();
-                String fkTable = getQualifiedObjectName(destSession,  
-                                                        destCatalog, 
-                                                        destSchema, 
-                                                        ti.getSimpleName(), 
-                                                        DialectFactory.DEST_TYPE);
-                String pkTable = getQualifiedObjectName(destSession, 
-                                                        destCatalog, 
-                                                        destSchema, 
-                                                        pkTableName, 
-                                                        DialectFactory.DEST_TYPE);  
-                sb.append(fkTable);
-                sb.append(" ADD FOREIGN KEY (");
-                sb.append(fkTableCol);
-                sb.append(") REFERENCES ");
-                sb.append(pkTable);
-                sb.append("(");
-                sb.append(pkTableCol);
-                sb.append(")");
-                result.add(sb.toString());
-            }
-        } finally {
-            closeResultSet(rs);
+            String fkTable = getQualifiedObjectName(destSession,  
+                                                    destCatalog, 
+                                                    destSchema, 
+                                                    ti.getSimpleName(), 
+                                                    DialectFactory.DEST_TYPE);
+            String pkTable = getQualifiedObjectName(destSession, 
+                                                    destCatalog, 
+                                                    destSchema, 
+                                                    pkTableName, 
+                                                    DialectFactory.DEST_TYPE);
+            StringBuilder tmp = new StringBuilder();
+            tmp.append("ALTER TABLE ");
+            tmp.append(fkTable);
+            tmp.append(" ADD FOREIGN KEY (");
+            tmp.append(fkTableCol);
+            tmp.append(") REFERENCES ");
+            tmp.append(pkTable);
+            tmp.append("(");
+            tmp.append(pkTableCol);
+            tmp.append(")");
+            result.add(tmp.toString());
         }
         return result;
     }
     
-    private static boolean containsTable(ArrayList tableInfos, String table) {
+    public static boolean tableHasForeignKey(String destCatalog, 
+                                             String destSchema, 
+                                             String destTableName,
+                                             ForeignKeyInfo fkInfo,
+                                             SessionInfoProvider prov)
+    {
         boolean result = false;
-        Iterator i = tableInfos.iterator();
-        while (i.hasNext()) {
-            ITableInfo ti = (ITableInfo)i.next();
+        try {
+            SQLDatabaseMetaData md = 
+                prov.getCopyDestSession().getSQLConnection().getSQLMetaData();
+            
+            ITableInfo[] tables = md.getTables(destCatalog, 
+                                                destSchema, 
+                                                destTableName, 
+                                                new String[] {"TABLE"}, 
+                                                null);
+            if (tables.length == 1) {
+                for (ForeignKeyInfo existingKey: tables[0].getImportedKeys()) {
+                    if (areEqual(existingKey, fkInfo)) {
+                        result = true;
+                        break;
+                    }
+                }
+            } else {
+                log.error(
+                    "Couldn't find an exact match for destination table "+
+                    destTableName+". Skipping FK constraint");
+            }
+        } catch (SQLException e) {
+            log.error("Unexpected exception while attempting to determine if " +
+                      "a table ("+destTableName+") has a particular foreign " +
+                      "key");
+        }
+        return result;
+    }
+    
+    private static boolean areEqual(ForeignKeyInfo fk1, ForeignKeyInfo fk2) {
+        String fk1FKColumn = fk1.getForeignKeyColumnName();
+        String fk2FKColumn = fk2.getForeignKeyColumnName();
+        String fk1PKColumn = fk1.getPrimaryKeyColumnName();
+        String fk2PKColumn = fk2.getPrimaryKeyColumnName();
+        String fk1FKTable = fk1.getForeignKeyTableName();
+        String fk2FKTable = fk2.getForeignKeyTableName();
+        String fk1PKTable = fk1.getPrimaryKeyTableName();
+        String fk2PKTable = fk2.getPrimaryKeyTableName();
+        
+        if (!fk1PKColumn.equals(fk2PKColumn)) {
+            return false;
+        }        
+        if (!fk1FKColumn.equals(fk2FKColumn)) {
+            return false;
+        }
+        if (!fk1PKTable.equals(fk2PKTable)) {
+            return false;
+        }
+        if (!fk1FKTable.equals(fk2FKTable)) {
+            return false;
+        }        
+        return true;
+    }
+    
+    private static boolean containsTable(List<ITableInfo> tableInfos, 
+                                         String table) 
+    {
+        boolean result = false;
+        for (ITableInfo ti : tableInfos) {
             if (table.equalsIgnoreCase(ti.getSimpleName())) {
                 result = true;
                 break;
-            }
+            }            
         }
         return result;
     }

@@ -70,6 +70,38 @@ public class MockTableInfo extends MockDatabaseObjectInfo implements ITableInfo 
      */
     public ITableInfo[] getChildTables() {
         return childTables;
+    }
+
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ITableInfo#getExportedKeys()
+     */
+    public ForeignKeyInfo[] getExportedKeys() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ITableInfo#getImportedKeys()
+     */
+    public ForeignKeyInfo[] getImportedKeys() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ITableInfo#setExportedKeys(net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo[])
+     */
+    public void setExportedKeys(ForeignKeyInfo[] foreignKeys) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ITableInfo#setImportedKeys(net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo[])
+     */
+    public void setImportedKeys(ForeignKeyInfo[] foreignKeys) {
+        // TODO Auto-generated method stub
+        
     }    
     
 
