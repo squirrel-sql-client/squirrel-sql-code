@@ -762,7 +762,12 @@ public class CopyExecutor extends I18NBaseObject {
             while (it.hasNext()) {
                 String fkSQL = (String)it.next();
                 DBUtil.setLastStatementValues("");
-                DBUtil.executeUpdate(destConn, fkSQL, true);
+                try {
+                    DBUtil.executeUpdate(destConn, fkSQL, true);
+                } catch (SQLException e) {
+                    log.error("Unexpected exception while attempting to " +
+                              "create FK constraint using sql = "+fkSQL, e);
+                }
             }           
         }
     }    
