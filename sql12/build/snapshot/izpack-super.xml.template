@@ -21,8 +21,6 @@
 	</locale>
 
 	<resources>
-		<res	src="../../squirrel-sql-dist/squirrel-sql/core/dist/doc/licences/squirrel_licence.txt"
-				id="LicencePanel.licence"/>
 		<res	src="installer-readme.html"
 				id="HTMLInfoPanel.info"/>
 		<res	src="shortcutSpec.xml"
@@ -34,7 +32,6 @@
 	<panels>
 		<panel classname="HelloPanel"/>
 		<panel classname="HTMLInfoPanel"/>
-		<panel classname="LicencePanel"/>
 		<panel classname="TargetPanel"/>
 		<panel classname="PacksPanel"/>
 		<panel classname="InstallPanel"/>
