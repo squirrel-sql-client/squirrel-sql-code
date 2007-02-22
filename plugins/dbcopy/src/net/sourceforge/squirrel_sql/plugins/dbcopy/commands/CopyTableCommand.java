@@ -27,7 +27,6 @@ import javax.swing.ProgressMonitor;
 
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.sql.AnalyzeFKListner;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
@@ -37,7 +36,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.DBCopyPlugin;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.util.Compat;
 
-public class CopyTableCommand implements AnalyzeFKListner, ICommand
+public class CopyTableCommand implements ICommand
 {
     /**
      * Current session.
