@@ -381,16 +381,16 @@ public class ExplainPlanExecuter
               
               //if doesnt exist prompt to create it.
               
-              //i18n[ExplainPlanExecuter.createPlanTableMsg=The Oracle Plan 
+              //i18n[explainplanexecuter.createPlanTableMsg=The Oracle Plan 
               //Table '{0}' doesnt exist in the current schema. Do you want to 
               //create it?]
               String msg = 
-                  s_stringMgr.getString("ExplainPlanExecuter.createPlanTableMsg",
+                  s_stringMgr.getString("explainplanexecuter.createPlanTableMsg",
                                         getPlanTableName());
               
-              //i18n[ExplainPlanExecuter.createPlanTableTitle=Create Plan Table]
+              //i18n[explainplanexecuter.createPlanTableTitle=Create Plan Table]
               String title = 
-                  s_stringMgr.getString("ExplainPlanExecuter.createPlanTableTitle");
+                  s_stringMgr.getString("explainplanexecuter.createPlanTableTitle");
               
               int result = 
                   JOptionPane.showConfirmDialog(this,
@@ -407,17 +407,17 @@ public class ExplainPlanExecuter
                   // Tell the user that they won't be able to show the explain plan
                   
                   JFrame f = _session.getApplication().getMainFrame();                  
-                  //i18n[ExplainPlanExecuter.planTableUnavailable=Explain plans 
+                  //i18n[explainplanexecuter.planTableUnavailable=Explain plans 
                   //will be unavailable for this session]
                   msg = 
                       s_stringMgr.getString(
-                              "ExplainPlanExecuter.planTableUnavailable");
+                              "explainplanexecuter.planTableUnavailable");
                   
-                  //i18n[ExplainPlanExecuter.planTableUnavailableTitle=
+                  //i18n[explainplanexecuter.planTableUnavailableTitle=
                   //PLAN_TABLE not found]
                   title = 
                       s_stringMgr.getString(
-                              "ExplainPlanExecuter.planTableUnavailableTitle");
+                              "explainplanexecuter.planTableUnavailableTitle");
                       
                   JOptionPane.showMessageDialog(f, 
                                                 msg, 
@@ -493,14 +493,14 @@ public class ExplainPlanExecuter
       
       JFrame f = _session.getApplication().getMainFrame();
       
-      //i18n[ExplainPlanExecuter.choosePlanTableMsg=Choose a PLAN_TABLE to 
+      //i18n[explainplanexecuter.choosePlanTableMsg=Choose a PLAN_TABLE to 
       //store the result in]
       String message = 
-          s_stringMgr.getString("ExplainPlanExecuter.choosePlanTableMsg");
+          s_stringMgr.getString("explainplanexecuter.choosePlanTableMsg");
       
-      //i18n[ExplainPlanExecuter.choosePlanTableTitle=Available PLAN_TABLEs]
+      //i18n[explainplanexecuter.choosePlanTableTitle=Available PLAN_TABLEs]
       String chooserTitle = 
-          s_stringMgr.getString("ExplainPlanExecuter.choosePlanTableMsg");
+          s_stringMgr.getString("explainplanexecuter.choosePlanTableMsg");
           
        
       String option = 
