@@ -29,7 +29,7 @@ public class SybaseASEPlugin extends DefaultSessionPlugin
 	 */
 	public String getInternalName()
 	{
-		return "SybaseASE";
+		return "sybase";
 	}
 
 	/**
