@@ -83,6 +83,8 @@ DBCopy Plugin
 
 Bug-Fixes:
 
+An error occured when F5 (Refresh) was hit in a SQL Work Sheet or an Object Tree Window.
+
 Updated Simplified Chinese translation strings (Thanks to xpdz)
 Updated French translation strings (Thanks to Erwan Duroselle)
 Updated Italian translation strings (Thanks to Ivo Neri)
