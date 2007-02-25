@@ -57,7 +57,7 @@ public class RefreshSchemaInfoAction extends SquirrelAction
 
       if (_session != null)
       {
-         IObjectTreeAPI objectTreeAPI = _session.getObjectTreeAPIOfActiveSessionWindow();
+         IObjectTreeAPI objectTreeAPI = _session.getSessionSheet().getObjectTreePanel();
          CursorChanger cursorChg = new CursorChanger(getApplication().getMainFrame());
          cursorChg.show();
          try
