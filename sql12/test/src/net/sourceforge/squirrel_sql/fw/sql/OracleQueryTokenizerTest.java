@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 
 import junit.framework.TestCase;
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
+import net.sourceforge.squirrel_sql.plugins.oracle.gui.DummyPlugin;
 import net.sourceforge.squirrel_sql.plugins.oracle.prefs.OraclePreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.oracle.prefs.PreferencesManager;
 import net.sourceforge.squirrel_sql.plugins.oracle.tokenizer.OracleQueryTokenizer;
@@ -24,8 +25,13 @@ public class OracleQueryTokenizerTest extends TestCase
     QueryTokenizer qt = null;
     static int sqlFileStmtCount = 0;
     
+    static OraclePreferenceBean _prefs;
+    
     public void setUp() throws Exception {
         createSQLFile();
+        DummyPlugin plugin = new DummyPlugin();
+        PreferencesManager.initialize(plugin);
+        _prefs = PreferencesManager.getPreferences();         
     }
     
     public void tearDown() {
@@ -33,7 +39,6 @@ public class OracleQueryTokenizerTest extends TestCase
     }
     
     public void testHasQuery() {
-        OraclePreferenceBean _prefs = PreferencesManager.getPreferences(); 
         qt = new OracleQueryTokenizer(_prefs);
         qt.setScriptToTokenize(SELECT_DUAL);
         SQLUtil.checkQueryTokenizer(qt, 1);
@@ -44,7 +49,6 @@ public class OracleQueryTokenizerTest extends TestCase
     }
 
     public void testGenericSQL() {
-        OraclePreferenceBean _prefs = PreferencesManager.getPreferences();
         String script = SQLUtil.getGenericSQLScript();
         qt = new OracleQueryTokenizer(_prefs);
         qt.setScriptToTokenize(script);
@@ -52,26 +56,29 @@ public class OracleQueryTokenizerTest extends TestCase
     }
     
     public void testCreateStoredProcedure() {
-        OraclePreferenceBean _prefs = PreferencesManager.getPreferences();
         qt = new OracleQueryTokenizer(_prefs);
         qt.setScriptToTokenize(CREATE_STORED_PROC);
         SQLUtil.checkQueryTokenizer(qt, 1);
     }
 
     public void testCreateOrReplaceStoredProcedure() {
-        OraclePreferenceBean _prefs = PreferencesManager.getPreferences();
         qt = new OracleQueryTokenizer(_prefs);
         qt.setScriptToTokenize(CREATE_OR_REPLACE_STORED_PROC);
         SQLUtil.checkQueryTokenizer(qt, 1);
     }
     
     public void testHasQueryFromFile() {
-        OraclePreferenceBean _prefs = PreferencesManager.getPreferences();
         String fileSQL = "@" + tmpFilename + ";\n";
         qt = new OracleQueryTokenizer(_prefs);
         qt.setScriptToTokenize(fileSQL);
         SQLUtil.checkQueryTokenizer(qt, 6);
     }
+
+    public void testExecAnonProcedure() {
+        qt = new OracleQueryTokenizer(_prefs);
+        qt.setScriptToTokenize(ANON_PROC_EXEC);
+        SQLUtil.checkQueryTokenizer(qt, 1);
+    }    
     
     private static void createSQLFile() throws IOException {
         if (tmpFilename != null) {
@@ -88,6 +95,8 @@ public class OracleQueryTokenizerTest extends TestCase
         out.println();
         out.println(CREATE_OR_REPLACE_STORED_PROC);
         out.println();
+        out.println(ANON_PROC_EXEC);
+        out.println();
         out.println(SELECT_DUAL);
         out.println();
         out.println(STUDENTS_NOT_TAKING_CS112);
@@ -98,7 +107,7 @@ public class OracleQueryTokenizerTest extends TestCase
         
         // important to set this to the number of statements in the file 
         // above.
-        sqlFileStmtCount = 6;
+        sqlFileStmtCount = 7;
     }
     
 }

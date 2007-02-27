@@ -32,6 +32,21 @@ public interface OracleSQL {
         " \n" +
         "/ \n\n;";       
     
+    public final static String ANON_PROC_EXEC = 
+        "declare \n" +
+        "v_foo number(10); \n" +
+        "v_bar number(10); \n" +
+        "begin \n" +
+        "   for usr in \n" +
+        "       (select * from foo_bar where user like 'TST%') \n" +
+        "       loop \n" +
+        "       begin \n" +
+        "            update STUDENT set AGE = 13 where SNO = 100000; \n" +
+        "       end; \n" +
+        "   end loop; \n" +
+        "end; \n" +
+        "/ \n\n";        
+    
     public final static String UPDATE_TEST =  
         "update test " +
         "set /*PARAM1*/ thing /*C*/ = 'default value' /*/PARAM1*/;";

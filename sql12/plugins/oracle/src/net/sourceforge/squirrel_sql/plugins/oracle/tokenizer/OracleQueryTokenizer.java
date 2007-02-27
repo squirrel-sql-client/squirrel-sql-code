@@ -42,9 +42,14 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
     private static final String FUNCTION_PATTERN = 
         "^\\s*CREATE\\s+FUNCTION.*|^\\s*CREATE\\s+OR\\s+REPLACE\\s+FUNCTION\\s+.*";    
     
+    private static final String DECLARE_PATTERN = 
+        "^\\s*DECLARE\\s*.*";
+    
     private Pattern procPattern = Pattern.compile(PROCEDURE_PATTERN, Pattern.DOTALL);
     
     private Pattern funcPattern = Pattern.compile(FUNCTION_PATTERN, Pattern.DOTALL);
+    
+    private Pattern declPattern = Pattern.compile(DECLARE_PATTERN, Pattern.DOTALL);
     
     private static final String ORACLE_SCRIPT_INCLUDE_PREFIX = "@";
     
@@ -80,7 +85,8 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
         // find create SQL without matching "/".  The process of 
         // expanding file includes already joins the sql it finds.
         joinFragments(procPattern, false);
-        joinFragments(funcPattern, true);
+        joinFragments(funcPattern, false);
+        joinFragments(declPattern, true);
         
         expandFileIncludes(ORACLE_SCRIPT_INCLUDE_PREFIX);
         
