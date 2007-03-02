@@ -71,8 +71,8 @@ public class TriggerDetailsTab extends BasePreparedStatementTab
         "       end AS table_type, " +
         "       T1.old       AS reference_before, " +
         "       T1.new       AS reference_after " +
-        "FROM    systriggers  AS T1, " +
-        "       systables    AS T2 " +
+        "FROM   informix.systriggers  AS T1, " +
+        "       informix.systables    AS T2 " +
         "WHERE   T2.tabid     = T1.tabid " +
         "and T1.trigname = ? ";
     

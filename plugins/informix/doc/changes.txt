@@ -4,6 +4,8 @@ Informix Plugin Change Log
 
 0.02
 ====
+- Fixed to work with IDS 9 - qualified references to all system views by 
+  prefixing them with the string 'informix.' (no quotes).
 - Fixed ordering segements within the body of Stored Procedures.  
 - Applied code formatting to triggers and view source.  
 - Fixed erroneous inclusion of extra whitespace which for some definitions made

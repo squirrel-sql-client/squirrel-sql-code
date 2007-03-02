@@ -47,7 +47,7 @@ public class TriggerParentExpander implements INodeExpander {
 
     private static String SQL = 
         "select T1.trigname " +
-        "from systriggers AS T1, systables AS T2 " +
+        "from informix.systriggers AS T1, informix.systables AS T2 " +
         "where T2.tabid     = T1.tabid " +
         "and T2.tabname = ? ";
     

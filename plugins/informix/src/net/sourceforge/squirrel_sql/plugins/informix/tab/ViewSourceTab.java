@@ -36,7 +36,7 @@ public class ViewSourceTab extends InformixSourceTab
 	/** SQL that retrieves the source of a stored procedure. */
 	private static String SQL =
         "SELECT viewtext " +
-        "FROM systables AS T1, sysviews AS T2 " +
+        "FROM informix.systables AS T1, informix.sysviews AS T2 " +
         "WHERE tabname = ? " +
         "AND T2.tabid = T1.tabid ";
     

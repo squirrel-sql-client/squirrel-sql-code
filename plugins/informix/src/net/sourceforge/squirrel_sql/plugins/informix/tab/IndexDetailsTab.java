@@ -65,15 +65,15 @@ public class IndexDetailsTab extends BasePreparedStatementTab
         "       T4.nextsiz   AS next_extent, " +
         "      ( " +
         "           SELECT  COUNT(*) " +
-        "           FROM    sysmaster:sysptnext " +
+        "           FROM    sysmaster:informix.sysptnext " +
         "           WHERE   pe_partnum = T3.partn " +
         "       ) AS num_extents, " +
         "       T4.nptotal   AS pages_total, " +
         "       T4.npused    AS pages_used " +
-        "FROM    sysindices   AS T1, " +
-        "       systables    AS T2, " +
-        "       sysfragments AS T3, " +
-        "       sysmaster:sysptnhdr AS T4 " +
+        "FROM   informix.sysindices   AS T1, " +
+        "       informix.systables    AS T2, " +
+        "       informix.sysfragments AS T3, " +
+        "       sysmaster:informix.sysptnhdr AS T4 " +
         "WHERE   T1.tabid     >  99 " +
         "AND     T2.tabid     = T1.tabid " +
         "AND     T3.tabid     = T1.tabid " +
