@@ -48,7 +48,7 @@ public class IndexParentExpander implements INodeExpander
 {
     private static final String SQL = 
         "SELECT  T1.idxname " +
-        "FROM sysindices AS T1, systables AS T2 " +
+        "FROM informix.sysindices AS T1, informix.systables AS T2 " +
         "WHERE T1.tabid = T2.tabid " +
         "and t1.owner = ? "+
         "and T2.tabname = ? ";

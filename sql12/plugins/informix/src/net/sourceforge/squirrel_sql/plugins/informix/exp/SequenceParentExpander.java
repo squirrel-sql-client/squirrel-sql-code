@@ -42,8 +42,8 @@ public class SequenceParentExpander implements INodeExpander
 	/** SQL used to load sequence names  */
 	private static final String SQL =
         "SELECT  T2.tabname AS sequence_name " +
-        "FROM    syssequences AS T1, " +
-        "       systables    AS T2 " +
+        "FROM   informix.syssequences AS T1, " +
+        "       informix.systables    AS T2 " +
         "WHERE   T2.tabid = T1.tabid " +
         "and T2.owner = ? " +
         "and T2.tabname like ? ";
