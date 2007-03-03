@@ -91,8 +91,11 @@ public class DBUtil extends I18NBaseObject {
     private static final StringManager s_stringMgr =
         StringManagerFactory.getStringManager(DBUtil.class);    
     
-    
+    /** The name of the table to create when testing column names in dest db */
     private static final String TEST_TABLE_NAME = "dbcopytest";
+    
+    /** The last statement executed that we'll show to the user if error  */
+    private static String lastStatement = null;
     
     /**
      * Returns a string that looks like:
@@ -291,6 +294,7 @@ public class DBUtil extends I18NBaseObject {
                     s_stringMgr.getString("DBUtil.info.executeupdate", SQL);
                 log.debug(msg);
             }
+            lastStatement = SQL;
             result = stmt.executeUpdate(SQL);
         } finally {
             closeStatement(stmt);
@@ -361,6 +365,7 @@ public class DBUtil extends I18NBaseObject {
             log.debug(msg);
         }
         try {
+            lastStatement = sql;
             rs = stmt.executeQuery(sql);
         } catch (SQLException e) {
             // Only close the statement if SQLException - otherwise it has to 
@@ -1997,5 +2002,19 @@ public class DBUtil extends I18NBaseObject {
         }
         result.append(table);
         return result.toString();
+    }
+
+    /**
+     * @param lastStatement the lastStatement to set
+     */
+    public static void setLastStatement(String lastStatement) {
+        DBUtil.lastStatement = lastStatement;
+    }
+
+    /**
+     * @return the lastStatement
+     */
+    public static String getLastStatement() {
+        return lastStatement;
     }
 }
