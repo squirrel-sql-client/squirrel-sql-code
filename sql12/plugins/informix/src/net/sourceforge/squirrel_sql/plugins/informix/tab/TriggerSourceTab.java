@@ -36,7 +36,7 @@ public class TriggerSourceTab extends InformixSourceTab
 	/** SQL that retrieves the source of a stored procedure. */
 	private static String SQL =
         "SELECT  data " +
-        "FROM    systriggers AS T1, systrigbody AS T2 " +
+        "FROM    informix.systriggers AS T1, informix.systrigbody AS T2 " +
         "WHERE   trigname = ? " +
         "AND     T2.trigid = T1.trigid " +
         "AND     datakey IN ('D', 'A') " +

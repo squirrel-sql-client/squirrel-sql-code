@@ -36,7 +36,7 @@ public class ProcedureSourceTab extends InformixSourceTab
 	/** SQL that retrieves the source of a stored procedure. */
 	private static String SQL =
         "SELECT T1.procid, data " +
-        "FROM sysprocedures AS T1, sysprocbody AS T2 " +
+        "FROM informix.sysprocedures AS T1, informix.sysprocbody AS T2 " +
         "WHERE procname = ? " +
         "AND T2.procid = T1.procid " +
         "AND datakey = 'T' " +
