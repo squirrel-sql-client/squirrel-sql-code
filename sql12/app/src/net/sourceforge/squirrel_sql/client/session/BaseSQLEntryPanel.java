@@ -93,7 +93,11 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
 
       if(bounds[0] == bounds[1])
       {
-         bounds = getSqlBoundsBySeparatorRule();
+         bounds = getSqlBoundsBySeparatorRule(getCaretPosition());
+      }
+      if(bounds[0] == bounds[1])
+      {
+         bounds = getSqlBoundsBySeparatorRule(getCaretPosition()-1);          
       }
 
       return bounds;
@@ -104,12 +108,11 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
     * is counted as separator too. 
     * @return
     */
-   private int[] getSqlBoundsBySeparatorRule()
+   private int[] getSqlBoundsBySeparatorRule(int iCaretPos)
    {
       int[] bounds = new int[2];
 
       String sql = getText();
-      int iCaretPos = getCaretPosition();
 
       bounds[0] = lastIndexOfStateSep(sql, iCaretPos);
       bounds[1] = indexOfStateSep(sql, iCaretPos);
@@ -117,8 +120,7 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
       return bounds;
 
    }
-
-
+   
    private static int indexOfStateSep(String sql, int pos)
    {
       int ix = pos;
@@ -160,7 +162,11 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
          {
             return 0;
          }
-
+         
+         if (ix >= sql.length()) {
+             return ix;
+         }
+         
          if(false == Character.isWhitespace(sql.charAt(ix)))
          {
             newLinteCount = 0;
@@ -249,7 +255,8 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
 
    public void selectCurrentSql()
    {
-      int[] boundsOfSQLToBeExecuted = getSqlBoundsBySeparatorRule();
+      int[] boundsOfSQLToBeExecuted = 
+          getSqlBoundsBySeparatorRule(getCaretPosition());
 
       if(boundsOfSQLToBeExecuted[0] != boundsOfSQLToBeExecuted[1])
       {
