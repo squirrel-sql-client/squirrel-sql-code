@@ -83,6 +83,9 @@ DBCopy Plugin
 
 Bug-Fixes:
 
+Caching of schemas (serializing to disc) failed. A NotSerializableException was thrown.
+
+
 An error occured when F5 (Refresh) was hit in a SQL Work Sheet or an Object Tree Window.
 
 Updated Simplified Chinese translation strings (Thanks to xpdz)
