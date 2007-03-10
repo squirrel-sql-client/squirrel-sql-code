@@ -59,6 +59,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -278,8 +279,9 @@ public class DBUtil extends I18NBaseObject {
                                                 destTableName, 
                                                 new String[] {"TABLE"}, 
                                                 null);
-            if (tables.length == 1) {
-                for (ForeignKeyInfo existingKey: tables[0].getImportedKeys()) {
+            if (tables != null && tables.length == 1) {
+                ForeignKeyInfo[] fks = SQLUtilities.getImportedKeys(tables[0], md);
+                for (ForeignKeyInfo existingKey: fks) {
                     if (areEqual(existingKey, fkInfo)) {
                         result = true;
                         break;
@@ -288,7 +290,8 @@ public class DBUtil extends I18NBaseObject {
             } else {
                 log.error(
                     "Couldn't find an exact match for destination table "+
-                    destTableName+". Skipping FK constraint");
+                    destTableName+" in schema "+destSchema+" and catalog "+
+                    destCatalog+". Skipping FK constraint");
             }
         } catch (SQLException e) {
             log.error("Unexpected exception while attempting to determine if " +
