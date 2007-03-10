@@ -25,12 +25,16 @@ import java.util.List;
 
 import javax.swing.ProgressMonitor;
 
+import net.sourceforge.squirrel_sql.client.gui.ProgessCallBackDialog;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.DBCopyPlugin;
@@ -51,6 +55,23 @@ public class CopyTableCommand implements ICommand
     /** Logger for this class. */
     private final static ILogger log = 
                          LoggerController.createLogger(CopyTableCommand.class);
+    
+    /** Internationalized strings for this class */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(CopyTableCommand.class);   
+    
+    static interface i18n {
+        
+        //i18n[CopyTablesCommand.progressDialogTitle=Analyzing FKs in Tables to Copy]
+        String PROGRESS_DIALOG_TITLE = 
+            s_stringMgr.getString("CopyTablesCommand.progressDialogTitle");
+        
+        //i18n[CopyTablesCommand.loadingPrefix=Analyzing table:]
+        String LOADING_PREFIX = 
+            s_stringMgr.getString("CopyTablesCommand.loadingPrefix");        
+        
+    }
+    
     
     /** When analyzing FK dependencies for the selected tables, show the
      *  user the progress since this can take a while.
@@ -95,7 +116,9 @@ public class CopyTableCommand implements ICommand
             }
             try {
                 _plugin.setCopySourceSession(_session);
-                _plugin.setSelectedDatabaseObjects(getInsertionOrder(dbObjs));
+                SQLDatabaseMetaData md = 
+                    _session.getSQLConnection().getSQLMetaData();
+                _plugin.setSelectedDatabaseObjects(getInsertionOrder(dbObjs, md));
                 _plugin.setPasteMenuEnabled(true);
             } catch (SQLException e) {
                 log.error("Unexected exception: ", e);
@@ -103,32 +126,26 @@ public class CopyTableCommand implements ICommand
         } 
     }
     
-    private IDatabaseObjectInfo[] getInsertionOrder(IDatabaseObjectInfo[] dbObjs) 
+    private IDatabaseObjectInfo[] getInsertionOrder(IDatabaseObjectInfo[] dbObjs,
+                                                    SQLDatabaseMetaData md) 
         throws SQLException
     {
         List<ITableInfo> selectedTables = new ArrayList<ITableInfo>();
         for (int i = 0; i < dbObjs.length; i++) {
             selectedTables.add((ITableInfo)dbObjs[i]);
         }
-        selectedTables = SQLUtilities.getInsertionOrder(selectedTables);
+        ProgessCallBackDialog cb = 
+            new ProgessCallBackDialog(_session.getApplication().getMainFrame(), 
+                                       i18n.PROGRESS_DIALOG_TITLE,
+                                       dbObjs.length);
+        
+        cb.setLoadingPrefix(i18n.LOADING_PREFIX);
+        
+        selectedTables = 
+            SQLUtilities.getInsertionOrder(selectedTables, 
+                                           md, 
+                                           cb);
         return selectedTables.toArray(new IDatabaseObjectInfo[dbObjs.length]);
     }
-
-    /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.AnalyzeFKListner#finishAnalyzeTable(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
-     */
-    public void finishAnalyzeTable(ITableInfo ti) {
-        pm.setNote("Finished analyzing FKs for "+ti.getSimpleName());
-        pm.setProgress(++progressCount);
-    }
-
-    /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.AnalyzeFKListner#startAnalyzeTable(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
-     */
-    public void startAnalyzeTable(ITableInfo ti) {
-        pm.setNote("Analyzing FKs for "+ti.getSimpleName());
-        //pm.setProgress(++progressCount);
-    }
-
     
 }

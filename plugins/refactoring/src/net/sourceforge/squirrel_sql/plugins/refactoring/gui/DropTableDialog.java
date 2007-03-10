@@ -20,19 +20,49 @@
 package net.sourceforge.squirrel_sql.plugins.refactoring.gui;
 
 import java.awt.GridBagConstraints;
+import java.util.Arrays;
+import java.util.List;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class DropTableDialog extends AbstractRefactoringDialog {
 
+    
+    /** Internationalized strings for this class */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(DropTableDialog.class);
+    
+    static interface i18n {
+        //i18n[DropTableDialog.cascadeLabel=Cascade Constraints:]
+        String CASCADE_LABEL = 
+            s_stringMgr.getString("DropTableDialog.cascadeLabel");        
+        
+        //i18n[DropTableDialog.catalogLabel=Catalog:]
+        String CATALOG_LABEL = 
+            s_stringMgr.getString("DropTableDialog.catalogLabel");
+
+        //i18n[DropTableDialog.schemaLabel=Schema:]
+        String SCHEMA_LABEL = 
+            s_stringMgr.getString("DropTableDialog.schemaLabel");
+
+        //i18n[DropTableDialog.tableLabel=Table(s):]
+        String TABLE_LABEL = 
+            s_stringMgr.getString("DropTableDialog.tableLabel");
+        
+        //i18n[DropTableDialog.title=Drop Table(s)]
+        String TITLE = s_stringMgr.getString("DropTableDialog.title");
+        
+        
+    }
+                
     private JLabel catalogLabel = null;
     private JLabel schemaLabel = null;
     private JTextField catalogTF = null;
@@ -47,8 +77,7 @@ public class DropTableDialog extends AbstractRefactoringDialog {
     
     public DropTableDialog(ITableInfo[] tables) {
         super(false);
-        // i18n
-        setTitle("Drop Table(s)");
+        setTitle(i18n.TITLE);
         tableInfos = tables;
         init();
     }
@@ -57,13 +86,17 @@ public class DropTableDialog extends AbstractRefactoringDialog {
         return tableInfos;
     }
         
+    public List<ITableInfo> getTableInfoList() {
+        return Arrays.asList(tableInfos);
+    }
+    
     public boolean getCascadeConstraints() {
         return cascadeCB.isSelected();
     }
     
     protected void init() {
         // Catalog 
-        catalogLabel = getBorderedLabel("Catalog: ", emptyBorder);
+        catalogLabel = getBorderedLabel(i18n.CATALOG_LABEL + " ", emptyBorder);
         pane.add(catalogLabel, getLabelConstraints(c));
         
         catalogTF = new JTextField();
@@ -73,7 +106,7 @@ public class DropTableDialog extends AbstractRefactoringDialog {
         pane.add(catalogTF, getFieldConstraints(c));
         
         // Schema
-        schemaLabel = getBorderedLabel("Schema: ", emptyBorder);
+        schemaLabel = getBorderedLabel(i18n.SCHEMA_LABEL+" ", emptyBorder);
         pane.add(schemaLabel, getLabelConstraints(c));
         
         schemaTF = new JTextField();
@@ -83,7 +116,7 @@ public class DropTableDialog extends AbstractRefactoringDialog {
         pane.add(schemaTF, getFieldConstraints(c));
         
         // table list        
-        tableListLabel = getBorderedLabel("Tables: ", emptyBorder);
+        tableListLabel = getBorderedLabel(i18n.TABLE_LABEL+" ", emptyBorder);
         tableListLabel.setVerticalAlignment(JLabel.NORTH);
         pane.add(tableListLabel, getLabelConstraints(c));
         
@@ -98,7 +131,7 @@ public class DropTableDialog extends AbstractRefactoringDialog {
         pane.add(sp, c);
         
         // Cascade Constraints Checkbox
-        cascadeConstraintsLabel = new JLabel("Cascade Constraints:");
+        cascadeConstraintsLabel = new JLabel(i18n.CASCADE_LABEL+" ");
         cascadeConstraintsLabel.setBorder(emptyBorder);
         pane.add(cascadeConstraintsLabel, getLabelConstraints(c));        
         

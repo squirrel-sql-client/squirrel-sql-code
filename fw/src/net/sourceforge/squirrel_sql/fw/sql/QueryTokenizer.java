@@ -409,6 +409,13 @@ public class QueryTokenizer implements IQueryTokenizer
         }
         */
         return result;
+    }
+
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer#getSQLStatementSeparator()
+     */
+    public String getSQLStatementSeparator() {
+        return _querySep;
     }    
     
 }

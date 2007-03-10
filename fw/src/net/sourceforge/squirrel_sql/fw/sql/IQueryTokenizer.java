@@ -41,4 +41,15 @@ public interface IQueryTokenizer {
      * setScriptToTokenize has not yet been called.
      */
     int getQueryCount();
+    
+    /**
+     * Returns the statement separator being used for this session.  This may be
+     * the user's preference, or in the case of a plugin that provides a custom
+     * IQueryTokenizer implementation, this will be the plugin-specific setting
+     * which is also configurable.
+     * 
+     * @return the string of characters representing a delimiter between multiple
+     *         statements. 
+     */
+    String getSQLStatementSeparator();
 }
