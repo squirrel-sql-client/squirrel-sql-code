@@ -30,8 +30,10 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import net.sourceforge.squirrel_sql.client.gui.ProgessCallBackDialog;
 /**
- * @version 	$Id: DeleteTablesCommand.java,v 1.3 2007-02-20 00:05:47 manningr Exp $
+ * @version 	$Id: DeleteTablesCommand.java,v 1.4 2007-03-10 14:34:59 manningr Exp $
  * @author		Rob Manning
  */
 public class DeleteTablesCommand implements ICommand
@@ -43,6 +45,18 @@ public class DeleteTablesCommand implements ICommand
     /** Internationalized strings for this class */
     private static final StringManager s_stringMgr =
         StringManagerFactory.getStringManager(DeleteTablesCommand.class);
+    
+    static interface i18n {
+        
+        //i18n[DeleteTablesCommand.progressDialogTitle=Analyzing tables to delete]
+        String PROGRESS_DIALOG_TITLE = 
+            s_stringMgr.getString("DeleteTablesCommand.progressDialogTitle");
+        
+        //i18n[DeleteTablesCommand.loadingPrefix=Analyzing table:]
+        String LOADING_PREFIX = 
+            s_stringMgr.getString("DeleteTablesCommand.loadingPrefix");        
+        
+    }
     
     /** Current session. */
 	private final ISession _session;
@@ -86,7 +100,14 @@ public class DeleteTablesCommand implements ICommand
         List<ITableInfo> orderedTables = _tables;
         String cascadeClause = null;
         try {
-            orderedTables = SQLUtilities.getDeletionOrder(_tables);
+            ProgessCallBackDialog cb = 
+                new ProgessCallBackDialog(_session.getApplication().getMainFrame(),
+                                           i18n.PROGRESS_DIALOG_TITLE,
+                                           _tables.size());
+            
+            cb.setLoadingPrefix(i18n.LOADING_PREFIX);
+            
+            orderedTables = SQLUtilities.getDeletionOrder(_tables, md, cb);
         } catch (SQLException e) {
             s_log.error("Unexpected exception while attempting to order tables", e);
         }
@@ -112,5 +133,6 @@ public class DeleteTablesCommand implements ICommand
         
 		// Use this to run asynch
 		// _session.getApplication().getThreadPool().addTask(executer);
-	}        
+	}   
+    
 }
