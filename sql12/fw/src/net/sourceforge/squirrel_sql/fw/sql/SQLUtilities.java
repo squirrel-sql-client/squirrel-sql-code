@@ -7,8 +7,16 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
 public class SQLUtilities {
 
+    /** Logger for this class. */
+    private final static ILogger s_log =
+        LoggerController.createLogger(SQLUtilities.class);
+    
+    
     /**
      * Reverses the insertion order list.  Just a convenience method.
      * 
@@ -17,10 +25,13 @@ public class SQLUtilities {
      * @return
      * @throws SQLException
      */
-    public static List<ITableInfo> getDeletionOrder(List<ITableInfo> tables)
+    public static List<ITableInfo> getDeletionOrder(List<ITableInfo> tables,
+                                                    SQLDatabaseMetaData md,
+                                                    ProgressCallBack callback)
         throws SQLException
     {
-        List<ITableInfo> insertionOrder = getInsertionOrder(tables);
+        List<ITableInfo> insertionOrder = 
+            getInsertionOrder(tables, md, callback);
         Collections.reverse(insertionOrder);
         return insertionOrder;
     }
@@ -40,7 +51,9 @@ public class SQLUtilities {
      * @return
      * @throws SQLException
      */
-    public static List<ITableInfo> getInsertionOrder(List<ITableInfo> tables) 
+    public static List<ITableInfo> getInsertionOrder(List<ITableInfo> tables, 
+                                                     SQLDatabaseMetaData md,
+                                                     ProgressCallBack callback) 
         throws SQLException                                                     
     {
         List<ITableInfo> result = new ArrayList<ITableInfo>();
@@ -55,22 +68,23 @@ public class SQLUtilities {
         
         
         for (ITableInfo table : tables) {
-            ForeignKeyInfo[] importedKeys = table.getImportedKeys();
-            ForeignKeyInfo[] exportedKeys = table.getExportedKeys();
+            callback.currentlyLoading(table.getSimpleName());
+            ForeignKeyInfo[] importedKeys = getImportedKeys(table, md);
+            ForeignKeyInfo[] exportedKeys = getExportedKeys(table, md);
             
-            if (importedKeys.length == 0 && exportedKeys.length == 0)  {
+            if (importedKeys != null && importedKeys.length == 0 && exportedKeys.length == 0)  {
                 unattached.add(table);
                 continue;
             }
-            if (exportedKeys.length > 0) {
-                if (importedKeys.length > 0) {
+            if (exportedKeys != null && exportedKeys.length > 0) {
+                if (importedKeys != null && importedKeys.length > 0) {
                     sandwiches.add(table);
                 } else {
                     parents.add(table);
                 }
                 continue;
             }
-            if (importedKeys.length > 0) {
+            if (importedKeys != null && importedKeys.length > 0) {
                 children.add(table);
             }
         }
@@ -87,6 +101,42 @@ public class SQLUtilities {
         }
         for (ITableInfo info : children) {
             result.add(info);
+        }
+        return result;
+    }
+    
+    public static ForeignKeyInfo[] getImportedKeys(ITableInfo ti,
+                                                    SQLDatabaseMetaData md) {
+        ForeignKeyInfo[] result = ti.getImportedKeys();
+        if (result == null) {
+            try {
+                result = md.getImportedKeysInfo(ti);
+                // Avoid the hit next time
+                ti.setImportedKeys(result);
+            } catch (SQLException e) {
+                String tablename = ti.getSimpleName();
+                s_log.error(
+                    "Unexpected exception while getting imported keys for " +
+                    "table "+tablename);
+            }
+        }
+        return result;
+    }
+
+    public static ForeignKeyInfo[] getExportedKeys(ITableInfo ti,
+                                                   SQLDatabaseMetaData md) {
+        ForeignKeyInfo[] result = ti.getExportedKeys();
+        if (result == null) {
+            try {
+                result = md.getExportedKeysInfo(ti);
+                // Avoid the hit next time
+                ti.setExportedKeys(result);
+            } catch (SQLException e) {
+                String tablename = ti.getSimpleName();
+                s_log.error(
+                        "Unexpected exception while getting exported keys for " +
+                        "table "+tablename);
+            }
         }
         return result;
     }

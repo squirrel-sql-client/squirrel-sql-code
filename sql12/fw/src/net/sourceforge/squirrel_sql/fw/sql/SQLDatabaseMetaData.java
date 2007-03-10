@@ -1152,8 +1152,6 @@ public class SQLDatabaseMetaData
                tabResult.getString(2), tabResult.getString(3),
                tabResult.getString(4), tabResult.getString(5),
                this);
-            tabInfo.setExportedKeys(this.getExportedKeysInfo(tabInfo));
-            tabInfo.setImportedKeys(this.getImportedKeysInfo(tabInfo));
             if (nameMap != null)
             {
                nameMap.put(tabInfo.getSimpleName(), tabInfo);
