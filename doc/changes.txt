@@ -49,6 +49,11 @@ New Plugin for Sybase ASE by Ken McCullough
   	The plugin allows to script the code of Views and Stored Procedures of the 
   	Sybase ASE DB.
 
+Refactoring Plugin
+  - 'Drop Tables' action now orders the selected tables in order to satisfy any
+    FK dependencies.  Previously, this operation would fail if PK tables 
+    preceded (by name alphabetically) FK tables in the object tree list.
+    
 SQL Scripts Plugin
   - Now when selecting 'Create Data Script', the insert statements created are
     ordered by the first column.
