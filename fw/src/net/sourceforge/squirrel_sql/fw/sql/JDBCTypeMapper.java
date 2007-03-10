@@ -155,6 +155,9 @@ public class JDBCTypeMapper {
 
 	public static int getJdbcType(String jdbcTypeName) {
 		int type = Types.NULL;
+        if (jdbcTypeName == null) {
+            return Types.NULL;
+        }
 		if ("ARRAY".equals(jdbcTypeName)) {
 			type = Types.ARRAY;
 		} else if ("BIGINT".equals(jdbcTypeName)) {
@@ -211,7 +214,9 @@ public class JDBCTypeMapper {
 			type = Types.VARBINARY;
 		} else if ("VARCHAR".equals(jdbcTypeName)) {
 			type = Types.VARCHAR;
-		}
+		} else if (jdbcTypeName.startsWith("NVARCHAR")) {
+		    type = Types.VARCHAR;
+        }
 		return type;
 	}
     
