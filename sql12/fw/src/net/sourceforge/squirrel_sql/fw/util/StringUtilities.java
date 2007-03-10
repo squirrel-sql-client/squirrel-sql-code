@@ -181,4 +181,26 @@ public class StringUtilities
 		}
 		return (String[])result.toArray(new String[result.size()]);
 	}
+    
+    /**
+     * Joins the specified parts separating each from one another with the 
+     * specified delimiter.  If delim is null, then this merely returns the 
+     * concatenation of all the parts.
+     * 
+     * @param parts the strings to be joined
+     * @param delim the char(s) that should separate the parts in the result
+     * @return a string representing the joined parts.
+     */
+    public static String join(String[] parts, String delim) {
+        StringBuilder result = new StringBuilder();
+        
+        for (int i = 0; i < parts.length; i++) {
+            String part = parts[i];
+            result.append(part);
+            if (delim != null && i < parts.length-1) {
+                result.append(delim);
+            }        
+        }
+        return result.toString();
+    }
 }
