@@ -96,7 +96,7 @@ public class ScriptUtil
 
    public static String getStatementSeparator(ISession session)
    {
-      String statementSeparator = session.getProperties().getSQLStatementSeparator();
+      String statementSeparator = session.getQueryTokenizer().getSQLStatementSeparator();
 
       if (1 < statementSeparator.length())
       {
