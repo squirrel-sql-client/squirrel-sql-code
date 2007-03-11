@@ -52,12 +52,18 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class MonitorPanel extends net.sourceforge.squirrel_sql.client.session.mainpanel.BaseMainPanelTab {
 
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(MonitorPanel.class);
 
+    /** Logger for this class. */
+    private final static ILogger s_log = 
+        LoggerController.createLogger(MonitorPanel.class);
+    
 	 private Connection _conn = null;
 
 	 private Date _refreshDate;
@@ -140,7 +146,7 @@ public class MonitorPanel extends net.sourceforge.squirrel_sql.client.session.ma
 					 _haveSession = true;
 				}
 				catch (java.sql.SQLException ex) {
-					 ex.printStackTrace();
+					 s_log.error("Unexpected exception: "+ex.getMessage(), ex);
 				}
 		  }
 		  refreshData();
@@ -161,13 +167,11 @@ public class MonitorPanel extends net.sourceforge.squirrel_sql.client.session.ma
 				_perfViewer.show(_perfDataSet);
 		  }
 		  catch (java.sql.SQLException ex) {
-				// let's not burden the beta-tester with error dialogs quite yet.
-				ex.printStackTrace();
-		  }
+              s_log.error("Unexpected exception: "+ex.getMessage(), ex);
+          }
 		  catch (DataSetException dse) {
-				// let's not burden the beta-tester with error dialogs quite yet.
-				dse.printStackTrace();
-		  }
+              s_log.error("Unexpected exception: "+dse.getMessage(), dse);
+          }
 	 }
 
 	 private JPanel buildMainPanel() {
