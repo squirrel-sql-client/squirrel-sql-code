@@ -36,11 +36,6 @@ Enhancements:
   execution using the cancel button - which is otherwise effectively disabled 
   while the UI attempts to keep up with all of the UI updates in a large script.
 
-Code Completion:
-   The number of table columns that should be displayed on top of the completion list
-   when completion is called outside of the scope of a table/view is now configurable
-   in code completion properties.
-
 New Plugins for H2, PostgreSQL and DB2
 	These plugins provide source tabs for stored procedures, views and triggers.
 	They also provide details tab for sequences and triggers	
@@ -48,6 +43,15 @@ New Plugins for H2, PostgreSQL and DB2
 New Plugin for Sybase ASE by Ken McCullough
   	The plugin allows to script the code of Views and Stored Procedures of the 
   	Sybase ASE DB.
+
+Code Completion:
+   - The number of table columns that should be displayed on top of the 
+     completion list when completion is called outside of the scope of a 
+     table/view is now configurable in code completion properties.
+
+Edit Extras:
+   - New formatting action - remove newlines.  This is useful when copying SQL 
+     from console windows that insert end-of-line characters when copying.
 
 Refactoring Plugin
   - 'Drop Tables' action now orders the selected tables in order to satisfy any
