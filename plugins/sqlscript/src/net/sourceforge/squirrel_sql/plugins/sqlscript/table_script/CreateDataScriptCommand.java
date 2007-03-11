@@ -442,7 +442,8 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
 
    private String getStatementSeparator()
    {
-      String statementSeparator = _session.getProperties().getSQLStatementSeparator();
+      String statementSeparator = 
+          _session.getQueryTokenizer().getSQLStatementSeparator();
 
       if (1 < statementSeparator.length())
       {
