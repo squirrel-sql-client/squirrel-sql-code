@@ -126,7 +126,7 @@ public class ProgessCallBackDialog extends JDialog
                 public void run() {
                     statusLabel.setText(statusText.toString());
                     progressBar.setValue(progressBar.getValue() + 1);
-                    if (progressBar.getValue() == itemCount - 1) {
+                    if (finishedLoading()) {
                         ProgessCallBackDialog.this.setVisible(false);
                         return;
                     }                    
@@ -137,6 +137,10 @@ public class ProgessCallBackDialog extends JDialog
         }
     }
 
+    public boolean finishedLoading() {
+        return progressBar.getValue() == itemCount - 1;
+    }
+        
     private void createGUI() {
         JPanel dialogPanel = new JPanel(new GridBagLayout());
         dialogPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));

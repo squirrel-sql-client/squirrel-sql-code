@@ -28,7 +28,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
- * @version 	$Id: DeleteSelectedTablesAction.java,v 1.2 2007-02-18 22:44:19 manningr Exp $
+ * @version 	$Id: DeleteSelectedTablesAction.java,v 1.3 2007-03-11 03:01:29 manningr Exp $
  * @author		Rob Manning
  */
 public class DeleteSelectedTablesAction extends SquirrelAction
@@ -81,9 +81,8 @@ public class DeleteSelectedTablesAction extends SquirrelAction
 				if (Dialogs.showYesNo(getApplication().getMainFrame(), MSG, TITLE))
 				{
                     DeleteTablesCommand command = 
-                        new DeleteTablesCommand(_tree.getSession(), tables);
+                        new DeleteTablesCommand(_tree, tables);
                     command.execute();
-                    _tree.refreshSelectedNodes();
 				}
 			}
 		}
