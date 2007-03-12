@@ -44,12 +44,13 @@ public class TruncateLogCommand implements ICommand {
 
 	public void execute() {
 		if (_dbs.length > 0) {
-			final String sqlSep = _session.getProperties().getSQLStatementSeparator();
+			final String sqlSep = _session.getQueryTokenizer().getSQLStatementSeparator();
 			final StringBuffer buf = new StringBuffer();
 			for (int i = 0; i < _dbs.length; i++) {
 				final IDatabaseObjectInfo ti = _dbs[i];
-				buf.append("BACKUP LOG " + ti.getSimpleName() + " WITH TRUNCATE_ONLY");
-				buf.append(" " + sqlSep + " \n");
+				buf.append("BACKUP LOG " + ti.getSimpleName() + " WITH TRUNCATE_ONLY\n");
+				buf.append(sqlSep);
+                buf.append("\n");
 			}
             _session.getSessionInternalFrame().getSQLPanelAPI().appendSQLScript(buf.toString(), true);
             _session.getSessionInternalFrame().getSQLPanelAPI().executeCurrentSQL();

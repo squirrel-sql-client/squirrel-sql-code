@@ -19,10 +19,8 @@ package net.sourceforge.squirrel_sql.plugins.mssql.action;
  */
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
-
 import net.sourceforge.squirrel_sql.plugins.mssql.MssqlPlugin;
 
 public class IndexDefragCommand implements ICommand {
@@ -47,9 +45,17 @@ public class IndexDefragCommand implements ICommand {
 
 	public void execute() {
         StringBuffer sqlBuffer = new StringBuffer();
-        final String sqlSep = _session.getProperties().getSQLStatementSeparator();
-        sqlBuffer.append("DBCC INDEXDEFRAG(" + _tableInfo.getCatalogName() + "," + _tableInfo.getSimpleName() + "," + _indexName + ")");
-        sqlBuffer.append(" " + sqlSep + " \n");
+        final String sqlSep = 
+            _session.getQueryTokenizer().getSQLStatementSeparator();
+        sqlBuffer.append("DBCC INDEXDEFRAG(");
+        sqlBuffer.append(_tableInfo.getCatalogName());
+        sqlBuffer.append(",");
+        sqlBuffer.append(_tableInfo.getSimpleName()); 
+        sqlBuffer.append(","); 
+        sqlBuffer.append(_indexName); 
+        sqlBuffer.append(")\n");
+        sqlBuffer.append(sqlSep);
+        sqlBuffer.append(" \n");
         
         _session.getSessionInternalFrame().getSQLPanelAPI().appendSQLScript(sqlBuffer.toString(), true);
 		_session.getSessionInternalFrame().getSQLPanelAPI().executeCurrentSQL();

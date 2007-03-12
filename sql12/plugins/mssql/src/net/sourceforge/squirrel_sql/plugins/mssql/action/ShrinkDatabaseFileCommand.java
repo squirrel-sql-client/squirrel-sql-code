@@ -19,9 +19,7 @@ package net.sourceforge.squirrel_sql.plugins.mssql.action;
  */
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
-
 import net.sourceforge.squirrel_sql.plugins.mssql.MssqlPlugin;
 
 public class ShrinkDatabaseFileCommand implements ICommand {
@@ -43,15 +41,16 @@ public class ShrinkDatabaseFileCommand implements ICommand {
 	}
 
 	public void execute() {
-		final String sqlSep = _session.getProperties().getSQLStatementSeparator();
+		final String sqlSep = _session.getQueryTokenizer().getSQLStatementSeparator();
 		final StringBuffer buf = new StringBuffer();
         buf.append("USE ");
         buf.append(_catalogName);
         buf.append(sqlSep + "\n");
         buf.append("DBCC SHRINKFILE (");
         buf.append(_databaseFileName);
-        buf.append(", TRUNCATEONLY)");
-        buf.append(sqlSep + "\n");
+        buf.append(", TRUNCATEONLY)\n");
+        buf.append(sqlSep);
+        buf.append("\n");
 
         _session.getSessionInternalFrame().getSQLPanelAPI().appendSQLScript(buf.toString(), true);
         _session.getSessionInternalFrame().getSQLPanelAPI().executeCurrentSQL();

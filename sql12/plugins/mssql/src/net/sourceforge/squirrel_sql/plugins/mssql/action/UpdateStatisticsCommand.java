@@ -21,9 +21,7 @@ package net.sourceforge.squirrel_sql.plugins.mssql.action;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
-
 import net.sourceforge.squirrel_sql.plugins.mssql.MssqlPlugin;
 
 public class UpdateStatisticsCommand implements ICommand {
@@ -40,7 +38,7 @@ public class UpdateStatisticsCommand implements ICommand {
 	}
 
 	public void execute() {
-        final String sqlSep = _session.getProperties().getSQLStatementSeparator();
+        final String sqlSep = _session.getQueryTokenizer().getSQLStatementSeparator();
         final IObjectTreeAPI api = _session.getSessionInternalFrame().getObjectTreeAPI();
 		final IDatabaseObjectInfo[] dbObjs = api.getSelectedDatabaseObjects();
 
@@ -53,7 +51,9 @@ public class UpdateStatisticsCommand implements ICommand {
             cmd.append(dbObjs[i].getSchemaName());
             cmd.append(".");
             cmd.append(dbObjs[i].getSimpleName());
-            cmd.append(" WITH FULLSCAN, ALL" + sqlSep + "\n");
+            cmd.append(" WITH FULLSCAN, ALL\n");
+            cmd.append(sqlSep);
+            cmd.append("\n");
 		}
 
         if (cmd != null && cmd.length() > 0) {
