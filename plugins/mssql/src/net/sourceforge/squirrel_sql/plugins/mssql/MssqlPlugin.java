@@ -182,7 +182,9 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
         boolean isMssql = isMssql(iSession); 
         if (isMssql) {
             MSSQLPreferenceBean _prefs = PreferencesManager.getPreferences();
-            iSession.setQueryTokenizer(new MSSQLQueryTokenizer(_prefs));
+            if (_prefs.isInstallCustomQueryTokenizer()) {
+                iSession.setQueryTokenizer(new MSSQLQueryTokenizer(_prefs));
+            }
             GUIUtils.processOnSwingEventThread(new Runnable() {
                 public void run() {
                     updateTreeApi(iSession);

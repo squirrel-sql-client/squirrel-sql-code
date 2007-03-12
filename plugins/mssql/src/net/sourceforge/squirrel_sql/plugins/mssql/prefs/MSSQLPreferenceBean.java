@@ -38,6 +38,8 @@ public class MSSQLPreferenceBean implements Cloneable,
     
     private boolean removeMultiLineComments = false;
     
+    private boolean installCustomQueryTokenizer = true;
+    
 	public MSSQLPreferenceBean() {
 		super();
 	}
@@ -131,6 +133,20 @@ public class MSSQLPreferenceBean implements Cloneable,
      */
     public boolean isRemoveMultiLineComments() {
         return removeMultiLineComments;
+    }
+
+    /**
+     * @param installCustomQueryTokenizer the installCustomQueryTokenizer to set
+     */
+    public void setInstallCustomQueryTokenizer(boolean installCustomQueryTokenizer) {
+        this.installCustomQueryTokenizer = installCustomQueryTokenizer;
+    }
+
+    /**
+     * @return the installCustomQueryTokenizer
+     */
+    public boolean isInstallCustomQueryTokenizer() {
+        return installCustomQueryTokenizer;
     }
 
 	
