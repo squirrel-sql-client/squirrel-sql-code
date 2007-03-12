@@ -54,7 +54,7 @@ public class ScriptProcedureExecCommand implements ICommand {
         try {
             if (_dbObjs.length > 0) {
                 Connection conn = _session.getSQLConnection().getConnection();
-                final String sqlSep = _session.getProperties().getSQLStatementSeparator();
+                final String sqlSep = _session.getQueryTokenizer().getSQLStatementSeparator();
                 final StringBuffer buf = new StringBuffer();
 
                 for (int i = 0; i < _dbObjs.length; i++) {

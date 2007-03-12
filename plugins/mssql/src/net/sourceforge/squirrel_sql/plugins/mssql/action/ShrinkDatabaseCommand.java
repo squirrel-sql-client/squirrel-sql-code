@@ -46,13 +46,17 @@ public class ShrinkDatabaseCommand implements ICommand {
 	{
 		if (_dbs.length > 0)
 		{
-			final String sqlSep = _session.getProperties().getSQLStatementSeparator();
+			final String sqlSep = _session.getQueryTokenizer().getSQLStatementSeparator();
 			final StringBuffer buf = new StringBuffer();
 			for (int i = 0; i < _dbs.length; i++)
 			{
 				final IDatabaseObjectInfo ti = _dbs[i];
-				buf.append("DBCC SHRINKDATABASE(" + ti.getSimpleName() + ",TRUNCATEONLY)");
-				buf.append(" " + sqlSep + " \n");
+				buf.append("DBCC SHRINKDATABASE("); 
+                buf.append(ti.getSimpleName()); 
+                buf.append(",TRUNCATEONLY)");
+				buf.append("\n");
+                buf.append(sqlSep);
+                buf.append("\n");
 			}
             _session.getSessionInternalFrame().getSQLPanelAPI().appendSQLScript(buf.toString(), true);
             _session.getSessionInternalFrame().getSQLPanelAPI().executeCurrentSQL();
