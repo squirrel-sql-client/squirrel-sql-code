@@ -206,21 +206,10 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			++gbc.gridy;
 			pnl.add(_showToolTips, gbc);
 
-			// i8n[globalPrefs.scrollTabWarn=
-			// Right mouse menu on tabbed panes won't work when scrollable tabbed panes are
-			// used (JDK 1.4 bug #4465870). Consider using JDK 1.5 or higher or switch off scrollable tabbed panes.]
-			MultipleLineLabel scrollTabWarnLable = new MultipleLineLabel(s_stringMgr.getString("globalPrefs.scrollTabWarn"));
-			++gbc.gridy;
-			Insets oldInsets = (Insets) gbc.insets.clone();
-			gbc.insets.bottom = 0;
-			pnl.add(scrollTabWarnLable, gbc);
-			gbc.insets = oldInsets;
-
-			oldInsets = (Insets) gbc.insets.clone();
 			gbc.insets.top = 0;
 			++gbc.gridy;
 			pnl.add(_useScrollableTabbedPanes, gbc);
-			gbc.insets = oldInsets;
+			//gbc.insets = oldInsets;
 
 			++gbc.gridy;
 			pnl.add(_showMainToolBar, gbc);
