@@ -92,8 +92,11 @@ DBCopy Plugin
 
 Bug-Fixes:
 
-Caching of schemas (serializing to disc) failed. A NotSerializableException was thrown.
+1680919: failure to export cvs/excel on mac osx (incomplete ClassPath entry in
+          Info.plist)
 
+Caching of schemas (serializing to disc) failed. A NotSerializableException was 
+thrown, due to development code introduced during version 2.5 development.
 
 An error occured when F5 (Refresh) was hit in a SQL Work Sheet or an Object Tree Window.
 
