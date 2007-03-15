@@ -25,9 +25,9 @@
         <key>MainClass</key>
         <string>net.sourceforge.squirrel_sql.client.Main</string>
         <key>JVMVersion</key>
-        <string>1.4+</string>
+        <string>1.5+</string>
         <key>ClassPath</key>
-        <string>$JAVAROOT/squirrel-sql.jar</string>
+        <string>$JAVAROOT/squirrel-sql.jar:$JAVAROOT/lib/antlr-2.7.5H3.jar:$JAVAROOT/lib/commons-cli.jar:$JAVAROOT/lib/commons-logging-1.0.4.jar:$JAVAROOT/lib/forms.jar:$JAVAROOT/lib/fw.jar:$JAVAROOT/lib/hibernate3.jar:$JAVAROOT/lib/jxl.jar:$JAVAROOT/lib/log4j.jar:$JAVAROOT/lib/nanoxml-2.2.3.jar</string>
         <key>WorkingDirectory</key>
         <string>$JAVAROOT</string>
         <key>Properties</key>
