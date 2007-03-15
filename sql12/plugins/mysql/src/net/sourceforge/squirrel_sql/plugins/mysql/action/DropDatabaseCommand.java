@@ -68,7 +68,8 @@ public class DropDatabaseCommand implements ICommand
 	{
 		if (_dbs.length > 0)
 		{
-			final String sqlSep = _session.getProperties().getSQLStatementSeparator();
+			final String sqlSep = 
+                _session.getQueryTokenizer().getSQLStatementSeparator();
 			final StringBuffer buf = new StringBuffer();
 			for (int i = 0; i < _dbs.length; i++)
 			{
@@ -77,7 +78,6 @@ public class DropDatabaseCommand implements ICommand
 					.append(ti.getQualifiedName())
 					.append(" ")
 					.append(sqlSep)
-					.append(" ")
 					.append('\n');
 			}
 			_session.getSessionInternalFrame().getSQLPanelAPI().executeSQL(buf.toString());
