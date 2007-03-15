@@ -1018,7 +1018,7 @@ public class SQLSyntax extends Syntax
    {
       _caseInsensitiveStringBuffer.setCharBuffer(buffer, offset, len);
 
-      String statSep = _sess.getProperties().getSQLStatementSeparator();
+      String statSep = _sess.getQueryTokenizer().getSQLStatementSeparator();
 
       if(statSep.length() != len)
       {

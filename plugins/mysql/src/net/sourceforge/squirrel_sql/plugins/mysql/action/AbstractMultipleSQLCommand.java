@@ -65,7 +65,7 @@ abstract class AbstractMultipleSQLCommand implements ICommand
 	public void execute()
 	{
 		final StringBuffer buf = new StringBuffer(2048);
-		final String sep = " " + _session.getProperties().getSQLStatementSeparator();
+		final String sep = " " + _session.getQueryTokenizer().getSQLStatementSeparator();
 
 		final IObjectTreeAPI api = _session.getSessionInternalFrame().getObjectTreeAPI();
 		final IDatabaseObjectInfo[] dbObjs = api.getSelectedDatabaseObjects();
@@ -75,7 +75,7 @@ abstract class AbstractMultipleSQLCommand implements ICommand
 			final String cmd = getMySQLCommand(dbObjs[i]);
 			if (cmd != null && cmd.length() > 0)
 			{
-				buf.append(cmd).append(sep).append('\n');
+				buf.append(cmd).append(" ").append(sep).append('\n');
 			}
 		}
 

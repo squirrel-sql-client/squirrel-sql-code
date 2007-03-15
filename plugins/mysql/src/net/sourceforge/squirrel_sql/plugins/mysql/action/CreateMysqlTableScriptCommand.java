@@ -67,7 +67,7 @@ class CreateMysqlTableScriptCommand implements ICommand
 	{
 		final SQLConnection conn = _session.getSQLConnection();
 		final StringBuffer buf = new StringBuffer(2048);
-		final String sep = " " + _session.getProperties().getSQLStatementSeparator();
+		final String sep = " " + _session.getQueryTokenizer().getSQLStatementSeparator();
 
 		try
 		{
