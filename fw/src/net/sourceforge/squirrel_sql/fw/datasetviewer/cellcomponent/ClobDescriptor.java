@@ -72,6 +72,10 @@ public class ClobDescriptor {
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(ClobDescriptor.class);
 
+    public static interface i18n {
+        String CLOB_LABEL = s_stringMgr.getString("ClobDescriptor.clob");
+    }
+    
 	/**
 	 * Ctor
 	 */
@@ -139,7 +143,7 @@ public class ClobDescriptor {
 			}
 			return _data + "...";	// tell user the data is truncated
 		}
-		return s_stringMgr.getString("ClobDescriptor.clob");
+		return i18n.CLOB_LABEL;
 	}
 
 	/*

@@ -22,7 +22,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -148,7 +147,7 @@ public class DataTypeClob
 	 */
 	private static boolean _makeNewlinesVisibleInCell = true;
 
-
+    
 	/**
 	 * Constructor - save the data needed by this data type.
 	 */
@@ -183,7 +182,7 @@ public class DataTypeClob
 			String readCompleteClobsString = DTProperties.get(thisClassName, "readCompleteClobs");
 			if (readCompleteClobsString != null && readCompleteClobsString.equals("true"))
 				_readCompleteClobs = true;
-
+            
 			_readClobsSize = LARGE_COLUMN_DEFAULT_READ_LENGTH;	// set to default
 			String readClobsSizeString = DTProperties.get(thisClassName, "readClobsSize");
 			if (readClobsSizeString != null)
@@ -205,6 +204,22 @@ public class DataTypeClob
 		return "net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.ClobDescriptor";
 	}
 
+    /**
+     * Used to provide manual override in cases where we are exporting data.
+     * @return the current value of _readCompleteClob
+     */
+    public static boolean getReadCompleteClob() {
+        return _readCompleteClobs;
+    }    
+
+    /**
+     * Used to provide manual override in cases where we are exporting data.
+     * @param val the new value of _readCompleteClob
+     */
+    public static void setReadCompleteClob(boolean val) {
+        _readCompleteClobs = val;
+    }
+    
 	/**
 	 * Determine if two objects of this data type contain the same value.
 	 * Neither of the objects is null

@@ -73,6 +73,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeClob;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
@@ -108,17 +110,18 @@ public class SQLResultExecuterPanel extends JPanel
 	 * <TT>ResultTab</TT> objects that have been created. Keyed
 	 * by <TT>ResultTab.getIdentifier()</TT>.
 	 */
-	private Map _allTabs = new HashMap();
+	private Map<IIdentifier,ResultTabInfo> _allTabs = 
+        new HashMap<IIdentifier,ResultTabInfo>();
 
 	/**
 	 * Pool of <TT>ResultTabInfo</TT> objects available for use.
 	 */
-	private List _availableTabs = new ArrayList();
+	private List<ResultTabInfo> _availableTabs = new ArrayList<ResultTabInfo>();
 
 	/**
 	 * Pool of <TT>ResultTabInfo</TT> objects currently being used.
 	 */
-	private ArrayList _usedTabs = new ArrayList();
+	private ArrayList<ResultTabInfo> _usedTabs = new ArrayList<ResultTabInfo>();
 
 	/** Listeners */
 	private EventListenerList _listeners = new EventListenerList();
@@ -277,7 +280,7 @@ public class SQLResultExecuterPanel extends JPanel
 		{
 	        sql = fireSQLToBeExecutedEvent(sql);
             ISQLExecutionListener[] executionListeners =
-              (ISQLExecutionListener[]) _listeners.getListeners(ISQLExecutionListener.class);
+                _listeners.getListeners(ISQLExecutionListener.class);
             SQLExecutionHandler handler = new SQLExecutionHandler(null);
             _executer = new SQLExecuterTask(_session, sql, handler, executionListeners);
 	        
@@ -473,8 +476,7 @@ public class SQLResultExecuterPanel extends JPanel
 						+ ")");
 		tab.clear();
 		_tabbedExecutionsPanel.remove(tab);
-		ResultTabInfo tabInfo = (ResultTabInfo)_allTabs
-				.get(tab.getIdentifier());
+		ResultTabInfo tabInfo = _allTabs.get(tab.getIdentifier());
 		_availableTabs.add(tabInfo);
 		_usedTabs.remove(tabInfo);
 		tabInfo._resultFrame = null;
@@ -641,8 +643,7 @@ public class SQLResultExecuterPanel extends JPanel
 				+ ")");
 		_tabbedExecutionsPanel.remove(tab);
 		ResultFrame frame = new ResultFrame(_session, tab);
-		ResultTabInfo tabInfo = (ResultTabInfo)_allTabs
-				.get(tab.getIdentifier());
+		ResultTabInfo tabInfo = _allTabs.get(tab.getIdentifier());
 		tabInfo._resultFrame = frame;
 		_session.getApplication().getMainFrame().addInternalFrame(frame, true, null, JLayeredPane.PALETTE_LAYER);
 		fireTabTornOffEvent(tab);
@@ -674,8 +675,7 @@ public class SQLResultExecuterPanel extends JPanel
 		s_log.debug("SQLPanel.returnToTabbedPane("
 				+ tab.getIdentifier().toString() + ")");
 
-		ResultTabInfo tabInfo = (ResultTabInfo)_allTabs
-				.get(tab.getIdentifier());
+		ResultTabInfo tabInfo = _allTabs.get(tab.getIdentifier());
 		if (tabInfo._resultFrame != null)
 		{
 			addResultsTab(tab, null);
@@ -684,6 +684,32 @@ public class SQLResultExecuterPanel extends JPanel
 		}
 	}
 
+    public ResultTab getSelectedResultTab() {
+        return (ResultTab)_tabbedExecutionsPanel.getSelectedComponent();
+    }
+    
+    /**
+     * The idea here is to allow the caller to force the result to be re-run, 
+     * potentially altering the output in the case where readFully is true and 
+     * the result previously contained data placeholders (<clob>).  This will 
+     * be useful for automating export to CSV/Excel of CLOB data, where it is 
+     * most likely that the user doesn't want to see <clob> in the resultant 
+     * export file.
+     * 
+     * @param readFully if true, then the configuration will (temporarily) be
+     * set so that clob data is read and displayed.
+     */
+    public void reRunSelectedResultTab(boolean readFully) {
+        boolean clobReadOrigVal = DataTypeClob.getReadCompleteClob();
+        if (readFully) {
+            DataTypeClob.setReadCompleteClob(true);
+        }
+        ResultTab rt = (ResultTab)_tabbedExecutionsPanel.getSelectedComponent();
+        rt.reRunSQL();
+        if (readFully) {
+            DataTypeClob.setReadCompleteClob(clobReadOrigVal);
+        }
+    }
 
 	private void addResultsTab(SQLExecutionInfo exInfo,
                               ResultSetDataSet rsds,
@@ -695,7 +721,7 @@ public class SQLResultExecuterPanel extends JPanel
 		final ResultTab tab;
 		if (_availableTabs.size() > 0)
 		{
-			ResultTabInfo ti = (ResultTabInfo)_availableTabs.remove(0);
+			ResultTabInfo ti = _availableTabs.remove(0);
 			_usedTabs.add(ti);
 			tab = ti._tab;
 			tab.reInit(creator, exInfo);
