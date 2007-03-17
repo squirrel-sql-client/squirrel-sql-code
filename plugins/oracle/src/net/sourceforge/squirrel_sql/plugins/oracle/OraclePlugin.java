@@ -116,20 +116,15 @@ public class OraclePlugin extends DefaultSessionPlugin
 
    private PluginResources _resources;
 
-   private NewDBOutputWorksheetAction _newDBOutputWorksheet;
-   private NewInvalidObjectsWorksheetAction _newInvalidObjectsWorksheet;
-   private NewSessionInfoWorksheetAction _newSessionInfoWorksheet;
-   private NewSGATraceWorksheetAction _newSGATraceWorksheet;
-
    /**
     * A list of Oracle sessions that are open so we'll know when none are left
     */
-   private ArrayList oracleSessions = new ArrayList();
+   private ArrayList<ISession> oracleSessions = new ArrayList<ISession>();
    /**
     * SQL to find schemas to which the logged in user has access
     */
    private static String SCHEMA_ACCESS_SQL =
-      "SELECT DISTINCT OWNER FROM USER_TAB_PRIVS";
+      "SELECT DISTINCT OWNER FROM ALL_OBJECTS";
    /**
     * SQL to determine whether or not this account is a DBA account
     */
@@ -138,7 +133,9 @@ public class OraclePlugin extends DefaultSessionPlugin
 
 
    private static final String ORACLE_ALIAS_PREFS_FILE = "oracleAliasPrefs.xml";
-   private Hashtable _oracleAliasPrefsByAliasIdentifier = new Hashtable();
+   
+   private Hashtable<IIdentifier, OracleAliasPrefs> _oracleAliasPrefsByAliasIdentifier = 
+       new Hashtable<IIdentifier, OracleAliasPrefs>();
 
    /**
     * Return the internal name of this plugin.
@@ -269,7 +266,8 @@ public class OraclePlugin extends DefaultSessionPlugin
          }
          else
          {
-            _oracleAliasPrefsByAliasIdentifier = new Hashtable();
+            _oracleAliasPrefsByAliasIdentifier = 
+                new Hashtable<IIdentifier, OracleAliasPrefs>();
          }
          PreferencesManager.initialize(this);
       }
@@ -321,7 +319,8 @@ public class OraclePlugin extends DefaultSessionPlugin
          return new IAliasPropertiesPanelController[0];
       }
 
-      OracleAliasPrefs aliasPrefs = (OracleAliasPrefs) _oracleAliasPrefsByAliasIdentifier.get(alias.getIdentifier());
+      OracleAliasPrefs aliasPrefs = 
+          _oracleAliasPrefsByAliasIdentifier.get(alias.getIdentifier());
 
       if (null == aliasPrefs)
       {
@@ -340,7 +339,8 @@ public class OraclePlugin extends DefaultSessionPlugin
          return;
       }
 
-      OracleAliasPrefs sourcePrefs = (OracleAliasPrefs) _oracleAliasPrefsByAliasIdentifier.get(source.getIdentifier());
+      OracleAliasPrefs sourcePrefs = 
+          _oracleAliasPrefsByAliasIdentifier.get(source.getIdentifier());
 
       if(null != sourcePrefs)
       {
@@ -355,6 +355,16 @@ public class OraclePlugin extends DefaultSessionPlugin
       _oracleAliasPrefsByAliasIdentifier.remove(alias.getIdentifier());
    }
 
+    /**
+     * Called when a session shutdown.
+     *
+     * @param   session The session that is ending.
+     */
+    public void sessionEnding(ISession session)
+    {
+        super.sessionEnding(session);
+        oracleSessions.remove(session);
+    }   
 
    public PluginSessionCallback sessionStarted(final ISession session)
    {
@@ -471,7 +481,8 @@ public class OraclePlugin extends DefaultSessionPlugin
    {
       if(isOracle(alias))
       {
-         OracleAliasPrefs prefs = (OracleAliasPrefs)_oracleAliasPrefsByAliasIdentifier.get(alias.getIdentifier());
+         OracleAliasPrefs prefs = 
+             _oracleAliasPrefsByAliasIdentifier.get(alias.getIdentifier());
 
          if(null == prefs)
          {
@@ -517,7 +528,7 @@ public class OraclePlugin extends DefaultSessionPlugin
             currentUserName = md.getUserName();
             stmt = con.getConnection().createStatement();
             rs = stmt.executeQuery(SCHEMA_ACCESS_SQL);
-            ArrayList tmp = new ArrayList();
+            ArrayList<String> tmp = new ArrayList<String>();
             while (rs.next())
             {
                tmp.add(rs.getString(1));
@@ -534,7 +545,7 @@ public class OraclePlugin extends DefaultSessionPlugin
                tmp.add("SYS");
             }
 
-            result = (String[]) tmp.toArray(new String[tmp.size()]);
+            result = tmp.toArray(new String[tmp.size()]);
          }
       }
       catch (SQLException e)
