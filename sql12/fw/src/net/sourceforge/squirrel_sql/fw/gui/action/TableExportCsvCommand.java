@@ -1,5 +1,15 @@
 package net.sourceforge.squirrel_sql.fw.gui.action;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.Types;
+import java.util.Calendar;
+
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+
 import jxl.Workbook;
 import jxl.write.WritableCell;
 import jxl.write.WritableSheet;
@@ -8,20 +18,12 @@ import jxl.write.WriteException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ExtTableColumn;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.ClobDescriptor;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.*;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.sql.Types;
-import java.util.Calendar;
 
 public class TableExportCsvCommand
 {
@@ -31,8 +33,15 @@ public class TableExportCsvCommand
    private static ILogger s_log = LoggerController.createLogger(TableExportCsvCommand.class);
 
    private JTable _table;
-
-
+   
+   static interface i18n {
+       //i18n[TableExportCsvCommand.missingClobDataMsg=Found Clob placeholder 
+       //({0}) amongst data to be exported. Continue exporting cell data?]
+       String missingClobDataMsg = 
+           s_stringMgr.getString("TableExportCsvCommand.missingClobDataMsg",
+                                 ClobDescriptor.i18n.CLOB_LABEL);
+   }
+   
    public TableExportCsvCommand(JTable table)
    {
       _table = table;
@@ -47,18 +56,79 @@ public class TableExportCsvCommand
          return;
       }
 
-
-      if(writeFile(ctrl))
+      if (!checkMissingData(ctrl.getSeparatorChar())) {
+          int choice = JOptionPane.showConfirmDialog(GUIUtils.getMainFrame(), 
+                                                     i18n.missingClobDataMsg);
+          if (choice == JOptionPane.YES_OPTION) {
+              // Need to somehow call 
+              // SQLResultExecuterPanel.reRunSelectedResultTab(true);
+              // 
+              // Something like :
+              // SQLResultExecuterPanel panel = getPanel(); 
+              // panel.reRunSelectedResultTab(true);
+              //
+              // However, that doesn't apply when the user is exporting from the
+              // table contents table.  There needs to be a more generic way to
+              // do this for all tables containing data that is to be exported
+              // where some of the fields contain placeholders.
+              // For now, we just inform the user and let them either continue
+              // or abort and change the configuration manually, 
+              // re-run the query / reload the table data and re-export.  
+          }
+          if (choice == JOptionPane.NO_OPTION) {
+              // abort the export
+              return;
+          }
+          if (choice == JOptionPane.CANCEL_OPTION) {
+              // abort the export
+              return;
+          }
+      }
+      
+      boolean writeFileSuccess = writeFile(ctrl);
+          
+      if(writeFileSuccess)
       {
          String command = ctrl.getCommand();
 
          if(null != command)
          {
             executeCommand(command);
+         } else {
+             // i18n[TableExportCsvCommand.writeFileSuccess=Export to file 
+             // "{0}" is complete.] 
+             String msg = 
+                 s_stringMgr.getString("TableExportCsvCommand.writeFileSuccess", 
+                                       ctrl.getFile().getAbsolutePath());
+             if (s_log.isInfoEnabled()) {
+                 s_log.info(msg);
+             }
+             JOptionPane.showMessageDialog(GUIUtils.getMainFrame(), msg);
          }
       }
    }
 
+   private boolean checkMissingData(String sepChar) {
+       int firstSelectedColIdx = _table.getSelectedColumn();
+       int lastSelectedColIdx = firstSelectedColIdx + _table.getSelectedColumnCount();
+       int firstSelectedRowIdx = _table.getSelectedRow();
+       int lastSelectedRowIdx = firstSelectedRowIdx + _table.getSelectedRowCount();
+       for (int colIdx = _table.getSelectedColumn(); colIdx < lastSelectedColIdx; colIdx++) {
+           ExtTableColumn col = (ExtTableColumn) _table.getColumnModel().getColumn(colIdx);
+           int sqlType = col.getColumnDisplayDefinition().getSqlType();
+           if (sqlType == Types.CLOB) {
+               for (int rowIdx = firstSelectedRowIdx; rowIdx < lastSelectedRowIdx; rowIdx++) {
+                   Object cellObj = _table.getValueAt(rowIdx, colIdx);
+                   String data = getDataCSV(sepChar, cellObj);
+                   if (data != null && ClobDescriptor.i18n.CLOB_LABEL.equals(data)) {
+                       return true;
+                   }
+               }
+           }
+       }
+       return false;
+   }
+   
    private void executeCommand(String command)
    {
       try
@@ -255,7 +325,7 @@ public class TableExportCsvCommand
             ret = new jxl.write.Number(colIdx, curRow, ((Number) cellObj).floatValue());
             break;
          case Types.BIGINT:
-            ret = new jxl.write.Number(colIdx, curRow, (float) Long.parseLong(cellObj.toString()));
+            ret = new jxl.write.Number(colIdx, curRow, Long.parseLong(cellObj.toString()));
             break;
          case Types.DATE:
          case Types.TIMESTAMP:
@@ -279,8 +349,6 @@ public class TableExportCsvCommand
             ret = new jxl.write.Label(colIdx, curRow, getDataXLSAsString(cellObj));
             break;
          default:
-            Class c = cellObj.getClass();
-            String s = c.getName();
             cellObj = CellComponentFactory.renderObject(cellObj, col.getColumnDisplayDefinition());
             ret = new jxl.write.Label(colIdx, curRow, getDataXLSAsString(cellObj));
       }
@@ -331,21 +399,25 @@ public class TableExportCsvCommand
          for (int colIdx = 0; colIdx < nbrSelCols; ++colIdx)
          {
             Object cellObj;
+            String cellObjData = null;
+            
             if(ctrl.useGloablPrefsFormatting() && _table.getColumnModel().getColumn(colIdx) instanceof ExtTableColumn)
             {
                ExtTableColumn col = (ExtTableColumn) _table.getColumnModel().getColumn(colIdx);
                cellObj = _table.getValueAt(selRows[rowIdx], selCols[colIdx]);
-
+               
                if(null != cellObj)
                {
                   cellObj = CellComponentFactory.renderObject(cellObj, col.getColumnDisplayDefinition());
+                  cellObjData = getDataCSV(separator, cellObj);
                }
             }
             else
             {
                cellObj = _table.getValueAt(selRows[rowIdx], selCols[colIdx]);
             }
-            bw.write(getDataCSV(separator, cellObj));
+            cellObjData = getDataCSV(separator, cellObj);
+            bw.write(cellObjData);
 
             if(nbrSelCols -1 > colIdx)
             {
@@ -362,7 +434,7 @@ public class TableExportCsvCommand
 
       return true;
    }
-
+   
    private String getDataCSV(String sepChar, Object cellObj)
    {
       if (cellObj == null)

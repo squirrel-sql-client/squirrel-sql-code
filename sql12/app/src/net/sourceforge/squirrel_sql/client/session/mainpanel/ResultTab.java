@@ -346,6 +346,10 @@ public class ResultTab extends JPanel implements IHasIdentifier
 		return _tp;
 	}
 
+    public void reRunSQL() {
+        _resultTabListener.rerunSQL(_exInfo.getSQL(), ResultTab.this);
+    }
+    
 	/**
 	 * Session properties have changed so update GUI if required.
 	 *
@@ -498,7 +502,7 @@ public class ResultTab extends JPanel implements IHasIdentifier
 
       public void actionPerformed(ActionEvent evt)
       {
-         _resultTabListener.rerunSQL(_exInfo.getSQL(), ResultTab.this);   
+         reRunSQL();   
       }
    }
 

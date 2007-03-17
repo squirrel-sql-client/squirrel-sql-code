@@ -75,6 +75,10 @@ public class BlobDescriptor {
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(BlobDescriptor.class);
 	
+    public static interface i18n {
+        String BLOB_LABEL = s_stringMgr.getString("BlobDescriptor.blob");
+    }
+    
 	/**
 	 * Ctor
 	 */
@@ -138,13 +142,14 @@ public class BlobDescriptor {
 			Byte[] useValue = new Byte[_data.length];
 					for (int i=0; i<_data.length; i++)
 						useValue[i] = new Byte(_data[i]);
-			String outString = (String)BinaryDisplayConverter.convertToString(useValue,
-						BinaryDisplayConverter.HEX, false);
+			String outString = BinaryDisplayConverter.convertToString(useValue,
+						                            BinaryDisplayConverter.HEX, 
+                                                    false);
 			if (_wholeBlobRead || _userSetBlobLimit > _data.length)
 				return outString;	// we have the whole contents of the BLOB
 			else return outString+"...";	// tell user the data is truncated
 		}
-		else return s_stringMgr.getString("BlobDescriptor.blob");
+		else return i18n.BLOB_LABEL;
 	}
 	
 	/* 
