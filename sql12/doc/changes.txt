@@ -92,6 +92,9 @@ DBCopy Plugin
 
 Bug-Fixes:
 
+1682289 Schema browser won't show all schemas. 
+	    (Thanks to Robert Williams for the patch)
+
 1680919: failure to export cvs/excel on mac osx (incomplete ClassPath entry in
           Info.plist)
 
@@ -142,6 +145,9 @@ Informix Plugin
   - Applied code formatting to triggers and view source.  
   - Fixed erroneous inclusion of extra whitespace which for some definitions 
     made the SQL invalid.
+
+Oracle Plugin
+  - Fixed a memory leak where the plugin was holding on to closed sessions
 
 Refactoring Plugin 
   - Now allows precision and scale for new or modified columns to be set to 0.
