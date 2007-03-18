@@ -50,7 +50,8 @@ public class SquirrelResources extends Resources
 	{
 		String APPLICATION_ICON = "AppIcon";
 		String COPY_SELECTED = "CopySelected";
-		String EMPTY16 = "Empty16";
+      String SQL_HISTORY = "SQLHistory";
+      String EMPTY16 = "Empty16";
 		String HELP_TOPIC = "HelpTopic";
 		String HELP_TOC_CLOSED = "HelpTocClosed";
 		String HELP_TOC_OPEN = "HelpTocOpen";
@@ -68,7 +69,7 @@ public class SquirrelResources extends Resources
 		String LOGS = "logs";
 		String ALIAS_PROPERTIES = "aliasProperties";
 
-	}
+   }
 
 	public SquirrelResources(String rsrcBundleBaseName)
 		throws IllegalArgumentException

@@ -65,13 +65,6 @@ public class SortableTable extends JTable
 	private void init()
 	{
 		setTableHeader(new ButtonTableHeader());
-
-		/*
-		 * TODO: When 1.4 is the earliest version supported, add the following
-		 * line: setSurrendersFocusOnKeystroke(true); This should help handle
-		 * some problems with navigation using tab & return to move through
-		 * cells.
-		 */
 	}
 }
 

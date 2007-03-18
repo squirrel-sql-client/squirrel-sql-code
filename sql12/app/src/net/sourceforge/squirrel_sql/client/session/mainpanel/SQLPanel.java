@@ -66,12 +66,10 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
-import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.*;
 import net.sourceforge.squirrel_sql.client.session.action.RedoAction;
 import net.sourceforge.squirrel_sql.client.session.action.UndoAction;
+import net.sourceforge.squirrel_sql.client.session.action.OpenSqlHistoryAction;
 import net.sourceforge.squirrel_sql.client.session.event.*;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 /**
@@ -170,9 +168,10 @@ public class SQLPanel extends JPanel
     */
    private boolean _inMainSessionWindow;
 	private SQLPanel.SQLExecutorHistoryListener _sqlExecutorHistoryListener = new SQLExecutorHistoryListener();
+   private ArrayList<SqlPanelListener> _sqlPanelListeners = new ArrayList<SqlPanelListener>();
 
 
-	/**
+   /**
 	 * Ctor.
 	 *
 	 * @param	session	 Current session.
@@ -417,7 +416,14 @@ public class SQLPanel extends JPanel
 		_sqlExecPanel.removeSQLExecutionListener(_sqlExecutorHistoryListener);
 		
 
-		_sqlEntry.dispose();
+
+
+      for (SqlPanelListener l : _sqlPanelListeners)
+      {
+         l.panelParentWindowClosing();
+      }
+
+      _sqlEntry.dispose();
 
 
    }
@@ -707,6 +713,11 @@ public class SQLPanel extends JPanel
 		}
 	}
 
+	private void openSQLHistory()
+	{
+      new SQLHistoryController(_session, getSQLPanelAPI(), ((SQLHistoryComboBoxModel)_sqlCombo.getModel()).getItems());
+   }
+
 	private void propertiesHaveChanged(String propName)
 	{
 		final SessionProperties props = _session.getProperties();
@@ -759,14 +770,19 @@ public class SQLPanel extends JPanel
 			}
 		}
 
-//		if (propName == null
-//			|| propName.equals(SessionProperties.IPropertyNames.SQL_EXECUTION_TAB_PLACEMENT))
-//		{
-//			_tabbedResultsPanel.setTabPlacement(props.getSQLExecutionTabPlacement());
-//		}
 	}
 
-    private class SetAutoCommitTask implements Runnable {
+   public void addSqlPanelListener(SqlPanelListener sqlPanelListener)
+   {
+      _sqlPanelListeners.add(sqlPanelListener);
+   }
+
+   public ArrayList<SQLHistoryItem> getSQLHistoryItems()
+   {
+      return ((SQLHistoryComboBoxModel)_sqlCombo.getModel()).getItems();
+   }
+
+   private class SetAutoCommitTask implements Runnable {
         
         public void run() {
             final SQLConnection conn = _session.getSQLConnection();
@@ -832,6 +848,7 @@ public class SQLPanel extends JPanel
 
 			Box box = Box.createHorizontalBox();
 			box.add(new CopyLastButton(app));
+			box.add(new ShowHistoryButton(app));
 			box.add(Box.createHorizontalStrut(10));
             // i18n[SQLPanel.limitrowscheckbox.hint=Limit rows: ]
             String hint = 
@@ -1048,6 +1065,23 @@ public class SQLPanel extends JPanel
 					copySelectedItemToEntryArea();
 				}
 			});
+		}
+	}
+
+	private class ShowHistoryButton extends JButton
+	{
+		ShowHistoryButton(IApplication app)
+		{
+         final SquirrelResources rsrc = app.getResources();
+         final ImageIcon icon = rsrc.getIcon(SquirrelResources.IImageNames.SQL_HISTORY);
+         setIcon(icon);
+         // i18n[SQLPanel.openSqlHistory.hint=Open SQL History]
+         String hint = s_stringMgr.getString("SQLPanel.openSqlHistory.hint");
+         setToolTipText(hint);
+         Dimension dm = getPreferredSize();
+         dm.setSize(dm.height, dm.height);
+			setPreferredSize(dm);
+         addActionListener(_session.getApplication().getActionCollection().get(OpenSqlHistoryAction.class));
 		}
 	}
 

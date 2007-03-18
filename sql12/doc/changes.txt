@@ -6,6 +6,13 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+- SQL history window
+  The contents of the SQL history combo box can now be opened in a window
+  where the user can search for formerly excuted statements. The history
+  is available through a button next to the SQL history combo box or through
+  tools pop up (ctrl+t).
+
+
 - Export: Warn the user when exporting data to CSV/Excel if there are Clob 
   placeholders (<Clob>) in the table data being exported.  Also, let the user 
   know when the export to file is complete, if no command is to be executed to 

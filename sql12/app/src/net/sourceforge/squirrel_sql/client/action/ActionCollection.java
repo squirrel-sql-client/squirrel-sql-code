@@ -489,6 +489,7 @@ public final class ActionCollection
 		add(new PreviousSqlAction(_app));
 		add(new NextSqlAction(_app));
 		add(new SelectSqlAction(_app));
+		add(new OpenSqlHistoryAction(_app));
 	}
 
 }

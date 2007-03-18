@@ -86,12 +86,21 @@ public class SQLHistoryComboBox extends MemoryComboBox
 
 	private String formatToolTip(String tt)
 	{
-		final StringBuffer buf = new StringBuffer(tt.length() + 25);
-		buf.append("<HTML><PRE>")
-			.append(tt)
-			.append("</PRE></HTML>");
-		return buf.toString();
-	}
+      final StringBuffer buf = new StringBuffer();
+      buf.append("<HTML><PRE>");
+
+      if (200 < tt.length())
+      {
+         buf.append(tt.substring(0, 200)).append(" ...");
+      }
+      else
+      {
+         buf.append(tt);
+      }
+
+      buf.append("</PRE></HTML>");
+      return buf.toString();
+   }
 
 	public void dispose()
 	{
