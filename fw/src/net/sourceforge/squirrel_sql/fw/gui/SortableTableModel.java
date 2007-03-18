@@ -74,7 +74,7 @@ public class SortableTableModel extends AbstractTableModel
 		{
 			_actualModel.addTableModelListener(_actualModelLis);
 		}
-		tableChanged();
+		tableChangedIntern();
 	}
 
 	/**
@@ -247,14 +247,28 @@ public class SortableTableModel extends AbstractTableModel
 		return _bAscending;
 	}
 
-	private void tableChanged()
+	public void tableChanged()
+	{
+      tableChangedIntern();
+
+      if(-1 != _iColumn)
+      {
+         sortByColumn(_iColumn, _bAscending);
+      }
+      else
+      {
+         fireTableDataChanged();
+      }
+   }
+
+	private void tableChangedIntern()
 	{
 		_indexes = new Integer[getRowCount()];
 		for (int i = 0; i < _indexes.length; ++i)
 		{
 			_indexes[i] = new Integer(i);
 		}
-	}
+   }
 
 	/**
 	 * When the table is sorted table methods like getSelectedRow() return row indices that
@@ -358,7 +372,7 @@ public class SortableTableModel extends AbstractTableModel
 	{
 		public void tableChanged(TableModelEvent evt)
 		{
-			SortableTableModel.this.tableChanged();
+			SortableTableModel.this.tableChangedIntern();
 		}
 	}
 }

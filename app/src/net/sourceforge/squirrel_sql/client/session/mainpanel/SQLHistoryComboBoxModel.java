@@ -23,6 +23,9 @@ import javax.swing.event.ListDataListener;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
+import java.util.ArrayList;
+
 /**
  * TODO: JavaDoc
  * 
@@ -212,4 +215,18 @@ public class SQLHistoryComboBoxModel extends DefaultComboBoxModel
 		} 
 		return newModel;
 	}
+
+   public ArrayList<SQLHistoryItem> getItems()
+   {
+      ArrayList<SQLHistoryItem> ret = new ArrayList<SQLHistoryItem>();
+
+      for (int i = 0; i < _dataModel.getSize(); i++)
+      {
+         ret.add((SQLHistoryItem) _dataModel.getElementAt(i));
+      }
+
+      return ret;
+
+
+   }
 }

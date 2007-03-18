@@ -27,6 +27,11 @@ import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.SqlPanelListener;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
+
+import java.util.ArrayList;
+
 /**
  * This interface defines the API through which plugins can work with the SQL
  * panel.
@@ -304,5 +309,9 @@ public interface ISQLPanelAPI
    void showToolsPopup();
    
    boolean confirmClose();
+
+   void addSqlPanelListener(SqlPanelListener sqlPanelListener);
+
+   ArrayList<SQLHistoryItem> getSQLHistoryItems();
 }
 

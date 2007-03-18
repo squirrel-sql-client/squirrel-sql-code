@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.io.Serializable;
+import java.util.Date;
 
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 /**
@@ -31,18 +32,22 @@ public class SQLHistoryItem implements Serializable, Cloneable
 	/** The SQL. */
 	private String _sql;
 
-	/**
+
+   private java.util.Date _lastUsageTime;
+
+   /**
 	 * Cleaned up vesion of the SQL. Appropriate for displaying in
 	 * a combobox.
 	 */
 	private String _shortSql;
+   private String _aliasName;
 
-	/**
+   /**
 	 * Default ctor.
 	 */
 	public SQLHistoryItem()
 	{
-		this("");
+		this("", "");
 	}
 
 	/**
@@ -53,14 +58,22 @@ public class SQLHistoryItem implements Serializable, Cloneable
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> SQL statement passed.
 	 */
-	public SQLHistoryItem(String sql)
+	public SQLHistoryItem(String sql, String aliasName)
 	{
 		super();
-		if (sql == null)
+      if (sql == null)
 		{
 			throw new IllegalArgumentException("sql == null");
 		}
-		setSQL(sql);
+
+      _aliasName = aliasName;
+
+      if(0 < sql.length())
+      {
+         _lastUsageTime = new Date();
+      }
+
+      setSQL(sql);
 	}
 
 	/**
@@ -139,4 +152,25 @@ public class SQLHistoryItem implements Serializable, Cloneable
 		_sql = sql.trim();
 		_shortSql = StringUtilities.cleanString(sql);
 	}
+
+   public Date getLastUsageTime()
+   {
+      return _lastUsageTime;
+   }
+
+   public void setLastUsageTime(Date _creationTime)
+   {
+      this._lastUsageTime = _creationTime;
+   }
+
+
+   public String getAliasName()
+   {
+      return _aliasName;
+   }
+
+   public void setAliasName(String _aliasName)
+   {
+      this._aliasName = _aliasName;
+   }
 }

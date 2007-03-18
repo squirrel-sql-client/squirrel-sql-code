@@ -47,16 +47,7 @@ public class SQLHistory
 	}
 
 
-	public synchronized void add(String sql)
-	{
-		if (sql == null)
-		{
-			throw new IllegalArgumentException("sql == null");
-		}
-		add(new SQLHistoryItem(sql));
-	}
-
-	public synchronized void add(SQLHistoryItem obj)
+   public synchronized void add(SQLHistoryItem obj)
 	{
 		if (obj == null)
 		{

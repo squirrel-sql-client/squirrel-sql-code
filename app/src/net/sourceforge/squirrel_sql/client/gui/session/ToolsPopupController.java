@@ -74,6 +74,8 @@ public class ToolsPopupController
 		addAction("sqlnext", ac.get(NextSqlAction.class));
 		addAction("sqlselect", ac.get(SelectSqlAction.class));
 
+      addAction("sqlhist", ac.get(OpenSqlHistoryAction.class));
+
 		if(sqlPanel.isInMainSessionWindow())
       {
          addAction("viewinobjecttree", ac.get(ViewObjectAtCursorInObjectTreeAction.class));
