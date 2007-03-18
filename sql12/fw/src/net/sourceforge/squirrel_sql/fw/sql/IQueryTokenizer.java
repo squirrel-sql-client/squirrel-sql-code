@@ -52,4 +52,12 @@ public interface IQueryTokenizer {
      *         statements. 
      */
     String getSQLStatementSeparator();
+    
+    /**
+     * Returns the string that identifies a line comment.
+     *  
+     * @return the start of line comment
+     */
+    String getLineCommentBegin();
+    
 }
