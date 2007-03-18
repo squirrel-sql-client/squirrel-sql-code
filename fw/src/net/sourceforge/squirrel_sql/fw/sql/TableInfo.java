@@ -22,6 +22,8 @@ import java.util.TreeSet;
 
 public class TableInfo extends DatabaseObjectInfo implements ITableInfo
 {
+    static final long serialVersionUID = -3184857504910012169L;
+
     /** Table Type. */
 	private final String _tableType;
 

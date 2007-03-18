@@ -33,6 +33,8 @@ import java.io.Serializable;
  */
 public class DatabaseObjectType implements IHasIdentifier, Serializable
 {
+   static final long serialVersionUID = 2325635336825122256L;
+   
    /** Internationalized strings for this class. */
    private static final StringManager s_stringMgr =
       StringManagerFactory.getStringManager(DatabaseObjectType.class);

@@ -26,6 +26,8 @@ package net.sourceforge.squirrel_sql.fw.sql;
  */
 public class PrimaryKeyInfo extends DatabaseObjectInfo
 {
+    static final long serialVersionUID = 4785889679696720264L;
+
     /** 
      * the name of the column which belongs to a list of columns that form a 
      * unique key for a table

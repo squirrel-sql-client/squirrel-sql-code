@@ -24,6 +24,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class ProcedureInfo extends DatabaseObjectInfo implements IProcedureInfo
 {
+    static final long serialVersionUID = -4111528608716386156L;
+    
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(ProcedureInfo.class);

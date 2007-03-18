@@ -28,7 +28,9 @@ import net.sourceforge.squirrel_sql.fw.util.BaseException;
  */
 public class WrappedSQLException extends BaseException
 {
-	/**
+	static final long serialVersionUID = 8923509127367847605L;
+
+    /**
 	 * Ctor specifying the <TT>SQLException</TT> that this exception
 	 * is wrapped around.
 	 * 

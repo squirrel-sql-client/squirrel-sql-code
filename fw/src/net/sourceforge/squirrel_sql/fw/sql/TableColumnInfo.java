@@ -19,6 +19,8 @@ package net.sourceforge.squirrel_sql.fw.sql;
  */
 public class TableColumnInfo extends DatabaseObjectInfo
 {
+    static final long serialVersionUID = 3529392685978921375L;
+    
     private final String _tableName;
 	private final String _columnName;
 	private final int _dataType;

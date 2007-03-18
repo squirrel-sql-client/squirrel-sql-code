@@ -20,7 +20,9 @@ package net.sourceforge.squirrel_sql.fw.sql;
 // TODO: Put in all the property accessors
 public class DataTypeInfo extends DatabaseObjectInfo
 {
-	private final int _dataType;
+	static final long serialVersionUID = -3501323961506084527L;
+    
+    private final int _dataType;
 	private final int _precision;
 	private final String _literalPrefix;
 	private final String _literalSuffix;

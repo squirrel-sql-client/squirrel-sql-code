@@ -36,6 +36,8 @@ import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
  */
 public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 {
+    static final long serialVersionUID = 8506401259069527981L;
+    
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(SQLDriver.class);

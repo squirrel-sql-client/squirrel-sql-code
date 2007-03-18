@@ -26,6 +26,8 @@ import java.sql.DriverPropertyInfo;
  */
 public class SQLDriverProperty implements Cloneable, Serializable
 {
+    static final long serialVersionUID = -5150608132930417454L;
+    
 	/** Property names for this bean. */
 	public interface IPropertyNames
 	{
@@ -39,7 +41,7 @@ public class SQLDriverProperty implements Cloneable, Serializable
 		String IS_SPECIFIED = "isSpecified";
 	}
 
-	/** Name. */
+    /** Name. */
 	private String _name;
 
 	/** Value associated with the name. */
