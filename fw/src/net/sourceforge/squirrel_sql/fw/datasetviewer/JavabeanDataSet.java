@@ -141,7 +141,7 @@ public class JavabeanDataSet implements IDataSet
 	protected Object executeGetter(Object bean, Method getter)
 		throws InvocationTargetException, IllegalAccessException
 	{
-		return getter.invoke(bean, null);
+		return getter.invoke(bean, (Object[])null);
 	}
 
 	public final int getColumnCount()

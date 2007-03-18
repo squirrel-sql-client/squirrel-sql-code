@@ -227,7 +227,7 @@ public class MetaDataDataSet implements IDataSet
 	{
 		try
 		{
-			return getter.invoke(bean, null);
+			return getter.invoke(bean, (Object[])null);
 		}
 		catch (Throwable th)
 		{
