@@ -40,7 +40,9 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
       String QUALIFIED_NAME = "qualifiedName";
    }
 
-   /** Catalog name. Can be <CODE>null</CODE> */
+   static final long serialVersionUID = -7138016566181091160L;
+
+/** Catalog name. Can be <CODE>null</CODE> */
    private final String _catalog;
 
    /** Schema name. Can be <CODE>null</CODE> */
@@ -145,13 +147,12 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
     * 
     * This method returns a qualifed name that meets this criteria. 
     * 
-    * @param md
     * @return a valid Informix qualified name - if catalog *and* schema are not
     *         null/empty, this returns the database object name such as
     *         catalog:schema.simpleName.  However, if either catalog or schema
     *         (or both) are null, this simply returns the simpleName
     */
-   private String getInformixQualifiedName(SQLDatabaseMetaData md) {
+   private String getInformixQualifiedName() {
        StringBuffer result = new StringBuffer();
        if (_catalog != null && _schema != null) {
            result.append(_catalog);
@@ -174,7 +175,7 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
 
       // check for Informix - it has very "special" qualified names
       if (isInformix(md)) {
-          return getInformixQualifiedName(md);
+          return getInformixQualifiedName();
       }
       
       try
