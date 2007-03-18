@@ -142,7 +142,7 @@ public final class XMLBeanWriter
 				if (returnType.isArray())
 				{
 					final boolean isStringArray = returnType.getName().equals("[Ljava.lang.String;");
-					Object[] props = (Object[]) getter.invoke(bean, null);
+					Object[] props = (Object[]) getter.invoke(bean, (Object[])null);
 					if (props != null)
 					{
 						IXMLElement indexElem = new XMLElement(propName);
@@ -173,18 +173,18 @@ public final class XMLBeanWriter
 						|| returnType == char.class)
 				{
 					IXMLElement propElem = new XMLElement(propName);
-					propElem.setContent("" + getter.invoke(bean, null));
+					propElem.setContent("" + getter.invoke(bean, (Object[])null));
 					beanElem.addChild(propElem);
 				}
 				else if (returnType == String.class)
 				{
 					IXMLElement propElem = new XMLElement(propName);
-					propElem.setContent((String) getter.invoke(bean, null));
+					propElem.setContent((String) getter.invoke(bean, (Object[])null));
 					beanElem.addChild(propElem);
 				}
 				else
 				{
-					beanElem.addChild(createElement(getter.invoke(bean, null), propName));
+					beanElem.addChild(createElement(getter.invoke(bean, (Object[])null), propName));
 				}
 			}
 			catch (Exception ex)

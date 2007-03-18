@@ -132,7 +132,7 @@ public class BeanPropertyTableModel extends DefaultTableModel
 	protected Object executeGetter(Object bean, Method getter)
 		throws InvocationTargetException, IllegalAccessException
 	{
-		return getter.invoke(bean, null);
+		return getter.invoke(bean, (Object[])null);
 	}
 
 	public void setNameColumnName(String value)
