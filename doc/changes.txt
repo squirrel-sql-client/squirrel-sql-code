@@ -6,6 +6,11 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+- Export: Warn the user when exporting data to CSV/Excel if there are Clob 
+  placeholders (<Clob>) in the table data being exported.  Also, let the user 
+  know when the export to file is complete, if no command is to be executed to 
+  show the exported file.
+  
 - 'Delete Records' action now orders the selected tables in order to satisfy any
   FK dependencies.  Previously, this operation would fail if PK tables preceded
   (by name alphabetically) FK tables in the object tree list.
