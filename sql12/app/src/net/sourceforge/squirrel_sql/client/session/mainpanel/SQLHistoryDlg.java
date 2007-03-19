@@ -66,10 +66,21 @@ public class SQLHistoryDlg extends JDialog
 
       addWindowListener(new WindowAdapter()
       {
+         boolean onWindowClosedCalled = false;
 
          public void windowClosed(WindowEvent e)
          {
-            onWIndowClosed();
+            if(false == onWindowClosedCalled)
+            {
+               onWindowClosed();
+            }
+         }
+
+
+         public void windowClosing(WindowEvent e)
+         {
+            onWindowClosed();
+            onWindowClosedCalled = true;
          }
       });
    }
@@ -146,7 +157,7 @@ public class SQLHistoryDlg extends JDialog
    }
 
 
-   private void onWIndowClosed()
+   private void onWindowClosed()
    {
       Dimension size = getSize();
       Preferences.userRoot().putInt(PREF_KEY_SQL_HISTORY_DLG_WIDTH, size.width);
