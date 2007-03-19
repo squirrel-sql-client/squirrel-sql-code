@@ -55,9 +55,20 @@ public class SQLHistoryController
 
       _dlg.addWindowListener(new WindowAdapter()
       {
+         boolean onWindowClosedCalled = false;
+
          public void windowClosed(WindowEvent e)
          {
+            if(false == onWindowClosedCalled)
+            {
+               onWindowClosed();
+            }
+         }
+
+         public void windowClosing(WindowEvent e)
+         {
             onWindowClosed();
+            onWindowClosedCalled = true;
          }
       });
 
@@ -113,11 +124,14 @@ public class SQLHistoryController
       {
          public void mousePressed(MouseEvent evt)
          {
-            if (evt.isPopupTrigger())
-            {
-               _popUp.show(evt.getComponent(), evt.getX(), evt.getY());
-            }
+            maybeShowPopup(evt);
          }
+
+         public void mouseReleased(MouseEvent e)
+         {
+            maybeShowPopup(e);
+         }
+
       });
 
 
@@ -163,6 +177,14 @@ public class SQLHistoryController
 
 
 
+   }
+
+   private void maybeShowPopup(MouseEvent evt)
+   {
+      if (evt.isPopupTrigger())
+      {
+         _popUp.show(evt.getComponent(), evt.getX(), evt.getY());
+      }
    }
 
    private void closeAndSetFocus()
