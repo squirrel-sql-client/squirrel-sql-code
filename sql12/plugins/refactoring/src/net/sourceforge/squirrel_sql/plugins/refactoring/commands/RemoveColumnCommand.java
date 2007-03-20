@@ -117,19 +117,21 @@ public class RemoveColumnCommand extends AbstractRefactoringCommand
 
     protected String[] getSQLFromDialog() {
         TableColumnInfo[] columns = columnListDialog.getSelectedColumnList();
+        
+        
         HibernateDialect dialect = null; 
             
         
         String[] result = new String[columns.length];
         try {
             dialect = DialectFactory.getDialect(_session, DialectFactory.DEST_TYPE);
+            // TODO: add configuration for whether or not to qualify names.
+            String tableName = _info[0].getQualifiedName();
             for (int i = 0; i < columns.length; i++) {
                 TableColumnInfo info = columns[i];
-                result[i] = DBUtil.getAlterSQLForColumnRemoval(_info[0].getQualifiedName(), 
-                                                               info, 
-                                                               dialect);
+                String columnName = info.getColumnName();
+                result[i] = dialect.getColumnDropSQL(tableName, columnName);
             }
-                                        
         } catch (UnsupportedOperationException e2) {
             //i18n[RemoveColumnCommand.unsupportedOperationMsg=The {0} dialect
             //doesn's support dropping columns]
