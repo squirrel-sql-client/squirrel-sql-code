@@ -137,19 +137,5 @@ public class DBUtil {
             return dialect.getColumnDefaultAlterSQL(to);
         }
         return null;
-    }
-    
-    public static String getAlterSQLForColumnRemoval(String tableName,
-                                                     TableColumnInfo info,
-                                                     HibernateDialect dialect) 
-    {
-        // The syntax of the alter command may be db-specific.  May need to add
-        // it to the HibernatDialect interface.         
-        StringBuffer result = new StringBuffer();
-        result.append("ALTER TABLE ");
-        result.append(tableName);
-        result.append(" DROP ");
-        result.append(info.getSimpleName());
-        return result.toString();
-    }
+    }    
 }
