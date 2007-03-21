@@ -95,10 +95,6 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
       {
          bounds = getSqlBoundsBySeparatorRule(getCaretPosition());
       }
-      if(bounds[0] == bounds[1])
-      {
-         bounds = getSqlBoundsBySeparatorRule(getCaretPosition()-1);          
-      }
 
       return bounds;
    }
@@ -159,10 +155,19 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
       for(;;)
       {
 
-         if (ix >= sql.length())
+         if (ix == sql.length())
          {
-             return ix;
+            if(ix == 0)
+            {
+               return ix;
+            }
+            else
+            {
+               ix--;
+            }
          }
+
+
          
          if(false == Character.isWhitespace(sql.charAt(ix)))
          {
