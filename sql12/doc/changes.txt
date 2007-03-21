@@ -109,6 +109,9 @@ DBCopy Plugin
 
 Bug-Fixes:
 
+Functions like Quote/Unquote SQL or Format SQL removed new lines.
+
+
 1682289 Schema browser won't show all schemas. 
 	    (Thanks to Robert Williams for the patch)
 
