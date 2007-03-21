@@ -6,6 +6,9 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+- Dialog prompt to save file changes on exit, now includes the filename in 
+  case there are multiple open files in different sessions.
+
 - SQL history window
   The contents of the SQL history combo box can now be opened in a window
   where the user can search for formerly excuted statements. The history
