@@ -20,6 +20,9 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.io.File;
+import java.util.ArrayList;
+
 import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -40,12 +43,13 @@ import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.*;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.SqlPanelListener;
 import net.sourceforge.squirrel_sql.client.util.PrintUtilities;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import java.util.ArrayList;
 
 /**
  * This class is the API through which plugins can work with the SQL Panel.
@@ -693,7 +697,9 @@ public class SQLPanelAPI implements ISQLPanelAPI
 
    private boolean showConfirmSaveDialog() 
    {
-       String msg = s_stringMgr.getString("SQLPanelAPI.unsavedchanges");
+       File file = _fileManager.getFile();
+       String msg = s_stringMgr.getString("SQLPanelAPI.unsavedchanges",
+                                          file.getAbsolutePath());
        String title = 
            s_stringMgr.getString("SQLPanelAPI.unsavedchangestitle");
        

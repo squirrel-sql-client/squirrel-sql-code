@@ -279,6 +279,10 @@ public class FileManager
       _sqlPanelAPI.getSession().getActiveSessionWindow().setSqlFile(file);
    }
 
+   public File getFile() {
+       return _toSaveTo;
+   }
+   
    private JFileChooser getFileChooser() {
        if (fileChooser == null) {
            fileChooser = new JFileChooser();
