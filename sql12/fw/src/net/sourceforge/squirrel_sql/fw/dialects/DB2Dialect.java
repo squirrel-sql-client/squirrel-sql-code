@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -444,18 +445,20 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect
      * @throw UnsupportedOperationException if the database doesn't support 
      *         modifying column types. 
      */
-    public String getColumnTypeAlterSQL(TableColumnInfo from, 
-                                        TableColumnInfo to)
+    public List<String> getColumnTypeAlterSQL(TableColumnInfo from, 
+                                              TableColumnInfo to)
         throws UnsupportedOperationException
     {
-        StringBuffer result = new StringBuffer();
-        result.append("ALTER TABLE ");
-        result.append(from.getTableName());
-        result.append(" ALTER COLUMN ");
-        result.append(from.getColumnName());
-        result.append(" SET DATA TYPE ");
-        result.append(DialectUtils.getTypeName(to, this));
-        return result.toString();
+        ArrayList<String> result = new ArrayList<String>();
+        StringBuffer tmp = new StringBuffer();
+        tmp.append("ALTER TABLE ");
+        tmp.append(from.getTableName());
+        tmp.append(" ALTER COLUMN ");
+        tmp.append(from.getColumnName());
+        tmp.append(" SET DATA TYPE ");
+        tmp.append(DialectUtils.getTypeName(to, this));
+        result.add(tmp.toString());
+        return result;
     }
 
     /**

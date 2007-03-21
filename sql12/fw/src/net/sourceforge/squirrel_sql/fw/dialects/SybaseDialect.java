@@ -19,6 +19,7 @@
 package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.sql.Types;
+import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -347,7 +348,7 @@ public class SybaseDialect extends org.hibernate.dialect.SybaseDialect
      * @throw UnsupportedOperationException if the database doesn't support 
      *         modifying column types. 
      */
-    public String getColumnTypeAlterSQL(TableColumnInfo from, 
+    public List<String> getColumnTypeAlterSQL(TableColumnInfo from, 
                                         TableColumnInfo to)
         throws UnsupportedOperationException
     {

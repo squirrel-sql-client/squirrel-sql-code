@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.refactoring;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
@@ -23,7 +24,7 @@ public class DBUtil {
                                                         HibernateDialect dialect)
         throws HibernateException, UnsupportedOperationException 
     {
-        ArrayList result = new ArrayList();
+        ArrayList<String> result = new ArrayList<String>();
 
         String[] addSQLs = dialect.getColumnAddSQL(info);
         
@@ -32,14 +33,14 @@ public class DBUtil {
             result.add(addSQL);
         }
 
-        return (String[])result.toArray(new String[result.size()]);
+        return result.toArray(new String[result.size()]);
     }
     
     public static String[] getAlterSQLForColumnChange(TableColumnInfo from,
                                                       TableColumnInfo to,
                                                       HibernateDialect dialect)
     {
-        ArrayList result = new ArrayList();
+        ArrayList<String> result = new ArrayList<String>();
         // It is important to process the name change first - so that we can use
         // the new name instead of the old in subsequent alterations 
         String nameSQL = getColumnNameAlterSQL(from, to, dialect);
@@ -54,18 +55,18 @@ public class DBUtil {
         if (commentSQL != null) {
             result.add(commentSQL);
         }
-        String typeSQL = getTypeAlterSQL(from, to, dialect);
+        List<String> typeSQL = getTypeAlterSQL(from, to, dialect);
         if (typeSQL != null) {
-            result.add(typeSQL);
+            result.addAll(typeSQL);
         }
         String defaultSQL = getAlterSQLForColumnDefault(from, to, dialect);
         if (defaultSQL != null) {
             result.add(defaultSQL);
         }
-        return (String[])result.toArray(new String[result.size()]);
+        return result.toArray(new String[result.size()]);
     }
     
-    public static String getTypeAlterSQL(TableColumnInfo from, 
+    public static List<String> getTypeAlterSQL(TableColumnInfo from, 
                                          TableColumnInfo to,
                                          HibernateDialect dialect)
     {

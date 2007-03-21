@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
@@ -336,7 +337,7 @@ public class DialectLiveTestRunner {
         TableColumnInfo thirdColLonger = 
             getVarcharColumn("nullvc", "test3", true, "defVal", "A varchar comment", 30);
         if (dialect.supportsAlterColumnType()) {
-            String alterColLengthSQL = 
+            List<String> alterColLengthSQL = 
                 dialect.getColumnTypeAlterSQL(thirdCol, thirdColLonger);
             runSQL(session, alterColLengthSQL);     
         } else {
@@ -538,6 +539,12 @@ public class DialectLiveTestRunner {
     private HibernateDialect getDialect(ISession session) throws Exception  {
         return DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);
     }
+    
+    private void runSQL(ISession session, List<String> sql) throws Exception {
+        for (String stmt : sql) {
+            runSQL(session, stmt);
+        }
+    }    
     
     private void runSQL(ISession session, String sql) throws Exception {
         HibernateDialect dialect = getDialect(session);        

@@ -12,7 +12,6 @@ Enhancements:
   is available through a button next to the SQL history combo box or through
   tools pop up (ctrl+t).
 
-
 - Export: Warn the user when exporting data to CSV/Excel if there are Clob 
   placeholders (<Clob>) in the table data being exported.  Also, let the user 
   know when the export to file is complete, if no command is to be executed to 
@@ -66,6 +65,9 @@ Edit Extras:
      from console windows that insert end-of-line characters when copying.
 
 Refactoring Plugin
+  - Added support for modifying the column type from varchar2 -> clob and 
+    clob -> varchar2 (which isn't directly supported by Oracle's column modify 
+    alter statement).
   - 'Drop Tables' action now orders the selected tables in order to satisfy any
     FK dependencies.  Previously, this operation would fail if PK tables 
     preceded (by name alphabetically) FK tables in the object tree list.
@@ -162,6 +164,8 @@ Oracle Plugin
   - Fixed a memory leak where the plugin was holding on to closed sessions
 
 Refactoring Plugin 
+  - 'Drop Column' action now properly delegates db-specific drop column command
+    to the appropriate dialect for the session.
   - Now allows precision and scale for new or modified columns to be set to 0.
   - The scrollbar in the column list dialog now appears, where previously it 
     did not, making tables with many columns difficult to work with for 
