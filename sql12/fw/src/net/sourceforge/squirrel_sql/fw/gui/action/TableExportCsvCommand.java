@@ -56,7 +56,7 @@ public class TableExportCsvCommand
          return;
       }
 
-      if (!checkMissingData(ctrl.getSeparatorChar())) {
+      if (checkMissingData(ctrl.getSeparatorChar())) {
           int choice = JOptionPane.showConfirmDialog(GUIUtils.getMainFrame(), 
                                                      i18n.missingClobDataMsg);
           if (choice == JOptionPane.YES_OPTION) {
@@ -109,6 +109,10 @@ public class TableExportCsvCommand
    }
 
    private boolean checkMissingData(String sepChar) {
+       // TODO: if the use checks "export entire table" and doesn't select all, 
+       // then the selected indices are not set, and this check doesn't properly
+       // detect missing data.  If export entire table is selected, we need to 
+       // set the selected indexes below correctly.
        int firstSelectedColIdx = _table.getSelectedColumn();
        int lastSelectedColIdx = firstSelectedColIdx + _table.getSelectedColumnCount();
        int firstSelectedRowIdx = _table.getSelectedRow();
