@@ -73,7 +73,7 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
          sql = getText();
          int[] bounds = getBoundsOfSQLToBeExecuted();
 
-         if(bounds[0] == bounds[1])
+         if(bounds[0] >= bounds[1])
          {
             sql = "";
          }
@@ -143,7 +143,7 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
             ++newLinteCount;
             if(2 == newLinteCount)
             {
-               return ix;
+               return ix-1;
             }
          }
 
@@ -178,7 +178,7 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
             ++newLinteCount;
             if(2 == newLinteCount)
             {
-               return ix;
+               return ix+2;
             }
          }
 
