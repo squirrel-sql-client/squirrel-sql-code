@@ -20,6 +20,7 @@
 package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
@@ -548,14 +549,15 @@ public class DialectUtils {
      * @throw UnsupportedOperationException if the database doesn't support 
      *         modifying column types. 
      */
-    public static String getColumnTypeAlterSQL(HibernateDialect dialect,
-                                               String alterClause,
-                                               String setClause,
-                                               boolean repeatColumn,
-                                               TableColumnInfo from, 
-                                               TableColumnInfo to)
+    public static List<String> getColumnTypeAlterSQL(HibernateDialect dialect,
+                                                     String alterClause,
+                                                     String setClause,
+                                                     boolean repeatColumn,
+                                                     TableColumnInfo from, 
+                                                     TableColumnInfo to)
         throws UnsupportedOperationException
     {
+        ArrayList<String> list = new ArrayList<String>();
         StringBuffer result = new StringBuffer();
         result.append("ALTER TABLE ");
         result.append(to.getTableName());
@@ -573,7 +575,8 @@ public class DialectUtils {
             result.append(" ");
         }
         result.append(getTypeName(to, dialect));
-        return result.toString();
+        list.add(result.toString());
+        return list;
     }    
     
     /**
@@ -722,4 +725,26 @@ public class DialectUtils {
         return result.toString();
     }
    
+    public static TableColumnInfo getRenamedColumn(TableColumnInfo info,
+                                                   String newColumnName) 
+    {
+        TableColumnInfo result = 
+            new TableColumnInfo(info.getCatalogName(), 
+                                info.getSchemaName(), 
+                                info.getTableName(),
+                                newColumnName,
+                                info.getDataType(), 
+                                info.getTypeName(),
+                                info.getColumnSize(),
+                                info.getDecimalDigits(), 
+                                info.getRadix(),
+                                info.isNullAllowed(),
+                                info.getRemarks(),
+                                info.getDefaultValue(),
+                                info.getOctetLength(),
+                                info.getOrdinalPosition(),
+                                info.isNullable()
+                                );
+        return result;
+    }
 }

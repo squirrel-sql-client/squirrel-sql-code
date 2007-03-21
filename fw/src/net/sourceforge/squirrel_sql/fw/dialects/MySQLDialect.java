@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -443,7 +444,7 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
      * @throw UnsupportedOperationException if the database doesn't support 
      *         modifying column types. 
      */
-    public String getColumnTypeAlterSQL(TableColumnInfo from, 
+    public List<String> getColumnTypeAlterSQL(TableColumnInfo from, 
                                         TableColumnInfo to)
         throws UnsupportedOperationException
     {
@@ -457,7 +458,9 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
         result.append(to.getColumnName());
         result.append(" ");
         result.append(DialectUtils.getTypeName(to, this));
-        return result.toString();
+        ArrayList<String> list = new ArrayList<String>();
+        list.add(result.toString());
+        return list;
     }
     
     /**

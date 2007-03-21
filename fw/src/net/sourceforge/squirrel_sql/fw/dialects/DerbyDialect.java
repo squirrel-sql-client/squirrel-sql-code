@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -372,10 +373,11 @@ public class DerbyDialect extends DB2Dialect
      * @throw UnsupportedOperationException if the database doesn't support 
      *         modifying column types. 
      */
-    public String getColumnTypeAlterSQL(TableColumnInfo from, 
+    public List<String> getColumnTypeAlterSQL(TableColumnInfo from, 
                                         TableColumnInfo to)
         throws UnsupportedOperationException
     {
+        ArrayList<String> list = new ArrayList<String>();
         if (from.getDataType() != to.getDataType()) {
             throw new UnsupportedOperationException(i18n.TYPE_MESSAGE);
         }
@@ -392,7 +394,8 @@ public class DerbyDialect extends DB2Dialect
         result.append(to.getColumnName());
         result.append(" SET DATA TYPE ");
         result.append(DialectUtils.getTypeName(to, this));
-        return result.toString();
+        list.add(result.toString());
+        return list;
     }
 
     /**

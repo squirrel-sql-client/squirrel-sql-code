@@ -22,6 +22,8 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
+import java.util.List;
+
 import org.hibernate.HibernateException;
 
 /**
@@ -318,7 +320,7 @@ public interface HibernateDialect {
      * @throw UnsupportedOperationException if the database doesn't support 
      *         modifying column types. 
      */
-    String getColumnTypeAlterSQL(TableColumnInfo from, TableColumnInfo to)
+    List<String> getColumnTypeAlterSQL(TableColumnInfo from, TableColumnInfo to)
         throws UnsupportedOperationException;
     
     /**

@@ -19,6 +19,7 @@
 package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.sql.Types;
+import java.util.List;
 
 import org.hibernate.dialect.GenericDialect;
 
@@ -376,7 +377,7 @@ public class DaffodilDialect extends GenericDialect
      * @throw UnsupportedOperationException if the database doesn't support 
      *         modifying column types. 
      */
-    public String getColumnTypeAlterSQL(TableColumnInfo from, 
+    public List<String> getColumnTypeAlterSQL(TableColumnInfo from, 
                                         TableColumnInfo to)
         throws UnsupportedOperationException
     {

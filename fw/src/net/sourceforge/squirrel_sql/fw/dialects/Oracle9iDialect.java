@@ -19,6 +19,8 @@
 package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -300,14 +302,6 @@ public class Oracle9iDialect extends Oracle9Dialect
         return new String[] { result.toString() };
     }
     
-    public String getDropPrimaryKeySQL(String tableName) {
-        StringBuffer result = new StringBuffer();
-        result.append("ALTER TABLE ");
-        result.append(tableName);
-        result.append(" DROP PRIMARY KEY CASCADE");
-        return result.toString();
-    }
-    
     /**
      * Returns the SQL used to alter the specified column to allow/disallow null 
      * values, based on the value of isNullable.
@@ -384,20 +378,60 @@ public class Oracle9iDialect extends Oracle9Dialect
      * @throw UnsupportedOperationException if the database doesn't support 
      *         modifying column types. 
      */
-    public String getColumnTypeAlterSQL(TableColumnInfo from, 
-                                        TableColumnInfo to)
+    public List<String> getColumnTypeAlterSQL(TableColumnInfo from, 
+                                              TableColumnInfo to)
         throws UnsupportedOperationException
     {
-        StringBuffer result = new StringBuffer();
-        result.append("ALTER TABLE ");
-        result.append(from.getTableName());
-        result.append(" MODIFY (");
-        result.append(from.getColumnName());
-        result.append(" ");
-        result.append(DialectUtils.getTypeName(to, this));
-        result.append(")");
-        return result.toString();
+        ArrayList<String> result = new ArrayList<String>();
+        
+        // Oracle won't allow in-place conversion between CLOB and VARCHAR 
+        if ( (from.getDataType() == Types.VARCHAR && to.getDataType() == Types.CLOB)
+                || (from.getDataType() == Types.CLOB && to.getDataType() == Types.VARCHAR) ) 
+        {
+            // add <columnName>_2 null as CLOB
+            TableColumnInfo newInfo = 
+                DialectUtils.getRenamedColumn(to, to.getColumnName()+"_2");
+            
+            String[] addSQL = this.getColumnAddSQL(newInfo);
+            for (int i = 0; i < addSQL.length; i++) {
+                result.add(addSQL[i]);
+            }
+            
+            // update table set <columnName>_2 = <columnName>
+            StringBuilder updateSQL = new StringBuilder();
+            updateSQL.append("update ");
+            updateSQL.append(from.getTableName());
+            updateSQL.append(" set ");
+            updateSQL.append(newInfo.getColumnName());
+            updateSQL.append(" = ");
+            updateSQL.append(from.getColumnName());
+            result.add(updateSQL.toString());
+            
+            // drop <columnName>
+            String dropSQL = 
+                getColumnDropSQL(from.getTableName(), from.getColumnName());
+            result.add(dropSQL);
+            
+            // rename <columnName>_2 to <columnName>
+            String renameSQL = this.getColumnNameAlterSQL(newInfo, to);
+            result.add(renameSQL);
+        } 
+        else 
+        {
+            StringBuffer tmp = new StringBuffer();
+            tmp.append("ALTER TABLE ");
+            tmp.append(from.getTableName());
+            tmp.append(" MODIFY (");
+            tmp.append(from.getColumnName());
+            tmp.append(" ");
+            tmp.append(DialectUtils.getTypeName(to, this));
+            tmp.append(")");
+            result.add(tmp.toString());
+        }
+        return result;
     }
+    
+    
     
     /**
      * Returns a boolean value indicating whether or not this database dialect

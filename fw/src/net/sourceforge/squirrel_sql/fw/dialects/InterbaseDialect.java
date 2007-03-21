@@ -18,6 +18,8 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
+import java.util.List;
+
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
@@ -318,7 +320,7 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect
      * @throw UnsupportedOperationException if the database doesn't support 
      *         modifying column types. 
      */
-    public String getColumnTypeAlterSQL(TableColumnInfo from, 
+    public List<String> getColumnTypeAlterSQL(TableColumnInfo from, 
                                         TableColumnInfo to)
         throws UnsupportedOperationException
     {
