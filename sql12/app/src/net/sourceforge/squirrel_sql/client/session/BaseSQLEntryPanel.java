@@ -158,12 +158,9 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
       int newLinteCount = 0;
       for(;;)
       {
-         if(0 == ix)
+
+         if (ix >= sql.length())
          {
-            return 0;
-         }
-         
-         if (ix >= sql.length()) {
              return ix;
          }
          
@@ -178,9 +175,15 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
             ++newLinteCount;
             if(2 == newLinteCount)
             {
-               return ix+2;
+               return ix+newLinteCount;
             }
          }
+
+         if(0 == ix)
+         {
+            return 0 + newLinteCount;
+         }
+
 
          --ix;
       }
