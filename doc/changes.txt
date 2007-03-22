@@ -6,6 +6,8 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+- Updated French translation (Thanks to Erwan Duroselle)
+
 - Dialog prompt to save file changes on exit, now includes the filename in 
   case there are multiple open files in different sessions.
 
