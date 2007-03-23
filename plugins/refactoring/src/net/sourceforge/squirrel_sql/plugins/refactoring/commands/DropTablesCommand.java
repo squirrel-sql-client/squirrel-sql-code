@@ -245,16 +245,20 @@ public class DropTablesCommand extends AbstractRefactoringCommand
          * @see net.sourceforge.squirrel_sql.plugins.refactoring.commands.DropTablesCommand.SQLResultListener#finished(java.lang.String[])
          */
         public void finished(String[] sqls) {
+            StringBuilder script = new StringBuilder();
             for (int i = 0; i < sqls.length; i++) {
                 String sql = sqls[i];
-                if (s_log.isInfoEnabled()) {
-                    s_log.info("DropTablesCommand: executing SQL - "+sql);
+                if (s_log.isDebugEnabled()) {
+                    s_log.debug("DropTablesCommand: adding SQL - "+sql);
                 }
-                CommandExecHandler handler = new CommandExecHandler(_session);
-                SQLExecuterTask executer = 
-                    new SQLExecuterTask(_session, sql, handler);
-                executer.run();                            
+                script.append(sql);
             }
+
+            CommandExecHandler handler = new CommandExecHandler(_session);
+            SQLExecuterTask executer = 
+                new SQLExecuterTask(_session, script.toString(), handler);
+            executer.run();                            
+            
             GUIUtils.processOnSwingEventThread(new Runnable() {
                 public void run() {
                     dropTableDialog.setVisible(false);
