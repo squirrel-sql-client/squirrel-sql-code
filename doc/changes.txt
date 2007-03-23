@@ -6,6 +6,7 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+- Updated Czech translation (Thanks to Jan Kostrhun)
 - Updated French translation (Thanks to Erwan Duroselle)
 
 - Dialog prompt to save file changes on exit, now includes the filename in 
