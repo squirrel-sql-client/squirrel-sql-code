@@ -227,4 +227,33 @@ public class StringUtilities
         }
         return tmp.toArray(new String[tmp.size()]);
     }
+    
+    public static int getTokenBeginIndex(String selectSQL, String token)
+    {
+       String lowerSel = selectSQL.toLowerCase();
+       String lowerToken = token.toLowerCase().trim();
+
+       int curPos = 0;
+       int count = 0;
+       while(-1 != curPos)
+       {
+          curPos = lowerSel.indexOf(lowerToken, curPos + lowerToken.length());
+
+          if(-1 < curPos
+                  && (0 == curPos || Character.isWhitespace(lowerSel.charAt(curPos-1)))
+                  && (lowerSel.length() == curPos + lowerToken.length() || Character.isWhitespace(lowerSel.charAt(curPos + lowerToken.length())))
+            )
+          {
+             return curPos;
+          }
+          // If we've loop through one time for each character in the string, 
+          // then something must be wrong.  Get out!
+          if (count++ > selectSQL.length()) {
+              break;
+          }
+       }
+
+       return curPos;
+    }
+    
 }
