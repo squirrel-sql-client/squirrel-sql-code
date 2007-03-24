@@ -28,4 +28,24 @@ public class StringUtilitiesTest extends TestCase {
         assertEquals("foobarbaz", joinedParts);
     }
 
+    public void testSegment() {
+        String[] segments = null;
+        String longString = "part1part2part3part4";
+        segments = StringUtilities.segment(longString, 1);
+        assertEquals(segments.length, 20);
+        segments = StringUtilities.segment(longString, 5);
+        assertEquals(segments.length, 4);
+        segments = StringUtilities.segment(longString, 9);
+        assertEquals(segments.length, 3);
+        segments = StringUtilities.segment(longString, 11);
+        assertEquals(segments.length, 2);
+        segments = StringUtilities.segment(longString, 20);
+        assertEquals(segments.length, 1);
+        /*
+        for (int i = 0; i < segments.length; i++) {
+            String string = segments[i];
+            System.out.println("segment: |"+string+"|");
+        }
+        */
+    }
 }

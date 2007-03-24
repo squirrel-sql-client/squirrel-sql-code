@@ -203,4 +203,28 @@ public class StringUtilities
         }
         return result.toString();
     }
+    
+    public static String[] segment(String source, int maxSegmentSize) {
+        ArrayList<String> tmp = new ArrayList<String>();
+        if (source.length() <= maxSegmentSize) {
+            return new String[] { source };
+        }
+        boolean done = false;
+        int currBeginIdx = 0;
+        int currEndIdx = maxSegmentSize;
+        while (!done) {
+            String segment = source.substring(currBeginIdx, currEndIdx);
+            tmp.add(segment);
+            if (currEndIdx >= source.length()) {
+                done = true;
+                continue;
+            }
+            currBeginIdx = currEndIdx;
+            currEndIdx += maxSegmentSize;
+            if (currEndIdx > source.length()) {
+                currEndIdx = source.length();
+            }
+        }
+        return tmp.toArray(new String[tmp.size()]);
+    }
 }
