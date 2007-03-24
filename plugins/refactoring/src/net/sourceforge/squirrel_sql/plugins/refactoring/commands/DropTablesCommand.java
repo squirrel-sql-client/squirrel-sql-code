@@ -28,6 +28,7 @@ import java.util.List;
 
 import net.sourceforge.squirrel_sql.client.db.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.client.gui.ProgessCallBackDialog;
+import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
@@ -54,6 +55,8 @@ public class DropTablesCommand extends AbstractRefactoringCommand
     private static final StringManager s_stringMgr =
         StringManagerFactory.getStringManager(DropTablesCommand.class);
     
+    private List<ITableInfo> orderedTables = null;
+    
     private static interface i18n {
                 
         //i18n[DropTablesCommand.progressDialogTitle=Analyzing tables to drop]
@@ -62,7 +65,11 @@ public class DropTablesCommand extends AbstractRefactoringCommand
         
         //i18n[DropTablesCommand.loadingPrefix=Analyzing table:]
         String LOADING_PREFIX = 
-            s_stringMgr.getString("DropTablesCommand.loadingPrefix");        
+            s_stringMgr.getString("DropTablesCommand.loadingPrefix");
+        
+        //i18n[DropTablesCommand.droppingPrefix=Dropping table:]
+        String DROPPING_PREFIX = 
+            s_stringMgr.getString("DropTablesCommand.droppingPrefix");
     }
     
     /** 
@@ -106,7 +113,7 @@ public class DropTablesCommand extends AbstractRefactoringCommand
         
         ArrayList<String> result = new ArrayList<String>();
         try {
-            List<ITableInfo> orderedTables = getOrderedTables(tables);
+            orderedTables = getOrderedTables(tables);
             
             dialect = DialectFactory.getDialect(_session, DialectFactory.DEST_TYPE); 
             String sep = _session.getQueryTokenizer().getSQLStatementSeparator();
@@ -254,7 +261,9 @@ public class DropTablesCommand extends AbstractRefactoringCommand
                 script.append(sql);
             }
 
-            CommandExecHandler handler = new CommandExecHandler(_session);
+            // Shows the user a dialog to let them know what's happening
+            DropTableCommandExecHandler handler = 
+                new DropTableCommandExecHandler(_session);
             SQLExecuterTask executer = 
                 new SQLExecuterTask(_session, script.toString(), handler);
             executer.run();                            
@@ -296,4 +305,32 @@ public class DropTablesCommand extends AbstractRefactoringCommand
         }
     }
 
+    private class DropTableCommandExecHandler extends DefaultSQLExecuterHandler {
+        
+        ProgessCallBackDialog cb = null;
+        int count = 0;
+        
+        public DropTableCommandExecHandler(ISession session)
+        {
+            super(session);
+            cb = new ProgessCallBackDialog(dropTableDialog,
+                                          i18n.PROGRESS_DIALOG_TITLE,
+                                          DropTablesCommand.this.orderedTables.size());
+            
+            cb.setLoadingPrefix(i18n.DROPPING_PREFIX);
+            
+        }
+
+        /* (non-Javadoc)
+         * @see net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler#sqlToBeExecuted(java.lang.String)
+         */
+        @Override
+        public void sqlToBeExecuted(String sql) {
+            ITableInfo ti = DropTablesCommand.this.orderedTables.get(count++);
+            cb.currentlyLoading(ti.getSimpleName());
+        }
+        
+        
+    }
+    
 }
