@@ -31,6 +31,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 
@@ -99,8 +100,8 @@ public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
                   String sTable = metaData.getTableName(1);
                   if (sTable == null || sTable.equals(""))
                   {
-
-                     int iFromIndex = getTokenBeginIndex(sql, "from");
+                     int iFromIndex = 
+                         StringUtilities.getTokenBeginIndex(sql, "from");
                      sTable = getNextToken(sql, iFromIndex + "from".length());
                   }
                   genInserts(srcResult, sTable, sbRows, false);
@@ -161,26 +162,4 @@ public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
       return selectSQL.substring(startPosTrimed, curPos);
    }
 
-   private int getTokenBeginIndex(String selectSQL, String token)
-   {
-      String lowerSel = selectSQL.toLowerCase();
-      String lowerToken = token.toLowerCase().trim();
-
-      int curPos = 0;
-      while(-1 != curPos)
-      {
-         curPos = lowerSel.indexOf(lowerToken);
-
-         if(
-                -1 < curPos
-             && (0 == curPos || Character.isWhitespace(lowerSel.charAt(curPos-1)))
-             && (lowerSel.length() == curPos + lowerToken.length() || Character.isWhitespace(lowerSel.charAt(curPos + lowerToken.length())))
-           )
-         {
-            return curPos;
-         }
-      }
-
-      return curPos;
-   }
 }

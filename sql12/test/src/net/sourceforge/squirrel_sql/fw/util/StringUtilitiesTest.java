@@ -48,4 +48,13 @@ public class StringUtilitiesTest extends TestCase {
         }
         */
     }
+    
+    public void testGetTokenBeginIndex() {
+        String sql = "select valid_from from dealer";
+        int idx = StringUtilities.getTokenBeginIndex(sql, "from");
+        assertEquals(18, idx);
+        sql = "select from_date from dealer";
+        idx = StringUtilities.getTokenBeginIndex(sql, "from");
+        assertEquals(17, idx);
+    }
 }
