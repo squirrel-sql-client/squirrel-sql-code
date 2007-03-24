@@ -23,6 +23,7 @@ import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Window;
 
 import javax.swing.BorderFactory;
 import javax.swing.JDialog;
@@ -82,7 +83,6 @@ public class ProgessCallBackDialog extends JDialog
     
     public ProgessCallBackDialog(Dialog owner, String title, int totalItems) {
         super(owner, title);
-        setLocationRelativeTo(owner);
         init(totalItems);
     }
 
@@ -94,9 +94,14 @@ public class ProgessCallBackDialog extends JDialog
 
     private void init(int totalItems) {
         itemCount = totalItems;
+        final Window owner = super.getOwner(); 
+        final ProgessCallBackDialog dialog = this;
+        
         GUIUtils.processOnSwingEventThread(new Runnable() {
             public void run() {
                 createGUI();
+                setLocationRelativeTo(owner);
+                dialog.setVisible(true);
             }
         });
         
@@ -167,8 +172,7 @@ public class ProgessCallBackDialog extends JDialog
         dialogPanel.add(progressBar, c);
         super.getContentPane().add(dialogPanel);
         super.pack();
-        super.setSize(new Dimension(200, 100));  
-        super.setVisible(true);
+        super.setSize(new Dimension(400, 100));  
     }
     
     /**
