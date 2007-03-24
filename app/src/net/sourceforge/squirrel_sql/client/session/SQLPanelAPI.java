@@ -427,7 +427,7 @@ public class SQLPanelAPI implements ISQLPanelAPI
 	 */
 	public synchronized void appendSQLScript(String sqlScript, boolean select)
 	{
-		_panel.getSQLEntryPanel().appendText(sqlScript, select);
+        _panel.getSQLEntryPanel().appendText(sqlScript, select);
 	}
 
 	/**
@@ -698,8 +698,15 @@ public class SQLPanelAPI implements ISQLPanelAPI
    private boolean showConfirmSaveDialog() 
    {
        File file = _fileManager.getFile();
+       
+       // i18n[SQLPanelAPI.untitledLabel=Untitled]
+       String filename = s_stringMgr.getString("SQLPanelAPI.untitledLabel");
+       
+       if (file != null) {
+           filename = file.getAbsolutePath();
+       }
        String msg = s_stringMgr.getString("SQLPanelAPI.unsavedchanges",
-                                          file.getAbsolutePath());
+                                          filename);
        String title = 
            s_stringMgr.getString("SQLPanelAPI.unsavedchangestitle");
        
