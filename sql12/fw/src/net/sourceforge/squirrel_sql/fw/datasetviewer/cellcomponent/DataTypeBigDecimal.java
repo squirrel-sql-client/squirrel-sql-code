@@ -132,7 +132,12 @@ public class DataTypeBigDecimal extends FloatingPointBase
       _scale = colDef.getScale();
 
       _numberFormat = NumberFormat.getInstance();
-      _numberFormat.setMaximumFractionDigits(_scale);
+
+      // This is a bit hard coded but if we use _scale here
+      // some number displays go crazy.
+      //_numberFormat.setMaximumFractionDigits(_scale);
+      _numberFormat.setMaximumFractionDigits(5);      
+      
       _numberFormat.setMinimumFractionDigits(0);
 
    }
