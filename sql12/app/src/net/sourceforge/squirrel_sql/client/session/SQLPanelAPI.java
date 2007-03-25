@@ -707,8 +707,12 @@ public class SQLPanelAPI implements ISQLPanelAPI
        }
        String msg = s_stringMgr.getString("SQLPanelAPI.unsavedchanges",
                                           filename);
+       
+       
+       
        String title = 
-           s_stringMgr.getString("SQLPanelAPI.unsavedchangestitle");
+           s_stringMgr.getString("SQLPanelAPI.unsavedchangestitle",
+                                 ": "+_panel.getSession().getAlias().getName());
        
        JFrame f = getSession().getApplication().getMainFrame();
        int option = 
