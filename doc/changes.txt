@@ -120,6 +120,7 @@ Bug-Fixes:
 - Updated French translation strings (Thanks to Erwan Duroselle)
 - Updated Italian translation strings (Thanks to Ivo Neri)
 
+
 1682289 Schema browser won't show all schemas. 
 	    (Thanks to Robert Williams for the patch)
 
@@ -127,6 +128,9 @@ Bug-Fixes:
         Info.plist)
 
 1679998 DOUBLE PRECISION is rounded with locale datatype setting
+
+1672207 Create Data Script - PostgreSql.  PostgreSQL requires insert stmt 
+		boolean values to be literal strings "true" or "false", instead of 1/0.
 
 1660412 Create insert script hangs on explicit Oracle DATE fields
 
