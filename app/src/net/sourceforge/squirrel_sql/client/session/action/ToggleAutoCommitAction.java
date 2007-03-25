@@ -7,6 +7,8 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.IToggleAction;
 import net.sourceforge.squirrel_sql.fw.gui.ToggleComponentHolder;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeListener;
@@ -20,6 +22,8 @@ import java.beans.PropertyChangeEvent;
  */
 public class ToggleAutoCommitAction extends SquirrelAction implements ISessionAction, IToggleAction
 {
+   static final long serialVersionUID = 4894924988552643833L;
+      
    private ISession _session;
    private PropertyChangeListener _propertyListener;
    private boolean _inActionPerformed;
@@ -46,7 +50,7 @@ public class ToggleAutoCommitAction extends SquirrelAction implements ISessionAc
       setEnabled(false);
    }
 
-   public void setSession(ISession session)
+   public void setSession(final ISession session)
    {
       if(null != _session)
       {
@@ -54,21 +58,19 @@ public class ToggleAutoCommitAction extends SquirrelAction implements ISessionAc
       }
       _session = session;
 
-      if (session == null)
-      {
-         setEnabled(false);
-         _toogleComponentHolder.setSelected(false);
-      }
-      else
-      {
-          GUIUtils.processOnSwingEventThread(new Runnable() {
-              public void run() {
-                  setEnabled(true);
-                  _session.getProperties().addPropertyChangeListener(_propertyListener);
-                  _toogleComponentHolder.setSelected(_session.getProperties().getAutoCommit());              
+      GUIUtils.processOnSwingEventThread(new Runnable() {
+          public void run() {
+              if (session == null || session.getProperties() == null) {
+                  setEnabled(false);
+                 _toogleComponentHolder.setSelected(false);
+              } else {
+                 SessionProperties props = session.getProperties();
+                 setEnabled(true);
+                 props.addPropertyChangeListener(_propertyListener);
+                 _toogleComponentHolder.setSelected(props.getAutoCommit());
               }
-          });
-      }
+          }
+      });
 
    }
 
