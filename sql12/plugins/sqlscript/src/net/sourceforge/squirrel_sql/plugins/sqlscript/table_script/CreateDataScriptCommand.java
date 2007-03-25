@@ -32,6 +32,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
+import net.sourceforge.squirrel_sql.client.db.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -308,11 +309,21 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
                }
                else if (iBoolean)
                {
-                  sbValues.append(1);
+                   // PostgreSQL uses literal values true/false instead of 1/0.
+                   if (DialectFactory.isPostgreSQL(_session)) {
+                       sbValues.append("true");
+                   } else {
+                       sbValues.append(1);
+                   }
                }
                else
                {
-                  sbValues.append(0);
+                   // PostgreSQL uses literal values true/false instead of 1/0.
+                   if (DialectFactory.isPostgreSQL(_session)) {
+                       sbValues.append("false");
+                   } else {
+                       sbValues.append(0);
+                   }
                }
 
                if(false == fromResultSet)
