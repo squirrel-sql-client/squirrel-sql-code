@@ -111,17 +111,14 @@ DBCopy Plugin
 
 
 Bug-Fixes:
-
-Functions like Quote/Unquote SQL or Format SQL removed new lines.
-
-Caching of schemas (serializing to disc) failed. A NotSerializableException was 
-thrown, due to development code introduced during version 2.5 development.
-
-An error occured when F5 (Refresh) was hit in a SQL Work Sheet or an Object Tree Window.
-
-Updated Simplified Chinese translation strings (Thanks to xpdz)
-Updated French translation strings (Thanks to Erwan Duroselle)
-Updated Italian translation strings (Thanks to Ivo Neri)
+- Fixed NPE that is seen on startup when sessions are set to "Connect at Startup"
+- Functions like Quote/Unquote SQL or Format SQL removed new lines.
+- Caching of schemas (serializing to disc) failed. A NotSerializableException 
+  was thrown, due to development code introduced during version 2.5 development.
+- An error occured when F5 (Refresh) was hit in a SQL Work Sheet or an Object Tree Window.
+- Updated Simplified Chinese translation strings (Thanks to xpdz)
+- Updated French translation strings (Thanks to Erwan Duroselle)
+- Updated Italian translation strings (Thanks to Ivo Neri)
 
 1682289 Schema browser won't show all schemas. 
 	    (Thanks to Robert Williams for the patch)
