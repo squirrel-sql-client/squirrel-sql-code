@@ -114,13 +114,6 @@ Bug-Fixes:
 
 Functions like Quote/Unquote SQL or Format SQL removed new lines.
 
-
-1682289 Schema browser won't show all schemas. 
-	    (Thanks to Robert Williams for the patch)
-
-1680919: failure to export cvs/excel on mac osx (incomplete ClassPath entry in
-          Info.plist)
-
 Caching of schemas (serializing to disc) failed. A NotSerializableException was 
 thrown, due to development code introduced during version 2.5 development.
 
@@ -130,8 +123,20 @@ Updated Simplified Chinese translation strings (Thanks to xpdz)
 Updated French translation strings (Thanks to Erwan Duroselle)
 Updated Italian translation strings (Thanks to Ivo Neri)
 
+1682289 Schema browser won't show all schemas. 
+	    (Thanks to Robert Williams for the patch)
+
+1680919 failure to export cvs/excel on mac osx (incomplete ClassPath entry in
+        Info.plist)
+
+1679998 DOUBLE PRECISION is rounded with locale datatype setting
+
+1660412 Create insert script hangs on explicit Oracle DATE fields
+
 1659412 TIMESTAMP WITH TIME ZONE shows as <Unknown (-101)> - Support was added
         for rendering values of columns with this Oracle-specific type.
+
+1643307 Title is missing in Save-Dialog
 
 1617839 Two new lines with white spaces in between do not separate SQLs when 
         SQLs are executed without selection.
@@ -151,7 +156,7 @@ Updated Italian translation strings (Thanks to Ivo Neri)
 DBCopy Plugin 
   - If the source/dest database is Oracle, and the type of column being copied 
     is DATE, then treat it like a TIMESTAMP for reading or writing the value.  
-    Oracle stores a time component in date columns and this prevents this 
+    Oracle stores a time component in date columns and this change prevents the 
     time component value from being lost if the destination database can also 
     store a time component in DATE columns.
 
