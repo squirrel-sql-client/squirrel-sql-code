@@ -10,7 +10,9 @@ Enhancements:
 - Updated French translation (Thanks to Erwan Duroselle)
 
 - Dialog prompt to save file changes on exit, now includes the filename in 
-  case there are multiple open files in different sessions.
+  case there are multiple open files in different sessions.  Also, the session
+  alias name appears in the title, in case the editor contents aren't yet 
+  associated with a file.
 
 - SQL history window
   The contents of the SQL history combo box can now be opened in a window
