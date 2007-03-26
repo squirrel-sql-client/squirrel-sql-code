@@ -37,6 +37,7 @@ import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
@@ -139,9 +140,14 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
                         StringBuffer sql = new StringBuffer();
                         sql.append("select * from ");
                         sql.append(ti.getQualifiedName());
-                        sql.append(" order by ");
-                        sql.append(getFirstColumnName(ti));
-                        sql.append(" asc ");
+                        
+                        // Some databases cannot order by LONG/LOB columns.
+                        if (!JDBCTypeMapper.isLongType(getFirstColumnType(ti))) 
+                        {
+                            sql.append(" order by ");
+                            sql.append(getFirstColumnName(ti));
+                            sql.append(" asc ");
+                        } 
                         ResultSet srcResult = stmt.executeQuery(sql.toString());
                         genInserts(srcResult, sTable, sbRows, false);
                      }
@@ -181,12 +187,19 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
       });
       showAbortFrame();
    }
-
+   
    protected String getFirstColumnName(ITableInfo ti) throws SQLException {
        TableColumnInfo[] infos = 
            _session.getSQLConnection().getSQLMetaData().getColumnInfo(ti);
        return infos[0].getColumnName();
    }
+
+   protected int getFirstColumnType(ITableInfo ti) throws SQLException {
+       TableColumnInfo[] infos = 
+           _session.getSQLConnection().getSQLMetaData().getColumnInfo(ti);
+       return infos[0].getDataType();
+   }
+   
    
    protected void genInserts(ResultSet srcResult, String sTable, StringBuffer sbRows, boolean headerOnly)
       throws SQLException
