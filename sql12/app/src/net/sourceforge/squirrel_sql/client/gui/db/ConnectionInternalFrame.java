@@ -168,20 +168,24 @@ public class ConnectionInternalFrame extends BaseInternalFrame
 		pack();
 	}
 
-	public void executed(boolean connected)
+	public void executed(final boolean connected)
 	{
-		_connecting = false;
-		if (connected)
-		{
-			dispose();
-		}
-		else
-		{
-			setStatusText(null);
-			_user.setEnabled(true);
-			_password.setEnabled(true);
-			_btnsPnl.setExecuting(false);
-		}
+        _connecting = false;
+        GUIUtils.processOnSwingEventThread(new Runnable() {
+            public void run() {
+                if (connected)
+                {
+                    dispose();
+                }
+                else
+                {
+                    setStatusText(null);
+                    _user.setEnabled(true);
+                    _password.setEnabled(true);
+                    _btnsPnl.setExecuting(false);
+                }                
+            }
+        });
 	}
 
 	/**
