@@ -250,6 +250,22 @@ public class JDBCTypeMapper {
         }        
         return result;
     }
+    
+    public static boolean isLongType(int jdbcType) {
+        boolean result = false;
+        switch (jdbcType) {
+            case Types.LONGVARBINARY:
+            case Types.LONGVARCHAR:
+            case Types.BLOB:
+            case Types.CLOB:
+                result = true;
+                break;
+            default:
+                result = false;
+        }        
+        return result;
+    }
+    
 }
 
 
