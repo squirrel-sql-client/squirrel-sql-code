@@ -1,6 +1,13 @@
 SQL Bookmark Plugin Change Log
 ==============================
 
+2.0.1
+=====
+
+1646886: (Duplicate parameters show as duplicates in the dialog box).  
+Now parameter that appear multiple times in an SQL statement do not result in 
+multiple entry fields in the boolmark run dialog.
+
 0.43
 ====
 
