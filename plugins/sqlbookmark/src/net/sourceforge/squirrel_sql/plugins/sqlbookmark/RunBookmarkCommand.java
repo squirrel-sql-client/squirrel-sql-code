@@ -19,38 +19,28 @@
 
 package net.sourceforge.squirrel_sql.plugins.sqlbookmark;
 
-import java.util.StringTokenizer;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.awt.Frame;
-import java.awt.Component;
-import java.awt.BorderLayout;
-import java.awt.GridBagLayout;
-import java.awt.Container;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import java.util.StringTokenizer;
 
-import javax.swing.JPanel;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.JButton;
 import javax.swing.SwingConstants;
 
-import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
-import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
-import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
-import net.sourceforge.squirrel_sql.fw.util.FileExtensionFilter;
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-
-import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
-
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.PropertyPanel;
+import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 /**
  * Runs a bookmark.
@@ -145,126 +135,148 @@ public class RunBookmarkCommand implements ICommand {
      **/
     protected String parseAndLoadSql(String sql) {
 
-	ArrayList itemsInSql = new ArrayList();
-	HashMap paramsById = new HashMap();
-	ArrayList parameters = new ArrayList();
+        // TODO: Make Parameter implement SQLItem interface which has a getString
+        // method which can also be implemented by SQLString, or SQLFragment or
+        // some such.  We can then eliminate the use of instanceof below and 
+        // clean up the code a bit, by making itemsInSql look like:
+        //
+        //   ArrayList<SQLItem> itemsInSql = new ArrayList<SQLItem>();
+        // 
+    	ArrayList itemsInSql = new ArrayList();
+    	HashMap<String,Parameter> paramsById = new HashMap<String,Parameter>();
+    	ArrayList<Parameter> parameters = new ArrayList<Parameter>();
 
-	//
-	// First parse the SQL string
-	//
-	int start = 0;
-	int idx = 0;
-	while ((idx = sql.indexOf("${", start)) >= 0) {
-	    int ridx = sql.indexOf("}", idx);
-	    if (ridx < 0) break;
+    
+        HashMap<String, Parameter> lookup = new HashMap<String, Parameter>();
+        
+        //
+        // First parse the SQL string
+        //
+        int start = 0;
+        int idx = 0;
+        while ((idx = sql.indexOf("${", start)) >= 0) {
+            int ridx = sql.indexOf("}", idx);
+            if (ridx < 0) break;
 
-	    String arg = sql.substring(idx + 2, ridx);
-	    itemsInSql.add(sql.substring(start, idx));
-	    start = ridx + 1;
+            String arg = sql.substring(idx + 2, ridx);
+            itemsInSql.add(sql.substring(start, idx));
+            start = ridx + 1;
 
-	    StringTokenizer st = new StringTokenizer(arg, ",");
-	    Parameter parameter = new Parameter();
-	    if (arg.startsWith("ref=")) {
-		String ref = st.nextToken();
-		parameter.reference = ref.substring(4);
-	    }
-	    else if (arg.startsWith("id=")) {
-		String id = st.nextToken();
-		String prompt = st.nextToken();
-		parameter.id = id.substring(3);
-		parameter.prompt = prompt;
-		if (st.countTokens() > 0) {
-		    String tip = st.nextToken();
-		    parameter.tip = tip;
-		}
-	    }
-	    else {
-		String prompt = st.nextToken();
-		parameter.prompt = prompt;
-		if (st.countTokens() > 0) {
-		    String tip = st.nextToken();
-		    parameter.tip = tip;
-		}
-	    }
+            StringTokenizer st = new StringTokenizer(arg, ",");
+            Parameter parameter = new Parameter();
+            if (arg.startsWith("ref=")) {
+                String ref = st.nextToken();
+                parameter.reference = ref.substring(4);
+            }
+            else if (arg.startsWith("id=")) {
+                String id = st.nextToken();
+                String prompt = st.nextToken();
+                parameter.id = id.substring(3);
+                parameter.prompt = prompt;
+                if (st.countTokens() > 0) {
+                    String tip = st.nextToken();
+                    parameter.tip = tip;
+                }
+            }
+            else {
+                String prompt = st.nextToken();
+                parameter.prompt = prompt;
+                if (st.countTokens() > 0) {
+                    String tip = st.nextToken();
+                    parameter.tip = tip;
+                }
+            }
 
-	    if (parameter.reference == null)
-		parameters.add(parameter);
-	    if (parameter.id != null)
-		paramsById.put(parameter.id, parameter);
+            if (parameter.reference == null) {
 
-	    itemsInSql.add(parameter);
-	}
-	itemsInSql.add(sql.substring(start));
+                // 1646886: If we've already seen the parameter, don't create another
+                // instance as this will force the user to enter the same value twice.
+                // Add the previous instance to itemsInSql though so that the parameters
+                // value gets propagated to the right spot(s) in the SQL statement.
+                if (lookup.containsKey(parameter.prompt)) {
+                    parameter = lookup.get(parameter.prompt);
+                } else {
+                    lookup.put(parameter.prompt, parameter);
+                    parameters.add(parameter);
+                }
 
-   DoneAction doneAction = null;
-	//
-	// If there are parameters in the SQL string, then we need
-	// to prompt for some answers.
-	//
-	if (parameters.size() > 0) {
-		 // i18n[sqlbookmark.qureyParams=Query Parameters]
-		 JDialog dialog = new JDialog(frame, s_stringMgr.getString("sqlbookmark.qureyParams"), true);
-	    Container contentPane = dialog.getContentPane();
-	    contentPane.setLayout(new BorderLayout());
+            }
+            if (parameter.id != null) {
+                paramsById.put(parameter.id, parameter);
+            }
+            itemsInSql.add(parameter);
+        }
+        itemsInSql.add(sql.substring(start));
 
-	    PropertyPanel propPane = new PropertyPanel();
-	    contentPane.add(propPane, BorderLayout.CENTER);
+        DoneAction doneAction = null;
+        //
+        // If there are parameters in the SQL string, then we need
+        // to prompt for some answers.
+        //
+        if (parameters.size() > 0) {
+            // i18n[sqlbookmark.qureyParams=Query Parameters]
+            JDialog dialog = new JDialog(frame, s_stringMgr.getString("sqlbookmark.qureyParams"), true);
+            Container contentPane = dialog.getContentPane();
+            contentPane.setLayout(new BorderLayout());
 
-	    for (idx = 0; idx < parameters.size(); idx++) {
-		Parameter parameter = (Parameter) parameters.get(idx);
+            PropertyPanel propPane = new PropertyPanel();
+            contentPane.add(propPane, BorderLayout.CENTER);
 
-		JLabel label = new JLabel(parameter.prompt + ":",
-					  SwingConstants.RIGHT);
-		if (parameter.tip != null)
-		    label.setToolTipText(parameter.tip);
+            for (idx = 0; idx < parameters.size(); idx++) {
+                Parameter parameter = parameters.get(idx);
 
-		JTextField value = new JTextField(20);
-		propPane.add(label, value);
+                JLabel label = new JLabel(parameter.prompt + ":",
+                        SwingConstants.RIGHT);
+                if (parameter.tip != null)
+                    label.setToolTipText(parameter.tip);
 
-		parameter.value = value;
-	    }
+                JTextField value = new JTextField(20);
+                propPane.add(label, value);
 
-	    JPanel actionPane = new JPanel();
-	    contentPane.add(actionPane, BorderLayout.SOUTH);
+                parameter.value = value;
+            }
 
-		 // i18n[sqlbookmark.btnOk=OK]
-		 JButton done = new JButton(s_stringMgr.getString("sqlbookmark.btnOk"));
-	    actionPane.add(done);
-       doneAction = new DoneAction(dialog);
-       done.addActionListener(doneAction);
-       dialog.getRootPane().setDefaultButton(done);
-	    dialog.setLocationRelativeTo(frame);
-	    dialog.pack();
-	    dialog.setVisible(true);
-	}
+            JPanel actionPane = new JPanel();
+            contentPane.add(actionPane, BorderLayout.SOUTH);
 
-   if(null == doneAction || doneAction.actionExecuted())
-   {
-      //
-      // No go through the parse SQL and build the final SQL replacing
-      // parameters with values is goes.
-      //
-      StringBuffer sqlbuf = new StringBuffer();
-      for (idx = 0; idx < itemsInSql.size(); idx++) {
-          Object item = itemsInSql.get(idx);
-          if (item instanceof String)
-         sqlbuf.append((String) item);
-          if (item instanceof Parameter) {
-         Parameter parameter = (Parameter) item;
-         if (parameter.reference != null)
-             parameter = (Parameter) paramsById.get(parameter.reference);
+            // i18n[sqlbookmark.btnOk=OK]
+            JButton done = new JButton(s_stringMgr.getString("sqlbookmark.btnOk"));
+            actionPane.add(done);
+            doneAction = new DoneAction(dialog);
+            done.addActionListener(doneAction);
+            dialog.getRootPane().setDefaultButton(done);
+            dialog.setLocationRelativeTo(frame);
+            dialog.pack();
+            dialog.setVisible(true);
+        }
 
-         sqlbuf.append(parameter.value.getText());
-          }
-      }
+        if(null == doneAction || doneAction.actionExecuted())
+        {
+            //
+            // No go through the parse SQL and build the final SQL replacing
+            // parameters with values is goes.
+            //
+            StringBuffer sqlbuf = new StringBuffer();
+            for (idx = 0; idx < itemsInSql.size(); idx++) {
+                Object item = itemsInSql.get(idx);
+                if (item instanceof String)
+                    sqlbuf.append((String) item);
+                if (item instanceof Parameter) {
+                    Parameter parameter = (Parameter) item;
+                    if (parameter.reference != null)
+                        parameter = paramsById.get(parameter.reference);
 
-      return sqlbuf.toString();
+                    sqlbuf.append(parameter.value.getText());
+                }
+            }
 
-   }
-   else
-   {
-      return null;
-   }
+            return sqlbuf.toString();
+
+        }
+        else
+        {
+            return null;
+        }
 
     }
 
