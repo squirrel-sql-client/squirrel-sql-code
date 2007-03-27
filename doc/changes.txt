@@ -139,6 +139,10 @@ Bug-Fixes:
 1659412 TIMESTAMP WITH TIME ZONE shows as <Unknown (-101)> - Support was added
         for rendering values of columns with this Oracle-specific type.
 
+1646886 (Duplicate parameters show as duplicates in the dialog box)
+		Now parameter that appear multiple times in an SQL statement do not 
+		result in multiple entry fields in the boolmark run dialog.
+
 1643307 Title is missing in Save-Dialog
 
 1617839 Two new lines with white spaces in between do not separate SQLs when 
