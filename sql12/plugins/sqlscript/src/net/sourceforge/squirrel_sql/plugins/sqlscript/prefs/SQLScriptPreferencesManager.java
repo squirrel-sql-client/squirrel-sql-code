@@ -26,6 +26,7 @@ import java.util.Iterator;
 import net.sourceforge.squirrel_sql.client.Version;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
+import net.sourceforge.squirrel_sql.client.plugin.PreferenceUtil;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
@@ -52,7 +53,7 @@ public class SQLScriptPreferencesManager {
         
         // Folder to store user settings.
         try {
-            _userSettingsFolder = plugin.getPluginAppSettingsFolder();
+            _userSettingsFolder = plugin.getPluginUserSettingsFolder();
         } catch (IOException ex) {
             throw new PluginException(ex);
         }        
@@ -88,9 +89,10 @@ public class SQLScriptPreferencesManager {
         try {
             XMLBeanReader doc = new XMLBeanReader();
             
-            doc.load(new File(_userSettingsFolder, USER_PREFS_FILE_NAME),
-            		SQLScriptPreferenceBean.class.getClassLoader());
+            File prefFile = PreferenceUtil.getPreferenceFileToReadFrom(plugin);
             
+            doc.load(prefFile, SQLScriptPreferenceBean.class.getClassLoader());            
+
             Iterator it = doc.iterator();
             if (it.hasNext()) {
                 _prefs = (SQLScriptPreferenceBean)it.next();

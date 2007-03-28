@@ -26,6 +26,7 @@ import java.util.Iterator;
 import net.sourceforge.squirrel_sql.client.Version;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
+import net.sourceforge.squirrel_sql.client.plugin.PreferenceUtil;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
@@ -52,7 +53,7 @@ public class PreferencesManager {
         
         // Folder to store user settings.
         try {
-            _userSettingsFolder = plugin.getPluginAppSettingsFolder();
+            _userSettingsFolder = plugin.getPluginUserSettingsFolder();
         } catch (IOException ex) {
             throw new PluginException(ex);
         }        
@@ -69,7 +70,8 @@ public class PreferencesManager {
     }
     
     /**
-     * Save preferences to disk.
+     * Save preferences to disk.  Always write to the user settings folder, not
+     * the application settings folder.
      */
     public static void savePrefs() {
         try {
@@ -88,8 +90,9 @@ public class PreferencesManager {
         try {
             XMLBeanReader doc = new XMLBeanReader();
             
-            doc.load(new File(_userSettingsFolder, USER_PREFS_FILE_NAME),
-                                DBCopyPreferenceBean.class.getClassLoader());
+            File prefFile = PreferenceUtil.getPreferenceFileToReadFrom(plugin);
+            
+            doc.load(prefFile, DBCopyPreferenceBean.class.getClassLoader());
             
             Iterator it = doc.iterator();
             if (it.hasNext()) {
@@ -108,5 +111,6 @@ public class PreferencesManager {
         _prefs.setClientName(Version.getApplicationName() + "/" + plugin.getDescriptiveName());
         _prefs.setClientVersion(Version.getShortVersion() + "/" + plugin.getVersion());
     }    
+    
     
 }
