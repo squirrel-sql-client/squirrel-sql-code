@@ -206,6 +206,12 @@ public class DataTypeDate
 		}
 	}
 
+    public static boolean getReadDateAsTimestamp() {
+        propertiesAlreadyLoaded = false;
+        loadProperties();
+        return readDateAsTimestamp;
+    }
+    
 	/**
 	 * Return the name of the java class used to hold this data type.
 	 */
@@ -502,11 +508,7 @@ public class DataTypeDate
         loadProperties();
         Object data = null;
 
-        if (readDateAsTimestamp) {
-            data = rs.getTimestamp(index);
-        } else {
-            data = rs.getDate(index);
-        }
+        data = rs.getDate(index);
 
         if (rs.wasNull()) {
             return null;

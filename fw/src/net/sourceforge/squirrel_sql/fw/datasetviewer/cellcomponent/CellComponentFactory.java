@@ -145,7 +145,8 @@ public class CellComponentFactory {
 	 * The key is the ColumnDisplayDefinition object, and the value
 	 * is the DataTypeObject for that column's data type.
 	 */
-	static HashMap _colDataTypeObjects = new HashMap();
+	static HashMap<ColumnDisplayDefinition, IDataTypeComponent> _colDataTypeObjects = 
+        new HashMap<ColumnDisplayDefinition, IDataTypeComponent>();
 	
 	/* map of DBMS-specific registered data handlers.
 	 * The key is a string of the form:
@@ -153,7 +154,8 @@ public class CellComponentFactory {
 	 * and the value is the fully-qualified name of the class
 	 * for the DataTypeObject for that type.
 	 */
-	 static HashMap _registeredDataTypes = new HashMap();
+	 static HashMap<String,String> _registeredDataTypes = 
+         new HashMap<String,String>();
 
 	/* The current JTable that we are working with.
 	 * This is used only to see when the user moves
@@ -359,7 +361,6 @@ public class CellComponentFactory {
 		IDataTypeComponent dataTypeObject = getDataTypeObject(table, colDef);
 		
 		JTextField textField;
-		String editableText;
 		
 		// Default behavior if no data type found is to use a restorable text field
 		// with no other special behavior and hope the object has a toString().
@@ -702,7 +703,7 @@ public class CellComponentFactory {
 	  * 	- those that are specifically listed in the variable initialClassNameList
 	  */
 	 public static OkJPanel[] getControlPanels() {
-		ArrayList panelList = new ArrayList();
+		ArrayList<OkJPanel> panelList = new ArrayList<OkJPanel>();
 		
 		/*
 		 * This is the list of names of classes that:
@@ -728,16 +729,17 @@ public class CellComponentFactory {
 
 		// make a single list of all class names that we need to check.
 		// Start with the names of known, standard classes that provide Control Panels
-		ArrayList classNameList = new ArrayList(Arrays.asList(initialClassNameList));
+		ArrayList<String> classNameList = 
+            new ArrayList<String>(Arrays.asList(initialClassNameList));
 		
 		// add to that the list of all names that have been registered by plugins
-		Iterator classNames = _registeredDataTypes.keySet().iterator();
+		Iterator<String> classNames = _registeredDataTypes.keySet().iterator();
 		while (classNames.hasNext())
 			classNameList.add(classNames.next());
 		
 		// Now go through the list in the given order to get the panels
 		for (int i=0; i< classNameList.size(); i++) {
-			String className = (String)classNameList.get(i);
+			String className = classNameList.get(i);
 			Class[] parameterTypes = new Class[0];
 			try {
 				Method panelMethod =
@@ -751,7 +753,7 @@ public class CellComponentFactory {
 			}
 		}
 		
-		return (OkJPanel[])panelList.toArray(new OkJPanel[0]);
+		return panelList.toArray(new OkJPanel[0]);
 	}
 
 
@@ -794,7 +796,7 @@ public class CellComponentFactory {
 			_table = table;
 		}
 		if (_colDataTypeObjects.containsKey(colDef))
-			return (IDataTypeComponent)_colDataTypeObjects.get(colDef);
+			return _colDataTypeObjects.get(colDef);
 		
 
 		// we have not already created a DataType object for this column
@@ -807,7 +809,7 @@ public class CellComponentFactory {
 			// there is at least one registered handler
 			String typeName = Integer.toString(colDef.getSqlType()) + ":" + colDef.getSqlTypeName();
 			if (_registeredDataTypes.containsKey(typeName)) {
-				String handlerClassName = (String)_registeredDataTypes.get(typeName);
+				String handlerClassName = _registeredDataTypes.get(typeName);
 				
 				// We really should not run into any problems here because
 				// we checked when the handler was registered that the class
@@ -842,12 +844,8 @@ public class CellComponentFactory {
 					//??
 					break;
 
-				// TODO: When JDK1.4 is the earliest JDK supported
-				// by Squirrel then remove the hardcoding of the
-				// boolean data type.
 				case Types.BIT:
-				case 16:
-//				case Types.BOOLEAN:
+				case Types.BOOLEAN:
 					dataTypeComponent = new DataTypeBoolean(table, colDef);
 					break;
 
@@ -856,7 +854,17 @@ public class CellComponentFactory {
 					break;
 
 				case Types.DATE :
-					dataTypeComponent = new DataTypeDate(table, colDef);
+                    // Some databases store a time component in DATE columns (Oracle) 
+                    // The user can set a preference for DATEs that allows them
+                    // to be read as TIMESTAMP columns instead. This doesn't 
+                    // appear to have ill effects for databases that are standards
+                    // compliant (such as MySQL or PostgreSQL).  If the user 
+                    // prefers it, use the TIMESTAMP data type instead of DATE.
+                    if (DataTypeDate.getReadDateAsTimestamp()) {
+                        dataTypeComponent = new DataTypeTimestamp(table, colDef);
+                    } else {
+                        dataTypeComponent = new DataTypeDate(table, colDef);
+                    }
 					break;
 
 				case Types.TIMESTAMP :
