@@ -113,6 +113,11 @@ DBCopy Plugin
 
 
 Bug-Fixes:
+
+- When treating dates like timestamps, simply use the DataTypeTimestamp class 
+  instead of trying to make the DataTypeDate class smart enough to interpret 
+  timestamps.  This fixes the issue where a Number format error was encountered
+  while editing DATEs when they are being interpreted as TIMESTAMPS.
 - Fixed NPE that is seen on startup when sessions are set to "Connect at Startup"
 - Functions like Quote/Unquote SQL or Format SQL removed new lines.
 - Caching of schemas (serializing to disc) failed. A NotSerializableException 
@@ -122,6 +127,26 @@ Bug-Fixes:
 - Updated French translation strings (Thanks to Erwan Duroselle)
 - Updated Italian translation strings (Thanks to Ivo Neri)
 
+1689040 (plugins prefs files saving) 
+	Now preferences for some plugins (DBCopy, MS SQL-Server, Oracle, SQLScript and 
+	Sybase ASE)  that were formerly stored in the program plugin directory, are now 
+	stored in the user's settings directory.  This means that preferences for these 
+	plugins should now be preserved when re-installing SQuirreL to a new location.  
+	To migrate existing settings, command-line arguments can be given: 
+	
+	-DmigratePreferences=true -DoldSQuirreLInstallDir=<old location>
+	
+	This will result in migrating newer prefs.xml files that are located in
+	the program plugin directory 
+	
+	(e.g. <old location>/plugins/dbcopy/prefs.xml) 
+	
+	to the user's settings directory 
+	
+	(e.g. USER_HOME/.squirrel-sql/plugins/dbcopy/prefs.xml)
+	
+	You should edit the launch script to add these settings, start SQuirreL, 
+	stop SQuirreL gracefully, then remove these settings from the launch script.
 
 1682289 Schema browser won't show all schemas. 
 	    (Thanks to Robert Williams for the patch)
