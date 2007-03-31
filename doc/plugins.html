@@ -222,7 +222,55 @@ com.l2fprod.gui.plaf.skin.impl.gtk.GtkSkinNotFoundException
 
 <A NAME="addmenuitems"><H4>Adding Menu Items</H4></A>
 
-??TODO??
+There are several places where plugins may want to add menu items to allow the
+user to activate plugin-specific behaviors.  The Object Tree is one of these 
+places.  It displays objects of various types as defined in the class:
+<pre>
+    net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType
+</pre>
+The Object tree displays a popup 
+menu when the user right-clicks (ctrl-click on Mac OS) on an object in the 
+tree.  The SQuirreL API that allows plugins to add items to this menu for all 
+objects (or objects of a specific type) is found in the IObjectTreeAPI interface 
+for which an implementation can be obtained as follows:
+<pre>
+    IObjectTreeAPI api = session.getObjectTreeAPIOfActiveSessionWindow();
+</pre>
+You can find examples in the existing plugins where this is done in the method:
+<pre>
+    PluginSessionCallback sessionStarted(ISession session);
+</pre> 
+The sessionStarted method is called on all loaded plugins each time a new 
+database session window is created (by the user clicking the "Connect" button 
+while selecting an alias to connect to).  The 
+<TT>net.sourceforge.squirrel_sql.client.plugin.PluginManager</TT> class is 
+responsible for providing this notification to the loaded plugins.
+<p>
+Some useful methods for adding menu items in the IObjectTreeAPI interface are:
+<pre>
+	void addToPopup(DatabaseObjectType dboType, Action action);
+	
+	void addToPopup(DatabaseObjectType dboType, JMenu menu);
+</pre>
+These methods both take a DatabaseObjectType to determine which type of object
+to add the menu item to.  DatabaseObjectType defines all public constants that
+are used to identify types of objects found in the object tree.  For example 
+there are:
+<pre>
+	DatabaseObjectType.FOREIGN_KEY
+	DatabaseObjectType.FUNCTION
+	DatabaseObjectType.INDEX
+	DatabaseObjectType.PRIMARY_KEY
+	DatabaseObjectType.PROCEDURE
+	DatabaseObjectType.SCHEMA
+	DatabaseObjectType.SEQUENCE
+	DatabaseObjectType.TABLE
+	DatabaseObjectType.UDT	
+	DatabaseObjectType.VIEW	
+</pre>
+These are the ones most commonly used by plugins, but there are still more.  Any
+object shown in the tree has a corresponding DatabaseObjectType constant that 
+represents it type.
 &nbsp;
 
 <A NAME="addprefspanel"><H4>Adding a Panel to Application Preferences/Session Properties</H4></A>
