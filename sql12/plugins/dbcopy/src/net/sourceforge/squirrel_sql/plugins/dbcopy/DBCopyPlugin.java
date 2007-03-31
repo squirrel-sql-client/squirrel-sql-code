@@ -33,6 +33,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -181,13 +182,16 @@ public class DBCopyPlugin extends DefaultSessionPlugin
         copyAction.setEnabled(enabled);        
     }
 
-    public void setPasteMenuEnabled(boolean enabled) {
-        final ActionCollection coll = getApplication().getActionCollection();
-        PasteTableAction pasteAction = 
-            (PasteTableAction)coll.get(PasteTableAction.class);
-        pasteAction.setEnabled(enabled);
+    public void setPasteMenuEnabled(final boolean enabled) {
+        GUIUtils.processOnSwingEventThread(new Runnable() {
+            public void run() {
+                final ActionCollection coll = getApplication().getActionCollection();
+                PasteTableAction pasteAction = 
+                    (PasteTableAction)coll.get(PasteTableAction.class);
+                pasteAction.setEnabled(enabled);                
+            }
+        });
     }
-    
     
     /**
      * @param selectedDatabaseObjects The selectedDatabaseObjects to set.

@@ -114,19 +114,26 @@ public class CopyTableCommand implements ICommand
             		}
 				}
             }
-            try {
-                _plugin.setCopySourceSession(_session);
-                SQLDatabaseMetaData md = 
-                    _session.getSQLConnection().getSQLMetaData();
-                _plugin.setSelectedDatabaseObjects(getInsertionOrder(dbObjs, md));
-                _plugin.setPasteMenuEnabled(true);
-            } catch (SQLException e) {
-                log.error("Unexected exception: ", e);
-            }
+
+            _plugin.setCopySourceSession(_session);
+            final IDatabaseObjectInfo[] fdbObjs = dbObjs;
+            final SQLDatabaseMetaData md = 
+                _session.getSQLConnection().getSQLMetaData();
+            _session.getApplication().getThreadPool().addTask(new Runnable() {
+                public void run() {
+                    try {
+                        getInsertionOrder(fdbObjs, md);
+                        _plugin.setPasteMenuEnabled(true);
+                    } catch (SQLException e) {
+                        log.error("Unexected exception: ", e);
+                    }
+                }
+            });
+            
         } 
     }
     
-    private IDatabaseObjectInfo[] getInsertionOrder(IDatabaseObjectInfo[] dbObjs,
+    private void getInsertionOrder(IDatabaseObjectInfo[] dbObjs,
                                                     SQLDatabaseMetaData md) 
         throws SQLException
     {
@@ -145,7 +152,9 @@ public class CopyTableCommand implements ICommand
             SQLUtilities.getInsertionOrder(selectedTables, 
                                            md, 
                                            cb);
-        return selectedTables.toArray(new IDatabaseObjectInfo[dbObjs.length]);
+        
+        _plugin.setSelectedDatabaseObjects(
+                selectedTables.toArray(new IDatabaseObjectInfo[dbObjs.length]));
     }
     
 }
