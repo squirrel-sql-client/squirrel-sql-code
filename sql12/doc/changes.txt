@@ -111,6 +111,11 @@ DBCopy Plugin
   - The error message for SQLExceptions now includes the SQL statement that was 
     last executed (including bind variable values if it was a PreparedStatement)
 
+Data Type Controls/DBCopy preference sheet scrolling - sped up the scrollbar 
+so that one click of the down arrow gives ~10 pixels of scroll instead of 
+only 1 pixel.  This makes it so that scrolling with a wheel mouse moves from 
+top edge to bottom edge in about three full rotations of the wheel instead of 
+about thirty.
 
 Bug-Fixes:
 
