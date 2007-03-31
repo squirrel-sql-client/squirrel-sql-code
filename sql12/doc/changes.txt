@@ -124,7 +124,8 @@ Bug-Fixes:
   timestamps.  This fixes the issue where a Number format error was encountered
   while editing DATEs when they are being interpreted as TIMESTAMPS.
 - Fixed NPE that is seen on startup when sessions are set to "Connect at Startup"
-- Functions like Quote/Unquote SQL or Format SQL removed new lines.
+- Fixed functions like Quote/Unquote SQL or Format SQL which were removing new lines.
+  (Now there is a separate function to remove newlines)
 - Caching of schemas (serializing to disc) failed. A NotSerializableException 
   was thrown, due to development code introduced during version 2.5 development.
 - An error occured when F5 (Refresh) was hit in a SQL Work Sheet or an Object Tree Window.
@@ -161,19 +162,23 @@ Bug-Fixes:
 
 1679998 DOUBLE PRECISION is rounded with locale datatype setting
 
-1672207 Create Data Script - PostgreSql.  PostgreSQL requires insert stmt 
+1675787 Bad link in Online Help
+
+1672207 Create Data Script - PostgreSql.  PostgreSQL requires insert statement 
 		boolean values to be literal strings "true" or "false", instead of 1/0.
 
-1660412 Create insert script hangs on explicit Oracle DATE fields
+1660412 Create insert script hangs on explicit Oracle DATE fields (A bug in the
+		the SQL parsing routine would hang the thread when the word "from" 
+		appeared in a column name in the select statement)
 
 1659412 TIMESTAMP WITH TIME ZONE shows as <Unknown (-101)> - Support was added
         for rendering values of columns with this Oracle-specific type.
 
-1646886 (Duplicate parameters show as duplicates in the dialog box)
-		Now parameter that appear multiple times in an SQL statement do not 
+1646886 (SQL Bookmarks: Duplicate parameters show as duplicates in the dialog box)
+        Now parameter that appear multiple times in an SQL statement do not 
 		result in multiple entry fields in the boolmark run dialog.
 
-1643307 Title is missing in Save-Dialog
+1643307 Title is missing in Save-Dialog (When ending a session for file saves)
 
 1617839 Two new lines with white spaces in between do not separate SQLs when 
         SQLs are executed without selection.
