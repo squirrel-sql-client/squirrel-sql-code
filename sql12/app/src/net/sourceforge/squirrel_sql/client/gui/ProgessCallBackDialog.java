@@ -143,7 +143,7 @@ public class ProgessCallBackDialog extends JDialog
     }
 
     public boolean finishedLoading() {
-        return progressBar.getValue() == itemCount - 1;
+        return progressBar.getValue() >= itemCount - 1;
     }
         
     private void createGUI() {
