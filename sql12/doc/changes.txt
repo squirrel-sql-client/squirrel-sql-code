@@ -7,7 +7,9 @@ Not yet released - available from CVS or in the latest snapshot:
 Enhancements:
 
 - Updated Czech translation (Thanks to Jan Kostrhun)
+- Updated Simplified Chinese translation (Thanks to xpdz)
 - Updated French translation (Thanks to Erwan Duroselle)
+- Updated Italian translation strings (Thanks to Ivo Neri)
 
 - Dialog prompt to save file changes on exit, now includes the filename in 
   case there are multiple open files in different sessions.  Also, the session
@@ -129,9 +131,6 @@ Bug-Fixes:
 - Caching of schemas (serializing to disc) failed. A NotSerializableException 
   was thrown, due to development code introduced during version 2.5 development.
 - An error occured when F5 (Refresh) was hit in a SQL Work Sheet or an Object Tree Window.
-- Updated Simplified Chinese translation strings (Thanks to xpdz)
-- Updated French translation strings (Thanks to Erwan Duroselle)
-- Updated Italian translation strings (Thanks to Ivo Neri)
 
 1689040 (plugins prefs files saving) 
 	Now preferences for some plugins (DBCopy, MS SQL-Server, Oracle, SQLScript and 
