@@ -373,7 +373,9 @@ public class OraclePlugin extends DefaultSessionPlugin
          return null;
       }
       OraclePreferenceBean _prefs = PreferencesManager.getPreferences();
-      session.setQueryTokenizer(new OracleQueryTokenizer(_prefs));
+      if (_prefs.isInstallCustomQueryTokenizer()) {
+          session.setQueryTokenizer(new OracleQueryTokenizer(_prefs));
+      }
       GUIUtils.processOnSwingEventThread(new Runnable()
       {
          public void run()
