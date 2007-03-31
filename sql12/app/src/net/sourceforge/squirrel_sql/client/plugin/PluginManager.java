@@ -449,7 +449,9 @@ public class PluginManager
 	private void checkPlugin(File pluginFile, Map pluginStatuses, List pluginUrls, boolean isMac)
 	{
 		final String fileName = pluginFile.getAbsolutePath();
-		if (fileName.toLowerCase().endsWith(".zip") || fileName.toLowerCase().endsWith(".jar"))
+		if (!fileName.toLowerCase().endsWith("src.jar") && 
+                (fileName.toLowerCase().endsWith(".zip") 
+                || fileName.toLowerCase().endsWith(".jar")))
 		{
 			try
 			{
