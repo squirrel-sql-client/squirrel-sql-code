@@ -38,7 +38,8 @@ public class DBCopyGlobalPreferencesTab implements IGlobalPreferencesPanel {
     
     public DBCopyGlobalPreferencesTab() {
         prefs = new PreferencesPanel(PreferencesManager.getPreferences());
-        _myscrolledPanel = new JScrollPane(prefs);      
+        _myscrolledPanel = new JScrollPane(prefs);  
+        _myscrolledPanel.getVerticalScrollBar().setUnitIncrement(10);
     }
     
     public void initialize(IApplication app) {
