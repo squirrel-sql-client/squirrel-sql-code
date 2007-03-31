@@ -67,6 +67,7 @@ public class DataTypePreferencesPanel implements  IGlobalPreferencesPanel
 
       _myPanel = new DataTypePropertiesPanel();
       _myscrolledPanel = new JScrollPane(_myPanel);
+      _myscrolledPanel.getVerticalScrollBar().setUnitIncrement(10);
       _myscrolledPanel.setPreferredSize(new Dimension(600, 450));      
    }
 
