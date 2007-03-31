@@ -23,8 +23,11 @@ import java.io.Serializable;
  * A bean class to store preferences for the MS SQL-Server plugin.
  */
 public class MSSQLPreferenceBean implements Cloneable, 
-                                             Serializable {
-	static final String UNSUPPORTED = "Unsupported";
+                                             Serializable {    
+    
+	static final long serialVersionUID = -8870273703050156986L;
+
+    static final String UNSUPPORTED = "Unsupported";
 
     /** Client Name. */
 	private String _clientName;

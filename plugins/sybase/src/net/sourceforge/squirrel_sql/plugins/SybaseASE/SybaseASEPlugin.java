@@ -151,7 +151,9 @@ public class SybaseASEPlugin extends DefaultSessionPlugin
             return null;
          }
          SybasePreferenceBean _prefs = PreferencesManager.getPreferences();
-         session.setQueryTokenizer(new SybaseQueryTokenizer(_prefs));
+         if (_prefs.isInstallCustomQueryTokenizer()) {
+             session.setQueryTokenizer(new SybaseQueryTokenizer(_prefs));
+         }
          // Add context menu items to the object tree's view and procedure nodes.
          IObjectTreeAPI otApi = session.getSessionInternalFrame().getObjectTreeAPI();
          otApi.addToPopup(DatabaseObjectType.VIEW, new ScriptSybaseASEViewAction(getApplication(), _resources, session));

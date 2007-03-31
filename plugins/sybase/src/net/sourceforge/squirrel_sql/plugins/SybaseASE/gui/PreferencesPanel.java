@@ -23,6 +23,8 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -42,6 +44,10 @@ import net.sourceforge.squirrel_sql.plugins.SybaseASE.prefs.PreferencesManager;
 
 public class PreferencesPanel extends JPanel  {                              
 
+    JCheckBox useCustomQTCheckBox = null;
+    
+    JLabel useCustomQTLabel = null;    
+        
     SybasePreferenceBean _prefs = null;
     
     JCheckBox removeMultiLineCommentCheckBox = null;
@@ -62,6 +68,19 @@ public class PreferencesPanel extends JPanel  {
     private static final StringManager s_stringMgr =
         StringManagerFactory.getStringManager(PreferencesPanel.class);
     
+    
+    static interface i18n {
+        
+        //i18n[PreferencesPanel.useCustomQTLabel=Use Custom Query Tokenizer]
+        String USE_CUSTOM_QT_LABEL = 
+            s_stringMgr.getString("PreferencesPanel.useCustomQTLabel");
+
+        //i18n[PreferencesPanel.useCustomQTToolTip=Gives enhanced capabilities
+        //over the default query tokenizer for handling Sybase scripts]
+        String USE_CUSTOM_QT_TOOLTIP = 
+            s_stringMgr.getString("PreferencesPanel.useCustomQTToolTip");
+        
+    }    
     
     public PreferencesPanel(SybasePreferenceBean prefs) {
         
@@ -90,17 +109,32 @@ public class PreferencesPanel extends JPanel  {
             s_stringMgr.getString("PreferencesPanel.borderLabel");
         result.setBorder(getTitledBorder(borderLabel));
         
-        addLineCommentLabel(result, 0, 0);
-        addLineCommentTextField(result, 1, 0);
+        addUseCustomQTCheckBox(result, 0, 0);
         
-        addStatementSeparatorLabel(result, 0, 1);
-        addStatementSeparatorTextField(result, 1, 1);
+        addLineCommentLabel(result, 0, 1);
+        addLineCommentTextField(result, 1, 1);
+        
+        addStatementSeparatorLabel(result, 0, 2);
+        addStatementSeparatorTextField(result, 1, 2);
                 
-        addRemoveMultiLineCommentCheckBox(result, 0, 2);
+        addRemoveMultiLineCommentCheckBox(result, 0, 3);
         
         return result;
     }    
-        
+
+    private void addUseCustomQTCheckBox(JPanel panel, int col, int row) {
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridx = col;
+        c.gridy = row;
+        c.insets = new Insets(5,5,0,0);
+        c.anchor = GridBagConstraints.WEST;
+        c.gridwidth = 2;  // Span across two columns
+        useCustomQTCheckBox = new JCheckBox(i18n.USE_CUSTOM_QT_LABEL);        
+        useCustomQTCheckBox.setToolTipText(i18n.USE_CUSTOM_QT_TOOLTIP);
+        useCustomQTCheckBox.addActionListener(new UseQTHandler());
+        panel.add(useCustomQTCheckBox, c);        
+    }        
+    
     private void addRemoveMultiLineCommentCheckBox(JPanel panel, int col, int row) {
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = col;
@@ -187,12 +221,15 @@ public class PreferencesPanel extends JPanel  {
         removeMultiLineCommentCheckBox.setSelected(_prefs.isRemoveMultiLineComments());
         lineCommentTextField.setText(_prefs.getLineComment());
         statementSeparatorTextField.setText(_prefs.getStatementSeparator());
+        useCustomQTCheckBox.setSelected(_prefs.isInstallCustomQueryTokenizer());
+        updatePreferenceState();
     }
     
     private void save() {
         _prefs.setRemoveMultiLineComments(removeMultiLineCommentCheckBox.isSelected());
         _prefs.setLineComment(lineCommentTextField.getText());
         _prefs.setStatementSeparator(statementSeparatorTextField.getText());
+        _prefs.setInstallCustomQueryTokenizer(useCustomQTCheckBox.isSelected());
         PreferencesManager.savePrefs();
     }
 
@@ -209,4 +246,27 @@ public class PreferencesPanel extends JPanel  {
     public Component getPanelComponent() {
         return this;
     }
+    
+    private void updatePreferenceState() {
+        if (useCustomQTCheckBox.isSelected()) {
+            removeMultiLineCommentCheckBox.setEnabled(true);
+            lineCommentTextField.setEnabled(true);
+            lineCommentLabel.setEnabled(true);
+            statementSeparatorTextField.setEnabled(true);
+            statementSeparatorLabel.setEnabled(true);
+        } else {
+            removeMultiLineCommentCheckBox.setEnabled(false);
+            lineCommentTextField.setEnabled(false);
+            lineCommentLabel.setEnabled(false);
+            statementSeparatorTextField.setEnabled(false);
+            statementSeparatorLabel.setEnabled(false);                
+        }        
+    }    
+    
+    private class UseQTHandler implements ActionListener {
+        public void actionPerformed(ActionEvent event) {
+            updatePreferenceState();
+        }
+    }
+    
 }

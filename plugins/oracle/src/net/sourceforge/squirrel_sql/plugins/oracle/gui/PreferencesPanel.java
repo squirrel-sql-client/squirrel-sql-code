@@ -260,6 +260,7 @@ public class PreferencesPanel extends JPanel  {
         statementSeparatorTextField.setText(_prefs.getStatementSeparator());
         procedureSeparatorTextField.setText(_prefs.getProcedureSeparator());
         useCustomQTCheckBox.setSelected(_prefs.isInstallCustomQueryTokenizer());
+        updatePreferenceState();
     }
     
     private void save() {

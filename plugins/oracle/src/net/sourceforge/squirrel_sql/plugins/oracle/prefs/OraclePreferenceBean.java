@@ -24,7 +24,10 @@ import java.io.Serializable;
  */
 public class OraclePreferenceBean implements Cloneable, 
                                              Serializable {
-	static final String UNSUPPORTED = "Unsupported";
+    
+	static final long serialVersionUID = 5818886723165356478L;
+
+    static final String UNSUPPORTED = "Unsupported";
 
     /** Client Name. */
 	private String _clientName;
