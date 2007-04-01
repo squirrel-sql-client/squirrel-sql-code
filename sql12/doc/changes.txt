@@ -196,6 +196,8 @@ Bug-Fixes:
 
 1471672 Float numeric field precision loss in output (DBMS:Oracle)
 
+1447227 Object tree should refresh when changing object tree filters
+
 DBCopy Plugin 
   - If the source/dest database is Oracle, and the type of column being copied 
     is DATE, then treat it like a TIMESTAMP for reading or writing the value.  
