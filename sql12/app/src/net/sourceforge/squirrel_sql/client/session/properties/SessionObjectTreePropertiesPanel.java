@@ -24,7 +24,13 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -35,6 +41,7 @@ import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 /**
  * This panel allows the user to tailor object tree settings for a session.
@@ -48,7 +55,8 @@ public class SessionObjectTreePropertiesPanel
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(SessionObjectTreePropertiesPanel.class);
 
-
+    private static boolean _objectTreeRefreshNeeded = false;
+    
 	/** Application API. */
 	private final IApplication _app;
 
@@ -122,8 +130,22 @@ public class SessionObjectTreePropertiesPanel
 	{
 		_myPanel.applyChanges(_props);
 	}
+    
+	/**
+     * @param objectTreeRefreshNeeded the objectTreeRefreshNeeded to set
+     */
+    public void setObjectTreeRefreshNeeded(boolean objectTreeRefreshNeeded) {
+        _objectTreeRefreshNeeded = objectTreeRefreshNeeded;
+    }
 
-	private static final class ObjectTreepropsPanel extends JPanel
+    /**
+     * @return the objectTreeRefreshNeeded
+     */
+    public boolean isObjectTreeRefreshNeeded() {
+        return _objectTreeRefreshNeeded;
+    }
+
+    private static final class ObjectTreepropsPanel extends JPanel
 	{
 		/**
 		 * This interface defines locale specific strings. This should be
@@ -183,10 +205,41 @@ public class SessionObjectTreePropertiesPanel
 			props.setContentsNbrRowsToShow(_contentsNbrRowsToShowField.getInt());
 			props.setContentsLimitRows(_contentsLimitRowsChk.isSelected());
 			props.setShowRowCount(_showRowCountChk.isSelected());
-			props.setSchemaPrefixList(_schemaPrefixField.getText());
-			props.setCatalogPrefixList(_catalogPrefixField.getText());
-			props.setObjectFilter(_objectFilterField.getText());
-			props.setLoadSchemasCatalogs(_loadSchemasCatalogsChk.isSelected());
+            // detect whether or not the object tree needs refreshing by comparing
+            // old value to new and see if they changed.
+            final String oldSchemaPrefixList = props.getSchemaPrefixList();
+            final String oldCatalogPrefixList = props.getCatalogPrefixList();
+            final String oldObjectFilter = props.getObjectFilter();
+            final boolean oldLoadSchemasCatalogs = 
+                props.getLoadSchemasCatalogs();
+            final String newSchemaPrefixList = _schemaPrefixField.getText();
+            final String newCatalogPrefixList = _catalogPrefixField.getText();
+            final String newObjectFilter = _objectFilterField.getText();
+            final boolean newLoadSchemasCatalogs = 
+                _loadSchemasCatalogsChk.isSelected();
+			props.setSchemaPrefixList(newSchemaPrefixList);
+			props.setCatalogPrefixList(newCatalogPrefixList);
+			props.setObjectFilter(newObjectFilter);
+			props.setLoadSchemasCatalogs(newLoadSchemasCatalogs);
+            _objectTreeRefreshNeeded = false;
+            if (!StringUtilities.areStringsEqual(oldSchemaPrefixList, 
+                                                 newSchemaPrefixList)) 
+            {
+                _objectTreeRefreshNeeded = true;
+            }
+            if (!StringUtilities.areStringsEqual(oldCatalogPrefixList,
+                                                 newCatalogPrefixList)) 
+            {
+                _objectTreeRefreshNeeded = true;
+            }
+            if (!StringUtilities.areStringsEqual(oldObjectFilter,
+                                                 newObjectFilter)) 
+            {
+                _objectTreeRefreshNeeded = true;
+            }
+            if (oldLoadSchemasCatalogs != newLoadSchemasCatalogs) {
+                _objectTreeRefreshNeeded = true;
+            }
 		}
 
 		private void updateControlStatus()

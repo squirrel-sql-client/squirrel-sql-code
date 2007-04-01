@@ -24,31 +24,38 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.prefs.Preferences;
 
-import javax.swing.*;
-
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.preferences.NewSessionPropertiesSheet;
+import net.sourceforge.squirrel_sql.client.gui.WindowManager;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.SessionPluginInfo;
+import net.sourceforge.squirrel_sql.client.preferences.NewSessionPropertiesSheet;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class SessionPropertiesSheet extends BaseSessionInternalFrame
 {
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(SessionPropertiesSheet.class);
 
-
+    
 	/**
     * This interface defines locale specific strings. This should be
     * replaced with a property file.
@@ -64,7 +71,8 @@ public class SessionPropertiesSheet extends BaseSessionInternalFrame
 	private static final ILogger s_log =
 		LoggerController.createLogger(SessionPropertiesSheet.class);
 
-	private final List _panels = new ArrayList();
+	private final List<ISessionPropertiesPanel> _panels = 
+        new ArrayList<ISessionPropertiesPanel>();
 
    private JTabbedPane _tabbedPane;
 
@@ -75,9 +83,8 @@ public class SessionPropertiesSheet extends BaseSessionInternalFrame
 	{
 		super(session, session.getTitle() + " " + i18n.TITLE, true);
 		createGUI();
-		for (Iterator it = _panels.iterator(); it.hasNext();)
+        for (ISessionPropertiesPanel pnl : _panels)
 		{
-			ISessionPropertiesPanel pnl = (ISessionPropertiesPanel)it.next();
 			pnl.initialize(getSession().getApplication(), getSession());
 		}
 
@@ -133,14 +140,37 @@ public class SessionPropertiesSheet extends BaseSessionInternalFrame
 	{
 		final boolean isDebug = s_log.isDebugEnabled();
 		long start = 0;
-		for (Iterator it = _panels.iterator(); it.hasNext();)
+        for (ISessionPropertiesPanel pnl : _panels)
 		{
-			ISessionPropertiesPanel pnl = (ISessionPropertiesPanel)it.next();
 			if (isDebug)
 			{
 				start = System.currentTimeMillis();
 			}
 			pnl.applyChanges();
+            if (pnl instanceof SessionObjectTreePropertiesPanel) {
+                SessionObjectTreePropertiesPanel otPanel = 
+                    (SessionObjectTreePropertiesPanel) pnl;
+                if (otPanel.isObjectTreeRefreshNeeded()) {
+                    WindowManager wm = 
+                        _session.getApplication().getWindowManager();
+                    BaseSessionInternalFrame[] frames = 
+                        wm.getAllFramesOfSession(_session.getIdentifier());
+                    for (int i = 0; i < frames.length; i++) {
+                        BaseSessionInternalFrame frame = frames[i];
+                        try {
+                            if (frame instanceof SessionInternalFrame) {
+                                SessionInternalFrame sif = 
+                                    (SessionInternalFrame)frame;
+                                sif.getObjectTreeAPI().refreshSelectedNodes();
+                            }
+                        } catch (Exception e) {
+                            s_log.error(
+                                "Unexpected exception while attempting to " +
+                                "refresh object tree: "+e.getMessage(), e);
+                        }
+                    }
+                }
+            }
 			if (isDebug)
 			{
 				s_log.debug("Panel " + pnl.getTitle() + " applied changes in "
@@ -197,9 +227,8 @@ public class SessionPropertiesSheet extends BaseSessionInternalFrame
 
 		// Add all panels to the tabbed panel.
 		_tabbedPane = UIFactory.getInstance().createTabbedPane();
-		for (Iterator it = _panels.iterator(); it.hasNext();)
+        for (ISessionPropertiesPanel pnl : _panels) 
 		{
-			ISessionPropertiesPanel pnl = (ISessionPropertiesPanel) it.next();
 			String pnlTitle = pnl.getTitle();
 			String hint = pnl.getHint();
 			_tabbedPane.addTab(pnlTitle, null, pnl.getPanelComponent(), hint);

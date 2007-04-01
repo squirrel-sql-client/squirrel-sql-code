@@ -33,7 +33,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  * @author <A HREF="mailto:jmheight@users.sourceforge.net">Jason Height</A>
  */
 public class BaseSessionInternalFrame extends BaseInternalFrame  {
-	private ISession _session;
+   protected ISession _session;
    private String _titleWithoutFile = "";
    private String _sqlFilePath = null;
    
