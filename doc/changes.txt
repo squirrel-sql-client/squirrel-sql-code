@@ -194,6 +194,8 @@ Bug-Fixes:
         The new menu item allows the user to specify whether or not to cascade 
         constraints as well as being able to see the SQL that will be executed.
 
+1471672 Float numeric field precision loss in output (DBMS:Oracle)
+
 DBCopy Plugin 
   - If the source/dest database is Oracle, and the type of column being copied 
     is DATE, then treat it like a TIMESTAMP for reading or writing the value.  
