@@ -820,7 +820,7 @@ public class CellComponentFactory {
 				
 					// get the constructor for the object (the table may be null)
 					Class[] constClasses =
-						{Class.forName("java.swing.JTable"), colDef.getClass()};
+						{Class.forName("javax.swing.JTable"), colDef.getClass()};
 					Constructor handlerConst = handlerClass.getConstructor(constClasses);
 				
 					// create an instance
