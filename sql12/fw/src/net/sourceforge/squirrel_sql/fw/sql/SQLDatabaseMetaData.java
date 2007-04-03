@@ -1691,12 +1691,26 @@ public class SQLDatabaseMetaData
     public synchronized PrimaryKeyInfo[] getPrimaryKey(ITableInfo ti) 
         throws SQLException
     {
-        final List results = new ArrayList();
+        return getPrimaryKey(ti.getCatalogName(), 
+                             ti.getSchemaName(), 
+                             ti.getSimpleName());
+    }
+    
+    /**
+     * 
+     * @param ti
+     * @return
+     * @throws SQLException
+     */
+    public synchronized PrimaryKeyInfo[] getPrimaryKey(String catalog, 
+                                                       String schema, 
+                                                       String table) 
+        throws SQLException
+    {
+        final List<PrimaryKeyInfo> results = new ArrayList<PrimaryKeyInfo>();
         ResultSet rs = null;
         try {
-            rs = privateGetJDBCMetaData().getPrimaryKeys(
-                    ti.getCatalogName(), ti.getSchemaName(),
-                    ti.getSimpleName());
+            rs = privateGetJDBCMetaData().getPrimaryKeys(catalog, schema,table);
             while (rs.next()) {
                 PrimaryKeyInfo pkInfo = 
                     new PrimaryKeyInfo(rs.getString(1),  // catalog
@@ -1713,8 +1727,9 @@ public class SQLDatabaseMetaData
         }
         
         final PrimaryKeyInfo[] ar = new PrimaryKeyInfo[results.size()];
-        return (PrimaryKeyInfo[])results.toArray(ar);
+        return results.toArray(ar);
     }
+    
     
     /**
      * @deprecated use getProcedureColumnsDataSet instead
