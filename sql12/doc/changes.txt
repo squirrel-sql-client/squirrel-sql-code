@@ -156,6 +156,10 @@ Bug-Fixes:
 1682289 Schema browser won't show all schemas. 
 	    (Thanks to Robert Williams for the patch)
 
+1681202 Access to column metadata by name (that is, COLUMN_NAME) fails. This 
+        affected the SQLScripts and Graph Plugins for some versions of the DB2 
+        JDBC driver)
+
 1680919 failure to export cvs/excel on mac osx (incomplete ClassPath entry in
         Info.plist)
 
