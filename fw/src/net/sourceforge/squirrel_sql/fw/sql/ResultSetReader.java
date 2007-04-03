@@ -187,12 +187,8 @@ public class ResultSetReader
 						row[i] = null;
 						break;
 
-					// TODO: When JDK1.4 is the earliest JDK supported
-					// by Squirrel then remove the hardcoding of the
-					// boolean data type.
 					case Types.BIT:
-					case 16:
-//					case Types.BOOLEAN:
+					case Types.BOOLEAN:
 						row[i] = _rs.getObject(idx);
 						if (row[i] != null
 							&& !(row[i] instanceof Boolean))
