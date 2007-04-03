@@ -27,12 +27,18 @@ import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.util.MyURLClassLoader;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class SQLDriverClassLoader extends MyURLClassLoader
 {
+    
+    /** Logger for this class. */
+    private final static ILogger s_log =
+                LoggerController.createLogger(SQLDriverClassLoader.class);    
+    
 	public SQLDriverClassLoader(ISQLDriver sqlDriver) throws MalformedURLException
 	{
-		super(createURLs(sqlDriver.getJarFileNames()));
+		super(createURLs(sqlDriver.getName(), sqlDriver.getJarFileNames()));
 	}
 
 	public SQLDriverClassLoader(URL[] urls)
@@ -48,7 +54,7 @@ public class SQLDriverClassLoader extends MyURLClassLoader
 	public Class[] getDriverClasses(ILogger logger)
 	{
 		final Class[] classes = getAssignableClasses(Driver.class, logger);
-		final List list = new ArrayList();
+		final List<Class> list = new ArrayList<Class>();
 		for (int i = 0; i < classes.length; ++i)
 		{
 			Class clazz = classes[i];
@@ -57,10 +63,10 @@ public class SQLDriverClassLoader extends MyURLClassLoader
 				list.add(clazz);
 			}
 		}
-		return (Class[])list.toArray(new Class[list.size()]);
+		return list.toArray(new Class[list.size()]);
 	}
 
-	private static URL[] createURLs(String[] fileNames)
+	private static URL[] createURLs(String driverName, String[] fileNames)
 		throws MalformedURLException
 	{
 		if (fileNames == null)
@@ -70,7 +76,24 @@ public class SQLDriverClassLoader extends MyURLClassLoader
 		URL[] urls = new URL[fileNames.length];
 		for (int i = 0; i < fileNames.length; ++i)
 		{
-			urls[i] = new File(fileNames[i]).toURL();
+            File f = new File(fileNames[i]);
+            if (!f.exists()) {
+                s_log.info(
+                    "For driver '"+driverName+"', the JVM says file doesn't exist: "+
+                    fileNames[i]);
+            }
+            if (f.isDirectory()) {
+                s_log.info(
+                    "For driver '"+driverName+"', the JVM says the file is a directory: "+
+                    fileNames[i]);
+            }
+            if (!f.canRead()) {
+                s_log.info(
+                    "For driver '"+driverName+"', the JVM says the file can't be read: "+
+                    fileNames[i]);
+            }
+            urls[i] = f.toURL();
+            
 		}
 		return urls;
 	}
