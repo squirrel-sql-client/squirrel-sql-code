@@ -1,26 +1,48 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
+import java.awt.FontMetrics;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
+
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.SwingUtilities;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ObjectTreeSearch;
-import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ColumnInfoXmlBean;
-import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ConstraintViewXmlBean;
-import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.TableFrameControllerXmlBean;
-import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.*;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
-import java.awt.*;
-import java.awt.event.*;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
+import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ColumnInfoXmlBean;
+import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ConstraintViewXmlBean;
+import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.TableFrameControllerXmlBean;
 
 
 public class TableFrameController
@@ -215,32 +237,35 @@ public class TableFrameController
       throws SQLException
    {
       DatabaseMetaData metaData = _session.getSQLConnection().getConnection().getMetaData();
-      ResultSet res = null;
-      Hashtable constaintInfosByConstraintName = new Hashtable();
-      Vector colInfosBuf = new Vector();
+      SQLDatabaseMetaData md = _session.getSQLConnection().getSQLMetaData();
+      Hashtable<String, ConstraintData> constaintInfosByConstraintName = 
+          new Hashtable<String, ConstraintData>();
+      Vector<ColumnInfo> colInfosBuf = new Vector<ColumnInfo>();
       if (s_log.isDebugEnabled()) {
           s_log.debug("initFromDB: _catalog="+_catalog+" _schema="+_schema+
                       " _tableName="+_tableName);
       }
-      try {
-          res = metaData.getColumns(_catalog, _schema, _tableName, null);
-          while(res.next())
-          {
-             String columnName = res.getString("COLUMN_NAME");
-             String columnType = res.getString("TYPE_NAME");
-             int columnSize = res.getInt("COLUMN_SIZE");
-             int decimalDigits = res.getInt("DECIMAL_DIGITS");
-             boolean nullable = "YES".equals(res.getString("IS_NULLABLE"));
-    
-             ColumnInfo colInfo = new ColumnInfo(columnName, columnType, columnSize, decimalDigits,nullable);
-             colInfosBuf.add(colInfo);
-          }
-      } finally {
-          if (res != null) {
-              try { res.close(); } catch (SQLException e) {}
-          }
+
+          
+      TableColumnInfo[] infos = md.getColumnInfo(_catalog, _schema, _tableName);
+      for (int i = 0; i < infos.length; i++) {
+         TableColumnInfo info = infos[i];
+         String columnName = info.getColumnName();
+         String columnType = info.getTypeName();
+         int columnSize = info.getColumnSize();
+         int decimalDigits = info.getDecimalDigits();
+         boolean nullable = "YES".equalsIgnoreCase(info.isNullable());
+
+         ColumnInfo colInfo = new ColumnInfo(columnName, 
+                                             columnType, 
+                                             columnSize, 
+                                             decimalDigits,
+                                             nullable);
+         colInfosBuf.add(colInfo);
+         
       }
-      _colInfos = (ColumnInfo[]) colInfosBuf.toArray(new ColumnInfo[colInfosBuf.size()]);
+      
+      _colInfos = colInfosBuf.toArray(new ColumnInfo[colInfosBuf.size()]);
 
       if(0 == _colInfos.length)
       {
@@ -249,38 +274,41 @@ public class TableFrameController
       }
 
       try {
-          res = metaData.getPrimaryKeys(_catalog, _schema, _tableName);
-          while(res.next())
-          {
-             for (int i = 0; i < _colInfos.length; i++)
+          PrimaryKeyInfo[] pkinfos = 
+              md.getPrimaryKey(_catalog, _schema, _tableName);
+          for (int i = 0; i < pkinfos.length; i++) {
+             PrimaryKeyInfo info = pkinfos[i];
+             for (int c = 0; c < _colInfos.length; c++)
              {
-                if(_colInfos[i].getName().equals(res.getString("COLUMN_NAME")))
+                if(_colInfos[c].getName().equals(info.getColumnName()))
                 {
-                   _colInfos[i].markPrimaryKey();
+                   _colInfos[c].markPrimaryKey();
                 }
              }
-          }
+          }          
       } catch (SQLException e) {
           s_log.error("Unable to get Primary Key info", e);
-      } finally {
-          if (res != null) {
-              try { res.close(); } catch (SQLException e) {}
-          }
-      }
-
+      } 
+      
+      ResultSet res = null;
       try {
           res = metaData.getImportedKeys(_catalog, _schema, _tableName);
           while(res.next())
           {
-             ColumnInfo colInfo = findColumnInfo(res.getString("FKCOLUMN_NAME"));
-             colInfo.setImportData(res.getString("PKTABLE_NAME"), res.getString("PKCOLUMN_NAME"), res.getString("FK_NAME"));
+             String pkTable = res.getString(3);   // PKTABLE_NAME
+             String pkColName = res.getString(4); // PKCOLUMN_NAME         
+             String fkColName = res.getString(8); // FKCOLUMN_NAME
+             String fkName = res.getString(12);   // FK_NAME
+             
+             ColumnInfo colInfo = findColumnInfo(fkColName);
+             colInfo.setImportData(pkTable, pkColName, fkName);
     
-             ConstraintData  constraintData = (ConstraintData) constaintInfosByConstraintName.get(res.getString("FK_NAME"));
+             ConstraintData  constraintData = constaintInfosByConstraintName.get(fkName);
     
              if(null == constraintData)
              {
-                constraintData = new ConstraintData(res.getString("PKTABLE_NAME"), _tableName, res.getString("FK_NAME"));
-                constaintInfosByConstraintName.put(res.getString("FK_NAME"), constraintData);
+                constraintData = new ConstraintData(pkTable, _tableName, fkName);
+                constaintInfosByConstraintName.put(fkName, constraintData);
              }
              constraintData.addColumnInfo(colInfo);
           }
@@ -292,23 +320,28 @@ public class TableFrameController
           }
       }
 
-      ConstraintData[] constraintData = (ConstraintData[]) constaintInfosByConstraintName.values().toArray(new ConstraintData[0]);
+      ConstraintData[] constraintData = 
+          constaintInfosByConstraintName.values().toArray(new ConstraintData[0]);
 
-      Hashtable oldConstraintViewsByConstraintName = new Hashtable();
+      Hashtable<String, ConstraintView> oldConstraintViewsByConstraintName = 
+          new Hashtable<String, ConstraintView>();
 
       if(null != _constraintViews)
       {
          _desktopController.removeConstraintViews(_constraintViews, true);
          for (int i = 0; i < _constraintViews.length; i++)
          {
-            oldConstraintViewsByConstraintName.put(_constraintViews[i].getData().getConstraintName(), _constraintViews[i]);
+            String constraintName = 
+                _constraintViews[i].getData().getConstraintName();
+            oldConstraintViewsByConstraintName.put(constraintName, _constraintViews[i]);
          }
       }
 
       _constraintViews = new ConstraintView[constraintData.length];
       for (int i = 0; i < constraintData.length; i++)
       {
-         ConstraintView oldCV = (ConstraintView) oldConstraintViewsByConstraintName.get(constraintData[i].getConstraintName());
+         ConstraintView oldCV = 
+             oldConstraintViewsByConstraintName.get(constraintData[i].getConstraintName());
 
          if(null != oldCV)
          {

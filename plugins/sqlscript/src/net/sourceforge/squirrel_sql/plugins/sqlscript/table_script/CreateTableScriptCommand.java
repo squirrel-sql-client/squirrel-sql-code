@@ -283,47 +283,49 @@ public class CreateTableScriptCommand implements ICommand
           return "";
       }
 
-      Vector pkCols = new Vector();
+      Vector<IndexColInfo> pkCols = new Vector<IndexColInfo>();
       while(primaryKeys.next())
       {
-         pkCols.add(new IndexColInfo(primaryKeys.getString("COLUMN_NAME")));
+         String column = primaryKeys.getString(4); // COLUMN_NAME
+         pkCols.add(new IndexColInfo(column));
       }
       primaryKeys.close();
 
       Collections.sort(pkCols, IndexColInfo.NAME_COMPARATOR);
 
-      Hashtable buf = new Hashtable();
+      Hashtable<String, IndexInfo> buf = new Hashtable<String, IndexInfo>();
 
       ResultSet indexInfo = metaData.getIndexInfo(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName(), false, false);
       
       boolean unique = false;
       while(indexInfo.next())
       {
-         String ixName = indexInfo.getString("INDEX_NAME");
-
+         String table = indexInfo.getString(3); // TABLE_NAME
+         unique = !indexInfo.getBoolean(4); // NON_UNIQUE
+         String ixName = indexInfo.getString(6); // INDEX_NAME
+         String column = indexInfo.getString(9); // COLUMN_NAME 
+         int ordinalPosition = indexInfo.getInt(8); // ORDINAL_POSITION
+         
          if(null == ixName)
          {
             continue;
          }
-
-         unique = !indexInfo.getBoolean("NON_UNIQUE");
-
-         IndexInfo ixi = (IndexInfo) buf.get(ixName);
+         IndexInfo ixi = buf.get(ixName);
 
          if(null == ixi)
          {
-            Vector ixCols = new Vector();
-            String table = indexInfo.getString("TABLE_NAME");
-            ixCols.add(new IndexColInfo(indexInfo.getString("COLUMN_NAME"), indexInfo.getInt("ORDINAL_POSITION")));
+            Vector<IndexColInfo> ixCols = new Vector<IndexColInfo>();
+            
+            ixCols.add(new IndexColInfo(column, ordinalPosition));
             buf.put(ixName, new IndexInfo(table, ixName, ixCols));
          }
          else
          {
-            ixi.cols.add(new IndexColInfo(indexInfo.getString("COLUMN_NAME"), indexInfo.getInt("ORDINAL_POSITION")));
+            ixi.cols.add(new IndexColInfo(column, ordinalPosition));
          }
       }
       indexInfo.close();
-      IndexInfo[] ixs = (IndexInfo[]) buf.values().toArray(new IndexInfo[buf.size()]);
+      IndexInfo[] ixs = buf.values().toArray(new IndexInfo[buf.size()]);
       for (int i = 0; i < ixs.length; i++)
       {
          Collections.sort(ixs[i].cols, IndexColInfo.NAME_COMPARATOR);
@@ -390,23 +392,26 @@ public class CreateTableScriptCommand implements ICommand
           return "";
       }
 
-      Hashtable buf = new Hashtable();
+      Hashtable<String, ConstraintInfo> buf = 
+          new Hashtable<String, ConstraintInfo>();
       while(importedKeys.next())
       {
-         String fkName = importedKeys.getString("FK_NAME");
-
-         ConstraintInfo ci = (ConstraintInfo) buf.get(fkName);
+         String pkTable = importedKeys.getString(3);   // PKTABLE_NAME
+         String pkColName = importedKeys.getString(4); // PKCOLUMN_NAME
+         String fkTable = importedKeys.getString(7);   // FKTABLE_NAME         
+         String fkColName = importedKeys.getString(8); // FKCOLUMN_NAME
+         short updateRule = importedKeys.getShort(10); // UPDATE_RULE         
+         short deleteRule = importedKeys.getShort(11); // DELETE_RULE
+         String fkName = importedKeys.getString(12);   // FK_NAME
+         
+         ConstraintInfo ci = buf.get(fkName);
 
          if(null == ci)
          {
-            Vector fkCols = new Vector();
-            Vector pkCols = new Vector();
-            String fkTable = importedKeys.getString("FKTABLE_NAME");
-            String pkTable = importedKeys.getString("PKTABLE_NAME");
-            fkCols.add(importedKeys.getString("FKCOLUMN_NAME"));
-            pkCols.add(importedKeys.getString("PKCOLUMN_NAME"));
-            short deleteRule = importedKeys.getShort("DELETE_RULE");
-            short updateRule = importedKeys.getShort("UPDATE_RULE");
+            Vector<String> fkCols = new Vector<String>();
+            Vector<String> pkCols = new Vector<String>();
+            fkCols.add(fkColName);
+            pkCols.add(pkColName);
             ci = new ConstraintInfo(fkTable, 
                                     pkTable, 
                                     fkName, 
@@ -418,13 +423,13 @@ public class CreateTableScriptCommand implements ICommand
          }
          else
          {
-            ci.fkCols.add(importedKeys.getString("FKCOLUMN_NAME"));
-            ci.pkCols.add(importedKeys.getString("PKCOLUMN_NAME"));
+            ci.fkCols.add(fkColName);
+            ci.pkCols.add(pkColName);
 
          }
       }
       importedKeys.close();
-      ConstraintInfo[] cis = (ConstraintInfo[]) buf.values().toArray(new ConstraintInfo[buf.size()]);
+      ConstraintInfo[] cis = buf.values().toArray(new ConstraintInfo[buf.size()]);
 
 
 
@@ -452,8 +457,6 @@ public class CreateTableScriptCommand implements ICommand
                continue;
             }
          }
-
-
 
          sbToAppend.append("ALTER TABLE " + cis[i].fkTable + "\n");
          sbToAppend.append("ADD CONSTRAINT " + cis[i].fkName + "\n");
@@ -523,6 +526,7 @@ public class CreateTableScriptCommand implements ICommand
                      break;
                  case DatabaseMetaData.importedKeySetDefault:
                      sbToAppend.append(" ON DELETE SET DEFAULT");
+                     break;
                  case DatabaseMetaData.importedKeyRestrict:
                  case DatabaseMetaData.importedKeyNoAction:
                  default:
@@ -542,6 +546,7 @@ public class CreateTableScriptCommand implements ICommand
                      break;
                  case DatabaseMetaData.importedKeySetDefault:
                      sbToAppend.append(" ON UPDATE SET DEFAULT");
+                     break;
                  case DatabaseMetaData.importedKeyRestrict:
                  case DatabaseMetaData.importedKeyNoAction:
                  default:

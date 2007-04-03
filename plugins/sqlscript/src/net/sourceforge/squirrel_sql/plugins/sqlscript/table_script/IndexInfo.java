@@ -7,9 +7,9 @@ public class IndexInfo extends Object
 {
   String table;
   String ixName;
-  Vector cols;
+  Vector<IndexColInfo> cols;
 
-   public IndexInfo(String table, String ixName, Vector cols)
+   public IndexInfo(String table, String ixName, Vector<IndexColInfo> cols)
    {
       this.table = table;
       this.ixName = ixName;
