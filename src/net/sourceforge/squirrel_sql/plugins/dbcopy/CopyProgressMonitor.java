@@ -65,7 +65,7 @@ public class CopyProgressMonitor extends I18NBaseObject
     
     /** Logger for this class. */
     private final static ILogger log = 
-                         LoggerController.createLogger(CopyExecutor.class);
+                         LoggerController.createLogger(CopyProgressMonitor.class);
     
     private ProgressMonitor pm = null;
     
@@ -212,15 +212,22 @@ public class CopyProgressMonitor extends I18NBaseObject
             showMessageDialog(message, title, messageType);                                  
         }
         if (e.getType() == ErrorEvent.SQL_EXCEPTION_TYPE) {
-            
             String exMessage = wordWrap(e.getException().getMessage(), 80);
             String sql = formatter.reformat(DBUtil.getLastStatement());
-            String sqlAndValues = sql + DBUtil.getLastStatementValues();
+            String values = DBUtil.getLastStatementValues();
+            String sqlAndValues = sql;
+            if (values != null) {
+                sqlAndValues += values;
+            } else {
+                sqlAndValues += "\n(No bind variables)";
+            }
             int errorCode = ((SQLException)e.getException()).getErrorCode();
-            log.error("SQL Error code = "+errorCode,e.getException());
+            log.error("SQL Error code = "+errorCode+" sql = "+sqlAndValues,
+                      e.getException());
             String message = getMessage("CopyProgressMonitor.sqlErrorMessage",
-                                        new String[]{exMessage, ""+errorCode,
-                                        sqlAndValues});
+                                        new String[]{exMessage, 
+                                                     ""+errorCode,
+                                                     sqlAndValues});
             String title = getMessage("CopyProgressMonitor.sqlErrorTitle");
             showMessageDialog(message, title, JOptionPane.ERROR_MESSAGE);
         }
