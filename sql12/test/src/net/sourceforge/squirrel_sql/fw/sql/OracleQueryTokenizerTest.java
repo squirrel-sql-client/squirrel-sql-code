@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 
 import junit.framework.TestCase;
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
+import net.sourceforge.squirrel_sql.client.ApplicationManager;
 import net.sourceforge.squirrel_sql.plugins.oracle.gui.DummyPlugin;
 import net.sourceforge.squirrel_sql.plugins.oracle.prefs.OraclePreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.oracle.prefs.PreferencesManager;
@@ -19,7 +20,7 @@ public class OracleQueryTokenizerTest extends TestCase
     static String tmpFilename = null;
     static boolean removeMultilineComment = true;
     static {
-        ApplicationArguments.initialize(new String[] {});        
+        ApplicationManager.initApplication();        
     }
     
     QueryTokenizer qt = null;

@@ -1,7 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.gui;
 
 import junit.framework.TestCase;
-import net.sourceforge.squirrel_sql.client.ApplicationArguments;
+import net.sourceforge.squirrel_sql.client.ApplicationManager;
 
 public class GUIUtilsTest extends TestCase {
 
@@ -12,7 +12,7 @@ public class GUIUtilsTest extends TestCase {
     static final String LENGTH_160 = LENGTH_80 + LENGTH_80;
 
     public void testGetWrappedLine() {
-        ApplicationArguments.initialize(new String[] {});
+        ApplicationManager.initApplication();
         String wrappedLine = GUIUtils.getWrappedLine(LENGTH_80, 40);
         String[] parts = wrappedLine.split("\\n");
         assertEquals("number of newlines in word-wrapped string" , 2, parts.length);

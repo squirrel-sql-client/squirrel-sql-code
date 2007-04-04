@@ -45,6 +45,17 @@ public class SQLUtilities {
      * 
      *  net.sourceforge.schemaspy.SchemaSpy.sortTablesByRI()
      * 
+     * unattached - tables that have no dependencies on other tables
+     * parents    - tables that only have children
+     * children   - tables that only have parents
+     * sandwiches - tables that have both parents and children - as in the 
+     *              "sandwich" generation.
+     * 
+     * The first SQLException encountered while attempting to get FK information
+     * on any table will cause this to bail it's effort to re-order the list and
+     * the list will be returned as it came in - there's no point in spewing
+     * exceptions to end up with a flawed result; just give up.
+     * 
      * @param md
      * @param tables
      * @param listener
@@ -65,78 +76,89 @@ public class SQLUtilities {
         List<ITableInfo> parents = new ArrayList<ITableInfo>();
         // tables that have at least one child table and have a least one parent table
         List<ITableInfo> sandwiches = new ArrayList<ITableInfo>();
-        
-        
-        for (ITableInfo table : tables) {
-            callback.currentlyLoading(table.getSimpleName());
-            ForeignKeyInfo[] importedKeys = getImportedKeys(table, md);
-            ForeignKeyInfo[] exportedKeys = getExportedKeys(table, md);
-            
-            if (importedKeys != null && importedKeys.length == 0 && exportedKeys.length == 0)  {
-                unattached.add(table);
-                continue;
-            }
-            if (exportedKeys != null && exportedKeys.length > 0) {
-                if (importedKeys != null && importedKeys.length > 0) {
-                    sandwiches.add(table);
-                } else {
-                    parents.add(table);
+        ITableInfo lastTable = null;
+        try {
+            for (ITableInfo table : tables) {
+                lastTable = table;
+                callback.currentlyLoading(table.getSimpleName());
+                ForeignKeyInfo[] importedKeys = getImportedKeys(table, md);
+                ForeignKeyInfo[] exportedKeys = getExportedKeys(table, md);
+                
+                if (importedKeys != null && importedKeys.length == 0 && exportedKeys.length == 0)  {
+                    unattached.add(table);
+                    continue;
                 }
-                continue;
+                if (exportedKeys != null && exportedKeys.length > 0) {
+                    if (importedKeys != null && importedKeys.length > 0) {
+                        sandwiches.add(table);
+                    } else {
+                        parents.add(table);
+                    }
+                    continue;
+                }
+                if (importedKeys != null && importedKeys.length > 0) {
+                    children.add(table);
+                }
             }
-            if (importedKeys != null && importedKeys.length > 0) {
-                children.add(table);
+            reorderTables(sandwiches);
+            
+            for (ITableInfo info : unattached) {
+                result.add(info);
             }
-        }
-        reorderTables(sandwiches);
-        
-        for (ITableInfo info : unattached) {
-            result.add(info);
-        }
-        for (ITableInfo info : parents) {
-            result.add(info);
-        }
-        for (ITableInfo info : sandwiches) {
-            result.add(info);
-        }
-        for (ITableInfo info : children) {
-            result.add(info);
+            for (ITableInfo info : parents) {
+                result.add(info);
+            }
+            for (ITableInfo info : sandwiches) {
+                result.add(info);
+            }
+            for (ITableInfo info : children) {
+                result.add(info);
+            }
+            if (result.size() != tables.size()) {
+                s_log.error(
+                    "getInsertionOrder(): failed to obtain a result table list " +
+                    "("+result.size()+") that is the same size as the input table " +
+                    "list ("+tables.size()+") - returning the original unordered " +
+                    "list");
+                result = tables;
+            }
+        } catch (Exception e) {
+            if (lastTable != null) {
+                String tablename = lastTable.getSimpleName();
+                s_log.error(
+                    "Unexpected exception while getting foreign key info for " +
+                    "table "+tablename, e);
+            } else {
+                s_log.error(
+                    "Unexpected exception while getting foreign key info ", e);                
+            }
+            result = tables;
         }
         return result;
     }
     
     public static ForeignKeyInfo[] getImportedKeys(ITableInfo ti,
-                                                    SQLDatabaseMetaData md) {
+                                                    SQLDatabaseMetaData md) 
+        throws SQLException 
+    {
         ForeignKeyInfo[] result = ti.getImportedKeys();
         if (result == null) {
-            try {
-                result = md.getImportedKeysInfo(ti);
-                // Avoid the hit next time
-                ti.setImportedKeys(result);
-            } catch (SQLException e) {
-                String tablename = ti.getSimpleName();
-                s_log.error(
-                    "Unexpected exception while getting imported keys for " +
-                    "table "+tablename);
-            }
+            result = md.getImportedKeysInfo(ti);
+            // Avoid the hit next time
+            ti.setImportedKeys(result);
         }
         return result;
     }
 
     public static ForeignKeyInfo[] getExportedKeys(ITableInfo ti,
-                                                   SQLDatabaseMetaData md) {
+                                                   SQLDatabaseMetaData md) 
+        throws SQLException 
+    {
         ForeignKeyInfo[] result = ti.getExportedKeys();
         if (result == null) {
-            try {
-                result = md.getExportedKeysInfo(ti);
-                // Avoid the hit next time
-                ti.setExportedKeys(result);
-            } catch (SQLException e) {
-                String tablename = ti.getSimpleName();
-                s_log.error(
-                        "Unexpected exception while getting exported keys for " +
-                        "table "+tablename);
-            }
+            result = md.getExportedKeysInfo(ti);
+            // Avoid the hit next time
+            ti.setExportedKeys(result);
         }
         return result;
     }
