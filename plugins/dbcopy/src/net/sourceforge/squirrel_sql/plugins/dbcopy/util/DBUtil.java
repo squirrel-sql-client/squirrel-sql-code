@@ -419,7 +419,12 @@ public class DBUtil extends I18NBaseObject {
             	stmt.setFetchSize(fetchSize);
             } else { 
                 stmt = con.createStatement();
-                stmt.setFetchSize(_prefs.getSelectFetchSize());
+                // Allow the user to set "0" for the fetch size to indicate that
+                // this should not be called.  JDBC-ODBC bridge driver fails to
+                // execute SQL once you have set the fetch size to *any* value.
+                if (_prefs.getSelectFetchSize() > 0) {
+                    stmt.setFetchSize(_prefs.getSelectFetchSize());
+                }
             }
         } catch(SQLException e) {
             // Only close the statement if SQLException - otherwise it has to 
