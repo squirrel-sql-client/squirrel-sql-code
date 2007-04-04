@@ -2,7 +2,7 @@
 package net.sourceforge.squirrel_sql.fw.sql;
 
 import junit.framework.TestCase;
-import net.sourceforge.squirrel_sql.client.ApplicationArguments;
+import net.sourceforge.squirrel_sql.client.ApplicationManager;
 
 public class QueryTokenizerTest extends TestCase implements GenericSQL {
 
@@ -10,7 +10,7 @@ public class QueryTokenizerTest extends TestCase implements GenericSQL {
     static String tmpFilename = null;
     static boolean removeMultilineComment = true;
     static {
-        ApplicationArguments.initialize(new String[] {});        
+        ApplicationManager.initApplication();        
     }
     QueryTokenizer qt = null;
     

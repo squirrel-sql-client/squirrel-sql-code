@@ -10,6 +10,7 @@ public class AllTests extends TestCase {
 		suite.addTestSuite(SQLDatabaseMetaDataTest.class);
         suite.addTestSuite(QueryTokenizerTest.class);
         suite.addTestSuite(OracleQueryTokenizerTest.class);
+        suite.addTestSuite(SQLUtilitiesTest.class);
 		return suite;
 	}
 }
