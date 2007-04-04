@@ -106,6 +106,9 @@ Informix Plugin
     take advantage of this capability.
 
 DBCopy Plugin 
+  - Allow the user to set "0" for the fetch size to indicate that this should 
+    not be called.  JDBC-ODBC bridge driver fails to execute *any* SQL once you 
+    have set the fetch size to *any* value.
   - Analyzes FKs to be copied and skips them if they already exist in 
     destination database. 
   - Now the plugin reorders source tables to satisfy FK dependencies when 
