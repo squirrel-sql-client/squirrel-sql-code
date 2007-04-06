@@ -258,7 +258,7 @@ public class InformixPlugin extends DefaultSessionPlugin {
         {
 				s_log.error("Unexpected exception from getDatabaseProductName()", ex);
         }
-        return dbms != null && dbms.toLowerCase().startsWith(INFORMIX);
+        return dbms != null && dbms.toLowerCase().contains(INFORMIX);
     }
 
 }
