@@ -123,7 +123,8 @@ top edge to bottom edge in about three full rotations of the wheel instead of
 about thirty.
 
 Bug-Fixes:
-
+- Added support for identifying Informix XPS, so that the Informix plugin can 
+  be used.
 - When treating dates like timestamps, simply use the DataTypeTimestamp class 
   instead of trying to make the DataTypeDate class smart enough to interpret 
   timestamps.  This fixes the issue where a Number format error was encountered
