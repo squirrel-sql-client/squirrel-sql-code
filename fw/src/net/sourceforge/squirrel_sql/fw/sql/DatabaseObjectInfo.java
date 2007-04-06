@@ -127,7 +127,7 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
    private boolean isInformix(SQLDatabaseMetaData md) {
        boolean result = false;
        try {
-           if (md.getDatabaseProductName().toLowerCase().startsWith("informix")) {
+           if (md.getDatabaseProductName().toLowerCase().contains("informix")) {
                result = true;
            } 
        } catch (SQLException e) {
