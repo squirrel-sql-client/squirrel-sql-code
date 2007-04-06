@@ -31,7 +31,7 @@ public class QueryTokenizer implements IQueryTokenizer
 {
 	protected ArrayList<String> _queries = new ArrayList<String>();
     
-	protected Iterator _queryIterator;
+	protected Iterator<String> _queryIterator;
 
     protected String _querySep = null;
     
@@ -139,7 +139,7 @@ public class QueryTokenizer implements IQueryTokenizer
 
 	public String nextQuery()
 	{
-		return (String) _queryIterator.next();
+		return _queryIterator.next();
 	}
 
     public void setScriptToTokenize(String script) {
@@ -343,8 +343,8 @@ public class QueryTokenizer implements IQueryTokenizer
             return;
         }
         ArrayList<String> tmp = new ArrayList<String>();
-        for (Iterator iter = _queries.iterator(); iter.hasNext();) {
-            String sql = (String) iter.next();
+        for (Iterator<String> iter = _queries.iterator(); iter.hasNext();) {
+            String sql = iter.next();
             if (sql.startsWith(scriptIncludePrefix)) {
                 try {
                     String filename = sql.substring(1);
@@ -399,7 +399,7 @@ public class QueryTokenizer implements IQueryTokenizer
                 }
                 qt.setScriptToTokenize(fileLines.toString());
                 while (qt.hasQuery()) {
-                    String sql = (String) qt.nextQuery();
+                    String sql = qt.nextQuery();
                     result.add(sql);
                 }
             }
