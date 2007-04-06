@@ -175,7 +175,7 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect
         if (databaseProductName == null) {
             return false;
         }
-        if (databaseProductName.trim().startsWith("Informix")) {
+        if (databaseProductName.toLowerCase().contains("informix")) {
             // We don't yet have the need to discriminate by version.
             return true;
         }
