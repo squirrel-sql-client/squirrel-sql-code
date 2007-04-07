@@ -25,12 +25,12 @@
         <pack name="Optional Plugin - Internationalization "     index="15" selected="true"/>
         <pack name="Optional Translation - Brazilian Portuguese" index="16" selected="true"/>
         <pack name="Optional Translation - Bulgarian"            index="17" selected="true"/>
-        <pack name="Optional Translation - Czech"                index="16" selected="true"/>
-        <pack name="Optional Translation - Simplified Chinese"   index="18" selected="true"/>
-        <pack name="Optional Translation - French"               index="19" selected="true"/>
-        <pack name="Optional Translation - German"               index="20" selected="true"/>
-        <pack name="Optional Translation - Italian"              index="21" selected="true"/>
-        <pack name="Optional Translation - Spanish"              index="22" selected="true"/>
+        <pack name="Optional Translation - Czech"                index="18" selected="true"/>
+        <pack name="Optional Translation - Simplified Chinese"   index="19" selected="true"/>
+        <pack name="Optional Translation - French"               index="20" selected="true"/>
+        <pack name="Optional Translation - German"               index="21" selected="true"/>
+        <pack name="Optional Translation - Italian"              index="22" selected="true"/>
+        <pack name="Optional Translation - Spanish"              index="23" selected="true"/>
     </com.izforge.izpack.panels.PacksPanel>
     <com.izforge.izpack.panels.InstallPanel/>
     <com.izforge.izpack.panels.ShortcutPanel/>
