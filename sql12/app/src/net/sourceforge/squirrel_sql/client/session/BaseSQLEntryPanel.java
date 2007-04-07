@@ -1,15 +1,22 @@
 package net.sourceforge.squirrel_sql.client.session;
 
-import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
-import net.sourceforge.squirrel_sql.client.IApplication;
-
-import javax.swing.*;
-import javax.swing.text.JTextComponent;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
+import javax.swing.Action;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.SwingUtilities;
+import javax.swing.text.JTextComponent;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.session.action.ViewObjectAtCursorInObjectTreeAction;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
 
 /*
  * Copyright (C) 2001-2003 Colin Bell
@@ -351,7 +358,28 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
 			}
 		}
 
-		private void displayPopupMenu(MouseEvent evt)
+        /**
+         * This provides the feature which is like in Eclipse when you control
+         * click on an identifier it takes you to the file that contains the 
+         * identifier (method, class, etc) definition.  Similarly, ctrl-clicking 
+         * on an identifier in the SQL editor will invoke the view object at
+         * cursor in object tree action. 
+         */
+		@Override
+        public void mouseClicked(MouseEvent e) {
+            if (e.isControlDown()) {
+                
+                final Action a = 
+                    _app.getActionCollection().get(ViewObjectAtCursorInObjectTreeAction.class);
+                GUIUtils.processOnSwingEventThread(new Runnable() {
+                    public void run() {
+                        a.actionPerformed(new ActionEvent(this, 1, "ViewObjectAtCursorInObjectTreeAction"));
+                    }
+                });
+            }
+        }
+
+        private void displayPopupMenu(MouseEvent evt)
 		{
 			_textPopupMenu.setTextComponent((JTextComponent)getTextComponent());
 			_textPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
