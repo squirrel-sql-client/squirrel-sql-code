@@ -6,28 +6,31 @@
         <installpath>./tmp/SQuirreL SQL Client</installpath>
     </com.izforge.izpack.panels.TargetPanel>
     <com.izforge.izpack.panels.PacksPanel>
-        <pack name="Base" index="0" selected="true"/>
-        <pack name="Standard" index="1" selected="true"/>
-        <pack name="Optional Plugin - DBCopy" index="2" selected="true"/>
-        <pack name="Optional Plugin - Derby" index="3" selected="true"/>
-        <pack name="Optional Plugin - Firebird " index="4" selected="true"/>
-        <pack name="Optional Plugin - Informix " index="5" selected="true"/>        
-        <pack name="Optional Plugin - Microsoft SQL Server " index="6" selected="true"/>
-        <pack name="Optional Plugin - MySQL " index="7" selected="true"/>
-        <pack name="Optional Plugin - Oracle" index="8" selected="true"/>
-        <pack name="Optional Plugin - Refactoring" index="9" selected="true"/>        
-        <pack name="Optional Plugin - Session Scripts" index="10" selected="true"/>
-        <pack name="Optional Plugin - SQL Validator " index="11" selected="true"/>
-        <pack name="Optional Plugin - Sybase " index="12" selected="true"/>        
-        <pack name="Optional Plugin - Internationalization " index="13" selected="true"/>
-        <pack name="Optional Translation - Brazilian Portuguese" index="14" selected="true"/>
-        <pack name="Optional Translation - Bulgarian" index="15" selected="true"/>
-        <pack name="Optional Translation - Czech" index="16" selected="true"/>
-        <pack name="Optional Translation - Simplified Chinese" index="17" selected="true"/>
-        <pack name="Optional Translation - French" index="18" selected="true"/>
-        <pack name="Optional Translation - German" index="19" selected="true"/>
-        <pack name="Optional Translation - Italian" index="20" selected="true"/>
-        <pack name="Optional Translation - Spanish" index="21" selected="true"/>
+        <pack name="Base"                                        index="0" selected="true"/>
+        <pack name="Standard"                                    index="1" selected="true"/>
+        <pack name="Optional Plugin - DBCopy"                    index="2" selected="true"/>
+	<pack name="Optional Plugin - DB2"                       index="3" selected="true"/>
+        <pack name="Optional Plugin - Derby"                     index="4" selected="true"/>
+        <pack name="Optional Plugin - Firebird"                  index="5" selected="true"/>
+        <pack name="Optional Plugin - H2"                        index="6" selected="true"/>
+        <pack name="Optional Plugin - Informix"                  index="7" selected="true"/>        
+        <pack name="Optional Plugin - Microsoft SQL Server "     index="8" selected="true"/>
+        <pack name="Optional Plugin - MySQL "                    index="9" selected="true"/>
+        <pack name="Optional Plugin - Oracle"                    index="10" selected="true"/>
+        <pack name="Optional Plugin - PostgreSQL"                index="10" selected="true"/>
+        <pack name="Optional Plugin - Refactoring"               index="11" selected="true"/>        
+        <pack name="Optional Plugin - Session Scripts"           index="12" selected="true"/>
+        <pack name="Optional Plugin - SQL Validator "            index="13" selected="true"/>
+        <pack name="Optional Plugin - Sybase "                   index="14" selected="true"/>        
+        <pack name="Optional Plugin - Internationalization "     index="15" selected="true"/>
+        <pack name="Optional Translation - Brazilian Portuguese" index="16" selected="true"/>
+        <pack name="Optional Translation - Bulgarian"            index="17" selected="true"/>
+        <pack name="Optional Translation - Czech"                index="16" selected="true"/>
+        <pack name="Optional Translation - Simplified Chinese"   index="18" selected="true"/>
+        <pack name="Optional Translation - French"               index="19" selected="true"/>
+        <pack name="Optional Translation - German"               index="20" selected="true"/>
+        <pack name="Optional Translation - Italian"              index="21" selected="true"/>
+        <pack name="Optional Translation - Spanish"              index="22" selected="true"/>
     </com.izforge.izpack.panels.PacksPanel>
     <com.izforge.izpack.panels.InstallPanel/>
     <com.izforge.izpack.panels.ShortcutPanel/>
