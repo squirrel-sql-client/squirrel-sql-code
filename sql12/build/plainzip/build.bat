@@ -1,8 +1,8 @@
 set PLAIN_ZIP_DIR=c:\home\projects\squirrel-sql\sql12\build\plainzip
 
-set INSTALL_JAR=c:\tmp\squirrel-sql-2.4.1-install.jar
+set INSTALL_JAR=c:\tmp\squirrel-sql-2.5-install.jar
 
-set VERSION=2.4.1
+set VERSION=2.5
 
 cd %PLAIN_ZIP_DIR%
 

@@ -6,26 +6,47 @@ for this is that it prepares a fresh checkout of the source repository and
 replaces certain parameterized files in order to ensure that the build isn't
 tainted with local changes.
 
-1. Update Version.java to contain the correct version
+Pre-build prep:
+
+  1. Update Version.java to contain the correct version.
+
+  2. Add version header to doc/changes.txt with the date of release.
 
 In the snapshot directory, update build-weekly.properties as follows:
 
-1. set appversion to the correct version
+  1. set appversion to the correct version
 
-2. set replace.version=false
+  2. set replace.version=false
 
-3. set cvs.dest.dir to some directory where the result of the build will be stored
+  3. set cvs.dest.dir to some directory where the result of the build will be stored
 
-4. run "ant -f build-weekly.xml"
+  4. run "ant -f build-weekly.xml"
 
-5. During the build process, the installer that is produced will be executed
+  5. During the build process, the installer that is produced will be executed
    and SQuirreL will be installed and launched automatically.  It is a good 
    idea at this point to do a sanity check.  Check the version to make sure
    it is correct.  Look for something that changed (maybe a bug that was fixed
    and see that it appears to be fixed in this build).  If everything is good
    quit SQuirreL and the build process will continue by creating a source archive.
    If something appears to be wrong with the build, quit SQuirreL and Ctrl-C 
-   will stop the rest of the build.
+   will stop the rest of the build. (Note: IzPack 3.9.0 installers throws an NPE 
+   when the installer is run in auto-install using the auto-install xml file.  
+   This is ok since the software is still installed correctly, it just looks ugly 
+   to have the stack trace appear in the Ant output).
 
-6. When the build completes the install jar and source archive will be 
-   ${cvs.dest.dir}/squirrel-sql-dist
+  6. When the build completes the install jars (generic and Mac OS X) and source 
+   archive will be ${cvs.dest.dir}/squirrel-sql-dist
+   
+  7. If this is not a snapshot release, then additional archived versions need to 
+   be prepared.  These are the "extract and run" no-installer archives that 
+   many people seem to prefer over the installer.
+   
+Additional Steps for Non-Snapshot release:
+
+  1. Modify build/plainzip/build.bat and build/plainzip/build.sh to have the 
+   correct version and local path to the installer created by step 4. above.
+   
+  2. On Linux run build.sh, on Windows run build.bat ( there is no script to run
+   on Mac OS X)  This will product 3 software archive files on each platform.
+   They are the base-only, base & standard plugins, base & all standard/optional
+   plugins archive files.
