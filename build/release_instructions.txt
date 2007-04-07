@@ -11,6 +11,9 @@ Pre-build prep:
   1. Update Version.java to contain the correct version.
 
   2. Add version header to doc/changes.txt with the date of release.
+  
+  3. Update version in snapshot_release_notes.template.(Not required but will 
+     be needed for the next snapshot, so it's good to do it while we are here)
 
 In the snapshot directory, update build-weekly.properties as follows:
 
