@@ -670,7 +670,7 @@ public class OraclePlugin extends DefaultSessionPlugin
       }
    }
 
-    private void updateObjectTree(IObjectTreeAPI objTree) {
+    private void updateObjectTree(final IObjectTreeAPI objTree) {
         ISession session = objTree.getSession();
         addDetailTab(objTree, DatabaseObjectType.SESSION, new OptionsTab());
         addDetailTab(objTree, IObjectTypes.CONSUMER_GROUP, new DatabaseObjectInfoTab());
@@ -709,6 +709,17 @@ public class OraclePlugin extends DefaultSessionPlugin
         addDetailTab(objTree, DatabaseObjectType.USER, new UserDetailsTab(session));
 
         addDetailTab(objTree, DatabaseObjectType.VIEW, new ViewSourceTab());
+        
+        // This fixes the issue where the tree is getting constructed prior to 
+        // the Oracle plugin expanders being registered.(USERS, SESSIONS, 
+        // INSTANCES nodes have no children until the tree is refreshed).  Even
+        // though this is a hack, it doesn't seem to negatively impact 
+        // performance even when loading all schemas.
+        GUIUtils.processOnSwingEventThread(new Runnable() {
+            public void run() {
+                objTree.refreshTree();
+            }
+        });
     }
 
    private void addExpander(final IObjectTreeAPI objTree,
