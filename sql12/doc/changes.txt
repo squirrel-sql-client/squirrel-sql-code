@@ -11,6 +11,9 @@ Enhancements:
 - Updated French translation (Thanks to Erwan Duroselle)
 - Updated Italian translation strings (Thanks to Ivo Neri)
 
+- When the user control-clicks on an identifier in the SQL editor it takes you 
+  will show that object in the object tree (Same behavior as Ctrl-b).
+
 - Dialog prompt to save file changes on exit, now includes the filename in 
   case there are multiple open files in different sessions.  Also, the session
   alias name appears in the title, in case the editor contents aren't yet 
@@ -123,6 +126,9 @@ top edge to bottom edge in about three full rotations of the wheel instead of
 about thirty.
 
 Bug-Fixes:
+- Fixed issue where USERS, SESSIONS, INSTANCES nodes in the object tree for 
+  Oracle sessions weren't being populated with child nodes when the session is 
+  first started.
 - Added support for identifying Informix XPS, so that the Informix plugin can 
   be used.
 - When treating dates like timestamps, simply use the DataTypeTimestamp class 
