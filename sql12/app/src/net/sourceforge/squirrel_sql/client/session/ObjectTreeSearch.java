@@ -59,7 +59,7 @@ public class ObjectTreeSearch
 
       if (false == success)
       {
-         // i18n[ObjectTreeSearch.error.objectnotfound=Could not locate the database object '{0}' in Object tree]
+         // i18n[ObjectTreeSearch.error.objectnotfound=Could not locate the database object ''{0}'' in Object tree]
          String msg =
              s_stringMgr.getString(
                      "ObjectTreeSearch.error.objectnotfound",
