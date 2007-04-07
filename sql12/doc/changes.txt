@@ -130,7 +130,7 @@ Bug-Fixes:
   Oracle sessions weren't being populated with child nodes when the session is 
   first started.
 - Added support for identifying Informix XPS, so that the Informix plugin can 
-  be used.
+  be used (Thanks to Dieter Engelhardt for the patch)
 - When treating dates like timestamps, simply use the DataTypeTimestamp class 
   instead of trying to make the DataTypeDate class smart enough to interpret 
   timestamps.  This fixes the issue where a Number format error was encountered
