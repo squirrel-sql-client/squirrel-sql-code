@@ -294,8 +294,7 @@ documentation that comes with the driver).
 driver that is in a jar file or a directory that is not in the current
 class path.
 <P ALIGN="CENTER"><IMG SRC="images/chg_driver_2.png" BORDER="0"
-	ALT="Change
-Driver dialog (Extra Class Path tab)"></A></P>
+	ALT="Change Driver dialog (Extra Class Path tab)"></P>
 
 <P>The <EM>Add</EM> button will display a File Open dialog allowing
 you to select one or more jar files or directories. The <EM>Delete</EM>
@@ -456,12 +455,12 @@ results from the tabbed folder and display it in its own window.</P>
 </A>
 
 <P>Every SQL statement that is successfully executed is also added to the 
-drop-down history list, which is shown below.  
+drop-down history list, which is shown below.</P>  
 
 <P ALIGN="CENTER"><IMG SRC="images/sql_history_list.png" BORDER="0"
 	ALT="&quot;Torn off&quot; query results"></P>
 
-This list can then be used to find and re-execute 
+<P>This list can then be used to find and re-execute 
 previously executed statements.  The drop-down list allows you to pick the SQL
 statement, and clicking the 
 blue arrow ( <img src="images/history_arrow.png" align="middle"> )
@@ -469,7 +468,7 @@ will copy the statement into the editor.
 Additionally, the history list can be searched
 using the SQL History dialog which is accessed by the icon 
 ( <img src="images/history_dialog_icon.png" align="middle"> ) which is next to the blue 
-arrow.  The SQL History window is shown below.
+arrow.  The SQL History window is shown below.</P>
 
 <P ALIGN="CENTER"><IMG SRC="images/sql_history_dialog.png" BORDER="0"
 	ALT="&quot;Torn off&quot; query results"></P>
@@ -483,22 +482,24 @@ same manner as the data within the <A href="#ContentsTab">Contents
 Tab</A>. You should read that section to understand the capabilities and
 limitations of data editing, including the use of the Popup window to
 import and export data. In addition, there are two things that you need
-to know about editing in the SQL Results:
+to know about editing in the SQL Results:</P>
 <DL>
 	<LI>To enable editing in the SQL Results tables, you must set the
-	"SQL Results" entry in the Session Properties to "Editable Table".
+	"SQL Results" entry in the Session Properties to "Editable Table".</LI>
 	<LI>Editing is only allowed when the SQL that was executed
-	consists of: <PRE>
+	consists of: 
+	<PRE>
 	"SELECT <column list> FROM <single_table_name>"
     or
 	"SELECT <column list> FROM <single_table_name> WHERE ..."
-</PRE> In addition, the name of the table must be unique within the entire DB.
+    </PRE> 
+    In addition, the name of the table must be unique within the entire DB.
 	This means that if you have multiple catalogs or schemas which have
 	that same table name defined in them, Squirrel cannot determine which
 	to use and thus will not allow data to be updated in the DB. (Squirrel
 	is just a bit stupid on this point: it will let you edit the data, and
 	then tell you that it cannot update the DB when you exit the cell being
-	changed.)
+	changed.)</LI>
 </DL>
 <P><A NAME="ContentsTab">
 <h2>The Contents Tab and Editing Data</h2>
@@ -861,11 +862,15 @@ external command.
 		have used for editing other fields, so you can just choose one of
 		them. The command will typically need the name of the file to edit.
 		This may be done by using "%f" where you want the name of the file to
-		go in that command, so, for example, instead of typing: <PRE>
-	xterm -e vi myfilename
-</PRE> you could type <PRE>
-	xterm -e vi %f
-</PRE> which makes the command more general and avoids the need for you to
+		go in that command, so, for example, instead of typing: 
+		<PRE>
+	        xterm -e vi myfilename
+        </PRE> 
+        you could type 
+        <PRE>
+	        xterm -e vi %f
+        </PRE> 
+        which makes the command more general and avoids the need for you to
 		edit the command for each file.
 		<LI>Click on "Execute". This causes the cell data to be exported
 		to the selected file and the command to be executed. When the external
@@ -879,8 +884,9 @@ external command.
 	operate in, so you may need to provide for that as part of the command.
 	For example, to run VI on Linux you may need to enter the command:
 	<PRE>
-	xterm -e vi %f
-</PRE> to have VI run in a window visible to you. If you just enter "vi %f" as
+	    xterm -e vi %f
+    </PRE> 
+    to have VI run in a window visible to you. If you just enter "vi %f" as
 	the command, you will not get a window to operate in. Other commands
 	(e.g. gimp) provide their own windows, so the extra step will not be
 	necessary for them.
@@ -893,6 +899,7 @@ may, of course, change those values at any time.
 <P>Also, if you just want to set the default values for a particular
 column, you can enter the "File:" and "Command:" field information and
 click on "Apply".
+
 <h3><a name="Limitations"></a>Limitations</h3>
 
 <P>Some DBMSs implement "standard" data types in non-standard ways
@@ -1163,14 +1170,17 @@ be shown when the mouse &quot;hovers&quot; over some controls.</P>
 tabs in tabbed folders in a scrollable region rather than wrapping them
 when all tabs will not fit within a single run.</P>
 
-<p align="center">
+<P>
+<center>
 <table>
 	<tr>
-		<td width="40%" align="right"><img src="images/stacked_tabs.png"
-			border="0"></td>
+		<td width="40%" align="right">
+		    <img src="images/stacked_tabs.png" border="0">
+		</td>
 		<td width="10%"></td>
-		<td width="40%" align="left"><img
-			src="images/scrollable_tabs.png" border="0"></td>
+		<td width="40%" align="left">
+			<img src="images/scrollable_tabs.png" border="0">
+	    </td>
 	</tr>
 	<tr>
 		<td align="center">Stacked Tabs</td>
@@ -1178,7 +1188,8 @@ when all tabs will not fit within a single run.</P>
 		<td align="center">Scrollable Tabs</td>
 	</tr>
 </table>
-</p>
+</center>
+
 
 <P><B>Show Main Window Tool Bar</B> - If checked then the tool bar
 will be displayed in the main window.</P>
@@ -1207,19 +1218,15 @@ black-and-white.</P>
 the name (and location) of the logging file for SQuirreL. If the file
 name is too long for the label then the full name will be displayed in a
 tooltip.</P>
-For more information see
-<A HREF="#logs">Logs</A>
-.
-</P>
+For more information see <A HREF="#logs">Logs</A>.
 
 <P><B>Configuration File</B> - This (display only) setting tells you
 the name (and location) of the logging configuration file for SQuirreL.
 If the file name is too long for the label then the full name will be
 displayed in a tooltip.</P>
-For more information see
-<A HREF="#logs">Logs</A>
-.
-</P>
+
+For more information see <A HREF="#logs">Logs</A>.
+<P>
 
 <H4>SQL Tab</H4>
 
@@ -1232,7 +1239,7 @@ For more information see
 JDBC driver will wait while attempting to connect to the database.</P>
 
 <P><B>Large Scrip Statement Count</B> - By default, a script is
-considered large if it has > 200 SQL statements selected for execution
+considered large if it has more than 200 SQL statements selected for execution
 in the script. When this is set to zero, large script execution support
 is disabled. Large script support consists of the following behavior
 during execution:
@@ -1240,14 +1247,14 @@ during execution:
 	<li>Only one message is written in the message panel at the bottom
 	of the session window at the end of running many statements summarizing
 	the details of execution (timing, statement type and count, etc).</li>
-	<li>The message "SQL Statement x of y <some sql...>" is
+	<li>The message "SQL Statement x of y &lt;some sql...&gt;" is
 	still displayed in the results panel to indicate progress.</li>
 	<li>The history bar isn't updated during large script execution.</li>
 </ul>
 This feature can dramatically improve UI responsiveness when executing
 many statements in large scripts (especially those with statement counts
 in the thousands).
-</P>
+<P>
 
 <H4>SQL Tab (Debug)</H4>
 
@@ -1374,7 +1381,7 @@ difference is between seeing:
 </PRE>
 Note that this option does not affect display in the Popup window, where
 newlines actually become new lines.
-</P>
+<P>
 
 <H4>CHAR, VARCHAR, LONGVARCHAR (SQL Types 1, 12, -1)</H4>
 
@@ -1389,7 +1396,7 @@ difference is between seeing:
 </PRE>
 Note that this option does not affect display in the Popup window, where
 newlines actually become new lines.
-</P>
+<P>
 
 <P><B>Allow LONGVARCHAR type to be used in WHERE clause</B> - When
 checked, the LONGVARCHAR type is used in WHERE clauses just as other
@@ -1883,17 +1890,17 @@ will display a dialog box showing the plugins currently installed.</P>
 	columns" boxe by selecting the names and using the arrow buttons to
 	move them to the other box You must leave at least one column in the
 	"use columns" box, and the column in the "use columns" box must be
-	sufficient to uniquely identify each ro in the table, e.g. the primary
+	sufficient to uniquely identify each row in the table, e.g. the primary
 	key fields for the table The "Reset" button restores the column name
-	lists to the way they were whe you opened the window <BR Remember to
-		click "OK" when you are done
+	lists to the way they were when you opened the window <BR>
+	 Remember to click "OK" when you are done
 	<BR>
 	If you define a set of columns to use in the WHERE clause and then edit
-	som other column, SQuirreL will warn you that "1 duplicate row" is
-	about to b created. Since you have told SQuirreL to not look at the
+	some other column, SQuirreL will warn you that "1 duplicate row" is
+	about to be created. Since you have told SQuirreL to not look at the
 	edited column it does no recognize that the new data is different than
-	the old data so i gives you a warning. In this case there is no problem
-	and you should jus tell SQuirreL to go ahead with the update.
+	the old data so it gives you a warning. In this case there is no problem
+	and you should just tell SQuirreL to go ahead with the update.
 </DL>
 
 <A NAME="windows_menu">
