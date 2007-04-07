@@ -68,72 +68,64 @@
 	<tr>
       <td class="body_left_border">&nbsp;</td>
       <td width='100%' class="body" bgcolor="white" valign="top">
-         <h1 class="body"><A name="newfeatures">2.4.x Highlights:</A></h1>
+         <h1 class="body"><A name="newfeatures">2.5 Highlights:</A></h1>
          <ul>
-            <li> Note: This is the first release of SQuirreL that specifically 
-            requires JDK 1.5 or higher to compile and run. The build scripts and 
-            the installer now check for at least Java 1.5 before proceeding.
-            
-            </li>
             <li>Enhancements </li>
             <UL>
                <li>New plugins provide enhanced capabilities:
                   <UL>
                      <li>
-                     Derby Plugin: Shows source SQL for views and triggers as 
-                     well as further details about triggers
+                     DB2 Plugin: Stored Procedures, Triggers and Views are shown 
+                     in the object tree and have a &quot;Source&quot; tab which 
+                     displays the source of the selected object and a 
+                     &quot;Details&quot; tab which gives DB2-specific 
+                     information about the object.  Sequences and Indexes are 
+                     also shown in the object tree and have a details tab 
+                     giving DB2-specific information about them. 
                      </li>
                      <li>
-                     Informix Plugin: Shows source SQL for Stored Procedures, 
-                     Triggers and Views as well as details for Sequences and 
-                     Indexes. (Special thanks to Doug Lawry for data dictionary 
-                     queries)
+                     H2 Plugin: Indexes and Views are shown in the object tree 
+                     and have a &quot;Source&quot; tab which displays the source 
+                     of the selected object and a &quot;Details&quot; tab which 
+                     gives H2-specific information about the object.  Sequences 
+                     and Indexes are also shown in the object tree and have a 
+                     details tab giving H2-specific information about them.  
                      </li>
                      <li>
-                     Refactoring Plugin: Allows you to view SQL alterations for
-                     several refactorings or apply them directly to existing 
-                     tables.  Refactorings supported are Add/Modify/Drop columns
-                     and Add/Drop Primary Key.
+                     PostgreSQL Plugin: Stored Procedures, Triggers and Views 
+                     are shown in the object tree and have a &quot;Source&quot; 
+                     tab which displays the source of the selected object and 
+				     a &quot;Details&quot; tab which gives PostgreSQL-specific 
+				     information about the 
+					 object.  Sequences and Indexes are also shown in the 
+					 object tree and have a details tab giving DB2-specific 
+					 information about them.  
+                     </li>                     
+                     <li>
+					 Sybase Plugin: Allows the user to reverse engineer to the 
+					 source code for Views and Stored Procedures displayed in the 
+					 object tree.
                      </li>
                   </UL>
                </li>
 
-               <li>MS Excel export of displayed tables - thanks to André Schild
-                   for the patch
+               <li>Added better support for executing large scripts so that 
+               SQuirreL remains responsive to UI interaction, as well as 
+               providing much faster execution.
                </li>
-               <li>Enhancements to the Graph Plugin
-                  <ul> 
-                  	<li> Allows graphs to be saved as jpg images files instead of printing them </li>
-                  	<li> New right mouse menu item for tables: "View table in Object tree" </li>
-            	  </ul>   
+               <li>Added custom statement tokenizer framework to allow plugins to
+                   control how statements are tokenized.
                </li>
-			
-               <li>Made SQuirreL work with hxtt drivers. 
-               See <a href="http://www.hxtt.com">www.hxtt.com</a>. 
-               (Thanks to Yonghong Zhao for this patch)
+			   <li>Drop tables, Delete Records and Copy Tables features now will
+			   order the tables according to Foreign Key dependencies instead of
+			   alphabetically by name.
+               <li>Oracle Plugin now supports executing create statements for 
+               triggers, stored procedures and functions using "/" just as is 
+               done in SQL-Plus.  Also "@" can now be used to indicate a file to be 
+               parsed and executed while running another script in SQL Editor.
                </li>
-               <li> DBCopy Plugin: 
-               	<ul>
-               	    <li> Added support for Informix and HADB. Special 
-                    thanks goes to Lars Heill (Sun HADB) and Doug Lawry (IBM Informix) 
-                    for help with installation/configuration and technical guidance
-                    regarding data types.
-                    </li>
-                    <li> Promoted dialect framework to core to allow other plugins 
-                    to use (Refactoring) - this version of DBCopy plugin (1.1) 
-                    is now no longer compatible or supported for previous 
-                    versions of SQuirreL.
-                    </li>
-                 </ul>
-				</li>
-				<li> Schema refresh on catalog combo box change:
-				Schemas are refreshed automatically, when the user switches to 
-				another catalog. On systems that support Catalogs like Sybase 
-				or MSSQL, Schemas within a Catalog only become accessible when 
-				the catalog combo box is switched to the their Catalog. To make 
-				Schemas available in the Object Tree, Code completion etc. after 
-				a Catalog switch Schemas are now automatically refreshed.
-				(Thanks to Stan Berka for this patch)		
+				<li> SQL History Dialog allows for searching previously executed
+				statements by regular expression.
 				</li>		
             </UL>
             <li>Many bug fixes</li>
@@ -281,9 +273,9 @@
 
 			<h2>The most important <U>downloads</U> are:</h2>
 
-         <UL>http://sourceforge.net/project/showfiles.php?group_id=28383&package_id=29193&release_id=490938
-            <LI><B><a href="http://sourceforge.net/project/showfiles.php?group_id=28383&package_id=29193&release_id=490963">Install jars (and source) of SQuirreL 2.4.1 for Windows/Linux/others</a></B></LI>
-	        <LI><B><a href="http://sourceforge.net/project/showfiles.php?group_id=28383&package_id=29193&release_id=490938">Plain zip format of SQuirreL 2.4.1</a></B></LI>
+         <UL>
+            <LI><B><a href="http://sourceforge.net/project/showfiles.php?group_id=28383&package_id=29193&release_id=499452">Install jars (and source) of SQuirreL 2.5 for Windows/Linux/others</a></B></LI>
+	        <LI><B><a href="http://sourceforge.net/project/showfiles.php?group_id=28383&package_id=29193&release_id=499450">Plain zip format of SQuirreL 2.5</a></B></LI>
             <LI><B><a href="http://sourceforge.net/project/showfiles.php?group_id=28383&package_id=158128">Install jars of weekly snapshots for Windows/Linux/others</a></B></LI>
             <LI><B><a href="http://sourceforge.net/project/showfiles.php?group_id=28383">Overview of all available downloads</a></B></LI>
          </UL>
