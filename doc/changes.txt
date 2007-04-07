@@ -92,10 +92,10 @@ SQL Scripts Plugin
 Oracle Plugin
   - Added configuration panel for Oracle plugin in Global Preferences to allow 
     configuration of new custom Oracle query tokenizer.
-  - Added support for executing create procedure and create function blocks 
-    delimited by a single "/" such as is supported in SQL-Plus.  Also, added 
-    support for the "@" construct which is used to specify a script file to be 
-    included.
+  - Added support for executing create procedure, create function and create
+    trigger blocks delimited by a single "/" such as is supported in SQL-Plus.  
+    Also, added support for the "@" construct which is used to specify a script 
+    file to be executed without loading it into the SQL Editor first.
   - Source tab for views now presents source code that is formatted and 
     correctly formed to allow it to be used as an SQL statement to replicate 
     the view.
