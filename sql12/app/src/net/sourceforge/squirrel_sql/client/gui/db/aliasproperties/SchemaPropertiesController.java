@@ -83,7 +83,7 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
 
       _pnl.chkCacheSchemaIndepndentMetaData.setSelected(alias.getSchemaProperties().isCacheSchemaIndependentMetaData());
 
-
+      _pnl.cboSchemaTableUpdateWhat.addItem(SchemaTableUpdateWhatItem.ALL);
       _pnl.cboSchemaTableUpdateWhat.addItem(SchemaTableUpdateWhatItem.TABLES);
       _pnl.cboSchemaTableUpdateWhat.addItem(SchemaTableUpdateWhatItem.VIEWS);
       _pnl.cboSchemaTableUpdateWhat.addItem(SchemaTableUpdateWhatItem.PROCEDURES);
@@ -238,6 +238,10 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
       else if(SchemaTableUpdateWhatItem.PROCEDURES == selWhatItem)
       {
          _schemaTableModel.setColumnTo(SchemaTableModel.IX_PROCEDURE, selToItem);
+      } else {
+          _schemaTableModel.setColumnTo(SchemaTableModel.IX_TABLE, selToItem);
+          _schemaTableModel.setColumnTo(SchemaTableModel.IX_VIEW, selToItem);
+          _schemaTableModel.setColumnTo(SchemaTableModel.IX_PROCEDURE, selToItem);
       }
    }
 
@@ -360,7 +364,9 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
       public static final SchemaTableUpdateWhatItem VIEWS = new SchemaTableUpdateWhatItem(s_stringMgr.getString("SchemaTableUpdateWhatItem.views"));
       // i18n[SchemaTableUpdateWhatItem.procedures=Procedures]
       public static final SchemaTableUpdateWhatItem PROCEDURES = new SchemaTableUpdateWhatItem(s_stringMgr.getString("SchemaTableUpdateWhatItem.procedures"));
-
+      // i18n[SchemaTableUpdateWhatItem.allObjects=All Objects]
+      public static final SchemaTableUpdateWhatItem ALL = new SchemaTableUpdateWhatItem(s_stringMgr.getString("SchemaTableUpdateWhatItem.allObjects"));
+      
       private String _name;
 
       private SchemaTableUpdateWhatItem(String name)
