@@ -24,9 +24,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import net.sourceforge.squirrel_sql.client.db.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.MockSession;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -157,7 +157,7 @@ public class MockSessionInfoProvider implements SessionInfoProvider {
         throws SQLException, UserCancelledOperationException 
     {
         String destTable = fixCase(tableName, destSession);
-        if (DialectFactory.isFrontBaseSession(destSession)) {
+        if (DialectFactory.isFrontBase(destSession.getMetaData())) {
             DBUtil.dropTable(destTable, schema, null, destSession, true, DialectFactory.DEST_TYPE);
         } else {
             DBUtil.dropTable(destTable, schema, null, destSession, false, DialectFactory.DEST_TYPE);
@@ -213,7 +213,7 @@ public class MockSessionInfoProvider implements SessionInfoProvider {
         SQLConnection con = session.getSQLConnection();
         String result = identifier;
         if (con.getSQLMetaData().getJDBCMetaData().storesUpperCaseIdentifiers()
-                && !DialectFactory.isFrontBaseSession(session)) {
+                && !DialectFactory.isFrontBase(session.getMetaData())) {
             result = identifier.toUpperCase();
         }
         return result;

@@ -11,7 +11,6 @@ import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
-import net.sourceforge.squirrel_sql.client.db.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.MockSession;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -29,7 +28,7 @@ import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
  */
 public class DialectLiveTestRunner {
 
-    ArrayList sessions = new ArrayList();
+    ArrayList<ISession> sessions = new ArrayList<ISession>();
     ResourceBundle bundle = null;
     
     TableColumnInfo firstCol = null;
@@ -60,13 +59,13 @@ public class DialectLiveTestRunner {
     private void initSessions() throws Exception {
         String dbsToTest = bundle.getString("dbsToTest");
         StringTokenizer st = new StringTokenizer(dbsToTest, ",");
-        ArrayList dbs = new ArrayList();
+        ArrayList<String> dbs = new ArrayList<String>();
         while (st.hasMoreTokens()) {
             String db = st.nextToken().trim();
             dbs.add(db);
         }
-        for (Iterator iter = dbs.iterator(); iter.hasNext();) {
-            String db = (String) iter.next();
+        for (Iterator<String> iter = dbs.iterator(); iter.hasNext();) {
+            String db = iter.next();
             String url = bundle.getString(db+"_jdbcUrl");
             String user = bundle.getString(db+"_jdbcUser");
             String pass = bundle.getString(db+"_jdbcPass");
@@ -133,7 +132,9 @@ public class DialectLiveTestRunner {
     
     private void dropTable(ISession session, String tableName) throws Exception {
         HibernateDialect dialect = 
-            DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);        
+            DialectFactory.getDialect(DialectFactory.DEST_TYPE, 
+                                      session.getApplication().getMainFrame(), 
+                                      session.getMetaData());       
         try {
             ITableInfo ti = getTableInfo(session, tableName);
             if (ti == null) {    
@@ -156,7 +157,9 @@ public class DialectLiveTestRunner {
      */
     private void createTestTables(ISession session) throws Exception {
         HibernateDialect dialect = 
-            DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);  
+            DialectFactory.getDialect(DialectFactory.DEST_TYPE, 
+                                      session.getApplication().getMainFrame(), 
+                                      session.getMetaData());  
 
         dropTable(session, fixTableName(session,"test"));
         dropTable(session, fixTableName(session,"test1"));
@@ -165,18 +168,18 @@ public class DialectLiveTestRunner {
         dropTable(session, fixTableName(session,"test4"));
         dropTable(session, fixTableName(session,"test5"));
         dropTable(session, fixTableName(session,"pktest"));
-        if (DialectFactory.isOracleSession(session)) {
+        if (DialectFactory.isOracle(session.getMetaData())) {
             dropTable(session, fixTableName(session,"matview"));
         }
 
         String pageSizeClause = "";
         
-        if (DialectFactory.isIngresSession(session)) {
+        if (DialectFactory.isIngres(session.getMetaData())) {
             // alterations fail for some reason unless you do this...
             pageSizeClause = " with page_size=4096";
         } 
         
-        if (DialectFactory.isDB2Session(session)) {
+        if (DialectFactory.isDB2(session.getMetaData())) {
             // db2pkCol is used to create a PK when using DB2.  DB2 doesn't allow
             // you to add a PK to a table after it has been constructed unless the
             // column(s) that comprise the PK were originally there when created
@@ -198,10 +201,12 @@ public class DialectLiveTestRunner {
     }    
     
     private void runTests() throws Exception {        
-        for (Iterator iter = sessions.iterator(); iter.hasNext();) {            
-            ISession session = (ISession) iter.next();
+        for (Iterator<ISession> iter = sessions.iterator(); iter.hasNext();) {            
+            ISession session = iter.next();
             HibernateDialect dialect = 
-                DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);  
+                DialectFactory.getDialect(DialectFactory.DEST_TYPE, 
+                                          session.getApplication().getMainFrame(), 
+                                          session.getMetaData()); 
 
             init(session);
             testAddColumn(session);
@@ -217,7 +222,7 @@ public class DialectLiveTestRunner {
             // been made "not null" via a check constraint.  Therefore, the only
             // columns that qualify to be made PKs are those that were declared
             // not null at the time of table creation.
-            if (DialectFactory.isDB2Session(session)) {
+            if (DialectFactory.isDB2(session.getMetaData())) {
                 testAddPrimaryKey(session, new TableColumnInfo[] {db2pkCol});
                 testDropPrimaryKey(session, db2pkCol.getTableName());
             } else {
@@ -259,9 +264,11 @@ public class DialectLiveTestRunner {
      * @throws Exception
      */
     private void testDropMatView(ISession session) throws Exception {
-        if (!DialectFactory.isOracleSession(session)) return;
+        if (!DialectFactory.isOracle(session.getMetaData())) return;
         HibernateDialect dialect = 
-            DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);          
+            DialectFactory.getDialect(DialectFactory.DEST_TYPE, 
+                                      session.getApplication().getMainFrame(), 
+                                      session.getMetaData());          
         
         testAddPrimaryKey(session, new TableColumnInfo[] { pkCol } );
         String createMatViewSQL = 
@@ -284,7 +291,9 @@ public class DialectLiveTestRunner {
     
     private void testAlterName(ISession session) throws Exception {
         HibernateDialect dialect = 
-            DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);  
+            DialectFactory.getDialect(DialectFactory.DEST_TYPE, 
+                                      session.getApplication().getMainFrame(), 
+                                      session.getMetaData());  
 
         TableColumnInfo newNameCol = 
             getVarcharColumn("newNameCol", "test", true, null, "A column to be renamed");
@@ -303,7 +312,9 @@ public class DialectLiveTestRunner {
     
     private void testDropColumn(ISession session) throws Exception {
         HibernateDialect dialect = 
-            DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);  
+            DialectFactory.getDialect(DialectFactory.DEST_TYPE, 
+                                      session.getApplication().getMainFrame(), 
+                                      session.getMetaData());  
         
         if (dialect.supportsDropColumn()) {
             dropColumn(session, dropCol);
@@ -321,7 +332,9 @@ public class DialectLiveTestRunner {
     
     private void testAlterColumnlength(ISession session) throws Exception {
         HibernateDialect dialect = 
-            DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);  
+            DialectFactory.getDialect(DialectFactory.DEST_TYPE, 
+                                      session.getApplication().getMainFrame(), 
+                                      session.getMetaData());  
         
         
         //convert nullint into a varchar(100)
@@ -353,7 +366,9 @@ public class DialectLiveTestRunner {
     
     private void testAlterDefaultValue(ISession session) throws Exception {
         HibernateDialect dialect = 
-            DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);  
+            DialectFactory.getDialect(DialectFactory.DEST_TYPE, 
+                                      session.getApplication().getMainFrame(), 
+                                      session.getMetaData());
         
         TableColumnInfo varcharColWithDefaultValue = 
             getVarcharColumn("noDefaultVarcharCol",
@@ -391,7 +406,9 @@ public class DialectLiveTestRunner {
     
     private void testAlterNull(ISession session) throws Exception {
         HibernateDialect dialect = 
-            DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);  
+            DialectFactory.getDialect(DialectFactory.DEST_TYPE, 
+                                      session.getApplication().getMainFrame(), 
+                                      session.getMetaData());  
         TableColumnInfo notNullThirdCol = 
             getVarcharColumn("nullvc", "test3", false, "defVal", "A varchar comment");        
         if (dialect.supportsAlterColumnNull()) {
@@ -430,7 +447,9 @@ public class DialectLiveTestRunner {
         throws Exception 
     {
         HibernateDialect dialect = 
-            DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);
+            DialectFactory.getDialect(DialectFactory.DEST_TYPE, 
+                                      session.getApplication().getMainFrame(), 
+                                      session.getMetaData());
        
         String[] sqls = dialect.getColumnAddSQL(info);
         for (int i = 0; i < sqls.length; i++) {
@@ -462,7 +481,9 @@ public class DialectLiveTestRunner {
         throws Exception    
     {
         HibernateDialect dialect = 
-            DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);
+            DialectFactory.getDialect(DialectFactory.DEST_TYPE, 
+                                      session.getApplication().getMainFrame(), 
+                                      session.getMetaData());
         String commentSQL = dialect.getColumnCommentAlterSQL(info);
         if (commentSQL != null && !commentSQL.equals("")) {
             runSQL(session, commentSQL);
@@ -478,7 +499,9 @@ public class DialectLiveTestRunner {
         throws Exception 
     {
         HibernateDialect dialect = 
-            DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);
+            DialectFactory.getDialect(DialectFactory.DEST_TYPE, 
+                                      session.getApplication().getMainFrame(), 
+                                      session.getMetaData());
         String pkName = getPKName(tableName);
         String sql = dialect.getDropPrimaryKeySQL(pkName, tableName);
         runSQL(session, sql);
@@ -489,7 +512,9 @@ public class DialectLiveTestRunner {
         throws Exception 
     {
         HibernateDialect dialect = 
-            DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);
+            DialectFactory.getDialect(DialectFactory.DEST_TYPE, 
+                                      session.getApplication().getMainFrame(), 
+                                      session.getMetaData());
 
         String tableName = colInfos[0].getTableName();
         
@@ -530,14 +555,18 @@ public class DialectLiveTestRunner {
     throws Exception 
     {
         HibernateDialect dialect = 
-            DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);
+            DialectFactory.getDialect(DialectFactory.DEST_TYPE, 
+                                      session.getApplication().getMainFrame(), 
+                                      session.getMetaData());
 
         String sql = dialect.getColumnDropSQL(info.getTableName(), info.getColumnName());
         runSQL(session, sql);
     }
     
     private HibernateDialect getDialect(ISession session) throws Exception  {
-        return DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);
+        return DialectFactory.getDialect(DialectFactory.DEST_TYPE, 
+                                         session.getApplication().getMainFrame(), 
+                                         session.getMetaData());
     }
     
     private void runSQL(ISession session, List<String> sql) throws Exception {

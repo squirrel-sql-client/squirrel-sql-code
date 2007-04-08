@@ -17,9 +17,10 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.SQLException;
 import java.io.Serializable;
+import java.sql.SQLException;
 
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
@@ -123,18 +124,6 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
    {
       return generateQualifiedName(conn.getSQLMetaData());
    }
-
-   private boolean isInformix(SQLDatabaseMetaData md) {
-       boolean result = false;
-       try {
-           if (md.getDatabaseProductName().toLowerCase().contains("informix")) {
-               result = true;
-           } 
-       } catch (SQLException e) {
-           // Ignore
-       }
-       return result;
-   }
    
    /**
     * Informix represents database objects in catalogs *and* schemas.  So a table
@@ -174,7 +163,7 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
       boolean supportsCatalogsInDataManipulation = false;
 
       // check for Informix - it has very "special" qualified names
-      if (isInformix(md)) {
+      if (DialectFactory.isInformix(md)) {
           return getInformixQualifiedName();
       }
       

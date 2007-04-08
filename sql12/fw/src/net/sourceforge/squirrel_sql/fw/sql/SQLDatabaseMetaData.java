@@ -67,7 +67,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * 
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SQLDatabaseMetaData
+public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 {
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
@@ -161,10 +161,8 @@ public class SQLDatabaseMetaData
 		_conn = conn;
 	}
 
-    /**
-     * Return the name of the current user. Cached on first call.
-     *
-     * @return  the current user name.
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getUserName()
      */
     public synchronized String getUserName() throws SQLException
 	{
@@ -178,13 +176,8 @@ public class SQLDatabaseMetaData
 		return value;
 	}
 
-    /**
-     * Return the database product name for this connection. Cached on first
-     * call.
-     *
-     * @return  the database product name for this connection.
-     *
-     * @throws  SQLException    Thrown if an SQL error occurs.
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getDatabaseProductName()
      */
     public synchronized String getDatabaseProductName()
 		throws SQLException
@@ -199,13 +192,8 @@ public class SQLDatabaseMetaData
 		return value;
 	}
 
-    /**
-     * Return the database product version for this connection. Cached on first
-     * call.
-     *
-     * @return  database product version
-     *
-     * @throws  SQLException    Thrown if an SQL error occurs.
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getDatabaseProductVersion()
      */
 	public synchronized String getDatabaseProductVersion()
 		throws SQLException
@@ -220,12 +208,8 @@ public class SQLDatabaseMetaData
 		return value;
 	}
 
-    /**
-     * Return the JDBC driver name for this connection. Cached on first call.
-     *
-     * @return  the JDBC driver name for this connection.
-     *
-     * @throws  SQLException    Thrown if an SQL error occurs.
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getDriverName()
      */
 	public synchronized String getDriverName() throws SQLException
 	{
@@ -239,12 +223,8 @@ public class SQLDatabaseMetaData
 		return value;
 	}
 
-    /**
-     * Return the JDBC version of this driver. Cached on first call.
-     *
-     * @return  the JDBC version of the driver.
-     *
-     * @throws  SQLException    Thrown if an SQL error occurs.
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getJDBCVersion()
      */
     public int getJDBCVersion() throws SQLException
 	{
@@ -262,13 +242,8 @@ public class SQLDatabaseMetaData
 		return value.intValue();
 	}
 
-    /**
-     * Return the string used to quote characters in this DBMS. Cached on first
-     * call.
-     *
-     * @return  quote string.
-     *
-     * @throws  SQLException    Thrown if an SQL error occurs.
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getIdentifierQuoteString()
      */
 	public synchronized String getIdentifierQuoteString() throws SQLException
 	{
@@ -292,14 +267,8 @@ public class SQLDatabaseMetaData
 		return value;
 	}
 
-    /**
-     * Returns the "cascade" constraints clause which is supported by some 
-     * databases when performing a delete to removed child records in dependent
-     * tables which would otherwise be orphaned and make the delete fail.
-     *  
-     * @return the "cascade" clause.
-     * 
-     * @throws SQLException
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getCascadeClause()
      */
     public synchronized String getCascadeClause() throws SQLException {
         final String key = "getCascadeClause";
@@ -321,13 +290,8 @@ public class SQLDatabaseMetaData
         return value;
     }
     
-    /**
-     * Return a string array containing the names of all the schemas in the
-     * database. Cached on first call.
-     *
-     * @return  String[] of the names of the schemas in the database.
-     *
-     * @throws  SQLException    Thrown if an SQL error occurs.
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getSchemas()
      */
 	public synchronized String[] getSchemas() throws SQLException
 	{
@@ -393,12 +357,8 @@ public class SQLDatabaseMetaData
 		return (String[])list.toArray(new String[list.size()]);
 	}
 
-    /**
-     * Retrieves whether this database supports schemas at all.
-     *
-     * @return  <TT>true</TT> if database supports schemas.
-     *
-     * @throws  SQLException    Thrown if an SQL error occurs.
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#supportsSchemas()
      */
     public boolean supportsSchemas() throws SQLException
 	{
@@ -406,14 +366,8 @@ public class SQLDatabaseMetaData
 				|| supportsSchemasInTableDefinitions();
 	}
 
-    /**
-     * Retrieves whether a schema name can be used in a data manipulation
-     * statement. Cached on first call.
-     *
-     * @return  <TT>true</TT> if a schema name can be used in a data
-     *          manipulation statement.
-     *
-     * @throws  SQLException    Thrown if an SQL error occurs.
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#supportsSchemasInDataManipulation()
      */
     public synchronized boolean supportsSchemasInDataManipulation()
 		throws SQLException
@@ -443,14 +397,8 @@ public class SQLDatabaseMetaData
 		return value.booleanValue();
 	}
 
-    /**
-     * Retrieves whether a schema name can be used in a table definition
-     * statement. Cached on first call.
-     *
-     * @return  <TT>true</TT> if a schema name can be used in a table
-     *          definition statement.
-     *
-     * @throws  SQLException    Thrown if an SQL error occurs.
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#supportsSchemasInTableDefinitions()
      */
 	public synchronized boolean supportsSchemasInTableDefinitions()
 		throws SQLException
@@ -480,13 +428,8 @@ public class SQLDatabaseMetaData
 		return value.booleanValue();
 	}
 
-    /**
-     * Retrieves whether this DBMS supports stored procedures. Cached on first
-     * call.
-     *
-     * @return  <TT>true</TT> if DBMS supports stored procedures.
-     *
-     * @throws  SQLException    Thrown if an SQL error occurs.
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#supportsStoredProcedures()
      */
     public synchronized boolean supportsStoredProcedures() throws SQLException
 	{
@@ -512,13 +455,8 @@ public class SQLDatabaseMetaData
 		return value.booleanValue();
 	}
 
-    /**
-     * Retrieves whether this DBMS supports save points. Cached on first
-     * call.
-     *
-     * @return  <TT>true</TT> if DBMS supports save points.
-     * 
-     * @throws SQLException if an SQL error occurs.
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#supportsSavepoints()
      */
     public synchronized boolean supportsSavepoints() throws SQLException {
         
@@ -535,16 +473,8 @@ public class SQLDatabaseMetaData
         return value.booleanValue();        
     }
     
-    /**
-     * Retrieves whether this DBMS supports result sets of the specified type. 
-     * Cached on first call.
-     *
-     * @param type the type of the ResultSet.  There are constants defined in 
-     *             the ResultSet class that define the different types.
-     *             
-     * @return  <TT>true</TT> if DBMS supports this type of ResultSet.
-     * 
-     * @throws SQLException if an SQL error occurs.
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#supportsResultSetType(int)
      */
     public synchronized boolean supportsResultSetType(int type) 
         throws SQLException
@@ -562,13 +492,8 @@ public class SQLDatabaseMetaData
         return value.booleanValue();                
     }
         
-    /**
-     * Return a string array containing the names of all the catalogs in the
-     * database. Cached on first call.
-     *
-     * @return  String[] of the names of the catalogs in the database.
-     *
-     * @throws  SQLException    Thrown if an SQL error occurs.
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getCatalogs()
      */
     public synchronized String[] getCatalogs() throws SQLException
 	{
@@ -603,12 +528,8 @@ public class SQLDatabaseMetaData
 		return (String[])list.toArray(new String[list.size()]);
 	}
 
-    /**
-     * Retrieves the URL for this DBMS.
-     * 
-     * @return  the URL for this DBMS or null if it cannot be generated
-     * 
-     * @throws SQLException if a database access error occurs
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getURL()
      */
     public synchronized String getURL() throws SQLException {
         final String key = "getURL";
@@ -623,12 +544,8 @@ public class SQLDatabaseMetaData
         return value;
     }    
     
-    /**
-     * Retrieves the database vendor's preferred term for "catalog".
-     * 
-     * @return the vendor term for "catalog"
-     * 
-     * @throws SQLException if a database access error occurs
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getCatalogTerm()
      */
     public synchronized String getCatalogTerm() throws SQLException {
         final String key = "getCatalogTerm";
@@ -643,12 +560,8 @@ public class SQLDatabaseMetaData
         return value;
     }
     
-    /**
-     * Retrieves the database vendor's preferred term for "schema".
-     * 
-     * @return  the vendor term for "schema"
-     * 
-     * @throws SQLException if a database access error occurs
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getSchemaTerm()
      */
     public synchronized String getSchemaTerm() throws SQLException {
         final String key = "getSchemaTerm";
@@ -663,12 +576,8 @@ public class SQLDatabaseMetaData
         return value;        
     }
 
-    /**
-     * Retrieves the database vendor's preferred term for "procedure".
-     * 
-     * @return the vendor term for "procedure"
-     * 
-     * @throws SQLException if a database access error occurs
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getProcedureTerm()
      */
     public synchronized String getProcedureTerm() throws SQLException {
         final String key = "getProcedureTerm";
@@ -684,13 +593,8 @@ public class SQLDatabaseMetaData
     }
     
     
-    /**
-     * Retrieves the String that this database uses as the separator between a
-     * catalog and table name. Cached on first call.
-     *
-     * @return  The separator character.
-     *
-     * @throws  SQLException    Thrown if an SQL error occurs.
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getCatalogSeparator()
      */
     public synchronized String getCatalogSeparator() throws SQLException
 	{
@@ -707,12 +611,8 @@ public class SQLDatabaseMetaData
 		return value;
 	}
 
-    /**
-     * Retrieves whether this database supports catalogs at all.
-     *
-     * @return  <TT>true</TT> fi database supports catalogs.
-     *
-     * @throws  SQLException    Thrown if an SQL error occurs.
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#supportsCatalogs()
      */
     public boolean supportsCatalogs() throws SQLException
 	{
@@ -721,14 +621,8 @@ public class SQLDatabaseMetaData
 			|| supportsCatalogsInProcedureCalls();
 	}
 
-    /**
-     * Retrieves whether a catalog name can be used in a table definition
-     * statement. Cached on first call.
-     *
-     * @return  <TT>true</TT> if a catalog name can be used in a table
-     *          definition statement.
-     *
-     * @throws  SQLException    Thrown if an SQL error occurs.
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#supportsCatalogsInTableDefinitions()
      */
     public synchronized boolean supportsCatalogsInTableDefinitions() throws SQLException
 	{
@@ -757,14 +651,8 @@ public class SQLDatabaseMetaData
 		return value.booleanValue();
 	}
 
-    /**
-     * Retrieves whether a catalog name can be used in a data manipulation
-     * statement. Cached on first call.
-     *
-     * @return  <TT>true</TT> if a catalog name can be used in a data
-     *          manipulation statement.
-     *
-     * @throws  SQLException    Thrown if an SQL error occurs.
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#supportsCatalogsInDataManipulation()
      */
     public synchronized boolean supportsCatalogsInDataManipulation() throws SQLException
 	{
@@ -792,14 +680,8 @@ public class SQLDatabaseMetaData
 		return value.booleanValue();
 	}
 
-    /**
-     * Retrieves whether a catalog name can be used in a procedure call. Cached
-     * on first call.
-     *
-     * @return  <TT>true</TT> if a catalog name can be used in a procedure
-     *          call.
-     *
-     * @throws  SQLException    Thrown if an SQL error occurs.
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#supportsCatalogsInProcedureCalls()
      */
 	public synchronized boolean supportsCatalogsInProcedureCalls() throws SQLException
 	{
@@ -827,39 +709,31 @@ public class SQLDatabaseMetaData
 		return value.booleanValue();
 	}
 
-    /**
-     * Return the <TT>DatabaseMetaData</TT> object for this connection.
-     *
-     * @return  The <TT>DatabaseMetaData</TT> object for this connection.
-     *
-     * @throws  SQLException    Thrown if an SQL error occurs.
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getJDBCMetaData()
      */
 	public synchronized DatabaseMetaData getJDBCMetaData() throws SQLException
 	{
 		return privateGetJDBCMetaData();
 	}
 
-	/**
-     * 
-     * @return
-     * @throws SQLException
-	 */
+	/* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getMetaDataSet()
+     */
     public synchronized IDataSet getMetaDataSet() throws SQLException {
         return new MetaDataDataSet(privateGetJDBCMetaData());
     }
     
-    /**
-     * @deprecated  Replaced by getDataTypes
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getTypeInfo()
      */
     public ResultSet getTypeInfo() throws SQLException
 	{
 		return privateGetJDBCMetaData().getTypeInfo();
 	}
 
-    /**
-     * 
-     * @return
-     * @throws DataSetException
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getTypesDataSet()
      */
     public synchronized IDataSet getTypesDataSet() throws DataSetException {
         ResultSet rs = null;
@@ -873,10 +747,8 @@ public class SQLDatabaseMetaData
         }
     }
     
-    /**
-     * Retrieve information about the data types in the database.
-     *
-     * @throws  SQLException    Thrown if an SQL error occurs.
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getDataTypes()
      */
     public synchronized DataTypeInfo[] getDataTypes()
 		throws SQLException
@@ -936,11 +808,9 @@ public class SQLDatabaseMetaData
       }
    }
 
-   /**
-    * NOTE: This method should only be used by SchemaInfo since this class should not and does not cache.
-    *
-    * Retrieve information about the procedures in the system.
-    */
+   /* (non-Javadoc)
+ * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getProcedures(java.lang.String, java.lang.String, java.lang.String, net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack)
+ */
    public synchronized IProcedureInfo[] getProcedures(String catalog,
                                                       String schemaPattern,
                                                       String procedureNamePattern,
@@ -981,14 +851,8 @@ public class SQLDatabaseMetaData
      return (IProcedureInfo[]) list.toArray(new IProcedureInfo[list.size()]);
   }
 
-    /**
-     * Return a string array containing the different types of tables in this
-     * database. E.G. <TT>"TABLE", "VIEW", "SYSTEM TABLE"</TT>. Cached on first
-     * call.
-     *
-     * @return  table type names.
-     *
-     * @throws  SQLException    Thrown if an SQL error occurs.
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getTableTypes()
      */
     public synchronized String[] getTableTypes() throws SQLException
 	{
@@ -1070,11 +934,9 @@ public class SQLDatabaseMetaData
 	}
 
 
-   /**
-    * NOTE: This method should only be used by SchemaInfo since this class sholud not and does not cache.
-    *
-    * Retrieve information about the tables in the system.
-    */
+   /* (non-Javadoc)
+ * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getTables(java.lang.String, java.lang.String, java.lang.String, java.lang.String[], net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack)
+ */
    public synchronized ITableInfo[] getTables(String catalog,
                                               String schemaPattern,
                                               String tableNamePattern,
@@ -1205,25 +1067,9 @@ public class SQLDatabaseMetaData
       return (ITableInfo[]) list.toArray(new ITableInfo[list.size()]);
    }
    
-   /**
-     * Retrieve information about the UDTs in the system.
-     *
-     * @param   catalog     The name of the catalog to retrieve UDTs
-     *                      for. An empty string will return those without a
-     *                      catalog. <TT>null</TT> means that the catalog
-     *                      will not be used to narrow the search.
-     * @param   schemaPattern   The name of the schema to retrieve UDTs
-     *                      for. An empty string will return those without a
-     *                      schema. <TT>null</TT> means that the schema
-     *                      will not be used to narrow the search.
-     * @param   typeNamepattern     A type name pattern; must match the
-     *                              type name as it is stored in the
-     *                              database.
-     * @param   types       List of user-defined types (JAVA_OBJECT, STRUCT, or
-     *                      DISTINCT) to include; null returns all types
-     *
-     * @throws  SQLException    Thrown if an SQL error occurs.
-     */
+   /* (non-Javadoc)
+ * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getUDTs(java.lang.String, java.lang.String, java.lang.String, int[])
+ */
     public synchronized IUDTInfo[] getUDTs(String catalog, String schemaPattern,
 								           String typeNamePattern, int[] types)
 		throws SQLException
@@ -1268,12 +1114,9 @@ public class SQLDatabaseMetaData
 
    }
 
-   /**
-     * Retrieve the names of the Numeric Functions that this DBMS supports.
-     * Cached on first call.
-     *
-     * @return  String[] of function names.
-     */
+   /* (non-Javadoc)
+ * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getNumericFunctions()
+ */
    public synchronized String[] getNumericFunctions() throws SQLException
 	{
 		final String key = "getNumericFunctions";
@@ -1288,11 +1131,8 @@ public class SQLDatabaseMetaData
 		return value;
 	}
 
-    /**
-     * Retrieve the names of the String Functions that this DBMS supports.
-     * Cached on first call.
-     *
-     * @return  String[] of function names.
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getStringFunctions()
      */
 	public synchronized String[] getStringFunctions() throws SQLException
 	{
@@ -1308,11 +1148,8 @@ public class SQLDatabaseMetaData
 		return value;
 	}
 
-    /**
-     * Retrieve the names of the System Functions that this DBMS supports.
-     * Cached on first call.
-     *
-     * @return  String[] of function names.
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getSystemFunctions()
      */
 	public synchronized String[] getSystemFunctions() throws SQLException
 	{
@@ -1328,11 +1165,8 @@ public class SQLDatabaseMetaData
 		return value;
 	}
 
-    /**
-     * Retrieve the names of the Date/Time Functions that this DBMS supports.
-     * Cached on first call.
-     *
-     * @return  String[] of function names.
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getTimeDateFunctions()
      */
 	public synchronized String[] getTimeDateFunctions() throws SQLException
 	{
@@ -1348,11 +1182,8 @@ public class SQLDatabaseMetaData
 		return value;
 	}
 
-    /**
-     * Retrieve the names of the non-standard keywords that this DBMS supports.
-     * Cached on first call.
-     *
-     * @return  String[] of keywords.
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getSQLKeywords()
      */
 	public synchronized String[] getSQLKeywords() throws SQLException
 	{
@@ -1368,6 +1199,9 @@ public class SQLDatabaseMetaData
 		return value;
 	}
 
+	/* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getBestRowIdentifier(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+     */
 	public synchronized BestRowIdentifier[] getBestRowIdentifier(ITableInfo ti)
 		throws SQLException
 	{
@@ -1407,9 +1241,9 @@ public class SQLDatabaseMetaData
 		return (BestRowIdentifier[])results.toArray(ar);
 	}
 
-	/**
-     * @deprecated use getColumnPrivilegesDataSet instead. 
-	 */
+	/* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getColumnPrivileges(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+     */
     public ResultSet getColumnPrivileges(ITableInfo ti)
 		throws SQLException
 	{
@@ -1422,13 +1256,8 @@ public class SQLDatabaseMetaData
 													columns);
 	}
 
-    /**
-     * 
-     * @param ti
-     * @param columnIndices
-     * @param computeWidths
-     * @return
-     * @throws DataSetException
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getColumnPrivilegesDataSet(net.sourceforge.squirrel_sql.fw.sql.ITableInfo, int[], boolean)
      */
     public synchronized IDataSet getColumnPrivilegesDataSet(ITableInfo ti,
                                                             int[] columnIndices,
@@ -1456,8 +1285,8 @@ public class SQLDatabaseMetaData
         }
     }
     
-    /**
-     *  @deprecated. Replaced by getExportedKeysInfo 
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getExportedKeys(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
      */
     public ResultSet getExportedKeys(ITableInfo ti)
 		throws SQLException
@@ -1467,11 +1296,8 @@ public class SQLDatabaseMetaData
 			ti.getSimpleName());
 	}
 
-    /**
-     * 
-     * @param ti
-     * @return
-     * @throws DataSetException
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getExportedKeysDataSet(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
      */
     public synchronized IDataSet getExportedKeysDataSet(ITableInfo ti) 
         throws DataSetException  
@@ -1491,8 +1317,8 @@ public class SQLDatabaseMetaData
         }
     }
     
-    /**
-     * @deprecated. Replaced by getImportedKeysInfo
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getImportedKeys(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
      */
 	public ResultSet getImportedKeys(ITableInfo ti)
 		throws SQLException
@@ -1502,6 +1328,9 @@ public class SQLDatabaseMetaData
 			ti.getSimpleName());
 	}
 
+	/* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getImportedKeysInfo(java.lang.String, java.lang.String, java.lang.String)
+     */
 	public synchronized ForeignKeyInfo[] getImportedKeysInfo(String catalog, 
                                                              String schema, 
                                                              String tableName) 
@@ -1512,6 +1341,9 @@ public class SQLDatabaseMetaData
         return getForeignKeyInfo(rs);
     }
     
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getImportedKeysInfo(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+     */
     public synchronized ForeignKeyInfo[] getImportedKeysInfo(ITableInfo ti)
 		throws SQLException
 	{
@@ -1519,6 +1351,9 @@ public class SQLDatabaseMetaData
 								ti.getSchemaName(), ti.getSimpleName()));
 	}
 
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getImportedKeysDataSet(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+     */
     public synchronized IDataSet getImportedKeysDataSet(ITableInfo ti) 
         throws DataSetException  
     {
@@ -1537,6 +1372,9 @@ public class SQLDatabaseMetaData
         }
     }    
     
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getExportedKeysInfo(java.lang.String, java.lang.String, java.lang.String)
+     */
     public synchronized ForeignKeyInfo[] getExportedKeysInfo(String catalog, String schema, String tableName)
         throws SQLException
     {
@@ -1545,6 +1383,9 @@ public class SQLDatabaseMetaData
         return getForeignKeyInfo(rs);
     } 
     
+	/* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getExportedKeysInfo(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+     */
 	public synchronized ForeignKeyInfo[] getExportedKeysInfo(ITableInfo ti)
 		throws SQLException
 	{
@@ -1604,8 +1445,8 @@ public class SQLDatabaseMetaData
 		return results;
 	}
 
-    /**
-     * @deprecated use getIndexInfo instead.
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getIndexInfo(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
      */
     public ResultSet getIndexInfo(ITableInfo ti)
 		throws SQLException
@@ -1615,13 +1456,8 @@ public class SQLDatabaseMetaData
 			ti.getSimpleName(), false, true);
 	}
 
-    /**
-     * 
-     * @param ti
-     * @param columnIndices
-     * @param computeWidths
-     * @return
-     * @throws DataSetException
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getIndexInfo(net.sourceforge.squirrel_sql.fw.sql.ITableInfo, int[], boolean)
      */
     public synchronized ResultSetDataSet getIndexInfo(ITableInfo ti, 
                                                       int[] columnIndices,
@@ -1643,8 +1479,8 @@ public class SQLDatabaseMetaData
         }
     }
     
-    /**
-     * @deprecated use getPrimaryKey instead
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getPrimaryKeys(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
      */
 	public ResultSet getPrimaryKeys(ITableInfo ti)
 		throws SQLException
@@ -1654,14 +1490,9 @@ public class SQLDatabaseMetaData
 			ti.getSimpleName());
 	}
     
-	/**
-     * 
-     * @param ti
-     * @param columnIndices
-     * @param computeWidths
-     * @return
-     * @throws DataSetException
-	 */
+	/* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getPrimaryKey(net.sourceforge.squirrel_sql.fw.sql.ITableInfo, int[], boolean)
+     */
     public synchronized IDataSet getPrimaryKey(ITableInfo ti, 
                                                int[] columnIndices,
                                                boolean computeWidths)
@@ -1682,11 +1513,8 @@ public class SQLDatabaseMetaData
         }
     }
 
-    /**
-     * 
-     * @param ti
-     * @return
-     * @throws SQLException
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getPrimaryKey(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
      */
     public synchronized PrimaryKeyInfo[] getPrimaryKey(ITableInfo ti) 
         throws SQLException
@@ -1696,11 +1524,8 @@ public class SQLDatabaseMetaData
                              ti.getSimpleName());
     }
     
-    /**
-     * 
-     * @param ti
-     * @return
-     * @throws SQLException
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getPrimaryKey(java.lang.String, java.lang.String, java.lang.String)
      */
     public synchronized PrimaryKeyInfo[] getPrimaryKey(String catalog, 
                                                        String schema, 
@@ -1731,8 +1556,8 @@ public class SQLDatabaseMetaData
     }
     
     
-    /**
-     * @deprecated use getProcedureColumnsDataSet instead
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getProcedureColumns(net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo)
      */
     public ResultSet getProcedureColumns(IProcedureInfo ti)
 		throws SQLException
@@ -1743,11 +1568,8 @@ public class SQLDatabaseMetaData
 													        "%");
 	}
 
-    /**
-     * 
-     * @param ti
-     * @return
-     * @throws DataSetException
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getProcedureColumnsDataSet(net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo)
      */
     public synchronized IDataSet getProcedureColumnsDataSet(IProcedureInfo ti)
         throws DataSetException
@@ -1769,8 +1591,8 @@ public class SQLDatabaseMetaData
         }
     }
     
-    /**
-     * @deprecated use getTablePrivilegesDataSet instead
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getTablePrivileges(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
      */ 
 	public ResultSet getTablePrivileges(ITableInfo ti)
 		throws SQLException
@@ -1780,14 +1602,9 @@ public class SQLDatabaseMetaData
 													ti.getSimpleName());
 	}
 
-	/**
-     * 
-     * @param ti
-     * @param columnIndices
-     * @param computeWidths
-     * @return
-     * @throws DataSetException
-	 */
+	/* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getTablePrivilegesDataSet(net.sourceforge.squirrel_sql.fw.sql.ITableInfo, int[], boolean)
+     */
     public synchronized IDataSet getTablePrivilegesDataSet(ITableInfo ti,
                                                            int[] columnIndices,
                                                            boolean computeWidths) 
@@ -1810,9 +1627,9 @@ public class SQLDatabaseMetaData
     }
     
     
-	/**
-     *  @deprecated use getVersionColumnsDataSet instead
-	 */
+	/* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getVersionColumns(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+     */
 	public ResultSet getVersionColumns(ITableInfo ti)
 		throws SQLException
 	{
@@ -1821,12 +1638,9 @@ public class SQLDatabaseMetaData
 												          ti.getSimpleName());
 	}
 
-	/**
-     * 
-     * @param ti
-     * @return
-     * @throws DataSetException
-	 */
+	/* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getVersionColumnsDataSet(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+     */
     public synchronized IDataSet getVersionColumnsDataSet(ITableInfo ti)
         throws DataSetException
     {
@@ -1855,14 +1669,9 @@ public class SQLDatabaseMetaData
 											ti.getSimpleName(), "%");
 	}
     
-	/**
-     * 
-     * @param ti
-     * @param columnIndices
-     * @param computeWidths
-     * @return
-     * @throws DataSetException
-	 */
+	/* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getColumns(net.sourceforge.squirrel_sql.fw.sql.ITableInfo, int[], boolean)
+     */
     public synchronized IDataSet getColumns(ITableInfo ti, 
                                             int[] columnIndices,
                                             boolean computeWidths)
@@ -1883,13 +1692,8 @@ public class SQLDatabaseMetaData
         return result;
     }
     
-    /**
-     * 
-     * @param catalog
-     * @param schema
-     * @param table
-     * @return
-     * @throws SQLException
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getColumnInfo(java.lang.String, java.lang.String, java.lang.String)
      */
     public synchronized TableColumnInfo[] getColumnInfo(String catalog, 
                                                         String schema, 
@@ -1947,11 +1751,8 @@ public class SQLDatabaseMetaData
        }
     }
     
-    /**
-     * 
-     * @param ti
-     * @return
-     * @throws SQLException
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getColumnInfo(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
      */
     public synchronized TableColumnInfo[] getColumnInfo(ITableInfo ti)
 		throws SQLException
@@ -1959,30 +1760,16 @@ public class SQLDatabaseMetaData
 	    return getColumnInfo(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName());
     }
 
-    /**
-     * Retrieve whether this driver correctly handles Statement.setMaxRows(int).
-     * Some drivers such as version 5.02 of the Opta2000 driver use setMaxRows
-     * for UPDATEs, DELETEs etc. instead of just SELECTs. If this method returns
-     * <TT>false</TT> then setMaxRows should only be applied to statements
-     * that are running SELECTs.
-     *
-     * @return  <TT>true</TT> if this driver correctly implements setMaxRows().
-     *
-     * @throws  SQLException    Thrown if an SQL error occurs.
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#correctlySupportsSetMaxRows()
      */
     public boolean correctlySupportsSetMaxRows() throws SQLException
 	{
 		return !IDriverNames.OPTA2000.equals(getDriverName());
 	}
 
-    /**
-     * Retrieve whether this driver supports multiple result sets. Cached on
-     * first call.
-     *
-     * @return  <tt>true</tt> if driver supports multiple result sets
-     *          else <tt>false</tt>.
-     *
-     * @throws  SQLException    Thrown if an SQL error occurs.
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#supportsMultipleResultSets()
      */
 	public synchronized boolean supportsMultipleResultSets()
 			throws SQLException
@@ -2000,15 +1787,8 @@ public class SQLDatabaseMetaData
 		return value.booleanValue();
 	}
 
-    /**
-     * Retrieves whether this database treats mixed case unquoted SQL
-     * identifiers as case insensitive and stores them in upper case.
-     * Cached on first call.
-     *
-     * @return  <tt>true</tt> if driver stores upper case identifiers
-     *          else <tt>false</tt>.
-     *
-     * @throws  SQLException    Thrown if an SQL error occurs.
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#storesUpperCaseIdentifiers()
      */
 	public synchronized boolean storesUpperCaseIdentifiers()
 		throws SQLException
@@ -2027,8 +1807,8 @@ public class SQLDatabaseMetaData
 	}
 
 
-    /**
-     * Clear cache of commonly accessed metadata properties.
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#clearCache()
      */
 	public void clearCache()
 	{

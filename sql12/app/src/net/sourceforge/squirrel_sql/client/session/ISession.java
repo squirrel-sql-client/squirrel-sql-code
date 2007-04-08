@@ -37,6 +37,7 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
@@ -73,6 +74,13 @@ public interface ISession extends IHasIdentifier
     */
    SQLConnection getSQLConnection();
 
+   /**
+    * Return the current SQL connection database metadata.
+    *
+    * @return the current SQL connection database metadata.
+    */
+   ISQLDatabaseMetaData getMetaData();
+   
    /**
     * Return the driver used to connect to the database.
     *

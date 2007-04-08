@@ -27,11 +27,11 @@ import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
 
-import net.sourceforge.squirrel_sql.client.db.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.client.gui.db.ColumnDetailDialog;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
@@ -81,7 +81,9 @@ public class AddColumnCommand extends AbstractRefactoringCommand
         String tableName = _info[0].getQualifiedName();
         try {
             dialect =  
-                DialectFactory.getDialect(_session, DialectFactory.DEST_TYPE);
+                DialectFactory.getDialect(DialectFactory.DEST_TYPE, 
+                                          _session.getApplication().getMainFrame(), 
+                                          _session.getMetaData());
             String dbName = dialect.getDisplayName();
             columnDetailDialog = new ColumnDetailDialog(ColumnDetailDialog.ADD_MODE);
             columnDetailDialog.setTableName(tableName);

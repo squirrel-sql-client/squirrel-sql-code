@@ -16,7 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.client.db.dialects;
+package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -28,39 +28,15 @@ import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.dialects.AxionDialect;
-import net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect;
-import net.sourceforge.squirrel_sql.fw.dialects.DaffodilDialect;
-import net.sourceforge.squirrel_sql.fw.dialects.DerbyDialect;
-import net.sourceforge.squirrel_sql.fw.dialects.FirebirdDialect;
-import net.sourceforge.squirrel_sql.fw.dialects.FrontBaseDialect;
-import net.sourceforge.squirrel_sql.fw.dialects.H2Dialect;
-import net.sourceforge.squirrel_sql.fw.dialects.HADBDialect;
-import net.sourceforge.squirrel_sql.fw.dialects.HSQLDialect;
-import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
-import net.sourceforge.squirrel_sql.fw.dialects.InformixDialect;
-import net.sourceforge.squirrel_sql.fw.dialects.IngresDialect;
-import net.sourceforge.squirrel_sql.fw.dialects.InterbaseDialect;
-import net.sourceforge.squirrel_sql.fw.dialects.MAXDBDialect;
-import net.sourceforge.squirrel_sql.fw.dialects.McKoiDialect;
-import net.sourceforge.squirrel_sql.fw.dialects.MySQLDialect;
-import net.sourceforge.squirrel_sql.fw.dialects.Oracle9iDialect;
-import net.sourceforge.squirrel_sql.fw.dialects.PointbaseDialect;
-import net.sourceforge.squirrel_sql.fw.dialects.PostgreSQLDialect;
-import net.sourceforge.squirrel_sql.fw.dialects.ProgressDialect;
-import net.sourceforge.squirrel_sql.fw.dialects.SQLServerDialect;
-import net.sourceforge.squirrel_sql.fw.dialects.SybaseDialect;
-import net.sourceforge.squirrel_sql.fw.dialects.TimesTenDialect;
-import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
- * This class maps ISession instances to their corresponding Hibernate dialect.  
+ * This class maps SQLDatabaseMetaData instances to their corresponding 
+ * Hibernate dialect.  
  */
 public class DialectFactory {
 
@@ -126,7 +102,8 @@ public class DialectFactory {
     
     private static final TimesTenDialect timestenDialect = new TimesTenDialect();
     
-    private static HashMap dbNameDialectMap = new HashMap();
+    private static HashMap<String, HibernateDialect> dbNameDialectMap = 
+        new HashMap<String, HibernateDialect>();
     
     public static boolean isPromptForDialect = false; 
     
@@ -166,112 +143,88 @@ public class DialectFactory {
         dbNameDialectMap.put(timestenDialect.getDisplayName(), timestenDialect);
     }
     
-    /** cache previous decisions about which dialect to use */
-    private static HashMap sessionDialectMap = new HashMap();
-    
-    public static boolean isAxionSession(ISession session) {
-        return dialectSupportsProduct(session, axionDialect)
-                || testSessionDialect(session, AxionDialect.class);
+    public static boolean isAxion(ISQLDatabaseMetaData md) {
+        return dialectSupportsProduct(md, axionDialect);
     }
     
-    public static boolean isDaffodilSession(ISession session) {
-        return dialectSupportsProduct(session, daffodilDialect)
-                || testSessionDialect(session, DaffodilDialect.class);
+    public static boolean isDaffodil(ISQLDatabaseMetaData md) {
+        return dialectSupportsProduct(md, daffodilDialect);
     }
     
-    public static boolean isDB2Session(ISession session) {
-        return dialectSupportsProduct(session, db2Dialect)
-                || testSessionDialect(session, DB2Dialect.class);
+    public static boolean isDB2(ISQLDatabaseMetaData md) {
+        return dialectSupportsProduct(md, db2Dialect);
     }
 
-    public static boolean isDerbySession(ISession session) {
-        return dialectSupportsProduct(session, derbyDialect)
-                || testSessionDialect(session, DerbyDialect.class);
+    public static boolean isDerby(ISQLDatabaseMetaData md) {
+        return dialectSupportsProduct(md, derbyDialect);
     }    
     
-    public static boolean isFirebirdSession(ISession session) {
-        return dialectSupportsProduct(session, firebirdDialect)
-                || testSessionDialect(session, FirebirdDialect.class);
+    public static boolean isFirebird(ISQLDatabaseMetaData md) {
+        return dialectSupportsProduct(md, firebirdDialect);
     }
     
-    public static boolean isFrontBaseSession(ISession session) {
-        return dialectSupportsProduct(session, frontbaseDialect)
-                || testSessionDialect(session, FrontBaseDialect.class);
+    public static boolean isFrontBase(ISQLDatabaseMetaData md) {
+        return dialectSupportsProduct(md, frontbaseDialect);
     }
 
-    public static boolean isHADBDialect(ISession session) {
-        return dialectSupportsProduct(session, hadbDialect)
-                || testSessionDialect(session, HADBDialect.class);
+    public static boolean isHADB(ISQLDatabaseMetaData md) {
+        return dialectSupportsProduct(md, hadbDialect);
     }    
     
-    public static boolean isH2Dialect(ISession session) {
-        return dialectSupportsProduct(session, h2Dialect)
-                || testSessionDialect(session, H2Dialect.class);
+    public static boolean isH2(ISQLDatabaseMetaData md) {
+        return dialectSupportsProduct(md, h2Dialect);
     }
     
-    public static boolean isHSQLSession(ISession session) {
-        return dialectSupportsProduct(session, hsqlDialect)
-                || testSessionDialect(session, HSQLDialect.class);
+    public static boolean isHSQL(ISQLDatabaseMetaData md) {
+        return dialectSupportsProduct(md, hsqlDialect);
     }    
 
-    public static boolean isInformixSession(ISession session) {
-        return dialectSupportsProduct(session, informixDialect)
-                || testSessionDialect(session, InformixDialect.class);
+    public static boolean isInformix(ISQLDatabaseMetaData md) {
+        return dialectSupportsProduct(md, informixDialect);
     }    
     
-    public static boolean isIngresSession(ISession session) {
-        return dialectSupportsProduct(session, ingresDialect)
-                || testSessionDialect(session, IngresDialect.class);
+    public static boolean isIngres(ISQLDatabaseMetaData md) {
+        return dialectSupportsProduct(md, ingresDialect);
     }
     
-    public static boolean isMaxDBSession(ISession session) {
-        return dialectSupportsProduct(session, maxDbDialect)
-                || testSessionDialect(session, MAXDBDialect.class);
+    public static boolean isMaxDB(ISQLDatabaseMetaData md) {
+        return dialectSupportsProduct(md, maxDbDialect);
     }
     
-    public static boolean isMcKoiSession(ISession session) {
-        return dialectSupportsProduct(session, mckoiDialect)
-                || testSessionDialect(session, McKoiDialect.class);        
+    public static boolean isMcKoi(ISQLDatabaseMetaData md) {
+        return dialectSupportsProduct(md, mckoiDialect);        
     }
 
-    public static boolean isMSSQLServerSession(ISession session) {
-        return dialectSupportsProduct(session, sqlserverDialect)
-                || testSessionDialect(session, SQLServerDialect.class);
+    public static boolean isMSSQLServer(ISQLDatabaseMetaData md) {
+        return dialectSupportsProduct(md, sqlserverDialect);
     }            
     
-    public static boolean isMySQLSession(ISession session) {
-        return dialectSupportsProduct(session, mysqlDialect)
-                || testSessionDialect(session, MySQLDialect.class);
+    public static boolean isMySQL(ISQLDatabaseMetaData md) {
+        return dialectSupportsProduct(md, mysqlDialect);
     }        
     
-    public static boolean isOracleSession(ISession session) {
-        return dialectSupportsProduct(session, oracle9iDialect)
-                || testSessionDialect(session, Oracle9iDialect.class);        
+    public static boolean isOracle(ISQLDatabaseMetaData md) {
+        return dialectSupportsProduct(md, oracle9iDialect);        
     }
     
-    public static boolean isPointbase(ISession session) {
-        return dialectSupportsProduct(session, pointbaseDialect)
-                || testSessionDialect(session, PointbaseDialect.class);        
+    public static boolean isPointbase(ISQLDatabaseMetaData md) {
+        return dialectSupportsProduct(md, pointbaseDialect);        
     }
 
-    public static boolean isPostgreSQL(ISession session) {
-        return dialectSupportsProduct(session, postgreSQLDialect)
-                || testSessionDialect(session, PostgreSQLDialect.class);        
+    public static boolean isPostgreSQL(ISQLDatabaseMetaData md) {
+        return dialectSupportsProduct(md, postgreSQLDialect);        
     }    
     
-    public static boolean isProgressSQL(ISession session) {
-        return dialectSupportsProduct(session, progressDialect)
-                || testSessionDialect(session, ProgressDialect.class);        
+    public static boolean isProgress(ISQLDatabaseMetaData md) {
+        return dialectSupportsProduct(md, progressDialect);        
     }
     
-    public static boolean isSyBaseSession(ISession session) {
-        return dialectSupportsProduct(session, sybaseDialect)
-                || testSessionDialect(session, SybaseDialect.class);        
+    public static boolean isSyBase(ISQLDatabaseMetaData md) {
+        return dialectSupportsProduct(md, sybaseDialect);        
     }
     
-    public static boolean isTimesTen(ISession session) {
-        return dialectSupportsProduct(session, timestenDialect)
-        	|| testSessionDialect(session, TimesTenDialect.class);            	
+    public static boolean isTimesTen(ISQLDatabaseMetaData md) {
+        return dialectSupportsProduct(md, timestenDialect);            	
     }
     
     /**
@@ -285,12 +238,11 @@ public class DialectFactory {
      * @return true if there is a match of any string in the nameToMatch and 
      *              the ISession's driver class name; false otherwise.
      */
-    private static boolean dialectSupportsProduct(ISession session, 
+    private static boolean dialectSupportsProduct(ISQLDatabaseMetaData data, 
     											  HibernateDialect dialect) 
     {
         boolean result = false;
-        if (session != null && dialect != null) {
-        	SQLDatabaseMetaData data = session.getSQLConnection().getSQLMetaData();
+        if (data != null && dialect != null) {
         	try {
         		String productName = data.getDatabaseProductName();
         		String productVersion = data.getDatabaseProductVersion();
@@ -309,121 +261,86 @@ public class DialectFactory {
         }
         return result;
     }
-    
-    /**
-     * 
-     * @param session
-     * @param dialectClass
-     * @return
-     */
-    private static boolean testSessionDialect(ISession session, 
-                                              Class dialectClass) 
-    {
-        boolean result = false;
-        if (sessionDialectMap.containsKey(session)) {
-            HibernateDialect dialect = 
-                (HibernateDialect)sessionDialectMap.get(session);
-            if (dialect != null) {
-                String sessionDialectClassName = dialect.getClass().getName();
-                String dialectClassName = dialectClass.getName();
-                if (sessionDialectClassName.equals(dialectClassName)) { 
-                    result = true;
-                }
-            }
-        }
-        return result;
-    }
-    
-    public static HibernateDialect getDialect(ISession session, int sessionType) 
-        throws UserCancelledOperationException 
-    {
-        HibernateDialect result = null;
-        if (sessionDialectMap.containsKey(session)) {
-            result = (HibernateDialect)sessionDialectMap.get(session);
-        } else {
-            result = _getDialect(session, sessionType);
-            sessionDialectMap.put(session, result);
-        }        
-        return result;
-    }
-    
+            
     public static HibernateDialect getDialect(String dbName) {
-        return (HibernateDialect)dbNameDialectMap.get(dbName);
+        return dbNameDialectMap.get(dbName);
     }
     
-    private static HibernateDialect _getDialect(ISession session,
-                                                int sessionType) 
+    public static HibernateDialect getDialect(int sessionType,
+                                              JFrame parent, 
+                                              ISQLDatabaseMetaData md) 
         throws UserCancelledOperationException 
     {
         // User doesn't wish for us to try to auto-detect the dest db.
         if (isPromptForDialect) {
-            return showDialectDialog(session, sessionType);
+            //return showDialectDialog(session, sessionType);
         }
-        if (isAxionSession(session)) {
+        if (isAxion(md)) {
             return axionDialect;
         }
-        if (isDaffodilSession(session)) {
+        if (isDaffodil(md)) {
             return daffodilDialect;
         }
-        if (isDB2Session(session)) {
+        if (isDB2(md)) {
             return db2Dialect;
         }
-        if (isDerbySession(session)) {
+        if (isDerby(md)) {
             return derbyDialect;
         }
-        if (isFirebirdSession(session)) {
+        if (isFirebird(md)) {
             return firebirdDialect;
         }
-        if (isFrontBaseSession(session)) {
+        if (isFrontBase(md)) {
             return frontbaseDialect;
         }
-        if (isHADBDialect(session)) {
+        if (isHADB(md)) {
             return hadbDialect;
         }
-        if (isH2Dialect(session)) {
+        if (isH2(md)) {
             return h2Dialect;
         }
-        if (isHSQLSession(session)) {
+        if (isHSQL(md)) {
             return hsqlDialect;
         }
-        if (isInformixSession(session)) {
+        if (isInformix(md)) {
             return informixDialect;
         }
-        if (isIngresSession(session)) {
+        if (isIngres(md)) {
             return ingresDialect;
         }
-        if (isMaxDBSession(session)) {
+        if (isMaxDB(md)) {
             return maxDbDialect;
         }
-        if (isMcKoiSession(session)) {
+        if (isMcKoi(md)) {
             return mckoiDialect;
         }
-        if (isMySQLSession(session)) {
+        if (isMySQL(md)) {
             return mysqlDialect;
         }
-        if (isMSSQLServerSession(session)) {
+        if (isMSSQLServer(md)) {
             return sqlserverDialect;
         }
-        if (isOracleSession(session)) {
+        if (isOracle(md)) {
             return oracle9iDialect;
         }
-        if (isPointbase(session)) {
+        if (isPointbase(md)) {
             return pointbaseDialect;
         }
-        if (isPostgreSQL(session)) {
+        if (isPostgreSQL(md)) {
             return postgreSQLDialect;
         }
-        if (isProgressSQL(session)) {
+        if (isProgress(md)) {
             return progressDialect;
         }
-        if (isSyBaseSession(session)) {
+        if (isSyBase(md)) {
             return sybaseDialect;
         }
-        if (isTimesTen(session)) {
+        if (isTimesTen(md)) {
         	return timestenDialect;
         }
+        
         // Failed to detect the dialect that should be used.  Ask the user.
-        return showDialectDialog(session, sessionType);
+        return showDialectDialog(parent, sessionType);
     }
 
     /**
@@ -437,11 +354,10 @@ public class DialectFactory {
      * @param sessionType TODO
      * @return
      */
-    private static HibernateDialect showDialectDialog(ISession destSession, 
+    private static HibernateDialect showDialectDialog(JFrame parent,
                                                       int sessionType) 
         throws UserCancelledOperationException 
     {
-        JFrame f = destSession.getApplication().getMainFrame();
         Object[] dbNames = getDbNames();
         String chooserTitle = s_stringMgr.getString("dialectChooseTitle");
         String typeStr = null;
@@ -457,7 +373,7 @@ public class DialectFactory {
             message = s_stringMgr.getString("autoDetectDisabledMessage", typeStr);
         } 
         String dbName = 
-            (String)JOptionPane.showInputDialog(f,
+            (String)JOptionPane.showInputDialog(parent,
                                                 message,
                                                 chooserTitle,
                                                 JOptionPane.INFORMATION_MESSAGE, 
@@ -467,7 +383,7 @@ public class DialectFactory {
         if (dbName == null || "".equals(dbName)) {
             throw new UserCancelledOperationException();
         }
-        return (HibernateDialect)dbNameDialectMap.get(dbName);
+        return dbNameDialectMap.get(dbName);
     }
     
     /**
@@ -477,7 +393,7 @@ public class DialectFactory {
      * @return
      */
     public static Object[] getDbNames() {
-        Set keyset = dbNameDialectMap.keySet();
+        Set<String> keyset = dbNameDialectMap.keySet();
         Object[] keys = keyset.toArray();
         Arrays.sort(keys);
         return keys;
@@ -490,20 +406,8 @@ public class DialectFactory {
      * @return
      */
     public static Object[] getSupportedDialects() {
-        Collection c = dbNameDialectMap.values();
+        Collection<HibernateDialect> c = dbNameDialectMap.values();
         return c.toArray();
     }
-    
-    /**
-     * When a session is closed, it's important to not hold onto it for GC
-     * purposes.
-     * 
-     * @param session
-     */
-    public static void removeSession(ISession session) {
-        if (sessionDialectMap.containsKey(session)) {
-            sessionDialectMap.remove(session);
-        }
-    }
-    
+        
 }

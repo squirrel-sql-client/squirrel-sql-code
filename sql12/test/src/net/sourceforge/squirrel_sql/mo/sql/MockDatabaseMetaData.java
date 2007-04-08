@@ -95,6 +95,13 @@ public class MockDatabaseMetaData extends
     }
 
     /* (non-Javadoc)
+     * @see com.mockobjects.sql.MockDatabaseMetaData#getDatabaseProductName()
+     */
+    public String getDatabaseProductVersion() throws SQLException {
+        return "1.0";
+    }
+    
+    /* (non-Javadoc)
      * @see com.mockobjects.sql.MockDatabaseMetaData#allProceduresAreCallable()
      */
     public boolean allProceduresAreCallable() throws SQLException {

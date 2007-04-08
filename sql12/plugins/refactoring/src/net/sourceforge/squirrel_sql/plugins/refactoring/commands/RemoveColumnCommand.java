@@ -23,9 +23,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
-import net.sourceforge.squirrel_sql.client.db.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
@@ -36,7 +36,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.refactoring.DBUtil;
 
 /**
  * Implements showing a list of columns for a selected table to the 
@@ -89,7 +88,9 @@ public class RemoveColumnCommand extends AbstractRefactoringCommand
             
             try {
                 HibernateDialect dialect =  
-                    DialectFactory.getDialect(_session, DialectFactory.DEST_TYPE);
+                    DialectFactory.getDialect(DialectFactory.DEST_TYPE, 
+                                              _session.getApplication().getMainFrame(), 
+                                              _session.getMetaData());
                 if (!dialect.supportsDropColumn()) {
                     //i18n[RemoveColumnAction.removeColumnNotSupported=This
                     //database ({0}) does not support dropping columns]
@@ -124,7 +125,9 @@ public class RemoveColumnCommand extends AbstractRefactoringCommand
         
         String[] result = new String[columns.length];
         try {
-            dialect = DialectFactory.getDialect(_session, DialectFactory.DEST_TYPE);
+            dialect = DialectFactory.getDialect(DialectFactory.DEST_TYPE, 
+                                                _session.getApplication().getMainFrame(), 
+                                                _session.getMetaData());
             // TODO: add configuration for whether or not to qualify names.
             String tableName = _info[0].getQualifiedName();
             for (int i = 0; i < columns.length; i++) {
@@ -183,7 +186,9 @@ public class RemoveColumnCommand extends AbstractRefactoringCommand
             HibernateDialect dialect = null;
             try {
                 dialect =  
-                    DialectFactory.getDialect(_session, DialectFactory.DEST_TYPE);
+                    DialectFactory.getDialect(DialectFactory.DEST_TYPE, 
+                                              _session.getApplication().getMainFrame(), 
+                                              _session.getMetaData());
             } catch (UserCancelledOperationException ex) {
                 log.info("User cancelled add column request");
                 return;                

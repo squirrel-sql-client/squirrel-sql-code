@@ -57,6 +57,7 @@ import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
@@ -1005,5 +1006,11 @@ class Session implements ISession
         }
     }
 
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.client.session.ISession#getMetaData()
+     */
+    public ISQLDatabaseMetaData getMetaData() {
+        return _conn.getSQLMetaData();
+    }
 
 }
