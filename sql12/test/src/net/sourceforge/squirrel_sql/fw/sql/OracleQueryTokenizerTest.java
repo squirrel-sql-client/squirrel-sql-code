@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import junit.framework.TestCase;
-import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.ApplicationManager;
 import net.sourceforge.squirrel_sql.plugins.oracle.gui.DummyPlugin;
 import net.sourceforge.squirrel_sql.plugins.oracle.prefs.OraclePreferenceBean;

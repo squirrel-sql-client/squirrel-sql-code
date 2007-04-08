@@ -37,9 +37,10 @@ public class MyURLClassLoader extends URLClassLoader
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(MyURLClassLoader.class);
 
-	private Map _classes = new HashMap();
+	private Map<String, Class> _classes = new HashMap<String, Class>();
 
-    ArrayList listeners = new ArrayList();
+    ArrayList<ClassLoaderListener> listeners = 
+        new ArrayList<ClassLoaderListener>();
     
 	public MyURLClassLoader(String fileName) throws IOException
 	{
@@ -68,9 +69,9 @@ public class MyURLClassLoader extends URLClassLoader
      * @param filename the name of the file (doesn't include path)
      */
     private void notifyListenersLoadedZipFile(String filename) {
-        Iterator i = listeners.iterator();
+        Iterator<ClassLoaderListener> i = listeners.iterator();
         while (i.hasNext()) {
-            ClassLoaderListener listener = (ClassLoaderListener)i.next();
+            ClassLoaderListener listener = i.next();
             listener.loadedZipFile(filename);
         }
     }
@@ -79,9 +80,9 @@ public class MyURLClassLoader extends URLClassLoader
      * Notify listeners that we've finished loading files.
      */
     private void notifyListenersFinished() {
-        Iterator i = listeners.iterator();
+        Iterator<ClassLoaderListener> i = listeners.iterator();
         while (i.hasNext()) {
-            ClassLoaderListener listener = (ClassLoaderListener)i.next();
+            ClassLoaderListener listener = i.next();
             listener.finishedLoadingZipFiles();
         }        
     }
@@ -92,7 +93,7 @@ public class MyURLClassLoader extends URLClassLoader
     
 	public Class[] getAssignableClasses(Class type, ILogger logger)
 	{
-		List classes = new ArrayList();
+		List<Class> classes = new ArrayList<Class>();
 		URL[] urls = getURLs();
 		for (int i = 0; i < urls.length; ++i)
 		{
@@ -111,8 +112,10 @@ public class MyURLClassLoader extends URLClassLoader
 					String msg = s_stringMgr.getString(
 									"MyURLClassLoader.errorLoadingFile", args);
 					logger.error(msg, ex);
+                    continue;
 				}
                 notifyListenersLoadedZipFile(file.getName());
+                
 				for (Iterator it = new EnumerationIterator(zipFile.entries());
 						it.hasNext();)
 				{
@@ -152,7 +155,7 @@ public class MyURLClassLoader extends URLClassLoader
 			}
 		}
         notifyListenersFinished();
-		return (Class[]) classes.toArray(new Class[classes.size()]);
+		return classes.toArray(new Class[classes.size()]);
 	}
 
 	protected synchronized Class findClass(String className)
