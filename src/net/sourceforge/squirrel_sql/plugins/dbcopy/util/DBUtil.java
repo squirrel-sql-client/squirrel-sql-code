@@ -49,8 +49,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
-import net.sourceforge.squirrel_sql.client.db.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
@@ -400,12 +400,12 @@ public class DBUtil extends I18NBaseObject {
 
         Connection con = sqlcon.getConnection();
         try {
-            if (DialectFactory.isMySQLSession(session)) {
+            if (DialectFactory.isMySQL(session.getMetaData())) {
                 stmt = con.createStatement(ResultSet.TYPE_FORWARD_ONLY,
                                            ResultSet.CONCUR_READ_ONLY);
             
                 stmt.setFetchSize(Integer.MIN_VALUE);
-            } else if (DialectFactory.isTimesTen(session)) {
+            } else if (DialectFactory.isTimesTen(session.getMetaData())) {
             	stmt = con.createStatement();
             	int fetchSize = _prefs.getSelectFetchSize();
             	// TimesTen allows a maximum fetch size of 128. 
@@ -553,7 +553,7 @@ public class DBUtil extends I18NBaseObject {
         }
         String catalog = null;
         // MySQL uses catalogs and not schemas
-        if (DialectFactory.isMySQLSession(session)) {
+        if (DialectFactory.isMySQL(session.getMetaData())) {
             catalog = schema;
             schema = null;
         }
@@ -1302,7 +1302,7 @@ public class DBUtil extends I18NBaseObject {
         throws MappingException
     {
        
-        if (DialectFactory.isFirebirdSession(destSession)) {
+        if (DialectFactory.isFirebird(destSession.getMetaData())) {
             if (!PreferencesManager.getPreferences().isCommitAfterTableDefs()) {
                 // TODO: maybe instead of throwing an exception, we could ask 
                 // the user if they would like us to adjust their preference for
@@ -1377,7 +1377,7 @@ public class DBUtil extends I18NBaseObject {
             // if the source session is Axion and they want primary keys that 
             // it's not possible.
             if (_prefs.isCopyPrimaryKeys()
-            		&& !DialectFactory.isAxionSession(sourceSession)) {
+            		&& !DialectFactory.isAxion(sourceSession.getMetaData())) {
                 String pkString = DBUtil.getPKColumnString(sourceCon, ti);
                 if (pkString != null) {
                     result.append(",\n\tPRIMARY KEY ");
@@ -1457,7 +1457,9 @@ public class DBUtil extends I18NBaseObject {
         } else {
             ISession destSession = prov.getCopyDestSession();
             HibernateDialect d = 
-                DialectFactory.getDialect(destSession, DialectFactory.DEST_TYPE);
+                DialectFactory.getDialect(DialectFactory.DEST_TYPE, 
+                                          destSession.getApplication().getMainFrame(), 
+                                          destSession.getMetaData());
             String nullString = d.getNullColumnString().toUpperCase();
             result.append(nullString);
         }
@@ -1872,7 +1874,7 @@ public class DBUtil extends I18NBaseObject {
             
             StringBuffer sbToAppend = new StringBuffer();
             sbToAppend.append("CREATE");
-            if (!DialectFactory.isDaffodilSession(destSession)) {
+            if (!DialectFactory.isDaffodil(destSession.getMetaData())) {
             	sbToAppend.append(unique ? " UNIQUE ": " ");
             }
             sbToAppend.append(" INDEX ");
@@ -1966,7 +1968,8 @@ public class DBUtil extends I18NBaseObject {
             sql.append(" ( ");
             sql.append(colInfo.getColumnName());
             sql.append(" CHAR(10) )");
-            boolean cascade = DialectFactory.isFrontBaseSession(destSession);
+            boolean cascade = 
+                DialectFactory.isFrontBase(destSession.getMetaData());
             try {
                 dropTable(TEST_TABLE_NAME, 
                           schema, 
@@ -2048,7 +2051,9 @@ public class DBUtil extends I18NBaseObject {
     {
         StringBuffer result = new StringBuffer();
         HibernateDialect dialect = 
-            DialectFactory.getDialect(sourceSession, DialectFactory.DEST_TYPE);
+            DialectFactory.getDialect(DialectFactory.SOURCE_TYPE, 
+                                      sourceSession.getApplication().getMainFrame(), 
+                                      sourceSession.getMetaData());
         String lengthFunction = dialect.getLengthFunction(colInfo.getDataType());
         if (lengthFunction == null) {
             log.error("Length function is null for dialect="+

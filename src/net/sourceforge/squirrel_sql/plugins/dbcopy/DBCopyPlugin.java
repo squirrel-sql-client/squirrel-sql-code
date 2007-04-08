@@ -24,7 +24,6 @@ import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.db.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
@@ -79,11 +78,6 @@ public class DBCopyPlugin extends DefaultSessionPlugin
             // Can't paste from a session that is no longer around.
             setPasteMenuEnabled(false);
         }
-        // Be sure to forget the dialect that was being "remembered" for 
-        // this session.  A reference to the session might possibly be 
-        // maintained in ColTypeMapper that would keep it from being 
-        // garbage collected.
-        DialectFactory.removeSession(session);        
     }
     
     /* (non-Javadoc)
