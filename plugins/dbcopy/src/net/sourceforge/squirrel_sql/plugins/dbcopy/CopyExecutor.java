@@ -27,8 +27,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
-import net.sourceforge.squirrel_sql.client.db.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -90,10 +90,11 @@ public class CopyExecutor extends I18NBaseObject {
         StringManagerFactory.getStringManager(CopyExecutor.class);
     
     /** the list of ITableInfos that represent the user's last selection. */
-    private ArrayList selectedTableInfos = null;    
+    private ArrayList<ITableInfo> selectedTableInfos = null;    
     
     /** the CopyTableListeners that have registered with this class */
-    private ArrayList listeners = new ArrayList();
+    private ArrayList<CopyTableListener> listeners = 
+        new ArrayList<CopyTableListener>();
     
     /** whether or not the user cancelled the copy operation */
     private volatile boolean cancelled = false;    
@@ -356,7 +357,7 @@ public class CopyExecutor extends I18NBaseObject {
         IDatabaseObjectInfo[] dbObjs = prov.getSourceSelectedDatabaseObjects();
         if (dbObjs != null) {
             result = new int[dbObjs.length];
-            selectedTableInfos = new ArrayList();
+            selectedTableInfos = new ArrayList<ITableInfo>();
             for (int i = 0; i < dbObjs.length; i++) {
                 if (false == dbObjs[i] instanceof ITableInfo) {
                     continue;
@@ -383,9 +384,9 @@ public class CopyExecutor extends I18NBaseObject {
     
     private void sendAnalysisStarted() {
         AnalysisEvent event = new AnalysisEvent(prov);
-        Iterator i = listeners.iterator();
+        Iterator<CopyTableListener> i = listeners.iterator();
         while (i.hasNext()) {
-            CopyTableListener listener = (CopyTableListener)i.next();
+            CopyTableListener listener = i.next();
             listener.tableAnalysisStarted(event);
         }
     }
@@ -394,10 +395,10 @@ public class CopyExecutor extends I18NBaseObject {
         TableEvent event = new TableEvent(prov);
         event.setTableCount(prov.getSourceSelectedDatabaseObjects().length);
         event.setTableNumber(number);
-        Iterator i = listeners.iterator();
+        Iterator<CopyTableListener> i = listeners.iterator();
         event.setTableName(ti.getSimpleName());
         while (i.hasNext()) {
-            CopyTableListener listener = (CopyTableListener)i.next();
+            CopyTableListener listener = i.next();
             listener.analyzingTable(event);
         }                
     }
@@ -405,9 +406,9 @@ public class CopyExecutor extends I18NBaseObject {
     private void sendCopyStarted(int[] tableCounts) {
         CopyEvent event = new CopyEvent(prov);
         event.setTableCounts(tableCounts);
-        Iterator i = listeners.iterator();
+        Iterator<CopyTableListener> i = listeners.iterator();
         while (i.hasNext()) {
-            CopyTableListener listener = (CopyTableListener)i.next();
+            CopyTableListener listener = i.next();
             listener.copyStarted(event);
         }        
     }
@@ -417,9 +418,9 @@ public class CopyExecutor extends I18NBaseObject {
         event.setTableNumber(number);
         event.setTableCount(prov.getSourceSelectedDatabaseObjects().length);
         event.setTableName(ti.getSimpleName());
-        Iterator i = listeners.iterator();
+        Iterator<CopyTableListener> i = listeners.iterator();
         while (i.hasNext()) {
-            CopyTableListener listener = (CopyTableListener)i.next();
+            CopyTableListener listener = i.next();
             listener.tableCopyStarted(event);
         }
     }
@@ -429,9 +430,9 @@ public class CopyExecutor extends I18NBaseObject {
         event.setTableNumber(number);
         event.setTableCount(prov.getSourceSelectedDatabaseObjects().length);
         event.setTableName(ti.getSimpleName());
-        Iterator i = listeners.iterator();
+        Iterator<CopyTableListener> i = listeners.iterator();
         while (i.hasNext()) {
-            CopyTableListener listener = (CopyTableListener)i.next();
+            CopyTableListener listener = i.next();
             listener.tableCopyFinished(event);
         }
     }    
@@ -452,18 +453,18 @@ public class CopyExecutor extends I18NBaseObject {
     private void sendErrorEvent(int type, Exception e) {
         ErrorEvent event = new ErrorEvent(prov, type);
         event.setException(e);
-        Iterator i = listeners.iterator();
+        Iterator<CopyTableListener> i = listeners.iterator();
         while (i.hasNext()) {
-            CopyTableListener listener = (CopyTableListener)i.next();
+            CopyTableListener listener = i.next();
             listener.handleError(event);
         }        
     }
     
     private void sendRecordEvent(int number, int count) {
         RecordEvent event = new RecordEvent(prov, number, count);
-        Iterator i = listeners.iterator();
+        Iterator<CopyTableListener> i = listeners.iterator();
         while (i.hasNext()) {
-            CopyTableListener listener = (CopyTableListener)i.next();
+            CopyTableListener listener = i.next();
             listener.recordCopied(event);
         }
     }
@@ -472,18 +473,18 @@ public class CopyExecutor extends I18NBaseObject {
         StatementEvent event = 
             new StatementEvent(sql, StatementEvent.INSERT_RECORD_TYPE);
         event.setBindValues(vals);
-        Iterator i = listeners.iterator();
+        Iterator<CopyTableListener> i = listeners.iterator();
         while (i.hasNext()) {
-            CopyTableListener listener = (CopyTableListener)i.next();
+            CopyTableListener listener = i.next();
             listener.statementExecuted(event);
         }        
     }
     
     private void notifyCopyFinished() {
         int seconds = (int)getElapsedSeconds();
-        Iterator i = listeners.iterator();
+        Iterator<CopyTableListener> i = listeners.iterator();
         while (i.hasNext()) {
-            CopyTableListener listener = (CopyTableListener)i.next();
+            CopyTableListener listener = i.next();
             listener.copyFinished(seconds);
         }
     }
@@ -560,10 +561,10 @@ public class CopyExecutor extends I18NBaseObject {
             DBUtil.setLastStatement(selectSQL);
             rs = DBUtil.executeQuery(prov.getCopySourceSession(), selectSQL);
             DBUtil.setLastStatement(insertSQL);
-            boolean isMysql = DialectFactory.isMySQLSession(destSession);
+            boolean isMysql = DialectFactory.isMySQL(destSession.getMetaData());
             boolean isSourceOracle = 
-                DialectFactory.isOracleSession(sourceSession);
-            boolean isDestOracle = DialectFactory.isOracleSession(destSession);
+                DialectFactory.isOracle(sourceSession.getMetaData());
+            boolean isDestOracle = DialectFactory.isOracle(destSession.getMetaData());
             while (rs.next() && !cancelled) {
                 // MySQL driver gets unhappy when we use the same 
                 // PreparedStatement to bind null and non-null LOB variables
@@ -572,7 +573,7 @@ public class CopyExecutor extends I18NBaseObject {
                 {
                     insertStmt.clearParameters();
                 }
-                StringBuffer lastStmtValuesBuffer = new StringBuffer();
+                StringBuilder lastStmtValuesBuffer = new StringBuilder();
                 lastStmtValuesBuffer.append("\n(Bind variable values: ");
                 for (int i = 0; i < columnCount; i++) {
 
@@ -694,7 +695,7 @@ public class CopyExecutor extends I18NBaseObject {
                                               new Integer(destInfos.length)});
             throw new MappingException(msg);
         }
-        ArrayList result = new ArrayList();
+        ArrayList<TableColumnInfo> result = new ArrayList<TableColumnInfo>();
         
         for (int sourceIdx = 0; sourceIdx < sourceInfos.length; sourceIdx++) {
             TableColumnInfo sourceInfo = sourceInfos[sourceIdx];
@@ -718,7 +719,7 @@ public class CopyExecutor extends I18NBaseObject {
                                     sourceInfo.getColumnName());
             }
         }
-        return (TableColumnInfo[])result.toArray(new TableColumnInfo[destInfos.length]);
+        return result.toArray(new TableColumnInfo[destInfos.length]);
     }
     
     /**
@@ -750,7 +751,7 @@ public class CopyExecutor extends I18NBaseObject {
         throws SQLException, UserCancelledOperationException 
     {
         if (!prefs.isCopyForeignKeys() 
-        		|| DialectFactory.isAxionSession(prov.getCopySourceSession())) {
+        		|| DialectFactory.isAxion(prov.getCopySourceSession().getMetaData())) {
             return;
         }
         SQLConnection destConn = prov.getCopyDestSession().getSQLConnection();

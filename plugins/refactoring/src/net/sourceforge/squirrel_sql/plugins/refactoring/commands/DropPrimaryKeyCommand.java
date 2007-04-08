@@ -22,10 +22,10 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import net.sourceforge.squirrel_sql.client.db.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.client.gui.db.ColumnListDialog;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
@@ -96,7 +96,9 @@ public class DropPrimaryKeyCommand extends AbstractRefactoringCommand {
         
         String result = null;
         try {
-            dialect = DialectFactory.getDialect(_session, DialectFactory.DEST_TYPE);            
+            dialect = DialectFactory.getDialect(DialectFactory.DEST_TYPE, 
+                                                _session.getApplication().getMainFrame(), 
+                                                _session.getMetaData());            
             result = 
                 dialect.getDropPrimaryKeySQL(this.pkName, 
                                              columnListDialog.getTableName());

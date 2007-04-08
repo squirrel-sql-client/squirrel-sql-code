@@ -42,7 +42,9 @@ import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.UidIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
+import net.sourceforge.squirrel_sql.fw.sql.MockSQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.MockSQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
@@ -368,5 +370,12 @@ public class MockSession implements ISession {
 
     public void setQueryTokenizer(IQueryTokenizer tokenizer) {
         // TODO Auto-generated method stub
+    }
+
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.client.session.ISession#getMetaData()
+     */
+    public ISQLDatabaseMetaData getMetaData() {
+        return con.getSQLMetaData();
     }    
 }

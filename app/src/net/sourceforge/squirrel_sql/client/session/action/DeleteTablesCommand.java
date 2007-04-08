@@ -23,14 +23,13 @@ import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
 
-import net.sourceforge.squirrel_sql.client.db.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.client.gui.ProgessCallBackDialog;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
@@ -39,7 +38,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
- * @version 	$Id: DeleteTablesCommand.java,v 1.5 2007-03-11 03:01:29 manningr Exp $
+ * @version 	$Id: DeleteTablesCommand.java,v 1.6 2007-04-08 11:48:55 manningr Exp $
  * @author		Rob Manning
  */
 public class DeleteTablesCommand implements ICommand
@@ -185,7 +184,7 @@ public class DeleteTablesCommand implements ICommand
     private boolean isMaterializedView(ITableInfo ti,
                                       ISession session)
     {
-        if (!DialectFactory.isOracleSession(session)) {
+        if (!DialectFactory.isOracle(session.getMetaData())) {
             // Only Oracle supports materialized views directly.
             return false;
         }

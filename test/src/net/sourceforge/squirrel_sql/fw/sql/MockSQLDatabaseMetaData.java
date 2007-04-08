@@ -4,7 +4,8 @@ import java.sql.SQLException;
 
 import com.mockobjects.sql.MockConnection2;
 
-public class MockSQLDatabaseMetaData extends SQLDatabaseMetaData {
+public class MockSQLDatabaseMetaData extends SQLDatabaseMetaData 
+                                     implements ISQLDatabaseMetaData {
 
     static MockConnection2 conn = new MockConnection2();
     static SQLConnection sqlConn = new SQLConnection(conn, null, null);

@@ -21,11 +21,11 @@ import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.db.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
@@ -179,7 +179,9 @@ public class PasteTableAction extends SquirrelAction
                   " name="+dbObj.getSimpleName());
 
         HibernateDialect d = 
-            DialectFactory.getDialect(session, DialectFactory.DEST_TYPE);
+            DialectFactory.getDialect(DialectFactory.DEST_TYPE, 
+                                      session.getApplication().getMainFrame(), 
+                                      session.getMetaData());
         if (!d.canPasteTo(dbObj)) {
             //i18n[PasteTableAction.error.destdbobj=The destination database 
             //doesn't support copying tables into '{0}' objects.\n Please 
@@ -200,8 +202,8 @@ public class PasteTableAction extends SquirrelAction
      * @return
      */
     private boolean sourceDestSchemasDiffer() {
-        ISession sourceSession = sessionInfoProv.getCopySourceSession();
-        ISession destSession = sessionInfoProv.getCopyDestSession();
+        //ISession sourceSession = sessionInfoProv.getCopySourceSession();
+        //ISession destSession = sessionInfoProv.getCopyDestSession();
         
         // TODO: check to be sure that the source and destination schemas are
         // different. Abort if they are the same and inform the user.

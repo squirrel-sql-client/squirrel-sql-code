@@ -22,8 +22,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-import net.sourceforge.squirrel_sql.client.db.dialects.DialectFactory;
+import javax.swing.JFrame;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
@@ -77,7 +79,7 @@ public class ColTypeMapper {
         // decimal, so try to figure out if Oracle is really storing a BIGINT
         // and claiming it is a DECIMAL.  If so, convert the type to BIGINT before
         // going any further.
-        if (DialectFactory.isOracleSession(sourceSession)
+        if (DialectFactory.isOracle(sourceSession.getMetaData())
                 && colJdbcType ==Types.DECIMAL) 
         {
             // No decimal digits strongly suggests an INTEGER of some type.
@@ -91,7 +93,7 @@ public class ColTypeMapper {
         // numeric or decimal types this is precision.
         int size = getColumnLength(sourceSession, colInfo, sourceTableName);
                         
-        if (DialectFactory.isPointbase(destSession) && size <= 0) {
+        if (DialectFactory.isPointbase(destSession.getMetaData()) && size <= 0) {
             if (DBUtil.isBinaryType(colInfo)) { 
                 // For PointBase, if type maps to Pointbase "BLOB", and the size
                 // isn't valid (PB requires size for BLOBS) then set it to something
@@ -102,7 +104,7 @@ public class ColTypeMapper {
                 size = 20; // Numbers and such.
             }
         }
-        if (DialectFactory.isFirebirdSession(destSession)) {
+        if (DialectFactory.isFirebird(destSession.getMetaData())) {
             if (colJdbcType == java.sql.Types.DECIMAL) {
                 if (size > 18) {
                     size = 18;
@@ -110,8 +112,11 @@ public class ColTypeMapper {
             }
         }
         String result = null;
+        JFrame mainFrame = destSession.getApplication().getMainFrame();
         HibernateDialect destDialect = 
-            DialectFactory.getDialect(destSession, DialectFactory.DEST_TYPE);
+            DialectFactory.getDialect(DialectFactory.DEST_TYPE, 
+                                      mainFrame, 
+                                      destSession.getMetaData());
 
         if (s_log.isDebugEnabled()) {
             s_log.debug(
@@ -123,7 +128,9 @@ public class ColTypeMapper {
         }
         if (destDialect != null) {
             HibernateDialect sourceDialect = 
-                DialectFactory.getDialect(sourceSession, DialectFactory.SOURCE_TYPE);
+                DialectFactory.getDialect(DialectFactory.SOURCE_TYPE, 
+                                          mainFrame, 
+                                          sourceSession.getMetaData());
             
             int precision = sourceDialect.getPrecisionDigits(size, colJdbcType);
             
@@ -205,7 +212,7 @@ public class ColTypeMapper {
         // that will be copied from Oracle.  We specify a default value of 4000
         // in case the table has no records or if the BLOB/CLOB column contains 
         // only null values.
-        if (DialectFactory.isOracleSession(sourceSession)
+        if (DialectFactory.isOracle(sourceSession.getMetaData())
                 && (colInfo.getDataType() == Types.CLOB 
                         || colInfo.getDataType() == Types.BLOB))
         {
@@ -221,12 +228,13 @@ public class ColTypeMapper {
     }
     
     private static int getColumnLength(ISession sourceSession, 
-                                               TableColumnInfo colInfo) 
+                                       TableColumnInfo colInfo) 
         throws UserCancelledOperationException
     {
         HibernateDialect dialect = 
-            DialectFactory.getDialect(sourceSession, 
-                                      DialectFactory.SOURCE_TYPE);
+            DialectFactory.getDialect(DialectFactory.SOURCE_TYPE, 
+                                      sourceSession.getApplication().getMainFrame(), 
+                                      sourceSession.getMetaData());
         int length = colInfo.getColumnSize();
         int type = colInfo.getDataType();
         length = dialect.getColumnLength(length, type); 

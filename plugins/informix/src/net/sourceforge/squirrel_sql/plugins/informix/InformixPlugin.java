@@ -18,8 +18,6 @@ package net.sourceforge.squirrel_sql.plugins.informix;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.sql.SQLException;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
@@ -29,6 +27,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -187,7 +186,7 @@ public class InformixPlugin extends DefaultSessionPlugin {
     public PluginSessionCallback sessionStarted(final ISession session)
     {
        boolean isInformix = false;
-       isInformix = isInformix(session);
+       isInformix = DialectFactory.isInformix(session.getMetaData());
        if (isInformix)
        {
            GUIUtils.processOnSwingEventThread(new Runnable() {
@@ -246,19 +245,4 @@ public class InformixPlugin extends DefaultSessionPlugin {
         
     }
     
-    private boolean isInformix(ISession session)
-    {
-        final String INFORMIX = "informix";
-        String dbms = null;
-        try
-        {
-            dbms = session.getSQLConnection().getSQLMetaData().getDatabaseProductName();
-        }
-        catch (SQLException ex)
-        {
-				s_log.error("Unexpected exception from getDatabaseProductName()", ex);
-        }
-        return dbms != null && dbms.toLowerCase().contains(INFORMIX);
-    }
-
 }

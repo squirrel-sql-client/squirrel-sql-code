@@ -26,11 +26,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import net.sourceforge.squirrel_sql.client.db.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.client.gui.ProgessCallBackDialog;
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
@@ -115,7 +115,9 @@ public class DropTablesCommand extends AbstractRefactoringCommand
         try {
             orderedTables = getOrderedTables(tables);
             
-            dialect = DialectFactory.getDialect(_session, DialectFactory.DEST_TYPE); 
+            dialect = DialectFactory.getDialect(DialectFactory.DEST_TYPE, 
+                                                _session.getApplication().getMainFrame(), 
+                                                _session.getMetaData()); 
             String sep = _session.getQueryTokenizer().getSQLStatementSeparator();
             
             for (ITableInfo info : orderedTables) {
@@ -173,7 +175,7 @@ public class DropTablesCommand extends AbstractRefactoringCommand
     private boolean isMaterializedView(ITableInfo ti,
                                       ISession session)
     {
-        if (!DialectFactory.isOracleSession(session)) {
+        if (!DialectFactory.isOracle(session.getMetaData())) {
             // Only Oracle supports materialized views directly.
             return false;
         }
