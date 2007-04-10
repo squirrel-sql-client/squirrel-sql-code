@@ -17,25 +17,34 @@ package net.sourceforge.squirrel_sql.client.session.properties;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import java.awt.Dimension;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.HashMap;
-import java.util.Iterator;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JList;
 import javax.swing.ListModel;
-import javax.swing.JOptionPane;
+
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 
 /**
@@ -48,6 +57,9 @@ public class EditWhereColsPanel extends JPanel
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(EditWhereColsPanel.class);
 
+    /** Logger for this class. */
+    private static final ILogger s_log =
+        LoggerController.createLogger(EditWhereColsPanel.class);    
 
 	/** The name of the database table the Where clause applies to. */
 	private String _tableName;
@@ -69,7 +81,11 @@ public class EditWhereColsPanel extends JPanel
 	
 	/** The list of column names to NOT use as calculated when window is created **/
 	private Object[] initalNotUseColsArray;
-
+    
+	private ISession _session = null;
+    
+    private PrimaryKeyInfo[] primaryKeyInfos = null; 
+    
 	/**
 	 * ?? this should be changed to use the I18N file mechanism.
 	 */
@@ -78,6 +94,9 @@ public class EditWhereColsPanel extends JPanel
 		String TITLE = s_stringMgr.getString("editWhereColsPanel.limitColsInCell");
 		// i18n[editWhereColsPanel.limitColsInCellHint=Limit columns used in WHERE clause when editing table]
 		String HINT = s_stringMgr.getString("editWhereColsPanel.limitColsInCellHint");
+        // i18n[editWhereColsPanel.usePKLabel=Use PK]
+        String USE_PK = s_stringMgr.getString("editWhereColsPanel.usePKLabel");
+
 	}
 	
 	/**
@@ -92,15 +111,18 @@ public class EditWhereColsPanel extends JPanel
 	 * @throws	IllegalArgumentException
 	 *			The exception thrown if invalid arguments are passed.
 	 */
-	public EditWhereColsPanel(SortedSet columnList, 
-							String tableName, String unambiguousTableName)
+	public EditWhereColsPanel(ISession session,
+                              ITableInfo ti,                   
+                              SortedSet columnList, 
+                              String unambiguousTableName)
 		throws IllegalArgumentException
 	{
 		super();
-
+		_session = session;
+        getPrimaryKey(ti);
 		// save the input for use later
 		_columnList = columnList;
-		_tableName = tableName;
+		_tableName = ti.getQualifiedName();
 		_unambiguousTableName = unambiguousTableName;
 		
 		// look up the table in the EditWhereCols list
@@ -132,7 +154,16 @@ public class EditWhereColsPanel extends JPanel
 		createGUI();
 	}
 
-
+	private void getPrimaryKey(ITableInfo ti) {
+        try {
+            primaryKeyInfos = _session.getMetaData().getPrimaryKey(ti);
+        } catch (SQLException e) {
+            s_log.error(
+               "Unexpected exception while attempting to get primary key info" +
+               " for table "+ti.getQualifiedName()+": "+e.getMessage(), e);
+        }
+    }
+    
 	/**
 	 * Get the title of the panel.
 	 *
@@ -255,6 +286,44 @@ public class EditWhereColsPanel extends JPanel
 		notUseColsList.setListData(notUseColsSet.toArray());
 	}
 	
+    private void usePK() {
+        if (primaryKeyInfos == null || primaryKeyInfos.length <= 0) {
+            // i18n[editWhereColsPanel.noPK=The table ''{0}'' doesn't have a primary key.]
+            String msg = 
+                s_stringMgr.getString("editWhereColsPanel.noPK", _tableName);
+            JOptionPane.showMessageDialog(this,msg);
+            
+            return;
+        }
+        HashSet<String> pkCols = new HashSet<String>();
+        for (int i = 0; i < primaryKeyInfos.length; i++) {
+            PrimaryKeyInfo pkInfo = primaryKeyInfos[i];
+            pkCols.add(pkInfo.getColumnName());
+        }
+        
+        ArrayList<String> newNotUseList = new ArrayList<String>();
+        ListModel useColsModel = useColsList.getModel();
+        ListModel notUseColsModel = notUseColsList.getModel();
+        
+        for (int i=0; i<useColsModel.getSize(); i++) {
+            Object colName = useColsModel.getElementAt(i);
+            if (!pkCols.contains(colName)) {
+                newNotUseList.add(colName.toString());
+            }
+        }        
+        
+        for (int i=0; i<notUseColsModel.getSize(); i++) {
+            Object colName = notUseColsModel.getElementAt(i);
+            if (!pkCols.contains(colName)) {
+                newNotUseList.add(colName.toString());
+            }
+        }
+        
+        useColsList.setListData(pkCols.toArray());
+        notUseColsList.setListData(newNotUseList.toArray());
+        
+        
+    }
 	
 	/**
 	 * Create the GUI elements for the panel.
@@ -272,7 +341,7 @@ public class EditWhereColsPanel extends JPanel
 		add(useColsPanel);
 
 		JPanel moveButtonsPanel = new JPanel();
-		JPanel buttonPanel = new JPanel(new BorderLayout());
+		JPanel buttonPanel = new JPanel(new GridLayout(3,1));
 //????? if desired, get fancy and use icons in buttons instead of text ?????????
 		JButton moveToNotUsedButton = new JButton("=>");
 		moveToNotUsedButton.addActionListener(new ActionListener()
@@ -282,7 +351,7 @@ public class EditWhereColsPanel extends JPanel
 				moveToNotUsed();
 			}
  		});
-		buttonPanel.add(moveToNotUsedButton, BorderLayout.NORTH);
+		buttonPanel.add(moveToNotUsedButton);
 		JButton moveToUsedButton = new JButton("<=");
 		moveToUsedButton.addActionListener(new ActionListener()
 		{
@@ -291,8 +360,16 @@ public class EditWhereColsPanel extends JPanel
 				moveToUsed();
 			}
 			});
-		buttonPanel.add(moveToUsedButton, BorderLayout.SOUTH);
+		buttonPanel.add(moveToUsedButton);
 
+        JButton usePKButton = new JButton(EditWhereColsPanelI18N.USE_PK);
+        usePKButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                usePK();
+            }
+        });
+        buttonPanel.add(usePKButton);
+        
 		moveButtonsPanel.add(buttonPanel, BorderLayout.CENTER);
 		add(moveButtonsPanel);
 	  

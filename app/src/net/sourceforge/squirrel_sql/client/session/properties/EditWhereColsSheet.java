@@ -226,10 +226,14 @@ public class EditWhereColsSheet extends BaseSessionInternalFrame
 				// i18n[editWhereColsSheet.unableToEdit=Unable to get list of columns, {0}]
 				s_stringMgr.getString("editWhereColsSheet.unableToEdit", ex));
 		}
-
+		String unambiguousname = 
+            ContentsTab.getUnambiguousTableName(session, 
+                                                _objectInfo.getQualifiedName());
 		_editWhereColsPanel =
-			new EditWhereColsPanel(columnNames,  _objectInfo.getQualifiedName(),
-				ContentsTab.getUnambiguousTableName(session, _objectInfo.getQualifiedName()));
+			new EditWhereColsPanel(session,
+                                   (ITableInfo)_objectInfo,
+                                   columnNames,  
+                                   unambiguousname);
 
 		final JScrollPane sp = new JScrollPane(_editWhereColsPanel);
 		sp.setBorder(BorderFactory.createEmptyBorder());
