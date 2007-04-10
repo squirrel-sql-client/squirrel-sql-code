@@ -58,4 +58,40 @@ public interface OracleSQL {
         "group by s.sno, s.SNAME, s.AGE " +
         "having max(case when t.cno = 'CS112' " +
         "                then 1 else 0 end) = 0; ";        
+    
+    public final static String NO_SEP_SLASH_SQL = 
+        "/*==============================================================*/\n" +
+        "/* Database name:  FOOB                                         */\n" +
+        "/* DBMS name:      ORACLE Version 8i2 (8.1.6)                   */\n" +
+        "/* Created on:     4/1/2005 2:51:03 PM                          */\n" +
+        "/*==============================================================*/\n" +
+        "\n" +
+        "\n" +
+        "\n" +
+        "\n" +
+        "/*==============================================================*/\n" +
+        "/* Table : FOOB_CAB                                             */\n" +
+        "/*==============================================================*/\n" +
+        "\n" +
+        "\n" +
+        "create table FOOB_CAB  (\n" +
+        "   CABID                INTEGER                          not null,\n" +
+        "   Name                 VARCHAR2(100)                    not null,\n" +
+        "   Description          CLOB,\n" +
+        "   constraint PK_FOOB_CAB primary key (ALCID)\n" +
+        ")\n" +
+        "/\n" +
+        "\n" +
+        "\n" +
+        "/*==============================================================*/\n" +
+        "/* Table : FOOB_Add12EmakeTypo                                  */\n" +
+        "/*==============================================================*/\n" +
+        "\n" +
+        "\n" +
+        "create table FOOB_Add12EmakeTypo  (\n" +
+        "   Add12EmakeTypo       VARCHAR2(35)                     not null,\n" +
+        "   Description          VARCHAR2(255),\n" +
+        "   constraint PK_FOOB_Add12EmakeTypo primary key (Add12EmakeTypo)\n" +
+        ")\n" +
+        "/\n";        
 }

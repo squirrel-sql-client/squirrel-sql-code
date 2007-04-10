@@ -79,6 +79,14 @@ public class OracleQueryTokenizerTest extends TestCase
         qt.setScriptToTokenize(ANON_PROC_EXEC);
         SQLUtil.checkQueryTokenizer(qt, 1);
     }    
+
+    public void testNoSepSlash() {
+        qt = new OracleQueryTokenizer(_prefs);
+        qt.setScriptToTokenize(NO_SEP_SLASH_SQL);
+        SQLUtil.checkQueryTokenizer(qt, 2);        
+    }    
+    
+    
     
     private static void createSQLFile() throws IOException {
         if (tmpFilename != null) {
@@ -100,7 +108,8 @@ public class OracleQueryTokenizerTest extends TestCase
         out.println(SELECT_DUAL);
         out.println();
         out.println(STUDENTS_NOT_TAKING_CS112);
-        out.println();
+        //out.println();
+        //out.println(NO_SEP_SLASH_SQL);
         out.close();
         tmpFilename = f.getAbsolutePath();
         System.out.println("tmpFilename="+tmpFilename);
