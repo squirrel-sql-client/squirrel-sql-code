@@ -33,7 +33,7 @@ public class MockResultSet implements ResultSet {
 	/**
 	 * ResultSetMetaData describing this result.
 	 */
-	MockResultSetMetaData rsmd = null;
+	ResultSetMetaData rsmd = null;
 	
 	/**
 	 * The TableColumnInfos that describe the columns of the result.
@@ -44,7 +44,7 @@ public class MockResultSet implements ResultSet {
 	 * The simulated results from the "database"
 	 */
 	ArrayList rowData = new ArrayList();
-	
+    
 	/** 
 	 * The index into rowData of the next row to be used to return column 
 	 * values
@@ -54,6 +54,10 @@ public class MockResultSet implements ResultSet {
 	public MockResultSet() {
 	}
 	
+    public void setMetaData(ResultSetMetaData md) {
+        rsmd = md;
+    }
+    
 	/**
 	 * 
 	 * @param infos an array of TableColumnInfo items that describe the columns
@@ -316,9 +320,8 @@ public class MockResultSet implements ResultSet {
 		return rsmd;
 	}
 
-	public Object getObject(int arg0) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+	public Object getObject(int column) throws SQLException {
+		return currentRow()[column-1];
 	}
 
 	public Object getObject(String arg0) throws SQLException {
@@ -395,9 +398,14 @@ public class MockResultSet implements ResultSet {
 		return null;
 	}
 
-	public Timestamp getTimestamp(int arg0) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+	public Timestamp getTimestamp(int column) throws SQLException {
+	    Object date = getObject(column);
+        if (date instanceof java.util.Date) {
+            long time = ((java.util.Date)date).getTime();
+            return new Timestamp(time);
+        } else {
+            return (Timestamp)date;
+        }
 	}
 
 	public Timestamp getTimestamp(String arg0) throws SQLException {

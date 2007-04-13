@@ -30,6 +30,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponent
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeBlob;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeClob;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeDate;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeTimestamp;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -216,7 +217,11 @@ public class ResultSetReader
 						break;
 
 					case Types.DATE :
-						row[i] = DataTypeDate.staticReadResultSet(_rs, idx, false);
+                        if (DataTypeDate.getReadDateAsTimestamp()) {
+                            row[i] = _rs.getTimestamp(idx);
+                        } else {
+                            row[i] = DataTypeDate.staticReadResultSet(_rs, idx, false);
+                        }
 						break;
 
 					case Types.TIMESTAMP :
