@@ -257,6 +257,9 @@ public class StringUtilities
     }
     
     public static Byte[] getByteArray(byte[] bytes) {
+        if (bytes == null || bytes.length == 0 ) {
+            return new Byte[0];
+        }
         Byte[] result = new Byte[bytes.length]; 
         for (int i = 0; i < bytes.length; i++) {
             result[i] = Byte.valueOf(bytes[i]);

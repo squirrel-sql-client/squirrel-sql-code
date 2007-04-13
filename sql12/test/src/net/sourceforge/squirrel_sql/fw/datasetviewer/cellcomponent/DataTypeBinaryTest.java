@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
+
 /*
  * Copyright (C) 2006 Rob Manning
  * manningr@users.sourceforge.net
@@ -34,5 +36,21 @@ public class DataTypeBinaryTest extends AbstractDataTypeTest {
 	public void testTextComponents() {
 		testTextComponents(iut);
 	}
+    
+    public void testAreEqual() {
+        String val1Str = "value1";
+        String val2Str = "value2";
+        Byte[] val1ByteArr = StringUtilities.getByteArray(val1Str.getBytes());
+        Byte[] val2ByteArr = StringUtilities.getByteArray(val2Str.getBytes());
+        iut.areEqual(null, null);
+        iut.areEqual(val1Str, val2Str);
+        iut.areEqual(val1ByteArr, val2ByteArr);
+        iut.areEqual(null, val2Str);
+        iut.areEqual(val1Str, null);
+        iut.areEqual(val1ByteArr, null);
+        iut.areEqual(val1Str, val2ByteArr);
+        iut.areEqual(null, val2ByteArr);
+        iut.areEqual(val1ByteArr, val2Str);
+    }
 
 }
