@@ -368,7 +368,14 @@ public class PopupEditableIOPanel extends JPanel
 
 		if (e.getActionCommand().equals("browse")) {
 			JFileChooser chooser = new JFileChooser();
-
+			String filename = fileNameField.getText();
+            if (filename != null && !"".equals(filename)) {
+                File f = new File(filename);
+                String path = f.getAbsolutePath();
+                if (path != null && !"".equals(path)) {
+                    chooser.setCurrentDirectory(new File(path));
+                }
+            }
 			int returnVal = chooser.showOpenDialog(this);
 			if(returnVal == JFileChooser.APPROVE_OPTION) {
 				//	System.out.println("You chose to open this file: " +
