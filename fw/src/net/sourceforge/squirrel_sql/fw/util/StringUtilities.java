@@ -166,7 +166,7 @@ public class StringUtilities
 			return new String[0];
 		}
 
-		final List result = new ArrayList();
+		final List<String> result = new ArrayList<String>();
 		String elem = null;
 		int i = 0, j = 0;
 		while (j != -1 && j < len)
@@ -179,7 +179,7 @@ public class StringUtilities
 				result.add(elem);
 			}
 		}
-		return (String[])result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
     
     /**
@@ -254,6 +254,15 @@ public class StringUtilities
        }
 
        return curPos;
+    }
+    
+    public static Byte[] getByteArray(byte[] bytes) {
+        Byte[] result = new Byte[bytes.length]; 
+        for (int i = 0; i < bytes.length; i++) {
+            result[i] = Byte.valueOf(bytes[i]);
+        }
+
+        return result;
     }
     
 }
