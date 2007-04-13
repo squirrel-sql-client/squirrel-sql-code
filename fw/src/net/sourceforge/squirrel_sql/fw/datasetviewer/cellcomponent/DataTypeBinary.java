@@ -114,6 +114,14 @@ public class DataTypeBinary
 	public boolean areEqual(Object obj1, Object obj2) {
         Byte[] b1 = null;
         Byte[] b2 = null;
+        if (obj1 == null && obj2 == null) {
+            return true;
+        }
+        if ( (obj1 != null && obj2 == null) 
+                || (obj1 == null && obj2 != null) ) 
+        {
+            return false;
+        }
         if (obj1 instanceof Byte[]) {
             b1 = (Byte[])obj1;
         } else {
