@@ -124,7 +124,11 @@
 	</target>		
 	
 	<!-- create the source archive for this snapshot -->
-	<target name="createsourcearchive" depends="cvsexport">
+	<target name="createsourcearchive">  <!-- depends="cvsexport"> -->
+		<!-- Copy the (potentially) modified Version.java over the cvsexport'd one -->
+		<copy file="${version.dest.filename}" 
+		      toFile="${dist.dir}/src/sql12/app/src/net/sourceforge/squirrel_sql/client/Version.java"/>
+
 		 <zip destfile="${source.zip.file}"
 		       basedir="${dist.dir}/src"
 		       update="true"
