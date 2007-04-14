@@ -34,6 +34,15 @@
 		<property name="deprecation" value="on"/>
 		<property name="targetVM" value="1.5"/>
 
+        <condition property="appversion" 
+        		   value="${squirrel.version}" 
+        	       else = "Non-Release Build">
+        	
+            <isset property="${squirrel.version}"/>
+        
+        </condition>
+
+
 		<available property="htmlsummary.present" file="${html_summary_file}"/>
 		
 		<property environment="env"/>
@@ -197,11 +206,23 @@
 			</fileset>
 		</copy>
 
-		<jar jarfile="${core_dist_lib_dir}/${name}.jar" compress="false"
-				manifest="build/MANIFEST.MF">
+		<jar jarfile="${core_dist_lib_dir}/${name}.jar" compress="false">
+				<!--  manifest="build/MANIFEST.MF"> -->
+			<manifest> <!-- file="MANIFEST.MF" -->
+				<attribute name="Manifest-Version" value="1.0"/>
+				<!-- Todo: It sure would be nice not to have to hard-code this.  The 
+				           problem is, there isn't a generic way to determine what
+				           all of the app library files and plugin library files are.
+				  -->
+				<attribute name="Class-Path" value="lib/antlr-2.7.5H3.jar lib/commons-cli.jar lib/commons-logging-1.0.4.jar lib/forms.jar lib/fw.jar lib/hibernate3.jar lib/jxl.jar lib/log4j.jar lib/nanoxml-2.1.jar lib/openide.jar lib/openide-loaders.jar lib/org-netbeans-modules-editor-fold.jar lib/org-netbeans-modules-editor.jar lib/org-netbeans-modules-editor-lib.jar lib/org-netbeans-modules-editor-util.jar lib/syntax.jar "/>
+				<attribute name="Main-Class" value="net.sourceforge.squirrel_sql.client.Main"/>
+				<attribute name="Application-Version" value="${appversion}"/>
+				<attribute name="Built-By" value="${user.name}"/>
+			</manifest>
 			<fileset dir="${core_obj_dir}">
 				<include name="net/sourceforge/squirrel_sql/client/**/*.*"/>
 			</fileset>
+			
 		</jar>
 
 		<copy todir="${core_dist_dir}" >
