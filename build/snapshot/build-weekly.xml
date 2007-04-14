@@ -250,9 +250,14 @@
 			<fileset dir="${bv.install.dir}" defaultexcludes="no">
 			</fileset>
 		</delete>		
+		
+		<!-- failonerror is false for now because IzPack 3.9.0 has an issue 
+		     processing the shortcut panel (Bug #8912 NPE in Automation) but
+		     the install seems to be ok up until that point.  failonerror can
+		     be set back to true once the bug is fixed -->
 		<java jar="${install.jar.file}"
 		      fork="true"
-			  failonerror="true"
+			  failonerror="false"
 			  maxmemory="128m"
 	    >
 			<arg value="${auto.install.file}"/>
@@ -317,6 +322,11 @@
 		</antcall>	
 	</target>
 	
+	<target name="runOtherInstaller" depends="init">
+		<antcall target="runinstaller">
+			<param name="install.jar.file" value="${dist.dir}/${name}-${squirrel.version}-install.jar"/>
+		</antcall>	
+	</target>
 	
 	<!-- This does the work of checking out or updating the source, building the
 	     distribution and the install jar. -->
@@ -349,9 +359,7 @@
 		<antcall target="createinstallscript"/>
 		
 		<!-- Run the Windows/Linux installer -->
-		<antcall target="runinstaller">
-			<param name="install.jar.file" value="${dist.dir}/${name}-${squirrel.version}-install.jar"/>
-		</antcall>
+		<antcall target="runOtherInstaller"/>
 		
 		<antcall target="launchsquirrel"/>
 				
