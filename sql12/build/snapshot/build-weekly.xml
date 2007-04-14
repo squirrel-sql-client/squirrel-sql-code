@@ -195,9 +195,12 @@
 		<echo message="Executing build file ${build.file.dest.dir}/build.xml target=${build.target}" />
 		<ant antfile="${build.file.dest.dir}/build.xml" 
 			 target="${build.target}"
-			 inheritAll="false"
-		     dir="${cvs.dest.dir}/${project.module}"
-	    />	
+		     inheritAll="false"
+			 dir="${cvs.dest.dir}/${project.module}">
+			
+			<property name="squirrel.version" value="${squirrel.version}"/>
+			
+		</ant>
 	</target>
 	
 	<!-- Launches the application for manual build verification testing -->
