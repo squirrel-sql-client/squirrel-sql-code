@@ -15,7 +15,7 @@
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.2</string>
+    <string>@SquirrelVersion@</string>
     <key>CFBundleSignature</key>
     <string>????</string>
     <key>CFBundleVersion</key>
@@ -27,7 +27,7 @@
         <key>JVMVersion</key>
         <string>1.5+</string>
         <key>ClassPath</key>
-        <string>$JAVAROOT/squirrel-sql.jar:$JAVAROOT/lib/antlr-2.7.5H3.jar:$JAVAROOT/lib/commons-cli.jar:$JAVAROOT/lib/commons-logging-1.0.4.jar:$JAVAROOT/lib/forms.jar:$JAVAROOT/lib/fw.jar:$JAVAROOT/lib/hibernate3.jar:$JAVAROOT/lib/jxl.jar:$JAVAROOT/lib/log4j.jar:$JAVAROOT/lib/nanoxml-2.2.3.jar</string>
+        <string>$JAVAROOT/squirrel-sql.jar:$JAVAROOT/lib/antlr-2.7.5H3.jar:$JAVAROOT/lib/commons-cli.jar:$JAVAROOT/lib/commons-logging-1.0.4.jar:$JAVAROOT/lib/forms.jar:$JAVAROOT/lib/fw.jar:$JAVAROOT/lib/hibernate3.jar:$JAVAROOT/lib/jxl.jar:$JAVAROOT/lib/log4j.jar:$JAVAROOT/lib/nanoxml-2.2.3.jar:$JAVAROOT/lib/openide-loaders.jar:$JAVAROOT/lib/openide.jar:$JAVAROOT/lib/org-netbeans-modules-editor-fold.jar:$JAVAROOT/lib/org-netbeans-modules-editor-lib.jar:$JAVAROOT/lib/org-netbeans-modules-editor-util.jar:$JAVAROOT/lib/org-netbeans-modules-editor.jar:$JAVAROOT/lib/syntax.jar</string>
         <key>WorkingDirectory</key>
         <string>$JAVAROOT</string>
         <key>Properties</key>
