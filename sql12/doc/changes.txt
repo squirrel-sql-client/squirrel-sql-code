@@ -6,6 +6,8 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+- Added 'Use PK' button on the "Edit Where clause" dialog which will cause only
+  PK columns to be used for updating rows in the table contents panel.
 - Added "All Objects" to alias properties.
 - Use the last directory that a file was imported from when importing 
   additional files for binary fields.
