@@ -34,6 +34,9 @@
 		<property name="deprecation" value="on"/>
 		<property name="targetVM" value="1.5"/>
 
+		<echo message="squirrel.version: ${squirrel.version}"/>
+		<echo message="appversion: ${appversion}"/>
+
         <condition property="appversion" 
         		   value="${squirrel.version}" 
         	       else = "Non-Release Build">
