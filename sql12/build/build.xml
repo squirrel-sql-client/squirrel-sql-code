@@ -38,7 +38,7 @@
         		   value="${squirrel.version}" 
         	       else = "Non-Release Build">
         	
-            <isset property="${squirrel.version}"/>
+            <isset property="squirrel.version"/>
         
         </condition>
 
@@ -207,7 +207,6 @@
 		</copy>
 
 		<jar jarfile="${core_dist_lib_dir}/${name}.jar" compress="false">
-				<!--  manifest="build/MANIFEST.MF"> -->
 			<manifest> <!-- file="MANIFEST.MF" -->
 				<attribute name="Manifest-Version" value="1.0"/>
 				<!-- Todo: It sure would be nice not to have to hard-code this.  The 
