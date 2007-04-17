@@ -282,8 +282,9 @@ public class SQLPanel extends JPanel
 		{
 			throw new IllegalArgumentException("null ISQLExecutionListener passed");
 		}
-		_listeners.add(ISQLExecutionListener.class, lis);
-	}
+		//_listeners.add(ISQLExecutionListener.class, lis);
+      _sqlExecPanel.addSQLExecutionListener(lis);
+   }
 
 	/**
 	 * Remove an SQL execution listener.
@@ -299,7 +300,8 @@ public class SQLPanel extends JPanel
 		{
 			throw new IllegalArgumentException("null ISQLExecutionListener passed");
 		}
-		_listeners.remove(ISQLExecutionListener.class, lis);
+		//_listeners.remove(ISQLExecutionListener.class, lis);
+      _sqlExecPanel.addSQLExecutionListener(lis);
 	}
 
 	/**
