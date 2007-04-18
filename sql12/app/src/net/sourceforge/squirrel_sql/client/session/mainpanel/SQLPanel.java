@@ -301,7 +301,7 @@ public class SQLPanel extends JPanel
 			throw new IllegalArgumentException("null ISQLExecutionListener passed");
 		}
 		//_listeners.remove(ISQLExecutionListener.class, lis);
-      _sqlExecPanel.addSQLExecutionListener(lis);
+      _sqlExecPanel.removeSQLExecutionListener(lis);
 	}
 
 	/**
