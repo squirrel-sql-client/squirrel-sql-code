@@ -73,7 +73,7 @@ class MainFrameToolBar extends ToolBar
    private ToggleAutoCommitAction _toggleAutoCommitAction;
 
    private boolean _dontReactToSessionDropDownAction = false;
-
+   
    /**
     * ctor.
     *
@@ -143,7 +143,7 @@ class MainFrameToolBar extends ToolBar
 		{
 			super();
 			_myApp = app;
-			final AliasesDropDownModel model = new AliasesDropDownModel(app);
+			final AliasesDropDownModel model = new AliasesDropDownModel(app, this);
 			setModel(model);
 
 			// Under JDK1.4 the first item in a JComboBox
@@ -176,7 +176,7 @@ class MainFrameToolBar extends ToolBar
 			try
 			{
 				Object obj = getSelectedItem();
-				if (obj instanceof SQLAlias)
+				if (obj instanceof SQLAlias && this.isEnabled())
 				{
 					new ConnectToAliasCommand(_myApp, (SQLAlias)obj).execute();
 				}
@@ -197,15 +197,16 @@ class MainFrameToolBar extends ToolBar
 	private static class AliasesDropDownModel extends SortedComboBoxModel
 	{
 		private IApplication _myApp;
-
+        private AliasesDropDown _aliasDropDown;
 		/**
 		 * Default ctor. Listen to the <TT>DataCache</TT> object for additions
 		 * and removals of aliases from the cache.
 		 */
-		public AliasesDropDownModel(IApplication app)
+		public AliasesDropDownModel(IApplication app, AliasesDropDown drop)
 		{
 			super();
 			_myApp = app;
+            _aliasDropDown = drop;
 			load();
 			//_app.getDataCache().addAliasesListener(new MyAliasesListener(this));
 		}
@@ -229,7 +230,12 @@ class MainFrameToolBar extends ToolBar
 		 */
 		private void addAlias(ISQLAlias alias)
 		{
+            _aliasDropDown.setEnabled(false);
 			addElement(alias);
+            if (_aliasDropDown.getModel().getSize() > 0) {
+                _aliasDropDown.setSelectedIndex(0);
+            }
+            _aliasDropDown.setEnabled(true);            
 		}
 
 		/**
@@ -239,7 +245,12 @@ class MainFrameToolBar extends ToolBar
 		 */
 		private void removeAlias(ISQLAlias alias)
 		{
+            _aliasDropDown.setEnabled(false);
 			removeElement(alias);
+            if (_aliasDropDown.getModel().getSize() > 0) {
+                _aliasDropDown.setSelectedIndex(0);
+            }
+            _aliasDropDown.setEnabled(true);
 		}
 	}
 
