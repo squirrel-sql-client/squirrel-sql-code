@@ -861,6 +861,8 @@ public class CellComponentFactory {
                     // compliant (such as MySQL or PostgreSQL).  If the user 
                     // prefers it, use the TIMESTAMP data type instead of DATE.
                     if (DataTypeDate.getReadDateAsTimestamp()) {
+                        colDef.setSqlType(Types.TIMESTAMP);
+                        colDef.setSqlTypeName("TIMESTAMP");
                         dataTypeComponent = new DataTypeTimestamp(table, colDef);
                     } else {
                         dataTypeComponent = new DataTypeDate(table, colDef);

@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
 import java.sql.Types;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeDate;
 /**
  * This defines the display information for a column.
  *
@@ -158,6 +159,10 @@ public class ColumnDisplayDefinition
 		return _sqlType;
 	}
 
+    public void setSqlType(int sqlType) {
+        _sqlType = sqlType;
+    }
+    
 	/**
 	 * Return the column data type name.
 	 *
@@ -168,6 +173,10 @@ public class ColumnDisplayDefinition
 		return _sqlTypeName;
 	}
 
+    public void setSqlTypeName(String sqlTypeName) {
+        _sqlTypeName = sqlTypeName;
+    }
+    
 	/**
 	 * Return a boolean indicating column is nullable or not.
 	 *
@@ -274,6 +283,10 @@ public class ColumnDisplayDefinition
 
 		_sqlType = sqlType;
 		_sqlTypeName = sqlTypeName;
+        if (sqlType == Types.DATE && DataTypeDate.getReadDateAsTimestamp()) {
+            _sqlType = Types.TIMESTAMP;
+            _sqlTypeName = "TIMESTAMP";
+        }
 		_isNullable = isNullable;
 		_columnSize = columnSize;
 		_precision = precision;
