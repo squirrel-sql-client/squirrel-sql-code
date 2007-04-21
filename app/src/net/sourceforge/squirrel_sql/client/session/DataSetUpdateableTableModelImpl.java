@@ -14,6 +14,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
@@ -307,10 +308,10 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
          // WHERE clause.  Any field that can be used there will return something
          // of the form "<fieldName> = <value>", and a field that cannot be
          // used will return a null or zero-length string.
-         String databaseProductName = _session.getSQLConnection().getSQLMetaData().getDatabaseProductName();
-
-         if (CellComponentFactory.getWhereClauseValue(colDefs[col], values[col], databaseProductName) == null 
-                 || CellComponentFactory.getWhereClauseValue(colDefs[col], values[col], databaseProductName).length() == 0) 
+         ISQLDatabaseMetaData md = _session.getMetaData();
+         
+         if (CellComponentFactory.getWhereClauseValue(colDefs[col], values[col], md) == null 
+                 || CellComponentFactory.getWhereClauseValue(colDefs[col], values[col], md).length() == 0) 
          {
              if (count > 1) {
                  // i18n[DataSetUpdateableTableModelImpl.info.identicalrows=This operation will result in {0} identical rows.\nDo you wish to proceed?]
@@ -331,7 +332,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
          // no problems found, so do not return a warning message.
          return null;	// nothing for user to worry about
       }
-      catch (SQLException e)
+      catch (Exception e)
       {
          throw new  RuntimeException(e);
       }
@@ -560,8 +561,8 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
                value = null;
 
             // do different things depending on data type
-            String databaseProductName = _session.getSQLConnection().getSQLMetaData().getDatabaseProductName();
-            String clause = CellComponentFactory.getWhereClauseValue(colDefs[i], value, databaseProductName);
+            ISQLDatabaseMetaData md = _session.getMetaData();
+            String clause = CellComponentFactory.getWhereClauseValue(colDefs[i], value, md);
 
             if (clause != null && clause.length() > 0)
                if (whereClause.length() == 0)
@@ -582,7 +583,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
          whereClause.insert(0, " WHERE ");
          return whereClause.toString();
       }
-      catch (SQLException e)
+      catch (Exception e)
       {
          throw new RuntimeException(e);
       }

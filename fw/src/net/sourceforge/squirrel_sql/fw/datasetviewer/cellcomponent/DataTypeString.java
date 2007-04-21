@@ -17,42 +17,41 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.*;
-import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
-
-import java.util.HashMap;
-import java.util.Iterator;
-
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.IOException;
-
-import javax.swing.JTextField;
-import javax.swing.JTextArea;
-import javax.swing.JTable;
-import javax.swing.JCheckBox;
-import javax.swing.BorderFactory;
-import javax.swing.SwingUtilities;
-import javax.swing.text.JTextComponent;
-import javax.swing.JScrollPane;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Types;
+import java.util.HashMap;
+import java.util.Iterator;
+
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.text.JTextComponent;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
-import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 
 /**
@@ -589,7 +588,7 @@ public class DataTypeString
 	 * 	"columnName is null"
 	 * or whatever is appropriate for this column in the database.
 	 */
-	public String getWhereClauseValue(Object value, String databaseProductName) {
+	public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
 		// first do special check to see if we should use LONGVARCHAR
 		// in the WHERE clause.
 		// (Oracle does not allow this.)
@@ -604,7 +603,7 @@ public class DataTypeString
 			// Since being truncated is the same as needing to re-read,
 			// only use this in the WHERE clause if we do not need to re-read
 			if ( ! needToReRead(value))
-				return _colDef.getLabel() + "='" + escapeLine(value.toString(), databaseProductName) + "'";
+				return _colDef.getLabel() + "='" + escapeLine(value.toString(), md) + "'";
 			else return "";	// value is truncated, so do not use in WHERE clause
 		}
 	}
@@ -655,7 +654,7 @@ public class DataTypeString
 	 * single quote used by SQL.  The escape sequence is that a single quote
 	 * is represented by two single quotes in a row.
 	 */
-	static public String escapeLine(String s, String databaseProductName) {
+	static public String escapeLine(String s, ISQLDatabaseMetaData md) {
 		String retvalue = s;
 		if (s.indexOf ("'") != -1 ) {
 			StringBuffer hold = new StringBuffer();
@@ -670,7 +669,7 @@ public class DataTypeString
 			}
 			retvalue = hold.toString();
 		}
-		return DatabaseSpecificEscape.escapeSQL(retvalue, databaseProductName);
+		return DatabaseSpecificEscape.escapeSQL(retvalue, md);
 	}
 
 	/*

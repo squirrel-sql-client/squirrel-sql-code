@@ -25,6 +25,8 @@ import java.io.IOException;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
@@ -168,7 +170,7 @@ public interface IDataTypeComponent
 	 * 	"columnName is null"
 	 * or whatever is appropriate for this column in the database.
 	 */
-	public String getWhereClauseValue(Object value, String databaseProductName);
+	public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md);
 	
 	
 	/**

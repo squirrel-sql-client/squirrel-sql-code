@@ -35,6 +35,7 @@ import java.sql.ResultSet;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 
 /**
  * @author gwg
@@ -394,7 +395,7 @@ public class DataTypeByte
 	 * 	"columnName is null"
 	 * or whatever is appropriate for this column in the database.
 	 */
-	public String getWhereClauseValue(Object value, String databaseProductName) {
+	public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
 		if (value == null || value.toString() == null || value.toString().length() == 0)
 			return _colDef.getLabel() + " IS NULL";
 		else

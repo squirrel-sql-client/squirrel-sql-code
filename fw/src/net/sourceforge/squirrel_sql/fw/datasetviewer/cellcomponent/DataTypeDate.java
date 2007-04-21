@@ -46,9 +46,10 @@ import javax.swing.text.JTextComponent;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -530,7 +531,7 @@ public class DataTypeDate
 	 * 	"columnName is null"
 	 * or whatever is appropriate for this column in the database.
 	 */
-	public String getWhereClauseValue(Object value, String databaseProductName)
+	public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md)
 	{
 		if (value == null || value.toString() == null || value.toString().length() == 0)
 		{
@@ -551,10 +552,7 @@ public class DataTypeDate
                 // treat it like a time - no date component
                 return _colDef.getLabel() + "={t '" + value.toString() + "'}";
             } else {
-                // treat it like a date - no time component
-                String oracleProductName = 
-                    SQLDatabaseMetaData.IDBMSProductNames.ORACLE;
-                if (oracleProductName.equalsIgnoreCase(databaseProductName)) {
+                if (DialectFactory.isOracle(md)) {
                     // Oracle stores time information in java.sql.Types.Date columns
                     // This tells Oracle that we are only talking about the date part.                    
                     return "trunc(" + _colDef.getLabel() + ")={d '" + value.toString() + "'}";
