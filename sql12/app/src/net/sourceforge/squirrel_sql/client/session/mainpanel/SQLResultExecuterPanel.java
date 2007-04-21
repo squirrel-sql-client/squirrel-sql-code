@@ -278,7 +278,19 @@ public class SQLResultExecuterPanel extends JPanel
 	{
 		if (sql != null && sql.trim().length() > 0)
 		{
+            String origSQL = sql; 
 	        sql = fireSQLToBeExecutedEvent(sql);
+            
+            // This can happen if an impl of ISQLExecutionListener returns null 
+            // from the statementExecuting API method, to indicate that the SQL 
+            // shouldn't be executed.            
+            if (sql == null) {
+                s_log.info(
+                    "executeSQL: An ISQLExecutionListener veto'd execution of "+
+                    "the following SQL: "+origSQL);
+                return;
+            }
+            
             ISQLExecutionListener[] executionListeners =
                 _listeners.getListeners(ISQLExecutionListener.class);
             SQLExecutionHandler handler = new SQLExecutionHandler(null);

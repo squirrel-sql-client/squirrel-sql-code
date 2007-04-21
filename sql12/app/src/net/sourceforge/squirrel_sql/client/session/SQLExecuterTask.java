@@ -91,6 +91,12 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
 
    public SQLExecuterTask(ISession session, String sql, ISQLExecuterHandler handler, ISQLExecutionListener[] executionListeners)
    {
+      if (sql == null) {
+          if (s_log.isDebugEnabled()) {
+              s_log.debug("init(): expected non-null sql");
+              return;
+          }
+      }
       _session = session;
       _schemaInfoUpdateCheck = new SchemaInfoUpdateCheck(_session);
       _sql = sql;
@@ -119,6 +125,13 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
    
    public void run()
    {
+       if (_sql == null) {
+           if (s_log.isDebugEnabled()) {
+               s_log.debug("init(): expected non-null sql.  Skipping execution");
+           }
+           return;
+       }
+       
       String lastExecutedStatement = null;
       int statementCount = 0;
       final SessionProperties props = _session.getProperties();
