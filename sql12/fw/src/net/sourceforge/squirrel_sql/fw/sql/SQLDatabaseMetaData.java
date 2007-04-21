@@ -230,9 +230,6 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		{
             boolean isSQLServer = 
                 DialectFactory.isSyBase(this) || DialectFactory.isMSSQLServer(this);
-            
-			final String driverName = getDriverName();
-            
 			if (isSQLServer)
 			{
 				value = "";
@@ -254,7 +251,6 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
         String value = (String)_cache.get(key);
         if (value == null)
         {
-            final String driverName = getDriverName();
             if (DialectFactory.isDB2(this) || DialectFactory.isOracle(this))
             {
                 value = "CASCADE";
@@ -288,7 +284,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 
 		final boolean isDB2 = DialectFactory.isDB2(this);
 
-		final ArrayList list = new ArrayList();
+		final ArrayList<String> list = new ArrayList<String>();
 		ResultSet rs = privateGetJDBCMetaData().getSchemas();
 		try
 		{
@@ -305,7 +301,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
     				{
     					hasSysFun = true;
     				}
-    				list.add(row[0]);
+    				list.add((String)row[0]);
     			}
             }
 		}
@@ -331,7 +327,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 //		value = (String[])list.toArray(new String[list.size()]);
 //		_cache.put(key, value);
 
-		return (String[])list.toArray(new String[list.size()]);
+		return list.toArray(new String[list.size()]);
 	}
 
     /* (non-Javadoc)
@@ -474,19 +470,14 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
         return value.booleanValue();                
     }
         
-    /* (non-Javadoc)
+    
+    /* Not cached.
+     * (non-Javadoc)
      * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getCatalogs()
      */
     public synchronized String[] getCatalogs() throws SQLException
 	{
-//		final String key = "getCatalogs";
-//		String[] value = (String[])_cache.get(key);
-//		if (value != null)
-//		{
-//			return value;
-//		}
-
-		final ArrayList list = new ArrayList();
+		final ArrayList<String> list = new ArrayList<String>();
 		ResultSet rs = privateGetJDBCMetaData().getCatalogs();
 		try
 		{
@@ -495,7 +486,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
     			Object[] row = null;
     			while ((row = rdr.readRow()) != null)
     			{
-    				list.add(row[0]);
+    				list.add(row[0].toString());
     			}
             }
 		}
@@ -504,10 +495,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
          close(rs);
 		}
 
-//		value = (String[])list.toArray(new String[list.size()]);
-//		_cache.put(key, value);
-
-		return (String[])list.toArray(new String[list.size()]);
+		return list.toArray(new String[list.size()]);
 	}
 
     /* (non-Javadoc)
@@ -747,7 +735,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		throws SQLException
 	{
 		final DatabaseMetaData md = privateGetJDBCMetaData();
-		final ArrayList list = new ArrayList();
+		final ArrayList<DataTypeInfo> list = new ArrayList<DataTypeInfo>();
 		final ResultSet rs = md.getTypeInfo();
 		try
 		{
@@ -783,7 +771,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		{
          close(rs);
       }
-		return (DataTypeInfo[])list.toArray(new DataTypeInfo[list.size()]);
+		return list.toArray(new DataTypeInfo[list.size()]);
 	}
 
    private void close(ResultSet rs)
@@ -811,7 +799,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
      throws SQLException
   {
      DatabaseMetaData md = privateGetJDBCMetaData();
-     ArrayList list = new ArrayList();
+     ArrayList<ProcedureInfo> list = new ArrayList<ProcedureInfo>();
      ResultSet rs = md.getProcedures(catalog, schemaPattern, procedureNamePattern);
      int count = 0;
      try
@@ -841,7 +829,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
         close(rs);
 
      }
-     return (IProcedureInfo[]) list.toArray(new IProcedureInfo[list.size()]);
+     return list.toArray(new IProcedureInfo[list.size()]);
   }
 
     /* (non-Javadoc)
@@ -860,7 +848,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
         
 		// Use a set rather than a list as some combinations of MS SQL and the
 		// JDBC/ODBC return multiple copies of each table type.
-		final Set tableTypes = new TreeSet();
+		final Set<String> tableTypes = new TreeSet<String>();
 		final ResultSet rs = md.getTableTypes();
 		if (rs != null)
 		{
@@ -919,9 +907,14 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
             if (tableTypes.contains("SEQUENCE")) {
                 tableTypes.remove("SEQUENCE");
             }
+            // There are many of these "tables", that PostgreSQL throws 
+            // SQLExceptions for whenever a table-like operation is attempted. 
+            if (tableTypes.contains("SYSTEM INDEX")) {
+                tableTypes.remove("SYSTEM INDEX");
+            }
 		}
 
-		value = (String[])tableTypes.toArray(new String[tableTypes.size()]);
+		value = tableTypes.toArray(new String[tableTypes.size()]);
 		_cache.put(key, value);
 		return value;
 	}
@@ -941,7 +934,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 
       final DatabaseMetaData md = privateGetJDBCMetaData();
       final String dbDriverName = getDriverName();
-      Set list = new TreeSet();
+      Set<ITableInfo> list = new TreeSet<ITableInfo>();
       boolean isSQLServer = 
           DialectFactory.isSyBase(this) || DialectFactory.isMSSQLServer(this);
       if (isSQLServer && schemaPattern == null)
@@ -968,13 +961,13 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
                 list.add(tables[j]);
               }
             }
-            return (ITableInfo[]) list.toArray(new ITableInfo[list.size()]);
+            return list.toArray(new ITableInfo[list.size()]);
           }
       }
       //Add end
 
 
-      Map nameMap = null;
+      Map<String, ITableInfo> nameMap = null;
       ResultSet superTabResult = null;
       ResultSet tabResult = null;
       try
@@ -989,7 +982,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
                 // we need to find the ITableInfo again for re-ordering.
                 if (superTabResult != null && superTabResult.next())
                 {
-                   nameMap = new HashMap();
+                   nameMap = new HashMap<String, ITableInfo>();
                 }
              }
              catch (Throwable th)
@@ -1058,7 +1051,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
          close(superTabResult);
       }
 
-      return (ITableInfo[]) list.toArray(new ITableInfo[list.size()]);
+      return list.toArray(new ITableInfo[list.size()]);
    }
    
    /* (non-Javadoc)
@@ -1069,7 +1062,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		throws SQLException
 	{
 		DatabaseMetaData md = privateGetJDBCMetaData();
-		ArrayList list = new ArrayList();
+		ArrayList<UDTInfo> list = new ArrayList<UDTInfo>();
 		ResultSet rs = md.getUDTs(catalog, schemaPattern, typeNamePattern, types);
 		try
 		{
@@ -1088,7 +1081,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
          close(rs);
       }
 
-		return (IUDTInfo[])list.toArray(new IUDTInfo[list.size()]);
+		return list.toArray(new IUDTInfo[list.size()]);
 	}
 
    private String getAsString(Object val)
@@ -1199,7 +1192,8 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	public synchronized BestRowIdentifier[] getBestRowIdentifier(ITableInfo ti)
 		throws SQLException
 	{
-		final List results = new ArrayList();
+		final List<BestRowIdentifier> results = 
+            new ArrayList<BestRowIdentifier>();
 
         ResultSet rs = null;
 		try
@@ -1232,7 +1226,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		}
 
 		final BestRowIdentifier[] ar = new BestRowIdentifier[results.size()];
-		return (BestRowIdentifier[])results.toArray(ar);
+		return results.toArray(ar);
 	}
 
 	/* (non-Javadoc)
@@ -1393,8 +1387,10 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	private ForeignKeyInfo[] getForeignKeyInfo(ResultSet rs)
 		throws SQLException
 	{
-		final Map keys = new HashMap();
-		final Map columns = new HashMap();
+		final Map<String, ForeignKeyInfo> keys = 
+            new HashMap<String, ForeignKeyInfo>();
+		final Map<String, ArrayList<ForeignKeyColumnInfo>> columns = 
+            new HashMap<String, ArrayList<ForeignKeyColumnInfo>>();
 
 		try
 		{
@@ -1412,13 +1408,13 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 				if (!keys.containsKey(key))
 				{
 					keys.put(key, fki);
-					columns.put(key, new ArrayList());
+					columns.put(key, new ArrayList<ForeignKeyColumnInfo>());
 				}
 
 				ForeignKeyColumnInfo fkiCol = new ForeignKeyColumnInfo(rdr.getString(8),
 														rdr.getString(8),
 														rdr.getLong(9).intValue());
-				((List)columns.get(key)).add(fkiCol);
+				columns.get(key).add(fkiCol);
 			}
 		}
 		finally
@@ -1427,14 +1423,15 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
       }
 
 		final ForeignKeyInfo[] results = new ForeignKeyInfo[keys.size()];
-		Iterator it = keys.values().iterator();
+		Iterator<ForeignKeyInfo> it = keys.values().iterator();
 		int idx = 0;
 		while (it.hasNext())
 		{
-			final ForeignKeyInfo fki = (ForeignKeyInfo)it.next();
+			final ForeignKeyInfo fki = it.next();
 			final String key = createForeignKeyInfoKey(fki);
-			final List colsList = (List)columns.get(key);
-			final ForeignKeyColumnInfo[] fkiCol = (ForeignKeyColumnInfo[])colsList.toArray(new ForeignKeyColumnInfo[colsList.size()]);
+			final List<ForeignKeyColumnInfo> colsList = columns.get(key);
+			final ForeignKeyColumnInfo[] fkiCol = 
+                colsList.toArray(new ForeignKeyColumnInfo[colsList.size()]);
 			fki.setForeignKeyColumnInfo(fkiCol);
 			results[idx++] = fki;
 		}
@@ -1710,7 +1707,8 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
        ResultSet rs = null;
        try
        {
-          final Map columns = new TreeMap();
+          final Map<Integer, TableColumnInfo> columns = 
+              new TreeMap<Integer, TableColumnInfo>();
           DatabaseMetaData md = privateGetJDBCMetaData();
           rs = md.getColumns(catalog, schema, table, "%");
           final ResultSetColumnReader rdr = new ResultSetColumnReader(rs);
@@ -1745,7 +1743,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
              columns.put(new Integer(10000 * tci.getOrdinalPosition()  + index), tci);
           }
 
-          return (TableColumnInfo[]) columns.values().toArray(new TableColumnInfo[columns.size()]);
+          return columns.values().toArray(new TableColumnInfo[columns.size()]);
 
        }
        finally
@@ -1837,7 +1835,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 			data = "";
 		}
 
-		final List list = new ArrayList();
+		final List<String> list = new ArrayList<String>();
 		final StringTokenizer st = new StringTokenizer(data, ",");
 		while (st.hasMoreTokens())
 		{
@@ -1845,7 +1843,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		}
 		Collections.sort(list);
 
-		return (String[])list.toArray(new String[list.size()]);
+		return list.toArray(new String[list.size()]);
 	}
 
 	/**
