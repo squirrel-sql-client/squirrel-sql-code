@@ -18,8 +18,6 @@ package net.sourceforge.squirrel_sql.plugins.db2;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.sql.SQLException;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
@@ -29,6 +27,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -186,29 +185,26 @@ public class DB2Plugin extends DefaultSessionPlugin {
      */
     public PluginSessionCallback sessionStarted(final ISession session)
     {
-       boolean isDB2 = false;
-       isDB2 = isDB2(session);
-       if (isDB2)
-       {
-           GUIUtils.processOnSwingEventThread(new Runnable() {
-               public void run() {
-                   updateTreeApi(session);
-               }
-           });
+       
+       if (!isPluginSession(session)) {
+           return null;
        }
-       if (false == isDB2)
-       {
-          return null;
-       }
+       GUIUtils.processOnSwingEventThread(new Runnable() {
+           public void run() {
+               updateTreeApi(session);
+           }
+       });
 
        return new PluginSessionCallback()
        {
-          public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+          public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, 
+                                             ISession sess)
           {
              // Supports Session main window only
           }
 
-          public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+          public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, 
+                                                    ISession sess)
           {
              // Supports Session main window only
           }
@@ -217,6 +213,11 @@ public class DB2Plugin extends DefaultSessionPlugin {
 
     }
 
+    @Override
+    protected boolean isPluginSession(ISession session) {
+        return DialectFactory.isDB2(session.getMetaData());
+    }
+    
     private void updateTreeApi(ISession session) {
         
         _treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
@@ -244,19 +245,4 @@ public class DB2Plugin extends DefaultSessionPlugin {
         
     }
     
-    private boolean isDB2(ISession session)
-    {
-        final String DB2 = "db2";
-        String dbms = null;
-        try
-        {
-            dbms = session.getSQLConnection().getSQLMetaData().getDatabaseProductName();
-        }
-        catch (SQLException ex)
-        {
-				s_log.error("Unexpected exception from getDatabaseProductName()", ex);
-        }
-        return dbms != null && dbms.toLowerCase().startsWith(DB2);
-    }
-
 }

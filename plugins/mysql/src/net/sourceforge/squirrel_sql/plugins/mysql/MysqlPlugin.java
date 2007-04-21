@@ -17,22 +17,29 @@ package net.sourceforge.squirrel_sql.plugins.mysql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.SQLException;
-
 import javax.swing.JMenu;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
+import net.sourceforge.squirrel_sql.client.plugin.PluginException;
+import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import net.sourceforge.squirrel_sql.plugins.mysql.action.AlterTableAction;
 import net.sourceforge.squirrel_sql.plugins.mysql.action.AnalyzeTableAction;
 import net.sourceforge.squirrel_sql.plugins.mysql.action.CheckTableAction;
 import net.sourceforge.squirrel_sql.plugins.mysql.action.CopyTableAction;
 import net.sourceforge.squirrel_sql.plugins.mysql.action.CreateDatabaseAction;
 import net.sourceforge.squirrel_sql.plugins.mysql.action.CreateMysqlTableScriptAction;
-//import net.sourceforge.squirrel_sql.plugins.mysql.action.CreateTableAction;
 import net.sourceforge.squirrel_sql.plugins.mysql.action.DropDatabaseAction;
 import net.sourceforge.squirrel_sql.plugins.mysql.action.ExplainSelectTableAction;
 import net.sourceforge.squirrel_sql.plugins.mysql.action.ExplainTableAction;
@@ -52,17 +59,6 @@ import net.sourceforge.squirrel_sql.plugins.mysql.tab.ShowSlaveStatusTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.ShowVariablesTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.TableStatusTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.UserGrantsTab;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
-import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
-import net.sourceforge.squirrel_sql.client.plugin.PluginException;
-import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
-import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 /**
  * MySQL plugin class.
  *
@@ -207,6 +203,7 @@ public class MysqlPlugin extends DefaultSessionPlugin
 
 		_mySQLMenu = createFullMysqlMenu();
 		app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, _mySQLMenu);
+        super.registerSessionMenu(_mySQLMenu);        
 	}
 
 	/**
@@ -223,51 +220,47 @@ public class MysqlPlugin extends DefaultSessionPlugin
    }
 
    /**
-	 * Session has been started. If this is a MySQL session
-	 * then setup MySQL tabs etc.
-	 *
-	 * @param	session		Session that has started.
-	 *
-	 * @return	<TT>true</TT> if session is MySQL in which case this plugin
-	 * 			is interested in it.
-	 */
-	public PluginSessionCallback sessionStarted(final ISession session)
-	{
-      boolean isMysql = false;
-      isMysql = isMysql(session);
-      if (isMysql)
-      {
-          GUIUtils.processOnSwingEventThread(new Runnable() {
-              public void run() {
-                  updateTreeApi(session);
-              }
-          });
-      }
+    * Session has been started. If this is a MySQL session
+    * then setup MySQL tabs etc.
+    *
+    * @param	session		Session that has started.
+    *
+    * @return	<TT>true</TT> if session is MySQL in which case this plugin
+    * 			is interested in it.
+    */
+   public PluginSessionCallback sessionStarted(final ISession session)
+   {
+       if (!isPluginSession(session)) {
+           return null;
+       }
 
-      if(isMysql)
-      {
-         PluginSessionCallback ret = new PluginSessionCallback()
-         {
-            public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
-            {
+       GUIUtils.processOnSwingEventThread(new Runnable() {
+           public void run() {
+               updateTreeApi(session);
+           }
+       });
+       PluginSessionCallback ret = new PluginSessionCallback()
+       {
+           public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+           {
                // TODO
                // Plugin supports only the main session window
-            }
+           }
 
-            public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
-            {
+           public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+           {
                // TODO
                // Plugin supports only the main session window
-            }
-         };
-         return ret;
-      }
-      else
-      {
-         return null;
-      }
-	}
-
+           }
+       };
+       return ret;
+   }
+    
+    @Override
+    protected boolean isPluginSession(ISession session) {
+        return DialectFactory.isMySQL(session.getMetaData());
+    }
+    
     private void updateTreeApi(ISession session) {
         _treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
         final ActionCollection coll = getApplication().getActionCollection();
@@ -375,25 +368,4 @@ public class MysqlPlugin extends DefaultSessionPlugin
 		return mysqlMenu;
 	}
 
-	/**
-	 * Decide whether the passed session is a MySQL one.
-	 *
-	 * @param	session		Session we are checking.
-	 *
-	 * @return	<TT>true</TT> if <TT>session</TT> is a MySQL one.
-	 */
-	private boolean isMysql(ISession session)
-	{
-		final String MYSQL = "mysql";
-		String dbms = null;
-		try
-		{
-			dbms = session.getSQLConnection().getSQLMetaData().getDatabaseProductName();
-		}
-		catch (SQLException ex)
-		{
-			s_log.debug("Error in getDatabaseProductName()", ex);
-		}
-		return dbms != null && dbms.toLowerCase().startsWith(MYSQL);
-	}
 }

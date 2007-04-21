@@ -19,15 +19,28 @@ package net.sourceforge.squirrel_sql.client.plugin;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import javax.swing.JMenu;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
+import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public abstract class DefaultSessionPlugin extends DefaultPlugin
 											implements ISessionPlugin
 {
+    /** Subclasses that create a session JMenu will set this */
+    private JMenu sessionMenu = null;
+    
+    /** Logger for this class. */
+    private static final ILogger s_log = 
+        LoggerController.createLogger(DefaultSessionPlugin.class); 
+    
 	/**
 	 * A new session has been created. At this point the
 	 * <TT>SessionPanel</TT> does not exist for the new session.
@@ -88,4 +101,69 @@ public abstract class DefaultSessionPlugin extends DefaultPlugin
 		return null;
 	}
 
+    /**
+     * This should be overridden by all databases-specific subclasses so that 
+     * registerSessionMenu will work correctly. It should return true 
+     * when the plugin subclass is db-specific and the specified session is for a 
+     * database that the plugin supports; false is returned otherwise.
+     */
+    protected boolean isPluginSession(ISession session) {
+        if (s_log.isDebugEnabled() && sessionMenu != null) {
+            s_log.debug(
+                "The default isPluginSession() impl was called for session \""+
+                session.getAlias().getName()+"\", but sessionMenu ("+
+                sessionMenu.getText()+")is not null - this is probably a bug.");
+        }
+        return true;
+    }
+    
+    /**
+     * Plugin sub-classes call this to register their session JMenu with this 
+     * class so that this class can manage it's enabled state, as sessions 
+     * become activated.
+     * 
+     * @param menu the plugin session menu
+     */
+    protected void registerSessionMenu(JMenu menu) {
+        if (menu == null) {
+            throw new IllegalArgumentException("menu cannot be null");
+        }
+        sessionMenu = menu;
+        _app.getSessionManager().addSessionListener(new SessionListener());
+    }
+    
+    /**
+     * A session listener that is used to determine when sessions are activated
+     * and to trigger the enable menu task if the session is relevant to this 
+     * plugin.
+     */
+    private class SessionListener extends SessionAdapter {
+        public void sessionActivated(SessionEvent evt) {
+            final ISession session = evt.getSession();
+            EnableMenuTask task = new EnableMenuTask(session);
+            session.getApplication().getThreadPool().addTask(task);
+        }
+    }
+    
+    /**
+     * A runnable that implements changing the enabled state of sessionMenu. 
+     * This class ensures that UI state change occurs in the Swing EDT.
+     */
+    private class EnableMenuTask implements Runnable {
+        
+        private ISession _session = null;
+        
+        public EnableMenuTask(ISession session) {
+            _session = session;
+        }
+        
+        public void run() {
+            final boolean enable = isPluginSession(_session);
+            GUIUtils.processOnSwingEventThread(new Runnable() {
+                public void run() {
+                    sessionMenu.setEnabled(enable);
+                }
+            });                        
+        }
+    }
 }

@@ -37,7 +37,7 @@ public abstract class DefaultPlugin implements IPlugin
 		StringManagerFactory.getStringManager(DefaultPlugin.class);
 
 	/** Current application API. */
-	private IApplication _app;
+	protected IApplication _app;
 
 	/**
 	 * Called on application startup before application started up.

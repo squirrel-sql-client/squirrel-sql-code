@@ -4,6 +4,7 @@ import java.sql.SQLException;
 
 import javax.swing.JMenu;
 
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -146,7 +147,6 @@ public class FirebirdPlugin extends DefaultSessionPlugin {
 	public synchronized void initialize() throws PluginException
 	{
 		super.initialize();
-
 		final IApplication app = getApplication();
 		final ActionCollection coll = app.getActionCollection();
 
@@ -155,6 +155,7 @@ public class FirebirdPlugin extends DefaultSessionPlugin {
 
 		_firebirdMenu = createFirebirdMenu();
 		app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, _firebirdMenu);
+        super.registerSessionMenu(_firebirdMenu);
 	}
 
     /**
@@ -171,48 +172,44 @@ public class FirebirdPlugin extends DefaultSessionPlugin {
    }
 
    /**
-     * Session has been started. If this is an Oracle session then
-     * register an extra expander for the Schema nodes to show
-     * Oracle Packages.
-     *
-     * @param   session     Session that has started.
-     *
-     * @return  <TT>true</TT> if session is Oracle in which case this plugin
-     *                          is interested in it.
-     */
-    public PluginSessionCallback sessionStarted(final ISession session)
-    {
-       boolean isFirebird = false;
-       isFirebird = isFirebird(session);
-       if (isFirebird)
-       {
-           GUIUtils.processOnSwingEventThread(new Runnable() {
-               public void run() {
-                   updateTreeApi(session);
-               }
-           });
+    * Session has been started. If this is an Oracle session then
+    * register an extra expander for the Schema nodes to show
+    * Oracle Packages.
+    *
+    * @param   session     Session that has started.
+    *
+    * @return  <TT>true</TT> if session is Oracle in which case this plugin
+    *                          is interested in it.
+    */
+   public PluginSessionCallback sessionStarted(final ISession session)
+   {
+       if (!isPluginSession(session)) {
+           return null;
        }
-       if (false == isFirebird)
-       {
-          return null;
-       }
-
+       GUIUtils.processOnSwingEventThread(new Runnable() {
+           public void run() {
+               updateTreeApi(session);
+           }
+       });
        return new PluginSessionCallback()
        {
-          public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
-          {
-             // Supports Session main window only
-          }
+           public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+           {
+               // Supports Session main window only
+           }
 
-          public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
-          {
-             // Supports Session main window only
-          }
+           public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+           {
+               // Supports Session main window only
+           }
        };
+   }
 
-
+    @Override
+    protected boolean isPluginSession(ISession session) {
+        return DialectFactory.isFirebird(session.getMetaData());
     }
-
+    
     private void updateTreeApi(ISession session) {
         _treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
 
@@ -264,20 +261,5 @@ public class FirebirdPlugin extends DefaultSessionPlugin {
 
 		return firebirdMenu;
 	}
-
-    private boolean isFirebird(ISession session)
-    {
-        final String FIREBIRD = "firebird";
-        String dbms = null;
-        try
-        {
-            dbms = session.getSQLConnection().getSQLMetaData().getDatabaseProductName();
-        }
-        catch (SQLException ex)
-        {
-				s_log.debug("Error in getDatabaseProductName()", ex);
-        }
-        return dbms != null && dbms.toLowerCase().startsWith(FIREBIRD);
-    }
 
 }

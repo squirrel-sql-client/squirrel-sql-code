@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -180,46 +181,43 @@ public class H2Plugin extends DefaultSessionPlugin {
    }
 
    /**
-     * Session has been started. Update the tree api in using the event thread
-     *
-     * @param   session     Session that has started.
-     *
-     * @return  <TT>true</TT> if session is Oracle in which case this plugin
-     *                          is interested in it.
-     */
-    public PluginSessionCallback sessionStarted(final ISession session)
-    {
-       boolean isPostgres = false;
-       isPostgres = isPostgres(session);
-       if (isPostgres)
-       {
-           GUIUtils.processOnSwingEventThread(new Runnable() {
-               public void run() {
-                   updateTreeApi(session);
-               }
-           });
-       }
-       if (false == isPostgres)
-       {
-          return null;
+    * Session has been started. Update the tree api in using the event thread
+    *
+    * @param   session     Session that has started.
+    *
+    * @return  <TT>true</TT> if session is Oracle in which case this plugin
+    *                          is interested in it.
+    */
+   public PluginSessionCallback sessionStarted(final ISession session)
+   {
+       if (!isPluginSession(session)) {
+           return null;
        }
 
+       GUIUtils.processOnSwingEventThread(new Runnable() {
+           public void run() {
+               updateTreeApi(session);
+           }
+       });
        return new PluginSessionCallback()
        {
-          public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
-          {
-             // Supports Session main window only
-          }
+           public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+           {
+               // Supports Session main window only
+           }
 
-          public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
-          {
-             // Supports Session main window only
-          }
+           public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+           {
+               // Supports Session main window only
+           }
        };
+   }
 
-
-    }
-
+    @Override
+    protected boolean isPluginSession(ISession session) {
+        return DialectFactory.isH2(session.getMetaData());
+    }    
+    
     private void updateTreeApi(ISession session) {
         
         _treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
@@ -257,19 +255,4 @@ public class H2Plugin extends DefaultSessionPlugin {
         
     }
     
-    private boolean isPostgres(ISession session)
-    {
-        final String h2 = "h2";
-        String dbms = null;
-        try
-        {
-            dbms = session.getSQLConnection().getSQLMetaData().getDatabaseProductName();
-        }
-        catch (SQLException ex)
-        {
-				s_log.error("Unexpected exception from getDatabaseProductName()", ex);
-        }
-        return dbms != null && dbms.toLowerCase().startsWith(h2);
-    }
-
 }

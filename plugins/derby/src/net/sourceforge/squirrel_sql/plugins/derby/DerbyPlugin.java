@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -173,46 +174,45 @@ public class DerbyPlugin extends DefaultSessionPlugin {
    }
 
    /**
-     * Session has been started. Update the tree api in using the event thread
-     *
-     * @param   session     Session that has started.
-     *
-     * @return  <TT>true</TT> if session is Oracle in which case this plugin
-     *                          is interested in it.
-     */
-    public PluginSessionCallback sessionStarted(final ISession session)
-    {
-       boolean isDerby = false;
-       isDerby = isDerby(session);
-       if (isDerby)
-       {
-           GUIUtils.processOnSwingEventThread(new Runnable() {
-               public void run() {
-                   updateTreeApi(session);
-               }
-           });
+    * Session has been started. Update the tree api in using the event thread
+    *
+    * @param   session     Session that has started.
+    *
+    * @return  <TT>true</TT> if session is Oracle in which case this plugin
+    *                          is interested in it.
+    */
+   public PluginSessionCallback sessionStarted(final ISession session)
+   {
+       if (!isPluginSession(session)) {
+           return null;
        }
-       if (false == isDerby)
-       {
-          return null;
-       }
+       GUIUtils.processOnSwingEventThread(new Runnable() {
+           public void run() {
+               updateTreeApi(session);
+           }
+       });
 
        return new PluginSessionCallback()
        {
-          public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
-          {
-             // Supports Session main window only
-          }
+           public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+           {
+               // Supports Session main window only
+           }
 
-          public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
-          {
-             // Supports Session main window only
-          }
+           public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+           {
+               // Supports Session main window only
+           }
        };
 
 
-    }
+   }
 
+    @Override
+    protected boolean isPluginSession(ISession session) {
+        return DialectFactory.isDerby(session.getMetaData());
+    }
+    
     private void updateTreeApi(ISession session) {
         //DatabaseObjectInfoTab dboit = new DatabaseObjectInfoTab();
         
@@ -242,19 +242,4 @@ public class DerbyPlugin extends DefaultSessionPlugin {
         
     }
     
-    private boolean isDerby(ISession session)
-    {
-        final String DERBY = "apache derby";
-        String dbms = null;
-        try
-        {
-            dbms = session.getSQLConnection().getSQLMetaData().getDatabaseProductName();
-        }
-        catch (SQLException ex)
-        {
-				s_log.error("Unexpected exception from getDatabaseProductName()", ex);
-        }
-        return dbms != null && dbms.toLowerCase().startsWith(DERBY);
-    }
-
 }

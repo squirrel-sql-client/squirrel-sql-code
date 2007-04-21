@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -222,6 +223,11 @@ public class PostgresPlugin extends DefaultSessionPlugin {
 
     }
 
+    @Override
+    protected boolean isPluginSession(ISession session) {
+        return DialectFactory.isPostgreSQL(session.getMetaData());
+    }
+    
     private void updateTreeApi(ISession session) {
         
         _treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
