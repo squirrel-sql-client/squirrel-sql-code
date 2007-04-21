@@ -30,6 +30,9 @@ Task 137984 (Bug in alias delete) The problem was that notifications were
   be launched.  Now, the alias drop down is disabled while the update is 
   happening and enabled immediately afterward.
 
+Fixed bug which appeared while editing tables in PostgreSQL 8.1.  If the table 
+was created without an OID column, the last column would not be editable.
+
 2.5 (4/7/2007)
 ================
 
