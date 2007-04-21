@@ -1,6 +1,31 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+2.5.1
+================
+
+Bug-Fixes:
+
+Fixed bug which appeared while editing tables in PostgreSQL 8.1.  If the table
+was created without an OID column, the last column would not be editable.
+
+Fix for issue where dates aren't correctly displayed or updated when using
+'treat date as timestamp' pref in the SQl Editor result panel.
+
+Use the last directory that a file was imported from when importing additional
+files for binary fields.
+
+1699294:  Squirrel imports BLOB, but does not update data
+
+Oracle Plugin: Handle slashes when they are used as statement separators.
+
+137984 (Bug in alias delete) The problem was that notifications were being
+sent to the alias drop-down that the item was being deleted which trigger an
+update and new selection forcing the connect to alias window to be launched.
+Now, the alias drop down is disabled while the update is happening and enabled
+immediately afterward.
+
+
 2.5 (4/7/2007)
 ================
 
