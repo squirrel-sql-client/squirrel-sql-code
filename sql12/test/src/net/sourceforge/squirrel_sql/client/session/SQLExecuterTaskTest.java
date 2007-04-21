@@ -19,15 +19,41 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import static org.easymock.EasyMock.createMock;
-import junit.framework.TestCase;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 
-public class SQLExecuterTaskTest extends TestCase {
+import java.sql.Connection;
+
+import junit.framework.TestCase;
+import net.sourceforge.squirrel_sql.BaseSQuirreLTestCase;
+import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
+import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+
+public class SQLExecuterTaskTest extends BaseSQuirreLTestCase {
 
     private ISession session = null;
+    private IQueryTokenizer tokenizer = null;
+    private ISQLDatabaseMetaData md = null;
+    private ISQLDriver driver = null;
+    private Connection con = null;
+    private SQLConnection sqlCon = null;
+    
     
     protected void setUp() throws Exception {
         super.setUp();
         session = createMock(ISession.class);
+        tokenizer = createMock(IQueryTokenizer.class);
+        md = createMock(ISQLDatabaseMetaData.class);
+        con = createMock(Connection.class);
+        driver = createMock(ISQLDriver.class);
+        sqlCon = new SQLConnection(con, null, driver);
+        session.setQueryTokenizer(tokenizer);
+        expect(session.getMetaData()).andReturn(md);
+        expect(session.getSQLConnection()).andReturn(sqlCon);
+        expect(session.getQueryTokenizer()).andReturn(tokenizer);
+        replay(session);
     }
 
     protected void tearDown() throws Exception {
