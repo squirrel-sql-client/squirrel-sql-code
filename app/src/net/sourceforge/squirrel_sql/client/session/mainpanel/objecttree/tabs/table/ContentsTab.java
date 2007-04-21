@@ -40,6 +40,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -289,11 +290,9 @@ public class ContentsTab extends BaseTableTab
             //
             if (pseudoColumn.length() == 0)
             {
-               String dbName = md.getDatabaseProductName().toUpperCase();
-               if (dbName.equals("POSTGRESQL"))
-               {
-                  pseudoColumn = ", oid";
-               }
+                if (DialectFactory.isPostgreSQL(md)) {
+                    pseudoColumn = ", oid";
+                }
             }
 
             ResultSet rs = null;
