@@ -18,7 +18,6 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
@@ -288,11 +287,6 @@ public interface ISQLDatabaseMetaData {
     IDataSet getMetaDataSet() throws SQLException;
 
     /**
-     * @deprecated  Replaced by getDataTypes
-     */
-    ResultSet getTypeInfo() throws SQLException;
-
-    /**
      * 
      * @return
      * @throws DataSetException
@@ -400,11 +394,6 @@ public interface ISQLDatabaseMetaData {
     BestRowIdentifier[] getBestRowIdentifier(ITableInfo ti) throws SQLException;
 
     /**
-     * @deprecated use getColumnPrivilegesDataSet instead. 
-     */
-    ResultSet getColumnPrivileges(ITableInfo ti) throws SQLException;
-
-    /**
      * 
      * @param ti
      * @param columnIndices
@@ -416,22 +405,12 @@ public interface ISQLDatabaseMetaData {
             boolean computeWidths) throws DataSetException;
 
     /**
-     *  @deprecated. Replaced by getExportedKeysInfo 
-     */
-    ResultSet getExportedKeys(ITableInfo ti) throws SQLException;
-
-    /**
      * 
      * @param ti
      * @return
      * @throws DataSetException
      */
     IDataSet getExportedKeysDataSet(ITableInfo ti) throws DataSetException;
-
-    /**
-     * @deprecated. Replaced by getImportedKeysInfo
-     */
-    ResultSet getImportedKeys(ITableInfo ti) throws SQLException;
 
     ForeignKeyInfo[] getImportedKeysInfo(String catalog, String schema,
             String tableName) throws SQLException;
@@ -446,11 +425,6 @@ public interface ISQLDatabaseMetaData {
     ForeignKeyInfo[] getExportedKeysInfo(ITableInfo ti) throws SQLException;
 
     /**
-     * @deprecated use getIndexInfo instead.
-     */
-    ResultSet getIndexInfo(ITableInfo ti) throws SQLException;
-
-    /**
      * 
      * @param ti
      * @param columnIndices
@@ -460,11 +434,6 @@ public interface ISQLDatabaseMetaData {
      */
     ResultSetDataSet getIndexInfo(ITableInfo ti, int[] columnIndices,
             boolean computeWidths) throws DataSetException;
-
-    /**
-     * @deprecated use getPrimaryKey instead
-     */
-    ResultSet getPrimaryKeys(ITableInfo ti) throws SQLException;
 
     /**
      * 
@@ -495,11 +464,6 @@ public interface ISQLDatabaseMetaData {
             throws SQLException;
 
     /**
-     * @deprecated use getProcedureColumnsDataSet instead
-     */
-    ResultSet getProcedureColumns(IProcedureInfo ti) throws SQLException;
-
-    /**
      * 
      * @param ti
      * @return
@@ -507,11 +471,6 @@ public interface ISQLDatabaseMetaData {
      */
     IDataSet getProcedureColumnsDataSet(IProcedureInfo ti)
             throws DataSetException;
-
-    /**
-     * @deprecated use getTablePrivilegesDataSet instead
-     */
-    ResultSet getTablePrivileges(ITableInfo ti) throws SQLException;
 
     /**
      * 
@@ -523,11 +482,6 @@ public interface ISQLDatabaseMetaData {
      */
     IDataSet getTablePrivilegesDataSet(ITableInfo ti, int[] columnIndices,
             boolean computeWidths) throws DataSetException;
-
-    /**
-     *  @deprecated use getVersionColumnsDataSet instead
-     */
-    ResultSet getVersionColumns(ITableInfo ti) throws SQLException;
 
     /**
      * 
