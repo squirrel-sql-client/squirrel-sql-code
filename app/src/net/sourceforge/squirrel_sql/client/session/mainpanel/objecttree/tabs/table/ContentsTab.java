@@ -201,9 +201,6 @@ public class ContentsTab extends BaseTableTab
       final ISession session = getSession();
       final SQLConnection conn = session.getSQLConnection();
       SQLDatabaseMetaData md = conn.getSQLMetaData();
-      //ISQLDatabaseMetaData md = conn.getSQLMetaData();
-      //md = (ISQLDatabaseMetaData)Spin.off(md);
-//		final SQLFilterClauses sqlFilterClauses = session.getSQLFilterClauses();
 
       try
       {
@@ -286,7 +283,9 @@ public class ContentsTab extends BaseTableTab
             // For some DBs (e.g. PostgreSQL) there is actually a pseudo-column
             // providing the rowId, but the getBestRowIdentifier function is not
             // implemented.  This kludge hardcodes the knowledge that specific
-            // DBs use a specific pseudo-column.
+            // DBs use a specific pseudo-column.  Additionally, as of pg 8.1,
+            // you must create the table using "WITH OID" appended to the create
+            // statement.  Otherwise, OID column is not available by default.
             //
             if (pseudoColumn.length() == 0)
             {
@@ -325,10 +324,18 @@ public class ContentsTab extends BaseTableTab
             }
             catch (SQLException ex)
             {
+                // We assume here that if the pseudoColumn was used in the query,
+                // then it was likely to have caused the SQLException.  If not, 
+                // (length == 0), then retrying the query won't help - just throw
+                // the exception.
                if (pseudoColumn.length() == 0)
                {
                   throw ex;
                }
+               // pseudocolumn query failed, so reset it.  Otherwise, we'll 
+               // mistake the last column for a pseudocolumn and make it 
+               // uneditable 
+               pseudoColumn = "";
 
                // Some tables have pseudo column primary keys and others
                // do not.  JDBC on some DBMSs does not handle pseudo
