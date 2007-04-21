@@ -24,6 +24,10 @@ Bug-Fixes:
 
 1699294 Squirrel imports BLOB, but does not update data 
 
+138092 (PostgreSQL table types) Now PostgreSQL table types list and object tree
+       exclude "SYSTEM INDEX" type.  Treating these objects as tables causes 
+       lots of SQLExceptions from the PostgreSQL jdbc driver.
+
 Task 137984 (Bug in alias delete) The problem was that notifications were 
   being sent to the alias drop-down that the item was being deleted which 
   triggered an update and new selection forcing the connect to alias window to 

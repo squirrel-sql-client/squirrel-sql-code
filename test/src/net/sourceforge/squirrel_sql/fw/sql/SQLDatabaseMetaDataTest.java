@@ -17,28 +17,43 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.replay;
+
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import junit.framework.TestCase;
-import net.sourceforge.squirrel_sql.client.ApplicationManager;
+import net.sourceforge.squirrel_sql.BaseSQuirreLTestCase;
 import net.sourceforge.squirrel_sql.mo.sql.MockDatabaseMetaData;
 
 import com.mockobjects.sql.MockConnection2;
+
 
 /**
  * Test case for SQLDatabaseMetaData class.
  * 
  * @author manningr
  */
-public class SQLDatabaseMetaDataTest extends TestCase {
+public class SQLDatabaseMetaDataTest extends BaseSQuirreLTestCase {
 
 	SQLDatabaseMetaData iut = null;
+    SQLDatabaseMetaData pg_tt_test = null;
 	MockConnection2 con = null;
 	MockDatabaseMetaData md = null;
 	
+    // postgres table types test
+    java.sql.Connection pg_con = null;
+    SQLConnection pg_sql_con = null;
+    ISQLDriver pg_driver = null;
+    DatabaseMetaData pg_jmd = null;
+    ResultSet pg_tableTypesRS = null;
+    
 	protected void setUp() throws Exception {
 		super.setUp();
-		ApplicationManager.initApplication();
 		con = new MockConnection2();
 		md = new MockDatabaseMetaData("aCatalog", "aSchema");
 		con.setupMetaData(md);
@@ -47,7 +62,46 @@ public class SQLDatabaseMetaDataTest extends TestCase {
 		md.setCatalogs(new String[] {"aCatalog"}, iut);
 		md.setSchemas(new String[] {"aSchema"}, iut);
 
-		
+        // pg table types test
+        pg_driver = createMock(ISQLDriver.class);
+
+        pg_tableTypesRS = createNiceMock(ResultSet.class);
+        expect(pg_tableTypesRS.next()).andReturn(true);
+        expect(pg_tableTypesRS.getString(1)).andReturn("SYSTEM INDEX");
+        expect(pg_tableTypesRS.next()).andReturn(true);
+        expect(pg_tableTypesRS.getString(1)).andReturn("SYSTEM VIEW");
+        expect(pg_tableTypesRS.next()).andReturn(true);
+        expect(pg_tableTypesRS.getString(1)).andReturn("SYSTEM TABLE");
+        expect(pg_tableTypesRS.next()).andReturn(true);
+        expect(pg_tableTypesRS.getString(1)).andReturn("SYSTEM TOAST INDEX");
+        expect(pg_tableTypesRS.next()).andReturn(true);
+        expect(pg_tableTypesRS.getString(1)).andReturn("SYSTEM TOAST TABLE");
+        expect(pg_tableTypesRS.next()).andReturn(true);
+        expect(pg_tableTypesRS.getString(1)).andReturn("SYSTEM VIEW");
+        expect(pg_tableTypesRS.next()).andReturn(true);
+        expect(pg_tableTypesRS.getString(1)).andReturn("TABLE");
+        expect(pg_tableTypesRS.next()).andReturn(true);
+        expect(pg_tableTypesRS.getString(1)).andReturn("TEMPORARY INDEX");
+        expect(pg_tableTypesRS.next()).andReturn(true);
+        expect(pg_tableTypesRS.getString(1)).andReturn("TEMPORARY TABLE");
+        expect(pg_tableTypesRS.next()).andReturn(true);
+        expect(pg_tableTypesRS.getString(1)).andReturn("VIEW");
+        expect(pg_tableTypesRS.next()).andReturn(false);
+        //expectLastCall();
+        replay(pg_tableTypesRS);
+        
+        pg_jmd = createMock(DatabaseMetaData.class);
+        expect(pg_jmd.getDatabaseProductName()).andReturn("PostgreSQL");
+        expect(pg_jmd.getDatabaseProductVersion()).andReturn("8.1.8");
+        expect(pg_jmd.getTableTypes()).andReturn(pg_tableTypesRS);
+        replay(pg_jmd);
+        
+        pg_con = createMock(java.sql.Connection.class);
+        expect(pg_con.getMetaData()).andReturn(pg_jmd).atLeastOnce();
+        replay(pg_con);
+        
+        pg_sql_con = new SQLConnection(pg_con, null, pg_driver);
+        pg_tt_test = new SQLDatabaseMetaData(pg_sql_con);
 	}
 
 	public void testGetSchemas() {
@@ -86,4 +140,19 @@ public class SQLDatabaseMetaDataTest extends TestCase {
 		}
 	}
 
+    public void testPGGetTableTypes() {
+        try {
+            String[] tableTypes = pg_tt_test.getTableTypes();
+            for (int i = 0; i < tableTypes.length; i++) {
+                String type = tableTypes[i];
+                assertFalse(
+                    "'SYSTEM INDEX' is a type returned from " +
+                    "SQLDatabaseMetaData.getTableTypes for PostgreSQL - " +
+                    "it should not be.", 
+                    "SYSTEM INDEX".equals(type));
+            }
+        } catch (SQLException e) {
+            fail("Unexpected exception: "+e.getMessage());
+        }
+    }
 }
