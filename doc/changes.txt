@@ -6,6 +6,9 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+- Task 138098 (Plugins Session Menu Items (Disable)) When using a session that 
+  is not supported by a db-specific plugin, that plugin should disable it's 
+  Session menu items
 - Added 'Use PK' button on the "Edit Where clause" dialog which will cause only
   PK columns to be used for updating rows in the table contents panel.
 - Added "All Objects" to alias properties.
