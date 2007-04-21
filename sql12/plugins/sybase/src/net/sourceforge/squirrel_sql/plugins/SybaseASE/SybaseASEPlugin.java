@@ -9,6 +9,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.plugins.SybaseASE.gui.SybaseGlobalPreferencesTab;
 import net.sourceforge.squirrel_sql.plugins.SybaseASE.prefs.PreferencesManager;
@@ -137,46 +138,40 @@ public class SybaseASEPlugin extends DefaultSessionPlugin
 	 * @param   session	 The session that is starting.
 	 *
 	 * @return An implementation of PluginSessionCallback or null to indicate
-    * the plugin does not work with this session
+	 * the plugin does not work with this session
 	 */
 	public PluginSessionCallback sessionStarted(ISession session)
 	{
-		try
-		{
-         String driverName = session.getSQLConnection().getConnection().getMetaData().getDriverName();
-         if(false == driverName.toUpperCase().startsWith("JCONNECT"))
-         {
-            // Plugin knows only how to script Views and Stored Procedures on DB2.
-            // So if it's not a DB2 Session we tell SQuirreL the Plugin should not be used.
-            return null;
-         }
-         SybasePreferenceBean _prefs = PreferencesManager.getPreferences();
-         if (_prefs.isInstallCustomQueryTokenizer()) {
-             session.setQueryTokenizer(new SybaseQueryTokenizer(_prefs));
-         }
-         // Add context menu items to the object tree's view and procedure nodes.
-         IObjectTreeAPI otApi = session.getSessionInternalFrame().getObjectTreeAPI();
-         otApi.addToPopup(DatabaseObjectType.VIEW, new ScriptSybaseASEViewAction(getApplication(), _resources, session));
-         otApi.addToPopup(DatabaseObjectType.PROCEDURE, new ScriptSybaseASEProcedureAction(getApplication(), _resources, session));
+	    if (!isPluginSession(session)) {
+	        return null;
+	    }
+	    SybasePreferenceBean _prefs = PreferencesManager.getPreferences();
+	    if (_prefs.isInstallCustomQueryTokenizer()) {
+	        session.setQueryTokenizer(new SybaseQueryTokenizer(_prefs));
+	    }
+	    // Add context menu items to the object tree's view and procedure nodes.
+	    IObjectTreeAPI otApi = session.getSessionInternalFrame().getObjectTreeAPI();
+	    otApi.addToPopup(DatabaseObjectType.VIEW, new ScriptSybaseASEViewAction(getApplication(), _resources, session));
+	    otApi.addToPopup(DatabaseObjectType.PROCEDURE, new ScriptSybaseASEProcedureAction(getApplication(), _resources, session));
 
 
-         return new PluginSessionCallback()
-         {
-            public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
-            {
-               //plugin supports Session main window only
-            }
+	    return new PluginSessionCallback()
+	    {
+	        public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+	        {
+	            //plugin supports Session main window only
+	        }
 
-            public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
-            {
-               //plugin supports Session main window only
-            }
-         };
-		}
-		catch(Exception e)
-		{
-         throw new RuntimeException(e);
-		}
+	        public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+	        {
+	            //plugin supports Session main window only
+	        }
+	    };
 	}
 
+    @Override
+    protected boolean isPluginSession(ISession session) {
+        return DialectFactory.isSyBase(session.getMetaData());
+    }
+    
 }

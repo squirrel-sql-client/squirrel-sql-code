@@ -18,8 +18,6 @@ package net.sourceforge.squirrel_sql.plugins.mssql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.sql.SQLException;
-
 import javax.swing.JMenu;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
@@ -33,11 +31,10 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
-import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -155,8 +152,9 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
         coll.add(new UpdateStatisticsAction(app, _resources, this));
 
 		_mssqlMenu = createFullMssqlMenu();
+        
 		app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, _mssqlMenu);
-        app.getSessionManager().addSessionListener(new MssqlSessionListener());
+        super.registerSessionMenu(_mssqlMenu);
     }
     
     public void load(net.sourceforge.squirrel_sql.client.IApplication iApplication) throws net.sourceforge.squirrel_sql.client.plugin.PluginException {
@@ -179,25 +177,28 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
    }
 
    public PluginSessionCallback sessionStarted(final ISession iSession) {
-        boolean isMssql = isMssql(iSession); 
-        if (isMssql) {
-            MSSQLPreferenceBean _prefs = PreferencesManager.getPreferences();
-            if (_prefs.isInstallCustomQueryTokenizer()) {
-                iSession.setQueryTokenizer(new MSSQLQueryTokenizer(_prefs));
-            }
-            GUIUtils.processOnSwingEventThread(new Runnable() {
-                public void run() {
-                    updateTreeApi(iSession);
-                }
-            });
-        }
-        if (isMssql) {
-            return new MssqlPluginSessionCallback();
-        } else {
-            return null;
-        }
-    }
-    
+       if (!isPluginSession(iSession)) {
+           return null;
+       }
+       MSSQLPreferenceBean _prefs = PreferencesManager.getPreferences();
+       if (_prefs.isInstallCustomQueryTokenizer()) {
+           iSession.setQueryTokenizer(new MSSQLQueryTokenizer(_prefs));
+       }
+       GUIUtils.processOnSwingEventThread(new Runnable() {
+           public void run() {
+               updateTreeApi(iSession);
+           }
+       });
+
+       return new MssqlPluginSessionCallback();
+   }
+
+   @Override
+   protected boolean isPluginSession(ISession session) {
+       return DialectFactory.isMSSQLServer(session.getMetaData());
+   }
+   
+   
     private void updateTreeApi(ISession iSession) {
         _treeAPI = iSession.getSessionInternalFrame().getObjectTreeAPI();
 
@@ -453,66 +454,6 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
         _resources.addToMenu(coll.get(ScriptProcedureExecAction.class),mssqlMenu);
 
 		return mssqlMenu;
-    }
-    
-    /**
-     * A listener that will determine whether or not the SQLSever Menu Item 
-     * should be enabled or disabled.  If the session that was just activated
-     * wasn't a SQL Server session, then disable the menu item.  Otherwise, 
-     * enable it.  We don't want to allow the user to do MS SQL Server specific
-     * things on a non-MS SQL Server database.
-     */
-    private class MssqlSessionListener extends SessionAdapter {
-        public void sessionActivated(SessionEvent evt) {
-            final ISession session = evt.getSession();
-            EnableMenuTask task = new EnableMenuTask(session);
-            session.getApplication().getThreadPool().addTask(task);
-        }
-    }
-    
-    /**
-     * Does the database product name indicate that it's from Microsoft.  If so,
-     * we say that it's MS SQL Server.
-     *  
-     * @param session
-     * @return
-     */
-    private boolean isMssql(ISession session) {
-        final String MICROSOFT = "microsoft";
-        String dbms = null;
-        try
-        {
-            SQLConnection con = session.getSQLConnection();
-            if (con != null) {
-                SQLDatabaseMetaData data = con.getSQLMetaData();
-                if (data != null) {
-                    dbms = data.getDatabaseProductName();
-                }
-            }
-        }
-        catch (SQLException ex)
-        {
-            s_log.debug("Unable to get the database product name", ex);
-        }
-        return dbms != null && dbms.toLowerCase().startsWith(MICROSOFT);        
-    }
-    
-    private class EnableMenuTask implements Runnable {
-        
-        private ISession _session = null;
-        
-        public EnableMenuTask(ISession session) {
-            _session = session;
-        }
-        
-        public void run() {
-            final boolean enable = isMssql(_session);
-            GUIUtils.processOnSwingEventThread(new Runnable() {
-                public void run() {
-                    _mssqlMenu.setEnabled(enable);
-                }
-            });            
-        }
     }
     
     private class MssqlPluginSessionCallback implements PluginSessionCallback {

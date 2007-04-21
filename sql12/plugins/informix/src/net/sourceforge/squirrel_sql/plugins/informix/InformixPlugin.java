@@ -174,7 +174,7 @@ public class InformixPlugin extends DefaultSessionPlugin {
    {
       return true;
    }
-
+   
    /**
      * Session has been started. Update the tree api in using the event thread
      *
@@ -183,39 +183,38 @@ public class InformixPlugin extends DefaultSessionPlugin {
      * @return  <TT>true</TT> if session is Oracle in which case this plugin
      *                          is interested in it.
      */
-    public PluginSessionCallback sessionStarted(final ISession session)
-    {
-       boolean isInformix = false;
-       isInformix = DialectFactory.isInformix(session.getMetaData());
-       if (isInformix)
-       {
-           GUIUtils.processOnSwingEventThread(new Runnable() {
-               public void run() {
-                   updateTreeApi(session);
-               }
-           });
+   public PluginSessionCallback sessionStarted(final ISession session)
+   {
+       if (!isPluginSession(session)) {
+           return null;
        }
-       if (false == isInformix)
-       {
-          return null;
-       }
+       GUIUtils.processOnSwingEventThread(new Runnable() {
+           public void run() {
+               updateTreeApi(session);
+           }
+       });
 
        return new PluginSessionCallback()
        {
-          public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
-          {
-             // Supports Session main window only
-          }
+           public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+           {
+               // Supports Session main window only
+           }
 
-          public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
-          {
-             // Supports Session main window only
-          }
+           public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+           {
+               // Supports Session main window only
+           }
        };
 
 
-    }
+   }
 
+    @Override
+    protected boolean isPluginSession(ISession session) {
+        return DialectFactory.isInformix(session.getMetaData());
+    }    
+    
     private void updateTreeApi(ISession session) {
         //DatabaseObjectInfoTab dboit = new DatabaseObjectInfoTab();
         

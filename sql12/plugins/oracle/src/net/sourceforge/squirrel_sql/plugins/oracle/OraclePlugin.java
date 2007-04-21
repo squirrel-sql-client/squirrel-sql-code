@@ -50,6 +50,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
@@ -417,6 +418,11 @@ public class OraclePlugin extends DefaultSessionPlugin
       return ret;
    }
 
+   @Override
+   protected boolean isPluginSession(ISession session) {
+       return DialectFactory.isOracle(session.getMetaData());
+   }
+   
    private void addActions(ISession session)
    {
       ActionCollection coll = getApplication().getActionCollection();
