@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.plugins.oracle.tokenizer;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 
@@ -30,6 +31,19 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.oracle.prefs.OraclePreferenceBean;
 
+/**
+ * This class is loaded by the Oracle Plugin and registered with all Oracle 
+ * Sessions as the query tokenizer if the plugin is loaded.  It handles some
+ * of the syntax allowed in SQL-Plus scripts that would be hard to parse in a 
+ * generic way for any database.  It handles create statements for stored 
+ * procedures, triggers, functions and anonymous procedure blocks.  It can also
+ * handle "/" as the statement terminator in leiu of or in addition to the 
+ * default statement separator which is ";". This class is not meant to fully
+ * replicate all of the syntax available in the highly expressive and venerable
+ * SQL-Plus reporting tool. 
+ *  
+ * @author manningr
+ */
 public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokenizer
 {
     /** Logger for this class. */
@@ -45,8 +59,13 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
     private static final String TRIGGER_PATTERN = 
         "^\\s*CREATE\\s+TRIGGER.*|^\\s*CREATE\\s+OR\\s+REPLACE\\s+TRIGGER\\s+.*";    
     
-    private static final String DECLARE_PATTERN = 
-        "^\\s*DECLARE\\s*.*";
+    private static final String DECLARE_PATTERN = "^\\s*DECLARE\\s*.*";
+    
+    /** Finds any "\n/" (slash) characters on their own line (no sep) */
+    private static final String SLASH_PATTERN = ".*\\n/\\n.*";
+
+    /** Finds any "\n/" (slash) characters on their own line (no sep) */
+    private static final String SLASH_SPLIT_PATTERN = "\\n/\\n";
     
     private Pattern procPattern = Pattern.compile(PROCEDURE_PATTERN, Pattern.DOTALL);
     
@@ -55,6 +74,8 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
     private Pattern triggerPattern = Pattern.compile(TRIGGER_PATTERN, Pattern.DOTALL);
     
     private Pattern declPattern = Pattern.compile(DECLARE_PATTERN, Pattern.DOTALL);
+    
+    private Pattern slashPattern = Pattern.compile(SLASH_PATTERN, Pattern.DOTALL);
     
     private static final String ORACLE_SCRIPT_INCLUDE_PREFIX = "@";
     
@@ -84,17 +105,20 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
         // of tokenizing above renders these procedure blocks as separate 
         // statements, which is invalid for Oracle.  Since "/" is the way 
         // in SQL-Plus to denote the end of a procedure or function, we 
-        // re-assemble any create procedure statements that we find.
-        // This should be done before expanding file includes.  Otherwise, any
-        // create sql found in files will already be joined, causing this to 
+        // re-assemble any create procedure/function/trigger statements that we 
+        // find. This should be done before expanding file includes.  Otherwise, 
+        // any create sql found in files will already be joined, causing this to 
         // find create SQL without matching "/".  The process of 
-        // expanding file includes already joins the sql it finds.
+        // expanding 'file includes' already joins the sql fragments that it 
+        // finds.
         joinFragments(procPattern, false);
         joinFragments(funcPattern, false);
         joinFragments(triggerPattern, false);
         joinFragments(declPattern, true);
         
         expandFileIncludes(ORACLE_SCRIPT_INCLUDE_PREFIX);
+        
+        removeRemainingSlashes();
         
         _queryIterator = _queries.iterator();
     }
@@ -112,6 +136,54 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
         };
     }
         
+    /**
+     * This is to take care of scripts that have no statement separators.
+     * Like :
+     * 
+     * select * from sometable1
+     * /
+     * 
+     * select * from sometable2
+     * /
+     * 
+     * SQL-Plus allows "/" to terminate statements as well as multiple statement
+     * blocks, so someone will probably have written a script that does this.
+     */
+    private void removeRemainingSlashes() {
+        
+        ArrayList<String> tmp = new ArrayList<String>();
+        boolean foundEOLSlash = false;
+        for (Iterator<String> iter = _queries.iterator(); iter.hasNext();) {
+            String next = iter.next();
+            if (slashPattern.matcher(next).matches()) {
+                foundEOLSlash = true;
+                String[] parts = next.split(SLASH_SPLIT_PATTERN);
+                for (int i = 0; i < parts.length; i++) {
+                    String part = parts[i];
+                    if (slashPattern.matcher(part).matches()) {
+                        int lastIndex = part.lastIndexOf("/");
+                        tmp.add(part.substring(0, lastIndex));
+                    } else {
+                        if (part.endsWith("/")) {
+                            part = part.substring(0, part.lastIndexOf("/"));
+                        } 
+                        tmp.add(part);
+                    }
+                }
+            } else if (next.endsWith("/")) {
+                foundEOLSlash = true;
+                int lastIndex = next.lastIndexOf("/");
+                tmp.add(next.substring(0, lastIndex));
+            } else {
+                tmp.add(next);
+            }
+        }
+        if (foundEOLSlash == true) {
+            _queries = tmp;
+        }
+        
+    }
+    
     /** 
      * This will loop through _queries and break apart lines that look like
      * 
@@ -122,10 +194,10 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
      *   create proc...
      */
     private void breakApartNewLines() {
-        ArrayList tmp = new ArrayList();
+        ArrayList<String> tmp = new ArrayList<String>();
         String sep = _prefs.getProcedureSeparator();
-        for (Iterator iter = _queries.iterator(); iter.hasNext();) {
-            String next = (String) iter.next();
+        for (Iterator<String> iter = _queries.iterator(); iter.hasNext();) {
+            String next = iter.next();
             if (next.startsWith(sep)) {
                 tmp.add(sep);
                 String[] parts = next.split(sep+"\\n+");
@@ -154,10 +226,10 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
         
         boolean inMultiSQLStatement = false;
         StringBuffer collector = null;
-        ArrayList tmp = new ArrayList();
+        ArrayList<String> tmp = new ArrayList<String>();
         String sep = _prefs.getProcedureSeparator();
-        for (Iterator iter = _queries.iterator(); iter.hasNext();) {
-            String next = (String) iter.next();
+        for (Iterator<String> iter = _queries.iterator(); iter.hasNext();) {
+            String next = iter.next();
             if (pattern.matcher(next.toUpperCase()).matches()) {
                 inMultiSQLStatement = true;
                 collector = new StringBuffer(next);
@@ -173,7 +245,8 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
                     if (skipStraySlash) {
                         // Stray sep - or we failed to find pattern
                         if (s_log.isDebugEnabled()) {
-                            s_log.debug("Detected stray proc separator("+sep+"). Skipping");
+                            s_log.debug(
+                                "Detected stray proc separator("+sep+"). Skipping");
                         }
                     } else {
                         tmp.add(next);
