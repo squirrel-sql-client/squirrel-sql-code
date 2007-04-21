@@ -6,9 +6,10 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
-- Task 138098 (Plugins Session Menu Items (Disable)) When using a session that 
+Task 138098 (Plugins Session Menu Items (Disable)) When using a session that 
   is not supported by a db-specific plugin, that plugin should disable it's 
   Session menu items
+
 - Added 'Use PK' button on the "Edit Where clause" dialog which will cause only
   PK columns to be used for updating rows in the table contents panel.
 - Added "All Objects" to alias properties.
@@ -17,8 +18,13 @@ Enhancements:
 
 Bug-Fixes:
 
-- 1699294: Squirrel imports BLOB, but does not update data 
-- Task 137984: (Bug in alias delete) The problem was that notifications were 
+1704798 ISQLExecutionListeners cannot return "null"
+
+1701380 addSQLExecutionListener is broken
+
+1699294 Squirrel imports BLOB, but does not update data 
+
+Task 137984 (Bug in alias delete) The problem was that notifications were 
   being sent to the alias drop-down that the item was being deleted which 
   triggered an update and new selection forcing the connect to alias window to 
   be launched.  Now, the alias drop down is disabled while the update is 
