@@ -726,6 +726,8 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
     
     /* (non-Javadoc)
      * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getTypeInfo()
+     * 
+     * @deprecated  Replaced by getDataTypes
      */
     public ResultSet getTypeInfo() throws SQLException
 	{
@@ -1243,6 +1245,8 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 
 	/* (non-Javadoc)
      * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getColumnPrivileges(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+     * 
+     * @deprecated use getColumnPrivilegesDataSet instead. 
      */
     public ResultSet getColumnPrivileges(ITableInfo ti)
 		throws SQLException
@@ -1287,6 +1291,8 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
     
     /* (non-Javadoc)
      * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getExportedKeys(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+     * 
+     * @deprecated. Replaced by getExportedKeysInfo 
      */
     public ResultSet getExportedKeys(ITableInfo ti)
 		throws SQLException
@@ -1319,6 +1325,8 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
     
     /* (non-Javadoc)
      * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getImportedKeys(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+     * 
+     * @deprecated. Replaced by getImportedKeysInfo
      */
 	public ResultSet getImportedKeys(ITableInfo ti)
 		throws SQLException
@@ -1447,6 +1455,8 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 
     /* (non-Javadoc)
      * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getIndexInfo(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+     * 
+     * @deprecated use getIndexInfo instead.
      */
     public ResultSet getIndexInfo(ITableInfo ti)
 		throws SQLException
@@ -1481,6 +1491,8 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
     
     /* (non-Javadoc)
      * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getPrimaryKeys(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+     * 
+     * @deprecated use getPrimaryKey instead
      */
 	public ResultSet getPrimaryKeys(ITableInfo ti)
 		throws SQLException
@@ -1558,6 +1570,8 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
     
     /* (non-Javadoc)
      * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getProcedureColumns(net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo)
+     * 
+     * @deprecated use getProcedureColumnsDataSet instead
      */
     public ResultSet getProcedureColumns(IProcedureInfo ti)
 		throws SQLException
@@ -1593,6 +1607,8 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
     
     /* (non-Javadoc)
      * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getTablePrivileges(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+     * 
+     * @deprecated use getTablePrivilegesDataSet instead
      */ 
 	public ResultSet getTablePrivileges(ITableInfo ti)
 		throws SQLException
@@ -1629,6 +1645,8 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
     
 	/* (non-Javadoc)
      * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getVersionColumns(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+     * 
+     * @deprecated use getVersionColumnsDataSet instead
      */
 	public ResultSet getVersionColumns(ITableInfo ti)
 		throws SQLException
