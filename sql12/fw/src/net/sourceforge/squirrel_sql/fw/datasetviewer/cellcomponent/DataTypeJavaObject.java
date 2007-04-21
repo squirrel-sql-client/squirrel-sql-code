@@ -33,6 +33,7 @@ import javax.swing.JCheckBox;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
@@ -395,7 +396,7 @@ public class DataTypeJavaObject
 	 * 	"columnName is null"
 	 * or whatever is appropriate for this column in the database.
 	 */
-	public String getWhereClauseValue(Object value, String databaseProductName) {
+	public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
 		if (value == null || value.toString() == null )
 			return _colDef.getLabel() + " IS NULL";
 		else

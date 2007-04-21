@@ -51,6 +51,7 @@ import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.gui.ReadTypeCombo;
 import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -629,7 +630,7 @@ public class DataTypeClob
 	 * 	"columnName is null"
 	 * or whatever is appropriate for this column in the database.
 	 */
-	public String getWhereClauseValue(Object value, String databaseProductName) {
+	public String getWhereClauseValue(Object value, ISQLDatabaseMetaData md) {
 		if (value == null || ((ClobDescriptor)value).getData() == null)
 			return _colDef.getLabel() + " IS NULL";
 		else

@@ -1,5 +1,8 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+
 /*
  * Copyright (C) 2005 Rob Manning, Gerd Wagner
  * manningr@users.sourceforge.net
@@ -30,10 +33,10 @@ public class DatabaseSpecificBooleanValue {
     
     
     public static String getBooleanValue(String orig, 
-                                         String databaseProductName)
+                                         ISQLDatabaseMetaData md)
     {
         for (int i = 0; i < _booleans.length; i++) {
-            if(_booleans[i].productMatches(databaseProductName)) {
+            if(_booleans[i].productMatches(md)) {
                 return _booleans[i].getBooleanValue(orig);
             }
         }
@@ -41,14 +44,14 @@ public class DatabaseSpecificBooleanValue {
     }
     
     private static interface IBooleanValue {
-        public boolean productMatches(String databaseProductName);
+        public boolean productMatches(ISQLDatabaseMetaData md);
         public String getBooleanValue(String originalValue);
     }    
     
     private static class SybaseBoolean implements IBooleanValue {
         
-        public boolean productMatches(String databaseProductName) {
-            return "Adaptive Server Enterprise".equals(databaseProductName);
+        public boolean productMatches(ISQLDatabaseMetaData md) {
+            return DialectFactory.isSyBase(md);
         }
         
         public String getBooleanValue(String orig) {
@@ -65,8 +68,8 @@ public class DatabaseSpecificBooleanValue {
     
     private static class MSSQLServerBoolean extends SybaseBoolean {
         
-        public boolean productMatches(String databaseProductName) {
-            return "Microsoft SQL Server".equals(databaseProductName);
+        public boolean productMatches(ISQLDatabaseMetaData md) {
+            return DialectFactory.isMSSQLServer(md);
         }
         
     }

@@ -35,6 +35,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DatabaseTypesDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -84,15 +85,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	private interface IDriverNames
 	{
         String AS400 = "AS/400 Toolbox for Java JDBC Driver";
-        String FRONTBASE = "FBJDriver";
-        String FREE_TDS = "InternetCDS Type 4 JDBC driver for MS SQLServer";
-        String IBMDB2 = "IBM DB2";
-        String INGRES = "CA-Ingres JDBC Driver";
-        String JCONNECT = "jConnect (TM) for JDBC (TM)";
-		  String JTDS = "jTDS Type 4 JDBC Driver for MS SQL Server and Sybase";
         String OPTA2000 = "i-net OPTA 2000";
-        String ORACLE = "Oracle";
-
 	}
 
    public static class DriverMatch
@@ -108,22 +101,6 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
          return con.getSQLDriver().getDriverClassName().startsWith(COM_HTTX_DRIVER_PREFIX);
       }
    }
-
-
-   /**
-	 * Full or partial names of various DBMS poducts that can be matched
-	 * to <tt>getDatabaseProductName()</tt>.
-	 */
-	public interface IDBMSProductNames
-	{
-		String DB2 = "DB2";
-		String MYSQL = "mysql";
-		String MICROSOFT_SQL = "Microsoft SQL Server";
-		String POSTGRESQL = "PostgreSQL";
-		String SYBASE = "Sybase SQL Server";
-		String SYBASE_OLD = "SQL Server";
-		String ORACLE = "Oracle";
-	}
 
 	/** Connection to database this class is supplying information for. */
 	private SQLConnection _conn;
@@ -251,10 +228,12 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		String value = (String)_cache.get(key);
 		if (value == null)
 		{
+            boolean isSQLServer = 
+                DialectFactory.isSyBase(this) || DialectFactory.isMSSQLServer(this);
+            
 			final String driverName = getDriverName();
-			if (driverName.equals(IDriverNames.FREE_TDS)
-				|| driverName.equals(IDriverNames.JCONNECT)
-				|| driverName.equals(IDriverNames.JTDS))
+            
+			if (isSQLServer)
 			{
 				value = "";
 			}
@@ -276,8 +255,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
         if (value == null)
         {
             final String driverName = getDriverName();
-            if (driverName.startsWith(IDriverNames.IBMDB2)
-                || driverName.startsWith(IDriverNames.ORACLE))
+            if (DialectFactory.isDB2(this) || DialectFactory.isOracle(this))
             {
                 value = "CASCADE";
             }
@@ -304,12 +282,11 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 
 		boolean hasGuest = false;
 		boolean hasSysFun = false;
+        
+        final boolean isMSSQLorSYBASE = 
+              DialectFactory.isSyBase(this) || DialectFactory.isMSSQLServer(this);
 
-		final String dbProductName = getDatabaseProductName();
-		final boolean isMSSQLorSYBASE = dbProductName.equals(IDBMSProductNames.MICROSOFT_SQL)
-								|| dbProductName.equals(IDBMSProductNames.SYBASE)
-								|| dbProductName.equals(IDBMSProductNames.SYBASE_OLD);
-		final boolean isDB2 = dbProductName.startsWith(IDBMSProductNames.DB2);
+		final boolean isDB2 = DialectFactory.isDB2(this);
 
 		final ArrayList list = new ArrayList();
 		ResultSet rs = privateGetJDBCMetaData().getSchemas();
@@ -385,7 +362,10 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		}
 		catch (SQLException ex)
 		{
-			if (getDriverName().equals(IDriverNames.FREE_TDS))
+            boolean isSQLServer = 
+                DialectFactory.isSyBase(this) || DialectFactory.isMSSQLServer(this);
+            
+			if (isSQLServer)
 			{
 				value = Boolean.TRUE;
 			}
@@ -416,7 +396,9 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		}
 		catch (SQLException ex)
 		{
-			if (getDriverName().equals(IDriverNames.FREE_TDS))
+            boolean isSQLServer = 
+                DialectFactory.isSyBase(this) || DialectFactory.isMSSQLServer(this);            
+			if (isSQLServer)
 			{
 				value = Boolean.TRUE;
 			}
@@ -442,7 +424,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 
 		// PostgreSQL (at least 7.3.2) returns false for
 		// supportsStoredProcedures() even though it does support them.
-		if (getDatabaseProductName().equals(IDBMSProductNames.POSTGRESQL))
+		if (DialectFactory.isPostgreSQL(this))
 		{
 			value = Boolean.TRUE;
 		}
@@ -639,7 +621,10 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		}
 		catch (SQLException ex)
 		{
-			if (getDriverName().equals(IDriverNames.FREE_TDS))
+            boolean isSQLServer = 
+                DialectFactory.isSyBase(this) || DialectFactory.isMSSQLServer(this);
+            
+			if (isSQLServer)
 			{
 				value = Boolean.TRUE;
 			}
@@ -669,7 +654,10 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		}
 		catch (SQLException ex)
 		{
-			if (getDriverName().equals(IDriverNames.FREE_TDS))
+		    boolean isSQLServer = 
+                DialectFactory.isSyBase(this) || DialectFactory.isMSSQLServer(this);
+
+			if (isSQLServer)
 			{
 				value = Boolean.TRUE;
 			}
@@ -698,7 +686,10 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		}
 		catch (SQLException ex)
 		{
-			if (getDriverName().equals(IDriverNames.FREE_TDS))
+            boolean isSQLServer = 
+                DialectFactory.isSyBase(this) || DialectFactory.isMSSQLServer(this);
+            
+			if (isSQLServer)
 			{
 				value = Boolean.TRUE;
 			}
@@ -951,8 +942,9 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
       final DatabaseMetaData md = privateGetJDBCMetaData();
       final String dbDriverName = getDriverName();
       Set list = new TreeSet();
-
-      if (dbDriverName.equals(IDriverNames.FREE_TDS) && schemaPattern == null)
+      boolean isSQLServer = 
+          DialectFactory.isSyBase(this) || DialectFactory.isMSSQLServer(this);
+      if (isSQLServer && schemaPattern == null)
       {
          schemaPattern = "dbo";
       }
@@ -1252,8 +1244,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		throws SQLException
 	{
 		// MM-MYSQL driver doesnt support null for column name.
-		final String dbProdName = getDatabaseProductName();
-		final String columns = dbProdName.equalsIgnoreCase(IDBMSProductNames.MYSQL) ? "%" : null;
+        final String columns = DialectFactory.isMySQL(this) ? "%" : null;
 		return privateGetJDBCMetaData().getColumnPrivileges(ti.getCatalogName(),
 													ti.getSchemaName(),
 													ti.getSimpleName(),
@@ -1271,9 +1262,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
         ResultSet rs = null;
         try {
             DatabaseMetaData md = privateGetJDBCMetaData();
-            final String dbProdName = getDatabaseProductName();
-            final String columns = 
-                dbProdName.equalsIgnoreCase(IDBMSProductNames.MYSQL) ? "%" : null;
+            final String columns = DialectFactory.isMySQL(this) ? "%" : null;
             
             rs = md.getColumnPrivileges(ti.getCatalogName(),
                     ti.getSchemaName(),

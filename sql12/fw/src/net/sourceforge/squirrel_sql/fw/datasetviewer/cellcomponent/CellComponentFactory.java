@@ -1,37 +1,33 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
-import javax.swing.DefaultCellEditor;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JTextArea;
-import javax.swing.JLabel;
-
-import java.awt.Component;
-import java.sql.Types;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-
 import java.awt.Color;
- 
+import java.awt.Component;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-
-import java.util.HashMap;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Types;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DefaultColumnRenderer;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JLabel;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
+import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 
 
 /**
@@ -539,12 +535,12 @@ public class CellComponentFactory {
 	 * 	"columnName is null"
 	 * or whatever is appropriate for this column in the database.
 	 */
-	public static String getWhereClauseValue(ColumnDisplayDefinition colDef, Object value, String databaseProductName) {
+	public static String getWhereClauseValue(ColumnDisplayDefinition colDef, Object value, ISQLDatabaseMetaData md) {
 		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
 
 		if (dataTypeObject != null) {
 			// we have an appropriate data type object
-			return dataTypeObject.getWhereClauseValue(value, databaseProductName);
+			return dataTypeObject.getWhereClauseValue(value, md);
 		}
 		
 		// if no object for this data type, then cannot use value in where clause
