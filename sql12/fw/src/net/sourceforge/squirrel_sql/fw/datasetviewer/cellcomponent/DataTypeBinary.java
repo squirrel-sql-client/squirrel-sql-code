@@ -18,22 +18,24 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.*;
-
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
-import javax.swing.text.JTextComponent;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.text.JTextComponent;
+
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 /**
  * @author gwg
@@ -110,8 +112,27 @@ public class DataTypeBinary
 	 * Neither of the objects is null
 	 */
 	public boolean areEqual(Object obj1, Object obj2) {
-		Byte[] b1 = (Byte[])obj1;
-		Byte[] b2 = (Byte[])obj2;
+        Byte[] b1 = null;
+        Byte[] b2 = null;
+        if (obj1 == null && obj2 == null) {
+            return true;
+        }
+        if ( (obj1 != null && obj2 == null) 
+                || (obj1 == null && obj2 != null) ) 
+        {
+            return false;
+        }
+        if (obj1 instanceof Byte[]) {
+            b1 = (Byte[])obj1;
+        } else {
+            b1 = StringUtilities.getByteArray(obj1.toString().getBytes());
+        }
+        if (obj2 instanceof Byte[]) {
+            b2 = (Byte[])obj2;
+        } else {
+            b2 = StringUtilities.getByteArray(obj2.toString().getBytes());
+        }
+		
 		for (int i=0; i<b1.length; i++)
 			if (b1[i] != b2[i])
 				return false;
