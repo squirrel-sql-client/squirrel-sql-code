@@ -38,6 +38,7 @@ import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -610,7 +611,7 @@ public class SessionManager
     * Note: This Method does not cache allowed Schemas.
     * It is preferable to use getAllowedSchemas(ISession) if a Session is avaialable.
     */
-   public String[] getAllowedSchemas(SQLConnection con, ISQLAliasExt alias)
+   public String[] getAllowedSchemas(ISQLConnection con, ISQLAliasExt alias)
    {
       try
       {

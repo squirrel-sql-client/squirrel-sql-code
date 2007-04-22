@@ -6,7 +6,7 @@ import java.util.Vector;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.SQLSchema;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 
 public class SQLSchemaImpl implements SQLSchema
@@ -21,7 +21,7 @@ public class SQLSchemaImpl implements SQLSchema
          if (_session != null) {
              _session.getApplication().getThreadPool().addTask(new Runnable() {
                  public void run() {
-                     SQLConnection con = _session.getSQLConnection();
+                     ISQLConnection con = _session.getSQLConnection();
                      if (con != null) {
                          _dmd = con.getSQLMetaData();
                      }

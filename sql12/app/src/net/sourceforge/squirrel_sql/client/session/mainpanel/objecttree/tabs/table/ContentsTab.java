@@ -43,8 +43,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
@@ -199,7 +199,7 @@ public class ContentsTab extends BaseTableTab
    protected IDataSet createDataSet() throws DataSetException
    {
       final ISession session = getSession();
-      final SQLConnection conn = session.getSQLConnection();
+      final ISQLConnection conn = session.getSQLConnection();
       SQLDatabaseMetaData md = conn.getSQLMetaData();
 
       try

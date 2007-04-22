@@ -14,9 +14,9 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -201,7 +201,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
          return s_stringMgr.getString("DataSetUpdateableTableModelImpl.confirmupdateallrows");
 
       final ISession session = _session;
-      final SQLConnection conn = session.getSQLConnection();
+      final ISQLConnection conn = session.getSQLConnection();
 
       int count = -1;	// start with illegal number of rows matching query
 
@@ -262,7 +262,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
          String whereClause = getWhereClause(values, colDefs, col, newValue);
 
          final ISession session = _session;
-         final SQLConnection conn = session.getSQLConnection();
+         final ISQLConnection conn = session.getSQLConnection();
 
          int count = -1;	// start with illegal number of rows matching query
 
@@ -365,7 +365,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       String whereClause = getWhereClause(values, colDefs, -1, null);
 
       final ISession session = _session;
-      final SQLConnection conn = session.getSQLConnection();
+      final ISQLConnection conn = session.getSQLConnection();
 
       Object wholeDatum = null;
 
@@ -447,7 +447,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       }
       
       final ISession session = _session;
-      final SQLConnection conn = session.getSQLConnection();
+      final ISQLConnection conn = session.getSQLConnection();
 
       int count = -1;
 
@@ -604,7 +604,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
 
       // get the SQL session
       final ISession session = _session;
-      final SQLConnection conn = session.getSQLConnection();
+      final ISQLConnection conn = session.getSQLConnection();
 
       // string used as error indicator and description of problems seen
       // when checking for 0 or mulitple matches in DB
@@ -725,7 +725,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       }
 
       final ISession session = _session;
-      final SQLConnection conn = session.getSQLConnection();
+      final ISQLConnection conn = session.getSQLConnection();
 
       try
       {
@@ -791,7 +791,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
          return TI_ERROR_MESSAGE;
 
       final ISession session = _session;
-      final SQLConnection conn = session.getSQLConnection();
+      final ISQLConnection conn = session.getSQLConnection();
 
       int count = -1;
 

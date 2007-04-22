@@ -22,7 +22,7 @@ import java.sql.SQLException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ObjectArrayDataSet;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -70,7 +70,7 @@ public class TableTypesTab extends BaseDataSetTab
 		final ISession session = getSession();
 		try
 		{
-			final SQLConnection conn = session.getSQLConnection();
+			final ISQLConnection conn = session.getSQLConnection();
 			final String[] tableTypes = conn.getSQLMetaData().getTableTypes();
 			return new ObjectArrayDataSet(tableTypes);
 		}

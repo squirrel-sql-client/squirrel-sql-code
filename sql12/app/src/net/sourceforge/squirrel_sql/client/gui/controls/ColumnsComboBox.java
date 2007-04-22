@@ -24,8 +24,8 @@ import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 /**
  * This combobox contains all the columns in an SQL table.
@@ -46,7 +46,7 @@ public class ColumnsComboBox extends JComboBox
 	 *
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
-	public ColumnsComboBox(SQLConnection conn, ITableInfo ti)
+	public ColumnsComboBox(ISQLConnection conn, ITableInfo ti)
 		throws SQLException
 	{
 		super(getData(conn, ti));
@@ -58,7 +58,7 @@ public class ColumnsComboBox extends JComboBox
 		return (TableColumnInfo)getSelectedItem();
 	}
 
-	private static TableColumnInfo[] getData(SQLConnection conn, ITableInfo ti)
+	private static TableColumnInfo[] getData(ISQLConnection conn, ITableInfo ti)
 		throws SQLException
 	{
 		if (conn == null)

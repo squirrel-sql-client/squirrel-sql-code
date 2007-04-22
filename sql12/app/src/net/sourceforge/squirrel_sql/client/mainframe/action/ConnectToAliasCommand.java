@@ -26,6 +26,7 @@ import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
@@ -326,7 +327,7 @@ public class ConnectToAliasCommand implements ICommand
 			}
 		}
 
-		private void closeConnection(SQLConnection conn)
+		private void closeConnection(ISQLConnection conn)
 		{
 			if (conn != null)
 			{

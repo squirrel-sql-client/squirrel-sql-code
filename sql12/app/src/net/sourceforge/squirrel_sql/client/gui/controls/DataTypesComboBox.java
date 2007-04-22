@@ -22,7 +22,7 @@ import java.sql.SQLException;
 import javax.swing.JComboBox;
 
 import net.sourceforge.squirrel_sql.fw.sql.DataTypeInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 /**
  * This combobox contains all the data types in a database.
  *
@@ -40,7 +40,7 @@ public class DataTypesComboBox extends JComboBox
 	 *
 	 * @throws	SQLException	Thrown if an SQL error occurs.
 	 */
-	public DataTypesComboBox(SQLConnection conn)
+	public DataTypesComboBox(ISQLConnection conn)
 		throws SQLException
 	{
 		super(getData(conn));
@@ -52,7 +52,7 @@ public class DataTypesComboBox extends JComboBox
 		return (DataTypeInfo)getItemAt(idx);
 	}
 
-	private static DataTypeInfo[] getData(SQLConnection conn)
+	private static DataTypeInfo[] getData(ISQLConnection conn)
 		throws SQLException
 	{
 		if (conn == null)

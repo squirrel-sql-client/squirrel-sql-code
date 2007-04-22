@@ -32,7 +32,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTextFileDestination;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ObjectArrayDataSet;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
@@ -159,7 +159,7 @@ public class DumpSessionCommand implements ICommand
 		final List titles = new ArrayList();
 		synchronized (_session)
 		{
-			final SQLConnection conn = _session.getSQLConnection();
+			final ISQLConnection conn = _session.getSQLConnection();
 			final SQLDatabaseMetaData md = conn.getSQLMetaData();
 
 			// Dump session properties.
@@ -375,7 +375,7 @@ public class DumpSessionCommand implements ICommand
 		return tempFile;
 	}
 
-	private File createGeneralConnectionDumpFile(SQLConnection conn)
+	private File createGeneralConnectionDumpFile(ISQLConnection conn)
 		throws IOException
 	{
 		Connection myConn = conn.getConnection();

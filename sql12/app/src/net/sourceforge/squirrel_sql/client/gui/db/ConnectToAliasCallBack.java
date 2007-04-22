@@ -4,7 +4,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.WrappedSQLException;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -45,7 +45,7 @@ public class ConnectToAliasCallBack implements ICompletionCallback
    /**
     * @see CompletionCallback#connected(net.sourceforge.squirrel_sql.fw.sql.SQLConnection)
     */
-   public void connected(SQLConnection conn)
+   public void connected(ISQLConnection conn)
    {
       // Empty.
    }

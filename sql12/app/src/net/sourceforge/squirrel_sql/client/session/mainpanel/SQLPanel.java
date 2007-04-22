@@ -56,7 +56,7 @@ import javax.swing.undo.UndoManager;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.MemoryComboBox;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -787,7 +787,7 @@ public class SQLPanel extends JPanel
    private class SetAutoCommitTask implements Runnable {
         
         public void run() {
-            final SQLConnection conn = _session.getSQLConnection();
+            final ISQLConnection conn = _session.getSQLConnection();
             final SessionProperties props = _session.getProperties();
             if (conn != null)
             {

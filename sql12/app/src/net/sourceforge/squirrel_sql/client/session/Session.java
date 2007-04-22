@@ -57,6 +57,7 @@ import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
@@ -351,7 +352,7 @@ class Session implements ISession
    /**
     * @return <TT>SQLConnection</TT> for this session.
     */
-   public SQLConnection getSQLConnection()
+   public ISQLConnection getSQLConnection()
    {
         checkThread();
       return _conn;
@@ -924,7 +925,7 @@ class Session implements ISession
       public void propertyChange(PropertyChangeEvent evt)
       {
          final String propName = evt.getPropertyName();
-         if (propName == null || propName == SQLConnection.IPropertyNames.CATALOG)
+         if (propName == null || propName == ISQLConnection.IPropertyNames.CATALOG)
          {
             setupTitle();
          }

@@ -19,7 +19,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.ta
  */
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
@@ -61,7 +61,7 @@ public class ExportedKeysTab extends BaseTableTab
 	 */
 	protected IDataSet createDataSet() throws DataSetException
 	{
-		final SQLConnection conn = getSession().getSQLConnection();
+		final ISQLConnection conn = getSession().getSQLConnection();
         return conn.getSQLMetaData().getExportedKeysDataSet(getTableInfo());
 	}
 }

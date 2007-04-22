@@ -24,7 +24,7 @@ import java.sql.Statement;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
@@ -66,7 +66,7 @@ public class RowCountTab extends BaseTableTab
 	 */
 	protected IDataSet createDataSet() throws DataSetException
 	{
-		final SQLConnection conn = getSession().getSQLConnection();
+		final ISQLConnection conn = getSession().getSQLConnection();
 		try
 		{
 			final Statement stmt = conn.createStatement();
