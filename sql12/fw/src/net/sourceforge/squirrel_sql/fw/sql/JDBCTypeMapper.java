@@ -22,7 +22,7 @@ import java.util.ArrayList;
 public class JDBCTypeMapper {
 
     public static String[] getJdbcTypeList() {
-        ArrayList result = new ArrayList();
+        ArrayList<String> result = new ArrayList<String>();
         result.add(getJdbcTypeName(Types.ARRAY));
         result.add(getJdbcTypeName(Types.BOOLEAN));
         result.add(getJdbcTypeName(Types.BIGINT));
@@ -53,7 +53,7 @@ public class JDBCTypeMapper {
         result.add(getJdbcTypeName(Types.TINYINT));
         result.add(getJdbcTypeName(Types.VARBINARY));
         result.add(getJdbcTypeName(Types.VARCHAR));
-        return (String[])result.toArray(new String[result.size()]);
+        return result.toArray(new String[result.size()]);
     }
     
 	public static String getJdbcTypeName(int jdbcType) {
