@@ -26,9 +26,9 @@ import java.lang.StringBuffer;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IUDTInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 
 import net.sourceforge.squirrel_sql.plugins.mssql.sql.constraint.*;
 import net.sourceforge.squirrel_sql.plugins.mssql.sql.dbfile.*;
@@ -45,7 +45,7 @@ public class MssqlIntrospector {
     
     public final static int MSSQL_UNKNOWN = -1;
     
-    public static TableConstraints getTableConstraints(IDatabaseObjectInfo oi, SQLConnection conn) throws java.sql.SQLException {
+    public static TableConstraints getTableConstraints(IDatabaseObjectInfo oi, ISQLConnection conn) throws java.sql.SQLException {
         TableConstraints constraints = new TableConstraints();
         
         Connection c = conn.getConnection();
@@ -137,7 +137,7 @@ public class MssqlIntrospector {
         return constraints;
     }
     
-    public static DatabaseFileInfo getDatabaseFileInfo(String catalogName, SQLConnection conn) throws java.sql.SQLException {
+    public static DatabaseFileInfo getDatabaseFileInfo(String catalogName, ISQLConnection conn) throws java.sql.SQLException {
         DatabaseFileInfo dbInfo = new DatabaseFileInfo();
         
         Connection c = conn.getConnection();
@@ -230,7 +230,7 @@ public class MssqlIntrospector {
             return MSSQL_UNKNOWN;
     }
     
-    public static String generateCreateScript(IDatabaseObjectInfo oi, SQLConnection conn, boolean withConstraints) throws java.sql.SQLException {
+    public static String generateCreateScript(IDatabaseObjectInfo oi, ISQLConnection conn, boolean withConstraints) throws java.sql.SQLException {
         StringBuffer buf = new StringBuffer();
         
         if (getObjectInfoType(oi) == MSSQL_TABLE)
@@ -258,7 +258,7 @@ public class MssqlIntrospector {
         return buf.toString();
     }
     
-    public static String generateCreateDatabaseScript(String catalogName, SQLConnection conn) throws java.sql.SQLException {
+    public static String generateCreateDatabaseScript(String catalogName, ISQLConnection conn) throws java.sql.SQLException {
         StringBuffer buf = new StringBuffer();
         
         DatabaseFileInfo dbInfo = MssqlIntrospector.getDatabaseFileInfo(catalogName,conn);
@@ -334,7 +334,7 @@ public class MssqlIntrospector {
         return buf.toString();
     }
     
-    public static String generateCreateIndexesScript(IDatabaseObjectInfo oi, SQLConnection conn) throws java.sql.SQLException {
+    public static String generateCreateIndexesScript(IDatabaseObjectInfo oi, ISQLConnection conn) throws java.sql.SQLException {
         Connection c = conn.getConnection();
         
         StringBuffer buf = new StringBuffer();
@@ -396,7 +396,7 @@ public class MssqlIntrospector {
         return buf.toString();
     }
     
-    public static String generateCreateTriggersScript(IDatabaseObjectInfo oi, SQLConnection conn) throws java.sql.SQLException {
+    public static String generateCreateTriggersScript(IDatabaseObjectInfo oi, ISQLConnection conn) throws java.sql.SQLException {
         Connection c = conn.getConnection();
         
         StringBuffer buf = new StringBuffer();
@@ -422,7 +422,7 @@ public class MssqlIntrospector {
         return buf.toString();
     }
     
-    public static String generatePermissionsScript(IDatabaseObjectInfo oi, SQLConnection conn) throws java.sql.SQLException {
+    public static String generatePermissionsScript(IDatabaseObjectInfo oi, ISQLConnection conn) throws java.sql.SQLException {
         Connection c = conn.getConnection();
         
         StringBuffer buf = new StringBuffer();
@@ -503,7 +503,7 @@ public class MssqlIntrospector {
         return buf.toString();
     }
     
-    protected static String generateCreateTableScript(IDatabaseObjectInfo oi, SQLConnection conn, boolean withConstraints) throws java.sql.SQLException {
+    protected static String generateCreateTableScript(IDatabaseObjectInfo oi, ISQLConnection conn, boolean withConstraints) throws java.sql.SQLException {
         Connection c = conn.getConnection();
         
         StringBuffer buf = new StringBuffer();
@@ -641,7 +641,7 @@ public class MssqlIntrospector {
         return buf.toString();
     }
     
-    public static String generateUsersAndRolesScript(String catalogName, SQLConnection conn) throws java.sql.SQLException {    
+    public static String generateUsersAndRolesScript(String catalogName, ISQLConnection conn) throws java.sql.SQLException {    
         StringBuffer buf = new StringBuffer();
         
         Connection c = conn.getConnection();

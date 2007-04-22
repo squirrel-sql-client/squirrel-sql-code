@@ -47,6 +47,7 @@ import net.sourceforge.squirrel_sql.client.session.IAllowedSchemaChecker;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
@@ -54,7 +55,7 @@ import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -245,7 +246,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 
          app.getSessionManager().addAllowedSchemaChecker(new IAllowedSchemaChecker()
          {
-            public String[] getAllowedSchemas(SQLConnection con, ISQLAliasExt alias)
+            public String[] getAllowedSchemas(ISQLConnection con, ISQLAliasExt alias)
             {
                return onGetAllowedSchemas(con, alias);
             }
@@ -385,8 +386,6 @@ public class OraclePlugin extends DefaultSessionPlugin
          }
       });
 
-
-
       oracleSessions.add(session);
 
 
@@ -485,7 +484,7 @@ public class OraclePlugin extends DefaultSessionPlugin
       return jdbcDriver.getClass().getName().startsWith("oracle.");
    }
 
-   private String[] onGetAllowedSchemas(SQLConnection con, ISQLAliasExt alias)
+   private String[] onGetAllowedSchemas(ISQLConnection con, ISQLAliasExt alias)
    {
       if(isOracle(alias))
       {
@@ -518,7 +517,7 @@ public class OraclePlugin extends DefaultSessionPlugin
     * @param con
     * @return an array of strings representing the names of accessible schemas
     */
-   private String[] getAccessibleSchemas(OracleAliasPrefs aliasPrefs, SQLConnection con)
+   private String[] getAccessibleSchemas(OracleAliasPrefs aliasPrefs, ISQLConnection con)
    {
       String[] result = null;
       ResultSet rs = null;
@@ -589,7 +588,7 @@ public class OraclePlugin extends DefaultSessionPlugin
     * @param session the session to check
     * @return true if the user has the DBA privilege; false otherwise.
     */
-   private boolean hasSystemPrivilege(SQLConnection con)
+   private boolean hasSystemPrivilege(ISQLConnection con)
    {
       boolean result = false;
       Statement stmt = null;

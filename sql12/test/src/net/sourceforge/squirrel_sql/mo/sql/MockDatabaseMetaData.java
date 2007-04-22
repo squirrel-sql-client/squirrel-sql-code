@@ -851,30 +851,27 @@ public class MockDatabaseMetaData extends
 
 	public void setCatalogs(String[] catalogNames, SQLDatabaseMetaData md) {
 		catalogs = new MockResultSet();
-		ArrayList list = new ArrayList();
+        TableColumnInfo[] cols = new TableColumnInfo[] {
+                new TableColumnInfo("aCatalog", // catalog 
+                                    "aSchema",  // schema
+                                    "",         // tableName
+                                    "",         // columnName
+                                    1,          // dataType; 1 == CHAR
+                                    "",         // typeName 
+                                    0,  // columnSize  
+                                    0,  // decimalDigits
+                                    0,  // radix   
+                                    0,  // isNullAllowed
+                                    "",
+                                    "", // defaultValue
+                                    0, 
+                                    0, 
+                                    "", // isNullable 
+                                    md) };      
+        catalogs.setTableColumnInfos(cols);
 		for (int i = 0; i < catalogNames.length; i++) {
 			catalogs.addRow(new Object[] {catalogNames[i]});
-			list.add(new TableColumnInfo(catalogNames[i], // catalog 
-										 "aSchema",       // schema
-										 "",              // tableName
-										 "",              // columnName
-										 1,               // dataType
-										 "", // typeName 
-										 0,  // columnSize
-										 0,  // decimalDigits
-										 0,  // radix
-										 0,  // isNullAllowed
-										 "",
-										 "", // defaultValue
-										 0, 
-										 0, 
-										 "", // isNullable 
-										 md));			
 		}
-		TableColumnInfo[] array = 
-			(TableColumnInfo[])list.toArray(new TableColumnInfo[list.size()]);
-		MockResultSetMetaData rsmd = new MockResultSetMetaData(array); 
-		catalogs.setTableColumnInfos(array);
 	}
 
 	public ResultSet getSchemas() throws SQLException {
@@ -883,30 +880,28 @@ public class MockDatabaseMetaData extends
 
 	public void setSchemas(String[] schemaNames, SQLDatabaseMetaData md) {
 		schemas = new MockResultSet(null);
-		ArrayList list = new ArrayList();
-		for (int i = 0; i < schemaNames.length; i++) {
+        TableColumnInfo[] cols = new TableColumnInfo[] {
+                                    new TableColumnInfo("aCatalog", // catalog 
+                                                        "aSchema",  // schema
+                                                        "",         // tableName
+                                                        "",         // columnName
+                                                        1,          // dataType; 1 == CHAR
+                                                        "",         // typeName 
+                                                        0,  // columnSize  
+                                                        0,  // decimalDigits
+                                                        0,  // radix   
+                                                        0,  // isNullAllowed
+                                                        "",
+                                                        "", // defaultValue
+                                                        0, 
+                                                        0, 
+                                                        "", // isNullable 
+                                                        md) };      
+        schemas.setTableColumnInfos(cols);
+        for (int i = 0; i < schemaNames.length; i++) {
 			schemas.addRow(new Object[] {schemaNames[i]});
-			list.add(new TableColumnInfo("aCatalog", // catalog 
-					 				     "aSchema",       // schema
-					 				     "",              // tableName
-					 				     "",              // columnName
-					 				     1,               // dataType
-					 				     "", // typeName 
-					 				     0,  // columnSize
-					 				     0,  // decimalDigits
-					 				     0,  // radix
-					 				     0,  // isNullAllowed
-					 				     "",
-					 				     "", // defaultValue
-					 				     0, 
-										 0, 
-										 "", // isNullable 
-										 md));		
 		}
-		TableColumnInfo[] array = 
-			(TableColumnInfo[])list.toArray(new TableColumnInfo[list.size()]);
-		MockResultSetMetaData rsmd = new MockResultSetMetaData(array);
-		schemas.setTableColumnInfos(array);
+		
 	}
     
 	public String getSQLKeywords() throws SQLException {

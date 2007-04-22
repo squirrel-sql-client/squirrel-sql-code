@@ -26,9 +26,9 @@ import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.DataTypeInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -67,7 +67,7 @@ public class DBUtils
 	public ITableInfo getTableInfo()
 	{
 
-		SQLConnection conn = _session.getSQLConnection();
+		ISQLConnection conn = _session.getSQLConnection();
 		SQLDatabaseMetaData dmd = conn.getSQLMetaData();
 		IObjectTreeAPI treeAPI = _session.getSessionInternalFrame().getObjectTreeAPI();
 		IDatabaseObjectInfo[] dbInfo = treeAPI.getSelectedDatabaseObjects();
@@ -86,7 +86,7 @@ public class DBUtils
 		ResultSetMetaData rsmd;
 		try
 		{
-			final SQLConnection conn = _session.getSQLConnection();
+			final ISQLConnection conn = _session.getSQLConnection();
 			SQLDatabaseMetaData dmd = conn.getSQLMetaData();
 			Statement stmt = conn.createStatement();
 			ResultSet rs =
@@ -112,7 +112,7 @@ public class DBUtils
 
 		try
 		{
-			final SQLConnection conn = _session.getSQLConnection();
+			final ISQLConnection conn = _session.getSQLConnection();
 			Statement stmt = conn.createStatement();
 			ResultSet rs =
 				stmt.executeQuery("SELECT * FROM " + getTableInfo() + ";");
@@ -136,7 +136,7 @@ public class DBUtils
 		try
 		{
 
-			SQLConnection conn = _session.getSQLConnection();
+			ISQLConnection conn = _session.getSQLConnection();
 			Statement stmt = conn.createStatement();
 			stmt.execute(SQLQuery);
 		}
@@ -153,7 +153,7 @@ public class DBUtils
 		Vector dataTypes = new Vector();
 		try
 		{
-			final SQLConnection conn = _session.getSQLConnection();
+			final ISQLConnection conn = _session.getSQLConnection();
 			SQLDatabaseMetaData dmd = conn.getSQLMetaData();
 			DataTypeInfo[] infos = dmd.getDataTypes();
             for (int i = 0; i < infos.length; i++) {
@@ -173,7 +173,7 @@ public class DBUtils
 		String primaryKey = "";
 		try
 		{
-			SQLConnection con = _session.getSQLConnection();
+			ISQLConnection con = _session.getSQLConnection();
 			SQLDatabaseMetaData db = con.getSQLMetaData();
             PrimaryKeyInfo[] infos = db.getPrimaryKey(getTableInfo());
             for (int i=0; i < infos.length; i++) {

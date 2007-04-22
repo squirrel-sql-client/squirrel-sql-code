@@ -28,7 +28,7 @@ import org.firebirdsql.squirrel.FirebirdPlugin;
 import org.firebirdsql.squirrel.util.IndexParentInfo;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -97,7 +97,7 @@ public class TableExpander implements INodeExpander {
         childNodes.add(child);
         */
         
-        final SQLConnection conn = session.getSQLConnection();
+        final ISQLConnection conn = session.getSQLConnection();
         
         PreparedStatement pstmt = conn.prepareStatement(TRIGGER_SQL);
         try {

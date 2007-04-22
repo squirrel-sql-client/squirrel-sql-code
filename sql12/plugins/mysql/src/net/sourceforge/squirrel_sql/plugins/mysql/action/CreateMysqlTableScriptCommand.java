@@ -22,7 +22,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -65,7 +65,7 @@ class CreateMysqlTableScriptCommand implements ICommand
 	 */
 	public void execute() throws BaseException
 	{
-		final SQLConnection conn = _session.getSQLConnection();
+		final ISQLConnection conn = _session.getSQLConnection();
 		final StringBuffer buf = new StringBuffer(2048);
 		final String sep = " " + _session.getQueryTokenizer().getSQLStatementSeparator();
 

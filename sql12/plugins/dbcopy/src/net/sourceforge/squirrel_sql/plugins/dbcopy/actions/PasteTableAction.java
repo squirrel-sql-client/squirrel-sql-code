@@ -31,7 +31,7 @@ import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -101,7 +101,7 @@ public class PasteTableAction extends SquirrelAction
         	// schema/catalog, build the schema DatabaseObjectInfo.
         	if (Compat.isTableTypeDBO(dbObjs[0].getDatabaseObjectType())) {
         		IDatabaseObjectInfo tableLabelInfo = dbObjs[0];
-        		SQLConnection destCon = destSession.getSQLConnection();
+        		ISQLConnection destCon = destSession.getSQLConnection();
         		SQLDatabaseMetaData md = null;
         		if (destCon != null) {
         			md = destCon.getSQLMetaData();

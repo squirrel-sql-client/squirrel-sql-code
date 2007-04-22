@@ -30,9 +30,9 @@ import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.MockDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.util.DBUtil;
@@ -188,7 +188,7 @@ public class MockSessionInfoProvider implements SessionInfoProvider {
     }
     
     private List<ITableInfo> getAllTables(ISession sourceSession) throws SQLException {
-        SQLConnection sourceConn = sourceSession.getSQLConnection();
+        ISQLConnection sourceConn = sourceSession.getSQLConnection();
         SQLDatabaseMetaData data = sourceConn.getSQLMetaData(); 
         ITableInfo[] tableInfos = data.getTables(sourceCatalog, sourceSchema, "%", new String[] {"TABLE"}, null);
         
@@ -210,7 +210,7 @@ public class MockSessionInfoProvider implements SessionInfoProvider {
     private String fixCase(String identifier, ISession session) 
         throws SQLException 
     {
-        SQLConnection con = session.getSQLConnection();
+        ISQLConnection con = session.getSQLConnection();
         String result = identifier;
         if (con.getSQLMetaData().getJDBCMetaData().storesUpperCaseIdentifiers()
                 && !DialectFactory.isFrontBase(session.getMetaData())) {

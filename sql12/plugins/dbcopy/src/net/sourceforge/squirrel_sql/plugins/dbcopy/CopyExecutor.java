@@ -31,8 +31,8 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -147,7 +147,7 @@ public class CopyExecutor extends I18NBaseObject {
     private void _execute() {
         start = System.currentTimeMillis();
         boolean encounteredException = false;
-        SQLConnection destConn = destSession.getSQLConnection();
+        ISQLConnection destConn = destSession.getSQLConnection();
         if (!analyzeTables()) {
             return;
         }
@@ -316,7 +316,7 @@ public class CopyExecutor extends I18NBaseObject {
      * 
      * @param con
      */
-    private void setupAutoCommit(SQLConnection con) {
+    private void setupAutoCommit(ISQLConnection con) {
         boolean autoCommitPref = prefs.isAutoCommitEnabled();
         try {
             originalAutoCommitValue = con.getAutoCommit();
@@ -339,7 +339,7 @@ public class CopyExecutor extends I18NBaseObject {
      * 
      * @param con
      */
-    private void restoreAutoCommit(SQLConnection con) {
+    private void restoreAutoCommit(ISQLConnection con) {
         if (originalAutoCommitValue == currentAutoCommitValue) {
             return;
         }
@@ -520,8 +520,8 @@ public class CopyExecutor extends I18NBaseObject {
         if (!PreferencesManager.getPreferences().isCopyData()) {
             return;
         }
-        SQLConnection sourceConn = prov.getCopySourceSession().getSQLConnection();
-        SQLConnection destConn = prov.getCopyDestSession().getSQLConnection();
+        ISQLConnection sourceConn = prov.getCopySourceSession().getSQLConnection();
+        ISQLConnection destConn = prov.getCopyDestSession().getSQLConnection();
         SQLDatabaseMetaData sourceMetaData = sourceConn.getSQLMetaData();
         SQLDatabaseMetaData destMetaData = destConn.getSQLMetaData();
         try {
@@ -728,7 +728,7 @@ public class CopyExecutor extends I18NBaseObject {
      * 
      * @param connection
      */
-    private void commitConnection(SQLConnection connection) {
+    private void commitConnection(ISQLConnection connection) {
         try {
             connection.commit();
         } catch (SQLException e) {
@@ -754,7 +754,7 @@ public class CopyExecutor extends I18NBaseObject {
         		|| DialectFactory.isAxion(prov.getCopySourceSession().getMetaData())) {
             return;
         }
-        SQLConnection destConn = prov.getCopyDestSession().getSQLConnection();
+        ISQLConnection destConn = prov.getCopyDestSession().getSQLConnection();
         for (int i = 0; i < dbObjs.length; i++) {
             ITableInfo ti = (ITableInfo) dbObjs[i];
             Set fkStmts = 
@@ -779,7 +779,7 @@ public class CopyExecutor extends I18NBaseObject {
         if (cancelled) {
             return;
         }
-        SQLConnection destCon = prov.getCopyDestSession().getSQLConnection();
+        ISQLConnection destCon = prov.getCopyDestSession().getSQLConnection();
         String createTableSql = DBUtil.getCreateTableSql(prov, ti);
         DBUtil.executeUpdate(destCon, createTableSql, true);
         

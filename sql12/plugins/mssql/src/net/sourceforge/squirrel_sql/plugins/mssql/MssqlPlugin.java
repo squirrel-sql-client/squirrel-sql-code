@@ -38,8 +38,8 @@ import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -337,7 +337,7 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
         
         ITableInfo tableInfo = (ITableInfo) dbObjs[0];
         
-        SQLConnection conn = _session.getSQLConnection();
+        ISQLConnection conn = _session.getSQLConnection();
         SQLDatabaseMetaData metaData = conn.getSQLMetaData();
         
         try {

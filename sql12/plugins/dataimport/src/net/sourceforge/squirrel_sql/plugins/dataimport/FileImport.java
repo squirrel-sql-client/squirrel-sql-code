@@ -212,8 +212,10 @@ public class FileImport extends JPanel implements ActionListener {
 					filename = chooser.getSelectedFile().getName();
 					tableNameTxt.setText(filename);
 					readButton.setEnabled(true);
-					mytable.removeAll();
-					settingTable.removeAll();
+                    if (mytable != null) {
+                        mytable.removeAll();
+                        settingTable.removeAll();
+                    }
 					repaint();
 					return;
 				}

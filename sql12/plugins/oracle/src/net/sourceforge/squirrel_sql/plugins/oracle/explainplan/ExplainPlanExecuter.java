@@ -49,7 +49,7 @@ import net.sourceforge.squirrel_sql.client.session.event.SQLResultExecuterTabEve
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -436,7 +436,7 @@ public class ExplainPlanExecuter
       Statement stmt = null;
       try {
           ISession session = getSession();
-          SQLConnection con = session.getSQLConnection();
+          ISQLConnection con = session.getSQLConnection();
           stmt = con.createStatement();
           stmt.execute(createPlanTableSQL);
           SchemaInfo schemaInfo = session.getSchemaInfo();
@@ -464,7 +464,7 @@ public class ExplainPlanExecuter
       ResultSet rs = null;
       ArrayList planTableList = new ArrayList();
       try {
-          SQLConnection con = _session.getSQLConnection();
+          ISQLConnection con = _session.getSQLConnection();
           pstmt = con.prepareStatement(ALL_PLAN_TABLE_SQL);
           pstmt.setString(1, planTableName);
           rs = pstmt.executeQuery();
@@ -531,7 +531,7 @@ public class ExplainPlanExecuter
       PreparedStatement stmt = null;
       ResultSet rs = null;
       try {
-          SQLConnection con = getSession().getSQLConnection();
+          ISQLConnection con = getSession().getSQLConnection();
           stmt = con.prepareStatement(USER_PLAN_TABLE_SQL);
           stmt.setString(1, getPlanTableName());
           rs = stmt.executeQuery();

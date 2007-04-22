@@ -8,10 +8,10 @@ import java.util.List;
 
 import org.firebirdsql.squirrel.FirebirdPlugin;
 
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -63,7 +63,7 @@ public class TriggerParentExpander implements INodeExpander {
         final List childNodes = new ArrayList();
         final IDatabaseObjectInfo parentDbinfo = parentNode
                 .getDatabaseObjectInfo();
-        final SQLConnection conn = session.getSQLConnection();
+        final ISQLConnection conn = session.getSQLConnection();
         final SQLDatabaseMetaData md = session.getSQLConnection()
                 .getSQLMetaData();
         final String schemaName = parentDbinfo.getSchemaName();

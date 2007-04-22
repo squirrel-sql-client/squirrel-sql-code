@@ -47,7 +47,7 @@ public class SQLDatabaseMetaDataTest extends BaseSQuirreLTestCase {
 	
     // postgres table types test
     java.sql.Connection pg_con = null;
-    SQLConnection pg_sql_con = null;
+    ISQLConnection pg_sql_con = null;
     ISQLDriver pg_driver = null;
     DatabaseMetaData pg_jmd = null;
     ResultSet pg_tableTypesRS = null;
@@ -57,7 +57,7 @@ public class SQLDatabaseMetaDataTest extends BaseSQuirreLTestCase {
 		con = new MockConnection2();
 		md = new MockDatabaseMetaData("aCatalog", "aSchema");
 		con.setupMetaData(md);
-		SQLConnection scon = new SQLConnection(con, null, null);
+		ISQLConnection scon = new SQLConnection(con, null, null);
 		iut = new SQLDatabaseMetaData(scon);
 		md.setCatalogs(new String[] {"aCatalog"}, iut);
 		md.setSchemas(new String[] {"aSchema"}, iut);
@@ -128,7 +128,7 @@ public class SQLDatabaseMetaDataTest extends BaseSQuirreLTestCase {
             // Check our state initially after setup
 			String[] currentCatalogs = iut.getCatalogs();
 			assertEquals(1, currentCatalogs.length);
-			
+            
 			// Now, simulate adding a catalog to the database 
 			md.setCatalogs(new String[] {"aCatalog", "Catalog2"}, iut);
 			
