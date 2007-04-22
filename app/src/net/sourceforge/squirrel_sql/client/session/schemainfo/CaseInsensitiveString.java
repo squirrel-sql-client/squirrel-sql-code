@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.client.session.schemainfo;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 
 /**
@@ -19,6 +20,18 @@ public class CaseInsensitiveString implements Comparable, Serializable
    private int hash = 0;
    private boolean _isMutable;
 
+   private static HashMap<Character,Character> upChars;
+   private static HashMap<Character,Character> lcChars;
+   
+   static {
+       if (upChars == null) {
+           upChars = new HashMap<Character,Character>();
+       }
+       if (lcChars == null) {
+           lcChars = new HashMap<Character,Character>();
+       }
+   }
+   
    public CaseInsensitiveString(String s)
    {
       value = new char[s.length()];
@@ -58,7 +71,7 @@ public class CaseInsensitiveString implements Comparable, Serializable
 
          for (int i = 0; i < len; i++)
          {
-            h = 31 * h + Character.toUpperCase(val[off++]);
+            h = 31 * h + toUpperCase(val[off++]);
          }
          hash = h;
       }
@@ -86,8 +99,8 @@ public class CaseInsensitiveString implements Comparable, Serializable
             // try converting both characters to uppercase.
             // If the results match, then the comparison scan should
             // continue.
-            char u1 = Character.toUpperCase(c1);
-            char u2 = Character.toUpperCase(c2);
+            char u1 = toUpperCase(c1);
+            char u2 = toUpperCase(c2);
             if (u1 == u2)
             {
                continue;
@@ -135,7 +148,7 @@ public class CaseInsensitiveString implements Comparable, Serializable
             // for the Georgian alphabet, which has strange rules about case
             // conversion.  So we need to make one last check before
             // exiting.
-            if (Character.toLowerCase(u1) == Character.toLowerCase(u2))
+            if (toLowerCase(u1) == toLowerCase(u2))
             {
                continue;
             }
@@ -178,9 +191,9 @@ public class CaseInsensitiveString implements Comparable, Serializable
          {
             char c1 = v1[k];
             char c2 = v2[k];
-            if (Character.toLowerCase(c1) != Character.toLowerCase(c2))
+            if (toLowerCase(c1) != toLowerCase(c2))
             {
-               return Character.toLowerCase(c1) - Character.toLowerCase(c2);
+               return toLowerCase(c1) - toLowerCase(c2);
             }
             k++;
          }
@@ -191,12 +204,39 @@ public class CaseInsensitiveString implements Comparable, Serializable
          {
             char c1 = v1[i++];
             char c2 = v2[j++];
-            if (Character.toLowerCase(c1) != Character.toLowerCase(c2))
+            if (toLowerCase(c1) != toLowerCase(c2))
             {
-               return Character.toLowerCase(c1) - Character.toLowerCase(c2);
+               return toLowerCase(c1) - toLowerCase(c2);
             }
          }
       }
       return len1 - len2;
    }
+   
+   private char toLowerCase(char c) {
+       char result = c;
+       Character key = new Character(c);
+       if (lcChars.containsKey(key)) {
+           return lcChars.get(key).charValue();
+       }
+       if (Character.isUpperCase(c)) {
+           result = Character.toLowerCase(c);
+       }
+       lcChars.put(key, new Character(result));
+       return result;
+   }
+   
+   private char toUpperCase(char c) {
+       char result = c;
+       Character key = new Character(c);
+       if (upChars.containsKey(key)) {
+           return upChars.get(key).charValue();
+       }
+       if (Character.isLowerCase(c)) {
+           result = Character.toUpperCase(c);
+       }
+       upChars.put(key, new Character(result));
+       return result;
+   }
+   
 }
