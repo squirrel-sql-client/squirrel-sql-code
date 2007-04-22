@@ -24,7 +24,7 @@ import java.util.TreeMap;
 
 import javax.swing.JComboBox;
 
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 /**
  * This <TT>JComboBox</TT> will display all the catalogs
@@ -93,7 +93,7 @@ public class SQLCatalogsComboBox extends JComboBox
      *             have direct access to the model.  Use the setCatalogs method
      *             instead.
 	 */
-	public void setConnection(SQLConnection conn) throws SQLException
+	public void setConnection(ISQLConnection conn) throws SQLException
 	{
 		if (conn == null)
 		{

@@ -92,7 +92,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
    {
       private static final String COM_HTTX_DRIVER_PREFIX = "com.hxtt.sql.";
 
-      public static boolean isComHttxDriver(SQLConnection con)
+      public static boolean isComHttxDriver(ISQLConnection con)
       {
          if(null == con)
          {
@@ -103,7 +103,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
    }
 
 	/** Connection to database this class is supplying information for. */
-	private SQLConnection _conn;
+	private ISQLConnection _conn;
 
 	/**
 	 * Cache of commonly accessed metadata properties keyed by the method
@@ -128,7 +128,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if null SQLConnection passed.
 	 */
-	SQLDatabaseMetaData(SQLConnection conn)
+	SQLDatabaseMetaData(ISQLConnection conn)
 	{
 		super();
 		if (conn == null)
@@ -486,7 +486,9 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
     			Object[] row = null;
     			while ((row = rdr.readRow()) != null)
     			{
-    				list.add(row[0].toString());
+                    if (row != null && row[0] != null) { 
+                        list.add(row[0].toString());
+                    }
     			}
             }
 		}

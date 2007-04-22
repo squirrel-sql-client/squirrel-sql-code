@@ -46,7 +46,7 @@ public class SQLConnectionState
 		super();
 	}
 
-   public void saveState(SQLConnection conn, ISessionProperties sessionProperties, IMessageHandler msgHandler)
+   public void saveState(ISQLConnection conn, ISessionProperties sessionProperties, IMessageHandler msgHandler)
 		throws SQLException
 	{
 		if (conn == null)
@@ -119,13 +119,13 @@ public class SQLConnectionState
 		_connProps = conn.getConnectionProperties();
 	}
 
-	public void restoreState(SQLConnection conn)
+	public void restoreState(ISQLConnection conn)
 		throws SQLException
 	{
 		restoreState(conn, null);
 	}
 
-	public void restoreState(SQLConnection conn, IMessageHandler msgHandler)
+	public void restoreState(ISQLConnection conn, IMessageHandler msgHandler)
 		throws SQLException
 	{
 		if (conn == null)
