@@ -89,7 +89,7 @@ public class SQLDriverManager
 		_classLoaders.remove(sqlDriver.getIdentifier());
 	}
 
-	public SQLConnection getConnection(ISQLDriver sqlDriver, ISQLAlias alias,
+	public ISQLConnection getConnection(ISQLDriver sqlDriver, ISQLAlias alias,
 											String user, String pw)
 		throws ClassNotFoundException, IllegalAccessException,
 				InstantiationException, MalformedURLException, SQLException

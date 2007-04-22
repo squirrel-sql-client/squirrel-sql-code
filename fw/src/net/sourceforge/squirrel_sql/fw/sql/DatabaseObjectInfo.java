@@ -120,7 +120,7 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
       return _dboType;
    }
 
-   protected String generateQualifiedName(SQLConnection conn)
+   protected String generateQualifiedName(ISQLConnection conn)
    {
       return generateQualifiedName(conn.getSQLMetaData());
    }
