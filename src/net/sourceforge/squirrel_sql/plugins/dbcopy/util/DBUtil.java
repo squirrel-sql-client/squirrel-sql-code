@@ -55,9 +55,9 @@ import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
@@ -113,7 +113,7 @@ public class DBUtil extends I18NBaseObject {
      * @return
      * @throws SQLException
      */
-    public static String getPKColumnString(SQLConnection sourceConn,
+    public static String getPKColumnString(ISQLConnection sourceConn,
                                            ITableInfo ti) 
         throws SQLException 
     {
@@ -143,7 +143,7 @@ public class DBUtil extends I18NBaseObject {
      * @return
      * @throws SQLException
      */
-    private static List getPKColumnList(SQLConnection sourceConn,
+    private static List getPKColumnList(ISQLConnection sourceConn,
                                         ITableInfo ti) 
         throws SQLException 
     {
@@ -349,7 +349,7 @@ public class DBUtil extends I18NBaseObject {
      * @throws SQLException if a database access error occurs or the given SQL 
      *                       statement produces a ResultSet object
      */
-    public static int executeUpdate(SQLConnection con, 
+    public static int executeUpdate(ISQLConnection con, 
                                     String SQL,
                                     boolean writeSQL) throws SQLException {
         Statement stmt = null;
@@ -391,7 +391,7 @@ public class DBUtil extends I18NBaseObject {
                                          String sql) 
         throws SQLException 
     {
-    	SQLConnection sqlcon = session.getSQLConnection(); 
+    	ISQLConnection sqlcon = session.getSQLConnection(); 
         if (sqlcon == null || sql == null) {
             return null;
         }
@@ -544,7 +544,7 @@ public class DBUtil extends I18NBaseObject {
                                           String tableName) 
         throws SQLException, MappingException, UserCancelledOperationException 
     {
-        SQLConnection con = session.getSQLConnection();
+        ISQLConnection con = session.getSQLConnection();
         // Currently, as of milestone 3, Axion doesn't support "schemas" like 
         // other databases.  So, set the schema to emtpy string if we detect 
         // an Axion session.
@@ -1178,7 +1178,7 @@ public class DBUtil extends I18NBaseObject {
      * @return
      * @throws SQLException
      */
-    public static int getColumnType(SQLConnection con, 
+    public static int getColumnType(ISQLConnection con, 
                                     ITableInfo ti, 
                                     String columnName) throws SQLException { 
         int result = -1;
@@ -1194,7 +1194,7 @@ public class DBUtil extends I18NBaseObject {
         return result;
     }
         
-    public static int[] getColumnTypes(SQLConnection con, 
+    public static int[] getColumnTypes(ISQLConnection con, 
                                        ITableInfo ti, 
                                        String[] colNames) 
         throws SQLException 
@@ -1214,7 +1214,7 @@ public class DBUtil extends I18NBaseObject {
         return result;
     }
     
-    public static boolean tableHasPrimaryKey(SQLConnection con,
+    public static boolean tableHasPrimaryKey(ISQLConnection con,
                                              ITableInfo ti) 
         throws SQLException
     {
@@ -1263,7 +1263,7 @@ public class DBUtil extends I18NBaseObject {
                                                  String tableName) 
         throws SQLException, UserCancelledOperationException
     {
-        SQLConnection con = session.getSQLConnection();
+        ISQLConnection con = session.getSQLConnection();
         boolean useTrunc = PreferencesManager.getPreferences().isUseTruncate();
         String fullTableName = 
             getQualifiedObjectName(session, 
@@ -1347,7 +1347,7 @@ public class DBUtil extends I18NBaseObject {
         result.append("\n");
         TableColumnInfo colInfo = null;
         try {
-            SQLConnection sourceCon = prov.getCopySourceSession().getSQLConnection();
+            ISQLConnection sourceCon = prov.getCopySourceSession().getSQLConnection();
             TableColumnInfo[] colInfoArr = sourceCon.getSQLMetaData().getColumnInfo(ti);
             if (colInfoArr.length == 0) {
                 //i18n[DBUtil.error.nocolumns=Table '{0}' in schema '{1}' has 
@@ -1494,7 +1494,7 @@ public class DBUtil extends I18NBaseObject {
      * @return
      * @throws SQLException
      */
-    public static String getColumnName(SQLConnection sourceConn, 
+    public static String getColumnName(ISQLConnection sourceConn, 
                                        ITableInfo ti, 
                                        int column) 
     throws SQLException 
@@ -1511,7 +1511,7 @@ public class DBUtil extends I18NBaseObject {
      * @return
      * @throws SQLException
      */
-    public static String[] getColumnNames(SQLConnection sourceConn, 
+    public static String[] getColumnNames(ISQLConnection sourceConn, 
                                           ITableInfo ti) 
         throws SQLException 
     {
@@ -1758,7 +1758,7 @@ public class DBUtil extends I18NBaseObject {
      * @return
      * @throws SQLException
      */
-    public static int getColumnCount(SQLConnection sourceConn, ITableInfo ti) 
+    public static int getColumnCount(ISQLConnection sourceConn, ITableInfo ti) 
         throws SQLException 
     {
         return sourceConn.getSQLMetaData().getColumnInfo(ti).length;
@@ -1772,7 +1772,7 @@ public class DBUtil extends I18NBaseObject {
      * @return
      * @throws SQLException
      */
-    public static int getColumnType(SQLConnection con, ITableInfo ti, int column) 
+    public static int getColumnType(ISQLConnection con, ITableInfo ti, int column) 
         throws SQLException 
     {
         TableColumnInfo[] infoArr = con.getSQLMetaData().getColumnInfo(ti);
@@ -1780,7 +1780,7 @@ public class DBUtil extends I18NBaseObject {
         return colInfo.getDataType();
     }
     
-    public static int[] getColumnTypes(SQLConnection con, ITableInfo ti) 
+    public static int[] getColumnTypes(ISQLConnection con, ITableInfo ti) 
         throws SQLException 
     {
         TableColumnInfo[] infoArr = con.getSQLMetaData().getColumnInfo(ti);
@@ -1803,7 +1803,7 @@ public class DBUtil extends I18NBaseObject {
       
         ISession sourceSession = prov.getCopySourceSession();
         ISession destSession = prov.getCopyDestSession();
-        SQLConnection con = sourceSession.getSQLConnection();
+        ISQLConnection con = sourceSession.getSQLConnection();
         String destSchema = prov.getDestSelectedDatabaseObject().getSimpleName();
         String destCatalog = prov.getDestSelectedDatabaseObject().getCatalogName();                
 
@@ -1940,8 +1940,8 @@ public class DBUtil extends I18NBaseObject {
         if (sourceSession == null || destSession == null) {
             return;
         }
-        SQLConnection sourceCon = sourceSession.getSQLConnection();
-        SQLConnection con = destSession.getSQLConnection();        
+        ISQLConnection sourceCon = sourceSession.getSQLConnection();
+        ISQLConnection con = destSession.getSQLConnection();        
         TableColumnInfo[] colInfoArr = null;
         try {
             colInfoArr = sourceCon.getSQLMetaData().getColumnInfo(ti);
@@ -2003,7 +2003,7 @@ public class DBUtil extends I18NBaseObject {
         throws UserCancelledOperationException
     {
         boolean result = false;
-        SQLConnection con = session.getSQLConnection();
+        ISQLConnection con = session.getSQLConnection();
         String table = getQualifiedObjectName(session, 
                                              catalogName, 
                                              schemaName,
