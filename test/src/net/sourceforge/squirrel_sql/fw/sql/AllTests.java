@@ -7,9 +7,10 @@ import junit.framework.TestSuite;
 public class AllTests extends TestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite("SQL framework tests");
-		suite.addTestSuite(SQLDatabaseMetaDataTest.class);
+        suite.addTestSuite(JDBCTypeMapperTest.class);
         suite.addTestSuite(QueryTokenizerTest.class);
         suite.addTestSuite(OracleQueryTokenizerTest.class);
+        suite.addTestSuite(SQLDatabaseMetaDataTest.class);
         suite.addTestSuite(SQLUtilitiesTest.class);
 		return suite;
 	}
