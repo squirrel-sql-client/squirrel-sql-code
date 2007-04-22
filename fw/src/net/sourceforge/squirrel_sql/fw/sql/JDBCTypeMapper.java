@@ -168,12 +168,16 @@ public class JDBCTypeMapper {
 			type = Types.BIT;
 		} else if ("BLOB".equals(jdbcTypeName)) {
 			type = Types.BLOB;
+        } else if ("BOOLEAN".equals(jdbcTypeName)) {
+            type = Types.BOOLEAN;
 		} else if ("CHAR".equals(jdbcTypeName)) {
 			type = Types.CHAR;
 		} else if ("CLOB".equals(jdbcTypeName)) {
 			type = Types.CLOB;
 		} else if ("DATE".equals(jdbcTypeName)) {
 			type = Types.DATE;
+        } else if ("DATALINK".equals(jdbcTypeName)) {
+            type = Types.DATALINK;
 		} else if ("DECIMAL".equals(jdbcTypeName)) {
 			type = Types.DECIMAL;
 		} else if ("DISTINCT".equals(jdbcTypeName)) {
