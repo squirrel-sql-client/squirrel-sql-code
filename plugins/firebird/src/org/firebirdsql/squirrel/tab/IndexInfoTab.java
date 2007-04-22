@@ -24,8 +24,8 @@ import java.sql.SQLException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.JavabeanDataSet;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -95,7 +95,7 @@ public class IndexInfoTab extends BaseDataSetTab
         throws DataSetException
     {
         final ISession session = getSession();
-        final SQLConnection conn = session.getSQLConnection();
+        final ISQLConnection conn = session.getSQLConnection();
 
         try
         {

@@ -8,7 +8,7 @@ public class MockSQLDatabaseMetaData extends SQLDatabaseMetaData
                                      implements ISQLDatabaseMetaData {
 
     static MockConnection2 conn = new MockConnection2();
-    static SQLConnection sqlConn = new SQLConnection(conn, null, null);
+    static ISQLConnection sqlConn = new SQLConnection(conn, null, null);
     
     
     public MockSQLDatabaseMetaData() {

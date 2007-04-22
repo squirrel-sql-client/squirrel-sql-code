@@ -21,8 +21,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 //import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 //import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -58,7 +58,7 @@ public class SessionExpander implements INodeExpander
 		throws SQLException
 	{
 		final List childNodes = new ArrayList();
-		final SQLConnection conn = session.getSQLConnection();
+		final ISQLConnection conn = session.getSQLConnection();
 		final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
 
 		// Users.

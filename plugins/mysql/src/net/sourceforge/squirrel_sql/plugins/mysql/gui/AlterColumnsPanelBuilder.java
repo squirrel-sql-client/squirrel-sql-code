@@ -32,9 +32,9 @@ import javax.swing.JTextField;
 import com.jgoodies.forms.layout.FormLayout;
 
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
-import net.sourceforge.squirrel_sql.fw.sql.DataTypeInfo;
+import net.sourceforge.squirrel_sql.fw.sql.DataTypeInfo;import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -199,7 +199,7 @@ class AlterColumnsPanelBuilder
 		_dataTypesByTypeName = new HashMap();
 		_mediator = new ControlMediator();
 
-		final SQLConnection conn = session.getSQLConnection();
+		final ISQLConnection conn = session.getSQLConnection();
 
 		_columnsCmb = new ColumnsComboBox(conn, ti);
 

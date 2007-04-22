@@ -32,7 +32,7 @@ import java.sql.*;
 
 import net.sourceforge.squirrel_sql.client.session.*;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.*;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 
 import org.rege.isqlj.*;
@@ -40,7 +40,7 @@ import org.rege.isqlj.*;
 public class SqscConnection
 		implements SqlConnection
 {
-	private SQLConnection squirrelCon = null;
+	private ISQLConnection squirrelCon = null;
 	private Database db = null;
 	private ISession session = null;
 	private IPlugin plugin = null;

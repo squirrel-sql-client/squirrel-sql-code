@@ -79,7 +79,7 @@ public class CreateSelectScriptCommand implements ICommand
    {
       StringBuffer sbScript = new StringBuffer(1000);
       StringBuffer sbConstraints = new StringBuffer(1000);
-      SQLConnection conn = _session.getSQLConnection();
+      ISQLConnection conn = _session.getSQLConnection();
       try
       {
         boolean isJdbcOdbc = conn.getSQLMetaData().getURL().startsWith("jdbc:odbc:");

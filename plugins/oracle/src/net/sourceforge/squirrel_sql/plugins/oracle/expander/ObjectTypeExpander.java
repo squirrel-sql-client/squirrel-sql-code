@@ -25,7 +25,7 @@ import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -90,7 +90,7 @@ public class ObjectTypeExpander implements INodeExpander
 											String schemaName)
 		throws SQLException
 	{
-		final SQLConnection conn = session.getSQLConnection();
+		final ISQLConnection conn = session.getSQLConnection();
 		final SQLDatabaseMetaData md = conn.getSQLMetaData();
 		final List childNodes = new ArrayList();
 		String objFilter =  session.getProperties().getObjectFilter();

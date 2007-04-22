@@ -19,7 +19,7 @@ package net.sourceforge.squirrel_sql.plugins.sqlval;
  */
 import java.io.Serializable;
 
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 
 public class WebServiceSessionProperties implements Cloneable, Serializable
@@ -150,7 +150,7 @@ public class WebServiceSessionProperties implements Cloneable, Serializable
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if null SQLConnection passed.
 	 */
-	public void setSQLConnection(SQLConnection conn)
+	public void setSQLConnection(ISQLConnection conn)
 	{
 		if (conn == null)
 		{

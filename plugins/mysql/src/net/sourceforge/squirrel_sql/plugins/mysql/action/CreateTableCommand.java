@@ -24,7 +24,7 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -439,7 +439,7 @@ public class CreateTableCommand extends JDialog implements ICommand
 
 	private void btCreateTableActionPerformed(java.awt.event.ActionEvent evt)
 	{
-		SQLConnection con = _session.getSQLConnection();
+		ISQLConnection con = _session.getSQLConnection();
 		String query = getQuery();
 		try
 		{

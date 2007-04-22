@@ -54,28 +54,40 @@ public class MockResultSetMetaData implements ResultSetMetaData {
 	}
 
 	public int getColumnType(int arg0) throws SQLException {
-		if (_infos == null || _infos.length <= 0 || arg0 >= _infos.length) {
+        // Need to adjust param which is 1-based(JDBC) to a 0-based number for 
+        // array access
+        int idx = arg0 - 1;
+		if (_infos == null || _infos.length <= 0 || idx >= _infos.length) {
 			return 0;
 		}
-		return _infos[arg0].getDataType();
+		return _infos[idx].getDataType();
 	}
 
 	public String getColumnTypeName(int arg0) throws SQLException {
-		if (_infos == null || _infos.length <= 0) {
+        // Need to adjust param which is 1-based(JDBC) to a 0-based number for 
+        // array access
+        int idx = arg0 - 1;        
+		if (_infos == null || _infos.length <= 0 || idx >= _infos.length) {
 			return null;
 		}
-		return _infos[arg0].getTypeName();
+		return _infos[idx].getTypeName();
 	}
 
 	public int getPrecision(int arg0) throws SQLException {
-		if (_infos == null || _infos.length <= 0) {
+        // Need to adjust param which is 1-based(JDBC) to a 0-based number for 
+        // array access
+        int idx = arg0 - 1;                
+		if (_infos == null || _infos.length <= 0 || idx >= _infos.length) {
 			return 0;
 		}
 		return _infos[arg0].getColumnSize();
 	}
 
 	public int getScale(int arg0) throws SQLException {
-		if (_infos == null || _infos.length <= 0) {
+        // Need to adjust param which is 1-based(JDBC) to a 0-based number for 
+        // array access
+        int idx = arg0 - 1;                        
+		if (_infos == null || _infos.length <= 0 || idx >= _infos.length) {
 			return 0;
 		}
 		return _infos[arg0].getDecimalDigits();
@@ -85,7 +97,7 @@ public class MockResultSetMetaData implements ResultSetMetaData {
 		if (_infos == null || _infos.length <= 0) {
 			return null;
 		}
-		return _infos[arg0].getSchemaName();
+		return _infos[0].getSchemaName();
 	}
 
 	public String getTableName(int arg0) throws SQLException {

@@ -810,7 +810,7 @@ public class MockResultSet implements ResultSet {
 		} else {
 			throw new SQLException(
 				"Error: requested value for non-existant column with index="+
-				colIdx);
+				(colIdx-1));
 		}
 	}
 	

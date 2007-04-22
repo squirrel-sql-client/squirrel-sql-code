@@ -22,7 +22,7 @@ import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
@@ -60,7 +60,7 @@ public class ProcedureSourceTab extends DB2SourceTab
             s_log.debug("procedure name="+doi.getSimpleName());
         }
         
-		SQLConnection conn = session.getSQLConnection();
+		ISQLConnection conn = session.getSQLConnection();
 		PreparedStatement pstmt = conn.prepareStatement(SQL);
         pstmt.setString(1, doi.getSchemaName());
 		pstmt.setString(2, doi.getSimpleName());
