@@ -42,8 +42,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -137,7 +137,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
       final SessionProperties props = _session.getProperties();
       try
       {
-         final SQLConnection conn = _session.getSQLConnection();
+         final ISQLConnection conn = _session.getSQLConnection();
          _stmt = conn.createStatement();
 
          try
@@ -500,7 +500,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
       return true;
    }
 
-   private void handleAllWarnings(SQLConnection conn, Statement stmt)
+   private void handleAllWarnings(ISQLConnection conn, Statement stmt)
    {
       // If SQL executing produced warnings then write them out to the session
       // message handler. TODO: This is a pain. PostgreSQL sends "raise

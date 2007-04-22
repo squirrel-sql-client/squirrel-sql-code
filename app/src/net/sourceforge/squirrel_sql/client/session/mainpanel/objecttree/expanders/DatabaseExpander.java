@@ -27,7 +27,7 @@ import javax.swing.SwingUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -110,7 +110,7 @@ public class DatabaseExpander implements INodeExpander
 		throws SQLException
 	{
 		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
-		final SQLConnection conn = session.getSQLConnection();
+		final ISQLConnection conn = session.getSQLConnection();
 		final SQLDatabaseMetaData md = conn.getSQLMetaData();
 
 		boolean supportsCatalogs = false;
@@ -260,7 +260,7 @@ public class DatabaseExpander implements INodeExpander
 
 		if (session.getProperties().getLoadSchemasCatalogs())
 		{
-			final SQLConnection conn = session.getSQLConnection();
+			final ISQLConnection conn = session.getSQLConnection();
 			final SQLDatabaseMetaData md = conn.getSQLMetaData();
 
 			// Add table types to list.

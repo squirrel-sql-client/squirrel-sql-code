@@ -10,7 +10,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 
 import javax.swing.*;
 import javax.swing.table.TableColumn;
@@ -204,7 +204,7 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
    {
       ConnectToAliasCallBack cb = new ConnectToAliasCallBack(_app, _alias)
       {
-         public void connected(SQLConnection conn)
+         public void connected(ISQLConnection conn)
          {
             onConnected(conn);
          }
@@ -251,7 +251,7 @@ public class SchemaPropertiesController implements IAliasPropertiesPanelControll
     * synchronized because the user may connect twice from within the Schema Properties Panel.
     * @param conn
     */
-   private synchronized void onConnected(SQLConnection conn)
+   private synchronized void onConnected(ISQLConnection conn)
    {
       try
       {

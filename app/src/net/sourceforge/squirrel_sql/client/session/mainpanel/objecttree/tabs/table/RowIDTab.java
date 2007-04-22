@@ -22,8 +22,8 @@ import java.sql.SQLException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.JavabeanArrayDataSet;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.dbobj.adapter.AdapterFactory;
@@ -70,7 +70,7 @@ public class RowIDTab extends BaseTableTab
 	{
 		try
 		{
-			final SQLConnection conn = getSession().getSQLConnection();
+			final ISQLConnection conn = getSession().getSQLConnection();
 			final SQLDatabaseMetaData md = conn.getSQLMetaData();
 			final ITableInfo ti = getTableInfo();
 			final BestRowIdentifier[] bris = md.getBestRowIdentifier(ti);

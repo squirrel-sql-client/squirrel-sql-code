@@ -76,7 +76,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeClob;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -879,7 +879,7 @@ public class SQLResultExecuterPanel extends JPanel
     private class SetAutoCommitTask implements Runnable {
                 
         public void run() {
-            final SQLConnection conn = _session.getSQLConnection();
+            final ISQLConnection conn = _session.getSQLConnection();
             final SessionProperties props = _session.getProperties();
             if (conn != null)
             {

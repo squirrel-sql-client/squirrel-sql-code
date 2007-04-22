@@ -63,6 +63,7 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
@@ -637,7 +638,7 @@ public class AliasInternalFrame extends BaseInternalFrame
 		/**
 		 * @see CompletionCallback#connected(SQLConnection)
 		 */
-		public void connected(SQLConnection conn)
+		public void connected(ISQLConnection conn)
 		{
 			try
 			{

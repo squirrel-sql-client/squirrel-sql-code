@@ -8,7 +8,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 
 import javax.swing.*;
 import java.awt.*;
@@ -57,11 +57,11 @@ public class CatalogsPanel extends JPanel implements ActionListener
 		{
 			final String propName = evt.getPropertyName();
 			if (propName == null ||
-				propName.equals(SQLConnection.IPropertyNames.CATALOG))
+				propName.equals(ISQLConnection.IPropertyNames.CATALOG))
 			{
 				if (_catalogsCmb != null)
 				{
-					final SQLConnection conn = _session.getSQLConnection();
+					final ISQLConnection conn = _session.getSQLConnection();
 					if (!StringUtilities.areStringsEqual(conn.getCatalog(), _catalogsCmb.getSelectedCatalog()))
 					{
 						_catalogsCmb.setSelectedCatalog(conn.getCatalog());

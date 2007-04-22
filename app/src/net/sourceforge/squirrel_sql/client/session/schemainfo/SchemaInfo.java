@@ -174,7 +174,7 @@ public class SchemaInfo
 
       try
       {
-         SQLConnection conn = _session.getSQLConnection();
+         ISQLConnection conn = _session.getSQLConnection();
          _dmd = conn.getSQLMetaData();
 
          _dmd.clearCache();

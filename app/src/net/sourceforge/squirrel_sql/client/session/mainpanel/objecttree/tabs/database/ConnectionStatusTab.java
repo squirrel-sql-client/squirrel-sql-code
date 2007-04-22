@@ -23,7 +23,7 @@ import java.util.Date;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.JavabeanDataSet;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -71,7 +71,7 @@ public class ConnectionStatusTab extends BaseDataSetTab
 	protected IDataSet createDataSet() throws DataSetException
 	{
 		final ISession session = getSession();
-		final SQLConnection conn = session.getSQLConnection();
+		final ISQLConnection conn = session.getSQLConnection();
 		final IMessageHandler msgHandler = session.getMessageHandler();
 		return new JavabeanDataSet(new ConnectionInfo(conn, msgHandler));
 	}
@@ -88,7 +88,7 @@ public class ConnectionStatusTab extends BaseDataSetTab
 		private Date _timeOpened;
 		private String _transIsol;
 
-		ConnectionInfo(SQLConnection conn, IMessageHandler msgHandler)
+		ConnectionInfo(ISQLConnection conn, IMessageHandler msgHandler)
 		{
 			super();
 			Connection jdbcConn = conn.getConnection();

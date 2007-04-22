@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.IUDTInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
@@ -53,7 +53,7 @@ public class UDTTypeExpander implements INodeExpander
 	{
 		final List childNodes = new ArrayList();
 		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
-		final SQLConnection conn = session.getSQLConnection();
+		final ISQLConnection conn = session.getSQLConnection();
 		final String catalogName = parentDbinfo.getCatalogName();
 		final String schemaName = parentDbinfo.getSchemaName();
 		final String objFilter = session.getProperties().getObjectFilter();

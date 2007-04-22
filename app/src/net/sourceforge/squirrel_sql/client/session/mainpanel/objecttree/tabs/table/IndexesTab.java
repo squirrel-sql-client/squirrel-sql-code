@@ -20,8 +20,8 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.ta
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -67,7 +67,7 @@ public class IndexesTab extends BaseTableTab
 	 */
 	protected IDataSet createDataSet() throws DataSetException
 	{
-		final SQLConnection conn = getSession().getSQLConnection();
+		final ISQLConnection conn = getSession().getSQLConnection();
         final SQLDatabaseMetaData dmd = conn.getSQLMetaData();
         ITableInfo ti = getTableInfo();
         if (! "TABLE".equalsIgnoreCase(ti.getType())) {

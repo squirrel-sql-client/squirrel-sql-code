@@ -52,8 +52,8 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.tab
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -290,7 +290,7 @@ public class SQLFilterSheet extends BaseSessionInternalFrame
 
 		try
 		{
-			SQLConnection sqlConnection = getSession().getSQLConnection();
+			ISQLConnection sqlConnection = getSession().getSQLConnection();
             SQLDatabaseMetaData md = sqlConnection.getSQLMetaData();
             TableColumnInfo[] infos = md.getColumnInfo((ITableInfo)_objectInfo);
             for (int i = 0; i < infos.length; i++) {
