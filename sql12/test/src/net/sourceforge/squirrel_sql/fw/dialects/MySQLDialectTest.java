@@ -18,13 +18,6 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
-import java.sql.Types;
-
-import junit.framework.TestCase;
-
-import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
-
-import org.hibernate.MappingException;
 
 public class MySQLDialectTest extends DialectTestCase {
 
