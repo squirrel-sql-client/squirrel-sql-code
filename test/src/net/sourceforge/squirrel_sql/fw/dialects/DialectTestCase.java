@@ -18,65 +18,37 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
-import java.sql.Types;
+import java.lang.reflect.Field;
 
+import net.sourceforge.squirrel_sql.BaseSQuirreLTestCase;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 
 import org.hibernate.MappingException;
 import org.hibernate.dialect.Dialect;
 
-import junit.framework.TestCase;
-
-public class DialectTestCase extends TestCase {
+public class DialectTestCase extends BaseSQuirreLTestCase {
 
     protected void testAllTypes(Dialect d) {
-        testType(Types.ARRAY, d);
-        testType(Types.BIGINT, d);
-        testType(Types.BINARY, d);
-        testType(Types.BIT, d);
-        testType(Types.BLOB, d);
-        testType(Types.BOOLEAN, d);
-        testType(Types.CHAR, d);
-        testType(Types.CLOB, d);
-        testType(Types.DATALINK, d);
-        testType(Types.DATE, d);
-        testType(Types.DECIMAL, d);
-        testType(Types.DISTINCT, d);
-        testType(Types.DOUBLE, d);
-        testType(Types.FLOAT, d);
-        testType(Types.INTEGER, d);
-        testType(Types.JAVA_OBJECT, d);
-        testType(Types.LONGVARBINARY, d);
-        testType(Types.LONGVARCHAR, d);
-        testType(Types.NULL, d);
-        testType(Types.NUMERIC, d);
-        testType(Types.OTHER, d);
-        testType(Types.REAL, d);
-        testType(Types.REF, d);
-        testType(Types.SMALLINT, d);
-        testType(Types.STRUCT, d);
-        testType(Types.TIME, d);
-        testType(Types.TIMESTAMP, d);
-        testType(Types.TINYINT, d);
-        testType(Types.VARBINARY, d);
-        testType(Types.VARCHAR, d);        
+        try {
+            Field[] fields = java.sql.Types.class.getDeclaredFields();
+            for (int i = 0; i < fields.length; i++) {
+                Field field = fields[i];
+                Integer jdbcType = field.getInt(null);
+                testType(jdbcType, d);
+            }
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
     }
     
     protected void testType(int type, Dialect dialect) {
         try {
             dialect.getTypeName(type);
         } catch (MappingException e) {
-            String[] parts = e.getMessage().split(":");
-            int typeCode = Integer.parseInt(parts[1].trim());
             System.out.println(
-                    "No mapping for type: "+typeCode+"="+
-                    JDBCTypeMapper.getJdbcTypeName(typeCode));            
+                    "No mapping for type: "+type+"="+
+                    JDBCTypeMapper.getJdbcTypeName(type));            
         }
-    }
-
-    
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(DialectTestCase.class);
     }
 
 }

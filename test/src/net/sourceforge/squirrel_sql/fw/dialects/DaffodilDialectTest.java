@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.dialects;
 /*
- * Copyright (C) 2005 Rob Manning
+ * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,14 +17,10 @@ package net.sourceforge.squirrel_sql.fw.dialects;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-public class FirebirdDialectTest extends DialectTestCase {
+public class DaffodilDialectTest extends DialectTestCase {
 
-    private FirebirdDialect dialect = new FirebirdDialect();
+    private DaffodilDialect dialect = new DaffodilDialect();
     
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(FirebirdDialectTest.class);
-    }
-
     /*
      * Test method for 'org.hibernate.dialect.Dialect.getTypeName(int)'
      */
@@ -32,4 +28,8 @@ public class FirebirdDialectTest extends DialectTestCase {
         testAllTypes(dialect);
     }
     
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(Oracle9iDialectTest.class);
+    }
+
 }
