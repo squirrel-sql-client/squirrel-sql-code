@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+	<meta http-equiv="CONTENT-TYPE" CONTENT="text/html; charset=iso-8859-15">
+	<title>SQL Parametrisation Help</title>
+	<style type="text/css">
+	    pre {
+	         font: normal 10pt Courier New, Courier, monospaced;
+	         background:#EEEEEE;
+	         padding:5pt;
+	    }
+	</style>
+</head>
+<body lang="en-us" dir="ltr">
+    <h1>SQL Parametrisation</h1>
+    <h2>Thorsten Mürell</h2>
+
+    <p>SQL Parametrisation allows you to put variables into your SQL statements.</p>
+    
+    <p>Just replace the variable parts of your SQL statement with variables like ':variable'
+       and you will be prompted on SQL execution for the value.</p>
+       
+    <p>An example:</p>
+    
+    <pre>
+SELECT *
+  FROM customer
+ WHERE last_name = :last_name
+;
+    </pre>
+    
+    <p>When you execute this SQL, you will be asked for a value for ':last_name'. This value
+       will be quoted unless it can be expressed as an int or a float. If this is the case
+       you can use the "Quote Value" checkbox to force the quotes around the value.</p>
+</body>
+</html>
