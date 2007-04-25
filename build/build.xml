@@ -385,6 +385,10 @@
 			<param name="p_rebuild" value="${rebuild.plugin.sqlbookmark}"/>
 		</antcall>
 		<antcall target="build_plugin">
+			<param name="p_internal_name" value="sqlparam"/>
+			<param name="p_rebuild" value="${rebuild.plugin.sqlparam}"/>
+		</antcall>
+		<antcall target="build_plugin">
 			<param name="p_internal_name" value="sqlscript"/>
 			<param name="p_rebuild" value="${rebuild.plugin.sqlscript}"/>
 		</antcall>
@@ -977,6 +981,10 @@
 		<antcall target="deploytest">
 			<param name="p_internal_name" value="sessionscript"/>
 			<param name="shoulddeploy" value="${rebuild.plugin.sessionscript}"/>
+		</antcall>
+		<antcall target="deploytest">
+			<param name="p_internal_name" value="sqlparam"/>
+			<param name="shoulddeploy" value="${rebuild.plugin.sqlparam}"/>
 		</antcall>
 		<antcall target="deploytest">
 			<param name="p_internal_name" value="sqlbookmark"/>
