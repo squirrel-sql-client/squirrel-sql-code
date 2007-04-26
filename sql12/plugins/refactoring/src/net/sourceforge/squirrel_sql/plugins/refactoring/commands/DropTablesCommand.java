@@ -125,7 +125,9 @@ public class DropTablesCommand extends AbstractRefactoringCommand
                                                      isMaterializedView);
                 StringBuilder dropSQL = new StringBuilder(); 
                 dropSQL.append(sql);
+                dropSQL.append("\n");
                 dropSQL.append(sep);
+                dropSQL.append("\n");
                 result.add(dropSQL.toString());                
             }            
         } catch (UnsupportedOperationException e2) {
