@@ -1011,7 +1011,11 @@ class Session implements ISession
      * @see net.sourceforge.squirrel_sql.client.session.ISession#getMetaData()
      */
     public ISQLDatabaseMetaData getMetaData() {
-        return _conn.getSQLMetaData();
+        if (_conn != null) {
+            return _conn.getSQLMetaData();
+        } else {
+            return null;
+        }
     }
 
 }
