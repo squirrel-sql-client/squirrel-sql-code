@@ -6,6 +6,8 @@ SQuirreL SQL Client Change Log
 
 Bug-Fixes:
 
+Refactoring Plugin: SQL-Server needs eol between GO and statement.
+
 Fixed bug which appeared while editing tables in PostgreSQL 8.1.  If the table
 was created without an OID column, the last column would not be editable.
 
