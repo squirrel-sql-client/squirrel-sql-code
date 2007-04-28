@@ -27,8 +27,8 @@ import java.util.List;
 import org.hibernate.HibernateException;
 
 /**
- * An interface for methods needed by database dialects in order to copy 
- * database objects to or from them.  
+ * An interface for methods implemented by database dialects for the purpose of 
+ * handling standard and non-standard SQL and database types. 
  */
 public interface HibernateDialect {
     
@@ -255,7 +255,7 @@ public interface HibernateDialect {
      * @param isMaterializedView TODO
      * @return the drop SQL command.
      */
-    String getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints, boolean isMaterializedView);
+    List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints, boolean isMaterializedView);
     
     /**
      * Returns the SQL that forms the command to add a primary key to the 

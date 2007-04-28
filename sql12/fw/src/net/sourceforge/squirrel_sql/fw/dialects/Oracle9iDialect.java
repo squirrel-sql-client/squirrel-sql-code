@@ -261,7 +261,7 @@ public class Oracle9iDialect extends Oracle9Dialect
      * 
      * @return the drop SQL command.
      */
-    public String getTableDropSQL(ITableInfo ti, 
+    public List<String> getTableDropSQL(ITableInfo ti, 
                                   boolean cascadeConstraints, 
                                   boolean isMaterializedView)
     {

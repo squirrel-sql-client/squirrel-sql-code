@@ -11,6 +11,7 @@ import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
@@ -168,37 +169,53 @@ public abstract class AbstractRefactoringCommand implements ICommand {
     /**
      * The subclass should implement this so that the action listeners can get
      * the SQL 
+     * @param listener TODO
      * @return
      */
-    protected abstract String[] getSQLFromDialog();
+    protected abstract void getSQLFromDialog(SQLResultListener listener);
     
     /**
      *                      
      *                      
      *
      */
-    protected class EditSQLListener implements ActionListener {
+    protected class EditSQLListener implements ActionListener, SQLResultListener {
 
-        public void actionPerformed(ActionEvent e) {
-            String[] sqls = getSQLFromDialog();
-            StringBuffer sql = new StringBuffer();
+        /* (non-Javadoc)
+         * @see net.sourceforge.squirrel_sql.plugins.refactoring.commands.SQLResultListener#finished(java.lang.String[])
+         */
+        public void finished(String[] sqls) {
+            final StringBuffer sql = new StringBuffer();
             for (int i = 0; i < sqls.length; i++) {
                 sql.append(sqls[i]);
                 if (i < sqls.length) {
                     sql.append("\n\n");
                 }
-            }
-            if (columnListDialog != null) {
-                columnListDialog.setVisible(false);
-            }
-            if (columnDetailDialog != null) {
-                columnDetailDialog.setVisible(false);
-            }
-            if (dropTableDialog != null) {
-                dropTableDialog.setVisible(false);
-            }
-            _session.getSQLPanelAPIOfActiveSessionWindow().appendSQLScript(sql.toString(), true);
-            _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
+            }            
+            GUIUtils.processOnSwingEventThread(new Runnable() {
+                public void run() {
+                    if (columnListDialog != null) {
+                        columnListDialog.setVisible(false);
+                    }
+                    if (columnDetailDialog != null) {
+                        columnDetailDialog.setVisible(false);
+                    }
+                    if (dropTableDialog != null) {
+                        dropTableDialog.setVisible(false);
+                    }
+                    _session.getSQLPanelAPIOfActiveSessionWindow().appendSQLScript(sql.toString(), true);
+                    _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
+                }
+            });            
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            final SQLResultListener listener = this;
+            _session.getApplication().getThreadPool().addTask(new Runnable() {
+                public void run() {
+                    getSQLFromDialog(listener);
+                }
+            });
         }
         
     }

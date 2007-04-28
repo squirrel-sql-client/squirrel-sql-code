@@ -20,6 +20,7 @@
 package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -275,7 +276,7 @@ public class DialectUtils {
      * @param isMatView TODO
      * @return the drop SQL command.
      */
-    public static String getTableDropSQL(ITableInfo iTableInfo, 
+    public static List<String> getTableDropSQL(ITableInfo iTableInfo, 
                                          boolean supportsCascade, 
                                          boolean cascadeValue, 
                                          boolean supportsMatViews, 
@@ -293,7 +294,7 @@ public class DialectUtils {
             result.append(" ");
             result.append(cascadeClause);
         }
-        return result.toString();
+        return Arrays.asList(new String[] { result.toString() });
     }
     
     public static String getTypeName(TableColumnInfo info, 

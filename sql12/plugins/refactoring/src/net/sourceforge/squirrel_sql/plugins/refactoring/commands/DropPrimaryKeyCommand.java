@@ -91,7 +91,7 @@ public class DropPrimaryKeyCommand extends AbstractRefactoringCommand {
         
     }
 
-    protected String[] getSQLFromDialog() {
+    protected void getSQLFromDialog(SQLResultListener listener) {
         HibernateDialect dialect = null; 
         
         String result = null;
@@ -113,14 +113,14 @@ public class DropPrimaryKeyCommand extends AbstractRefactoringCommand {
         } catch (UserCancelledOperationException e) {
             // user cancelled selecting a dialect. do nothing?
         }
-        return new String[] { result };
+        listener.finished(new String[] { result });
         
     }
     
     
-    private class ShowSQLListener implements ActionListener {
-        public void actionPerformed( ActionEvent e) {
-            String[] sql = getSQLFromDialog();
+    private class ShowSQLListener implements ActionListener, SQLResultListener {
+        
+        public void finished(String[] sql) {
             if (sql.length == 0) {
 //              TODO: tell the user no changes
                 return;
@@ -137,21 +137,20 @@ public class DropPrimaryKeyCommand extends AbstractRefactoringCommand {
             String title = 
                 s_stringMgr.getString("DropPrimaryKeyCommand.sqlDialogTitle");
             sqldialog.setTitle(title);
-            sqldialog.setVisible(true);                
+            sqldialog.setVisible(true);                            
+        }
+        
+        public void actionPerformed( ActionEvent e) {
+            getSQLFromDialog(this);
         }
     }
     
-    private class DropPrimaryKeyActionListener implements ActionListener {
-
-        public void actionPerformed(ActionEvent e) {
-            if (columnListDialog == null) {
-                System.err.println("dialog was null");
-                return;
-            }
-            
+    private class DropPrimaryKeyActionListener implements ActionListener,
+                                                          SQLResultListener {
+        public void finished(String[] sqls) {
             CommandExecHandler handler = new CommandExecHandler(_session);
             
-            String[] sqls = getSQLFromDialog();
+            
             for (int i = 0; i < sqls.length; i++) {
                 String sql = sqls[i];
                 log.info("DropPrimaryKeyCommand: executing SQL - "+sql);
@@ -159,7 +158,15 @@ public class DropPrimaryKeyCommand extends AbstractRefactoringCommand {
                     new SQLExecuterTask(_session, sql, handler);
                 executer.run();                            
             }
-            columnListDialog.setVisible(false);
+            columnListDialog.setVisible(false);            
+        }
+        
+        public void actionPerformed(ActionEvent e) {
+            if (columnListDialog == null) {
+                System.err.println("dialog was null");
+                return;
+            }
+            getSQLFromDialog(this);
         }
         
     }
