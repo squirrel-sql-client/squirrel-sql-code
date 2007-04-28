@@ -9,7 +9,7 @@
         <pack name="Base"                                        index="0" selected="true"/>
         <pack name="Standard"                                    index="1" selected="true"/>
         <pack name="Optional Plugin - DBCopy"                    index="2" selected="true"/>
-	<pack name="Optional Plugin - DB2"                       index="3" selected="true"/>
+        <pack name="Optional Plugin - DB2"                       index="3" selected="true"/>
         <pack name="Optional Plugin - Derby"                     index="4" selected="true"/>
         <pack name="Optional Plugin - Firebird"                  index="5" selected="true"/>
         <pack name="Optional Plugin - H2"                        index="6" selected="true"/>
@@ -20,17 +20,18 @@
         <pack name="Optional Plugin - PostgreSQL"                index="11" selected="true"/>
         <pack name="Optional Plugin - Refactoring"               index="12" selected="true"/>        
         <pack name="Optional Plugin - Session Scripts"           index="13" selected="true"/>
-        <pack name="Optional Plugin - SQL Validator "            index="14" selected="true"/>
-        <pack name="Optional Plugin - Sybase "                   index="15" selected="true"/>        
-        <pack name="Optional Plugin - Internationalization "     index="16" selected="true"/>
-        <pack name="Optional Translation - Brazilian Portuguese" index="17" selected="true"/>
-        <pack name="Optional Translation - Bulgarian"            index="18" selected="true"/>
-        <pack name="Optional Translation - Czech"                index="19" selected="true"/>
-        <pack name="Optional Translation - Simplified Chinese"   index="20" selected="true"/>
-        <pack name="Optional Translation - French"               index="21" selected="true"/>
-        <pack name="Optional Translation - German"               index="22" selected="true"/>
-        <pack name="Optional Translation - Italian"              index="23" selected="true"/>
-        <pack name="Optional Translation - Spanish"              index="24" selected="true"/>
+        <pack name="Optional Plugin - SQL Parametrization"       index="14" selected="true"/>
+        <pack name="Optional Plugin - SQL Validator "            index="15" selected="true"/>
+        <pack name="Optional Plugin - Sybase "                   index="16" selected="true"/>        
+        <pack name="Optional Plugin - Internationalization "     index="17" selected="true"/>
+        <pack name="Optional Translation - Brazilian Portuguese" index="18" selected="true"/>
+        <pack name="Optional Translation - Bulgarian"            index="19" selected="true"/>
+        <pack name="Optional Translation - Czech"                index="20" selected="true"/>
+        <pack name="Optional Translation - Simplified Chinese"   index="21" selected="true"/>
+        <pack name="Optional Translation - French"               index="22" selected="true"/>
+        <pack name="Optional Translation - German"               index="23" selected="true"/>
+        <pack name="Optional Translation - Italian"              index="24" selected="true"/>
+        <pack name="Optional Translation - Spanish"              index="25" selected="true"/>
     </com.izforge.izpack.panels.PacksPanel>
     <com.izforge.izpack.panels.InstallPanel/>
     <com.izforge.izpack.panels.ShortcutPanel/>
