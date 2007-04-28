@@ -30,6 +30,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetScrollingPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.MapDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseObjectTab;
@@ -48,6 +50,10 @@ public abstract class BasePreparedStatementTab extends BaseObjectTab
 	/** Component to display in tab. */
 	private DataSetScrollingPanel _comp;
 
+    /** Logger for this class. */
+    private final static ILogger s_log = 
+        LoggerController.createLogger(BasePreparedStatementTab.class);
+            
 	public BasePreparedStatementTab(String title, String hint)
 	{
 		this(title, hint, false);
@@ -93,7 +99,16 @@ public abstract class BasePreparedStatementTab extends BaseObjectTab
 	{
 		if (_comp == null)
 		{
-			_comp = new DataSetScrollingPanel();
+		    ISession session = getSession();
+            SessionProperties props = session.getProperties();
+            String destClassName = props.getMetaDataOutputClassName();
+            try {
+                _comp = new DataSetScrollingPanel(destClassName, null);
+            } catch (Exception e) {
+                s_log.error("Unexpected exception from call to getComponent: "+
+                            e.getMessage(), e);
+            }
+            
 		}
 		return _comp;
 	}
@@ -113,10 +128,8 @@ public abstract class BasePreparedStatementTab extends BaseObjectTab
 				ResultSet rs = pstmt.executeQuery();
 				try
 				{
-					final SessionProperties props = session.getProperties();
-					final String destClassName = props.getMetaDataOutputClassName();
 					final IDataSet ds = createDataSetFromResultSet(rs);
-					_comp.load(ds, destClassName);
+					_comp.load(ds);
 				}
 				finally
 				{
@@ -148,7 +161,7 @@ public abstract class BasePreparedStatementTab extends BaseObjectTab
 
 		final int columnCount = rsds.getColumnCount();
 		final ColumnDisplayDefinition[] colDefs = rsds.getDataSetDefinition().getColumnDefinitions();
-		final Map data = new HashMap();
+		final Map<String, Object> data = new HashMap<String, Object>();
 		if (rsds.next(null))
 		{
 			for (int i = 0; i < columnCount; ++i)

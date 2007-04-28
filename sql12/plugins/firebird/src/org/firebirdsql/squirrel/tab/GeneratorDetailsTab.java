@@ -17,15 +17,15 @@ package org.firebirdsql.squirrel.tab;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BasePreparedStatementTab;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
- * This class will display the details for an Oracle sequence.
+ * This class will display the details for a Firebird sequence.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
@@ -66,6 +66,9 @@ public class GeneratorDetailsTab extends BasePreparedStatementTab
             "gen_id(" + doi.getSimpleName() + ", 0) as current_value " +
             "from rdb$database";
         
+        if (s_log.isDebugEnabled()) {
+            s_log.debug("Preparing SQL: "+sql);
+        }
 		PreparedStatement pstmt = session.getSQLConnection().prepareStatement(sql);
 		return pstmt;
 	}
