@@ -33,8 +33,6 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetScrollingPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.MapDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -54,10 +52,6 @@ abstract class BaseSQLTab extends BaseObjectTab
 	/** Logger for this class. */
     private final static ILogger s_log =
         LoggerController.createLogger(BaseSQLTab.class);
-
-    /** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(BaseSQLTab.class);
     
 	public BaseSQLTab(String title, String hint)
 	{
@@ -104,7 +98,15 @@ abstract class BaseSQLTab extends BaseObjectTab
 	{
         if (_comp == null)
         {
-            _comp = new DataSetScrollingPanel();
+            ISession session = getSession();
+            SessionProperties props = session.getProperties();
+            String destClassName = props.getMetaDataOutputClassName();
+            try {
+                _comp = new DataSetScrollingPanel(destClassName, null);
+            } catch (Exception e) {
+                s_log.error("Unexpected exception from call to getComponent: "+
+                            e.getMessage(), e);
+            }            
         }        
 		return _comp;
 	}
@@ -125,9 +127,7 @@ abstract class BaseSQLTab extends BaseObjectTab
 				ResultSet rs = stmt.executeQuery(getSQL());
 				try
 				{
-					final SessionProperties props = session.getProperties();
-					final String destClassName = props.getMetaDataOutputClassName();
-                    _comp.load(createDataSetFromResultSet(rs), destClassName);				
+                    _comp.load(createDataSetFromResultSet(rs));				
                 } 
                 finally 
                 {
@@ -141,25 +141,7 @@ abstract class BaseSQLTab extends BaseObjectTab
 		}
 		catch (SQLException ex)
 		{
-            // 1385270 (Dropping multiple selected tables produces exceptions)
-            //
-			// This exception is thrown when a group of tables is dropped in a 
-            // MySQL session and the MySQL Columns or MySQL Indexes tab was the
-            // last tab selected.  For now, just log the error, don't show it
-            // in the status until we figure out where the race condition is that
-            // causes the tab to get refreshed against a table that was just 
-            // dropped.  There may be other valid reasons for an exception here,
-            // so we can't just squelch it.
-            // TODO: Figure out where the race condition is that causes the tab 
-            // to get refreshed against a table that was just dropped. When we
-            // have solved that, then put the following line back in and remove
-            // the error logging here:
-            //
-            // throw new DataSetException(ex);
-            
-            // i18n[mysql.error.refreshcomponent=Unable to refresh MySQL plugin tab
-            String msg = s_stringMgr.getString("mysql.error.refreshcomponent");
-            s_log.error(msg, ex);
+            throw new DataSetException(ex);
 		}
 	}
 
@@ -177,7 +159,7 @@ abstract class BaseSQLTab extends BaseObjectTab
 
 		final int columnCount = rsds.getColumnCount();
 		final ColumnDisplayDefinition[] colDefs = rsds.getDataSetDefinition().getColumnDefinitions();
-		final Map data = new HashMap();
+		final Map<String, Object> data = new HashMap<String, Object>();
 		if (rsds.next(null))
 		{
 			for (int i = 0; i < columnCount; ++i)
