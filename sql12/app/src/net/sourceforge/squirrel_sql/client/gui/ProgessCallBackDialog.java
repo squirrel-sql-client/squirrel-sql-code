@@ -107,6 +107,11 @@ public class ProgessCallBackDialog extends JDialog
         
     }
     
+    public void setTotalItems(int totalItems) {
+        itemCount = totalItems;
+        progressBar.setMaximum(totalItems);
+    }
+    
     /**
      * Sets the text that is displayed before each thing being loaded.  By 
      * default this is the string "Loading:".

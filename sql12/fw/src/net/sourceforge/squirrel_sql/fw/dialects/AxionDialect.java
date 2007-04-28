@@ -402,4 +402,17 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect
                                                  false);
     }
     
+    /**
+     * Returns the SQL command to drop the specified table's foreign key 
+     * constraint.
+     * 
+     * @param fkName the name of the foreign key that should be dropped
+     * @param tableName the name of the table whose foreign key should be 
+     *                  dropped
+     * @return
+     */
+    public String getDropForeignKeySQL(String fkName, String tableName) {
+        return DialectUtils.getDropForeignKeySQL(fkName, tableName);
+    }
+    
 }

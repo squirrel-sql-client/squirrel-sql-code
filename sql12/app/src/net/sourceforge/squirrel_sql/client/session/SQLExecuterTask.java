@@ -83,7 +83,9 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
    private DataSetUpdateableTableModelImpl _dataSetUpdateableTableModel;
    private SchemaInfoUpdateCheck _schemaInfoUpdateCheck;
    private IQueryTokenizer _tokenizer = null;
-
+   /** Whether or not to check if the schema should be updated */
+   private boolean schemaCheck = true;
+   
    public SQLExecuterTask(ISession session, String sql,ISQLExecuterHandler handler)
    {
       this(session, sql, handler, new ISQLExecutionListener[0]);
@@ -121,6 +123,10 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
     */
    public int getQueryCount() {
        return _tokenizer.getQueryCount();
+   }
+   
+   public void setSchemaCheck(boolean aBoolean) {
+       schemaCheck = aBoolean;
    }
    
    public void run()
@@ -309,13 +315,15 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
             _handler.sqlCloseExecutionHandler();
          }
 
-         try
-         {
-            _schemaInfoUpdateCheck.flush();
-         }
-         catch (Throwable t)
-         {
-            s_log.error("Could not update cache ", t);
+         if (schemaCheck) {
+             try
+             {
+                _schemaInfoUpdateCheck.flush();
+             }
+             catch (Throwable t)
+             {
+                s_log.error("Could not update cache ", t);
+             }
          }
       }
    }
@@ -444,8 +452,9 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
       {
          _dataSetUpdateableTableModel.setTableInfo(null);
       }
-
-      _schemaInfoUpdateCheck.addExecutionInfo(exInfo);
+      if (schemaCheck) {
+          _schemaInfoUpdateCheck.addExecutionInfo(exInfo);
+      }
 
       return true;
    }

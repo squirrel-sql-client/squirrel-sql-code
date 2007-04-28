@@ -42,6 +42,7 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -64,17 +65,27 @@ public class DropTablesCommand extends AbstractRefactoringCommand
     
     private static interface i18n {
                 
-        //i18n[DropTablesCommand.progressDialogTitle=Analyzing tables to drop]
-        String PROGRESS_DIALOG_TITLE = 
-            s_stringMgr.getString("DropTablesCommand.progressDialogTitle");
+        //i18n[DropTablesCommand.progressDialogAnalyzeTitle=Analyzing tables to drop]
+        String PROGRESS_DIALOG_ANALYZE_TITLE = 
+            s_stringMgr.getString("DropTablesCommand.progressDialogAnalyzeTitle");
+        
+        //i18n[DropTablesCommand.progressDialogDropTitle=Dropping tables]
+        String PROGRESS_DIALOG_DROP_TITLE = 
+            s_stringMgr.getString("DropTablesCommand.progressDialogDropTitle");        
         
         //i18n[DropTablesCommand.loadingPrefix=Analyzing table:]
         String LOADING_PREFIX = 
             s_stringMgr.getString("DropTablesCommand.loadingPrefix");
+
+        //i18n[DropTablesCommand.droppingConstraintPrefix=Dropping Constraint:]
+        String DROPPING_CONSTRAINT_PREFIX = 
+            s_stringMgr.getString("DropTablesCommand.droppingConstraintPrefix");
+
+        //i18n[DropTablesCommand.droppingTablePrefix=Dropping table:]
+        String DROPPING_TABLE_PREFIX = 
+            s_stringMgr.getString("DropTablesCommand.droppingTablePrefix");
         
-        //i18n[DropTablesCommand.droppingPrefix=Dropping table:]
-        String DROPPING_PREFIX = 
-            s_stringMgr.getString("DropTablesCommand.droppingPrefix");
+
     }
     
     /** 
@@ -130,7 +141,8 @@ public class DropTablesCommand extends AbstractRefactoringCommand
             // be an error.
             if (cascadeConstraints)  {
                 for (ITableInfo info: orderedTables) {
-                    List<String> dropFKSQLs = getDropChildFKConstraints(info);
+                    List<String> dropFKSQLs = 
+                        getDropChildFKConstraints(dialect, info);
                     for (String dropFKSQL : dropFKSQLs) {
                         StringBuilder dropSQL = new StringBuilder(); 
                         dropSQL.append(dropFKSQL);
@@ -169,19 +181,15 @@ public class DropTablesCommand extends AbstractRefactoringCommand
         listener.finished(result.toArray(new String[result.size()]));
     }
     
-    private List<String> getDropChildFKConstraints(ITableInfo ti) {
+    private List<String> getDropChildFKConstraints(HibernateDialect dialect, 
+                                                   ITableInfo ti) {
         ArrayList<String> result = new ArrayList<String>();
         ForeignKeyInfo[] fks = ti.getExportedKeys();
         for (int i = 0; i < fks.length; i++) {
             ForeignKeyInfo info = fks[i];
             String fkName = info.getForeignKeyName();
             String fkTable = info.getForeignKeyTableName();
-            StringBuilder tmp = new StringBuilder();
-            tmp.append("ALTER TABLE ");
-            tmp.append(fkTable);
-            tmp.append(" DROP CONSTRAINT ");
-            tmp.append(fkName);
-            result.add(tmp.toString());            
+            result.add(dialect.getDropForeignKeySQL(fkName, fkTable));            
         }
         return result;
     }
@@ -196,7 +204,7 @@ public class DropTablesCommand extends AbstractRefactoringCommand
                 public void run() {
                     getOrderedTablesCallBack = 
                         new ProgessCallBackDialog(dropTableDialog,
-                                                  i18n.PROGRESS_DIALOG_TITLE,
+                                                  i18n.PROGRESS_DIALOG_ANALYZE_TITLE,
                                                   tables.size());
                     
                     getOrderedTablesCallBack.setLoadingPrefix(i18n.LOADING_PREFIX);                    
@@ -306,7 +314,7 @@ public class DropTablesCommand extends AbstractRefactoringCommand
          * @see net.sourceforge.squirrel_sql.plugins.refactoring.commands.DropTablesCommand.SQLResultListener#finished(java.lang.String[])
          */
         public void finished(String[] sqls) {
-            StringBuilder script = new StringBuilder();
+            final StringBuilder script = new StringBuilder();
             for (int i = 0; i < sqls.length; i++) {
                 String sql = sqls[i];
                 if (s_log.isDebugEnabled()) {
@@ -320,25 +328,28 @@ public class DropTablesCommand extends AbstractRefactoringCommand
                 public void run() {
                     DropTablesCommand.this.handler = 
                         new DropTableCommandExecHandler(_session);
+
+                    final SQLExecuterTask executer = 
+                        new SQLExecuterTask(_session, 
+                                            script.toString(), 
+                                            DropTablesCommand.this.handler);
+                    executer.setSchemaCheck(false);
+                    _session.getApplication().getThreadPool().addTask(new Runnable() {
+                        public void run() {
+                            executer.run();
+                            
+                            GUIUtils.processOnSwingEventThread(new Runnable() {
+                                public void run() {
+                                    dropTableDialog.setVisible(false);
+                                    _session.getSchemaInfo().reloadAll();
+                                }
+                            });
+                        }
+                    });
+                    
+                    
                 }
-            }, true);
-            
-            final SQLExecuterTask executer = 
-                new SQLExecuterTask(_session, 
-                                    script.toString(), 
-                                    DropTablesCommand.this.handler);
-            _session.getApplication().getThreadPool().addTask(new Runnable() {
-                public void run() {
-                    executer.run();    
-                }
-            });
-                                        
-            
-            GUIUtils.processOnSwingEventThread(new Runnable() {
-                public void run() {
-                    dropTableDialog.setVisible(false);
-                }
-            });
+            });            
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -369,30 +380,58 @@ public class DropTablesCommand extends AbstractRefactoringCommand
     private class DropTableCommandExecHandler extends DefaultSQLExecuterHandler {
         
         ProgessCallBackDialog cb = null;
-        int count = 0;
+        
+        /** 
+         * Total number of statements to be executed.  We use the same dialog 
+         * for dropping constraints and tables.  We don't know how many 
+         * constraints there will be before this is set.
+         */
+        int total = 0;
+        
+        /** This is used to track the number of tables seen so far, so that we
+         *  can pick the right one from the ordered table list to display as the
+         *  table name of the table currently being dropped - yes, a hack!
+         */
+        int tableCount = 0;
         
         public DropTableCommandExecHandler(ISession session)
         {
             super(session);
             cb = new ProgessCallBackDialog(dropTableDialog,
-                                          i18n.PROGRESS_DIALOG_TITLE,
+                                          i18n.PROGRESS_DIALOG_DROP_TITLE,
                                           DropTablesCommand.this.orderedTables.size());
-            
-            cb.setLoadingPrefix(i18n.DROPPING_PREFIX);
-            
         }
+
+        
+        /* (non-Javadoc)
+         * @see net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler#sqlStatementCount(int)
+         */
+        @Override
+        public void sqlStatementCount(int statementCount) {
+            cb.setTotalItems(statementCount);
+        }
+
 
         /* (non-Javadoc)
          * @see net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler#sqlToBeExecuted(java.lang.String)
          */
         @Override
         public void sqlToBeExecuted(String sql) {
-            int next = count;
-            if (next < DropTablesCommand.this.orderedTables.size()) {
-                ITableInfo ti = DropTablesCommand.this.orderedTables.get(next);
-                cb.currentlyLoading(ti.getSimpleName());
+            System.out.println("sql: "+sql);
+            
+            if (sql.startsWith("ALTER")) {
+                cb.setLoadingPrefix(i18n.DROPPING_CONSTRAINT_PREFIX);
+                // Hack!!! hopefully the FK name will always be the last token!
+                String[] parts = StringUtilities.split(sql, ' ');
+                cb.currentlyLoading(parts[parts.length - 1]);
+            } else {         
+                cb.setLoadingPrefix(i18n.DROPPING_TABLE_PREFIX);
+                if (tableCount < DropTablesCommand.this.orderedTables.size()) {
+                    ITableInfo ti = DropTablesCommand.this.orderedTables.get(tableCount);
+                    cb.currentlyLoading(ti.getSimpleName());
+                }
+                tableCount++;
             }
-            count++;
         }
         
         

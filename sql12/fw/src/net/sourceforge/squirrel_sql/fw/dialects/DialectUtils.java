@@ -39,7 +39,7 @@ import org.hibernate.HibernateException;
  * dialects, it is not possible to inherit common behavior from a single base 
  * class.  So, this class is where common code is located.
  * 
- * @author rmmannin
+ * @author manningr
  */
 public class DialectUtils {
 
@@ -131,7 +131,7 @@ public class DialectUtils {
                                          boolean addNullClause) 
         throws UnsupportedOperationException, HibernateException 
     {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         result.append("ALTER TABLE ");
         result.append(info.getTableName());
         result.append(" ");
@@ -160,7 +160,7 @@ public class DialectUtils {
     }
     
     public static String appendDefaultClause(TableColumnInfo info, 
-                                             StringBuffer buffer) {
+                                             StringBuilder buffer) {
 
         if (info.getDefaultValue() != null 
                 && !"".equals(info.getDefaultValue())) 
@@ -192,7 +192,7 @@ public class DialectUtils {
                                                   String columnName, 
                                                   String comment) 
     {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         result.append("COMMENT ON COLUMN ");
         result.append(tableName);
         result.append(".");
@@ -247,7 +247,7 @@ public class DialectUtils {
                                           String dropClause, 
                                           boolean addConstraintClause, 
                                           String constraintClause) {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         result.append("ALTER TABLE ");
         result.append(tableName);
         result.append(" ");
@@ -283,7 +283,7 @@ public class DialectUtils {
                                          String cascadeClause, 
                                          boolean isMatView) 
     {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         if (supportsMatViews && isMatView) {
             result.append("DROP MATERIALIZED VIEW ");
         } else {
@@ -355,7 +355,7 @@ public class DialectUtils {
                                                    String alterClause,
                                                    boolean specifyType) 
     {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         result.append("ALTER TABLE ");
         result.append(info.getTableName());
         result.append(" ");
@@ -392,7 +392,7 @@ public class DialectUtils {
                                              ArrayList result) 
     {
         for (int i = 0; i < colInfos.length; i++) {
-            StringBuffer notNullSQL = new StringBuffer();
+            StringBuilder notNullSQL = new StringBuilder();
             notNullSQL.append("ALTER TABLE ");
             notNullSQL.append(colInfos[i].getTableName());
             notNullSQL.append(" ");
@@ -428,7 +428,7 @@ public class DialectUtils {
                                              String pkName, 
                                              TableColumnInfo[] colInfos, 
                                              boolean appendConstraintName) {
-        StringBuffer pkSQL = new StringBuffer();
+        StringBuilder pkSQL = new StringBuilder();
         pkSQL.append("ALTER TABLE ");
         pkSQL.append(ti.getQualifiedName());
         pkSQL.append(" ADD CONSTRAINT ");
@@ -453,7 +453,7 @@ public class DialectUtils {
      * @return
      */
     private static String getColumnList(TableColumnInfo[] colInfos) {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         result.append("(");
         for (int i = 0; i < colInfos.length; i++) {
             result.append(colInfos[i].getColumnName());
@@ -480,7 +480,7 @@ public class DialectUtils {
                                                String alterClause,
                                                String renameToClause) 
     {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         result.append("ALTER TABLE ");
         result.append(from.getTableName());
         result.append(" ");
@@ -512,7 +512,7 @@ public class DialectUtils {
                                                   String alterClause, 
                                                   boolean specifyType, 
                                                   String defaultClause) {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         result.append("ALTER TABLE ");
         result.append(info.getTableName());
         result.append(" ");
@@ -559,7 +559,7 @@ public class DialectUtils {
         throws UnsupportedOperationException
     {
         ArrayList<String> list = new ArrayList<String>();
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         result.append("ALTER TABLE ");
         result.append(to.getTableName());
         result.append(" ");
@@ -592,7 +592,7 @@ public class DialectUtils {
      */
     public static String getColumnRenameSQL(TableColumnInfo from, 
                                             TableColumnInfo to) {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         result.append("RENAME COLUMN ");
         result.append(from.getTableName());
         result.append(".");
@@ -685,7 +685,7 @@ public class DialectUtils {
                                               String tableName, 
                                               boolean useConstraintName, 
                                               boolean cascadeConstraints) {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         result.append("ALTER TABLE ");
         result.append(tableName);
         if (useConstraintName) {
@@ -712,7 +712,7 @@ public class DialectUtils {
                                         boolean unique,
                                         TableColumnInfo[] columns) 
     {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         if (unique) {
             result.append("CREATE UNIQUE INDEX ");
         } else {
@@ -748,4 +748,23 @@ public class DialectUtils {
                                 );
         return result;
     }
+    
+    /**
+     * Returns the SQL command to drop the specified table's foreign key 
+     * constraint.
+     * 
+     * @param fkName the name of the foreign key that should be dropped
+     * @param tableName the name of the table whose foreign key should be 
+     *                  dropped
+     * @return
+     */
+    public static String getDropForeignKeySQL(String fkName, String tableName) {
+        StringBuilder tmp = new StringBuilder();
+        tmp.append("ALTER TABLE ");
+        tmp.append(tableName);
+        tmp.append(" DROP CONSTRAINT ");
+        tmp.append(fkName);
+        return tmp.toString();                    
+    }
+    
 }
