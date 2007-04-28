@@ -219,11 +219,19 @@
 		</pack>				
 
 		<pack required="no" preselected="no" name="Optional Plugin - Session Scripts">
-			<description>This plugin allows you to specify SQL statements to be executed when you first connect to a database.</description>
+			<description>This plugin allows you to specify SQL statements to be executed when you first connect to a database</description>
 			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" 
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/sessionscript/dist/sessionscript.jar"/>
 			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" 
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/sessionscript/dist/sessionscript"/>
+		</pack>				
+
+		<pack required="no" preselected="no" name="Optional Plugin - SQL Parametrisation ">
+			<description>This plugin allows you to put variables into your SQL statements </description>
+			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/sqlparam/dist/sqlparam.jar"/>
+			<file targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/sqlparam/dist/sqlparam"/>
 		</pack>				
 
 		<pack required="no" preselected="no" name="Optional Plugin - SQL Validator ">

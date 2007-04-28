@@ -6,6 +6,13 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+New Plugin (SQL Parametrisation - Thomas Mürell) allows you to put variables 
+           into your SQL statements.
+
+Refactoring Plugin: Refactored drop tables command to not use the EDT for 
+calculating foriegn keys.  Also, now FKs in child tables are dropped before any 
+parent tables are dropped when cascade constraints is selected.
+
 Task 138098 (Plugins Session Menu Items (Disable)) When using a session that 
   is not supported by a db-specific plugin, that plugin should disable it's 
   Session menu items
