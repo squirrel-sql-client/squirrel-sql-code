@@ -170,7 +170,7 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
      */
     public String[] getColumnAddSQL(TableColumnInfo info) throws UnsupportedOperationException {
         ArrayList returnVal = new ArrayList();
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         result.append("ALTER TABLE ");
         result.append(info.getTableName());
         result.append(" ADD COLUMN ");
@@ -213,7 +213,7 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
                                                 TableColumnInfo info,
                                                 boolean nullable) 
     {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         result.append(" ALTER TABLE ");
         result.append(tableName);
         result.append(" MODIFY ");
@@ -250,7 +250,7 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
     public String getColumnDefaultAlterSQL(TableColumnInfo info)
         throws UnsupportedOperationException 
     {   
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         result.append("ALTER TABLE ");
         result.append(info.getTableName());
         result.append(" MODIFY ");
@@ -282,7 +282,7 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
     public String getColumnCommentAlterSQL(TableColumnInfo info) 
         throws UnsupportedOperationException 
     {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         result.append("ALTER TABLE ");
         result.append(info.getTableName());
         result.append(" MODIFY ");
@@ -345,7 +345,7 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
     public String[] getAddPrimaryKeySQL(String pkName, 
                                         TableColumnInfo[] colInfos, ITableInfo ti) 
     {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         result.append("ALTER TABLE ");
         result.append(ti.getQualifiedName());
         result.append(" ADD CONSTRAINT ");
@@ -410,7 +410,7 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
      * @return the SQL to make the change
      */
     public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to) {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         result.append("ALTER TABLE ");
         result.append(from.getTableName());
         result.append(" CHANGE ");
@@ -448,7 +448,7 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
                                         TableColumnInfo to)
         throws UnsupportedOperationException
     {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         result.append("ALTER TABLE ");
         result.append(from.getTableName());
         result.append(" CHANGE ");
@@ -473,6 +473,24 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
      */
     public String getDropPrimaryKeySQL(String pkName, String tableName) {
         return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false);
+    }
+    
+    /**
+     * Returns the SQL command to drop the specified table's foreign key 
+     * constraint.
+     * 
+     * @param fkName the name of the foreign key that should be dropped
+     * @param tableName the name of the table whose foreign key should be 
+     *                  dropped
+     * @return
+     */
+    public String getDropForeignKeySQL(String fkName, String tableName) {
+        StringBuilder tmp = new StringBuilder();
+        tmp.append("ALTER TABLE ");
+        tmp.append(tableName);
+        tmp.append(" DROP FOREIGN KEY ");
+        tmp.append(fkName);
+        return tmp.toString();
     }
     
 }

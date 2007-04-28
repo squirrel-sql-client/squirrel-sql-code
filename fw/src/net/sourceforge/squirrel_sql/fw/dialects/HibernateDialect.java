@@ -351,4 +351,16 @@ public interface HibernateDialect {
      */
     String getDropPrimaryKeySQL(String pkName, String tableName);
     
+    /**
+     * Returns the SQL command to drop the specified table's foreign key 
+     * constraint.
+     * 
+     * @param fkName the name of the foreign key that should be dropped
+     * @param tableName the name of the table whose foreign key should be 
+     *                  dropped
+     * @return
+     */
+    String getDropForeignKeySQL(String fkName, String tableName);
+    
+    
 }
