@@ -35,6 +35,7 @@ import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
@@ -56,6 +57,10 @@ public class DropTablesCommand extends AbstractRefactoringCommand
         StringManagerFactory.getStringManager(DropTablesCommand.class);
     
     private List<ITableInfo> orderedTables = null;
+    
+    private DropTableCommandExecHandler handler = null;
+    
+    ProgessCallBackDialog getOrderedTablesCallBack = null;
     
     private static interface i18n {
                 
@@ -106,7 +111,7 @@ public class DropTablesCommand extends AbstractRefactoringCommand
 	}
 
     @Override
-    protected String[] getSQLFromDialog() {
+    protected void getSQLFromDialog(SQLResultListener listener) {
         HibernateDialect dialect = null; 
         List<ITableInfo> tables = dropTableDialog.getTableInfoList();
         boolean cascadeConstraints = dropTableDialog.getCascadeConstraints();
@@ -120,17 +125,36 @@ public class DropTablesCommand extends AbstractRefactoringCommand
                                                 _session.getMetaData()); 
             String sep = _session.getQueryTokenizer().getSQLStatementSeparator();
             
+            // Drop FK constraints before dropping any tables.  Otherwise, we 
+            // may drop the child table prior to dropping it's FKs, which would
+            // be an error.
+            if (cascadeConstraints)  {
+                for (ITableInfo info: orderedTables) {
+                    List<String> dropFKSQLs = getDropChildFKConstraints(info);
+                    for (String dropFKSQL : dropFKSQLs) {
+                        StringBuilder dropSQL = new StringBuilder(); 
+                        dropSQL.append(dropFKSQL);
+                        dropSQL.append("\n");
+                        dropSQL.append(sep);
+                        result.add(dropSQL.toString());                        
+                    }
+                }
+            }
+            
+            // Set cascadeConstraints to false, since we've already generated the
+            // SQL for dropping these constraints above.
             for (ITableInfo info : orderedTables) {
                 boolean isMaterializedView = isMaterializedView(info, _session);
-                String sql = dialect.getTableDropSQL(info, 
-                                                     cascadeConstraints,                         
-                                                     isMaterializedView);
-                StringBuilder dropSQL = new StringBuilder(); 
-                dropSQL.append(sql);
-                dropSQL.append("\n");
-                dropSQL.append(sep);
-                dropSQL.append("\n");
-                result.add(dropSQL.toString());                
+                List<String> sqls = dialect.getTableDropSQL(info, 
+                                                            false, // cascadeConstraints                      
+                                                            isMaterializedView);
+                for (String sql : sqls) {
+                    StringBuilder dropSQL = new StringBuilder(); 
+                    dropSQL.append(sql);
+                    dropSQL.append("\n");
+                    dropSQL.append(sep);
+                    result.add(dropSQL.toString());
+                }
             }            
         } catch (UnsupportedOperationException e2) {
             //i18n[DropTablesCommand.unsupportedOperationMsg=The {0} 
@@ -142,22 +166,48 @@ public class DropTablesCommand extends AbstractRefactoringCommand
         } catch (UserCancelledOperationException e) {
             // user cancelled selecting a dialect. do nothing?
         }
-        return result.toArray(new String[result.size()]);
+        listener.finished(result.toArray(new String[result.size()]));
     }
     
-    private List<ITableInfo> getOrderedTables(List<ITableInfo> tables) {
+    private List<String> getDropChildFKConstraints(ITableInfo ti) {
+        ArrayList<String> result = new ArrayList<String>();
+        ForeignKeyInfo[] fks = ti.getExportedKeys();
+        for (int i = 0; i < fks.length; i++) {
+            ForeignKeyInfo info = fks[i];
+            String fkName = info.getForeignKeyName();
+            String fkTable = info.getForeignKeyTableName();
+            StringBuilder tmp = new StringBuilder();
+            tmp.append("ALTER TABLE ");
+            tmp.append(fkTable);
+            tmp.append(" DROP CONSTRAINT ");
+            tmp.append(fkName);
+            result.add(tmp.toString());            
+        }
+        return result;
+    }
+    
+    private List<ITableInfo> getOrderedTables(final List<ITableInfo> tables) {
         List<ITableInfo> result = tables;
         SQLDatabaseMetaData md = _session.getSQLConnection().getSQLMetaData();
         
         try {
-            ProgessCallBackDialog cb = 
-                new ProgessCallBackDialog(dropTableDialog,
-                                          i18n.PROGRESS_DIALOG_TITLE,
-                                          tables.size());
+            // Create the analysis dialog using the EDT, and wait for it to finish.
+            GUIUtils.processOnSwingEventThread(new Runnable() {
+                public void run() {
+                    getOrderedTablesCallBack = 
+                        new ProgessCallBackDialog(dropTableDialog,
+                                                  i18n.PROGRESS_DIALOG_TITLE,
+                                                  tables.size());
+                    
+                    getOrderedTablesCallBack.setLoadingPrefix(i18n.LOADING_PREFIX);                    
+                }
+            }, true);
             
-            cb.setLoadingPrefix(i18n.LOADING_PREFIX);
-            
-            result = SQLUtilities.getDeletionOrder(tables, md, cb);
+            // Now, get the drop order (same as delete) and update the dialog
+            // status while doing so.
+            result = SQLUtilities.getDeletionOrder(tables, 
+                                                   md, 
+                                                   getOrderedTablesCallBack);
         } catch (SQLException e) {
             s_log.error(
                 "Encountered exception while attempting to order tables " +
@@ -263,14 +313,26 @@ public class DropTablesCommand extends AbstractRefactoringCommand
                     s_log.debug("DropTablesCommand: adding SQL - "+sql);
                 }
                 script.append(sql);
+                script.append("\n");
             }
-
             // Shows the user a dialog to let them know what's happening
-            DropTableCommandExecHandler handler = 
-                new DropTableCommandExecHandler(_session);
-            SQLExecuterTask executer = 
-                new SQLExecuterTask(_session, script.toString(), handler);
-            executer.run();                            
+            GUIUtils.processOnSwingEventThread(new Runnable() {
+                public void run() {
+                    DropTablesCommand.this.handler = 
+                        new DropTableCommandExecHandler(_session);
+                }
+            }, true);
+            
+            final SQLExecuterTask executer = 
+                new SQLExecuterTask(_session, 
+                                    script.toString(), 
+                                    DropTablesCommand.this.handler);
+            _session.getApplication().getThreadPool().addTask(new Runnable() {
+                public void run() {
+                    executer.run();    
+                }
+            });
+                                        
             
             GUIUtils.processOnSwingEventThread(new Runnable() {
                 public void run() {
@@ -288,10 +350,6 @@ public class DropTablesCommand extends AbstractRefactoringCommand
         
     }
     
-    public interface SQLResultListener {
-        public void finished(String[] sql);
-    }
-    
     public class GetSQLTask implements Runnable {
         
         private SQLResultListener _listener;
@@ -304,8 +362,7 @@ public class DropTablesCommand extends AbstractRefactoringCommand
          * @see java.lang.Runnable#run()
          */
         public void run() {
-            String[] sql = getSQLFromDialog();
-            _listener.finished(sql);
+            getSQLFromDialog(_listener);
         }
     }
 
@@ -330,8 +387,12 @@ public class DropTablesCommand extends AbstractRefactoringCommand
          */
         @Override
         public void sqlToBeExecuted(String sql) {
-            ITableInfo ti = DropTablesCommand.this.orderedTables.get(count++);
-            cb.currentlyLoading(ti.getSimpleName());
+            int next = count;
+            if (next < DropTablesCommand.this.orderedTables.size()) {
+                ITableInfo ti = DropTablesCommand.this.orderedTables.get(next);
+                cb.currentlyLoading(ti.getSimpleName());
+            }
+            count++;
         }
         
         

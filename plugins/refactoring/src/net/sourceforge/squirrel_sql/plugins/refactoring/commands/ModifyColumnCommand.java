@@ -120,7 +120,7 @@ public class ModifyColumnCommand extends AbstractRefactoringCommand
         }
     }
 
-    protected String[] getSQLFromDialog() {
+    protected void getSQLFromDialog(SQLResultListener listener) {
         TableColumnInfo to = columnDetailDialog.getColumnInfo();
         String dbName = columnDetailDialog.getSelectedDBName();
         HibernateDialect dialect = DialectFactory.getDialect(dbName);
@@ -146,7 +146,7 @@ public class ModifyColumnCommand extends AbstractRefactoringCommand
             // Better to use exception message as it contains more info
             _session.getMessageHandler().showMessage(e2.getMessage());
         }
-        return result;
+        listener.finished(result);
         
     }
     
@@ -192,13 +192,9 @@ public class ModifyColumnCommand extends AbstractRefactoringCommand
         }
     }
         
-    private class OKButtonListener implements ActionListener {
+    private class OKButtonListener implements ActionListener, SQLResultListener {
 
-        /* (non-Javadoc)
-         * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-         */
-        public void actionPerformed(ActionEvent e) {
-            String[] sqls = getSQLFromDialog();
+        public void finished(String[] sqls) {
             CommandExecHandler handler = new CommandExecHandler(_session);
             
             if (sqls == null || sqls.length == 0) {
@@ -227,18 +223,20 @@ public class ModifyColumnCommand extends AbstractRefactoringCommand
                 }
             }
             columnDetailDialog.setVisible(false);
-            
         }
         
-    }
-
-    private class ShowSQLButtonListener implements ActionListener {
-
         /* (non-Javadoc)
          * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
          */
         public void actionPerformed(ActionEvent e) {
-            String[] sqls = getSQLFromDialog();
+            getSQLFromDialog(this);
+        }
+        
+    }
+
+    private class ShowSQLButtonListener implements ActionListener, SQLResultListener {
+
+        public void finished(String[] sqls) {
             if (sqls == null || sqls.length == 0) {
 //              TODO: tell the user no changes
                 return;
@@ -256,7 +254,14 @@ public class ModifyColumnCommand extends AbstractRefactoringCommand
             String title = 
                 s_stringMgr.getString("ModifyColumnCommand.sqlDialogTitle");
             sqldialog.setTitle(title);
-            sqldialog.setVisible(true);                
+            sqldialog.setVisible(true);                            
+        }
+        
+        /* (non-Javadoc)
+         * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+         */
+        public void actionPerformed(ActionEvent e) {
+            getSQLFromDialog(this);
         }
         
     }

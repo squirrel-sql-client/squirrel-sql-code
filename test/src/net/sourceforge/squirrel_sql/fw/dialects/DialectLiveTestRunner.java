@@ -300,7 +300,7 @@ public class DialectLiveTestRunner {
         String schema = msession.getDefaultSchema();
         SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
         ITableInfo info = new TableInfo(cat, schema, "MATVIEW", "TABLE", "", md);
-        String dropSQL = dialect.getTableDropSQL(info, true, false);
+        List<String> dropSQL = dialect.getTableDropSQL(info, true, false);
         runSQL(session, dropSQL);
     }
     

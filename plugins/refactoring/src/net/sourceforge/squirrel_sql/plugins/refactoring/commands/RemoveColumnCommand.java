@@ -116,7 +116,7 @@ public class RemoveColumnCommand extends AbstractRefactoringCommand
         
     }
 
-    protected String[] getSQLFromDialog() {
+    protected void getSQLFromDialog(SQLResultListener listener) {
         TableColumnInfo[] columns = columnListDialog.getSelectedColumnList();
         
         
@@ -146,13 +146,14 @@ public class RemoveColumnCommand extends AbstractRefactoringCommand
         } catch (UserCancelledOperationException e) {
             // user cancelled selecting a dialog. do nothing?
         }
-        return result;        
+        listener.finished(result);        
     }
     
     
-    private class DropSQLActionListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            String[] sqls = getSQLFromDialog();
+    private class DropSQLActionListener implements ActionListener, 
+                                                   SQLResultListener 
+    {
+        public void finished(String[] sqls) {
             if (sqls == null || sqls.length == 0) {
 //              TODO: tell the user no changes
                 return;
@@ -170,7 +171,11 @@ public class RemoveColumnCommand extends AbstractRefactoringCommand
             String title = 
                 s_stringMgr.getString("RemoveColumnCommand.sqlDialogTitle");
             sqldialog.setTitle(title);
-            sqldialog.setVisible(true);                            
+            sqldialog.setVisible(true);                                        
+        }
+        
+        public void actionPerformed(ActionEvent e) {
+            getSQLFromDialog(this);
         }
     }
     
@@ -199,7 +204,7 @@ public class RemoveColumnCommand extends AbstractRefactoringCommand
             // statement.  This may be db-specific
             TableColumnInfo[] columns = columnListDialog.getSelectedColumnList();
             for (int i = 0; i < columns.length; i++) {
-                TableColumnInfo column = (TableColumnInfo)columns[i];
+                TableColumnInfo column = columns[i];
                 String dropSQL = 
                     dialect.getColumnDropSQL(column.getTableName(), 
                                              column.getColumnName());

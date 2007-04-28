@@ -102,7 +102,7 @@ public class AddColumnCommand extends AbstractRefactoringCommand
         
     }
 
-    protected String[] getSQLFromDialog() {
+    protected void getSQLFromDialog(SQLResultListener listener) {
         TableColumnInfo info = columnDetailDialog.getColumnInfo();
         String[] result = null;
         try {
@@ -124,10 +124,10 @@ public class AddColumnCommand extends AbstractRefactoringCommand
             _session.getMessageHandler().showMessage(msg);
 
         }
-        return result;        
+        listener.finished(result);        
     }
     
-    private class AddButtonListener implements ActionListener {
+    private class AddButtonListener implements ActionListener, SQLResultListener {
 
         public void actionPerformed(ActionEvent e) {
             String columnName = columnDetailDialog.getColumnInfo().getColumnName();
@@ -140,7 +140,12 @@ public class AddColumnCommand extends AbstractRefactoringCommand
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            String[] sqls = getSQLFromDialog();
+            getSQLFromDialog(this);
+        }
+            
+            
+        public void finished(String[] sqls) {    
+            
             if (sqls == null || sqls.length == 0) {
                 return;
             }
@@ -192,11 +197,9 @@ public class AddColumnCommand extends AbstractRefactoringCommand
         }
     }
     
-    private class ShowSQLButtonListener implements ActionListener {
+    private class ShowSQLButtonListener implements ActionListener, SQLResultListener {
 
-        public void actionPerformed(ActionEvent e) {
-            String[] sqls = getSQLFromDialog();
-            
+        public void finished(String[] sqls) {
             if (sqls != null) {
                 StringBuffer script = new StringBuffer();
                 for (int i = 0; i < sqls.length; i++) {
@@ -212,6 +215,10 @@ public class AddColumnCommand extends AbstractRefactoringCommand
                 sqldialog.setTitle(title);
                 sqldialog.setVisible(true);
             }
+        }
+        
+        public void actionPerformed(ActionEvent e) {
+            getSQLFromDialog(this);
         }
         
     }

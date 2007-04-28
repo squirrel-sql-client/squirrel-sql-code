@@ -233,7 +233,7 @@ public class DerbyDialect extends DB2Dialect
      * reference the specified table.
      * @return the drop SQL command.
      */
-    public String getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints, boolean isMaterializedView){
+    public List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints, boolean isMaterializedView){
         return DialectUtils.getTableDropSQL(iTableInfo, false, cascadeConstraints, false, DialectUtils.CASCADE_CLAUSE, false);
     }
    

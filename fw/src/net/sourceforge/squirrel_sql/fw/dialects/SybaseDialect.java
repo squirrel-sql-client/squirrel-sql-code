@@ -19,9 +19,12 @@
 package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
@@ -216,8 +219,39 @@ public class SybaseDialect extends org.hibernate.dialect.SybaseDialect
      * reference the specified table.
      * @return the drop SQL command.
      */
-    public String getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints, boolean isMaterializedView){
-        return DialectUtils.getTableDropSQL(iTableInfo, false, cascadeConstraints, false, DialectUtils.CASCADE_CLAUSE, false);
+    public List<String> getTableDropSQL(ITableInfo iTableInfo, 
+                                        boolean cascadeConstraints, 
+                                        boolean isMaterializedView){
+    
+        // SQL-Server doesn't support a cascade clause.
+        List<String> dropTableSQL = 
+            DialectUtils.getTableDropSQL(iTableInfo, 
+                                         false, 
+                                         cascadeConstraints, 
+                                         false, 
+                                         DialectUtils.CASCADE_CLAUSE, 
+                                         false);
+        if (cascadeConstraints) {
+            ArrayList<String> result = new ArrayList<String>();
+            ForeignKeyInfo[] fks = iTableInfo.getExportedKeys();
+            if (fks != null && fks.length > 0) {
+                for (int i = 0; i < fks.length; i++) {
+                    ForeignKeyInfo info = fks[i];
+                    String fkName = info.getForeignKeyName();
+                    String fkTable = info.getForeignKeyTableName();
+                    StringBuilder tmp = new StringBuilder();
+                    tmp.append("ALTER TABLE ");
+                    tmp.append(fkTable);
+                    tmp.append(" DROP CONSTRAINT ");
+                    tmp.append(fkName);
+                    result.add(tmp.toString());
+                }
+            }
+            result.addAll(dropTableSQL);
+            return result;
+        } else {
+            return dropTableSQL;
+        }
     }
 
     /**

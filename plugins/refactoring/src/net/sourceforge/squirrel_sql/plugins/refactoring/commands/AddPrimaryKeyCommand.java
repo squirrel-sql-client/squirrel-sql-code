@@ -96,7 +96,7 @@ public class AddPrimaryKeyCommand extends AbstractRefactoringCommand {
         
     }
 
-    protected String[] getSQLFromDialog() {
+    protected void getSQLFromDialog(SQLResultListener listener) {
         TableColumnInfo[] columns = columnListDialog.getSelectedColumnList();
         HibernateDialect dialect = null; 
             
@@ -121,14 +121,17 @@ public class AddPrimaryKeyCommand extends AbstractRefactoringCommand {
         } catch (UserCancelledOperationException e) {
             // user cancelled selecting a dialog. do nothing?
         }
-        return result;
+        listener.finished(result);
         
     }
     
     
-    private class ShowSQLListener implements ActionListener {
+    private class ShowSQLListener implements ActionListener, SQLResultListener {
         public void actionPerformed( ActionEvent e) {
-            String[] addPKSQLs = getSQLFromDialog();
+            getSQLFromDialog(this);
+        }
+        
+        public void finished(String[] addPKSQLs) {
             if (addPKSQLs == null || addPKSQLs.length == 0) {
 //              TODO: tell the user no changes
                 return;
@@ -151,17 +154,11 @@ public class AddPrimaryKeyCommand extends AbstractRefactoringCommand {
         }
     }
     
-    private class AddPrimaryKeyActionListener implements ActionListener {
-
-        public void actionPerformed(ActionEvent e) {
-            if (columnListDialog == null) {
-                System.err.println("dialog was null");
-                return;
-            }
-            
+    private class AddPrimaryKeyActionListener implements ActionListener, 
+                                                         SQLResultListener 
+    {
+        public void finished(String[] addPKSQLs) {
             CommandExecHandler handler = new CommandExecHandler(_session);
-            
-            String[] addPKSQLs = getSQLFromDialog();
             if (addPKSQLs != null) {
                 for (int i = 0; i < addPKSQLs.length; i++) {
                     String addPKSQL = addPKSQLs[i];
@@ -171,7 +168,15 @@ public class AddPrimaryKeyCommand extends AbstractRefactoringCommand {
                     executer.run();
                 }
             }
-            columnListDialog.setVisible(false);
+            columnListDialog.setVisible(false);            
+        }
+        
+        public void actionPerformed(ActionEvent e) {
+            if (columnListDialog == null) {
+                System.err.println("dialog was null");
+                return;
+            }
+            getSQLFromDialog(this);
         }
         
     }
