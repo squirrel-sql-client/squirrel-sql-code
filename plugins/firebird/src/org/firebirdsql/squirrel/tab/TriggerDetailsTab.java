@@ -20,15 +20,15 @@ package org.firebirdsql.squirrel.tab;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BasePreparedStatementTab;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
- * This class will display the details for an Oracle trigger.
+ * This class will display the details for a Firebird trigger.
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
@@ -84,9 +84,15 @@ public class TriggerDetailsTab extends BasePreparedStatementTab
 	protected PreparedStatement createStatement() throws SQLException
 	{
 		ISession session = getSession();
+        if (s_log.isDebugEnabled()) {
+            s_log.debug("Preparing SQL: "+SQL);
+        }        
 		PreparedStatement pstmt = session.getSQLConnection().prepareStatement(SQL);
 		IDatabaseObjectInfo doi = getDatabaseObjectInfo();
-		pstmt.setString(1, doi.getSimpleName());
+        if (s_log.isDebugEnabled()) {
+            s_log.debug("setString param: "+doi.getSimpleName());
+        }        
+        pstmt.setString(1, doi.getSimpleName());
 		return pstmt;
 	}
 }
