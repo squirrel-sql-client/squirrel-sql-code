@@ -18,25 +18,17 @@ package net.sourceforge.squirrel_sql.plugins.dataimport;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Iterator;
+import java.util.HashMap;
 
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
-import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
-import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
-import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
 public class DataImportPlugin extends DefaultSessionPlugin {
     /** Plugin preferences. */
@@ -48,6 +40,9 @@ public class DataImportPlugin extends DefaultSessionPlugin {
     /** Folder to store user settings in. */
     private File _userSettingsFolder;
 
+    private HashMap<ISession, FileImportTab> sessionMap = 
+        new HashMap<ISession, FileImportTab>();
+    
     /**
      * Return the internal name of this plugin.
      *
@@ -211,5 +206,16 @@ public class DataImportPlugin extends DefaultSessionPlugin {
             logger.showMessage(Logger.ILogTypes.ERROR, ex);
         }
         */
+    }
+
+    /* (non-Javadoc)
+     * @see net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin#sessionEnding(net.sourceforge.squirrel_sql.client.session.ISession)
+     */
+    @Override
+    public void sessionEnding(ISession session) {
+        FileImportTab tab = sessionMap.get(session);
+        if (tab != null) {
+            tab.sessionEnding(session);
+        }
     }
 }

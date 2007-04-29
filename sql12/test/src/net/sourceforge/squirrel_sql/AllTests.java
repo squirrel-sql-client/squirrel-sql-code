@@ -8,6 +8,7 @@ public class AllTests extends TestCase {
 	
 	public static Test suite() {
 		TestSuite result = new TestSuite("squirrel_sql tests");
+        result.addTest(net.sourceforge.squirrel_sql.client.session.mainpanel.AllTests.suite());
 		result.addTest(net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.AllTests.suite());
         result.addTest(net.sourceforge.squirrel_sql.client.session.AllTests.suite());
         result.addTest(net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.AllTests.suite());
