@@ -6,7 +6,7 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
-New Plugin (SQL Parametrisation - Thomas Mürell) allows you to put variables 
+New Plugin (SQL Parametrisation - Thorsten MÃ¼rell) allows you to put variables 
            into your SQL statements.
 
 Refactoring Plugin: Refactored drop tables command to not use the EDT for 
