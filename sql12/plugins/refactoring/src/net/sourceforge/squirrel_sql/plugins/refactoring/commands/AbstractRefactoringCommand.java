@@ -185,6 +185,9 @@ public abstract class AbstractRefactoringCommand implements ICommand {
          * @see net.sourceforge.squirrel_sql.plugins.refactoring.commands.SQLResultListener#finished(java.lang.String[])
          */
         public void finished(String[] sqls) {
+            if (sqls == null) {
+                return;
+            }
             final StringBuffer sql = new StringBuffer();
             for (int i = 0; i < sqls.length; i++) {
                 sql.append(sqls[i]);
