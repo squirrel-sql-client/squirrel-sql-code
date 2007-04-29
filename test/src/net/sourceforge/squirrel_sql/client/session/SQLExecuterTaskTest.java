@@ -1,5 +1,4 @@
 package net.sourceforge.squirrel_sql.client.session;
-
 /*
  * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
@@ -24,7 +23,6 @@ import static org.easymock.EasyMock.replay;
 
 import java.sql.Connection;
 
-import junit.framework.TestCase;
 import net.sourceforge.squirrel_sql.BaseSQuirreLTestCase;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;

@@ -93,4 +93,16 @@ public abstract class BaseMainPanelTab implements IMainPanelTab
 	 * Refresh the component.
 	 */
 	protected abstract void refreshComponent();
+    
+    /**
+     * When a session is ending, if it happens to be the one this class is using,
+     * then set our reference to null to allow it to be GC'd.
+     * 
+     * @param session the session that is ending.
+     */
+    public void sessionEnding(ISession session) {
+        if (_session == session) {
+            _session = null;
+        }
+    }
 }
