@@ -23,15 +23,24 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import javax.swing.*;
 
+import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 /**
  * This dialog displays a summary of all plugins.
  *
@@ -64,8 +73,8 @@ public class PluginSummaryDialog extends JDialog
 	{
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-		final SquirrelResources rsrc = _app.getResources();
-		final ImageIcon icon = rsrc.getIcon(SquirrelResources.IImageNames.PLUGINS);
+//		final SquirrelResources rsrc = _app.getResources();
+//		final ImageIcon icon = rsrc.getIcon(SquirrelResources.IImageNames.PLUGINS);
 //		if (icon != null)
 //		{
 //			setIconImage(icon.getImage());
@@ -89,17 +98,16 @@ public class PluginSummaryDialog extends JDialog
 		contentPane.add(new JScrollPane(_pluginPnl), BorderLayout.CENTER);
 
 		final JPanel btnsPnl = new JPanel();
-//TODO: Enable once load works for plugins.
-//		final JButton okBtn = new JButton(s_stringMgr.getString("PluginSummaryDialog.ok"));
-//		okBtn.addActionListener(new ActionListener()
-//		{
-//			public void actionPerformed(ActionEvent evt)
-//			{
-//				saveSettings();
-//				dispose();
-//			}
-//		});
-//		btnsPnl.add(okBtn);
+		final JButton okBtn = new JButton(s_stringMgr.getString("PluginSummaryDialog.ok"));
+		okBtn.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent evt)
+			{
+				saveSettings();
+				dispose();
+			}
+		});
+		btnsPnl.add(okBtn);
 		final JButton closeBtn = new JButton(s_stringMgr.getString("PluginSummaryDialog.close"));
 		closeBtn.addActionListener(new ActionListener()
 		{
@@ -129,7 +137,9 @@ public class PluginSummaryDialog extends JDialog
 
 
       pack();
+      setSize(655, 500);
 		GUIUtils.centerWithinParent(this);
 		setResizable(true);
+        
 	}
 }
