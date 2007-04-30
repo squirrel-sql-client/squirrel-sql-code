@@ -192,7 +192,7 @@ public class PostgresPlugin extends DefaultSessionPlugin {
      */
    public PluginSessionCallback sessionStarted(final ISession session)
    {
-       if (isPluginSession(session)) {
+       if (!isPluginSession(session)) {
            return null;
        }
        GUIUtils.processOnSwingEventThread(new Runnable() {
