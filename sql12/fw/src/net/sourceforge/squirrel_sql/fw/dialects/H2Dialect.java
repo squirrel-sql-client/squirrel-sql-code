@@ -29,7 +29,7 @@ public class H2Dialect extends Dialect implements HibernateDialect {
     
     public H2Dialect() {
         super();
-
+        registerColumnType(Types.ARRAY, "array");
         registerColumnType(Types.BIGINT, "bigint");
         registerColumnType(Types.BINARY, "binary");
         registerColumnType(Types.BIT, "boolean");
