@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JLayeredPane;
 import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -152,6 +153,7 @@ public class SQLParamExecutionListener implements ISQLExecutionListener {
 	private void createParameterDialog(String parameter, String oldValue) {
 		dialog = new AskParamValueDialog(parameter, oldValue);
 		session.getApplication().getMainFrame().addInternalFrame(dialog, true);
+		dialog.setLayer(JLayeredPane.MODAL_LAYER);
 		dialog.moveToFront();
 		GUIUtils.centerWithinDesktop(dialog);
 		dialog.setVisible(true);
