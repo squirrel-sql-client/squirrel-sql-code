@@ -464,7 +464,7 @@ public class PluginManager {
                       "Detected MacOS X plugin on non-Mac platform - skipping");
                     return;
                 }
-                if (ps == null || !ps.isLoadAtStartup()) {
+                if (ps != null && !ps.isLoadAtStartup()) {
                     // We need this in order to allow the user to see this 
                     // plugin - which isn't loaded - in the plugin summary 
                     // dialog, so that they can enable it.
