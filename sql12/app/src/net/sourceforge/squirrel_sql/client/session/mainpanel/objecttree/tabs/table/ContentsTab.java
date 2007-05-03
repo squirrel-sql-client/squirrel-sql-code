@@ -26,8 +26,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javax.swing.JLayeredPane;
+
 import net.sourceforge.squirrel_sql.client.session.DataSetUpdateableTableModelImpl;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.PleaseWaitDialog;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.OrderByClausePanel;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterClauses;
@@ -41,6 +44,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
@@ -201,7 +205,8 @@ public class ContentsTab extends BaseTableTab
       final ISession session = getSession();
       final ISQLConnection conn = session.getSQLConnection();
       SQLDatabaseMetaData md = conn.getSQLMetaData();
-
+      PleaseWaitDialog waitDialog = null;
+      
       try
       {
          final Statement stmt = conn.createStatement();
@@ -319,8 +324,13 @@ public class ContentsTab extends BaseTableTab
                {
                  buf.append(" order by ").append(clause);
                }
-
-               rs = stmt.executeQuery(buf.toString());
+               
+               // Initialize the dialog to ask the user to wait, because the query
+               // can take a while
+               waitDialog = new PleaseWaitDialog(stmt, _app.getMessageHandler());
+               waitDialog.showDialog(_app);
+               
+           	   rs = stmt.executeQuery(buf.toString());
             }
             catch (SQLException ex)
             {
@@ -437,6 +447,11 @@ public class ContentsTab extends BaseTableTab
       catch (SQLException ex)
       {
          throw new DataSetException(ex);
+      } finally {
+    	  // Hide the dialog if one is shown
+    	  if (waitDialog != null) {
+    		  waitDialog.dispose();
+    	  }
       }
    }
 
