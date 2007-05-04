@@ -22,6 +22,7 @@ import java.awt.Component;
 import java.awt.MenuComponent;
 import java.awt.Toolkit;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -66,10 +67,10 @@ public class SQLParamExecutionListener implements ISQLExecutionListener {
 	 * @param sql
 	 */
 	public void statementExecuted(String sql) {
-		log.info("SQL executed: " + sql);
+		// log.info("SQL executed: " + sql);
 	}
 
-   /**
+	/**
 	 * Called prior to an individual statement being executed. If you modify the
 	 * script remember to return it so that the caller knows about the
 	 * modifications.
@@ -80,10 +81,11 @@ public class SQLParamExecutionListener implements ISQLExecutionListener {
 	 *			statement will not be executed.
 	 */
 	public String statementExecuting(String sql) {
-		log.info("SQL starting to execute: " + sql);
+		// log.info("SQL starting to execute: " + sql);
 		StringBuffer buffer = new StringBuffer(sql);
 		Map<String, String> cache = plugin.getCache();
-		Pattern p = Pattern.compile(":\\w+");
+		Map<String, String> currentCache = new HashMap<String, String>();
+		Pattern p = Pattern.compile(":[a-zA-Z]\\w+");
 
 		Matcher m = p.matcher(buffer);
 
@@ -91,52 +93,58 @@ public class SQLParamExecutionListener implements ISQLExecutionListener {
 			if (isQuoted(buffer, m.start()))
 				continue;
 			final String var = m.group();
-			final String oldValue = cache.get(var);
-			if (SwingUtilities.isEventDispatchThread()) {
-				createParameterDialog(var, oldValue);
-				while (!dialog.isDone()) {
-					try {
-					AWTEvent event = Toolkit.getDefaultToolkit().getSystemEventQueue().getNextEvent();
-					Object source = event.getSource();
-					if (event instanceof ActiveEvent) {
-				            ((ActiveEvent)event).dispatch();
-				          } else if (source instanceof Component) {
-				            ((Component)source).dispatchEvent(
-				              event);
-				          } else if (source instanceof MenuComponent) {
-				            ((MenuComponent)source).dispatchEvent(
-				              event);
-				          } else {
-				            System.err.println(
-				              "Unable to dispatch: " + event);
-				          }
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
+			String value = null;
+			if (currentCache.containsKey(var)) {
+				value = currentCache.get(var);
 			} else {
-				try {
-					SwingUtilities.invokeAndWait(new Runnable() {
-						public void run() {
-							createParameterDialog(var, oldValue);
-						}
-					});
+				final String oldValue = cache.get(var);
+				if (SwingUtilities.isEventDispatchThread()) {
+					createParameterDialog(var, oldValue);
 					while (!dialog.isDone()) {
-						wait();
+						try {
+							AWTEvent event = Toolkit.getDefaultToolkit().getSystemEventQueue().getNextEvent();
+							Object source = event.getSource();
+							if (event instanceof ActiveEvent) {
+								((ActiveEvent)event).dispatch();
+							} else if (source instanceof Component) {
+								((Component)source).dispatchEvent(
+										event);
+							} else if (source instanceof MenuComponent) {
+								((MenuComponent)source).dispatchEvent(
+										event);
+							} else {
+								System.err.println(
+										"Unable to dispatch: " + event);
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 					}
-				} catch (InvocationTargetException ite) {
-					ite.printStackTrace();
-				} catch (InterruptedException ie) {
-					ie.printStackTrace();
+				} else {
+					try {
+						SwingUtilities.invokeAndWait(new Runnable() {
+							public void run() {
+								createParameterDialog(var, oldValue);
+							}
+						});
+						while (!dialog.isDone()) {
+							wait();
+						}
+					} catch (InvocationTargetException ite) {
+						ite.printStackTrace();
+					} catch (InterruptedException ie) {
+						ie.printStackTrace();
+					}
 				}
-			}
-			if (dialog.isCancelled()) {
+				if (dialog.isCancelled()) {
+					dialog = null;
+					return null;
+				}
+				value = sanitizeValue(dialog.getValue(), dialog.isQuotingNeeded());
+				cache.put(var, dialog.getValue());
+				currentCache.put(var, value);
 				dialog = null;
-				return null;
 			}
-			String value = sanitizeValue(dialog.getValue(), dialog.isQuotingNeeded());
-			cache.put(var, dialog.getValue());
-			dialog = null;
 			buffer.replace(m.start(), m.end(), value);
 			m.reset();
 		}
@@ -146,7 +154,7 @@ public class SQLParamExecutionListener implements ISQLExecutionListener {
 				new SelectInternalFrameCommand(session.getActiveSessionWindow()).execute();
 			}
 		});
-		log.info("SQL passing to execute: " + buffer.toString());
+		// log.info("SQL passing to execute: " + buffer.toString());
 		return buffer.toString();
 	}
 
@@ -158,23 +166,23 @@ public class SQLParamExecutionListener implements ISQLExecutionListener {
 		GUIUtils.centerWithinDesktop(dialog);
 		dialog.setVisible(true);
 	}
-	
+
 	private String sanitizeValue(String value, boolean quoting) {
 		String retValue = value;
 		boolean quotesNeeded = quoting;
-		
+
 		try {
 			Float.parseFloat(value);
 		} catch (NumberFormatException nfe) {
 			quotesNeeded = true;
 		}
-		
+
 		if (quotesNeeded) {
 			retValue = "'" + value + "'";
 		}
 		return retValue;
 	}
-	
+
 	private boolean isQuoted(StringBuffer buffer, int position) {
 		String part = buffer.substring(0, position);
 		if (searchAllOccurences(part, "\"") % 2 != 0) 
@@ -183,7 +191,7 @@ public class SQLParamExecutionListener implements ISQLExecutionListener {
 			return true;
 		return false;
 	}
-	
+
 	private int searchAllOccurences(String haystack, String needle) {
 		int i = 0;
 		int pos = 0;
