@@ -32,6 +32,8 @@ Bug-Fixes:
 
 1701380 addSQLExecutionListener is broken
 
+1700093 Formatter fails for insert script with multiple subselects
+
 1699294 Squirrel imports BLOB, but does not update data 
 
 138092 (PostgreSQL table types) Now PostgreSQL table types list and object tree
