@@ -60,4 +60,11 @@ public interface IQueryTokenizer {
      */
     String getLineCommentBegin();
     
+    /**
+     * Returns whether or not the query tokenizer should remove multi-line 
+     * comments from the statements while tokenizing them.
+     * 
+     * @return true if remove; falso otherwise.
+     */
+    boolean isRemoveMultiLineComment();
 }

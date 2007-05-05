@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -347,7 +348,8 @@ public class QueryTokenizer implements IQueryTokenizer
             String sql = iter.next();
             if (sql.startsWith(scriptIncludePrefix)) {
                 try {
-                    String filename = sql.substring(1);
+                    String filename = 
+                        sql.substring(scriptIncludePrefix.length());
                     List<String> fileSQL = getStatementsFromIncludeFile(filename);
                     tmp.addAll(fileSQL);
                 } catch (Exception e) {
@@ -366,6 +368,12 @@ public class QueryTokenizer implements IQueryTokenizer
     protected List<String> getStatementsFromIncludeFile(String filename) 
         throws Exception 
     {
+        if (filename.startsWith("'")) {
+            filename = filename.substring(1);
+        }
+        if (filename.endsWith("'")) {
+            filename = StringUtilities.chop(filename);
+        }
         ArrayList<String> result = new ArrayList<String>();
         if (s_log.isDebugEnabled()) {
             s_log.debug("Attemping to open file '"+filename+"'");
