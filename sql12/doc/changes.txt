@@ -6,6 +6,8 @@ SQuirreL SQL Client Change Log
 
 Bug-Fixes:
 
+1700093 Formatter fails for insert script with multiple subselects
+
 Refactoring Plugin: SQL-Server needs eol between GO and statement.
 
 Fixed bug which appeared while editing tables in PostgreSQL 8.1.  If the table
