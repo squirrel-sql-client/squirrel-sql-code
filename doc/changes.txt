@@ -18,6 +18,8 @@ Refactoring Plugin: Refactored drop tables command to not use the EDT for
 calculating foreign keys.  Also, now FKs in child tables are dropped before any 
 parent tables are dropped when cascade constraints is selected.
 
+Oracle Plugin: Source tab for materialized views
+
 Task 138098 (Plugins Session Menu Items (Disable)) When using a session that 
   is not supported by a db-specific plugin, that plugin should disable it's 
   Session menu items

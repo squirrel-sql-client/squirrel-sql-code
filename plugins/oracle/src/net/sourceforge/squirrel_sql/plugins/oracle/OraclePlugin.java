@@ -47,7 +47,6 @@ import net.sourceforge.squirrel_sql.client.session.IAllowedSchemaChecker;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
@@ -89,6 +88,7 @@ import net.sourceforge.squirrel_sql.plugins.oracle.tab.OptionsTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.SequenceDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.SessionDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.SessionStatisticsTab;
+import net.sourceforge.squirrel_sql.plugins.oracle.tab.SnapshotSourceTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.TriggerColumnInfoTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.TriggerDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.TriggerSourceTab;
@@ -714,6 +714,7 @@ public class OraclePlugin extends DefaultSessionPlugin
         addDetailTab(objTree, DatabaseObjectType.USER, new UserDetailsTab(session));
 
         addDetailTab(objTree, DatabaseObjectType.VIEW, new ViewSourceTab());
+        addDetailTab(objTree, DatabaseObjectType.TABLE, new SnapshotSourceTab());
         
         // This fixes the issue where the tree is getting constructed prior to 
         // the Oracle plugin expanders being registered.(USERS, SESSIONS, 
