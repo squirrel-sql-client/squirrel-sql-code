@@ -268,4 +268,24 @@ public class StringUtilities
         return result;
     }
     
+    /**
+     * Chops off the very last character of the given string.
+     * 
+     * @param aString a string to chop
+     * @return the specified string minus it's last character, or null for null
+     *         or empty string for a string with length == 0|1.
+     */
+    public static String chop(String aString) {
+        if (aString == null) {
+            return null;
+        }
+        if (aString.length() == 0) {
+            return "";
+        }
+        if (aString.length() == 1) {
+            return "";
+        }
+        return aString.substring(0, aString.length()-1);
+    }
+    
 }
