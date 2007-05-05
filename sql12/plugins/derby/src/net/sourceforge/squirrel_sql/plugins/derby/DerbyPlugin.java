@@ -18,8 +18,6 @@ package net.sourceforge.squirrel_sql.plugins.derby;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.sql.SQLException;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
@@ -32,6 +30,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.Dat
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -40,6 +39,7 @@ import net.sourceforge.squirrel_sql.plugins.derby.exp.TableExpander;
 import net.sourceforge.squirrel_sql.plugins.derby.tab.TriggerDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.derby.tab.TriggerSourceTab;
 import net.sourceforge.squirrel_sql.plugins.derby.tab.ViewSourceTab;
+import net.sourceforge.squirrel_sql.plugins.derby.tokenizer.DerbyQueryTokenizer;
 
 
 /**
@@ -186,6 +186,13 @@ public class DerbyPlugin extends DefaultSessionPlugin {
        if (!isPluginSession(session)) {
            return null;
        }
+       s_log.info("Installing Derby query tokenizer");
+       IQueryTokenizer orig = session.getQueryTokenizer();
+       DerbyQueryTokenizer tokenizer = 
+           new DerbyQueryTokenizer(orig.getSQLStatementSeparator(),
+                                   orig.getLineCommentBegin(),
+                                   orig.isRemoveMultiLineComment());
+       session.setQueryTokenizer(tokenizer);
        GUIUtils.processOnSwingEventThread(new Runnable() {
            public void run() {
                updateTreeApi(session);
