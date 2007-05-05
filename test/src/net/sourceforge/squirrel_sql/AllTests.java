@@ -11,6 +11,7 @@ public class AllTests extends TestCase {
         result.addTest(net.sourceforge.squirrel_sql.client.session.mainpanel.AllTests.suite());
 		result.addTest(net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.AllTests.suite());
         result.addTest(net.sourceforge.squirrel_sql.client.session.AllTests.suite());
+        result.addTest(net.sourceforge.squirrel_sql.fw.codereformat.AllTests.suite());
         result.addTest(net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.AllTests.suite());
         result.addTest(net.sourceforge.squirrel_sql.fw.dialects.AllTests.suite());
         result.addTest(net.sourceforge.squirrel_sql.fw.sql.AllTests.suite());
