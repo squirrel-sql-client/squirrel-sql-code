@@ -288,6 +288,16 @@ public class PluginManager {
         }
     }
 
+    public synchronized void unloadPlugin(String pluginInternalName) {
+        for (Iterator<IPlugin> it = _loadedPlugins.values().iterator(); it.hasNext();) {
+            IPlugin plugin = it.next();
+            if (plugin.getInternalName().equals(pluginInternalName)) {
+                plugin.unload();
+                it.remove();
+            }
+        }
+    }
+    
     /**
      * Unload all plugins.
      */

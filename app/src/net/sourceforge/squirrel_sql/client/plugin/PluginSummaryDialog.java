@@ -34,6 +34,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
+import javax.swing.event.TableModelEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
@@ -56,6 +57,12 @@ public class PluginSummaryDialog extends JDialog
 
 	private PluginSummaryTable _pluginPnl;
 
+    static interface i18n {
+        //i18n[PluginSummaryDialog.unload=Unload]
+        String UNLOAD_LABEL = 
+            s_stringMgr.getString("PluginSummaryDialog.unload");
+    }
+    
 	public PluginSummaryDialog(IApplication app, Frame owner)
 		throws DataSetException
 	{
@@ -94,7 +101,7 @@ public class PluginSummaryDialog extends JDialog
 		final PluginManager pmgr = _app.getPluginManager();
 		final PluginInfo[] pluginInfo = pmgr.getPluginInformation();
 		final PluginStatus[] pluginStatus = pmgr.getPluginStatuses();
-		_pluginPnl = new PluginSummaryTable(pluginInfo, pluginStatus);
+		_pluginPnl = new PluginSummaryTable(_app, pluginInfo, pluginStatus);
 		contentPane.add(new JScrollPane(_pluginPnl), BorderLayout.CENTER);
 
 		final JPanel btnsPnl = new JPanel();
@@ -108,6 +115,24 @@ public class PluginSummaryDialog extends JDialog
 			}
 		});
 		btnsPnl.add(okBtn);
+        final JButton unloadButton = new JButton(i18n.UNLOAD_LABEL);
+        unloadButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                int row = _pluginPnl.getSelectedRow();
+                if (row == -1) {
+                    // no rows selected.
+                    return;
+                }
+                // column 1 is internal name
+                String internalName = 
+                    (String)_pluginPnl.getModel().getValueAt(row, 1);
+                _app.getPluginManager().unloadPlugin(internalName);
+                // column 3 is loaded status
+                _pluginPnl.setValueAt("false", row, 3);
+                _pluginPnl.repaint();
+            }
+        });
+        btnsPnl.add(unloadButton);
 		final JButton closeBtn = new JButton(s_stringMgr.getString("PluginSummaryDialog.close"));
 		closeBtn.addActionListener(new ActionListener()
 		{

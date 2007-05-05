@@ -27,6 +27,7 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTable;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -66,7 +67,7 @@ public class PluginSummaryTable extends SortableTable
 		100, 100, 150, 50, 50, 100, 100,
 	};
 
-	public PluginSummaryTable(PluginInfo[] pluginInfo, PluginStatus[] pluginStatus)
+	public PluginSummaryTable(IApplication app, PluginInfo[] pluginInfo, PluginStatus[] pluginStatus)
 	{
 		super(new MyTableModel(pluginInfo, pluginStatus));
 
@@ -191,9 +192,16 @@ public class PluginSummaryTable extends SortableTable
         	if (col == 0)
         	{
         		final PluginData pd = _pluginData.get(row);
-        		pd._status.setLoadAtStartup(Boolean.valueOf(value.toString()).booleanValue());
+                boolean loadAtStartup = 
+                    Boolean.valueOf(value.toString()).booleanValue();
+        		pd._status.setLoadAtStartup(loadAtStartup);
         		fireTableCellUpdated(row, col);
         	}
+            if (col == 3) {
+                final PluginData pd = _pluginData.get(row);
+                pd._info.setLoaded(Boolean.valueOf(value.toString()));
+                fireTableCellUpdated(row, col);
+            }
 		}
 
 		private static class PluginData
