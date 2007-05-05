@@ -16,6 +16,7 @@ package net.sourceforge.squirrel_sql.plugins.sqlparam;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -27,6 +28,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -45,6 +47,13 @@ public class SQLParamPlugin extends DefaultSessionPlugin
 //	private static final String PREFS_FILE_NAME = "sqlparamprefs.xml";
 	Map<String, String> cache;
 	
+    /** 
+     * Remember which sqlpanelapis we've registered listeners with so that we 
+     * can unregister them when it's time to unload.
+     */
+    HashMap<ISQLPanelAPI, ISQLExecutionListener> panelListenerMap = 
+        new HashMap<ISQLPanelAPI, ISQLExecutionListener>();
+    
 	/**
 	 * Return the internal name of this plugin.
 	 *
@@ -154,7 +163,9 @@ public class SQLParamPlugin extends DefaultSessionPlugin
 	@Override
 	public void unload()
 	{
-		/* Nothing to do to unload */
+	   for (ISQLPanelAPI api : panelListenerMap.keySet()) {
+	        api.removeSQLExecutionListener(panelListenerMap.get(api));
+       }
 	}
 
 	/**
@@ -225,8 +236,10 @@ public class SQLParamPlugin extends DefaultSessionPlugin
 			public void run()
 			{
 				log.info("Adding SQL execution listener.");
-				sqlPaneAPI.addSQLExecutionListener(new SQLParamExecutionListener(plugin, session));
-
+                ISQLExecutionListener listener = 
+                    new SQLParamExecutionListener(plugin, session);
+				sqlPaneAPI.addSQLExecutionListener(listener);
+                panelListenerMap.put(sqlPaneAPI, listener);
 			}
 
 		});
