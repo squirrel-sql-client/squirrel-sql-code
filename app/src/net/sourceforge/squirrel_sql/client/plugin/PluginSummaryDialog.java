@@ -118,17 +118,19 @@ public class PluginSummaryDialog extends JDialog
         final JButton unloadButton = new JButton(i18n.UNLOAD_LABEL);
         unloadButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                int row = _pluginPnl.getSelectedRow();
-                if (row == -1) {
+                int[] rows = _pluginPnl.getSelectedRows();
+                if (rows.length == 0) {
                     // no rows selected.
                     return;
                 }
-                // column 1 is internal name
-                String internalName = 
-                    (String)_pluginPnl.getModel().getValueAt(row, 1);
-                _app.getPluginManager().unloadPlugin(internalName);
-                // column 3 is loaded status
-                _pluginPnl.setValueAt("false", row, 3);
+                for (int row : rows) {
+                    // column 1 is internal name
+                    String internalName = 
+                        (String)_pluginPnl.getModel().getValueAt(row, 1);
+                    _app.getPluginManager().unloadPlugin(internalName);
+                    // column 3 is loaded status
+                    _pluginPnl.setValueAt("false", row, 3);
+                }
                 _pluginPnl.repaint();
             }
         });
