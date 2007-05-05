@@ -24,6 +24,9 @@ Task 138098 (Plugins Session Menu Items (Disable)) When using a session that
   is not supported by a db-specific plugin, that plugin should disable it's 
   Session menu items
 
+- Added unload button to plugin summary dialog which will cause the selected 
+  plugin to be unloaded.
+  
 - Added support for setting whether or not plugins are loaded at startup 
   (without physically removing them), using the plugin summary dialog.  You must 
   restart SQuirreL for plugin change to take effect.
