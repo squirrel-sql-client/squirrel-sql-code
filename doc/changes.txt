@@ -9,17 +9,23 @@ Enhancements:
 New Plugin (SQL Parametrisation - Thorsten Mürell) allows you to put variables 
            into your SQL statements.
 
+Derby Plugin: New custom QueryTokenizer which allows Derby sessions to give the 
+command:  run '<abs-path-to-script>'
+This slurps in the file and executes it's statements.  This is supported in 
+Derby's own ij command-line interpreter.
+
 Refactoring Plugin: Refactored drop tables command to not use the EDT for 
-calculating foriegn keys.  Also, now FKs in child tables are dropped before any 
+calculating foreign keys.  Also, now FKs in child tables are dropped before any 
 parent tables are dropped when cascade constraints is selected.
 
 Task 138098 (Plugins Session Menu Items (Disable)) When using a session that 
   is not supported by a db-specific plugin, that plugin should disable it's 
   Session menu items
 
-- Added support for enabling/disabling plugins without removing them, using the 
-  plugin summary dialog.  You must restart SQuirreL for plugin change to take 
-  effect.
+- Added support for setting whether or not plugins are loaded at startup 
+  (without physically removing them), using the plugin summary dialog.  You must 
+  restart SQuirreL for plugin change to take effect.
+  
 - Added 'Use PK' button on the "Edit Where clause" dialog which will cause only
   PK columns to be used for updating rows in the table contents panel.
 - Added "All Objects" to alias properties.
