@@ -1,24 +1,61 @@
 package net.sourceforge.squirrel_sql.fw.sql;
+/*
+ * Copyright (C) 2007 Rob Manning
+ * manningr@users.sourceforge.net
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.ANON_PROC_EXEC;
+import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.CREATE_FUNCTION_SQL;
+import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.CREATE_OR_REPLACE_STORED_PROC;
+import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.CREATE_STORED_PROC;
+import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.NO_SEP_SLASH_SQL;
+import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.SELECT_DUAL;
+import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.STUDENTS_NOT_TAKING_CS112;
+import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.UPDATE_TEST;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
 
 import junit.framework.Assert;
 
-public class SQLUtil implements GenericSQL {
+/**
+ * A helper class for testing components that manipulate SQL.
+ * 
+ * @author mannignr
+ */
+public class SQLUtil {
     
     private static int genericSQLCount = 0;
     
     public static String getGenericSQLScript() {
         StringBuffer result = new StringBuffer();
-        result.append(CREATE_STUDENT);
+        result.append(GenericSQL.CREATE_STUDENT);
         result.append("\n\n");
-        result.append(CREATE_COURSES);
+        result.append(GenericSQL.CREATE_COURSES);
         result.append("\n\n");
-        result.append(CREATE_PROFESSOR);
+        result.append(GenericSQL.CREATE_PROFESSOR);
         result.append("\n\n");
-        result.append(CREATE_TAKE);
+        result.append(GenericSQL.CREATE_TAKE);
         result.append("\n\n");
-        result.append(CREATE_TEACH);
+        result.append(GenericSQL.CREATE_TEACH);
         result.append("\n\n");
-        result.append(STUDENTS_NOT_TAKING_CS112);
+        result.append(GenericSQL.STUDENTS_NOT_TAKING_CS112);
         result.append("\n\n");
         // Don't forget to set this to the number of statements in result
         genericSQLCount = 6;
@@ -50,5 +87,31 @@ public class SQLUtil implements GenericSQL {
         return genericSQLCount;
     }
     
+    /**
+     * Creates a temporary file with the specified SQL statements in it.
+     * @param sqls
+     * @param deleteOnExit
+     * @return
+     * @throws IOException
+     */
+    public static String createSQLFile(List<String> sqls, 
+                                       boolean deleteOnExit) 
+        throws IOException 
+    {
+        File f = File.createTempFile("test", ".sql");
+        if (deleteOnExit) {
+            f.deleteOnExit();
+        }
+        PrintWriter out = new PrintWriter(new FileWriter(f));
+        for (String sql : sqls) {
+            out.println(sql);
+            out.println();            
+        }
+        out.close();
+        String tmpFilename = f.getAbsolutePath();
+        System.out.println("tmpFilename="+tmpFilename);
+                
+        return tmpFilename;
+    }
     
 }

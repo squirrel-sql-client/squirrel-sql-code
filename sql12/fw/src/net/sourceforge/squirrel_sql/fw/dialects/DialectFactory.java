@@ -186,6 +186,10 @@ public class DialectFactory {
     public static boolean isIngres(ISQLDatabaseMetaData md) {
         return dialectSupportsProduct(md, ingresDialect);
     }
+
+    public static boolean isInterbase(ISQLDatabaseMetaData md) {
+        return dialectSupportsProduct(md, interbaseDialect);
+    }
     
     public static boolean isMaxDB(ISQLDatabaseMetaData md) {
         return dialectSupportsProduct(md, maxDbDialect);
@@ -308,6 +312,9 @@ public class DialectFactory {
         if (isIngres(md)) {
             return ingresDialect;
         }
+        if (isInterbase(md)) {
+            return ingresDialect;
+        }        
         if (isMaxDB(md)) {
             return maxDbDialect;
         }

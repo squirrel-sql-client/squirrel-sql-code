@@ -45,7 +45,6 @@ import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
-import net.sourceforge.squirrel_sql.fw.sql.MockSQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.MockSQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
@@ -96,7 +95,7 @@ public class MockSession implements ISession {
     
     private void init(boolean initConnection) {
     	if (initConnection) {
-            MockConnection2 mockCon = getMockConnection();
+            //MockConnection2 mockCon = getMockConnection();
     		con = new SQLConnection(getMockConnection(), null, sqlDriver);
     	}
     	id = new UidIdentifier();

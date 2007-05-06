@@ -110,5 +110,19 @@ public interface OracleSQL {
         "   Description          VARCHAR2(255),\n" +
         "   constraint PK_FOOB_Add12EmakeTypo primary key (Add12EmakeTypo)\n" +
         ")\n" +
-        "/\n";        
+        "/\n";    
+    
+    public final static String CREATE_FUNCTION_SQL = 
+        "create or replace function airport_city(iata_code in char) " +
+        "return varchar2 " +
+        "is " +
+        "    city_name varchar2(50); " +
+        "begin " +
+        "    select city " +
+        "    into city_name " +
+        "    from iata_airport_codes " +
+        "    where code = iata_code " +
+        "    return (city_name); " +
+        "end; " +
+        "/ ";
 }

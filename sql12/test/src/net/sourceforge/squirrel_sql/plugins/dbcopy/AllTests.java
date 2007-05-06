@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.dbcopy.util;
+package net.sourceforge.squirrel_sql.plugins.dbcopy;
 /*
  * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
@@ -23,8 +23,8 @@ import junit.framework.TestSuite;
 
 public class AllTests extends TestCase {
 	public static Test suite() {
-		TestSuite suite = new TestSuite("dbcopy util tests");
-		suite.addTestSuite(CompatTest.class);
+		TestSuite suite = new TestSuite("dbcopy tests");
+		suite.addTestSuite(ColTypeMapperTest.class);
 		return suite;
 	}
 }
