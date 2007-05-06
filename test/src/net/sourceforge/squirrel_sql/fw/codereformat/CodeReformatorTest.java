@@ -25,6 +25,7 @@ import static net.sourceforge.squirrel_sql.fw.sql.GenericSQL.CREATE_STUDENT;
 import static net.sourceforge.squirrel_sql.fw.sql.GenericSQL.CREATE_TAKE;
 import static net.sourceforge.squirrel_sql.fw.sql.GenericSQL.CREATE_TEACH;
 import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.ANON_PROC_EXEC;
+import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.CREATE_FUNCTION_SQL;
 import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.CREATE_OR_REPLACE_STORED_PROC;
 import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.CREATE_STORED_PROC;
 import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.NO_SEP_SLASH_SQL;
@@ -83,6 +84,7 @@ public class CodeReformatorTest extends BaseSQuirreLTestCase {
         c.reformat(UPDATE_TEST);
         c.reformat(OracleSQL.STUDENTS_NOT_TAKING_CS112);
         c.reformat(NO_SEP_SLASH_SQL);
+        c.reformat(CREATE_FUNCTION_SQL);
        
     }
 

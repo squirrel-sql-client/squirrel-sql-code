@@ -1,19 +1,44 @@
-package net.sourceforge.squirrel_sql.fw.sql;
+package net.sourceforge.squirrel_sql.plugins.oracle.tokenizer;
+/*
+ * Copyright (C) 2007 Rob Manning
+ * manningr@users.sourceforge.net
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.ANON_PROC_EXEC;
+import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.CREATE_FUNCTION_SQL;
+import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.CREATE_OR_REPLACE_STORED_PROC;
+import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.CREATE_STORED_PROC;
+import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.NO_SEP_SLASH_SQL;
+import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.SELECT_DUAL;
+import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.SELECT_DUAL_2;
+import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.STUDENTS_NOT_TAKING_CS112;
+import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.UPDATE_TEST;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.Arrays;
 
 import junit.framework.TestCase;
 import net.sourceforge.squirrel_sql.client.ApplicationManager;
+import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtil;
 import net.sourceforge.squirrel_sql.plugins.oracle.gui.DummyPlugin;
 import net.sourceforge.squirrel_sql.plugins.oracle.prefs.OraclePreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.oracle.prefs.PreferencesManager;
-import net.sourceforge.squirrel_sql.plugins.oracle.tokenizer.OracleQueryTokenizer;
 
-public class OracleQueryTokenizerTest extends TestCase
-                                      implements OracleSQL {
+public class OracleQueryTokenizerTest extends TestCase {
 
     static String nullSQL = null;       
     static String tmpFilename = null;
@@ -71,7 +96,7 @@ public class OracleQueryTokenizerTest extends TestCase
         String fileSQL = "@" + tmpFilename + ";\n";
         qt = new OracleQueryTokenizer(_prefs);
         qt.setScriptToTokenize(fileSQL);
-        SQLUtil.checkQueryTokenizer(qt, 6);
+        SQLUtil.checkQueryTokenizer(qt, sqlFileStmtCount);
     }
 
     public void testExecAnonProcedure() {
@@ -92,31 +117,20 @@ public class OracleQueryTokenizerTest extends TestCase
         if (tmpFilename != null) {
             return;
         }
-        File f = File.createTempFile("test", ".sql");
-        //f.deleteOnExit();
-        PrintWriter out = new PrintWriter(new FileWriter(f));
-        out.println(SELECT_DUAL);
-        out.println();
-        out.print(UPDATE_TEST);
-        out.println();
-        out.println(CREATE_STORED_PROC);
-        out.println();
-        out.println(CREATE_OR_REPLACE_STORED_PROC);
-        out.println();
-        out.println(ANON_PROC_EXEC);
-        out.println();
-        out.println(SELECT_DUAL);
-        out.println();
-        out.println(STUDENTS_NOT_TAKING_CS112);
-        //out.println();
-        //out.println(NO_SEP_SLASH_SQL);
-        out.close();
-        tmpFilename = f.getAbsolutePath();
-        System.out.println("tmpFilename="+tmpFilename);
+        String[] sqls = new String[] {
+                SELECT_DUAL, 
+                UPDATE_TEST,
+                CREATE_FUNCTION_SQL,
+                CREATE_STORED_PROC,
+                CREATE_OR_REPLACE_STORED_PROC,
+                ANON_PROC_EXEC,
+                SELECT_DUAL,
+                STUDENTS_NOT_TAKING_CS112,
+                NO_SEP_SLASH_SQL,
+        };
         
-        // important to set this to the number of statements in the file 
-        // above.
-        sqlFileStmtCount = 7;
+        tmpFilename = SQLUtil.createSQLFile( Arrays.asList(sqls), true);        
+        sqlFileStmtCount = sqls.length;
     }
     
 }

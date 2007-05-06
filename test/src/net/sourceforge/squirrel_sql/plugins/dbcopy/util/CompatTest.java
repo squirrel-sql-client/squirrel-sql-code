@@ -21,35 +21,20 @@ package net.sourceforge.squirrel_sql.plugins.dbcopy.util;
 
 import java.sql.SQLException;
 
-import junit.framework.TestCase;
-import net.sourceforge.squirrel_sql.client.ApplicationManager;
+import net.sourceforge.squirrel_sql.BaseSQuirreLTestCase;
 import net.sourceforge.squirrel_sql.client.session.MockSession;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.mo.sql.MockDatabaseMetaData;
 
-public class CompatTest extends TestCase {
+public class CompatTest extends BaseSQuirreLTestCase {
 
 	private MockSession session = null;
 	private MockDatabaseMetaData mdata = null; 
 	
 	protected void setUp() throws Exception {
 		super.setUp();
-		ApplicationManager.initApplication();
 		session = new MockSession();
-        
 		mdata = session.getMockDatabaseMetaData();
-	}
-
-	public void testGetTables() {
-		//fail("Not yet implemented"); // TODO
-	}
-
-	public void testGetIObjectTreeAPI() {
-		//fail("Not yet implemented"); // TODO
-	}
-
-	public void testReloadSchema() {
-		//fail("Not yet implemented"); // TODO
 	}
 
 	public void testIsKeyword() throws SQLException {
@@ -84,10 +69,6 @@ public class CompatTest extends TestCase {
 		assertEquals(false, Compat.isTableTypeDBO(DatabaseObjectType.UDT_TYPE_DBO));
 		assertEquals(false, Compat.isTableTypeDBO(DatabaseObjectType.USER));
 		assertEquals(false, Compat.isTableTypeDBO(DatabaseObjectType.VIEW));
-	}
-
-	public void testAddToPopupForTableFolder() {
-		//fail("Not yet implemented"); // TODO
 	}
 
 }
