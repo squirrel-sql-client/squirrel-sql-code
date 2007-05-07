@@ -16,7 +16,7 @@ public class SnapshotSourceTab extends OracleSourceTab
 
 	/** SQL that retrieves the data. */
 	private static final String SQL =
-        "SELECT QUERY " +
+        "SELECT 'CREATE MATERIALIZED VIEW ' || TABLE_NAME || ' AS ', QUERY " +
         "FROM SYS.ALL_SNAPSHOTS " +
         "WHERE OWNER = ? AND TABLE_NAME = ? ";
     
