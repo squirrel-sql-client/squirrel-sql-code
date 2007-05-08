@@ -121,7 +121,7 @@ public class DBUtil extends I18NBaseObject {
         if (pkColumns == null || pkColumns.size() == 0) {
             return null;
         }
-        StringBuffer sb = new StringBuffer("(");
+        StringBuilder sb = new StringBuilder("(");
         Iterator i = pkColumns.iterator();
         while (i.hasNext()) {
             String columnName = (String)i.next();
@@ -186,7 +186,11 @@ public class DBUtil extends I18NBaseObject {
         throws SQLException , UserCancelledOperationException
     {
         HashSet<String> result = new HashSet<String>();
-        for (ForeignKeyInfo fkInfo : ti.getImportedKeys()) {
+        ForeignKeyInfo[] keys = ti.getImportedKeys();
+        if (keys == null) {
+            return result;
+        }
+        for (ForeignKeyInfo fkInfo : keys) {
             String pkTableName = fkInfo.getPrimaryKeyTableName();
             String pkTableCol = fkInfo.getPrimaryKeyColumnName();
             String fkTableName = fkInfo.getForeignKeyTableName();
@@ -1341,7 +1345,7 @@ public class DBUtil extends I18NBaseObject {
                                                              destSchema,
                                                              ti.getSimpleName(), 
                                                              DialectFactory.DEST_TYPE); 
-        StringBuffer result = new StringBuffer("CREATE TABLE ");
+        StringBuilder result = new StringBuilder("CREATE TABLE ");
         result.append(destinationTableName);
         result.append(" ( ");
         result.append("\n");
@@ -1411,7 +1415,7 @@ public class DBUtil extends I18NBaseObject {
     public static String getColumnList(TableColumnInfo[] colInfoArr) 
         throws SQLException 
     {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         
         for (int i = 0; i < colInfoArr.length; i++) {
             TableColumnInfo colInfo = colInfoArr[i];
@@ -1443,7 +1447,7 @@ public class DBUtil extends I18NBaseObject {
         if (_prefs.isCheckKeywords()) {
             checkKeyword(prov.getCopyDestSession(), destTableName, columnName);
         }
-        StringBuffer result = new StringBuffer(columnName);
+        StringBuilder result = new StringBuilder(columnName);
         boolean notNullable = colInfo.isNullable().equalsIgnoreCase("NO");
         String typeName = ColTypeMapper.mapColType(prov.getCopySourceSession(), 
                                                    prov.getCopyDestSession(), 
@@ -1536,7 +1540,7 @@ public class DBUtil extends I18NBaseObject {
                                         ITableInfo ti) 
         throws SQLException, UserCancelledOperationException 
     {
-        StringBuffer result = new StringBuffer("select ");
+        StringBuilder result = new StringBuilder("select ");
         result.append(columnList);
         result.append(" from ");
         ISession sourceSession = prov.getCopySourceSession();
@@ -1584,7 +1588,7 @@ public class DBUtil extends I18NBaseObject {
                                       int columnCount) 
         throws SQLException, UserCancelledOperationException
     {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         result.append("insert into ");
         String destSchema = prov.getDestSelectedDatabaseObject().getSimpleName();
         String destCatalog = prov.getDestSelectedDatabaseObject().getCatalogName();
@@ -1668,7 +1672,7 @@ public class DBUtil extends I18NBaseObject {
                 (schema == null || schema.equals(""))) {
             return object;
         }
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         if (useCatalog && catalog != null && !catalog.equals("")) {
             result.append(catalog);
             result.append(getCatSep(session));
@@ -1741,7 +1745,7 @@ public class DBUtil extends I18NBaseObject {
      * @return
      */
     private static String getQuestionMarks(int count) {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         for (int i = 0; i < count; i++) {
             result.append("?");
             if (i < count-1) {
@@ -1872,7 +1876,7 @@ public class DBUtil extends I18NBaseObject {
             
             Collections.sort(ixs[i].cols, IndexColInfo.ORDINAL_POSITION_COMPARATOR);
             
-            StringBuffer sbToAppend = new StringBuffer();
+            StringBuilder sbToAppend = new StringBuilder();
             sbToAppend.append("CREATE");
             if (!DialectFactory.isDaffodil(destSession.getMetaData())) {
             	sbToAppend.append(unique ? " UNIQUE ": " ");
@@ -1886,8 +1890,8 @@ public class DBUtil extends I18NBaseObject {
                                                   ixs[i].table, 
                                                   DialectFactory.DEST_TYPE);
             sbToAppend.append(table);
-            StringBuffer indexMapKey = new StringBuffer(ixs[i].table);
-            StringBuffer columnBuffer = new StringBuffer();
+            StringBuilder indexMapKey = new StringBuilder(ixs[i].table);
+            StringBuilder columnBuffer = new StringBuilder();
             if(ixs[i].cols.size() == 1) {
                 columnBuffer.append("(").append(ixs[i].cols.get(0));
                 
@@ -1962,8 +1966,8 @@ public class DBUtil extends I18NBaseObject {
                                                       TEST_TABLE_NAME, 
                                                       DialectFactory.DEST_TYPE); 
             
-            StringBuffer sql = 
-                new StringBuffer("CREATE TABLE ");
+            StringBuilder sql = 
+                new StringBuilder("CREATE TABLE ");
             sql.append(tableName);
             sql.append(" ( ");
             sql.append(colInfo.getColumnName());
@@ -2049,7 +2053,7 @@ public class DBUtil extends I18NBaseObject {
                                                boolean tableNameIsQualified)
         throws UserCancelledOperationException
     {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         HibernateDialect dialect = 
             DialectFactory.getDialect(DialectFactory.SOURCE_TYPE, 
                                       sourceSession.getApplication().getMainFrame(), 
