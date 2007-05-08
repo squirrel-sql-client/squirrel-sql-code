@@ -226,6 +226,18 @@ public class SQLParamPlugin extends DefaultSessionPlugin
 
 		return ret;
 	}
+	
+	/**
+	 * This method is called on session closing an needs to free resources.
+	 * 
+	 * @param session the session to be closed
+	 */
+	@Override
+	public void sessionEnding(ISession session) {
+		ISQLPanelAPI sqlPaneAPI = session.getSessionSheet().getSQLPaneAPI();
+		ISQLExecutionListener listener = panelListenerMap.remove(sqlPaneAPI);
+		sqlPaneAPI.removeSQLExecutionListener(listener);
+	}
 
 	private void initSQLParam(final ISQLPanelAPI sqlPaneAPI, final ISession session)
 	{
