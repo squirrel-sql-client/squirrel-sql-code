@@ -37,6 +37,8 @@ Task 138098 (Plugins Session Menu Items (Disable)) When using a session that
 - Use the last directory that a file was imported from when importing 
   additional files for binary fields.
 
+Finished German translation
+
 Bug-Fixes:
 
 1704798 ISQLExecutionListeners cannot return "null"
