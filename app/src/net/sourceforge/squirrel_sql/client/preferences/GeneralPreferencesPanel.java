@@ -334,7 +334,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
          pnl.add(homePathField, gbc);
 
          ++gbc.gridy;
-         // i18n[GeneralPreferencesPanel.squirrelUserPath=User directory: -user {0}]
+         // i18n[GeneralPreferencesPanel.squirrelUserPath=User directory: -userdir {0}]
          JTextField userPathField = new JTextField(s_stringMgr.getString("GeneralPreferencesPanel.squirrelUserPath", userDir));
          userPathField.setEditable(false);
          userPathField.setBackground(pnl.getBackground());
