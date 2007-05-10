@@ -103,7 +103,7 @@ public class ProgessCallBackDialog extends JDialog
                 setLocationRelativeTo(owner);
                 dialog.setVisible(true);
             }
-        });
+        }, true);
         
     }
     
