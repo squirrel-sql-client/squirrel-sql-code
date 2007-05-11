@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.fw.util.log;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**
@@ -143,4 +144,21 @@ public class Log4jLogger implements ILogger
 	{
 		return _log.isInfoEnabled();
 	}
+    
+    /**
+     * Sets the log level of the logger.  For instance:
+     * 
+     * Level.ALL
+     * Level.DEBUG
+     * Level.ERROR
+     * Level.FATAL
+     * Level.INFO
+     * Level.OFF
+     * Level.WARN
+     *  
+     * @param l the level to set the logger to.
+     */    
+    public void setLevel(Level l) {
+        _log.setLevel(l);
+    }
 }

@@ -94,6 +94,28 @@ public class TestUtil {
         return result;
     }
 
+    public static TableColumnInfo getBigintColumnInfo(ISQLDatabaseMetaData md,
+            boolean nullable) 
+    {
+        return getTableColumnInfo(md, 
+                                  java.sql.Types.BIGINT, 
+                                  "Bigint", 
+                                  20, 
+                                  10, 
+                                  nullable);        
+    }
+    
+    public static TableColumnInfo getBinaryColumnInfo(ISQLDatabaseMetaData md,
+                                                      boolean nullable) 
+    {
+        return getTableColumnInfo(md, 
+                                  java.sql.Types.BINARY, 
+                                  "Binary", 
+                                  -1, 
+                                  0, 
+                                  nullable);        
+    }    
+    
     public static TableColumnInfo getBlobColumnInfo(ISQLDatabaseMetaData md,
                                                     boolean nullable) 
     {

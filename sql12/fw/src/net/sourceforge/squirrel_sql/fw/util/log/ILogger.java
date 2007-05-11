@@ -1,4 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.util.log;
+
+import org.apache.log4j.Level;
 /*
  * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
@@ -36,5 +38,20 @@ public interface ILogger
 
 	boolean isDebugEnabled();
 	boolean isInfoEnabled();
+    
+    /**
+     * Sets the log level of the logger.  For instance:
+     * 
+     * Level.ALL
+     * Level.DEBUG
+     * Level.ERROR
+     * Level.FATAL
+     * Level.INFO
+     * Level.OFF
+     * Level.WARN
+     *  
+     * @param l the level to set the logger to.
+     */
+    void setLevel(Level l);
 }
 
