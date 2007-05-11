@@ -6,7 +6,12 @@ SQuirreL SQL Client Change Log
 
 Bug-Fixes:
 
-1700093 Formatter fails for insert script with multiple subselects
+1714476: (DB copy uses wrong case for table names) The copy operation would
+         sometimes fail to select records from the source table.  Since the
+         case for the source table is always known to be correct, the plugin 
+         no longer erroneously attempts to correct the case.
+
+1700093: Formatter fails for insert script with multiple subselects
 
 Refactoring Plugin: SQL-Server needs eol between GO and statement.
 
