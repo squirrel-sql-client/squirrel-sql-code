@@ -1641,10 +1641,22 @@ public class DBUtil extends I18NBaseObject {
                                                 int sessionType) 
         throws UserCancelledOperationException
     {
-        String catalog = fixCase(session, catalogName);
-        String schema = fixCase(session, schemaName);
-        String object = fixCase(session, objectName);
-        SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
+        
+        String catalog = catalogName;
+        String schema = schemaName;
+        String object = objectName;
+        
+        // Bug #1714476 (DB copy uses wrong case for table names):  When the 
+        // catalog/schema/object names come from the source session, don't mess
+        // with the case, as the case is provided by the driver for the existing
+        // table, and doesn't need to be fixed.
+        if (sessionType == DialectFactory.DEST_TYPE) { 
+            catalog = fixCase(session, catalogName);
+            schema = fixCase(session, schemaName);
+            object = fixCase(session, objectName);
+        }
+
+	SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
         boolean useSchema = true;
         boolean useCatalog = true;
         try {
