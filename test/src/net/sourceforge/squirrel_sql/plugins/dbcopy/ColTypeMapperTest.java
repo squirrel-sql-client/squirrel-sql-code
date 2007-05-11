@@ -18,6 +18,8 @@ package net.sourceforge.squirrel_sql.plugins.dbcopy;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import static java.lang.System.out;
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
 
 import java.sql.ResultSet;
 
@@ -26,15 +28,15 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.test.TestUtil;
-
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
 
 public class ColTypeMapperTest extends BaseSQuirreLTestCase {
 
+    static ILogger s_log = 
+        LoggerController.createLogger(ColTypeMapperTest.class);
+    
     static String[] dbNames = {
         "Axion",
         "Daffodil",
@@ -60,7 +62,13 @@ public class ColTypeMapperTest extends BaseSQuirreLTestCase {
         "timesten",
     };
     
+    static {
+        // Don't care to see tons of debug from ColTypeMapper
+        disableLogging(ColTypeMapper.class);
+    }
+    
     protected void setUp() throws Exception {
+        
     }
 
     protected void tearDown() throws Exception {
@@ -71,26 +79,62 @@ public class ColTypeMapperTest extends BaseSQuirreLTestCase {
         for (String sourceName : dbNames) {
             for (String destName : dbNames) {
                 try {
-                    out.println("processing source = "+sourceName+" dest = "+
-                                destName);
+                    if (s_log.isDebugEnabled()) {
+                        s_log.debug("processing source = "+sourceName+
+                                    " dest = "+destName);
+                    }
+                    
+                    testBigintColType(sourceName, destName);
+                    testBinaryColType(sourceName, destName);
+                    //testBitColType(sourceName, destName);
                     testBlobColType(sourceName, destName);
+                    //testBooleanColType(sourceName, destName);
+                    //testCharColType(sourceName, destName);
                     testClobColType(sourceName, destName);
                     testDateColType(sourceName, destName);
+                    //testDecimalColType(sourceName, destName);
+                    //testDoubleColType(sourceName, destName);
+                    //testFloatColType(sourceName, destName);
                     testIntegerColType(sourceName, destName);
+                    //testLongVarbinaryColType(sourceName, destName);
+                    //testNumericColType(sourceName, destName);
+                    //testRealColType(sourceName, destName);
+                    //testSmallIntColType(sourceName, destName);
+                    //testTimestampColType(sourceName, destName);
+                    //testTimeColType(sourceName, destName);
+                    //testTinyIntColType(sourceName, destName);
                     testLongVarcharColType(sourceName, destName);
                     testVarcharColType(sourceName, destName);
                 } catch (Exception e) {
-                    out.println("Unexpected exception: "+e.getMessage());
+                    s_log.error("Unexpected exception: "+e.getMessage(), e);
                 }
             }
         }
     }
 
+    private void testBigintColType(String fromDb, String toDb) throws Exception 
+    {
+        ISQLDatabaseMetaData md = TestUtil.getEasyMockSQLMetaData(fromDb);
+        TableColumnInfo column = TestUtil.getBigintColumnInfo(md, true);
+        testColType(md, toDb, column);
+    }    
+
+    private void testBinaryColType(String fromDb, String toDb) throws Exception 
+    {
+        ISQLDatabaseMetaData md = TestUtil.getEasyMockSQLMetaData(fromDb);
+        TableColumnInfo column = TestUtil.getBinaryColumnInfo(md, true);
+        // This is for brute force detection of columns whose column size is 0
+        ResultSet rs = createNiceMock(ResultSet.class);
+        expect(rs.next()).andReturn(true).once();
+        expect(rs.getInt(1)).andReturn(5000).once();        
+        testColType(md, toDb, column, rs);
+    }    
+    
     private void testBlobColType(String fromDb, String toDb) throws Exception 
     {
         ISQLDatabaseMetaData md = TestUtil.getEasyMockSQLMetaData(fromDb);
         TableColumnInfo column = TestUtil.getBlobColumnInfo(md, true);
-        // This is for brute force detection of BLOB/CLOB lengths if necessary
+        //This is for brute force detection of BLOB/CLOB lengths if necessary
         ResultSet rs = createNiceMock(ResultSet.class);
         expect(rs.next()).andReturn(true).once();
         expect(rs.getInt(1)).andReturn(5000).once();
@@ -106,7 +150,6 @@ public class ColTypeMapperTest extends BaseSQuirreLTestCase {
         expect(rs.next()).andReturn(true).once();
         expect(rs.getInt(1)).andReturn(5000).once();
         testColType(md, toDb, column, rs);        
-        testColType(md, toDb, column);
     }    
 
     
