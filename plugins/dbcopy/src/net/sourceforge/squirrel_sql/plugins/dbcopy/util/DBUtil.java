@@ -56,6 +56,7 @@ import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
@@ -1545,25 +1546,6 @@ public class DBUtil extends I18NBaseObject {
         result.append(" from ");
         ISession sourceSession = prov.getCopySourceSession();
         
-        //String sourceSchema = null;
-        // MySQL uses catalogs instead of schemas
-        /*
-        if (DialectFactory.isMySQLSession(sourceSession)) {
-            if (log.isDebugEnabled()) {
-                String catalog = 
-                    prov.getSourceSelectedDatabaseObjects()[0].getCatalogName();
-                String schema =
-                    prov.getSourceSelectedDatabaseObjects()[0].getSchemaName();
-                log.debug("Detected MySQL, using catalog ("+catalog+") " +
-                          "instead of schema ("+schema+")");
-            }
-            sourceSchema = 
-                prov.getSourceSelectedDatabaseObjects()[0].getCatalogName();
-        } else {
-            sourceSchema = 
-                prov.getSourceSelectedDatabaseObjects()[0].getSchemaName();
-        }
-        */
         String tableName = getQualifiedObjectName(sourceSession, 
                                                   ti.getCatalogName(), 
                                                   ti.getSchemaName(), 
@@ -1645,12 +1627,21 @@ public class DBUtil extends I18NBaseObject {
                                                 String schemaName,
                                                 String objectName, 
                                                 int sessionType) 
-        throws UserCancelledOperationException
     {
-        String catalog = fixCase(session, catalogName);
-        String schema = fixCase(session, schemaName);
-        String object = fixCase(session, objectName);
-        SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
+        String catalog = catalogName;
+        String schema = schemaName;
+        String object = objectName;
+        
+        // Bug #1714476 (DB copy uses wrong case for table names):  When the 
+        // catalog/schema/object names come from the source session, don't mess
+        // with the case, as the case is provided by the driver for the existing
+        // table, and doesn't need to be fixed.
+        if (sessionType == DialectFactory.DEST_TYPE) { 
+            catalog = fixCase(session, catalogName);
+            schema = fixCase(session, schemaName);
+            object = fixCase(session, objectName);
+        }
+        ISQLDatabaseMetaData md = session.getMetaData();
         boolean useSchema = true;
         boolean useCatalog = true;
         try {
@@ -1688,7 +1679,7 @@ public class DBUtil extends I18NBaseObject {
     public static String getCatSep(ISession session) {
         String catsep = ".";
         try {
-            SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
+            ISQLDatabaseMetaData md = session.getMetaData();
             catsep = md.getCatalogSeparator();
         } catch (SQLException e) {
             log.error("getCatSep: Unexpected Exception - "+e.getMessage(), e);
