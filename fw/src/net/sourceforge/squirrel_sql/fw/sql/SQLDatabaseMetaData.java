@@ -228,16 +228,10 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		String value = (String)_cache.get(key);
 		if (value == null)
 		{
-            boolean isSQLServer = 
-                DialectFactory.isSyBase(this) || DialectFactory.isMSSQLServer(this);
-			if (isSQLServer)
-			{
-				value = "";
-			}
-			else
-			{
-				value = privateGetJDBCMetaData().getIdentifierQuoteString();
-			}
+			value = privateGetJDBCMetaData().getIdentifierQuoteString();
+			if (value == null) {
+			    value = "";
+            }
 			_cache.put(key, value);
 		}
 		return value;
