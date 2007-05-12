@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.plugins.oracle.tokenizer;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 
@@ -61,6 +60,8 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
     
     private static final String DECLARE_PATTERN = "^\\s*DECLARE\\s*.*";
     
+    private static final String BEGIN_PATTERN = "^\\s*BEGIN\\s*.*";    
+    
     /** Finds any "\n/" (slash) characters on their own line (no sep) */
     private static final String SLASH_PATTERN = ".*\\n/\\n.*";
 
@@ -74,6 +75,8 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
     private Pattern triggerPattern = Pattern.compile(TRIGGER_PATTERN, Pattern.DOTALL);
     
     private Pattern declPattern = Pattern.compile(DECLARE_PATTERN, Pattern.DOTALL);
+    
+    private Pattern beginPattern = Pattern.compile(BEGIN_PATTERN, Pattern.DOTALL);
     
     private Pattern slashPattern = Pattern.compile(SLASH_PATTERN, Pattern.DOTALL);
     
@@ -114,7 +117,8 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
         joinFragments(procPattern, false);
         joinFragments(funcPattern, false);
         joinFragments(triggerPattern, false);
-        joinFragments(declPattern, true);
+        joinFragments(declPattern, false);
+        joinFragments(beginPattern, true);
         
         expandFileIncludes(ORACLE_SCRIPT_INCLUDE_PREFIX);
         
