@@ -59,7 +59,7 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
    private DatabaseObjectType _dboType = DatabaseObjectType.OTHER;
 
    public DatabaseObjectInfo(String catalog, String schema, String simpleName,
-                             DatabaseObjectType dboType, SQLDatabaseMetaData md)
+                             DatabaseObjectType dboType, ISQLDatabaseMetaData md)
    {
       super();
       if (dboType == null)
@@ -155,7 +155,7 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
        return result.toString();
    }
    
-   protected String generateQualifiedName(SQLDatabaseMetaData md)
+   protected String generateQualifiedName(ISQLDatabaseMetaData md)
    {
       String catSep = null;
       String identifierQuoteString = null;
