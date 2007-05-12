@@ -41,6 +41,15 @@ Finished German translation
 
 Bug-Fixes:
 
+1716859 Can't see data in content tab or row count tab (MS SQLServer databases
+        with a dash ("-") in their name would cause the content tab or row count
+        tabs to render no data.
+
+1714476 (DB copy uses wrong case for table names) The copy operation would
+         sometimes fail to select records from the source table.  Since the
+         case for the source table is always known to be correct, the plugin
+         no longer erroneously attempts to correct the case.
+
 1704798 ISQLExecutionListeners cannot return "null"
 
 1701380 addSQLExecutionListener is broken
