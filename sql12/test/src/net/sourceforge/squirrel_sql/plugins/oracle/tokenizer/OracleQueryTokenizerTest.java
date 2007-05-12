@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.plugins.oracle.tokenizer;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.ANON_PROC_EXEC;
+import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.ANON_PROC_EXEC_2;
 import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.CREATE_FUNCTION_SQL;
 import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.CREATE_OR_REPLACE_STORED_PROC;
 import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.CREATE_STORED_PROC;
@@ -105,6 +106,12 @@ public class OracleQueryTokenizerTest extends TestCase {
         SQLUtil.checkQueryTokenizer(qt, 1);
     }    
 
+    public void testExecAnonProcedure2() {
+        qt = new OracleQueryTokenizer(_prefs);
+        qt.setScriptToTokenize(ANON_PROC_EXEC_2);
+        SQLUtil.checkQueryTokenizer(qt, 1);
+    }    
+    
     public void testNoSepSlash() {
         qt = new OracleQueryTokenizer(_prefs);
         qt.setScriptToTokenize(NO_SEP_SLASH_SQL);

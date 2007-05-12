@@ -64,6 +64,18 @@ public interface OracleSQL {
         "end; \n" +
         "/ \n\n";        
     
+    public final static String ANON_PROC_EXEC_2 = 
+        "begin " +
+        "   for usr in " +
+        "       (select mychar from test where mychar like 'TST%') " +
+        "       loop " +
+        "       begin " +
+        "            update test set mychar = 'foo'; " +
+        "       end; " +
+        "   end loop; " +
+        "end; \n" +
+        "/ \n\n";        
+    
     public final static String UPDATE_TEST =  
         "update test " +
         "set /*PARAM1*/ thing /*C*/ = 'default value' /*/PARAM1*/;";
