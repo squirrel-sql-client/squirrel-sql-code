@@ -4,6 +4,7 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.startsWith;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -53,13 +54,14 @@ public class TestUtil {
         return session;
     }
     
-    
-    
     public static ISQLConnection getEasyMockSQLConnection(ResultSet rs) 
         throws SQLException 
     {
+        if (rs == null) {
+            throw new IllegalArgumentException("rs cannot be null");
+        }
         Statement stmt = createNiceMock(Statement.class);
-        expect(stmt.executeQuery("")).andReturn(rs);
+        expect(stmt.executeQuery(startsWith("select"))).andReturn(rs).anyTimes();
         replay(stmt);
         
         Connection con = createNiceMock(Connection.class);

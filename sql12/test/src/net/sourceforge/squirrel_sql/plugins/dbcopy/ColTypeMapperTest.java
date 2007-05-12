@@ -20,16 +20,21 @@ package net.sourceforge.squirrel_sql.plugins.dbcopy;
 import static java.lang.System.out;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 
+import java.io.File;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLTestCase;
+import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.PreferencesManager;
 import net.sourceforge.squirrel_sql.test.TestUtil;
 
 public class ColTypeMapperTest extends BaseSQuirreLTestCase {
@@ -65,6 +70,15 @@ public class ColTypeMapperTest extends BaseSQuirreLTestCase {
     static {
         // Don't care to see tons of debug from ColTypeMapper
         disableLogging(ColTypeMapper.class);
+        IPlugin plugin = createNiceMock(IPlugin.class);
+        try {
+            expect(plugin.getPluginUserSettingsFolder())
+                            .andReturn(new File(".")).anyTimes();
+            replay(plugin);
+            PreferencesManager.initialize(plugin);
+        } catch (Exception e) {
+            fail("Unexpected exception : "+e.getMessage());
+        }
     }
     
     protected void setUp() throws Exception {
@@ -107,11 +121,20 @@ public class ColTypeMapperTest extends BaseSQuirreLTestCase {
                     testVarcharColType(sourceName, destName);
                 } catch (Exception e) {
                     s_log.error("Unexpected exception: "+e.getMessage(), e);
+                    fail("Unexpected exception: "+e.getMessage());
                 }
             }
         }
     }
 
+    private ResultSet getColLengthResult() throws SQLException {
+        ResultSet rs = createNiceMock(ResultSet.class);
+        expect(rs.next()).andReturn(true).once();
+        expect(rs.getInt(1)).andReturn(5000).once();   
+        replay(rs);
+        return rs;
+    }
+    
     private void testBigintColType(String fromDb, String toDb) throws Exception 
     {
         ISQLDatabaseMetaData md = TestUtil.getEasyMockSQLMetaData(fromDb);
@@ -124,9 +147,7 @@ public class ColTypeMapperTest extends BaseSQuirreLTestCase {
         ISQLDatabaseMetaData md = TestUtil.getEasyMockSQLMetaData(fromDb);
         TableColumnInfo column = TestUtil.getBinaryColumnInfo(md, true);
         // This is for brute force detection of columns whose column size is 0
-        ResultSet rs = createNiceMock(ResultSet.class);
-        expect(rs.next()).andReturn(true).once();
-        expect(rs.getInt(1)).andReturn(5000).once();        
+        ResultSet rs = getColLengthResult();
         testColType(md, toDb, column, rs);
     }    
     
@@ -135,9 +156,7 @@ public class ColTypeMapperTest extends BaseSQuirreLTestCase {
         ISQLDatabaseMetaData md = TestUtil.getEasyMockSQLMetaData(fromDb);
         TableColumnInfo column = TestUtil.getBlobColumnInfo(md, true);
         //This is for brute force detection of BLOB/CLOB lengths if necessary
-        ResultSet rs = createNiceMock(ResultSet.class);
-        expect(rs.next()).andReturn(true).once();
-        expect(rs.getInt(1)).andReturn(5000).once();
+        ResultSet rs = getColLengthResult();
         testColType(md, toDb, column, rs);
     }    
 
@@ -146,9 +165,7 @@ public class ColTypeMapperTest extends BaseSQuirreLTestCase {
         ISQLDatabaseMetaData md = TestUtil.getEasyMockSQLMetaData(fromDb);
         TableColumnInfo column = TestUtil.getClobColumnInfo(md, true);
         // This is for brute force detection of BLOB/CLOB lengths if necessary
-        ResultSet rs = createNiceMock(ResultSet.class);
-        expect(rs.next()).andReturn(true).once();
-        expect(rs.getInt(1)).andReturn(5000).once();
+        ResultSet rs = getColLengthResult();
         testColType(md, toDb, column, rs);        
     }    
 
