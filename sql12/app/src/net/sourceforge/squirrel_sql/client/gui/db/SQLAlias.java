@@ -19,17 +19,16 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  */
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
-import java.io.File;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDriverProperty;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDriverProperty;
 
 /**
  * This represents a Database alias which is a description of the means
@@ -38,9 +37,10 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDriverProperty;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparable
+@SuppressWarnings("serial")
+public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparable<Object>
 {
-   /** Internationalized strings for this class. */
+    /** Internationalized strings for this class. */
    private static final StringManager s_stringMgr =
       StringManagerFactory.getStringManager(SQLAlias.class);
 
@@ -147,7 +147,9 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
       setAutoLogon(rhs.isAutoLogon());
       setUseDriverProperties(rhs.getUseDriverProperties());
       setDriverProperties(rhs.getDriverPropertiesClone());
-      _schemaProperties = (SQLAliasSchemaProperties) Utilities.cloneObject(((SQLAlias)rhs)._schemaProperties, getClass().getClassLoader());
+      _schemaProperties = 
+          (SQLAliasSchemaProperties) Utilities.cloneObject(rhs._schemaProperties, 
+                                                           getClass().getClassLoader());
    }
 
    /**
@@ -228,7 +230,11 @@ public class SQLAlias implements Cloneable, Serializable, ISQLAliasExt, Comparab
     */
    public synchronized boolean isValid()
    {
-      return _name.length() > 0 && _driverId != null && _url.length() > 0;
+      return _name != null
+                 && _name.length() > 0 
+                 && _driverId != null
+                 && _url != null
+                 && _url.length() > 0;
    }
 
    public IIdentifier getIdentifier()
