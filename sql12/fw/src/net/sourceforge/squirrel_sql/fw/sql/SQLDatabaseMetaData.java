@@ -276,17 +276,10 @@ public class SQLDatabaseMetaData
 		String value = (String)_cache.get(key);
 		if (value == null)
 		{
-			final String driverName = getDriverName();
-			if (driverName.equals(IDriverNames.FREE_TDS)
-				|| driverName.equals(IDriverNames.JCONNECT)
-				|| driverName.equals(IDriverNames.JTDS))
-			{
-				value = "";
-			}
-			else
-			{
-				value = privateGetJDBCMetaData().getIdentifierQuoteString();
-			}
+			value = privateGetJDBCMetaData().getIdentifierQuoteString();
+			if (value == null) {
+			    value = "";
+                        }
 			_cache.put(key, value);
 		}
 		return value;
