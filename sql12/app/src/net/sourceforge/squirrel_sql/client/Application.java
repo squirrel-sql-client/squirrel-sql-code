@@ -665,9 +665,10 @@ class Application implements IApplication
 		if (loadPlugins)
 		{
 			_pluginManager.initializePlugins();
-			for (Iterator it = _pluginManager.getPluginLoadInfoIterator(); it.hasNext();)
+			for (Iterator<PluginLoadInfo> it = 
+                _pluginManager.getPluginLoadInfoIterator(); it.hasNext();)
 			{
-				PluginLoadInfo pli = (PluginLoadInfo)it.next();
+				PluginLoadInfo pli = it.next();
 				long created = pli.getCreationTime();
 				long load = pli.getLoadTime();
 				long init = pli.getInitializeTime();
@@ -1018,6 +1019,7 @@ class Application implements IApplication
 		}
 	}
 
+    @SuppressWarnings("deprecation")
 	private void setupJDBCLogging()
 	{
 		// If logging has changed.

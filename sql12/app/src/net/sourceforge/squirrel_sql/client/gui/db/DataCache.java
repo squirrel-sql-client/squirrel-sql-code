@@ -26,8 +26,14 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoCacheSerializer;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDriver;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
@@ -38,13 +44,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDriver;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
-import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
-import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoCacheSerializer;
-import net.sourceforge.squirrel_sql.client.IApplication;
 
 /**
  * XML cache of JDBC drivers and aliases.
@@ -564,6 +563,7 @@ public class DataCache
     * version to the new one to allow for loading old versions of the
     * SQLDrivers.xml file.
     */
+   @SuppressWarnings("deprecation")
    private void fixupDrivers()
    {
       for (Iterator it = drivers(); it.hasNext();)
@@ -600,7 +600,6 @@ public class DataCache
     private void mergeDefaultWebsites(URL defaultDriversUrl)
     {
         InputStreamReader isr = null;
-        ArrayList missingDrivers = new ArrayList();
         try
         {
             isr = new InputStreamReader(defaultDriversUrl.openStream());
