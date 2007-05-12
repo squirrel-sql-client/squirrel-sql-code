@@ -20,9 +20,9 @@ package net.sourceforge.squirrel_sql.fw.sql;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 
+import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -155,4 +155,40 @@ public class SQLDatabaseMetaDataTest extends BaseSQuirreLTestCase {
             fail("Unexpected exception: "+e.getMessage());
         }
     }
+    
+    /**
+     * Test for bug 1716859 (Can't see data in content tab or row count tab)
+     * SQLServer with a dash in the name needs to be quoted.
+     * @throws SQLException
+     */
+    public void testGetIdentifierQuoteStringMSSQL() throws SQLException {
+        Connection con = createNiceMock(Connection.class);
+        DatabaseMetaData md = createNiceMock(DatabaseMetaData.class);
+        expect(md.getIdentifierQuoteString()).andReturn("foo").anyTimes();
+        expect(md.getDatabaseProductName())
+                    .andReturn("microsoft")
+                    .andReturn("sybase")
+                    .andReturn("adaptive")
+                    .andReturn("sql server");
+        expect(con.getMetaData()).andReturn(md).anyTimes();
+        replay(con);
+        replay(md);
+        SQLConnection sqlcon = new SQLConnection(con, null, null);
+        SQLDatabaseMetaData sqlmd = new SQLDatabaseMetaData(sqlcon);
+        try {
+            String quoteString = sqlmd.getIdentifierQuoteString();
+            assertEquals("foo", quoteString);
+            quoteString = sqlmd.getIdentifierQuoteString();
+            assertEquals("foo", quoteString);
+            quoteString = sqlmd.getIdentifierQuoteString();
+            assertEquals("foo", quoteString);
+            quoteString = sqlmd.getIdentifierQuoteString();
+            assertEquals("foo", quoteString);
+            
+        } catch (SQLException e) {
+            fail("Unexpected exception: "+e.getMessage());
+        }        
+    }
+    
+    
 }
