@@ -40,7 +40,7 @@ public class TableColumnInfo extends DatabaseObjectInfo
 							int columnSize, int decimalDigits, int radix,
 							int isNullAllowed, String remarks, String defaultValue,
 							int octetLength, int ordinalPosition,
-							String isNullable, SQLDatabaseMetaData md)
+							String isNullable, ISQLDatabaseMetaData md)
 	{
 		super(catalog, schema, tableName + '.' + columnName,
 				DatabaseObjectType.COLUMN, md);
