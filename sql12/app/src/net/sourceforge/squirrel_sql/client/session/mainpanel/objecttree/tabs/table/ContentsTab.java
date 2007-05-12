@@ -26,8 +26,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import javax.swing.JLayeredPane;
-
 import net.sourceforge.squirrel_sql.client.session.DataSetUpdateableTableModelImpl;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.PleaseWaitDialog;
@@ -44,12 +42,11 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -204,7 +201,7 @@ public class ContentsTab extends BaseTableTab
    {
       final ISession session = getSession();
       final ISQLConnection conn = session.getSQLConnection();
-      SQLDatabaseMetaData md = conn.getSQLMetaData();
+      ISQLDatabaseMetaData md = session.getMetaData();
       PleaseWaitDialog waitDialog = null;
       
       try
@@ -324,6 +321,10 @@ public class ContentsTab extends BaseTableTab
                {
                  buf.append(" order by ").append(clause);
                }
+
+               if (s_log.isDebugEnabled()) {
+                   s_log.debug("createDataSet running SQL: "+buf.toString());
+               }
                
                // Initialize the dialog to ask the user to wait, because the query
                // can take a while
@@ -331,6 +332,7 @@ public class ContentsTab extends BaseTableTab
                waitDialog.showDialog(_app);
                
            	   rs = stmt.executeQuery(buf.toString());
+
             }
             catch (SQLException ex)
             {
