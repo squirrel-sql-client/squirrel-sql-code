@@ -82,6 +82,7 @@ public class SQLHistoryItem implements Serializable, Cloneable
 	 * 
 	 * @param	rhs		The object that this object is being compared to.
 	 */
+    @Override
 	public boolean equals(Object rhs)
 	{
 		boolean rc = false;
@@ -96,11 +97,17 @@ public class SQLHistoryItem implements Serializable, Cloneable
 		return rc;
 	}
 
+    @Override
+    public int hashCode() {
+        return getSQL().hashCode();
+    }
+    
 	/**
 	 * Return a copy of this object.
 	 * 
 	 * @return	The cloned object.
 	 */
+    @Override
 	public Object clone()
 	{
 		try
@@ -119,6 +126,7 @@ public class SQLHistoryItem implements Serializable, Cloneable
 	 * 
 	 * @return	A string representation of this object.
 	 */
+    @Override
 	public String toString()
 	{
 		return _shortSql;

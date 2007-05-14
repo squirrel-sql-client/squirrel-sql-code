@@ -23,8 +23,9 @@ import junit.framework.TestSuite;
 
 public class AllTests extends TestCase {
 	public static Test suite() {
-		TestSuite suite = new TestSuite("mainpanel tests");
+		TestSuite suite = new TestSuite("client session mainpanel tests");
 		suite.addTestSuite(BaseMainPanelTabTest.class);
+        suite.addTestSuite(SQLHistoryItemTest.class);
 		return suite;
 	}
 }
