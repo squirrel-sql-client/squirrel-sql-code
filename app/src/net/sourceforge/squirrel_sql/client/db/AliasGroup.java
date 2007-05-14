@@ -164,8 +164,9 @@ public class AliasGroup implements Cloneable, Serializable, Comparable
 		{
 			final String oldValue = _name;
 			_name = data;
-			_propChgReporter.firePropertyChange(IPropertyNames.NAME,
-												oldValue, _name);
+            getPropertyChangeReporter().firePropertyChange(IPropertyNames.NAME,
+												           oldValue, 
+                                                           _name);
 		}
 	}
 
