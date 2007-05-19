@@ -114,6 +114,20 @@ public class Utilities
       }
    }
 
+   public static Throwable getDeepestThrowable(Throwable t)
+   {
+      Throwable parent = t;
+      Throwable child = t.getCause();
+      while(null != child)
+      {
+         parent = child;
+         child = parent.getCause();
+      }
+
+      return parent;
+
+   }
+
    /**
     * Change the passed class name to its corresponding file name. E.G.
     * change &quot;Utilities&quot; to &quot;Utilities.class&quot;.

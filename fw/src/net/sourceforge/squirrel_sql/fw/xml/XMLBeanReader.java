@@ -43,7 +43,7 @@ import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-public class XMLBeanReader
+public class XMLBeanReader implements Iterable
 {
 	/** Logger for this class. */
 	private static final ILogger s_log =
