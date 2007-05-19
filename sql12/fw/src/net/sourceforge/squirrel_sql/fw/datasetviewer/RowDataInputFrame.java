@@ -47,6 +47,7 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -234,7 +235,7 @@ public class RowDataInputFrame extends JInternalFrame
 
 			// the second row contains a multi-line description,
 			// so make that row high enough to display it
-			setRowHeight(1, 60);
+			setRowHeight(1, 80);
 
 			setRowSelectionAllowed(false);
 			setColumnSelectionAllowed(false);
@@ -283,12 +284,6 @@ public class RowDataInputFrame extends JInternalFrame
 				return false;	// only the first row (containing data) is editable
 			return CellComponentFactory.isEditableInCell(_colDefs[col], getValueAt(row,col));
 		}
-
-//		// set up editors and renderers
-//		public TableCellEditor getCellEditor(int row, int column) {
-//			// assume this is only called for the first row in the table
-//			return CellComponentFactory.getInCellEditor(this, _colDefs[column]);
-//		}
 
 		public TableCellRenderer getCellRenderer(int row, int column) {
 			if (row == 0)
@@ -362,15 +357,52 @@ public class RowDataInputFrame extends JInternalFrame
 				rowData[0][i] = initalValues[i];	// set data in first row
 
 				// put a description of the field in the following rows
-				rowData[1][i] = colDefs[i].getSqlTypeName() + "\n" +
-					((colDefs[i].isNullable()) ? "nullable" : "not nullable") + "\n" +
-					"mx size="+ colDefs[i].getPrecision() + "\n" +
-					"scale=" + colDefs[i].getScale();
+				rowData[1][i] = getColumnDescription(colDefs[i]);
+                    
+//                    colDefs[i].getSqlTypeName() + "\n" +
+//					((colDefs[i].isNullable()) ? "nullable" : "not nullable") + "\n" +
+//					"precision="+ colDefs[i].getPrecision() + "\n" +
+//					"scale=" + colDefs[i].getScale();
 			}
 
 			// put the data and header names into the model
 			setDataVector(rowData, colNames);
 		}
+        
+        /**
+         * Provides values for several column attributes (nullable, prec, scale)
+         * and in the event the column is auto-increment it displays that as a 
+         * visual cue to the user that the field cannot be edited.
+         * 
+         * @param def the ColumnDisplayDefinition that describes the column
+         * @return a string of column attributes separated by eol chars.
+         */
+        private String getColumnDescription(ColumnDisplayDefinition def) {
+            StringBuilder result = new StringBuilder();
+            result.append(def.getSqlTypeName());
+            result.append("\n");
+            if (def.isNullable()) {
+                result.append("nullable");
+            } else {
+                result.append("not nullable");
+            }
+            result.append("\n");
+            if (JDBCTypeMapper.isNumberType(def.getSqlType())) {
+                result.append("prec=");
+                result.append(def.getPrecision());
+                result.append("\n");
+                result.append("scale=");
+                result.append(def.getScale());
+                if (def.isAutoIncrement()) {
+                    result.append("\n");
+                    result.append("(auto-incr)");
+                }
+            } else {
+                result.append("length=");
+                result.append(def.getColumnSize());
+            }
+            return result.toString();
+        }
 	}
 
 	/**
@@ -378,10 +410,14 @@ public class RowDataInputFrame extends JInternalFrame
 	 */
 	class RowDataDescriptionRenderer implements TableCellRenderer {
 
-		public Component getTableCellRendererComponent(JTable table,
-																	  Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+		public Component getTableCellRendererComponent(JTable table, 
+                                                       Object value, 
+                                                       boolean isSelected, 
+                                                       boolean hasFocus, 
+                                                       int row, 
+                                                       int column) {
 
-				JTextArea ta = new JTextArea((String)value, 4, 20);
+				JTextArea ta = new JTextArea((String)value, 8, 20);
 				ta.setBackground(Color.lightGray);
 				return ta;
 			}

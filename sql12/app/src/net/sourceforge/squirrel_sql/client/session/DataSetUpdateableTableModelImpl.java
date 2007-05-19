@@ -9,11 +9,15 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ContentsTab;
 import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -63,7 +67,8 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
     */
    String sqlOutputClassNameAtTimeOfForcedEdit = "";
 
-   private Vector _dataSetUpdateableTableModelListener = new Vector();
+   private Vector<DataSetUpdateableTableModelListener> _dataSetUpdateableTableModelListener = 
+       new Vector<DataSetUpdateableTableModelListener>();
 
    /**
     * Remember which column contains the rowID; if no rowID, this is -1
@@ -126,7 +131,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
          _session.getProperties().getTableContentsOutputClassName();
 
       DataSetUpdateableTableModelListener[] listeners =
-         (DataSetUpdateableTableModelListener[]) _dataSetUpdateableTableModelListener.toArray(new DataSetUpdateableTableModelListener[0]);
+         _dataSetUpdateableTableModelListener.toArray(new DataSetUpdateableTableModelListener[0]);
 
       for (int i = 0; i < listeners.length; i++)
       {
@@ -518,7 +523,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
 
          // For tables that have a lot of columns, the user may have limited the set of columns
          // to use in the where clause, so see if there is a table of col names
-         HashMap colNames = (EditWhereCols.get(getFullTableName()));
+         HashMap<String, String> colNames = (EditWhereCols.get(getFullTableName()));
 
 
 
@@ -787,39 +792,71 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
    public String insertRow(Object[] values, ColumnDisplayDefinition[] colDefs) {
 
       // if we could not identify which table to edit, tell user
-      if (ti == null)
+      if (ti == null) {
          return TI_ERROR_MESSAGE;
-
+      }
+      
       final ISession session = _session;
       final ISQLConnection conn = session.getSQLConnection();
-
+      
       int count = -1;
-
+      
       try
       {
          // start the string for use in the prepared statment
-         StringBuffer buf = new StringBuffer(
-            "INSERT INTO " + ti.getQualifiedName() + " VALUES (");
+         StringBuilder buf = new StringBuilder("INSERT INTO ");
+         buf.append(ti.getQualifiedName());
 
+         // Add the list of column names we will be inserting into - be sure
+         // to skip the rowId column and any auto increment columns.
+         buf.append(" ( ");
+         for (int i=0; i<colDefs.length; i++) {
+             if (i == _rowIDcol) {
+                 continue;
+             }
+             if (colDefs[i].isAutoIncrement()) {
+                 if (s_log.isInfoEnabled()) {
+                     s_log.info("insertRow: skipping auto-increment column "+
+                                colDefs[i].getColumnName());
+                 }
+                 continue;
+             } 
+             buf.append(colDefs[i].getColumnName());
+             buf.append(",");
+         }
+         buf.setCharAt(buf.length()-1, ')');
+         buf.append(" VALUES (");
+         
          // add a variable position for each of the columns
          for (int i=0; i<colDefs.length; i++) {
-            if (i != _rowIDcol)
+            if (i != _rowIDcol && !colDefs[i].isAutoIncrement() )
+                
                buf.append(" ?,");
          }
 
          // replace the last "," with ")"
          buf.setCharAt(buf.length()-1, ')');
 
-         final PreparedStatement pstmt = conn.prepareStatement(buf.toString());
+         String pstmtSQL = buf.toString();
+         if (s_log.isInfoEnabled()) {
+             s_log.info("insertRow: pstmt sql = "+pstmtSQL);
+         }
+         final PreparedStatement pstmt = conn.prepareStatement(pstmtSQL);
 
          try
          {
+            // We need to keep track of the bind var index separately, since 
+            // the number of column defs may not be the number of bind vars
+            // (For example: auto-increment columns are excluded)
+            int bindVarIdx = 1;
+             
             // have the DataType object fill in the appropriate kind of value
             // into the appropriate variable position in the prepared stmt
             for (int i=0; i<colDefs.length; i++) {
-               if (i != _rowIDcol) {
-                  CellComponentFactory.setPreparedStatementValue(
-                     colDefs[i], pstmt, values[i], i+1);
+               if (i != _rowIDcol && !colDefs[i].isAutoIncrement()) {
+                   CellComponentFactory.setPreparedStatementValue(
+                           colDefs[i], pstmt, values[i], bindVarIdx);
+                   bindVarIdx++;
                }
             }
             count = pstmt.executeUpdate();
@@ -842,6 +879,13 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
          return s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.unknownerrorupdate");
 
       // insert succeeded
+      try {
+          IObjectTreeAPI api = _session.getObjectTreeAPIOfActiveSessionWindow();
+          api.refreshSelectedTab();
+      } catch (Exception e) {
+          e.printStackTrace();
+      }
+
       return null;
    }
 

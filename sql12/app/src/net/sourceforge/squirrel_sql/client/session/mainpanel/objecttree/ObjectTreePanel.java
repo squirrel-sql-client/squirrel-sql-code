@@ -46,6 +46,7 @@ import javax.swing.tree.TreePath;
 
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseDataSetTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.database.CatalogsTab;
@@ -72,8 +73,8 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.tab
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.TablePriviligesTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.VersionColumnsTab;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
-import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterClauses;
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -90,7 +91,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 {
-	/** Logger for this class. */
+
+    /** Logger for this class. */
 	private static final ILogger s_log =
 		LoggerController.createLogger(ObjectTreePanel.class);
 
@@ -117,7 +119,8 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 	 * Contains instances of <TT>ObjectTreeTabbedPane</TT> objects keyed by
 	 * the node type. I.E. the tabbed folders for each node type are kept here.
 	 */
-	private final Map _tabbedPanes = new HashMap();
+	private final Map<IIdentifier, ObjectTreeTabbedPane> _tabbedPanes = 
+        new HashMap<IIdentifier, ObjectTreeTabbedPane>();
 
 	/** Listens to changes in session properties. */
 	private SessionPropertiesListener _propsListener;
@@ -127,14 +130,7 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 
 	private ObjectTreeSelectionListener _objTreeSelLis = null;
 
-	private SQLFilterClauses _sqlFilterClauses = new SQLFilterClauses();
-
-	/**
-	 * Collection of <TT>IObjectPanelTab</TT> objects to be displayed for all
-	 * nodes in the object tree.
-	 */
-//	private List _tabsForAllNodes = new ArrayList();
-
+    private ObjectTreeTabbedPane _selectedObjTreeTabbedPane = null; 
 	/**
 	 * ctor specifying the current session.
 	 *
@@ -292,11 +288,11 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 		_propsListener = new SessionPropertiesListener();
 		_session.getProperties().addPropertyChangeListener(_propsListener);
 
-		Iterator it = _tabbedPanes.values().iterator();
+		Iterator<ObjectTreeTabbedPane> it = _tabbedPanes.values().iterator();
 		while (it.hasNext())
 		{
 			//setupTabbedPane((ObjectTreeTabbedPane)it.next());
-			ObjectTreeTabbedPane ottp = (ObjectTreeTabbedPane) it.next();
+			ObjectTreeTabbedPane ottp = it.next();
 			ottp.getTabbedPane().addChangeListener(_tabPnlListener);
 		}
 
@@ -314,10 +310,10 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 			_propsListener = null;
 		}
 
-		Iterator it = _tabbedPanes.values().iterator();
+		Iterator<ObjectTreeTabbedPane> it = _tabbedPanes.values().iterator();
 		while (it.hasNext())
 		{
-			ObjectTreeTabbedPane pane = (ObjectTreeTabbedPane)it.next();
+			ObjectTreeTabbedPane pane = it.next();
 			pane.getTabbedPane().removeChangeListener(_tabPnlListener);
 		}
 		_tabPnlListener = null;
@@ -677,6 +673,26 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 		return getTabbedPane(dbObjectType).getTabIfSelected(title);
 	}
 
+    /**
+     * Calls refreshComponent on the selected tab in the current 
+     * ObjectTreeTabbedPane, if the selected tab happens to be a BaseDataSetTab
+     * type. 
+     * 
+     * @throws DataSetException if there was a problem refreshing the component.
+     */
+    public void refreshSelectedTab() throws DataSetException 
+    {
+        if (_selectedObjTreeTabbedPane != null) {
+            IObjectTab tab= _selectedObjTreeTabbedPane.getSelectedTab();
+            if (tab != null) {
+                if (tab instanceof BaseDataSetTab) {
+                    BaseDataSetTab btab = (BaseDataSetTab) tab;
+                    btab.refreshComponent();
+                }
+            }        
+        }
+    }
+    
    /**
     * Tries to locate the object given by the paramteres in the Object tree.
     * The first matching object found is selected.
@@ -779,6 +795,7 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 	 */
 	private void setSelectedObjectPanel(ObjectTreeTabbedPane pane)
 	{
+        _selectedObjTreeTabbedPane = pane;
 		JTabbedPane comp = null;
 		if (pane != null)
 		{
@@ -839,7 +856,7 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 	 */
 	private ObjectTreeTabbedPane getTabbedPane(DatabaseObjectType dboType)
 	{
-		return (ObjectTreeTabbedPane)_tabbedPanes.get(dboType.getIdentifier());
+		return _tabbedPanes.get(dboType.getIdentifier());
 	}
 
 	/**
@@ -860,7 +877,7 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 		}
 
 		final IIdentifier key = dboType.getIdentifier();
-		ObjectTreeTabbedPane tabPane = (ObjectTreeTabbedPane)_tabbedPanes.get(key);
+		ObjectTreeTabbedPane tabPane = _tabbedPanes.get(key);
 		if (tabPane == null)
 		{
 			tabPane = new ObjectTreeTabbedPane(_session);
@@ -907,10 +924,10 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 		{
 			final SessionProperties props = _session.getProperties();
 
-			Iterator it = _tabbedPanes.values().iterator();
+			Iterator<ObjectTreeTabbedPane> it = _tabbedPanes.values().iterator();
 			while (it.hasNext())
 			{
-				ObjectTreeTabbedPane pane = (ObjectTreeTabbedPane)it.next();
+				ObjectTreeTabbedPane pane = it.next();
 
 				if (propName == null
 					|| propName.equals(SessionProperties.IPropertyNames.META_DATA_OUTPUT_CLASS_NAME)
@@ -931,10 +948,10 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 
    private void onForceEditMode(boolean editable)
    {
-      Iterator it = _tabbedPanes.values().iterator();
+      Iterator<ObjectTreeTabbedPane> it = _tabbedPanes.values().iterator();
       while (it.hasNext())
       {
-         ObjectTreeTabbedPane pane = (ObjectTreeTabbedPane)it.next();
+         ObjectTreeTabbedPane pane = it.next();
          pane.rebuild();
 
       }

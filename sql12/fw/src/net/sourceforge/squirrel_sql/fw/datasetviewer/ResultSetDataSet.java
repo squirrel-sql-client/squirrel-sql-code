@@ -41,7 +41,7 @@ public class ResultSetDataSet implements IDataSet
 
 	private int _columnCount;
 	private DataSetDefinition _dataSetDefinition;
-	private List _alData;
+	private List<Object[]> _alData;
 
 	/** If <TT>true</TT> cancel has been requested. */
 	private volatile boolean _cancel = false;
@@ -108,7 +108,7 @@ public class ResultSetDataSet implements IDataSet
 			columnIndices = null;
 		}
 		_iCurrent = -1;
-		_alData = new ArrayList();
+		_alData = new ArrayList<Object[]>();
 
 		if (rs != null)
 		{
@@ -193,7 +193,7 @@ public class ResultSetDataSet implements IDataSet
 		// TODO: This should be handled with an Iterator
 		if (++_iCurrent < _alData.size())
 		{
-			_currentRow = (Object[])_alData.get(_iCurrent);
+			_currentRow = _alData.get(_iCurrent);
 			return true;
 		}
 		return false;
@@ -228,7 +228,7 @@ public class ResultSetDataSet implements IDataSet
  		if (computeWidths) {
  			colWidths = new int[_columnCount];
  			for (int i = 0; i < _alData.size(); i++) {
- 				Object[] row = (Object[])_alData.get(i);
+ 				Object[] row = _alData.get(i);
  				for (int col = 0; i < _columnCount; i++) {
  					if (row[col] != null) {
  						int colWidth = row[col].toString().length();
@@ -258,7 +258,7 @@ public class ResultSetDataSet implements IDataSet
 			boolean isNullable = true;
 			if (md.isNullable(idx) == ResultSetMetaData.columnNoNulls)
 				isNullable = false;
-			
+			            
 			int precis;
 			try {
 				precis = md.getPrecision(idx);
@@ -289,11 +289,17 @@ public class ResultSetDataSet implements IDataSet
             s_log.error("Failed to call ResultSetMetaData.isCurrency()", e);
          }
 
-
+         boolean isAutoIncrement = false;
+         try {
+             isAutoIncrement = md.isAutoIncrement(idx);
+         } catch (SQLException e) {
+             s_log.error("Failed to call ResultSetMetaData.isAutoIncrement()", e);
+         }
          columnDefs[i] =
                 new ColumnDisplayDefinition(
                 computeWidths ? colWidths[i] : md.getColumnDisplaySize(idx),
                fullTableName+":"+md.getColumnLabel(idx),
+                md.getColumnName(idx),
                 md.getColumnLabel(idx),
                 md.getColumnType(idx),
                 md.getColumnTypeName(idx),
@@ -302,7 +308,8 @@ public class ResultSetDataSet implements IDataSet
                 precis,
                 md.getScale(idx),
                 isSigned,
-                isCurrency);
+                isCurrency,
+                isAutoIncrement);
 		}
 		return columnDefs;
 	}

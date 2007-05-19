@@ -31,6 +31,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExp
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.IObjectTreeListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -270,4 +271,14 @@ public interface IObjectTreeAPI extends IHasIdentifier
     * @param node the tree node to expand
     */
    void expandNode(ObjectTreeNode node);
+   
+   /**
+    * Calls refreshComponent on the selected tab in the current 
+    * ObjectTreeTabbedPane, if the selected tab happens to be a BaseDataSetTab
+    * type. 
+    * 
+    * @throws DataSetException if there was a problem refreshing the component.
+    */
+   void refreshSelectedTab() throws DataSetException;
+   
 }

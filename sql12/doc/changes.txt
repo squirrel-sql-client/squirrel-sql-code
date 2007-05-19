@@ -43,7 +43,6 @@ Task 138098 (Plugins Session Menu Items (Disable)) When using a session that
 Finished German translation
 
 Bug-Fixes:
-
 1716859 Can't see data in content tab or row count tab (MS SQLServer databases
         with a dash ("-") in their name would cause the content tab or row count
         tabs to render no data.
@@ -52,6 +51,11 @@ Bug-Fixes:
          sometimes fail to select records from the source table.  Since the
          case for the source table is always known to be correct, the plugin
          no longer erroneously attempts to correct the case.
+
+1714475: (Adding rows from the content tab)  When inserting row data, pay 
+         attention to isAutoIncrement flag so that these columns are excluded 
+         like rowId columns.  After insert, refresh the table data so that 
+         auto-generated fields are populated.
 
 1704798 ISQLExecutionListeners cannot return "null"
 

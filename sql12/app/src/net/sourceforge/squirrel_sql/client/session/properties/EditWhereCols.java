@@ -49,7 +49,8 @@ public class EditWhereCols {
 	 * containing the list of names of columns to use in WHERE clause.
 	 * There is only one copy of this table for all instances of this class.
 	 */
-	private static HashMap _tables = new HashMap();
+	private static HashMap<String, HashMap<String, String>> _tables = 
+        new HashMap<String, HashMap<String, String>>();
 	
 	/**
 	 * ctor
@@ -64,17 +65,17 @@ public class EditWhereCols {
 	public String[] getDataArray() {
 		// first convert internal data into the string array
 		dataArray = new String[_tables.size()];
-		Iterator keys = _tables.keySet().iterator();
+		Iterator<String> keys = _tables.keySet().iterator();
 		int index = 0;
 		
 		// get each table's info
 		while (keys.hasNext()) {
-			String tableName = (String)keys.next();
-			HashMap h = (HashMap)_tables.get(tableName);
-			Iterator columnNames = h.keySet().iterator();
+			String tableName = keys.next();
+			HashMap<String, String> h = _tables.get(tableName);
+			Iterator<String> columnNames = h.keySet().iterator();
 			String outData = tableName + " ";
 			while (columnNames.hasNext()) {
-				String colName = (String)columnNames.next();
+				String colName = columnNames.next();
 				outData += colName;
 				if (columnNames.hasNext())
 					outData +=  ",";
@@ -94,7 +95,8 @@ public class EditWhereCols {
 	 * @param inData array of strings in form "tableName col,col,col..."
 	 */
 	public void setDataArray(String[] inData) {
-		_tables = new HashMap();	// make sure we are starting clean
+	    // make sure we are starting clean
+		_tables = new HashMap<String, HashMap<String, String>>();	
 		
 		// convert each string into key+HashMap and fill it into the data
 		for (int i=0; i< inData.length; i++) {
@@ -102,7 +104,7 @@ public class EditWhereCols {
 			String tableName = inData[i].substring(0, endIndex);
 			
 			int startIndex;
-			ArrayList colList = new ArrayList();
+			ArrayList<String> colList = new ArrayList<String>();
 			while (true) {
 				startIndex = endIndex+1;
 				endIndex = inData[i].indexOf(',', startIndex);
@@ -116,7 +118,7 @@ public class EditWhereCols {
 			
 			// create a hashmap containing the column names.
 			// by convention, the value and key is the same for each column name
-			HashMap h = new HashMap(colList.size());
+			HashMap<String, String> h = new HashMap<String, String>(colList.size());
 			for (int j=0; j<colList.size(); j++)
 				h.put(colList.get(j), colList.get(j));
 				
@@ -129,7 +131,7 @@ public class EditWhereCols {
 	 * add or replace a table-name/hashmap-of-column-names mapping.
 	 * If map is null, remove the entry from the tables.
 	 */
-	public static void put(String tableName, HashMap colNames) {
+	public static void put(String tableName, HashMap<String, String> colNames) {
 		if (colNames == null)
 			_tables.remove(tableName);
 		else 
@@ -141,7 +143,7 @@ public class EditWhereCols {
 	 * get the HashMap of column names for the given table name.
 	 * it will be null if the table does not have any limitation on the columns to use.
 	 */
-	public static HashMap get(String tableName) {
-		return (HashMap)_tables.get(tableName);
+	public static HashMap<String,String> get(String tableName) {
+		return _tables.get(tableName);
 	}
 }
