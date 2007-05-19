@@ -294,6 +294,9 @@ public class ContentsTab extends BaseTableTab
                 if (DialectFactory.isPostgreSQL(md)) {
                     pseudoColumn = ", oid";
                 }
+                if (DialectFactory.isOracle(md)) {
+                    pseudoColumn = ", ROWID";
+                }
             }
 
             ResultSet rs = null;

@@ -36,7 +36,6 @@ import javax.swing.tree.TreePath;
 import net.sourceforge.squirrel_sql.client.plugin.ISessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.plugin.SessionPluginInfo;
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.DatabaseExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.ProcedureTypeExpander;
@@ -64,9 +63,11 @@ public class ObjectTreeModel extends DefaultTreeModel
 	 * of <TT>INodeExpander</TT> objects. The key to the list is the
 	 * node type.
 	 */
-	private Map _expanders = new HashMap();
+	private Map<IIdentifier, List<INodeExpander>> _expanders = 
+        new HashMap<IIdentifier, List<INodeExpander>>();
 
-	private final Set _objectTypes = new TreeSet(new DatabaseObjectTypeComparator());
+	private final Set<DatabaseObjectType> _objectTypes = 
+        new TreeSet<DatabaseObjectType>(new DatabaseObjectTypeComparator());
 
 	/**
 	 * ctor specifying session.
@@ -101,9 +102,9 @@ public class ObjectTreeModel extends DefaultTreeModel
                         boolean foundUDTExp = false;
                         boolean foundDatabaseExp = false;
                         final PluginManager pmgr = session.getApplication().getPluginManager();
-                        for (Iterator pluginItr = pmgr.getSessionPluginIterator(); pluginItr.hasNext();)
+                        for (Iterator<SessionPluginInfo> pluginItr = pmgr.getSessionPluginIterator(); pluginItr.hasNext();)
                         {
-                            ISessionPlugin p = ((SessionPluginInfo)pluginItr.next()).getSessionPlugin();
+                            ISessionPlugin p = (pluginItr.next()).getSessionPlugin();
                             INodeExpander tableExp = p.getDefaultNodeExpander(session, DatabaseObjectType.TABLE_TYPE_DBO);
                             if (tableExp != null)
                             {
@@ -195,8 +196,8 @@ public class ObjectTreeModel extends DefaultTreeModel
 		{
 			throw new IllegalArgumentException("Null DatabaseObjectType passed");
 		}
-		List list = getExpandersList(dboType);
-		return (INodeExpander[])list.toArray(new INodeExpander[list.size()]);
+		List<INodeExpander> list = getExpandersList(dboType);
+		return list.toArray(new INodeExpander[list.size()]);
 	}
 
 	/**
@@ -208,7 +209,7 @@ public class ObjectTreeModel extends DefaultTreeModel
 	public synchronized DatabaseObjectType[] getDatabaseObjectTypes()
 	{
 		DatabaseObjectType[] ar = new DatabaseObjectType[_objectTypes.size()];
-		return (DatabaseObjectType[])_objectTypes.toArray(ar);
+		return _objectTypes.toArray(ar);
 	}
 
 	synchronized void addKnownDatabaseObjectType(DatabaseObjectType dboType)
@@ -232,17 +233,17 @@ public class ObjectTreeModel extends DefaultTreeModel
 	 *
 	 * @param	dboType		Database object type.
 	 */
-	private List getExpandersList(DatabaseObjectType dboType)
+	private List<INodeExpander> getExpandersList(DatabaseObjectType dboType)
 	{
 		if (dboType == null)
 		{
 			throw new IllegalArgumentException("Null DatabaseObjectType passed");
 		}
 		IIdentifier key = dboType.getIdentifier();
-		List list = (List)_expanders.get(key);
+		List<INodeExpander> list = _expanders.get(key);
 		if (list == null)
 		{
-			list = new ArrayList();
+			list = new ArrayList<INodeExpander>();
 			_expanders.put(key, list);
 		}
 		return list;
@@ -370,16 +371,16 @@ public class ObjectTreeModel extends DefaultTreeModel
       {
          return new DatabaseObjectInfo(null, null, session.getAlias().getName(),
                                  DatabaseObjectType.SESSION,
-                                 session.getSQLConnection().getSQLMetaData());
+                                 session.getMetaData());
       }
    }
 
-	private static final class DatabaseObjectTypeComparator implements Comparator
+	private static final class DatabaseObjectTypeComparator 
+                         implements Comparator<DatabaseObjectType>
 	{
-		public int compare(Object o1, Object o2)
+		public int compare(DatabaseObjectType o1, DatabaseObjectType o2)
 		{
-			return ((DatabaseObjectType)o1).getName()
-				.compareToIgnoreCase(((DatabaseObjectType)o2).getName());
+			return o1.getName().compareToIgnoreCase(o2.getName());
 		}
 	}
 }

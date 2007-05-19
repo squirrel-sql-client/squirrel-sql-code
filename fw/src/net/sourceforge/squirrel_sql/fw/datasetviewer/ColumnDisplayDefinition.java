@@ -34,6 +34,9 @@ public class ColumnDisplayDefinition
 	/** Full name of the column, including the table Catalog, Schema and Table names. */
 	private String _fullTableColumnName;
 
+    /** Column name to be used in SQL statements */
+    private String _columnName;
+    
 	/** Column heading. */
 	private String _label;
 
@@ -90,6 +93,11 @@ public class ColumnDisplayDefinition
 	 */
 	private boolean _isCurrency;
 
+    /** 
+     * Flag for whether the column is automatically numbered, thus read-only. 
+     */
+    private boolean _isAutoIncrement;
+    
 	/**
 	 * Ctor.
 	 *
@@ -99,7 +107,7 @@ public class ColumnDisplayDefinition
 	public ColumnDisplayDefinition(int displayWidth, String label)
 	{
 		super();
-		init(displayWidth, null, label, Types.NULL, null, true, 0, 0, 0, true, false);
+		init(displayWidth, null, null, label, Types.NULL, null, true, 0, 0, 0, true, false, false);
 	}
 
 	/**
@@ -110,13 +118,13 @@ public class ColumnDisplayDefinition
 	 * @param	className		Name of the class for the type of data in the column.
 	 */
 	public ColumnDisplayDefinition(int displayWidth, String fullTableColumnName,
-				String label, int sqlType, String sqlTypeName,
+                String columnName, String label, int sqlType, String sqlTypeName,
 				boolean isNullable, int columnSize, int precision, int scale,
-				boolean isSigned, boolean isCurrency) {
+				boolean isSigned, boolean isCurrency, boolean isAutoIncrement) {
 		super();
-		init(displayWidth, fullTableColumnName, label, sqlType, sqlTypeName,
-			isNullable, columnSize, precision, scale,
-			isSigned, isCurrency);
+		init(displayWidth, fullTableColumnName, columnName, label, sqlType, 
+             sqlTypeName, isNullable, columnSize, precision, scale,
+             isSigned, isCurrency, isAutoIncrement);
 	}
 
 	/**
@@ -261,10 +269,12 @@ public class ColumnDisplayDefinition
 	 * @param	label			Column heading.
 	 * @param	sqlType			Type of data (from java.sql.Types).
 	 */
-	private void init(int displayWidth, String fullTableColumnName, String label,
+	private void init(int displayWidth, String fullTableColumnName, 
+                      String columnName, String label,
 						int sqlType, String sqlTypeName,
 						boolean isNullable, int columnSize, int precision,
-						int scale, boolean isSigned, boolean isCurrency)
+						int scale, boolean isSigned, boolean isCurrency, 
+                        boolean isAutoIncrement)
 	{
 		if (label == null)
 		{
@@ -276,7 +286,7 @@ public class ColumnDisplayDefinition
 			_displayWidth = label.length();
 		}
 		_fullTableColumnName = fullTableColumnName;
-
+		_columnName = columnName;
 		// If all columns in a table have empty strings as the headings then the
 		// row height of the label row is zero. We dont want this.
 		_label = label.length() > 0 ? label : " ";
@@ -293,11 +303,14 @@ public class ColumnDisplayDefinition
 		_scale = scale;
 		_isSigned = isSigned;
 		_isCurrency = isCurrency;
+        _isAutoIncrement = isAutoIncrement;
 	}
     
     public String toString() {
-        StringBuffer result = new StringBuffer();
-        result.append("[ sqlType=");
+        StringBuilder result = new StringBuilder();
+        result.append("[ columnName=");
+        result.append(_columnName);
+        result.append(", sqlType=");
         result.append(_sqlType);
         result.append(", sqlTypeName=");
         result.append(_sqlTypeName);
@@ -305,5 +318,27 @@ public class ColumnDisplayDefinition
         result.append(getClassName());
         result.append(" ]");
         return result.toString();
+    }
+
+    public void setIsAutoIncrement(boolean autoIncrement) {
+        _isAutoIncrement = autoIncrement;
+    }
+    
+    public boolean isAutoIncrement() {
+        return _isAutoIncrement;
+    }
+
+    /**
+     * @param _columnName the _columnName to set
+     */
+    public void setColumnName(String _columnName) {
+        this._columnName = _columnName;
+    }
+
+    /**
+     * @return the _columnName
+     */
+    public String getColumnName() {
+        return _columnName;
     }
 }

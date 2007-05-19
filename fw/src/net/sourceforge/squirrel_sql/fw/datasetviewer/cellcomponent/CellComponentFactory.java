@@ -313,10 +313,12 @@ public class CellComponentFactory {
 	 * Return true if the data type for the column may be edited
 	 * within the table cell, false if not.
 	 */
-	public static boolean isEditableInCell(
-		ColumnDisplayDefinition colDef, Object originalValue)
+	public static boolean isEditableInCell(ColumnDisplayDefinition colDef,     
+                                           Object originalValue)
 	{
-			
+		if (colDef.isAutoIncrement()) {
+		    return false;
+        }
 		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
 		
 		if (dataTypeObject != null)
@@ -423,7 +425,12 @@ public class CellComponentFactory {
 	 * Return true if the data type for the column may be edited
 	 * in the popup, false if not.
 	 */
-	public static boolean isEditableInPopup(ColumnDisplayDefinition colDef, Object originalValue) {
+	public static boolean isEditableInPopup(ColumnDisplayDefinition colDef, 
+                                            Object originalValue) {
+        if (colDef.isAutoIncrement()) {
+            return false;
+        }
+        
 		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
 		
 		if (dataTypeObject != null)
@@ -905,15 +912,22 @@ public class CellComponentFactory {
 				// TODO: Hard coded -. JDBC/ODBC bridge JDK1.4
 				// brings back -9 for nvarchar columns in
 				// MS SQL Server tables.
-				// -8 is ROWID in Oracle.
 				case Types.CHAR:
 				case Types.VARCHAR:
 				case Types.LONGVARCHAR:
 				case -9:
-				case -8:
-					// set up for string types
-					dataTypeComponent = new DataTypeString(table, colDef);
-					break;
+                    // set up for string types
+                    dataTypeComponent = new DataTypeString(table, colDef);
+                    break;
+                
+                // -8 is ROWID in Oracle.  It's a string, but it's auto-assigned
+                case -8:
+                    dataTypeComponent = new DataTypeString(table, colDef);
+                    // Oracle jdbc driver doesn't properly identify this column
+                    // in ResultSetMetaData as read-only.  For now, just use 
+                    // isAutoIncrement flag to simulate this setting.
+                    colDef.setIsAutoIncrement(true);
+                    break;
 
 				case Types.BINARY:
 				case Types.VARBINARY:

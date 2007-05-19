@@ -63,7 +63,7 @@ class ObjectTreeTabbedPane
 	 * Collection of <TT>IObjectTab</TT> objects displayed in
 	 * this tabbed panel.
 	 */
-	private List _tabs = new ArrayList();
+	private List<IObjectTab> _tabs = new ArrayList<IObjectTab>();
 
 	ObjectTreeTabbedPane(ISession session)
 	{
@@ -92,7 +92,7 @@ class ObjectTreeTabbedPane
 
 	IObjectTab getTabIfSelected(String title)
 	{
-		IObjectTab tab = (IObjectTab)_tabs.get(_tabPnl.getSelectedIndex());
+		IObjectTab tab = getSelectedTab();
 		if ((tab != null) && (tab.getTitle().equals(title)))
 		{
 			return tab;
@@ -100,6 +100,11 @@ class ObjectTreeTabbedPane
 		return null;
 	}
 
+    IObjectTab getSelectedTab() {
+        IObjectTab tab = _tabs.get(_tabPnl.getSelectedIndex());
+        return tab;
+    }
+    
 	synchronized void addObjectPanelTab(IObjectTab tab)
 	{
 		if (tab == null)
@@ -120,7 +125,7 @@ class ObjectTreeTabbedPane
                 "addObjectPanelTab: _tabs.size() == 1, but " +
                 "_tabPnl.getTabCount() == 0 - adding first tab component to " +
                 "the tabbed page");
-            IObjectTab firstTab = (IObjectTab)_tabs.get(0);
+            IObjectTab firstTab = _tabs.get(0);
             _tabPnl.addTab(firstTab.getTitle(), 
                            null, 
                            firstTab.getComponent(), 
@@ -140,7 +145,7 @@ class ObjectTreeTabbedPane
 			int idx = _tabPnl.getSelectedIndex();
 			if (idx != -1 && idx < _tabs.size())
 			{
-				IObjectTab tab = (IObjectTab)_tabs.get(idx);
+				IObjectTab tab = _tabs.get(idx);
 				if (tab != null)
 				{
 					tab.select();
@@ -151,10 +156,10 @@ class ObjectTreeTabbedPane
 
 	void setDatabaseObjectInfo(IDatabaseObjectInfo dboInfo)
 	{
-		Iterator it = _tabs.iterator();
+		Iterator<IObjectTab> it = _tabs.iterator();
 		while (it.hasNext())
 		{
-			IObjectTab tab = (IObjectTab)it.next();
+			IObjectTab tab = it.next();
 			tab.setDatabaseObjectInfo(dboInfo);
 		}
 	}
@@ -166,14 +171,14 @@ class ObjectTreeTabbedPane
 	synchronized void rebuild()
 	{
 		final int curTabIdx = _tabPnl.getSelectedIndex();
-		final List oldTabs = new ArrayList();
+		final List<IObjectTab> oldTabs = new ArrayList<IObjectTab>();
 		oldTabs.addAll(_tabs);
 		_tabPnl.removeAll();
 		_tabs.clear();
-		Iterator it = oldTabs.iterator();
+		Iterator<IObjectTab> it = oldTabs.iterator();
 		while (it.hasNext())
 		{
-			final IObjectTab tab = (IObjectTab)it.next();
+			final IObjectTab tab = it.next();
 			tab.rebuild();
 			addObjectPanelTab(tab);
 		}
