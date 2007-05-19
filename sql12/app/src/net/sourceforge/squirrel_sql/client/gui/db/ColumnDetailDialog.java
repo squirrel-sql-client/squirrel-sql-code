@@ -251,6 +251,12 @@ public class ColumnDetailDialog extends JDialog {
             remarks = commentTextArea.getText();
         }
         String defaultValue = defaultTextField.getText();
+        // TODO Maybe we should have a checkbox to allow the user to toggle 
+        // default value on/off.  Some dbs (like DB2) treat empty string "" as
+        // a different default value than null.
+        if ("".equals(defaultValue)) {
+            defaultValue = null;
+        }
         
         // These are not used
         String catalog = null;
