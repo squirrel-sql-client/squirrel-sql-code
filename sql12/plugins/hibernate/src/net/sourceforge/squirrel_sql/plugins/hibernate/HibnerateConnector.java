@@ -79,6 +79,8 @@ public class HibnerateConnector
             }
          });
 
+         Thread.currentThread().setContextClassLoader(null);
+
       }
       catch (final Throwable t)
       {

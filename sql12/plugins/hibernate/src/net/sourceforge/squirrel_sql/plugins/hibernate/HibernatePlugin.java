@@ -1,6 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate;
 
-import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
@@ -8,13 +7,22 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateController;
+
+import java.util.HashMap;
 
 public class HibernatePlugin extends DefaultSessionPlugin
 {
-	private HibernatePluginResources _resources;
+   private static ILogger s_log = LoggerController.createLogger(HibernatePlugin.class);
 
-	public String getInternalName()
+
+	private HibernatePluginResources _resources;
+   private HashMap<IIdentifier, HQLTabController> _hqlTabControllerBySessionID = new HashMap<IIdentifier, HQLTabController>();
+
+   public String getInternalName()
 	{
 		return "hibernate";
 	}
@@ -68,13 +76,28 @@ public class HibernatePlugin extends DefaultSessionPlugin
    }
 
 
-	public PluginSessionCallback sessionStarted(ISession session)
+   public void sessionEnding(ISession session)
+   {
+      try
+      {
+         _hqlTabControllerBySessionID.get(session.getIdentifier()).sessionEnding();
+      }
+      catch (Throwable t)
+      {
+         s_log.error(t);
+      }
+   }
+
+   public PluginSessionCallback sessionStarted(ISession session)
 	{
 		try
 		{
-         ActionCollection coll = getApplication().getActionCollection();
+         HQLTabController hqlTabController = new HQLTabController(session, this, _resources);
 
-         session.getSessionSheet().insertMainTab(new HQLTabController(session, this, _resources), 2);
+         _hqlTabControllerBySessionID.put(session.getIdentifier(), hqlTabController);
+
+
+         session.getSessionSheet().insertMainTab(hqlTabController, 2, false);
 
 
          return new PluginSessionCallback()
