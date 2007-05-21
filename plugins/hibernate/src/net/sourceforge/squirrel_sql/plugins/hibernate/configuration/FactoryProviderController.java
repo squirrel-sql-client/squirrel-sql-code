@@ -31,11 +31,13 @@ public class FactoryProviderController
    private FactoryProviderDialog _dlg;
 
 
-   public FactoryProviderController(HibernatePlugin plugin)
+   public FactoryProviderController(HibernatePlugin plugin, String className)
    {
       _plugin = plugin;
 
       _dlg = new FactoryProviderDialog(_plugin.getApplication().getMainFrame());
+
+      _dlg.txtClassName.setText(className);
 
       _dlg.btnWriteExampleFactorProvider.addActionListener(new ActionListener()
       {

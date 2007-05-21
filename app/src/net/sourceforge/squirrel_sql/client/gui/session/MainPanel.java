@@ -218,14 +218,15 @@ public class MainPanel extends JPanel
 	 * @param	tab		The tab to be added.
 	 * @param	idx		The index to add the tab at.
 	 *
-	 * @throws	IllegalArgumentException
+	 * @param selectInsertedTab
+    * @throws	IllegalArgumentException
 	 *			Thrown if a <TT>null</TT> <TT>ITablePanelTab</TT> passed.
 	 *
 	 * @throws	IllegalArgumentException
 	 *			Thrown if a tab already exists with the same title as the one
 	 *			passed in.
 	 */
-	public void insertMainPanelTab(IMainPanelTab tab, int idx)
+	public void insertMainPanelTab(IMainPanelTab tab, int idx, boolean selectInsertedTab)
 	{
 		if (tab == null)
 		{
@@ -242,8 +243,12 @@ public class MainPanel extends JPanel
 
 		_tabs.add(idx, tab);
 		_tabPnl.insertTab(title, null, tab.getComponent(), tab.getHint(), idx);
-		_tabPnl.setSelectedIndex(idx);
-	}
+
+      if(selectInsertedTab)
+      {
+         _tabPnl.setSelectedIndex(idx);
+      }
+   }
 
 	public int removeMainPanelTab(IMainPanelTab tab)
 	{

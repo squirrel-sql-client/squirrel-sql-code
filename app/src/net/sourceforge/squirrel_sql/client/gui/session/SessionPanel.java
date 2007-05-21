@@ -262,7 +262,12 @@ public class SessionPanel extends JPanel
 		return _mainTabPane.addMainPanelTab(tab);
 	}
 
-	public void insertMainTab(IMainPanelTab tab, int idx)
+   public void insertMainTab(IMainPanelTab tab, int idx)
+   {
+      insertMainTab(tab, idx, true);
+   }
+
+	public void insertMainTab(IMainPanelTab tab, int idx, boolean selectInsertedTab)
 	{
 		if (tab == null)
 		{
@@ -273,7 +278,7 @@ public class SessionPanel extends JPanel
 			throw new IllegalArgumentException("Index " + idx + "conflicts with standard tabs");
 		}
 
-		_mainTabPane.insertMainPanelTab(tab, idx);
+		_mainTabPane.insertMainPanelTab(tab, idx, selectInsertedTab);
 	}
 
 	public int removeMainTab(IMainPanelTab tab)

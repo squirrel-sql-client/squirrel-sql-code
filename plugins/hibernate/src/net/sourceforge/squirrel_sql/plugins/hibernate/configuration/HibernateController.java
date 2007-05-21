@@ -204,7 +204,7 @@ public class HibernateController
 
    private void onFactoryProviderInfo()
    {
-      String className = new FactoryProviderController(_plugin).getClassName();
+      String className = new FactoryProviderController(_plugin, _panel.txtFactoryProvider.getText()).getClassName();
       _panel.txtFactoryProvider.setText(className);
 
    }
@@ -348,7 +348,7 @@ public class HibernateController
             return;
          }
 
-         reader.load(xmlFile);
+         reader.load(xmlFile, _plugin.getClass().getClassLoader());
 
          Map<String, String> providers = new HashMap<String, String>();
 

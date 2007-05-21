@@ -7,6 +7,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
+import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateConfiguration;
 import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateController;
 
@@ -15,6 +16,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.prefs.Preferences;
 
@@ -48,32 +50,6 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController
 
          _sqlPanelController = new SQLPanelController(_panel.txtHQL, this, _session, _resource);
 
-         XMLBeanReader reader = new XMLBeanReader();
-         File pluginUserSettingsFolder = _plugin.getPluginUserSettingsFolder();
-
-
-         File xmlFile = new File(pluginUserSettingsFolder.getPath(), HibernateController.HIBERNATE_CONFIGS_XML_FILE);
-
-         if(false == xmlFile.exists())
-         {
-            return;
-         }
-
-         reader.load(xmlFile);
-
-
-         HashMap cfgByName = new HashMap();
-         for (Object o : reader)
-         {
-            HibernateConfiguration cfg = (HibernateConfiguration) o;
-
-            cfgByName.put(cfg.getName(), cfg);
-            _panel.cboConfigurations.addItem(cfg);
-         }
-
-         _panel.cboConfigurations.setSelectedItem(cfgByName.get(Preferences.userRoot().get(PREF_KEY_LAST_SELECTED_CONFIG, null)));
-
-
          _hibnerateConnector = new HibnerateConnector(new HibnerateConnectorListener()
          {
             public void connected(HibernateConnection con)
@@ -97,10 +73,39 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController
             }
          });
 
+         loadConfigsFromXml();
+
       }
       catch (Exception e)
       {
          throw new RuntimeException(e);
+      }
+   }
+
+   private void loadConfigsFromXml()
+      throws IOException, XMLException
+   {
+      XMLBeanReader reader = new XMLBeanReader();
+      File pluginUserSettingsFolder = _plugin.getPluginUserSettingsFolder();
+
+
+      File xmlFile = new File(pluginUserSettingsFolder.getPath(), HibernateController.HIBERNATE_CONFIGS_XML_FILE);
+
+      if(xmlFile.exists())
+         {
+            reader.load(xmlFile, _plugin.getClass().getClassLoader());
+
+
+            HashMap cfgByName = new HashMap();
+         for (Object o : reader)
+         {
+            HibernateConfiguration cfg = (HibernateConfiguration) o;
+
+            cfgByName.put(cfg.getName(), cfg);
+            _panel.cboConfigurations.addItem(cfg);
+         }
+
+         _panel.cboConfigurations.setSelectedItem(cfgByName.get(Preferences.userRoot().get(PREF_KEY_LAST_SELECTED_CONFIG, null)));
       }
    }
 
@@ -111,7 +116,6 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController
       {
          if(null != _panel.cboConfigurations.getSelectedItem())
          {
-            //_panel.btnConnected.setIcon(_resource.getIcon(HibernatePluginResources.IKeys.CONNECTING_IMAGE));
             _panel.btnConnected.setEnabled(false);
             _panel.btnConnected.setDisabledSelectedIcon(_resource.getIcon(HibernatePluginResources.IKeys.CONNECTING_IMAGE));
             _panel.btnConnected.repaint();
@@ -121,6 +125,7 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController
          {
             // i18n[HQLTabController.noConfigSelected=Please select a Hibernate Configuration to connect to.\nHibernate Configurations can be defined in the global preferences window.]
             JOptionPane.showMessageDialog(_session.getApplication().getMainFrame(), s_stringMgr.getString("HQLTabController.noConfigSelected"));
+            _panel.btnConnected.setSelected(false);
          }
 
       }
@@ -156,6 +161,7 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController
    {
       _panel.btnConnected.setIcon(_resource.getIcon(HibernatePluginResources.IKeys.DISCONNECTED_IMAGE));
       _panel.btnConnected.setEnabled(true);
+      _panel.btnConnected.setSelected(false);
       _session.getApplication().getMessageHandler().showErrorMessage(t);
       s_log.error(t);
 
@@ -213,5 +219,13 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController
    public void addToToolbar(AbstractAction action)
    {
       _panel.addToToolbar(new JButton(action));
+   }
+
+   public void sessionEnding()
+   {
+      if(null != _con)
+      {
+         _con.close();         
+      }
    }
 }

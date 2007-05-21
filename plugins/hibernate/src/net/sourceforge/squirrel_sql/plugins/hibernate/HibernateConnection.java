@@ -1,16 +1,22 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate;
 
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 public class HibernateConnection
 {
+   private static ILogger s_log = LoggerController.createLogger(HibernateConnection.class);
+
+
    private Object _sessionFactoryImpl;
    private URLClassLoader _cl;
    private SessionFactoryImplIF _sessionFactoryImplIF;
@@ -77,6 +83,17 @@ public class HibernateConnection
 
    public void close()
    {
-      _sessionFactoryImplIF.close();
+      try
+      {
+         _sessionFactoryImplIF.close();
+      }
+      catch (Throwable t)
+      {
+         s_log.error(t);
+      }
+      _sessionFactoryImplIF = null;
+      _cl = null;
+      System.gc();
+
    }
 }
