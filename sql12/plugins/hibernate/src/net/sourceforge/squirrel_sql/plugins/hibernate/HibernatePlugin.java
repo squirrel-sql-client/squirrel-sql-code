@@ -80,7 +80,7 @@ public class HibernatePlugin extends DefaultSessionPlugin
    {
       try
       {
-         _hqlTabControllerBySessionID.get(session.getIdentifier()).sessionEnding();
+         _hqlTabControllerBySessionID.remove(session.getIdentifier()).sessionEnding();
       }
       catch (Throwable t)
       {
