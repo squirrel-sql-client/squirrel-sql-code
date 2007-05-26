@@ -238,9 +238,10 @@ public class MockSession implements ISession {
     	System.err.println("MockSession.selectMainTab: stub not yet implemented");
     }
 
-    public void addMainTab(IMainPanelTab tab) {
+    public int addMainTab(IMainPanelTab tab) {
         // TODO Auto-generated method stub
     	System.err.println("MockSession.addMainTab: stub not yet implemented");
+        return 0;
     }
 
     public void addToStatusBar(JComponent comp) {
