@@ -103,12 +103,31 @@ public class StringManager
 		}
 	}
 
-
+    /**
+     * Retrieve the localized string for the passed key and format it with the
+     * passed arguments.
+     *
+     * @param   key     Key to retrieve string for.
+     * @param   args    Any string arguments that should be used as values to 
+     *                  parameters found in the localized string.
+     *                   
+     * @return  Localized string or error message.
+     *
+     * @throws  IllegalArgumentException
+     *          Thrown if <TT>null</TT> <TT>key</TT> passed.
+     */    
+    public String getString(String key, String[] args) 
+    {
+        return getString(key, (Object[])args);
+    }
+    
 	/**
 	 * Retrieve the localized string for the passed key and format it with the
 	 * passed arguments.
 	 *
 	 * @param	key		Key to retrieve string for.
+     * @param   args    Any string arguments that should be used as values to 
+     *                  parameters found in the localized string. 
 	 *
 	 * @return	Localized string or error message.
 	 *
