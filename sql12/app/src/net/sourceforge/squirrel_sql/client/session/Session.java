@@ -119,7 +119,8 @@ class Session implements ISession
     * keyed by <TT>IPlugin.getInternalName()</TT>. Each <TT>Map</TT>
     * contains the objects saved for the plugin.
     */
-   private final Map _pluginObjects = new HashMap();
+   private final Map<String, Map<String, Object>> _pluginObjects = 
+       new HashMap<String, Map<String, Object>>();
 
    private IMessageHandler _msgHandler = NullMessageHandler.getInstance();
 
@@ -129,13 +130,16 @@ class Session implements ISession
    /** Set to <TT>true</TT> once session closed. */
    private boolean _closed;
 
-   private List _statusBarToBeAdded = new ArrayList();
+   private List<JComponent> _statusBarToBeAdded = 
+       new ArrayList<JComponent>();
 
    private SQLConnectionListener _connLis = null;
 
    private BaseSessionInternalFrame _activeActiveSessionWindow;
    private SessionInternalFrame _sessionInternalFrame;
-   private Hashtable _parserEventsProcessorsByEntryPanelIdentifier = new Hashtable();
+   private Hashtable<IIdentifier, ParserEventsProcessor> 
+       _parserEventsProcessorsByEntryPanelIdentifier = 
+       new Hashtable<IIdentifier, ParserEventsProcessor>();
 
 
    /** flag to track whether or not the table data has been loaded in the object tree */
@@ -247,7 +251,7 @@ class Session implements ISession
 
 
          ParserEventsProcessor[] procs =
-            (ParserEventsProcessor[]) _parserEventsProcessorsByEntryPanelIdentifier.values().toArray(new ParserEventsProcessor[0]);
+            _parserEventsProcessorsByEntryPanelIdentifier.values().toArray(new ParserEventsProcessor[0]);
 
 
          for (int i = 0; i < procs.length; i++)
@@ -397,10 +401,10 @@ class Session implements ISession
       {
          throw new IllegalArgumentException("Null key passed");
       }
-      Map map = (Map) _pluginObjects.get(plugin.getInternalName());
+      Map<String, Object> map = _pluginObjects.get(plugin.getInternalName());
       if (map == null)
       {
-         map = new HashMap();
+         map = new HashMap<String, Object>();
          _pluginObjects.put(plugin.getInternalName(), map);
       }
       return map.get(key);
@@ -433,10 +437,10 @@ class Session implements ISession
       {
          throw new IllegalArgumentException("Null key passed");
       }
-      Map map = (Map) _pluginObjects.get(plugin.getInternalName());
+      Map<String, Object> map = _pluginObjects.get(plugin.getInternalName());
       if (map == null)
       {
-         map = new HashMap();
+         map = new HashMap<String, Object>();
          _pluginObjects.put(plugin.getInternalName(), map);
       }
       return map.put(key, value);
@@ -452,7 +456,7 @@ class Session implements ISession
       {
          throw new IllegalArgumentException("Null key passed");
       }
-      Map map = (Map) _pluginObjects.get(plugin.getInternalName());
+      Map<String, Object> map = _pluginObjects.get(plugin.getInternalName());
       if (map != null)
       {
          map.remove(key);
@@ -543,10 +547,10 @@ class Session implements ISession
       _sessionSheet = child;
       if (_sessionSheet != null)
       {
-         final ListIterator it = _statusBarToBeAdded.listIterator();
+         final ListIterator<JComponent> it = _statusBarToBeAdded.listIterator();
          while (it.hasNext())
          {
-            addToStatusBar((JComponent)it.next());
+            addToStatusBar(it.next());
             it.remove();
          }
       }
@@ -560,10 +564,10 @@ class Session implements ISession
       _activeActiveSessionWindow = sif;
 
       _sessionSheet = sif.getSessionPanel();
-      final ListIterator it = _statusBarToBeAdded.listIterator();
+      final ListIterator<JComponent> it = _statusBarToBeAdded.listIterator();
       while (it.hasNext())
       {
-         addToStatusBar((JComponent)it.next());
+         addToStatusBar(it.next());
          it.remove();
       }
    }
@@ -596,12 +600,14 @@ class Session implements ISession
     *
     * @param	tab	 The tab to be added.
     *
+    * @return the index of the new tab that was added.
+    *
     * @throws	IllegalArgumentException
     *			Thrown if a <TT>null</TT> <TT>IMainPanelTab</TT> passed.
     */
-   public void addMainTab(IMainPanelTab tab)
+   public int addMainTab(IMainPanelTab tab)
    {
-      _sessionSheet.addMainTab(tab);
+      return _sessionSheet.addMainTab(tab);
    }
 
    /**
@@ -712,7 +718,7 @@ class Session implements ISession
     */
    public IParserEventsProcessor getParserEventsProcessor(IIdentifier entryPanelIdentifier)
    {
-      ParserEventsProcessor pep = (ParserEventsProcessor) _parserEventsProcessorsByEntryPanelIdentifier.get(entryPanelIdentifier);
+      ParserEventsProcessor pep = _parserEventsProcessorsByEntryPanelIdentifier.get(entryPanelIdentifier);
 
       if(null == pep)
       {

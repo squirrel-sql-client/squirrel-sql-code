@@ -169,11 +169,13 @@ public interface ISession extends IHasIdentifier
     * Add a tab to the main tabbed panel.
     *
     * @param	tab	 The tab to be added.
+    * 
+    * @return the index of the new tab that was added.
     *
     * @throws	IllegalArgumentException
     *			Thrown if a <TT>null</TT> <TT>IMainPanelTab</TT> passed.
     */
-   void addMainTab(IMainPanelTab tab);
+   int addMainTab(IMainPanelTab tab);
 
    /**
     * Add component to the session sheets status bar.
