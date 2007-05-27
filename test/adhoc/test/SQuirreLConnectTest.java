@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.test;
+package test;
 
 import java.sql.Connection;
 import java.sql.Driver;

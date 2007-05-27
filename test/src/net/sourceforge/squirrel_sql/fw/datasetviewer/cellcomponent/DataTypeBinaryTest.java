@@ -26,7 +26,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
  * 
  * @author manningr
  */
-public class DataTypeBinaryTest extends AbstractDataTypeTest {
+public class DataTypeBinaryTest extends AbstractDataType {
 
 	public void setUp() throws Exception {
 		super.setUp();

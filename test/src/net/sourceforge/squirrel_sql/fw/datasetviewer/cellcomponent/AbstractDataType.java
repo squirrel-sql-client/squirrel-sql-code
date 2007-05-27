@@ -24,8 +24,7 @@ import java.awt.event.KeyListener;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import junit.framework.TestCase;
-import net.sourceforge.squirrel_sql.client.ApplicationManager;
+import net.sourceforge.squirrel_sql.BaseSQuirreLTestCase;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 
 /**
@@ -33,21 +32,16 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
  * 
  * @author manningr
  */
-public abstract class AbstractDataTypeTest extends TestCase {
+public abstract class AbstractDataType extends BaseSQuirreLTestCase {
 
 	protected IDataTypeComponent iut = null;
 		
 	public abstract void testTextComponents();
 
-	public AbstractDataTypeTest() {
+	public AbstractDataType() {
 		super();
 	}
 
-	public void setUp() throws Exception {
-		super.setUp();
-		ApplicationManager.initApplication();
-	}
-	
 	protected ColumnDisplayDefinition getColDef() {
 		return new ColumnDisplayDefinition(10, "aLabel");
 	}
@@ -66,13 +60,8 @@ public abstract class AbstractDataTypeTest extends TestCase {
 		if (listeners.length > 0) {
 			KeyListener listener = listeners[0];
 			KeyEvent e = new KeyEvent(c, -1, 1111111111l, -1, -1, (char)KeyEvent.VK_ENTER);
-			try {
-				// Test for bug 1541154 (ArrayIndexOutOfBoundsException in DataTypeDouble)				
-				listener.keyTyped(e);
-			} catch (RuntimeException ex) {
-				ex.printStackTrace();
-				fail("Unexpected exception: "+ex.getMessage());
-			}		
+			// Test for bug 1541154 (ArrayIndexOutOfBoundsException in DataTypeDouble)				
+			listener.keyTyped(e);
 		}
 	}
 

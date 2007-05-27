@@ -4,7 +4,7 @@ import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 
-public class SplashScreenTest {
+public class SplashScreenTestUI {
 
     /**
      * @param args
