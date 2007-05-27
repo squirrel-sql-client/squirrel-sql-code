@@ -783,8 +783,14 @@
 
 		<mkdir dir="${test_dir}/results"/>
 		
-		<!-- Run AllTests using the test code -->
-		<junit printsummary="true" fork="yes" dir="${test_dir}">
+		<!-- Runs all tests using the test code just built.  This will find any
+		     class that ends with "Test" and expect that it can run it as a 
+		     JUnit test.  If that is not the case for any class, pick another 
+		     name that does not end with "Test".  This eliminates the need for
+		     manually configured AllTest class TestSuites, and removes the 
+		     temptation to not configure certain tests because they fail.  If a 
+		     test fails, fix it; if it can't be fixed, then remove it.  -->
+		<junit printsummary="true" fork="yes" dir="${basedir}">
 			<classpath>
 				<fileset dir="fw/lib">
 					<include name="**/*.*"/>
@@ -804,11 +810,12 @@
 				<pathelement path="${test_dir}"/>			
 			</classpath>
 			<formatter type="plain"/>
-			<formatter type="xml"/>
-			
-			<test todir="${test_dir}/results" 
-				  name="net.sourceforge.squirrel_sql.AllTests"/>
-						
+			<formatter type="xml"/>			
+			<batchtest fork="yes">
+				<fileset dir="test/src">
+					<include name="**/*Test.java" />
+				</fileset>
+			</batchtest>
 	 	</junit>
     </target>
 	
