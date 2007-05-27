@@ -43,7 +43,7 @@
                 optimize="${optimize}"
                 includeJavaRuntime="yes"
         		source="${targetVM}"
-	        	target="{$targetVM}">
+	        	target="${targetVM}">
         	
             <classpath>
 				<fileset dir="lib">
