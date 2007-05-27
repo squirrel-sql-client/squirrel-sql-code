@@ -24,7 +24,7 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * 
  * @author manningr
  */
-public class DataTypeFloatTest extends AbstractDataTypeTest {
+public class DataTypeFloatTest extends AbstractDataType {
 
 	public void setUp() throws Exception {
 		super.setUp();
