@@ -38,7 +38,7 @@ public class TableInfo extends DatabaseObjectInfo implements ITableInfo
     
 	public TableInfo(String catalog, String schema, String simpleName,
 					 String tableType, String remarks,
-					 SQLDatabaseMetaData md)
+					 ISQLDatabaseMetaData md)
 	{
 		super(catalog, schema, simpleName, getTableType(tableType), md);
 		_remarks = remarks;
