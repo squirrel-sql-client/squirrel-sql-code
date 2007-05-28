@@ -32,7 +32,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
@@ -111,15 +111,18 @@ public class CreateTableScriptCommand implements ICommand
        });
 	}
 
-
+   public String createTableScriptString(IDatabaseObjectInfo dbObj) {
+       return createTableScriptString(new IDatabaseObjectInfo[] { dbObj });
+   }
+   
    public String createTableScriptString(IDatabaseObjectInfo[] dbObjs)
    {
       StringBuffer sbScript = new StringBuffer(1000);
       StringBuffer sbConstraints = new StringBuffer(1000);
-      ISQLConnection conn = _session.getSQLConnection();
+      ISQLDatabaseMetaData md = _session.getMetaData();
       try
       {
-        boolean isJdbcOdbc = conn.getSQLMetaData().getURL().startsWith("jdbc:odbc:");
+        boolean isJdbcOdbc = md.getURL().startsWith("jdbc:odbc:");
         if (isJdbcOdbc)
         {
            _session.getMessageHandler().showErrorMessage("JDBC-ODBC Bridge doesn't provide necessary meta data. Script will be incomplete");
@@ -154,8 +157,7 @@ public class CreateTableScriptCommand implements ICommand
            if (false == isJdbcOdbc)
            {
               try {
-                  PrimaryKeyInfo[] infos = 
-                      conn.getSQLMetaData().getPrimaryKey(ti);
+                  PrimaryKeyInfo[] infos = md.getPrimaryKey(ti);
                   for (int i = 0; i < infos.length; i++) {
                       int iKeySeq = infos[i].getKeySequence() - 1;
                       if (pks.size() <= iKeySeq)
@@ -173,7 +175,7 @@ public class CreateTableScriptCommand implements ICommand
            }
 
            ScriptUtil su = new ScriptUtil();
-           TableColumnInfo[] infos = conn.getSQLMetaData().getColumnInfo(ti);
+           TableColumnInfo[] infos = md.getColumnInfo(ti);
            for (int i = 0; i < infos.length; i++) {
                int decimalDigits = 0;
                if (false == isJdbcOdbc)

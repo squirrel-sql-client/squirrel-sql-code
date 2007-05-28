@@ -33,6 +33,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.oracle.util.DBUtil;
 
 /**
  * This class is only responsible for formatting source statements for Oracle
@@ -48,6 +49,7 @@ public abstract class OracleSourceTab extends BaseSourceTab {
     public static final int VIEW_TYPE = 0;
     public static final int STORED_PROC_TYPE = 1;
     public static final int TRIGGER_TYPE = 2;
+    public static final int TABLE_TYPE = 3;
     
     protected int sourceType = VIEW_TYPE;
 
@@ -73,6 +75,8 @@ public abstract class OracleSourceTab extends BaseSourceTab {
 
     private final class OracleSourcePanel extends BaseSourcePanel
     {
+        private static final long serialVersionUID = 7855991042669454322L;
+
         private JTextArea _ta;
 
         OracleSourcePanel()
@@ -95,6 +99,12 @@ public abstract class OracleSourceTab extends BaseSourceTab {
                     String line2 = rs.getString(2);
                     buf.append(line1.trim() + " ");
                     buf.append(line2.trim() + " ");
+                }
+                if (buf.length() == 0 && sourceType == TABLE_TYPE) {
+                    // Handle table source
+                    String tableScript = 
+                        DBUtil.getTableSource(session, getDatabaseObjectInfo());
+                    buf.append(tableScript);
                 }
                 if (s_log.isDebugEnabled()) {
                     s_log.debug("View source before formatting: "+

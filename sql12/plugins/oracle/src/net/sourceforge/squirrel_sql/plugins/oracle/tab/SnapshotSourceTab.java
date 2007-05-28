@@ -24,6 +24,7 @@ public class SnapshotSourceTab extends OracleSourceTab
 	{
 		// i18n[oracle.displaySnapshotDetails=Display materialized view details]
 		super(s_stringMgr.getString("oracle.displaySnapshotDetails"));
+        super.sourceType = OracleSourceTab.TABLE_TYPE;
 	}
 
 	protected PreparedStatement createStatement() throws SQLException
