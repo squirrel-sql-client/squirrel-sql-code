@@ -19,6 +19,9 @@ calculating foreign keys.  Also, now FKs in child tables are dropped before any
 parent tables are dropped when cascade constraints is selected.
 
 Oracle Plugin: 
+ - Show the source for Oracle tables, as well as materialized views.  This 
+   leverages work done in SQLScripts plugin, and therefore requires it to be 
+   installed to render table source.
  - Added additional query tokenization pass to find begin...end;/ type 
    anonymous procedures.
  - Source tab for materialized views
