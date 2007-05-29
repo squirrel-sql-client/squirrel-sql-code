@@ -18,16 +18,16 @@ public class SQLPanelController
       StringManagerFactory.getStringManager(SQLPanelController.class);
 
 
-   private JTextArea _txtHQL;
    private IHQLTabController _hqlTabController;
    private ISession _sess;
    private HibernatePluginResources _resource;
    private HibernateConnection _con;
    private AbstractAction _convertToSQL;
+   private IHqlEntryPanelManager _hqlEntryPanelManager;
 
-   public SQLPanelController(JTextArea txtHQL, IHQLTabController hqlTabController, ISession sess, HibernatePluginResources resource)
+   public SQLPanelController(IHqlEntryPanelManager hqlEntryPanelManager, IHQLTabController hqlTabController, ISession sess, HibernatePluginResources resource)
    {
-      _txtHQL = txtHQL;
+      _hqlEntryPanelManager = hqlEntryPanelManager;
       _hqlTabController = hqlTabController;
       _sess = sess;
       _resource = resource;
@@ -51,7 +51,7 @@ public class SQLPanelController
 
    private void onConvertToHQL()
    {
-      String hql = _txtHQL.getText();
+      String hql = _hqlEntryPanelManager.getEntryPanel().getSQLToBeExecuted();
 
       if(null != hql && 0 != hql.trim().length())
       {

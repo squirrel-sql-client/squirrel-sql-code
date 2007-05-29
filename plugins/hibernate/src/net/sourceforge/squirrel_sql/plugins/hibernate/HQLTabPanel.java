@@ -6,7 +6,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.AffineTransform;
 import java.util.prefs.Preferences;
 
 public class HQLTabPanel extends JPanel
@@ -17,7 +16,6 @@ public class HQLTabPanel extends JPanel
    private static final String PERF_KEY_HQL_TAB_DIVIDER_LOCATION = "Squirrel.hibernateplugin.hqlTabDivLoc";
 
 
-   JTextArea txtHQL;
    JTextArea txtSQL;
    JSplitPane split;
    JComboBox cboConfigurations;
@@ -26,7 +24,7 @@ public class HQLTabPanel extends JPanel
    private int _curXOfToolbar;
 
 
-   public HQLTabPanel()
+   public HQLTabPanel(JComponent textComp)
    {
       setLayout(new GridBagLayout());
 
@@ -36,16 +34,6 @@ public class HQLTabPanel extends JPanel
       _toolbar = createToolbar();
       add(_toolbar, gbc);
 
-      txtHQL = new JTextArea()
-      {
-         protected void paintComponent(Graphics g)
-         {
-            super.paintComponent(g);
-            super.paintBorder(g);
-            drawTextAreaName(g, "HQL", txtHQL);
-            super.paintChildren(g);
-         }
-      };
       txtSQL = new JTextArea()
       {
          protected void paintComponent(Graphics g)
@@ -58,7 +46,7 @@ public class HQLTabPanel extends JPanel
       };
 
 
-      split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new JScrollPane(txtHQL), new JScrollPane(txtSQL));
+      split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, textComp, new JScrollPane(txtSQL));
       gbc = new GridBagConstraints(0,1,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0 );
       add(split, gbc);
 
@@ -72,6 +60,7 @@ public class HQLTabPanel extends JPanel
       });
 
    }
+
 
    private void drawTextAreaName(Graphics g, String name, JTextArea txtArea)
    {

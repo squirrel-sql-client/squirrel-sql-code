@@ -23,7 +23,6 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPugin;
 
@@ -33,15 +32,13 @@ import javax.swing.event.UndoableEditListener;
 import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
 import javax.swing.text.Element;
-import javax.swing.text.BadLocationException;
 import javax.swing.undo.UndoManager;
 
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.ActionEvent;
-import java.util.prefs.Preferences;
+import java.util.Properties;
+import java.util.HashMap;
 
 import org.netbeans.editor.ext.ExtKit;
 
@@ -61,10 +58,13 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
    private ISession _session;
    private SyntaxPugin _plugin;
 
-   NetbeansSQLEntryPanel(ISession session, SyntaxPreferences prefs, SyntaxFactory syntaxFactory, SyntaxPugin plugin)
+   NetbeansSQLEntryPanel(ISession session, SyntaxPreferences prefs, SyntaxFactory syntaxFactory, SyntaxPugin plugin, HashMap props)
 	{
 		super(session.getApplication());
-		_plugin = plugin;
+
+      NetbeansPropertiesWrapper wrp = new NetbeansPropertiesWrapper(props);
+
+      _plugin = plugin;
 
       if (session == null)
 		{
@@ -77,7 +77,7 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 
 		_app = session.getApplication();
 
-		_textArea = new NetbeansSQLEditorPane(session, prefs, syntaxFactory, _plugin, getIdentifier());
+		_textArea = new NetbeansSQLEditorPane(session, prefs, syntaxFactory, _plugin, getIdentifier(), wrp);
 
 	}
 

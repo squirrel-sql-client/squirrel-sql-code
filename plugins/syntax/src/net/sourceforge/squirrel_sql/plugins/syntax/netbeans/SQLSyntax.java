@@ -61,6 +61,7 @@ public class SQLSyntax extends Syntax
 
    private ISession _sess;
    private NetbeansSQLEditorPane _editorPane;
+   private NetbeansPropertiesWrapper _props;
    private Hashtable _knownTables = new Hashtable();
    private Vector _currentErrorInfos = new Vector();
    private boolean _parsingInitialized;
@@ -68,19 +69,20 @@ public class SQLSyntax extends Syntax
 
    private CaseInsensitiveString _caseInsensitiveStringBuffer = new CaseInsensitiveString();
 
-   public SQLSyntax(ISession sess, NetbeansSQLEditorPane editorPane)
+   public SQLSyntax(ISession sess, NetbeansSQLEditorPane editorPane, NetbeansPropertiesWrapper props)
    {
       _sess = sess;
       _editorPane = editorPane;
+      _props = props;
       tokenContextPath = SQLTokenContext.contextPath;
    }
 
    private void initParsing()
    {
-      if(false == _parsingInitialized && null != _sess.getParserEventsProcessor(_editorPane.getSqlEntryPanelIdentifier()))
+      if(false == _parsingInitialized && null != _props.getParserEventsProcessor(_editorPane.getSqlEntryPanelIdentifier(), _sess))
       {
          _parsingInitialized = true;
-         _sess.getParserEventsProcessor(_editorPane.getSqlEntryPanelIdentifier()).addParserEventsListener(new ParserEventsAdapter()
+         _props.getParserEventsProcessor(_editorPane.getSqlEntryPanelIdentifier(), _sess).addParserEventsListener(new ParserEventsAdapter()
          {
             public void errorsFound(ErrorInfo[] errorInfos)
             {

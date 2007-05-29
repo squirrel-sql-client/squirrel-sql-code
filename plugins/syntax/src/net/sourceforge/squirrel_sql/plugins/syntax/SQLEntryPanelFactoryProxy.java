@@ -9,6 +9,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
+import java.util.Properties;
+import java.util.HashMap;
 
 
 public class SQLEntryPanelFactoryProxy implements ISQLEntryPanelFactory
@@ -39,7 +41,7 @@ public class SQLEntryPanelFactoryProxy implements ISQLEntryPanelFactory
       _netbeansFactory.sessionEnding(session);
    }
 
-   public ISQLEntryPanel createSQLEntryPanel(final ISession session)
+   public ISQLEntryPanel createSQLEntryPanel(final ISession session, HashMap props)
    {
       if (session == null)
       {
@@ -55,7 +57,7 @@ public class SQLEntryPanelFactoryProxy implements ISQLEntryPanelFactory
 
       if (prefs.getUseNetbeansTextControl())
       {
-         newPnl = _netbeansFactory.createSQLEntryPanel(session);
+         newPnl = _netbeansFactory.createSQLEntryPanel(session, props);
       }
       else if (prefs.getUseOsterTextControl())
       {
@@ -73,7 +75,7 @@ public class SQLEntryPanelFactoryProxy implements ISQLEntryPanelFactory
       }
       else
       {
-         newPnl = _originalFactory.createSQLEntryPanel(session);
+         newPnl = _originalFactory.createSQLEntryPanel(session, props);
       }
 
       if(null == pnl || false == newPnl.getClass().equals(pnl.getClass()))
