@@ -40,8 +40,9 @@ public class NetbeansSQLEditorPane extends JEditorPane
 
    private IIdentifier _sqlEntryPanelIdentifier;
 	private SessionAdapter _sessionListener;
+   private NetbeansPropertiesWrapper _propertiesWrapper;
 
-	public NetbeansSQLEditorPane(ISession session, SyntaxPreferences prefs, SyntaxFactory syntaxFactory, SyntaxPugin plugin, IIdentifier sqlEntryPanelIdentifier)
+   public NetbeansSQLEditorPane(ISession session, SyntaxPreferences prefs, SyntaxFactory syntaxFactory, SyntaxPugin plugin, IIdentifier sqlEntryPanelIdentifier, NetbeansPropertiesWrapper propertiesWrapper)
 	{
 		_session = session;
 
@@ -49,6 +50,7 @@ public class NetbeansSQLEditorPane extends JEditorPane
 		_syntaxFactory = syntaxFactory;
 		_plugin = plugin;
 		_sqlEntryPanelIdentifier = sqlEntryPanelIdentifier;
+      _propertiesWrapper = propertiesWrapper;
 
 		_syntaxFactory.putEditorPane(_session, this);
 
@@ -78,7 +80,7 @@ public class NetbeansSQLEditorPane extends JEditorPane
 		modifyKeyStrokes();
 
 		Document doc = getDocument();
-		_syntaxFactory.putDocument(_session, doc);
+      _syntaxFactory.putDocument(_session, _propertiesWrapper, doc);
 
 		_sessionListener = new SessionAdapter()
 		{
@@ -189,7 +191,7 @@ public class NetbeansSQLEditorPane extends JEditorPane
       modifyKeyStrokes();
 
       Document doc = getDocument();
-      _syntaxFactory.putDocument(_session, doc);
+      _syntaxFactory.putDocument(_session, _propertiesWrapper, doc);
 
    }
 
@@ -214,10 +216,10 @@ public class NetbeansSQLEditorPane extends JEditorPane
 
    private void initParsing()
    {
-      if(false == _parsingInitialized && null != _session.getParserEventsProcessor(_sqlEntryPanelIdentifier))
+      if(false == _parsingInitialized && null != _propertiesWrapper.getParserEventsProcessor(_sqlEntryPanelIdentifier, _session))
       {
          _parsingInitialized = true;
-         _session.getParserEventsProcessor(_sqlEntryPanelIdentifier).addParserEventsListener(new ParserEventsAdapter()
+         _propertiesWrapper.getParserEventsProcessor(_sqlEntryPanelIdentifier, _session).addParserEventsListener(new ParserEventsAdapter()
          {
             public void errorsFound(ErrorInfo[] errorInfos)
             {

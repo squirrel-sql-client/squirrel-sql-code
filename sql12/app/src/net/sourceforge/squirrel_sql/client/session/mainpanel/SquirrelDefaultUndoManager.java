@@ -30,7 +30,7 @@ public class SquirrelDefaultUndoManager extends UndoManager
 	/**
 	 * Default ctor.
 	 */
-	SquirrelDefaultUndoManager()
+   public SquirrelDefaultUndoManager()
 	{
 		super();
 		// Prepare to have a lot of DocumentEvent.EventType.CHANGE

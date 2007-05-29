@@ -1,4 +1,6 @@
 package net.sourceforge.squirrel_sql.client.session;
+
+import java.util.HashMap;
 /*
  * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -17,9 +19,8 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import net.sourceforge.squirrel_sql.client.session.ISession;
 
 public interface ISQLEntryPanelFactory
 {
-	ISQLEntryPanel createSQLEntryPanel(ISession session);
+	ISQLEntryPanel createSQLEntryPanel(ISession session, HashMap props);
 }

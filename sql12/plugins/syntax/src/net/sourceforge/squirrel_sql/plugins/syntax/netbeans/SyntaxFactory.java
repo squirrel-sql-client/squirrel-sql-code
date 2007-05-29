@@ -2,15 +2,16 @@ package net.sourceforge.squirrel_sql.plugins.syntax.netbeans;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import org.netbeans.editor.LocaleSupport;
 import org.netbeans.editor.StatusBar;
 import org.netbeans.editor.Syntax;
 
 import javax.swing.text.Document;
-import java.util.Hashtable;
-import java.util.Vector;
-import java.util.ResourceBundle;
 import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.ResourceBundle;
+import java.util.Vector;
 
 
 /**
@@ -27,11 +28,11 @@ import java.util.ArrayList;
  */
 public class SyntaxFactory
 {
-	private Hashtable _sessionByDocument = new Hashtable();
-	private Hashtable _editorPaneBySessionID = new Hashtable();
-	private Hashtable _syntaxesBySessionID = new Hashtable();
-	private Hashtable _sqlTokenListenersBySession = new Hashtable();
-	private Hashtable _documentsBySessionID = new Hashtable();
+	private Hashtable<Document, DocumentAssignedObjects> _documentAssignedObjectsByDocument = new Hashtable<Document, DocumentAssignedObjects>();
+	private Hashtable<IIdentifier, ArrayList<NetbeansSQLEditorPane>> _editorPanesBySessionID = new Hashtable<IIdentifier, ArrayList<NetbeansSQLEditorPane>>();
+	private Hashtable<IIdentifier, Vector<SQLSyntax>> _syntaxesBySessionID = new Hashtable<IIdentifier, Vector<SQLSyntax>>();
+	private Hashtable<IIdentifier ,Vector<SQLTokenListener>> _sqlTokenListenersBySession = new Hashtable<IIdentifier ,Vector<SQLTokenListener>>();
+	private Hashtable<IIdentifier, ArrayList<Document>> _documentsBySessionID = new Hashtable<IIdentifier, ArrayList<Document>>();
 
 
 	public SyntaxFactory()
@@ -62,9 +63,9 @@ public class SyntaxFactory
 
 	public Syntax getSyntax(Document doc)
 	{
-		ISession sess = (ISession) _sessionByDocument.get(doc);
+      DocumentAssignedObjects docAssigendObjs = _documentAssignedObjectsByDocument.get(doc);
 
-		if(null == sess)
+      if(null == docAssigendObjs)
 		{
 			// Once and again the Netbeans editor calls createSyntax() after
 			// sessionEnding() was called. Then sess is null and the code below
@@ -73,27 +74,44 @@ public class SyntaxFactory
 		}
 
 
-		NetbeansSQLEditorPane editor = (NetbeansSQLEditorPane) _editorPaneBySessionID.get(sess.getIdentifier());
+		ArrayList<NetbeansSQLEditorPane> editors = _editorPanesBySessionID.get(docAssigendObjs.getSession().getIdentifier());
 
-		SQLSyntax syntax = new SQLSyntax(sess, editor);
 
-		Vector tokenListeners = (Vector) _sqlTokenListenersBySession.get(sess.getIdentifier());
+      NetbeansSQLEditorPane editorMatchingDocument = null;
+      for (NetbeansSQLEditorPane editor : editors)
+      {
+         if(doc.equals(editor.getDocument()))
+         {
+            editorMatchingDocument = editor;
+            break;
+         }
+      }
+
+      if(null == editorMatchingDocument)
+      {
+         throw new IllegalStateException("No Editor matching document found");
+      }
+
+
+      SQLSyntax syntax = new SQLSyntax(docAssigendObjs.getSession(), editorMatchingDocument, docAssigendObjs.getProperties());
+
+		Vector<SQLTokenListener> tokenListeners = _sqlTokenListenersBySession.get(docAssigendObjs.getSession().getIdentifier());
 
 		if(null != tokenListeners)
 		{
 			for (int i = 0; i < tokenListeners.size(); i++)
 			{
-				SQLTokenListener tl = (SQLTokenListener) tokenListeners.elementAt(i);
+				SQLTokenListener tl = tokenListeners.elementAt(i);
 				syntax.addSQLTokenListener(tl);
 			}
 		}
 
 
-		Vector syntaxes = (Vector) _syntaxesBySessionID.get(sess.getIdentifier());
+		Vector<SQLSyntax> syntaxes = _syntaxesBySessionID.get(docAssigendObjs.getSession().getIdentifier());
 		if(null == syntaxes)
 		{
-			syntaxes = new Vector();
-			_syntaxesBySessionID.put(sess.getIdentifier(), syntaxes);
+			syntaxes = new Vector<SQLSyntax>();
+			_syntaxesBySessionID.put(docAssigendObjs.getSession().getIdentifier(), syntaxes);
 		}
 		syntaxes.add(syntax);
 
@@ -103,22 +121,22 @@ public class SyntaxFactory
 
 	public void addSQLTokenListeners(ISession sess, SQLTokenListener tl)
 	{
-		Vector tokenListeners = (Vector) _sqlTokenListenersBySession.get(sess.getIdentifier());
+		Vector<SQLTokenListener> tokenListeners = _sqlTokenListenersBySession.get(sess.getIdentifier());
 
 		if(null == tokenListeners)
 		{
-			tokenListeners = new Vector();
+			tokenListeners = new Vector<SQLTokenListener>();
 			_sqlTokenListenersBySession.put(sess.getIdentifier(), tokenListeners);
 		}
 		tokenListeners.add(tl);
 
-		Vector syntaxes = (Vector) _syntaxesBySessionID.get(sess.getIdentifier());
+		Vector<SQLSyntax> syntaxes = _syntaxesBySessionID.get(sess.getIdentifier());
 
 		if(null != syntaxes)
 		{
 			for (int i = 0; i < syntaxes.size(); i++)
 			{
-				SQLSyntax syntax = (SQLSyntax) syntaxes.elementAt(i);
+				SQLSyntax syntax = syntaxes.elementAt(i);
 				syntax.addSQLTokenListener(tl);
 			}
 		}
@@ -126,7 +144,7 @@ public class SyntaxFactory
 
 	public void removeSQLTokenListeners(ISession sess, SQLTokenListener tl)
 	{
-		Vector tokenListeners = (Vector) _sqlTokenListenersBySession.get(sess.getIdentifier());
+		Vector<SQLTokenListener> tokenListeners = _sqlTokenListenersBySession.get(sess.getIdentifier());
 
 		if(null == tokenListeners)
 		{
@@ -135,29 +153,39 @@ public class SyntaxFactory
 
 		tokenListeners.remove(tl);
 
-		Vector syntaxes = (Vector) _syntaxesBySessionID.get(sess.getIdentifier());
+		Vector<SQLSyntax> syntaxes = _syntaxesBySessionID.get(sess.getIdentifier());
 
 		for (int i = 0; i < syntaxes.size(); i++)
 		{
-			SQLSyntax syntax = (SQLSyntax) syntaxes.elementAt(i);
+			SQLSyntax syntax = syntaxes.elementAt(i);
 			syntax.removeSQLTokenListener(tl);
 		}
 	}
 
 	public void putEditorPane(ISession sess, NetbeansSQLEditorPane editor)
 	{
-		_editorPaneBySessionID.put(sess.getIdentifier(), editor);
+      ArrayList<NetbeansSQLEditorPane> buf = _editorPanesBySessionID.get(sess.getIdentifier());
+
+      if(null == buf)
+      {
+         buf = new ArrayList<NetbeansSQLEditorPane>();
+         _editorPanesBySessionID.put(sess.getIdentifier(), buf);
+
+      }
+
+      buf.remove(editor);
+      buf.add(editor);
 	}
 
-	public void putDocument(ISession session, Document document)
+	public void putDocument(ISession session, NetbeansPropertiesWrapper wrp, Document document)
 	{
-		_sessionByDocument.put(document, session);
+		_documentAssignedObjectsByDocument.put(document, new DocumentAssignedObjects(session, wrp));
 
-		ArrayList docs = (ArrayList) _documentsBySessionID.get(session.getIdentifier());
+		ArrayList<Document> docs = _documentsBySessionID.get(session.getIdentifier());
 
 		if(null == docs)
 		{
-			docs = new ArrayList();
+			docs = new ArrayList<Document>();
 			_documentsBySessionID.put(session.getIdentifier(), docs);
 		}
 		docs.add(document);
@@ -165,18 +193,42 @@ public class SyntaxFactory
 
 	public void sessionEnding(ISession sess)
 	{
-		ArrayList docs = (ArrayList) _documentsBySessionID.remove(sess.getIdentifier());
+		ArrayList<Document> docs = _documentsBySessionID.remove(sess.getIdentifier());
 
 		if(null != docs)
 		{
-			for (int i = 0; i < docs.size(); i++)
-			{
-				_sessionByDocument.remove(docs.get(i));
-			}
-		}
+         for (Document doc : docs)
+         {
+            _documentAssignedObjectsByDocument.remove(doc);
+         }
+      }
 
-		_editorPaneBySessionID.remove(sess.getIdentifier());
+		_editorPanesBySessionID.remove(sess.getIdentifier());
 		_syntaxesBySessionID.remove(sess.getIdentifier());
 		_sqlTokenListenersBySession.remove(sess.getIdentifier());
 	}
+
+
+   private static class DocumentAssignedObjects
+   {
+      private ISession _session;
+      private NetbeansPropertiesWrapper _wrp;
+
+      public DocumentAssignedObjects(ISession session, NetbeansPropertiesWrapper wrp)
+      {
+         _session = session;
+         _wrp = wrp;
+      }
+
+
+      public ISession getSession()
+      {
+         return _session;
+      }
+
+      public NetbeansPropertiesWrapper getProperties()
+      {
+         return _wrp;
+      }
+   }
 }

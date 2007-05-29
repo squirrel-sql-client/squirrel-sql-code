@@ -18,6 +18,10 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.client.session.ISession;
+
+import java.util.Properties;
+import java.util.HashMap;
+
 /**
  * A factory that creates <TT>DefaultSQLEntrypanel</TT> objects.
  *
@@ -30,10 +34,11 @@ public class DefaultSQLEntryPanelFactory implements ISQLEntryPanelFactory
 	 *
 	 * @param	session	The session that an SQL entry is to be created for.
 	 *
-	 * @throws	IllegalArgumentException
+	 * @param props
+    * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>ISession</TT> passed.
 	 */
-	public ISQLEntryPanel createSQLEntryPanel(ISession session)
+	public ISQLEntryPanel createSQLEntryPanel(ISession session, HashMap props)
 	{
 		if (session == null)
 		{

@@ -30,6 +30,8 @@ import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
+import java.util.HashMap;
 import java.util.prefs.Preferences;
 
 import javax.swing.Action;
@@ -866,7 +868,7 @@ public class SQLPanel extends JPanel
 		_splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		_splitPane.setOneTouchExpandable(true);
 
-		installSQLEntryPanel(app.getSQLEntryPanelFactory().createSQLEntryPanel(_session));
+		installSQLEntryPanel(app.getSQLEntryPanelFactory().createSQLEntryPanel(_session, new HashMap()));
 
       _executerPanleHolder = new JPanel(new GridLayout(1,1));
       _simpleExecuterPanel = new JPanel(new GridLayout(1,1));

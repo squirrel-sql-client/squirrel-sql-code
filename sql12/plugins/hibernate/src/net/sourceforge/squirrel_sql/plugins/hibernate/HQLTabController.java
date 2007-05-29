@@ -37,6 +37,7 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController
    private HibnerateConnector _hibnerateConnector;
    private HibernatePluginResources _resource;
    private SQLPanelController _sqlPanelController;
+   private HqlEntryPanelManager _hqlEntrPanelManager;
 
    public HQLTabController(ISession session, HibernatePlugin plugin, HibernatePluginResources resource)
    {
@@ -45,10 +46,11 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController
       {
          _session = session;
          _plugin = plugin;
-         _panel = new HQLTabPanel();
+         _hqlEntrPanelManager = new HqlEntryPanelManager(_session);
+         _panel = new HQLTabPanel(_hqlEntrPanelManager.getComponent());
          _panel.btnConnected.setIcon(resource.getIcon(HibernatePluginResources.IKeys.DISCONNECTED_IMAGE));
 
-         _sqlPanelController = new SQLPanelController(_panel.txtHQL, this, _session, _resource);
+         _sqlPanelController = new SQLPanelController(_hqlEntrPanelManager, this, _session, _resource);
 
          _hibnerateConnector = new HibnerateConnector(new HibnerateConnectorListener()
          {

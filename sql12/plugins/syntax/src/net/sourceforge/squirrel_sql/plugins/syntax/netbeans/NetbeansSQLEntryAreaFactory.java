@@ -30,6 +30,9 @@ import org.netbeans.modules.editor.NbDialogSupport;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.util.Properties;
+import java.util.HashMap;
+
 /**
  * Factory for creating Netbeans SQL entry area objects.
  *
@@ -58,7 +61,7 @@ public class NetbeansSQLEntryAreaFactory
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory#createSQLEntryPanel()
 	 */
-	public ISQLEntryPanel createSQLEntryPanel(ISession session)
+	public ISQLEntryPanel createSQLEntryPanel(ISession session, HashMap props)
 		throws IllegalArgumentException
 	{
 		if (session == null)
@@ -67,7 +70,7 @@ public class NetbeansSQLEntryAreaFactory
 		}
 
 		SyntaxPreferences prefs = getPreferences(session);
-      return new NetbeansSQLEntryPanel(session, prefs, _syntaxFactory, _plugin);
+      return new NetbeansSQLEntryPanel(session, prefs, _syntaxFactory, _plugin, props);
 	}
 
 	private SyntaxPreferences getPreferences(ISession session)
