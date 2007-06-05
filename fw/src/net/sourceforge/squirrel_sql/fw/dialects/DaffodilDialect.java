@@ -18,6 +18,7 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
+import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import org.hibernate.dialect.GenericDialect;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
@@ -438,6 +440,26 @@ public class DaffodilDialect extends GenericDialect
      */
     public String getDropForeignKeySQL(String fkName, String tableName) {
         return DialectUtils.getDropForeignKeySQL(fkName, tableName);
+    }
+    
+    /**
+     * Returns the SQL command to create the specified table.
+     * 
+     * @param tables the tables to get create statements for
+     * @param md the metadata from the ISession
+     * @param prefs preferences about how the resultant SQL commands should be 
+     *              formed.
+     * @param isJdbcOdbc whether or not the connection is via JDBC-ODBC bridge.
+     *  
+     * @return the SQL that is used to create the specified table
+     */
+    public List<String> getCreateTableSQL(List<ITableInfo> tables, 
+                                          ISQLDatabaseMetaData md,
+                                          CreateScriptPreferences prefs,
+                                          boolean isJdbcOdbc)
+        throws SQLException
+    {
+        return DialectUtils.getCreateTableSQL(tables, md, this, prefs, isJdbcOdbc);
     }
     
 }

@@ -21,6 +21,8 @@ import java.awt.BorderLayout;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.JTextArea;
 
@@ -29,11 +31,13 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.Bas
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab;
 import net.sourceforge.squirrel_sql.fw.codereformat.CodeReformator;
 import net.sourceforge.squirrel_sql.fw.codereformat.CommentSpec;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.dialects.CreateScriptPreferences;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.oracle.util.DBUtil;
 
 /**
  * This class is only responsible for formatting source statements for Oracle
@@ -42,9 +46,6 @@ import net.sourceforge.squirrel_sql.plugins.oracle.util.DBUtil;
  * @author manningr
  */
 public abstract class OracleSourceTab extends BaseSourceTab {
-
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(OracleSourceTab.class);
 
     public static final int VIEW_TYPE = 0;
     public static final int STORED_PROC_TYPE = 1;
@@ -100,21 +101,42 @@ public abstract class OracleSourceTab extends BaseSourceTab {
                     buf.append(line1.trim() + " ");
                     buf.append(line2.trim() + " ");
                 }
+                String source = "";
                 if (buf.length() == 0 && sourceType == TABLE_TYPE) {
+                    ISQLDatabaseMetaData md = session.getMetaData();
+                    // TODO: Need to define a better approach to getting dialects.
+                    // That is, we don't really want to ever prompt the user in this
+                    // case.  It's always Oracle.  Yet, we may have a new OracleDialect
+                    // at some point.
+                    HibernateDialect dialect = DialectFactory.getDialect("Oracle");
+                    
+                    // TODO: How to let the user customize this??
+                    CreateScriptPreferences prefs = new CreateScriptPreferences();
+                    
+                    ITableInfo[] tabs = new ITableInfo[] { (ITableInfo)getDatabaseObjectInfo() };
+                    List<ITableInfo> tables = Arrays.asList(tabs);
                     // Handle table source
-                    String tableScript = 
-                        DBUtil.getTableSource(session, getDatabaseObjectInfo());
-                    buf.append(tableScript);
+                    List<String> sqls = dialect.getCreateTableSQL(tables, md, prefs, false);
+                    String sep = session.getQueryTokenizer().getSQLStatementSeparator();
+                    for (String sql : sqls) {
+                        buf.append(sql);
+                        buf.append(sep);
+                        buf.append("\n");
+                    }
+                    source = buf.toString();
+                } else {
+                    if (s_log.isDebugEnabled()) {
+                        s_log.debug("View source before formatting: "+
+                                    buf.toString());
+                    }
+                    source = formatter.reformat(buf.toString());
                 }
-                if (s_log.isDebugEnabled()) {
-                    s_log.debug("View source before formatting: "+
-                                buf.toString());
-                }
-                _ta.setText(formatter.reformat(buf.toString()));
+                _ta.setText(source);
                 _ta.setCaretPosition(0);
             }
             catch (SQLException ex)
             {
+                s_log.error("Unexpected exception: "+ex.getMessage(), ex);
                 session.getMessageHandler().showErrorMessage(ex);
             }
 

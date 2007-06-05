@@ -19,12 +19,22 @@
 
 package net.sourceforge.squirrel_sql.fw.dialects;
 
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Vector;
 
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IndexInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
+import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -766,5 +776,397 @@ public class DialectUtils {
         tmp.append(fkName);
         return tmp.toString();                    
     }
+    
+    public static List<String> getCreateTableSQL(List<ITableInfo> tables,
+                                                 ISQLDatabaseMetaData md,
+                                                 HibernateDialect dialect,
+                                                 CreateScriptPreferences prefs,
+                                                 boolean isJdbcOdbc)
+        throws SQLException
+    {
+        List<String> sqls = new ArrayList<String>();
+        List<String> allconstraints = new ArrayList<String>();
+        
+        for (ITableInfo ti : tables) {
+            StringBuilder result = new StringBuilder();
+            String tableName = 
+                prefs.isQualifyTableNames()? ti.getQualifiedName() : ti.getSimpleName();
+            result.append("CREATE TABLE ");
+            result.append(tableName);
+            result.append("\n(");
+            
+            List<PrimaryKeyInfo> pkInfos = getPrimaryKeyInfo(md, ti, isJdbcOdbc);
+            List<String> pks = getPKSequenceList(pkInfos);
+            TableColumnInfo[] infos = md.getColumnInfo(ti);
+            for (TableColumnInfo tcInfo : infos) {
+                String columnName = tcInfo.getColumnName();
+                int columnSize = tcInfo.getColumnSize();
+                int dataType = tcInfo.getDataType();
+                int precision = dialect.getPrecisionDigits(columnSize, dataType);
+                String column = dialect.getTypeName(tcInfo.getDataType(), 
+                                                    tcInfo.getColumnSize(),
+                                                    precision,
+                                                    tcInfo.getDecimalDigits()); 
+                
+                result.append("\n   ");
+                result.append(columnName);
+                result.append(" ");
+                result.append(column);
+                String isNullable = tcInfo.isNullable();
+                if (pks.size() == 1 && pks.get(0).equals(columnName))
+                {
+                   result.append(" PRIMARY KEY");
+                }
+                if ("NO".equalsIgnoreCase(isNullable))
+                {
+                   result.append(" NOT NULL");
+                }
+                result.append(",");                   
+            }
+            
+            if (pks.size() > 1) {
+               result.append("\n   CONSTRAINT ");
+               result.append(pkInfos.get(0).getSimpleName());
+               result.append(" PRIMARY KEY (");
+               for (int i = 0; i < pks.size(); i++)
+               {
+                  result.append(pks.get(i));
+                  result.append(",");
+               }
+               result.setLength(result.length() - 1);
+               result.append("),");
+            }
+            result.setLength(result.length() - 1);
+
+            result.append("\n)");
+            sqls.add(result.toString());
+            
+            if(isJdbcOdbc) { continue; }
+
+            List<String> constraints = 
+                createConstraints(ti, tables, prefs, md);
+            addConstraintsSQLs(sqls, allconstraints, constraints, prefs);
+            
+            List<String> indexes = createIndexes(ti, md, pkInfos);
+            addConstraintsSQLs(sqls, allconstraints, indexes, prefs);
+        }
+        
+        if (prefs.isConstraintsAtEnd()) {
+            sqls.addAll(allconstraints);
+        }
+        return sqls;
+    }
+    
+    private static void addConstraintsSQLs(List<String> sqls,
+                                           List<String> allconstraints,
+                                           List<String> sqlsToAdd,
+                                           CreateScriptPreferences prefs) 
+    {
+        if(sqlsToAdd.size() > 0) {
+           if(prefs.isConstraintsAtEnd()) {
+               allconstraints.addAll(sqlsToAdd);
+           } else {
+               sqls.addAll(sqlsToAdd);
+           }
+        }        
+    }
+    
+    private static List<String> createIndexes(ITableInfo ti,
+                                              ISQLDatabaseMetaData md,
+                                              List<PrimaryKeyInfo> primaryKeys) 
+    {
+        List<String> result = new ArrayList<String>();
+        if (ti.getDatabaseObjectType() == DatabaseObjectType.VIEW) {
+            return result;
+        }
+
+        List<IndexColInfo> pkCols = new ArrayList<IndexColInfo>();
+        for (PrimaryKeyInfo pkInfo : primaryKeys) {
+           pkCols.add(new IndexColInfo(pkInfo.getColumnName()));
+        }
+        Collections.sort(pkCols, IndexColInfo.NAME_COMPARATOR);
+
+        List<IndexInfo> indexInfos = null;
+        try {
+            indexInfos = md.getIndexInfo(ti);
+        } catch (SQLException e) {
+            //i18n[CreateTableScriptCommand.error.getprimarykey=Unable to get primary key info for table {0}]
+            String msg = 
+                s_stringMgr.getString(
+                        "CreateTableScriptCommand.error.getprimarykey", 
+                        ti.getSimpleName());
+            log.error(msg, e);
+            return result;
+        }       
+        
+        // Group all columns by index 
+        Hashtable<String, TableIndexInfo> buf = new Hashtable<String, TableIndexInfo>();
+        for (IndexInfo indexInfo : indexInfos) {
+            String indexName = indexInfo.getSimpleName();
+            if(null == indexName) {
+               continue;
+            }
+            TableIndexInfo ixi = buf.get(indexName);
+            if(null == ixi)
+            {
+               List<IndexColInfo> ixCols = new ArrayList<IndexColInfo>();
+               
+               ixCols.add(new IndexColInfo(indexInfo.getColumnName(), 
+                                           indexInfo.getOrdinalPosition()));
+               buf.put(indexName, 
+                       new TableIndexInfo(indexInfo.getTableName(), 
+                                          indexName, 
+                                          ixCols,
+                                          !indexInfo.isNonUnique()));
+            }
+            else
+            {
+               ixi.cols.add(new IndexColInfo(indexInfo.getColumnName(), 
+                                             indexInfo.getOrdinalPosition()));
+            }           
+        }
+        
+        TableIndexInfo[] ixs = buf.values().toArray(new TableIndexInfo[buf.size()]);
+        for (int i = 0; i < ixs.length; i++)
+        {
+           Collections.sort(ixs[i].cols, IndexColInfo.NAME_COMPARATOR);
+
+           if(pkCols.equals(ixs[i].cols))
+           {
+              // Serveral DBs automatically create an index for primary key fields
+              // and return this index in getIndexInfo(). We remove this index from the script
+              // because it would break the script with an index already exists error.
+              continue;
+           }
+
+           Collections.sort(ixs[i].cols, IndexColInfo.ORDINAL_POSITION_COMPARATOR);
+
+           StringBuilder indexSQL = new StringBuilder();
+           indexSQL.append("CREATE");
+           indexSQL.append(ixs[i].unique ? " UNIQUE ": " ");
+           indexSQL.append("INDEX ");
+           indexSQL.append(ixs[i].ixName);
+           indexSQL.append(" ON ");
+           indexSQL.append(ixs[i].table);
+
+           if (ixs[i].cols.size() == 1) {
+               indexSQL.append("(").append(ixs[i].cols.get(0));
+
+               for (int j = 1; j < ixs[i].cols.size(); j++) {
+                   indexSQL.append(",").append(ixs[i].cols.get(j));
+               }
+           } else {
+               indexSQL.append("\n(\n");
+               for (int j = 0; j < ixs[i].cols.size(); j++) {
+                   indexSQL.append("  ");
+                   indexSQL.append(ixs[i].cols.get(j));
+                   if (j < ixs[i].cols.size() - 1) {
+                       indexSQL.append(",\n");
+                   } else {
+                       indexSQL.append("\n");
+                   }
+               }
+           }
+           indexSQL.append(")");
+           result.add(indexSQL.toString());
+        }
+        return result;
+    }
+    
+    private static List<String> createConstraints(ITableInfo ti, 
+                                                  List<ITableInfo> tables, 
+                                                  CreateScriptPreferences prefs,
+                                                  ISQLDatabaseMetaData md)
+        throws SQLException
+    {
+
+        List<String> result = new ArrayList<String>();
+        StringBuffer sbToAppend = new StringBuffer();
+
+        ConstraintInfo[] cis = getConstraintInfos(ti, md);
+
+        for (int i = 0; i < cis.length; i++) {
+            if (!prefs.isIncludeExternalReferences()) {
+                boolean found = false;
+                for (ITableInfo table : tables) {
+                    if(table.getSimpleName().equalsIgnoreCase(cis[i].pkTable)) {
+                        found = true;
+                        break;
+                    }
+                }
+                if(false == found) {
+                    continue;
+                }
+            }
+
+            sbToAppend.append("ALTER TABLE " + cis[i].fkTable + "\n");
+            sbToAppend.append("ADD CONSTRAINT " + cis[i].fkName + "\n");
+
+
+            if(cis[i].fkCols.size() == 1)
+            {
+                sbToAppend.append("FOREIGN KEY (").append(cis[i].fkCols.get(0));
+
+                for (int j = 1; j < cis[i].fkCols.size(); j++)
+                {
+                    sbToAppend.append(",").append(cis[i].fkCols.get(j));
+                }
+                sbToAppend.append(")\n");
+
+                sbToAppend.append("REFERENCES " + cis[i].pkTable + "(");
+                sbToAppend.append(cis[i].pkCols.get(0));
+                for (int j = 1; j < cis[i].pkCols.size(); j++)
+                {
+                    sbToAppend.append(",").append(cis[i].pkCols.get(j));
+                }
+            }
+            else
+            {
+                sbToAppend.append("FOREIGN KEY\n");
+                sbToAppend.append("(\n");
+                for (int j = 0; j < cis[i].fkCols.size(); j++)
+                {
+                    if(j < cis[i].fkCols.size() -1)
+                    {
+                        sbToAppend.append("  " + cis[i].fkCols.get(j) + ",\n");
+                    }
+                    else
+                    {
+                        sbToAppend.append("  " + cis[i].fkCols.get(j) + "\n");
+                    }
+                }
+                sbToAppend.append(")\n");
+
+                sbToAppend.append("REFERENCES " + cis[i].pkTable + "\n");
+                sbToAppend.append("(\n");
+                for (int j = 0; j < cis[i].pkCols.size(); j++)
+                {
+                    if(j < cis[i].pkCols.size() -1)
+                    {
+                        sbToAppend.append("  " + cis[i].pkCols.get(j) + ",\n");
+                    }
+                    else
+                    {
+                        sbToAppend.append("  " + cis[i].pkCols.get(j) + "\n");
+                    }
+                }
+            }
+
+            sbToAppend.append(")");
+
+            if (prefs.isDeleteRefAction()) {
+                sbToAppend.append(" ON DELETE ");
+                sbToAppend.append(prefs.getRefActionByType(prefs.getDeleteAction()));
+            } else {
+                switch (cis[i].deleteRule) {
+                case DatabaseMetaData.importedKeyCascade:
+                    sbToAppend.append(" ON DELETE CASCADE");
+                    break;
+                case DatabaseMetaData.importedKeySetNull:
+                    sbToAppend.append(" ON DELETE SET NULL");
+                    break;
+                case DatabaseMetaData.importedKeySetDefault:
+                    sbToAppend.append(" ON DELETE SET DEFAULT");
+                    break;
+                case DatabaseMetaData.importedKeyRestrict:
+                case DatabaseMetaData.importedKeyNoAction:
+                default:
+                    sbToAppend.append(" ON DELETE NO ACTION");
+                }
+            }
+            if (prefs.isUpdateRefAction()) {
+                sbToAppend.append(" ON UPDATE ");
+                sbToAppend.append(prefs.getRefActionByType(prefs.getUpdateAction()));             
+            } else {
+                switch (cis[i].updateRule) {
+                case DatabaseMetaData.importedKeyCascade:
+                    sbToAppend.append(" ON UPDATE CASCADE");
+                    break;
+                case DatabaseMetaData.importedKeySetNull:
+                    sbToAppend.append(" ON UPDATE SET NULL");
+                    break;
+                case DatabaseMetaData.importedKeySetDefault:
+                    sbToAppend.append(" ON UPDATE SET DEFAULT");
+                    break;
+                case DatabaseMetaData.importedKeyRestrict:
+                case DatabaseMetaData.importedKeyNoAction:
+                default:
+                    sbToAppend.append(" ON UPDATE NO ACTION");
+                }             
+            }
+            sbToAppend.append("\n");
+            result.add(sbToAppend.toString());
+        }
+
+        return result;
+    }
+    
+    private static ConstraintInfo[] getConstraintInfos(ITableInfo ti, 
+                                                       ISQLDatabaseMetaData md) 
+        throws SQLException 
+    {
+        Hashtable<String, ConstraintInfo> buf = 
+            new Hashtable<String, ConstraintInfo>();
+        ForeignKeyInfo[] fkinfos = md.getImportedKeysInfo(ti);
+        for (ForeignKeyInfo fkinfo : fkinfos) {
+            ConstraintInfo ci = buf.get(fkinfo.getSimpleName());
+
+            if(null == ci)
+            {
+               Vector<String> fkCols = new Vector<String>();
+               Vector<String> pkCols = new Vector<String>();
+               fkCols.add(fkinfo.getForeignKeyColumnName());
+               pkCols.add(fkinfo.getPrimaryKeyColumnName());
+               ci = new ConstraintInfo(fkinfo.getForeignKeyTableName(), 
+                                       fkinfo.getPrimaryKeyTableName(), 
+                                       fkinfo.getSimpleName(), 
+                                       fkCols, 
+                                       pkCols,
+                                       (short)fkinfo.getDeleteRule(),
+                                       (short)fkinfo.getUpdateRule());
+               buf.put(fkinfo.getSimpleName(), ci);
+            }
+            else
+            {
+               ci.fkCols.add(fkinfo.getForeignKeyColumnName());
+               ci.pkCols.add(fkinfo.getPrimaryKeyColumnName());
+            }
+            
+        }
+        return buf.values().toArray(new ConstraintInfo[buf.size()]);
+    }
+    
+    
+    private static List<PrimaryKeyInfo> getPrimaryKeyInfo(ISQLDatabaseMetaData md, 
+                                                          ITableInfo ti,
+                                                          boolean isJdbcOdbc) 
+    {
+        List<PrimaryKeyInfo> result = new ArrayList<PrimaryKeyInfo>(); 
+        if (isJdbcOdbc) {
+            return result;
+        }
+        try {
+            result = Arrays.asList(md.getPrimaryKey(ti));
+        } catch (SQLException e) {
+            // i18n[CreateTableScriptCommand.error.getprimarykey=Unable to get 
+            //primary key info for table {0}]
+            String msg = 
+                s_stringMgr.getString("DialectUtils.error.getprimarykey", 
+                                      ti.getSimpleName());
+            log.error(msg, e);
+        }
+        return result;
+    }
+    
+    private static List<String> getPKSequenceList(List<PrimaryKeyInfo> infos) {
+        String[] result = new String[infos.size()];
+        for (PrimaryKeyInfo info : infos) {
+            int iKeySeq = info.getKeySequence() - 1;
+            result[iKeySeq] = info.getColumnName();
+        }
+        return Arrays.asList(result);
+    }
+    
+    
     
 }

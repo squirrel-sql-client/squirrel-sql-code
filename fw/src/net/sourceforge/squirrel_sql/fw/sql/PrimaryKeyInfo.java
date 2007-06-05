@@ -62,13 +62,13 @@ public class PrimaryKeyInfo extends DatabaseObjectInfo
      * @param aPrimaryKeyName the name of the primary key
      * @param md
      */
-	PrimaryKeyInfo(String catalog, 
+	public PrimaryKeyInfo(String catalog, 
                    String schema,
                    String aTableName,
                    String aColumnName, 
                    short aKeySequence, 
                    String aPrimaryKeyName,
-                   SQLDatabaseMetaData md)
+                   ISQLDatabaseMetaData md)
 	{
 		super(catalog, schema, aPrimaryKeyName, DatabaseObjectType.PRIMARY_KEY, md);
         columnName = aColumnName;

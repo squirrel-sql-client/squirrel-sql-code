@@ -19,9 +19,11 @@
 package net.sourceforge.squirrel_sql.fw.dialects;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import org.hibernate.HibernateException;
@@ -362,5 +364,21 @@ public interface HibernateDialect {
      */
     String getDropForeignKeySQL(String fkName, String tableName);
     
-    
+    /**
+     * Returns the SQL command to create the specified table.
+     * 
+     * @param tables the tables to get create statements for
+     * @param md the metadata from the ISession
+     * @param prefs preferences about how the resultant SQL commands should be 
+     *              formed.
+     * @param isJdbcOdbc whether or not the connection is via JDBC-ODBC bridge.
+     *  
+     * @return the SQL that is used to create the specified table
+     */
+    List<String> getCreateTableSQL(List<ITableInfo> tables, 
+                                   ISQLDatabaseMetaData md,
+                                   CreateScriptPreferences prefs,
+                                   boolean isJdbcOdbc) throws SQLException;    
+
 }
+

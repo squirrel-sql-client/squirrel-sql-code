@@ -16,6 +16,7 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.sql.DatabaseMetaData;
 import java.sql.Types;
 import java.util.ArrayList;
 
@@ -270,6 +271,42 @@ public class JDBCTypeMapper {
         return result;
     }
     
+    public static IndexInfo.IndexType getIndexType(short indexType) {
+        IndexInfo.IndexType result = null;
+        switch (indexType) {
+            case DatabaseMetaData.tableIndexStatistic:
+                result = IndexInfo.IndexType.STATISTIC;
+                break;
+            case DatabaseMetaData.tableIndexClustered:
+                result = IndexInfo.IndexType.CLUSTERED;
+                break;
+            case DatabaseMetaData.tableIndexHashed:
+                result = IndexInfo.IndexType.HASHED;
+                break;
+            case DatabaseMetaData.tableIndexOther:
+                result = IndexInfo.IndexType.OTHER;
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown index type: "+
+                                                   indexType);
+        }
+        return result;
+    }
+    
+    public static IndexInfo.SortOrder getIndexSortOrder(String sortOrder) {
+        if (sortOrder == null) {
+            return IndexInfo.SortOrder.NONE;
+        }
+        if (sortOrder.equalsIgnoreCase("A")) {
+            return IndexInfo.SortOrder.ASC;
+        }
+        if (sortOrder.equalsIgnoreCase("D")) {
+            return IndexInfo.SortOrder.DESC;
+        }        
+
+        throw new IllegalArgumentException("Unknown index sort order: "+
+                                           sortOrder);
+    }
 }
 
 
