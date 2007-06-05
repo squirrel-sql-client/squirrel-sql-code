@@ -1434,20 +1434,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 
 		return results;
 	}
-
-    /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getIndexInfo(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
-     * 
-     * @deprecated use getIndexInfo instead.
-     */
-    public ResultSet getIndexInfo(ITableInfo ti)
-		throws SQLException
-	{
-		return privateGetJDBCMetaData().getIndexInfo(
-			ti.getCatalogName(), ti.getSchemaName(),
-			ti.getSimpleName(), false, true);
-	}
-
+        
     /* (non-Javadoc)
      * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getIndexInfo(net.sourceforge.squirrel_sql.fw.sql.ITableInfo, int[], boolean)
      */
@@ -1469,6 +1456,60 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
         } finally {
             if (rs != null) try { rs.close(); } catch (SQLException e) {}
         }
+    }
+    
+    /**
+     * Returns a list of IndexInfos describing indexes for the specified table.
+     * 
+     * @param ti the table to find all index information for.
+     * @return a list of IndexInfos
+     * @throws SQLException
+     */
+    public List<IndexInfo> getIndexInfo(ITableInfo ti) throws SQLException {
+        List<IndexInfo> result = new ArrayList<IndexInfo>();
+        ResultSet rs = null;
+        try {
+            rs = privateGetJDBCMetaData().getIndexInfo(
+                    ti.getCatalogName(), ti.getSchemaName(),
+                    ti.getSimpleName(), false, true);
+            while (rs.next()) {
+                String catalog = rs.getString(1);
+                String schema = rs.getString(2);
+                String table = rs.getString(3); 
+                boolean nonunique = rs.getBoolean(4);
+                String indexQualifier = rs.getString(5);
+                String indexName = rs.getString(6); 
+                IndexInfo.IndexType indexType = 
+                    JDBCTypeMapper.getIndexType(rs.getShort(7));
+                short ordinalPosition = rs.getShort(8);
+                String column = rs.getString(9); 
+                IndexInfo.SortOrder sortOrder = 
+                    JDBCTypeMapper.getIndexSortOrder(rs.getString(10));
+                int cardinality = rs.getInt(11);
+                int pages = rs.getInt(12);
+                String filterCondition = rs.getString(13);
+
+                IndexInfo indexInfo = new IndexInfo(catalog, 
+                                                schema, 
+                                                indexName,
+                                                table,
+                                                column,
+                                                nonunique,
+                                                indexQualifier,
+                                                indexType,
+                                                ordinalPosition,
+                                                sortOrder,
+                                                cardinality,
+                                                pages,
+                                                filterCondition,
+                                                this);        
+                result.add(indexInfo);
+            }
+        } catch (SQLException e) {
+        } finally {
+            if (rs != null) try { rs.close(); } catch (SQLException e) {}
+        }        
+        return result;
     }
     
     /* (non-Javadoc)

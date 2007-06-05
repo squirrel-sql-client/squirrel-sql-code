@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
+package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.util.Vector;
 
@@ -8,16 +8,16 @@ public class ConstraintInfo extends Object
   String fkTable;
   String pkTable;
   String fkName;
-  Vector fkCols;
-  Vector pkCols;
+  Vector<String> fkCols;
+  Vector<String> pkCols;
   short updateRule;
   short deleteRule;
 
    public ConstraintInfo(String fkTable, 
                          String pkTable, 
                          String fkName, 
-                         Vector fkCols, 
-                         Vector pkCols,
+                         Vector<String> fkCols, 
+                         Vector<String> pkCols,
                          short deleteRule,
                          short updateRule)
    {

@@ -137,14 +137,14 @@ public class ColTypeMapperTest extends BaseSQuirreLTestCase {
     
     private void testBigintColType(String fromDb, String toDb) throws Exception 
     {
-        ISQLDatabaseMetaData md = TestUtil.getEasyMockSQLMetaData(fromDb);
+        ISQLDatabaseMetaData md = TestUtil.getEasyMockSQLMetaData(fromDb, null);
         TableColumnInfo column = TestUtil.getBigintColumnInfo(md, true);
         testColType(md, toDb, column);
     }    
 
     private void testBinaryColType(String fromDb, String toDb) throws Exception 
     {
-        ISQLDatabaseMetaData md = TestUtil.getEasyMockSQLMetaData(fromDb);
+        ISQLDatabaseMetaData md = TestUtil.getEasyMockSQLMetaData(fromDb, null);
         TableColumnInfo column = TestUtil.getBinaryColumnInfo(md, true);
         // This is for brute force detection of columns whose column size is 0
         ResultSet rs = getColLengthResult();
@@ -153,7 +153,7 @@ public class ColTypeMapperTest extends BaseSQuirreLTestCase {
     
     private void testBlobColType(String fromDb, String toDb) throws Exception 
     {
-        ISQLDatabaseMetaData md = TestUtil.getEasyMockSQLMetaData(fromDb);
+        ISQLDatabaseMetaData md = TestUtil.getEasyMockSQLMetaData(fromDb, null);
         TableColumnInfo column = TestUtil.getBlobColumnInfo(md, true);
         //This is for brute force detection of BLOB/CLOB lengths if necessary
         ResultSet rs = getColLengthResult();
@@ -162,7 +162,7 @@ public class ColTypeMapperTest extends BaseSQuirreLTestCase {
 
     private void testClobColType(String fromDb, String toDb) throws Exception 
     {
-        ISQLDatabaseMetaData md = TestUtil.getEasyMockSQLMetaData(fromDb);
+        ISQLDatabaseMetaData md = TestUtil.getEasyMockSQLMetaData(fromDb, null);
         TableColumnInfo column = TestUtil.getClobColumnInfo(md, true);
         // This is for brute force detection of BLOB/CLOB lengths if necessary
         ResultSet rs = getColLengthResult();
@@ -172,7 +172,7 @@ public class ColTypeMapperTest extends BaseSQuirreLTestCase {
     
     private void testDateColType(String fromDb, String toDb) throws Exception 
     {
-        ISQLDatabaseMetaData md = TestUtil.getEasyMockSQLMetaData(fromDb);
+        ISQLDatabaseMetaData md = TestUtil.getEasyMockSQLMetaData(fromDb, null);
         TableColumnInfo column = TestUtil.getDateColumnInfo(md, true);
         testColType(md, toDb, column);
     }    
@@ -180,7 +180,7 @@ public class ColTypeMapperTest extends BaseSQuirreLTestCase {
     private void testLongVarcharColType(String fromDb, String toDb) 
         throws Exception 
     {
-        ISQLDatabaseMetaData md = TestUtil.getEasyMockSQLMetaData(fromDb);
+        ISQLDatabaseMetaData md = TestUtil.getEasyMockSQLMetaData(fromDb, null);
         TableColumnInfo column = 
             TestUtil.getLongVarcharColumnInfo(md, true, Integer.MAX_VALUE);
         testColType(md, toDb, column);
@@ -188,14 +188,14 @@ public class ColTypeMapperTest extends BaseSQuirreLTestCase {
     
     private void testVarcharColType(String fromDb, String toDb) throws Exception 
     {
-        ISQLDatabaseMetaData md = TestUtil.getEasyMockSQLMetaData(fromDb);
+        ISQLDatabaseMetaData md = TestUtil.getEasyMockSQLMetaData(fromDb, null);
         TableColumnInfo column = TestUtil.getVarcharColumnInfo(md, true, 2000);
         testColType(md, toDb, column);
     }    
     
     private void testIntegerColType(String fromDb, String toDb) throws Exception 
     {
-        ISQLDatabaseMetaData md = TestUtil.getEasyMockSQLMetaData(fromDb);
+        ISQLDatabaseMetaData md = TestUtil.getEasyMockSQLMetaData(fromDb, null);
         TableColumnInfo column = TestUtil.getIntegerColumnInfo(md, true);
         testColType(md, toDb, column);
     }

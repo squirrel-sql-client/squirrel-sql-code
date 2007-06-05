@@ -19,6 +19,7 @@ package net.sourceforge.squirrel_sql.fw.sql;
  */
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
+import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
@@ -435,6 +436,15 @@ public interface ISQLDatabaseMetaData {
     ResultSetDataSet getIndexInfo(ITableInfo ti, int[] columnIndices,
             boolean computeWidths) throws DataSetException;
 
+    /**
+     * Returns a list of IndexInfos describing indexes for the specified table.
+     * 
+     * @param ti the table to find all index information for.
+     * @return a list of IndexInfos
+     * @throws SQLException
+     */
+    public List<IndexInfo> getIndexInfo(ITableInfo ti) throws SQLException;
+    
     /**
      * 
      * @param ti
