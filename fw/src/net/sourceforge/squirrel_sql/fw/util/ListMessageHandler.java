@@ -17,7 +17,6 @@ package net.sourceforge.squirrel_sql.fw.util;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -34,18 +33,18 @@ public class ListMessageHandler implements IMessageHandler
 
 
    /** Stores msgs. */
-   private List _msgs = new Vector();
+   private List<String> _msgs = new Vector<String>();
 
    /** Stores exceptions. */
-   private List _throwables = new Vector();
+   private List<Throwable> _throwables = new Vector<Throwable>();
 
    /** Stores error msgs. */
-   private List _errMsgs = new Vector();
+   private List<String> _errMsgs = new Vector<String>();
 
    /** Stores exceptions. */
-   private List _errThrowables = new Vector();
+   private List<Throwable> _errThrowables = new Vector<Throwable>();
 
-   private List _warningMsgs = new Vector();
+   private List<String> _warningMsgs = new Vector<String>();
 
    //
    ///////////////////////////////////////////////////////////////////////////////////
@@ -110,7 +109,7 @@ public class ListMessageHandler implements IMessageHandler
     */
    public Throwable[] getExceptions()
    {
-      return (Throwable[])_throwables.toArray(new Throwable[_throwables.size()]);
+      return _throwables.toArray(new Throwable[_throwables.size()]);
    }
 
    /**
@@ -120,7 +119,7 @@ public class ListMessageHandler implements IMessageHandler
     */
    public Throwable[] getErrorExceptions()
    {
-      return (Throwable[])_errThrowables.toArray(new Throwable[_errThrowables.size()]);
+      return _errThrowables.toArray(new Throwable[_errThrowables.size()]);
    }
 
    /**
@@ -130,7 +129,7 @@ public class ListMessageHandler implements IMessageHandler
     */
    public String[] getMessages()
    {
-      return (String[])_msgs.toArray(new String[_msgs.size()]);
+      return _msgs.toArray(new String[_msgs.size()]);
    }
 
    /**
@@ -140,11 +139,21 @@ public class ListMessageHandler implements IMessageHandler
     */
    public String[] getErrorMessages()
    {
-      return (String[])_errMsgs.toArray(new String[_errMsgs.size()]);
+      return _errMsgs.toArray(new String[_errMsgs.size()]);
    }
 
    public String[] getWarningMessages()
    {
-      return (String[]) _warningMsgs.toArray(new String[_warningMsgs.size()]);
+      return _warningMsgs.toArray(new String[_warningMsgs.size()]);
    }
+   
+   /**
+    * Sets the exception formatter to use when handling messages.
+    * 
+    * @param formatter the ExceptionFormatter
+    */
+   public void setExceptionFormatter(ExceptionFormatter formatter) {
+       // No custom behavior required for dumping the application.
+   }
+   
 }

@@ -37,6 +37,7 @@ import javax.swing.text.StyleConstants;
 
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
+import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -79,6 +80,8 @@ public class MessagePanel extends JTextPane implements IMessageHandler
 
    private HashMap _saSetHistoryBySaSet =new HashMap();
 
+   private ExceptionFormatter formatter = null;
+   
    private static interface I18N {
        //i18n[MessagePanel.clearLabel=Clear]
        String CLEAR_LABEL = s_stringMgr.getString("MessagePanel.clearLabel");
@@ -208,6 +211,15 @@ public class MessagePanel extends JTextPane implements IMessageHandler
    }
 
    /**
+    * Sets the exception formatter to use when handling messages.
+    * 
+    * @param formatter the ExceptionFormatter
+    */
+   public void setExceptionFormatter(ExceptionFormatter formatter) {
+       this.formatter = formatter; 
+   }
+   
+   /**
 	 * Show an error message. The controls
 	 * background color will be changed to show it is an error msg.
 	 *
@@ -232,7 +244,11 @@ public class MessagePanel extends JTextPane implements IMessageHandler
    {
       if (th != null)
       {
-         if (th instanceof DataTruncation)
+         if (formatter != null && formatter.formatsException(th)) {
+             String msg = formatter.format(th);
+             privateShowMessage(msg, saSet);
+         } 
+         else if (th instanceof DataTruncation)
          {
             DataTruncation ex = (DataTruncation) th;
             StringBuffer buf = new StringBuffer();

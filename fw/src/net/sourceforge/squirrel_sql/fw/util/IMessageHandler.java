@@ -52,4 +52,12 @@ public interface IMessageHandler
 	void showErrorMessage(String msg);
 
    void showWarningMessage(String msg);
+   
+   /**
+    * Sets the exception formatter to use when handling messages.
+    * 
+    * @param formatter the ExceptionFormatter
+    */
+   void setExceptionFormatter(ExceptionFormatter formatter);
+   
 }

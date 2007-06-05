@@ -81,4 +81,14 @@ public class NullMessageHandler implements IMessageHandler
    {
       // Empty.
    }
+   
+   /**
+    * Sets the exception formatter to use when handling messages.
+    * 
+    * @param formatter the ExceptionFormatter
+    */
+   public void setExceptionFormatter(ExceptionFormatter formatter) {
+       // Empty
+   }
+   
 }
