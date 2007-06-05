@@ -43,6 +43,10 @@ Task 138098 (Plugins Session Menu Items (Disable)) When using a session that
 - Use the last directory that a file was imported from when importing 
   additional files for binary fields.
 
+1731251: (Cryptic exceptions with DB2 JCC driver) Provides an API to allow 
+plugin authors to create and register custom exception formatters to be used 
+when displaying error messages and the like in the session message panel.
+
 Finished German translation
 
 Bug-Fixes:
