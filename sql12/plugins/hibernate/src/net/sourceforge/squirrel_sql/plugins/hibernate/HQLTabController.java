@@ -230,4 +230,16 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController
          _con.close();         
       }
    }
+
+
+   public HqlEntryPanelManager getHqlEntrPanelManager()
+   {
+      return _hqlEntrPanelManager;
+   }
+
+
+   public HibernateConnection getHibernateConnection()
+   {
+      return _con;
+   }
 }

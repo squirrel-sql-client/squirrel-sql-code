@@ -7,11 +7,14 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateController;
+import net.sourceforge.squirrel_sql.plugins.hibernate.completion.HQLCompleteCodeAction;
 
+import javax.swing.*;
 import java.util.HashMap;
 
 public class HibernatePlugin extends DefaultSessionPlugin
@@ -99,6 +102,8 @@ public class HibernatePlugin extends DefaultSessionPlugin
 
          session.getSessionSheet().insertMainTab(hqlTabController, 2, false);
 
+         initCodeCompletion(hqlTabController, session);
+
 
          return new PluginSessionCallback()
          {
@@ -119,4 +124,25 @@ public class HibernatePlugin extends DefaultSessionPlugin
 		}
 	}
 
+   private void initCodeCompletion(HQLTabController hqlTabController, ISession session)
+   {
+      ISQLEntryPanel entryPanel = hqlTabController.getHqlEntrPanelManager().getEntryPanel();
+      HibernateConnection con = hqlTabController.getHibernateConnection();
+
+      HQLCompleteCodeAction hcca = new HQLCompleteCodeAction(getApplication(), this, entryPanel, session, con);
+
+
+      JMenuItem item = entryPanel.addToSQLEntryAreaMenu(hcca);
+
+      _resources.configureMenuItem(hcca, item);
+
+      JComponent comp = entryPanel.getTextComponent();
+      comp.registerKeyboardAction(hcca, _resources.getKeyStroke(hcca), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+   }
+
+
+   public HibernatePluginResources getResources()
+   {
+      return _resources;
+   }
 }
