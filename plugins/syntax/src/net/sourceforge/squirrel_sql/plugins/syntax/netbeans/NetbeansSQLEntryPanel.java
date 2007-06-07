@@ -21,6 +21,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.BaseSQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
+import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
@@ -57,12 +58,13 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
    private SyntaxFactory _syntaxFactory;
    private ISession _session;
    private SyntaxPugin _plugin;
+   private NetbeansPropertiesWrapper _propertiesWrapper;
 
    NetbeansSQLEntryPanel(ISession session, SyntaxPreferences prefs, SyntaxFactory syntaxFactory, SyntaxPugin plugin, HashMap props)
 	{
 		super(session.getApplication());
 
-      NetbeansPropertiesWrapper wrp = new NetbeansPropertiesWrapper(props);
+      _propertiesWrapper = new NetbeansPropertiesWrapper(props);
 
       _plugin = plugin;
 
@@ -77,7 +79,7 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 
 		_app = session.getApplication();
 
-		_textArea = new NetbeansSQLEditorPane(session, prefs, syntaxFactory, _plugin, getIdentifier(), wrp);
+		_textArea = new NetbeansSQLEditorPane(session, prefs, syntaxFactory, _plugin, getIdentifier(), _propertiesWrapper);
 
 	}
 
@@ -273,9 +275,15 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 	public void replaceSelection(String sqlScript)
 	{
 		_textArea.replaceSelection(sqlScript);
-      _session.getParserEventsProcessor(getIdentifier()).triggerParser();
 
-	}
+      IParserEventsProcessor parserEventsProcessor = _propertiesWrapper.getParserEventsProcessor(getIdentifier(), _session);
+
+      if(null != parserEventsProcessor)
+      {
+         parserEventsProcessor.triggerParser();
+      }
+
+   }
 
 	/**
 	 * @see ISQLEntryPanel#hasFocus()

@@ -81,4 +81,9 @@ public abstract class CompletionInfo implements Comparable
       return false;
    }
 
+
+   public String toString()
+   {
+      return getCompletionString();
+   }
 }

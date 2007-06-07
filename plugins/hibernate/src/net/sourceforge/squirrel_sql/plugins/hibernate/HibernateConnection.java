@@ -5,7 +5,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,21 +14,14 @@ import java.util.Map;
 public class HibernateConnection
 {
    private static ILogger s_log = LoggerController.createLogger(HibernateConnection.class);
-
-
    private Object _sessionFactoryImpl;
    private URLClassLoader _cl;
-   private SessionFactoryImplIF _sessionFactoryImplIF;
+
 
    public HibernateConnection(Object sessionFactoryImpl, URLClassLoader cl)
    {
       _sessionFactoryImpl = sessionFactoryImpl;
       _cl = cl;
-
-      _sessionFactoryImplIF = (SessionFactoryImplIF)
-         Proxy.newProxyInstance(getClass().getClassLoader(),
-                                new Class<?>[]{SessionFactoryImplIF.class},
-                                new SessionFactoryImplIFCaller(_sessionFactoryImpl));
    }
 
 
@@ -37,40 +29,28 @@ public class HibernateConnection
    {
       try
       {
-//         Class<?> stringClass = _cl.loadClass("java.lang.String");
-//         Class<?> booleanTypeClass = _cl.loadClass("java.lang.Boolean").getField("TYPE").getClass();
-//         Class<?> mapClass = _cl.loadClass("java.util.Map");
 
 
-         Class<?> queryPlanCl = _cl.loadClass("org.hibernate.engine.query.HQLQueryPlan");
-         
-         Class<?> sessionFactoryImplementorClass = _cl.loadClass("org.hibernate.engine.SessionFactoryImplementor");
+         Class sessionFactoryImplementorClass = (Class) new ReflectionCaller(_cl).getClass("org.hibernate.engine.SessionFactoryImplementor").getCallee();
 
-
-         Constructor<?> queryPlanConstr = queryPlanCl.getConstructor(new Class[]{String.class, Boolean.TYPE, Map.class, sessionFactoryImplementorClass});
-
-         Object queryPlan = queryPlanConstr.newInstance(new Object[]{hqlQuery, false, Collections.EMPTY_MAP, _sessionFactoryImpl});
-
-         Method getTranslatorsMeth = queryPlanCl.getMethod("getTranslators", new Class[0]);
-
-         Object[] translators = (Object[]) getTranslatorsMeth.invoke(queryPlan, new Object[0]);
-
+         List<ReflectionCaller> translators =
+         new ReflectionCaller(_cl)
+            .getClass("org.hibernate.engine.query.HQLQueryPlan")
+            .callConstructor(new Class[]{String.class, Boolean.TYPE, Map.class, sessionFactoryImplementorClass}, new Object[]{hqlQuery, false, Collections.EMPTY_MAP, _sessionFactoryImpl})
+            .callArrayMethod("getTranslators");
 
          ArrayList<String> ret = new ArrayList<String>();
 
-         Class<?> queryTranslatorCl = _cl.loadClass("org.hibernate.hql.QueryTranslator");
-         Method collectSqlStringsMeth = queryTranslatorCl.getMethod("collectSqlStrings");
 
-         for (Object translator : translators)
+         for (ReflectionCaller translator : translators)
          {
-            List sqls = (List) collectSqlStringsMeth.invoke(translator, new Object[0]);
+            List sqls = (List) translator.callMethod("collectSqlStrings").getCallee();
 
             for (Object sql : sqls)
             {
                ret.add(sql.toString());
             }
          }
-
          return ret;
       }
       catch (Exception e)
@@ -85,13 +65,13 @@ public class HibernateConnection
    {
       try
       {
-         _sessionFactoryImplIF.close();
+         new ReflectionCaller(_sessionFactoryImpl, _cl).callMethod("close");
       }
       catch (Throwable t)
       {
          s_log.error(t);
       }
-      _sessionFactoryImplIF = null;
+      _sessionFactoryImpl = null;
       _cl = null;
       System.gc();
 
