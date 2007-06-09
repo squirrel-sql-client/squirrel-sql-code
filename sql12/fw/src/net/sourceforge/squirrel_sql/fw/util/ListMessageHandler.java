@@ -20,8 +20,6 @@ package net.sourceforge.squirrel_sql.fw.util;
 import java.util.List;
 import java.util.Vector;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
-
 /**
  * This message handler stores msgs in 2 <TT>java.util.List</TT> objects. One
  * for exceptions and the other for strings.
