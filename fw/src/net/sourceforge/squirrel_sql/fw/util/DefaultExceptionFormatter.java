@@ -22,8 +22,7 @@ import java.sql.DataTruncation;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLExecutionException;
+import net.sourceforge.squirrel_sql.fw.sql.SQLExecutionException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -47,7 +46,7 @@ public class DefaultExceptionFormatter implements ExceptionFormatter {
     private ExceptionFormatter customFormatter = null;
     
     /**
-     * @see net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter#format(java.lang.Throwable, ISession)
+     * @see net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter#format(java.lang.Throwable)
      */
     public String format(Throwable th) {
         if (th == null) {
@@ -85,7 +84,7 @@ public class DefaultExceptionFormatter implements ExceptionFormatter {
 
     
     /**
-     * @see net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter#formatsException(java.lang.Throwable, ISession)
+     * @see net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter#formatsException(java.lang.Throwable)
      */
     public boolean formatsException(Throwable t) {
         return true;
