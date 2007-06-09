@@ -35,12 +35,15 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * @author manningr
  */
 public class DefaultExceptionFormatter implements ExceptionFormatter {
-
     
     /** Logger for this class. */
     private static final ILogger s_log =
         LoggerController.createLogger(DefaultExceptionFormatter.class);
                 
+    /** 
+     * When a plugin registers it's own ExceptionFormatter for session which 
+     * contains this class, this will be non-null
+     */
     private ExceptionFormatter customFormatter = null;
     
     /**
@@ -145,9 +148,9 @@ public class DefaultExceptionFormatter implements ExceptionFormatter {
         {
             buf.append(buildMessage("Error: ", ex));
             if (s_log.isDebugEnabled()) {
-               s_log.debug("Error", ex);
-           }
-           ex = ex.getNextException();
+                s_log.debug("Error", ex);
+            }
+            ex = ex.getNextException();
         }                
         return buf.toString();
     }
