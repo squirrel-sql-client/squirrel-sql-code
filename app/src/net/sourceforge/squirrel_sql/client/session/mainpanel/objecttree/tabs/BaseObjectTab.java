@@ -105,7 +105,7 @@ public abstract class BaseObjectTab implements IObjectTab
 			}
 			catch (Throwable th)
 			{
-				getSession().getMessageHandler().showErrorMessage(th);
+				getSession().showErrorMessage(th);
 			}
 			_hasBeenDisplayed = true;
 		}

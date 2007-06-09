@@ -108,7 +108,7 @@ public class DropTableScriptCommand implements ICommand {
                 sbScript.append("\n");
             }
         } catch (Exception e) {
-            _session.getMessageHandler().showErrorMessage(e);
+            _session.showErrorMessage(e);
         }
         return sbScript.toString();
     }

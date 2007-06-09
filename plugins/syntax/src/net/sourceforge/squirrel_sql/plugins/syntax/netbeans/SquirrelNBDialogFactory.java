@@ -70,7 +70,7 @@ public class SquirrelNBDialogFactory extends WindowAdapter implements DialogSupp
          for (int i = 0; i < activeSessions.length; i++)
          {
 				//i18n[syntax.findExplain=Press F3 to go to next result. Press Ctrl+Shift+F7 to toggle highlight search.]
-				activeSessions[i].getMessageHandler().showMessage(s_stringMgr.getString("syntax.findExplain"));
+				activeSessions[i].showMessage(s_stringMgr.getString("syntax.findExplain"));
          }
          _findHintProvided = true;
       }

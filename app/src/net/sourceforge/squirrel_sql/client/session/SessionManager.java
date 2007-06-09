@@ -279,7 +279,7 @@ public class SessionManager
             	session.close();
             } catch (SQLException sqle) {
                 s_log.error("Error closing Session", sqle);
-                session.getMessageHandler().showErrorMessage(s_stringMgr.getString("SessionManager.ErrorClosingSession", sqle));
+                session.showErrorMessage(s_stringMgr.getString("SessionManager.ErrorClosingSession", sqle));
             }
             fireSessionClosed(session);
 
@@ -324,7 +324,7 @@ public class SessionManager
       catch (Throwable ex)
       {
          s_log.error("Error closing Session", ex);
-         session.getMessageHandler().showErrorMessage(s_stringMgr.getString("SessionManager.ErrorClosingSession", ex));
+         session.showErrorMessage(s_stringMgr.getString("SessionManager.ErrorClosingSession", ex));
       }
 
       return false;

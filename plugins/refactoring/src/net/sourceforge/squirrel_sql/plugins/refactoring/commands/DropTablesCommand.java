@@ -174,7 +174,7 @@ public class DropTablesCommand extends AbstractRefactoringCommand
             String msg = 
                 s_stringMgr.getString("DropTablesCommand.unsupportedOperationMsg",
                                       dialect.getDisplayName());
-            _session.getMessageHandler().showMessage(msg);
+            _session.showMessage(msg);
         } catch (UserCancelledOperationException e) {
             // user cancelled selecting a dialect. do nothing?
         }

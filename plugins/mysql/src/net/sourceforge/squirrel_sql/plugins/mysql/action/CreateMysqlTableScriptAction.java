@@ -54,7 +54,7 @@ public class CreateMysqlTableScriptAction extends SquirrelAction
 			}
 			catch (Throwable th)
 			{
-				_session.getMessageHandler().showErrorMessage(th);
+				_session.showErrorMessage(th);
 			}
 		}
 	}

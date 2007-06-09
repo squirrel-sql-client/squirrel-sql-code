@@ -105,7 +105,7 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
          if(false == qt.hasQuery())
          {
             // i18n[CreateTableOfCurrentSQLCommand.noQuery=No query found to create the script from.]
-            _session.getMessageHandler().showErrorMessage(s_stringMgr.getString("CreateTableOfCurrentSQLCommand.noQuery"));
+            _session.showErrorMessage(s_stringMgr.getString("CreateTableOfCurrentSQLCommand.noQuery"));
             return;
          }
 
@@ -154,11 +154,11 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
                executer.run();
 
                // i18n[sqlscript.successCreate=Successfully created table {0}]
-               _session.getMessageHandler().showMessage(s_stringMgr.getString("sqlscript.successCreate", sTable));
+               _session.showMessage(s_stringMgr.getString("sqlscript.successCreate", sTable));
             }
             catch (Exception e)
             {
-               _session.getMessageHandler().showErrorMessage(e);
+               _session.showErrorMessage(e);
 
                // i18n[sqlscript.storeSqlInTableFailed=An error occured during storing SQL result in table {0}. See messages for details.\nI will create the copy script. You may correct errors and run it again.]
                String msg = s_stringMgr.getString("sqlscript.storeSqlInTableFailed", sTable);
@@ -169,7 +169,7 @@ public class CreateTableOfCurrentSQLCommand extends CreateDataScriptCommand
       }
       catch (Exception e)
       {
-         _session.getMessageHandler().showErrorMessage(e);
+         _session.showErrorMessage(e);
          e.printStackTrace();
       }
       finally

@@ -17,11 +17,11 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.sql.ResultSet;
-import java.sql.SQLWarning;
 import java.sql.SQLException;
+import java.sql.SQLWarning;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
+import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 
 /**
  * This default implementation of the sql executer handler simply notifies the
@@ -81,12 +81,12 @@ public class DefaultSQLExecuterHandler implements ISQLExecuterHandler
          msg += "\n" + postErrorString;
       }
 
-      _session.getMessageHandler().showErrorMessage(msg);
+      _session.showErrorMessage(msg);
 	}
 
 	public void sqlExecutionWarning(SQLWarning warn)
 	{
-		_session.getMessageHandler().showMessage(warn);
+		_session.showMessage(warn);
 	}
 
    public void sqlStatementCount(int statementCount)

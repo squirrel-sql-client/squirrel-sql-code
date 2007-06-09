@@ -77,6 +77,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeClob;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -90,6 +91,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 public class SQLResultExecuterPanel extends JPanel
 									implements ISQLResultExecuter
 {
+    static final long serialVersionUID = 6961615570741567740L;
+    
 	/** Logger for this class. */
 	private static final ILogger s_log = 
         LoggerController.createLogger(SQLResultExecuterPanel.class);
@@ -270,7 +273,7 @@ public class SQLResultExecuterPanel extends JPanel
             // i18n[SQLResultExecuterPanel.nosqlselected=No SQL selected for execution.]
             String msg = 
                 s_stringMgr.getString("SQLResultExecuterPanel.nosqlselected");
-			_session.getMessageHandler().showErrorMessage(msg);
+			_session.showErrorMessage(msg);
 		}
 	}
 
@@ -774,7 +777,7 @@ public class SQLResultExecuterPanel extends JPanel
 		}
 		catch (DataSetException dse)
 		{
-			_session.getMessageHandler().showErrorMessage(dse);
+			_session.showErrorMessage(dse);
 		}
 	}
 
@@ -891,7 +894,7 @@ public class SQLResultExecuterPanel extends JPanel
                 catch (SQLException ex)
                 {
                     s_log.error("Error with transaction control", ex);
-                    _session.getMessageHandler().showErrorMessage(ex);
+                    _session.showErrorMessage(ex);
                 }
                 try
                 {
@@ -900,7 +903,7 @@ public class SQLResultExecuterPanel extends JPanel
                 catch (SQLException ex)
                 {
                     props.setAutoCommit(auto);
-                    _session.getMessageHandler().showErrorMessage(ex);
+                    _session.showErrorMessage(ex);
                 }
             }        
         }
@@ -1038,100 +1041,100 @@ public class SQLResultExecuterPanel extends JPanel
    }
    
    /** This class is the handler for the execution of sql against the SQLExecuterPanel
-	 *
-	 */
-	private class SQLExecutionHandler implements ISQLExecuterHandler
+	*
+	*/
+    private class SQLExecutionHandler implements ISQLExecuterHandler
 	{
-      private CancelPanel _cancelPanel = new CancelPanel();
+        private CancelPanel _cancelPanel = new CancelPanel();
 
-      /**
-       * Hold onto the current ResultDataSet so if the execution is
-       * cancelled then this can be cancelled.
-       */
-      private ResultSetDataSet rsds = null;
+        /**
+         * Hold onto the current ResultDataSet so if the execution is
+         * cancelled then this can be cancelled.
+         */
+        private ResultSetDataSet rsds = null;
 
-      private String sqlToBeExecuted = null;
-      private SQLType sqlType = null;
-      private ResultTab _resultTabToReplace;
-      private boolean _largeScript = false;
-      private double _scriptTotalTime = 0;
-      private double _scriptQueryTime = 0;
-      private double _scriptOutptutTime = 0;
-      private int _scriptRowsInserted = 0;
-      private int _scriptRowsSelected = 0;
-      private int _scriptRowsUpdated = 0;
-      private int _scriptRowsDeleted = 0;
+        private String sqlToBeExecuted = null;
+        private SQLType sqlType = null;
+        private ResultTab _resultTabToReplace;
+        private boolean _largeScript = false;
+        private double _scriptTotalTime = 0;
+        private double _scriptQueryTime = 0;
+        private double _scriptOutptutTime = 0;
+        private int _scriptRowsInserted = 0;
+        private int _scriptRowsSelected = 0;
+        private int _scriptRowsUpdated = 0;
+        private int _scriptRowsDeleted = 0;
       
-      public SQLExecutionHandler(ResultTab resultTabToReplace)
-      {
-         super();
-         _resultTabToReplace = resultTabToReplace;
-         setCancelPanel(_cancelPanel);
-      }
+        public SQLExecutionHandler(ResultTab resultTabToReplace)
+        {
+            super();
+            _resultTabToReplace = resultTabToReplace;
+            setCancelPanel(_cancelPanel);
+        }
 
-      /**
-       * Set whether or not the script is large.  If the script is large, then
-       * do some performance optimizations with the GUI so that it remains 
-       * responsive.  If the UI is not responsive, then the user is not able
-       * to see what is happening, nor are they able to control it (cancelling
-       * becomes ineffective)
-       * 
-       * @param aBoolean whether or not the script is large.
-       */
-      public void setLargeScript(boolean aBoolean) {
-          _largeScript = aBoolean;
-      }
+        /**
+         * Set whether or not the script is large.  If the script is large, then
+         * do some performance optimizations with the GUI so that it remains 
+         * responsive.  If the UI is not responsive, then the user is not able
+         * to see what is happening, nor are they able to control it (cancelling
+         * becomes ineffective)
+         * 
+         * @param aBoolean whether or not the script is large.
+         */
+        public void setLargeScript(boolean aBoolean) {
+            _largeScript = aBoolean;
+        }
       
-      /**
-       * Determines whether or not the current statement SQL should be rendered.
-       * Since too many statements can cause the UI to stop rendering the 
-       * statements, we back off rendering after many statements so that the UI 
-       * can continue to provide feedback to the user. 
-       * 
-       * @param current
-       * @param total
-       * @return
-       */
-      private boolean shouldRenderSQL(int current, int total) {
-          if (!_largeScript) {
-              return true;
-          }
-          boolean result = true;
-          // Back-off a bit after a hundred updates to allow the UI to update
-          if (total > 200 && current > 100 && current % 10 != 0) {
-              result = false;
-          }
-          if (total > 1000 && current > 500 && current % 50 != 0) {
-              result = false;
-          }
-          if (total > 2000 && current > 1000 && current % 100 != 0) {
-              result = false;
-          }
-          return result;
-      }
-      
-      public void sqlToBeExecuted(final String sql)
-      {
-          _cancelPanel.incCurrentQueryIndex();
-          int currentStmtCount = _cancelPanel.getCurrentQueryIndex();
-          if (!shouldRenderSQL(currentStmtCount,_cancelPanel.getTotalCount())) {
-              return;
-          }
-          final String cleanSQL = StringUtilities.cleanString(sql);
-          sqlToBeExecuted = cleanSQL;
-          sqlType = getSQLType(cleanSQL);
-          
-          SwingUtilities.invokeLater(new Runnable() {
-              public void run() {
-                  _cancelPanel.setSQL(cleanSQL);
-               
-                  // i18n[SQLResultExecuterPanel.execStatus=Executing SQL...]
-                  String status = 
-                     s_stringMgr.getString("SQLResultExecuterPanel.execStatus");
-                  _cancelPanel.setStatusLabel(status);
-              }
-          });
-		}
+        /**
+         * Determines whether or not the current statement SQL should be rendered.
+         * Since too many statements can cause the UI to stop rendering the 
+         * statements, we back off rendering after many statements so that the UI 
+         * can continue to provide feedback to the user. 
+         * 
+         * @param current
+         * @param total
+         * @return
+         */
+        private boolean shouldRenderSQL(int current, int total) {
+            if (!_largeScript) {
+                return true;
+            }
+            boolean result = true;
+            // Back-off a bit after a hundred updates to allow the UI to update
+            if (total > 200 && current > 100 && current % 10 != 0) {
+                result = false;
+            }
+            if (total > 1000 && current > 500 && current % 50 != 0) {
+                result = false;
+            }
+            if (total > 2000 && current > 1000 && current % 100 != 0) {
+                result = false;
+            }
+            return result;
+        }
+
+        public void sqlToBeExecuted(final String sql)
+        {
+            _cancelPanel.incCurrentQueryIndex();
+            int currentStmtCount = _cancelPanel.getCurrentQueryIndex();
+            if (!shouldRenderSQL(currentStmtCount,_cancelPanel.getTotalCount())) {
+                return;
+            }
+            final String cleanSQL = StringUtilities.cleanString(sql);
+            sqlToBeExecuted = cleanSQL;
+            sqlType = getSQLType(cleanSQL);
+
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    _cancelPanel.setSQL(cleanSQL);
+
+                    // i18n[SQLResultExecuterPanel.execStatus=Executing SQL...]
+                    String status = 
+                        s_stringMgr.getString("SQLResultExecuterPanel.execStatus");
+                    _cancelPanel.setStatusLabel(status);
+                }
+            });
+        }
 
         /**
          * This will - depending on the size of the script - print a message 
@@ -1143,14 +1146,14 @@ public class SQLResultExecuterPanel extends JPanel
          * this method will track the total time when executing a large script, 
          * otherwise for small scripts it puts out a message for every statement.
          */
-		public void sqlExecutionComplete(SQLExecutionInfo exInfo, 
-                                         int processedStatementCount, 
-                                         int statementCount)
-		{
+        public void sqlExecutionComplete(SQLExecutionInfo exInfo, 
+                int processedStatementCount, 
+                int statementCount)
+        {
             double executionLength = ((double)exInfo.getSQLExecutionElapsedMillis())/1000d;
             double outputLength = ((double)exInfo.getResultsProcessingElapsedMillis())/1000d;            
             double totalLength = executionLength + outputLength;
-            
+
             if (_largeScript) {
                 // Track the time in aggregate for the script.
                 _scriptQueryTime += executionLength;
@@ -1161,30 +1164,30 @@ public class SQLResultExecuterPanel extends JPanel
                 // show the user the total execution time.                 
                 if (statementCount == processedStatementCount) {
                     printScriptExecDetails(statementCount,
-                                           _scriptQueryTime,
-                                           _scriptOutptutTime,
-                                           _scriptTotalTime);
+                            _scriptQueryTime,
+                            _scriptOutptutTime,
+                            _scriptTotalTime);
                 }
             } else {
                 printStatementExecTime(processedStatementCount,
-                                       statementCount,
-                                       executionLength,
-                                       outputLength,
-                                       totalLength);
+                        statementCount,
+                        executionLength,
+                        outputLength,
+                        totalLength);
             }
-		}
+        }
 
         private void printScriptExecDetails(int statementCount, 
-                                            double executionLength,
-                                            double outputLength,
-                                            double totalLength) 
+                double executionLength,
+                double outputLength,
+                double totalLength) 
         {
             final NumberFormat nbrFmt = NumberFormat.getNumberInstance();
-            
+
             Object[] args = new Object[] {new Integer(statementCount),
-                                          nbrFmt.format(totalLength),
-                                          nbrFmt.format(executionLength),
-                                          nbrFmt.format(outputLength)};
+                    nbrFmt.format(totalLength),
+                    nbrFmt.format(executionLength),
+                    nbrFmt.format(outputLength)};
 
             //i18n[SQLResultExecuterPanel.scriptQueryStatistics=Executed {0} 
             //queries; elapsed time (seconds) - Total: {1}, SQL query: {2}, 
@@ -1193,56 +1196,56 @@ public class SQLResultExecuterPanel extends JPanel
                 s_stringMgr.getString(
                         "SQLResultExecuterPanel.scriptQueryStatistics", 
                         args);
-            
+
             String[] counts = 
                 new String[] {Integer.toString(_scriptRowsInserted),
-                              Integer.toString(_scriptRowsSelected),
-                              Integer.toString(_scriptRowsUpdated),
-                              Integer.toString(_scriptRowsDeleted)};
-            
+                    Integer.toString(_scriptRowsSelected),
+                    Integer.toString(_scriptRowsUpdated),
+                    Integer.toString(_scriptRowsDeleted)};
+
             //i18n[SQLResultExecuterPanel.scriptStmtCounts=Row update 
             //counts: {0} Inserts, {1} Selects, {2} Updates, {3} Deletes
             String msg = 
                 s_stringMgr.getString("SQLResultExecuterPanel.scriptStmtCounts",
-                                      counts);
-            getSession().getMessageHandler().showMessage(msg);
-            getSession().getMessageHandler().showMessage(stats);
+                        counts);
+            getSession().showMessage(msg);
+            getSession().showMessage(stats);
         }
-        
+
         private void printStatementExecTime(int processedStatementCount, 
-                                            int statementCount,
-                                            double executionLength,
-                                            double outputLength,
-                                            double totalLength)
+                int statementCount,
+                double executionLength,
+                double outputLength,
+                double totalLength)
         {
             final NumberFormat nbrFmt = NumberFormat.getNumberInstance();
-            
+
             Object[] args = new Object[] {new Integer(processedStatementCount),
-                                          new Integer(statementCount),
-                                          nbrFmt.format(totalLength),
-                                          nbrFmt.format(executionLength),
-                                          nbrFmt.format(outputLength)};
+                    new Integer(statementCount),
+                    nbrFmt.format(totalLength),
+                    nbrFmt.format(executionLength),
+                    nbrFmt.format(outputLength)};
 
             //i18n[SQLResultExecuterPanel.queryStatistics=Query {0} of {1} 
             //elapsed time (seconds) - Total: {2}, SQL query: {3}, 
             //Building output: {4}]
             String stats = 
                 s_stringMgr.getString("SQLResultExecuterPanel.queryStatistics", 
-                                      args);
-            
-            getSession().getMessageHandler().showMessage(stats);            
+                        args);
+
+            getSession().showMessage(stats);            
         }
-        
-		public void sqlExecutionCancelled()
-		{
-			if (rsds != null) {
-				rsds.cancelProcessing();
+
+        public void sqlExecutionCancelled()
+        {
+            if (rsds != null) {
+                rsds.cancelProcessing();
             }
             // i18n[SQLResultExecuterPanel.canceleRequested=Query execution cancel requested by user.]
-//            String canc = 
-//                s_stringMgr.getString("SQLResultExecuterPanel.canceleRequested");
-//			getSession().getMessageHandler().showMessage(canc);
-		}
+//          String canc = 
+//          s_stringMgr.getString("SQLResultExecuterPanel.canceleRequested");
+//          getSession().getMessageHandler().showMessage(canc);
+        }
 
 		public void sqlDataUpdated(int updateCount)
 		{
@@ -1291,7 +1294,7 @@ public class SQLResultExecuterPanel extends JPanel
             if (_largeScript) {
                 return;
             }
-            getSession().getMessageHandler().showMessage(msg);
+            getSession().showMessage(msg);
 		}
 
 		public void sqlResultSetAvailable(ResultSet rs, SQLExecutionInfo info,
@@ -1316,199 +1319,188 @@ public class SQLResultExecuterPanel extends JPanel
 
 		public void sqlExecutionWarning(SQLWarning warn)
 		{
-			getSession().getMessageHandler().showMessage(warn);
+		    getSession().showMessage(warn);
 		}
 
-      public void sqlStatementCount(int statementCount)
-      {
-         _cancelPanel.setQueryCount(statementCount);
-      }
-
-      public void sqlCloseExecutionHandler()
-      {
-         removeCancelPanel(_cancelPanel);
-         _executer = null;
-      }
-
-      public void sqlExecutionException(Throwable th, String postErrorString)
+		public void sqlStatementCount(int statementCount)
 		{
-         String msg = "Error: ";
+		    _cancelPanel.setQueryCount(statementCount);
+		}
 
-         if(th instanceof SQLException)
-         {
-            SQLException sqlEx = (SQLException) th;
-            sqlEx.getSQLState();
-            sqlEx.getErrorCode();
+		public void sqlCloseExecutionHandler()
+		{
+		    removeCancelPanel(_cancelPanel);
+		    _executer = null;
+		}
 
-            msg += sqlEx + ", SQL State: " + sqlEx.getSQLState() + ", Error Code: " + sqlEx.getErrorCode();
-         }
-         else
-         {
-            msg += th;
-         }
+		public void sqlExecutionException(Throwable th, String postErrorString)
+		{
+		    SQLExecutionException ex = 
+		        new SQLExecutionException(th, postErrorString);
 
-         if(null != postErrorString)
-         {
-            msg += "\n" + postErrorString;
-         }
+		    ExceptionFormatter formatter = getSession().getExceptionFormatter();
 
-         getSession().getMessageHandler().showErrorMessage(msg);
+		    String message = formatter.format(ex);
 
-         if(getSession().getProperties().getWriteSQLErrorsToLog())
-         {
-            s_log.info(msg);   
-         }
+		    getSession().showErrorMessage(message);
+
+
+		    if(getSession().getProperties().getWriteSQLErrorsToLog())
+		    {
+		        s_log.info(message);   
+		    }
 		}
 
 
-      private void removeCancelPanel(final JPanel cancelPanel)
-      {
-         SwingUtilities.invokeLater(new Runnable()
-         {
-            public void run()
-            {
-               _tabbedExecutionsPanel.remove(cancelPanel);
+		private void removeCancelPanel(final JPanel cancelPanel)
+		{
+		    SwingUtilities.invokeLater(new Runnable()
+		    {
+		        public void run()
+		        {
+		            _tabbedExecutionsPanel.remove(cancelPanel);
 
-               int indexToSelect = -1;
-               if(null == _resultTabToReplace)
-               {
-                  indexToSelect = getIndexOfTab(_stickyTab);
-               }
-               else
-               {
-                  indexToSelect = getIndexOfTab(_resultTabToReplace);
-               }
+		            int indexToSelect = -1;
+		            if(null == _resultTabToReplace)
+		            {
+		                indexToSelect = getIndexOfTab(_stickyTab);
+		            }
+		            else
+		            {
+		                indexToSelect = getIndexOfTab(_resultTabToReplace);
+		            }
 
-               if(-1 != indexToSelect)
-               {
-                  _tabbedExecutionsPanel.setSelectedIndex(indexToSelect);
-               }
+		            if(-1 != indexToSelect)
+		            {
+		                _tabbedExecutionsPanel.setSelectedIndex(indexToSelect);
+		            }
 
-            }
-         });
-      }
-      private void setCancelPanel(final JPanel panel)
-      {
-         SwingUtilities.invokeLater(new Runnable()
-         {
-            public void run()
-            {
-                // i18n[SQLResultExecuterPanel.exec=Executing SQL]
-                String execMsg = 
-                    s_stringMgr.getString("SQLResultExecuterPanel.exec");
-                // i18n[SQLResultExecuterPanel.cancelMsg=Press Cancel to Stop]
-                String cancMsg = 
-                    s_stringMgr.getString("SQLResultExecuterPanel.cancelMsg");
-                
-               _tabbedExecutionsPanel.addTab(execMsg, null, panel,	cancMsg);
-               _tabbedExecutionsPanel.setSelectedComponent(panel);
-            }
-         });
-      }
+		        }
+		    });
+		}
+
+		private void setCancelPanel(final JPanel panel)
+		{
+		    SwingUtilities.invokeLater(new Runnable()
+		    {
+		        public void run()
+		        {
+		            // i18n[SQLResultExecuterPanel.exec=Executing SQL]
+		            String execMsg = 
+		                s_stringMgr.getString("SQLResultExecuterPanel.exec");
+		            // i18n[SQLResultExecuterPanel.cancelMsg=Press Cancel to Stop]
+		            String cancMsg = 
+		                s_stringMgr.getString("SQLResultExecuterPanel.cancelMsg");
+
+		            _tabbedExecutionsPanel.addTab(execMsg, null, panel,	cancMsg);
+		            _tabbedExecutionsPanel.setSelectedComponent(panel);
+		        }
+		    });
+		}
       
-      private final class CancelPanel extends JPanel
-										implements ActionListener
+		private final class CancelPanel extends JPanel
+		implements ActionListener
 		{
-			private JLabel _sqlLbl = new JLabel();
-			private JLabel _currentStatusLbl = new JLabel();
+		    private JLabel _sqlLbl = new JLabel();
+		    private JLabel _currentStatusLbl = new JLabel();
 
-			/** Total number of queries that will be executed. */
-			private int _queryCount;
+		    /** Total number of queries that will be executed. */
+		    private int _queryCount;
 
-			/** Number of the query currently being executed (starts from 1). */
-			private int _currentQueryIndex = 0;
+		    /** Number of the query currently being executed (starts from 1). */
+		    private int _currentQueryIndex = 0;
 
-			private CancelPanel()
-			{
-				super(new GridBagLayout());
+		    private CancelPanel()
+		    {
+		        super(new GridBagLayout());
 
-                // i18n[SQLResultExecuterPanel.cancelButtonLabel=Cancel]
-                String label = 
-                    s_stringMgr.getString("SQLResultExecuterPanel.cancelButtonLabel");
-				JButton cancelBtn = new JButton(label);
-				cancelBtn.addActionListener(this);
+		        // i18n[SQLResultExecuterPanel.cancelButtonLabel=Cancel]
+		        String label = 
+		            s_stringMgr.getString("SQLResultExecuterPanel.cancelButtonLabel");
+		        JButton cancelBtn = new JButton(label);
+		        cancelBtn.addActionListener(this);
 
-				GridBagConstraints gbc = new GridBagConstraints();
+		        GridBagConstraints gbc = new GridBagConstraints();
 
-				gbc.anchor = GridBagConstraints.WEST;
-				gbc.insets = new Insets(5, 10, 5, 10);
+		        gbc.anchor = GridBagConstraints.WEST;
+		        gbc.insets = new Insets(5, 10, 5, 10);
 
-				gbc.gridx = 0;
-				gbc.gridy = 0;
-                
-                // i18n[SQLResultExecuterPanel.sqlLabel=SQL:]
-                label = s_stringMgr.getString("SQLResultExecuterPanel.sqlLabel");
-				add(new JLabel(label), gbc);
+		        gbc.gridx = 0;
+		        gbc.gridy = 0;
 
-				gbc.weightx = 1;
-				++gbc.gridx;
-				add(_sqlLbl, gbc);
+		        // i18n[SQLResultExecuterPanel.sqlLabel=SQL:]
+		        label = s_stringMgr.getString("SQLResultExecuterPanel.sqlLabel");
+		        add(new JLabel(label), gbc);
 
-				gbc.weightx = 0;
-				gbc.gridx = 0;
-				++gbc.gridy;
-                // i18n[SQLResultExecuterPanel.statusLabel=Status:]
-                label = 
-                    s_stringMgr.getString("SQLResultExecuterPanel.statusLabel");
-				add(new JLabel(label), gbc);
+		        gbc.weightx = 1;
+		        ++gbc.gridx;
+		        add(_sqlLbl, gbc);
 
-				++gbc.gridx;
-				add(_currentStatusLbl, gbc);
+		        gbc.weightx = 0;
+		        gbc.gridx = 0;
+		        ++gbc.gridy;
+		        // i18n[SQLResultExecuterPanel.statusLabel=Status:]
+		        label = 
+		            s_stringMgr.getString("SQLResultExecuterPanel.statusLabel");
+		        add(new JLabel(label), gbc);
 
-				gbc.gridx = 0;
-				++gbc.gridy;
-				gbc.fill = GridBagConstraints.NONE;
-				add(cancelBtn, gbc);
-			}
+		        ++gbc.gridx;
+		        add(_currentStatusLbl, gbc);
 
-            public void incCurrentQueryIndex() {
-                ++_currentQueryIndex;
-            }
-            
-			public void setSQL(String sql)
-			{
-                // i18n[SQLResultExecuterPanel.currentSQLLabel={0} of {1} - {2}]
-                String label = 
-                    s_stringMgr.getString("SQLResultExecuterPanel.currentSQLLabel",
-                                          new Object[] { String.valueOf(_currentQueryIndex),
-                                                         String.valueOf(_queryCount),
-                                                         sql} );                
-				_sqlLbl.setText(label);
-			}
+		        gbc.gridx = 0;
+		        ++gbc.gridy;
+		        gbc.fill = GridBagConstraints.NONE;
+		        add(cancelBtn, gbc);
+		    }
 
-			public void setStatusLabel(String text)
-			{
-				_currentStatusLbl.setText(text);
-			}
+		    public void incCurrentQueryIndex() {
+		        ++_currentQueryIndex;
+		    }
 
-			public void setQueryCount(int value)
-			{
-				_queryCount = value;
-				_currentQueryIndex = 0;
-			}
+		    public void setSQL(String sql)
+		    {
+		        // i18n[SQLResultExecuterPanel.currentSQLLabel={0} of {1} - {2}]
+		        String label = 
+		            s_stringMgr.getString("SQLResultExecuterPanel.currentSQLLabel",
+		                    new Object[] { String.valueOf(_currentQueryIndex),
+		                    String.valueOf(_queryCount),
+		                    sql} );                
+		        _sqlLbl.setText(label);
+		    }
 
-            public int getTotalCount() {
-                return _queryCount;
-            }
-            
-            public int getCurrentQueryIndex() {
-                return _currentQueryIndex;
-            }
-           
-            
-			public void actionPerformed(ActionEvent event)
-			{
-				try
-				{
-                    if (_executer != null){
-                        _executer.cancel();
-                    }
-				}
-				catch (Throwable th)
-				{
-					s_log.error("Error occured cancelling SQL", th);
-				}
-			}
+		    public void setStatusLabel(String text)
+		    {
+		        _currentStatusLbl.setText(text);
+		    }
+
+		    public void setQueryCount(int value)
+		    {
+		        _queryCount = value;
+		        _currentQueryIndex = 0;
+		    }
+
+		    public int getTotalCount() {
+		        return _queryCount;
+		    }
+
+		    public int getCurrentQueryIndex() {
+		        return _currentQueryIndex;
+		    }
+
+
+		    public void actionPerformed(ActionEvent event)
+		    {
+		        try
+		        {
+		            if (_executer != null){
+		                _executer.cancel();
+		            }
+		        }
+		        catch (Throwable th)
+		        {
+		            s_log.error("Error occured cancelling SQL", th);
+		        }
+		    }
 		}
 	}
 

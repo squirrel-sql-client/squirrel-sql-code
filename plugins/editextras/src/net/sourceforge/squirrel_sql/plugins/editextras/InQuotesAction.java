@@ -85,7 +85,7 @@ class InQuotesAction extends SquirrelAction
 			{
 				// i18n[editextras.errorQuoteSql=Error processing Quote SQL command: {0}]
 				final String msg = s_stringMgr.getString("editextras.errorQuoteSql", ex);
-				_session.getMessageHandler().showErrorMessage(msg);
+				_session.showErrorMessage(msg);
 				s_log.error(msg, ex);
 			}
 		}

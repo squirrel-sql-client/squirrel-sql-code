@@ -32,6 +32,7 @@ import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -81,7 +82,7 @@ public class AddPrimaryKeyCommand extends AbstractRefactoringCommand {
                 String msg = 
                     s_stringMgr.getString("AddPrimaryKeyCommand.primaryKeyExists", 
                                            ti.getSimpleName());
-                _session.getMessageHandler().showErrorMessage(msg);
+                _session.showErrorMessage(msg);
                 return;
             }
             
@@ -89,7 +90,7 @@ public class AddPrimaryKeyCommand extends AbstractRefactoringCommand {
                                        new ShowSQLListener(), 
                                        ColumnListDialog.ADD_PRIMARY_KEY_MODE);
         } catch (Exception e) {
-            _session.getMessageHandler().showErrorMessage(e);
+            _session.showErrorMessage(e);
             log.error("Unexpected exception "+e.getMessage(), e);
         }
         
@@ -117,7 +118,7 @@ public class AddPrimaryKeyCommand extends AbstractRefactoringCommand {
                 s_stringMgr.getString("AddPrimaryKeyCommand.unsupportedOperationMsg", 
                                       dialect.getDisplayName());
                                       
-            _session.getMessageHandler().showErrorMessage(msg);
+            _session.showErrorMessage(msg);
         } catch (UserCancelledOperationException e) {
             // user cancelled selecting a dialog. do nothing?
         }

@@ -565,7 +565,7 @@ public class SessionPanel extends JPanel
 				}
 				catch (SQLException ex)
 				{
-					getSession().getMessageHandler().showErrorMessage(ex);
+					getSession().showErrorMessage(ex);
 					SessionPanel.this._toolBar._catalogsPanel.refreshCatalogs();
 				}
 			}

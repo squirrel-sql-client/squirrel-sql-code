@@ -64,7 +64,7 @@ public class DeactivateIndexAction extends SquirrelAction implements ISessionAct
 			}
 			catch (Throwable th)
 			{
-				_session.getMessageHandler().showErrorMessage(th);
+				_session.showErrorMessage(th);
 			}
 		}
 	}

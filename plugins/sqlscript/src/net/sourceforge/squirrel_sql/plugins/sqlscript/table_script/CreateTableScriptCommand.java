@@ -118,7 +118,7 @@ public class CreateTableScriptCommand implements ICommand
             boolean isJdbcOdbc = md.getURL().startsWith("jdbc:odbc:");
             if (isJdbcOdbc) {
                 // TODO i18n
-                _session.getMessageHandler().showErrorMessage(
+                _session.showErrorMessage(
                             "JDBC-ODBC Bridge doesn't provide necessary meta " +
                             "data. Script will be incomplete");
             }
@@ -159,7 +159,7 @@ public class CreateTableScriptCommand implements ICommand
                 result.append("\n");
             }
         } catch (Exception e) {
-            _session.getMessageHandler().showErrorMessage(e);
+            _session.showErrorMessage(e);
         }
         return result.toString();
     }

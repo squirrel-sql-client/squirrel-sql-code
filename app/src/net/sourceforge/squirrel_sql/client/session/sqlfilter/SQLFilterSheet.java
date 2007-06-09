@@ -150,7 +150,7 @@ public class SQLFilterSheet extends BaseSessionInternalFrame
                     // i18n[SQLFilterSheet.contentsMsg=You must have the Contents Tab selected to activate the SQL Filter]
                     String msg = 
                         s_stringMgr.getString("SQLFilterSheet.contentsMsg");
-					_objectTree.getSession().getMessageHandler().showMessage(msg);
+					_objectTree.getSession().showMessage(msg);
 				}
 				else
 				{
@@ -268,7 +268,7 @@ public class SQLFilterSheet extends BaseSessionInternalFrame
 		}
 		catch (DataSetException ex)
 		{
-			getSession().getMessageHandler().showErrorMessage(ex);
+			getSession().showErrorMessage(ex);
 		}
 
 		dispose();

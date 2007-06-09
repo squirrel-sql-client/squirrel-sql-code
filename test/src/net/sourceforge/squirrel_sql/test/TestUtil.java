@@ -61,12 +61,12 @@ public class TestUtil {
         ISession session =
             createMock(ISession.class);
         IQueryTokenizer tokenizer = getEasyMockQueryTokenizer();
-        IMessageHandler messageHandler = getEasyMockMessageHandler();
+        //IMessageHandler messageHandler = getEasyMockMessageHandler();
         
         expect(session.getMetaData()).andReturn(md).anyTimes();
         expect(session.getApplication()).andReturn(getEasyMockApplication()).anyTimes();
         expect(session.getQueryTokenizer()).andReturn(tokenizer).anyTimes();
-        expect(session.getMessageHandler()).andReturn(messageHandler).anyTimes();
+        //expect(session.getMessageHandler()).andReturn(messageHandler).anyTimes();
         if (replay) {
             replay(session);
         }
@@ -75,10 +75,10 @@ public class TestUtil {
     
     public static IMessageHandler getEasyMockMessageHandler() {
         IMessageHandler result = createMock(IMessageHandler.class);
-        result.showErrorMessage(isA(Throwable.class));
+        result.showErrorMessage(isA(Throwable.class), null);
         result.showErrorMessage(isA(String.class));
         result.showMessage(isA(String.class));
-        result.showMessage(isA(Throwable.class));
+        result.showMessage(isA(Throwable.class), null);
         result.showWarningMessage(isA(String.class));
         replay(result);
         return result;

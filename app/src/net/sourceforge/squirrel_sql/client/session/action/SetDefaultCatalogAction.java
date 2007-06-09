@@ -80,7 +80,7 @@ public class SetDefaultCatalogAction extends SquirrelAction
 			}
 			catch (Throwable th)
 			{
-				_tree.getSession().getMessageHandler().showErrorMessage(th);
+				_tree.getSession().showErrorMessage(th);
 				s_log.error("Error occured setting session catalog to " + catalog, th);
 			}
 		}

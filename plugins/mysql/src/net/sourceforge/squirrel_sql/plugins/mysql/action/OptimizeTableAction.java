@@ -85,7 +85,7 @@ public class OptimizeTableAction extends SquirrelAction implements ISessionActio
 			}
 			catch (Throwable th)
 			{
-				_session.getMessageHandler().showErrorMessage(th);
+				_session.showErrorMessage(th);
 			}
 		}
 	}

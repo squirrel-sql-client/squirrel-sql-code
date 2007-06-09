@@ -206,7 +206,7 @@ public class FileImport extends JPanel implements ActionListener {
 
 					// i18n[dataimport.fileOpened=File:\n\"{0}\" opened]
 					msg = s_stringMgr.getString("dataimport.fileOpened", filename);
-					_session.getMessageHandler().showMessage(msg);
+					_session.showMessage(msg);
 
 					//          fileNameTxt.setText(filename);
 					filename = chooser.getSelectedFile().getName();
@@ -258,7 +258,7 @@ public class FileImport extends JPanel implements ActionListener {
 				if (insertData())
 				{
 					// i18n[dataimport.insertsDone=All insertions are done!]
-					_session.getMessageHandler().showMessage(s_stringMgr.getString("dataimport.insertsDone"));
+					_session.showMessage(s_stringMgr.getString("dataimport.insertsDone"));
 				}
 			}
 		}
@@ -279,18 +279,18 @@ public class FileImport extends JPanel implements ActionListener {
 		  final Statement stmt = _session.getSQLConnection().createStatement();
 		  try {
 		  stmt.execute(_createStr);
-		  _session.getMessageHandler().showMessage(_createStr);
-		  _session.getMessageHandler().showMessage("Done!");
+		  _session.showMessage(_createStr);
+		  _session.showMessage("Done!");
 		  return true;
 		  }
 		  catch (Exception ee)
-		  {_session.getMessageHandler().showErrorMessage(ee);
+		  {_session.showErrorMessage(ee);
 		  JOptionPane.showMessageDialog(frame,"Create table error:" +_createStr  );
 		  return false;
 		  }
 	 }
 	 catch (Exception ex) {
-		  _session.getMessageHandler().showErrorMessage(ex);
+		  _session.showErrorMessage(ex);
 		  return false;
 	 }
 }
@@ -327,10 +327,10 @@ boolean insertData(){
 				}
 				}
 				pstmt.executeUpdate();
-				_session.getMessageHandler().showMessage(Integer.toString(i+1)+" Done!");
+				_session.showMessage(Integer.toString(i+1)+" Done!");
 		  }
 		  catch (Exception ee){
-				_session.getMessageHandler().showErrorMessage(ee);
+				_session.showErrorMessage(ee);
 
 			  // i18n[dataimport.insertError=Insert error at line: {0}]
 				JOptionPane.showMessageDialog(frame,s_stringMgr.getString("dataimport.insertError", Integer.toString(i)));
@@ -340,7 +340,7 @@ boolean insertData(){
 		  return true;
 	 }
 	 catch (Exception ex) {
-		  _session.getMessageHandler().showErrorMessage(ex);
+		  _session.showErrorMessage(ex);
 		  return false;
 	 }
  }
@@ -444,7 +444,7 @@ boolean insertData(){
 				return true;
 		  }
 		  catch (Exception ecp){
-			  _session.getMessageHandler().showErrorMessage(ecp);
+			  _session.showErrorMessage(ecp);
 		  repaint();
 		  return false;
 		  }

@@ -69,13 +69,13 @@ public class AlterTableAction extends SquirrelAction implements ISessionAction
 				}
 				catch (Throwable th)
 				{
-					_session.getMessageHandler().showErrorMessage(th);
+					_session.showErrorMessage(th);
 				}
 			}
 			else
 			{
 				String msg = s_stringMgr.getString("AlterTableAction.error.wrongobjcount");
-				_session.getMessageHandler().showErrorMessage(msg);
+				_session.showErrorMessage(msg);
 			}
 		}
 	}

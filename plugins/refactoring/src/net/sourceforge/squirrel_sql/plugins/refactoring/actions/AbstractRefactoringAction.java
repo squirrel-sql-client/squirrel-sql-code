@@ -50,12 +50,12 @@ public abstract class AbstractRefactoringAction extends SquirrelAction
                 _session.getObjectTreeAPIOfActiveSessionWindow();
             IDatabaseObjectInfo[] infos = api.getSelectedDatabaseObjects();
             if (infos.length > 1 && !isMultipleObjectAction()) {
-                _session.getMessageHandler().showMessage(getErrorMessage());
+                _session.showMessage(getErrorMessage());
             } else {
                 try {
                     getCommand(infos).execute();
                 } catch (Exception e) {
-                    _session.getMessageHandler().showMessage(e);
+                    _session.showMessage(e);
                 }            
             }
         }

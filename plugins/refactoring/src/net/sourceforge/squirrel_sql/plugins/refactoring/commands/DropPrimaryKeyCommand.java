@@ -78,7 +78,7 @@ public class DropPrimaryKeyCommand extends AbstractRefactoringCommand {
                 String msg = 
                     s_stringMgr.getString("DropPrimaryKeyCommand.noKeyToDrop",
                                           ti.getSimpleName());
-                _session.getMessageHandler().showErrorMessage(msg);
+                _session.showErrorMessage(msg);
                 return;
             }
             super.showColumnListDialog(new DropPrimaryKeyActionListener(), 
@@ -109,7 +109,7 @@ public class DropPrimaryKeyCommand extends AbstractRefactoringCommand {
                 s_stringMgr.getString("DropPrimaryKeyCommand.unsupportedOperationMsg", 
                                       dialect.getDisplayName());
                                       
-            _session.getMessageHandler().showMessage(msg);
+            _session.showMessage(msg);
         } catch (UserCancelledOperationException e) {
             // user cancelled selecting a dialect. do nothing?
         }

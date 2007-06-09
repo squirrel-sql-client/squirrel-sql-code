@@ -117,14 +117,13 @@ public class ValidateSQLAction extends SquirrelAction implements ISessionAction
 			final String stmtSep= _session.getQueryTokenizer().getSQLStatementSeparator();
 			final String solComment = _session.getQueryTokenizer().getLineCommentBegin();
 			final ValidationProps valProps = new ValidationProps(_prefs, wssProps,
-													_session.getMessageHandler(),
 													sql, stmtSep, solComment, _session);
 			new Executor(_session.getApplication(), valProps, _session.getProperties()).execute();
 		}
 		else
 		{
 			// i18n[sqlval.noSql=No SQL specified]
-			_session.getMessageHandler().showErrorMessage(s_stringMgr.getString("sqlval.noSql"));
+			_session.showErrorMessage(s_stringMgr.getString("sqlval.noSql"));
 		}
 	}
 
@@ -132,7 +131,6 @@ public class ValidateSQLAction extends SquirrelAction implements ISessionAction
 	{
 		final WebServicePreferences _prefs;
 		final WebServiceSessionProperties _sessionProps;
-		final IMessageHandler _msgHandler;
 		final String _sql;
 		final String _stmtSep;
 		final String _solComment;
@@ -140,13 +138,12 @@ public class ValidateSQLAction extends SquirrelAction implements ISessionAction
 
 		ValidationProps(WebServicePreferences prefs,
 						WebServiceSessionProperties sessionProps,
-						IMessageHandler msgHandler, String sql, String stmtSep,
+                        String sql, String stmtSep,
 						String solComment, ISession session)
 		{
 			super();
 			_prefs = prefs;
 			_sessionProps = sessionProps;
-			_msgHandler = msgHandler;
 			_sql = sql;
 			_stmtSep= stmtSep;
 			_solComment = solComment;
@@ -179,7 +176,7 @@ public class ValidateSQLAction extends SquirrelAction implements ISessionAction
 			try
 			{
 				cmd.execute();
-				_valProps._msgHandler.showMessage(cmd.getResults());
+                _valProps._session.showMessage(cmd.getResults());
 			}
 			catch (Throwable th)
 			{

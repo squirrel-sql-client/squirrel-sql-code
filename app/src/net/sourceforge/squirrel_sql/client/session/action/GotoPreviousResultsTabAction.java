@@ -84,7 +84,7 @@ public class GotoPreviousResultsTabAction extends SquirrelAction
 			catch (Throwable ex)
 			{
 				final String msg = "Error occured seting current results tab";
-				_panel.getSession().getMessageHandler().showErrorMessage(msg + ": " + ex);
+				_panel.getSession().showErrorMessage(msg + ": " + ex);
 				s_log.error(msg, ex);
 			}
 		}

@@ -273,7 +273,7 @@ public class SGATracePanel extends JPanel
       }
       catch (SQLException ex)
       {
-         _session.getMessageHandler().showErrorMessage(ex);
+         _session.showErrorMessage(ex);
       }
    }
 

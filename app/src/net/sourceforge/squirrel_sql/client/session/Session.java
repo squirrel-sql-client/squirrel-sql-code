@@ -64,6 +64,8 @@ import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnectionState;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.DefaultExceptionFormatter;
+import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.NullMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -149,6 +151,9 @@ class Session implements ISession
    private boolean _pluginsFinishedLoading = false;
 
    private IQueryTokenizer tokenizer = null;
+   
+   /** The default exception formatter */
+   private DefaultExceptionFormatter formatter = new DefaultExceptionFormatter();
    
    /**
     * Create a new session.
@@ -298,11 +303,11 @@ class Session implements ISession
       {
          getSQLConnection().commit();
          final String msg = s_stringMgr.getString("Session.commit");
-         getMessageHandler().showMessage(msg);
+         _msgHandler.showMessage(msg);
       }
       catch (Throwable ex)
       {
-         getMessageHandler().showErrorMessage(ex);
+         _msgHandler.showErrorMessage(ex, formatter);
       }
    }
 
@@ -315,11 +320,11 @@ class Session implements ISession
       {
          getSQLConnection().rollback();
          final String msg = s_stringMgr.getString("Session.rollback");
-         getMessageHandler().showMessage(msg);
+         _msgHandler.showMessage(msg);
       }
       catch (Exception ex)
       {
-         getMessageHandler().showErrorMessage(ex);
+         _msgHandler.showErrorMessage(ex, formatter);
       }
    }
 
@@ -508,7 +513,7 @@ class Session implements ISession
          final String msg = s_stringMgr.getString("Session.error.connclose");
          s_log.error(msg, ex);
          _msgHandler.showErrorMessage(msg);
-         _msgHandler.showErrorMessage(ex);
+         _msgHandler.showErrorMessage(ex, this.getExceptionFormatter());
       }
       try
       {
@@ -530,11 +535,6 @@ class Session implements ISession
          s_log.error(msg, t);
          _app.getSessionManager().fireReconnectFailed(this);
       }
-   }
-
-   public IMessageHandler getMessageHandler()
-   {
-      return _msgHandler;
    }
 
    public void setMessageHandler(IMessageHandler handler)
@@ -1013,7 +1013,7 @@ class Session implements ISession
         }
     }
 
-    /* (non-Javadoc)
+    /**
      * @see net.sourceforge.squirrel_sql.client.session.ISession#getMetaData()
      */
     public ISQLDatabaseMetaData getMetaData() {
@@ -1024,4 +1024,53 @@ class Session implements ISession
         }
     }
 
+    /**
+     * @see net.sourceforge.squirrel_sql.client.session.ISession#setExceptionFormatter(net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter)
+     */
+    public void setExceptionFormatter(ExceptionFormatter formatter) {
+        this.formatter.setCustomExceptionFormatter(formatter);
+    }
+
+    /**
+     * @see net.sourceforge.squirrel_sql.client.session.ISession#getExceptionFormatter()
+     */
+    public ExceptionFormatter getExceptionFormatter() {
+        return this.formatter; 
+    }
+
+    /**
+     * @see net.sourceforge.squirrel_sql.client.session.ISession#showErrorMessage(java.lang.String)
+     */
+    public void showErrorMessage(String msg) {
+        _msgHandler.showErrorMessage(msg);
+    }
+
+    /**
+     * @see net.sourceforge.squirrel_sql.client.session.ISession#showErrorMessage(java.lang.Throwable, net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter)
+     */
+    public void showErrorMessage(Throwable th) {
+        _msgHandler.showErrorMessage(th, formatter);
+    }
+
+    /**
+     * @see net.sourceforge.squirrel_sql.client.session.ISession#showMessage(java.lang.String)
+     */
+    public void showMessage(String msg) {
+        _msgHandler.showMessage(msg);
+    }
+
+    /**
+     * @see net.sourceforge.squirrel_sql.client.session.ISession#showMessage(java.lang.Throwable, net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter)
+     */
+    public void showMessage(Throwable th) {
+        _msgHandler.showMessage(th, formatter);
+    }
+
+    /**
+     * @see net.sourceforge.squirrel_sql.client.session.ISession#showWarningMessage(java.lang.String)
+     */
+    public void showWarningMessage(String msg) {
+        _msgHandler.showWarningMessage(msg);
+    }
+    
 }

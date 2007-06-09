@@ -118,7 +118,7 @@ public abstract class H2SourceTab extends BaseSourceTab {
             }
             catch (SQLException ex)
             {
-                session.getMessageHandler().showErrorMessage(ex);
+                session.showErrorMessage(ex);
             }
 
         }

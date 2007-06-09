@@ -109,7 +109,7 @@ public class SQLFilterAction extends SquirrelAction implements IObjectTreeAction
                 //single table or view selected to activate the SQL Filter]
                 String msg = 
                     s_stringMgr.getString("SQLFilterAction.singleObjectMessage");
-			    _tree.getSession().getMessageHandler().showMessage(msg);
+			    _tree.getSession().showMessage(msg);
 			}
 		}
 	}

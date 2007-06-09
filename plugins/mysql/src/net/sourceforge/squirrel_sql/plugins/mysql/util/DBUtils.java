@@ -100,7 +100,7 @@ public class DBUtils
 		}
 		catch (SQLException ex)
 		{
-			_session.getMessageHandler().showErrorMessage(ex);
+			_session.showErrorMessage(ex);
 		}
 		return columnNames;
 	}
@@ -126,7 +126,7 @@ public class DBUtils
 		}
 		catch (SQLException ex)
 		{
-			_session.getMessageHandler().showErrorMessage(ex);
+			_session.showErrorMessage(ex);
 		}
 		return dataTypes;
 	}
@@ -142,7 +142,7 @@ public class DBUtils
 		}
 		catch (SQLException ex)
 		{
-			_session.getMessageHandler().showErrorMessage(ex);
+			_session.showErrorMessage(ex);
 		}
 	}
 
@@ -162,7 +162,7 @@ public class DBUtils
 		}
 		catch (SQLException ex)
 		{
-			_session.getMessageHandler().showErrorMessage(ex);
+			_session.showErrorMessage(ex);
 		}
 		return dataTypes;
 	}
@@ -182,7 +182,7 @@ public class DBUtils
 		}
 		catch (SQLException ex)
 		{
-			_session.getMessageHandler().showErrorMessage(ex);
+			_session.showErrorMessage(ex);
 		}
 
 		return primaryKey;

@@ -75,7 +75,7 @@ public class ConnectCommand implements ICommand
 			{
 				wss.open();
 				// i18n[sqlval.connected=Connected to the SQL Validation web service]
-				_session.getMessageHandler().showMessage(s_stringMgr.getString("sqlval.connected"));
+				_session.showMessage(s_stringMgr.getString("sqlval.connected"));
 			}
 		}
 		catch (Throwable th)

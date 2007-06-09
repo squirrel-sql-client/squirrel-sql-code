@@ -82,7 +82,7 @@ public class ExplainSelectTableAction extends SquirrelAction implements ISession
 			}
 			catch (Throwable th)
 			{
-				_session.getMessageHandler().showErrorMessage(th);
+				_session.showErrorMessage(th);
 			}
 		}
 	}

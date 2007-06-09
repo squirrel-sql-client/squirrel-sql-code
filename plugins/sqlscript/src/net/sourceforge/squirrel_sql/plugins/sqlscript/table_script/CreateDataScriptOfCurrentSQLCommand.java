@@ -81,7 +81,7 @@ public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
                if(false == qt.hasQuery())
                {
                   // i18n[CreateDataScriptOfCurrentSQLCommand.noQuery=No query found to create the script from.]
-                  _session.getMessageHandler().showErrorMessage(s_stringMgr.getString("CreateTableOfCurrentSQLCommand.noQuery"));
+                  _session.showErrorMessage(s_stringMgr.getString("CreateTableOfCurrentSQLCommand.noQuery"));
                   return;
                }
 
@@ -119,7 +119,7 @@ public class CreateDataScriptOfCurrentSQLCommand extends CreateDataScriptCommand
             }
             catch (Exception e)
             {
-               _session.getMessageHandler().showErrorMessage(e);
+               _session.showErrorMessage(e);
             }
             finally
             {

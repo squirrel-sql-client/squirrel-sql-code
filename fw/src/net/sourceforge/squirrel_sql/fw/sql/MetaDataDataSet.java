@@ -211,7 +211,7 @@ public class MetaDataDataSet implements IDataSet
 			}
 			catch (SQLException ex)
 			{
-				_msgHandler.showMessage(ex);
+				_msgHandler.showMessage(ex, null);
 			}
 
 		}

@@ -132,7 +132,7 @@ public class DumpApplicationCommand implements ICommand
                 //i18n[DumpApplicationCommand.error.dumpingstatus=Error dumping Application Status bean]
 				final String msg = s_stringMgr.getString("DumpApplicationCommand.error.dumpingstatus");
 				_msgHandler.showMessage(msg);
-				_msgHandler.showMessage(th);
+				_msgHandler.showMessage(th, null);
 				s_log.error(msg, th);
 			}
 
@@ -151,7 +151,7 @@ public class DumpApplicationCommand implements ICommand
                 //i18n[DumpApplicationCommand.error.dumpingsystemprops=Error dumping metadata]
 				final String msg = s_stringMgr.getString("DumpApplicationCommand.error.dumpingsystemprops");
 				_msgHandler.showMessage(msg);
-				_msgHandler.showMessage(th);
+				_msgHandler.showMessage(th, null);
 				s_log.error(msg, th);
 			}
 
@@ -169,7 +169,7 @@ public class DumpApplicationCommand implements ICommand
                 //i18n[DumpApplicationCommand.error.dumpingdrivers=Error dumping drivers]
 				final String msg = s_stringMgr.getString("DumpApplicationCommand.error.dumpingdrivers");
 				_msgHandler.showMessage(msg);
-				_msgHandler.showMessage(th);
+				_msgHandler.showMessage(th, null);
 				s_log.error(msg, th);
 			}
 
@@ -187,7 +187,7 @@ public class DumpApplicationCommand implements ICommand
                 //i18n[DumpApplicationCommand.error.dumpingaliases=Error dumping aliases]
 				final String msg = s_stringMgr.getString("DumpApplicationCommand.error.dumpingaliases");
 				_msgHandler.showMessage(msg);
-				_msgHandler.showMessage(th);
+				_msgHandler.showMessage(th, null);
 				s_log.error(msg, th);
 			}
 
@@ -214,7 +214,7 @@ public class DumpApplicationCommand implements ICommand
                     //i18n[DumpApplicationCommand.error.sessiondump=Error dumping sessions]
 					final String msg = s_stringMgr.getString("DumpApplicationCommand.error.sessiondump");
 					_msgHandler.showMessage(msg);
-					_msgHandler.showMessage(th);
+					_msgHandler.showMessage(th, null);
 					s_log.error(msg, th);
 				}
 			}

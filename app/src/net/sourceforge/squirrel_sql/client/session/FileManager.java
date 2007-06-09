@@ -108,7 +108,7 @@ public class FileManager
       }
       catch (java.io.IOException io)
       {
-         _sqlPanelAPI.getSession().getMessageHandler().showErrorMessage(io);
+         _sqlPanelAPI.getSession().showErrorMessage(io);
       }
       finally
       {
@@ -250,11 +250,11 @@ public class FileManager
             // i18n[FileManager.savedfile=Saved to {0}]
             String msg = s_stringMgr.getString("FileManager.savedfile",
                                                file.getAbsolutePath());
-            _sqlPanelAPI.getSession().getMessageHandler().showMessage(msg);
+            _sqlPanelAPI.getSession().showMessage(msg);
          }
          catch (IOException ex)
          {
-            _sqlPanelAPI.getSession().getMessageHandler().showErrorMessage(ex);
+            _sqlPanelAPI.getSession().showErrorMessage(ex);
          }
          finally
          {

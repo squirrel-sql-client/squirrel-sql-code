@@ -489,7 +489,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
                 if (_stopExecution) {
                     return false;
                 } else {
-                    _session.getMessageHandler().showMessage(ex);
+                    _session.showMessage(ex);
                     s_log.error("Error reading ResultSet", ex);
                 }
             }
@@ -554,7 +554,7 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
       catch (Throwable th)
       {
          s_log.error("Can't get warnings from ResultSet", th);
-         _session.getMessageHandler().showMessage(th);
+         _session.showMessage(th);
       }
    }
 

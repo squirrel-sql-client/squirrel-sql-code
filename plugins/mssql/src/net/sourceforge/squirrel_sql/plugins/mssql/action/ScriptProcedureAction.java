@@ -54,7 +54,7 @@ public class ScriptProcedureAction extends SquirrelAction implements ISessionAct
                     new ScriptProcedureCommand(_session, _plugin, dbObjs).execute();
                 }
                 catch (Throwable th) {
-                    _session.getMessageHandler().showErrorMessage(th);
+                    _session.showErrorMessage(th);
                 }
             }
                 

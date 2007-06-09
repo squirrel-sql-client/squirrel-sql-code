@@ -56,7 +56,7 @@ public class CloseSessionAction extends SquirrelAction
 			catch (Throwable ex)
 			{
 				final String msg = "Error occured closing session";
-				_session.getMessageHandler().showErrorMessage(msg + ": " + ex);
+				_session.showErrorMessage(msg + ": " + ex);
 				s_log.error(msg, ex);
 			}
 		}

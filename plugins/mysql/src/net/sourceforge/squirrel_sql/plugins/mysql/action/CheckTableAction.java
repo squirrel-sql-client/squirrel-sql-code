@@ -105,7 +105,7 @@ public class CheckTableAction extends SquirrelAction implements ISessionAction
 			}
 			catch (Throwable th)
 			{
-				_session.getMessageHandler().showErrorMessage(th);
+				_session.showErrorMessage(th);
 			}
 		}
 	}

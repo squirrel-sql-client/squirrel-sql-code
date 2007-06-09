@@ -84,7 +84,7 @@ class ConvertToStringBufferAction extends SquirrelAction
 			{
 				// i18n[editextras.convertStringBufErr=Error executing convert to StringBuffer command: {0}]
 				final String msg = s_stringMgr.getString("editextras.convertStringBufErr", ex);
-				_session.getMessageHandler().showErrorMessage(msg);
+				_session.showErrorMessage(msg);
 				s_log.error(msg, ex);
 			}
 		}

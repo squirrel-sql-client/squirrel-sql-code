@@ -30,7 +30,7 @@ public class FrameWorkAcessor
 		if(session.getActiveSessionWindow() instanceof ObjectTreeInternalFrame)
 		{
 			// i18n[sqlscript.scriptWritten=Script was written to the SQL editor of the main session window.]
-			session.getMessageHandler().showMessage(s_stringMgr.getString("sqlscript.scriptWritten"));
+			session.showMessage(s_stringMgr.getString("sqlscript.scriptWritten"));
 			return session.getSessionSheet().getSQLPaneAPI();
 		}
 		else

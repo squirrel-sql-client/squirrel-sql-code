@@ -20,6 +20,8 @@ package net.sourceforge.squirrel_sql.fw.util;
 import java.util.List;
 import java.util.Vector;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
+
 /**
  * This message handler stores msgs in 2 <TT>java.util.List</TT> objects. One
  * for exceptions and the other for strings.
@@ -62,7 +64,7 @@ public class ListMessageHandler implements IMessageHandler
     *
     * @param	th	Exception to be stored.
     */
-   public void showMessage(Throwable th)
+   public void showMessage(Throwable th, ExceptionFormatter formatter)
    {
       _throwables.add(th);
    }
@@ -82,15 +84,14 @@ public class ListMessageHandler implements IMessageHandler
     *
     * @param	th		Exception.
     */
-   public void showErrorMessage(Throwable th)
+   public void showErrorMessage(Throwable th, ExceptionFormatter formatter)
    {
       _errThrowables.add(th);
    }
 
    /**
     * Store this exception.
-    *
-    * @param	th		Exception.
+ * @param	th		Exception.
     */
    public void showErrorMessage(String msg)
    {
@@ -145,15 +146,5 @@ public class ListMessageHandler implements IMessageHandler
    public String[] getWarningMessages()
    {
       return _warningMsgs.toArray(new String[_warningMsgs.size()]);
-   }
-   
-   /**
-    * Sets the exception formatter to use when handling messages.
-    * 
-    * @param formatter the ExceptionFormatter
-    */
-   public void setExceptionFormatter(ExceptionFormatter formatter) {
-       // No custom behavior required for dumping the application.
-   }
-   
+   }   
 }

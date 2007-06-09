@@ -118,7 +118,7 @@ public abstract class PostgresSourceTab extends BaseSourceTab {
             }
             catch (SQLException ex)
             {
-                session.getMessageHandler().showErrorMessage(ex);
+                session.showErrorMessage(ex);
             }
 
         }

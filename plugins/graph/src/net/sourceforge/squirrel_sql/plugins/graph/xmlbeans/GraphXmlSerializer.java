@@ -65,7 +65,7 @@ public class GraphXmlSerializer
 			// i18n[graph.graphSaved=Graph "{0}" saved to "{1}"]
 			String msg = s_stringMgr.getString("graph.graphSaved", params);
 
-			_session.getMessageHandler().showMessage(msg);
+			_session.showMessage(msg);
       }
       catch (Exception e)
       {
@@ -193,7 +193,7 @@ public class GraphXmlSerializer
 
 			String[] params = {_graphFile, newGraphFile};
 			// i18n[graph.graphRenamed=Renamed "{0}" to "{1}"]
-			_session.getMessageHandler().showMessage(s_stringMgr.getString("graph.graphRenamed", params));
+			_session.showMessage(s_stringMgr.getString("graph.graphRenamed", params));
 
          _graphFile = newGraphFile;
       }
@@ -211,7 +211,7 @@ public class GraphXmlSerializer
 
 		String[] params = {_graphFile};
 		// i18n[graph.graphRemoved=Removed graph file "{0}"]
-      _session.getMessageHandler().showMessage(s_stringMgr.getString("graph.graphRemoved", params));
+      _session.showMessage(s_stringMgr.getString("graph.graphRemoved", params));
 
    }
 }

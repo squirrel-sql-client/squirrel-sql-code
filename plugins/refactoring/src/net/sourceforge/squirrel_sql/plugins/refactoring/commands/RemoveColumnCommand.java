@@ -82,7 +82,7 @@ public class RemoveColumnCommand extends AbstractRefactoringCommand
                 //column cannot be removed - a table must have a least one column]
                 String msg = 
                     s_stringMgr.getString("RemoveColumnAction.singleColumnMessage");
-                _session.getMessageHandler().showErrorMessage(msg);
+                _session.showErrorMessage(msg);
                 return;
             }
             
@@ -97,7 +97,7 @@ public class RemoveColumnCommand extends AbstractRefactoringCommand
                     String msg = 
                         s_stringMgr.getString("RemoveColumnAction.removeColumnNotSupported",
                                               dialect.getDisplayName());
-                    _session.getMessageHandler().showErrorMessage(msg);
+                    _session.showErrorMessage(msg);
                     return;                    
                 }
             } catch (UserCancelledOperationException e) {
@@ -142,7 +142,7 @@ public class RemoveColumnCommand extends AbstractRefactoringCommand
                 s_stringMgr.getString("RemoveColumnCommand.unsupportedOperationMsg", 
                                       dialect.getDisplayName());
                                       
-            _session.getMessageHandler().showMessage(msg);
+            _session.showMessage(msg);
         } catch (UserCancelledOperationException e) {
             // user cancelled selecting a dialog. do nothing?
         }
