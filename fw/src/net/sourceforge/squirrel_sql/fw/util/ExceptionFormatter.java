@@ -18,7 +18,6 @@
  */
 package net.sourceforge.squirrel_sql.fw.util;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
 
 /**
  * An interface that will allow plugin writers to customize the MessageHandler
