@@ -21,201 +21,192 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
+import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.plugins.dataimport.action.ImportTableDataAction;
+import net.sourceforge.squirrel_sql.plugins.dataimport.gui.DataImportGlobalPreferencesTab;
+import net.sourceforge.squirrel_sql.plugins.dataimport.prefs.PreferencesManager;
 
 public class DataImportPlugin extends DefaultSessionPlugin {
-    /** Plugin preferences. */
-//    private Preferences _lafPrefs;
+	/** Plugin preferences. */
+//	private Preferences _lafPrefs;
 
-    /** The app folder for this plugin. */
-    private File _pluginAppFolder;
+	/** The app folder for this plugin. */
+	private File _pluginAppFolder;
 
-    /** Folder to store user settings in. */
-    private File _userSettingsFolder;
+	/** Folder to store user settings in. */
+	private File _userSettingsFolder;
 
-    private HashMap<ISession, FileImportTab> sessionMap = 
-        new HashMap<ISession, FileImportTab>();
-    
-    /**
-     * Return the internal name of this plugin.
-     *
-     * @return  the internal name of this plugin.
-     */
-    public String getInternalName() {
-        return "dataimport";
-    }
+	private HashMap<ISession, FileImportTab> sessionMap = 
+		new HashMap<ISession, FileImportTab>();
 
-    /**
-     * Return the descriptive name of this plugin.
-     *
-     * @return  the descriptive name of this plugin.
-     */
-    public String getDescriptiveName() {
-        return "Data Import Plugin";
-    }
+	private Resources resources = null;
 
-    /**
-     * Returns the current version of this plugin.
-     *
-     * @return  the current version of this plugin.
-     */
-    public String getVersion() {
-        return "0.1";
-    }
+	/**
+	 * Return the internal name of this plugin.
+	 *
+	 * @return  the internal name of this plugin.
+	 */
+	public String getInternalName() {
+		return "dataimport";
+	}
 
-    /**
-     * Returns the authors name.
-     *
-     * @return  the authors name.
-     */
-    public String getAuthor() {
-        return "Like Gao";
-    }
+	/**
+	 * Return the descriptive name of this plugin.
+	 *
+	 * @return  the descriptive name of this plugin.
+	 */
+	public String getDescriptiveName() {
+		return "Data Import Plugin";
+	}
 
-    /**
-     * Initialize this plugin.
-     */
-    public synchronized void initialize() throws PluginException {
-        super.initialize();
-        // Folder within plugins folder that belongs to this
-        // plugin.
-        try {
-            _pluginAppFolder = getPluginAppSettingsFolder();
-        } catch (IOException ex) {
-            throw new PluginException(ex);
-        }
+	/**
+	 * Returns the current version of this plugin.
+	 *
+	 * @return  the current version of this plugin.
+	 */
+	public String getVersion() {
+		return "0.02";
+	}
 
-        // Folder to store user settings.
-        try {
-            _userSettingsFolder = getPluginUserSettingsFolder();
-        } catch (IOException ex) {
-            throw new PluginException(ex);
-        }
+	/**
+	 * Returns the authors name.
+	 *
+	 * @return  the authors name.
+	 */
+	public String getAuthor() {
+		return "Like Gao";
+	}
 
-        // Load plugin preferences.
-        loadPrefs();
-    }
+	@Override
+	public String getContributors() {
+		return "Thorsten Mürell";
+	}
 
-    /**
-     * Application is shutting down so save preferences.
-     */
-    public void unload() {
-        savePrefs();
-        super.unload();
-    }
 
-   public boolean allowsSessionStartedInBackground()
-   {
-      return true;
-   }
+	@Override
+	public String getChangeLogFileName() {
+		return "changes.txt";
+	}
 
-   /**
-     * Called when a session started. Add File Import tab to session window.
-     *
-     * @param   session     The session that is starting.
-     *
-     * @return  <TT>true</TT> to indicate that this plugin is
-     *          applicable to passed session.
-     */
-    public PluginSessionCallback sessionStarted(final ISession session) {
-        GUIUtils.processOnSwingEventThread(new Runnable() {
-            public void run() {
-                session.addMainTab(new FileImportTab(session));        
-            }
-        });
-        
+	@Override
+	public String getLicenceFileName() {
+		return "licence.txt";
+	}
 
-       return new PluginSessionCallback()
-       {
-          public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
-          {
-             // Only supports Session main window
-          }
+	@Override
+	public void load(IApplication app) throws PluginException {
+		super.load(app);
+		resources = new Resources(getClass().getName(), this);
+	}
 
-          public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
-          {
-             // Only supports Session main window
-          }
-       };
-    }
+	/**
+	 * Initialize this plugin.
+	 */
+	public synchronized void initialize() throws PluginException {
+		super.initialize();
+		// Folder within plugins folder that belongs to this
+		// plugin.
+		try {
+			_pluginAppFolder = getPluginAppSettingsFolder();
+		} catch (IOException ex) {
+			throw new PluginException(ex);
+		}
 
-    /**
-     * Create Look and Feel preferences panel for the Global Preferences dialog.
-     *
-     * @return  Look and Feel preferences panel.
-     */
-    public IGlobalPreferencesPanel[] getGlobalPreferencePanels() {
-        return null;
-//        return new IGlobalPreferencesPanel[] {
-//             new LAFPreferencesPanel(this, _lafRegister)};
-    }
+		// Folder to store user settings.
+		try {
+			_userSettingsFolder = getPluginUserSettingsFolder();
+		} catch (IOException ex) {
+			throw new PluginException(ex);
+		}
 
-    /**
-     * Load from preferences file.
-     */
-    private void loadPrefs() {
-/*
-        try {
-            XMLBeanReader doc = new XMLBeanReader();
-            doc.load(
-                new File(_userSettingsFolder, LAFConstants.USER_PREFS_FILE_NAME),
-                getClass().getClassLoader());
-            Iterator it = doc.iterator();
-            if (it.hasNext()) {
-                _lafPrefs = (LAFPreferences) it.next();
-            }
-        } catch (FileNotFoundException ignore) {
-            // property file not found for user - first time user ran pgm.
-        } catch (Exception ex) {
-            Logger logger = getApplication().getLogger();
-            logger.showMessage(
-                Logger.ILogTypes.ERROR,
-                "Error occured reading from preferences file: "
-                    + LAFConstants.USER_PREFS_FILE_NAME);
-            //i18n
-            logger.showMessage(Logger.ILogTypes.ERROR, ex);
-        }
-        if (_lafPrefs == null) {
-            _lafPrefs = new LAFPreferences();
-        }
-        */
-    }
+		PreferencesManager.initialize(this);
 
-    /**
-     * Save preferences to disk.
-     */
-    private void savePrefs() {
-        /*
-        try {
-            XMLBeanWriter wtr = new XMLBeanWriter(_lafPrefs);
-            wtr.save(new File(_userSettingsFolder, LAFConstants.USER_PREFS_FILE_NAME));
-        } catch (Exception ex) {
-            Logger logger = getApplication().getLogger();
-            logger.showMessage(
-                Logger.ILogTypes.ERROR,
-                "Error occured writing to preferences file: "
-                    + LAFConstants.USER_PREFS_FILE_NAME);
-            //i18n
-            logger.showMessage(Logger.ILogTypes.ERROR, ex);
-        }
-        */
-    }
+		IApplication app = getApplication();
+		ActionCollection coll = app.getActionCollection();
 
-    /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin#sessionEnding(net.sourceforge.squirrel_sql.client.session.ISession)
-     */
-    @Override
-    public void sessionEnding(ISession session) {
-        FileImportTab tab = sessionMap.get(session);
-        if (tab != null) {
-            tab.sessionEnding(session);
-        }
-    }
+		coll.add(new ImportTableDataAction(app, resources));
+	}
+
+	/**
+	 * Application is shutting down so save preferences.
+	 */
+	public void unload() {
+		super.unload();
+		PreferencesManager.unload();
+	}
+
+	public boolean allowsSessionStartedInBackground()
+	{
+		return true;
+	}
+
+	/**
+	 * Called when a session started. Add File Import tab to session window.
+	 *
+	 * @param   session     The session that is starting.
+	 *
+	 * @return  <TT>true</TT> to indicate that this plugin is
+	 *          applicable to passed session.
+	 */
+	public PluginSessionCallback sessionStarted(final ISession session) {
+		/*
+		GUIUtils.processOnSwingEventThread(new Runnable() {
+			public void run() {
+				session.addMainTab(new FileImportTab(session));        
+			}
+		});
+		*/
+
+		updateTreeApi(session);
+		return new PluginSessionCallback()
+		{
+			public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
+			{
+				// Only supports Session main window
+			}
+
+			public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
+			{
+				// Only supports Session main window
+			}
+		};
+	}
+
+	private void updateTreeApi(ISession session) {
+		IObjectTreeAPI treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
+		final ActionCollection coll = getApplication().getActionCollection();
+
+		treeAPI.addToPopup(DatabaseObjectType.TABLE, coll.get(ImportTableDataAction.class));        
+	}
+
+	/**
+	 * Create preferences panel for the Global Preferences dialog.
+	 *
+	 * @return  Preferences panel.
+	 */
+	public IGlobalPreferencesPanel[] getGlobalPreferencePanels() {
+        DataImportGlobalPreferencesTab tab = new DataImportGlobalPreferencesTab();
+        return new IGlobalPreferencesPanel[] { tab };
+	}
+
+	/* (non-Javadoc)
+	 * @see net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin#sessionEnding(net.sourceforge.squirrel_sql.client.session.ISession)
+	 */
+	@Override
+	public void sessionEnding(ISession session) {
+		FileImportTab tab = sessionMap.get(session);
+		if (tab != null) {
+//			tab.sessionEnding(session);
+		}
+	}
 }

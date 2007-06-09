@@ -44,7 +44,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 //import com.bigfoot.colbell.squirrel.sessionsheet.*;
 
 
-
+@Deprecated
 public class FileImport extends JPanel implements ActionListener {
 
 	private static final StringManager s_stringMgr =
