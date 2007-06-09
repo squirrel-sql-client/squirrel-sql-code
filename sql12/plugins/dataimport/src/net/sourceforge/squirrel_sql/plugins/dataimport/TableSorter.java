@@ -35,7 +35,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
-
+@Deprecated
 public class TableSorter extends TableMap
 {
     int             indexes[];

@@ -24,6 +24,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.BaseMainPanelTab;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
+@Deprecated
 public class FileImportTab extends BaseMainPanelTab {
 	 /**
 	  * This interface defines locale specific strings. This should be

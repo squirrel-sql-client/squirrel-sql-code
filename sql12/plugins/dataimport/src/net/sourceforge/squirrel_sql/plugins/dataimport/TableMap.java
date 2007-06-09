@@ -3,7 +3,7 @@ import javax.swing.table.*;
 import javax.swing.event.TableModelListener;
 import javax.swing.event.TableModelEvent;
 
-
+@Deprecated
 public class TableMap extends AbstractTableModel implements TableModelListener
 {
     protected TableModel model;

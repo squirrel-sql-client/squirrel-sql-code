@@ -37,7 +37,7 @@ import java.awt.Color;
  *Like Gao, lgao@gmu.edu
 */
 
-
+@Deprecated
 public class CombTable extends JScrollPane{
 
 	private static final StringManager s_stringMgr =

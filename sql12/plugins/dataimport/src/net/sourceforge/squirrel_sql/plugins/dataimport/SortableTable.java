@@ -26,6 +26,7 @@ import javax.swing.*;
 import javax.swing.table.*;
 
 
+@Deprecated
 public class SortableTable extends JScrollPane{ //JPanel{
     public String[] names;
     public Object[][] data;

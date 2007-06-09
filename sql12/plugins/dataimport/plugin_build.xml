@@ -70,6 +70,13 @@
 				<include name="**/*.*"/>
 			</fileset>
 		</jar>
+
+		<copy todir="${p_plugin.dist_dir}/${internal_name}" >
+			<fileset dir="doc" >
+				<include name="*"/>
+			</fileset>
+		</copy>
+
 		<jar jarfile="${p_plugin.dist_dir}/${internal_name}/src.jar" compress="false">
 			<fileset dir=".">
 				<include name="src/**/*.*"/>
