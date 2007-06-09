@@ -138,7 +138,7 @@ public abstract class InformixSourceTab extends BaseSourceTab {
             }
             catch (SQLException ex)
             {
-                session.getMessageHandler().showErrorMessage(ex);
+                session.showErrorMessage(ex);
             }
 
         }

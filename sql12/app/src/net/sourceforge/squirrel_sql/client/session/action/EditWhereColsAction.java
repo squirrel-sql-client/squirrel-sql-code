@@ -103,7 +103,7 @@ public class EditWhereColsAction extends SquirrelAction
                 //WHERE clause]
                 String msg = 
                     s_stringMgr.getString("EditWhereColsAction.singleObjectMessage");
-				_tree.getSession().getMessageHandler().showMessage(msg);
+				_tree.getSession().showMessage(msg);
 			}
 		}
 	}

@@ -166,7 +166,7 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
             }
             catch (Exception e)
             {
-               _session.getMessageHandler().showErrorMessage(e);
+               _session.showErrorMessage(e);
             }
             SwingUtilities.invokeLater(new Runnable()
             {

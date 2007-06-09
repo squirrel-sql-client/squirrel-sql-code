@@ -46,14 +46,14 @@ public abstract class AbstractJoin extends CodeCompletionFunction
          if(3 > st.countTokens())
          {
 				// i18n[codecompletion.function.needsTwoArgs=function needs at least two arguments]
-				_session.getMessageHandler().showMessage(s_stringMgr.getString("codecompletion.function.needsTwoArgs"));
+				_session.showMessage(s_stringMgr.getString("codecompletion.function.needsTwoArgs"));
             return null;
          }
 
          if(false == functionSting.trim().endsWith(","))
          {
 				// i18n[codecompletion.function.mustEndWith=function must end with ',']
-				_session.getMessageHandler().showMessage(s_stringMgr.getString("codecompletion.function.mustEndWith"));
+				_session.showMessage(s_stringMgr.getString("codecompletion.function.mustEndWith"));
             return null;
          }
 
@@ -79,7 +79,7 @@ public abstract class AbstractJoin extends CodeCompletionFunction
             if(null == table)
             {
 					// i18n[codecompletion.unknowntable=unknown table {0}]
-					_session.getMessageHandler().showMessage(s_stringMgr.getString("codecompletion.unknowntable", table));
+					_session.showMessage(s_stringMgr.getString("codecompletion.unknowntable", table));
                return null;
             }
             tables.add(table);

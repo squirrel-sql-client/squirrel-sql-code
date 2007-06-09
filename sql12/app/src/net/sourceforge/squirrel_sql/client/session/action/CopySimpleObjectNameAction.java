@@ -79,7 +79,7 @@ public class CopySimpleObjectNameAction
 			catch (Throwable ex)
 			{
 				final String msg = "Error occured copying object names";
-				_tree.getSession().getMessageHandler().showErrorMessage(msg + ": " + ex);
+				_tree.getSession().showErrorMessage(msg + ": " + ex);
 				s_log.error(msg, ex);
 			}
 		}

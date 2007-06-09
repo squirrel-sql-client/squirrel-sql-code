@@ -137,7 +137,7 @@ public abstract class OracleSourceTab extends BaseSourceTab {
             catch (SQLException ex)
             {
                 s_log.error("Unexpected exception: "+ex.getMessage(), ex);
-                session.getMessageHandler().showErrorMessage(ex);
+                session.showErrorMessage(ex);
             }
 
         }

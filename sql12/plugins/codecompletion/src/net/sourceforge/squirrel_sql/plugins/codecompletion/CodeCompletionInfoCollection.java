@@ -168,7 +168,7 @@ public class CodeCompletionInfoCollection
             if(null == autoCorrectProvider)
             {
 					// i18n[codecompletion.useSyntaxPlugin=Code completion will work better if you use the Syntax plugin. Get it from squirrelsql.org, it's free!]
-					_session.getMessageHandler().showMessage(s_stringMgr.getString("codecompletion.useSyntaxPlugin"));
+					_session.showMessage(s_stringMgr.getString("codecompletion.useSyntaxPlugin"));
             }
             else
             {
@@ -216,7 +216,7 @@ public class CodeCompletionInfoCollection
          if(MAX_COMPLETION_INFOS < completionInfos.size())
          {
             buf.addAll(completionInfos.subList(0,MAX_COMPLETION_INFOS));
-            _session.getMessageHandler().showMessage(TOO_MANY_COMPLETION_INFOS);
+            _session.showMessage(TOO_MANY_COMPLETION_INFOS);
          }
          else
          {
@@ -248,7 +248,7 @@ public class CodeCompletionInfoCollection
 
             if(MAX_COMPLETION_INFOS < ret.size())
             {
-               _session.getMessageHandler().showMessage(TOO_MANY_COMPLETION_INFOS);
+               _session.showMessage(TOO_MANY_COMPLETION_INFOS);
                break;
             }
          }

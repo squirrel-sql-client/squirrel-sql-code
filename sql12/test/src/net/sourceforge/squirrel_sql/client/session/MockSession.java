@@ -48,6 +48,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.MockSQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.MockMessageHandler;
 import net.sourceforge.squirrel_sql.mo.sql.MockDatabaseMetaData;
@@ -131,6 +132,23 @@ public class MockSession implements ISession {
         return result;
     }
     
+    /**
+     * @see net.sourceforge.squirrel_sql.client.session.ISession#getExceptionFormatter()
+     */
+    public ExceptionFormatter getExceptionFormatter() {
+        // TODO Auto-generated method stub
+        System.err.println("MockSession.getExceptionFormatter: stub not yet implemented");
+        return null;
+    }
+
+    /**
+     * @see net.sourceforge.squirrel_sql.client.session.ISession#setExceptionFormatter(net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter)
+     */
+    public void setExceptionFormatter(ExceptionFormatter formatter) {
+        // TODO Auto-generated method stub
+        System.err.println("MockSession.setExceptionFormatter: stub not yet implemented");
+    }
+
     public boolean isClosed() {
     	return closed;
     }
@@ -378,5 +396,47 @@ public class MockSession implements ISession {
      */
     public ISQLDatabaseMetaData getMetaData() {
         return con.getSQLMetaData();
+    }
+
+    /**
+     * @see net.sourceforge.squirrel_sql.client.session.ISession#showErrorMessage(java.lang.String)
+     */
+    public void showErrorMessage(String msg) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /**
+     * @see net.sourceforge.squirrel_sql.client.session.ISession#showErrorMessage(java.lang.Throwable)
+     */
+    public void showErrorMessage(Throwable th) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /**
+     * @see net.sourceforge.squirrel_sql.client.session.ISession#showMessage(java.lang.String)
+     */
+    public void showMessage(String msg) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /**
+     * @see net.sourceforge.squirrel_sql.client.session.ISession#showMessage(java.lang.Throwable)
+     */
+    public void showMessage(Throwable th) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /**
+     * @see net.sourceforge.squirrel_sql.client.session.ISession#showWarningMessage(java.lang.String)
+     */
+    public void showWarningMessage(String msg) {
+        // TODO Auto-generated method stub
+        
     }    
+    
+    
 }

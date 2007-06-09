@@ -146,7 +146,7 @@ public class SQLConnectionState
 				{
 					throw ex;
 				}
-				msgHandler.showErrorMessage(ex);
+				msgHandler.showErrorMessage(ex, null);
 			}
 		}
 
@@ -163,7 +163,7 @@ public class SQLConnectionState
 				{
 					throw ex;
 				}
-				msgHandler.showErrorMessage(ex);
+				msgHandler.showErrorMessage(ex, null);
 			}
 		}
 
@@ -178,7 +178,7 @@ public class SQLConnectionState
 			{
 				throw ex;
 			}
-			msgHandler.showErrorMessage(ex);
+			msgHandler.showErrorMessage(ex, null);
 		}
 	}
 

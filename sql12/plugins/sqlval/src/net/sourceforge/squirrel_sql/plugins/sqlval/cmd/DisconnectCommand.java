@@ -76,7 +76,7 @@ public class DisconnectCommand implements ICommand
 			{
 				wss.close();
 				// i18n[sqlval.disconnected=Disconnected from the SQL Validation web service]
-				_session.getMessageHandler().showMessage(s_stringMgr.getString("sqlval.disconnected"));
+				_session.showMessage(s_stringMgr.getString("sqlval.disconnected"));
 			}
 		}
 		catch (Throwable th)

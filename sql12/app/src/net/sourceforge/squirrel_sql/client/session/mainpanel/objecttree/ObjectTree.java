@@ -966,7 +966,7 @@ class ObjectTree extends JTree
 			{
 				final String msg = "Error: " + _parentNode.toString();
 				s_log.error(msg, ex);
-				_session.getMessageHandler().showErrorMessage(msg + ": " + ex.toString());
+				_session.showErrorMessage(msg + ": " + ex.toString());
 			}
 		}
 

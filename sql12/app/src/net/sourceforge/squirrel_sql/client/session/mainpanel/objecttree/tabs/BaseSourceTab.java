@@ -148,7 +148,7 @@ public abstract class BaseSourceTab extends BaseObjectTab
 		catch (SQLException ex)
 		{
 			s_log.error(ex);
-			session.getMessageHandler().showErrorMessage(ex);
+			session.showErrorMessage(ex);
 		}
 	}
 
@@ -180,7 +180,7 @@ public abstract class BaseSourceTab extends BaseObjectTab
 			}
 			catch (SQLException ex)
 			{
-				session.getMessageHandler().showErrorMessage(ex);
+				session.showErrorMessage(ex);
 			}
 
 		}

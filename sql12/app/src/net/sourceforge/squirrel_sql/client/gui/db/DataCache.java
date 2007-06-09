@@ -369,7 +369,7 @@ public class DataCache
                                        driversFile.getPath());
             s_log.error(msg, ex);
             msgHandler.showErrorMessage(msg);
-            msgHandler.showErrorMessage(ex);
+            msgHandler.showErrorMessage(ex, null);
             loadDefaultDrivers(dftDriversURL);
          }
       }
@@ -518,7 +518,7 @@ public class DataCache
                                     sqlDriver.getName());
          s_log.error(msg, th);
          msgHandler.showErrorMessage(msg);
-         msgHandler.showErrorMessage(th);
+         msgHandler.showErrorMessage(th, null);
       }
 
       if(extendedMessaging && registrationSucessfully)
@@ -553,7 +553,7 @@ public class DataCache
                                     aliasesFile.getPath());
          s_log.error(msg, ex);
          msgHandler.showErrorMessage(msg);
-         msgHandler.showErrorMessage(ex);
+         msgHandler.showErrorMessage(ex, null);
       }
    }
 

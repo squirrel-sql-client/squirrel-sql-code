@@ -18,6 +18,8 @@
  */
 package net.sourceforge.squirrel_sql.fw.util;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
+
 /**
  * An IMessageHandler implementation that can be used as a test fixture where
  * needed.
@@ -32,7 +34,7 @@ public class MockMessageHandler implements IMessageHandler {
 	
 	private boolean showErrorMessages = false;
 	
-    public void showMessage(Throwable th) {
+    public void showMessage(Throwable th, ExceptionFormatter formatter) {
     	if (showMessages) {
     		System.out.println(
     			"MockMessageHandler.showMessage(Throwable): th.getMessage="+
@@ -47,7 +49,7 @@ public class MockMessageHandler implements IMessageHandler {
     	}
     }
 
-    public void showErrorMessage(Throwable th) {
+    public void showErrorMessage(Throwable th, ExceptionFormatter formatter) {
     	if (showErrorMessages) {
     		System.out.println(
     			"MockMessageHandler.showErrorMessage(Throwable): th.getMessage="+
@@ -114,5 +116,19 @@ public class MockMessageHandler implements IMessageHandler {
 		return showErrorMessages;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.util.IMessageHandler#setExceptionFormatter(net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter, ISession)
+	 */
+	public void setExceptionFormatter(ExceptionFormatter formatter, ISession session) {
+	    // Do Nothing
+    }
 
+    /**
+     * @see net.sourceforge.squirrel_sql.fw.util.IMessageHandler#getExceptionFormatter()
+     */
+    public ExceptionFormatter getExceptionFormatter() {
+        throw new UnsupportedOperationException();
+    }
+
+    
 }

@@ -801,7 +801,7 @@ public class SQLPanel extends JPanel
                 catch (SQLException ex)
                 {
                     s_log.error("Error with transaction control", ex);
-                    _session.getMessageHandler().showErrorMessage(ex);
+                    _session.showErrorMessage(ex);
                 }
                 try
                 {
@@ -810,7 +810,7 @@ public class SQLPanel extends JPanel
                 catch (SQLException ex)
                 {
                     props.setAutoCommit(auto);
-                    _session.getMessageHandler().showErrorMessage(ex);
+                    _session.showErrorMessage(ex);
                 }
             }        
         }

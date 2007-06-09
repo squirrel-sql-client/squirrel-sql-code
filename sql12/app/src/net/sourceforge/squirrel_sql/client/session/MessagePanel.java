@@ -1,6 +1,5 @@
 package net.sourceforge.squirrel_sql.client.session;
 /*
- * TODO: i18n
  * Copyright (C) 2001-2004 Colin Bell
  * colbell@users.sourceforge.net
  *
@@ -22,9 +21,6 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.sql.DataTruncation;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
 import java.util.HashMap;
 
 import javax.swing.Action;
@@ -37,6 +33,7 @@ import javax.swing.text.StyleConstants;
 
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
+import net.sourceforge.squirrel_sql.fw.util.DefaultExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -50,6 +47,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class MessagePanel extends JTextPane implements IMessageHandler
 {
+    static final long serialVersionUID = 5859398063643519072L;
+    
 	/** Logger for this class. */
 	private static final ILogger s_log =
 		LoggerController.createLogger(MessagePanel.class);
@@ -78,14 +77,16 @@ public class MessagePanel extends JTextPane implements IMessageHandler
 	private String _lastMessage;
 	private SimpleAttributeSet _lastSASet;
 
-   private HashMap _saSetHistoryBySaSet =new HashMap();
+   private HashMap<SimpleAttributeSet, SimpleAttributeSet> _saSetHistoryBySaSet 
+       = new HashMap<SimpleAttributeSet, SimpleAttributeSet>();
 
-   private ExceptionFormatter formatter = null;
-   
    private static interface I18N {
        //i18n[MessagePanel.clearLabel=Clear]
        String CLEAR_LABEL = s_stringMgr.getString("MessagePanel.clearLabel");
    }
+   
+   private DefaultExceptionFormatter defaultExceptionFormatter = 
+       new DefaultExceptionFormatter();
    
    /**
     * Default ctor.
@@ -164,12 +165,14 @@ public class MessagePanel extends JTextPane implements IMessageHandler
     * Show a message describing the passed throwable object.
     *
     * @param th	The throwable object.
+    * @param session the session that generated the exception.
     */
-   public synchronized void showMessage(final Throwable th)
+   public synchronized void showMessage(final Throwable th, 
+                                        final ExceptionFormatter formatter)
    {
       if (th != null)
       {
-         privateShowMessage(th, _saSetMessage);
+         privateShowMessage(th, formatter, _saSetMessage);
       }
    }
    
@@ -179,12 +182,13 @@ public class MessagePanel extends JTextPane implements IMessageHandler
 	 * background color will be changed to show it is an error msg.
 	 *
 	 * @param	th		Exception.
+     * @param session the session that generated the exception. 
 	 */
-	public synchronized void showErrorMessage(final Throwable th)
+	public synchronized void showErrorMessage(final Throwable th, ExceptionFormatter formatter)
 	{
 		if (th != null)
 		{
-			privateShowMessage(th, _saSetError);
+			privateShowMessage(th, formatter, _saSetError);
 		}
 	}
 
@@ -209,21 +213,11 @@ public class MessagePanel extends JTextPane implements IMessageHandler
          privateShowMessage(msg, _saSetWarning);
       }
    }
-
-   /**
-    * Sets the exception formatter to use when handling messages.
-    * 
-    * @param formatter the ExceptionFormatter
-    */
-   public void setExceptionFormatter(ExceptionFormatter formatter) {
-       this.formatter = formatter; 
-   }
    
    /**
 	 * Show an error message. The controls
 	 * background color will be changed to show it is an error msg.
-	 *
-	 * @param	th		Exception.
+ * @param	th		Exception.
 	 */
 	public synchronized void showErrorMessage(final String msg)
 	{
@@ -240,71 +234,25 @@ public class MessagePanel extends JTextPane implements IMessageHandler
     * @param th	The throwable whose details shall be displayed.
     * @param saSet The SimpleAttributeSet to be used for message output.
     */
-   private void privateShowMessage(final Throwable th, SimpleAttributeSet saSet)
+   private void privateShowMessage(final Throwable th, 
+                                   final ExceptionFormatter formatter, 
+                                   final 
+                                   SimpleAttributeSet saSet)
    {
-      if (th != null)
-      {
-         if (formatter != null && formatter.formatsException(th)) {
-             String msg = formatter.format(th);
-             privateShowMessage(msg, saSet);
-         } 
-         else if (th instanceof DataTruncation)
-         {
-            DataTruncation ex = (DataTruncation) th;
-            StringBuffer buf = new StringBuffer();
-            buf.append("Data Truncation error occured on")
-               .append(ex.getRead() ? " a read " : " a write ")
-               .append(" of column ")
-               .append(ex.getIndex())
-               .append("Data was ")
-               .append(ex.getDataSize())
-               .append(" bytes long and ")
-               .append(ex.getTransferSize())
-               .append(" bytes were transferred.");
-            privateShowMessage(buf.toString(), saSet);
-         }
-         else if (th instanceof SQLWarning)
-         {
-            SQLWarning ex = (SQLWarning) th;
-            while (ex != null)
-            {
-               StringBuffer buf = new StringBuffer();
-               buf.append("Warning:   ")
-                  .append(ex.getMessage())
-                  .append("\nSQLState:  ")
-                  .append(ex.getSQLState())
-                  .append("\nErrorCode: ")
-                  .append(ex.getErrorCode());
-               s_log.debug("Warning shown in MessagePanel", th);
-               ex = ex.getNextWarning();
-               privateShowMessage(buf.toString(), saSet);
-            }
-         }
-         else if (th instanceof SQLException)
-         {
-            SQLException ex = (SQLException) th;
-            while (ex != null)
-            {
-               StringBuffer buf = new StringBuffer();
-               buf.append("Error:	 ")
-                  .append(ex.getMessage())
-                  .append("\nSQLState:  ")
-                  .append(ex.getSQLState())
-                  .append("\nErrorCode: ")
-                  .append(ex.getErrorCode());
-               s_log.debug("Error", th);
-               ex = ex.getNextException();
-               privateShowMessage(buf.toString(), saSet);
-            }
-         }
-         else
-         {
-            privateShowMessage(th.toString(), saSet);
-            s_log.debug("Exception shown in MessagePanel", th);
-         }
+      if (th != null) {
+          
+          String message = "";
+          if (formatter != null) {
+              message = defaultExceptionFormatter.format(th);
+          } else {
+              message = formatter.format(th);
+          }
+          if (s_log.isDebugEnabled()) {
+              s_log.debug("Exception message shown in MessagePanel: "+message);
+          }
       }
    }
-
+   
 	/**
 	 * Private method, the real implementation of the corresponding show*Message methods.
 	 *
@@ -344,7 +292,7 @@ public class MessagePanel extends JTextPane implements IMessageHandler
          // Checks if the former message should be highlighted in a 'history' color.
          if (document.getLength() >= _lastLength && null != _lastMessage)
 			{
-            SimpleAttributeSet historySaSet = (SimpleAttributeSet) _saSetHistoryBySaSet.get(_lastSASet);
+            SimpleAttributeSet historySaSet = _saSetHistoryBySaSet.get(_lastSASet);
             document.remove(_lastLength, _lastMessage.length());
             document.insertString(document.getLength(), _lastMessage, historySaSet);
 			}
@@ -386,6 +334,8 @@ public class MessagePanel extends JTextPane implements IMessageHandler
 	 */
 	private class MessagePanelPopupMenu extends TextPopupMenu
 	{
+        static final long serialVersionUID = -425002646648750251L;
+        
 		public MessagePanelPopupMenu()
 		{
 			super();
@@ -399,6 +349,7 @@ public class MessagePanel extends JTextPane implements IMessageHandler
 		 */
 		private class ClearAction extends BaseAction
 		{
+            static final long serialVersionUID = 2124058843445088350L;
 			protected ClearAction()
 			{
 				super(I18N.CLEAR_LABEL);

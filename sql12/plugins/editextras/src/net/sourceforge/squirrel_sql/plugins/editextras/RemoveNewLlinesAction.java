@@ -70,7 +70,7 @@ class RemoveNewLinesAction extends SquirrelAction implements ISQLPanelAction {
                 final String msg = s_stringMgr.getString(
                         "editextras.errorRemoveNewLines", ex);
 
-                _session.getMessageHandler().showErrorMessage(msg);
+                _session.showErrorMessage(msg);
                 s_log.error(msg, ex);
             }
         }

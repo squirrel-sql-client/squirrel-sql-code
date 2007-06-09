@@ -40,6 +40,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
+import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 /**
@@ -141,7 +142,6 @@ public interface ISession extends IHasIdentifier
    void removePluginObject(IPlugin plugin, String key);
 
    void setMessageHandler(IMessageHandler handler);
-   IMessageHandler getMessageHandler();
 
    SessionPanel getSessionSheet();
 
@@ -309,5 +309,60 @@ public interface ISession extends IHasIdentifier
     */
    public IQueryTokenizer getQueryTokenizer();
        
+   /**
+    * Sets the exception formatter to use when handling messages.
+    * 
+    * @param formatter
+    *            the ExceptionFormatter
+    * @param session TODO
+    */
+   void setExceptionFormatter(ExceptionFormatter formatter);
+
+   /**
+    * Returns the exception formatter to use when handling messages.
+    * 
+    * @return
+    */
+   ExceptionFormatter getExceptionFormatter();
+ 
+   // Facade methods for IMessageHandler.  We don't want to allow code to 
+   // directly access an internal IMessageHandler, now that the IMessageHandler
+   // interface requires an ExceptionFormatter to be injected for methods that
+   // accept Exceptions.
+   
+   /**
+    * Show a message describing the passed exception. This will apply
+    * any custom formatting if an ExceptionFormatter has been set.
+    * 
+    * @param th the exception to be shown
+    */
+   void showMessage(Throwable th);
+
+   /**
+    * Show a message.
+    * 
+    * @param msg
+    *            The message.
+    */
+   void showMessage(String msg);
+
+   /**
+    * Show an error message describing the passed exception. This will apply
+    * any custom formatting if an ExceptionFormatter has been set.
+    * 
+    * @param th the exception to be shown
+    */
+   void showErrorMessage(Throwable th);
+
+   /**
+    * Show an error message. The implementation of <TT>IMessageHandler</TT>
+    * may or may not treat this differently to <TT>showMessage(String)</TT>.
+    * @param session the session that generated the exception.
+    * @param th
+    *            Exception.
+    */
+   void showErrorMessage(String msg);
+
+   void showWarningMessage(String msg);    
    
 }

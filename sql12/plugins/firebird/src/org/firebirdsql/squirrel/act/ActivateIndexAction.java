@@ -64,7 +64,7 @@ public class ActivateIndexAction extends SquirrelAction implements ISessionActio
 			}
 			catch (Throwable th)
 			{
-				_session.getMessageHandler().showErrorMessage(th);
+				_session.showErrorMessage(th);
 			}
 		}
 	}

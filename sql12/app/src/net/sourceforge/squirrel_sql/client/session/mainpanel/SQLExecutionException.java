@@ -16,36 +16,33 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.fw.util;
+package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
+public class SQLExecutionException extends Throwable {
+    
+    private static final long serialVersionUID = -3594099581993936333L;
+    
+    /** Further explanation or detail about the cause */
+    private String postError = null;
+    
+    public SQLExecutionException(Throwable cause, String postError) {
+        super(cause);
+        this.postError = postError;
+    }
 
-/**
- * An interface that will allow plugin writers to customize the MessageHandler
- * in SQuirreL to handle sometimes cryptic messages embedded in SQLExceptions
- * from JDBC drivers.(FR#1731251)
- *  
- * @author manningr
- */
-public interface ExceptionFormatter {
-    
     /**
-     * Returns a boolean indicating whether or not this formatter can format the
-     * specified exception.
-     * 
-     * @param t the exception to determine formatting compatibility
-     * 
-     * @return a boolean value to indicate whether format should be called on the 
-     *         given throwable
+     * @param postError the postError to set
      */
-    boolean formatsException(Throwable t);
-    
+    public void setPostError(String postError) {
+        this.postError = postError;
+    }
+
     /**
-     * 
-     * @param t the exception to be formatted
-     * 
-     * @return the message
+     * @return the postError
      */
-    String format(Throwable t);
+    public String getPostError() {
+        return postError;
+    }
+    
     
 }

@@ -455,7 +455,7 @@ public class CreateTableCommand extends JDialog implements ICommand
 		}
 		catch (SQLException ex)
 		{
-			_session.getMessageHandler().showErrorMessage(ex);
+			_session.showErrorMessage(ex);
 
 		}
 	}

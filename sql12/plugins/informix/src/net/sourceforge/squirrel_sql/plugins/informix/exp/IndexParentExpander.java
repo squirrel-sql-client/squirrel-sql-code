@@ -112,7 +112,7 @@ public class IndexParentExpander implements INodeExpander
                 childNodes.add(new ObjectTreeNode(session, doi));
             }
         } catch (SQLException e) {
-            session.getMessageHandler().showErrorMessage(e);
+            session.showErrorMessage(e);
         } finally {
             if (pstmt != null) {
                 try { pstmt.close(); } catch (SQLException e) {}

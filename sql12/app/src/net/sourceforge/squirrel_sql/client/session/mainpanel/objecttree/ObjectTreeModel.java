@@ -305,9 +305,7 @@ public class ObjectTreeModel extends DefaultTreeModel
                   String msg =
                      "Error loading object type " +  startNode.getDatabaseObjectType() +
                      ". Error: " + e.toString() +  ". See SQuirreL Logs for stackttrace.";
-                  startNode.getSession().getApplication().getMessageHandler().showErrorMessage(msg);
-
-                  e.printStackTrace();
+                  startNode.getSession().showErrorMessage(msg);
                   logger.error(msg, e);
                }
             }

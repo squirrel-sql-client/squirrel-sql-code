@@ -31,6 +31,7 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.h2.util.IndexParentInfo;
@@ -108,7 +109,7 @@ public class IndexParentExpander implements INodeExpander
                 childNodes.add(new ObjectTreeNode(session, doi));
             }
         } catch (SQLException e) {
-            session.getMessageHandler().showErrorMessage(e);
+            session.showErrorMessage(e);
         } finally {
             if (pstmt != null) {
                 try { pstmt.close(); } catch (SQLException e) {}

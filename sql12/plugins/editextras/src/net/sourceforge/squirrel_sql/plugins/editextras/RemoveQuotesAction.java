@@ -84,7 +84,7 @@ class RemoveQuotesAction extends SquirrelAction
 				// i18n[editextras.errorRemoveQuotes=Error processing Remove Quotes SQL command: {0}]
 				final String msg = s_stringMgr.getString("editextras.errorRemoveQuotes", ex);
 
-				_session.getMessageHandler().showErrorMessage(msg);
+				_session.showErrorMessage(msg);
 				s_log.error(msg, ex);
 			}
 		}

@@ -144,7 +144,7 @@ public class ModifyColumnCommand extends AbstractRefactoringCommand
                                       dbName);
                                       */
             // Better to use exception message as it contains more info
-            _session.getMessageHandler().showMessage(e2.getMessage());
+            _session.showMessage(e2.getMessage());
         }
         listener.finished(result);
         
@@ -184,7 +184,7 @@ public class ModifyColumnCommand extends AbstractRefactoringCommand
             TableColumnInfo[] colInfos = listDialog.getSelectedColumnList();
             if (colInfos == null || colInfos.length != 1) {
                 // TODO I18N
-                _session.getMessageHandler().showMessage("Exactly one column must be selected to modify");
+                _session.showMessage("Exactly one column must be selected to modify");
                 return;
             }
             columnToModify = colInfos[0];

@@ -121,7 +121,7 @@ public class AddColumnCommand extends AbstractRefactoringCommand
             String msg = 
                 s_stringMgr.getString("AddColumnCommand.unsupportedOperationMsg",
                                       dbName);
-            _session.getMessageHandler().showMessage(msg);
+            _session.showMessage(msg);
 
         }
         listener.finished(result);        

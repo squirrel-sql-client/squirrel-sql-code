@@ -85,7 +85,8 @@ public class CreateSelectScriptCommand implements ICommand
         boolean isJdbcOdbc = conn.getSQLMetaData().getURL().startsWith("jdbc:odbc:");
         if (isJdbcOdbc)
         {
-           _session.getMessageHandler().showErrorMessage("JDBC-ODBC Bridge doesn't provide necessary meta data. Script will be incomplete");
+           // TODO I18N
+           _session.showErrorMessage("JDBC-ODBC Bridge doesn't provide necessary meta data. Script will be incomplete");
         }
 
         for (int k = 0; k < dbObjs.length; k++)
@@ -116,8 +117,7 @@ public class CreateSelectScriptCommand implements ICommand
       }
       catch (Exception e)
       {
-         e.printStackTrace();
-         _session.getMessageHandler().showErrorMessage(e);
+         _session.showErrorMessage(e);
       }
 
       return sbScript.append("\n").append(sbConstraints).toString();

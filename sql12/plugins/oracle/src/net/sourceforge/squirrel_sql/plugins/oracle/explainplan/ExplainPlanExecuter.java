@@ -326,7 +326,7 @@ public class ExplainPlanExecuter
 
 		  }
 		  catch (SQLException ex) {
-			 getSession().getMessageHandler().showErrorMessage(ex);
+			 getSession().showErrorMessage(ex);
              s_log.error(ex);
 		  }
 		  finally {
@@ -337,7 +337,7 @@ public class ExplainPlanExecuter
 			 catch (SQLException ex) {}
 		  }
 		} catch (SQLException ex) {
-		  getSession().getMessageHandler().showErrorMessage(ex);
+		  getSession().showErrorMessage(ex);
 		} finally {
 		  try {
 			 if (deletePlan != null)
@@ -347,7 +347,7 @@ public class ExplainPlanExecuter
 		}
 	 }
 	 else {
-		_session.getMessageHandler().showErrorMessage(
+		_session.showErrorMessage(
 			// i18n[oracle.noSql=No SQL selected for execution.]
 			s_stringMgr.getString("oracle.noSql"));
 	 }
@@ -443,7 +443,7 @@ public class ExplainPlanExecuter
           schemaInfo.refershCacheForSimpleTableName("PLAN_TABLE");
       } catch (SQLException ex) {
           result = false;
-          getSession().getMessageHandler().showErrorMessage(ex);
+          getSession().showErrorMessage(ex);
           s_log.error(ex);
       } finally {
           if (stmt != null) try {stmt.close();} catch (SQLException e) {}
@@ -478,7 +478,7 @@ public class ExplainPlanExecuter
               planTableList.add(tmp.toString());
           }
       } catch (SQLException e) {
-          getSession().getMessageHandler().showErrorMessage(e);
+          getSession().showErrorMessage(e);
           s_log.error(e);          
       } finally {
           if (rs != null) try {rs.close();} catch (SQLException e) {}
@@ -539,7 +539,7 @@ public class ExplainPlanExecuter
               result = true;
           }
       } catch (SQLException e) {
-          getSession().getMessageHandler().showErrorMessage(e);
+          getSession().showErrorMessage(e);
           s_log.error(e);
       } finally {
           if (rs != null) try { rs.close(); } catch (SQLException e) {}

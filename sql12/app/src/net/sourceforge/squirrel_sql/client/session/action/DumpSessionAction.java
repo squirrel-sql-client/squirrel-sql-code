@@ -100,14 +100,14 @@ public class DumpSessionAction extends SquirrelAction
                     s_stringMgr.getString("DumpSessionAction.success",
                                           outFile.getAbsolutePath()); 
 
-                _session.getMessageHandler().showMessage(msg);
+                _session.showMessage(msg);
 			}
 			catch (Throwable ex)
 			{
 			    // i18n[DumpSessionAction.error=Error occured dumping session: {0}]
                 final String msg = 
                     s_stringMgr.getString("DumpSessionAction.error", ex);
-				_session.getMessageHandler().showErrorMessage(msg);
+				_session.showErrorMessage(msg);
 				s_log.error(msg, ex);
 			}
 		}

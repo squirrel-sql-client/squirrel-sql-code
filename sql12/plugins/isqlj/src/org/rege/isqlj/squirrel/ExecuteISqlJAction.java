@@ -70,7 +70,7 @@ public class ExecuteISqlJAction
 			}
 			catch (BaseException ex)
 			{
-				session.getMessageHandler().showErrorMessage(ex);
+				session.showErrorMessage(ex);
 			}
         }
     }

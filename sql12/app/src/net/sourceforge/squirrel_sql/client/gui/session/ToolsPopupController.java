@@ -87,7 +87,7 @@ public class ToolsPopupController
       if(3 > _ctrlTCount)
       {
           // i18n[ToolsPopupController.toolspopupmsg=Please try out the Tools popup by hitting ctrl+t in the SQL Editor. Do it three times to stop this message.]
-         _session.getMessageHandler().showMessage(s_stringMgr.getString("ToolsPopupController.toolspopupmsg"));
+         _session.showMessage(s_stringMgr.getString("ToolsPopupController.toolspopupmsg"));
       }
    }
 

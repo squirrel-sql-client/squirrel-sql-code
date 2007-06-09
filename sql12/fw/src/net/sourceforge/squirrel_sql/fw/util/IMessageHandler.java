@@ -1,4 +1,6 @@
 package net.sourceforge.squirrel_sql.fw.util;
+
+
 /*
  * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
@@ -17,47 +19,46 @@ package net.sourceforge.squirrel_sql.fw.util;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-public interface IMessageHandler
-{
-	/**
-	 * Show a message describing the passed exception.
-	 * 
-	 * @param	th		Exception.
-	 */
-	void showMessage(Throwable th);
+public interface IMessageHandler {
+    /**
+     * Show a message describing the passed exception.
+     * 
+     * @param th the exception to be shown
+     *
+     * @param formatter the ExceptionFormatter to use to format any content in 
+     *                  the specified exception
+     */
+    void showMessage(Throwable th, ExceptionFormatter formatter);
 
-	/**
-	 * Show a message.
-	 * 
-	 * @param	msg		The message.
-	 */
-	void showMessage(String msg);
+    /**
+     * Show a message.
+     * 
+     * @param msg
+     *            The message.
+     */
+    void showMessage(String msg);
 
-	/**
-	 * Show an error message describing the passed exception. The implementation
-	 * of <TT>IMessageHandler</TT> may or may not treat this differently to
-	 * <TT>showMessage(Throwable)</TT>.
-	 * 
-	 * @param	th		Exception.
-	 */
-	void showErrorMessage(Throwable th);
+    /**
+     * Show an error message describing the passed exception. The implementation
+     * of <TT>IMessageHandler</TT> may or may not treat this differently to
+     * <TT>showMessage(Throwable)</TT>.
+     * 
+     * @param th the exception to be shown
+     *
+     * @param formatter the ExceptionFormatter to use to format any content in 
+     *                  the specified exception
+     */
+    void showErrorMessage(Throwable th, ExceptionFormatter formatter);
 
-	/**
-	 * Show an error message. The implementation
-	 * of <TT>IMessageHandler</TT> may or may not treat this differently to
-	 * <TT>showMessage(String)</TT>.
-	 * 
-	 * @param	th		Exception.
-	 */
-	void showErrorMessage(String msg);
+    /**
+     * Show an error message. The implementation of <TT>IMessageHandler</TT>
+     * may or may not treat this differently to <TT>showMessage(String)</TT>.
+     * @param session the session that generated the exception.
+     * @param th
+     *            Exception.
+     */
+    void showErrorMessage(String msg);
 
-   void showWarningMessage(String msg);
-   
-   /**
-    * Sets the exception formatter to use when handling messages.
-    * 
-    * @param formatter the ExceptionFormatter
-    */
-   void setExceptionFormatter(ExceptionFormatter formatter);
-   
+    void showWarningMessage(String msg);    
+
 }

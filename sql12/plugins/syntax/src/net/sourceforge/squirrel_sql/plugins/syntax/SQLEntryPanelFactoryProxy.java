@@ -65,7 +65,7 @@ public class SQLEntryPanelFactoryProxy implements ISQLEntryPanelFactory
          {
             public void run()
             {
-               session.getMessageHandler().showMessage(
+               session.showMessage(
 						// i18n[syntax.osterWarning=You are using the Oster editor. Please consider using the Netbeans editor. See menu File --> New Session Properties --> Syntax]
 						s_stringMgr.getString("syntax.osterWarning"));
             }

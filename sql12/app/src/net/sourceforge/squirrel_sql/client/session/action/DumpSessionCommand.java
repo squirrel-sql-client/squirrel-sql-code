@@ -135,10 +135,6 @@ public class DumpSessionCommand implements ICommand
 			throw new IllegalArgumentException("Null ISession passed");
 		}
 		_session = session;
-		if (_msgHandler == null)
-		{
-			_msgHandler = session.getMessageHandler();
-		}
 	}
 
 	/**
@@ -155,8 +151,8 @@ public class DumpSessionCommand implements ICommand
 			throw new IllegalStateException("Trying to dump session to null file");
 		}
 
-		final List files = new ArrayList();
-		final List titles = new ArrayList();
+		final List<File> files = new ArrayList<File>();
+		final List<String> titles = new ArrayList<String>();
 		synchronized (_session)
 		{
 			final ISQLConnection conn = _session.getSQLConnection();
@@ -171,8 +167,8 @@ public class DumpSessionCommand implements ICommand
 			catch (Throwable th)
 			{
 				final String msg = "Error dumping driver info";
-				_msgHandler.showErrorMessage(msg);
-				_msgHandler.showErrorMessage(th);
+				showErrorMessage(msg);
+				showErrorMessage(th);
 				s_log.error(msg, th);
 			}
 	
@@ -185,8 +181,8 @@ public class DumpSessionCommand implements ICommand
 			catch (Throwable th)
 			{
 				final String msg = "Error dumping driver info";
-				_msgHandler.showErrorMessage(msg);
-				_msgHandler.showErrorMessage(th);
+                showErrorMessage(msg);
+                showErrorMessage(th);
 				s_log.error(msg, th);
 			}
 	
@@ -199,8 +195,8 @@ public class DumpSessionCommand implements ICommand
 			catch (Throwable th)
 			{
 				final String msg = "Error dumping alias info";
-				_msgHandler.showErrorMessage(msg);
-				_msgHandler.showErrorMessage(th);
+				showErrorMessage(msg);
+				showErrorMessage(th);
 				s_log.error(msg, th);
 			}
 	
@@ -213,8 +209,8 @@ public class DumpSessionCommand implements ICommand
 			catch (Throwable th)
 			{
 				final String msg = "Error dumping general connection info";
-				_msgHandler.showErrorMessage(msg);
-				_msgHandler.showErrorMessage(th);
+				showErrorMessage(msg);
+				showErrorMessage(th);
 				s_log.error(msg, th);
 			}
 	
@@ -230,8 +226,8 @@ public class DumpSessionCommand implements ICommand
 			catch (Throwable th)
 			{
 				final String msg = "Error dumping metadata";
-				_msgHandler.showErrorMessage(msg);
-				_msgHandler.showErrorMessage(th);
+				showErrorMessage(msg);
+				showErrorMessage(th);
 				s_log.error(msg, th);
 			}
 	
@@ -247,8 +243,8 @@ public class DumpSessionCommand implements ICommand
 			catch (Throwable th)
 			{
 				final String msg = "Error dumping catalogs";
-				_msgHandler.showErrorMessage(msg);
-				_msgHandler.showErrorMessage(th);
+				showErrorMessage(msg);
+				showErrorMessage(th);
 				s_log.error(msg, th);
 			}
 	
@@ -264,8 +260,8 @@ public class DumpSessionCommand implements ICommand
 			catch (Throwable th)
 			{
 				final String msg = "Error dumping schemas";
-				_msgHandler.showErrorMessage(msg);
-				_msgHandler.showErrorMessage(th);
+				showErrorMessage(msg);
+				showErrorMessage(th);
 				s_log.error(msg, th);
 			}
 	
@@ -281,8 +277,8 @@ public class DumpSessionCommand implements ICommand
 			catch (Throwable th)
 			{
 				final String msg = "Error dumping data types";
-				_msgHandler.showErrorMessage(msg);
-				_msgHandler.showErrorMessage(th);
+				showErrorMessage(msg);
+				showErrorMessage(th);
 				s_log.error(msg, th);
 			}
 	
@@ -298,8 +294,8 @@ public class DumpSessionCommand implements ICommand
 			catch (Throwable th)
 			{
 				final String msg = "Error dumping table types";
-				_msgHandler.showErrorMessage(msg);
-				_msgHandler.showErrorMessage(th);
+				showErrorMessage(msg);
+				showErrorMessage(th);
 				s_log.error(msg, th);
 			}
 		}
@@ -308,7 +304,7 @@ public class DumpSessionCommand implements ICommand
 		deleteTempFiles(files);
 	}
 
-	private void combineTempFiles(List titles, List files)
+	private void combineTempFiles(List<String> titles, List<File> files)
 	{
 		try
 		{
@@ -324,7 +320,7 @@ public class DumpSessionCommand implements ICommand
 					wtr.println(SEP);
 					wtr.println(titles.get(i));
 					wtr.println(SEP);
-					File file = (File)files.get(i);
+					File file = files.get(i);
 					BufferedReader rdr = new BufferedReader(new FileReader(file));
 					try
 					{
@@ -348,17 +344,17 @@ public class DumpSessionCommand implements ICommand
 		catch (IOException ex)
 		{
 			final String msg = "Error combining temp files into dump file";
-			_msgHandler.showErrorMessage(msg);
-			_msgHandler.showErrorMessage(ex.toString());
+			showErrorMessage(msg);
+			showErrorMessage(ex);
 			s_log.error(msg, ex);
 		}
 	}
 
-	private void deleteTempFiles(List files)
+	private void deleteTempFiles(List<File> files)
 	{
 		for (int i = 0, limit = files.size(); i < limit; ++i)
 		{
-			if (!((File)files.get(i)).delete())
+			if (!(files.get(i)).delete())
 			{
 				s_log.error("Couldn't delete temporary DumpSession file");
 			}
@@ -412,4 +408,24 @@ public class DumpSessionCommand implements ICommand
 			wtr.close();
 		}
 	}
+    
+    private void showErrorMessage(String msg) {
+        if (_session != null) {
+            _session.showErrorMessage(msg);
+        } else if (_msgHandler != null) {
+            _msgHandler.showErrorMessage(msg);
+        } else {
+            s_log.error("No IMessageHandler or ISession configured");
+        }        
+    }
+    
+    private void showErrorMessage(Throwable th) {
+        if (_session != null) {
+            _session.showErrorMessage(th);
+        } else if (_msgHandler != null) {
+            _msgHandler.showErrorMessage(th, null);
+        } else {
+            s_log.error("No IMessageHandler or ISession configured");
+        }
+    }
 }

@@ -20,16 +20,14 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.da
 import java.sql.Connection;
 import java.util.Date;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseDataSetTab;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.JavabeanDataSet;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseDataSetTab;
 
 /**
  * This is the tab displaying connection status information.
@@ -72,8 +70,7 @@ public class ConnectionStatusTab extends BaseDataSetTab
 	{
 		final ISession session = getSession();
 		final ISQLConnection conn = session.getSQLConnection();
-		final IMessageHandler msgHandler = session.getMessageHandler();
-		return new JavabeanDataSet(new ConnectionInfo(conn, msgHandler));
+		return new JavabeanDataSet(new ConnectionInfo(conn, session));
 	}
 
 	/**
@@ -88,7 +85,7 @@ public class ConnectionStatusTab extends BaseDataSetTab
 		private Date _timeOpened;
 		private String _transIsol;
 
-		ConnectionInfo(ISQLConnection conn, IMessageHandler msgHandler)
+		ConnectionInfo(ISQLConnection conn, ISession session)
 		{
 			super();
 			Connection jdbcConn = conn.getConnection();
@@ -99,7 +96,7 @@ public class ConnectionStatusTab extends BaseDataSetTab
 			}
 			catch (Throwable th)
 			{
-				msgHandler.showErrorMessage(th.toString());
+				session.showErrorMessage(th);
 			}
 
 			try
@@ -108,7 +105,7 @@ public class ConnectionStatusTab extends BaseDataSetTab
 			}
 			catch (Throwable th)
 			{
-				msgHandler.showErrorMessage(th.toString());
+				session.showErrorMessage(th);
 			}
 
 			try
@@ -117,7 +114,7 @@ public class ConnectionStatusTab extends BaseDataSetTab
 			}
 			catch (Throwable th)
 			{
-				msgHandler.showErrorMessage(th.toString());
+				session.showErrorMessage(th);
 			}
 
 			try
@@ -126,7 +123,7 @@ public class ConnectionStatusTab extends BaseDataSetTab
 			}
 			catch (Throwable th)
 			{
-				msgHandler.showErrorMessage(th.toString());
+				session.showErrorMessage(th);
 			}
 
 			try
@@ -156,7 +153,7 @@ public class ConnectionStatusTab extends BaseDataSetTab
 			}
 			catch (Throwable th)
 			{
-				msgHandler.showErrorMessage(th.toString());
+				session.showErrorMessage(th);
 			}
 
 			_timeOpened = conn.getTimeOpened();
