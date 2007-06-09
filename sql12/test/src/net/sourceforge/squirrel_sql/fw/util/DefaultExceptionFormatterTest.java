@@ -24,7 +24,7 @@ import java.sql.SQLException;
 import java.sql.SQLWarning;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLExecutionException;
+import net.sourceforge.squirrel_sql.fw.sql.SQLExecutionException;
 
 import static org.easymock.EasyMock.*;
 import org.junit.After;
