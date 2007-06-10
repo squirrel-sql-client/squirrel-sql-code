@@ -139,4 +139,16 @@ public class ColumnMappingTableModel extends AbstractTableModel {
 		}
 		return -1;
 	}
+	
+	/**
+	 * Resets the column mappings to "Skip"
+	 */
+	public void resetMappings() {
+		mapping.clear();
+		defaults.clear();
+		for (int i = 0; i < columns.length; i++) {
+			mapping.add("Skip");
+			defaults.add("");
+		}
+	}
 }

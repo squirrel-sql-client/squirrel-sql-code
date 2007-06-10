@@ -105,13 +105,6 @@ public class ImportFileDialog extends BaseInternalFrame {
 	{
 		btnsPnl.addListener(new MyOkClosePanelListener());
 
-/*		final FormLayout layout = new FormLayout(
-			// Columns
-			"right:pref, 8dlu, left:min(100dlu;pref):grow",
-			// Rows
-			"pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 6dlu, pref, 3dlu, pref, 3dlu, pref");
-			*/
-
 		final FormLayout layout = new FormLayout(
 				// Columns
 				"left:pref:grow",
@@ -133,7 +126,11 @@ public class ImportFileDialog extends BaseInternalFrame {
 		headersIncluded.setSelected(true);
 		headersIncluded.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				ImportFileDialog.this.updatePreviewData();
+				GUIUtils.processOnSwingEventThread(new Runnable() {
+					public void run() {
+						ImportFileDialog.this.updatePreviewData();
+					}
+				});
 			}
 		});
 
@@ -202,6 +199,7 @@ public class ImportFileDialog extends BaseInternalFrame {
 			previewTable.setModel(new DefaultTableModel(data, headers));
 		}
 		mappingTable.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(editBox));
+		((ColumnMappingTableModel) mappingTable.getModel()).resetMappings();
 	}
 	
 	/**
