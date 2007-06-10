@@ -4,7 +4,6 @@ TODO for Dataimport
  - Remove the old code
  - Allow the user to specify ranges of rows to import
  - Allow specifying formats for import
- - Column section after checking the "header" box
  - Help pages
  
 Done
@@ -12,4 +11,5 @@ Done
 
  - [2007-06-09] Allow the user to select the sheet (XLS)
  - [2007-06-09] Allow the user to select the seperator (CSV)
+ - [2007-06-10] Invalidate column selection after checking the "header" box
  
