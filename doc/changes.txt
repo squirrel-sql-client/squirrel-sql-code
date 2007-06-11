@@ -8,6 +8,9 @@ Enhancements:
 
 New Plugin (SQL Parametrisation - Thorsten Mürell) allows you to put variables 
            into your SQL statements.
+           
+New Plugin (Data import - Thorsten Mürell) allows you to import arbitary files
+           into the database.
 
 Derby Plugin: New custom QueryTokenizer which allows Derby sessions to give the 
 command:  run '<abs-path-to-script>'

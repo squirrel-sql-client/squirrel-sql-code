@@ -49,7 +49,7 @@ public class ColumnMappingTableModel extends AbstractTableModel {
 	public ColumnMappingTableModel(TableColumnInfo[] columns) {
 		this.columns = columns;
 		for (int i = 0; i < columns.length; i++) {
-			mapping.add("Skip");
+			mapping.add(SpecialColumnMapping.SKIP.getVisibleString());
 			defaults.add("");
 		}
 	}
@@ -147,7 +147,7 @@ public class ColumnMappingTableModel extends AbstractTableModel {
 		mapping.clear();
 		defaults.clear();
 		for (int i = 0; i < columns.length; i++) {
-			mapping.add("Skip");
+			mapping.add(SpecialColumnMapping.SKIP.getVisibleString());
 			defaults.add("");
 		}
 	}
