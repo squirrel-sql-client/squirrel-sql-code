@@ -38,4 +38,41 @@ public class CompletionCandidates
    {
       return _stringToReplace;
    }
+
+   public String getAllCandidatesPrefix()
+   {
+      if(0 == _candidates.length)
+      {
+         return "";
+      }
+
+
+      String prefix = null;
+      for (CompletionInfo _candidate : _candidates)
+      {
+         String completionString = _candidate.getCompletionString();
+         if (null == prefix)
+         {
+            prefix = completionString;
+         }
+         else
+         {
+            int ix;
+            int minLen = Math.min(prefix.length(), completionString.length());
+
+            prefix = prefix.substring(0, minLen);
+
+            for(ix =0; ix < minLen; ++ix)
+            {
+               if(prefix.charAt(ix) != completionString.charAt(ix))
+               {
+                  prefix = prefix.substring(0, ix);
+                  break;
+               }
+            }
+         }
+      }
+
+      return prefix;
+   }
 }
