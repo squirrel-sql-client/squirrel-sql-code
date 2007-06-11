@@ -23,19 +23,20 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
 import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsAdapter;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.TableAliasInfo;
+import net.sourceforge.squirrel_sql.fw.completion.CompletionCandidates;
+import net.sourceforge.squirrel_sql.fw.completion.util.CompletionParser;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.completion.CompletionCandidates;
 import net.sourceforge.squirrel_sql.plugins.codecompletion.prefs.CodeCompletionPreferences;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class StandardCompletorModel
 {
-   private static final char[] SEPARATORS = {' ', '\t', '\n' ,  ',', '(', '\'','"', '=', '>', '<'};
 
    private ISession _session;
    private ILogger _log = LoggerController.createLogger(CodeCompletorModel.class);
@@ -71,73 +72,60 @@ public class StandardCompletorModel
 		_codeCompletionInfos.replaceLastAliasInfos(aliasInfos);
 	}
 
-	CompletionCandidates getCompletionCandidates(String textTillCarret)
+
+   CompletionCandidates getCompletionCandidates(String textTillCarret)
    {
-      String stringToParse = getStringToParse(textTillCarret);
-      int stringToParsePosition = getStringToParsePosition ( textTillCarret );
+      CompletionParser parser = new CompletionParser(textTillCarret);
 
-      StringTokenizer st = new StringTokenizer(stringToParse, ".");
-      ArrayList<String> buf = new ArrayList<String>();
-      while(st.hasMoreTokens())
-      {
-         buf.add(st.nextToken());
-      }
-
-      if(textTillCarret.endsWith(".") || 0 == buf.size())
-      {
-         buf.add("");
-      }
-
-      String stringToReplace = buf.get(buf.size() - 1);
 
       ArrayList<CodeCompletionInfo> ret = new ArrayList<CodeCompletionInfo>();
 
-      if(1 == buf.size())
+      if(false == parser.isQualified())
       {
 
          ///////////////////////////////////////////////////////////////////////////////
          // The colums of the last completed table/view that match the tableNamePat
          // will be returned on top of the collection
-         ret.addAll( getColumnsFromLastSelectionStartingWith((String)buf.get(0)) );
+         ret.addAll( getColumnsFromLastSelectionStartingWith(parser.getStringToParse()) );
          //
          //////////////////////////////////////////////////////////////////////////////
 
-         ret.addAll( Arrays.asList(_codeCompletionInfos.getInfosStartingWith(null, null, (String)buf.get(0))) );
+         ret.addAll( Arrays.asList(_codeCompletionInfos.getInfosStartingWith(null, null, parser.getStringToParse())) );
       }
       else // 1 < buf.size()
       {
          String catalog = null;
          int catAndSchemCount = 0;
-         if(_codeCompletionInfos.isCatalog((String)buf.get(0)))
+         if(_codeCompletionInfos.isCatalog((String)parser.getToken(0)))
          {
-            catalog = (String)buf.get(0);
+            catalog = (String)parser.getToken(0);
             catAndSchemCount = 1;
          }
 
          String schema = null;
-         if(_codeCompletionInfos.isSchema((String)buf.get(0)))
+         if(_codeCompletionInfos.isSchema(parser.getToken(0)))
          {
-            schema = (String)buf.get(0);
+            schema = parser.getToken(0);
             catAndSchemCount = 1;
          }
-         else if(_codeCompletionInfos.isSchema((String)buf.get(1)))
+         else if(_codeCompletionInfos.isSchema(parser.getToken(1)))
          {
-            schema = (String)buf.get(1);
+            schema = parser.getToken(1);
             catAndSchemCount = 2;
          }
 
          // Might also be a catalog or a schema name
-         String tableNamePat1 = (String)buf.get(buf.size() - 2);
-         String colNamePat1 = (String)buf.get(buf.size() - 1);
+         String tableNamePat1 = parser.getToken(parser.size() - 2);
+         String colNamePat1 = parser.getToken(parser.size() - 1);
 
          if(0 < catAndSchemCount)
          {
-            String tableNamePat2 = (String)buf.get(catAndSchemCount);
+            String tableNamePat2 = parser.getToken(catAndSchemCount);
 
-            if(buf.size() > catAndSchemCount + 1)
+            if(parser.size() > catAndSchemCount + 1)
             {
-               String colNamePat2 = (String)buf.get(catAndSchemCount+1);
-               ret.addAll( getColumnsForName(catalog, schema, tableNamePat2, colNamePat2, stringToParsePosition) );
+               String colNamePat2 = parser.getToken(catAndSchemCount+1);
+               ret.addAll( getColumnsForName(catalog, schema, tableNamePat2, colNamePat2, parser.getStringToParsePosition()) );
             }
             else
             {
@@ -147,96 +135,17 @@ public class StandardCompletorModel
          }
          else
          {
-            ret.addAll( getColumnsForName(null, null, tableNamePat1, colNamePat1, stringToParsePosition) );
+            ret.addAll( getColumnsForName(null, null, tableNamePat1, colNamePat1, parser.getStringToParsePosition()) );
          }
       }
 
       CodeCompletionInfo[] ccis = (CodeCompletionInfo[]) ret.toArray(new CodeCompletionInfo[ret.size()]);
 
-      int replacementStart = textTillCarret.length() - stringToReplace.length();
-
-      return new CompletionCandidates(ccis, replacementStart, stringToReplace);
+      return new CompletionCandidates(ccis, parser.getReplacementStart(), parser.getStringToReplace());
    }
 
 
-   private String getStringToParse(String textTillCaret)
-   {
-
-      int lastIndexOfLineFeed = textTillCaret.lastIndexOf('\n');
-      String lineTillCaret;
-
-      if(-1 == lastIndexOfLineFeed)
-      {
-         lineTillCaret = textTillCaret;
-      }
-      else
-      {
-         lineTillCaret = textTillCaret.substring(lastIndexOfLineFeed);
-      }
-
-      String beginning = "";
-      if (0 != lineTillCaret.trim().length() && !Character.isWhitespace(lineTillCaret.charAt(lineTillCaret.length() - 1)))
-      {
-         String trimmedLineTillCaret = lineTillCaret.trim();
-
-         int lastSeparatorIndex = getLastSeparatorIndex(trimmedLineTillCaret);
-         if (-1 == lastSeparatorIndex)
-         {
-            beginning = trimmedLineTillCaret;
-         }
-         else
-         {
-            beginning = trimmedLineTillCaret.substring(lastSeparatorIndex + 1, trimmedLineTillCaret.length());
-         }
-      }
-
-      return beginning;
-   }
-
-   private int getLastSeparatorIndex(String str)
-   {
-      int lastSeparatorIndex = -1;
-      for(int i=0; i < SEPARATORS.length; ++i)
-      {
-         int buf = str.lastIndexOf(SEPARATORS[i]);
-         if(buf > lastSeparatorIndex)
-         {
-            lastSeparatorIndex = buf;
-         }
-      }
-      return lastSeparatorIndex;
-   }
-
-	private int getStringToParsePosition(String textTillCaret)
-	{
-
-		int lastIndexOfLineFeed = textTillCaret.lastIndexOf('\n');
-		String lineTillCaret;
-
-		if (-1 == lastIndexOfLineFeed)
-		{
-			lineTillCaret = textTillCaret;
-		}
-		else
-		{
-			lineTillCaret = textTillCaret.substring(lastIndexOfLineFeed);
-		}
-
-		int pos = lastIndexOfLineFeed + 1;
-		if (0 != lineTillCaret.length() && !Character.isWhitespace(lineTillCaret.charAt(lineTillCaret.length() - 1)))
-		{
-			int lastSeparatorIndex = getLastSeparatorIndex(lineTillCaret);
-			if (-1 != lastSeparatorIndex)
-			{
-				pos += lastSeparatorIndex;
-			}
-		}
-
-		return pos;
-	}
-
-
-	private ArrayList<CodeCompletionInfo> getColumnsForName(String catalog, String schema, String name, String colNamePat, int colPos)
+   private ArrayList<CodeCompletionInfo> getColumnsForName(String catalog, String schema, String name, String colNamePat, int colPos)
 	{
 		CodeCompletionInfo[] infos = _codeCompletionInfos.getInfosStartingWith(catalog, schema, name);
 		String upperCaseTableNamePat = name.toUpperCase();

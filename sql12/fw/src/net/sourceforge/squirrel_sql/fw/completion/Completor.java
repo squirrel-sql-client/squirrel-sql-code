@@ -58,7 +58,8 @@ public class Completor
 		KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0, false),
 		KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0, false),
 		KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, 0, false),
-		KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, 0, false)
+		KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, 0, false),
+		KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, KeyEvent.CTRL_MASK, false)
 	};
 
    private Action[] _originalActions = null;
@@ -126,11 +127,22 @@ public class Completor
 
    private void onKeyPressedOnList(KeyEvent e)
 	{
-		if(e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_TAB)
+		if(e.getKeyCode() == KeyEvent.VK_ENTER || (e.getKeyCode() == KeyEvent.VK_SPACE && e.getModifiers() != KeyEvent.CTRL_MASK) || e.getKeyCode() == KeyEvent.VK_TAB)
 		{
-			completionSelected(e.getKeyCode());
+			completionSelected(e.getKeyCode(), e.getModifiers());
 		}
-		else if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
+      else if(e.getKeyCode() == KeyEvent.VK_SPACE && e.getModifiers() == KeyEvent.CTRL_MASK)
+      {
+         completionSelected(e.getKeyCode(), e.getModifiers());
+         SwingUtilities.invokeLater(new Runnable()
+         {
+            public void run()
+            {
+               show();
+            }
+         });
+      }
+      else if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
 		{
 			closePopup();
 		}
@@ -240,22 +252,15 @@ public class Completor
 
    private void reInitListLater()
    {
-      try
-      {
-         _currCandidates = _model.getCompletionCandidates(getTextTillCarret());
+      _currCandidates = _model.getCompletionCandidates(getTextTillCarret());
 
-         if(0 == _currCandidates.getCandidates().length && _txtComp.editorEqualsFilter())
-         {
-            closePopup();
-         }
-         else
-         {
-            fillAndShowCompletionList(_currCandidates.getCandidates());
-         }
-      }
-      catch (BadLocationException e)
+      if(0 == _currCandidates.getCandidates().length && _txtComp.editorEqualsFilter())
       {
-         throw new RuntimeException(e);
+         closePopup();
+      }
+      else
+      {
+         fillAndShowCompletionList(_currCandidates.getCandidates());
       }
    }
 
@@ -264,16 +269,22 @@ public class Completor
     * @return If there is an extra filter text field the complete text in this text field is returned
     * @throws BadLocationException
     */
-   private String getTextTillCarret()
-      throws BadLocationException
+   public String getTextTillCarret()
    {
-      if(_txtComp.editorEqualsFilter())
+      try
+      {
+         if(_txtComp.editorEqualsFilter())
       {
          return _txtComp.getEditor().getText(0, _txtComp.getFilter().getCaretPosition());
+         }
+         else
+         {
+            return _txtComp.getFilter().getText();
+         }
       }
-      else
+      catch (BadLocationException e)
       {
-         return _txtComp.getFilter().getText();
+         throw new RuntimeException(e);
       }
    }
 
@@ -281,11 +292,11 @@ public class Completor
 	{
 		if(2 == e.getClickCount())
 		{
-			completionSelected(KeyEvent.VK_ENTER);
+			completionSelected(KeyEvent.VK_ENTER, 0);
 		}
 	}
 
-	private void completionSelected(int keyCode)
+	private void completionSelected(int keyCode, int modifiers)
 	{
       Object selected = null;
       if(0 < _completionList.getModel().getSize())
@@ -295,7 +306,7 @@ public class Completor
       closePopup();
 		if(null != selected && selected instanceof CompletionInfo)
 		{
-			fireEvent((CompletionInfo)selected, keyCode);
+			fireEvent((CompletionInfo)selected, keyCode, modifiers);
 		}
 	}
 
@@ -346,7 +357,7 @@ public class Completor
 			}
 			if(1 == _currCandidates.getCandidates().length)
 			{
-				fireEvent(_currCandidates.getCandidates()[0], KeyEvent.VK_ENTER);
+				fireEvent(_currCandidates.getCandidates()[0], KeyEvent.VK_ENTER, 0);
 				return;
 			}
 
@@ -471,7 +482,7 @@ public class Completor
 	}
 
 
-	private void fireEvent(CompletionInfo completion, int keyCode)
+	private void fireEvent(CompletionInfo completion, int keyCode, int modifiers)
 	{
 		Vector clone =(Vector) _listeners.clone();
 
@@ -480,11 +491,11 @@ public class Completor
          CompletorListener completorListener = (CompletorListener)clone.elementAt(i);
          if(_txtComp.editorEqualsFilter())
          {
-            completorListener.completionSelected(completion, _currCandidates.getReplacementStart(), keyCode);
+            completorListener.completionSelected(completion, _currCandidates.getReplacementStart(), keyCode, modifiers);
          }
          else
          {
-            completorListener.completionSelected(completion, -1, keyCode);
+            completorListener.completionSelected(completion, -1, keyCode, modifiers);
          }
 		}
 	}

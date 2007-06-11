@@ -19,12 +19,12 @@ package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.completion.Completor;
 import net.sourceforge.squirrel_sql.fw.completion.CompletorListener;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
+import net.sourceforge.squirrel_sql.fw.completion.CompletionCandidates;
 
 import javax.swing.text.JTextComponent;
 import java.awt.event.ActionEvent;
@@ -34,10 +34,10 @@ public class CompleteCodeAction extends SquirrelAction
 {
 	private ISQLEntryPanel _sqlEntryPanel;
 	private Completor _cc;
+   private CodeCompletorModel _model;
 
 
-
-	public CompleteCodeAction(IApplication app,
+   public CompleteCodeAction(IApplication app,
                              CodeCompletionPlugin plugin,
                              ISQLEntryPanel sqlEntryPanel,
                              ISession session,
@@ -46,16 +46,16 @@ public class CompleteCodeAction extends SquirrelAction
 		super(app, plugin.getResources());
 		_sqlEntryPanel = sqlEntryPanel;
 
-		CodeCompletorModel model = new CodeCompletorModel(session, plugin, codeCompletionInfos, sqlEntryPanel.getIdentifier());
-		_cc = new Completor((JTextComponent)_sqlEntryPanel.getTextComponent(), model);
-		_sqlEntryPanel.addSQLTokenListener(model.getSQLTokenListener());
+      _model = new CodeCompletorModel(session, plugin, codeCompletionInfos, sqlEntryPanel.getIdentifier());
+      _cc = new Completor((JTextComponent)_sqlEntryPanel.getTextComponent(), _model);
+		_sqlEntryPanel.addSQLTokenListener(_model.getSQLTokenListener());
 
 		_cc.addCodeCompletorListener
 		(
 			new CompletorListener()
 			{
-				public void completionSelected(CompletionInfo completion, int replaceBegin, int keyCode)
-				{performCompletionSelected((CodeCompletionInfo) completion, replaceBegin, keyCode);}
+				public void completionSelected(CompletionInfo completion, int replaceBegin, int keyCode, int modifiers)
+				{performCompletionSelected((CodeCompletionInfo) completion, replaceBegin, keyCode, modifiers);}
 			}
 		);
 	}
@@ -68,9 +68,23 @@ public class CompleteCodeAction extends SquirrelAction
 
 
 
-	private void performCompletionSelected(CodeCompletionInfo completion, int replaceBegin, int keyCode)
+	private void performCompletionSelected(CodeCompletionInfo completion, int replaceBegin, int keyCode, int modifiers)
 	{
-		if(KeyEvent.VK_TAB == keyCode)
+
+      boolean moveCarretBack = true;
+      if(KeyEvent.VK_SPACE == keyCode && modifiers == KeyEvent.CTRL_MASK)
+      {
+         // Code Completion has been done within Code Completion. Now just replace what all candidates have in common.  
+
+         CompletionCandidates completionCandidates = _model.getCompletionCandidates(_cc.getTextTillCarret());
+
+         _sqlEntryPanel.setSelectionStart(replaceBegin);
+         _sqlEntryPanel.setSelectionEnd(_sqlEntryPanel.getCaretPosition());
+         _sqlEntryPanel.replaceSelection(completionCandidates.getAllCandidatesPrefix());
+         moveCarretBack = false;
+
+      }
+      else if(KeyEvent.VK_TAB == keyCode)
 		{
 			_sqlEntryPanel.setSelectionStart(replaceBegin);
 			_sqlEntryPanel.setSelectionEnd(getNextWhiteSpacePos(_sqlEntryPanel.getCaretPosition()));
@@ -83,7 +97,7 @@ public class CompleteCodeAction extends SquirrelAction
 			_sqlEntryPanel.replaceSelection(completion.getCompletionString());
 		}
 
-		if(0 < completion.getMoveCarretBackCount())
+		if(moveCarretBack && 0 < completion.getMoveCarretBackCount())
 		{
 			_sqlEntryPanel.setCaretPosition(_sqlEntryPanel.getCaretPosition()  - completion.getMoveCarretBackCount());
 		}

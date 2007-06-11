@@ -2,14 +2,10 @@ package net.sourceforge.squirrel_sql.plugins.hibernate;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class HibernateConnection
 {
@@ -31,11 +27,11 @@ public class HibernateConnection
       {
 
 
-         Class sessionFactoryImplementorClass = (Class) new ReflectionCaller(_cl).getClass("org.hibernate.engine.SessionFactoryImplementor").getCallee();
+         Class sessionFactoryImplementorClass = (Class) new ReflectionCaller().getClass("org.hibernate.engine.SessionFactoryImplementor", _cl).getCallee();
 
          List<ReflectionCaller> translators =
          new ReflectionCaller(_cl)
-            .getClass("org.hibernate.engine.query.HQLQueryPlan")
+            .getClass("org.hibernate.engine.query.HQLQueryPlan", _cl)
             .callConstructor(new Class[]{String.class, Boolean.TYPE, Map.class, sessionFactoryImplementorClass}, new Object[]{hqlQuery, false, Collections.EMPTY_MAP, _sessionFactoryImpl})
             .callArrayMethod("getTranslators");
 
@@ -55,6 +51,7 @@ public class HibernateConnection
       }
       catch (Exception e)
       {
+         e.printStackTrace();
          throw new RuntimeException(e);
       }
    }
@@ -65,7 +62,7 @@ public class HibernateConnection
    {
       try
       {
-         new ReflectionCaller(_sessionFactoryImpl, _cl).callMethod("close");
+         new ReflectionCaller(_sessionFactoryImpl).callMethod("close");
       }
       catch (Throwable t)
       {
@@ -75,5 +72,28 @@ public class HibernateConnection
       _cl = null;
       System.gc();
 
+   }
+
+   public ArrayList<MappedClassInfo> getMappedClassInfos()
+   {
+
+      ArrayList<MappedClassInfo> ret = new ArrayList<MappedClassInfo>();
+
+      ReflectionCaller caller = new ReflectionCaller(_sessionFactoryImpl);
+      Collection<ReflectionCaller> persisters = caller.callMethod("getAllClassMetadata").callCollectionMethod("values");
+
+      for (ReflectionCaller persister : persisters)
+      {
+         Object entityMode_POJO = persister.getClass("org.hibernate.EntityMode", _cl).getField("POJO").getCallee();
+         Class mappedClass = (Class) persister.callMethod("getMappedClass", new Object[]{entityMode_POJO}).getCallee();
+
+         String identifierPropertyName = (String) persister.callMethod("getIdentifierPropertyName").getCallee();
+
+         String[] propertyNames = (String[]) persister.callMethod("getPropertyNames").getCallee();
+
+         ret.add(new MappedClassInfo(mappedClass.getName(), identifierPropertyName, propertyNames));
+      }
+
+      return ret;
    }
 }

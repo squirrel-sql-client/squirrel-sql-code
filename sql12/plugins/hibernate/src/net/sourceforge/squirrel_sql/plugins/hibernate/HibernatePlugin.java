@@ -127,9 +127,8 @@ public class HibernatePlugin extends DefaultSessionPlugin
    private void initCodeCompletion(HQLTabController hqlTabController, ISession session)
    {
       ISQLEntryPanel entryPanel = hqlTabController.getHqlEntrPanelManager().getEntryPanel();
-      HibernateConnection con = hqlTabController.getHibernateConnection();
 
-      HQLCompleteCodeAction hcca = new HQLCompleteCodeAction(getApplication(), this, entryPanel, session, con);
+      HQLCompleteCodeAction hcca = new HQLCompleteCodeAction(getApplication(), this, entryPanel, hqlTabController);
 
 
       JMenuItem item = entryPanel.addToSQLEntryAreaMenu(hcca);

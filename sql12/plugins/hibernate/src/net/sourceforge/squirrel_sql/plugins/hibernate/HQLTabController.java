@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.prefs.Preferences;
 
-public class HQLTabController implements IMainPanelTab, IHQLTabController
+public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibernateConnectionProvider
 {
 
    private static final StringManager s_stringMgr =

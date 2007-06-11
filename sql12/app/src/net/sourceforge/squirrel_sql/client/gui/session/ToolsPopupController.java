@@ -45,7 +45,7 @@ public class ToolsPopupController
       (
          new CompletorListener()
          {
-            public void completionSelected(CompletionInfo completion, int replaceBegin, int keyCode)
+            public void completionSelected(CompletionInfo completion, int replaceBegin, int keyCode, int modifiers)
             {onToolsPopupActionSelected(completion);}
          }
       );

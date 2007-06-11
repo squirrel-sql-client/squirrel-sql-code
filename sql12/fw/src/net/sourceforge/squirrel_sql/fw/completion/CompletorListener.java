@@ -24,8 +24,9 @@ public interface CompletorListener
 {
    /**
     * @param completion
-	 * @param replaceBegin This parameter is usefull only when the editor and the filter editor are the same.
-	 * @param keyCode
-	 */
-   void completionSelected(CompletionInfo completion, int replaceBegin, int keyCode);
+    * @param replaceBegin This parameter is usefull only when the editor and the filter editor are the same.
+    * @param keyCode
+    * @param modifiers
+    */
+   void completionSelected(CompletionInfo completion, int replaceBegin, int keyCode, int modifiers);
 }

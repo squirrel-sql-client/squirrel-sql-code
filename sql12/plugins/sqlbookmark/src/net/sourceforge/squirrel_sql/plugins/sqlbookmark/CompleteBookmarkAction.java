@@ -51,7 +51,7 @@ public class CompleteBookmarkAction extends SquirrelAction
       (
          new CompletorListener()
          {
-            public void completionSelected(CompletionInfo completion, int replaceBegin, int keyCode)
+            public void completionSelected(CompletionInfo completion, int replaceBegin, int keyCode, int modifiers)
             {performCompletionSelected(completion);}
          }
       );
