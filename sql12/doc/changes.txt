@@ -6,6 +6,11 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+Code Completion Plugin:
+  When Ctrl+Space is hit while completion popup is already open the prefix up to
+  where all completion candidates match will be written to the SQL editor. The 
+  completion popup will remain open.
+
 New Plugin (SQL Parametrisation - Thorsten Mürell) allows you to put variables 
            into your SQL statements.
            
