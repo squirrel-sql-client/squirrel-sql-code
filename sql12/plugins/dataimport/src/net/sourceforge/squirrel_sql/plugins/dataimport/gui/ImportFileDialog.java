@@ -165,10 +165,10 @@ public class ImportFileDialog extends BaseInternalFrame {
 	
 	private void updatePreviewData() {
 		JComboBox editBox = new JComboBox();
-		editBox.addItem("Skip");
-		editBox.addItem("Fixed value");
-		editBox.addItem("Autoincrement");
-		editBox.addItem("NULL");
+		editBox.addItem(SpecialColumnMapping.SKIP.getVisibleString());
+		editBox.addItem(SpecialColumnMapping.FIXED_VALUE.getVisibleString());
+		editBox.addItem(SpecialColumnMapping.AUTO_INCREMENT.getVisibleString());
+		editBox.addItem(SpecialColumnMapping.NULL.getVisibleString());
 		
 		if (previewData != null && previewData.length > 0) {
 			String[] headers = new String[previewData[0].length];
@@ -184,7 +184,8 @@ public class ImportFileDialog extends BaseInternalFrame {
 				}
 			} else {
 				for (int i = 0; i < headers.length; i++) {
-					headers[i] = "Column" + i;
+					//i18n[ImportFileDialog.column=Column]
+					headers[i] = stringMgr.getString("ImportFileDialog.column") + i;
 				}
 			}
 

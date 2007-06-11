@@ -147,6 +147,14 @@
 		</pack>				
 
 -->
+		<pack required="no" preselected="no" name="Optional Plugin - Data import">
+			<description>This plugin allows you import files into the database.</description>
+			<file targetdir="$INSTALL_PATH/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/dataimport/dist/dataimport.jar"/>
+			<file targetdir="$INSTALL_PATH/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/dataimport/dist/dataimport"/>
+		</pack>
+
         <pack required="no" preselected="no" name="Optional Plugin - DBCopy">
             <description>This optional plugin allows database objects to be copied from one database session to another </description>
             <file targetdir="$INSTALL_PATH/plugins"

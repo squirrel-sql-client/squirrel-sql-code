@@ -23,7 +23,7 @@
         <property name="plugins_dist_dir" value="${dist_dir}/plugins"/>
         <property name="p_plugin.work_dir" value="${plugins_dist_dir}/${internal_name}/work"/>
         <property name="p_plugin.core_libs_dir" value="${dist_dir}/core/dist/lib"/>
-        <property name="p_plugin.dist_dir" value="${plugins_dist_dir}/core/dist/plugins"/>
+        <property name="p_plugin.dist_dir" value="${dist_dir}/core/dist/plugins"/>
     </target>		
 	<!--
 	==================================================================

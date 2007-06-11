@@ -139,7 +139,11 @@ public class CSVSettingsPanel extends JPanel {
 		if (useTab.isSelected()) {
 			settings.setSeperator('\t');
 		} else {
-			settings.setSeperator(seperatorChar.getText().charAt(0));
+			if (seperatorChar.getText().length() > 0) {
+				settings.setSeperator(seperatorChar.getText().charAt(0));
+			} else {
+				settings.setSeperator(';');
+			}
 		}
 		settings.setImportCharset(Charset.forName(encoding.getSelectedItem().toString()));
 		settings.setDateFormat(dateFormat.getText());
@@ -157,6 +161,11 @@ public class CSVSettingsPanel extends JPanel {
 	}
 	
 	private void stateChanged() {
+		if (seperatorChar.getText().length() > 1) {
+			try {
+				seperatorChar.setText(seperatorChar.getText(0, 1));
+			} catch (Exception e) { /* Ignore that */ }
+		}
 		if (useTab.isSelected()) {
 			seperatorChar.setEnabled(false);
 		} else {

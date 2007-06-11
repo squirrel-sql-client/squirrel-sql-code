@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+	<meta http-equiv="CONTENT-TYPE" CONTENT="text/html; charset=iso-8859-15">
+	<title>Dataimport Help</title>
+	<style type="text/css">
+	    pre {
+	         font: normal 10pt Courier New, Courier, monospaced;
+	         background:#EEEEEE;
+	         padding:5pt;
+	    }
+	</style>
+</head>
+<body lang="en-us" dir="ltr">
+    <h1>Data Import</h1>
+    <h2>Thorsten Mürell</h2>
+    
+    <p>The data import plugin allows to import arbitary files into existing tables in the
+       database. Currently the following types of files are supported:</p>
+       
+    <ul>
+        <li>Microsoft Excel files</li>
+        <li>Comma separated files (CSV)</li>
+    </ul>
+    
+    <p>Both file formats offer you some selections to choose the sheet (Excel) or the 
+       seperator and file encoding (CSV).</p>
+       
+    <p>To import a file, right click a table and choose "Import file" from the menu.</p>
+       
+    <p>After that you can map the table's columns to the colums of the import file. At 
+       the top of dialog you firstly choose, if the first row contains the column headers.
+       Then you can associate the existing table columns with the import file columns. 
+       You also have several "special" options:</p>
+       
+    <ul>
+        <li><b>Skip:</b> This column is not used. The default value of the database will
+            be used.</li>
+        <li><b>NULL:</b> This column will be set to NULL.</li>
+        <li><b>Fixed value:</b> This column will be set to fixed value, that you can
+            specify in the third column named "Fixed Value".</li>
+        <li><b>Auto increment:</b> This column will be incremented by one each insert. 
+            You can specify the start value by typing a number into the "Fixed Value"
+            column.<li>
+    </ul>
+</body>
+</html>

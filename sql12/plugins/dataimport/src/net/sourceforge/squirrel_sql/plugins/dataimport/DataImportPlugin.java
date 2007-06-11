@@ -92,6 +92,11 @@ public class DataImportPlugin extends DefaultSessionPlugin {
 	public String getLicenceFileName() {
 		return "licence.txt";
 	}
+	
+	@Override
+	public String getHelpFileName() {
+		return "readme.html";
+	}
 
 	@Override
 	public void load(IApplication app) throws PluginException {

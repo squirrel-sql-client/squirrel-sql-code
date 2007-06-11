@@ -35,6 +35,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dataimport.gui.ColumnMappingTableModel;
 import net.sourceforge.squirrel_sql.plugins.dataimport.gui.ProgressBarDialog;
+import net.sourceforge.squirrel_sql.plugins.dataimport.gui.SpecialColumnMapping;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.IFileImporter;
 import net.sourceforge.squirrel_sql.plugins.dataimport.importer.UnsupportedFormatException;
 import net.sourceforge.squirrel_sql.plugins.dataimport.prefs.DataImportPreferenceBean;
@@ -165,13 +166,13 @@ public class ImportDataIntoTableExecutor {
     			for (TableColumnInfo column : columns) {
     				String mapping = getMapping(column);
     				try {
-    					if ("Skip".equals(mapping)) {
+    					if (SpecialColumnMapping.SKIP.getVisibleString().equals(mapping)) {
     						continue;
-    					} else if ("Fixed value".equals(mapping)) {
+    					} else if (SpecialColumnMapping.FIXED_VALUE.getVisibleString().equals(mapping)) {
     						bindFixedColumn(stmt, i++, column);
-    					} else if ("Autoincrement".equals(mapping)) {
+    					} else if (SpecialColumnMapping.AUTO_INCREMENT.getVisibleString().equals(mapping)) {
     						bindAutoincrementColumn(stmt, i++, column, rows);
-    					} else if ("NULL".equals(mapping)) {
+    					} else if (SpecialColumnMapping.NULL.getVisibleString().equals(mapping)) {
     						stmt.setNull(i++, column.getDataType());
     					} else {
     						bindColumn(stmt, i++, column);
@@ -319,7 +320,7 @@ public class ImportDataIntoTableExecutor {
     	StringBuffer columnsList = new StringBuffer();
     	for (TableColumnInfo column : columns) {
     		String mapping = getMapping(column);
-    		if ("Skip".equals(mapping)) continue;
+    		if (SpecialColumnMapping.SKIP.getVisibleString().equals(mapping)) continue;
     		
     		if (columnsList.length() != 0) {
     			columnsList.append(", ");
@@ -334,7 +335,7 @@ public class ImportDataIntoTableExecutor {
     	for (TableColumnInfo column : columns) {
     		int pos = columnMapping.findTableColumn(column.getColumnName());
     		String mapping = columnMapping.getValueAt(pos, 1).toString();
-    		if (!"Skip".equals(mapping)) {
+    		if (!SpecialColumnMapping.SKIP.getVisibleString().equals(mapping)) {
     			count++;
     		}
     	}
