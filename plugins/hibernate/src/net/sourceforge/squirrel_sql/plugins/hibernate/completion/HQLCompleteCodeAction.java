@@ -11,6 +11,7 @@ import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePlugin;
 import net.sourceforge.squirrel_sql.plugins.hibernate.IHibernateConnectionProvider;
 
 import javax.swing.text.JTextComponent;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
@@ -68,6 +69,14 @@ public class HQLCompleteCodeAction extends SquirrelAction
          _sqlEntryPanel.setSelectionStart(replaceBegin);
          _sqlEntryPanel.setSelectionEnd(_sqlEntryPanel.getCaretPosition());
          _sqlEntryPanel.replaceSelection(completionCandidates.getAllCandidatesPrefix());
+
+         SwingUtilities.invokeLater(new Runnable()
+         {
+            public void run()
+            {
+               _cc.show();
+            }
+         });
 
       }
 		if(KeyEvent.VK_TAB == keyCode)

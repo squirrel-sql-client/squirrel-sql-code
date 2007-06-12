@@ -1,21 +1,19 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.db.Utils;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
-import org.jdesktop.layout.LayoutStyle;
-
-public class SQLPanelController
+public class HQLPanelController
 {
    private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(SQLPanelController.class);
+      StringManagerFactory.getStringManager(HQLPanelController.class);
 
 
    private IHQLTabController _hqlTabController;
@@ -25,7 +23,7 @@ public class SQLPanelController
    private AbstractAction _convertToSQL;
    private IHqlEntryPanelManager _hqlEntryPanelManager;
 
-   public SQLPanelController(IHqlEntryPanelManager hqlEntryPanelManager, IHQLTabController hqlTabController, ISession sess, HibernatePluginResources resource)
+   public HQLPanelController(IHqlEntryPanelManager hqlEntryPanelManager, IHQLTabController hqlTabController, ISession sess, HibernatePluginResources resource)
    {
       _hqlEntryPanelManager = hqlEntryPanelManager;
       _hqlTabController = hqlTabController;
@@ -69,7 +67,9 @@ public class SQLPanelController
          catch (Exception e)
          {
             Throwable t = Utilities.getDeepestThrowable(e);
-            _sess.getApplication().getMessageHandler().showErrorMessage(t);
+            ExceptionFormatter formatter = _sess.getExceptionFormatter();
+            String message = formatter.format(t);
+            _sess.showErrorMessage(message);
             return;
          }
 
@@ -93,7 +93,7 @@ public class SQLPanelController
          _hqlTabController.displaySQLs(sqls.toString());
 
 
-         // i18n[SQLPanelController.hqlToSqlSuccess=Generated {0} SQL(s) in {1} milliseconds.]
+         // i18n[HQLPanelController.hqlToSqlSuccess=Generated {0} SQL(s) in {1} milliseconds.]
          _sess.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("SQLPanelController.hqlToSqlSuccess",list.size(), duration));
 
       }

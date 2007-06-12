@@ -27,6 +27,7 @@ import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionCandidates;
 
 import javax.swing.text.JTextComponent;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
@@ -71,39 +72,51 @@ public class CompleteCodeAction extends SquirrelAction
 	private void performCompletionSelected(CodeCompletionInfo completion, int replaceBegin, int keyCode, int modifiers)
 	{
 
-      boolean moveCarretBack = true;
       if(KeyEvent.VK_SPACE == keyCode && modifiers == KeyEvent.CTRL_MASK)
       {
-         // Code Completion has been done within Code Completion. Now just replace what all candidates have in common.  
+         // Code Completion has been done within Code Completion.
+         // and relaunch completion popup.  
 
          CompletionCandidates completionCandidates = _model.getCompletionCandidates(_cc.getTextTillCarret());
 
          _sqlEntryPanel.setSelectionStart(replaceBegin);
          _sqlEntryPanel.setSelectionEnd(_sqlEntryPanel.getCaretPosition());
          _sqlEntryPanel.replaceSelection(completionCandidates.getAllCandidatesPrefix());
-         moveCarretBack = false;
 
+         SwingUtilities.invokeLater(new Runnable()
+         {
+            public void run()
+            {
+               _cc.show();
+            }
+         });
       }
       else if(KeyEvent.VK_TAB == keyCode)
 		{
 			_sqlEntryPanel.setSelectionStart(replaceBegin);
 			_sqlEntryPanel.setSelectionEnd(getNextWhiteSpacePos(_sqlEntryPanel.getCaretPosition()));
 			_sqlEntryPanel.replaceSelection(completion.getCompletionString());
+         adoptCaret(completion);
 		}
 		else
 		{
 			_sqlEntryPanel.setSelectionStart(replaceBegin);
 			_sqlEntryPanel.setSelectionEnd(_sqlEntryPanel.getCaretPosition());
 			_sqlEntryPanel.replaceSelection(completion.getCompletionString());
+         adoptCaret(completion);
 		}
 
-		if(moveCarretBack && 0 < completion.getMoveCarretBackCount())
-		{
-			_sqlEntryPanel.setCaretPosition(_sqlEntryPanel.getCaretPosition()  - completion.getMoveCarretBackCount());
-		}
-	}
+   }
 
-	private int getNextWhiteSpacePos(int startPos)
+   private void adoptCaret(CodeCompletionInfo completion)
+   {
+      if(0 < completion.getMoveCarretBackCount())
+      {
+         _sqlEntryPanel.setCaretPosition(_sqlEntryPanel.getCaretPosition()  - completion.getMoveCarretBackCount());
+      }
+   }
+
+   private int getNextWhiteSpacePos(int startPos)
 	{
 		String text = _sqlEntryPanel.getText();
 

@@ -127,21 +127,10 @@ public class Completor
 
    private void onKeyPressedOnList(KeyEvent e)
 	{
-		if(e.getKeyCode() == KeyEvent.VK_ENTER || (e.getKeyCode() == KeyEvent.VK_SPACE && e.getModifiers() != KeyEvent.CTRL_MASK) || e.getKeyCode() == KeyEvent.VK_TAB)
+		if(e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_TAB)
 		{
 			completionSelected(e.getKeyCode(), e.getModifiers());
 		}
-      else if(e.getKeyCode() == KeyEvent.VK_SPACE && e.getModifiers() == KeyEvent.CTRL_MASK)
-      {
-         completionSelected(e.getKeyCode(), e.getModifiers());
-         SwingUtilities.invokeLater(new Runnable()
-         {
-            public void run()
-            {
-               show();
-            }
-         });
-      }
       else if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
 		{
 			closePopup();

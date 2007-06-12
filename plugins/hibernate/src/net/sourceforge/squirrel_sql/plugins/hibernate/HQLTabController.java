@@ -36,7 +36,7 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
    private HibernateConnection _con;
    private HibnerateConnector _hibnerateConnector;
    private HibernatePluginResources _resource;
-   private SQLPanelController _sqlPanelController;
+   private HQLPanelController _hqlPanelController;
    private HqlEntryPanelManager _hqlEntrPanelManager;
 
    public HQLTabController(ISession session, HibernatePlugin plugin, HibernatePluginResources resource)
@@ -50,7 +50,7 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
          _panel = new HQLTabPanel(_hqlEntrPanelManager.getComponent());
          _panel.btnConnected.setIcon(resource.getIcon(HibernatePluginResources.IKeys.DISCONNECTED_IMAGE));
 
-         _sqlPanelController = new SQLPanelController(_hqlEntrPanelManager, this, _session, _resource);
+         _hqlPanelController = new HQLPanelController(_hqlEntrPanelManager, this, _session, _resource);
 
          _hibnerateConnector = new HibnerateConnector(new HibnerateConnectorListener()
          {
@@ -145,7 +145,7 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
          finally
          {
             _con = null;
-            _sqlPanelController.setConnection(null);
+            _hqlPanelController.setConnection(null);
          }
       }
    }
@@ -155,7 +155,7 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
       _con = con;
       _panel.btnConnected.setIcon(_resource.getIcon(HibernatePluginResources.IKeys.CONNECTED_IMAGE));
       _panel.btnConnected.setEnabled(true);
-      _sqlPanelController.setConnection(con);
+      _hqlPanelController.setConnection(con);
 
    }
 
@@ -164,11 +164,11 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
       _panel.btnConnected.setIcon(_resource.getIcon(HibernatePluginResources.IKeys.DISCONNECTED_IMAGE));
       _panel.btnConnected.setEnabled(true);
       _panel.btnConnected.setSelected(false);
-      _session.getApplication().getMessageHandler().showErrorMessage(t);
+      _session.showErrorMessage(t);
       s_log.error(t);
 
       _con = null;
-      _sqlPanelController.setConnection(null);
+      _hqlPanelController.setConnection(null);
 
    }
 
