@@ -79,7 +79,7 @@ public class HQLCompleteCodeAction extends SquirrelAction
          });
 
       }
-		if(KeyEvent.VK_TAB == keyCode)
+		else if(KeyEvent.VK_TAB == keyCode)
 		{
 			_sqlEntryPanel.setSelectionStart(replaceBegin);
 			_sqlEntryPanel.setSelectionEnd(getNextWhiteSpacePos(_sqlEntryPanel.getCaretPosition()));

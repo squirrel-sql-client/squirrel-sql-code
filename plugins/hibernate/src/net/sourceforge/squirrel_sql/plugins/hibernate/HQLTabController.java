@@ -18,6 +18,7 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.prefs.Preferences;
 
 public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibernateConnectionProvider
@@ -38,6 +39,7 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
    private HibernatePluginResources _resource;
    private HQLPanelController _hqlPanelController;
    private HqlEntryPanelManager _hqlEntrPanelManager;
+   private ArrayList<ConnectionListener> _listeners = new ArrayList<ConnectionListener>();
 
    public HQLTabController(ISession session, HibernatePlugin plugin, HibernatePluginResources resource)
    {
@@ -136,7 +138,7 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
          _panel.btnConnected.setIcon(_resource.getIcon(HibernatePluginResources.IKeys.DISCONNECTED_IMAGE));
          try
          {
-            _con.close();
+            closeConnection();
          }
          catch (Exception e)
          {
@@ -207,6 +209,7 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
 
    public void select()
    {
+      _hqlEntrPanelManager.requestFocus();   
    }
 
    public void setSession(ISession session)
@@ -227,7 +230,17 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
    {
       if(null != _con)
       {
-         _con.close();         
+         closeConnection();
+      }
+   }
+
+   private void closeConnection()
+   {
+      _con.close();
+
+      for (ConnectionListener listener : _listeners)
+      {
+         listener.connectionClosed();
       }
    }
 
@@ -241,5 +254,10 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
    public HibernateConnection getHibernateConnection()
    {
       return _con;
+   }
+
+   public void addConnectionListener(ConnectionListener connectionListener)
+   {
+      _listeners.add(connectionListener);
    }
 }

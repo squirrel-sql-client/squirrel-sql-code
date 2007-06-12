@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.fw.completion.util;
 
+import org.apache.log4j.helpers.BoundedFIFO;
+
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
@@ -93,8 +95,13 @@ public class CompletionParser
       return _textTillCarret.length() - _stringToReplace.length();
    }
 
-   public String getAllButLast()
+   public String getTextTillCarret()
    {
-      return null;  //To change body of created methods use File | Settings | File Templates.
+      return _textTillCarret;
+   }
+
+   public String getLastToken()
+   {
+      return _tokens.get(_tokens.size()-1);
    }
 }

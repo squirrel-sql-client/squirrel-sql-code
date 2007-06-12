@@ -50,7 +50,7 @@ public class MappedClassInfo extends CompletionInfo
       return true;
    }
 
-   public ArrayList<CompletionInfo> getQualifiedMatchingColumns(CompletionParser parser)
+   public ArrayList<CompletionInfo> getQualifiedMatchingAttributes(CompletionParser parser)
    {
       ArrayList<CompletionInfo> ret = new ArrayList<CompletionInfo>();
 

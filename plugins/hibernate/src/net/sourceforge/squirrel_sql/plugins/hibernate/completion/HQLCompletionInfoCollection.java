@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.plugins.hibernate.completion;
 
 import net.sourceforge.squirrel_sql.fw.completion.util.CompletionParser;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
+import net.sourceforge.squirrel_sql.fw.completion.CompletionCandidates;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernateConnection;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
 
@@ -21,20 +22,46 @@ public class HQLCompletionInfoCollection
       _simpleInfos.addAll(HQLFunctionInfo.createInfos());
    }
 
-   public ArrayList<CompletionInfo> getInfosStartingWith(CompletionParser parser)
+   public CompletionCandidates getInfosStartingWith(CompletionParser parser)
    {
 
-      ArrayList<CompletionInfo> ret = new ArrayList<CompletionInfo>();
+      ArrayList<CompletionInfo> ciClasses = new ArrayList<CompletionInfo>();
+      ArrayList<CompletionInfo> ciAttrs = new ArrayList<CompletionInfo>();
+
 
       for (MappedClassInfo mappedClassInfo : _mappedClassInfos)
       {
          if(mappedClassInfo.matches(parser))
          {
-            ret.add(mappedClassInfo);
+            ciClasses.add(mappedClassInfo);
          }
 
-         ret.addAll(mappedClassInfo.getQualifiedMatchingColumns(parser));
+         ciAttrs.addAll(mappedClassInfo.getQualifiedMatchingAttributes(parser));
       }
+
+
+
+      ArrayList<CompletionInfo> ret;
+      int replacementStart;
+      String stringToReplace;
+      if(0 < ciClasses.size())
+      {
+         // We assume that classes and attributes won't be in the same completion list.
+         // Classes will be completed fully qualified when the user works with fully qualified class names ...
+         ret = ciClasses;
+         replacementStart = parser.getReplacementStart();
+         stringToReplace = parser.getStringToReplace();
+      }
+      else
+      {
+         // ... while attributes used in qualified expressions will not be completed qualified.
+         // That means for pack.Foo. the completion popup will be placed behind the last dot.
+         ret = ciAttrs;
+         replacementStart = parser.getTextTillCarret().length() - parser.getLastToken().length();
+         stringToReplace = parser.getLastToken();
+      }
+
+
 
       for (SimpleHQLCompletionInfo simpleInfo : _simpleInfos)
       {
@@ -43,7 +70,10 @@ public class HQLCompletionInfoCollection
             ret.add(simpleInfo);
          }
       }
+      
 
-      return ret;
+      return new CompletionCandidates(ret.toArray(new CompletionInfo[ret.size()]), replacementStart, stringToReplace);
+
+
    }
 }
