@@ -7,6 +7,7 @@ import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 import net.sourceforge.squirrel_sql.fw.completion.util.CompletionParser;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernateConnection;
 import net.sourceforge.squirrel_sql.plugins.hibernate.IHibernateConnectionProvider;
+import net.sourceforge.squirrel_sql.plugins.hibernate.ConnectionListener;
 
 import java.util.ArrayList;
 
@@ -20,6 +21,14 @@ public class HQLCodeCompletorModel implements ICompletorModel
    public HQLCodeCompletorModel(IHibernateConnectionProvider hibernateConnectionProvider)
    {
       _hibernateConnectionProvider = hibernateConnectionProvider;
+
+      _hibernateConnectionProvider.addConnectionListener(new ConnectionListener()
+      {
+         public void connectionClosed()
+         {
+            _codeCompletionInfos = null;
+         }
+      });
    }
 
 
@@ -27,10 +36,8 @@ public class HQLCodeCompletorModel implements ICompletorModel
    {
       init();
 
-
       CompletionParser parser = new CompletionParser(textTillCarret, true);
-      ArrayList<CompletionInfo> cis = _codeCompletionInfos.getInfosStartingWith(parser);
-      return new CompletionCandidates(cis.toArray(new CompletionInfo[cis.size()]), parser.getReplacementStart(), parser.getStringToReplace());
+      return _codeCompletionInfos.getInfosStartingWith(parser);
 
    }
 

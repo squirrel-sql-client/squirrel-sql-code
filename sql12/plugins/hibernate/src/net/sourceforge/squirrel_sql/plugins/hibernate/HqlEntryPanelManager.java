@@ -68,4 +68,8 @@ public class HqlEntryPanelManager implements IHqlEntryPanelManager
       return _sqlEntry;
    }
 
+   public void requestFocus()
+   {
+      _sqlEntry.requestFocus();
+   }
 }
