@@ -68,7 +68,7 @@ public class HQLCompleteCodeAction extends SquirrelAction
 
          _sqlEntryPanel.setSelectionStart(replaceBegin);
          _sqlEntryPanel.setSelectionEnd(_sqlEntryPanel.getCaretPosition());
-         _sqlEntryPanel.replaceSelection(completionCandidates.getAllCandidatesPrefix());
+         _sqlEntryPanel.replaceSelection(completionCandidates.getAllCandidatesPrefix(true));
 
          SwingUtilities.invokeLater(new Runnable()
          {

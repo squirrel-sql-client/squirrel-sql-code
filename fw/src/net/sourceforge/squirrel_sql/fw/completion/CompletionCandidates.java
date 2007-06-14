@@ -39,7 +39,7 @@ public class CompletionCandidates
       return _stringToReplace;
    }
 
-   public String getAllCandidatesPrefix()
+   public String getAllCandidatesPrefix(boolean caseSensitive)
    {
       if(0 == _candidates.length)
       {
@@ -64,7 +64,7 @@ public class CompletionCandidates
 
             for(ix =0; ix < minLen; ++ix)
             {
-               if(prefix.charAt(ix) != completionString.charAt(ix))
+               if(getCharAt(prefix, ix, caseSensitive) != getCharAt(completionString, ix, caseSensitive))
                {
                   prefix = prefix.substring(0, ix);
                   break;
@@ -74,5 +74,11 @@ public class CompletionCandidates
       }
 
       return prefix;
+   }
+
+   private char getCharAt(String prefix, int ix, boolean caseSensitive)
+   {
+      char c = prefix.charAt(ix);
+      return caseSensitive ? c : Character.toUpperCase(c);
    }
 }
