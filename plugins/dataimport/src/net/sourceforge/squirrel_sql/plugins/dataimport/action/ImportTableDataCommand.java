@@ -21,6 +21,7 @@ import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.prefs.Preferences;
 
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -49,11 +50,14 @@ import net.sourceforge.squirrel_sql.plugins.dataimport.importer.IFileImporter;
 public class ImportTableDataCommand implements ICommand {
 	private static final StringManager stringMgr =
 		StringManagerFactory.getStringManager(ImportTableDataCommand.class);
-	
+
+	private static final String PREFS_KEY_LAST_IMPORT_DIRECTORY = "squirrelsql_dataimport_last_import_directory";
+
+
 	private ISession session;
 	private ITableInfo table;
-	
-	
+
+
 	/**
 	 * The constructor.
 	 * 
@@ -75,19 +79,26 @@ public class ImportTableDataCommand implements ICommand {
 	 * Then the column mapping dialog is shown.
 	 */
 	public void execute() {
-		JFileChooser openFile = new JFileChooser();
-		
+		JFileChooser openFile = new JFileChooser(Preferences.userRoot().get(PREFS_KEY_LAST_IMPORT_DIRECTORY, System.getProperty("user.home")));
+
 		int res = openFile.showOpenDialog(session.getApplication().getMainFrame());
-		
+
 		if (res == JFileChooser.APPROVE_OPTION) {
 			File f = openFile.getSelectedFile();
+
+			if(null != f.getParent()){
+				Preferences.userRoot().put(PREFS_KEY_LAST_IMPORT_DIRECTORY, f.getParent());
+			}
+
 			try {
 				TableColumnInfo[] columns = session.getMetaData().getColumnInfo(table);
-				
+
 				ImportFileType type = determineType(f);
-				
+
+
+
 				IFileImporter importer = FileImporterFactory.createImporter(type, f);
-				
+
 				if (importer.getConfigurationPanel() != null) {
 					//i18n[ImportTableDataCommand.settingsDialogTitle=Import file settings]
 					final JDialog dialog = new JDialog(session.getApplication().getMainFrame(), stringMgr.getString("ImportTableDataCommand.settingsDialogTitle"), true);
@@ -106,12 +117,12 @@ public class ImportTableDataCommand implements ICommand {
 						return;
 					}
 				}
-				
-				
+
+
 				final ImportFileDialog importFileDialog = new ImportFileDialog(session, importer, table, columns);
-				
+
 				importFileDialog.setPreviewData(importer.getPreview(10));
-				
+
 				GUIUtils.processOnSwingEventThread(new Runnable() {
 					public void run() {
 						session.getApplication().getMainFrame().addInternalFrame(importFileDialog, true);
@@ -120,7 +131,7 @@ public class ImportTableDataCommand implements ICommand {
 						importFileDialog.setVisible(true);
 					}
 				}, true);
-				
+
 			} catch (SQLException e) {
 				//i18n[ImportTableDataCommand.sqlErrorOccured=An error occured while reading database data.]
 				//i18n[ImportTableDataCommand.error=Error]
@@ -131,7 +142,7 @@ public class ImportTableDataCommand implements ICommand {
 			}
 		}
 	}
-	
+
 	private ImportFileType determineType(File f) {
 		// TODO: Implement this better
 		if (f.getName().toLowerCase().endsWith("xls")) {
@@ -139,11 +150,11 @@ public class ImportTableDataCommand implements ICommand {
 		}
 		return ImportFileType.CSV;
 	}
-	
+
 	private class StateListener implements IOkClosePanelListener {
 		private boolean okPressed = false;
 		private JDialog dialog = null;
-		
+
 		/**
 		 * The constructor
 		 * 
@@ -152,14 +163,14 @@ public class ImportTableDataCommand implements ICommand {
 		public StateListener(JDialog dialog) {
 			this.dialog = dialog;
 		}
-		
+
 		/**
 		 * Invoked on cancel press
 		 * 
 		 * @param evt The event
 		 */
 		public void cancelPressed(OkClosePanelEvent evt) { /* Not needed */ }
-		
+
 		/**
 		 * Invoked on close press
 		 * 
@@ -169,7 +180,7 @@ public class ImportTableDataCommand implements ICommand {
 			okPressed = false;
 			dialog.dispose();
 		}
-		
+
 		/**
 		 * Invoked on ok press
 		 * 
@@ -179,7 +190,7 @@ public class ImportTableDataCommand implements ICommand {
 			okPressed = true;
 			dialog.dispose();
 		}
-		
+
 		/**
 		 * Returns if the OK button was pressed.
 		 * 
