@@ -33,7 +33,11 @@ import java.text.DateFormat;
  */
 public class LogPanel extends JPanel
 {
-	private static final StringManager s_stringMgr =
+
+    private static final long serialVersionUID = -2886311809367056785L;
+
+
+    private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(MemoryPanel.class);
 
 
