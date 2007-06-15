@@ -51,7 +51,7 @@ public class LogPanel extends JPanel
 	private Timer _displayLastLogTimer;
 	private Timer _whiteIconTimer;
 
-	private final Vector _logsDuringDisplayDelay = new Vector();
+	private final Vector<LogData> _logsDuringDisplayDelay = new Vector<LogData>();
 	private LogData _curlogToDisplay;
 	private IApplication _app;
 
@@ -93,37 +93,37 @@ public class LogPanel extends JPanel
 			public void info(Class source, Object message)
 			{
 				_statistics.setInfoCount(_statistics._infoCount + 1);
-				addLog(LOG_TYPE_INFO, source, message, null);
+				addLog(LOG_TYPE_INFO, source.getName(), message, null);
 			}
 
 			public void info(Class source, Object message, Throwable th)
 			{
 				_statistics.setInfoCount(_statistics._infoCount + 1);
-				addLog(LOG_TYPE_INFO, source, message, th);
+				addLog(LOG_TYPE_INFO, source.getName(), message, th);
 			}
 
 			public void warn(Class source, Object message)
 			{
 				_statistics.setWarnCount(_statistics._warnCount + 1);
-				addLog(LOG_TYPE_WARN, source, message, null);
+				addLog(LOG_TYPE_WARN, source.getName(), message, null);
 			}
 
 			public void warn(Class source, Object message, Throwable th)
 			{
 				_statistics.setWarnCount(_statistics._warnCount + 1);
-				addLog(LOG_TYPE_WARN, source, message, th);
+				addLog(LOG_TYPE_WARN, source.getName(), message, th);
 			}
 
 			public void error(Class source, Object message)
 			{
 				_statistics.setErrorCount(_statistics._errorCount + 1);
-				addLog(LOG_TYPE_ERROR, source, message, message instanceof Throwable ? (Throwable)message:null);
+				addLog(LOG_TYPE_ERROR, source.getName(), message, message instanceof Throwable ? (Throwable)message:null);
 			}
 
 			public void error(Class source, Object message, Throwable th)
 			{
 				_statistics.setErrorCount(_statistics._errorCount + 1);
-				addLog(LOG_TYPE_ERROR, source, message, th);
+				addLog(LOG_TYPE_ERROR, source.getName(), message, th);
 			}
 		});
 
@@ -234,7 +234,7 @@ public class LogPanel extends JPanel
 	}
 
 
-	private void addLog(int logType, Class source, Object message, Throwable t)
+	private void addLog(int logType, String source, Object message, Throwable t)
 	{
 		LogData log = new LogData();
 		log.logType = logType;
@@ -257,7 +257,7 @@ public class LogPanel extends JPanel
 		LogData[] logs;
 		synchronized(_logsDuringDisplayDelay)
 		{
-			logs = (LogData[]) _logsDuringDisplayDelay.toArray(new LogData[_logsDuringDisplayDelay.size()]);
+			logs = _logsDuringDisplayDelay.toArray(new LogData[_logsDuringDisplayDelay.size()]);
 			_logsDuringDisplayDelay.clear();
 		}
 
@@ -310,7 +310,7 @@ public class LogPanel extends JPanel
 		int logType = -1;
 		Object message = null;
 		Throwable throwable = null;
-		Class source;
+		String source;
 		String logTime;
 
 		public LogData()
@@ -347,7 +347,7 @@ public class LogPanel extends JPanel
 
 		private void updateToString()
 		{
-			Integer[] params = new Integer[]
+			Object[] params = new Integer[]
 				{
 					new Integer(_errorCount),
 					new Integer(_warnCount),
