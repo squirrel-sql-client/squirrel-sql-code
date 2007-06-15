@@ -61,8 +61,19 @@ public class DefaultExceptionFormatter implements ExceptionFormatter {
             cause = th.getCause();
         }
         
+        String customMessage = null;
+        
         if (customFormatter != null && customFormatter.formatsException(cause)) {
-            result.append(customFormatter.format(cause));
+            try {
+                customMessage = customFormatter.format(cause);
+            } catch (Exception e) {
+                s_log.error( 
+                    "Exception occurred while formatting:  "+e.getMessage(), e);
+            }
+        } 
+        
+        if (customMessage != null) {
+            result.append(customMessage);
         } else {
             if (cause instanceof DataTruncation) {
                 result.append(getDataTruncationMessage((DataTruncation)cause));
@@ -150,6 +161,9 @@ public class DefaultExceptionFormatter implements ExceptionFormatter {
                 s_log.debug("Error", ex);
             }
             ex = ex.getNextException();
+            if (ex != null) {
+                buf.append("\n");
+            }
         }                
         return buf.toString();
     }
