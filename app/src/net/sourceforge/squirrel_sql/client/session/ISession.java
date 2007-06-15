@@ -40,6 +40,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
+import net.sourceforge.squirrel_sql.fw.util.DefaultExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
@@ -307,7 +308,7 @@ public interface ISession extends IHasIdentifier
     * 
     * @return an implementation of IQueryTokenizer
     */
-   public IQueryTokenizer getQueryTokenizer();
+   IQueryTokenizer getQueryTokenizer();
        
    /**
     * Sets the exception formatter to use when handling messages.
@@ -317,14 +318,27 @@ public interface ISession extends IHasIdentifier
     * @param session TODO
     */
    void setExceptionFormatter(ExceptionFormatter formatter);
-
+   
    /**
     * Returns the exception formatter to use when handling messages.
     * 
     * @return
     */
    ExceptionFormatter getExceptionFormatter();
- 
+
+   /**
+    * Facade method for ExceptionFormatter to allow callers to safely get a 
+    * formatted exception without forcing them to wrap it in a try/catch block
+    *  
+    * @param t the exception to format
+    * 
+    * @return the context of the exception, in default or custom format, 
+    *         depending on whether or not a custom ExceptionFormatter was 
+    *         installed.
+    */
+   String formatException(Throwable t);
+   
+   
    // Facade methods for IMessageHandler.  We don't want to allow code to 
    // directly access an internal IMessageHandler, now that the IMessageHandler
    // interface requires an ExceptionFormatter to be injected for methods that

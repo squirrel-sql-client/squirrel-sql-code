@@ -242,10 +242,14 @@ public class MessagePanel extends JTextPane implements IMessageHandler
       if (th != null) {
           
           String message = "";
-          if (formatter != null) {
+          if (formatter == null) {
               message = defaultExceptionFormatter.format(th);
           } else {
-              message = formatter.format(th);
+              try {
+                  message = formatter.format(th);
+              } catch (Exception e) {
+                  s_log.error("Unable to format message: "+e.getMessage(), e);
+              }
           }
           if (s_log.isDebugEnabled()) {
               s_log.debug("Exception message shown in MessagePanel: "+message);
