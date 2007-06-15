@@ -403,7 +403,7 @@ public class MockSession implements ISession {
      */
     public void showErrorMessage(String msg) {
         // TODO Auto-generated method stub
-        
+        System.err.println("MockSession.showErrorMessage: stub not yet implemented");
     }
 
     /**
@@ -411,7 +411,7 @@ public class MockSession implements ISession {
      */
     public void showErrorMessage(Throwable th) {
         // TODO Auto-generated method stub
-        
+        System.err.println("MockSession.showErrorMessage: stub not yet implemented");
     }
 
     /**
@@ -419,7 +419,7 @@ public class MockSession implements ISession {
      */
     public void showMessage(String msg) {
         // TODO Auto-generated method stub
-        
+        System.err.println("MockSession.showMessage: stub not yet implemented");
     }
 
     /**
@@ -427,7 +427,7 @@ public class MockSession implements ISession {
      */
     public void showMessage(Throwable th) {
         // TODO Auto-generated method stub
-        
+        System.err.println("MockSession.showMessage: stub not yet implemented");
     }
 
     /**
@@ -435,8 +435,13 @@ public class MockSession implements ISession {
      */
     public void showWarningMessage(String msg) {
         // TODO Auto-generated method stub
-        
+        System.err.println("MockSession.showWarningMessage: stub not yet implemented");
     }    
     
+    public String formatException(Throwable th) {
+        // TODO Auto-generated method stub
+        System.err.println("MockSession.format: stub not yet implemented");
+        return null;        
+    }
     
 }

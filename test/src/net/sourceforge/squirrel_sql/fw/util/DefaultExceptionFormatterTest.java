@@ -172,7 +172,7 @@ public class DefaultExceptionFormatterTest extends BaseSQuirreLJUnit4TestCase {
      * Test method for {@link net.sourceforge.squirrel_sql.fw.util.DefaultExceptionFormatter#setCustomExceptionFormatter(net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter)}.
      */
     @Test
-    public final void testSetCustomExceptionFormatter() {
+    public final void testSetCustomExceptionFormatter() throws Exception {
         ExceptionFormatter formatter1 = createMock(ExceptionFormatter.class);
         SQLException ex = new SQLException("table does not exist");
         SQLExecutionException ee = new SQLExecutionException(ex, "");
@@ -189,7 +189,7 @@ public class DefaultExceptionFormatterTest extends BaseSQuirreLJUnit4TestCase {
      * Test method for {@link net.sourceforge.squirrel_sql.fw.util.DefaultExceptionFormatter#setCustomExceptionFormatter(net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter)}.
      */
     @Test
-    public final void testSetMultiCustomExceptionFormatter() {
+    public final void testSetMultiCustomExceptionFormatter() throws Exception {
         ExceptionFormatter formatter1 = createMock(ExceptionFormatter.class);
         ExceptionFormatter formatter2 = createMock(ExceptionFormatter.class);
         SQLException ex = new SQLException("table does not exist");
