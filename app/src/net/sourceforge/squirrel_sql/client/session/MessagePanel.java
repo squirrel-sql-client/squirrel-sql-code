@@ -236,8 +236,7 @@ public class MessagePanel extends JTextPane implements IMessageHandler
     */
    private void privateShowMessage(final Throwable th, 
                                    final ExceptionFormatter formatter, 
-                                   final 
-                                   SimpleAttributeSet saSet)
+                                   final SimpleAttributeSet saSet)
    {
       if (th != null) {
           
@@ -251,6 +250,7 @@ public class MessagePanel extends JTextPane implements IMessageHandler
                   s_log.error("Unable to format message: "+e.getMessage(), e);
               }
           }
+          privateShowMessage(message, saSet);
           if (s_log.isDebugEnabled()) {
               s_log.debug("Exception message shown in MessagePanel: "+message);
           }
