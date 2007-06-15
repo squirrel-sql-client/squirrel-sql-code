@@ -78,6 +78,7 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLExecutionException;
+import net.sourceforge.squirrel_sql.fw.util.DefaultExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -1339,12 +1340,9 @@ public class SQLResultExecuterPanel extends JPanel
 		    SQLExecutionException ex = 
 		        new SQLExecutionException(th, postErrorString);
 
-		    ExceptionFormatter formatter = getSession().getExceptionFormatter();
-
-		    String message = formatter.format(ex);
+		    String message = getSession().formatException(th);
 
 		    getSession().showErrorMessage(message);
-
 
 		    if(getSession().getProperties().getWriteSQLErrorsToLog())
 		    {

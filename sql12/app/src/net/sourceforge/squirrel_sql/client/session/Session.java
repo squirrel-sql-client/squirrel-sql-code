@@ -1037,6 +1037,13 @@ class Session implements ISession
     public ExceptionFormatter getExceptionFormatter() {
         return this.formatter; 
     }
+    
+    /**
+     * @see net.sourceforge.squirrel_sql.client.session.ISession#formatException(java.lang.Throwable)
+     */
+    public String formatException(Throwable th) {
+        return this.formatter.format(th);
+    }
 
     /**
      * @see net.sourceforge.squirrel_sql.client.session.ISession#showErrorMessage(java.lang.String)

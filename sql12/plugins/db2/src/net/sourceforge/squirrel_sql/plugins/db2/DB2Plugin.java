@@ -18,6 +18,8 @@ package net.sourceforge.squirrel_sql.plugins.db2;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.sql.SQLException;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
@@ -50,6 +52,8 @@ import net.sourceforge.squirrel_sql.plugins.db2.tab.ViewSourceTab;
  * @author manningr
  */
 public class DB2Plugin extends DefaultSessionPlugin {
+    
+    private static final String JCC_DRIVER_NAME = "IBM DB2 JDBC Universal Driver Architecture";
     
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(DB2Plugin.class);
@@ -98,7 +102,7 @@ public class DB2Plugin extends DefaultSessionPlugin {
      */
     public String getVersion()
     {
-        return "0.01";
+        return "0.02";
     }
 
     /**
@@ -117,7 +121,7 @@ public class DB2Plugin extends DefaultSessionPlugin {
      * @return  Contributors names.
      */    
     public String getContributors() {
-        return "";
+        return "Christoph Schmitz";
     }    
     
     /**
@@ -195,6 +199,15 @@ public class DB2Plugin extends DefaultSessionPlugin {
            }
        });
 
+       // Install DB2JCCExceptionFormatter iff we're using the JCC driver
+       try {
+           if (JCC_DRIVER_NAME.equals(session.getMetaData().getJDBCMetaData().getDriverName())) {
+               session.setExceptionFormatter(new DB2JCCExceptionFormatter());
+           }
+       } catch (SQLException e) {
+           s_log.error("Problem installing exception formatter: " + e.getMessage());
+       }    
+  
        return new PluginSessionCallback()
        {
           public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, 
