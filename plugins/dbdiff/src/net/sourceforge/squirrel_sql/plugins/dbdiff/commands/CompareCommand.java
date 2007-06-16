@@ -32,33 +32,16 @@ public class CompareCommand  extends I18NBaseObject
                                   implements ICommand
 {
     
-    /** the provider of information about what to copy and where */
-    private SessionInfoProvider prov = null;
-
     /** the class that does the work of copying */
     private DiffExecutor executor = null;
-    
-    /** the class that provides feedback to the user throught the copy operation */
-    //private CopyProgressMonitor monitor = null;
-    
-    /** the user's preferences */
-    //private static DBCopyPreferenceBean prefs = 
-    //                                        PreferencesManager.getPreferences();
-    
+        
     /**
      * Constructor specifying the current session.
      */
     public CompareCommand(SessionInfoProvider provider)
     {
         super();
-        prov = provider;
         executor = new DiffExecutor(provider);
-        //monitor = new CopyProgressMonitor(provider);
-        //executor.addListener(monitor);
-        //executor.setPref(monitor);
-        // executor.addListener(copyScripter);
-        //monitor.setExecutor(executor);
-        
     }
 
     // ICommand Interface implementation
