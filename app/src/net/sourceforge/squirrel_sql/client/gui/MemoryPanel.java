@@ -45,7 +45,8 @@ public class MemoryPanel extends JPanel
 	private JButton _btnGarbage;
 	private JButton _btnSessionGCStatus;
 	private IApplication _app;
-	private HashMap _sessionInfosBySessionIDs = new HashMap();
+	private HashMap<IIdentifier, MemorySessionInfo> _sessionInfosBySessionIDs = 
+        new HashMap<IIdentifier, MemorySessionInfo>();
 
 	public MemoryPanel(IApplication app)
 	{
@@ -117,7 +118,7 @@ public class MemoryPanel extends JPanel
 			public void sessionClosed(SessionEvent evt)
 			{
 				IIdentifier id = evt.getSession().getIdentifier();
-				MemorySessionInfo msi = (MemorySessionInfo) _sessionInfosBySessionIDs.get(id);
+				MemorySessionInfo msi = _sessionInfosBySessionIDs.get(id);
 				if(null == msi)
 				{
 					throw new IllegalStateException("A session with ID " + id + " has not been created");
@@ -140,7 +141,7 @@ public class MemoryPanel extends JPanel
 
 			public void sessionFinalized(IIdentifier sessionId)
 			{
-				MemorySessionInfo msi = (MemorySessionInfo) _sessionInfosBySessionIDs.get(sessionId);
+				MemorySessionInfo msi = _sessionInfosBySessionIDs.get(sessionId);
 				if(null == msi)
 				{
 					throw new IllegalStateException("A session with ID " + sessionId + " has not been created");
@@ -175,9 +176,10 @@ public class MemoryPanel extends JPanel
 		SessionGCStatus ret = new SessionGCStatus();
 
 		int numSessAwaitingGC = 0;
-		for(Iterator i = _sessionInfosBySessionIDs.values().iterator(); i.hasNext();)
+		for(Iterator<MemorySessionInfo> i = 
+            _sessionInfosBySessionIDs.values().iterator(); i.hasNext();)
 		{
-			MemorySessionInfo msi = (MemorySessionInfo) i.next();
+			MemorySessionInfo msi =  i.next();
 			if(null != msi.closed && null == msi.finalized)
 			{
 				++numSessAwaitingGC;
@@ -214,7 +216,7 @@ public class MemoryPanel extends JPanel
 		_bar.setMaximum((int)total);
 		_bar.setValue((int)just);
 
-		Long[] params = new Long[]
+		Object[] params = new Long[]
 			{
 				new Long(just),
 				new Long(total)
@@ -236,7 +238,8 @@ public class MemoryPanel extends JPanel
 			};
 
 
-		MemorySessionInfo[] msis = (MemorySessionInfo[]) _sessionInfosBySessionIDs.values().toArray(new MemorySessionInfo[0]);
+		MemorySessionInfo[] msis = 
+            _sessionInfosBySessionIDs.values().toArray(new MemorySessionInfo[0]);
 
 		Arrays.sort(msis);
 
@@ -267,7 +270,7 @@ public class MemoryPanel extends JPanel
 		//Sessions garbage collected:\n
 		//==================================================\n
 		//{3}\n]
-		String msg = s_stringMgr.getString("MemoryPanel.gcStatus", params);
+		String msg = s_stringMgr.getString("MemoryPanel.gcStatus", (Object[])params);
 		ErrorDialog errorDialog = new ErrorDialog(_app.getMainFrame(), msg);
 
 
@@ -276,7 +279,7 @@ public class MemoryPanel extends JPanel
 		errorDialog.setVisible(true);
 	}
 
-	private static class MemorySessionInfo implements Comparable
+	private static class MemorySessionInfo implements Comparable<Object>
 	{
 		MemorySessionInfo(IIdentifier sessionId, String aliasName)
 		{
