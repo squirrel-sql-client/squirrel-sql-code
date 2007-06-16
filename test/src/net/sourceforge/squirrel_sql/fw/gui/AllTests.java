@@ -1,11 +1,10 @@
-package net.sourceforge.squirrel_sql.client.session;
-
+package net.sourceforge.squirrel_sql.fw.gui;
 /*
  * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
- * modify it under the terdims of the GNU Lesser General Public
+ * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
  *
@@ -18,22 +17,14 @@ package net.sourceforge.squirrel_sql.client.session;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses( { MessagePanelTest.class,
-                 SQLExecuterTaskTest.class })
-public class AllTests {
+public class AllTests extends TestCase {
 	public static Test suite() {
-		TestSuite suite = new TestSuite("Client Session tests");
-        suite.addTest(new JUnit4TestAdapter(MessagePanelTest.class));
-        suite.addTestSuite(SQLExecuterTaskTest.class);
+		TestSuite suite = new TestSuite("fw gui tests");
+		suite.addTestSuite(GUIUtilsTest.class);
 		return suite;
 	}
 }
