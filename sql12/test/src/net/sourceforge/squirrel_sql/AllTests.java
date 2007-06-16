@@ -33,11 +33,13 @@ public class AllTests extends TestCase {
         result.addTest(net.sourceforge.squirrel_sql.fw.codereformat.AllTests.suite());
         result.addTest(net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.AllTests.suite());
         result.addTest(net.sourceforge.squirrel_sql.fw.dialects.AllTests.suite());
+        result.addTest(net.sourceforge.squirrel_sql.fw.gui.AllTests.suite());
         result.addTest(net.sourceforge.squirrel_sql.fw.id.AllTests.suite());
         result.addTest(net.sourceforge.squirrel_sql.fw.sql.AllTests.suite());
         result.addTest(net.sourceforge.squirrel_sql.fw.util.AllTests.suite());
         result.addTest(net.sourceforge.squirrel_sql.plugins.dbcopy.AllTests.suite());
 		result.addTest(net.sourceforge.squirrel_sql.plugins.dbcopy.util.AllTests.suite());
+        result.addTest(net.sourceforge.squirrel_sql.plugins.dbdiff.AllTests.suite());
         result.addTest(net.sourceforge.squirrel_sql.plugins.derby.tokenizer.AllTests.suite());
         result.addTest(net.sourceforge.squirrel_sql.plugins.oracle.tokenizer.AllTests.suite());        
 		return result;

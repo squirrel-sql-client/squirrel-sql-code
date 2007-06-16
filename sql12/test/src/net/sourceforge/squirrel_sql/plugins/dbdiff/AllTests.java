@@ -1,11 +1,10 @@
-package net.sourceforge.squirrel_sql.client.session;
-
+package net.sourceforge.squirrel_sql.plugins.dbdiff;
 /*
  * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
- * modify it under the terdims of the GNU Lesser General Public
+ * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
  *
@@ -27,13 +26,13 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses( { MessagePanelTest.class,
-                 SQLExecuterTaskTest.class })
+@SuiteClasses( { ColumnDifferenceTest.class })
 public class AllTests {
+    
 	public static Test suite() {
-		TestSuite suite = new TestSuite("Client Session tests");
-        suite.addTest(new JUnit4TestAdapter(MessagePanelTest.class));
-        suite.addTestSuite(SQLExecuterTaskTest.class);
-		return suite;
+        TestSuite result = new TestSuite("squirrel_sql dbdiff tests");
+        result.addTest(new JUnit4TestAdapter(ColumnDifferenceTest.class));
+        return result;
 	}
+    
 }
