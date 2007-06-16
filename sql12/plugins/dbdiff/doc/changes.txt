@@ -1,0 +1,7 @@
+DBDiff Plugin Change Log
+========================
+
+0.01 (??/??/????)
+================
+
+- initial release
