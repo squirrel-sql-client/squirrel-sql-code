@@ -21,7 +21,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,7 +30,6 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -39,8 +37,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.gui.ColumnDiffDialog;
-import net.sourceforge.squirrel_sql.plugins.dbdiff.prefs.DBDiffPreferenceBean;
-import net.sourceforge.squirrel_sql.plugins.dbdiff.prefs.PreferencesManager;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.util.DBUtil;
 
 /**
@@ -60,11 +56,7 @@ public class DiffExecutor extends I18NBaseObject {
     
     /** the thread we do the work in */
     private Thread execThread = null;
-    
-    /** the user's preferences */
-    private static DBDiffPreferenceBean prefs = 
-                                            PreferencesManager.getPreferences();    
-    
+        
     /** Logger for this class. */
     private final static ILogger log = 
                          LoggerController.createLogger(DiffExecutor.class);
@@ -72,15 +64,9 @@ public class DiffExecutor extends I18NBaseObject {
     /** Internationalized strings for this class. */
     private static final StringManager s_stringMgr =
         StringManagerFactory.getStringManager(DiffExecutor.class);
-    
-    /** the CopyTableListeners that have registered with this class */
-    private ArrayList<DiffListener> listeners = new ArrayList<DiffListener>();
-    
+        
     /** whether or not the user cancelled the copy operation */
     private volatile boolean cancelled = false;    
-    
-    /** impl that gives us feedback from the user */
-    //private UICallbacks pref = null;
     
     /** the start time in millis that the copy operation began */
     private long start = 0;
@@ -129,12 +115,11 @@ public class DiffExecutor extends I18NBaseObject {
     }
     
     /**
-     * Performs the table copy operation. 
+     * Performs the table diff operation. 
      */
     private void _execute() throws SQLException {
         start = System.currentTimeMillis();
         boolean encounteredException = false;
-        ISQLConnection destConn = destSession.getSQLConnection();
         IDatabaseObjectInfo[] sourceObjs = 
             prov.getSourceSelectedDatabaseObjects();
         IDatabaseObjectInfo[] destObjs = 
@@ -143,13 +128,6 @@ public class DiffExecutor extends I18NBaseObject {
         if (!sanityCheck(sourceObjs, destObjs)) {
             return;
         }
-        /*
-        String sourceSchema = sourceObjs[0].getSchemaName();
-        String sourceCatalog = sourceObjs[0].getCatalogName();
-        String destSchema = destObjs[0].getSimpleName();
-        String destCatalog = destObjs[0].getCatalogName();
-        */
-        
         
         ISQLDatabaseMetaData sourceMetaData = 
             prov.getDiffSourceSession().getMetaData();
@@ -241,19 +219,7 @@ public class DiffExecutor extends I18NBaseObject {
     public List<ColumnDifference> getColumnDifferences() {
         return colDifferences;
     }
-    
-    /**
-     * Registers the specified listener to receive copy events from this class.
-     * 
-     * @param listener
-     */
-    public void addListener(DiffListener listener) {
-        if (listener == null) {
-            throw new IllegalArgumentException("listener cannot be null");
-        }
-        listeners.add(listener);
-    }
-        
+            
     /**
      * Must have the same number of objects to compare in each set, and they 
      * must be the same type of Objects (Schemas or Tables)
