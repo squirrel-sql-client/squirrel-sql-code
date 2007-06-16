@@ -19,14 +19,10 @@ package net.sourceforge.squirrel_sql.plugins.dbdiff.commands;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import javax.swing.ProgressMonitor;
-
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.DBDiffPlugin;
@@ -46,31 +42,7 @@ public class SelectCommand implements ICommand
     /** Logger for this class. */
     private final static ILogger log = 
                          LoggerController.createLogger(SelectCommand.class);
-    
-    /** Internationalized strings for this class */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(SelectCommand.class);   
-    
-    static interface i18n {
-        
-        //i18n[CopyTablesCommand.progressDialogTitle=Analyzing FKs in Tables to Copy]
-        String PROGRESS_DIALOG_TITLE = 
-            s_stringMgr.getString("CopyTablesCommand.progressDialogTitle");
-        
-        //i18n[CopyTablesCommand.loadingPrefix=Analyzing table:]
-        String LOADING_PREFIX = 
-            s_stringMgr.getString("CopyTablesCommand.loadingPrefix");        
-        
-    }
-    
-    
-    /** When analyzing FK dependencies for the selected tables, show the
-     *  user the progress since this can take a while.
-     */
-    ProgressMonitor pm = null;
-    
-    int progressCount = 0;
-    
+               
     /**
      * Ctor specifying the current session.
      */

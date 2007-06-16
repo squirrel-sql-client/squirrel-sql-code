@@ -25,6 +25,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
@@ -45,6 +48,20 @@ import net.sourceforge.squirrel_sql.plugins.dbdiff.util.DBUtil;
  */
 public class DiffExecutor extends I18NBaseObject {
 
+    /** Logger for this class. */
+    private final static ILogger s_log = 
+                         LoggerController.createLogger(DiffExecutor.class);
+    
+    /** Internationalized strings for this class. */
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(DiffExecutor.class);
+    
+    static interface i18n {
+        // i18n[DiffExecutor.noDiffsMessage=No differences were detected]
+        String NO_DIFFS_MESSAGE = 
+            s_stringMgr.getString("DiffExecutor.noDiffsMessage");
+    }
+    
     /** the class that provides out session information */
     SessionInfoProvider prov = null;
     
@@ -56,15 +73,7 @@ public class DiffExecutor extends I18NBaseObject {
     
     /** the thread we do the work in */
     private Thread execThread = null;
-        
-    /** Logger for this class. */
-    private final static ILogger log = 
-                         LoggerController.createLogger(DiffExecutor.class);
-    
-    /** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(DiffExecutor.class);
-        
+                
     /** whether or not the user cancelled the copy operation */
     private volatile boolean cancelled = false;    
     
@@ -92,7 +101,7 @@ public class DiffExecutor extends I18NBaseObject {
      * Starts the thread that executes the copy operation.
      */
     public void execute() {
-        Runnable runnable = new Runnable() {
+       Runnable runnable = new Runnable() {
             public void run() {
                 try {
                     _execute();
@@ -168,16 +177,27 @@ public class DiffExecutor extends I18NBaseObject {
                 }
                     
             }
-            MainFrame frame = sourceSession.getApplication().getMainFrame();
-            ColumnDiffDialog dialog = new ColumnDiffDialog(frame, false); 
+            final MainFrame frame = sourceSession.getApplication().getMainFrame();
             if (colDifferences != null && colDifferences.size() > 0) {
+                
+                ColumnDiffDialog dialog = new ColumnDiffDialog(frame, false);                 
                 dialog.setColumnDifferences(colDifferences);
                 dialog.setSession1Label(sourceSession.getAlias().getName());
                 dialog.setSession2Label(destSession.getAlias().getName());
                 dialog.setVisible(true);
+            } else {
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        JOptionPane.showMessageDialog(frame, 
+                                                      i18n.NO_DIFFS_MESSAGE, 
+                                                      "DBDiff", 
+                                                      JOptionPane.INFORMATION_MESSAGE);
+                    }
+                });      
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            s_log.error("Encountered unexpected exception while executing " +
+                        "diff: "+e.getMessage(), e);
         }
         
         if (encounteredException) {
@@ -263,7 +283,8 @@ public class DiffExecutor extends I18NBaseObject {
                                              ti.getSimpleName(),
                                              DialectFactory.SOURCE_TYPE);
                 } catch (Exception e) {
-                    log.error("",e);
+                    s_log.error(
+                        "Unexpected exception while attempting to get table counts",e);
                     result[i] = 0;
                 }
             }           
