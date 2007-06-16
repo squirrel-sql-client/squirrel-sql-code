@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Rob Manning
+ * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or

@@ -30,6 +30,8 @@ import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
+import static java.util.Arrays.asList;
+
 /**
  * A utility class for building test objects.
  * 
@@ -227,7 +229,7 @@ public class TestUtil {
         expect(result.getColumnName()).andReturn(columnName).anyTimes();
         expect(result.getSimpleName()).andReturn("TestIndex").anyTimes();
         expect(result.getOrdinalPosition()).andReturn((short)1).anyTimes();
-        expect(result.getTableName()).andReturn("TestTable").anyTimes();
+        expect(result.getTableName()).andReturn(tableName).anyTimes();
         expect(result.isNonUnique()).andReturn(false).anyTimes();
         replay(result);
         return Arrays.asList(new IndexInfo[] { result });
@@ -283,6 +285,22 @@ public class TestUtil {
                                          true);
     }
     
+    public static TableColumnInfo getEasyMockTableColumn(String catalogName,
+                                                         String schemaName,
+                                                         String tableName, 
+                                                         String columnName,
+                                                         int dataType) 
+    {
+        String[] columnNames = new String[] { columnName };
+        Integer[] dataTypes = new Integer[] { dataType };
+        TableColumnInfo[] result = getEasyMockTableColumns(catalogName, 
+                                                           schemaName, 
+                                                           tableName, 
+                                                           asList(columnNames), 
+                                                           asList(dataTypes)); 
+        return result[0];
+    }
+    
     public static TableColumnInfo[] getEasyMockTableColumns(String catalogName,
                                                             String schemaName,
                                                             String tableName, 
@@ -297,30 +315,150 @@ public class TestUtil {
         int index = 0;
         for (String columnName : columnNames) {
             Integer columnDataType = dataTypes.get(index++);
-            TableColumnInfo info = createMock(TableColumnInfo.class);
-            expect(info.getCatalogName()).andReturn(catalogName).anyTimes();
-            expect(info.getSchemaName()).andReturn(schemaName).anyTimes();
-            expect(info.getTableName()).andReturn(tableName).anyTimes();
-            expect(info.getColumnName()).andReturn(columnName).anyTimes();
-            expect(info.getDataType()).andReturn(columnDataType).anyTimes();
-            expect(info.getTypeName()).andReturn(JDBCTypeMapper.getJdbcTypeName(columnDataType)).anyTimes();
-            expect(info.getColumnSize()).andReturn(10).anyTimes();
-            expect(info.getDatabaseObjectType()).andReturn(DatabaseObjectType.COLUMN).anyTimes();
-            expect(info.getDefaultValue()).andReturn("defval").anyTimes();
-            expect(info.getRemarks()).andReturn("remark").anyTimes();
-            expect(info.getDecimalDigits()).andReturn(10).anyTimes();
-            expect(info.getOctetLength()).andReturn(10).anyTimes();
-            expect(info.getQualifiedName()).andReturn(schemaName + "." + tableName + "." + columnName).anyTimes();
-            expect(info.getRadix()).andReturn(10).anyTimes();
-            expect(info.isNullable()).andReturn("YES").anyTimes();
-            expect(info.isNullAllowed()).andReturn(1).anyTimes();
-            replay(info);
+            
+            TableColumnInfo info = getEasyMockTableColumnInfo(catalogName,
+                                                              schemaName,
+                                                              tableName,
+                                                              columnName,
+                                                              columnDataType,
+                                                              10,
+                                                              "defval",
+                                                              "remark",
+                                                              10,
+                                                              10,
+                                                              10,
+                                                              true);
+            
             result.add(info);
         }
         
         return result.toArray(new TableColumnInfo[0]);
     }
     
+    
+    public static TableColumnInfo getEasyMockTableColumnInfo(String catalogName,
+                                                             String schemaName,
+                                                             String tableName, 
+                                                             String columnName,
+                                                             int dataType,
+                                                             int columnSize,
+                                                             String defaultValue,
+                                                             String remarks,
+                                                             int decimalDigits,
+                                                             int octetLength,
+                                                             int radix,
+                                                             boolean nullable)
+    {
+        TableColumnInfo info = createMock(TableColumnInfo.class);
+        expect(info.getCatalogName()).andReturn(catalogName).anyTimes();
+        expect(info.getSchemaName()).andReturn(schemaName).anyTimes();
+        expect(info.getTableName()).andReturn(tableName).anyTimes();
+        expect(info.getColumnName()).andReturn(columnName).anyTimes();
+        expect(info.getDataType()).andReturn(dataType).anyTimes();
+        expect(info.getTypeName()).andReturn(JDBCTypeMapper.getJdbcTypeName(dataType)).anyTimes();
+        expect(info.getColumnSize()).andReturn(columnSize).anyTimes();
+        expect(info.getDatabaseObjectType()).andReturn(DatabaseObjectType.COLUMN).anyTimes();
+        expect(info.getDefaultValue()).andReturn(defaultValue).anyTimes();
+        expect(info.getRemarks()).andReturn(remarks).anyTimes();
+        expect(info.getDecimalDigits()).andReturn(decimalDigits).anyTimes();
+        expect(info.getOctetLength()).andReturn(octetLength).anyTimes();
+        expect(info.getQualifiedName()).andReturn(schemaName + "." + tableName + "." + columnName).anyTimes();
+        expect(info.getRadix()).andReturn(radix).anyTimes();
+        if (nullable) {
+            expect(info.isNullable()).andReturn("YES").anyTimes();
+            expect(info.isNullAllowed()).andReturn(1).anyTimes();
+        } else {
+            expect(info.isNullable()).andReturn("NO").anyTimes();
+            expect(info.isNullAllowed()).andReturn(0).anyTimes();            
+        }
+        replay(info);
+        return info;
+    }
+                  
+    /**
+     * Returns a new TableColumnInfo EasyMock based on values from the one 
+     * specified, only the column size is the one specified.
+     * 
+     * @param info the existing TableColumnInfo to replicate
+     * @param newSize the new column size
+     * @return
+     */
+    public static TableColumnInfo setEasyMockTableColumnInfoSize(final TableColumnInfo info,
+                                                                 final int newSize) 
+    {
+        TableColumnInfo result = 
+            getEasyMockTableColumnInfo(info.getCatalogName(),
+                                       info.getSchemaName(),
+                                       info.getTableName(),
+                                       info.getColumnName(),
+                                       info.getDataType(),
+                                       newSize,
+                                       info.getDefaultValue(),
+                                       info.getRemarks(),
+                                       info.getDecimalDigits(),
+                                       info.getOctetLength(),
+                                       info.getRadix(),
+                                       info.isNullAllowed() == 1 ? true : false);
+        return result;
+
+    }
+
+    /**
+     * Returns a new TableColumnInfo EasyMock based on values from the one 
+     * specified, only the column size is the one specified.
+     * 
+     * @param info the existing TableColumnInfo to replicate
+     * @param newSize the new column size
+     * @return
+     */
+    public static TableColumnInfo setEasyMockTableColumnInfoNullable(final TableColumnInfo info,
+                                                                     final boolean nullable) 
+    {
+        TableColumnInfo result = 
+            getEasyMockTableColumnInfo(info.getCatalogName(),
+                                       info.getSchemaName(),
+                                       info.getTableName(),
+                                       info.getColumnName(),
+                                       info.getDataType(),
+                                       info.getColumnSize(),
+                                       info.getDefaultValue(),
+                                       info.getRemarks(),
+                                       info.getDecimalDigits(),
+                                       info.getOctetLength(),
+                                       info.getRadix(),
+                                       nullable);
+        return result;
+
+    }
+    
+    /**
+     * Returns a new TableColumnInfo EasyMock based on values from the one 
+     * specified, only the column size is the one specified.
+     * 
+     * @param info the existing TableColumnInfo to replicate
+     * @param newSize the new column size
+     * @return
+     */
+    public static TableColumnInfo setEasyMockTableColumnInfoType(final TableColumnInfo info,
+                                                                 final int dataType) 
+    {
+        TableColumnInfo result = 
+            getEasyMockTableColumnInfo(info.getCatalogName(),
+                                       info.getSchemaName(),
+                                       info.getTableName(),
+                                       info.getColumnName(),
+                                       dataType,
+                                       info.getColumnSize(),
+                                       info.getDefaultValue(),
+                                       info.getRemarks(),
+                                       info.getDecimalDigits(),
+                                       info.getOctetLength(),
+                                       info.getRadix(),
+                                       info.isNullAllowed() == 1 ? true : false);
+        return result;
+
+    }
+
     
     public static TableColumnInfo getBigintColumnInfo(ISQLDatabaseMetaData md,
             boolean nullable) 

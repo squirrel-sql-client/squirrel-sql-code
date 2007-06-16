@@ -47,8 +47,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.I18NBaseObject;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.SessionInfoProvider;
-import net.sourceforge.squirrel_sql.plugins.dbdiff.prefs.DBDiffPreferenceBean;
-import net.sourceforge.squirrel_sql.plugins.dbdiff.prefs.PreferencesManager;
 
 import org.hibernate.MappingException;
 
@@ -61,10 +59,6 @@ public class DBUtil extends I18NBaseObject {
     /** Logger for this class. */
     private final static ILogger log = 
         LoggerController.createLogger(DBUtil.class);    
-    
-    /** Plugin settings. The configuration panel uses this */
-    private static DBDiffPreferenceBean _prefs = 
-        PreferencesManager.getPreferences();
     
     /** Internationalized strings for this class */
     private static final StringManager s_stringMgr =
@@ -247,27 +241,7 @@ public class DBUtil extends I18NBaseObject {
 
         Connection con = sqlcon.getConnection();
         try {
-            if (DialectFactory.isMySQL(session.getMetaData())) {
-                stmt = con.createStatement(ResultSet.TYPE_FORWARD_ONLY,
-                                           ResultSet.CONCUR_READ_ONLY);
-            
-                stmt.setFetchSize(Integer.MIN_VALUE);
-            } else if (DialectFactory.isTimesTen(session.getMetaData())) {
-            	stmt = con.createStatement();
-            	int fetchSize = _prefs.getSelectFetchSize();
-            	// TimesTen allows a maximum fetch size of 128. 
-            	if (fetchSize > 128) {
-            		log.info(
-            			"executeQuery: TimesTen allows a maximum fetch size of " +
-            			"128.  Altering preferred fetch size from "+fetchSize+
-            			" to 128.");
-            		fetchSize = 128;
-            	}
-            	stmt.setFetchSize(fetchSize);
-            } else { 
-                stmt = con.createStatement();
-                stmt.setFetchSize(_prefs.getSelectFetchSize());
-            }
+            stmt = con.createStatement();
         } catch(SQLException e) {
             // Only close the statement if SQLException - otherwise it has to 
             // remain open until the ResultSet is read through by the caller.

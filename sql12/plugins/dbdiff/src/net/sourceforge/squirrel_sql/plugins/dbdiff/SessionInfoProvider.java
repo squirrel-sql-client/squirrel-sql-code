@@ -22,7 +22,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
 /**
- * This is implemented in order to pass needed info along to copy executor. 
+ * This is implemented in order to pass needed info along to diff executor. 
  *
  */
 public interface SessionInfoProvider {
