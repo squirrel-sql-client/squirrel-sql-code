@@ -1,8 +1,14 @@
 DB2 Plugin Change Log
 =====================
 
+0.02
+====
 
-0.10
+- Exceptions from DB2 Universal JDBC driver are now interpreted as DB2Diagnoseable
+  exceptions so that the cause of the exception can be printed (Thanks to 
+  Christoph Schmitz)
+
+0.01
 ====
 
 - Initial release.
