@@ -9,15 +9,11 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.table.ContentsTab;
 import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetUpdateableTableModelListener;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
-import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -645,7 +641,7 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
                       rowCountErrorMessage += 
                           s_stringMgr.getString(
                                   "DataSetUpdateableTableModelImpl.error.rowmatched", 
-                                  new Integer[] { new Integer(i+1), new Integer(rs.getInt(1)) });
+                                  new Object[] { new Integer(i+1), new Integer(rs.getInt(1)) });
                   }
                }
             }

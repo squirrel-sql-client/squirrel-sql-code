@@ -155,9 +155,12 @@ public class MessagePanel extends JTextPane implements IMessageHandler
    }
 
 
-   public void addToMessagePanelPopup(Action act)
+   public void addToMessagePanelPopup(Action action)
    {
-      _popupMenu.add(act);   
+       if (action == null) {
+           throw new IllegalArgumentException("action cannot be null");
+       }
+      _popupMenu.add(action);   
    }
 
 
@@ -170,10 +173,11 @@ public class MessagePanel extends JTextPane implements IMessageHandler
    public synchronized void showMessage(final Throwable th, 
                                         final ExceptionFormatter formatter)
    {
-      if (th != null)
+      if (th == null)
       {
-         privateShowMessage(th, formatter, _saSetMessage);
+          throw new IllegalArgumentException("th cannot be null");
       }
+      privateShowMessage(th, formatter, _saSetMessage);
    }
    
 
@@ -184,12 +188,14 @@ public class MessagePanel extends JTextPane implements IMessageHandler
 	 * @param	th		Exception.
      * @param session the session that generated the exception. 
 	 */
-	public synchronized void showErrorMessage(final Throwable th, ExceptionFormatter formatter)
+	public synchronized void showErrorMessage(final Throwable th, 
+                                              ExceptionFormatter formatter)
 	{
-		if (th != null)
+		if (th == null)
 		{
-			privateShowMessage(th, formatter, _saSetError);
+            throw new IllegalArgumentException("th cannot be null");
 		}
+        privateShowMessage(th, formatter, _saSetError);
 	}
 
 
@@ -200,18 +206,21 @@ public class MessagePanel extends JTextPane implements IMessageHandler
     */
    public synchronized void showMessage(final String msg)
    {
-      if (msg != null)
+      if (msg == null)
       {
-         privateShowMessage(msg, _saSetMessage);
+          throw new IllegalArgumentException("msg cannot be null");
       }
+      privateShowMessage(msg, _saSetMessage);
    }
 
    public void showWarningMessage(String msg)
    {
-      if (msg != null)
+      if (msg == null)
       {
-         privateShowMessage(msg, _saSetWarning);
+          throw new IllegalArgumentException("msg cannot be null");
+         
       }
+      privateShowMessage(msg, _saSetWarning);
    }
    
    /**
@@ -221,10 +230,11 @@ public class MessagePanel extends JTextPane implements IMessageHandler
 	 */
 	public synchronized void showErrorMessage(final String msg)
 	{
-		if (msg != null)
+		if (msg == null)
 		{
-			privateShowMessage(msg, _saSetError);
+			throw new IllegalArgumentException("msg cannot be null");
 		}
+        privateShowMessage(msg, _saSetError);
 	}
 
 
