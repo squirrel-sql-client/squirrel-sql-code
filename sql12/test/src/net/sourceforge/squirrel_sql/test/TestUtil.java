@@ -32,6 +32,8 @@ import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 import static java.util.Arrays.asList;
 
+import static java.sql.Types.*;
+
 /**
  * A utility class for building test objects.
  * 
@@ -197,12 +199,21 @@ public class TestUtil {
     {
         return getEasyMockSQLMetaData(dbName, dbURL, nice, true);
     }
-    
-    public static IApplication getEasyMockApplication() {
-        IApplication result = createNiceMock(IApplication.class);
+
+    public static IApplication getEasyMockApplication(boolean nice) {
+        IApplication result = null;
+        if (nice) {
+            result = createNiceMock(IApplication.class);
+        } else {
+            result = createMock(IApplication.class);
+        }
         expect(result.getMainFrame()).andReturn(null);
         replay(result);
         return result;
+    }    
+    
+    public static IApplication getEasyMockApplication() {
+        return getEasyMockApplication(true);
     }
 
     public static ForeignKeyInfo[] getEasyMockForeignKeyInfos(String fkName,
@@ -433,10 +444,10 @@ public class TestUtil {
     
     /**
      * Returns a new TableColumnInfo EasyMock based on values from the one 
-     * specified, only the column size is the one specified.
+     * specified, only the column data type is the one specified.
      * 
      * @param info the existing TableColumnInfo to replicate
-     * @param newSize the new column size
+     * @param dataTyoe the new column data type
      * @return
      */
     public static TableColumnInfo setEasyMockTableColumnInfoType(final TableColumnInfo info,
@@ -463,79 +474,44 @@ public class TestUtil {
     public static TableColumnInfo getBigintColumnInfo(ISQLDatabaseMetaData md,
             boolean nullable) 
     {
-        return getTableColumnInfo(md, 
-                                  java.sql.Types.BIGINT, 
-                                  "Bigint", 
-                                  20, 
-                                  10, 
-                                  nullable);        
+        return getTableColumnInfo(md, BIGINT,  20, 10, nullable);        
     }
     
     public static TableColumnInfo getBinaryColumnInfo(ISQLDatabaseMetaData md,
                                                       boolean nullable) 
     {
-        return getTableColumnInfo(md, 
-                                  java.sql.Types.BINARY, 
-                                  "Binary", 
-                                  -1, 
-                                  0, 
-                                  nullable);        
+        return getTableColumnInfo(md, BINARY, -1, 0, nullable);        
     }    
     
     public static TableColumnInfo getBlobColumnInfo(ISQLDatabaseMetaData md,
                                                     boolean nullable) 
     {
-        return getTableColumnInfo(md, 
-                                  java.sql.Types.BLOB, 
-                                  "Binary LOB", 
-                                  Integer.MAX_VALUE, 
-                                  0, 
-                                  nullable);        
+        return getTableColumnInfo(md, BLOB,  Integer.MAX_VALUE, 0, nullable);        
     }
 
     public static TableColumnInfo getClobColumnInfo(ISQLDatabaseMetaData md,
             boolean nullable) 
     {
-        return getTableColumnInfo(md, 
-                                  java.sql.Types.CLOB, 
-                                  "Character LOB", 
-                                  Integer.MAX_VALUE, 
-                                  0, 
-                                  nullable);        
+        return getTableColumnInfo(md, CLOB, Integer.MAX_VALUE, 0, nullable);        
     }
     
     public static TableColumnInfo getIntegerColumnInfo(ISQLDatabaseMetaData md,
                                                        boolean nullable) 
     {
-        return getTableColumnInfo(md, 
-                                  java.sql.Types.INTEGER, 
-                                  "Integer", 
-                                  10, 
-                                  0, 
-                                  nullable);        
+        return getTableColumnInfo(md, INTEGER, 10, 0, nullable);        
     }
     
     public static TableColumnInfo getDateColumnInfo(ISQLDatabaseMetaData md,
                                                     boolean nullable) 
     {
-        return getTableColumnInfo(md, 
-                                  java.sql.Types.DATE, 
-                                  "Date", 
-                                  0, 
-                                  0, 
-                                  nullable);                
+        return getTableColumnInfo(md, DATE, 0, 0, nullable);                
     }
 
     public static TableColumnInfo getLongVarcharColumnInfo(ISQLDatabaseMetaData md,
                                                            boolean nullable,
                                                            int length) 
     {
-        return getTableColumnInfo(md, 
-                java.sql.Types.LONGVARCHAR, 
-                "LongVarchar", 
-                length, 
-                0, 
-                nullable);                
+        return getTableColumnInfo(md, LONGVARCHAR, length, 0, nullable);                
     }
     
     
@@ -543,24 +519,28 @@ public class TestUtil {
                                                        boolean nullable,
                                                        int length) 
     {
-        return getTableColumnInfo(md, 
-                                  java.sql.Types.VARCHAR, 
-                                  "Varchar", 
-                                  length, 
-                                  0, 
-                                  nullable);                
+        return getTableColumnInfo(md, VARCHAR, length, 0, nullable);                
     }
     
     public static TableColumnInfo getTableColumnInfo(ISQLDatabaseMetaData md,
                                                      int type,
-                                                     String typeName,
+                                                     int columnSize,
+                                                     int decimalDigits,
+                                                     boolean nullable) 
+    {
+        return getTableColumnInfo(md, "TestColumn", type, columnSize, decimalDigits, nullable);
+    }
+
+    public static TableColumnInfo getTableColumnInfo(ISQLDatabaseMetaData md,
+                                                     String columnName,
+                                                     int type,
                                                      int columnSize,
                                                      int decimalDigits,
                                                      boolean nullable) 
     {
         int isNullableInt = 0;
         String isNullableStr = "no";
-            
+
         if (nullable) {
             isNullableInt = 1;
             isNullableStr = "yes";            
@@ -568,9 +548,9 @@ public class TestUtil {
         TableColumnInfo info = new TableColumnInfo("TestCatalog",
                 "TestSchema",
                 "TestTable",
-                "TestColumn",
+                columnName,
                 type,
-                typeName,      // typeName
+                JDBCTypeMapper.getJdbcTypeName(type), // typeName
                 columnSize,    // columnSize
                 decimalDigits, // decimalDigits
                 0,             // radix

@@ -18,14 +18,14 @@ package net.sourceforge.squirrel_sql.client.session.event;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.ResultTab;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab;
 
 public class ResultTabEvent
 {
 	private ISession _session;
-	private ResultTab _tab;
+	private IResultTab _tab;
 
-	public ResultTabEvent(ISession session, ResultTab tab)
+	public ResultTabEvent(ISession session, IResultTab tab)
 		throws IllegalArgumentException
 	{
 		super();
@@ -46,7 +46,7 @@ public class ResultTabEvent
 		return _session;
 	}
 
-	public ResultTab getResultTab()
+	public IResultTab getResultTab()
 	{
 		return _tab;
 	}

@@ -41,7 +41,9 @@ import net.sourceforge.squirrel_sql.client.Version;
 public class SessionInternalFrame extends BaseSessionInternalFrame
 					implements ISQLInternalFrame, IObjectTreeInternalFrame
 {
-	/** Application API. */
+    static final long serialVersionUID = 6961615570741567740L;
+    
+    /** Application API. */
 	private final IApplication _app;
 
 	private SessionPanel _sessionPanel;

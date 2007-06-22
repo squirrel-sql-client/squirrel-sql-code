@@ -131,7 +131,7 @@ public final class ActionCollection
 	 *
 	 * @throws	IllegalArgumentException	Thrown if a null action class passed.
 	 */
-	public synchronized Action get(Class actionClass)
+	public synchronized Action get(Class<? extends Action> actionClass)
 	{
 		if (actionClass == null)
 		{

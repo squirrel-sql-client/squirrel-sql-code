@@ -78,8 +78,6 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLExecutionException;
-import net.sourceforge.squirrel_sql.fw.util.DefaultExceptionFormatter;
-import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -133,7 +131,7 @@ public class SQLResultExecuterPanel extends JPanel
 
 	/** Factory for generating unique IDs for new <TT>ResultTab</TT> objects. */
 	private IntegerIdentifierFactory _idFactory = new IntegerIdentifierFactory();
-   private ResultTab _stickyTab;
+   private IResultTab _stickyTab;
    
    private SquirrelPreferences _prefs = null;
 
@@ -311,7 +309,7 @@ public class SQLResultExecuterPanel extends JPanel
 		}
 	}
 
-   private void onRerunSQL(String sql, ResultTab resultTab)
+   private void onRerunSQL(String sql, IResultTab resultTab)
    {
       _executer = new SQLExecuterTask(_session, sql, new SQLExecutionHandler(resultTab), new ISQLExecutionListener[0]);
       _session.getApplication().getThreadPool().addTask(_executer);
@@ -393,7 +391,7 @@ public class SQLResultExecuterPanel extends JPanel
          }
       }
 
-      if(false == _tabbedExecutionsPanel.getSelectedComponent() instanceof ResultTab)
+      if(false == _tabbedExecutionsPanel.getSelectedComponent() instanceof IResultTab)
       {
           //i18n[SQLResultExecuterPanel.nonStickyPanel=Cannot make a cancel panel sticky]
           String msg = 
@@ -403,7 +401,7 @@ public class SQLResultExecuterPanel extends JPanel
          return;
       }
 
-      _stickyTab = (ResultTab) _tabbedExecutionsPanel.getSelectedComponent();
+      _stickyTab = (IResultTab) _tabbedExecutionsPanel.getSelectedComponent();
       int selectedIndex = _tabbedExecutionsPanel.getSelectedIndex();
 
       ImageIcon icon = getStickyIcon();
@@ -420,7 +418,7 @@ public class SQLResultExecuterPanel extends JPanel
       return icon;
    }
 
-   private int getIndexOfTab(ResultTab resultTab)
+   private int getIndexOfTab(IResultTab resultTab)
    {
       if(null == resultTab)
       {
@@ -444,9 +442,9 @@ public class SQLResultExecuterPanel extends JPanel
       Component selectedTab = _tabbedExecutionsPanel.getSelectedComponent();
 
       List tabs = (List)_usedTabs.clone();
-      for (Iterator it = tabs.iterator(); it.hasNext();)
+      for (Iterator<ResultTabInfo> it = tabs.iterator(); it.hasNext();)
       {
-         ResultTabInfo ti = (ResultTabInfo)it.next();
+         ResultTabInfo ti = it.next();
          if(ti._tab.equals(selectedTab))
          {
             if (ti._resultFrame == null)
@@ -534,7 +532,7 @@ public class SQLResultExecuterPanel extends JPanel
 		}
 	}
 
-	protected void fireTabAddedEvent(ResultTab tab)
+	protected void fireTabAddedEvent(IResultTab tab)
 	{
 		// Guaranteed to be non-null.
 		Object[] listeners = _listeners.getListenerList();
@@ -555,7 +553,7 @@ public class SQLResultExecuterPanel extends JPanel
 		}
 	}
 
-	protected void fireTabRemovedEvent(ResultTab tab)
+	protected void fireTabRemovedEvent(IResultTab tab)
 	{
 		// Guaranteed to be non-null.
 		Object[] listeners = _listeners.getListenerList();
@@ -576,7 +574,7 @@ public class SQLResultExecuterPanel extends JPanel
 		}
 	}
 
-	protected void fireTabTornOffEvent(ResultTab tab)
+	protected void fireTabTornOffEvent(IResultTab tab)
 	{
 		// Guaranteed to be non-null.
 		Object[] listeners = _listeners.getListenerList();
@@ -597,7 +595,7 @@ public class SQLResultExecuterPanel extends JPanel
 		}
 	}
 
-	protected void fireTornOffResultTabReturned(ResultTab tab)
+	protected void fireTornOffResultTabReturned(IResultTab tab)
 	{
 		// Guaranteed to be non-null.
 		Object[] listeners = _listeners.getListenerList();
@@ -701,8 +699,11 @@ public class SQLResultExecuterPanel extends JPanel
 		}
 	}
 
-    public ResultTab getSelectedResultTab() {
-        return (ResultTab)_tabbedExecutionsPanel.getSelectedComponent();
+    /**
+     * @see net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter#getSelectedResultTab()
+     */
+    public IResultTab getSelectedResultTab() {
+        return (IResultTab)_tabbedExecutionsPanel.getSelectedComponent();
     }
     
     /**
@@ -721,7 +722,7 @@ public class SQLResultExecuterPanel extends JPanel
         if (readFully) {
             DataTypeClob.setReadCompleteClob(true);
         }
-        ResultTab rt = (ResultTab)_tabbedExecutionsPanel.getSelectedComponent();
+        IResultTab rt = (IResultTab)_tabbedExecutionsPanel.getSelectedComponent();
         rt.reRunSQL();
         if (readFully) {
             DataTypeClob.setReadCompleteClob(clobReadOrigVal);
@@ -733,7 +734,7 @@ public class SQLResultExecuterPanel extends JPanel
                               ResultSetMetaDataDataSet mdds,
                               final JPanel cancelPanel,
                               IDataSetUpdateableTableModel creator,
-                              final ResultTab resultTabToReplace)
+                              final IResultTab resultTabToReplace)
 	{
 		final ResultTab tab;
 		if (_availableTabs.size() > 0)
@@ -749,7 +750,7 @@ public class SQLResultExecuterPanel extends JPanel
 		{
          ResultTabListener resultTabListener = new ResultTabListener()
          {
-            public void rerunSQL(String sql, ResultTab resultTab)
+            public void rerunSQL(String sql, IResultTab resultTab)
             {
                onRerunSQL(sql, resultTab);
             }
@@ -783,7 +784,7 @@ public class SQLResultExecuterPanel extends JPanel
 		}
 	}
 
-	private void addResultsTab(ResultTab tab, ResultTab resultTabToReplace)
+	private void addResultsTab(ResultTab tab, IResultTab resultTabToReplace)
 	{
       if(null == resultTabToReplace && null == _stickyTab)
       {
@@ -1001,7 +1002,7 @@ public class SQLResultExecuterPanel extends JPanel
       });
    }
 
-   private void initAccelerator(Class actionClass, JMenuItem mnuItem)
+   private void initAccelerator(Class<? extends Action> actionClass, JMenuItem mnuItem)
    {
       Action action = _session.getApplication().getActionCollection().get(actionClass);
 
@@ -1057,7 +1058,7 @@ public class SQLResultExecuterPanel extends JPanel
 
         private String sqlToBeExecuted = null;
         private SQLType sqlType = null;
-        private ResultTab _resultTabToReplace;
+        private IResultTab _resultTabToReplace;
         private boolean _largeScript = false;
         private double _scriptTotalTime = 0;
         private double _scriptQueryTime = 0;
@@ -1067,7 +1068,7 @@ public class SQLResultExecuterPanel extends JPanel
         private int _scriptRowsUpdated = 0;
         private int _scriptRowsDeleted = 0;
       
-        public SQLExecutionHandler(ResultTab resultTabToReplace)
+        public SQLExecutionHandler(IResultTab resultTabToReplace)
         {
             super();
             _resultTabToReplace = resultTabToReplace;
