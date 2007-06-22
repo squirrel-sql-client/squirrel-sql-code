@@ -2,8 +2,11 @@ package net.sourceforge.squirrel_sql.fw.gui.action;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.sql.Types;
 import java.util.Calendar;
 
@@ -377,8 +380,7 @@ public class TableExportCsvCommand
    private boolean writeCSV(File file, TableExportCsvController ctrl, boolean includeHeaders, int nbrSelCols, int[] selCols, int nbrSelRows, int[] selRows)
       throws IOException
    {
-      FileWriter fw = new FileWriter(file);
-      BufferedWriter bw = new BufferedWriter(fw);
+      BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), ctrl.getCSVCharset()));
 
       String separator = ctrl.getSeparatorChar();
 
@@ -432,9 +434,7 @@ public class TableExportCsvCommand
       }
 
       bw.flush();
-      fw.flush();
       bw.close();
-      fw.close();
 
       return true;
    }

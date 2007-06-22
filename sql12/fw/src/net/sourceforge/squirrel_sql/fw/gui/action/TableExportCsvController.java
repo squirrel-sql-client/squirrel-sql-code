@@ -6,6 +6,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
 import java.io.File;
+import java.nio.charset.Charset;
+import java.nio.charset.IllegalCharsetNameException;
 import java.awt.event.*;
 import java.awt.*;
 import java.util.prefs.Preferences;
@@ -13,6 +15,7 @@ import java.util.prefs.Preferences;
 public class TableExportCsvController
 {
    private static final String PREF_KEY_CSV_FILE = "SquirrelSQL.csvexport.csvfile";
+   private static final String PREF_KEY_CSV_ENCODING = "SquirrelSQL.csvexport.csvencoding";
    private static final String PREF_KEY_WITH_HEADERS = "SquirrelSQL.csvexport.withColumnHeaders";
    private static final String PREF_KEY_SEPERATOR_TAB = "SquirrelSQL.csvexport.sepearatorTab";
    private static final String PREF_KEY_SEPERATOR_CHAR = "SquirrelSQL.csvexport.sepearatorChar";
@@ -155,6 +158,8 @@ public class TableExportCsvController
          _dlg.lblSeparator.setEnabled(true);
          _dlg.chkSeparatorTab.setEnabled(true);
          _dlg.txtSeparatorChar.setEnabled(true);
+         _dlg.lblCharset.setEnabled(true);
+         _dlg.charsets.setEnabled(true);
 
          if(_dlg.chkSeparatorTab.isSelected())
          {
@@ -176,8 +181,10 @@ public class TableExportCsvController
       else if (_dlg.radFormatXLS.isSelected())
       {
          _dlg.lblSeparator.setEnabled(false);
+         _dlg.lblCharset.setEnabled(false);
          _dlg.chkSeparatorTab.setEnabled(false);
          _dlg.txtSeparatorChar.setEnabled(false);
+         _dlg.charsets.setEnabled(false);
          if(replaceEnding)
          {
             replaceFileEnding();
@@ -354,6 +361,7 @@ public class TableExportCsvController
    private void writePrefs()
    {
       Preferences.userRoot().put(PREF_KEY_CSV_FILE, _dlg.txtFile.getText());
+      Preferences.userRoot().put(PREF_KEY_CSV_ENCODING, _dlg.charsets.getSelectedItem().toString());
       Preferences.userRoot().putBoolean(PREF_KEY_WITH_HEADERS, _dlg.chkWithHeaders.isSelected());
       Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_CSV, _dlg.radFormatCSV.isSelected());
       Preferences.userRoot().putBoolean(PREF_KEY_FORMAT_XLS, _dlg.radFormatXLS.isSelected());
@@ -369,6 +377,7 @@ public class TableExportCsvController
    private void initDlg()
    {
       _dlg.txtFile.setText(Preferences.userRoot().get(PREF_KEY_CSV_FILE, null));
+      _dlg.charsets.setSelectedItem(Preferences.userRoot().get(PREF_KEY_CSV_ENCODING, Charset.defaultCharset().name()));
       _dlg.chkWithHeaders.setSelected(Preferences.userRoot().getBoolean(PREF_KEY_WITH_HEADERS, true));
 
 
@@ -471,6 +480,14 @@ public class TableExportCsvController
       {
          return _dlg.txtSeparatorChar.getText();
       }
+   }
+   
+   Charset getCSVCharset() {
+	   try {
+		   return Charset.forName(_dlg.charsets.getSelectedItem().toString());
+	   } catch (IllegalCharsetNameException icne) {
+		   return Charset.defaultCharset();
+	   }
    }
 
    boolean includeHeaders()
