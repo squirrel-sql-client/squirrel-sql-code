@@ -8,6 +8,7 @@ import net.sourceforge.squirrel_sql.fw.resources.LibraryResources;
 
 import javax.swing.*;
 import java.awt.*;
+import java.nio.charset.Charset;
 
 public class TableExportCsvDlg extends JDialog
 {
@@ -20,6 +21,7 @@ public class TableExportCsvDlg extends JDialog
    JRadioButton radFormatXLS;
    JRadioButton radFormatCSV;
    JLabel lblSeparator;
+   JLabel lblCharset;
    JTextField txtSeparatorChar;
    JCheckBox chkSeparatorTab;
    JRadioButton radComplete;
@@ -31,6 +33,7 @@ public class TableExportCsvDlg extends JDialog
    JButton btnCommandFile;
    JButton btnOk;
    JButton btnCancel;
+   JComboBox charsets;
 
    public TableExportCsvDlg()
    {
@@ -230,10 +233,25 @@ public class TableExportCsvDlg extends JDialog
       gbc = new GridBagConstraints(2, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
       ret.add(chkSeparatorTab, gbc);
 
-
       gbc = new GridBagConstraints(3, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
       ret.add(new JPanel(), gbc);
+      
 
+      charsets = new JComboBox();
+      for (String s : Charset.availableCharsets().keySet()) {
+    	  charsets.addItem(s);
+      }
+      
+      gbc = new GridBagConstraints(0, 1, 2, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
+      // i18n[TableExportCsvDlg.charset=Charset:]
+      lblCharset = new JLabel(s_stringMgr.getString("TableExportCsvDlg.charset"));
+      ret.add(lblCharset, gbc);
+      
+      gbc = new GridBagConstraints(2, 1, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
+      ret.add(charsets, gbc);
+
+      gbc = new GridBagConstraints(3, 1, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0);
+      ret.add(new JPanel(), gbc);
 
       return ret;
    }
