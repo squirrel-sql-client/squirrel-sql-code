@@ -45,4 +45,10 @@ public interface ISQLResultExecuter
 	public JComponent getComponent();
 
 	public void execute(ISQLEntryPanel parent);
+    
+    /**
+     * Returns the currently selected ResultTab.
+     * @return
+     */
+    public IResultTab getSelectedResultTab();
 }

@@ -50,7 +50,7 @@ public class ResultFrame extends BaseSessionInternalFrame
         StringManagerFactory.getStringManager(ResultFrame.class);
 
    /** SQL Results. */
-	private ResultTab _tab;
+	private IResultTab _tab;
    private JCheckBox _chkOnTop;
 
    /**
@@ -63,7 +63,7 @@ public class ResultFrame extends BaseSessionInternalFrame
     * 			If a <TT>null</TT> <TT>ISession</TT> or
     *			<TT>ResultTab</TT> passed.
     */
-   public ResultFrame(ISession session, ResultTab tab)
+   public ResultFrame(ISession session, IResultTab tab)
    {
       super(session, getFrameTitle(session, tab), true, true, true, true);
       _tab = tab;
@@ -144,7 +144,7 @@ public class ResultFrame extends BaseSessionInternalFrame
 		dispose();
 	}
 
-	private static String getFrameTitle(ISession session, ResultTab tab)
+	private static String getFrameTitle(ISession session, IResultTab tab)
 		throws IllegalArgumentException
 	{
 		if (tab == null)

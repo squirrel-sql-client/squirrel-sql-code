@@ -40,9 +40,9 @@ import java.util.ArrayList;
  */
 public interface ISQLPanelAPI
 {
-	public void addExecutor(ISQLResultExecuter exec);
+	void addExecutor(ISQLResultExecuter exec);
 
-	public void removeExecutor(ISQLResultExecuter exec);
+	void removeExecutor(ISQLResultExecuter exec);
 
 	/**
 	 * Add a listener listening for SQL Execution.
@@ -96,25 +96,32 @@ public interface ISQLPanelAPI
 	 * @throws	IllegalArgumentException
 	 *			If a null <TT>ISQLPanelListener</TT> passed.
 	 */
-	public void removeSQLPanelListener(ISQLPanelListener lis);
+	void removeSQLPanelListener(ISQLPanelListener lis);
 
 	/**
 	 * Add a listener for events in this sql panel executer tabs.
 	 *
 	 * @param	lis		The listener.
 	 */
-	public void addExecuterTabListener(ISQLResultExecuterTabListener lis);
+	void addExecuterTabListener(ISQLResultExecuterTabListener lis);
 
 	/**
 	 * Remove a listener for events in this sql panel executer tabs.
 	 *
 	 * @param	lis		The listener.
 	 */
-	public void removeExecuterTabListener(ISQLResultExecuterTabListener lis);
+	void removeExecuterTabListener(ISQLResultExecuterTabListener lis);
 
-	// TODO: Do we need this?
+
 	ISQLEntryPanel getSQLEntryPanel();
 
+    /**
+     * Returns the result execution panel that stores such things as IResultTabs
+     * 
+     * @return an implementation of ISQLResultExecuter 
+     */
+    ISQLResultExecuter getSQLResultExecuter();
+    
 	/**
 	 * Return the entire contents of the SQL entry area.
 	 *
@@ -288,30 +295,30 @@ public interface ISQLPanelAPI
 
 	ISession getSession();
 
-   boolean isInMainSessionWindow();
+	boolean isInMainSessionWindow();
 
-   void addToToolsPopUp(String selectionString, Action action);
+	void addToToolsPopUp(String selectionString, Action action);
 
-   boolean fileSave();
+	boolean fileSave();
 
-   void fileSaveAs();
+	void fileSaveAs();
 
-   void fileOpen();
+	void fileOpen();
 
-   void fileAppend();
-   
-   void fileClose();
-   
-   void fileNew();
-   
-   void filePrint();
-   
-   void showToolsPopup();
-   
-   boolean confirmClose();
+	void fileAppend();
 
-   void addSqlPanelListener(SqlPanelListener sqlPanelListener);
+	void fileClose();
 
-   ArrayList<SQLHistoryItem> getSQLHistoryItems();
+	void fileNew();
+
+	void filePrint();
+
+	void showToolsPopup();
+
+	boolean confirmClose();
+
+	void addSqlPanelListener(SqlPanelListener sqlPanelListener);
+
+	ArrayList<SQLHistoryItem> getSQLHistoryItems();
 }
 

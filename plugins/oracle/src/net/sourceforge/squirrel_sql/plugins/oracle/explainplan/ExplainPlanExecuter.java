@@ -46,6 +46,7 @@ import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.SQLResultExecuterTabEvent;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
@@ -64,11 +65,9 @@ import com.sun.treetable.TreeTableModel;
  * This is the panel where Oracle Explain Plans are executed and results presented.
  *
  */
-public class ExplainPlanExecuter
-	 extends JPanel
-	 implements ISQLResultExecuter {
+public class ExplainPlanExecuter extends JPanel implements ISQLResultExecuter {
 
-	private static final StringManager s_stringMgr =
+    private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(ExplainPlanExecuter.class);
 
 
@@ -134,7 +133,7 @@ public class ExplainPlanExecuter
 
   /** Current session. */
   public ISession getSession() {
-	 return _session;
+      return _session;
   }
 
   private void expandEntireTree(final JTree tree, final TreePath parentPath) {
@@ -462,7 +461,7 @@ public class ExplainPlanExecuter
   private boolean getAlternatePlanTable(String planTableName) {
       PreparedStatement pstmt = null;
       ResultSet rs = null;
-      ArrayList planTableList = new ArrayList();
+      ArrayList<String> planTableList = new ArrayList<String>();
       try {
           ISQLConnection con = _session.getSQLConnection();
           pstmt = con.prepareStatement(ALL_PLAN_TABLE_SQL);
@@ -489,7 +488,7 @@ public class ExplainPlanExecuter
           return false;
       }
       String[] planTables = 
-          (String[])planTableList.toArray(new String[planTableList.size()]);
+          planTableList.toArray(new String[planTableList.size()]);
       
       JFrame f = _session.getApplication().getMainFrame();
       
@@ -625,7 +624,7 @@ public class ExplainPlanExecuter
 													  };
 		public static class ExplainRow implements TreeNode {
 		  private ExplainRow parent;
-		  private List children;
+		  private List<ExplainRow> children;
 		  private int id;
 		  private String idObj;
 		  private String stmntId;
@@ -701,9 +700,10 @@ public class ExplainPlanExecuter
 			 return parent;
 		  }
 
-		  public Enumeration children() {
-			 if (children == null)
-				children = new ArrayList();
+		  public Enumeration<ExplainRow> children() {
+			 if (children == null) {
+				children = new ArrayList<ExplainRow>();
+             }
 			 return Collections.enumeration(children);
 		  }
 
@@ -718,8 +718,9 @@ public class ExplainPlanExecuter
 		  }
 
 		  public void addChild(ExplainRow row) {
-			 if (children == null)
-				children = new ArrayList();
+			 if (children == null) {
+				children = new ArrayList<ExplainRow>();
+             }
 			 children.add(row);
 		  }
 
@@ -746,7 +747,7 @@ public class ExplainPlanExecuter
 		  }
 
 		  public TreeNode getChildAt(int child) {
-			 return (TreeNode)children.get(child);
+			 return children.get(child);
 		  }
 
 		  public ExplainRow findChild(int id) {
@@ -831,17 +832,21 @@ public class ExplainPlanExecuter
   }
 
   private class PlanTreeCellRenderer extends DefaultTreeCellRenderer {
-	 public Component getTreeCellRendererComponent(JTree tree,
-																  Object value,
-																  boolean selected,
-																  boolean expanded,
-																  boolean leaf,
-																  int row,
-																  boolean hasFocus) {
-		super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
-		this.setIcon(null);
-		return this;
-	 }
+
+      private static final long serialVersionUID = 6829431667964347305L;
+
+      public Component getTreeCellRendererComponent(JTree tree,
+                                                    Object value,
+                                                    boolean selected,
+                                                    boolean expanded,
+                                                    boolean leaf,
+                                                    int row,
+                                                    boolean hasFocus) 
+      {
+          super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
+          this.setIcon(null);
+          return this;
+      }
 
   }
 
@@ -873,5 +878,14 @@ public class ExplainPlanExecuter
 
   }
 
+  /**
+   * @see net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter#getSelectedResultTab()
+   */
+  public IResultTab getSelectedResultTab() {
+      throw new UnsupportedOperationException("ExplainPlanExecuter has no ResultTabs");
+  }
+
+
+  
 
 }

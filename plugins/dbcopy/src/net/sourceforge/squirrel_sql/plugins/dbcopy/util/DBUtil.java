@@ -118,14 +118,14 @@ public class DBUtil extends I18NBaseObject {
                                            ITableInfo ti) 
         throws SQLException 
     {
-        List pkColumns = getPKColumnList(sourceConn, ti);
+        List<String> pkColumns = getPKColumnList(sourceConn, ti);
         if (pkColumns == null || pkColumns.size() == 0) {
             return null;
         }
         StringBuilder sb = new StringBuilder("(");
-        Iterator i = pkColumns.iterator();
+        Iterator<String> i = pkColumns.iterator();
         while (i.hasNext()) {
-            String columnName = (String)i.next();
+            String columnName = i.next();
             sb.append(columnName);
             if (i.hasNext()) {
                 sb.append(", ");
@@ -144,11 +144,11 @@ public class DBUtil extends I18NBaseObject {
      * @return
      * @throws SQLException
      */
-    private static List getPKColumnList(ISQLConnection sourceConn,
-                                        ITableInfo ti) 
+    private static List<String> getPKColumnList(ISQLConnection sourceConn,
+                                                ITableInfo ti) 
         throws SQLException 
     {
-        ArrayList pkColumns = new ArrayList();
+        ArrayList<String> pkColumns = new ArrayList<String>();
         DatabaseMetaData md = sourceConn.getConnection().getMetaData();
         ResultSet rs = null;
         if (md.supportsCatalogsInTableDefinitions()) {
@@ -175,15 +175,16 @@ public class DBUtil extends I18NBaseObject {
      * Returns a List of SQL statements that add foreign key(s) to the table 
      * described in the specified ITableInfo.
      * 
-     * @param sourceConn
-     * @param ti
+     * @param prov used to see if the destination session connection FKs in the 
+     *             source session exist already 
+     * @param ti the table to get FK information on
      * @return Set a set of SQL statements that can be used to create foreign
      *             key constraints.
      * @throws SQLException
      */
-    public static Set getForeignKeySQL(SessionInfoProvider prov,  
-                                        ITableInfo ti,
-                                        ArrayList selectedTableInfos) 
+    public static Set<String> getForeignKeySQL(SessionInfoProvider prov,  
+                                               ITableInfo ti,
+                                               ArrayList<ITableInfo> selectedTableInfos) 
         throws SQLException , UserCancelledOperationException
     {
         HashSet<String> result = new HashSet<String>();

@@ -613,7 +613,7 @@ public class SQLPanel extends JPanel
    }
 
 
-   private void fireTabTornOffEvent(ResultTab tab)
+   private void fireTabTornOffEvent(IResultTab tab)
 	{
 		// Guaranteed to be non-null.
 		Object[] listeners = _listeners.getListenerList();
@@ -634,7 +634,7 @@ public class SQLPanel extends JPanel
 		}
 	}
 
-	private void fireTornOffResultTabReturned(ResultTab tab)
+	private void fireTornOffResultTabReturned(IResultTab tab)
 	{
 		// Guaranteed to be non-null.
 		Object[] listeners = _listeners.getListenerList();

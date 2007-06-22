@@ -376,6 +376,15 @@ public class SQLPanelAPI implements ISQLPanelAPI
 		return _panel.getSQLEntryPanel();
 	}
 
+    /**
+     * Returns the result execution panel that stores such things as IResultTabs
+     * 
+     * @return an implementation of ISQLResultExecuter 
+     */
+    public ISQLResultExecuter getSQLResultExecuter() {
+        return _panel.getSQLExecPanel();
+    }
+    
 	/**
 	 * Return the entire contents of the SQL entry area.
 	 *

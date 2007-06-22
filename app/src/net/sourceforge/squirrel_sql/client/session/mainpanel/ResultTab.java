@@ -51,7 +51,7 @@ import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
 import net.sourceforge.squirrel_sql.client.session.EditableSqlCheck;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
-public class ResultTab extends JPanel implements IHasIdentifier
+public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 {
 	/** Uniquely identifies this ResultTab. */
 	private IIdentifier _id;
@@ -143,6 +143,9 @@ public class ResultTab extends JPanel implements IHasIdentifier
       propertiesHaveChanged(null);
    }
 
+	/**
+     * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#reInit(net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel, net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo)
+     */
 	public void reInit(IDataSetUpdateableTableModel creator, SQLExecutionInfo exInfo)
 	{
 		_creator = creator;
@@ -219,18 +222,8 @@ public class ResultTab extends JPanel implements IHasIdentifier
 	}
 
 	/**
-	 * Show the results from the passed <TT>IDataSet</TT>.
-	 *
-	 * @param	rsds	<TT>ResultSetDataSet</TT> to show results for.
-	 * @param	mdds	<TT>ResultSetMetaDataDataSet</TT> for rsds.
-	 * @param	exInfo	Execution info.
-	 *
-	 * @throws	IllegalArgumentException
-	 * 			Thrown if <tt>null</tt> <tt>SQLExecutionInfo</tt> passed.
-	 *
-	 * @throws	DataSetException
-	 * 			Thrown if error occured processing dataset.
-	 */
+     * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#showResults(net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet, net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet, net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo)
+     */
 	public void showResults(ResultSetDataSet rsds, ResultSetMetaDataDataSet mdds,
 								SQLExecutionInfo exInfo)
 		throws DataSetException
@@ -276,8 +269,8 @@ public class ResultTab extends JPanel implements IHasIdentifier
 	}
 
 	/**
-	 * Clear results and current SQL script.
-	 */
+     * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#clear()
+     */
 	public void clear()
 	{
 		if (_metaDataOutput != null)
@@ -294,28 +287,24 @@ public class ResultTab extends JPanel implements IHasIdentifier
 	}
 
 	/**
-	 * Return the current SQL script.
-	 *
-	 * @return	Current SQL script.
-	 */
+     * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#getSqlString()
+     */
 	public String getSqlString()
 	{
 		return _exInfo != null ? _exInfo.getSQL() : null;
 	}
 
 	/**
-	 * Return the current SQL script with control characters removed.
-	 *
-	 * @return	Current SQL script.
-	 */
+     * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#getViewableSqlString()
+     */
 	public String getViewableSqlString()
 	{
 		return StringUtilities.cleanString(getSqlString());
 	}
 
 	/**
-	 * Return the title for this tab.
-	 */
+     * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#getTitle()
+     */
 	public String getTitle()
 	{
 		String title = _sql;
@@ -327,25 +316,34 @@ public class ResultTab extends JPanel implements IHasIdentifier
 	}
 
 	/**
-	 * Close this tab.
-	 */
+     * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#closeTab()
+     */
 	public void closeTab()
 	{
 		add(_tp, BorderLayout.CENTER);
 		_sqlPanel.closeTab(this);
 	}
 
+	/**
+     * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#returnToTabbedPane()
+     */
 	public void returnToTabbedPane()
 	{
 		add(_tp, BorderLayout.CENTER);
 		_sqlPanel.returnToTabbedPane(this);
 	}
 
+	/**
+     * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#getOutputComponent()
+     */
 	public Component getOutputComponent()
 	{
 		return _tp;
 	}
 
+    /**
+     * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#reRunSQL()
+     */
     public void reRunSQL() {
         _resultTabListener.rerunSQL(_exInfo.getSQL(), ResultTab.this);
     }
@@ -508,8 +506,8 @@ public class ResultTab extends JPanel implements IHasIdentifier
 
 
    /**
-	 * @see IHasIdentifier#getIdentifier()
-	 */
+ * @see net.sourceforge.squirrel_sql.client.session.mainpanel.IResultTab#getIdentifier()
+ */
 	public IIdentifier getIdentifier()
 	{
 		return _id;
@@ -517,7 +515,9 @@ public class ResultTab extends JPanel implements IHasIdentifier
 
 	private static class QueryInfoPanel extends JPanel
 	{
-		private MultipleLineLabel _queryLbl = new MultipleLineLabel();
+        private static final long serialVersionUID = 2124193091025851544L;
+        
+        private MultipleLineLabel _queryLbl = new MultipleLineLabel();
 		private JLabel _rowCountLbl = new JLabel();
 		private JLabel _executedLbl = new JLabel();
 		private JLabel _elapsedLbl = new JLabel();
