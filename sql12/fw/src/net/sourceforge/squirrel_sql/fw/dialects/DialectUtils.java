@@ -890,11 +890,10 @@ public class DialectUtils {
         try {
             indexInfos = md.getIndexInfo(ti);
         } catch (SQLException e) {
-            //i18n[CreateTableScriptCommand.error.getprimarykey=Unable to get primary key info for table {0}]
+            //i18n[DialectUtils.error.getprimarykey=Unable to get primary key info for table {0}]
             String msg = 
-                s_stringMgr.getString(
-                        "CreateTableScriptCommand.error.getprimarykey", 
-                        ti.getSimpleName());
+                s_stringMgr.getString("DialectUtils.error.getprimarykey", 
+                                      ti.getSimpleName());
             log.error(msg, e);
             return result;
         }       
