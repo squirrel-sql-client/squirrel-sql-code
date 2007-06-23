@@ -13,13 +13,13 @@ import javax.swing.*;
 import java.util.Properties;
 import java.util.HashMap;
 
-public class HqlEntryPanelManager implements IHqlEntryPanelManager
+public class HQLEntryPanelManager implements IHqlEntryPanelManager
 {
    private ISession _session;
    private ISQLEntryPanel _sqlEntry;
    private JComponent _component;
 
-   public HqlEntryPanelManager(ISession session)
+   public HQLEntryPanelManager(ISession session)
    {
       _session = session;
 

@@ -47,6 +47,6 @@ public interface ExceptionFormatter {
      * @throw exception if some problem occurred while attempting to format the
      *        specified exception
      */
-    String format(Throwable t) throws Exception;
+    String format(Throwable t);
     
 }

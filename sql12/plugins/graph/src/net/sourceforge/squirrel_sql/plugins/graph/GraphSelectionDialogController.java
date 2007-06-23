@@ -5,12 +5,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
-import java.util.Arrays;
-import java.util.Vector;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import java.awt.event.*;
 
 
 public class GraphSelectionDialogController
@@ -20,7 +15,7 @@ public class GraphSelectionDialogController
 
 
 	GraphSelectionDialog _dlg;
-   private boolean m_ok;
+   private boolean _ok;
    private GraphController m_selectedController;
    private JFrame _parent;
 
@@ -28,11 +23,7 @@ public class GraphSelectionDialogController
    {
       _parent = parent;
       _dlg = new GraphSelectionDialog(parent);
-      Vector buf = new Vector();
-		// i18n[graph.createNewGraph=Create a new graph]
-		buf.add(s_stringMgr.getString("graph.createNewGraph"));
-      buf.addAll(Arrays.asList(controllers));
-      _dlg.lstControllers.setListData(buf);
+      _dlg.lstControllers.setListData(controllers);
       _dlg.lstControllers.setSelectedIndex(0);
 
       _dlg.lstControllers.addMouseListener(new MouseAdapter()
@@ -51,6 +42,55 @@ public class GraphSelectionDialogController
          }
       });
 
+      _dlg.btnCreateNewGraph.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onCreateNewGraph();
+         }
+      });
+
+      _dlg.btnCancel.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onCancel();
+         }
+      });
+
+
+      AbstractAction closeAction = new AbstractAction()
+      {
+         public void actionPerformed(ActionEvent actionEvent)
+         {
+            close();
+         }
+      };
+      KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+      _dlg.getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(escapeStroke, "CloseAction");
+      _dlg.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "CloseAction");
+      _dlg.getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escapeStroke, "CloseAction");
+      _dlg.getRootPane().getActionMap().put("CloseAction", closeAction);
+
+
+   }
+
+   private void onCancel()
+   {
+      close();
+   }
+
+   private void close()
+   {
+      _dlg.setVisible(false);
+      _dlg.dispose();
+   }
+
+   private void onCreateNewGraph()
+   {
+      // getSelectedController() == null means: Create a new Graph
+      _ok = true;
+      close();
    }
 
    private void onOK()
@@ -75,10 +115,9 @@ public class GraphSelectionDialogController
          return;
       }
 
-      _dlg.setVisible(false);
-      _dlg.dispose();
+      close();
 
-      m_ok = true;
+      _ok = true;
       if(_dlg.lstControllers.getSelectedValue() instanceof GraphController)
       {
          m_selectedController = (GraphController) _dlg.lstControllers.getSelectedValue();
@@ -93,9 +132,13 @@ public class GraphSelectionDialogController
 
    public boolean isOK()
    {
-      return m_ok;
+      return _ok;
    }
 
+
+   /**
+    *  getSelectedController() == null means: Create a new Graph
+    */
    public GraphController getSelectedController()
    {
       return m_selectedController;
