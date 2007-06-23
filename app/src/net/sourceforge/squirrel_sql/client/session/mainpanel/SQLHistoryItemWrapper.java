@@ -7,6 +7,8 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.text.SimpleDateFormat;
 import java.awt.*;
 
@@ -40,6 +42,8 @@ public class SQLHistoryItemWrapper
          ret.add(new SQLHistoryItemWrapper(item, ++i));
       }
 
+      Collections.reverse(ret);
+
       return ret;
    }
 
@@ -47,6 +51,11 @@ public class SQLHistoryItemWrapper
    public static String[] getColumns()
    {
       return COLUMNS;
+   }
+
+   public static int getSQLColIx()
+   {
+      return 2;
    }
 
 
@@ -81,10 +90,6 @@ public class SQLHistoryItemWrapper
       }
    }
 
-   public static int getSQLColIx()
-   {
-      return 2;
-   }
 
    public String getUpperCaseSQL()
    {

@@ -13,8 +13,10 @@ public class GraphSelectionDialog extends JDialog
 		StringManagerFactory.getStringManager(GraphSelectionDialog.class);
 
 
-	public JList lstControllers;
-   public JButton btnOK;
+	JList lstControllers;
+   JButton btnCreateNewGraph;
+   JButton btnOK;
+   JButton btnCancel;
 
    public GraphSelectionDialog(JFrame parent)
    {
@@ -22,19 +24,51 @@ public class GraphSelectionDialog extends JDialog
 		// i18n[graph.selGraph=Select graph]
 		setTitle(s_stringMgr.getString("graph.selGraph"));
 
-      getContentPane().setLayout(new BorderLayout());
+      getContentPane().setLayout(new GridBagLayout());
 
-		// i18n[graph.selGraphToAdd=Select the graph to add the selected tables to]
-		getContentPane().add(new JLabel(s_stringMgr.getString("graph.selGraphToAdd")), BorderLayout.NORTH);
+
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      // i18n[graph.selGraphToAdd=Select the graph to add the selected tables to]
+		getContentPane().add(new JLabel(s_stringMgr.getString("graph.selGraphToAdd")), gbc);
 
       lstControllers = new JList();
       lstControllers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-      getContentPane().add(lstControllers, BorderLayout.CENTER);
+      gbc = new GridBagConstraints(0,1,1,1,1,1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,5,5,5),0,0);
+      getContentPane().add(new JScrollPane(lstControllers), gbc);
 
-		// i18n[graph.btnOk=OK]
+
+      gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5),0,0);
+      getContentPane().add(createButtonPanel(), gbc);
+
+      setSize(400, 300);
+   }
+
+   private JPanel createButtonPanel()
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,5,5),0,0);
+      // i18n[graph.btnOk=OK]
 		btnOK = new JButton(s_stringMgr.getString("graph.btnOk"));
-      getContentPane().add(btnOK, BorderLayout.SOUTH);
+      ret.add(btnOK, gbc);
+      getRootPane().setDefaultButton(btnOK);
 
-      setSize(300, 300);
+
+      gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,5,5,5),0,0);
+      // i18n[graph.btnCreateNewGraph=Create new graph]
+		btnCreateNewGraph = new JButton(s_stringMgr.getString("graph.btnCreateNewGraph"));
+      ret.add(btnCreateNewGraph, gbc);
+
+      gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,5,5,5),0,0);
+      // i18n[graph.btnCancel=Cancel]
+		btnCancel = new JButton(s_stringMgr.getString("graph.btnCancel"));
+      ret.add(btnCancel, gbc);
+
+
+      return ret;
    }
 }
