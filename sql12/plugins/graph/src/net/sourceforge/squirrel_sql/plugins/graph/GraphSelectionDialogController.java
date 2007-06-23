@@ -111,7 +111,7 @@ public class GraphSelectionDialogController
       if (null == _dlg.lstControllers.getSelectedValue())
       {
 			// i18n[graph.noSel=No selection]
-			JOptionPane.showConfirmDialog(_parent, s_stringMgr.getString("graph.noSel"));
+			JOptionPane.showMessageDialog(_parent, s_stringMgr.getString("graph.noSel"));
          return;
       }
 

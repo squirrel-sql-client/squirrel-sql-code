@@ -39,7 +39,7 @@ public class GraphSelectionDialog extends JDialog
       getContentPane().add(new JScrollPane(lstControllers), gbc);
 
 
-      gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0,5,5,5),0,0);
+      gbc = new GridBagConstraints(0,2,1,1,1,0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0,5,5,5),0,0);
       getContentPane().add(createButtonPanel(), gbc);
 
       setSize(400, 300);
