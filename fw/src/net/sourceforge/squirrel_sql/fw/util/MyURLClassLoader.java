@@ -31,6 +31,7 @@ import java.util.zip.ZipFile;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 
+@SuppressWarnings("unchecked")
 public class MyURLClassLoader extends URLClassLoader
 {
 	/** Internationalized strings for this class. */
@@ -161,7 +162,7 @@ public class MyURLClassLoader extends URLClassLoader
 	protected synchronized Class findClass(String className)
 		throws ClassNotFoundException
 	{
-		Class cls = (Class) _classes.get(className);
+		Class cls = _classes.get(className);
 		if (cls == null)
 		{
 			cls = super.findClass(className);
@@ -170,6 +171,7 @@ public class MyURLClassLoader extends URLClassLoader
 		return cls;
 	}
 
+    @SuppressWarnings("unused")
 	protected void classHasBeenLoaded(Class cls)
 	{
 		// Empty
