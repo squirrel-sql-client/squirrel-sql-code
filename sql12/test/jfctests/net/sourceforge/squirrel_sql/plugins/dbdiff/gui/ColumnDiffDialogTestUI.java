@@ -30,6 +30,8 @@ import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.ColumnDifference;
 import net.sourceforge.squirrel_sql.test.TestUtil;
 
+import static java.sql.Types.*;
+
 public class ColumnDiffDialogTestUI {
 
     public static void main(String[] args) throws Exception {
@@ -48,10 +50,17 @@ public class ColumnDiffDialogTestUI {
         diff2.setColumns(column3, column4);
         diff2.execute();
         
+        ColumnDifference diff3 = new ColumnDifference();
+        TableColumnInfo column5 = 
+            TestUtil.getTableColumnInfo(md, "LongColumnName", VARCHAR, 100, 0, false);
+        diff3.setColumn1(column5);
+        diff3.setCol2Exists(false);
+        
         final ArrayList<ColumnDifference> diffs = new ArrayList<ColumnDifference>();
         diffs.add(diff);
         diffs.add(diff2);
-        ApplicationArguments.initialize(new String[] {});
+        diffs.add(diff3);
+
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 JFrame f = new JFrame();
