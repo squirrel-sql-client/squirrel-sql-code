@@ -43,7 +43,7 @@ public class MockResultSet implements ResultSet {
 	/**
 	 * The simulated results from the "database"
 	 */
-	ArrayList rowData = new ArrayList();
+	ArrayList<Object[]> rowData = new ArrayList<Object[]>();
     
 	/** 
 	 * The index into rowData of the next row to be used to return column 
@@ -158,11 +158,13 @@ public class MockResultSet implements ResultSet {
 		return null;
 	}
 
+    @SuppressWarnings("deprecation")
 	public BigDecimal getBigDecimal(int arg0, int arg1) throws SQLException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+    @SuppressWarnings("deprecation")
 	public BigDecimal getBigDecimal(String arg0, int arg1) throws SQLException {
 		// TODO Auto-generated method stub
 		return null;
@@ -329,12 +331,14 @@ public class MockResultSet implements ResultSet {
 		return null;
 	}
 
+    @SuppressWarnings("unchecked")
 	public Object getObject(int arg0, Map arg1) throws SQLException {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	public Object getObject(String arg0, Map arg1) throws SQLException {
+	
+	@SuppressWarnings("unchecked")
+    public Object getObject(String arg0, Map arg1) throws SQLException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -439,11 +443,13 @@ public class MockResultSet implements ResultSet {
 		return null;
 	}
 
+    @SuppressWarnings("deprecation")
 	public InputStream getUnicodeStream(int arg0) throws SQLException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+    @SuppressWarnings("deprecation")
 	public InputStream getUnicodeStream(String arg0) throws SQLException {
 		// TODO Auto-generated method stub
 		return null;
@@ -815,17 +821,15 @@ public class MockResultSet implements ResultSet {
 	}
 	
 	private int getIntValue(int colIdx) throws SQLException {
-		String value = getStringValue(colIdx);
 		return Integer.parseInt(getStringValue(colIdx));
 	}
 
 	private long getLongValue(int colIdx) throws SQLException {
-		String value = getStringValue(colIdx);
 		return Long.parseLong(getStringValue(colIdx));
 	}	
 	
 	private Object[] currentRow() {
-		return (Object[])rowData.get(cursorIndex);
+		return rowData.get(cursorIndex);
 	}
 
 }
