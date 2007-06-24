@@ -7,20 +7,23 @@ import net.sourceforge.squirrel_sql.BaseSQuirreLTestCase;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.test.TestUtil;
 
 public class MyURLClassLoaderTest extends BaseSQuirreLTestCase {
 
-    private static final String COMMONS_CLI_JAR_URL = 
-        "file:../squirrel-sql-dist/squirrel-sql/core/dist/lib/commons-cli.jar";
+    private static String filePrefix = "file:";
     
-    private static final String DBCOPY_JAR_URL =
-        "file:../squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/dbcopy.jar";
+    private static String COMMONS_CLI_JAR = 
+        "squirrel-sql-dist/squirrel-sql/core/dist/lib/commons-cli.jar";
+    
+    private static String DBCOPY_JAR =
+        "squirrel-sql-dist/squirrel-sql/plugins/dbcopy/dist/dbcopy.jar";
 
-    private static final String BOGUS_ZIP_FILE_URL = 
-        "file:../squirrel-sql-dist/squirrel-sql/core/dist/log4j.properties";
+    private static String BOGUS_ZIP_FILE = 
+        "squirrel-sql-dist/squirrel-sql/core/dist/log4j.properties";
 
-    private static final String EXTERNAL_DEPENDS_JAR_URL = 
-        "file:./plugins/syntax/lib/syntax.jar";
+    private static String EXTERNAL_DEPENDS_JAR = 
+        "plugins/syntax/lib/syntax.jar";
     
     private static final String COMMONS_CLI_OPTION_CLASS = 
         "org.apache.commons.cli.Option";
@@ -35,8 +38,27 @@ public class MyURLClassLoaderTest extends BaseSQuirreLTestCase {
     
     protected void setUp() throws Exception {
         super.setUp();
+        
     }
 
+    /**
+     * Try to locate the file using different prefixes so that the test can be
+     * run from the ant script, or from in Eclipse.
+     * 
+     * @param filename
+     * @return
+     */
+    private String getFilePrefixedFilename(String filename) {
+        String distDir = 
+            TestUtil.findAncestorSquirrelSqlDistDirBase("squirrel-sql-dist");
+        if (distDir == null) {
+            throw new IllegalStateException("Couldn't locate distDir (squirrel-sql-dist)");
+        }
+        String result = filePrefix + distDir + filename;
+        System.out.println("Found file: "+result);
+        return result;
+    }
+    
     protected void tearDown() throws Exception {
         super.tearDown();
     }
@@ -53,15 +75,16 @@ public class MyURLClassLoaderTest extends BaseSQuirreLTestCase {
     }
 
     public void testMyURLClassLoaderURL() {
-        getIPluginAssignableClasses(COMMONS_CLI_JAR_URL);
+        getIPluginAssignableClasses(getFilePrefixedFilename(COMMONS_CLI_JAR));
     }
 
     public void testMyURLClassLoaderURLArray() {
         try {
-            URL url = new URL(DBCOPY_JAR_URL);
+            URL url = new URL(getFilePrefixedFilename(DBCOPY_JAR));
             MyURLClassLoader loader = new MyURLClassLoader(new URL[] {url});
             loader.findClass(DBCOPY_PLUGIN_CLASS);
         } catch (Exception e) {
+            e.printStackTrace();
             fail(e.getMessage());
         }                
     }
@@ -70,13 +93,13 @@ public class MyURLClassLoaderTest extends BaseSQuirreLTestCase {
     
     public void testAddClassLoaderListener() {
         MyClassLoaderListener listener = new MyClassLoaderListener();
-        MyURLClassLoader loader = getLoader(COMMONS_CLI_JAR_URL);
+        MyURLClassLoader loader = getLoader(getFilePrefixedFilename(COMMONS_CLI_JAR));
         loader.addClassLoaderListener(listener);
     }
 
     public void testRemoveClassLoaderListener() {
         MyClassLoaderListener listener = new MyClassLoaderListener();
-        MyURLClassLoader loader = getLoader(DBCOPY_JAR_URL);
+        MyURLClassLoader loader = getLoader(getFilePrefixedFilename(DBCOPY_JAR));
         loader.addClassLoaderListener(listener);
         try {
             loader.getAssignableClasses(IPlugin.class, s_log);
@@ -95,23 +118,24 @@ public class MyURLClassLoaderTest extends BaseSQuirreLTestCase {
         assertEquals(0, listener.loadingZipFileCount);
     }
 
+    @SuppressWarnings("unchecked")
     public void testGetAssignableClasses() {
-        Class[] classes = getIPluginAssignableClasses(COMMONS_CLI_JAR_URL);
+        Class[] classes = getIPluginAssignableClasses(getFilePrefixedFilename(COMMONS_CLI_JAR));
         assertEquals(0, classes.length);
         
-        classes = getIPluginAssignableClasses(DBCOPY_JAR_URL);
+        classes = getIPluginAssignableClasses(getFilePrefixedFilename(DBCOPY_JAR));
         assertEquals(1, classes.length);
         
-        classes = getIPluginAssignableClasses(BOGUS_ZIP_FILE_URL);
+        classes = getIPluginAssignableClasses(getFilePrefixedFilename(BOGUS_ZIP_FILE));
         assertEquals(0, classes.length);
         
-        classes = getIPluginAssignableClasses(EXTERNAL_DEPENDS_JAR_URL);
+        classes = getIPluginAssignableClasses(getFilePrefixedFilename(EXTERNAL_DEPENDS_JAR));
         assertEquals(0, classes.length);
         
     }
 
     public void testFindClassString() {
-        MyURLClassLoader loader = getLoader(COMMONS_CLI_JAR_URL);
+        MyURLClassLoader loader = getLoader(getFilePrefixedFilename(COMMONS_CLI_JAR));
         try {
             loader.findClass(COMMONS_CLI_OPTION_CLASS);
         } catch (Exception e) {
@@ -121,7 +145,7 @@ public class MyURLClassLoaderTest extends BaseSQuirreLTestCase {
 
     public void testClassHasBeenLoaded() {
         try {
-            MyURLClassLoader loader = getLoader(COMMONS_CLI_JAR_URL);
+            MyURLClassLoader loader = getLoader(getFilePrefixedFilename(COMMONS_CLI_JAR));
             loader.findClass(COMMONS_CLI_OPTION_CLASS);
             loader.classHasBeenLoaded(org.apache.commons.cli.Option.class);
         } catch (Exception e) {
@@ -130,7 +154,7 @@ public class MyURLClassLoaderTest extends BaseSQuirreLTestCase {
     }
 
     // HELPERS
-    
+    @SuppressWarnings("unchecked")    
     private Class[] getIPluginAssignableClasses(String urlToSearch) {
         MyURLClassLoader loader = getLoader(urlToSearch);
         return loader.getAssignableClasses(IPlugin.class, s_log);
