@@ -122,6 +122,7 @@ public class ProxyPreparedStatement extends ProxyStatement implements
 		_pstmt.setBinaryStream(parameterIndex,x,length);
 	}
 
+    @SuppressWarnings("deprecation")
     public void setUnicodeStream(int parameterIndex, InputStream x, int length)
             throws SQLException {
 		ProxyMethodManager.check("ProxyPreparedStatement", "setUnicodeStream");

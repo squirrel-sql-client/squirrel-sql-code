@@ -251,6 +251,7 @@ public class ProxyResultSet implements ResultSet {
 		ProxyMethodManager.check("ProxyResultSet", "getBinaryStream");
 		return _rs.getBinaryStream(columnIndex);
 	}
+    @SuppressWarnings("deprecation")
     public InputStream getUnicodeStream(int columnIndex) throws SQLException {
 		ProxyMethodManager.check("ProxyResultSet", "getUnicodeStream");
 		return _rs.getUnicodeStream(columnIndex);
@@ -473,6 +474,8 @@ public class ProxyResultSet implements ResultSet {
 		ProxyMethodManager.check("ProxyResultSet", "getBinaryStream");
 		return _rs.getBinaryStream(columnName);
 	}
+    
+    @SuppressWarnings("deprecation")
     public InputStream getUnicodeStream(String columnName) throws SQLException {
 		ProxyMethodManager.check("ProxyResultSet", "getUnicodeStream");
 		return _rs.getUnicodeStream(columnName);
@@ -511,6 +514,7 @@ public class ProxyResultSet implements ResultSet {
 		ProxyMethodManager.check("ProxyResultSet", "updateObject");
 		_rs.updateObject(columnName,x);
 	}
+    @SuppressWarnings("unchecked")
     public Object getObject(int i, Map map) throws SQLException {
 		ProxyMethodManager.check("ProxyResultSet", "getObject");
 		return _rs.getObject(i,map);
@@ -527,6 +531,7 @@ public class ProxyResultSet implements ResultSet {
 		ProxyMethodManager.check("ProxyResultSet", "getBigDecimal");
 		return _rs.getBigDecimal(columnName);
 	}
+    @SuppressWarnings("deprecation")
     public BigDecimal getBigDecimal(String columnName, int scale) throws SQLException {
 		ProxyMethodManager.check("ProxyResultSet", "getBigDecimal");
 		return _rs.getBigDecimal(columnName);
@@ -607,6 +612,7 @@ public class ProxyResultSet implements ResultSet {
 		ProxyMethodManager.check("ProxyResultSet", "getTimestamp");
 		return _rs.getTimestamp(columnIndex, cal);
 	}
+    @SuppressWarnings("unchecked")
     public Object getObject(String colName, Map map) throws SQLException {
 		ProxyMethodManager.check("ProxyResultSet", "getObject");
 		return _rs.getObject(colName,map);

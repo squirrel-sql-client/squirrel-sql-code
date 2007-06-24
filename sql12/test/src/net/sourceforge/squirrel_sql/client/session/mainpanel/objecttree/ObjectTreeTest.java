@@ -56,7 +56,7 @@ public class ObjectTreeTest extends TestCase {
      * changed (i.e. the user added or deleted records)
      */
     public void testMatchKeyPrefixDeletedRows() {
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<String, Object>();
         String tableKey = "table(100)";
         map.put(tableKey, null);
         SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
