@@ -49,23 +49,24 @@ public class TableDiffExecutor {
         Set<String> t2ColumnNames = getAllColumnNames(t2cols);
         Map<String, TableColumnInfo> t2ColMap = getColumnMap(t2cols);
         
-        for (Iterator<String> iter = columnNames.iterator(); iter.hasNext();) {
-            String columnName = iter.next();
+        for (String columnName : columnNames) {
             ColumnDifference diff = new ColumnDifference();
             if (t1ColumnNames.contains(columnName)) {
-                if (t2ColumnNames.contains(columnName)) {
-                    // Column is in both table 1 and 2
-                    TableColumnInfo c1 = t1ColMap.get(columnName);
+                TableColumnInfo c1 = t1ColMap.get(columnName);
+                
+                if (t2ColumnNames.contains(columnName)) { // Column is in both table 1 and 2
                     TableColumnInfo c2 = t2ColMap.get(columnName);
                     diff.setColumns(c1, c2);
                 } else {
                     // Column is in table 1, but not table 2
                     diff.setCol2Exists(false);
+                    diff.setColumn1(c1);
                 }
             } else {
                 // Column is in table 2, but not table 1 - how else would we get
                 // here??
                 diff.setCol1Exists(false);
+                diff.setColumn2(t2ColMap.get(columnName));
             }
             if (diff.execute()) {
                 colDifferences.add(diff);
