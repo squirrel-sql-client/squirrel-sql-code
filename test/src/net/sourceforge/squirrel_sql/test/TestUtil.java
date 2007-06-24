@@ -7,6 +7,7 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.startsWith;
 import static org.easymock.EasyMock.isA;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -16,8 +17,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.swing.Action;
+
+import org.easymock.classextension.EasyMock;
+
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
@@ -141,7 +148,22 @@ public class TestUtil {
         return sqlCon;
     }
     
+    public static ISQLDatabaseMetaData getEasyMockH2SQLMetaData() 
+        throws SQLException 
+    {
+        ISQLDatabaseMetaData md = createMock(ISQLDatabaseMetaData.class);
+        expect(md.getDatabaseProductName()).andReturn("H2").anyTimes();
+        expect(md.getDatabaseProductVersion()).andReturn("1.0 (2007-04-29)").anyTimes();
+        expect(md.supportsSchemasInDataManipulation()).andReturn(true).anyTimes();
+        expect(md.supportsCatalogsInDataManipulation()).andReturn(false).anyTimes();
+        expect(md.getCatalogSeparator()).andReturn(".").anyTimes();
+        expect(md.getIdentifierQuoteString()).andReturn("\"").anyTimes();
+        expect(md.getURL()).andReturn("jdbc:h2:tcp://localhost:9094/testDatabase").anyTimes();
+        replay(md);
+        return md;
+    }
 
+    
     public static ISQLDatabaseMetaData getEasyMockSQLMetaData(String dbName,
                                                               String dbURL,
                                                               boolean nice,
@@ -160,7 +182,7 @@ public class TestUtil {
         expect(md.supportsSchemasInDataManipulation()).andReturn(true).anyTimes();
         expect(md.supportsCatalogsInDataManipulation()).andReturn(true).anyTimes();
         expect(md.getCatalogSeparator()).andReturn("").anyTimes();
-        expect(md.getIdentifierQuoteString()).andReturn("'").anyTimes();
+        expect(md.getIdentifierQuoteString()).andReturn("\"").anyTimes();
         expect(md.getURL()).andReturn(dbURL).anyTimes();
         if (replay) {
             replay(md);
@@ -207,7 +229,11 @@ public class TestUtil {
         } else {
             result = createMock(IApplication.class);
         }
-        expect(result.getMainFrame()).andReturn(null);
+        SquirrelResources resoures = getEasyMockSquirrelResources();
+        SquirrelPreferences prefs = getEasyMockSquirrelPreferences();
+        expect(result.getMainFrame()).andReturn(null).anyTimes();
+        expect(result.getResources()).andReturn(resoures).anyTimes();
+        expect(result.getSquirrelPreferences()).andReturn(prefs).anyTimes();
         replay(result);
         return result;
     }    
@@ -216,6 +242,21 @@ public class TestUtil {
         return getEasyMockApplication(true);
     }
 
+    public static SquirrelResources getEasyMockSquirrelResources() {
+        SquirrelResources resources = EasyMock.createMock(SquirrelResources.class);
+        resources.setupAction(isA(Action.class), EasyMock.anyBoolean());
+        EasyMock.expectLastCall().times(1, 10000);
+        replay(resources);
+        return resources;
+    }
+    
+    public static SquirrelPreferences getEasyMockSquirrelPreferences() {
+        SquirrelPreferences prefs = EasyMock.createMock(SquirrelPreferences.class);
+        expect(prefs.getShowColoriconsInToolbar()).andReturn(true).anyTimes();
+        replay(prefs);
+        return prefs;
+    }
+    
     public static ForeignKeyInfo[] getEasyMockForeignKeyInfos(String fkName,
                                                               String ctab, 
                                                               String ccol, 
@@ -564,4 +605,17 @@ public class TestUtil {
         return info;
     }
     
+    public static String findAncestorSquirrelSqlDistDirBase(String dirToFind) {
+        File f = new File("../"+dirToFind); 
+        if (f.exists()) return "../";
+        f = new File("../../"+dirToFind); 
+        if (f.exists()) return "../../";
+        f = new File("../../../"+dirToFind); 
+        if (f.exists()) return "../../../";
+        f = new File("../../../../"+dirToFind); 
+        if (f.exists()) return "../../../../";
+        f = new File("../../../../../"+dirToFind); 
+        if (f.exists()) return "../../../../../";        
+        return null;
+    }
 }

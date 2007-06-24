@@ -267,7 +267,10 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
 
    public boolean equals(Object obj)
    {
-      if (obj instanceof DatabaseObjectInfo)
+      if (obj == null) {
+          return false;
+      }
+      if (obj.getClass() == this.getClass())
       {
          DatabaseObjectInfo info = (DatabaseObjectInfo) obj;
          if ((info._catalog == null && _catalog == null)
