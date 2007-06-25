@@ -18,6 +18,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.client.session.parser.ParserEventsAdapter;
+import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.ErrorInfo;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.plugins.syntax.KeyManager;
@@ -159,7 +160,7 @@ public class NetbeansSQLEditorPane extends JEditorPane
             if(_session.getActiveSessionWindow().hasSQLPanelAPI())
             {
                IIdentifier entryPanelId = _session.getSQLPanelAPIOfActiveSessionWindow().getSQLEntryPanel().getIdentifier();
-               _session.getParserEventsProcessor(entryPanelId).triggerParser();
+               triggerParser(entryPanelId);
             }
          }
       };
@@ -168,6 +169,17 @@ public class NetbeansSQLEditorPane extends JEditorPane
 
       getKeymap().addActionForKeyStroke(ks, triggerParserAction);
    }
+
+   private void triggerParser(IIdentifier entryPanelId)
+   {
+      IParserEventsProcessor parserEventsProcessor = _propertiesWrapper.getParserEventsProcessor(entryPanelId, _session);
+
+      if(null != parserEventsProcessor)
+      {
+         parserEventsProcessor.triggerParser();
+      }
+   }
+
 
    public void updateFromPreferences()
    {

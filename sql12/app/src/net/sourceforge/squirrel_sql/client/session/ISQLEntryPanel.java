@@ -24,6 +24,7 @@ import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.text.JTextComponent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoManager;
@@ -39,7 +40,7 @@ public interface ISQLEntryPanel extends IHasIdentifier
 	 *
 	 * @return	The text area component.
 	 */
-	JComponent getTextComponent();
+	JTextComponent getTextComponent();
 
 	/**
 	 * If the component returned by <TT>getTextComponent</TT> contains

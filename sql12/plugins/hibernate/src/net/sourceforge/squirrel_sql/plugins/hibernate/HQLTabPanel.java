@@ -16,7 +16,6 @@ public class HQLTabPanel extends JPanel
    private static final String PERF_KEY_HQL_TAB_DIVIDER_LOCATION = "Squirrel.hibernateplugin.hqlTabDivLoc";
 
 
-   JTextArea txtSQL;
    JSplitPane split;
    JComboBox cboConfigurations;
    JToggleButton btnConnected;
@@ -24,7 +23,7 @@ public class HQLTabPanel extends JPanel
    private int _curXOfToolbar;
 
 
-   public HQLTabPanel(JComponent textComp)
+   public HQLTabPanel(JComponent hqlTextComp, JComponent sqlTextComp)
    {
       setLayout(new GridBagLayout());
 
@@ -34,19 +33,8 @@ public class HQLTabPanel extends JPanel
       _toolbar = createToolbar();
       add(_toolbar, gbc);
 
-      txtSQL = new JTextArea()
-      {
-         protected void paintComponent(Graphics g)
-         {
-            super.paintComponent(g);
-            super.paintBorder(g);
-            drawTextAreaName(g, "SQL", txtSQL);
-            super.paintChildren(g);
-         }
-      };
 
-
-      split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, textComp, new JScrollPane(txtSQL));
+      split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, hqlTextComp, sqlTextComp);
       gbc = new GridBagConstraints(0,1,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0 );
       add(split, gbc);
 
@@ -61,23 +49,6 @@ public class HQLTabPanel extends JPanel
 
    }
 
-
-   private void drawTextAreaName(Graphics g, String name, JTextArea txtArea)
-   {
-      Color oldCol = g.getColor();
-      Rectangle2D bounds = g.getFontMetrics().getStringBounds(name, g);
-
-      Dimension size = txtArea.getSize();
-
-      g.setColor(Color.lightGray);
-
-      int x = size.width - bounds.getBounds().width  - 10;
-      int y = size.height - bounds.getBounds().height - 20;
-
-      g.drawString(name, x, y);
-
-      g.setColor(oldCol);
-   }
 
    public void closing()
    {
@@ -102,11 +73,15 @@ public class HQLTabPanel extends JPanel
 
       cboConfigurations = new JComboBox();
       gbc = new GridBagConstraints(_curXOfToolbar++,0,1,1, 1,0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5,0,5,5), 0,0);
-      ret.add(cboConfigurations, gbc);
+      ret.add(cboConfigurations, gbc);                      
 
       gbc = new GridBagConstraints(_curXOfToolbar++,0,1,1, 0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       
       btnConnected = new JToggleButton();
+
+      //i18n[hibernate.HQLTabPanel.connect=Connect/disconnect configuration selected configuration]
+      btnConnected.setToolTipText(s_stringMgr.getString("hibernate.HQLTabPanel.connect"));
+
       ret.add(btnConnected, gbc);
 
       return ret;

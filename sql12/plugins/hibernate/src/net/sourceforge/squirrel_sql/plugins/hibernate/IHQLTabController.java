@@ -1,10 +1,12 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate;
 
 import javax.swing.*;
+import java.util.ArrayList;
 
 public interface IHQLTabController
 {
-   void displaySQLs(String sqls);
 
    void addToToolbar(AbstractAction action);
+
+   void displaySqls(ArrayList<String> sqls);
 }

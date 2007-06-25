@@ -8,6 +8,8 @@ import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.*;
 import java.util.ArrayList;
 
 public class HQLPanelController
@@ -37,18 +39,29 @@ public class HQLPanelController
             onConvertToHQL();
          }
       };
-      //_convertToSQL.putValue(AbstractAction.SMALL_ICON, _resource.getIcon(HibernatePluginResources.IKeys.HQL_IMAGE));
 
-      //_convertToSQL.putValue(AbstractAction.SHORT_DESCRIPTION,  "HQL to SQL");
-      _convertToSQL.putValue(AbstractAction.NAME,  "HQL to SQL");
+      // i18n[hibernate.hqlToSqlLong=HQL to SQL]
+      _convertToSQL.putValue(AbstractAction.NAME,  s_stringMgr.getString("hibernate.hqlToSqlLong"));
+
+      // i18n[hibernate.hqlToSqlShort=Convert HQL to SQL (ctrl + enter)]
+      _convertToSQL.putValue(AbstractAction.SHORT_DESCRIPTION,  s_stringMgr.getString("hibernate.hqlToSqlShort"));
 
       _convertToSQL.setEnabled(false);
 
       _hqlTabController.addToToolbar(_convertToSQL);
+
+      KeyStroke ctrlEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, Event.CTRL_MASK);
+      hqlEntryPanelManager.addKeystrokeListener(ctrlEnter, _convertToSQL);
+
    }
 
    private void onConvertToHQL()
    {
+      if(false == _convertToSQL.isEnabled())
+      {
+         return;
+      }
+
       String hql = _hqlEntryPanelManager.getEntryPanel().getSQLToBeExecuted();
 
       if(null != hql && 0 != hql.trim().length())
@@ -73,24 +86,7 @@ public class HQLPanelController
             return;
          }
 
-         StringBuffer sqls = new StringBuffer();
-
-         String sep = _sess.getProperties().getSQLStatementSeparator();
-
-
-
-         for (String sql : list)
-         {
-            sqls.append(sql);
-
-            if(1 < sep.length())
-            {
-               sqls.append("\n");
-            }
-            sqls.append(sep).append("\n\n");
-         }
-
-         _hqlTabController.displaySQLs(sqls.toString());
+         _hqlTabController.displaySqls(list);
 
 
          // i18n[HQLPanelController.hqlToSqlSuccess=Generated {0} SQL(s) in {1} milliseconds.]
@@ -98,6 +94,7 @@ public class HQLPanelController
 
       }
    }
+
 
    public void setConnection(HibernateConnection con)
    {
