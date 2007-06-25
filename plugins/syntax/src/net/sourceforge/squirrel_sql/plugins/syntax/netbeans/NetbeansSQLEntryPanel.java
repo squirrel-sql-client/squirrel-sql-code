@@ -33,6 +33,7 @@ import javax.swing.event.UndoableEditListener;
 import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
 import javax.swing.text.Element;
+import javax.swing.text.JTextComponent;
 import javax.swing.undo.UndoManager;
 
 import java.awt.*;
@@ -96,7 +97,7 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 	/**
 	 * @see ISQLEntryPanel#gettextComponent()
 	 */
-	public JComponent getTextComponent()
+	public JTextComponent getTextComponent()
 	{
 		return _textArea;
 	}
@@ -144,8 +145,8 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void setText(String text)
 	{
-		setText(text, false);
-      _session.getParserEventsProcessor(getIdentifier()).triggerParser();
+		setText(text, true);
+      triggerParser();
 	}
 
 	/**
@@ -159,9 +160,12 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 	public void setText(String text, boolean select)
 	{
 		_textArea.setText(text);
-		setSelectionEnd(_textArea.getDocument().getLength());
-		setSelectionStart(0);
-      _session.getParserEventsProcessor(getIdentifier()).triggerParser();
+      if (select)
+      {
+         setSelectionEnd(_textArea.getDocument().getLength());
+         setSelectionStart(0);
+      }
+      triggerParser();
 	}
 
 	/**
@@ -203,7 +207,7 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 				setSelectionStart(start);
 			}
 
-         _session.getParserEventsProcessor(getIdentifier()).triggerParser();
+         triggerParser();
 
 		}
 		catch (Exception ex)
@@ -276,16 +280,21 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 	{
 		_textArea.replaceSelection(sqlScript);
 
+      triggerParser();
+
+   }
+
+   private void triggerParser()
+   {
       IParserEventsProcessor parserEventsProcessor = _propertiesWrapper.getParserEventsProcessor(getIdentifier(), _session);
 
       if(null != parserEventsProcessor)
       {
          parserEventsProcessor.triggerParser();
       }
-
    }
 
-	/**
+   /**
 	 * @see ISQLEntryPanel#hasFocus()
 	 */
 	public boolean hasFocus()

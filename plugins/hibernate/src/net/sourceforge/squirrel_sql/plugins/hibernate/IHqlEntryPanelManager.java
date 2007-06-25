@@ -8,4 +8,6 @@ public interface IHqlEntryPanelManager
 {
    JComponent  getComponent();
    ISQLEntryPanel getEntryPanel();
+
+   void addKeystrokeListener(KeyStroke ctrlEnter, AbstractAction action);
 }

@@ -1,7 +1,8 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate;
 
-import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
+import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesSheet;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -10,15 +11,16 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateConfiguration;
 import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateController;
+import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernatePanel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.prefs.Preferences;
 
 public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibernateConnectionProvider
@@ -40,6 +42,7 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
    private HQLPanelController _hqlPanelController;
    private HQLEntryPanelManager _hqlEntrPanelManager;
    private ArrayList<ConnectionListener> _listeners = new ArrayList<ConnectionListener>();
+   private SQLPanelManager _sqlPanelManager;
 
    public HQLTabController(ISession session, HibernatePlugin plugin, HibernatePluginResources resource)
    {
@@ -49,7 +52,8 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
          _session = session;
          _plugin = plugin;
          _hqlEntrPanelManager = new HQLEntryPanelManager(_session);
-         _panel = new HQLTabPanel(_hqlEntrPanelManager.getComponent());
+         _sqlPanelManager = new SQLPanelManager(_session);
+         _panel = new HQLTabPanel(_hqlEntrPanelManager.getComponent(), _sqlPanelManager.getComponent());
          _panel.btnConnected.setIcon(resource.getIcon(HibernatePluginResources.IKeys.DISCONNECTED_IMAGE));
 
          _hqlPanelController = new HQLPanelController(_hqlEntrPanelManager, this, _session, _resource);
@@ -127,9 +131,16 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
          }
          else
          {
-            // i18n[HQLTabController.noConfigSelected=Please select a Hibernate Configuration to connect to.\nHibernate Configurations can be defined in the global preferences window.]
-            JOptionPane.showMessageDialog(_session.getApplication().getMainFrame(), s_stringMgr.getString("HQLTabController.noConfigSelected"));
             _panel.btnConnected.setSelected(false);
+
+            // i18n[HQLTabController.noConfigSelected=Please select a Hibernate configuration to connect to.\nHibernate configurations can be defined in the global preferences window.\nWould you like to open the window now?]
+            int opt = JOptionPane.showConfirmDialog(_session.getApplication().getMainFrame(), s_stringMgr.getString("HQLTabController.noConfigSelected"));
+
+
+            if(JOptionPane.YES_OPTION == opt)
+            {
+               GlobalPreferencesSheet.showSheet(_plugin.getApplication(), HibernatePanel.class);
+            }
          }
 
       }
@@ -216,14 +227,15 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
    {
    }
 
-   public void displaySQLs(String sqls)
-   {
-      _panel.txtSQL.setText(sqls);
-   }
 
    public void addToToolbar(AbstractAction action)
    {
       _panel.addToToolbar(new JButton(action));
+   }
+
+   public void displaySqls(ArrayList<String> sqls)
+   {
+      _sqlPanelManager.displaySqls(sqls);
    }
 
    public void sessionEnding()

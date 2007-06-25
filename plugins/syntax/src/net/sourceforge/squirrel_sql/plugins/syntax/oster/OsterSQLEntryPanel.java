@@ -31,6 +31,7 @@ import javax.swing.event.UndoableEditListener;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
 import javax.swing.text.PlainDocument;
+import javax.swing.text.JTextComponent;
 import javax.swing.undo.UndoManager;
 
 import org.netbeans.editor.BaseDocument;
@@ -87,7 +88,7 @@ public class OsterSQLEntryPanel extends BaseSQLEntryPanel
 	/**
 	 * @see ISQLEntryPanel#gettextComponent()
 	 */
-	public JComponent getTextComponent()
+	public JTextComponent getTextComponent()
 	{
 		return _textArea;
 	}
@@ -133,7 +134,7 @@ public class OsterSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void setText(String text)
 	{
-		setText(text, false);
+		setText(text, true);
 	}
 
 	/**
@@ -147,9 +148,13 @@ public class OsterSQLEntryPanel extends BaseSQLEntryPanel
 	public void setText(String text, boolean select)
 	{
 		_textArea.setText(text);
-		setSelectionEnd(_textArea.getDocument().getLength());
-		setSelectionStart(0);
-	}
+
+      if(select)
+      {
+         setSelectionEnd(_textArea.getDocument().getLength());
+         setSelectionStart(0);
+      }
+   }
 
 	/**
 	 * Append the passed SQL script to the SQL entry area but don't select

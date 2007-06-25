@@ -25,6 +25,7 @@ import javax.swing.JTextArea;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.JTextComponent;
 import javax.swing.undo.UndoManager;
 
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
@@ -63,7 +64,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	 *
 	 * @return	The text area component.
 	 */
-	public JComponent getTextComponent()
+	public JTextComponent getTextComponent()
 	{
 		return _comp;
 	}
@@ -123,7 +124,7 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void setText(String sqlScript)
 	{
-		setText(sqlScript, false);
+		setText(sqlScript, true);
 	}
 
 	/**
@@ -141,8 +142,8 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 		{
 			setSelectionEnd(getText().length());
 			setSelectionStart(0);
-			_comp.setCaretPosition(0);
 		}
+      _comp.setCaretPosition(0);
 	}
 
 	/**
