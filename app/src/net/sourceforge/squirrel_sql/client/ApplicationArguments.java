@@ -104,6 +104,8 @@ public class ApplicationArguments
 		super();
 		createOptions();
 
+        // set up array to return for public access to cmd line args
+        _rawArgs = args;        
 
 		final CommandLineParser parser = new GnuParser();
 		try
