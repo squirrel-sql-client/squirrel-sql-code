@@ -4,12 +4,12 @@ import java.awt.Font;
 import java.awt.event.MouseListener;
 
 import javax.swing.Action;
-import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JTextArea;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
+import javax.swing.text.JTextComponent;
 import javax.swing.undo.UndoManager;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -110,7 +110,7 @@ public class MockSQLEntryPanel implements ISQLEntryPanel {
 		return null;
 	}
 
-	public JComponent getTextComponent() {
+	public JTextComponent getTextComponent() {
 		return new JTextArea();
 	}
 
