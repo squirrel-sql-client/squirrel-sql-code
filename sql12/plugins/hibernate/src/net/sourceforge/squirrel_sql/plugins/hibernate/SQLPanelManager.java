@@ -16,10 +16,11 @@ import java.awt.event.ActionEvent;
 
 public class SQLPanelManager extends EntryPanelManagerBase
 {
-   private HibernateSQLPanel _hibernateSQLPanel;
    private static final String PREF_KEY_APPEND_SQL = "SquirrelSQL.hibernate.sqlAppendSql";
    private static final String PREF_KEY_FORMAT_SQL = "SquirrelSQL.hibernate.sqlFormatSql";
    private static final String PREF_KEY_EXECUTE_SQL = "SquirrelSQL.hibernate.sqlExecuteSql";
+
+   private HibernateSQLPanel _hibernateSQLPanel;
 
    SQLResultExecuterPanel _resultExecuterPanel;
 
@@ -27,9 +28,9 @@ public class SQLPanelManager extends EntryPanelManagerBase
    public SQLPanelManager(final ISession session)
    {
       super(session);
-      _hibernateSQLPanel = new HibernateSQLPanel(super.getComponent());
-
       _resultExecuterPanel = new SQLResultExecuterPanel(session);
+      _hibernateSQLPanel = new HibernateSQLPanel(super.getComponent(), _resultExecuterPanel);
+
 
       session.getApplication().getSessionManager().addSessionListener(
          new SessionAdapter()
@@ -52,24 +53,11 @@ public class SQLPanelManager extends EntryPanelManagerBase
       });
 
 
-      _hibernateSQLPanel._btnExecuteSql.addActionListener(new ActionListener()
-      {
-         public void actionPerformed(ActionEvent e)
-         {
-            onExecuteSql();
-         }
-      });
-
-
       _hibernateSQLPanel._chkAppendSql.setSelected(Preferences.userRoot().getBoolean(PREF_KEY_APPEND_SQL, false));
       _hibernateSQLPanel._chkAlwaysFormatSql.setSelected(Preferences.userRoot().getBoolean(PREF_KEY_FORMAT_SQL, false));
       _hibernateSQLPanel._chkAlwaysExecuteSql.setSelected(Preferences.userRoot().getBoolean(PREF_KEY_EXECUTE_SQL, false));
    }
 
-   private void onExecuteSql()
-   {
-      displaySqlResult(getEntryPanel().getText());   
-   }
 
    private void onFormatSql()
    {
@@ -99,23 +87,23 @@ public class SQLPanelManager extends EntryPanelManagerBase
 
       if (_hibernateSQLPanel._chkAlwaysExecuteSql.isSelected())
       {
+         _hibernateSQLPanel._tabResult_code.setSelectedComponent(_resultExecuterPanel);
          displaySqlResult(allSqls);
       }
       else
       {
-         displaySqlCode(allSqls);
+         _hibernateSQLPanel._tabResult_code.setSelectedComponent(super.getComponent());
       }
+      displaySqlCode(allSqls);
    }
 
    private void displaySqlResult(String allSqls)
    {
-      _hibernateSQLPanel.setMainComponent(_resultExecuterPanel);
       _resultExecuterPanel.executeSQL(allSqls);
    }
 
    private void displaySqlCode(String allSqls)
    {
-      _hibernateSQLPanel.setMainComponent(super.getComponent());
 
       if (_hibernateSQLPanel._chkAlwaysFormatSql.isSelected())
       {

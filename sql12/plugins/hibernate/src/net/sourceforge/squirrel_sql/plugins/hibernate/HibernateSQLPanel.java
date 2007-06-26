@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.plugins.hibernate;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLResultExecuterPanel;
+import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,20 +16,25 @@ public class HibernateSQLPanel extends JPanel
    JCheckBox _chkAppendSql;
    JButton _btnFormatSql;
    JCheckBox _chkAlwaysFormatSql;
-   JButton _btnExecuteSql;
    JCheckBox _chkAlwaysExecuteSql;
 
-   private JComponent _mainComp;
-   private JPanel _mainCompHolder;
+   JTabbedPane _tabResult_code;
 
 
-   public HibernateSQLPanel(JComponent mainComp)
+   public HibernateSQLPanel(JComponent textComp, SQLResultExecuterPanel resultExecuterPanel)
    {
-      setLayout(new BorderLayout());
-      _mainCompHolder = new JPanel(new GridLayout(1,1));
-      add(_mainCompHolder, BorderLayout.CENTER);
 
-      setMainComponent(mainComp);
+      setLayout(new BorderLayout());
+      _tabResult_code = new JTabbedPane();//UIFactory.getInstance().createTabbedPane();
+
+      // i18n[HibernateSQLPanel.code=SQL code]
+      _tabResult_code.addTab(s_stringMgr.getString("HibernateSQLPanel.code"), textComp);
+
+      // i18n[HibernateSQLPanel.result=SQL result]
+      _tabResult_code.addTab(s_stringMgr.getString("HibernateSQLPanel.result"), resultExecuterPanel);
+
+
+      add(_tabResult_code, BorderLayout.CENTER);
 
       add(createBottomPanel(), BorderLayout.SOUTH);
    }
@@ -62,32 +68,16 @@ public class HibernateSQLPanel extends JPanel
 
 
       gbc = new GridBagConstraints(4,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
-      // i18n[HibernateSQLPanel.executeSql=Execute]
-      _btnExecuteSql = new JButton(s_stringMgr.getString("HibernateSQLPanel.executeSql"));
-      ret.add(_btnExecuteSql, gbc);
-
-      gbc = new GridBagConstraints(5,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
-      // i18n[HibernateSQLPanel.alwaysExecute=Always execute SQL]
-      _chkAlwaysExecuteSql = new JCheckBox(s_stringMgr.getString("HibernateSQLPanel.alwaysExecute"));
+      // i18n[HibernateSQLPanel.Execute=Execute SQL]
+      _chkAlwaysExecuteSql = new JCheckBox(s_stringMgr.getString("HibernateSQLPanel.Execute"));
       ret.add(_chkAlwaysExecuteSql, gbc);
 
 
-      gbc = new GridBagConstraints(6,0,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      gbc = new GridBagConstraints(5,0,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
       ret.add(new JPanel(), gbc);
 
 
       return ret;
 
-   }
-
-   public void setMainComponent(JComponent mainComp)
-   {
-      if(_mainComp != mainComp)
-      {
-         _mainComp = mainComp;
-         _mainCompHolder.removeAll();
-         _mainCompHolder.add(_mainComp);
-         _mainCompHolder.invalidate();
-      }
    }
 }
