@@ -21,12 +21,14 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 
 public class MySQLDialectTest extends DialectTestCase {
 
-    private MySQLDialect dialect = new MySQLDialect();
+    private MySQLDialect dialect = null;
     
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(MySQLDialectTest.class);
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        dialect = new MySQLDialect();
     }
-
+    
     /*
      * Test method for 'org.hibernate.dialect.Dialect.getTypeName(int)'
      */

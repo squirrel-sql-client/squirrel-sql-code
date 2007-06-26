@@ -19,7 +19,13 @@ package net.sourceforge.squirrel_sql.fw.dialects;
  */
 public class InformixDialectTest extends DialectTestCase {
 
-    private InformixDialect dialect = new InformixDialect();
+    private InformixDialect dialect = null;
+    
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        dialect = new InformixDialect();
+    }
     
     /*
      * Test method for 'org.hibernate.dialect.Dialect.getTypeName(int)'
@@ -28,8 +34,4 @@ public class InformixDialectTest extends DialectTestCase {
         testAllTypes(dialect);
     }
     
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(Oracle9iDialectTest.class);
-    }
-
 }

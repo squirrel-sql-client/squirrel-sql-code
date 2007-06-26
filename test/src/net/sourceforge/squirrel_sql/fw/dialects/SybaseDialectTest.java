@@ -19,7 +19,13 @@ package net.sourceforge.squirrel_sql.fw.dialects;
  */
 public class SybaseDialectTest extends DialectTestCase {
 
-    private SybaseDialect dialect = new SybaseDialect();
+    private SybaseDialect dialect = null;
+    
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        dialect = new SybaseDialect();
+    }
     
     /*
      * Test method for 'org.hibernate.dialect.Dialect.getTypeName(int)'
@@ -28,8 +34,4 @@ public class SybaseDialectTest extends DialectTestCase {
         testAllTypes(dialect);
     }
     
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(Oracle9iDialectTest.class);
-    }
-
 }

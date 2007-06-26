@@ -19,7 +19,13 @@ package net.sourceforge.squirrel_sql.fw.dialects;
  */
 public class TimesTenDialectTest extends DialectTestCase {
 
-    private TimesTenDialect dialect = new TimesTenDialect();
+    private TimesTenDialect dialect = null;
+    
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        dialect = new TimesTenDialect();
+    }
     
     /*
      * Test method for 'org.hibernate.dialect.Dialect.getTypeName(int)'
@@ -28,8 +34,4 @@ public class TimesTenDialectTest extends DialectTestCase {
         testAllTypes(dialect);
     }
     
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(Oracle9iDialectTest.class);
-    }
-
 }

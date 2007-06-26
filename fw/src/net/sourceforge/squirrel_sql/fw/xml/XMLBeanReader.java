@@ -43,7 +43,7 @@ import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-public class XMLBeanReader implements Iterable
+public class XMLBeanReader implements Iterable<Object>
 {
 	/** Logger for this class. */
 	private static final ILogger s_log =
@@ -66,7 +66,7 @@ public class XMLBeanReader implements Iterable
 	};
 
 	private ClassLoader _cl;
-	private final List _beanColl = new ArrayList();
+	private final List<Object> _beanColl = new ArrayList<Object>();
 
 	public XMLBeanReader()
 	{
@@ -151,7 +151,7 @@ public class XMLBeanReader implements Iterable
 		}
 	}
 
-	public Iterator iterator()
+	public Iterator<Object> iterator()
 	{
 		return _beanColl.iterator();
 	}
@@ -177,17 +177,17 @@ public class XMLBeanReader implements Iterable
 					bean.getClass(),
 					Introspector.USE_ALL_BEANINFO);
 			PropertyDescriptor[] propDesc = info.getPropertyDescriptors();
-			Map props = new HashMap();
+			Map<String, PropertyDescriptor> props = 
+                new HashMap<String, PropertyDescriptor>();
 			for (int i = 0; i < propDesc.length; ++i)
 			{
 				props.put(propDesc[i].getName(), propDesc[i]);
 			}
-			final List children = beanElement.getChildren();
-			for (Iterator it = children.iterator(); it.hasNext();)
+			final List<IXMLElement> children = beanElement.getChildren();
+			for (Iterator<IXMLElement> it = children.iterator(); it.hasNext();)
 			{
-				final IXMLElement propElem = (IXMLElement) it.next();
-				final PropertyDescriptor curProp =
-					(PropertyDescriptor) props.get(propElem.getName());
+				final IXMLElement propElem = it.next();
+				final PropertyDescriptor curProp = props.get(propElem.getName());
 				if (curProp != null)
 				{
 					loadProperty(bean, curProp, propElem);
@@ -368,11 +368,11 @@ public class XMLBeanReader implements Iterable
 	private Object[] loadIndexedProperty(IXMLElement beanElement)
 		throws XMLException
 	{
-		final List beans = new ArrayList();
-		final List children = beanElement.getChildren();
-		for (Iterator it = children.iterator(); it.hasNext();)
+		final List<Object> beans = new ArrayList<Object>();
+		final List<IXMLElement> children = beanElement.getChildren();
+		for (Iterator<IXMLElement> it = children.iterator(); it.hasNext();)
 		{
-			beans.add(loadBean((IXMLElement) it.next()));
+			beans.add(loadBean(it.next()));
 		}
 		return beans.toArray(new Object[beans.size()]);
 	}

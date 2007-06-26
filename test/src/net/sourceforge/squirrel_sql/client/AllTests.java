@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.fw.dialects;
+package net.sourceforge.squirrel_sql.client;
 /*
  * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
@@ -17,21 +17,21 @@ package net.sourceforge.squirrel_sql.fw.dialects;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-public class Oracle9iDialectTest extends DialectTestCase {
+import junit.framework.JUnit4TestAdapter;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
-    private Oracle9iDialect dialect = null;
-    
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        dialect = new Oracle9iDialect();
-    }
-    
-    /*
-     * Test method for 'org.hibernate.dialect.Dialect.getTypeName(int)'
-     */
-    public void testGetTypeNameInt() {
-        testAllTypes(dialect);
-    }
-    
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
+
+@RunWith(Suite.class)
+@SuiteClasses( { ApplicationArgumentsTest.class })
+public class AllTests extends TestCase {
+	public static Test suite() {
+		TestSuite suite = new TestSuite("Client tests");
+        suite.addTest(new JUnit4TestAdapter(ApplicationArgumentsTest.class));
+		return suite;
+	}
 }

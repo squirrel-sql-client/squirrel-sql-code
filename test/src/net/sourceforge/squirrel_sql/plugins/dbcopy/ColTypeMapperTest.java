@@ -27,6 +27,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLTestCase;
+import net.sourceforge.squirrel_sql.client.ApplicationArguments;
+import net.sourceforge.squirrel_sql.client.ApplicationManager;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
@@ -35,12 +37,13 @@ import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.PreferencesManager;
+import net.sourceforge.squirrel_sql.plugins.dbcopy.util.DBUtil;
 import net.sourceforge.squirrel_sql.test.TestUtil;
 
 public class ColTypeMapperTest extends BaseSQuirreLTestCase {
 
-    static ILogger s_log = 
-        LoggerController.createLogger(ColTypeMapperTest.class);
+    static ILogger s_log = null; 
+        
     
     static String[] dbNames = {
         "Axion",
@@ -68,8 +71,11 @@ public class ColTypeMapperTest extends BaseSQuirreLTestCase {
     };
     
     static {
+        ApplicationManager.initApplication();
         // Don't care to see tons of debug from ColTypeMapper
         disableLogging(ColTypeMapper.class);
+        disableLogging(ColTypeMapperTest.class);
+        disableLogging(DBUtil.class);
         IPlugin plugin = createNiceMock(IPlugin.class);
         try {
             expect(plugin.getPluginUserSettingsFolder())
@@ -79,6 +85,7 @@ public class ColTypeMapperTest extends BaseSQuirreLTestCase {
         } catch (Exception e) {
             fail("Unexpected exception : "+e.getMessage());
         }
+        s_log = LoggerController.createLogger(ColTypeMapperTest.class);
     }
     
     protected void setUp() throws Exception {
@@ -243,7 +250,9 @@ public class ColTypeMapperTest extends BaseSQuirreLTestCase {
         if (type.indexOf(pattern) != -1) {
             fail("Found -1 in type: "+type);
         } else {
-            out.println(type);
+            if (s_log.isDebugEnabled()) {
+               s_log.debug("Found type "+type+" in pattern: "+pattern); 
+            }
         }
     }
         

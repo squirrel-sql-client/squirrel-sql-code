@@ -20,20 +20,24 @@ package net.sourceforge.squirrel_sql.client;
  */
 
 /**
- * A simple wrapper for ApplicationArguments to ensure that it's initialize 
- * method only get's called once when running JUnit tests.
+ * A simple wrapper for ApplicationArguments to ensure that it's initialized 
+ * method get's called *after* being reset, but before running JUnit tests.
  * 
  * @author manningr
  */
 public class ApplicationManager {
-
 	
-	private static ApplicationArguments args = null;
-	
+    static {
+        initApplication();
+    }
+    
+    /**
+     * Resets the state of the ApplicationArguments singleton and initializes
+     * it.  It is safe to call this as many times as needed.
+     */
 	public static void initApplication() {
-		if (args == null) {
-			ApplicationArguments.initialize(new String[0]);
-			args = ApplicationArguments.getInstance();
-		}
+        ApplicationArguments.reset();
+		ApplicationArguments.initialize(new String[0]);
+		ApplicationArguments.getInstance();
 	}
 }

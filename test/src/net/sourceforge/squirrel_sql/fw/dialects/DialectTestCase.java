@@ -45,9 +45,18 @@ public class DialectTestCase extends BaseSQuirreLTestCase {
         try {
             dialect.getTypeName(type);
         } catch (MappingException e) {
-            System.out.println(
-                    "No mapping for type: "+type+"="+
-                    JDBCTypeMapper.getJdbcTypeName(type));            
+            if (type != 0            // NULL
+                    && type != 70    // DATALINK
+                    && type != 1111  // OTHER
+                    && type != 2000  // JAVA_OBJECT
+                    && type != 2001  // DISTINCT
+                    && type != 2002  // STRUCT
+                    && type != 2003  // ARRAY
+                    && type != 2006) // REF
+            {
+                fail("No mapping for type: "+type+"="+
+                        JDBCTypeMapper.getJdbcTypeName(type));
+            }
         }
     }
 

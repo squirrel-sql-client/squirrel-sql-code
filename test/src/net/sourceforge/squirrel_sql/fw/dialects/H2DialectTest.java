@@ -19,7 +19,13 @@ package net.sourceforge.squirrel_sql.fw.dialects;
  */
 public class H2DialectTest extends DialectTestCase {
 
-    private H2Dialect dialect = new H2Dialect();
+    private H2Dialect dialect = null;
+    
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        dialect = new H2Dialect();
+    }
     
     /*
      * Test method for 'org.hibernate.dialect.Dialect.getTypeName(int)'
@@ -28,8 +34,4 @@ public class H2DialectTest extends DialectTestCase {
         testAllTypes(dialect);
     }
     
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(Oracle9iDialectTest.class);
-    }
-
 }
