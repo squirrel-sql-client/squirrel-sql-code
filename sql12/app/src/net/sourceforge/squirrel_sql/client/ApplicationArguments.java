@@ -324,4 +324,13 @@ public class ApplicationArguments
 	{
 		return str == null || str.length() == 0;
 	}
+    
+    /**
+     * Resets the internally stored instance so that the next call to initialize
+     * will function as the first call.  Useful for unit tests, so it uses package
+     * level access.
+     */
+    static final void reset() {
+        s_instance = null;
+    }
 }
