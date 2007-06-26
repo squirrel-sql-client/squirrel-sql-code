@@ -9,11 +9,8 @@ import org.apache.log4j.Level;
 
 public class BaseSQuirreLTestCase extends TestCase {
 
-    static {
-        ApplicationManager.initApplication();        
-    }
-    
     protected void setUp() throws Exception {
+        ApplicationManager.initApplication();
         super.setUp();
     }
 

@@ -21,10 +21,12 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 
 public class PointbaseDialectTest extends DialectTestCase {
 
-    private PointbaseDialect dialect = new PointbaseDialect();
+    private PointbaseDialect dialect = null;
     
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(PointbaseDialectTest.class);
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        dialect = new PointbaseDialect();
     }
 
     /*

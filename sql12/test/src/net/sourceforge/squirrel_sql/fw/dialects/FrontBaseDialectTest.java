@@ -19,7 +19,13 @@ package net.sourceforge.squirrel_sql.fw.dialects;
  */
 public class FrontBaseDialectTest extends DialectTestCase {
 
-    private FrontBaseDialect dialect = new FrontBaseDialect();
+    private FrontBaseDialect dialect = null;
+    
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        dialect = new FrontBaseDialect();
+    }
     
     /*
      * Test method for 'org.hibernate.dialect.Dialect.getTypeName(int)'

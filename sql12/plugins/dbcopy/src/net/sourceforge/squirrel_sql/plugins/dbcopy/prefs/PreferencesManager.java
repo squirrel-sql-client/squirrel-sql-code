@@ -87,19 +87,21 @@ public class PreferencesManager {
      * Load from preferences file.
      */
     private static void loadPrefs() {
+        File prefFile = null;
         try {
             XMLBeanReader doc = new XMLBeanReader();
             
-            File prefFile = PreferenceUtil.getPreferenceFileToReadFrom(plugin);
+            prefFile = PreferenceUtil.getPreferenceFileToReadFrom(plugin);
             
             doc.load(prefFile, DBCopyPreferenceBean.class.getClassLoader());
             
-            Iterator it = doc.iterator();
+            Iterator<Object> it = doc.iterator();
             if (it.hasNext()) {
                 _prefs = (DBCopyPreferenceBean)it.next();
             }
         } catch (FileNotFoundException ignore) {
-            s_log.info(USER_PREFS_FILE_NAME + " not found - will be created");
+            s_log.info(USER_PREFS_FILE_NAME + "("+prefFile.getAbsolutePath()+
+                       ") not found - will be created");
         } catch (Exception ex) {
             s_log.error("Error occured reading from preferences file: "
                     + USER_PREFS_FILE_NAME, ex);

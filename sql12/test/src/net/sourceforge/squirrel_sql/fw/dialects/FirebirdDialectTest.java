@@ -19,12 +19,14 @@ package net.sourceforge.squirrel_sql.fw.dialects;
  */
 public class FirebirdDialectTest extends DialectTestCase {
 
-    private FirebirdDialect dialect = new FirebirdDialect();
+    private FirebirdDialect dialect = null;
     
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(FirebirdDialectTest.class);
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        dialect = new FirebirdDialect();
     }
-
+        
     /*
      * Test method for 'org.hibernate.dialect.Dialect.getTypeName(int)'
      */

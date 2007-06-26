@@ -32,13 +32,14 @@ public class ApplicationArgumentsTest {
     
     @Before
     public void setUp() throws Exception {
+        ApplicationArguments.reset();
         ApplicationArguments.initialize(_rawArgs);
         applicationArgumentsUnderTest = ApplicationArguments.getInstance();
     }
 
     @After
     public void tearDown() throws Exception {
-        
+        ApplicationArguments.reset();
     }
 
     @Test
@@ -50,5 +51,5 @@ public class ApplicationArgumentsTest {
         assertEquals("3", rawArgs[2]);
         assertEquals("4", rawArgs[3]);
     }
-
+    
 }
