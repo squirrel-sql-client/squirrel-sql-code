@@ -28,7 +28,7 @@ public class AllTests extends TestCase {
         suite.addTest(new JUnit4TestAdapter(DatabaseObjectInfoTest.class));
         suite.addTestSuite(JDBCTypeMapperTest.class);
         suite.addTestSuite(QueryTokenizerTest.class);
-        suite.addTest(new JUnit4TestAdapter(ResultSetReader.class));
+        suite.addTest(new JUnit4TestAdapter(ResultSetReaderTest.class));
         suite.addTestSuite(SQLDatabaseMetaDataTest.class);
         suite.addTestSuite(SQLUtilitiesTest.class);
 		return suite;
