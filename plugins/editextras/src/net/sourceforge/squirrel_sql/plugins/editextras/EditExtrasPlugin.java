@@ -320,4 +320,10 @@ public class EditExtrasPlugin extends DefaultSessionPlugin
 			createSQLEntryAreaPopMenuItems(evt.getSQLPanel());
 		}
 	}
+
+
+   public Object getExternalService()
+   {
+      return new EditExtrasExternalServiceImpl();
+   }
 }
