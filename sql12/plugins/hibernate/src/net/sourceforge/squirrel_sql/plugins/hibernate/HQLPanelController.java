@@ -36,7 +36,7 @@ public class HQLPanelController
       {
          public void actionPerformed(ActionEvent e)
          {
-            onConvertToHQL();
+            onConvertToSQL();
          }
       };
 
@@ -55,7 +55,7 @@ public class HQLPanelController
 
    }
 
-   private void onConvertToHQL()
+   private void onConvertToSQL()
    {
       if(false == _convertToSQL.isEnabled())
       {

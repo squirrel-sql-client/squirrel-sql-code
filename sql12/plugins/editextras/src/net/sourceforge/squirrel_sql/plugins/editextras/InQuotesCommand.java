@@ -20,6 +20,8 @@ import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+
 /**
  * This command will &quot;quote&quot; an SQL string.
  *
@@ -37,24 +39,31 @@ class InQuotesCommand implements ICommand
 
 	public void execute() throws BaseException
 	{
-      int[] bounds = _api.getSQLEntryPanel().getBoundsOfSQLToBeExecuted();
+      ISQLEntryPanel entryPanel = _api.getSQLEntryPanel();
+
+      quoteSQL(entryPanel, false);
+	}
+
+   public static void quoteSQL(ISQLEntryPanel entryPanel, boolean sbAppend)
+   {
+      int[] bounds = entryPanel.getBoundsOfSQLToBeExecuted();
 
       if(bounds[0] == bounds[1])
       {
          return;
       }
 
-      String textToQuote = _api.getSQLEntryPanel().getSQLToBeExecuted();
+      String textToQuote = entryPanel.getSQLToBeExecuted();
 
-		if (null == textToQuote)
-		{
-			return;
-		}
+      if (null == textToQuote)
+      {
+         return;
+      }
 
-		String quotedText = Utilities.quoteText(textToQuote, false);
+      String quotedText = Utilities.quoteText(textToQuote, sbAppend);
 
-      _api.getSQLEntryPanel().setSelectionStart(bounds[0]);
-      _api.getSQLEntryPanel().setSelectionEnd(bounds[1]);
-      _api.getSQLEntryPanel().replaceSelection(quotedText);
-	}
+      entryPanel.setSelectionStart(bounds[0]);
+      entryPanel.setSelectionEnd(bounds[1]);
+      entryPanel.replaceSelection(quotedText);
+   }
 }

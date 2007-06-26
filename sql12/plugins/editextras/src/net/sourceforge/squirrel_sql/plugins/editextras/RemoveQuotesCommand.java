@@ -20,6 +20,8 @@ import net.sourceforge.squirrel_sql.fw.util.BaseException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+
 /**
  * This command will remove &quot;quotes&quot; from an SQL string.
  *
@@ -37,24 +39,32 @@ class RemoveQuotesCommand implements ICommand
 
 	public void execute() throws BaseException
 	{
-      int[] bounds = _api.getSQLEntryPanel().getBoundsOfSQLToBeExecuted();
+      ISQLEntryPanel entryPanel = _api.getSQLEntryPanel();
+
+      unquoteSQL(entryPanel);
+	}
+
+   static void unquoteSQL(ISQLEntryPanel entryPanel)
+   {
+      int[] bounds = entryPanel.getBoundsOfSQLToBeExecuted();
 
       if(bounds[0] == bounds[1])
       {
          return;
       }
 
-      String textToUnquote = _api.getSQLEntryPanel().getSQLToBeExecuted();
+      String textToUnquote = entryPanel.getSQLToBeExecuted();
 
-		if (null == textToUnquote)
-		{
-			return;
-		}
+      if (null == textToUnquote)
+      {
+         return;
+      }
 
-		String unquotedText = Utilities.unquoteText(textToUnquote);
+      String unquotedText = Utilities.unquoteText(textToUnquote);
 
-      _api.getSQLEntryPanel().setSelectionStart(bounds[0]);
-      _api.getSQLEntryPanel().setSelectionEnd(bounds[1]);
-      _api.getSQLEntryPanel().replaceSelection(unquotedText);
-	}
+      entryPanel.setSelectionStart(bounds[0]);
+      entryPanel.setSelectionEnd(bounds[1]);
+      entryPanel.replaceSelection(unquotedText);
+   }
+
 }
