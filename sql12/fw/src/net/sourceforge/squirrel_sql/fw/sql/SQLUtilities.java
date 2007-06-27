@@ -18,6 +18,46 @@ public class SQLUtilities {
     
     
     /**
+     * Contributed by Thomas Mueller to handle doubling quote characters 
+     * found in an identifier. In H2 and other dbs, the following statement
+     * creates a table with an embedded quote character:
+     * 
+     *  CREATE TABLE "foo""bar" (someid int);
+     *  
+     * However, what is returned by the driver for table name is:
+     * 
+     *  foo"bar
+     *  
+     * The reason is simple.  Just like embedded quotes in SQL strings, such as:
+     * 
+     * select 'I don''t know' from test
+     * 
+     * Similarly, embedded quote characters can also appear in identifiers 
+     * such as table names, by doubling (or quoting, if you will) the quote.  
+     * 
+     * @param s the string to have embedded quotes expanded.
+     * 
+     * @return a new string with any embedded quotes doubled, or null if null is
+     *         passed.
+     */
+    public static String quoteIdentifier(String s) {
+        if (s == null) {
+            return null;
+        }
+        StringBuilder buff = null;
+        buff = new StringBuilder();
+        for(int i=0; i<s.length(); i++) {
+            char c = s.charAt(i);
+            if(c == '"' && i != 0 && i != s.length()-1) {
+                buff.append(c);
+            }
+            buff.append(c);
+        }
+        String result = buff.toString();
+        return result;
+    }     
+    
+    /**
      * Reverses the insertion order list.  Just a convenience method.
      * 
      * @param md
