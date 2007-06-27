@@ -11,8 +11,8 @@
 			<p>A plugin is an application written in Java that runs within SQuirreL. This
 			allows developers to enhance the functionality of SQuirreL without having to
 			rebuild the SQuirreL application itself.</p>
-			<p>The <a href="#standard">standard plugins</a>, <a href="#stable">stable plugins</a> 
-                           and <a href="#beta">beta plugins</a> are all included in SQuirreL's installer.
+			<p>All plugins that are host in the SQuirreL source code repository are 
+			   included in SQuirreL's installer.
 			   Besides these there are <a href="#othersites">plugins available at other sites</a>
 			   that you can <a href="http://sourceforge.net/project/showfiles.php?group_id=28383">download</a> 
 		           and add to your installation.
@@ -42,9 +42,10 @@
             <a href="http://squirrelsql.org/index.php?page=home/#installation">download section </a>
             for details.
         <p>
-            Note: We do not provide separate downloads for plugins anymore because of the
-            efforts it takes to keep them up to date for all available versions.
-
+            Note: We no longer provide separate downloads for plugins due to the additional work
+            involved in packaging them as well as versioning issues that arise when mixing incompatible
+            versions of SQuirreL with individual plugins.  The correct version of each available plugin 
+            is always provided in the SQuirreL SQL Client install jar.
          <p>
             To install a Plugin hosted on <a href="#othersites">other sites</a> essentially all you need to do is to drop the Plugin
             files into the plugin/ directory of your SQuirreL SQL installtion directory. For further details
@@ -141,6 +142,26 @@
 			</table>
 
 <!-- Graph Plugin. -->
+         <hr size="1"/>
+         <table width="100%" border="0" cellpadding="4" cellspacing="0">
+            <tr>
+               <td width="50%">
+                  <p><a href="#installationDownload">Graph Plugin</a> by
+                  <a href="https://sourceforge.net/sendmessage.php?touser=776065">Gerd Wagner</a>
+                  <br>Version 1.0 released 21 Jun 2005</p>
+               </td>
+            </tr>
+            <tr>
+               <td colspan="2"><p><em>Requirements:</em>  SQuirreL SQL Client 2.x or higher</p></td>
+            </tr>
+            <tr>
+               <td colspan="2"><p>
+                  This plugin allows you to create and print charts of database tables and their foreign key relations.
+                  If you use it together with the SQL Scripts plugin you are able to script tables from within the charts.
+               </td>
+            </tr>
+         </table>
+
 
 <!-- H2 Plugin. -->
          <hr size="1"/>
@@ -175,7 +196,26 @@
 			</table>
 
 <!-- Look and Feel Plugin. -->
-
+			 <hr size="1"/>
+			<table width="100%" border="0" cellpadding="4" cellspacing="0">
+				<tr>
+					<td width="50%">
+						<p><a href="#installationDownload">Look and Feel</a> by
+						<a href="http://sourceforge.net/sendmessage.php?touser=233132">Colin Bell</a>
+						<br>Version 1.0 released 21 Jun 2005</p>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2"><p><em>Requirements:</em> SQuirreL SQL Client 2.x or higher</p></td>
+				</tr>
+				<tr>
+					<td colspan="2"><p>
+						This plugin allows you to select a Look and Feel other than the default Java one. It also
+						allows you to specify the fonts for the different GUI elements. It ships
+						with several Look and Feel implementations.</p>
+					</td>
+				</tr>
+			</table>
 <!-- Mac OS X Plugin. -->
 
 <!-- MySQL Plugin. -->
@@ -258,9 +298,87 @@
 				</tr>
 			</table>
 
-<!-- SQL Bookmarks Plugin -->
+<!-- SQL Entry Area Enhancements Plugin. -->
+			<hr size="1"/>
+			<table width="100%" border="0" cellpadding="4" cellspacing="0">
+				<tr>
+					<td width="50%">
+						<p><a href="#installationDownload">SQL Entry Area Enhancements Plugin</a> by
+						<a href="https://sourceforge.net/sendmessage.php?touser=776065">Gerd Wagner</a>
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<P>This plugin provides adding and removing Java quoting around
+						SQL and formatting of SQL in the SQL editor.</P>
+					</td>
+				</tr>
+			</table>
 
-<!-- SQL Scripts Plugin -->
+<!-- SQL Bookmarks plugin -->
+		  <hr size="1"/>
+				<table width="100%" border="0" cellpadding="4" cellspacing="0">
+				  <tr>
+					  <td width="50%">
+							<p><a href="#installationDownload">SQL Bookmarks</a> by
+						  <a href="http://sourceforge.net/sendmessage.php?touser=358158">Joe Mocker</a><br>
+						</td>
+				  </tr>
+				  <tr>
+					  <td colspan="2">
+						<p> This plugin allows you to manage commonly used SQL
+						code for easy reuse. The plugin also provides a simple
+						syntax for parameter replacement within the bookmarked
+						SQL. As the SQL is reloaded, the user is prompted to
+						enter values for any embedded parameters, after which
+						the SQL is loaded into the SQL editor for execution.
+						To select an existing bookmark use the ctrl+j shortcut
+						or the tools popup (ctrl+t) in the SQL editor. New bookmarks can be added from the
+						SQL editor via the tools popup (ctrl+t).
+						</p>
+					  </td>
+				  </tr>
+			 </table>
+			 
+<!-- SQL Entry Completion Plugin. -->
+			<hr size="1"/>
+			<table width="100%" border="0" cellpadding="4" cellspacing="0">
+				<tr>
+					<td width="50%">
+						<p><a href="#installationDownload">SQL Entry Completion Plugin / Code Completion</a> by
+						<a href="https://sourceforge.net/sendmessage.php?touser=776065">Gerd Wagner</a>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<p>This plugin offers code completion in much the same
+						way as modern IDEs do. You use code completion through
+						the standard ctrl+space shortcut or the tools popup (ctrl+t). Completion works on
+						tables, views, columns catalogs, schemas, aliases, SQL keywords, data types and stored procedures.
+						It allows you to generate of SQL-JOIN syntax based on foreign keys.</p>
+					</td>
+				</tr>
+			</table>
+
+
+<!-- SQL Scripts Plugin. -->
+			<hr size="1"/>
+			<table width="100%" border="0" cellpadding="4" cellspacing="0">
+				<tr>
+					<td width="50%"><p><a href="#installationDownload">SQL Scripts</a> by
+						<a href="http://sourceforge.net/sendmessage.php?touser=379231">Johan Compagner</a>
+						and <a href="https://sourceforge.net/sendmessage.php?touser=776065">Gerd Wagner</a><br></p>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2"><p>
+						The SQL Scripts plugin allows you to generate CREATE TABLE and INSERT scripts for existing
+						tables in your database. It also allows you to create data insert script from SQLs or tables.
+						For any SELECT statement it allows you to store the result of the statement in a new table.</p>
+					</td>
+				</tr>
+			</table>
 
 <!-- SQL Validator Plugin. -->
 			<hr size="1"/>
@@ -290,7 +408,24 @@
 
 <!-- Sybase Plugin -->
 
-<!-- Syntax Plugin -->
+<!-- Syntax Plugin. -->
+			<hr size="1"/>
+			<table width="100%" border="0" cellpadding="4" cellspacing="0">
+				<tr>
+					<td width="50%">
+						<p><a href="#installationDownload">Syntax Highlighting Plugin</a> by
+						<a href="https://sourceforge.net/sendmessage.php?touser=233132">Colin Bell</a>
+						and <a href="https://sourceforge.net/sendmessage.php?touser=776065">Gerd Wagner</a></p>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<p>This plugin replaces the old jEdit plugin. It's built upon the editor of Sun's Netbeans IDE editor
+						and supplies syntax highlighting for the SQL editor. It provides search and replace functionality
+						and it allows you to define abreviations and auto corrects in a similar way as in modern office products.</p>
+					</td>
+				</tr>
+			</table>
 
 		</td>
 		<td class="body_right_border">&nbsp;</td>
@@ -392,192 +527,8 @@
 
 
 
-<!-- ************************************************************************************** -->
-<!-- standard -->
-<!-- ************************************************************************************** -->
 
 
-<table border="0" cellpadding="0" cellspacing="0" width="100%">
-	<tr>
-		<td width='10' height='10'><img border="0" src="images/border_tl.gif" width="10" height="10"></td>
-		<td width='100%' height='10'><img border="0" src="images/border_t.gif" width="100%" height="10"></td>
-		<td width='10' height='10'><img border="0" src="images/border_tr.gif" width="10" height="10"></td>
-	</tr>
-	<tr>
-		<td class="body_left_border">&nbsp;</td>
-		<td width='100%' bgcolor="white" valign="top">
-			<h1 class="body"><a name="standard">Standard Plugins</a></h1>
-
-<!-- Look and Feel Plugin. -->
-			 <hr size="1"/>
-			<table width="100%" border="0" cellpadding="4" cellspacing="0">
-				<tr>
-					<td width="50%">
-						<p><a href="#installationDownload">Look and Feel</a> by
-						<a href="http://sourceforge.net/sendmessage.php?touser=233132">Colin Bell</a>
-						<br>Version 1.0 released 21 Jun 2005</p>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="2"><p><em>Requirements:</em> SQuirreL SQL Client 2.x or higher</p></td>
-				</tr>
-				<tr>
-					<td colspan="2"><p>
-						This plugin allows you to select a Look and Feel other than the default Java one. It also
-						allows you to specify the fonts for the different GUI elements. It ships
-						with several Look and Feel implementations.</p>
-					</td>
-				</tr>
-			</table>
-
-<!-- SQL Bookmarks plugin -->
-		  <hr size="1"/>
-				<table width="100%" border="0" cellpadding="4" cellspacing="0">
-				  <tr>
-					  <td width="50%">
-							<p><a href="#installationDownload">SQL Bookmarks</a> by
-						  <a href="http://sourceforge.net/sendmessage.php?touser=358158">Joe Mocker</a><br>
-						  Version 1.0 released 21 Jun 2005</p>
-						</td>
-				  </tr>
-				  <tr>
-					  <td colspan="2"><p><em>Requirements:</em> SQuirreL SQL Client 2.x or higher</p></td>
-				  </tr>
-				  <tr>
-					  <td colspan="2">
-						<p> This plugin allows you to manage commonly used SQL
-						code for easy reuse. The plugin also provides a simple
-						syntax for parameter replacement within the bookmarked
-						SQL. As the SQL is reloaded, the user is prompted to
-						enter values for any embedded parameters, after which
-						the SQL is loaded into the SQL editor for execution.
-						To select an existing bookmark use the ctrl+j shortcut
-						or the tools popup (ctrl+t) in the SQL editor. New bookmarks can be added from the
-						SQL editor via the tools popup (ctrl+t).
-						</p>
-					  </td>
-				  </tr>
-			 </table>
-
-<!-- SQL Scripts Plugin. -->
-			<hr size="1"/>
-			<table width="100%" border="0" cellpadding="4" cellspacing="0">
-				<tr>
-					<td width="50%"><p><a href="#installationDownload">SQL Scripts</a> by
-						<a href="http://sourceforge.net/sendmessage.php?touser=379231">Johan Compagner</a>
-						and <a href="https://sourceforge.net/sendmessage.php?touser=776065">Gerd Wagner</a><br>
-						Version 1.0 released 21 Jun 2005</p>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="2"><p><em>Requirements:</em> SQuirreL SQL Client 2.x or higher</p></td>
-				</tr>
-				<tr>
-					<td colspan="2"><p>
-						The SQL Scripts plugin allows you to generate CREATE TABLE and INSERT scripts for existing
-						tables in your database. It also allows you to create data insert script from SQLs or tables.
-						For any SELECT statement it allows you to store the result of the statement in a new table.</p>
-					</td>
-				</tr>
-			</table>
-
-<!-- Syntax Plugin. -->
-			<hr size="1"/>
-			<table width="100%" border="0" cellpadding="4" cellspacing="0">
-				<tr>
-					<td width="50%">
-						<p><a href="#installationDownload">Syntax Highlighting Plugin</a> by
-						<a href="https://sourceforge.net/sendmessage.php?touser=233132">Colin Bell</a>
-						and <a href="https://sourceforge.net/sendmessage.php?touser=776065">Gerd Wagner</a>
-						<br>Version 1.0 released 21 Jun 2005</p>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="2"><p><em>Requirements:</em> SQuirreL SQL Client 2.x or higher</p></td>
-				</tr>
-				<tr>
-					<td colspan="2">
-						<p>This plugin replaces the old jEdit plugin. It's built upon the editor of Sun's Netbeans IDE editor
-						and supplies syntax highlighting for the SQL editor. It provides search and replace functionality
-						and it allows you to define abreviations and auto corrects in a similar way as in modern office products.</p>
-					</td>
-				</tr>
-			</table>
-
-<!-- SQL Entry Completion Plugin. -->
-			<hr size="1"/>
-			<table width="100%" border="0" cellpadding="4" cellspacing="0">
-				<tr>
-					<td width="50%">
-						<p><a href="#installationDownload">SQL Entry Completion Plugin / Code Completion</a> by
-						<a href="https://sourceforge.net/sendmessage.php?touser=776065">Gerd Wagner</a>
-						<br>Version 1.0 released 21 Jun 2005</p>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="2"><p><em>Requirements:</em> SQuirreL SQL Client 2.x or higher</p></td>
-				</tr>
-				<tr>
-					<td colspan="2">
-						<p>This plugin offers code completion in much the same
-						way as modern IDEs do. You use code completion through
-						the standard ctrl+space shortcut or the tools popup (ctrl+t). Completion works on
-						tables, views, columns catalogs, schemas, aliases, SQL keywords, data types and stored procedures.
-						It allows you to generate of SQL-JOIN syntax based on foreign keys.</p>
-					</td>
-				</tr>
-			</table>
-
-<!-- SQL Entry Area Enhancements Plugin. -->
-			<hr size="1"/>
-			<table width="100%" border="0" cellpadding="4" cellspacing="0">
-				<tr>
-					<td width="50%">
-						<p><a href="#installationDownload">SQL Entry Area Enhancements Plugin</a> by
-						<a href="https://sourceforge.net/sendmessage.php?touser=776065">Gerd Wagner</a>
-						<br>Version 1.0 released 21 Jun 2005</p>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="2"><p><em>Requirements:</em>  SQuirreL SQL Client 2.x or higher</p></td>
-				</tr>
-				<tr>
-					<td colspan="2">
-						<P>This plugin provides adding and removing Java quoting around
-						SQL and formating of SQL in the SQL editor.</P>
-					</td>
-				</tr>
-			</table>
-
-<!-- Graph Plugin. -->
-         <hr size="1"/>
-         <table width="100%" border="0" cellpadding="4" cellspacing="0">
-            <tr>
-               <td width="50%">
-                  <p><a href="#installationDownload">Graph Plugin</a> by
-                  <a href="https://sourceforge.net/sendmessage.php?touser=776065">Gerd Wagner</a>
-                  <br>Version 1.0 released 21 Jun 2005</p>
-               </td>
-            </tr>
-            <tr>
-               <td colspan="2"><p><em>Requirements:</em>  SQuirreL SQL Client 2.x or higher</p></td>
-            </tr>
-            <tr>
-               <td colspan="2"><p>
-                  This plugin allows you to create and print charts of database tables and their foreign key relations.
-                  If you use it together with the SQL Scripts plugin you are able to script tables from within the charts.
-               </td>
-            </tr>
-         </table>
 
 
-		</td>
-		<td class="body_right_border">&nbsp;</td>
-	</tr>
-	<tr>
-		<td width='10' height='10'><img border="0" src="images/border_bl.gif" width="10" height="10"></td>
-		<td width='100%' height='10'><img border="0" src="images/border_b.gif" width="100%" height="10"></td>
-		<td width='10' height='10'><img border="0" src="images/border_br.gif" width="10" height="10"></td>
-	</tr>
-</table>
 
