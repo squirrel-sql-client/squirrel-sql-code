@@ -257,7 +257,8 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
       {
          buf.append(identifierQuoteString);
       }
-      buf.append(_simpleName);
+      String quoteExpandedName = SQLUtilities.quoteIdentifier(_simpleName);
+      buf.append(quoteExpandedName);
       if (identifierQuoteString != null)
       {
          buf.append(identifierQuoteString);
