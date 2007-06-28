@@ -72,7 +72,7 @@ li								{ font-family: Arial;
 										font-size: 12pt; 
 										text-align: Left; 
 										margin-left: 5; 
-               			margin-top: 0; 
+               							margin-top: 0; 
 										margin-bottom: 8 }
 h1.question 			{ font-weight: bold; 
 										color: rgb(70,70,102); 
@@ -81,3 +81,5 @@ h1.question 			{ font-weight: bold;
 										margin-left: 15 }
 p.answer					{ margin-left: 25 }
 
+.plugin_title { font-weight: bold; font-size: 1.1em; }
+.plugin_category {	font-weight: bold; font-size: 12pt; }	
