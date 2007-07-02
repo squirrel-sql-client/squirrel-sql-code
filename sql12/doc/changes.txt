@@ -56,6 +56,13 @@ Task 138098 (Plugins Session Menu Items (Disable)) When using a session that
 - Use the last directory that a file was imported from when importing 
   additional files for binary fields.
 
+1743720: (Save settings immediately, not only when closing SQuirreL).  Now there
+is a setting in Global Preferences to "Save Preferences Immediately" (Default 
+is true) Additionally, if this is not desired and it can be disabled to give the 
+old behavior (faster), and a new menu item under "File" called "Save Preferences" 
+is available to immediately save everything that is normally saved during 
+shutdown.
+
 1742033: (Skipping quoting escape in table dropping) Refactoring plugin drop 
 table functionality now handles tables with embedded double quotes by doubling 
 the double quotes to allow the database to recognize the doubled quote as a 
