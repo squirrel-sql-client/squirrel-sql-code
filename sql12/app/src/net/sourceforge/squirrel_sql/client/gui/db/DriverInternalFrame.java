@@ -17,6 +17,9 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.DRIVER_DEFINITIONS;
+import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.GLOBAL_PREFERENCES;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -31,12 +34,30 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+import javax.swing.ListModel;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
 import net.sourceforge.squirrel_sql.fw.gui.DefaultFileListBoxModel;
 import net.sourceforge.squirrel_sql.fw.gui.FileListBox;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -49,14 +70,12 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
 /**
  * This dialog allows maintenance of a JDBC driver definition.
  *
  * @author	<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
+@SuppressWarnings("serial")
 public class DriverInternalFrame extends BaseInternalFrame
 {
 	/** Different types of maintenance that can be done. */
@@ -236,6 +255,8 @@ public class DriverInternalFrame extends BaseInternalFrame
 			{
 				_app.getDataCache().refreshDriver(_sqlDriver, _app.getMessageHandler());
 			}
+            _app.savePreferences(DRIVER_DEFINITIONS);
+            _app.savePreferences(GLOBAL_PREFERENCES);
 			dispose();
 		}
 		catch (Throwable th)
@@ -693,7 +714,8 @@ public class DriverInternalFrame extends BaseInternalFrame
 			addActionListener(this);
 		}
 
-		public void actionPerformed(ActionEvent e)
+		@SuppressWarnings("unchecked")
+        public void actionPerformed(ActionEvent e)
 		{
 			_driverClassCmb.removeAllItems();
 //			File file = _listBox.getSelectedFile();

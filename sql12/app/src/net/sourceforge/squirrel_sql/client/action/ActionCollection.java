@@ -43,6 +43,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.GlobalPreferencesAct
 import net.sourceforge.squirrel_sql.client.mainframe.action.InstallDefaultDriversAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.MaximizeAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.NewSessionPropertiesAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.SavePreferencesAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ShowLoadedDriversOnlyAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileHorizontalAction;
@@ -70,7 +71,7 @@ public final class ActionCollection
 	private IApplication _app;
 
 	/** Collection of all Actions keyed by class name. */
-	private final Map _actionColl = new HashMap();
+	private final Map<String, Action> _actionColl = new HashMap<String, Action>();
 
     /** Internationalized strings for this class. */
     private static final StringManager s_stringMgr =
@@ -159,7 +160,7 @@ public final class ActionCollection
 			throw new IllegalArgumentException("null Action Class Name passed.");
 		}
 
-		Action action = (Action)_actionColl.get(actionClassName);
+		Action action = _actionColl.get(actionClassName);
 		if (action == null)
 		{
             // i18n[ActionCollection.actionNotFound=Action {0} not found in ActionCollection.]
@@ -186,6 +187,7 @@ public final class ActionCollection
 	 *
 	 * @throws	IllegalArgumentException	Thrown if a null action class passed.
 	 */
+    @SuppressWarnings("unchecked")
 	public void enableAction(Class actionClass, boolean enable)
 		throws IllegalArgumentException
 	{
@@ -227,9 +229,9 @@ public final class ActionCollection
 		final boolean isTreeFrame = (frame instanceof ObjectTreeInternalFrame);
 		final boolean isSessionInternalFrame = (frame instanceof SessionInternalFrame);
 
-		for (Iterator it = actions(); it.hasNext();)
+		for (Iterator<Action> it = actions(); it.hasNext();)
 		{
-			final Action act = (Action) it.next();
+			final Action act = it.next();
 
 			if (act instanceof ISessionAction)
 			{
@@ -275,9 +277,9 @@ public final class ActionCollection
 			session = ((BaseSessionInternalFrame)frame).getSession();
 		}
 
-		for (Iterator it = actions(); it.hasNext();)
+		for (Iterator<Action> it = actions(); it.hasNext();)
 		{
-			final Action act = (Action)it.next();
+			final Action act = it.next();
 			if (act instanceof ISessionAction)
 			{
 				((ISessionAction)act).setSession(session);
@@ -357,7 +359,7 @@ public final class ActionCollection
 	/**
 	 * Return an <TT>Iterator</TT> over this collection.
 	 */
-	public Iterator actions()
+	public Iterator<Action> actions()
 	{
 		return _actionColl.values().iterator();
 	}
@@ -369,9 +371,9 @@ public final class ActionCollection
 	 */
 	public synchronized void setCurrentSession(ISession session)
 	{
-		for (Iterator it = actions(); it.hasNext();)
+		for (Iterator<Action> it = actions(); it.hasNext();)
 		{
-			final Action act = (Action)it.next();
+			final Action act = it.next();
 			if (act instanceof ISessionAction)
 			{
 				((ISessionAction)act).setSession(session);
@@ -449,6 +451,7 @@ public final class ActionCollection
 		//add(new DropSelectedTablesAction(_app));
 		add(new DeleteSelectedTablesAction(_app));
 		add(new DumpApplicationAction(_app));
+        add(new SavePreferencesAction(_app));
 		add(new DumpSessionAction(_app));
 		add(new ExecuteSqlAction(_app));
 		add(new ExitAction(_app));
@@ -457,7 +460,7 @@ public final class ActionCollection
 		add(new FileAppendAction(_app));
 		add(new FileSaveAction(_app));
 		add(new FileSaveAsAction(_app));
-      add(new FilePrintAction(_app));
+        add(new FilePrintAction(_app));
 		add(new FileCloseAction(_app));
 		add(new GlobalPreferencesAction(_app));
 		add(new GotoNextResultsTabAction(_app));

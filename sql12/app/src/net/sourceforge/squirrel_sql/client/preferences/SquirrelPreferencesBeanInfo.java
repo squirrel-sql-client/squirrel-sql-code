@@ -34,6 +34,7 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
 {
    private static PropertyDescriptor[] s_dscrs;
 
+   @SuppressWarnings("unchecked")
    private static Class CLS = SquirrelPreferences.class;
 
    public SquirrelPreferencesBeanInfo() throws IntrospectionException
@@ -110,13 +111,14 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
                "getWarnForUnsavedBufferEdits", "setWarnForUnsavedBufferEdits"),
             new PropertyDescriptor(SHOW_SESSION_STARTUP_TIME_HINT, CLS,
                "getShowSessionStartupTimeHint", "setShowSessionStartupTimeHint"),
-           new PropertyDescriptor(SHOW_DEBUG_LOG_MESSAGES, CLS,
-                   "getShowDebugLogMessages", "getShowDebugLogMessages"),               
-           new PropertyDescriptor(SHOW_INFO_LOG_MESSAGES, CLS,
-                   "getShowInfoLogMessages", "getShowInfoLogMessages"),
-           new PropertyDescriptor(SHOW_ERROR_LOG_MESSAGES, CLS,
-                   "getShowErrorLogMessages", "getShowErrorLogMessages"),
-
+            new PropertyDescriptor(SHOW_DEBUG_LOG_MESSAGES, CLS,
+               "getShowDebugLogMessages", "setShowDebugLogMessages"),               
+            new PropertyDescriptor(SHOW_INFO_LOG_MESSAGES, CLS,
+               "getShowInfoLogMessages", "setShowInfoLogMessages"),
+            new PropertyDescriptor(SHOW_ERROR_LOG_MESSAGES, CLS,
+               "getShowErrorLogMessages", "setShowErrorLogMessages"),
+            new PropertyDescriptor(SAVE_PREFERENCES_IMMEDIATELY, CLS,
+               "getSavePreferencesImmediately", "setSavePreferencesImmediately"),
          };
       }
    }

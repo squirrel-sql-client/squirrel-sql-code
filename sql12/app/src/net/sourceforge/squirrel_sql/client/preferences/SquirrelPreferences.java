@@ -46,6 +46,7 @@ import java.util.Iterator;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
+@SuppressWarnings("serial")
 public class SquirrelPreferences implements Serializable
 {
 
@@ -87,6 +88,7 @@ public class SquirrelPreferences implements Serializable
       String SHOW_DEBUG_LOG_MESSAGES = "showDebugLogMessages";
       String SHOW_INFO_LOG_MESSAGES = "showInfoLogMessages";
       String SHOW_ERROR_LOG_MESSAGES = "showErrorLogMessages";
+      String SAVE_PREFERENCES_IMMEDIATELY = "savePreferencesImmediately";
    }
 
    public interface IJdbcDebugTypes
@@ -117,13 +119,13 @@ public class SquirrelPreferences implements Serializable
 	private boolean _showContentsWhenDragging = false;
 
 
-   private boolean _fileOpenInPreviousDir = true;
+	private boolean _fileOpenInPreviousDir = true;
 
-   private boolean _fileOpenInSpecifiedDir = false;
+	private boolean _fileOpenInSpecifiedDir = false;
 
-   private String _fileSpecifiedDir = "";
+	private String _fileSpecifiedDir = "";
 
-   private String _filePreviousDir = System.getProperty("user.home");
+	private String _filePreviousDir = System.getProperty("user.home");
 
 	/** JDBC Debug Type. */
 	private int _jdbcDebugType = IJdbcDebugTypes.NONE;
@@ -192,7 +194,8 @@ public class SquirrelPreferences implements Serializable
     private boolean _warnJreJdbcMismatch = true;
     
 	/** Collection of <TT>PluginStatus</tt> objects. */
-	private final ArrayList _pluginStatusInfoColl = new ArrayList();
+	private final ArrayList<PluginStatus> _pluginStatusInfoColl = 
+        new ArrayList<PluginStatus>();
 
     /** Warning when closing session if a file was edited but not saved. */
     private boolean _warnForUnsavedFileEdits = true;
@@ -200,26 +203,21 @@ public class SquirrelPreferences implements Serializable
     /** Warning when closing session if a buffer was edited but not saved. */
     private boolean _warnForUnsavedBufferEdits = true;
 
+    /** Hint to Alias Schema Properties when Session startup takes considerable time */
+    private boolean _showSessionStartupTimeHint = true;
 
-   /** Hint to Alias Schema Properties when Session startup takes considerable time */
-   private boolean _showSessionStartupTimeHint = true;
+    /** Show DEBUG log messages in the log viewer */
+    private boolean _showDebugLogMessages = true;
 
-   /** Show DEBUG log messages in the log viewer */
-   private boolean _showDebugLogMessages = true;
-   
-   /** Show INFO log messages in the log viewer */
-   private boolean _showInfoLogMessages = true;
-   
-   /** Show ERROR log messages in the log viewer */
-   private boolean _showErrorLogMessages = true;
-   
-   /**
-	 * Objects stored by plugins. Each element of this collection is a <TT>Map</TT>
-	 * keyed by the plugin's internal name and containing all objects for that
-	 * plugin.
-	 */
-	//private Map _allPluginObjects = new HashMap();
+    /** Show INFO log messages in the log viewer */
+    private boolean _showInfoLogMessages = true;
 
+    /** Show ERROR log messages in the log viewer */
+    private boolean _showErrorLogMessages = true;
+
+    /** Always save preferences immediately when they change, instead of at shutdown */
+    private boolean _savePreferencesImmediately = true;
+   
 	/** Object to handle property change events. */
 	private transient PropertyChangeReporter _propChgReporter;
 
@@ -537,12 +535,12 @@ public class SquirrelPreferences implements Serializable
 	public synchronized PluginStatus[] getPluginStatuses()
 	{
 		final PluginStatus[] ar = new PluginStatus[_pluginStatusInfoColl.size()];
-		return (PluginStatus[])_pluginStatusInfoColl.toArray(ar);
+		return _pluginStatusInfoColl.toArray(ar);
 	}
 
 	public PluginStatus getPluginStatus(int idx)
 	{
-		return (PluginStatus)_pluginStatusInfoColl.get(idx);
+		return _pluginStatusInfoColl.get(idx);
 	}
 
 	// TODO: Only set if changed? May not be practical.
@@ -554,7 +552,7 @@ public class SquirrelPreferences implements Serializable
 		}
 
 		PluginStatus[] oldValue = new PluginStatus[_pluginStatusInfoColl.size()];
-		oldValue = (PluginStatus[])_pluginStatusInfoColl.toArray(oldValue);
+		oldValue = _pluginStatusInfoColl.toArray(oldValue);
 		_pluginStatusInfoColl.clear();
 		_pluginStatusInfoColl.addAll(Arrays.asList(data));
 		getPropertyChangeReporter().firePropertyChange(IPropertyNames.PLUGIN_STATUSES,
@@ -565,7 +563,7 @@ public class SquirrelPreferences implements Serializable
 	public synchronized void setPluginStatus(int idx, PluginStatus value)
 	{
 		_pluginStatusInfoColl.ensureCapacity(idx + 1);
-		final PluginStatus oldValue = (PluginStatus)_pluginStatusInfoColl.get(idx);;
+		final PluginStatus oldValue = _pluginStatusInfoColl.get(idx);;
 		_pluginStatusInfoColl.set(idx, value);
 		getPropertyChangeReporter().firePropertyChange(IPropertyNames.PLUGIN_STATUSES,
 											oldValue, value);
@@ -844,6 +842,7 @@ public class SquirrelPreferences implements Serializable
 		setJdbcDebugType(IJdbcDebugTypes.NONE);
 	}
 
+    @SuppressWarnings("unchecked")
 	public static SquirrelPreferences load()
 	{
 		File prefsFile = new ApplicationFiles().getUserPreferencesFile();
@@ -905,7 +904,7 @@ public class SquirrelPreferences implements Serializable
 	}
 
     /**
-     * @param _warnJreJdbcMismatch The _warnJreJdbcMismatch to set.
+     * @param data The _warnJreJdbcMismatch to set.
      */
     public synchronized void setWarnJreJdbcMismatch(boolean data) {
         if (data != _warnJreJdbcMismatch)
@@ -926,7 +925,7 @@ public class SquirrelPreferences implements Serializable
     }
 
     /**
-     * @param _warnForUnsavedFileEdits The _warnForUnsaveFileEdits to set.
+     * @param data The _warnForUnsaveFileEdits to set.
      */
     public synchronized void setWarnForUnsavedFileEdits(boolean data) {
         if (data != _warnForUnsavedFileEdits)
@@ -947,7 +946,7 @@ public class SquirrelPreferences implements Serializable
     }
     
     /**
-     * @param _warnForUnsavedBufferEdits The _warnForUnsavedBufferEdits to set.
+     * @param data The _warnForUnsavedBufferEdits to set.
      */
     public synchronized void setWarnForUnsavedBufferEdits(boolean data) {
         if (data != _warnForUnsavedBufferEdits)
@@ -970,7 +969,7 @@ public class SquirrelPreferences implements Serializable
 
 
    /**
-    * @param _warnForUnsavedBufferEdits The _warnForUnsavedBufferEdits to set.
+    * @param data The _warnForUnsavedBufferEdits to set.
     */
    public synchronized void setShowSessionStartupTimeHint(boolean data)
    {
@@ -993,7 +992,7 @@ public class SquirrelPreferences implements Serializable
    }
 
    /**
-    * @param _warnForUnsavedBufferEdits The _warnForUnsavedBufferEdits to set.
+    * @param data The _warnForUnsavedBufferEdits to set.
     */
    public synchronized void setShowDebugLogMessages(boolean data)
    {
@@ -1018,7 +1017,7 @@ public class SquirrelPreferences implements Serializable
  
 
 /**
-    * @param _showInfoLogMessages the _showInfoLogMessages to set
+    * @param data the _showInfoLogMessages to set
     */
    public void setShowInfoLogMessages(boolean data) {
        if (data != _showInfoLogMessages)
@@ -1039,7 +1038,7 @@ public class SquirrelPreferences implements Serializable
    }
 
    /**
-    * @param _showErrorLogMessages the _showErrorLogMessages to set
+    * @param data the _showErrorLogMessages to set
     */
    public void setShowErrorLogMessages(boolean data) {
        if (data != _showErrorLogMessages)
@@ -1057,5 +1056,27 @@ public class SquirrelPreferences implements Serializable
     */
    public boolean getShowErrorLogMessages() {
        return _showErrorLogMessages;
+   }
+   
+   /**
+    * @param data the _savePreferencesImmediately to set
+    */
+   public void setSavePreferencesImmediately(boolean data) {
+       if (data != _showErrorLogMessages)
+       {
+          final boolean oldValue = _savePreferencesImmediately;
+          _savePreferencesImmediately = data;
+          getPropertyChangeReporter().firePropertyChange(
+             IPropertyNames.SAVE_PREFERENCES_IMMEDIATELY,
+             oldValue, _savePreferencesImmediately);
+       }
+   }
+
+   /**
+    * @return the _showErrorLogMessages
+    */
+   public boolean getSavePreferencesImmediately() {
+       return _savePreferencesImmediately;
    }   
+   
 }

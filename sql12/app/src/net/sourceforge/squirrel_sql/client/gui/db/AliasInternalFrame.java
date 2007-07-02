@@ -18,6 +18,9 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.ALIAS_DEFINITIONS;
+import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.GLOBAL_PREFERENCES;
+
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -78,6 +81,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  *
  * @author	<A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
+@SuppressWarnings("serial")
 public class AliasInternalFrame extends BaseInternalFrame
 {
 	/**
@@ -277,6 +281,8 @@ public class AliasInternalFrame extends BaseInternalFrame
 			{
 				_app.getDataCache().addAlias(_sqlAlias);
 			}
+            _app.savePreferences(ALIAS_DEFINITIONS);
+            _app.savePreferences(GLOBAL_PREFERENCES);
 			dispose();
 		}
 		catch (ValidationException ex)
@@ -579,15 +585,17 @@ public class AliasInternalFrame extends BaseInternalFrame
 	 */
 	private final class DriversCombo extends JComboBox
 	{
-		private Map _map = new HashMap();
+		private Map<IIdentifier, ISQLDriver> _map = 
+            new HashMap<IIdentifier, ISQLDriver>();
         SquirrelPreferences prefs = _app.getSquirrelPreferences();
-		DriversCombo()
+		@SuppressWarnings("unchecked")
+        DriversCombo()
 		{
 			super();
 			SquirrelResources res = _app.getResources();
 			setRenderer(new DriverListCellRenderer(res.getIcon("list.driver.found"),
 											res.getIcon("list.driver.notfound")));
-			List list = new ArrayList();
+			List<ISQLDriver> list = new ArrayList<ISQLDriver>();
 			for (Iterator it = AliasInternalFrame.this._app.getDataCache().drivers();
 					it.hasNext();)
 			{
@@ -617,9 +625,9 @@ public class AliasInternalFrame extends BaseInternalFrame
 			return (ISQLDriver) getSelectedItem();
 		}
 
-		private class DriverComparator implements Comparator
+		private class DriverComparator implements Comparator<ISQLDriver>
 		{
-			public int compare(Object o1, Object o2)
+			public int compare(ISQLDriver o1, ISQLDriver o2)
 			{
 				return o1.toString().compareToIgnoreCase(o2.toString());
 			}

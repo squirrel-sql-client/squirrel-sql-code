@@ -48,6 +48,7 @@ import net.sourceforge.squirrel_sql.client.session.action.*;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
+@SuppressWarnings("serial")
 final class MainFrameMenuBar extends JMenuBar
 {
 
@@ -262,6 +263,7 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, NewSessionPropertiesAction.class, menu);
 		menu.addSeparator();
 		addToMenu(rsrc, DumpApplicationAction.class, menu);
+        addToMenu(rsrc, SavePreferencesAction.class, menu);
 		menu.addSeparator();
 		if (!_osxPluginLoaded)
 		{
@@ -433,7 +435,7 @@ final class MainFrameMenuBar extends JMenuBar
    }
 
 
-
+   @SuppressWarnings("unchecked")
    private Action addDesktopPaneActionToMenu(Resources rsrc, Class actionClass,
 											JMenu menu, JDesktopPane desktopPane)
 	{
@@ -453,7 +455,8 @@ final class MainFrameMenuBar extends JMenuBar
 		}
 		return act;
 	}
-
+   
+    @SuppressWarnings("unchecked")
 	private Action addToMenu(Resources rsrc, Class actionClass, JMenu menu)
 	{
 		Action act = _actions.get(actionClass);
@@ -471,6 +474,7 @@ final class MainFrameMenuBar extends JMenuBar
 		return act;
 	}
 
+    @SuppressWarnings("unchecked")
 	private JCheckBoxMenuItem addToMenuAsCheckBoxMenuItem(Resources rsrc, Class actionClass, JMenu menu)
 	{
 		Action act = _actions.get(actionClass);

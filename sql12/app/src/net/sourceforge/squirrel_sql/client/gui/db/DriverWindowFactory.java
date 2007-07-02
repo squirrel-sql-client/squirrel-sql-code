@@ -24,6 +24,7 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
@@ -58,7 +59,8 @@ class DriverWindowFactory implements AliasInternalFrame.IMaintenanceType
 	 * modifying an existing driver. Keyed by
 	 * <TT>ISQLDriver.getIdentifier()</TT>.
 	 */
-	private final Map _modifySheets = new HashMap();
+	private final Map<IIdentifier, DriverInternalFrame> _modifySheets = 
+        new HashMap<IIdentifier, DriverInternalFrame>();
 
 	/**
 	 * ctor.
@@ -173,7 +175,7 @@ class DriverWindowFactory implements AliasInternalFrame.IMaintenanceType
 
 	private DriverInternalFrame get(ISQLDriver driver)
 	{
-		return (DriverInternalFrame) _modifySheets.get(driver.getIdentifier());
+		return _modifySheets.get(driver.getIdentifier());
 	}
 }
 

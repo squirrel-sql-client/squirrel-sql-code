@@ -33,6 +33,7 @@ import net.sourceforge.squirrel_sql.client.gui.WindowManager;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
+import net.sourceforge.squirrel_sql.client.preferences.PreferenceType;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
@@ -213,4 +214,17 @@ public interface IApplication
      */
 	void openURL(String url);
 
+    /**
+     * Saves off preferences and all state present in the application.
+     */
+    void saveApplicationState();
+    
+    /**
+     * Persists the specified category of preferences to file.
+     * 
+     * @param preferenceType the enumerated type that indicates what category
+     *                       of preferences to be persisted. 
+     */
+    public void savePreferences(PreferenceType preferenceType);
+    
 }

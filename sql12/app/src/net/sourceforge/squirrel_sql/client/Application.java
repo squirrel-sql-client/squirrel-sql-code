@@ -54,6 +54,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.ViewHelpCommand;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginLoadInfo;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
+import net.sourceforge.squirrel_sql.client.preferences.PreferenceType;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLEntryPanelFactory;
@@ -141,6 +142,11 @@ class Application implements IApplication
 	/** Current type of JDBC debug logging that we are doing. */
 	private int _jdbcDebugType = SquirrelPreferences.IJdbcDebugTypes.NONE;
 
+    /** contains info about files and directories used by the application. */
+    private ApplicationFiles _appFiles = null;
+    
+    private EditWhereCols editWhereCols = new EditWhereCols();
+    
 	/**
 	 * Default ctor.
 	 */
@@ -169,7 +175,9 @@ class Application implements IApplication
 					}
 					catch (Throwable t)
 					{
-						t.printStackTrace();
+                        if (s_log.isDebugEnabled()) {
+                            t.printStackTrace();
+                        }
 						s_log.error("Exception occured dispatching Event " + event, t);
 					}
 				}
@@ -181,6 +189,8 @@ class Application implements IApplication
 		// Setup the applications Look and Feel.
 		setupLookAndFeel(args);
 
+        editWhereCols.setApplication(this);
+        
 // TODO: Make properties file Application.properties so we can use class
 // name to generate properties file name.
 		_resources = new SquirrelResources("net.sourceforge.squirrel_sql.client.resources.squirrel");
@@ -231,6 +241,7 @@ class Application implements IApplication
 
 	}
 
+    
 	/**
 	 * Application is shutting down.
 	 */
@@ -238,30 +249,60 @@ class Application implements IApplication
 	{
 		s_log.info(s_stringMgr.getString("Application.shutdown",
 									Calendar.getInstance().getTime()));
-      try
-      {
-         if (!_sessionManager.closeAllSessions())
-         {
-            s_log.info(s_stringMgr.getString("Application.shutdownCancelled",
-               Calendar.getInstance().getTime()));
+
+		saveApplicationState();
+
+        if (!closeAllSessions()) {
             return false;
-         }
-      }
-      catch (Throwable t)
-      {
-         String msg =
-            s_stringMgr.getString("Application.error.closeAllSessions",
-               t.getMessage());
-         s_log.error(msg, t);
-      }
+        }
+        _pluginManager.unloadPlugins();
+        
+        closeAllViewers();
+        
+        closeOutputStreams();
+        
+        SchemaInfoCacheSerializer.waitTillStoringIsDone();
 
-      _pluginManager.unloadPlugins();
+        String msg = s_stringMgr.getString("Application.shutdowncomplete",
+										   Calendar.getInstance().getTime());
+		s_log.info(msg);
+		LoggerController.shutdown();
 
-		// Remember the currently selected entries in the
-		// aliases and drivers windows.
-		// JASON: Do in WindowManager and do much better
-//		final MainFrame mf = _windowManager.getMainFrame();
-		int idx = _windowManager.getAliasesListInternalFrame().getSelectedIndex();
+		return true;
+	}
+
+    /**
+     * Saves off preferences and all state present in the application.
+     */
+    public void saveApplicationState() {
+        saveGlobalPreferences();
+
+		saveDrivers();
+
+		saveAliases();
+
+		// Save Application level SQL history.
+		saveSQLHistory();
+
+		// Save options selected for Cell Import Export operations
+		saveCellImportExportInfo();
+
+		// Save options selected for Edit Where Columns
+		saveEditWhereColsInfo();
+
+		// Save options selected for DataType-specific properties
+		saveDataTypePreferences();
+    }
+
+    /**
+     * Remember the currently selected entries in the aliases and drivers 
+     * windows.
+     */
+    private void saveGlobalPreferences() {
+        // JASON: Do in WindowManager and do much better
+        // final MainFrame mf = _windowManager.getMainFrame();
+        
+        int idx = _windowManager.getAliasesListInternalFrame().getSelectedIndex();
 		_prefs.setAliasesSelectedIndex(idx);
 		idx = _windowManager.getDriversListInternalFrame().getSelectedIndex();
 		_prefs.setDriversSelectedIndex(idx);
@@ -270,35 +311,32 @@ class Application implements IApplication
 		_prefs.setFirstRun(false);
 
 		_prefs.save();
+    }
 
-      try
-      {
-         FileViewerFactory.getInstance().closeAllViewers();
-      }
-      catch (Throwable t)
-      {
-         // i18n[Application.error.closeFileViewers=Unable to close all file viewers]
-         s_log.error(s_stringMgr.getString("Application.error.closeFileViewers"), t);
-      }
+    /**
+     * 
+     */
+    private void closeOutputStreams() {
+        if (_jdbcDebugOutputStream != null)
+        {
+            _jdbcDebugOutputStream.close();
+            _jdbcDebugOutputStream = null;
+        }
 
-      final ApplicationFiles appFiles = new ApplicationFiles();
+        if (_jdbcDebugOutputWriter != null)
+        {
+            _jdbcDebugOutputWriter.close();
+            _jdbcDebugOutputWriter = null;
+        }
+    }
 
-		try
+    /**
+     * Saves alias definitions that are in memory to the aliases file.
+     */
+    private void saveAliases() {
+        try
 		{
-			final File file = appFiles.getDatabaseDriversFile();
-			_cache.saveDrivers(file);
-		}
-		catch (Throwable th)
-		{
-			String msg = s_stringMgr.getString("Application.error.driversave",
-												th.getMessage());
-			showErrorDialog(msg, th);
-			s_log.error(msg, th);
-		}
-
-		try
-		{
-			final File file = appFiles.getDatabaseAliasesFile();
+			final File file = _appFiles.getDatabaseAliasesFile();
 			_cache.saveAliases(file);
 		}
 		catch (Throwable th)
@@ -313,39 +351,62 @@ class Application implements IApplication
 			showErrorDialog(msg, th);
 			s_log.error(msg, th);
 		}
+    }
 
-		if (_jdbcDebugOutputStream != null)
+    /**
+     * Saves the driver definitions that are in memory to the drivers file.
+     */
+    private void saveDrivers() {
+        try
 		{
-			_jdbcDebugOutputStream.close();
-			_jdbcDebugOutputStream = null;
+			final File file = _appFiles.getDatabaseDriversFile();
+			_cache.saveDrivers(file);
 		}
-
-		if (_jdbcDebugOutputWriter != null)
+		catch (Throwable th)
 		{
-			_jdbcDebugOutputWriter.close();
-			_jdbcDebugOutputWriter = null;
+			String msg = s_stringMgr.getString("Application.error.driversave",
+												th.getMessage());
+			showErrorDialog(msg, th);
+			s_log.error(msg, th);
 		}
+    }
 
-		// Save Application level SQL history.
-		saveSQLHistory();
+    /**
+     * 
+     */
+    private void closeAllViewers() {
+        try {
+            FileViewerFactory.getInstance().closeAllViewers();
+        } catch (Throwable t){
+            //i18n[Application.error.closeFileViewers=Unable to close all file viewers]
+            s_log.error(s_stringMgr.getString("Application.error.closeFileViewers"), t);
+        }
+    }
 
-		// Save options selected for Cell Import Export operations
-		saveCellImportExportInfo();
-
-		// Save options selected for Edit Where Columns
-		saveEditWhereColsInfo();
-
-		// Save options selected for DataType-specific properties
-		saveDTProperties();
-
-      SchemaInfoCacheSerializer.waitTillStoringIsDone();
-
-      String msg = s_stringMgr.getString("Application.shutdowncomplete",
-										Calendar.getInstance().getTime());
-		s_log.info(msg);
-		LoggerController.shutdown();
-
-		return true;
+	/**
+	 * Returns true is closing all sessions was successful.
+	 * @return
+	 */
+	private boolean closeAllSessions() {
+	    boolean result = false;
+	    try
+	    {
+	        if (!_sessionManager.closeAllSessions())
+	        {
+	            s_log.info(s_stringMgr.getString("Application.shutdownCancelled",
+	                    Calendar.getInstance().getTime()));
+	        } else {
+	            result = true;
+	        }
+	    }
+	    catch (Throwable t)
+	    {
+	        String msg =
+	            s_stringMgr.getString("Application.error.closeAllSessions",
+	                    t.getMessage());
+	        s_log.error(msg, t);
+	    }
+	    return result;
 	}
 
 	public PluginManager getPluginManager()
@@ -631,9 +692,9 @@ class Application implements IApplication
 
 		// TODO: pass in a message handler so user gets error msgs.
 		indicateNewStartupTask(splash, s_stringMgr.getString("Application.splash.loadingjdbc"));
-		final ApplicationFiles appFiles = new ApplicationFiles();
+		_appFiles = new ApplicationFiles();
 
-      String errMsg = FileTransformer.transform(appFiles);
+      String errMsg = FileTransformer.transform(_appFiles);
       if(null != errMsg)
       {
          System.err.println(errMsg);
@@ -642,8 +703,8 @@ class Application implements IApplication
       }
 
       _cache = new DataCache(_driverMgr, 
-                             appFiles.getDatabaseDriversFile(),
-                             appFiles.getDatabaseAliasesFile(),
+                             _appFiles.getDatabaseDriversFile(),
+                             _appFiles.getDatabaseAliasesFile(),
                              _resources.getDefaultDriversUrl(),
                              this);
 
@@ -771,6 +832,7 @@ class Application implements IApplication
 	/**
 	 * Load application level SQL History for the current user.
 	 */
+    @SuppressWarnings("unchecked")
 	private void loadSQLHistory()
 	{
 		try
@@ -838,6 +900,7 @@ class Application implements IApplication
 	 * Load the options previously selected by user for import/export of
 	 * data in various Cells.
 	 */
+    @SuppressWarnings("unchecked")
 	private void loadCellImportExportInfo()
 	{
 		CellImportExportInfoSaver saverInstance = null;
@@ -889,9 +952,10 @@ class Application implements IApplication
 	 * Load the options previously selected by user for specific cols to use
 	 * in WHERE clause when editing cells.
 	 */
+    @SuppressWarnings("all")
 	private void loadEditWhereColsInfo()
 	{
-		EditWhereCols saverInstance = null;
+		
 		try
 		{
 			XMLBeanReader doc = new XMLBeanReader();
@@ -899,8 +963,8 @@ class Application implements IApplication
 			Iterator it = doc.iterator();
 			if (it.hasNext())
 			{
-				saverInstance = (EditWhereCols)it.next();
-				EditWhereCols x = saverInstance;
+				editWhereCols = (EditWhereCols)it.next();
+                editWhereCols.setApplication(this);
 			}
 		}
 		catch (FileNotFoundException ignore)
@@ -925,7 +989,7 @@ class Application implements IApplication
 	{
 		try
 		{
-			XMLBeanWriter wtr = new XMLBeanWriter(new EditWhereCols());
+			XMLBeanWriter wtr = new XMLBeanWriter(editWhereCols);
 			wtr.save(new ApplicationFiles().getEditWhereColsFile());
 		}
 		catch (Exception ex)
@@ -939,6 +1003,7 @@ class Application implements IApplication
 	 * Load the options previously selected by user for specific cols to use
 	 * in WHERE clause when editing cells.
 	 */
+    @SuppressWarnings("all")
 	private void loadDTProperties()
 	{
 		DTProperties saverInstance = null;
@@ -946,7 +1011,7 @@ class Application implements IApplication
 		{
 			XMLBeanReader doc = new XMLBeanReader();
 			doc.load(new ApplicationFiles().getDTPropertiesFile());
-			Iterator it = doc.iterator();
+			Iterator<Object> it = doc.iterator();
 			if (it.hasNext())
 			{
 				saverInstance = (DTProperties)it.next();
@@ -971,7 +1036,7 @@ class Application implements IApplication
 	/**
 	 * Save the options selected by user for Cell Import Export.
 	 */
-	private void saveDTProperties()
+	private void saveDataTypePreferences()
 	{
 		try
 		{
@@ -985,6 +1050,43 @@ class Application implements IApplication
 		}
 	}
 
+    /**
+     * Persists the specified category of preferences to file if the user has 
+     * the "always save preferences immediately" preference checked.
+     * 
+     * @param preferenceType the enumerated type that indicates what category
+     *                       of preferences to be persisted. 
+     */
+    public void savePreferences(PreferenceType preferenceType) {
+        if (!_prefs.getSavePreferencesImmediately()) {
+            return;
+        }
+        switch (preferenceType) {
+            case ALIAS_DEFINITIONS:
+                saveAliases();
+                break;
+            case DRIVER_DEFINITIONS:
+                saveDrivers();
+                break;
+            case GLOBAL_PREFERENCES:
+                saveGlobalPreferences();
+                break;
+            case DATATYPE_PREFERENCES:
+                saveDataTypePreferences();
+                break;
+            case CELLIMPORTEXPORT_PREFERENCES:
+                saveCellImportExportInfo();
+                break;
+            case SQLHISTORY:
+                saveSQLHistory();
+                break;
+            case EDITWHERECOL_PREFERENCES:
+                saveEditWhereColsInfo();
+                break;
+            default:
+                s_log.error("Unknown preference type: "+preferenceType);
+        }
+    }
 
 	/**
 	 * Setup applications Look and Feel.
