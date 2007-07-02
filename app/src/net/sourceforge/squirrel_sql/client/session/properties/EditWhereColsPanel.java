@@ -52,6 +52,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * the WHERE clause when editing a cell in a table.  This is useful if the table has a large number
  * of columns and the WHERE clause generated using all the columns exceeds the DBMS limit.
  */
+@SuppressWarnings("serial")
 public class EditWhereColsPanel extends JPanel
 {
 	private static final StringManager s_stringMgr =
@@ -68,7 +69,7 @@ public class EditWhereColsPanel extends JPanel
 	private String _unambiguousTableName;
 	
 	/** The list of all possible columns in the table **/
-	private SortedSet _columnList;
+	private SortedSet<String> _columnList;
 	
 	/** The list of "to use" column names as seen by the user **/
 	private JList useColsList;
@@ -85,6 +86,8 @@ public class EditWhereColsPanel extends JPanel
 	private ISession _session = null;
     
     private PrimaryKeyInfo[] primaryKeyInfos = null; 
+    
+    EditWhereCols _editWhereCols = new EditWhereCols();
     
 	/**
 	 * ?? this should be changed to use the I18N file mechanism.
@@ -113,12 +116,13 @@ public class EditWhereColsPanel extends JPanel
 	 */
 	public EditWhereColsPanel(ISession session,
                               ITableInfo ti,                   
-                              SortedSet columnList, 
+                              SortedSet<String> columnList, 
                               String unambiguousTableName)
 		throws IllegalArgumentException
 	{
 		super();
 		_session = session;
+        _editWhereCols.setApplication(session.getApplication());
         getPrimaryKey(ti);
 		// save the input for use later
 		_columnList = columnList;
@@ -126,7 +130,7 @@ public class EditWhereColsPanel extends JPanel
 		_unambiguousTableName = unambiguousTableName;
 		
 		// look up the table in the EditWhereCols list
-		HashMap colsTable = EditWhereCols.get(unambiguousTableName);
+		HashMap<String, String> colsTable = EditWhereCols.get(unambiguousTableName);
 		
 		if (colsTable == null) {
 			// use all of the columns
@@ -136,10 +140,10 @@ public class EditWhereColsPanel extends JPanel
 		else {
 			// use just the columns listed in the table, and set the not-used cols to the ones
 			// that are not mentioned in the table
-			SortedSet initialUseColsSet = new TreeSet( );
-			SortedSet initialNotUseColsList = new TreeSet();
+			SortedSet<Object> initialUseColsSet = new TreeSet<Object>( );
+			SortedSet<Object> initialNotUseColsList = new TreeSet<Object>();
 			
-			Iterator it = _columnList.iterator();
+			Iterator<String> it = _columnList.iterator();
 			while (it.hasNext()) {
 				Object colName = it.next();
 				if (colsTable.get(colName) != null)
@@ -198,10 +202,10 @@ public class EditWhereColsPanel extends JPanel
 	 * Put the current data into the EditWhereCols table.
 	 */
 	public boolean ok() {
-		
+        
 		// if all cols are in the "to use" side, delete from EditWhereCols
 		if (notUseColsList.getModel().getSize() == 0) {
-			EditWhereCols.put(_unambiguousTableName, null);
+			_editWhereCols.put(_unambiguousTableName, null);
 		}
 		else {
 			// some cols are not to be used
@@ -216,13 +220,15 @@ public class EditWhereColsPanel extends JPanel
 			}
 			
 			// create the HashMap of names to use and put it in EditWhereCols
-			HashMap useColsMap = new HashMap(useColsModel.getSize());
+			HashMap<String, String> useColsMap = 
+                new HashMap<String, String>(useColsModel.getSize());
 			
 			for (int i=0; i< useColsModel.getSize(); i++) {
-				useColsMap.put(useColsModel.getElementAt(i), useColsModel.getElementAt(i));
+				useColsMap.put((String)useColsModel.getElementAt(i), 
+                               (String)useColsModel.getElementAt(i));
 			}
 			
-			EditWhereCols.put(_unambiguousTableName, useColsMap);
+			_editWhereCols.put(_unambiguousTableName, useColsMap);
 		}
 		return true;
 	}
@@ -234,20 +240,20 @@ public class EditWhereColsPanel extends JPanel
 		
 		// get the values from the "not use" list and convert to sorted set
 		ListModel notUseColsModel = notUseColsList.getModel();
-		SortedSet notUseColsSet = new TreeSet();
+		SortedSet<String> notUseColsSet = new TreeSet<String>();
 		for (int i=0; i<notUseColsModel.getSize(); i++)
-			notUseColsSet.add(notUseColsModel.getElementAt(i));
+			notUseColsSet.add((String)notUseColsModel.getElementAt(i));
 		
 		// get the values from the "use" list
 		ListModel useColsModel = useColsList.getModel();
 		
 		// create an empty set for the "use" list
-		SortedSet useColsSet = new TreeSet();
+		SortedSet<Object> useColsSet = new TreeSet<Object>();
 
 		// for each element in the "use" set, if selected then add to "not use",
 		// otherwise add to new "use" set
 		for (int i=0; i<useColsModel.getSize(); i++) {
-			Object colName = useColsModel.getElementAt(i);
+			String colName = (String)useColsModel.getElementAt(i);
 			if (useColsList.isSelectedIndex(i))
 				notUseColsSet.add(colName);
 			else useColsSet.add(colName);
@@ -263,20 +269,20 @@ public class EditWhereColsPanel extends JPanel
 	private void moveToUsed() {
 		// get the values from the "use" list and convert to sorted set
 		ListModel useColsModel = useColsList.getModel();
-		SortedSet useColsSet = new TreeSet();
+		SortedSet<String> useColsSet = new TreeSet<String>();
 		for (int i=0; i<useColsModel.getSize(); i++)
-			useColsSet.add(useColsModel.getElementAt(i));
+			useColsSet.add((String)useColsModel.getElementAt(i));
 		
 		// get the values from the "not use" list
 		ListModel notUseColsModel = notUseColsList.getModel();
 		
 		// create an empty set for the "not use" list
-		SortedSet notUseColsSet = new TreeSet();
+		SortedSet<Object> notUseColsSet = new TreeSet<Object>();
 
 		// for each element in the "not use" set, if selected then add to "use",
 		// otherwise add to new "not use" set
 		for (int i=0; i<notUseColsModel.getSize(); i++) {
-			Object colName = notUseColsModel.getElementAt(i);
+			String colName = (String)notUseColsModel.getElementAt(i);
 			if (notUseColsList.isSelectedIndex(i))
 				useColsSet.add(colName);
 			else notUseColsSet.add(colName);

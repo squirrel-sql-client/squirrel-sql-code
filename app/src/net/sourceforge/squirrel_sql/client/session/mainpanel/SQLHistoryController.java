@@ -22,6 +22,7 @@ public class SQLHistoryController
 {
    private static final String PREF_KEY_SQL_HISTORY_COL_NAME_PREFIX_ = "Squirrel.sqlHistoryColIxPrefix_";
 
+   @SuppressWarnings("unused")
    private static final StringManager s_stringMgr =
        StringManagerFactory.getStringManager(SQLHistoryController.class);
 
@@ -34,7 +35,8 @@ public class SQLHistoryController
    private JPopupMenu _popUp = new JPopupMenu();
 
 
-   public SQLHistoryController(ISession session, ISQLPanelAPI sqlPanelAPI, ArrayList<SQLHistoryItem> items)
+   @SuppressWarnings("serial")
+public SQLHistoryController(ISession session, ISQLPanelAPI sqlPanelAPI, ArrayList<SQLHistoryItem> items)
    {
       _sqlPanelAPI = sqlPanelAPI;
       _sqlHistoryItemWrappers = SQLHistoryItemWrapper.wrap(items);
@@ -74,7 +76,9 @@ public class SQLHistoryController
 
 
       SortableTableModel stm = (SortableTableModel) _dlg.tblHistoryItems.getModel();
-      SqlHistoryTableModel dtm = new SqlHistoryTableModel((ArrayList<SQLHistoryItemWrapper>) _sqlHistoryItemWrappers.clone(), stm);
+      ArrayList<SQLHistoryItemWrapper> copy = 
+          new ArrayList<SQLHistoryItemWrapper>(_sqlHistoryItemWrappers);
+      SqlHistoryTableModel dtm = new SqlHistoryTableModel(copy, stm);
       stm.setActualModel(dtm);
 
       final TableColumnModel tcm = new DefaultTableColumnModel();
@@ -161,6 +165,7 @@ public class SQLHistoryController
          }
       });
 
+      
       AbstractAction closeAction = new AbstractAction()
       {
          public void actionPerformed(ActionEvent actionEvent)
@@ -233,7 +238,10 @@ public class SQLHistoryController
       {
          SortableTableModel stm = (SortableTableModel) _dlg.tblHistoryItems.getModel();
          SqlHistoryTableModel tm = (SqlHistoryTableModel) stm.getActualModel();
-         tm.setData((ArrayList<SQLHistoryItemWrapper>) _sqlHistoryItemWrappers.clone());
+         
+         ArrayList<SQLHistoryItemWrapper> clone = 
+             new ArrayList<SQLHistoryItemWrapper>(_sqlHistoryItemWrappers);
+        tm.setData(clone);
       }
    }
 
@@ -245,7 +253,9 @@ public class SQLHistoryController
 
       if(_dlg.chkFiltered.isSelected())
       {
-         tm.setData((ArrayList<SQLHistoryItemWrapper>) _sqlHistoryItemWrappers.clone());
+          ArrayList<SQLHistoryItemWrapper> clone = 
+              new ArrayList<SQLHistoryItemWrapper>(_sqlHistoryItemWrappers);
+         tm.setData(clone);
       }
 
 
@@ -358,7 +368,7 @@ public class SQLHistoryController
       }
    }
 
-
+   @SuppressWarnings("serial")
    private static class SqlHistoryTableModel extends DefaultTableModel
    {
       private ArrayList<SQLHistoryItemWrapper> _tempSqlHistoryItemWrappers;

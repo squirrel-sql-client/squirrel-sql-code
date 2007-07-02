@@ -52,6 +52,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  * Edit Where Cols dialog gui.
  * JASON: Rename to EditWhereColsInternalFrame 
  */
+@SuppressWarnings("serial")
 public class EditWhereColsSheet extends BaseSessionInternalFrame
 {
 
@@ -202,7 +203,7 @@ public class EditWhereColsSheet extends BaseSessionInternalFrame
 	 */
 	private void createGUI()
 	{
-		SortedSet columnNames = new TreeSet();
+		SortedSet<String> columnNames = new TreeSet<String>();
 
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 

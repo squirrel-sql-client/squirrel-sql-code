@@ -24,6 +24,7 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
@@ -57,7 +58,8 @@ class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
 	 * Collection of <TT>AliasMaintDialog</TT> that are currently visible modifying
 	 * an existing aliss. Keyed by <TT>ISQLAlias.getIdentifier()</TT>.
 	 */
-	private Map _modifySheets = new HashMap();
+	private Map<IIdentifier, AliasInternalFrame> _modifySheets = 
+        new HashMap<IIdentifier, AliasInternalFrame>();
 
 	/**
 	 * ctor.
@@ -184,6 +186,6 @@ class AliasWindowFactory implements AliasInternalFrame.IMaintenanceType
 
 	private AliasInternalFrame get(ISQLAlias alias)
 	{
-		return (AliasInternalFrame) _modifySheets.get(alias.getIdentifier());
+		return _modifySheets.get(alias.getIdentifier());
 	}
 }

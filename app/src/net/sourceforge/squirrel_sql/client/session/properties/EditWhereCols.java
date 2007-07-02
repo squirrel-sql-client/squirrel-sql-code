@@ -28,6 +28,9 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.preferences.PreferenceType;
+
 public class EditWhereCols {
 
 	
@@ -52,6 +55,12 @@ public class EditWhereCols {
 	private static HashMap<String, HashMap<String, String>> _tables = 
         new HashMap<String, HashMap<String, String>>();
 	
+    /**  
+     * Is used to persist the _tables map each time it changes is the user 
+     * so wishes
+     */
+    private IApplication _app = null;
+    
 	/**
 	 * ctor
 	 */
@@ -131,11 +140,16 @@ public class EditWhereCols {
 	 * add or replace a table-name/hashmap-of-column-names mapping.
 	 * If map is null, remove the entry from the tables.
 	 */
-	public static void put(String tableName, HashMap<String, String> colNames) {
-		if (colNames == null)
+	public void put(String tableName, HashMap<String, String> colNames) {
+        if (_app == null) {
+            throw new IllegalStateException("application has not been set");
+        }        
+		if (colNames == null) {
 			_tables.remove(tableName);
-		else 
+        } else { 
 			_tables.put(tableName, colNames);
+        }
+        _app.savePreferences(PreferenceType.EDITWHERECOL_PREFERENCES);
 		return;
 	}
 	
@@ -146,4 +160,18 @@ public class EditWhereCols {
 	public static HashMap<String,String> get(String tableName) {
 		return _tables.get(tableName);
 	}
+
+
+    /**
+     * Used to inject the IApplication which is used to persist this data.
+     * 
+     * @param application the IApplication to set
+     */
+    public void setApplication(IApplication application) {
+        if (application == null) {
+            throw new IllegalArgumentException("application cannot be null");
+        }
+        this._app = application;
+    }
+
 }

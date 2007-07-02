@@ -17,6 +17,9 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.DATATYPE_PREFERENCES;
+import static net.sourceforge.squirrel_sql.client.preferences.PreferenceType.GLOBAL_PREFERENCES;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -52,6 +55,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
+@SuppressWarnings("serial")
 public class GlobalPreferencesSheet extends BaseInternalFrame
 {
 	/** Internationalized strings for this class. */
@@ -72,7 +76,8 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 	 * List of all the panels (instances of
 	 * <TT>IGlobalPreferencesPanel</TT> objects in shhet.
 	 */
-	private List _panels = new ArrayList();
+	private List<IGlobalPreferencesPanel> _panels = 
+        new ArrayList<IGlobalPreferencesPanel>();
 
    private JTabbedPane _tabPane;
 
@@ -103,9 +108,9 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
       _app = app;
       createGUI();
 
-      for (Iterator it = _panels.iterator(); it.hasNext();)
+      for (Iterator<IGlobalPreferencesPanel> it = _panels.iterator(); it.hasNext();)
       {
-         IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel) it.next();
+         IGlobalPreferencesPanel pnl = it.next();
          try
          {
             pnl.initialize(_app);
@@ -142,6 +147,7 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if a <TT>null</TT> <TT>IApplication</TT> object passed.
 	 */
+    @SuppressWarnings("unchecked")
 	public static synchronized void showSheet(IApplication app, Class componentClassOfTabToSelect)
 	{
 		if (s_instance == null)
@@ -158,7 +164,7 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
          s_instance.selectTab(componentClassOfTabToSelect);
       }
    }
-
+   @SuppressWarnings("unchecked")
    private void selectTab(Class componentClassofTabToSelect)
    {
       for (int i = 0; i < _tabPane.getTabCount(); i++)
@@ -183,9 +189,9 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
       Preferences.userRoot().putInt(PREF_KEY_GLOBAL_PREFS_SHEET_WIDTH, size.width);
       Preferences.userRoot().putInt(PREF_KEY_GLOBAL_PREFS_SHEET_HEIGHT, size.height);
 
-      for (Iterator it = _panels.iterator(); it.hasNext();)
+      for (Iterator<IGlobalPreferencesPanel> it = _panels.iterator(); it.hasNext();)
       {
-         IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel) it.next();
+         IGlobalPreferencesPanel pnl = it.next();
          pnl.uninitialize(_app);
       }
 
@@ -228,13 +234,13 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 		{
 			final boolean isDebug = s_log.isDebugEnabled();
 			long start = 0;
-			for (Iterator it = _panels.iterator(); it.hasNext();)
+			for (Iterator<IGlobalPreferencesPanel> it = _panels.iterator(); it.hasNext();)
 			{
 				if (isDebug)
 				{
 					start = System.currentTimeMillis();
 				}
-				IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel)it.next();
+				IGlobalPreferencesPanel pnl = it.next();
 				try
 				{
 					pnl.applyChanges();
@@ -255,50 +261,13 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 		}
 		finally
 		{
+            _app.savePreferences(GLOBAL_PREFERENCES);
+            _app.savePreferences(DATATYPE_PREFERENCES);
 			cursorChg.restore();
 		}
 
 		dispose();
 	}
-
-    private void performSave() {
-        CursorChanger cursorChg = new CursorChanger(_app.getMainFrame());
-        cursorChg.show();
-        try
-        {
-            final boolean isDebug = s_log.isDebugEnabled();
-            long start = 0;
-            for (Iterator it = _panels.iterator(); it.hasNext();)
-            {
-                if (isDebug)
-                {
-                    start = System.currentTimeMillis();
-                }
-                IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel)it.next();
-                try
-                {
-                    pnl.applyChanges();
-                }
-                catch (Throwable th)
-                {
-                    final String msg = s_stringMgr.getString("GlobalPreferencesSheet.error.saving", pnl.getTitle());
-                    s_log.error(msg, th);
-                    _app.showErrorDialog(msg, th);
-                }
-                if (isDebug)
-                {
-                    s_log.debug("Panel " + pnl.getTitle()
-                                + " applied changes in "
-                                + (System.currentTimeMillis() - start) + "ms");
-                }
-            }
-        }
-        finally
-        {
-            _app.getSquirrelPreferences().save();
-            cursorChg.restore();
-        }
-    }
     
 	/**
 	 * Create user interface.
@@ -336,9 +305,9 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 
 		// Add all panels to the tabbed pane.
 		_tabPane = UIFactory.getInstance().createTabbedPane();
-		for (Iterator it = _panels.iterator(); it.hasNext();)
+		for (Iterator<IGlobalPreferencesPanel> it = _panels.iterator(); it.hasNext();)
 		{
-			IGlobalPreferencesPanel pnl = (IGlobalPreferencesPanel) it.next();
+			IGlobalPreferencesPanel pnl = it.next();
 			String pnlTitle = pnl.getTitle();
 			String hint = pnl.getHint();
 			_tabPane.addTab(pnlTitle, null, pnl.getPanelComponent(), hint);
@@ -404,12 +373,6 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 				performOk();
 			}
 		});
-        JButton saveBtn = new JButton(s_stringMgr.getString("GlobalPreferencesSheet.save"));
-        saveBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                performSave();
-            }
-        });
 		JButton closeBtn = new JButton(s_stringMgr.getString("GlobalPreferencesSheet.close"));
 		closeBtn.addActionListener(new ActionListener()
 		{
@@ -419,10 +382,9 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 			}
 		});
 
-		GUIUtils.setJButtonSizesTheSame(new JButton[] { okBtn, saveBtn, closeBtn });
+		GUIUtils.setJButtonSizesTheSame(new JButton[] { okBtn, closeBtn });
 
 		pnl.add(okBtn);
-      pnl.add(saveBtn);
 		pnl.add(closeBtn);
 
 		getRootPane().setDefaultButton(okBtn);

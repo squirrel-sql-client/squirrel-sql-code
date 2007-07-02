@@ -22,15 +22,17 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
-import javax.swing.*;
-
-import net.sourceforge.squirrel_sql.fw.gui.MultipleLineLabel;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 {
@@ -63,7 +65,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 		_app = app;
 
 		getPanelComponent();
-      _myPanel.loadData(_app, _app.getSquirrelPreferences());
+      _myPanel.loadData(_app.getSquirrelPreferences());
 
    }
 
@@ -96,6 +98,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 		return s_stringMgr.getString("GeneralPreferencesPanel.tabhint");
 	}
 
+    @SuppressWarnings("serial")
 	private static final class MyPanel extends JPanel
 	{
 
@@ -119,7 +122,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
       private JCheckBox _warnForUnsavedFileEdits = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.warnForUnsavedFileEdits"));
       private JCheckBox _warnForUnsavedBufferEdits = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.warnForUnsavedBufferEdits"));
       private JCheckBox _showSessionStartupTimeHint = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showSessionStartupTimeHint"));
-
+      private JCheckBox _savePreferencesImmediately = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.savePreferencesImmediately"));
 
       MyPanel()
 		{
@@ -127,10 +130,8 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
 			createUserInterface();
 		}
 
-      void loadData(IApplication app, SquirrelPreferences prefs)
+      void loadData(SquirrelPreferences prefs)
       {
-         final ApplicationFiles appFiles = new ApplicationFiles();
-
          _showContents.setSelected(prefs.getShowContentsWhenDragging());
          _showToolTips.setSelected(prefs.getShowToolTips());
          _useScrollableTabbedPanes.setSelected(prefs.getUseScrollableTabbedPanes());
@@ -147,6 +148,8 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
          _warnForUnsavedFileEdits.setSelected(prefs.getWarnForUnsavedFileEdits());
          _warnForUnsavedBufferEdits.setSelected(prefs.getWarnForUnsavedBufferEdits());
          _showSessionStartupTimeHint.setSelected(prefs.getShowSessionStartupTimeHint());
+         _savePreferencesImmediately.setSelected(prefs.getSavePreferencesImmediately());
+         
       }
 
       void applyChanges(SquirrelPreferences prefs)
@@ -166,6 +169,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
          prefs.setWarnForUnsavedFileEdits(_warnForUnsavedFileEdits.isSelected());
          prefs.setWarnForUnsavedBufferEdits(_warnForUnsavedBufferEdits.isSelected());
          prefs.setShowSessionStartupTimeHint(_showSessionStartupTimeHint.isSelected());
+         prefs.setSavePreferencesImmediately(_savePreferencesImmediately.isSelected());
       }
 
 		private void createUserInterface()
@@ -259,6 +263,10 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
          gbc.gridy = 4;
          pnl.add(_showSessionStartupTimeHint, gbc);
 
+         gbc.gridx = 0;
+         gbc.gridy = 5;
+         pnl.add(_savePreferencesImmediately, gbc);
+         
          return pnl;
 		}
 
