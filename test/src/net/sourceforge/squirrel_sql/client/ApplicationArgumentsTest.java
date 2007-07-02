@@ -18,7 +18,8 @@
  */
 package net.sourceforge.squirrel_sql.client;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.After;
 import org.junit.Before;
@@ -45,7 +46,8 @@ public class ApplicationArgumentsTest {
     @Test
     public final void testGetRawArguments() {
         String[] rawArgs = applicationArgumentsUnderTest.getRawArguments();
-        assertEquals(_rawArgs, rawArgs);
+        assertNotNull(rawArgs);
+        assertEquals(4, rawArgs.length);
         assertEquals("1", rawArgs[0]);
         assertEquals("2", rawArgs[1]);
         assertEquals("3", rawArgs[2]);

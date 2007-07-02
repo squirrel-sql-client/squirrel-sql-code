@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.client.gui.db.DataCache;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
+import net.sourceforge.squirrel_sql.client.preferences.PreferenceType;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
@@ -195,6 +196,23 @@ public class MockApplication implements IApplication {
     public void openURL(String url) {
         // TODO Auto-generated method stub
     	System.err.println("MockApplication.openURL: stub not yet implemented");
+    }
+
+
+    /**
+     * @see net.sourceforge.squirrel_sql.client.IApplication#saveApplicationState()
+     */
+    public void saveApplicationState() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /**
+     * @see net.sourceforge.squirrel_sql.client.IApplication#savePreferences(net.sourceforge.squirrel_sql.client.preferences.PreferenceType)
+     */
+    public void savePreferences(PreferenceType preferenceType) {
+        // TODO Auto-generated method stub
+        
     }
 
 }
