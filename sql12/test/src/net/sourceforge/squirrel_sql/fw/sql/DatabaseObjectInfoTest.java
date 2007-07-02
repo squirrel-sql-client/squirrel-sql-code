@@ -68,7 +68,7 @@ public class DatabaseObjectInfoTest extends BaseSQuirreLJUnit4TestCase {
         String sep = h2SQLDatabaseMetaData.getCatalogSeparator();
         String expectedQualifiedName = 
             identifierQuoteString + testSchema  + identifierQuoteString + sep +
-            identifierQuoteString + tableName + identifierQuoteString;
+            identifierQuoteString + "foo\"\"\"\"bar" + identifierQuoteString;
         
         String qn = dboInfoUnderTest.getQualifiedName();
         assertEquals(expectedQualifiedName, qn);
@@ -90,6 +90,7 @@ public class DatabaseObjectInfoTest extends BaseSQuirreLJUnit4TestCase {
         new EqualsTester(a,b,c,d);
     }
 
+    @SuppressWarnings("serial")
     private static class MyDatabaseObjectInfo extends DatabaseObjectInfo {
         
         public MyDatabaseObjectInfo(String catalog, 
