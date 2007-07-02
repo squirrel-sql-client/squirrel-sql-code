@@ -50,6 +50,7 @@ public class ProgressDialect extends org.hibernate.dialect.Dialect
         registerColumnType(Types.BLOB, "lvarbinary($l)");
         registerColumnType(Types.BOOLEAN, "bit");
         registerColumnType(Types.CHAR, 2000, "char($l)");
+        registerColumnType(Types.CHAR, "char(2000)");
         //registerColumnType(Types.CLOB, 31982, "varchar($l)");
         registerColumnType(Types.CLOB, "varchar($l)");
         registerColumnType(Types.DATE, "date");
@@ -58,6 +59,7 @@ public class ProgressDialect extends org.hibernate.dialect.Dialect
         registerColumnType(Types.FLOAT, "float($p)");
         registerColumnType(Types.INTEGER, "integer");        
         registerColumnType(Types.LONGVARBINARY, 999999999, "lvarbinary($l)");
+        registerColumnType(Types.LONGVARBINARY, "lvarbinary(999999999)");
         //registerColumnType(Types.LONGVARCHAR, 31982, "varchar($l)");
         registerColumnType(Types.LONGVARCHAR, "varchar($l)");
         registerColumnType(Types.NUMERIC, "numeric($p,2)");
@@ -67,7 +69,9 @@ public class ProgressDialect extends org.hibernate.dialect.Dialect
         registerColumnType(Types.TIMESTAMP, "timestamp");
         registerColumnType(Types.TINYINT, "tinyint");
         registerColumnType(Types.VARBINARY, 31982, "varbinary($l)");
-        registerColumnType(Types.VARCHAR, 31982,"varchar($l)");        
+        registerColumnType(Types.VARBINARY, "varbinary(31982)");
+        registerColumnType(Types.VARCHAR, 31982,"varchar($l)");
+        registerColumnType(Types.VARCHAR, "varchar(31982)");
     }    
     
     /* (non-Javadoc)
@@ -198,7 +202,9 @@ public class ProgressDialect extends org.hibernate.dialect.Dialect
      * @throws UnsupportedOperationException if the database doesn't support 
      *         annotating columns with a comment.
      */
-    public String getColumnCommentAlterSQL(String tableName, String columnName, String comment) throws UnsupportedOperationException {
+    @SuppressWarnings("unused")
+    public String getColumnCommentAlterSQL(String tableName, String columnName, 
+    String comment) throws UnsupportedOperationException {
         throw new UnsupportedOperationException("This database dialect doesn't support adding comments to columns");
     }
     
