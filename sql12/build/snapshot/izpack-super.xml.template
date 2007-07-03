@@ -328,7 +328,7 @@
 	    </pack>
 
 	    <pack required="no" preselected="no" name="Optional Translation - Russion">
-	        <description>Provides native labels and user messages for use in a Russion locale (Dmitry Matyukhin)</description>
+	        <description>Provides native labels and user messages for use in a Russian locale (Dmitry Matyukhin)</description>
 	    	<file	targetdir="$INSTALL_PATH/lib"
 		        	src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/squirrel-sql_ru.jar"/>
 	    </pack>
