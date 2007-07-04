@@ -17,9 +17,13 @@ New Plugin (SQL Parametrisation - Thorsten Mürell) allows you to put variables
 New Plugin (Data import - Thorsten Mürell) allows you to import arbitary files
            into the database.
 
-DB2Plugin: Exceptions from DB2 Universal JDBC driver are now interpreted as 
-		   DB2Diagnoseable exceptions so that the cause of the exception can 
-		   be printed (Thanks to Christoph Schmitz)
+DB2Plugin: 
+ - Exceptions from DB2 Universal JDBC driver are now interpreted as 
+   DB2Diagnoseable exceptions so that the cause of the exception can be printed 
+   (Thanks to Christoph Schmitz).
+ - When the source tab of a C-language stored procedure is selected, we now 
+   show the user a nice informative message stating that the source code is 
+   unavailable instead of merely displaying the word "null".
 		   
 Derby Plugin: New custom QueryTokenizer which allows Derby sessions to give the 
 command:  run '<abs-path-to-script>'

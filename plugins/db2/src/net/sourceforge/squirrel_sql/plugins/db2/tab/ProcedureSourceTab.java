@@ -34,7 +34,7 @@ public class ProcedureSourceTab extends DB2SourceTab
 {
 	/** SQL that retrieves the source of a stored procedure. */
 	private static String SQL =
-        "select text " +
+        "select text, language " +
         "from SYSCAT.PROCEDURES " +
         "where PROCSCHEMA = ? " +
         "and PROCNAME = ? ";
