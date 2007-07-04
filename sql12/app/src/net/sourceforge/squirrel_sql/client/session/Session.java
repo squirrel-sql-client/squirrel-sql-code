@@ -150,6 +150,9 @@ class Session implements ISession
    /** flag to track whether or not the plugins have finished loading for this new session */
    private boolean _pluginsFinishedLoading = false;
 
+   /** This is set to true when a plugin sets a custom IQueryTokenizer */
+   private boolean customTokenizerInstalled = false;
+   
    private IQueryTokenizer tokenizer = null;
    
    /** The default exception formatter */
@@ -987,14 +990,19 @@ class Session implements ISession
 
     /**
      * Returns the IQueryTokenizer implementation to use for tokenizing scripts
-     * statements that should be sent to the server.
+     * statements that should be sent to the server.  If the tokenizer hasn't 
+     * been initialized yet, then a default one will be created.  If a cutom
+     * tokenizer has been installed, this will just return that one, in lieu of
+     * the default one.
      * 
      * @return an implementation of IQueryTokenizer
      */    
     public IQueryTokenizer getQueryTokenizer() {
-        if (tokenizer == null) {
+        if (tokenizer == null || !customTokenizerInstalled) {
             // No tokenizer has been set by any installed plugin.  Go ahead and
-            // give the default tokenizer.
+            // give the default tokenizer.  It is important to not cache this 
+            // object so that session property changes to the current session 
+            // are reflected in this default tokenizer.
             tokenizer = new QueryTokenizer(_props.getSQLStatementSeparator(),
                                            _props.getStartOfLineComment(),
                                            _props.getRemoveMultiLineComment());
@@ -1006,11 +1014,24 @@ class Session implements ISession
      * Sets the IQueryTokenizer implementation to use for this session.
      * 
      * @param tokenizer
+     * 
+     * @throws IllegalArgumentException for null argument
+     * @throws IllegalStateException if a custom tokenizer is already installed.
      */    
     public void setQueryTokenizer(IQueryTokenizer aTokenizer) {
-        if (aTokenizer != null) {
-            tokenizer = aTokenizer;
+        if (aTokenizer == null) {
+            throw new IllegalArgumentException("aTokenizer arg cannot be null");
+        }        
+        if (customTokenizerInstalled) {
+            String currentTokenizer = tokenizer.getClass().getName();
+            String newTokenizer = tokenizer.getClass().getName();
+            throw new IllegalStateException(
+                "Only one custom query tokenizer can be installed.  " +
+                "Current tokenizer is "+currentTokenizer+". New tokenizer is "+
+                newTokenizer);
         }
+        customTokenizerInstalled = true;
+        tokenizer = aTokenizer;
     }
 
     /**
