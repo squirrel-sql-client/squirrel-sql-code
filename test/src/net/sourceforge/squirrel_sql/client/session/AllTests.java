@@ -33,6 +33,7 @@ public class AllTests {
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Client Session tests");
         suite.addTest(new JUnit4TestAdapter(MessagePanelTest.class));
+        suite.addTest(new JUnit4TestAdapter(SessionTest.class));
         suite.addTestSuite(SQLExecuterTaskTest.class);
 		return suite;
 	}
