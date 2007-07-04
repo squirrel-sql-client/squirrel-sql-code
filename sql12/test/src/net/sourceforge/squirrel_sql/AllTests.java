@@ -26,6 +26,7 @@ public class AllTests extends TestCase {
 	public static Test suite() {
 		TestSuite result = new TestSuite("squirrel_sql tests");
         result.addTest(net.sourceforge.squirrel_sql.client.AllTests.suite());
+        result.addTest(net.sourceforge.squirrel_sql.client.action.AllTests.suite());
         result.addTest(net.sourceforge.squirrel_sql.client.db.AllTests.suite());
         result.addTest(net.sourceforge.squirrel_sql.client.gui.db.AllTests.suite());
         result.addTest(net.sourceforge.squirrel_sql.client.mainframe.action.AllTests.suite());
