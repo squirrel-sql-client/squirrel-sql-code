@@ -116,6 +116,10 @@ Task 137984 (Bug in alias delete) The problem was that notifications were
   be launched.  Now, the alias drop down is disabled while the update is 
   happening and enabled immediately afterward.
 
+Fixed a bug that occurred when no plugin installs a custom QueryTokenizer in 
+a Session - changing the session properties for query tokenizing has no 
+effect.
+
 Fixed bug which appeared while editing tables in PostgreSQL 8.1.  If the table 
 was created without an OID column, the last column would not be editable.
 
