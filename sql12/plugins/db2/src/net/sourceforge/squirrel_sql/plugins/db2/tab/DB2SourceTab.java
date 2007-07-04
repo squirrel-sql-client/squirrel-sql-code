@@ -64,6 +64,13 @@ public abstract class DB2SourceTab extends BaseSourceTab {
     private static CodeReformator formatter = 
         new CodeReformator(";", commentSpecs);
     
+    static interface i18n {
+        //i18n[DB2SourceTab.cLanguageProcMsg=This is a C-language routine. The 
+        //source code is unavailable.]
+        String C_LANGUAGE_PROC_MSG = 
+            s_stringMgr.getString("DB2SourceTab.cLanguageProcMsg"); 
+    }
+    
     public DB2SourceTab(String hint)
     {
         super(hint);
@@ -72,6 +79,8 @@ public abstract class DB2SourceTab extends BaseSourceTab {
 
     private final class InformixSourcePanel extends BaseSourcePanel
     {
+        private static final long serialVersionUID = 1L;
+
         private JTextArea _ta;
 
         InformixSourcePanel()
@@ -92,6 +101,14 @@ public abstract class DB2SourceTab extends BaseSourceTab {
                 {
                     if (sourceType == STORED_PROC_TYPE) {
                         String tmpProcData = rs.getString(1);
+                        String tmpProcLanguage = rs.getString(2);
+                        if (tmpProcData == null || "".equals(tmpProcData)) {
+                            if (tmpProcLanguage != null 
+                                    && tmpProcLanguage.trim().equalsIgnoreCase("C")) 
+                            {
+                                tmpProcData = i18n.C_LANGUAGE_PROC_MSG;
+                            }
+                        }
                         buf.append(tmpProcData);
                     } 
                     if (sourceType == TRIGGER_TYPE) {
