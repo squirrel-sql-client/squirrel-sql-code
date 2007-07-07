@@ -28,7 +28,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
-import net.sourceforge.squirrel_sql.plugins.oracle.prefs.PreferencesManager;
+import net.sourceforge.squirrel_sql.client.plugin.PluginQueryTokenizerPreferencesManager;
+import net.sourceforge.squirrel_sql.client.plugin.gui.PluginQueryTokenizerPreferencesPanel;
+import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.oracle.prefs.OraclePreferenceBean;
 
 public class TestPreferencesPanel {
@@ -38,18 +40,22 @@ public class TestPreferencesPanel {
      */
     public static void main(String[] args) throws Exception {
         JFrame f = new JFrame();
+        // TODO move to new standard location and rewrite test to be less static
         f.getContentPane().setLayout(new BorderLayout());
         ApplicationArguments.initialize(new String[0]);
-        PreferencesManager.initialize(new DummyPlugin());
-        OraclePreferenceBean bean = PreferencesManager.getPreferences();
-        final PreferencesPanel p = new PreferencesPanel(bean);
+        final PluginQueryTokenizerPreferencesManager prefsManager = 
+            new PluginQueryTokenizerPreferencesManager();
+        prefsManager.initialize(new DummyPlugin(), new OraclePreferenceBean());
+        IQueryTokenizerPreferenceBean bean = prefsManager.getPreferences();
+        final PluginQueryTokenizerPreferencesPanel p = 
+            new PluginQueryTokenizerPreferencesPanel(prefsManager, bean, "Oracle");
         JScrollPane sp = new JScrollPane(p);
         f.getContentPane().add(sp, BorderLayout.CENTER);
         JButton button = new JButton("Save");
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 p.applyChanges();
-                PreferencesManager.unload();
+                prefsManager.unload();
             }
         });
         JButton exitButton = new JButton("Exit");
@@ -64,6 +70,7 @@ public class TestPreferencesPanel {
         f.getContentPane().add(buttonPanel, BorderLayout.SOUTH);
         f.setBounds(200, 50,700, 700);
         f.setVisible(true);
+        
     }
 
 }
