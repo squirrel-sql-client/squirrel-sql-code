@@ -47,6 +47,9 @@ Task 138098 (Plugins Session Menu Items (Disable)) When using a session that
   is not supported by a db-specific plugin, that plugin should disable it's 
   Session menu items
 
+Task 137959 (Refactor PreferencesManager) removed redundant plugin class 
+  definitions related to Preferences which were very similar.
+
 - Added unload button to plugin summary dialog which will cause the selected 
   plugin to be unloaded.
   
