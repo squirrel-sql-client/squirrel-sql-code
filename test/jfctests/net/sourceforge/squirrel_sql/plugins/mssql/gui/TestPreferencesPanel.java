@@ -32,7 +32,6 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginQueryTokenizerPreference
 import net.sourceforge.squirrel_sql.client.plugin.gui.PluginQueryTokenizerPreferencesPanel;
 import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.mssql.prefs.PreferencesManager;
-import net.sourceforge.squirrel_sql.plugins.mssql.prefs.MSSQLPreferenceBean;
 
 public class TestPreferencesPanel {
 
