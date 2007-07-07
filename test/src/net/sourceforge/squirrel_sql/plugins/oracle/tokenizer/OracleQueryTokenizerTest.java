@@ -33,11 +33,12 @@ import java.util.Arrays;
 
 import junit.framework.TestCase;
 import net.sourceforge.squirrel_sql.client.ApplicationManager;
+import net.sourceforge.squirrel_sql.client.plugin.PluginQueryTokenizerPreferencesManager;
+import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtil;
 import net.sourceforge.squirrel_sql.plugins.oracle.gui.DummyPlugin;
 import net.sourceforge.squirrel_sql.plugins.oracle.prefs.OraclePreferenceBean;
-import net.sourceforge.squirrel_sql.plugins.oracle.prefs.PreferencesManager;
 
 public class OracleQueryTokenizerTest extends TestCase {
 
@@ -51,13 +52,14 @@ public class OracleQueryTokenizerTest extends TestCase {
     QueryTokenizer qt = null;
     static int sqlFileStmtCount = 0;
     
-    static OraclePreferenceBean _prefs;
+    static IQueryTokenizerPreferenceBean _prefs;
     
     public void setUp() throws Exception {
         createSQLFile();
         DummyPlugin plugin = new DummyPlugin();
-        PreferencesManager.initialize(plugin);
-        _prefs = PreferencesManager.getPreferences();         
+        PluginQueryTokenizerPreferencesManager prefsManager = new PluginQueryTokenizerPreferencesManager();
+        prefsManager.initialize(plugin, new OraclePreferenceBean());
+        _prefs = prefsManager.getPreferences();  
     }
     
     public void tearDown() {

@@ -4,15 +4,21 @@ import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
+import net.sourceforge.squirrel_sql.client.plugin.PluginQueryTokenizerPreferencesManager;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
+import net.sourceforge.squirrel_sql.client.plugin.gui.PluginGlobalPreferencesTab;
+import net.sourceforge.squirrel_sql.client.plugin.gui.PluginQueryTokenizerPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.plugins.SybaseASE.gui.SybaseGlobalPreferencesTab;
-import net.sourceforge.squirrel_sql.plugins.SybaseASE.prefs.PreferencesManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.SybaseASE.prefs.SybasePreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.SybaseASE.tokenizer.SybaseQueryTokenizer;
 
@@ -21,8 +27,34 @@ import net.sourceforge.squirrel_sql.plugins.SybaseASE.tokenizer.SybaseQueryToken
  */
 public class SybaseASEPlugin extends DefaultSessionPlugin
 {
+    /**
+     * Internationalized strings for this class.
+     */
+    private static final StringManager s_stringMgr =
+       StringManagerFactory.getStringManager(SybaseASEPlugin.class);
+               
+    /** Logger for this class. */
+    @SuppressWarnings("unused")
+    private final static ILogger s_log = 
+        LoggerController.createLogger(SybaseASEPlugin.class);
+                
 	private PluginResources _resources;
 
+    /** manages our query tokenizing preferences */
+    private PluginQueryTokenizerPreferencesManager _prefsManager = null;
+    
+    /** The database name that appears in the border label of the pref panel */
+    private static final String SCRIPT_SETTINGS_BORDER_LABEL_DBNAME = "Sybase";
+    
+    interface i18n {
+        // i18n[SybaseASEPlugin.title=SybaseASE]
+        String title = s_stringMgr.getString("SybaseASEPlugin.title");
+
+        // i18n[SybaseASEPlugin.hint=Preferences for SybaseASE]
+        String hint = s_stringMgr.getString("SybaseASEPlugin.hint");
+    }
+    
+    
 	/**
 	 * Return the internal name of this plugin.
 	 *
@@ -117,9 +149,36 @@ public class SybaseASEPlugin extends DefaultSessionPlugin
 	 */
 	public IGlobalPreferencesPanel[] getGlobalPreferencePanels()
 	{
-        SybaseGlobalPreferencesTab tab = new SybaseGlobalPreferencesTab();
+        boolean includeProcSepPref = false;
+        
+        PluginQueryTokenizerPreferencesPanel _prefsPanel = 
+            new PluginQueryTokenizerPreferencesPanel(
+                    _prefsManager,
+                    _prefsManager.getPreferences(), 
+                    SCRIPT_SETTINGS_BORDER_LABEL_DBNAME, 
+                    includeProcSepPref);
+
+        PluginGlobalPreferencesTab tab = new PluginGlobalPreferencesTab(_prefsPanel);
+
+        tab.setHint(i18n.hint);
+        tab.setTitle(i18n.title);
+
         return new IGlobalPreferencesPanel[] { tab };
 	}
+    
+    /**
+     * Determines from the user's preference whether or not to install the 
+     * custom query tokenizer, and if so configure installs it.
+     * 
+     * @param session the session to install the custom query tokenizer in.
+     */
+    private void installSybaseQueryTokenizer(ISession session) {
+        IQueryTokenizerPreferenceBean _prefs = _prefsManager.getPreferences();
+        
+        if (_prefs.isInstallCustomQueryTokenizer()) {
+            session.setQueryTokenizer(new SybaseQueryTokenizer(_prefs));
+        }
+    }
     
 	/**
 	 * Initialize this plugin.
@@ -127,7 +186,9 @@ public class SybaseASEPlugin extends DefaultSessionPlugin
 	public synchronized void initialize() throws PluginException
 	{
 		_resources = new PluginResources("net.sourceforge.squirrel_sql.plugins.SybaseASE.SybaseASE", this);
-        PreferencesManager.initialize(this);
+        _prefsManager = new PluginQueryTokenizerPreferencesManager();
+        _prefsManager.initialize(this, new SybasePreferenceBean());
+
 	}
 
 
@@ -145,10 +206,8 @@ public class SybaseASEPlugin extends DefaultSessionPlugin
 	    if (!isPluginSession(session)) {
 	        return null;
 	    }
-	    SybasePreferenceBean _prefs = PreferencesManager.getPreferences();
-	    if (_prefs.isInstallCustomQueryTokenizer()) {
-	        session.setQueryTokenizer(new SybaseQueryTokenizer(_prefs));
-	    }
+        installSybaseQueryTokenizer(session);
+
 	    // Add context menu items to the object tree's view and procedure nodes.
 	    IObjectTreeAPI otApi = session.getSessionInternalFrame().getObjectTreeAPI();
 	    otApi.addToPopup(DatabaseObjectType.VIEW, new ScriptSybaseASEViewAction(getApplication(), _resources, session));

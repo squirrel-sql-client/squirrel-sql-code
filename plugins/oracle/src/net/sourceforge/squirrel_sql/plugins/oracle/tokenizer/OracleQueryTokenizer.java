@@ -23,12 +23,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 
+import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ITokenizerFactory;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.oracle.prefs.OraclePreferenceBean;
 
 /**
  * This class is loaded by the Oracle Plugin and registered with all Oracle 
@@ -82,9 +82,9 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
     
     private static final String ORACLE_SCRIPT_INCLUDE_PREFIX = "@";
     
-    private OraclePreferenceBean _prefs = null;
+    private IQueryTokenizerPreferenceBean _prefs = null;
     
-	public OracleQueryTokenizer(OraclePreferenceBean prefs)
+	public OracleQueryTokenizer(IQueryTokenizerPreferenceBean prefs)
 	{
         super(prefs.getStatementSeparator(),
               prefs.getLineComment(), 

@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.oracle.prefs;
+
 /*
  * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
@@ -19,155 +20,160 @@ package net.sourceforge.squirrel_sql.plugins.oracle.prefs;
  */
 import java.io.Serializable;
 
+import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
+
 /**
  * A bean class to store preferences for the Oracle plugin.
  */
 public class OraclePreferenceBean implements Cloneable, 
-                                             Serializable {
-    
-	static final long serialVersionUID = 5818886723165356478L;
+                                             Serializable,
+                                             IQueryTokenizerPreferenceBean 
+{
+
+    static final long serialVersionUID = 5818886723165356478L;
 
     static final String UNSUPPORTED = "Unsupported";
 
     /** Client Name. */
-	private String _clientName;
+    private String _clientName;
 
-	/** Client version. */
-	private String _clientVersion;
-    
+    /** Client version. */
+    private String _clientVersion;
+
     private String statementSeparator = ";";
-    
+
     private String procedureSeparator = "/";
-    
+
     private String lineComment = "--";
-    
+
     private boolean removeMultiLineComments = false;
-    
-    private boolean installCustomQueryTokenizer = true;    
-    
-	public OraclePreferenceBean() {
-		super();
-	}
 
-	/**
-	 * Return a copy of this object.
-	 */
-	public Object clone() {
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException ex) {
-			throw new InternalError(ex.getMessage()); // Impossible.
-		}
-	}
+    private boolean installCustomQueryTokenizer = true;
 
-	/**
-	 * Retrieve the client to use. This is only
-	 * used if <TT>useAnonymousClient</TT> is false.
-	 *
-	 * @return	Client name.
-	 */
-	public String getClientName() {
-		return _clientName;
-	}
-
-	/**
-	 * Set the client name.
-	 *
-	 * @param	value	Client name
-	 */
-	public void setClientName(String value) {
-		_clientName = value;
-	}
-
-	/**
-	 * Retrieve the client version to use. This is only
-	 * used if <TT>useAnonymousLogon</TT> is false.
-	 *
-	 * @return	Client version.
-	 */
-	public String getClientVersion() {
-		return _clientVersion;
-	}
-
-	/**
-	 * Set the client version.
-	 *
-	 * @param	value	Client version
-	 */
-	public void setClientVersion(String value) {
-		_clientVersion = value;
-	}
+    public OraclePreferenceBean() {
+        super();
+    }
 
     /**
-     * @param statementSeparator the statementSeparator to set
+     * Return a copy of this object.
+     */
+    public Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException ex) {
+            throw new InternalError(ex.getMessage()); // Impossible.
+        }
+    }
+
+    /**
+     * Retrieve the client to use. This is only used if <TT>useAnonymousClient</TT>
+     * is false.
+     * 
+     * @return Client name.
+     */
+    public String getClientName() {
+        return _clientName;
+    }
+
+    /**
+     * Set the client name.
+     * 
+     * @param value
+     *            Client name
+     */
+    public void setClientName(String value) {
+        _clientName = value;
+    }
+
+    /**
+     * Retrieve the client version to use. This is only used if <TT>useAnonymousLogon</TT>
+     * is false.
+     * 
+     * @return Client version.
+     */
+    public String getClientVersion() {
+        return _clientVersion;
+    }
+
+    /**
+     * Set the client version.
+     * 
+     * @param value
+     *            Client version
+     */
+    public void setClientVersion(String value) {
+        _clientVersion = value;
+    }
+
+    /**
+     * @see net.sourceforge.squirrel_sql.plugins.oracle.prefs.IQueryTokenizerPreferenceBean#setStatementSeparator(java.lang.String)
      */
     public void setStatementSeparator(String statementSeparator) {
         this.statementSeparator = statementSeparator;
     }
 
     /**
-     * @return the statementSeparator
+     * @see net.sourceforge.squirrel_sql.plugins.oracle.prefs.IQueryTokenizerPreferenceBean#getStatementSeparator()
      */
     public String getStatementSeparator() {
         return statementSeparator;
     }
 
     /**
-     * @param procedureSeparator the procedureSeparator to set
+     * @see net.sourceforge.squirrel_sql.plugins.oracle.prefs.IQueryTokenizerPreferenceBean#setProcedureSeparator(java.lang.String)
      */
     public void setProcedureSeparator(String procedureSeparator) {
         this.procedureSeparator = procedureSeparator;
     }
 
     /**
-     * @return the procedureSeparator
+     * @see net.sourceforge.squirrel_sql.plugins.oracle.prefs.IQueryTokenizerPreferenceBean#getProcedureSeparator()
      */
     public String getProcedureSeparator() {
         return procedureSeparator;
     }
 
     /**
-     * @param lineComment the lineComment to set
+     * @see net.sourceforge.squirrel_sql.plugins.oracle.prefs.IQueryTokenizerPreferenceBean#setLineComment(java.lang.String)
      */
     public void setLineComment(String lineComment) {
         this.lineComment = lineComment;
     }
 
     /**
-     * @return the lineComment
+     * @see net.sourceforge.squirrel_sql.plugins.oracle.prefs.IQueryTokenizerPreferenceBean#getLineComment()
      */
     public String getLineComment() {
         return lineComment;
     }
 
     /**
-     * @param removeMultiLineComments the removeMultiLineComments to set
+     * @see net.sourceforge.squirrel_sql.plugins.oracle.prefs.IQueryTokenizerPreferenceBean#setRemoveMultiLineComments(boolean)
      */
     public void setRemoveMultiLineComments(boolean removeMultiLineComments) {
         this.removeMultiLineComments = removeMultiLineComments;
     }
 
     /**
-     * @return the removeMultiLineComments
+     * @see net.sourceforge.squirrel_sql.plugins.oracle.prefs.IQueryTokenizerPreferenceBean#isRemoveMultiLineComments()
      */
     public boolean isRemoveMultiLineComments() {
         return removeMultiLineComments;
     }
 
     /**
-     * @param installCustomQueryTokenizer the installCustomQueryTokenizer to set
+     * @see net.sourceforge.squirrel_sql.plugins.oracle.prefs.IQueryTokenizerPreferenceBean#setInstallCustomQueryTokenizer(boolean)
      */
-    public void setInstallCustomQueryTokenizer(boolean installCustomQueryTokenizer) {
+    public void setInstallCustomQueryTokenizer(
+            boolean installCustomQueryTokenizer) {
         this.installCustomQueryTokenizer = installCustomQueryTokenizer;
     }
 
     /**
-     * @return the installCustomQueryTokenizer
+     * @see net.sourceforge.squirrel_sql.plugins.oracle.prefs.IQueryTokenizerPreferenceBean#isInstallCustomQueryTokenizer()
      */
     public boolean isInstallCustomQueryTokenizer() {
         return installCustomQueryTokenizer;
     }
 
-	
 }
-

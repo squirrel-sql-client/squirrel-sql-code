@@ -28,6 +28,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
+import net.sourceforge.squirrel_sql.client.plugin.PluginQueryTokenizerPreferencesManager;
+import net.sourceforge.squirrel_sql.client.plugin.gui.PluginQueryTokenizerPreferencesPanel;
+import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.mssql.prefs.PreferencesManager;
 import net.sourceforge.squirrel_sql.plugins.mssql.prefs.MSSQLPreferenceBean;
 
@@ -40,9 +43,14 @@ public class TestPreferencesPanel {
         JFrame f = new JFrame();
         f.getContentPane().setLayout(new BorderLayout());
         ApplicationArguments.initialize(new String[0]);
-        PreferencesManager.initialize(new DummyPlugin());
-        MSSQLPreferenceBean bean = PreferencesManager.getPreferences();
-        final PreferencesPanel p = new PreferencesPanel(bean);
+
+
+        final PluginQueryTokenizerPreferencesManager prefsManager = 
+            new PluginQueryTokenizerPreferencesManager();
+        IQueryTokenizerPreferenceBean bean = prefsManager.getPreferences();        
+        final PluginQueryTokenizerPreferencesPanel p = 
+            new PluginQueryTokenizerPreferencesPanel(prefsManager, bean, 
+                                                     "MS SQL-Server");
         JScrollPane sp = new JScrollPane(p);
         f.getContentPane().add(sp, BorderLayout.CENTER);
         JButton button = new JButton("Save");

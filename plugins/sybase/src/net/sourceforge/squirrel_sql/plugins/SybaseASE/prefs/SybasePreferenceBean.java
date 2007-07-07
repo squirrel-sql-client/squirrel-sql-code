@@ -19,11 +19,14 @@ package net.sourceforge.squirrel_sql.plugins.SybaseASE.prefs;
  */
 import java.io.Serializable;
 
+import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
+
 /**
  * A bean class to store preferences for the Sybase plugin.
  */
 public class SybasePreferenceBean implements Cloneable, 
-                                             Serializable {
+                                             Serializable,
+                                             IQueryTokenizerPreferenceBean {
     
 	static final long serialVersionUID = 3722068008392095286L;
 
@@ -152,6 +155,23 @@ public class SybasePreferenceBean implements Cloneable,
         return installCustomQueryTokenizer;
     }
 
+    /**
+     * This is not implemented at the moment, but will be soon.
+     * @see net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean#getProcedureSeparator()
+     */
+    public String getProcedureSeparator() {
+        return null;
+    }
+
+    /**
+     * This is not implemented at the moment, but will be soon. 
+     * @see net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean#setProcedureSeparator(java.lang.String)
+     */
+    public void setProcedureSeparator(String procedureSeparator) {
+        
+    }
+
+    
 	
 }
 

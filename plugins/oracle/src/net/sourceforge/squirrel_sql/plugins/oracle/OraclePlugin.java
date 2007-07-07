@@ -40,8 +40,11 @@ import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
+import net.sourceforge.squirrel_sql.client.plugin.PluginQueryTokenizerPreferencesManager;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
+import net.sourceforge.squirrel_sql.client.plugin.gui.PluginGlobalPreferencesTab;
+import net.sourceforge.squirrel_sql.client.plugin.gui.PluginQueryTokenizerPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IAllowedSchemaChecker;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
@@ -53,6 +56,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IOb
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
@@ -75,10 +79,8 @@ import net.sourceforge.squirrel_sql.plugins.oracle.expander.TableExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.TriggerParentExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.UserParentExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.explainplan.ExplainPlanExecuter;
-import net.sourceforge.squirrel_sql.plugins.oracle.gui.OracleGlobalPreferencesTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.invalidobjects.NewInvalidObjectsWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.prefs.OraclePreferenceBean;
-import net.sourceforge.squirrel_sql.plugins.oracle.prefs.PreferencesManager;
 import net.sourceforge.squirrel_sql.plugins.oracle.sessioninfo.NewSessionInfoWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.IndexColumnInfoTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.IndexDetailsTab;
@@ -139,6 +141,17 @@ public class OraclePlugin extends DefaultSessionPlugin
    private Hashtable<IIdentifier, OracleAliasPrefs> _oracleAliasPrefsByAliasIdentifier = 
        new Hashtable<IIdentifier, OracleAliasPrefs>();
 
+   /** manages our query tokenizing preferences */
+   private PluginQueryTokenizerPreferencesManager _prefsManager = null;
+   
+   interface i18n {
+       // i18n[OraclePlugin.title=Oracle]
+       String title = s_stringMgr.getString("OraclePlugin.title");
+       
+       // i18n[OraclePlugin.hint=Preferences for Oracle]
+       String hint = s_stringMgr.getString("OraclePlugin.hint");
+   }
+   
    /**
     * Return the internal name of this plugin.
     *
@@ -219,7 +232,15 @@ public class OraclePlugin extends DefaultSessionPlugin
     * @return  properties panel.
     */
    public IGlobalPreferencesPanel[] getGlobalPreferencePanels() {
-       OracleGlobalPreferencesTab tab = new OracleGlobalPreferencesTab();
+       PluginQueryTokenizerPreferencesPanel _prefsPanel = 
+           new PluginQueryTokenizerPreferencesPanel(_prefsManager,
+                   _prefsManager.getPreferences(), "Oracle");
+       
+       PluginGlobalPreferencesTab tab = new PluginGlobalPreferencesTab(_prefsPanel);
+       
+       tab.setHint(i18n.hint);
+       tab.setTitle(i18n.title);
+       
        return new IGlobalPreferencesPanel[] { tab };
    }
    
@@ -259,7 +280,7 @@ public class OraclePlugin extends DefaultSessionPlugin
             XMLBeanReader xbr = new XMLBeanReader();
             xbr.load(f, getClass().getClassLoader());
 
-            for(Iterator i=xbr.iterator(); i.hasNext();)
+            for(Iterator<Object> i=xbr.iterator(); i.hasNext();)
             {
                OracleAliasPrefs buf = (OracleAliasPrefs) i.next();
                _oracleAliasPrefsByAliasIdentifier.put(buf.getAliasIdentifier(), buf);
@@ -271,7 +292,8 @@ public class OraclePlugin extends DefaultSessionPlugin
             _oracleAliasPrefsByAliasIdentifier = 
                 new Hashtable<IIdentifier, OracleAliasPrefs>();
          }
-         PreferencesManager.initialize(this);
+         _prefsManager = new PluginQueryTokenizerPreferencesManager();
+         _prefsManager.initialize(this, new OraclePreferenceBean());
       }
       catch (Exception e)
       {
@@ -374,7 +396,7 @@ public class OraclePlugin extends DefaultSessionPlugin
       {
          return null;
       }
-      OraclePreferenceBean _prefs = PreferencesManager.getPreferences();
+      IQueryTokenizerPreferenceBean _prefs = _prefsManager.getPreferences();
       if (_prefs.isInstallCustomQueryTokenizer()) {
           session.setQueryTokenizer(new OracleQueryTokenizer(_prefs));
       }
