@@ -16,7 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.plugins.oracle.gui;
+package net.sourceforge.squirrel_sql.client.plugin.gui;
 
 import java.awt.Component;
 import java.awt.GridBagConstraints;
@@ -34,61 +34,132 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
+import net.sourceforge.squirrel_sql.client.plugin.PluginQueryTokenizerPreferencesManager;
+import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.oracle.prefs.OraclePreferenceBean;
-import net.sourceforge.squirrel_sql.plugins.oracle.prefs.PreferencesManager;
 
-public class PreferencesPanel extends JPanel  {                              
+/**
+ * This can be used (or subclassed) to provide a plugin-specific preference
+ * panel geared toward storing custom QueryTokenizer preferences.  A plugin 
+ * can instantiate this class giving it an IQueryTokenizerPreferenceBean with 
+ * which to load and store preference information.  The databaseName is used to
+ * tailor some of the tooltips for a specific database.
+ * 
+ * @author manningr
+ */
+public class PluginQueryTokenizerPreferencesPanel extends JPanel  {                              
 
-    OraclePreferenceBean _prefs = null;
+    private static final long serialVersionUID = 1L;
+
+    /** The preference bean that we store preferences in */
+    protected IQueryTokenizerPreferenceBean _prefs = null;
     
-    JCheckBox useCustomQTCheckBox = null;
+    protected PluginQueryTokenizerPreferencesManager _prefsManager = null; 
     
-    JLabel useCustomQTLabel = null;    
+    protected JCheckBox useCustomQTCheckBox = null;
     
-    JCheckBox removeMultiLineCommentCheckBox = null;
+    protected JLabel useCustomQTLabel = null;    
     
-    JTextField lineCommentTextField = null;
+    protected JCheckBox removeMultiLineCommentCheckBox = null;
     
-    JLabel lineCommentLabel = null;
+    protected JTextField lineCommentTextField = null;
     
-    JLabel procedureSeparatorLabel = null;
+    protected JLabel lineCommentLabel = null;
     
-    JTextField procedureSeparatorTextField = null;
+    protected JLabel procedureSeparatorLabel = null;
     
-    JLabel statementSeparatorLabel = null;
+    protected JTextField procedureSeparatorTextField = null;
     
-    JTextField statementSeparatorTextField = null;
+    protected JLabel statementSeparatorLabel = null;
     
-    /** Logger for this class. */
-    private final static ILogger log = 
-        LoggerController.createLogger(PreferencesPanel.class);    
+    protected JTextField statementSeparatorTextField = null;
     
     /** Internationalized strings for this class. */
     private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(PreferencesPanel.class);
+        StringManagerFactory.getStringManager(PluginQueryTokenizerPreferencesPanel.class);
+    
+    /** the name of the database we are storing preferences for. */
+    protected String _databaseName = null;
+    
+    protected boolean _showProcSep = true;
     
     static interface i18n {
         
         //i18n[PreferencesPanel.useCustomQTLabel=Use Custom Query Tokenizer]
         String USE_CUSTOM_QT_LABEL = 
             s_stringMgr.getString("PreferencesPanel.useCustomQTLabel");
-
-        //i18n[PreferencesPanel.useCustomQTToolTip=Gives enhanced capabilities
-        //over the default query tokenizer for handling Oracle scripts]
-        String USE_CUSTOM_QT_TOOLTIP = 
-            s_stringMgr.getString("PreferencesPanel.useCustomQTToolTip");
         
+        //i18n[PreferencesPanel.removeMultiLineCommentLabel=Remove multi-line 
+        //comments (/*...*/) from SQL before executing
+        String REMOVE_ML_COMMENT_LABEL  = 
+            s_stringMgr.getString("PreferencesPanel.removeMultiLineCommentLabel");
+        
+        //i18n[PreferencesPanel.removeMultiLineCommentLabelTipText=]
+        String REMOVE_ML_COMMENT_LABEL_TT =
+            s_stringMgr.getString("PreferencesPanel.removeMultiLineCommentLabelTipText");
+        
+        //i18n[PreferencesPanel.statementSeparatorLabel=Statement Separator]
+        String STMT_SEP_LABEL = 
+            s_stringMgr.getString("PreferencesPanel.statementSeparatorLabel");
+        
+        //i18n[PreferencesPanel.statementSeparatorToolTip=When multiple 
+        //statements are selected, use this to separate them into single 
+        //statements.]
+        String STMT_SEP_LABEL_TT = 
+            s_stringMgr.getString("PreferencesPanel.statementSeparatorToolTip");
+        
+        //i18n[PreferencesPanel.lineCommentLabel=Start of line comment]
+        String LINE_COMMENT_LABEL = 
+            s_stringMgr.getString("PreferencesPanel.lineCommentLabel");
+
+        //i18n[PreferencesPanel.lineCommentToolTip=Sequence of characters at 
+        //the beginning of a line to indicate that whole line is a comment]        
+        String LINE_COMMENT_LABEL_TT = 
+            s_stringMgr.getString("PreferencesPanel.lineCommentToolTip");
+        
+        //i18n[PreferencesPanel.procedureSeparatorLabel=Procedure/Function 
+        //Separator]        
+        String PROC_SEP_LABEL =
+            s_stringMgr.getString("PreferencesPanel.procedureSeparatorLabel");
+        
+        //i18n[PreferencesPanel.procedureSeparatorToolTip=Multiple statements 
+        //within a procedure or function can be terminated with this.]        
+        String PROC_SEP_LABEL_TT = 
+            s_stringMgr.getString("PreferencesPanel.procedureSeparatorToolTip");
+            
+    }
+
+    /**
+     * Construct a new PreferencesPanel.
+     * @param prefs
+     * @param databaseName
+     */
+    public PluginQueryTokenizerPreferencesPanel(PluginQueryTokenizerPreferencesManager prefsMgr,
+                                                IQueryTokenizerPreferenceBean prefs, 
+                                                String databaseName) {
+        
+        this(prefsMgr, prefs, databaseName, true);
     }
     
     
-    public PreferencesPanel(OraclePreferenceBean prefs) {
+    /**
+     * Construct a new PreferencesPanel.
+     * @param prefs
+     * @param databaseName
+     * @param showProcedureSeparator whether or not the custom tokenizer needs 
+     *        procedure separator preference.
+     */
+    public PluginQueryTokenizerPreferencesPanel(PluginQueryTokenizerPreferencesManager prefsMgr,
+                                                IQueryTokenizerPreferenceBean prefs, 
+                                                String databaseName,
+                                                boolean showProcedureSeparator) {
         
         super();
         _prefs = prefs;
+        _prefsManager = prefsMgr;
+        _databaseName = databaseName;
+        _showProcSep = showProcedureSeparator;
         createGUI();
         loadData();
     }
@@ -107,23 +178,28 @@ public class PreferencesPanel extends JPanel  {
     
     private JPanel createTopPanel() {
         JPanel result = new JPanel(new GridBagLayout());
-        //i18n[PreferencesPanel.borderLabel=Oracle Script Settings]
+        //i18n[PreferencesPanel.borderLabel={0} Script Settings]
         String borderLabel = 
-            s_stringMgr.getString("PreferencesPanel.borderLabel");
+            s_stringMgr.getString("PreferencesPanel.borderLabel",
+                                  _databaseName);
         result.setBorder(getTitledBorder(borderLabel));
         
-        addUseCustomQTCheckBox(result, 0, 0);
+        int y = 0;
         
-        addLineCommentLabel(result, 0, 1);
-        addLineCommentTextField(result, 1, 1);
+        addUseCustomQTCheckBox(result, 0, y++);
         
-        addStatementSeparatorLabel(result, 0, 2);
-        addStatementSeparatorTextField(result, 1, 2);
+        addLineCommentLabel(result, 0, y);
+        addLineCommentTextField(result, 1, y++);
         
-        addProcedureSeparatorLabel(result, 0, 3);
-        addProcedureSeparatorTextField(result, 1, 3);
+        addStatementSeparatorLabel(result, 0, y);
+        addStatementSeparatorTextField(result, 1, y++);
         
-        addRemoveMultiLineCommentCheckBox(result, 0, 4);
+        if (_showProcSep) {
+            addProcedureSeparatorLabel(result, 0, y);
+            addProcedureSeparatorTextField(result, 1, y++);
+        }
+        
+        addRemoveMultiLineCommentCheckBox(result, 0, y);
         
         return result;
     }    
@@ -135,8 +211,15 @@ public class PreferencesPanel extends JPanel  {
         c.insets = new Insets(5,5,0,0);
         c.anchor = GridBagConstraints.WEST;
         c.gridwidth = 2;  // Span across two columns
-        useCustomQTCheckBox = new JCheckBox(i18n.USE_CUSTOM_QT_LABEL);        
-        useCustomQTCheckBox.setToolTipText(i18n.USE_CUSTOM_QT_TOOLTIP);
+        useCustomQTCheckBox = new JCheckBox(i18n.USE_CUSTOM_QT_LABEL);   
+        
+        //i18n[PreferencesPanel.useCustomQTToolTip=Gives enhanced capabilities
+        //over the default query tokenizer for handling {0} scripts]
+        String USE_CUSTOM_QT_TOOLTIP = 
+            s_stringMgr.getString("PreferencesPanel.useCustomQTToolTip",
+                                  _databaseName);
+        
+        useCustomQTCheckBox.setToolTipText(USE_CUSTOM_QT_TOOLTIP);
         useCustomQTCheckBox.addActionListener(new UseQTHandler());
         panel.add(useCustomQTCheckBox, c);        
     }    
@@ -146,12 +229,9 @@ public class PreferencesPanel extends JPanel  {
         c.gridx = col;
         c.gridy = row;
         c.gridwidth = 2;  // Span across two columns
-        String cbLabel = 
-            s_stringMgr.getString("PreferencesPanel.removeMultiLineCommentLabel");
+        String cbLabel = i18n.REMOVE_ML_COMMENT_LABEL;
         removeMultiLineCommentCheckBox = new JCheckBox(cbLabel);        
-        String cbToolTipText = 
-            s_stringMgr.getString("PreferencesPanel.removeMultiLineCommentLabelTipText");
-        removeMultiLineCommentCheckBox.setToolTipText(cbToolTipText);
+        removeMultiLineCommentCheckBox.setToolTipText(i18n.REMOVE_ML_COMMENT_LABEL_TT);
         panel.add(removeMultiLineCommentCheckBox, c);        
     }
         
@@ -160,13 +240,9 @@ public class PreferencesPanel extends JPanel  {
         c.gridx = col;
         c.gridy = row;  
         c.insets = new Insets(5,5,0,0);
-        String bsLabel = 
-            s_stringMgr.getString("PreferencesPanel.statementSeparatorLabel");
-        statementSeparatorLabel = new JLabel(bsLabel);
+        statementSeparatorLabel = new JLabel(i18n.STMT_SEP_LABEL);
         statementSeparatorLabel.setHorizontalAlignment(JLabel.LEFT);
-        String labelToolTipText = 
-            s_stringMgr.getString("PreferencesPanel.statementSeparatorToolTip");
-        statementSeparatorLabel.setToolTipText(labelToolTipText);
+        statementSeparatorLabel.setToolTipText(i18n.STMT_SEP_LABEL_TT);
         panel.add(statementSeparatorLabel, c);        
     }    
     
@@ -180,9 +256,7 @@ public class PreferencesPanel extends JPanel  {
         statementSeparatorTextField = new JTextField(10);
         
         statementSeparatorTextField.setHorizontalAlignment(JTextField.RIGHT);
-        String toolTip = 
-            s_stringMgr.getString("PreferencesPanel.statementSeparatorToolTip");
-        statementSeparatorTextField.setToolTipText(toolTip);
+        statementSeparatorTextField.setToolTipText(i18n.STMT_SEP_LABEL_TT);
         panel.add(statementSeparatorTextField, c);        
     }    
         
@@ -191,13 +265,9 @@ public class PreferencesPanel extends JPanel  {
         c.gridx = col;
         c.gridy = row;  
         c.insets = new Insets(5,5,0,0);
-        String bsLabel = 
-            s_stringMgr.getString("PreferencesPanel.lineCommentLabel");
-        lineCommentLabel = new JLabel(bsLabel);
+        lineCommentLabel = new JLabel(i18n.LINE_COMMENT_LABEL);
         lineCommentLabel.setHorizontalAlignment(JLabel.LEFT);
-        String labelToolTipText = 
-            s_stringMgr.getString("PreferencesPanel.lineCommentToolTip");
-        lineCommentLabel.setToolTipText(labelToolTipText);
+        lineCommentLabel.setToolTipText(i18n.LINE_COMMENT_LABEL_TT);
         panel.add(lineCommentLabel, c);        
     }
     
@@ -210,9 +280,7 @@ public class PreferencesPanel extends JPanel  {
         c.anchor = GridBagConstraints.WEST;
         lineCommentTextField = new JTextField(10);
         lineCommentTextField.setHorizontalAlignment(JTextField.RIGHT);
-        String toolTip = 
-            s_stringMgr.getString("PreferencesPanel.lineCommentToolTip");
-        lineCommentTextField.setToolTipText(toolTip);
+        lineCommentTextField.setToolTipText(i18n.LINE_COMMENT_LABEL_TT);
         panel.add(lineCommentTextField, c);        
     }
     
@@ -222,13 +290,9 @@ public class PreferencesPanel extends JPanel  {
         c.gridx = col;
         c.gridy = row;  
         c.insets = new Insets(5,5,0,0);
-        String commitLabel = 
-            s_stringMgr.getString("PreferencesPanel.procedureSeparatorLabel");
-        procedureSeparatorLabel = new JLabel(commitLabel);
+        procedureSeparatorLabel = new JLabel(i18n.PROC_SEP_LABEL);
         procedureSeparatorLabel.setHorizontalAlignment(JLabel.RIGHT);
-        String commitlabelToolTipText = 
-            s_stringMgr.getString("PreferencesPanel.procedureSeparatorToolTip");
-        procedureSeparatorLabel.setToolTipText(commitlabelToolTipText);
+        procedureSeparatorLabel.setToolTipText(i18n.PROC_SEP_LABEL_TT);
         panel.add(procedureSeparatorLabel, c);                
     }
     
@@ -241,9 +305,7 @@ public class PreferencesPanel extends JPanel  {
         c.anchor = GridBagConstraints.WEST;
         procedureSeparatorTextField = new JTextField(10);
         procedureSeparatorTextField.setHorizontalAlignment(JTextField.RIGHT);
-        String commitlabelToolTipText = 
-            s_stringMgr.getString("PreferencesPanel.procedureSeparatorToolTip");
-        procedureSeparatorTextField.setToolTipText(commitlabelToolTipText);
+        procedureSeparatorTextField.setToolTipText(i18n.PROC_SEP_LABEL_TT);
         panel.add(procedureSeparatorTextField, c);                
     }
 
@@ -258,7 +320,9 @@ public class PreferencesPanel extends JPanel  {
         removeMultiLineCommentCheckBox.setSelected(_prefs.isRemoveMultiLineComments());
         lineCommentTextField.setText(_prefs.getLineComment());
         statementSeparatorTextField.setText(_prefs.getStatementSeparator());
-        procedureSeparatorTextField.setText(_prefs.getProcedureSeparator());
+        if (_showProcSep) {
+            procedureSeparatorTextField.setText(_prefs.getProcedureSeparator());
+        }
         useCustomQTCheckBox.setSelected(_prefs.isInstallCustomQueryTokenizer());
         updatePreferenceState();
     }
@@ -267,9 +331,11 @@ public class PreferencesPanel extends JPanel  {
         _prefs.setRemoveMultiLineComments(removeMultiLineCommentCheckBox.isSelected());
         _prefs.setLineComment(lineCommentTextField.getText());
         _prefs.setStatementSeparator(statementSeparatorTextField.getText());
-        _prefs.setProcedureSeparator(procedureSeparatorTextField.getText());
+        if (_showProcSep) {
+            _prefs.setProcedureSeparator(procedureSeparatorTextField.getText());
+        }
         _prefs.setInstallCustomQueryTokenizer(useCustomQTCheckBox.isSelected());
-        PreferencesManager.savePrefs();
+        _prefsManager.savePrefs();
     }
 
     /* (non-Javadoc)
@@ -293,16 +359,20 @@ public class PreferencesPanel extends JPanel  {
             lineCommentLabel.setEnabled(true);
             statementSeparatorTextField.setEnabled(true);
             statementSeparatorLabel.setEnabled(true);
-            procedureSeparatorLabel.setEnabled(true);
-            procedureSeparatorTextField.setEnabled(true);            
+            if (_showProcSep) {
+                procedureSeparatorLabel.setEnabled(true);
+                procedureSeparatorTextField.setEnabled(true);
+            }
         } else {
             removeMultiLineCommentCheckBox.setEnabled(false);
             lineCommentTextField.setEnabled(false);
             lineCommentLabel.setEnabled(false);
             statementSeparatorTextField.setEnabled(false);
-            statementSeparatorLabel.setEnabled(false);                
-            procedureSeparatorLabel.setEnabled(false);
-            procedureSeparatorTextField.setEnabled(false);
+            statementSeparatorLabel.setEnabled(false);  
+            if (_showProcSep) {
+                procedureSeparatorLabel.setEnabled(false);
+                procedureSeparatorTextField.setEnabled(false);
+            }
         }        
     }    
     

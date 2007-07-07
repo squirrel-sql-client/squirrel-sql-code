@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package net.sourceforge.squirrel_sql.plugins.oracle.gui;
+package net.sourceforge.squirrel_sql.client.plugin.gui;
 
 import java.awt.Component;
 
@@ -24,53 +24,61 @@ import javax.swing.JScrollPane;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.plugins.oracle.prefs.PreferencesManager;
 
-public class OracleGlobalPreferencesTab implements IGlobalPreferencesPanel {
+public class PluginGlobalPreferencesTab implements IGlobalPreferencesPanel {
 
-    PreferencesPanel prefs = null;
+    PluginQueryTokenizerPreferencesPanel _prefs = null;
+
     private JScrollPane _myscrolledPanel;
+
+    private String _title = null;
     
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(OracleGlobalPreferencesTab.class);    
+    private String _hint = null;
     
-    public OracleGlobalPreferencesTab() {
-        prefs = new PreferencesPanel(PreferencesManager.getPreferences());
-        _myscrolledPanel = new JScrollPane(prefs);      
+    public PluginGlobalPreferencesTab(Component component) {
+        _myscrolledPanel = new JScrollPane(component);
     }
-    
+
     public void initialize(IApplication app) {
         /* Do Nothing */
     }
 
     public void uninitialize(IApplication app) {
         /* Do Nothing */
-    }    
-    
+    }
+
     public void applyChanges() {
-        if (prefs != null) {
-            prefs.applyChanges();
+        if (_prefs != null) {
+            _prefs.applyChanges();
         }
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see net.sourceforge.squirrel_sql.client.util.IOptionPanel#getTitle()
      */
     public String getTitle() {
-        //i18n[OracleGlobalPreferencesTab.title=Oracle]
-        return s_stringMgr.getString("OracleGlobalPreferencesTab.title");
+        return _title;
     }
 
-    /* (non-Javadoc)
+    public void setTitle(String title) {
+        this._title = title;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
      * @see net.sourceforge.squirrel_sql.client.util.IOptionPanel#getHint()
      */
     public String getHint() {
-        // i18n[OracleGlobalPreferencesTab.hint=Preferences for Oracle]
-        return s_stringMgr.getString("OracleGlobalPreferencesTab.hint"); 
+        return _hint;
     }
 
+    public void setHint(String hint) {
+        this._hint = hint;
+    }
+    
     public Component getPanelComponent() {
         return _myscrolledPanel;
     }

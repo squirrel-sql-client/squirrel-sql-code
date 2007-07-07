@@ -19,28 +19,26 @@ package net.sourceforge.squirrel_sql.plugins.mssql.tokenizer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ITokenizerFactory;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.mssql.prefs.MSSQLPreferenceBean;
 
 public class MSSQLQueryTokenizer extends QueryTokenizer implements IQueryTokenizer
 {
     /** Logger for this class. */
+    @SuppressWarnings("unused")
     private final static ILogger s_log =
         LoggerController.createLogger(MSSQLQueryTokenizer.class);
     
-
+    /** the preference bean */
+    private IQueryTokenizerPreferenceBean _prefs = null;
     
-    private MSSQLPreferenceBean _prefs = null;
-    
-	public MSSQLQueryTokenizer(MSSQLPreferenceBean prefs)
+	public MSSQLQueryTokenizer(IQueryTokenizerPreferenceBean prefs)
 	{
-        super(prefs.getStatementSeparator(),
-              prefs.getLineComment(), 
-              prefs.isRemoveMultiLineComments());
+        super(prefs);
         _prefs = prefs;
 	}
 

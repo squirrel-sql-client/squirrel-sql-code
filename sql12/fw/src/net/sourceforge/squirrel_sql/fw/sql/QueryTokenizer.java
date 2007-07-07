@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -58,6 +59,12 @@ public class QueryTokenizer implements IQueryTokenizer
         setFactory();
 	}
 
+    public QueryTokenizer(IQueryTokenizerPreferenceBean prefs) {
+        this(prefs.getStatementSeparator(), 
+             prefs.getLineComment(),
+             prefs.isRemoveMultiLineComments()); 
+    }
+    
     /**
      * Sets the ITokenizerFactory which is used to create additional instances
      * of the IQueryTokenizer - this is used for handling file includes

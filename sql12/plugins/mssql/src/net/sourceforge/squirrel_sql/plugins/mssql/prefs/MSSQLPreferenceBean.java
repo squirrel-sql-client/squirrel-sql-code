@@ -19,11 +19,14 @@ package net.sourceforge.squirrel_sql.plugins.mssql.prefs;
  */
 import java.io.Serializable;
 
+import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
+
 /**
  * A bean class to store preferences for the MS SQL-Server plugin.
  */
 public class MSSQLPreferenceBean implements Cloneable, 
-                                             Serializable {    
+                                             Serializable,
+                                             IQueryTokenizerPreferenceBean {    
     
 	static final long serialVersionUID = -8870273703050156986L;
 
@@ -42,6 +45,7 @@ public class MSSQLPreferenceBean implements Cloneable,
     private boolean removeMultiLineComments = false;
     
     private boolean installCustomQueryTokenizer = true;
+    
     
 	public MSSQLPreferenceBean() {
 		super();
@@ -152,6 +156,21 @@ public class MSSQLPreferenceBean implements Cloneable,
         return installCustomQueryTokenizer;
     }
 
+    /**
+     * This is not implemented at the moment, but will be soon.
+     * @see net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean#getProcedureSeparator()
+     */
+    public String getProcedureSeparator() {
+        return null;
+    }
+
+    /**
+     * This is not implemented at the moment, but will be soon. 
+     * @see net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean#setProcedureSeparator(java.lang.String)
+     */
+    public void setProcedureSeparator(String procedureSeparator) {
+        
+    }
 	
 }
 

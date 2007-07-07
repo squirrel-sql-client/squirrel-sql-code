@@ -19,34 +19,40 @@ package net.sourceforge.squirrel_sql.plugins.SybaseASE.tokenizer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ITokenizerFactory;
 import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.SybaseASE.prefs.SybasePreferenceBean;
 
+/**
+ * 
+ * At the moment, the only purpose this serves is to provide another bucket for 
+ * configuration, allowing Sybase plugin to store separator preferences separately
+ * from other plugins. This will be expanded to handle stored procedures at a 
+ * later time.
+ * 
+ * @author manningr
+ */
 public class SybaseQueryTokenizer extends QueryTokenizer implements IQueryTokenizer
 {
     /** Logger for this class. */
+    @SuppressWarnings("unused")
     private final static ILogger s_log =
         LoggerController.createLogger(SybaseQueryTokenizer.class);
     
-
+    /** the preference bean */
+    private IQueryTokenizerPreferenceBean _prefs = null;
     
-    private SybasePreferenceBean _prefs = null;
-    
-	public SybaseQueryTokenizer(SybasePreferenceBean prefs)
+	public SybaseQueryTokenizer(IQueryTokenizerPreferenceBean prefs)
 	{
-        super(prefs.getStatementSeparator(),
-              prefs.getLineComment(), 
-              prefs.isRemoveMultiLineComments());
+        super(prefs);
         _prefs = prefs;
 	}
 
     public void setScriptToTokenize(String script) {
         super.setScriptToTokenize(script);
-        
         _queryIterator = _queries.iterator();
     }
     

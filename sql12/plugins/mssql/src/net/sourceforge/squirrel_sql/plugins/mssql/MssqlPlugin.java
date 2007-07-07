@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.plugins.mssql;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
@@ -26,8 +27,11 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.plugin.PluginQueryTokenizerPreferencesManager;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
+import net.sourceforge.squirrel_sql.client.plugin.gui.PluginGlobalPreferencesTab;
+import net.sourceforge.squirrel_sql.client.plugin.gui.PluginQueryTokenizerPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -36,11 +40,14 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.mssql.action.GenerateSqlAction;
@@ -53,7 +60,6 @@ import net.sourceforge.squirrel_sql.plugins.mssql.action.ShrinkDatabaseFileActio
 import net.sourceforge.squirrel_sql.plugins.mssql.action.TruncateLogAction;
 import net.sourceforge.squirrel_sql.plugins.mssql.action.UpdateStatisticsAction;
 import net.sourceforge.squirrel_sql.plugins.mssql.event.IndexIterationListener;
-import net.sourceforge.squirrel_sql.plugins.mssql.gui.MSSQLGlobalPreferencesTab;
 import net.sourceforge.squirrel_sql.plugins.mssql.gui.MonitorPanel;
 import net.sourceforge.squirrel_sql.plugins.mssql.prefs.MSSQLPreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.mssql.prefs.PreferencesManager;
@@ -71,6 +77,26 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
     private ISession _session;
     private int[] indexColumnIndices = new int[] { 6 };
     
+    /** manages our query tokenizing preferences */
+    private PluginQueryTokenizerPreferencesManager _prefsManager = null;
+
+    /** The database name that appears in the border label of the pref panel */
+    private static final String SCRIPT_SETTINGS_BORDER_LABEL_DBNAME = "MS SQL-Server";
+    
+    /**
+     * Internationalized strings for this class.
+     */
+    private static final StringManager s_stringMgr =
+       StringManagerFactory.getStringManager(MssqlPlugin.class);
+    
+    interface i18n {
+        // i18n[SybaseASEPlugin.title=SybaseASE]
+        String title = s_stringMgr.getString("MssqlPlugin.title");
+
+        // i18n[SybaseASEPlugin.hint=Preferences for SybaseASE]
+        String hint = s_stringMgr.getString("MssqlPlugin.hint");
+    }    
+    
     public MssqlPlugin() {
         super();
     }
@@ -84,7 +110,20 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
     }
     
     public net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel[] getGlobalPreferencePanels() {
-        MSSQLGlobalPreferencesTab tab = new MSSQLGlobalPreferencesTab();
+        boolean includeProcSepPref = false;
+        
+        PluginQueryTokenizerPreferencesPanel _prefsPanel = 
+            new PluginQueryTokenizerPreferencesPanel(
+                    _prefsManager,
+                    _prefsManager.getPreferences(), 
+                    SCRIPT_SETTINGS_BORDER_LABEL_DBNAME, 
+                    includeProcSepPref);
+
+        PluginGlobalPreferencesTab tab = new PluginGlobalPreferencesTab(_prefsPanel);
+
+        tab.setHint(i18n.hint);
+        tab.setTitle(i18n.title);
+
         return new IGlobalPreferencesPanel[] { tab };
     }
     
@@ -155,6 +194,9 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
         
 		app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, _mssqlMenu);
         super.registerSessionMenu(_mssqlMenu);
+        
+        _prefsManager = new PluginQueryTokenizerPreferencesManager();
+        _prefsManager.initialize(this, new MSSQLPreferenceBean());        
     }
     
     public void load(net.sourceforge.squirrel_sql.client.IApplication iApplication) throws net.sourceforge.squirrel_sql.client.plugin.PluginException {
@@ -180,10 +222,7 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
        if (!isPluginSession(iSession)) {
            return null;
        }
-       MSSQLPreferenceBean _prefs = PreferencesManager.getPreferences();
-       if (_prefs.isInstallCustomQueryTokenizer()) {
-           iSession.setQueryTokenizer(new MSSQLQueryTokenizer(_prefs));
-       }
+       installMssqlQueryTokenizer(iSession);
        GUIUtils.processOnSwingEventThread(new Runnable() {
            public void run() {
                updateTreeApi(iSession);
@@ -196,6 +235,20 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
    @Override
    protected boolean isPluginSession(ISession session) {
        return DialectFactory.isMSSQLServer(session.getMetaData());
+   }
+   
+   /**
+    * Determines from the user's preference whether or not to install the 
+    * custom query tokenizer, and if so configure installs it.
+    * 
+    * @param session the session to install the custom query tokenizer in.
+    */
+   private void installMssqlQueryTokenizer(ISession session) {
+       IQueryTokenizerPreferenceBean _prefs = _prefsManager.getPreferences();
+
+       if (_prefs.isInstallCustomQueryTokenizer()) {
+           session.setQueryTokenizer(new MSSQLQueryTokenizer(_prefs));
+       }
    }
    
    
@@ -232,10 +285,10 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
     public String getVersion() {
         return new String("0.3");
     }
-    
+    @SuppressWarnings("unchecked")
     private void removeActionsOfType(ActionCollection coll,java.lang.Class classType) {
         java.lang.Object obj;
-        java.util.Iterator iter = coll.actions();
+        java.util.Iterator<Action> iter = coll.actions();
         while (iter.hasNext()) {
             obj = iter.next();
             if (obj.getClass() == classType)
