@@ -203,7 +203,7 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect
     public String[] getColumnAddSQL(TableColumnInfo info) 
         throws UnsupportedOperationException 
     {
-        ArrayList result = new ArrayList();
+        ArrayList<String> result = new ArrayList<String>();
         
         StringBuffer addColumn = new StringBuffer();
         addColumn.append("ALTER TABLE ");
@@ -245,7 +245,7 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect
             result.add(getColumnCommentAlterSQL(info));
         }
         
-        return (String[])result.toArray(new String[result.size()]);
+        return result.toArray(new String[result.size()]);
         
      }
 

@@ -187,6 +187,7 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect
      * @throws UnsupportedOperationException if the database doesn't support 
      *         annotating columns with a comment.
      */
+    @SuppressWarnings("unused")
     public String getColumnCommentAlterSQL(String tableName, String columnName, String comment) throws UnsupportedOperationException {
         throw new UnsupportedOperationException("This database dialect doesn't support adding comments to columns");
     }

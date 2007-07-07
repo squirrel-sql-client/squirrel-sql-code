@@ -58,6 +58,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  */
 public class ColumnListDialog extends JDialog {
 
+    private static final long serialVersionUID = 1L;
+
     private JLabel tableNameLabel = null;
     private JLabel primaryKeyNameLabel = null;
     private JTextField tableNameTextField = null;
@@ -142,12 +144,12 @@ public class ColumnListDialog extends JDialog {
             
     public void setColumnList(TableColumnInfo[] columnInfos) {
         colInfos = columnInfos;
-        ArrayList tmp = new ArrayList();
+        ArrayList<String> tmp = new ArrayList<String>();
         for (int i = 0; i < colInfos.length; i++) {
             TableColumnInfo info = colInfos[i];
             tmp.add(info.getColumnName());
         }
-        String[] cols = (String[])tmp.toArray(new String[tmp.size()]);
+        String[] cols = tmp.toArray(new String[tmp.size()]);
         if (columnList != null) {
             columnList.setListData(cols);
         } else {
@@ -175,13 +177,13 @@ public class ColumnListDialog extends JDialog {
     }
     
     public TableColumnInfo[] getSelectedColumnList() {
-        ArrayList result = new ArrayList();
+        ArrayList<TableColumnInfo> result = new ArrayList<TableColumnInfo>();
         Object[] selectedColNames = columnList.getSelectedValues();
         for (int i = 0; i < selectedColNames.length; i++) {
             String columnName = (String)selectedColNames[i];
             result.add(getColInfoByName(columnName));
         }
-        return (TableColumnInfo[])result.toArray(new TableColumnInfo[result.size()]);
+        return result.toArray(new TableColumnInfo[result.size()]);
     }
     
     private TableColumnInfo getColInfoByName(String columnName) {

@@ -391,12 +391,12 @@ public class H2Dialect extends Dialect implements HibernateDialect {
     public String[] getColumnAddSQL(TableColumnInfo info) 
         throws UnsupportedOperationException 
     {
-        ArrayList result = new ArrayList();
+        ArrayList<String> result = new ArrayList<String>();
         result.add(DialectUtils.getColumnAddSQL(info, this, true, true, true));
         if (info.getRemarks() != null && !"".equals(info.getRemarks())) {
             result.add(getColumnCommentAlterSQL(info));
         }
-        return (String[])result.toArray(new String[result.size()]);
+        return result.toArray(new String[result.size()]);
     }
 
     /**
@@ -466,7 +466,7 @@ public class H2Dialect extends Dialect implements HibernateDialect {
                                         TableColumnInfo[] columns, 
                                         ITableInfo ti) 
     {
-        ArrayList result = new ArrayList();
+        ArrayList<String> result = new ArrayList<String>();
         StringBuffer addPKSQL = new StringBuffer();
         addPKSQL.append("ALTER TABLE ");
         addPKSQL.append(ti.getQualifiedName());
@@ -485,7 +485,7 @@ public class H2Dialect extends Dialect implements HibernateDialect {
         }
         addPKSQL.append(")");
         result.add(addPKSQL.toString());
-        return (String[]) result.toArray(new String[result.size()]);
+        return result.toArray(new String[result.size()]);
     }
     
     /**

@@ -268,7 +268,7 @@ public class SQLServerDialect extends org.hibernate.dialect.SQLServerDialect
                                         TableColumnInfo[] colInfos, 
                                         ITableInfo ti) 
     {
-        ArrayList result = new ArrayList();
+        ArrayList<String> result = new ArrayList<String>();
         String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
         // convert all columns in key to not null - this doesn't hurt if they 
         // are already null.        
@@ -277,7 +277,7 @@ public class SQLServerDialect extends org.hibernate.dialect.SQLServerDialect
         String pkSQL = DialectUtils.getAddPrimaryKeySQL(ti, pkName, colInfos, false);
         result.add(pkSQL);
         
-        return (String[])result.toArray(new String[result.size()]);
+        return result.toArray(new String[result.size()]);
     }
     
     /**

@@ -399,7 +399,7 @@ public class DialectUtils {
                                              HibernateDialect dialect,
                                              String alterClause,
                                              boolean specifyType,
-                                             ArrayList result) 
+                                             ArrayList<String> result) 
     {
         for (int i = 0; i < colInfos.length; i++) {
             StringBuilder notNullSQL = new StringBuilder();
@@ -560,6 +560,7 @@ public class DialectUtils {
      * @throw UnsupportedOperationException if the database doesn't support 
      *         modifying column types. 
      */
+    @SuppressWarnings("unused")
     public static List<String> getColumnTypeAlterSQL(HibernateDialect dialect,
                                                      String alterClause,
                                                      String setClause,

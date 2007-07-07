@@ -171,7 +171,7 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
      *         adding columns after a table has already been created.
      */
     public String[] getColumnAddSQL(TableColumnInfo info) throws UnsupportedOperationException {
-        ArrayList returnVal = new ArrayList();
+        ArrayList<String> returnVal = new ArrayList<String>();
         StringBuilder result = new StringBuilder();
         result.append("ALTER TABLE ");
         result.append(info.getTableName());
@@ -208,7 +208,7 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect
             returnVal.add(getColumnDefaultAlterSQL(info));
         }   
         
-        return (String[])returnVal.toArray(new String[returnVal.size()]);
+        return returnVal.toArray(new String[returnVal.size()]);
     }
 
     public String getModifyColumnNullabilitySQL(String tableName, 

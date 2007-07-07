@@ -200,12 +200,12 @@ public class PostgreSQLDialect
     public String[] getColumnAddSQL(TableColumnInfo info) 
         throws UnsupportedOperationException 
     {
-        ArrayList result = new ArrayList();
+        ArrayList<String> result = new ArrayList<String>();
         result.add(DialectUtils.getColumnAddSQL(info, this, true, true, true));
         if (info.getRemarks() != null && !"".equals(info.getRemarks())) {
             result.add(getColumnCommentAlterSQL(info));
         }
-        return (String[])result.toArray(new String[result.size()]);
+        return result.toArray(new String[result.size()]);
     }
 
     /**

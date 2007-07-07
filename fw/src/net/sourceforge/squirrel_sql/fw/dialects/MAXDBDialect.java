@@ -156,12 +156,12 @@ public class MAXDBDialect extends SAPDBDialect
     public String[] getColumnAddSQL(TableColumnInfo info) 
         throws UnsupportedOperationException 
     {
-        ArrayList result = new ArrayList();
+        ArrayList<String> result = new ArrayList<String>();
         result.add(DialectUtils.getColumnAddSQL(info, this, true, false, true));
         if (info.getRemarks() != null && !"".equals(info.getRemarks())) {
             result.add(getColumnCommentAlterSQL(info));
         }
-        return (String[])result.toArray(new String[result.size()]);
+        return result.toArray(new String[result.size()]);
     }
 
     /**
@@ -216,13 +216,13 @@ public class MAXDBDialect extends SAPDBDialect
     public String[] getAddPrimaryKeySQL(String pkName, 
                                         TableColumnInfo[] columns, ITableInfo ti) 
     {
-        ArrayList result = new ArrayList();
+        ArrayList<String> result = new ArrayList<String>();
         for (int i = 0; i < columns.length; i++) {
             TableColumnInfo info = columns[i];
             result.add(getColumnNullableAlterSQL(info, false));
         }
         result.add(DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false));
-        return (String[])result.toArray(new String[result.size()]);
+        return result.toArray(new String[result.size()]);
     }
     
     /**
