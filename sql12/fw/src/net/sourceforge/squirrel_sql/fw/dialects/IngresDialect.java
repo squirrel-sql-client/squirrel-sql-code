@@ -202,7 +202,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect
      *         adding columns after a table has already been created.
      */
     public String[] getColumnAddSQL(TableColumnInfo info) throws UnsupportedOperationException {
-        ArrayList result = new ArrayList();
+        ArrayList<String> result = new ArrayList<String>();
         
         result.add(DialectUtils.getColumnAddSQL(info, this, false, false, false));
         
@@ -215,7 +215,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect
         if (info.getRemarks() != null && !"".equals(info.getRemarks())) {
             result.add(getColumnCommentAlterSQL(info));
         }        
-        return (String[])result.toArray(new String[result.size()]);
+        return result.toArray(new String[result.size()]);
     }
 
     /**
@@ -281,7 +281,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect
     public String[] getAddPrimaryKeySQL(String pkName, 
                                         TableColumnInfo[] columns, ITableInfo ti) 
     {
-        ArrayList result = new ArrayList();
+        ArrayList<String> result = new ArrayList<String>();
         String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
         for (int i = 0; i < columns.length; i++) {
             TableColumnInfo info = columns[i];
@@ -294,7 +294,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect
             result.add(notNullSQL);
         }
         result.add(DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false));
-        return (String[])result.toArray(new String[result.size()]);
+        return result.toArray(new String[result.size()]);
     }
     
     /**

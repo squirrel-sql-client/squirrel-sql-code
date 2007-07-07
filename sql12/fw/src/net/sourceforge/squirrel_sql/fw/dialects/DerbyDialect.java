@@ -249,7 +249,7 @@ public class DerbyDialect extends DB2Dialect
                                         TableColumnInfo[] colInfos, 
                                         ITableInfo ti) 
     {
-        ArrayList result = new ArrayList();
+        ArrayList<String> result = new ArrayList<String>();
         String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
         
         // convert each column that will be a member key to non-null - this 
@@ -262,7 +262,7 @@ public class DerbyDialect extends DB2Dialect
         
         result.add(DialectUtils.getAddPrimaryKeySQL(ti, pkName, colInfos, false));
         
-        return (String[])result.toArray(new String[result.size()]);
+        return result.toArray(new String[result.size()]);
     }
     
     /**

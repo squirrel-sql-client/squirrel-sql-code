@@ -21,7 +21,6 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
