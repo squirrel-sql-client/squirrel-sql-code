@@ -25,13 +25,20 @@ import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
+import net.sourceforge.squirrel_sql.client.plugin.PluginQueryTokenizerPreferencesManager;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
+import net.sourceforge.squirrel_sql.client.plugin.gui.PluginGlobalPreferencesTab;
+import net.sourceforge.squirrel_sql.client.plugin.gui.PluginQueryTokenizerPreferencesPanel;
+import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.mysql.action.AlterTableAction;
@@ -47,6 +54,7 @@ import net.sourceforge.squirrel_sql.plugins.mysql.action.OptimizeTableAction;
 import net.sourceforge.squirrel_sql.plugins.mysql.action.RenameTableAction;
 import net.sourceforge.squirrel_sql.plugins.mysql.expander.SessionExpander;
 import net.sourceforge.squirrel_sql.plugins.mysql.expander.UserParentExpander;
+import net.sourceforge.squirrel_sql.plugins.mysql.prefs.MysqlPreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.DatabaseStatusTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.OpenTablesTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.ProcessesTab;
@@ -59,6 +67,7 @@ import net.sourceforge.squirrel_sql.plugins.mysql.tab.ShowSlaveStatusTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.ShowVariablesTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.TableStatusTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.UserGrantsTab;
+import net.sourceforge.squirrel_sql.plugins.mysql.tokenizer.MysqlQueryTokenizer;
 /**
  * MySQL plugin class.
  *
@@ -66,11 +75,16 @@ import net.sourceforge.squirrel_sql.plugins.mysql.tab.UserGrantsTab;
  */
 public class MysqlPlugin extends DefaultSessionPlugin
 {
+    /**
+     * Internationalized strings for this class.
+     */
+    private static final StringManager s_stringMgr =
+       StringManagerFactory.getStringManager(MysqlPlugin.class);
+               
 	/** Logger for this class. */
-	private final static ILogger s_log = LoggerController.createLogger(MysqlPlugin.class);
-
-	/** Folder to store user settings in. */
-//	private File _userSettingsFolder;
+    @SuppressWarnings("unused")
+	private final static ILogger s_log = 
+        LoggerController.createLogger(MysqlPlugin.class);
 
 	/** Plugin resources. */
 	private PluginResources _resources;
@@ -81,6 +95,18 @@ public class MysqlPlugin extends DefaultSessionPlugin
 	/** MySQL menu. */
 	private JMenu _mySQLMenu;
 
+	/** manages our query tokenizing preferences */
+	private PluginQueryTokenizerPreferencesManager _prefsManager = null;
+
+    
+	interface i18n {
+	    // i18n[MysqlPlugin.title=MySQL]
+	    String title = s_stringMgr.getString("MysqlPlugin.title");
+
+	    // i18n[MysqlPlugin.hint=Preferences for MySQL]
+	    String hint = s_stringMgr.getString("MysqlPlugin.hint");
+	}
+    
 	/**
 	 * Return the internal name of this plugin.
 	 *
@@ -174,6 +200,25 @@ public class MysqlPlugin extends DefaultSessionPlugin
 	}
 
 	/**
+	 * Create panel for the Global Properties dialog.
+	 * 
+	 * @return  properties panel.
+	 */
+	public IGlobalPreferencesPanel[] getGlobalPreferencePanels() {
+	    PluginQueryTokenizerPreferencesPanel _prefsPanel = 
+	        new PluginQueryTokenizerPreferencesPanel(_prefsManager,
+	                _prefsManager.getPreferences(), "MySQL");
+
+	    PluginGlobalPreferencesTab tab = new PluginGlobalPreferencesTab(_prefsPanel);
+
+	    tab.setHint(i18n.hint);
+	    tab.setTitle(i18n.title);
+
+	    return new IGlobalPreferencesPanel[] { tab };
+	}
+    
+    
+	/**
 	 * Initialize this plugin.
 	 */
 	public synchronized void initialize() throws PluginException
@@ -203,7 +248,11 @@ public class MysqlPlugin extends DefaultSessionPlugin
 
 		_mySQLMenu = createFullMysqlMenu();
 		app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, _mySQLMenu);
-        super.registerSessionMenu(_mySQLMenu);        
+        super.registerSessionMenu(_mySQLMenu);   
+        
+
+        _prefsManager = new PluginQueryTokenizerPreferencesManager();
+        _prefsManager.initialize(this, new MysqlPreferenceBean());
 	}
 
 	/**
@@ -233,12 +282,15 @@ public class MysqlPlugin extends DefaultSessionPlugin
        if (!isPluginSession(session)) {
            return null;
        }
-
+       
        GUIUtils.processOnSwingEventThread(new Runnable() {
            public void run() {
                updateTreeApi(session);
            }
        });
+       
+       installMysqlQueryTokenizer(session);
+       
        PluginSessionCallback ret = new PluginSessionCallback()
        {
            public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
@@ -259,6 +311,22 @@ public class MysqlPlugin extends DefaultSessionPlugin
     @Override
     protected boolean isPluginSession(ISession session) {
         return DialectFactory.isMySQL(session.getMetaData());
+    }
+    
+    /**
+     * Determines from the user's preference whether or not to install the 
+     * custom query tokenizer, and if so configure installs it.
+     * 
+     * @param session the session to install the custom query tokenizer in.
+     */
+    private void installMysqlQueryTokenizer(ISession session) {
+
+        IQueryTokenizerPreferenceBean _prefs = _prefsManager.getPreferences();
+        
+        if (_prefs.isInstallCustomQueryTokenizer()) {
+            session.setQueryTokenizer(new MysqlQueryTokenizer(_prefs));
+        }
+        
     }
     
     private void updateTreeApi(ISession session) {
