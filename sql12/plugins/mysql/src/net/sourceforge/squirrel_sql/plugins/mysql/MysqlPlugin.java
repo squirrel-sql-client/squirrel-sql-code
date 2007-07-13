@@ -56,6 +56,7 @@ import net.sourceforge.squirrel_sql.plugins.mysql.expander.SessionExpander;
 import net.sourceforge.squirrel_sql.plugins.mysql.expander.UserParentExpander;
 import net.sourceforge.squirrel_sql.plugins.mysql.prefs.MysqlPreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.DatabaseStatusTab;
+import net.sourceforge.squirrel_sql.plugins.mysql.tab.MysqlViewSourceTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.OpenTablesTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.MysqlProcedureSourceTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.ProcessesTab;
@@ -111,6 +112,9 @@ public class MysqlPlugin extends DefaultSessionPlugin
         String SHOW_PROCEDURE_SOURCE =
             s_stringMgr.getString("MysqlPlugin.showProcedureSource");
         
+        //i18n[MysqlPlugin.showViewSource=Show view source]
+        String SHOW_VIEW_SOURCE = 
+            s_stringMgr.getString("MysqlPlugin.showViewSource");
 	}
     
 	/**
@@ -361,12 +365,17 @@ public class MysqlPlugin extends DefaultSessionPlugin
         _treeAPI.addDetailTab(DatabaseObjectType.TABLE, new ShowColumnsTab());
         _treeAPI.addDetailTab(DatabaseObjectType.TABLE, new ShowIndexesTab());
 
-        // Tabs to add to the procedure nodes.  We can add support for stored
+        // Tab to add to the procedure nodes.  We can add support for stored
         // procedures even when using MySQL 4 or earlier.  This just will be 
         // unused in that case b/c there will be no procedure nodes.
         MysqlProcedureSourceTab procSourceTab =
             new MysqlProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE, stmtSep);
         _treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, procSourceTab);
+        
+        // Tab to add to view nodes.
+        MysqlViewSourceTab viewSourceTab = 
+            new MysqlViewSourceTab(i18n.SHOW_VIEW_SOURCE, stmtSep);
+        _treeAPI.addDetailTab(DatabaseObjectType.VIEW, viewSourceTab);
         
         // Tabs to add to the user nodes.
         _treeAPI.addDetailTab(DatabaseObjectType.USER, new UserGrantsTab());
