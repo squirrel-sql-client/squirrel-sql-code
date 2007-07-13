@@ -57,6 +57,7 @@ import net.sourceforge.squirrel_sql.plugins.mysql.expander.UserParentExpander;
 import net.sourceforge.squirrel_sql.plugins.mysql.prefs.MysqlPreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.DatabaseStatusTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.OpenTablesTab;
+import net.sourceforge.squirrel_sql.plugins.mysql.tab.MysqlProcedureSourceTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.ProcessesTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.ShowColumnsTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.ShowIndexesTab;
@@ -105,6 +106,11 @@ public class MysqlPlugin extends DefaultSessionPlugin
 
 	    // i18n[MysqlPlugin.hint=Preferences for MySQL]
 	    String hint = s_stringMgr.getString("MysqlPlugin.hint");
+        
+        //i18n[MysqlPlugin.showProcedureSource=Show procedure source]
+        String SHOW_PROCEDURE_SOURCE =
+            s_stringMgr.getString("MysqlPlugin.showProcedureSource");
+        
 	}
     
 	/**
@@ -332,6 +338,7 @@ public class MysqlPlugin extends DefaultSessionPlugin
     private void updateTreeApi(ISession session) {
         _treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
         final ActionCollection coll = getApplication().getActionCollection();
+        String stmtSep = session.getQueryTokenizer().getSQLStatementSeparator();
 
         // Show users in the object tee.
         _treeAPI.addExpander(DatabaseObjectType.SESSION, new SessionExpander());
@@ -354,6 +361,13 @@ public class MysqlPlugin extends DefaultSessionPlugin
         _treeAPI.addDetailTab(DatabaseObjectType.TABLE, new ShowColumnsTab());
         _treeAPI.addDetailTab(DatabaseObjectType.TABLE, new ShowIndexesTab());
 
+        // Tabs to add to the procedure nodes.  We can add support for stored
+        // procedures even when using MySQL 4 or earlier.  This just will be 
+        // unused in that case b/c there will be no procedure nodes.
+        MysqlProcedureSourceTab procSourceTab =
+            new MysqlProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE, stmtSep);
+        _treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, procSourceTab);
+        
         // Tabs to add to the user nodes.
         _treeAPI.addDetailTab(DatabaseObjectType.USER, new UserGrantsTab());
 
