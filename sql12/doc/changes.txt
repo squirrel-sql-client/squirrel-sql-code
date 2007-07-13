@@ -30,8 +30,9 @@ command:  run '<abs-path-to-script>'
 This slurps in the file and executes it's statements.  This is supported in 
 Derby's own ij command-line interpreter.
 
-MySQL Plugin: Added support for handling stored procedure create 
-statements.
+MySQL Plugin: 
+ - Added support for handling stored procedure create statements.
+ - Added source tab for Stored Procedures.
 
 Oracle Plugin: 
  - Show the source for Oracle tables, as well as materialized views.  
