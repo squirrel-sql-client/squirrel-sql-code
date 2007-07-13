@@ -156,7 +156,9 @@ public abstract class BaseSourceTab extends BaseObjectTab
 
 	private final class DefaultSourcePanel extends BaseSourcePanel
 	{
-		private JTextArea _ta;
+        private static final long serialVersionUID = 1L;
+
+        private JTextArea _ta;
 
         DefaultSourcePanel()
 		{
