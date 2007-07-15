@@ -33,6 +33,8 @@ import net.sourceforge.squirrel_sql.client.plugin.gui.PluginQueryTokenizerPrefer
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithTriggersExpander;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
@@ -52,13 +54,16 @@ import net.sourceforge.squirrel_sql.plugins.mysql.action.ExplainSelectTableActio
 import net.sourceforge.squirrel_sql.plugins.mysql.action.ExplainTableAction;
 import net.sourceforge.squirrel_sql.plugins.mysql.action.OptimizeTableAction;
 import net.sourceforge.squirrel_sql.plugins.mysql.action.RenameTableAction;
+import net.sourceforge.squirrel_sql.plugins.mysql.expander.MysqlTableTriggerExtractorImpl;
 import net.sourceforge.squirrel_sql.plugins.mysql.expander.SessionExpander;
 import net.sourceforge.squirrel_sql.plugins.mysql.expander.UserParentExpander;
 import net.sourceforge.squirrel_sql.plugins.mysql.prefs.MysqlPreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.DatabaseStatusTab;
+import net.sourceforge.squirrel_sql.plugins.mysql.tab.MysqlProcedureSourceTab;
+import net.sourceforge.squirrel_sql.plugins.mysql.tab.MysqlTriggerDetailsTab;
+import net.sourceforge.squirrel_sql.plugins.mysql.tab.MysqlTriggerSourceTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.MysqlViewSourceTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.OpenTablesTab;
-import net.sourceforge.squirrel_sql.plugins.mysql.tab.MysqlProcedureSourceTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.ProcessesTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.ShowColumnsTab;
 import net.sourceforge.squirrel_sql.plugins.mysql.tab.ShowIndexesTab;
@@ -111,6 +116,10 @@ public class MysqlPlugin extends DefaultSessionPlugin
         //i18n[MysqlPlugin.showProcedureSource=Show procedure source]
         String SHOW_PROCEDURE_SOURCE =
             s_stringMgr.getString("MysqlPlugin.showProcedureSource");
+
+        //i18n[MysqlPlugin.showTriggerSource=Show trigger source]
+        String SHOW_TRIGGER_SOURCE =
+            s_stringMgr.getString("MysqlPlugin.showTriggerSource");
         
         //i18n[MysqlPlugin.showViewSource=Show view source]
         String SHOW_VIEW_SOURCE = 
@@ -342,12 +351,13 @@ public class MysqlPlugin extends DefaultSessionPlugin
     private void updateTreeApi(ISession session) {
         _treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
         final ActionCollection coll = getApplication().getActionCollection();
-        String stmtSep = session.getQueryTokenizer().getSQLStatementSeparator();
+        
 
         // Show users in the object tee.
         _treeAPI.addExpander(DatabaseObjectType.SESSION, new SessionExpander());
         _treeAPI.addExpander(IObjectTypes.USER_PARENT, new UserParentExpander(this));
 
+        
         // Tabs to add to the database node.
         _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new DatabaseStatusTab());
         _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new ProcessesTab());
@@ -365,17 +375,6 @@ public class MysqlPlugin extends DefaultSessionPlugin
         _treeAPI.addDetailTab(DatabaseObjectType.TABLE, new ShowColumnsTab());
         _treeAPI.addDetailTab(DatabaseObjectType.TABLE, new ShowIndexesTab());
 
-        // Tab to add to the procedure nodes.  We can add support for stored
-        // procedures even when using MySQL 4 or earlier.  This just will be 
-        // unused in that case b/c there will be no procedure nodes.
-        MysqlProcedureSourceTab procSourceTab =
-            new MysqlProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE, stmtSep);
-        _treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, procSourceTab);
-        
-        // Tab to add to view nodes.
-        MysqlViewSourceTab viewSourceTab = 
-            new MysqlViewSourceTab(i18n.SHOW_VIEW_SOURCE, stmtSep);
-        _treeAPI.addDetailTab(DatabaseObjectType.VIEW, viewSourceTab);
         
         // Tabs to add to the user nodes.
         _treeAPI.addDetailTab(DatabaseObjectType.USER, new UserGrantsTab());
@@ -387,7 +386,40 @@ public class MysqlPlugin extends DefaultSessionPlugin
 //              _treeAPI.addToPopup(DatabaseObjectType.CATALOG, coll.get(CreateTableAction.class));
         _treeAPI.addToPopup(DatabaseObjectType.CATALOG, coll.get(DropDatabaseAction.class));
 
-        _treeAPI.addToPopup(DatabaseObjectType.TABLE, createMysqlTableMenu());        
+        _treeAPI.addToPopup(DatabaseObjectType.TABLE, createMysqlTableMenu());  
+        
+        updateTreeApiForMysql5(session);
+    }
+    
+    private void updateTreeApiForMysql5(ISession session) {
+        if (!DialectFactory.isMySQL5(session.getMetaData())) {
+            return;
+        }
+        String stmtSep = session.getQueryTokenizer().getSQLStatementSeparator();
+        
+        MysqlProcedureSourceTab procSourceTab =
+            new MysqlProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE, stmtSep);
+        _treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, procSourceTab);
+        
+        // Tab to add to view nodes.
+        MysqlViewSourceTab viewSourceTab = 
+            new MysqlViewSourceTab(i18n.SHOW_VIEW_SOURCE, stmtSep);
+        _treeAPI.addDetailTab(DatabaseObjectType.VIEW, viewSourceTab);  
+        
+        // Show triggers for tables
+        TableWithTriggersExpander trigExp = new TableWithTriggersExpander();
+        trigExp.setTableTriggerExtractor(new MysqlTableTriggerExtractorImpl());
+        _treeAPI.addExpander(DatabaseObjectType.TABLE, trigExp);        
+        
+        // tabs for triggers
+        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, 
+                              new DatabaseObjectInfoTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER,
+                              new MysqlTriggerDetailsTab());
+        MysqlTriggerSourceTab trigSourceTab = 
+            new MysqlTriggerSourceTab(i18n.SHOW_TRIGGER_SOURCE, stmtSep);
+        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, trigSourceTab);
+        
     }
     
 	/**

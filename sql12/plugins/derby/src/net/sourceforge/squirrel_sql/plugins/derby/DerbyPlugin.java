@@ -26,6 +26,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithTriggersExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -35,7 +36,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.derby.exp.TableExpander;
+import net.sourceforge.squirrel_sql.plugins.derby.exp.DerbyTableTriggerExtractorImpl;
 import net.sourceforge.squirrel_sql.plugins.derby.tab.TriggerDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.derby.tab.TriggerSourceTab;
 import net.sourceforge.squirrel_sql.plugins.derby.tab.ViewSourceTab;
@@ -221,7 +222,6 @@ public class DerbyPlugin extends DefaultSessionPlugin {
     }
     
     private void updateTreeApi(ISession session) {
-        //DatabaseObjectInfoTab dboit = new DatabaseObjectInfoTab();
         
         _treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
         
@@ -235,14 +235,17 @@ public class DerbyPlugin extends DefaultSessionPlugin {
         //_treeAPI.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
         //_treeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexDetailsTab());
         _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
-        _treeAPI.addDetailTab(IObjectTypes.TRIGGER_PARENT, new DatabaseObjectInfoTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER_TYPE_DBO, new DatabaseObjectInfoTab());
         //_treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
         //_treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new SequenceDetailsTab());        
         
         // Expanders - trigger and index expanders are added inside the table
         // expander
-        //_treeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander());        
-        _treeAPI.addExpander(DatabaseObjectType.TABLE, new TableExpander());
+        //_treeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander());
+        TableWithTriggersExpander trigExp = new TableWithTriggersExpander();
+        trigExp.setTableTriggerExtractor(new DerbyTableTriggerExtractorImpl());
+        _treeAPI.addExpander(DatabaseObjectType.TABLE, trigExp);
+        
         
         _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
         _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab("The source of the trigger"));

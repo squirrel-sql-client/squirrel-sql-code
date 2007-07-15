@@ -1,6 +1,6 @@
-package net.sourceforge.squirrel_sql.plugins.derby.exp;
+package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders;
 /*
- * Copyright (C) 2006 Rob Manning
+ * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -27,30 +27,34 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExp
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-
 
 /**
- * This class is an expander for the table nodes. It will add TRIGGER and INDEX
+ * This class is an expander for the table nodes. It will add TRIGGER
  * Object Type nodes to the table node.
  * 
  * @author manningr
  */
-public class TableExpander implements INodeExpander {
+public class TableWithTriggersExpander implements INodeExpander {
 
-    /** Logger for this class. */
-    private static final ILogger s_log = 
-        LoggerController.createLogger(TableExpander.class);
+    private ITableTriggerExtractor extractor = null;
     
     /**
      * Ctor.
      */
-    public TableExpander() {
+    public TableWithTriggersExpander() {
         super();
     }
 
+    /**
+     * Method for injecting the component that allows this class to work with
+     * a specific database, depending on the type of trigger extractor.
+     * 
+     * @param extractor the ITableTriggerExtractor implementation to use.
+     */
+    public void setTableTriggerExtractor(ITableTriggerExtractor extractor) {
+        this.extractor = extractor;
+    }    
+    
     /**
      * Create the child nodes for the passed parent node and return them. Note
      * that this method should <B>not </B> actually add the child nodes to the
@@ -64,9 +68,11 @@ public class TableExpander implements INodeExpander {
      * @return A list of <TT>ObjectTreeNode</TT> objects representing the
      *         child nodes for the passed node.
      */
-    public List createChildren(ISession session, ObjectTreeNode parentNode)
-            throws SQLException {
-        final List childNodes = new ArrayList();
+    public List<ObjectTreeNode> createChildren(ISession session, 
+                                               ObjectTreeNode parentNode)
+        throws SQLException 
+    {
+        final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
         final IDatabaseObjectInfo parentDbinfo = parentNode
                 .getDatabaseObjectInfo();
         final SQLDatabaseMetaData md = session.getSQLConnection()
@@ -77,14 +83,10 @@ public class TableExpander implements INodeExpander {
         IDatabaseObjectInfo triggerParentInfo = 
             new TriggerParentInfo(parentDbinfo, schemaName, md);
         ObjectTreeNode triggerChild = new ObjectTreeNode(session, triggerParentInfo);
-        triggerChild.addExpander(new TriggerParentExpander());
+        TriggerParentExpander expander = new TriggerParentExpander();
+        expander.setTableTriggerExtractor(extractor);
+        triggerChild.addExpander(expander);
         
-        //IDatabaseObjectInfo indexParentInfo = 
-            //new IndexParentInfo(parentDbinfo, md);
-        //ObjectTreeNode indexChild = new ObjectTreeNode(session, indexParentInfo);
-        //indexChild.addExpander(new IndexParentExpander());
-        
-        //childNodes.add(indexChild);
         childNodes.add(triggerChild);
         
         return childNodes;

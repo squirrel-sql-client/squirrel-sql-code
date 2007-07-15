@@ -32,20 +32,20 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.For
  *
  * @author manningr
  */
-public class MysqlViewSourceTab extends FormattedSourceTab
+public class MysqlTriggerSourceTab extends FormattedSourceTab
 {
 	/** SQL that retrieves the source of a view. */
 	private static String SQL =
-        "SELECT VIEW_DEFINITION " +
-        "FROM INFORMATION_SCHEMA.VIEWS " +
-        "WHERE TABLE_SCHEMA = ? " +
-        "AND TABLE_NAME = ? ";
+        "SELECT ACTION_STATEMENT " +
+        "FROM INFORMATION_SCHEMA.TRIGGERS " +
+        "WHERE TRIGGER_SCHEMA = ? " +
+        "AND TRIGGER_NAME = ? ";
     
 	/** Logger for this class. */
 	private final static ILogger s_log =
-		LoggerController.createLogger(MysqlViewSourceTab.class);
+		LoggerController.createLogger(MysqlTriggerSourceTab.class);
 
-	public MysqlViewSourceTab(String hint, String stmtSep)
+	public MysqlTriggerSourceTab(String hint, String stmtSep)
 	{
 		super(hint);
         super.setupFormatter(stmtSep, null);
@@ -64,7 +64,6 @@ public class MysqlViewSourceTab extends FormattedSourceTab
                         " as first bind value");
             s_log.debug("Binding table name "+doi.getSimpleName()+
                         " as second bind value");                        
-            
         }
 		PreparedStatement pstmt = conn.prepareStatement(SQL);
         
