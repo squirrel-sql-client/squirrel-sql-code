@@ -55,6 +55,11 @@ public class ViewSourceTab extends InformixSourceTab
 		final IDatabaseObjectInfo doi = getDatabaseObjectInfo();
 
 		ISQLConnection conn = session.getSQLConnection();
+        if (s_log.isDebugEnabled()) {
+            s_log.debug("Running View Source SQL: "+SQL);
+            s_log.debug("View Name="+doi.getSimpleName());
+            s_log.debug("Schema Name="+doi.getSchemaName());
+        }                
 		PreparedStatement pstmt = conn.prepareStatement(SQL);
 		pstmt.setString(1, doi.getSimpleName());
 		return pstmt;
