@@ -10,7 +10,6 @@ import net.sourceforge.squirrel_sql.client.gui.db.ColumnListDialog;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -117,7 +116,7 @@ public abstract class AbstractRefactoringCommand implements ICommand {
     {
         SQLDatabaseMetaData md = _session.getSQLConnection().getSQLMetaData();
         if (mode == ColumnListDialog.DROP_PRIMARY_KEY_MODE) {
-            ArrayList result= new ArrayList();
+            ArrayList<TableColumnInfo> result= new ArrayList<TableColumnInfo>();
             PrimaryKeyInfo[] pkCols = md.getPrimaryKey(ti);
             TableColumnInfo[] colInfos = md.getColumnInfo(ti);
             for (int i = 0; i < pkCols.length; i++) {
@@ -131,7 +130,7 @@ public abstract class AbstractRefactoringCommand implements ICommand {
                     }
                 }
             }
-            return (TableColumnInfo[])result.toArray(new TableColumnInfo[result.size()]);
+            return result.toArray(new TableColumnInfo[result.size()]);
         } 
         return _session.getSQLConnection().getSQLMetaData().getColumnInfo(ti);        
     }
