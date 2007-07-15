@@ -19,18 +19,12 @@ package net.sourceforge.squirrel_sql.plugins.dbcopy.commands;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.CopyExecutor;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.CopyProgressMonitor;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.CopyScripter;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.I18NBaseObject;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.SessionInfoProvider;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.DBCopyPreferenceBean;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.PreferencesManager;
 
 /** 
  * This class represents the command that gets executed when the user clicks 
@@ -41,6 +35,7 @@ public class PasteTableCommand extends I18NBaseObject
 {
     
     /** the provider of information about what to copy and where */
+    @SuppressWarnings("unused")
     private SessionInfoProvider prov = null;
 
     /** the class that does the work of copying */
@@ -51,11 +46,7 @@ public class PasteTableCommand extends I18NBaseObject
     
     /** the class that writes a script that represents the copy operation */
     private CopyScripter copyScripter = null;
-    
-    /** the user's preferences */
-    private static DBCopyPreferenceBean prefs = 
-                                            PreferencesManager.getPreferences();
-    
+        
     /**
      * Constructor specifying the current session.
      */
@@ -69,7 +60,6 @@ public class PasteTableCommand extends I18NBaseObject
         executor.addListener(monitor);
         executor.addListener(copyScripter);
         executor.setPref(monitor);
-        // executor.addListener(copyScripter);
         monitor.setExecutor(executor);
         
     }
