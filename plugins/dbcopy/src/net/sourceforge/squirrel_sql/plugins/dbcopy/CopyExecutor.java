@@ -757,11 +757,11 @@ public class CopyExecutor extends I18NBaseObject {
         ISQLConnection destConn = prov.getCopyDestSession().getSQLConnection();
         for (int i = 0; i < dbObjs.length; i++) {
             ITableInfo ti = (ITableInfo) dbObjs[i];
-            Set fkStmts = 
+            Set<String> fkStmts = 
                 DBUtil.getForeignKeySQL(prov, ti, selectedTableInfos);
-            Iterator it = fkStmts.iterator();
+            Iterator<String> it = fkStmts.iterator();
             while (it.hasNext()) {
-                String fkSQL = (String)it.next();
+                String fkSQL = it.next();
                 DBUtil.setLastStatementValues("");
                 try {
                     DBUtil.executeUpdate(destConn, fkSQL, true);
@@ -788,12 +788,12 @@ public class CopyExecutor extends I18NBaseObject {
         }
         
         if (prefs.isCopyIndexDefs()) {
-            Collection indices = 
+            Collection<String> indices = 
                 DBUtil.getCreateIndicesSQL(prov, ti);
             
-            Iterator i = indices.iterator();
+            Iterator<String> i = indices.iterator();
             while (i.hasNext()) {
-                String createIndicesSql = (String)i.next();
+                String createIndicesSql = i.next();
                 DBUtil.executeUpdate(destCon, createIndicesSql, true);
             }
         }
