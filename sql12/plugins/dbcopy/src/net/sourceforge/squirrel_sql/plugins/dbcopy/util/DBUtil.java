@@ -1792,7 +1792,7 @@ public class DBUtil extends I18NBaseObject {
      * Shamelessly copied this from the SQL Scripts plugin 
      * by Johan Compagner and Gerd Wagner
      */
-    public static Collection getCreateIndicesSQL(SessionInfoProvider prov, 
+    public static Collection<String> getCreateIndicesSQL(SessionInfoProvider prov, 
                                                  ITableInfo ti) 
         throws SQLException, UserCancelledOperationException 
     {
@@ -1803,8 +1803,8 @@ public class DBUtil extends I18NBaseObject {
         String destSchema = prov.getDestSelectedDatabaseObject().getSimpleName();
         String destCatalog = prov.getDestSelectedDatabaseObject().getCatalogName();                
 
-        ArrayList result = new ArrayList();
-        Vector pkCols = new Vector();
+        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<IndexColInfo> pkCols = new ArrayList<IndexColInfo>();
         
         DatabaseMetaData metaData = con.getConnection().getMetaData();
         ResultSet primaryKeys = null;
@@ -1827,7 +1827,7 @@ public class DBUtil extends I18NBaseObject {
             Collections.sort(pkCols, IndexColInfo.NAME_COMPARATOR);
         }
         
-        Hashtable buf = new Hashtable();
+        Hashtable<String, IndexInfo> buf = new Hashtable<String, IndexInfo>();
         
         ResultSet indexInfo = metaData.getIndexInfo(ti.getCatalogName(), 
                                                     ti.getSchemaName(), 
@@ -1841,9 +1841,9 @@ public class DBUtil extends I18NBaseObject {
                 continue;
             }
             unique = !indexInfo.getBoolean("NON_UNIQUE");
-            IndexInfo ixi = (IndexInfo) buf.get(ixName);
+            IndexInfo ixi = buf.get(ixName);
             if(null == ixi) {
-                Vector ixCols = new Vector();
+                Vector<IndexColInfo> ixCols = new Vector<IndexColInfo>();
                 String table = indexInfo.getString("TABLE_NAME");
                 ixCols.add(new IndexColInfo(indexInfo.getString("COLUMN_NAME"), 
                                             indexInfo.getInt("ORDINAL_POSITION")));
@@ -1854,8 +1854,8 @@ public class DBUtil extends I18NBaseObject {
             }
         }
         indexInfo.close();
-        IndexInfo[] ixs = (IndexInfo[]) buf.values().toArray(new IndexInfo[buf.size()]);
-        HashMap indexMap = new HashMap();
+        IndexInfo[] ixs = buf.values().toArray(new IndexInfo[buf.size()]);
+        HashMap<String, String> indexMap = new HashMap<String, String>();
         for (int i = 0; i < ixs.length; i++) {
             Collections.sort(ixs[i].cols, IndexColInfo.NAME_COMPARATOR);
             

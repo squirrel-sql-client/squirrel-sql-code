@@ -41,22 +41,20 @@ public class IndexColInfo
       return _ordinalPosition.compareTo(((IndexColInfo)obj)._ordinalPosition);
    }
 
-   static class NameComparator implements Comparator
+   static class NameComparator implements Comparator<IndexColInfo>
    {
-      public int compare(Object o1, Object o2)
+      public int compare(IndexColInfo o1, IndexColInfo o2)
       {
-         return ((IndexColInfo)o1)._colName.compareTo(((IndexColInfo)o2)._colName);
+         return (o1._colName.compareTo(o2._colName));
       }
    }
 
-   static class OrdinalPositionComparator implements Comparator
+   static class OrdinalPositionComparator implements Comparator<IndexColInfo>
    {
-      public int compare(Object o1, Object o2)
+      public int compare(IndexColInfo o1, IndexColInfo o2)
       {
-         return ((IndexColInfo)o1)._ordinalPosition.compareTo(((IndexColInfo)o2)._ordinalPosition);
+         return o1._ordinalPosition.compareTo(o2._ordinalPosition);
       }
 
    }
-
-
 }
