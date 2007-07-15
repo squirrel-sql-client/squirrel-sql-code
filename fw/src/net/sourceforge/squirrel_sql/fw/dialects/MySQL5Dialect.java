@@ -1,6 +1,5 @@
-package net.sourceforge.squirrel_sql.plugins.derby;
 /*
- * Copyright (C) 2006 Rob Manning
+ * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,17 +16,23 @@ package net.sourceforge.squirrel_sql.plugins.derby;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+package net.sourceforge.squirrel_sql.fw.dialects;
 
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+public class MySQL5Dialect extends MySQLDialect {
 
-/**
- * Some types that are created by the Derby plugin.
- * @author manningr
- *
- */
-public interface IObjectTypes {
+    /**
+     * @see net.sourceforge.squirrel_sql.fw.dialects.MySQLDialect#supportsProduct(java.lang.String, java.lang.String)
+     */
+    @Override
+    public boolean supportsProduct(String databaseProductName, String databaseProductVersion) {
+        if (databaseProductName == null || databaseProductVersion == null) {
+            return false;
+        }
+        if (!databaseProductName.trim().toLowerCase().startsWith("mysql")) {
+            return false;
+        }
+        return databaseProductVersion.startsWith("5");
+    }
 
-    DatabaseObjectType VIEW_PARENT = DatabaseObjectType.createNewDatabaseObjectType("View");
-    DatabaseObjectType INDEX_PARENT = DatabaseObjectType.createNewDatabaseObjectType("Indices");
-    DatabaseObjectType SEQUENCE_PARENT = DatabaseObjectType.createNewDatabaseObjectType("Sequences");    
+    
 }

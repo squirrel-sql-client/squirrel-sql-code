@@ -86,6 +86,8 @@ public class DialectFactory {
     
     private static final MySQLDialect mysqlDialect = new MySQLDialect();
     
+    private static final MySQL5Dialect mysql5Dialect = new MySQL5Dialect();    
+    
     private static final Oracle9iDialect oracle9iDialect = new Oracle9iDialect();
     
     private static final PointbaseDialect pointbaseDialect = 
@@ -205,6 +207,10 @@ public class DialectFactory {
     
     public static boolean isMySQL(ISQLDatabaseMetaData md) {
         return dialectSupportsProduct(md, mysqlDialect);
+    }        
+
+    public static boolean isMySQL5(ISQLDatabaseMetaData md) {
+        return dialectSupportsProduct(md, mysql5Dialect);
     }        
     
     public static boolean isOracle(ISQLDatabaseMetaData md) {

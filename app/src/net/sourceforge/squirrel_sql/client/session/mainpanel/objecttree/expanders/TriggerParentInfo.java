@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.derby.exp;
+package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders;
 /*
  * Copyright (C) 2006 Rob Manning
  * manningr@users.sourceforge.net
@@ -20,9 +20,9 @@ package net.sourceforge.squirrel_sql.plugins.derby.exp;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.plugins.derby.IObjectTypes;
 
 /**
  * This class stores information about a Derby Trigger parent. This just
@@ -32,6 +32,8 @@ import net.sourceforge.squirrel_sql.plugins.derby.IObjectTypes;
  */
 public class TriggerParentInfo extends DatabaseObjectInfo
 {
+    private static final long serialVersionUID = 1L;
+
     public interface IPropertyNames {
         String SIMPLE_NAME = "simpleName";
         String TABLE_INFO = "tableInfo";
@@ -43,7 +45,11 @@ public class TriggerParentInfo extends DatabaseObjectInfo
 								SQLDatabaseMetaData md)
 		throws SQLException
 	{
-		super(null, schema, "TRIGGER", IObjectTypes.TRIGGER_PARENT, md);
+		super(tableInfo.getCatalogName(), 
+              schema, 
+              "TRIGGER", 
+              DatabaseObjectType.TRIGGER_TYPE_DBO, 
+              md);
 		_tableInfo = tableInfo;
 	}
 

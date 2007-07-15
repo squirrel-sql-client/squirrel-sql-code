@@ -32,7 +32,8 @@ Derby's own ij command-line interpreter.
 
 MySQL Plugin: 
  - Added support for handling stored procedure create statements.
- - Added source tab for Stored Procedures and Views.
+ - Added source tab for Stored Procedures, Triggers and Views.  Triggers are 
+   displayed as object nodes beneath tables as is done in other plugins.
 
 Oracle Plugin: 
  - Show the source for Oracle tables, as well as materialized views.  

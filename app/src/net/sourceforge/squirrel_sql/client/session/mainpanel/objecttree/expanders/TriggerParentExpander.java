@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.derby.exp;
+package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders;
 /*
  * Copyright (C) 2006 Rob Manning
  * manningr@users.sourceforge.net
@@ -44,14 +44,8 @@ public class TriggerParentExpander implements INodeExpander {
     /** Logger for this class. */
     private static final ILogger s_log = LoggerController
             .createLogger(TriggerParentExpander.class);
-
-    private static String SQL = 
-        "select tr.TRIGGERNAME " +
-        "from SYS.SYSTRIGGERS tr, SYS.SYSTABLES t, SYS.SYSSCHEMAS s " +
-        "where tr.TABLEID = t.TABLEID " +
-        "and s.SCHEMAID = t.SCHEMAID " +
-        "and t.TABLENAME = ? " +
-        "and s.SCHEMANAME = ? ";
+    
+    private ITableTriggerExtractor triggerExtractor = null;
     
     /**
      * Ctor.
@@ -61,6 +55,16 @@ public class TriggerParentExpander implements INodeExpander {
         super();
     }
 
+    /**
+     * Method for injecting the component that allows this class to work with
+     * a specific database, depending on the type of trigger extractor.
+     * 
+     * @param extractor the ITableTriggerExtractor implementation to use.
+     */
+    public void setTableTriggerExtractor(ITableTriggerExtractor extractor) {
+        this.triggerExtractor = extractor;
+    }
+    
     /**
      * Create the child nodes for the passed parent node and return them. Note
      * that this method should <B>not </B> actually add the child nodes to the
@@ -74,9 +78,9 @@ public class TriggerParentExpander implements INodeExpander {
      * @return A list of <TT>ObjectTreeNode</TT> objects representing the
      *         child nodes for the passed node.
      */
-    public List createChildren(ISession session, ObjectTreeNode parentNode)
+    public List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode parentNode)
             throws SQLException {
-        final List childNodes = new ArrayList();
+        final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
         final IDatabaseObjectInfo parentDbinfo = parentNode
                 .getDatabaseObjectInfo();
         final ISQLConnection conn = session.getSQLConnection();
@@ -87,11 +91,18 @@ public class TriggerParentExpander implements INodeExpander {
         final IDatabaseObjectInfo tableInfo = ((TriggerParentInfo) parentDbinfo)
                 .getTableInfo();
         PreparedStatement pstmt = null;
+        ResultSet rs = null;
         try {
-            pstmt = conn.prepareStatement(SQL);
-            pstmt.setString(1, tableInfo.getSimpleName());
-            pstmt.setString(2, tableInfo.getSchemaName());
-            ResultSet rs = pstmt.executeQuery();
+            String tableName = tableInfo.getSimpleName();
+            String query = triggerExtractor.getTableTriggerQuery();
+            if (s_log.isDebugEnabled()) {
+                s_log.debug("Getting triggers for table "+tableName+
+                            " in schema "+ schemaName + " and catalog " +
+                            catalogName + " - Running query: " + query);
+            }
+            pstmt = conn.prepareStatement(query);
+            triggerExtractor.bindParamters(pstmt, tableInfo);
+            rs = pstmt.executeQuery();
             while (rs.next()) {
                 DatabaseObjectInfo doi = 
                     new DatabaseObjectInfo(catalogName, 
@@ -101,6 +112,7 @@ public class TriggerParentExpander implements INodeExpander {
                 childNodes.add(new ObjectTreeNode(session, doi));
             }
         } finally {
+            if (rs != null) try { rs.close(); } catch (SQLException e){}
             if (pstmt != null) try { pstmt.close(); } catch (SQLException e){}
         }
 

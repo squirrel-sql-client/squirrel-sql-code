@@ -85,7 +85,7 @@ public class DatabaseObjectType implements IHasIdentifier, Serializable
 
    /**
     * Database object type for a "Procedure Type" node in the object tree. There is
-    * only one node of this type in the object tree and it says "PROCEDURE".
+    * only one node of this type in the object tree and it is labeled "PROCEDURE".
     */
    public final static DatabaseObjectType PROC_TYPE_DBO = DatabaseObjectType.createNewDatabaseObjectType("Stored Procedure Type");
 
@@ -109,10 +109,14 @@ public class DatabaseObjectType implements IHasIdentifier, Serializable
     */
    public final static DatabaseObjectType TABLE_TYPE_DBO = DatabaseObjectType.createNewDatabaseObjectType("Table Type");
 
-
-
    public static final DatabaseObjectType VIEW = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.view"));
 
+   /**
+    * Database object type for a "Trigger Type" node in the object tree. There is
+    * one node of this type in the object tree for each table and it is labeled "TRIGGER".
+    */   
+   public static final DatabaseObjectType TRIGGER_TYPE_DBO = DatabaseObjectType.createNewDatabaseObjectType("Trigger Type");   
+   
    /** Trigger. */
    public final static DatabaseObjectType TRIGGER = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.catalog"));
 
