@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.plugins.hibernate;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
+import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.HibernatePropertyInfo;
 
 import java.net.URLClassLoader;
 import java.util.*;
@@ -88,9 +89,21 @@ public class HibernateConnection
 
          String identifierPropertyName = (String) persister.callMethod("getIdentifierPropertyName").getCallee();
 
+         String identifierPropertyTypeName = (String) persister.callMethod("getIdentifierType").callMethod("getName").getCallee();
+
+         HibernatePropertyInfo identifierPropInfo = new HibernatePropertyInfo(identifierPropertyName, identifierPropertyTypeName);
+
+
          String[] propertyNames = (String[]) persister.callMethod("getPropertyNames").getCallee();
 
-         ret.add(new MappedClassInfo(mappedClass.getName(), identifierPropertyName, propertyNames));
+         HibernatePropertyInfo[] infos = new HibernatePropertyInfo[propertyNames.length];
+         for (int i = 0; i < propertyNames.length; i++)
+         {
+            String typeName = (String) persister.callMethod("getPropertyType", new String[]{propertyNames[i]}).callMethod("getName").getCallee();
+            infos[i] = new HibernatePropertyInfo(propertyNames[i], typeName);
+         }
+
+         ret.add(new MappedClassInfo(mappedClass.getName(), identifierPropInfo, infos));
       }
 
       return ret;

@@ -57,41 +57,48 @@ public class HQLPanelController
 
    private void onConvertToSQL()
    {
-      if(false == _convertToSQL.isEnabled())
+      try
       {
-         return;
-      }
-
-      String hql = _hqlEntryPanelManager.getEntryPanel().getSQLToBeExecuted();
-
-      if(null != hql && 0 != hql.trim().length())
-      {
-
-
-         ArrayList<String> list = null;
-
-         long begin = System.currentTimeMillis();
-         long duration = 0;
-         try
+         if(false == _convertToSQL.isEnabled())
          {
-            list = _con.generateSQL(hql);
-            duration = System.currentTimeMillis() - begin;
-         }
-         catch (Exception e)
-         {
-            Throwable t = Utilities.getDeepestThrowable(e);
-            ExceptionFormatter formatter = _sess.getExceptionFormatter();
-            String message = formatter.format(t);
-            _sess.showErrorMessage(message);
             return;
          }
 
-         _hqlTabController.displaySqls(list);
+         String hql = _hqlEntryPanelManager.getEntryPanel().getSQLToBeExecuted();
+
+         if(null != hql && 0 != hql.trim().length())
+         {
 
 
-         // i18n[HQLPanelController.hqlToSqlSuccess=Generated {0} SQL(s) in {1} milliseconds.]
-         _sess.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("SQLPanelController.hqlToSqlSuccess",list.size(), duration));
+            ArrayList<String> list = null;
 
+            long begin = System.currentTimeMillis();
+            long duration = 0;
+            try
+            {
+               list = _con.generateSQL(hql);
+               duration = System.currentTimeMillis() - begin;
+            }
+            catch (Exception e)
+            {
+               Throwable t = Utilities.getDeepestThrowable(e);
+               ExceptionFormatter formatter = _sess.getExceptionFormatter();
+               String message = formatter.format(t);
+               _sess.showErrorMessage(message);
+               return;
+            }
+
+            _hqlTabController.displaySqls(list);
+
+
+            // i18n[HQLPanelController.hqlToSqlSuccess=Generated {0} SQL(s) in {1} milliseconds.]
+            _sess.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("SQLPanelController.hqlToSqlSuccess",list.size(), duration));
+
+         }
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
       }
    }
 

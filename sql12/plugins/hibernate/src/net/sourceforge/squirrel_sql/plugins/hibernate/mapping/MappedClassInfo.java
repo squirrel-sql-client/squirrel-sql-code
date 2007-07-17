@@ -12,17 +12,17 @@ public class MappedClassInfo extends CompletionInfo
    private String _simpleMappedClassName;
    private CompletionParser _lastParser;
 
-   public MappedClassInfo(String mappedClassName, String identifierPropertyName, String[] propertyNames)
+   public MappedClassInfo(String mappedClassName, HibernatePropertyInfo indentifierHibernatePropertyInfo, HibernatePropertyInfo[] hibernatePropertyInfos)
    {
       _mappedClassName = mappedClassName;
       _simpleMappedClassName = MappingUtils.getSimpleClassName(mappedClassName);
 
-      _propertyInfos = new PropertyInfo[propertyNames.length + 1];
+      _propertyInfos = new PropertyInfo[hibernatePropertyInfos.length + 1];
 
-      _propertyInfos[0] = new PropertyInfo(identifierPropertyName, mappedClassName);
-      for (int i = 0; i < propertyNames.length; i++)
+      _propertyInfos[0] = new PropertyInfo(indentifierHibernatePropertyInfo, mappedClassName);
+      for (int i = 0; i < hibernatePropertyInfos.length; i++)
       {
-         _propertyInfos[i+1] = new PropertyInfo(propertyNames[i], mappedClassName);
+         _propertyInfos[i+1] = new PropertyInfo(hibernatePropertyInfos[i], mappedClassName);
       }
 
 
