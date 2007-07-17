@@ -5,17 +5,17 @@ import net.sourceforge.squirrel_sql.fw.completion.util.CompletionParser;
 
 public class PropertyInfo  extends CompletionInfo
 {
-   private String _propertyName;
+   private HibernatePropertyInfo _hibernatePropertyInfo;
    private String _mappedClassNameWithEndingDot;
    private String _fullQualifiedName;
    private String _simpleQualifiedName;
    private String _simpleMappedClassNameWithEndingDot;
 
-   public PropertyInfo(String propertyName, String mappedClassName)
+   public PropertyInfo(HibernatePropertyInfo hibernatePropertyInfo, String mappedClassName)
    {
-      _propertyName = propertyName;
-      _fullQualifiedName = mappedClassName + "." +propertyName;
-      _simpleQualifiedName = MappingUtils.getSimpleClassName(mappedClassName) + "." + propertyName;
+      _hibernatePropertyInfo = hibernatePropertyInfo;
+      _fullQualifiedName = mappedClassName + "." +hibernatePropertyInfo;
+      _simpleQualifiedName = MappingUtils.getSimpleClassName(mappedClassName) + "." + hibernatePropertyInfo;
 
       _mappedClassNameWithEndingDot = mappedClassName + ".";
       _simpleMappedClassNameWithEndingDot = MappingUtils.getSimpleClassName(mappedClassName) + ".";
@@ -25,7 +25,13 @@ public class PropertyInfo  extends CompletionInfo
 
    public String getCompareString()
    {
-      return _propertyName;
+      return _hibernatePropertyInfo.getPropertyName();
+   }
+
+
+   public String toString()
+   {
+      return _hibernatePropertyInfo.toString();
    }
 
    public boolean matchesQualified(CompletionParser parser)
