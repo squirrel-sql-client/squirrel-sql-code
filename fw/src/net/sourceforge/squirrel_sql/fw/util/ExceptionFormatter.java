@@ -40,12 +40,20 @@ public interface ExceptionFormatter {
     boolean formatsException(Throwable t);
     
     /**
+     * Returns a custom-formatted message based on the contents of the specified
+     * Throwable. An exception can be thrown to indicate that custom formatting
+     * couldn't be done and that the default formatting should be applied. 
      * 
-     * @param t the exception to be formatted
      * 
-     * @return the message
-     * @throw exception if some problem occurred while attempting to format the
-     *        specified exception
+     * @param t the Throwable to be formatted
+     * 
+     * @return A formatted version of the message encapsulated by the specified
+     *         throwable.
+     *         
+     * @throws Exception in the event that the specified Throwable for whatever
+     *        reason could not be formatted, an exception can be thrown to 
+     *        indicate that custom formatting wasn't done and that the 
+     *        default formatting should be applied.                    
      */
     String format(Throwable t) throws Exception;
     
