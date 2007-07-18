@@ -28,6 +28,9 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.ITableIndexExtractor;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.ITableTriggerExtractor;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithChildNodesExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -36,8 +39,9 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.db2.exp.DB2TableIndexExtractorImpl;
+import net.sourceforge.squirrel_sql.plugins.db2.exp.DB2TableTriggerExtractorImpl;
 import net.sourceforge.squirrel_sql.plugins.db2.exp.SchemaExpander;
-import net.sourceforge.squirrel_sql.plugins.db2.exp.TableExpander;
 import net.sourceforge.squirrel_sql.plugins.db2.tab.IndexDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.db2.tab.ProcedureSourceTab;
 import net.sourceforge.squirrel_sql.plugins.db2.tab.SequenceDetailsTab;
@@ -251,7 +255,23 @@ public class DB2Plugin extends DefaultSessionPlugin {
         // Expanders - trigger and index expanders are added inside the table
         // expander
         _treeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander());        
-        _treeAPI.addExpander(DatabaseObjectType.TABLE, new TableExpander());
+        
+        // Expanders - trigger and index expanders are added inside the table
+        // expander        
+        TableWithChildNodesExpander tableExpander = 
+            new TableWithChildNodesExpander(); 
+        
+        //tableExpander.setTableIndexExtractor(extractor);
+        ITableIndexExtractor indexExtractor = 
+            new DB2TableIndexExtractorImpl();
+        ITableTriggerExtractor triggerExtractor = 
+            new DB2TableTriggerExtractorImpl();
+        
+        tableExpander.setTableTriggerExtractor(triggerExtractor);
+        tableExpander.setTableIndexExtractor(indexExtractor);
+        
+        _treeAPI.addExpander(DatabaseObjectType.TABLE, tableExpander);
+        
         
         _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
         _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab("The source of the trigger"));
