@@ -18,8 +18,6 @@ package net.sourceforge.squirrel_sql.plugins.h2;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.sql.SQLException;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
@@ -56,6 +54,7 @@ public class H2Plugin extends DefaultSessionPlugin {
 		StringManagerFactory.getStringManager(H2Plugin.class);
 
     /** Logger for this class. */
+    @SuppressWarnings("unused")
     private final static ILogger s_log = 
         LoggerController.createLogger(H2Plugin.class);
 
