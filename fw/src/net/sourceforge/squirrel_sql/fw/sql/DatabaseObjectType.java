@@ -77,6 +77,12 @@ public class DatabaseObjectType implements IHasIdentifier, Serializable
    /** Function. */
    public final static DatabaseObjectType FUNCTION = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.function"));
 
+   /**
+    * Database object type for a "Index Type" node in the object tree. There is
+    * one node of this type in the object tree for each table and it is labeled "INDEX".
+    */   
+   public static final DatabaseObjectType INDEX_TYPE_DBO = DatabaseObjectType.createNewDatabaseObjectType("Trigger Type");   
+   
    /** Index. */
    public final static DatabaseObjectType INDEX = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.index"));
 

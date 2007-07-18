@@ -26,7 +26,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithTriggersExpander;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithChildNodesExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -242,7 +242,7 @@ public class DerbyPlugin extends DefaultSessionPlugin {
         // Expanders - trigger and index expanders are added inside the table
         // expander
         //_treeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander());
-        TableWithTriggersExpander trigExp = new TableWithTriggersExpander();
+        TableWithChildNodesExpander trigExp = new TableWithChildNodesExpander();
         trigExp.setTableTriggerExtractor(new DerbyTableTriggerExtractorImpl());
         _treeAPI.addExpander(DatabaseObjectType.TABLE, trigExp);
         
