@@ -29,19 +29,24 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 
 /**
- * This class is an expander for the table nodes. It will add TRIGGER
- * Object Type nodes to the table node.
+ * This class is an expander for the table nodes. It will add TRIGGER and/or
+ * INDEX Object Type nodes to the table node if the trigger and/or index
+ * extractors are set.
  * 
  * @author manningr
  */
-public class TableWithTriggersExpander implements INodeExpander {
+public class TableWithChildNodesExpander implements INodeExpander {
 
-    private ITableTriggerExtractor extractor = null;
+    /** the plugin-assigned table trigger extractor implementation */ 
+    private ITableTriggerExtractor triggerExtractor = null;
+    
+    /** the plugin-assigned table index extractor implementation */
+    private ITableIndexExtractor indexExtractor = null;
     
     /**
      * Ctor.
      */
-    public TableWithTriggersExpander() {
+    public TableWithChildNodesExpander() {
         super();
     }
 
@@ -52,8 +57,18 @@ public class TableWithTriggersExpander implements INodeExpander {
      * @param extractor the ITableTriggerExtractor implementation to use.
      */
     public void setTableTriggerExtractor(ITableTriggerExtractor extractor) {
-        this.extractor = extractor;
+        this.triggerExtractor = extractor;
     }    
+
+    /**
+     * Method for injecting the component that allows this class to work with
+     * a specific database, depending on the type of index extractor.
+     * 
+     * @param extractor the ITableIndexExtractor implementation to use.
+     */
+    public void setTableIndexExtractor(ITableIndexExtractor extractor) {
+        this.indexExtractor = extractor;
+    }        
     
     /**
      * Create the child nodes for the passed parent node and return them. Note
@@ -79,16 +94,26 @@ public class TableWithTriggersExpander implements INodeExpander {
                 .getSQLMetaData();
         final String schemaName = parentDbinfo.getSchemaName();
 
-        
-        IDatabaseObjectInfo triggerParentInfo = 
-            new TriggerParentInfo(parentDbinfo, schemaName, md);
-        ObjectTreeNode triggerChild = new ObjectTreeNode(session, triggerParentInfo);
-        TriggerParentExpander expander = new TriggerParentExpander();
-        expander.setTableTriggerExtractor(extractor);
-        triggerChild.addExpander(expander);
-        
-        childNodes.add(triggerChild);
-        
+        if (triggerExtractor != null) {
+            IDatabaseObjectInfo triggerParentInfo = 
+                new TriggerParentInfo(parentDbinfo, schemaName, md);
+            ObjectTreeNode triggerChild = 
+                new ObjectTreeNode(session, triggerParentInfo);
+            TriggerParentExpander expander = new TriggerParentExpander();
+            expander.setTableTriggerExtractor(triggerExtractor);
+            triggerChild.addExpander(expander);
+            childNodes.add(triggerChild);
+        }
+        if (indexExtractor != null) {
+            IDatabaseObjectInfo triggerParentInfo = 
+                new IndexParentInfo(parentDbinfo, schemaName, md);
+            ObjectTreeNode triggerChild = 
+                new ObjectTreeNode(session, triggerParentInfo);
+            IndexParentExpander expander = new IndexParentExpander();
+            expander.setTableIndexExtractor(indexExtractor);
+            triggerChild.addExpander(expander);
+            childNodes.add(triggerChild);            
+        }
         return childNodes;
     }
 }

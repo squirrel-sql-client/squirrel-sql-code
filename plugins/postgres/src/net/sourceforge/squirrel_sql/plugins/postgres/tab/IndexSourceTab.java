@@ -26,12 +26,13 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.FormattedSourceTab;
 /**
- * This class will display the source for an Postgres index.
+ * This class will display the source for an PostgreSQL index.
  *
  * @author manningr
  */
-public class IndexSourceTab extends PostgresSourceTab
+public class IndexSourceTab extends FormattedSourceTab
 {
 	/** SQL that retrieves the source of an index. */
 	private static String SQL =
@@ -44,9 +45,11 @@ public class IndexSourceTab extends PostgresSourceTab
 	private final static ILogger s_log =
 		LoggerController.createLogger(ViewSourceTab.class);
 
-	public IndexSourceTab(String hint)
+	public IndexSourceTab(String hint, String stmtSep)
 	{
 		super(hint);
+        super.setupFormatter(stmtSep, null);
+        super.setCompressWhitespace(true);
 	}
 
 	protected PreparedStatement createStatement() throws SQLException

@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.postgres.exp;
+package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders;
 /*
  * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
@@ -33,7 +33,6 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.postgres.util.IndexParentInfo;
 
 
 
@@ -43,17 +42,14 @@ import net.sourceforge.squirrel_sql.plugins.postgres.util.IndexParentInfo;
  *
  */
 public class IndexParentExpander implements INodeExpander
-{
-    private static final String SQL = 
-        "select indexname " +
-        "from pg_catalog.pg_indexes " +
-        "where schemaname = ? " +
-        "and tablename = ? ";
-    
+{    
     /** Logger for this class. */
     private static final ILogger s_log =
         LoggerController.createLogger(IndexParentExpander.class);
 
+    /** the db-specific extractor implementation */
+    private ITableIndexExtractor extractor = null;
+    
     /**
      * Default ctor.
      */
@@ -62,6 +58,15 @@ public class IndexParentExpander implements INodeExpander
         super();
     }
 
+    /**
+     * Sets the db-specific index extractor.
+     * 
+     * @param extractor this is provided by the plugin.
+     */
+    public void setTableIndexExtractor(ITableIndexExtractor extractor) {
+        this.extractor = extractor;
+    }
+    
     /**
      * Create the child nodes for the passed parent node and return them. Note
      * that this method should <B>not</B> actually add the child nodes to the
@@ -76,44 +81,43 @@ public class IndexParentExpander implements INodeExpander
      * @throws    SQLException
      *            Thrown if an SQL error occurs.
      */
-    public List createChildren(ISession session, ObjectTreeNode parentNode)
+    public List<ObjectTreeNode> createChildren(ISession session, 
+                                               ObjectTreeNode parentNode)
     {
-        final List childNodes = new ArrayList();
+        final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
         final IDatabaseObjectInfo parentDbinfo = 
             parentNode.getDatabaseObjectInfo();
+        final IDatabaseObjectInfo tableInfo = ((IndexParentInfo) parentDbinfo)
+        .getTableInfo();
+        
         final ISQLConnection conn = session.getSQLConnection();
         final SQLDatabaseMetaData md = 
             session.getSQLConnection().getSQLMetaData();
-        final String schemaName = parentDbinfo.getSchemaName();
-        final String catalogName = parentDbinfo.getCatalogName();
-        final IDatabaseObjectInfo tableInfo = 
-            ((IndexParentInfo) parentDbinfo).getTableInfo();
-        String tableName = tableInfo.getSimpleName();
         PreparedStatement pstmt = null;
+        ResultSet rs = null;
         try {
+            String query = extractor.getTableIndexQuery();
             if (s_log.isDebugEnabled()) {
-                s_log.debug("Running SQL: "+SQL);
-                s_log.debug("SchemaName="+schemaName);
-                s_log.debug("TableName="+tableName);
+                s_log.debug("Running query for index extraction: "+query);
             }
-            pstmt = conn.prepareStatement(SQL);
-            pstmt.setString(1, schemaName);
-            pstmt.setString(2, tableName);
-            ResultSet rs = pstmt.executeQuery();
+            pstmt = conn.prepareStatement(query);
+            extractor.bindParamters(pstmt, tableInfo);
+            rs = pstmt.executeQuery();
             while (rs.next()) {
                 DatabaseObjectInfo doi = 
-                    new DatabaseObjectInfo(catalogName, 
-                                           schemaName, 
+                    new DatabaseObjectInfo(parentDbinfo.getCatalogName(), 
+                                           parentDbinfo.getSchemaName(), 
                                            rs.getString(1),
                                            DatabaseObjectType.INDEX, md);
                 childNodes.add(new ObjectTreeNode(session, doi));
             }
         } catch (SQLException e) {
             session.showErrorMessage(e);
+            s_log.error("Unexpected exception while extracting indexes for " +
+                        "parent dbinfo: "+parentDbinfo, e);
         } finally {
-            if (pstmt != null) {
-                try { pstmt.close(); } catch (SQLException e) {}
-            }
+            if (rs != null) try { rs.close(); } catch (SQLException e) {}
+            if (pstmt != null) try { pstmt.close(); } catch (SQLException e) {}
         }
 
         return childNodes;

@@ -18,8 +18,6 @@ package net.sourceforge.squirrel_sql.plugins.postgres;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.sql.SQLException;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
@@ -28,6 +26,9 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.ITableIndexExtractor;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.ITableTriggerExtractor;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithChildNodesExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -36,8 +37,9 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.postgres.exp.PostgresTableIndexExtractorImpl;
+import net.sourceforge.squirrel_sql.plugins.postgres.exp.PostgresTableTriggerExtractorImpl;
 import net.sourceforge.squirrel_sql.plugins.postgres.exp.SchemaExpander;
-import net.sourceforge.squirrel_sql.plugins.postgres.exp.TableExpander;
 import net.sourceforge.squirrel_sql.plugins.postgres.tab.IndexDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.postgres.tab.IndexSourceTab;
 import net.sourceforge.squirrel_sql.plugins.postgres.tab.ProcedureSourceTab;
@@ -58,6 +60,7 @@ public class PostgresPlugin extends DefaultSessionPlugin {
 		StringManagerFactory.getStringManager(PostgresPlugin.class);
 
     /** Logger for this class. */
+    @SuppressWarnings("unused")
     private final static ILogger s_log = 
         LoggerController.createLogger(PostgresPlugin.class);
 
@@ -223,10 +226,24 @@ public class PostgresPlugin extends DefaultSessionPlugin {
     private void updateTreeApi(ISession session) {
         
         _treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
-        // Expanders - trigger and index expanders are added inside the table
-        // expander
         _treeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander());        
-        _treeAPI.addExpander(DatabaseObjectType.TABLE, new TableExpander());
+        String stmtSep = session.getQueryTokenizer().getSQLStatementSeparator();
+        
+        // Expanders - trigger and index expanders are added inside the table
+        // expander        
+        TableWithChildNodesExpander tableExpander = 
+            new TableWithChildNodesExpander(); 
+        
+        //tableExpander.setTableIndexExtractor(extractor);
+        ITableIndexExtractor indexExtractor = 
+            new PostgresTableIndexExtractorImpl();
+        ITableTriggerExtractor triggerExtractor = 
+            new PostgresTableTriggerExtractorImpl();
+        
+        tableExpander.setTableTriggerExtractor(triggerExtractor);
+        tableExpander.setTableIndexExtractor(indexExtractor);
+        
+        _treeAPI.addExpander(DatabaseObjectType.TABLE, tableExpander);
         
         // Procedure tab
         _treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, 
@@ -234,13 +251,13 @@ public class PostgresPlugin extends DefaultSessionPlugin {
         
         // View Tab
         _treeAPI.addDetailTab(DatabaseObjectType.VIEW, 
-                              new ViewSourceTab(i18n.SHOW_VIEW_SOURCE));
+                              new ViewSourceTab(i18n.SHOW_VIEW_SOURCE, stmtSep));
         
         // Index tab
         _treeAPI.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
         _treeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexDetailsTab());
         _treeAPI.addDetailTab(DatabaseObjectType.INDEX, 
-                              new IndexSourceTab(i18n.SHOW_INDEX_SOURCE));
+                              new IndexSourceTab(i18n.SHOW_INDEX_SOURCE, stmtSep));
 
         // Trigger tabs
         _treeAPI.addDetailTab(IObjectTypes.TRIGGER_PARENT, new DatabaseObjectInfoTab());
