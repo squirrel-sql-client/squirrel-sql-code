@@ -20,15 +20,14 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs;
 import java.awt.BorderLayout;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import javax.swing.JTextArea;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourcePanel;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab;
 import net.sourceforge.squirrel_sql.fw.codereformat.CodeReformator;
 import net.sourceforge.squirrel_sql.fw.codereformat.CommentSpec;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -47,6 +46,9 @@ public abstract class FormattedSourceTab extends BaseSourceTab {
     private final static ILogger s_log = LoggerController
             .createLogger(FormattedSourceTab.class);
 
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(FormattedSourceTab.class);
+    
     /** does the work of formatting */
     private CodeReformator formatter = null;
 
@@ -60,6 +62,13 @@ public abstract class FormattedSourceTab extends BaseSourceTab {
             new CommentSpec("--", "\n")
         };
     
+    
+    static interface i18n {
+        //i18n[FormatterSourceTab.noSourceAvailable=No object source code is 
+        //available]
+        String NO_SOURCE_AVAILABLE = 
+            s_stringMgr.getString("FormatterSourceTab.noSourceAvailable");
+    }
     
     public FormattedSourceTab(String hint) {
         super(hint);
@@ -122,24 +131,35 @@ public abstract class FormattedSourceTab extends BaseSourceTab {
                 StringBuffer buf = new StringBuffer(4096);
                 while (rs.next()) {
                     String line = rs.getString(1);
+                    if (line == null) {
+                        s_log.debug("load: Null object source line; skipping...");
+                        continue;
+                    }
                     if (compressWhitespace) {
                         buf.append(line.trim() + " ");
                     } else {
                         buf.append(line);
                     }
                 }
-                if (formatter != null) {
+                if (formatter != null && buf.length() != 0) {
                     if (s_log.isDebugEnabled()) {
                         s_log.debug("Object source code before formatting: "
                                 + buf.toString());
                     }
                     _ta.setText(formatter.reformat(buf.toString()));
                 } else {
+                    if (buf.length() == 0) {
+                        buf.append(i18n.NO_SOURCE_AVAILABLE);
+                    }
                     _ta.setText(buf.toString());
                 }
                 _ta.setCaretPosition(0);
 
-            } catch (SQLException ex) {
+            } catch (Exception ex) {
+                if (s_log.isDebugEnabled()) {
+                    s_log.debug("Unexpected exception while formatting " +
+                                "object source code", ex);
+                }
                 session.showErrorMessage(ex);
             } finally {
                 if (rs != null) try { rs.close(); } catch (Exception e) {}

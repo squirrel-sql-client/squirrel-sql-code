@@ -1,6 +1,6 @@
-package net.sourceforge.squirrel_sql.plugins.postgres.exp;
+package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders;
 /*
- * Copyright (C) 2007 Rob Manning
+ * Copyright (C) 2006 Rob Manning
  * manningr@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -20,18 +20,20 @@ package net.sourceforge.squirrel_sql.plugins.postgres.exp;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.plugins.postgres.IObjectTypes;
 
 /**
- * This class stores information about an Informix Trigger parent. This just
- * stores info about the table that the trigger relates to.
+ * This class stores information about a Index parent. This just
+ * stores info about the table that the index relates to.
  *
  * @author manningr
  */
-public class TriggerParentInfo extends DatabaseObjectInfo
+public class IndexParentInfo extends DatabaseObjectInfo
 {
+    private static final long serialVersionUID = 1L;
+
     public interface IPropertyNames {
         String SIMPLE_NAME = "simpleName";
         String TABLE_INFO = "tableInfo";
@@ -39,11 +41,16 @@ public class TriggerParentInfo extends DatabaseObjectInfo
     
 	private final IDatabaseObjectInfo _tableInfo;
 
-	public TriggerParentInfo(IDatabaseObjectInfo tableInfo, String schema,
-								SQLDatabaseMetaData md)
+	public IndexParentInfo(IDatabaseObjectInfo tableInfo, 
+                           String schema,
+						   SQLDatabaseMetaData md)
 		throws SQLException
 	{
-		super(null, schema, "TRIGGER", IObjectTypes.TRIGGER_PARENT, md);
+		super(tableInfo.getCatalogName(), 
+              schema, 
+              "INDEX", 
+              DatabaseObjectType.INDEX_TYPE_DBO, 
+              md);
 		_tableInfo = tableInfo;
 	}
 

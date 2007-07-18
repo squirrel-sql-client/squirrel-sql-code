@@ -111,6 +111,10 @@ public class TriggerParentExpander implements INodeExpander {
                                            DatabaseObjectType.TRIGGER, md);
                 childNodes.add(new ObjectTreeNode(session, doi));
             }
+        } catch (SQLException e) {
+            session.showErrorMessage(e);
+            s_log.error("Unexpected exception while extracting triggers for " +
+                        "parent dbinfo: "+parentDbinfo, e);            
         } finally {
             if (rs != null) try { rs.close(); } catch (SQLException e){}
             if (pstmt != null) try { pstmt.close(); } catch (SQLException e){}

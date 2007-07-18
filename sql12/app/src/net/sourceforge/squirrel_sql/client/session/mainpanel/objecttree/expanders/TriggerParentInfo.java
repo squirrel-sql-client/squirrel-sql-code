@@ -25,7 +25,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 
 /**
- * This class stores information about a Derby Trigger parent. This just
+ * This class stores information about a Trigger parent. This just
  * stores info about the table that the trigger relates to.
  *
  * @author manningr

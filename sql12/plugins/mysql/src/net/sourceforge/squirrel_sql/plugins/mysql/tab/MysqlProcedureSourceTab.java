@@ -43,11 +43,10 @@ public class MysqlProcedureSourceTab extends FormattedSourceTab {
 	private final static ILogger s_log =
 		LoggerController.createLogger(MysqlProcedureSourceTab.class);
 
-	public MysqlProcedureSourceTab(String hint, String stmtSep)
+	public MysqlProcedureSourceTab(String hint)
 	{
 		super(hint);
-        super.setupFormatter(stmtSep, null);
-        super.setCompressWhitespace(true);
+        super.setCompressWhitespace(false);
 	}
 
 	protected PreparedStatement createStatement() throws SQLException

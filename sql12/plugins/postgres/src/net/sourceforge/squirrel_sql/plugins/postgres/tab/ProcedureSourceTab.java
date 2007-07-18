@@ -21,6 +21,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.FormattedSourceTab;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -30,7 +31,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  *
  * @author manningr
  */
-public class ProcedureSourceTab extends PostgresSourceTab
+public class ProcedureSourceTab extends FormattedSourceTab
 {
 	/** SQL that retrieves the source of a stored procedure. */
 	private static String SQL =
@@ -46,7 +47,7 @@ public class ProcedureSourceTab extends PostgresSourceTab
 	public ProcedureSourceTab(String hint)
 	{
 		super(hint);
-        sourceType = STORED_PROC_TYPE;
+		super.setCompressWhitespace(false);
 	}
 
 	protected PreparedStatement createStatement() throws SQLException

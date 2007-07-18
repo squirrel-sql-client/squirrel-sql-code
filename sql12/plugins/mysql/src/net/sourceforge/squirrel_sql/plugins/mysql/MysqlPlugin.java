@@ -33,7 +33,7 @@ import net.sourceforge.squirrel_sql.client.plugin.gui.PluginQueryTokenizerPrefer
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithTriggersExpander;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithChildNodesExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -398,7 +398,7 @@ public class MysqlPlugin extends DefaultSessionPlugin
         String stmtSep = session.getQueryTokenizer().getSQLStatementSeparator();
         
         MysqlProcedureSourceTab procSourceTab =
-            new MysqlProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE, stmtSep);
+            new MysqlProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE);
         _treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, procSourceTab);
         
         // Tab to add to view nodes.
@@ -407,7 +407,7 @@ public class MysqlPlugin extends DefaultSessionPlugin
         _treeAPI.addDetailTab(DatabaseObjectType.VIEW, viewSourceTab);  
         
         // Show triggers for tables
-        TableWithTriggersExpander trigExp = new TableWithTriggersExpander();
+        TableWithChildNodesExpander trigExp = new TableWithChildNodesExpander();
         trigExp.setTableTriggerExtractor(new MysqlTableTriggerExtractorImpl());
         _treeAPI.addExpander(DatabaseObjectType.TABLE, trigExp);        
         
