@@ -6,6 +6,7 @@ import net.sourceforge.squirrel_sql.client.gui.db.SchemaTableTypeCombination;
 import net.sourceforge.squirrel_sql.client.gui.db.SchemaNameLoadInfo;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
+import net.sourceforge.squirrel_sql.client.session.SessionManager;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
@@ -17,32 +18,64 @@ import java.util.*;
 import java.sql.SQLException;
 import java.io.Serializable;
 
+@SuppressWarnings("serial")
 public class SchemaInfoCache implements Serializable
 {
    private static final ILogger s_log = LoggerController.createLogger(SchemaInfoCache.class);
 
-   private List _catalogs = new ArrayList();
-   private List _schemas = new ArrayList();
+   private List<String> _catalogs = new ArrayList<String>();
+   private List<String> _schemas = new ArrayList<String>();
 
-   private TreeMap _keywords = new TreeMap();
-   private TreeMap _dataTypes = new TreeMap();
-   private Map _functions = Collections.synchronizedMap(new TreeMap());
+   private TreeMap<CaseInsensitiveString, String> _keywords = 
+       new TreeMap<CaseInsensitiveString, String>();
+   private TreeMap<CaseInsensitiveString, String> _dataTypes = 
+       new TreeMap<CaseInsensitiveString, String>();
+   private Map<CaseInsensitiveString, String> _functions = 
+       Collections.synchronizedMap(new TreeMap<CaseInsensitiveString, String>());
 
    /////////////////////////////////////////////////////////////////////////////
    // Schema dependent data.
    // Are changed only in this class
    //
-   private Map _tableNames = Collections.synchronizedMap(new TreeMap());
-   private Map _iTableInfos = Collections.synchronizedMap(new TreeMap());
-   private Hashtable _tableInfosBySimpleName = new Hashtable();
+   
+   // 1752089 (ConcurrentModificationException raised when loading schema)
+   // When JDK 6 is the earliest supported JDK, we will want to investigate the 
+   // new ConcurrentSkipListSets to give us better (more performant) options 
+   // for synchronizing access to iterators while the data structure is modified.
+   
+   // This is the data structure that gets cloned when someone asks for it.
+   private TreeMap<CaseInsensitiveString, String> _internalTableNameTreeMap = 
+       new TreeMap<CaseInsensitiveString, String>();
+   
+   private Map<CaseInsensitiveString, String> _tableNames = 
+       Collections.synchronizedMap(_internalTableNameTreeMap);
+   
+// This is the data structure that gets cloned when someone asks for it.
+   private TreeMap<ITableInfo, ITableInfo> _internalTableInfoTreeMap = 
+       new TreeMap<ITableInfo, ITableInfo>();
 
-   private Map _extendedColumnInfosByTableName = Collections.synchronizedMap(new TreeMap());
-   private Map _extColumnInfosByColumnName = Collections.synchronizedMap(new TreeMap());
+   private Map<ITableInfo, ITableInfo> _iTableInfos = 
+       Collections.synchronizedMap(_internalTableInfoTreeMap);
+   
+   
+   private Hashtable<CaseInsensitiveString, List<ITableInfo>> _tableInfosBySimpleName = 
+       new Hashtable<CaseInsensitiveString, List<ITableInfo>>();
+
+   private Map<CaseInsensitiveString, List<ExtendedColumnInfo>> _extendedColumnInfosByTableName = 
+       Collections.synchronizedMap(new TreeMap<CaseInsensitiveString, List<ExtendedColumnInfo>>());
+   
+   private Map<CaseInsensitiveString, List<ExtendedColumnInfo>> _extColumnInfosByColumnName = 
+       Collections.synchronizedMap(new TreeMap<CaseInsensitiveString, List<ExtendedColumnInfo>>());
 
 
-   private Map _procedureNames = Collections.synchronizedMap(new TreeMap());
-   private Map _iProcedureInfos = Collections.synchronizedMap(new TreeMap());
-   private Hashtable _procedureInfosBySimpleName = new Hashtable();
+   private Map<CaseInsensitiveString, String> _procedureNames = 
+       Collections.synchronizedMap(new TreeMap<CaseInsensitiveString, String>());
+   
+   private Map<IProcedureInfo, IProcedureInfo> _iProcedureInfos = 
+       Collections.synchronizedMap(new TreeMap<IProcedureInfo, IProcedureInfo>());
+   
+   private Hashtable<CaseInsensitiveString, List<IProcedureInfo>> _procedureInfosBySimpleName = 
+       new Hashtable<CaseInsensitiveString, List<IProcedureInfo>>();
    //
    ///////////////////////////////////////////////////////////////////////////
 
@@ -69,17 +102,24 @@ public class SchemaInfoCache implements Serializable
 
    private SchemaLoadInfo[] getAllSchemaLoadInfos()
    {
-      SchemaLoadInfo[] schemaLoadInfos = _session.getAlias().getSchemaProperties().getSchemaLoadInfos(_schemaPropsCacheIsBasedOn, _tabelTableTypesCacheable, _viewTableTypesCacheable);
-
+      SQLAliasSchemaProperties schemaProps =  
+          _session.getAlias().getSchemaProperties();
+      SchemaLoadInfo[] schemaLoadInfos = 
+          schemaProps.getSchemaLoadInfos(_schemaPropsCacheIsBasedOn, 
+                                         _tabelTableTypesCacheable, 
+                                         _viewTableTypesCacheable);
+      SessionManager sessionMgr = _session.getApplication().getSessionManager();
+      boolean allSchemasAllowed = sessionMgr.areAllSchemasAllowed(_session);
+      
       if(   1 == schemaLoadInfos.length
          && null == schemaLoadInfos[0].schemaName
-         && false == _session.getApplication().getSessionManager().areAllSchemasAllowed(_session))
+         && false == allSchemasAllowed)
       {
-         if(false == _session.getApplication().getSessionManager().areAllSchemasAllowed(_session))
+         if(false == allSchemasAllowed)
          {
-            String[] allowedSchemas = _session.getApplication().getSessionManager().getAllowedSchemas(_session);
+            String[] allowedSchemas = sessionMgr.getAllowedSchemas(_session);
 
-            ArrayList ret = new ArrayList();
+            ArrayList<SchemaLoadInfo> ret = new ArrayList<SchemaLoadInfo>();
 
             for (int i = 0; i < allowedSchemas.length; i++)
             {
@@ -89,7 +129,7 @@ public class SchemaInfoCache implements Serializable
                ret.add(buf);
             }
 
-            schemaLoadInfos = (SchemaLoadInfo[]) ret.toArray(new SchemaLoadInfo[ret.size()]);
+            schemaLoadInfos = ret.toArray(new SchemaLoadInfo[ret.size()]);
          }
       }
 
@@ -134,20 +174,20 @@ public class SchemaInfoCache implements Serializable
 
    private void initTypes()
    {
-      ArrayList tableTypeCandidates = new ArrayList();
+      ArrayList<String> tableTypeCandidates = new ArrayList<String>();
       tableTypeCandidates.add("TABLE");
       tableTypeCandidates.add("SYSTEM TABLE");
 
-      ArrayList viewTypeCandidates = new ArrayList();
+      ArrayList<String> viewTypeCandidates = new ArrayList<String>();
       viewTypeCandidates.add("VIEW");
 
       try
       {
-         ArrayList availableBuf = new ArrayList();
+         ArrayList<String> availableBuf = new ArrayList<String>();
          String[] buf = _session.getSQLConnection().getSQLMetaData().getTableTypes();
          availableBuf.addAll(Arrays.asList(buf));
 
-         for(Iterator i=tableTypeCandidates.iterator();i.hasNext();)
+         for(Iterator<String> i=tableTypeCandidates.iterator();i.hasNext();)
          {
             if(false == availableBuf.contains(i.next()))
             {
@@ -155,7 +195,7 @@ public class SchemaInfoCache implements Serializable
             }
          }
 
-         for(Iterator i=viewTypeCandidates.iterator();i.hasNext();)
+         for(Iterator<String> i=viewTypeCandidates.iterator();i.hasNext();)
          {
             if(false == availableBuf.contains(i.next()))
             {
@@ -170,8 +210,8 @@ public class SchemaInfoCache implements Serializable
          s_log.error("Could not get table types", e);
       }
 
-      _tabelTableTypesCacheable = (String[]) tableTypeCandidates.toArray(new String[tableTypeCandidates.size()]);
-      _viewTableTypesCacheable = (String[]) viewTypeCandidates.toArray(new String[viewTypeCandidates.size()]);
+      _tabelTableTypesCacheable = tableTypeCandidates.toArray(new String[tableTypeCandidates.size()]);
+      _viewTableTypesCacheable = viewTypeCandidates.toArray(new String[viewTypeCandidates.size()]);
    }
 
    public boolean isCachedTableType(String type)
@@ -225,10 +265,10 @@ public class SchemaInfoCache implements Serializable
       _tableNames.put(ciTableName, tableName);
       _iTableInfos.put(info, info);
 
-      ArrayList aITabInfos = (ArrayList) _tableInfosBySimpleName.get(ciTableName);
+      List<ITableInfo> aITabInfos = _tableInfosBySimpleName.get(ciTableName);
       if(null == aITabInfos)
       {
-         aITabInfos = new ArrayList();
+         aITabInfos = new ArrayList<ITableInfo>();
          _tableInfosBySimpleName.put(ciTableName, aITabInfos);
       }
       aITabInfos.add(info);
@@ -244,10 +284,10 @@ public class SchemaInfoCache implements Serializable
          CaseInsensitiveString ciProc = new CaseInsensitiveString(proc);
          _procedureNames.put(ciProc ,proc);
 
-         ArrayList aIProcInfos = (ArrayList) _procedureInfosBySimpleName.get(ciProc);
+         List<IProcedureInfo> aIProcInfos = _procedureInfosBySimpleName.get(ciProc);
          if(null == aIProcInfos)
          {
-            aIProcInfos = new ArrayList();
+            aIProcInfos = new ArrayList<IProcedureInfo>();
             _procedureInfosBySimpleName.put(ciProc, aIProcInfos);
          }
          aIProcInfos.add(procedure);
@@ -258,17 +298,17 @@ public class SchemaInfoCache implements Serializable
 
    public void writeColumsToCache(TableColumnInfo[] infos, CaseInsensitiveString simpleTableName)
    {
-      ArrayList ecisInTable = new ArrayList();
+      ArrayList<ExtendedColumnInfo> ecisInTable = new ArrayList<ExtendedColumnInfo>();
       for (int i = 0; i < infos.length; i++)
       {
          ExtendedColumnInfo eci = new ExtendedColumnInfo(infos[i], simpleTableName.toString());
          ecisInTable.add(eci);
 
          CaseInsensitiveString ciColName = new CaseInsensitiveString(eci.getColumnName());
-         ArrayList ecisInColName = (ArrayList) _extColumnInfosByColumnName.get(ciColName);
+         List<ExtendedColumnInfo> ecisInColName = _extColumnInfosByColumnName.get(ciColName);
          if(null == ecisInColName)
          {
-            ecisInColName = new ArrayList();
+            ecisInColName = new ArrayList<ExtendedColumnInfo>();
             _extColumnInfosByColumnName.put(ciColName, ecisInColName);
          }
          ecisInColName.add(eci);
@@ -366,9 +406,9 @@ public class SchemaInfoCache implements Serializable
 
    void clearTables(String catalogName, String schemaName, String simpleName, String[] types)
    {
-      for(Iterator i = _iTableInfos.keySet().iterator(); i.hasNext();)
+      for(Iterator<ITableInfo> i = _iTableInfos.keySet().iterator(); i.hasNext();)
       {
-         ITableInfo ti = (ITableInfo) i.next();
+         ITableInfo ti = i.next();
 
 
          boolean matches = matchesMetaString(ti.getCatalogName(), catalogName);
@@ -395,7 +435,7 @@ public class SchemaInfoCache implements Serializable
             i.remove();
 
             CaseInsensitiveString ciSimpleName = new CaseInsensitiveString(ti.getSimpleName());
-            ArrayList tableInfos = (ArrayList) _tableInfosBySimpleName.get(ciSimpleName);
+            List<ITableInfo> tableInfos = _tableInfosBySimpleName.get(ciSimpleName);
             tableInfos.remove(ti);
             if(0 == tableInfos.size())
             {
@@ -403,7 +443,7 @@ public class SchemaInfoCache implements Serializable
                _tableNames.remove(ciSimpleName);
             }
 
-            ArrayList ecisInTable = (ArrayList) _extendedColumnInfosByTableName.get(ciSimpleName);
+            List<ExtendedColumnInfo> ecisInTable = _extendedColumnInfosByTableName.get(ciSimpleName);
 
             if(null == ecisInTable)
             {
@@ -411,9 +451,9 @@ public class SchemaInfoCache implements Serializable
                continue;
             }
 
-            for(Iterator j=ecisInTable.iterator();j.hasNext();)
+            for(Iterator<ExtendedColumnInfo> j=ecisInTable.iterator();j.hasNext();)
             {
-               ExtendedColumnInfo eci = (ExtendedColumnInfo) j.next();
+               ExtendedColumnInfo eci = j.next();
 
                String qn1 = ti.getCatalogName() + "." + ti.getSchemaName() + "." + ti.getSimpleName();
                String qn2 = eci.getCatalog() + "." + eci.getSchema() + "." + eci.getSimpleTableName();
@@ -423,7 +463,7 @@ public class SchemaInfoCache implements Serializable
                }
 
                CaseInsensitiveString ciColName = new CaseInsensitiveString(eci.getColumnName());
-               ArrayList ecisInColumn = (ArrayList) _extColumnInfosByColumnName.get(ciColName);
+               List<ExtendedColumnInfo> ecisInColumn =  _extColumnInfosByColumnName.get(ciColName);
 
                if (ecisInColumn != null) {
                    ecisInColumn.remove(eci);
@@ -452,9 +492,9 @@ public class SchemaInfoCache implements Serializable
 
    void clearStoredProcedures(String catalogName, String schemaName, String simpleName)
    {
-      for(Iterator i = _iProcedureInfos.keySet().iterator(); i.hasNext();)
+      for(Iterator<IProcedureInfo> i = _iProcedureInfos.keySet().iterator(); i.hasNext();)
       {
-         IProcedureInfo pi = (IProcedureInfo) i.next();
+         IProcedureInfo pi = i.next();
 
 
          boolean matches = matchesMetaString(pi.getCatalogName(), catalogName);
@@ -467,7 +507,7 @@ public class SchemaInfoCache implements Serializable
             i.remove();
 
             CaseInsensitiveString ciSimpleName = new CaseInsensitiveString(pi.getSimpleName());
-            ArrayList procedureInfos = (ArrayList) _procedureInfosBySimpleName.get(ciSimpleName);
+            List<IProcedureInfo> procedureInfos = _procedureInfosBySimpleName.get(ciSimpleName);
             procedureInfos.remove(pi);
             if(0 == procedureInfos.size())
             {
@@ -508,81 +548,83 @@ public class SchemaInfoCache implements Serializable
    }
 
 
-   void writeKeywords(Hashtable keywordsBuf)
+   void writeKeywords(Hashtable<CaseInsensitiveString, String> keywordsBuf)
    {
       _keywords.clear();
       _keywords.putAll(keywordsBuf);
    }
 
 
-   void writeDataTypes(Hashtable dataTypesBuf)
+   void writeDataTypes(Hashtable<CaseInsensitiveString, String> dataTypesBuf)
    {
       _dataTypes.clear();
       _dataTypes.putAll(dataTypesBuf);
    }
 
-   void writeFunctions(Hashtable functionsBuf)
+   void writeFunctions(Hashtable<CaseInsensitiveString, String> functionsBuf)
    {
       _functions.clear();
       _functions.putAll(functionsBuf);
    }
 
-   List getCatalogsForReadOnly()
+   List<String> getCatalogsForReadOnly()
    {
       return _catalogs;
    }
 
-   List getSchemasForReadOnly()
+   List<String> getSchemasForReadOnly()
    {
       return _schemas;
    }
 
-   TreeMap getKeywordsForReadOnly()
+   TreeMap<CaseInsensitiveString, String> getKeywordsForReadOnly()
    {
       return _keywords;
    }
 
-   TreeMap getDataTypesForReadOnly()
+   TreeMap<CaseInsensitiveString, String> getDataTypesForReadOnly()
    {
       return _dataTypes;
    }
 
-   Map getFunctionsForReadOnly()
+   Map<CaseInsensitiveString, String> getFunctionsForReadOnly()
    {
       return _functions;
    }
 
-   Map getTableNamesForReadOnly()
+   @SuppressWarnings("unchecked")
+   Map<CaseInsensitiveString, String> getTableNamesForReadOnly()
    {
-      return _tableNames;
+      return (Map)_internalTableNameTreeMap.clone();
    }
 
-   Map getITableInfosForReadOnly()
+   @SuppressWarnings("unchecked")
+   Map<ITableInfo, ITableInfo> getITableInfosForReadOnly()
    {
-      return _iTableInfos;
+      return (Map)_internalTableInfoTreeMap.clone();
    }
 
-   Hashtable getTableInfosBySimpleNameForReadOnly()
+   Hashtable<CaseInsensitiveString, List<ITableInfo>> getTableInfosBySimpleNameForReadOnly()
    {
       return _tableInfosBySimpleName;
    }
 
-   Map getExtendedColumnInfosByTableNameForReadOnly()
+   Map<CaseInsensitiveString, List<ExtendedColumnInfo>> getExtendedColumnInfosByTableNameForReadOnly()
    {
       return _extendedColumnInfosByTableName;
    }
 
-   Map getExtColumnInfosByColumnNameForReadOnly()
+   Map<CaseInsensitiveString, List<ExtendedColumnInfo>> getExtColumnInfosByColumnNameForReadOnly()
    {
       return _extColumnInfosByColumnName;
    }
 
-   Map getProcedureNamesForReadOnly()
+   Map<CaseInsensitiveString, String> getProcedureNamesForReadOnly()
    {
       return _procedureNames;
    }
 
-   Map getIProcedureInfosForReadOnly()
+   Map<IProcedureInfo, IProcedureInfo> getIProcedureInfosForReadOnly()
    {
       return _iProcedureInfos;
    }

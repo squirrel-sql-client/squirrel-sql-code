@@ -715,7 +715,8 @@ public class SchemaInfo
 
          setProgress(msg + " (default keywords)", beginProgress);
 
-         Hashtable keywordsBuf = new Hashtable();
+         Hashtable<CaseInsensitiveString, String> keywordsBuf = 
+             new Hashtable<CaseInsensitiveString, String>();
 
          for (int i = 0; i < DefaultKeywords.KEY_WORDS.length; i++)
          {
@@ -770,7 +771,8 @@ public class SchemaInfo
             return;
          }
 
-         Hashtable dataTypesBuf = new Hashtable();
+         Hashtable<CaseInsensitiveString, String> dataTypesBuf = 
+             new Hashtable<CaseInsensitiveString, String>();
 
          DataTypeInfo[] infos = _dmd.getDataTypes();
          for (int i = 0; i < infos.length; i++)
@@ -800,7 +802,7 @@ public class SchemaInfo
          return;
       }
 
-      ArrayList buf = new ArrayList();
+      ArrayList<String> buf = new ArrayList<String>();
 
       try
       {
@@ -832,10 +834,11 @@ public class SchemaInfo
          s_log.error("Error", ex);
       }
 
-      Hashtable functionsBuf = new Hashtable();
+      Hashtable<CaseInsensitiveString, String> functionsBuf = 
+          new Hashtable<CaseInsensitiveString, String>();
       for (int i = 0; i < buf.size(); i++)
       {
-         String func = (String) buf.get(i);
+         String func = buf.get(i);
          if (func.length() > 0)
          {
             functionsBuf.put(new CaseInsensitiveString(func) ,func);
@@ -850,32 +853,32 @@ public class SchemaInfo
 
    public String[] getKeywords()
    {
-      return (String[]) _schemaInfoCache.getKeywordsForReadOnly().values().toArray(new String[_schemaInfoCache.getKeywordsForReadOnly().size()]);
+      return _schemaInfoCache.getKeywordsForReadOnly().values().toArray(new String[_schemaInfoCache.getKeywordsForReadOnly().size()]);
    }
 
    public String[] getDataTypes()
    {
-      return (String[]) _schemaInfoCache.getDataTypesForReadOnly().values().toArray(new String[_schemaInfoCache.getDataTypesForReadOnly().size()]);
+      return _schemaInfoCache.getDataTypesForReadOnly().values().toArray(new String[_schemaInfoCache.getDataTypesForReadOnly().size()]);
    }
 
    public String[] getFunctions()
    {
-      return (String[]) _schemaInfoCache.getFunctionsForReadOnly().values().toArray(new String[_schemaInfoCache.getFunctionsForReadOnly().size()]);
+      return _schemaInfoCache.getFunctionsForReadOnly().values().toArray(new String[_schemaInfoCache.getFunctionsForReadOnly().size()]);
    }
 
    public String[] getTables()
    {
-      return (String[]) _schemaInfoCache.getTableNamesForReadOnly().values().toArray(new String[_schemaInfoCache.getTableNamesForReadOnly().size()]);
+      return _schemaInfoCache.getTableNamesForReadOnly().values().toArray(new String[_schemaInfoCache.getTableNamesForReadOnly().size()]);
    }
 
    public String[] getCatalogs()
    {
-      return (String[]) _schemaInfoCache.getCatalogsForReadOnly().toArray(new String[_schemaInfoCache.getCatalogsForReadOnly().size()]);
+      return _schemaInfoCache.getCatalogsForReadOnly().toArray(new String[_schemaInfoCache.getCatalogsForReadOnly().size()]);
    }
 
    public String[] getSchemas()
    {
-      return (String[]) _schemaInfoCache.getSchemasForReadOnly().toArray(new String[_schemaInfoCache.getSchemasForReadOnly().size()]);
+      return _schemaInfoCache.getSchemasForReadOnly().toArray(new String[_schemaInfoCache.getSchemasForReadOnly().size()]);
    }
 
    public ITableInfo[] getITableInfos()
