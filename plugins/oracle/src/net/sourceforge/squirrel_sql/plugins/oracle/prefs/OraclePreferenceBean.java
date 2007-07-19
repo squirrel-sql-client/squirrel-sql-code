@@ -50,6 +50,8 @@ public class OraclePreferenceBean implements Cloneable,
 
     private boolean installCustomQueryTokenizer = true;
 
+    private boolean excludeRecycleBinTables = true;
+    
     public OraclePreferenceBean() {
         super();
     }
@@ -174,6 +176,20 @@ public class OraclePreferenceBean implements Cloneable,
      */
     public boolean isInstallCustomQueryTokenizer() {
         return installCustomQueryTokenizer;
+    }
+
+    /**
+     * @param excludeRecycleBinTables the excludeRecycleBinTables to set
+     */
+    public void setExcludeRecycleBinTables(boolean excludeRecycleBinTables) {
+        this.excludeRecycleBinTables = excludeRecycleBinTables;
+    }
+
+    /**
+     * @return the excludeRecycleBinTables
+     */
+    public boolean isExcludeRecycleBinTables() {
+        return excludeRecycleBinTables;
     }
 
 }

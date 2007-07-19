@@ -30,10 +30,10 @@ import javax.swing.JScrollPane;
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.plugin.PluginQueryTokenizerPreferencesManager;
 import net.sourceforge.squirrel_sql.client.plugin.gui.PluginQueryTokenizerPreferencesPanel;
-import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
+import net.sourceforge.squirrel_sql.plugins.oracle.prefs.OraclePluginPreferencesPanel;
 import net.sourceforge.squirrel_sql.plugins.oracle.prefs.OraclePreferenceBean;
 
-public class TestPreferencesPanel {
+public class TestOraclePluginPreferencesPanel {
 
     /**
      * @param args
@@ -46,9 +46,8 @@ public class TestPreferencesPanel {
         final PluginQueryTokenizerPreferencesManager prefsManager = 
             new PluginQueryTokenizerPreferencesManager();
         prefsManager.initialize(new DummyPlugin(), new OraclePreferenceBean());
-        IQueryTokenizerPreferenceBean bean = prefsManager.getPreferences();
         final PluginQueryTokenizerPreferencesPanel p = 
-            new PluginQueryTokenizerPreferencesPanel(prefsManager, bean, "Oracle");
+            new OraclePluginPreferencesPanel(prefsManager);
         JScrollPane sp = new JScrollPane(p);
         f.getContentPane().add(sp, BorderLayout.CENTER);
         JButton button = new JButton("Save");

@@ -226,7 +226,7 @@ public class MysqlPlugin extends DefaultSessionPlugin
 	public IGlobalPreferencesPanel[] getGlobalPreferencePanels() {
 	    PluginQueryTokenizerPreferencesPanel _prefsPanel = 
 	        new PluginQueryTokenizerPreferencesPanel(_prefsManager,
-	                _prefsManager.getPreferences(), "MySQL");
+	                "MySQL");
 
 	    PluginGlobalPreferencesTab tab = new PluginGlobalPreferencesTab(_prefsPanel);
 

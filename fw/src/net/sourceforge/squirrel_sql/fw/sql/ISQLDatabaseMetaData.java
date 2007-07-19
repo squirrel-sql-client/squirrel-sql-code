@@ -61,6 +61,16 @@ public interface ISQLDatabaseMetaData {
     String getDatabaseProductVersion() throws SQLException;
 
     /**
+     * Return the database major version for this connection. Cached on first
+     * call.
+     *
+     * @return  database major version
+     *
+     * @throws  SQLException    Thrown if an SQL error occurs.
+     */    
+    int getDatabaseMajorVersion() throws SQLException;
+    
+    /**
      * Return the JDBC driver name for this connection. Cached on first call.
      *
      * @return  the JDBC driver name for this connection.

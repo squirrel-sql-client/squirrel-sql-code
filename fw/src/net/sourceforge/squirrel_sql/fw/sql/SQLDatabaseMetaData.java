@@ -37,8 +37,6 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
@@ -70,9 +68,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 {
-	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(SQLDatabaseMetaData.class);
 
 	/** Logger for this class. */
 	private final static ILogger s_log =
@@ -112,7 +107,8 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
     * likely to be changed during an open Session.
     * Meta data that is likely to be changed should be kept in SchemaInfo.
 	 */
-	private Map _cache = Collections.synchronizedMap(new HashMap());
+	private Map<String, Object> _cache = 
+        Collections.synchronizedMap(new HashMap<String, Object>());
 
     /**
      * If previous attempts to getSuperTables fail, then this will be set to 
@@ -185,6 +181,19 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		return value;
 	}
 
+    public synchronized int getDatabaseMajorVersion() 
+        throws SQLException
+    {
+        final String key = "getDatabaseMajorVersion";
+        Integer value = (Integer)_cache.get(key);
+        if (value == null)
+        {
+            value = privateGetJDBCMetaData().getDatabaseMajorVersion();
+            _cache.put(key, value);
+        }
+        return value;
+    }
+    
     /* (non-Javadoc)
      * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getDriverName()
      */
