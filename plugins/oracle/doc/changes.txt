@@ -6,6 +6,7 @@ Oracle Change Log
 
 - Added source tab for tables to allow viewing the source for
   materialized views.
+- Added option to hide Recycle Bin tables (Oracle 10g Flashback Database).
 
 0.17
 ====
