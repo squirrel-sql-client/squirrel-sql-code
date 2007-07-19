@@ -71,6 +71,7 @@ import net.sourceforge.squirrel_sql.plugins.oracle.SGAtrace.NewSGATraceWorksheet
 import net.sourceforge.squirrel_sql.plugins.oracle.dboutput.NewDBOutputWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.DefaultDatabaseExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.InstanceParentExpander;
+import net.sourceforge.squirrel_sql.plugins.oracle.expander.OracleTableParentExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.PackageExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.ProcedureExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.SchemaExpander;
@@ -80,6 +81,7 @@ import net.sourceforge.squirrel_sql.plugins.oracle.expander.TriggerParentExpande
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.UserParentExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.explainplan.ExplainPlanExecuter;
 import net.sourceforge.squirrel_sql.plugins.oracle.invalidobjects.NewInvalidObjectsWorksheetAction;
+import net.sourceforge.squirrel_sql.plugins.oracle.prefs.OraclePluginPreferencesPanel;
 import net.sourceforge.squirrel_sql.plugins.oracle.prefs.OraclePreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.oracle.sessioninfo.NewSessionInfoWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.IndexColumnInfoTab;
@@ -179,7 +181,7 @@ public class OraclePlugin extends DefaultSessionPlugin
     */
    public String getVersion()
    {
-      return "0.17";
+      return "0.18";
    }
 
    /**
@@ -233,8 +235,7 @@ public class OraclePlugin extends DefaultSessionPlugin
     */
    public IGlobalPreferencesPanel[] getGlobalPreferencePanels() {
        PluginQueryTokenizerPreferencesPanel _prefsPanel = 
-           new PluginQueryTokenizerPreferencesPanel(_prefsManager,
-                   _prefsManager.getPreferences(), "Oracle");
+           new OraclePluginPreferencesPanel(_prefsManager);
        
        PluginGlobalPreferencesTab tab = new PluginGlobalPreferencesTab(_prefsPanel);
        
@@ -483,15 +484,38 @@ public class OraclePlugin extends DefaultSessionPlugin
      */
     public INodeExpander getDefaultNodeExpander(ISession session, DatabaseObjectType type) {
       boolean isOracle = isOracle(session.getAlias());
+      boolean isOracleWithFlashBack = isOracleWithFlashBack(session);
       if ((type == DatabaseObjectType.PROC_TYPE_DBO) && isOracle) {
           return new ProcedureExpander();
       }
       if (type == DatabaseObjectType.DATABASE_TYPE_DBO && isOracle) {
           return new DefaultDatabaseExpander(session);
       }
+      if (type == DatabaseObjectType.TABLE_TYPE_DBO && isOracleWithFlashBack) {
+          OraclePreferenceBean prefs = 
+              (OraclePreferenceBean)_prefsManager.getPreferences();
+          return new OracleTableParentExpander(prefs);
+      }
       return null;
     }
 
+    private boolean isOracleWithFlashBack(ISession session) {
+        boolean result = false;
+        if (DialectFactory.isOracle(session.getMetaData())) {
+            // Not all Oracle's, just 10g and above.
+            try {
+                int version = 
+                    session.getMetaData().getDatabaseMajorVersion();
+                if (version >= 10) {
+                    result = true;
+                }
+            } catch (SQLException e) {
+                s_log.error("Unexpected exception while attempting to get " +
+                            "the database version", e);
+            }
+        }
+        return result;
+    }
 
    private boolean isOracle(ISQLAliasExt alias)
    {

@@ -27,7 +27,7 @@ import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 
 public class PluginGlobalPreferencesTab implements IGlobalPreferencesPanel {
 
-    PluginQueryTokenizerPreferencesPanel _prefs = null;
+    protected PluginQueryTokenizerPreferencesPanel _prefs = null;
 
     private JScrollPane _myscrolledPanel;
 
@@ -35,8 +35,9 @@ public class PluginGlobalPreferencesTab implements IGlobalPreferencesPanel {
     
     private String _hint = null;
     
-    public PluginGlobalPreferencesTab(Component component) {
-        _myscrolledPanel = new JScrollPane(component);
+    public PluginGlobalPreferencesTab(PluginQueryTokenizerPreferencesPanel prefsPanel) {
+        _myscrolledPanel = new JScrollPane(prefsPanel);
+        _prefs = prefsPanel;
     }
 
     public void initialize(IApplication app) {

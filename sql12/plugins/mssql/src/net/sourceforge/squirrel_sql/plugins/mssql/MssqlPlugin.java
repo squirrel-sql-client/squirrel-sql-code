@@ -115,7 +115,6 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
         PluginQueryTokenizerPreferencesPanel _prefsPanel = 
             new PluginQueryTokenizerPreferencesPanel(
                     _prefsManager,
-                    _prefsManager.getPreferences(), 
                     SCRIPT_SETTINGS_BORDER_LABEL_DBNAME, 
                     includeProcSepPref);
 

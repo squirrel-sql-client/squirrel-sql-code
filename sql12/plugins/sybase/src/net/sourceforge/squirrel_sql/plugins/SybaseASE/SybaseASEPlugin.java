@@ -154,7 +154,6 @@ public class SybaseASEPlugin extends DefaultSessionPlugin
         PluginQueryTokenizerPreferencesPanel _prefsPanel = 
             new PluginQueryTokenizerPreferencesPanel(
                     _prefsManager,
-                    _prefsManager.getPreferences(), 
                     SCRIPT_SETTINGS_BORDER_LABEL_DBNAME, 
                     includeProcSepPref);
 
