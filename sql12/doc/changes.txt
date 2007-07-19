@@ -36,6 +36,8 @@ MySQL Plugin:
    displayed as object nodes beneath tables as is done in other plugins.
 
 Oracle Plugin: 
+ - (Feature Request 1735530: Hide Oracle Bin$.....==$0 tables ) 
+ 	Added configuration for removing the Recycle Bin tables from the object tree.
  - Show the source for Oracle tables, as well as materialized views.  
  - Added additional query tokenization pass to find begin...end;/ type 
    anonymous procedures.
