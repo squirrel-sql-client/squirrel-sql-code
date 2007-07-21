@@ -47,7 +47,7 @@ public class DerbyTableTriggerExtractorImpl implements ITableTriggerExtractor {
         "and s.SCHEMANAME = ? ";
     
     /**
-     * @see net.sourceforge.squirrel_sql.plugins.derby.exp.ITableTriggerExtractor#bindParamters(java.sql.PreparedStatement, net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
+     * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.ITableTriggerExtractor#bindParamters(java.sql.PreparedStatement, net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
      */
     public void bindParamters(PreparedStatement pstmt, IDatabaseObjectInfo dbo) 
         throws SQLException 
@@ -63,7 +63,7 @@ public class DerbyTableTriggerExtractorImpl implements ITableTriggerExtractor {
     }
 
     /**
-     * @see net.sourceforge.squirrel_sql.plugins.derby.exp.ITableTriggerExtractor#getTableTriggerQuery()
+     * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.ITableTriggerExtractor#getTableTriggerQuery()
      */
     public String getTableTriggerQuery() {
         return SQL;
