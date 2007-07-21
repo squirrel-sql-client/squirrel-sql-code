@@ -1,35 +1,31 @@
 package org.firebirdsql.squirrel;
 
-import java.sql.SQLException;
-
 import javax.swing.JMenu;
 
-import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-//import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.FirebirdObjectTreeListener;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithChildNodesExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import org.firebirdsql.squirrel.act.ActivateIndexAction;
 import org.firebirdsql.squirrel.act.DeactivateIndexAction;
 import org.firebirdsql.squirrel.exp.DatabaseExpander;
-import org.firebirdsql.squirrel.exp.IndexParentExpander;
-import org.firebirdsql.squirrel.exp.TableExpander;
+import org.firebirdsql.squirrel.exp.FirebirdTableIndexExtractorImpl;
+import org.firebirdsql.squirrel.exp.FirebirdTableTriggerExtractorImpl;
+import org.firebirdsql.squirrel.exp.AllIndexesParentExpander;
 import org.firebirdsql.squirrel.tab.DomainDetailsTab;
 import org.firebirdsql.squirrel.tab.GeneratorDetailsTab;
 import org.firebirdsql.squirrel.tab.IndexInfoTab;
@@ -42,9 +38,6 @@ public class FirebirdPlugin extends DefaultSessionPlugin {
 
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(FirebirdPlugin.class);
-
-    /** Logger for this class. */
-    private final static ILogger s_log = LoggerController.createLogger(FirebirdPlugin.class);
 
     /** API for the Obejct Tree. */
     private IObjectTreeAPI _treeAPI;
@@ -82,7 +75,7 @@ public class FirebirdPlugin extends DefaultSessionPlugin {
      */
     public String getVersion()
     {
-        return "0.01";
+        return "0.02";
     }
 
     /**
@@ -127,17 +120,6 @@ public class FirebirdPlugin extends DefaultSessionPlugin {
 	public synchronized void load(IApplication app) throws PluginException
 	{
 		super.load(app);
-
-		// Folder to store user settings.
-//		try
-//		{
-//			_userSettingsFolder = getPluginUserSettingsFolder();
-//		}
-//		catch (IOException ex)
-//		{
-//			throw new PluginException(ex);
-//		}
-
 		_resources = new FirebirdResources(getClass().getName(), this);
 	}
 
@@ -216,15 +198,21 @@ public class FirebirdPlugin extends DefaultSessionPlugin {
         // Tabs to add to the database node.
         _treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
         _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
-        _treeAPI.addDetailTab(IObjectTypes.TRIGGER_PARENT, new DatabaseObjectInfoTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER_TYPE_DBO, new DatabaseObjectInfoTab());
         _treeAPI.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
         _treeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexInfoTab());
 
         // Expanders.
-        _treeAPI.addExpander(IObjectTypes.INDEX_PARENT, new IndexParentExpander());
+        _treeAPI.addExpander(IObjectTypes.INDEX_PARENT, new AllIndexesParentExpander());
 
         _treeAPI.addExpander(DatabaseObjectType.SESSION, new DatabaseExpander(this));
-        _treeAPI.addExpander(DatabaseObjectType.TABLE, new TableExpander(this));
+
+        TableWithChildNodesExpander tableExp = new TableWithChildNodesExpander();
+        tableExp.setTableTriggerExtractor(new FirebirdTableTriggerExtractorImpl());
+        tableExp.setTableIndexExtractor(new FirebirdTableIndexExtractorImpl());
+        _treeAPI.addExpander(DatabaseObjectType.TABLE, tableExp);
+        
+        
         _treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new GeneratorDetailsTab());
         _treeAPI.addDetailTab(DatabaseObjectType.DATATYPE, new DomainDetailsTab());
         _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());

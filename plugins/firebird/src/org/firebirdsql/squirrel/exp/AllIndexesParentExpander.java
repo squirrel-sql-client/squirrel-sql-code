@@ -6,22 +6,18 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
-
-import org.firebirdsql.squirrel.util.IndexParentInfo;
 import org.firebirdsql.squirrel.util.SystemTables;
 
-public class IndexParentExpander implements INodeExpander
+public class AllIndexesParentExpander implements INodeExpander
 {
     private static final String STD_INDICES_SQL =
         "SELECT " +
@@ -37,24 +33,9 @@ public class IndexParentExpander implements INodeExpander
             SystemTables.IIndexTable.COL_NAME;
 
     /**
-     * SQL used to load only those indices related to a single object in
-     * the database.
-     */
-    private static final String RELATED_INDICES_SQL =
-        STD_INDICES_SQL +
-        " WHERE " +
-            SystemTables.IIndexTable.COL_RELATION_NAME + " = ?" +
-        " ORDER BY " +
-            SystemTables.IIndexTable.COL_NAME;
-
-    /** Logger for this class. */
-    private static final ILogger s_log =
-        LoggerController.createLogger(IndexParentExpander.class);
-
-    /**
      * Default ctor.
      */
-    public IndexParentExpander()
+    public AllIndexesParentExpander()
     {
         super();
     }
@@ -73,28 +54,20 @@ public class IndexParentExpander implements INodeExpander
      * @throws    SQLException
      *            Thrown if an SQL error occurs.
      */
-    public List createChildren(ISession session, ObjectTreeNode parentNode)
+    public List<ObjectTreeNode> createChildren(ISession session, 
+                                               ObjectTreeNode parentNode)
         throws SQLException
     {
-        final List childNodes = new ArrayList();
+        final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
         final ISQLConnection conn = session.getSQLConnection();
         final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
-        final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
-        final IDatabaseObjectInfo roi = ((IndexParentInfo)parentDbinfo).getRelatedObjectInfo();
 
-        PreparedStatement pstmt;
-        if (roi == null)
-        {
-            pstmt = conn.prepareStatement(ALL_INDICES_SQL);
-        }
-        else
-        {
-            pstmt = conn.prepareStatement(RELATED_INDICES_SQL);
-            pstmt.setString(1, roi.getSimpleName());
-        }
+        PreparedStatement pstmt = null;
+        
 
         try
         {
+            pstmt = conn.prepareStatement(ALL_INDICES_SQL);
             final ResultSet rs = pstmt.executeQuery();
             while (rs.next())
             {
@@ -106,7 +79,7 @@ public class IndexParentExpander implements INodeExpander
         }
         finally
         {
-            pstmt.close();
+            if (pstmt != null) try { pstmt.close(); } catch (SQLException e) {}
         }
         return childNodes;
     }
