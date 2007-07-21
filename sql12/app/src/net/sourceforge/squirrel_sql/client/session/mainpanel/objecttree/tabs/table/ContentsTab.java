@@ -42,6 +42,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableModel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.TablePopupMenu;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
@@ -453,13 +454,25 @@ public class ContentsTab extends BaseTableTab
       {
          throw new DataSetException(ex);
       } finally {
-    	  // Hide the dialog if one is shown
-    	  if (waitDialog != null) {
-    		  waitDialog.dispose();
-    	  }
+          disposeWaitDialog(waitDialog);
       }
    }
 
+   /**
+    * Hide the dialog if one is shown
+    * 
+    * @param waitDialog the PleaseWaitDialog to close - can be null.
+    */
+   private void disposeWaitDialog(final PleaseWaitDialog waitDialog) {
+      if (waitDialog != null) {
+          GUIUtils.processOnSwingEventThread(new Runnable() {
+              public void run() {
+                  waitDialog.dispose();
+              }
+          });
+      }       
+   }
+   
    public void setDatabaseObjectInfo(IDatabaseObjectInfo value)
    {
       super.setDatabaseObjectInfo(value);
@@ -564,7 +577,9 @@ public class ContentsTab extends BaseTableTab
 	 */
 	class EditableContentsTabPopupMenu extends TablePopupMenu
 	{
-		public EditableContentsTabPopupMenu(DataSetViewerTablePanel viewer) {
+	    private static final long serialVersionUID = 1L;
+
+        public EditableContentsTabPopupMenu(DataSetViewerTablePanel viewer) {
 			super(viewer.isTableEditable(), ContentsTab.this, viewer);
 			removeAll();	// the normal constructor creates a bunch of entries we do not want
 			add(_insertRow);
@@ -577,6 +592,8 @@ public class ContentsTab extends BaseTableTab
 	 */
 	class UneditableContentsTabPopupMenu extends TablePopupMenu
 	{
+        private static final long serialVersionUID = 1L;
+        
 		public UneditableContentsTabPopupMenu(DataSetViewerTablePanel viewer) {
 			super(viewer.isTableEditable(), ContentsTab.this, viewer);
 			removeAll();	// the normal constructor creates a bunch of entries we do not want
