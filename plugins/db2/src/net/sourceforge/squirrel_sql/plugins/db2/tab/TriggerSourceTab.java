@@ -26,12 +26,13 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.FormattedSourceTab;
 /**
  * This class will display the source for an DB2 trigger.
  *
  * @author manningr
  */
-public class TriggerSourceTab extends DB2SourceTab
+public class TriggerSourceTab extends FormattedSourceTab
 {
 	/** SQL that retrieves the source of a stored procedure. */
 	private static String SQL =
@@ -43,10 +44,11 @@ public class TriggerSourceTab extends DB2SourceTab
 	private final static ILogger s_log =
 		LoggerController.createLogger(TriggerSourceTab.class);
 
-	public TriggerSourceTab(String hint)
+	public TriggerSourceTab(String hint, String stmtSep)
 	{
 		super(hint);
-        sourceType = TRIGGER_TYPE;
+        super.setCompressWhitespace(true);
+        super.setupFormatter(stmtSep, null);
 	}
 
 	protected PreparedStatement createStatement() throws SQLException
