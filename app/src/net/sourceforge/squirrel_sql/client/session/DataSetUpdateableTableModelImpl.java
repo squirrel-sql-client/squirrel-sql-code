@@ -208,23 +208,34 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
 
       try
       {
-         final Statement stmt = conn.createStatement();
+         Statement stmt = null;
+         ResultSet rs = null;
          try
          {
+            stmt = conn.createStatement();
             String countSql = "select count(*) from " + ti.getQualifiedName() + whereClause;
-            final ResultSet rs = stmt.executeQuery(countSql);
+            rs = stmt.executeQuery(countSql);
             rs.next();
             count = rs.getInt(1);
          }
          finally
          {
-            stmt.close();
+            // We don't care if these throw an SQLException.  Just squelch them
+            // and report to the user what the outcome of the previous statements
+            // were.
+            if (rs != null) try { rs.close(); } catch (SQLException e) {}
+            if (stmt != null) try { stmt.close(); } catch (SQLException e) {}
          }
       }
       catch (SQLException ex)
       {
-          // i18n[DataSetUpdateableTableModelImpl.error.exceptionduringcheck=Exception seen during check on DB.  Exception was:\n{0}\nUpdate is probably not safe to do.\nDo you wish to proceed?]
-          return s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.exceptionduringcheck", ex.getMessage());
+          //i18n[DataSetUpdateableTableModelImpl.error.exceptionduringcheck=Exception 
+          //seen during check on DB.  Exception was:\n{0}\nUpdate is probably not 
+          //safe to do.\nDo you wish to proceed?]
+          String msg = 
+              s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.exceptionduringcheck", ex.getMessage());
+          s_log.error(msg, ex);
+          return msg;
       }
 
       if (count == -1)
