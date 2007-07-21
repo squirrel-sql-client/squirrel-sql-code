@@ -1,6 +1,6 @@
 Firebird Plugin Change Log
 ==========================
-
+0.02====- Added triggers node beneath each table.
 0.01
 ====
 - Initial release.

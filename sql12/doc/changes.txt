@@ -30,6 +30,8 @@ command:  run '<abs-path-to-script>'
 This slurps in the file and executes it's statements.  This is supported in 
 Derby's own ij command-line interpreter.
 
+Firedbird Plugin: Added triggers node for each table to display triggers.
+
 MySQL Plugin: 
  - Added support for handling stored procedure create statements.
  - Added source tab for Stored Procedures, Triggers and Views.  Triggers are 
