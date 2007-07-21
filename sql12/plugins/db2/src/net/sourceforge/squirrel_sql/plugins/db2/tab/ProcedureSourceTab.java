@@ -21,8 +21,11 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.FormattedSourceTab;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
@@ -30,11 +33,25 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  *
  * @author manningr
  */
-public class ProcedureSourceTab extends DB2SourceTab
+public class ProcedureSourceTab extends FormattedSourceTab
 {
+    private static final StringManager s_stringMgr =
+        StringManagerFactory.getStringManager(ProcedureSourceTab.class);   
+    
+    static interface i18n {
+        //i18n[ProcedureSourceTab.cLanguageProcMsg=This is a C-language routine. The 
+        //source code is unavailable.]
+        String C_LANGUAGE_PROC_MSG = 
+            s_stringMgr.getString("DB2SourceTab.cLanguageProcMsg"); 
+    }    
+    
 	/** SQL that retrieves the source of a stored procedure. */
 	private static String SQL =
-        "select text, language " +
+        "select " +
+        "    case " +
+        "        when language = 'C' then '" +i18n.C_LANGUAGE_PROC_MSG+"' " +
+        "        else text " +
+        "    end as text " +
         "from SYSCAT.PROCEDURES " +
         "where PROCSCHEMA = ? " +
         "and PROCNAME = ? ";
@@ -46,7 +63,7 @@ public class ProcedureSourceTab extends DB2SourceTab
 	public ProcedureSourceTab(String hint)
 	{
 		super(hint);
-        sourceType = STORED_PROC_TYPE;
+        super.setCompressWhitespace(false);
 	}
 
 	protected PreparedStatement createStatement() throws SQLException

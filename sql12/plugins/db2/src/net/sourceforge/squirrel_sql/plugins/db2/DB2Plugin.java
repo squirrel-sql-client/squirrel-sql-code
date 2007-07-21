@@ -72,11 +72,16 @@ public class DB2Plugin extends DefaultSessionPlugin {
     static interface i18n {
         //i18n[DB2Plugin.showViewSource=Show view source]
         String SHOW_VIEW_SOURCE = 
-            s_stringMgr.getString("InformixPlugin.showViewSource");
+            s_stringMgr.getString("DB2Plugin.showViewSource");
         
         //i18n[DB2Plugin.showProcedureSource=Show procedure source]
         String SHOW_PROCEDURE_SOURCE =
-            s_stringMgr.getString("InformixPlugin.showProcedureSource");
+            s_stringMgr.getString("DB2Plugin.showProcedureSource");
+        
+        //i18n[DB2Plugin.showTriggerSource=Show trigger source]
+        String SHOW_TRIGGER_SOURCE =
+            s_stringMgr.getString("DB2Plugin.showTriggerSource");
+        
     }
     
     /**
@@ -236,12 +241,14 @@ public class DB2Plugin extends DefaultSessionPlugin {
     }
     
     private void updateTreeApi(ISession session) {
+        String stmtSep = session.getQueryTokenizer().getSQLStatementSeparator();
+        
         
         _treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
         _treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, 
                 new ProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE));
         _treeAPI.addDetailTab(DatabaseObjectType.VIEW, 
-                              new ViewSourceTab(i18n.SHOW_VIEW_SOURCE));
+                              new ViewSourceTab(i18n.SHOW_VIEW_SOURCE, stmtSep));
         
         
         _treeAPI.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
@@ -274,7 +281,8 @@ public class DB2Plugin extends DefaultSessionPlugin {
         
         
         _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
-        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab("The source of the trigger"));
+        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, 
+                              new TriggerSourceTab("The source of the trigger", stmtSep));
         
     }
     
