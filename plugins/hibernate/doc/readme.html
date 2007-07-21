@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<BODY LANG="en-US" DIR="LTR">
+<P STYLE="margin-bottom: 0cm"><B>Hibernate Plugin</B></P>
+<P STYLE="margin-bottom: 0cm">To use the Hibernate Plugin requires to
+create at least one Hibernate configuration in SQuirreL's Global
+Preferences.</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><IMG SRC="hibernate.jpg" NAME="graphics1" ALIGN=LEFT  BORDER=0><BR CLEAR=LEFT><BR>
+</P>
+<P STYLE="margin-bottom: 0cm">You start out with providing a name for
+the configuration. Than you add all the Jars of your Hibernate
+installation as well as all jars that are needed by your mapped
+classes and the mapped classes themselves to the additional
+Classpath. Normally this is simply the same Classpath as you use in
+your project.</P>
+<P STYLE="margin-bottom: 0cm"><A NAME="DDE_LINK1"></A>Since there are
+several way of obtaining a Hibernate connection (SessionFactory) the
+Hibernate Plugin leaves it to the user to provide this connection.
+This means that the user has to give the Plugin a class that has a
+static method with the following signature: 
+</P>
+<P STYLE="margin-bottom: 0cm"><FONT FACE="Courier, monospace">public
+org.hibernate.impl.SessionFactoryImpl getSessionFactoryImpl()</FONT></P>
+<P STYLE="margin-bottom: 0cm">The Plugin will obtain the Hibernate
+connection using this function. The dialog to tell the Plugin the
+name of this class offers to save an example implementation such a
+class. Note that this class must be inside your additional Classpath
+too.</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><IMG SRC="factory.jpg" NAME="graphics2" ALIGN=LEFT  BORDER=0><BR CLEAR=LEFT><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><I>Note: Never forget use the &ldquo;Apply
+changes to this configuration&rdquo; button when you are done. </I>
+</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm">When this configuration part is done
+you may connect to a configuration from inside a Session window.</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><IMG SRC="./session.jpg" NAME="graphics3" ALIGN=LEFT BORDER=0><BR CLEAR=LEFT><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+</BODY>
+</HTML>

@@ -52,7 +52,7 @@ public class HibernatePlugin extends DefaultSessionPlugin
 
 	public String getHelpFileName()
 	{
-		return "readme.txt";
+		return "readme.html";
 	}
 
 	public String getLicenceFileName()
