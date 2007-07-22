@@ -42,4 +42,9 @@ public class PropertyInfo  extends CompletionInfo
          (_fullQualifiedName.startsWith(stringToParse) && stringToParse.startsWith(_mappedClassNameWithEndingDot)) ||
          (_simpleQualifiedName.startsWith(stringToParse) && stringToParse.startsWith(_simpleMappedClassNameWithEndingDot));
    }
+
+   public boolean matchesUnQualified(CompletionParser parser)
+   {
+      return _hibernatePropertyInfo.getPropertyName().startsWith(parser.getLastToken());
+   }
 }
