@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 import net.sourceforge.squirrel_sql.fw.completion.util.CompletionParser;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class MappedClassInfo extends CompletionInfo
 {
@@ -65,4 +66,37 @@ public class MappedClassInfo extends CompletionInfo
       return ret;
 
    }
+
+
+   public Collection<? extends CompletionInfo> getMatchingAttributes(CompletionParser parser)
+   {
+      ArrayList<CompletionInfo> ret = new ArrayList<CompletionInfo>();
+
+      for (PropertyInfo propertyInfo : _propertyInfos)
+      {
+         if(1 < parser.size() && propertyInfo.matchesUnQualified(parser))
+         {
+            ret.add(propertyInfo);
+         }
+      }
+
+      return ret;
+   }
+
+
+   public boolean isSame(String name)
+   {
+      return _mappedClassName.equals(name) || _simpleMappedClassName.equals(name);
+   }
+
+   public String getClassName()
+   {
+      return _mappedClassName;
+   }
+
+   public String getSimpleClassName()
+   {
+      return _simpleMappedClassName;
+   }
+
 }

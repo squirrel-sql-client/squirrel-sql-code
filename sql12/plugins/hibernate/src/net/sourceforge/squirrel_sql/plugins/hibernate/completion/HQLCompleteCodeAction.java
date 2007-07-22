@@ -17,7 +17,7 @@ import java.awt.event.KeyEvent;
 
 public class HQLCompleteCodeAction extends SquirrelAction
 {
-	private ISQLEntryPanel _sqlEntryPanel;
+	private ISQLEntryPanel _hqlEntryPanel;
    private IHibernateConnectionProvider _hibernateConnectionProvider;
    private Completor _cc;
    private HQLCodeCompletorModel _model;
@@ -29,11 +29,11 @@ public class HQLCompleteCodeAction extends SquirrelAction
                                 IHibernateConnectionProvider hibernateConnectionProvider)
 	{
 		super(app, plugin.getResources());
-		_sqlEntryPanel = sqlEntryPanel;
+		_hqlEntryPanel = sqlEntryPanel;
       _hibernateConnectionProvider = hibernateConnectionProvider;
 
-      _model = new HQLCodeCompletorModel(hibernateConnectionProvider);
-      _cc = new Completor((JTextComponent)_sqlEntryPanel.getTextComponent(), _model);
+      _model = new HQLCodeCompletorModel(hibernateConnectionProvider, new HQLAliasFinder(_hqlEntryPanel));
+      _cc = new Completor(_hqlEntryPanel.getTextComponent(), _model);
 
 		_cc.addCodeCompletorListener
 		(
@@ -45,7 +45,10 @@ public class HQLCompleteCodeAction extends SquirrelAction
             }
 			}
 		);
-	}
+
+
+
+   }
 
 
 	public void actionPerformed(ActionEvent evt)
@@ -66,9 +69,9 @@ public class HQLCompleteCodeAction extends SquirrelAction
 
          CompletionCandidates completionCandidates = _model.getCompletionCandidates(_cc.getTextTillCarret());
 
-         _sqlEntryPanel.setSelectionStart(replaceBegin);
-         _sqlEntryPanel.setSelectionEnd(_sqlEntryPanel.getCaretPosition());
-         _sqlEntryPanel.replaceSelection(completionCandidates.getAllCandidatesPrefix(true));
+         _hqlEntryPanel.setSelectionStart(replaceBegin);
+         _hqlEntryPanel.setSelectionEnd(_hqlEntryPanel.getCaretPosition());
+         _hqlEntryPanel.replaceSelection(completionCandidates.getAllCandidatesPrefix(true));
 
          SwingUtilities.invokeLater(new Runnable()
          {
@@ -81,21 +84,21 @@ public class HQLCompleteCodeAction extends SquirrelAction
       }
 		else if(KeyEvent.VK_TAB == keyCode)
 		{
-			_sqlEntryPanel.setSelectionStart(replaceBegin);
-			_sqlEntryPanel.setSelectionEnd(getNextWhiteSpacePos(_sqlEntryPanel.getCaretPosition()));
-			_sqlEntryPanel.replaceSelection(completion.getCompletionString());
+			_hqlEntryPanel.setSelectionStart(replaceBegin);
+			_hqlEntryPanel.setSelectionEnd(getNextWhiteSpacePos(_hqlEntryPanel.getCaretPosition()));
+			_hqlEntryPanel.replaceSelection(completion.getCompletionString());
 		}
 		else
 		{
-			_sqlEntryPanel.setSelectionStart(replaceBegin);
-			_sqlEntryPanel.setSelectionEnd(_sqlEntryPanel.getCaretPosition());
-			_sqlEntryPanel.replaceSelection(completion.getCompletionString());
+			_hqlEntryPanel.setSelectionStart(replaceBegin);
+			_hqlEntryPanel.setSelectionEnd(_hqlEntryPanel.getCaretPosition());
+			_hqlEntryPanel.replaceSelection(completion.getCompletionString());
 		}
 	}
 
 	private int getNextWhiteSpacePos(int startPos)
 	{
-		String text = _sqlEntryPanel.getText();
+		String text = _hqlEntryPanel.getText();
 
 		int retPos = startPos;
 
