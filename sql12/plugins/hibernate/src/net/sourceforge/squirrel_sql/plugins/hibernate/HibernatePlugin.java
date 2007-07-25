@@ -102,7 +102,7 @@ public class HibernatePlugin extends DefaultSessionPlugin
 
          session.getSessionSheet().insertMainTab(hqlTabController, 2, false);
 
-         initCodeCompletion(hqlTabController, session);
+         initCodeCompletion(hqlTabController);
 
 
          return new PluginSessionCallback()
@@ -124,11 +124,11 @@ public class HibernatePlugin extends DefaultSessionPlugin
 		}
 	}
 
-   private void initCodeCompletion(HQLTabController hqlTabController, ISession session)
+   private void initCodeCompletion(HQLTabController hqlTabController)
    {
       ISQLEntryPanel entryPanel = hqlTabController.getHqlEntrPanelManager().getEntryPanel();
 
-      HQLCompleteCodeAction hcca = new HQLCompleteCodeAction(getApplication(), this, entryPanel, hqlTabController);
+      HQLCompleteCodeAction hcca = new HQLCompleteCodeAction(getApplication(), this, entryPanel, hqlTabController, hqlTabController.getHqlSyntaxHighlightTokenMatcherProxy());
 
 
       JMenuItem item = entryPanel.addToSQLEntryAreaMenu(hcca);

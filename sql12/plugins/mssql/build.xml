@@ -4,7 +4,7 @@
 	<property name="build.dir" value="build"/>
 	<property name="build.classes" value="${build.dir}/classes"/>
 	<property name="build.lib" value="${build.dir}/lib"/>
-    <property name="squirrel.dir" value="/home/gerd/work/java/squirrel1_2/squirrel-sql-dist/squirrel-sql/core/dist" />
+    <property name="squirrel.dir" value="/home/gerd/work/java/squirrel/squirrel-sql-dist/squirrel-sql/core/dist" />
     <property name="squirrel.lib" value="${squirrel.dir}/lib" />
     <property name="squirrel.plugins" value="${squirrel.dir}/plugins" />
 

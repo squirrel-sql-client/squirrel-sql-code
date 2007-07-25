@@ -92,7 +92,7 @@ public class HqlAliasParser
 
    private boolean isSepartor(char c)
    {
-      return ',' == c;
+      return ',' == c || '(' == c || ')' == c;
    }
 
 

@@ -5,6 +5,8 @@ import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionCandidates;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernateConnection;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
+import net.sourceforge.squirrel_sql.client.session.ISyntaxHighlightTokenMatcher;
+import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,9 +17,13 @@ public class HQLCompletionInfoCollection
    private ArrayList<SimpleHQLCompletionInfo> _simpleInfos;
    private ArrayList<AliasInfo> _currentAliasInfos = new ArrayList<AliasInfo>();
 
-   private HashMap<String, MappedClassInfo> _mappedClassInfoByName = new HashMap<String, MappedClassInfo>();
+   private HashMap<String, MappedClassInfo> _mappedClassInfoByClassName = new HashMap<String, MappedClassInfo>();
    private HashMap<String, MappedClassInfo> _mappedClassInfoBySimpleClassName = new HashMap<String, MappedClassInfo>();
    private HashMap<String, SimpleHQLCompletionInfo> _simpleInfosByName = new HashMap<String, SimpleHQLCompletionInfo>();
+   private HashMap<String, String> _attributeNames = new HashMap<String, String>();
+   private HqlSyntaxHighlightTokenMatcher _hqlSyntaxHighlightTokenMatcher = new HqlSyntaxHighlightTokenMatcher(this);
+
+   private MappedClassInfo _lastFoundMappedClassInfo;
 
    public HQLCompletionInfoCollection(HibernateConnection con)
    {
@@ -25,8 +31,13 @@ public class HQLCompletionInfoCollection
 
       for (MappedClassInfo mappedClassInfo : _mappedClassInfos)
       {
-         _mappedClassInfoByName.put(mappedClassInfo.getClassName(), mappedClassInfo);
+         _mappedClassInfoByClassName.put(mappedClassInfo.getClassName(), mappedClassInfo);
          _mappedClassInfoBySimpleClassName.put(mappedClassInfo.getSimpleClassName(), mappedClassInfo);
+
+         for (String  attrName : mappedClassInfo.getAttributeNames())
+         {
+            _attributeNames.put(attrName, attrName);
+         }
       }
 
 
@@ -38,6 +49,14 @@ public class HQLCompletionInfoCollection
       {
          _simpleInfosByName.put(simpleInfo.getCompareString(), simpleInfo);
       }
+
+      _hqlSyntaxHighlightTokenMatcher.addSQLTokenListener(new SQLTokenListener()
+      {
+         public void tableOrViewFound(String name)
+         {
+            onTableOrViewFound(name);
+         }
+      });
 
    }
 
@@ -70,14 +89,20 @@ public class HQLCompletionInfoCollection
 
 
 
-      ArrayList<CompletionInfo> ret;
+      ArrayList<CompletionInfo> ret = new ArrayList<CompletionInfo>();
+      if(null != _lastFoundMappedClassInfo && 1 == parser.size())
+      {
+         ret.addAll(_lastFoundMappedClassInfo.getMatchingAttributes(parser));      
+      }
+
+
       int replacementStart;
       String stringToReplace;
       if(0 < ciClasses.size())
       {
          // We assume that classes and attributes won't be in the same completion list.
          // Classes will be completed fully qualified when the user works with fully qualified class names ...
-         ret = ciClasses;
+         ret.addAll(ciClasses);
          replacementStart = parser.getReplacementStart();
          stringToReplace = parser.getStringToReplace();
       }
@@ -85,7 +110,7 @@ public class HQLCompletionInfoCollection
       {
          // ... while attributes used in qualified expressions will not be completed qualified.
          // That means for pack.Foo. the completion popup will be placed behind the last dot.
-         ret = ciAttrs;
+         ret.addAll(ciAttrs);
          replacementStart = parser.getTextTillCarret().length() - parser.getLastToken().length();
          stringToReplace = parser.getLastToken();
       }
@@ -99,12 +124,26 @@ public class HQLCompletionInfoCollection
             ret.add(simpleInfo);
          }
       }
-      
 
       return new CompletionCandidates(ret.toArray(new CompletionInfo[ret.size()]), replacementStart, stringToReplace);
 
 
    }
+
+   private void onTableOrViewFound(String name)
+   {
+      MappedClassInfo mappedClassInfo = _mappedClassInfoBySimpleClassName.get(name);
+
+      if(null != mappedClassInfo)
+      {
+         _lastFoundMappedClassInfo = mappedClassInfo;
+      }
+      else
+      {
+         _lastFoundMappedClassInfo = _mappedClassInfoByClassName.get(name);
+      }
+   }
+
 
    public void setCurrentAliasInfos(ArrayList<AliasInfo> aliasInfos)
    {
@@ -117,7 +156,7 @@ public class HQLCompletionInfoCollection
 
       if(null == ret)
       {
-         ret = _mappedClassInfoByName.get(className);
+         ret = _mappedClassInfoByClassName.get(className);
       }
 
       return ret;
@@ -153,5 +192,32 @@ public class HQLCompletionInfoCollection
       return true;
 
 
+   }
+
+   public ISyntaxHighlightTokenMatcher getHqlSyntaxHighlightTokenMatcher()
+   {
+      return _hqlSyntaxHighlightTokenMatcher;
+   }
+
+   public boolean isMappeadClass(String name)
+   {
+      return _mappedClassInfoByClassName.containsKey(name) || _mappedClassInfoBySimpleClassName.containsKey(name);
+   }
+
+   public boolean isFunction(String name)
+   {
+      SimpleHQLCompletionInfo completionInfo = _simpleInfosByName.get(name);
+      return null != completionInfo && completionInfo instanceof HQLFunctionInfo;
+   }
+
+   public boolean isKeyword(String name)
+   {
+      SimpleHQLCompletionInfo completionInfo = _simpleInfosByName.get(name);
+      return null != completionInfo && completionInfo instanceof HQLKeywordInfo;
+   }
+
+   public boolean isMappedAttribute(String name)
+   {
+      return _attributeNames.containsKey(name);
    }
 }

@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.plugins.hibernate;
 
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.ISyntaxHighlightTokenMatcherFactory;
 import net.sourceforge.squirrel_sql.client.session.action.UndoAction;
 import net.sourceforge.squirrel_sql.client.session.action.RedoAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SquirrelDefaultUndoManager;
@@ -18,12 +19,18 @@ public class EntryPanelManagerBase
    private ISQLEntryPanel _entry;
    private JComponent _component;
 
-   public EntryPanelManagerBase(ISession session)
+   public EntryPanelManagerBase(ISession session, ISyntaxHighlightTokenMatcherFactory syntaxHighlightTokenMatcherFactory)
    {
       _session = session;
 
       HashMap props = new HashMap();
       props.put(IParserEventsProcessorFactory.class.getName(), null);
+
+      if(null != syntaxHighlightTokenMatcherFactory)
+      {
+         props.put(ISyntaxHighlightTokenMatcherFactory.class.getName(), syntaxHighlightTokenMatcherFactory);
+      }
+
 
       _entry = _session.getApplication().getSQLEntryPanelFactory().createSQLEntryPanel(_session, props);
 

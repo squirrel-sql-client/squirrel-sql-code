@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.plugins.hibernate;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.ISyntaxHighlightTokenMatcherFactory;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessorFactory;
 import net.sourceforge.squirrel_sql.client.session.action.RedoAction;
 import net.sourceforge.squirrel_sql.client.session.action.UndoAction;
@@ -24,9 +25,9 @@ public class HQLEntryPanelManager extends EntryPanelManagerBase implements IHqlE
       StringManagerFactory.getStringManager(HQLEntryPanelManager.class);
 
 
-   public HQLEntryPanelManager(ISession session)
+   public HQLEntryPanelManager(ISession session, ISyntaxHighlightTokenMatcherFactory syntaxHighlightTokenMatcherFactory)
    {
-      super(session);
+      super(session, syntaxHighlightTokenMatcherFactory);
 
       // i18n[HQLEntryPanelManager,quoteHQL=Quote HQL]
       AbstractAction quoteHql = new AbstractAction(s_stringMgr.getString("HQLEntryPanelManager,quoteHQL"))
