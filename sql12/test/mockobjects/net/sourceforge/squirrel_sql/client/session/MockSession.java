@@ -92,6 +92,10 @@ public class MockSession implements ISession {
     	sqlDriver = new MockSQLDriver(className, jdbcUrl);
     	con = new SQLConnection(c, null, sqlDriver);
     	init(false);
+        sqlAlias.setUrl(jdbcUrl);
+        sqlAlias.setUserName(u);
+        sqlAlias.setPassword(p);
+        sqlDriver.setDriverClassName(className);
     }
     
     private void init(boolean initConnection) {

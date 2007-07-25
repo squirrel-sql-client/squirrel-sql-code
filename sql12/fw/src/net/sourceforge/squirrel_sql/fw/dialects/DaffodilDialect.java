@@ -22,7 +22,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
 
-import org.hibernate.dialect.GenericDialect;
+import org.hibernate.dialect.Dialect;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -34,7 +34,7 @@ import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
  * An extension to the standard Hibernate Daffodil dialect
  */
 
-public class DaffodilDialect extends GenericDialect 
+public class DaffodilDialect extends Dialect 
                              implements HibernateDialect {
     
     public DaffodilDialect() {
