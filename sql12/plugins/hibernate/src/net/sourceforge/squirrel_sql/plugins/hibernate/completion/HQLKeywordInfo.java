@@ -15,6 +15,7 @@ public class HQLKeywordInfo extends SimpleHQLCompletionInfo
       // -- EJBQL tokens --
       "both", "empty", "leading", "member", "object", "of", "trailing",
    };
+   private String _toString;
 
    public static ArrayList<HQLKeywordInfo> createInfos()
    {
@@ -32,6 +33,12 @@ public class HQLKeywordInfo extends SimpleHQLCompletionInfo
    public HQLKeywordInfo(String infoString)
    {
       super(infoString);
+      _toString = super.toString() + " (keyword)";
    }
 
+
+   public String toString()
+   {
+      return _toString;
+   }
 }

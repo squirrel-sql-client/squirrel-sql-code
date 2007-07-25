@@ -49,21 +49,36 @@ public class HQLCodeCompletorModel implements ICompletorModel
       {
          _codeCompletionInfos = new HQLCompletionInfoCollection(_hibernateConnectionProvider.getHibernateConnection());
 
-         _hqlAliasFinder.setMappingInfoProvider(new MappingInfoProvider(){
+         MappingInfoProvider mappingInfoProvider = new MappingInfoProvider()
+         {
             public MappedClassInfo getMappedClassInfoFor(String token)
             {
                return onGetMappedClassInfoFor(token);
             }
-         });
 
-         _hqlAliasFinder.setAliasFinderListener(new AliasFinderListener(){
+            public boolean mayBeClassOrAliasName(String token)
+            {
+               return onMayBeClassOrAliasName(token);
+            }
+         };
+
+
+         AliasFinderListener aliasFinderListener = new AliasFinderListener()
+         {
 
             public void aliasesFound(ArrayList<AliasInfo> aliasInfos)
             {
                onAliasesFound(aliasInfos);
             }
-         });
+         };
+         
+         _hqlAliasFinder.start(mappingInfoProvider, aliasFinderListener);
       }
+   }
+
+   private boolean onMayBeClassOrAliasName(String token)
+   {
+      return _codeCompletionInfos.mayBeClassOrAliasName(token);
    }
 
    private void onAliasesFound(ArrayList<AliasInfo> aliasInfos)

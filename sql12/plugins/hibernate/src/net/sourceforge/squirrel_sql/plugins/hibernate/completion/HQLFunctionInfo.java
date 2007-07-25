@@ -45,6 +45,8 @@ public class HQLFunctionInfo extends SimpleHQLCompletionInfo
 
       "max", "min",};
 
+   private String _toString;
+
 
    public static ArrayList<HQLFunctionInfo> createInfos()
    {
@@ -61,8 +63,12 @@ public class HQLFunctionInfo extends SimpleHQLCompletionInfo
    public HQLFunctionInfo(String infoString)
    {
       super(infoString);
+      _toString = super.toString() + " (function)";
    }
 
 
-
+   public String toString()
+   {
+      return _toString;
+   }
 }

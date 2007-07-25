@@ -14,8 +14,10 @@ public class HQLCompletionInfoCollection
    private ArrayList<MappedClassInfo> _mappedClassInfos;
    private ArrayList<SimpleHQLCompletionInfo> _simpleInfos;
    private ArrayList<AliasInfo> _currentAliasInfos = new ArrayList<AliasInfo>();
+
    private HashMap<String, MappedClassInfo> _mappedClassInfoByName = new HashMap<String, MappedClassInfo>();
    private HashMap<String, MappedClassInfo> _mappedClassInfoBySimpleClassName = new HashMap<String, MappedClassInfo>();
+   private HashMap<String, SimpleHQLCompletionInfo> _simpleInfosByName = new HashMap<String, SimpleHQLCompletionInfo>();
 
    public HQLCompletionInfoCollection(HibernateConnection con)
    {
@@ -31,6 +33,12 @@ public class HQLCompletionInfoCollection
       _simpleInfos = new ArrayList<SimpleHQLCompletionInfo>();
       _simpleInfos.addAll(HQLKeywordInfo.createInfos());
       _simpleInfos.addAll(HQLFunctionInfo.createInfos());
+
+      for (SimpleHQLCompletionInfo simpleInfo : _simpleInfos)
+      {
+         _simpleInfosByName.put(simpleInfo.getCompareString(), simpleInfo);
+      }
+
    }
 
    public CompletionCandidates getInfosStartingWith(CompletionParser parser)
@@ -46,7 +54,7 @@ public class HQLCompletionInfoCollection
          {
             ciClasses.add(aliasInfo);
          }
-         ciAttrs.addAll(aliasInfo.getMatchingAttributes(parser));
+         ciAttrs.addAll(aliasInfo.getQualifiedMatchingAttributes(parser));
 
       }
 
@@ -113,6 +121,37 @@ public class HQLCompletionInfoCollection
       }
 
       return ret;
+
+   }
+
+   public boolean mayBeClassOrAliasName(String token)
+   {
+      if(0 == token.length())
+      {
+         return false;
+      }
+
+      if(false == Character.isJavaIdentifierStart(token.charAt(0)))
+      {
+         return false;
+      }
+
+      if(_simpleInfosByName.containsKey(token))
+      {
+         return false;
+      }
+
+      for (int i = 1; i < token.length(); i++)
+      {
+         char c = token.charAt(i);
+         if(false == Character.isJavaIdentifierPart(c) && '.' != c)
+         {
+            return false;
+         }
+      }
+
+      return true;
+
 
    }
 }
