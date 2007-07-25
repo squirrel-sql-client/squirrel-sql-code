@@ -74,7 +74,7 @@ public class MappedClassInfo extends CompletionInfo
 
       for (PropertyInfo propertyInfo : _propertyInfos)
       {
-         if(1 < parser.size() && propertyInfo.matchesUnQualified(parser))
+         if(/*1 < parser.size() && */propertyInfo.matchesUnQualified(parser))
          {
             ret.add(propertyInfo);
          }
@@ -99,4 +99,16 @@ public class MappedClassInfo extends CompletionInfo
       return _simpleMappedClassName;
    }
 
+   public String[] getAttributeNames()
+   {
+      String[] ret = new String[_propertyInfos.length];
+
+      for (int i = 0; i < _propertyInfos.length; i++)
+      {
+         ret[i] = _propertyInfos[i].getCompareString();
+
+      }
+
+      return ret;
+   }
 }
