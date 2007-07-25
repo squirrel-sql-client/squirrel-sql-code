@@ -6,4 +6,6 @@ public interface MappingInfoProvider
 {
    // Will be called asynchronously to the event dispatch thread
    MappedClassInfo getMappedClassInfoFor(String token);
+
+   boolean mayBeClassOrAliasName(String token);
 }

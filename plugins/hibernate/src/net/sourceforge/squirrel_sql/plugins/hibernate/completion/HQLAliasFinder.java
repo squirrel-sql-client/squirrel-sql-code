@@ -1,20 +1,24 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.completion;
 
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
-import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import javax.swing.*;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.ArrayList;
 
 public class HQLAliasFinder
 {
+   private static ILogger s_log = LoggerController.createLogger(HQLAliasFinder.class);
+
    private MappingInfoProvider _mappingInfoProvider;
    private ISQLEntryPanel _hqlEntryPanel;
    private AliasFinderListener _aliasFinderListener;
    private Timer _timer;
+
+   private HqlAliasParser _hqlAliasParser = new HqlAliasParser();
 
    public HQLAliasFinder(ISQLEntryPanel hqlEntryPanel)
    {
@@ -22,31 +26,19 @@ public class HQLAliasFinder
    }
 
 
-   public void setMappingInfoProvider(MappingInfoProvider mappingInfoProvider)
+   public void start(MappingInfoProvider mappingInfoProvider, AliasFinderListener aliasFinderListener)
    {
-      _mappingInfoProvider = mappingInfoProvider;
-      init();
-   }
-
-
-   public void setAliasFinderListener(AliasFinderListener aliasFinderListener)
-   {
-      _aliasFinderListener = aliasFinderListener;
-      init();
-   }
-
-   private void init()
-   {
-      if(null == _mappingInfoProvider || null == _aliasFinderListener)
+      if (null == _timer)
       {
-         return;
+         _mappingInfoProvider = mappingInfoProvider;
+         _aliasFinderListener = aliasFinderListener;
+
+         // One synchron call for first completion
+         findAliases();
+         start();
       }
-
-
-      // One synchron call for first completion
-      findAliases();
-      start();
    }
+
 
    private void start()
    {
@@ -63,37 +55,38 @@ public class HQLAliasFinder
 
    public void stop()
    {
-      _timer.cancel();
-      _timer.purge();
+      if (null != _timer)
+      {
+         _timer.cancel();
+         _timer.purge();
+         _timer = null;
+      }
    }
 
    private void findAliases()
    {
-      String hql = _hqlEntryPanel.getText();
-
-      final ArrayList<AliasInfo> infos = parse(hql);
-
-      GUIUtils.processOnSwingEventThread(new Runnable()
+      try
       {
-         public void run()
+         String hql = _hqlEntryPanel.getText();
+
+         final ArrayList<AliasInfo> infos = parse(hql);
+
+         GUIUtils.processOnSwingEventThread(new Runnable()
          {
-            _aliasFinderListener.aliasesFound(infos);
-         }
-      });
+            public void run()
+            {
+               _aliasFinderListener.aliasesFound(infos);
+            }
+         });
+      }
+      catch (Throwable t)
+      {
+         s_log.error("Error in HQLAliasFinder:", t);
+      }
    }
 
    private ArrayList<AliasInfo> parse(String hql)
    {
-      ArrayList<AliasInfo> ret = new ArrayList<AliasInfo>();
-
-      // Just a dummy
-      if(-1 < hql.indexOf("Kv auftrag"))
-      {
-         MappedClassInfo mci = _mappingInfoProvider.getMappedClassInfoFor("Kv");
-         ret.add(new AliasInfo(mci, "auftrag"));
-      }
-
-      return ret;
+      return _hqlAliasParser.parse(hql, _mappingInfoProvider);
    }
-
 }
