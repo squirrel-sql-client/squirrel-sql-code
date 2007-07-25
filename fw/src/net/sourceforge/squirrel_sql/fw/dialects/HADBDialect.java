@@ -10,9 +10,9 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 import org.hibernate.HibernateException;
-import org.hibernate.dialect.GenericDialect;
+import org.hibernate.dialect.Dialect;
 
-public class HADBDialect extends GenericDialect implements HibernateDialect {
+public class HADBDialect extends Dialect implements HibernateDialect {
 
     public HADBDialect() {
         super();

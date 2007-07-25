@@ -127,7 +127,7 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
             _panel.btnConnected.setEnabled(false);
             _panel.btnConnected.setDisabledSelectedIcon(_resource.getIcon(HibernatePluginResources.IKeys.CONNECTING_IMAGE));
             _panel.btnConnected.repaint();
-            _hibnerateConnector.connect((HibernateConfiguration)_panel.cboConfigurations.getSelectedItem());
+            _hibnerateConnector.connect((HibernateConfiguration)_panel.cboConfigurations.getSelectedItem(), _session);
          }
          else
          {
@@ -179,7 +179,10 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
       _panel.btnConnected.setSelected(false);
       _session.showErrorMessage(t);
       s_log.error(t);
-
+      if (s_log.isDebugEnabled()) {
+          t.printStackTrace();
+      }
+      
       _con = null;
       _hqlPanelController.setConnection(null);
 

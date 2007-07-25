@@ -6,6 +6,8 @@ public class HibernateConfiguration
    private String _name;
    private String[] _classpathEntries = new String[0];
 
+   /** the root directory to recurse to find *.cfg.xml files */
+   private String _mappingFileRootDir = null;
 
    public String getProvider()
    {
@@ -41,5 +43,19 @@ public class HibernateConfiguration
    public String toString()
    {
       return _name;
+   }
+
+   /**
+    * @return the _mappingFileRootDir
+    */
+   public String getMappingFileRootDir() {
+       return _mappingFileRootDir;
+   }
+
+   /**
+    * @param fileRootDir the _mappingFileRootDir to set
+    */
+   public void setMappingFileRootDir(String fileRootDir) {
+       _mappingFileRootDir = fileRootDir;
    }
 }
