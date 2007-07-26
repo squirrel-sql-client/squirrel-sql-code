@@ -341,6 +341,10 @@
 			<param name="p_rebuild" value="${rebuild.plugin.h2}"/>
 		</antcall>		
 		<antcall target="build_plugin">
+			<param name="p_internal_name" value="hibernate"/>
+			<param name="p_rebuild" value="${rebuild.plugin.hibernate}"/>
+		</antcall>				
+		<antcall target="build_plugin">
 			<param name="p_internal_name" value="informix"/>
 			<param name="p_rebuild" value="${rebuild.plugin.informix}"/>			
 		</antcall>		
@@ -958,6 +962,10 @@
 			<param name="p_internal_name" value="graph"/>
 			<param name="shoulddeploy" value="${rebuild.plugin.graph}"/>
 		</antcall>
+		<antcall target="deploytest">
+			<param name="p_internal_name" value="hibernate"/>
+			<param name="shoulddeploy" value="${rebuild.plugin.hibernate}"/>			
+		</antcall>				
 		<antcall target="deploytest">
 			<param name="p_internal_name" value="h2"/>
 			<param name="shoulddeploy" value="${rebuild.plugin.h2}"/>			
