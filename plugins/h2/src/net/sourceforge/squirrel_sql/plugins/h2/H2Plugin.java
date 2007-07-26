@@ -26,6 +26,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithChildNodesExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -34,8 +35,9 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.h2.exp.H2TableIndexExtractorImpl;
+import net.sourceforge.squirrel_sql.plugins.h2.exp.H2TableTriggerExtractorImpl;
 import net.sourceforge.squirrel_sql.plugins.h2.exp.SchemaExpander;
-import net.sourceforge.squirrel_sql.plugins.h2.exp.TableExpander;
 import net.sourceforge.squirrel_sql.plugins.h2.tab.IndexDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.h2.tab.IndexSourceTab;
 import net.sourceforge.squirrel_sql.plugins.h2.tab.SequenceDetailsTab;
@@ -223,7 +225,12 @@ public class H2Plugin extends DefaultSessionPlugin {
         // Expanders - trigger and index expanders are added inside the table
         // expander
         _treeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander());        
-        _treeAPI.addExpander(DatabaseObjectType.TABLE, new TableExpander());
+        //_treeAPI.addExpander(DatabaseObjectType.TABLE, new TableExpander());
+        TableWithChildNodesExpander tableExp = 
+            new TableWithChildNodesExpander();
+        tableExp.setTableIndexExtractor(new H2TableIndexExtractorImpl());
+        tableExp.setTableTriggerExtractor(new H2TableTriggerExtractorImpl());
+        _treeAPI.addExpander(DatabaseObjectType.TABLE,tableExp);
                 
         // View Tab
         _treeAPI.addDetailTab(DatabaseObjectType.VIEW, 
