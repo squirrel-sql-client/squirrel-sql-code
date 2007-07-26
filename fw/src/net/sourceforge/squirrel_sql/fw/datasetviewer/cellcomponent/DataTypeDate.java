@@ -196,7 +196,10 @@ public class DataTypeDate
 			if (lenientString != null && lenientString.equals("false"))
 				lenient =false;
             
-            readDateAsTimestamp = true;
+            // Bug #1757076
+            // always use false unless user specifies otherwise; this breaks
+            // date editing in Derby (possibly DB2 as well)
+            readDateAsTimestamp = false;
             String readDateAsTimestampString = 
                 DTProperties.get(thisClassName, "readDateAsTimestamp");
             if (readDateAsTimestampString != null && 
@@ -503,6 +506,7 @@ public class DataTypeDate
       * On input from the DB, read the data from the ResultSet into the appropriate
       * type of object to be stored in the table cell.
       */
+    @SuppressWarnings("unused")
     public static Object staticReadResultSet(ResultSet rs, int index, boolean limitDataRead)
         throws java.sql.SQLException 
     {
@@ -759,7 +763,9 @@ public class DataTypeDate
 	// Class that displays the various formats available for dates
 	public static class DateFormatTypeCombo extends JComboBox
 	{
-		public DateFormatTypeCombo()
+        private static final long serialVersionUID = 1L;
+
+        public DateFormatTypeCombo()
 		{
 			// i18n[dataTypeDate.full=Full ({0})]
 			addItem(s_stringMgr.getString("dataTypeDate.full", DateFormat.getDateInstance(DateFormat.FULL).format(new java.util.Date())));
@@ -799,7 +805,9 @@ public class DataTypeDate
 	  */
 	 private static class DateOkJPanel extends OkJPanel
 	 {
-		 /*
+        private static final long serialVersionUID = 1L;
+
+        /*
 		 * GUI components - need to be here because they need to be
 		 * accessible from the event handlers to alter each other's state.
 		 */

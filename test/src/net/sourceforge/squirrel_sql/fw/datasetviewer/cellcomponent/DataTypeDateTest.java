@@ -34,5 +34,13 @@ public class DataTypeDateTest extends AbstractDataType {
 	public void testTextComponents() {
 		testTextComponents(iut);
 	}
+    
+    // 1757076 (DATE column seen as TIMESTAMP, update in editable mode fails)
+    // We should always return false for this, when the user hasn't specified 
+    public void testGetReadDateAsTimestamp() {
+        
+        assertFalse("Expected default value to be false for read date as timestamp", 
+                    DataTypeDate.getReadDateAsTimestamp());
+    }
 
 }
