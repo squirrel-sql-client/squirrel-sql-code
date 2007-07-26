@@ -263,7 +263,9 @@ public class SchemaInfoCache implements Serializable
       CaseInsensitiveString ciTableName = new CaseInsensitiveString(tableName);
 
       _tableNames.put(ciTableName, tableName);
-      _iTableInfos.put(info, info);
+      synchronized(_iTableInfos) {
+          _iTableInfos.put(info, info);
+      }
 
       List<ITableInfo> aITabInfos = _tableInfosBySimpleName.get(ciTableName);
       if(null == aITabInfos)
@@ -380,7 +382,9 @@ public class SchemaInfoCache implements Serializable
    private void clearAllSchemaDependentData()
    {
       _tableNames.clear();
-      _iTableInfos.clear();
+      synchronized(_iTableInfos) {
+          _iTableInfos.clear();
+      }
       _tableInfosBySimpleName.clear();
 
       _extColumnInfosByColumnName.clear();
@@ -406,7 +410,11 @@ public class SchemaInfoCache implements Serializable
 
    void clearTables(String catalogName, String schemaName, String simpleName, String[] types)
    {
-      for(Iterator<ITableInfo> i = _iTableInfos.keySet().iterator(); i.hasNext();)
+       Set <ITableInfo> tableInfoSet = null;
+       synchronized(_iTableInfos) {
+           tableInfoSet = _iTableInfos.keySet();
+       }
+      for(Iterator<ITableInfo> i = tableInfoSet.iterator(); i.hasNext();)
       {
          ITableInfo ti = i.next();
 
@@ -601,7 +609,9 @@ public class SchemaInfoCache implements Serializable
    @SuppressWarnings("unchecked")
    Map<ITableInfo, ITableInfo> getITableInfosForReadOnly()
    {
-      return (Map)_internalTableInfoTreeMap.clone();
+       synchronized(_iTableInfos) {
+           return (Map)_internalTableInfoTreeMap.clone();
+       }
    }
 
    Hashtable<CaseInsensitiveString, List<ITableInfo>> getTableInfosBySimpleNameForReadOnly()
