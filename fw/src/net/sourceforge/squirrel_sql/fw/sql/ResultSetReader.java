@@ -30,7 +30,6 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponent
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeBlob;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeClob;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeDate;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeTimestamp;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -430,12 +429,10 @@ public class ResultSetReader
 						break;
 
 					// all of the following have been converted to use the DataType objects
-					// TODO: When JDK1.4 is the earliest JDK supported
-					// by Squirrel then remove the hardcoding of the
-					// boolean data type.
+                    // So, why not just have case Types.NULL and default??? (this seems pointless)
+                    // RMM 20070726
 					case Types.BIT:
-					case 16:
-//					case Types.BOOLEAN:
+					case Types.BOOLEAN:
 
 					case Types.DECIMAL:
 					case Types.NUMERIC:
