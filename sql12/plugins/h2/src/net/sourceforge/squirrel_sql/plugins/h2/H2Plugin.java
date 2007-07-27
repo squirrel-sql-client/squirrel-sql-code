@@ -31,6 +31,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.Dat
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -220,6 +221,8 @@ public class H2Plugin extends DefaultSessionPlugin {
     }    
     
     private void updateTreeApi(ISession session) {
+        IQueryTokenizer qt = session.getQueryTokenizer();
+        String stmtSep = qt.getSQLStatementSeparator();
         
         _treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
         // Expanders - trigger and index expanders are added inside the table
@@ -234,16 +237,16 @@ public class H2Plugin extends DefaultSessionPlugin {
                 
         // View Tab
         _treeAPI.addDetailTab(DatabaseObjectType.VIEW, 
-                              new ViewSourceTab(i18n.SHOW_VIEW_SOURCE));
+                              new ViewSourceTab(i18n.SHOW_VIEW_SOURCE, stmtSep));
         
         // Index tab
         _treeAPI.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
         _treeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexDetailsTab());
         _treeAPI.addDetailTab(DatabaseObjectType.INDEX, 
-                              new IndexSourceTab(i18n.SHOW_INDEX_SOURCE));
+                              new IndexSourceTab(i18n.SHOW_INDEX_SOURCE, stmtSep));
 
         // Trigger tabs
-        _treeAPI.addDetailTab(IObjectTypes.TRIGGER_PARENT, new DatabaseObjectInfoTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER_TYPE_DBO, new DatabaseObjectInfoTab());
         _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
         _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
         

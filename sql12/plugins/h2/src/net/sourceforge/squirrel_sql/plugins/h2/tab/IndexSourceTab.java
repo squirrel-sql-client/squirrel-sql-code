@@ -26,12 +26,13 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.FormattedSourceTab;
 /**
  * This class will display the source for an H2 index.
  *
  * @author manningr
  */
-public class IndexSourceTab extends H2SourceTab
+public class IndexSourceTab extends FormattedSourceTab
 {
 	/** SQL that retrieves the source of an index. */
 	private static String SQL =
@@ -45,9 +46,11 @@ public class IndexSourceTab extends H2SourceTab
 	private final static ILogger s_log =
 		LoggerController.createLogger(ViewSourceTab.class);
 
-	public IndexSourceTab(String hint)
+	public IndexSourceTab(String hint, String stmtSep)
 	{
 		super(hint);
+        super.setCompressWhitespace(true);
+        super.setupFormatter(stmtSep, null);        
 	}
 
 	protected PreparedStatement createStatement() throws SQLException
