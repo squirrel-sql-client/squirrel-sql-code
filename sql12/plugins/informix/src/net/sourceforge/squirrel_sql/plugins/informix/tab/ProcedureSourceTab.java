@@ -43,6 +43,7 @@ public class ProcedureSourceTab extends InformixSourceTab
         "ORDER BY T1.procid, T2.seqno ";
     
 	/** Logger for this class. */
+    @SuppressWarnings("unused")
 	private final static ILogger s_log =
 		LoggerController.createLogger(ProcedureSourceTab.class);
 
