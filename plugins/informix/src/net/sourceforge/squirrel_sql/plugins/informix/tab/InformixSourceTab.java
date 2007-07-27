@@ -41,6 +41,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public abstract class InformixSourceTab extends BaseSourceTab {
 
+    @SuppressWarnings("unused")
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(InformixSourceTab.class);
 
@@ -72,6 +73,8 @@ public abstract class InformixSourceTab extends BaseSourceTab {
 
     private final class InformixSourcePanel extends BaseSourcePanel
     {
+        private static final long serialVersionUID = 1L;
+
         private JTextArea _ta;
 
         InformixSourcePanel()

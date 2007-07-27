@@ -26,6 +26,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithChildNodesExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -34,8 +35,9 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.informix.exp.InformixTableIndexExtractorImpl;
+import net.sourceforge.squirrel_sql.plugins.informix.exp.InformixTableTriggerExtractorImpl;
 import net.sourceforge.squirrel_sql.plugins.informix.exp.SchemaExpander;
-import net.sourceforge.squirrel_sql.plugins.informix.exp.TableExpander;
 import net.sourceforge.squirrel_sql.plugins.informix.tab.IndexDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.informix.tab.ProcedureSourceTab;
 import net.sourceforge.squirrel_sql.plugins.informix.tab.SequenceDetailsTab;
@@ -55,6 +57,7 @@ public class InformixPlugin extends DefaultSessionPlugin {
 		StringManagerFactory.getStringManager(InformixPlugin.class);
 
     /** Logger for this class. */
+    @SuppressWarnings("unused")
     private final static ILogger s_log = 
         LoggerController.createLogger(InformixPlugin.class);
 
@@ -230,14 +233,20 @@ public class InformixPlugin extends DefaultSessionPlugin {
         _treeAPI.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
         _treeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexDetailsTab());
         _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
-        _treeAPI.addDetailTab(IObjectTypes.TRIGGER_PARENT, new DatabaseObjectInfoTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER_TYPE_DBO, new DatabaseObjectInfoTab());
         _treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
         _treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new SequenceDetailsTab());        
         
         // Expanders - trigger and index expanders are added inside the table
         // expander
-        _treeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander());        
-        _treeAPI.addExpander(DatabaseObjectType.TABLE, new TableExpander());
+        _treeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander()); 
+        
+        TableWithChildNodesExpander tableExp = 
+            new TableWithChildNodesExpander();
+        tableExp.setTableIndexExtractor(new InformixTableIndexExtractorImpl());
+        tableExp.setTableTriggerExtractor(new InformixTableTriggerExtractorImpl());
+        _treeAPI.addExpander(DatabaseObjectType.TABLE,tableExp);
+        
         
         _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
         _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab("The source of the trigger"));
