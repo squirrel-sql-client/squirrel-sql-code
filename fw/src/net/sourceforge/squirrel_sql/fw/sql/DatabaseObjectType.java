@@ -81,7 +81,7 @@ public class DatabaseObjectType implements IHasIdentifier, Serializable
     * Database object type for a "Index Type" node in the object tree. There is
     * one node of this type in the object tree for each table and it is labeled "INDEX".
     */   
-   public static final DatabaseObjectType INDEX_TYPE_DBO = DatabaseObjectType.createNewDatabaseObjectType("Trigger Type");   
+   public static final DatabaseObjectType INDEX_TYPE_DBO = DatabaseObjectType.createNewDatabaseObjectType("Index Type");   
    
    /** Index. */
    public final static DatabaseObjectType INDEX = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.index"));
@@ -100,6 +100,13 @@ public class DatabaseObjectType implements IHasIdentifier, Serializable
    /** Schema. */
    public final static DatabaseObjectType SCHEMA = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.schema"));
 
+   /**
+    * Database object type for a "Sequence Type" node in the object tree. There is
+    * one node of this type in the object tree for each table and it is labeled "SEQUENCE".
+    */   
+   public static final DatabaseObjectType SEQUENCE_TYPE_DBO = DatabaseObjectType.createNewDatabaseObjectType("Sequence Type");   
+   
+   
    /**
     * An object that generates uniques IDs for primary keys. E.G. an Oracle
     * sequence.
