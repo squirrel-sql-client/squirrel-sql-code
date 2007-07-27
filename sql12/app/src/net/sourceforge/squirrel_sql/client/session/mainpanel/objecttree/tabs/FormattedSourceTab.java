@@ -62,6 +62,8 @@ public abstract class FormattedSourceTab extends BaseSourceTab {
             new CommentSpec("--", "\n")
         };
     
+    /** The String to use to separate statements */
+    private String statementSeparator = null;
     
     static interface i18n {
         //i18n[FormatterSourceTab.noSourceAvailable=No object source code is 
@@ -91,6 +93,7 @@ public abstract class FormattedSourceTab extends BaseSourceTab {
         if (commentSpecs != null) {
             this.commentSpecs = commentSpecs;
         }
+        statementSeparator = stmtSep;
         formatter = new CodeReformator(stmtSep, this.commentSpecs);
     }
 
@@ -141,6 +144,8 @@ public abstract class FormattedSourceTab extends BaseSourceTab {
                         buf.append(line);
                     }
                 }
+                buf.append("\n");
+                buf.append(statementSeparator);
                 if (formatter != null && buf.length() != 0) {
                     if (s_log.isDebugEnabled()) {
                         s_log.debug("Object source code before formatting: "
