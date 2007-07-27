@@ -228,7 +228,7 @@ public class H2Plugin extends DefaultSessionPlugin {
         // Expanders - trigger and index expanders are added inside the table
         // expander
         _treeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander());        
-        //_treeAPI.addExpander(DatabaseObjectType.TABLE, new TableExpander());
+
         TableWithChildNodesExpander tableExp = 
             new TableWithChildNodesExpander();
         tableExp.setTableIndexExtractor(new H2TableIndexExtractorImpl());
