@@ -39,10 +39,6 @@ public class AliasInfo extends CompletionInfo
    {
       if(2 == parser.size() && parser.getToken(0).equals(_alias))
       {
-         System.out.println("AliasInfo.getQualifiedMatchingAttributes "+ _alias);
-
-         new Throwable().printStackTrace();
-
          return _mci.getMatchingAttributes(parser);
       }
       else
