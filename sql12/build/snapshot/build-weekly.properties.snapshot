@@ -9,11 +9,9 @@
 # application name that is used in the name of the installer file.
 name=squirrel-sql
 
-# version that's used in the name of the installer file
-# NOTE: THIS IS LEFT BLANK ON PURPOSE.  WE DECIDED SNAPSHOTS SHOULDN'T HAVE A
-# VERSION TO AVOID CONFUSION FOR NOW.  THE SNAPSHOT DATE SHOULD BE ENOUGH
-# TO IDENTIFY THE VERSION.
-appversion=
+# version that's used in the name of the installer file - this isn't used if 
+# building a snapshot release (i.e. replace.version is set to true)
+appversion=2.3.1
 
 # cvs repository cvsroot to checkout the source from.
 #project.cvsroot=:pserver:anonymous@cvs.sourceforge.net/cvsroot/squirrel-sql
@@ -46,20 +44,34 @@ replace.version=true
 version.dest.filename=${cvs.dest.dir}/sql12/app/src/net/sourceforge/squirrel_sql/client/Version.java
 
 # What build target to call on the build script to produce the compiled objects
-# required by the installer.
-build.target=compile_plugins
+# required by the installer(s)
+build.target=mac_dist
 
 # The build directory where the main build scripts and configuration files are.
 build.file.dest.dir=${cvs.dest.dir}/${project.module}/build
 
 # Directory where IzPack is installed 
-izpack.home.dir=/usr/local/IzPack
+izpack.home.dir=/usr/local/IzPack_3.10.2
 
-# The template file to use to create the IzPack configuration file
-izpack.config.file.template=izpack-super.xml.template
+#
+# The template file to use to create the Windows/Unix IzPack configuration file
+#
+other.izpack.config.file.template=izpack-super.xml.template
 
-# The name of the IzPack configuration file.
-izpack.config.file=izpack-super.xml
+#
+# The template file to use to create the MacOS X IzPack configuration file
+#
+macosx.izpack.config.file.template=izpack-mac.xml.template
+
+#
+# The name of the Windows/Unix IzPack configuration file.
+#
+other.izpack.config.file=izpack-super.xml
+
+#
+# The name of the MacOS X IzPack configuration file.
+#
+macosx.izpack.config.file=izpack-macosx.xml
 
 # The template file to use to create the auto install script
 auto.intall.template=autoinstall.xml.template
