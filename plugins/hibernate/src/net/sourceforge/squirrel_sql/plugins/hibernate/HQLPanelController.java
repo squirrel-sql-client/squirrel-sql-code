@@ -51,7 +51,7 @@ public class HQLPanelController
       _hqlTabController.addToToolbar(_convertToSQL);
 
       KeyStroke ctrlEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, Event.CTRL_MASK);
-      hqlEntryPanelManager.addKeystrokeListener(ctrlEnter, _convertToSQL);
+      hqlEntryPanelManager.registerKeyboardAction(_convertToSQL, ctrlEnter);
 
    }
 

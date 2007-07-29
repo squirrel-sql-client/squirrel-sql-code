@@ -126,17 +126,11 @@ public class HibernatePlugin extends DefaultSessionPlugin
 
    private void initCodeCompletion(HQLTabController hqlTabController)
    {
-      ISQLEntryPanel entryPanel = hqlTabController.getHqlEntrPanelManager().getEntryPanel();
-
-      HQLCompleteCodeAction hcca = new HQLCompleteCodeAction(getApplication(), this, entryPanel, hqlTabController, hqlTabController.getHqlSyntaxHighlightTokenMatcherProxy());
-
-
-      JMenuItem item = entryPanel.addToSQLEntryAreaMenu(hcca);
-
+      HQLEntryPanelManager hqlEntryPanelManager = hqlTabController.getHqlEntrPanelManager();
+      HQLCompleteCodeAction hcca = new HQLCompleteCodeAction(getApplication(), this, hqlEntryPanelManager, hqlTabController, hqlTabController.getHqlSyntaxHighlightTokenMatcherProxy());
+      JMenuItem item = hqlEntryPanelManager.addToSQLEntryAreaMenu(hcca);
       _resources.configureMenuItem(hcca, item);
-
-      JComponent comp = entryPanel.getTextComponent();
-      comp.registerKeyboardAction(hcca, _resources.getKeyStroke(hcca), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+      hqlEntryPanelManager.registerKeyboardAction(hcca, _resources.getKeyStroke(hcca));
    }
 
 

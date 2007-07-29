@@ -9,5 +9,11 @@ public interface IHqlEntryPanelManager
    JComponent  getComponent();
    ISQLEntryPanel getEntryPanel();
 
-   void addKeystrokeListener(KeyStroke ctrlEnter, AbstractAction action);
+   void addToSQLEntryAreaMenu(JMenu menu);
+
+   JMenuItem addToSQLEntryAreaMenu(Action action);
+
+   void addToToolsPopUp(String selectionString, Action action);
+
+   void registerKeyboardAction(Action action, KeyStroke keyStroke);
 }

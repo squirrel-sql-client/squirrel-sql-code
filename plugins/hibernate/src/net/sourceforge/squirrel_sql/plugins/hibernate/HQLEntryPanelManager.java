@@ -11,6 +11,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.SquirrelDefaultUndo
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.plugins.hibernate.completion.HQLCompleteCodeAction;
 
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
@@ -78,8 +79,25 @@ public class HQLEntryPanelManager extends EntryPanelManagerBase implements IHqlE
       EditExtrasAccessor.quoteHQL(getEntryPanel(), getSession());
    }
 
-   public void addKeystrokeListener(KeyStroke keyStroke, AbstractAction action)
+
+   public void addToSQLEntryAreaMenu(JMenu menu)
    {
-      getEntryPanel().getTextComponent().getKeymap().addActionForKeyStroke(keyStroke, action);
+      getEntryPanel().addToSQLEntryAreaMenu(menu);
+   }
+
+   public JMenuItem addToSQLEntryAreaMenu(Action action)
+   {
+      return getEntryPanel().addToSQLEntryAreaMenu(action);
+   }
+
+   public void addToToolsPopUp(String selectionString, Action action)
+   {
+      throw new UnsupportedOperationException("NYI");
+   }
+
+   public void registerKeyboardAction(Action action, KeyStroke keyStroke)
+   {
+      JComponent comp = getEntryPanel().getTextComponent();
+      comp.registerKeyboardAction(action, keyStroke, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
    }
 }

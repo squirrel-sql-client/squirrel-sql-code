@@ -156,7 +156,7 @@ public class HibernateController
    {
       String provider = _panel.txtFactoryProvider.getText();
 
-      if(null == provider)
+      if(null == provider || 0 == provider.trim().length())
       {
          // i18n[HibernateController.noProviderMsg=Missing SessionFactoryImplProvider .\nChanges cannot be applied.]
          JOptionPane.showMessageDialog(_plugin.getApplication().getMainFrame(), s_stringMgr.getString("HibernateController.noProviderMsg"));
