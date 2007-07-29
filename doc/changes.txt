@@ -32,6 +32,8 @@ Derby's own ij command-line interpreter.
 
 Firedbird Plugin: Added triggers node for each table to display triggers.
 
+LAF Plugin: Added substance look and feel as an option.
+
 MySQL Plugin: 
  - Added support for handling stored procedure create statements.
  - Added source tab for Stored Procedures, Triggers and Views.  Triggers are 
