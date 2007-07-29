@@ -10,6 +10,7 @@ import net.sourceforge.squirrel_sql.fw.completion.CompletionCandidates;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePlugin;
 import net.sourceforge.squirrel_sql.plugins.hibernate.IHibernateConnectionProvider;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HqlSyntaxHighlightTokenMatcherProxy;
+import net.sourceforge.squirrel_sql.plugins.hibernate.HQLEntryPanelManager;
 
 import javax.swing.text.JTextComponent;
 import javax.swing.*;
@@ -26,12 +27,12 @@ public class HQLCompleteCodeAction extends SquirrelAction
 
    public HQLCompleteCodeAction(IApplication app,
                                 HibernatePlugin plugin,
-                                ISQLEntryPanel sqlEntryPanel,
+                                HQLEntryPanelManager hqlEntryPanelManager,
                                 IHibernateConnectionProvider hibernateConnectionProvider,
                                 HqlSyntaxHighlightTokenMatcherProxy hqlSyntaxHighlightTokenMatcherProxy)
 	{
 		super(app, plugin.getResources());
-		_hqlEntryPanel = sqlEntryPanel;
+		_hqlEntryPanel = hqlEntryPanelManager.getEntryPanel();
       _hibernateConnectionProvider = hibernateConnectionProvider;
 
       _model = new HQLCodeCompletorModel(hibernateConnectionProvider, new HQLAliasFinder(_hqlEntryPanel), hqlSyntaxHighlightTokenMatcherProxy);

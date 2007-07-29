@@ -186,6 +186,11 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
       _panel.btnConnected.setEnabled(true);
       _hqlPanelController.setConnection(con);
 
+      for (ConnectionListener listener : _listeners)
+      {
+         listener.connectionOpened(con);
+      }
+
    }
 
    private void onConnectFailed(Throwable t)
