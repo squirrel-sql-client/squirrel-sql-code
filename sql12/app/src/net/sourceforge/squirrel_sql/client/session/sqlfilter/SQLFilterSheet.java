@@ -68,8 +68,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class SQLFilterSheet extends BaseSessionInternalFrame
 {
+    private static final long serialVersionUID = 1L;
 
-	/** Logger for this class. */
+    /** Logger for this class. */
 	private static final ILogger s_log =
 		LoggerController.createLogger(SQLFilterSheet.class);
 
@@ -87,7 +88,7 @@ public class SQLFilterSheet extends BaseSessionInternalFrame
 	private final IDatabaseObjectInfo _objectInfo;
 
 	/** A list of panels that make up this sheet. */
-	private List _panels = new ArrayList();
+	private List<ISQLFilterPanel> _panels = new ArrayList<ISQLFilterPanel>();
 
 	/** A variable that contains a value that indicates which tab currently has focus. */
 	private int _tabSelected;
@@ -156,9 +157,9 @@ public class SQLFilterSheet extends BaseSessionInternalFrame
 				{
 					final boolean isDebug = s_log.isDebugEnabled();
 					long start = 0;
-					for (Iterator it = _panels.iterator(); it.hasNext();)
+					for (Iterator<ISQLFilterPanel> it = _panels.iterator(); it.hasNext();)
 					{
-						ISQLFilterPanel pnl = (ISQLFilterPanel)it.next();
+						ISQLFilterPanel pnl = it.next();
 						if (isDebug)
 						{
 							start = System.currentTimeMillis();
@@ -241,9 +242,9 @@ public class SQLFilterSheet extends BaseSessionInternalFrame
 	{
 		final boolean isDebug = s_log.isDebugEnabled();
 		long start = 0;
-		for (Iterator it = _panels.iterator(); it.hasNext();)
+		for (Iterator<ISQLFilterPanel> it = _panels.iterator(); it.hasNext();)
 		{
-			ISQLFilterPanel pnl = (ISQLFilterPanel)it.next();
+			ISQLFilterPanel pnl = it.next();
 			if (isDebug)
 			{
 				start = System.currentTimeMillis();
@@ -279,8 +280,8 @@ public class SQLFilterSheet extends BaseSessionInternalFrame
 	 */
 	private void createGUI()
 	{
-		SortedSet columnNames = new TreeSet();
-		Map textColumns = new TreeMap();
+		SortedSet<String> columnNames = new TreeSet<String>();
+		Map<String, Boolean> textColumns = new TreeMap<String, Boolean>();
 
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setTitle(getTitle());
@@ -324,9 +325,9 @@ public class SQLFilterSheet extends BaseSessionInternalFrame
 		_panels.add(_orderByClausePanel);
 
 		JTabbedPane tabPane = UIFactory.getInstance().createTabbedPane();
-		for (Iterator it = _panels.iterator(); it.hasNext();)
+		for (Iterator<ISQLFilterPanel> it = _panels.iterator(); it.hasNext();)
 		{
-			ISQLFilterPanel pnl = (ISQLFilterPanel)it.next();
+			ISQLFilterPanel pnl = it.next();
 			String pnlTitle = pnl.getTitle();
 			String hint = pnl.getHint();
 			final JScrollPane sp = new JScrollPane(pnl.getPanelComponent());

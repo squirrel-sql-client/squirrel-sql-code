@@ -16,6 +16,12 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 
 public class MockSQLEntryPanel implements ISQLEntryPanel {
 
+    ISession _session = null;
+    
+    public MockSQLEntryPanel(ISession session) {
+        _session = session;
+    }
+    
 	public void addCaretListener(CaretListener lis) {
 		// TODO Auto-generated method stub
 

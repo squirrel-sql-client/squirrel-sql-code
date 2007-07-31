@@ -38,14 +38,14 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class XMLObjectCache implements IObjectCache
+public class XMLObjectCache<E extends IHasIdentifier> implements IObjectCache<E>
 {
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(XMLObjectCache.class);
 
 	/** Cache of stored objects. */
-	private ObjectCache _cache = new ObjectCache();
+	private ObjectCache<E> _cache = new ObjectCache<E>();
 
 	/**
 	 * Default ctor.
@@ -65,7 +65,7 @@ public class XMLObjectCache implements IObjectCache
 	 * @return	The <CODE>IHasIdentifier</CODE> retrieved or <CODE>null</CODE>
 	 *			if no object exists for <CODE>id</CODE>.
 	 */
-	public IHasIdentifier get(Class objClass, IIdentifier id)
+	public IHasIdentifier get(Class<E> objClass, IIdentifier id)
 	{
 		return _cache.get(objClass, id);
 	}
@@ -79,7 +79,7 @@ public class XMLObjectCache implements IObjectCache
 	 *				Thrown if an object of the same class as <CODE>obj</CODE>
 	 *				and with the same identifier is already in the cache.
 	 */
-	public void add(IHasIdentifier obj) throws DuplicateObjectException
+	public void add(E obj) throws DuplicateObjectException
 	{
 		_cache.add(obj);
 	}
@@ -90,7 +90,7 @@ public class XMLObjectCache implements IObjectCache
 	 * @param	objClass	Class of object to be removed.
 	 * @param	id			Identifier for object to be removed.
 	 */
-	public void remove(Class objClass, IIdentifier id)
+	public void remove(Class<E> objClass, IIdentifier id)
 	{
 		_cache.remove(objClass, id);
 	}
@@ -101,7 +101,7 @@ public class XMLObjectCache implements IObjectCache
 	 *
 	 * @return	Class[] of all classes stored.
 	 */
-	public Class[] getAllClasses()
+	public Class<E>[] getAllClasses()
 	{
 		return _cache.getAllClasses();
 	}
@@ -114,7 +114,7 @@ public class XMLObjectCache implements IObjectCache
 	 *
 	 * @return	<CODE>Iterator</CODE> over all objects.
 	 */
-	public Iterator getAllForClass(Class objClass)
+	public Iterator<E> getAllForClass(Class<E> objClass)
 	{
 		return _cache.getAllForClass(objClass);
 	}
@@ -128,7 +128,7 @@ public class XMLObjectCache implements IObjectCache
 	 * @param	objClass	The class of objects whose cache we want to listen
 	 *						to.
 	 */
-	public void addChangesListener(IObjectCacheChangeListener lis, Class objClass)
+	public void addChangesListener(IObjectCacheChangeListener lis, Class<E> objClass)
 	{
 		_cache.addChangesListener(lis, objClass);
 	}
@@ -143,7 +143,7 @@ public class XMLObjectCache implements IObjectCache
 	 *						to.
 	 */
 	public void removeChangesListener(IObjectCacheChangeListener lis,
-										Class objClass)
+										Class<E> objClass)
 	{
 		_cache.removeChangesListener(lis, objClass);
 	}
@@ -190,14 +190,14 @@ public class XMLObjectCache implements IObjectCache
 	{
 		XMLBeanReader rdr = new XMLBeanReader();
 		rdr.load(xmlFileName, cl);
-		for (Iterator it = rdr.iterator(); it.hasNext();)
+		for (Iterator<Object> it = rdr.iterator(); it.hasNext();)
 		{
 			final Object obj = it.next();
 			if (!(obj instanceof IHasIdentifier))
 			{
 				throw new XMLException(s_stringMgr.getString("XMLObjectCache.error.notimplemented"));
 			}
-			add((IHasIdentifier) obj);
+			add((E)obj);
 		}
 	}
 
@@ -243,7 +243,7 @@ public class XMLObjectCache implements IObjectCache
 	{
 		XMLBeanReader xmlRdr = new XMLBeanReader();
 		xmlRdr.load(rdr, cl);
-		for (Iterator it = xmlRdr.iterator(); it.hasNext();)
+		for (Iterator<?> it = xmlRdr.iterator(); it.hasNext();)
 		{
 			final Object obj = it.next();
 			if (!(obj instanceof IHasIdentifier))
@@ -252,7 +252,7 @@ public class XMLObjectCache implements IObjectCache
 			}
 			try
 			{
-				add((IHasIdentifier) obj);
+				add((E) obj);
 			}
 			catch (DuplicateObjectException ex)
 			{
@@ -279,10 +279,10 @@ public class XMLObjectCache implements IObjectCache
 		throws IOException, XMLException
 	{
 		XMLBeanWriter wtr = new XMLBeanWriter();
-		Class[] classes = _cache.getAllClasses();
+		Class<E>[] classes = _cache.getAllClasses();
 		for (int i = 0; i < classes.length; ++i)
 		{
-			for (Iterator it = _cache.getAllForClass(classes[i]);
+			for (Iterator<E> it = _cache.getAllForClass(classes[i]);
 					it.hasNext();)
 			{
 				wtr.addToRoot(it.next());
@@ -295,7 +295,7 @@ public class XMLObjectCache implements IObjectCache
 	 * Save all objects of type <CODE>objClass</CODE> to an XML document.
 	 *
 	 * @param	xmlFileName	 Name of XML file to save to.
-	 * @param	objClass		Class of objects to be saved.
+	 * @param	forClass		Class of objects to be saved.
 	 *
 	 * @exception	IOException
 	 *				Thrown if an IO error occurs.
@@ -303,13 +303,12 @@ public class XMLObjectCache implements IObjectCache
 	 * @exception	XMLException
 	 *				Thrown if an XML error occurs.
 	 */
-	public synchronized void saveAllForClass(
-		String xmlFilename,
-		Class objClass)
+	public synchronized void saveAllForClass(String xmlFilename,
+	                                         Class<E> forClass)
 		throws IOException, XMLException
 	{
 		XMLBeanWriter wtr = new XMLBeanWriter();
-		for (Iterator it = _cache.getAllForClass(objClass); it.hasNext();)
+		for (Iterator<E> it = _cache.getAllForClass(forClass); it.hasNext();)
 		{
 			wtr.addToRoot(it.next());
 		}

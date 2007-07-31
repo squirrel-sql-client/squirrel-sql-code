@@ -106,37 +106,37 @@ public class LogPanel extends JPanel
 
 		LoggerController.addLoggerListener(new ILoggerListener()
 		{
-			public void info(Class source, Object message)
+			public void info(Class<?> source, Object message)
 			{
 				_statistics.setInfoCount(_statistics._infoCount + 1);
 				addLog(LOG_TYPE_INFO, source.getName(), message, null);
 			}
 
-			public void info(Class source, Object message, Throwable th)
+			public void info(Class<?> source, Object message, Throwable th)
 			{
 				_statistics.setInfoCount(_statistics._infoCount + 1);
 				addLog(LOG_TYPE_INFO, source.getName(), message, th);
 			}
 
-			public void warn(Class source, Object message)
+			public void warn(Class<?> source, Object message)
 			{
 				_statistics.setWarnCount(_statistics._warnCount + 1);
 				addLog(LOG_TYPE_WARN, source.getName(), message, null);
 			}
 
-			public void warn(Class source, Object message, Throwable th)
+			public void warn(Class<?> source, Object message, Throwable th)
 			{
 				_statistics.setWarnCount(_statistics._warnCount + 1);
 				addLog(LOG_TYPE_WARN, source.getName(), message, th);
 			}
 
-			public void error(Class source, Object message)
+			public void error(Class<?> source, Object message)
 			{
 				_statistics.setErrorCount(_statistics._errorCount + 1);
 				addLog(LOG_TYPE_ERROR, source.getName(), message, message instanceof Throwable ? (Throwable)message:null);
 			}
 
-			public void error(Class source, Object message, Throwable th)
+			public void error(Class<?> source, Object message, Throwable th)
 			{
 				_statistics.setErrorCount(_statistics._errorCount + 1);
 				addLog(LOG_TYPE_ERROR, source.getName(), message, th);

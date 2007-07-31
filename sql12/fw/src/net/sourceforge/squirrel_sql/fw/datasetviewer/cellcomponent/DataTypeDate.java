@@ -203,9 +203,9 @@ public class DataTypeDate
             String readDateAsTimestampString = 
                 DTProperties.get(thisClassName, "readDateAsTimestamp");
             if (readDateAsTimestampString != null && 
-                    readDateAsTimestampString.equals("false")) 
+                    readDateAsTimestampString.equals("true")) 
             {
-                readDateAsTimestamp = false;
+                readDateAsTimestamp = true;
             }
 		}
 	}

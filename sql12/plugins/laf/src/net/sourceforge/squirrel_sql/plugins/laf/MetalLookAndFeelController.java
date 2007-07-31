@@ -120,7 +120,8 @@ class MetalLookAndFeelController extends AbstractPlasticController
 		_defaultMetalTheme = new DefaultMetalTheme();
 
 		XMLObjectCache cache = plugin.getSettingsCache();
-		Iterator it = cache.getAllForClass(MetalThemePreferences.class);
+		Iterator it = 
+            cache.getAllForClass(MetalThemePreferences.class);
 		if (it.hasNext())
 		{
 			_prefs = (MetalThemePreferences)it.next();
@@ -148,7 +149,7 @@ class MetalLookAndFeelController extends AbstractPlasticController
 	{
 		ClassLoader cl = getLAFRegister().getLookAndFeelClassLoader();
 
-		Vector ret = new Vector();
+		Vector<MetalTheme> ret = new Vector<MetalTheme>();
 
 		boolean defaultThemeIsIncluded = false;
 
@@ -156,7 +157,7 @@ class MetalLookAndFeelController extends AbstractPlasticController
 		{
 			try
 			{
-				Class clazz = Class.forName(_extraThemeClassNames[i], false, cl);
+				Class<?> clazz = Class.forName(_extraThemeClassNames[i], false, cl);
 				ret.add((MetalTheme)clazz.newInstance());
 
 				if(null != _defaultMetalTheme && _extraThemeClassNames[i].equals(_defaultMetalTheme.getClass().getName()))
@@ -176,7 +177,7 @@ class MetalLookAndFeelController extends AbstractPlasticController
 		}
 
 
-		return (MetalTheme[]) ret.toArray(new MetalTheme[ret.size()]);
+		return ret.toArray(new MetalTheme[ret.size()]);
 	}
 
 	void installCurrentTheme(LookAndFeel laf, MetalTheme theme)

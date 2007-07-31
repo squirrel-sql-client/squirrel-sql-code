@@ -18,20 +18,15 @@ package net.sourceforge.squirrel_sql.plugins.mysql.action;
  */
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
-import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-//import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-//import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
-
 import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 import net.sourceforge.squirrel_sql.plugins.mysql.util.DBUtils;
 /*
@@ -58,7 +53,7 @@ public class CopyTableCommand implements ICommand
 	private javax.swing.JDialog jd;
 	private DBUtils dbUtils;
 	private String[] colNames;
-	private JCheckBox[] chFields;
+	//private JCheckBox[] chFields;
 	private ITableInfo oldTableName;
 	private String newTableName;
 	private String SQLCommandRoot = "";
@@ -105,7 +100,7 @@ public class CopyTableCommand implements ICommand
 		dbUtils = new DBUtils(_session, _plugin);
 		colNames = dbUtils.getColumnNames();
 		oldTableName = dbUtils.getTableInfo();
-		chFields = new JCheckBox[colNames.length];
+		//chFields = new JCheckBox[colNames.length];
 		listFields.setSelectionMode(
 			ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		listModel = (DefaultListModel) listFields.getModel();
@@ -234,13 +229,15 @@ public class CopyTableCommand implements ICommand
 		jd.setVisible(true);
 	}
 	private void listFieldsValueChanged(
-		javax.swing.event.ListSelectionEvent evt)
+		@SuppressWarnings("unused")
+        javax.swing.event.ListSelectionEvent evt)
 	{
 
 	}
 
 	//Set the list disabled if allfields of table are to be copied
-	private void chAllFieldsActionPerformed(java.awt.event.ActionEvent evt)
+	private void chAllFieldsActionPerformed(@SuppressWarnings("unused")
+    java.awt.event.ActionEvent evt)
 	{
 		if (chAllFields.isSelected())
 		{
@@ -255,7 +252,8 @@ public class CopyTableCommand implements ICommand
 	}
 
 	//Set the boolean value when the user selects b/w structure and data
-	private void rdStructureDataActionPerformed(java.awt.event.ActionEvent evt)
+	private void rdStructureDataActionPerformed(@SuppressWarnings("unused")
+    java.awt.event.ActionEvent evt)
 	{
 		if (rdStructureData.isSelected())
 			isStructure = false;
@@ -263,7 +261,8 @@ public class CopyTableCommand implements ICommand
 			isStructure = true;
 	}
 
-	private void rdStructureActionPerformed(java.awt.event.ActionEvent evt)
+	private void rdStructureActionPerformed(@SuppressWarnings("unused")
+    java.awt.event.ActionEvent evt)
 	{
 		if (rdStructure.isSelected())
 			isStructure = true;
@@ -271,15 +270,17 @@ public class CopyTableCommand implements ICommand
 			isStructure = false;
 	}
 
-	private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt)
+	private void buttonCancelActionPerformed(@SuppressWarnings("unused")
+    java.awt.event.ActionEvent evt)
 	{
 		jd.setVisible(false);
 		jd.dispose();
 	}
 
-	private void buttonOkActionPerformed(java.awt.event.ActionEvent evt)
+	private void buttonOkActionPerformed(@SuppressWarnings("unused")
+    java.awt.event.ActionEvent evt)
 	{
-		newTableName = (String) tfTableName.getText();
+		newTableName = tfTableName.getText();
 		String selectedFields = "";
 		String fields = "";
 		Object[] obj = listFields.getSelectedValues();
@@ -331,7 +332,8 @@ public class CopyTableCommand implements ICommand
 	}
 
 	/** Closes the dialog */
-	private void closeDialog(java.awt.event.WindowEvent evt)
+	private void closeDialog(@SuppressWarnings("unused")
+    java.awt.event.WindowEvent evt)
 	{
 		jd.setVisible(false);
 		jd.dispose();

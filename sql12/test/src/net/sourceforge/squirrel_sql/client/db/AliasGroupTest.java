@@ -52,7 +52,9 @@ public class AliasGroupTest extends BaseSQuirreLTestCase {
         ag3.setIdentifier(id2);
         ag3.setName(name2);
         
-        AliasGroup ag4 = new AliasGroup() {};
+        AliasGroup ag4 = new AliasGroup() {
+            private static final long serialVersionUID = 1L;
+        };
         ag4.setIdentifier(id1);
         ag4.setName(name1);
         

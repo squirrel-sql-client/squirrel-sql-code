@@ -25,10 +25,10 @@ import java.util.Iterator;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class EnumerationIterator implements Iterator
+public class EnumerationIterator<E> implements Iterator<E>
 {
 	/** <TT>Enumeration</TT> that this <TT>Iterator</TT> is built over. */
-	private Enumeration _en;
+	private Enumeration<E> _en;
 
 	/**
 	 * Ctor.
@@ -37,10 +37,10 @@ public class EnumerationIterator implements Iterator
 	 *				over. If <TT>null</TT> pretends it was an empty
 	 *				<TT>Enumeration</TT> passed.
 	 */
-	public EnumerationIterator(Enumeration en)
+	public EnumerationIterator(Enumeration<E> en)
 	{
 		super();
-		_en = en != null ? en : new EmptyEnumeration();
+		_en = en != null ? en : new EmptyEnumeration<E>();
 	}
 
 	/**
@@ -61,7 +61,7 @@ public class EnumerationIterator implements Iterator
 	 * @throws	<TT>NoSuchElementException</TT>
 	 *			iteration has no more elements.
 	 */
-	public Object next()
+	public E next()
 	{
 		return _en.nextElement();
 	}

@@ -40,7 +40,9 @@ public class SQLHistoryItemTest extends TestCase {
         SQLHistoryItem item1 = new SQLHistoryItem(sql1, aliasName1);
         SQLHistoryItem item2 = new SQLHistoryItem(sql1, aliasName1);
         SQLHistoryItem item3 = new SQLHistoryItem(sql2, aliasName2);
-        SQLHistoryItem item4 = new SQLHistoryItem(sql1, aliasName1) {} ;
+        SQLHistoryItem item4 = new SQLHistoryItem(sql1, aliasName1) {
+            private static final long serialVersionUID = 1L;
+        } ;
         
         new EqualsTester(item1, item2, item3, item4);
     }

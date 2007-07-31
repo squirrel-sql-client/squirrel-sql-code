@@ -34,7 +34,7 @@ public class IndexInfoBeanInfo extends SimpleBeanInfo
     private static final StringManager s_stringMgr =
         StringManagerFactory.getStringManager(IndexInfoBeanInfo.class);
 
-    private static final Class CLAZZ = IndexInfo.class;
+    private static final Class<IndexInfo> CLAZZ = IndexInfo.class;
 
     private static interface IPropertyNames extends IndexInfo.IPropertyNames
     {

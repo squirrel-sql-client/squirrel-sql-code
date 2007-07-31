@@ -113,7 +113,8 @@ class LAFRegister
 	 * Collection of <TT>ILookAndFeelController</TT> objects keyed by
 	 * the Look and Feel class name.
 	 */
-	private Map _lafControllers = new HashMap();
+	private Map<String, ILookAndFeelController> _lafControllers = 
+        new HashMap<String, ILookAndFeelController>();
 	/**
 	 * Default LAF controller. Used if a specialised one isn't available for
      * the LAF in _lafControllers.
@@ -195,7 +196,7 @@ class LAFRegister
 		{
 			throw new IllegalArgumentException("lafClassName == null");
 		}
-		ILookAndFeelController ctrl = (ILookAndFeelController)_lafControllers.get(lafClassName);
+		ILookAndFeelController ctrl = _lafControllers.get(lafClassName);
 		if (ctrl == null)
 		{
 			ctrl = _dftLAFController;
@@ -223,7 +224,7 @@ class LAFRegister
 		final LAFPreferences prefs = _plugin.getLAFPreferences();
 		final String lafClassName = prefs.getLookAndFeelClassName();
 		// Get Look and Feel class object.
-		Class lafClass = null;
+		Class<?> lafClass = null;
 		if (_lafClassLoader != null)
 		{
 			lafClass = Class.forName(lafClassName, true, _lafClassLoader);
@@ -340,10 +341,10 @@ class LAFRegister
 	private void installLookAndFeels()
 	{
 		// Map of JAR file URLs containing LAFs keyed by the LAF class name.
-		final Map lafs = loadInstallProperties();
+		final Map<String, URL> lafs = loadInstallProperties();
 		// Retrieve URLs of all the Look and Feel jars and store in lafUrls.
-		final List lafUrls = new ArrayList();
-		for (Iterator it = lafs.values().iterator(); it.hasNext();)
+		final List<URL> lafUrls = new ArrayList<URL>();
+		for (Iterator<URL> it = lafs.values().iterator(); it.hasNext();)
 		{
 			lafUrls.add(it.next());
 		}
@@ -352,11 +353,11 @@ class LAFRegister
 		try
 		{
 			URL[] urls = new URL[lafUrls.size()];
-			_lafClassLoader = new MyURLClassLoader((URL[]) lafUrls.toArray(urls));
-			for (Iterator it = lafs.keySet().iterator(); it.hasNext();)
+			_lafClassLoader = new MyURLClassLoader(lafUrls.toArray(urls));
+			for (Iterator<String> it = lafs.keySet().iterator(); it.hasNext();)
 			{
-				String className = (String)it.next(); 
-				Class lafClass = Class.forName(className, false, _lafClassLoader);
+				String className = it.next(); 
+				Class<?> lafClass = Class.forName(className, false, _lafClassLoader);
 				try
 				{
 					LookAndFeel laf = (LookAndFeel)lafClass.newInstance();
@@ -431,9 +432,10 @@ class LAFRegister
 			s_log.error("Error installing SkinLookAndFeelController", ex);
 		}
 		// Initialize all the LAF controllers.
-		for (Iterator it = _lafControllers.values().iterator(); it.hasNext();)
+		for (Iterator<ILookAndFeelController> it = 
+                _lafControllers.values().iterator(); it.hasNext();)
 		{
-			((ILookAndFeelController)it.next()).initialize();
+			it.next().initialize();
 		}
 	}
 	/**
@@ -443,9 +445,9 @@ class LAFRegister
 	 * 
 	 * @return	Map
 	 */
-	private Map loadInstallProperties()
+	private Map<String, URL> loadInstallProperties()
 	{
-		Map lafs = new HashMap();
+		Map<String, URL> lafs = new HashMap<String, URL>();
 		// Directory containing the standard LAF jar files.
 		final File stdLafJarDir = _plugin.getLookAndFeelFolder();
 		// Load info about the standard LAFs that come with this plugin.

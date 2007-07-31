@@ -31,16 +31,16 @@ import java.util.ArrayList;
  */
 public class SessionWindowsHolder
 {
-   HashMap _framesBySessionIdentifier = new HashMap();
-   HashMap _sessionIdentifierByFrame = new HashMap();
-   Vector _framesInOpeningSequence = new Vector();
+   HashMap<IIdentifier, List<BaseSessionInternalFrame>> _framesBySessionIdentifier = new HashMap<IIdentifier, List<BaseSessionInternalFrame>>();
+   HashMap<BaseSessionInternalFrame, IIdentifier> _sessionIdentifierByFrame = new HashMap<BaseSessionInternalFrame, IIdentifier>();
+   Vector<BaseSessionInternalFrame> _framesInOpeningSequence = new Vector<BaseSessionInternalFrame>();
 
    public int addFrame(IIdentifier sessionIdentifier, BaseSessionInternalFrame internalFrame)
    {
-      List windowList = (List)_framesBySessionIdentifier.get(sessionIdentifier);
+      List<BaseSessionInternalFrame> windowList = _framesBySessionIdentifier.get(sessionIdentifier);
       if (windowList == null)
       {
-         windowList = new ArrayList();
+         windowList = new ArrayList<BaseSessionInternalFrame>();
          _framesBySessionIdentifier.put(sessionIdentifier, windowList);
       }
       windowList.add(internalFrame);
@@ -54,7 +54,7 @@ public class SessionWindowsHolder
 
    public BaseSessionInternalFrame[] getFramesOfSession(IIdentifier sessionIdentifier)
    {
-      List list = (List) _framesBySessionIdentifier.get(sessionIdentifier);
+      List<BaseSessionInternalFrame> list = _framesBySessionIdentifier.get(sessionIdentifier);
 
       if(null == list)
       {
@@ -62,20 +62,20 @@ public class SessionWindowsHolder
       }
       else
       {
-         return (BaseSessionInternalFrame[]) list.toArray(new BaseSessionInternalFrame[list.size()]);
+         return list.toArray(new BaseSessionInternalFrame[list.size()]);
       }
    }
 
    public void removeWindow(BaseSessionInternalFrame internalFrame)
    {
-      IIdentifier sessionIdentifier = (IIdentifier) _sessionIdentifierByFrame.get(internalFrame);
+      IIdentifier sessionIdentifier = _sessionIdentifierByFrame.get(internalFrame);
 
       if(null == sessionIdentifier)
       {
          throw new IllegalArgumentException("Unknown Frame " + internalFrame.getTitle());
       }
 
-      List framesOfSession = (List) _framesBySessionIdentifier.get(sessionIdentifier);
+      List<BaseSessionInternalFrame> framesOfSession = _framesBySessionIdentifier.get(sessionIdentifier);
       framesOfSession.remove(internalFrame);
 
       _framesInOpeningSequence.remove(internalFrame);
@@ -101,13 +101,13 @@ public class SessionWindowsHolder
 
       if(nextIx < _framesInOpeningSequence.size())
       {
-         return (BaseSessionInternalFrame) _framesInOpeningSequence.get(nextIx);
+         return _framesInOpeningSequence.get(nextIx);
       }
       else
       {
          if(1 < _framesInOpeningSequence.size())
          {
-            return (BaseSessionInternalFrame) _framesInOpeningSequence.get(0);
+            return _framesInOpeningSequence.get(0);
          }
          else
          {
@@ -122,14 +122,14 @@ public class SessionWindowsHolder
 
       if( 0 <= prevIx)
       {
-         return (BaseSessionInternalFrame) _framesInOpeningSequence.get(prevIx);
+         return _framesInOpeningSequence.get(prevIx);
       }
       else
       {
 
          if(1 < _framesInOpeningSequence.size())
          {
-            return (BaseSessionInternalFrame) _framesInOpeningSequence.get(_framesInOpeningSequence.size() - 1);
+            return _framesInOpeningSequence.get(_framesInOpeningSequence.size() - 1);
          }
          else
          {

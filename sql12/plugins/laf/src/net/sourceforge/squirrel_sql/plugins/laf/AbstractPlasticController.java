@@ -89,7 +89,7 @@ abstract class AbstractPlasticController extends DefaultLookAndFeelController
 	private final LAFRegister _lafRegister;
 
 	/** The Plastic themes keyed by the theme name. */
-	private Map _themes = new TreeMap();
+	private Map<String, MetalTheme> _themes = new TreeMap<String, MetalTheme>();
 
 	/**
 	 * Ctor specifying the Look and Feel plugin and register.
@@ -129,7 +129,7 @@ abstract class AbstractPlasticController extends DefaultLookAndFeelController
 			try
 			{
 				
-				Class clazz = 
+				Class<?> clazz = 
 					Class.forName(PLASTIC_THEME_CLASS_NAMES[i], false, cl);
 				MetalTheme theme = (MetalTheme)clazz.newInstance();
 				_themes.put(theme.getName(), theme); 
@@ -205,7 +205,7 @@ abstract class AbstractPlasticController extends DefaultLookAndFeelController
 
 	final MetalTheme getThemeForName(String name)
 	{
-		return (MetalTheme)_themes.get(name);
+		return _themes.get(name);
 	}
 
 	/**
@@ -238,7 +238,7 @@ abstract class AbstractPlasticController extends DefaultLookAndFeelController
 		return _lafPlugin;
 	}
 
-	Iterator themesIterator()
+	Iterator<MetalTheme> themesIterator()
 	{
 		return _themes.values().iterator();
 	}
@@ -248,7 +248,8 @@ abstract class AbstractPlasticController extends DefaultLookAndFeelController
 	 */
 	final static class PrefsPanel extends BaseLAFPreferencesPanelComponent
 	{
-		private AbstractPlasticController _ctrl;
+        private static final long serialVersionUID = 1L;
+        private AbstractPlasticController _ctrl;
 		private JComboBox _themeCmb;
 		private int _origSelThemeIdx;
 
@@ -304,9 +305,9 @@ abstract class AbstractPlasticController extends DefaultLookAndFeelController
 		{
 			_themeCmb.removeAllItems();
 
-			for(Iterator it = _ctrl.themesIterator(); it.hasNext();)
+			for(Iterator<MetalTheme> it = _ctrl.themesIterator(); it.hasNext();)
 			{
-				_themeCmb.addItem(((MetalTheme)it.next()).getName());
+				_themeCmb.addItem((it.next()).getName());
 			}
 	
 			if (_themeCmb.getModel().getSize() > 0)

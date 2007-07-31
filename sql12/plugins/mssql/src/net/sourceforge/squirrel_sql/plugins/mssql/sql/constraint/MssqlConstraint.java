@@ -26,11 +26,11 @@ public class MssqlConstraint {
      * Holds value of property constraintName.
      */
     private String _constraintName;
-    private ArrayList _constraintColumns;
+    private ArrayList<String> _constraintColumns;
     
     /** Creates a new instance of MssqlConstraint */
     public MssqlConstraint() {
-        _constraintColumns = new ArrayList();
+        _constraintColumns = new ArrayList<String>();
     }
     
     /**
@@ -59,7 +59,7 @@ public class MssqlConstraint {
     
     public boolean constrainsColumn(String columnName) {
         for (int i = 0; i < _constraintColumns.size(); i++)
-            if (columnName.equals((String) _constraintColumns.get(i)))
+            if (columnName.equals(_constraintColumns.get(i)))
                 return true;
         return false;
     }

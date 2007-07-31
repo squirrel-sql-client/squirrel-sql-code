@@ -264,7 +264,7 @@ public class GUIUtils
 		{
 			throw new IllegalArgumentException("null JInternalFrame[] passed");
 		}
-		List framesList = new ArrayList();
+		List<JInternalFrame> framesList = new ArrayList<JInternalFrame>();
 		for (int i = 0; i < frames.length; ++i)
 		{
 			JInternalFrame fr = frames[i];
@@ -273,7 +273,7 @@ public class GUIUtils
 				framesList.add(frames[i]);
 			}
 		}
-		return (JInternalFrame[]) framesList.toArray(new JInternalFrame[framesList.size()]);
+		return framesList.toArray(new JInternalFrame[framesList.size()]);
 	}
 
 	/**
@@ -288,7 +288,7 @@ public class GUIUtils
 		{
 			throw new IllegalArgumentException("null JInternalFrame[] passed");
 		}
-		List framesList = new ArrayList();
+		List<JInternalFrame> framesList = new ArrayList<JInternalFrame>();
 		for (int i = 0; i < frames.length; ++i)
 		{
 			JInternalFrame fr = frames[i];
@@ -297,7 +297,7 @@ public class GUIUtils
 				framesList.add(frames[i]);
 			}
 		}
-		return (JInternalFrame[]) framesList.toArray(new JInternalFrame[framesList.size()]);
+		return framesList.toArray(new JInternalFrame[framesList.size()]);
 	}
 
 	/**
@@ -313,7 +313,7 @@ public class GUIUtils
 		{
 			throw new IllegalArgumentException("null JInternalFrame[] passed");
 		}
-		List framesList = new ArrayList();
+		List<JInternalFrame> framesList = new ArrayList<JInternalFrame>();
 		for (int i = 0; i < frames.length; ++i)
 		{
 			JInternalFrame fr = frames[i];
@@ -322,7 +322,7 @@ public class GUIUtils
 				framesList.add(frames[i]);
 			}
 		}
-		return (JInternalFrame[]) framesList.toArray(new JInternalFrame[framesList.size()]);
+		return framesList.toArray(new JInternalFrame[framesList.size()]);
 	}
 
 	public static boolean isWithinParent(Component wind)
@@ -363,7 +363,8 @@ public class GUIUtils
 	public static Rectangle getScreenBoundsFor(Rectangle rc)
 	{
         final GraphicsDevice[] gds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
-        final List configs = new ArrayList();
+        final List<GraphicsConfiguration> configs = 
+            new ArrayList<GraphicsConfiguration>();
 
         for (int i = 0; i < gds.length; i++)
         {
@@ -377,9 +378,9 @@ public class GUIUtils
         GraphicsConfiguration selected = null;
         if (configs.size() > 0)
         {
-            for (Iterator it = configs.iterator(); it.hasNext();)
+            for (Iterator<GraphicsConfiguration> it = configs.iterator(); it.hasNext();)
             {
-            	GraphicsConfiguration gcc = (GraphicsConfiguration)it.next();
+            	GraphicsConfiguration gcc = it.next();
                 if (selected == null)
                     selected = gcc;
                 else
@@ -506,7 +507,7 @@ public class GUIUtils
        StringBuffer result = new StringBuffer();
        char[] lineChars = line.toCharArray();
        int lastBreakCharIdx = -1;
-       ArrayList breakPoints = new ArrayList();
+       ArrayList<Integer> breakPoints = new ArrayList<Integer>();
        
        // look for places to break the string
        for (int i = 0; i < lineChars.length; i++) {
@@ -522,8 +523,8 @@ public class GUIUtils
            breakPoints.add(new Integer(lineChars.length));
        }
        int lastBreakPointIdx = 0;
-       for (Iterator iter = breakPoints.iterator(); iter.hasNext();) {
-           int breakPointIdx = ((Integer) iter.next()).intValue() + 1;
+       for (Iterator<Integer> iter = breakPoints.iterator(); iter.hasNext();) {
+           int breakPointIdx = (iter.next()).intValue() + 1;
            if (breakPointIdx > line.length()) {
                breakPointIdx = line.length();
            }

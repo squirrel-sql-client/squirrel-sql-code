@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -52,11 +53,13 @@ public class UserScriptPlugin extends DefaultSessionPlugin
    /**
     * Logger for this class.
     */
+   @SuppressWarnings("unused")
    private static ILogger s_log = LoggerController.createLogger(UserScriptPlugin.class);
 
    private PluginResources _resources;
 
-   private Hashtable _userScriptAdminsBySessionId = new Hashtable();
+   private Hashtable<IIdentifier, UserScriptAdmin> _userScriptAdminsBySessionId = 
+       new Hashtable<IIdentifier, UserScriptAdmin>();
    private URLClassLoader m_userScriptClassLoader;
 
    /**
@@ -234,7 +237,7 @@ public class UserScriptPlugin extends DefaultSessionPlugin
 
    public UserScriptAdmin getUserScriptAdmin(ISession session)
    {
-      return (UserScriptAdmin) _userScriptAdminsBySessionId.get(session.getIdentifier());
+      return _userScriptAdminsBySessionId.get(session.getIdentifier());
    }
 
    public URLClassLoader getUserScriptClassLoader()

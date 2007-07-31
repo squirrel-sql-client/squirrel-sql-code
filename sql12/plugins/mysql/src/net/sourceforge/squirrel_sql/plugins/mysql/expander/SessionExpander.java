@@ -21,16 +21,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
-
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-//import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-//import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
-
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.plugins.mysql.IObjectTypes;
 /**
  * This class add new child nodes to the Database node.
@@ -54,11 +49,10 @@ public class SessionExpander implements INodeExpander
 	 * @return	A list of <TT>ObjectTreeNode</TT> objects representing the child
 	 *			nodes for the passed node.
 	 */
-	public List createChildren(ISession session, ObjectTreeNode parentNode)
+	public List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode parentNode)
 		throws SQLException
 	{
-		final List childNodes = new ArrayList();
-		final ISQLConnection conn = session.getSQLConnection();
+		final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
 		final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
 
 		// Users.

@@ -19,6 +19,19 @@ package net.sourceforge.squirrel_sql.client.gui.session;
 * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.BorderLayout;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.prefs.Preferences;
+
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
@@ -27,22 +40,10 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
-import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import java.awt.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.prefs.Preferences;
 /**
  * This tabbed panel is the main panel within the session window.
  *
@@ -50,7 +51,9 @@ import java.util.prefs.Preferences;
  */
 public class MainPanel extends JPanel
 {
-	/**
+    private static final long serialVersionUID = 1L;
+
+    /**
 	 * IDs of tabs.
 	 */
 	public interface ITabIndexes
@@ -82,7 +85,7 @@ public class MainPanel extends JPanel
 	 * Collection of <TT>IMainPanelTab</TT> objects displayed in
 	 * this tabbed panel.
 	 */
-	private List _tabs = new ArrayList();
+	private List<IMainPanelTab> _tabs = new ArrayList<IMainPanelTab>();
 
    private static final String PREFS_KEY_SELECTED_TAB_IX = "squirrelSql_mainPanel_sel_tab_ix";
 
@@ -113,7 +116,7 @@ public class MainPanel extends JPanel
 		propertiesHaveChanged(null);
 
 		// Refresh the currently selected tab.
-		((IMainPanelTab)_tabs.get(getTabbedPane().getSelectedIndex())).select();
+		(_tabs.get(getTabbedPane().getSelectedIndex())).select();
 	}
 
 	public void addNotify()
@@ -283,11 +286,11 @@ public class MainPanel extends JPanel
 	 */
 	void sessionClosing(ISession session)
 	{
-		for (Iterator it = _tabs.iterator(); it.hasNext();)
+		for (Iterator<IMainPanelTab> it = _tabs.iterator(); it.hasNext();)
 		{
 			try
 			{
-				((IMainPanelTab)it.next()).sessionClosing(session);
+				(it.next()).sessionClosing(session);
 			}
 			catch (Throwable th)
 			{
@@ -338,7 +341,7 @@ public class MainPanel extends JPanel
 		int idx = _tabPnl.getSelectedIndex();
 		if (idx != -1)
 		{
-			((IMainPanelTab)_tabs.get(idx)).select();
+			(_tabs.get(idx)).select();
 		}
 	}
 

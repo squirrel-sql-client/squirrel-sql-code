@@ -21,7 +21,7 @@ import java.util.Vector;
  */
 public class LoggerController
 {
-	private static Vector s_oldfactories = new Vector();
+	private static Vector<ILoggerFactory> s_oldfactories = new Vector<ILoggerFactory>();
 	private static ILoggerFactory s_factory = new Log4jLoggerFactory();
 
 	public static void registerLoggerFactory(ILoggerFactory factory)
@@ -30,7 +30,7 @@ public class LoggerController
 		s_factory = factory != null ? factory : new Log4jLoggerFactory();
 	}
 
-	public static ILogger createLogger(Class clazz)
+	public static ILogger createLogger(Class<?> clazz)
 	{
 		return s_factory.createLogger(clazz);
 	}
@@ -46,7 +46,7 @@ public class LoggerController
 
 		for (int i = 0; i < s_oldfactories.size(); i++)
 		{
-			ILoggerFactory iLoggerFactory = (ILoggerFactory) s_oldfactories.get(i);
+			ILoggerFactory iLoggerFactory = s_oldfactories.get(i);
 			iLoggerFactory.addLoggerListener(l);
 		}
 	}
@@ -57,7 +57,7 @@ public class LoggerController
 
 		for (int i = 0; i < s_oldfactories.size(); i++)
 		{
-			ILoggerFactory iLoggerFactory = (ILoggerFactory) s_oldfactories.get(i);
+			ILoggerFactory iLoggerFactory = s_oldfactories.get(i);
 			iLoggerFactory.removeLoggerListener(l);
 		}
 

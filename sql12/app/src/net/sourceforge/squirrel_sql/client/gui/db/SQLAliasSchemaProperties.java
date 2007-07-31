@@ -6,7 +6,10 @@ import java.util.Arrays;
 
 public class SQLAliasSchemaProperties implements Serializable
 {
-   SQLAliasSchemaDetailProperties[] _schemaDetails = new SQLAliasSchemaDetailProperties[0];
+   private static final long serialVersionUID = 1L;
+
+   SQLAliasSchemaDetailProperties[] _schemaDetails = 
+       new SQLAliasSchemaDetailProperties[0];
 
    public static final int GLOBAL_STATE_LOAD_ALL_CACHE_NONE = 0;
    public static final int GLOBAL_STATE_LOAD_AND_CACHE_ALL = 1;
@@ -81,7 +84,7 @@ public class SQLAliasSchemaProperties implements Serializable
       if(GLOBAL_STATE_SPECIFY_SCHEMAS == _globalState &&
          GLOBAL_STATE_SPECIFY_SCHEMAS == schemaPropsCacheIsBasedOn._globalState)
       {
-         ArrayList ret = new ArrayList();
+         ArrayList<SchemaLoadInfo> ret = new ArrayList<SchemaLoadInfo>();
 
          for (int i = 0; i < _schemaDetails.length; i++)
          {
@@ -91,7 +94,7 @@ public class SQLAliasSchemaProperties implements Serializable
             SchemaLoadInfo buf = new SchemaLoadInfo(addStringArrays(tableTypes, viewTypes));
             buf.schemaName = _schemaDetails[i].getSchemaName();
 
-            ArrayList tableTypesToLoad = new ArrayList();
+            ArrayList<String> tableTypesToLoad = new ArrayList<String>();
 
             if(needsLoading(_schemaDetails[i].getTable(), null == cachedDetailProp ? null : new Integer(cachedDetailProp.getTable())))
             {
@@ -108,12 +111,12 @@ public class SQLAliasSchemaProperties implements Serializable
 
             if(0 < tableTypesToLoad.size() || buf.loadProcedures)
             {
-               buf.tableTypes = (String[]) tableTypesToLoad.toArray(new String[tableTypesToLoad.size()]);
+               buf.tableTypes = tableTypesToLoad.toArray(new String[tableTypesToLoad.size()]);
                ret.add(buf);
             }
          }
 
-         return (SchemaLoadInfo[]) ret.toArray(new SchemaLoadInfo[ret.size()]);
+         return ret.toArray(new SchemaLoadInfo[ret.size()]);
       }
 
       return getSchemasToLoadDefault(tableTypes, viewTypes);
@@ -133,7 +136,8 @@ public class SQLAliasSchemaProperties implements Serializable
       }
       else if(SQLAliasSchemaProperties.GLOBAL_STATE_SPECIFY_SCHEMAS == _globalState)
       {
-         ArrayList schemaLoadInfos = new ArrayList();
+         ArrayList<SchemaLoadInfo> schemaLoadInfos = 
+             new ArrayList<SchemaLoadInfo>();
 
          for (int i = 0; i < _schemaDetails.length; i++)
          {
@@ -171,7 +175,7 @@ public class SQLAliasSchemaProperties implements Serializable
             schemaLoadInfos.add(schemaLoadInfo);
          }
 
-         return (SchemaLoadInfo[]) schemaLoadInfos.toArray(new SchemaLoadInfo[schemaLoadInfos.size()]);
+         return schemaLoadInfos.toArray(new SchemaLoadInfo[schemaLoadInfos.size()]);
       }
       else
       {
@@ -182,11 +186,11 @@ public class SQLAliasSchemaProperties implements Serializable
 
    private String[] addStringArrays(String[] tableTypes, String[] viewTypes)
    {
-      ArrayList ret = new ArrayList();
+      ArrayList<String> ret = new ArrayList<String>();
       ret.addAll(Arrays.asList(tableTypes));
       ret.addAll(Arrays.asList(viewTypes));
 
-      return (String[]) ret.toArray(new String[ret.size()]);
+      return ret.toArray(new String[ret.size()]);
    }
 
    private boolean needsLoading(int loadingID, Integer cachedLoadingID)
@@ -222,7 +226,8 @@ public class SQLAliasSchemaProperties implements Serializable
 
    public SchemaTableTypeCombination[] getAllSchemaTableTypeCombinationsNotToBeCached(String[] tableTypes, String[] viewTypes)
    {
-      ArrayList ret = new ArrayList();
+      ArrayList<SchemaTableTypeCombination> ret = 
+          new ArrayList<SchemaTableTypeCombination>();
 
       for (int i = 0; i < _schemaDetails.length; i++)
       {
@@ -243,12 +248,12 @@ public class SQLAliasSchemaProperties implements Serializable
          }
       }
 
-      return (SchemaTableTypeCombination[]) ret.toArray(new SchemaTableTypeCombination[ret.size()]);
+      return ret.toArray(new SchemaTableTypeCombination[ret.size()]);
    }
 
    public String[] getAllSchemaProceduresNotToBeCached()
    {
-      ArrayList ret = new ArrayList();
+      ArrayList<String> ret = new ArrayList<String>();
 
       for (int i = 0; i < _schemaDetails.length; i++)
       {
@@ -259,7 +264,7 @@ public class SQLAliasSchemaProperties implements Serializable
 
       }
 
-      return (String[]) ret.toArray(new String[ret.size()]);
+      return ret.toArray(new String[ret.size()]);
    }
 
    public boolean getExpectsSomeCachedData()
@@ -313,7 +318,7 @@ public class SQLAliasSchemaProperties implements Serializable
       }
       else if(GLOBAL_STATE_SPECIFY_SCHEMAS == _globalState)
       {
-         ArrayList schemaNames = new ArrayList();
+         ArrayList<String> schemaNames = new ArrayList<String>();
 
          ret.state = SchemaNameLoadInfo.STATE_USES_PROVIDED_SCHEMA_NAMES;
 
@@ -329,7 +334,7 @@ public class SQLAliasSchemaProperties implements Serializable
             schemaNames.add(_schemaDetails[i].getSchemaName());
          }
 
-         ret.schemaNames = (String[]) schemaNames.toArray(new String[schemaNames.size()]);
+         ret.schemaNames = schemaNames.toArray(new String[schemaNames.size()]);
       }
       else
       {

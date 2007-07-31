@@ -18,20 +18,23 @@ package net.sourceforge.squirrel_sql.plugins.mssql.util;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.sql.Connection;
 import java.sql.CallableStatement;
+import java.sql.Connection;
 import java.sql.ResultSet;
-import java.lang.StringBuffer;
+import java.util.List;
 
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IUDTInfo;
-
-import net.sourceforge.squirrel_sql.plugins.mssql.sql.constraint.*;
-import net.sourceforge.squirrel_sql.plugins.mssql.sql.dbfile.*;
+import net.sourceforge.squirrel_sql.plugins.mssql.sql.constraint.CheckConstraint;
+import net.sourceforge.squirrel_sql.plugins.mssql.sql.constraint.DefaultConstraint;
+import net.sourceforge.squirrel_sql.plugins.mssql.sql.constraint.ForeignKeyConstraint;
+import net.sourceforge.squirrel_sql.plugins.mssql.sql.constraint.PrimaryKeyConstraint;
+import net.sourceforge.squirrel_sql.plugins.mssql.sql.constraint.TableConstraints;
+import net.sourceforge.squirrel_sql.plugins.mssql.sql.dbfile.DatabaseFile;
+import net.sourceforge.squirrel_sql.plugins.mssql.sql.dbfile.DatabaseFileInfo;
 
 public class MssqlIntrospector {
     
@@ -66,10 +69,10 @@ public class MssqlIntrospector {
         while (rs.next()) {
             String constraintType = rs.getString(1);
             String constraintName = rs.getString(2);
-            String deleteAction = rs.getString(3);
-            String updateAction = rs.getString(4);
-            String statusEnabled = rs.getString(5);
-            String statusForReplication = rs.getString(6);
+            //String deleteAction = rs.getString(3);
+            //String updateAction = rs.getString(4);
+            //String statusEnabled = rs.getString(5);
+            //String statusForReplication = rs.getString(6);
             String constraintKeys = rs.getString(7);
             
             if (constraintType.startsWith("DEFAULT")) {
@@ -449,12 +452,12 @@ public class MssqlIntrospector {
             dbo    billing_bak            public             dbo     Grant       Update (All+New)
             dbo    billing_bak            usbilling          dbo     Deny        Insert .
             */
-            String owner = rs.getString(1);
+            //String owner = rs.getString(1);
             String grantee = rs.getString(3);
-            String grantor = rs.getString(4);
+            //String grantor = rs.getString(4);
             String protectType = rs.getString(5).trim();
             String action = rs.getString(6);
-            String column = rs.getString(7);
+            //String column = rs.getString(7);
 
             /*
             GRANT 
@@ -561,10 +564,12 @@ public class MssqlIntrospector {
                 buf.append("NOT NULL ");
 
             if (withConstraints) {
+                List<DefaultConstraint> defs = 
+                    constraints.getDefaultsForColumn(colName);
                 /* there can be only one default in truth, but the model allows more than one. */
-                Object[] defs = constraints.getDefaultsForColumn(colName);
-                if (defs != null && defs.length == 1) {
-                    DefaultConstraint def = (DefaultConstraint) defs[0];
+                
+                if (defs != null && defs.size() == 1) {
+                    DefaultConstraint def = defs.get(0);
                     buf.append("CONSTRAINT [");
                     buf.append(def.getConstraintName());
                     buf.append("] DEFAULT ");
@@ -578,9 +583,9 @@ public class MssqlIntrospector {
 
         if (withConstraints) {
             /* there can be only one PK in truth, but the model allows more than one. */
-            Object[] pks = constraints.getPrimaryKeyConstraints();
-            if (pks != null && pks.length == 1) {
-                PrimaryKeyConstraint pk = (PrimaryKeyConstraint) pks[0];
+            List<PrimaryKeyConstraint> pks = constraints.getPrimaryKeyConstraints();
+            if (pks != null && pks.size() == 1) {
+                PrimaryKeyConstraint pk = pks.get(0);
                 buf.append("\tCONSTRAINT [");
                 buf.append(pk.getConstraintName());
                 buf.append("] PRIMARY KEY ");
@@ -598,9 +603,9 @@ public class MssqlIntrospector {
                 /* TODO: FILLFACTOR, ON [PRIMARY], etc. */
             }
 
-            Object[] fks = constraints.getForeignKeyConstraints();
-            for (int i = 0; i < fks.length; i++) {
-                ForeignKeyConstraint fk = (ForeignKeyConstraint) fks[i];
+            List<ForeignKeyConstraint> fks = constraints.getForeignKeyConstraints();
+            for (int i = 0; i < fks.size(); i++) {
+                ForeignKeyConstraint fk = fks.get(i);
                 buf.append("\tFOREIGN KEY\n\t(\n\t\t");
                 Object[] foreignColumns = fk.getConstraintColumns();
                 for (int j = 0; j < foreignColumns.length; j++) {
@@ -624,9 +629,7 @@ public class MssqlIntrospector {
                 buf.append("\n\t),");
             }
 
-            Object[] checks = constraints.getCheckConstraints();
-            for (int i = 0; i < checks.length; i++) {
-                CheckConstraint check = (CheckConstraint) checks[i];
+            for (CheckConstraint check : constraints.getCheckConstraints()) {
                 buf.append("\tCONSTRAINT [");
                 buf.append(check.getConstraintName());
                 buf.append("] CHECK ");
@@ -641,6 +644,7 @@ public class MssqlIntrospector {
         return buf.toString();
     }
     
+    @SuppressWarnings("unused")
     public static String generateUsersAndRolesScript(String catalogName, ISQLConnection conn) throws java.sql.SQLException {    
         StringBuffer buf = new StringBuffer();
         

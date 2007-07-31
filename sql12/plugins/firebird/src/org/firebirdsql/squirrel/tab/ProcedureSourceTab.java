@@ -39,7 +39,8 @@ public class ProcedureSourceTab extends BaseSourceTab
 			+ " where rdb$procedure_name = ?";
 
 	/** Logger for this class. */
-	private final static ILogger s_log =
+	@SuppressWarnings("unused")
+    private final static ILogger s_log =
 		LoggerController.createLogger(ProcedureSourceTab.class);
 
 	public ProcedureSourceTab(String hint)

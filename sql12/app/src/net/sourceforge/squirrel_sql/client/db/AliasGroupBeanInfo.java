@@ -27,7 +27,7 @@ import java.beans.SimpleBeanInfo;
  */
 public class AliasGroupBeanInfo extends SimpleBeanInfo
 {
-	private static final Class CLAZZ = AliasGroup.class;
+	private static final Class<AliasGroup> CLAZZ = AliasGroup.class;
 
 	private static interface IPropertyNames extends AliasGroup.IPropertyNames
 	{

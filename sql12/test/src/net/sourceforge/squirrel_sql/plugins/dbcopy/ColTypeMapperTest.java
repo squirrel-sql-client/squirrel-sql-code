@@ -17,7 +17,6 @@ package net.sourceforge.squirrel_sql.plugins.dbcopy;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import static java.lang.System.out;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
@@ -27,7 +26,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLTestCase;
-import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.ApplicationManager;
 import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -78,8 +76,10 @@ public class ColTypeMapperTest extends BaseSQuirreLTestCase {
         disableLogging(DBUtil.class);
         IPlugin plugin = createNiceMock(IPlugin.class);
         try {
+            String dbcopyPrefsDir = 
+                System.getProperty("user.home") + "/.squirrel-sql/plugins/dbcopy";
             expect(plugin.getPluginUserSettingsFolder())
-                            .andReturn(new File(".")).anyTimes();
+                            .andReturn(new File(dbcopyPrefsDir)).anyTimes();
             replay(plugin);
             PreferencesManager.initialize(plugin);
         } catch (Exception e) {

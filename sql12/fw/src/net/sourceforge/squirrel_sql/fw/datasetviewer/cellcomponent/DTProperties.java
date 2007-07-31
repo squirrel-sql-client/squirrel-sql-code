@@ -76,7 +76,8 @@ public class DTProperties {
 	 * containing the properties for that DataType.
 	 * There is only one copy of this table for all instances of this class.
 	 */
-	private static HashMap dataTypes = new HashMap();
+	private static HashMap<String, HashMap<String, String>> dataTypes = 
+        new HashMap<String, HashMap<String, String>>();
 	
 	/**
 	 * ctor
@@ -90,17 +91,17 @@ public class DTProperties {
 	 */
 	public String[] getDataArray() {
 		// first convert internal data into the string array
-		Iterator keys = dataTypes.keySet().iterator();
+		Iterator<String> keys = dataTypes.keySet().iterator();
 
-		ArrayList propertyList = new ArrayList();
+		ArrayList<String> propertyList = new ArrayList<String>();
 		
 		// get each DataType's info
 		while (keys.hasNext()) {
-			String tableName = (String)keys.next();
-			HashMap h = (HashMap)dataTypes.get(tableName);
-			Iterator propertyNames = h.keySet().iterator();
+			String tableName = keys.next();
+			HashMap<String, ?> h = dataTypes.get(tableName);
+			Iterator<String> propertyNames = h.keySet().iterator();
 			while (propertyNames.hasNext()) {
-				String propertyName = (String)propertyNames.next();
+				String propertyName = propertyNames.next();
 				propertyList.add(
 					tableName + " " +
 					propertyName + "=" +
@@ -108,7 +109,7 @@ public class DTProperties {
 			}
 		}
 
-		dataArray = (String[])propertyList.toArray(dataArray);
+		dataArray = propertyList.toArray(dataArray);
 		return dataArray;
 	}
 	
@@ -119,7 +120,7 @@ public class DTProperties {
 	 * @param inData array of strings in form "DataTypeClass property=value"
 	 */
 	public void setDataArray(String[] inData) {
-		dataTypes = new HashMap();	// make sure we are starting clean
+		dataTypes = new HashMap<String, HashMap<String, String>>();	// make sure we are starting clean
 		
 		// convert each string into Classname, prop, & value and fill it into the data
 		for (int i=0; i< inData.length; i++) {
@@ -127,7 +128,6 @@ public class DTProperties {
 			String dataTypeName = inData[i].substring(0, endIndex);
 			
 			int startIndex;
-			ArrayList colList = new ArrayList();
 			startIndex = endIndex + 1;
 			endIndex = inData[i].indexOf("=", startIndex);
 			String propertyName = inData[i].substring(startIndex, endIndex);
@@ -135,9 +135,9 @@ public class DTProperties {
 			
 			// if we have seen a property for this DataType before, then the
 			// hashmap already exists.  Otherwise, we need to create it now.
-			HashMap h = (HashMap)dataTypes.get(dataTypeName);
+			HashMap<String, String> h = dataTypes.get(dataTypeName);
 			if (h == null) {
-				h = new HashMap();
+				h = new HashMap<String, String>();
 				dataTypes.put(dataTypeName, h);
 			}
 			
@@ -154,9 +154,9 @@ public class DTProperties {
 		String propertyValue) {
 		
 		// get the hashmap for this type, or create it if this is a new property
-		HashMap h = (HashMap)dataTypes.get(dataTypeName);
+		HashMap<String, String> h = dataTypes.get(dataTypeName);
 		if (h == null) {
-			h = new HashMap();
+			h = new HashMap<String, String>();
 			dataTypes.put(dataTypeName, h);
 		}
 		h.put(propertyName, propertyValue);
@@ -167,11 +167,11 @@ public class DTProperties {
 	 * it will be null if the table does not have any limitation on the columns to use.
 	 */
 	public static String get(String dataTypeName, String propertyName) {
-		HashMap h = (HashMap)dataTypes.get(dataTypeName);
+		HashMap<String, String> h = dataTypes.get(dataTypeName);
 		if (h == null)
 			return null;
 		
-		return (String)h.get(propertyName);
+		return h.get(propertyName);
 	}
 		
 }

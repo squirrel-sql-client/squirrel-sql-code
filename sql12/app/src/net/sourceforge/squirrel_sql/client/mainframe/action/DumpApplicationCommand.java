@@ -115,8 +115,8 @@ public class DumpApplicationCommand implements ICommand
 	 */
 	public void execute()
 	{
-		List files = new ArrayList();
-		List titles = new ArrayList();
+		List<File>   files  = new ArrayList<File>();
+		List<String> titles = new ArrayList<String>();
 		synchronized(_app)
 		{
 			ApplicationStatusBean bean = new ApplicationStatusBean();
@@ -224,7 +224,7 @@ public class DumpApplicationCommand implements ICommand
 		deleteTempFiles(files);
 	}
 
-	private void combineTempFiles(List titles, List files)
+	private void combineTempFiles(List<String> titles, List<File> files)
 	{
 		try
 		{
@@ -242,8 +242,7 @@ public class DumpApplicationCommand implements ICommand
 					wtr.println(SEP);
 					wtr.println(titles.get(i));
 					wtr.println(SEP);
-					File file = (File)files.get(i);
-					BufferedReader rdr = new BufferedReader(new FileReader(file));
+					BufferedReader rdr = new BufferedReader(new FileReader(files.get(i)));
 					try
 					{
 						String line = null;
@@ -273,11 +272,11 @@ public class DumpApplicationCommand implements ICommand
 		}
 	}
 
-	private void deleteTempFiles(List files)
+	private void deleteTempFiles(List<File> files)
 	{
 		for (int i = 0, limit = files.size(); i < limit; ++i)
 		{
-			if (!((File)files.get(i)).delete())
+			if (!(files.get(i)).delete())
 			{
                 //i18n[DumpApplicationCommand.error.deletetempfile=Couldn't delete temporary DumpSession file]
 				s_log.error(s_stringMgr.getString("DumpApplicationCommand.error.deletetempfile"));

@@ -26,7 +26,7 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public interface IObjectCache
+public interface IObjectCache<E extends IHasIdentifier>
 {
 	/**
 	 * Retrieve a stored object.
@@ -38,7 +38,7 @@ public interface IObjectCache
 	 * @return  The <CODE>IHasIdentifier</CODE> retrieved or <CODE>null</CODE>
 	 *			if no object exists for <CODE>id</CODE>.
 	 */
-	IHasIdentifier get(Class objClass, IIdentifier id);
+	IHasIdentifier get(Class<E> objClass, IIdentifier id);
 
 	/**
 	 * Store an object.
@@ -49,7 +49,7 @@ public interface IObjectCache
 	 *				Thrown if an object of the same class as <CODE>obj</CODE>
 	 *				and with the same identifier is already in the cache.
 	 */
-	void add(IHasIdentifier obj) throws DuplicateObjectException;
+	void add(E obj) throws DuplicateObjectException;
 
 	/**
 	 * Remove an object.
@@ -57,7 +57,7 @@ public interface IObjectCache
 	 * @param   objClass	Class of object to be removed.
 	 * @param   id			Identifier for object to be removed.
 	 */
-	void remove(Class objClass, IIdentifier id);
+	void remove(Class<E> objClass, IIdentifier id);
 
 	/**
 	 * Return an array of <CODE>Class</CODE objects that represent all the
@@ -65,7 +65,7 @@ public interface IObjectCache
 	 *
 	 * @return  Class[] of all classes stored.
 	 */
-	Class[] getAllClasses();
+	Class<E>[] getAllClasses();
 
 	/**
 	 * Return an <CODE>Iterator</CODE> of all objects stored for the
@@ -75,7 +75,7 @@ public interface IObjectCache
 	 *
 	 * @return  <CODE>Iterator</CODE> over all objects.
 	 */
-	Iterator getAllForClass(Class objClass);
+	Iterator<E> getAllForClass(Class<E> objClass);
 
 	/**
 	 * Adds a listener for changes to the cache entry for the passed class.
@@ -86,7 +86,7 @@ public interface IObjectCache
 	 * @param   objClass	The class of objects whose cache we want to listen
 	 *						to.
 	 */
-	void addChangesListener(IObjectCacheChangeListener lis, Class objClass);
+	void addChangesListener(IObjectCacheChangeListener lis, Class<E> objClass);
 
 	/**
 	 * Removes a listener for changes to the cache entry for the passed class.
@@ -97,5 +97,5 @@ public interface IObjectCache
 	 * @param   objClass	The class of objects whose cache we want to listen
 	 *						to.
 	 */
-	void removeChangesListener(IObjectCacheChangeListener lis, Class objClass);
+	void removeChangesListener(IObjectCacheChangeListener lis, Class<E> objClass);
 }

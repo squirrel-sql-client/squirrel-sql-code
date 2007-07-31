@@ -20,7 +20,10 @@ import java.util.HashMap;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessorFactory;
+
 public interface ISQLEntryPanelFactory
 {
-	ISQLEntryPanel createSQLEntryPanel(ISession session, HashMap props);
+	ISQLEntryPanel createSQLEntryPanel(ISession session, 
+                                       HashMap<String, IParserEventsProcessorFactory> props);
 }

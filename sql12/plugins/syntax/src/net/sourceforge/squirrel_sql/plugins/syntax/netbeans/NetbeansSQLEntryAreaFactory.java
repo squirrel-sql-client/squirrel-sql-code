@@ -17,21 +17,18 @@ package net.sourceforge.squirrel_sql.plugins.syntax.netbeans;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+import java.util.HashMap;
+
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessorFactory;
 import net.sourceforge.squirrel_sql.plugins.syntax.IConstants;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPugin;
-import org.netbeans.editor.ImplementationProvider;
-import org.netbeans.editor.DialogSupport;
-import org.netbeans.modules.editor.NbImplementationProvider;
-import org.netbeans.modules.editor.NbDialogSupport;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.util.Properties;
-import java.util.HashMap;
+import org.netbeans.editor.DialogSupport;
+import org.netbeans.editor.ImplementationProvider;
+import org.netbeans.modules.editor.NbImplementationProvider;
 
 /**
  * Factory for creating Netbeans SQL entry area objects.
@@ -61,7 +58,8 @@ public class NetbeansSQLEntryAreaFactory
 	/**
 	 * @see net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory#createSQLEntryPanel()
 	 */
-	public ISQLEntryPanel createSQLEntryPanel(ISession session, HashMap props)
+	public ISQLEntryPanel createSQLEntryPanel(ISession session, 
+                                              HashMap<String, IParserEventsProcessorFactory> props)
 		throws IllegalArgumentException
 	{
 		if (session == null)

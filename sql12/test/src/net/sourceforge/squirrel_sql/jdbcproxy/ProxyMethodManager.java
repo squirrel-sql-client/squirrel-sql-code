@@ -1,6 +1,5 @@
 package net.sourceforge.squirrel_sql.jdbcproxy;
 
-import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,7 +28,7 @@ public class ProxyMethodManager {
     
     private static Properties _props = null; 
     
-    private static HashMap methodsCalled = new HashMap();
+    private static HashMap<String, Long> methodsCalled = new HashMap<String, Long>();
     
     public static void setDriverProperties(Properties props) {
         _props = props;
@@ -40,7 +39,7 @@ public class ProxyMethodManager {
     {
         String key = className + "." + methodName;
         if (methodsCalled.containsKey(key)) {
-            Long count = (Long)methodsCalled.get(key);
+            Long count = methodsCalled.get(key);
             methodsCalled.put(key, new Long(count.longValue() + 1));
         } else {
             methodsCalled.put(key, new Long(1));
@@ -55,9 +54,9 @@ public class ProxyMethodManager {
 
     public static void printMethodsCalled() {
         if (trackMethods()) {
-            for (Iterator iter = methodsCalled.keySet().iterator(); iter.hasNext();) {
-                String key = (String) iter.next();
-                Long count = (Long)methodsCalled.get(key);
+            for (Iterator<String> iter = methodsCalled.keySet().iterator(); iter.hasNext();) {
+                String key = iter.next();
+                Long count = methodsCalled.get(key);
                 System.out.println(key + " -> "+count.longValue());
             }
         }

@@ -1,17 +1,28 @@
 package net.sourceforge.squirrel_sql.plugins.userscript.kernel;
 
+import java.awt.BorderLayout;
+import java.awt.Frame;
+import java.awt.GridLayout;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.TableColumn;
+
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.DefaultTableColumnModel;
-import java.awt.*;
-
 public class ScriptListDialog extends JDialog
 {
-	private static final StringManager s_stringMgr =
+    private static final long serialVersionUID = 1L;
+
+    private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(ScriptListDialog.class);
 
 
@@ -65,7 +76,8 @@ public class ScriptListDialog extends JDialog
 
 		return ret;
 	}
-
+	
+    @SuppressWarnings("unused")
 	private JPanel createScriptPanel(String applicableScriptsText)
 	{
 		JPanel scriptPnl = new JPanel();

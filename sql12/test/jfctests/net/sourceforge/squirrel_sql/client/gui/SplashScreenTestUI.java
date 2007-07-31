@@ -17,7 +17,7 @@ public class SplashScreenTestUI {
         SquirrelPreferences _prefs = SquirrelPreferences.load();
         
 
-        SplashScreen splash = new SplashScreen(_resources, 15, _prefs);
+        new SplashScreen(_resources, 15, _prefs);
 
 
     }

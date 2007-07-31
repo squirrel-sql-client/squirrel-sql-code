@@ -22,27 +22,14 @@ import net.sourceforge.squirrel_sql.client.session.action.IObjectTreeAction;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.refactoring.commands.DropTablesCommand;
 
 public class DropSelectedTablesAction extends AbstractRefactoringAction
 										implements IObjectTreeAction
 {
-    /** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(DropSelectedTablesAction.class);   
-    
-	/** Title for confirmation dialog. */
-	private static final String TITLE = 
-        s_stringMgr.getString("DropSelectedTablesAction.title");
+    private static final long serialVersionUID = 1L;
 
-	/** Message for confirmation dialog. */
-	private static final String MSG = 
-        s_stringMgr.getString("DropSelectedTablesAction.message");
-
-
-	/**
+    /**
 	 * @param	app	Application API.
 	 */
 	public DropSelectedTablesAction(IApplication app, Resources rsrc)

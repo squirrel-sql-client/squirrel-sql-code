@@ -24,7 +24,7 @@ import java.util.Vector;
 public class Log4jLoggerFactory implements ILoggerFactory
 {
 	private ILoggerListener _listenerOfAllLoggers;
-	private Vector _listeners =new Vector();
+	private Vector<ILoggerListener> _listeners =new Vector<ILoggerListener>();
 
 	public Log4jLoggerFactory()
 	{
@@ -47,11 +47,11 @@ public class Log4jLoggerFactory implements ILoggerFactory
 	{
 		_listenerOfAllLoggers = new ILoggerListener()
 		{
-			public void info(Class source, Object message)
+			public void info(Class<?> source, Object message)
 			{
 				try
 				{
-					ILoggerListener[] listeners = (ILoggerListener[]) _listeners.toArray(new ILoggerListener[_listeners.size()]);
+					ILoggerListener[] listeners = _listeners.toArray(new ILoggerListener[_listeners.size()]);
 					for (int i = 0; i < listeners.length; i++)
 					{
 						listeners[i].info(source, message);
@@ -63,11 +63,11 @@ public class Log4jLoggerFactory implements ILoggerFactory
 				}
 			}
 
-			public void info(Class source, Object message, Throwable th)
+			public void info(Class<?> source, Object message, Throwable th)
 			{
 				try
 				{
-					ILoggerListener[] listeners = (ILoggerListener[]) _listeners.toArray(new ILoggerListener[_listeners.size()]);
+					ILoggerListener[] listeners = _listeners.toArray(new ILoggerListener[_listeners.size()]);
 					for (int i = 0; i < listeners.length; i++)
 					{
 						listeners[i].info(source, message, th);
@@ -79,11 +79,11 @@ public class Log4jLoggerFactory implements ILoggerFactory
 				}
 			}
 
-			public void warn(Class source, Object message)
+			public void warn(Class<?> source, Object message)
 			{
 				try
 				{
-					ILoggerListener[] listeners = (ILoggerListener[]) _listeners.toArray(new ILoggerListener[_listeners.size()]);
+					ILoggerListener[] listeners = _listeners.toArray(new ILoggerListener[_listeners.size()]);
 					for (int i = 0; i < listeners.length; i++)
 					{
 						listeners[i].warn(source, message);
@@ -95,11 +95,11 @@ public class Log4jLoggerFactory implements ILoggerFactory
 				}
 			}
 
-			public void warn(Class source, Object message, Throwable th)
+			public void warn(Class<?> source, Object message, Throwable th)
 			{
 				try
 				{
-					ILoggerListener[] listeners = (ILoggerListener[]) _listeners.toArray(new ILoggerListener[_listeners.size()]);
+					ILoggerListener[] listeners = _listeners.toArray(new ILoggerListener[_listeners.size()]);
 					for (int i = 0; i < listeners.length; i++)
 					{
 						listeners[i].warn(source, message, th);
@@ -111,11 +111,11 @@ public class Log4jLoggerFactory implements ILoggerFactory
 				}
 			}
 
-			public void error(Class source, Object message)
+			public void error(Class<?> source, Object message)
 			{
 				try
 				{
-					ILoggerListener[] listeners = (ILoggerListener[]) _listeners.toArray(new ILoggerListener[_listeners.size()]);
+					ILoggerListener[] listeners = _listeners.toArray(new ILoggerListener[_listeners.size()]);
 					for (int i = 0; i < listeners.length; i++)
 					{
 						listeners[i].error(source, message);
@@ -127,11 +127,11 @@ public class Log4jLoggerFactory implements ILoggerFactory
 				}
 			}
 
-			public void error(Class source, Object message, Throwable th)
+			public void error(Class<?> source, Object message, Throwable th)
 			{
 				try
 				{
-					ILoggerListener[] listeners = (ILoggerListener[]) _listeners.toArray(new ILoggerListener[_listeners.size()]);
+					ILoggerListener[] listeners = _listeners.toArray(new ILoggerListener[_listeners.size()]);
 					for (int i = 0; i < listeners.length; i++)
 					{
 						listeners[i].error(source, message, th);
@@ -150,7 +150,7 @@ public class Log4jLoggerFactory implements ILoggerFactory
 		}
 	}
 
-	public ILogger createLogger(Class clazz)
+	public ILogger createLogger(Class<?> clazz)
 	{
 		return new Log4jLogger(clazz, _listenerOfAllLoggers);
 	}

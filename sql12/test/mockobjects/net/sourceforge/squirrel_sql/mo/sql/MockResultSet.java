@@ -250,9 +250,20 @@ public class MockResultSet implements ResultSet {
 		return null;
 	}
 
-	public Date getDate(int arg0) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+	public Date getDate(int colIdx) throws SQLException {
+        Object[] currentRow = currentRow();
+        if (colIdx-1 < currentRow.length) {
+            
+            if (currentRow[colIdx-1] instanceof Date) {
+                return (Date)currentRow[colIdx-1];    
+            } else {
+                throw new SQLException("not a Date: "+currentRow[colIdx-1].getClass().getName());
+            }
+        } else {
+            throw new SQLException(
+                "Error: requested value for non-existant column with index="+
+                (colIdx-1));
+        }
 	}
 
 	public Date getDate(String arg0) throws SQLException {

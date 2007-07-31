@@ -4,6 +4,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.db.aliasproperties.DriverPropertiesController;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -15,16 +16,17 @@ import java.util.Arrays;
 
 public class AliasPropertiesController
 {
-   private static HashMap _currentlyOpenInstancesByAliasID = new HashMap();
+   private static HashMap<IIdentifier, AliasPropertiesController> _currentlyOpenInstancesByAliasID = 
+       new HashMap<IIdentifier, AliasPropertiesController>();
 
    private AliasPropertiesInternalFrame _frame;
-   private ArrayList _iAliasPropertiesPanelControllers = new ArrayList();
+   private ArrayList<IAliasPropertiesPanelController> _iAliasPropertiesPanelControllers = new ArrayList<IAliasPropertiesPanelController>();
    private IApplication _app;
    private SQLAlias _alias;
 
    public static void showAliasProperties(IApplication app, SQLAlias selectedAlias)
    {
-      AliasPropertiesController openProps = (AliasPropertiesController) _currentlyOpenInstancesByAliasID.get(selectedAlias.getIdentifier());
+      AliasPropertiesController openProps = _currentlyOpenInstancesByAliasID.get(selectedAlias.getIdentifier());
       if(null == openProps)
       {
          _currentlyOpenInstancesByAliasID.put(selectedAlias.getIdentifier(), new AliasPropertiesController(app, selectedAlias));
@@ -69,7 +71,9 @@ public class AliasPropertiesController
 
       AbstractAction closeAction = new AbstractAction()
       {
-         public void actionPerformed(ActionEvent actionEvent)
+        private static final long serialVersionUID = 1L;
+
+        public void actionPerformed(ActionEvent actionEvent)
          {
             performClose();
          }
@@ -97,7 +101,7 @@ public class AliasPropertiesController
 
       for (int i = 0; i < _iAliasPropertiesPanelControllers.size(); i++)
       {
-         IAliasPropertiesPanelController aliasPropertiesController = (IAliasPropertiesPanelController) _iAliasPropertiesPanelControllers.get(i);
+         IAliasPropertiesPanelController aliasPropertiesController = _iAliasPropertiesPanelControllers.get(i);
 
          int index = _frame.tabPane.getTabCount();
          _frame.tabPane.add(aliasPropertiesController.getTitle(), aliasPropertiesController.getPanelComponent());
@@ -116,7 +120,7 @@ public class AliasPropertiesController
    {
       for (int i = 0; i < _iAliasPropertiesPanelControllers.size(); i++)
       {
-         IAliasPropertiesPanelController aliasPropertiesController = (IAliasPropertiesPanelController) _iAliasPropertiesPanelControllers.get(i);
+         IAliasPropertiesPanelController aliasPropertiesController = _iAliasPropertiesPanelControllers.get(i);
          aliasPropertiesController.applyChanges();
       }
       performClose();

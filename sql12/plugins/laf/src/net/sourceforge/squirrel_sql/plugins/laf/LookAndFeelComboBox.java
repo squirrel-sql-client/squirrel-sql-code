@@ -32,17 +32,21 @@ import javax.swing.UIManager.LookAndFeelInfo;
  */
 public class LookAndFeelComboBox extends JComboBox
 {
-	/**
+    private static final long serialVersionUID = 1L;
+
+    /**
 	 * <TT>LookAndFeelInfo</TT> objects keyed by the
 	 * Look and Feel name.
 	 */
-	private Map _lafsByName = new TreeMap();
+	private Map<String, LookAndFeelInfo> _lafsByName = 
+        new TreeMap<String, LookAndFeelInfo>();
 
 	/**
 	 * <TT>LookAndFeelInfo</TT> objects keyed by the
 	 * Class name of the Look and Feel.
 	 */
-	private Map _lafsByClassName = new TreeMap();
+	private Map<String, LookAndFeelInfo> _lafsByClassName = 
+        new TreeMap<String, LookAndFeelInfo>();
 
 	/**
 	 * Default ctor. Select the currently active L & F after
@@ -71,7 +75,7 @@ public class LookAndFeelComboBox extends JComboBox
 
 	public LookAndFeelInfo getSelectedLookAndFeel()
 	{
-		return (LookAndFeelInfo)_lafsByName.get(getSelectedItem());
+		return _lafsByName.get(getSelectedItem());
 	}
 
 	public void setSelectedLookAndFeelName(String selectedLafName)
@@ -86,8 +90,7 @@ public class LookAndFeelComboBox extends JComboBox
 	{
 		if (selectedLafClassName != null)
 		{
-			LookAndFeelInfo info =
-				(LookAndFeelInfo)_lafsByClassName.get(selectedLafClassName);
+			LookAndFeelInfo info =_lafsByClassName.get(selectedLafClassName);
 			if (info != null)
 			{
 				setSelectedLookAndFeelName(info.getName());
@@ -104,7 +107,7 @@ public class LookAndFeelComboBox extends JComboBox
 		// Put all available "Look and Feel" objects into collections
 		// keyed by LAF name and by the class name.
 		LookAndFeelInfo[] info = UIManager.getInstalledLookAndFeels();
-		_lafsByName = new TreeMap();
+		_lafsByName = new TreeMap<String, LookAndFeelInfo>();
 		for (int i = 0; i < info.length; ++i)
 		{
 			_lafsByName.put(info[i].getName(), info[i]);
@@ -113,9 +116,9 @@ public class LookAndFeelComboBox extends JComboBox
 
 		// Add the names of all LAF objects to control. By doing thru the Map
 		// these will be sorted.
-		for (Iterator it = _lafsByName.values().iterator(); it.hasNext();)
+		for (Iterator<LookAndFeelInfo> it = _lafsByName.values().iterator(); it.hasNext();)
 		{
-			addItem(((LookAndFeelInfo)it.next()).getName());
+			addItem(it.next().getName());
 		}
 	}
 }

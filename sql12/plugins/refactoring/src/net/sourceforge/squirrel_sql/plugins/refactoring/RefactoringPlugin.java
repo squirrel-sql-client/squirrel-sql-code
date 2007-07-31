@@ -32,8 +32,6 @@ import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.AddColumnAction;
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.AddPrimaryKeyAction;
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.DropPrimaryKeyAction;
@@ -49,12 +47,7 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
       String REFACTORING = "refactoring";
    }
 
-   /** Logger for this class. */
-   private static ILogger s_log = LoggerController.createLogger(RefactoringPlugin.class);
-
    private PluginResources _resources;
-
-   
 
    /**
     * Return the internal name of this plugin.

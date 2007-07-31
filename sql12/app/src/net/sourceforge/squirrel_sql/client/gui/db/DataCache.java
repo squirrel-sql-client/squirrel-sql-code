@@ -28,6 +28,7 @@ import java.util.Iterator;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoCacheSerializer;
+import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
@@ -57,10 +58,10 @@ public class DataCache
       StringManagerFactory.getStringManager(DataCache.class);
 
    /** Class for objects that define aliases to JDBC data sources. */
-   private final static Class SQL_ALIAS_IMPL = SQLAlias.class;
+   private final static Class<SQLAlias> SQL_ALIAS_IMPL = SQLAlias.class;
 
    /** Class for objects that define JDBC drivers. */
-   private final static Class SQL_DRIVER_IMPL = SQLDriver.class;
+   private final static Class<SQLDriver> SQL_DRIVER_IMPL = SQLDriver.class;
 
    /** Logger for this class. */
    private final static ILogger s_log =
@@ -162,7 +163,7 @@ public class DataCache
         saveSecure(file, SQL_ALIAS_IMPL);
     }
 
-   private void saveSecure(File file, Class forClass) throws IOException, XMLException
+   private void saveSecure(File file, Class<? extends IHasIdentifier> forClass) throws IOException, XMLException
    {
       File tempFile = new File(file.getPath() + "~");
       try
@@ -255,7 +256,7 @@ public class DataCache
       _driverMgr.unregisterSQLDriver(sqlDriver);
    }
 
-   public Iterator drivers()
+   public Iterator<ISQLDriver> drivers()
    {
       return _cache.getAllForClass(SQL_DRIVER_IMPL);
    }
@@ -275,7 +276,7 @@ public class DataCache
       return (ISQLAlias) _cache.get(SQL_ALIAS_IMPL, id);
    }
 
-   public Iterator aliases()
+   public Iterator<ISQLAlias> aliases()
    {
       return _cache.getAllForClass(SQL_ALIAS_IMPL);
    }
@@ -292,12 +293,12 @@ public class DataCache
       _cache.remove(SQL_ALIAS_IMPL, alias.getIdentifier());
    }
 
-   public Iterator getAliasesForDriver(ISQLDriver driver)
+   public Iterator<ISQLAlias> getAliasesForDriver(ISQLDriver driver)
    {
-      ArrayList data = new ArrayList();
-      for (Iterator it = aliases(); it.hasNext();)
+      ArrayList<ISQLAlias> data = new ArrayList<ISQLAlias>();
+      for (Iterator<ISQLAlias> it = aliases(); it.hasNext();)
       {
-         ISQLAlias alias = (ISQLAlias) it.next();
+         ISQLAlias alias = it.next();
          if (driver.equals(getDriver(alias.getDriverIdentifier())))
          {
             data.add(alias);
@@ -382,10 +383,9 @@ public class DataCache
          s_log.error("Error loading drivers", ex);
       }
 
-      for (Iterator it = drivers(); it.hasNext();)
+      for (Iterator<ISQLDriver> it = drivers(); it.hasNext();)
       {
-         ISQLDriver sqlDriver = (ISQLDriver) it.next();
-         registerDriver(sqlDriver, msgHandler, false);
+         registerDriver(it.next(), msgHandler, false);
       }
    }
 
@@ -416,14 +416,14 @@ public class DataCache
     {
         ISQLDriver[] result = null;
         InputStreamReader isr = new InputStreamReader(url.openStream());
-        ArrayList missingDrivers = new ArrayList();
+        ArrayList<ISQLDriver> missingDrivers = new ArrayList<ISQLDriver>();
         try
         {
             XMLObjectCache tmp = new XMLObjectCache();
             tmp.load(isr, null, true);
 
-            for (Iterator iter = tmp.getAllForClass(SQL_DRIVER_IMPL); iter.hasNext();) {
-                ISQLDriver defaultDriver = (ISQLDriver) iter.next();
+            for (Iterator<ISQLDriver> iter = tmp.getAllForClass(SQL_DRIVER_IMPL); iter.hasNext();) {
+                ISQLDriver defaultDriver = iter.next();
                 if (!containsDriver(defaultDriver)) {
                     missingDrivers.add(defaultDriver);
                 }
@@ -440,9 +440,7 @@ public class DataCache
             isr.close();
         }
         if (missingDrivers.size() > 0) {
-            result =
-                (ISQLDriver[])missingDrivers.toArray(
-                                        new ISQLDriver[missingDrivers.size()]);
+            result = missingDrivers.toArray(new ISQLDriver[missingDrivers.size()]);
         }
         return result;
     }
@@ -456,8 +454,8 @@ public class DataCache
      */
     public boolean containsDriver(ISQLDriver driver) {
         boolean result = false;
-        for (Iterator iter = _cache.getAllForClass(SQL_DRIVER_IMPL); iter.hasNext();) {
-            ISQLDriver cachedDriver = (ISQLDriver) iter.next();
+        for (Iterator<ISQLDriver> iter = _cache.getAllForClass(SQL_DRIVER_IMPL); iter.hasNext();) {
+            ISQLDriver cachedDriver = iter.next();
             if (cachedDriver.equals(driver)) {
                 result = true;
                 break;
@@ -566,9 +564,9 @@ public class DataCache
    @SuppressWarnings("deprecation")
    private void fixupDrivers()
    {
-      for (Iterator it = drivers(); it.hasNext();)
+      for (Iterator<ISQLDriver> it = drivers(); it.hasNext();)
       {
-         ISQLDriver driver = (ISQLDriver)it.next();
+         ISQLDriver driver = it.next();
          String[] fileNames = driver.getJarFileNames();
          if (fileNames == null || fileNames.length == 0)
          {
@@ -606,9 +604,9 @@ public class DataCache
             XMLObjectCache tmp = new XMLObjectCache();
             tmp.load(isr, null, true);
 
-            for (Iterator iter = tmp.getAllForClass(SQL_DRIVER_IMPL); iter.hasNext();) {
+            for (Iterator<ISQLDriver> iter = tmp.getAllForClass(SQL_DRIVER_IMPL); iter.hasNext();) {
 
-                ISQLDriver defaultDriver = (ISQLDriver) iter.next();
+                ISQLDriver defaultDriver = iter.next();
                 ISQLDriver cachedDriver = getDriver(defaultDriver.getIdentifier());
                 if (cachedDriver != null) {
                     if (cachedDriver.getWebSiteUrl() == null

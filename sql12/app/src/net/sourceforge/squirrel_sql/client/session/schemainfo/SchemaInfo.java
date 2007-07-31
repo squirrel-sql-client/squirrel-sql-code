@@ -68,13 +68,47 @@ public class SchemaInfo
 
    private static final int MAX_PROGRESS = 100;
 
-   final HashMap _tablesLoadingColsInBackground = new HashMap();
+   static interface i18n {
+       // i18n[SchemaInfo.loadingCatalogs=Loading catalogs]
+       String LOADING_CATALOGS_MSG = 
+           s_stringMgr.getString("SchemaInfo.loadingCatalogs");
+       
+       // i18n[SchemaInfo.loadingKeywords=Loading keywords]
+       String LOADING_KEYWORDS_MSG = 
+           s_stringMgr.getString("SchemaInfo.loadingKeywords");
+       
+       // i18n[SchemaInfo.loadingDataTypes=Loading data types]
+       String LOADING_DATATYPES_MSG = 
+           s_stringMgr.getString("SchemaInfo.loadingDataTypes");
+       
+       // i18n[SchemaInfo.loadingFunctions=Loading functions]
+       String LOADING_FUNCTIONS_MSG = 
+           s_stringMgr.getString("SchemaInfo.loadingFunctions");
+
+       // i18n[SchemaInfo.loadingTables=Loading tables]
+       String LOADING_TABLES_MSG = 
+           s_stringMgr.getString("SchemaInfo.loadingTables");
+       
+       // i18n[SchemaInfo.loadingStoredProcedures=Loading stored procedures]
+       String LOADING_PROCS_MSG = 
+           s_stringMgr.getString("SchemaInfo.loadingStoredProcedures");
+       
+       // i18n[SchemaInfo.loadingSchemas=Loading schemas]
+       String LOADING_SCHEMAS_MSG = 
+           s_stringMgr.getString("SchemaInfo.loadingSchemas");
+
+   }
+   
+   
+   final HashMap<CaseInsensitiveString,CaseInsensitiveString> _tablesLoadingColsInBackground = 
+       new HashMap<CaseInsensitiveString,CaseInsensitiveString>();
 
 
    private SchemaInfoCache _schemaInfoCache;
 
 
-   private Vector _listeners = new Vector();
+   private Vector<SchemaInfoUpdateListener> _listeners = 
+       new Vector<SchemaInfoUpdateListener>();
    private boolean _inInitialLoad;
    private long _initalLoadBeginTime;
    private boolean _sessionStartupTimeHintShown;
@@ -148,7 +182,6 @@ public class SchemaInfo
       fireSchemaInfoUpdate();
    }
 
-
    private void privateLoadAll()
    {
       synchronized (this)
@@ -168,10 +201,10 @@ public class SchemaInfo
       breathing();
 
 
-
+       
       long mstart = System.currentTimeMillis();
-      String msg;
-
+      long mfinish = 0;
+      
       try
       {
          ISQLConnection conn = _session.getSQLConnection();
@@ -189,21 +222,22 @@ public class SchemaInfo
 
          notifySchemasAndCatalogsLoad();
 
-
+         long start = 0, finish = 0;
          try
          {
-            // i18n[SchemaInfo.loadingKeywords=Loading keywords]
-            msg = s_stringMgr.getString("SchemaInfo.loadingKeywords");
-            s_log.debug(msg);
-            long start = System.currentTimeMillis();
+            if (s_log.isDebugEnabled()) {
+                s_log.debug(i18n.LOADING_KEYWORDS_MSG);
+                start = System.currentTimeMillis();
+            }            
 
             int beginProgress = getLoadMethodProgress(progress++);
-            int endProgress = getLoadMethodProgress(progress);
-            setProgress(msg, beginProgress);
-            loadKeywords(msg, beginProgress);
+            setProgress(i18n.LOADING_KEYWORDS_MSG, beginProgress);
+            loadKeywords(i18n.LOADING_KEYWORDS_MSG, beginProgress);
 
-            long finish = System.currentTimeMillis();
-            s_log.debug("Keywords loaded in " + (finish - start) + " ms");
+            if (s_log.isDebugEnabled()) {
+                finish = System.currentTimeMillis();
+                s_log.debug("Keywords loaded in " + (finish - start) + " ms");
+            }
          }
          catch (Exception ex)
          {
@@ -212,18 +246,18 @@ public class SchemaInfo
 
          try
          {
-            // i18n[SchemaInfo.loadingDataTypes=Loading data types]
-            msg = s_stringMgr.getString("SchemaInfo.loadingDataTypes");
-            s_log.debug(msg);
-            long start = System.currentTimeMillis();
-
+            if (s_log.isDebugEnabled()) {
+                s_log.debug(i18n.LOADING_DATATYPES_MSG);
+                start = System.currentTimeMillis();
+            }
             int beginProgress = getLoadMethodProgress(progress++);
-            int endProgress = getLoadMethodProgress(progress);
-            setProgress(msg, beginProgress);
-            loadDataTypes(msg, beginProgress);
+            setProgress(i18n.LOADING_DATATYPES_MSG, beginProgress);
+            loadDataTypes(i18n.LOADING_DATATYPES_MSG, beginProgress);
 
-            long finish = System.currentTimeMillis();
-            s_log.debug("Data types loaded in " + (finish - start) + " ms");
+            if (s_log.isDebugEnabled()) {
+                finish = System.currentTimeMillis();
+                s_log.debug("Data types loaded in " + (finish - start) + " ms");
+            }
          }
          catch (Exception ex)
          {
@@ -232,18 +266,19 @@ public class SchemaInfo
 
          try
          {
-            // i18n[SchemaInfo.loadingFunctions=Loading functions]
-            msg = s_stringMgr.getString("SchemaInfo.loadingFunctions");
-            s_log.debug(msg);
-
-            long start = System.currentTimeMillis();
+            if (s_log.isDebugEnabled()) {
+                s_log.debug(i18n.LOADING_FUNCTIONS_MSG);
+                start = System.currentTimeMillis();
+            }
+            
             int beginProgress = getLoadMethodProgress(progress++);
-            int endProgress = getLoadMethodProgress(progress);
-            setProgress(msg, beginProgress);
-            loadGlobalFunctions(msg, beginProgress);
+            setProgress(i18n.LOADING_FUNCTIONS_MSG, beginProgress);
+            loadGlobalFunctions(i18n.LOADING_FUNCTIONS_MSG, beginProgress);
 
-            long finish = System.currentTimeMillis();
-            s_log.debug("Functions loaded in " + (finish - start) + " ms");
+            if (s_log.isDebugEnabled()) {
+                finish = System.currentTimeMillis();
+                s_log.debug("Functions loaded in " + (finish - start) + " ms");
+            }
          }
          catch (Exception ex)
          {
@@ -268,8 +303,10 @@ public class SchemaInfo
          _loading = false;
          _loaded = true;
       }
-      long mfinish = System.currentTimeMillis();
-      s_log.debug("SchemaInfo.load took " + (mfinish - mstart) + " ms");
+      if (s_log.isDebugEnabled()) {
+          mfinish = System.currentTimeMillis();
+          s_log.debug("SchemaInfo.load took " + (mfinish - mstart) + " ms");
+      }
    }
 
    private void notifyStoredProceduresLoaded()
@@ -302,21 +339,27 @@ public class SchemaInfo
 
    private int loadStoredProcedures(String catalog, String schema, String procNamePattern, int progress)
    {
-      String msg;
+      
+      long start = 0, finish = 0;
       try
       {
-         // i18n[SchemaInfo.loadingStoredProcedures=Loading stored procedures]
-         msg = s_stringMgr.getString("SchemaInfo.loadingStoredProcedures");
-         s_log.debug(msg);
-         long start = System.currentTimeMillis();
+         if (s_log.isDebugEnabled()) {
+             s_log.debug(i18n.LOADING_PROCS_MSG);
+             start = System.currentTimeMillis();
+         }
 
          int beginProgress = getLoadMethodProgress(progress++);
-         int endProgress = getLoadMethodProgress(progress);
-         setProgress(msg, beginProgress);
-         privateLoadStoredProcedures(catalog, schema, procNamePattern, msg, beginProgress);
+         setProgress(i18n.LOADING_PROCS_MSG, beginProgress);
+         privateLoadStoredProcedures(catalog, 
+                                     schema, 
+                                     procNamePattern, 
+                                     i18n.LOADING_PROCS_MSG, 
+                                     beginProgress);
 
-         long finish = System.currentTimeMillis();
-         s_log.debug("stored procedures loaded in " + (finish - start) + " ms");
+         if (s_log.isDebugEnabled()) {
+             finish = System.currentTimeMillis();
+             s_log.debug("stored procedures loaded in " + (finish - start) + " ms");
+         }
       }
       catch (Exception ex)
       {
@@ -325,22 +368,33 @@ public class SchemaInfo
       return progress;
    }
 
-   private int loadTables(String catalog, String schema, String tableNamePattern, String[] types, int progress)
+   private int loadTables(String catalog, 
+                          String schema, 
+                          String tableNamePattern, 
+                          String[] types, 
+                          int progress)
    {
-      String msg;
+      long start = 0, finish = 0;
       try
       {
-         // i18n[SchemaInfo.loadingTables=Loading tables]
-         msg = s_stringMgr.getString("SchemaInfo.loadingTables");
-         s_log.debug(msg);
-         long start = System.currentTimeMillis();
+         if (s_log.isDebugEnabled()) {
+             s_log.debug(i18n.LOADING_TABLES_MSG);
+             start = System.currentTimeMillis();
+         }
 
          int beginProgress = getLoadMethodProgress(progress++);
-         setProgress(msg, beginProgress);
-         privateLoadTables(catalog, schema, tableNamePattern, types, msg, beginProgress);
+         setProgress(i18n.LOADING_TABLES_MSG, beginProgress);
+         privateLoadTables(catalog, 
+                           schema, 
+                           tableNamePattern, 
+                           types, 
+                           i18n.LOADING_TABLES_MSG, 
+                           beginProgress);
 
-         long finish = System.currentTimeMillis();
-         s_log.debug("Tables loaded in " + (finish - start) + " ms");
+         if (s_log.isDebugEnabled()) {
+             finish = System.currentTimeMillis();
+             s_log.debug("Tables loaded in " + (finish - start) + " ms");
+         }
       }
       catch (Exception ex)
       {
@@ -351,21 +405,22 @@ public class SchemaInfo
 
    private int loadSchemas(int progress)
    {
+      long start = 0, finish = 0;
       try
       {
-         String msg;
-         // i18n[SchemaInfo.loadingSchemas=Loading schemas]
-         msg = s_stringMgr.getString("SchemaInfo.loadingSchemas");
-         s_log.debug(msg);
-         long start = System.currentTimeMillis();
+         if (s_log.isDebugEnabled()) {
+             s_log.debug(i18n.LOADING_SCHEMAS_MSG);
+             start = System.currentTimeMillis();
+         }
 
          int beginProgress = getLoadMethodProgress(progress++);
-         int endProgress = getLoadMethodProgress(progress);
-         setProgress(msg, beginProgress);
-         privateLoadSchemas(msg, beginProgress, endProgress);
+         setProgress(i18n.LOADING_SCHEMAS_MSG, beginProgress);
+         privateLoadSchemas();
 
-         long finish = System.currentTimeMillis();
-         s_log.debug("Schemas loaded in " + (finish - start) + " ms");
+         if (s_log.isDebugEnabled()) {
+             finish = System.currentTimeMillis();
+             s_log.debug("Schemas loaded in " + (finish - start) + " ms");
+         }
       }
       catch (Exception ex)
       {
@@ -376,21 +431,22 @@ public class SchemaInfo
 
    private int loadCatalogs(int progress)
    {
+      long start = 0, finish = 0;
       try
       {
-         String msg;
-         // i18n[SchemaInfo.loadingCatalogs=Loading catalogs]
-         msg = s_stringMgr.getString("SchemaInfo.loadingCatalogs");
-         s_log.debug(msg);
-         long start = System.currentTimeMillis();
+         if (s_log.isDebugEnabled()) {
+             s_log.debug(i18n.LOADING_CATALOGS_MSG);
+             start = System.currentTimeMillis();
+         }
 
          int beginProgress = getLoadMethodProgress(progress++);
-         int endProgress = getLoadMethodProgress(progress);
-         setProgress(msg, beginProgress);
-         privateLoadCatalogs(msg, beginProgress, endProgress);
+         setProgress(i18n.LOADING_CATALOGS_MSG, beginProgress);
+         privateLoadCatalogs();
 
-         long finish = System.currentTimeMillis();
-         s_log.debug("Catalogs loaded in " + (finish - start) + " ms");
+         if (s_log.isDebugEnabled()) {
+             finish = System.currentTimeMillis();
+             s_log.debug("Catalogs loaded in " + (finish - start) + " ms");
+         }
       }
       catch (Exception ex)
       {
@@ -401,7 +457,7 @@ public class SchemaInfo
 
    private int getLoadMethodProgress(int progress)
    {
-      return (int)(((double)progress) / ((double)LOAD_METHODS_COUNT) * ((double)MAX_PROGRESS));
+      return (int)(((double)progress) / ((double)LOAD_METHODS_COUNT) * (MAX_PROGRESS));
    }
 
    private void setProgress(final String note, final int value)
@@ -488,7 +544,7 @@ public class SchemaInfo
 
    }
 
-   private void privateLoadCatalogs(String msg, int beginProgress, int endProgress)
+   private void privateLoadCatalogs()
    {
       try
       {
@@ -505,7 +561,7 @@ public class SchemaInfo
       }
    }
 
-   private void privateLoadSchemas(String msg, int beginProgress, int endProgress)
+   private void privateLoadSchemas()
    {
       try
       {
@@ -687,7 +743,7 @@ public class SchemaInfo
    {
       if (!_loading && data != null)
       {
-         return (String) _schemaInfoCache.getTableNamesForReadOnly().get(new CaseInsensitiveString(data));
+         return _schemaInfoCache.getTableNamesForReadOnly().get(new CaseInsensitiveString(data));
       }
       return null;
    }
@@ -696,7 +752,7 @@ public class SchemaInfo
    {
       if (!_loading && data != null)
       {
-         return (String) _schemaInfoCache.getProcedureNamesForReadOnly().get(new CaseInsensitiveString(data));
+         return _schemaInfoCache.getProcedureNamesForReadOnly().get(new CaseInsensitiveString(data));
       }
       return null;
    }
@@ -899,7 +955,7 @@ public class SchemaInfo
 
    public ITableInfo[] getITableInfos(String catalog, String schema, String tableNamePattern, String[] types)
    {
-      ArrayList ret = new ArrayList();
+      ArrayList<ITableInfo> ret = new ArrayList<ITableInfo>();
       if (null != types)
       {
          // By default null == types we return only cached types
@@ -907,9 +963,9 @@ public class SchemaInfo
          ret.addAll(Arrays.asList(tableInfosForUncachedTypes));
       }
 
-      for(Iterator i=_schemaInfoCache.getITableInfosForReadOnly().keySet().iterator(); i.hasNext();)
+      for(Iterator<ITableInfo> i=_schemaInfoCache.getITableInfosForReadOnly().keySet().iterator(); i.hasNext();)
       {
-         ITableInfo iTableInfo = (ITableInfo) i.next();
+         ITableInfo iTableInfo = i.next();
 
          if(null != catalog &&
             false == catalog.equalsIgnoreCase(iTableInfo.getCatalogName()) &&
@@ -946,7 +1002,7 @@ public class SchemaInfo
          ret.add(iTableInfo);
       }
 
-      return (ITableInfo[]) ret.toArray(new ITableInfo[ret.size()]);
+      return ret.toArray(new ITableInfo[ret.size()]);
    }
 
    private boolean fulfillsPlatformDependendMatches(ITableInfo iTableInfo, String catalog)
@@ -967,7 +1023,7 @@ public class SchemaInfo
    {
       try
       {
-         ArrayList missingTypes = new ArrayList();
+         ArrayList<String> missingTypes = new ArrayList<String>();
          for (int i = 0; i < types.length; i++)
          {
             if(false == _schemaInfoCache.isCachedTableType(types[i]))
@@ -980,13 +1036,16 @@ public class SchemaInfo
          {
             try
             {
-               String[] buf = (String[]) missingTypes.toArray(new String[missingTypes.size()]);
+               String[] buf = missingTypes.toArray(new String[missingTypes.size()]);
                ProgressCallBack pcb = new ProgressCallBack()
                {
                   public void currentlyLoading(String simpleName)
                   {
-                     String msg = s_stringMgr.getString("SchemaInfo.loadingTables");
-                     setProgress(msg + " (" + simpleName + ")", 1);
+                     StringBuilder tmp = new StringBuilder(i18n.LOADING_TABLES_MSG);
+                     tmp.append(" (");
+                     tmp.append(simpleName);
+                     tmp.append(")");
+                     setProgress(tmp.toString(), 1);
                   }
                };
                return _dmd.getTables(catalog, schema, tableNamePattern, buf, pcb);
@@ -1016,12 +1075,13 @@ public class SchemaInfo
 
    public IProcedureInfo[] getStoredProceduresInfos(String catalog, String schema, String procNamePattern)
    {
-      ArrayList ret = new ArrayList();
+      ArrayList<IProcedureInfo> ret = new ArrayList<IProcedureInfo>();
 
-      for (Iterator i = _schemaInfoCache.getIProcedureInfosForReadOnly().keySet().iterator(); i.hasNext();)
+      for (Iterator<IProcedureInfo> i = 
+          _schemaInfoCache.getIProcedureInfosForReadOnly().keySet().iterator(); i.hasNext();)
       {
 
-         IProcedureInfo iProcInfo = (IProcedureInfo) i.next();
+         IProcedureInfo iProcInfo = i.next();
          boolean toAdd = true;
          if (null != catalog && false == catalog.equalsIgnoreCase(iProcInfo.getCatalogName()))
          {
@@ -1054,7 +1114,7 @@ public class SchemaInfo
          }
       }
 
-      return (IProcedureInfo[]) ret.toArray(new IProcedureInfo[ret.size()]);
+      return ret.toArray(new IProcedureInfo[ret.size()]);
    }
 
 
@@ -1177,7 +1237,7 @@ public class SchemaInfo
    {
       CaseInsensitiveString cissTableName = new CaseInsensitiveString(tableName);
       loadColumns(cissTableName);
-      ArrayList extColInfo = (ArrayList) _schemaInfoCache.getExtendedColumnInfosByTableNameForReadOnly().get(cissTableName);
+      List<ExtendedColumnInfo> extColInfo = _schemaInfoCache.getExtendedColumnInfosByTableNameForReadOnly().get(cissTableName);
 
       if (null == extColInfo)
       {
@@ -1186,15 +1246,15 @@ public class SchemaInfo
 
       if (null == catalog && null == schema)
       {
-         return (ExtendedColumnInfo[]) extColInfo.toArray(new ExtendedColumnInfo[extColInfo.size()]);
+         return extColInfo.toArray(new ExtendedColumnInfo[extColInfo.size()]);
       }
       else
       {
-         ArrayList ret = new ArrayList();
+         ArrayList<ExtendedColumnInfo> ret = new ArrayList<ExtendedColumnInfo>();
 
          for (int i = 0; i < extColInfo.size(); i++)
          {
-            ExtendedColumnInfo extendedColumnInfo = (ExtendedColumnInfo) extColInfo.get(i);
+            ExtendedColumnInfo extendedColumnInfo = extColInfo.get(i);
             boolean toAdd = true;
             if (null != catalog && false == catalog.equalsIgnoreCase(extendedColumnInfo.getCatalog()))
             {
@@ -1212,7 +1272,7 @@ public class SchemaInfo
             }
          }
 
-         return (ExtendedColumnInfo[]) ret.toArray(new ExtendedColumnInfo[ret.size()]);
+         return ret.toArray(new ExtendedColumnInfo[ret.size()]);
       }
    }
 
@@ -1354,7 +1414,8 @@ public class SchemaInfo
       {
          public void run()
          {
-            SchemaInfoUpdateListener[] listeners = (SchemaInfoUpdateListener[]) _listeners.toArray(new SchemaInfoUpdateListener[0]);
+            SchemaInfoUpdateListener[] listeners = 
+                _listeners.toArray(new SchemaInfoUpdateListener[0]);
 
             for (int i = 0; i < listeners.length; i++)
             {
@@ -1379,18 +1440,18 @@ public class SchemaInfo
 
    public void refershCacheForSimpleTableName(String simpleTableName)
    {
-      HashMap caseSensitiveTableNames = new HashMap();
+      HashMap<String, String> caseSensitiveTableNames = new HashMap<String, String>();
 
       CaseInsensitiveString caseInsensitiveTableName = new CaseInsensitiveString(simpleTableName);
-      String caseSensitiveTableName = (String) _schemaInfoCache.getTableNamesForReadOnly().get(caseInsensitiveTableName);
+      String caseSensitiveTableName = _schemaInfoCache.getTableNamesForReadOnly().get(caseInsensitiveTableName);
 
       caseSensitiveTableNames.put(caseSensitiveTableName, caseSensitiveTableName);
 
       ////////////////////////////////////////////////////////////////////////
       // Reload  all matching table types
-      for(Iterator i=caseSensitiveTableNames.keySet().iterator(); i.hasNext();)
+      for(Iterator<String> i=caseSensitiveTableNames.keySet().iterator(); i.hasNext();)
       {
-         String buf = (String) i.next();
+         String buf = i.next();
          TableInfo ti = new TableInfo(null, null, buf, null, null, _dmd);
          reload(ti);
       }
@@ -1401,18 +1462,18 @@ public class SchemaInfo
 
    public void refreshCacheForSimpleProcedureName(String simpleProcName)
    {
-      HashMap caseSensitiveProcNames = new HashMap();
+      HashMap<String, String> caseSensitiveProcNames = new HashMap<String, String>();
 
       CaseInsensitiveString caseInsensitiveProcName = new CaseInsensitiveString(simpleProcName);
-      String caseSensitiveProcName = (String) _schemaInfoCache.getProcedureNamesForReadOnly().remove(caseInsensitiveProcName);
+      String caseSensitiveProcName = _schemaInfoCache.getProcedureNamesForReadOnly().remove(caseInsensitiveProcName);
 
       caseSensitiveProcNames.put(caseSensitiveProcName, caseSensitiveProcName);
 
       ////////////////////////////////////////////////////////////////////////
       // Reload  all matching procedure types
-      for(Iterator i=caseSensitiveProcNames.keySet().iterator(); i.hasNext();)
+      for(Iterator<String> i=caseSensitiveProcNames.keySet().iterator(); i.hasNext();)
       {
-         String buf = (String) i.next();
+         String buf = i.next();
          ProcedureInfo pi = new ProcedureInfo(null, null, buf, null, DatabaseMetaData.procedureResultUnknown, _dmd);
          reload(pi);
       }

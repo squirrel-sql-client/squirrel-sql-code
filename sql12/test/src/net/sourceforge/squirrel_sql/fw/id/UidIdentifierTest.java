@@ -38,7 +38,9 @@ public class UidIdentifierTest extends TestCase {
         uid2.setString("1");
         UidIdentifier uid3 = createIIdentifier();
         uid3.setString("2");
-        UidIdentifier uid4 = new UidIdentifier() {};
+        UidIdentifier uid4 = new UidIdentifier() {
+            private static final long serialVersionUID = 1L;
+        };
         uid4.setString("1");
         new EqualsTester(uid1, uid2, uid3, uid4);
     }

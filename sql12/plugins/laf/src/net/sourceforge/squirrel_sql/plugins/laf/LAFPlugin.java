@@ -78,7 +78,7 @@ public class LAFPlugin extends DefaultPlugin
 	private File _userExtraLAFFolder;
 
 	/** Cache of settings for the plugin. */
-	private final XMLObjectCache _settingsCache = new XMLObjectCache();
+	private final XMLObjectCache<LAFPreferences> _settingsCache = new XMLObjectCache<LAFPreferences>();
 
 	/**
 	 * Return the internal name of this plugin.
@@ -303,7 +303,7 @@ public class LAFPlugin extends DefaultPlugin
 		return _resources;
 	}
 
-	XMLObjectCache getSettingsCache()
+	XMLObjectCache<LAFPreferences> getSettingsCache()
 	{
 		return _settingsCache;
 	}
@@ -381,7 +381,7 @@ public class LAFPlugin extends DefaultPlugin
 		{
 			XMLBeanReader doc = new XMLBeanReader();
 			doc.load(oldPrefsFile, getClass().getClassLoader());
-			Iterator it = doc.iterator();
+			Iterator<?> it = doc.iterator();
 			if (it.hasNext())
 			{
 				_lafPrefs = (LAFPreferences) it.next();
@@ -412,10 +412,11 @@ public class LAFPlugin extends DefaultPlugin
 			{
 				s_log.error("Cache should have been empty", ex);
 			}
-			Iterator it = _settingsCache.getAllForClass(LAFPreferences.class);
+			Iterator<LAFPreferences> it = 
+                _settingsCache.getAllForClass(LAFPreferences.class);
 			if (it.hasNext())
 			{
-				_lafPrefs = (LAFPreferences)it.next();
+				_lafPrefs = it.next();
 			}
 			else
 			{

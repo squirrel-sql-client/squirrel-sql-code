@@ -51,7 +51,9 @@ public class AlterTableDialog extends JDialog
 //	private final static ILogger s_log =
 //		LoggerController.createLogger(AlterTableDialog.class);
 
-	/** Internationalized strings for this class. */
+    private static final long serialVersionUID = 1L;
+
+    /** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(AlterTableDialog.class);
 
@@ -84,7 +86,7 @@ public class AlterTableDialog extends JDialog
 										ti.getQualifiedName()));
 		setContentPane(buildContentPane(session, plugin, ti));
 	}
-
+	@SuppressWarnings("unused")
 	private JComponent buildContentPane(ISession session, MysqlPlugin plugin,
 											ITableInfo ti)
 		throws SQLException

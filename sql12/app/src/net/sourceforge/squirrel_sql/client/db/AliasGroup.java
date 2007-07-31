@@ -30,9 +30,11 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class AliasGroup implements Cloneable, Serializable, Comparable
+public class AliasGroup implements Cloneable, Serializable, Comparable<AliasGroup>
 {
-	/** Internationalized strings for this class. */
+    private static final long serialVersionUID = 1L;
+
+    /** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(AliasGroup.class);
 
@@ -117,9 +119,9 @@ public class AliasGroup implements Cloneable, Serializable, Comparable
 	 * is a <TT>AliasGroup</TT>, then the <TT>getName()</TT> functions of the two
 	 * objects are used to compare them. Otherwise, it throws a ClassCastException
 	 */
-	public int compareTo(Object rhs)
+	public int compareTo(AliasGroup rhs)
 	{
-		return _name.compareTo(((AliasGroup)rhs).getName());
+		return _name.compareTo((rhs).getName());
 	}
 
 	/**
