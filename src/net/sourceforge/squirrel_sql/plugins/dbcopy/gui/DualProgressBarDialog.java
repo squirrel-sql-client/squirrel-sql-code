@@ -121,7 +121,7 @@ public class DualProgressBarDialog {
     {
         dialog = new JDialog(owner, title, modal);
         dialog.getContentPane().setLayout(new BorderLayout());
-        dialog.getContentPane().add(buildPanel(listener), BorderLayout.CENTER);
+        dialog.getContentPane().add(buildPanel(), BorderLayout.CENTER);
         dialog.getContentPane().add(buildButtonPanel(listener), BorderLayout.SOUTH);
         dialog.setSize(350,205);
         dialog.setLocationRelativeTo(owner);
@@ -130,11 +130,9 @@ public class DualProgressBarDialog {
     }
     
     /**
-     * @param listener an ActionListener that will receive ActionEvents from the
-     *        cancel button.
      * @return
      */
-    private static JPanel buildPanel(ActionListener listener) {
+    private static JPanel buildPanel() {
         JPanel dataPanel = new JPanel();
         dataPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
         GridBagLayout gl = new GridBagLayout();
