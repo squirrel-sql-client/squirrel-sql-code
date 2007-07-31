@@ -1,20 +1,26 @@
 package net.sourceforge.squirrel_sql.plugins.userscript.kernel;
 
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import java.awt.Color;
+import java.awt.Component;
+import java.util.Arrays;
+import java.util.Vector;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-import java.awt.*;
-import java.util.Arrays;
-import java.util.Vector;
-import java.util.List;
+
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class ScriptListTableModel extends AbstractTableModel
 {
-	private static final StringManager s_stringMgr =
+    private static final long serialVersionUID = 1L;
+
+    private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(ScriptListTableModel.class);
 
 	private static final String[] colNames =
@@ -106,10 +112,10 @@ public class ScriptListTableModel extends AbstractTableModel
 
 	void addScript(Script newScript)
 	{
-		Vector buf = new Vector();
+		Vector<Script> buf = new Vector<Script>();
 		buf.addAll(Arrays.asList(m_scripts));
 		buf.add(newScript);
-		m_scripts = (Script[]) buf.toArray(new Script[buf.size()]);
+		m_scripts = buf.toArray(new Script[buf.size()]);
 		refresh();
 	}
 
@@ -125,10 +131,10 @@ public class ScriptListTableModel extends AbstractTableModel
 
 	public void remove(int ix)
 	{
-		Vector buf = new Vector();
+		Vector<Script> buf = new Vector<Script>();
 		buf.addAll(Arrays.asList(m_scripts));
 		buf.remove(ix);
-		m_scripts = (Script[]) buf.toArray(new Script[buf.size()]);
+		m_scripts = buf.toArray(new Script[buf.size()]);
 		refresh();
 	}
 }

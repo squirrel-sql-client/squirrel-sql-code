@@ -30,7 +30,7 @@ public class Log4jLogger implements ILogger
 	/** Log4j logger to log to. */
 	private Logger _log;
 	private ILoggerListener _listener;
-	private Class _clazz;
+	private Class<?> _clazz;
 
 	/**
 	 * Ctor specifying the object requesting the logger. A
@@ -42,7 +42,7 @@ public class Log4jLogger implements ILogger
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>clazz</TT> is <TT>null</TT>.
 	 */
-	Log4jLogger(Class clazz, ILoggerListener listener)
+	Log4jLogger(Class<?> clazz, ILoggerListener listener)
 	{
 		if (clazz == null)
 		{

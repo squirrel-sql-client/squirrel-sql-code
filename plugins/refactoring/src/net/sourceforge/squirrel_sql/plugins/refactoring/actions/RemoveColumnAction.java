@@ -29,6 +29,8 @@ import net.sourceforge.squirrel_sql.plugins.refactoring.commands.RemoveColumnCom
 public class RemoveColumnAction extends AbstractRefactoringAction
                                         implements ISessionAction {
 
+    private static final long serialVersionUID = 1L;
+
     /** Internationalized strings for this class. */
     private static final StringManager s_stringMgr =
         StringManagerFactory.getStringManager(RemoveColumnAction.class);

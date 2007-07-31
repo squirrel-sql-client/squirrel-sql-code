@@ -47,7 +47,9 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionSQLProperti
 // JASON: Rename to NewSessionPropertiesInternalFrame
 public class NewSessionPropertiesSheet extends BaseInternalFrame
 {
-	/** Internationalized strings for this class. */
+    private static final long serialVersionUID = 1L;
+
+    /** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(NewSessionPropertiesSheet.class);
 
@@ -62,7 +64,7 @@ public class NewSessionPropertiesSheet extends BaseInternalFrame
 	private JLabel _titleLbl = new JLabel();
 
 	private IApplication _app;
-	private List _panels = new ArrayList();
+	private List<INewSessionPropertiesPanel> _panels = new ArrayList<INewSessionPropertiesPanel>();
 
 	public static final String PREF_KEY_NEW_SESSION_PROPS_SHEET_WIDTH = "Squirrel.newSessionPropsSheetWidth";
 	public static final String PREF_KEY_NEW_SESSION_PROPS_SHEET_HEIGHT = "Squirrel.newSessionPropsSheetHeight";
@@ -75,9 +77,9 @@ public class NewSessionPropertiesSheet extends BaseInternalFrame
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 
 		createGUI();
-		for (Iterator it = _panels.iterator(); it.hasNext();)
+		for (Iterator<INewSessionPropertiesPanel> it = _panels.iterator(); it.hasNext();)
 		{
-			INewSessionPropertiesPanel pnl = (INewSessionPropertiesPanel) it.next();
+			INewSessionPropertiesPanel pnl = it.next();
 			pnl.initialize(_app);
 		}
 
@@ -152,13 +154,13 @@ public class NewSessionPropertiesSheet extends BaseInternalFrame
 	{
 		final boolean isDebug = s_log.isDebugEnabled();
 		long start = 0;
-		for (Iterator it = _panels.iterator(); it.hasNext();)
+		for (Iterator<INewSessionPropertiesPanel> it = _panels.iterator(); it.hasNext();)
 		{
 			if (isDebug)
 			{
 				start = System.currentTimeMillis();
 			}
-			INewSessionPropertiesPanel pnl = (INewSessionPropertiesPanel) it.next();
+			INewSessionPropertiesPanel pnl = it.next();
 			pnl.applyChanges();
 			if (isDebug)
 			{
@@ -203,9 +205,9 @@ public class NewSessionPropertiesSheet extends BaseInternalFrame
 
 		// Add all panels to the tabbed pane.
 		final JTabbedPane tabPane = UIFactory.getInstance().createTabbedPane();
-		for (Iterator it = _panels.iterator(); it.hasNext();)
+		for (Iterator<INewSessionPropertiesPanel> it = _panels.iterator(); it.hasNext();)
 		{
-			INewSessionPropertiesPanel pnl = (INewSessionPropertiesPanel)it.next();
+			INewSessionPropertiesPanel pnl = it.next();
 			String winTitle = pnl.getTitle();
 			String hint = pnl.getHint();
 			tabPane.addTab(winTitle, null, pnl.getPanelComponent(), hint);
@@ -234,7 +236,9 @@ public class NewSessionPropertiesSheet extends BaseInternalFrame
 
       AbstractAction closeAction = new AbstractAction()
       {
-         public void actionPerformed(ActionEvent actionEvent)
+        private static final long serialVersionUID = 1L;
+
+        public void actionPerformed(ActionEvent actionEvent)
          {
             performClose();
          }

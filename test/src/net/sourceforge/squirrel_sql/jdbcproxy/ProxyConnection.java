@@ -159,12 +159,12 @@ public class ProxyConnection implements Connection {
         ProxyMethodManager.check("ProxyConnection", "createStatement");
         return new ProxyStatement(this, _con.createStatement(resultSetType, resultSetConcurrency, resultSetHoldability));
     }
-
+    @SuppressWarnings("unchecked")
     public Map getTypeMap() throws SQLException {
         ProxyMethodManager.check("ProxyConnection", "getTypeMap");
         return _con.getTypeMap();
     }
-
+    @SuppressWarnings("unchecked")
     public void setTypeMap(Map map) throws SQLException {
         ProxyMethodManager.check("ProxyConnection", "setTypeMap");
         _con.setTypeMap(map);

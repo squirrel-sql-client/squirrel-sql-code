@@ -66,7 +66,9 @@ import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
  */
 public class HelpViewerWindow extends JFrame
 {
-	/** Logger for this class. */
+    private static final long serialVersionUID = 1L;
+
+    /** Logger for this class. */
 	private final static ILogger s_log =
 		LoggerController.createLogger(HelpViewerWindow.class);
 
@@ -90,7 +92,7 @@ public class HelpViewerWindow extends JFrame
 	private URL _homeURL;
 
 	/** Collection of the nodes in the tree keyed by the URL.toString(). */
-	private final Map _nodes = new HashMap();
+	private final Map<String, DefaultMutableTreeNode> _nodes = new HashMap<String, DefaultMutableTreeNode>();
 
 	/**
 	 * Ctor.
@@ -150,7 +152,7 @@ public class HelpViewerWindow extends JFrame
 		{
 			key = key.substring(0, idx);
 		}
-		DefaultMutableTreeNode node = (DefaultMutableTreeNode)_nodes.get(key);
+		DefaultMutableTreeNode node = _nodes.get(key);
 		if (node != null) // && node != _tree.getLastSelectedPathComponent())
 		{
 			DefaultTreeModel model = (DefaultTreeModel)_tree.getModel();
@@ -309,7 +311,7 @@ public class HelpViewerWindow extends JFrame
             // i18n[HelpViewerWindow.squirrel=SQuirreL]
 			DocumentNode dn = new DocumentNode(s_stringMgr.getString("HelpViewerWindow.squirrel"), file);
 			licenceRoot.add(dn);
-			_nodes.put(dn.getURL(), dn);
+			_nodes.put(dn.getURL().toString(), dn);
 		}
 		catch (MalformedURLException ex)
 		{
@@ -327,7 +329,7 @@ public class HelpViewerWindow extends JFrame
             // i18n[HelpViewerWindow.squirrel=SQuirreL]
 			DocumentNode dn = new DocumentNode(s_stringMgr.getString("HelpViewerWindow.squirrel"), file);
 			changeLogRoot.add(dn);
-			_nodes.put(dn.getURL(), dn);
+			_nodes.put(dn.getURL().toString(), dn);
 		}
 		catch (MalformedURLException ex)
 		{
@@ -455,7 +457,9 @@ public class HelpViewerWindow extends JFrame
 
 	private class DocumentNode extends DefaultMutableTreeNode
 	{
-		private URL _url;
+        private static final long serialVersionUID = 1L;
+
+        private URL _url;
 
 		DocumentNode(String title, File file) throws MalformedURLException
 		{
@@ -475,14 +479,15 @@ public class HelpViewerWindow extends JFrame
 
 		void setFile(File file) throws MalformedURLException
 		{
-			_url = file.toURL();
+			_url = file.toURI().toURL();
 		}
 	}
 
 	private class FolderNode extends DocumentNode
 	{
-		private final List _docTitles = new ArrayList();
-		private final List _docURLs = new ArrayList();
+        private static final long serialVersionUID = 1L;
+        private final List<String> _docTitles = new ArrayList<String>();
+		private final List<URL> _docURLs = new ArrayList<URL>();
 		private final File _contentsFile;
 
 		FolderNode(String title) throws IOException
@@ -528,7 +533,7 @@ public class HelpViewerWindow extends JFrame
 					for (int i = 0, limit = _docTitles.size(); i < limit; ++i)
 					{
 //						final String docTitle = (String)_docTitles.get(i);
-						final URL docUrl = (URL)_docURLs.get(i);
+						final URL docUrl = _docURLs.get(i);
 						buf = new StringBuffer(50);
 						buf.append("<A HREF=\"")
 							.append(docUrl)

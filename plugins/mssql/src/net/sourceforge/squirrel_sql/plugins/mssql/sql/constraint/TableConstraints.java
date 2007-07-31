@@ -19,14 +19,15 @@ package net.sourceforge.squirrel_sql.plugins.mssql.sql.constraint;
  */
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TableConstraints {
     
-    private ArrayList _constraints;
+    private ArrayList<MssqlConstraint> _constraints;
     
     /** Creates a new instance of TableConstraints */
     public TableConstraints() {
-        _constraints = new ArrayList();
+        _constraints = new ArrayList<MssqlConstraint>();
     }
     
     public MssqlConstraint[] getConstraints() {
@@ -37,50 +38,52 @@ public class TableConstraints {
         _constraints.add(constraint);
     }
     
-    public Object[] getDefaultsForColumn(String columnName) {
-        ArrayList results = new ArrayList();
+    public List<DefaultConstraint> getDefaultsForColumn(String columnName) {
+        ArrayList<DefaultConstraint> results = new ArrayList<DefaultConstraint>();
         for (int i = 0; i < _constraints.size(); i++) {
-            MssqlConstraint constraint = (MssqlConstraint) _constraints.get(i);
+            MssqlConstraint constraint = _constraints.get(i);
             if (constraint instanceof DefaultConstraint) {
                 DefaultConstraint def = (DefaultConstraint) constraint;
                 if (def.constrainsColumn(columnName))
                     results.add(def);
             }
         }
-        return results.toArray();
+        return results;
     }
     
-    public Object[] getCheckConstraints() {
-        ArrayList results = new ArrayList();
+    public List<CheckConstraint> getCheckConstraints() {
+        ArrayList<CheckConstraint> results = new ArrayList<CheckConstraint>();
         for (int i = 0; i < _constraints.size(); i++) {
-            MssqlConstraint constraint = (MssqlConstraint) _constraints.get(i);
+            MssqlConstraint constraint = _constraints.get(i);
             if (constraint instanceof CheckConstraint) {
-                results.add(constraint);
+                results.add((CheckConstraint)constraint);
             }
         }
-        return results.toArray();
+        return results;
     }
     
-    public Object[] getForeignKeyConstraints() {
-        ArrayList results = new ArrayList();
+    public List<ForeignKeyConstraint> getForeignKeyConstraints() {
+        ArrayList<ForeignKeyConstraint> results = 
+            new ArrayList<ForeignKeyConstraint>();
         for (int i = 0; i < _constraints.size(); i++) {
-            MssqlConstraint constraint = (MssqlConstraint) _constraints.get(i);
+            MssqlConstraint constraint = _constraints.get(i);
             if (constraint instanceof ForeignKeyConstraint) {
-                results.add(constraint);
+                results.add((ForeignKeyConstraint)constraint);
             }
         }
-        return results.toArray();
+        return results;
     }
     
-    public Object[] getPrimaryKeyConstraints() {
-        ArrayList results = new ArrayList();
+    public List<PrimaryKeyConstraint> getPrimaryKeyConstraints() {
+        ArrayList<PrimaryKeyConstraint> results = 
+            new ArrayList<PrimaryKeyConstraint>();
         for (int i = 0; i < _constraints.size(); i++) {
-            MssqlConstraint constraint = (MssqlConstraint) _constraints.get(i);
+            MssqlConstraint constraint = _constraints.get(i);
             if (constraint instanceof PrimaryKeyConstraint) {
-                results.add(constraint);
+                results.add((PrimaryKeyConstraint)constraint);
             }
         }
-        return results.toArray();
+        return results;
     }
     
 }

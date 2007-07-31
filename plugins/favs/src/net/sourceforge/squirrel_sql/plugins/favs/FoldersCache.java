@@ -20,18 +20,14 @@ package net.sourceforge.squirrel_sql.plugins.favs;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
 
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.fw.util.DuplicateObjectException;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 import net.sourceforge.squirrel_sql.fw.xml.XMLObjectCache;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 /**
  * XML cache of <CODE>Folder</CODE> objects.
  */
@@ -41,6 +37,7 @@ public final class FoldersCache
 	private static final ILogger s_log = LoggerController.createLogger(FoldersCache.class);
 
 	/** Application API. */
+    @SuppressWarnings("unused")
 	private IApplication _app;
 
 	/** Root folder. */
@@ -70,12 +67,12 @@ public final class FoldersCache
 		{
 			if (new File(_queriesFileName).exists())
 			{
-				XMLObjectCache cache = new XMLObjectCache();
+				XMLObjectCache<Folder> cache = new XMLObjectCache<Folder>();
 				cache.load(_queriesFileName, getClass().getClassLoader());
-				Iterator it = cache.getAllForClass(Folder.class);
+				Iterator<Folder> it = cache.getAllForClass(Folder.class);
 				if (it.hasNext())
 				{
-					_rootFolder = (Folder)it.next();
+					_rootFolder = it.next();
 				}
 			}
 		}
@@ -99,7 +96,7 @@ public final class FoldersCache
 	{
 		try
 		{
-			XMLObjectCache cache = new XMLObjectCache();
+			XMLObjectCache<Folder> cache = new XMLObjectCache<Folder>();
 			try
 			{
 				if (_rootFolder != null)

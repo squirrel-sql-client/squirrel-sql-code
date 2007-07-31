@@ -61,23 +61,23 @@ public class ConnectToStartupAliasesCommand implements ICommand
 
    public void execute()
    {
-      final List aliases = new ArrayList();
+      final List<ISQLAlias> aliases = new ArrayList<ISQLAlias>();
       final DataCache cache = _app.getDataCache();
       synchronized (cache)
       {
-         for (Iterator it = cache.aliases(); it.hasNext();)
+         for (Iterator<ISQLAlias> it = cache.aliases(); it.hasNext();)
          {
-            SQLAlias alias = (SQLAlias)it.next();
+            ISQLAlias alias = it.next();
             if (alias.isConnectAtStartup())
             {
                aliases.add(alias);
             }
          }
       }
-      final Iterator it = aliases.iterator();
+      final Iterator<ISQLAlias> it = aliases.iterator();
       while (it.hasNext())
       {
-         final SQLAlias alias = (SQLAlias)it.next();
+         final SQLAlias alias = (SQLAlias) it.next();
          new ConnectToAliasCommand(_app, alias).execute();
       }
    }

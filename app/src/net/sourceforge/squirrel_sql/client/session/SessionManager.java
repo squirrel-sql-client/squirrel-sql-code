@@ -67,17 +67,17 @@ public class SessionManager
    private ISession _activeSession;
 
    /** Linked list of sessions. */
-   private final LinkedList _sessionsList = new LinkedList();
+   private final LinkedList<ISession> _sessionsList = new LinkedList<ISession>();
 
    /** Map of sessions keyed by session ID. */
-   private final Map _sessionsById = new HashMap();
+   private final Map<IIdentifier, ISession> _sessionsById = new HashMap<IIdentifier, ISession>();
 
    private EventListenerList listenerList = new EventListenerList();
 
    /** Factory used to generate session IDs. */
    private final IntegerIdentifierFactory _idFactory = new IntegerIdentifierFactory(1);
-   private ArrayList _allowedSchemaCheckers = new ArrayList();
-   private Hashtable _allowedSchemasBySessionID = new Hashtable();
+   private ArrayList<IAllowedSchemaChecker> _allowedSchemaCheckers = new ArrayList<IAllowedSchemaChecker>();
+   private Hashtable<IIdentifier, String[]> _allowedSchemasBySessionID = new Hashtable<IIdentifier, String[]>();
 
    /**
     * Ctor.
@@ -161,8 +161,7 @@ public class SessionManager
     */
    public synchronized ISession[] getConnectedSessions()
    {
-      final ISession[] ar = new ISession[_sessionsList.size()];
-      return (ISession[])_sessionsList.toArray(ar);
+      return _sessionsList.toArray(new ISession[_sessionsList.size()]);
    }
 
    /**
@@ -192,7 +191,7 @@ public class SessionManager
          {
             idx = 0;
          }
-         return (ISession)_sessionsList.get(idx);
+         return _sessionsList.get(idx);
       }
 
       s_log.error("SessionManager.getNextSession()-> Session " +
@@ -200,7 +199,7 @@ public class SessionManager
       if (sessionCount > 0)
       {
          s_log.error("SessionManager.getNextSession()-> Returning first session");
-         return (ISession)_sessionsList.getFirst();
+         return _sessionsList.getFirst();
       }
       s_log.error("SessionManager.getNextSession()-> List empty so returning passed session");
       return session;
@@ -223,7 +222,7 @@ public class SessionManager
          {
             idx = sessionCount - 1;
          }
-         return (ISession)_sessionsList.get(idx);
+         return _sessionsList.get(idx);
       }
 
       s_log.error("SessionManager.getPreviousSession()-> Session " +
@@ -231,7 +230,7 @@ public class SessionManager
       if (sessionCount > 0)
       {
          s_log.error("SessionManager.getPreviousSession()-> Returning last session");
-         return (ISession)_sessionsList.getLast();
+         return _sessionsList.getLast();
       }
       s_log.error("SessionManager.getPreviousSession()-> List empty so returning passed session");
       return session;
@@ -247,7 +246,7 @@ public class SessionManager
     */
    public ISession getSession(IIdentifier sessionID)
    {
-      return (ISession)_sessionsById.get(sessionID);
+      return _sessionsById.get(sessionID);
    }
 
    /**
@@ -308,7 +307,7 @@ public class SessionManager
             {
                if (!_sessionsList.isEmpty())
                {
-                  setActiveSession((ISession)_sessionsList.getLast());
+                  setActiveSession(_sessionsList.getLast());
                }
                else
                {
@@ -600,7 +599,7 @@ public class SessionManager
 
    public String[] getAllowedSchemas(ISession session)
    {
-      String[] allowedSchemas = (String[])_allowedSchemasBySessionID.get(session.getIdentifier());
+      String[] allowedSchemas = _allowedSchemasBySessionID.get(session.getIdentifier());
       if(null == allowedSchemas)
       {
          allowedSchemas = getAllowedSchemas(session.getSQLConnection(), session.getAlias());
@@ -621,14 +620,14 @@ public class SessionManager
       try
       {
          // Do not do new HashMap() here.
-         HashMap uniqueAllowedSchemas = null;
+         HashMap<String, Object> uniqueAllowedSchemas = null;
 
          for (int i = 0; i < _allowedSchemaCheckers.size(); i++)
          {
             String[] allowedSchemas = null;
             try
             {
-               allowedSchemas = ((IAllowedSchemaChecker)_allowedSchemaCheckers.get(i)).getAllowedSchemas(con, alias);
+               allowedSchemas = (_allowedSchemaCheckers.get(i)).getAllowedSchemas(con, alias);
             }
             catch (Exception e)
             {
@@ -639,7 +638,7 @@ public class SessionManager
             {
                if(null == uniqueAllowedSchemas)
                {
-                  uniqueAllowedSchemas = new HashMap();
+                  uniqueAllowedSchemas = new HashMap<String, Object>();
                }
 
                for (int j = 0; j < allowedSchemas.length; j++)
@@ -655,9 +654,9 @@ public class SessionManager
          }
          else
          {
-            ArrayList list = new ArrayList(uniqueAllowedSchemas.keySet());
+            ArrayList<String> list = new ArrayList<String>(uniqueAllowedSchemas.keySet());
             Collections.sort(list);
-            return (String[]) list.toArray(new String[list.size()]);
+            return list.toArray(new String[list.size()]);
          }
       }
       catch (Exception e)

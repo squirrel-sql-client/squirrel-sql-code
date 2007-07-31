@@ -11,9 +11,9 @@ import java.util.HashMap;
 
 public class NetbeansPropertiesWrapper
 {
-   private HashMap _props;
+   private HashMap<String, IParserEventsProcessorFactory> _props;
 
-   public NetbeansPropertiesWrapper(HashMap props)
+   public NetbeansPropertiesWrapper(HashMap<String, IParserEventsProcessorFactory> props)
    {
       _props = props;
    }
@@ -30,7 +30,7 @@ public class NetbeansPropertiesWrapper
       }
       else
       {
-         IParserEventsProcessorFactory fact = (IParserEventsProcessorFactory) _props.get(IParserEventsProcessorFactory.class.getName());
+         IParserEventsProcessorFactory fact = _props.get(IParserEventsProcessorFactory.class.getName());
          return fact.getParserEventsProcessor(sqlEntryPanelIdentifier, sess);
       }
    }

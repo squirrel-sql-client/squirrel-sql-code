@@ -135,10 +135,10 @@ public class XMLBeanReader implements Iterable<Object>
 			final IXMLParser parser = XMLParserFactory.createDefaultXMLParser();
 			parser.setReader(new StdXMLReader(rdr));
 			IXMLElement element = (IXMLElement) parser.parse();
-			Iterator it = new EnumerationIterator(element.enumerateChildren());
+			Iterator<IXMLElement> it = new EnumerationIterator<IXMLElement>(element.enumerateChildren());
 			while (it.hasNext())
 			{
-				final IXMLElement elem = (IXMLElement) it.next();
+				final IXMLElement elem = it.next();
 				if (isBeanElement(elem))
 				{
 					_beanColl.add(loadBean(elem));
@@ -162,7 +162,7 @@ public class XMLBeanReader implements Iterable<Object>
 		{
 			String beanClassName = getClassNameFromElement(beanElement);
 			beanClassName = fixClassName(beanClassName);
-			Class beanClass = null;
+			Class<?> beanClass = null;
 			if (_cl == null)
 			{
 				beanClass = Class.forName(beanClassName);
@@ -211,8 +211,8 @@ public class XMLBeanReader implements Iterable<Object>
 		final Method setter = propDescr.getWriteMethod();
 		if (setter != null)
 		{
-			final Class parmType = setter.getParameterTypes()[0];
-			final Class arrayType = parmType.getComponentType();
+			final Class<?> parmType = setter.getParameterTypes()[0];
+			final Class<?> arrayType = parmType.getComponentType();
 			final String value = propElem.getContent();
 			if (isIndexedElement(propElem))
 			{

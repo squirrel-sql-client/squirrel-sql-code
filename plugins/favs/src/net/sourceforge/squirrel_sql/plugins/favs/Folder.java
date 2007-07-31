@@ -17,22 +17,19 @@ package net.sourceforge.squirrel_sql.plugins.favs;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.IValidatable;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
-//??import net.sourceforge.squirrel_sql.client.util.IHasName;
 
 /**
  * This class represents a folder within which queries that can be stored.
@@ -40,7 +37,9 @@ import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
 public final class Folder implements Cloneable, Serializable, IHasIdentifier,
 										IValidatable /*, IHasName*/ {
 
-	private static final StringManager s_stringMgr =
+    private static final long serialVersionUID = 1L;
+
+    private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(Folder.class);
 
 	private static final String EMPTY_STRING = "";
@@ -67,7 +66,7 @@ public final class Folder implements Cloneable, Serializable, IHasIdentifier,
 	private String _name;
 
 	/** Folders that this object contains. */
-	private List _subFolders = new ArrayList();
+	private List<Folder> _subFolders = new ArrayList<Folder>();
 
 	/** Object to handle property change events. */
 	private transient PropertyChangeSupport _propChgNotifier = null;
@@ -175,16 +174,16 @@ public final class Folder implements Cloneable, Serializable, IHasIdentifier,
 		return _subFolders.remove(subFolder);
 	}
 
-	public Iterator subFolders() {
+	public Iterator<Folder> subFolders() {
 		return _subFolders.iterator();
 	}
 
 	public Folder[] getSubFolders() {
-		return (Folder[])_subFolders.toArray(new Folder[_subFolders.size()]);
+		return _subFolders.toArray(new Folder[_subFolders.size()]);
 	}
 
 	public Folder getSubFolder(int idx) throws ArrayIndexOutOfBoundsException {
-		return (Folder)_subFolders.get(idx);
+		return _subFolders.get(idx);
 	}
 
 	public void setSubFolders(Folder[] value) {

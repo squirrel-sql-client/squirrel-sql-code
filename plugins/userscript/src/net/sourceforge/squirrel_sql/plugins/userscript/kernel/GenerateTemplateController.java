@@ -1,14 +1,13 @@
 package net.sourceforge.squirrel_sql.plugins.userscript.kernel;
 
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-
-import javax.swing.*;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.awt.*;
-import java.io.File;
+import java.awt.event.ActionListener;
 import java.io.FileOutputStream;
-import java.io.FileNotFoundException;
+
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 
 public class GenerateTemplateController
 {

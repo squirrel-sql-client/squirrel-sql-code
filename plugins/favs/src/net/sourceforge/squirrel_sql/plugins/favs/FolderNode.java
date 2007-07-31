@@ -17,11 +17,12 @@ package net.sourceforge.squirrel_sql.plugins.favs;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 
 final class FolderNode extends BaseNode {
-	private Folder _folder;
+
+    private static final long serialVersionUID = 1L;
+    private Folder _folder;
 	private String _identifier;
 	private String _name;
 

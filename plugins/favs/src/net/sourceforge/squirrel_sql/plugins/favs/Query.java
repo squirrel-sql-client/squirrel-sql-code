@@ -17,31 +17,22 @@ package net.sourceforge.squirrel_sql.plugins.favs;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
-import net.sourceforge.squirrel_sql.fw.persist.IValidatable;
-import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
-
 import net.sourceforge.squirrel_sql.client.util.IdentifierFactory;
+import net.sourceforge.squirrel_sql.fw.id.IHasIdentifier;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.persist.IValidatable;
 
 /**
  * This class represents a query that can be saved and restored.
  */
 final class Query implements Cloneable, Serializable, IHasIdentifier, IValidatable {
-	private static final String EMPTY_STRING = "";
 
-	/**
-	 * This interface defines locale specific strings. This should be
-	 * replaced with a property file.
-	 */
-	private interface i18n {
-		String ERR_BLANK_NAME = "Name cannot be blank.";
-		String ERR_BLANK_SQL = "SQL cannot be blank.";
-	}
+    private static final long serialVersionUID = 1L;
+
+    private static final String EMPTY_STRING = "";
+
 
 	public interface IPropertyNames {
 		String DESCRIPTION = "Description";
@@ -56,6 +47,7 @@ final class Query implements Cloneable, Serializable, IHasIdentifier, IValidatab
 	private String _name;
 
 	/** Description for this query. */
+    @SuppressWarnings("unused")
 	private String _description;
 
 	/** SQL. */

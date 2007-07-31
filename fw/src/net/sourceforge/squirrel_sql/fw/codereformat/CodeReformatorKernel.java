@@ -17,7 +17,6 @@ package net.sourceforge.squirrel_sql.fw.codereformat;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.util.Vector;
-import java.util.Locale;
 
 public class CodeReformatorKernel
 {
@@ -37,7 +36,7 @@ public class CodeReformatorKernel
 	{
 		_statesOfPosition = getStatesOfPosition(in);
 
-		Vector ret = new Vector();
+		Vector<String> ret = new Vector<String>();
 
       // toUpperCase replaces the German ß by ss.
       // This will kill reformating later.
@@ -129,7 +128,7 @@ public class CodeReformatorKernel
 
 			}
 		}
-		return (String[])ret.toArray(new String[0]);
+		return ret.toArray(new String[ret.size()]);
 	}
 
 	private Piece getNextToplevelPiece(int startAt, String in)

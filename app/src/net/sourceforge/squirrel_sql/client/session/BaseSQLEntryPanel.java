@@ -9,7 +9,6 @@ import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.SwingUtilities;
-import javax.swing.text.JTextComponent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.action.ViewObjectAtCursorInObjectTreeAction;
@@ -381,7 +380,7 @@ public abstract class BaseSQLEntryPanel implements ISQLEntryPanel
 
         private void displayPopupMenu(MouseEvent evt)
 		{
-			_textPopupMenu.setTextComponent((JTextComponent)getTextComponent());
+			_textPopupMenu.setTextComponent(getTextComponent());
 			_textPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
 		}
 	}

@@ -100,7 +100,7 @@ public class ProxyDriver implements Driver {
     public DriverPropertyInfo[] getPropertyInfo(String url, Properties info)
         throws SQLException 
     {
-        ArrayList list = new ArrayList();
+        List<DriverPropertyInfo> list = new ArrayList<DriverPropertyInfo>();
 
         DriverPropertyInfo classInfo = new SortableDriverProperty(DRIVER_CLASS_PROP_KEY, null);
         classInfo.required = true;
@@ -117,26 +117,29 @@ public class ProxyDriver implements Driver {
         DriverPropertyInfo trackCalls = new SortableDriverProperty(TRACK_METHOD_CALLS_KEY, null);
         trackCalls.required = false;
         list.add(trackCalls);
-        List connMethods = getMethods("java.sql.Connection", "ProxyConnection");
+        List<SortableDriverProperty> connMethods = 
+            getMethods("java.sql.Connection", "ProxyConnection");
         Collections.sort(connMethods);
         list.addAll(connMethods);
-        List mdMethods = getMethods("java.sql.DatabaseMetaData", "ProxyDatabaseMetaData");
+        List<SortableDriverProperty> mdMethods = 
+            getMethods("java.sql.DatabaseMetaData", "ProxyDatabaseMetaData");
         Collections.sort(mdMethods);
         list.addAll(mdMethods);
-        List psMethods = getMethods("java.sql.PreparedStatement", "ProxyPreparedStatement");
+        List<SortableDriverProperty> psMethods = 
+            getMethods("java.sql.PreparedStatement", "ProxyPreparedStatement");
         Collections.sort(psMethods);
         list.addAll(psMethods);        
-        List rsMethods = getMethods("java.sql.ResultSet", "ProxyResultSet");
+        List<SortableDriverProperty> rsMethods = getMethods("java.sql.ResultSet", "ProxyResultSet");
         Collections.sort(rsMethods);
         list.addAll(rsMethods);        
-        List rsmdMethods = getMethods("java.sql.ResultSetMetaData", "ProxyResultSetMetaData");
+        List<SortableDriverProperty> rsmdMethods = getMethods("java.sql.ResultSetMetaData", "ProxyResultSetMetaData");
         Collections.sort(rsmdMethods);
         list.addAll(rsmdMethods);        
-        List stmtMethods = getMethods("java.sql.Statement", "ProxyStatement");
+        List<SortableDriverProperty> stmtMethods = getMethods("java.sql.Statement", "ProxyStatement");
         Collections.sort(stmtMethods);
         list.addAll(stmtMethods);        
         DriverPropertyInfo[] ar = new DriverPropertyInfo[list.size()];
-        return (DriverPropertyInfo[])list.toArray(ar);
+        return list.toArray(ar);
     }
     
     /**
@@ -158,16 +161,16 @@ public class ProxyDriver implements Driver {
 
     }
     
-    private List getMethods(String className, String proxyClassName) {
-        ArrayList result = new ArrayList();
+    private List<SortableDriverProperty> getMethods(String className, String proxyClassName) {
+        ArrayList<SortableDriverProperty> result = new ArrayList<SortableDriverProperty>();
         try {
-            Class c = Class.forName(className);
+            Class<?> c = Class.forName(className);
             Method[] methods = c.getDeclaredMethods();
             
             if (methods.length > 0) {
                 for (int i = 0; i < methods.length; i++) {
                     Method method = methods[i];
-                    DriverPropertyInfo info = 
+                    SortableDriverProperty info = 
                         new SortableDriverProperty(proxyClassName + "." + method.getName(), null);
                     info.required = false;
                     result.add(info);
@@ -180,7 +183,7 @@ public class ProxyDriver implements Driver {
     }
     
     private class SortableDriverProperty extends DriverPropertyInfo
-                                         implements Comparable {        
+                                         implements Comparable<SortableDriverProperty> {        
         public SortableDriverProperty(String name, String value) {
             super(name, value);
         }
@@ -188,12 +191,8 @@ public class ProxyDriver implements Driver {
         /* (non-Javadoc)
          * @see java.lang.Comparable#compareTo(java.lang.Object)
          */
-        public int compareTo(Object o) {
-            if (o instanceof DriverPropertyInfo) {
-                DriverPropertyInfo dpi = (DriverPropertyInfo)o;
-                return name.compareTo(dpi.name); 
-            }
-            return 0;
+        public int compareTo(SortableDriverProperty o) {
+            return name.compareTo(o.name); 
         }
     }
 }

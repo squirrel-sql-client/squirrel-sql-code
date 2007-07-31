@@ -23,7 +23,7 @@ public class ScriptEnvironment
 	private JTabbedPane m_tabbedPane;
 	private JLabel m_lblStatus;
 
-	private Vector m_printStreams = new Vector();
+	private Vector<PrintStream> m_printStreams = new Vector<PrintStream>();
 	private int createdPrintStreamsCount = 0;
 
 	ScriptEnvironment(ISQLPanelAPI sqlPanelApi, JFrame ownerFrame)
@@ -117,7 +117,7 @@ public class ScriptEnvironment
 	{
 		for (int i = 0; i < m_printStreams.size(); i++)
 		{
-			PrintStream printStream = (PrintStream) m_printStreams.elementAt(i);
+			PrintStream printStream = m_printStreams.elementAt(i);
 			printStream.flush();
 		}
 	}

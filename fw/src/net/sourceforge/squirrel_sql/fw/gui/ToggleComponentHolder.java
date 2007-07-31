@@ -7,7 +7,8 @@ import java.awt.event.ActionEvent;
 
 public class ToggleComponentHolder
 {
-   private ArrayList _toggleables = new ArrayList();
+   private ArrayList<AbstractButton> _toggleables = 
+       new ArrayList<AbstractButton>();
    private boolean _selected;
 
    public boolean isSelected()
@@ -21,8 +22,7 @@ public class ToggleComponentHolder
       
       for (int i = 0; i < _toggleables.size(); i++)
       {
-         final AbstractButton abstractButton = 
-             (AbstractButton) _toggleables.get(i);
+         final AbstractButton abstractButton = _toggleables.get(i);
          GUIUtils.processOnSwingEventThread(new Runnable() {
              public void run() {
                  abstractButton.setSelected(_selected);
@@ -51,7 +51,7 @@ public class ToggleComponentHolder
 
       for (int i = 0; i < _toggleables.size(); i++)
       {
-         AbstractButton abstractButton = (AbstractButton) _toggleables.get(i);
+         AbstractButton abstractButton = _toggleables.get(i);
          abstractButton.setSelected(_selected);
       }
    }

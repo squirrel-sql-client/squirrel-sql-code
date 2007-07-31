@@ -22,6 +22,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 
 public class MockTableInfo extends MockDatabaseObjectInfo implements ITableInfo {
 
+    private static final long serialVersionUID = 1L;
     private String type = null;
     private String remarks = null;
     private ITableInfo[] childTables = null;

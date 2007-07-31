@@ -24,7 +24,7 @@ import java.util.NoSuchElementException;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class EmptyEnumeration implements Enumeration
+public class EmptyEnumeration<E> implements Enumeration<E>
 {
 	/**
 	 * Returns <CODE>false</CODE> as container is empty.
@@ -37,7 +37,7 @@ public class EmptyEnumeration implements Enumeration
 	/**
 	 * Throws <CODE>NoSuchElementException</CODE> as container is empty.
 	 */
-	public Object nextElement()
+	public E nextElement()
 	{
 		throw new NoSuchElementException();
 	}

@@ -101,6 +101,16 @@ public class SQLResultExecuterPanel extends JPanel
     private static final StringManager s_stringMgr =
         StringManagerFactory.getStringManager(SQLResultExecuterPanel.class);
     
+    static interface i18n {
+        // i18n[SQLResultExecuterPanel.exec=Executing SQL]
+        String EXEC_SQL_MSG = 
+            s_stringMgr.getString("SQLResultExecuterPanel.exec");
+        // i18n[SQLResultExecuterPanel.cancelMsg=Press Cancel to Stop]
+        String CANCEL_SQL_MSG = 
+            s_stringMgr.getString("SQLResultExecuterPanel.cancelMsg");
+        
+    }
+    
 	private ISession _session;
 
 	private MyPropertiesListener _propsListener;
@@ -321,10 +331,10 @@ public class SQLResultExecuterPanel extends JPanel
 	 */
 	public synchronized void closeAllSQLResultFrames()
 	{
-		List tabs = (List)_usedTabs.clone();
-		for (Iterator it = tabs.iterator(); it.hasNext();)
+		List<ResultTabInfo> tabs = new ArrayList<ResultTabInfo>(_usedTabs);
+		for (Iterator<ResultTabInfo> it = tabs.iterator(); it.hasNext();)
 		{
-			ResultTabInfo ti = (ResultTabInfo)it.next();
+			ResultTabInfo ti = it.next();
 			if (ti._resultFrame != null)
 			{
 				ti._resultFrame.dispose();
@@ -338,10 +348,10 @@ public class SQLResultExecuterPanel extends JPanel
 	 */
 	public synchronized void closeAllSQLResultTabs()
 	{
-		List tabs = (List)_usedTabs.clone();
-		for (Iterator it = tabs.iterator(); it.hasNext();)
+		List<ResultTabInfo> tabs = new ArrayList<ResultTabInfo>(_usedTabs);
+		for (Iterator<ResultTabInfo> it = tabs.iterator(); it.hasNext();)
 		{
-			ResultTabInfo ti = (ResultTabInfo)it.next();
+			ResultTabInfo ti = it.next();
 			if (ti._resultFrame == null)
 			{
 				closeTab(ti._tab);
@@ -353,10 +363,10 @@ public class SQLResultExecuterPanel extends JPanel
    {
       Component selectedTab = _tabbedExecutionsPanel.getSelectedComponent();
 
-      List tabs = (List)_usedTabs.clone();
-      for (Iterator it = tabs.iterator(); it.hasNext();)
+      List<ResultTabInfo> tabs = new ArrayList<ResultTabInfo>(_usedTabs);
+      for (Iterator<ResultTabInfo> it = tabs.iterator(); it.hasNext();)
       {
-         ResultTabInfo ti = (ResultTabInfo)it.next();
+         ResultTabInfo ti = it.next();
          if(false == ti._tab.equals(selectedTab))
          {
             if (ti._resultFrame == null)
@@ -441,7 +451,7 @@ public class SQLResultExecuterPanel extends JPanel
    {
       Component selectedTab = _tabbedExecutionsPanel.getSelectedComponent();
 
-      List tabs = (List)_usedTabs.clone();
+      List<ResultTabInfo> tabs = new ArrayList<ResultTabInfo>(_usedTabs);
       for (Iterator<ResultTabInfo> it = tabs.iterator(); it.hasNext();)
       {
          ResultTabInfo ti = it.next();
@@ -844,10 +854,10 @@ public class SQLResultExecuterPanel extends JPanel
    {
       Component selectedTab = _tabbedExecutionsPanel.getComponentAt(index);
 
-      List tabs = (List)_usedTabs.clone();
-      for (Iterator it = tabs.iterator(); it.hasNext();)
+      List<ResultTabInfo> tabs = new ArrayList<ResultTabInfo>(_usedTabs);
+      for (Iterator<ResultTabInfo> it = tabs.iterator(); it.hasNext();)
       {
-         ResultTabInfo ti = (ResultTabInfo)it.next();
+         ResultTabInfo ti = it.next();
          if(ti._tab.equals(selectedTab))
          {
             if (ti._resultFrame == null)
@@ -1129,7 +1139,7 @@ public class SQLResultExecuterPanel extends JPanel
 
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
-                    _cancelPanel.setSQL(cleanSQL);
+                    _cancelPanel.setSQL(sqlToBeExecuted);
 
                     // i18n[SQLResultExecuterPanel.execStatus=Executing SQL...]
                     String status = 
@@ -1153,8 +1163,8 @@ public class SQLResultExecuterPanel extends JPanel
                 int processedStatementCount, 
                 int statementCount)
         {
-            double executionLength = ((double)exInfo.getSQLExecutionElapsedMillis())/1000d;
-            double outputLength = ((double)exInfo.getResultsProcessingElapsedMillis())/1000d;            
+            double executionLength = ((double)exInfo.getSQLExecutionElapsedMillis())/1000;
+            double outputLength = ((double)exInfo.getResultsProcessingElapsedMillis())/1000;            
             double totalLength = executionLength + outputLength;
 
             if (_largeScript) {
@@ -1341,7 +1351,7 @@ public class SQLResultExecuterPanel extends JPanel
 		    SQLExecutionException ex = 
 		        new SQLExecutionException(th, postErrorString);
 
-		    String message = getSession().formatException(th);
+		    String message = getSession().formatException(ex);
 
 		    getSession().showErrorMessage(message);
 
@@ -1385,14 +1395,10 @@ public class SQLResultExecuterPanel extends JPanel
 		    {
 		        public void run()
 		        {
-		            // i18n[SQLResultExecuterPanel.exec=Executing SQL]
-		            String execMsg = 
-		                s_stringMgr.getString("SQLResultExecuterPanel.exec");
-		            // i18n[SQLResultExecuterPanel.cancelMsg=Press Cancel to Stop]
-		            String cancMsg = 
-		                s_stringMgr.getString("SQLResultExecuterPanel.cancelMsg");
-
-		            _tabbedExecutionsPanel.addTab(execMsg, null, panel,	cancMsg);
+		            _tabbedExecutionsPanel.addTab(i18n.EXEC_SQL_MSG, 
+                                                  null, 
+                                                  panel,	
+                                                  i18n.CANCEL_SQL_MSG);
 		            _tabbedExecutionsPanel.setSelectedComponent(panel);
 		        }
 		    });
@@ -1401,7 +1407,8 @@ public class SQLResultExecuterPanel extends JPanel
 		private final class CancelPanel extends JPanel
 		implements ActionListener
 		{
-		    private JLabel _sqlLbl = new JLabel();
+            private static final long serialVersionUID = 1L;
+            private JLabel _sqlLbl = new JLabel();
 		    private JLabel _currentStatusLbl = new JLabel();
 
 		    /** Total number of queries that will be executed. */

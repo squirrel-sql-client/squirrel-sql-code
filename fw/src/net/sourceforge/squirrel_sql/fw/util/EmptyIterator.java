@@ -24,7 +24,7 @@ import java.util.NoSuchElementException;
  *
  * @author  <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class EmptyIterator implements Iterator
+public class EmptyIterator<E> implements Iterator<E>
 {
 	/**
 	 * Returns <CODE>false</CODE> as container is empty.
@@ -37,7 +37,7 @@ public class EmptyIterator implements Iterator
 	/**
 	 * Throws <CODE>NoSuchElementException</CODE> as container is empty.
 	 */
-	public Object next()
+	public E next()
 	{
 		throw new NoSuchElementException();
 	}

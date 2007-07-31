@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 public class ForeignKeyConstraint extends MssqlConstraint {
     
-    private ArrayList _primaryColumns;
+    private ArrayList<String> _primaryColumns;
     
     /**
      * Holds value of property referencedTable.
@@ -34,7 +34,7 @@ public class ForeignKeyConstraint extends MssqlConstraint {
     /** Creates a new instance of ForeignKeyConstraint */
     public ForeignKeyConstraint() {
         super();
-        _primaryColumns = new ArrayList();
+        _primaryColumns = new ArrayList<String>();
     }
     
     public void addPrimaryColumn(String columnName) {

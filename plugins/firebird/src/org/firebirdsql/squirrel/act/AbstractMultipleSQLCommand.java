@@ -16,6 +16,7 @@ abstract class AbstractMultipleSQLCommand implements ICommand
     private ISession _session;
 
     /** Current plugin. */
+    @SuppressWarnings("unused")
     private final IPlugin _plugin;
 
     /**

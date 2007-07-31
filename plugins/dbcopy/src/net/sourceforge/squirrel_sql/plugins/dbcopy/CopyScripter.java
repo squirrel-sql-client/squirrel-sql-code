@@ -22,10 +22,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.event.CopyEvent;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.event.CopyTableAdaptor;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.event.CopyTableListener;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.event.ErrorEvent;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.event.RecordEvent;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.event.StatementEvent;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.event.TableEvent;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.util.ScriptWriter;
 
 /**

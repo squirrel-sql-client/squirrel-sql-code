@@ -19,18 +19,17 @@ package net.sourceforge.squirrel_sql.plugins.favs;
  */
 import javax.swing.tree.TreePath;
 
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
 
 public class NewSavedQueriesFolderCommand {
 
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(NewSavedQueriesFolderCommand.class);
 
-	private IApplication _app;
+	@SuppressWarnings("unused")
+    private IApplication _app;
 	private QueryTree _tree;
 	private TreePath _path;
 

@@ -6,7 +6,9 @@ import java.util.ArrayList;
 
 public class PrefixesTableModel extends DefaultTableModel
 {
-	private ArrayList _data = new ArrayList();
+    private static final long serialVersionUID = 1L;
+
+    private ArrayList<PrefixedConfig> _data = new ArrayList<PrefixedConfig>();
 
 	public PrefixesTableModel(PrefixedConfig[] prefixedConfigs)
 	{
@@ -15,7 +17,7 @@ public class PrefixesTableModel extends DefaultTableModel
 	}
 	public Object getValueAt(int row, int column)
 	{
-		PrefixedConfig buf = (PrefixedConfig) _data.get(row);
+		PrefixedConfig buf = _data.get(row);
 
 		if(0 == column)
 		{
@@ -29,7 +31,7 @@ public class PrefixesTableModel extends DefaultTableModel
 
 	public void setValueAt(Object aValue, int row, int column)
 	{
-		PrefixedConfig buf = (PrefixedConfig) _data.get(row);
+		PrefixedConfig buf = _data.get(row);
 
 		if(0 == column)
 		{
@@ -65,7 +67,8 @@ public class PrefixesTableModel extends DefaultTableModel
 
 	public void removeRows(int[] selRows)
 	{
-		ArrayList toRemove = new ArrayList(selRows.length);
+		ArrayList<PrefixedConfig> toRemove = 
+            new ArrayList<PrefixedConfig>(selRows.length);
 
 		for (int i = 0; i < selRows.length; i++)
 		{
@@ -81,6 +84,6 @@ public class PrefixesTableModel extends DefaultTableModel
 
 	public PrefixedConfig[] getData()
 	{
-		return (PrefixedConfig[]) _data.toArray(new PrefixedConfig[_data.size()]);
+		return _data.toArray(new PrefixedConfig[_data.size()]);
 	}
 }

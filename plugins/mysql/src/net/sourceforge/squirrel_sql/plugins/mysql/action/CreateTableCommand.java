@@ -24,17 +24,12 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-//import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-//import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
-
 import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
-import net.sourceforge.squirrel_sql.plugins.mysql.util.DBUtils;
 import net.sourceforge.squirrel_sql.plugins.mysql.util.FieldDetails;
 /**
  * CreateTableCommand.java
@@ -45,7 +40,10 @@ import net.sourceforge.squirrel_sql.plugins.mysql.util.FieldDetails;
  */
 public class CreateTableCommand extends JDialog implements ICommand
 {
-	private static final StringManager s_stringMgr =
+    private static final long serialVersionUID = 1L;
+
+
+    private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(CreateTableCommand.class);
 
 
@@ -88,7 +86,8 @@ public class CreateTableCommand extends JDialog implements ICommand
 	private ISession _session;
 
 	/** Current plugin. */
-	private final MysqlPlugin _plugin;
+	@SuppressWarnings("unused")
+    private final MysqlPlugin _plugin;
 
 	public CreateTableCommand(ISession session, MysqlPlugin plugin)
 	{
@@ -109,7 +108,6 @@ public class CreateTableCommand extends JDialog implements ICommand
 	 */
 	private void initComponents()
 	{
-		DBUtils dbUtils = new DBUtils(_session, _plugin);
 		lbTableName = new javax.swing.JLabel();
 		tfTableName = new javax.swing.JTextField();
 		lbTableType = new javax.swing.JLabel();
@@ -392,7 +390,8 @@ public class CreateTableCommand extends JDialog implements ICommand
 	}
 
 	//Set the attributes for the fields in the class FieldDetails
-	private void btAddActionPerformed(java.awt.event.ActionEvent evt)
+	private void btAddActionPerformed(@SuppressWarnings("unused")
+    java.awt.event.ActionEvent evt)
 	{
 		FieldDetails fd = new FieldDetails();
 
@@ -415,7 +414,8 @@ public class CreateTableCommand extends JDialog implements ICommand
 
 	//Display the field attributes when selected in the list
 	private void listFieldsValueChanged(
-		javax.swing.event.ListSelectionEvent evt)
+		@SuppressWarnings("unused")
+        javax.swing.event.ListSelectionEvent evt)
 	{
 
 		int index = listFields.getSelectedIndex();
@@ -437,7 +437,8 @@ public class CreateTableCommand extends JDialog implements ICommand
 
 	}
 
-	private void btCreateTableActionPerformed(java.awt.event.ActionEvent evt)
+	private void btCreateTableActionPerformed(@SuppressWarnings("unused")
+    java.awt.event.ActionEvent evt)
 	{
 		ISQLConnection con = _session.getSQLConnection();
 		String query = getQuery();
@@ -460,14 +461,16 @@ public class CreateTableCommand extends JDialog implements ICommand
 		}
 	}
 
-	private void chPrimaryItemStateChanged(java.awt.event.ItemEvent evt)
+	private void chPrimaryItemStateChanged(@SuppressWarnings("unused")
+    java.awt.event.ItemEvent evt)
 	{
 		if (chPrimary.isSelected())
 			chNotNull.setSelected(true);
 
 	}
 
-	private void cbFieldTypeActionPerformed(java.awt.event.ActionEvent evt)
+	private void cbFieldTypeActionPerformed(@SuppressWarnings("unused")
+    java.awt.event.ActionEvent evt)
 	{
 		tfFieldLength.setText("5");
 
@@ -491,7 +494,8 @@ public class CreateTableCommand extends JDialog implements ICommand
 	}
 
 	//Reset the checkbox selected index false when fieldname gains focus
-	private void tfFieldNameFocusGained(java.awt.event.FocusEvent evt)
+	private void tfFieldNameFocusGained(@SuppressWarnings("unused")
+    java.awt.event.FocusEvent evt)
 	{
 		cbFieldType.setSelectedIndex(0);
 		chAuto.setSelected(false);
@@ -505,14 +509,16 @@ public class CreateTableCommand extends JDialog implements ICommand
 	}
 
 	/** Closes the dialog */
-	private void closeDialog(java.awt.event.WindowEvent evt)
+	private void closeDialog(@SuppressWarnings("unused")
+    java.awt.event.WindowEvent evt)
 	{
 		setVisible(false);
 		dispose();
 	}
 
 	//Remove the Fields added to the list
-	private void btRemoveActionPerformed(java.awt.event.ActionEvent evt)
+	private void btRemoveActionPerformed(@SuppressWarnings("unused")
+    java.awt.event.ActionEvent evt)
 	{
 		int index = listFields.getSelectedIndex();
 		DefaultListModel listModel = (DefaultListModel) listFields.getModel();
@@ -520,7 +526,8 @@ public class CreateTableCommand extends JDialog implements ICommand
 		listFields.invalidate();
 	}
 
-	private void btCancelActionPerformed(java.awt.event.ActionEvent evt)
+	private void btCancelActionPerformed(@SuppressWarnings("unused")
+    java.awt.event.ActionEvent evt)
 	{
 		jd.setVisible(false);
 		jd.dispose();

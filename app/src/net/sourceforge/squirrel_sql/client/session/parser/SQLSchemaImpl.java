@@ -12,7 +12,7 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 public class SQLSchemaImpl implements SQLSchema
 {
    private ISession _session;
-   private Hashtable _tableCache = new Hashtable();
+   private Hashtable<String, SQLSchema.Table> _tableCache = new Hashtable<String, Table>();
    private SQLDatabaseMetaData _dmd;
 
    SQLSchemaImpl(ISession session)
@@ -35,7 +35,7 @@ public class SQLSchemaImpl implements SQLSchema
       if(_session.getSchemaInfo().isTable(name))
       {
          String key = getKey(catalog, schema, name);
-         SQLSchema.Table ret = (SQLSchema.Table) _tableCache.get(key);
+         SQLSchema.Table ret = _tableCache.get(key);
          if(null == ret)
          {
             ret = new SQLSchema.Table(catalog, schema, name, _dmd);
@@ -63,15 +63,15 @@ public class SQLSchemaImpl implements SQLSchema
       return ret.toString();
    }
 
-    public List getTables(String catalog, String schema, String name)
+    public List<Table> getTables(String catalog, String schema, String name)
 	{
-        Vector ret = new Vector();
+        Vector<Table> ret = new Vector<Table>();
         String[] tableNames = _session.getSchemaInfo().getTables();
         
         for (int i = 0; i < tableNames.length; i++)
         {
             String key = getKey(catalog, schema, name);
-            SQLSchema.Table buf = (SQLSchema.Table) _tableCache.get(key);
+            SQLSchema.Table buf = _tableCache.get(key);
             if(null == buf)
             {
                 buf = new SQLSchema.Table(catalog, schema, tableNames[i], _dmd); 

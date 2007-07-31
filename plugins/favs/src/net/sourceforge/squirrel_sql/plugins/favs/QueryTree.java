@@ -18,36 +18,35 @@ package net.sourceforge.squirrel_sql.plugins.favs;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import javax.swing.Action;
+
+import javax.swing.Action;
 import javax.swing.JMenuItem;
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
-import javax.swing.event.TreeExpansionEvent;
-import javax.swing.event.TreeExpansionListener;
 
-import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
-import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
+import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
 
 final class QueryTree extends JTree {
-	private IApplication _app;
+    private static final long serialVersionUID = 1L;
 
+    private IApplication _app;
+    
+    @SuppressWarnings("unused")
 	private QueryTreeModel _model;
 
 	/** Popup menu for this component. */
 	private MyPopupMenu _popupMenu = new MyPopupMenu();
 
-	private List _actions = new ArrayList();
+	private List<BaseFavouriteAction> _actions = 
+        new ArrayList<BaseFavouriteAction>();
 
 	public QueryTree(IApplication app, FoldersCache cache) throws IllegalArgumentException {
 		super(new QueryTreeModel(app, cache));
@@ -126,7 +125,9 @@ final class QueryTree extends JTree {
 	 * Popup menu for this tree.
 	 */
 	private class MyPopupMenu extends BasePopupMenu {
-		/** Set to <CODE>true</CODE> once list is built. */
+        private static final long serialVersionUID = 1L;
+
+        /** Set to <CODE>true</CODE> once list is built. */
 		private boolean _built = false;
 
 		/**
@@ -142,16 +143,15 @@ final class QueryTree extends JTree {
 				add(actColl.get(DeleteSavedQueriesFolderAction.class));
 				_built = true;
 			}
-			BaseNode node = null;
-			for (Iterator it = QueryTree.this._actions.iterator(); it.hasNext();) {
-				((BaseFavouriteAction)it.next()).setTreePath(path);
+			for (Iterator<BaseFavouriteAction> it = QueryTree.this._actions.iterator(); it.hasNext();) {
+				(it.next()).setTreePath(path);
 			}
 			super.show(evt);
 		}
 		public JMenuItem add(Action action) {
 			if (action instanceof BaseFavouriteAction) {
 				((BaseFavouriteAction)action).setQueryTree(QueryTree.this);
-				_actions.add(action);
+				_actions.add((BaseFavouriteAction)action);
 			}
 			return super.add(action);
 		}

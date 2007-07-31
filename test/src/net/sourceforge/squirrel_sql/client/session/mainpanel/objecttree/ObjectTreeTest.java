@@ -21,7 +21,6 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.TestCase;
 import net.sourceforge.squirrel_sql.BaseSQuirreLTestCase;
 import net.sourceforge.squirrel_sql.client.ApplicationManager;
 import net.sourceforge.squirrel_sql.client.session.MockSession;

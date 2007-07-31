@@ -45,7 +45,8 @@ public class FileViewerFactory
 	 * Collection of <TT>HtmlViewer</TT> objects keyed by the URL they are
 	 * displaying.
 	 */
-	private final HashMap _sheets = new HashMap();
+	private final HashMap<String, HtmlViewerSheet> _sheets = 
+        new HashMap<String, HtmlViewerSheet>();
 
 	/** Listener used to cleanup instances of viewers after they are closed. */
 	private MyInternalFrameListener _lis = new MyInternalFrameListener();
@@ -90,7 +91,7 @@ public class FileViewerFactory
 			throw new IllegalArgumentException("URL == null");
 		}
 
-		HtmlViewerSheet viewer = (HtmlViewerSheet)_sheets.get(url.toString());
+		HtmlViewerSheet viewer = _sheets.get(url.toString());
 		if (viewer == null)
 		{
 			viewer = new HtmlViewerSheet(parent.getApplication(),
@@ -108,11 +109,12 @@ public class FileViewerFactory
 
 	public synchronized void closeAllViewers()
 	{
-		final Map viewers = (Map)_sheets.clone();
-		final Iterator it = viewers.values().iterator();
+		final Map<String, HtmlViewerSheet> viewers = 
+            new HashMap<String, HtmlViewerSheet>(_sheets);
+		final Iterator<HtmlViewerSheet> it = viewers.values().iterator();
 		while (it.hasNext())
 		{
-			final HtmlViewerSheet v = (HtmlViewerSheet)it.next();
+			final HtmlViewerSheet v = it.next();
 			removeViewer(v);
 			v.dispose();
 		}
@@ -139,4 +141,5 @@ public class FileViewerFactory
 //			super.internalFrameClosed(evt);
 		}
 	}
+    
 }

@@ -114,6 +114,7 @@ public class DBMetaDataConcurrencyTester {
     
     private static class GetProceduresRunnable implements Runnable {
                 
+        @SuppressWarnings("unused")
         public void run() {
             int count = 0;
             while (getProcedures && count++ < iterations) {
@@ -147,7 +148,7 @@ public class DBMetaDataConcurrencyTester {
             while (getProductName && count++ < iterations) {
                 try {
                     System.out.println("Thread "+Thread.currentThread().getName());
-                    String productName = md.getDatabaseProductName();
+                    md.getDatabaseProductName();
                     if (sleepTime > 0) {
                         Thread.sleep(sleepTime);
                     }
@@ -165,7 +166,7 @@ public class DBMetaDataConcurrencyTester {
             while (getProductVersion && count++ < iterations) {
                 try {
                     System.out.println("Thread "+Thread.currentThread().getName());
-                    String productVersion = md.getDatabaseProductVersion();
+                    md.getDatabaseProductVersion();
                     if (sleepTime > 0) {
                         Thread.sleep(sleepTime);
                     }
@@ -183,8 +184,8 @@ public class DBMetaDataConcurrencyTester {
             while (getJDBCVersion && count++ < iterations) {
                 try {
                     System.out.println("Thread "+Thread.currentThread().getName());
-                    int major = md.getJDBCMajorVersion();
-                    int minor = md.getJDBCMinorVersion();
+                    md.getJDBCMajorVersion();
+                    md.getJDBCMinorVersion();
                     if (sleepTime > 0) {
                         Thread.sleep(sleepTime);
                     }
@@ -198,7 +199,7 @@ public class DBMetaDataConcurrencyTester {
     
     
     private static class GetTablesRunnable implements Runnable {
-        
+        @SuppressWarnings("unused")
         public void run() {
             int count = 0;
             while (getTables && count++ < iterations) {
@@ -206,7 +207,7 @@ public class DBMetaDataConcurrencyTester {
                 try {
                     System.out.println("Thread "+Thread.currentThread().getName());
                     rs = md.getTables(null, user, null, null);
-                    ArrayList list = new ArrayList();
+                    ArrayList<String> list = new ArrayList<String>();
                     while (rs.next()) {
                         String catalog = rs.getString(1);
                         String schema = rs.getString(2);
@@ -236,6 +237,7 @@ public class DBMetaDataConcurrencyTester {
     
     private static class GetColumnsRunnable implements Runnable {
         
+        @SuppressWarnings("unused")
         public void run() {
             int count = 0;
             while (getColumns && count++ < iterations) {

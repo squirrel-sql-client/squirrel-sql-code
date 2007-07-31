@@ -17,30 +17,31 @@ package net.sourceforge.squirrel_sql.plugins.syntax.netbeans;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseListener;
+import java.util.HashMap;
+
+import javax.swing.SwingUtilities;
+import javax.swing.event.CaretListener;
+import javax.swing.event.UndoableEditListener;
+import javax.swing.text.Document;
+import javax.swing.text.Element;
+import javax.swing.text.JTextComponent;
+import javax.swing.text.PlainDocument;
+import javax.swing.undo.UndoManager;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.BaseSQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
+import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessorFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPugin;
-
-import javax.swing.*;
-import javax.swing.event.CaretListener;
-import javax.swing.event.UndoableEditListener;
-import javax.swing.text.Document;
-import javax.swing.text.PlainDocument;
-import javax.swing.text.Element;
-import javax.swing.text.JTextComponent;
-import javax.swing.undo.UndoManager;
-
-import java.awt.*;
-import java.awt.event.MouseListener;
-import java.awt.event.ActionEvent;
-import java.util.Properties;
-import java.util.HashMap;
 
 import org.netbeans.editor.ext.ExtKit;
 
@@ -50,6 +51,7 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 	private static final ILogger s_log = LoggerController.createLogger(NetbeansSQLEntryPanel.class);
 
 	/** Application API. */
+    @SuppressWarnings("unused")
 	private IApplication _app;
 
 	/** Text component. */
@@ -61,7 +63,11 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
    private SyntaxPugin _plugin;
    private NetbeansPropertiesWrapper _propertiesWrapper;
 
-   NetbeansSQLEntryPanel(ISession session, SyntaxPreferences prefs, SyntaxFactory syntaxFactory, SyntaxPugin plugin, HashMap props)
+   NetbeansSQLEntryPanel(ISession session, 
+                         SyntaxPreferences prefs, 
+                         SyntaxFactory syntaxFactory, 
+                         SyntaxPugin plugin, 
+                         HashMap<String, IParserEventsProcessorFactory> props)
 	{
 		super(session.getApplication());
 
@@ -80,7 +86,12 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 
 		_app = session.getApplication();
 
-		_textArea = new NetbeansSQLEditorPane(session, prefs, syntaxFactory, _plugin, getIdentifier(), _propertiesWrapper);
+		_textArea = new NetbeansSQLEditorPane(session, 
+                                              prefs, 
+                                              syntaxFactory, 
+                                              _plugin, 
+                                              getIdentifier(), 
+                                              _propertiesWrapper);
 
 	}
 

@@ -43,6 +43,7 @@ import net.sourceforge.squirrel_sql.plugins.mysql.MysqlPlugin;
 public class DBUtils
 {
 	/** Logger for this class. */
+    @SuppressWarnings("unused")
 	private final static ILogger s_log =
 		LoggerController.createLogger(DBUtils.class);
 
@@ -50,6 +51,7 @@ public class DBUtils
 	private ISession _session;
 
 	/** Current plugin. */
+    @SuppressWarnings("unused")
 	private final MysqlPlugin _plugin;
 
 	/**
@@ -66,9 +68,6 @@ public class DBUtils
 	//To get the TableInfo for the selected object in the tree
 	public ITableInfo getTableInfo()
 	{
-
-		ISQLConnection conn = _session.getSQLConnection();
-		SQLDatabaseMetaData dmd = conn.getSQLMetaData();
 		IObjectTreeAPI treeAPI = _session.getSessionInternalFrame().getObjectTreeAPI();
 		IDatabaseObjectInfo[] dbInfo = treeAPI.getSelectedDatabaseObjects();
 
@@ -81,13 +80,10 @@ public class DBUtils
 
 	public String[] getColumnNames()
 	{
-		Vector dadaSet = new Vector();
 		String[] columnNames = null;
-		ResultSetMetaData rsmd;
 		try
 		{
 			final ISQLConnection conn = _session.getSQLConnection();
-			SQLDatabaseMetaData dmd = conn.getSQLMetaData();
 			Statement stmt = conn.createStatement();
 			ResultSet rs =
 				stmt.executeQuery("SELECT * FROM " + getTableInfo() + ";");
@@ -107,7 +103,6 @@ public class DBUtils
 
 	public String[] getFieldDataTypes()
 	{
-		Vector dataSet = new Vector();
 		String[] dataTypes = null;
 
 		try
@@ -147,10 +142,10 @@ public class DBUtils
 	}
 
 	//Get all the data types available
-	public Vector getDataTypes()
+	public Vector<String> getDataTypes()
 	{
 
-		Vector dataTypes = new Vector();
+		Vector<String> dataTypes = new Vector<String>();
 		try
 		{
 			final ISQLConnection conn = _session.getSQLConnection();

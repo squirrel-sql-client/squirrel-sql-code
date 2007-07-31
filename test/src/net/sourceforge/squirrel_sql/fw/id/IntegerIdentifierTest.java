@@ -38,7 +38,9 @@ public class IntegerIdentifierTest extends TestCase {
 
         IntegerIdentifier uid3 = new IntegerIdentifier(2);
 
-        IntegerIdentifier uid4 = new IntegerIdentifier(1) {};
+        IntegerIdentifier uid4 = new IntegerIdentifier(1) {
+            private static final long serialVersionUID = 1L;
+        };
 
         new EqualsTester(uid1, uid2, uid3, uid4);
     }

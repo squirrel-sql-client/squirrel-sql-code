@@ -17,15 +17,6 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.ANON_PROC_EXEC;
-import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.CREATE_FUNCTION_SQL;
-import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.CREATE_OR_REPLACE_STORED_PROC;
-import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.CREATE_STORED_PROC;
-import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.NO_SEP_SLASH_SQL;
-import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.SELECT_DUAL;
-import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.STUDENTS_NOT_TAKING_CS112;
-import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.UPDATE_TEST;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;

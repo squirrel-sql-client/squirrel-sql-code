@@ -59,7 +59,7 @@ public class ScriptListController
 				ScriptListTableModel tm = (ScriptListTableModel) m_dlg.tblScriptList.getModel();
 				tm.setScripts(props.getScripts());
 
-				Vector extraClassPath = new Vector();
+				Vector<String> extraClassPath = new Vector<String>();
 				for (int i = 0; i < props.getExtraClassPath().length; i++)
 				{
 					extraClassPath.add(props.getExtraClassPath()[i].getEntry());
@@ -187,10 +187,10 @@ public class ScriptListController
 		if(JFileChooser.APPROVE_OPTION == fc.showOpenDialog(m_ownerFrame))
 		{
 
-			Vector extraClassPath = new Vector();
+			Vector<String> extraClassPath = new Vector<String>();
 			for (int i = 0; i < m_dlg.lstExtraClasspath.getModel().getSize(); i++)
 			{
-				extraClassPath.add(m_dlg.lstExtraClasspath.getModel().getElementAt(i));
+				extraClassPath.add((String)m_dlg.lstExtraClasspath.getModel().getElementAt(i));
 			}
 
          File[] files = fc.getSelectedFiles();

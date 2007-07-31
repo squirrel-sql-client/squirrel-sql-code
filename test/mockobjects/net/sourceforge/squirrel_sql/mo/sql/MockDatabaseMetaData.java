@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.mo.sql;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
@@ -28,7 +27,7 @@ import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import com.mockobjects.sql.MockSingleRowResultSet;
 
 
-
+@SuppressWarnings("unused")
 public class MockDatabaseMetaData extends
         com.mockobjects.sql.MockDatabaseMetaData {
 	

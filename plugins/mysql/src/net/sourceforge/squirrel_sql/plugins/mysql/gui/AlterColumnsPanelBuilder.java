@@ -32,7 +32,8 @@ import javax.swing.JTextField;
 import com.jgoodies.forms.layout.FormLayout;
 
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
-import net.sourceforge.squirrel_sql.fw.sql.DataTypeInfo;import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.DataTypeInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
@@ -67,7 +68,7 @@ class AlterColumnsPanelBuilder
 	 * type name. We uppercase the type name as MySQL and/or its JDBC
 	 * drivers are inconsistent in the case of the data type names.
 	 */
-	private Map _dataTypesByTypeName;
+	private Map<String, DataTypeInfo> _dataTypesByTypeName;
 
 	/**
 	 * Update the status of the GUI controls as the user makes changes.
@@ -196,7 +197,7 @@ class AlterColumnsPanelBuilder
 	private void initComponents(ISession session, ITableInfo ti)
 		throws SQLException
 	{
-		_dataTypesByTypeName = new HashMap();
+		_dataTypesByTypeName = new HashMap<String, DataTypeInfo>();
 		_mediator = new ControlMediator();
 
 		final ISQLConnection conn = session.getSQLConnection();

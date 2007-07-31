@@ -24,6 +24,9 @@ import java.util.List;
 
 import javax.swing.SwingUtilities;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -31,11 +34,6 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 /**
  * This class handles the expanding of database, catalog and schema nodes
  * in the object tree.
@@ -106,7 +104,7 @@ public class DatabaseExpander implements INodeExpander
 	 * @return	A list of <TT>ObjectTreeNode</TT> objects representing the child
 	 *			nodes for the passed node.
 	 */
-	public List createChildren(ISession session, ObjectTreeNode parentNode)
+	public List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode parentNode)
 		throws SQLException
 	{
 		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
@@ -133,13 +131,13 @@ public class DatabaseExpander implements INodeExpander
 			s_log.debug("DBMS doesn't support 'supportsSchemas()", ex);
 		}
 
-		List childNodes = new ArrayList();
+		List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
 
 		if (parentDbinfo.getDatabaseObjectType() == DatabaseObjectType.SESSION)
 		{
 			// If a driver says it supports schemas/catalogs but doesn't
 			// provide schema/catalog nodes, try to get other nodes.
-			List addedChildren = new ArrayList();
+			List<ObjectTreeNode> addedChildren = new ArrayList<ObjectTreeNode>();
 			if (supportsCatalogs)
 			{
 				addedChildren = createCatalogNodes(session, md);
@@ -162,7 +160,7 @@ public class DatabaseExpander implements INodeExpander
 			// If a driver says it supports schemas but doesn't
 			// provide schema nodes, try to get other nodes.
 			final String catalogName = parentDbinfo.getSimpleName();
-			List addedChildren = new ArrayList();
+			List<ObjectTreeNode> addedChildren = new ArrayList<ObjectTreeNode>();
 			if (supportsSchemas)
 			{
 				addedChildren = createSchemaNodes(session, md, catalogName);
@@ -184,10 +182,10 @@ public class DatabaseExpander implements INodeExpander
 		return childNodes;
 	}
 
-	private List createCatalogNodes(ISession session, SQLDatabaseMetaData md)
+	private List<ObjectTreeNode> createCatalogNodes(ISession session, SQLDatabaseMetaData md)
 		throws SQLException
 	{
-		final List childNodes = new ArrayList();
+		final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
 		if (session.getProperties().getLoadSchemasCatalogs())
 		{
 			final String[] catalogs = md.getCatalogs();
@@ -217,12 +215,12 @@ public class DatabaseExpander implements INodeExpander
 		return childNodes;
 	}
 
-	protected List createSchemaNodes(ISession session, 
+	protected List<ObjectTreeNode> createSchemaNodes(ISession session, 
                                      SQLDatabaseMetaData md,
 								     String catalogName)
 		throws SQLException
 	{
-		final List childNodes = new ArrayList();
+		final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
 		if (session.getProperties().getLoadSchemasCatalogs())
 		{
          session.getSchemaInfo().waitTillSchemasAndCatalogsLoaded();
@@ -253,10 +251,10 @@ public class DatabaseExpander implements INodeExpander
 		return childNodes;
 	}
 
-	private List createObjectTypeNodes(ISession session, String catalogName,
+	private List<ObjectTreeNode> createObjectTypeNodes(ISession session, String catalogName,
 											String schemaName)
 	{
-		final List list = new ArrayList();
+		final List<ObjectTreeNode> list = new ArrayList<ObjectTreeNode>();
 
 		if (session.getProperties().getLoadSchemasCatalogs())
 		{

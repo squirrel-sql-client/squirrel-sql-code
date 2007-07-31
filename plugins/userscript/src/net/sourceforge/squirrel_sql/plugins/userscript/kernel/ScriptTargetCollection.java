@@ -5,8 +5,9 @@ import java.util.Hashtable;
 
 public class ScriptTargetCollection
 {
-	private Vector m_targets = new Vector();
-	private Hashtable m_containedTargetTypes = new Hashtable();
+	private Vector<ScriptTarget> m_targets = new Vector<ScriptTarget>();
+	private Hashtable<String, String> m_containedTargetTypes = 
+        new Hashtable<String, String>();
 
 	public void add(ScriptTarget target)
 	{
@@ -16,12 +17,12 @@ public class ScriptTargetCollection
 
 	public ScriptTarget[] getAll()
 	{
-		return (ScriptTarget[]) m_targets.toArray(new ScriptTarget[m_targets.size()]);
+		return m_targets.toArray(new ScriptTarget[m_targets.size()]);
 	}
 
 	public String[] getContainedTargetTypes()
 	{
-		return (String[]) m_containedTargetTypes.keySet().toArray(new String[0]);
+		return m_containedTargetTypes.keySet().toArray(new String[0]);
 	}
 
 	public int size()
