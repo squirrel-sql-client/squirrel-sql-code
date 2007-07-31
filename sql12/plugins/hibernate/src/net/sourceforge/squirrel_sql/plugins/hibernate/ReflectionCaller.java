@@ -131,7 +131,7 @@ public class ReflectionCaller
       }
    }
 
-   private Class getCalleeClass()
+   public Class getCalleeClass()
    {
       if(_callee instanceof Class)
       {
@@ -191,4 +191,14 @@ public class ReflectionCaller
       throw throwBuf;
 
    }
+
+   public static void main(String[] args)
+   {
+      ReflectionCaller c = new ReflectionCaller(Integer.class);
+
+      System.out.println(c.getCalleeClass().getName());
+
+
+   }
+
 }

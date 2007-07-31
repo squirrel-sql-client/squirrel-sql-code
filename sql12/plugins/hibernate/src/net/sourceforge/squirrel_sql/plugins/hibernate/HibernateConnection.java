@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.plugins.hibernate;
 
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.HibernatePropertyInfo;
 
@@ -79,8 +80,8 @@ public class HibernateConnection
 
       ArrayList<MappedClassInfo> ret = new ArrayList<MappedClassInfo>();
 
-      ReflectionCaller caller = new ReflectionCaller(_sessionFactoryImpl);
-      Collection<ReflectionCaller> persisters = caller.callMethod("getAllClassMetadata").callCollectionMethod("values");
+      ReflectionCaller sessionFactoryImplcaller = new ReflectionCaller(_sessionFactoryImpl);
+      Collection<ReflectionCaller> persisters = sessionFactoryImplcaller.callMethod("getAllClassMetadata").callCollectionMethod("values");
 
       for (ReflectionCaller persister : persisters)
       {
@@ -89,9 +90,11 @@ public class HibernateConnection
 
          String identifierPropertyName = (String) persister.callMethod("getIdentifierPropertyName").getCallee();
 
-         String identifierPropertyTypeName = (String) persister.callMethod("getIdentifierType").callMethod("getName").getCallee();
+         Class identifierPropertyClass = persister.callMethod("getIdentifierType").callMethod("getReturnedClass").getCalleeClass();
 
-         HibernatePropertyInfo identifierPropInfo = new HibernatePropertyInfo(identifierPropertyName, identifierPropertyTypeName);
+         String identifierPropertyClassName = identifierPropertyClass.getName();
+
+         HibernatePropertyInfo identifierPropInfo = new HibernatePropertyInfo(identifierPropertyName, identifierPropertyClassName, null);
 
 
          String[] propertyNames = (String[]) persister.callMethod("getPropertyNames").getCallee();
@@ -99,8 +102,30 @@ public class HibernateConnection
          HibernatePropertyInfo[] infos = new HibernatePropertyInfo[propertyNames.length];
          for (int i = 0; i < propertyNames.length; i++)
          {
-            String typeName = (String) persister.callMethod("getPropertyType", new String[]{propertyNames[i]}).callMethod("getName").getCallee();
-            infos[i] = new HibernatePropertyInfo(propertyNames[i], typeName);
+            ReflectionCaller propertyTypeCaller = persister.callMethod("getPropertyType", new String[]{propertyNames[i]});
+            String mayBeCollectionTypeName = propertyTypeCaller.callMethod("getReturnedClass").getCalleeClass().getName();
+
+            try
+            {
+               // If this isn't instanceof org.hibernate.type.CollectionType a NoSuchMethodException will be thrown
+               String role = (String) propertyTypeCaller.callMethod("getRole").getCallee();
+
+               ReflectionCaller collectionMetaDataCaller = sessionFactoryImplcaller.callMethod("getCollectionMetadata", new Object[]{role});
+               String typeName = collectionMetaDataCaller.callMethod("getElementType").callMethod("getReturnedClass").getCalleeClass().getName();
+
+               infos[i] = new HibernatePropertyInfo(propertyNames[i], typeName, mayBeCollectionTypeName);
+            }
+            catch(RuntimeException e)
+            {
+               if(Utilities.getDeepestThrowable(e) instanceof NoSuchMethodException)
+               {
+                  infos[i] = new HibernatePropertyInfo(propertyNames[i], mayBeCollectionTypeName, null);
+               }
+               else
+               {
+                  throw e;
+               }
+            }
          }
 
          ret.add(new MappedClassInfo(mappedClass.getName(), identifierPropInfo, infos));

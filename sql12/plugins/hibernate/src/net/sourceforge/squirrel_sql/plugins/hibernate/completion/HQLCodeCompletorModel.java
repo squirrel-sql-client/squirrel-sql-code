@@ -99,9 +99,9 @@ public class HQLCodeCompletorModel implements ICompletorModel
       _codeCompletionInfos.setCurrentAliasInfos(aliasInfos);
    }
 
-   private MappedClassInfo onGetMappedClassInfoFor(String className)
+   private MappedClassInfo onGetMappedClassInfoFor(String token)
    {
-      return _codeCompletionInfos.getMappedClassInfo(className);
+      return _codeCompletionInfos.getMappedClassInfo(token);
    }
 
 }

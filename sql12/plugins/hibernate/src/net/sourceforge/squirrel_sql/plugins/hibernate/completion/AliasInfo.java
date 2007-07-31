@@ -1,6 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.completion;
 
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
+import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.PropertyInfo;
 import net.sourceforge.squirrel_sql.fw.completion.util.CompletionParser;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 
@@ -51,5 +52,10 @@ public class AliasInfo extends CompletionInfo
    public String toString()
    {
       return _toString;
+   }
+
+   public PropertyInfo getAttributeByName(String attrName)
+   {
+      return _mci.getAttributeByName(attrName);
    }
 }
