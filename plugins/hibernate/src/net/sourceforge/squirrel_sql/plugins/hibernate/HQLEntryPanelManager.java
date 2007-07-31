@@ -38,7 +38,7 @@ public class HQLEntryPanelManager extends EntryPanelManagerBase implements IHqlE
             onQuoteHQL();
          }
       };
-      getEntryPanel().addToSQLEntryAreaMenu(quoteHql);
+      addToSQLEntryAreaMenu(quoteHql);
 
       // i18n[HQLEntryPanelManager,quoteHQLsb=Quote HQL sb]
       AbstractAction quoteSbHql = new AbstractAction(s_stringMgr.getString("HQLEntryPanelManager,quoteHQLsb"))
@@ -48,7 +48,7 @@ public class HQLEntryPanelManager extends EntryPanelManagerBase implements IHqlE
             onQuoteHQLSb();
          }
       };
-      getEntryPanel().addToSQLEntryAreaMenu(quoteSbHql);
+      addToSQLEntryAreaMenu(quoteSbHql);
 
       // i18n[HQLEntryPanelManager,unquoteHQL=Unquote HQL]
       AbstractAction unquoteHql = new AbstractAction(s_stringMgr.getString("HQLEntryPanelManager,unquoteHQL"))
@@ -58,7 +58,7 @@ public class HQLEntryPanelManager extends EntryPanelManagerBase implements IHqlE
             onUnquoteHQL();
          }
       };
-      getEntryPanel().addToSQLEntryAreaMenu(unquoteHql);
+      addToSQLEntryAreaMenu(unquoteHql);
 
 
 
