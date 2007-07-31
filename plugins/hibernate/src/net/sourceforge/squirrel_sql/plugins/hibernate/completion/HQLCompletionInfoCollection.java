@@ -5,16 +5,22 @@ import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionCandidates;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernateConnection;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
+import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.PropertyInfo;
 import net.sourceforge.squirrel_sql.client.session.ISyntaxHighlightTokenMatcher;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.StringTokenizer;
 
 public class HQLCompletionInfoCollection
 {
    private ArrayList<MappedClassInfo> _mappedClassInfos;
    private ArrayList<SimpleHQLCompletionInfo> _simpleInfos;
+
+   /**
+    * Hint in case troubles arise: Migth need to be synchronized.
+    */
    private ArrayList<AliasInfo> _currentAliasInfos = new ArrayList<AliasInfo>();
 
    private HashMap<String, MappedClassInfo> _mappedClassInfoByClassName = new HashMap<String, MappedClassInfo>();
@@ -150,16 +156,52 @@ public class HQLCompletionInfoCollection
       _currentAliasInfos = aliasInfos;
    }
 
-   public MappedClassInfo getMappedClassInfo(String className)
+   public MappedClassInfo getMappedClassInfo(String token)
    {
-      MappedClassInfo ret = _mappedClassInfoBySimpleClassName.get(className);
-
-      if(null == ret)
+      if(0 < token.indexOf('.'))
       {
-         ret = _mappedClassInfoByClassName.get(className);
-      }
+         // looking for an alias like posses in
+         // from Kv k inner join fetch k.positionen as posses where posses.artNr = 'sdfsdf'
 
-      return ret;
+         StringTokenizer st = new StringTokenizer(token, ".");
+
+         if(2 != st.countTokens())
+         {
+            return null;
+         }
+
+         String aliasCandidate = st.nextToken();
+
+         // We need this buffer because this method may be called asynchronously to the event dispatch thread
+         // What could happen is, that _currentAliasInfos ist set to null.
+
+         ArrayList<AliasInfo> buf = _currentAliasInfos;
+
+         for (AliasInfo currentAliasInfo : buf)
+         {
+            if(currentAliasInfo.getCompareString().equals(aliasCandidate))
+            {
+               PropertyInfo prop = currentAliasInfo.getAttributeByName(st.nextToken());
+               return _mappedClassInfoByClassName.get(prop.getClassName());
+            }
+         }
+
+         return null;
+
+      }
+      else
+      {
+         // looking for a simple class alias
+
+         MappedClassInfo ret = _mappedClassInfoBySimpleClassName.get(token);
+
+         if(null == ret)
+         {
+            ret = _mappedClassInfoByClassName.get(token);
+         }
+
+         return ret;
+      }
 
    }
 

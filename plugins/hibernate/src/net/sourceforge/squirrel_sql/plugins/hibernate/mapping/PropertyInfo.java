@@ -47,4 +47,9 @@ public class PropertyInfo  extends CompletionInfo
    {
       return _hibernatePropertyInfo.getPropertyName().startsWith(parser.getLastToken());
    }
+
+   public String getClassName()
+   {
+      return _hibernatePropertyInfo.getClassName();
+   }
 }

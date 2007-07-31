@@ -111,4 +111,19 @@ public class MappedClassInfo extends CompletionInfo
 
       return ret;
    }
+
+   public PropertyInfo getAttributeByName(String attrName)
+   {
+      for (PropertyInfo propertyInfo : _propertyInfos)
+      {
+         if(propertyInfo.getCompareString().equals(attrName))
+         {
+            return propertyInfo;
+         }
+      }
+
+      return null;
+
+
+   }
 }
