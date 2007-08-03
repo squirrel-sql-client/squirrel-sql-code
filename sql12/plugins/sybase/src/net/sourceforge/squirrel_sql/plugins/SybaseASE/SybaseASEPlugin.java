@@ -12,6 +12,8 @@ import net.sourceforge.squirrel_sql.client.plugin.gui.PluginQueryTokenizerPrefer
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithChildNodesExpander;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
@@ -19,7 +21,11 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.SybaseASE.exp.SybaseTableIndexExtractorImpl;
+import net.sourceforge.squirrel_sql.plugins.SybaseASE.exp.SybaseTableTriggerExtractorImpl;
 import net.sourceforge.squirrel_sql.plugins.SybaseASE.prefs.SybasePreferenceBean;
+import net.sourceforge.squirrel_sql.plugins.SybaseASE.tab.TriggerSourceTab;
+import net.sourceforge.squirrel_sql.plugins.SybaseASE.tab.ViewSourceTab;
 import net.sourceforge.squirrel_sql.plugins.SybaseASE.tokenizer.SybaseQueryTokenizer;
 
 /**
@@ -45,13 +51,22 @@ public class SybaseASEPlugin extends DefaultSessionPlugin
     
     /** The database name that appears in the border label of the pref panel */
     private static final String SCRIPT_SETTINGS_BORDER_LABEL_DBNAME = "Sybase";
-    
-    interface i18n {
+        
+    static interface i18n {
         // i18n[SybaseASEPlugin.title=SybaseASE]
         String title = s_stringMgr.getString("SybaseASEPlugin.title");
 
         // i18n[SybaseASEPlugin.hint=Preferences for SybaseASE]
         String hint = s_stringMgr.getString("SybaseASEPlugin.hint");
+        
+        //i18n[SybaseASEPlugin.showViewSource=Show view source]
+        String SHOW_VIEW_SOURCE = 
+            s_stringMgr.getString("SybaseASEPlugin.showViewSource");
+        
+        // i18n[SybaseASEPlugin.triggerHint=Show trigger source]
+        String TRIGGER_HINT=s_stringMgr.getString("SybaseASEPlugin.triggerHint");
+
+        
     }
     
     
@@ -206,13 +221,30 @@ public class SybaseASEPlugin extends DefaultSessionPlugin
 	        return null;
 	    }
         installSybaseQueryTokenizer(session);
+        String stmtSep = session.getQueryTokenizer().getSQLStatementSeparator();
 
 	    // Add context menu items to the object tree's view and procedure nodes.
 	    IObjectTreeAPI otApi = session.getSessionInternalFrame().getObjectTreeAPI();
 	    otApi.addToPopup(DatabaseObjectType.VIEW, new ScriptSybaseASEViewAction(getApplication(), _resources, session));
 	    otApi.addToPopup(DatabaseObjectType.PROCEDURE, new ScriptSybaseASEProcedureAction(getApplication(), _resources, session));
 
+        otApi.addDetailTab(DatabaseObjectType.VIEW, 
+                new ViewSourceTab(i18n.SHOW_VIEW_SOURCE, stmtSep));
+        
+        TableWithChildNodesExpander tableExp = new TableWithChildNodesExpander();
+        tableExp.setTableIndexExtractor(new SybaseTableIndexExtractorImpl());
+        tableExp.setTableTriggerExtractor(new SybaseTableTriggerExtractorImpl());
+        otApi.addExpander(DatabaseObjectType.TABLE, tableExp);
+        
+        otApi.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
+        //otApi.addDetailTab(DatabaseObjectType.INDEX, new IndexDetailsTab());        
+        otApi.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
+        otApi.addDetailTab(DatabaseObjectType.TRIGGER_TYPE_DBO, new DatabaseObjectInfoTab());
+        
+        otApi.addDetailTab(DatabaseObjectType.TRIGGER, 
+                           new TriggerSourceTab(i18n.TRIGGER_HINT, stmtSep));
 
+        
 	    return new PluginSessionCallback()
 	    {
 	        public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
