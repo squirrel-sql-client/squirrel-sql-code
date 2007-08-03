@@ -26,6 +26,7 @@ import javax.swing.JTextArea;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.codereformat.CodeReformator;
 import net.sourceforge.squirrel_sql.fw.codereformat.CommentSpec;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -167,8 +168,7 @@ public abstract class FormattedSourceTab extends BaseSourceTab {
                 }
                 session.showErrorMessage(ex);
             } finally {
-                if (rs != null) try { rs.close(); } catch (Exception e) {}
-                if (stmt != null) try { stmt.close(); } catch (Exception e) {}
+                SQLUtilities.closeResultSet(rs);
             }
         }
     }

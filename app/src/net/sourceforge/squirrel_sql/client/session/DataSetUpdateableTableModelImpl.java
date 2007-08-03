@@ -18,6 +18,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -223,8 +224,8 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
             // We don't care if these throw an SQLException.  Just squelch them
             // and report to the user what the outcome of the previous statements
             // were.
-            if (rs != null) try { rs.close(); } catch (SQLException e) {}
-            if (stmt != null) try { stmt.close(); } catch (SQLException e) {}
+            SQLUtilities.closeResultSet(rs);
+            SQLUtilities.closeStatement(stmt);
          }
       }
       catch (SQLException ex)
@@ -238,19 +239,19 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
           return msg;
       }
 
-      if (count == -1)
+      if (count == -1) {
           // i18n[DataSetUpdateableTableModelImpl.error.unknownerror=Unknown error during check on DB.  Update is probably not safe.\nDo you wish to proceed?]
          return s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.unknownerror");
-
-      if (count == 0)
+      }
+      if (count == 0) {
           // i18n[DataSetUpdateableTableModelImpl.error.staleupdaterow=This row in the Database has been changed since you refreshed the data.\nNo rows will be updated by this operation.\nDo you wish to proceed?]
          return s_stringMgr.getString("DataSetUpdateableTableModelImpl.error.staleupdaterow");
-
-      if (count > 1)
+      }
+      if (count > 1) {
           // i18n[DataSetUpdateableTableModelImpl.info.updateidenticalrows=This operation will update {0} identical rows.\nDo you wish to proceed?]
           return s_stringMgr.getString("DataSetUpdateableTableModelImpl.info.updateidenticalrows",
-                                       new Long(count));
-
+                                       Long.valueOf(count));
+      }
       // no problems found, so do not return a warning message.
       return null;	// nothing for user to worry about
    }
@@ -320,27 +321,15 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
          // WHERE clause.  Any field that can be used there will return something
          // of the form "<fieldName> = <value>", and a field that cannot be
          // used will return a null or zero-length string.
-         ISQLDatabaseMetaData md = _session.getMetaData();
          
-         if (CellComponentFactory.getWhereClauseValue(colDefs[col], values[col], md) == null 
-                 || CellComponentFactory.getWhereClauseValue(colDefs[col], values[col], md).length() == 0) 
-         {
-             if (count > 1) {
-                 // i18n[DataSetUpdateableTableModelImpl.info.identicalrows=This operation will result in {0} identical rows.\nDo you wish to proceed?]
-                 return s_stringMgr.getString("DataSetUpdateableTableModelImpl.info.identicalrows",
-                                              new Long(count));
-             }
+         if (count > 1) {
+             // i18n[DataSetUpdateableTableModelImpl.info.identicalrows=This 
+             //operation will result in {0} identical rows.\nDo you wish 
+             //to proceed?]
+             return s_stringMgr.getString("DataSetUpdateableTableModelImpl.info.identicalrows",
+                                          Long.valueOf(count));
          }
-         else {
-            // the field being updated is one whose contents
-            //should be visible in the WHERE clause
-             if (count > 1) {
-                 // i18n[DataSetUpdateableTableModelImpl.info.identicalrows=This operation will result in {0} identical rows.\nDo you wish to proceed?]
-                 return s_stringMgr.getString("DataSetUpdateableTableModelImpl.info.identicalrows",
-                                              new Long(count));
-             }
-         }
-
+         
          // no problems found, so do not return a warning message.
          return null;	// nothing for user to worry about
       }
@@ -646,13 +635,13 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
                      rowCountErrorMessage += 
                          s_stringMgr.getString(
                                  "DataSetUpdateableTableModelImpl.error.rownotmatch",
-                                 new Integer(i+1));
+                                 Integer.valueOf(i+1));
                   } else {
                       //i18n[DataSetUpdateableTableModelImpl.error.rowmatched=\n   Row {0} matched {1} rows in DB]
                       rowCountErrorMessage += 
                           s_stringMgr.getString(
                                   "DataSetUpdateableTableModelImpl.error.rowmatched", 
-                                  new Object[] { new Integer(i+1), new Integer(rs.getInt(1)) });
+                                  new Object[] { Integer.valueOf(i+1), Integer.valueOf(rs.getInt(1)) });
                   }
                }
             }
