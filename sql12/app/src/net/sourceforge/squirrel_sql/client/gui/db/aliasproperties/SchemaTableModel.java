@@ -27,7 +27,7 @@ public class SchemaTableModel extends DefaultTableModel
 
    public Object getValueAt(int row, int column)
    {
-      SQLAliasSchemaDetailProperties buf = (SQLAliasSchemaDetailProperties) _schemaDetails[row];
+      SQLAliasSchemaDetailProperties buf = _schemaDetails[row];
       switch(column)
       {
          case IX_SCHEMA_NAME:
