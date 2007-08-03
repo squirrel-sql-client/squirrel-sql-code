@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -266,7 +267,7 @@ public class ColTypeMapper {
             s_log.error("ColTypeMapper.getColumnLengthBruteForce: encountered " +
                         "unexpected SQLException - "+e.getMessage());
         } finally {
-            DBUtil.closeResultSet(rs);
+            SQLUtilities.closeResultSet(rs);
         }        
         return length;
     }

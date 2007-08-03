@@ -1,6 +1,9 @@
 package net.sourceforge.squirrel_sql.fw.sql;
 
+import java.io.Serializable;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -208,9 +211,11 @@ public class SQLUtilities {
         Collections.sort(sandwiches, new TableComparator());
     }
     
-    private static class TableComparator implements Comparator<ITableInfo> {
-        
-              
+    private static class TableComparator implements Comparator<ITableInfo>, 
+                                                    Serializable {
+                      
+        private static final long serialVersionUID = 1L;
+
         public int compare(ITableInfo t1, ITableInfo t2) {
             ForeignKeyInfo[] t1ImportedKeys = t1.getImportedKeys();
             for (int i = 0; i < t1ImportedKeys.length; i++) {
@@ -306,52 +311,45 @@ public class SQLUtilities {
         }
         return result;
     }
-    /*
-    private static class TableDependInfo extends TableInfo {
-        
-        ForeignKeyInfo[] exportedKeys = null;
-        ForeignKeyInfo[] importedKeys = null;
-        
-        
-        public TableDependInfo(ITableInfo info, 
-                               SQLDatabaseMetaData md,
-                               ForeignKeyInfo[] expKeys,
-                               ForeignKeyInfo[] impKeys
-                               ) 
-        throws SQLException 
-        {
-            super(info.getCatalogName(), 
-                 info.getSchemaName(), 
-                 info.getSimpleName(),
-                 info.getType(),
-                 info.getRemarks(),
-                 md);
-            exportedKeys = expKeys;
-            importedKeys = impKeys;
-        }
-        
-        public TableDependInfo(ITableInfo info, SQLDatabaseMetaData md) 
-            throws SQLException 
-        {
-            this(info.getCatalogName(), 
-                 info.getSchemaName(), 
-                 info.getSimpleName(),
-                 info.getType(),
-                 info.getRemarks(),
-                 md); 
-        }
-        
-        public TableDependInfo(String catalog, String schema, String simpleName,
-                 String tableType, String remarks,
-                 SQLDatabaseMetaData md) throws SQLException {
-            super(catalog, schema, simpleName, tableType, remarks, md);
-            exportedKeys = md.getExportedKeysInfo(this);
-            importedKeys = md.getImportedKeysInfo(this);
-        }
-        
-        
-        
-        
-    } */
 
-}
+    /**
+     * Closes the specified ResultSet safely (with no exceptions) and logs a 
+     * debug message if SQLException is encountered.
+     * 
+     * @param rs the ResultSet to close - it can be null.
+     */
+    public static void closeResultSet(ResultSet rs) {
+        if (rs == null) {
+            return;
+        }
+        try {
+            rs.close();
+        } catch (SQLException e) {
+            if (s_log.isDebugEnabled()) {
+                s_log.error("Unexpected exception while closing ResultSet: "+
+                            e.getMessage(), e);
+            }
+        }
+    }
+    
+    /**
+     * Closes the specified Statement safely (with no exceptions) and logs a 
+     * debug message if SQLException is encountered.
+     * 
+     * @param stmt the Statement to close - it can be null.
+     */
+    public static void closeStatement(Statement stmt) {
+        if (stmt == null) {
+            return;
+        }
+        try {
+            stmt.close();
+        } catch (SQLException e) {
+            if (s_log.isDebugEnabled()) {
+                s_log.error("Unexpected exception while closing Statement: "+
+                            e.getMessage(), e);
+            }
+        }
+    }
+    
+ }
