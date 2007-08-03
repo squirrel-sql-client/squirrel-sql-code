@@ -34,6 +34,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -619,8 +620,8 @@ public class CopyExecutor extends I18NBaseObject {
                 sleep(prefs.getRecordDelayMillis());
             }
         } finally {
-            DBUtil.closeResultSet(rs);
-            DBUtil.closeStatement(insertStmt);
+            SQLUtilities.closeResultSet(rs);
+            SQLUtilities.closeStatement(insertStmt);
             if (!currentAutoCommitValue) {
                 commitConnection(destConn);
             }
@@ -690,9 +691,9 @@ public class CopyExecutor extends I18NBaseObject {
                 s_stringMgr.getString("CopyExecutor.tablecolmismatch",
                                       new Object[] {
                                               sourceTableName,
-                                              new Integer(sourceInfos.length),
+                                              Integer.valueOf(sourceInfos.length),
                                               destTableName,
-                                              new Integer(destInfos.length)});
+                                              Integer.valueOf(destInfos.length)});
             throw new MappingException(msg);
         }
         ArrayList<TableColumnInfo> result = new ArrayList<TableColumnInfo>();

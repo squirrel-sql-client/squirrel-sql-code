@@ -374,7 +374,7 @@ public class DBUtil extends I18NBaseObject {
             lastStatement = SQL;
             result = stmt.executeUpdate(SQL);
         } finally {
-            closeStatement(stmt);
+            SQLUtilities.closeStatement(stmt);
         }
         return result;
     }
@@ -435,9 +435,8 @@ public class DBUtil extends I18NBaseObject {
         } catch(SQLException e) {
             // Only close the statement if SQLException - otherwise it has to 
             // remain open until the ResultSet is read through by the caller.
-            if (stmt != null) { 
-                try {stmt.close();} catch (SQLException ex) { /* Do Nothing */}
-            }
+            SQLUtilities.closeResultSet(rs);
+            SQLUtilities.closeStatement(stmt);
             throw e;
         }
         if (log.isDebugEnabled()) {
@@ -462,39 +461,6 @@ public class DBUtil extends I18NBaseObject {
     }    
     
     /**
-     * Closes the specified ResultSet.
-     * 
-     * @param rs the ResultSet to close.
-     */
-    public static void closeResultSet(ResultSet rs) {
-        if (rs == null) {
-            return;
-        }
-        try {
-            Statement stmt = rs.getStatement();
-            closeStatement(stmt);
-        } catch (Exception e) { /* Do Nothing */ }
-    }
-
-    
-    /**
-     * Closes the specified Statement.
-     * 
-     * @param stmt the Statement to close.
-     */
-    public static void closeStatement(Statement stmt) {
-        if (stmt != null) {
-            try {
-                ResultSet rs = stmt.getResultSet();
-                if (rs != null) {
-                    rs.close();
-                }
-            } catch (SQLException e) {}
-            try { stmt.close(); } catch (SQLException e) {}
-        }
-    }
-    
-    /**
      * Returns a count of the records in the specified table.
      * 
      * @param con the SQLConnection to use to execute the count query.
@@ -516,7 +482,7 @@ public class DBUtil extends I18NBaseObject {
         } catch (Exception e) {
             /* Do Nothing - this can happen when the table doesn't exist */
         } finally {
-            closeResultSet(rs);
+            SQLUtilities.closeResultSet(rs);
         }
         return result;        
     }
@@ -961,7 +927,7 @@ public class DBUtil extends I18NBaseObject {
                 //i18n[DBUtil.error.unknowntype=Unknown Java SQL column type: '{0}']
                 String msg =
                     s_stringMgr.getString("DBUtil.error.unknowntype",
-                                          new Integer(sourceColType));
+                                          Integer.valueOf(sourceColType));
                 log.error(msg);
                 // We still have to bind a value, or else the PS will throw
                 // an exception.
@@ -1037,7 +1003,7 @@ public class DBUtil extends I18NBaseObject {
         if (log.isDebugEnabled() && clobValue != null) {
             // i18n[DBUtil.info.bindclobmem=bindClobVarInMemory: binding '{0}' bytes]
             String msg = s_stringMgr.getString("DBUtil.info.bindclobmem",
-                                               new Integer(clobValue.length()));
+                                               Integer.valueOf(clobValue.length()));
             log.debug(msg);
         }
         ps.setString(index, clobValue);
@@ -1059,7 +1025,7 @@ public class DBUtil extends I18NBaseObject {
             //i18n[DBUtil.info.bindblobmem=bindBlobVarInMemory: binding '{0}' bytes]
             String msg = 
                 s_stringMgr.getString("DBUtil.info.bindblobmem",
-                                      new Integer(blobValue.length));
+                                      Integer.valueOf(blobValue.length));
             log.debug(msg);
         }
         ps.setBytes(index, blobValue);
@@ -1100,7 +1066,7 @@ public class DBUtil extends I18NBaseObject {
                 //i18n[DBUtil.info.bindcloblength=bindClobVarInFile: writing '{0}' bytes.]
                 String msg =
                     s_stringMgr.getString("DBUtil.info.bindcloblength",
-                                          new Integer(length));
+                                          Integer.valueOf(length));
                 log.debug(msg);
             }
             fos.write(buf, 0, length);
@@ -1148,7 +1114,7 @@ public class DBUtil extends I18NBaseObject {
                 //i18n[DBUtil.info.bindbloblength=bindBlobVarInFile: writing '{0}' bytes.]
                 String msg =
                     s_stringMgr.getString("DBUtil.info.bindbloblength",
-                                          new Integer(length));
+                                          Integer.valueOf(length));
                 log.debug(msg);
             }
             fos.write(buf, 0, length);
@@ -1236,7 +1202,7 @@ public class DBUtil extends I18NBaseObject {
                 result = true;
             }
         } finally { 
-            closeResultSet(rs);
+            SQLUtilities.closeResultSet(rs);
         }
         return result;
     }
@@ -1820,9 +1786,12 @@ public class DBUtil extends I18NBaseObject {
                 }
     
             } catch (SQLException e) {
-                
+                log.error("Unexpected exception while attempting get primary " +
+                          "key columns for table "+ti.getSimpleName()+
+                          " in schema/catalog: "+ti.getSchemaName()+"/"+
+                          ti.getCatalogName(), e);
             } finally {
-                if (primaryKeys != null) try { primaryKeys.close(); } catch (SQLException e) {}
+                SQLUtilities.closeResultSet(primaryKeys);
             }
             Collections.sort(pkCols, IndexColInfo.NAME_COMPARATOR);
         }
