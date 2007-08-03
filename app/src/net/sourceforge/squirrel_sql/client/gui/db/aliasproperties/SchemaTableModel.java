@@ -8,6 +8,8 @@ import java.util.Arrays;
 
 public class SchemaTableModel extends DefaultTableModel
 {
+   private static final long serialVersionUID = 1L;
+    
    static final int IX_SCHEMA_NAME = 0;
    static final int IX_TABLE = 1;
    static final int IX_VIEW = 2;
@@ -44,7 +46,7 @@ public class SchemaTableModel extends DefaultTableModel
 
    public void setValueAt(Object aValue, int row, int column)
    {
-      SQLAliasSchemaDetailProperties buf = (SQLAliasSchemaDetailProperties) _schemaDetails[row];
+      SQLAliasSchemaDetailProperties buf = _schemaDetails[row];
 
       switch(column)
       {
@@ -93,7 +95,8 @@ public class SchemaTableModel extends DefaultTableModel
 
    public void updateSchemas(String[] schemaNames)
    {
-      ArrayList newDetails = new ArrayList();
+      ArrayList<SQLAliasSchemaDetailProperties> newDetails = 
+          new ArrayList<SQLAliasSchemaDetailProperties>();
 
       for (int i = 0; i < schemaNames.length; i++)
       {
@@ -118,7 +121,7 @@ public class SchemaTableModel extends DefaultTableModel
 
       }
 
-      _schemaDetails = (SQLAliasSchemaDetailProperties[]) newDetails.toArray(new SQLAliasSchemaDetailProperties[newDetails.size()]);
+      _schemaDetails = newDetails.toArray(new SQLAliasSchemaDetailProperties[newDetails.size()]);
       Arrays.sort(_schemaDetails);
 
       fireTableDataChanged();
