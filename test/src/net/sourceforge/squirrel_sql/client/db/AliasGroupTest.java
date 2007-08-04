@@ -37,8 +37,8 @@ public class AliasGroupTest extends BaseSQuirreLTestCase {
     public void testEqualsObject() throws Exception {
         IIdentifier id1 = new IntegerIdentifier(1);
         IIdentifier id2 = new IntegerIdentifier(2);
-        String name1 = new String("NameTest");
-        String name2 = new String("NameTest2");
+        String name1 = "NameTest";
+        String name2 = "NameTest2";
         
         AliasGroup ag1 = new AliasGroup();
         ag1.setIdentifier(id1);
