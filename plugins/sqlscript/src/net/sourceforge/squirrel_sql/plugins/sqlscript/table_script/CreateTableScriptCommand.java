@@ -55,12 +55,20 @@ public class CreateTableScriptCommand implements ICommand
    private final SQLScriptPlugin _plugin;
 
     /** Logger for this class. */
-    private static ILogger s_log = LoggerController.createLogger(CreateTableScriptCommand.class);
+    private static ILogger s_log = 
+        LoggerController.createLogger(CreateTableScriptCommand.class);
    
     /** i18n strings for this class */
     private static final StringManager s_stringMgr =
         StringManagerFactory.getStringManager(CreateTableScriptCommand.class);
 
+    static interface i18n {
+        //i18n[CreateTableScriptCommand.jdbcOdbcMessage=JDBC-ODBC Bridge doesn't 
+        //provide all of the necessary metadata. The script may be incomplete.]
+        String JDBCODBC_MESSAGE = 
+            s_stringMgr.getString("CreateTableScriptCommand.jdbcOdbcMessage"); 
+    }
+    
     private static SQLScriptPreferenceBean prefs = 
             SQLScriptPreferencesManager.getPreferences();
     
@@ -117,10 +125,8 @@ public class CreateTableScriptCommand implements ICommand
         try {
             boolean isJdbcOdbc = md.getURL().startsWith("jdbc:odbc:");
             if (isJdbcOdbc) {
-                // TODO i18n
-                _session.showErrorMessage(
-                            "JDBC-ODBC Bridge doesn't provide necessary meta " +
-                            "data. Script will be incomplete");
+                _session.showErrorMessage(i18n.JDBCODBC_MESSAGE);
+                s_log.error(i18n.JDBCODBC_MESSAGE);
             }
 
             TableScriptConfigCtrl tscc = new TableScriptConfigCtrl(_session
