@@ -38,9 +38,11 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IndexInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
@@ -49,6 +51,7 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
+import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.DBCopyPreferenceBean;
 
 import org.easymock.classextension.EasyMock;
 
@@ -193,7 +196,23 @@ public class TestUtil {
     }
 
     public static ISQLDatabaseMetaData getEasyMockSQLMetaData(String dbName,
-            String dbURL, boolean nice, boolean replay) throws SQLException {
+                                                              String dbURL,
+                                                              DatabaseMetaData md) 
+        throws SQLException
+    {
+        ISQLDatabaseMetaData result = getEasyMockSQLMetaData(dbName, dbURL, false, false);
+        expect(result.getJDBCMetaData()).andReturn(md);
+        replay(result);
+        return result;
+    }
+    
+    
+    public static ISQLDatabaseMetaData getEasyMockSQLMetaData(String dbName,
+                                                              String dbURL, 
+                                                              boolean nice, 
+                                                              boolean replay) 
+        throws SQLException 
+    {
         ISQLDatabaseMetaData md = null;
         if (nice) {
             md = createNiceMock(ISQLDatabaseMetaData.class);
@@ -210,6 +229,8 @@ public class TestUtil {
         expect(md.getCatalogSeparator()).andReturn("").anyTimes();
         expect(md.getIdentifierQuoteString()).andReturn("\"").anyTimes();
         expect(md.getURL()).andReturn(dbURL).anyTimes();
+        DatabaseMetaData dbmd = createMock(DatabaseMetaData.class);
+        expect(md.getJDBCMetaData()).andReturn(dbmd).anyTimes();
         if (replay) {
             replay(md);
         }
@@ -609,5 +630,43 @@ public class TestUtil {
                 mockSqlDriverPropCol).anyTimes();
         replay(mockSqlAlias);
         return mockSqlAlias;
+    }
+    
+    public static IDatabaseObjectInfo getEasyMockDatabaseObjectInfo(String catalog, 
+                                                                    String schema, 
+                                                                    String simpleName, 
+                                                                    String qualName)
+    {
+        IDatabaseObjectInfo result = EasyMock.createMock(IDatabaseObjectInfo.class);
+        expect(result.getCatalogName()).andReturn(catalog).anyTimes();
+        expect(result.getSchemaName()).andReturn(schema).anyTimes();
+        expect(result.getSimpleName()).andReturn(simpleName).anyTimes();
+        expect(result.getQualifiedName()).andReturn(qualName).anyTimes();
+        replay(result);
+        return result;
+    }
+    
+    public static DBCopyPreferenceBean getEasyMockDBCopyPreferenceBean() {
+        DBCopyPreferenceBean result = EasyMock.createMock(DBCopyPreferenceBean.class);
+        expect(result.isCopyForeignKeys()).andReturn(true);
+        expect(result.isCopyPrimaryKeys()).andReturn(true);
+        expect(result.isPruneDuplicateIndexDefs()).andReturn(true);
+        expect(result.isPromptForDialect()).andReturn(false);
+        replay(result);
+        return result;
+    }
+    
+    public static ITableInfo getEasyMockTableInfo(String catalog, 
+                                                  String schema, 
+                                                  String simpleName, 
+                                                  String qualName) 
+    {
+        ITableInfo result = EasyMock.createMock(ITableInfo.class);
+        expect(result.getCatalogName()).andReturn(catalog).anyTimes();
+        expect(result.getSchemaName()).andReturn(schema).anyTimes();
+        expect(result.getSimpleName()).andReturn(simpleName).anyTimes();
+        expect(result.getQualifiedName()).andReturn(qualName).anyTimes();
+        replay(result);        
+        return result;
     }
 }
