@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.fw.dialects;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -33,6 +34,7 @@ public class AllTests extends TestCase {
         suite.addTestSuite(H2DialectTest.class);
         suite.addTestSuite(HADBDialectTest.class);
         suite.addTestSuite(HSQLDialectTest.class);
+        suite.addTest(new JUnit4TestAdapter(IndexColInfoTest.class));
         suite.addTestSuite(InformixDialectTest.class);
         suite.addTestSuite(IngresDialectTest.class);
         suite.addTestSuite(InterbaseDialectTest.class);

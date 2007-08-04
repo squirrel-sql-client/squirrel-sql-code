@@ -271,8 +271,8 @@ public class DropTablesCommand extends AbstractRefactoringCommand
                 "Unexpected exception while attempting to find mat. views " +
                 "in schema: "+schema, e);
         } finally {
-            if (rs != null) try { rs.close(); } catch (SQLException ex) {}
-            if (stmt != null) try { stmt.close(); } catch (SQLException ex) {}            
+            SQLUtilities.closeResultSet(rs);
+            SQLUtilities.closeStatement(stmt);            
         }
         
     }
@@ -380,14 +380,7 @@ public class DropTablesCommand extends AbstractRefactoringCommand
     private class DropTableCommandExecHandler extends DefaultSQLExecuterHandler {
         
         ProgessCallBackDialog cb = null;
-        
-        /** 
-         * Total number of statements to be executed.  We use the same dialog 
-         * for dropping constraints and tables.  We don't know how many 
-         * constraints there will be before this is set.
-         */
-        int total = 0;
-        
+                
         /** This is used to track the number of tables seen so far, so that we
          *  can pick the right one from the ordered table list to display as the
          *  table name of the table currently being dropped - yes, a hack!
@@ -417,7 +410,9 @@ public class DropTablesCommand extends AbstractRefactoringCommand
          */
         @Override
         public void sqlToBeExecuted(String sql) {
-            System.out.println("sql: "+sql);
+            if (s_log.isDebugEnabled()) {
+                s_log.debug("Statement to be executed: "+sql);
+            }
             
             if (sql.startsWith("ALTER")) {
                 cb.setLoadingPrefix(i18n.DROPPING_CONSTRAINT_PREFIX);

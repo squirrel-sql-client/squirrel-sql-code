@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
 
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+
 public class InformixTimeTypeTest {
 
     String jdbcUrl = "jdbc:informix-sqli:192.168.1.100:9088/dbcopydest:INFORMIXSERVER=sockets_srvr";
@@ -47,20 +49,40 @@ public class InformixTimeTypeTest {
      */
     public void doTest() throws SQLException {
         Statement stmt = null;
-        stmt = con.createStatement();
         try {
+            stmt = con.createStatement();
             stmt.execute(dropSQL);
-        } catch (SQLException e) { /* Don't care */ }
-        stmt.execute(createTableSQL);
-        PreparedStatement pstmt = con.prepareStatement(insertSQL);
-        Time time = new Time(System.currentTimeMillis());
-        pstmt.setTime(1, time);
-        pstmt.executeUpdate();
-
-        ResultSet rs = stmt.executeQuery(selectSQL);
-        if (rs.next()) {
-            java.sql.Timestamp ts = rs.getTimestamp(1);
-            System.out.println("ts="+ts);
+        } catch (SQLException e) { 
+            e.printStackTrace(); 
+        } finally {
+            SQLUtilities.closeStatement(stmt);
+        }
+        try {
+            stmt = con.createStatement();
+            stmt.execute(createTableSQL);
+        } catch (SQLException e) {
+            e.printStackTrace(); 
+        } finally {
+            SQLUtilities.closeStatement(stmt);
+        }
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            pstmt = con.prepareStatement(insertSQL);
+            Time time = new Time(System.currentTimeMillis());
+            pstmt.setTime(1, time);
+            pstmt.executeUpdate();
+    
+            rs = stmt.executeQuery(selectSQL);
+            if (rs.next()) {
+                java.sql.Timestamp ts = rs.getTimestamp(1);
+                System.out.println("ts="+ts);
+            }
+        }  catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            SQLUtilities.closeResultSet(rs);
+            SQLUtilities.closeStatement(pstmt);
         }
     }
 

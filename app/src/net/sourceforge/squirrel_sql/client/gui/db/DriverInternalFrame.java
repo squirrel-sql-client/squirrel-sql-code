@@ -171,7 +171,7 @@ public class DriverInternalFrame extends BaseInternalFrame
 			throw new IllegalArgumentException(
                 // i18n[DriverInternalFrame.error.illegalvalue=Illegal value of {0} passed for Maintenance type]
 			    s_stringMgr.getString("DriverInternalFrame.error.illegalvalue", 
-                                      new Integer(maintType)));
+                                      maintType));
 		}
 
 		_app = app;
