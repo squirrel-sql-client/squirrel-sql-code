@@ -19,10 +19,12 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
  */
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -71,7 +73,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 class ObjectTree extends JTree
 {
-	/** Logger for this class. */
+    private static final long serialVersionUID = 1L;
+
+    /** Logger for this class. */
 	private static final ILogger s_log =
 		LoggerController.createLogger(ObjectTree.class);
 
@@ -79,13 +83,14 @@ class ObjectTree extends JTree
 	private final ObjectTreeModel _model;
 
 	/** Current session. */
-	private final ISession _session;
+	transient private final ISession _session;
 
 	/**
 	 * Collection of popup menus (<TT>JPopupMenu</TT> instances) for the
 	 * object tree. Keyed by node type.
 	 */
-	private final Map _popups = new HashMap();
+	private final Map<IIdentifier, JPopupMenu> _popups = 
+        new HashMap<IIdentifier, JPopupMenu>();
 
 	/**
 	 * Global popup menu. This contains items that are to be displayed
@@ -93,7 +98,7 @@ class ObjectTree extends JTree
 	 */
 	private final JPopupMenu _globalPopup = new JPopupMenu();
 
-	private final List _globalActions = new ArrayList();
+	private final List<Action> _globalActions = new ArrayList<Action>();
 
 	/**
 	 * Object to synchronize on so that only one node can be expanded at any
@@ -106,7 +111,7 @@ class ObjectTree extends JTree
 	 * expanded. The key is <TT>Treepath.toString()</TT> and the value
 	 * is <TT>null</TT>.
 	 */
-	private Map _expandedPathNames = new HashMap();
+	private Map<String, Object> _expandedPathNames = new HashMap<String, Object>();
 
 	/**
 	 * Collection of listeners to this object tree.
@@ -317,7 +322,8 @@ class ObjectTree extends JTree
    private void refreshTree()
    {
       final TreePath[] selectedPaths = getSelectionPaths();
-      final Map selectedPathNames = new HashMap();
+      final Map<String, Object> selectedPathNames = 
+          new HashMap<String, Object>();
       if (selectedPaths != null)
       {
          for (int i = 0; i < selectedPaths.length; ++i)
@@ -340,7 +346,8 @@ class ObjectTree extends JTree
 
       final TreePath[] selectedPaths = getSelectionPaths();
       ObjectTreeNode[] nodes = getSelectedNodes();
-      final Map selectedPathNames = new HashMap();
+      final Map<String, Object> selectedPathNames = 
+          new HashMap<String, Object>();
       if (selectedPaths != null)
       {
          for (int i = 0; i < selectedPaths.length; ++i)
@@ -397,7 +404,8 @@ class ObjectTree extends JTree
 	 * 			Thrown if null ObjectTreeNode passed.
 	 */
 	private void restoreExpansionState(ObjectTreeNode node,
-		Map previouslySelectedTreePathNames, List selectedTreePaths)
+	                                   Map<String, Object> previouslySelectedTreePathNames, 
+                                       List<TreePath> selectedTreePaths)
 	{
 		if (node == null)
 		{
@@ -426,10 +434,14 @@ class ObjectTree extends JTree
       // Go through each child of the parent and see if it was previously
 		// expanded. If it was recursively call this method in order to expand
 		// the child.
-		Iterator it = new EnumerationIterator(node.children());
+          
+      Enumeration<ObjectTreeNode> childEnumeration = 
+          (Enumeration<ObjectTreeNode>) node.children();
+		Iterator<ObjectTreeNode> it = 
+            new EnumerationIterator<ObjectTreeNode>(childEnumeration);
 		while (it.hasNext())
 		{
-			final ObjectTreeNode child = (ObjectTreeNode)it.next();
+			final ObjectTreeNode child = it.next();
 			final TreePath childPath = new TreePath(child.getPath());
 			final String childPathName = childPath.toString();
 
@@ -459,7 +471,7 @@ class ObjectTree extends JTree
      * @param pattern
      * @return
      */
-    protected boolean matchKeyPrefix(Map map, ObjectTreeNode node, String path) {
+    protected boolean matchKeyPrefix(Map<String, Object> map, ObjectTreeNode node, String path) {
         // We only show row counts for tables and views.  Other objects won't 
         // be affected by changing row counts.
         if (node.getDatabaseObjectType() != DatabaseObjectType.TABLE
@@ -467,15 +479,15 @@ class ObjectTree extends JTree
         {
             return map.containsKey(path);
         }
-        Set s = map.keySet();
-        Iterator i = s.iterator();
+        Set<String> s = map.keySet();
+        Iterator<String> i = s.iterator();
         String pathPrefix = path;
         if (path.indexOf("(") != -1) {
             pathPrefix = path.substring(0, path.lastIndexOf("("));
         }
         boolean result = false;
         while (i.hasNext()) {
-            String key = (String)i.next();
+            String key = i.next();
             String keyPrefix = key;
             if (key.indexOf("(") != -1) {
                 keyPrefix = key.substring(0, key.lastIndexOf("("));
@@ -488,7 +500,11 @@ class ObjectTree extends JTree
         return result;
     }
         
-	private void startExpandingTree(ObjectTreeNode node, boolean selectNode, Map selectedPathNames, boolean refreshSchemaInfo, boolean startExpandInThread)
+	private void startExpandingTree(ObjectTreeNode node, 
+                                    boolean selectNode, 
+                                    Map<String, Object> selectedPathNames, 
+                                    boolean refreshSchemaInfo, 
+                                    boolean startExpandInThread)
 	{
 		ExpansionController exp = new ExpansionController(node, selectNode, selectedPathNames, refreshSchemaInfo);
 		if (SwingUtilities.isEventDispatchThread() && startExpandInThread)
@@ -581,9 +597,9 @@ class ObjectTree extends JTree
 		_globalPopup.add(action);
 		_globalActions.add(action);
 
-		for (Iterator it = _popups.values().iterator(); it.hasNext();)
+		for (Iterator<JPopupMenu> it = _popups.values().iterator(); it.hasNext();)
 		{
-			JPopupMenu pop = (JPopupMenu)it.next();
+			JPopupMenu pop = it.next();
 			pop.add(action);
 		}
 	}
@@ -629,11 +645,11 @@ class ObjectTree extends JTree
 			throw new IllegalArgumentException("JMenu == null");
 		}
 		_globalPopup.add(menu);
-		_globalActions.add(menu);
+		_globalActions.add(menu.getAction());
 
-		for (Iterator it = _popups.values().iterator(); it.hasNext();)
+		for (Iterator<JPopupMenu> it = _popups.values().iterator(); it.hasNext();)
 		{
-			JPopupMenu pop = (JPopupMenu)it.next();
+			JPopupMenu pop = it.next();
 			pop.add(menu);
 		}
 	}
@@ -657,14 +673,14 @@ class ObjectTree extends JTree
 			throw new IllegalArgumentException("Null DatabaseObjectType passed");
 		}
 		IIdentifier key = dboType.getIdentifier();
-		JPopupMenu pop = (JPopupMenu)_popups.get(key);
+		JPopupMenu pop = _popups.get(key);
 		if (pop == null && create)
 		{
 			pop = new JPopupMenu();
 			_popups.put(key, pop);
-			for (Iterator it = _globalActions.iterator(); it.hasNext();)
+			for (Iterator<Action> it = _globalActions.iterator(); it.hasNext();)
 			{
-				pop.add((Action)it.next());
+				pop.add(it.next());
 			}
 		}
 		return pop;
@@ -679,7 +695,7 @@ class ObjectTree extends JTree
 	ObjectTreeNode[] getSelectedNodes()
 	{
 		TreePath[] paths = getSelectionPaths();
-		List list = new ArrayList();
+		List<ObjectTreeNode> list = new ArrayList<ObjectTreeNode>();
 		if (paths != null)
 		{
 			for (int i = 0; i < paths.length; ++i)
@@ -687,11 +703,11 @@ class ObjectTree extends JTree
 				Object obj = paths[i].getLastPathComponent();
 				if (obj instanceof ObjectTreeNode)
 				{
-					list.add(obj);
+					list.add((ObjectTreeNode)obj);
 				}
 			}
 		}
-		ObjectTreeNode[] ar = (ObjectTreeNode[])list.toArray(new ObjectTreeNode[list.size()]);
+		ObjectTreeNode[] ar = list.toArray(new ObjectTreeNode[list.size()]);
 		Arrays.sort(ar, new NodeComparator());
 		return ar;
 	}
@@ -824,9 +840,9 @@ class ObjectTree extends JTree
 		_globalPopup.removeAll();
 		_globalPopup.setInvoker(null);
 		_globalActions.clear();
-		for(Iterator i=_popups.values().iterator(); i.hasNext();)
+		for(Iterator<JPopupMenu> i=_popups.values().iterator(); i.hasNext();)
 		{
-			JPopupMenu popup = (JPopupMenu) i.next();
+			JPopupMenu popup = i.next();
 			popup.removeAll();
 			popup.setInvoker(null);
 		}
@@ -856,9 +872,12 @@ class ObjectTree extends JTree
 	/**
 	 * This class is used to sort the nodes by their title.
 	 */
-	private static class NodeComparator implements Comparator
+	private static class NodeComparator implements Comparator<ObjectTreeNode>,
+                                                   Serializable
 	{
-		public int compare(Object obj1, Object obj2)
+        private static final long serialVersionUID = 1L;
+
+        public int compare(ObjectTreeNode obj1, ObjectTreeNode obj2)
 		{
 			return obj1.toString().compareToIgnoreCase(obj2.toString());
 		}
@@ -868,10 +887,13 @@ class ObjectTree extends JTree
 	{
 		private final ObjectTreeNode _node;
 		private final boolean _selectNode;
-		private final Map _selectedPathNames;
+		private final Map<String, Object> _selectedPathNames;
       private boolean _refreshSchemaInfo;
 
-      ExpansionController(ObjectTreeNode node, boolean selectNode, Map selectedPathNames, boolean refreshSchemaInfo)
+      ExpansionController(ObjectTreeNode node, 
+                          boolean selectNode, 
+                          Map<String, Object> selectedPathNames, 
+                          boolean refreshSchemaInfo)
       {
          super();
          _node = node;
@@ -888,22 +910,22 @@ class ObjectTree extends JTree
 				cursorChg.show();
 				try
 				{
-               if(_refreshSchemaInfo && _node instanceof ObjectTreeNode)
+               if(_refreshSchemaInfo)
                {
-                  _session.getSchemaInfo().reload(((ObjectTreeNode)_node).getDatabaseObjectInfo());
+                  _session.getSchemaInfo().reload(_node.getDatabaseObjectInfo());
                }
 
                expandNode(_node, _selectNode);
 					if (_selectedPathNames != null)
 					{
-						final List newlySelectedTreepaths = new ArrayList();
+						final List<TreePath> newlySelectedTreepaths = new ArrayList<TreePath>();
 						
 						GUIUtils.processOnSwingEventThread(new Runnable()
 						{
 							public void run()
 							{
                         restoreExpansionState(_node, _selectedPathNames, newlySelectedTreepaths);
-                        setSelectionPaths((TreePath[]) newlySelectedTreepaths.toArray(new TreePath[newlySelectedTreepaths.size()]));
+                        setSelectionPaths(newlySelectedTreepaths.toArray(new TreePath[newlySelectedTreepaths.size()]));
                      }
 						});
 					}
