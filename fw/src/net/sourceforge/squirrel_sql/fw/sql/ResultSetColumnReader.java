@@ -33,8 +33,8 @@ public class ResultSetColumnReader
 //	private final static ILogger s_log =
 //		LoggerController.createLogger(ResultSetColumnReader.class);
 
-	private final static Long LONG_ZERO = new Long(0);
-	private final static Double DOUBLE_ZERO = new Double(0);
+	private final static Long LONG_ZERO = Long.valueOf(0);
+	private final static Double DOUBLE_ZERO = Double.valueOf(0);
 
 	/** The <TT>ResultSet</TT> being read. */
 	private final ResultSet _rs;
@@ -47,13 +47,6 @@ public class ResultSetColumnReader
 	private ResultSetMetaData _rsmd;
 
 	public ResultSetColumnReader(ResultSet rs) throws SQLException
-	{
-		this(rs, null);
-	}
-
-
-	public ResultSetColumnReader(ResultSet rs,
-							int[] columnIndices) throws SQLException
 	{
 		super();
 		if (rs == null)
@@ -104,8 +97,7 @@ public class ResultSetColumnReader
 					// by Squirrel then remove the hardcoding of the
 					// boolean data type.
 					case Types.BIT:
-					case 16:
-//					case Types.BOOLEAN:
+					case Types.BOOLEAN:
 						if (obj instanceof Boolean)
 						{
 							results = (Boolean)obj;
@@ -182,20 +174,15 @@ public class ResultSetColumnReader
 					case Types.DOUBLE:
 					case Types.FLOAT:
 					case Types.REAL:
-						if (obj instanceof Long)
+					    if (obj instanceof Number)
 						{
-							results = (Double)obj;
-						}
-						else if (obj instanceof Number)
-						{
-							results = new Double(((Number)obj).doubleValue());
+							results = ((Number)obj).doubleValue();
 						}
 						else
 						{
 							results = new Double(obj.toString());
 						}
 						break;
-
 					default:
 						results = new Double(obj.toString());
 						break;
@@ -233,13 +220,9 @@ public class ResultSetColumnReader
 					case Types.TINYINT:
 					case Types.INTEGER:
 					case Types.BIGINT :
-						if (obj instanceof Long)
+					    if (obj instanceof Number)
 						{
-							results = (Long)obj;
-						}
-						else if (obj instanceof Number)
-						{
-							results = new Long(((Number)obj).longValue());
+							results = ((Number)obj).longValue();
 						}
 						else
 						{
@@ -248,9 +231,9 @@ public class ResultSetColumnReader
 						break;
                     case Types.BIT:
                         if ("true".equalsIgnoreCase(obj.toString())) {
-                            results = new Long(1);
+                            results = Long.valueOf(1);
                         } else {
-                            results = new Long(0);
+                            results = Long.valueOf(0);
                         }
                         break;
 					default:
