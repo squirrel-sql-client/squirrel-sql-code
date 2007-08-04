@@ -30,7 +30,7 @@ import java.util.Vector;
 
 public class Completor
 {
-	private Vector _listeners = new Vector();
+	private Vector<CompletorListener> _listeners = new Vector<CompletorListener>();
 	private ICompletorModel _model;
 	private JPanel _completionPanel;
 	private JList _completionList;
@@ -78,7 +78,9 @@ public class Completor
 		_completionPanel =
 			new JPanel(new BorderLayout())
 			{
-				public void setSize(int width, int height)
+                private static final long serialVersionUID = 1L;
+
+                public void setSize(int width, int height)
 				{
 					// without this the completion panel's size will be weird
 					super.setSize(_curCompletionPanelSize.width, _curCompletionPanelSize.height);
@@ -402,13 +404,15 @@ public class Completor
 
 
 			if(_txtComp.editorEqualsFilter())
-         {
-            Action doNothingAction = new AbstractAction("doNothingAction")
-            {
-               public void actionPerformed(ActionEvent e)
-               {
-               }
-            };
+			{
+			    Action doNothingAction = new AbstractAction("doNothingAction")
+			    {
+			        private static final long serialVersionUID = 1L;
+
+			        public void actionPerformed(ActionEvent e)
+			        {
+			        }
+			    };
 
             Keymap km = _txtComp.getEditor().getKeymap();
 
@@ -473,11 +477,11 @@ public class Completor
 
 	private void fireEvent(CompletionInfo completion, int keyCode, int modifiers)
 	{
-		Vector clone =(Vector) _listeners.clone();
+		Vector<CompletorListener> clone = new Vector<CompletorListener>(_listeners);
 
 		for (int i = 0; i < clone.size(); i++)
 		{
-         CompletorListener completorListener = (CompletorListener)clone.elementAt(i);
+         CompletorListener completorListener = clone.elementAt(i);
          if(_txtComp.editorEqualsFilter())
          {
             completorListener.completionSelected(completion, _currCandidates.getReplacementStart(), keyCode, modifiers);
