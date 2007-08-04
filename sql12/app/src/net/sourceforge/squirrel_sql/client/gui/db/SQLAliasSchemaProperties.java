@@ -96,18 +96,18 @@ public class SQLAliasSchemaProperties implements Serializable
 
             ArrayList<String> tableTypesToLoad = new ArrayList<String>();
 
-            if(needsLoading(_schemaDetails[i].getTable(), null == cachedDetailProp ? null : new Integer(cachedDetailProp.getTable())))
+            if(needsLoading(_schemaDetails[i].getTable(), null == cachedDetailProp ? null : cachedDetailProp.getTable()))
             {
                tableTypesToLoad.addAll(Arrays.asList(tableTypes));
             }
 
-            if(needsLoading(_schemaDetails[i].getView(), null == cachedDetailProp ? null : new Integer(cachedDetailProp.getView())))
+            if(needsLoading(_schemaDetails[i].getView(), null == cachedDetailProp ? null : cachedDetailProp.getView()))
             {
                tableTypesToLoad.addAll(Arrays.asList(viewTypes));
             }
 
             buf.loadProcedures =
-               needsLoading(_schemaDetails[i].getProcedure(), null == cachedDetailProp ? null : new Integer(cachedDetailProp.getProcedure()));
+               needsLoading(_schemaDetails[i].getProcedure(), null == cachedDetailProp ? null : cachedDetailProp.getProcedure());
 
             if(0 < tableTypesToLoad.size() || buf.loadProcedures)
             {
