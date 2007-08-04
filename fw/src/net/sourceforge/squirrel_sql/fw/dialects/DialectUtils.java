@@ -872,21 +872,37 @@ public class DialectUtils {
         }        
     }
     
-    private static List<String> createIndexes(ITableInfo ti,
+    /**
+     * Get a list of statements needed to create indexes for the specified table
+     * 
+     * @param ti
+     * @param md
+     * @param primaryKeys can be null
+     * @return
+     */
+    public  static List<String> createIndexes(ITableInfo ti,
                                               ISQLDatabaseMetaData md,
                                               List<PrimaryKeyInfo> primaryKeys) 
     {
+        if (ti == null) {
+            throw new IllegalArgumentException("ti cannot be null");
+        }
+        if (md == null) {
+            throw new IllegalArgumentException("md cannot be null");
+        }
         List<String> result = new ArrayList<String>();
         if (ti.getDatabaseObjectType() == DatabaseObjectType.VIEW) {
             return result;
         }
 
         List<IndexColInfo> pkCols = new ArrayList<IndexColInfo>();
-        for (PrimaryKeyInfo pkInfo : primaryKeys) {
-           pkCols.add(new IndexColInfo(pkInfo.getColumnName()));
+        if (primaryKeys != null) {
+            for (PrimaryKeyInfo pkInfo : primaryKeys) {
+               pkCols.add(new IndexColInfo(pkInfo.getColumnName()));
+            }
+            Collections.sort(pkCols, IndexColInfo.NAME_COMPARATOR);
         }
-        Collections.sort(pkCols, IndexColInfo.NAME_COMPARATOR);
-
+        
         List<IndexInfo> indexInfos = null;
         try {
             indexInfos = md.getIndexInfo(ti);
