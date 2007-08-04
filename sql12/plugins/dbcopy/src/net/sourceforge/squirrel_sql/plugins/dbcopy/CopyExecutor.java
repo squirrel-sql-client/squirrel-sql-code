@@ -23,16 +23,21 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectUtils;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
@@ -789,9 +794,15 @@ public class CopyExecutor extends I18NBaseObject {
         }
         
         if (prefs.isCopyIndexDefs()) {
-            Collection<String> indices = 
-                DBUtil.getCreateIndicesSQL(prov, ti);
-            
+            Collection<String> indices = null;
+            ISQLDatabaseMetaData sqlmd = sourceSession.getMetaData();
+            if (prefs.isCopyPrimaryKeys()) {
+                PrimaryKeyInfo[] pkList = sqlmd.getPrimaryKey(ti);
+                List<PrimaryKeyInfo> pkList2 = Arrays.asList(pkList);
+                indices = DialectUtils.createIndexes(ti, sqlmd, pkList2);
+            } else {
+                indices = DialectUtils.createIndexes(ti, sqlmd, null);
+            }
             Iterator<String> i = indices.iterator();
             while (i.hasNext()) {
                 String createIndicesSql = i.next();

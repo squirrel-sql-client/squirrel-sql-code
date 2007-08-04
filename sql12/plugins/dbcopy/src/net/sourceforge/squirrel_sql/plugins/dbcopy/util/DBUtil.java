@@ -39,15 +39,10 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
@@ -71,8 +66,6 @@ import net.sourceforge.squirrel_sql.plugins.dbcopy.I18NBaseObject;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.SessionInfoProvider;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.DBCopyPreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.PreferencesManager;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.sqlscript.IndexColInfo;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.sqlscript.IndexInfo;
 
 import org.hibernate.MappingException;
 
@@ -101,6 +94,10 @@ public class DBUtil extends I18NBaseObject {
     private static String lastStatement = null;
     
     private static String lastStatementValues = null;
+    
+    public static void setPreferences(DBCopyPreferenceBean bean) {
+        _prefs = bean;
+    }
     
     /**
      * Returns a string that looks like:
@@ -1753,146 +1750,7 @@ public class DBUtil extends I18NBaseObject {
         }
         return result;
     }
-    
-    /** 
-     * Shamelessly copied this from the SQL Scripts plugin 
-     * by Johan Compagner and Gerd Wagner
-     */
-    public static Collection<String> getCreateIndicesSQL(SessionInfoProvider prov, 
-                                                 ITableInfo ti) 
-        throws SQLException, UserCancelledOperationException 
-    {
-      
-        ISession sourceSession = prov.getCopySourceSession();
-        ISession destSession = prov.getCopyDestSession();
-        ISQLConnection con = sourceSession.getSQLConnection();
-        String destSchema = prov.getDestSelectedDatabaseObject().getSimpleName();
-        String destCatalog = prov.getDestSelectedDatabaseObject().getCatalogName();                
-
-        ArrayList<String> result = new ArrayList<String>();
-        ArrayList<IndexColInfo> pkCols = new ArrayList<IndexColInfo>();
-        
-        DatabaseMetaData metaData = con.getConnection().getMetaData();
-        ResultSet primaryKeys = null;
-        if (_prefs.isCopyPrimaryKeys()) {
-            try {
-                primaryKeys = metaData.getPrimaryKeys(ti.getCatalogName(), 
-                                                      ti.getSchemaName(), 
-                                                      ti.getSimpleName());
-                while(primaryKeys.next()) {
-                    IndexColInfo indexColInfo = 
-                        new IndexColInfo(primaryKeys.getString("COLUMN_NAME"));
-                    pkCols.add(indexColInfo);
-                }
-    
-            } catch (SQLException e) {
-                log.error("Unexpected exception while attempting get primary " +
-                          "key columns for table "+ti.getSimpleName()+
-                          " in schema/catalog: "+ti.getSchemaName()+"/"+
-                          ti.getCatalogName(), e);
-            } finally {
-                SQLUtilities.closeResultSet(primaryKeys);
-            }
-            Collections.sort(pkCols, IndexColInfo.NAME_COMPARATOR);
-        }
-        
-        Hashtable<String, IndexInfo> buf = new Hashtable<String, IndexInfo>();
-        
-        ResultSet indexInfo = metaData.getIndexInfo(ti.getCatalogName(), 
-                                                    ti.getSchemaName(), 
-                                                    ti.getSimpleName(), 
-                                                    false, false);
-        
-        boolean unique = false;
-        while(indexInfo.next()) {
-            String ixName = indexInfo.getString("INDEX_NAME");
-            if(null == ixName) {
-                continue;
-            }
-            unique = !indexInfo.getBoolean("NON_UNIQUE");
-            IndexInfo ixi = buf.get(ixName);
-            if(null == ixi) {
-                Vector<IndexColInfo> ixCols = new Vector<IndexColInfo>();
-                String table = indexInfo.getString("TABLE_NAME");
-                ixCols.add(new IndexColInfo(indexInfo.getString("COLUMN_NAME"), 
-                                            indexInfo.getInt("ORDINAL_POSITION")));
-                buf.put(ixName, new IndexInfo(table, ixName, ixCols));
-            } else {
-                ixi.cols.add(new IndexColInfo(indexInfo.getString("COLUMN_NAME"), 
-                                              indexInfo.getInt("ORDINAL_POSITION")));
-            }
-        }
-        indexInfo.close();
-        IndexInfo[] ixs = buf.values().toArray(new IndexInfo[buf.size()]);
-        HashMap<String, String> indexMap = new HashMap<String, String>();
-        for (int i = 0; i < ixs.length; i++) {
-            Collections.sort(ixs[i].cols, IndexColInfo.NAME_COMPARATOR);
             
-            if(pkCols.equals(ixs[i].cols)) {
-                // Serveral DBs automatically create an index for primary key fields
-                // and return this index in getIndexInfo(). We remove this index from the script
-                // because it would break the script with an index already exists error.
-                continue;
-            }
-            
-            Collections.sort(ixs[i].cols, IndexColInfo.ORDINAL_POSITION_COMPARATOR);
-            
-            StringBuilder sbToAppend = new StringBuilder();
-            sbToAppend.append("CREATE");
-            if (!DialectFactory.isDaffodil(destSession.getMetaData())) {
-            	sbToAppend.append(unique ? " UNIQUE ": " ");
-            }
-            sbToAppend.append(" INDEX ");
-            sbToAppend.append(ixs[i].ixName);
-            sbToAppend.append(" ON ");
-            String table = getQualifiedObjectName(destSession, 
-                                                  destCatalog, 
-                                                  destSchema, 
-                                                  ixs[i].table, 
-                                                  DialectFactory.DEST_TYPE);
-            sbToAppend.append(table);
-            StringBuilder indexMapKey = new StringBuilder(ixs[i].table);
-            StringBuilder columnBuffer = new StringBuilder();
-            if(ixs[i].cols.size() == 1) {
-                columnBuffer.append("(").append(ixs[i].cols.get(0));
-                
-                for (int j = 1; j < ixs[i].cols.size(); j++) {
-                    columnBuffer.append(",").append(ixs[i].cols.get(j));
-                }
-            } else {
-                columnBuffer.append("\n(\n");
-                for (int j = 0; j < ixs[i].cols.size(); j++) {
-                    if(j < ixs[i].cols.size() -1) {
-                        columnBuffer.append("  " + ixs[i].cols.get(j) + ",\n");
-                    } else {
-                        columnBuffer.append("  " + ixs[i].cols.get(j) + "\n");
-                    }
-                }
-            }
-            columnBuffer.append(")");
-            indexMapKey.append("|");
-            indexMapKey.append(columnBuffer.toString());
-            sbToAppend.append(columnBuffer.toString());
-            if (_prefs.isPruneDuplicateIndexDefs()
-                    && indexMap.containsKey(indexMapKey.toString())) 
-            {
-                if (log.isDebugEnabled()) {
-                    //i18n[DBUtil.info.prunedupidxs=getCreateIndicesSQL: 
-                    // pruning duplicate index named '{0}' on '{1}']
-                    String msg =
-                        s_stringMgr.getString("DBUtil.info.prunedupidxs",
-                                              new String[] { ixs[i].ixName,
-                                                      indexMapKey.toString() });
-                    log.debug(msg);
-                }
-            } else {
-                indexMap.put(indexMapKey.toString(),null);
-                result.add(sbToAppend.toString());
-            }
-        }
-      return result;
-    }
-        
     public static void validateColumnNames(ITableInfo ti, 
                                            SessionInfoProvider prov) 
         throws MappingException, UserCancelledOperationException
