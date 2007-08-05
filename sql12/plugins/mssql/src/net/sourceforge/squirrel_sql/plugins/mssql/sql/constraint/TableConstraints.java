@@ -31,7 +31,8 @@ public class TableConstraints {
     }
     
     public MssqlConstraint[] getConstraints() {
-        return (MssqlConstraint[]) _constraints.toArray();
+        
+        return _constraints.toArray(new MssqlConstraint[_constraints.size()]);
     }
     
     public void addConstraint(MssqlConstraint constraint) {
