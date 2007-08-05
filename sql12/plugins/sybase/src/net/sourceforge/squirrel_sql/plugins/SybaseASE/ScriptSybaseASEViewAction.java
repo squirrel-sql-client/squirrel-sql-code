@@ -1,5 +1,9 @@
 package net.sourceforge.squirrel_sql.plugins.SybaseASE;
 
+import java.awt.event.ActionEvent;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
@@ -7,14 +11,27 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-import java.awt.event.ActionEvent;
-import java.sql.ResultSet;
-import java.sql.Statement;
+
 
 public class ScriptSybaseASEViewAction extends SquirrelAction
 {
-   private ISession _session;
+    private static final long serialVersionUID = 1L;
+
+    transient private ISession _session;
+   
+    /** Logger for this class. */
+    transient private final ILogger s_log =
+        LoggerController.createLogger(ScriptSybaseASEViewAction.class);
+    
+   ///////////////////////////////////////////////////////////
+   // Sybase ASE specific code to read view definitions.
+   private static final String sql =
+       "Select text " +
+       "from sysobjects inner join syscomments on syscomments.id = sysobjects.id " +
+       "where name = ?";
 
 
    public ScriptSybaseASEViewAction(IApplication app, Resources rsrc, ISession session)
@@ -28,7 +45,7 @@ public class ScriptSybaseASEViewAction extends SquirrelAction
 	{
       try
       {
-         Statement stat = _session.getSQLConnection().createStatement();
+         PreparedStatement stat = _session.getSQLConnection().prepareStatement(sql);
 
          SessionInternalFrame sessMainFrm = _session.getSessionInternalFrame();
          IDatabaseObjectInfo[] dbObjs = sessMainFrm.getObjectTreeAPI().getSelectedDatabaseObjects();
@@ -39,13 +56,11 @@ public class ScriptSybaseASEViewAction extends SquirrelAction
          {
             ITableInfo ti = (ITableInfo) dbObjs[i];
 
-            ///////////////////////////////////////////////////////////
-            // Sybase ASE specific code to read view definitions.
-            String sql =
-                "Select text " +
-                "from sysobjects inner join syscomments on syscomments.id = sysobjects.id " +
-                "where name = '" + ti.getSimpleName() + "'";
-
+            stat.setString(1, ti.getSimpleName());
+            if (s_log.isDebugEnabled()) {
+                s_log.debug("Running SQL: "+sql);
+                s_log.debug("Bind var value is: "+ti.getSimpleName());
+            }
             ResultSet res = stat.executeQuery(sql);
 
             while(res.next())
@@ -65,6 +80,10 @@ public class ScriptSybaseASEViewAction extends SquirrelAction
       }
       catch (Exception e)
       {
+         s_log.error(
+             "Unexpected exception while attempting to get source for view: "+
+             e.getMessage(), e);
+         
          throw new RuntimeException(e);
       }
    }
