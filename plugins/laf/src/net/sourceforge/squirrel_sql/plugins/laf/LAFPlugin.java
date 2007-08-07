@@ -455,7 +455,7 @@ public class LAFPlugin extends DefaultPlugin
 		}
 	}
 
-	private class UIFactoryListener extends UIFactoryAdapter
+	private static class UIFactoryListener extends UIFactoryAdapter
 	{
 		/**
 		 * A tabbed panel object has been created.
@@ -466,7 +466,6 @@ public class LAFPlugin extends DefaultPlugin
 		{
 			final JTabbedPane pnl = (JTabbedPane)evt.getComponent();
 			pnl.putClientProperty(Options.NO_CONTENT_BORDER_KEY, Boolean.TRUE);
-//			pnl.putClientProperty(Options.EMBEDDED_TABS_KEY, Boolean.TRUE);
 		}
 	}
 }
