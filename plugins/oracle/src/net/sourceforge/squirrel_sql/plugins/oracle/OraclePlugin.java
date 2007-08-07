@@ -736,12 +736,12 @@ public class OraclePlugin extends DefaultSessionPlugin
         addDetailTab(objTree, IObjectTypes.TYPE, new DatabaseObjectInfoTab());
 
         // Expanders.
-        addExpander(objTree, DatabaseObjectType.SCHEMA, new SchemaExpander(OraclePlugin.this));
+        addExpander(objTree, DatabaseObjectType.SCHEMA, new SchemaExpander());
         addExpander(objTree, DatabaseObjectType.TABLE, new TableExpander());
         addExpander(objTree, IObjectTypes.PACKAGE, new PackageExpander());
         addExpander(objTree, IObjectTypes.USER_PARENT, new UserParentExpander(session));
         addExpander(objTree, IObjectTypes.SESSION_PARENT, new SessionParentExpander());
-        addExpander(objTree, IObjectTypes.INSTANCE_PARENT, new InstanceParentExpander(OraclePlugin.this));
+        addExpander(objTree, IObjectTypes.INSTANCE_PARENT, new InstanceParentExpander());
         addExpander(objTree, IObjectTypes.TRIGGER_PARENT, new TriggerParentExpander());
 
         addDetailTab(objTree, DatabaseObjectType.PROCEDURE, new ObjectSourceTab("PROCEDURE", "Show stored procedure source"));

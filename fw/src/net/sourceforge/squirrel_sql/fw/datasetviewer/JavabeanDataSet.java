@@ -36,20 +36,22 @@ public class JavabeanDataSet implements IDataSet
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(JavabeanDataSet.class);
 
-
+	@SuppressWarnings("unused")
 	private ILogger s_log =
 		LoggerController.createLogger(JavabeanDataSet.class);
 
 	// i18n[javaBeanDataSet.name=Property Name]
-	private String _nameColumnName = s_stringMgr.getString("javaBeanDataSet.name");
+	private static final String _nameColumnName = 
+        s_stringMgr.getString("javaBeanDataSet.name");
 	// i18n[javaBeanDataSet.value=Value]
-	private String _valueColumnName = s_stringMgr.getString("javaBeanDataSet.value");
+	private static final String _valueColumnName = 
+        s_stringMgr.getString("javaBeanDataSet.value");
 
 	// TODO: These 2 should be handled with an Iterator!!!
 	private int _iCurrent = -1;
 	private Object[] _currentRow;
 
-	private List _data;
+	private List<Object[]> _data;
 
 	private DataSetDefinition _dataSetDefinition;
 
@@ -160,13 +162,13 @@ public class JavabeanDataSet implements IDataSet
 		// TODO: This should be handled with an Iterator!!!
 		if (++_iCurrent < _data.size())
 		{
-			_currentRow = (Object[])_data.get(_iCurrent);
+			_currentRow = _data.get(_iCurrent);
 			return true;
 		}
 		return false;
 	}
 
-	public Object get(int columnIndex)
+	public synchronized Object get(int columnIndex)
 	{
 		return _currentRow[columnIndex];
 	}
@@ -182,7 +184,7 @@ public class JavabeanDataSet implements IDataSet
 	private void commonCtor()
 	{
 		_iCurrent = -1;
-		_data = new ArrayList();
+		_data = new ArrayList<Object[]>();
 
 		ColumnDisplayDefinition[] colDefs = createColumnDefinitions();
 		_dataSetDefinition = new DataSetDefinition(colDefs);

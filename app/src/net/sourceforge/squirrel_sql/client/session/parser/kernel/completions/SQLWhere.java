@@ -18,7 +18,7 @@
  *
  * created by cse, 10.10.2002 14:29:20
  *
- * @version $Id: SQLWhere.java,v 1.1 2004-04-04 10:36:30 colbell Exp $
+ * @version $Id: SQLWhere.java,v 1.2 2007-08-07 01:02:15 manningr Exp $
  */
 package net.sourceforge.squirrel_sql.client.session.parser.kernel.completions;
 
@@ -38,7 +38,7 @@ import java.util.Iterator;
 public class SQLWhere extends SQLCompletion implements SQLStatementContext
 {
     private SQLStatement statement;
-    private List children = new ArrayList();
+    private List<Completion> children = new ArrayList<Completion>();
 
     public SQLWhere(SQLStatement statement, int startPosition)
     {
@@ -56,9 +56,9 @@ public class SQLWhere extends SQLCompletion implements SQLStatementContext
     public Completion getCompletion(int position)
     {
         if(super.getCompletion(position) != null) {
-            Iterator it = children.iterator();
+            Iterator<Completion> it = children.iterator();
             while(it.hasNext()) {
-                Completion comp = (Completion)it.next();
+                Completion comp = it.next();
                 if((comp = comp.getCompletion(position)) != null)
                     return comp;
             }

@@ -20,18 +20,14 @@ package net.sourceforge.squirrel_sql.plugins.oracle.expander;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
-
 import net.sourceforge.squirrel_sql.plugins.oracle.IObjectTypes;
-import net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin;
 /**
  * This class is an expander for the schema nodes. It will add various Object Type
  * nodes to the schema node.
@@ -40,20 +36,13 @@ import net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin;
  */
 public class SchemaExpander implements INodeExpander
 {
-	/** The plugin. */
-	private OraclePlugin _plugin;
 
 	/**
 	 * Ctor.
 	 */
-	public SchemaExpander(OraclePlugin plugin)
+	public SchemaExpander()
 	{
 		super();
-		if (plugin == null)
-		{
-			throw new IllegalArgumentException("OraclePlugin == null");
-		}
-		_plugin = plugin;
 	}
 
 	/**
@@ -67,9 +56,9 @@ public class SchemaExpander implements INodeExpander
 	 * @return	A list of <TT>ObjectTreeNode</TT> objects representing the child
 	 *			nodes for the passed node.
 	 */
-	public List createChildren(ISession session, ObjectTreeNode parentNode)
+	public List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode parentNode)
 	{
-		final List childNodes = new ArrayList();
+		final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
 		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
 		final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
 		final String catalogName = parentDbinfo.getCatalogName();
@@ -105,7 +94,7 @@ public class SchemaExpander implements INodeExpander
 										schemaName, "SEQUENCE",
 										IObjectTypes.SEQUENCE_PARENT, md);
 		ObjectTreeNode node = new ObjectTreeNode(session, seqInfo);
-		node.addExpander(new SequenceParentExpander(_plugin));
+		node.addExpander(new SequenceParentExpander());
 		childNodes.add(node);
 
 		objType = new ObjectType(IObjectTypes.TYPE_PARENT, "TYPE", IObjectTypes.TYPE);

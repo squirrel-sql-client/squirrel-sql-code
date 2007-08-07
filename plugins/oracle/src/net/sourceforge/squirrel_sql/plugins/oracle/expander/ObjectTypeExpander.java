@@ -75,10 +75,10 @@ public class ObjectTypeExpander implements INodeExpander
 	 * @return	A list of <TT>ObjectTreeNode</TT> objects representing the child
 	 *			nodes for the passed node.
 	 */
-	public List createChildren(ISession session, ObjectTreeNode parentNode)
+	public List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode parentNode)
 		throws SQLException
 	{
-		final List childNodes = new ArrayList();
+		final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
 		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
 		final String catalogName = parentDbinfo.getCatalogName();
 		final String schemaName = parentDbinfo.getSchemaName();
@@ -86,13 +86,13 @@ public class ObjectTypeExpander implements INodeExpander
 		return childNodes;
 	}
 
-	private List createNodes(ISession session, String catalogName,
+	private List<ObjectTreeNode> createNodes(ISession session, String catalogName,
 											String schemaName)
 		throws SQLException
 	{
 		final ISQLConnection conn = session.getSQLConnection();
 		final SQLDatabaseMetaData md = conn.getSQLMetaData();
-		final List childNodes = new ArrayList();
+		final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
 		String objFilter =  session.getProperties().getObjectFilter();
 
 		// Add node for each object.

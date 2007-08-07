@@ -19,8 +19,6 @@ package net.sourceforge.squirrel_sql.plugins.mssql.gui;
  */
 
 import java.awt.BorderLayout;
-import java.awt.CheckboxGroup;
-import java.awt.Component;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -28,34 +26,23 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-
 import java.sql.SQLException;
-
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.ListModel;
-import javax.swing.border.BevelBorder;
 import javax.swing.table.DefaultTableModel;
-
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.factories.Borders;
 
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -66,11 +53,13 @@ import net.sourceforge.squirrel_sql.fw.sql.IUDTInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
 import net.sourceforge.squirrel_sql.plugins.mssql.MssqlPlugin;
 import net.sourceforge.squirrel_sql.plugins.mssql.util.DatabaseObjectInfoRenderer;
 import net.sourceforge.squirrel_sql.plugins.mssql.util.DatabaseObjectInfoTableModel;
 import net.sourceforge.squirrel_sql.plugins.mssql.util.MssqlIntrospector;
+
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.factories.Borders;
 
 public class GenerateSqlDialog extends JDialog {
 
@@ -181,12 +170,12 @@ public class GenerateSqlDialog extends JDialog {
         c.gridy = 1;
         allObjectsCheckbox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == e.SELECTED)
+                if (e.getStateChange() == ItemEvent.SELECTED)
                     transferObjectsOfType(0,(DatabaseObjectInfoTableModel) _availableTable.getModel(),(DatabaseObjectInfoTableModel) _selectedTable.getModel());
-                else if (e.getStateChange() == e.DESELECTED)
+                else if (e.getStateChange() == ItemEvent.DESELECTED)
                     transferObjectsOfType(0,(DatabaseObjectInfoTableModel) _selectedTable.getModel(),(DatabaseObjectInfoTableModel) _availableTable.getModel());
                 
-                boolean isSelected = (e.getStateChange() == e.SELECTED);
+                boolean isSelected = (e.getStateChange() == ItemEvent.SELECTED);
                 
                 allTablesCheckbox.setSelected(isSelected);
                 allRulesCheckbox.setSelected(isSelected);
@@ -212,9 +201,9 @@ public class GenerateSqlDialog extends JDialog {
         c.gridy = 2;
         allTablesCheckbox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == e.SELECTED)
+                if (e.getStateChange() == ItemEvent.SELECTED)
                     transferObjectsOfType(MssqlIntrospector.MSSQL_TABLE,(DatabaseObjectInfoTableModel) _availableTable.getModel(),(DatabaseObjectInfoTableModel) _selectedTable.getModel());
-                else if (e.getStateChange() == e.DESELECTED)
+                else if (e.getStateChange() == ItemEvent.DESELECTED)
                     transferObjectsOfType(MssqlIntrospector.MSSQL_TABLE,(DatabaseObjectInfoTableModel) _selectedTable.getModel(),(DatabaseObjectInfoTableModel) _availableTable.getModel());
             }
         });
@@ -225,9 +214,9 @@ public class GenerateSqlDialog extends JDialog {
         c.gridy = 2;
         allRulesCheckbox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == e.SELECTED)
+                if (e.getStateChange() == ItemEvent.SELECTED)
                     transferObjectsOfType(MssqlIntrospector.MSSQL_RULE,(DatabaseObjectInfoTableModel) _availableTable.getModel(),(DatabaseObjectInfoTableModel) _selectedTable.getModel());
-                else if (e.getStateChange() == e.DESELECTED)
+                else if (e.getStateChange() == ItemEvent.DESELECTED)
                     transferObjectsOfType(MssqlIntrospector.MSSQL_RULE,(DatabaseObjectInfoTableModel) _selectedTable.getModel(),(DatabaseObjectInfoTableModel) _availableTable.getModel());
             }
         });
@@ -238,9 +227,9 @@ public class GenerateSqlDialog extends JDialog {
         c.gridy = 3;
         allViewsCheckbox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == e.SELECTED)
+                if (e.getStateChange() == ItemEvent.SELECTED)
                     transferObjectsOfType(MssqlIntrospector.MSSQL_VIEW,(DatabaseObjectInfoTableModel) _availableTable.getModel(),(DatabaseObjectInfoTableModel) _selectedTable.getModel());
-                else if (e.getStateChange() == e.DESELECTED)
+                else if (e.getStateChange() == ItemEvent.DESELECTED)
                     transferObjectsOfType(MssqlIntrospector.MSSQL_VIEW,(DatabaseObjectInfoTableModel) _selectedTable.getModel(),(DatabaseObjectInfoTableModel) _availableTable.getModel());
             }
         });
@@ -251,9 +240,9 @@ public class GenerateSqlDialog extends JDialog {
         c.gridy = 3;
         allUddtCheckbox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == e.SELECTED)
+                if (e.getStateChange() == ItemEvent.SELECTED)
                     transferObjectsOfType(MssqlIntrospector.MSSQL_UDT,(DatabaseObjectInfoTableModel) _availableTable.getModel(),(DatabaseObjectInfoTableModel) _selectedTable.getModel());
-                else if (e.getStateChange() == e.DESELECTED)
+                else if (e.getStateChange() == ItemEvent.DESELECTED)
                     transferObjectsOfType(MssqlIntrospector.MSSQL_UDT,(DatabaseObjectInfoTableModel) _selectedTable.getModel(),(DatabaseObjectInfoTableModel) _availableTable.getModel());
             }
         });
@@ -264,9 +253,9 @@ public class GenerateSqlDialog extends JDialog {
         c.gridy = 4;
         allProceduresCheckbox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == e.SELECTED)
+                if (e.getStateChange() == ItemEvent.SELECTED)
                     transferObjectsOfType(MssqlIntrospector.MSSQL_STOREDPROCEDURE,(DatabaseObjectInfoTableModel) _availableTable.getModel(),(DatabaseObjectInfoTableModel) _selectedTable.getModel());
-                else if (e.getStateChange() == e.DESELECTED)
+                else if (e.getStateChange() == ItemEvent.DESELECTED)
                     transferObjectsOfType(MssqlIntrospector.MSSQL_STOREDPROCEDURE,(DatabaseObjectInfoTableModel) _selectedTable.getModel(),(DatabaseObjectInfoTableModel) _availableTable.getModel());
             }
         });
@@ -277,9 +266,9 @@ public class GenerateSqlDialog extends JDialog {
         c.gridy = 4;
         allUdfsCheckbox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == e.SELECTED)
+                if (e.getStateChange() == ItemEvent.SELECTED)
                     transferObjectsOfType(MssqlIntrospector.MSSQL_UDF,(DatabaseObjectInfoTableModel) _availableTable.getModel(),(DatabaseObjectInfoTableModel) _selectedTable.getModel());
-                else if (e.getStateChange() == e.DESELECTED)
+                else if (e.getStateChange() == ItemEvent.DESELECTED)
                     transferObjectsOfType(MssqlIntrospector.MSSQL_UDF,(DatabaseObjectInfoTableModel) _selectedTable.getModel(),(DatabaseObjectInfoTableModel) _availableTable.getModel());
             }
         });
@@ -290,9 +279,9 @@ public class GenerateSqlDialog extends JDialog {
         c.gridy = 5;
         allDefaultsCheckbox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == e.SELECTED)
+                if (e.getStateChange() == ItemEvent.SELECTED)
                     transferObjectsOfType(MssqlIntrospector.MSSQL_DEFAULT,(DatabaseObjectInfoTableModel) _availableTable.getModel(),(DatabaseObjectInfoTableModel) _selectedTable.getModel());
-                else if (e.getStateChange() == e.DESELECTED)
+                else if (e.getStateChange() == ItemEvent.DESELECTED)
                     transferObjectsOfType(MssqlIntrospector.MSSQL_DEFAULT,(DatabaseObjectInfoTableModel) _selectedTable.getModel(),(DatabaseObjectInfoTableModel) _availableTable.getModel());
             }
         });
@@ -561,8 +550,6 @@ public class GenerateSqlDialog extends JDialog {
         boolean generateDrop = _generateDropCheckbox.isSelected();
         boolean generateDependent = _generateDependentCheckbox.isSelected();
         boolean includeHeaders = _includeHeadersCheckbox.isSelected();
-        boolean extendedProps = _extendedPropsCheckbox.isSelected();
-        boolean onlySeven = _onlySevenCheckbox.isSelected();
         
         StringBuffer buf = new StringBuffer();
         
@@ -757,7 +744,7 @@ public class GenerateSqlDialog extends JDialog {
 		return session.getApplication().getMainFrame();
 	}
     
-    public ArrayList getSelectedItems() {
+    public ArrayList<IDatabaseObjectInfo> getSelectedItems() {
         return ((DatabaseObjectInfoTableModel) (_selectedTable.getModel())).getContents();
     }
     

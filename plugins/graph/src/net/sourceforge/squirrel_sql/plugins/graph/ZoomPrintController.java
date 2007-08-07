@@ -190,7 +190,7 @@ public class ZoomPrintController
       try
       {
 
-         ArrayList images = new ArrayList();
+         ArrayList<BufferedImage> images = new ArrayList<BufferedImage>();
 
 
          if (_panel.chkShowEdges.isSelected())
@@ -230,9 +230,8 @@ public class ZoomPrintController
             images.add(img);
          }
 
-         new GraphToFilesCtrlr(
-            (BufferedImage[]) images.toArray(new BufferedImage[images.size()]),
-            _session.getApplication().getMainFrame());
+         new GraphToFilesCtrlr(images.toArray(new BufferedImage[images.size()]),
+                                              _session.getApplication().getMainFrame());
 
       }
       catch (PrinterException e)

@@ -32,17 +32,17 @@ public class SQLModifyingStatement extends SQLStatement
         super(start);
     }
 
-    public List getTables(String catalog, String schema, String name)
+    public List<Table> getTables(String catalog, String schema, String name)
     {
         if(name != null || m_table == null) {
             return super.getTables(catalog, schema, name);
         }
         else {
-            List tables = super.getTables(m_table.catalog, m_table.schema, m_table.name);
-            List result = new ArrayList();
-            Iterator it = tables.iterator();
+            List<Table> tables = super.getTables(m_table.catalog, m_table.schema, m_table.name);
+            List<Table> result = new ArrayList<Table>();
+            Iterator<Table> it = tables.iterator();
             while(it.hasNext()) {
-                Table table = (Table)it.next();
+                Table table = it.next();
                 if(table.matches(catalog, schema, name))
                     result.add(table);
             }

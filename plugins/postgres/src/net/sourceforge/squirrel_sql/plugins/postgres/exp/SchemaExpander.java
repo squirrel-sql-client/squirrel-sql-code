@@ -56,9 +56,9 @@ public class SchemaExpander implements INodeExpander
 	 * @return	A list of <TT>ObjectTreeNode</TT> objects representing the child
 	 *			nodes for the passed node.
 	 */
-	public List createChildren(ISession session, ObjectTreeNode parentNode)
+	public List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode parentNode)
 	{
-		final List childNodes = new ArrayList();
+		final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
 		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
 		final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
 		final String catalogName = parentDbinfo.getCatalogName();

@@ -25,13 +25,13 @@ import java.lang.StringBuffer;
 public class ExtensionFilter extends FileFilter {
     
     /* these arrays are parallel. */
-    private ArrayList _descriptions;
-    private ArrayList _extensions;
+    private ArrayList<String> _descriptions;
+    private ArrayList<String> _extensions;
     
     /** Creates a new instance of ExtensionFilter */
     public ExtensionFilter() {
-        _descriptions = new ArrayList();
-        _extensions = new ArrayList();
+        _descriptions = new ArrayList<String>();
+        _extensions = new ArrayList<String>();
     }
     
     public void addExtension(String description, String extension) {
@@ -43,7 +43,7 @@ public class ExtensionFilter extends FileFilter {
         if (f.isDirectory())
             return true;
         for (int i = 0; i < _extensions.size(); i++) {
-            String ext = (String) _extensions.get(i);
+            String ext = _extensions.get(i);
             if (f.getName().endsWith("." + ext))
                 return true;
         }
@@ -53,9 +53,9 @@ public class ExtensionFilter extends FileFilter {
     public String getDescription() {
         StringBuffer buf = new StringBuffer();
         for (int i = 0; i < _extensions.size(); i++) {
-            buf.append((String) _descriptions.get(i));
+            buf.append(_descriptions.get(i));
             buf.append(" (*.");
-            buf.append((String) _extensions.get(i));
+            buf.append(_extensions.get(i));
             buf.append(")");
             if (i < _extensions.size() - 1)
                 buf.append("; ");

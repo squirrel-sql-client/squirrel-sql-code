@@ -64,11 +64,12 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 public class SQLBookmarkPlugin extends DefaultSessionPlugin
 {
 
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(SQLBookmarkPlugin.class);
+   /** Logger for this class. */
+   private final static ILogger s_log = 
+       LoggerController.createLogger(SQLBookmarkPlugin.class);  
 
-
-   private ArrayList _sqlPanelAPIsListeningForBookmarks = new ArrayList();
+   private ArrayList<ISQLPanelAPI> _sqlPanelAPIsListeningForBookmarks = 
+       new ArrayList<ISQLPanelAPI>();
 
 
    private static final String BOOKMARKS_PROPS_FILE = "bookmarks.properties";
@@ -233,8 +234,6 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
 
       IApplication app = getApplication();
 
-      PluginManager pmgr = app.getPluginManager();
-
       // Folder within plugins folder that belongs to this
       // plugin.
       try
@@ -350,7 +349,7 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
       resources.addToMenu(coll.get(AddBookmarkAction.class), menu);
       menu.add(new JSeparator());
 
-      for (Iterator i = bookmarkManager.iterator(); i.hasNext();)
+      for (Iterator<Bookmark> i = bookmarkManager.iterator(); i.hasNext();)
       {
          Object o = i.next();
          Bookmark bookmark = (Bookmark) o;
@@ -434,17 +433,18 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
 
    public void removeALLSQLPanelsAPIListeningForBookmarks()
    {
-      _sqlPanelAPIsListeningForBookmarks = new ArrayList();
+      _sqlPanelAPIsListeningForBookmarks = new ArrayList<ISQLPanelAPI>();
    }
 
    public ISQLPanelAPI[] getSQLPanelAPIsListeningForBookmarks()
    {
-      return (ISQLPanelAPI[]) _sqlPanelAPIsListeningForBookmarks.toArray(new ISQLPanelAPI[_sqlPanelAPIsListeningForBookmarks.size()]);
+      return _sqlPanelAPIsListeningForBookmarks.toArray(new ISQLPanelAPI[_sqlPanelAPIsListeningForBookmarks.size()]);
    }
 
 
    Properties getBookmarkProperties()
    {
+      FileInputStream fis = null;
       try
       {
          if(null == _boomarkProps)
@@ -458,7 +458,7 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
             }
             else
             {
-               FileInputStream fis = new FileInputStream(boomarkPropsFile);
+               fis = new FileInputStream(boomarkPropsFile);
                _boomarkProps = new Properties();
                _boomarkProps.load(fis);
             }
@@ -468,11 +468,21 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
       catch (IOException e)
       {
          throw new RuntimeException(e);
+      } finally {
+          if (fis != null) {
+              try {
+                  fis.close();
+              } catch (IOException ex) {
+                  s_log.error("Unable to close output stream: "+ex.getMessage(),
+                              ex);
+              }
+          }
       }
    }
 
    void saveBookmarkProperties()
    {
+       FileOutputStream fos = null;
       try
       {
          if(null == _boomarkProps)
@@ -482,12 +492,19 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
 
          File usf = getPluginUserSettingsFolder();
          File boomarkPropsFile = new File(usf, BOOKMARKS_PROPS_FILE);
-         FileOutputStream fos = new FileOutputStream(boomarkPropsFile);
+         fos = new FileOutputStream(boomarkPropsFile);
          _boomarkProps.store(fos, "Bookmark properties");
-      }
-      catch (IOException e)
-      {
-         throw new RuntimeException(e);
+      } catch (IOException e) {
+          throw new RuntimeException(e);
+      } finally {
+          if (fos != null) {
+              try {
+                  fos.close();
+              } catch (IOException ex) {
+                  s_log.error("Unable to close output stream: "+ex.getMessage(),
+                              ex);
+              }
+          }
       }
    }
 

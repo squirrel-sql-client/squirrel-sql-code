@@ -31,8 +31,12 @@ import java.beans.SimpleBeanInfo;
  */
 public class SQLAliasBeanInfo extends SimpleBeanInfo
 {
-   private static PropertyDescriptor[] s_desc;
-   private static Class CLAZZ = net.sourceforge.squirrel_sql.client.gui.db.SQLAlias.class;
+   /**
+    * If more than one thread is constructing, volatile tells them to check an 
+    * otherwise cached value.
+    */ 
+   private static volatile PropertyDescriptor[] s_desc;
+   private static Class<SQLAlias> CLAZZ = net.sourceforge.squirrel_sql.client.gui.db.SQLAlias.class;
 
    private interface IPropNames extends ISQLAlias.IPropertyNames
    {

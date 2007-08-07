@@ -42,7 +42,7 @@ public class ProcedureSourceTab extends FormattedSourceTab
         //i18n[ProcedureSourceTab.cLanguageProcMsg=This is a C-language routine. The 
         //source code is unavailable.]
         String C_LANGUAGE_PROC_MSG = 
-            s_stringMgr.getString("DB2SourceTab.cLanguageProcMsg"); 
+            s_stringMgr.getString("ProcedureSourceTab.cLanguageProcMsg"); 
     }    
     
 	/** SQL that retrieves the source of a stored procedure. */

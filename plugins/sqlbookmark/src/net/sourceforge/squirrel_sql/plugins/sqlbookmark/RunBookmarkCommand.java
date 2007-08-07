@@ -283,18 +283,18 @@ public class RunBookmarkCommand implements ICommand {
     /**
      * Internal convenience class for managing attributes of a parameter.
      */
-    class Parameter {
-	String reference;
-	String id;
-	String prompt;
-	String tip;
-	JTextField value;
+    static class Parameter {
+    	String reference;
+    	String id;
+    	String prompt;
+    	String tip;
+    	JTextField value;
     }
 
     /** 
      * Internal action class called when user clicks the "OK" button.
      */
-    class DoneAction implements ActionListener {
+    static class DoneAction implements ActionListener {
 
 	JDialog dialog = null;
        private boolean _actionExecuted;

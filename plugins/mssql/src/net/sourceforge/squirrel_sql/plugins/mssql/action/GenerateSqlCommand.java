@@ -114,9 +114,9 @@ public class GenerateSqlCommand implements ICommand {
                         fw.write(MssqlIntrospector.generateUsersAndRolesScript(_session.getSQLConnection().getCatalog(),_session.getSQLConnection()));
                 }
                 
-                ArrayList objs = dlog.getSelectedItems();
+                ArrayList<IDatabaseObjectInfo> objs = dlog.getSelectedItems();
                 for (int i = 0; i < objs.size(); i++) {
-                    IDatabaseObjectInfo oi = (IDatabaseObjectInfo) objs.get(i);
+                    IDatabaseObjectInfo oi = objs.get(i);
                     
                     if (!dlog.getOneFile())
                         fw = new FileWriter(fc.getSelectedFile() + java.io.File.separator + MssqlIntrospector.getFixedVersionedObjectName(oi.getSimpleName()) + ".txt",false);

@@ -71,7 +71,7 @@ public class HtmlViewerPanel extends JPanel
 	private URL _currentURL;
 
 	/** History of links. */
-	private final List _history = new LinkedList();
+	private final List<URL> _history = new LinkedList<URL>();
 
 	/** Current index into <TT>_history</TT>. */
 	private int _historyIndex = -1;
@@ -154,7 +154,7 @@ public class HtmlViewerPanel extends JPanel
 		}
 		if (!url.equals(_currentURL))
 		{
-			ListIterator it = _history.listIterator(_historyIndex + 1);
+			ListIterator<URL> it = _history.listIterator(_historyIndex + 1);
 			while (it.hasNext())
 			{
 				it.next();
@@ -172,7 +172,7 @@ public class HtmlViewerPanel extends JPanel
 	{
 		if (_historyIndex > 0 && _historyIndex < _history.size())
 		{
-			displayURL((URL)_history.get(--_historyIndex));
+			displayURL(_history.get(--_historyIndex));
 		}
 	}
 
@@ -180,7 +180,7 @@ public class HtmlViewerPanel extends JPanel
 	{
 		if (_historyIndex > -1 && _historyIndex < _history.size() - 1)
 		{
-			displayURL((URL)_history.get(++_historyIndex));
+			displayURL(_history.get(++_historyIndex));
 		}
 	}
 

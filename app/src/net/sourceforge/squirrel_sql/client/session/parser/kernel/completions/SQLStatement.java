@@ -18,7 +18,7 @@
  *
  * created 24.09.2002 12:27:12
  *
- * @version $Id: SQLStatement.java,v 1.1 2004-04-04 10:36:30 colbell Exp $
+ * @version $Id: SQLStatement.java,v 1.2 2007-08-07 01:02:15 manningr Exp $
  */
 package net.sourceforge.squirrel_sql.client.session.parser.kernel.completions;
 
@@ -36,9 +36,10 @@ import java.util.*;
  */
 public class SQLStatement extends SQLCompletion implements SQLSchema, SQLStatementContext
 {
-    private SortedSet children;
+    private SortedSet<Completion> children;
     protected SQLSchema sqlSchema;
-
+    private static final List<Completion> EMPTY_LIST = 
+        new ArrayList<Completion>();
 
     public SQLStatement(int start)
     {
@@ -52,9 +53,9 @@ public class SQLStatement extends SQLCompletion implements SQLSchema, SQLStateme
     public Completion getCompletion(int position)
     {
         if(isEnclosed(position)) {
-            Iterator it = getChildren();
+            Iterator<Completion> it = getChildren();
             while(it.hasNext()) {
-                Completion c = ((Completion)it.next()).getCompletion(position);
+                Completion c = it.next().getCompletion(position);
                 if(c != null) return c;
             }
         }
@@ -114,7 +115,7 @@ public class SQLStatement extends SQLCompletion implements SQLSchema, SQLStateme
         return sqlSchema.getTable(catalog, schema, name);
     }
 
-    public List getTables(String catalog, String schema, String name)
+    public List<Table> getTables(String catalog, String schema, String name)
     {
         return sqlSchema.getTables(catalog, schema, name);
     }
@@ -134,9 +135,9 @@ public class SQLStatement extends SQLCompletion implements SQLSchema, SQLStateme
         return this;
     }
 
-    protected Iterator getChildren()
+    protected Iterator<Completion> getChildren()
     {
-        return children != null ? children.iterator() : Collections.EMPTY_LIST.iterator();
+        return children != null ? children.iterator() : EMPTY_LIST.iterator();
     }
 
     /**

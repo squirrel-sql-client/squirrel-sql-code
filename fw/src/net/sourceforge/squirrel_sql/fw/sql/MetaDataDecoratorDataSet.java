@@ -45,8 +45,8 @@ public class MetaDataDecoratorDataSet extends MetaDataDataSet {
     
     boolean finishedLocalRows = false;
     
-    Iterator iter = null;
-    ArrayList data = new ArrayList();
+    Iterator<Object[]> iter = null;
+    ArrayList<Object[]> data = new ArrayList<Object[]>();
     
     Object[] currentRow = null;
     
@@ -113,7 +113,7 @@ public class MetaDataDecoratorDataSet extends MetaDataDataSet {
             return super.next(msgHandler);
         } else {
             if (iter.hasNext()) {
-                currentRow = (Object[])iter.next();
+                currentRow = iter.next();
                 return true;
             } else {
                 finishedLocalRows = true;

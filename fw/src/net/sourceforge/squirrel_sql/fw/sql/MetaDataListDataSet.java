@@ -37,23 +37,18 @@ public class MetaDataListDataSet implements IDataSet
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(MetaDataListDataSet.class);
 
-	private interface IStrings
+	private static interface IStrings
 	{
 		String NAME_COLUMN = s_stringMgr.getString("MetaDataListDataSet.propname");
 	}
 
 	private final static String[] s_hdgs = new String[] { IStrings.NAME_COLUMN };
 	private DataSetDefinition _dsDef;
-	private Iterator _rowIter;
-	private List _row = new ArrayList();
+	private Iterator<String> _rowIter;
+	private List<String> _row = new ArrayList<String>();
 	private String _rowElem;
 
 	public MetaDataListDataSet(String functionList)
-	{
-		this(functionList, null);
-	}
-
-	public MetaDataListDataSet(String functionList, IMessageHandler msgHandler)
 	{
 		super();
 		_dsDef = new DataSetDefinition(createColumnDefinitions());
@@ -74,7 +69,7 @@ public class MetaDataListDataSet implements IDataSet
 	{
 		if (_rowIter.hasNext())
 		{
-			_rowElem = (String) _rowIter.next();
+			_rowElem = _rowIter.next();
 			return true;
 		}
 		return false;

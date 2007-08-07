@@ -18,9 +18,12 @@
  *
  * created by cse, 24.09.2002 12:00:04
  *
- * @version $Id: SQLCompletion.java,v 1.1 2004-04-04 10:36:31 colbell Exp $
+ * @version $Id: SQLCompletion.java,v 1.2 2007-08-07 01:02:15 manningr Exp $
  */
 package net.sourceforge.squirrel_sql.client.session.parser.kernel;
+
+import java.io.Serializable;
+import java.util.Comparator;
 
 
 /**
@@ -123,15 +126,18 @@ public abstract class SQLCompletion implements Completion
      * A comparator implementation which sorts descending according to startPosition,
      * while preferring {@link #isConcrete concrete} items before non-concrete ones
      */
-    public class ChildComparator implements java.util.Comparator
+    public static class ChildComparator implements Comparator<SQLCompletion>,
+                                                   Serializable
     {
-        public int compare(Object o1, Object o2)
+        private static final long serialVersionUID = -8912522485515591605L;
+
+        public int compare(SQLCompletion c1, SQLCompletion c2)
         {
-            SQLCompletion c1 = (SQLCompletion)o1;
-            SQLCompletion c2 = (SQLCompletion)o2;
-            if(c1.isConcrete() == c2.isConcrete())
+            if(c1.isConcrete() == c2.isConcrete()) {
                 return c2.startPosition - c1.startPosition ;
-            else return c1.isConcrete() ? -1 : 1;
+            } else {
+                return c1.isConcrete() ? -1 : 1;
+            }
         }
     }
 }

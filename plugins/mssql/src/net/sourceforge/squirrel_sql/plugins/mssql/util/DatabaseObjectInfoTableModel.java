@@ -24,10 +24,12 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 
 public class DatabaseObjectInfoTableModel extends AbstractTableModel {
     
-    private ArrayList _objectInfo;
+    private static final long serialVersionUID = -1879428906496726350L;
+
+    private ArrayList<IDatabaseObjectInfo> _objectInfo;
     
     public DatabaseObjectInfoTableModel() {
-        _objectInfo = new ArrayList();
+        _objectInfo = new ArrayList<IDatabaseObjectInfo>();
     }
     
     public void addElement(IDatabaseObjectInfo oi) {
@@ -59,7 +61,7 @@ public class DatabaseObjectInfoTableModel extends AbstractTableModel {
             case 0:
                 return _objectInfo.get(rowIndex);
             case 1:
-                return ((IDatabaseObjectInfo) _objectInfo.get(rowIndex)).getSchemaName();
+                return _objectInfo.get(rowIndex).getSchemaName();
             default:
                 return null;
         }
@@ -69,7 +71,7 @@ public class DatabaseObjectInfoTableModel extends AbstractTableModel {
         return (columnIndex == 0);
     }*/
     
-    public ArrayList getContents() {
+    public ArrayList<IDatabaseObjectInfo> getContents() {
         return _objectInfo;
     }
     

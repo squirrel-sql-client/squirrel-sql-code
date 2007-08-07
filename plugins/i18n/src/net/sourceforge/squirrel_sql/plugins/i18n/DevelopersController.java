@@ -101,8 +101,8 @@ public class DevelopersController
 		{
 			File[] files = sourceDir.listFiles();
 
-			ArrayList newProps = new ArrayList();
-			ArrayList replaceProps = new ArrayList();
+			ArrayList<String> newProps = new ArrayList<String>();
+			ArrayList<String> replaceProps = new ArrayList<String>();
 
 
 			File i18nStringFile = new File(sourceDir, "I18NStrings.properties");
@@ -146,13 +146,15 @@ public class DevelopersController
                             int occurrencesFound = fixSourceFile(files[i].getAbsolutePath());
                             if (occurrences != occurrencesFound) {
                                 Object[] params =
-                                    new Object[]{new Integer(occurrences),
-													          new Integer(occurrencesFound),
-																 files[i].getPath() };
+                                    new Object[]{
+                                        Integer.valueOf(occurrences),
+										Integer.valueOf(occurrencesFound),
+										files[i].getPath() 
+                                    };
 
-										  // i18n[i18n.unequalOccurrences=Found {0} i18n comments but only {1} places
-										  // to convert to s_stringMgr.getString() in file {2}]
-										  String msg = s_stringMgr.getString("i18n.unequalOccurrences", params);
+							    // i18n[i18n.unequalOccurrences=Found {0} i18n comments but only {1} places
+							    // to convert to s_stringMgr.getString() in file {2}]
+							    String msg = s_stringMgr.getString("i18n.unequalOccurrences", params);
                                 _app.getMessageHandler().showErrorMessage(msg);
                             }
                         }
@@ -198,7 +200,11 @@ public class DevelopersController
 				ps.close();
 				fos.close();
 
-				Object[] params = new Object[]{new Integer(newProps.size()), new Integer(replaceProps.size()), i18nStringFile.getPath()};
+				Object[] params = new Object[] {
+                        Integer.valueOf(newProps.size()), 
+                        Integer.valueOf(replaceProps.size()), 
+                        i18nStringFile.getPath()
+                };
 
 				_app.getMessageHandler().showMessage(s_stringMgr.getString("i18n.parseSuccess", params));
 				// i18n[i18n.parseSuccess=Added {0} new and {1} replaced properties to {2}]
@@ -212,7 +218,11 @@ public class DevelopersController
 
 	}
 
-	private int parseProps(String code, Properties curProps, ArrayList newProps, ArrayList replaceProps) throws I18nParseException
+	private int parseProps(String code, 
+                           Properties curProps, 
+                           ArrayList<String> newProps, 
+                           ArrayList<String> replaceProps) 
+        throws I18nParseException
 	{
         int occurrences = 0;
 		code = code.replace('\r', ' ');
@@ -245,7 +255,7 @@ public class DevelopersController
 				boolean found = false;
 				for (int i = 0; i < newProps.size(); i++)
 				{
-					if(((String)newProps.get(i)).split("=")[0].startsWith(key.split("=")[0]))
+					if(newProps.get(i).split("=")[0].startsWith(key.split("=")[0]))
 					{
 						found = true;
 						replaceProps.add(prop);
@@ -371,7 +381,7 @@ public class DevelopersController
 		int occurrencesReplaced = 0;
 		boolean writeFixFile =false;
 
-		ArrayList linesToPrint = new ArrayList();
+		ArrayList<String> linesToPrint = new ArrayList<String>();
 
 		Pattern pat = Pattern.compile("\\s*//\\s*i18n\\[(.*)");
 		Pattern commentLinePattern = Pattern.compile("\\s*//");

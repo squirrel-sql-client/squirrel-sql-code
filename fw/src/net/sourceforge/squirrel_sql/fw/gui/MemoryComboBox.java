@@ -21,7 +21,9 @@ import javax.swing.*;
 
 public class MemoryComboBox extends JComboBox
 {
-	public static int NO_MAX = -1;
+    private static final long serialVersionUID = -1059386228875239787L;
+
+    public final static int NO_MAX = -1;
 
 	private int _maxMemoryCount = NO_MAX;
 

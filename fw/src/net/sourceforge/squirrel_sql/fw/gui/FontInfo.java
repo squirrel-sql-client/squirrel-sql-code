@@ -18,10 +18,13 @@ package net.sourceforge.squirrel_sql.fw.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.Font;
+import java.io.Serializable;
 
-public class FontInfo implements Cloneable
+public class FontInfo implements Cloneable, Serializable
 {
-	public interface IPropertyNames
+    private static final long serialVersionUID = 1L;
+
+    public interface IPropertyNames
 	{
 		String FAMILY = "family";
 		String IS_BOLD = "isBold";
@@ -172,4 +175,44 @@ public class FontInfo implements Cloneable
 		}
 		return buf.toString();
 	}
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int PRIME = 31;
+        int result = 1;
+        result = PRIME * result + ((_familyName == null) ? 0 : _familyName.hashCode());
+        result = PRIME * result + (_isBold ? 1231 : 1237);
+        result = PRIME * result + (_isItalic ? 1231 : 1237);
+        result = PRIME * result + _size;
+        return result;
+    }
+
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final FontInfo other = (FontInfo) obj;
+        if (_familyName == null) {
+            if (other._familyName != null)
+                return false;
+        } else if (!_familyName.equals(other._familyName))
+            return false;
+        if (_isBold != other._isBold)
+            return false;
+        if (_isItalic != other._isItalic)
+            return false;
+        if (_size != other._size)
+            return false;
+        return true;
+    }
 }

@@ -7,7 +7,6 @@ import java.util.*;
 public class Parser
 {
 	private static final int maxT = 103;
-	private static final int maxP = 103;
 
 	private static final boolean T = true;
 	private static final boolean x = false;
@@ -15,30 +14,30 @@ public class Parser
 
 	private int errDist = minErrDist;
 
-	private Vector parserListeners = new Vector();
-	private Vector sqlSelectStatlisteners = new Vector();
+	private Vector<ParserListener> parserListeners = new Vector<ParserListener>();
+	private Vector<SQLSelectStatementListener> sqlSelectStatlisteners = new Vector<SQLSelectStatementListener>();
 
 	protected Scanner scanner;  // input scanner
 	protected Token token;      // last recognized token
 	protected Token t;          // lookahead token
 
-	public List statements = new ArrayList();
+	public List<SQLStatement> statements = new ArrayList<SQLStatement>();
 	public SQLSchema rootSchema;
 
-	private Stack stack;
+	private Stack<SQLStatementContext> stack;
 
 	protected void addRootStatement(SQLStatement statement)
 	{
 		statement.setSqlSchema(rootSchema);
 		fireStatementAdded(statement);
 		statements.add(statement);
-		stack = new Stack();
+		stack = new Stack<SQLStatementContext>();
 		stack.push(statement);
 	}
 
 	private void fireStatementAdded(SQLStatement statement)
 	{
-		ParserListener[] clone = (ParserListener[]) parserListeners.toArray(new ParserListener[parserListeners.size()]);
+		ParserListener[] clone = parserListeners.toArray(new ParserListener[parserListeners.size()]);
 
 		for (int i = 0; i < clone.length; i++)
 		{
@@ -71,19 +70,19 @@ public class Parser
 
 	private SQLStatementContext getContext()
 	{
-		return (SQLStatementContext) stack.peek();
+		return stack.peek();
 	}
 
 	private void pushContext(SQLStatementContext context)
 	{
-		SQLStatementContext parent = (SQLStatementContext) stack.peek();
+		SQLStatementContext parent = stack.peek();
 		parent.addContext(context);
 		stack.push(context);
 	}
 
 	private SQLStatementContext popContext()
 	{
-		return (SQLStatementContext) stack.pop();
+		return stack.pop();
 	}
 
 
@@ -169,7 +168,7 @@ public class Parser
 		}
 	}
 
-	private boolean WeakSeparator(int n, int syFol, int repFol)
+	boolean WeakSeparator(int n, int syFol, int repFol)
 	{
 		boolean[] s = new boolean[maxT + 1];
 		if (t.kind == n)
@@ -1590,7 +1589,7 @@ public class Parser
 	{
 		SQLSelectStatement statement = new SQLSelectStatement(t.pos);
 
-		SQLSelectStatementListener[] clone = (SQLSelectStatementListener[]) sqlSelectStatlisteners.toArray(new SQLSelectStatementListener[sqlSelectStatlisteners.size()]);
+		SQLSelectStatementListener[] clone = sqlSelectStatlisteners.toArray(new SQLSelectStatementListener[sqlSelectStatlisteners.size()]);
 
 		for (int i = 0; i < clone.length; i++)
 		{

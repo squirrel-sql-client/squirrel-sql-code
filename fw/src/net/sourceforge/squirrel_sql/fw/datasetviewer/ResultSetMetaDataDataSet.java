@@ -56,20 +56,21 @@ public class ResultSetMetaDataDataSet implements IDataSet
 
 	private DataSetDefinition _dsDef;
 	private boolean[] _propertyMethodIndicators;
-	private Iterator _rowsIter;
+	private Iterator<Object[]> _rowsIter;
 	private Object[] _row;
 
 	/**
 	 * Data. Each element is an array of String objects representing a column from
 	 * the result set metadata.
 	 */
-	private List _data = new ArrayList();
+	private List<Object[]> _data = new ArrayList<Object[]>();
 
 	/**
 	 * Collection of method names that are considered to the
 	 * &quot;properties&quot; of the <TT>ResultSetMetaData</TT> class.
 	 */
-	private static final Map s_propNames = new HashMap();
+	private static final Map<String, Object> s_propNames = 
+        new HashMap<String, Object>();
 
 	static
 	{
@@ -130,7 +131,7 @@ public class ResultSetMetaDataDataSet implements IDataSet
 	{
 		if (_rowsIter.hasNext())
 		{
-			_row = (Object[]) _rowsIter.next();
+			_row = _rowsIter.next();
 		}
 		else
 		{
@@ -139,7 +140,7 @@ public class ResultSetMetaDataDataSet implements IDataSet
 		return _row != null;
 	}
 
-	public Object get(int columnIndex)
+	public synchronized Object get(int columnIndex)
 	{
 		return _row[columnIndex];
 	}
@@ -148,7 +149,8 @@ public class ResultSetMetaDataDataSet implements IDataSet
 	{
 		final Method[] methods = ResultSetMetaData.class.getMethods();
 		_propertyMethodIndicators = new boolean[methods.length];
-		final List colDefs = new ArrayList();
+		final List<ColumnDisplayDefinition> colDefs = 
+            new ArrayList<ColumnDisplayDefinition>();
 		for (int i = 0; i < methods.length; ++i)
 		{
 			if (isPropertyMethod(methods[i]))
@@ -161,8 +163,7 @@ public class ResultSetMetaDataDataSet implements IDataSet
 				_propertyMethodIndicators[i] = false;
 			}
 		}
-		return (ColumnDisplayDefinition[]) colDefs.toArray(
-			new ColumnDisplayDefinition[colDefs.size()]);
+		return colDefs.toArray(new ColumnDisplayDefinition[colDefs.size()]);
 	}
 
 	private void load(ResultSetMetaData md) throws DataSetException
@@ -170,12 +171,12 @@ public class ResultSetMetaDataDataSet implements IDataSet
 		try
 		{
 			final Method[] methods = ResultSetMetaData.class.getMethods();
-			final ArrayList line = new ArrayList();
+			final ArrayList<Object> line = new ArrayList<Object>();
 			for (int metaIdx = 1, metaLimit = md.getColumnCount() + 1;
 				metaIdx < metaLimit;
 				++metaIdx)
 			{
-				Object[] methodParms = new Object[] { new Integer(metaIdx), };
+				Object[] methodParms = new Object[] { Integer.valueOf(metaIdx), };
 				line.clear();
 				line.ensureCapacity(methods.length);
 				for (int methodIdx = 0; methodIdx < methods.length; ++methodIdx)

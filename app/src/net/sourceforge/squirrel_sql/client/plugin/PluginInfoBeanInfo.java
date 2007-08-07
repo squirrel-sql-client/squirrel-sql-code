@@ -39,7 +39,7 @@ public final class PluginInfoBeanInfo extends SimpleBeanInfo
 		super();
 		if (s_descr == null)
 		{
-			final Class CLAZZ = PluginInfo.class;
+			final Class<PluginInfo> CLAZZ = PluginInfo.class;
 			s_descr = new PropertyDescriptor[8];
 
 			s_descr[0] = new PropertyDescriptor(IPropNames.PLUGIN_CLASS_NAME, CLAZZ,

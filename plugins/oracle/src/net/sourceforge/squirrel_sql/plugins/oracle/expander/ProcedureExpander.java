@@ -56,11 +56,10 @@ public class ProcedureExpander implements INodeExpander
       return createProcedureNodes(session, null, schemaName);
    }
 
-   private List createProcedureNodes(ISession session, String catalogName,
+   private List<ObjectTreeNode> createProcedureNodes(ISession session, String catalogName,
                                      String schemaName)
    {
-      final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
-      final List childNodes = new ArrayList();
+      final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
       IProcedureInfo[] procs = null;
       String objFilter = session.getProperties().getObjectFilter();
       //procs = md.getProcedures(catalogName, schemaName, objFilter != null && objFilter.length() > 0 ? objFilter :"%");

@@ -22,16 +22,17 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
 import java.util.HashMap;
+import java.util.List;
 import java.util.prefs.Preferences;
 
 import javax.swing.Action;
@@ -55,6 +56,25 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.EventListenerList;
 import javax.swing.undo.UndoManager;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
+import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.action.OpenSqlHistoryAction;
+import net.sourceforge.squirrel_sql.client.session.action.RedoAction;
+import net.sourceforge.squirrel_sql.client.session.action.UndoAction;
+import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
+import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
+import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
+import net.sourceforge.squirrel_sql.client.session.event.ISQLResultExecuterTabListener;
+import net.sourceforge.squirrel_sql.client.session.event.ResultTabEvent;
+import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
+import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
+import net.sourceforge.squirrel_sql.client.session.event.SQLResultExecuterTabEvent;
+import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
 import net.sourceforge.squirrel_sql.fw.gui.MemoryComboBox;
@@ -64,16 +84,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
-import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.client.session.*;
-import net.sourceforge.squirrel_sql.client.session.action.RedoAction;
-import net.sourceforge.squirrel_sql.client.session.action.UndoAction;
-import net.sourceforge.squirrel_sql.client.session.action.OpenSqlHistoryAction;
-import net.sourceforge.squirrel_sql.client.session.event.*;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 /**
  * This is the panel where SQL scripts can be entered and executed.
  *
@@ -154,7 +164,8 @@ public class SQLPanel extends JPanel
 	/** Factory for generating unique IDs for new <TT>ResultTab</TT> objects. */
 //	private IntegerIdentifierFactory _idFactory = new IntegerIdentifierFactory();
 
-	private final List _executors = new ArrayList();
+	private final List<ISQLResultExecuter> _executors = 
+        new ArrayList<ISQLResultExecuter>();
 
 	private SQLResultExecuterPanel _sqlExecPanel;
 
@@ -243,7 +254,7 @@ public class SQLPanel extends JPanel
          _executerPanleHolder.remove(_simpleExecuterPanel);
          _executerPanleHolder.add(_tabbedExecuterPanel);
          _executors.get(0);
-         ISQLResultExecuter buf = (ISQLResultExecuter) _executors.get(0);
+         ISQLResultExecuter buf = _executors.get(0);
          _tabbedExecuterPanel.addTab(buf.getTitle(), null, buf.getComponent(), buf.getTitle());
       }
 

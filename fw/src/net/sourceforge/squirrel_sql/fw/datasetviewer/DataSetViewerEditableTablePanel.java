@@ -269,12 +269,12 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		// In case we are editing an SQL result that contains the edited colum
 		// more than once, we need to tell the caller to update all columns.
 		// Otherwise generation of where clauses for further editing will fail.
-		ArrayList buf = new ArrayList();
+		ArrayList<Integer> buf = new ArrayList<Integer>();
 		for (int i = 0; i < _colDefs.length; i++)
 		{
 			if(_colDefs[i].getFullTableColumnName().equalsIgnoreCase(_colDefs[col].getFullTableColumnName()))
 			{
-				buf.add(new Integer(i));
+				buf.add(i);
 			}
 		}
 
@@ -282,7 +282,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 
 		for (int i = 0; i < ret.length; i++)
 		{
-			ret[i] = ((Integer)buf.get(i)).intValue();
+			ret[i] = buf.get(i);
 		}
 
 		return ret;
@@ -305,7 +305,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 
 
 		// i18n[dataSetViewerEditableTablePanel.deleteRosQuestion=Do you wish to delete {0} rows from this table?]
-		String msg = s_stringMgr.getString("dataSetViewerEditableTablePanel.deleteRosQuestion", new Integer(rows.length));
+		String msg = s_stringMgr.getString("dataSetViewerEditableTablePanel.deleteRosQuestion", rows.length);
 
 		// Non-empty set of rows to delete.  Make sure user wants to delete
 		int option = JOptionPane.showConfirmDialog(
