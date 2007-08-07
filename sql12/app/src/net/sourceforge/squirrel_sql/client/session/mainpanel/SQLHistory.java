@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class SQLHistory
 {
-	private List _history = new ArrayList();
+	private List<SQLHistoryItem> _history = new ArrayList<SQLHistoryItem>();
 
 	public SQLHistory()
 	{
@@ -37,7 +37,7 @@ public class SQLHistory
 	public synchronized SQLHistoryItem[] getData()
 	{
 		SQLHistoryItem[] data = new SQLHistoryItem[_history.size()];
-		return (SQLHistoryItem[])_history.toArray(data);
+		return _history.toArray(data);
 	}
 
 	public synchronized void setData(SQLHistoryItem[] data)

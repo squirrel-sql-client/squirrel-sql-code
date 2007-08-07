@@ -17,21 +17,14 @@ package net.sourceforge.squirrel_sql.plugins.oracle.expander;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
-
-import net.sourceforge.squirrel_sql.plugins.oracle.IObjectTypes;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 /**
  * This class handles the expanding of a Package node. It will build all the
  * procedures for the package.
@@ -51,7 +44,7 @@ public class PackageExpander implements INodeExpander
 	 * @return	A list of <TT>ObjectTreeNode</TT> objects representing the child
 	 *			nodes for the passed node.
 	 */
-	public List createChildren(ISession session, ObjectTreeNode parentNode)
+	public List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode parentNode)
 	{
 		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
 		final String schemaName = parentDbinfo.getSchemaName();
@@ -59,11 +52,10 @@ public class PackageExpander implements INodeExpander
 		return createProcedureNodes(session, packageName, schemaName);
 	}
 
-	private List createProcedureNodes(ISession session, String catalogName,
+	private List<ObjectTreeNode> createProcedureNodes(ISession session, String catalogName,
 										String schemaName)
 	{
-		final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
-		final List childNodes = new ArrayList();
+		final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
 		IProcedureInfo[] procs = null;
 		final String objFilter = session.getProperties().getObjectFilter();
       //procs = md.getProcedures(catalogName, schemaName, objFilter != null && objFilter.length() > 0 ? objFilter :"%");

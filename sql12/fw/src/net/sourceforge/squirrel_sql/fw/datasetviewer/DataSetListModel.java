@@ -47,7 +47,7 @@ public class DataSetListModel extends BaseDataSetViewerDestination
 	 * Data. Each element is an array of objects. Each object is
 	 * the data for a column.
 	 */
-	private List _data = new ArrayList();
+	private List<Object[]> _data = new ArrayList<Object[]>();
 
 	/** Column headings. */
 	//	private ColumnDisplayDefinition[] _hdgs = new ColumnDisplayDefinition[0];
@@ -112,7 +112,7 @@ public class DataSetListModel extends BaseDataSetViewerDestination
 	 */
 	public Object getValueAt(int rowIndex, int columnIndex)
 	{
-		return ((Object[]) _data.get(rowIndex))[columnIndex];
+		return (_data.get(rowIndex))[columnIndex];
 	}
 
 	/**
@@ -124,7 +124,7 @@ public class DataSetListModel extends BaseDataSetViewerDestination
 	 */
 	public void setValueAt(Object value, int rowIndex, int columnIndex)
 	{
-		((Object[]) _data.get(rowIndex))[columnIndex] = value;
+		(_data.get(rowIndex))[columnIndex] = value;
 	}
 
 	/**

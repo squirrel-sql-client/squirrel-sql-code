@@ -35,6 +35,6 @@ public interface INodeExpander
 	 * @return	A list of <TT>ObjectTreeNode</TT> objects representing the child
 	 *			nodes for the passed node.
 	 */
-	List createChildren(ISession session, ObjectTreeNode node)
+	List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode node)
 			throws SQLException;
 }

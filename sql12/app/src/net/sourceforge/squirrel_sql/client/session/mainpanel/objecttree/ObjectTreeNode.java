@@ -39,7 +39,9 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 	/** Current session. */
 //	private final ISession _session;
 
-	/** Application API. */
+    private static final long serialVersionUID = 1L;
+
+    /** Application API. */
 	private final IApplication _app;
 
 	/** ID of the session for this window. */
@@ -52,7 +54,8 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 	private boolean _allowsChildren = true;
 
 	/** Collection of <TT>INodeExpander</TT> objects for this node. */
-	private final List _expanders = new ArrayList();
+	private final List<INodeExpander> _expanders = 
+        new ArrayList<INodeExpander>();
 
 	/**
 	 * Ctor that assumes node cannot have children.
@@ -140,7 +143,7 @@ public class ObjectTreeNode extends DefaultMutableTreeNode
 	 */
 	public INodeExpander[] getExpanders()
 	{
-		return (INodeExpander[])_expanders.toArray(new INodeExpander[_expanders.size()]);
+		return _expanders.toArray(new INodeExpander[_expanders.size()]);
 	}
 
 	/**

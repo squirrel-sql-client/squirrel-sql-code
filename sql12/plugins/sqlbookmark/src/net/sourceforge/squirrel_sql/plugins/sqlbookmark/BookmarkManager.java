@@ -21,19 +21,16 @@ package net.sourceforge.squirrel_sql.plugins.sqlbookmark;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.FileInputStream;
-import java.io.BufferedInputStream;
-import java.io.FileOutputStream;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Vector;
 
-import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
-import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
-import net.sourceforge.squirrel_sql.fw.xml.XMLException;
-import net.sourceforge.squirrel_sql.fw.completion.ICompletorModel;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionCandidates;
-import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
+import net.sourceforge.squirrel_sql.fw.completion.ICompletorModel;
+import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
+import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
+import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 
 /**
  * Manages the users bookmarks. Including loading and saving to
@@ -52,12 +49,12 @@ public class BookmarkManager implements ICompletorModel
    /**
     * List of all the loaded bookmarks
     */
-   private ArrayList bookmarks = new ArrayList();
+   private ArrayList<Bookmark> bookmarks = new ArrayList<Bookmark>();
 
    /**
     * Index of bookmark names to indexes in the bookmarks array
     */
-   private HashMap bookmarkIdx = new HashMap();
+   private HashMap<String, Integer> bookmarkIdx = new HashMap<String, Integer>();
    private SQLBookmarkPlugin _plugin;
 
    public BookmarkManager(SQLBookmarkPlugin plugin)
@@ -81,7 +78,7 @@ public class BookmarkManager implements ICompletorModel
     */
    protected boolean add(Bookmark bookmark)
    {
-      Integer idxInt = (Integer) bookmarkIdx.get(bookmark.getName());
+      Integer idxInt = bookmarkIdx.get(bookmark.getName());
       if (idxInt != null)
       {
          bookmarks.set(idxInt.intValue(), bookmark);
@@ -90,7 +87,7 @@ public class BookmarkManager implements ICompletorModel
       else
       {
          bookmarks.add(bookmark);
-         idxInt = new Integer(bookmarks.size() - 1);
+         idxInt = bookmarks.size() - 1;
          bookmarkIdx.put(bookmark.getName(), idxInt);
          return false;
       }
@@ -104,10 +101,10 @@ public class BookmarkManager implements ICompletorModel
     */
    protected Bookmark get(String name)
    {
-      Integer idxInt = (Integer) bookmarkIdx.get(name);
-      if (idxInt != null)
-         return (Bookmark) bookmarks.get(idxInt.intValue());
-
+      Integer idxInt = bookmarkIdx.get(name);
+      if (idxInt != null) {
+         return bookmarks.get(idxInt.intValue());
+      }
       return null;
    }
 
@@ -124,7 +121,7 @@ public class BookmarkManager implements ICompletorModel
          if (bookmarkFile.exists())
          {
             xmlin.load(bookmarkFile, getClass().getClassLoader());
-            for (Iterator i = xmlin.iterator(); i.hasNext();)
+            for (Iterator<?> i = xmlin.iterator(); i.hasNext();)
             {
                Object bean = i.next();
                if (bean instanceof Bookmark)
@@ -149,9 +146,9 @@ public class BookmarkManager implements ICompletorModel
       {
          XMLBeanWriter xmlout = new XMLBeanWriter();
 
-         for (Iterator i = bookmarks.iterator(); i.hasNext();)
+         for (Iterator<Bookmark> i = bookmarks.iterator(); i.hasNext();)
          {
-            Bookmark bookmark = (Bookmark) i.next();
+            Bookmark bookmark = i.next();
 
             xmlout.addToRoot(bookmark);
          }
@@ -164,19 +161,19 @@ public class BookmarkManager implements ICompletorModel
       }
    }
 
-   protected Iterator iterator()
+   protected Iterator<Bookmark> iterator()
    {
       return bookmarks.iterator();
    }
 
    public CompletionCandidates getCompletionCandidates(String bookmarkNameBegin)
    {
-      Vector ret = new Vector();
+      Vector<BookmarkCompletionInfo> ret = new Vector<BookmarkCompletionInfo>();
 
       int maxNameLen = 0;
       for (int i = 0; i < bookmarks.size(); i++)
       {
-         Bookmark bookmark = (Bookmark) bookmarks.get(i);
+         Bookmark bookmark = bookmarks.get(i);
          if (bookmark.getName().startsWith(bookmarkNameBegin))
          {
             ret.add(new BookmarkCompletionInfo(bookmark));
@@ -205,7 +202,7 @@ public class BookmarkManager implements ICompletorModel
 
 
 
-      BookmarkCompletionInfo[] candidates = (BookmarkCompletionInfo[]) ret.toArray(new BookmarkCompletionInfo[ret.size()]);
+      BookmarkCompletionInfo[] candidates = ret.toArray(new BookmarkCompletionInfo[ret.size()]);
 
       for (int i = 0; i < candidates.length; i++)
       {
@@ -217,7 +214,7 @@ public class BookmarkManager implements ICompletorModel
 
    public void removeAll()
    {
-      bookmarks = new ArrayList();
-      bookmarkIdx = new HashMap();
+      bookmarks = new ArrayList<Bookmark>();
+      bookmarkIdx = new HashMap<String, Integer>();
    }
 }

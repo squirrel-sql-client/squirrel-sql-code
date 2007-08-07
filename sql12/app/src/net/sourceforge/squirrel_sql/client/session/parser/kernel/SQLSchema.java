@@ -20,7 +20,6 @@
  */
 package net.sourceforge.squirrel_sql.client.session.parser.kernel;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +35,7 @@ public interface SQLSchema
     /**
      * a descriptor which groups together information about a database table
      */
-    public class Table implements Cloneable, Comparable
+    public class Table implements Cloneable, Comparable<Table>
     {
         public final String catalog;
         public final String schema;
@@ -105,9 +104,9 @@ public interface SQLSchema
             this.columns = columns;
         }
 
-        public void setColumns(List columns)
+        public void setColumns(List<String> columns)
         {
-            this.columns = (String[])columns.toArray(new String[columns.size()]);
+            this.columns = columns.toArray(new String[columns.size()]);
         }
 
         public String[] getColumns()
@@ -121,10 +120,10 @@ public interface SQLSchema
             String[] cols = getColumns();
             if(prefix == null) return cols;
 
-            List list = new ArrayList(cols.length);
+            List<String> list = new ArrayList<String>(cols.length);
             for(int i=0; i<cols.length; i++)
                 if(cols[i].startsWith(prefix)) list.add(cols[i]);
-            return (String[])list.toArray(new String[list.size()]);
+            return list.toArray(new String[list.size()]);
         }
 
         public String getCompositeName()
@@ -179,9 +178,8 @@ public interface SQLSchema
                   (name == null || this.name.startsWith(name));
         }
 
-        public int compareTo(Object o)
+        public int compareTo(Table other)
         {
-            Table other = (Table)o;
             if(alias != null) {
                 return other.alias != null ? alias.compareTo(other.alias) : -1;
             }
@@ -193,9 +191,8 @@ public interface SQLSchema
 
         protected void loadColumns()
         {
-            ResultSet rs = null;
             try {
-                List cols = new ArrayList();
+                List<String> cols = new ArrayList<String>();
                 TableColumnInfo[] infos = dmd.getColumnInfo(catalog, schema, name);
                 for (int i = 0; i < infos.length; i++) {
                     cols.add(infos[i].getColumnName());
@@ -204,9 +201,6 @@ public interface SQLSchema
             }
             catch (SQLException e) {
                 throw new RuntimeException(e.getMessage());
-            }
-            finally {
-                if(rs != null) try {rs.close();} catch(SQLException e) {}
             }
         }
     }
@@ -228,7 +222,7 @@ public interface SQLSchema
      * @param name name pattern (optional)
      * @return descriptors for tables matching the parameters
      */
-    List getTables(String catalog, String schema, String name);
+    List<Table> getTables(String catalog, String schema, String name);
 
     /**
      * @param alias an alias, possibly also the table name itself

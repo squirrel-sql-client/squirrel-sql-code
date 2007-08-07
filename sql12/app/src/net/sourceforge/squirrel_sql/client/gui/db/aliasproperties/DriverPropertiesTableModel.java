@@ -30,7 +30,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 class DriverPropertiesTableModel extends AbstractTableModel
 {
-	/** Internationalized strings for this class. */
+    private static final long serialVersionUID = 1L;
+
+    /** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(DriverPropertiesTableModel.class);
 
@@ -44,7 +46,7 @@ class DriverPropertiesTableModel extends AbstractTableModel
 	}
 
 	/** Number of columns in model. */
-	private final int COLUMN_COUNT = 5;
+	private static final int COLUMN_COUNT = 5;
 
 	/** Logger for this class. */
 	private static final ILogger s_log =
@@ -72,8 +74,7 @@ class DriverPropertiesTableModel extends AbstractTableModel
 				return sdp.getName();
 
 			case IColumnIndexes.IDX_SPECIFY:
-				// TODO: Use valueof when min supported JDK is 1.4
-				return new Boolean(sdp.isSpecified());
+				return Boolean.valueOf(sdp.isSpecified());
 
 			case IColumnIndexes.IDX_VALUE:
 				return sdp.getValue();
@@ -116,7 +117,7 @@ class DriverPropertiesTableModel extends AbstractTableModel
 		return COLUMN_COUNT;
 	}
 
-	public Class getColumnClass(int col)
+	public Class<?> getColumnClass(int col)
 	{
 		switch (col)
 		{

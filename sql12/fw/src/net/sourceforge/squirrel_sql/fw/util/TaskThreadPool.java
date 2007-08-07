@@ -46,7 +46,7 @@ public class TaskThreadPool
 	// Total number of threads.
 	private int _threadCount;
 
-	private List _tasks = new ArrayList();
+	private List<Runnable> _tasks = new ArrayList<Runnable>();
 
 	private MyCallback _callback = new MyCallback();
    private JFrame _parentForMessages = null;

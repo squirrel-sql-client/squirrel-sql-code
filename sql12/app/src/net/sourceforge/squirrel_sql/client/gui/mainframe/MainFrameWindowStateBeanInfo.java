@@ -24,9 +24,14 @@ import java.beans.PropertyDescriptor;
 import java.beans.SimpleBeanInfo;
 
 public class MainFrameWindowStateBeanInfo extends SimpleBeanInfo {
-	private static final Class s_actualClass = MainFrameWindowState.class;
+	private static final Class<MainFrameWindowState> s_actualClass = 
+        MainFrameWindowState.class;
 
-	private static PropertyDescriptor[] s_dscrs;
+   /**
+    * If more than one thread is constructing, volatile tells them to check an 
+    * otherwise cached value.
+    */     
+	private static volatile PropertyDescriptor[] s_dscrs;
 
 	public MainFrameWindowStateBeanInfo() throws IntrospectionException {
 		super();

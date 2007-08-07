@@ -75,13 +75,13 @@ public class BundlesTableModel extends DefaultTableModel
 
    public I18nBundle[] getBundlesForRows(int[] rows)
    {
-      ArrayList ret = new ArrayList(rows.length);
+      ArrayList<I18nBundle> ret = new ArrayList<I18nBundle>(rows.length);
 
       for (int i = 0; i < rows.length; i++)
       {
          ret.add(_bundles[rows[i]]);
       }
 
-      return (I18nBundle[]) ret.toArray(new I18nBundle[ret.size()]);
+      return ret.toArray(new I18nBundle[ret.size()]);
    }
 }

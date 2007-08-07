@@ -40,7 +40,8 @@ public class MetaDataDataSet implements IDataSet
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(MetaDataDataSet.class);
 
-	private final static Map s_ignoreMethods = new HashMap();
+	private final static Map<String, Object> s_ignoreMethods = 
+        new HashMap<String, Object>();
 	static
 	{
 		s_ignoreMethods.put("getCatalogs", null);
@@ -58,7 +59,7 @@ public class MetaDataDataSet implements IDataSet
 		s_ignoreMethods.put("getSQLKeywords", null);
 	}
 
-	private interface IStrings
+	private static interface IStrings
 	{
 		String UNSUPPORTED = s_stringMgr.getString("MetaDataDataSet.unsupported");
 		String NAME_COLUMN = s_stringMgr.getString("MetaDataDataSet.propname");
@@ -69,7 +70,7 @@ public class MetaDataDataSet implements IDataSet
 		new String[] { IStrings.NAME_COLUMN, IStrings.VALUE_COLUMN };
 	private DataSetDefinition _dsDef;
 
-	private Iterator _rowsIter;
+	private Iterator<Object[]> _rowsIter;
 	private Object[] _row;
 
 	private IMessageHandler _msgHandler;
@@ -78,7 +79,7 @@ public class MetaDataDataSet implements IDataSet
 	 * Data. Each element represents a row of the table and is made up of
 	 * an array of strings. Each string is an element in the row.
 	 */
-	private List _data = new ArrayList();
+	private List<Object[]> _data = new ArrayList<Object[]>();
 
 	public MetaDataDataSet(DatabaseMetaData md)
 	{
@@ -108,7 +109,7 @@ public class MetaDataDataSet implements IDataSet
 	{
 		if (_rowsIter.hasNext())
 		{
-			_row = (Object[]) _rowsIter.next();
+			_row = _rowsIter.next();
 		}
 		else
 		{

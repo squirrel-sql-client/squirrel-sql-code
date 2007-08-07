@@ -33,13 +33,14 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class JavabeanArrayDataSet implements IDataSet
 {
+    @SuppressWarnings("unused")
 	private final ILogger s_log =
 		LoggerController.createLogger(JavabeanArrayDataSet.class);
 
 	private Object[] _currentRow;
 
-	private List _data;
-	private Iterator _dataIter;
+	private List<Object[]> _data;
+	private Iterator<Object[]> _dataIter;
 
 	private int _columnCount;
 	private DataSetDefinition _dataSetDefinition;
@@ -74,13 +75,13 @@ public class JavabeanArrayDataSet implements IDataSet
 	{
 		if (_dataIter.hasNext())
 		{
-			_currentRow = (Object[])_dataIter.next();
+			_currentRow = _dataIter.next();
 			return true;
 		}
 		return false;
 	}
 
-	public Object get(int columnIndex)
+	public synchronized Object get(int columnIndex)
 	{
 		return _currentRow[columnIndex];
 	}
@@ -165,10 +166,10 @@ public class JavabeanArrayDataSet implements IDataSet
 	{
 		if (beans.length > 0)
 		{
-			final Class clazz = beans[0].getClass();
+			final String className = beans[0].getClass().getName();
 			for (int i = 1; i < beans.length; ++i)
 			{
-				if (beans[i].getClass() != clazz)
+				if (!beans[i].getClass().getName().equals(className))
 				{
 					throw new IllegalArgumentException("All beans must be the same Class");
 				}
@@ -179,7 +180,7 @@ public class JavabeanArrayDataSet implements IDataSet
 
 	private void initialize(BeanInfo info)
 	{
-		_data = new ArrayList();
+		_data = new ArrayList<Object[]>();
 		ColumnDisplayDefinition[] colDefs = createColumnDefinitions(info, null);
 		_dataSetDefinition = new DataSetDefinition(colDefs);
 		_columnCount = _dataSetDefinition.getColumnDefinitions().length;

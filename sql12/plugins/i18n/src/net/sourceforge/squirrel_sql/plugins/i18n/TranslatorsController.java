@@ -153,9 +153,9 @@ public class TranslatorsController
 
       Locale[] availableLocales = Locale.getAvailableLocales();
 
-      Arrays.sort(availableLocales, new Comparator()
+      Arrays.sort(availableLocales, new Comparator<Locale>()
       {
-         public int compare(Object o1, Object o2)
+         public int compare(Locale o1, Locale o2)
          {
             return o1.toString().compareTo(o2.toString());
          }
@@ -329,7 +329,7 @@ public class TranslatorsController
 
       boolean filesFound = false;
 
-      ArrayList commands = new ArrayList();
+      ArrayList<String> commands = new ArrayList<String>();
       for (int i = 0; i < selBundles.length; i++)
       {
          File f = selBundles[i].getPathRelativeTo(workDir);
@@ -376,10 +376,10 @@ public class TranslatorsController
          for (int i = 0; i < commands.size(); i++)
          {
             // i18n[i18n.executingCommand=Executing command: {0}]
-            String msg = s_stringMgr.getString("i18n.executingCommand", (String) commands.get(i));
+            String msg = s_stringMgr.getString("i18n.executingCommand", commands.get(i));
             _app.getMessageHandler().showMessage(msg);
 
-            Runtime.getRuntime().exec((String) commands.get(i));
+            Runtime.getRuntime().exec(commands.get(i));
          }
       }
       catch (IOException e)
@@ -533,8 +533,8 @@ public class TranslatorsController
 
 		String pluginDir = new ApplicationFiles().getPluginsDirectory().getPath();
 
-      ArrayList defaultI18nProps = new ArrayList();
-      ArrayList localizedI18nProps = new ArrayList();
+      ArrayList<I18nProps> defaultI18nProps = new ArrayList<I18nProps>();
+      ArrayList<I18nProps> localizedI18nProps = new ArrayList<I18nProps>();
 
 
       for (int i = 0; i < sourceUrls.length; i++)
@@ -555,28 +555,29 @@ public class TranslatorsController
          }
       }
 
-      Hashtable i18nBundlesByName = new Hashtable();
+      Hashtable<String, I18nBundle> i18nBundlesByName = 
+          new Hashtable<String, I18nBundle>();
 
       for (int i = 0; i < defaultI18nProps.size(); i++)
       {
-         I18nProps i18nProps = (I18nProps) defaultI18nProps.get(i);
+         I18nProps i18nProps = defaultI18nProps.get(i);
          I18nBundle pack = new I18nBundle(i18nProps, selLocale, getWorkDir(false), sourceUrls);
          i18nBundlesByName.put(i18nProps.getPath(), pack);
       }
 
       for (int i = 0; i < localizedI18nProps.size(); i++)
       {
-         I18nProps locI18nProps = (I18nProps) localizedI18nProps.get(i);
+         I18nProps locI18nProps = localizedI18nProps.get(i);
          String key = locI18nProps.getUnlocalizedPath(selLocale);
 
-         I18nBundle bundle = (I18nBundle) i18nBundlesByName.get(key);
+         I18nBundle bundle = i18nBundlesByName.get(key);
          if(null != bundle)
          {
             bundle.setLocalizedProp(locI18nProps);
          }
       }
 
-      I18nBundle[] bundles = (I18nBundle[]) i18nBundlesByName.values().toArray(new I18nBundle[0]);
+      I18nBundle[] bundles = i18nBundlesByName.values().toArray(new I18nBundle[0]);
 
       int[] selRows = _panel.tblBundels.getSelectedRows();
       _bundlesTableModel.setBundles(bundles);
@@ -592,7 +593,7 @@ public class TranslatorsController
 	{
 		ApplicationFiles af = new ApplicationFiles();
 
-		ArrayList ret = new ArrayList();
+		ArrayList<URL> ret = new ArrayList<URL>();
 		URL[] urls;
 
 
@@ -637,10 +638,14 @@ public class TranslatorsController
 			}
 		}
 
-		return (URL[]) ret.toArray(new URL[ret.size()]);
+		return ret.toArray(new URL[ret.size()]);
 	}
 
-	private void findI18nInArchive(Locale selLoc, File file, ArrayList defaultI18nProps, ArrayList localizedI18nProps, URL[] sourceUrls)
+	private void findI18nInArchive(Locale selLoc, 
+                                   File file, 
+                                   ArrayList<I18nProps> defaultI18nProps, 
+                                   ArrayList<I18nProps> localizedI18nProps, 
+                                   URL[] sourceUrls)
 	{
 		try
 		{
@@ -678,7 +683,11 @@ public class TranslatorsController
 
 	}
 
-   private void findI18nInDir(Locale selLoc, File dir, ArrayList defaultI18nProps, ArrayList localizedI18nProps, URL[] sourceUrls)
+   private void findI18nInDir(Locale selLoc, 
+                              File dir, 
+                              ArrayList<I18nProps> defaultI18nProps, 
+                              ArrayList<I18nProps> localizedI18nProps, 
+                              URL[] sourceUrls)
    {
       File[] files = dir.listFiles();
 

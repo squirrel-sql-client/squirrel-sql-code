@@ -30,7 +30,9 @@ import javax.swing.table.AbstractTableModel;
 
 public final class MyTableModel extends AbstractTableModel
 {
-	private List _data = new ArrayList();
+    private static final long serialVersionUID = 5511368149198548935L;
+
+    private List<Object[]> _data = new ArrayList<Object[]>();
 	private ColumnDisplayDefinition[] _colDefs = new ColumnDisplayDefinition[0];
 	private IDataSetTableControls _creator = null;
 
@@ -67,7 +69,7 @@ public final class MyTableModel extends AbstractTableModel
 		if (_creator.needToReRead(col, getValueAt(row, col)))
 		{
 			StringBuffer message = new StringBuffer();
-			Object newValue = _creator.reReadDatum((Object[]) _data.get(row), col, message);
+			Object newValue = _creator.reReadDatum(_data.get(row), col, message);
 			if (message.length() > 0)
 			{
 				// there was a problem with the read
@@ -76,7 +78,7 @@ public final class MyTableModel extends AbstractTableModel
 				// goes away (because the cell is being re-painted).
 				return false;	// cell is not editable
 			}
-			((Object[]) _data.get(row))[col] = newValue;
+			(_data.get(row))[col] = newValue;
 		}
 
 		return _creator.isColumnEditable(col, getValueAt(row, col));
@@ -86,11 +88,11 @@ public final class MyTableModel extends AbstractTableModel
 	{
 		if(RowNumberTableColumn.ROW_NUMBER_MODEL_INDEX == col)
 		{
-			return new Integer(row + 1);
+			return Integer.valueOf(row + 1);
 		}
 		else
 		{
-			return ((Object[])_data.get(row))[col];
+			return _data.get(row)[col];
 		}
 	}
 
@@ -116,7 +118,7 @@ public final class MyTableModel extends AbstractTableModel
 		}
 	}
 
-	public Class getColumnClass(int col)
+	public Class<?> getColumnClass(int col)
 	{
 		try
 		{
@@ -165,7 +167,7 @@ public final class MyTableModel extends AbstractTableModel
 
       for (int i = 0; i < colsToUpdate.length; i++)
       {
-         ((Object[])_data.get(row))[ colsToUpdate[i] ] = newValue;
+         _data.get(row)[ colsToUpdate[i] ] = newValue;
       }
 	}
 	

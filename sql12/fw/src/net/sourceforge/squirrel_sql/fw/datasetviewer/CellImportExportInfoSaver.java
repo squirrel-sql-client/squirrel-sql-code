@@ -51,12 +51,13 @@ public class CellImportExportInfoSaver {
 	/**
 	 * The map holding the data for lookup.
 	 */
-	private HashMap map = new HashMap();
+	private HashMap<String, CellImportExportInfo> map = 
+        new HashMap<String, CellImportExportInfo>();
 	
 	/**
 	 * The list of commands that user has previously entered
 	 */
-	private ArrayList cmdList = new ArrayList();
+	private ArrayList<String> cmdList = new ArrayList<String>();
 	
 	/**
 	 * the singleton instance of this class.
@@ -93,7 +94,7 @@ public class CellImportExportInfoSaver {
 	/**
 	 * Used by fw to save user input for export/import on column.
 	 */
-	public void save(String tableColumnName,
+	public synchronized void save(String tableColumnName,
 		String fileName,
 		String command) {
 		
@@ -117,16 +118,16 @@ public class CellImportExportInfoSaver {
 	 * Used by fw to find entries user previously entered for this column.
 	 */
 	public CellImportExportInfo get(String tableColumnName) {
-		return (CellImportExportInfo)map.get(tableColumnName);
+		return map.get(tableColumnName);
 	}
 	
 	/**
 	 * Used by fw to get the list of all commands this user has associated
 	 * with columns.
 	 */
-	public String[] getCmdList() {
+	public synchronized String[] getCmdList() {
 		String[] data = new String[cmdList.size()];
-		return (String[])cmdList.toArray(data);
+		return cmdList.toArray(data);
 	}
 	
 	/**
@@ -165,7 +166,7 @@ public class CellImportExportInfoSaver {
 	 */
 	public synchronized void setCmdList(String[] data)
 	{
-		cmdList = new ArrayList(Arrays.asList(data));
+		cmdList = new ArrayList<String>(Arrays.asList(data));
 		Collections.sort(cmdList);
 	}
 
@@ -181,10 +182,10 @@ public class CellImportExportInfoSaver {
 			instance = new CellImportExportInfoSaver();	// better safe than sorry!
 			
 		CellImportExportInfo[] array = new CellImportExportInfo[instance.map.size()];
-		Iterator iterator = instance.map.values().iterator();
+		Iterator<CellImportExportInfo> iterator = instance.map.values().iterator();
 		int index = 0;
 		while (iterator.hasNext()) {
-			array[index] = (CellImportExportInfo)iterator.next();
+			array[index] = iterator.next();
 			index++;
 		}
 

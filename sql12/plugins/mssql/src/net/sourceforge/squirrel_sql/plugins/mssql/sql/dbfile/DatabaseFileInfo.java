@@ -28,15 +28,15 @@ public class DatabaseFileInfo {
     private String _owner;
     private short _compatibilityLevel;
     private String _createdDate;
-    private HashMap _options;
-    private ArrayList _dataFiles;
-    private ArrayList _logFiles;
+    private HashMap<String, String> _options;
+    private ArrayList<DatabaseFile> _dataFiles;
+    private ArrayList<Object> _logFiles;
     
     /** Creates a new instance of DatabaseFileInfo */
     public DatabaseFileInfo() {
-        _options = new HashMap();
-        _dataFiles = new ArrayList();
-        _logFiles = new ArrayList();
+        _options = new HashMap<String, String>();
+        _dataFiles = new ArrayList<DatabaseFile>();
+        _logFiles = new ArrayList<Object>();
     }
     
     /**
@@ -109,7 +109,7 @@ public class DatabaseFileInfo {
     
     public String getOption(String option) {
         if (_options.containsKey(option))
-            return (String) _options.get(option);
+            return _options.get(option);
         else
             return "";
     }
@@ -145,11 +145,11 @@ public class DatabaseFileInfo {
     public void addDataFile(DatabaseFile file) {
         // not so simple -- we want to keep the filegroups together.
         for (int i = 0; i < _dataFiles.size(); i++) {
-            DatabaseFile f = (DatabaseFile) _dataFiles.get(i);
+            DatabaseFile f = _dataFiles.get(i);
             if (f.getFilegroup().equals(file.getFilegroup())) {
                 // keep scanning until we're either EOL or find a different filegroup.
                 for (int j = i + 1; j < _dataFiles.size(); j++) {
-                    f = (DatabaseFile) _dataFiles.get(i);
+                    f = _dataFiles.get(i);
                     if (!f.getFilegroup().equals(file.getFilegroup())) {
                         // j is the index of the first file in the next filegroup.
                         _dataFiles.add(j,file);

@@ -22,6 +22,8 @@ import java.io.Serializable;
 
 public class UidIdentifier implements IIdentifier, Serializable
 {
+   private static final long serialVersionUID = -8010376070171401650L;
+
    public interface IPropertyNames
    {
       String STRING = "string";

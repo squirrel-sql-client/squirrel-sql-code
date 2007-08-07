@@ -72,7 +72,8 @@ public class XmlRefomatter
 
 			xml = xml.trim();
 
-			ArrayList tagList = new ArrayList();	// GWG XML format check code
+			// GWG XML format check code
+			ArrayList<String> tagList = new ArrayList<String>();	
 
 			while(null != parseRes)
 			{
@@ -87,7 +88,7 @@ public class XmlRefomatter
 					// see if there was a problem during parsing
 					if (nextRes == null) {
 						// the parse did not find XML, or it was mal-formed
-                  showWarning(_message);
+					    showWarning(_message);
 						return xml;
 					}
 
@@ -102,7 +103,7 @@ public class XmlRefomatter
 				{
 					// GWG format check code follows...
 					if (tagList.size()> 0 ) {
-						String startTag = (String)tagList.remove(tagList.size()-1);
+						String startTag = tagList.remove(tagList.size()-1);
 						// Assume that all start tags are "<...>" or include a space
 						// after the tag name (e.g. as in "<SOMETAG args>" and all
 						// end tags are "</...>".  Remove the syntactic markers,
@@ -118,7 +119,7 @@ public class XmlRefomatter
 
 							// i18n[xmlRefomatter.malformedXml=Possible mal-formed XML:\n   Starting tag was: {0}\nEnding Tag was: {1}\nContinuing with reformatting XML."]
 							String msg = s_stringMgr.getString("xmlRefomatter.malformedXml", args);
-                     showWarning(msg);
+							showWarning(msg);
 						}
 					}
 					// End GWG format check code

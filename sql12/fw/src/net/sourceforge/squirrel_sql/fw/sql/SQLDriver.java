@@ -61,7 +61,7 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 	private String _jarFileName = null;
 
 	/** Names for driver jar files. */
-	private List _jarFileNamesList = new ArrayList();
+	private List<String> _jarFileNamesList = new ArrayList<String>();
 
 	/** The class name of the JDBC driver. */
 	private String _driverClassName;
@@ -221,7 +221,7 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 		{
 			throw new ValidationException(IStrings.ERR_BLANK_DRIVER);
 		}
-		if (_driverClassName != data)
+        if (!data.equals(_driverClassName))
 		{
 			final String oldValue = _driverClassName;
 			_driverClassName = data;
@@ -259,15 +259,13 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 
 	public synchronized String[] getJarFileNames()
 	{
-		return (String[]) _jarFileNamesList.toArray(
-			new String[_jarFileNamesList.size()]);
+		return _jarFileNamesList.toArray(new String[_jarFileNamesList.size()]);
 	}
 
 	public synchronized void setJarFileNames(String[] values)
 	{
 		String[] oldValue =
-			(String[]) _jarFileNamesList.toArray(
-				new String[_jarFileNamesList.size()]);
+            _jarFileNamesList.toArray(new String[_jarFileNamesList.size()]);
 		_jarFileNamesList.clear();
 
 		if (values == null)
@@ -297,7 +295,7 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 		{
 			throw new ValidationException(IStrings.ERR_BLANK_URL);
 		}
-		if (_url != data)
+		if (!data.equals(_url))
 		{
 			final String oldValue = _url;
 			_url = data;
@@ -320,7 +318,7 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 		{
 			throw new ValidationException(IStrings.ERR_BLANK_NAME);
 		}
-		if (_name != data)
+        if (!data.equals(_name))
 		{
 			final String oldValue = _name;
 			_name = data;
@@ -348,7 +346,7 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 		StringWrapper[] wrappers = new StringWrapper[_jarFileNamesList.size()];
 		for (int i = 0; i < wrappers.length; ++i)
 		{
-			wrappers[i] = new StringWrapper((String) _jarFileNamesList.get(i));
+			wrappers[i] = new StringWrapper(_jarFileNamesList.get(i));
 		}
 		return wrappers;
 	}
@@ -356,7 +354,7 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 	public StringWrapper getJarFileNameWrapper(int idx)
 		throws ArrayIndexOutOfBoundsException
 	{
-		return new StringWrapper((String) _jarFileNamesList.get(idx));
+		return new StringWrapper(_jarFileNamesList.get(idx));
 	}
 
 	public void setJarFileNameWrappers(StringWrapper[] value)
@@ -374,7 +372,7 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 	public void setJarFileNameWrapper(int idx, StringWrapper value)
 		throws ArrayIndexOutOfBoundsException
 	{
-		_jarFileNamesList.set(idx, value);
+		_jarFileNamesList.set(idx, value.getString());
 	}
 
 	private String getString(String data)

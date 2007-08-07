@@ -33,7 +33,6 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 
-import net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin;
 /**
  * This class handles the expanding of the "Sequence Group"
  * node. It will give a list of all the Sequences available in the schema.
@@ -52,7 +51,7 @@ public class SequenceParentExpander implements INodeExpander
 	/**
 	 * Default ctor.
 	 */
-	public SequenceParentExpander(OraclePlugin plugin)
+	public SequenceParentExpander()
 	{
 		super();
 	}
@@ -68,10 +67,10 @@ public class SequenceParentExpander implements INodeExpander
 	 * @return	A list of <TT>ObjectTreeNode</TT> objects representing the child
 	 *			nodes for the passed node.
 	 */
-	public List createChildren(ISession session, ObjectTreeNode parentNode)
+	public List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode parentNode)
 		throws SQLException
 	{
-		final List childNodes = new ArrayList();
+		final List<ObjectTreeNode> childNodes = new ArrayList<ObjectTreeNode>();
 		final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
 		final ISQLConnection conn = session.getSQLConnection();
 		final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();

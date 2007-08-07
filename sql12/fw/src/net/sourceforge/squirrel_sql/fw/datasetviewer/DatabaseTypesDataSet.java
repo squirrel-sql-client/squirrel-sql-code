@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 
 public class DatabaseTypesDataSet implements IDataSet
@@ -32,7 +33,7 @@ public class DatabaseTypesDataSet implements IDataSet
 	private int[] _columnIndices;
 	private int _columnCount;
 	private DataSetDefinition _dataSetDefinition;
-    private List _allData = new ArrayList();
+    private List<Object[]> _allData = new ArrayList<Object[]>();
     private int _currentRowIdx = -1;
 
 	public DatabaseTypesDataSet(ResultSet rs) throws DataSetException
@@ -124,7 +125,7 @@ public class DatabaseTypesDataSet implements IDataSet
 					{
 						if (_row[i] instanceof Number)
 						{
-							_row[i] = new Integer(((Number)_row[i]).intValue());
+							_row[i] = ((Number)_row[i]).intValue();
 						}
 						else
 						{
@@ -223,7 +224,7 @@ public class DatabaseTypesDataSet implements IDataSet
      */
 	public Object get(int columnIndex)
 	{
-        Object[] currentRow = (Object[])_allData.get(_currentRowIdx);
+        Object[] currentRow = _allData.get(_currentRowIdx);
 		return currentRow[columnIndex];
 	}
 
@@ -267,7 +268,7 @@ public class DatabaseTypesDataSet implements IDataSet
         } catch (SQLException e) {
             throw new DataSetException(e);
         } finally {
-            try { rs.close(); } catch (SQLException e) {}
+            SQLUtilities.closeResultSet(rs);
         }
     }
 }
