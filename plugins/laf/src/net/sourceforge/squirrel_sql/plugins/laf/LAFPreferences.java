@@ -30,7 +30,9 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
  */
 public class LAFPreferences implements Cloneable, Serializable, IHasIdentifier
 {
-	/** The <CODE>IIdentifier</CODE> that uniquely identifies this object. */
+    static final long serialVersionUID = 5458252097202539743L;
+    
+    /** The <CODE>IIdentifier</CODE> that uniquely identifies this object. */
 	private IIdentifier _id;
 	private String _lafClassName;
 	private FontInfo _fiMenu;
@@ -72,32 +74,6 @@ public class LAFPreferences implements Cloneable, Serializable, IHasIdentifier
 		}
 	}
 
-	/**
-	 * Two preferences objects are considered equal if their preference
-	 * attribues are the same.
-	 */
-	public boolean equals(Object rhs)
-	{
-		boolean rc = false;
-		if (rhs != null && rhs.getClass().equals(getClass()))
-		{
-			LAFPreferences obj = (LAFPreferences) rhs;
-			if (_fiMenuEnabled == obj._fiMenuEnabled
-				&& _fiStaticEnabled == obj._fiStaticEnabled
-				&& _fiStatusBarEnabled == obj._fiStatusBarEnabled
-				&& _fiOtherEnabled == obj._fiOtherEnabled
-				&& _fiOther.equals(obj._fiOther)
-				&& _fiStatic.equals(obj._fiStatic)
-				&& _fiMenu.equals(obj._fiMenu)
-				&& _fiStatusBar.equals(obj._fiStatusBar)
-				&& _lafClassName.equals(obj._lafClassName)
-				&& _canLAFSetBorders == obj._canLAFSetBorders)
-			{
-				rc = true;
-			}
-		}
-		return rc;
-	}
 	public String getLookAndFeelClassName()
 	{
 		return _lafClassName;
@@ -209,4 +185,78 @@ public class LAFPreferences implements Cloneable, Serializable, IHasIdentifier
 	{
 		_canLAFSetBorders = value;
 	}
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int PRIME = 31;
+        int result = 1;
+        result = PRIME * result + (_canLAFSetBorders ? 1231 : 1237);
+        result = PRIME * result + ((_fiMenu == null) ? 0 : _fiMenu.hashCode());
+        result = PRIME * result + (_fiMenuEnabled ? 1231 : 1237);
+        result = PRIME * result + ((_fiOther == null) ? 0 : _fiOther.hashCode());
+        result = PRIME * result + (_fiOtherEnabled ? 1231 : 1237);
+        result = PRIME * result + ((_fiStatic == null) ? 0 : _fiStatic.hashCode());
+        result = PRIME * result + (_fiStaticEnabled ? 1231 : 1237);
+        result = PRIME * result + ((_fiStatusBar == null) ? 0 : _fiStatusBar.hashCode());
+        result = PRIME * result + (_fiStatusBarEnabled ? 1231 : 1237);
+        result = PRIME * result + ((_id == null) ? 0 : _id.hashCode());
+        result = PRIME * result + ((_lafClassName == null) ? 0 : _lafClassName.hashCode());
+        return result;
+    }
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final LAFPreferences other = (LAFPreferences) obj;
+        if (_canLAFSetBorders != other._canLAFSetBorders)
+            return false;
+        if (_fiMenu == null) {
+            if (other._fiMenu != null)
+                return false;
+        } else if (!_fiMenu.equals(other._fiMenu))
+            return false;
+        if (_fiMenuEnabled != other._fiMenuEnabled)
+            return false;
+        if (_fiOther == null) {
+            if (other._fiOther != null)
+                return false;
+        } else if (!_fiOther.equals(other._fiOther))
+            return false;
+        if (_fiOtherEnabled != other._fiOtherEnabled)
+            return false;
+        if (_fiStatic == null) {
+            if (other._fiStatic != null)
+                return false;
+        } else if (!_fiStatic.equals(other._fiStatic))
+            return false;
+        if (_fiStaticEnabled != other._fiStaticEnabled)
+            return false;
+        if (_fiStatusBar == null) {
+            if (other._fiStatusBar != null)
+                return false;
+        } else if (!_fiStatusBar.equals(other._fiStatusBar))
+            return false;
+        if (_fiStatusBarEnabled != other._fiStatusBarEnabled)
+            return false;
+        if (_id == null) {
+            if (other._id != null)
+                return false;
+        } else if (!_id.equals(other._id))
+            return false;
+        if (_lafClassName == null) {
+            if (other._lafClassName != null)
+                return false;
+        } else if (!_lafClassName.equals(other._lafClassName))
+            return false;
+        return true;
+    }
 }
