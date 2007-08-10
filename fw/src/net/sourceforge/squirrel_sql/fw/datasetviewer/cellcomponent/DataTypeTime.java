@@ -223,28 +223,18 @@ public class DataTypeTime
          return (String)_renderer.renderObject(value);
 
       // use a date formatter
-      if (value == null)
+      try
       {
-         return (String)_renderer.renderObject(value);
+          return (String)_renderer.renderObject(dateFormat.format(value));
       }
-      else
+      catch (Exception e)
       {
-
-         try
-         {
-            return (String)_renderer.renderObject(dateFormat.format(value));
-         }
-         catch (Exception e)
-         {
-            if(false == _renderExceptionHasBeenLogged)
-            {
-               _renderExceptionHasBeenLogged = true;
-               s_log.error("Could not format \"" + value + "\" as date type", e);
-            }
-            return (String) _renderer.renderObject(value);
-         }
-
-
+          if(false == _renderExceptionHasBeenLogged)
+          {
+              _renderExceptionHasBeenLogged = true;
+              s_log.error("Could not format \"" + value + "\" as date type", e);
+          }
+          return (String) _renderer.renderObject(value);
       }
    }
 
@@ -708,7 +698,9 @@ public class DataTypeTime
    // Class that displays the various formats available for dates
    public static class DateFormatTypeCombo extends JComboBox
    {
-      public DateFormatTypeCombo()
+    private static final long serialVersionUID = 1L;
+
+    public DateFormatTypeCombo()
       {
          // i18n[dataTypeTime.full=Full ({0})]
          addItem(s_stringMgr.getString("dataTypeTime.full", DateFormat.getTimeInstance(DateFormat.FULL).format(new java.util.Date())));
@@ -748,7 +740,8 @@ public class DataTypeTime
      */
     private static class TimeOkJPanel extends OkJPanel
     {
-       /*
+        private static final long serialVersionUID = 1L;
+        /*
          * GUI components - need to be here because they need to be
          * accessible from the event handlers to alter each other's state.
          */
@@ -844,7 +837,7 @@ public class DataTypeTime
           useJavaDefaultFormat = useJavaDefaultFormatChk.isSelected();
           DTProperties.put(
              thisClassName,
-             "useJavaDefaultFormat", new Boolean(useJavaDefaultFormat).toString());
+             "useJavaDefaultFormat", Boolean.valueOf(useJavaDefaultFormat).toString());
 
 
           localeFormat = dateFormatTypeDrop.getValue();
@@ -857,7 +850,7 @@ public class DataTypeTime
           dateFormat.setLenient(lenient);
           DTProperties.put(
              thisClassName,
-             "lenient", new Boolean(lenient).toString());
+             "lenient", Boolean.valueOf(lenient).toString());
        }
 
     } // end of inner class
