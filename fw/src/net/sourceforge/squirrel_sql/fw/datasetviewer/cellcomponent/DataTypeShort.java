@@ -377,9 +377,11 @@ public class DataTypeShort
 		throws java.sql.SQLException {
 		
 		short data = rs.getShort(index);
-		if (rs.wasNull())
+		if (rs.wasNull()) {
 			return null;
-		else return new Short(data);
+        } else {
+            return Short.valueOf(data);
+        }
 	}
 
 	/**
@@ -439,7 +441,7 @@ public class DataTypeShort
 			return null;
 		
 		// field is not nullable, so create a reasonable default value
-		return new Short((short)0);
+		return Short.valueOf((short)0);
 	}
 	
 	

@@ -236,11 +236,11 @@ public class ResultSetReader
 						{
 							if (row[i] instanceof Number)
 							{
-								row[i] = new Long(((Number)row[i]).longValue());
+								row[i] = Long.valueOf(((Number)row[i]).longValue());
 							}
 							else
 							{
-								row[i] = new Long(row[i].toString());
+								row[i] = Long.valueOf(row[i].toString());
 							}
 						}
 						break;
@@ -295,7 +295,7 @@ public class ResultSetReader
 						{
 							if (row[i] instanceof Number)
 							{
-								row[i] = new Integer(((Number)row[i]).intValue());
+								row[i] = Integer.valueOf(((Number)row[i]).intValue());
 							}
 							else
 							{
@@ -387,7 +387,9 @@ public class ResultSetReader
 //??						}
 //??						else
 //??						{
-							row[i] = s_stringMgr.getString("ResultSetReader.unknown", new Object[] {new Integer(columnType)});
+                            Integer colTypeInteger = Integer.valueOf(columnType);
+							row[i] = s_stringMgr.getString("ResultSetReader.unknown", 
+                                                            colTypeInteger);
 	//??					}
 				}
 			}

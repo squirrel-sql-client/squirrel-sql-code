@@ -17,25 +17,24 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.*;
-import java.awt.*;
-import java.math.BigDecimal;
-
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.IOException;
-
-import javax.swing.*;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
-import javax.swing.text.JTextComponent;
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Types;
 import java.text.NumberFormat;
-import java.text.DateFormat;
+
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.text.JTextComponent;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellDataPopup;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
@@ -44,8 +43,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
-import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
 
 /**
  * @author gwg
@@ -280,8 +277,13 @@ public class DataTypeBigDecimal extends FloatingPointBase
 			// means for that to be the scale, but if it is negative then we do not check.
 			if (_scale >= 0 && obj.scale() > _scale)
 			{
-				Object[] args = new Object[]{new Integer(obj.scale()), new Integer(_scale)};
-				// i18n[dataTypeBigDecimal.scaleEceeded=Scale Exceeded: Number of digits to right of decimal place ({0})\nis greater than allowed in column ({1}).]
+				Object[] args = new Object[]{
+                        Integer.valueOf(obj.scale()), 
+                        Integer.valueOf(_scale)
+                };
+				// i18n[dataTypeBigDecimal.scaleEceeded=Scale Exceeded: Number 
+                //of digits to right of decimal place ({0})\nis greater than 
+                //allowed in column ({1}).]
 				String msg = s_stringMgr.getString("dataTypeBigDecimal.scaleEceeded", args);
 
 				messageBuffer.append(msg);
@@ -303,8 +305,13 @@ public class DataTypeBigDecimal extends FloatingPointBase
 			// When precision is 0, we cannot check the length, so do not try.
 			if (_precision > 0 && objPrecision > _precision)
 			{
-				Object[] args = new Object[]{new Integer(objPrecision), new Integer(_precision)};
-				// i18n[dataTypeBigDecimal.precisionEceeded=Precision Exceeded: Number of digits in number ({0})\nis greater than allowed in column ({1})]
+				Object[] args = new Object[]{
+                        Integer.valueOf(objPrecision), 
+                        Integer.valueOf(_precision)
+                };
+				// i18n[dataTypeBigDecimal.precisionEceeded=Precision Exceeded: 
+                //Number of digits in number ({0})\nis greater than allowed in 
+                //column ({1})]
 				String msg = s_stringMgr.getString("dataTypeBigDecimal.precisionEceeded", args);
 
 				messageBuffer.append(msg);
