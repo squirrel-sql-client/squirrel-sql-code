@@ -18,33 +18,23 @@ package net.sourceforge.squirrel_sql.plugins.syntax.oster;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.awt.Font;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import javax.swing.Action;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
-import javax.swing.text.PlainDocument;
 import javax.swing.text.JTextComponent;
+import javax.swing.text.PlainDocument;
 import javax.swing.undo.UndoManager;
-
-import org.netbeans.editor.BaseDocument;
-
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.session.BaseSQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
-
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
 
 public class OsterSQLEntryPanel extends BaseSQLEntryPanel
@@ -220,7 +210,7 @@ public class OsterSQLEntryPanel extends BaseSQLEntryPanel
 	public void setTabSize(int tabSize)
 	{
 		_textArea.getDocument().putProperty(PlainDocument.tabSizeAttribute,
-												new Integer(tabSize));
+												Integer.valueOf(tabSize));
 	}
 
 	/**
