@@ -23,25 +23,13 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
-import java.util.Hashtable;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeEvent;
 
-import javax.swing.*;
-
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.gui.SortedComboBoxModel;
-import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
-import net.sourceforge.squirrel_sql.fw.gui.IToggleAction;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
-import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
-import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeEvent;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.mainframe.action.CascadeAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
 import net.sourceforge.squirrel_sql.client.mainframe.action.GlobalPreferencesAction;
@@ -52,10 +40,22 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.TileHorizontalAction
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileVerticalAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
-import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
-import net.sourceforge.squirrel_sql.client.session.action.*;
+import net.sourceforge.squirrel_sql.client.session.action.CommitAction;
+import net.sourceforge.squirrel_sql.client.session.action.NewObjectTreeAction;
+import net.sourceforge.squirrel_sql.client.session.action.NewSQLWorksheetAction;
+import net.sourceforge.squirrel_sql.client.session.action.RollbackAction;
+import net.sourceforge.squirrel_sql.client.session.action.ToggleAutoCommitAction;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.gui.IToggleAction;
+import net.sourceforge.squirrel_sql.fw.gui.SortedComboBoxModel;
+import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
+import net.sourceforge.squirrel_sql.fw.util.IObjectCacheChangeListener;
+import net.sourceforge.squirrel_sql.fw.util.ObjectCacheChangeEvent;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * Toolbar for <CODE>MainFrame</CODE>.
  *
@@ -63,16 +63,16 @@ import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
  */
 class MainFrameToolBar extends ToolBar
 {
-	/** Internationalized strings for this class. */
+    private static final long serialVersionUID = 1L;
+
+    /** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(MainFrameToolBar.class);
 
 	/** Application API. */
-	private IApplication _app;
+	transient private IApplication _app;
 
-   private ToggleAutoCommitAction _toggleAutoCommitAction;
-
-   private boolean _dontReactToSessionDropDownAction = false;
+	private boolean _dontReactToSessionDropDownAction = false;
    
    /**
     * ctor.
@@ -137,7 +137,9 @@ class MainFrameToolBar extends ToolBar
 	private static class AliasesDropDown extends JComboBox
 											implements ActionListener
 	{
-		final private IApplication _myApp;
+	    private static final long serialVersionUID = 1L;
+        
+        transient final private IApplication _myApp;
 
 		AliasesDropDown(IApplication app)
 		{
@@ -196,7 +198,9 @@ class MainFrameToolBar extends ToolBar
 	 */
 	private static class AliasesDropDownModel extends SortedComboBoxModel
 	{
-		private IApplication _myApp;
+        private static final long serialVersionUID = 1L;
+
+        transient private IApplication _myApp;
         private AliasesDropDown _aliasDropDown;
 		/**
 		 * Default ctor. Listen to the <TT>DataCache</TT> object for additions
@@ -216,10 +220,10 @@ class MainFrameToolBar extends ToolBar
 		 */
 		private void load()
 		{
-			Iterator it = _myApp.getDataCache().aliases();
+			Iterator<ISQLAlias> it = _myApp.getDataCache().aliases();
 			while (it.hasNext())
 			{
-				addAlias((ISQLAlias) it.next());
+				addAlias(it.next());
 			}
 		}
 
@@ -315,7 +319,8 @@ class MainFrameToolBar extends ToolBar
 	private class SessionDropDown extends JComboBox
 										implements ActionListener
 	{
-		private IApplication _app;
+        private static final long serialVersionUID = 1L;
+        private IApplication _app;
 		private boolean _closing = false;
 
 		SessionDropDown(IApplication app)
@@ -371,7 +376,8 @@ class MainFrameToolBar extends ToolBar
 	 */
 	private static class SessionDropDownModel extends SortedComboBoxModel
 	{
-		private SessionManager _sessionManager;
+        private static final long serialVersionUID = 1L;
+        transient private SessionManager _sessionManager;
 
 		/**
 		 * Default ctor. Listen to the <TT>ISessioManager</TT> object for additions
