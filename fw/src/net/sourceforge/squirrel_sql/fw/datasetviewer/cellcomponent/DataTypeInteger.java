@@ -380,7 +380,7 @@ public class DataTypeInteger
 		int data = rs.getInt(index);
 		if (rs.wasNull())
 			return null;
-		else return new Integer(data);
+		else return Integer.valueOf(data);
 	}
 
 	/**
@@ -440,7 +440,7 @@ public class DataTypeInteger
 			return null;
 		
 		// field is not nullable, so create a reasonable default value
-		return new Integer(0);
+		return Integer.valueOf(0);
 	}
 	
 	
