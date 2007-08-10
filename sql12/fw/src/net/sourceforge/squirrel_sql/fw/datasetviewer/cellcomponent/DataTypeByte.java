@@ -377,9 +377,11 @@ public class DataTypeByte
 		throws java.sql.SQLException {
 		
 		byte data = rs.getByte(index);
-		if (rs.wasNull())
+		if (rs.wasNull()) {
 			return null;
-		else return new Byte(data);
+        } else {
+            return Byte.valueOf(data);
+        }
 	}
 
 	/**
@@ -439,7 +441,7 @@ public class DataTypeByte
 			return null;
 		
 		// field is not nullable, so create a reasonable default value
-		return new Byte((byte)0);
+		return Byte.valueOf((byte)0);
 	}
 	
 	

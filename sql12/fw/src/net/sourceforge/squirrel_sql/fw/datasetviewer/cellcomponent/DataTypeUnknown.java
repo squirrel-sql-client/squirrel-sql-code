@@ -348,7 +348,7 @@ public class DataTypeUnknown
 		else
 		{
 			data = s_stringMgr.getString("DataTypeUnknown.unknown",
-				new Object[] {new Integer(_colDef.getSqlType())} );
+			                             _colDef.getSqlType() );
 		}
 		
 		if (rs.wasNull())
@@ -528,7 +528,8 @@ public class DataTypeUnknown
 	  * method to save the data when the user is happy with it.
 	  */
 	 private static class UnknownOkJPanel extends OkJPanel {
-		/*
+        private static final long serialVersionUID = 1L;
+        /*
 		 * GUI components - need to be here because they need to be
 		 * accessible from the event handlers to alter each other's state.
 		 */
@@ -566,7 +567,7 @@ public class DataTypeUnknown
 			_readUnknown = _showUnknownChk.isSelected();
 			DTProperties.put(
 				thisClassName,
-				"readUnknown", new Boolean(_readUnknown).toString());
+				"readUnknown", Boolean.valueOf(_readUnknown).toString());
 		}
 	 
 	 } // end of inner class
