@@ -109,7 +109,7 @@ public class BinaryDisplayConverter {
 			// see if this is one that should be displayed that way
 			if (showAscii) {
 				if (printable.indexOf((char)value) > -1) {
-					s = new Character((char)value) +
+					s = Character.valueOf((char)value) +
 						"          ".substring(10-(convConst.width - 1));
 				}
 			}
@@ -175,8 +175,7 @@ public class BinaryDisplayConverter {
 			// be a space when the data is displayed as a single ASCII character.
 			if (showAscii && s.charAt(1) == ' ') {
 				// convert the char into its numeric value
-				bytes[byteIndex++] =
-					new Byte((byte)s.charAt(0));
+				bytes[byteIndex++] = Byte.valueOf((byte)s.charAt(0));
 			}
 			else {
 
@@ -186,7 +185,7 @@ public class BinaryDisplayConverter {
 				// using the Hex radix, it insists that the input must be SIGNED.
 				// To get around this, we up-size the conversion to Integer, then 
 				// truncate that to a byte, and finally convert the byte to a Byte.  Yech.
-				bytes[byteIndex++] = new Byte(
+				bytes[byteIndex++] = Byte.valueOf(
 					(byte)(Integer.valueOf(s, convConst.radix)).intValue());	
 			}	
 

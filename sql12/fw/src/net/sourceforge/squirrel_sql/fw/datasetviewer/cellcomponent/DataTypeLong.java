@@ -376,9 +376,11 @@ public class DataTypeLong
 		throws java.sql.SQLException {
 		
 		long data = rs.getLong(index);
-		if (rs.wasNull())
+		if (rs.wasNull()) {
 			return null;
-		else return new Long(data);
+        } else {
+            return Long.valueOf(data);
+        }
 	}
 
 	/**
@@ -412,7 +414,6 @@ public class DataTypeLong
 			pstmt.setNull(position, _colDef.getSqlType());
 		}
 		else {
-			long val = ((Long)value).intValue();
 			pstmt.setLong(position, ((Long)value).longValue());
 		}
 	}
@@ -439,7 +440,7 @@ public class DataTypeLong
 			return null;
 		
 		// field is not nullable, so create a reasonable default value
-		return new Long(0);
+		return Long.valueOf(0);
 	}
 	
 	
