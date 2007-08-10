@@ -274,7 +274,7 @@ public class DataSetViewerEditableTablePanel extends DataSetViewerTablePanel
 		{
 			if(_colDefs[i].getFullTableColumnName().equalsIgnoreCase(_colDefs[col].getFullTableColumnName()))
 			{
-				buf.add(i);
+				buf.add(Integer.valueOf(i));
 			}
 		}
 
