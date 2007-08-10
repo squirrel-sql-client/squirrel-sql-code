@@ -12,8 +12,10 @@ import java.util.HashMap;
  * the usage of this class leads to better performance and
  * memory finger print.
  */
-public class CaseInsensitiveString implements Comparable, Serializable
+public class CaseInsensitiveString implements Comparable<CaseInsensitiveString>, 
+                                              Serializable
 {
+   private static final long serialVersionUID = -4625230597578277614L;
    private char[] value = new char[0];
    private int offset = 0;
    private int count = 0;
@@ -169,12 +171,8 @@ public class CaseInsensitiveString implements Comparable, Serializable
       return new String(value, offset, count);
    }
 
-   public int compareTo(Object o)
+   public int compareTo(CaseInsensitiveString anotherString)
    {
-//      return this.toString().toLowerCase().compareTo(o.toString().toLowerCase());
-
-      CaseInsensitiveString anotherString = (CaseInsensitiveString) o;
-
       int len1 = count;
       int len2 = anotherString.count;
       int n = Math.min(len1, len2);
@@ -215,27 +213,27 @@ public class CaseInsensitiveString implements Comparable, Serializable
    
    private char toLowerCase(char c) {
        char result = c;
-       Character key = new Character(c);
+       Character key = Character.valueOf(c);
        if (lcChars.containsKey(key)) {
            return lcChars.get(key).charValue();
        }
        if (Character.isUpperCase(c)) {
            result = Character.toLowerCase(c);
        }
-       lcChars.put(key, new Character(result));
+       lcChars.put(key, Character.valueOf(result));
        return result;
    }
    
    private char toUpperCase(char c) {
        char result = c;
-       Character key = new Character(c);
+       Character key = Character.valueOf(c);
        if (upChars.containsKey(key)) {
            return upChars.get(key).charValue();
        }
        if (Character.isLowerCase(c)) {
            result = Character.toUpperCase(c);
        }
-       upChars.put(key, new Character(result));
+       upChars.put(key, Character.valueOf(result));
        return result;
    }
    
