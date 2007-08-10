@@ -141,7 +141,7 @@ public class BlobDescriptor {
 			// using the standard convention
 			Byte[] useValue = new Byte[_data.length];
 					for (int i=0; i<_data.length; i++)
-						useValue[i] = new Byte(_data[i]);
+						useValue[i] = Byte.valueOf(_data[i]);
 			String outString = BinaryDisplayConverter.convertToString(useValue,
 						                            BinaryDisplayConverter.HEX, 
                                                     false);

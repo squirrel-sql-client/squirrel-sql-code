@@ -222,7 +222,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
             int major = md.getJDBCMajorVersion();
             int minor = md.getJDBCMinorVersion();
             int vers = (major * 100) + minor;
-            value = new Integer(vers);
+            value = Integer.valueOf(vers);
             _cache.put(key, value);
 		}
 		return value.intValue();
@@ -357,7 +357,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 
 		try
 		{
-			value = new Boolean(privateGetJDBCMetaData().supportsSchemasInDataManipulation());
+			value = Boolean.valueOf(privateGetJDBCMetaData().supportsSchemasInDataManipulation());
 		}
 		catch (SQLException ex)
 		{
@@ -367,6 +367,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 			if (isSQLServer)
 			{
 				value = Boolean.TRUE;
+                _cache.put(key, value);
 			}
 			throw ex;
 		}
@@ -391,7 +392,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 
 		try
 		{
-			value = new Boolean(privateGetJDBCMetaData().supportsSchemasInTableDefinitions());
+			value = Boolean.valueOf(privateGetJDBCMetaData().supportsSchemasInTableDefinitions());
 		}
 		catch (SQLException ex)
 		{
@@ -400,6 +401,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 			if (isSQLServer)
 			{
 				value = Boolean.TRUE;
+                _cache.put(key, value);
 			}
 			throw ex;
 		}
@@ -429,7 +431,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		}
 		else
 		{
-			value = new Boolean(privateGetJDBCMetaData().supportsStoredProcedures());
+			value = Boolean.valueOf(privateGetJDBCMetaData().supportsStoredProcedures());
 		}
 		_cache.put(key, value);
 
@@ -447,7 +449,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
         {
             return value.booleanValue();
         }
-        value = new Boolean(privateGetJDBCMetaData().supportsSavepoints());
+        value = Boolean.valueOf(privateGetJDBCMetaData().supportsSavepoints());
 
         _cache.put(key, value);
 
@@ -466,7 +468,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
         {
             return value.booleanValue();
         }
-        value = new Boolean(privateGetJDBCMetaData().supportsResultSetType(type));
+        value = Boolean.valueOf(privateGetJDBCMetaData().supportsResultSetType(type));
 
         _cache.put(key, value);
 
@@ -610,7 +612,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 
 		try
 		{
-			value = new Boolean(privateGetJDBCMetaData().supportsCatalogsInTableDefinitions());
+			value = Boolean.valueOf(privateGetJDBCMetaData().supportsCatalogsInTableDefinitions());
 		}
 		catch (SQLException ex)
 		{
@@ -620,6 +622,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 			if (isSQLServer)
 			{
 				value = Boolean.TRUE;
+                _cache.put(key, value);
 			}
 			throw ex;
 		}
@@ -643,7 +646,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 
 		try
 		{
-			value = new Boolean(privateGetJDBCMetaData().supportsCatalogsInDataManipulation());
+			value = Boolean.valueOf(privateGetJDBCMetaData().supportsCatalogsInDataManipulation());
 		}
 		catch (SQLException ex)
 		{
@@ -653,6 +656,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 			if (isSQLServer)
 			{
 				value = Boolean.TRUE;
+                _cache.put(key, value);
 			}
 			throw ex;
 		}
@@ -675,7 +679,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 
 		try
 		{
-			value = new Boolean(privateGetJDBCMetaData().supportsCatalogsInProcedureCalls());
+			value = Boolean.valueOf(privateGetJDBCMetaData().supportsCatalogsInProcedureCalls());
 		}
 		catch (SQLException ex)
 		{
@@ -685,6 +689,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 			if (isSQLServer)
 			{
 				value = Boolean.TRUE;
+                _cache.put(key, value);
 			}
 			throw ex;
 		}
@@ -729,7 +734,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
         } catch (SQLException e) {
             throw new DataSetException(e);
         } finally {
-            if (rs != null) try { rs.close(); } catch (SQLException e) {}
+            SQLUtilities.closeResultSet(rs);
         }
     }
     
@@ -1227,7 +1232,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		}
 		finally
 		{
-            if (rs != null) try { rs.close(); } catch (SQLException e) {}
+            SQLUtilities.closeResultSet(rs);
 		}
 
 		final BestRowIdentifier[] ar = new BestRowIdentifier[results.size()];
@@ -1273,7 +1278,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
         } catch (SQLException e) {
             throw new DataSetException(e);
         } finally {
-            if (rs != null) try { rs.close(); } catch (SQLException e) {}
+            SQLUtilities.closeResultSet(rs);
         }
     }
     
@@ -1307,7 +1312,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
         } catch (SQLException e) { 
             throw new DataSetException(e);
         } finally {
-            if (rs != null) try { rs.close(); } catch (SQLException e) {}
+            SQLUtilities.closeResultSet(rs);
         }
     }
     
@@ -1364,7 +1369,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
         } catch (SQLException e) { 
             throw new DataSetException(e);
         } finally {
-            if (rs != null) try { rs.close(); } catch (SQLException e) {}
+            SQLUtilities.closeResultSet(rs);
         }
     }    
     
@@ -1463,7 +1468,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
         } catch (SQLException e) {
             throw new DataSetException(e);
         } finally {
-            if (rs != null) try { rs.close(); } catch (SQLException e) {}
+            SQLUtilities.closeResultSet(rs);
         }
     }
     
@@ -1516,7 +1521,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
             }
         } catch (SQLException e) {
         } finally {
-            if (rs != null) try { rs.close(); } catch (SQLException e) {}
+            SQLUtilities.closeResultSet(rs);
         }        
         return result;
     }
@@ -1553,7 +1558,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
         } catch (SQLException e) { 
             throw new DataSetException(e);
         }finally {
-            if (rs != null) try { rs.close(); } catch (SQLException e) {}
+            SQLUtilities.closeResultSet(rs);
         }
     }
 
@@ -1592,7 +1597,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
                 results.add(pkInfo);
             }
         }finally {
-            if (rs != null) try { rs.close(); } catch (SQLException e) {}
+            SQLUtilities.closeResultSet(rs);
         }
         
         final PrimaryKeyInfo[] ar = new PrimaryKeyInfo[results.size()];
@@ -1633,7 +1638,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
         } catch (SQLException e) {
             throw new DataSetException(e);
         } finally {
-            if (rs != null) try { rs.close(); } catch (SQLException e) {}
+            SQLUtilities.closeResultSet(rs);
         }
     }
     
@@ -1670,7 +1675,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
         } catch (SQLException e) {
             throw new DataSetException(e);
         } finally {
-            if (rs != null) try { rs.close(); } catch (SQLException e) {}
+            SQLUtilities.closeResultSet(rs);
         }
     }
     
@@ -1706,7 +1711,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
         } catch (SQLException e) {
             throw new DataSetException(e);
         } finally {
-            if (rs != null) try { rs.close(); } catch (SQLException e) {}
+            SQLUtilities.closeResultSet(rs);
         }
     }
     
@@ -1737,7 +1742,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
         } catch (SQLException e) { 
             throw new DataSetException(e);
         } finally {
-            if (rs != null) try { rs.close(); } catch (SQLException e) {}
+            SQLUtilities.closeResultSet(rs);
         }
         return result;
     }
@@ -1786,7 +1791,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
              ++index;
              //
              ////////////////////////////////////////////////////////////////////////////////////////////
-             columns.put(new Integer(10000 * tci.getOrdinalPosition()  + index), tci);
+             columns.put(Integer.valueOf(10000 * tci.getOrdinalPosition()  + index), tci);
           }
 
           return columns.values().toArray(new TableColumnInfo[columns.size()]);
@@ -1794,11 +1799,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
        }
        finally
        {
-          if (rs != null) try
-          {
-             rs.close();
-          }
-          catch (SQLException e){}
+           SQLUtilities.closeResultSet(rs);
        }
     }
     
@@ -1832,7 +1833,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 			return value.booleanValue();
 		}
 
-		value = new Boolean(privateGetJDBCMetaData().supportsMultipleResultSets());
+		value = Boolean.valueOf(privateGetJDBCMetaData().supportsMultipleResultSets());
 		_cache.put(key, value);
 
 		return value.booleanValue();
@@ -1851,7 +1852,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 			return value.booleanValue();
 		}
 
-		value = new Boolean(privateGetJDBCMetaData().storesUpperCaseIdentifiers());
+		value = Boolean.valueOf(privateGetJDBCMetaData().storesUpperCaseIdentifiers());
 		_cache.put(key, value);
 
 		return value.booleanValue();
