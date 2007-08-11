@@ -142,7 +142,7 @@ public class PluginSummaryTable extends SortableTable
 			switch (col)
 			{
 				case 0:
-					return new Boolean(pd._status.isLoadAtStartup());
+					return Boolean.valueOf(pd._status.isLoadAtStartup());
                 case 1:
                     return pd._info.getInternalName();                    
 				case 2:

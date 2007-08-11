@@ -246,7 +246,7 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 	public void setTabSize(int tabSize)
 	{
 		_textArea.getDocument().putProperty(PlainDocument.tabSizeAttribute,
-												new Integer(tabSize));
+												Integer.valueOf(tabSize));
 	}
 
 	/**

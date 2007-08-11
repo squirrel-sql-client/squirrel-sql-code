@@ -29,6 +29,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -110,7 +111,7 @@ public class AliasInternalFrame extends BaseInternalFrame
 		LoggerController.createLogger(AliasInternalFrame.class);
 
 	/** Application API. */
-	private final IApplication _app;
+	transient private final IApplication _app;
 
 	/** The <TT>ISQLAlias</TT> being maintained. */
 	private final ISQLAlias _sqlAlias;
@@ -125,7 +126,7 @@ public class AliasInternalFrame extends BaseInternalFrame
 	private final int _maintType;
 
 	/** Listener to the drivers cache. */
-	private DriversCacheListener _driversCacheLis;
+	transient private DriversCacheListener _driversCacheLis;
 
 	/** Alias name text field.. */
 	private final JTextField _aliasName = new JTextField();
@@ -186,7 +187,7 @@ public class AliasInternalFrame extends BaseInternalFrame
             // i18n[AliasInternalFrame.illegalValue=Illegal value of {0} passed for Maintenance type]
 			final String msg =
                 s_stringMgr.getString("AliasInternalFrame.illegalValue",
-                                      new Integer(maintType));
+                                      Integer.valueOf(maintType));
 			throw new IllegalArgumentException(msg);
 		}
 
@@ -625,7 +626,8 @@ public class AliasInternalFrame extends BaseInternalFrame
 			return (ISQLDriver) getSelectedItem();
 		}
 
-		private class DriverComparator implements Comparator<ISQLDriver>
+		private class DriverComparator implements Comparator<ISQLDriver>,
+		                                          Serializable
 		{
 			public int compare(ISQLDriver o1, ISQLDriver o2)
 			{

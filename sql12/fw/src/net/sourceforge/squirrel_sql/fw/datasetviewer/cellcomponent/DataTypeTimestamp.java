@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -130,7 +129,7 @@ public class DataTypeTimestamp
    private static int DEFAULT_LOCALE_FORMAT = DateFormat.SHORT;
 
    /*
-     * Properties settable by the user
+     * Properties set-able by the user
      */
     // flag for whether we have already loaded the properties or not
     private static boolean propertiesAlreadyLoaded = false;
@@ -244,26 +243,20 @@ public class DataTypeTimestamp
          return (String)_renderer.renderObject(value);
 
       // use a date formatter
-      if (value == null)
+      try
       {
-         return (String) _renderer.renderObject(value);
+          return (String) _renderer.renderObject(dateFormat.format(value));
       }
-      else
+      catch (Exception e)
       {
-         try
-         {
-            return (String) _renderer.renderObject(dateFormat.format(value));
-         }
-         catch (Exception e)
-         {
-            if(false == _renderExceptionHasBeenLogged)
-            {
-               _renderExceptionHasBeenLogged = true;
-               s_log.error("Could not format \"" + value + "\" as date type", e);
-            }
-            return (String) _renderer.renderObject(value);
-         }
+          if(false == _renderExceptionHasBeenLogged)
+          {
+              _renderExceptionHasBeenLogged = true;
+              s_log.error("Could not format \"" + value + "\" as date type", e);
+          }
+          return (String) _renderer.renderObject(value);
       }
+
    }
 
    /**
@@ -722,7 +715,9 @@ public class DataTypeTimestamp
    // Class that displays the various formats available for dates
    public static class DateFormatTypeCombo extends JComboBox
    {
-      public DateFormatTypeCombo()
+    private static final long serialVersionUID = -923184160665210096L;
+
+    public DateFormatTypeCombo()
       {
 
          // i18n[dataTypeTimestamp.full=Full ({0})]
@@ -762,52 +757,54 @@ public class DataTypeTimestamp
      * method to save the data when the user is happy with it.
      */
     private static class TimestampOkJPanel extends OkJPanel {
-         Timestamp ts = new Timestamp(new java.util.Date().getTime());
-      /*
+        private static final long serialVersionUID = 2391094010453874795L;
+
+        Timestamp ts = new Timestamp(new java.util.Date().getTime());
+        /*
          * GUI components - need to be here because they need to be
          * accessible from the event handlers to alter each other's state.
          */
-      // check box for whether to use Java Default or a Locale-dependent format
-      private JCheckBox useJavaDefaultFormatChk = new JCheckBox(
-         // i18n[dateTypeTimestamp.defaultFormat=Use default format ]
-         s_stringMgr.getString("dateTypeTimestamp.defaultFormat") + "(" + ts + ")");
+        // check box for whether to use Java Default or a Locale-dependent format
+        private JCheckBox useJavaDefaultFormatChk = new JCheckBox(
+                // i18n[dateTypeTimestamp.defaultFormat=Use default format ]
+                s_stringMgr.getString("dateTypeTimestamp.defaultFormat") + "(" + ts + ")");
 
-      // label for the date format combo, used to enable/disable text
-      // i18n[dateTypeTimestamp.orLocaleDependend= or locale-dependent format:]
-      private RightLabel dateFormatTypeDropLabel = new RightLabel(s_stringMgr.getString("dateTypeTimestamp.orLocaleDependend"));
+        // label for the date format combo, used to enable/disable text
+        // i18n[dateTypeTimestamp.orLocaleDependend= or locale-dependent format:]
+        private RightLabel dateFormatTypeDropLabel = new RightLabel(s_stringMgr.getString("dateTypeTimestamp.orLocaleDependend"));
 
-      // Combo box for read-all/read-part of blob
-      private DateFormatTypeCombo dateFormatTypeDrop = new DateFormatTypeCombo();
+        // Combo box for read-all/read-part of blob
+        private DateFormatTypeCombo dateFormatTypeDrop = new DateFormatTypeCombo();
 
-      // checkbox for whether to interpret input leniently or not
-      // i18n[dateTypeTimestamp.allowInexact=allow inexact format on input]
-      private JCheckBox lenientChk = new JCheckBox(s_stringMgr.getString("dateTypeTimestamp.allowInexact"));
+        // checkbox for whether to interpret input leniently or not
+        // i18n[dateTypeTimestamp.allowInexact=allow inexact format on input]
+        private JCheckBox lenientChk = new JCheckBox(s_stringMgr.getString("dateTypeTimestamp.allowInexact"));
 
-      // Objects needed to handle radio buttons
-      private JRadioButton doNotUseButton =
-         // i18n[dateTypeTimestamp.timestampInWhere=Do not use Timstamp in WHERE clause]
-         new JRadioButton(s_stringMgr.getString("dateTypeTimestamp.timestampInWhere"));
+        // Objects needed to handle radio buttons
+        private JRadioButton doNotUseButton =
+            // i18n[dateTypeTimestamp.timestampInWhere=Do not use Timestamp in WHERE clause]
+            new JRadioButton(s_stringMgr.getString("dateTypeTimestamp.timestampInWhere"));
 
         // i18n[dateTypeTimestamp.jdbcEscape=Use JDBC standard escape format ]
         String jdbcEscapeMsg = s_stringMgr.getString("dateTypeTimestamp.jdbcEscape");
 
-      private JRadioButton useTimestampFormatButton =
-         new JRadioButton(jdbcEscapeMsg + "( \"{ts '" + ts + "'}\")");
+        private JRadioButton useTimestampFormatButton =
+            new JRadioButton(jdbcEscapeMsg + "( \"{ts '" + ts + "'}\")");
 
         // i18n[dateTypeTimestamp.stringVersion=Use String version of Timestamp ]
         String stringVersionMsg = s_stringMgr.getString("dateTypeTimestamp.stringVersion");
 
-      private JRadioButton useStringFormatButton =
-         new JRadioButton(stringVersionMsg + "('"+ ts + "')");
+        private JRadioButton useStringFormatButton =
+            new JRadioButton(stringVersionMsg + "('"+ ts + "')");
 
-      // IMPORTANT: put the buttons into the array in same order as their
-      // associated values defined for whereClauseUsage.
+        // IMPORTANT: put the buttons into the array in same order as their
+        // associated values defined for whereClauseUsage.
 
-      private ButtonModel radioButtonModels[] = {
-         doNotUseButton.getModel(),
-         useTimestampFormatButton.getModel(),
-         useStringFormatButton.getModel() };
-      private ButtonGroup whereClauseUsageGroup = new ButtonGroup();
+        private ButtonModel radioButtonModels[] = {
+                doNotUseButton.getModel(),
+                useTimestampFormatButton.getModel(),
+                useStringFormatButton.getModel() };
+        private ButtonGroup whereClauseUsageGroup = new ButtonGroup();
 
 
       public TimestampOkJPanel() {
@@ -903,7 +900,7 @@ public class DataTypeTimestamp
          useJavaDefaultFormat = useJavaDefaultFormatChk.isSelected();
          DTProperties.put(
             thisClassName,
-            "useJavaDefaultFormat", new Boolean(useJavaDefaultFormat).toString());
+            "useJavaDefaultFormat", Boolean.valueOf(useJavaDefaultFormat).toString());
 
 
          localeFormat = dateFormatTypeDrop.getValue();
@@ -916,9 +913,9 @@ public class DataTypeTimestamp
          dateFormat.setLenient(lenient);
          DTProperties.put(
             thisClassName,
-            "lenient", new Boolean(lenient).toString());
+            "lenient", Boolean.valueOf(lenient).toString());
 
-         //WARNING: this depends on entires in ButtonGroup being in the same order
+         //WARNING: this depends on entries in ButtonGroup being in the same order
          // as the values for whereClauseUsage
          int buttonIndex;
          for (buttonIndex=0; buttonIndex< radioButtonModels.length; buttonIndex++) {

@@ -52,7 +52,7 @@ class DriverPropertiesTableModel extends AbstractTableModel
 	private static final ILogger s_log =
 		LoggerController.createLogger(DriverPropertiesTableModel.class);
 
-	private SQLDriverPropertyCollection _props = new SQLDriverPropertyCollection();
+	transient private SQLDriverPropertyCollection _props = new SQLDriverPropertyCollection();
 
 	DriverPropertiesTableModel(SQLDriverPropertyCollection props)
 	{
@@ -86,7 +86,7 @@ class DriverPropertiesTableModel extends AbstractTableModel
 				DriverPropertyInfo dpi = sdp.getDriverPropertyInfo();
 				if (dpi != null)
 				{
-					return new Boolean(dpi.required);
+					return Boolean.valueOf(dpi.required);
 				}
 				return Boolean.FALSE;
 			}

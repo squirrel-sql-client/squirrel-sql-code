@@ -53,7 +53,7 @@ public class ResultSetReaderTest extends BaseSQuirreLTestCase {
         MockResultSet rs = new MockResultSet();
         Date d = new Date(Calendar.getInstance().getTimeInMillis());
         
-        rs.addRow(new Object[]{ new Integer(1), d });      
+        rs.addRow(new Object[]{ Integer.valueOf(1), d });      
         MockResultSetMetaData rsmd = new MockResultSetMetaData();
         rsmd.setupAddColumnTypes(new int[] { 4, 91 });
         rsmd.setupGetColumnCount(2);

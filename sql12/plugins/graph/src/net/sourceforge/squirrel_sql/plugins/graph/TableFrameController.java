@@ -14,10 +14,12 @@ import java.awt.event.MouseEvent;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JCheckBoxMenuItem;
@@ -71,13 +73,17 @@ public class TableFrameController
    private ISession _session;
    private Rectangle _startSize;
    private GraphDesktopController _desktopController;
-   private Vector _listeners = new Vector();
-   private Vector _openFramesConnectedToMe = new Vector();
-   private Hashtable _compListenersToOtherFramesByFrameCtrlr = new Hashtable();
-   private Hashtable _scrollListenersToOtherFramesByFrameCtrlr = new Hashtable();
-   private Hashtable _columnSortListenersToOtherFramesByFrameCtrlr = new Hashtable();
+   private Vector<TableFrameControllerListener> _listeners = new Vector<TableFrameControllerListener>();
+   private Vector<TableFrameController> _openFramesConnectedToMe = new Vector<TableFrameController>();
+   private Hashtable<TableFrameController, ComponentAdapter> _compListenersToOtherFramesByFrameCtrlr = 
+       new Hashtable<TableFrameController, ComponentAdapter>();
+   private Hashtable<TableFrameController, AdjustmentListener> _scrollListenersToOtherFramesByFrameCtrlr = 
+       new Hashtable<TableFrameController, AdjustmentListener>();
+   private Hashtable<TableFrameController, ColumnSortListener> _columnSortListenersToOtherFramesByFrameCtrlr = 
+       new Hashtable<TableFrameController, ColumnSortListener>();
 
-   private Vector _mySortListeners = new Vector();
+   private Vector<ColumnSortListener> _mySortListeners = 
+       new Vector<ColumnSortListener>();
 
    private JPopupMenu _popUp;
    private JMenuItem _mnuAddTableForForeignKey;
@@ -708,7 +714,8 @@ public class TableFrameController
 
    private void fireSortListeners()
    {
-      ColumnSortListener[] listeners = (ColumnSortListener[]) _mySortListeners.toArray(new ColumnSortListener[_mySortListeners.size()]);
+      ColumnSortListener[] listeners = 
+          _mySortListeners.toArray(new ColumnSortListener[_mySortListeners.size()]);
 
       for (int i = 0; i < listeners.length; i++)
       {
@@ -718,7 +725,7 @@ public class TableFrameController
 
    private void orderColumns()
    {
-      Comparator comp;
+      Comparator<ColumnInfo> comp;
 
       switch(_columnOrder)
       {
@@ -732,12 +739,10 @@ public class TableFrameController
             _orderedColumnInfos = new ColumnInfo[_colInfos.length];
             System.arraycopy(_colInfos, 0, _orderedColumnInfos, 0, _colInfos.length);
 
-            comp = new Comparator()
+            comp = new Comparator<ColumnInfo>()
             {
-               public int compare(Object o1, Object o2)
+               public int compare(ColumnInfo c1, ColumnInfo c2)
                {
-                  ColumnInfo c1 = (ColumnInfo) o1;
-                  ColumnInfo c2 = (ColumnInfo) o2;
                   return c1.getName().compareTo(c2.getName());
                }
             };
@@ -751,12 +756,10 @@ public class TableFrameController
             _orderedColumnInfos = new ColumnInfo[_colInfos.length];
             System.arraycopy(_colInfos, 0, _orderedColumnInfos, 0, _colInfos.length);
 
-            comp = new Comparator()
+            comp = new Comparator<ColumnInfo>()
             {
-               public int compare(Object o1, Object o2)
+               public int compare(ColumnInfo c1, ColumnInfo c2)
                {
-                  ColumnInfo c1 = (ColumnInfo) o1;
-                  ColumnInfo c2 = (ColumnInfo) o2;
                   if(c1.isPrimaryKey() && false == c2.isPrimaryKey())
                   {
                      return -1;
@@ -834,14 +837,14 @@ public class TableFrameController
 
          if(null == _tablesExportedTo)
          {
-            Hashtable exportBuf = new Hashtable();
+            Hashtable<String, String> exportBuf = new Hashtable<String, String>();
             ResultSet res = metaData.getExportedKeys(_catalog, _schema, _tableName);
             while(res.next())
             {
                String tableName = res.getString("FKTABLE_NAME");
                exportBuf.put(tableName, tableName);
             }
-            _tablesExportedTo = (String[]) exportBuf.keySet().toArray(new String[0]);
+            _tablesExportedTo = exportBuf.keySet().toArray(new String[0]);
          }
          _addTablelListener.addTablesRequest(_tablesExportedTo, _schema, _catalog);
 
@@ -856,14 +859,14 @@ public class TableFrameController
 
    private void onAddParentTables()
    {
-      Vector tablesToAdd = new Vector();
+      List<String> tablesToAdd = new ArrayList<String>();
 
       for (int i = 0; i < _constraintViews.length; i++)
       {
          tablesToAdd.add(_constraintViews[i].getData().getPkTableName());
       }
 
-      _addTablelListener.addTablesRequest((String[]) tablesToAdd.toArray(new String[tablesToAdd.size()]), _schema, _catalog);
+      _addTablelListener.addTablesRequest(tablesToAdd.toArray(new String[tablesToAdd.size()]), _schema, _catalog);
    }
 
 
@@ -928,21 +931,17 @@ public class TableFrameController
 
       for (int i = 0; i < _listeners.size(); i++)
       {
-         TableFrameControllerListener tableFrameControllerListener = (TableFrameControllerListener) _listeners.elementAt(i);
+         TableFrameControllerListener tableFrameControllerListener = _listeners.elementAt(i);
          tableFrameControllerListener.closed(this);
       }
 
-      for(Enumeration e=_compListenersToOtherFramesByFrameCtrlr.keys(); e.hasMoreElements();)
-      {
-         TableFrameController tfc = (TableFrameController) e.nextElement();
-         ComponentAdapter listenerToRemove = (ComponentAdapter) _compListenersToOtherFramesByFrameCtrlr.get(tfc);
+      for(TableFrameController tfc : _compListenersToOtherFramesByFrameCtrlr.keySet()) {
+         ComponentAdapter listenerToRemove = _compListenersToOtherFramesByFrameCtrlr.get(tfc);
          tfc._frame.removeComponentListener(listenerToRemove);
       }
 
-      for(Enumeration e=_scrollListenersToOtherFramesByFrameCtrlr.keys(); e.hasMoreElements();)
-      {
-         TableFrameController tfc = (TableFrameController) e.nextElement();
-         AdjustmentListener listenerToRemove = (AdjustmentListener) _scrollListenersToOtherFramesByFrameCtrlr.get(tfc);
+      for(TableFrameController tfc : _scrollListenersToOtherFramesByFrameCtrlr.keySet()) {
+         AdjustmentListener listenerToRemove = _scrollListenersToOtherFramesByFrameCtrlr.get(tfc);
          tfc._frame.scrollPane.getVerticalScrollBar().removeAdjustmentListener(listenerToRemove);
       }
 
@@ -1022,7 +1021,7 @@ public class TableFrameController
    {
       for (int i = 0; i < _openFramesConnectedToMe.size(); i++)
       {
-         TableFrameController tableFrameController = (TableFrameController) _openFramesConnectedToMe.elementAt(i);
+         TableFrameController tableFrameController = _openFramesConnectedToMe.elementAt(i);
          recalculateConnectionsTo(tableFrameController);
       }
    }
@@ -1032,8 +1031,8 @@ public class TableFrameController
    {
       _openFramesConnectedToMe.remove(tfc);
 
-      Vector constraintDataToRemove = new Vector();
-      Vector newConstraintData = new Vector();
+      List<ConstraintView> constraintDataToRemove = new ArrayList<ConstraintView>();
+      List<ConstraintView> newConstraintData = new ArrayList<ConstraintView>();
 
       for (int i = 0; i < _constraintViews.length; i++)
       {
@@ -1047,26 +1046,30 @@ public class TableFrameController
          }
       }
 
-      ComponentAdapter compListenerToRemove = (ComponentAdapter) _compListenersToOtherFramesByFrameCtrlr.remove(tfc);
+      ComponentAdapter compListenerToRemove = 
+          _compListenersToOtherFramesByFrameCtrlr.remove(tfc);
       if(null != compListenerToRemove)
       {
          tfc._frame.removeComponentListener(compListenerToRemove);
       }
 
 
-      AdjustmentListener adjListenerToRemove = (AdjustmentListener) _scrollListenersToOtherFramesByFrameCtrlr.remove(tfc);
+      AdjustmentListener adjListenerToRemove = 
+          _scrollListenersToOtherFramesByFrameCtrlr.remove(tfc);
       if(null != adjListenerToRemove)
       {
          tfc._frame.scrollPane.getVerticalScrollBar().removeAdjustmentListener(adjListenerToRemove);
       }
 
-      ColumnSortListener columnSortListener = (ColumnSortListener) _columnSortListenersToOtherFramesByFrameCtrlr.get(tfc);
+      ColumnSortListener columnSortListener = 
+         _columnSortListenersToOtherFramesByFrameCtrlr.get(tfc);
       if(null != columnSortListener)
       {
          tfc.removeSortListener(columnSortListener);
       }
 
-      ConstraintView[] buf = (ConstraintView[]) constraintDataToRemove.toArray(new ConstraintView[constraintDataToRemove.size()]);
+      ConstraintView[] buf = 
+          constraintDataToRemove.toArray(new ConstraintView[constraintDataToRemove.size()]);
       _desktopController.removeConstraintViews(buf, false);
    }
 
@@ -1160,7 +1163,7 @@ public class TableFrameController
 
    private ConstraintView[] findConstraintViews(String tableName)
    {
-      Vector ret = new Vector();
+      List<ConstraintView> ret = new ArrayList<ConstraintView>();
       for (int i = 0; i < _constraintViews.length; i++)
       {
          if(_constraintViews[i].getData().getPkTableName().equals(tableName))
@@ -1168,13 +1171,13 @@ public class TableFrameController
             ret.add(_constraintViews[i]);
          }
       }
-      return (ConstraintView[]) ret.toArray(new ConstraintView[ret.size()]);
+      return ret.toArray(new ConstraintView[ret.size()]);
    }
 
 
    private int[] calculateRelativeConnectionPointHeights(ColumnInfo[] colInfos)
    {
-      Hashtable buf = new Hashtable();
+      Hashtable<Integer, Integer> buf = new Hashtable<Integer, Integer>();
       FontMetrics fm = _frame.txtColumsFactory.getGraphics().getFontMetrics(_frame.txtColumsFactory.getFont());
 
       for (int i = 0; i < colInfos.length; i++)
@@ -1197,15 +1200,14 @@ public class TableFrameController
 
          scrolledHeight += + _frame.getTitlePane().getSize().height + 2;//  + 6;
 
-         buf.put(new Integer(scrolledHeight), new Integer(scrolledHeight));
+         buf.put(Integer.valueOf(scrolledHeight), Integer.valueOf(scrolledHeight));
       }
 
       int[] ret = new int[buf.size()];
 
       int i=0;
-      for(Enumeration e=buf.keys(); e.hasMoreElements(); )
-      {
-         ret[i++] = ((Integer)e.nextElement()).intValue();
+      for (Integer key: buf.keySet()) {
+          ret[i++] = key.intValue();
       }
       return ret;
    }
@@ -1229,7 +1231,7 @@ public class TableFrameController
 
       FontMetrics fm = _frame.txtColumsFactory.getGraphics().getFontMetrics(_frame.txtColumsFactory.getFont());
       int width = getMaxSize(_colInfos, fm) + 30;
-      int height = (int)(Math.min(_colInfos.length, maxViewingCols) * (fm.getHeight()) + 47);
+      int height = Math.min(_colInfos.length, maxViewingCols) * (fm.getHeight()) + 47;
       _startSize = new Rectangle(width, height);
    }
 

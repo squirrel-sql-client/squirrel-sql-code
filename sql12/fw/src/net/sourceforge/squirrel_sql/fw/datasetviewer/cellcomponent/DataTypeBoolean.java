@@ -356,9 +356,11 @@ public class DataTypeBoolean
 		throws java.sql.SQLException {
 		
 		boolean data = rs.getBoolean(index);
-		if (rs.wasNull())
+		if (rs.wasNull()) {
 			return null;
-		else return new Boolean(data);
+		} else {
+		    return Boolean.valueOf(data);
+		}
 	}
 
 	/**
@@ -422,11 +424,11 @@ public class DataTypeBoolean
 		}
 		
 		// no default in DB.  If nullable, use null.
-		if (_isNullable)
+		if (_isNullable) {
 			return null;
-		
+		}
 		// field is not nullable, so create a reasonable default value
-		return new Boolean(true);
+		return Boolean.valueOf(true);
 	}
 	
 	

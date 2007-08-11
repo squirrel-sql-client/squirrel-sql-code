@@ -107,8 +107,8 @@ public class WebServiceValidator
 		// Parameters for call.
 		final Object[] parms = new Object[]
 		{
-			new Integer(_webServiceSession.getSessionID()),
-			new Integer(_webServiceSession.getSessionKey()),
+			Integer.valueOf(_webServiceSession.getSessionID()),
+			Integer.valueOf(_webServiceSession.getSessionKey()),
 			sql, "text"
 		};
 

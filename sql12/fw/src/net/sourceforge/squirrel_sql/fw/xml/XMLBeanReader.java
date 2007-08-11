@@ -260,7 +260,7 @@ public class XMLBeanReader implements Iterable<Object>
 			}
 			else if (parmType == boolean.class)
 			{
-				Object data = new Boolean(value);
+				Object data = Boolean.valueOf(value);
 				try
 				{
 					setter.invoke(bean, new Object[] { data });
@@ -335,11 +335,11 @@ public class XMLBeanReader implements Iterable<Object>
 				Object data;
 				if (value != null && value.length() > 0)
 				{
-					data = new Character(value.charAt(0));
+					data = Character.valueOf(value.charAt(0));
 				}
 				else
 				{
-					data = new Character(' ');
+					data = Character.valueOf(' ');
 				}
 				try
 				{

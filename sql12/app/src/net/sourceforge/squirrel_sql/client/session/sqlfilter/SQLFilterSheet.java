@@ -85,7 +85,7 @@ public class SQLFilterSheet extends BaseSessionInternalFrame
 	private final IObjectTreeAPI _objectTree;
 
 	/** A reference to a class containing information about the database metadata. */
-	private final IDatabaseObjectInfo _objectInfo;
+	transient private final IDatabaseObjectInfo _objectInfo;
 
 	/** A list of panels that make up this sheet. */
 	private List<ISQLFilterPanel> _panels = new ArrayList<ISQLFilterPanel>();
@@ -100,10 +100,10 @@ public class SQLFilterSheet extends BaseSessionInternalFrame
 	private JButton _clearFilter = new JButton();
 
 	/** A reference to a panel for the SQL Where Clause. */
-	private WhereClausePanel _whereClausePanel = null;
+	transient private WhereClausePanel _whereClausePanel = null;
 
 	/** A reference to a panel for the SQL Order By Clause. */
-	private OrderByClausePanel _orderByClausePanel = null;
+	transient private OrderByClausePanel _orderByClausePanel = null;
 
 	/**
 	 * Creates a new instance of SQLFilterSheet
@@ -303,7 +303,7 @@ public class SQLFilterSheet extends BaseSessionInternalFrame
                         || (dataType == Types.LONGVARCHAR)
                         || (dataType == Types.VARCHAR))
                 {
-                    textColumns.put(columnName, new Boolean(true));
+                    textColumns.put(columnName, Boolean.valueOf(true));
                 }
                 
             }

@@ -358,7 +358,7 @@ public class Utilities
             bOut.close();
             ObjectInputStream oIn = new ObjectInputStream(bIn)
             {
-               protected Class resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException
+               protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException
                {
             	   return Class.forName(desc.getName(), false, classLoader);
                }
@@ -430,4 +430,20 @@ public class Utilities
        return result;
    }
    
+   /**
+    * Closes the specified Reader which can be null.  Logs an error if 
+    * an exception occurs while closing.
+    * 
+    * @param reader the Reader to close.
+    */
+   public static void closeReader(Reader reader) {
+       if (reader == null) {
+           return;
+       }
+       try {
+           reader.close();
+       } catch (IOException e) {
+           s_log.error("Unable to close Reader: "+e.getMessage(), e);
+       }
+   }
 }

@@ -101,7 +101,7 @@ public class TonicLookAndFeelController extends DefaultLookAndFeelController
 	{
 		UIManager.getDefaults().put(
 				"TabbedPane.thickBorders",
-				new Boolean(_prefs.getUseTabbedPaneThickBorders()));
+				Boolean.valueOf(_prefs.getUseTabbedPaneThickBorders()));
 	}
 
 	/**

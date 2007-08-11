@@ -32,7 +32,7 @@ public class ScriptListTableModel extends AbstractTableModel
 			// i18n[userscript.showInStandardMenues=Show in standard menues]
 			s_stringMgr.getString("userscript.showInStandardMenues")
 		};
-	private Script[] m_scripts = new Script[0];
+	transient private Script[] m_scripts = new Script[0];
 
 	void setScripts(Script[] scripts)
 	{
@@ -59,7 +59,7 @@ public class ScriptListTableModel extends AbstractTableModel
 			case 1:
 				return m_scripts[rowIndex].getScriptClass();
 			case 2:
-				return new Boolean(m_scripts[rowIndex].isShowInStandard());
+				return Boolean.valueOf(m_scripts[rowIndex].isShowInStandard());
 			default:
 				throw new IllegalArgumentException("Invalid column index " + columnIndex);
 		}

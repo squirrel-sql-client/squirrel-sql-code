@@ -506,7 +506,11 @@ public class MssqlIntrospector {
         return buf.toString();
     }
     
-    protected static String generateCreateTableScript(IDatabaseObjectInfo oi, ISQLConnection conn, boolean withConstraints) throws java.sql.SQLException {
+    protected static String generateCreateTableScript(IDatabaseObjectInfo oi, 
+                                                      ISQLConnection conn, 
+                                                      boolean withConstraints) 
+        throws java.sql.SQLException 
+    {
         Connection c = conn.getConnection();
         
         StringBuffer buf = new StringBuffer();
@@ -553,7 +557,7 @@ public class MssqlIntrospector {
             buf.append("] ");
             if (colType.equals("char") || colType.equals("varchar")) {
                 buf.append("(");
-                buf.append(new Integer(rs.getInt(4)).toString());   // length
+                buf.append(rs.getInt(4));   // length
                 buf.append(") COLLATE ");
                 buf.append(rs.getString(10));       // collation
                 buf.append(" ");

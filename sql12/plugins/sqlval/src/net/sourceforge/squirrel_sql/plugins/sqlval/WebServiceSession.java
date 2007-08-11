@@ -134,7 +134,7 @@ public class WebServiceSession
 			anonDBMS ? "N/A" : _sessionProps.getTargetDBMSVersion(),
 			anonDBMS ? "N/A" : _sessionProps.getConnectionTechnology(),
 			anonDBMS ? "N/A" : _sessionProps.getConnectionTechnologyVersion(),
-			new Integer(1)	// 1 = interactive, 0 = batch
+			Integer.valueOf(1)	// 1 = interactive, 0 = batch
 		};
 		_sessionData = (SessionData)l_call.invoke(parms);
 	}

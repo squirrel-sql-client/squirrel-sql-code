@@ -846,7 +846,9 @@ public class DataTypeClob
 	  */
 	 private static class ClobOkJPanel extends OkJPanel
 	 {
-		 /*
+        private static final long serialVersionUID = 6613369906375451603L;
+
+        /*
 		 * GUI components - need to be here because they need to be
 		 * accessible from the event handlers to alter each other's state.
 		 */
@@ -956,12 +958,12 @@ public class DataTypeClob
 			 _readClobs = _showClobChk.isSelected();
 			 DTProperties.put(
 				 thisClassName,
-				 "readClobs", new Boolean(_readClobs).toString());
+				 "readClobs", Boolean.valueOf(_readClobs).toString());
 
 			 _readCompleteClobs = (_clobTypeDrop.getSelectedIndex() == 0) ? false : true;
 			 DTProperties.put(
 				 thisClassName,
-				 "readCompleteClobs", new Boolean(_readCompleteClobs).toString());
+				 "readCompleteClobs", Boolean.valueOf(_readCompleteClobs).toString());
 
 			 _readClobsSize = _showClobSizeField.getInt();
 			 DTProperties.put(
@@ -971,7 +973,7 @@ public class DataTypeClob
 			 _makeNewlinesVisibleInCell = _makeNewlinesVisibleInCellChk.isSelected();
 			 DTProperties.put(
 				 thisClassName,
-				 "makeNewlinesVisibleInCell", new Boolean(_makeNewlinesVisibleInCell).toString());
+				 "makeNewlinesVisibleInCell", Boolean.valueOf(_makeNewlinesVisibleInCell).toString());
 		 }
 
 	 } // end of inner class

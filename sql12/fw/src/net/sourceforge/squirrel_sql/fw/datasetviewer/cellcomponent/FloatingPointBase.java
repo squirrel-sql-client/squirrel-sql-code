@@ -90,8 +90,9 @@ public class FloatingPointBase
 	 */
 	private static class FloatingPointOkJPanel extends OkJPanel
 	{
+        private static final long serialVersionUID = 3745853322636427759L;
 
-		JRadioButton optUseDefaultFormat;
+        JRadioButton optUseDefaultFormat;
 		JRadioButton optUseLocaleDependendFormat;
 
 		public FloatingPointOkJPanel()
@@ -134,7 +135,9 @@ public class FloatingPointBase
 		{
 			// get the values from the controls and set them in the static properties
 			useJavaDefaultFormat = optUseDefaultFormat.isSelected();
-			DTProperties.put(DataTypeBigDecimal.class.getName(), "useJavaDefaultFormat", new Boolean(useJavaDefaultFormat).toString());
+			DTProperties.put(DataTypeBigDecimal.class.getName(), 
+			                 "useJavaDefaultFormat", 
+			                 Boolean.valueOf(useJavaDefaultFormat).toString());
 		}
 	} // end of inner class
 

@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.prefs.Preferences;
 import java.net.URL;
 
-public class I18nBundle implements Comparable
+public class I18nBundle implements Comparable<I18nBundle>
 {
 
 	private static final StringManager s_stringMgr =
@@ -67,7 +67,7 @@ public class I18nBundle implements Comparable
 			}
 		}
 
-		_missingTranslationsCount = new Integer(buf.size());
+		_missingTranslationsCount = Integer.valueOf(buf.size());
 	}
 
 	public void setLocalizedProp(I18nProps localizedProps)
@@ -142,7 +142,7 @@ public class I18nBundle implements Comparable
             }
 			
 
-			String[] keys = (String[]) propsToAppend.keySet().toArray(new String[0]);
+			String[] keys = propsToAppend.keySet().toArray(new String[0]);
 			Arrays.sort(keys);
 
 
@@ -166,7 +166,7 @@ public class I18nBundle implements Comparable
 			Object[] params =
 				new Object[]
 				{
-					new Integer(propsToAppend.size()),
+					Integer.valueOf(propsToAppend.size()),
 					toAppendTo.getPath()
 				};
 
@@ -188,12 +188,46 @@ public class I18nBundle implements Comparable
 		return toAppendTo;
 	}
 
-
-
-	public int compareTo(Object other)
+	public int compareTo(I18nBundle other)
 	{
-		return getName().compareTo(((I18nBundle)other).getName());
-
-
+		return getName().compareTo(other.getName());
 	}
+
+
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((getName() == null) ? 0 : getName().hashCode());
+        return result;
+    }
+
+
+
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final I18nBundle other = (I18nBundle) obj;
+        if (getName() == null) {
+            if (other.getName() != null)
+                return false;
+        } else if (!getName().equals(other.getName()))
+            return false;
+        return true;
+    }
+	
+	
 }

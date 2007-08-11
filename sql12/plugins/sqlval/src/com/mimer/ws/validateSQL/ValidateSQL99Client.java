@@ -52,7 +52,11 @@ public class ValidateSQL99Client {
         //Set the return type
         l_call.setReturnType(l_qn);
 
-        Object l_ret = l_call.invoke( new Object[] {new Integer(a_sessionId), new Integer(a_sessionKey), a_sqlStatement, a_resultType} );
+        Object l_ret = 
+            l_call.invoke( new Object[] { Integer.valueOf(a_sessionId), 
+                                          Integer.valueOf(a_sessionKey), 
+                                          a_sqlStatement, 
+                                          a_resultType} );
 
         return (ValidatorResult)l_ret;
     }
@@ -107,11 +111,16 @@ public class ValidateSQL99Client {
         //Set the return type
         l_call.setReturnType(l_qn);
 
-        Object l_ret = l_call.invoke( new Object[] {a_userName, a_password,
-                             a_callingProgram, a_callingProgramVersion,
-                             a_targetDbms, a_targetDbmsVersion,
-                             a_connectionTechnology, a_connectionTechnologyVersion,
-                             new Integer(a_interactive)} );
+        Object l_ret = 
+            l_call.invoke( new Object[] { a_userName, 
+                                          a_password,
+                                          a_callingProgram, 
+                                          a_callingProgramVersion,
+                                          a_targetDbms, 
+                                          a_targetDbmsVersion,
+                                          a_connectionTechnology, 
+                                          a_connectionTechnologyVersion,
+                                          Integer.valueOf(a_interactive)} );
 
         return (SessionData)l_ret;
     }

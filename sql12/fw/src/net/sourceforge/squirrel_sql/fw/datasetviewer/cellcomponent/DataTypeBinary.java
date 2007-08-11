@@ -156,8 +156,9 @@ public class DataTypeBinary
 		if (value instanceof java.lang.String) {
 			byte[] bytes = ((String)value).getBytes();
 			useValue = new Byte[bytes.length];
-			for (int i=0; i<bytes.length; i++)
-				useValue[i] = new Byte(bytes[i]);
+			for (int i=0; i<bytes.length; i++) {
+				useValue[i] = Byte.valueOf(bytes[i]);
+            }
 		}
 		else useValue = (Byte[])value;
 		// use the default settings for the conversion
@@ -393,8 +394,9 @@ public class DataTypeBinary
 			return null;
 		else {
 			Byte[] internal = new Byte[data.length];
-			for (int i=0; i<data.length; i++)
-				internal[i] = new Byte(data[i]);
+			for (int i=0; i<data.length; i++) {
+				internal[i] = Byte.valueOf(data[i]);
+            }
 			return internal;
 		}
 	}
@@ -510,9 +512,9 @@ public class DataTypeBinary
 	 	
 	 	// Convert bytes to Bytes
 	 	Byte[] bBytes = new Byte[count];
-	 	for (int i=0; i<count; i++)
-	 		bBytes[i] = new Byte(buf[i]);
-	 	
+	 	for (int i=0; i<count; i++) {
+	 		bBytes[i] = Byte.valueOf(buf[i]);
+        }
 	 	// return the text converted from the file 
 	 	return BinaryDisplayConverter.convertToString(bBytes,
 	 		BinaryDisplayConverter.HEX, false);

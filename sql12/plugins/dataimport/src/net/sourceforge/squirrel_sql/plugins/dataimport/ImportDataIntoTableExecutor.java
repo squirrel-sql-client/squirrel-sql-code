@@ -197,7 +197,12 @@ public class ImportDataIntoTableExecutor {
     		JOptionPane.showMessageDialog(session.getApplication().getMainFrame(), stringMgr.getString("ImportDataIntoTableExecutor.sqlException"), stringMgr.getString("ImportDataIntoTableExecutor.error"), JOptionPane.ERROR_MESSAGE);
     		log.error("Database error", sqle);
     	} catch (UnsupportedFormatException ufe) {
-    		try { conn.rollback(); } catch (Exception e) { /* Do nothing */ }
+    		try { 
+    		    conn.rollback(); 
+    		} catch (Exception e) { 
+    		    log.error("Unexpected exception while attempting to rollback: "
+    		              +e.getMessage(), e);
+    		}
     		log.error("Unsupported format.", ufe);
     	} catch (IOException ioe) {
     		//i18n[ImportDataIntoTableExecutor.ioException=An error occured while reading the input file.]
@@ -230,7 +235,7 @@ public class ImportDataIntoTableExecutor {
     		break;
     	case Types.INTEGER:
     	case Types.NUMERIC:
-   			stmt.setInt(index, new Long(value).intValue());
+   			stmt.setInt(index, (int)value);
     		break;
     	default:
     		throw new UnsupportedFormatException();

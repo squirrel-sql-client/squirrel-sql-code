@@ -676,16 +676,17 @@ public class DataTypeBlob
 
 		int count = inStream.read(buf);
 
-		if (count != fileSize)
+		if (count != fileSize) {
 			throw new IOException(
 				"Could read only "+ count +
 				" bytes from a total file size of " + fileSize +
 				". Import failed.");
-
+		}
 		// Convert bytes to Bytes
 		Byte[] bBytes = new Byte[count];
-		for (int i=0; i<count; i++)
-			bBytes[i] = new Byte(buf[i]);
+		for (int i=0; i<count; i++) {
+			bBytes[i] = Byte.valueOf(buf[i]);
+		}
 
 		// return the text converted from the file 
 		return BinaryDisplayConverter.convertToString(bBytes,
@@ -786,12 +787,15 @@ public class DataTypeBlob
 	  * method to save the data when the user is happy with it.
 	  */
 	 private static class BlobOkJPanel extends OkJPanel {
-		/*
+
+	    private static final long serialVersionUID = 2859310264477848330L;
+
+        /*
 		 * GUI components - need to be here because they need to be
 		 * accessible from the event handlers to alter each other's state.
 		 */
 		// check box for whether to read contents during table load or not
-	  private JCheckBox _showBlobChk = new JCheckBox(
+	    private JCheckBox _showBlobChk = new JCheckBox(
 		// i18n[dataTypeBlob.readOnFirstLoad=Read contents when table is first loaded:]
 		s_stringMgr.getString("dataTypeBlob.readOnFirstLoad"));
 
@@ -879,13 +883,13 @@ public class DataTypeBlob
 			_readBlobs = _showBlobChk.isSelected();
 			DTProperties.put(
 				thisClassName,
-				"readBlobs", new Boolean(_readBlobs).toString());
+				"readBlobs", Boolean.valueOf(_readBlobs).toString());
 
 
 			_readCompleteBlobs = (_blobTypeDrop.getSelectedIndex() == 0) ? false : true;
 			DTProperties.put(
 				thisClassName,
-				"readCompleteBlobs", new Boolean(_readCompleteBlobs).toString());
+				"readCompleteBlobs", Boolean.valueOf(_readCompleteBlobs).toString());
 
 			_readBlobsSize = _showBlobSizeField.getInt();
 			DTProperties.put(

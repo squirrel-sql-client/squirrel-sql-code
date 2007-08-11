@@ -197,7 +197,7 @@ public class ErrorStream {
 
             // i18n[ErrorStream.error.syntax=Syntax error {0}]
             default: s = s_stringMgr.getString("ErrorStream.error.syntax", 
-                                               new Integer(n));
+                                               Integer.valueOf(n));
 		}
 		StoreError(n, line, col, s);
 	}
@@ -211,7 +211,7 @@ public class ErrorStream {
 			default:
                 // i18n[ErrorStream.error.semantic=Semantic error {0}]
                 s = s_stringMgr.getString("ErrorStream.error.semantic", 
-                                          new Integer(n)); 
+                                          Integer.valueOf(n)); 
                 break;
 		}
 		StoreError(n, line, col, s);
@@ -235,7 +235,7 @@ public class ErrorStream {
 			default:
                 // i18n[ErrorStream.multipleerrors={0} errors detected]
                 String msg = s_stringMgr.getString("ErrorStream.multipleerrors",
-                                                   new Integer(count));
+                                                   Integer.valueOf(count));
                 ParserLogger.log(msg); 
                 break;
 		}

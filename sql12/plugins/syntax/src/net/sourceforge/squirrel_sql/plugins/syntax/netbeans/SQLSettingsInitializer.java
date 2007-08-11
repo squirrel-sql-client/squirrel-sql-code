@@ -60,7 +60,6 @@ public class SQLSettingsInitializer extends Settings.AbstractInitializer
     */
    public void updateSettingsMap(Class kitClass, Map settingsMap)
    {
-
       // Update java colorings
       if (kitClass == BaseKit.class)
       {
@@ -112,7 +111,7 @@ public class SQLSettingsInitializer extends Settings.AbstractInitializer
 
          settingsMap.put(SettingsNames.LINE_NUMBER_VISIBLE, Boolean.valueOf(true));
 
-         settingsMap.put(SettingsNames.TEXT_LIMIT_WIDTH, new Integer(_syntaxPreferences.getTextLimitLineWidth()));
+         settingsMap.put(SettingsNames.TEXT_LIMIT_WIDTH, Integer.valueOf(_syntaxPreferences.getTextLimitLineWidth()));
 
 
          settingsMap.put(SettingsNames.ABBREV_MAP, SQLSettingsDefaults.getAbbrevMap(_plugin));

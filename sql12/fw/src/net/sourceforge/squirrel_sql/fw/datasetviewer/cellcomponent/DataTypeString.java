@@ -164,10 +164,11 @@ public class DataTypeString
 	/**
 	 * If <tt>_limitRead</tt> is <tt>true</tt> and
 	 * <tt>_limitReadOnSpecificColumns is <tt>true</tt>, then only columns whose label is listed here.
-	 * The column names are converted tol ALL CAPS before being put on this list
+	 * The column names are converted to ALL CAPS before being put on this list
 	 * so that they will match the label retrieved from _colDef.
 	 */
-	private static HashMap _limitReadColumnNameMap = new HashMap();
+	private static HashMap<String, String> _limitReadColumnNameMap = 
+	    new HashMap<String, String>();
 
 
 	/**
@@ -826,7 +827,9 @@ public class DataTypeString
 		 * accessible from the event handlers to alter each other's state.
 		 */
 
-		// check box for whether to show newlines as "\n" for in-cell display
+        private static final long serialVersionUID = -578848466466561988L;
+
+        // check box for whether to show newlines as "\n" for in-cell display
 		private JCheckBox _makeNewlinesVisibleInCellChk =
 			// i18n[dataTypeString.newlines=Show newlines as \\n within cells]
 			new JCheckBox(s_stringMgr.getString("dataTypeString.newlines"));
@@ -891,7 +894,7 @@ public class DataTypeString
 			});
 
 			// fill in list of column names to check against
-			Iterator names = _limitReadColumnNameMap.keySet().iterator();
+			Iterator<String> names = _limitReadColumnNameMap.keySet().iterator();
 			StringBuffer namesText = new StringBuffer();
 			while (names.hasNext()) {
 				if (namesText.length() > 0)
@@ -968,15 +971,15 @@ public class DataTypeString
 			// get the values from the controls and set them in the static properties
 			_makeNewlinesVisibleInCell = _makeNewlinesVisibleInCellChk.isSelected();
 			DTProperties.put(thisClassName,
-				"makeNewlinesVisibleInCell", new Boolean(_makeNewlinesVisibleInCell).toString());
+				"makeNewlinesVisibleInCell", Boolean.valueOf(_makeNewlinesVisibleInCell).toString());
 
 			_useLongInWhere = _useLongInWhereChk.isSelected();
 			DTProperties.put(thisClassName,
-				"useLongInWhere", new Boolean(_useLongInWhere).toString());
+				"useLongInWhere", Boolean.valueOf(_useLongInWhere).toString());
 
 			_limitRead = _limitReadChk.isSelected();
 			DTProperties.put(thisClassName,
-				"limitRead", new Boolean(_limitRead).toString());
+				"limitRead", Boolean.valueOf(_limitRead).toString());
 
 			_limitReadLength = _limitReadLengthTextField.getInt();
 			DTProperties.put(thisClassName,
@@ -984,7 +987,7 @@ public class DataTypeString
 
 			_limitReadOnSpecificColumns = _limitReadOnSpecificColumnsChk.isSelected();
 			DTProperties.put(thisClassName,
-				"limitReadOnSpecificColumns", new Boolean(_limitReadOnSpecificColumns).toString());
+				"limitReadOnSpecificColumns", Boolean.valueOf(_limitReadOnSpecificColumns).toString());
 
 			// Handle list of column names
 

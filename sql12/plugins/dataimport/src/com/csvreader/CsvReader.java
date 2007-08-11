@@ -508,7 +508,7 @@ public class CsvReader {
 
 		// use headersHolder.Length here in case headers is null
 		for (int i = 0; i < headersHolder.Length; i++) {
-			headersHolder.IndexByName.put(headers[i], new Integer(i));
+			headersHolder.IndexByName.put(headers[i], Integer.valueOf(i));
 		}
 	}
 
@@ -1239,7 +1239,7 @@ public class CsvReader {
 			headersHolder.Headers[i] = columnValue;
 
 			// if there are duplicate header names, we will save the last one
-			headersHolder.IndexByName.put(columnValue, new Integer(i));
+			headersHolder.IndexByName.put(columnValue, Integer.valueOf(i));
 		}
 
 		if (result) {
@@ -1446,10 +1446,10 @@ public class CsvReader {
 	public int getIndex(String headerName) throws IOException {
 		checkClosed();
 
-		Object indexValue = headersHolder.IndexByName.get(headerName);
+		Integer indexValue = headersHolder.IndexByName.get(headerName);
 
 		if (indexValue != null) {
-			return ((Integer) indexValue).intValue();
+			return indexValue.intValue();
 		} else {
 			return -1;
 		}
@@ -1751,12 +1751,12 @@ public class CsvReader {
 
 		public int Length;
 
-		public HashMap IndexByName;
+		public HashMap<String, Integer> IndexByName;
 
 		public HeadersHolder() {
 			Headers = null;
 			Length = 0;
-			IndexByName = new HashMap();
+			IndexByName = new HashMap<String, Integer>();
 		}
 	}
 

@@ -59,7 +59,7 @@ public class Utils
 			case DatabaseMetaData.typeSearchable :
 				return s_stringMgr.getString("Utils.yes");
 			default :
-				return s_stringMgr.getString("Utils.unknown", new Integer(type));
+				return s_stringMgr.getString("Utils.unknown", Integer.valueOf(type));
 		}
 	}
 }
