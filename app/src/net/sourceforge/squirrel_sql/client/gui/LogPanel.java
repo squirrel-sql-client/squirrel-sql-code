@@ -53,7 +53,7 @@ public class LogPanel extends JPanel
 		StringManagerFactory.getStringManager(MemoryPanel.class);
 
 
-	private SquirrelResources _resources;
+	transient private SquirrelResources _resources;
 
 	private static final int LOG_TYPE_INFO = 0;
 	private static final int LOG_TYPE_WARN = 1;
@@ -68,11 +68,11 @@ public class LogPanel extends JPanel
 	private Timer _whiteIconTimer;
 
 	private final Vector<LogData> _logsDuringDisplayDelay = new Vector<LogData>();
-	private LogData _curlogToDisplay;
-	private IApplication _app;
+	transient private LogData _curlogToDisplay;
+    transient private IApplication _app;
 
 
-	private LogStatistics _statistics = new LogStatistics();
+    transient private LogStatistics _statistics = new LogStatistics();
 
 	public LogPanel(IApplication app)
 	{
@@ -365,9 +365,9 @@ public class LogPanel extends JPanel
 		{
 			Object[] params = new Integer[]
 				{
-					new Integer(_errorCount),
-					new Integer(_warnCount),
-					new Integer(_infoCount),
+					Integer.valueOf(_errorCount),
+                    Integer.valueOf(_warnCount),
+                    Integer.valueOf(_infoCount),
 				};
 			// i18n[LogPanel.logInfoLabel=Logs: Errors {0}, Warnings {1}, Infos {2}]
 			_toString = s_stringMgr.getString("LogPanel.logInfoLabel", params);

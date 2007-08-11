@@ -53,20 +53,22 @@ import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 
 public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 {
-	/** Uniquely identifies this ResultTab. */
+    private static final long serialVersionUID = 1L;
+
+    /** Uniquely identifies this ResultTab. */
 	private IIdentifier _id;
 
 	/** Current session. */
-	private ISession _session;
+	transient private ISession _session;
 
 	/** SQL Execution information. */
-	private SQLExecutionInfo _exInfo;
+	transient private SQLExecutionInfo _exInfo;
 
 	/** Panel displaying the SQL results. */
-	private IDataSetViewer _resultSetOutput;
+	transient private IDataSetViewer _resultSetOutput;
 
 	/** Panel displaying the SQL results meta data. */
-	private IDataSetViewer _metaDataOutput;
+	transient private IDataSetViewer _metaDataOutput;
 
 	/** Scroll pane for <TT>_resultSetOutput</TT>. */
 	private JScrollPane _resultSetSp = new JScrollPane();
@@ -92,9 +94,11 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
 	/** Listener to the sessions properties. */
 	private PropertyChangeListener _propsListener;
 
-   private boolean _allowEditing;
-   private IDataSetUpdateableTableModel _creator;
-   private ResultSetDataSet _rsds;
+    private boolean _allowEditing;
+   
+    transient private IDataSetUpdateableTableModel _creator;
+   
+    transient private ResultSetDataSet _rsds;
    
    /** Internationalized strings for this class. */
    private static final StringManager s_stringMgr =
@@ -247,7 +251,7 @@ public class ResultTab extends JPanel implements IHasIdentifier, IResultTab
             // i18n[ResultTab.limitMessage=Limited to <font color='red'> {0} </font> rows]
             String limitMsg = 
                 s_stringMgr.getString("ResultTab.limitMessage", 
-                                      new Integer(rowCount));
+                                      Integer.valueOf(rowCount));
 			_currentSqlLbl.setText("<html><pre>&nbsp;" + limitMsg +
                                    ";&nbsp;&nbsp;" + buf + "</pre></html>");
 		}

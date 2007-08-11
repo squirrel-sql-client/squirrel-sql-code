@@ -244,28 +244,19 @@ public class DataTypeDate
 			return (String)_renderer.renderObject(value);
 
 		// use a date formatter
-		if (value == null)
-      {
-         return (String)_renderer.renderObject(value);
-      }
-      else
-      {
-
-         try
-         {
-            return (String)_renderer.renderObject(dateFormat.format(value));
-         }
-         catch (Exception e)
-         {
-            if(false == _renderExceptionHasBeenLogged)
-            {
-               _renderExceptionHasBeenLogged = true;
-               s_log.error("Could not format \"" + value + "\" as date type", e);
-            }
-            return (String) _renderer.renderObject(value);
-         }
-
-      }
+		try
+		{
+		    return (String)_renderer.renderObject(dateFormat.format(value));
+		}
+		catch (Exception e)
+		{
+		    if(false == _renderExceptionHasBeenLogged)
+		    {
+		        _renderExceptionHasBeenLogged = true;
+		        s_log.error("Could not format \"" + value + "\" as date type", e);
+		    }
+		    return (String) _renderer.renderObject(value);
+		}
    }
 
 	/**
@@ -910,7 +901,7 @@ public class DataTypeDate
 			 useJavaDefaultFormat = useJavaDefaultFormatChk.isSelected();
 			 DTProperties.put(
 				 thisClassName,
-				 "useJavaDefaultFormat", new Boolean(useJavaDefaultFormat).toString());
+				 "useJavaDefaultFormat", Boolean.valueOf(useJavaDefaultFormat).toString());
 
 
 			 localeFormat = dateFormatTypeDrop.getValue();
@@ -923,12 +914,12 @@ public class DataTypeDate
 			 dateFormat.setLenient(lenient);
 			 DTProperties.put(
 				 thisClassName,
-				 "lenient", new Boolean(lenient).toString());
+				 "lenient", Boolean.valueOf(lenient).toString());
              
              readDateAsTimestamp = readdDateAsTimestampChk.isSelected();
              DTProperties.put(thisClassName,
                               "readDateAsTimestamp",
-                              new Boolean(readDateAsTimestamp).toString());
+                              Boolean.valueOf(readDateAsTimestamp).toString());
 		 }
 
 	 } // end of inner class

@@ -314,8 +314,6 @@ public class DataTypeOther
 	 private class KeyTextHandler extends KeyAdapter {
 		// special handling of operations while editing Strings
 		public void keyTyped(KeyEvent e) {
-			char c = e.getKeyChar();
-
 			// as a coding convenience, create a reference to the text component
 			// that is typecast to JTextComponent.  this is not essential, as we
 			// could typecast every reference, but this makes the code cleaner
@@ -542,14 +540,16 @@ public class DataTypeOther
 	  * method to save the data when the user is happy with it.
 	  */
 	 private static class SQLOtherOkJPanel extends OkJPanel {
-		/*
-		 * GUI components - need to be here because they need to be
-		 * accessible from the event handlers to alter each other's state.
-		 */
-		// check box for whether to read contents during table load or not
-		private JCheckBox _showSQLOtherChk = new JCheckBox(
-			// i18n[dataTypeOther.readContentsWhenLoaded=Read contents when table is first loaded and display as string]
-			s_stringMgr.getString("dataTypeOther.readContentsWhenLoaded"));
+
+	     private static final long serialVersionUID = 9034966488591013288L;
+	     /*
+	      * GUI components - need to be here because they need to be
+	      * accessible from the event handlers to alter each other's state.
+	      */
+	     // check box for whether to read contents during table load or not
+	     private JCheckBox _showSQLOtherChk = new JCheckBox(
+	             // i18n[dataTypeOther.readContentsWhenLoaded=Read contents when table is first loaded and display as string]
+	             s_stringMgr.getString("dataTypeOther.readContentsWhenLoaded"));
 
 
 		public SQLOtherOkJPanel() {
@@ -579,7 +579,7 @@ public class DataTypeOther
 			_readSQLOther = _showSQLOtherChk.isSelected();
 			DTProperties.put(
 				thisClassName,
-				"readSQLOther", new Boolean(_readSQLOther).toString());
+				"readSQLOther", Boolean.valueOf(_readSQLOther).toString());
 		}
 	 
 	 } // end of inner class

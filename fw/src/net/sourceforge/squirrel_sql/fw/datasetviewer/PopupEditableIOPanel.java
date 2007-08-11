@@ -50,7 +50,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.RestorableJTe
 import net.sourceforge.squirrel_sql.fw.gui.TextPopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
  import net.sourceforge.squirrel_sql.fw.util.StringManager;
- import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
 /**
  * @author gwg
@@ -58,12 +59,12 @@ import net.sourceforge.squirrel_sql.fw.gui.action.BaseAction;
  * Class to handle IO between user and editable text, text and object,
  * and text/object to/from file.
  */
-public class PopupEditableIOPanel extends JPanel
-	implements ActionListener {
+public class PopupEditableIOPanel extends JPanel implements ActionListener {
 
-	private static final StringManager s_stringMgr =
+    private static final long serialVersionUID = 1L;
+
+    private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(PopupEditableIOPanel.class);
-
 
 	// The text area displaying the object contents
 	private final JTextArea _ta;
@@ -72,9 +73,9 @@ public class PopupEditableIOPanel extends JPanel
 	private final JScrollPane scrollPane;
 
 	// Description needed to handle conversion of data to/from Object
-	private final ColumnDisplayDefinition _colDef;
+	transient private final ColumnDisplayDefinition _colDef;
 
-	private MouseAdapter _lis;
+	transient private MouseAdapter _lis;
 
 	private final TextPopupMenu _popupMenu;
 
@@ -123,7 +124,7 @@ public class PopupEditableIOPanel extends JPanel
 			return;
 		}
 	}
-	private BinaryOptionActionListener optionActionListener =
+	transient private BinaryOptionActionListener optionActionListener =
 		new BinaryOptionActionListener();
 
 	// text put in file name field to indicate that we should
@@ -641,7 +642,7 @@ public class PopupEditableIOPanel extends JPanel
 
 				// EXPORT OBJECT TO OSX_FILE
 
-				if (exportData(file, outStream, canonicalFilePathName) == true) {
+				if (exportData(outStream, canonicalFilePathName) == true) {
 
 					// if we get here, then everything worked correctly, so
 					// tell user that data was put into file.
@@ -684,7 +685,7 @@ public class PopupEditableIOPanel extends JPanel
 				}
 
 				// export data to file
-				if (exportData(file, outStream, canonicalFilePathName) == false) {
+				if (exportData(outStream, canonicalFilePathName) == false) {
 					// bad export - do not proceed with command
 					// The exportData() method has already put up a message
 					// to the user saying the export failed.
@@ -692,6 +693,7 @@ public class PopupEditableIOPanel extends JPanel
 				}
 
 				int commandResult;
+				BufferedReader err = null;
 				try {
 					// execute command
 					Process cmdProcess = Runtime.getRuntime().exec(command);
@@ -706,7 +708,7 @@ public class PopupEditableIOPanel extends JPanel
 					// but continue processing.  But without this, some
 					// problems are not seen (e.g. "bad argument" type
 					// messages from the process).
-					BufferedReader err = new BufferedReader(
+					err = new BufferedReader(
 						new InputStreamReader(cmdProcess.getErrorStream()));
 
 					String errMsg = err.readLine();
@@ -723,6 +725,8 @@ public class PopupEditableIOPanel extends JPanel
 						// i18n[popupeditableIoPanel.executeError2=Execute Error]
 						s_stringMgr.getString("popupeditableIoPanel.executeError2"),JOptionPane.ERROR_MESSAGE);
 					return;
+				} finally {
+				    Utilities.closeReader(err);
 				}
 
 				// check for possibly bad return from child
@@ -731,7 +735,7 @@ public class PopupEditableIOPanel extends JPanel
 					// ask user before proceeding.
 					int option = JOptionPane.showConfirmDialog(this,
 							// i18n[popupeditableIoPanel.commandReturnNot0=The convention for command returns is that 0 means success, but this command returned {0}.\nDo you wish to import the file contents anyway?]
-							s_stringMgr.getString("popupeditableIoPanel.commandReturnNot0", new Integer(commandResult)),
+							s_stringMgr.getString("popupeditableIoPanel.commandReturnNot0", Integer.valueOf(commandResult)),
 
 							// i18n[popupeditableIoPanel.importWarning=Import Warning]
 							s_stringMgr.getString("popupeditableIoPanel.importWarning"), JOptionPane.YES_NO_OPTION);
@@ -867,8 +871,8 @@ public class PopupEditableIOPanel extends JPanel
 	 * One is when the user asks to export, and the other is when they
 	 * as to run an external command, which involves exporting to file first.
 	 */
-	private boolean exportData(File file, FileOutputStream outStream,
-										String canonicalFilePathName){
+	private boolean exportData(FileOutputStream outStream,
+	                           String canonicalFilePathName){
 
 		// hand file output stream to DataType object for export
 		// Also, handle File IO errors here so that DataType objects
@@ -957,7 +961,9 @@ public class PopupEditableIOPanel extends JPanel
 
 	private class WordWrapAction extends BaseAction
 	{
-		WordWrapAction()
+        private static final long serialVersionUID = 1L;
+
+        WordWrapAction()
 		{
 			// i18n[popupEditableIoPanel.wrapWord=Wrap on Word on/off]
 			super(s_stringMgr.getString("popupEditableIoPanel.wrapWord"));
@@ -974,7 +980,9 @@ public class PopupEditableIOPanel extends JPanel
 
 	private class XMLReformatAction extends BaseAction
 	{
-		XMLReformatAction()
+        private static final long serialVersionUID = 1L;
+
+        XMLReformatAction()
 		{
 			// i18n[popupEditableIoPanel.reformatXml=Reformat XML]
 			super(s_stringMgr.getString("popupEditableIoPanel.reformatXml"));

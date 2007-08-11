@@ -34,14 +34,16 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.RowNumberTableColumn;
 
 public class SortableTableModel extends AbstractTableModel
 {
-	private MyTableModelListener _actualModelLis = new MyTableModelListener();
+    private static final long serialVersionUID = -3534263285990454876L;
+
+    transient private MyTableModelListener _actualModelLis = new MyTableModelListener();
 
 	/** Column currently being sorted by. -1 means unsorted. */
 	protected int _iColumn = -1;
 
 	private boolean _bAscending;
 
-	/** The autal model that this model is wrapped around. */
+	/** The actual model that this model is wrapped around. */
 	private TableModel _actualModel;
 
 	public TableModel getActualModel()
@@ -109,7 +111,7 @@ public class SortableTableModel extends AbstractTableModel
 	{
 		if(RowNumberTableColumn.ROW_NUMBER_MODEL_INDEX == col)
 		{
-			return new Integer(row + 1);
+			return Integer.valueOf(row + 1);
 		}
 		else
 		{
@@ -146,7 +148,7 @@ public class SortableTableModel extends AbstractTableModel
 	/*
 	 * @see TableModel#getColumnClass(int)
 	 */
-	public Class getColumnClass(int col)
+	public Class<?> getColumnClass(int col)
 	{
 		return _actualModel.getColumnClass(col);
 	}
@@ -266,7 +268,7 @@ public class SortableTableModel extends AbstractTableModel
 		_indexes = new Integer[getRowCount()];
 		for (int i = 0; i < _indexes.length; ++i)
 		{
-			_indexes[i] = new Integer(i);
+			_indexes[i] = Integer.valueOf(i);
 		}
    }
 
@@ -275,7 +277,7 @@ public class SortableTableModel extends AbstractTableModel
 	 * correspond to the view not to the model. This method transforms the view index to
 	 * the model index.
 	 * @param row The view row index.
-	 * @return The model row index. -1 if no model index correspondig to row was found.
+	 * @return The model row index. -1 if no model index corresponding to row was found.
 	 */
 	public int transfromToModelRow(int row)
 	{
@@ -288,7 +290,7 @@ public class SortableTableModel extends AbstractTableModel
 	}
 
 
-	class TableModelComparator implements Comparator
+	class TableModelComparator implements Comparator<Integer>
 	{
 		private int _iColumn;
 		private int _iAscending;
@@ -328,11 +330,8 @@ public class SortableTableModel extends AbstractTableModel
 		/*
 		 * @see Comparator#compare(Object, Object)
 		 */
-		public int compare(Object o1, Object o2)
+		public int compare(final Integer i1, final Integer i2)
 		{
-			final Integer i1 = (Integer)o1;
-			final Integer i2 = (Integer)o2;
-
 			final Object data1 = _actualModel.getValueAt(i1.intValue(), _iColumn);
 			final Object data2 = _actualModel.getValueAt(i2.intValue(), _iColumn);
 			try

@@ -112,9 +112,9 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
          _nodeSquirrelMarks.add(new DefaultMutableTreeNode(defaultBookmarks[i]));
       }
 
-      for (Iterator i = _plugin.getBookmarkManager().iterator(); i.hasNext();)
+      for (Iterator<Bookmark> i = _plugin.getBookmarkManager().iterator(); i.hasNext();)
       {
-         Bookmark mark = (Bookmark) i.next();
+         Bookmark mark = i.next();
          _nodeUserMarks.add(new DefaultMutableTreeNode(mark));
       }
 
@@ -123,7 +123,7 @@ public class SQLBookmarkPreferencesController implements IGlobalPreferencesPanel
       String propDefaultMarksInPopup =
          _plugin.getBookmarkProperties().getProperty(SQLBookmarkPlugin.BOOKMARK_PROP_DEFAULT_MARKS_IN_POPUP, "" + false);
 
-      _pnlPrefs.chkSquirrelMarksInPopup.setSelected(new Boolean(propDefaultMarksInPopup).booleanValue());
+      _pnlPrefs.chkSquirrelMarksInPopup.setSelected(Boolean.valueOf(propDefaultMarksInPopup).booleanValue());
 
       _pnlPrefs.treBookmarks.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener()
       {

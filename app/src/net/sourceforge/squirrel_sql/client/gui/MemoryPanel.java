@@ -36,7 +36,9 @@ import javax.swing.Timer;
 
 public class MemoryPanel extends JPanel
 {
-	/** Internationalized strings for this class. */
+    private static final long serialVersionUID = 1L;
+
+    /** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(MemoryPanel.class);
 
@@ -44,7 +46,7 @@ public class MemoryPanel extends JPanel
 	private JProgressBar _bar;
 	private JButton _btnGarbage;
 	private JButton _btnSessionGCStatus;
-	private IApplication _app;
+	transient private IApplication _app;
 	private HashMap<IIdentifier, MemorySessionInfo> _sessionInfosBySessionIDs = 
         new HashMap<IIdentifier, MemorySessionInfo>();
 
@@ -78,7 +80,9 @@ public class MemoryPanel extends JPanel
 
 		_btnSessionGCStatus = new JButton()
 		{
-			public void paint(Graphics g)
+            private static final long serialVersionUID = 1L;
+
+            public void paint(Graphics g)
 			{
 				super.paint(g);
 //				paintNumWaitingGC(g);
@@ -218,8 +222,8 @@ public class MemoryPanel extends JPanel
 
 		Object[] params = new Long[]
 			{
-				new Long(just),
-				new Long(total)
+				Long.valueOf(just),
+				Long.valueOf(total)
 			};
 
 		// i18n[MemoryPanel.memSize={0} of {1} MB];
@@ -279,7 +283,7 @@ public class MemoryPanel extends JPanel
 		errorDialog.setVisible(true);
 	}
 
-	private static class MemorySessionInfo implements Comparable<Object>
+	private static class MemorySessionInfo implements Comparable<MemorySessionInfo>
 	{
 		MemorySessionInfo(IIdentifier sessionId, String aliasName)
 		{
@@ -327,13 +331,44 @@ public class MemoryPanel extends JPanel
 			}
 		}
 
-		public int compareTo(Object o)
+		public int compareTo(MemorySessionInfo other)
 		{
-			MemorySessionInfo other = (MemorySessionInfo) o;
-
-			return new Integer(sessionId.toString()).compareTo(new Integer(other.sessionId.toString()));
-
+			return Integer.valueOf(sessionId.toString()).compareTo(Integer.valueOf(other.sessionId.toString()));
 		}
+
+        /**
+         * @see java.lang.Object#hashCode()
+         */
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result
+                    + ((sessionId == null) ? 0 : sessionId.hashCode());
+            return result;
+        }
+
+        /**
+         * @see java.lang.Object#equals(java.lang.Object)
+         */
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            final MemorySessionInfo other = (MemorySessionInfo) obj;
+            if (sessionId == null) {
+                if (other.sessionId != null)
+                    return false;
+            } else if (!sessionId.equals(other.sessionId))
+                return false;
+            return true;
+        }
+		
+		
 	}
 
 

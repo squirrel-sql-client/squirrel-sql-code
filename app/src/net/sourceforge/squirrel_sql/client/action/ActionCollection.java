@@ -350,7 +350,7 @@ public final class ActionCollection
 				final int mnemonic = ak.getMnemonic();
 				if (mnemonic != KeyEvent.VK_UNDEFINED)
 				{
-					action.putValue(Action.MNEMONIC_KEY, new Integer(mnemonic));
+					action.putValue(Action.MNEMONIC_KEY, Integer.valueOf(mnemonic));
 				}
 			}
 		}

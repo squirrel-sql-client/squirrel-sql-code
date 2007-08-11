@@ -270,19 +270,19 @@ public class MssqlPlugin extends net.sourceforge.squirrel_sql.client.plugin.Defa
     }
     
     public String getAuthor() {
-        return new String("Ryan Walberg");
+        return "Ryan Walberg";
     }
     
     public String getDescriptiveName() {
-        return new String("Microsoft SQL Server Assistant");
+        return "Microsoft SQL Server Assistant";
     }
     
     public String getInternalName() {
-        return new String("mssql");
+        return "mssql";
     }
     
     public String getVersion() {
-        return new String("0.3");
+        return "0.3";
     }
     @SuppressWarnings("unchecked")
     private void removeActionsOfType(ActionCollection coll,java.lang.Class classType) {

@@ -30,8 +30,10 @@ import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
  */
 public class SyntaxPreferences implements Serializable, Cloneable
 {
-   public interface IPropertyNames
-   {
+    private static final long serialVersionUID = 1L;
+
+
+    public interface IPropertyNames {
 //		String BLINK_CARET = "blinkCaret";
 //		String BLOCK_CARET_ENABLED = "blockCaretEnabled";
 //		String BRACKET_HIGHLIGHTING = "bracketHighlighting";
@@ -393,10 +395,10 @@ public class SyntaxPreferences implements Serializable, Cloneable
    {
       if (_textLimitLineWidth != data)
       {
-         final Integer oldValue = new Integer(_textLimitLineWidth);
+         final Integer oldValue = Integer.valueOf(_textLimitLineWidth);
          _textLimitLineWidth = data;
          getPropertyChangeReporter().firePropertyChange(IPropertyNames.TEXT_LIMIT_LINE_WIDTH,
-            oldValue, new Integer(_textLimitLineWidth));
+            oldValue, Integer.valueOf(_textLimitLineWidth));
       }
 
    }

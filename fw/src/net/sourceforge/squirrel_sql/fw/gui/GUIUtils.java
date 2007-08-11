@@ -516,11 +516,11 @@ public class GUIUtils
                lastBreakCharIdx = i;
            }
            if (i > 0 && (i % lineLength == 0) && lastBreakCharIdx != -1) {
-               breakPoints.add(new Integer(lastBreakCharIdx));
+               breakPoints.add(Integer.valueOf(lastBreakCharIdx));
            }
        }
        if (lastBreakCharIdx != lineChars.length) {
-           breakPoints.add(new Integer(lineChars.length));
+           breakPoints.add(Integer.valueOf(lineChars.length));
        }
        int lastBreakPointIdx = 0;
        for (Iterator<Integer> iter = breakPoints.iterator(); iter.hasNext();) {

@@ -18,36 +18,28 @@ package net.sourceforge.squirrel_sql.plugins.mssql.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.sql.Connection;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.CallableStatement;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Date;
+
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.util.Date;
 
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.BaseDataSetViewerDestination;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetViewerTablePanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -69,8 +61,6 @@ public class MonitorPanel extends net.sourceforge.squirrel_sql.client.session.ma
 	 private Date _refreshDate;
 	 private JPanel _mainPanel;
 
-	 private JPanel _cpuHistory = null;
-	 private JPanel _ioHistory = null;
 	 private JSlider _frequency = null;
 
 	 private IDataSetViewer _whoViewer;
@@ -205,7 +195,7 @@ public class MonitorPanel extends net.sourceforge.squirrel_sql.client.session.ma
 								_refreshTimer.start();
 					 }
 					 // i18n[mssql.delay={0}s delay]
-					 slider.setToolTipText(s_stringMgr.getString("mssql.delay", new Integer(slider.getValue())));
+					 slider.setToolTipText(s_stringMgr.getString("mssql.delay", Integer.valueOf(slider.getValue())));
 				}
 		  });
 		  addComponentToGridBag(0,0,1,1,0.0,0.0,GridBagConstraints.BOTH,gridBag,_frequency,panel);

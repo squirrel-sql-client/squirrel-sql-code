@@ -202,9 +202,9 @@ public class ColumnDetailDialog extends JDialog {
         nullableCheckBox.setSelected(info.isNullable().equals("YES"));
         
         if (JDBCTypeMapper.isNumberType(info.getDataType())) {
-            precisionSpinner.setValue(new Integer(info.getColumnSize()));
+            precisionSpinner.setValue(Integer.valueOf(info.getColumnSize()));
         } else {
-            lengthSpinner.setValue(new Integer(info.getColumnSize()));
+            lengthSpinner.setValue(Integer.valueOf(info.getColumnSize()));
         }   
         commentTextArea.setText(info.getRemarks());
         defaultTextField.setText(info.getDefaultValue());

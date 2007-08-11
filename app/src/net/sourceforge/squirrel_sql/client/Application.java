@@ -734,10 +734,10 @@ class Application implements IApplication
 				long load = pli.getLoadTime();
 				long init = pli.getInitializeTime();
                 Object[] params = new Object[] { pli.getInternalName(),
-                                                 new Long(created),
-                                                 new Long(load),
-                                                 new Long(init),
-                                                 new Long(created + load + init)
+                                                 Long.valueOf(created),
+                                                 Long.valueOf(load),
+                                                 Long.valueOf(init),
+                                                 Long.valueOf(created + load + init)
                 };
                 String pluginLoadMsg = 
                     s_stringMgr.getString("Application.splash.loadplugintime",

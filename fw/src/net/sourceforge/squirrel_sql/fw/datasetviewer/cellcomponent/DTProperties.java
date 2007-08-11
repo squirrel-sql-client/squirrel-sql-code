@@ -59,7 +59,7 @@ import java.util.Iterator;
 public class DTProperties {
 	
 	/**
-	 * The version of the data suitible for loading/unloading from/to files.
+	 * The version of the data suitable for loading/unloading from/to files.
 	 * The internal representation is a HashMap containing HashMaps containing strings.
 	 * The XMLReader/Writer Beans in fw.xml do not handle the general case of HashMaps,
 	 * so rather than trying to handle that there, we just convert the data internally into a form
@@ -98,14 +98,16 @@ public class DTProperties {
 		// get each DataType's info
 		while (keys.hasNext()) {
 			String tableName = keys.next();
-			HashMap<String, ?> h = dataTypes.get(tableName);
+			HashMap<String, String> h = dataTypes.get(tableName);
 			Iterator<String> propertyNames = h.keySet().iterator();
 			while (propertyNames.hasNext()) {
 				String propertyName = propertyNames.next();
-				propertyList.add(
-					tableName + " " +
-					propertyName + "=" +
-					(String)h.get(propertyName));
+                StringBuilder tmp = new StringBuilder(tableName);
+                tmp.append(" ");
+                tmp.append(propertyName);
+                tmp.append("=");
+                tmp.append(h.get(propertyName));
+                propertyList.add(tmp.toString());
 			}
 		}
 

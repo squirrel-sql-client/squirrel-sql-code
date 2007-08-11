@@ -99,8 +99,8 @@ public class ResultSetColumnReaderTest extends BaseSQuirreLJUnit4TestCase {
         
         index = 1;
         expect(mockResultSet.getMetaData()).andReturn(mockResultSetMetaData).anyTimes();        
-        expect(mockResultSet.getObject(index++)).andReturn(new Boolean(true)).anyTimes();
-        expect(mockResultSet.getObject(index++)).andReturn(new Boolean(false)).anyTimes();
+        expect(mockResultSet.getObject(index++)).andReturn(Boolean.valueOf(true)).anyTimes();
+        expect(mockResultSet.getObject(index++)).andReturn(Boolean.valueOf(false)).anyTimes();
         expect(mockResultSet.getObject(index++)).andReturn(Long.valueOf(1)).anyTimes();
         expect(mockResultSet.getObject(index++)).andReturn(Short.valueOf((short)0)).anyTimes();
         expect(mockResultSet.getObject(index++)).andReturn("true").anyTimes();
@@ -151,10 +151,10 @@ public class ResultSetColumnReaderTest extends BaseSQuirreLJUnit4TestCase {
         
         index = 1;
         expect(mockResultSet.getMetaData()).andReturn(mockResultSetMetaData).anyTimes();        
-        expect(mockResultSet.getObject(index++)).andReturn(new Long(123)).anyTimes();
-        expect(mockResultSet.getObject(index++)).andReturn(new Integer(345)).anyTimes();
-        expect(mockResultSet.getObject(index++)).andReturn(new Float(123.5)).anyTimes();
-        expect(mockResultSet.getObject(index++)).andReturn(new Short((short)127)).anyTimes();
+        expect(mockResultSet.getObject(index++)).andReturn(Long.valueOf(123)).anyTimes();
+        expect(mockResultSet.getObject(index++)).andReturn(Integer.valueOf(345)).anyTimes();
+        expect(mockResultSet.getObject(index++)).andReturn(Float.valueOf((float)123.5)).anyTimes();
+        expect(mockResultSet.getObject(index++)).andReturn(Short.valueOf((short)127)).anyTimes();
         expect(mockResultSet.getObject(index++)).andReturn("567").anyTimes();
         expect(mockResultSet.getObject(index++)).andReturn("789").anyTimes();
         
@@ -196,10 +196,10 @@ public class ResultSetColumnReaderTest extends BaseSQuirreLJUnit4TestCase {
         
         index = 1;
         expect(mockResultSet.getMetaData()).andReturn(mockResultSetMetaData).anyTimes();        
-        expect(mockResultSet.getObject(index++)).andReturn(new Long(123)).anyTimes();
-        expect(mockResultSet.getObject(index++)).andReturn(new Integer(345)).anyTimes();
+        expect(mockResultSet.getObject(index++)).andReturn(Long.valueOf(123)).anyTimes();
+        expect(mockResultSet.getObject(index++)).andReturn(Integer.valueOf(345)).anyTimes();
         expect(mockResultSet.getObject(index++)).andReturn("123").anyTimes();
-        expect(mockResultSet.getObject(index++)).andReturn(new Short((short)127)).anyTimes();
+        expect(mockResultSet.getObject(index++)).andReturn(Short.valueOf((short)127)).anyTimes();
         expect(mockResultSet.getObject(index++)).andReturn("567").anyTimes();
         expect(mockResultSet.getObject(index++)).andReturn("789").anyTimes();
         expect(mockResultSet.getObject(index++)).andReturn("true").anyTimes();

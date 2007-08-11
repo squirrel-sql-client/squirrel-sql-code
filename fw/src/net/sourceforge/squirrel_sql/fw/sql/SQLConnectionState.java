@@ -56,7 +56,7 @@ public class SQLConnectionState
 
 		try
 		{
-			_transIsolation = new Integer(conn.getTransactionIsolation());
+			_transIsolation = Integer.valueOf(conn.getTransactionIsolation());
 		}
 		catch (SQLException ex)
 		{

@@ -40,9 +40,9 @@ public class ProxyMethodManager {
         String key = className + "." + methodName;
         if (methodsCalled.containsKey(key)) {
             Long count = methodsCalled.get(key);
-            methodsCalled.put(key, new Long(count.longValue() + 1));
+            methodsCalled.put(key, Long.valueOf(count.longValue() + 1));
         } else {
-            methodsCalled.put(key, new Long(1));
+            methodsCalled.put(key, Long.valueOf(1));
         }
         if (_props.containsKey(key)) {
             String info = (String)_props.get(key);

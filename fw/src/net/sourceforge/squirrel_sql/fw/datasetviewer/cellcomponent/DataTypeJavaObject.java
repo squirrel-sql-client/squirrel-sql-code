@@ -316,7 +316,6 @@ public class DataTypeJavaObject
 	 private class KeyTextHandler extends KeyAdapter {
 		// special handling of operations while editing Strings
 		public void keyTyped(KeyEvent e) {
-			char c = e.getKeyChar();
 
 			// as a coding convenience, create a reference to the text component
 			// that is typecast to JTextComponent.  this is not essential, as we
@@ -350,27 +349,27 @@ public class DataTypeJavaObject
 			// the class (at least under PostgreSQL).
 			//row[i] = _rs.getObject(index);
 			//data = rs.getString(index);
-                        try{
-                          Object value = rs.getObject(index);
-                          if(value==null
-                             || value instanceof Number
-                             || value instanceof String
-                             || value instanceof java.util.Date
-                             || value instanceof java.net.URL
-                              ){
-                             data=value+"";
-                          }
-                        }catch(Exception e){
-                        }
-                        if(data==null){
-                          data = s_stringMgr.getString("DataTypeUnknown.unknown",
-                              new Object[] {new Integer(_colDef.getSqlType())} );
-                        }
+		    try{
+		        Object value = rs.getObject(index);
+		        if(value==null
+		                || value instanceof Number
+		                || value instanceof String
+		                || value instanceof java.util.Date
+		                || value instanceof java.net.URL
+		        ){
+		            data=value+"";
+		        }
+		    }catch(Exception e){
+		    }
+		    if(data==null){
+		        data = s_stringMgr.getString("DataTypeUnknown.unknown",
+		                Integer.valueOf(_colDef.getSqlType()));
+		    }
 		}
 		else
 		{
                   data = s_stringMgr.getString("DataTypeUnknown.unknown",
-                                               new Object[] {new Integer(_colDef.getSqlType())} );
+                                               Integer.valueOf(_colDef.getSqlType()));
 		}
 
 		if (rs.wasNull())
@@ -581,7 +580,9 @@ public class DataTypeJavaObject
 	  * method to save the data when the user is happy with it.
 	  */
 	 private static class SQLJavaObjectOkJPanel extends OkJPanel {
-		/*
+
+	    private static final long serialVersionUID = 1353928067985854545L;
+        /*
 		 * GUI components - need to be here because they need to be
 		 * accessible from the event handlers to alter each other's state.
 		 */
@@ -618,7 +619,7 @@ public class DataTypeJavaObject
 			_readSQLJavaObject = _showSQLJavaObjectChk.isSelected();
 			DTProperties.put(
 				thisClassName,
-				"readSQLJavaObject", new Boolean(_readSQLJavaObject).toString());
+				"readSQLJavaObject", Boolean.valueOf(_readSQLJavaObject).toString());
 		}
 
 	 } // end of inner class

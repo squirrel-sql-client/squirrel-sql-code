@@ -1197,10 +1197,12 @@ public class SQLResultExecuterPanel extends JPanel
         {
             final NumberFormat nbrFmt = NumberFormat.getNumberInstance();
 
-            Object[] args = new Object[] {new Integer(statementCount),
-                    nbrFmt.format(totalLength),
-                    nbrFmt.format(executionLength),
-                    nbrFmt.format(outputLength)};
+            Object[] args = new Object[] {
+                Integer.valueOf(statementCount),
+                nbrFmt.format(totalLength),
+                nbrFmt.format(executionLength),
+                nbrFmt.format(outputLength)
+            };
 
             //i18n[SQLResultExecuterPanel.scriptQueryStatistics=Executed {0} 
             //queries; elapsed time (seconds) - Total: {1}, SQL query: {2}, 
@@ -1233,11 +1235,13 @@ public class SQLResultExecuterPanel extends JPanel
         {
             final NumberFormat nbrFmt = NumberFormat.getNumberInstance();
 
-            Object[] args = new Object[] {new Integer(processedStatementCount),
-                    new Integer(statementCount),
+            Object[] args = new Object[] {
+                    Integer.valueOf(processedStatementCount),
+                    Integer.valueOf(statementCount),
                     nbrFmt.format(totalLength),
                     nbrFmt.format(executionLength),
-                    nbrFmt.format(outputLength)};
+                    nbrFmt.format(outputLength)
+            };
 
             //i18n[SQLResultExecuterPanel.queryStatistics=Query {0} of {1} 
             //elapsed time (seconds) - Total: {2}, SQL query: {3}, 
@@ -1263,7 +1267,7 @@ public class SQLResultExecuterPanel extends JPanel
 		public void sqlDataUpdated(int updateCount)
 		{
             
-            Integer count = new Integer(updateCount);
+            Integer count = Integer.valueOf(updateCount);
             String msg = "";
             
             switch (sqlType) {

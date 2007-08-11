@@ -70,16 +70,16 @@ public class MainPanel extends JPanel
 	private static final ILogger s_log = LoggerController.createLogger(MainPanel.class);
 
 	/** Current session. */
-	private ISession _session;
+	transient private ISession _session;
 
 	/** The tabbed pane. */
 	private final JTabbedPane _tabPnl = UIFactory.getInstance().createTabbedPane();
 
 	/** Listener to the sessions properties. */
-	private PropertyChangeListener _propsListener;
+	transient private PropertyChangeListener _propsListener;
 
 	/** Listener for changes to the tabbed panel. */
-	private ChangeListener _tabPnlListener;
+	transient private ChangeListener _tabPnlListener;
 
 	/**
 	 * Collection of <TT>IMainPanelTab</TT> objects displayed in
@@ -108,8 +108,8 @@ public class MainPanel extends JPanel
 
 		_session = session;
 
-		addMainPanelTab(new ObjectTreeTab(), new Integer('O'));
-		addMainPanelTab(new SQLTab(_session), new Integer('Q'));
+		addMainPanelTab(new ObjectTreeTab(), Integer.valueOf('O'));
+		addMainPanelTab(new SQLTab(_session), Integer.valueOf('Q'));
 
 		add(_tabPnl, BorderLayout.CENTER);
 
