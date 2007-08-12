@@ -1,24 +1,30 @@
 package net.sourceforge.squirrel_sql.client.session.schemainfo;
 
-import net.sourceforge.squirrel_sql.fw.sql.*;
+import java.sql.DatabaseMetaData;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.client.gui.session.BaseSessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecutionInfo;
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
-
-import javax.swing.*;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-import java.sql.DatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ProcedureInfo;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 
 
 /**
  * This class tries to update SchemaInfo after standard CREATE/ALTER statements.
- * This way Syntax higlightning and code completion are available just after
+ * This way Syntax highlighting and code completion are available just after
  * CREATE/ALTER statements were send to the DB.
  */
 public class SchemaInfoUpdateCheck
@@ -49,14 +55,13 @@ public class SchemaInfoUpdateCheck
    private static final Pattern PATTERN_DROP_FUNCTION = Pattern.compile("DROP\\s+FUNCTION\\s+([A-Z0-9_\\.\"]+)");
 
 
-   private HashMap _updateDatabaseObjectInfos = new HashMap();
-   private HashMap _dropTableSimpleNames = new HashMap();
-   private HashMap _dropProcedureSimpleNames = new HashMap();
-
+   private Set<IDatabaseObjectInfo> _updateDatabaseObjectInfos = 
+       new HashSet<IDatabaseObjectInfo>();
+   private Set<String> _dropTableSimpleNames = new HashSet<String>();
+   private Set<String> _dropProcedureSimpleNames = new HashSet<String>();
 
    private ISession _session;
    private SQLDatabaseMetaData _dmd;
-
 
    public SchemaInfoUpdateCheck(ISession session)
    {
@@ -74,26 +79,26 @@ public class SchemaInfoUpdateCheck
       TableInfo[] tis = getTableInfos(exInfo.getSQL());
       for (int i = 0; i < tis.length; i++)
       {
-         _updateDatabaseObjectInfos.put(tis[i], tis[i]);
+         _updateDatabaseObjectInfos.add(tis[i]);
       }
 
 
       ProcedureInfo[] pi = getProcedureInfos(exInfo.getSQL());
       for (int i = 0; i < pi.length; i++)
       {
-         _updateDatabaseObjectInfos.put(pi[i], pi[i]);
+         _updateDatabaseObjectInfos.add(pi[i]);
       }
 
       String dtsn = getDropTableSimpleName(exInfo.getSQL());
       if(null != dtsn)
       {
-         _dropTableSimpleNames.put(dtsn, dtsn);
+         _dropTableSimpleNames.add(dtsn);
       }
 
       String dpsn = getDropProcedureSimpleName(exInfo.getSQL());
       if(null != dpsn)
       {
-         _dropProcedureSimpleNames.put(dpsn, dpsn);
+         _dropProcedureSimpleNames.add(dpsn);
       }
    }
 
@@ -161,24 +166,17 @@ public class SchemaInfoUpdateCheck
       }
       else
       {
-         for(Iterator i = _updateDatabaseObjectInfos.keySet().iterator(); i.hasNext();)
-         {
-            IDatabaseObjectInfo doi = (IDatabaseObjectInfo) i.next();
-            _session.getSchemaInfo().reload(doi);
-         }
+          for (IDatabaseObjectInfo doi : _updateDatabaseObjectInfos) {
+              _session.getSchemaInfo().reload(doi);
+          }
 
-         for(Iterator i = _dropTableSimpleNames.keySet().iterator(); i.hasNext();)
-         {
-            String simpleTableName = (String) i.next();
-            _session.getSchemaInfo().refershCacheForSimpleTableName(simpleTableName);
+         for (String simpleTableName : _dropTableSimpleNames) {
+             _session.getSchemaInfo().refershCacheForSimpleTableName(simpleTableName);
          }
-
-         for(Iterator i = _dropProcedureSimpleNames.keySet().iterator(); i.hasNext();)
-         {
-            String simpleProcName = (String) i.next();
-            _session.getSchemaInfo().refreshCacheForSimpleProcedureName(simpleProcName);
+         
+         for (String simpleProcName : _dropProcedureSimpleNames) {
+             _session.getSchemaInfo().refreshCacheForSimpleProcedureName(simpleProcName);
          }
-
       }
 
       if(0 < _updateDatabaseObjectInfos.size()  + _dropTableSimpleNames.size() + _dropProcedureSimpleNames.size())
