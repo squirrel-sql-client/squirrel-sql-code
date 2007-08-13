@@ -9,4 +9,6 @@ public interface IHQLTabController
    void addToToolbar(AbstractAction action);
 
    void displaySqls(ArrayList<String> sqls);
+
+   IHibernateConnectionProvider getHibernateConnectionProvider();
 }

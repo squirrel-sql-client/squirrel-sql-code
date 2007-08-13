@@ -5,7 +5,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.util.prefs.Preferences;
 
 public class HQLTabPanel extends JPanel
@@ -16,14 +15,16 @@ public class HQLTabPanel extends JPanel
    private static final String PERF_KEY_HQL_TAB_DIVIDER_LOCATION = "Squirrel.hibernateplugin.hqlTabDivLoc";
 
 
-   JSplitPane split;
    JComboBox cboConfigurations;
    JToggleButton btnConnected;
+
+   private JSplitPane _splitHqlSql;
    private JPanel _toolbar;
    private int _curXOfToolbar;
+   private JTabbedPane _tabObjectsHql;
 
 
-   public HQLTabPanel(JComponent hqlTextComp, JComponent sqlTextComp)
+   public HQLTabPanel(JComponent mappedObjectComp, JComponent hqlTextComp, JComponent sqlTextComp)
    {
       setLayout(new GridBagLayout());
 
@@ -33,17 +34,28 @@ public class HQLTabPanel extends JPanel
       _toolbar = createToolbar();
       add(_toolbar, gbc);
 
+      _splitHqlSql = new JSplitPane(JSplitPane.VERTICAL_SPLIT, hqlTextComp, sqlTextComp);
 
-      split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, hqlTextComp, sqlTextComp);
+      _tabObjectsHql = new JTabbedPane();
+
+      // i18n[HQLTabPanel.mappedObjects=Mapped objects]
+      _tabObjectsHql.add(s_stringMgr.getString("HQLTabPanel.mappedObjects"), mappedObjectComp);
+
+      // i18n[HQLTabPanel.hql=HQL]
+      _tabObjectsHql.add(s_stringMgr.getString("HQLTabPanel.hql"), _splitHqlSql);
+
+
+
+
       gbc = new GridBagConstraints(0,1,1,1,1,1,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0 );
-      add(split, gbc);
+      add(_tabObjectsHql, gbc);
 
 
       SwingUtilities.invokeLater(new Runnable()
       {
          public void run()
          {
-            split.setDividerLocation(Preferences.userRoot().getDouble(PERF_KEY_HQL_TAB_DIVIDER_LOCATION, 0.5));
+            _splitHqlSql.setDividerLocation(Preferences.userRoot().getDouble(PERF_KEY_HQL_TAB_DIVIDER_LOCATION, 0.5));
          }
       });
 
@@ -52,7 +64,7 @@ public class HQLTabPanel extends JPanel
 
    public void closing()
    {
-      Preferences.userRoot().putDouble(PERF_KEY_HQL_TAB_DIVIDER_LOCATION, ((double)split.getDividerLocation())/ ((double)split.getHeight()) );
+      Preferences.userRoot().putDouble(PERF_KEY_HQL_TAB_DIVIDER_LOCATION, ((double) _splitHqlSql.getDividerLocation())/ ((double) _splitHqlSql.getHeight()) );
    }
 
 

@@ -19,10 +19,13 @@ public class EntryPanelManagerBase
    private ISQLEntryPanel _entry;
    private JComponent _component;
 
-   public EntryPanelManagerBase(ISession session, ISyntaxHighlightTokenMatcherFactory syntaxHighlightTokenMatcherFactory)
+   public EntryPanelManagerBase(ISession session)
    {
       _session = session;
+   }
 
+   public void init(ISyntaxHighlightTokenMatcherFactory syntaxHighlightTokenMatcherFactory)
+   {
       HashMap props = new HashMap();
       props.put(IParserEventsProcessorFactory.class.getName(), null);
 
@@ -59,21 +62,31 @@ public class EntryPanelManagerBase
 
          _entry.setUndoManager(undoManager);
       }
-
    }
 
    public JComponent getComponent()
    {
+      checkInit();
       return _component;
+   }
+
+   private void checkInit()
+   {
+      if(null == _component)
+      {
+         throw new IllegalStateException("Call init() before using this object");
+      }
    }
 
    public ISQLEntryPanel getEntryPanel()
    {
+      checkInit();
       return _entry;
    }
 
    public void requestFocus()
    {
+      checkInit();
       _entry.requestFocus();
    }
 
