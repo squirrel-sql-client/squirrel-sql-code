@@ -5,6 +5,8 @@ import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -17,20 +19,19 @@ public class HQLPanelController
    private static final StringManager s_stringMgr =
       StringManagerFactory.getStringManager(HQLPanelController.class);
 
+   private static ILogger s_log = LoggerController.createLogger(HQLPanelController.class);
 
    private IHQLTabController _hqlTabController;
    private ISession _sess;
-   private HibernatePluginResources _resource;
    private HibernateConnection _con;
    private AbstractAction _convertToSQL;
    private IHqlEntryPanelManager _hqlEntryPanelManager;
 
-   public HQLPanelController(IHqlEntryPanelManager hqlEntryPanelManager, IHQLTabController hqlTabController, ISession sess, HibernatePluginResources resource)
+   public HQLPanelController(IHqlEntryPanelManager hqlEntryPanelManager, IHQLTabController hqlTabController, ISession sess)
    {
       _hqlEntryPanelManager = hqlEntryPanelManager;
       _hqlTabController = hqlTabController;
       _sess = sess;
-      _resource = resource;
 
       _convertToSQL = new AbstractAction()
       {
@@ -85,6 +86,14 @@ public class HQLPanelController
                ExceptionFormatter formatter = _sess.getExceptionFormatter();
                String message = formatter.format(t);
                _sess.showErrorMessage(message);
+
+               if(_sess.getProperties().getWriteSQLErrorsToLog() ||
+                  (-1 == t.getClass().getName().toLowerCase().indexOf("hibernate") && -1 == t.getClass().getName().toLowerCase().indexOf("antlr")))
+               {
+                  // If this is not a hibernate error we write a log entry
+                  s_log.error(t);
+               }
+
                return;
             }
 
