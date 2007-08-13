@@ -1,34 +1,34 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISyntaxHighlightTokenMatcherFactory;
-import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessorFactory;
-import net.sourceforge.squirrel_sql.client.session.action.RedoAction;
-import net.sourceforge.squirrel_sql.client.session.action.UndoAction;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.SquirrelDefaultUndoManager;
-import net.sourceforge.squirrel_sql.fw.util.Resources;
+import net.sourceforge.squirrel_sql.client.session.ISyntaxHighlightTokenMatcher;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.hibernate.completion.HQLCompleteCodeAction;
 
 import javax.swing.*;
-import javax.swing.text.JTextComponent;
-import java.util.Properties;
-import java.util.HashMap;
 import java.awt.event.ActionEvent;
 
-public class HQLEntryPanelManager extends EntryPanelManagerBase implements IHqlEntryPanelManager
+public class HQLEntryPanelManager extends EntryPanelManagerBase
 {
 
    private static final StringManager s_stringMgr =
       StringManagerFactory.getStringManager(HQLEntryPanelManager.class);
 
+   private HqlSyntaxHighlightTokenMatcherProxy _hqlSyntaxHighlightTokenMatcherProxy = new HqlSyntaxHighlightTokenMatcherProxy();
+   private HibernatePluginResources _resources;
+   private IHibernateConnectionProvider _connectionProvider;
 
-   public HQLEntryPanelManager(ISession session, ISyntaxHighlightTokenMatcherFactory syntaxHighlightTokenMatcherFactory)
+
+   public HQLEntryPanelManager(ISession session, HibernatePluginResources resources, IHibernateConnectionProvider connectionProvider)
    {
-      super(session, syntaxHighlightTokenMatcherFactory);
+      super(session);
+      _connectionProvider = connectionProvider;
+
+      init(createSyntaxHighlightTokenMatcherFactory());
+
+      _resources = resources;
 
       // i18n[HQLEntryPanelManager,quoteHQL=Quote HQL]
       AbstractAction quoteHql = new AbstractAction(s_stringMgr.getString("HQLEntryPanelManager,quoteHQL"))
@@ -61,8 +61,32 @@ public class HQLEntryPanelManager extends EntryPanelManagerBase implements IHqlE
       addToSQLEntryAreaMenu(unquoteHql);
 
 
+      initCodeCompletion();
+   }
+
+
+   private void initCodeCompletion()
+   {
+      HQLCompleteCodeAction hcca = new HQLCompleteCodeAction(getSession().getApplication(), _resources, this, _connectionProvider, _hqlSyntaxHighlightTokenMatcherProxy);
+      JMenuItem item = addToSQLEntryAreaMenu(hcca);
+      _resources.configureMenuItem(hcca, item);
+      registerKeyboardAction(hcca, _resources.getKeyStroke(hcca));
+   }
+
+
+   private ISyntaxHighlightTokenMatcherFactory createSyntaxHighlightTokenMatcherFactory()
+   {
+      return new ISyntaxHighlightTokenMatcherFactory()
+      {
+         public ISyntaxHighlightTokenMatcher getSyntaxHighlightTokenMatcher(ISession sess, JEditorPane editorPane)
+         {
+            _hqlSyntaxHighlightTokenMatcherProxy.setEditorPane(editorPane);
+            return _hqlSyntaxHighlightTokenMatcherProxy;
+         }
+      };
 
    }
+
 
    private void onUnquoteHQL()
    {

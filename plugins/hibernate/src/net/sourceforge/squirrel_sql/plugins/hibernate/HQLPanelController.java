@@ -1,17 +1,17 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
+import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.*;
 import java.util.ArrayList;
 
 public class HQLPanelController
@@ -25,14 +25,19 @@ public class HQLPanelController
    private ISession _sess;
    private HibernateConnection _con;
    private AbstractAction _convertToSQL;
-   private IHqlEntryPanelManager _hqlEntryPanelManager;
+   private HQLEntryPanelManager _hqlEntryPanelManager;
 
-   public HQLPanelController(IHqlEntryPanelManager hqlEntryPanelManager, IHQLTabController hqlTabController, ISession sess)
+   public HQLPanelController(IHQLTabController hqlTabController, ISession sess, HibernatePluginResources resource)
    {
-      _hqlEntryPanelManager = hqlEntryPanelManager;
       _hqlTabController = hqlTabController;
       _sess = sess;
 
+      _hqlEntryPanelManager = new HQLEntryPanelManager(_sess, resource, hqlTabController.getHibernateConnectionProvider());
+
+   }
+
+   void initActions()
+   {
       _convertToSQL = new AbstractAction()
       {
          public void actionPerformed(ActionEvent e)
@@ -52,9 +57,9 @@ public class HQLPanelController
       _hqlTabController.addToToolbar(_convertToSQL);
 
       KeyStroke ctrlEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, Event.CTRL_MASK);
-      hqlEntryPanelManager.registerKeyboardAction(_convertToSQL, ctrlEnter);
-
+      _hqlEntryPanelManager.registerKeyboardAction(_convertToSQL, ctrlEnter);
    }
+
 
    private void onConvertToSQL()
    {
@@ -124,5 +129,15 @@ public class HQLPanelController
       {
          _convertToSQL.setEnabled(true);
       }
+   }
+
+   public JComponent getComponent()
+   {
+      return _hqlEntryPanelManager.getComponent();
+   }
+
+   public void requestFocus()
+   {
+      _hqlEntryPanelManager.requestFocus();
    }
 }

@@ -1,18 +1,17 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.completion;
 
+import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
-import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.fw.completion.CompletionCandidates;
+import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 import net.sourceforge.squirrel_sql.fw.completion.Completor;
 import net.sourceforge.squirrel_sql.fw.completion.CompletorListener;
-import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
-import net.sourceforge.squirrel_sql.fw.completion.CompletionCandidates;
-import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePlugin;
-import net.sourceforge.squirrel_sql.plugins.hibernate.IHibernateConnectionProvider;
-import net.sourceforge.squirrel_sql.plugins.hibernate.HqlSyntaxHighlightTokenMatcherProxy;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HQLEntryPanelManager;
+import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePluginResources;
+import net.sourceforge.squirrel_sql.plugins.hibernate.HqlSyntaxHighlightTokenMatcherProxy;
+import net.sourceforge.squirrel_sql.plugins.hibernate.IHibernateConnectionProvider;
 
-import javax.swing.text.JTextComponent;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -26,12 +25,12 @@ public class HQLCompleteCodeAction extends SquirrelAction
 
 
    public HQLCompleteCodeAction(IApplication app,
-                                HibernatePlugin plugin,
+                                HibernatePluginResources resources,
                                 HQLEntryPanelManager hqlEntryPanelManager,
                                 IHibernateConnectionProvider hibernateConnectionProvider,
                                 HqlSyntaxHighlightTokenMatcherProxy hqlSyntaxHighlightTokenMatcherProxy)
 	{
-		super(app, plugin.getResources());
+		super(app, resources);
 		_hqlEntryPanel = hqlEntryPanelManager.getEntryPanel();
       _hibernateConnectionProvider = hibernateConnectionProvider;
 

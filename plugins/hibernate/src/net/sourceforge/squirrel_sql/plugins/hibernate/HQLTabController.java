@@ -2,8 +2,6 @@ package net.sourceforge.squirrel_sql.plugins.hibernate;
 
 import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesSheet;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.ISyntaxHighlightTokenMatcherFactory;
-import net.sourceforge.squirrel_sql.client.session.ISyntaxHighlightTokenMatcher;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.IMainPanelTab;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -14,6 +12,7 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateConfiguration;
 import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateController;
 import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernatePanel;
+import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedObjectPanelManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -42,10 +41,9 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
    private HibnerateConnector _hibnerateConnector;
    private HibernatePluginResources _resource;
    private HQLPanelController _hqlPanelController;
-   private HQLEntryPanelManager _hqlEntrPanelManager;
    private ArrayList<ConnectionListener> _listeners = new ArrayList<ConnectionListener>();
    private SQLPanelManager _sqlPanelManager;
-   private HqlSyntaxHighlightTokenMatcherProxy _hqlSyntaxHighlightTokenMatcherProxy = new HqlSyntaxHighlightTokenMatcherProxy();
+   private MappedObjectPanelManager _mappedObjectsPanelManager;
 
    public HQLTabController(ISession session, HibernatePlugin plugin, HibernatePluginResources resource)
    {
@@ -54,12 +52,14 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
       {
          _session = session;
          _plugin = plugin;
-         _hqlEntrPanelManager = new HQLEntryPanelManager(_session, createSyntaxHighlightTokenMatcherFactory());
+
+         _hqlPanelController = new HQLPanelController(this, _session, resource);
          _sqlPanelManager = new SQLPanelManager(_session);
-         _panel = new HQLTabPanel(_hqlEntrPanelManager.getComponent(), _sqlPanelManager.getComponent());
+         _mappedObjectsPanelManager = new MappedObjectPanelManager(this, _session); 
+
+         _panel = new HQLTabPanel(_mappedObjectsPanelManager.getComponent(), _hqlPanelController.getComponent(), _sqlPanelManager.getComponent());
          _panel.btnConnected.setIcon(resource.getIcon(HibernatePluginResources.IKeys.DISCONNECTED_IMAGE));
 
-         _hqlPanelController = new HQLPanelController(_hqlEntrPanelManager, this, _session);
 
          _hibnerateConnector = new HibnerateConnector(new HibnerateConnectorListener()
          {
@@ -86,6 +86,8 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
 
          loadConfigsFromXml();
 
+         _hqlPanelController.initActions();
+
       }
       catch (Exception e)
       {
@@ -93,18 +95,6 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
       }
    }
 
-   private ISyntaxHighlightTokenMatcherFactory createSyntaxHighlightTokenMatcherFactory()
-   {
-      return new ISyntaxHighlightTokenMatcherFactory()
-      {
-         public ISyntaxHighlightTokenMatcher getSyntaxHighlightTokenMatcher(ISession sess, JEditorPane editorPane)
-         {
-            _hqlSyntaxHighlightTokenMatcherProxy.setEditorPane(editorPane);
-            return _hqlSyntaxHighlightTokenMatcherProxy;
-         }
-      };
-
-   }
 
    private void loadConfigsFromXml()
       throws IOException, XMLException
@@ -212,13 +202,13 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
 
    public String getTitle()
    {
-      // i18n[HQLTabController.title=HQL]
+      // i18n[HQLTabController.title=Hibernate]
       return s_stringMgr.getString("HQLTabController.title");
    }
 
    public String getHint()
    {
-      // i18n[HQLTabController.hint=Support for Hibernate HQL Queries]
+      // i18n[HQLTabController.hint=Support for Hibernate]
       return s_stringMgr.getString("HQLTabController.hint");
    }
 
@@ -244,7 +234,7 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
 
    public void select()
    {
-      _hqlEntrPanelManager.requestFocus();   
+      _hqlPanelController.requestFocus();   
    }
 
    public void setSession(ISession session)
@@ -260,6 +250,11 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
    public void displaySqls(ArrayList<String> sqls)
    {
       _sqlPanelManager.displaySqls(sqls);
+   }
+
+   public IHibernateConnectionProvider getHibernateConnectionProvider()
+   {
+      return this;
    }
 
    public void sessionEnding()
@@ -281,12 +276,6 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
    }
 
 
-   public HQLEntryPanelManager getHqlEntrPanelManager()
-   {
-      return _hqlEntrPanelManager;
-   }
-
-
    public HibernateConnection getHibernateConnection()
    {
       return _con;
@@ -297,8 +286,4 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
       _listeners.add(connectionListener);
    }
 
-   public HqlSyntaxHighlightTokenMatcherProxy getHqlSyntaxHighlightTokenMatcherProxy()
-   {
-      return _hqlSyntaxHighlightTokenMatcherProxy;
-   }
 }
