@@ -211,6 +211,14 @@
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/h2/dist/h2"/>
 		</pack>				
 
+		<pack required="no" preselected="no" name="Optional Plugin - Hibernate ">
+			<description>This optional plugin adds development support for Hibernate applications  </description>
+			<file targetdir="$INSTALL_PATH/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/hibernate/dist/hibernate.jar"/>
+			<file targetdir="$INSTALL_PATH/plugins" 
+				  src="../../squirrel-sql-dist/squirrel-sql/plugins/hibernate/dist/hibernate"/>
+		</pack>				
+		
 		<pack required="no" preselected="no" name="Optional Plugin - Informix ">
 			<description>This optional plugin adds functionality that is specific to the Informix DBMS  </description>
 			<file targetdir="$INSTALL_PATH/plugins" 
