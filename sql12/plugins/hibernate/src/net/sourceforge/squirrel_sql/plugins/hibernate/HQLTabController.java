@@ -59,7 +59,7 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
          _panel = new HQLTabPanel(_hqlEntrPanelManager.getComponent(), _sqlPanelManager.getComponent());
          _panel.btnConnected.setIcon(resource.getIcon(HibernatePluginResources.IKeys.DISCONNECTED_IMAGE));
 
-         _hqlPanelController = new HQLPanelController(_hqlEntrPanelManager, this, _session, _resource);
+         _hqlPanelController = new HQLPanelController(_hqlEntrPanelManager, this, _session);
 
          _hibnerateConnector = new HibnerateConnector(new HibnerateConnectorListener()
          {
