@@ -20,6 +20,7 @@ public final class HibernatePluginResources extends PluginResources
 
 		String HQL_IMAGE = "hql";
 		String HIBERNATE_IMAGE = "hibernate";
+		String PROPERTY_IMAGE = "property";
 	}
 
 }

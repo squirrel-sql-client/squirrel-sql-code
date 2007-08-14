@@ -74,7 +74,7 @@ public class MappedClassInfo extends CompletionInfo
 
       for (PropertyInfo propertyInfo : _propertyInfos)
       {
-         if(/*1 < parser.size() && */propertyInfo.matchesUnQualified(parser))
+         if(propertyInfo.matchesUnQualified(parser))
          {
             ret.add(propertyInfo);
          }
@@ -125,5 +125,10 @@ public class MappedClassInfo extends CompletionInfo
       return null;
 
 
+   }
+
+   public PropertyInfo[] getAttributes()
+   {
+      return _propertyInfos;
    }
 }

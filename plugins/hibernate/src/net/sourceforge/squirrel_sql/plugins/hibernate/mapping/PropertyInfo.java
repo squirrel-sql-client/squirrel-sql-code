@@ -52,4 +52,9 @@ public class PropertyInfo  extends CompletionInfo
    {
       return _hibernatePropertyInfo.getClassName();
    }
+
+   public HibernatePropertyInfo getHibernatePropertyInfo()
+   {
+      return _hibernatePropertyInfo;
+   }
 }
