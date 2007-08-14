@@ -23,7 +23,9 @@ import java.io.Serializable;
 
 public class PropertyChangeReporter implements Serializable
 {
-	private boolean _notify = true;
+    private static final long serialVersionUID = 1L;
+
+    private boolean _notify = true;
 	private Object _srcBean;
 	private PropertyChangeSupport _propChgNotifier;
 
