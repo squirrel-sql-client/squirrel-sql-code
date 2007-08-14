@@ -14,6 +14,7 @@ public class HibernateConnection
    private static ILogger s_log = LoggerController.createLogger(HibernateConnection.class);
    private Object _sessionFactoryImpl;
    private URLClassLoader _cl;
+   private ArrayList<MappedClassInfo> _mappedClassInfos;
 
 
    public HibernateConnection(Object sessionFactoryImpl, URLClassLoader cl)
@@ -71,14 +72,26 @@ public class HibernateConnection
       }
       _sessionFactoryImpl = null;
       _cl = null;
+      _mappedClassInfos = null;
       System.gc();
 
    }
 
    public ArrayList<MappedClassInfo> getMappedClassInfos()
    {
+      initMappedClassInfos();
+      return _mappedClassInfos;
+   }
 
-      ArrayList<MappedClassInfo> ret = new ArrayList<MappedClassInfo>();
+   private void initMappedClassInfos()
+   {
+      if(null != _mappedClassInfos)
+      {
+         return;
+      }
+
+
+      _mappedClassInfos = new ArrayList<MappedClassInfo>();
 
       ReflectionCaller sessionFactoryImplcaller = new ReflectionCaller(_sessionFactoryImpl);
       Collection<ReflectionCaller> persisters = sessionFactoryImplcaller.callMethod("getAllClassMetadata").callCollectionMethod("values");
@@ -128,9 +141,7 @@ public class HibernateConnection
             }
          }
 
-         ret.add(new MappedClassInfo(mappedClass.getName(), identifierPropInfo, infos));
+         _mappedClassInfos.add(new MappedClassInfo(mappedClass.getName(), identifierPropInfo, infos));
       }
-
-      return ret;
    }
 }
