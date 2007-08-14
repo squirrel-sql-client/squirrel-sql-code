@@ -142,8 +142,14 @@ public class DatabaseObjectType implements IHasIdentifier, Serializable
     */
    public final static DatabaseObjectType UDT_TYPE_DBO = DatabaseObjectType.createNewDatabaseObjectType("UDT Type");
 
+   /** User defined function. */
+   public final static DatabaseObjectType UDF = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.udf"));
 
-
+   /**
+    * Database object type for a "UDF Type" node in the object tree. There is only one
+    * node of this type in the object tree and it says "UDF".
+    */
+   public final static DatabaseObjectType UDF_TYPE_DBO = DatabaseObjectType.createNewDatabaseObjectType("UDF Type");
 
    /** A database user. */
    public final static DatabaseObjectType USER = createNewDatabaseObjectType(s_stringMgr.getString("DatabaseObjectType.user"));

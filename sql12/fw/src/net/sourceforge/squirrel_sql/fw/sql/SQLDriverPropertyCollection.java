@@ -17,6 +17,7 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.io.Serializable;
 import java.sql.DriverPropertyInfo;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +29,11 @@ import java.util.TreeMap;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public class SQLDriverPropertyCollection
+public class SQLDriverPropertyCollection implements Serializable
 {
-	/**
+    private static final long serialVersionUID = 1L;
+
+    /**
 	 * JavaBean property names for this class.
 	 */
 	public interface IPropertyNames
