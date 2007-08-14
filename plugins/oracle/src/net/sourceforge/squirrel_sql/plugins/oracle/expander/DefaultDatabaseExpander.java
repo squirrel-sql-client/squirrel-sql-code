@@ -18,25 +18,14 @@
  */
 package net.sourceforge.squirrel_sql.plugins.oracle.expander;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.DatabaseExpander;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin;
 import net.sourceforge.squirrel_sql.plugins.oracle.IObjectTypes;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.InstanceDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.SessionDetailsTab;
@@ -56,11 +45,11 @@ public class DefaultDatabaseExpander extends DatabaseExpander
       super(session);
    }
 
-   public List createChildren(ISession session, ObjectTreeNode parentNode)
+   public List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode parentNode)
    {
       try
       {
-         final List childNodes = super.createChildren(session, parentNode);
+         final List<ObjectTreeNode> childNodes = super.createChildren(session, parentNode);
 
          final SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
 
