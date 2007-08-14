@@ -1,12 +1,10 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
-import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ConstraintDataXmlBean;
-import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ColumnInfoXmlBean;
-
-import java.awt.*;
-import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.Vector;
+
+import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ColumnInfoXmlBean;
+import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ConstraintDataXmlBean;
 
 
 public class ConstraintData
@@ -60,11 +58,11 @@ public class ConstraintData
 
    public void addColumnInfo(ColumnInfo colInfo)
    {
-      Vector buf = new Vector();
+      Vector<ColumnInfo> buf = new Vector<ColumnInfo>();
       buf.addAll(Arrays.asList(_columnInfos));
       buf.add(colInfo);
 
-      _columnInfos = (ColumnInfo[]) buf.toArray(new ColumnInfo[buf.size()]);
+      _columnInfos = buf.toArray(new ColumnInfo[buf.size()]);
    }
 
    public String getPkTableName()
@@ -84,7 +82,7 @@ public class ConstraintData
 
    public String[] getDDL()
    {
-      Vector ret = new Vector();
+      Vector<String> ret = new Vector<String>();
 
       ret.add("ALTER TABLE " + _fkTableName);
       ret.add("ADD CONSTRAINT " + _constraintName);
@@ -149,7 +147,7 @@ public class ConstraintData
 
       }
 
-      return (String[]) ret.toArray(new String[ret.size()]);
+      return ret.toArray(new String[ret.size()]);
    }
 
    public void replaceCopiedColsByReferences(ColumnInfo[] colInfoRefs)
