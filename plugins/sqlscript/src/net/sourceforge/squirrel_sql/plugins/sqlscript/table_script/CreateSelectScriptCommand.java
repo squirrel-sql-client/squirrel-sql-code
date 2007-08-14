@@ -1,24 +1,16 @@
 package net.sourceforge.squirrel_sql.plugins.sqlscript.table_script;
 
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.sql.*;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
-
-import java.util.Vector;
-import java.util.Collections;
-import java.util.Hashtable;
-import java.sql.SQLException;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 
 public class CreateSelectScriptCommand implements ICommand
 {
@@ -99,7 +91,6 @@ public class CreateSelectScriptCommand implements ICommand
 
            sbScript.append("SELECT ");
 
-           ScriptUtil su = new ScriptUtil();
            TableColumnInfo[] infos = conn.getSQLMetaData().getColumnInfo(ti);
            for (int i = 0; i < infos.length; i++)
            {
