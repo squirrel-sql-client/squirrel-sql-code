@@ -13,6 +13,7 @@ public class HQLTabPanel extends JPanel
       StringManagerFactory.getStringManager(HQLTabPanel.class);
 
    private static final String PERF_KEY_HQL_TAB_DIVIDER_LOCATION = "Squirrel.hibernateplugin.hqlTabDivLoc";
+   private static final String PERF_KEY_LAST_SELECTED_TAB = "Squirrel.hibernateplugin.lastSelectedTab";
 
 
    JComboBox cboConfigurations;
@@ -51,6 +52,8 @@ public class HQLTabPanel extends JPanel
       add(_tabObjectsHql, gbc);
 
 
+      _tabObjectsHql.setSelectedIndex(Preferences.userRoot().getInt(PERF_KEY_LAST_SELECTED_TAB, 0));
+
       SwingUtilities.invokeLater(new Runnable()
       {
          public void run()
@@ -65,6 +68,7 @@ public class HQLTabPanel extends JPanel
    public void closing()
    {
       Preferences.userRoot().putDouble(PERF_KEY_HQL_TAB_DIVIDER_LOCATION, ((double) _splitHqlSql.getDividerLocation())/ ((double) _splitHqlSql.getHeight()) );
+      Preferences.userRoot().putInt(PERF_KEY_LAST_SELECTED_TAB, _tabObjectsHql.getSelectedIndex());
    }
 
 

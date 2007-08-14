@@ -227,8 +227,9 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
          Preferences.userRoot().put(PREF_KEY_LAST_SELECTED_CONFIG, cfg.getName());
       }
 
-      
       _panel.closing();
+
+      _mappedObjectsPanelManager.closing();
 
    }
 
