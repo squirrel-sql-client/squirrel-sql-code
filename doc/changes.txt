@@ -14,10 +14,12 @@ Code Completion Plugin:
 New Plugin (SQL Parametrisation - Thorsten Mürell) allows you to put variables 
            into your SQL statements.
            
-New Plugin (Data import - Thorsten Mürell) allows you to import arbitary files
+New Plugin (Data import - Thorsten Mürell) allows you to import arbitrary files
            into the database.
 
 DB2Plugin: 
+ - Added support for showing user-defined functions in the object tree and the 
+   source code that is associated with them if it is available.
  - Exceptions from DB2 Universal JDBC driver are now interpreted as 
    DB2Diagnoseable exceptions so that the cause of the exception can be printed 
    (Thanks to Christoph Schmitz).
@@ -27,7 +29,7 @@ DB2Plugin:
 		   
 Derby Plugin: New custom QueryTokenizer which allows Derby sessions to give the 
 command:  run '<abs-path-to-script>'
-This slurps in the file and executes it's statements.  This is supported in 
+This reads in the file and executes it's statements.  This is supported in 
 Derby's own ij command-line interpreter.
 
 Firedbird Plugin: Added triggers node for each table to display triggers.
