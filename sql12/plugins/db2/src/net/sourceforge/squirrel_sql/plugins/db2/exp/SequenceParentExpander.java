@@ -31,6 +31,7 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 /**
  * This class handles the expanding of the "Sequence Group"
  * node. It will give a list of all the Sequences available in the schema.
@@ -94,12 +95,8 @@ public class SequenceParentExpander implements INodeExpander
 		}
 		finally
 		{
-            if (rs != null) {
-                try {rs.close();} catch (SQLException e) {}
-            }
-            if (pstmt != null) {
-                try {pstmt.close();} catch (SQLException e) {}
-            }
+		    SQLUtilities.closeResultSet(rs);
+            SQLUtilities.closeStatement(pstmt);
 		}
 		return childNodes;
 	}

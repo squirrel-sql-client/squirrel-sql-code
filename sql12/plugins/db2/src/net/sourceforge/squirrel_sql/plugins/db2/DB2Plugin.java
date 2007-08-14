@@ -47,6 +47,8 @@ import net.sourceforge.squirrel_sql.plugins.db2.tab.ProcedureSourceTab;
 import net.sourceforge.squirrel_sql.plugins.db2.tab.SequenceDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.db2.tab.TriggerDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.db2.tab.TriggerSourceTab;
+import net.sourceforge.squirrel_sql.plugins.db2.tab.UDFDetailsTab;
+import net.sourceforge.squirrel_sql.plugins.db2.tab.UDFSourceTab;
 import net.sourceforge.squirrel_sql.plugins.db2.tab.ViewSourceTab;
 
 
@@ -66,10 +68,14 @@ public class DB2Plugin extends DefaultSessionPlugin {
     private final static ILogger s_log = 
         LoggerController.createLogger(DB2Plugin.class);
 
-    /** API for the Obejct Tree. */
+    /** API for the Object Tree. */
     private IObjectTreeAPI _treeAPI;
 
     static interface i18n {
+        //i18n[DB2Plugin.showUdfSource=Show UDF source]
+        String SHOW_UDF_SOURCE = 
+            s_stringMgr.getString("DB2Plugin.showUdfSource");
+        
         //i18n[DB2Plugin.showViewSource=Show view source]
         String SHOW_VIEW_SOURCE = 
             s_stringMgr.getString("DB2Plugin.showViewSource");
@@ -259,6 +265,11 @@ public class DB2Plugin extends DefaultSessionPlugin {
         _treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
         _treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new SequenceDetailsTab());        
 
+        _treeAPI.addDetailTab(DatabaseObjectType.UDF, new DatabaseObjectInfoTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.UDF, new UDFSourceTab(i18n.SHOW_UDF_SOURCE, stmtSep));
+        _treeAPI.addDetailTab(DatabaseObjectType.UDF, new UDFDetailsTab());        
+        
+        
         // Expanders - trigger and index expanders are added inside the table
         // expander
         _treeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander());        

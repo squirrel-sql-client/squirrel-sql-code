@@ -28,23 +28,29 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.FormattedSourceTab;
 /**
- * This class will display the source for an DB2 trigger.
+ * This class will display the source for an DB2 User-Defined function.
  *
  * @author manningr
  */
-public class TriggerSourceTab extends FormattedSourceTab
+public class UDFSourceTab extends FormattedSourceTab
 {
-	/** SQL that retrieves the source of a trigger. */
+	/** SQL that retrieves the source of a user-defined function. */
 	private static String SQL =
-        "select TEXT from SYSCAT.TRIGGERS " +
-        "where TABSCHEMA = ? " +
-        "and TRIGNAME = ? ";
-    
+	    "SELECT " +
+	    "case " +
+	    "    when body is null then 'No source available' " +
+	    "    else body " +
+	    "end " + 	    
+	    "FROM SYSIBM.SYSFUNCTIONS " +
+	    "WHERE schema = ? " +
+	    "AND name = ? " +
+	    "AND implementation is null ";
+	
 	/** Logger for this class. */
 	private final static ILogger s_log =
-		LoggerController.createLogger(TriggerSourceTab.class);
+		LoggerController.createLogger(UDFSourceTab.class);
 
-	public TriggerSourceTab(String hint, String stmtSep)
+	public UDFSourceTab(String hint, String stmtSep)
 	{
 		super(hint);
         super.setCompressWhitespace(true);
@@ -59,7 +65,7 @@ public class TriggerSourceTab extends FormattedSourceTab
         if (s_log.isDebugEnabled()) {
             s_log.debug("Running SQL: "+SQL);
             s_log.debug("schema="+doi.getSchemaName());
-            s_log.debug("trigname="+doi.getSimpleName());
+            s_log.debug("udf name="+doi.getSimpleName());
         }
 		ISQLConnection conn = session.getSQLConnection();
 		PreparedStatement pstmt = conn.prepareStatement(SQL);
