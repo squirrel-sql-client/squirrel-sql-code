@@ -11,33 +11,36 @@ import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.DefaultTreeCellRenderer;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.awt.*;
 
 public class MappedObjectPanelManager
 {
-   private MappedObjectPanel _panel = new MappedObjectPanel();
+   private MappedObjectPanel _panel;
    private IHibernateConnectionProvider _connectionProvider;
    private ISession _session;
    private DefaultMutableTreeNode _root;
    private HashMap<String, MappedClassInfo> _mappedClassInfoByClassName;
+   private DetailPanelController _detailPanelController;
 
    public MappedObjectPanelManager(IHibernateConnectionProvider connectionProvider, ISession session, HibernatePluginResources resource)
    {
       _connectionProvider = connectionProvider;
       _session = session;
 
+
+      _detailPanelController = new DetailPanelController(); 
+      _panel = new MappedObjectPanel(_detailPanelController.getDetailComponent());
+
+
       _root = new DefaultMutableTreeNode("Mapping");
+      _panel.objectTree.setModel(new DefaultTreeModel(_root));
 
-      _panel._objectTree.setModel(new DefaultTreeModel(_root));
-
-      _panel._objectTree.setCellRenderer(new MappingTreeCellRenderer(resource));
+      _panel.objectTree.setCellRenderer(new MappingTreeCellRenderer(resource));
 
       nodeStructurChanged(_root);
 
-      _panel._objectTree.addTreeExpansionListener(new TreeExpansionListener()
+      _panel.objectTree.addTreeExpansionListener(new TreeExpansionListener()
       {
          public void treeExpanded(TreeExpansionEvent event)
          {
@@ -109,7 +112,7 @@ public class MappedObjectPanelManager
 
    private void nodeStructurChanged(DefaultMutableTreeNode node)
    {
-      ((DefaultTreeModel)_panel._objectTree.getModel()).nodeStructureChanged(node);
+      ((DefaultTreeModel)_panel.objectTree.getModel()).nodeStructureChanged(node);
    }
 
    private void addMappedClassInfoNode(MappedClassInfo mappedClassInfo, DefaultMutableTreeNode parent)
@@ -144,5 +147,10 @@ public class MappedObjectPanelManager
    public JComponent getComponent()
    {
       return _panel;
+   }
+
+   public void closing()
+   {
+      _panel.closing();
    }
 }
