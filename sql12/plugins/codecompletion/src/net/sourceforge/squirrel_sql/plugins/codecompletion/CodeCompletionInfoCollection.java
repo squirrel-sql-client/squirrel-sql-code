@@ -34,11 +34,15 @@ public class CodeCompletionInfoCollection
 		StringManagerFactory.getStringManager(CodeCompletionInfoCollection.class);
 
 
-	private Hashtable _completionInfosByCataLogAndSchema = new Hashtable();
-   private Vector _aliasCompletionInfos = new Vector();
+	private Hashtable<String, Vector<CodeCompletionInfo>> _completionInfosByCataLogAndSchema = 
+	    new Hashtable<String, Vector<CodeCompletionInfo>>();
+   private Vector<CodeCompletionInfo> _aliasCompletionInfos = 
+       new Vector<CodeCompletionInfo>();
 
-   private Vector _schemas = new Vector();
-   private Vector _catalogs = new Vector();
+   private Vector<CodeCompletionSchemaInfo> _schemas = 
+       new Vector<CodeCompletionSchemaInfo>();
+   private Vector<CodeCompletionCatalogInfo> _catalogs = 
+       new Vector<CodeCompletionCatalogInfo>();
 
 	private ISession _session;
 	private CodeCompletionPlugin _plugin;
@@ -57,7 +61,8 @@ public class CodeCompletionInfoCollection
       {
          public void schemaInfoUpdated()
          {
-            _completionInfosByCataLogAndSchema = new Hashtable();
+            _completionInfosByCataLogAndSchema = 
+                new Hashtable<String, Vector<CodeCompletionInfo>>();
          }
       });
    }
@@ -79,11 +84,12 @@ public class CodeCompletionInfoCollection
             return;
 			}
 
-         Vector completionInfos = new Vector();
+         Vector<CodeCompletionInfo> completionInfos = new Vector<CodeCompletionInfo>();
 
          ITableInfo[] tables = _session.getSchemaInfo().getITableInfos(catalog, schema);
 
-         Hashtable completionInfoByUcTableName = new Hashtable();
+         Hashtable<String, CodeCompletionInfo> completionInfoByUcTableName = 
+             new Hashtable<String, CodeCompletionInfo>();
          for (int i = 0; i < tables.length; i++)
          {
             String ucTableName = tables[i].getSimpleName().toUpperCase();
@@ -112,8 +118,8 @@ public class CodeCompletionInfoCollection
                new CodeCompletionStoredProcedureInfo(storedProceduresInfos[i].getSimpleName(), 
                                                      storedProceduresInfos[i].getProcedureType(),
                                                      _session,
-						                                   _plugin,
-																	  catalog,
+						                             _plugin,
+													 catalog,
                                                      schema);
             completionInfos.add(buf);
          }
@@ -172,12 +178,12 @@ public class CodeCompletionInfoCollection
             }
             else
             {
-               Hashtable autoCorrections = autoCorrectProvider.getAutoCorrects();
+               Hashtable<String, String> autoCorrections = autoCorrectProvider.getAutoCorrects();
 
-               for(Enumeration e=autoCorrections.keys(); e.hasMoreElements();)
+               for(Enumeration<String> e=autoCorrections.keys(); e.hasMoreElements();)
                {
-                  String toCorrect = (String) e.nextElement();
-                  String correction = (String) autoCorrections.get(toCorrect);
+                  String toCorrect = e.nextElement();
+                  String correction = autoCorrections.get(toCorrect);
 
                   completionInfos.add(new CodeCompletionAutoCorrectInfo(toCorrect, correction));
                }
@@ -198,7 +204,7 @@ public class CodeCompletionInfoCollection
    {
 		load(catalog, schema, true);
 
-      Vector completionInfos = getCompletionInfos(catalog, schema);
+      Vector<CodeCompletionInfo> completionInfos = getCompletionInfos(catalog, schema);
 
       if(null == completionInfos)
       {
@@ -210,7 +216,7 @@ public class CodeCompletionInfoCollection
 
       if("".equals(upperCasePrefix))
       {
-			Vector buf = new Vector();
+			Vector<CodeCompletionInfo> buf = new Vector<CodeCompletionInfo>();
 			buf.addAll(_aliasCompletionInfos);
 
          if(MAX_COMPLETION_INFOS < completionInfos.size())
@@ -224,14 +230,14 @@ public class CodeCompletionInfoCollection
          }
 
 
-         return (CodeCompletionInfo[])buf.toArray(new CodeCompletionInfo[0]);
+         return buf.toArray(new CodeCompletionInfo[0]);
       }
 
-      Vector ret = new Vector();
+      Vector<CodeCompletionInfo> ret = new Vector<CodeCompletionInfo>();
 
 		for(int i=0; i < _aliasCompletionInfos.size(); ++i)
 		{
-			CodeCompletionInfo buf = (CodeCompletionInfo)_aliasCompletionInfos.get(i);
+			CodeCompletionInfo buf = _aliasCompletionInfos.get(i);
 			if(buf.upperCaseCompletionStringStartsWith(upperCasePrefix))
 			{
 				ret.add(buf);
@@ -241,7 +247,7 @@ public class CodeCompletionInfoCollection
 
       for(int i=0; i < completionInfos.size(); ++i)
       {
-         CodeCompletionInfo buf = (CodeCompletionInfo)completionInfos.get(i);
+         CodeCompletionInfo buf = completionInfos.get(i);
          if(buf.upperCaseCompletionStringStartsWith(upperCasePrefix))
          {
             ret.add(buf);
@@ -254,26 +260,26 @@ public class CodeCompletionInfoCollection
          }
       }
 
-      return (CodeCompletionInfo[])ret.toArray(new CodeCompletionInfo[0]);
+      return ret.toArray(new CodeCompletionInfo[0]);
    }
 
-   private Vector getCompletionInfos(String catalog, String schema)
+   private Vector<CodeCompletionInfo> getCompletionInfos(String catalog, String schema)
    {
       String key = (catalog + "," + schema).toUpperCase();
-      Vector ret = (Vector) _completionInfosByCataLogAndSchema.get(key);
+      Vector<CodeCompletionInfo> ret = _completionInfosByCataLogAndSchema.get(key);
 
       if(null == ret)
       {
          load(catalog, schema, false);
       }
-      ret = (Vector) _completionInfosByCataLogAndSchema.get(key);
+      ret = _completionInfosByCataLogAndSchema.get(key);
 
       return ret;
    }
 
    public void replaceLastAliasInfos(TableAliasInfo[] aliasInfos)
 	{
-		_aliasCompletionInfos = new Vector(aliasInfos.length);
+		_aliasCompletionInfos = new Vector<CodeCompletionInfo>(aliasInfos.length);
 
 		for (int i = 0; i < aliasInfos.length; i++)
 		{
@@ -288,7 +294,7 @@ public class CodeCompletionInfoCollection
    {
       for (int i = 0; i < _catalogs.size(); i++)
       {
-         CodeCompletionCatalogInfo info = (CodeCompletionCatalogInfo) _catalogs.get(i);
+         CodeCompletionCatalogInfo info = _catalogs.get(i);
          if(info.getCompareString().equalsIgnoreCase(name))
          {
             return true;
@@ -301,7 +307,7 @@ public class CodeCompletionInfoCollection
    {
       for (int i = 0; i < _schemas.size(); i++)
       {
-         CodeCompletionSchemaInfo info = (CodeCompletionSchemaInfo) _schemas.get(i);
+         CodeCompletionSchemaInfo info = _schemas.get(i);
          if(info.getCompareString().equalsIgnoreCase(name))
          {
             return true;
@@ -312,7 +318,7 @@ public class CodeCompletionInfoCollection
 
    public boolean addCompletionsAtListBegin(String catalog, String schema, CodeCompletionInfo[] completions)
    {
-      Vector completionInfos = getCompletionInfos(catalog, schema);
+      Vector<CodeCompletionInfo> completionInfos = getCompletionInfos(catalog, schema);
 
       if(null == completionInfos)
       {
