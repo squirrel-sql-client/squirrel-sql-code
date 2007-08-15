@@ -1,19 +1,16 @@
 package net.sourceforge.squirrel_sql.plugins.syntax;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
-import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
-import net.sourceforge.squirrel_sql.fw.xml.XMLException;
-
-import java.util.Hashtable;
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.util.Hashtable;
+
+import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
+import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 
 public class AutoCorrectProviderImpl
 {
    private File _pluginUserSettingsFolder;
    private AutoCorrectData _autoCorrectData;
-   private Hashtable _emptyHashtable = new Hashtable();
+   private Hashtable<String, String> _emptyHashtable = new Hashtable<String, String>();   
 
    public static final String AUTO_CORRECT_DATA_FILE_NAME = "autocorrectdata.xml";
 
@@ -22,7 +19,7 @@ public class AutoCorrectProviderImpl
       _pluginUserSettingsFolder = pluginUserSettingsFolder;
    }
 
-   public Hashtable getAutoCorrects()
+   public Hashtable<String, String> getAutoCorrects()
    {
       AutoCorrectData acd = getAutoCorrectData();
 
@@ -68,7 +65,7 @@ public class AutoCorrectProviderImpl
 
    private AutoCorrectData getDefaultAutoCorrectData()
    {
-      Hashtable ret = new Hashtable();
+      Hashtable<String, String> ret = new Hashtable<String, String>();
       ret.put("SLECT", "SELECT");
       ret.put("FORM", "FROM");
       ret.put("WERE", "WHERE");
@@ -78,7 +75,7 @@ public class AutoCorrectProviderImpl
 
    }
 
-   public void setAutoCorrects(Hashtable newAutoCorrects, boolean enableAutoCorrects)
+   public void setAutoCorrects(Hashtable<String, String> newAutoCorrects, boolean enableAutoCorrects)
    {
       try
       {

@@ -50,7 +50,9 @@ import java.util.*;
 
 public class OsterTextControl extends JTextPane
 {
-	/** Logger for this class. */
+    private static final long serialVersionUID = 1L;
+
+    /** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(OsterTextControl.class);
 
 	/** Current session. */
@@ -91,14 +93,16 @@ public class OsterTextControl extends JTextPane
 	 * A hash table containing the text styles.
 	 * Simple attribute sets are hashed by name (String)
 	 */
-	private Hashtable styles = new Hashtable();
+	private Hashtable<String, SimpleAttributeSet> styles = 
+	    new Hashtable<String, SimpleAttributeSet>();
 
 	/** Preferences for this plugin. */
 	private final SyntaxPreferences _syntaxPrefs;
 
-	private Vector _sqlTokenListeners = new Vector();
-	private Vector _currentErrorInfos = new Vector();
-   private Vector _oldErrorInfos = new Vector();
+	private Vector<SQLTokenListener> _sqlTokenListeners = 
+	    new Vector<SQLTokenListener>();
+	private Vector<ErrorInfo> _currentErrorInfos = new Vector<ErrorInfo>();
+   private Vector<ErrorInfo> _oldErrorInfos = new Vector<ErrorInfo>();
 
 
    OsterTextControl(ISession session, SyntaxPreferences prefs, final IIdentifier sqlEntryPanelIdentifier)
@@ -188,7 +192,7 @@ public class OsterTextControl extends JTextPane
 
          for (int i = 0; i < _oldErrorInfos.size(); i++)
          {
-            ErrorInfo errorInfo = (ErrorInfo) _oldErrorInfos.elementAt(i);
+            ErrorInfo errorInfo = _oldErrorInfos.elementAt(i);
             int colBegin = Math.max(errorInfo.beginPos - heuristicDist, 0);
             int colLen = Math.min(errorInfo.endPos - errorInfo.beginPos + 2*heuristicDist, getDocument().getLength() - colBegin);
             color(colBegin, colLen, false, null);
@@ -306,7 +310,7 @@ public class OsterTextControl extends JTextPane
 	 */
 	private SimpleAttributeSet getMyStyle(String styleName)
 	{
-		return ((SimpleAttributeSet)styles.get(styleName));
+		return styles.get(styleName);
 	}
 
 	private Token getNextToken() throws IOException
@@ -506,8 +510,10 @@ public class OsterTextControl extends JTextPane
 	{
 
       private boolean _endThread;
-      private Vector _currentLiteralAndCommentIntervals = new Vector();
-      private Hashtable _knownTables = new Hashtable();
+      private Vector<int[]> _currentLiteralAndCommentIntervals = 
+          new Vector<int[]>();
+      private Hashtable<String, String> _knownTables = 
+          new Hashtable<String, String>();
 
       /**
 		 * A simple wrapper representing something that needs to be colored.
@@ -532,7 +538,8 @@ public class OsterTextControl extends JTextPane
 		/**
 		 * Vector that stores the communication between the two threads.
 		 */
-		private volatile Vector recolorEventQueue = new Vector();
+		private volatile Vector<RecolorEvent> recolorEventQueue = 
+		    new Vector<RecolorEvent>();
 
 
 		/**
@@ -595,7 +602,7 @@ public class OsterTextControl extends JTextPane
 				{
 					if (recolorEventQueue.size() > 0)
 					{
-						RecolorEvent re = (RecolorEvent) (recolorEventQueue.elementAt(0));
+						RecolorEvent re = recolorEventQueue.elementAt(0);
 						recolorEventQueue.removeElementAt(0);
 
                   if(null != re.change)
@@ -673,7 +680,7 @@ public class OsterTextControl extends JTextPane
 							t = getNextToken();
 						}
                   SimpleAttributeSet errStyle = getMyStyle(IConstants.IStyleNames.ERROR);
-                  ErrorInfo[] errInfoClone = (ErrorInfo[]) _currentErrorInfos.toArray(new ErrorInfo[0]);
+                  ErrorInfo[] errInfoClone = _currentErrorInfos.toArray(new ErrorInfo[0]);
 						while (t != null && t.getCharEnd() <= colorStartPos + colorLen + 1)
 						{
 							// this is the actual command that colors the stuff.
@@ -787,7 +794,7 @@ public class OsterTextControl extends JTextPane
       {
          for (int i = 0; i < _currentLiteralAndCommentIntervals.size(); i++)
          {
-            int[] interval = (int[]) _currentLiteralAndCommentIntervals.elementAt(i);
+            int[] interval = _currentLiteralAndCommentIntervals.elementAt(i);
 
             if(re.position < interval[0])
             {
@@ -1006,7 +1013,7 @@ public class OsterTextControl extends JTextPane
       {
          for (int i = 0; i < _currentLiteralAndCommentIntervals.size(); i++)
          {
-            int[] interval = (int[]) _currentLiteralAndCommentIntervals.elementAt(i);
+            int[] interval = _currentLiteralAndCommentIntervals.elementAt(i);
 
             if(interval[0]-1 <= pos && pos <= interval[1]+1)
             {
@@ -1059,15 +1066,15 @@ public class OsterTextControl extends JTextPane
 
 	private void fireTableOrViewFound(String name)
 	{
-		Vector buf;
+		Vector<SQLTokenListener> buf;
 		synchronized(_sqlTokenListeners)
 		{
-			buf = (Vector)_sqlTokenListeners.clone();
+			buf = new Vector<SQLTokenListener>(_sqlTokenListeners);
 		}
 
 		for(int i=0; i < buf.size(); ++i)
 		{
-			((SQLTokenListener)buf.get(i)).tableOrViewFound(name);
+			buf.get(i).tableOrViewFound(name);
 		}
 	}
 
@@ -1077,7 +1084,7 @@ public class OsterTextControl extends JTextPane
 
       for (int i = 0; i < _currentErrorInfos.size(); i++)
       {
-         ErrorInfo errInfo = (ErrorInfo) _currentErrorInfos.elementAt(i);
+         ErrorInfo errInfo = _currentErrorInfos.elementAt(i);
 
          if(errInfo.beginPos-1 <= pos && pos <= errInfo.endPos)
          {
@@ -1095,7 +1102,9 @@ public class OsterTextControl extends JTextPane
 	 */
 	private class HighLightedDocument extends DefaultStyledDocument
 	{
-		public HighLightedDocument()
+        private static final long serialVersionUID = 1L;
+
+        public HighLightedDocument()
 		{
 			super();
 			putProperty(DefaultEditorKit.EndOfLineStringProperty, "\n");
@@ -1273,7 +1282,7 @@ public class OsterTextControl extends JTextPane
                   // if the char is greater then 255. So we prevent the char from being greater.
                   // This is surely not a proper Unicode treatment but it doesn't seem
                   // to do no harm and it keeps the SQLLexer working.
-						cbuf[off + i] = (char)(((int)s.charAt(i)) % 256);
+						cbuf[off + i] = (char)((s.charAt(i)) % 256);
 					}
 					return length;
 				}

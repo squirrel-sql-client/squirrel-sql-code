@@ -1,16 +1,16 @@
 package net.sourceforge.squirrel_sql.plugins.syntax;
 
-import java.util.Hashtable;
-import java.util.Vector;
 import java.util.Enumeration;
+import java.util.Hashtable;
 
 
 public class AutoCorrectData
 {
-   private Hashtable autoCorrects;
+   private Hashtable<String, String> autoCorrects;
    private boolean enableAutoCorrects = true;
 
-   public AutoCorrectData(Hashtable newAutoCorrects, boolean enableAutoCorrects)
+   public AutoCorrectData(Hashtable<String, String> newAutoCorrects, 
+                          boolean enableAutoCorrects)
    {
       autoCorrects = newAutoCorrects;
       this.enableAutoCorrects = enableAutoCorrects;
@@ -29,10 +29,10 @@ public class AutoCorrectData
       AutoCorrectDataItem[] ret = new AutoCorrectDataItem[autoCorrects.size()];
 
       int i=0;
-      for(Enumeration e=autoCorrects.keys(); e.hasMoreElements();)
+      for(Enumeration<String> e=autoCorrects.keys(); e.hasMoreElements();)
       {
-         String err = (String) e.nextElement();
-         ret[i] = new AutoCorrectDataItem(err, (String) autoCorrects.get(err));
+         String err = e.nextElement();
+         ret[i] = new AutoCorrectDataItem(err, autoCorrects.get(err));
          ++i;
       }
 
@@ -41,7 +41,7 @@ public class AutoCorrectData
 
    public void setAutoCorrects(AutoCorrectDataItem[] dataItems)
    {
-      autoCorrects = new Hashtable();
+      autoCorrects = new Hashtable<String, String>();
       for (int i = 0; i < dataItems.length; i++)
       {
          autoCorrects.put(dataItems[i].getErr(), dataItems[i].getCorr());
@@ -58,7 +58,7 @@ public class AutoCorrectData
       this.enableAutoCorrects = enableAutoCorrects;
    }
 
-   public Hashtable getAutoCorrectsHash()
+   public Hashtable<String, String> getAutoCorrectsHash()
    {
       return autoCorrects;
    }
