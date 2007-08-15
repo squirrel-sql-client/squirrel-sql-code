@@ -28,14 +28,14 @@ public class AutoCorrectController
 
       AutoCorrectData autoCorrectData = syntaxPugin.getAutoCorrectProviderImpl().getAutoCorrectData();
 
-      Vector data = new Vector();
+      Vector<Vector<String>> data = new Vector<Vector<String>>();
 
-      for(Enumeration e=autoCorrectData.getAutoCorrectsHash().keys(); e.hasMoreElements();)
+      for(Enumeration<String> e=autoCorrectData.getAutoCorrectsHash().keys(); e.hasMoreElements();)
       {
-         String error = (String) e.nextElement();
-         Vector row = new Vector();
+         String error = e.nextElement();
+         Vector<String> row = new Vector<String>();
          row.add(error);
-         String corr = (String) autoCorrectData.getAutoCorrectsHash().get(error);
+         String corr = autoCorrectData.getAutoCorrectsHash().get(error);
 
          corr = corr.replaceAll("\n","\\\\n");
 
@@ -43,20 +43,17 @@ public class AutoCorrectController
          data.add(row);
       }
 
-      Collections.sort(data, new Comparator()
+      Collections.sort(data, new Comparator<Vector<String>>()
       {
-         public int compare(Object o1, Object o2)
+         public int compare(Vector<String> row1, Vector<String> row2)
          {
-            Vector row1 = (Vector) o1;
-            Vector row2 = (Vector) o2;
-
-            return ((String)row1.get(0)).compareTo((String)row2.get(0));
+            return row1.get(0).compareTo(row2.get(0));
          }
       });
 
 
 
-      Vector colHeaders = new Vector();
+      Vector<String> colHeaders = new Vector<String>();
 		// i18n[syntax.errAbrev=error / abreviation]
 		colHeaders.add(s_stringMgr.getString("syntax.errAbrev"));
 		// i18n[syntax.corExt=correction / extension]
@@ -145,16 +142,17 @@ public class AutoCorrectController
 
       DefaultTableModel dtm = (DefaultTableModel) _dlg.tblAutoCorrects.getModel();
 
-      Vector dataVector = dtm.getDataVector();
+      Vector<Vector<String>> dataVector = dtm.getDataVector();
 
-      Hashtable newAutoCorrects = new Hashtable();
+      Hashtable<String, String> newAutoCorrects = 
+          new Hashtable<String, String>();
 
       for (int i = 0; i < dataVector.size(); i++)
       {
-         Vector row = (Vector) dataVector.get(i);
+         Vector<String> row = dataVector.get(i);
 
-         String error = (String) row.get(0);
-         String corr = (String) row.get(1);
+         String error = row.get(0);
+         String corr = row.get(1);
 
          if(null != error && null != corr && 0 != error.trim().length() && 0 != corr.trim().length() && false == error.equals(corr))
          {
@@ -173,7 +171,7 @@ public class AutoCorrectController
    {
       DefaultTableModel dtm = (DefaultTableModel) _dlg.tblAutoCorrects.getModel();
 
-      Vector newRow = new Vector();
+      Vector<String> newRow = new Vector<String>();
       newRow.add("");
       newRow.add("");
 
