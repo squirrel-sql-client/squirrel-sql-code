@@ -235,7 +235,8 @@ public class CellComponentFactory {
 	 */
 	static private final class CellRenderer extends DefaultTableCellRenderer implements SquirrelTableCellRenderer
 	{
-		private final IDataTypeComponent _dataTypeObject;
+        private static final long serialVersionUID = 1L;
+        private final IDataTypeComponent _dataTypeObject;
 
 		CellRenderer(IDataTypeComponent dataTypeObject)
 		{
@@ -676,14 +677,21 @@ public class CellComponentFactory {
 	 	
 	 	try {
 	 		// create an instance of the class for the handler object
-			Class handlerClass = Class.forName(dataTypeObjectName);
+			Class<?> handlerClass = Class.forName(dataTypeObjectName);
 				
 			// get the constructor for the object that uses the two class types
 			// that we will use when creating the instance in getDataTypeObject
-			Class[] constClasses =
+			Class<?>[] constClasses =
 				{new JTable().getClass(), new ColumnDisplayDefinition(0,"").getClass()};
-			Constructor handlerConst = handlerClass.getConstructor(constClasses);
-				
+			Constructor<?> handlerConst = handlerClass.getConstructor(constClasses);
+			
+			if (handlerConst == null) {
+			    s_log.error(
+			        "handlerClass ("+handlerClass.getName()+
+			        ")doesn't appear to have a constructor that " +
+			        "accepts JTable and ColumnDisplayDefinition arguments");
+			}
+			
 			// if we get here without any problem then we are ok
 	 		_registeredDataTypes.put(typeName, dataTypeObjectName);
 	 	}
@@ -743,7 +751,7 @@ public class CellComponentFactory {
 		// Now go through the list in the given order to get the panels
 		for (int i=0; i< classNameList.size(); i++) {
 			String className = classNameList.get(i);
-			Class[] parameterTypes = new Class[0];
+			Class<?>[] parameterTypes = new Class<?>[0];
 			try {
 				Method panelMethod =
 					Class.forName(className).getMethod("getControlPanel", parameterTypes);
@@ -752,7 +760,7 @@ public class CellComponentFactory {
 				panelList.add(panel);
 			}
 			catch (Exception e) {
-				// assume that errors here are not fatal and ignore them??
+				s_log.error("Unexpected exception: "+e.getMessage(), e);
 			}
 		}
 		
@@ -819,12 +827,12 @@ public class CellComponentFactory {
 				// exists and has an appropriate constructor.
 				try {
 					// create an instance of the class for the handler object
-					Class handlerClass = Class.forName(handlerClassName);
+					Class<?> handlerClass = Class.forName(handlerClassName);
 				
 					// get the constructor for the object (the table may be null)
-					Class[] constClasses =
+					Class<?>[] constClasses =
 						{Class.forName("javax.swing.JTable"), colDef.getClass()};
-					Constructor handlerConst = handlerClass.getConstructor(constClasses);
+					Constructor<?> handlerConst = handlerClass.getConstructor(constClasses);
 				
 					// create an instance
 					Object[] args = {table, colDef};
