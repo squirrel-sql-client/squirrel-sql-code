@@ -34,7 +34,9 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class BeanPropertyTableModel extends DefaultTableModel
 {
-	/** Internationalized strings for this class. */
+    private static final long serialVersionUID = 1L;
+
+    /** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(BeanPropertyTableModel.class);
 
@@ -56,10 +58,10 @@ public class BeanPropertyTableModel extends DefaultTableModel
 
 	public void refresh() throws BaseException
 	{
-		final Vector columnNames = new Vector();
+		final Vector<Object> columnNames = new Vector<Object>();
 		columnNames.add(_nameColumnName);
 		columnNames.add(_valueColumnName);
-		final Vector columnData = new Vector();
+		final Vector<Object> columnData = new Vector<Object>();
 		if (_bean != null)
 		{
 			try
@@ -79,7 +81,7 @@ public class BeanPropertyTableModel extends DefaultTableModel
 		setDataVector(columnData, columnNames);
 	}
 
-	private void processBeanInfo(BeanInfo info, Vector columnData)
+	private void processBeanInfo(BeanInfo info, Vector<Object> columnData)
 		throws InvocationTargetException, IllegalAccessException
 	{
 		BeanInfo[] extra = info.getAdditionalBeanInfo();
@@ -98,7 +100,7 @@ public class BeanPropertyTableModel extends DefaultTableModel
 			final Method getter = propDesc[i].getReadMethod();
 			if (propName != null && getter != null)
 			{
-				Vector line = generateLine(propName, _bean, getter);
+				Vector<Object> line = generateLine(propName, _bean, getter);
 				if (line != null)
 				{
 					columnData.add(line);
@@ -120,10 +122,10 @@ public class BeanPropertyTableModel extends DefaultTableModel
 	 *			<CODE>null</CODE> if this property is <B>not</B> to be added
 	 *			to the table.
 	 */
-	protected Vector generateLine(String propName, Object bean, Method getter)
+	protected Vector<Object> generateLine(String propName, Object bean, Method getter)
 		throws InvocationTargetException, IllegalAccessException
 	{
-		final Vector line = new Vector();
+		final Vector<Object> line = new Vector<Object>();
 		line.add(propName);
 		line.add(executeGetter(bean, getter));
 		return line;
@@ -145,12 +147,19 @@ public class BeanPropertyTableModel extends DefaultTableModel
 		_valueColumnName = value;
 	}
 
-	private static final class DataSorter implements Comparator
+	/**
+	 * This comparator is compatible with the strange use of lists in this 
+	 * class.  This classes lists are Vectors with Strings as the first element
+	 * and any object as the other objects.
+	 */
+	private static final class DataSorter implements Comparator<Object>
 	{
-		public int compare(Object obj1, Object obj2)
+		public int compare(Object o1, Object o2)
 		{
-			String lhs = (String) ((Vector)obj1).get(0);
-			String rhs = (String) ((Vector)obj2).get(0);
+		    Vector<Object> v1 = (Vector<Object>)o1;
+		    Vector<Object> v2 = (Vector<Object>)o2;
+		    String lhs = (String)v1.get(0);
+		    String rhs = (String)v2.get(0);
 			return lhs.compareToIgnoreCase(rhs);
 		}
 	}
