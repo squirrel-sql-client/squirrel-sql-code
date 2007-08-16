@@ -89,19 +89,101 @@ public class DataTypeInfo extends DatabaseObjectInfo
 		return _createParams;
 	}
 
-	public boolean equals(Object obj)
-	{
-		if (super.equals(obj) && obj instanceof DataTypeInfo)
-		{
-			DataTypeInfo info = (DataTypeInfo)obj;
-			final String name = getSimpleName();
-			final String rhsName = info.getSimpleName();
-			if ((rhsName == null && name == null)
-				|| (name != null && name.equals(rhsName)))
-			{
-				return true;
-			}
-		}
-		return false;
-	}
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + (_autoIncrement ? 1231 : 1237);
+        return result;
+    }
+
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final DataTypeInfo other = (DataTypeInfo) obj;
+        if (!getSimpleName().equals(other.getSimpleName()))
+            return false;
+        return true;
+    }
+
+    /**
+     * @return the nullable
+     */
+    public int getNullable() {
+        return _nullable;
+    }
+
+    /**
+     * @return the caseSensitive
+     */
+    public boolean isCaseSensitive() {
+        return _caseSensitive;
+    }
+
+    /**
+     * @return the searchable
+     */
+    public int getSearchable() {
+        return _searchable;
+    }
+
+    /**
+     * @return the unsigned
+     */
+    public boolean isUnsigned() {
+        return _unsigned;
+    }
+
+    /**
+     * @return the money
+     */
+    public boolean isMoney() {
+        return _money;
+    }
+
+    /**
+     * @return the autoIncrement
+     */
+    public boolean isAutoIncrement() {
+        return _autoIncrement;
+    }
+
+    /**
+     * @return the localTypeName
+     */
+    public String getLocalTypeName() {
+        return _localTypeName;
+    }
+
+    /**
+     * @return the minScale
+     */
+    public int getMinScale() {
+        return _minScale;
+    }
+
+    /**
+     * @return the maxScale
+     */
+    public int getMaxScale() {
+        return _maxScale;
+    }
+
+    /**
+     * @return the numPrecRadix
+     */
+    public int getNumPrecRadix() {
+        return _numPrecRadix;
+    }
 }
