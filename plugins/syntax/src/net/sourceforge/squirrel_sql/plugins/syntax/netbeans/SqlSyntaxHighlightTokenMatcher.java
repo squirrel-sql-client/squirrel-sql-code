@@ -16,10 +16,12 @@ public class SqlSyntaxHighlightTokenMatcher implements ISyntaxHighlightTokenMatc
 
    private CaseInsensitiveString _caseInsensitiveStringBuffer = new CaseInsensitiveString();
 
-   private Hashtable _knownTables = new Hashtable();
+   private Hashtable<CaseInsensitiveString, String> _knownTables = 
+       new Hashtable<CaseInsensitiveString, String>();
 
 
-   private Vector _sqlTokenListeners = new Vector();
+   private Vector<SQLTokenListener> _sqlTokenListeners = 
+       new Vector<SQLTokenListener>();
 
 
    public SqlSyntaxHighlightTokenMatcher(ISession sess, NetbeansSQLEditorPane editorPane)
@@ -41,7 +43,7 @@ public class SqlSyntaxHighlightTokenMatcher implements ISyntaxHighlightTokenMatc
       {
 
          // _knownTables is just a cache to prevent creating a new String each time
-         String table = (String) _knownTables.get(_caseInsensitiveStringBuffer);
+         String table = _knownTables.get(_caseInsensitiveStringBuffer);
          if(null == table)
          {
             table = new String(buffer, offset, len);
@@ -64,7 +66,7 @@ public class SqlSyntaxHighlightTokenMatcher implements ISyntaxHighlightTokenMatc
    {
       for (int i = 0; i < _sqlTokenListeners.size(); i++)
       {
-         SQLTokenListener sqlTokenListener = (SQLTokenListener) _sqlTokenListeners.elementAt(i);
+         SQLTokenListener sqlTokenListener = _sqlTokenListeners.elementAt(i);
          sqlTokenListener.tableOrViewFound(tableOrViewName);
       }
    }

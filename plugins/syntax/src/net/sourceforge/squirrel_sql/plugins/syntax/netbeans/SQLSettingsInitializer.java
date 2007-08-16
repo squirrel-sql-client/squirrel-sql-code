@@ -1,20 +1,29 @@
 package net.sourceforge.squirrel_sql.plugins.syntax.netbeans;
 
+import java.awt.Font;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.util.Map;
+
+import javax.swing.KeyStroke;
+
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPugin;
-import org.netbeans.editor.*;
+
+import org.netbeans.editor.BaseKit;
+import org.netbeans.editor.Coloring;
+import org.netbeans.editor.MultiKeyBinding;
+import org.netbeans.editor.Settings;
+import org.netbeans.editor.SettingsDefaults;
+import org.netbeans.editor.SettingsNames;
+import org.netbeans.editor.SettingsUtil;
+import org.netbeans.editor.TokenContext;
 import org.netbeans.editor.ext.ExtKit;
 import org.netbeans.editor.ext.ExtSettingsDefaults;
 import org.netbeans.editor.ext.ExtSettingsNames;
 import org.netbeans.editor.ext.java.JavaLayerTokenContext;
 import org.netbeans.editor.ext.java.JavaSettingsDefaults;
 import org.netbeans.editor.ext.java.JavaSettingsNames;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.util.Map;
 
 
 public class SQLSettingsInitializer extends Settings.AbstractInitializer
@@ -25,7 +34,7 @@ public class SQLSettingsInitializer extends Settings.AbstractInitializer
     */
    public static final String NAME = "sql-settings-initializer"; // NOI18N
 
-   private Class sqlKitClass;
+   private Class<?> sqlKitClass;
    private SyntaxPreferences _syntaxPreferences;
 
    private static int MENU_MASK = java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
@@ -40,7 +49,7 @@ public class SQLSettingsInitializer extends Settings.AbstractInitializer
     * @param syntaxPreferences
     * @param plugin
     */
-   public SQLSettingsInitializer(Class sqlKitClass, SyntaxPreferences syntaxPreferences, Font font, SyntaxPugin plugin)
+   public SQLSettingsInitializer(Class<?> sqlKitClass, SyntaxPreferences syntaxPreferences, Font font, SyntaxPugin plugin)
    {
       super(NAME);
       this.sqlKitClass = sqlKitClass;
@@ -58,8 +67,10 @@ public class SQLSettingsInitializer extends Settings.AbstractInitializer
     *                    The map can be empty if this is the first initializer
     *                    that updates it or if no previous initializers updated it.
     */
-   public void updateSettingsMap(Class kitClass, Map settingsMap)
+   public void updateSettingsMap(Class kitClass, Map map)
    {
+       
+       Map<String, Object> settingsMap = (Map<String, Object>)map;
       // Update java colorings
       if (kitClass == BaseKit.class)
       {
