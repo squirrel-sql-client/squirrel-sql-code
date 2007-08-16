@@ -71,7 +71,8 @@ public class WhereClausePanel implements ISQLFilterPanel
 	 * @throws	IllegalArgumentException
 	 *			The exception thrown if invalid arguments are passed.
 	 */
-	public WhereClausePanel(SortedSet columnList, Map textColumns, 
+	public WhereClausePanel(SortedSet<String> columnList, 
+	                        Map<String, String> textColumns, 
 							String tableName)
 		throws IllegalArgumentException
 	{
@@ -144,7 +145,9 @@ public class WhereClausePanel implements ISQLFilterPanel
 	 */
 	private static final class WhereClauseSubPanel extends JPanel
 	{
-		/**
+        private static final long serialVersionUID = 1L;
+
+        /**
 		 * This interface defines locale specific strings. This should be
 		 * replaced with a property file.
 		 */
@@ -218,7 +221,7 @@ public class WhereClausePanel implements ISQLFilterPanel
 		private String _tableName;
 
 		/** A List containing the names of the text columns */
-		private Map _textColumns;
+		private Map<String, String> _textColumns;
 
 		/**
 		 * A JPanel used for a bulk of the GUI elements of the panel.
@@ -226,8 +229,9 @@ public class WhereClausePanel implements ISQLFilterPanel
 		 * @param	columnList	A list of the column names for the table.
 		 * @param	tableName	The name of the database table.
 		 */
-		WhereClauseSubPanel(SortedSet columnList, Map textColumns,
-								String tableName)
+		WhereClauseSubPanel(SortedSet<String> columnList, 
+		                    Map<String, String> textColumns,
+						    String tableName)
 		{
 			super();
 			_tableName = tableName;
@@ -363,7 +367,9 @@ public class WhereClausePanel implements ISQLFilterPanel
 
 		private static final class OperatorTypeCombo extends JComboBox
 		{
-			OperatorTypeCombo()
+            private static final long serialVersionUID = 1L;
+
+            OperatorTypeCombo()
 			{
 				addItem("=");
 				addItem("<>");
@@ -380,7 +386,9 @@ public class WhereClausePanel implements ISQLFilterPanel
 
 		private static final class AndOrCombo extends JComboBox
 		{
-			AndOrCombo()
+            private static final long serialVersionUID = 1L;
+
+            AndOrCombo()
 			{
 				addItem(WhereClauseSubPanelI18n.AND);
 				addItem(WhereClauseSubPanelI18n.OR);
@@ -393,7 +401,7 @@ public class WhereClausePanel implements ISQLFilterPanel
 		 */
 		private void addTextToClause()
 		{
-			String value = (String)_valueField.getText();
+			String value = _valueField.getText();
 			String operator = (String)_operatorCombo.getSelectedItem();
 			if (((value != null) && (value.length() > 0))
 					|| ((operator.equals(WhereClauseSubPanelI18n.IS_NULL))
