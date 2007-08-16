@@ -42,6 +42,7 @@ import net.sourceforge.squirrel_sql.plugins.postgres.exp.PostgresTableTriggerExt
 import net.sourceforge.squirrel_sql.plugins.postgres.exp.SchemaExpander;
 import net.sourceforge.squirrel_sql.plugins.postgres.tab.IndexDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.postgres.tab.IndexSourceTab;
+import net.sourceforge.squirrel_sql.plugins.postgres.tab.LockTab;
 import net.sourceforge.squirrel_sql.plugins.postgres.tab.ProcedureSourceTab;
 import net.sourceforge.squirrel_sql.plugins.postgres.tab.SequenceDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.postgres.tab.TriggerDetailsTab;
@@ -108,7 +109,7 @@ public class PostgresPlugin extends DefaultSessionPlugin {
      */
     public String getVersion()
     {
-        return "0.01";
+        return "0.11";
     }
 
     /**
@@ -267,7 +268,9 @@ public class PostgresPlugin extends DefaultSessionPlugin {
 
         // Sequence tabs
         _treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
-        _treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new SequenceDetailsTab());        
+        _treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new SequenceDetailsTab()); 
+        
+        _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new LockTab());
 
         
         
