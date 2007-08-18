@@ -66,7 +66,9 @@ import com.jgoodies.forms.builder.ButtonBarBuilder;
  */
 public class AboutBoxDialog extends JDialog
 {
-	/** Logger for this class. */
+    private static final long serialVersionUID = 1L;
+
+    /** Logger for this class. */
 	private final static ILogger s_log =
 		LoggerController.createLogger(AboutBoxDialog.class);
 
@@ -157,7 +159,7 @@ public class AboutBoxDialog extends JDialog
 		{
 			start = System.currentTimeMillis();
 		}
-		_systemPnl = new SystemPanel(app);
+		_systemPnl = new SystemPanel();
 		_tabPnl.add(s_stringMgr.getString("AboutBoxDialog.system"), _systemPnl);
 		if (isDebug)
 		{
@@ -248,8 +250,9 @@ public class AboutBoxDialog extends JDialog
 
 	private static final class CreditsPanel extends JScrollPane
 	{
-		
-		CreditsPanel(IApplication app)
+        private static final long serialVersionUID = 1L;
+
+        CreditsPanel(IApplication app)
 		{
 			super();
 
@@ -346,7 +349,9 @@ public class AboutBoxDialog extends JDialog
 
 	private static final class AboutPanel extends JPanel
 	{
-		AboutPanel(IApplication app)
+        private static final long serialVersionUID = 1L;
+
+        AboutPanel(IApplication app)
 		{
 			super();
 			final SquirrelResources rsrc = app.getResources();
@@ -364,9 +369,10 @@ public class AboutBoxDialog extends JDialog
 
 	private static final class SystemPanel extends JPanel
 	{
-		private MemoryPanel _memoryPnl;
+        private static final long serialVersionUID = 1L;
+        private MemoryPanel _memoryPnl;
 
-		SystemPanel(IApplication app)
+		SystemPanel()
 		{
 			super();
 			setLayout(new BorderLayout());
@@ -394,7 +400,8 @@ public class AboutBoxDialog extends JDialog
 		extends PropertyPanel
 		implements ActionListener
 	{
-		private final JLabel _totalMemoryLbl = new JLabel();
+        private static final long serialVersionUID = 1L;
+        private final JLabel _totalMemoryLbl = new JLabel();
 		private final JLabel _usedMemoryLbl = new JLabel();
 		private final JLabel _freeMemoryLbl = new JLabel();
 		private Timer _timer;

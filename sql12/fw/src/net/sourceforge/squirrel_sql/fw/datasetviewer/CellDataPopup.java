@@ -186,7 +186,8 @@ public class CellDataPopup
 	//
 	private static class ColumnDataPopupPanel extends JPanel {
 
-		private final PopupEditableIOPanel ioPanel;
+        private static final long serialVersionUID = 1L;
+        private final PopupEditableIOPanel ioPanel;
 		private JInternalFrame _parentFrame = null;
 		private int _row;
 		private int _col;
@@ -206,7 +207,7 @@ public class CellDataPopup
 
 				// Since data is editable, we need to add control panel
 				// to manage user requests for DB update, file IO, etc.
-				JPanel editingControls = createPopupEditingControls(ioPanel, colDef);
+				JPanel editingControls = createPopupEditingControls();
 				add(editingControls, BorderLayout.SOUTH);
 			}
 			else {
@@ -221,10 +222,7 @@ public class CellDataPopup
 		/**
 		 * Set up user controls to stop editing and update DB.
 		 */
-		private JPanel createPopupEditingControls(PopupEditableIOPanel ioPanel,
-			ColumnDisplayDefinition colDef) {
-
-			final ColumnDisplayDefinition _colDef = colDef;
+		private JPanel createPopupEditingControls() {
 
 			JPanel panel = new JPanel(new BorderLayout());
 
@@ -310,7 +308,9 @@ _table.setValueAt(newValue, _row, _col);
 	// root type is Dialog or Frame, then other code must be used.
 	class TextAreaInternalFrame extends JInternalFrame
 	{
-		public TextAreaInternalFrame(String columnName, ColumnDisplayDefinition colDef,
+        private static final long serialVersionUID = 1L;
+
+        public TextAreaInternalFrame(String columnName, ColumnDisplayDefinition colDef,
 			Object value, int row, int col,
 			boolean isModelEditable, JTable table)
 		{
@@ -323,6 +323,8 @@ _table.setValueAt(newValue, _row, _col);
 
          AbstractAction closeAction = new AbstractAction()
          {
+            private static final long serialVersionUID = 1L;
+
             public void actionPerformed(ActionEvent actionEvent)
             {
                setVisible(false);

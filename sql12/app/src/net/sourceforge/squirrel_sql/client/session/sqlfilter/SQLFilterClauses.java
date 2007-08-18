@@ -27,15 +27,17 @@ import java.util.HashMap;
  */
 public class SQLFilterClauses implements Serializable
 {
-	/** The container for the SQL filter information */
-	HashMap _sqlClauseInformation;
+    private static final long serialVersionUID = 1L;
+
+    /** The container for the SQL filter information */
+	HashMap<String, HashMap<String, String>> _sqlClauseInformation;
 
 	/**
 	 * Creates a new instance of SQLFilterClauses.
 	 */
 	public SQLFilterClauses()
 	{
-		_sqlClauseInformation = new HashMap();
+		_sqlClauseInformation = new HashMap<String, HashMap<String, String>>();
 	}
 
 	/**
@@ -49,8 +51,8 @@ public class SQLFilterClauses implements Serializable
 	 */
 	public String get(String clauseName, String tableName)
 	{
-		HashMap filterData = (HashMap)_sqlClauseInformation.get(tableName);
-		return (filterData == null) ? null : (String)filterData.get(clauseName);
+		HashMap<String, String> filterData = _sqlClauseInformation.get(tableName);
+		return (filterData == null) ? null : filterData.get(clauseName);
 	}
 
 	/**
@@ -64,10 +66,10 @@ public class SQLFilterClauses implements Serializable
 	public void put(String clauseName, String tableName,
 						String clauseInformation)
 	{
-		HashMap filterData = (HashMap)_sqlClauseInformation.get(tableName);
+		HashMap<String, String> filterData = _sqlClauseInformation.get(tableName);
 		if (filterData == null)
 		{
-			filterData = new HashMap();
+			filterData = new HashMap<String, String>();
 		}
 		filterData.put(clauseName, clauseInformation);
 		_sqlClauseInformation.put(tableName, filterData);

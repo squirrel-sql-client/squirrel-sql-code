@@ -18,9 +18,8 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
 import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.Vector;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
 
@@ -83,7 +82,7 @@ public class CodeCompletionTableInfo extends CodeCompletionInfo
 
 
          ArrayList<CodeCompletionInfo> colInfosBuf = new ArrayList<CodeCompletionInfo>();
-         HashSet uniqCols = new HashSet();
+         HashSet<String> uniqCols = new HashSet<String>();
          for (int i = 0; i < schemColInfos.length; i++)
          {
             if(   (null == _catalog || ("" + _catalog).equals("" + schemColInfos[i].getCatalog()))
