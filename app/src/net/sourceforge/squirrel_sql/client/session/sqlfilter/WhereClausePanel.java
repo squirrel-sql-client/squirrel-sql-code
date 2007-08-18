@@ -72,7 +72,7 @@ public class WhereClausePanel implements ISQLFilterPanel
 	 *			The exception thrown if invalid arguments are passed.
 	 */
 	public WhereClausePanel(SortedSet<String> columnList, 
-	                        Map<String, String> textColumns, 
+	                        Map<String, Boolean> textColumns, 
 							String tableName)
 		throws IllegalArgumentException
 	{
@@ -221,7 +221,7 @@ public class WhereClausePanel implements ISQLFilterPanel
 		private String _tableName;
 
 		/** A List containing the names of the text columns */
-		private Map<String, String> _textColumns;
+		private Map<String, Boolean> _textColumns;
 
 		/**
 		 * A JPanel used for a bulk of the GUI elements of the panel.
@@ -230,7 +230,7 @@ public class WhereClausePanel implements ISQLFilterPanel
 		 * @param	tableName	The name of the database table.
 		 */
 		WhereClauseSubPanel(SortedSet<String> columnList, 
-		                    Map<String, String> textColumns,
+		                    Map<String, Boolean> textColumns,
 						    String tableName)
 		{
 			super();

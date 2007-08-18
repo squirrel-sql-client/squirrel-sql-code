@@ -34,7 +34,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
-import javax.swing.event.TableModelEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
@@ -49,11 +48,13 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  */
 public class PluginSummaryDialog extends JDialog
 {
-	/** Internationalized strings for this class. */
+    private static final long serialVersionUID = 1L;
+
+    /** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(PluginSummaryDialog.class);
 
-	private final IApplication _app;
+	transient private final IApplication _app;
 
 	private PluginSummaryTable _pluginPnl;
 
@@ -149,7 +150,9 @@ public class PluginSummaryDialog extends JDialog
 
       AbstractAction closeAction = new AbstractAction()
       {
-         public void actionPerformed(ActionEvent actionEvent)
+        private static final long serialVersionUID = 1L;
+
+        public void actionPerformed(ActionEvent actionEvent)
          {
             setVisible(false);
             dispose();

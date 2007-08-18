@@ -51,6 +51,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter;
 import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -67,6 +68,8 @@ import com.sun.treetable.TreeTableModel;
  */
 public class ExplainPlanExecuter extends JPanel implements ISQLResultExecuter {
 
+    private static final long serialVersionUID = 1L;
+
     private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(ExplainPlanExecuter.class);
 
@@ -79,8 +82,6 @@ public class ExplainPlanExecuter extends JPanel implements ISQLResultExecuter {
   private boolean checkedPlanTable = false;
   /** Factory for generating unique IDs for the explain plan statement ids*/
   private IntegerIdentifierFactory _idFactory = new IntegerIdentifierFactory();
-
-  private JTreeTable treeTable;
 
   private String _planTableName = "PLAN_TABLE";
   
@@ -329,20 +330,12 @@ public class ExplainPlanExecuter extends JPanel implements ISQLResultExecuter {
              s_log.error(ex);
 		  }
 		  finally {
-			 try {
-				if (explainPlan != null)
-				  explainPlan.close();
-			 }
-			 catch (SQLException ex) {}
+		      SQLUtilities.closeStatement(explainPlan);
 		  }
 		} catch (SQLException ex) {
-		  getSession().showErrorMessage(ex);
+		    getSession().showErrorMessage(ex);
 		} finally {
-		  try {
-			 if (deletePlan != null)
-				deletePlan.close();
-		  }
-		  catch (SQLException ex) {}
+		    SQLUtilities.closeStatement(deletePlan);
 		}
 	 }
 	 else {
@@ -445,7 +438,7 @@ public class ExplainPlanExecuter extends JPanel implements ISQLResultExecuter {
           getSession().showErrorMessage(ex);
           s_log.error(ex);
       } finally {
-          if (stmt != null) try {stmt.close();} catch (SQLException e) {}
+          SQLUtilities.closeStatement(stmt);
       }      
       return result;
   }
@@ -480,8 +473,8 @@ public class ExplainPlanExecuter extends JPanel implements ISQLResultExecuter {
           getSession().showErrorMessage(e);
           s_log.error(e);          
       } finally {
-          if (rs != null) try {rs.close();} catch (SQLException e) {}
-          if (pstmt != null) try {pstmt.close();} catch (SQLException e) {}
+          SQLUtilities.closeResultSet(rs);
+          SQLUtilities.closeStatement(pstmt);
       }
       if (planTableList.size() == 0) {
           s_log.info("No PLAN_TABLE table found in view ALL_TABLES");
@@ -541,8 +534,8 @@ public class ExplainPlanExecuter extends JPanel implements ISQLResultExecuter {
           getSession().showErrorMessage(e);
           s_log.error(e);
       } finally {
-          if (rs != null) try { rs.close(); } catch (SQLException e) {}
-          if (stmt != null) try { stmt.close(); } catch (SQLException e) {}
+          SQLUtilities.closeResultSet(rs);
+          SQLUtilities.closeStatement(stmt);
       }
       return result;
   }
@@ -613,7 +606,7 @@ public class ExplainPlanExecuter extends JPanel implements ISQLResultExecuter {
 														};
 
 		// Types of the columns.
-		private final Class[]  cTypes = { TreeTableModel.class,
+		private final Class<?>[]  cTypes = { TreeTableModel.class,
 														 String.class,
 														 String.class,
 														 String.class,
@@ -622,6 +615,7 @@ public class ExplainPlanExecuter extends JPanel implements ISQLResultExecuter {
 														 String.class,
 														 String.class
 													  };
+		@SuppressWarnings("unused")
 		public static class ExplainRow implements TreeNode {
 		  private ExplainRow parent;
 		  private List<ExplainRow> children;
@@ -818,7 +812,7 @@ public class ExplainPlanExecuter extends JPanel implements ISQLResultExecuter {
 		/**
 		 * Returns the class for the particular column.
 		 */
-		public Class getColumnClass(int column) {
+		public Class<?> getColumnClass(int column) {
 			 return cTypes[column];
 		}
 

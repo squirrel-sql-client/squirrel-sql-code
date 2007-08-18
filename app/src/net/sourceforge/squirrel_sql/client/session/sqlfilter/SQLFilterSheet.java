@@ -318,7 +318,7 @@ public class SQLFilterSheet extends BaseSessionInternalFrame
 		}
 
 		_whereClausePanel =
-			new WhereClausePanel(columnNames, textColumns, _objectInfo.getQualifiedName());
+		    new WhereClausePanel(columnNames, textColumns, _objectInfo.getQualifiedName());
 		_orderByClausePanel =
 			new OrderByClausePanel(columnNames, _objectInfo.getQualifiedName());
 		_panels.add(_whereClausePanel);

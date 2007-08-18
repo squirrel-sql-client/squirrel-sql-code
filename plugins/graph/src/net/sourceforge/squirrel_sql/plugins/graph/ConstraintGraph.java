@@ -15,7 +15,7 @@ public class ConstraintGraph
    private Point _fkGatherPoint;
    private Point _pkGatherPoint;
 
-   private Vector _foldingPoints = new Vector();
+   private Vector<FoldingPoint> _foldingPoints = new Vector<FoldingPoint>();
    private GraphLine _hitConnectLine;
    private boolean _isHitOnConnectLine;
    private FoldingPoint _hitFoldingPoint;
@@ -42,7 +42,7 @@ public class ConstraintGraph
       FoldingPointXmlBean[] foldPointXmlBeans = new FoldingPointXmlBean[_foldingPoints.size()];
       for (int i = 0; i < _foldingPoints.size(); i++)
       {
-         FoldingPoint point = (FoldingPoint) _foldingPoints.elementAt(i);
+         FoldingPoint point = _foldingPoints.elementAt(i);
          foldPointXmlBeans[i] = new FoldingPointXmlBean();
          foldPointXmlBeans[i].setX(point.getUnZoomedPoint().x);
          foldPointXmlBeans[i].setY(point.getUnZoomedPoint().y);
@@ -77,13 +77,13 @@ public class ConstraintGraph
 
    public GraphLine[] getAllLines()
    {
-      Vector ret = new Vector();
+      Vector<GraphLine> ret = new Vector<GraphLine>();
 
       ret.addAll(Arrays.asList(_fkStubLines));
       ret.addAll(Arrays.asList(getConnectLines()));
       ret.addAll(Arrays.asList(_pkStubLines));
 
-      return (GraphLine[]) ret.toArray(new GraphLine[ret.size()]);
+      return ret.toArray(new GraphLine[ret.size()]);
    }
 
    public GraphLine[] getLinesToArrow()
@@ -100,14 +100,14 @@ public class ConstraintGraph
 
       GraphLine[] ret = new GraphLine[_foldingPoints.size() + 1];
 
-      ret[0] = new GraphLine(_fkGatherPoint, (FoldingPoint) _foldingPoints.get(0));
+      ret[0] = new GraphLine(_fkGatherPoint, _foldingPoints.get(0));
 
       for (int i = 0; i < _foldingPoints.size() - 1; i++)
       {
-         ret[i + 1] = new GraphLine((FoldingPoint) _foldingPoints.get(i), (FoldingPoint) _foldingPoints.get(i+1));
+         ret[i + 1] = new GraphLine(_foldingPoints.get(i), _foldingPoints.get(i+1));
       }
 
-      ret[ret.length -1] = new GraphLine((FoldingPoint) _foldingPoints.lastElement(), _pkGatherPoint);
+      ret[ret.length -1] = new GraphLine(_foldingPoints.lastElement(), _pkGatherPoint);
 
       return ret;
 
@@ -129,7 +129,7 @@ public class ConstraintGraph
 
       for (int i = 0; i < _foldingPoints.size() - 1; i++)
       {
-         FoldingPoint fp = (FoldingPoint) _foldingPoints.get(i);
+         FoldingPoint fp = _foldingPoints.get(i);
          if(_hitConnectLine.getBegin().equals(fp.getZoomedPoint()))
          {
             _foldingPoints.insertElementAt(lastPopupClickPoint, i+1);
@@ -141,7 +141,7 @@ public class ConstraintGraph
 
    }
 
-   public Vector getFoldingPoints()
+   public Vector<FoldingPoint> getFoldingPoints()
    {
       return _foldingPoints;
    }
@@ -192,7 +192,7 @@ public class ConstraintGraph
       }
       else
       {
-         return (FoldingPoint) _foldingPoints.get(0);
+         return _foldingPoints.get(0);
       }
    }
 
@@ -204,7 +204,7 @@ public class ConstraintGraph
       }
       else
       {
-         return (FoldingPoint) _foldingPoints.get(_foldingPoints.size()-1);
+         return _foldingPoints.get(_foldingPoints.size()-1);
       }
 
    }
@@ -217,7 +217,7 @@ public class ConstraintGraph
       }
       else
       {
-         return new GraphLine((FoldingPoint) _foldingPoints.get(0), _fkGatherPoint);
+         return new GraphLine(_foldingPoints.get(0), _fkGatherPoint);
       }
    }
 }

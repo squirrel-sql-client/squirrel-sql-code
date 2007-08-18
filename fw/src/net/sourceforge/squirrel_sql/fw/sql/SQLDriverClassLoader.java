@@ -51,13 +51,13 @@ public class SQLDriverClassLoader extends MyURLClassLoader
 		super(url);
 	}
 
-	public Class[] getDriverClasses(ILogger logger)
+	public Class<?>[] getDriverClasses(ILogger logger)
 	{
-		final Class[] classes = getAssignableClasses(Driver.class, logger);
-		final List<Class> list = new ArrayList<Class>();
+		final Class<?>[] classes = getAssignableClasses(Driver.class, logger);
+		final List<Class<?>> list = new ArrayList<Class<?>>();
 		for (int i = 0; i < classes.length; ++i)
 		{
-			Class clazz = classes[i];
+			Class<?> clazz = classes[i];
 			if (!Modifier.isAbstract(clazz.getModifiers()))
 			{
 				list.add(clazz);
