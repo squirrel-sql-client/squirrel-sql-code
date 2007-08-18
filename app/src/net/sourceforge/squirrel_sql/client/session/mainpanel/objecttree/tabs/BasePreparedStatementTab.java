@@ -147,6 +147,15 @@ public abstract class BasePreparedStatementTab extends BaseObjectTab
 		}
 	}
 
+	/**
+	 * Subclasses must implement this to provide a PreparedStatement that has
+	 * it's parameter values bound and is ready to be executed.  It will be 
+	 * used in refreshComponent to load a DataSet into this tab.
+	 *  
+	 * @return the PreparedStatement to execute.
+	 * 
+	 * @throws SQLException
+	 */
 	protected abstract PreparedStatement createStatement() throws SQLException;
 
 	protected IDataSet createDataSetFromResultSet(ResultSet rs)
