@@ -18,6 +18,9 @@ New Plugin (Data import - Thorsten Mürell) allows you to import arbitrary files
            into the database.
 
 DB2Plugin: 
+ - Added support for OS/400 (trigger source and details not yet implemented). 
+   Special thanks goes to Tilmann Brenk for submitting OS/400 versions of all SQL 
+   statements required to support the plugin features.
  - Added support for showing user-defined functions in the object tree and the 
    source code that is associated with them if it is available.
  - Exceptions from DB2 Universal JDBC driver are now interpreted as 
@@ -47,6 +50,11 @@ Oracle Plugin:
  - Show the source for Oracle tables, as well as materialized views.  
  - Added additional query tokenization pass to find begin...end;/ type 
    anonymous procedures.
+   
+PostgreSQL Plugin:
+ - Added database locks display tab for PostgreSQL sessions.  Click on the top 
+ node in the object tree and look for a "Locks" tab.  Code was adapted from Rocco
+ Rutte's tab of the same name and purpose in the EclipseSQL project.
 
 Refactoring Plugin: Refactored drop tables command to not use the event dispatch
 thread for calculating foreign keys(UI Responsiveness).  Also, now FKs in child 

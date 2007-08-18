@@ -12,11 +12,18 @@
 <li>Rob Manning</li>
 </ul>
 
+<h2>Contributors</h2>
+<ul>
+<li>Christoph Schmitz - custom exception formatting using DB2Diagnosable API</li>
+<li>Tilmann Brenk - OS/400 DB2 version of all SQL queries used by the plugin</li>
+</ul>
+
 <H2>Introduction</H2>
 
 <P>The DB2 plugin adds DB2-specific functionality to the SQuirreL SQL
-Client. Read access is required to the following system views in order for this
-additional functionality to work correctly:
+Client for IBM DB2 hosted on LUW (Linux, Unix, Windows) and OS/400. Read access is 
+required to the following system views in order for this additional 
+functionality to work correctly on LUW DB2:
 <UL>
 <li>SYSCAT.DATATYPES</li>
 <li>SYSCAT.INDEXES</li>
@@ -26,17 +33,26 @@ additional functionality to work correctly:
 <li>SYSCAT.TABLESPACES</li>
 <li>SYSCAT.TRIGGERS</li>
 <li>SYSCAT.VIEWS</li>
+</UL>
 
+and the following system views on OS/400 DB2:
 
+<UL>
+<li>QSYS2.SYSFUNCS</li>
+<li>QSYS2.SYSINDEXES</li>
+<li>QSYS2.SYSROUTINES</li>
+<li>QSYS2.SYSSEQUENCES</li>
+<li>QSYS2.SYSVIEWS</li>
 </UL>
 
 <H2>New Tabs</H2>
 
-<P>Stored Procedures, Triggers and Views are shown in the object tree and have 
-a &quot;Source&quot; tab which displays the source of the selected object and 
-a &quot;Details&quot; tab which gives DB2-specific information about the 
-object.  Sequences and Indexes are also shown in the object tree and have a 
-details tab giving DB2-specific information about them.  
+<P>Stored Procedures, Triggers, Views and User-defined Functions (UDFs) are 
+shown in the object tree and have a &quot;Source&quot; tab which displays 
+the source of the selected object and a &quot;Details&quot; tab which gives 
+DB2-specific information about the object.  Sequences and Indexes are also 
+shown in the object tree and have a details tab giving DB2-specific 
+information about them.  
 
 <!-- INDEX -->
 
@@ -51,7 +67,7 @@ details tab in the right-hand view of the session window.
 </center>
 <p>
 The information provided by the details tab for indexes is derived by the 
-following query:
+following query on LUW DB2:
 <p>
 <pre>
 	SELECT T1.IID as index_identifier, 
@@ -92,6 +108,36 @@ following query:
 	AND     T1.TABSCHEMA = ? 
 	AND     T1.INDNAME = ? 
 </pre>
+
+and the following query on OS/400 DB2:
+<p>
+<pre>
+	select index_owner, 
+	index_name, 
+	index_schema, 
+	table_owner, 
+	table_name, 
+	table_schema, 
+	case is_unique 
+	    when 'D' then 'No (duplicates are allowed)' 
+	    when 'V' then 'Yes (duplicate NULL values are allowed)' 
+	    when 'U' then 'Yes' 
+	    when 'E' then 'Encoded vector index' 
+	end as uniqueness, 
+	column_count, 
+	system_index_name, 
+	system_index_schema, 
+	system_table_name, 
+	system_table_schema, 
+	long_comment, 
+	iasp_number, 
+	index_text, 
+	is_spanning_index 
+	from qsys2.sysindexes 
+	where table_schema = ? 
+	and index_name = ? 
+</pre>
+
 <p>
 
 <!-- STORED PROC SOURCE -->
@@ -105,7 +151,7 @@ the following picture, the schema is &quot;dbcopy&quot;
 <img src="images/procedure_source.jpg">
 </center>
 <p>
-The source code for stored procedures is derived by the following query:
+The source code for stored procedures is derived by the following query on LUW DB2:
 <p>
 <pre>
 	select text 
@@ -113,7 +159,14 @@ The source code for stored procedures is derived by the following query:
 	where PROCSCHEMA = ? 
 	and PROCNAME = ? 
 </pre>
-
+<p>
+and the following query on OS/400 DB2:
+<pre>
+	select routine_definition from qsys2.sysroutines 
+	where routine_schema=? 
+	and routine_name = ? 
+</pre>
+<p>
 <!-- SEQUENCE -->
 
 <h2>Sequence Details Tab</h2>
@@ -126,7 +179,7 @@ to the system catalog. An example of this is shown in the following picture:
 </center>
 <p>
 The information in the details tab for a sequence is derived from the following
-query:
+query on LUW DB2:
 <p>
 <pre>
 	SELECT  T1.OWNER     AS sequence_owner, 
@@ -158,13 +211,38 @@ query:
 	and T1.SEQSCHEMA = ? 
 	and T1.SEQNAME = ? 
 </pre>
+<p>
+and the following query on OS/400 DB2:
+<pre>
+	select sequence_schema, 
+	sequence_name, 
+	sequence_definer, 
+	data_type as type_name, 
+	minimum_value as min_value, 
+	maximum_value as max_value, 
+	increment as increment_by, 
+	case cycle_option 
+	 when 'YES' then 'CYCLE' 
+	 else 'NOCYCLE' 
+	as cycle_flag, 
+	case order 
+	 when 'YES' then 'ORDERED' 
+	 else 'UNORDERED' 
+	as order_flag, 
+	cache as cache_size, 
+	sequence_created as create_time, 
+	last_altered_timestamp as last_alter_time, 
+	long_comment as comment 
+	from qsys2.syssequences 
+</pre>
 
 <!-- TRIGGER SOURCE -->
 
 <h2>Trigger Source Tab</h2>
 The source tab for triggers displays the source for a table trigger and can
 be accessed by navigating to the &quot;TRIGGER&quot; folder beneath a table 
-object in the object tree.  An example of this is shown in the following 
+object in the object tree.  Currently, trigger features of this plugin are only 
+supported on LUW DB2.  An example of this is shown in the following 
 picture:
 <p>
 <center>
@@ -247,7 +325,7 @@ picture:
 <img src="images/view_source.jpg">
 </center>
 <p>
-The source code for views is derived from the following query:
+The source code for views is derived from the following query on LUW DB2:
 <p>
 <pre>
 	SELECT TEXT 
@@ -255,7 +333,109 @@ The source code for views is derived from the following query:
 	WHERE VIEWSCHEMA = ? 
 	AND VIEWNAME = ? 
 </pre>
+and the following query on OS/400 DB2:
 <p>
+<pre>
+	select view_definition 
+	from qsys2.sysviews 
+	where table_schema = ? 
+	and table_name = ? 
+</pre>
+<p>
+
+<!-- UDF SOURCE -->
+<h2>UDF Source Tab</h2>
+The source tab for UDFs displays the source for a User-defined function and can
+be accessed by navigating to the &quot;UDF&quot; folder beneath a schema 
+object in the object tree.  An example of this is shown in the following 
+picture:
+<p>
+<center>
+<img src="images/udf_source.jpg">
+</center>
+<p>
+The source code for a UDF is derived from the following query on LUW DB2:
+<p>
+<pre>
+	SELECT 
+	case 
+	    when body is null then 'No source available' 
+	    else body 
+	end 
+	FROM SYSIBM.SYSFUNCTIONS 
+	WHERE schema = ? 
+	AND name = ? 
+	AND implementation is null
+</pre>
+and the following query on OS/400 DB2:
+<p>
+<pre>
+	select 
+	case 
+	    when body = 'SQL' and routine_definition is not null then routine_definition 
+	    when body = 'SQL' and routine_definition is null then 'no source available' 
+	    when body = 'EXTERNAL' and external_name is not null then external_name 
+	    when body = 'EXTERNAL' and external_name is null then 'system-generated function' 
+	end as definition 
+	from QSYS2.SYSFUNCS 
+	where routine_schema = ? 
+	and routine_name = ? 
+</pre>
+<p>
+<!-- UDF DETAILS -->
+
+<h2>UDF Details Tab</h2>
+The details tab for UDFs displays information about the selected UDF 
+according to the system catalog. An example of this is shown in the following 
+picture:
+<p>
+<center>
+<img src="images/udf_details.jpg">
+</center>
+<p>
+The information in the details tab for a UDF is derived from the following
+query on LUW DB2:
+<p>
+<pre>
+	select 
+	name, 
+	schema, 
+	definer, 
+	function_id, 
+	parm_count, 
+	side_effects, 
+	fenced, 
+	language, 
+	contains_sql, 
+	result_cols, 
+	class, 
+	jar_id 
+	from sysibm.SYSFUNCTIONS 
+	where schema = ? 
+	and name = ? 
+</pre>
+<p>
+and the following query on OS/400 DB2:
+<p>
+<pre>
+	select 
+	routine_name as name, 
+	routine_schema as schema, 
+	routine_definer as definer, 
+	in_parms as parm_count, 
+	case external_action 
+	    when 'E' then 'has external side effects' 
+	    when 'N' then 'has no external side effects' 
+	end as side_effects, 
+	fenced, 
+	external_language as language, 
+	sql_data_access as contains_sql, 
+	number_of_results as result_cols, 
+	external_name 
+	from qsys2.SYSFUNCS 
+	where routine_schema = ? 
+	and routine_name = ? 
+</pre>
 </BODY>
 </HTML>
 

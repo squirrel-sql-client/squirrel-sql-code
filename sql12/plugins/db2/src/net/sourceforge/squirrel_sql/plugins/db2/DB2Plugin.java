@@ -61,6 +61,9 @@ public class DB2Plugin extends DefaultSessionPlugin {
     
     private static final String JCC_DRIVER_NAME = "IBM DB2 JDBC Universal Driver Architecture";
     
+    /** The product name that indicates we need to use os/400 queries */ 
+    private static final String OS_400_PRODUCT_NAME = "DB2 UDB for AS/400";
+    
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(DB2Plugin.class);
 
@@ -136,7 +139,7 @@ public class DB2Plugin extends DefaultSessionPlugin {
      * @return  Contributors names.
      */    
     public String getContributors() {
-        return "Christoph Schmitz";
+        return "Christoph Schmitz, Tilmann Brenk";
     }    
     
     /**
@@ -248,31 +251,36 @@ public class DB2Plugin extends DefaultSessionPlugin {
     
     private void updateTreeApi(ISession session) {
         String stmtSep = session.getQueryTokenizer().getSQLStatementSeparator();
-        
+        boolean isOS400 = isOS400(session);
         
         _treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
         _treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, 
-                new ProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE));
+                new ProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE, isOS400));
         _treeAPI.addDetailTab(DatabaseObjectType.VIEW, 
-                              new ViewSourceTab(i18n.SHOW_VIEW_SOURCE, stmtSep));
+                              new ViewSourceTab(i18n.SHOW_VIEW_SOURCE, stmtSep, isOS400));
         
         
         _treeAPI.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
-        _treeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexDetailsTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexDetailsTab(isOS400));
 
-        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
-        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER_TYPE_DBO, new DatabaseObjectInfoTab());
+        if (!isOS400) {
+            _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
+            _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER_TYPE_DBO, new DatabaseObjectInfoTab());
+        } else {
+            s_log.info("updateTreeApi: Trigger support not currently available on OS/400");
+        }
         _treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
-        _treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new SequenceDetailsTab());        
+        _treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new SequenceDetailsTab(isOS400));        
 
         _treeAPI.addDetailTab(DatabaseObjectType.UDF, new DatabaseObjectInfoTab());
-        _treeAPI.addDetailTab(DatabaseObjectType.UDF, new UDFSourceTab(i18n.SHOW_UDF_SOURCE, stmtSep));
-        _treeAPI.addDetailTab(DatabaseObjectType.UDF, new UDFDetailsTab());        
+        _treeAPI.addDetailTab(DatabaseObjectType.UDF, 
+                new UDFSourceTab(i18n.SHOW_UDF_SOURCE, stmtSep, isOS400));
+        _treeAPI.addDetailTab(DatabaseObjectType.UDF, new UDFDetailsTab(isOS400));        
         
         
         // Expanders - trigger and index expanders are added inside the table
         // expander
-        _treeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander());        
+        _treeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander(isOS400));        
         
         // Expanders - trigger and index expanders are added inside the table
         // expander        
@@ -281,20 +289,49 @@ public class DB2Plugin extends DefaultSessionPlugin {
         
         //tableExpander.setTableIndexExtractor(extractor);
         ITableIndexExtractor indexExtractor = 
-            new DB2TableIndexExtractorImpl();
-        ITableTriggerExtractor triggerExtractor = 
-            new DB2TableTriggerExtractorImpl();
-        
-        tableExpander.setTableTriggerExtractor(triggerExtractor);
+            new DB2TableIndexExtractorImpl(isOS400);
         tableExpander.setTableIndexExtractor(indexExtractor);
+        
+        if (!isOS400) {
+            // No support for triggers currently on OS/400
+            ITableTriggerExtractor triggerExtractor = 
+                new DB2TableTriggerExtractorImpl();
+        
+            tableExpander.setTableTriggerExtractor(triggerExtractor);
+        }
         
         _treeAPI.addExpander(DatabaseObjectType.TABLE, tableExpander);
         
         
         _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
         _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, 
-                              new TriggerSourceTab("The source of the trigger", stmtSep));
+                              new TriggerSourceTab(i18n.SHOW_TRIGGER_SOURCE, stmtSep));
         
     }
     
+    /**
+     * Determines whether or not we've connected to DB2 on OS/400. 
+     * 
+     * @param session
+     * @return
+     */
+    private boolean isOS400(ISession session) {
+        boolean result = false;
+        try {
+            String prodName = session.getMetaData().getDatabaseProductName();
+            if (prodName == null || prodName.equals("")) {
+                s_log.info("isOS400: product name is null or empty.  " +
+                		   "Assuming not an OS/400 DB2 session.");
+            } else if (prodName.equals(OS_400_PRODUCT_NAME)) {
+                s_log.info("isOS400: session appears to be an OS/400 DB2");
+                result = true;
+            } else {
+                s_log.info("isOS400: session doesn't appear to be an OS/400 DB2");
+            }
+        } catch (SQLException e) {
+            s_log.error("isOS400: unable to determine the product name: "+
+                        e.getMessage(), e);
+        }
+        return result;
+    }
 }

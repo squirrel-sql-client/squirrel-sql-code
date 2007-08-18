@@ -51,6 +51,10 @@ public class TriggerSourceTab extends FormattedSourceTab
         super.setupFormatter(stmtSep, null);
 	}
 
+    /**
+     * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab#createStatement()
+     */
+    @Override	
 	protected PreparedStatement createStatement() throws SQLException
 	{
 		final ISession session = getSession();

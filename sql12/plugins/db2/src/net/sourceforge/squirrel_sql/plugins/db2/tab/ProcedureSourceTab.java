@@ -38,12 +38,12 @@ public class ProcedureSourceTab extends FormattedSourceTab
     private static final StringManager s_stringMgr =
         StringManagerFactory.getStringManager(ProcedureSourceTab.class);   
     
-    static interface i18n {
+    private static interface i18n {
         //i18n[ProcedureSourceTab.cLanguageProcMsg=This is a C-language routine. The 
         //source code is unavailable.]
         String C_LANGUAGE_PROC_MSG = 
             s_stringMgr.getString("ProcedureSourceTab.cLanguageProcMsg"); 
-    }    
+    }        
     
 	/** SQL that retrieves the source of a stored procedure. */
 	private static String SQL =
@@ -56,29 +56,52 @@ public class ProcedureSourceTab extends FormattedSourceTab
         "where PROCSCHEMA = ? " +
         "and PROCNAME = ? ";
     
+	/** SQL that retrieves the source of a stored procedure on OS/400 */
+	private static String OS_400_SQL = 
+	    "select routine_definition from qsys2.sysroutines " +
+	    "where routine_schema=? " +
+	    "and routine_name = ? ";
+		
 	/** Logger for this class. */
 	private final static ILogger s_log =
 		LoggerController.createLogger(ProcedureSourceTab.class);
 
-	public ProcedureSourceTab(String hint)
+    /** boolean to indicate whether or not this session is OS/400 */
+    private boolean isOS400 = false;    
+	
+    /**
+     * Constructor
+     * 
+     * @param hint what the user sees on mouse-over tool-tip
+     * @param isOS400 whether or not the session is OS/400
+     */
+	public ProcedureSourceTab(String hint, boolean isOS400)
 	{
 		super(hint);
         super.setCompressWhitespace(false);
+        this.isOS400 = isOS400;
 	}
 
+	
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab#createStatement()
+	 */
+	@Override
 	protected PreparedStatement createStatement() throws SQLException
 	{
 		final ISession session = getSession();
 		final IDatabaseObjectInfo doi = getDatabaseObjectInfo();
-
+        String sql = SQL;
+        if (isOS400) {
+            sql = OS_400_SQL;
+        }
         if (s_log.isDebugEnabled()) {
-            s_log.debug("Running SQL for procedure source: "+SQL);
+            s_log.debug("Running SQL for procedure source: "+sql);
             s_log.debug("schema="+doi.getSchemaName());
             s_log.debug("procedure name="+doi.getSimpleName());
         }
-        
 		ISQLConnection conn = session.getSQLConnection();
-		PreparedStatement pstmt = conn.prepareStatement(SQL);
+		PreparedStatement pstmt = conn.prepareStatement(sql);
         pstmt.setString(1, doi.getSchemaName());
 		pstmt.setString(2, doi.getSimpleName());
 		return pstmt;

@@ -68,25 +68,62 @@ public class UDFDetailsTab extends BasePreparedStatementTab
 	    "where schema = ? " +
 	    "and name = ? ";
 	
+	/** SQL that retrieves the data on OS/400 */
+	private static String OS_400_SQL = 
+	    "select " +
+	    "routine_name as name, " +
+	    "routine_schema as schema, " +
+	    "routine_definer as definer, " +
+	    "in_parms as parm_count, " +
+	    "case external_action " +
+	    "    when 'E' then 'has external side effects' " +
+	    "    when 'N' then 'has no external side effects' " +
+	    "end as side_effects, " +
+	    "fenced, " +
+	    "external_language as language, " +
+	    "sql_data_access as contains_sql, " +
+	    "number_of_results as result_cols, " +
+	    "external_name " +
+	    "from qsys2.SYSFUNCS " +
+	    "where routine_schema = ? " +
+	    "and routine_name = ? ";
+	
 	/** Logger for this class. */
 	private final static ILogger s_log =
 		LoggerController.createLogger(TriggerDetailsTab.class);
 
-	public UDFDetailsTab()
+	/** whether or not we are connected to OS/400 */
+	private boolean isOS400 = false;
+	
+	/**
+	 * Constructor
+	 * 
+	 * @param isOS400 whether or not we are connected to an OS/400 system
+	 */
+	public UDFDetailsTab(boolean isOS400)
 	{
 		super(i18n.TITLE, i18n.HINT, true);
+		this.isOS400 = isOS400;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BasePreparedStatementTab#createStatement()
+	 */
+	@Override
 	protected PreparedStatement createStatement() throws SQLException
 	{
 		ISession session = getSession();
         IDatabaseObjectInfo doi = getDatabaseObjectInfo();
+        String sql = SQL;
+        if (isOS400) {
+            sql = OS_400_SQL;
+        }
         if (s_log.isDebugEnabled()) {
-            s_log.debug("UDF details SQL: "+SQL);
+            s_log.debug("UDF details SQL: "+sql);
             s_log.debug("UDF schema: "+doi.getSchemaName());
             s_log.debug("UDF name: "+doi.getSimpleName());
         }
-		PreparedStatement pstmt = session.getSQLConnection().prepareStatement(SQL);
+		PreparedStatement pstmt = session.getSQLConnection().prepareStatement(sql);
         pstmt.setString(1, doi.getSchemaName());
 		pstmt.setString(2, doi.getSimpleName());
 		return pstmt;
