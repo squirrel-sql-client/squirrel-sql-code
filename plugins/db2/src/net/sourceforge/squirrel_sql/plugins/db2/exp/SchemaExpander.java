@@ -37,12 +37,16 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 public class SchemaExpander implements INodeExpander
 {
 
+    /** whether or not we are connected to OS/400 */
+    private boolean isOS400 = false;
+    
 	/**
 	 * Ctor.
 	 */
-	public SchemaExpander()
+	public SchemaExpander(boolean isOS400)
 	{
 		super();
+		this.isOS400 = isOS400;
 	}
 
 	/**
@@ -71,7 +75,7 @@ public class SchemaExpander implements INodeExpander
                                    DatabaseObjectType.SEQUENCE_TYPE_DBO, 
                                    md);
         ObjectTreeNode node = new ObjectTreeNode(session, seqInfo);
-        node.addExpander(new SequenceParentExpander());
+        node.addExpander(new SequenceParentExpander(isOS400));
         childNodes.add(node);
 
         IDatabaseObjectInfo udfInfo = 
@@ -81,7 +85,7 @@ public class SchemaExpander implements INodeExpander
                                    DatabaseObjectType.UDF_TYPE_DBO, 
                                    md);
         ObjectTreeNode udfnode = new ObjectTreeNode(session, udfInfo);
-        udfnode.addExpander(new UDFParentExpander());
+        udfnode.addExpander(new UDFParentExpander(isOS400));
         childNodes.add(udfnode);
         
         

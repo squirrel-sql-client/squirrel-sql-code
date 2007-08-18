@@ -35,34 +35,58 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.For
 public class ViewSourceTab extends FormattedSourceTab
 {
 	/** SQL that retrieves the source of a stored procedure. */
-	private static String SQL =
+	private static final String SQL =
         "SELECT TEXT " +
         "FROM SYSCAT.VIEWS " +
         "WHERE VIEWSCHEMA = ? " +
         "AND VIEWNAME = ? ";
-    
+	
+	/** SQL that retrieves the source of a stored procedure on OS/400 */
+	private static final String OS_400_SQL = 
+	    "select view_definition " +
+	    "from qsys2.sysviews " +
+	    "where table_schema = ? " +
+	    "and table_name = ? ";
+	
 	/** Logger for this class. */
 	private final static ILogger s_log =
 		LoggerController.createLogger(ViewSourceTab.class);
 
-	public ViewSourceTab(String hint, String stmtSep)
+    /** boolean to indicate whether or not this session is OS/400 */
+    private boolean isOS400 = false;    
+	
+    /**
+     * Constructor
+     * 
+     * @param isOS400 whether or not we are connected to an OS/400 system
+     */    
+	public ViewSourceTab(String hint, String stmtSep, boolean isOS400)
 	{
 		super(hint);
         super.setCompressWhitespace(true);
-        super.setupFormatter(stmtSep, null);        
+        super.setupFormatter(stmtSep, null); 
+        this.isOS400 = isOS400;
 	}
 
+    /**
+     * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab#createStatement()
+     */
+    @Override	
 	protected PreparedStatement createStatement() throws SQLException
 	{
 		final ISession session = getSession();
 		final IDatabaseObjectInfo doi = getDatabaseObjectInfo();
-
 		ISQLConnection conn = session.getSQLConnection();
+        String sql = SQL;
+        if (isOS400) {
+            sql = OS_400_SQL;
+        }		
         if (s_log.isDebugEnabled()) {
-            s_log.debug("Running SQL for View source tab: "+SQL);
+            s_log.debug("Running SQL for View source tab: "+sql);
+            s_log.debug("schema="+doi.getSchemaName());
+            s_log.debug("view name="+doi.getSimpleName());            
         }
-		PreparedStatement pstmt = conn.prepareStatement(SQL);
-        
+		PreparedStatement pstmt = conn.prepareStatement(sql);
         pstmt.setString(1, doi.getSchemaName());
 		pstmt.setString(2, doi.getSimpleName());
 		return pstmt;

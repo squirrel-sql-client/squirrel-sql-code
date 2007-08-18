@@ -48,12 +48,23 @@ public class UDFParentExpander implements INodeExpander
 	    "AND name like ? " +
 	    "AND implementation is null";
 	
+	/** SQL used to load UDF names on OS/400 systems */
+	private static final String OS_400_SQL = 
+	    "select routine_name " +
+	    "from QSYS2.SYSFUNCS " +
+	    "where routine_schema like ? " +
+	    "and name like ? ";	    
+	
+	/** whether or not we are connected to OS/400 */
+	private boolean isOS400 = false;
+	
 	/**
 	 * Default ctor.
 	 */
-	public UDFParentExpander()
+	public UDFParentExpander(boolean isOS400)
 	{
 		super();
+		this.isOS400 = isOS400;
 	}
 
 	/**
@@ -79,7 +90,11 @@ public class UDFParentExpander implements INodeExpander
 		final String objFilter =  session.getProperties().getObjectFilter();
 
 
-		final PreparedStatement pstmt = conn.prepareStatement(SQL);
+		String sql = SQL;
+		if (isOS400) {
+		    sql = OS_400_SQL;
+		}
+		final PreparedStatement pstmt = conn.prepareStatement(sql);
         ResultSet rs = null;
 		try
 		{

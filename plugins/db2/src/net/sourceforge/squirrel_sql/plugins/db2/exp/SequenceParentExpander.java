@@ -47,12 +47,23 @@ public class SequenceParentExpander implements INodeExpander
         "WHERE SEQSCHEMA = ? " +
         "AND SEQNAME like ? ";
     
+	/** SQL used to load sequence names on OS/400 */
+	private static final String OS_400_SQL = 
+	    "select sequence_name " +
+	    "from qsys2.syssequences " +
+	    "where sequence_schema like ? " +
+	    "and sequence_name like ? ";
+	
+    /** whether or not we are connected to OS/400 */
+    private boolean isOS400 = false;	
+	
 	/**
 	 * Default ctor.
 	 */
-	public SequenceParentExpander()
+	public SequenceParentExpander(boolean isOS400)
 	{
 		super();
+		this.isOS400 = isOS400;
 	}
 
 	/**
@@ -77,8 +88,12 @@ public class SequenceParentExpander implements INodeExpander
 		final String schemaName = parentDbinfo.getSchemaName();
 		final String objFilter =  session.getProperties().getObjectFilter();
 
+        String sql = SQL;
+        if (isOS400) {
+            sql = OS_400_SQL;
+        }
 
-		final PreparedStatement pstmt = conn.prepareStatement(SQL);
+		final PreparedStatement pstmt = conn.prepareStatement(sql);
         ResultSet rs = null;
 		try
 		{

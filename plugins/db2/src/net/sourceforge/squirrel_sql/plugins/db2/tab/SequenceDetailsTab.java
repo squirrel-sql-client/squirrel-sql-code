@@ -25,6 +25,8 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.Bas
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
  * This class will display the details for an DB2 sequence.
  *
@@ -77,17 +79,62 @@ public class SequenceDetailsTab extends BasePreparedStatementTab
         "WHERE T1.DATATYPEID = T2.TYPEID " +
         "and T1.SEQSCHEMA = ? " +
         "and T1.SEQNAME = ? ";
-    
-	public SequenceDetailsTab()
+	
+	/** SQL that retrieves the data on OS/400 */
+	private static final String OS_400_SQL = 
+	    "select sequence_schema, " +
+	    "sequence_name, " +
+	    "sequence_definer, " +
+	    "data_type as type_name, " +
+	    "minimum_value as min_value, " +
+	    "maximum_value as max_value, " +
+	    "increment as increment_by, " +
+	    "case cycle_option " +
+	    " when 'YES' then 'CYCLE' " +
+	    " else 'NOCYCLE' " +
+	    "as cycle_flag, " +
+	    "case order " +
+	    " when 'YES' then 'ORDERED' " +
+	    " else 'UNORDERED' " +
+	    "as order_flag, " +
+	    "cache as cache_size, " +
+	    "sequence_created as create_time, " +
+	    "last_altered_timestamp as last_alter_time, " +
+	    "long_comment as comment " +
+	    "from qsys2.syssequences ";	    
+	
+    /** Logger for this class. */
+    private final static ILogger s_log =
+        LoggerController.createLogger(SequenceDetailsTab.class);
+
+    /** whether or not we are connected to OS/400 */
+    private boolean isOS400 = false;
+	
+	
+	public SequenceDetailsTab(boolean isOS400)
 	{
 		super(i18n.TITLE, i18n.HINT, true);
+		this.isOS400 = isOS400;
 	}
 
+    /**
+     * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BasePreparedStatementTab#createStatement()
+     */
+    @Override	
 	protected PreparedStatement createStatement() throws SQLException
-	{
+	{        
 		ISession session = getSession();
-		PreparedStatement pstmt = session.getSQLConnection().prepareStatement(SQL);
 		IDatabaseObjectInfo doi = getDatabaseObjectInfo();
+		String sql = SQL;
+        if (isOS400) {
+            sql = OS_400_SQL;
+        }
+        if (s_log.isDebugEnabled()) {
+            s_log.debug("Sequence details SQL: "+sql);
+            s_log.debug("Sequence schema: "+doi.getSchemaName());
+            s_log.debug("Sequence name: "+doi.getSimpleName());
+        }		
+		PreparedStatement pstmt = session.getSQLConnection().prepareStatement(sql);
 		pstmt.setString(1, doi.getSchemaName());
 		pstmt.setString(2, doi.getSimpleName());
 		return pstmt;

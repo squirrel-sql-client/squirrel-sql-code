@@ -33,7 +33,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class DB2TableIndexExtractorImpl implements ITableIndexExtractor {
 
-    
     /** Logger for this class */
     private final static ILogger s_log = 
         LoggerController.createLogger(DB2TableIndexExtractorImpl.class);
@@ -43,6 +42,26 @@ public class DB2TableIndexExtractorImpl implements ITableIndexExtractor {
         "select INDNAME from SYSCAT.INDEXES " +
         "where TABSCHEMA = ? " +
         "and TABNAME = ? ";
+    
+    /** The query that finds the indexes for a given table on OS/400 */
+    private static final String OS_400_SQL = 
+        "select " +
+        "index_name, " +
+        "from qsys2.sysindexes " +
+        "where table_schema = ? " +
+        "and table_name = ? ";        
+    
+    /** boolean to indicate whether or not this session is OS/400 */
+    private boolean isOS400 = false;        
+    
+    /**
+     * Ctor.
+     * 
+     * @param isOS400 whether or not the session is OS/400
+     */
+    public DB2TableIndexExtractorImpl(boolean isOS400) {
+        this.isOS400 = isOS400;
+    }
     
     /**
      * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.ITableIndexExtractor#bindParamters(java.sql.PreparedStatement, net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
@@ -64,6 +83,9 @@ public class DB2TableIndexExtractorImpl implements ITableIndexExtractor {
      * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.ITableIndexExtractor#getTableIndexQuery()
      */
     public String getTableIndexQuery() {
+        if (isOS400) {
+            return OS_400_SQL;
+        }
         return query;
     }
 

@@ -42,8 +42,7 @@ public class DB2TableTriggerExtractorImpl implements ITableTriggerExtractor {
         "select TRIGNAME from SYSCAT.TRIGGERS " +
         "where TABSCHEMA = ? " +
         "and TABNAME = ? ";
-        
-            
+                        
     /**
      * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.ITableTriggerExtractor#bindParamters(java.sql.PreparedStatement, net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
      */

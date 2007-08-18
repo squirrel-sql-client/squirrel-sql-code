@@ -100,6 +100,10 @@ public class TriggerDetailsTab extends BasePreparedStatementTab
 		super(i18n.TITLE, i18n.HINT, true);
 	}
 
+    /**
+     * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BasePreparedStatementTab#createStatement()
+     */
+    @Override	
 	protected PreparedStatement createStatement() throws SQLException
 	{
 		ISession session = getSession();

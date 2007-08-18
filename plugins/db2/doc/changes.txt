@@ -3,6 +3,9 @@ DB2 Plugin Change Log
 
 0.03
 ====
+- Added support for OS/400 (trigger source and details not yet implemented). 
+  Special thanks goes to Tilmann Brenk for submitting OS/400 versions of all SQL 
+  statements required to support the plugin features.
 - Added support for showing user-defined functions in the object tree and the 
   source code that is associated with them if it is available.
 - When the source tab of a C-language stored procedure is selected, we now 
