@@ -52,6 +52,7 @@ import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.ThreadSafeDateFormat;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -143,7 +144,8 @@ public class DataTypeTime
 
     // The DateFormat object to use for all locale-dependent formatting.
     // This is reset each time the user changes the previous settings.
-    private static DateFormat dateFormat = DateFormat.getTimeInstance(localeFormat);
+    private static ThreadSafeDateFormat dateFormat = 
+        new ThreadSafeDateFormat(localeFormat, true);
     private boolean _renderExceptionHasBeenLogged;
 
    /**
@@ -835,22 +837,22 @@ public class DataTypeTime
        {
           // get the values from the controls and set them in the static properties
           useJavaDefaultFormat = useJavaDefaultFormatChk.isSelected();
-          DTProperties.put(
-             thisClassName,
-             "useJavaDefaultFormat", Boolean.valueOf(useJavaDefaultFormat).toString());
+          DTProperties.put(thisClassName,
+                          "useJavaDefaultFormat", 
+                          Boolean.valueOf(useJavaDefaultFormat).toString());
 
 
           localeFormat = dateFormatTypeDrop.getValue();
-          dateFormat = DateFormat.getTimeInstance(localeFormat);	// lenient is set next
-          DTProperties.put(
-             thisClassName,
-             "localeFormat", Integer.toString(localeFormat));
+          dateFormat = new ThreadSafeDateFormat(localeFormat, true);	// lenient is set next
+          DTProperties.put(thisClassName,
+                           "localeFormat", 
+                           Integer.toString(localeFormat));
 
           lenient = lenientChk.isSelected();
           dateFormat.setLenient(lenient);
-          DTProperties.put(
-             thisClassName,
-             "lenient", Boolean.valueOf(lenient).toString());
+          DTProperties.put(thisClassName,
+                           "lenient", 
+                           Boolean.valueOf(lenient).toString());
        }
 
     } // end of inner class

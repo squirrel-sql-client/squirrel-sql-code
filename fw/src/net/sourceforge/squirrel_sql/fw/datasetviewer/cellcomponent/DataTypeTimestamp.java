@@ -55,6 +55,7 @@ import net.sourceforge.squirrel_sql.fw.gui.RightLabel;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.ThreadSafeDateFormat;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -146,8 +147,8 @@ public class DataTypeTimestamp
 
     // The DateFormat object to use for all locale-dependent formatting.
     // This is reset each time the user changes the previous settings.
-    private static DateFormat dateFormat =
-       DateFormat.getDateTimeInstance(localeFormat, localeFormat);
+    private static ThreadSafeDateFormat dateFormat = 
+        new ThreadSafeDateFormat(localeFormat, localeFormat);
 
    // values for how to use timestamps in WHERE clauses
     public static final int DO_NOT_USE = 0;
@@ -906,22 +907,23 @@ public class DataTypeTimestamp
       public void ok() {
          // get the values from the controls and set them in the static properties
          useJavaDefaultFormat = useJavaDefaultFormatChk.isSelected();
-         DTProperties.put(
-            thisClassName,
-            "useJavaDefaultFormat", Boolean.valueOf(useJavaDefaultFormat).toString());
+         DTProperties.put(thisClassName,
+                          "useJavaDefaultFormat", 
+                          Boolean.valueOf(useJavaDefaultFormat).toString());
 
 
          localeFormat = dateFormatTypeDrop.getValue();
-         dateFormat = DateFormat.getDateTimeInstance(localeFormat, localeFormat);	// lenient is set next
-         DTProperties.put(
-            thisClassName,
-            "localeFormat", Integer.toString(localeFormat));
+         dateFormat = 
+             new ThreadSafeDateFormat(localeFormat, localeFormat);	// lenient is set next
+         DTProperties.put(thisClassName,
+                          "localeFormat", 
+                          Integer.toString(localeFormat));
 
          lenient = lenientChk.isSelected();
          dateFormat.setLenient(lenient);
-         DTProperties.put(
-            thisClassName,
-            "lenient", Boolean.valueOf(lenient).toString());
+         DTProperties.put(thisClassName,
+                          "lenient", 
+                          Boolean.valueOf(lenient).toString());
 
          //WARNING: this depends on entries in ButtonGroup being in the same order
          // as the values for whereClauseUsage
@@ -933,9 +935,9 @@ public class DataTypeTimestamp
          if (buttonIndex > radioButtonModels.length)
             buttonIndex = USE_JDBC_ESCAPE_FORMAT;
          whereClauseUsage = buttonIndex;
-         DTProperties.put(
-            thisClassName,
-            "whereClauseUsage", Integer.toString(whereClauseUsage));
+         DTProperties.put(thisClassName,
+                          "whereClauseUsage", 
+                          Integer.toString(whereClauseUsage));
       }
 
     } // end of inner class
