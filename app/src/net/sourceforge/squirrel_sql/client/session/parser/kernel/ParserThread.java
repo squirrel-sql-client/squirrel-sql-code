@@ -18,7 +18,7 @@
  *
  * created by cse, 07.10.2002 11:57:54
  *
- * @version $Id: ParserThread.java,v 1.8 2006-09-23 21:57:43 gerdwagner Exp $
+ * @version $Id: ParserThread.java,v 1.9 2007-08-19 20:35:17 manningr Exp $
  */
 package net.sourceforge.squirrel_sql.client.session.parser.kernel;
 
@@ -41,7 +41,7 @@ import java.util.Vector;
  * cannot be generalized, unless the generated classes are made to implement public
  * interfaces</em>
  */
-public class ParserThread extends Thread
+public final class ParserThread extends Thread
 {
    private static final StringManager s_stringMgr =
       StringManagerFactory.getStringManager(ParserThread.class);
@@ -56,9 +56,10 @@ public class ParserThread extends Thread
 	private SQLStatement _curSQLSelectStat;
 
 
-	private Vector _workingTableAliasInfos = new Vector();
+	private Vector<TableAliasInfo> _workingTableAliasInfos = 
+	    new Vector<TableAliasInfo>();
 	private TableAliasInfo[] _lastRunTableAliasInfos = new TableAliasInfo[0];
-	private Vector _workingErrorInfos = new Vector();
+	private Vector<ErrorInfo> _workingErrorInfos = new Vector<ErrorInfo>();
 	private ErrorInfo[] _lastRunErrorInfos = new ErrorInfo[0];
 
 
@@ -144,7 +145,7 @@ public class ParserThread extends Thread
 
    private int[][] calculateCommentIntervals()
    {
-      Vector ret = new Vector();
+      Vector<int[]> ret = new Vector<int[]>();
       boolean inMultiLineComment = false;
       boolean inLineComment = false;
       boolean isaSlash = false;
@@ -208,7 +209,7 @@ public class ParserThread extends Thread
          curComment[1] = _workingString.length();
       }
 
-      return (int[][]) ret.toArray(new int[ret.size()][]);
+      return ret.toArray(new int[ret.size()][]);
 
 
    }
@@ -373,8 +374,8 @@ public class ParserThread extends Thread
 				///////////////////////////////////////////////////////////
 				// We are through with parsing. Now we store the outcome
 				// in _lastRun... and tell the listeners.
-				_lastRunTableAliasInfos = (TableAliasInfo[]) _workingTableAliasInfos.toArray(new TableAliasInfo[_workingTableAliasInfos.size()]);
-				_lastRunErrorInfos = (ErrorInfo[]) _workingErrorInfos.toArray(new ErrorInfo[_workingErrorInfos.size()]);
+				_lastRunTableAliasInfos = _workingTableAliasInfos.toArray(new TableAliasInfo[_workingTableAliasInfos.size()]);
+				_lastRunErrorInfos = _workingErrorInfos.toArray(new ErrorInfo[_workingErrorInfos.size()]);
 				_workingTableAliasInfos.clear();
 				_workingErrorInfos.clear();
 				_lastParserRunOffset = 0;

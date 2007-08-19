@@ -23,6 +23,7 @@ package net.sourceforge.squirrel_sql.client.session.parser.kernel.completions;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.SQLCompletion;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.SQLSchema;
 import net.sourceforge.squirrel_sql.client.session.parser.kernel.ParserLogger;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.SQLSchema.Table;
 
 import java.util.List;
 import java.util.Collections;
@@ -90,9 +91,9 @@ public class SQLTable extends SQLCompletion
         String tb = (name != null && position > startPosition) ?
               name.substring(0, position - startPosition) : null;
 
-        List tables = getStatement().getTables(catalog, schema, tb);
+        List<Table> tables = getStatement().getTables(catalog, schema, tb);
         Collections.sort(tables);
-        return (SQLSchema.Table[])tables.toArray(new SQLSchema.Table[tables.size()]);
+        return tables.toArray(new SQLSchema.Table[tables.size()]);
     }
 
     /**

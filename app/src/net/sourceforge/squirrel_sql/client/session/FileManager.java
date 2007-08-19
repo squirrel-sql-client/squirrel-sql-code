@@ -30,7 +30,8 @@ public class FileManager
    
    private JFileChooser fileChooser = null;
    
-   private HashMap fileAppenixes = new HashMap();
+   private HashMap<FileExtensionFilter, String> fileAppenixes = 
+       new HashMap<FileExtensionFilter, String>();
    
    FileManager(ISQLPanelAPI sqlPanelAPI)
    {

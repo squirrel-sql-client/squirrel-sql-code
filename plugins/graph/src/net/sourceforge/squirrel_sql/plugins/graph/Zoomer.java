@@ -9,7 +9,7 @@ public class Zoomer
 {
    private double _zoom = 1;
    private double _oldZoom = 1;
-   Vector _listeners = new Vector();
+   Vector<ZoomerListener> _listeners = new Vector<ZoomerListener>();
    private boolean _enabled;
    private boolean _hideScrollBars;
 
@@ -37,7 +37,7 @@ public class Zoomer
          setZoom(1, false);
       }
 
-      ZoomerListener[] listeners = (ZoomerListener[]) _listeners.toArray(new ZoomerListener[_listeners.size()]);
+      ZoomerListener[] listeners = _listeners.toArray(new ZoomerListener[_listeners.size()]);
       for (int i = 0; i < listeners.length; i++)
       {
          listeners[i].zoomEnabled(b);
@@ -49,7 +49,7 @@ public class Zoomer
       _oldZoom = _zoom;
       _zoom = zoom;
 
-      ZoomerListener[] listeners = (ZoomerListener[]) _listeners.toArray(new ZoomerListener[_listeners.size()]);
+      ZoomerListener[] listeners = _listeners.toArray(new ZoomerListener[_listeners.size()]);
       for (int i = 0; i < listeners.length; i++)
       {
          listeners[i].zoomChanged(_zoom, _oldZoom, adjusting);
@@ -80,7 +80,7 @@ public class Zoomer
    public void setHideScrollBars(boolean b)
    {
       _hideScrollBars =b;
-      ZoomerListener[] listeners = (ZoomerListener[]) _listeners.toArray(new ZoomerListener[_listeners.size()]);
+      ZoomerListener[] listeners = _listeners.toArray(new ZoomerListener[_listeners.size()]);
       for (int i = 0; i < listeners.length; i++)
       {
          listeners[i].setHideScrollBars(b);

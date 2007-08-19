@@ -31,7 +31,9 @@ import net.sourceforge.squirrel_sql.client.IApplication;
  */
 public class SQLALiasesCombo extends JComboBox
 {
-	/**
+    private static final long serialVersionUID = 1L;
+
+    /**
 	 * Default ctor. Builds an empty combo box.
 	 */
 	public SQLALiasesCombo()
@@ -58,9 +60,9 @@ public class SQLALiasesCombo extends JComboBox
 	public void load(IApplication app)
 	{
 		removeAllItems();
-		for (Iterator it = app.getDataCache().aliases(); it.hasNext();)
+		for (Iterator<ISQLAlias> it = app.getDataCache().aliases(); it.hasNext();)
 		{
-			ISQLAlias alias = (ISQLAlias)it.next();
+			ISQLAlias alias = it.next();
 			addItem(alias);
 		}
 	}

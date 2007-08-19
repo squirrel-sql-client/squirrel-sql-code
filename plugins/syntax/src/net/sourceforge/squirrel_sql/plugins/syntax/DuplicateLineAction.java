@@ -1,21 +1,21 @@
 package net.sourceforge.squirrel_sql.plugins.syntax;
 
+import java.awt.event.ActionEvent;
+
+import javax.swing.text.BadLocationException;
+import javax.swing.text.JTextComponent;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
-import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPluginResources;
-
-import javax.swing.text.JTextComponent;
-import javax.swing.text.BadLocationException;
-import java.awt.event.ActionEvent;
 
 
 public class DuplicateLineAction extends SquirrelAction implements ISQLPanelAction
 {
-   private ISession _session;
-   private ISQLPanelAPI _panel;
+    private static final long serialVersionUID = 1L;
+    
+    transient private ISQLPanelAPI _panel;
 
    public DuplicateLineAction(IApplication app, SyntaxPluginResources rsrc)
       throws IllegalArgumentException
@@ -35,7 +35,7 @@ public class DuplicateLineAction extends SquirrelAction implements ISQLPanelActi
    {
       try
       {
-         JTextComponent txtComp = (JTextComponent) _panel.getSQLEntryPanel().getTextComponent();
+         JTextComponent txtComp = _panel.getSQLEntryPanel().getTextComponent();
 
          int docLen = txtComp.getDocument().getLength();
          String text = txtComp.getDocument().getText(0, txtComp.getDocument().getLength());

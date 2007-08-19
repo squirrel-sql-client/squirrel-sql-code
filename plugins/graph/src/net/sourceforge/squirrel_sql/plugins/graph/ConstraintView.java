@@ -41,7 +41,8 @@ public class ConstraintView implements GraphComponent
    public static final int STUB_LENGTH = 20;
    private ISession _session;
    private TableFrameController _pkFramePointingTo;
-   private Vector _constraintViewListeners = new Vector();
+   private Vector<ConstraintViewListener> _constraintViewListeners = 
+       new Vector<ConstraintViewListener>();
 
    public ConstraintView(ConstraintData constraintData, GraphDesktopController desktopController, ISession session)
    {
@@ -266,13 +267,13 @@ public class ConstraintView implements GraphComponent
          drawConstraintNameOnLine(g, mainLine);
       }
 
-      Vector foldingPoints = _constraintGraph.getFoldingPoints();
+      Vector<FoldingPoint> foldingPoints = _constraintGraph.getFoldingPoints();
 
       if(false == isPrinting)
       {
          for (int i = 0; i < foldingPoints.size(); i++)
          {
-            drawFoldingPoint(g, (FoldingPoint) foldingPoints.get(i));
+            drawFoldingPoint(g, foldingPoints.get(i));
          }
       }
 
@@ -370,7 +371,7 @@ public class ConstraintView implements GraphComponent
       Dimension ret = new Dimension();
       for (int i = 0; i < _constraintGraph.getFoldingPoints().size(); i++)
       {
-         FoldingPoint fp = (FoldingPoint) _constraintGraph.getFoldingPoints().get(i);
+         FoldingPoint fp = _constraintGraph.getFoldingPoints().get(i);
 
          if (fp.getZoomedPoint().x > ret.width)
          {
@@ -523,13 +524,13 @@ public class ConstraintView implements GraphComponent
 
    public boolean hitMe(MouseEvent e)
    {
-      Vector foldingPoints = _constraintGraph.getFoldingPoints();
+      Vector<FoldingPoint> foldingPoints = _constraintGraph.getFoldingPoints();
 
 
       int hitDist = 8;
       for (int i = 0; i < foldingPoints.size(); i++)
       {
-         FoldingPoint foldingPoint = (FoldingPoint) foldingPoints.get(i);
+         FoldingPoint foldingPoint = foldingPoints.get(i);
          if (Math.abs(e.getPoint().x - foldingPoint.getZoomedPoint().x) < hitDist
             && Math.abs(e.getPoint().y - foldingPoint.getZoomedPoint().y) < hitDist)
          {
@@ -594,6 +595,7 @@ public class ConstraintView implements GraphComponent
       return _constraintData;
    }
 
+   @SuppressWarnings("unused")
    public void mouseClicked(MouseEvent e)
    {
    }
@@ -640,7 +642,8 @@ public class ConstraintView implements GraphComponent
          _constraintGraph.moveLastHitFoldingPointTo(new FoldingPoint(backTransformedPoint, _desktopController.getZoomer()));
 
 
-         ConstraintViewListener[] listeners = (ConstraintViewListener[]) _constraintViewListeners.toArray(new ConstraintViewListener[_constraintViewListeners.size()]);
+         ConstraintViewListener[] listeners = 
+             _constraintViewListeners.toArray(new ConstraintViewListener[_constraintViewListeners.size()]);
          for (int i = 0; i < listeners.length; i++)
          {
             listeners[i].foldingPointMoved(this);

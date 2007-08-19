@@ -19,7 +19,8 @@ public class GraphController
    private GraphMainPanelTab _graphPane;
    private GraphDesktopController _desktopController;
 
-   private Vector _openTableFrameCtrls = new Vector();
+   private Vector<TableFrameController> _openTableFrameCtrls = 
+       new Vector<TableFrameController>();
    private TableFrameControllerListener _tableFrameControllerListener;
    private static final int BORDER_X = ConstraintView.STUB_LENGTH + 10;
    private static final int BORDER_Y = 10;
@@ -123,7 +124,7 @@ public class GraphController
 
       for (int i = 0; i < _openTableFrameCtrls.size(); i++)
       {
-         TableFrameController tableFrameController = (TableFrameController) _openTableFrameCtrls.elementAt(i);
+         TableFrameController tableFrameController = _openTableFrameCtrls.elementAt(i);
          tableInfos[i] = tableFrameController.getTableInfo();
       }
 
@@ -134,7 +135,7 @@ public class GraphController
    {
       for (int i = 0; i < _openTableFrameCtrls.size(); i++)
       {
-         TableFrameController tableFrameController = (TableFrameController) _openTableFrameCtrls.elementAt(i);
+         TableFrameController tableFrameController = _openTableFrameCtrls.elementAt(i);
          tableFrameController.refresh();
       }
    }
@@ -173,7 +174,7 @@ public class GraphController
 
       for (int i = 0; i < _openTableFrameCtrls.size(); i++)
       {
-         TableFrameController tableFrameController = (TableFrameController) _openTableFrameCtrls.elementAt(i);
+         TableFrameController tableFrameController = _openTableFrameCtrls.elementAt(i);
          frameXmls[i] = tableFrameController.getXmlBean(); 
       }
       xmlBean.setTableFrameControllerXmls(frameXmls);
@@ -198,7 +199,7 @@ public class GraphController
       _openTableFrameCtrls.remove(tfc);
       for (int i = 0; i < _openTableFrameCtrls.size(); i++)
       {
-         TableFrameController tableFrameController = (TableFrameController) _openTableFrameCtrls.elementAt(i);
+         TableFrameController tableFrameController = _openTableFrameCtrls.elementAt(i);
          tableFrameController.tableFrameRemoved(tfc);
       }
 
@@ -316,7 +317,7 @@ public class GraphController
    {
       for (int i = 0; i < _openTableFrameCtrls.size(); i++)
       {
-         TableFrameController tfc = (TableFrameController) _openTableFrameCtrls.elementAt(i);
+         TableFrameController tfc = _openTableFrameCtrls.elementAt(i);
 
          if (tfc.equals(toExclude))
          {
@@ -352,16 +353,16 @@ public class GraphController
    {
       for (int i = 0; i < _openTableFrameCtrls.size(); i++)
       {
-         TableFrameController buf = (TableFrameController) _openTableFrameCtrls.elementAt(i);
+         TableFrameController buf = _openTableFrameCtrls.elementAt(i);
          if (false == buf.equals(tfc))
          {
             buf.tableFrameOpen(tfc);
          }
       }
 
-      Vector others = (Vector) _openTableFrameCtrls.clone();
+      Vector<TableFrameController> others = new  Vector<TableFrameController>(_openTableFrameCtrls);
       others.remove(tfc);
-      TableFrameController[] othersArr = (TableFrameController[]) others.toArray(new TableFrameController[others.size()]);
+      TableFrameController[] othersArr = others.toArray(new TableFrameController[others.size()]);
       tfc.initAfterAddedToDesktop(othersArr, resetBounds);
 
       if(resetBounds)

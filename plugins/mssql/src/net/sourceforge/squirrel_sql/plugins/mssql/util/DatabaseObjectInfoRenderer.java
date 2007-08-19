@@ -19,20 +19,18 @@ package net.sourceforge.squirrel_sql.plugins.mssql.util;
  */
 
 import java.awt.Component;
+
 import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.IUDTInfo;
 
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.plugins.mssql.MssqlPlugin;
-import net.sourceforge.squirrel_sql.plugins.mssql.util.MssqlIntrospector;
 
 public class DatabaseObjectInfoRenderer extends DefaultTableCellRenderer {
     
+    private static final long serialVersionUID = 1L;
+
     /** Creates a new instance of DatabaseObjectInfoRenderer */
     public DatabaseObjectInfoRenderer() {
     }

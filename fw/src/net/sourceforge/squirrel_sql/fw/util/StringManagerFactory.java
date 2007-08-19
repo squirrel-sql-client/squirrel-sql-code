@@ -31,7 +31,8 @@ public class StringManagerFactory
 	 * Collection of <TT>StringManager</TT> objects keyed by the Java package
 	 * name.
 	 */
-	private static final Map s_mgrs = new HashMap();
+	private static final Map<String, StringManager> s_mgrs = 
+	    new HashMap<String, StringManager>();
 
 	/**
 	 * Retrieve an instance of <TT>StringManager</TT> for the passed class.
@@ -45,7 +46,7 @@ public class StringManagerFactory
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>clazz</TT> passed.
 	 */
-	public static synchronized StringManager getStringManager(Class clazz)
+	public static synchronized StringManager getStringManager(Class<?> clazz)
 	{
 		if (clazz == null)
 		{
@@ -53,7 +54,7 @@ public class StringManagerFactory
 		}
 
 		final String key = getKey(clazz);
-		StringManager mgr = (StringManager)s_mgrs.get(key);
+		StringManager mgr = s_mgrs.get(key);
 		if (mgr == null)
 		{
 			mgr = new StringManager(key, clazz.getClassLoader());
@@ -73,7 +74,7 @@ public class StringManagerFactory
 	 * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>clazz</TT> passed.
 	 */
-	private static String getKey(Class clazz)
+	private static String getKey(Class<?> clazz)
 	{
 		if (clazz == null)
 		{
