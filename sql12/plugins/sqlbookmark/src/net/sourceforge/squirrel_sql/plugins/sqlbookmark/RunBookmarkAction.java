@@ -20,23 +20,18 @@
 package net.sourceforge.squirrel_sql.plugins.sqlbookmark;
 
 import java.awt.event.ActionEvent;
+
 import javax.swing.JMenuItem;
 
-import net.sourceforge.squirrel_sql.fw.util.Resources;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
-import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
-
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 /**
  * Initiates execution of a bookmark when user clicks on a bookmark
@@ -47,16 +42,17 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 public class RunBookmarkAction extends SquirrelAction
    implements ISQLPanelAction
 {
+    private static final long serialVersionUID = 1L;
 
-	/**
+    /**
 	 * Current session to load the bookmark into
 	 */
-	private ISession session;
+	transient private ISession session;
 
    /**
     * Handle to the main plugin object
     */
-   private SQLBookmarkPlugin plugin;
+   transient private SQLBookmarkPlugin plugin;
 
    public RunBookmarkAction(IApplication app, Resources rsrc,
                             SQLBookmarkPlugin plugin)

@@ -62,7 +62,7 @@ public class AutoCorrector
          if (' ' == insertChar.charAt(0))
          {
             String autoCorrCandidate = getStringBeforeWhiteSpace(e.getOffset()).toUpperCase();
-            final String corr = (String) _plugin.getAutoCorrectProviderImpl().getAutoCorrects().get(autoCorrCandidate);
+            final String corr = _plugin.getAutoCorrectProviderImpl().getAutoCorrects().get(autoCorrCandidate);
             if(null != corr)
             {
                _txtComp.setSelectionStart(e.getOffset() - autoCorrCandidate.length());

@@ -37,7 +37,7 @@ public class ForeignKeyInfoBeanInfo extends DatabaseObjectInfoBeanInfo
 			if (s_dscrs == null)
 			{
 				PropertyDescriptor[] sub = new PropertyDescriptor[2];
-				final Class clazz = ForeignKeyInfo.class;
+				final Class<ForeignKeyInfo> clazz = ForeignKeyInfo.class;
 				sub[0] = new PropertyDescriptor(PK_CATALOG_NAME,
 								clazz, "getPrimaryKeyCatalogName", null);
 				sub[1] = new PropertyDescriptor(PK_SCHEMA_NAME,

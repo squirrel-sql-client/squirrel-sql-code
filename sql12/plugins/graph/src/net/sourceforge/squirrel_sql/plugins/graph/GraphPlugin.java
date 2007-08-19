@@ -18,27 +18,25 @@ package net.sourceforge.squirrel_sql.plugins.graph;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.Vector;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.GraphXmlSerializer;
-
-import javax.swing.*;
-import java.net.URLClassLoader;
-import java.util.Hashtable;
-import java.util.Vector;
-import java.util.Arrays;
 
 /**
  * The SQL Script plugin class.
@@ -46,21 +44,16 @@ import java.util.Arrays;
 public class GraphPlugin extends DefaultSessionPlugin
 {
 
-   private Hashtable _grapControllersBySessionID = new Hashtable();
-
-   private interface IMenuResourceKeys
-   {
-      String GRAPH = "graph";
-   }
+   private Hashtable<IIdentifier, GraphController[]> _grapControllersBySessionID = 
+       new Hashtable<IIdentifier, GraphController[]>();
 
    /**
     * Logger for this class.
     */
+   @SuppressWarnings("unused")
    private static ILogger s_log = LoggerController.createLogger(GraphPlugin.class);
 
    private PluginResources _resources;
-
-   private URLClassLoader m_userScriptClassLoader;
 
    /**
     * Return the internal name of this plugin.
@@ -214,7 +207,8 @@ public class GraphPlugin extends DefaultSessionPlugin
 
    public void sessionEnding(ISession session)
    {
-      GraphController[] controllers = (GraphController[]) _grapControllersBySessionID.remove(session.getIdentifier());
+      GraphController[] controllers = 
+          _grapControllersBySessionID.remove(session.getIdentifier());
 
       for (int i = 0; i < controllers.length; i++)
       {
@@ -224,7 +218,7 @@ public class GraphPlugin extends DefaultSessionPlugin
 
    public GraphController[] getGraphControllers(ISession session)
    {
-      return (GraphController[])_grapControllersBySessionID.get(session.getIdentifier());
+      return _grapControllersBySessionID.get(session.getIdentifier());
    }
 
    public String patchName(String name, ISession session)
@@ -241,7 +235,7 @@ public class GraphPlugin extends DefaultSessionPlugin
          ++postfix;
       }
 
-      GraphController[] controllers = (GraphController[]) _grapControllersBySessionID.get(session.getIdentifier());
+      GraphController[] controllers = _grapControllersBySessionID.get(session.getIdentifier());
 
       while(true)
       {
@@ -288,9 +282,9 @@ public class GraphPlugin extends DefaultSessionPlugin
 
    public GraphController createNewGraphControllerForSession(ISession session)
    {
-      GraphController[] controllers = (GraphController[]) _grapControllersBySessionID.get(session.getIdentifier());
+      GraphController[] controllers = _grapControllersBySessionID.get(session.getIdentifier());
 
-      Vector v = new Vector();
+      Vector<GraphController> v = new Vector<GraphController>();
       if(null != controllers)
       {
          v.addAll(Arrays.asList(controllers));
@@ -298,7 +292,7 @@ public class GraphPlugin extends DefaultSessionPlugin
       GraphController ret = new GraphController(session, this, null);
       v.add(ret);
 
-      controllers = (GraphController[]) v.toArray(new GraphController[v.size()]);
+      controllers = v.toArray(new GraphController[v.size()]);
       _grapControllersBySessionID.put(session.getIdentifier(), controllers);
 
       return ret;
@@ -306,8 +300,8 @@ public class GraphPlugin extends DefaultSessionPlugin
 
    public void removeGraphController(GraphController toRemove, ISession session)
    {
-      GraphController[] controllers = (GraphController[]) _grapControllersBySessionID.get(session.getIdentifier());
-      Vector v = new Vector();
+      GraphController[] controllers = _grapControllersBySessionID.get(session.getIdentifier());
+      Vector<GraphController> v = new Vector<GraphController>();
       for (int i = 0; i < controllers.length; i++)
       {
          if(false == controllers[i].equals(toRemove))
@@ -316,7 +310,7 @@ public class GraphPlugin extends DefaultSessionPlugin
          }
       }
 
-      controllers = (GraphController[]) v.toArray(new GraphController[v.size()]);
+      controllers = v.toArray(new GraphController[v.size()]);
       _grapControllersBySessionID.put(session.getIdentifier(), controllers);
 
    }

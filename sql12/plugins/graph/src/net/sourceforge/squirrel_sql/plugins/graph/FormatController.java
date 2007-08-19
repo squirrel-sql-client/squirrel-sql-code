@@ -117,10 +117,10 @@ public class FormatController
       if(null == selBean)
       {
          selBean = new FormatXmlBean(name, width, height, false,isLandscape);
-         Vector v = new Vector();
+         Vector<FormatXmlBean> v = new Vector<FormatXmlBean>();
          v.addAll(Arrays.asList(_formats));
          v.add(selBean);
-         _formats = (FormatXmlBean[]) v.toArray(new FormatXmlBean[v.size()]);
+         _formats = v.toArray(new FormatXmlBean[v.size()]);
 
          _dlg.lstFormats.setListData(_formats);
          _dlg.lstFormats.setSelectedValue(selBean, true);
@@ -332,10 +332,10 @@ public class FormatController
 
       FormatXmlBean lsBean = new FormatXmlBean(selBean.getName() + " (LS)", selBean.getHeight(), selBean.getWidth(), false, true);
 
-      Vector v = new Vector();
+      Vector<FormatXmlBean> v = new Vector<FormatXmlBean>();
       v.addAll(Arrays.asList(_formats));
       v.add(lsBean);
-      _formats = (FormatXmlBean[]) v.toArray(new FormatXmlBean[v.size()]);
+      _formats = v.toArray(new FormatXmlBean[v.size()]);
 
       _dlg.lstFormats.setListData(_formats);
       _dlg.lstFormats.setSelectedValue(lsBean, true);
@@ -350,7 +350,7 @@ public class FormatController
    {
       Object[] selFormats = _dlg.lstFormats.getSelectedValues();
 
-      Vector remainFormats = new Vector();
+      Vector<FormatXmlBean> remainFormats = new Vector<FormatXmlBean>();
       for (int i = 0; i < _formats.length; i++)
       {
          boolean found = false;
@@ -375,7 +375,7 @@ public class FormatController
       }
       else
       {
-         _formats = (FormatXmlBean[]) remainFormats.toArray(new FormatXmlBean[remainFormats.size()]);
+         _formats = remainFormats.toArray(new FormatXmlBean[remainFormats.size()]);
       }
 
       saveFormats();

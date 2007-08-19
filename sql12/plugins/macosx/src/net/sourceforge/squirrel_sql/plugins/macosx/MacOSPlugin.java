@@ -71,7 +71,7 @@ public class MacOSPlugin extends DefaultPlugin {
           final IApplication app = getApplication();
 
 
-          Class com_apple_eawt_Application;
+          Class<?> com_apple_eawt_Application;
           try
           {
              com_apple_eawt_Application = Class.forName("com.apple.eawt.Application");
@@ -85,7 +85,7 @@ public class MacOSPlugin extends DefaultPlugin {
 
           Object applicationInstance = getApplication.invoke(com_apple_eawt_Application, new Object[0]);
 
-          Class com_apple_eawt_ApplicationListener = Class.forName("com.apple.eawt.ApplicationListener");
+          Class<?> com_apple_eawt_ApplicationListener = Class.forName("com.apple.eawt.ApplicationListener");
 
           ApplicationListenerInvocationHandler handler = new ApplicationListenerInvocationHandler(app);
           Object proxy = Proxy.newProxyInstance(IApplication.class.getClassLoader(), new Class[]{com_apple_eawt_ApplicationListener}, handler);
@@ -144,6 +144,7 @@ public class MacOSPlugin extends DefaultPlugin {
        }
        catch (Exception e)
        {
+          s_log.error("initialize: encountered exception: "+e.getMessage(), e);
           throw new RuntimeException(e);
        }
     }
