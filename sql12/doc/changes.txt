@@ -45,6 +45,9 @@ MySQL Plugin:
    displayed as object nodes beneath tables as is done in other plugins.
 
 Oracle Plugin: 
+ - Warning message is displayed if string literal timestamp setting is used for
+   internal where clauses - this setting may result in the inability to edit 
+   tables.
  - (Feature Request 1735530: Hide Oracle Bin$.....==$0 tables ) 
  	Added configuration for removing the Recycle Bin tables from the object tree.
  - Show the source for Oracle tables, as well as materialized views.  
