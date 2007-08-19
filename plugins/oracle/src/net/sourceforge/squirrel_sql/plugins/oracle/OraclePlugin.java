@@ -53,6 +53,8 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DTProperties;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeTimestamp;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
@@ -152,6 +154,14 @@ public class OraclePlugin extends DefaultSessionPlugin
        
        // i18n[OraclePlugin.hint=Preferences for Oracle]
        String hint = s_stringMgr.getString("OraclePlugin.hint");
+       
+       //i18n[OraclePlugin.timestampWarning=The setting to use string literals 
+       //for timestamps may result in the inability to edit tables containing
+       //these columns.  If this problem occurs, open 
+       //Global Preferences -> Data Type Controls and set Timestamps to use 
+       // "JDBC standard escape format"] 
+       String timestampWarning = 
+           s_stringMgr.getString("OraclePlugin.timestampWarning");
    }
    
    /**
@@ -410,8 +420,9 @@ public class OraclePlugin extends DefaultSessionPlugin
       });
 
       oracleSessions.add(session);
-
-
+      
+      checkTimestampSetting(session);
+            
       PluginSessionCallback ret = new PluginSessionCallback()
       {
          public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
@@ -440,6 +451,24 @@ public class OraclePlugin extends DefaultSessionPlugin
       return ret;
    }
 
+   /**
+    * This will check the setting for using timestamps in where clauses and 
+    * display a warning message to the user if string literal - which is known 
+    * not to work correctly in Oracle - is set to be used.
+    */
+   private void checkTimestampSetting(ISession session) {
+       
+       String tsClassName = DataTypeTimestamp.class.getName();
+       String timeStampWhereClauseUsage = 
+           DTProperties.get(tsClassName, DataTypeTimestamp.WHERE_CLAUSE_USAGE_KEY);
+       int timeStampWhereClauseUsageInt = Integer.parseInt(timeStampWhereClauseUsage);
+       if (DataTypeTimestamp.USE_STRING_FORMAT == timeStampWhereClauseUsageInt) {
+           session.showWarningMessage(i18n.timestampWarning);
+           s_log.warn(i18n.timestampWarning);
+       }
+       
+   }
+   
    @Override
    protected boolean isPluginSession(ISession session) {
        return DialectFactory.isOracle(session.getMetaData());

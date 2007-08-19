@@ -150,12 +150,20 @@ public class DataTypeTimestamp
        DateFormat.getDateTimeInstance(localeFormat, localeFormat);
 
    // values for how to use timestamps in WHERE clauses
-    private static final int DO_NOT_USE = 0;
-    private static final int USE_JDBC_ESCAPE_FORMAT = 1;
-    private static final int USE_STRING_FORMAT = 2;
-   // Define whether or not to use Timestamp in internally generated WHERE
+    public static final int DO_NOT_USE = 0;
+    public static final int USE_JDBC_ESCAPE_FORMAT = 1;
+    public static final int USE_STRING_FORMAT = 2;
+
+    // Define whether or not to use Timestamp in internally generated WHERE
    // clauses, and if so what format to use.
     private static int whereClauseUsage = USE_JDBC_ESCAPE_FORMAT;
+    
+    /** 
+     * The DTProperties key that is used to store and get the mode that 
+     * determines how timestamps are used in where clauses
+     */ 
+    public static String WHERE_CLAUSE_USAGE_KEY = "whereClauseUsage";
+    
     private boolean _renderExceptionHasBeenLogged;
 
 
