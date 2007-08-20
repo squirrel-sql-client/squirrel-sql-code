@@ -1,11 +1,11 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion.completionfunctions;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
-import net.sourceforge.squirrel_sql.plugins.codecompletion.CodeCompletionInfo;
-
 import java.util.Hashtable;
 import java.util.Vector;
+
+import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.plugins.codecompletion.CodeCompletionInfo;
 
 
 public class Join extends AbstractJoin
@@ -40,7 +40,11 @@ public class Join extends AbstractJoin
       return super.getFunctionResults(functionSting);
    }
 
-   protected String getJoinClause(String fkName, String table1, String table2, Hashtable colBuffersByFkName)
+   @Override
+   protected String getJoinClause(String fkName,    
+                                  String table1, 
+                                  String table2, 
+                                  Hashtable<String, Vector<ColBuffer>> colBuffersByFkName)
    {
       if(_returnedLeftJoinBefore)
       {
@@ -56,11 +60,11 @@ public class Join extends AbstractJoin
          return "INNER JOIN ";
       }
 
-      Vector colBufs = (Vector) colBuffersByFkName.get(fkName);
+      Vector<ColBuffer> colBufs = colBuffersByFkName.get(fkName);
 
       for (int i = 0; i < colBufs.size(); i++)
       {
-         ColBuffer colBuf = (ColBuffer) colBufs.get(i);
+         ColBuffer colBuf = colBufs.get(i);
 
          if(colBuf.tableName.equalsIgnoreCase(table1))
          {

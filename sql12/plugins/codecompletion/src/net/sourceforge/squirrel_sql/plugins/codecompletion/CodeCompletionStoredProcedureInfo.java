@@ -121,7 +121,7 @@ public class CodeCompletionStoredProcedureInfo extends CodeCompletionInfo
 		{
 			ResultSet res = _session.getSQLConnection().getConnection().getMetaData().getProcedureColumns(_catalog, _schema, _procName, null);
 
-			Vector ret = new Vector();
+			Vector<String> ret = new Vector<String>();
 			while (res.next())
 			{
 				switch (res.getInt("COLUMN_TYPE"))
@@ -134,7 +134,7 @@ public class CodeCompletionStoredProcedureInfo extends CodeCompletionInfo
 			}
 			res.close();
 
-			String[] _paramStrings = (String[]) ret.toArray(new String[ret.size()]);
+			String[] _paramStrings = ret.toArray(new String[ret.size()]);
 
 
 			_params = "";
@@ -198,4 +198,18 @@ public class CodeCompletionStoredProcedureInfo extends CodeCompletionInfo
 	{
 		return _moveCarretBackCount;
 	}
+
+    /**
+     * @return the _procType
+     */
+    public int getProcType() {
+        return _procType;
+    }
+
+    /**
+     * @param type the _procType to set
+     */
+    public void setProcType(int type) {
+        _procType = type;
+    }
 }

@@ -1,17 +1,31 @@
 package net.sourceforge.squirrel_sql.plugins.graph;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.util.Vector;
+
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JInternalFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ZoomerXmlBean;
-import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.FormatXmlBean;
-import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.GraphControllerXmlBean;
-import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.PrintXmlBean;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Vector;
+import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.PrintXmlBean;
+import net.sourceforge.squirrel_sql.plugins.graph.xmlbeans.ZoomerXmlBean;
 
 
 public class GraphDesktopController
@@ -283,7 +297,7 @@ public class GraphDesktopController
          hitOne.setSelected(true);
       }
 
-      Vector graphComponents = _desktopPane.getGraphComponents();
+      Vector<GraphComponent> graphComponents = _desktopPane.getGraphComponents();
 
       for (int i = 0; i < graphComponents.size(); i++)
       {
@@ -371,16 +385,16 @@ public class GraphDesktopController
 
    private ConstraintView findHit(MouseEvent e)
    {
-      Vector graphComponents = _desktopPane.getGraphComponents();
+      Vector<GraphComponent> graphComponents = _desktopPane.getGraphComponents();
 
 
       for (int i = 0; i < graphComponents.size(); i++)
       {
-         GraphComponent graphComponent = (GraphComponent) graphComponents.elementAt(i);
+         GraphComponent graphComponent = graphComponents.elementAt(i);
 
          if(graphComponent instanceof ConstraintView)
          {
-            ConstraintView constraintView = (ConstraintView) graphComponents.elementAt(i);
+            ConstraintView constraintView = (ConstraintView)graphComponents.elementAt(i);
             if(constraintView.hitMe(e))
             {
                return constraintView;

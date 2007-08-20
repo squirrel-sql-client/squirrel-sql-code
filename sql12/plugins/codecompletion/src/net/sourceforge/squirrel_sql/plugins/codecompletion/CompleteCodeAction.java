@@ -17,25 +17,26 @@
  */
 package net.sourceforge.squirrel_sql.plugins.codecompletion;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.completion.CompletionCandidates;
+import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 import net.sourceforge.squirrel_sql.fw.completion.Completor;
 import net.sourceforge.squirrel_sql.fw.completion.CompletorListener;
-import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
-import net.sourceforge.squirrel_sql.fw.completion.CompletionCandidates;
-
-import javax.swing.text.JTextComponent;
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 
 public class CompleteCodeAction extends SquirrelAction
 {
-	private ISQLEntryPanel _sqlEntryPanel;
-	private Completor _cc;
-   private CodeCompletorModel _model;
+    private static final long serialVersionUID = 1L;
+    private ISQLEntryPanel _sqlEntryPanel;
+	transient private Completor _cc;
+    transient private CodeCompletorModel _model;
 
 
    public CompleteCodeAction(IApplication app,
@@ -48,7 +49,7 @@ public class CompleteCodeAction extends SquirrelAction
 		_sqlEntryPanel = sqlEntryPanel;
 
       _model = new CodeCompletorModel(session, plugin, codeCompletionInfos, sqlEntryPanel.getIdentifier());
-      _cc = new Completor((JTextComponent)_sqlEntryPanel.getTextComponent(), _model);
+      _cc = new Completor(_sqlEntryPanel.getTextComponent(), _model);
 		_sqlEntryPanel.addSQLTokenListener(_model.getSQLTokenListener());
 
 		_cc.addCodeCompletorListener

@@ -96,9 +96,9 @@ public class StandardCompletorModel
       {
          String catalog = null;
          int catAndSchemCount = 0;
-         if(_codeCompletionInfos.isCatalog((String)parser.getToken(0)))
+         if(_codeCompletionInfos.isCatalog(parser.getToken(0)))
          {
-            catalog = (String)parser.getToken(0);
+            catalog = parser.getToken(0);
             catAndSchemCount = 1;
          }
 
@@ -139,7 +139,7 @@ public class StandardCompletorModel
          }
       }
 
-      CodeCompletionInfo[] ccis = (CodeCompletionInfo[]) ret.toArray(new CodeCompletionInfo[ret.size()]);
+      CodeCompletionInfo[] ccis = ret.toArray(new CodeCompletionInfo[ret.size()]);
 
       return new CompletionCandidates(ccis, parser.getReplacementStart(), parser.getStringToReplace());
    }

@@ -14,7 +14,8 @@ import java.util.Arrays;
 
 public class GraphDesktopPane extends ScrollableDesktopPane implements GraphPrintable
 {
-   private Vector _graphComponents = new Vector();
+   private static final long serialVersionUID = 1L;
+   private Vector<GraphComponent> _graphComponents = new Vector<GraphComponent>();
    private ConstraintViewListener _constraintViewListener;
 
    /////////////////////////////////////////////////////////
@@ -52,7 +53,7 @@ public class GraphDesktopPane extends ScrollableDesktopPane implements GraphPrin
    {
       for (int i = 0; i < _graphComponents.size(); i++)
       {
-         GraphComponent comp = (GraphComponent)_graphComponents.elementAt(i);
+         GraphComponent comp = _graphComponents.elementAt(i);
          if(comp instanceof EdgesGraphComponent)
          {
             ((EdgesGraphComponent)comp).setBounds(getWidth(), getHeight());
@@ -83,7 +84,7 @@ public class GraphDesktopPane extends ScrollableDesktopPane implements GraphPrin
       _graphComponents.removeAll(Arrays.asList(graphComponents));
    }
 
-   public Vector getGraphComponents()
+   public Vector<GraphComponent> getGraphComponents()
    {
       return _graphComponents;
    }
@@ -94,7 +95,7 @@ public class GraphDesktopPane extends ScrollableDesktopPane implements GraphPrin
       Dimension reqSize = super.getRequiredSize();
       for (int i = 0; i < _graphComponents.size(); i++)
       {
-         GraphComponent graphComponent = (GraphComponent) _graphComponents.elementAt(i);
+         GraphComponent graphComponent = _graphComponents.elementAt(i);
          Dimension buf = graphComponent.getRequiredSize();
 
          if(buf.width > reqSize.width)

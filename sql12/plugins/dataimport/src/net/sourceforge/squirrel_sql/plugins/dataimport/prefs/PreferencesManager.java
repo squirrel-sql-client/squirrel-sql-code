@@ -111,7 +111,7 @@ public class PreferencesManager {
             
             doc.load(prefFile, DataImportPreferenceBean.class.getClassLoader());
             
-            Iterator it = doc.iterator();
+            Iterator<?> it = doc.iterator();
             if (it.hasNext()) {
                 _prefs = (DataImportPreferenceBean)it.next();
             }
