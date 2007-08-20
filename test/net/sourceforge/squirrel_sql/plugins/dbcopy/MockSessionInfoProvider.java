@@ -230,7 +230,7 @@ public class MockSessionInfoProvider implements SessionInfoProvider {
     public IDatabaseObjectInfo[] getSourceSelectedDatabaseObjects() {
         int size = selectedDatabaseObjects.size();
         IDatabaseObjectInfo[] result = new IDatabaseObjectInfo[size];
-        Iterator i = selectedDatabaseObjects.iterator();
+        Iterator<?> i = selectedDatabaseObjects.iterator();
         int index = 0;
         while (i.hasNext()) { 
             result[index++] = (IDatabaseObjectInfo)i.next();
