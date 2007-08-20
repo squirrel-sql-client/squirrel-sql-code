@@ -2,6 +2,7 @@ package net.sourceforge.squirrel_sql.plugins.codecompletion.completionfunctions;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
+import net.sourceforge.squirrel_sql.plugins.codecompletion.completionfunctions.AbstractJoin.ColBuffer;
 
 import java.util.Hashtable;
 import java.util.Vector;
@@ -30,7 +31,11 @@ public class RightJoin extends AbstractJoin
       return getCompletionString() + " right join";
    }
 
-   protected String getJoinClause(String fkName, String table1, String table2, Hashtable colBuffersByFkName)
+   @Override
+   protected String getJoinClause(String fkName, 
+                                  String table1, 
+                                  String table2, 
+                                  Hashtable<String, Vector<ColBuffer>> colBuffersByFkName)
    {
       return "RIGHT JOIN ";
    }

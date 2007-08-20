@@ -51,14 +51,14 @@ public class FormatController
             XMLBeanReader br = new XMLBeanReader();
             br.load(userSettingsFolder + File.separator + FORMAT_XML_FILE_NAME, this.getClass().getClassLoader());
 
-            Vector buf = new Vector();
+            Vector<FormatXmlBean> buf = new Vector<FormatXmlBean>();
 
-            for(Iterator i=br.iterator(); i.hasNext();)
+            for(Iterator<?> i=br.iterator(); i.hasNext();)
             {
-               buf.add(i.next());
+               buf.add((FormatXmlBean)i.next());
             }
 
-            _formats = (FormatXmlBean[]) buf.toArray(new FormatXmlBean[buf.size()]);
+            _formats = buf.toArray(new FormatXmlBean[buf.size()]);
          }
 
       }

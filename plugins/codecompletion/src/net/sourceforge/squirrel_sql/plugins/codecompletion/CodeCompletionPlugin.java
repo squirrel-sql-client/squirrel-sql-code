@@ -47,6 +47,7 @@ import java.util.Iterator;
 public class CodeCompletionPlugin extends DefaultSessionPlugin
 {
 	/** Logger for this class. */
+    @SuppressWarnings("unused")
 	private final static ILogger
 			s_log = LoggerController.createLogger(CodeCompletionPlugin.class);
 
@@ -189,7 +190,7 @@ public class CodeCompletionPlugin extends DefaultSessionPlugin
 				XMLBeanReader reader = new XMLBeanReader();
 				reader.load(prefsFile, getClass().getClassLoader());
 
-				Iterator it = reader.iterator();
+				Iterator<?> it = reader.iterator();
 
 				if (it.hasNext())
 				{

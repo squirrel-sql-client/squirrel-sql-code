@@ -1,10 +1,9 @@
 package net.sourceforge.squirrel_sql.plugins.codecompletion.completionfunctions;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
-
 import java.util.Hashtable;
 import java.util.Vector;
+
+import net.sourceforge.squirrel_sql.client.session.ISession;
 
 
 public class InnerJoin extends AbstractJoin
@@ -30,7 +29,11 @@ public class InnerJoin extends AbstractJoin
       return getCompletionString() + " inner join";
    }
 
-   protected String getJoinClause(String fkName, String table1, String table2, Hashtable colBuffersByFkName)
+   @Override
+   protected String getJoinClause(String fkName, 
+                                  String table1, 
+                                  String table2, 
+                                  Hashtable<String, Vector<ColBuffer>> colBuffersByFkName)
    {
       return "INNER JOIN ";
    }

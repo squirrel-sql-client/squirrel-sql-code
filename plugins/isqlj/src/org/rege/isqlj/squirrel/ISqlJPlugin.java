@@ -28,26 +28,16 @@ package org.rege.isqlj.squirrel;
 * </p>
 */
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Iterator;
-
 import javax.swing.JMenu;
 
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
-import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
-
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.plugin.*;
-import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
+import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
+import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
+import net.sourceforge.squirrel_sql.client.plugin.PluginException;
+import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
+import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 
 
@@ -58,9 +48,6 @@ public class ISqlJPlugin extends DefaultSessionPlugin
 		String SCRIPTS = "isqlj";
 	}
 
-	private static ILogger  log = LoggerController.createLogger(ISqlJPlugin.class);
-	private File            pluginAppFolder;
-	private File            userSettingsFolder;
 	private PluginResources resources;
 
     public ISqlJPlugin()
@@ -74,24 +61,6 @@ public class ISqlJPlugin extends DefaultSessionPlugin
 		super.initialize();
 		IApplication app = getApplication();
 
-		PluginManager pmgr = app.getPluginManager();
-
-		try 
-		{
-			pluginAppFolder = getPluginAppSettingsFolder();
-		} catch (IOException ex) 
-		{
-			throw new PluginException(ex);
-		}
-
-		try 
-		{
-			userSettingsFolder = getPluginUserSettingsFolder();
-		} catch (IOException ex) 
-		{
-			throw new PluginException(ex);
-		}
-
 		resources = new ISqlJPluginResources("org.rege.isqlj.squirrel.ISqlJ", this);
 
 		ActionCollection coll = app.getActionCollection();
@@ -101,8 +70,6 @@ public class ISqlJPlugin extends DefaultSessionPlugin
 
 	public PluginSessionCallback sessionStarted(ISession session)
 	{
-		ActionCollection coll = getApplication().getActionCollection();
-		IObjectTreeAPI api = session.getSessionInternalFrame().getObjectTreeAPI();
 
       PluginSessionCallback ret = new PluginSessionCallback()
       {
