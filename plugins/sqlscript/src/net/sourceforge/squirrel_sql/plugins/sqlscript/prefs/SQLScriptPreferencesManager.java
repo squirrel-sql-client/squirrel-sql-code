@@ -93,7 +93,7 @@ public class SQLScriptPreferencesManager {
             
             doc.load(prefFile, SQLScriptPreferenceBean.class.getClassLoader());            
 
-            Iterator it = doc.iterator();
+            Iterator<?> it = doc.iterator();
             if (it.hasNext()) {
                 _prefs = (SQLScriptPreferenceBean)it.next();
             }

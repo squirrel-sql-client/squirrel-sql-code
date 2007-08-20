@@ -1,16 +1,17 @@
 package net.sourceforge.squirrel_sql.plugins.syntax;
 
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import java.util.HashMap;
+
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
-import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.NetbeansSQLEntryAreaFactory;
-import net.sourceforge.squirrel_sql.plugins.syntax.oster.OsterSQLEntryAreaFactory;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessorFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.*;
-import java.util.Properties;
-import java.util.HashMap;
+import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.NetbeansSQLEntryAreaFactory;
+import net.sourceforge.squirrel_sql.plugins.syntax.oster.OsterSQLEntryAreaFactory;
 
 
 public class SQLEntryPanelFactoryProxy implements ISQLEntryPanelFactory
@@ -41,7 +42,7 @@ public class SQLEntryPanelFactoryProxy implements ISQLEntryPanelFactory
       _netbeansFactory.sessionEnding(session);
    }
 
-   public ISQLEntryPanel createSQLEntryPanel(final ISession session, HashMap props)
+   public ISQLEntryPanel createSQLEntryPanel(final ISession session, HashMap<String, IParserEventsProcessorFactory> props)
    {
       if (session == null)
       {

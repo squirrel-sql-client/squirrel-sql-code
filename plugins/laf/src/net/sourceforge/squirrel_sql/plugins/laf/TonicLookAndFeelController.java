@@ -68,7 +68,7 @@ public class TonicLookAndFeelController extends DefaultLookAndFeelController
 		super();
 
 		XMLObjectCache cache = plugin.getSettingsCache();
-		Iterator it = cache.getAllForClass(TonicPreferences.class);
+		Iterator<?> it = cache.getAllForClass(TonicPreferences.class);
 		if (it.hasNext())
 		{
 			_prefs = (TonicPreferences)it.next();
@@ -114,7 +114,9 @@ public class TonicLookAndFeelController extends DefaultLookAndFeelController
 
 	private static final class TonicPrefsPanel extends BaseLAFPreferencesPanelComponent
 	{
-		/**
+        private static final long serialVersionUID = 1L;
+
+        /**
 		 * This interface defines locale specific strings. This should be
 		 * replaced with a property file.
 		 */

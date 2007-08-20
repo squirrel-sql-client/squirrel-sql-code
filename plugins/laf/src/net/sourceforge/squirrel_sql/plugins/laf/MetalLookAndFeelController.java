@@ -120,7 +120,7 @@ class MetalLookAndFeelController extends AbstractPlasticController
 		_defaultMetalTheme = new DefaultMetalTheme();
 
 		XMLObjectCache cache = plugin.getSettingsCache();
-		Iterator it = 
+		Iterator<?> it = 
             cache.getAllForClass(MetalThemePreferences.class);
 		if (it.hasNext())
 		{

@@ -48,6 +48,7 @@ import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.properties.ISessionPropertiesPanel;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -112,7 +113,8 @@ public class SyntaxPugin extends DefaultSessionPlugin
 	private SQLEntryPanelFactoryProxy _sqlEntryFactoryProxy;
 
 	/** Listeners to the preferences object in each open session. */
-	private Map _prefListeners = new HashMap();
+	private Map<IIdentifier, SessionPreferencesListener> _prefListeners = 
+	    new HashMap<IIdentifier, SessionPreferencesListener>();
 
 	/** Resources for this plugin. */
 	private SyntaxPluginResources _resources;
@@ -305,8 +307,8 @@ public class SyntaxPugin extends DefaultSessionPlugin
 
 		session.putPluginObject(this, IConstants.ISessionKeys.PREFS, prefs);
 
-		SessionPreferencesListener lis = new SessionPreferencesListener(this,
-												session, prefs);
+		SessionPreferencesListener lis = 
+		    new SessionPreferencesListener(this, session);
 		prefs.addPropertyChangeListener(lis);
 		_prefListeners.put(session.getIdentifier(), lis);
 	}
@@ -318,7 +320,7 @@ public class SyntaxPugin extends DefaultSessionPlugin
 		{
 			public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
 			{
-				initSqlInternalFrame(sess, sqlInternalFrame);
+				initSqlInternalFrame(sqlInternalFrame);
 			}
 
 			public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
@@ -376,7 +378,7 @@ public class SyntaxPugin extends DefaultSessionPlugin
       _resources.configureMenuItem(coll.get(UncommentAction.class), mnuUncomment);
    }
 
-   private void initSqlInternalFrame(ISession sess, SQLInternalFrame sqlInternalFrame)
+   private void initSqlInternalFrame(SQLInternalFrame sqlInternalFrame)
 	{
 		ActionCollection coll = getApplication().getActionCollection();
 		FindAction findAction = ((FindAction) coll.get(FindAction.class));
@@ -396,7 +398,7 @@ public class SyntaxPugin extends DefaultSessionPlugin
 
 		ISQLPanelAPI sqlPanelAPI = sqlInternalFrame.getSQLPanelAPI();
 
-		new AutoCorrector((JTextComponent) sqlPanelAPI.getSQLEntryPanel().getTextComponent(), this);
+		new AutoCorrector(sqlPanelAPI.getSQLEntryPanel().getTextComponent(), this);
 
 		if (sqlPanelAPI.getSQLEntryPanel().getTextComponent() instanceof NetbeansSQLEditorPane)
 		{
@@ -486,7 +488,7 @@ public class SyntaxPugin extends DefaultSessionPlugin
 					IConstants.USER_PREFS_FILE_NAME);
 			doc.load(file, getClass().getClassLoader());
 
-			Iterator it = doc.iterator();
+			Iterator<?> it = doc.iterator();
 
 			if (it.hasNext())
 			{
@@ -546,7 +548,7 @@ public class SyntaxPugin extends DefaultSessionPlugin
 		private SyntaxPugin _plugin;
 		private ISession _session;
 
-		SessionPreferencesListener(SyntaxPugin plugin, ISession session, SyntaxPreferences prefs)
+		SessionPreferencesListener(SyntaxPugin plugin, ISession session)
 		{
 			super();
 			_plugin = plugin;

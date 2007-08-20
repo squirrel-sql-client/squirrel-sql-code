@@ -27,7 +27,7 @@ import java.util.Comparator;
  * A wrapper for a position in a document appropriate for storing
  * in a collection.
  */
-class DocPositionComparator implements Comparator
+class DocPositionComparator implements Comparator<DocPosition>
 {
 	/**
 	 * Does this Comparator equal another?
@@ -55,33 +55,8 @@ class DocPositionComparator implements Comparator
 	 * @param o2 second DocPosition
 	 * @return negative if first < second, 0 if equal, positive if first > second
 	 */
-	public int compare(Object o1, Object o2)
+	public int compare(DocPosition d1, DocPosition d2)
 	{
-		if (o1 instanceof DocPosition && o2 instanceof DocPosition)
-		{
-			DocPosition d1 = (DocPosition) (o1);
-			DocPosition d2 = (DocPosition) (o2);
-			return (d1.getPosition() - d2.getPosition());
-		}
-		else if (o1 instanceof DocPosition)
-		{
-			return -1;
-		}
-		else if (o2 instanceof DocPosition)
-		{
-			return 1;
-		}
-		else if (o1.hashCode() < o2.hashCode())
-		{
-			return -1;
-		}
-		else if (o2.hashCode() > o1.hashCode())
-		{
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
+	    return (d1.getPosition() - d2.getPosition());
 	}
 }

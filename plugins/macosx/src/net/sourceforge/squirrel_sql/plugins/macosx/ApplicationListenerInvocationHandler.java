@@ -12,7 +12,7 @@ public class ApplicationListenerInvocationHandler implements InvocationHandler
 {
    private Object _com_apple_eawt_ApplicationAdapter_Instance;
    private IApplication _app;
-   private Class _com_apple_eawt_ApplicationEvent;
+   private Class<?> _com_apple_eawt_ApplicationEvent;
    private Method _setHandled;
 
    ApplicationListenerInvocationHandler(IApplication app)

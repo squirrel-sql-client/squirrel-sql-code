@@ -21,13 +21,11 @@ import java.sql.DatabaseMetaData;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
 
 /**
  * This class handles the expanding of a Procedure node. 
@@ -49,7 +47,7 @@ public class ProcedureExpander implements INodeExpander
     * @return	A list of <TT>ObjectTreeNode</TT> objects representing the child
     *			nodes for the passed node.
     */
-   public List createChildren(ISession session, ObjectTreeNode parentNode)
+   public List<ObjectTreeNode> createChildren(ISession session, ObjectTreeNode parentNode)
    {
       final IDatabaseObjectInfo parentDbinfo = parentNode.getDatabaseObjectInfo();
       final String schemaName = parentDbinfo.getSchemaName();

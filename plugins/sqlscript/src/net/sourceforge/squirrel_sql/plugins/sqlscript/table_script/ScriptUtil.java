@@ -14,7 +14,7 @@ public class ScriptUtil
    private static SQLScriptPreferenceBean prefs = 
 	   							SQLScriptPreferencesManager.getPreferences();
     
-   Hashtable _uniqueColNames = new Hashtable();
+   Hashtable<String, String> _uniqueColNames = new Hashtable<String, String>();
 
    /**
     * This method provides unique column names.

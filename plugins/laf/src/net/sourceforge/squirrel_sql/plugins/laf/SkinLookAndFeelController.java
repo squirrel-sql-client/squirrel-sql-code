@@ -76,7 +76,7 @@ public class SkinLookAndFeelController extends DefaultLookAndFeelController
 		super();
 
 		XMLObjectCache cache = plugin.getSettingsCache();
-		Iterator it = cache.getAllForClass(SkinPreferences.class);
+		Iterator<?> it = cache.getAllForClass(SkinPreferences.class);
 		if (it.hasNext())
 		{
 			_prefs = (SkinPreferences)it.next();
@@ -119,9 +119,9 @@ public class SkinLookAndFeelController extends DefaultLookAndFeelController
 				if (themePackFile.exists())
 				{
 					ClassLoader cl = lafRegister.getLookAndFeelClassLoader();
-					Class skinLafClass = 
+					Class<?> skinLafClass = 
 						Class.forName(SKINNABLE_LAF_CLASS_NAME, false, cl);
-					Class skinClass = 
+					Class<?> skinClass = 
 						Class.forName(SKIN_CLASS_NAME, false, cl);
 
 					Method loadThemePack =
@@ -161,7 +161,9 @@ public class SkinLookAndFeelController extends DefaultLookAndFeelController
 
 	private static final class SkinPrefsPanel extends BaseLAFPreferencesPanelComponent
 	{
-		/**
+        private static final long serialVersionUID = 1L;
+
+        /**
 		 * This interface defines locale specific strings. This should be
 		 * replaced with a property file.
 		 */
