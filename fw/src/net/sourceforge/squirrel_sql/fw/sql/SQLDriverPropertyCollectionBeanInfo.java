@@ -40,7 +40,8 @@ public class SQLDriverPropertyCollectionBeanInfo extends SimpleBeanInfo
 		super();
 		if (s_desc == null)
 		{
-			final Class clazz = SQLDriverPropertyCollection.class;
+			final Class<SQLDriverPropertyCollection> clazz = 
+			    SQLDriverPropertyCollection.class;
 			s_desc = new PropertyDescriptor[1];
 			s_desc[0] = new IndexedPropertyDescriptor(IPropNames.DRIVER_PROPERTIES,
 							clazz,

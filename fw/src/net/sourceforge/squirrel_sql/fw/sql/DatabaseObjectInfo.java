@@ -304,9 +304,8 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
       return _qualifiedName.hashCode();
    }
 
-   public int compareTo(Object o)
+   public int compareTo(IDatabaseObjectInfo o)
    {
-      DatabaseObjectInfo other = (DatabaseObjectInfo) o;
-      return _qualifiedName.compareTo(other._qualifiedName);
+      return _qualifiedName.compareTo(o.getQualifiedName());
    }
 }

@@ -81,7 +81,7 @@ public class MockDatabaseObjectInfo implements IDatabaseObjectInfo {
     /* (non-Javadoc)
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
-    public int compareTo(Object o) {
+    public int compareTo(IDatabaseObjectInfo o) {
         // TODO Auto-generated method stub
         System.err.println("MockDatabaseObjectInfo.compareTo: stub not yet implemented");
         return 0;

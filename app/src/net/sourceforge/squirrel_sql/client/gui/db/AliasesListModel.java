@@ -34,7 +34,8 @@ import net.sourceforge.squirrel_sql.client.IApplication;
  */
 public class AliasesListModel extends SortedListModel
 {
-	/** Application API. */
+    private static final long serialVersionUID = 1L;
+    /** Application API. */
 	private IApplication _app;
 
 	/**
@@ -56,10 +57,10 @@ public class AliasesListModel extends SortedListModel
 	 */
 	private void load()
 	{
-		Iterator it = _app.getDataCache().aliases();
+		Iterator<ISQLAlias> it = _app.getDataCache().aliases();
 		while (it.hasNext())
 		{
-			addAlias((ISQLAlias)it.next());
+			addAlias(it.next());
 		}
 	}
 

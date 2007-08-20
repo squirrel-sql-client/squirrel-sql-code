@@ -1,16 +1,11 @@
 package net.sourceforge.squirrel_sql.client.session.mainpanel;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.text.SimpleDateFormat;
-import java.awt.*;
 
 public class SQLHistoryItemWrapper
 {

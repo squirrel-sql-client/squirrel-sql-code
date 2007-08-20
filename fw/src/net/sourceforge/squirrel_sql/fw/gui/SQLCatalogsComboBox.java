@@ -34,7 +34,9 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
  */
 public class SQLCatalogsComboBox extends JComboBox
 {
-	/**
+    private static final long serialVersionUID = 1L;
+
+    /**
 	 * Default ctor. Builds an empty combo box.
 	 */
 	public SQLCatalogsComboBox()
@@ -58,12 +60,12 @@ public class SQLCatalogsComboBox extends JComboBox
         super.removeAllItems();
         if (catalogs != null)
         {
-            final Map map = new TreeMap();
+            final Map<String, String> map = new TreeMap<String, String>();
             for (int i = 0; i < catalogs.length; ++i)
             {
                 map.put(catalogs[i], catalogs[i]);
             }
-            for (Iterator it = map.values().iterator(); it.hasNext();)
+            for (Iterator<String> it = map.values().iterator(); it.hasNext();)
             {
                 addItem(it.next());
             }

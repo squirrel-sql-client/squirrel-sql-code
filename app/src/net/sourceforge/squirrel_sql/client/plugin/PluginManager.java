@@ -422,7 +422,7 @@ public class PluginManager {
 
         _pluginsClassLoader = new MyURLClassLoader(urls);
         _pluginsClassLoader.addClassLoaderListener(classLoaderListener);
-        Class[] classes = _pluginsClassLoader.getAssignableClasses(
+        Class<?>[] classes = _pluginsClassLoader.getAssignableClasses(
                 IPlugin.class, s_log);
         for (int i = 0; i < classes.length; ++i) {
             try {
@@ -603,7 +603,7 @@ public class PluginManager {
         return _pluginLoadInfoColl.values().iterator();
     }
 
-    private void loadPlugin(Class pluginClass) {
+    private void loadPlugin(Class<?> pluginClass) {
         PluginInfo pi = new PluginInfo(pluginClass.getName());
         try {
             final PluginLoadInfo pli = new PluginLoadInfo();
@@ -673,7 +673,7 @@ public class PluginManager {
      *         be found / is not loaded.
      */
     public Object bindExternalPluginService(String internalNameOfPlugin,
-                                            Class toBindTo) 
+                                            Class<?> toBindTo) 
     {
         IPlugin plugin = _loadedPlugins.get(internalNameOfPlugin);
 
@@ -739,7 +739,7 @@ public class PluginManager {
      * 
      * @author rmmannin
      */
-    private class MyPlaceHolderPlugin extends DefaultPlugin {
+    private static class MyPlaceHolderPlugin extends DefaultPlugin {
         private String _internalName = null;
 
         public MyPlaceHolderPlugin(String internalName) {

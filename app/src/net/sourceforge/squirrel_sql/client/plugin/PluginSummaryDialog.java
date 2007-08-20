@@ -102,7 +102,7 @@ public class PluginSummaryDialog extends JDialog
 		final PluginManager pmgr = _app.getPluginManager();
 		final PluginInfo[] pluginInfo = pmgr.getPluginInformation();
 		final PluginStatus[] pluginStatus = pmgr.getPluginStatuses();
-		_pluginPnl = new PluginSummaryTable(_app, pluginInfo, pluginStatus);
+		_pluginPnl = new PluginSummaryTable(pluginInfo, pluginStatus);
 		contentPane.add(new JScrollPane(_pluginPnl), BorderLayout.CENTER);
 
 		final JPanel btnsPnl = new JPanel();

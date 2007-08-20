@@ -27,7 +27,9 @@ import javax.swing.event.DocumentEvent;
  */
 public class SquirrelDefaultUndoManager extends UndoManager
 {
-	/**
+   private static final long serialVersionUID = 1L;
+
+    /**
 	 * Default ctor.
 	 */
    public SquirrelDefaultUndoManager()
@@ -53,7 +55,7 @@ public class SquirrelDefaultUndoManager extends UndoManager
 		int i = edits.indexOf(ue);
 		while (i >= 0)
 		{
-			UndoableEdit edit = (UndoableEdit) edits.elementAt(i--);
+			UndoableEdit edit = edits.elementAt(i--);
 			if (edit.isSignificant())
 			{
 				if (edit instanceof AbstractDocument.DefaultDocumentEvent)
@@ -93,7 +95,7 @@ public class SquirrelDefaultUndoManager extends UndoManager
 
 		while (i < count)
 		{
-			UndoableEdit edit = (UndoableEdit) edits.elementAt(i++);
+			UndoableEdit edit = edits.elementAt(i++);
 			if (edit.isSignificant())
 			{
 				if (edit instanceof AbstractDocument.DefaultDocumentEvent)

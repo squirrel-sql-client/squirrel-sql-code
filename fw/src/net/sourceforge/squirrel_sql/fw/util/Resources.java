@@ -270,7 +270,7 @@ public abstract class Resources
 		return getIcon(keyName, "image");
 	}
 
-	public ImageIcon getIcon(Class objClass, String propName)
+	public ImageIcon getIcon(Class<?> objClass, String propName)
 	{
 		return getIcon(objClass.getName(), propName);
 	}

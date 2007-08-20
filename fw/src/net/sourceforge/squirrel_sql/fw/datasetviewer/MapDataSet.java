@@ -51,19 +51,19 @@ public class MapDataSet implements IDataSet
    };
 
    /** The <TT>Map</TT> over which this <TT>DataSet</TT> is built. */
-   private final Map _src;
+   private final Map<?,?> _src;
 
    private DataSetDefinition _dsDef;
 
    private final static int[] s_hdgLens = new int[] { 30, 100 };
 
    /** Iterator used when iterating through using <TT>IDataSet.next()</TT>. */
-   private Iterator _rowKeys;
+   private Iterator<?> _rowKeys;
 
    /** Current row used when iterating through using <TT>IDataSet.next()</TT>. */
    private Object[] _curRow = new Object[2];
 
-   public MapDataSet(Map src) throws DataSetException
+   public MapDataSet(Map<?,?> src) throws DataSetException
    {
       super();
       if (src == null)

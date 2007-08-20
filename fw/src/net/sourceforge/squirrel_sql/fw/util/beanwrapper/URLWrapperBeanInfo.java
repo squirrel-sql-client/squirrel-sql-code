@@ -27,7 +27,7 @@ import java.beans.PropertyDescriptor;
 public class URLWrapperBeanInfo
 {
 	private static PropertyDescriptor[] s_descriptors;
-	private final static Class s_cls = URLWrapper.class;
+	private final static Class<URLWrapper> s_cls = URLWrapper.class;
 
 	public URLWrapperBeanInfo() throws IntrospectionException
 	{

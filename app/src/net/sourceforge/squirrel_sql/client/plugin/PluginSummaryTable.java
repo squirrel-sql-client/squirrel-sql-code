@@ -27,7 +27,6 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTable;
 import net.sourceforge.squirrel_sql.fw.gui.SortableTableModel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -36,7 +35,9 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class PluginSummaryTable extends SortableTable
 {
-	/** Internationalized strings for this class. */
+    private static final long serialVersionUID = 1L;
+
+    /** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(PluginSummaryTable.class); 
     
@@ -51,7 +52,7 @@ public class PluginSummaryTable extends SortableTable
 		s_stringMgr.getString("PluginSummaryTable.contributors"),
 	};
 
-	private final static Class[] s_dataTypes = new Class[]
+	private final static Class<?>[] s_dataTypes = new Class[]
 	{
 		Boolean.class,
         String.class,
@@ -67,7 +68,7 @@ public class PluginSummaryTable extends SortableTable
 		100, 100, 150, 50, 50, 100, 100,
 	};
 
-	public PluginSummaryTable(IApplication app, PluginInfo[] pluginInfo, PluginStatus[] pluginStatus)
+	public PluginSummaryTable(PluginInfo[] pluginInfo, PluginStatus[] pluginStatus)
 	{
 		super(new MyTableModel(pluginInfo, pluginStatus));
 
@@ -97,7 +98,8 @@ public class PluginSummaryTable extends SortableTable
 
 	private static class MyTableModel extends AbstractTableModel
 	{
-		private ArrayList<PluginData> _pluginData = new ArrayList<PluginData>();
+        private static final long serialVersionUID = 1L;
+        private ArrayList<PluginData> _pluginData = new ArrayList<PluginData>();
 
 		MyTableModel(PluginInfo[] pluginInfo, PluginStatus[] pluginStatus)
 		{
@@ -177,7 +179,7 @@ public class PluginSummaryTable extends SortableTable
 			return s_hdgs[col];
 		}
 
-		public Class getColumnClass(int col)
+		public Class<?> getColumnClass(int col)
 		{
 			return s_dataTypes[col];
 		}
@@ -216,6 +218,10 @@ public class PluginSummaryTable extends SortableTable
 				_info = info;
 				_status = (status != null) ? status : new PluginStatus(_info.getInternalName());
 				_internalName = _info.getInternalName();
+			}
+			
+			public String getInternalName() {
+			    return _internalName;
 			}
 		}
 	}

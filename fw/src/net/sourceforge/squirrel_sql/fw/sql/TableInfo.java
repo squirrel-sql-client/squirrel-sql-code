@@ -30,7 +30,7 @@ public class TableInfo extends DatabaseObjectInfo implements ITableInfo
 	/** Table remarks. */
 	private final String _remarks;
 
-	private SortedSet _childList; // build up datastructure.
+	private SortedSet<ITableInfo> _childList; // build up datastructure.
 	private ITableInfo[] _childs; // final cache.
 
     ForeignKeyInfo[] exportedKeys = null;
@@ -94,7 +94,7 @@ public class TableInfo extends DatabaseObjectInfo implements ITableInfo
 	{
 		if (_childList == null)
 		{
-			_childList = new TreeSet();
+			_childList = new TreeSet<ITableInfo>();
 		}
 		_childList.add(tab);
 	}
@@ -103,8 +103,7 @@ public class TableInfo extends DatabaseObjectInfo implements ITableInfo
 	{
 		if (_childs == null && _childList != null)
 		{
-			_childs = (ITableInfo[]) _childList.toArray(
-								new ITableInfo[_childList.size()]);
+			_childs = _childList.toArray(new ITableInfo[_childList.size()]);
 			_childList = null;
 		}
 		return _childs;

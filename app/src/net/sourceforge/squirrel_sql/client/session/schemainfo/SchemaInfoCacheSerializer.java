@@ -1,18 +1,24 @@
 package net.sourceforge.squirrel_sql.client.session.schemainfo;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectStreamClass;
+import java.util.Hashtable;
+
+import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
-import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
-import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-
-import java.io.*;
-import java.util.Hashtable;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class SchemaInfoCacheSerializer
 {
@@ -21,7 +27,8 @@ public class SchemaInfoCacheSerializer
 
 
    private static final ILogger s_log = LoggerController.createLogger(SchemaInfoCacheSerializer.class);
-   private static Hashtable _storingSessionIDs = new Hashtable();
+   private static Hashtable<IIdentifier, IIdentifier> _storingSessionIDs = 
+       new Hashtable<IIdentifier, IIdentifier>();
 
 
    public static SchemaInfoCache load(ISession session)
@@ -66,7 +73,7 @@ public class SchemaInfoCacheSerializer
          FileInputStream fis = new FileInputStream(schemaCacheFile);
          ObjectInputStream ois = new ObjectInputStream(fis)
          {
-            protected Class resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException
+            protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException
             {
                ClassLoader loader = SchemaInfoCache.class.getClassLoader();
                return Class.forName(desc.getName(), false, loader);

@@ -17,16 +17,19 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.io.Serializable;
 import java.util.Comparator;
 /**
  * This class compares does a case-insensitive comparison of two
  * <TT>IDatabaseObjectInfo</TT> objects using their simple names.
  */
-public class DatabaseObjectSimpleNameInfoComparator implements Comparator
+public class DatabaseObjectSimpleNameInfoComparator 
+implements Comparator<IDatabaseObjectInfo>, Serializable
 {
-	public int compare(Object o1, Object o2)
+    private static final long serialVersionUID = 1L;
+
+    public int compare(IDatabaseObjectInfo o1, IDatabaseObjectInfo o2)
 	{
-		return ((IDatabaseObjectInfo)o1).getSimpleName().compareToIgnoreCase(
-			((IDatabaseObjectInfo)o2).getSimpleName());
+		return o1.getSimpleName().compareToIgnoreCase(o2.getSimpleName());
 	}
 }

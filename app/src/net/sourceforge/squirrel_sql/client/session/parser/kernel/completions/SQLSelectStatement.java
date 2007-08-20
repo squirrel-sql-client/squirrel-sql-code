@@ -18,18 +18,18 @@
  *
  * created by cse, 26.09.2002 15:14:45
  *
- * @version $Id: SQLSelectStatement.java,v 1.1 2004-04-04 10:36:30 colbell Exp $
+ * @version $Id: SQLSelectStatement.java,v 1.2 2007-08-20 00:16:17 manningr Exp $
  */
 package net.sourceforge.squirrel_sql.client.session.parser.kernel.completions;
 
-import net.sourceforge.squirrel_sql.client.session.parser.kernel.SQLSchema;
-import net.sourceforge.squirrel_sql.client.session.parser.kernel.Completion;
-import net.sourceforge.squirrel_sql.client.session.parser.kernel.ParserLogger;
-
-import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
+
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.Completion;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.ParserLogger;
+import net.sourceforge.squirrel_sql.client.session.parser.kernel.SQLSchema;
 
 
 /**
@@ -44,12 +44,13 @@ public class SQLSelectStatement extends SQLStatement
     private static final int FA_HAVING = 1;
     private static final int FA_ORDERBY = 2;
 
-    private Map aliasMap = new HashMap();
+    private Map<String, Table> aliasMap = new HashMap<String, Table>();
     private int selectListStart, selectListEnd, fromStart, fromEnd;
 
     private int[][] fieldAreas = new int[3][2]; //FA_xxx
 
-	 private Vector listeners = new Vector();
+	 private Vector<SQLSelectStatementListener> listeners = 
+	     new Vector<SQLSelectStatementListener>();
 
     public SQLSelectStatement(int start)
     {
@@ -138,12 +139,12 @@ public class SQLSelectStatement extends SQLStatement
         return true;
     }
 
-    public List getTables(String catalog, String schema, String name)
+    public List<Table> getTables(String catalog, String schema, String name)
     {
         if(aliasMap.size() == 0)
             return sqlSchema.getTables(catalog, schema, name);
         else {
-            List tables = sqlSchema.getTables(catalog, schema, name);
+            List<Table> tables = sqlSchema.getTables(catalog, schema, name);
             tables.addAll(aliasMap.values());
             return tables;
         }
@@ -151,7 +152,7 @@ public class SQLSelectStatement extends SQLStatement
 
     public SQLSchema.Table getTableForAlias(String alias)
     {
-        SQLSchema.Table table = (SQLSchema.Table)aliasMap.get(alias);
+        SQLSchema.Table table = aliasMap.get(alias);
         return table != null ? table : sqlSchema.getTableForAlias(alias);
     }
 
@@ -188,7 +189,8 @@ public class SQLSelectStatement extends SQLStatement
 
 	 private void fireAliasDefined(String tableName, String aliasName)
 	 {
-    	 SQLSelectStatementListener[] clone = (SQLSelectStatementListener[]) listeners.toArray(new SQLSelectStatementListener[listeners.size()]);
+    	 SQLSelectStatementListener[] clone = 
+    	     listeners.toArray(new SQLSelectStatementListener[listeners.size()]);
 
 		 for (int i = 0; i < clone.length; i++)
 		 {
