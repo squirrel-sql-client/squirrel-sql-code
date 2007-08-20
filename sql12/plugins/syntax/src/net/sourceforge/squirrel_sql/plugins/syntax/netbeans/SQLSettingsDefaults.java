@@ -1,22 +1,22 @@
 package net.sourceforge.squirrel_sql.plugins.syntax.netbeans;
 
-import org.netbeans.editor.*;
-import org.netbeans.editor.ext.ExtSettingsDefaults;
-import org.netbeans.editor.ext.java.JavaLayerTokenContext;
-
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.InputEvent;
+import java.awt.Color;
+import java.awt.Font;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.Hashtable;
-import java.util.Enumeration;
 
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
-import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxStyle;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPugin;
+import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxStyle;
 
-import javax.swing.*;
+import org.netbeans.editor.Coloring;
+import org.netbeans.editor.Settings;
+import org.netbeans.editor.SettingsDefaults;
+import org.netbeans.editor.SettingsUtil;
+import org.netbeans.editor.TokenCategory;
+import org.netbeans.editor.TokenContextPath;
+import org.netbeans.editor.ext.ExtSettingsDefaults;
+import org.netbeans.editor.ext.java.JavaLayerTokenContext;
 
 
 public class SQLSettingsDefaults extends ExtSettingsDefaults
@@ -197,9 +197,9 @@ public class SQLSettingsDefaults extends ExtSettingsDefaults
 
    }
 
-   public static Map getAbbrevMap(SyntaxPugin plugin)
+   public static Map<String, String> getAbbrevMap(SyntaxPugin plugin)
    {
-      Map javaAbbrevMap = new TreeMap();
+      Map<String, String> javaAbbrevMap = new TreeMap<String, String>();
 
       // We do abrevs ourselfs in the DocumentListener in NetbeansSQLEntryPanel.
       // We don't use the Netbeans implementation mainly because it is case sensitive.

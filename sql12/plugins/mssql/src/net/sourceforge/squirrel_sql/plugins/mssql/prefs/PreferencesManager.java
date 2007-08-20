@@ -93,7 +93,7 @@ public class PreferencesManager {
             
             doc.load(prefFile, MSSQLPreferenceBean.class.getClassLoader());
                         
-            Iterator it = doc.iterator();
+            Iterator<?> it = doc.iterator();
             if (it.hasNext()) {
                 _prefs = (MSSQLPreferenceBean)it.next();
             }

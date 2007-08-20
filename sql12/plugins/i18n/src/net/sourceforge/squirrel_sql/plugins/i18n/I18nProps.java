@@ -1,24 +1,19 @@
 package net.sourceforge.squirrel_sql.plugins.i18n;
 
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import java.io.*;
-import java.util.Properties;
-import java.util.Enumeration;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Locale;
-import java.util.ArrayList;
+import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import java.net.URLClassLoader;
-import java.net.URL;
-import java.net.MalformedURLException;
 
 public class I18nProps extends Object
 {
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(I18nProps.class);
-
 
     private File _file;
     private File _zipFile;
@@ -43,7 +38,7 @@ public class I18nProps extends Object
 
         for (int i = 0; i < sourceUrls.length; i++)
         {
-            String classPathEntry = (String) sourceUrls[i].getPath().replaceAll("%20", " ");
+            String classPathEntry = sourceUrls[i].getPath().replaceAll("%20", " ");
             if(getPath().startsWith(classPathEntry))
             {
                 _name = getPath().substring(classPathEntry.length());
@@ -123,11 +118,10 @@ public class I18nProps extends Object
     public void removeProps(Properties toRemoveFrom)
     {
         Properties toRemove = getProperties();
-
-        for(Enumeration e=toRemove.keys(); e.hasMoreElements(); )
-        {
-            toRemoveFrom.remove(e.nextElement());
-        }
+        
+        for (Object key : toRemove.keySet()) {
+            toRemoveFrom.remove(key);
+        }        
     }
 
     public void copyTo(File toCopyTo)
@@ -223,9 +217,9 @@ public class I18nProps extends Object
         {
             // These files contain images etc. We try to filter out these props.
             Properties ret = getProperties();
-            for(Enumeration e=ret.keys(); e.hasMoreElements();)
-            {
-                String key = (String) e.nextElement();
+            
+            for (Object obj : ret.keySet()) {
+                String key = (String) obj;
 
                 if(key.endsWith(".image") ||
                     key.endsWith(".rolloverimage") ||

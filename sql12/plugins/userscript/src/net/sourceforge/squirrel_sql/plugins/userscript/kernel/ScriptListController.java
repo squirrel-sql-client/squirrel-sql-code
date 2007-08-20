@@ -154,7 +154,7 @@ public class ScriptListController
 			return;
 		}
 
-		Vector remainEntries = new Vector();
+		Vector<Object> remainEntries = new Vector<Object>();
 
 		for(int i=0; i < m_dlg.lstExtraClasspath.getModel().getSize(); ++i)
 		{

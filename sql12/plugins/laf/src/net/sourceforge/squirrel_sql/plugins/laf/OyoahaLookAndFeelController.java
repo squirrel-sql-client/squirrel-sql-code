@@ -73,7 +73,7 @@ public class OyoahaLookAndFeelController extends DefaultLookAndFeelController
 		super();
 
 		XMLObjectCache cache = plugin.getSettingsCache();
-		Iterator it = cache.getAllForClass(OyoahaPreferences.class);
+		Iterator<?> it = cache.getAllForClass(OyoahaPreferences.class);
 		if (it.hasNext())
 		{
 			_prefs = (OyoahaPreferences)it.next();
@@ -116,7 +116,7 @@ public class OyoahaLookAndFeelController extends DefaultLookAndFeelController
 				if (themePackFile.exists())
 				{
 					ClassLoader cl = lafRegister.getLookAndFeelClassLoader();
-					Class oyLafClass = 
+					Class<?> oyLafClass = 
 						Class.forName(OA_LAF_CLASS_NAME, false, cl);
 					Method setTheme =
 						oyLafClass.getMethod("setOyoahaTheme",
@@ -150,7 +150,9 @@ public class OyoahaLookAndFeelController extends DefaultLookAndFeelController
 
 	private static final class OyoahaPrefsPanel extends BaseLAFPreferencesPanelComponent
 	{
-		/**
+        private static final long serialVersionUID = 1L;
+
+        /**
 		 * This interface defines locale specific strings. This should be
 		 * replaced with a property file.
 		 */

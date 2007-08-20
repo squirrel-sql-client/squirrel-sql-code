@@ -335,7 +335,7 @@ public class SQLValidatorPlugin extends DefaultSessionPlugin
 			XMLBeanReader doc = new XMLBeanReader();
 			doc.load(new File(_userSettingsFolder, USER_PREFS_FILE_NAME),
 								getClass().getClassLoader());
-			Iterator it = doc.iterator();
+			Iterator<?> it = doc.iterator();
 			if (it.hasNext())
 			{
 				_prefs = (WebServicePreferences)it.next();

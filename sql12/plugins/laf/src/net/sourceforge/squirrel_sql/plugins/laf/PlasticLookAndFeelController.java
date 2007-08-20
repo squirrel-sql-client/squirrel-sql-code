@@ -71,7 +71,7 @@ class PlasticLookAndFeelController extends AbstractPlasticController
       {
 
          XMLObjectCache cache = plugin.getSettingsCache();
-         Iterator it = cache.getAllForClass(PlasticThemePreferences.class);
+         Iterator<?> it = cache.getAllForClass(PlasticThemePreferences.class);
          if (it.hasNext())
          {
             _prefs = (PlasticThemePreferences) it.next();
@@ -81,7 +81,7 @@ class PlasticLookAndFeelController extends AbstractPlasticController
             _prefs = new PlasticThemePreferences();
 
             ClassLoader cl = getLAFRegister().getLookAndFeelClassLoader();
-            Class clazz = 
+            Class<?> clazz = 
             	Class.forName(AbstractPlasticController.DEFAULT_PLASTIC_THEME_CLASS_NAME, false, cl);
             MetalTheme theme = (MetalTheme) clazz.newInstance();
             _prefs.setThemeName(theme.getName());
@@ -128,7 +128,7 @@ class PlasticLookAndFeelController extends AbstractPlasticController
 		try
 		{
 			ClassLoader cl = getLAFRegister().getLookAndFeelClassLoader();
-			Class themeBaseClass;
+			Class<?> themeBaseClass;
 			try
 			{
 				themeBaseClass = Class.forName(THEME_BASE_CLASS, false, cl);

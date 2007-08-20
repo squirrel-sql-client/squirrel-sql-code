@@ -20,6 +20,7 @@ import java.util.Vector;
 public class SQLSyntax extends Syntax
 {
    /** Logger for this class. */
+   @SuppressWarnings("unused")
    private static ILogger s_log = LoggerController.createLogger(SQLSyntax.class);
 
 
@@ -60,7 +61,7 @@ public class SQLSyntax extends Syntax
    private ISession _sess;
    private NetbeansSQLEditorPane _editorPane;
    private NetbeansPropertiesWrapper _props;
-   private Vector _currentErrorInfos = new Vector();
+   private Vector<ErrorInfo> _currentErrorInfos = new Vector<ErrorInfo>();
    private boolean _parsingInitialized;
 
    private ISyntaxHighlightTokenMatcher _tokenMatcher;
@@ -1034,7 +1035,7 @@ public class SQLSyntax extends Syntax
 
       for (int i = 0; i < _currentErrorInfos.size(); i++)
       {
-         ErrorInfo errInf = (ErrorInfo) _currentErrorInfos.elementAt(i);
+         ErrorInfo errInf = _currentErrorInfos.elementAt(i);
 
 //         byte[] bytes = _editorPane.getText().getBytes();
 //         System.out.println("*********************************************** " + absolutePosition);
