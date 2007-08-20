@@ -37,7 +37,7 @@ public class DatabaseObjectInfoBeanInfo extends SimpleBeanInfo
 			if (s_dscrs == null)
 			{
 				s_dscrs = new PropertyDescriptor[4];
-				final Class clazz = DatabaseObjectInfo.class;
+				final Class<DatabaseObjectInfo> clazz = DatabaseObjectInfo.class;
 				int idx = 0;
 				s_dscrs[idx++] = new PropertyDescriptor(
 								DatabaseObjectInfo.IPropertyNames.CATALOG_NAME,

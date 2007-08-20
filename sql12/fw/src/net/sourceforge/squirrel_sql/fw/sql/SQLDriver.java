@@ -172,15 +172,13 @@ public class SQLDriver implements ISQLDriver, Cloneable, Serializable
 	}
 
 	/**
-	 * Compare this <TT>ISQLDriver</TT> to another object. If the passed object
-	 * is a <TT>ISQLDriver</TT>, then the <TT>getName()</TT> functions of the two
-	 * <TT>ISQLDriver</TT> objects are used to compare them. Otherwise, it throws a
-	 * ClassCastException (as <TT>ISQLDriver</TT> objects are comparable only to
-	 * other <TT>ISQLDriver</TT> objects).
+	 * Compare this <TT>ISQLDriver</TT> to another <TT>ISQLDriver</TT>.  The 
+	 * <TT>getName()</TT> functions of the two <TT>ISQLDriver</TT> objects are 
+	 * used to compare them. 
 	 */
-	public int compareTo(Object rhs)
+	public int compareTo(ISQLDriver rhs)
 	{
-		return _name.compareTo(((ISQLDriver)rhs).getName());
+		return _name.compareTo(rhs.getName());
 	}
 
 	public void addPropertyChangeListener(PropertyChangeListener listener)

@@ -45,7 +45,8 @@ public class BestRowIdentifierAdapterBeanInfo
 		{
 			if (s_dscrs == null)
 			{
-				final Class clazz = BestRowIdentifierAdapter.class;
+				final Class<BestRowIdentifierAdapter> clazz = 
+				    BestRowIdentifierAdapter.class;
 				final PropertyDescriptor[] sub = new PropertyDescriptor[7];
 				sub[0] = new PropertyDescriptor(COLUMN_NAME, clazz, "getColumnName", null);
 				sub[0].setDisplayName(s_stringMgr.getString("BestRowIdentifierAdapterBeanInfo.columnName"));

@@ -24,7 +24,7 @@ import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
 import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
 
-public interface ISQLDriver extends IHasIdentifier, Comparable
+public interface ISQLDriver extends IHasIdentifier, Comparable<ISQLDriver>
 {
 	/**
 	 * JavaBean property names for this class.
@@ -59,7 +59,7 @@ public interface ISQLDriver extends IHasIdentifier, Comparable
 	 * ClassCastException (as <TT>ISQLDriver</TT> objects are comparable only to
 	 * other <TT>ISQLDriver</TT> objects).
 	 */
-	int compareTo(Object rhs);
+	int compareTo(ISQLDriver rhs);
 
 	IIdentifier getIdentifier();
 

@@ -31,7 +31,7 @@ import java.beans.SimpleBeanInfo;
 public class SessionPropertiesBeanInfo extends SimpleBeanInfo
 {
    private static PropertyDescriptor[] s_dscrs;
-   private static Class CLAZZ = SessionProperties.class;
+   private static Class<SessionProperties> CLAZZ = SessionProperties.class;
 
    private interface IPropNames extends SessionProperties.IPropertyNames
    {

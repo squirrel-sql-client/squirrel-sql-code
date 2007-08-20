@@ -43,7 +43,7 @@ public class HashtableDataSet implements IDataSet
       String VALUE_COLUMN = s_stringMgr.getString("hashtabledataset.value");
    }
 
-   private Hashtable _src;
+   private Hashtable<?,?> _src;
 //	private final int _columnCount = 2;
    private DataSetDefinition _dsDef;
    private final static String[] s_hdgs =
@@ -52,9 +52,9 @@ public class HashtableDataSet implements IDataSet
          HashtableDataSetI18n.VALUE_COLUMN };
    private final static int[] s_hdgLens = new int[] { 30, 100 };
    private String[] _curRow = new String[2];
-   private Iterator _rowKeys;
+   private Iterator<?> _rowKeys;
 
-   public HashtableDataSet(Hashtable src) throws DataSetException
+   public HashtableDataSet(Hashtable<?,?> src) throws DataSetException
    {
       super();
       _src = src;

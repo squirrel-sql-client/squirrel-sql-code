@@ -21,8 +21,8 @@ package net.sourceforge.squirrel_sql.fw.sql;
 import java.beans.PropertyChangeListener;
 
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.id.UidIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.persist.ValidationException;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.util.beanwrapper.StringWrapper;
 
 public class MockSQLDriver implements ISQLDriver {
@@ -30,6 +30,10 @@ public class MockSQLDriver implements ISQLDriver {
     private String driverClassName = null;
     
     private String url = null;
+    
+    private String name = "mockSQLDriver";
+    
+    IIdentifier id = new UidIdentifierFactory().createIdentifier();
     
     public MockSQLDriver(String aClassName, String url) {
         driverClassName = aClassName;
@@ -40,7 +44,7 @@ public class MockSQLDriver implements ISQLDriver {
         System.err.println("MockSQLDriver.assignFrom: stub not yet implemented");
     }
 
-    public int compareTo(Object rhs) {
+    public int compareTo(ISQLDriver rhs) {
         System.err.println("MockSQLDriver.compareTo: stub not yet implemented");
         return 0;
     }
@@ -108,12 +112,11 @@ public class MockSQLDriver implements ISQLDriver {
     }
 
     public String getName() {
-        System.err.println("MockSQLDriver.getName: stub not yet implemented");
-        return null;
+        return this.name;
     }
 
     public void setName(String name) throws ValidationException {
-        System.err.println("MockSQLDriver.setName: stub not yet implemented");
+        this.name = name;
     }
 
     public boolean isJDBCDriverClassLoaded() {
@@ -147,6 +150,37 @@ public class MockSQLDriver implements ISQLDriver {
     public void setWebSiteUrl(String url) throws ValidationException {
         // TODO Auto-generated method stub
         
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        return result;
+    }
+
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final MockSQLDriver other = (MockSQLDriver) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        return true;
     }
 
 }

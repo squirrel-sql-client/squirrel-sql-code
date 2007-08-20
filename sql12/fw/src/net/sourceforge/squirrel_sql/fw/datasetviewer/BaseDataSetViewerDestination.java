@@ -184,7 +184,7 @@ public abstract class BaseDataSetViewerDestination implements IDataSetViewer
 		IDataSetViewer dsv = null;
 		try
 		{
-			Class cls = Class.forName(sName);
+			Class<?> cls = Class.forName(sName);
 			dsv = (IDataSetViewer) cls.newInstance();
 			dsv.init(updateableModel);
 		}

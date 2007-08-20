@@ -33,7 +33,7 @@ public class SQLDriverBeanInfo extends SimpleBeanInfo
 		// Empty body.
 	}
 
-	private final static Class CLAZZ = SQLDriver.class;
+	private final static Class<?> CLAZZ = SQLDriver.class;
 	
 	private static PropertyDescriptor[] s_descr;
 

@@ -74,6 +74,7 @@ import net.sourceforge.squirrel_sql.client.session.event.ResultTabEvent;
 import net.sourceforge.squirrel_sql.client.session.event.SQLExecutionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SQLPanelEvent;
 import net.sourceforge.squirrel_sql.client.session.event.SQLResultExecuterTabEvent;
+import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessorFactory;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
 import net.sourceforge.squirrel_sql.fw.gui.IntegerField;
@@ -91,7 +92,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class SQLPanel extends JPanel
 {
-	/** Logger for this class. */
+    private static final long serialVersionUID = 1L;
+
+    /** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(SQLPanel.class);
 
     /** Internationalized strings for this class. */
@@ -108,17 +111,17 @@ public class SQLPanel extends JPanel
 	private static boolean s_loadedSQLHistory;
 
 	/** Current session. */
-	private ISession _session;
+	transient private ISession _session;
 
 	private SQLHistoryComboBox _sqlCombo;
-	private ISQLEntryPanel _sqlEntry;
+	transient private ISQLEntryPanel _sqlEntry;
 	private JCheckBox _limitRowsChk;
 	private IntegerField _nbrRows = new IntegerField();
 
 	private JScrollPane _sqlEntryScroller;
 
-	private SqlComboListener _sqlComboListener = new SqlComboListener();
-	private MyPropertiesListener _propsListener;
+	transient private SqlComboListener _sqlComboListener = new SqlComboListener();
+	transient private MyPropertiesListener _propsListener;
 
 	/** Each tab is a <TT>ResultTab</TT> showing the results of a query. */
 //	private JTabbedPane _tabbedResultsPanel;
@@ -169,7 +172,7 @@ public class SQLPanel extends JPanel
 
 	private SQLResultExecuterPanel _sqlExecPanel;
 
-	private ISQLPanelAPI _panelAPI;
+	transient private ISQLPanelAPI _panelAPI;
 
    private static final String PREFS_KEY_SPLIT_DIVIDER_LOC = "squirrelSql_sqlPanel_divider_loc";
    private UndoAction _undoAction;
@@ -180,7 +183,7 @@ public class SQLPanel extends JPanel
     * false if this panle is within a SQLInternalFrame
     */
    private boolean _inMainSessionWindow;
-	private SQLPanel.SQLExecutorHistoryListener _sqlExecutorHistoryListener = new SQLExecutorHistoryListener();
+	transient private SQLPanel.SQLExecutorHistoryListener _sqlExecutorHistoryListener = new SQLExecutorHistoryListener();
    private ArrayList<SqlPanelListener> _sqlPanelListeners = new ArrayList<SqlPanelListener>();
 
 
@@ -235,7 +238,7 @@ public class SQLPanel extends JPanel
 	}
 
 	/** Current session. */
-	public ISession getSession()
+	public synchronized ISession getSession()
 	{
 		return _session;
 	}
@@ -390,13 +393,13 @@ public class SQLPanel extends JPanel
 	{
       if(1 == _executors.size())
       {
-         ISQLResultExecuter exec = (ISQLResultExecuter) _executors.get(0);
+         ISQLResultExecuter exec = _executors.get(0);
          exec.execute(_sqlEntry);
       }
       else
       {
          int selectedIndex = _tabbedExecuterPanel.getSelectedIndex();
-         ISQLResultExecuter exec = (ISQLResultExecuter)_executors.get(selectedIndex);
+         ISQLResultExecuter exec = _executors.get(selectedIndex);
          exec.execute(_sqlEntry);
       }
 	}
@@ -623,7 +626,7 @@ public class SQLPanel extends JPanel
       }
    }
 
-
+   @SuppressWarnings("unused")
    private void fireTabTornOffEvent(IResultTab tab)
 	{
 		// Guaranteed to be non-null.
@@ -645,6 +648,7 @@ public class SQLPanel extends JPanel
 		}
 	}
 
+   @SuppressWarnings("unused")
 	private void fireTornOffResultTabReturned(IResultTab tab)
 	{
 		// Guaranteed to be non-null.
@@ -728,6 +732,7 @@ public class SQLPanel extends JPanel
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private void openSQLHistory()
 	{
       new SQLHistoryController(_session, getSQLPanelAPI(), ((SQLHistoryComboBoxModel)_sqlCombo.getModel()).getItems());
@@ -879,7 +884,10 @@ public class SQLPanel extends JPanel
 		_splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		_splitPane.setOneTouchExpandable(true);
 
-		installSQLEntryPanel(app.getSQLEntryPanelFactory().createSQLEntryPanel(_session, new HashMap()));
+		installSQLEntryPanel(
+		        app.getSQLEntryPanelFactory().createSQLEntryPanel(
+		                _session, 
+		                new HashMap<String, IParserEventsProcessorFactory>()));
 
       _executerPanleHolder = new JPanel(new GridLayout(1,1));
       _simpleExecuterPanel = new JPanel(new GridLayout(1,1));
@@ -929,7 +937,7 @@ public class SQLPanel extends JPanel
 			int index = pane.getSelectedIndex();
 			if (index != -1)
 			{
-				fireExecuterTabActivated((ISQLResultExecuter)_executors.get(index));
+				fireExecuterTabActivated(_executors.get(index));
 			}
 		}
 	}
@@ -1037,7 +1045,7 @@ public class SQLPanel extends JPanel
 		{
 			updateProperties(evt);
 		}
-
+		@SuppressWarnings("unused")
 		private void updateProperties(DocumentEvent evt)
 		{
 			if (_propsListener != null)
@@ -1061,7 +1069,9 @@ public class SQLPanel extends JPanel
 
 	private class CopyLastButton extends JButton
 	{
-		CopyLastButton(IApplication app)
+        private static final long serialVersionUID = 1L;
+
+        CopyLastButton(IApplication app)
 		{
 			super();
 			final SquirrelResources rsrc = app.getResources();
@@ -1085,7 +1095,9 @@ public class SQLPanel extends JPanel
 
 	private class ShowHistoryButton extends JButton
 	{
-		ShowHistoryButton(IApplication app)
+        private static final long serialVersionUID = 1L;
+
+        ShowHistoryButton(IApplication app)
 		{
          final SquirrelResources rsrc = app.getResources();
          final ImageIcon icon = rsrc.getIcon(SquirrelResources.IImageNames.SQL_HISTORY);

@@ -19,7 +19,7 @@ package net.sourceforge.squirrel_sql.fw.completion;
 
 
 
-public abstract class CompletionInfo implements Comparable
+public abstract class CompletionInfo implements Comparable<CompletionInfo>
 {
    private String _upperCaseCompletionString;
 
@@ -30,10 +30,8 @@ public abstract class CompletionInfo implements Comparable
       return getCompareString();
    }
 
-   public int compareTo(Object obj)
+   public int compareTo(CompletionInfo other)
    {
-      CompletionInfo other = (CompletionInfo)obj;
-
       if(null == _upperCaseCompletionString)
       {
          _upperCaseCompletionString = getCompareString().toUpperCase();

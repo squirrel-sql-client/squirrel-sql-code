@@ -62,7 +62,7 @@ public class OrderByClausePanel implements ISQLFilterPanel
 	 * @param	tableName	The name of the database table that the filter
 	 * 						information will apply to.
 	 */
-	public OrderByClausePanel(SortedSet columnList, String tableName)
+	public OrderByClausePanel(SortedSet<String> columnList, String tableName)
 	{
 		super();
 		_myPanel = new OrderByClauseSubPanel(columnList, tableName);
@@ -133,7 +133,9 @@ public class OrderByClausePanel implements ISQLFilterPanel
 	/** A private class that makes up the bulk of the GUI for the panel. */
 	private static final class OrderByClauseSubPanel extends JPanel
 	{
-		/**
+        private static final long serialVersionUID = 1L;
+
+        /**
 		 * This interface defines locale specific strings. This should be replaced with a property file.
 		 */
 		interface OrderByClausePanelI18n
@@ -186,7 +188,7 @@ public class OrderByClausePanel implements ISQLFilterPanel
 		 * @param tableName The name of the database table.
 		 *
 		 */
-		OrderByClauseSubPanel(SortedSet columnList, String tableName)
+		OrderByClauseSubPanel(SortedSet<String> columnList, String tableName)
 		{
 			super(new GridBagLayout());
 			_columnCombo = new JComboBox(columnList.toArray());
@@ -311,7 +313,9 @@ public class OrderByClausePanel implements ISQLFilterPanel
 
 	private static final class OrderCombo extends JComboBox
 	{
-		OrderCombo()
+        private static final long serialVersionUID = 1L;
+
+        OrderCombo()
 		{
 			super();
 			addItem(OrderByClauseSubPanel.OrderByClausePanelI18n.ASC);

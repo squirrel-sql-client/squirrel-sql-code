@@ -21,7 +21,8 @@ public class ParserEventsProcessor implements IParserEventsProcessor
 {
 	private Timer _parserTimer;
 	private ParserThread _parserThread;
-	private Vector _listeners = new Vector();
+	private Vector<ParserEventsListener> _listeners = 
+	    new Vector<ParserEventsListener>();
 	private ISession _session;
    private ISQLPanelAPI _sqlPanelApi;
 	private KeyAdapter _triggerParserKeyListener;
@@ -126,7 +127,8 @@ public class ParserEventsProcessor implements IParserEventsProcessor
          return;
       }
 
-      ParserEventsListener[] clone = (ParserEventsListener[]) _listeners.toArray(new ParserEventsListener[_listeners.size()]);
+      ParserEventsListener[] clone = 
+          _listeners.toArray(new ParserEventsListener[_listeners.size()]);
 
 		TableAliasInfo[] aliasInfos = _parserThread.getTableAliasInfos();
 		ErrorInfo[] errorInfos = _parserThread.getErrorInfos();

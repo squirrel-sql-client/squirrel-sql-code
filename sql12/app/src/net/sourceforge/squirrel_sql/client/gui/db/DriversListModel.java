@@ -32,7 +32,9 @@ import net.sourceforge.squirrel_sql.client.IApplication;
  */
 class DriversListModel extends SortedListModel
 {
-	/** Application API. */
+    private static final long serialVersionUID = 1L;
+
+    /** Application API. */
 	private IApplication _app;
 
 	/**
@@ -80,10 +82,10 @@ class DriversListModel extends SortedListModel
 	private void load()
 	{
 		clear();
-		Iterator it = _app.getDataCache().drivers();
+		Iterator<ISQLDriver> it = _app.getDataCache().drivers();
 		while (it.hasNext())
 		{
-			addDriver((ISQLDriver)it.next());
+			addDriver(it.next());
 		}
 	}
 

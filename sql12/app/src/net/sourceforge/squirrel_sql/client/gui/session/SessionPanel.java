@@ -74,16 +74,20 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class SessionPanel extends JPanel
 {
-	/** Logger for this class. */
+    private static final long serialVersionUID = 1L;
+
+    /** Logger for this class. */
+    @SuppressWarnings("unused")
 	private static final ILogger s_log =
 		LoggerController.createLogger(SessionPanel.class);
 
 	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr =
+	@SuppressWarnings("unused")
+    private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(SessionPanel.class);
 
 	/** Application API. */
-	private final IApplication _app;
+	transient private final IApplication _app;
 
 	/** ID of the session for this window. */
 	private IIdentifier _sessionId;
@@ -486,7 +490,7 @@ public class SessionPanel extends JPanel
 
    private class MyToolBar extends ToolBar
    {
-      private SQLCatalogsComboBox _catalogsCmb;
+      private static final long serialVersionUID = 1L;
       private IObjectTreeListener _lis;
       private CatalogsPanel _catalogsPanel;
 
