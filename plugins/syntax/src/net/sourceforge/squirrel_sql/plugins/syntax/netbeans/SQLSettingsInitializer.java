@@ -67,9 +67,13 @@ public class SQLSettingsInitializer extends Settings.AbstractInitializer
     *                    The map can be empty if this is the first initializer
     *                    that updates it or if no previous initializers updated it.
     */
+   /* Suppress warnings for issues that are present in this old release of 
+    * NetBeans editor libraries we are using.
+    */
+   @SuppressWarnings("unchecked")
    public void updateSettingsMap(Class kitClass, Map map)
    {
-       
+       @SuppressWarnings("cast")
        Map<String, Object> settingsMap = (Map<String, Object>)map;
       // Update java colorings
       if (kitClass == BaseKit.class)
