@@ -9,6 +9,8 @@ import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.HibernatePropertyI
 import java.net.URLClassLoader;
 import java.util.*;
 
+import org.hibernate.persister.entity.AbstractEntityPersister;
+
 public class HibernateConnection
 {
    private static ILogger s_log = LoggerController.createLogger(HibernateConnection.class);
@@ -107,7 +109,15 @@ public class HibernateConnection
 
          String identifierPropertyClassName = identifierPropertyClass.getName();
 
-         HibernatePropertyInfo identifierPropInfo = new HibernatePropertyInfo(identifierPropertyName, identifierPropertyClassName, null);
+
+         String tableName = (String) persister.callMethod("getTableName").getCallee();
+         String[] identifierColumnNames = (String[]) persister.callMethod("getIdentifierColumnNames").getCallee();
+
+
+         HibernatePropertyInfo identifierPropInfo =
+            new HibernatePropertyInfo(identifierPropertyName, identifierPropertyClassName, tableName, identifierColumnNames);
+         
+         identifierPropInfo.setIdentifier(true);
 
 
          String[] propertyNames = (String[]) persister.callMethod("getPropertyNames").getCallee();
@@ -118,6 +128,9 @@ public class HibernateConnection
             ReflectionCaller propertyTypeCaller = persister.callMethod("getPropertyType", new String[]{propertyNames[i]});
             String mayBeCollectionTypeName = propertyTypeCaller.callMethod("getReturnedClass").getCalleeClass().getName();
 
+            String propTableName = (String) persister.callMethod("getPropertyTableName", new String[]{propertyNames[i]}).getCallee();
+            String[] propertyColumnNames = (String[]) persister.callMethod("getPropertyColumnNames", new String[]{propertyNames[i]}).getCallee();
+
             try
             {
                // If this isn't instanceof org.hibernate.type.CollectionType a NoSuchMethodException will be thrown
@@ -126,13 +139,14 @@ public class HibernateConnection
                ReflectionCaller collectionMetaDataCaller = sessionFactoryImplcaller.callMethod("getCollectionMetadata", new Object[]{role});
                String typeName = collectionMetaDataCaller.callMethod("getElementType").callMethod("getReturnedClass").getCalleeClass().getName();
 
-               infos[i] = new HibernatePropertyInfo(propertyNames[i], typeName, mayBeCollectionTypeName);
+               infos[i] = new HibernatePropertyInfo(propertyNames[i], typeName, propTableName, propertyColumnNames);
+               infos[i].setCollectionClassName(mayBeCollectionTypeName);
             }
             catch(RuntimeException e)
             {
                if(Utilities.getDeepestThrowable(e) instanceof NoSuchMethodException)
                {
-                  infos[i] = new HibernatePropertyInfo(propertyNames[i], mayBeCollectionTypeName, null);
+                  infos[i] = new HibernatePropertyInfo(propertyNames[i], mayBeCollectionTypeName, propTableName, propertyColumnNames);
                }
                else
                {
@@ -141,7 +155,7 @@ public class HibernateConnection
             }
          }
 
-         _mappedClassInfos.add(new MappedClassInfo(mappedClass.getName(), identifierPropInfo, infos));
+         _mappedClassInfos.add(new MappedClassInfo(mappedClass.getName(), tableName, identifierPropInfo, infos));
       }
    }
 }

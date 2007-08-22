@@ -9,6 +9,8 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import javax.swing.*;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import java.util.ArrayList;
@@ -51,6 +53,14 @@ public class MappedObjectPanelManager
       });
 
 
+      _panel.objectTree.addTreeSelectionListener(new TreeSelectionListener()
+      {
+         public void valueChanged(TreeSelectionEvent e)
+         {
+            onTreeSelectionChanged(e);
+         }
+      });
+
       _connectionProvider.addConnectionListener(new ConnectionListener()
       {
          public void connectionOpened(HibernateConnection con)
@@ -64,6 +74,20 @@ public class MappedObjectPanelManager
          }
       });
 
+   }
+
+   private void onTreeSelectionChanged(TreeSelectionEvent e)
+   {
+      DefaultMutableTreeNode n = (DefaultMutableTreeNode) e.getPath().getLastPathComponent();
+
+      if(null != n && n.getUserObject() instanceof MappedClassInfoTreeWrapper)
+      {
+         _detailPanelController.selectionChanged((MappedClassInfoTreeWrapper)n.getUserObject());
+      }
+      else
+      {
+         _detailPanelController.selectionChanged(null);
+      }
    }
 
    private void onTreeExpanded(TreeExpansionEvent event)
@@ -94,6 +118,7 @@ public class MappedObjectPanelManager
    {
       _root.removeAllChildren();
       nodeStructurChanged(_root);
+      _detailPanelController.selectionChanged(null);
    }
 
    private void onConnectionOpened(HibernateConnection con)

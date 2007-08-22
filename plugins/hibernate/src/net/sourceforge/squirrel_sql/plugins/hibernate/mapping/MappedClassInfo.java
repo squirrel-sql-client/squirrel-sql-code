@@ -9,13 +9,15 @@ import java.util.Collection;
 public class MappedClassInfo extends CompletionInfo
 {
    private String _mappedClassName;
+   private String _tableName;
    private PropertyInfo[] _propertyInfos;
    private String _simpleMappedClassName;
    private CompletionParser _lastParser;
 
-   public MappedClassInfo(String mappedClassName, HibernatePropertyInfo indentifierHibernatePropertyInfo, HibernatePropertyInfo[] hibernatePropertyInfos)
+   public MappedClassInfo(String mappedClassName, String tableName, HibernatePropertyInfo indentifierHibernatePropertyInfo, HibernatePropertyInfo[] hibernatePropertyInfos)
    {
       _mappedClassName = mappedClassName;
+      _tableName = tableName;
       _simpleMappedClassName = MappingUtils.getSimpleClassName(mappedClassName);
 
       _propertyInfos = new PropertyInfo[hibernatePropertyInfos.length + 1];
@@ -130,5 +132,11 @@ public class MappedClassInfo extends CompletionInfo
    public PropertyInfo[] getAttributes()
    {
       return _propertyInfos;
+   }
+
+
+   public String getTableName()
+   {
+      return _tableName;
    }
 }

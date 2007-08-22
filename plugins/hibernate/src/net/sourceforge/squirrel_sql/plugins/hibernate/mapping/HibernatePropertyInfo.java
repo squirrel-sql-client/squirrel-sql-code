@@ -4,23 +4,34 @@ public class HibernatePropertyInfo
 {
    private String _propertyName;
    private String _className;
+   private String _tableName;
+   private String[] _columnNames;
    private String _toString;
    private String _collectionClassName;
+   private boolean _identifier;
+   private String _classNameRegardingCollection;
 
-   public HibernatePropertyInfo(String propertyName, String className, String collectionClassName)
+   public HibernatePropertyInfo(String propertyName, String className, String tableName, String[] columnNames)
    {
       _propertyName = propertyName;
       _className = className;
-      _collectionClassName = collectionClassName;
+      _tableName = tableName;
+      _columnNames = columnNames;
+      initStrings();
+   }
 
-      if(null != _collectionClassName)
-      {
-         _toString = propertyName + " " + _collectionClassName + "<" + className + ">";
-      }
-      else
-      {
-         _toString = propertyName + " " + className;
-      }
+
+   public void setCollectionClassName(String collectionClassName)
+   {
+      _collectionClassName = collectionClassName;
+      initStrings();
+   }
+
+   private void initStrings()
+   {
+      _classNameRegardingCollection = null == _collectionClassName ? _className : _collectionClassName + "<" + _className + ">";
+
+      _toString = _propertyName + " " + _classNameRegardingCollection;
    }
 
 
@@ -43,5 +54,33 @@ public class HibernatePropertyInfo
    public String getCollectionClassName()
    {
       return _collectionClassName;
+   }
+
+   public void setIdentifier(boolean identifier)
+   {
+      _identifier = identifier;
+   }
+
+   public boolean isIdentifier()
+   {
+      return _identifier;
+   }
+
+
+   public String getTableName()
+   {
+      return _tableName;
+   }
+
+
+   public String[] getColumnNames()
+   {
+      return _columnNames;
+   }
+
+
+   public String getClassNameRegardingCollection()
+   {
+      return _classNameRegardingCollection;
    }
 }
