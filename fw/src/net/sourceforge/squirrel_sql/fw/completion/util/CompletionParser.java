@@ -104,4 +104,14 @@ public class CompletionParser
    {
       return _tokens.get(_tokens.size()-1);
    }
+
+   public String getAllButFirst()
+   {
+      String ret = _tokens.get(1);
+      for (int i = 2; i < _tokens.size(); i++)
+      {
+         ret += DEREF_CHAR + _tokens.get(i);
+      }
+      return ret;
+   }
 }

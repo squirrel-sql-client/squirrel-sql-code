@@ -60,18 +60,6 @@ public class HQLCodeCompletorModel implements ICompletorModel
       {
          _codeCompletionInfos = new HQLCompletionInfoCollection(_hibernateConnectionProvider.getHibernateConnection());
 
-         MappingInfoProvider mappingInfoProvider = new MappingInfoProvider()
-         {
-            public MappedClassInfo getMappedClassInfoFor(String token)
-            {
-               return onGetMappedClassInfoFor(token);
-            }
-
-            public boolean mayBeClassOrAliasName(String token)
-            {
-               return onMayBeClassOrAliasName(token);
-            }
-         };
 
 
          AliasFinderListener aliasFinderListener = new AliasFinderListener()
@@ -83,25 +71,15 @@ public class HQLCodeCompletorModel implements ICompletorModel
             }
          };
          
-         _hqlAliasFinder.start(mappingInfoProvider, aliasFinderListener);
+         _hqlAliasFinder.start(_codeCompletionInfos, aliasFinderListener);
 
          _hqlSyntaxHighlightTokenMatcherProxy.setDelegate(_codeCompletionInfos.getHqlSyntaxHighlightTokenMatcher());
       }
    }
 
-   private boolean onMayBeClassOrAliasName(String token)
-   {
-      return _codeCompletionInfos.mayBeClassOrAliasName(token);
-   }
-
    private void onAliasesFound(ArrayList<AliasInfo> aliasInfos)
    {
       _codeCompletionInfos.setCurrentAliasInfos(aliasInfos);
-   }
-
-   private MappedClassInfo onGetMappedClassInfoFor(String token)
-   {
-      return _codeCompletionInfos.getMappedClassInfo(token);
    }
 
 }

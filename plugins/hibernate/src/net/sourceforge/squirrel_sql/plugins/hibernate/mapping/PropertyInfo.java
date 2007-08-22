@@ -6,6 +6,7 @@ import net.sourceforge.squirrel_sql.fw.completion.util.CompletionParser;
 public class PropertyInfo  extends CompletionInfo
 {
    private HibernatePropertyInfo _hibernatePropertyInfo;
+   private MappedClassInfo _mappedClassInfo;
    private String _mappedClassNameWithEndingDot;
    private String _fullQualifiedName;
    private String _simpleQualifiedName;
@@ -38,14 +39,20 @@ public class PropertyInfo  extends CompletionInfo
    {
       String stringToParse = parser.getStringToParse();
 
-      return
+      if(
          (_fullQualifiedName.startsWith(stringToParse) && stringToParse.startsWith(_mappedClassNameWithEndingDot)) ||
-         (_simpleQualifiedName.startsWith(stringToParse) && stringToParse.startsWith(_simpleMappedClassNameWithEndingDot));
+         (_simpleQualifiedName.startsWith(stringToParse) && stringToParse.startsWith(_simpleMappedClassNameWithEndingDot))
+      )
+      {
+         return true;
+      }
+
+      return false;
    }
 
-   public boolean matchesUnQualified(CompletionParser parser)
+   public boolean matchesUnQualified(String attrCandidate)
    {
-      return _hibernatePropertyInfo.getPropertyName().startsWith(parser.getLastToken());
+      return _hibernatePropertyInfo.getPropertyName().startsWith(attrCandidate);
    }
 
    public String getClassName()
@@ -56,5 +63,15 @@ public class PropertyInfo  extends CompletionInfo
    public HibernatePropertyInfo getHibernatePropertyInfo()
    {
       return _hibernatePropertyInfo;
+   }
+
+   public MappedClassInfo getMappedClassInfo()
+   {
+      return _mappedClassInfo;
+   }
+
+   public void setMappedClassInfo(MappedClassInfo mappedClassInfo)
+   {
+      _mappedClassInfo = mappedClassInfo;
    }
 }
