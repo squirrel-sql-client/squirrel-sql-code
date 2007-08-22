@@ -74,6 +74,21 @@ public class HQLCompletionInfoCollection implements MappingInfoProvider
    public CompletionCandidates getInfosStartingWith(CompletionParser parser)
    {
 
+      // Tricky alias and chaining completion examples 
+      //
+      // au to auftr in
+      // from Kv auftr where au
+      //
+      // au to auftr in
+      // from Kv.positionen.kv auftr where au
+      //
+      // positionen. to fields of Kv aggregate positionen in
+      // from Kv auftr where auftr.positionen.
+      //
+      // positionen. to fields of Kv aggregate positionen in
+      // from Kv where positionen.
+
+
       ArrayList<CompletionInfo> ciClasses = new ArrayList<CompletionInfo>();
       ArrayList<CompletionInfo> ciAttrs = new ArrayList<CompletionInfo>();
 
@@ -101,9 +116,27 @@ public class HQLCompletionInfoCollection implements MappingInfoProvider
 
 
       ArrayList<CompletionInfo> ret = new ArrayList<CompletionInfo>();
-      if(null != _lastFoundMappedClassInfo && 1 == parser.size())
+      MappedClassInfo lastFoundBuf = _lastFoundMappedClassInfo;
+      if(null != lastFoundBuf)
       {
-         ret.addAll(_lastFoundMappedClassInfo.getMatchingAttributes(parser));      
+         if(1 == parser.size())
+         {
+            ret.addAll(lastFoundBuf.getMatchingAttributes(parser));
+         }
+         else
+         {
+
+            for (PropertyInfo propertyInfo : lastFoundBuf.getAttributes())
+            {
+               if(propertyInfo.getHibernatePropertyInfo().getPropertyName().equals(parser.getToken(0)))
+               {
+                  MappedClassInfo mappedClassInfo = propertyInfo.getMappedClassInfo();
+                  CompletionParser simpleAttrFakeParser = new CompletionParser(mappedClassInfo.getClassName() + "." + parser.getAllButFirst());
+                  ArrayList<PropertyInfo> matchingAttributes = mappedClassInfo.getQualifiedMatchingAttributes(simpleAttrFakeParser);
+                  ret.addAll(matchingAttributes);
+               }
+            }
+         }
       }
 
 
@@ -163,7 +196,8 @@ public class HQLCompletionInfoCollection implements MappingInfoProvider
 
    public MappedClassInfo getMappedClassInfoFor(String token)
    {
-      // looking for an alias like posses in
+      // Example for this code:
+      // Completion should 
       // from Kv k inner join fetch k.positionen as posses where posses.artNr = 'sdfsdf'
 
       CompletionParser cp = new CompletionParser(token);

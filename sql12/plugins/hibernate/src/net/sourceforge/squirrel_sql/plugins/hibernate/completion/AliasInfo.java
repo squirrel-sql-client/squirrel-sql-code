@@ -39,9 +39,8 @@ public class AliasInfo extends CompletionInfo
 
    public ArrayList<PropertyInfo> getQualifiedMatchingAttributes(CompletionParser parser)
    {
-      if(parser.getToken(0).equals(_alias))
+      if(1 < parser.size() && parser.getToken(0).equals(_alias))
       {
-         // cannot call _mci.getMatchingAttributes() because of property chaining   
          return _mci.getQualifiedMatchingAttributes(new CompletionParser(_mci.getClassName() + "." + parser.getAllButFirst()));
       }
       else
