@@ -56,9 +56,9 @@ public class MappedClassInfo extends CompletionInfo
       return true;
    }
 
-   public ArrayList<CompletionInfo> getQualifiedMatchingAttributes(CompletionParser parser)
+   public ArrayList<PropertyInfo> getQualifiedMatchingAttributes(CompletionParser parser)
    {
-      ArrayList<CompletionInfo> ret = new ArrayList<CompletionInfo>();
+      ArrayList<PropertyInfo> ret = new ArrayList<PropertyInfo>();
 
       String stringToParse = parser.getStringToParse();
 

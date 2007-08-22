@@ -8,6 +8,7 @@ import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 import java.util.Collection;
 import java.util.List;
 import java.util.Collections;
+import java.util.ArrayList;
 
 public class AliasInfo extends CompletionInfo
 {
@@ -36,7 +37,7 @@ public class AliasInfo extends CompletionInfo
    
 
 
-   public Collection<? extends CompletionInfo> getQualifiedMatchingAttributes(CompletionParser parser)
+   public ArrayList<PropertyInfo> getQualifiedMatchingAttributes(CompletionParser parser)
    {
       if(parser.getToken(0).equals(_alias))
       {
@@ -45,7 +46,7 @@ public class AliasInfo extends CompletionInfo
       }
       else
       {
-         return Collections.EMPTY_LIST;
+         return new ArrayList<PropertyInfo>();
       }
    }
 

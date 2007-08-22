@@ -11,7 +11,6 @@ import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.StringTokenizer;
 
 public class HQLCompletionInfoCollection implements MappingInfoProvider
 {
@@ -164,60 +163,67 @@ public class HQLCompletionInfoCollection implements MappingInfoProvider
 
    public MappedClassInfo getMappedClassInfoFor(String token)
    {
-      if(0 < token.indexOf('.'))
+      // looking for an alias like posses in
+      // from Kv k inner join fetch k.positionen as posses where posses.artNr = 'sdfsdf'
+
+      CompletionParser cp = new CompletionParser(token);
+
+      if(2 > cp.size())
       {
-         // looking for an alias like posses in
-         // from Kv k inner join fetch k.positionen as posses where posses.artNr = 'sdfsdf'
+         return getMappedClassInfoForNonAliasedToken(cp);
+      }
 
-         StringTokenizer st = new StringTokenizer(token, ".");
+      String aliasCandidate = cp.getToken(0);
 
-         if(2 != st.countTokens())
+      // We need this buffer because this method may be called asynchronously to the event dispatch thread
+      // What could happen is, that _currentAliasInfos ist changed.
+
+      ArrayList<AliasInfo> buf = _currentAliasInfos;
+
+      for (AliasInfo currentAliasInfo : buf)
+      {
+         if(currentAliasInfo.getCompareString().equals(aliasCandidate))
          {
-            return getMappedClassInfoForClassName(token);
-         }
-
-         String aliasCandidate = st.nextToken();
-
-         // We need this buffer because this method may be called asynchronously to the event dispatch thread
-         // What could happen is, that _currentAliasInfos ist set to null.
-
-         ArrayList<AliasInfo> buf = _currentAliasInfos;
-
-         String attrName = st.nextToken();
-         for (AliasInfo currentAliasInfo : buf)
-         {
-            if(currentAliasInfo.getCompareString().equals(aliasCandidate))
+            ArrayList<PropertyInfo> matchingAttributes = currentAliasInfo.getQualifiedMatchingAttributes(cp);
+            for (PropertyInfo matchingAttribute : matchingAttributes)
             {
-               PropertyInfo prop = currentAliasInfo.getAttributeByName(attrName);
-               if(null != prop)
+               if(matchingAttribute.getHibernatePropertyInfo().getPropertyName().equals(cp.getLastToken()))
                {
-                  return _mappedClassInfoByClassName.get(prop.getClassName());
+                  return matchingAttribute.getMappedClassInfo();
                }
             }
          }
-
-         return getMappedClassInfoForClassName(token);
-
-      }
-      else
-      {
-         return getMappedClassInfoForClassName(token);
       }
 
+      return getMappedClassInfoForNonAliasedToken(cp);
    }
 
-   private MappedClassInfo getMappedClassInfoForClassName(String token)
+   private MappedClassInfo getMappedClassInfoForNonAliasedToken(CompletionParser cp)
    {
-      // looking for a simple class name
-
-      MappedClassInfo ret = _mappedClassInfoBySimpleClassName.get(token);
-
-      if(null == ret)
+      for (MappedClassInfo mappedClassInfo : _mappedClassInfos)
       {
-         ret = _mappedClassInfoByClassName.get(token);
+         if(mappedClassInfo.matches(cp))
+         {
+            return mappedClassInfo;
+         }
+
+         if(
+              cp.getStringToParse().startsWith(mappedClassInfo.getClassName()) ||
+              cp.getStringToParse().startsWith(mappedClassInfo.getSimpleClassName())
+           )
+         {
+            ArrayList<PropertyInfo> matchingAttributes = mappedClassInfo.getQualifiedMatchingAttributes(cp);
+            for (PropertyInfo matchingAttribute : matchingAttributes)
+            {
+               if(matchingAttribute.getHibernatePropertyInfo().getPropertyName().equals(cp.getLastToken()))
+               {
+                  return matchingAttribute.getMappedClassInfo();
+               }
+            }
+         }
       }
 
-      return ret;
+      return null;
    }
 
    public boolean mayBeClassOrAliasName(String token)
