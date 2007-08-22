@@ -135,10 +135,10 @@ public class XMLBeanReader implements Iterable<Object>
 			final IXMLParser parser = XMLParserFactory.createDefaultXMLParser();
 			parser.setReader(new StdXMLReader(rdr));
 			IXMLElement element = (IXMLElement) parser.parse();
-			Iterator<IXMLElement> it = new EnumerationIterator<IXMLElement>(element.enumerateChildren());
+			Iterator it = new EnumerationIterator(element.enumerateChildren());
 			while (it.hasNext())
 			{
-				final IXMLElement elem = it.next();
+				final IXMLElement elem = (IXMLElement) it.next();
 				if (isBeanElement(elem))
 				{
 					_beanColl.add(loadBean(elem));
@@ -158,11 +158,12 @@ public class XMLBeanReader implements Iterable<Object>
 
 	private Object loadBean(IXMLElement beanElement) throws XMLException
 	{
+	    String beanClassName = null;
 		try
 		{
-			String beanClassName = getClassNameFromElement(beanElement);
+			beanClassName = getClassNameFromElement(beanElement);
 			beanClassName = fixClassName(beanClassName);
-			Class<?> beanClass = null;
+			Class beanClass = null;
 			if (_cl == null)
 			{
 				beanClass = Class.forName(beanClassName);
@@ -198,6 +199,9 @@ public class XMLBeanReader implements Iterable<Object>
 		}
 		catch (Exception ex)
 		{
+		    s_log.error(
+		        "Unexpected exception while attempting to load xml bean "+
+		        ex.getMessage(), ex);
 			throw new XMLException(ex);
 		}
 	}
@@ -211,8 +215,8 @@ public class XMLBeanReader implements Iterable<Object>
 		final Method setter = propDescr.getWriteMethod();
 		if (setter != null)
 		{
-			final Class<?> parmType = setter.getParameterTypes()[0];
-			final Class<?> arrayType = parmType.getComponentType();
+			final Class parmType = setter.getParameterTypes()[0];
+			final Class arrayType = parmType.getComponentType();
 			final String value = propElem.getContent();
 			if (isIndexedElement(propElem))
 			{
@@ -260,7 +264,7 @@ public class XMLBeanReader implements Iterable<Object>
 			}
 			else if (parmType == boolean.class)
 			{
-				Object data = Boolean.valueOf(value);
+				Object data = new Boolean(value);
 				try
 				{
 					setter.invoke(bean, new Object[] { data });
@@ -335,11 +339,11 @@ public class XMLBeanReader implements Iterable<Object>
 				Object data;
 				if (value != null && value.length() > 0)
 				{
-					data = Character.valueOf(value.charAt(0));
+					data = new Character(value.charAt(0));
 				}
 				else
 				{
-					data = Character.valueOf(' ');
+					data = new Character(' ');
 				}
 				try
 				{

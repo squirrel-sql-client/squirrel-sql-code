@@ -26,6 +26,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
 
@@ -288,6 +289,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 
          if(f.exists())
          {
+             System.out.println("File: "+f.getAbsolutePath());
             XMLBeanReader xbr = new XMLBeanReader();
             xbr.load(f, getClass().getClassLoader());
 
@@ -331,8 +333,11 @@ public class OraclePlugin extends DefaultSessionPlugin
 
          XMLBeanWriter xbw = new XMLBeanWriter();
 
-         xbw.addToRoot(_oracleAliasPrefsByAliasIdentifier.values().iterator());
-
+         Collection<OracleAliasPrefs> set =  
+             _oracleAliasPrefsByAliasIdentifier.values();
+         if (set.size() > 0) {
+             xbw.addIteratorToRoot(set.iterator());
+         }
 
          xbw.save(f);
       }

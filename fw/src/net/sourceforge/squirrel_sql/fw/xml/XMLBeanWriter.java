@@ -53,7 +53,7 @@ public final class XMLBeanWriter
 		}
 	}
 
-	public void addToRoot(Iterator<Object> it) throws XMLException
+	public void addIteratorToRoot(Iterator it) throws XMLException
 	{
 		while (it.hasNext())
 		{
@@ -138,7 +138,7 @@ public final class XMLBeanWriter
 			try
 			{
 				final String propName = propDescr.getName();
-				Class<?> returnType = getter.getReturnType();
+				Class returnType = getter.getReturnType();
 				if (returnType.isArray())
 				{
 					final boolean isStringArray = returnType.getName().equals("[Ljava.lang.String;");
