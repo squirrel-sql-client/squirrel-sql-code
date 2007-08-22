@@ -2,9 +2,12 @@ package net.sourceforge.squirrel_sql.plugins.hibernate.mapping;
 
 import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 import net.sourceforge.squirrel_sql.fw.completion.util.CompletionParser;
+import net.sourceforge.squirrel_sql.plugins.hibernate.completion.HQLCompletionInfoCollection;
+import net.sourceforge.squirrel_sql.plugins.hibernate.completion.MappingInfoProvider;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Arrays;
 
 public class MappedClassInfo extends CompletionInfo
 {
@@ -22,10 +25,10 @@ public class MappedClassInfo extends CompletionInfo
 
       _propertyInfos = new PropertyInfo[hibernatePropertyInfos.length + 1];
 
-      _propertyInfos[0] = new PropertyInfo(indentifierHibernatePropertyInfo, mappedClassName);
+      _propertyInfos[0] = new PropertyInfo(indentifierHibernatePropertyInfo, _mappedClassName);
       for (int i = 0; i < hibernatePropertyInfos.length; i++)
       {
-         _propertyInfos[i+1] = new PropertyInfo(hibernatePropertyInfos[i], mappedClassName);
+         _propertyInfos[i+1] = new PropertyInfo(hibernatePropertyInfos[i], _mappedClassName);
       }
 
 
@@ -57,12 +60,66 @@ public class MappedClassInfo extends CompletionInfo
    {
       ArrayList<CompletionInfo> ret = new ArrayList<CompletionInfo>();
 
-      for (PropertyInfo propertyInfo : _propertyInfos)
+      String stringToParse = parser.getStringToParse();
+
+
+      String propertyChainBegin;
+      if( stringToParse.startsWith(_mappedClassName + ".") )
       {
-         if(1 < parser.size() && propertyInfo.matchesQualified(parser))
+         propertyChainBegin = stringToParse.substring((_mappedClassName + ".").length());
+      }
+      else if ( stringToParse.startsWith(_simpleMappedClassName + ".") )
+      {
+         propertyChainBegin = stringToParse.substring((_simpleMappedClassName + ".").length());
+      }
+      else
+      {
+         return ret;
+      }
+
+      ArrayList<String> props = getArrayFormChain(propertyChainBegin);
+
+      PropertyInfo[] propInfoBuf = _propertyInfos;
+
+      for (int i = 0; i < props.size(); i++)
+      {
+         for (PropertyInfo propertyInfo : propInfoBuf)
          {
-            ret.add(propertyInfo);
+            if(propertyInfo.matchesUnQualified(props.get(i)))
+            {
+               if(i == props.size() -1)
+               {
+                  ret.add(propertyInfo);
+               }
+               else if(i < props.size() - 1 && props.get(i).equals(propertyInfo.getHibernatePropertyInfo().getPropertyName()))
+               {
+                  // This could (perhaps more elegantly) be done by recursion
+                  propInfoBuf = new PropertyInfo[0];
+
+                  MappedClassInfo mappedClassInfo = propertyInfo.getMappedClassInfo();
+                  if(null != mappedClassInfo)
+                  {
+                     propInfoBuf = mappedClassInfo.getAttributes();
+                  }
+                  break;
+               }
+            }
          }
+      }
+
+      return ret;
+
+   }
+
+   private ArrayList<String> getArrayFormChain(String propertyChainBegin)
+   {
+      ArrayList<String> ret = new ArrayList<String>();
+
+      ret.addAll(Arrays.asList(propertyChainBegin.split("\\.")));
+
+      if(propertyChainBegin.endsWith("."))
+      {
+         ret.add("");
       }
 
       return ret;
@@ -76,7 +133,7 @@ public class MappedClassInfo extends CompletionInfo
 
       for (PropertyInfo propertyInfo : _propertyInfos)
       {
-         if(propertyInfo.matchesUnQualified(parser))
+         if(propertyInfo.matchesUnQualified(parser.getLastToken()))
          {
             ret.add(propertyInfo);
          }
@@ -138,5 +195,13 @@ public class MappedClassInfo extends CompletionInfo
    public String getTableName()
    {
       return _tableName;
+   }
+
+   public void initAttributesWithClassInfo(MappingInfoProvider mappingInfoProvider)
+   {
+      for (PropertyInfo propertyInfo : _propertyInfos)
+      {
+         propertyInfo.setMappedClassInfo(mappingInfoProvider.getMappedClassInfoFor(propertyInfo.getHibernatePropertyInfo().getClassName()));
+      }
    }
 }

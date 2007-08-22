@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
-public class HQLCompletionInfoCollection
+public class HQLCompletionInfoCollection implements MappingInfoProvider
 {
    private ArrayList<MappedClassInfo> _mappedClassInfos;
    private ArrayList<SimpleHQLCompletionInfo> _simpleInfos;
@@ -63,6 +63,12 @@ public class HQLCompletionInfoCollection
             onTableOrViewFound(name);
          }
       });
+
+
+      for (MappedClassInfo mappedClassInfo : _mappedClassInfos)
+      {
+         mappedClassInfo.initAttributesWithClassInfo(this);
+      }
 
    }
 
@@ -156,7 +162,7 @@ public class HQLCompletionInfoCollection
       _currentAliasInfos = aliasInfos;
    }
 
-   public MappedClassInfo getMappedClassInfo(String token)
+   public MappedClassInfo getMappedClassInfoFor(String token)
    {
       if(0 < token.indexOf('.'))
       {
@@ -167,7 +173,7 @@ public class HQLCompletionInfoCollection
 
          if(2 != st.countTokens())
          {
-            return null;
+            return getMappedClassInfoForClassName(token);
          }
 
          String aliasCandidate = st.nextToken();
@@ -177,32 +183,41 @@ public class HQLCompletionInfoCollection
 
          ArrayList<AliasInfo> buf = _currentAliasInfos;
 
+         String attrName = st.nextToken();
          for (AliasInfo currentAliasInfo : buf)
          {
             if(currentAliasInfo.getCompareString().equals(aliasCandidate))
             {
-               PropertyInfo prop = currentAliasInfo.getAttributeByName(st.nextToken());
-               return _mappedClassInfoByClassName.get(prop.getClassName());
+               PropertyInfo prop = currentAliasInfo.getAttributeByName(attrName);
+               if(null != prop)
+               {
+                  return _mappedClassInfoByClassName.get(prop.getClassName());
+               }
             }
          }
 
-         return null;
+         return getMappedClassInfoForClassName(token);
 
       }
       else
       {
-         // looking for a simple class alias
-
-         MappedClassInfo ret = _mappedClassInfoBySimpleClassName.get(token);
-
-         if(null == ret)
-         {
-            ret = _mappedClassInfoByClassName.get(token);
-         }
-
-         return ret;
+         return getMappedClassInfoForClassName(token);
       }
 
+   }
+
+   private MappedClassInfo getMappedClassInfoForClassName(String token)
+   {
+      // looking for a simple class name
+
+      MappedClassInfo ret = _mappedClassInfoBySimpleClassName.get(token);
+
+      if(null == ret)
+      {
+         ret = _mappedClassInfoByClassName.get(token);
+      }
+
+      return ret;
    }
 
    public boolean mayBeClassOrAliasName(String token)
