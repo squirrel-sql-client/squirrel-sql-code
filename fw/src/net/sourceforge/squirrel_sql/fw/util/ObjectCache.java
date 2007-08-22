@@ -71,6 +71,7 @@ public class ObjectCache<E extends IHasIdentifier> implements IObjectCache<E>
 	 *			 	Thrown if an object of the same class as <CODE>obj</CODE>
 	 *				and with the same identifier is already in the cache.
 	 */
+	@SuppressWarnings("unchecked")
 	public synchronized void add(E obj) throws DuplicateObjectException
 	{
 		getCacheEntry((Class<E>) obj.getClass()).add(obj);
@@ -121,6 +122,7 @@ public class ObjectCache<E extends IHasIdentifier> implements IObjectCache<E>
 	 *
 	 * @return	Class[] of all classes stored.
 	 */
+	@SuppressWarnings("unchecked")
 	public synchronized Class<E>[] getAllClasses()
 	{
 		List<Class<?>> classes = new ArrayList<Class<?>>();
