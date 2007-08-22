@@ -116,6 +116,9 @@ when displaying error messages and the like in the session message panel.
 Finished German translation
 
 Bug-Fixes:
+
+Got to line dialog (ctrl+g) was missing lables.
+
 1752089 (ConcurrentModificationException raised when loading schema)
 
 1716859 Can't see data in content tab or row count tab (MS SQLServer databases
