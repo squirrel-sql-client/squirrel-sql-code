@@ -491,10 +491,9 @@ class Session implements ISession
     */
    public void reconnect()
    {
-      SQLConnectionState connState = null;
+      SQLConnectionState connState = new SQLConnectionState();
       if (_conn != null)
       {
-         connState = new SQLConnectionState();
          try
          {
             connState.saveState(_conn, getProperties(), _msgHandler);
@@ -575,12 +574,12 @@ class Session implements ISession
       }
    }
 
-   public SessionInternalFrame getSessionInternalFrame()
+   public synchronized SessionInternalFrame getSessionInternalFrame()
    {
       return _sessionInternalFrame;
    }
 
-   public SessionPanel getSessionSheet()
+   public synchronized SessionPanel getSessionSheet()
    {
       return _sessionSheet;
    }
