@@ -209,6 +209,21 @@ public class SQLPanelAPI implements ISQLPanelAPI
        }
    }
 
+   public void fileOpen(File f) {
+       if (unsavedEdits) {
+           showConfirmSaveDialog();
+       }              
+       if (_fileManager.open(f)) {
+           fileOpened = true;
+           fileSaved = false;
+           unsavedEdits = false;
+           ActionCollection actions = 
+               getSession().getApplication().getActionCollection();
+           actions.enableAction(FileSaveAction.class, false);           
+       }
+       
+   }
+   
    /* (non-Javadoc)
     * @see net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI#filePrint()
     */

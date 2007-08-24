@@ -48,6 +48,15 @@ public class FileManager
       return saveIntern(true);
    }
       
+   public boolean open(File f) {
+       boolean result = false;
+       _sqlPanelAPI.getSession().selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
+       result = true;
+       _sqlPanelAPI.setEntireSQLScript("");
+       loadScript(f);
+       return result;
+   }
+   
    public boolean open(boolean appendToExisting)
    {
        boolean result = false;
@@ -83,13 +92,14 @@ public class FileManager
              _sqlPanelAPI.setEntireSQLScript("");
          }
          loadScript(selectedFile);
-         prefs.setFilePreviousDir(selectedFile.getAbsolutePath());
+         
       }
       return result;
    }
 
    private void loadScript(File file)
    {
+       SquirrelPreferences prefs = _sqlPanelAPI.getSession().getApplication().getSquirrelPreferences();
       FileInputStream fis = null;
       BufferedInputStream bis = null;
       try
@@ -106,6 +116,7 @@ public class FileManager
          }
          _sqlPanelAPI.appendSQLScript(sb.toString(), true);
          setFile(file);
+         prefs.setFilePreviousDir(file.getAbsolutePath());
       }
       catch (java.io.IOException io)
       {

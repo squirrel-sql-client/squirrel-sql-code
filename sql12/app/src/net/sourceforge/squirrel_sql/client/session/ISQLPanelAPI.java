@@ -30,6 +30,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.ISQLResultExecuter;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SqlPanelListener;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -304,6 +305,8 @@ public interface ISQLPanelAPI
 	void fileSaveAs();
 
 	void fileOpen();
+	
+	void fileOpen(File f);
 
 	void fileAppend();
 

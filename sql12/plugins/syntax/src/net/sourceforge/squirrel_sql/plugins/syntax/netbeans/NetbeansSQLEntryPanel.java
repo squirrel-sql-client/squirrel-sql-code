@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.plugins.syntax.netbeans;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.awt.Font;
+import java.awt.dnd.DropTarget;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseListener;
 import java.util.HashMap;
@@ -38,6 +39,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessorFactory;
+import net.sourceforge.squirrel_sql.fw.gui.dnd.FileEditorDropTargetListener;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
@@ -57,43 +59,46 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 	/** Text component. */
 	private NetbeansSQLEditorPane _textArea;
 
-
    private SyntaxFactory _syntaxFactory;
    private ISession _session;
    private SyntaxPugin _plugin;
    private NetbeansPropertiesWrapper _propertiesWrapper;
-
+   
+   @SuppressWarnings("unused")
+   private DropTarget dt;
+   
    NetbeansSQLEntryPanel(ISession session, 
                          SyntaxPreferences prefs, 
                          SyntaxFactory syntaxFactory, 
                          SyntaxPugin plugin, 
                          HashMap<String, IParserEventsProcessorFactory> props)
-	{
-		super(session.getApplication());
+   {
+       super(session.getApplication());
+       if (session == null)
+       {
+           throw new IllegalArgumentException("Null ISession passed");
+       }
 
-      _propertiesWrapper = new NetbeansPropertiesWrapper(props);
+       _propertiesWrapper = new NetbeansPropertiesWrapper(props);
 
-      _plugin = plugin;
+       _plugin = plugin;
 
-      if (session == null)
-		{
-			throw new IllegalArgumentException("Null ISession passed");
-		}
 
-      _syntaxFactory = syntaxFactory;
-      _session = session;
-      _plugin = plugin;
+       _syntaxFactory = syntaxFactory;
+       _session = session;
+       _plugin = plugin;
 
-		_app = session.getApplication();
+       _app = session.getApplication();
 
-		_textArea = new NetbeansSQLEditorPane(session, 
-                                              prefs, 
-                                              syntaxFactory, 
-                                              _plugin, 
-                                              getIdentifier(), 
-                                              _propertiesWrapper);
+       _textArea = new NetbeansSQLEditorPane(session, 
+                                             prefs, 
+                                             syntaxFactory, 
+                                             _plugin, 
+                                             getIdentifier(), 
+                                             _propertiesWrapper);
 
-	}
+       dt = new DropTarget(_textArea, new FileEditorDropTargetListener(session)); 
+   }
 
 
    public int getCaretLineNumber()
@@ -438,11 +443,10 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
       kit.getActionByName(ExtKit.replaceAction).actionPerformed(evt);
    }
 
-
     /* (non-Javadoc)
      * @see net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel#setUndoManager(javax.swing.undo.UndoManager)
      */
     public void setUndoManager(UndoManager manager) {
         _textArea.setUndoManager(manager);
-    }
+    }    
 }
