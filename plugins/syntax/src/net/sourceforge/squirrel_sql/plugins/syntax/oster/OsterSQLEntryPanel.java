@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.plugins.syntax.oster;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 import java.awt.Font;
+import java.awt.dnd.DropTarget;
 import java.awt.event.MouseListener;
 
 import javax.swing.event.CaretListener;
@@ -33,6 +34,7 @@ import net.sourceforge.squirrel_sql.client.session.BaseSQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
+import net.sourceforge.squirrel_sql.fw.gui.dnd.FileEditorDropTargetListener;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
@@ -47,6 +49,9 @@ public class OsterSQLEntryPanel extends BaseSQLEntryPanel
 
 	/** Text component. */
 	private OsterTextControl _textArea;
+
+    @SuppressWarnings("unused")
+    private DropTarget dt;
 
 
 	OsterSQLEntryPanel(ISession session, SyntaxPreferences prefs)
@@ -66,6 +71,8 @@ public class OsterSQLEntryPanel extends BaseSQLEntryPanel
 		_app = session.getApplication();
 
 		_textArea = new OsterTextControl(session, prefs, getIdentifier());
+		
+		dt = new DropTarget(_textArea, new FileEditorDropTargetListener(session));
 	}
 
 

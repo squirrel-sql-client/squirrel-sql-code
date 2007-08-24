@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.client.session;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.Font;
+import java.awt.dnd.DropTarget;
 import java.awt.event.MouseListener;
 
 import javax.swing.JComponent;
@@ -30,6 +31,7 @@ import javax.swing.undo.UndoManager;
 
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.gui.FontInfo;
+import net.sourceforge.squirrel_sql.fw.gui.dnd.FileEditorDropTargetListener;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -45,6 +47,9 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 	/** Text area control. */
 	private MyTextArea _comp;
 
+    @SuppressWarnings("unused")
+    private DropTarget dt;
+	
 	public DefaultSQLEntryPanel(ISession session)
 	{
 		super(session.getApplication());
@@ -55,6 +60,8 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 
 		_session = session;
 		_comp = new MyTextArea(session, this);
+		
+		dt = new DropTarget(_comp, new FileEditorDropTargetListener(session));
 	}
 
 	/**
