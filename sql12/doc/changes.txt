@@ -6,6 +6,9 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+Added basic drag-n-drop to transfer a file from the desktop into an SQL Editor 
+panel.
+
 Code Completion Plugin:
   When Ctrl+Space is hit while completion popup is already open the prefix up to
   where all completion candidates match will be written to the SQL editor. The 
