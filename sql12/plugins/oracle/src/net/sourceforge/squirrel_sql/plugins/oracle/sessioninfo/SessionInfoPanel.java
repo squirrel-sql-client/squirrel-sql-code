@@ -18,31 +18,39 @@ package net.sourceforge.squirrel_sql.plugins.oracle.sessioninfo;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
-import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin;
-import net.sourceforge.squirrel_sql.plugins.oracle.common.AutoWidthResizeTable;
-
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.oracle.OraclePlugin;
+import net.sourceforge.squirrel_sql.plugins.oracle.common.AutoWidthResizeTable;
+
 public class SessionInfoPanel extends JPanel
 {
+    private static final long serialVersionUID = 1L;
+
    /**
     * Logger for this class.
     */
-   private static final ILogger s_log = LoggerController.createLogger(SessionInfoPanel.class);
+   private static final ILogger s_log = 
+       LoggerController.createLogger(SessionInfoPanel.class);
 
    //JMH Remove the current sql text. Create a tabbed pane for session details (including sql text)
-   private static final String sessionInfoSQL = "SELECT sess.Sid, " +
+   private static final String SESSION_INFO_SQL = "SELECT sess.Sid, " +
       "     sess.serial#, " +
       "     NVL(sess.username, bgproc.name), " +
       "     sess.schemaname, " +
@@ -88,11 +96,11 @@ public class SessionInfoPanel extends JPanel
    /**
     * Current session.
     */
-   private ISession _session;
+   transient private ISession _session;
 
    private AutoWidthResizeTable _sessionInfo;
    private boolean hasResized = false;
-   private Timer _refreshTimer = new Timer(true);
+   transient private Timer _refreshTimer = new Timer(true);
 
    private boolean _autoRefresh = false;
    private int _refreshPeriod = 10;
@@ -207,76 +215,89 @@ public class SessionInfoPanel extends JPanel
 
    public synchronized void populateSessionInfo()
    {
-      if (!OraclePlugin.checkObjectAccessible(_session, sessionInfoSQL))
+      if (!OraclePlugin.checkObjectAccessible(_session, SESSION_INFO_SQL))
       {
          return;
       }
+      PreparedStatement pstmt = null;
+      ResultSet rs = null;
       try
       {
-//An interestibng piece of SQL
-//            SELECT SQL_Text
-//              FROM V$SQLText_With_Newlines
-//             WHERE Address || ':' || Hash_Value = :f1
-//             ORDER BY Piece
-         PreparedStatement s = _session.getSQLConnection().getConnection().prepareStatement(sessionInfoSQL);
-         if (s.execute())
-         {
-            ResultSet rs = s.getResultSet();
-            DefaultTableModel tm = createTableModel();
-            while (rs.next())
-            {
-               String sid = rs.getString(1);
-               String serNum = rs.getString(2);
-               String sessionName = rs.getString(3);
-               String schema = rs.getString(4);
-               String status = rs.getString(5);
-               String server = rs.getString(6);
-               String OSusr = rs.getString(7);
-               String machine = rs.getString(8);
-               String terminal = rs.getString(9);
-               String program = rs.getString(10);
-               String process = rs.getString(11);
-               String type = rs.getString(12);
-               String module = rs.getString(13);
-               String action = rs.getString(14);
-               String clientInfo = rs.getString(15);
-               String blockGets = rs.getString(16);
-               String consistentGets = rs.getString(17);
-               String physReads = rs.getString(18);
-               String blockChanges = rs.getString(19);
-               String consistentChanges = rs.getString(20);
-               String CPUtime = rs.getString(21);
-               String lastSQL = rs.getString(22);
-               String currSQL = rs.getString(23);
-               String SQLaddr = rs.getString(24);
-               String prevSQLaddr = rs.getString(25);
-               String logonTime = rs.getString(26);
-
-               //Should probably create my own table model but i am being a bit slack.
-               tm.addRow(new Object[]{sid, serNum, sessionName, schema, status, server,
-                  OSusr, machine, terminal, program, process, type, module,
-                  action, clientInfo, blockGets, consistentGets,
-                  physReads, blockChanges, consistentChanges, CPUtime,
-                  lastSQL, currSQL, SQLaddr, prevSQLaddr, logonTime});
-            }
-            _sessionInfo.setModel(tm);
-            if (!hasResized)
-            {
-               //Only resize once.
-               hasResized = true;
-               _sessionInfo.resizeColumnWidth(300);
-            }
+         Connection con = _session.getSQLConnection().getConnection();
+         if (s_log.isDebugEnabled()) {
+             s_log.debug("populateSessionInfo: running sql - "+SESSION_INFO_SQL);
          }
+         pstmt = con.prepareStatement(SESSION_INFO_SQL);
+         rs = pstmt.executeQuery();
+         final DefaultTableModel tm = createTableModel();
+         while (rs.next())
+         {
+           String sid = rs.getString(1);
+           String serNum = rs.getString(2);
+           String sessionName = rs.getString(3);
+           String schema = rs.getString(4);
+           String status = rs.getString(5);
+           String server = rs.getString(6);
+           String OSusr = rs.getString(7);
+           String machine = rs.getString(8);
+           String terminal = rs.getString(9);
+           String program = rs.getString(10);
+           String process = rs.getString(11);
+           String type = rs.getString(12);
+           String module = rs.getString(13);
+           String action = rs.getString(14);
+           String clientInfo = rs.getString(15);
+           String blockGets = rs.getString(16);
+           String consistentGets = rs.getString(17);
+           String physReads = rs.getString(18);
+           String blockChanges = rs.getString(19);
+           String consistentChanges = rs.getString(20);
+           String CPUtime = rs.getString(21);
+           String lastSQL = rs.getString(22);
+           String currSQL = rs.getString(23);
+           String SQLaddr = rs.getString(24);
+           String prevSQLaddr = rs.getString(25);
+           String logonTime = rs.getString(26);
+
+           //Should probably create my own table model but i am being a bit slack.
+           tm.addRow(new Object[]{sid, serNum, sessionName, schema, status, server,
+              OSusr, machine, terminal, program, process, type, module,
+              action, clientInfo, blockGets, consistentGets,
+              physReads, blockChanges, consistentChanges, CPUtime,
+              lastSQL, currSQL, SQLaddr, prevSQLaddr, logonTime});
+         }
+         updateTableModel(tm);
       }
       catch (SQLException ex)
       {
          _session.showErrorMessage(ex);
+      } finally {
+          SQLUtilities.closeResultSet(rs);
+          SQLUtilities.closeStatement(pstmt);
       }
    }
 
+   /**
+    * Sets the specified updated TableModel using the EDT.
+    * 
+    * @param tm the TableModel to set.
+    */
+   private void updateTableModel(final DefaultTableModel tm) {
+       GUIUtils.processOnSwingEventThread(new Runnable() {
+           public void run() {
+               _sessionInfo.setModel(tm);
+               if (!hasResized)
+               {
+                 //Only resize once.
+                 hasResized = true;
+                 _sessionInfo.resizeColumnWidth(300);
+               }
+           }
+       });       
+   }
+   
    private void createGUI()
    {
-      final IApplication app = _session.getApplication();
       setLayout(new BorderLayout());
       _sessionInfo = new AutoWidthResizeTable(new DefaultTableModel());
       _sessionInfo.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
