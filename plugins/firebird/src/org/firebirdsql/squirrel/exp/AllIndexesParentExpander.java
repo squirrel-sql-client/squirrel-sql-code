@@ -14,6 +14,7 @@ import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 
 import org.firebirdsql.squirrel.util.SystemTables;
 
@@ -79,7 +80,7 @@ public class AllIndexesParentExpander implements INodeExpander
         }
         finally
         {
-            if (pstmt != null) try { pstmt.close(); } catch (SQLException e) {}
+            SQLUtilities.closeStatement(pstmt);
         }
         return childNodes;
     }
