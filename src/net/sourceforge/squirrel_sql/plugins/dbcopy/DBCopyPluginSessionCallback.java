@@ -39,7 +39,8 @@ public class DBCopyPluginSessionCallback implements PluginSessionCallback {
 
     public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, 
                                               ISession session) {
-        _plugin.addMenuItemsToContextMenu(session);
+        _plugin.addMenuItemsToContextMenu(objectTreeInternalFrame.getObjectTreeAPI());
+        
     }
 
 }
