@@ -29,16 +29,17 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 /**
- * This class will display the source for an DB2 trigger.
+ * This class will display the source for an DB2 stored procedure.
  *
  * @author manningr
  */
 public class ProcedureSourceTab extends FormattedSourceTab
 {
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(ProcedureSourceTab.class);   
     
     private static interface i18n {
+        StringManager s_stringMgr =
+            StringManagerFactory.getStringManager(ProcedureSourceTab.class);   
+
         //i18n[ProcedureSourceTab.cLanguageProcMsg=This is a C-language routine. The 
         //source code is unavailable.]
         String C_LANGUAGE_PROC_MSG = 
@@ -59,7 +60,7 @@ public class ProcedureSourceTab extends FormattedSourceTab
 	/** SQL that retrieves the source of a stored procedure on OS/400 */
 	private static String OS_400_SQL = 
 	    "select routine_definition from qsys2.sysroutines " +
-	    "where routine_schema=? " +
+	    "where routine_schema = ? " +
 	    "and routine_name = ? ";
 		
 	/** Logger for this class. */

@@ -51,7 +51,7 @@ public class SequenceParentExpander implements INodeExpander
 	private static final String OS_400_SQL = 
 	    "select sequence_name " +
 	    "from qsys2.syssequences " +
-	    "where sequence_schema like ? " +
+	    "where sequence_schema = ? " +
 	    "and sequence_name like ? ";
 	
     /** whether or not we are connected to OS/400 */

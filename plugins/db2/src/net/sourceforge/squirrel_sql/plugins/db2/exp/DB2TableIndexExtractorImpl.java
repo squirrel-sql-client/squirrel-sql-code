@@ -46,7 +46,7 @@ public class DB2TableIndexExtractorImpl implements ITableIndexExtractor {
     /** The query that finds the indexes for a given table on OS/400 */
     private static final String OS_400_SQL = 
         "select " +
-        "index_name, " +
+        "index_name " +
         "from qsys2.sysindexes " +
         "where table_schema = ? " +
         "and table_name = ? ";        
