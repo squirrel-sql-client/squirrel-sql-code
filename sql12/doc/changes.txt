@@ -62,7 +62,11 @@ PostgreSQL Plugin:
  node in the object tree and look for a "Locks" tab.  Code was adapted from Rocco
  Rutte's tab of the same name and purpose in the EclipseSQL project.
 
-Refactoring Plugin: Refactored drop tables command to not use the event dispatch
+Refactoring Plugin: 
+
+- Fixed problem where the comment of a column could not be altered if it was 
+  null.
+- Refactored drop tables command to not use the event dispatch
 thread for calculating foreign keys(UI Responsiveness).  Also, now FKs in child 
 tables are dropped before any parent tables are dropped when cascade 
 constraints is selected.

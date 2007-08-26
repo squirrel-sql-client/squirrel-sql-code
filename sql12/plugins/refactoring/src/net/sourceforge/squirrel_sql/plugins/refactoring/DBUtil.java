@@ -107,10 +107,10 @@ public class DBUtil {
         if (!dialect.supportsColumnComment()) {
             return null;
         }
-        if (oldComment == null || newComment == null) {
+        if (oldComment == null && newComment == null) {
             return null;
         }
-        if (!oldComment.equals(newComment)) {
+        if (oldComment == null || !oldComment.equals(newComment)) {            
             return dialect.getColumnCommentAlterSQL(to);
         }
         return null;        
