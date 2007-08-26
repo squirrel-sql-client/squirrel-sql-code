@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -54,7 +55,10 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  */
 public class ObjectTreeModel extends DefaultTreeModel
 {
-   private static ILogger logger =
+    private static final long serialVersionUID = 1L;
+
+
+    private static ILogger logger =
      LoggerController.createLogger(ObjectTreeModel.class);
 
 
@@ -283,11 +287,12 @@ public class ObjectTreeModel extends DefaultTreeModel
             {
                try
                {
-                  List children = expanders[i].createChildren(startNode.getSession(), startNode);
+                  List<ObjectTreeNode> children = 
+                      expanders[i].createChildren(startNode.getSession(), startNode);
 
                   for (int j = 0; j < children.size(); j++)
                   {
-                     ObjectTreeNode newChild = (ObjectTreeNode) children.get(j);
+                     ObjectTreeNode newChild = children.get(j);
                      if(0 == getExpanders(newChild.getDatabaseObjectType()).length)
                      {
                         newChild.setAllowsChildren(false);
@@ -360,6 +365,8 @@ public class ObjectTreeModel extends DefaultTreeModel
 
    private static final class RootNode extends ObjectTreeNode
    {
+      private static final long serialVersionUID = 1L;
+
       RootNode(ISession session)
       {
          super(session, createDbo(session));
@@ -374,9 +381,11 @@ public class ObjectTreeModel extends DefaultTreeModel
    }
 
 	private static final class DatabaseObjectTypeComparator 
-                         implements Comparator<DatabaseObjectType>
+                         implements Comparator<DatabaseObjectType>, Serializable
 	{
-		public int compare(DatabaseObjectType o1, DatabaseObjectType o2)
+        private static final long serialVersionUID = 1L;
+
+        public int compare(DatabaseObjectType o1, DatabaseObjectType o2)
 		{
 			return o1.getName().compareToIgnoreCase(o2.getName());
 		}
