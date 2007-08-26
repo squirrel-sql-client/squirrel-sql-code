@@ -78,7 +78,7 @@ public class ExplainPlanExecuter extends JPanel implements ISQLResultExecuter {
   private static final ILogger s_log = LoggerController.createLogger(
 		ExplainPlanExecuter.class);
 
-  private ISession _session;
+  transient private ISession _session;
   private boolean checkedPlanTable = false;
   /** Factory for generating unique IDs for the explain plan statement ids*/
   private IntegerIdentifierFactory _idFactory = new IntegerIdentifierFactory();
