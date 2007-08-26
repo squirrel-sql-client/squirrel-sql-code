@@ -114,7 +114,6 @@ public class MonitorPanel extends net.sourceforge.squirrel_sql.client.session.ma
 				// i18n[mssql.monitor=Monitor]
 				return s_stringMgr.getString("mssql.monitor");
 		  else {
-				java.text.DateFormat fmt = new java.text.SimpleDateFormat();
 				// i18n[mssql.monitorAsOf=Monitor (as of {0,date,full})]
 				return s_stringMgr.getString("mssql.monitorAsOf", _refreshDate);
 		  }
