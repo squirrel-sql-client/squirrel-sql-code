@@ -52,8 +52,8 @@ public class UDFParentExpander implements INodeExpander
 	private static final String OS_400_SQL = 
 	    "select routine_name " +
 	    "from QSYS2.SYSFUNCS " +
-	    "where routine_schema like ? " +
-	    "and name like ? ";	    
+	    "where routine_schema = ? " +
+	    "and routine_name like ? ";	    
 	
 	/** whether or not we are connected to OS/400 */
 	private boolean isOS400 = false;
