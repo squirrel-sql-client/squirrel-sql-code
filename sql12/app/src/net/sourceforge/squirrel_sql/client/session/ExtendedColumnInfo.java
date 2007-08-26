@@ -24,6 +24,7 @@ import java.io.Serializable;
 
 public class ExtendedColumnInfo implements Serializable
 {
+   private static final long serialVersionUID = 1L;
    private String _columnName;
    private String _columnType;
    private int _columnSize;
@@ -95,17 +96,35 @@ public class ExtendedColumnInfo implements Serializable
       return _simpleTableName;
    }
 
-
-   public boolean equals(Object obj)
-   {
-      ExtendedColumnInfo other = (ExtendedColumnInfo)obj;
-
-      return _qualifiedName.equals(other._qualifiedName);
+   /**
+    * @see java.lang.Object#hashCode()
+    */
+   @Override
+   public int hashCode() {
+       final int prime = 31;
+       int result = 1;
+       result = prime * result
+       + ((_qualifiedName == null) ? 0 : _qualifiedName.hashCode());
+       return result;
    }
 
-   public int hashCode()
-   {
-      return _qualifiedName.hashCode();
+   /**
+    * @see java.lang.Object#equals(java.lang.Object)
+    */
+   @Override
+   public boolean equals(Object obj) {
+       if (this == obj)
+           return true;
+       if (obj == null)
+           return false;
+       if (getClass() != obj.getClass())
+           return false;
+       final ExtendedColumnInfo other = (ExtendedColumnInfo) obj;
+       if (_qualifiedName == null) {
+           if (other._qualifiedName != null)
+               return false;
+       } else if (!_qualifiedName.equals(other._qualifiedName))
+           return false;
+       return true;
    }
-
 }
