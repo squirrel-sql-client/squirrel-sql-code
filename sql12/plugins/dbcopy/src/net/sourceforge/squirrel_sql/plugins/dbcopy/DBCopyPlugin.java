@@ -68,7 +68,8 @@ public class DBCopyPlugin extends DefaultSessionPlugin
      * @see net.sourceforge.squirrel_sql.client.plugin.ISessionPlugin#sessionStarted(net.sourceforge.squirrel_sql.client.session.ISession)
      */
     public PluginSessionCallback sessionStarted(final ISession session) {
-        addMenuItemsToContextMenu(session);        
+        IObjectTreeAPI api = Compat.getIObjectTreeAPI(session, this);
+        addMenuItemsToContextMenu(api);        
         return new DBCopyPluginSessionCallback(this);
     }
     
@@ -217,9 +218,9 @@ public class DBCopyPlugin extends DefaultSessionPlugin
      * @param coll
      * @param api
      */
-    protected void addMenuItemsToContextMenu(ISession session) 
+    protected void addMenuItemsToContextMenu(final IObjectTreeAPI api) 
     {
-        final IObjectTreeAPI api = Compat.getIObjectTreeAPI(session, this);
+        //final IObjectTreeAPI api = Compat.getIObjectTreeAPI(session, this);
         final ActionCollection coll = getApplication().getActionCollection();
         
         if (SwingUtilities.isEventDispatchThread()) {
