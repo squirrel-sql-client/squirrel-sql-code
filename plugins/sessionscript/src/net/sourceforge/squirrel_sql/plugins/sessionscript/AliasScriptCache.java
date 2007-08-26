@@ -42,7 +42,7 @@ public class AliasScriptCache
 	private SessionScriptPlugin _plugin;
 
 	/** Cache that contains data. */
-	private XMLObjectCache _cache = new XMLObjectCache();
+	private XMLObjectCache<AliasScript> _cache = new XMLObjectCache<AliasScript>();
 
 	/** File name to save scripts to. */
 	private String _scriptsFileName;

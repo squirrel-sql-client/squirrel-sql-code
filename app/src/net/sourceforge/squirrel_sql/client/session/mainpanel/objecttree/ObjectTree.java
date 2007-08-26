@@ -1016,8 +1016,8 @@ class ObjectTree extends JTree
 			{
 				boolean nodeTypeAllowsChildren = false;
 				DatabaseObjectType lastDboType = null;
-				List list = _expanders[i].createChildren(_session, _parentNode);
-				Iterator it = list.iterator();
+				List<ObjectTreeNode> list = _expanders[i].createChildren(_session, _parentNode);
+				Iterator<ObjectTreeNode> it = list.iterator();
 				while (it.hasNext())
 				{
 					Object nextObj = it.next();
