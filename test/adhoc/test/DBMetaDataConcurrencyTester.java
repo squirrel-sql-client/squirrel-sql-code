@@ -24,6 +24,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+
 /**
  * 
  * A description of this class goes here...
@@ -135,7 +137,7 @@ public class DBMetaDataConcurrencyTester {
                 } catch (Exception e) {
                     handleException(e);
                 } finally {
-                    if (rs != null) try { rs.close(); } catch (Exception e) {} 
+                    SQLUtilities.closeResultSet(rs); 
                 }
             }
         }
@@ -229,7 +231,7 @@ public class DBMetaDataConcurrencyTester {
                 } catch (Exception e) {
                     handleException(e);
                 } finally {
-                    if (rs != null) try { rs.close(); } catch (Exception e) {} 
+                    SQLUtilities.closeResultSet(rs); 
                 }
             }
         }
@@ -275,7 +277,7 @@ public class DBMetaDataConcurrencyTester {
                 } catch (Exception e) {
                     handleException(e);
                 } finally {
-                    if (rs != null) try { rs.close(); } catch (Exception e) {} 
+                    SQLUtilities.closeResultSet(rs); 
                 }
             }
         }
