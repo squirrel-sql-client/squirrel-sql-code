@@ -37,8 +37,10 @@ import java.awt.event.ActionListener;
 
 public class SGATraceInternalFrame extends OracleInternalFrame
 {
+    private static final long serialVersionUID = 1L;
 
-   private static final String PREF_PART_SGA_FRAME = "SGAFrame";
+
+    private static final String PREF_PART_SGA_FRAME = "SGAFrame";
 
 
    private static final StringManager s_stringMgr =
@@ -50,14 +52,14 @@ public class SGATraceInternalFrame extends OracleInternalFrame
     */
    private SGATraceToolBar _toolBar;
 
-   private Resources _resources;
+   transient private Resources _resources;
 
    public SGATraceInternalFrame(ISession session, Resources resources)
    {
       // I18n[oracle.sgaTitle=Oracle SGA trace for: {0}]
       super(session, s_stringMgr.getString("oracle.sgaTitle", session.getTitle()));
       _resources = resources;
-      createGUI(session);
+      createGUI();
    }
 
    public SGATracePanel getSGATracePanel()
@@ -65,7 +67,7 @@ public class SGATraceInternalFrame extends OracleInternalFrame
       return _sgaTracePanel;
    }
 
-   private void createGUI(ISession session)
+   private void createGUI()
    {
       addInternalFrameListener(new InternalFrameAdapter()
       {
@@ -107,7 +109,9 @@ public class SGATraceInternalFrame extends OracleInternalFrame
     */
    private class SGATraceToolBar extends OracleToolBar
    {
-      SGATraceToolBar(ISession session, boolean stayOnTop, int autoRefeshPeriod)
+    private static final long serialVersionUID = 1L;
+
+    SGATraceToolBar(ISession session, boolean stayOnTop, int autoRefeshPeriod)
       {
          super();
          createGUI(session, stayOnTop, autoRefeshPeriod);
