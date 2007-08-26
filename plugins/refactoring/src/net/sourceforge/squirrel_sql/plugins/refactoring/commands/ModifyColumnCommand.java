@@ -71,6 +71,14 @@ public class ModifyColumnCommand extends AbstractRefactoringCommand
     private TableColumnInfo columnToModify = null;
     
     private HibernateDialect dialect = null;    
+    
+    static interface i18n {
+        //i18n[ModifyColumnCommand.modifyOneColMsg=Exactly one column must be 
+        //selected to modify]
+        String MODIFY_ONE_COL_MSG = 
+            s_stringMgr.getString("ModifyColumnCommand.modifyOneColMsg");        
+    }
+    
     /**
      * Ctor specifying the current session.
      */
@@ -169,7 +177,7 @@ public class ModifyColumnCommand extends AbstractRefactoringCommand
             columnDetailDialog.setSelectedDialect(dbName);
             columnDetailDialog.setVisible(true);
         } catch (UserCancelledOperationException ex) {
-            ex.printStackTrace();
+            log.info("User cancelled the operation", ex);
         }        
     }
     
@@ -183,8 +191,7 @@ public class ModifyColumnCommand extends AbstractRefactoringCommand
             listDialog.setVisible(false);
             TableColumnInfo[] colInfos = listDialog.getSelectedColumnList();
             if (colInfos == null || colInfos.length != 1) {
-                // TODO I18N
-                _session.showMessage("Exactly one column must be selected to modify");
+                _session.showMessage(i18n.MODIFY_ONE_COL_MSG);
                 return;
             }
             columnToModify = colInfos[0];
@@ -201,9 +208,6 @@ public class ModifyColumnCommand extends AbstractRefactoringCommand
                 // TODO: tell the user no changes
                 return;
             }            
-            // TODO: execute SQL.  Maybe should put it on the SQLEditor first?
-            // No, that should be configurable.
-
             for (int i = 0; i < sqls.length; i++) {
                 String sql = sqls[i];
                 
