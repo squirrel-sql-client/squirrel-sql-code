@@ -1,29 +1,39 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.mapping;
 
-import net.sourceforge.squirrel_sql.plugins.hibernate.IHibernateConnectionProvider;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.plugins.hibernate.ConnectionListener;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernateConnection;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePluginResources;
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.plugins.hibernate.IHibernateConnectionProvider;
 
 import javax.swing.*;
-import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeExpansionEvent;
-import javax.swing.event.TreeSelectionListener;
+import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Collections;
+import java.util.prefs.Preferences;
 
 public class MappedObjectPanelManager
 {
+
+   private static final String PERF_KEY_OBJ_TAB_CHKSHOWQUALIFIED = "Squirrel.hibernateplugin.chkShowQualified";
+
+
    private MappedObjectPanel _panel;
    private IHibernateConnectionProvider _connectionProvider;
    private ISession _session;
    private DefaultMutableTreeNode _root;
    private HashMap<String, MappedClassInfo> _mappedClassInfoByClassName;
    private DetailPanelController _detailPanelController;
+   private ArrayList<MappedClassInfoTreeWrapper> _mappedClassInfoTreeWrappers;
 
    public MappedObjectPanelManager(IHibernateConnectionProvider connectionProvider, ISession session, HibernatePluginResources resource)
    {
@@ -65,7 +75,7 @@ public class MappedObjectPanelManager
       {
          public void connectionOpened(HibernateConnection con)
          {
-            onConnectionOpened(con);
+            initTree(con);
          }
 
          public void connectionClosed()
@@ -73,6 +83,36 @@ public class MappedObjectPanelManager
             onConnectionClosed();
          }
       });
+
+      _panel.chkShowQualified.addActionListener(new ActionListener()
+      {
+         public void actionPerformed(ActionEvent e)
+         {
+            onChkQualified();
+         }
+      });
+
+      _panel.chkShowQualified.setSelected(Preferences.userRoot().getBoolean(PERF_KEY_OBJ_TAB_CHKSHOWQUALIFIED, false));
+
+   }
+
+   private void onChkQualified()
+   {
+      HibernateConnection con = _connectionProvider.getHibernateConnection();
+
+      if(null == con)
+      {
+         return;
+      }
+
+      _root.removeAllChildren();
+
+      initTree(con);
+
+//      DefaultTreeModel treeModel = (DefaultTreeModel) _panel.objectTree.getModel();
+//
+//      _panel.objectTree.setModel(null);
+//      _panel.objectTree.setModel(treeModel);
 
    }
 
@@ -105,13 +145,18 @@ public class MappedObjectPanelManager
             DefaultMutableTreeNode propertyInfoNode = (DefaultMutableTreeNode) mappedClassInfoWrapperNode.getChildAt(i);
             PropertyInfoTreeWrapper propertyInfoTreeWrapper = (PropertyInfoTreeWrapper) propertyInfoNode.getUserObject();
             MappedClassInfo mappedClassInfo = propertyInfoTreeWrapper.getMappedClassInfo();
-            addMappedClassInfoNode(mappedClassInfo, propertyInfoNode);
+            addMappedClassInfoNode(createMappedClassInfoTreeWrapper(mappedClassInfo), propertyInfoNode);
          }
 
          ((MappedClassInfoTreeWrapper) userObject).setExpanded(true);
 
          nodeStructurChanged(mappedClassInfoWrapperNode);
       }
+   }
+
+   private MappedClassInfoTreeWrapper createMappedClassInfoTreeWrapper(MappedClassInfo mappedClassInfo)
+   {
+      return new MappedClassInfoTreeWrapper(mappedClassInfo, _panel.chkShowQualified.isSelected());
    }
 
    private void onConnectionClosed()
@@ -121,15 +166,15 @@ public class MappedObjectPanelManager
       _detailPanelController.selectionChanged(null);
    }
 
-   private void onConnectionOpened(HibernateConnection con)
+   private void initTree(HibernateConnection con)
    {
       ArrayList<MappedClassInfo> mappedClassInfos = con.getMappedClassInfos();
 
-      initMappedClassInfos(mappedClassInfos);
+      ArrayList<MappedClassInfoTreeWrapper> wrappers = initMappedClassInfos(mappedClassInfos);
 
-      for (MappedClassInfo mappedClassInfo : mappedClassInfos)
+      for (MappedClassInfoTreeWrapper wrapper : wrappers)
       {
-         addMappedClassInfoNode(mappedClassInfo, _root);
+         addMappedClassInfoNode(wrapper, _root);
       }
 
       nodeStructurChanged(_root);
@@ -140,11 +185,13 @@ public class MappedObjectPanelManager
       ((DefaultTreeModel)_panel.objectTree.getModel()).nodeStructureChanged(node);
    }
 
-   private void addMappedClassInfoNode(MappedClassInfo mappedClassInfo, DefaultMutableTreeNode parent)
+   private void addMappedClassInfoNode(MappedClassInfoTreeWrapper mappedClassInfoTreeWrapper, DefaultMutableTreeNode parent)
    {
-      DefaultMutableTreeNode mappedClassInfoNode = new DefaultMutableTreeNode(new MappedClassInfoTreeWrapper(mappedClassInfo));
+      _mappedClassInfoTreeWrappers.add(mappedClassInfoTreeWrapper);
 
-      PropertyInfo[] propertyInfos = mappedClassInfo.getAttributes();
+      DefaultMutableTreeNode mappedClassInfoNode = new DefaultMutableTreeNode(mappedClassInfoTreeWrapper);
+
+      PropertyInfo[] propertyInfos = mappedClassInfoTreeWrapper.getMappedClassInfo().getAttributes();
 
       for (PropertyInfo propertyInfo : propertyInfos)
       {
@@ -160,13 +207,22 @@ public class MappedObjectPanelManager
       parent.add(mappedClassInfoNode);
    }
 
-   private void initMappedClassInfos(ArrayList<MappedClassInfo> mappedClassInfos)
+   private ArrayList<MappedClassInfoTreeWrapper> initMappedClassInfos(ArrayList<MappedClassInfo> mappedClassInfos)
    {
+      ArrayList<MappedClassInfoTreeWrapper> ret = new ArrayList<MappedClassInfoTreeWrapper>();
+
       _mappedClassInfoByClassName = new HashMap<String, MappedClassInfo>();
       for (MappedClassInfo mappedClassInfo : mappedClassInfos)
       {
          _mappedClassInfoByClassName.put(mappedClassInfo.getClassName(), mappedClassInfo);
+         ret.add(createMappedClassInfoTreeWrapper(mappedClassInfo));
       }
+
+      _mappedClassInfoTreeWrappers = new ArrayList<MappedClassInfoTreeWrapper>();
+
+      Collections.sort(ret);
+
+      return ret;
    }
 
    public JComponent getComponent()
@@ -177,5 +233,6 @@ public class MappedObjectPanelManager
    public void closing()
    {
       _panel.closing();
+      Preferences.userRoot().putBoolean(PERF_KEY_OBJ_TAB_CHKSHOWQUALIFIED, _panel.chkShowQualified.isSelected());
    }
 }
