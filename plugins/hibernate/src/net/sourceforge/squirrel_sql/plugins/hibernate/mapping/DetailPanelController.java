@@ -1,6 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.mapping;
 
-import net.sourceforge.squirrel_sql.fw.datasetviewer.JavabeanArrayDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.EmptyDataSet;
 
 import javax.swing.*;
@@ -32,7 +31,7 @@ public class DetailPanelController
          {
             MappedClassInfo mci = mappedClassInfoTreeWrapper.getMappedClassInfo();
 
-            DetailAttribute[] attributes = DetailAttribute.createDetailtPropertyInfoBeans(mci.getAttributes());
+            DetailAttribute[] attributes = DetailAttribute.createDetailtAttributes(mci.getAttributes());
 
             _detailPanel.tblDetails.show(new DetailAttributeDataSet(attributes));
          }

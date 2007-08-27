@@ -1,17 +1,15 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.mapping;
 
-import java.util.ArrayList;
-
-public class MappedClassInfoTreeWrapper extends Object
+public class MappedClassInfoTreeWrapper extends Object implements Comparable
 {
    private MappedClassInfo _mappedClassInfo;
    private boolean _expanded;
    private String _toString;
 
-   public MappedClassInfoTreeWrapper(MappedClassInfo mappedClassInfo)
+   public MappedClassInfoTreeWrapper(MappedClassInfo mappedClassInfo, boolean showQualified)
    {
       _mappedClassInfo = mappedClassInfo;
-      initToString();
+      initToString(showQualified);
    }
 
 
@@ -20,9 +18,16 @@ public class MappedClassInfoTreeWrapper extends Object
       return _toString;
    }
 
-   private void initToString()
+   private void initToString(boolean showQualified)
    {
-      _toString = _mappedClassInfo.getSimpleClassName() + " ->" + _mappedClassInfo.getTableName();
+      if(showQualified)
+      {
+         _toString = _mappedClassInfo.getClassName() + " ->" + _mappedClassInfo.getTableName();
+      }
+      else
+      {
+         _toString = _mappedClassInfo.getSimpleClassName() + " ->" + _mappedClassInfo.getTableName();
+      }
    }
 
    public boolean isExpanded()
@@ -39,5 +44,17 @@ public class MappedClassInfoTreeWrapper extends Object
    public MappedClassInfo getMappedClassInfo()
    {
       return _mappedClassInfo;
+   }
+
+   public void setQualified(boolean b)
+   {
+      initToString(b);
+   }
+
+   public int compareTo(Object o)
+   {
+      MappedClassInfoTreeWrapper other = (MappedClassInfoTreeWrapper) o;
+
+      return _toString.compareTo(other.toString());
    }
 }

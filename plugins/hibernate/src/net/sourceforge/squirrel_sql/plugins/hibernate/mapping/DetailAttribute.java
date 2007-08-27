@@ -21,7 +21,7 @@ public class DetailAttribute
       }
    }
 
-   public static DetailAttribute[] createDetailtPropertyInfoBeans(PropertyInfo[] attributes)
+   public static DetailAttribute[] createDetailtAttributes(PropertyInfo[] attributes)
    {
       DetailAttribute[] ret = new DetailAttribute[attributes.length];
 
