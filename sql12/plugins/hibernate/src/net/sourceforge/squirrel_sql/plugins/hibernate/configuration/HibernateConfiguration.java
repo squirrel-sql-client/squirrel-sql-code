@@ -5,9 +5,7 @@ public class HibernateConfiguration
    private String _provider;
    private String _name;
    private String[] _classpathEntries = new String[0];
-
-   /** the root directory to recurse to find *.cfg.xml files */
-   private String _mappingFileRootDir = null;
+   private boolean _userDefinedProvider;
 
    public String getProvider()
    {
@@ -45,17 +43,14 @@ public class HibernateConfiguration
       return _name;
    }
 
-   /**
-    * @return the _mappingFileRootDir
-    */
-   public String getMappingFileRootDir() {
-       return _mappingFileRootDir;
+   public void setUserDefinedProvider(boolean userDefinedProvider)
+   {
+      _userDefinedProvider = userDefinedProvider;
    }
 
-   /**
-    * @param fileRootDir the _mappingFileRootDir to set
-    */
-   public void setMappingFileRootDir(String fileRootDir) {
-       _mappingFileRootDir = fileRootDir;
+
+   public boolean isUserDefinedProvider()
+   {
+      return _userDefinedProvider;
    }
 }

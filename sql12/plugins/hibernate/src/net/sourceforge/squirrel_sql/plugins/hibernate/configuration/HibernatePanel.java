@@ -22,6 +22,8 @@ public class HibernatePanel extends JPanel
    JButton btnClassPathRemove;
    JTextField txtConfigName;
    JButton btnApplyConfigChanges;
+   JRadioButton radConfiguration;
+   JRadioButton radUserDefProvider;
 
 
    public HibernatePanel()
@@ -70,7 +72,7 @@ public class HibernatePanel extends JPanel
 
 
       gbc = new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.NORTHWEST,GridBagConstraints.HORIZONTAL, new Insets(10,5,5,5),0,0);
-      ret.add(createSessionFactoryPanel(), gbc);
+      ret.add(createHowToCreateSessionFactoryPanel(), gbc);
 
       gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.NONE, new Insets(10,5,5,5),0,0);
       // i18n[HibernatePanel.applyConfigChanges=Apply changes to this configuration]
@@ -140,12 +142,46 @@ public class HibernatePanel extends JPanel
       return ret;
    }
 
-   private JPanel createSessionFactoryPanel()
+   private JPanel createHowToCreateSessionFactoryPanel()
    {
       JPanel ret = new JPanel();
 
       ret.setBorder(BorderFactory.createEtchedBorder());
       ret.setLayout(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.WEST,GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      // i18n[HibernatePanel.toObtainSessionFact=To obtain a Hibernate SessionFactoryImpl instance SQuirreL should:]
+      ret.add(new JLabel(s_stringMgr.getString("HibernatePanel.toObtainSessionFact")), gbc);
+
+
+      gbc = new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.WEST,GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      // i18n[HibernatePanel.toObtainSessionFactConfiguration=Call "new org.hibernate.cfg.Configuration().configure().buildSessionFactory();"]
+      radConfiguration = new JRadioButton(s_stringMgr.getString("HibernatePanel.toObtainSessionFactConfiguration"));
+      ret.add(radConfiguration, gbc);
+
+      gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.WEST,GridBagConstraints.NONE, new Insets(5,5,0,5),0,0);
+      // i18n[HibernatePanel.toObtainSessionFactFactoryProvider=Invoke the user defined provider method below:]
+      radUserDefProvider = new JRadioButton(s_stringMgr.getString("HibernatePanel.toObtainSessionFactFactoryProvider"));
+      ret.add(radUserDefProvider, gbc);
+
+
+      ButtonGroup btnGr = new ButtonGroup();
+      btnGr.add(radConfiguration);
+      btnGr.add(radUserDefProvider);
+      radConfiguration.setSelected(true);
+
+      gbc = new GridBagConstraints(0,3,1,1,1,0, GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL, new Insets(0,5,5,5),0,0);
+      ret.add(createUserDefinedSessionFactoryPanel(), gbc);
+
+      return ret;
+
+   }
+
+   private JPanel createUserDefinedSessionFactoryPanel()
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
 
       GridBagConstraints gbc;
       gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.WEST,GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
@@ -165,8 +201,6 @@ public class HibernatePanel extends JPanel
       btnEditFactoryProviderInfo = new JButton(s_stringMgr.getString("HibernatePanel.editFactoryProvider"));
       ret.add(btnEditFactoryProviderInfo, gbc);
 
-
       return ret;
-
    }
 }

@@ -27,7 +27,6 @@ public class HibernateController
 
    private HibernatePlugin _plugin;
    private HibernatePanel _panel;
-   //private HibernateConfig m_currConfig;
 
    static final String PERF_KEY_LAST_DIR = "Squirrel.Hibernate.lastDir";
    public static final String HIBERNATE_CONFIGS_XML_FILE = "hibernateConfigs.xml";
@@ -99,7 +98,20 @@ public class HibernateController
          }
       });
 
+      _panel.radUserDefProvider.addItemListener(new ItemListener()
+      {
+         public void itemStateChanged(ItemEvent e)
+         {
+            onUserDevProviderChanged(e);
+         }
+      });
 
+
+   }
+
+   private void onUserDevProviderChanged(ItemEvent e)
+   {
+      _panel.btnEditFactoryProviderInfo.setEnabled(_panel.radUserDefProvider.isSelected());
    }
 
    private void onRemoveConfig()
@@ -152,26 +164,25 @@ public class HibernateController
       }
    }
 
-   private void onApplyConfigChanges()
+   private boolean onApplyConfigChanges()
    {
       String provider = _panel.txtFactoryProvider.getText();
 
-      if(null == provider || 0 == provider.trim().length())
+      if(_panel.radUserDefProvider.isSelected() && (null == provider || 0 == provider.trim().length()))
       {
          // i18n[HibernateController.noProviderMsg=Missing SessionFactoryImplProvider .\nChanges cannot be applied.]
          JOptionPane.showMessageDialog(_plugin.getApplication().getMainFrame(), s_stringMgr.getString("HibernateController.noProviderMsg"));
-         return;
+         return false;
       }
 
-      String cfgName = (String) _panel.txtConfigName.getText();
+      String cfgName = _panel.txtConfigName.getText();
 
       if(null == cfgName || 0 == cfgName.trim().length())
       {
          // i18n[HibernateController.noCfgNameMsg=Not a valid configuration name\nChanges cannot be applied.]
          JOptionPane.showMessageDialog(_plugin.getApplication().getMainFrame(), s_stringMgr.getString("HibernateController.noProviderMsg"));
-         return;
+         return false;
       }
-
 
 
       HibernateConfiguration cfg = (HibernateConfiguration) _panel.cboConfigs.getSelectedItem();
@@ -194,12 +205,16 @@ public class HibernateController
       }
       cfg.setClassPathEntries(classPathEntries);
 
+      cfg.setUserDefinedProvider(_panel.radUserDefProvider.isSelected());
+
       if(wasNull)
       {
          _panel.cboConfigs.addItem(cfg);
          _panel.cboConfigs.setSelectedItem(cfg);
 
       }
+
+      return true;
    }
 
    private void onFactoryProviderInfo()
@@ -283,6 +298,9 @@ public class HibernateController
 
          _panel.txtFactoryProvider.setText(null);
 
+         _panel.radConfiguration.setSelected(true);
+         _panel.btnEditFactoryProviderInfo.setEnabled(false);
+
          return;
 
       }
@@ -299,6 +317,11 @@ public class HibernateController
          listModel.addElement(path);
       }
 
+      _panel.radUserDefProvider.setSelected(config.isUserDefinedProvider());
+
+      _panel.btnEditFactoryProviderInfo.setEnabled(config.isUserDefinedProvider());
+
+
       _panel.txtFactoryProvider.setText(config.getProvider());
    }
 
@@ -314,18 +337,22 @@ public class HibernateController
    {
       try
       {
-         File pluginUserSettingsFolder = _plugin.getPluginUserSettingsFolder();
-
-         File cfgsFile = new File(pluginUserSettingsFolder.getPath(), HIBERNATE_CONFIGS_XML_FILE);
-
-         XMLBeanWriter bw = new XMLBeanWriter();
-
-         for (int i = 0; i < _panel.cboConfigs.getItemCount(); i++)
+         if(onApplyConfigChanges())
          {
-            bw.addToRoot(_panel.cboConfigs.getItemAt(i));
-         }
+            File pluginUserSettingsFolder = _plugin.getPluginUserSettingsFolder();
 
-         bw.save(cfgsFile);
+            File cfgsFile = new File(pluginUserSettingsFolder.getPath(), HIBERNATE_CONFIGS_XML_FILE);
+
+            XMLBeanWriter bw = new XMLBeanWriter();
+
+            for (int i = 0; i < _panel.cboConfigs.getItemCount(); i++)
+            {
+               bw.addToRoot(_panel.cboConfigs.getItemAt(i));
+            }
+
+            bw.save(cfgsFile);
+
+         }
       }
       catch (Exception e)
       {
