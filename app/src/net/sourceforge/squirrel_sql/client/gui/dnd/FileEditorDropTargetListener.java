@@ -78,7 +78,7 @@ public class FileEditorDropTargetListener extends DropTargetAdapter
             List<File> transferData = 
                 (List<File>)t.getTransferData(DataFlavor.javaFileListFlavor);
             if (transferData.size() > 1) {
-                _session.showErrorMessage("Only one file may be dropped onto the editor at a time.");
+                _session.showErrorMessage(i18n.ONE_FILE_DROP_MESSAGE);
             } else {
                 File f = transferData.get(0);
                 if (s_log.isInfoEnabled()) {
