@@ -30,11 +30,11 @@ import javax.swing.text.PlainDocument;
 import javax.swing.undo.UndoManager;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.dnd.FileEditorDropTargetListener;
 import net.sourceforge.squirrel_sql.client.session.BaseSQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
-import net.sourceforge.squirrel_sql.fw.gui.dnd.FileEditorDropTargetListener;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
