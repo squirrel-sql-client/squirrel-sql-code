@@ -7,7 +7,7 @@ create at least one Hibernate configuration in SQuirreL's Global
 Preferences.</P>
 <P STYLE="margin-bottom: 0cm"><BR>
 </P>
-<P STYLE="margin-bottom: 0cm"><IMG SRC="hibernate.jpg" NAME="graphics1" ALIGN=LEFT  BORDER=0><BR CLEAR=LEFT><BR>
+<P STYLE="margin-bottom: cm"><IMG SRC="hibernate.jpg" NAME="graphics1" ALIGN=LEFT  BORDER=0><BR CLEAR=LEFT><BR>
 </P>
 <P STYLE="margin-bottom: 0cm">First, you must provide a name for
 the configuration. Next, you need to add all of the Hibernate library jars 
@@ -17,13 +17,18 @@ Classpath. Normally this is simply the same Classpath that you use in
 your project (Ant, Eclispe, NetBeans, IntelliJIDEA, etc.) for the Java compiler.</P>
 <P STYLE="margin-bottom: 0cm"><A NAME="DDE_LINK1"></A>Since there are
 multiple ways to obtain a Hibernate connection (SessionFactory), the
-Hibernate Plugin requires the user to provide this connection.
+Hibernate Plugin offers the most standard way to provide this connection by calling<BR>
+<code>new org.hibernate.cfg.Configuration().configure().buildSessionFactory();</code><BR>
+and offers the user to provide this connection by himself.
 This means that the user has to give the Plugin a class that has a
-static method with the following signature: 
+method with the following signature: 
 </P>
-<P STYLE="margin-bottom: 0cm"><FONT FACE="Courier, monospace">public
-org.hibernate.impl.SessionFactoryImpl getSessionFactoryImpl()</FONT></P>
-<P STYLE="margin-bottom: 0cm">The Hibernate Plugin will obtain the Hibernate
+
+<!--<P STYLE="margin-bottom: 0cm"><FONT FACE="Courier, monospace">-->
+<code>public org.hibernate.impl.SessionFactoryImpl getSessionFactoryImpl()</code><br>
+<!--</FONT></P><P STYLE="margin-bottom: 0cm">--> 
+
+The Hibernate Plugin will obtain the Hibernate
 connection using this function. The dialog to tell the Plugin the
 name of this class also allows you to create an example implementation with 
 a stub getSessionFactoryImpl() method.  Note that the class with the 
@@ -32,10 +37,6 @@ too.</P>
 <P STYLE="margin-bottom: 0cm"><BR>
 </P>
 <P STYLE="margin-bottom: 0cm"><IMG SRC="factory.jpg" NAME="graphics2" ALIGN=LEFT  BORDER=0><BR CLEAR=LEFT><BR>
-</P>
-<P STYLE="margin-bottom: 0cm"><I>Note: Be sure to click the &ldquo;Apply
-changes to this configuration&rdquo; button when you are done, or your changes
-won't be saved. </I>
 </P>
 <P STYLE="margin-bottom: 0cm"><BR>
 </P>

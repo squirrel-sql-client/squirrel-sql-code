@@ -2,12 +2,8 @@ package net.sourceforge.squirrel_sql.plugins.hibernate;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateConfiguration;
-import net.sourceforge.squirrel_sql.plugins.hibernate.util.SessionFactoryImplFromSquirrelSessionProvider;
 
 import javax.swing.*;
-
-import org.hibernate.impl.SessionFactoryImpl;
-
 import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -50,36 +46,30 @@ public class HibnerateConnector
    {
       try
       {
-         String provider = cfg.getProvider();
-
-         
          URLClassLoader cl = getClassLoader(cfg);
-         
-         
-         
-         HibernateConnection con = null;
+         Thread.currentThread().setContextClassLoader(cl);
+
          Object sessionFactoryImpl = null;
-         
-         if (provider == null) {
-             //TODO:
-             //     When I attempt to use the user-specified classpath, for some 
-             //     reason Hibernate internally cannot cast it's Oracle9Dialect 
-             //     to Dialect which is the abstract base class - it throws a 
-             //     ClassCastException.  Yet without this, the user would be 
-             //     forced to package up their app and stick it into SQuirreL's
-             //     classpath somehow - lib or script.
-             Thread.currentThread().setContextClassLoader(cl);
-             sessionFactoryImpl = doConnectUsingSession(cfg, session);
-         } else {
-             Thread.currentThread().setContextClassLoader(cl);             
-             Class<?> providerClass = cl.loadClass(provider);
-    
-             Object sessionFactoryProviderImpl = providerClass.newInstance();
-    
-             Method meth = providerClass.getMethod("getSessionFactoryImpl", new Class[0]);
-             sessionFactoryImpl = meth.invoke(sessionFactoryProviderImpl, new Object[0]);
+
+         if (cfg.isUserDefinedProvider())
+         {
+            String provider = cfg.getProvider();
+            Class<?> providerClass = cl.loadClass(provider);
+
+            Object sessionFactoryProviderImpl = providerClass.newInstance();
+
+            sessionFactoryImpl =
+               new ReflectionCaller(sessionFactoryProviderImpl).callMethod("getSessionFactoryImpl").getCallee();
          }
-         con = new HibernateConnection(sessionFactoryImpl, cl);
+         else
+         {
+            Class<?> confiugrationClass = cl.loadClass("org.hibernate.cfg.Configuration");
+            ReflectionCaller rc = new ReflectionCaller(confiugrationClass.newInstance());
+
+            sessionFactoryImpl = rc.callMethod("configure").callMethod("buildSessionFactory").getCallee();
+         }
+
+         HibernateConnection con = new HibernateConnection(sessionFactoryImpl, cl);
          sendConnection(con);
              
          Thread.currentThread().setContextClassLoader(null);
@@ -106,17 +96,8 @@ public class HibnerateConnector
           }
        });       
    }
-   
-   private SessionFactoryImpl doConnectUsingSession(HibernateConfiguration cfg, 
-                                                    ISession session) {
-       SessionFactoryImplFromSquirrelSessionProvider prov = 
-           new SessionFactoryImplFromSquirrelSessionProvider();
-       prov.setHibernateConfig(cfg);
-       prov.setSession(session);
-       return prov.getSessionFactoryImpl();
-   }
-   
-   private URLClassLoader getClassLoader(HibernateConfiguration cfg) 
+
+   private URLClassLoader getClassLoader(HibernateConfiguration cfg)
        throws Exception 
    {
        String[] classpath = cfg.getClassPathEntries();

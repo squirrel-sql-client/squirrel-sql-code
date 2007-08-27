@@ -6,6 +6,15 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+New Plugin (Hibernate)
+   - allows to generate SQL statements from Hibernate HQL statements
+   - shows object tree of mapped objects
+   - HQL Code completion and syntax highlighting
+   - Default way to create a HibernateSessionFactory using "new Configuration().configure().buildSessionFactory();"
+   - User defined way to create a HibernateSessionFactory by calling a user defined provider method.
+   See help for further details.
+
+
 Added basic drag-n-drop to transfer a file from the desktop into an SQL Editor 
 panel.
 
