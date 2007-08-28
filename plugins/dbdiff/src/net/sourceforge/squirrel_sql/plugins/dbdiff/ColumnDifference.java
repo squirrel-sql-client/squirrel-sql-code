@@ -43,6 +43,9 @@ public class ColumnDifference {
     private boolean col1Exists = true;
     private boolean col2Exists = true;
     
+    private String col1remarks = "";
+    private String col2remarks = "";
+    
     public ColumnDifference() {}
     
     public void setColumns(TableColumnInfo c1, TableColumnInfo c2) {
@@ -67,6 +70,7 @@ public class ColumnDifference {
         col1IsNullable = c1.isNullable().equalsIgnoreCase("NO") ? false : true;
         tableName = c1.getTableName();
         columnName = c1.getColumnName();        
+        col1remarks = c1.getRemarks();
     }
 
     public void setColumn2(TableColumnInfo c2) {
@@ -74,7 +78,8 @@ public class ColumnDifference {
         col2Length = c2.getColumnSize();
         col2IsNullable = c2.isNullable().equalsIgnoreCase("NO") ? false : true;
         tableName = c2.getTableName();
-        columnName = c2.getColumnName();        
+        columnName = c2.getColumnName();    
+        col2remarks = c2.getRemarks();
     }
     
     public int getCol1Type() {
@@ -101,6 +106,14 @@ public class ColumnDifference {
         return col2IsNullable;
     }
     
+    public String getCol1Remarks() {
+        return col1remarks;
+    }
+    
+    public String getCol2Remarks() {
+        return col2remarks;
+    }
+    
     /**
      * Returns a boolean indicating whether or not the two columns are different
      * in any aspect.
@@ -118,6 +131,9 @@ public class ColumnDifference {
             return true;
         }
         if (col1IsNullable != col2IsNullable) {
+            return true;
+        }
+        if (!remarksEqual()) {
             return true;
         }
         return false;
@@ -177,6 +193,29 @@ public class ColumnDifference {
      */
     public boolean isCol2Exists() {
         return col2Exists;
+    }
+    
+    public boolean remarksEqual() {
+        if (col1remarks == null && col2remarks == null) {
+            return true;
+        }
+        if ((col1remarks == null && col2remarks != null) 
+                || (col1remarks != null && col2remarks == null)) {
+            return false;
+        }
+        return col1remarks.equals(col2remarks);
+    }
+    
+    public boolean typesEqual() {
+        return col1Type == col2Type;
+    }
+    
+    public boolean lengthsEqual() {
+        return col1Length == col2Length;
+    }
+    
+    public boolean nullableEqual() {
+        return col1IsNullable == col2IsNullable;
     }
     
     public String toString() {

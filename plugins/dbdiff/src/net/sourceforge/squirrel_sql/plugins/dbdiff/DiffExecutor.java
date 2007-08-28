@@ -31,6 +31,7 @@ import javax.swing.SwingUtilities;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
@@ -179,12 +180,15 @@ public class DiffExecutor extends I18NBaseObject {
             }
             final MainFrame frame = sourceSession.getApplication().getMainFrame();
             if (colDifferences != null && colDifferences.size() > 0) {
-                
-                ColumnDiffDialog dialog = new ColumnDiffDialog(frame, false);                 
-                dialog.setColumnDifferences(colDifferences);
-                dialog.setSession1Label(sourceSession.getAlias().getName());
-                dialog.setSession2Label(destSession.getAlias().getName());
-                dialog.setVisible(true);
+                GUIUtils.processOnSwingEventThread(new Runnable() {
+                    public void run() {
+                        ColumnDiffDialog dialog = new ColumnDiffDialog(frame, false);                 
+                        dialog.setColumnDifferences(colDifferences);
+                        dialog.setSession1Label(sourceSession.getAlias().getName());
+                        dialog.setSession2Label(destSession.getAlias().getName());
+                        dialog.setVisible(true);                        
+                    }
+                });
             } else {
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
