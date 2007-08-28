@@ -52,7 +52,7 @@ public class ColumnDiffDialogTestUI {
         
         ColumnDifference diff3 = new ColumnDifference();
         TableColumnInfo column5 = 
-            TestUtil.getTableColumnInfo(md, "LongColumnName", VARCHAR, 100, 0, false);
+            TestUtil.getTableColumnInfo(md, "LongColumnNameThatIsUnreal", VARCHAR, 100, 0, false);
         diff3.setColumn1(column5);
         diff3.setCol2Exists(false);
         

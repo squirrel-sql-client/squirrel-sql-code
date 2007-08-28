@@ -22,6 +22,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.util.List;
 
@@ -29,6 +30,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableColumnModel;
@@ -41,6 +43,8 @@ import net.sourceforge.squirrel_sql.fw.gui.ButtonTableHeader;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbdiff.ColumnDifference;
 
 import org.jdesktop.layout.GroupLayout;
@@ -56,6 +60,10 @@ public class ColumnDiffDialog extends javax.swing.JDialog {
     private static StringManager s_stringMgr = 
         StringManagerFactory.getStringManager(ColumnDiffDialog.class);
     
+    /** Logger for this class. */
+    private final static ILogger s_log = 
+        LoggerController.createLogger(ColumnDiffDialog.class);
+            
     interface i18n {
         // i18n[ColumnDiffDialog.sessionLabelPrefix=Session]
         String SESSION_LABEL_PREFIX = 
@@ -75,6 +83,8 @@ public class ColumnDiffDialog extends javax.swing.JDialog {
     // The header for the scrollable part which presents column differences
     private ButtonTableHeader _tableHeader;
     
+    private JTable corner = null;
+    
     private JPanel infoPanel;
     private JPanel diffPanel;
     private JLabel session1Label;
@@ -83,9 +93,11 @@ public class ColumnDiffDialog extends javax.swing.JDialog {
     private JTable _rowHeader;
     private List<ColumnDifference> _tableDiffs;
     
-    private static final Color differenceColor = new Color(255, 155, 140);
+    private static final Color differenceColor = new Color(255, 166, 166);
     
-    private int rowHeaderColumnMinimumWidth = 110;
+    private static final Color missingColor = new Color(255, 230, 0);
+    
+    private int rowHeaderColumnMinimumWidth = 120;
  
     
     public ColumnDiffDialog(java.awt.Frame parent, boolean modal) {
@@ -102,9 +114,40 @@ public class ColumnDiffDialog extends javax.swing.JDialog {
         }
         DiffTableModel model = new DiffTableModel(diffs);
         diffTable.setModel(model);
-        RowHeaderTableModel rowheaderModel = new RowHeaderTableModel(diffs);
-        _rowHeader.setModel(rowheaderModel);
         _tableDiffs = diffs;
+
+        RowHeaderTableModel rowheaderModel = new RowHeaderTableModel(diffs);
+        
+        _rowHeader.setModel(rowheaderModel);
+        
+        TableColumnModel rowHeaderTableColModel = _rowHeader.getColumnModel();
+        TableColumn rowHeaderTableCol1 = rowHeaderTableColModel.getColumn(0);
+        TableColumn rowHeaderTableCol2 = rowHeaderTableColModel.getColumn(1);
+        
+        TableColumnModel cornerTableColModel = corner.getColumnModel();
+        TableColumn cornerTableCol1 = cornerTableColModel.getColumn(0);
+        TableColumn cornerTableCol2 = cornerTableColModel.getColumn(1);
+        
+        int column1MinWidth = getLongestColumnDifferenceTableName(diffs)*3;
+        System.out.println("column1MinWidth: "+column1MinWidth);
+        int column2MinWidth = getLongestColumnDifferenceColumnName(diffs)*7;
+        System.out.println("column2MinWidth: "+column2MinWidth);
+        rowHeaderTableCol1.setMinWidth(column1MinWidth);
+        rowHeaderTableCol2.setMinWidth(column2MinWidth);
+        cornerTableCol1.setMinWidth(column1MinWidth);
+        cornerTableCol2.setMinWidth(column2MinWidth);
+        
+        
+
+        // These don't appear to work.
+//        rowHeaderTableCol1.setResizable(true);
+//        rowHeaderTableCol2.setResizable(true);
+//        cornerTableCol1.setResizable(true);
+//        cornerTableCol2.setResizable(true);
+        
+        //corner.validate();
+        
+        super.pack();
     }
     
     public void setSession1Label(String label) {
@@ -121,6 +164,28 @@ public class ColumnDiffDialog extends javax.swing.JDialog {
         session2Label.setText(getSessionLabel(2, label));
     }
 
+    private int getLongestColumnDifferenceTableName(List<ColumnDifference> diffs) {
+        int result = 0;
+        for (ColumnDifference diff : diffs) {
+            int length = diff.getTableName().length();
+            if (result < length) {
+                result = length;
+            }
+        }
+        return result;
+    }
+
+    private int getLongestColumnDifferenceColumnName(List<ColumnDifference> diffs) {
+        int result = 0;
+        for (ColumnDifference diff : diffs) {
+            int length = diff.getColumnName().length();
+            if (result < length) {
+                result = length;
+            }
+        }
+        return result;
+    }
+    
     private String getSessionLabel(int sessionNum, String label) {
         StringBuilder result = new StringBuilder();
         result.append(i18n.SESSION_LABEL_PREFIX);
@@ -152,7 +217,9 @@ public class ColumnDiffDialog extends javax.swing.JDialog {
                 i18n.SESSION_LABEL_PREFIX+"1 Length", 
                 i18n.SESSION_LABEL_PREFIX+"2 Length", 
                 i18n.SESSION_LABEL_PREFIX+"1 Null", 
-                i18n.SESSION_LABEL_PREFIX+"2 Null"
+                i18n.SESSION_LABEL_PREFIX+"2 Null",
+                i18n.SESSION_LABEL_PREFIX+"1 Remarks", 
+                i18n.SESSION_LABEL_PREFIX+"2 Remarks",                
             }
         ) {
             private static final long serialVersionUID = -8971846055387133384L;
@@ -220,7 +287,7 @@ public class ColumnDiffDialog extends javax.swing.JDialog {
         
         contentPane.add(BorderLayout.NORTH, infoPanel);
         contentPane.add(BorderLayout.CENTER, diffPanel);
-        pack();
+        
     }
     
     private void postInit() {        
@@ -230,25 +297,41 @@ public class ColumnDiffDialog extends javax.swing.JDialog {
         panel.setLayout(new BorderLayout());
         panel.add(_rowHeader, BorderLayout.CENTER);
         jScrollPane1.setRowHeaderView(panel);
-        
+        //jScrollPane1.setRowHeaderView(_rowHeader);
         
         _tableHeader = new ButtonTableHeader();
         _tableHeader.setTable(diffTable);
         diffTable.setTableHeader(_tableHeader);
-        //_tableHeader.initColWidths();
+        _tableHeader.initColWidths();
         _tableHeader.setColumnModel(diffTable.getColumnModel());
         //_tableHeader.adoptAllColWidths(true);
         //_tableHeader.initColWidths();
+                
+        corner = new JTable(new CornerTableModel());
+        corner.setRowHeight(25);
         
-        JTable corner = new JTable(
-                new Object[][] {{"Table", "Column" }}, 
-                new Object[] {"Table", "Column" });
         corner.setBackground(Color.lightGray);
+        corner.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        corner.setFont(corner.getFont().deriveFont(Font.BOLD));
+        //corner.createDefaultColumnsFromModel();
+        
+        
+        // This is weird - if I don't set this the column header doesn't line up
+        // with the column contents.
+        corner.getColumnModel().getColumn(0).setMinWidth(200);
+        
+        DefaultTableCellRenderer  tcrColumn  =  new DefaultTableCellRenderer();
+        tcrColumn.setHorizontalAlignment(JTextField.CENTER);
+        corner.getColumnModel().getColumn(0).setCellRenderer(tcrColumn);        
+        corner.getColumnModel().getColumn(1).setCellRenderer(tcrColumn);
+        
         JPanel cornerPanel = new JPanel();
         cornerPanel.setLayout(new BorderLayout());
         cornerPanel.add(corner, BorderLayout.CENTER);
         
         jScrollPane1.setCorner(JScrollPane.UPPER_LEFT_CORNER, cornerPanel);
+        //jScrollPane1.setCorner(JScrollPane.UPPER_LEFT_CORNER, corner);
+        
     }
     
     private JTable getRowHeader() {
@@ -265,15 +348,21 @@ public class ColumnDiffDialog extends javax.swing.JDialog {
         };
         */
         TableModel tm = new RowHeaderTableModel();
-        TableColumnModel tcm = new DefaultTableColumnModel() {
+        TableColumnModel tcm = getTableColumnModel(rowHeaderColumnMinimumWidth);
+        JTable result = new JTable(tm, tcm);
+        result.createDefaultColumnsFromModel();
+        return result;
+    }
+    
+    private TableColumnModel getTableColumnModel(final int minWidth) {
+        TableColumnModel result = new DefaultTableColumnModel() {
             private static final long serialVersionUID = 1L;
-            public void addColumn(TableColumn tc) {                
-                tc.setMinWidth(rowHeaderColumnMinimumWidth);
+            public void addColumn(TableColumn tc) {  
+                tc.setResizable(true);
+                tc.setMinWidth(minWidth);
                 super.addColumn(tc);
             }
         };
-        JTable result = new JTable(tm, tcm);
-        result.createDefaultColumnsFromModel();
         return result;
     }
     
@@ -289,7 +378,10 @@ public class ColumnDiffDialog extends javax.swing.JDialog {
                 i18n.SESSION_LABEL_PREFIX+"1 Length", 
                 i18n.SESSION_LABEL_PREFIX+"2 Length", 
                 i18n.SESSION_LABEL_PREFIX+"1 Null", 
-                i18n.SESSION_LABEL_PREFIX+"2 Null"
+                i18n.SESSION_LABEL_PREFIX+"2 Null",
+                i18n.SESSION_LABEL_PREFIX+"1 Remarks", 
+                i18n.SESSION_LABEL_PREFIX+"2 Remarks"
+                
         };
         
         
@@ -334,8 +426,8 @@ public class ColumnDiffDialog extends javax.swing.JDialog {
                 return "";
             }
             if (row >= _diffs.size()) {
-                System.err.println("specified row ("+row+
-                        ") equals or exceeds _diffs size("+_diffs.size()+")");
+                s_log.error("specified row ("+row+") equals or exceeds " +
+                		    "_diffs size("+_diffs.size()+")");
                 return "";
             }
             ColumnDifference diff = _diffs.get(row);
@@ -367,6 +459,12 @@ public class ColumnDiffDialog extends javax.swing.JDialog {
             case 5:
                 result = diff.col2AllowsNull();
                 break;
+            case 6:
+                result = diff.getCol1Remarks();
+                break;
+            case 7:
+                result = diff.getCol2Remarks();
+                break;
             default: 
                System.err.println("Unknown column: " + column);
             }
@@ -374,7 +472,68 @@ public class ColumnDiffDialog extends javax.swing.JDialog {
         }
     }
     
-    private class RowHeaderTableModel extends DefaultTableModel {
+    private static class CornerTableColumnModel extends DefaultTableColumnModel {
+        
+    }
+    
+    private static class CornerTableModel extends DefaultTableModel {
+
+        private static final long serialVersionUID = 1L;
+
+        /**
+         * @see javax.swing.table.DefaultTableModel#getColumnCount()
+         */
+        @Override
+        public int getColumnCount() {
+            return 2;
+        }
+
+        /**
+         * @see javax.swing.table.DefaultTableModel#getColumnName(int)
+         */
+        @Override
+        public String getColumnName(int column) {
+            if (column == 0) {
+                return "Table";
+            }
+            return "Column";
+        }
+
+        /**
+         * @see javax.swing.table.DefaultTableModel#getRowCount()
+         */
+        @Override
+        public int getRowCount() {
+            return 1;
+        }
+
+        /**
+         * @see javax.swing.table.DefaultTableModel#getValueAt(int, int)
+         */
+        @Override
+        public Object getValueAt(int row, int column) {
+            if (column == 0) {
+                return "Table";
+            }
+            return "Column";
+        }
+
+        /**
+         * @see javax.swing.table.DefaultTableModel#isCellEditable(int, int)
+         */
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+        
+    }
+    
+    /**
+     * This class forms the vertical "header" that contains the first two 
+     * columns in our table and is used to display the table and column name
+     * being diff'd for a particular row.  
+     */
+    private static class RowHeaderTableModel extends DefaultTableModel {
         
         private static final long serialVersionUID = 9015962292222867195L;
 
@@ -475,32 +634,40 @@ public class ColumnDiffDialog extends javax.swing.JDialog {
             ColumnDifference diff = _tableDiffs.get(row);
 
             if (!diff.isCol1Exists() || !diff.isCol2Exists()) {
-                setHighlighted(label);
+                setMissing(label, value);
                 return label;
             }
-            
+
             switch (column) {
             case 0: 
             case 1:
-                if (diff.getCol1Type() != diff.getCol2Type()) {
-                    setHighlighted(label);
+                if (!diff.typesEqual()) {
+                    setHighlighted(label, value);
                 } else {
                     setNormal(label);
                 }
                 break;
             case 2:
             case 3:
-                if (diff.getCol1Length() != diff.getCol2Length()) {
-                    setHighlighted(label);
+                if (!diff.lengthsEqual()) {
+                    setHighlighted(label, value);
                 } else {
                     setNormal(label);
                 }
                 break;
             case 4:
             case 5:
-                if (diff.col1AllowsNull() != diff.col2AllowsNull()) 
+                if (!diff.nullableEqual()) 
                 {
-                    setHighlighted(label);
+                    setHighlighted(label, value);
+                } else {
+                    setNormal(label);
+                }
+                break;
+            case 6:
+            case 7:
+                if (!diff.remarksEqual()) {
+                    setHighlighted(label, value);
                 } else {
                     setNormal(label);
                 }
@@ -511,12 +678,28 @@ public class ColumnDiffDialog extends javax.swing.JDialog {
             return label;       
          }
         
-        private void setHighlighted(Component label) {
+        private void setMissing(Component label, Object value) {
+            if (value != null 
+                    && value.toString() != null 
+                    && value.toString().equals(i18n.MISSING_LABEL))
+            {
+                label.setBackground(missingColor);
+                label.setForeground(Color.BLACK);
+                label.setFont(label.getFont().deriveFont(Font.ITALIC));
+            } else {
+                setNormal(label);
+            }
+        }
+        private void setHighlighted(Component label, Object value) {
             label.setBackground(differenceColor);
+            label.setFont(label.getFont().deriveFont(Font.ITALIC));
+            label.setForeground(Color.BLACK);
         }
         
         private void setNormal(Component label) {
             label.setBackground(originalCellBGColor);
+            label.setForeground(Color.BLACK);
+            label.setFont(label.getFont().deriveFont(Font.PLAIN));
         }
         
         
