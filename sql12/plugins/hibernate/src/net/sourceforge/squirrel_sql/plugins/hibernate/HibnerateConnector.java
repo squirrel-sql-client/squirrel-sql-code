@@ -61,6 +61,16 @@ public class HibnerateConnector
             sessionFactoryImpl =
                new ReflectionCaller(sessionFactoryProviderImpl).callMethod("getSessionFactoryImpl").getCallee();
          }
+         else if (cfg.isJPA())
+         {
+            String persistenceUnitName = cfg.getPersistenceUnitName();
+            Class<?> persistenceClass = cl.loadClass("javax.persistence.Persistence");
+
+            Method createMeth = persistenceClass.getMethod("createEntityManagerFactory", String.class);
+            Object hibernateEntityManagerFactory = createMeth.invoke(persistenceClass, persistenceUnitName);
+            ReflectionCaller rc = new ReflectionCaller(hibernateEntityManagerFactory);
+            sessionFactoryImpl = rc.callMethod("getSessionFactory").getCallee();
+         }
          else
          {
             Class<?> confiugrationClass = cl.loadClass("org.hibernate.cfg.Configuration");

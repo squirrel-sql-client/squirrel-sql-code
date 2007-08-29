@@ -6,6 +6,8 @@ public class HibernateConfiguration
    private String _name;
    private String[] _classpathEntries = new String[0];
    private boolean _userDefinedProvider;
+   private boolean _jpa;
+   private String _persistenceUnitName;
 
    public String getProvider()
    {
@@ -52,5 +54,25 @@ public class HibernateConfiguration
    public boolean isUserDefinedProvider()
    {
       return _userDefinedProvider;
+   }
+
+   public boolean isJPA()
+   {
+      return _jpa;
+   }
+
+   public void setJPA(boolean b)
+   {
+      _jpa = b;
+   }
+
+   public void setPersistenceUnitName(String persistenceUnitName)
+   {
+      _persistenceUnitName = persistenceUnitName;
+   }
+
+   public String getPersistenceUnitName()
+   {
+      return _persistenceUnitName;
    }
 }

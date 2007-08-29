@@ -10,8 +10,10 @@ New Plugin (Hibernate)
    - allows to generate SQL statements from Hibernate HQL statements
    - shows object tree of mapped objects
    - HQL Code completion and syntax highlighting
-   - Default way to create a HibernateSessionFactory using "new Configuration().configure().buildSessionFactory();"
-   - User defined way to create a HibernateSessionFactory by calling a user defined provider method.
+   - Three ways to create a HibernateSessionFactory
+     * Native way using "new Configuration().configure().buildSessionFactory();"
+     * JPA way using "Persistence.createEntityManagerFactory("<persitence-unit name>");"
+     * User defined way to by calling a user defined provider method.
    See help for further details.
 
 

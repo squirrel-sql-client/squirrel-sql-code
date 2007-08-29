@@ -98,20 +98,38 @@ public class HibernateController
          }
       });
 
-      _panel.radUserDefProvider.addItemListener(new ItemListener()
+      ItemListener radObtainSessFactListener = new ItemListener()
       {
          public void itemStateChanged(ItemEvent e)
          {
-            onUserDevProviderChanged(e);
+            onObtainSessFactChanged();
          }
-      });
+      };
+
+      _panel.radConfiguration.addItemListener(radObtainSessFactListener);
+      _panel.radJPA.addItemListener(radObtainSessFactListener);
+      _panel.radUserDefProvider.addItemListener(radObtainSessFactListener);
 
 
    }
 
-   private void onUserDevProviderChanged(ItemEvent e)
+   private void onObtainSessFactChanged()
    {
-      _panel.btnEditFactoryProviderInfo.setEnabled(_panel.radUserDefProvider.isSelected());
+      if(_panel.radUserDefProvider.isSelected())
+      {
+         _panel.btnEditFactoryProviderInfo.setEnabled(true);
+         _panel.txtPersistenceUnitName.setEnabled(false);
+      }
+      else if(_panel.radJPA.isSelected())
+      {
+         _panel.btnEditFactoryProviderInfo.setEnabled(false);
+         _panel.txtPersistenceUnitName.setEnabled(true);
+      }
+      else if(_panel.radConfiguration.isSelected())
+      {
+         _panel.btnEditFactoryProviderInfo.setEnabled(false);
+         _panel.txtPersistenceUnitName.setEnabled(false);
+      }
    }
 
    private void onRemoveConfig()
@@ -167,6 +185,7 @@ public class HibernateController
    private boolean onApplyConfigChanges()
    {
       String provider = _panel.txtFactoryProvider.getText();
+      String persistenceUnitName = _panel.txtPersistenceUnitName.getText();
 
       if(_panel.radUserDefProvider.isSelected() && (null == provider || 0 == provider.trim().length()))
       {
@@ -174,6 +193,14 @@ public class HibernateController
          JOptionPane.showMessageDialog(_plugin.getApplication().getMainFrame(), s_stringMgr.getString("HibernateController.noProviderMsg"));
          return false;
       }
+
+      if(_panel.radJPA.isSelected() && (null == persistenceUnitName || 0 == persistenceUnitName.trim().length()))
+      {
+         // i18n[HibernateController.noPersistenceUnitName=Missing Persitence-Unit name .\nChanges cannot be applied.]
+         JOptionPane.showMessageDialog(_plugin.getApplication().getMainFrame(), s_stringMgr.getString("HibernateController.noPersistenceUnitName"));
+         return false;
+      }
+
 
       String cfgName = _panel.txtConfigName.getText();
 
@@ -195,6 +222,7 @@ public class HibernateController
       }
 
       cfg.setProvider(provider);
+      cfg.setPersistenceUnitName(persistenceUnitName);
       cfg.setName(cfgName);
 
       String[] classPathEntries = new String[_panel.lstClassPath.getModel().getSize()];
@@ -205,7 +233,17 @@ public class HibernateController
       }
       cfg.setClassPathEntries(classPathEntries);
 
-      cfg.setUserDefinedProvider(_panel.radUserDefProvider.isSelected());
+
+      if(_panel.radUserDefProvider.isSelected())
+      {
+         cfg.setUserDefinedProvider(true);
+      }
+      else if(_panel.radJPA.isSelected())
+      {
+         cfg.setJPA(true);
+      }
+
+
 
       if(wasNull)
       {
@@ -299,7 +337,7 @@ public class HibernateController
          _panel.txtFactoryProvider.setText(null);
 
          _panel.radConfiguration.setSelected(true);
-         _panel.btnEditFactoryProviderInfo.setEnabled(false);
+         onObtainSessFactChanged();
 
          return;
 
@@ -317,12 +355,23 @@ public class HibernateController
          listModel.addElement(path);
       }
 
-      _panel.radUserDefProvider.setSelected(config.isUserDefinedProvider());
-
-      _panel.btnEditFactoryProviderInfo.setEnabled(config.isUserDefinedProvider());
+      if(config.isUserDefinedProvider())
+      {
+         _panel.radUserDefProvider.setSelected(true);
+      }
+      else if(config.isJPA())
+      {
+         _panel.radJPA.setSelected(true);
+      }
+      else
+      {
+         _panel.radConfiguration.setSelected(true);
+      }
+      onObtainSessFactChanged();
 
 
       _panel.txtFactoryProvider.setText(config.getProvider());
+      _panel.txtPersistenceUnitName.setText(config.getPersistenceUnitName());
    }
 
 
