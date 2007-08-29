@@ -24,6 +24,8 @@ public class HibernatePanel extends JPanel
    JButton btnApplyConfigChanges;
    JRadioButton radConfiguration;
    JRadioButton radUserDefProvider;
+   JRadioButton radJPA;
+   JTextField txtPersistenceUnitName;
 
 
    public HibernatePanel()
@@ -161,7 +163,12 @@ public class HibernatePanel extends JPanel
       radConfiguration = new JRadioButton(s_stringMgr.getString("HibernatePanel.toObtainSessionFactConfiguration"));
       ret.add(radConfiguration, gbc);
 
-      gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.WEST,GridBagConstraints.NONE, new Insets(5,5,0,5),0,0);
+
+      gbc = new GridBagConstraints(0,2,1,1,0,0, GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5),0,0);
+      ret.add(createJPAPanel(), gbc);
+
+
+      gbc = new GridBagConstraints(0,3,1,1,0,0, GridBagConstraints.WEST,GridBagConstraints.NONE, new Insets(5,5,0,5),0,0);
       // i18n[HibernatePanel.toObtainSessionFactFactoryProvider=Invoke the user defined provider method below:]
       radUserDefProvider = new JRadioButton(s_stringMgr.getString("HibernatePanel.toObtainSessionFactFactoryProvider"));
       ret.add(radUserDefProvider, gbc);
@@ -170,13 +177,36 @@ public class HibernatePanel extends JPanel
       ButtonGroup btnGr = new ButtonGroup();
       btnGr.add(radConfiguration);
       btnGr.add(radUserDefProvider);
+      btnGr.add(radJPA);
       radConfiguration.setSelected(true);
 
-      gbc = new GridBagConstraints(0,3,1,1,1,0, GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL, new Insets(0,5,5,5),0,0);
+      gbc = new GridBagConstraints(0,4,1,1,1,0, GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL, new Insets(0,5,5,5),0,0);
       ret.add(createUserDefinedSessionFactoryPanel(), gbc);
 
       return ret;
 
+   }
+
+   private JPanel createJPAPanel()
+   {
+      JPanel ret = new JPanel(new GridBagLayout());
+
+      GridBagConstraints gbc;
+
+      gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,0,5,5),0,0);
+      // i18n[HibernatePanel.toObtainSessionFactJPA=Call "javax.persistence.Persistence.createEntityManagerFactory("<persitence-unit name>");"]
+      radJPA = new JRadioButton(s_stringMgr.getString("HibernatePanel.toObtainSessionFactJPA"));
+      ret.add(radJPA, gbc);
+
+      gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
+      // i18n[HibernatePanel.toObtainSessionFactPersUnit=persitence-unit name:]
+      ret.add(new JLabel(s_stringMgr.getString("HibernatePanel.toObtainSessionFactPersUnit")), gbc);
+
+      gbc = new GridBagConstraints(2,0,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5,0,5,5),0,0);
+      txtPersistenceUnitName = new JTextField();
+      ret.add(txtPersistenceUnitName, gbc);
+
+      return ret;
    }
 
    private JPanel createUserDefinedSessionFactoryPanel()
