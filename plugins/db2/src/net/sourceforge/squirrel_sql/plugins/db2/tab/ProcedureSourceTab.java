@@ -76,10 +76,11 @@ public class ProcedureSourceTab extends FormattedSourceTab
      * @param hint what the user sees on mouse-over tool-tip
      * @param isOS400 whether or not the session is OS/400
      */
-	public ProcedureSourceTab(String hint, boolean isOS400)
+	public ProcedureSourceTab(String hint, boolean isOS400, String stmtSep)
 	{
 		super(hint);
         super.setCompressWhitespace(false);
+        super.setupFormatter(stmtSep, null);
         this.isOS400 = isOS400;
 	}
 
