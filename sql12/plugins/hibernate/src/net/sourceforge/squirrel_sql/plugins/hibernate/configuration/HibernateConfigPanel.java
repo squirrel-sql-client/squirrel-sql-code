@@ -7,10 +7,10 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 
-public class HibernatePanel extends JPanel
+public class HibernateConfigPanel extends JPanel
 {
    private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(HibernatePanel.class);
+      StringManagerFactory.getStringManager(HibernateConfigPanel.class);
 
    JComboBox cboConfigs;
    JButton btnNewConfig;
@@ -28,14 +28,14 @@ public class HibernatePanel extends JPanel
    JTextField txtPersistenceUnitName;
 
 
-   public HibernatePanel()
+   public HibernateConfigPanel()
    {
       setLayout(new GridBagLayout());
 
       GridBagConstraints gbc;
 
       gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.WEST,GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
-      // i18n[HibernatePanel.config=Configuration]
+      // i18n[HibernateConfigPanel.config=Configuration]
       JLabel lblConfig = new JLabel(s_stringMgr.getString("HibernatePanel.config"));
       add(lblConfig, gbc);
 
@@ -44,12 +44,12 @@ public class HibernatePanel extends JPanel
       add(cboConfigs, gbc);
 
       gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.WEST,GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
-      // i18n[HibernatePanel.newConfig=New]
+      // i18n[HibernateConfigPanel.newConfig=New]
       btnNewConfig = new JButton(s_stringMgr.getString("HibernatePanel.newConfig"));
       add(btnNewConfig, gbc);
 
       gbc = new GridBagConstraints(3,0,1,1,0,0, GridBagConstraints.WEST,GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
-      // i18n[HibernatePanel.removeConfig=Remove]
+      // i18n[HibernateConfigPanel.removeConfig=Remove]
       btnRemoveConfig = new JButton(s_stringMgr.getString("HibernatePanel.removeConfig"));
       add(btnRemoveConfig, gbc);
 
@@ -60,7 +60,7 @@ public class HibernatePanel extends JPanel
    private JPanel createConfigDefPanel()
    {
       JPanel ret = new JPanel(new GridBagLayout());
-      // i18n[HibernatePanel.ConfiguirationDef=Configuration definition]
+      // i18n[HibernateConfigPanel.ConfiguirationDef=Configuration definition]
       ret.setBorder(BorderFactory.createTitledBorder(s_stringMgr.getString("HibernatePanel.ConfiguirationDef")));
 
       GridBagConstraints gbc;
@@ -77,7 +77,7 @@ public class HibernatePanel extends JPanel
       ret.add(createHowToCreateSessionFactoryPanel(), gbc);
 
       gbc = new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.NONE, new Insets(10,5,5,5),0,0);
-      // i18n[HibernatePanel.applyConfigChanges=Apply changes to this configuration]
+      // i18n[HibernateConfigPanel.applyConfigChanges=Apply changes to this configuration]
       btnApplyConfigChanges = new JButton(s_stringMgr.getString("HibernatePanel.applyConfigChanges"));
       ret.add(btnApplyConfigChanges, gbc);
 
@@ -91,7 +91,7 @@ public class HibernatePanel extends JPanel
       GridBagConstraints gbc;
 
       gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.WEST,GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
-      // i18n[HibernatePanel.configName=Configuration name]
+      // i18n[HibernateConfigPanel.configName=Configuration name]
       ret.add(new JLabel(s_stringMgr.getString("HibernatePanel.configName")), gbc);
 
       gbc = new GridBagConstraints(1,0,1,1,1,0, GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5),0,0);
@@ -104,7 +104,7 @@ public class HibernatePanel extends JPanel
 
    private JPanel createClasspathPanel()
    {
-      // i18n[HibernatePanel.newFactoryClasspathBorder=Additional classpath entries to create a SessionFactoryImpl]
+      // i18n[HibernateConfigPanel.newFactoryClasspathBorder=Additional classpath entries to create a SessionFactoryImpl]
       TitledBorder brd = BorderFactory.createTitledBorder(s_stringMgr.getString("HibernatePanel.newFactoryClasspathBorder"));
       JPanel ret = new JPanel(new GridBagLayout());
       ret.setBorder(brd);
@@ -131,12 +131,12 @@ public class HibernatePanel extends JPanel
       GridBagConstraints gbc;
 
       gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-      // i18n[HibernatePanel.classPathAdd=Add classpath entry]
+      // i18n[HibernateConfigPanel.classPathAdd=Add classpath entry]
       btnClassPathAdd = new JButton(s_stringMgr.getString("HibernatePanel.classPathAdd"));
       ret.add(btnClassPathAdd, gbc);
 
       gbc = new GridBagConstraints(1,0,1,1,0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-      // i18n[HibernatePanel.classPathRemove=Remove selected entries]
+      // i18n[HibernateConfigPanel.classPathRemove=Remove selected entries]
       btnClassPathRemove = new JButton(s_stringMgr.getString("HibernatePanel.classPathRemove"));
       ret.add(btnClassPathRemove, gbc);
 
@@ -154,12 +154,12 @@ public class HibernatePanel extends JPanel
       GridBagConstraints gbc;
 
       gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.WEST,GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
-      // i18n[HibernatePanel.toObtainSessionFact=To obtain a Hibernate SessionFactoryImpl instance SQuirreL should:]
+      // i18n[HibernateConfigPanel.toObtainSessionFact=To obtain a Hibernate SessionFactoryImpl instance SQuirreL should:]
       ret.add(new JLabel(s_stringMgr.getString("HibernatePanel.toObtainSessionFact")), gbc);
 
 
       gbc = new GridBagConstraints(0,1,1,1,0,0, GridBagConstraints.WEST,GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
-      // i18n[HibernatePanel.toObtainSessionFactConfiguration=Call "new org.hibernate.cfg.Configuration().configure().buildSessionFactory();"]
+      // i18n[HibernateConfigPanel.toObtainSessionFactConfiguration=Call "new org.hibernate.cfg.Configuration().configure().buildSessionFactory();"]
       radConfiguration = new JRadioButton(s_stringMgr.getString("HibernatePanel.toObtainSessionFactConfiguration"));
       ret.add(radConfiguration, gbc);
 
@@ -169,7 +169,7 @@ public class HibernatePanel extends JPanel
 
 
       gbc = new GridBagConstraints(0,3,1,1,0,0, GridBagConstraints.WEST,GridBagConstraints.NONE, new Insets(5,5,0,5),0,0);
-      // i18n[HibernatePanel.toObtainSessionFactFactoryProvider=Invoke the user defined provider method below:]
+      // i18n[HibernateConfigPanel.toObtainSessionFactFactoryProvider=Invoke the user defined provider method below:]
       radUserDefProvider = new JRadioButton(s_stringMgr.getString("HibernatePanel.toObtainSessionFactFactoryProvider"));
       ret.add(radUserDefProvider, gbc);
 
@@ -194,12 +194,12 @@ public class HibernatePanel extends JPanel
       GridBagConstraints gbc;
 
       gbc = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,0,5,5),0,0);
-      // i18n[HibernatePanel.toObtainSessionFactJPA=Call "javax.persistence.Persistence.createEntityManagerFactory("<persitence-unit name>");"]
+      // i18n[HibernateConfigPanel.toObtainSessionFactJPA=Call "javax.persistence.Persistence.createEntityManagerFactory("<persitence-unit name>");"]
       radJPA = new JRadioButton(s_stringMgr.getString("HibernatePanel.toObtainSessionFactJPA"));
       ret.add(radJPA, gbc);
 
       gbc = new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
-      // i18n[HibernatePanel.toObtainSessionFactPersUnit=persitence-unit name:]
+      // i18n[HibernateConfigPanel.toObtainSessionFactPersUnit=persitence-unit name:]
       ret.add(new JLabel(s_stringMgr.getString("HibernatePanel.toObtainSessionFactPersUnit")), gbc);
 
       gbc = new GridBagConstraints(2,0,1,1,1,0,GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5,0,5,5),0,0);
@@ -215,7 +215,7 @@ public class HibernatePanel extends JPanel
 
       GridBagConstraints gbc;
       gbc = new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.WEST,GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
-      // i18n[HibernatePanel.FactoryProvider=SessionFactoryImpl provider]
+      // i18n[HibernateConfigPanel.FactoryProvider=SessionFactoryImpl provider]
       JLabel lblConfig = new JLabel(s_stringMgr.getString("HibernatePanel.FactoryProvider"));
       ret.add(lblConfig, gbc);
 
@@ -227,7 +227,7 @@ public class HibernatePanel extends JPanel
       ret.add(txtFactoryProvider, gbc);
 
       gbc = new GridBagConstraints(2,0,1,1,0,0, GridBagConstraints.WEST,GridBagConstraints.NONE, new Insets(5,5,5,5),0,0);
-      // i18n[HibernatePanel.editFactoryProvider=Edit]
+      // i18n[HibernateConfigPanel.editFactoryProvider=Edit]
       btnEditFactoryProviderInfo = new JButton(s_stringMgr.getString("HibernatePanel.editFactoryProvider"));
       ret.add(btnEditFactoryProviderInfo, gbc);
 

@@ -19,22 +19,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.io.File;
 
-public class HibernateController
+public class HibernateConfigController
 {
    private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(HibernateController.class);
+      StringManagerFactory.getStringManager(HibernateConfigController.class);
 
 
    private HibernatePlugin _plugin;
-   private HibernatePanel _panel;
+   private HibernateConfigPanel _panel;
 
    static final String PERF_KEY_LAST_DIR = "Squirrel.Hibernate.lastDir";
    public static final String HIBERNATE_CONFIGS_XML_FILE = "hibernateConfigs.xml";
 
-   public HibernateController(HibernatePlugin plugin)
+   public HibernateConfigController(HibernatePlugin plugin)
    {
       _plugin = plugin;
-      _panel = new HibernatePanel();
+      _panel = new HibernateConfigPanel();
 
       _panel.lstClassPath.setModel(new DefaultListModel());
 
@@ -138,12 +138,12 @@ public class HibernateController
 
       if(null == selConfig)
       {
-         // i18n[HibernateController.NoConfigToRemove=No configuration selected to remove.]
+         // i18n[HibernateConfigController.NoConfigToRemove=No configuration selected to remove.]
          JOptionPane.showMessageDialog(_plugin.getApplication().getMainFrame(), s_stringMgr.getString("HibernateController.NoConfigToRemove"));
       }
       else
       {
-         // i18n[HibernateController.ReallyRemoveConfig=Are you sure you want to delete configuration "{0}".]
+         // i18n[HibernateConfigController.ReallyRemoveConfig=Are you sure you want to delete configuration "{0}".]
          if(JOptionPane.YES_OPTION ==
             JOptionPane.showConfirmDialog(_plugin.getApplication().getMainFrame(), s_stringMgr.getString("HibernateController.ReallyRemoveConfig", selConfig)))
          {
@@ -189,14 +189,14 @@ public class HibernateController
 
       if(_panel.radUserDefProvider.isSelected() && (null == provider || 0 == provider.trim().length()))
       {
-         // i18n[HibernateController.noProviderMsg=Missing SessionFactoryImplProvider .\nChanges cannot be applied.]
+         // i18n[HibernateConfigController.noProviderMsg=Missing SessionFactoryImplProvider .\nChanges cannot be applied.]
          JOptionPane.showMessageDialog(_plugin.getApplication().getMainFrame(), s_stringMgr.getString("HibernateController.noProviderMsg"));
          return false;
       }
 
       if(_panel.radJPA.isSelected() && (null == persistenceUnitName || 0 == persistenceUnitName.trim().length()))
       {
-         // i18n[HibernateController.noPersistenceUnitName=Missing Persitence-Unit name .\nChanges cannot be applied.]
+         // i18n[HibernateConfigController.noPersistenceUnitName=Missing Persitence-Unit name .\nChanges cannot be applied.]
          JOptionPane.showMessageDialog(_plugin.getApplication().getMainFrame(), s_stringMgr.getString("HibernateController.noPersistenceUnitName"));
          return false;
       }
@@ -206,7 +206,7 @@ public class HibernateController
 
       if(null == cfgName || 0 == cfgName.trim().length())
       {
-         // i18n[HibernateController.noCfgNameMsg=Not a valid configuration name\nChanges cannot be applied.]
+         // i18n[HibernateConfigController.noCfgNameMsg=Not a valid configuration name\nChanges cannot be applied.]
          JOptionPane.showMessageDialog(_plugin.getApplication().getMainFrame(), s_stringMgr.getString("HibernateController.noProviderMsg"));
          return false;
       }
@@ -237,10 +237,17 @@ public class HibernateController
       if(_panel.radUserDefProvider.isSelected())
       {
          cfg.setUserDefinedProvider(true);
+         cfg.setJPA(false);
       }
       else if(_panel.radJPA.isSelected())
       {
+         cfg.setUserDefinedProvider(false);
          cfg.setJPA(true);
+      }
+      else
+      {
+         cfg.setUserDefinedProvider(false);
+         cfg.setJPA(false);
       }
 
 
@@ -284,7 +291,7 @@ public class HibernateController
 
          public String getDescription()
          {
-            // i18n[HibernateController.classpathEntryDesc=Jars, Zips or directories]
+            // i18n[HibernateConfigController.classpathEntryDesc=Jars, Zips or directories]
             return s_stringMgr.getString("HibernateController.classpathEntryDesc");
          }
       });
@@ -377,7 +384,7 @@ public class HibernateController
 
 
 
-   public HibernatePanel getPanel()
+   public HibernateConfigPanel getPanel()
    {
       return _panel;
    }

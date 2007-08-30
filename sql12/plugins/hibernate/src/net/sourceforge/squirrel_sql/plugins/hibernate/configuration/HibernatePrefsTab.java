@@ -1,10 +1,10 @@
-package net.sourceforge.squirrel_sql.plugins.hibernate;
+package net.sourceforge.squirrel_sql.plugins.hibernate.configuration;
 
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateController;
+import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateConfigController;
 
 import java.awt.*;
 
@@ -14,9 +14,9 @@ public class HibernatePrefsTab implements IGlobalPreferencesPanel
       StringManagerFactory.getStringManager(HibernatePrefsTab.class);
 
 
-   private HibernateController _ctrl;
+   private HibernateConfigController _ctrl;
 
-   public HibernatePrefsTab(HibernateController ctrl)
+   public HibernatePrefsTab(HibernateConfigController ctrl)
    {
       _ctrl = ctrl;
    }

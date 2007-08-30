@@ -21,18 +21,18 @@ public class HQLPanelController
 
    private static ILogger s_log = LoggerController.createLogger(HQLPanelController.class);
 
-   private IHQLTabController _hqlTabController;
+   private IHibernateTabController _hibernateTabController;
    private ISession _sess;
    private HibernateConnection _con;
    private AbstractAction _convertToSQL;
    private HQLEntryPanelManager _hqlEntryPanelManager;
 
-   public HQLPanelController(IHQLTabController hqlTabController, ISession sess, HibernatePluginResources resource)
+   public HQLPanelController(IHibernateTabController hibernateTabController, ISession sess, HibernatePluginResources resource)
    {
-      _hqlTabController = hqlTabController;
+      _hibernateTabController = hibernateTabController;
       _sess = sess;
 
-      _hqlEntryPanelManager = new HQLEntryPanelManager(_sess, resource, hqlTabController.getHibernateConnectionProvider());
+      _hqlEntryPanelManager = new HQLEntryPanelManager(_sess, resource, hibernateTabController.getHibernateConnectionProvider());
 
    }
 
@@ -54,7 +54,7 @@ public class HQLPanelController
 
       _convertToSQL.setEnabled(false);
 
-      _hqlTabController.addToToolbar(_convertToSQL);
+      _hibernateTabController.addToToolbar(_convertToSQL);
 
       KeyStroke ctrlEnter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, Event.CTRL_MASK);
       _hqlEntryPanelManager.registerKeyboardAction(_convertToSQL, ctrlEnter);
@@ -102,7 +102,7 @@ public class HQLPanelController
                return;
             }
 
-            _hqlTabController.displaySqls(list);
+            _hibernateTabController.displaySqls(list);
 
 
             // i18n[HQLPanelController.hqlToSqlSuccess=Generated {0} SQL(s) in {1} milliseconds.]

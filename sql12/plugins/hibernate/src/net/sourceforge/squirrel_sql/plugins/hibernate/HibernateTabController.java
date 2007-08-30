@@ -10,8 +10,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateConfiguration;
-import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateController;
-import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernatePanel;
+import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateConfigController;
+import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateConfigPanel;
+import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernatePrefsTab;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedObjectPanelManager;
 
 import javax.swing.*;
@@ -24,16 +25,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.prefs.Preferences;
 
-public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibernateConnectionProvider
+public class HibernateTabController implements IMainPanelTab, IHibernateTabController, IHibernateConnectionProvider
 {
 
    private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(HQLTabController.class);
+      StringManagerFactory.getStringManager(HibernateTabController.class);
 
-   private static ILogger s_log = LoggerController.createLogger(HQLTabController.class);
+   private static ILogger s_log = LoggerController.createLogger(HibernateTabController.class);
 
 
-   private HQLTabPanel _panel;
+   private HibernateTabPanel _panel;
    private ISession _session;
    private HibernatePlugin _plugin;
    private static final String PREF_KEY_LAST_SELECTED_CONFIG = "SQuirreL.hibernateplugin.lastSelectedConfig";
@@ -45,7 +46,7 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
    private SQLPanelManager _sqlPanelManager;
    private MappedObjectPanelManager _mappedObjectsPanelManager;
 
-   public HQLTabController(ISession session, HibernatePlugin plugin, HibernatePluginResources resource)
+   public HibernateTabController(ISession session, HibernatePlugin plugin, HibernatePluginResources resource)
    {
       _resource = resource;
       try
@@ -57,8 +58,12 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
          _sqlPanelManager = new SQLPanelManager(_session);
          _mappedObjectsPanelManager = new MappedObjectPanelManager(this, _session, resource);
 
-         _panel = new HQLTabPanel(_mappedObjectsPanelManager.getComponent(), _hqlPanelController.getComponent(), _sqlPanelManager.getComponent());
+         _panel = new HibernateTabPanel(_mappedObjectsPanelManager.getComponent(), _hqlPanelController.getComponent(), _sqlPanelManager.getComponent(), _resource);
          _panel.btnConnected.setIcon(resource.getIcon(HibernatePluginResources.IKeys.DISCONNECTED_IMAGE));
+
+         Dimension oldSize = _panel.btnConnected.getPreferredSize();
+         Dimension newSize = new Dimension(oldSize.width-20, oldSize.height);
+         _panel.btnConnected.setPreferredSize(newSize);
 
 
          _hibnerateConnector = new HibnerateConnector(new HibnerateConnectorListener()
@@ -84,6 +89,17 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
             }
          });
 
+
+         _panel.btnOpenConfigs.setPreferredSize(_panel.btnConnected.getPreferredSize());
+         _panel.btnOpenConfigs.addActionListener(new ActionListener()
+         {
+            public void actionPerformed(ActionEvent e)
+            {
+               onOpenConfigs();
+            }
+         });
+
+
          loadConfigsFromXml();
 
          _hqlPanelController.initActions();
@@ -95,6 +111,11 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
       }
    }
 
+   private void onOpenConfigs()
+   {
+      GlobalPreferencesSheet.showSheet(_plugin.getApplication(), HibernateConfigPanel.class);
+   }
+
 
    private void loadConfigsFromXml()
       throws IOException, XMLException
@@ -103,7 +124,7 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
       File pluginUserSettingsFolder = _plugin.getPluginUserSettingsFolder();
 
 
-      File xmlFile = new File(pluginUserSettingsFolder.getPath(), HibernateController.HIBERNATE_CONFIGS_XML_FILE);
+      File xmlFile = new File(pluginUserSettingsFolder.getPath(), HibernateConfigController.HIBERNATE_CONFIGS_XML_FILE);
 
       if(xmlFile.exists())
          {
@@ -139,13 +160,13 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
          {
             _panel.btnConnected.setSelected(false);
 
-            // i18n[HQLTabController.noConfigSelected=Please select a Hibernate configuration to connect to.\nHibernate configurations can be defined in the global preferences window.\nWould you like to open the window now?]
+            // i18n[HibernateTabController.noConfigSelected=Please select a Hibernate configuration to connect to.\nHibernate configurations can be defined in the global preferences window.\nWould you like to open the window now?]
             int opt = JOptionPane.showConfirmDialog(_session.getApplication().getMainFrame(), s_stringMgr.getString("HQLTabController.noConfigSelected"));
 
 
             if(JOptionPane.YES_OPTION == opt)
             {
-               GlobalPreferencesSheet.showSheet(_plugin.getApplication(), HibernatePanel.class);
+               GlobalPreferencesSheet.showSheet(_plugin.getApplication(), HibernateConfigPanel.class);
             }
          }
 
@@ -202,13 +223,13 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
 
    public String getTitle()
    {
-      // i18n[HQLTabController.title=Hibernate]
+      // i18n[HibernateTabController.title=Hibernate]
       return s_stringMgr.getString("HQLTabController.title");
    }
 
    public String getHint()
    {
-      // i18n[HQLTabController.hint=Support for Hibernate]
+      // i18n[HibernateTabController.hint=Support for Hibernate]
       return s_stringMgr.getString("HQLTabController.hint");
    }
 
@@ -245,7 +266,13 @@ public class HQLTabController implements IMainPanelTab, IHQLTabController, IHibe
 
    public void addToToolbar(AbstractAction action)
    {
-      _panel.addToToolbar(new JButton(action));
+      JButton btn = new JButton(action);
+      Dimension size = btn.getPreferredSize();
+      size.height = _panel.btnConnected.getPreferredSize().height;
+      btn.setPreferredSize(size);
+
+      
+      _panel.addToToolbar(btn);
    }
 
    public void displaySqls(ArrayList<String> sqls)

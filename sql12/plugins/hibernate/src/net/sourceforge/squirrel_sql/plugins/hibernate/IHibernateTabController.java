@@ -3,7 +3,7 @@ package net.sourceforge.squirrel_sql.plugins.hibernate;
 import javax.swing.*;
 import java.util.ArrayList;
 
-public interface IHQLTabController
+public interface IHibernateTabController
 {
 
    void addToToolbar(AbstractAction action);

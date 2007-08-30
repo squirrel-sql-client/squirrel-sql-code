@@ -7,10 +7,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.prefs.Preferences;
 
-public class HQLTabPanel extends JPanel
+public class HibernateTabPanel extends JPanel
 {
    private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(HQLTabPanel.class);
+      StringManagerFactory.getStringManager(HibernateTabPanel.class);
 
    private static final String PERF_KEY_HQL_TAB_DIVIDER_LOCATION = "Squirrel.hibernateplugin.hqlTabDivLoc";
    private static final String PERF_KEY_LAST_SELECTED_TAB = "Squirrel.hibernateplugin.lastSelectedTab";
@@ -18,15 +18,18 @@ public class HQLTabPanel extends JPanel
 
    JComboBox cboConfigurations;
    JToggleButton btnConnected;
+   JButton btnOpenConfigs;
 
    private JSplitPane _splitHqlSql;
    private JPanel _toolbar;
    private int _curXOfToolbar;
    private JTabbedPane _tabObjectsHql;
+   private HibernatePluginResources _resource;
 
 
-   public HQLTabPanel(JComponent mappedObjectComp, JComponent hqlTextComp, JComponent sqlTextComp)
+   public HibernateTabPanel(JComponent mappedObjectComp, JComponent hqlTextComp, JComponent sqlTextComp, HibernatePluginResources resource)
    {
+      _resource = resource;
       setLayout(new GridBagLayout());
 
       GridBagConstraints gbc;
@@ -39,10 +42,10 @@ public class HQLTabPanel extends JPanel
 
       _tabObjectsHql = new JTabbedPane();
 
-      // i18n[HQLTabPanel.mappedObjects=Mapped objects]
+      // i18n[HibernateTabPanel.mappedObjects=Mapped objects]
       _tabObjectsHql.add(s_stringMgr.getString("HQLTabPanel.mappedObjects"), mappedObjectComp);
 
-      // i18n[HQLTabPanel.hql=HQL]
+      // i18n[HibernateTabPanel.hql=HQL]
       _tabObjectsHql.add(s_stringMgr.getString("HQLTabPanel.hql"), _splitHqlSql);
 
 
@@ -82,7 +85,7 @@ public class HQLTabPanel extends JPanel
 
       _curXOfToolbar = 0;
 
-      // i18n[HQLTabPanel.configuration=Configuration]
+      // i18n[HibernateTabPanel.configuration=Configuration]
       JLabel lblCfg = new JLabel(s_stringMgr.getString("HQLTabPanel.configuration"));
       gbc = new GridBagConstraints(_curXOfToolbar++,0,1,1, 0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
       ret.add(lblCfg, gbc);
@@ -92,13 +95,17 @@ public class HQLTabPanel extends JPanel
       ret.add(cboConfigurations, gbc);                      
 
       gbc = new GridBagConstraints(_curXOfToolbar++,0,1,1, 0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
-      
       btnConnected = new JToggleButton();
-
-      //i18n[hibernate.HQLTabPanel.connect=Connect/disconnect configuration selected configuration]
+      //i18n[hibernate.HibernateTabPanel.connect=Connect/disconnect configuration selected configuration]
       btnConnected.setToolTipText(s_stringMgr.getString("hibernate.HQLTabPanel.connect"));
-
       ret.add(btnConnected, gbc);
+
+      gbc = new GridBagConstraints(_curXOfToolbar++,0,1,1, 0,0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0);
+      btnOpenConfigs = new JButton(_resource.getIcon(HibernatePluginResources.IKeys.HIBERNATE_IMAGE));
+      //i18n[hibernate.HibernateTabPanel.openConfigs=Open Hibernate configurations]
+      btnOpenConfigs.setToolTipText(s_stringMgr.getString("hibernate.HibernateTabPanel.openConfigs"));
+      ret.add(btnOpenConfigs, gbc);
+
 
       return ret;
    }
