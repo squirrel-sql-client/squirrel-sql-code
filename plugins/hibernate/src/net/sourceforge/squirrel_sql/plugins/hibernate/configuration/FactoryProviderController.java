@@ -90,7 +90,7 @@ public class FactoryProviderController
 
    private void onWriteExampleFactorProvider()
    {
-      String dirPath = Preferences.userRoot().get(HibernateController.PERF_KEY_LAST_DIR, System.getProperty("user.home"));
+      String dirPath = Preferences.userRoot().get(HibernateConfigController.PERF_KEY_LAST_DIR, System.getProperty("user.home"));
 
       JFileChooser fc = new JFileChooser(dirPath);
 
@@ -149,7 +149,7 @@ public class FactoryProviderController
          s_log.error(msg, e);
       }
 
-      Preferences.userRoot().put(HibernateController.PERF_KEY_LAST_DIR, dir.getPath());
+      Preferences.userRoot().put(HibernateConfigController.PERF_KEY_LAST_DIR, dir.getPath());
    }
 
    public String getClassName()

@@ -7,14 +7,12 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateController;
-import net.sourceforge.squirrel_sql.plugins.hibernate.completion.HQLCompleteCodeAction;
+import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateConfigController;
+import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernatePrefsTab;
 
-import javax.swing.*;
 import java.util.HashMap;
 
 public class HibernatePlugin extends DefaultSessionPlugin
@@ -23,7 +21,7 @@ public class HibernatePlugin extends DefaultSessionPlugin
 
 
 	private HibernatePluginResources _resources;
-   private HashMap<IIdentifier, HQLTabController> _hqlTabControllerBySessionID = new HashMap<IIdentifier, HQLTabController>();
+   private HashMap<IIdentifier, HibernateTabController> _hqlTabControllerBySessionID = new HashMap<IIdentifier, HibernateTabController>();
 
    public String getInternalName()
 	{
@@ -70,7 +68,7 @@ public class HibernatePlugin extends DefaultSessionPlugin
 
 	public IGlobalPreferencesPanel[] getGlobalPreferencePanels()
 	{
-		return new IGlobalPreferencesPanel[]{new HibernatePrefsTab(new HibernateController(this))};
+		return new IGlobalPreferencesPanel[]{new HibernatePrefsTab(new HibernateConfigController(this))};
 	}
 
 	public synchronized void initialize() throws PluginException
@@ -95,14 +93,14 @@ public class HibernatePlugin extends DefaultSessionPlugin
 	{
 		try
 		{
-         HQLTabController hqlTabController = new HQLTabController(session, this, _resources);
+         HibernateTabController hibernateTabController = new HibernateTabController(session, this, _resources);
 
-         _hqlTabControllerBySessionID.put(session.getIdentifier(), hqlTabController);
+         _hqlTabControllerBySessionID.put(session.getIdentifier(), hibernateTabController);
 
 
-         session.getSessionSheet().insertMainTab(hqlTabController, 2, false);
+         session.getSessionSheet().insertMainTab(hibernateTabController, 2, false);
 
-         //initCodeCompletion(hqlTabController);
+         //initCodeCompletion(hibernateTabController);
 
 
          return new PluginSessionCallback()
