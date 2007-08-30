@@ -92,11 +92,11 @@ public class SequenceDetailsTab extends BasePreparedStatementTab
 	    "case cycle_option " +
 	    " when 'YES' then 'CYCLE' " +
 	    " else 'NOCYCLE' " +
-	    "as cycle_flag, " +
+	    "end as cycle_flag, " +
 	    "case order " +
 	    " when 'YES' then 'ORDERED' " +
 	    " else 'UNORDERED' " +
-	    "as order_flag, " +
+	    "end as order_flag, " +
 	    "cache as cache_size, " +
 	    "sequence_created as create_time, " +
 	    "last_altered_timestamp as last_alter_time, " +
