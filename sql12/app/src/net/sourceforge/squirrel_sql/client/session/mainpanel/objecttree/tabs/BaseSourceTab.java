@@ -105,6 +105,7 @@ public abstract class BaseSourceTab extends BaseObjectTab
             _scroller = new JScrollPane(_comp);
             LineNumber lineNumber = new LineNumber( _comp );
             _scroller.setRowHeaderView( lineNumber );
+            _scroller.getVerticalScrollBar().setUnitIncrement(10);
         }
 		return _scroller;
 	}
