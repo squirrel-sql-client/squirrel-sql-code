@@ -255,7 +255,7 @@ public class DB2Plugin extends DefaultSessionPlugin {
         
         _treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
         _treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, 
-                new ProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE, isOS400));
+                new ProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE, isOS400, stmtSep));
         _treeAPI.addDetailTab(DatabaseObjectType.VIEW, 
                               new ViewSourceTab(i18n.SHOW_VIEW_SOURCE, stmtSep, isOS400));
         
