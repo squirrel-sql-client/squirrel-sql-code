@@ -3,6 +3,7 @@ DB2 Plugin Change Log
 
 0.03
 ====
+- Added tab for displaying the source code for DB2 MQTs as well as DB2 tables.
 - Added support for OS/400 (trigger source and details not yet implemented). 
   Special thanks goes to Tilmann Brenk for submitting OS/400 versions of all SQL 
   statements required to support the plugin features.
