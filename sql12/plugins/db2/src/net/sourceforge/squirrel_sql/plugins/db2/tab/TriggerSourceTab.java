@@ -35,20 +35,30 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.For
 public class TriggerSourceTab extends FormattedSourceTab
 {
 	/** SQL that retrieves the source of a trigger. */
-	private static String SQL =
+	private final static String SQL =
         "select TEXT from SYSCAT.TRIGGERS " +
         "where TABSCHEMA = ? " +
         "and TRIGNAME = ? ";
     
+	/** SQL that retrieves the source of a trigger on DB2 on OS/400. */
+	private final static String OS2_400_SQL = 
+	    "select action_statement " +
+	    "from qsys2.systriggers " +
+	    "where trigger_schema = ? " +
+	    "and trigger_name = ? ";
+	
 	/** Logger for this class. */
 	private final static ILogger s_log =
 		LoggerController.createLogger(TriggerSourceTab.class);
+	
+	private boolean isOS2400 = false;
 
-	public TriggerSourceTab(String hint, String stmtSep)
+	public TriggerSourceTab(String hint, boolean isOS2400, String stmtSep)
 	{
 		super(hint);
         super.setCompressWhitespace(true);
         super.setupFormatter(stmtSep, null);
+        this.isOS2400 = isOS2400;
 	}
 
     /**
@@ -60,13 +70,18 @@ public class TriggerSourceTab extends FormattedSourceTab
 		final ISession session = getSession();
 		final IDatabaseObjectInfo doi = getDatabaseObjectInfo();
 
+		String sql = SQL;
+		if (isOS2400) {
+		    sql = OS2_400_SQL;
+		}
+		
         if (s_log.isDebugEnabled()) {
-            s_log.debug("Running SQL: "+SQL);
+            s_log.debug("Running SQL: "+sql);
             s_log.debug("schema="+doi.getSchemaName());
             s_log.debug("trigname="+doi.getSimpleName());
         }
 		ISQLConnection conn = session.getSQLConnection();
-		PreparedStatement pstmt = conn.prepareStatement(SQL);
+		PreparedStatement pstmt = conn.prepareStatement(sql);
         pstmt.setString(1, doi.getSchemaName());
 		pstmt.setString(2, doi.getSimpleName());
 		return pstmt;
