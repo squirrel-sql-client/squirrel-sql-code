@@ -157,7 +157,7 @@ public abstract class FormattedSourceTab extends BaseSourceTab {
                         s_log.debug("Object source code before formatting: "
                                 + buf.toString());
                     }
-                    _ta.setText(formatter.reformat(buf.toString()));
+                    _ta.setText(format(buf.toString()));
                 } else {
                     if (buf.length() == 0) {
                         buf.append(i18n.NO_SOURCE_AVAILABLE);
@@ -178,4 +178,22 @@ public abstract class FormattedSourceTab extends BaseSourceTab {
         }
     }
 
+    /**
+     * We trap any IllegalStateException from the formatter here.  If the SQL
+     * source code fails to format, log it and show the original unformatted
+     * version.
+     * 
+     * @param toFormat the SQL to format.
+     * 
+     * @return either formatted or original version of the specified SQL.
+     */
+    private String format(String toFormat) {
+        String result = toFormat;
+        try {
+            result = formatter.reformat(toFormat);
+        } catch (IllegalStateException e) {
+            s_log.error("format: Formatting SQL failed: "+e.getMessage(), e);
+        }
+        return result;
+    }
 }
