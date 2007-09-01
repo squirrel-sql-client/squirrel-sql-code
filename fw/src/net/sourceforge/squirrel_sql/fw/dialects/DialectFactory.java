@@ -276,15 +276,14 @@ public class DialectFactory {
         return dbNameDialectMap.get(dbName);
     }
     
-    public static HibernateDialect getDialect(int sessionType,
-                                              JFrame parent, 
-                                              ISQLDatabaseMetaData md) 
-        throws UserCancelledOperationException 
+    /**
+     * 
+     * @param md
+     * @return
+     */
+    public static HibernateDialect getDialect(ISQLDatabaseMetaData md) 
+        throws UnknownDialectException
     {
-        // User doesn't wish for us to try to auto-detect the dest db.
-        if (isPromptForDialect) {
-            //return showDialectDialog(session, sessionType);
-        }
         if (isAxion(md)) {
             return axionDialect;
         }
@@ -349,11 +348,30 @@ public class DialectFactory {
             return sybaseDialect;
         }
         if (isTimesTen(md)) {
-        	return timestenDialect;
-        }
+            return timestenDialect;
+        }        
+        throw new UnknownDialectException();
+    }
+    
+    public static HibernateDialect getDialect(int sessionType,
+                                              JFrame parent, 
+                                              ISQLDatabaseMetaData md) 
+        throws UserCancelledOperationException 
+    {
+        HibernateDialect result = null;
         
-        // Failed to detect the dialect that should be used.  Ask the user.
-        return showDialectDialog(parent, sessionType);
+        // User doesn't wish for us to try to auto-detect the dest db.
+        if (isPromptForDialect) {
+            result = showDialectDialog(parent, sessionType);
+        } else {
+            try {
+                result = getDialect(md);
+            } catch (UnknownDialectException e) {
+                // Failed to detect the dialect that should be used.  Ask the user.
+                result = showDialectDialog(parent, sessionType);    
+            }       
+        }
+        return result;
     }
 
     /**

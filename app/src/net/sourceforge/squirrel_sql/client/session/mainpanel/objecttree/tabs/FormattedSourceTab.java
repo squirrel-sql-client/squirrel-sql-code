@@ -64,7 +64,10 @@ public abstract class FormattedSourceTab extends BaseSourceTab {
         };
     
     /** The String to use to separate statements */
-    private String statementSeparator = null;
+    protected String statementSeparator = null;
+    
+    /** Whether or not to appendSeparator before reformatting */
+    protected boolean appendSeparator = true;
     
     static interface i18n {
         //i18n[FormatterSourceTab.noSourceAvailable=No object source code is 
@@ -145,8 +148,10 @@ public abstract class FormattedSourceTab extends BaseSourceTab {
                         buf.append(line);
                     }
                 }
-                buf.append("\n");
-                buf.append(statementSeparator);
+                if (appendSeparator) {
+                    buf.append("\n");
+                    buf.append(statementSeparator);
+                }
                 if (formatter != null && buf.length() != 0) {
                     if (s_log.isDebugEnabled()) {
                         s_log.debug("Object source code before formatting: "

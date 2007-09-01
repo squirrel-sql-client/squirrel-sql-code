@@ -38,11 +38,30 @@ public class DB2TableTriggerExtractorImpl implements ITableTriggerExtractor {
         LoggerController.createLogger(DB2TableTriggerExtractorImpl.class);
                 
     /** The query that finds the triggers for a given table */
-    private static String query = 
+    private final static String query = 
         "select TRIGNAME from SYSCAT.TRIGGERS " +
         "where TABSCHEMA = ? " +
         "and TABNAME = ? ";
-                        
+                
+    // TODO: need to know the SYSTRIGGERS equivalent of TABNAME
+    private final static String OS2_400_SQL = 
+        "select trigger_name " +
+        "from qsys2.systriggers " +
+        "where trigger_schema = ? " +
+        "and trigger_name = ? ";
+    
+    /** boolean to indicate whether or not this session is OS/400 */
+    private boolean isOS400 = false;            
+    
+    /**
+     * Ctor.
+     * 
+     * @param isOS400 whether or not the session is OS/400
+     */    
+    public DB2TableTriggerExtractorImpl(boolean isOS400) {
+        this.isOS400 = isOS400;
+    }
+    
     /**
      * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.ITableTriggerExtractor#bindParamters(java.sql.PreparedStatement, net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
      */

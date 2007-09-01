@@ -43,6 +43,7 @@ import net.sourceforge.squirrel_sql.plugins.db2.exp.DB2TableIndexExtractorImpl;
 import net.sourceforge.squirrel_sql.plugins.db2.exp.DB2TableTriggerExtractorImpl;
 import net.sourceforge.squirrel_sql.plugins.db2.exp.SchemaExpander;
 import net.sourceforge.squirrel_sql.plugins.db2.tab.IndexDetailsTab;
+import net.sourceforge.squirrel_sql.plugins.db2.tab.TableSourceTab;
 import net.sourceforge.squirrel_sql.plugins.db2.tab.ProcedureSourceTab;
 import net.sourceforge.squirrel_sql.plugins.db2.tab.SequenceDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.db2.tab.TriggerDetailsTab;
@@ -259,23 +260,23 @@ public class DB2Plugin extends DefaultSessionPlugin {
         _treeAPI.addDetailTab(DatabaseObjectType.VIEW, 
                               new ViewSourceTab(i18n.SHOW_VIEW_SOURCE, stmtSep, isOS400));
         
-        
         _treeAPI.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
         _treeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexDetailsTab(isOS400));
 
-        if (!isOS400) {
-            _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
-            _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER_TYPE_DBO, new DatabaseObjectInfoTab());
-        } else {
-            s_log.info("updateTreeApi: Trigger support not currently available on OS/400");
-        }
+
+        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
+        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER_TYPE_DBO, new DatabaseObjectInfoTab());
+
         _treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
         _treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new SequenceDetailsTab(isOS400));        
 
         _treeAPI.addDetailTab(DatabaseObjectType.UDF, new DatabaseObjectInfoTab());
         _treeAPI.addDetailTab(DatabaseObjectType.UDF, 
                 new UDFSourceTab(i18n.SHOW_UDF_SOURCE, stmtSep, isOS400));
-        _treeAPI.addDetailTab(DatabaseObjectType.UDF, new UDFDetailsTab(isOS400));        
+        _treeAPI.addDetailTab(DatabaseObjectType.UDF, new UDFDetailsTab(isOS400));  
+        
+        _treeAPI.addDetailTab(DatabaseObjectType.TABLE, 
+                new TableSourceTab("Show MQT Source", stmtSep, isOS400));
         
         
         // Expanders - trigger and index expanders are added inside the table
@@ -292,20 +293,16 @@ public class DB2Plugin extends DefaultSessionPlugin {
             new DB2TableIndexExtractorImpl(isOS400);
         tableExpander.setTableIndexExtractor(indexExtractor);
         
-        if (!isOS400) {
-            // No support for triggers currently on OS/400
-            ITableTriggerExtractor triggerExtractor = 
-                new DB2TableTriggerExtractorImpl();
-        
-            tableExpander.setTableTriggerExtractor(triggerExtractor);
-        }
+        ITableTriggerExtractor triggerExtractor = 
+            new DB2TableTriggerExtractorImpl(isOS400);
+        tableExpander.setTableTriggerExtractor(triggerExtractor);
         
         _treeAPI.addExpander(DatabaseObjectType.TABLE, tableExpander);
         
         
         _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
         _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, 
-                              new TriggerSourceTab(i18n.SHOW_TRIGGER_SOURCE, stmtSep));
+                              new TriggerSourceTab(i18n.SHOW_TRIGGER_SOURCE, isOS400, stmtSep));
         
     }
     

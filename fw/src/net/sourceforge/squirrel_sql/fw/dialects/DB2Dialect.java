@@ -74,7 +74,8 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect
         registerColumnType(Types.TINYINT, "smallint");
         registerColumnType(Types.VARBINARY, 254, "varchar($l) for bit data");
         registerColumnType(Types.VARBINARY, "blob");
-        registerColumnType(Types.VARCHAR, 4000, "varchar($l)");
+        // The driver throws an exception for varchar with length > 3924
+        registerColumnType(Types.VARCHAR, 3924, "varchar($l)");
         registerColumnType(Types.VARCHAR, 32700, "long varchar");
         // DB2 spec says max=2147483647, but the driver throws an exception
         registerColumnType(Types.VARCHAR, 1073741823, "clob($l)");
