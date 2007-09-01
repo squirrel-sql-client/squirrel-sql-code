@@ -50,9 +50,10 @@ and the following system views on OS/400 DB2:
 <P>Stored Procedures, Triggers, Views and User-defined Functions (UDFs) are 
 shown in the object tree and have a &quot;Source&quot; tab which displays 
 the source of the selected object and a &quot;Details&quot; tab which gives 
-DB2-specific information about the object.  Sequences and Indexes are also 
-shown in the object tree and have a details tab giving DB2-specific 
-information about them.  
+DB2-specific information about the object.  Tables and Materialized Query Tables
+are shown in the object tree and have a &quot;Source&quot; tab which displays
+the source of the selected object. Sequences and Indexes are also shown in the 
+object tree and have a details tab giving DB2-specific information about them.  
 
 <!-- INDEX -->
 
@@ -316,16 +317,17 @@ query:
 <!-- VIEW SOURCE -->
 
 <h2>View Source Tab</h2>
-The source tab for views displays the source for a view and can
-be accessed by navigating to the &quot;VIEW&quot; folder beneath a schema 
-object in the object tree.  An example of this is shown in the following 
+The source tab for views and MQTs (Materialized Query Tables) displays the 
+source for a view/MQT and can be accessed by navigating to the 
+&quot;VIEW&quot;/&quot;MQT&quot; folder beneath a schema object in the 
+object tree.  An example of this is shown in the following 
 picture:
 <p>
 <center>
 <img src="images/view_source.jpg">
 </center>
 <p>
-The source code for views is derived from the following query on LUW DB2:
+The source code for views/MQTs is derived from the following query on LUW DB2:
 <p>
 <pre>
 	SELECT TEXT 
