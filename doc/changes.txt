@@ -137,7 +137,12 @@ Finished German translation
 
 Bug-Fixes:
 
-Got to line dialog (ctrl+g) was missing lables.
+Fixed bug in CodeReformator which is exposed when the statement separator 
+is "|".  Also, made formatted source tab able to handle this type of problem 
+more gracefully by showing the source in it's original form, instead of 
+nothing at all.
+
+Goto line dialog (ctrl+g) was missing labels.
 
 1752089 (ConcurrentModificationException raised when loading schema)
 
@@ -159,7 +164,7 @@ Got to line dialog (ctrl+g) was missing lables.
 
 1701380 addSQLExecutionListener is broken
 
-1700093 Formatter fails for insert script with multiple subselects
+1700093 Formatter fails for insert script with multiple sub-selects
 
 1699294 Squirrel imports BLOB, but does not update data 
 

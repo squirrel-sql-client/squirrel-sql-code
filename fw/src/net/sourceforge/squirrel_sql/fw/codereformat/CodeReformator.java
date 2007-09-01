@@ -107,11 +107,32 @@ public class CodeReformator {
         String ret = s.replaceAll("\\(", " ( ");
         ret = ret.replaceAll("\\)", " ) ");
         ret = ret.replaceAll(",", " , ");
-        ret = ret.replaceAll(_statementSeparator, " " + _statementSeparator
-                + " ");
+        String sep = _statementSeparator;
+        
+        // If our separator is the regular expression special char '|', then
+        // quote it before formatting.
+        if (sep.equals("|")) {
+            sep = "\\|";
+        }
+        ret = ret.replaceAll(sep, concat(" ",sep," "));
         return flatenWhiteSpaces(ret, true).trim();
     }
 
+    /**
+     * Concatenates the specified strings and returns the result.
+     * 
+     * @param strings the strings in array form to concatenate.
+     * 
+     * @return the concatenated result.
+     */
+    private String concat(String... strings) {
+        StringBuilder result = new StringBuilder();
+        for (String string : strings) {
+            result.append(string);
+        }
+        return result.toString();
+    }
+    
     private List<String> getReformatedPieces(String in, PieceMarkerSpec[] markers) {
         CodeReformatorKernel kernel = new CodeReformatorKernel(
                 _statementSeparator, markers, _commentSpecs);

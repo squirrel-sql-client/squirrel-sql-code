@@ -38,7 +38,9 @@ import net.sourceforge.squirrel_sql.fw.sql.GenericSQL;
 import net.sourceforge.squirrel_sql.fw.sql.OracleSQL;
 
 public class CodeReformatorTest extends BaseSQuirreLTestCase {
-
+    
+    CodeReformator c = null;
+    
     private static CommentSpec[] COMMENT_SPECS =
         new CommentSpec[]
         {
@@ -48,10 +50,14 @@ public class CodeReformatorTest extends BaseSQuirreLTestCase {
         
     protected void setUp() throws Exception {
         super.setUp();
+        
+        c = new CodeReformator(";", COMMENT_SPECS);
     }
 
     protected void tearDown() throws Exception {
         super.tearDown();
+        
+        c = null;
     }
 
     /**
@@ -88,4 +94,38 @@ public class CodeReformatorTest extends BaseSQuirreLTestCase {
        
     }
 
+    public void testReformatSemiColonStatementSeparator() {
+        c = new CodeReformator(";", COMMENT_SPECS);
+        
+        String pipeSql = "CREATE TABLE BIGINT_VIEW ( BIGINT_COLUMN bigint ); ";
+
+        c.reformat(pipeSql);
+    }
+        
+    public void testReformatPipeStatementSeparator() {
+        c = new CodeReformator("|", COMMENT_SPECS);
+        
+        String pipeSql = "CREATE TABLE BIGINT_VIEW ( BIGINT_COLUMN bigint )| ";
+
+        c.reformat(pipeSql);
+        
+        String pipeSql2 = 
+            "CREATE TABLE BIGINT_TYPE_TABLE \n" +
+            "( \n" +
+            "   ID int PRIMARY KEY NOT NULL, \n" +
+            "   NAME varchar(30) NOT NULL, \n" +
+            "   BIGINT_COLUMN bigint, \n" +
+            "   DESCRIPTION varchar(100), \n" +
+            "   CREATE_DATE date NOT NULL, \n" +
+            "   LAST_MODIFIED date NOT NULL \n" +
+            ")| \n" +
+            " \n" +
+            "CREATE UNIQUE INDEX PK_BIGINT ON BIGINT_TYPE_TABLE(ID)| \n" +
+            " \n" +
+            "CREATE UNIQUE INDEX BIGINT_NAME_IDX ON BIGINT_TYPE_TABLE(NAME)| \n";            
+
+        c.reformat(pipeSql2);
+    }
+    
+    
 }
