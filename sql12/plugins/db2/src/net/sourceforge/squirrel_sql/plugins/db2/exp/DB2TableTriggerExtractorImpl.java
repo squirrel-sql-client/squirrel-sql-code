@@ -44,7 +44,7 @@ public class DB2TableTriggerExtractorImpl implements ITableTriggerExtractor {
         "and TABNAME = ? ";
                 
     /** The query that finds the triggers for a given table in DB2 on OS/400 */
-    private final static String OS2400_SQL = 
+    private final static String OS400_SQL = 
         "select trigger_name " +
         "from qsys2.systriggers " +
         "where trigger_schema = ? " +
@@ -85,7 +85,7 @@ public class DB2TableTriggerExtractorImpl implements ITableTriggerExtractor {
     public String getTableTriggerQuery() {
         String result = SQL;
         if (isOS400) {
-            result = OS2400_SQL;
+            result = OS400_SQL;
         } 
         return result;
     }
