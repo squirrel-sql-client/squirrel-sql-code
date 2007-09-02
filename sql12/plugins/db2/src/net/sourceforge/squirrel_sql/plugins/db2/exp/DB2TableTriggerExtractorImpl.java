@@ -38,17 +38,17 @@ public class DB2TableTriggerExtractorImpl implements ITableTriggerExtractor {
         LoggerController.createLogger(DB2TableTriggerExtractorImpl.class);
                 
     /** The query that finds the triggers for a given table */
-    private final static String query = 
+    private final static String SQL = 
         "select TRIGNAME from SYSCAT.TRIGGERS " +
         "where TABSCHEMA = ? " +
         "and TABNAME = ? ";
                 
-    // TODO: need to know the SYSTRIGGERS equivalent of TABNAME
-    private final static String OS2_400_SQL = 
+    /** The query that finds the triggers for a given table in DB2 on OS/400 */
+    private final static String OS2400_SQL = 
         "select trigger_name " +
         "from qsys2.systriggers " +
         "where trigger_schema = ? " +
-        "and trigger_name = ? ";
+        "and event_object_table = ? ";
     
     /** boolean to indicate whether or not this session is OS/400 */
     private boolean isOS400 = false;            
@@ -83,7 +83,11 @@ public class DB2TableTriggerExtractorImpl implements ITableTriggerExtractor {
      * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.ITableTriggerExtractor#getTableTriggerQuery()
      */
     public String getTableTriggerQuery() {
-        return query;
+        String result = SQL;
+        if (isOS400) {
+            result = OS2400_SQL;
+        } 
+        return result;
     }
 
 }
