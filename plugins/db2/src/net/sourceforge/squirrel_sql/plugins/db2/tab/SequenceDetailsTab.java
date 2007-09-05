@@ -101,7 +101,9 @@ public class SequenceDetailsTab extends BasePreparedStatementTab
 	    "sequence_created as create_time, " +
 	    "last_altered_timestamp as last_alter_time, " +
 	    "long_comment as comment " +
-	    "from qsys2.syssequences ";	    
+	    "from qsys2.syssequences " +
+	    "where sequence_schema = ? " +
+	    "and sequence_name = ?";	    
 	
     /** Logger for this class. */
     private final static ILogger s_log =
