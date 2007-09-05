@@ -53,11 +53,11 @@ public class TableSourceTab extends FormattedSourceTab
 	
 	/** SQL that retrieves the source of a MQT on OS/400 */
 	private static final String OS400_MQT_SQL = 
-	    "select view_definition " +
-	    "from qsys2.sysviews " +
+	    "select mqt_definition " +
+	    "from qsys2.systables " +
 	    "where table_schema = ? " +
 	    "and table_name = ? ";
-	
+		
 	/** Logger for this class. */
 	private final static ILogger s_log =
 		LoggerController.createLogger(ViewSourceTab.class);
