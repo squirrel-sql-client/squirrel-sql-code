@@ -250,22 +250,7 @@ public class DataTypeClob
 	public String renderObject(Object value) {
 		String text = (String)_renderer.renderObject(value);
 		if (_makeNewlinesVisibleInCell){
-			/*
-			 * TODO: When 1.4 is the earliest version supported,
-			 * replace the following code with:
-			 * 	text = text.replaceAll("\n", "/\\n");
-			 */
-			 int index = 0;
-			 StringBuffer buf = new StringBuffer(text);
-			 while (index < buf.length()) {
-				 if (buf.charAt(index) == '\n') {
-					 // found a newline - change it into the string "\n"
-					 buf.replace(index, index+1 , "/n");
-					 index +=1;
-				 }
-				 index++;
-			 }
-			 text = buf.toString();
+             text = text.replaceAll("\n", "/\\n");
 		}
 		return text;
 	}

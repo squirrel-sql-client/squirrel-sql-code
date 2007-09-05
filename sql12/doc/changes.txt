@@ -16,6 +16,8 @@ New Plugin (Hibernate)
      * User defined way to by calling a user defined provider method.
    See help for further details.
 
+Improved speed at which large files are loaded into import popup for 
+CLOB/VARCHAR cells.
 
 Added basic drag-n-drop to transfer a file from the desktop into an SQL Editor 
 panel.
