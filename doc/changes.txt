@@ -139,6 +139,10 @@ Finished German translation
 
 Bug-Fixes:
 
+Statements like
+"SELECT TestTab.testid, TestTab.testname FROM TestTab"
+were not editable.
+
 Fixed bug in CodeReformator which is exposed when the statement separator 
 is "|".  Also, made formatted source tab able to handle this type of problem 
 more gracefully by showing the source in it's original form, instead of 
