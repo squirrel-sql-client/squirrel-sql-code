@@ -43,15 +43,13 @@ public class SchemaInfoCache implements Serializable
    // new ConcurrentSkipListSets to give us better (more performant) options 
    // for synchronizing access to iterators while the data structure is modified.
    
-   // This is the data structure that gets cloned when someone asks for it.
-   private TreeMap<CaseInsensitiveString, String> _internalTableNameTreeMap = 
+   private TreeMap<CaseInsensitiveString, String> _internalTableNameTreeMap =
        new TreeMap<CaseInsensitiveString, String>();
    
    private Map<CaseInsensitiveString, String> _tableNames = 
        Collections.synchronizedMap(_internalTableNameTreeMap);
    
-// This is the data structure that gets cloned when someone asks for it.
-   private TreeMap<ITableInfo, ITableInfo> _internalTableInfoTreeMap = 
+   private TreeMap<ITableInfo, ITableInfo> _internalTableInfoTreeMap =
        new TreeMap<ITableInfo, ITableInfo>();
 
    private Map<ITableInfo, ITableInfo> _iTableInfos = 
@@ -603,15 +601,13 @@ public class SchemaInfoCache implements Serializable
    @SuppressWarnings("unchecked")
    Map<CaseInsensitiveString, String> getTableNamesForReadOnly()
    {
-      return (Map)_internalTableNameTreeMap.clone();
+      return _internalTableNameTreeMap;
    }
 
    @SuppressWarnings("unchecked")
    Map<ITableInfo, ITableInfo> getITableInfosForReadOnly()
    {
-       synchronized(_iTableInfos) {
-           return (Map)_internalTableInfoTreeMap.clone();
-       }
+      return _internalTableInfoTreeMap;
    }
 
    Hashtable<CaseInsensitiveString, List<ITableInfo>> getTableInfosBySimpleNameForReadOnly()
