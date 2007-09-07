@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePlugin;
+import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePrefsListener;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -30,11 +31,14 @@ public class HibernateConfigController
 
    static final String PERF_KEY_LAST_DIR = "Squirrel.Hibernate.lastDir";
    public static final String HIBERNATE_CONFIGS_XML_FILE = "hibernateConfigs.xml";
+   private HibernatePrefsListener _hibernatePrefsListener;
 
    public HibernateConfigController(HibernatePlugin plugin)
    {
       _plugin = plugin;
       _panel = new HibernateConfigPanel();
+
+      _hibernatePrefsListener = _plugin.removeHibernatePrefsListener();
 
       _panel.lstClassPath.setModel(new DefaultListModel());
 
@@ -401,12 +405,21 @@ public class HibernateConfigController
 
             XMLBeanWriter bw = new XMLBeanWriter();
 
+            ArrayList<HibernateConfiguration> buf = new ArrayList<HibernateConfiguration>();
             for (int i = 0; i < _panel.cboConfigs.getItemCount(); i++)
             {
-               bw.addToRoot(_panel.cboConfigs.getItemAt(i));
+               HibernateConfiguration cfg = (HibernateConfiguration) _panel.cboConfigs.getItemAt(i);
+               bw.addToRoot(cfg);
+               buf.add(cfg);
             }
 
             bw.save(cfgsFile);
+
+            if(null != _hibernatePrefsListener)
+            {
+               _hibernatePrefsListener.configurationChanged(buf);
+            }
+
 
          }
       }
@@ -433,16 +446,30 @@ public class HibernateConfigController
 
          reader.load(xmlFile, _plugin.getClass().getClassLoader());
 
-         Map<String, String> providers = new HashMap<String, String>();
+
+
+         HibernateConfiguration toSel = null;
 
          for (Object o : reader)
          {
             HibernateConfiguration cfg = (HibernateConfiguration) o;
-            providers.put(cfg.getProvider(), cfg.getProvider());
+
+            if(null != _hibernatePrefsListener &&
+               null != _hibernatePrefsListener.getPreselectedCfg() &&
+               cfg.getName().equals(_hibernatePrefsListener.getPreselectedCfg().getName()))
+            {
+               toSel = cfg;
+            }
+
             _panel.cboConfigs.addItem(cfg);
          }
 
-         if(0 < _panel.cboConfigs.getItemCount())
+
+         if(null != toSel)
+         {
+            _panel.cboConfigs.setSelectedItem(toSel);
+         }
+         else if(0 < _panel.cboConfigs.getItemCount())
          {
             _panel.cboConfigs.setSelectedItem(_panel.cboConfigs.getItemAt(0));
          }
