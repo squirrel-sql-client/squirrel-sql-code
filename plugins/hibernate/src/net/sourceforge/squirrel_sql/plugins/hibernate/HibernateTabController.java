@@ -135,7 +135,15 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
    private void onConfigurationChanged(ArrayList<HibernateConfiguration> changedCfgs)
    {
       HibernateConfiguration selCfg = (HibernateConfiguration) _panel.cboConfigurations.getSelectedItem();
-      loadConfigs(changedCfgs, selCfg.getName());
+
+      if(null != selCfg)
+      {
+         loadConfigs(changedCfgs, selCfg.getName());
+      }
+      else
+      {
+         loadConfigs(changedCfgs, null);
+      }
    }
 
 
