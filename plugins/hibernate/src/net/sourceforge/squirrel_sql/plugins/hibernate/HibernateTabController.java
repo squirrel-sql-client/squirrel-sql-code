@@ -12,7 +12,6 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLException;
 import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateConfiguration;
 import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateConfigController;
 import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateConfigPanel;
-import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernatePrefsTab;
 import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedObjectPanelManager;
 
 import javax.swing.*;
@@ -113,7 +112,30 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
 
    private void onOpenConfigs()
    {
+      _plugin.setHibernatePrefsListener(new HibernatePrefsListener()
+      {
+         public void configurationChanged(ArrayList<HibernateConfiguration> changedCfgs)
+         {
+            onConfigurationChanged(changedCfgs);
+         }
+
+         public HibernateConfiguration getPreselectedCfg()
+         {
+            return onGetPreselectedCfg();
+         }
+      });
       GlobalPreferencesSheet.showSheet(_plugin.getApplication(), HibernateConfigPanel.class);
+   }
+
+   private HibernateConfiguration onGetPreselectedCfg()
+   {
+      return (HibernateConfiguration) _panel.cboConfigurations.getSelectedItem();
+   }
+
+   private void onConfigurationChanged(ArrayList<HibernateConfiguration> changedCfgs)
+   {
+      HibernateConfiguration selCfg = (HibernateConfiguration) _panel.cboConfigurations.getSelectedItem();
+      loadConfigs(changedCfgs, selCfg.getName());
    }
 
 
@@ -123,24 +145,31 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
       XMLBeanReader reader = new XMLBeanReader();
       File pluginUserSettingsFolder = _plugin.getPluginUserSettingsFolder();
 
-
       File xmlFile = new File(pluginUserSettingsFolder.getPath(), HibernateConfigController.HIBERNATE_CONFIGS_XML_FILE);
 
-      if(xmlFile.exists())
-         {
-            reader.load(xmlFile, _plugin.getClass().getClassLoader());
+      if (xmlFile.exists())
+      {
+         reader.load(xmlFile, _plugin.getClass().getClassLoader());
+         loadConfigs(reader, Preferences.userRoot().get(PREF_KEY_LAST_SELECTED_CONFIG, null));
+      }
+   }
 
+   private void loadConfigs(Iterable reader, String cfgNameToSelect)
+   {
+      _panel.cboConfigurations.removeAllItems();
 
-            HashMap cfgByName = new HashMap();
-         for (Object o : reader)
-         {
-            HibernateConfiguration cfg = (HibernateConfiguration) o;
+      HashMap<String, HibernateConfiguration> cfgByName = new HashMap<String, HibernateConfiguration>();
+      for (Object o : reader)
+      {
+         HibernateConfiguration cfg = (HibernateConfiguration) o;
 
-            cfgByName.put(cfg.getName(), cfg);
-            _panel.cboConfigurations.addItem(cfg);
-         }
+         cfgByName.put(cfg.getName(), cfg);
+         _panel.cboConfigurations.addItem(cfg);
+      }
 
-         _panel.cboConfigurations.setSelectedItem(cfgByName.get(Preferences.userRoot().get(PREF_KEY_LAST_SELECTED_CONFIG, null)));
+      if(null != cfgNameToSelect)
+      {
+         _panel.cboConfigurations.setSelectedItem(cfgByName.get(cfgNameToSelect));
       }
    }
 

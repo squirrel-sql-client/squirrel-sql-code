@@ -22,6 +22,7 @@ public class HibernatePlugin extends DefaultSessionPlugin
 
 	private HibernatePluginResources _resources;
    private HashMap<IIdentifier, HibernateTabController> _hqlTabControllerBySessionID = new HashMap<IIdentifier, HibernateTabController>();
+   private HibernatePrefsListener _curHibernatePrefsListener;
 
    public String getInternalName()
 	{
@@ -100,9 +101,6 @@ public class HibernatePlugin extends DefaultSessionPlugin
 
          session.getSessionSheet().insertMainTab(hibernateTabController, 2, false);
 
-         //initCodeCompletion(hibernateTabController);
-
-
          return new PluginSessionCallback()
          {
             public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
@@ -127,5 +125,18 @@ public class HibernatePlugin extends DefaultSessionPlugin
    public HibernatePluginResources getResources()
    {
       return _resources;
+   }
+
+   public void setHibernatePrefsListener(HibernatePrefsListener hibernatePrefsListener)
+   {
+      _curHibernatePrefsListener = hibernatePrefsListener;
+   }
+
+   public HibernatePrefsListener removeHibernatePrefsListener()
+   {
+      HibernatePrefsListener buf = _curHibernatePrefsListener;
+      _curHibernatePrefsListener = null;
+      return buf;
+
    }
 }
