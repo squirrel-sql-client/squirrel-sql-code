@@ -25,7 +25,7 @@ public class EditableSqlCheck
    private String getTableFromSQLIntern(String sql)
    {
        
-      Pattern patternBeforeTable = Pattern.compile("SELECT\\s+[A-Z0-9_\\*',\\s]*\\s+FROM\\s+([A-Z0-9_\\.]+)");
+      Pattern patternBeforeTable = Pattern.compile("SELECT\\s+[A-Z0-9_\\*\\.',\\s]*\\s+FROM\\s+([A-Z0-9_\\.]+)");
       sql = sql.toUpperCase().trim();
       // Bug 1371587 - remove useless accent characters if they exist
       sql = sql.replaceAll("\\`", "");
