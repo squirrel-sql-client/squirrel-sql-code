@@ -37,12 +37,6 @@ public class SchemaInfoCache implements Serializable
    // Schema dependent data.
    // Are changed only in this class
    //
-   
-   // 1752089 (ConcurrentModificationException raised when loading schema)
-   // When JDK 6 is the earliest supported JDK, we will want to investigate the 
-   // new ConcurrentSkipListSets to give us better (more performant) options 
-   // for synchronizing access to iterators while the data structure is modified.
-   
    private TreeMap<CaseInsensitiveString, String> _internalTableNameTreeMap =
        new TreeMap<CaseInsensitiveString, String>();
    
