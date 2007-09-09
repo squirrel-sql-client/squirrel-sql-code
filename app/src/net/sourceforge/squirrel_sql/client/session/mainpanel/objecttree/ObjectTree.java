@@ -507,11 +507,14 @@ class ObjectTree extends JTree
                                     boolean startExpandInThread)
 	{
 		ExpansionController exp = new ExpansionController(node, selectNode, selectedPathNames, refreshSchemaInfo);
-		if (SwingUtilities.isEventDispatchThread() && startExpandInThread)
-		{
-			_session.getApplication().getThreadPool().addTask(exp);
-		}
-		else
+
+// This is a potential fix for Bug #1752089. I couldn't fiond any reason for this thread.
+// If this proves to be right over some time remove the threading stuff.
+//		if (SwingUtilities.isEventDispatchThread() && startExpandInThread)
+//		{
+//			_session.getApplication().getThreadPool().addTask(exp);
+//		}
+//		else
 		{
 			exp.run();
 		}
