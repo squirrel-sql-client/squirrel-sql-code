@@ -452,32 +452,41 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
 
       int count = -1;
 
+      final String sql = constructUpdateSql(
+            ti.getQualifiedName(), colDefs[col].getLabel(), whereClause);
+      
+      if (s_log.isDebugEnabled()) {
+          s_log.debug("updateTableComponent: executing SQL - "+sql);
+      }
+      PreparedStatement pstmt = null;
       try
       {
-         final String sql = "UPDATE " + ti.getQualifiedName() +
-            " SET " + colDefs[col].getLabel() + " = ? " +
-            whereClause;
-         s_log.debug(sql);
-         final PreparedStatement pstmt = conn.prepareStatement(sql);
-         try
-         {
-            // have the DataType object fill in the appropriate kind of value
-            // into the first (and only) variable position in the prepared stmt
-            CellComponentFactory.setPreparedStatementValue(
-               colDefs[col], pstmt, newValue, 1);
-            count = pstmt.executeUpdate();
-         }
-         finally
-         {
-            pstmt.close();
-         }
+         pstmt = conn.prepareStatement(sql);
+
+         // have the DataType object fill in the appropriate kind of value
+         // into the first (and only) variable position in the prepared stmt
+         CellComponentFactory.setPreparedStatementValue(
+                colDefs[col], pstmt, newValue, 1);
+         count = pstmt.executeUpdate();
       }
       catch (SQLException ex)
       {
-          // i18n[DataSetUpdateableTableModelImpl.error.updateproblem=There was a problem reported during the update.  The DB message was:\n{0}\nThis may or may not be serious depending on the above message.\nThe data was probably not changed in the database.\nYou may need to refresh the table to get an accurate view of the current data.]
-         return s_stringMgr.getString(
-                     "DataSetUpdateableTableModelImpl.error.updateproblem",
-                     ex.getMessage());          
+          //i18n[DataSetUpdateableTableModelImpl.error.updateproblem=There 
+          //was a problem reported during the update.  
+          //The DB message was:\n{0}\nThis may or may not be serious depending 
+          //on the above message.\nThe data was probably not changed in the 
+          //database.\nYou may need to refresh the table to get an accurate 
+          //view of the current data.]
+          String errMsg = s_stringMgr.getString(
+                "DataSetUpdateableTableModelImpl.error.updateproblem",
+                ex.getMessage());
+          s_log.error("updateTableComponent: unexpected exception - "+
+                      ex.getMessage()+" while executing SQL: "+sql);
+          
+          
+         return errMsg;           
+      } finally {
+          SQLUtilities.closeStatement(pstmt);
       }
 
       if (count == -1) {
@@ -492,7 +501,28 @@ public class DataSetUpdateableTableModelImpl implements IDataSetUpdateableTableM
       return null;
    }
 
-
+   
+   /**
+    * Build the update SQL from the specified components.
+    *  
+    * @param table the fully qualified name of the table
+    * @param column the name of the column to update
+    * @param whereClause the where clause that restricts the update to one row.
+    * 
+    * @return the SQL to execute
+    */
+   private String constructUpdateSql(String table, String column,
+           String whereClause) {
+       StringBuilder result = new StringBuilder();
+       result.append("UPDATE ");
+       result.append(table);
+       result.append(" SET ");
+       result.append(column);
+       result.append(" = ? ");
+       result.append(whereClause);
+       return result.toString();
+   }
+   
    /**
     * Let fw get the rowIDcol
     */
