@@ -48,6 +48,7 @@ import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -340,6 +341,11 @@ public class ContentsTab extends BaseTableTab
             }
             catch (SQLException ex)
             {
+                if (s_log.isDebugEnabled()) {
+                        s_log.debug(
+                            "createDataSet: exception from pseudocolumn query - "
+                                    + ex, ex);
+                    }
                 // We assume here that if the pseudoColumn was used in the query,
                 // then it was likely to have caused the SQLException.  If not, 
                 // (length == 0), then retrying the query won't help - just throw
@@ -366,7 +372,6 @@ public class ContentsTab extends BaseTableTab
                // table data without using the pseudo column.
                // TODO: Should we change the mode from editable to
                // non-editable?
-               s_log.debug("Error querying using pseudo column", ex);
                final StringBuffer buf = new StringBuffer();
                buf.append("select *")
                   .append(" from ")
@@ -446,7 +451,7 @@ public class ContentsTab extends BaseTableTab
          }
          finally
          {
-             if (stmt != null) try {stmt.close(); } catch (Exception e) {}
+             SQLUtilities.closeStatement(stmt);
          }
 
       }
