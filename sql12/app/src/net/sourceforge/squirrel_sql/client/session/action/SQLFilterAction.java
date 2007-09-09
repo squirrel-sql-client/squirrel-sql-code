@@ -27,6 +27,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -42,22 +43,20 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  */
 public class SQLFilterAction extends SquirrelAction implements IObjectTreeAction
 {
-	private IObjectTreeAPI _tree;
+    private static final long serialVersionUID = 1L;
+
+    transient private IObjectTreeAPI _tree;
 
     /** Internationalized strings for this class. */
     private static final StringManager s_stringMgr =
         StringManagerFactory.getStringManager(SQLFilterAction.class);
     
-	/** The SQuirreL application instance. */
-	private IApplication _app;
-
 	/** Creates a new instance of SQLFilterAction
 	* @param app A reference to the SQuirreL application instance
 	*/
 	public SQLFilterAction(IApplication app)
 	{
 		super(app);
-		_app = app;
 	}
 
 	/** Sets the _session variable with a reference to the current SQuirrel session
@@ -67,7 +66,12 @@ public class SQLFilterAction extends SquirrelAction implements IObjectTreeAction
 	public void setObjectTree(IObjectTreeAPI tree)
 	{
 		_tree = tree;
-      setEnabled(null != _tree);
+		GUIUtils.processOnSwingEventThread(new Runnable() {
+		    public void run() {
+		        setEnabled(null != _tree);
+		    }
+		});
+      
 	}
 
 	/**
