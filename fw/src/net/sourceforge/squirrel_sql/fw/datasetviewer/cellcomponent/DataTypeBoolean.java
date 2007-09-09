@@ -65,12 +65,9 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
  * handling and resetting the cell to the original value.
  */
 
-public class DataTypeBoolean
+public class DataTypeBoolean extends BaseDataTypeComponent
 	implements IDataTypeComponent
 {
-	/* the whole column definition */
-	private ColumnDisplayDefinition _colDef;
-
 	/* whether nulls are allowed or not */
 	private boolean _isNullable;
 

@@ -79,15 +79,12 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  * handling and resetting the cell to the original value.
  */
 
-public class DataTypeBlob
+public class DataTypeBlob extends BaseDataTypeComponent
 	implements IDataTypeComponent
 {
 
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(DataTypeBlob.class);
-
-	/* the whole column definition */
-	private ColumnDisplayDefinition _colDef;
 
 	/* whether nulls are allowed or not */
 	private boolean _isNullable;

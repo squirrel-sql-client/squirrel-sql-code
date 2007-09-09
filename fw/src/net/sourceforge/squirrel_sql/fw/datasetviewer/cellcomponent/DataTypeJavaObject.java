@@ -70,12 +70,9 @@ import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
  * DBMS-specific plug-ins will need to be developed to register handlers
  * for instances of this type.
  */
-public class DataTypeJavaObject
+public class DataTypeJavaObject extends BaseDataTypeComponent
 	implements IDataTypeComponent
 {
-	/* the whole column definition */
-	private ColumnDisplayDefinition _colDef;
-
 	/* whether nulls are allowed or not */
 	private boolean _isNullable;
 

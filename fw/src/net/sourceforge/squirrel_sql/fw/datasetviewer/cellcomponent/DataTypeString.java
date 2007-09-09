@@ -80,15 +80,11 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  * contain values of this data type.  It provides the special behavior for null
  * handling and resetting the cell to the original value.
  */
-public class DataTypeString
+public class DataTypeString extends BaseDataTypeComponent
 	implements IDataTypeComponent
 {
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(DataTypeString.class);
-
-
-	/* the whole column definition */
-	private ColumnDisplayDefinition _colDef;
 
 	/* whether nulls are allowed or not */
 	private boolean _isNullable;
@@ -183,7 +179,13 @@ public class DataTypeString
 		loadProperties();
 	}
 
-
+	/**
+	 * For sub-classes
+	 */
+	protected DataTypeString() {
+	    
+	}
+	
 	/** Internal function to get the user-settable properties from the DTProperties,
 	 * if they exist, and to ensure that defaults are set if the properties have
 	 * not yet been created.
@@ -276,7 +278,7 @@ public class DataTypeString
 	public String renderObject(Object value) {
 		String text = (String)_renderer.renderObject(value);
 		if (_makeNewlinesVisibleInCell) {
-             text = text.replaceAll("\n", "/\\n");
+			 text = text.replaceAll("\n", "/\\n");
 		}
 		return text;
 	}

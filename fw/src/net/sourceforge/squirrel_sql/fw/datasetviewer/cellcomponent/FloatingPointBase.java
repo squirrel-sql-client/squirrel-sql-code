@@ -1,14 +1,19 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.text.NumberFormat;
+
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.JRadioButton;
+
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
-import javax.swing.*;
-import java.awt.*;
-import java.text.NumberFormat;
-
-public class FloatingPointBase
+public class FloatingPointBase extends BaseDataTypeComponent
 {
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(FloatingPointBase.class);
@@ -20,7 +25,6 @@ public class FloatingPointBase
 	// flag for whether to use the default Java format (true)
 	// or the Locale-dependent format (false)
 	protected static boolean useJavaDefaultFormat = false;
-
 
 	/**
 	 * Generate a JPanel containing controls that allow the user
