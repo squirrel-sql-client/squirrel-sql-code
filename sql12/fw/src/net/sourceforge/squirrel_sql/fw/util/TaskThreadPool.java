@@ -108,7 +108,7 @@ public class TaskThreadPool
 		{
 			if (_tasks.size() > 0)
 			{
-				return (Runnable)_tasks.remove(0);
+				return _tasks.remove(0);
 			}
 			return null;
 		}
