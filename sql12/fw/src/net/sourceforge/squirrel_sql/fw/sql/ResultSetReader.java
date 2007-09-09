@@ -180,6 +180,7 @@ public class ResultSetReader
 			try
 			{
 				final int columnType = _rsmd.getColumnType(idx);
+				final String columnTypeName = _rsmd.getColumnTypeName(idx);
 				//final String columnClassName = _rsmd.getColumnClassName(idx);
 				switch (columnType)
 				{
@@ -377,20 +378,20 @@ public class ResultSetReader
 					    break;
 
 					default:
-						// Since we are reading Meta-data, there should never be a
-						// field with an unknown data type.
-						// If there is, then we REALLY do not know how to handle it,
-						// so do not attempt to read.
-//??						if (_largeObjInfo.getReadAllOther())
-//??						{
-//??							row[i] = _rs.getObject(idx);
-//??						}
-//??						else
-//??						{
+					    /* 
+					     * See if there is a plugin-registered DataTypeComponent
+					     * that can handle this column.
+					     */
+					    row[i] = 
+					        CellComponentFactory.readResultWithPluginRegisteredDataType(_rs, 
+					                                                     columnType, 
+					                                                     columnTypeName, 
+					                                                     idx);
+					    if (row[i] == null) {
                             Integer colTypeInteger = Integer.valueOf(columnType);
 							row[i] = s_stringMgr.getString("ResultSetReader.unknown", 
                                                             colTypeInteger);
-	//??					}
+					    }
 				}
 			}
 			catch (Throwable th)
