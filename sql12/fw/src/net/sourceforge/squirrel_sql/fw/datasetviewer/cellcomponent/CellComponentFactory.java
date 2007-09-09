@@ -5,7 +5,6 @@ import java.awt.Component;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,7 +12,6 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JLabel;
@@ -147,11 +145,11 @@ public class CellComponentFactory {
 	/* map of DBMS-specific registered data handlers.
 	 * The key is a string of the form:
 	 *   <SQL type as a string>:<SQL type name>
-	 * and the value is the fully-qualified name of the class
-	 * for the DataTypeObject for that type.
+	 * and the value is a factory that can create instances of DBMS-specific
+	 * DataTypeComponets.
 	 */
-	 static HashMap<String,String> _registeredDataTypes = 
-         new HashMap<String,String>();
+	 static HashMap<String,IDataTypeComponentFactory> _pluginDataTypeFactories = 
+         new HashMap<String,IDataTypeComponentFactory>();
 
 	/* The current JTable that we are working with.
 	 * This is used only to see when the user moves
@@ -236,7 +234,7 @@ public class CellComponentFactory {
 	static private final class CellRenderer extends DefaultTableCellRenderer implements SquirrelTableCellRenderer
 	{
         private static final long serialVersionUID = 1L;
-        private final IDataTypeComponent _dataTypeObject;
+        transient private final IDataTypeComponent _dataTypeObject;
 
 		CellRenderer(IDataTypeComponent dataTypeObject)
 		{
@@ -428,15 +426,16 @@ public class CellComponentFactory {
 	 */
 	public static boolean isEditableInPopup(ColumnDisplayDefinition colDef, 
                                             Object originalValue) {
-        if (colDef.isAutoIncrement()) {
+        if (colDef != null && colDef.isAutoIncrement()) {
             return false;
         }
         
 		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
 		
-		if (dataTypeObject != null)
+		if (dataTypeObject != null) {
 			return dataTypeObject.isEditableInPopup(originalValue);
-		
+		}
+			
 		// there was no data type object, so this data type is unknown
 		// to squirrel and thus cannot be edited.	
 		return false;
@@ -508,6 +507,44 @@ public class CellComponentFactory {
 	/*
 	 * DataBase-related functions
 	 */
+	 
+
+    /**
+     * Returns the result for the column at the specified index as determined 
+     * by a previously registered plugin DataTypeComponent.  Will return null 
+     * if the type cannot be handled by any plugin-registered DataTypeComponent.
+     * 
+     * @param rs
+     *        the ResultSet to read
+     * @param sqlType
+     *        the Java SQL type of the column
+     * @param sqlTypeName
+     *        the SQL type name of the column
+     * @param index
+     *        the index of the column that should be read
+     * 
+     * @return the value as interpreted by the plugin-registered
+     *         DataTypeComponent, or null if no plugin DataTypeComponent has
+     *         been registered for the specified sqlType and sqlTypename.
+     * 
+     * @throws Exception
+     */
+    public static Object readResultWithPluginRegisteredDataType(ResultSet rs,
+            int sqlType, String sqlTypeName, int index) throws Exception {
+
+        Object result = null;
+        String typeNameKey = getRegDataTypeKey(sqlType, sqlTypeName);
+        if (_pluginDataTypeFactories.containsKey(typeNameKey)) {
+            IDataTypeComponentFactory factory = _pluginDataTypeFactories.get(typeNameKey);
+            IDataTypeComponent dtComp = factory.constructDataTypeComponent();
+            ColumnDisplayDefinition colDef = new ColumnDisplayDefinition(
+                rs, index);
+            dtComp.setColumnDisplayDefinition(colDef);
+            dtComp.setTable(_table);
+            result = dtComp.readResultSet(rs, index, false);
+        }
+        return result;
+    }
 	 
 	 /**
 	  * On input from the DB, read the data from the ResultSet into the appropriate
@@ -662,45 +699,38 @@ public class CellComponentFactory {
 		dataTypeObject.exportObject(outStream, text);	 		
 	 }
 	
-	
-	/*
-	 * Method for registering a DataTypeObject handler for a non-standard
-	 * SQL type (or overridding a standard handler).
-	 */
-	 public static void registerDataType(
-	 	String dataTypeObjectName, int sqlType, String sqlTypeName)
-	 	throws ClassNotFoundException
-	 {
-	 	String typeName = Integer.toString(sqlType) + ":" + sqlTypeName;
-	 	
-	 	// check that the named class exists and has the right constructor available
-	 	
-	 	try {
-	 		// create an instance of the class for the handler object
-			Class<?> handlerClass = Class.forName(dataTypeObjectName);
-				
-			// get the constructor for the object that uses the two class types
-			// that we will use when creating the instance in getDataTypeObject
-			Class<?>[] constClasses =
-				{new JTable().getClass(), new ColumnDisplayDefinition(0,"").getClass()};
-			Constructor<?> handlerConst = handlerClass.getConstructor(constClasses);
-			
-			if (handlerConst == null) {
-			    s_log.error(
-			        "handlerClass ("+handlerClass.getName()+
-			        ")doesn't appear to have a constructor that " +
-			        "accepts JTable and ColumnDisplayDefinition arguments");
-			}
-			
-			// if we get here without any problem then we are ok
-	 		_registeredDataTypes.put(typeName, dataTypeObjectName);
-	 	}
-	 	catch (Exception e) {
-	 		throw new ClassNotFoundException("Could not locate class "+dataTypeObjectName);
-	 	}
-	 }
+	/**
+     * Constructs a key that is used to lookup previously registered custom
+     * types.
+     * 
+     * @param sqlType
+     *        the JDBC type code supplied by the driver
+     * @param sqlTypeName
+     *        the JDBC type name supplied by the driver
+     * 
+     * @return a key that can be used to store/retreive a custom type.
+     */
+	private static String getRegDataTypeKey(int sqlType, String sqlTypeName) {
+	    StringBuilder result = new StringBuilder();
+	    result.append(sqlType);
+	    result.append(":");
+	    result.append(sqlTypeName);
+	    return result.toString();
+	}
 	 
+	/**
+	 * Method for registering a DataTypeComponent factory for a non-standard
+	 * SQL type (or for overriding a standard handler).
+	 */
+	public static void registerDataTypeFactory(
+	        IDataTypeComponentFactory factory, int sqlType, String sqlTypeName)
+	{
+	    String typeName = getRegDataTypeKey(sqlType, sqlTypeName);
 
+	    _pluginDataTypeFactories.put(typeName, factory);
+	}
+	
+	
 	/*
 	 * Get control panels to let user adjust properties
 	 * on DataType classes.
@@ -744,9 +774,12 @@ public class CellComponentFactory {
             new ArrayList<String>(Arrays.asList(initialClassNameList));
 		
 		// add to that the list of all names that have been registered by plugins
-		Iterator<String> classNames = _registeredDataTypes.keySet().iterator();
-		while (classNames.hasNext())
-			classNameList.add(classNames.next());
+//		Iterator<IDataTypeComponentFactory> pluginDataTypeFactories = 
+//		    _registeredDataTypes.values().iterator();
+//		while (pluginDataTypeFactories.hasNext()) {
+//		    TODO: add support for plugin-registered data-type preferences panels
+//		          when it is needed.
+//		}
 		
 		// Now go through the list in the given order to get the panels
 		for (int i=0; i< classNameList.size(); i++) {
@@ -798,7 +831,6 @@ public class CellComponentFactory {
 	private static IDataTypeComponent getDataTypeObject(
 		JTable table, ColumnDisplayDefinition colDef) {
 		
-
 		// keep a hash table of the column objects
 		// so we can reuse them.
 		if (table != _table) {
@@ -814,38 +846,24 @@ public class CellComponentFactory {
 		// so do that now and save it
 		IDataTypeComponent dataTypeComponent = null;
 		
-		// look to see if this column's data type has a plugin-supplied
-		// DataTypeObject handler.
-		if (_registeredDataTypes.size() > 0) {
-			// there is at least one registered handler
-			String typeName = Integer.toString(colDef.getSqlType()) + ":" + colDef.getSqlTypeName();
-			if (_registeredDataTypes.containsKey(typeName)) {
-				String handlerClassName = _registeredDataTypes.get(typeName);
-				
-				// We really should not run into any problems here because
-				// we checked when the handler was registered that the class
-				// exists and has an appropriate constructor.
-				try {
-					// create an instance of the class for the handler object
-					Class<?> handlerClass = Class.forName(handlerClassName);
-				
-					// get the constructor for the object (the table may be null)
-					Class<?>[] constClasses =
-						{Class.forName("javax.swing.JTable"), colDef.getClass()};
-					Constructor<?> handlerConst = handlerClass.getConstructor(constClasses);
-				
-					// create an instance
-					Object[] args = {table, colDef};
-					dataTypeComponent = (IDataTypeComponent)handlerConst.newInstance(args);
-				}
-				catch (Exception e) {
-					// since all errors are reported to the plugin during
-					// application startup, just continue here.
-					s_log.warn("Could not find handler class named "+handlerClassName, e);
-				}
-			}
+		/* See if we have a custom data-type registered. */
+		if (!_pluginDataTypeFactories.isEmpty()) {
+            String typeName = getRegDataTypeKey(colDef.getSqlType(), 
+                colDef.getSqlTypeName());
+            IDataTypeComponentFactory factory = _pluginDataTypeFactories.get(typeName);
+            if (factory != null) {
+                dataTypeComponent = factory.constructDataTypeComponent();
+                if (colDef != null) {
+                    dataTypeComponent.setColumnDisplayDefinition(colDef);
+                }
+                if (table != null) {
+                    dataTypeComponent.setTable(table);
+                } else if (_table != null) {
+                    dataTypeComponent.setTable(_table);
+                }                
+            }
 		}
-
+		
 		// Use the standard SQL type code to get the right handler
 		// for this data type.
 		if (dataTypeComponent == null) {	

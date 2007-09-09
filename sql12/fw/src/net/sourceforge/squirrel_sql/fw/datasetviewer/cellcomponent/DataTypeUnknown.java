@@ -70,12 +70,9 @@ import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
  * for instances of this type.
  */
 
-public class DataTypeUnknown
+public class DataTypeUnknown extends BaseDataTypeComponent
 	implements IDataTypeComponent
 {
-	/* the whole column definition */
-	private ColumnDisplayDefinition _colDef;
-
 	/* whether nulls are allowed or not */
 	private boolean _isNullable;
 

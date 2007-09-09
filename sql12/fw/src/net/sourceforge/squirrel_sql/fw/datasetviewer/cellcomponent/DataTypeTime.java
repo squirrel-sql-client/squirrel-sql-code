@@ -83,7 +83,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * handling and resetting the cell to the original value.
  */
 
-public class DataTypeTime
+public class DataTypeTime extends BaseDataTypeComponent
    implements IDataTypeComponent
 {
 
@@ -92,10 +92,6 @@ public class DataTypeTime
 
    /** Logger for this class. */
    private static ILogger s_log = LoggerController.createLogger(DataTypeTime.class);
-
-
-   /* the whole column definition */
-   private ColumnDisplayDefinition _colDef;
 
    /* whether nulls are allowed or not */
    private boolean _isNullable;
