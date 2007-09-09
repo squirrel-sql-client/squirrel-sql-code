@@ -22,29 +22,24 @@ import java.sql.SQLException;
 
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.db.ConnectToAliasCallBack;
+import net.sourceforge.squirrel_sql.client.gui.db.ConnectionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.db.ICompletionCallback;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SessionManager;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLAlias;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
-import net.sourceforge.squirrel_sql.fw.sql.WrappedSQLException;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.gui.db.ConnectionInternalFrame;
-import net.sourceforge.squirrel_sql.client.gui.db.ConnectToAliasCallBack;
-import net.sourceforge.squirrel_sql.client.gui.db.ICompletionCallback;
-import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
-import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.SessionManager;
 /**
  * This <CODE>ICommand</CODE> allows the user to connect to
  * an <TT>ISQLAlias</TT>.
@@ -373,7 +368,7 @@ public class ConnectToAliasCommand implements ICommand
 			try
 			{
 				app.getPluginManager().sessionCreated(_session);
-				final SessionInternalFrame child = app.getWindowManager().createInternalFrame(_session);
+				app.getWindowManager().createInternalFrame(_session);
                 _connSheet.executed(true);
 			}
 			catch (Throwable th)
