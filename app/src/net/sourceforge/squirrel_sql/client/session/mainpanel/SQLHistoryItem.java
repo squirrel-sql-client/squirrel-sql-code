@@ -29,7 +29,13 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
  */
 public class SQLHistoryItem implements Serializable, Cloneable
 {
-	/** The SQL. */
+	/**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+
+    /** The SQL. */
 	private String _sql;
 
 
@@ -112,7 +118,7 @@ public class SQLHistoryItem implements Serializable, Cloneable
 	{
 		try
 		{
-			return (SQLHistoryItem)super.clone();
+			return super.clone();
 		}
 		catch (CloneNotSupportedException ex)
 		{
