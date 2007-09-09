@@ -54,6 +54,7 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.IObjectTab;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DTProperties;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeTimestamp;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
@@ -102,6 +103,7 @@ import net.sourceforge.squirrel_sql.plugins.oracle.tab.TriggerSourceTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.UserDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tab.ViewSourceTab;
 import net.sourceforge.squirrel_sql.plugins.oracle.tokenizer.OracleQueryTokenizer;
+import net.sourceforge.squirrel_sql.plugins.oracle.types.OracleXmlTypeDataTypeComponentFactory;
 
 /**
  * Oracle plugin class.
@@ -307,6 +309,11 @@ public class OraclePlugin extends DefaultSessionPlugin
          }
          _prefsManager = new PluginQueryTokenizerPreferencesManager();
          _prefsManager.initialize(this, new OraclePreferenceBean());
+
+         /* Register custom DataTypeComponent factory for Oracles XMLType */
+         CellComponentFactory.registerDataTypeFactory(
+             new OracleXmlTypeDataTypeComponentFactory() , 2007,
+             "SYS.XMLTYPE");
       }
       catch (Exception e)
       {
