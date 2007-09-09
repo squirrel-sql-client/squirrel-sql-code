@@ -1,6 +1,11 @@
 Oracle Change Log
 =================
 
+0.19
+====
+
+ - Added support for working with columns that have data type of XMLType  
+
 0.18
 ====
 
