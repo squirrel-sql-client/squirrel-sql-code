@@ -17,6 +17,9 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Types;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
@@ -127,6 +130,43 @@ public class ColumnDisplayDefinition
              isSigned, isCurrency, isAutoIncrement);
 	}
 
+	/**
+	 * Constructs a new ColumnDisplayDefinition using ResultSetMetaData from 
+	 * the specified ResultSet.
+	 *  
+	 * @param rs the ResultSet to use
+	 * @param idx the index of the column to build a display definition for.
+	 * 
+	 * @throws SQLException
+	 */
+	public ColumnDisplayDefinition(ResultSet rs, int idx) throws SQLException {
+	    super();
+	    ResultSetMetaData md = rs.getMetaData();
+	    
+	    String columnLabel = md.getColumnLabel(idx);
+	    String columnName = md.getColumnName(idx);
+	    int displayWidth = columnLabel.length();
+	    String fullTableColumnName = 
+	        new StringBuilder(md.getTableName(idx))
+	                .append(":")
+	                .append(columnName)
+	                .toString();
+	    int sqlType = md.getColumnType(idx);
+	    String sqlTypeName = md.getColumnTypeName(idx);
+	    boolean isNullable = 
+	        md.isNullable(idx) == ResultSetMetaData.columnNullable;
+	    int columnSize = md.getColumnDisplaySize(idx);
+	    int precision = md.getPrecision(idx);
+	    int scale = md.getScale(idx);
+        boolean isSigned = md.isSigned(idx);
+        boolean isCurrency = md.isCurrency(idx);
+        boolean isAutoIncrement = md.isAutoIncrement(idx);
+        
+        init(displayWidth, fullTableColumnName, columnName, columnLabel, sqlType, 
+             sqlTypeName, isNullable, columnSize, precision, scale,
+             isSigned, isCurrency, isAutoIncrement);	    
+	}
+	
 	/**
 	 * Return the number of characters to display.
 	 *
