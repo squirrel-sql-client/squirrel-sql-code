@@ -36,9 +36,7 @@ import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
-import net.sourceforge.squirrel_sql.client.session.action.FileSaveAction;
-import net.sourceforge.squirrel_sql.client.session.action.ToolsPopupAction;
-import net.sourceforge.squirrel_sql.client.session.action.ViewObjectAtCursorInObjectTreeAction;
+import net.sourceforge.squirrel_sql.client.session.action.*;
 import net.sourceforge.squirrel_sql.client.session.event.IResultTabListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLExecutionListener;
 import net.sourceforge.squirrel_sql.client.session.event.ISQLPanelListener;
@@ -89,10 +87,48 @@ public class SQLPanelAPI implements ISQLPanelAPI
 		}
 		_panel = panel;
         _panel.getSQLEntryPanel().addUndoableEditListener(new SQLEntryUndoListener());
-      _toolsPopupController = new ToolsPopupController(getSession().getApplication(), _panel, getSession());
-      
+      initToolsPopUp();
+
       createStandardEntryAreaMenuItems();
 	}
+
+   private void initToolsPopUp()
+   {
+      _toolsPopupController = new ToolsPopupController(getSession(), _panel.getSQLEntryPanel());
+
+
+      ActionCollection ac = getSession().getApplication().getActionCollection();
+
+      _toolsPopupController.addAction("undo", _panel.getUndoAction());
+      _toolsPopupController.addAction("redo", _panel.getRedoAction());
+      _toolsPopupController.addAction("runsql", ac.get(ExecuteSqlAction.class));
+      _toolsPopupController.addAction("fileopen", ac.get(FileOpenAction.class));
+      _toolsPopupController.addAction("filesave", ac.get(FileSaveAction.class));
+      _toolsPopupController.addAction("filesaveas", ac.get(FileSaveAsAction.class));
+      _toolsPopupController.addAction("filenew", ac.get(FileNewAction.class));
+      _toolsPopupController.addAction("fileappend", ac.get(FileAppendAction.class));
+      _toolsPopupController.addAction("fileprint", ac.get(FilePrintAction.class));
+      _toolsPopupController.addAction("fileclose", ac.get(FileCloseAction.class));
+
+      _toolsPopupController.addAction("tabnext", ac.get(GotoNextResultsTabAction.class));
+      _toolsPopupController.addAction("tabprevious", ac.get(GotoPreviousResultsTabAction.class));
+      _toolsPopupController.addAction("tabcloseall", ac.get(CloseAllSQLResultTabsAction.class));
+      _toolsPopupController.addAction("tabcloseallbutcur", ac.get(CloseAllSQLResultTabsButCurrentAction.class));
+      _toolsPopupController.addAction("tabclosecur", ac.get(CloseCurrentSQLResultTabAction.class));
+      _toolsPopupController.addAction("tabsticky", ac.get(ToggleCurrentSQLResultTabStickyAction.class));
+
+      _toolsPopupController.addAction("sqlprevious", ac.get(PreviousSqlAction.class));
+      _toolsPopupController.addAction("sqlnext", ac.get(NextSqlAction.class));
+      _toolsPopupController.addAction("sqlselect", ac.get(SelectSqlAction.class));
+
+      _toolsPopupController.addAction("sqlhist", ac.get(OpenSqlHistoryAction.class));
+
+      if (_panel.isInMainSessionWindow())
+      {
+         _toolsPopupController.addAction("viewinobjecttree", ac.get(ViewObjectAtCursorInObjectTreeAction.class));
+      }
+
+   }
 
 
    private void createStandardEntryAreaMenuItems()
