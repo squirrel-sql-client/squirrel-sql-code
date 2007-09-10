@@ -117,7 +117,7 @@ public class CachePlugin extends DefaultSessionPlugin
     */
    public String getContributors()
    {
-      return "";
+      return "Andreas Schneider";
    }
 
    /**
