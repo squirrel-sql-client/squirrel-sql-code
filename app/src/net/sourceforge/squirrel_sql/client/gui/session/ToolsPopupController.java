@@ -8,10 +8,8 @@ import javax.swing.Action;
 import javax.swing.text.JTextComponent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.action.*;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLPanel;
 import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 import net.sourceforge.squirrel_sql.fw.completion.Completor;
@@ -33,13 +31,13 @@ public class ToolsPopupController
     private static final StringManager s_stringMgr =
         StringManagerFactory.getStringManager(ToolsPopupController.class);
 
-   public ToolsPopupController(IApplication app, SQLPanel sqlPanel, ISession session)
+   public ToolsPopupController(ISession session, ISQLEntryPanel sqlEntryPanel)
    {
-      _sqlEntryPanel = sqlPanel.getSQLEntryPanel();
+      _sqlEntryPanel = sqlEntryPanel;
       _session = session;
       
       _toolsPopupCompletorModel = new ToolsPopupCompletorModel();
-      _toolsCompletor = new Completor((JTextComponent)_sqlEntryPanel.getTextComponent(), _toolsPopupCompletorModel, new Color(255,204,204), true);
+      _toolsCompletor = new Completor(_sqlEntryPanel.getTextComponent(), _toolsPopupCompletorModel, new Color(255,204,204), true);
 
       _toolsCompletor.addCodeCompletorListener
       (
@@ -49,37 +47,6 @@ public class ToolsPopupController
             {onToolsPopupActionSelected(completion);}
          }
       );
-
-      ActionCollection ac = app.getActionCollection();
-
-      addAction("undo", sqlPanel.getUndoAction());
-      addAction("redo", sqlPanel.getRedoAction());
-      addAction("runsql", ac.get(ExecuteSqlAction.class));
-      addAction("fileopen", ac.get(FileOpenAction.class));
-      addAction("filesave", ac.get(FileSaveAction.class));
-      addAction("filesaveas", ac.get(FileSaveAsAction.class));
-		addAction("filenew", ac.get(FileNewAction.class));
-		addAction("fileappend", ac.get(FileAppendAction.class));
-        addAction("fileprint", ac.get(FilePrintAction.class));
-		addAction("fileclose", ac.get(FileCloseAction.class));
-
-      addAction("tabnext", ac.get(GotoNextResultsTabAction.class));
-      addAction("tabprevious", ac.get(GotoPreviousResultsTabAction.class));
-      addAction("tabcloseall", ac.get(CloseAllSQLResultTabsAction.class));
-      addAction("tabcloseallbutcur", ac.get(CloseAllSQLResultTabsButCurrentAction.class));
-      addAction("tabclosecur", ac.get(CloseCurrentSQLResultTabAction.class));
-      addAction("tabsticky", ac.get(ToggleCurrentSQLResultTabStickyAction.class));
-
-		addAction("sqlprevious", ac.get(PreviousSqlAction.class));
-		addAction("sqlnext", ac.get(NextSqlAction.class));
-		addAction("sqlselect", ac.get(SelectSqlAction.class));
-
-      addAction("sqlhist", ac.get(OpenSqlHistoryAction.class));
-
-		if(sqlPanel.isInMainSessionWindow())
-      {
-         addAction("viewinobjecttree", ac.get(ViewObjectAtCursorInObjectTreeAction.class));
-      }
 
 
       _ctrlTCount = Preferences.userRoot().getInt(PREFS_KEY_CTRL_T_COUNT, 0);

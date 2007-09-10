@@ -3,6 +3,7 @@ package net.sourceforge.squirrel_sql.plugins.hibernate;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.ISyntaxHighlightTokenMatcherFactory;
 import net.sourceforge.squirrel_sql.client.session.ISyntaxHighlightTokenMatcher;
+import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupController;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.hibernate.completion.HQLCompleteCodeAction;
@@ -19,6 +20,7 @@ public class HQLEntryPanelManager extends EntryPanelManagerBase
    private HqlSyntaxHighlightTokenMatcherProxy _hqlSyntaxHighlightTokenMatcherProxy = new HqlSyntaxHighlightTokenMatcherProxy();
    private HibernatePluginResources _resources;
    private IHibernateConnectionProvider _connectionProvider;
+   private ToolsPopupController _toolsPopupController;
 
 
    public HQLEntryPanelManager(ISession session, HibernatePluginResources resources, IHibernateConnectionProvider connectionProvider)
@@ -30,6 +32,10 @@ public class HQLEntryPanelManager extends EntryPanelManagerBase
 
       _resources = resources;
 
+      initToolsPopUp();
+      initCodeCompletion();
+
+
       // i18n[HQLEntryPanelManager,quoteHQL=Quote HQL]
       AbstractAction quoteHql = new AbstractAction(s_stringMgr.getString("HQLEntryPanelManager,quoteHQL"))
       {
@@ -38,7 +44,8 @@ public class HQLEntryPanelManager extends EntryPanelManagerBase
             onQuoteHQL();
          }
       };
-      addToSQLEntryAreaMenu(quoteHql);
+      quoteHql.putValue(Action.SHORT_DESCRIPTION, "Quote HQL");
+      addToSQLEntryAreaMenu(quoteHql, "quote");
 
       // i18n[HQLEntryPanelManager,quoteHQLsb=Quote HQL sb]
       AbstractAction quoteSbHql = new AbstractAction(s_stringMgr.getString("HQLEntryPanelManager,quoteHQLsb"))
@@ -48,7 +55,8 @@ public class HQLEntryPanelManager extends EntryPanelManagerBase
             onQuoteHQLSb();
          }
       };
-      addToSQLEntryAreaMenu(quoteSbHql);
+      quoteSbHql.putValue(Action.SHORT_DESCRIPTION, "Quote HQL as StringBuffer");
+      addToSQLEntryAreaMenu(quoteSbHql, "quotesb");
 
       // i18n[HQLEntryPanelManager,unquoteHQL=Unquote HQL]
       AbstractAction unquoteHql = new AbstractAction(s_stringMgr.getString("HQLEntryPanelManager,unquoteHQL"))
@@ -58,17 +66,24 @@ public class HQLEntryPanelManager extends EntryPanelManagerBase
             onUnquoteHQL();
          }
       };
-      addToSQLEntryAreaMenu(unquoteHql);
+      unquoteHql.putValue(Action.SHORT_DESCRIPTION, "Unquote HQL");
+      addToSQLEntryAreaMenu(unquoteHql, "unquote");
+   }
 
-
-      initCodeCompletion();
+   private void initToolsPopUp()
+   {
+      _toolsPopupController = new ToolsPopupController(getSession(), getEntryPanel());
+      HQLToolsPopUpAction htp = new HQLToolsPopUpAction(_resources, _toolsPopupController, getSession().getApplication());
+      JMenuItem item = addToSQLEntryAreaMenu(htp, null);
+      _resources.configureMenuItem(htp, item);
+      registerKeyboardAction(htp, _resources.getKeyStroke(htp));
    }
 
 
    private void initCodeCompletion()
    {
       HQLCompleteCodeAction hcca = new HQLCompleteCodeAction(getSession().getApplication(), _resources, this, _connectionProvider, _hqlSyntaxHighlightTokenMatcherProxy);
-      JMenuItem item = addToSQLEntryAreaMenu(hcca);
+      JMenuItem item = addToSQLEntryAreaMenu(hcca, "complete");
       _resources.configureMenuItem(hcca, item);
       registerKeyboardAction(hcca, _resources.getKeyStroke(hcca));
    }
@@ -104,13 +119,13 @@ public class HQLEntryPanelManager extends EntryPanelManagerBase
    }
 
 
-   public void addToSQLEntryAreaMenu(JMenu menu)
+   public JMenuItem addToSQLEntryAreaMenu(Action action, String toolsPopupSelectionString)
    {
-      getEntryPanel().addToSQLEntryAreaMenu(menu);
-   }
+      if(null != toolsPopupSelectionString)
+      {
+         _toolsPopupController.addAction(toolsPopupSelectionString, action);
+      }
 
-   public JMenuItem addToSQLEntryAreaMenu(Action action)
-   {
       return getEntryPanel().addToSQLEntryAreaMenu(action);
    }
 
