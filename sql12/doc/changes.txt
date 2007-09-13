@@ -63,7 +63,7 @@ MySQL Plugin:
    displayed as object nodes beneath tables as is done in other plugins.
 
 Oracle Plugin: 
- - 890843, 1787653: Added experimental support Oracle's SYS.XMLTYPE column.
+ - 890843, 1787653: Added support Oracle's SYS.XMLTYPE column.
  - Warning message is displayed if string literal timestamp setting is used for
    internal where clauses - this setting may result in the inability to edit 
    tables.
