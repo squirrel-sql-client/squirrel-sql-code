@@ -18,8 +18,8 @@
  */
 package net.sourceforge.squirrel_sql.plugins.oracle.types;
 
-import java.io.StringReader;
 import java.lang.reflect.Method;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -36,14 +36,24 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * A custom DatatType implementation of IDataTypeComponent that can handle 
  * Oracle's SYS.XMLTYPE (DataType value of 2007).  This requires that the XDK
  * (XML Developer Kit) be downloaded from Oracle and the jars from this kit 
- * included along with the driver in "Extra ClassPath" 
+ * included along with the driver in "Extra ClassPath".
  * 
  * @author manningr
  */
 public class OracleXmlTypeDataTypeComponent extends BaseDataTypeComponent
         implements IDataTypeComponent {
 
-    private static final String XML_TYPE_CLASS = "oracle.xdb.XMLType";
+    /**
+     * The fully-qualified name of Oracle's utility class that will convert 
+     * betweem XMLType and String for us.
+     */
+    private static final String XML_TYPE_CLASSNAME = "oracle.xdb.XMLType";
+    
+    /** 
+     * When we lookup the class def for oracle.xdb.XMLType, save a copy of it 
+     * so that we don't have to look it up again.
+     */
+    private static Class<?> XML_TYPE_CLASS = null;
     
     /** Logger for this class. */
     private static ILogger s_log = 
@@ -55,6 +65,9 @@ public class OracleXmlTypeDataTypeComponent extends BaseDataTypeComponent
     private static final StringManager s_stringMgr =
        StringManagerFactory.getStringManager(OracleXmlTypeDataTypeComponent.class);
     
+    /**
+     * I18n messages
+     */
     static interface i18n {
         //i18n[OracleXmlTypeDataTypeComponent.cellErrorMsg=<Error: see log file>]
         String CELL_ERROR_MSG = 
@@ -144,6 +157,12 @@ public class OracleXmlTypeDataTypeComponent extends BaseDataTypeComponent
     }
 
     /**
+     * This class relies on reflection to get a handle to Oracle's XMLType which
+     * is made available separately from the JDBC driver, so we cannot just 
+     * assume the user will always have, nor can we depend on it to compile
+     * SQuirreL code.  So we remove this dependency here by using reflection 
+     * which doesn't require this library in order to just compile the code.
+     * 
      * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent#readResultSet(java.sql.ResultSet, int, boolean)
      */
     public Object readResultSet(ResultSet rs, int idx, boolean limitDataRead)
@@ -154,17 +173,28 @@ public class OracleXmlTypeDataTypeComponent extends BaseDataTypeComponent
             if (o == null) {
                 return NULL_VALUE_PATTERN;
             } else if ("oracle.sql.OPAQUE".equals(o.getClass().getName())) {
-                Class<?> xmlTypeClass = Class.forName(XML_TYPE_CLASS);
-                Method createXmlMethod = xmlTypeClass.getMethod("createXml",o.getClass());
+                XML_TYPE_CLASS = Class.forName(XML_TYPE_CLASSNAME);
+                Method createXmlMethod = XML_TYPE_CLASS.getMethod("createXml",o.getClass());
+                
+                // Below is equivalent to the following:
+                // xmlType = XMLType.createXML(o);
                 Object xmlTypeObj = createXmlMethod.invoke(null, o);
                 Method getStringValMethod =  
-                    xmlTypeClass.getMethod("getStringVal", (Class[])null);
+                    XML_TYPE_CLASS.getMethod("getStringVal", (Class[])null);
+                
+                // Below is equivalent to the following:
+                // stringValueResult = xmlType.getStringVal();
                 Object stringValueResult = 
                     getStringValMethod.invoke(xmlTypeObj, (Object[])null);
                 result = stringValueResult;
-            } else if (XML_TYPE_CLASS.equals(o.getClass().getName())) { 
+                
+            } else if (XML_TYPE_CLASSNAME.equals(o.getClass().getName())) { 
+                XML_TYPE_CLASS = o.getClass();
                 Method getStringValMethod =  
-                    o.getClass().getMethod("getStringVal", (Class[])null);
+                    XML_TYPE_CLASS.getMethod("getStringVal", (Class[])null);
+
+                // Below is equivalent to the following:
+                // stringValueResult = xmlType.getStringVal();                
                 Object stringValueResult = 
                     getStringValMethod.invoke(o, (Object[])null);
                 result = stringValueResult;                               
@@ -173,7 +203,7 @@ public class OracleXmlTypeDataTypeComponent extends BaseDataTypeComponent
             }
         } catch (ClassNotFoundException e) {
             s_log.error("Perhaps the XDK which contains the class "
-                    + XML_TYPE_CLASS + " is not in the CLASSPATH?", e);
+                    + XML_TYPE_CLASSNAME + " is not in the CLASSPATH?", e);
         } catch (Exception e) {
             s_log.error("Unexpected exception while attempting to read " +
             		"SYS.XMLType column", e);
@@ -194,20 +224,33 @@ public class OracleXmlTypeDataTypeComponent extends BaseDataTypeComponent
             // figure.
             //pstmt.setNull(position, _colDef.getSqlType());
             
-            // Throws an exception claiming that it got a clob and expected a 
-            // number (inconsistent data types)
+            // Both of these throw an exception claiming that it got a clob 
+            // and expected a number (inconsistent data types):
+            //
             //pstmt.setClob(position, null);
             //pstmt.setNull(position, java.sql.Types.CLOB);
+            //
             
+            // This seems to work for both Oracle 9i and 10g
             pstmt.setObject(position, null);
         } else {
-            // This appears not to fail, yet doesn't change the value in any 
-            // way.
-            //pstmt.setString(position, ((String)value));
+            try {
+                Class<?>[] args = new Class[] {
+                        Connection.class,
+                        String.class  
+                };
+                
+                Method createXmlMethod = XML_TYPE_CLASS.getMethod("createXML", args);
+                Object xmlTypeObj = createXmlMethod.invoke(null, pstmt.getConnection(), value.toString());
+    
+                // now bind the string..
+                pstmt.setObject(position,xmlTypeObj);
+            } catch (Exception e){
+                s_log.error(
+                    "setPreparedStatementValue: Unexpected exception - "
+                            + e.getMessage(), e);
+            }
             
-            String valueStr = (String)value;
-            pstmt.setCharacterStream(
-                position, new StringReader(valueStr), valueStr.length());
         }
     }
 
