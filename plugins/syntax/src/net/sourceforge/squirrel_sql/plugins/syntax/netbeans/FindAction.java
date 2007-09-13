@@ -23,34 +23,49 @@ public class FindAction extends SquirrelAction implements ISQLPanelAction
 
 
    private ISession _session;
+   private ISQLEntryPanel _sqlEntryPanel;
+
+   public FindAction(IApplication app, SyntaxPluginResources rsrc, ISQLEntryPanel sqlEntryPanel)
+	{
+		this(app, rsrc);
+      _sqlEntryPanel = sqlEntryPanel;
+   }
 
    public FindAction(IApplication app, SyntaxPluginResources rsrc)
-			throws IllegalArgumentException
 	{
 		super(app, rsrc);
 	}
+   
 
-	public void actionPerformed(ActionEvent evt)
+
+   public void actionPerformed(ActionEvent evt)
 	{
-      if(null != _session)
+      if(null != _sqlEntryPanel)
       {
-
+         doActionPerformed(_sqlEntryPanel, evt);
+      }
+      else if(null != _session)
+      {
          ISQLEntryPanel sqlEntryPanel = _session.getSQLPanelAPIOfActiveSessionWindow().getSQLEntryPanel();
-
-         if(false == sqlEntryPanel instanceof NetbeansSQLEntryPanel)
-         {
-            String msg =
-					//i18n[syntax.findNetbeansOnly=Find is only available when the Netbeans editor is used.\nSee menu File --> New Session Properties --> Tab Syntax]
-					s_stringMgr.getString("syntax.findNetbeansOnly");
-            JOptionPane.showMessageDialog(_session.getApplication().getMainFrame(), msg);
-            return;
-         }
-
-         NetbeansSQLEntryPanel nsep = (NetbeansSQLEntryPanel) sqlEntryPanel;
-         nsep.showFindDialog(evt);
+         doActionPerformed(sqlEntryPanel, evt);
       }
 
 	}
+
+   private void doActionPerformed(ISQLEntryPanel sqlEntryPanel, ActionEvent evt)
+   {
+      if(false == sqlEntryPanel instanceof NetbeansSQLEntryPanel)
+      {
+         String msg =
+            //i18n[syntax.findNetbeansOnly=Find is only available when the Netbeans editor is used.\nSee menu File --> New Session Properties --> Tab Syntax]
+            s_stringMgr.getString("syntax.findNetbeansOnly");
+         JOptionPane.showMessageDialog(_session.getApplication().getMainFrame(), msg);
+         return;
+      }
+
+      NetbeansSQLEntryPanel nsep = (NetbeansSQLEntryPanel) sqlEntryPanel;
+      nsep.showFindDialog(evt);
+   }
 
    public void setSQLPanel(ISQLPanelAPI panel)
    {

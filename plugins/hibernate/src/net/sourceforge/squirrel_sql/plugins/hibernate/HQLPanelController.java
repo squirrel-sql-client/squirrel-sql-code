@@ -7,6 +7,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -65,50 +66,59 @@ public class HQLPanelController
    {
       try
       {
-         if(false == _convertToSQL.isEnabled())
+         if (false == _convertToSQL.isEnabled())
          {
             return;
          }
 
          String hql = _hqlEntryPanelManager.getEntryPanel().getSQLToBeExecuted();
 
-         if(null != hql && 0 != hql.trim().length())
+         if (null == hql || 0 == hql.trim().length())
          {
-
-
-            ArrayList<String> list = null;
-
-            long begin = System.currentTimeMillis();
-            long duration = 0;
-            try
-            {
-               list = _con.generateSQL(hql);
-               duration = System.currentTimeMillis() - begin;
-            }
-            catch (Exception e)
-            {
-               Throwable t = Utilities.getDeepestThrowable(e);
-               ExceptionFormatter formatter = _sess.getExceptionFormatter();
-               String message = formatter.format(t);
-               _sess.showErrorMessage(message);
-
-               if(_sess.getProperties().getWriteSQLErrorsToLog() ||
-                  (-1 == t.getClass().getName().toLowerCase().indexOf("hibernate") && -1 == t.getClass().getName().toLowerCase().indexOf("antlr")))
-               {
-                  // If this is not a hibernate error we write a log entry
-                  s_log.error(t);
-               }
-
-               return;
-            }
-
-            _hibernateTabController.displaySqls(list);
-
-
-            // i18n[HQLPanelController.hqlToSqlSuccess=Generated {0} SQL(s) in {1} milliseconds.]
-            _sess.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("SQLPanelController.hqlToSqlSuccess",list.size(), duration));
-
+            return;
          }
+
+         String statementSeparator = _sess.getProperties().getSQLStatementSeparator();
+         String startOfLineComment = _sess.getProperties().getStartOfLineComment();
+         QueryTokenizer qt = new QueryTokenizer(statementSeparator, startOfLineComment, true);
+         qt.setScriptToTokenize(hql);
+
+         if(false == qt.hasQuery())
+         {
+            return;
+         }
+
+
+         ArrayList<String> list;
+
+         long begin = System.currentTimeMillis();
+         long duration;
+         try
+         {
+            list = _con.generateSQL(qt.nextQuery());
+            duration = System.currentTimeMillis() - begin;
+         }
+         catch (Exception e)
+         {
+            Throwable t = Utilities.getDeepestThrowable(e);
+            ExceptionFormatter formatter = _sess.getExceptionFormatter();
+            String message = formatter.format(t);
+            _sess.showErrorMessage(message);
+
+            if (_sess.getProperties().getWriteSQLErrorsToLog() ||
+               (-1 == t.getClass().getName().toLowerCase().indexOf("hibernate") && -1 == t.getClass().getName().toLowerCase().indexOf("antlr")))
+            {
+               // If this is not a hibernate error we write a log entry
+               s_log.error(t);
+            }
+
+            return;
+         }
+
+         _hibernateTabController.displaySqls(list);
+
+         // i18n[HQLPanelController.hqlToSqlSuccess=Generated {0} SQL(s) in {1} milliseconds.]
+         _sess.getApplication().getMessageHandler().showMessage(s_stringMgr.getString("SQLPanelController.hqlToSqlSuccess", list.size(), duration));
       }
       catch (Exception e)
       {

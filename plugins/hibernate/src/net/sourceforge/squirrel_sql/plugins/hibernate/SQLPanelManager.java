@@ -28,7 +28,7 @@ public class SQLPanelManager extends EntryPanelManagerBase
    public SQLPanelManager(final ISession session)
    {
       super(session);
-      init(null);
+      init(null, null);
 
       _resultExecuterPanel = new SQLResultExecuterPanel(session);
       _hibernateSQLPanel = new HibernateSQLPanel(super.getComponent(), _resultExecuterPanel);

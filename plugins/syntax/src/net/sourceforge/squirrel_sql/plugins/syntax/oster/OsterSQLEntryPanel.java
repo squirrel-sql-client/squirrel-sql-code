@@ -53,12 +53,15 @@ public class OsterSQLEntryPanel extends BaseSQLEntryPanel
     @SuppressWarnings("unused")
     private DropTarget dt;
 
+   private ISession _session;
 
-	OsterSQLEntryPanel(ISession session, SyntaxPreferences prefs)
+
+   OsterSQLEntryPanel(ISession session, SyntaxPreferences prefs)
 	{
 		super(session.getApplication());
+      _session = session;
 
-		if (session == null)
+      if (session == null)
 		{
 			throw new IllegalArgumentException("Null ISession passed");
 		}
@@ -395,5 +398,10 @@ public class OsterSQLEntryPanel extends BaseSQLEntryPanel
 	{
 		_textArea.removeSQLTokenListener(tl);
 	}
+
+   public ISession getSession()
+   {
+      return _session;
+   }
 
 }

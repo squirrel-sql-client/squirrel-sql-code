@@ -8,6 +8,7 @@ import javax.swing.text.JTextComponent;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.action.ISQLPanelAction;
 
 
@@ -16,6 +17,7 @@ public class DuplicateLineAction extends SquirrelAction implements ISQLPanelActi
     private static final long serialVersionUID = 1L;
     
     transient private ISQLPanelAPI _panel;
+   private ISQLEntryPanel _isqlEntryPanel;
 
    public DuplicateLineAction(IApplication app, SyntaxPluginResources rsrc)
       throws IllegalArgumentException
@@ -23,19 +25,30 @@ public class DuplicateLineAction extends SquirrelAction implements ISQLPanelActi
       super(app, rsrc);
    }
 
+   public DuplicateLineAction(IApplication app, SyntaxPluginResources rsrc, ISQLEntryPanel isqlEntryPanel)
+   {
+      this(app, rsrc);
+      _isqlEntryPanel = isqlEntryPanel;
+   }
+
    public void actionPerformed(ActionEvent evt)
    {
-      if (null != _panel)
+
+      if(null != _isqlEntryPanel)
       {
-         duplicateLineAction();
+         duplicateLineAction(_isqlEntryPanel);
+      }
+      else if (null != _panel)
+      {
+         duplicateLineAction(_panel.getSQLEntryPanel());
       }
    }
 
-   private void duplicateLineAction()
+   private void duplicateLineAction(ISQLEntryPanel sqlEntryPanel)
    {
       try
       {
-         JTextComponent txtComp = _panel.getSQLEntryPanel().getTextComponent();
+         JTextComponent txtComp = sqlEntryPanel.getTextComponent();
 
          int docLen = txtComp.getDocument().getLength();
          String text = txtComp.getDocument().getText(0, txtComp.getDocument().getLength());

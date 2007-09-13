@@ -71,7 +71,7 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
                          SyntaxPreferences prefs, 
                          SyntaxFactory syntaxFactory, 
                          SyntaxPugin plugin, 
-                         HashMap<String, IParserEventsProcessorFactory> props)
+                         HashMap<String, Object> props)
    {
        super(session.getApplication());
        if (session == null)
@@ -430,6 +430,11 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 	{
       _syntaxFactory.addSQLTokenListeners(_session, tl);
 	}
+
+   public ISession getSession()
+   {
+      return _session;
+   }
 
    public void showFindDialog(ActionEvent evt)
    {
