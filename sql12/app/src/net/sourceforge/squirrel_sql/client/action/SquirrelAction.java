@@ -22,11 +22,14 @@ import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 
+import javax.swing.*;
+
 public abstract class SquirrelAction extends BaseAction
 {
 	protected IApplication _app;
+   private Resources _rsrc;
 
-	protected SquirrelAction(IApplication app)
+   protected SquirrelAction(IApplication app)
 	{
 		this(app, app.getResources());
 	}
@@ -34,7 +37,8 @@ public abstract class SquirrelAction extends BaseAction
 	protected SquirrelAction(IApplication app, Resources rsrc)
 	{
 		super();
-		if (app == null)
+      _rsrc = rsrc;
+      if (app == null)
 		{
 			throw new IllegalArgumentException("Null IApplication passed");
 		}
@@ -51,4 +55,9 @@ public abstract class SquirrelAction extends BaseAction
 	{
 		return _app;
 	}
+
+   public KeyStroke getKeyStroke()
+   {
+      return _rsrc.getKeyStroke(this);
+   }
 }

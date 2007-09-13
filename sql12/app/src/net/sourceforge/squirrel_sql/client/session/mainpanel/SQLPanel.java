@@ -887,7 +887,7 @@ public class SQLPanel extends JPanel
 		installSQLEntryPanel(
 		        app.getSQLEntryPanelFactory().createSQLEntryPanel(
 		                _session, 
-		                new HashMap<String, IParserEventsProcessorFactory>()));
+		                new HashMap<String, Object>()));
 
       _executerPanleHolder = new JPanel(new GridLayout(1,1));
       _simpleExecuterPanel = new JPanel(new GridLayout(1,1));

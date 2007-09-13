@@ -25,5 +25,5 @@ import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor
 public interface ISQLEntryPanelFactory
 {
 	ISQLEntryPanel createSQLEntryPanel(ISession session, 
-                                       HashMap<String, IParserEventsProcessorFactory> props);
+                                       HashMap<String, Object> props);
 }

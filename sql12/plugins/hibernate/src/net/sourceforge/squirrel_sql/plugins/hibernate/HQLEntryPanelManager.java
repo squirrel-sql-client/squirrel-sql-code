@@ -28,11 +28,14 @@ public class HQLEntryPanelManager extends EntryPanelManagerBase
       super(session);
       _connectionProvider = connectionProvider;
 
-      init(createSyntaxHighlightTokenMatcherFactory());
+      ToolsPopupAccessorProxy tpap = new ToolsPopupAccessorProxy();
+
+      init(createSyntaxHighlightTokenMatcherFactory(), tpap);
 
       _resources = resources;
 
       initToolsPopUp();
+      tpap.apply(this);
       initCodeCompletion();
 
 
@@ -127,11 +130,6 @@ public class HQLEntryPanelManager extends EntryPanelManagerBase
       }
 
       return getEntryPanel().addToSQLEntryAreaMenu(action);
-   }
-
-   public void addToToolsPopUp(String selectionString, Action action)
-   {
-      throw new UnsupportedOperationException("NYI");
    }
 
    public void registerKeyboardAction(Action action, KeyStroke keyStroke)

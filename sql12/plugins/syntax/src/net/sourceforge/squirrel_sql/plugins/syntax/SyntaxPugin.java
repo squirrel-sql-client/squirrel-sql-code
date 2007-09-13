@@ -77,30 +77,30 @@ public class SyntaxPugin extends DefaultSessionPlugin
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(SyntaxPugin.class);
 
+   static interface i18n
+   {
+      //i18n[SyntaxPlugin.touppercase=touppercase]
+      String TO_UPPER_CASE =
+         s_stringMgr.getString("SyntaxPlugin.touppercase");
+      //i18n[SyntaxPlugin.tolowercase=tolowercase]
+      String TO_LOWER_CASE =
+         s_stringMgr.getString("SyntaxPlugin.tolowercase");
+      //i18n[SyntaxPlugin.find=find]
+      String FIND = s_stringMgr.getString("SyntaxPlugin.find");
+      //i18n[SyntaxPlugin.replace=replace]
+      String REPLACE = s_stringMgr.getString("SyntaxPlugin.replace");
+      //i18n[SyntaxPlugin.autocorr=autocorr]
+      String AUTO_CORR = s_stringMgr.getString("SyntaxPlugin.autocorr");
+      //i18n[SyntaxPlugin.duplicateline=duplicateline]
+      String DUP_LINE = s_stringMgr.getString("SyntaxPlugin.duplicateline");
+      //i18n[SyntaxPlugin.comment=comment]
+      String COMMENT = s_stringMgr.getString("SyntaxPlugin.comment");
+      //i18n[SyntaxPlugin.uncomment=uncomment]
+      String UNCOMMENT = s_stringMgr.getString("SyntaxPlugin.uncomment");
 
-    private static interface i18n {
-        //i18n[SyntaxPlugin.touppercase=touppercase]
-        String TO_UPPER_CASE = 
-            s_stringMgr.getString("SyntaxPlugin.touppercase");    
-        //i18n[SyntaxPlugin.tolowercase=tolowercase]
-        String TO_LOWER_CASE = 
-            s_stringMgr.getString("SyntaxPlugin.tolowercase");        
-        //i18n[SyntaxPlugin.find=find]
-        String FIND = s_stringMgr.getString("SyntaxPlugin.find");
-        //i18n[SyntaxPlugin.replace=replace]
-        String REPLACE = s_stringMgr.getString("SyntaxPlugin.replace");
-        //i18n[SyntaxPlugin.autocorr=autocorr]
-        String AUTO_CORR = s_stringMgr.getString("SyntaxPlugin.autocorr");
-        //i18n[SyntaxPlugin.duplicateline=duplicateline]
-        String DUP_LINE = s_stringMgr.getString("SyntaxPlugin.duplicateline");
-        //i18n[SyntaxPlugin.comment=comment]
-        String COMMENT = s_stringMgr.getString("SyntaxPlugin.comment");
-        //i18n[SyntaxPlugin.uncomment=uncomment]
-        String UNCOMMENT = s_stringMgr.getString("SyntaxPlugin.uncomment");
-        
-    }
-    
-	/** Logger for this class. */
+   }
+
+   /** Logger for this class. */
 	private static final ILogger s_log = LoggerController.createLogger(SyntaxPugin.class);
 
 	/** SyntaxPreferences for new sessions. */
@@ -342,35 +342,12 @@ public class SyntaxPugin extends DefaultSessionPlugin
       session.addToToolbar(coll.get(ConfigureAutoCorrectAction.class));
 
       SessionInternalFrame sif = session.getSessionInternalFrame();
-      sif.addToToolsPopUp(i18n.FIND, coll.get(FindAction.class));
-      sif.addToToolsPopUp(i18n.REPLACE, coll.get(ReplaceAction.class));
-      sif.addToToolsPopUp(i18n.AUTO_CORR, coll.get(ConfigureAutoCorrectAction.class));
-      sif.addToToolsPopUp(i18n.DUP_LINE, coll.get(DuplicateLineAction.class));
-      sif.addToToolsPopUp(i18n.COMMENT, coll.get(CommentAction.class));
-      sif.addToToolsPopUp(i18n.UNCOMMENT, coll.get(UncommentAction.class));
 
       ISQLPanelAPI sqlPanelAPI = sif.getSQLPanelAPI();
       ISQLEntryPanel sep = sqlPanelAPI.getSQLEntryPanel();
       JComponent septc = sep.getTextComponent();
 
-      new AutoCorrector((JTextComponent) septc, this);
-
-
-      if (sep.getTextComponent() instanceof NetbeansSQLEditorPane)
-      {
-         NetbeansSQLEditorPane nbEdit = (NetbeansSQLEditorPane) septc;
-         SQLKit kit = (SQLKit) nbEdit.getEditorKit();
-
-         Action toUpperAction = kit.getActionByName(BaseKit.toUpperCaseAction);
-         toUpperAction.putValue(Resources.ACCELERATOR_STRING,
-            SQLSettingsInitializer.ACCELERATOR_STRING_TO_UPPER_CASE);
-         sif.addToToolsPopUp(i18n.TO_UPPER_CASE, toUpperAction);
-
-         Action toLowerAction = kit.getActionByName(BaseKit.toLowerCaseAction);
-         toLowerAction.putValue(Resources.ACCELERATOR_STRING,
-            SQLSettingsInitializer.ACCELERATOR_STRING_TO_LOWER_CASE);
-         sif.addToToolsPopUp(i18n.TO_LOWER_CASE, toLowerAction);
-      }
+      new ToolsPopupHandler(this).initToolsPopup(sif, coll);
 
       JMenuItem mnuComment = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(CommentAction.class));
       JMenuItem mnuUncomment = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(UncommentAction.class));
@@ -389,29 +366,9 @@ public class SyntaxPugin extends DefaultSessionPlugin
 		sqlInternalFrame.addToToolbar(replaceAction);
 		sqlInternalFrame.addToToolbar(coll.get(ConfigureAutoCorrectAction.class));
 
-		sqlInternalFrame.addToToolsPopUp(i18n.FIND , coll.get(FindAction.class));
-		sqlInternalFrame.addToToolsPopUp(i18n.REPLACE , coll.get(ReplaceAction.class));
-		sqlInternalFrame.addToToolsPopUp(i18n.AUTO_CORR , coll.get(ConfigureAutoCorrectAction.class));
-		sqlInternalFrame.addToToolsPopUp(i18n.DUP_LINE , coll.get(DuplicateLineAction.class));
-		sqlInternalFrame.addToToolsPopUp(i18n.COMMENT , coll.get(CommentAction.class));
-		sqlInternalFrame.addToToolsPopUp(i18n.UNCOMMENT , coll.get(UncommentAction.class));
+      new ToolsPopupHandler(this).initToolsPopup(sqlInternalFrame, coll);
 
 		ISQLPanelAPI sqlPanelAPI = sqlInternalFrame.getSQLPanelAPI();
-
-		new AutoCorrector(sqlPanelAPI.getSQLEntryPanel().getTextComponent(), this);
-
-		if (sqlPanelAPI.getSQLEntryPanel().getTextComponent() instanceof NetbeansSQLEditorPane)
-		{
-			NetbeansSQLEditorPane nbEdit = (NetbeansSQLEditorPane) sqlPanelAPI.getSQLEntryPanel().getTextComponent();
-			Action toUpperAction = ((SQLKit) nbEdit.getEditorKit()).getActionByName(BaseKit.toUpperCaseAction);
-			toUpperAction.putValue(Resources.ACCELERATOR_STRING, SQLSettingsInitializer.ACCELERATOR_STRING_TO_UPPER_CASE);
-			sqlInternalFrame.addToToolsPopUp(i18n.TO_UPPER_CASE, toUpperAction);
-
-			Action toLowerAction = ((SQLKit) nbEdit.getEditorKit()).getActionByName(BaseKit.toLowerCaseAction);
-			toLowerAction.putValue(Resources.ACCELERATOR_STRING, SQLSettingsInitializer.ACCELERATOR_STRING_TO_LOWER_CASE);
-			sqlInternalFrame.addToToolsPopUp(i18n.TO_LOWER_CASE, toLowerAction);
-		}
-
 
 		JMenuItem mnuComment = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(CommentAction.class));
 		JMenuItem mnuUncomment = sqlPanelAPI.addToSQLEntryAreaMenu(coll.get(UncommentAction.class));
@@ -422,8 +379,7 @@ public class SyntaxPugin extends DefaultSessionPlugin
 
 
 
-
-	/**
+   /**
 	 * Called when a session shutdown.
 	 *
 	 * @param	session	The session that is ending.
@@ -466,7 +422,7 @@ public class SyntaxPugin extends DefaultSessionPlugin
 		};
 	}
 
-	PluginResources getResources()
+	SyntaxPluginResources getResources()
 	{
 		return _resources;
 	}

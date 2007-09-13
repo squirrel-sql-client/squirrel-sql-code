@@ -168,4 +168,6 @@ public interface ISQLEntryPanel extends IHasIdentifier
 	void removeSQLTokenListener(SQLTokenListener tl);
 
 	void dispose();
+
+   ISession getSession();
 }

@@ -7,10 +7,13 @@ import javax.swing.SwingUtilities;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessorFactory;
+import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupAccessor;
+import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.NetbeansSQLEntryAreaFactory;
+import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.FindAction;
+import net.sourceforge.squirrel_sql.plugins.syntax.netbeans.ReplaceAction;
 import net.sourceforge.squirrel_sql.plugins.syntax.oster.OsterSQLEntryAreaFactory;
 
 
@@ -42,7 +45,7 @@ public class SQLEntryPanelFactoryProxy implements ISQLEntryPanelFactory
       _netbeansFactory.sessionEnding(session);
    }
 
-   public ISQLEntryPanel createSQLEntryPanel(final ISession session, HashMap<String, IParserEventsProcessorFactory> props)
+   public ISQLEntryPanel createSQLEntryPanel(final ISession session, HashMap<String, Object> props)
    {
       if (session == null)
       {
@@ -79,6 +82,10 @@ public class SQLEntryPanelFactoryProxy implements ISQLEntryPanelFactory
          newPnl = _originalFactory.createSQLEntryPanel(session, props);
       }
 
+      new ToolsPopupHandler(_syntaxPugin).initToolsPopup(props, newPnl);
+
+      new AutoCorrector(newPnl.getTextComponent(), _syntaxPugin);
+
       if(null == pnl || false == newPnl.getClass().equals(pnl.getClass()))
       {
          removePanel(session);
@@ -87,6 +94,7 @@ public class SQLEntryPanelFactoryProxy implements ISQLEntryPanelFactory
 
       return newPnl;
    }
+
 
    private SyntaxPreferences getPreferences(ISession session)
    {

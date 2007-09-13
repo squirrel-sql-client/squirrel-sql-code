@@ -8,6 +8,7 @@ import net.sourceforge.squirrel_sql.client.session.action.RedoAction;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SquirrelDefaultUndoManager;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessorFactory;
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.session.ToolsPopupAccessor;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 
 import javax.swing.*;
@@ -24,7 +25,7 @@ public class EntryPanelManagerBase
       _session = session;
    }
 
-   public void init(ISyntaxHighlightTokenMatcherFactory syntaxHighlightTokenMatcherFactory)
+   public void init(ISyntaxHighlightTokenMatcherFactory syntaxHighlightTokenMatcherFactory, ToolsPopupAccessor tpa)
    {
       HashMap props = new HashMap();
       props.put(IParserEventsProcessorFactory.class.getName(), null);
@@ -32,6 +33,11 @@ public class EntryPanelManagerBase
       if(null != syntaxHighlightTokenMatcherFactory)
       {
          props.put(ISyntaxHighlightTokenMatcherFactory.class.getName(), syntaxHighlightTokenMatcherFactory);
+      }
+
+      if(null != tpa)
+      {
+         props.put(ToolsPopupAccessor.class.getName(), tpa);
       }
 
 

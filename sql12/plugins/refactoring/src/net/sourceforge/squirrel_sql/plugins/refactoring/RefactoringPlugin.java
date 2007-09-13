@@ -199,8 +199,8 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
                //sqlInternalFrame.addSeparatorToToolbar();
                //sqlInternalFrame.addToToolbar(coll.get(CreateTableOfCurrentSQLAction.class));
 
-               //sqlInternalFrame.addToToolsPopUp("sql2table", coll.get(CreateTableOfCurrentSQLAction.class));
-               //sqlInternalFrame.addToToolsPopUp("sql2ins", coll.get(CreateDataScriptOfCurrentSQLAction.class));
+               //sqlInternalFrame.addToToolsPopup("sql2table", coll.get(CreateTableOfCurrentSQLAction.class));
+               //sqlInternalFrame.addToToolsPopup("sql2ins", coll.get(CreateDataScriptOfCurrentSQLAction.class));
            }
 
            public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)

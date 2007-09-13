@@ -59,7 +59,7 @@ public class NetbeansSQLEntryAreaFactory
 	 * @see net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory#createSQLEntryPanel()
 	 */
 	public ISQLEntryPanel createSQLEntryPanel(ISession session, 
-                                              HashMap<String, IParserEventsProcessorFactory> props)
+                                              HashMap<String, Object> props)
 		throws IllegalArgumentException
 	{
 		if (session == null)

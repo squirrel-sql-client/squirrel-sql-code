@@ -344,7 +344,12 @@ public class DefaultSQLEntryPanel extends BaseSQLEntryPanel
 		// Not implemented
 	}
 
-	private static class MyTextArea extends JTextArea
+   public ISession getSession()
+   {
+      return _session;
+   }
+
+   private static class MyTextArea extends JTextArea
 	{
 		private DefaultSQLEntryPanel _pnl;
 

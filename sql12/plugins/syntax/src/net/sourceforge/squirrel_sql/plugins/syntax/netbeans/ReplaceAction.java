@@ -22,6 +22,7 @@ public class ReplaceAction extends SquirrelAction implements ISQLPanelAction
 		StringManagerFactory.getStringManager(ReplaceAction.class);
 
    private ISession _session;
+   private ISQLEntryPanel _isqlEntryPanel;
 
    public ReplaceAction(IApplication app, SyntaxPluginResources rsrc)
 			throws IllegalArgumentException
@@ -29,25 +30,39 @@ public class ReplaceAction extends SquirrelAction implements ISQLPanelAction
 		super(app, rsrc);
 	}
 
-	public void actionPerformed(ActionEvent evt)
+   public ReplaceAction(IApplication app, SyntaxPluginResources rsrc, ISQLEntryPanel isqlEntryPanel)
+   {
+      this(app, rsrc);
+      _isqlEntryPanel = isqlEntryPanel;
+   }
+
+   public void actionPerformed(ActionEvent evt)
 	{
+      if(null != _isqlEntryPanel)
+      {
+         doActionPerformed(_isqlEntryPanel, evt);
+      }
       if(null != _session)
       {
          ISQLEntryPanel sqlEntryPanel = _session.getSQLPanelAPIOfActiveSessionWindow().getSQLEntryPanel();
-
-         if(false == sqlEntryPanel instanceof NetbeansSQLEntryPanel)
-         {
-            String msg =
-					//i18n[syntax.replaceNetbeansOnly=Replace is only available when the Netbeans editor is used.\nSee menu File --> New Session Properties --> Tab Syntax]
-					s_stringMgr.getString("syntax.replaceNetbeansOnly");
-            JOptionPane.showMessageDialog(_session.getApplication().getMainFrame(), msg);
-            return;
-         }
-
-         NetbeansSQLEntryPanel nsep = (NetbeansSQLEntryPanel) sqlEntryPanel;
-         nsep.showReplaceDialog(evt);
+         doActionPerformed(sqlEntryPanel, evt);
       }
 	}
+
+   private void doActionPerformed(ISQLEntryPanel sqlEntryPanel, ActionEvent evt)
+   {
+      if(false == sqlEntryPanel instanceof NetbeansSQLEntryPanel)
+      {
+         String msg =
+            //i18n[syntax.replaceNetbeansOnly=Replace is only available when the Netbeans editor is used.\nSee menu File --> New Session Properties --> Tab Syntax]
+            s_stringMgr.getString("syntax.replaceNetbeansOnly");
+         JOptionPane.showMessageDialog(_session.getApplication().getMainFrame(), msg);
+         return;
+      }
+
+      NetbeansSQLEntryPanel nsep = (NetbeansSQLEntryPanel) sqlEntryPanel;
+      nsep.showReplaceDialog(evt);
+   }
 
    public void setSQLPanel(ISQLPanelAPI panel)
    {
