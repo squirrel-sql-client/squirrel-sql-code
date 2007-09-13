@@ -22,21 +22,17 @@ import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
-import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
-import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
-import net.sourceforge.squirrel_sql.fw.gui.Dialogs;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
-
 import net.sourceforge.squirrel_sql.plugins.mssql.MssqlPlugin;
 
 public class ShowStatisticsAction extends SquirrelAction implements ISessionAction {
-	private ISession _session;
-	private final MssqlPlugin _plugin;
+
+    private static final long serialVersionUID = 1L;
+    transient private ISession _session;
+	transient private final MssqlPlugin _plugin;
     
     private final ITableInfo _tableInfo;
     private final String _indexName;
