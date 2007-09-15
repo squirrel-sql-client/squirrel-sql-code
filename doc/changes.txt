@@ -55,6 +55,9 @@ Derby's own ij command-line interpreter.
 
 Firedbird Plugin: Added triggers node for each table to display triggers.
 
+Informix Plugin: 1732161: Fixed Source code of procedures and triggers to work 
+with Informix version 7.3.1
+
 LAF Plugin: Added substance look and feel as an option.
 
 MySQL Plugin: 

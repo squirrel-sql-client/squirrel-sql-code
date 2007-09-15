@@ -101,7 +101,7 @@ public class InformixPlugin extends DefaultSessionPlugin {
      */
     public String getVersion()
     {
-        return "0.02";
+        return "0.03";
     }
 
     /**
