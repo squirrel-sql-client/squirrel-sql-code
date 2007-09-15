@@ -33,9 +33,20 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
  */
 public class ProcedureSourceTab extends InformixSourceTab
 {
-	/** SQL that retrieves the source of a stored procedure. */
+	/**
+     * SQL that retrieves the source of a stored procedure.
+     * 
+     * Note: seqno is technically not needed to display the source for the
+     * stored procedure, however, on some versions of Informix it is an error to
+     * order by a column that is not in the select list, yielding this
+     * exception:
+     * 
+     *      Error: ORDER BY column (seqno) must be in SELECT list. 
+     *      SQLState: IX000
+     *      ErrorCode: -309
+     */
 	private static String SQL =
-        "SELECT T1.procid, data " +
+        "SELECT T1.procid, T2.data, T2.seqno " +
         "FROM informix.sysprocedures AS T1, informix.sysprocbody AS T2 " +
         "WHERE procname = ? " +
         "AND T2.procid = T1.procid " +
@@ -43,7 +54,6 @@ public class ProcedureSourceTab extends InformixSourceTab
         "ORDER BY T1.procid, T2.seqno ";
     
 	/** Logger for this class. */
-    @SuppressWarnings("unused")
 	private final static ILogger s_log =
 		LoggerController.createLogger(ProcedureSourceTab.class);
 
@@ -53,10 +63,19 @@ public class ProcedureSourceTab extends InformixSourceTab
         sourceType = STORED_PROC_TYPE;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.BaseSourceTab#createStatement()
+	 */
+	@Override
 	protected PreparedStatement createStatement() throws SQLException
 	{
 		final ISession session = getSession();
 		final IDatabaseObjectInfo doi = getDatabaseObjectInfo();
+
+		if (s_log.isDebugEnabled()) {
+            s_log.debug("Running SQL: "+SQL);
+            s_log.debug("procname="+doi.getSimpleName());
+        }
 
 		ISQLConnection conn = session.getSQLConnection();
 		PreparedStatement pstmt = conn.prepareStatement(SQL);

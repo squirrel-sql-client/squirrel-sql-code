@@ -1,6 +1,11 @@
 Informix Plugin Change Log
 ==========================
 
+0.03
+====
+- 1732161 (Source code of procedures and triggers) Fixed to work with 
+Informix version 7.31, which requires that "ORDER BY" columns also appear in the
+"SELECT" clause. 
 
 0.02
 ====

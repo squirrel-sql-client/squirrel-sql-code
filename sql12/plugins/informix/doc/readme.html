@@ -106,11 +106,12 @@ the following picture, the catalog is &quot;dbcopy&quot; and the schema is
 The source code for stored procedures is derived by the following query:
 <p>
 <pre>
-	SELECT T1.procid, data 
+	SELECT T1.procid, T2.data, T2.seqno 
 	FROM informix.sysprocedures AS T1, informix.sysprocbody AS T2 
 	WHERE procname = ? 
 	AND T2.procid = T1.procid 
 	AND datakey = 'T' 
+	ORDER BY T1.procid, T2.seqno
 </pre>
 
 <!-- SEQUENCE -->
@@ -164,7 +165,7 @@ picture:
 The source code for triggers is derived from the following query:
 <p>
 <pre>
-	SELECT  data 
+	SELECT  T2.data, T2.datakey, T2.seqno 
 	FROM    informix.systriggers AS T1, informix.systrigbody AS T2 
 	WHERE   trigname = ? 
 	AND     T2.trigid = T1.trigid 
