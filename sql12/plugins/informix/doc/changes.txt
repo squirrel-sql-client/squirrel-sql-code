@@ -6,6 +6,9 @@ Informix Plugin Change Log
 - 1732161 (Source code of procedures and triggers) Fixed to work with 
 Informix version 7.31, which requires that "ORDER BY" columns also appear in the
 "SELECT" clause. 
+- When executing an SQL statement with a syntax error, the driver is now asked
+to provide the position of the error in the statement.  If it is available, the
+cursor is moved to the position of the incorrect syntax.
 
 0.02
 ====
