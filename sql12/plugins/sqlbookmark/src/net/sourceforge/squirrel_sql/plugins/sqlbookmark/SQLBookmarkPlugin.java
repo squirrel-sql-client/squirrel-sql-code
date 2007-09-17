@@ -40,15 +40,12 @@ import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
-import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -225,6 +222,12 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
       this.bookmarkManager = bookmarks;
    }
 
+
+   public Object getExternalService()
+   {
+      return new BoomarksExternalServiceImpl(this);
+   }
+
    /**
     * Initialize this plugin.
     */
@@ -298,7 +301,7 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
             sqlInternalFrame.addToToolsPopUp("bookmarkedit", coll.get(EditBookmarksAction.class));
 
             ISQLPanelAPI sqlPaneAPI = sqlInternalFrame.getSQLPanelAPI();
-            CompleteBookmarkAction cba = new CompleteBookmarkAction(sess.getApplication(), resources, sqlPaneAPI.getSQLEntryPanel(), sess, SQLBookmarkPlugin.this);
+            CompleteBookmarkAction cba = new CompleteBookmarkAction(sess.getApplication(), resources, sqlPaneAPI.getSQLEntryPanel(), SQLBookmarkPlugin.this);
             JMenuItem item = sqlPaneAPI.addToSQLEntryAreaMenu(cba);
             resources.configureMenuItem(cba, item);
             JComponent comp = sqlPaneAPI.getSQLEntryPanel().getTextComponent();
@@ -327,7 +330,6 @@ public class SQLBookmarkPlugin extends DefaultSessionPlugin
          new CompleteBookmarkAction(session.getApplication(),
             resources,
             sqlPaneAPI.getSQLEntryPanel(),
-            session,
             SQLBookmarkPlugin.this);
       JMenuItem item = sqlPaneAPI.addToSQLEntryAreaMenu(cba);
       resources.configureMenuItem(cba, item);
