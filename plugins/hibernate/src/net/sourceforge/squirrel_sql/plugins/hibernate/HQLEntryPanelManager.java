@@ -37,40 +37,53 @@ public class HQLEntryPanelManager extends EntryPanelManagerBase
       initToolsPopUp();
       tpap.apply(this);
       initCodeCompletion();
+      initBookmarks();
 
 
-      // i18n[HQLEntryPanelManager,quoteHQL=Quote HQL]
-      AbstractAction quoteHql = new AbstractAction(s_stringMgr.getString("HQLEntryPanelManager,quoteHQL"))
+      // i18n[HQLEntryPanelManager.quoteHQL=Quote HQL]
+      String strQuote = s_stringMgr.getString("HQLEntryPanelManager.quoteHQL");
+      AbstractAction quoteHql = new AbstractAction(strQuote)
       {
          public void actionPerformed(ActionEvent e)
          {
             onQuoteHQL();
          }
       };
-      quoteHql.putValue(Action.SHORT_DESCRIPTION, "Quote HQL");
+      quoteHql.putValue(Action.SHORT_DESCRIPTION, strQuote);
       addToSQLEntryAreaMenu(quoteHql, "quote");
 
-      // i18n[HQLEntryPanelManager,quoteHQLsb=Quote HQL sb]
-      AbstractAction quoteSbHql = new AbstractAction(s_stringMgr.getString("HQLEntryPanelManager,quoteHQLsb"))
+      // i18n[HQLEntryPanelManager.quoteHQLsb=Quote HQL as StingBuffer]
+      String strQuoteSb = s_stringMgr.getString("HQLEntryPanelManager.quoteHQLsb");
+      AbstractAction quoteSbHql = new AbstractAction(strQuoteSb)
       {
          public void actionPerformed(ActionEvent e)
          {
             onQuoteHQLSb();
          }
       };
-      quoteSbHql.putValue(Action.SHORT_DESCRIPTION, "Quote HQL as StringBuffer");
+      quoteSbHql.putValue(Action.SHORT_DESCRIPTION, strQuoteSb);
       addToSQLEntryAreaMenu(quoteSbHql, "quotesb");
 
-      // i18n[HQLEntryPanelManager,unquoteHQL=Unquote HQL]
-      AbstractAction unquoteHql = new AbstractAction(s_stringMgr.getString("HQLEntryPanelManager,unquoteHQL"))
+      // i18n[HQLEntryPanelManager.unquoteHQL=Unquote HQL]
+      String strUnquote = s_stringMgr.getString("HQLEntryPanelManager.unquoteHQL");
+      AbstractAction unquoteHql = new AbstractAction(strUnquote)
       {
          public void actionPerformed(ActionEvent e)
          {
             onUnquoteHQL();
          }
       };
-      unquoteHql.putValue(Action.SHORT_DESCRIPTION, "Unquote HQL");
+      unquoteHql.putValue(Action.SHORT_DESCRIPTION, strUnquote);
       addToSQLEntryAreaMenu(unquoteHql, "unquote");
+   }
+
+
+   private void initBookmarks()
+   {
+      HQLBookmarksAction hba = new HQLBookmarksAction(getSession().getApplication(), _resources, getEntryPanel());
+      JMenuItem item = addToSQLEntryAreaMenu(hba, "bookmarkselect");
+      _resources.configureMenuItem(hba, item);
+      registerKeyboardAction(hba, _resources.getKeyStroke(hba));
    }
 
    private void initToolsPopUp()

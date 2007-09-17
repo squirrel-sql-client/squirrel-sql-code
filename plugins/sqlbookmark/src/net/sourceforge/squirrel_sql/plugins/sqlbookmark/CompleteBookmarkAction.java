@@ -34,18 +34,16 @@ public class CompleteBookmarkAction extends SquirrelAction
 {
    private ISQLEntryPanel _sqlEntryPanel;
    private Completor _cc;
-   private ISession _session;
    private SQLBookmarkPlugin _plugin;
 
 
-   public CompleteBookmarkAction(IApplication app, PluginResources rsrc, ISQLEntryPanel sqlEntryPanel, ISession session, SQLBookmarkPlugin plugin)
+   public CompleteBookmarkAction(IApplication app, PluginResources rsrc, ISQLEntryPanel sqlEntryPanel, SQLBookmarkPlugin plugin)
    {
       super(app, rsrc);
       _sqlEntryPanel = sqlEntryPanel;
-      _session = session;
       _plugin = plugin;
 
-      _cc = new Completor((JTextComponent)_sqlEntryPanel.getTextComponent(), plugin.getBookmarkManager(), new Color(204,255,255), true);
+      _cc = new Completor(_sqlEntryPanel.getTextComponent(), plugin.getBookmarkManager(), new Color(204,255,255), true);
 
       _cc.addCodeCompletorListener
       (
@@ -68,6 +66,6 @@ public class CompleteBookmarkAction extends SquirrelAction
    private void performCompletionSelected(CompletionInfo completion)
    {
       Bookmark bm = ((BookmarkCompletionInfo)completion).getBookmark();
-      new RunBookmarkCommand(getApplication().getMainFrame(), _session, bm, _plugin, _sqlEntryPanel).execute();
+      new RunBookmarkCommand(getApplication().getMainFrame(), _sqlEntryPanel.getSession(), bm, _plugin, _sqlEntryPanel).execute();
 	}
 }
