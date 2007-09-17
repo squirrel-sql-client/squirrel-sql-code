@@ -35,6 +35,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.informix.exception.InformixExceptionFormatter;
 import net.sourceforge.squirrel_sql.plugins.informix.exp.InformixTableIndexExtractorImpl;
 import net.sourceforge.squirrel_sql.plugins.informix.exp.InformixTableTriggerExtractorImpl;
 import net.sourceforge.squirrel_sql.plugins.informix.exp.SchemaExpander;
@@ -196,7 +197,9 @@ public class InformixPlugin extends DefaultSessionPlugin {
                updateTreeApi(session);
            }
        });
-
+       InformixExceptionFormatter formatter = 
+           new InformixExceptionFormatter(session);
+       session.setExceptionFormatter(formatter);
        return new PluginSessionCallback()
        {
            public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
@@ -209,8 +212,6 @@ public class InformixPlugin extends DefaultSessionPlugin {
                // Supports Session main window only
            }
        };
-
-
    }
 
     @Override

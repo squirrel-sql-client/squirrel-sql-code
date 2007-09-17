@@ -49,14 +49,18 @@ DB2Plugin:
    unavailable instead of merely displaying the word "null".
 		   
 Derby Plugin: New custom QueryTokenizer which allows Derby sessions to give the 
-command:  run '<abs-path-to-script>'
-This reads in the file and executes it's statements.  This is supported in 
-Derby's own ij command-line interpreter.
+              command:  run '<abs-path-to-script>'
+              This reads in the file and executes it's statements.  This is 
+              supported in Derby's own ij command-line interpreter.
 
-Firedbird Plugin: Added triggers node for each table to display triggers.
+Firebird Plugin: Added triggers node for each table to display triggers.
 
-Informix Plugin: 1732161: Fixed Source code of procedures and triggers to work 
-with Informix version 7.3.1
+Informix Plugin: 
+ - 1732161: Fixed Source code of procedures and triggers to work 
+            with Informix version 7.3.1
+ - When executing an SQL statement with a syntax error, the driver is now asked
+   to provide the position of the error in the statement.  If it is available, 
+   the cursor is moved to the position of the incorrect syntax.
 
 LAF Plugin: Added substance look and feel as an option.
 
