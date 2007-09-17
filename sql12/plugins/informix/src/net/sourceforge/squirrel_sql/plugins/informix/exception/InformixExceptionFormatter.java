@@ -87,6 +87,7 @@ public class InformixExceptionFormatter extends SessionAdapter implements ISessi
         this.sqlEntryPanel = 
             session.getSQLPanelAPIOfActiveSessionWindow().getSQLEntryPanel();
         this._session = session;
+        session.getApplication().getSessionManager().addSessionListener(this);
     }
     
     /**
@@ -95,7 +96,7 @@ public class InformixExceptionFormatter extends SessionAdapter implements ISessi
     public String format(Throwable t) throws Exception {
         StringBuilder msg = new StringBuilder();
         msg.append(defaultFormatter.format(t));
-        if (sqlcon != null) {
+        if (sqlcon != null && sqlcon.getConnection() != null) {
             String offset = getSqlErrorOffset();
             msg.append("\n");
             msg.append(i18n.positionLabel);
@@ -108,8 +109,9 @@ public class InformixExceptionFormatter extends SessionAdapter implements ISessi
                     int newPosition = start + offsetNum - 1;
                     sqlEntryPanel.setCaretPosition(newPosition);
                 }
-            }
-            
+            }   
+        } else {
+            msg.append(i18n.NOT_AVAILABLE_MSG);
         }
         return msg.toString();
     }
@@ -175,8 +177,10 @@ public class InformixExceptionFormatter extends SessionAdapter implements ISessi
      * @see net.sourceforge.squirrel_sql.client.session.event.ISessionListener#allSessionsClosed()
      */
     public void allSessionsClosed() {
+        _session.getApplication().getSessionManager().removeSessionListener(this);
         _session = null;
         sqlcon = null;
+        
     }
 
     /**
@@ -218,6 +222,7 @@ public class InformixExceptionFormatter extends SessionAdapter implements ISessi
      */
     public void sessionClosed(SessionEvent evt) {
         if (evt.getSession() == _session) {
+            _session.getApplication().getSessionManager().removeSessionListener(this);
             _session = null;
             sqlcon = null;
         }
@@ -228,6 +233,7 @@ public class InformixExceptionFormatter extends SessionAdapter implements ISessi
      */
     public void sessionClosing(SessionEvent evt) {
         if (evt.getSession() == _session) {
+            _session.getApplication().getSessionManager().removeSessionListener(this);
             _session = null;
             sqlcon = null;
         }        
