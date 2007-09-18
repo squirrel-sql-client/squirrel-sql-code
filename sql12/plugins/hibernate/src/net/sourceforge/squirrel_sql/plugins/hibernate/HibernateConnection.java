@@ -8,6 +8,10 @@ import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.HibernatePropertyI
 
 import java.net.URLClassLoader;
 import java.util.*;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 
 import org.hibernate.persister.entity.AbstractEntityPersister;
 
@@ -157,5 +161,13 @@ public class HibernateConnection
 
          _mappedClassInfos.add(new MappedClassInfo(mappedClass.getName(), tableName, identifierPropInfo, infos));
       }
+   }
+
+
+   public Connection getSqlConnection()
+   {
+      ReflectionCaller rc = new ReflectionCaller(_sessionFactoryImpl);
+
+      return (Connection) rc.callMethod("openSession").callMethod("getJDBCContext").callMethod("getConnectionManager").callMethod("getConnection").getCallee();
    }
 }

@@ -8,7 +8,7 @@ import net.sourceforge.squirrel_sql.plugins.hibernate.IHibernateConnectionProvid
 import net.sourceforge.squirrel_sql.plugins.hibernate.ConnectionListener;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HqlSyntaxHighlightTokenMatcherProxy;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernateConnection;
-import net.sourceforge.squirrel_sql.plugins.hibernate.mapping.MappedClassInfo;
+import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateConfiguration;
 
 import java.util.ArrayList;
 
@@ -29,7 +29,7 @@ public class HQLCodeCompletorModel implements ICompletorModel
 
       _hibernateConnectionProvider.addConnectionListener(new ConnectionListener()
       {
-         public void connectionOpened(HibernateConnection con)
+         public void connectionOpened(HibernateConnection con, HibernateConfiguration cfg)
          {
             init();
          }
