@@ -1,5 +1,7 @@
 package net.sourceforge.squirrel_sql.plugins.hibernate.configuration;
 
+import java.io.File;
+
 public class HibernateConfiguration
 {
    private String _provider;
@@ -74,5 +76,24 @@ public class HibernateConfiguration
    public String getPersistenceUnitName()
    {
       return _persistenceUnitName;
+   }
+
+   public String classpathAsString()
+   {
+      if(0 == _classpathEntries.length)
+      {
+         return "";
+      }
+      else
+      {
+         String ret = _classpathEntries[0];
+
+         for (String _classpathEntry : _classpathEntries)
+         {
+            ret += File.pathSeparator + _classpathEntry;
+         }
+
+         return ret;
+      }
    }
 }

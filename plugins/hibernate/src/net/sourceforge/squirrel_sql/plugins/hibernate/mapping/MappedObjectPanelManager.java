@@ -5,6 +5,7 @@ import net.sourceforge.squirrel_sql.plugins.hibernate.ConnectionListener;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernateConnection;
 import net.sourceforge.squirrel_sql.plugins.hibernate.HibernatePluginResources;
 import net.sourceforge.squirrel_sql.plugins.hibernate.IHibernateConnectionProvider;
+import net.sourceforge.squirrel_sql.plugins.hibernate.configuration.HibernateConfiguration;
 
 import javax.swing.*;
 import javax.swing.event.TreeExpansionEvent;
@@ -13,7 +14,6 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ public class MappedObjectPanelManager
       _panel = new MappedObjectPanel(_detailPanelController.getDetailComponent());
 
 
-      _root = new DefaultMutableTreeNode("Mapping");
+      _root = new DefaultMutableTreeNode(new MappingRoot());
       _panel.objectTree.setModel(new DefaultTreeModel(_root));
 
       _panel.objectTree.setCellRenderer(new MappingTreeCellRenderer(resource));
@@ -73,8 +73,9 @@ public class MappedObjectPanelManager
 
       _connectionProvider.addConnectionListener(new ConnectionListener()
       {
-         public void connectionOpened(HibernateConnection con)
+         public void connectionOpened(HibernateConnection con, HibernateConfiguration cfg)
          {
+            initRoot(con, cfg);
             initTree(con);
          }
 
@@ -96,6 +97,14 @@ public class MappedObjectPanelManager
 
    }
 
+   private void initRoot(HibernateConnection con, HibernateConfiguration cfg)
+   {
+      MappingRoot mr = (MappingRoot) _root.getUserObject();
+
+      mr.init(con, cfg);
+
+   }
+
    private void onChkQualified()
    {
       HibernateConnection con = _connectionProvider.getHibernateConnection();
@@ -108,25 +117,19 @@ public class MappedObjectPanelManager
       _root.removeAllChildren();
 
       initTree(con);
-
-//      DefaultTreeModel treeModel = (DefaultTreeModel) _panel.objectTree.getModel();
-//
-//      _panel.objectTree.setModel(null);
-//      _panel.objectTree.setModel(treeModel);
-
    }
 
    private void onTreeSelectionChanged(TreeSelectionEvent e)
    {
       DefaultMutableTreeNode n = (DefaultMutableTreeNode) e.getPath().getLastPathComponent();
 
-      if(null != n && n.getUserObject() instanceof MappedClassInfoTreeWrapper)
+      if(null != n && null != n.getUserObject())
       {
-         _detailPanelController.selectionChanged((MappedClassInfoTreeWrapper)n.getUserObject());
+         _detailPanelController.selectionChanged(n.getUserObject());
       }
       else
       {
-         _detailPanelController.selectionChanged(null);
+         _detailPanelController.clearDetail();
       }
    }
 
@@ -161,9 +164,12 @@ public class MappedObjectPanelManager
 
    private void onConnectionClosed()
    {
+      MappingRoot mr = (MappingRoot) _root.getUserObject();
+      mr.clear();
+
       _root.removeAllChildren();
       nodeStructurChanged(_root);
-      _detailPanelController.selectionChanged(null);
+      _detailPanelController.clearDetail();
    }
 
    private void initTree(HibernateConnection con)

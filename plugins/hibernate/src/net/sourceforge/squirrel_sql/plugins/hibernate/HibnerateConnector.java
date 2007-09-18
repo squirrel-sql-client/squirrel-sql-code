@@ -80,7 +80,7 @@ public class HibnerateConnector
          }
 
          HibernateConnection con = new HibernateConnection(sessionFactoryImpl, cl);
-         sendConnection(con);
+         sendConnection(con, cfg);
              
          Thread.currentThread().setContextClassLoader(null);
 
@@ -97,12 +97,13 @@ public class HibnerateConnector
       }
    }
    
-   private void sendConnection(final HibernateConnection con) {
+   private void sendConnection(final HibernateConnection con, final HibernateConfiguration cfg)
+   {
        SwingUtilities.invokeLater(new Runnable()
        {
           public void run()
           {
-             _hibnerateConnectorListener.connected(con);
+             _hibnerateConnectorListener.connected(con, cfg);
           }
        });       
    }

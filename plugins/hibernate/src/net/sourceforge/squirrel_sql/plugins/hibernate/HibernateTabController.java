@@ -67,9 +67,9 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
 
          _hibnerateConnector = new HibnerateConnector(new HibnerateConnectorListener()
          {
-            public void connected(HibernateConnection con)
+            public void connected(HibernateConnection con, HibernateConfiguration cfg)
             {
-               onConnected(con);
+               onConnected(con, cfg);
             }
 
             public void connectFailed(Throwable t)
@@ -227,7 +227,7 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
       }
    }
 
-   private void onConnected(HibernateConnection con)
+   private void onConnected(HibernateConnection con, HibernateConfiguration cfg)
    {
       _con = con;
       _panel.btnConnected.setIcon(_resource.getIcon(HibernatePluginResources.IKeys.CONNECTED_IMAGE));
@@ -236,7 +236,7 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
 
       for (ConnectionListener listener : _listeners)
       {
-         listener.connectionOpened(con);
+         listener.connectionOpened(con, cfg);
       }
 
    }
@@ -248,10 +248,6 @@ public class HibernateTabController implements IMainPanelTab, IHibernateTabContr
       _panel.btnConnected.setSelected(false);
       _session.showErrorMessage(t);
       s_log.error(t);
-      if (s_log.isDebugEnabled()) {
-          t.printStackTrace();
-      }
-      
       _con = null;
       _hqlPanelController.setConnection(null);
 
