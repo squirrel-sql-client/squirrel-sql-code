@@ -179,9 +179,20 @@ public class ResultSetReader
 			int idx = _columnIndices != null ? _columnIndices[i] : i + 1;
 			try
 			{
-				final int columnType = _rsmd.getColumnType(idx);
-				final String columnTypeName = _rsmd.getColumnTypeName(idx);
-				//final String columnClassName = _rsmd.getColumnClassName(idx);
+				int columnType = _rsmd.getColumnType(idx);
+
+            String columnTypeName;
+            try
+            {
+               // Fails on DB2 8.1 for Linux.
+               columnTypeName = _rsmd.getColumnTypeName(idx);
+            }
+            catch (SQLException e)
+            {
+               columnTypeName = _rsmd.getColumnClassName(idx);
+            }
+
+
 				switch (columnType)
 				{
 					case Types.NULL:
