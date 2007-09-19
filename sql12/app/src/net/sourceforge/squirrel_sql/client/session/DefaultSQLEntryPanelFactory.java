@@ -38,7 +38,7 @@ public class DefaultSQLEntryPanelFactory implements ISQLEntryPanelFactory
     * @throws	IllegalArgumentException
 	 * 			Thrown if <TT>null</TT> <TT>ISession</TT> passed.
 	 */
-	public ISQLEntryPanel createSQLEntryPanel(ISession session, HashMap props)
+	public ISQLEntryPanel createSQLEntryPanel(ISession session, HashMap<String, Object> props)
 	{
 		if (session == null)
 		{
