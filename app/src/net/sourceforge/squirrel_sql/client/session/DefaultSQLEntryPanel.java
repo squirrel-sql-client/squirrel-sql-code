@@ -21,7 +21,6 @@ import java.awt.Font;
 import java.awt.dnd.DropTarget;
 import java.awt.event.MouseListener;
 
-import javax.swing.JComponent;
 import javax.swing.JTextArea;
 import javax.swing.event.CaretListener;
 import javax.swing.event.UndoableEditListener;
