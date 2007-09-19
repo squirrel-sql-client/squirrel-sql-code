@@ -225,4 +225,12 @@ public class MockSQLEntryPanel implements ISQLEntryPanel {
 		return null;
 	}
 
+    /**
+     * @see net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel#getSession()
+     */
+    public ISession getSession() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }
