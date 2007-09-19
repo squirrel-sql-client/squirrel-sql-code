@@ -75,15 +75,7 @@ public class DefaultExceptionFormatter implements ExceptionFormatter {
         if (customMessage != null) {
             result.append(customMessage);
         } else {
-            if (cause instanceof DataTruncation) {
-                result.append(getDataTruncationMessage((DataTruncation)cause));
-            } else if (cause instanceof SQLWarning){
-                result.append(getSQLWarningMessage((SQLWarning)cause));
-            } else if (cause instanceof SQLException) {
-                result.append(getSQLExceptionMessage((SQLException)cause));
-            } else {
-                result.append(cause.toString());
-            }
+            result.append(defaultFormatSQLException(cause));
         }
         if (postError != null && !"".equals(postError)) {
             result.append("\n");
@@ -93,6 +85,20 @@ public class DefaultExceptionFormatter implements ExceptionFormatter {
         return result.toString();
     }
 
+    public String defaultFormatSQLException(Throwable cause) {
+        StringBuilder result = new StringBuilder();
+        if (cause instanceof DataTruncation) {
+            result.append(getDataTruncationMessage((DataTruncation)cause));
+        } else if (cause instanceof SQLWarning){
+            result.append(getSQLWarningMessage((SQLWarning)cause));
+        } else if (cause instanceof SQLException) {
+            result.append(getSQLExceptionMessage((SQLException)cause));
+        } else {
+            result.append(cause.toString());
+        }
+        return result.toString();
+    }
+    
     
     /**
      * @see net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter#formatsException(java.lang.Throwable)
