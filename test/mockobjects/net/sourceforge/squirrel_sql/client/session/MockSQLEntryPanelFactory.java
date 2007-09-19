@@ -21,7 +21,7 @@ public class MockSQLEntryPanelFactory implements ISQLEntryPanelFactory {
      * @see net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory#createSQLEntryPanel(net.sourceforge.squirrel_sql.client.session.ISession, java.util.HashMap)
      */
     public ISQLEntryPanel createSQLEntryPanel(ISession session, 
-                                              HashMap<String, IParserEventsProcessorFactory> props) {
+                                              HashMap<String, Object> props) {
         return createSQLEntryPanel(session);
     }
 
