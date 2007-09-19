@@ -166,6 +166,55 @@ public class ResultSetReader
 	}
 
 	/**
+     * Attempt to get the column type name - for some drivers this results in an
+     * SQLException. Log an INFO message if this is unavailable.
+     * 
+     * @param idx
+     *        the column index to get the type name for.
+     * 
+     * @return the type name of the column, or the Java class, or "Unavailable"
+     *         if neither are available.
+     */
+	private String safelyGetColumnTypeName(int idx) {
+	    String columnTypeName = null;
+        try
+        {
+           /*
+            * Fails on DB2 8.1 for Linux 
+            * However, Windows 8.1 fixpak 14 driver (2.10.52) works without 
+            * exception
+            * Also, Linux 9.0.1 server with 3.1.57 driver works fine as well
+            */ 
+           columnTypeName = _rsmd.getColumnTypeName(idx);
+        }
+        catch (SQLException e)
+        {
+           if (s_log.isInfoEnabled()) {
+               s_log.info("doRead: ResultSetMetaData.getColumnTypeName("+
+                   idx+") threw an unexpected exception - "+e.getMessage());
+               s_log.info("Unable to determine column type name so " +
+                    "any custom types provided by plugins will be " +
+                    "unavailable.  This is a driver bug.");
+           }
+        }
+        if (columnTypeName == null) {
+            try {
+                columnTypeName = _rsmd.getColumnClassName(idx);
+            } catch (SQLException e) {
+                if (s_log.isInfoEnabled()) {
+                    s_log.info("doRead: ResultSetMetaData.getColumnClassName("+
+                        idx+") threw an unexpected exception - "+e.getMessage());
+                    
+                }
+            }
+        }
+        if (columnTypeName == null) {
+            columnTypeName = "Unavailable";
+        }
+        return columnTypeName;
+	}
+	
+	/**
 	 * Method used to read data for all Tabs except the ContentsTab, where
 	 * the data is used only for reading.
 	 * The only data read in the non-ContentsTab tabs is Meta-data about the DB,
@@ -180,18 +229,7 @@ public class ResultSetReader
 			try
 			{
 				int columnType = _rsmd.getColumnType(idx);
-
-            String columnTypeName;
-            try
-            {
-               // Fails on DB2 8.1 for Linux.
-               columnTypeName = _rsmd.getColumnTypeName(idx);
-            }
-            catch (SQLException e)
-            {
-               columnTypeName = _rsmd.getColumnClassName(idx);
-            }
-
+				String columnTypeName = safelyGetColumnTypeName(idx);
 
 				switch (columnType)
 				{
