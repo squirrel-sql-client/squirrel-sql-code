@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -217,9 +218,14 @@ public class I18nProps extends Object
         {
             // These files contain images etc. We try to filter out these props.
             Properties ret = getProperties();
-            
-            for (Object obj : ret.keySet()) {
-                String key = (String) obj;
+
+
+            // Do not change this way to iterate.
+            // Changing to ret.keySet().iterator() caused bug #1787731
+            // The save way would be not to use  ret.remove(key) inside the loop.
+            for(Enumeration e=ret.keys(); e.hasMoreElements();)
+            {
+                String key = (String) e.nextElement();
 
                 if(key.endsWith(".image") ||
                     key.endsWith(".rolloverimage") ||
