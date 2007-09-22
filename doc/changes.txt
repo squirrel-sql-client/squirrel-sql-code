@@ -1,7 +1,14 @@
 DBCopy Change Log
 =================
 
-1.11 (??/??/??)
+1.12
+====
+ - Copy thread will wait for the dialog record progress bar to be updated 
+   before continuing to copy records.
+ - Fixed bug which caused cursors to remain open in the source database after
+   the copy operation was complete. 
+ 
+1.11
 ====
 If the source/dest database is Oracle, and the type of column being copied is 
 DATE, then treat it like a TIMESTAMP for reading or writing the value.  Oracle 
