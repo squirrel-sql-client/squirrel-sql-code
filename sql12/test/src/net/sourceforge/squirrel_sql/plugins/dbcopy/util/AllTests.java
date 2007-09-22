@@ -24,7 +24,6 @@ import junit.framework.TestSuite;
 public class AllTests extends TestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite("dbcopy util tests");
-		suite.addTestSuite(CompatTest.class);
         suite.addTestSuite(DBUtilTest.class);
 		return suite;
 	}

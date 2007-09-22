@@ -54,7 +54,6 @@ import net.sourceforge.squirrel_sql.plugins.dbcopy.event.StatementEvent;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.event.TableEvent;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.DBCopyPreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.PreferencesManager;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.util.Compat;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.util.DBUtil;
 
 import org.hibernate.MappingException;
@@ -240,8 +239,11 @@ public class CopyExecutor extends I18NBaseObject {
             return;
         }         
         end = System.currentTimeMillis();
-        Compat.reloadSchema(prov.getCopyDestSession(), 
-        					prov.getDestSelectedDatabaseObject());	
+        
+        ISession session = prov.getCopyDestSession();
+        session.getSchemaInfo().reload(prov.getDestSelectedDatabaseObject());
+        session.getSchemaInfo().fireSchemaInfoUpdate();
+
         notifyCopyFinished();
     }
     
