@@ -41,7 +41,6 @@ import net.sourceforge.squirrel_sql.plugins.dbcopy.actions.CopyTableAction;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.actions.PasteTableAction;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.gui.DBCopyGlobalPreferencesTab;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.PreferencesManager;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.util.Compat;
 
 /**
  * The class that sets up the various resources required by SQuirreL to 
@@ -68,7 +67,7 @@ public class DBCopyPlugin extends DefaultSessionPlugin
      * @see net.sourceforge.squirrel_sql.client.plugin.ISessionPlugin#sessionStarted(net.sourceforge.squirrel_sql.client.session.ISession)
      */
     public PluginSessionCallback sessionStarted(final ISession session) {
-        IObjectTreeAPI api = Compat.getIObjectTreeAPI(session, this);
+        IObjectTreeAPI api = session.getObjectTreeAPIOfActiveSessionWindow();
         addMenuItemsToContextMenu(api);        
         return new DBCopyPluginSessionCallback(this);
     }
@@ -236,13 +235,11 @@ public class DBCopyPlugin extends DefaultSessionPlugin
     
     private void addToPopup(IObjectTreeAPI api, ActionCollection coll) {
 
-        //api.addToPopup(DatabaseObjectType.TABLE_TYPE_DBO,
-		//           coll.get(CopyTableAction.class));
-    	Compat.addToPopupForTableFolder(api, coll.get(CopyTableAction.class));
+        api.addToPopup(DatabaseObjectType.TABLE_TYPE_DBO,
+                       coll.get(CopyTableAction.class));
     	
-        //api.addToPopup(DatabaseObjectType.TABLE_TYPE_DBO,
-	    //       coll.get(PasteTableAction.class));
-        Compat.addToPopupForTableFolder(api, coll.get(PasteTableAction.class));
+        api.addToPopup(DatabaseObjectType.TABLE_TYPE_DBO,
+	                   coll.get(PasteTableAction.class));
         
     	// Copy action object tree types
         api.addToPopup(DatabaseObjectType.TABLE, 
