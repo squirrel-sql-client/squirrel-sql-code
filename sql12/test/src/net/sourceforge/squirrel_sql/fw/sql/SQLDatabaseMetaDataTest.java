@@ -25,12 +25,10 @@ import static org.easymock.EasyMock.replay;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLTestCase;
-import net.sourceforge.squirrel_sql.mo.sql.MockDatabaseMetaData;
-
-import com.mockobjects.sql.MockConnection2;
 
 
 /**
@@ -41,79 +39,67 @@ import com.mockobjects.sql.MockConnection2;
 public class SQLDatabaseMetaDataTest extends BaseSQuirreLTestCase {
 
 	SQLDatabaseMetaData iut = null;
-    SQLDatabaseMetaData pg_tt_test = null;
-	MockConnection2 con = null;
-	MockDatabaseMetaData md = null;
 	
-    // postgres table types test
-    java.sql.Connection pg_con = null;
-    ISQLConnection pg_sql_con = null;
-    ISQLDriver pg_driver = null;
-    DatabaseMetaData pg_jmd = null;
-    ResultSet pg_tableTypesRS = null;
+	/* Mock Objects */
+	Connection mockConnection = null;
+    ISQLConnection mockSqlConnection = null;
+    DatabaseMetaData mockDatabaseMetaData = null;
     
 	protected void setUp() throws Exception {
 		super.setUp();
-		con = new MockConnection2();
-		md = new MockDatabaseMetaData("aCatalog", "aSchema");
-		con.setupMetaData(md);
-		ISQLConnection scon = new SQLConnection(con, null, null);
-		iut = new SQLDatabaseMetaData(scon);
-		md.setCatalogs(new String[] {"aCatalog"}, iut);
-		md.setSchemas(new String[] {"aSchema"}, iut);
+        
+        mockDatabaseMetaData = createMock(DatabaseMetaData.class);
+        expect(mockDatabaseMetaData.getDatabaseProductName()).andReturn("PostgreSQL");
+        expect(mockDatabaseMetaData.getDatabaseProductVersion()).andReturn("8.1.8");
 
-        // pg table types test
-        pg_driver = createMock(ISQLDriver.class);
+        /* Build the table types returned by PostgreSQL */
+        ResultSet mockTableTypeResultSet = 
+            buildVarcharResultSet(new String[] { "SYSTEM INDEX", 
+                    "SYSTEM VIEW", "SYSTEM TABLE", "SYSTEM TOAST INDEX", 
+                    "SYSTEM TOAST TABLE", "SYSTEM VIEW", "TABLE", 
+                    "TEMPORARY INDEX", "TEMPORARY TABLE", "VIEW"});        
+        expect(mockDatabaseMetaData.getTableTypes()).andReturn(mockTableTypeResultSet);
+        
+        /* The first time that catalogs are asked for, return just one */
+        ResultSet catalogResultSet1 = 
+            buildVarcharResultSet(new String[] { "aCatalog" });
+        expect(mockDatabaseMetaData.getCatalogs()).andReturn(catalogResultSet1);
+        
+        /* The second time that catalogs are asked for, return two */
+        ResultSet catalogResultSet2 = 
+            buildVarcharResultSet(new String[] { "aCatalog", "aCatalog2" });
+        expect(mockDatabaseMetaData.getCatalogs()).andReturn(catalogResultSet2);
+        
+        /* The first time that schemas are asked for, return just one */
+        ResultSet schemaResultSet1 = 
+            buildVarcharResultSet(new String[] { "aSchema" });
+        expect(mockDatabaseMetaData.getSchemas()).andReturn(schemaResultSet1);
+        
+        /* The second time that schemas are asked for, return two */
+        ResultSet schemaResultSet2 = 
+            buildVarcharResultSet(new String[] { "aSchema", "aSchema2" });
+        expect(mockDatabaseMetaData.getSchemas()).andReturn(schemaResultSet2);
+        replay(mockDatabaseMetaData);
 
-        pg_tableTypesRS = createNiceMock(ResultSet.class);
-        expect(pg_tableTypesRS.next()).andReturn(true);
-        expect(pg_tableTypesRS.getString(1)).andReturn("SYSTEM INDEX");
-        expect(pg_tableTypesRS.next()).andReturn(true);
-        expect(pg_tableTypesRS.getString(1)).andReturn("SYSTEM VIEW");
-        expect(pg_tableTypesRS.next()).andReturn(true);
-        expect(pg_tableTypesRS.getString(1)).andReturn("SYSTEM TABLE");
-        expect(pg_tableTypesRS.next()).andReturn(true);
-        expect(pg_tableTypesRS.getString(1)).andReturn("SYSTEM TOAST INDEX");
-        expect(pg_tableTypesRS.next()).andReturn(true);
-        expect(pg_tableTypesRS.getString(1)).andReturn("SYSTEM TOAST TABLE");
-        expect(pg_tableTypesRS.next()).andReturn(true);
-        expect(pg_tableTypesRS.getString(1)).andReturn("SYSTEM VIEW");
-        expect(pg_tableTypesRS.next()).andReturn(true);
-        expect(pg_tableTypesRS.getString(1)).andReturn("TABLE");
-        expect(pg_tableTypesRS.next()).andReturn(true);
-        expect(pg_tableTypesRS.getString(1)).andReturn("TEMPORARY INDEX");
-        expect(pg_tableTypesRS.next()).andReturn(true);
-        expect(pg_tableTypesRS.getString(1)).andReturn("TEMPORARY TABLE");
-        expect(pg_tableTypesRS.next()).andReturn(true);
-        expect(pg_tableTypesRS.getString(1)).andReturn("VIEW");
-        expect(pg_tableTypesRS.next()).andReturn(false);
-        //expectLastCall();
-        replay(pg_tableTypesRS);
+        mockConnection = createMock(Connection.class);
+        expect(mockConnection.getMetaData()).andReturn(mockDatabaseMetaData).anyTimes();
+        replay(mockConnection);        
         
-        pg_jmd = createMock(DatabaseMetaData.class);
-        expect(pg_jmd.getDatabaseProductName()).andReturn("PostgreSQL");
-        expect(pg_jmd.getDatabaseProductVersion()).andReturn("8.1.8");
-        expect(pg_jmd.getTableTypes()).andReturn(pg_tableTypesRS);
-        replay(pg_jmd);
+        mockSqlConnection = createMock(ISQLConnection.class);
+        expect(mockSqlConnection.getConnection()).andReturn(mockConnection).anyTimes();
+        replay(mockSqlConnection);
         
-        pg_con = createMock(java.sql.Connection.class);
-        expect(pg_con.getMetaData()).andReturn(pg_jmd).atLeastOnce();
-        replay(pg_con);
         
-        pg_sql_con = new SQLConnection(pg_con, null, pg_driver);
-        pg_tt_test = new SQLDatabaseMetaData(pg_sql_con);
+        iut = new SQLDatabaseMetaData(mockSqlConnection);
 	}
 
 	public void testGetSchemas() {
 		
 		try {
-			// Check our state initially after setup
+			// Check to be sure we get only one schema
 			String[] currentSchemas = iut.getSchemas();
 			assertEquals(1, currentSchemas.length);
-			
-			// Now, simulate adding a schema to the database
-			md.setSchemas(new String[] {"aSchema", "Schema2"}, iut);
-			
+						
 			// Now, check to be sure we get both schemas.
 			currentSchemas = iut.getSchemas();
 			assertEquals(2, currentSchemas.length);
@@ -125,13 +111,10 @@ public class SQLDatabaseMetaDataTest extends BaseSQuirreLTestCase {
 
 	public void testGetCatalogs() {
 		try {
-            // Check our state initially after setup
+            // Check to be sure we get only one schema
 			String[] currentCatalogs = iut.getCatalogs();
 			assertEquals(1, currentCatalogs.length);
-            
-			// Now, simulate adding a catalog to the database 
-			md.setCatalogs(new String[] {"aCatalog", "Catalog2"}, iut);
-			
+            			
 			// Now, check to be sure we get both catalogs.
 			currentCatalogs = iut.getCatalogs();
 			assertEquals(2, currentCatalogs.length);
@@ -140,9 +123,29 @@ public class SQLDatabaseMetaDataTest extends BaseSQuirreLTestCase {
 		}
 	}
 
+    private ResultSet buildVarcharResultSet(String[] values) throws SQLException {
+        ResultSetMetaData rsmd = createMock(ResultSetMetaData.class);
+        expect(rsmd.getColumnCount()).andReturn(1);
+        expect(rsmd.getColumnType(1)).andReturn(java.sql.Types.VARCHAR).anyTimes();
+        expect(rsmd.getColumnTypeName(1)).andReturn("varchar").anyTimes();
+        replay(rsmd);
+        ResultSet rs = createMock(ResultSet.class);
+        expect(rs.getMetaData()).andReturn(rsmd);
+        for (String value : values) {
+            expect(rs.next()).andReturn(true);
+            expect(rs.getString(1)).andReturn(value);    
+            expect(rs.wasNull()).andReturn(false);
+        }
+        expect(rs.next()).andReturn(false);
+        rs.close();
+        replay(rs);
+        return rs;
+    }
+	
+	
     public void testPGGetTableTypes() {
         try {
-            String[] tableTypes = pg_tt_test.getTableTypes();
+            String[] tableTypes = iut.getTableTypes();
             for (int i = 0; i < tableTypes.length; i++) {
                 String type = tableTypes[i];
                 assertFalse(
