@@ -4,7 +4,9 @@ Oracle Change Log
 0.19
 ====
 
- - Added support for working with columns that have data type of XMLType  
+ - Added support for working with columns that have data type of XMLType
+ - Added capability to put the cursor at the position in the SQL where the 
+ statement failed.  
 
 0.18
 ====
