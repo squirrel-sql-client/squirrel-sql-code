@@ -22,10 +22,6 @@ CLOB/VARCHAR cells.
 Added basic drag-n-drop to transfer a file from the desktop into an SQL Editor 
 panel.
 
-Code Completion Plugin:
-  When Ctrl+Space is hit while completion popup is already open the prefix up to
-  where all completion candidates match will be written to the SQL editor. The 
-  completion popup will remain open.
 
 New Plugin (SQL Parametrisation - Thorsten Mürell) allows you to put variables 
            into your SQL statements.
@@ -33,7 +29,13 @@ New Plugin (SQL Parametrisation - Thorsten Mürell) allows you to put variables
 New Plugin (Data import - Thorsten Mürell) allows you to import arbitrary files
            into the database.
 
-DB2Plugin: 
+DBCopy Plugin:
+ - Copy thread will wait for the dialog record progress bar to be updated 
+   before continuing to copy records.
+ - Fixed bug which caused cursors to remain open in the source database after
+   the copy operation was complete. 
+
+DB2 Plugin: 
  - Added tab for displaying the source code for DB2 MQTs as well as DB2 
    tables.
  - Added support for OS/400 (trigger source and details not yet implemented). 
@@ -47,6 +49,11 @@ DB2Plugin:
  - When the source tab of a C-language stored procedure is selected, we now 
    show the user a nice informative message stating that the source code is 
    unavailable instead of merely displaying the word "null".
+
+Code Completion Plugin:
+  When Ctrl+Space is hit while completion popup is already open the prefix up to
+  where all completion candidates match will be written to the SQL editor. The 
+  completion popup will remain open.
 		   
 Derby Plugin: New custom QueryTokenizer which allows Derby sessions to give the 
               command:  run '<abs-path-to-script>'
