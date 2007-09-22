@@ -114,7 +114,7 @@ public class DBCopyPlugin extends DefaultSessionPlugin
      * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getVersion()
      */
     public String getVersion() {
-        return "1.11";
+        return "1.12";
     }
 
     /**

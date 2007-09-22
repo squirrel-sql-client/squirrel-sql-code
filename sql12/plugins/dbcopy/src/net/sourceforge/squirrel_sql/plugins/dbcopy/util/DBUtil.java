@@ -479,7 +479,7 @@ public class DBUtil extends I18NBaseObject {
         } catch (Exception e) {
             /* Do Nothing - this can happen when the table doesn't exist */
         } finally {
-            SQLUtilities.closeResultSet(rs);
+            SQLUtilities.closeResultSet(rs, true);
         }
         return result;        
     }
