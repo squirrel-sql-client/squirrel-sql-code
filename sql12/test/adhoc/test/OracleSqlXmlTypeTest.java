@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.Writer;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -14,7 +13,6 @@ import java.sql.Statement;
 
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
-import oracle.sql.CLOB;
 import oracle.sql.OPAQUE;
 import oracle.xdb.XMLType;
 
@@ -39,26 +37,6 @@ import oracle.xdb.XMLType;
 
 public class OracleSqlXmlTypeTest {
 
-    private static final String tableName ="foo\"\"bar";
-    
-    private static final String dropTable = "drop table \"" + tableName + "\"";
-    private static final String createTable = "CREATE TABLE "+tableName+" (someid int)";
-    
-    private static void execute(Connection con, String sql, boolean printError) {
-        Statement stmt = null;
-        try {
-            stmt = con.createStatement();
-            System.out.println("Executing sql: "+sql);
-            stmt.execute(sql);
-        } catch (SQLException e ) {
-            if (printError) {
-                e.printStackTrace();
-            }
-        } finally {
-            if (stmt != null) try { stmt.close(); } catch (SQLException e) {}
-        }
-    }
-    
     private static void test(Connection con) throws Exception {
         OPAQUE opaque = getOpaque(con);
         readOpaqueAsBytes(opaque);
@@ -114,7 +92,7 @@ public class OracleSqlXmlTypeTest {
             char[] buffer = new char[32];
             
             while (reader.read(buffer) != -1) {
-                System.out.println("buffer: "+buffer);
+                System.out.println("buffer: "+buffer.toString());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -158,7 +136,6 @@ public class OracleSqlXmlTypeTest {
     private static void setNullXmlValue(Connection con) {
         PreparedStatement pstmt = null;
         try {
-            CLOB clob = getClob(null, con);
             String sql = "update xmltable set XML_DATA = ? where DOC_ID = 3";
             pstmt = con.prepareStatement(sql);
             pstmt.setObject(1, null);
@@ -171,33 +148,4 @@ public class OracleSqlXmlTypeTest {
             SQLUtilities.closeStatement(pstmt);
         }
     }
-    
-    private static CLOB getClob(String xmlData, Connection conn) throws SQLException{
-        CLOB tempClob = null;
-        try{
-          // If the temporary CLOB has not yet been created, create one
-          tempClob = CLOB.createTemporary(conn, true, CLOB.DURATION_SESSION); 
-       
-          // Open the temporary CLOB in readwrite mode, to enable writing
-          tempClob.open(CLOB.MODE_READWRITE); 
-          // Get the output stream to write
-          Writer tempClobWriter = tempClob.getCharacterOutputStream(); 
-          // Write the data into the temporary CLOB
-          tempClobWriter.write(xmlData); 
-       
-          // Flush and close the stream
-          tempClobWriter.flush();
-          tempClobWriter.close(); 
-       
-          // Close the temporary CLOB 
-          tempClob.close();    
-        } catch(SQLException sqlexp){
-          tempClob.freeTemporary(); 
-          sqlexp.printStackTrace();
-        } catch(Exception exp){
-          tempClob.freeTemporary(); 
-          exp.printStackTrace();
-        }
-        return tempClob; 
-      }    
 }
