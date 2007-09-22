@@ -31,7 +31,6 @@ import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -408,26 +407,7 @@ public class DualProgressBarDialog {
             }
         }
     }
-    
-    public static void main(String[] args) {
-        final JFrame test = new JFrame();
-        JButton showDialog = new JButton("Show Dialog");
-        showDialog.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) { 
-                getDialog(test, "test", true, new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        System.out.println("Cancel button pressed");
-                        System.exit(0);
-                    }
-                });
-            }
-        });
-        test.getContentPane().setLayout(new BorderLayout());
-        test.getContentPane().add(showDialog, BorderLayout.CENTER);
-        test.setSize(100,100);
-        test.setVisible(true);
-    }
- 
+     
     /**
      * This thread is responsible for updating the elapsed and remaining time
      * labels.
