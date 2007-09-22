@@ -73,6 +73,7 @@ import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanWriter;
 import net.sourceforge.squirrel_sql.plugins.oracle.SGAtrace.NewSGATraceWorksheetAction;
 import net.sourceforge.squirrel_sql.plugins.oracle.dboutput.NewDBOutputWorksheetAction;
+import net.sourceforge.squirrel_sql.plugins.oracle.exception.OracleExceptionFormatter;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.DefaultDatabaseExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.InstanceParentExpander;
 import net.sourceforge.squirrel_sql.plugins.oracle.expander.OracleTableParentExpander;
@@ -423,6 +424,9 @@ public class OraclePlugin extends DefaultSessionPlugin
       if (_prefs.isInstallCustomQueryTokenizer()) {
           session.setQueryTokenizer(new OracleQueryTokenizer(_prefs));
       }
+      OracleExceptionFormatter formatter = new OracleExceptionFormatter();
+      formatter.setSession(session);
+      session.setExceptionFormatter(formatter);
       GUIUtils.processOnSwingEventThread(new Runnable()
       {
          public void run()
