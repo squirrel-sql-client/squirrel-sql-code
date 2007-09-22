@@ -314,21 +314,53 @@ public class SQLUtilities {
 
     /**
      * Closes the specified ResultSet safely (with no exceptions) and logs a 
-     * debug message if SQLException is encountered.
+     * debug message if SQLException is encountered.  This will not close the
+     * Statement that created the ResultSet.
      * 
      * @param rs the ResultSet to close - it can be null.
-     */
+     */    
     public static void closeResultSet(ResultSet rs) {
+        closeResultSet(rs, false);
+    }
+    
+    /**
+     * Closes the specified ResultSet safely (with no exceptions) and logs a 
+     * debug message if SQLException is encountered.  This will also close the
+     * Statement that created the ResultSet if closeStatement boolean is true.
+     * 
+     * @param rs the ResultSet to close - it can be null.
+     * @param closeStatement if true, will close the Statement that created this
+     *                       ResultSet; false - will not close the Statement.
+     */
+    public static void closeResultSet(ResultSet rs, boolean closeStatement) {
         if (rs == null) {
             return;
         }
+        // Close the ResultSet
         try {
             rs.close();
         } catch (SQLException e) {
             if (s_log.isDebugEnabled()) {
-                s_log.error("Unexpected exception while closing ResultSet: "+
+                s_log.debug("Unexpected exception while closing ResultSet: "+
                             e.getMessage(), e);
             }
+        }
+        if (closeStatement) {
+            // Close the ResultSet's Statement if it is non-null.  This frees open
+            // cursors.
+
+            try {
+                Statement stmt = rs.getStatement();
+                if (stmt != null) {
+                    stmt.close();
+                }
+            } catch (SQLException e) {
+                if (s_log.isDebugEnabled()) {
+                    s_log.debug("Unexpected exception while closing " +
+                    		    "Statement: "+
+                                e.getMessage(), e);
+                }
+            }            
         }
     }
     
