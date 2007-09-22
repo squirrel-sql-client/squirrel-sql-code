@@ -43,10 +43,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  *   
  * @author manningr
  */
-public class InformixExceptionFormatter extends SessionAdapter implements ISessionListener, ExceptionFormatter {
-
-    /** The Informix SQLConnection being used */
-    private ISQLConnection sqlcon = null;
+public class InformixExceptionFormatter extends SessionAdapter 
+    implements ISessionListener, ExceptionFormatter {
     
     /** Interface to allow us to set the caret position in the SQL editor */
     private ISQLEntryPanel sqlEntryPanel = null;
@@ -83,7 +81,6 @@ public class InformixExceptionFormatter extends SessionAdapter implements ISessi
      * @param session the ISesssion implementation to work with.
      */
     public InformixExceptionFormatter(ISession session) {
-        this.sqlcon = session.getSQLConnection();
         this.sqlEntryPanel = 
             session.getSQLPanelAPIOfActiveSessionWindow().getSQLEntryPanel();
         this._session = session;
@@ -96,6 +93,7 @@ public class InformixExceptionFormatter extends SessionAdapter implements ISessi
     public String format(Throwable t) throws Exception {
         StringBuilder msg = new StringBuilder();
         msg.append(defaultFormatter.format(t));
+        ISQLConnection sqlcon = _session.getSQLConnection();
         if (sqlcon != null && sqlcon.getConnection() != null) {
             String offset = getSqlErrorOffset();
             msg.append("\n");
@@ -129,6 +127,7 @@ public class InformixExceptionFormatter extends SessionAdapter implements ISessi
     private String getSqlErrorOffset() {
         String result = i18n.NOT_AVAILABLE_MSG;
         try {
+            ISQLConnection sqlcon = _session.getSQLConnection();
             Class<?> conClass = sqlcon.getConnection().getClass();
             Connection ifmxcon = sqlcon.getConnection();
 
@@ -168,9 +167,10 @@ public class InformixExceptionFormatter extends SessionAdapter implements ISessi
     // ISessionListener interface methods
     
     /*     
-     * Since we depend upon the Informix-specific IfmxConnection class, it is 
-     * vital that we get a hold of and hang on to the most recent SQLConnection 
-     * that is associated with our session.
+     * Since we depend upon the Informix-specific IfmxConnection class, we need 
+     * to keep a reference to the ISession we are associated with.  However,
+     * this session could be closed, at which time we want to give up our 
+     * reference so that it can be garbage collected.
      */
     
     /**
@@ -179,42 +179,6 @@ public class InformixExceptionFormatter extends SessionAdapter implements ISessi
     public void allSessionsClosed() {
         _session.getApplication().getSessionManager().removeSessionListener(this);
         _session = null;
-        sqlcon = null;
-        
-    }
-
-    /**
-     * @see net.sourceforge.squirrel_sql.client.session.event.ISessionListener#connectionClosedForReconnect(net.sourceforge.squirrel_sql.client.session.event.SessionEvent)
-     */
-    public void connectionClosedForReconnect(SessionEvent evt) {
-        if (evt.getSession() == _session) {
-            sqlcon = null;
-        }
-    }
-
-    /**
-     * @see net.sourceforge.squirrel_sql.client.session.event.ISessionListener#reconnected(net.sourceforge.squirrel_sql.client.session.event.SessionEvent)
-     */
-    public void reconnected(SessionEvent evt) {
-        if (evt.getSession() == _session) {
-            sqlcon = _session.getSQLConnection();
-        }
-    }
-
-    /**
-     * @see net.sourceforge.squirrel_sql.client.session.event.ISessionListener#reconnectFailed(net.sourceforge.squirrel_sql.client.session.event.SessionEvent)
-     */
-    public void reconnectFailed(SessionEvent evt) {
-        sqlcon = null;
-    }
-
-    /**
-     * @see net.sourceforge.squirrel_sql.client.session.event.ISessionListener#sessionActivated(net.sourceforge.squirrel_sql.client.session.event.SessionEvent)
-     */
-    public void sessionActivated(SessionEvent evt) {
-        if (evt.getSession() == _session) {
-            sqlcon = _session.getSQLConnection();
-        }
     }
 
     /**
@@ -224,7 +188,6 @@ public class InformixExceptionFormatter extends SessionAdapter implements ISessi
         if (evt.getSession() == _session) {
             _session.getApplication().getSessionManager().removeSessionListener(this);
             _session = null;
-            sqlcon = null;
         }
     }
 
@@ -235,20 +198,7 @@ public class InformixExceptionFormatter extends SessionAdapter implements ISessi
         if (evt.getSession() == _session) {
             _session.getApplication().getSessionManager().removeSessionListener(this);
             _session = null;
-            sqlcon = null;
         }        
     }
 
-    /**
-     * @see net.sourceforge.squirrel_sql.client.session.event.ISessionListener#sessionConnected(net.sourceforge.squirrel_sql.client.session.event.SessionEvent)
-     */
-    public void sessionConnected(SessionEvent evt) {
-        if (evt.getSession() == _session) {
-            sqlcon = _session.getSQLConnection();
-        }
-    }
-
-
-    
-    
 }
