@@ -23,11 +23,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.ProgressMonitor;
-
 import net.sourceforge.squirrel_sql.client.gui.ProgessCallBackDialog;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
@@ -38,7 +37,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.DBCopyPlugin;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.util.Compat;
+import net.sourceforge.squirrel_sql.plugins.dbcopy.util.DBUtil;
 
 public class CopyTableCommand implements ICommand
 {
@@ -72,14 +71,6 @@ public class CopyTableCommand implements ICommand
         
     }
     
-    
-    /** When analyzing FK dependencies for the selected tables, show the
-     *  user the progress since this can take a while.
-     */
-    ProgressMonitor pm = null;
-    
-    int progressCount = 0;
-    
     /**
      * Ctor specifying the current session.
      */
@@ -96,17 +87,17 @@ public class CopyTableCommand implements ICommand
      */
     public void execute()
     {
-        IObjectTreeAPI api = Compat.getIObjectTreeAPI(_session, _plugin);
+        IObjectTreeAPI api = _session.getObjectTreeAPIOfActiveSessionWindow();
         if (api != null) {
             IDatabaseObjectInfo[] dbObjs = api.getSelectedDatabaseObjects();
-            if (Compat.isTableTypeDBO(dbObjs[0].getDatabaseObjectType())) {
+            if (DatabaseObjectType.TABLE_TYPE_DBO.equals(dbObjs[0].getDatabaseObjectType())) {
             	String catalog = dbObjs[0].getCatalogName();
             	String schema = dbObjs[0].getSchemaName();
             	if (log.isDebugEnabled()) {
 	            	log.debug("CopyTableCommand.execute: catalog="+catalog);
 	            	log.debug("CopyTableCommand.execute: schema="+schema);
             	}	
-            	dbObjs = Compat.getTables(_session, catalog, schema, null);
+            	dbObjs = DBUtil.getTables(_session, catalog, schema, null);
             	for (int i = 0; i < dbObjs.length; i++) {
             		ITableInfo info = (ITableInfo)dbObjs[i];
             		if (log.isDebugEnabled()) {

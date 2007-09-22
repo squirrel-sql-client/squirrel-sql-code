@@ -21,7 +21,6 @@ import java.awt.event.ActionEvent;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-import net.sourceforge.squirrel_sql.client.plugin.IPlugin;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
@@ -41,7 +40,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.DBCopyPlugin;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.SessionInfoProvider;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.commands.PasteTableCommand;
-import net.sourceforge.squirrel_sql.plugins.dbcopy.util.Compat;
 
 
 public class PasteTableAction extends SquirrelAction
@@ -82,7 +80,7 @@ public class PasteTableAction extends SquirrelAction
     public void actionPerformed(ActionEvent evt) {
         ISession destSession = sessionInfoProv.getCopyDestSession();
         IObjectTreeAPI api = 
-            Compat.getIObjectTreeAPI(destSession, (IPlugin)sessionInfoProv);
+            destSession.getObjectTreeAPIOfActiveSessionWindow();
         if (api == null) {
             return;
         }
@@ -99,7 +97,7 @@ public class PasteTableAction extends SquirrelAction
         } else {
         	// When the user pastes on a TABLE label which is located under a 
         	// schema/catalog, build the schema DatabaseObjectInfo.
-        	if (Compat.isTableTypeDBO(dbObjs[0].getDatabaseObjectType())) {
+        	if (DatabaseObjectType.TABLE_TYPE_DBO.equals(dbObjs[0].getDatabaseObjectType())) {
         		IDatabaseObjectInfo tableLabelInfo = dbObjs[0];
         		ISQLConnection destCon = destSession.getSQLConnection();
         		SQLDatabaseMetaData md = null;

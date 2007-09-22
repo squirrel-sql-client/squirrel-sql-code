@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Set;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfo;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
@@ -528,21 +529,21 @@ public class DBUtil extends I18NBaseObject {
         }
         // trim the table name in case of HADB
         tableName = tableName.trim();
-        ITableInfo[] tis = Compat.getTables(session, catalog, schema, tableName);
+        ITableInfo[] tis = getTables(session, catalog, schema, tableName);
         if (tis == null || tis.length == 0) {
             if (Character.isUpperCase(tableName.charAt(0))) {
                 tableName = tableName.toLowerCase();
             } else {
                 tableName = tableName.toUpperCase();
             }
-            tis = Compat.getTables(session, null, schema, tableName);
+            tis = getTables(session, null, schema, tableName);
             if (tis.length == 0) {
                 if (Character.isUpperCase(tableName.charAt(0))) {
                     tableName = tableName.toLowerCase();
                 } else {
                     tableName = tableName.toUpperCase();
                 }
-                tis = Compat.getTables(session, null, schema, tableName);
+                tis = getTables(session, null, schema, tableName);
             }
         }
         if (tis.length == 0) {
@@ -564,6 +565,48 @@ public class DBUtil extends I18NBaseObject {
         }
         return tis[0];
     }
+    
+    public static ITableInfo[] getTables(ISession session, String catalog,
+            String schema, String tableName) {
+        ITableInfo[] result = new ITableInfo[0];
+
+        try {
+            SchemaInfo schemaInfo = session.getSchemaInfo();
+            result = schemaInfo.getITableInfos(catalog, schema, tableName);
+        } catch (Exception e) {
+            log.error("Encountered unexpected exception when attempting to "
+                    + "call schemaInfo.getTables with catalog = " + catalog
+                    + " schema = " + schema + " tableName = " + tableName);
+
+        }
+
+        if (result == null || result.length == 0) {
+            // Fallback to the old method, going directly to the database
+            // instead
+            // of using SchemaInfo, since SchemaInfo didn't have it.
+            SQLDatabaseMetaData d = session.getSQLConnection().getSQLMetaData();
+            result = getTables(d, catalog, schema, tableName);
+        }
+
+        return result;
+    }
+
+    private static ITableInfo[] getTables(SQLDatabaseMetaData data,
+            String catalog, String schema, String tableName) {
+
+        ITableInfo[] result = new ITableInfo[0];
+
+        try {
+            result = data.getTables(catalog, schema, tableName, null, null);
+        } catch (Exception e) {
+            log.error("Encountered unexpected exception when attempting to "
+                    + "call SQLDatabaseMetaData.getTables with catalog = "
+                    + catalog + " schema = " + schema + " tableName = "
+                    + tableName);
+
+        }
+        return result;
+    }           
     
     /**
      * Decides whether or not the specified column types 
@@ -1213,7 +1256,7 @@ public class DBUtil extends I18NBaseObject {
      * @return
      */
     public static boolean isKeyword(ISession session, String data) {
-        return Compat.isKeyword(session, data);
+        return session.getSchemaInfo().isKeyword(data);
     }
     
     /**
