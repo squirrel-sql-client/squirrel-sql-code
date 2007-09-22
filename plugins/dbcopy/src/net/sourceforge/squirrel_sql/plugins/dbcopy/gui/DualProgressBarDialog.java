@@ -38,6 +38,7 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -321,15 +322,12 @@ public class DualProgressBarDialog {
     public static void incrementTopBar(final int value) {
         final int newValue = topBar.getValue() + value;
         remainingCalc.incrementCurrentItem();
-        if (SwingUtilities.isEventDispatchThread()) {
-            topBar.setValue(newValue);
-        } else {
-            SwingUtilities.invokeLater(new Runnable() {
+        GUIUtils.processOnSwingEventThread(new Runnable() {
                public void run() {
                    topBar.setValue(newValue);
                }
-            });
-        }
+            }
+            , true);        
     }
 
     public static void incrementBottomBar(final int value) {
