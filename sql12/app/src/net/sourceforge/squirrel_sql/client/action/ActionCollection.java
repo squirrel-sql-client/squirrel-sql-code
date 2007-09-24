@@ -62,7 +62,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  *
  * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
  */
-public final class ActionCollection
+public class ActionCollection
 {
 	/** Logger for this class. */
 	private static ILogger s_log;
