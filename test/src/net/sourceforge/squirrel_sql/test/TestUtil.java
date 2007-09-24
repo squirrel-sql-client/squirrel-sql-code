@@ -10,6 +10,7 @@ import static java.sql.Types.LONGVARCHAR;
 import static java.sql.Types.VARCHAR;
 import static java.util.Arrays.asList;
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.startsWith;
 import static org.easymock.classextension.EasyMock.createMock;
@@ -30,10 +31,20 @@ import java.util.List;
 import javax.swing.Action;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
+import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.action.DeleteSelectedTablesAction;
+import net.sourceforge.squirrel_sql.client.session.action.EditWhereColsAction;
+import net.sourceforge.squirrel_sql.client.session.action.FilterObjectsAction;
+import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeAction;
+import net.sourceforge.squirrel_sql.client.session.action.RefreshObjectTreeItemAction;
+import net.sourceforge.squirrel_sql.client.session.action.RefreshSchemaInfoAction;
+import net.sourceforge.squirrel_sql.client.session.action.SQLFilterAction;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
@@ -92,6 +103,14 @@ public class TestUtil {
                 .anyTimes();
         expect(session.getQueryTokenizer()).andReturn(tokenizer).anyTimes();
         // expect(session.getMessageHandler()).andReturn(messageHandler).anyTimes();
+        expect(session.getAlias()).andReturn(getEasyMockSqlAliasExt());
+        expect(session.getIdentifier()).andReturn(getEasyMockIdentifier()).anyTimes();
+        try {
+            ISQLConnection con = getEasyMockSQLConnection();            
+            expect(session.getSQLConnection()).andReturn(con).anyTimes();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if (replay) {
             replay(session);
         }
@@ -277,10 +296,76 @@ public class TestUtil {
         expect(result.getMainFrame()).andReturn(null).anyTimes();
         expect(result.getResources()).andReturn(resoures).anyTimes();
         expect(result.getSquirrelPreferences()).andReturn(prefs).anyTimes();
+        TaskThreadPool mockThreadPool = getEasyMockTaskThreadPool();
+        expect(result.getThreadPool()).andReturn(mockThreadPool).anyTimes();
+        ActionCollection mockActColl = getEasyMockActionCollection(); 
+        expect(result.getActionCollection()).andReturn(mockActColl).anyTimes();
         replay(result);
         return result;
     }
 
+    public static ActionCollection getEasyMockActionCollection() {
+        ActionCollection result = createMock(ActionCollection.class);
+        result.add(isA(Action.class));
+        expectLastCall().anyTimes();
+        expectActionCollectionGet("refreshSchema", RefreshSchemaInfoAction.class, result);
+        expectActionCollectionGet("refreshObjectTree", RefreshObjectTreeAction.class, result);
+        expectActionCollectionGet("refreshObjectItemTree", RefreshObjectTreeItemAction.class, result);        
+        expectActionCollectionGet("editWhereColsAction", EditWhereColsAction.class, result);        
+        expectActionCollectionGet("SQLFilterAction", SQLFilterAction.class, result);
+        expectActionCollectionGet("DeleteSelectedTablesAction", DeleteSelectedTablesAction.class, result);
+        expectActionCollectionGet("FilterObjectsAction", FilterObjectsAction.class, result);
+        replay(result);
+        return result;
+    }
+    
+    public static void expectActionCollectionGet(String actionName, 
+                                                 Class<? extends Action> actionClass,
+                                                 ActionCollection col) {   
+        SquirrelAction action = 
+            getEasyMockSquirrelAction(actionName);
+        expect(col.get(actionClass)).andReturn(action).anyTimes();
+    }
+    
+    public static SquirrelAction getEasyMockSquirrelAction(String name) {
+        SquirrelAction result = createMock(SquirrelAction.class);
+        expect(result.getValue(Action.NAME)).andReturn(name).anyTimes();
+        expect(result.getValue(Action.SMALL_ICON)).andReturn(null).anyTimes();
+        expect(result.getValue(Action.MNEMONIC_KEY)).andReturn(null).anyTimes();
+        expect(result.getValue(Action.SHORT_DESCRIPTION)).andReturn(null).anyTimes();
+        expect(result.getValue(Action.ACTION_COMMAND_KEY)).andReturn(null).anyTimes();
+        expect(result.getValue(Action.ACCELERATOR_KEY)).andReturn(null).anyTimes();
+        expect(result.isEnabled()).andReturn(true).anyTimes();
+        expect(result.getKeyStroke()).andReturn(null).anyTimes();
+        result.addPropertyChangeListener(isA(PropertyChangeListener.class));
+        expectLastCall().anyTimes();
+        replay(result);
+        return result;
+    }
+    
+    public static TaskThreadPool getEasyMockTaskThreadPool() {
+        TaskThreadPool result = createMock(TaskThreadPool.class);
+        result.addTask(isA(Runnable.class));
+        expectLastCall().anyTimes();
+        replay(result);
+        return result;
+    }
+    
+    public static IIdentifier getEasyMockIdentifier() {
+        IIdentifier result = createMock(IIdentifier.class);
+        replay(result);
+        return result;
+    }
+    
+    public static ISQLAliasExt getEasyMockSqlAliasExt() {
+        ISQLAliasExt result = createMock(ISQLAliasExt.class);
+        expect(result.getName()).andReturn("TestAlias").anyTimes();
+        IIdentifier id = getEasyMockIdentifier();
+        expect(result.getDriverIdentifier()).andReturn(id).anyTimes();
+        replay(result);
+        return result;
+    }
+    
     public static IApplication getEasyMockApplication() {
         return getEasyMockApplication(true);
     }
@@ -635,13 +720,15 @@ public class TestUtil {
     public static IDatabaseObjectInfo getEasyMockDatabaseObjectInfo(String catalog, 
                                                                     String schema, 
                                                                     String simpleName, 
-                                                                    String qualName)
+                                                                    String qualName,
+                                                                    DatabaseObjectType type)
     {
         IDatabaseObjectInfo result = EasyMock.createMock(IDatabaseObjectInfo.class);
         expect(result.getCatalogName()).andReturn(catalog).anyTimes();
         expect(result.getSchemaName()).andReturn(schema).anyTimes();
         expect(result.getSimpleName()).andReturn(simpleName).anyTimes();
         expect(result.getQualifiedName()).andReturn(qualName).anyTimes();
+        expect(result.getDatabaseObjectType()).andReturn(type).anyTimes();
         replay(result);
         return result;
     }

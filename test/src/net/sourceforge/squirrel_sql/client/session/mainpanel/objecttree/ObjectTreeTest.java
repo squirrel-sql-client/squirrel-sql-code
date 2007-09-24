@@ -23,16 +23,15 @@ import java.util.Map;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLTestCase;
 import net.sourceforge.squirrel_sql.client.ApplicationManager;
-import net.sourceforge.squirrel_sql.client.session.MockSession;
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.test.TestUtil;
 
 public class ObjectTreeTest extends BaseSQuirreLTestCase {
 
     ObjectTree tree = null;
-    MockSession session = null;
+    ISession session = null;
 
     public static void main(String[] args) {
         
@@ -42,7 +41,8 @@ public class ObjectTreeTest extends BaseSQuirreLTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         ApplicationManager.initApplication();
-        session = new MockSession();
+        //session = new MockSession();
+        session = TestUtil.getEasyMockSession("Oracle");
         tree = new ObjectTree(session);
     }
 
@@ -59,40 +59,24 @@ public class ObjectTreeTest extends BaseSQuirreLTestCase {
         Map<String, Object> map = new HashMap<String, Object>();
         String tableKey = "table(100)";
         map.put(tableKey, null);
-        SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
-        IDatabaseObjectInfo dbInfo =
-            new DatabaseObjectInfo("catalog",
-                                   "schema",
-                                   "table",
-                                   DatabaseObjectType.TABLE,
-                                   md);
+        
+        IDatabaseObjectInfo dbInfo = 
+            TestUtil.getEasyMockDatabaseObjectInfo("catalog", 
+                                                   "schema", 
+                                                   "table", 
+                                                   "schema.table",
+                                                   DatabaseObjectType.TABLE);
         ObjectTreeNode node = new ObjectTreeNode(session, dbInfo);
-
-        session.getProperties().setShowRowCount(true);
 
         // Test to see that table(100) matches table(0).  It should since only
         // the row count is different.
         assertEquals(true, tree.matchKeyPrefix(map, node, "table(0)"));
-        
-        session.getProperties().setShowRowCount(false);
-        
-        // Test to see that table(100) matches table(0).  It should since only
-        // the row count is different.
-        assertEquals(true, tree.matchKeyPrefix(map, node, "table(0)"));        
-        
-        session.getProperties().setShowRowCount(true);
 
         // Test to see if we can fool matchKeyPrefix into assuming that there 
         // will be '(' on the end of the path since row count is enabled.  Yet
         // we'll send in a string that doesn't have this characteristic.
         assertEquals(true, tree.matchKeyPrefix(map, node, "table"));
         
-        session.getProperties().setShowRowCount(false);
-        
-        // Test to see if we can fool matchKeyPrefix into assuming that there 
-        // will be '(' on the end of the path since row count is enabled.  Yet
-        // we'll send in a string that doesn't have this characteristic.
-        assertEquals(true, tree.matchKeyPrefix(map, node, "table"));        
     }
 
 }
