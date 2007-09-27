@@ -44,6 +44,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableMode
 import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -490,22 +491,14 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
                     return false;
                 } else {
                     _session.showMessage(ex);
-                    s_log.error("Error reading ResultSet", ex);
+                    s_log.error("Error reading ResultSet for SQL: "
+                            + exInfo.getSQL(), ex);
                 }
             }
         }
 
       handleResultSetWarnings(rs);
-
-      try
-      {
-         rs.close();
-      }
-      catch (Throwable th)
-      {
-         s_log.error("Error closing ResultSet", th);
-      }
-
+      SQLUtilities.closeResultSet(rs);
       return true;
    }
 
@@ -524,10 +517,8 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
          }
          catch (Throwable th)
          {
-            s_log
-                  .debug(
-                        "Driver doesn't handle Connection.getWarnings()/clearWarnings()",
-                        th);
+            s_log.debug("Driver doesn't handle "
+                        + "Connection.getWarnings()/clearWarnings()", th);
          }
       }
 
@@ -538,10 +529,8 @@ public class SQLExecuterTask implements Runnable, IDataSetUpdateableTableModel
       }
       catch (Throwable th)
       {
-         s_log
-               .debug(
-                     "Driver doesn't handle Statement.getWarnings()/clearWarnings()",
-                     th);
+         s_log.debug("Driver doesn't handle "
+                    + "Statement.getWarnings()/clearWarnings()", th);
       }
    }
 
