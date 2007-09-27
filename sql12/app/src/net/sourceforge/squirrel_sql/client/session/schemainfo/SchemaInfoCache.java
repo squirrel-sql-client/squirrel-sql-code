@@ -1,27 +1,37 @@
 package net.sourceforge.squirrel_sql.client.session.schemainfo;
 
+import java.io.Serializable;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaProperties;
 import net.sourceforge.squirrel_sql.client.gui.db.SchemaLoadInfo;
-import net.sourceforge.squirrel_sql.client.gui.db.SchemaTableTypeCombination;
 import net.sourceforge.squirrel_sql.client.gui.db.SchemaNameLoadInfo;
-import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.gui.db.SchemaTableTypeCombination;
 import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.util.Utilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.util.Utilities;
 
-import java.util.*;
-import java.sql.SQLException;
-import java.io.Serializable;
-
-@SuppressWarnings("serial")
 public class SchemaInfoCache implements Serializable
 {
-   private static final ILogger s_log = LoggerController.createLogger(SchemaInfoCache.class);
+   private static final long serialVersionUID = 1L;
+
+   private static final ILogger s_log = 
+       LoggerController.createLogger(SchemaInfoCache.class);
 
    private List<String> _catalogs = new ArrayList<String>();
    private List<String> _schemas = new ArrayList<String>();
@@ -43,8 +53,14 @@ public class SchemaInfoCache implements Serializable
    private Map<CaseInsensitiveString, String> _tableNames = 
        Collections.synchronizedMap(_internalTableNameTreeMap);
    
-   private TreeMap<ITableInfo, ITableInfo> _internalTableInfoTreeMap =
-       new TreeMap<ITableInfo, ITableInfo>();
+
+   /** 
+    * This data structure can be accessed by multiple concurrent threads.  It 
+    * needs to be some sort of synchronized data structure; otherwise 
+    * ConcurrentModificationExceptions may result.(Bug #1752089)
+    */
+   private Hashtable<ITableInfo, ITableInfo> _internalTableInfoTreeMap =
+       new Hashtable<ITableInfo, ITableInfo>();
 
    private Map<ITableInfo, ITableInfo> _iTableInfos = 
        Collections.synchronizedMap(_internalTableInfoTreeMap);
@@ -592,14 +608,12 @@ public class SchemaInfoCache implements Serializable
       return _functions;
    }
 
-   @SuppressWarnings("unchecked")
    Map<CaseInsensitiveString, String> getTableNamesForReadOnly()
    {
       return _internalTableNameTreeMap;
    }
 
-   @SuppressWarnings("unchecked")
-   Map<ITableInfo, ITableInfo> getITableInfosForReadOnly()
+   Hashtable<ITableInfo, ITableInfo> getITableInfosForReadOnly()
    {
       return _internalTableInfoTreeMap;
    }
