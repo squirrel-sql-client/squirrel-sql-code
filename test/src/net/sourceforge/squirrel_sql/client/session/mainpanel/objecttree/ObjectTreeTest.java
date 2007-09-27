@@ -41,7 +41,6 @@ public class ObjectTreeTest extends BaseSQuirreLTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         ApplicationManager.initApplication();
-        //session = new MockSession();
         session = TestUtil.getEasyMockSession("Oracle");
         tree = new ObjectTree(session);
     }
