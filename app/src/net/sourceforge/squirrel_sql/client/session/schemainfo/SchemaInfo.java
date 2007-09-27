@@ -963,9 +963,11 @@ public class SchemaInfo
          ret.addAll(Arrays.asList(tableInfosForUncachedTypes));
       }
 
-      for(Iterator<ITableInfo> i=_schemaInfoCache.getITableInfosForReadOnly().keySet().iterator(); i.hasNext();)
+      Hashtable<ITableInfo, ITableInfo> tis = 
+          _schemaInfoCache.getITableInfosForReadOnly();
+      for(Enumeration<ITableInfo> i = tis.keys(); i != null && i.hasMoreElements();) 
       {
-         ITableInfo iTableInfo = i.next();
+         ITableInfo iTableInfo = i.nextElement();
 
          if(null != catalog &&
             false == catalog.equalsIgnoreCase(iTableInfo.getCatalogName()) &&
