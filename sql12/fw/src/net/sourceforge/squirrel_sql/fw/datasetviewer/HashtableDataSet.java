@@ -17,8 +17,11 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
 
 import net.sourceforge.squirrel_sql.fw.util.EnumerationIterator;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
@@ -27,24 +30,25 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 public class HashtableDataSet implements IDataSet
 {
-   /** Internationalized strings for this class. */
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(HashtableDataSet.class);
 
-
-
-   private interface HashtableDataSetI18n
+   private static abstract class HashtableDataSetI18n
    {
-      // i18n[hashtabledataset.unsupported=<Unsupported>]
-      String UNSUPPORTED = s_stringMgr.getString("hashtabledataset.unsupported");
+      /** Internationalized strings for this class. */
+      private static final StringManager s_stringMgr =
+         StringManagerFactory.getStringManager(HashtableDataSet.class);
+
+       // i18n[hashtabledataset.unsupported=<Unsupported>]
+      public static final String UNSUPPORTED = 
+          s_stringMgr.getString("hashtabledataset.unsupported");
       // i18n[hashtabledataset.key=Key]
-      String NAME_COLUMN = s_stringMgr.getString("hashtabledataset.key");
+      public static final String NAME_COLUMN = 
+          s_stringMgr.getString("hashtabledataset.key");
       // i18n[hashtabledataset.value=Value]
-      String VALUE_COLUMN = s_stringMgr.getString("hashtabledataset.value");
+      public static final String VALUE_COLUMN = 
+          s_stringMgr.getString("hashtabledataset.value");
    }
 
-   private Hashtable<?,?> _src;
-//	private final int _columnCount = 2;
+   private Hashtable<String,String> _src;
    private DataSetDefinition _dsDef;
    private final static String[] s_hdgs =
       new String[] {
@@ -52,16 +56,28 @@ public class HashtableDataSet implements IDataSet
          HashtableDataSetI18n.VALUE_COLUMN };
    private final static int[] s_hdgLens = new int[] { 30, 100 };
    private String[] _curRow = new String[2];
-   private Iterator<?> _rowKeys;
+   private Iterator<String> _rowKeys;
 
-   public HashtableDataSet(Hashtable<?,?> src) throws DataSetException
+   public HashtableDataSet(final Hashtable<String,String> src) 
+       throws DataSetException
    {
-      super();
-      _src = src;
-      _dsDef = new DataSetDefinition(createColumnDefinitions());
-      _rowKeys = new EnumerationIterator(_src.keys());
+      _src = new Hashtable<String, String>();
+      for ( Map.Entry<String, String> entry : src.entrySet()) {
+          _src.put(entry.getKey(), entry.getValue());
+      }
+      init();
    }
 
+   public HashtableDataSet(final Properties props) throws DataSetException {
+       _src = new Hashtable<String, String>();
+       for (Object obj : props.keySet()) {
+           String key = (String)obj;
+           String value = props.getProperty(key);
+           _src.put(key, value);
+       }
+       init();
+   }
+      
    public final int getColumnCount()
    {
       return s_hdgs.length;
@@ -77,11 +93,11 @@ public class HashtableDataSet implements IDataSet
       _curRow[0] = null;
       if (_rowKeys.hasNext())
       {
-         _curRow[0] = (String) _rowKeys.next();
+         _curRow[0] = _rowKeys.next();
       }
       if (_curRow[0] != null)
       {
-         _curRow[1] = _src.get(_curRow[0]).toString();
+         _curRow[1] = _src.get(_curRow[0]);
       }
       return _curRow[0] != null;
    }
@@ -91,6 +107,12 @@ public class HashtableDataSet implements IDataSet
       return _curRow[columnIndex];
    }
 
+   private void init() {
+       _dsDef = new DataSetDefinition(createColumnDefinitions());
+       Enumeration<String> keyEnumeration = _src.keys();
+       _rowKeys = new EnumerationIterator<String>(keyEnumeration);       
+   }   
+   
    private ColumnDisplayDefinition[] createColumnDefinitions()
    {
       final int columnCount = getColumnCount();
