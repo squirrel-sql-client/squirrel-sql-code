@@ -19,7 +19,6 @@ package net.sourceforge.squirrel_sql.plugins.sqlscript;
  */
 import java.io.File;
 import java.io.IOException;
-import java.util.Hashtable;
 
 import javax.swing.JMenu;
 
@@ -29,7 +28,6 @@ import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
-import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
@@ -67,8 +65,6 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
    private File _userSettingsFolder;
 
    private PluginResources _resources;
-
-   private Hashtable _saveAndLoadDelegates = new Hashtable();
 
    /**
     * Return the internal name of this plugin.
@@ -173,7 +169,7 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
       super.initialize();
       IApplication app = getApplication();
 
-      PluginManager pmgr = app.getPluginManager();
+      //PluginManager pmgr = app.getPluginManager();
 
       // Folder within plugins folder that belongs to this
       // plugin.
@@ -293,8 +289,6 @@ public class SQLScriptPlugin extends DefaultSessionPlugin {
    private void createMenu()
    {
       IApplication app = getApplication();
-      ActionCollection coll = app.getActionCollection();
-      
       app.addToMenu(IApplication.IMenuIDs.SESSION_MENU, getSessionMenu());
    }
 
