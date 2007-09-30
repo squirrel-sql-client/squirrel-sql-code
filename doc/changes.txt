@@ -96,9 +96,9 @@ PostgreSQL Plugin:
 
 Refactoring Plugin: 
 
-- Fixed problem where the comment of a column could not be altered if it was 
-  null.
-- Refactored drop tables command to not use the event dispatch
+ - Fixed problem where the comment of a column could not be altered if it was 
+   null.
+ - Refactored drop tables command to not use the event dispatch
 thread for calculating foreign keys(UI Responsiveness).  Also, now FKs in child 
 tables are dropped before any parent tables are dropped when cascade 
 constraints is selected.
@@ -152,6 +152,7 @@ single quote which is part of the identifier. Thanks goes to Thomas Mueller
 plugin authors to create and register custom exception formatters to be used 
 when displaying error messages and the like in the session message panel.
 
+Updated French translation (Thanks to Erwan Duroselle)
 Finished German translation
 
 Bug-Fixes:
