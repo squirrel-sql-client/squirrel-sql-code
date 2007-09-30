@@ -160,7 +160,7 @@ public class SchemaInfoUpdateCheck
          // reload complete SchemaInfo
          SQLDatabaseMetaData dmd = _session.getSQLConnection().getSQLMetaData();
          DatabaseObjectInfo sessionOI = new DatabaseObjectInfo(null, null, "SessionDummy", DatabaseObjectType.SESSION, dmd);
-         _session.getSchemaInfo().reload(sessionOI);
+         _session.getSchemaInfo().reload(sessionOI, false);
 
 
       }
@@ -171,11 +171,11 @@ public class SchemaInfoUpdateCheck
           }
 
          for (String simpleTableName : _dropTableSimpleNames) {
-             _session.getSchemaInfo().refershCacheForSimpleTableName(simpleTableName);
+             _session.getSchemaInfo().refershCacheForSimpleTableName(simpleTableName, false);
          }
          
          for (String simpleProcName : _dropProcedureSimpleNames) {
-             _session.getSchemaInfo().refreshCacheForSimpleProcedureName(simpleProcName);
+             _session.getSchemaInfo().refreshCacheForSimpleProcedureName(simpleProcName, false);
          }
       }
 
