@@ -177,9 +177,21 @@ public class SchemaInfo
 
    public void reloadAll()
    {
+      reloadAll(true);
+   }
+
+   /**
+    * @param fireSchemaInfoUpdate Should only be false when the caller makes sure fireSchemaInfoUpdate() is called later.
+    */
+   void reloadAll(boolean fireSchemaInfoUpdate)
+   {
       _schemaInfoCache.clearAll();
       privateLoadAll();
-      fireSchemaInfoUpdate();
+
+      if(fireSchemaInfoUpdate)
+      {
+         fireSchemaInfoUpdate();
+      }
    }
 
    private void privateLoadAll()
@@ -1293,6 +1305,14 @@ public class SchemaInfo
 
    public void reload(IDatabaseObjectInfo doi)
    {
+      reload(doi, true);
+   }
+
+   /**
+    * @param fireSchemaInfoUpdate Should only be false when the caller makes sure fireSchemaInfoUpdate() is called later.
+    */
+   void reload(IDatabaseObjectInfo doi, boolean fireSchemaInfoUpdate)
+   {
       boolean doReloadAll = false;
 
       try
@@ -1400,18 +1420,23 @@ public class SchemaInfo
          notifyTablesLoaded();
          notifyStoredProceduresLoaded();
 
-         fireSchemaInfoUpdate();
-
-
          if(doReloadAll)
          {
-            reloadAll();
+            reloadAll(fireSchemaInfoUpdate);
+         }
+         else
+         {
+            if(fireSchemaInfoUpdate)
+            {
+               fireSchemaInfoUpdate();
+            }
          }
       }
    }
 
    public void fireSchemaInfoUpdate()
    {
+      System.out.println("SchemaInfo.fireSchemaInfoUpdate");
       SwingUtilities.invokeLater(new Runnable()
       {
          public void run()
@@ -1440,7 +1465,16 @@ public class SchemaInfo
       _listeners.remove(l);
    }
 
+
    public void refershCacheForSimpleTableName(String simpleTableName)
+   {
+      refershCacheForSimpleTableName(simpleTableName, true);
+   }
+
+   /**
+    * @param fireSchemaInfoUpdate Should only be false when the caller makes sure fireSchemaInfoUpdate() is called later.
+    */
+   void refershCacheForSimpleTableName(String simpleTableName, boolean fireSchemaInfoUpdate)
    {
       HashMap<String, String> caseSensitiveTableNames = new HashMap<String, String>();
 
@@ -1455,14 +1489,27 @@ public class SchemaInfo
       {
          String buf = i.next();
          TableInfo ti = new TableInfo(null, null, buf, null, null, _dmd);
-         reload(ti);
+         reload(ti, fireSchemaInfoUpdate);
       }
       //
       ////////////////////////////////////////////////////////////////////////
-      fireSchemaInfoUpdate();
+
+// is done in reload
+//      if(fireSchemaInfoUpdate)
+//      {
+//         fireSchemaInfoUpdate();
+//      }
    }
 
    public void refreshCacheForSimpleProcedureName(String simpleProcName)
+   {
+      refreshCacheForSimpleProcedureName(simpleProcName, true);
+   }
+
+   /**
+    * @param fireSchemaInfoUpdate Should only be false when the caller makes sure fireSchemaInfoUpdate() is called later.
+    */
+   void refreshCacheForSimpleProcedureName(String simpleProcName, boolean fireSchemaInfoUpdate)
    {
       HashMap<String, String> caseSensitiveProcNames = new HashMap<String, String>();
 
@@ -1477,11 +1524,16 @@ public class SchemaInfo
       {
          String buf = i.next();
          ProcedureInfo pi = new ProcedureInfo(null, null, buf, null, DatabaseMetaData.procedureResultUnknown, _dmd);
-         reload(pi);
+         reload(pi, fireSchemaInfoUpdate);
       }
       //
       ////////////////////////////////////////////////////////////////////////
-      fireSchemaInfoUpdate();
+
+// is done in reload       
+//      if(fireSchemaInfoUpdate)
+//      {
+//         fireSchemaInfoUpdate();
+//      }
    }
 
    public void waitTillSchemasAndCatalogsLoaded()
