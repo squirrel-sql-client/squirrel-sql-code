@@ -69,7 +69,7 @@ Informix Plugin:
    to provide the position of the error in the statement.  If it is available, 
    the cursor is moved to the position of the incorrect syntax.
 
-LAF Plugin: Added substance look and feel as an option.
+LAF Plugin: Added Substance 4.0 look and feel as an option.
 
 MySQL Plugin: 
  - Added support for handling stored procedure create statements.
