@@ -90,7 +90,7 @@ public class HibernateConfigController
       {
          public void actionPerformed(ActionEvent e)
          {
-            onApplyConfigChanges();
+            onApplyConfigChanges(false);
          }
       });
 
@@ -186,22 +186,28 @@ public class HibernateConfigController
       }
    }
 
-   private boolean onApplyConfigChanges()
+   private boolean onApplyConfigChanges(boolean silent)
    {
       String provider = _panel.txtFactoryProvider.getText();
       String persistenceUnitName = _panel.txtPersistenceUnitName.getText();
 
       if(_panel.radUserDefProvider.isSelected() && (null == provider || 0 == provider.trim().length()))
       {
-         // i18n[HibernateConfigController.noProviderMsg=Missing SessionFactoryImplProvider .\nChanges cannot be applied.]
-         JOptionPane.showMessageDialog(_plugin.getApplication().getMainFrame(), s_stringMgr.getString("HibernateController.noProviderMsg"));
+         if (false == silent)
+         {
+            // i18n[HibernateConfigController.noProviderMsg=Missing SessionFactoryImplProvider .\nChanges cannot be applied.]
+            JOptionPane.showMessageDialog(_plugin.getApplication().getMainFrame(), s_stringMgr.getString("HibernateController.noProviderMsg"));
+         }
          return false;
       }
 
       if(_panel.radJPA.isSelected() && (null == persistenceUnitName || 0 == persistenceUnitName.trim().length()))
       {
-         // i18n[HibernateConfigController.noPersistenceUnitName=Missing Persitence-Unit name .\nChanges cannot be applied.]
-         JOptionPane.showMessageDialog(_plugin.getApplication().getMainFrame(), s_stringMgr.getString("HibernateController.noPersistenceUnitName"));
+         if (false == silent)
+         {
+            // i18n[HibernateConfigController.noPersistenceUnitName=Missing Persitence-Unit name .\nChanges cannot be applied.]
+            JOptionPane.showMessageDialog(_plugin.getApplication().getMainFrame(), s_stringMgr.getString("HibernateController.noPersistenceUnitName"));
+         }
          return false;
       }
 
@@ -210,8 +216,11 @@ public class HibernateConfigController
 
       if(null == cfgName || 0 == cfgName.trim().length())
       {
-         // i18n[HibernateConfigController.noCfgNameMsg=Not a valid configuration name\nChanges cannot be applied.]
-         JOptionPane.showMessageDialog(_plugin.getApplication().getMainFrame(), s_stringMgr.getString("HibernateController.noProviderMsg"));
+         if (false == silent)
+         {
+            // i18n[HibernateConfigController.noCfgNameMsg=Not a valid configuration name\nChanges cannot be applied.]
+            JOptionPane.showMessageDialog(_plugin.getApplication().getMainFrame(), s_stringMgr.getString("HibernateController.noProviderMsg"));
+         }
          return false;
       }
 
@@ -397,7 +406,7 @@ public class HibernateConfigController
    {
       try
       {
-         if(onApplyConfigChanges())
+         if(onApplyConfigChanges(true))
          {
             File pluginUserSettingsFolder = _plugin.getPluginUserSettingsFolder();
 
