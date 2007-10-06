@@ -1,0 +1,112 @@
+drop table test;
+
+create table test ( 
+    myid integer, 
+    name varchar2(16), 
+    description varchar2(255),
+    mydate date,
+    attr1 varchar2(1),
+    attr2 char(1),
+    attr3 varchar2(50)
+);
+
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (1,'randomval1','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (2,'randomval2','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (3,'randomval3','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (4,'randomval4','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (5,'randomval5','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (6,'randomval6','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (7,'randomval7','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (8,'randomval8','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (9,'randomval9','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (10,'randomval10','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (11,'randomval11','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (12,'randomval12','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (13,'randomval13','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (14,'randomval14','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (15,'randomval15','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (16,'randomval16','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (17,'randomval17','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (18,'randomval18','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (19,'randomval19','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (20,'randomval20','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (21,'randomval21','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (22,'randomval22','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (23,'randomval23','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (24,'randomval24','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (25,'randomval25','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (26,'randomval26','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (27,'randomval27','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (28,'randomval28','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (29,'randomval29','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (30,'randomval30','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (31,'randomval31','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (32,'randomval32','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (33,'randomval33','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (34,'randomval34','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (35,'randomval35','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (36,'randomval36','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (37,'randomval37','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (38,'randomval38','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (39,'randomval39','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (40,'randomval40','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (41,'randomval41','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (42,'randomval42','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (43,'randomval43','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (44,'randomval44','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (45,'randomval45','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (46,'randomval46','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (47,'randomval47','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (48,'randomval48','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (49,'randomval49','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (50,'randomval50','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (51,'randomval51','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (52,'randomval52','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (53,'randomval53','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (54,'randomval54','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (55,'randomval55','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (56,'randomval56','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (57,'randomval57','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (58,'randomval58','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (59,'randomval59','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (60,'randomval60','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (61,'randomval61','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (62,'randomval62','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (63,'randomval63','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (64,'randomval64','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (65,'randomval65','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (66,'randomval66','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (67,'randomval67','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (68,'randomval68','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (69,'randomval69','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (70,'randomval70','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (71,'randomval71','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (72,'randomval72','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (73,'randomval73','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (74,'randomval74','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (75,'randomval75','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (76,'randomval76','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (77,'randomval77','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (78,'randomval78','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (79,'randomval79','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (80,'randomval80','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (81,'randomval81','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (82,'randomval82','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (83,'randomval83','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (84,'randomval84','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (85,'randomval85','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (86,'randomval86','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (87,'randomval87','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (88,'randomval88','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (89,'randomval89','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (90,'randomval90','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (91,'randomval91','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (92,'randomval92','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (93,'randomval93','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (94,'randomval94','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (95,'randomval95','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (96,'randomval96','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (97,'randomval97','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (98,'randomval98','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (99,'randomval99','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
+INSERT INTO TEST (MYID,NAME,DESCRIPTION,MYDATE,ATTR1,ATTR2,ATTR3) VALUES (100,'randomval100','a description of the value in this column',{d '2007-02-10'},'1','0','how this column is useful for other reasons');
