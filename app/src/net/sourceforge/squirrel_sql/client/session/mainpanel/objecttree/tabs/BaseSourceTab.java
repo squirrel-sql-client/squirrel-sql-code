@@ -153,6 +153,16 @@ public abstract class BaseSourceTab extends BaseObjectTab
 		}
 	}
 
+    /**
+     * Sub-classes should override this method to return a PreparedStatement
+     * which will yield the source code of the object returned by
+     * getDatabaseObjectInfo.
+     * 
+     * @return a PreparedStatement already with bound variables, ready to be
+     *         executed
+     * @throws SQLException
+     *             if any error occurs.
+     */
 	protected abstract PreparedStatement createStatement() throws SQLException;
 
 	private final class DefaultSourcePanel extends BaseSourcePanel
