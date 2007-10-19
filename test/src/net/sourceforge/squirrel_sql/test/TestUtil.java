@@ -92,7 +92,21 @@ public class TestUtil {
         return getEasyMockSession(dbName, true);
     }
 
-    public static ISession getEasyMockSession(ISQLDatabaseMetaData md,
+    public static ISession getEasyMockSession(ISQLDatabaseMetaData md, boolean replay) {
+        ISession session = null;
+        try {
+            ISQLConnection con = getEasyMockSQLConnection();
+            session = getEasyMockSession(md, con, false);
+            if (replay) {
+                replay(session);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return session;
+    }
+        
+    public static ISession getEasyMockSession(ISQLDatabaseMetaData md, ISQLConnection con, 
             boolean replay) {
         ISession session = createMock(ISession.class);
         IQueryTokenizer tokenizer = getEasyMockQueryTokenizer();
@@ -105,12 +119,7 @@ public class TestUtil {
         // expect(session.getMessageHandler()).andReturn(messageHandler).anyTimes();
         expect(session.getAlias()).andReturn(getEasyMockSqlAliasExt());
         expect(session.getIdentifier()).andReturn(getEasyMockIdentifier()).anyTimes();
-        try {
-            ISQLConnection con = getEasyMockSQLConnection();            
-            expect(session.getSQLConnection()).andReturn(con).anyTimes();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        expect(session.getSQLConnection()).andReturn(con).anyTimes();
         if (replay) {
             replay(session);
         }
@@ -158,8 +167,7 @@ public class TestUtil {
     public static ISession getEasyMockSession(ISQLDatabaseMetaData md,
             ResultSet rs) throws SQLException {
         ISQLConnection con = getEasyMockSQLConnection(rs);
-        ISession session = getEasyMockSession(md, false);
-        expect(session.getSQLConnection()).andReturn(con).anyTimes();
+        ISession session = getEasyMockSession(md, con, false);
         replay(session);
         return session;
     }
