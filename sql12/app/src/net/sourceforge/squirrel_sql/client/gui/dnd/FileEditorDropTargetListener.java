@@ -20,14 +20,20 @@ package net.sourceforge.squirrel_sql.client.gui.dnd;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTargetAdapter;
 import java.awt.dnd.DropTargetContext;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetListener;
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
+import java.util.StringTokenizer;
 
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -39,7 +45,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
  * desktop to a session sql editor panel.
  * 
  * @author manningr
- *
  */
 public class FileEditorDropTargetListener extends DropTargetAdapter 
                                           implements DropTargetListener {
@@ -75,17 +80,24 @@ public class FileEditorDropTargetListener extends DropTargetAdapter
             DropTargetContext context = dtde.getDropTargetContext();
             dtde.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
             Transferable t = dtde.getTransferable();
-            List<File> transferData = 
-                (List<File>)t.getTransferData(DataFlavor.javaFileListFlavor);
-            if (transferData.size() > 1) {
-                _session.showErrorMessage(i18n.ONE_FILE_DROP_MESSAGE);
+            File fileToOpen = null;
+            
+            if (t.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+                fileToOpen = handleJavaFileList(t);
+            } else if (t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                fileToOpen = handleUriListString(t);
             } else {
-                File f = transferData.get(0);
-                if (s_log.isInfoEnabled()) {
-                    s_log.info("drop: path="+f.getAbsolutePath());
-                }
-                _session.getSQLPanelAPIOfActiveSessionWindow().fileOpen(f);
+                s_log.error("drop: flavors fileList and UriListString "
+                        + "are not supported");
             }
+            if (fileToOpen != null) {
+                if (s_log.isInfoEnabled()) {
+                    s_log.info("drop: path="+fileToOpen.getAbsolutePath());
+                }            
+                ISQLPanelAPI api = 
+                    _session.getSQLPanelAPIOfActiveSessionWindow(); 
+                api.fileOpen(fileToOpen);
+            }            
             context.dropComplete(true);
         } catch (Exception e) {
             s_log.error("drop: Unexpected exception "+e.getMessage(),e);
@@ -93,4 +105,86 @@ public class FileEditorDropTargetListener extends DropTargetAdapter
 
     }
 
+    /**
+     * Handles the String data flavor which returns the data as a list of
+     * java.io.File objects.
+     * 
+     * @param t
+     *            the transferable to get the list from
+
+     * @return the only file in the list
+     * @throws UnsupportedFlavorException
+     * @throws IOException
+     */    
+    private File handleUriListString(Transferable t) 
+        throws UnsupportedFlavorException, IOException
+    {
+        File result = null;
+        
+        @SuppressWarnings("unchecked")
+        String transferData = 
+            (String)t.getTransferData(DataFlavor.stringFlavor);
+        
+        if (transferData != null) {
+            // Check to see if the string is a file uri.
+            if (transferData.startsWith("file://")) {
+                try {
+                    // we can have more than one file in the string so tokenize
+                    // on whitespace.  Let the user know if we find multiple
+                    // tokens that they cannot place drop than one file at a 
+                    // time
+                    StringTokenizer st = new StringTokenizer(transferData);
+                    if (st.countTokens() > 1) {
+                        _session.showErrorMessage(i18n.ONE_FILE_DROP_MESSAGE);
+                    } else {
+                        if (st.hasMoreTokens()) {
+                            String fileUrlStr = st.nextToken();
+                            URI uri = new URI(fileUrlStr);
+                            result = new File(uri);
+                        }
+                    }
+                } catch (URISyntaxException e) {
+                    s_log.error("handleUriListString: encountered an "
+                            + "invalid URI: " + transferData, e);
+                }
+            } else {
+                // Not a uri - assume it is a string filename.
+                result = new File(transferData);
+            }
+        }
+        return result;        
+    }
+    
+    
+    /**
+     * Handles the JavaFileList data flavor which returns the data as a list of
+     * java.io.File objects.
+     * 
+     * @param t
+     *            the transferable to get the list from
+
+     * @return the only file in the list
+     * @throws UnsupportedFlavorException
+     * @throws IOException
+     */
+    private File handleJavaFileList(Transferable t) 
+        throws UnsupportedFlavorException, IOException 
+    {
+        File result = null;
+        
+        @SuppressWarnings("unchecked")
+        List<File> transferData = 
+            (List<File>)t.getTransferData(DataFlavor.javaFileListFlavor);
+        
+        if (transferData.size() > 1) {
+            _session.showErrorMessage(i18n.ONE_FILE_DROP_MESSAGE);
+        } else {
+            result = transferData.get(0);
+            if (s_log.isInfoEnabled()) {
+                s_log.info("drop: path="+result.getAbsolutePath());
+            }
+            
+        }
+        return result;
+    }
 }
