@@ -54,12 +54,17 @@ public class SchemaInfoCacheTest extends BaseSQuirreLJUnit4TestCase {
         mockMetaData = null;
     }
 
-    @SuppressWarnings("unchecked")
-    @Test
+
+    // This test disabled for now until we figure out a better way to do 
+    // concurrent modifications to the schemaInfoCache.
+    //@Test
     public final void testGetITableInfosForReadOnly() {
         
+        @SuppressWarnings("unchecked")
         Map map = schemaInfoCacheUnderTest.getTableNamesForReadOnly();
+        @SuppressWarnings("unchecked")
         IteratorThread thread = new IteratorThread(map.values().iterator());
+        
         Thread t = new Thread(thread);
         t.start();
         sleep(500);
