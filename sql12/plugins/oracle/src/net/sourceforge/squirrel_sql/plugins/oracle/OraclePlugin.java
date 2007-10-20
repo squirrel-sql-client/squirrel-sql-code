@@ -292,7 +292,6 @@ public class OraclePlugin extends DefaultSessionPlugin
 
          if(f.exists())
          {
-             System.out.println("File: "+f.getAbsolutePath());
             XMLBeanReader xbr = new XMLBeanReader();
             xbr.load(f, getClass().getClassLoader());
 
