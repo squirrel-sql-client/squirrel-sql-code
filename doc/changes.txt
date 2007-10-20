@@ -1,8 +1,8 @@
 SQuirreL SQL Client Change Log
 ==============================
 
-Not yet released - available from CVS or in the latest snapshot:
-----------------------------------------------------------------
+2.6 (10/20/2007)
+==============
 
 Enhancements:
 
@@ -217,7 +217,7 @@ Fix for issue where dates aren't correctly displayed or updated when using
 'treat date as timestamp' pref in the SQl Editor result panel.
 
 2.5 (4/7/2007)
-================
+==============
 
 Enhancements:
 
