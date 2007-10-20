@@ -39,7 +39,13 @@ import java.sql.DriverManager;
 import java.util.Calendar;
 import java.util.Iterator;
 
-import javax.swing.*;
+import javax.swing.Action;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JOptionPane;
+import javax.swing.PopupFactory;
+import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
@@ -47,6 +53,7 @@ import net.sourceforge.squirrel_sql.client.gui.FileViewerFactory;
 import net.sourceforge.squirrel_sql.client.gui.SplashScreen;
 import net.sourceforge.squirrel_sql.client.gui.WindowManager;
 import net.sourceforge.squirrel_sql.client.gui.builders.UIFactory;
+import net.sourceforge.squirrel_sql.client.gui.db.DataCache;
 import net.sourceforge.squirrel_sql.client.gui.laf.AllBluesBoldMetalTheme;
 import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToStartupAliasesCommand;
@@ -60,16 +67,15 @@ import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanelFactory;
 import net.sourceforge.squirrel_sql.client.session.SessionManager;
-import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoCacheSerializer;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistory;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.SQLHistoryItem;
 import net.sourceforge.squirrel_sql.client.session.properties.EditWhereCols;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.SchemaInfoCacheSerializer;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.CellImportExportInfoSaver;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DTProperties;
 import net.sourceforge.squirrel_sql.fw.gui.CursorChanger;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
-import net.sourceforge.squirrel_sql.client.gui.db.DataCache;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.BareBonesBrowserLaunch;
 import net.sourceforge.squirrel_sql.fw.util.BaseException;
@@ -238,7 +244,6 @@ class Application implements IApplication
 				splash.dispose();
 			}
 		}
-
 	}
 
     
@@ -1093,6 +1098,17 @@ class Application implements IApplication
 	 */
 	private void setupLookAndFeel(ApplicationArguments args)
 	{
+	    /* 
+	     * Don't prevent the user from overriding the laf is they choose to use 
+	     * Swing's default laf prop 
+	     */
+	    String userSpecifiedOverride = System.getProperty("swing.defaultlaf");
+	    if (userSpecifiedOverride != null 
+	            && !"".equals(userSpecifiedOverride)) 
+	    {
+	        return;
+	    }
+	    
 		String lafClassName = args.useNativeLAF()
 					? UIManager.getSystemLookAndFeelClassName()
 					: MetalLookAndFeel.class.getName();
