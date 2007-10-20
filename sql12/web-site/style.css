@@ -68,6 +68,13 @@ td.body_right_border 	{ background-image: url('images/border_r.gif');
 .plugin_plain { font-family: arial; font-size: 12pt; margin-left: 5; 
                margin-top: 0; margin-bottom: 8; background-color: "FFFFFF" }
 
+li.hl		   {						font-family: Arial; 
+										font-size: 10pt; 
+										text-align: Left; 
+										margin-left: 2; 
+               							margin-top: 0; 
+										margin-bottom: 2 }
+
 li								{ font-family: Arial; 
 										font-size: 12pt; 
 										text-align: Left; 

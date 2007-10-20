@@ -68,73 +68,45 @@
 	<tr>
       <td class="body_left_border">&nbsp;</td>
       <td width='100%' class="body" bgcolor="white" valign="top">
-         <h1 class="body"><A name="newfeatures">2.5 Highlights:</A></h1>
+         <h3 class="body"><A name="newfeatures">2.6 Highlights:</A></h3>
          <ul>
-            <li>Enhancements </li>
+            <li class="hl">Enhancements </li>
             <UL>
-               <li>New plugins provide enhanced capabilities:
+               <li class="hl">New plugins provide enhanced capabilities:
                   <UL>
-                     <li>
-                     DB2 Plugin: Stored Procedures, Triggers and Views are shown 
-                     in the object tree and have a &quot;Source&quot; tab which 
-                     displays the source of the selected object and a 
-                     &quot;Details&quot; tab which gives DB2-specific 
-                     information about the object.  Sequences and Indexes are 
-                     also shown in the object tree and have a details tab 
-                     giving DB2-specific information about them. 
+                     <li class="hl">
+ 	                    Hibernate Plugin: 
+                    	<ul>
+	  						<li class="hl">allows to generate SQL statements from Hibernate HQL statements</li>
+	  						<li class="hl">shows object tree of mapped objects</li>
+	  						<li class="hl">HQL Tab which supports code completion and syntax highlighting</li>
+    	               	</ul>
                      </li>
-                     <li>
-                     H2 Plugin: Indexes and Views are shown in the object tree 
-                     and have a &quot;Source&quot; tab which displays the source 
-                     of the selected object and a &quot;Details&quot; tab which 
-                     gives H2-specific information about the object.  Sequences 
-                     and Indexes are also shown in the object tree and have a 
-                     details tab giving H2-specific information about them.  
+                     <li class="hl">
+                     	SQL Parametrisation (by Thorsten Mürell): This plugin allows you to put 
+                     	variables into your SQL statements.
                      </li>
-                     <li>
-                     PostgreSQL Plugin: Stored Procedures, Triggers and Views 
-                     are shown in the object tree and have a &quot;Source&quot; 
-                     tab which displays the source of the selected object and 
-				     a &quot;Details&quot; tab which gives PostgreSQL-specific 
-				     information about the 
-					 object.  Sequences and Indexes are also shown in the 
-					 object tree and have a details tab giving DB2-specific 
-					 information about them.  
-                     </li>                     
-                     <li>
-					 Sybase Plugin: Allows the user to reverse engineer to the 
-					 source code for Views and Stored Procedures displayed in the 
-					 object tree.
-                     </li>
+                     <li class="hl">
+						Data import (by Thorsten Mürell): This plugin allows you to import 
+						arbitrary files into the database.
+					 </li>
                   </UL>
                </li>
-
-               <li>Added better support for executing large scripts so that 
-               SQuirreL remains responsive to UI interaction, as well as 
-               providing much faster execution.
-               </li>
-               <li>Added custom statement tokenizer framework to allow plugins to
-                   control how statements are tokenized.
-               </li>
-			   <li>Drop tables, Delete Records and Copy Tables features now will
-			   order the tables according to Foreign Key dependencies instead of
-			   alphabetically by name.
-               <li>Oracle Plugin now supports executing create statements for 
-               triggers, stored procedures and functions using "/" just as is 
-               done in SQL-Plus.  Also "@" can now be used to indicate a file to be 
-               parsed and executed while running another script in SQL Editor.
-               </li>
-				<li> SQL History Dialog allows for searching previously executed
-				statements by regular expression.
-				</li>		
+			   <li class="hl">Previously unsupported types were added to various plugins (e.g. Oracle's SYS.XMLType)</li>
+			   <li class="hl">New source tabs are available for many of the existing plugins </li>
+               <li class="hl">Added support for OS/400 to the DB2 plugin.</li>
+               <li class="hl">Added Substance 4.0 LAF to the Look-and-Feel plugin </li>
+               <li class="hl"> Drag-n-Drop support was added to the SQL file editor to allow
+                    files to be dragged from the desktop into an open editor.</li>
+                <li class="hl">Many other improvements were made for performance and ease-of-use.</li>
             </UL>
-            <li>Many bug fixes</li>
+            <li class="hl">A number of bug fixes</li>
          </ul>
 
          <P><B>
             For all changes see <a
-            href="http://squirrel-sql.cvs.sourceforge.net/*checkout*/squirrel-sql/sql12/doc/changes.txt">Changelog</a>,
-            for an overview of all features see SQuirreL's help.
+            href="http://squirrel-sql.cvs.sourceforge.net/*checkout*/squirrel-sql/sql12/doc/changes.txt">Changelog</a>.
+            Likewise, please refer SQuirreL's help section for an overview of all features.
             <p><a href="#installation">Download</A></p>
 
             <p><a href="index.php?page=screenshots">Introduction, Features, Screenshots</A></p>
@@ -274,8 +246,8 @@
 			<h2>The most important <U>downloads</U> are:</h2>
 
          <UL>
-            <LI><B><a href="http://sourceforge.net/project/showfiles.php?group_id=28383&package_id=29193&release_id=499452">Install jars (and source) of SQuirreL 2.5 for Windows/Linux/others</a></B></LI>
-	        <LI><B><a href="http://sourceforge.net/project/showfiles.php?group_id=28383&package_id=29193&release_id=499450">Plain zip format of SQuirreL 2.5</a></B></LI>
+            <LI><B><a href="http://sourceforge.net/project/showfiles.php?group_id=28383&package_id=29193&release_id=548400">Install jars (and source) of SQuirreL 2.6 for Windows/Linux/others</a></B></LI>
+	        <LI><B><a href="http://sourceforge.net/project/showfiles.php?group_id=28383&package_id=29193&release_id=548382">Plain zip format of SQuirreL 2.6</a></B></LI>
             <LI><B><a href="http://sourceforge.net/project/showfiles.php?group_id=28383&package_id=158128">Install jars of weekly snapshots for Windows/Linux/others</a></B></LI>
             <LI><B><a href="http://sourceforge.net/project/showfiles.php?group_id=28383">Overview of all available downloads</a></B></LI>
          </UL>
@@ -396,10 +368,6 @@
 			from SQuirreL. Rather than the standard Java Swing GUI toolkit
 			it uses the GUI toolkit from the
 			<A HREF="http://www.eclipse.org">Eclipse</A> project.</P>
-
-			<P>The
-			<A HREF="http://www.sunopsis.com/corporate/us/products/jdbcforxml/">Sunopsis XML Driver (JDBC Edition)</A>
-			uses SQuirreL SQL Client as its ISQL tool.</P>
 
 		</td>
 		<td class="body_right_border">&nbsp;</td>
