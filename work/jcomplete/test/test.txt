@@ -1,4 +1,0 @@
-/* das ist ein mehrzeiliger Kommentar
-*/
-select a.name, a.vorname, b.salat from kunde a inner join bestellung b on (b.kunde = a.id) where a.tisch = 22;
-select a.name, a.

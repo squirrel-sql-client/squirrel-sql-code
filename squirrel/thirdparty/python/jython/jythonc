@@ -1,6 +1,0 @@
-#!/bin/sh
-###############################################################################
-
-JYTHON_HOME=`dirname $0`
-
-exec $JYTHON_HOME/jython $JYTHON_HOME/Tools/jythonc/jythonc.py "$@"
