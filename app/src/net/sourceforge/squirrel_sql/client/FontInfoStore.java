@@ -38,8 +38,11 @@ public class FontInfoStore
 	 */
 	public FontInfoStore()
 	{
-		Font font = (((Font)UIManager.get("Label.font")).deriveFont(10.0f));
-		_statusBarFontInfo = new FontInfo(font);
+	    Font tmp = (Font)UIManager.get("Label.font");
+	    if (tmp != null) {
+	        Font font = tmp.deriveFont(10.0f);
+	        _statusBarFontInfo = new FontInfo(font);	        
+	    }
 	}
 
 	/**
