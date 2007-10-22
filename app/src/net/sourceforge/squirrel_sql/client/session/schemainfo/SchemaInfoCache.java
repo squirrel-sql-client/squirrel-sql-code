@@ -9,8 +9,8 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaProperties;
 import net.sourceforge.squirrel_sql.client.gui.db.SchemaLoadInfo;
@@ -28,7 +28,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 public class SchemaInfoCache implements Serializable
 {
-   private static final long serialVersionUID = 1L;
+   private static final long serialVersionUID = 2L;
 
    private static final ILogger s_log = 
        LoggerController.createLogger(SchemaInfoCache.class);
@@ -55,16 +55,16 @@ public class SchemaInfoCache implements Serializable
    
 
    /** 
-    * This data structure can be accessed by multiple concurrent threads.  It 
-    * needs to be some sort of synchronized data structure; otherwise 
-    * ConcurrentModificationExceptions may result.(Bug #1752089)
+    * This data structure can be accessed by multiple concurrent threads.  
+    * Traversal via iterators is fast and cannot encounter interference from 
+    * other threads otherwise ConcurrentModificationExceptions may 
+    * result (Bug #1752089)
+    * 
+    * One other thing: it must maintain the order in which items were inserted
+    * so that traversal yeilds insertion order (Bug 1805954).
     */
-   private Hashtable<ITableInfo, ITableInfo> _internalTableInfoTreeMap =
-       new Hashtable<ITableInfo, ITableInfo>();
-
-   private Map<ITableInfo, ITableInfo> _iTableInfos = 
-       Collections.synchronizedMap(_internalTableInfoTreeMap);
-   
+   private CopyOnWriteArrayList<ITableInfo> _iTableInfos =
+       new CopyOnWriteArrayList<ITableInfo>();
    
    private Hashtable<CaseInsensitiveString, List<ITableInfo>> _tableInfosBySimpleName = 
        new Hashtable<CaseInsensitiveString, List<ITableInfo>>();
@@ -271,9 +271,7 @@ public class SchemaInfoCache implements Serializable
       CaseInsensitiveString ciTableName = new CaseInsensitiveString(tableName);
 
       _tableNames.put(ciTableName, tableName);
-      synchronized(_iTableInfos) {
-          _iTableInfos.put(info, info);
-      }
+      _iTableInfos.add(info);
 
       List<ITableInfo> aITabInfos = _tableInfosBySimpleName.get(ciTableName);
       if(null == aITabInfos)
@@ -418,14 +416,9 @@ public class SchemaInfoCache implements Serializable
 
    void clearTables(String catalogName, String schemaName, String simpleName, String[] types)
    {
-       Set <ITableInfo> tableInfoSet = null;
-       synchronized(_iTableInfos) {
-           tableInfoSet = _iTableInfos.keySet();
-       }
-      for(Iterator<ITableInfo> i = tableInfoSet.iterator(); i.hasNext();)
+      for(Iterator<ITableInfo> i = _iTableInfos.iterator(); i.hasNext();)
       {
          ITableInfo ti = i.next();
-
 
          boolean matches = matchesMetaString(ti.getCatalogName(), catalogName);
          matches &= matchesMetaString(ti.getSchemaName(), schemaName);
@@ -448,7 +441,9 @@ public class SchemaInfoCache implements Serializable
 
          if(matches)
          {
-            i.remove();
+             // CopyOnWriteArrayList has snapshot iterators that don't support 
+             // iterator.remove()
+             _iTableInfos.remove(ti);
 
             CaseInsensitiveString ciSimpleName = new CaseInsensitiveString(ti.getSimpleName());
             List<ITableInfo> tableInfos = _tableInfosBySimpleName.get(ciSimpleName);
@@ -613,9 +608,9 @@ public class SchemaInfoCache implements Serializable
       return _internalTableNameTreeMap;
    }
 
-   Hashtable<ITableInfo, ITableInfo> getITableInfosForReadOnly()
+   List<ITableInfo> getITableInfosForReadOnly()
    {
-      return _internalTableInfoTreeMap;
+      return _iTableInfos;
    }
 
    Hashtable<CaseInsensitiveString, List<ITableInfo>> getTableInfosBySimpleNameForReadOnly()
