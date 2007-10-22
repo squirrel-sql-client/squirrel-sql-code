@@ -975,12 +975,10 @@ public class SchemaInfo
          ret.addAll(Arrays.asList(tableInfosForUncachedTypes));
       }
 
-      Hashtable<ITableInfo, ITableInfo> tis = 
+      List<ITableInfo> tis = 
           _schemaInfoCache.getITableInfosForReadOnly();
-      for(Enumeration<ITableInfo> i = tis.keys(); i != null && i.hasMoreElements();) 
+      for(ITableInfo iTableInfo : tis) 
       {
-         ITableInfo iTableInfo = i.nextElement();
-
          if(null != catalog &&
             false == catalog.equalsIgnoreCase(iTableInfo.getCatalogName()) &&
             false == fulfillsPlatformDependendMatches(iTableInfo, catalog)
