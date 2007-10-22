@@ -1,6 +1,14 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+Not yet released - available from CVS or in the latest snapshot:
+----------------------------------------------------------------
+
+Bug-Fixes:
+
+1805954: Tables not in alpha order in Object view
+
+
 2.6 (10/20/2007)
 ==============
 
