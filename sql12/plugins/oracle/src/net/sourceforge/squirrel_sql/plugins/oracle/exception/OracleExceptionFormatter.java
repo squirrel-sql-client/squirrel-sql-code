@@ -104,7 +104,7 @@ public class OracleExceptionFormatter extends SessionAdapter
      * The name to give to our function.  Oracle doesn't support anonymous 
      * function blocks.
      */
-    private static final String OFFSET_FUNCTION_NAME = 
+    public static final String OFFSET_FUNCTION_NAME = 
         "SQUIRREL_GET_ERROR_OFFSET";
     
     /** 
