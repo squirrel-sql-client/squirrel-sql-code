@@ -144,15 +144,7 @@ public class ModifyColumnCommand extends AbstractRefactoringCommand
                     "Missing Dialect Type Mapping", 
                     JOptionPane.ERROR_MESSAGE);            
         } catch (UnsupportedOperationException e2) {
-            //i18n[ModifyColumnCommand.unsupportedOperationMsg=The {0} dialect
-            //doesn's support modifying columns]
-            /*
-            String msg = 
-                s_stringMgr.getString("ModifyColumnCommand.unsupportedOperationMsg",
-                                      dbName);
-                                      */
-            // Better to use exception message as it contains more info
-            _session.showMessage(e2.getMessage());
+            _session.showErrorMessage(e2.getMessage());
         }
         listener.finished(result);
         
