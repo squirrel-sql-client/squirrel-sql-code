@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -131,17 +132,15 @@ public class SchemaInfoCache implements Serializable
 
             for (int i = 0; i < allowedSchemas.length; i++)
             {
-               SchemaLoadInfo buf = (SchemaLoadInfo) Utilities.cloneObject(schemaLoadInfos[0], getClass().getClassLoader());
+               SchemaLoadInfo buf = (SchemaLoadInfo) Utilities.cloneObject(
+                     schemaLoadInfos[0], getClass().getClassLoader());
                buf.schemaName = allowedSchemas[i];
                
                ret.add(buf);
             }
-
             schemaLoadInfos = ret.toArray(new SchemaLoadInfo[ret.size()]);
          }
       }
-
-
       return schemaLoadInfos;
    }
 
@@ -158,17 +157,18 @@ public class SchemaInfoCache implements Serializable
       }
 
       SchemaLoadInfo[] schemaLoadInfos = getAllSchemaLoadInfos();
-
       for (int i = 0; i < schemaLoadInfos.length; i++)
       {
          if(null == schemaLoadInfos[i].schemaName || schemaLoadInfos[i].schemaName.equals(schemaName))
          {
+            
             // null == schemaLoadInfos[0].schemaName is the case when there are no _schemas specified
             // schemaLoadInfos.length will then be 1.
             schemaLoadInfos[i].schemaName = schemaName;
             if(null != tableTypes)
             {
-               SchemaLoadInfo buf = (SchemaLoadInfo) Utilities.cloneObject(schemaLoadInfos[i], getClass().getClassLoader());
+               SchemaLoadInfo buf = (SchemaLoadInfo) Utilities.cloneObject(
+                     schemaLoadInfos[i], getClass().getClassLoader());
                buf.tableTypes = tableTypes;
                return new SchemaLoadInfo[]{buf};
             }
@@ -176,7 +176,6 @@ public class SchemaInfoCache implements Serializable
             return new SchemaLoadInfo[]{schemaLoadInfos[i]};
          }
       }
-
       throw new IllegalArgumentException("Unknown Schema " + schemaName);
    }
 
@@ -210,8 +209,6 @@ public class SchemaInfoCache implements Serializable
                i.remove();
             }
          }
-
-//         availableTypesInDataBase = (String[]) availableBuf.toArray(new String[availableBuf.size()]);
       }
       catch (SQLException e)
       {
@@ -264,23 +261,67 @@ public class SchemaInfoCache implements Serializable
       return false;
    }
 
-
+   /**
+    * Adds the specified array of ITableInfos to the internal list(s), and sorts
+    * the combination.
+    *  
+    * @param infos the array of ITableInfos to add.
+    */
+   public void writeToTableCache(ITableInfo[] infos) {
+      for (ITableInfo info : infos) {
+         String tableName = info.getSimpleName();
+         CaseInsensitiveString ciTableName = new CaseInsensitiveString(tableName);
+         _tableNames.put(ciTableName, tableName);
+         
+         List<ITableInfo> aITabInfos = _tableInfosBySimpleName.get(ciTableName);
+         if(null == aITabInfos)
+         {
+            aITabInfos = new ArrayList<ITableInfo>();
+            _tableInfosBySimpleName.put(ciTableName, aITabInfos);
+         }
+         aITabInfos.add(info);         
+      }
+      // CopyOnWriteArrayList is unfortunately not sort-able as a List.  So this
+      // will throw an UnsupportedOperationException:
+      //
+      // Collections.sort(_iTableInfos, new TableInfoSimpleNameComparator());
+      //
+      // The following is the best approach according to concurrency master 
+      // Doug Lea, in this post: 
+      // http://osdir.com/ml/java.jsr.166-concurrency/2004-06/msg00001.html
+      //
+      // Here we copy the existing internal array into a new array that
+      // is large enough to hold the original and new elements.  Then sort it.  
+      // And finally, create a new CopyOnWriteArrayList with the sorted array.
+      
+      /* Now, create an array large enough to hold the original and the new */
+      int currSize = _iTableInfos.size();
+      ITableInfo[] tableArr = 
+         _iTableInfos.toArray(new ITableInfo[currSize+infos.length]);
+      /* 
+       * Append the new tables to the new array, starting at the end of the 
+       * original 
+       */
+      for (int i = 0; i < infos.length; i++) {
+         tableArr[currSize + i] = infos[i];
+      }
+      
+      /* Sort it and store in a new CopyOnWriteArrayList */
+      Arrays.sort(tableArr, new TableInfoSimpleNameComparator());
+      _iTableInfos = new CopyOnWriteArrayList<ITableInfo>(tableArr);
+   }
+   
+   /**
+    * Adds a single ITableInfo to the internal list(s) and re-sorts.  This 
+    * should not be called in a tight loop iterating over a list of ITableInfos.
+    * If the caller is looping over an array of ITableInfo objects, please use 
+    * the version that accepts the ITableInfo array instead.
+    * 
+    * @param info the ITableInfo to add.
+    */
    public void writeToTableCache(ITableInfo info)
    {
-      String tableName = info.getSimpleName();
-      CaseInsensitiveString ciTableName = new CaseInsensitiveString(tableName);
-
-      _tableNames.put(ciTableName, tableName);
-      _iTableInfos.add(info);
-
-      List<ITableInfo> aITabInfos = _tableInfosBySimpleName.get(ciTableName);
-      if(null == aITabInfos)
-      {
-         aITabInfos = new ArrayList<ITableInfo>();
-         _tableInfosBySimpleName.put(ciTableName, aITabInfos);
-      }
-      aITabInfos.add(info);
-
+      writeToTableCache(new ITableInfo[] { info });      
    }
 
 
@@ -636,6 +677,18 @@ public class SchemaInfoCache implements Serializable
    Map<IProcedureInfo, IProcedureInfo> getIProcedureInfosForReadOnly()
    {
       return _iProcedureInfos;
+   }
+
+   /**
+    * A comparator for ITableInfos that compares them using their simple name.
+    * All other data (such as schema) is ignored, since it isn't likely that we 
+    * will need to compare tables in multiple schemas/catalogs in the same list.
+    */
+   private class TableInfoSimpleNameComparator implements
+         Comparator<ITableInfo> {
+      public int compare(ITableInfo o1, ITableInfo o2) {
+         return o1.getSimpleName().compareTo(o2.getSimpleName());
+      }
    }
 
 }
