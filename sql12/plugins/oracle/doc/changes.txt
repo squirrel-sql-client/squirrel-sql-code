@@ -4,13 +4,14 @@ Oracle Change Log
 0.19
 ====
 
- - Added support for working with columns that have data type of XMLType
- - Added capability to put the cursor at the position in the SQL where the 
- statement failed.  
+Bug #1820214: 2.5.1 DB aliases do not transfer properly to 2.6.1
 
 0.18
 ====
 
+ - Added support for working with columns that have data type of XMLType
+ - Added capability to put the cursor at the position in the SQL where the 
+ statement failed.  
 - Added source tab for tables to allow viewing the source for
   materialized views.
 - Added option to hide Recycle Bin tables (Oracle 10g Flashback Database).

@@ -6,8 +6,16 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Bug-Fixes:
 
-1805954: Tables not in alpha order in Object view
+1820214: 2.5.1 DB aliases do not transfer properly to 2.6.1
 
+
+2.6.1 (10/24/2007)
+==============
+
+Bug-Fixes:
+
+1818446: Packaging problem in v2.6 on MacOS X
+1805954: Tables not in alpha order in Object view
 
 2.6 (10/20/2007)
 ==============

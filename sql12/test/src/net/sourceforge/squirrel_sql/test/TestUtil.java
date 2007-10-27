@@ -21,6 +21,7 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.Driver;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -35,9 +36,15 @@ import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
 import net.sourceforge.squirrel_sql.client.gui.db.ISQLAliasExt;
 import net.sourceforge.squirrel_sql.client.gui.db.SQLAlias;
+import net.sourceforge.squirrel_sql.client.gui.session.SessionInternalFrame;
+import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.resources.SquirrelResources;
+import net.sourceforge.squirrel_sql.client.session.IAllowedSchemaChecker;
+import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
+import net.sourceforge.squirrel_sql.client.session.ISQLPanelAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.SessionManager;
 import net.sourceforge.squirrel_sql.client.session.action.DeleteSelectedTablesAction;
 import net.sourceforge.squirrel_sql.client.session.action.EditWhereColsAction;
 import net.sourceforge.squirrel_sql.client.session.action.FilterObjectsAction;
@@ -57,9 +64,12 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IndexInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
+import net.sourceforge.squirrel_sql.fw.sql.QueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.sql.SQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDriverPropertyCollection;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.TaskThreadPool;
 import net.sourceforge.squirrel_sql.plugins.dbcopy.prefs.DBCopyPreferenceBean;
@@ -116,16 +126,52 @@ public class TestUtil {
         expect(session.getApplication()).andReturn(getEasyMockApplication())
                 .anyTimes();
         expect(session.getQueryTokenizer()).andReturn(tokenizer).anyTimes();
+        session.setQueryTokenizer(isA(QueryTokenizer.class));
+        ISQLPanelAPI api = getEasyMockSqlPanelApi();
+        expect(session.getSQLPanelAPIOfActiveSessionWindow()).andReturn(api).anyTimes();
         // expect(session.getMessageHandler()).andReturn(messageHandler).anyTimes();
         expect(session.getAlias()).andReturn(getEasyMockSqlAliasExt());
         expect(session.getIdentifier()).andReturn(getEasyMockIdentifier()).anyTimes();
         expect(session.getSQLConnection()).andReturn(con).anyTimes();
+        session.setExceptionFormatter(isA(ExceptionFormatter.class));
+        expectLastCall().anyTimes();
+        session.addSeparatorToToolbar();
+        expectLastCall().anyTimes();
+        SessionPanel panel = getEasyMockSessionPanel();
+        expect(session.getSessionSheet()).andReturn(panel).anyTimes();
+        session.addToToolbar(isA(Action.class));
+        expectLastCall().anyTimes();
+        SessionInternalFrame frame = getEasyMockSessionInternalFrame();
+        expect(session.getSessionInternalFrame()).andReturn(frame).anyTimes();
+        
         if (replay) {
             replay(session);
         }
         return session;
     }
 
+    public static SessionPanel getEasyMockSessionPanel() {
+        SessionPanel result = createMock(SessionPanel.class);
+        ISQLPanelAPI api = getEasyMockSqlPanelApi();
+        expect(result.getSQLPaneAPI()).andReturn(api);
+        replay(result);
+        return result;
+    }
+    
+    public static ISQLPanelAPI getEasyMockSqlPanelApi() {
+        ISQLPanelAPI result = createMock(ISQLPanelAPI.class);
+        ISQLEntryPanel panel = getEasyMockSqlEntryPanel();
+        expect(result.getSQLEntryPanel()).andReturn(panel);
+        replay(result);
+        return result;
+    }
+    
+    public static ISQLEntryPanel getEasyMockSqlEntryPanel() {
+        ISQLEntryPanel result = createMock(ISQLEntryPanel.class);
+        replay(result);
+        return result;
+    }
+    
     public static IMessageHandler getEasyMockMessageHandler() {
         IMessageHandler result = createMock(IMessageHandler.class);
         result.showErrorMessage(isA(Throwable.class), null);
@@ -291,7 +337,7 @@ public class TestUtil {
         return getEasyMockSQLMetaData(dbName, dbURL, nice, true);
     }
 
-    public static IApplication getEasyMockApplication(boolean nice) {
+    public static IApplication getEasyMockApplication(boolean nice, boolean replay, ActionCollection col) {
         IApplication result = null;
         if (nice) {
             result = createNiceMock(IApplication.class);
@@ -306,12 +352,40 @@ public class TestUtil {
         expect(result.getSquirrelPreferences()).andReturn(prefs).anyTimes();
         TaskThreadPool mockThreadPool = getEasyMockTaskThreadPool();
         expect(result.getThreadPool()).andReturn(mockThreadPool).anyTimes();
-        ActionCollection mockActColl = getEasyMockActionCollection(); 
+        ActionCollection mockActColl = col;
+        if (col == null) {
+            mockActColl = getEasyMockActionCollection();
+        }
         expect(result.getActionCollection()).andReturn(mockActColl).anyTimes();
-        replay(result);
+        SQLDriverManager driverManager = getEasyMockSQLDriverManager();
+        expect(result.getSQLDriverManager()).andReturn(driverManager).anyTimes();
+        SessionManager mockSessionManager = getEasyMockSessionManager();
+        expect(result.getSessionManager()).andReturn(mockSessionManager).anyTimes();
+        if (replay) {
+            replay(result);
+        }
         return result;
     }
 
+    public static SessionManager getEasyMockSessionManager() {
+        SessionManager result = createMock(SessionManager.class);
+        result.addAllowedSchemaChecker(isA(IAllowedSchemaChecker.class));
+        expectLastCall().anyTimes();
+        replay(result);
+        return result;
+    }
+    
+    public static SQLDriverManager getEasyMockSQLDriverManager() {
+        SQLDriverManager result = createMock(SQLDriverManager.class);
+        Driver mockDriver = createMock(Driver.class);
+        replay(mockDriver);
+        expect(result.getJDBCDriver(isA(IIdentifier.class))).andReturn(mockDriver).anyTimes();
+        replay(result);
+        return result;
+    }
+    
+    
+    
     public static ActionCollection getEasyMockActionCollection() {
         ActionCollection result = createMock(ActionCollection.class);
         result.add(isA(Action.class));
@@ -374,8 +448,22 @@ public class TestUtil {
         return result;
     }
     
+    public static ActionCollection getEasyMockActionCollection(boolean replay) {
+        ActionCollection result = createMock(ActionCollection.class);
+        if (replay) {
+            replay(result);
+        }
+        return result;
+    }
+    
     public static IApplication getEasyMockApplication() {
-        return getEasyMockApplication(true);
+        return getEasyMockApplication(true, true, null);
+    }
+    
+    public static IApplication getEasyMockApplication(ActionCollection col) {
+        IApplication result = getEasyMockApplication(false, false, col);
+        replay(result);
+        return result;
     }
 
     public static SquirrelResources getEasyMockSquirrelResources() {
@@ -387,6 +475,13 @@ public class TestUtil {
         return resources;
     }
 
+    public static SessionInternalFrame getEasyMockSessionInternalFrame() {
+        SessionInternalFrame result = createMock(SessionInternalFrame.class);
+        result.addToToolsPopUp(isA(String.class), isA(SquirrelAction.class));
+        expectLastCall().anyTimes();
+        return result;
+    }
+    
     public static SessionProperties getEasyMockSessionProperties(String sep,
             String solComment, boolean removeMultLineComments) {
         SessionProperties result = createMock(SessionProperties.class);
