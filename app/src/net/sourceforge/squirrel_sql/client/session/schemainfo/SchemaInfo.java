@@ -20,25 +20,41 @@ package net.sourceforge.squirrel_sql.client.session.schemainfo;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.sql.SQLException;
 import java.sql.DatabaseMetaData;
-import java.util.*;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
+import javax.swing.SwingUtilities;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaProperties;
 import net.sourceforge.squirrel_sql.client.gui.db.SchemaLoadInfo;
 import net.sourceforge.squirrel_sql.client.gui.db.SchemaNameLoadInfo;
-import net.sourceforge.squirrel_sql.client.gui.db.SQLAliasSchemaProperties;
+import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
+import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
-import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
-import net.sourceforge.squirrel_sql.fw.sql.*;
+import net.sourceforge.squirrel_sql.fw.sql.DataTypeInfo;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ProcedureInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.*;
 
 public class SchemaInfo
 {
@@ -389,11 +405,11 @@ public class SchemaInfo
       long start = 0, finish = 0;
       try
       {
+         
          if (s_log.isDebugEnabled()) {
              s_log.debug(i18n.LOADING_TABLES_MSG);
              start = System.currentTimeMillis();
          }
-
          int beginProgress = getLoadMethodProgress(progress++);
          setProgress(i18n.LOADING_TABLES_MSG, beginProgress);
          privateLoadTables(catalog, 
@@ -402,7 +418,6 @@ public class SchemaInfo
                            types, 
                            i18n.LOADING_TABLES_MSG, 
                            beginProgress);
-
          if (s_log.isDebugEnabled()) {
              finish = System.currentTimeMillis();
              s_log.debug("Tables loaded in " + (finish - start) + " ms");
@@ -1151,16 +1166,15 @@ public class SchemaInfo
                setProgress(msg + " (" + simpleName + ")", beginProgress);
             }
          };
-
-         SchemaLoadInfo[] schemaLoadInfos = _schemaInfoCache.getMatchingSchemaLoadInfos(schema, types);
-
+         SchemaLoadInfo[] schemaLoadInfos = 
+            _schemaInfoCache.getMatchingSchemaLoadInfos(schema, types);
+         
          for (int i = 0; i < schemaLoadInfos.length; i++)
          {
-            ITableInfo[] infos = _dmd.getTables(catalog, schemaLoadInfos[i].schemaName, tableNamePattern, schemaLoadInfos[i].tableTypes, pcb);
-            for (int j = 0; j < infos.length; j++)
-            {
-               _schemaInfoCache.writeToTableCache(infos[j]);
-            }
+            ITableInfo[] infos = _dmd.getTables(catalog,
+                  schemaLoadInfos[i].schemaName, tableNamePattern,
+                  schemaLoadInfos[i].tableTypes, pcb);
+            _schemaInfoCache.writeToTableCache(infos);
          }
       }
       catch (Throwable th)
