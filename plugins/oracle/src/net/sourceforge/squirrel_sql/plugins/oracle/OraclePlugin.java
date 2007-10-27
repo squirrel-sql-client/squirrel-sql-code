@@ -415,7 +415,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 
    public PluginSessionCallback sessionStarted(final ISession session)
    {
-      if (!isOracle(session.getAlias()))
+      if (!isOracle(session))
       {
          return null;
       }
@@ -476,10 +476,12 @@ public class OraclePlugin extends DefaultSessionPlugin
        String tsClassName = DataTypeTimestamp.class.getName();
        String timeStampWhereClauseUsage = 
            DTProperties.get(tsClassName, DataTypeTimestamp.WHERE_CLAUSE_USAGE_KEY);
-       int timeStampWhereClauseUsageInt = Integer.parseInt(timeStampWhereClauseUsage);
-       if (DataTypeTimestamp.USE_STRING_FORMAT == timeStampWhereClauseUsageInt) {
-           session.showWarningMessage(i18n.timestampWarning);
-           s_log.warn(i18n.timestampWarning);
+       if (timeStampWhereClauseUsage != null) {
+           int timeStampWhereClauseUsageInt = Integer.parseInt(timeStampWhereClauseUsage);
+           if (DataTypeTimestamp.USE_STRING_FORMAT == timeStampWhereClauseUsageInt) {
+               session.showWarningMessage(i18n.timestampWarning);
+               s_log.warn(i18n.timestampWarning);
+           }
        }
        
    }
@@ -561,6 +563,14 @@ public class OraclePlugin extends DefaultSessionPlugin
         return result;
     }
 
+   private boolean isOracle(ISession session) {
+       boolean result = false;
+       if (DialectFactory.isOracle(session.getMetaData())) {
+           result = true;
+       }
+       return result;
+   }
+    
    private boolean isOracle(ISQLAliasExt alias)
    {
       IIdentifier driverIdentifier = alias.getDriverIdentifier();
