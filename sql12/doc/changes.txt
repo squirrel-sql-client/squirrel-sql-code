@@ -7,6 +7,7 @@ SQuirreL SQL Client Change Log
 Bug-Fixes:
 
 1820214: 2.5.1 DB aliases do not transfer properly to 2.6.1
+1820020: modified tables aren't sorted
 
 2.6.1 (10/24/2007)
 =================
