@@ -7,6 +7,7 @@ Not yet released - available from CVS or in the latest snapshot:
 Bug-Fixes:
 
 1820214: 2.5.1 DB aliases do not transfer properly to 2.6.1
+1820020: modified tables aren't sorted
 
 
 2.6.1 (10/24/2007)
