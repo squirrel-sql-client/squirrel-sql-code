@@ -1,5 +1,11 @@
 Refactoring Plugin Change Log
 =============================
+
+0.13
+====
+
+1821354: Changing default value of a column in Derby does nothing 
+
 0.12
 ====
 - Fixed problem where the comment of a column could not be altered if it was 
