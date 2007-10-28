@@ -105,7 +105,7 @@ public class HQLCompletionInfoCollection implements MappingInfoProvider
 
       for (MappedClassInfo mappedClassInfo : _mappedClassInfos)
       {
-         if(mappedClassInfo.matches(parser))
+         if(mappedClassInfo.matches(parser, false))
          {
             ciClasses.add(mappedClassInfo);
          }
@@ -194,7 +194,7 @@ public class HQLCompletionInfoCollection implements MappingInfoProvider
       _currentAliasInfos = aliasInfos;
    }
 
-   public MappedClassInfo getMappedClassInfoFor(String token)
+   public MappedClassInfo getMappedClassInfoFor(String token, boolean matchNameExact)
    {
       // Example for this code:
       // Completion should 
@@ -204,7 +204,7 @@ public class HQLCompletionInfoCollection implements MappingInfoProvider
 
       if(2 > cp.size())
       {
-         return getMappedClassInfoForNonAliasedToken(cp);
+         return getMappedClassInfoForNonAliasedToken(cp, matchNameExact);
       }
 
       String aliasCandidate = cp.getToken(0);
@@ -229,14 +229,14 @@ public class HQLCompletionInfoCollection implements MappingInfoProvider
          }
       }
 
-      return getMappedClassInfoForNonAliasedToken(cp);
+      return getMappedClassInfoForNonAliasedToken(cp, false);
    }
 
-   private MappedClassInfo getMappedClassInfoForNonAliasedToken(CompletionParser cp)
+   private MappedClassInfo getMappedClassInfoForNonAliasedToken(CompletionParser cp, boolean matchNameExact)
    {
       for (MappedClassInfo mappedClassInfo : _mappedClassInfos)
       {
-         if(mappedClassInfo.matches(cp))
+         if(mappedClassInfo.matches(cp, matchNameExact))
          {
             return mappedClassInfo;
          }
