@@ -80,6 +80,8 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	private interface IDriverNames
 	{
         String AS400 = "AS/400 Toolbox for Java JDBC Driver";
+        /* work-around for bug which means we must use "dbo" for schema */
+        String FREE_TDS = "InternetCDS Type 4 JDBC driver for MS SQLServer";        
         String OPTA2000 = "i-net OPTA 2000";
 	}
 
@@ -945,9 +947,14 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
       final DatabaseMetaData md = privateGetJDBCMetaData();
       final String dbDriverName = getDriverName();
       Set<ITableInfo> list = new TreeSet<ITableInfo>();
-      boolean isSQLServer = 
-          DialectFactory.isSyBase(this) || DialectFactory.isMSSQLServer(this);
-      if (isSQLServer && schemaPattern == null)
+
+      /* work-around for this driver, which must have "dbo" for schema.  The
+       * JConnect family of drivers appears to not be affected and can accept a
+       * null schema, which is necessary to find tables in other schemas, within
+       * the same catalog.  Similarly, jTDS 1.2.2 doesn't require this, yet it
+       * doesn't return non-dbo schema tables, unfortunately. 
+       */
+      if (dbDriverName.equals(IDriverNames.FREE_TDS) && schemaPattern == null)      
       {
          schemaPattern = "dbo";
       }
