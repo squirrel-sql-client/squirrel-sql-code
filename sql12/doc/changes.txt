@@ -9,7 +9,7 @@ Bug-Fixes:
 Hibernate Plugin: When a statement like "from Kv k where k." was completed the fields for k. 
 would come from any arbitrary mapped class which name started with Kv
 
-
+1820792: Sybase ASE - table not shown in object browser
 1821354: Changing default value of a column in Derby does nothing
 1820214: 2.5.1 DB aliases do not transfer properly to 2.6.1
 1820020: modified tables aren't sorted
