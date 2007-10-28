@@ -2,7 +2,6 @@ package net.sourceforge.squirrel_sql.plugins.hibernate.mapping;
 
 import net.sourceforge.squirrel_sql.fw.completion.CompletionInfo;
 import net.sourceforge.squirrel_sql.fw.completion.util.CompletionParser;
-import net.sourceforge.squirrel_sql.plugins.hibernate.completion.HQLCompletionInfoCollection;
 import net.sourceforge.squirrel_sql.plugins.hibernate.completion.MappingInfoProvider;
 
 import java.util.ArrayList;
@@ -44,10 +43,18 @@ public class MappedClassInfo extends CompletionInfo
       return _simpleMappedClassName;
    }
 
-   public boolean matches(CompletionParser parser)
+   public boolean matches(CompletionParser parser, boolean matchNameExact)
    {
       _lastParser = parser;
-      return _mappedClassName.startsWith(parser.getStringToParse()) || _simpleMappedClassName.startsWith(parser.getStringToParse());
+
+      if(matchNameExact)
+      {
+         return _mappedClassName.equals(parser.getStringToParse()) || _simpleMappedClassName.equals(parser.getStringToParse());
+      }
+      else
+      {
+         return _mappedClassName.startsWith(parser.getStringToParse()) || _simpleMappedClassName.startsWith(parser.getStringToParse());
+      }
    }
 
 
@@ -201,7 +208,7 @@ public class MappedClassInfo extends CompletionInfo
    {
       for (PropertyInfo propertyInfo : _propertyInfos)
       {
-         propertyInfo.setMappedClassInfo(mappingInfoProvider.getMappedClassInfoFor(propertyInfo.getHibernatePropertyInfo().getClassName()));
+         propertyInfo.setMappedClassInfo(mappingInfoProvider.getMappedClassInfoFor(propertyInfo.getHibernatePropertyInfo().getClassName(), false));
       }
    }
 }
