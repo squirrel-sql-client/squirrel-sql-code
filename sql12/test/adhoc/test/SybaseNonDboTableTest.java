@@ -1,25 +1,5 @@
 package test;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
-import net.sourceforge.squirrel_sql.client.ApplicationArguments;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
-import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
-import oracle.sql.OPAQUE;
-import oracle.xdb.XMLType;
-
 /*
  * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
@@ -39,9 +19,20 @@ import oracle.xdb.XMLType;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-public class SybaseNonDboTableTest {
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
 
-   
+import net.sourceforge.squirrel_sql.client.ApplicationArguments;
+
+/**
+ * Test class to study the behavior of DatabaseMetaData.getTables in 
+ * Sybase.
+ * 
+ * @author manningr
+ */
+public class SybaseNonDboTableTest {
    
    private static void test(Connection con) throws Exception {
       DatabaseMetaData md = con.getMetaData();
