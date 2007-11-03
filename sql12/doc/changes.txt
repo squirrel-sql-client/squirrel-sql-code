@@ -4,6 +4,12 @@ SQuirreL SQL Client Change Log
 Not yet released - available from CVS or in the latest snapshot:
 ----------------------------------------------------------------
 
+Enhancements:
+
+Refactoring Plugin:
+ - Don't try to order the list of tables to be dropped (forcing FK info retrieval) 
+   when there is only one table being dropped.
+
 Bug-Fixes:
 
 Hibernate Plugin: When a statement like "from Kv k where k." was completed the fields for k. 

@@ -129,7 +129,11 @@ public class DropTablesCommand extends AbstractRefactoringCommand
         
         ArrayList<String> result = new ArrayList<String>();
         try {
-            orderedTables = getOrderedTables(tables);
+            if (tables.size() > 1) { 
+               orderedTables = getOrderedTables(tables);
+            } else {
+               orderedTables = tables;
+            }
             
             dialect = DialectFactory.getDialect(DialectFactory.DEST_TYPE, 
                                                 _session.getApplication().getMainFrame(), 

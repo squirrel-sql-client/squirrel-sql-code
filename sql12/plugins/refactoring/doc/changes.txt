@@ -1,6 +1,14 @@
 Refactoring Plugin Change Log
 =============================
 
+0.14
+====
+
+Enhancements:
+
+Don't try to order the list of tables to be dropped (forcing FK info retrieval) 
+when there is only one table being dropped.
+
 0.13
 ====
 
