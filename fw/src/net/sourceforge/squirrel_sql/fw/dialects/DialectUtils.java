@@ -803,6 +803,7 @@ public class DialectUtils {
                 String columnName = tcInfo.getColumnName();
                 int columnSize = tcInfo.getColumnSize();
                 int dataType = tcInfo.getDataType();
+                String defaultVal = tcInfo.getDefaultValue();
                 int precision = dialect.getPrecisionDigits(columnSize, dataType);
                 String column = dialect.getTypeName(tcInfo.getDataType(), 
                                                     tcInfo.getColumnSize(),
@@ -816,8 +817,15 @@ public class DialectUtils {
                 String isNullable = tcInfo.isNullable();
                 if (pks.size() == 1 && pks.get(0).equals(columnName))
                 {
-                   result.append(" PRIMARY KEY");
+                   result.append(" PRIMARY KEY");                   
+                } else {
+                   // in Sybase, DEFAULT keyword must appear prior to NULL/NOT NULL
+                   if (defaultVal != null && !"".equals(defaultVal)) {
+                      result.append(" DEFAULT ");
+                      result.append(defaultVal);
+                   }
                 }
+
                 if ("NO".equalsIgnoreCase(isNullable))
                 {
                    result.append(" NOT NULL");
