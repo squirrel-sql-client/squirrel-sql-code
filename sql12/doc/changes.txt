@@ -22,7 +22,7 @@ CASCADE or RESTRICT.  Now we append CASCADE to the DROP TABLE statement.
 1821354: Changing default value of a column in Derby does nothing
 1820214: 2.5.1 DB aliases do not transfer properly to 2.6.1
 1820020: modified tables aren't sorted
-
+1815667: Create Table Script does not include column defaults
 
 2.6.1 (10/24/2007)
 ==============
