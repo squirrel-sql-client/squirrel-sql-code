@@ -248,8 +248,16 @@ public class FrontBaseDialect extends org.hibernate.dialect.FrontBaseDialect
      * reference the specified table.
      * @return the drop SQL command.
      */
-    public List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints, boolean isMaterializedView){
-        return DialectUtils.getTableDropSQL(iTableInfo, true, cascadeConstraints, false, DialectUtils.CASCADE_CLAUSE, false);
+    public List<String> getTableDropSQL(ITableInfo iTableInfo,
+         boolean cascadeConstraints, boolean isMaterializedView) {
+        
+       return DialectUtils.getTableDropSQL(iTableInfo,
+                                          true,
+                                          true, // Frontbase requires CASCADE 
+                                                // or RESTRICT keywords.
+                                          false,
+                                          DialectUtils.CASCADE_CLAUSE,
+                                          false);
     }
     
     /**
