@@ -119,6 +119,15 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
                "getShowErrorLogMessages", "setShowErrorLogMessages"),
             new PropertyDescriptor(SAVE_PREFERENCES_IMMEDIATELY, CLS,
                "getSavePreferencesImmediately", "setSavePreferencesImmediately"),
+            new PropertyDescriptor(UPDATE_HOST, CLS, "getUpdateHost",
+               "setUpdateHost"),
+            new PropertyDescriptor(UPDATE_PORT, CLS, "getUpdatePort",
+                "setUpdatePort"),
+            new PropertyDescriptor(UPDATE_PATH, CLS, "getUpdatePath",
+                "setUpdatePath"),
+            new PropertyDescriptor(UPDATE_PATH, CLS, "getUpdateChannel",
+                "setUpdateChannel")            
+            
          };
       }
    }
