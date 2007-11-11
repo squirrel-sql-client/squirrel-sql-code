@@ -89,6 +89,10 @@ public class SquirrelPreferences implements Serializable
       String SHOW_INFO_LOG_MESSAGES = "showInfoLogMessages";
       String SHOW_ERROR_LOG_MESSAGES = "showErrorLogMessages";
       String SAVE_PREFERENCES_IMMEDIATELY = "savePreferencesImmediately";
+      String UPDATE_HOST = "updateHost";
+      String UPDATE_PORT = "updatePort";
+      String UPDATE_PATH = "updatePath";
+      String UPDATE_CHANNEL = "updateChannel";
    }
 
    public interface IJdbcDebugTypes
@@ -217,10 +221,24 @@ public class SquirrelPreferences implements Serializable
 
     /** Always save preferences immediately when they change, instead of at shutdown */
     private boolean _savePreferencesImmediately = true;
-   
+
+    /** Host to use when checking for and installing updates */
+    private String _updateHost = "squirrel-sql.sourceforge.net";
+    
+    /** Port to use when checking for and installing updates */
+    private String _updatePort = "80";
+    
+    /** Path to use when checking for and installing updates */
+    private String _updatePath = "releases";
+    
+    /** Channel to use when checking for and installing updates */ 
+    private String _updateChannel = "stable";
+    
 	/** Object to handle property change events. */
 	private transient PropertyChangeReporter _propChgReporter;
 
+
+	
 	/**
 	 * Default ctor.
 	 */
