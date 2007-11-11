@@ -20,8 +20,10 @@
 	     and directories -->
 	<target name="init">
 		<property file="${basedir}/build-weekly.properties"/>
+		
 		<property name="dist.dir" value="${cvs.dest.dir}/squirrel-sql-dist"/>
-
+		<mkdir dir="${dist.dir}"/>
+		
 		<tstamp>
 		    <format property="touch.time" 
 		    	    pattern="yyyyMMdd_kkmm"
@@ -58,8 +60,21 @@
 		<property name="source.zip.file"
 		          value="${dist.dir}/${name}-${squirrel.version}-src.zip"/>
 
-		<mkdir dir="${dist.dir}"/>
-		<mkdir dir="${dist.dir}/squirrel-sql"/>
+		<property name="release.dir" value="${dist.dir}/release"/>
+		<mkdir dir="${release.dir}"/>
+
+		<property name="release.core.dir" value="${release.dir}/core"/>
+		<mkdir dir="${release.core.dir}"/>
+		
+		<property name="release.i18n.dir" value="${release.dir}/i18n"/>
+		<mkdir dir="${release.i18n.dir}"/>
+
+		<property name="release.plugin.dir" value="${release.dir}/plugin"/>
+		<mkdir dir="${release.plugin.dir}"/>
+		
+		<property name="target.dir" value="${dist.dir}/squirrel-sql"/>
+		<property name="target.core.dir" value="${target.dir}/core/dist/lib"/>
+		
 	</target>
 
 	<target name="test" depends="init">
@@ -133,6 +148,50 @@
 		       basedir="${dist.dir}/src"
 		       update="true"
 		  />	
+	</target>
+	
+	<!-- Create the release update site to make this release available to the 
+	     UpdateManager -->
+	<target name="createupdatesite" depends="init">
+		<!-- copy the core jars (includes libraries) to release core subdir -->
+		<copy todir="${release.core.dir}">
+			<fileset dir="${target.core.dir}">
+			    <include name="*.jar"/>
+				<exclude name="squirrel-sql_*.jar"/>
+			</fileset>
+		</copy>
+		<!-- copy translation jars to the release i18n subdir -->
+		<copy todir="${release.i18n.dir}">
+			<fileset dir="${target.core.dir}" >
+				<include name="squirrel-sql_*.jar"/>	
+			</fileset>
+		</copy>
+		<!-- copy the plugin zip archives to the release directory -->
+		<copy todir="${release.plugin.dir}">
+			<fileset dir="${target.dir}">
+				<include name="*.zip"/>
+			</fileset>
+		</copy>
+		
+		<!-- build the release.xml document -->
+		<java fork="true"  classname="net.sourceforge.squirrel_sql.client.update.xmlbeans.XmlBeanUtilities">
+			<arg value="snapshot"/>
+			<arg value="${squirrel.version}"/>
+			<arg value="${release.dir}"/>
+		    <classpath>
+		    	<!-- TODO: classes will not be included until the 2.7 release;
+		    	           so we need to get them from somewhere else.
+		        <pathelement location="${release.core.dir}/squirrel-sql.jar"/>
+		    	<pathelement location="${release.core.dir}/fw.jar"/>
+		    	-->
+		    	
+		    	<!-- TODO: remove this when the above can be used -->
+		    	<pathelement location="/home/manningr/projects/squirrel_snapshots/sql12/eclipse-classes"/>
+		    	<pathelement location="${release.core.dir}/commons-cli.jar"/>
+		    	<pathelement location="${release.core.dir}/log4j.jar"/>
+		    </classpath>
+			
+		</java>
 	</target>
 	
 	<!-- This deletes the files that are in the cvs.dest.dir/project.module/build
