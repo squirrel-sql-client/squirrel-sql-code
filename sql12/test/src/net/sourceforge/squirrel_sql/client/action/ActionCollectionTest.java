@@ -39,7 +39,7 @@ public class ActionCollectionTest extends BaseSQuirreLJUnit4TestCase {
     
     @Before
     public void setUp() throws Exception {
-        mockApplication = TestUtil.getEasyMockApplication(false);
+        mockApplication = TestUtil.getEasyMockApplication(false, true, null);
         mockAction = EasyMock.createMock(Action.class);
         
         replay(mockAction);
