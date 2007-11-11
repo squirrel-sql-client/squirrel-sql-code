@@ -137,8 +137,9 @@ public class MockApplication implements IApplication {
 
     public MainFrame getMainFrame() {
         // TODO Auto-generated method stub
-    	System.err.println("MockApplication.getMainFrame: stub not yet implemented");
-        return null;
+       throw new UnsupportedOperationException("getMainFrame"); 
+    	//System.err.println("MockApplication.getMainFrame: stub not yet implemented");
+        //return null;
     }
 
     public TaskThreadPool getThreadPool() {
