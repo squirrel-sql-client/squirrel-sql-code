@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -83,12 +84,11 @@ public class FileEditorDropTargetListener extends DropTargetAdapter
             File fileToOpen = null;
             
             if (t.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-                fileToOpen = handleJavaFileList(t);
+                fileToOpen = handleJavaFileListFlavor(t);
             } else if (t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                fileToOpen = handleUriListString(t);
+                fileToOpen = handleStringFlavor(t);
             } else {
-                s_log.error("drop: flavors fileList and UriListString "
-                        + "are not supported");
+                fileToOpen = handleUriListFlavor(t);
             }
             if (fileToOpen != null) {
                 if (s_log.isInfoEnabled()) {
@@ -105,18 +105,37 @@ public class FileEditorDropTargetListener extends DropTargetAdapter
 
     }
 
+    private File handleUriListFlavor(Transferable transferable) 
+        throws ClassNotFoundException 
+    {
+        DataFlavor uriListFlavor = new DataFlavor("text/uri-list;class=java.lang.String");
+        File result = null;
+        try {
+            if (transferable.isDataFlavorSupported(uriListFlavor)) {
+                String data = (String)transferable.getTransferData(uriListFlavor);
+                List<File> fileList = (textURIListToFileList(data));
+                result = fileList.get(0);
+            } else {
+                s_log.error("handleUriListFlavor: no support for "
+                        + "text/uri-list data flavor");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }                
+        return result;
+    }
+    
     /**
      * Handles the String data flavor which returns the data as a list of
      * java.io.File objects.
      * 
      * @param t
      *            the transferable to get the list from
-
      * @return the only file in the list
      * @throws UnsupportedFlavorException
      * @throws IOException
      */    
-    private File handleUriListString(Transferable t) 
+    private File handleStringFlavor(Transferable t) 
         throws UnsupportedFlavorException, IOException
     {
         File result = null;
@@ -167,7 +186,7 @@ public class FileEditorDropTargetListener extends DropTargetAdapter
      * @throws UnsupportedFlavorException
      * @throws IOException
      */
-    private File handleJavaFileList(Transferable t) 
+    private File handleJavaFileListFlavor(Transferable t) 
         throws UnsupportedFlavorException, IOException 
     {
         File result = null;
@@ -187,4 +206,26 @@ public class FileEditorDropTargetListener extends DropTargetAdapter
         }
         return result;
     }
+    
+    private List<File> textURIListToFileList(String data) {
+        List<File> list = new ArrayList<File>(1);
+        for (StringTokenizer st = new StringTokenizer(data, "\r\n");
+                st.hasMoreTokens();) {
+            String s = st.nextToken();
+            if (s.startsWith("#")) {
+                // the line is a comment (as per the RFC 2483)
+                continue;
+            }
+            try {
+                java.net.URI uri = new java.net.URI(s);
+                java.io.File file = new java.io.File(uri);
+                list.add(file);
+            } catch (java.net.URISyntaxException e) {
+                // malformed URI
+            } catch (IllegalArgumentException e) {
+                // the URI is not a valid 'file:' URI
+            }
+        }
+        return list;
+    }    
 }
