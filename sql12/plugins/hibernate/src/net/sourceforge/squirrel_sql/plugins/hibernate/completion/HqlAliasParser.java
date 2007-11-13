@@ -36,7 +36,7 @@ public class HqlAliasParser
             }
             else
             {
-               lastMappedClass = mappingInfoProvider.getMappedClassInfoFor(token, true);
+               lastMappedClass = mappingInfoProvider.getMappedClassInfoFor(token, true, true);
             }
          }
          else
