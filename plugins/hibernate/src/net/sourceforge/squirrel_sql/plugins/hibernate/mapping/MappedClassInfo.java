@@ -43,9 +43,12 @@ public class MappedClassInfo extends CompletionInfo
       return _simpleMappedClassName;
    }
 
-   public boolean matches(CompletionParser parser, boolean matchNameExact)
+   public boolean matches(CompletionParser parser, boolean matchNameExact, boolean stateless)
    {
-      _lastParser = parser;
+      if(false == stateless)
+      {
+         _lastParser = parser;
+      }
 
       if(matchNameExact)
       {
@@ -208,7 +211,7 @@ public class MappedClassInfo extends CompletionInfo
    {
       for (PropertyInfo propertyInfo : _propertyInfos)
       {
-         propertyInfo.setMappedClassInfo(mappingInfoProvider.getMappedClassInfoFor(propertyInfo.getHibernatePropertyInfo().getClassName(), false));
+         propertyInfo.setMappedClassInfo(mappingInfoProvider.getMappedClassInfoFor(propertyInfo.getHibernatePropertyInfo().getClassName(), false, false));
       }
    }
 }

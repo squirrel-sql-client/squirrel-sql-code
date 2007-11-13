@@ -12,6 +12,10 @@ Refactoring Plugin:
 
 Bug-Fixes:
 
+Hibernate Plugin: Class names in completion list could change from fully qualified to simple
+while scrolling through the completion list.
+
+
 Hibernate Plugin: When a statement like "from Kv k where k." was completed the fields for k. 
 would come from any arbitrary mapped class which name started with Kv
 
