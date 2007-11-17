@@ -296,6 +296,12 @@ public class PluginManager {
                 it.remove();
             }
         }
+        for (Iterator<SessionPluginInfo> it = _sessionPlugins.iterator(); it.hasNext();) {
+           SessionPluginInfo plugin = it.next();
+           if (plugin.getInternalName().equals(pluginInternalName)) {
+               it.remove();
+           }
+        }
     }
     
     /**
