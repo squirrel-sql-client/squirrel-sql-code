@@ -92,7 +92,9 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 {
 
-    /** Logger for this class. */
+   private static final long serialVersionUID = -2257109602127706539L;
+
+   /** Logger for this class. */
 	private static final ILogger s_log =
 		LoggerController.createLogger(ObjectTreePanel.class);
 
@@ -130,7 +132,11 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 
 	private ObjectTreeSelectionListener _objTreeSelLis = null;
 
-    private ObjectTreeTabbedPane _selectedObjTreeTabbedPane = null; 
+   private ObjectTreeTabbedPane _selectedObjTreeTabbedPane = null;
+   
+   /** used to save and restore previously selected object tree paths */ 
+   private TreePath[] previouslySelectedPaths = null;
+   
 	/**
 	 * ctor specifying the current session.
 	 *
@@ -249,7 +255,7 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
       // Register tabs to display in the details panel for table nodes.
       addDetailTab(type, new DatabaseObjectInfoTab());
 
-      ContentsTab conttentsTab = new ContentsTab();
+      ContentsTab conttentsTab = new ContentsTab(this);
       conttentsTab.addListener(new DataSetUpdateableTableModelListener()
       {
          public void forceEditMode(boolean mode)
@@ -594,15 +600,30 @@ public class ObjectTreePanel extends JPanel implements IObjectTreeAPI
 		return _tree.getSelectedNodes();
 	}
 
-    /**
-     * Return a type-safe list of the currently selected database tables
-     *
-     * @return  list of <TT>ITableInfo</TT> objects.
-     */
-    public List<ITableInfo> getSelectedTables() {
-        return _tree.getSelectedTables();
-    }
-    
+   /**
+    * Return a type-safe list of the currently selected database tables
+    * 
+    * @return list of <TT>ITableInfo</TT> objects.
+    */
+   public List<ITableInfo> getSelectedTables() {
+      return _tree.getSelectedTables();
+   }
+   
+   /**
+    * Saves the tree paths that are currently selected.  These can then be 
+    * restored with restoreSavedSelectedPaths.
+    */
+   public void saveSelectedPaths() {
+      previouslySelectedPaths = _tree.getSelectionPaths();
+   }
+   
+   /**
+    * Used to restore selected tree paths that were saved with saveSelectedPaths.
+    */
+   public void restoreSavedSelectedPaths() {
+      _tree.setSelectionPaths(previouslySelectedPaths);
+      _tree.requestFocusInWindow();
+   }
     
 	/**
 	 * Return an array of the currently selected database

@@ -29,6 +29,7 @@ import java.sql.Statement;
 import net.sourceforge.squirrel_sql.client.session.DataSetUpdateableTableModelImpl;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.PleaseWaitDialog;
+import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreePanel;
 import net.sourceforge.squirrel_sql.client.session.properties.SessionProperties;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.OrderByClausePanel;
 import net.sourceforge.squirrel_sql.client.session.sqlfilter.SQLFilterClauses;
@@ -87,7 +88,11 @@ public class ContentsTab extends BaseTableTab
 		LoggerController.createLogger(ContentsTab.class);
 
 
-   public ContentsTab() { }
+	private ObjectTreePanel _treePanel = null;
+	
+   public ContentsTab(ObjectTreePanel treePanel) { 
+      _treePanel = treePanel;
+   }
 
 	/**
 	 * Return the title for the tab.
@@ -331,10 +336,15 @@ public class ContentsTab extends BaseTableTab
                    s_log.debug("createDataSet running SQL: "+buf.toString());
                }
                
+               // Save off selections so that selection/focus can be restored later.
+               _treePanel.saveSelectedPaths();
+               
                // Initialize the dialog to ask the user to wait, because the query
                // can take a while
                waitDialog = new PleaseWaitDialog(stmt, _app.getMessageHandler());
                waitDialog.showDialog(_app);
+               
+               _treePanel.restoreSavedSelectedPaths();
                
            	   rs = stmt.executeQuery(buf.toString());
 
