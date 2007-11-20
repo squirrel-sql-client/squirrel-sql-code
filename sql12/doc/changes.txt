@@ -22,6 +22,7 @@ Hibernate Plugin:
 Refactoring Plugin: When generating DROP TABLE statements, Frontbase requires
 CASCADE or RESTRICT.  Now we append CASCADE to the DROP TABLE statement.
 
+1830649: Focus Loss
 1820792: Sybase ASE - table not shown in object browser
 1821354: Changing default value of a column in Derby does nothing
 1820214: 2.5.1 DB aliases do not transfer properly to 2.6.1
