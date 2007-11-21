@@ -26,6 +26,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
 import net.sourceforge.squirrel_sql.client.session.DataSetUpdateableTableModelImpl;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.PleaseWaitDialog;
@@ -335,17 +336,20 @@ public class ContentsTab extends BaseTableTab
                if (s_log.isDebugEnabled()) {
                    s_log.debug("createDataSet running SQL: "+buf.toString());
                }
-               
-               // Save off selections so that selection/focus can be restored later.
-               _treePanel.saveSelectedPaths();
-               
-               // Initialize the dialog to ask the user to wait, because the query
-               // can take a while
-               waitDialog = new PleaseWaitDialog(stmt, _app.getMessageHandler());
-               waitDialog.showDialog(_app);
-               
-               _treePanel.restoreSavedSelectedPaths();
-               
+                              
+               if (objectTreeTabIsSelected()) {
+                  // Save off selections so that selection/focus can be restored 
+                  // later.
+
+                  _treePanel.saveSelectedPaths();
+                  // Initialize the dialog to ask the user to wait, because 
+                  // the query can take a while.  Only do this if the object 
+                  // tree (and hence this contents tab) is visible.
+                  waitDialog = new PleaseWaitDialog(stmt, _app.getMessageHandler());
+                  waitDialog.showDialog(_app);
+                  
+                  _treePanel.restoreSavedSelectedPaths();
+               }
            	   rs = stmt.executeQuery(buf.toString());
 
             }
@@ -473,6 +477,24 @@ public class ContentsTab extends BaseTableTab
       }
    }
 
+   /**
+    * Returns true if the ObjectTree tab is selected.
+    * 
+    * @return Returns true if the ObjectTree tab is selected.
+    *                 false is returned otherwise.
+    */
+   private boolean objectTreeTabIsSelected() {
+      boolean result = false;
+      ISession session = _treePanel.getSession();
+      if (session != null) {
+         SessionPanel sessionPanel = session.getSessionSheet();
+         if (sessionPanel != null) {
+            result = sessionPanel.isObjectTreeTabSelected();
+         }
+      }
+      return result;
+   }
+   
    /**
     * Hide the dialog if one is shown
     * 
