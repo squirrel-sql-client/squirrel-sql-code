@@ -20,11 +20,35 @@ package net.sourceforge.squirrel_sql.client.update;
 
 public interface UpdateController {
 
-    /**
-     * Returns a boolean value indicating whether or not there are updates 
-     * available to be installed.
-     * 
-     * @return
-     */
-    public boolean isUpdateToDate();
+   /**
+    * Returns a boolean value indicating whether or not there are updates
+    * available to be installed. The sequence of steps involved is :
+    * 
+    * 1. Find the local release.xml file 2. Load the local release.xml file as a
+    * ChannelXmlBean. 3. Determine the channel that the user has (stable or
+    * snapshot) 4. Get the release.xml file as a ChannelXmlBean from the server
+    * 5. Determine if it is the same as the local copy, which was placed either
+    * by the installer or the last update?
+    * 
+    * @return true if the installed software is latest; false otherwise.
+    */
+   boolean isUpToDate() throws Exception;
+
+   String getUpdateServerName();
+
+   String getUpdateServerPort();
+
+   String getUpdateServerPath();
+
+   String getUpdateServerChannel();
+
+   int getUpdateServerPortAsInt();
+
+   void showMessage(String title, String msg);
+   
+   void showUpdateDialog();
+   
+   void showErrorMessage(String title, String msg);
+   
+   void checkUpToDate();
 }

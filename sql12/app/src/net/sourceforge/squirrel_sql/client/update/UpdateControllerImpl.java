@@ -18,94 +18,231 @@
  */
 package net.sourceforge.squirrel_sql.client.update;
 
+import static net.sourceforge.squirrel_sql.client.update.UpdateUtil.RELEASE_XML_FILENAME;
+
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
+import net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus;
+import net.sourceforge.squirrel_sql.client.update.gui.CheckUpdateListener;
+import net.sourceforge.squirrel_sql.client.update.gui.UpdateManagerDialog;
+import net.sourceforge.squirrel_sql.client.update.gui.UpdateSummaryDialog;
+import net.sourceforge.squirrel_sql.client.update.xmlbeans.ArtifactXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChannelXmlBean;
-import net.sourceforge.squirrel_sql.client.update.xmlbeans.XmlBeanUtilities;
+import net.sourceforge.squirrel_sql.client.update.xmlbeans.ModuleXmlBean;
+import net.sourceforge.squirrel_sql.client.update.xmlbeans.ReleaseXmlBean;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.util.UpdateSettings;
 
 /**
- * This class implements the business logic needed by the view 
- * (UpdateManagerDialog), to let the user to install new or updated software.
+ * This class implements the business logic needed by the view
+ * (UpdateManagerDialog), to let the user to install new or updated software
+ * (the model)
  * 
  * @author manningr
  */
-public class UpdateControllerImpl implements UpdateController {
+public class UpdateControllerImpl implements UpdateController,
+      CheckUpdateListener {
 
-    public static final String DEFAULT_REPO_HOST = 
-        "squirrel-sql.sourceforge.net";
-    
-    public static final String DEFAULT_REPO_PATH = 
-        "releases";
+   /** the application and services it provides */
+   private IApplication _app = null;
 
-    /**
-     * The name of the release xml file that describes the installed version
-     */
-    public static final String RELEASE_XML_FILENAME = "release.xml";
-    
-    
-    private IApplication _app = null;
-    
-    private UpdateUtil _util = new UpdateUtil(); 
-    
-    public UpdateControllerImpl(IApplication app) {
-        _app = app;
-    }
-    
-    public boolean isUpdateToDate() {
-        boolean result = true;
-        
-        // 1. Find the local release.xml file
-        String releaseFilename = _util.getLocalReleaseFile();
-        
-        // 2. Load the local release.xml file as a ChannelXmlBean.
-        ChannelXmlBean installedBean = 
-            _util.getLocalReleaseInfo(releaseFilename);
-        
-        // 3. Determine the channel that the user has (stable or snapshot)
-        String channelName = installedBean.getName();
-        
-        StringBuilder releasePath = new StringBuilder(DEFAULT_REPO_PATH);
-        releasePath.append("/");
-        releasePath.append(channelName);
-        
-        // 4. Get the release.xml file as a ChannelXmlBean from the server
-        ChannelXmlBean currentReleaseBean = 
-            _util.downloadCurrentRelease(DEFAULT_REPO_HOST, 
-                                         releasePath.toString(), 
-                                         RELEASE_XML_FILENAME);
-        
-        // 5. Is it the same as the local copy, which was placed either by the
-        // installer or the last update?
-        return currentReleaseBean.equals(installedBean);
-    }
-    
-    /**
-     * Returns a set of plugins (internal names) of plugins that are currently
-     * installed (regardless of whether or not they are enabled).
-     * 
-     * @return a set of plugin internal names
-     */
-    public Set<String> getInstalledPlugins() {
-        Set<String> result = new HashSet<String>();
-        PluginManager pmgr = _app.getPluginManager();
-        PluginInfo[] infos = pmgr.getPluginInformation();
-        for (PluginInfo info : infos) {
-            result.add(info.getInternalName());
-        }
-        return result;
-    }
-    
-    /**
-     * Go get the files that need to be updated.
-     * 
-     * @return
-     */
-    public boolean pullDownUpdateFiles() {
-        return true;
-    }
-    
+   /** user's preferences about updates */
+   private UpdateSettings _settings = null;
+
+   /** utility class for low-level update routines */
+   private UpdateUtil _util = new UpdateUtil();
+
+   /** the release that we downloaded when we last checked */
+   private ChannelXmlBean _currentChannelBean = null;
+
+   /** the release we had installed the last time we checked / updated */
+   private ChannelXmlBean _installedChannelBean = null;
+   
+   /** the time that we last checked the server to see if we were uptodate */
+   private long _timeOfLastCheck = -1;
+
+   /**
+    * Constructor
+    * 
+    * @param app
+    *           the application and services it provides
+    */
+   public UpdateControllerImpl(IApplication app) {
+      _app = app;
+      _util.setPluginManager(app.getPluginManager());
+      _settings = app.getSquirrelPreferences().getUpdateSettings();
+   }
+
+   /*
+    * (non-Javadoc)
+    * 
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateController#showUpdateDialog()
+    */
+   public void showUpdateDialog() {
+      JFrame parent = _app.getMainFrame();
+      UpdateManagerDialog dialog = new UpdateManagerDialog(parent);
+      dialog.setUpdateServerName(_settings.getUpdateServer());
+      dialog.setUpdateServerPort(_settings.getUpdateServerPort());
+      dialog.setUpdateServerPath(_settings.getUpdateServerPath());
+      dialog.setUpdateServerChannel(_settings.getUpdateServerChannel());
+      dialog.addCheckUpdateListener(this);
+      dialog.setVisible(true);
+   }
+
+   /*
+    * (non-Javadoc)
+    * 
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateController#isUpToDate()
+    */
+   public boolean isUpToDate() throws Exception {
+      boolean result = true;
+
+      // 1. Find the local release.xml file
+      String releaseFilename = _util.getLocalReleaseFile();
+
+      // 2. Load the local release.xml file as a ChannelXmlBean.
+      _installedChannelBean = _util.getLocalReleaseInfo(releaseFilename);
+
+      // 3. Determine the channel that the user has (stable or snapshot)
+      String channelName = _installedChannelBean.getName();
+
+      StringBuilder releasePath = new StringBuilder("/");
+      releasePath.append(getUpdateServerPath());
+      releasePath.append("/");
+      releasePath.append(channelName);
+      releasePath.append("/");
+
+      // 4. Get the release.xml file as a ChannelXmlBean from the server
+      _currentChannelBean = _util.downloadCurrentRelease(getUpdateServerName(),
+                                                         getUpdateServerPortAsInt(),
+                                                         releasePath.toString(),
+                                                         RELEASE_XML_FILENAME);
+
+      _timeOfLastCheck = System.currentTimeMillis();
+
+      // 5. Is it the same as the local copy, which was placed either by the
+      // installer or the last update?
+      return _currentChannelBean.equals(_installedChannelBean);
+   }
+
+   /**
+    * Returns a set of plugins (internal names) of plugins that are currently
+    * installed (regardless of whether or not they are enabled).
+    * 
+    * @return a set of plugin internal names
+    */
+   public Set<String> getInstalledPlugins() {
+      Set<String> result = new HashSet<String>();
+      PluginManager pmgr = _app.getPluginManager();
+      PluginInfo[] infos = pmgr.getPluginInformation();
+      for (PluginInfo info : infos) {
+         result.add(info.getInternalName());
+      }
+      return result;
+   }
+
+   /**
+    * Go get the files that need to be updated.
+    * 
+    * @return
+    */
+   public boolean pullDownUpdateFiles() {
+      return true;
+   }
+
+   /**
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateController#getUpdateServerChannel()
+    */
+   public String getUpdateServerChannel() {
+      return _settings.getUpdateServerChannel();
+   }
+
+   /**
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateController#getUpdateServerName()
+    */
+   public String getUpdateServerName() {
+      return _settings.getUpdateServer();
+   }
+
+   /**
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateController#getUpdateServerPath()
+    */
+   public String getUpdateServerPath() {
+      return _settings.getUpdateServerPath();
+   }
+
+   /**
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateController#getUpdateServerPort()
+    */
+   public String getUpdateServerPort() {
+      return _settings.getUpdateServerPort();
+   }
+
+   /**
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateController#getUpdateServerPortAsInt()
+    */
+   public int getUpdateServerPortAsInt() {
+      return Integer.parseInt(getUpdateServerPort());
+   }
+
+   /**
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateController#showMessage(java.lang.String,
+    *      java.lang.String)
+    */
+   public void showMessage(String title, String msg) {
+      JOptionPane.showMessageDialog(_app.getMainFrame(),
+                                    msg,
+                                    title,
+                                    JOptionPane.INFORMATION_MESSAGE);
+
+   }
+
+   /**
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateController#showErrorMessage(java.lang.String, java.lang.String)
+    */
+   public void showErrorMessage(String title, String msg) {
+      JOptionPane.showMessageDialog(_app.getMainFrame(),
+                                    msg,
+                                    title,
+                                    JOptionPane.ERROR_MESSAGE);
+   }
+
+   /**
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateController#checkUpToDate()
+    */
+   public void checkUpToDate() {
+      // TODO: I18n
+      try {
+         if (isUpToDate()) {
+            showMessage("Update Check", "Software is the latest version.");
+         } else {
+            List<ArtifactStatus> artifactStatusItems = 
+               this._util.getArtifactStatus(_currentChannelBean);
+            UpdateSummaryDialog dialog = new UpdateSummaryDialog(_app.getMainFrame(),
+                                                                 artifactStatusItems,
+                                                                 this);
+            String installedVersion = 
+               _installedChannelBean.getCurrentRelease().getVersion();
+            dialog.setInstalledVersion(installedVersion);
+            
+            String currentVersion =
+               _currentChannelBean.getCurrentRelease().getVersion();
+            dialog.setAvailableVersion(currentVersion);
+            
+            GUIUtils.centerWithinParent(_app.getMainFrame());
+            dialog.setVisible(true);
+         }
+      } catch (Exception e) {
+         showErrorMessage("Update Check Failed", "Exception was - "
+               + e.getClass().getName() + ":" + e.getMessage());
+      }
+   }
 }

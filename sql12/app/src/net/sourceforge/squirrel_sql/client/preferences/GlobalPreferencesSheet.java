@@ -284,6 +284,7 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 		_panels.add(new SQLPreferencesPanel(_app.getMainFrame()));
 		_panels.add(new ProxyPreferencesPanel());
 		_panels.add(new DataTypePreferencesPanel());
+		_panels.add(new UpdatePreferencesPanel());
 
 		// Go thru all loaded plugins asking for panels.
 		PluginInfo[] plugins = _app.getPluginManager().getPluginInformation();

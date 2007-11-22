@@ -394,6 +394,7 @@ final class MainFrameMenuBar extends JMenuBar
 		addToMenu(rsrc, ViewHelpAction.class, menu);
 
 		menu.addSeparator();
+		addToMenu(rsrc, UpdateAction.class, menu);
 		if (!_osxPluginLoaded)
 		{
 			addToMenu(rsrc, AboutAction.class, menu);

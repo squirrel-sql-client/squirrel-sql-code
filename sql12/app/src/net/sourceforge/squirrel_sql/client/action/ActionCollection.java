@@ -48,6 +48,7 @@ import net.sourceforge.squirrel_sql.client.mainframe.action.ShowLoadedDriversOnl
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileHorizontalAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.TileVerticalAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.UpdateAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewHelpAction;
 import net.sourceforge.squirrel_sql.client.mainframe.action.ViewLogsAction;
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -487,6 +488,7 @@ public class ActionCollection
 		add(new TileHorizontalAction(_app));
 		add(new TileVerticalAction(_app));
 		add(new ToggleAutoCommitAction(_app));
+		add(new UpdateAction(_app));
 		add(new ViewHelpAction(_app));
 		add(new ViewLogsAction(_app));
 		add(new PreviousSqlAction(_app));

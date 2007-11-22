@@ -28,6 +28,7 @@ import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 import net.sourceforge.squirrel_sql.fw.util.ProxySettings;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.UpdateSettings;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.fw.xml.XMLBeanReader;
@@ -66,6 +67,7 @@ public class SquirrelPreferences implements Serializable
       String PLUGIN_OBJECTS = "pluginObjects";
       String PLUGIN_STATUSES = "pluginStatuses";
       String PROXY = "proxyPerferences";
+      String UPDATE = "updatePreferences";
       String SCROLLABLE_TABBED_PANES = "getUseScrollableTabbedPanes";
       String SESSION_PROPERTIES = "sessionProperties";
       String SHOW_ALIASES_TOOL_BAR = "showAliasesToolBar";
@@ -88,11 +90,7 @@ public class SquirrelPreferences implements Serializable
       String SHOW_DEBUG_LOG_MESSAGES = "showDebugLogMessages";
       String SHOW_INFO_LOG_MESSAGES = "showInfoLogMessages";
       String SHOW_ERROR_LOG_MESSAGES = "showErrorLogMessages";
-      String SAVE_PREFERENCES_IMMEDIATELY = "savePreferencesImmediately";
-      String UPDATE_HOST = "updateHost";
-      String UPDATE_PORT = "updatePort";
-      String UPDATE_PATH = "updatePath";
-      String UPDATE_CHANNEL = "updateChannel";
+      String SAVE_PREFERENCES_IMMEDIATELY = "savePreferencesImmediately";      
    }
 
    public interface IJdbcDebugTypes
@@ -179,6 +177,9 @@ public class SquirrelPreferences implements Serializable
 	/** Proxy settings. */
 	private ProxySettings _proxySettings = new ProxySettings();
 
+	/** Software update settings */
+	private UpdateSettings _updateSettings = new UpdateSettings();
+	
 	/** Index in drivers window to be initially selected. */
 	private int _driversSelectedIndex = -1;
 
@@ -223,16 +224,16 @@ public class SquirrelPreferences implements Serializable
     private boolean _savePreferencesImmediately = true;
 
     /** Host to use when checking for and installing updates */
-    private String _updateHost = "squirrel-sql.sourceforge.net";
+//    private String _updateHost = "squirrel-sql.sourceforge.net";
     
     /** Port to use when checking for and installing updates */
-    private String _updatePort = "80";
+//    private String _updatePort = "80";
     
     /** Path to use when checking for and installing updates */
-    private String _updatePath = "releases";
+//    private String _updatePath = "releases";
     
     /** Channel to use when checking for and installing updates */ 
-    private String _updateChannel = "stable";
+//    private String _updateChannel = "stable";
     
 	/** Object to handle property change events. */
 	private transient PropertyChangeReporter _propChgReporter;
@@ -598,6 +599,24 @@ public class SquirrelPreferences implements Serializable
 		return (ProxySettings)_proxySettings.clone();
 	}
 
+	public UpdateSettings getUpdateSettings() {
+	   return (UpdateSettings)_updateSettings.clone(); 
+	}
+
+   // TODO: Only set if changed
+   public synchronized void setUpdateSettings(UpdateSettings data)
+   {
+      if (data == null)
+      {
+         data = new UpdateSettings();
+      }
+      final UpdateSettings oldValue = _updateSettings;
+      _updateSettings= data;
+      getPropertyChangeReporter().firePropertyChange(IPropertyNames.UPDATE,
+                                 oldValue, _updateSettings);
+   }
+	
+	
 	// TODO: Only set if changed
 	public synchronized void setProxySettings(ProxySettings data)
 	{

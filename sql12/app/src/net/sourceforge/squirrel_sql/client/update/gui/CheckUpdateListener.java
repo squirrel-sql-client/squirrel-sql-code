@@ -16,21 +16,16 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.client.update;
+package net.sourceforge.squirrel_sql.client.update.gui;
 
 /**
- * The types of update channels supported by the update manager
+ * A callback interface that allows the UpdateManagerDialog to tell the 
+ * controller that the user wants to check for updates, without requiring the 
+ * UpdateManagerDialog to have a reference to the UpdateController.
  * 
  * @author manningr
  */
-public enum UpdateChannel {
+public interface CheckUpdateListener {
 
-   /* Channel that provides stable release updates */
-   STABLE,
-
-   /*
-    * Channel that provides snapshot release updates - more frequent and less
-    * stable
-    */
-   SNAPSHOT
+   void checkUpToDate();
 }

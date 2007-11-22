@@ -73,6 +73,8 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
                "getActionKeys", "setActionKeys"),
             new PropertyDescriptor(PROXY, CLS,
                "getProxySettings", "setProxySettings"),
+            new PropertyDescriptor(UPDATE, CLS,
+               "getUpdateSettings", "setUpdateSettings"),
             new PropertyDescriptor(ALIASES_SELECTED_INDEX, CLS,
                "getAliasesSelectedIndex", "setAliasesSelectedIndex"),
             new PropertyDescriptor(DRIVERS_SELECTED_INDEX, CLS,
@@ -118,16 +120,7 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
             new PropertyDescriptor(SHOW_ERROR_LOG_MESSAGES, CLS,
                "getShowErrorLogMessages", "setShowErrorLogMessages"),
             new PropertyDescriptor(SAVE_PREFERENCES_IMMEDIATELY, CLS,
-               "getSavePreferencesImmediately", "setSavePreferencesImmediately"),
-            new PropertyDescriptor(UPDATE_HOST, CLS, "getUpdateHost",
-               "setUpdateHost"),
-            new PropertyDescriptor(UPDATE_PORT, CLS, "getUpdatePort",
-                "setUpdatePort"),
-            new PropertyDescriptor(UPDATE_PATH, CLS, "getUpdatePath",
-                "setUpdatePath"),
-            new PropertyDescriptor(UPDATE_PATH, CLS, "getUpdateChannel",
-                "setUpdateChannel")            
-            
+               "getSavePreferencesImmediately", "setSavePreferencesImmediately"),            
          };
       }
    }
