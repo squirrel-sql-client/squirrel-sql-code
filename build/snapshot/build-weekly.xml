@@ -87,16 +87,16 @@
 		<echo message="config file template= ${izpack.config.file.template}" />
 		<echo message="config file = ${izpack.config.file}" />
 		
-        <copy file="${cvs.dest.dir}/${project.module}/build/snapshot/${izpack.config.file.template}" 
-              toFile="${cvs.dest.dir}/${project.module}/build/snapshot/${izpack.config.file}">
-            <filterchain>
-                <filterreader classname="org.apache.tools.ant.filters.ReplaceTokens">
-                        <param type="token"
-                               name="squirrel.version"
-                               value="${squirrel.version}"/>
-                </filterreader>
-            </filterchain>
-        </copy>
+                <copy file="${cvs.dest.dir}/${project.module}/build/snapshot/${izpack.config.file.template}" 
+                      toFile="${cvs.dest.dir}/${project.module}/build/snapshot/${izpack.config.file}">
+                    <filterchain>
+                        <filterreader classname="org.apache.tools.ant.filters.ReplaceTokens">
+                                <param type="token"
+                                       name="squirrel.version"
+                                       value="${squirrel.version}"/>
+                        </filterreader>
+                    </filterchain>
+                </copy>
 
 		<!-- This works with the latest version of IzPack - currently 3.9.0 
 		     The arguments are not correct for older versions such as 3.7.0 -->
@@ -151,7 +151,8 @@
 	</target>
 	
 	<!-- Create the release update site to make this release available to the 
-	     UpdateManager -->
+	     UpdateManager.  This needs to be done before the installer is built
+	     so that the release.xml file can be included. -->
 	<target name="createupdatesite" depends="init">
 		<!-- copy the core jars (includes libraries) to release core subdir -->
 		<copy todir="${release.core.dir}">
@@ -179,18 +180,11 @@
 			<arg value="${squirrel.version}"/>
 			<arg value="${release.dir}"/>
 		    <classpath>
-		    	<!-- TODO: classes will not be included until the 2.7 release;
-		    	           so we need to get them from somewhere else.
 		        <pathelement location="${release.core.dir}/squirrel-sql.jar"/>
 		    	<pathelement location="${release.core.dir}/fw.jar"/>
-		    	-->
-		    	
-		    	<!-- TODO: remove this when the above can be used -->
-		    	<pathelement location="/home/manningr/projects/squirrel_snapshots/sql12/eclipse-classes"/>
 		    	<pathelement location="${release.core.dir}/commons-cli.jar"/>
 		    	<pathelement location="${release.core.dir}/log4j.jar"/>
 		    </classpath>
-			
 		</java>
 	</target>
 	
@@ -415,6 +409,8 @@
 		</antcall>			
 		
 		<antcall target="executebuild"/>
+		
+		<antcall target="createupdatesite" />
 		
 		<!-- Create the installer for mac -->
 		<antcall target="createMacInstaller"/>
