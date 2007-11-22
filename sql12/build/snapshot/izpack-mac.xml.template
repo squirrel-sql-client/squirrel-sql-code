@@ -48,7 +48,7 @@
 					    src="../../squirrel-sql-dist/squirrel-sql/mac/SquirrelSQL/SquirrelSQL.app/Contents/Info.plist"/>
 			<singlefile	target="$INSTALL_PATH/Contents/Resources/Java/plugins/readme.txt"
 					    src="../../squirrel-sql-dist/squirrel-sql/core/dist/plugins/readme.txt"/>
-                        <singlefile     targetdir="$INSTALL_PATH/Contents/Resources/Java/update/release.xml"
+                        <singlefile     target="$INSTALL_PATH/Contents/Resources/Java/update/release.xml"
                                         src="../../squirrel-sql-dist/release/release.xml"/>
 			<file	targetdir="$INSTALL_PATH/Contents/Resources/Java"
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/doc"/>
