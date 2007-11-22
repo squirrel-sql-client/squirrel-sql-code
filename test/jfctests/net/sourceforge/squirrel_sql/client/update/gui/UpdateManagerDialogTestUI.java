@@ -25,7 +25,7 @@ public class UpdateManagerDialogTestUI {
             
             public void actionPerformed(ActionEvent e) {
                 if (dialog == null) {
-                    dialog = new UpdateManagerDialog(frame, null);
+                    dialog = new UpdateManagerDialog(frame);
                 }
                 dialog.setVisible(true);
             }
