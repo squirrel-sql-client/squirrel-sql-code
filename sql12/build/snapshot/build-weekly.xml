@@ -193,21 +193,40 @@
 	     "ant clean" -->
 	<target name="cvsupdate" depends="init" if="targettest">
 		<delete includeEmptyDirs="true" quiet="true">
-			<fileset dir="${cvs.dest.dir}/${project.module}/build">
-				<exclude name="CVS/**/*"/>
-			</fileset>
+        		<fileset dir="${cvs.dest.dir}/${project.module}/build">
+        			<exclude name="CVS/**/*"/>
+        		</fileset>
 		</delete>		
+		<!-- Delete the release directory so that it gets regenerated -->
+		<delete includeEmptyDirs="true" quiet="true">
+                        <fileset dir="${cvs.dest.dir}/squirrel-sql-dist/release">
+                                <exclude name="CVS/**/*"/>
+                        </fileset>			
+		</delete>			
+
 		<cvs command="update -A  -P -d -r ${cvs.tag}"
 		     compressionlevel="3"
 			 cvsroot="${project.cvsroot}" 
 			 dest="${cvs.dest.dir}" 
 			 package="${project.module}"
-		/>		
+		/>
+		
+		<!-- Copy the build files so that any local changes can be 
+		     tested.  Otherwise, they would need to be committed in CVS
+		     to test any changes -->
+		<copy overwrite="true" todir="${build.file.dest.dir}/snapshot">
+                        <fileset dir="." >
+                                <include name="*.template"/>    
+                        </fileset>
+                </copy>
+		
+
 		<ant antfile="${build.file.dest.dir}/build.xml" 
 			 target="clean"
 			 inheritAll="false"
 		     dir="${cvs.dest.dir}/${project.module}"
-	    />		
+		/>
+		
 	</target>
 	
 	<!-- this deletes the files underneath cvs.dest.dir, then checks out the 
