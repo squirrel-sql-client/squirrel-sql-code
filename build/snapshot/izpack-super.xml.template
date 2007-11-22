@@ -46,7 +46,7 @@
 			<description>SQL Client</description>
 			<singlefile	target="$INSTALL_PATH/plugins/readme.txt"
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/plugins/readme.txt"/>
-			<singlefile     targetdir="$INSTALL_PATH/update/release.xml"
+			<singlefile     target="$INSTALL_PATH/update/release.xml"
 			                src="../../squirrel-sql-dist/release/release.xml"/>
 			<file	targetdir="$INSTALL_PATH"
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/doc"/>
