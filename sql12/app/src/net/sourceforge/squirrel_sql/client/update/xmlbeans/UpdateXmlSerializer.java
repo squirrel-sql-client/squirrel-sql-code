@@ -22,10 +22,14 @@ import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import net.sourceforge.squirrel_sql.client.update.gui.ArtifactAction;
 
 /**
  * This class contains utility methods that can be used to read from and write
@@ -39,59 +43,109 @@ import java.io.InputStream;
  */
 public class UpdateXmlSerializer {
 
-    /**
-     * Writes the specified Release XMLBean to the specified file.
-     * 
-     * @param channelBean
-     *            the bean to write.
-     * @param filename
-     *            the filename of the file to write to.
-     * 
-     * @throws Exception
-     *             if any IO exceptions occur.
-     */
-    public void write(ChannelXmlBean channelBean, String filename)
-            throws Exception {
-        XMLEncoder os = new XMLEncoder(new BufferedOutputStream(
-                new FileOutputStream(filename)));
-        os.writeObject(channelBean);
-        os.close();
-    }
+   /** Allows for encoding enums. */
+   private EnumPersistenceDelegate enumDelegate = new EnumPersistenceDelegate();
+   
+   /**
+    * Writes the specified Release XMLBean to the specified file.
+    * 
+    * @param channelBean
+    *           the bean to write.
+    * @param filename
+    *           the filename of the file to write to.
+    * @throws FileNotFoundException
+    *            if the specified file could not be written to
+    * 
+    */
+   public void write(ChannelXmlBean channelBean, String filename)
+         throws FileNotFoundException {
+      XMLEncoder os = getXmlEncoder(filename);
+      os.writeObject(channelBean);
+      os.close();
+   }
 
-    /**
-     * Reads a Channel XMLBean from the specified file.
-     * 
-     * @param filename
-     *            the filename of the file to read the XML bean from.
-     * 
-     * @throws Exception
-     *             if any IO exceptions occurr.
-     */
-    public ChannelXmlBean read(String filename) throws IOException {
-        return read(new FileInputStream(filename));
-    }
+   /**
+    * Writes the specified ChangeList XMLBean to the specified file.
+    * 
+    * @param changeBean
+    *           the bean to write
+    * @param filename
+    *           the filename of the file to write to
+    * 
+    * @throws FileNotFoundException
+    *            if the specified file could not be written to
+    */
+   public void write(ChangeListXmlBean changeBean, String filename)
+         throws FileNotFoundException {
+      XMLEncoder os = getXmlEncoder(filename);
+      os.writeObject(changeBean);
+      os.close();
+   }
 
-    /**
-     * Reads a Channel XMLBean from the specified InputStream.
-     * 
-     * @param is
-     *            the InputStream to read the XML bean from.
-     * 
-     * @throws Exception
-     *             if any IO exceptions occurr.
-     */
-    public ChannelXmlBean read(InputStream is) throws IOException {
-        XMLDecoder bis = null;
-        Object result = null;
-        try {
-            bis = new XMLDecoder(new BufferedInputStream(is));
-            result = bis.readObject();
-        } finally {
-            if (is != null) {
-                is.close();
-            }
-        }
-        return (ChannelXmlBean) result;
-    }
-    
+   /**
+    * Writes the specified ChangeList XMLBean to the specified file.
+    * 
+    * @param changeBean
+    *           the bean to write
+    * @param filename
+    *           the filename of the file to write to
+    * 
+    * @throws FileNotFoundException
+    *            if the specified file could not be written to
+    */
+   public void write(ChangeListXmlBean changeBean, File file)
+         throws FileNotFoundException {
+      XMLEncoder os = getXmlEncoder(file.getAbsolutePath());
+      os.writeObject(changeBean);
+      os.close();
+   }
+   
+   /**
+    * Reads a Channel XMLBean from the specified file.
+    * 
+    * @param filename
+    *           the filename of the file to read the XML bean from.
+    * @throws IOException 
+    * @throws FileNotFoundException 
+    * 
+    * @throws Exception
+    *            if any IO exceptions occurr.
+    */
+   public ChannelXmlBean readChannelBean(String filename) throws FileNotFoundException,
+         IOException {
+      return readChannelBean(new FileInputStream(filename));
+   }
+
+   /**
+    * Reads a Channel XMLBean from the specified InputStream.
+    * 
+    * @param is
+    *           the InputStream to read the XML bean from.
+    * 
+    * @throws Exception
+    *            if any IO exceptions occurr.
+    */
+   public ChannelXmlBean readChannelBean(InputStream is) throws IOException {
+      XMLDecoder bis = null;
+      Object result = null;
+      try {
+         bis = new XMLDecoder(new BufferedInputStream(is));
+         result = bis.readObject();
+      } finally {
+         if (is != null) {
+            is.close();
+         }
+      }
+      return (ChannelXmlBean) result;
+   }
+
+   private XMLEncoder getXmlEncoder(String filename)
+         throws FileNotFoundException {
+      XMLEncoder result = null;
+      BufferedOutputStream os = 
+         new BufferedOutputStream(new FileOutputStream(filename));
+      result = new XMLEncoder(os);
+      result.setPersistenceDelegate(ArtifactAction.class, enumDelegate);
+      return result;
+   }
 }

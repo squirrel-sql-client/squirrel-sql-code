@@ -1,8 +1,8 @@
 package net.sourceforge.squirrel_sql.client.update.gui;
 
 /*
- * Copyright (C) 2001-2004 Colin Bell
- * colbell@users.sourceforge.net
+ * Copyright (C) 2007 Rob Manning
+ * manningr@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -109,6 +109,19 @@ public class UpdateSummaryTable extends SortableTable {
       
    }
 
+   /**
+    * Gets the list of changes requested by the user.
+    */
+   public List<ArtifactStatus> getUserRequestedChanges() {
+      List<ArtifactStatus> changes = new ArrayList<ArtifactStatus>();
+      for (ArtifactStatus artifactStatus : _artifacts) {
+         if (artifactStatus.getArtifactAction() != ArtifactAction.NONE) {
+            changes.add(artifactStatus);
+         }
+      }
+      return changes;
+   }
+   
    private void initPopup() {
       // TODO: i18n
       final JPopupMenu popup = new JPopupMenu("Install Options");
@@ -116,15 +129,41 @@ public class UpdateSummaryTable extends SortableTable {
       coreItem.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
             for (ArtifactStatus status : _artifacts) {
-               if (status.getType().equals("core")) {
-                  status.setAction(ArtifactStatus.Action.INSTALL);
+               if (status.isCoreArtifact()) {
+                  status.setArtifactAction(ArtifactAction.INSTALL);
                }
             }
          }
       });
       JMenuItem pluginItem = new JMenuItem("All plugins");
+      pluginItem.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent e) {
+            for (ArtifactStatus status : _artifacts) {
+               if (status.isPluginArtifact()) {
+                  status.setArtifactAction(ArtifactAction.INSTALL);
+               }
+            }
+         }
+      });
       JMenuItem translationItem = new JMenuItem("All translations");
+      translationItem.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent e) {
+            for (ArtifactStatus status : _artifacts) {
+               if (status.isTranslationArtifact()) {
+                  status.setArtifactAction(ArtifactAction.INSTALL);
+               }
+            }
+         }
+      });
+      
       JMenuItem allUpdatesItem = new JMenuItem("All updates");
+      allUpdatesItem.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent e) {
+            for (ArtifactStatus status : _artifacts) {
+               status.setArtifactAction(ArtifactAction.INSTALL);
+            }
+         }
+      });
       
       popup.add(coreItem);
       popup.add(pluginItem);
@@ -149,17 +188,17 @@ public class UpdateSummaryTable extends SortableTable {
    private JComboBox initCbo(JComboBox cbo) {
       cbo.setEditable(false);
 
-      cbo.addItem(ArtifactStatus.Action.NONE);
-      cbo.addItem(ArtifactStatus.Action.INSTALL);
-      cbo.addItem(ArtifactStatus.Action.REMOVE);
+      cbo.addItem(ArtifactAction.NONE);
+      cbo.addItem(ArtifactAction.INSTALL);
+      cbo.addItem(ArtifactAction.REMOVE);
 
       cbo.setSelectedIndex(0);
 
       _actionComboBox.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
             final JComboBox source = (JComboBox)e.getSource();
-            final ArtifactStatus.Action action = 
-               (ArtifactStatus.Action)(source).getSelectedItem();
+            final ArtifactAction action = 
+               (ArtifactAction)(source).getSelectedItem();
             final int row = UpdateSummaryTable.this.getSelectedRow();
             final SortableTableModel model = 
                (SortableTableModel)UpdateSummaryTable.this.getModel();
@@ -175,7 +214,7 @@ public class UpdateSummaryTable extends SortableTable {
                System.out.println("Need to ensure that core components are up-to-date");
                return;
             }
-            if (as.isCoreArtifact() && action == ArtifactStatus.Action.REMOVE) {
+            if (as.isCoreArtifact() && action == ArtifactAction.REMOVE) {
                // TODO: i18n
                _updateController.showErrorMessage("Illegal Action", 
                                                   "Core artifacts cannot be removed");
@@ -187,11 +226,11 @@ public class UpdateSummaryTable extends SortableTable {
             if (as.isCoreArtifact()) {
                for (ArtifactStatus status : UpdateSummaryTable.this._artifacts) {
                   if (status.isCoreArtifact()) {
-                     status.setAction(action);
+                     status.setArtifactAction(action);
                   }
                }
             }
-            as.setAction(action);
+            as.setArtifactAction(action);
             model.fireTableDataChanged();  
          }
       });
@@ -219,7 +258,7 @@ public class UpdateSummaryTable extends SortableTable {
          case 2:
             return as.isInstalled() ? i18n.YES_VAL : i18n.NO_VAL;
          case 3:
-            return as.getAction();
+            return as.getArtifactAction();
          default:
             throw new IndexOutOfBoundsException("" + col);
          }
@@ -249,9 +288,9 @@ public class UpdateSummaryTable extends SortableTable {
 //         System.out.println("setValueAt: value=" + value + " row=" + row
 //               + " col=" + col);
          final ArtifactStatus as = _artifacts.get(row);
-         ArtifactStatus.Action action = 
-            ArtifactStatus.Action.valueOf(value.toString()); 
-         as.setAction(action);
+         ArtifactAction action = 
+            ArtifactAction.valueOf(value.toString()); 
+         as.setArtifactAction(action);
       }
    }
 }

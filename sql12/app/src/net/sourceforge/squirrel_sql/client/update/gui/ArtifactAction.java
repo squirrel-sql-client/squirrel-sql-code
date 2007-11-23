@@ -1,5 +1,3 @@
-package net.sourceforge.squirrel_sql.client.update.gui;
-
 /*
  * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
@@ -18,30 +16,24 @@ package net.sourceforge.squirrel_sql.client.update.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+package net.sourceforge.squirrel_sql.client.update.gui;
 
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import java.io.Serializable;
 
-public class UpdateSummaryTableActionItem
-{
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(UpdateSummaryTableActionItem.class);
+import net.sourceforge.squirrel_sql.client.update.xmlbeans.EnumPersistenceDelegate;
 
-   private ArtifactAction _action;
-
-   private UpdateSummaryTableActionItem(ArtifactAction action)
-   {
-      this._action = action;
-   }
-
-   public String toString()
-   {
-      return _action.name();
-   }
-
-   public void setValue(ArtifactAction action) {
-      this._action = action;
-   }
-
-
+/**
+ * An enumeration that captures a user's desire for change for any given 
+ * artifact.
+ *  
+ * @author manningr
+ *
+ */
+public enum ArtifactAction implements Serializable {
+   NONE,
+   INSTALL,
+   REMOVE;
+   
+   static { EnumPersistenceDelegate.installFor(values()[0].getClass()); }   
 }
+

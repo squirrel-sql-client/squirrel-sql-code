@@ -1,5 +1,3 @@
-package net.sourceforge.squirrel_sql.client.update.gui;
-
 /*
  * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
@@ -18,30 +16,32 @@ package net.sourceforge.squirrel_sql.client.update.gui;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+package net.sourceforge.squirrel_sql.client.update.xmlbeans;
 
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import java.io.Serializable;
+import java.util.List;
 
-public class UpdateSummaryTableActionItem
-{
-   private static final StringManager s_stringMgr =
-      StringManagerFactory.getStringManager(UpdateSummaryTableActionItem.class);
+import net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus;
 
-   private ArtifactAction _action;
+public class ChangeListXmlBean implements Serializable {
 
-   private UpdateSummaryTableActionItem(ArtifactAction action)
-   {
-      this._action = action;
+   /** the changes to make */
+   private List<ArtifactStatus> changes = null;
+   
+   /**
+    * @return the _changes
+    */
+   public List<ArtifactStatus> getChanges() {
+      return changes;
    }
 
-   public String toString()
-   {
-      return _action.name();
+   /**
+    * @param _changes the _changes to set
+    */
+   public void setChanges(List<ArtifactStatus> changes) {
+      this.changes = changes;
    }
-
-   public void setValue(ArtifactAction action) {
-      this._action = action;
-   }
-
-
+   
+   
+   
 }

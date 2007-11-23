@@ -29,7 +29,8 @@ import net.sourceforge.squirrel_sql.client.util.IOUtilities;
 
 
 /**
- * Utility methods for working with XmlBeans. 
+ * Utility methods for working with XmlBeans. This will be used mostly for
+ * building releases.
  * 
  * @author manningr
  */

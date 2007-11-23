@@ -18,6 +18,8 @@
  */
 package net.sourceforge.squirrel_sql.client.update.gui;
 
+import java.io.Serializable;
+
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -27,13 +29,15 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  * 
  * @author manningr
  */
-public class ArtifactStatus {
+public class ArtifactStatus implements Serializable {
+
+   private transient static final long serialVersionUID = 3902196017013411091L;
 
    /** Internationalized strings for this class. */
-   private static final StringManager s_stringMgr = 
+   private transient static final StringManager s_stringMgr = 
       StringManagerFactory.getStringManager(ArtifactStatus.class);
    
-   private interface i18n {
+   private interface i18n extends Serializable {
       //i18n[ArtifactStatus.translationLabel=translation]
       String TRANSLATION_LABEL = s_stringMgr.getString("ArtifactStatus.translationLabel");
       
@@ -43,117 +47,149 @@ public class ArtifactStatus {
       //i18n[ArtifactStatus.pluginLabel=plugin]
       String PLUGIN_LABEL = s_stringMgr.getString("ArtifactStatus.pluginLabel");
    }
-   
-   public enum Action {
-      NONE,
-      INSTALL,
-      REMOVE
-   }
-   
+      
    /** the value for artifact type that identifies it as a core artifact */
    public static final String CORE_ARTIFACT_ID = "core";
 
    /** the value for artifact type that identifies it as a plugin artifact */
    public static final String PLUGIN_ARTIFACT_ID = "plugin";
-   
-   private String _name;
-   private String _type;
-   private boolean _installed;
-   private String _displayType;
-   
-   private Action _action = null;
-   
-   public ArtifactStatus(String name, String type, boolean installed) {
-      _name = name;
-      setType(type);
-      _installed = installed;
-      _action = Action.NONE;
-   }
 
+   /** the value for artifact type that identifies it as a plugin artifact */
+   public static final String TRANSLATION_ARTIFACT_ID = "i18n";   
+   
+   private String name = null;
+   private String type;
+   private boolean installed;
+   private String displayType;
+   private ArtifactAction artifactAction = ArtifactAction.NONE;
+   
    /**
     * @return the _name
     */
    public String getName() {
-      return _name;
+      return name;
    }
 
    /**
-    * @param _name the _name to set
+    * @param name the _name to set
     */
-   public void setName(String _name) {
-      this._name = _name;
+   public void setName(String name) {
+      this.name = name;
    }
 
    /**
     * @return the _type
     */
    public String getType() {
-      return _type;
+      return type;
    }
 
    /**
-    * @param _type the _type to set
+    * @param type the _type to set
     */
-   public void setType(String _type) {
-      this._type = _type;
-      if (_type.equals("i18n")) {
-         _displayType = i18n.TRANSLATION_LABEL;
+   public void setType(String type) {
+      this.type = type;
+      if (type.equals("i18n")) {
+         this.displayType = i18n.TRANSLATION_LABEL;
       }
-      if (_type.equals("core")) {
-         _displayType = i18n.CORE_LABEL;
+      if (type.equals("core")) {
+         this.displayType = i18n.CORE_LABEL;
       }
-      if (_type.equals("plugin")) {
-         _displayType = i18n.PLUGIN_LABEL;
+      if (type.equals("plugin")) {
+         this.displayType = i18n.PLUGIN_LABEL;
       }      
    }
 
    public boolean isCoreArtifact() {
-      return CORE_ARTIFACT_ID.equals(this._type);
+      return CORE_ARTIFACT_ID.equals(this.type);
    }
    
    public boolean isPluginArtifact() {
-      return PLUGIN_ARTIFACT_ID.equals(this._type);
+      return PLUGIN_ARTIFACT_ID.equals(this.type);
+   }
+   
+   public boolean isTranslationArtifact() {
+      return TRANSLATION_ARTIFACT_ID.equals(this.type);
    }
    
    /**
-    * @return the _installed
+    * @return the installed
     */
    public boolean isInstalled() {
-      return _installed;
+      return installed;
    }
 
    /**
-    * @param _installed the _installed to set
+    * @param installed the installed to set
     */
-   public void setInstalled(boolean _installed) {
-      this._installed = _installed;
+   public void setInstalled(boolean installed) {
+      this.installed = installed;
    }
 
    /**
-    * @return the action
+    * @return the artifactAction
     */
-   public Action getAction() {
-      return _action;
+   public ArtifactAction getArtifactAction() {
+      return artifactAction;
    }
 
    /**
-    * @param action the action to set
+    * @param action the artifactAction to set
     */
-   public void setAction(Action action) {
-      this._action = action;
+   public void setArtifactAction(ArtifactAction artifactAction) {
+      this.artifactAction = artifactAction;
    }
 
    /**
-    * @return the _displayType
+    * @return the displayType
     */
-   public String get_displayType() {
-      return _displayType;
+   public String getDisplayType() {
+      return displayType;
    }
 
    /**
-    * @param type the _displayType to set
+    * @param displayType the displayType to set
     */
-   public void set_displayType(String type) {
-      _displayType = type;
+   public void setDisplayType(String displayType) {
+      this.displayType = displayType;
    }
+
+   /**
+    * @see java.lang.Object#hashCode()
+    */
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((name == null) ? 0 : name.hashCode());
+      result = prime * result + ((type == null) ? 0 : type.hashCode());
+      return result;
+   }
+
+   /**
+    * @see java.lang.Object#equals(java.lang.Object)
+    */
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      final ArtifactStatus other = (ArtifactStatus) obj;
+      if (name == null) {
+         if (other.name != null)
+            return false;
+      } else if (!name.equals(other.name))
+         return false;
+      if (type == null) {
+         if (other.type != null)
+            return false;
+      } else if (!type.equals(other.type))
+         return false;
+      return true;
+   }
+   
+   
 }
