@@ -37,10 +37,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.update.UpdateController;
-import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
-import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -54,7 +51,7 @@ public class UpdateSummaryDialog extends JDialog {
    /** Internationalized strings for this class. */
    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(UpdateSummaryDialog.class);
 
-   private UpdateSummaryTable _pluginPnl;
+   private UpdateSummaryTable _updateSummaryTable;
 
    private JLabel installedVersionLabel = null;
    
@@ -101,8 +98,8 @@ public class UpdateSummaryDialog extends JDialog {
       availableVersionLabel.setText(tmp.toString());      
    }
    
-   private void createGUI(List<ArtifactStatus> artifactStatus, 
-                          UpdateController updateController) {
+   private void createGUI(final List<ArtifactStatus> artifactStatus, 
+                          final UpdateController updateController) {
       setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
       final Container contentPane = getContentPane();
@@ -120,30 +117,16 @@ public class UpdateSummaryDialog extends JDialog {
       // Label panel containing the versions for the update at top of dialog.
       contentPane.add(labelPanel, BorderLayout.NORTH);
 
-      _pluginPnl = new UpdateSummaryTable(artifactStatus, updateController);
-      contentPane.add(new JScrollPane(_pluginPnl), BorderLayout.CENTER);
+      _updateSummaryTable = new UpdateSummaryTable(artifactStatus, updateController);
+      contentPane.add(new JScrollPane(_updateSummaryTable), BorderLayout.CENTER);
 
       final JPanel btnsPnl = new JPanel();
       final JButton okBtn = new JButton(i18n.APPLY_LABEL);
       okBtn.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent evt) {
-            // TODO : download / install updates
-            //        remove requested plugins
-            int[] rows = _pluginPnl.getSelectedRows();
-            if (rows.length == 0) {
-               // no rows selected.
-               return;
-            }
-            for (int row : rows) {
-               // column 1 is internal name
-               String internalName = (String) _pluginPnl.getModel()
-                                                        .getValueAt(row, 1);
-//               _app.getPluginManager().unloadPlugin(internalName);
-               // column 3 is loaded status
-               _pluginPnl.setValueAt("false", row, 3);
-            }
-            _pluginPnl.repaint();
-            
+            List<ArtifactStatus> changes = 
+               _updateSummaryTable.getUserRequestedChanges();
+            updateController.applyChanges(changes);
          }
       });
       btnsPnl.add(okBtn);

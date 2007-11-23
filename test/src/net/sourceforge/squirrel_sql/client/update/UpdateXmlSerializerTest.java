@@ -67,7 +67,7 @@ public class UpdateXmlSerializerTest extends BaseSQuirreLJUnit4TestCase {
         assertTrue(f.canWrite());
         System.out.println("Persisting to file : "+filename);
         serializerUnderTest.write(channelBean, filename);
-        ChannelXmlBean newBean = serializerUnderTest.read(filename);
+        ChannelXmlBean newBean = serializerUnderTest.readChannelBean(filename);
         assertEquals(channelBean, newBean);
         
         assertEquals(1, newBean.getCurrentRelease().getModules().size());

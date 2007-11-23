@@ -18,15 +18,29 @@
  */
 package net.sourceforge.squirrel_sql.client.update;
 
+import java.util.List;
+
+import net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus;
+
+/**
+ * This interface allows the update summary view to send messages to the 
+ * controller based on the user's interaction with the view.  This allows the 
+ * view to be completely unaware of the UpdateController's implementation; the 
+ * business logic is separated from the view.  Any logic that doesn't directly 
+ * affect the view in some way, should be located in this interface.
+ * 
+ * @author manningr
+ */
 public interface UpdateController {
 
    /**
     * Returns a boolean value indicating whether or not there are updates
     * available to be installed. The sequence of steps involved is :
     * 
-    * 1. Find the local release.xml file 2. Load the local release.xml file as a
-    * ChannelXmlBean. 3. Determine the channel that the user has (stable or
-    * snapshot) 4. Get the release.xml file as a ChannelXmlBean from the server
+    * 1. Find the local release.xml file 
+    * 2. Load the local release.xml file as a ChannelXmlBean. 
+    * 3. Determine the channel that the user has (stable or snapshot) 
+    * 4. Get the release.xml file as a ChannelXmlBean from the server
     * 5. Determine if it is the same as the local copy, which was placed either
     * by the installer or the last update?
     * 
@@ -50,5 +64,17 @@ public interface UpdateController {
    
    void showErrorMessage(String title, String msg);
    
+   /**
+    * Ask the UpdateController to check for updated artifacts.
+    */
    void checkUpToDate();
+   
+   /**
+    * The user wishes to add/update/remove the specified list of Artifacts. Each
+    * artifact status specifies the user's desired action.
+    * 
+    * @param artifactStatusList the list of changes to make to 
+    *                           installed/available artifacts. 
+    */
+   void applyChanges(List<ArtifactStatus> artifactStatusList);
 }

@@ -47,7 +47,10 @@ public class UpdateSummaryDialogTestUI {
 
    private static List<ArtifactStatus> getArtifacts() {
       ArrayList<ArtifactStatus> result = new ArrayList<ArtifactStatus>();
-      ArtifactStatus status = new ArtifactStatus("fw.jar", "app", true);
+      ArtifactStatus status = new ArtifactStatus();
+      status.setName("fw.jar");
+      status.setType("core");
+      status.setInstalled(true);
       result.add(status);
       return result;
    }

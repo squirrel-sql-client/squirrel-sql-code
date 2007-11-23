@@ -245,4 +245,30 @@ public class UpdateControllerImpl implements UpdateController,
                + e.getClass().getName() + ":" + e.getMessage());
       }
    }
+
+   /**
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateController#applyChanges(java.util.List)
+    */
+   public void applyChanges(List<ArtifactStatus> artifactStatusList) {
+      try {
+         // Persists the change list to the update directory.
+         _util.saveChangeList(artifactStatusList);
+      
+         // Kick off a thread to go and fetch the files one-by-one.
+         
+         // When all updates are retrieved, consult the user to see if they want to install now or upon the 
+         // next startup.
+         
+         // If install now, then backup files to be updated/removed and shutdown
+         // so that the updater process can run.
+         
+      } catch (Exception e) {
+         showErrorMessage("Update Failed", "Exception was - "
+                          + e.getClass().getName() + ":" + e.getMessage());         
+      }
+      
+   }
+   
+   
+   
 }

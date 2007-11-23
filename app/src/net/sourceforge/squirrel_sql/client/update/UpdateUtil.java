@@ -21,7 +21,9 @@ package net.sourceforge.squirrel_sql.client.update;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -33,6 +35,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ArtifactXmlBean;
+import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChannelXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ModuleXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ReleaseXmlBean;
@@ -107,7 +110,7 @@ public class UpdateUtil {
          }
          URL url = new URL(HTTP_PROTOCOL_PREFIX, server, port, pathToFile);
          is = new BufferedInputStream(url.openStream());
-         result = serializer.read(is);
+         result = serializer.readChannelBean(is);
       } catch (Exception e) {
          s_log.error("downloadCurrentRelease: Unexpected exception while "
                + "attempting to open an HTTP connection to host (" + host
@@ -169,7 +172,7 @@ public class UpdateUtil {
                + localReleaseFile);
       }
       try {
-         result = serializer.read(localReleaseFile);
+         result = serializer.readChannelBean(localReleaseFile);
       } catch (IOException e) {
          s_log.error("Unable to read local release file: " + e.getMessage(), e);
       }
@@ -197,6 +200,41 @@ public class UpdateUtil {
       }
       return squirrelHomeDir;
    }   
+
+   public File getSquirrelLibraryDir()  {
+      ApplicationFiles appFiles = new ApplicationFiles();
+      File squirrelLibDir = appFiles.getLibraryDirectory();      
+      if (!squirrelLibDir.isDirectory()) {
+         s_log.error("SQuirreL Library Directory ("
+               + squirrelLibDir.getAbsolutePath()
+               + " doesn't appear to be a directory");
+      }
+      return squirrelLibDir;
+   }   
+
+   public File getSquirrelUpdateDir()  {
+      ApplicationFiles appFiles = new ApplicationFiles();
+      File squirrelUpdateDir = appFiles.getUpdateDirectory();      
+      if (!squirrelUpdateDir.isDirectory()) {
+         s_log.error("SQuirreL Update Directory ("
+               + squirrelUpdateDir.getAbsolutePath()
+               + " doesn't appear to be a directory");
+      }
+      return squirrelUpdateDir;
+   }   
+   
+   public void saveChangeList(List<ArtifactStatus> changes)
+         throws FileNotFoundException {
+      ChangeListXmlBean changeBean = new ChangeListXmlBean();
+      changeBean.setChanges(changes);
+      File updateDir = getSquirrelUpdateDir();
+      File changeListFile = new File(updateDir, "changeList.xml");
+      serializer.write(changeBean, changeListFile);
+   }
+   
+   public void getChangeList() {
+      
+   }
    
    /**
     * Returns the absolute path to the release xml file that describes what
@@ -233,6 +271,7 @@ public class UpdateUtil {
    
    public List<ArtifactStatus> getArtifactStatus(ReleaseXmlBean releaseXmlBean) {
       Set<String> installedPlugins = getInstalledPlugins();
+      Set<String> installedTranslations = getInstalledTranslations();
       ArrayList<ArtifactStatus> result = new ArrayList<ArtifactStatus>();
       Set<ModuleXmlBean> currentModuleBeans = releaseXmlBean.getModules();
       for (ModuleXmlBean module : currentModuleBeans) {
@@ -242,13 +281,21 @@ public class UpdateUtil {
             String name = artifact.getName();
             String type = moduleName;
             boolean installed = artifact.isInstalled();
-            if (moduleName.equals("core")) {
-               installed = true;
+            ArtifactStatus status = new ArtifactStatus();
+            status.setName(name);
+            status.setType(type);
+            status.setInstalled(installed);
+            if (status.isCoreArtifact()) {
+               status.setInstalled(true);
             }
-            if (moduleName.equals("plugin") && installedPlugins.contains(name)) {
-               installed = true;
+            if (status.isPluginArtifact() && installedPlugins.contains(name)) {
+               status.setInstalled(true);
             }
-            ArtifactStatus status = new ArtifactStatus(name, type, installed);
+            if (status.isTranslationArtifact() 
+                  && installedTranslations.contains(name)) 
+            {
+               status.setInstalled(true);  
+            }
             result.add(status);
          }
       }      
@@ -267,6 +314,17 @@ public class UpdateUtil {
       return result;
    }
 
+   public Set<String> getInstalledTranslations() {
+      HashSet<String> result = new HashSet<String>();
+      File libDir = getSquirrelLibraryDir();
+      for (String filename : libDir.list()) {
+         if (filename.startsWith(" squirrel-sql_")) {
+            result.add(filename);
+         }
+      }
+      return result;      
+   }
+   
    /**
     * @return the _pluginManager
     */

@@ -44,6 +44,12 @@ public class ApplicationFiles
 	/** Documentation folder. */
 	private String _documentationDir;
 
+	/** Name of folder that contains library jars */
+	private String _libraryDir;
+	
+	/** Name of folder that contains update files */
+	private String _updateDir;
+	
 	/** Flag for cleaning up execution log files on app entry. **/
 	private static boolean needExecutionLogCleanup = true;
 
@@ -60,8 +66,11 @@ public class ApplicationFiles
 
 		final String homeDir = args.getSquirrelHomeDirectory();
 		_squirrelHomeDir = new File(homeDir != null ? homeDir : System.getProperty(IJavaPropertyNames.USER_DIR));
-		_squirrelPluginsDir = _squirrelHomeDir.getPath() + File.separator + "plugins";
-		_documentationDir = _squirrelHomeDir.getPath() + File.separator + "doc";
+		String homeDirPath = _squirrelHomeDir.getPath() + File.separator;
+		_squirrelPluginsDir = homeDirPath + "plugins";
+		_documentationDir = homeDirPath + "doc";
+		_libraryDir = homeDirPath + "lib";
+		_updateDir = homeDirPath + "update";
 
 		_userSettingsDir = args.getUserSettingsDirectoryOverride();
 		if (_userSettingsDir == null)
@@ -100,6 +109,16 @@ public class ApplicationFiles
 	{
 		return new File(_squirrelPluginsDir);
 	}
+
+	public File getLibraryDirectory() 
+	{
+	   return new File(_libraryDir);
+	}
+	
+   public File getUpdateDirectory() 
+   {
+      return new File(_updateDir);
+   }
 
 	/**
 	 * @return file that contains database aliases.
