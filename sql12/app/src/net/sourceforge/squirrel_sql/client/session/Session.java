@@ -597,6 +597,12 @@ class Session implements ISession
       _sessionSheet.selectMainTab(tabIndex);
    }
 
+   public int getSelectedMainTabIndex()
+   {
+      return _sessionSheet.getSelectedMainTabIndex();
+   }
+
+
    /**
     * Add a tab to the main tabbed panel.
     *

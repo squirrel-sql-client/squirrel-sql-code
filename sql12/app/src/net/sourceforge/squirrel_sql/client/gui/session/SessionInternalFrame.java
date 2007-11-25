@@ -92,32 +92,8 @@ public class SessionInternalFrame extends BaseSessionInternalFrame
    }
 
 
-	public void setSelected(boolean selected)
-			throws PropertyVetoException
-	{
-		super.setSelected(selected);
 
-		// Without this when using alt left/right to move
-		// between sessions the focus is left in the SQL
-		// entry area of the previous session.
-		// TODO: Once Java 5 is minimum supported
-		// we don't need this,
-        if (Version.isJDK14())
-        {
-        	if (selected)
-        	{
-        		SwingUtilities.invokeLater(new Runnable()
-        		{
-        			public void run()
-        			{
-        				_sessionPanel.getSQLEntryPanel().requestFocus();
-        			}
-        		});
-        	}
-		}
-	}
-
-	private void createGUI(final ISession session)
+   private void createGUI(final ISession session)
 	{
 		setVisible(false);
 		setDefaultCloseOperation(SessionInternalFrame.DO_NOTHING_ON_CLOSE);
@@ -172,7 +148,27 @@ public class SessionInternalFrame extends BaseSessionInternalFrame
 
    public void requestFocus()
    {
-      _sessionPanel.getSQLEntryPanel().requestFocus();
+      if (ISession.IMainPanelTabIndexes.SQL_TAB == _session.getSelectedMainTabIndex())
+      {
+         SwingUtilities.invokeLater(new Runnable()
+         {
+            public void run()
+            {
+               _sessionPanel.getSQLEntryPanel().requestFocus();
+            }
+         });
+      }
+      else if (ISession.IMainPanelTabIndexes.OBJECT_TREE_TAB == _session.getSelectedMainTabIndex())
+      {
+         SwingUtilities.invokeLater(new Runnable()
+         {
+            public void run()
+            {
+               _sessionPanel.getObjectTreePanel().requestFocus();
+            }
+         });
+      }
+
    }
 
    public boolean hasSQLPanelAPI()
