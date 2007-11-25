@@ -45,6 +45,9 @@ public class UpdateSettings implements Cloneable
 	/** The last time an update check was made in milliseconds */
 	private String lastUpdateCheckTimeMillis = "0";
 	
+	/** Whether or not the update site is on a remote server */
+	private boolean isRemoteUpdateSite = true;
+	
 	/**
 	 * Return a copy of this object.
 	 */
@@ -158,4 +161,27 @@ public class UpdateSettings implements Cloneable
       this.lastUpdateCheckTimeMillis = lastUpdateCheckTimeMillis;
    }
 
+   /**
+    * Returns a boolean value to indicate whether or not the user wants to use 
+    * a remote site.  If this is false, it is assumed to mean that the user 
+    * wants to specify a local directory on the filesystem
+    * 
+    * @return true if remote site; false otherwise.
+    */
+   public boolean isRemoteUpdateSite() {
+      return this.isRemoteUpdateSite;
+   }
+
+   /**
+    * Sets a boolean value to indicate whether or not the user wants to use 
+    * a remote site.  If this is false, it is assumed to mean that the user 
+    * wants to specify a local directory on the filesystem
+    * 
+    * @param true for remote site; false for local directory.
+    */
+   public void setRemoteUpdateSite(boolean isRemoteUpdateSite) {
+      this.isRemoteUpdateSite = isRemoteUpdateSite;
+   }
+   
+   
 }
