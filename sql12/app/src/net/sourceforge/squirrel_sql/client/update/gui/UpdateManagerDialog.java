@@ -230,7 +230,14 @@ public class UpdateManagerDialog extends JDialog {
          public void actionPerformed(ActionEvent e) {
             for (CheckUpdateListener listener: _checkUpdateListeners) {
                UpdateManagerDialog.this.setVisible(false);
-               listener.checkUpToDate();
+               try {
+                  listener.checkUpToDate();
+               } catch (Exception ex) {
+                  listener.showErrorMessage(
+                     "Unexpected Exception",
+                     "Update check failed with Exception: " + ex.getMessage(),
+                     ex);
+               }
             }            
          }
       });

@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import net.sourceforge.squirrel_sql.client.update.gui.ArtifactAction;
+import net.sourceforge.squirrel_sql.client.util.IOUtilities;
 
 /**
  * This class contains utility methods that can be used to read from and write
@@ -113,6 +114,9 @@ public class UpdateXmlSerializer {
     */
    public ChannelXmlBean readChannelBean(String filename) throws FileNotFoundException,
          IOException {
+      if (filename == null) {
+         throw new IllegalArgumentException("filename cannot be null");
+      }
       return readChannelBean(new FileInputStream(filename));
    }
 
@@ -139,6 +143,24 @@ public class UpdateXmlSerializer {
       return (ChannelXmlBean) result;
    }
 
+   public ChangeListXmlBean readChangeListBean(File file)
+         throws FileNotFoundException {
+      XMLDecoder bis = null;
+      FileInputStream fis = null;
+      Object result = null;
+      try {
+         fis = new FileInputStream(file);
+         bis = new XMLDecoder(new BufferedInputStream(fis));
+         result = bis.readObject();
+      } finally {
+         IOUtilities.closeInputStream(fis);
+         if (bis != null) {
+            bis.close();
+         }
+      }
+      return (ChangeListXmlBean) result;      
+   }
+   
    private XMLEncoder getXmlEncoder(String filename)
          throws FileNotFoundException {
       XMLEncoder result = null;
