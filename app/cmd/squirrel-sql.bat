@@ -31,6 +31,7 @@ SET TMP_PARMS=--log-config-file "%SQUIRREL_SQL_HOME%\log4j.properties" --squirre
 @rem To change the language edit and uncomment this line:
 @rem start "SQuirreL SQL Client" /B "%LOCAL_JAVA%w" -Xmx256m -cp %TMP_CP%;<your working dir here> -Duser.language=<your language here> net.sourceforge.squirrel_sql.client.Main %TMP_PARMS%
 
+"%LOCAL_JAVA%w" -cp %TMP_CP% net.sourceforge.squirrel_sql.client.update.gui.Updater -prompt
 
 @rem Run with no command window. This may not work with older versions of Windows. Use the command above then.
 start "SQuirreL SQL Client" /B "%LOCAL_JAVA%w" -Xmx256m -cp %TMP_CP% net.sourceforge.squirrel_sql.client.Main %TMP_PARMS%
