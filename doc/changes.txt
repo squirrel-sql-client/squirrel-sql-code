@@ -12,6 +12,9 @@ Refactoring Plugin:
 
 Bug-Fixes:
 
+Changing to another window using Alt + left/right arrow did not properly set focus.
+
+
 Hibernate Plugin: 
  - Class names in completion list could change from fully qualified to simple
    while scrolling through the completion list.

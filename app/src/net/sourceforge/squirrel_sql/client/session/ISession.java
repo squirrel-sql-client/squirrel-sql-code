@@ -165,6 +165,9 @@ public interface ISession extends IHasIdentifier
     */
    void selectMainTab(int tabIndex) throws IllegalArgumentException;
 
+   public int getSelectedMainTabIndex();
+
+
    /**
     * Add a tab to the main tabbed panel.
     *

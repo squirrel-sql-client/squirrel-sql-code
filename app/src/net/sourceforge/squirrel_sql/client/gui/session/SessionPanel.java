@@ -247,7 +247,13 @@ public class SessionPanel extends JPanel
 		}
 	}
 
-	/**
+   public int getSelectedMainTabIndex()
+   {
+      return _mainTabPane.getTabbedPane().getSelectedIndex();
+   }
+
+
+   /**
 	 * Add a tab to the main tabbed panel.
 	 *
 	 * tab	Describes the tab to be added.
