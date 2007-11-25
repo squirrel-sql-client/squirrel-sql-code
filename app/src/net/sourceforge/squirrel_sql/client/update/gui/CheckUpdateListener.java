@@ -27,5 +27,17 @@ package net.sourceforge.squirrel_sql.client.update.gui;
  */
 public interface CheckUpdateListener {
 
+   /**
+    * Check for updates to the installed software.
+    */
    void checkUpToDate();
+   
+   /**
+    * Displays an error message dialog with the specified details.
+    * 
+    * @param title the title of the error message dialog
+    * @param msg a message describing 
+    * @param e the exception that was encountered
+    */
+   void showErrorMessage(String title, String msg, Exception e);
 }

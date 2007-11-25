@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.update;
 
 import static net.sourceforge.squirrel_sql.client.update.UpdateUtil.RELEASE_XML_FILENAME;
 
+import java.io.FileNotFoundException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,12 +35,11 @@ import net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus;
 import net.sourceforge.squirrel_sql.client.update.gui.CheckUpdateListener;
 import net.sourceforge.squirrel_sql.client.update.gui.UpdateManagerDialog;
 import net.sourceforge.squirrel_sql.client.update.gui.UpdateSummaryDialog;
-import net.sourceforge.squirrel_sql.client.update.xmlbeans.ArtifactXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChannelXmlBean;
-import net.sourceforge.squirrel_sql.client.update.xmlbeans.ModuleXmlBean;
-import net.sourceforge.squirrel_sql.client.update.xmlbeans.ReleaseXmlBean;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.UpdateSettings;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * This class implements the business logic needed by the view
@@ -51,6 +51,10 @@ import net.sourceforge.squirrel_sql.fw.util.UpdateSettings;
 public class UpdateControllerImpl implements UpdateController,
       CheckUpdateListener {
 
+   /** Logger for this class. */
+   private static final ILogger s_log =
+      LoggerController.createLogger(UpdateControllerImpl.class);
+   
    /** the application and services it provides */
    private IApplication _app = null;
 
@@ -58,7 +62,7 @@ public class UpdateControllerImpl implements UpdateController,
    private UpdateSettings _settings = null;
 
    /** utility class for low-level update routines */
-   private UpdateUtil _util = new UpdateUtil();
+   private UpdateUtil _util = null;
 
    /** the release that we downloaded when we last checked */
    private ChannelXmlBean _currentChannelBean = null;
@@ -77,10 +81,18 @@ public class UpdateControllerImpl implements UpdateController,
     */
    public UpdateControllerImpl(IApplication app) {
       _app = app;
-      _util.setPluginManager(app.getPluginManager());
       _settings = app.getSquirrelPreferences().getUpdateSettings();
    }
 
+   /**
+    * Sets the utility class for low-level update routines
+    * @param util the Update utility class to use.
+    */
+   public void setUpdateUtil(UpdateUtil util) {
+      this._util = util;
+      _util.setPluginManager(_app.getPluginManager());
+   }
+   
    /*
     * (non-Javadoc)
     * 
@@ -120,7 +132,7 @@ public class UpdateControllerImpl implements UpdateController,
       releasePath.append(channelName);
       releasePath.append("/");
 
-      // 4. Get the release.xml file as a ChannelXmlBean from the server
+      // 4. Get the release.xml file as a ChannelXmlBean from the server      
       _currentChannelBean = _util.downloadCurrentRelease(getUpdateServerName(),
                                                          getUpdateServerPortAsInt(),
                                                          releasePath.toString(),
@@ -173,6 +185,13 @@ public class UpdateControllerImpl implements UpdateController,
    }
 
    /**
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateController#isRemoteUpdateSite()
+    */
+   public boolean isRemoteUpdateSite() {
+      return _settings.isRemoteUpdateSite();
+   }
+   
+   /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateController#getUpdateServerPath()
     */
    public String getUpdateServerPath() {
@@ -208,13 +227,22 @@ public class UpdateControllerImpl implements UpdateController,
    /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateController#showErrorMessage(java.lang.String, java.lang.String)
     */
-   public void showErrorMessage(String title, String msg) {
+   public void showErrorMessage(String title, String msg, Exception e) {
+      s_log.error(msg, e);
       JOptionPane.showMessageDialog(_app.getMainFrame(),
                                     msg,
                                     title,
                                     JOptionPane.ERROR_MESSAGE);
+      
    }
 
+   /**
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateController#showErrorMessage(java.lang.String, java.lang.String)
+    */
+   public void showErrorMessage(String title, String msg) {
+      showErrorMessage(title, msg, null);
+   }
+   
    /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateController#checkUpToDate()
     */
@@ -242,7 +270,7 @@ public class UpdateControllerImpl implements UpdateController,
          }
       } catch (Exception e) {
          showErrorMessage("Update Check Failed", "Exception was - "
-               + e.getClass().getName() + ":" + e.getMessage());
+               + e.getClass().getName() + ":" + e.getMessage(), e);
       }
    }
 
@@ -262,9 +290,16 @@ public class UpdateControllerImpl implements UpdateController,
          // If install now, then backup files to be updated/removed and shutdown
          // so that the updater process can run.
          
+         // shutdown and start the updater.
+         
+         // TODO the updater should be started each time SQuirreL is launched to 
+         // quickly check to see if updates need to be applied and prompt the 
+         // user each time updates are available to be applied, to see if they
+         // want to apply them.
+         
       } catch (Exception e) {
          showErrorMessage("Update Failed", "Exception was - "
-                          + e.getClass().getName() + ":" + e.getMessage());         
+                          + e.getClass().getName() + ":" + e.getMessage(), e);         
       }
       
    }

@@ -62,6 +62,8 @@ public interface UpdateController {
    
    void showUpdateDialog();
    
+   void showErrorMessage(String title, String msg, Exception e);
+   
    void showErrorMessage(String title, String msg);
    
    /**
@@ -71,10 +73,28 @@ public interface UpdateController {
    
    /**
     * The user wishes to add/update/remove the specified list of Artifacts. Each
-    * artifact status specifies the user's desired action.
+    * artifact status specifies the user's desired action. This will :
+    * 
+    * 1. Persist the list of actions to a change list file in the update dir.
+    * 2. Start a background thread to retrieve each update file from the server.
+    * 3. When downloading is complete, ask the user if they want to install now.
+    * 4. If the user wants to install now :
+    *    a. Backup files that will be removed/updated.
+    *    b. shutdown and launch the updater
+    *    c. Updater installs updated files
+    *    d. SQuirreL starts again.
     * 
     * @param artifactStatusList the list of changes to make to 
     *                           installed/available artifacts. 
     */
    void applyChanges(List<ArtifactStatus> artifactStatusList);
+   
+   /**
+    * Returns a boolean value to indicate whether or not the user wants to use 
+    * a remote site.  If this is false, it is assumed to mean that the user 
+    * wants to specify a local directory on the filesystem
+    * 
+    * @return true if remote site; false otherwise.
+    */   
+   boolean isRemoteUpdateSite();   
 }

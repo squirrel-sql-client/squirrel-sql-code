@@ -25,6 +25,7 @@ import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.AboutBoxDialog;
 import net.sourceforge.squirrel_sql.client.update.UpdateController;
 import net.sourceforge.squirrel_sql.client.update.UpdateControllerImpl;
+import net.sourceforge.squirrel_sql.client.update.UpdateUtilImpl;
 import net.sourceforge.squirrel_sql.client.update.gui.UpdateManagerDialog;
 /**
  * This <CODE>ICommand</CODE> allows the user to copy an existing
@@ -60,7 +61,8 @@ public class UpdateCommand implements ICommand
 	 */
 	public void execute()
 	{
-	   UpdateController updateController = new UpdateControllerImpl(_app);
+	   UpdateControllerImpl updateController = new UpdateControllerImpl(_app);
+	   updateController.setUpdateUtil(new UpdateUtilImpl());
 	   updateController.showUpdateDialog();
 	}
 }

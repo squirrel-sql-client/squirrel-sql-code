@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.client.preferences;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -25,11 +26,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.preferences.UpdateChannelComboBoxEntry.ChannelType;
@@ -68,9 +73,9 @@ class UpdatePreferencesPanel implements IGlobalPreferencesPanel
       //i18n[UpdatePreferencesPanel.channel=Channel:]
       String CHANNEL = s_stringMgr.getString("UpdatePreferencesPanel.channel");
       
-      // i18n[UpdatePreferencesPanel.connectionBorderLabel=Connection]
-      String CONNECTION_BORDER_LABEL = 
-         s_stringMgr.getString("UpdatePreferencesPanel.connectionBorderLabel");
+      // i18n[UpdatePreferencesPanel.updateSiteBorderLabel=Update Site]
+      String UPDATE_SITE_BORDER_LABEL = 
+         s_stringMgr.getString("UpdatePreferencesPanel.updateSiteBorderLabel");
 	   
       //i18n[UpdatePreferencesPanel.enableAutoUpdate=Enable Automatic Updates]
       String ENABLE_AUTO_UPDATE = 
@@ -78,6 +83,10 @@ class UpdatePreferencesPanel implements IGlobalPreferencesPanel
 
 	   // i18n[UpdatePreferencesPanel.hint=Software Update Settings]
 	   String HINT = s_stringMgr.getString("UpdatePreferencesPanel.hint");
+	   
+	   // i18n[UpdatePreferencesPanel.localPathLabel=Local Path:]
+	   String LOCAL_PATH = 
+	      s_stringMgr.getString("UpdatePreferencesPanel.localPathLabel");
 	   
       //i18n[UpdatePreferencesPanel.path=Path:]
       String PATH = s_stringMgr.getString("UpdatePreferencesPanel.path");
@@ -122,7 +131,7 @@ class UpdatePreferencesPanel implements IGlobalPreferencesPanel
 
 		_app = app;
 
-		((MyPanel)getPanelComponent()).loadData(_app, _app.getSquirrelPreferences());
+		((MyPanel)getPanelComponent()).loadData(_app.getSquirrelPreferences());
 	}
 
    public void uninitialize(IApplication app)
@@ -158,9 +167,20 @@ class UpdatePreferencesPanel implements IGlobalPreferencesPanel
    private static final class MyPanel extends JPanel
    {
       private static final long serialVersionUID = 6411907298042579120L;
+      private JLabel serverLabel = null;
+      private JLabel portLabel = null;
+      private JLabel pathLabel = null;
+      private JLabel localPathLabel = null;
+      private JLabel channelLabel = null;
       private JTextField _updateServerName = new JTextField();
       private JTextField _updateServerPort = new JTextField();
       private JTextField _updateServerPath = new JTextField();
+      private JTextField _localPath = new JTextField();
+      
+      private JLabel siteTypeLabel = null;
+      private JRadioButton _remoteTypeButton = new JRadioButton("Remote");
+      private JRadioButton _localTypeButton = new JRadioButton("Local");
+      private ButtonGroup _updateSiteTypeGroup = new ButtonGroup();
       
       private UpdateChannelComboBoxEntry stableChannel = 
          new UpdateChannelComboBoxEntry(ChannelType.STABLE, 
@@ -187,13 +207,17 @@ class UpdatePreferencesPanel implements IGlobalPreferencesPanel
       private JComboBox _updateCheckFrequency = 
          new JComboBox(new Object[] {checkAtStartup, checkWeekly});
       
+      private final Insets SEP_INSETS = new Insets(10, 14, 0, 14);
+      private final Insets LABEL_INSETS = new Insets(2, 28, 6, 0);
+      private final Insets FIELD_INSETS = new Insets(2, 8, 6, 28);      
+      
       MyPanel()
       {
          super(new GridBagLayout());
          createUserInterface();
       }
 
-      void loadData(IApplication app, SquirrelPreferences prefs)
+      void loadData(SquirrelPreferences prefs)
       {
          final UpdateSettings updateSettings = prefs.getUpdateSettings();
 
@@ -213,12 +237,17 @@ class UpdatePreferencesPanel implements IGlobalPreferencesPanel
          
          String freqStr = updateSettings.getUpdateCheckFrequency();
          _updateCheckFrequency.setSelectedItem(checkWeekly);
-         if (freqStr != null
-               && freqStr.equals(Frequency.AT_STARTUP.name())) 
+         if (freqStr != null && freqStr.equals(Frequency.AT_STARTUP.name())) 
          {
             _updateCheckFrequency.setSelectedItem(checkAtStartup);
          }
-
+         if (updateSettings.isRemoteUpdateSite()) {
+            _remoteTypeButton.setSelected(true);
+            enableRemoteSite();
+         } else {
+            _localTypeButton.setSelected(true);
+            enableLocalPath();
+         }
          updateControlStatus();
       }
 
@@ -268,7 +297,7 @@ class UpdatePreferencesPanel implements IGlobalPreferencesPanel
          gbc.gridx = 0;
          gbc.gridy = 0;
          gbc.weightx = 1;
-         add(createConnectionPanel(), gbc);
+         add(createUpdateSitePanel(), gbc);
          ++gbc.gridy;
          add(createAutoUpdatePanel(), gbc);
 
@@ -276,49 +305,200 @@ class UpdatePreferencesPanel implements IGlobalPreferencesPanel
          _enableAutoUpdateChk.addActionListener(lis);
       }
 
-      private JPanel createConnectionPanel()
-      {
-
+      private JPanel createUpdateSitePanel()
+      {         
          JPanel pnl = new JPanel(new GridBagLayout());
-         pnl.setBorder(BorderFactory.createTitledBorder(i18n.CONNECTION_BORDER_LABEL));
+         pnl.setBorder(BorderFactory.createTitledBorder(i18n.UPDATE_SITE_BORDER_LABEL));
 
          final GridBagConstraints gbc = new GridBagConstraints();
-         gbc.anchor = GridBagConstraints.WEST;
-         gbc.insets = new Insets(4, 4, 4, 4);
          gbc.gridx = 0;
          gbc.gridy = 0;
-
-         gbc.fill = GridBagConstraints.HORIZONTAL;
-         ++gbc.gridx;
-         pnl.add(new JLabel(i18n.SERVER, JLabel.RIGHT), gbc);
-
-         ++gbc.gridy;
-         pnl.add(new JLabel(i18n.PORT, JLabel.RIGHT), gbc);
-
-         ++gbc.gridy;
-         pnl.add(new JLabel(i18n.PATH, JLabel.RIGHT), gbc);
-
-         ++gbc.gridy;
-         pnl.add(new JLabel(i18n.CHANNEL, JLabel.RIGHT), gbc);
-
-         ++gbc.gridx;
+         gbc.gridwidth = 1;
+         gbc.insets = SEP_INSETS;
+         gbc.fill = GridBagConstraints.NONE;
+         gbc.anchor = GridBagConstraints.EAST;
+         siteTypeLabel = new JLabel("Site Type:", JLabel.RIGHT);
+         pnl.add(siteTypeLabel, gbc);
+         
+         gbc.gridx = 1;
          gbc.gridy = 0;
+         gbc.gridwidth = 1;
          gbc.weightx = 1;
-         pnl.add(_updateServerName, gbc);
+         gbc.insets = SEP_INSETS;
+         gbc.fill = GridBagConstraints.NONE;
+         gbc.anchor = GridBagConstraints.WEST;
+         pnl.add(getSiteTypePanel(), gbc);
+         
+         gbc.gridx = 0;
+         gbc.gridy = 1;
+         gbc.gridwidth = 2;
+         gbc.insets = SEP_INSETS;
+         gbc.fill = GridBagConstraints.HORIZONTAL;
+         gbc.anchor = GridBagConstraints.WEST;
+         pnl.add(getSep(), gbc);
 
-         ++gbc.gridy;
+         
+         gbc.fill = GridBagConstraints.NONE;
+         gbc.gridx = 0;
+         gbc.gridy = 2;
+         gbc.gridwidth = 1;
+         gbc.weightx = 0;
+         gbc.insets = LABEL_INSETS;
+         gbc.anchor = GridBagConstraints.EAST;
+         serverLabel = new JLabel(i18n.SERVER, SwingConstants.RIGHT);
+         pnl.add(serverLabel, gbc);
+
+         gbc.gridx = 1;
+         gbc.gridy = 2;
+         gbc.gridwidth = 1;
+         gbc.weightx = 1;
+         gbc.insets = FIELD_INSETS;
+         gbc.fill = GridBagConstraints.HORIZONTAL;
+         gbc.anchor = GridBagConstraints.WEST;
+         pnl.add(_updateServerName, gbc);
+         
+         gbc.gridx = 0;
+         gbc.gridy = 3;
+         gbc.gridwidth = 1;
+         gbc.weightx = 0;
+         gbc.insets = LABEL_INSETS;
+         gbc.fill = GridBagConstraints.NONE;
+         gbc.anchor = GridBagConstraints.EAST;
+         portLabel = new JLabel(i18n.PORT, SwingConstants.RIGHT);
+         pnl.add(portLabel, gbc);
+
+         gbc.gridx = 1;
+         gbc.gridy = 3;
+         gbc.gridwidth = 1;
+         gbc.weightx = 1;
+         gbc.insets = FIELD_INSETS;
+         gbc.fill = GridBagConstraints.HORIZONTAL;
+         gbc.anchor = GridBagConstraints.WEST;
          pnl.add(_updateServerPort, gbc);
 
-         ++gbc.gridy;
-         pnl.add(_updateServerPath, gbc);
-
+         gbc.gridx = 0;
+         gbc.gridy = 4;
+         gbc.gridwidth = 1;
+         gbc.weightx = 0;
+         gbc.insets = LABEL_INSETS;
          gbc.fill = GridBagConstraints.NONE;
-         ++gbc.gridy;
-         pnl.add(_updateServerChannel, gbc);
+         gbc.anchor = GridBagConstraints.EAST;
+         pathLabel = new JLabel(i18n.PATH, SwingConstants.RIGHT);
+         pnl.add(pathLabel, gbc);
 
+         gbc.gridx = 1;
+         gbc.gridy = 4;
+         gbc.gridwidth = 1;
+         gbc.weightx = 1;
+         gbc.insets = FIELD_INSETS;
+         gbc.fill = GridBagConstraints.HORIZONTAL;
+         gbc.anchor = GridBagConstraints.WEST;
+         pnl.add(_updateServerPath, gbc);
+         
+         gbc.gridx = 0;
+         gbc.gridy = 5;
+         gbc.gridwidth = 1;
+         gbc.weightx = 0;
+         gbc.insets = LABEL_INSETS;
+         gbc.fill = GridBagConstraints.NONE;
+         gbc.anchor = GridBagConstraints.EAST;
+         channelLabel = new JLabel(i18n.CHANNEL, SwingConstants.RIGHT);
+         pnl.add(channelLabel, gbc);
+
+         gbc.gridx = 1;
+         gbc.gridy = 5;
+         gbc.gridwidth = 1;
+         gbc.weightx = 1;
+         gbc.insets = FIELD_INSETS;
+         gbc.fill = GridBagConstraints.NONE;
+         gbc.anchor = GridBagConstraints.WEST;
+         pnl.add(_updateServerChannel, gbc);
+         
+         gbc.gridx = 0;
+         gbc.gridy = 6;
+         gbc.gridwidth = 2;
+         gbc.insets = SEP_INSETS;
+         gbc.fill = GridBagConstraints.HORIZONTAL;
+         gbc.anchor = GridBagConstraints.WEST;
+         pnl.add(getSep(), gbc);
+         
+         gbc.gridx = 0;
+         gbc.gridy = 7;
+         gbc.gridwidth = 1;
+         gbc.weightx = 0;
+         gbc.insets = LABEL_INSETS;
+         gbc.fill = GridBagConstraints.NONE;
+         gbc.anchor = GridBagConstraints.EAST;
+         localPathLabel = new JLabel(i18n.LOCAL_PATH, SwingConstants.RIGHT);
+         pnl.add(localPathLabel, gbc);         
+         
+         gbc.gridx = 1;
+         gbc.gridy = 7;
+         gbc.gridwidth = 1;
+         gbc.weightx = 1;
+         gbc.insets = FIELD_INSETS;
+         gbc.fill = GridBagConstraints.HORIZONTAL;
+         gbc.anchor = GridBagConstraints.WEST;
+         pnl.add(_localPath, gbc);
+         
+         
+         
          return pnl;
       }
 
+      private void enableRemoteSite() {
+         _localPath.setEnabled(false);
+         localPathLabel.setEnabled(false);
+         _updateServerChannel.setEnabled(true);
+         _updateServerName.setEnabled(true);
+         _updateServerPath.setEnabled(true);
+         _updateServerPort.setEnabled(true);
+         serverLabel.setEnabled(true);
+         portLabel.setEnabled(true);
+         pathLabel.setEnabled(true);
+         channelLabel.setEnabled(true);
+      }
+      
+      private void enableLocalPath() {
+         _localPath.setEnabled(true);
+         localPathLabel.setEnabled(true);
+         _updateServerChannel.setEnabled(false);
+         _updateServerName.setEnabled(false);
+         _updateServerPath.setEnabled(false);
+         _updateServerPort.setEnabled(false);
+         serverLabel.setEnabled(false);
+         portLabel.setEnabled(false);
+         pathLabel.setEnabled(false);
+         channelLabel.setEnabled(false);         
+      }
+      
+      private JPanel getSiteTypePanel() {
+         _remoteTypeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+               enableRemoteSite();
+            }
+         });
+         _localTypeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+               enableLocalPath();
+            }
+         });
+         _updateSiteTypeGroup.add(_remoteTypeButton);
+         _updateSiteTypeGroup.add(_localTypeButton);
+         JPanel siteTypePanel = new JPanel();
+         siteTypePanel.add(_remoteTypeButton);
+         siteTypePanel.add(_localTypeButton);
+         return siteTypePanel;
+      }
+      
+      private JSeparator getSep() {
+         JSeparator sep = new JSeparator(SwingConstants.HORIZONTAL);
+         // separators need preferred size in GridBagLayout
+         sep.setPreferredSize(new Dimension(100, 20));
+         sep.setMinimumSize(new Dimension(100, 20));
+         return sep;         
+      }
+      
       private JPanel createAutoUpdatePanel()
       {
          JPanel pnl = new JPanel(new GridBagLayout());
