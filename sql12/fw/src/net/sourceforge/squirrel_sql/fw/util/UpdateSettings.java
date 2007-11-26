@@ -48,6 +48,8 @@ public class UpdateSettings implements Cloneable
 	/** Whether or not the update site is on a remote server */
 	private boolean isRemoteUpdateSite = true;
 	
+	private String fileSystemUpdatePath = "";
+	
 	/**
 	 * Return a copy of this object.
 	 */
@@ -181,6 +183,20 @@ public class UpdateSettings implements Cloneable
     */
    public void setRemoteUpdateSite(boolean isRemoteUpdateSite) {
       this.isRemoteUpdateSite = isRemoteUpdateSite;
+   }
+
+   /**
+    * @return the fileSystemUpdatePath
+    */
+   public String getFileSystemUpdatePath() {
+      return fileSystemUpdatePath;
+   }
+
+   /**
+    * @param fileSystemUpdatePath the fileSystemUpdatePath to set
+    */
+   public void setFileSystemUpdatePath(String fileSystemUpdatePath) {
+      this.fileSystemUpdatePath = fileSystemUpdatePath;
    }
    
    
