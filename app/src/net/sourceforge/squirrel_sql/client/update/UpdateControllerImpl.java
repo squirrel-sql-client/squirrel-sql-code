@@ -132,11 +132,18 @@ public class UpdateControllerImpl implements UpdateController,
       releasePath.append(channelName);
       releasePath.append("/");
 
-      // 4. Get the release.xml file as a ChannelXmlBean from the server      
-      _currentChannelBean = _util.downloadCurrentRelease(getUpdateServerName(),
-                                                         getUpdateServerPortAsInt(),
-                                                         releasePath.toString(),
-                                                         RELEASE_XML_FILENAME);
+      // 4. Get the release.xml file as a ChannelXmlBean from the server or 
+      //    filesystem.
+      if (_settings.isRemoteUpdateSite()) {
+
+         _currentChannelBean = _util.downloadCurrentRelease(getUpdateServerName(),
+                                                            getUpdateServerPortAsInt(),
+                                                            releasePath.toString(),
+                                                            RELEASE_XML_FILENAME);
+      } else {
+         _currentChannelBean = 
+            _util.loadUpdateFromFileSystem(_settings.getFileSystemUpdatePath());
+      }
 
       _timeOfLastCheck = System.currentTimeMillis();
 

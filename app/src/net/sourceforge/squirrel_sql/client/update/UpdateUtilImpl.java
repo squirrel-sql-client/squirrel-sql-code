@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.client.update;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -80,7 +81,7 @@ public class UpdateUtilImpl implements UpdateUtil {
    }
    
    /**
-    * Loads the channel xml bean from the file system.
+    * Loads the channel xml bean from the file system.throw new IOException();
     * 
     * @param path the directory to find release.xml in
     * 
@@ -89,10 +90,22 @@ public class UpdateUtilImpl implements UpdateUtil {
    public ChannelXmlBean loadUpdateFromFileSystem(final String path) 
    {
       ChannelXmlBean result = null;
+      BufferedInputStream is = null;
       try {
-         throw new IOException();
+         File f = new File(path);
+         if (!f.isDirectory()) {
+            s_log.error("FileSystem path ("+path+") is not a directory.");
+         } else {
+            f = new File(f, RELEASE_XML_FILENAME); 
+            is = new BufferedInputStream(new FileInputStream(f));
+            result = serializer.readChannelBean(is);
+         }            
       } catch (IOException e) {
-         
+         s_log.error("Unexpected exception while attempting "
+               + "load updates from filesystem path (" + path + "): "
+               + e.getMessage(), e);
+      } finally {
+         IOUtilities.closeInputStream(is);
       }
      
       return result;

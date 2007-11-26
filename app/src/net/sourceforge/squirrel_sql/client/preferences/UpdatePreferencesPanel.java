@@ -278,7 +278,9 @@ class UpdatePreferencesPanel implements IGlobalPreferencesPanel
             freqStr = Frequency.AT_STARTUP.name();
          }
          updateSettings.setUpdateCheckFrequency(freqStr);
-
+         updateSettings.setRemoteUpdateSite(_remoteTypeButton.isSelected());
+         updateSettings.setFileSystemUpdatePath(_localPath.getText());
+         
          prefs.setUpdateSettings(updateSettings);
          
       }
