@@ -57,7 +57,7 @@ import com.mockobjects.sql.MockConnection2;
 
 public class MockSession implements ISession {
 
-    ISQLAliasExt sqlAlias = null;
+   ISQLAliasExt sqlAlias = null;
     ISQLDriver sqlDriver = null;
     SQLConnection con = null;
     MockDatabaseMetaData mdata = null;
@@ -447,5 +447,13 @@ public class MockSession implements ISession {
         System.err.println("MockSession.format: stub not yet implemented");
         return null;        
     }
-    
+
+    /**
+     * @see net.sourceforge.squirrel_sql.client.session.ISession#getSelectedMainTabIndex()
+     */
+    public int getSelectedMainTabIndex() {
+       System.err.println("MockSession.getSelectedMainTabIndex: stub not yet implemented");
+       return 0;
+    }
+
 }
