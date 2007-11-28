@@ -31,6 +31,9 @@ import javax.swing.JOptionPane;
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
+import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesActionListener;
+import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesSheet;
+import net.sourceforge.squirrel_sql.client.preferences.UpdatePreferencesPanel;
 import net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus;
 import net.sourceforge.squirrel_sql.client.update.gui.CheckUpdateListener;
 import net.sourceforge.squirrel_sql.client.update.gui.UpdateManagerDialog;
@@ -58,9 +61,6 @@ public class UpdateControllerImpl implements UpdateController,
    /** the application and services it provides */
    private IApplication _app = null;
 
-   /** user's preferences about updates */
-   private UpdateSettings _settings = null;
-
    /** utility class for low-level update routines */
    private UpdateUtil _util = null;
 
@@ -73,6 +73,10 @@ public class UpdateControllerImpl implements UpdateController,
    /** the time that we last checked the server to see if we were uptodate */
    private long _timeOfLastCheck = -1;
 
+   /** Used to be able to bring the update dialog back up after re-config */
+   private static GlobalPrefsListener listener = null;
+   
+   
    /**
     * Constructor
     * 
@@ -81,7 +85,10 @@ public class UpdateControllerImpl implements UpdateController,
     */
    public UpdateControllerImpl(IApplication app) {
       _app = app;
-      _settings = app.getSquirrelPreferences().getUpdateSettings();
+      if (listener == null) {
+         listener = new GlobalPrefsListener();
+         GlobalPreferencesSheet.addGlobalPreferencesActionListener(listener);
+      }
    }
 
    /**
@@ -100,11 +107,18 @@ public class UpdateControllerImpl implements UpdateController,
     */
    public void showUpdateDialog() {
       JFrame parent = _app.getMainFrame();
-      UpdateManagerDialog dialog = new UpdateManagerDialog(parent);
-      dialog.setUpdateServerName(_settings.getUpdateServer());
-      dialog.setUpdateServerPort(_settings.getUpdateServerPort());
-      dialog.setUpdateServerPath(_settings.getUpdateServerPath());
-      dialog.setUpdateServerChannel(_settings.getUpdateServerChannel());
+      UpdateSettings settings = getUpdateSettings();
+      boolean isRemoteUpdateSite = settings.isRemoteUpdateSite();
+      UpdateManagerDialog dialog = 
+         new UpdateManagerDialog(parent, isRemoteUpdateSite);
+      if (isRemoteUpdateSite) {
+         dialog.setUpdateServerName(settings.getUpdateServer());
+         dialog.setUpdateServerPort(settings.getUpdateServerPort());
+         dialog.setUpdateServerPath(settings.getUpdateServerPath());
+         dialog.setUpdateServerChannel(settings.getUpdateServerChannel());
+      } else {
+         dialog.setLocalUpdatePath(settings.getFileSystemUpdatePath());
+      }
       dialog.addCheckUpdateListener(this);
       dialog.setVisible(true);
    }
@@ -116,7 +130,8 @@ public class UpdateControllerImpl implements UpdateController,
     */
    public boolean isUpToDate() throws Exception {
       boolean result = true;
-
+      UpdateSettings settings = getUpdateSettings();
+      
       // 1. Find the local release.xml file
       String releaseFilename = _util.getLocalReleaseFile();
 
@@ -134,7 +149,7 @@ public class UpdateControllerImpl implements UpdateController,
 
       // 4. Get the release.xml file as a ChannelXmlBean from the server or 
       //    filesystem.
-      if (_settings.isRemoteUpdateSite()) {
+      if (settings.isRemoteUpdateSite()) {
 
          _currentChannelBean = _util.downloadCurrentRelease(getUpdateServerName(),
                                                             getUpdateServerPortAsInt(),
@@ -142,7 +157,7 @@ public class UpdateControllerImpl implements UpdateController,
                                                             RELEASE_XML_FILENAME);
       } else {
          _currentChannelBean = 
-            _util.loadUpdateFromFileSystem(_settings.getFileSystemUpdatePath());
+            _util.loadUpdateFromFileSystem(settings.getFileSystemUpdatePath());
       }
 
       _timeOfLastCheck = System.currentTimeMillis();
@@ -181,35 +196,35 @@ public class UpdateControllerImpl implements UpdateController,
     * @see net.sourceforge.squirrel_sql.client.update.UpdateController#getUpdateServerChannel()
     */
    public String getUpdateServerChannel() {
-      return _settings.getUpdateServerChannel();
+      return getUpdateSettings().getUpdateServerChannel();
    }
 
    /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateController#getUpdateServerName()
     */
    public String getUpdateServerName() {
-      return _settings.getUpdateServer();
+      return getUpdateSettings().getUpdateServer();
    }
 
    /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateController#isRemoteUpdateSite()
     */
    public boolean isRemoteUpdateSite() {
-      return _settings.isRemoteUpdateSite();
+      return getUpdateSettings().isRemoteUpdateSite();
    }
    
    /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateController#getUpdateServerPath()
     */
    public String getUpdateServerPath() {
-      return _settings.getUpdateServerPath();
+      return getUpdateSettings().getUpdateServerPath();
    }
 
    /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateController#getUpdateServerPort()
     */
    public String getUpdateServerPort() {
-      return _settings.getUpdateServerPort();
+      return getUpdateSettings().getUpdateServerPort();
    }
 
    /**
@@ -310,7 +325,55 @@ public class UpdateControllerImpl implements UpdateController,
       }
       
    }
+
+   /**
+    * @see net.sourceforge.squirrel_sql.client.update.gui.CheckUpdateListener#showPreferences()
+    */
+   public void showPreferences() {
+      // 2. Wait for user to click ok/close
+      listener.setWaitingForOk(true);
+      
+      // 1. Display global preferences
+      GlobalPreferencesSheet.showSheet(_app, UpdatePreferencesPanel.class);
    
+   }
    
+   /**
+    * Returns the UpdateSettings from preferences.
+    * @return
+    */
+   private UpdateSettings getUpdateSettings() {
+      return _app.getSquirrelPreferences().getUpdateSettings();      
+   }
    
+   private class GlobalPrefsListener implements GlobalPreferencesActionListener {
+      
+      private boolean waitingForOk = false;
+      
+      public void onDisplayGlobalPreferences() {}
+      public void onPerformClose() {
+         showDialog();        
+      }
+      public void onPerformOk() {
+         showDialog();
+      }
+      
+      /**
+       * Re-show the dialog if we were waiting for Ok/Close.
+       */
+      private void showDialog() {
+         // 2. When the user clicks ok, then display update dialog again.
+         if (waitingForOk) {
+            waitingForOk = false;
+            showUpdateDialog();
+         }         
+      }
+      
+      /**
+       * @param waitingForOk the waitingForOk to set
+       */
+      public void setWaitingForOk(boolean waitingForOk) {
+         this.waitingForOk = waitingForOk;
+      }      
+   }
 }

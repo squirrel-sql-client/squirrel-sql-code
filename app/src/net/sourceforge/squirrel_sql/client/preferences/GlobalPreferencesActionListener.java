@@ -16,33 +16,29 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.client.update.gui;
+package net.sourceforge.squirrel_sql.client.preferences;
 
 /**
- * A callback interface that allows the UpdateManagerDialog to tell the 
- * controller that the user wants to check for updates, without requiring the 
- * UpdateManagerDialog to have a reference to the UpdateController.
+ * An interface to register as a listener for GlobalPreferences actions.
  * 
  * @author manningr
  */
-public interface CheckUpdateListener {
+public interface GlobalPreferencesActionListener {
 
    /**
-    * Check for updates to the installed software.
+    * This is called whenever global preferences are displayed.
     */
-   void checkUpToDate();
+   public void onDisplayGlobalPreferences();
    
    /**
-    * Displays an error message dialog with the specified details.
-    * 
-    * @param title the title of the error message dialog
-    * @param msg a message describing 
-    * @param e the exception that was encountered
+    * This is called when global preferences that were previously displayed are
+    * saved by clicking the OK button
     */
-   void showErrorMessage(String title, String msg, Exception e);
+   public void onPerformOk();
    
    /**
-    * Shows the update preferences 
+    * This is called when global preferences that were previously displayed are
+    * reverted by clicking the Close button 
     */
-   void showPreferences();
+   public void onPerformClose();
 }
