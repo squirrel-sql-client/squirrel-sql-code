@@ -96,5 +96,6 @@ public interface UpdateController {
     * 
     * @return true if remote site; false otherwise.
     */   
-   boolean isRemoteUpdateSite();   
+   boolean isRemoteUpdateSite();
+      
 }

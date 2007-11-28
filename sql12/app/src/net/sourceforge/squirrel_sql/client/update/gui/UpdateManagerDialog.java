@@ -66,6 +66,9 @@ public class UpdateManagerDialog extends JDialog {
    /** Check button for dialog */
    private JButton _checkBtn = null;
 
+   /** Configure button for dialog */
+   private JButton _configBtn = null;
+   
    /** Close button for dialog. */
    private JButton _closeBtn = null;
 
@@ -83,26 +86,33 @@ public class UpdateManagerDialog extends JDialog {
    
    /** server channel textfield */
    private JTextField _updateServerChannelTF = null;
+   
+   /** local path textfield */
+   private JTextField _localUpdatePath = null;
       
    /** registered check update listeners */
    private ArrayList<CheckUpdateListener> _checkUpdateListeners = 
       new ArrayList<CheckUpdateListener>();
    
+   private boolean isRemoteUpdateSite = true;
+   
    static interface i18n {
-      // i18n[UpdateManagerDialog.title=Update Manager]
-      String TITLE = s_stringMgr.getString("UpdateManagerDialog.title");
+      // i18n[UpdateManagerDialog.channelLabel=Channel:]
+      String CHANNEL_LABEL = s_stringMgr.getString("UpdateManagerDialog.channelLabel");
+      
+      // i18n[UpdateManagerDialog.checkButtonLabel=Check]
+      String CHECK_LABEL = s_stringMgr.getString("UpdateManagerDialog.checkButtonLabel");
 
       // i18n[UpdateManagerDialog.closeLabel=Close]
       String CLOSE_LABEL = s_stringMgr.getString("UpdateManagerDialog.closeLabel");
 
-      // i18n[UpdateManagerDialog.repositoryTabLabel=Repository]
-      String LOCATION_TAB_LABEL = s_stringMgr.getString("UpdateManagerDialog.repositoryTabLabel");
-
-      // i18n[UpdateManagerDialog.channelLabel=Channel:]
-      String CHANNEL_LABEL = s_stringMgr.getString("UpdateManagerDialog.channelLabel");
-
       // i18n[UpdateManagerDialog.hostLabel=Host:]
       String HOST_LABEL = s_stringMgr.getString("UpdateManagerDialog.hostLabel");
+
+      String LOCAL_UPDATE_PATH_LABEL = "Local Update Path:";
+      
+      // i18n[UpdateManagerDialog.repositoryTabLabel=Repository]
+      String LOCATION_TAB_LABEL = s_stringMgr.getString("UpdateManagerDialog.repositoryTabLabel");
 
       // i18n[UpdateManagerDialog.pathLabel=Path:]
       String PATH_LABEL = s_stringMgr.getString("UpdateManagerDialog.pathLabel");
@@ -110,18 +120,22 @@ public class UpdateManagerDialog extends JDialog {
       // i18n[UpdateManagerDialog.portLabel=Port:]
       String PORT_LABEL = s_stringMgr.getString("UpdateManagerDialog.portLabel");
 
-      // i18n[UpdateManagerDialog.checkButtonLabel=Check]
-      String CHECK_LABEL = s_stringMgr.getString("UpdateManagerDialog.checkButtonLabel");
+      // i18n[UpdateManagerDialog.settingsLabel=Settings]
+      String SETTINGS_LABEL = s_stringMgr.getString("UpdateManagerDialog.settingsLabel");
+
+      // i18n[UpdateManagerDialog.title=Update Manager]
+      String TITLE = s_stringMgr.getString("UpdateManagerDialog.title");
    }
 
    /**
     * 
     * @param parent
     */
-   public UpdateManagerDialog(JFrame parent) {
+   public UpdateManagerDialog(JFrame parent, boolean isRemoteUpdateSite) {
       super(parent, i18n.TITLE, true);
       setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
       this._parent = parent;
+      this.isRemoteUpdateSite = isRemoteUpdateSite;
       init();
    }
 
@@ -161,6 +175,11 @@ public class UpdateManagerDialog extends JDialog {
       _updateServerChannelTF.setText(channelStr);
    }
    
+   public void setLocalUpdatePath(String path) {
+      _localUpdatePath.setText(path);
+   }
+   
+   
    /**
     * Adds a listener which is called when check for updates action is invoked
     * from this dialog.
@@ -173,11 +192,24 @@ public class UpdateManagerDialog extends JDialog {
    
    /** Initialized the UI components */
    private void init() {
+      this.setLayout(new BorderLayout());
+      JPanel locationPanel = null;
+      if (isRemoteUpdateSite) {
+         locationPanel = getRemoteLocationPanel();
+      } else {
+         locationPanel = getLocalUpdateSitePanel();
+      }
+
+      this.add(locationPanel, BorderLayout.CENTER);
+      this.add(getButtonPanel(), BorderLayout.SOUTH);
+      this.setSize(300, 200);
+      GUIUtils.centerWithinParent(this);
+   }
+
+   private JPanel getRemoteLocationPanel() {
       EmptyBorder border = new EmptyBorder(new Insets(5, 5, 5, 5));
       Dimension mediumField = new Dimension(200, 20);
       Dimension portField = new Dimension(50, 20);
-
-      this.setLayout(new BorderLayout());
 
       JPanel locationPanel = new JPanel();
       locationPanel.setBorder(new EmptyBorder(0, 0, 0, 10));
@@ -215,21 +247,44 @@ public class UpdateManagerDialog extends JDialog {
       locationPanel.add(channelLabel, getLabelConstraints(c));
       locationPanel.add(_updateServerChannelTF, getFieldFillHorizontalConstaints(c));
       locationPanel.setBorder(new LineBorder(Color.LIGHT_GRAY, 1));
-
-      this.add(locationPanel, BorderLayout.CENTER);
-      this.add(getButtonPanel(), BorderLayout.SOUTH);
-      this.setSize(300, 200);
-      GUIUtils.centerWithinParent(this);
+      
+      return locationPanel;
    }
+   
+   private JPanel getLocalUpdateSitePanel() {
+      EmptyBorder border = new EmptyBorder(new Insets(5, 5, 5, 5));
+      Dimension mediumField = new Dimension(200, 20);
+      Dimension portField = new Dimension(50, 20);
 
+      JPanel locationPanel = new JPanel();
+      locationPanel.setBorder(new EmptyBorder(0, 0, 0, 10));
+      locationPanel.setLayout(new GridBagLayout());
+
+      int x = 0;
+      int y = -1;
+
+      GridBagConstraints c = new GridBagConstraints();
+      c.gridx = x;
+      c.gridy = y;
+      c.anchor = GridBagConstraints.NORTH;
+
+      JLabel localUpdatePathLabel = getBorderedLabel(i18n.LOCAL_UPDATE_PATH_LABEL, border);
+      _localUpdatePath = getSizedTextField(mediumField);
+
+      locationPanel.add(localUpdatePathLabel, getLabelConstraints(c));
+      locationPanel.add(_localUpdatePath, getFieldFillHorizontalConstaints(c));
+      
+      return locationPanel;
+   }
+   
    private JPanel getButtonPanel() {
       JPanel result = new JPanel();
 
       _checkBtn = new JButton(i18n.CHECK_LABEL);
       _checkBtn.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
+            UpdateManagerDialog.this.setVisible(false);
             for (CheckUpdateListener listener: _checkUpdateListeners) {
-               UpdateManagerDialog.this.setVisible(false);
                try {
                   listener.checkUpToDate();
                } catch (Exception ex) {
@@ -242,6 +297,16 @@ public class UpdateManagerDialog extends JDialog {
          }
       });
 
+      _configBtn = new JButton(i18n.SETTINGS_LABEL);
+      _configBtn.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent e) {
+            UpdateManagerDialog.this.setVisible(false);
+            for (CheckUpdateListener listener: _checkUpdateListeners) {
+               listener.showPreferences();
+            }
+         }
+      });
+      
       _closeBtn = new JButton(i18n.CLOSE_LABEL);
       _closeBtn.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
@@ -250,6 +315,7 @@ public class UpdateManagerDialog extends JDialog {
       });
 
       result.add(_checkBtn);
+      result.add(_configBtn);
       result.add(_closeBtn);
       return result;
    }

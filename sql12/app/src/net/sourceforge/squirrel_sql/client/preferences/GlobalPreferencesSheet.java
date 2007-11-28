@@ -89,6 +89,9 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 	public static final String PREF_KEY_GLOBAL_PREFS_SHEET_HEIGHT = "Squirrel.globalPrefsSheetHeight";
 
 
+	private static ArrayList<GlobalPreferencesActionListener> _listeners = 
+	   new ArrayList<GlobalPreferencesActionListener>();
+	
    /**
     * Ctor specifying the application API.
     *
@@ -140,6 +143,28 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 
 
 	/**
+	 * Registers a GlobalPreferencesActionListener to receive callbacks when 
+	 * certain actions take place.
+	 * 
+	 * @param listener the GlobalPreferencesActionListener to register.
+	 */
+	public static void addGlobalPreferencesActionListener(GlobalPreferencesActionListener listener) {
+	   _listeners.add(listener);
+	}
+	
+	
+   /**
+    * Unregisters a GlobalPreferencesActionListener to receive callbacks when 
+    * certain actions take place.
+    * 
+    * @param listener the GlobalPreferencesActionListener to unregister.
+    */
+   public static void removeGlobalPreferencesActionListener(GlobalPreferencesActionListener listener) {
+      _listeners.remove(listener);
+   }
+	
+	
+	/**
 	 * Show the Preferences dialog
 	 *
 	 * @param	app		Application API.
@@ -162,6 +187,9 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
       if(null != componentClassOfTabToSelect)
       {
          s_instance.selectTab(componentClassOfTabToSelect);
+      }
+      for (GlobalPreferencesActionListener listener : _listeners) {
+         listener.onDisplayGlobalPreferences();
       }
    }
    @SuppressWarnings("unchecked")
@@ -221,6 +249,9 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 	private void performClose()
 	{
 		dispose();
+      for (GlobalPreferencesActionListener listener : _listeners) {
+         listener.onPerformClose();
+      }		
 	}
 
 	/**
@@ -267,6 +298,9 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 		}
 
 		dispose();
+      for (GlobalPreferencesActionListener listener : _listeners) {
+         listener.onPerformOk();
+      }		
 	}
     
 	/**
@@ -284,7 +318,7 @@ public class GlobalPreferencesSheet extends BaseInternalFrame
 		_panels.add(new SQLPreferencesPanel(_app.getMainFrame()));
 		_panels.add(new ProxyPreferencesPanel());
 		_panels.add(new DataTypePreferencesPanel());
-		_panels.add(new UpdatePreferencesPanel());
+		_panels.add(new UpdatePreferencesTab());
 
 		// Go thru all loaded plugins asking for panels.
 		PluginInfo[] plugins = _app.getPluginManager().getPluginInformation();
