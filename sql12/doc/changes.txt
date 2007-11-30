@@ -1,12 +1,11 @@
 SQuirreL SQL Client Change Log
 ==============================
 
-2.6.2 (??/??/????)
+2.6.2 (11/30/2007)
 =================
 
 Bug-Fixes:
 
-1830649: Focus Loss
 1820792: Sybase ASE - table not shown in object browser
 1821354: Changing default value of a column in Derby does nothing
 1820214: 2.5.1 DB aliases do not transfer properly to 2.6.1
