@@ -10,6 +10,8 @@
 			<h1 class="body"></A>FAQ - SQuirreL SQL Client.</h1>
 			<p>
 				<ul>
+				        <li><a href="#faq11">I don't see Oracle system tables/views list in the code completion
+                                                             dialog.  Can I configure this somehow?</a></li>
 					<li><a href="#faq10">How do I install SQuirreL SQL Client on Windows Vista?
 					<li><a href="#faq9">I get a blank window when running SQuirreL on Fedora Core while
 			using Desktop Effects (Compiz) and the Sun JDK. </a></li>
@@ -92,6 +94,35 @@
 		<td class="body_left_border">&nbsp;</td>
 		<td width='100%' bgcolor="white" valign="top">
 			<h1 class="body">Answers - SQuirreL SQL Client.</h1>
+			<h1 class="question"><A NAME="faq11">I don't see Oracle system tables/views list in the code completion
+                                                             dialog.  Can I configure this somehow?</A></h1>
+                        <p class="answer">                                     
+				For startup performance, fine-grain control was introduced to allow
+				you to specify which schemas are loaded.  This is a big deal for
+				Oracle as it has by default many schemas which are rarely used and
+				some that are used occasionally that have tons of objects in them
+				(e.g. SYS).  You can control this configuration per alias as follows:
+                                <ol>
+					<li>  Right-click on the alias and choose "Alias Properties".</li>
+					<li>  In the "Schemas" tab of the resulting dialog, choose "Specify
+					Schema loading and caching".</li>
+					<li>  Click the "Connect database to refresh Schema table" button.(Now, for
+					each schema listed you are able to specify whether or not tables, views and/or
+					procedures are loaded into the object tree, by clicking the cell in Tables, Views, or
+					Procedures.</li>
+					<li>  Turn off all schemas and then explicitly add the ones you need for
+					this particular alias.  You can achieve this easily with the buttons
+					below the schema table.  It forms a sentence that should read "Set
+					&lt;All Objects&gt; in all Schemas to &lt;Don't load&gt;", then click Apply.  All
+					Table, View and Procedure cells move to "Don't load" value.</li>
+					<li>  Find your schema and change the Tables, Views and Procedures cells
+					for that row to "Load ..." (caching will help if you have a large
+					number of objects that are always present)</li>
+					<li>  Next find the SYS schema and change it to load VIEWS. </li>
+					<li>  Start a new session with that alias and SYS views will be loaded into 
+					      the object tree of that new session </li>
+				</ol>
+			</p>
 			<h1 class="question"><A NAME="faq10">How do I install SQuirreL SQL Client on Windows Vista?</A></h1>
 			<p class="answer">
 				Doug Lawry has reported that the following steps are required in order to install SQuirreL SQL Client on Windows Vista.</br>
