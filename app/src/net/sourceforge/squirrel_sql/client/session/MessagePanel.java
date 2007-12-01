@@ -261,9 +261,7 @@ public class MessagePanel extends JTextPane implements IMessageHandler
               }
           }
           privateShowMessage(message, saSet);
-          if (s_log.isDebugEnabled()) {
-              s_log.debug("Exception message shown in MessagePanel: "+message);
-          }
+          s_log.error("privateShowMessage: Exception was "+th.getMessage(), th);
       }
    }
    
