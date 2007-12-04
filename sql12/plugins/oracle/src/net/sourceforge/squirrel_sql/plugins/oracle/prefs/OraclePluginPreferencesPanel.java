@@ -58,11 +58,23 @@ public class OraclePluginPreferencesPanel extends
         String HIDE_RECYCLE_BIN_CB_TT = 
             s_stringMgr.getString("OraclePluginPreferencesPanel.hideRecycleBinCheckBoxToolTip");
         
+        //i18n[OraclePluginPreferencesPanel.showErrorOffsetLabel=Show Syntax 
+        //Error Offset in SQL Editor]
+        String SHOW_ERROR_OFFSET_LABEL = 
+           s_stringMgr.getString("OraclePluginPreferencesPanel.showErrorOffsetLabel");
+        
+        //i18n[OraclePluginPreferencesPanel.showErrorOffsetTT=Creates and uses a 
+        //user-defined function that is used to determine the syntax error token]
+        String SHOW_ERROR_OFFSET_TT = 
+           s_stringMgr.getString("OraclePluginPreferencesPanel.showErrorOffsetTT");
     }
     
     /** The checkbox for specifying exclusion of recycle bin tables */
-    private static JCheckBox excludeRecycleBinTablesCheckBox = 
+    private final static JCheckBox excludeRecycleBinTablesCheckBox = 
         new JCheckBox(i18n.HIDE_RECYCLE_BIN_CB_LABEL);
+    
+    private final static JCheckBox showErrorOffsetCheckBox = 
+       new JCheckBox(i18n.SHOW_ERROR_OFFSET_LABEL);
     
     /**
      * Construct a new PreferencesPanel.
@@ -80,7 +92,9 @@ public class OraclePluginPreferencesPanel extends
     @Override
     protected JPanel createTopPanel() {
         JPanel result = super.createTopPanel();
-        addRecycleBinCheckBox(result, 0, super.lastY);
+        int lastY = super.lastY;
+        addRecycleBinCheckBox(result, 0, lastY++);
+        addShowErrorOffsetCheckBox(result, 0, lastY++);
         return result;
     }
 
@@ -94,6 +108,17 @@ public class OraclePluginPreferencesPanel extends
         excludeRecycleBinTablesCheckBox.setToolTipText(i18n.HIDE_RECYCLE_BIN_CB_TT);
         result.add(excludeRecycleBinTablesCheckBox, c);        
     }
+
+    private void addShowErrorOffsetCheckBox(JPanel result, int col, int row) {
+       GridBagConstraints c = new GridBagConstraints();
+       c.gridx = col;
+       c.gridy = row;
+       c.gridwidth = 2;  // Span across two columns
+       c.anchor = GridBagConstraints.WEST;
+       c.insets = new Insets(5,5,0,0);
+       showErrorOffsetCheckBox.setToolTipText(i18n.SHOW_ERROR_OFFSET_TT);
+       result.add(showErrorOffsetCheckBox, c);        
+   }
     
     /**
      * @see net.sourceforge.squirrel_sql.client.plugin.gui.PluginQueryTokenizerPreferencesPanel#loadData()
@@ -104,6 +129,7 @@ public class OraclePluginPreferencesPanel extends
         IQueryTokenizerPreferenceBean prefs = _prefsManager.getPreferences();
         OraclePreferenceBean oraclePrefs = (OraclePreferenceBean)prefs;
         excludeRecycleBinTablesCheckBox.setSelected(oraclePrefs.isExcludeRecycleBinTables());
+        showErrorOffsetCheckBox.setSelected(oraclePrefs.isShowErrorOffset());
     }
 
     /**
@@ -114,6 +140,7 @@ public class OraclePluginPreferencesPanel extends
         IQueryTokenizerPreferenceBean prefs = _prefsManager.getPreferences();
         OraclePreferenceBean oraclePrefs = (OraclePreferenceBean)prefs;
         oraclePrefs.setExcludeRecycleBinTables(excludeRecycleBinTablesCheckBox.isSelected());
+        oraclePrefs.setShowErrorOffset(showErrorOffsetCheckBox.isSelected());
         super.save();
     }
     
