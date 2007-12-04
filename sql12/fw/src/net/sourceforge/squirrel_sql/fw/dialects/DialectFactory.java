@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -235,6 +236,33 @@ public class DialectFactory {
     
     public static boolean isTimesTen(ISQLDatabaseMetaData md) {
         return dialectSupportsProduct(md, timestenDialect);            	
+    }
+    
+    /**
+     * Returns a DialectType for the specified ISQLDatabaseMetaData
+     * 
+     * @param md the metadata to use to determine the dialect type
+     * 
+     * @return a dialect type 
+     */
+    public static DialectType getDialectType(ISQLDatabaseMetaData md) {
+       HibernateDialect dialect = null;
+       try {
+          dialect = getDialect(md);
+       } catch (UnknownDialectException e) {
+          try {
+             s_log.error("getDialectType: Unknown dialect for product="
+                  + md.getDatabaseProductName() + " version="
+                  + md.getDatabaseProductVersion()+" - "+e.getMessage(), e);
+          } catch (SQLException ex) {
+             s_log.error("getDialectType: unable to get database "
+                  + "product/version: " + ex.getMessage(), ex);
+          }
+       }
+       if (dialect == null) {
+          return DialectType.UNKNOWN;
+       }
+       return dialect.getDialectType();
     }
     
     /**

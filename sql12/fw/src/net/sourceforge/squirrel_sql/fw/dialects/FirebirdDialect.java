@@ -441,4 +441,11 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect
         return DialectUtils.getCreateTableSQL(tables, md, this, prefs, isJdbcOdbc);
     }
     
+    /**
+     * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDialectType()
+     */
+    public DialectType getDialectType() {
+       return DialectType.FIREBIRD;
+    }
+    
 }

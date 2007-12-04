@@ -466,5 +466,12 @@ public class SQLServerDialect extends org.hibernate.dialect.SQLServerDialect
         return DialectUtils.getCreateTableSQL(tables, md, this, prefs, isJdbcOdbc);
     }
     
+    /**
+     * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDialectType()
+     */
+    public DialectType getDialectType() {
+       return DialectType.MSSQL;
+    }
+    
 }
 

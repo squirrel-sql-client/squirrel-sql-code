@@ -18,27 +18,35 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
-public class MySQL5Dialect extends MySQLDialect {
-
-    /**
-     * @see net.sourceforge.squirrel_sql.fw.dialects.MySQLDialect#supportsProduct(java.lang.String, java.lang.String)
-     */
-    @Override
-    public boolean supportsProduct(String databaseProductName, String databaseProductVersion) {
-        if (databaseProductName == null || databaseProductVersion == null) {
-            return false;
-        }
-        if (!databaseProductName.trim().toLowerCase().startsWith("mysql")) {
-            return false;
-        }
-        return databaseProductVersion.startsWith("5");
-    }
-
-    /**
-     * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDialectType()
-     */
-    public DialectType getDialectType() {
-       return DialectType.MYSQL5;
-    }
-    
+/**
+ * An enumeration class that provides an entry for each database that we have a
+ * HibernateDialect (SQuirreL's version) implemented.
+ * 
+ * @author manningr
+ */
+public enum DialectType {
+   AXION,
+   DAFFODIL,
+   DB2,
+   DERBY,
+   FIREBIRD,
+   FRONTBASE,
+   HADB,
+   HSQLDB,
+   H2,
+   INFORMIX,
+   INGRES,
+   INTERBASE,
+   MAXDB,
+   MCKOI,
+   MSSQL,
+   MYSQL,     // MySQL 4.x and below
+   MYSQL5,    // MySQL 5.x and above
+   ORACLE,
+   POINTBASE,
+   POSTGRES,
+   PROGRESS,
+   SYBASEASE, // Sybase Adaptive Server Enterprise 
+   TIMESTEN,
+   UNKNOWN
 }
