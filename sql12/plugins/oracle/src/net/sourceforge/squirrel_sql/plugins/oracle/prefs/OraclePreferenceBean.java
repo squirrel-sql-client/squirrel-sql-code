@@ -52,6 +52,8 @@ public class OraclePreferenceBean implements Cloneable,
 
     private boolean excludeRecycleBinTables = true;
     
+    private boolean showErrorOffset = true;
+    
     public OraclePreferenceBean() {
         super();
     }
@@ -191,5 +193,19 @@ public class OraclePreferenceBean implements Cloneable,
     public boolean isExcludeRecycleBinTables() {
         return excludeRecycleBinTables;
     }
+
+   /**
+    * @return the showErrorOffset
+    */
+   public boolean isShowErrorOffset() {
+      return showErrorOffset;
+   }
+
+   /**
+    * @param showErrorOffset the showErrorOffset to set
+    */
+   public void setShowErrorOffset(boolean showErrorOffset) {
+      this.showErrorOffset = showErrorOffset;
+   }
 
 }

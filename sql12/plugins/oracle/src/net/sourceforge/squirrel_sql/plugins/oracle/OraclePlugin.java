@@ -151,7 +151,7 @@ public class OraclePlugin extends DefaultSessionPlugin
 
    /** manages our query tokenizing preferences */
    private PluginQueryTokenizerPreferencesManager _prefsManager = null;
-   
+      
    interface i18n {
        // i18n[OraclePlugin.title=Oracle]
        String title = s_stringMgr.getString("OraclePlugin.title");
@@ -195,7 +195,7 @@ public class OraclePlugin extends DefaultSessionPlugin
     */
    public String getVersion()
    {
-      return "0.19";
+      return "0.20";
    }
 
    /**
@@ -419,13 +419,17 @@ public class OraclePlugin extends DefaultSessionPlugin
       {
          return null;
       }
-      IQueryTokenizerPreferenceBean _prefs = _prefsManager.getPreferences();
-      if (_prefs.isInstallCustomQueryTokenizer()) {
-          session.setQueryTokenizer(new OracleQueryTokenizer(_prefs));
+      IQueryTokenizerPreferenceBean prefs = _prefsManager.getPreferences();
+      if (prefs.isInstallCustomQueryTokenizer()) {
+          session.setQueryTokenizer(new OracleQueryTokenizer(prefs));
       }
-      OracleExceptionFormatter formatter = new OracleExceptionFormatter();
-      formatter.setSession(session);
-      session.setExceptionFormatter(formatter);
+      
+      if (((OraclePreferenceBean)prefs).isShowErrorOffset()) {
+         OracleExceptionFormatter formatter = new OracleExceptionFormatter();
+         formatter.setSession(session);
+         session.setExceptionFormatter(formatter);
+      }
+      
       GUIUtils.processOnSwingEventThread(new Runnable()
       {
          public void run()
