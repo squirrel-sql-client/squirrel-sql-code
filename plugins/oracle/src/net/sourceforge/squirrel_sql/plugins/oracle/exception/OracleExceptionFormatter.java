@@ -40,7 +40,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
  * An ExceptionFormatter for Oracle which adds the position of the syntax error
- * and moves the caret position to that error position.
+ * and moves the caret position to that error position.  It does nothing else
+ * to format the exception, beyond what the default formatter does.
  * 
  * @author manningr
  */
@@ -91,9 +92,10 @@ public class OracleExceptionFormatter extends SessionAdapter
         
         try {
             if (!isOffsetFunctionAvailable()) {
-                initOffsetFunction();
+                if (initOffsetFunction()) {
+                   offsetFunctionAvailable = true;
+                }
             }
-            offsetFunctionAvailable = true;
         } catch (SQLException e) {
             s_log.error("setSession: Unexpected exception - "+
                 e.getMessage(), e);            
@@ -129,6 +131,9 @@ public class OracleExceptionFormatter extends SessionAdapter
         "end; ";
     
     /**
+     * Pass through to default formatter, detecting the error position and 
+     * setting the caret position appropriately.
+     * 
      * @see net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter#format(java.lang.Throwable)
      */
     public String format(Throwable t) throws Exception {
@@ -172,7 +177,7 @@ public class OracleExceptionFormatter extends SessionAdapter
         CallableStatement cstmt = null;
 
         try {
-            String callSql = "{?=call get_error_offset(?)}";
+            String callSql = "{?=call "+OFFSET_FUNCTION_NAME+"(?)}";
             if (s_log.isDebugEnabled()) {
                 s_log.debug("getErrorPosition: Executing sql: "+callSql);
                 s_log.debug("getErrorPosition: errant SQL was: "+sql);
@@ -191,11 +196,12 @@ public class OracleExceptionFormatter extends SessionAdapter
         return result;
     }
     
-    private void initOffsetFunction() throws SQLException {
+    private boolean initOffsetFunction() throws SQLException {
         ISQLConnection sqlcon = _session.getSQLConnection();
         Connection con = sqlcon.getConnection();
         CallableStatement cstmt = null;
         Statement stmt = null;
+        boolean result = true;
         try {
             stmt = con.createStatement();
             if (s_log.isDebugEnabled()) {
@@ -205,13 +211,16 @@ public class OracleExceptionFormatter extends SessionAdapter
             
             stmt.executeUpdate(OFFSET_FUNCTION);
         } catch (SQLException e ) {
-            s_log.error("initOffsetFunction: Unexpected exception - "+
+           result = false; 
+           s_log.error("initOffsetFunction: Unexpected exception - "+
                 e.getMessage(), e);
+            
             
         } finally {
             SQLUtilities.closeStatement(cstmt);
             SQLUtilities.closeStatement(stmt);
         }
+        return result;
     }
     
     private boolean isOffsetFunctionAvailable() throws SQLException {

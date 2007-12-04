@@ -1,6 +1,12 @@
 Oracle Change Log
 =================
 
+0.20
+====
+
+Allow the user to configure whether or not to show the syntax error offset 
+in the SQL Editor.
+
 0.19
 ====
 
