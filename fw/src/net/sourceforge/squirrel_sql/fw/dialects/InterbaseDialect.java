@@ -410,4 +410,11 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect
         return DialectUtils.getCreateTableSQL(tables, md, this, prefs, isJdbcOdbc);
     }
     
+    /**
+     * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDialectType()
+     */
+    public DialectType getDialectType() {
+       return DialectType.INTERBASE;
+    }
+    
 }

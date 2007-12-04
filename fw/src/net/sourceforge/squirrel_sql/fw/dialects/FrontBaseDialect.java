@@ -465,4 +465,11 @@ public class FrontBaseDialect extends org.hibernate.dialect.FrontBaseDialect
         return DialectUtils.getCreateTableSQL(tables, md, this, prefs, isJdbcOdbc);
     }
     
+    /**
+     * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDialectType()
+     */
+    public DialectType getDialectType() {
+       return DialectType.FRONTBASE;
+    }
+
 }

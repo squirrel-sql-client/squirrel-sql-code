@@ -33,7 +33,7 @@ import org.hibernate.HibernateException;
  * handling standard and non-standard SQL and database types. 
  */
 public interface HibernateDialect {
-    
+       
     /**
      * Get the name of the database type associated with the given
      * <tt>java.sql.Types</tt> typecode.
@@ -378,7 +378,14 @@ public interface HibernateDialect {
     List<String> getCreateTableSQL(List<ITableInfo> tables, 
                                    ISQLDatabaseMetaData md,
                                    CreateScriptPreferences prefs,
-                                   boolean isJdbcOdbc) throws SQLException;    
+                                   boolean isJdbcOdbc) throws SQLException;   
+    
+    /**
+     * Returns the DialectType enum value associated with this dialect.
+     * 
+     * @return the DialectType
+     */
+    DialectType getDialectType();
 
 }
 

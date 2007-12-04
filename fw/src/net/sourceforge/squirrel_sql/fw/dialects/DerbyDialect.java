@@ -446,4 +446,11 @@ public class DerbyDialect extends DB2Dialect
         return DialectUtils.getDropForeignKeySQL(fkName, tableName);
     }
     
+    /**
+     * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDialectType()
+     */
+    public DialectType getDialectType() {
+       return DialectType.DERBY;
+    }
+    
 }

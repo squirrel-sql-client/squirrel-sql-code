@@ -527,5 +527,12 @@ public class Oracle9iDialect extends Oracle9Dialect
     {
         return DialectUtils.getCreateTableSQL(tables, md, this, prefs, isJdbcOdbc);
     }
+
+    /**
+     * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDialectType()
+     */
+    public DialectType getDialectType() {
+       return DialectType.ORACLE;
+    }
     
 }

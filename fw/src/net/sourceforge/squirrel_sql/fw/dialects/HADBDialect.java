@@ -419,5 +419,12 @@ public class HADBDialect extends Dialect implements HibernateDialect {
     {
         return DialectUtils.getCreateTableSQL(tables, md, this, prefs, isJdbcOdbc);
     }
+
+    /**
+     * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDialectType()
+     */
+    public DialectType getDialectType() {
+       return DialectType.HADB;
+    }
     
 }
