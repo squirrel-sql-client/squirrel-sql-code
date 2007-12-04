@@ -6,6 +6,12 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+Oracle Plugin:
+
+ - Allow the user to configure whether or not to show the syntax error offset in 
+   the SQL Editor.  This feature creates a user-defined function called 
+   SQUIRREL_GET_ERROR_OFFSET, which can be disabled.
+
 Refactoring Plugin:
  - Don't try to order the list of tables to be dropped (forcing FK info retrieval) 
    when there is only one table being dropped.
