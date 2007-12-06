@@ -33,6 +33,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetScrollingPanel;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.MapDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -151,7 +152,7 @@ abstract class BaseSQLTab extends BaseObjectTab
 		throws DataSetException
 	{
 		final ResultSetDataSet rsds = new ResultSetDataSet();
-		rsds.setResultSet(rs);
+		rsds.setResultSet(rs, DialectType.MYSQL);
 		if (!_firstRowOnly)
 		{
 			return rsds;

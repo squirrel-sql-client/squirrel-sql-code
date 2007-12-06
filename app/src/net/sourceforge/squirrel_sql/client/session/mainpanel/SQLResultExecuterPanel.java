@@ -74,6 +74,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetUpdateableTableMode
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetMetaDataDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeClob;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.id.IntegerIdentifierFactory;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
@@ -1328,7 +1330,9 @@ public class SQLResultExecuterPanel extends JPanel
             {
                rsmdds = new ResultSetMetaDataDataSet(rs);
             }
-			rsds.setResultSet(rs);
+         DialectType dialectType = 
+            DialectFactory.getDialectType(getSession().getMetaData());
+			rsds.setResultSet(rs, dialectType);
 
 			addResultsTab(info, rsds, rsmdds, _cancelPanel, model, _resultTabToReplace);
 			rsds = null;

@@ -24,6 +24,7 @@ import java.sql.Types;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeDate;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 /**
  * This defines the display information for a column.
  *
@@ -96,50 +97,94 @@ public class ColumnDisplayDefinition
 	 */
 	private boolean _isCurrency;
 
-    /** 
-     * Flag for whether the column is automatically numbered, thus read-only. 
-     */
-    private boolean _isAutoIncrement;
+   /**
+    * Flag for whether the column is automatically numbered, thus read-only.
+    */
+   private boolean _isAutoIncrement;
+
+   /**
+    * The type of dialect of the session in which this column is being 
+    * displayed.  Plugins can now override behavior for standard SQL types, so
+    * it is necessary to know the current dialect so that the correct plugin 
+    * DataTypeComponent can be chosen for handling this column, if one has been
+    * registered. 
+    */
+   private DialectType _dialectType;
     
 	/**
-	 * Ctor.
-	 *
-	 * @param	displayWidth	Number of characters to display.
-	 * @param	label			Column heading.
-	 */
+    * Ctor.  The dialect type is set to GENERIC, so no plugin-overriding is 
+    * possible when using this constructor.
+    * 
+    * @param displayWidth
+    *           Number of characters to display.
+    * @param label
+    *           Column heading.
+    */
 	public ColumnDisplayDefinition(int displayWidth, String label)
 	{
 		super();
-		init(displayWidth, null, null, label, Types.NULL, null, true, 0, 0, 0, true, false, false);
+      init(displayWidth,
+           null,
+           null,
+           label,
+           Types.NULL,
+           null,
+           true,
+           0,
+           0,
+           0,
+           true,
+           false,
+           false,
+           DialectType.GENERIC);
 	}
 
-	/**
-	 * Constructor for use when the type of data in the column is known/needed.
-	 *
-	 * @param	displayWidth	Number of characters to display.
-	 * @param	label			Column heading.
-	 * @param	className		Name of the class for the type of data in the column.
-	 */
+   /**
+    * Constructor for use when the type of data in the column is known/needed.
+    * 
+    * @param displayWidth
+    *           Number of characters to display.
+    * @param fullTableColumnName
+    * @param columnName
+    * @param label
+    *           Column heading.
+    * @param sqlType
+    * @param sqlTypeName
+    * @param isNullable
+    * @param columnSize
+    * @param precision
+    * @param scale
+    * @param isSigned
+    * @param isCurrency
+    * @param isAutoIncrement
+    * @param dialectType
+    *           the type of dialect of the current session.
+    */
 	public ColumnDisplayDefinition(int displayWidth, String fullTableColumnName,
                 String columnName, String label, int sqlType, String sqlTypeName,
 				boolean isNullable, int columnSize, int precision, int scale,
-				boolean isSigned, boolean isCurrency, boolean isAutoIncrement) {
+				boolean isSigned, boolean isCurrency, boolean isAutoIncrement,
+				DialectType dialectType) {
 		super();
 		init(displayWidth, fullTableColumnName, columnName, label, sqlType, 
              sqlTypeName, isNullable, columnSize, precision, scale,
-             isSigned, isCurrency, isAutoIncrement);
+             isSigned, isCurrency, isAutoIncrement, dialectType);
 	}
 
 	/**
-	 * Constructs a new ColumnDisplayDefinition using ResultSetMetaData from 
-	 * the specified ResultSet.
-	 *  
-	 * @param rs the ResultSet to use
-	 * @param idx the index of the column to build a display definition for.
-	 * 
-	 * @throws SQLException
-	 */
-	public ColumnDisplayDefinition(ResultSet rs, int idx) throws SQLException {
+    * Constructs a new ColumnDisplayDefinition using ResultSetMetaData from the
+    * specified ResultSet.
+    * 
+    * @param rs
+    *           the ResultSet to use
+    * @param idx
+    *           the index of the column to build a display definition for.
+    * @param dialectType
+    *           the type of dialect of the current session.
+    * 
+    * @throws SQLException
+    */
+	public ColumnDisplayDefinition(ResultSet rs, int idx, DialectType dialectType) throws SQLException {
 	    super();
 	    ResultSetMetaData md = rs.getMetaData();
 	    
@@ -164,7 +209,7 @@ public class ColumnDisplayDefinition
         
         init(displayWidth, fullTableColumnName, columnName, columnLabel, sqlType, 
              sqlTypeName, isNullable, columnSize, precision, scale,
-             isSigned, isCurrency, isAutoIncrement);	    
+             isSigned, isCurrency, isAutoIncrement, dialectType);	    
 	}
 	
 	/**
@@ -301,50 +346,51 @@ public class ColumnDisplayDefinition
 	}
 
 	/**
-	 * Private initializer method for ctors. If the display width
-	 * is less than the width of the heading then make the display
-	 * width the same as the width of the heading.
-	 *
-	 * @param	displayWidth	Number of characters to display.
-	 * @param	label			Column heading.
-	 * @param	sqlType			Type of data (from java.sql.Types).
-	 */
-	private void init(int displayWidth, String fullTableColumnName, 
-                      String columnName, String label,
-						int sqlType, String sqlTypeName,
-						boolean isNullable, int columnSize, int precision,
-						int scale, boolean isSigned, boolean isCurrency, 
-                        boolean isAutoIncrement)
-	{
-		if (label == null)
-		{
-			label = " "; // Some drivers will give null.
-		}
-		_displayWidth = displayWidth;
-		if (_displayWidth < label.length())
-		{
-			_displayWidth = label.length();
-		}
-		_fullTableColumnName = fullTableColumnName;
-		_columnName = columnName;
-		// If all columns in a table have empty strings as the headings then the
-		// row height of the label row is zero. We dont want this.
-		_label = label.length() > 0 ? label : " ";
+    * Private initializer method for ctors. If the display width is less than
+    * the width of the heading then make the display width the same as the width
+    * of the heading.
+    * 
+    * @param displayWidth
+    *           Number of characters to display.
+    * @param label
+    *           Column heading.
+    * @param sqlType
+    *           Type of data (from java.sql.Types).
+    */
+   private void init(int displayWidth, String fullTableColumnName,
+         String columnName, String label, int sqlType, String sqlTypeName,
+         boolean isNullable, int columnSize, int precision, int scale,
+         boolean isSigned, boolean isCurrency, boolean isAutoIncrement,
+         DialectType dialectType) {
+      if (label == null) {
+         label = " "; // Some drivers will give null.
+      }
+      _displayWidth = displayWidth;
+      if (_displayWidth < label.length()) {
+         _displayWidth = label.length();
+      }
+      _fullTableColumnName = fullTableColumnName;
+      _columnName = columnName;
+      // If all columns in a table have empty strings as the headings then the
+      // row height of the label row is zero. We dont want this.
+      _label = label.length() > 0 ? label : " ";
 
-		_sqlType = sqlType;
-		_sqlTypeName = sqlTypeName;
-        if (sqlType == Types.DATE && DataTypeDate.getReadDateAsTimestamp()) {
-            _sqlType = Types.TIMESTAMP;
-            _sqlTypeName = "TIMESTAMP";
-        }
-		_isNullable = isNullable;
-		_columnSize = columnSize;
-		_precision = precision;
-		_scale = scale;
-		_isSigned = isSigned;
-		_isCurrency = isCurrency;
-        _isAutoIncrement = isAutoIncrement;
-	}
+      _sqlType = sqlType;
+      _sqlTypeName = sqlTypeName;
+      if (sqlType == Types.DATE && DataTypeDate.getReadDateAsTimestamp()) {
+         _sqlType = Types.TIMESTAMP;
+         _sqlTypeName = "TIMESTAMP";
+      }
+      _isNullable = isNullable;
+      _columnSize = columnSize;
+      _precision = precision;
+      _scale = scale;
+      _isSigned = isSigned;
+      _isCurrency = isCurrency;
+      _isAutoIncrement = isAutoIncrement;
+      _dialectType = dialectType;
+
+   }
     
     public String toString() {
         StringBuilder result = new StringBuilder();
@@ -354,9 +400,10 @@ public class ColumnDisplayDefinition
         result.append(_sqlType);
         result.append(", sqlTypeName=");
         result.append(_sqlTypeName);
-        result.append(", className=");
-        result.append(getClassName());
+        result.append(", dialectType=");        
+        result.append(_dialectType == null ? "null" : _dialectType.name());
         result.append(" ]");
+        
         return result.toString();
     }
 
@@ -381,4 +428,20 @@ public class ColumnDisplayDefinition
     public String getColumnName() {
         return _columnName;
     }
+
+   /**
+    * @return the _dialectType
+    */
+   public DialectType getDialectType() {
+      return _dialectType;
+   }
+
+   /**
+    * @param type the _dialectType to set
+    */
+   public void setDialectType(DialectType type) {
+      _dialectType = type;
+   }
+   
+   
 }

@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.datasetviewer;
+
 /*
  * Copyright (C) 2001-2003 Colin Bell
  * colbell@users.sourceforge.net
@@ -25,306 +26,327 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.sql.ResultSetReader;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
-public class ResultSetDataSet implements IDataSet
-{
-	private final static ILogger s_log =
-		LoggerController.createLogger(ResultSetDataSet.class);
+public class ResultSetDataSet implements IDataSet {
+   private final static ILogger s_log = LoggerController.createLogger(ResultSetDataSet.class);
 
-	// TODO: These 2 should be handled with an Iterator.
-	private int _iCurrent = -1;
-	private Object[] _currentRow;
+   // TODO: These 2 should be handled with an Iterator.
+   private int _iCurrent = -1;
 
-	private int _columnCount;
-	private DataSetDefinition _dataSetDefinition;
-	private List<Object[]> _alData;
+   private Object[] _currentRow;
 
-	/** If <TT>true</TT> cancel has been requested. */
-	private volatile boolean _cancel = false;
+   private int _columnCount;
 
-    /** the result set reader, which we will notify of cancel requests */
-    private ResultSetReader rdr = null; 
-    
-	public ResultSetDataSet()
-	{
-		super();
-	}
+   private DataSetDefinition _dataSetDefinition;
 
+   private List<Object[]> _alData;
 
-	/**
-	 * Form used by Tabs other than ContentsTab
-	 */
-	public void setResultSet(ResultSet rs)
-		throws DataSetException
-	{
- 		setResultSet(rs, null, false);
-	}
-	
-	/**
-	 * Form used by ContentsTab, and for SQL results
-	 */
-	public void setContentsTabResultSet(ResultSet rs, 
-		String fullTableName)
-		throws DataSetException
-	{
-			setResultSet(rs, fullTableName, null, false, true);
-	}
+   /** If <TT>true</TT> cancel has been requested. */
+   private volatile boolean _cancel = false;
 
-	public void setResultSet(ResultSet rs, int[] columnIndices)
-		throws DataSetException
-	{
- 		setResultSet(rs, columnIndices, false);
-	}
+   /** the result set reader, which we will notify of cancel requests */
+   private ResultSetReader rdr = null;
 
+   /**
+    * The type of dialect of the session from which this data set came.  
+    * Plugins can now override behavior for standard SQL types, so
+    * it is necessary to know the current dialect so that the correct plugin 
+    * DataTypeComponent can be chosen for rendering this dataset, if one has 
+    * been registered. 
+    */   
+   private DialectType _dialectType = null;
 
-	/**
-	 * External method to read the contents of a ResultSet that is used by
-	 * all Tab classes except ContentsTab.  This tunrs all the data into strings
-	 * for simplicity of operation.
-	 */
-	public void setResultSet(ResultSet rs,
- 				 int[] columnIndices, boolean computeWidths)
- 			throws DataSetException
-	{
-		setResultSet(rs, null, columnIndices, computeWidths, false);
-	}
+   /**
+    * Default constructor.
+    */
+   public ResultSetDataSet() {
+      super();
+   }
 
-	/**
-	 * Internal method to read the contents of a ResultSet that is used by
-	 * all Tab classes
-	 */
-	private void setResultSet(ResultSet rs, String fullTableName, 
- 				 int[] columnIndices, boolean computeWidths, boolean useColumnDefs)
- 			throws DataSetException
-	{
-		reset();
+   /**
+    * Form used by Tabs other than ContentsTab
+    * 
+    * @param rs
+    *           the ResultSet to set.
+    * @param dialectType
+    *           the type of dialect in use.
+    * @throws DataSetException
+    */
+   public void setResultSet(ResultSet rs, DialectType dialectType)
+         throws DataSetException {
+      setResultSet(rs, null, false, dialectType);
+   }
 
-		if (columnIndices != null && columnIndices.length == 0)
-		{
-			columnIndices = null;
-		}
-		_iCurrent = -1;
-		_alData = new ArrayList<Object[]>();
+   /**
+    * Form used by ContentsTab, and for SQL results
+    * 
+    * @param rs
+    *           the ResultSet to set.
+    * @param fullTableName
+    *           the fully-qualified table name
+    * @param dialectType
+    *           the type of dialect in use.
+    * @throws DataSetException
+    */
+   public void setContentsTabResultSet(ResultSet rs, String fullTableName,
+         DialectType dialectType) throws DataSetException {
+      setResultSet(rs, fullTableName, null, false, true, dialectType);
+   }
 
-		if (rs != null)
-		{
-			try
-			{
-				ResultSetMetaData md = rs.getMetaData();
- 				_columnCount = columnIndices != null ? columnIndices.length : md.getColumnCount();
+   /**
+    * Sets the ResultSet that contains the data
+    * 
+    * @param rs
+    *           the ResultSet to set.
+    * @param columnIndices
+    *           columns to read from the specified ResultSet
+    * @param dialectType
+    *           the type of dialect in use.
+    * @throws DataSetException
+    */
+   public void setResultSet(ResultSet rs, int[] columnIndices,
+         DialectType dialectType) throws DataSetException {
+      setResultSet(rs, columnIndices, false, dialectType);
+   }
 
-				// Done before actually reading the data from the ResultSet. If done after
-				// reading the data from the ResultSet Oracle throws a NullPointerException
-				// when processing ResultSetMetaData methods for the ResultSet returned for
-				// DatabasemetaData.getExportedKeys.
-				ColumnDisplayDefinition[] colDefs =
-					createColumnDefinitions(md, fullTableName, columnIndices, computeWidths);
-				_dataSetDefinition = new DataSetDefinition(colDefs);
+   /**
+    * External method to read the contents of a ResultSet that is used by all
+    * Tab classes except ContentsTab. This tunrs all the data into strings for
+    * simplicity of operation.
+    */
+   public void setResultSet(ResultSet rs, int[] columnIndices,
+         boolean computeWidths, DialectType dialectType) throws DataSetException {
+      setResultSet(rs, null, columnIndices, computeWidths, false, dialectType);
+   }
 
- 				// Read the entire row, since some drivers complain if columns are read out of sequence
- 				rdr = new ResultSetReader(rs, null);
-				Object[] row = null;
+   /**
+    * Internal method to read the contents of a ResultSet that is used by all
+    * Tab classes
+    */
+   private void setResultSet(ResultSet rs, String fullTableName,
+         int[] columnIndices, boolean computeWidths, boolean useColumnDefs,
+         DialectType dialectType) throws DataSetException {
+      reset();
+      _dialectType = dialectType;
+      if (columnIndices != null && columnIndices.length == 0) {
+         columnIndices = null;
+      }
+      _iCurrent = -1;
+      _alData = new ArrayList<Object[]>();
 
-				while (true) {
-					if (useColumnDefs)
-						row = rdr.readRow(colDefs);
-					else
-						row = rdr.readRow();
-		
-					if (row == null)
-						break;
-		
-					if (_cancel)
-					{
-						return;
-					}
+      if (rs != null) {
+         try {
+            ResultSetMetaData md = rs.getMetaData();
+            _columnCount = columnIndices != null ? columnIndices.length
+                  : md.getColumnCount();
 
- 					// SS: now select/reorder columns
- 					if (columnIndices != null)
-					{
- 						Object[] newRow = new Object[_columnCount];
- 						for (int i = 0; i < _columnCount; i++)
-						{
-							if (columnIndices[i] - 1 < row.length)
-							{
- 								newRow[i] = row[columnIndices[i] - 1];
-							}
-							else
-							{
-								newRow[i] = "Unknown";
-							}
- 						}
- 						row = newRow;
- 					}
-					_alData.add(row);
-				}
- 
-// 				ColumnDisplayDefinition[] colDefs = createColumnDefinitions(md, columnIndices, computeWidths);
-// 				_dataSetDefinition = new DataSetDefinition(colDefs);
-			}
-			catch (SQLException ex)
-			{
-				// Don't log an error message here. It is possible that the user
-                // interrupted the query because it was taking too long.  Just 
-                // throw the exception, and let the caller decide whether or not
-                // the exception should be logged.
-				throw new DataSetException(ex);
-			}
-		}
-	}
+            // Done before actually reading the data from the ResultSet. If done
+            // after
+            // reading the data from the ResultSet Oracle throws a
+            // NullPointerException
+            // when processing ResultSetMetaData methods for the ResultSet
+            // returned for
+            // DatabasemetaData.getExportedKeys.
+            ColumnDisplayDefinition[] colDefs = createColumnDefinitions(md,
+                                                                        fullTableName,
+                                                                        columnIndices,
+                                                                        computeWidths);
+            _dataSetDefinition = new DataSetDefinition(colDefs);
 
-	public final int getColumnCount()
-	{
-		return _columnCount;
-	}
+            // Read the entire row, since some drivers complain if columns are
+            // read out of sequence
+            rdr = new ResultSetReader(rs, null);
+            Object[] row = null;
 
-	public DataSetDefinition getDataSetDefinition()
-	{
-		return _dataSetDefinition;
-	}
+            while (true) {
+               if (useColumnDefs)
+                  row = rdr.readRow(colDefs);
+               else
+                  row = rdr.readRow();
 
-	public synchronized boolean next(IMessageHandler msgHandler)
-		throws DataSetException
-	{
-		// TODO: This should be handled with an Iterator
-		if (++_iCurrent < _alData.size())
-		{
-			_currentRow = _alData.get(_iCurrent);
-			return true;
-		}
-		return false;
-	}
+               if (row == null)
+                  break;
 
-	/* (non-Javadoc)
-	 * @see net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet#get(int)
-	 */
-	public Object get(int columnIndex)
-	{
-        if (_currentRow != null) {
-            return _currentRow[columnIndex];
-        } else {
-            return null;
-        }
-	}
+               if (_cancel) {
+                  return;
+               }
 
-	public void cancelProcessing()
-	{
-        rdr.setStopExecution(true);
-		_cancel = true;
-	}
+               // SS: now select/reorder columns
+               if (columnIndices != null) {
+                  Object[] newRow = new Object[_columnCount];
+                  for (int i = 0; i < _columnCount; i++) {
+                     if (columnIndices[i] - 1 < row.length) {
+                        newRow[i] = row[columnIndices[i] - 1];
+                     } else {
+                        newRow[i] = "Unknown";
+                     }
+                  }
+                  row = newRow;
+               }
+               _alData.add(row);
+            }
 
- 	// SS: Modified to auto-compute column widths if <computeWidths> is true
-	private ColumnDisplayDefinition[] createColumnDefinitions(ResultSetMetaData md,
- 			String fullTableName, int[] columnIndices, boolean computeWidths) throws SQLException
-	{
-		// TODO?? ColumnDisplayDefinition should also have the Type (String, Date, Double,Integer,Boolean)
- 		int[] colWidths = null;
- 
- 		// SS: update dynamic column widths
- 		if (computeWidths) {
- 			colWidths = new int[_columnCount];
- 			for (int i = 0; i < _alData.size(); i++) {
- 				Object[] row = _alData.get(i);
- 				for (int col = 0; i < _columnCount; i++) {
- 					if (row[col] != null) {
- 						int colWidth = row[col].toString().length();
- 						if (colWidth > colWidths[col]) {
- 							colWidths[col] = colWidth + 2;
- 						}
- 					}
- 				}
- 			}
- 		}
+            // ColumnDisplayDefinition[] colDefs = createColumnDefinitions(md,
+            // columnIndices, computeWidths);
+            // _dataSetDefinition = new DataSetDefinition(colDefs);
+         } catch (SQLException ex) {
+            // Don't log an error message here. It is possible that the user
+            // interrupted the query because it was taking too long. Just
+            // throw the exception, and let the caller decide whether or not
+            // the exception should be logged.
+            throw new DataSetException(ex);
+         }
+      }
+   }
 
-		ColumnDisplayDefinition[] columnDefs =
-			new ColumnDisplayDefinition[_columnCount];
-		for (int i = 0; i < _columnCount; ++i)
-		{
-			int idx = columnIndices != null ? columnIndices[i] : i + 1;
+   public final int getColumnCount() {
+      return _columnCount;
+   }
 
-			// save various info about the column for use in user input validation
-			// when editing table contents.
-			// Note that the columnDisplaySize is included two times, where the first
-			// entry may be adjusted for actual display while the second entry is the
-			// size expected by the DB.
-			// The isNullable() method returns three values that we convert into two
-			// by saying that if it is not known whether or not a column allows nulls,
-			// we will allow the user to enter nulls and any problems will be caught
-			// when they try to save the data to the DB
-			boolean isNullable = true;
-			if (md.isNullable(idx) == ResultSetMetaData.columnNoNulls)
-				isNullable = false;
-			            
-			int precis;
-			try {
-				precis = md.getPrecision(idx);
-			}
-			catch (NumberFormatException ignore) {
-				precis = Integer.MAX_VALUE;	// Oracle throws this ex on BLOB data types
-			}
+   public DataSetDefinition getDataSetDefinition() {
+      return _dataSetDefinition;
+   }
 
-			boolean isSigned = true;
-			try
-			{
-				isSigned = md.isSigned(idx); // HSQLDB 1.7.1 throws error.
-			}
-			catch (SQLException ignore)
-			{
-				// Empty block
-			}
+   public synchronized boolean next(IMessageHandler msgHandler)
+         throws DataSetException {
+      // TODO: This should be handled with an Iterator
+      if (++_iCurrent < _alData.size()) {
+         _currentRow = _alData.get(_iCurrent);
+         return true;
+      }
+      return false;
+   }
+
+   /*
+    * (non-Javadoc)
+    * 
+    * @see net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet#get(int)
+    */
+   public Object get(int columnIndex) {
+      if (_currentRow != null) {
+         return _currentRow[columnIndex];
+      } else {
+         return null;
+      }
+   }
+
+   public void cancelProcessing() {
+      rdr.setStopExecution(true);
+      _cancel = true;
+   }
+
+   // SS: Modified to auto-compute column widths if <computeWidths> is true
+   private ColumnDisplayDefinition[] createColumnDefinitions(
+         ResultSetMetaData md, String fullTableName, int[] columnIndices,
+         boolean computeWidths) throws SQLException {
+      // TODO?? ColumnDisplayDefinition should also have the Type (String, Date,
+      // Double,Integer,Boolean)
+      int[] colWidths = null;
+
+      // SS: update dynamic column widths
+      if (computeWidths) {
+         colWidths = new int[_columnCount];
+         for (int i = 0; i < _alData.size(); i++) {
+            Object[] row = _alData.get(i);
+            for (int col = 0; i < _columnCount; i++) {
+               if (row[col] != null) {
+                  int colWidth = row[col].toString().length();
+                  if (colWidth > colWidths[col]) {
+                     colWidths[col] = colWidth + 2;
+                  }
+               }
+            }
+         }
+      }
+
+      ColumnDisplayDefinition[] columnDefs = new ColumnDisplayDefinition[_columnCount];
+      for (int i = 0; i < _columnCount; ++i) {
+         int idx = columnIndices != null ? columnIndices[i] : i + 1;
+
+         // save various info about the column for use in user input validation
+         // when editing table contents.
+         // Note that the columnDisplaySize is included two times, where the
+         // first
+         // entry may be adjusted for actual display while the second entry is
+         // the
+         // size expected by the DB.
+         // The isNullable() method returns three values that we convert into
+         // two
+         // by saying that if it is not known whether or not a column allows
+         // nulls,
+         // we will allow the user to enter nulls and any problems will be
+         // caught
+         // when they try to save the data to the DB
+         boolean isNullable = true;
+         if (md.isNullable(idx) == ResultSetMetaData.columnNoNulls)
+            isNullable = false;
+
+         int precis;
+         try {
+            precis = md.getPrecision(idx);
+         } catch (NumberFormatException ignore) {
+            precis = Integer.MAX_VALUE; // Oracle throws this ex on BLOB data
+                                          // types
+         }
+
+         boolean isSigned = true;
+         try {
+            isSigned = md.isSigned(idx); // HSQLDB 1.7.1 throws error.
+         } catch (SQLException ignore) {
+            // Empty block
+         }
 
          boolean isCurrency = false;
 
-         try
-         {
-            // Matt Dahlman: this causes problems with the JDBC driver delivered with Teradata V2R05.00.00.11
+         try {
+            // Matt Dahlman: this causes problems with the JDBC driver delivered
+            // with Teradata V2R05.00.00.11
             isCurrency = md.isCurrency(idx);
-         }
-         catch (SQLException e)
-         {
+         } catch (SQLException e) {
             s_log.error("Failed to call ResultSetMetaData.isCurrency()", e);
          }
 
          boolean isAutoIncrement = false;
          try {
-             isAutoIncrement = md.isAutoIncrement(idx);
+            isAutoIncrement = md.isAutoIncrement(idx);
          } catch (SQLException e) {
-             s_log.error("Failed to call ResultSetMetaData.isAutoIncrement()", e);
+            s_log.error("Failed to call ResultSetMetaData.isAutoIncrement()", e);
          }
-         columnDefs[i] =
-                new ColumnDisplayDefinition(
-                computeWidths ? colWidths[i] : md.getColumnDisplaySize(idx),
-               fullTableName+":"+md.getColumnLabel(idx),
-                md.getColumnName(idx),
-                md.getColumnLabel(idx),
-                md.getColumnType(idx),
-                md.getColumnTypeName(idx),
-                isNullable,
-                md.getColumnDisplaySize(idx),
-                precis,
-                md.getScale(idx),
-                isSigned,
-                isCurrency,
-                isAutoIncrement);
-		}
-		return columnDefs;
-	}
+         columnDefs[i] = new ColumnDisplayDefinition(computeWidths ? colWidths[i]
+                                                           : md.getColumnDisplaySize(idx),
+                                                     fullTableName
+                                                           + ":"
+                                                           + md.getColumnLabel(idx),
+                                                     md.getColumnName(idx),
+                                                     md.getColumnLabel(idx),
+                                                     md.getColumnType(idx),
+                                                     md.getColumnTypeName(idx),
+                                                     isNullable,
+                                                     md.getColumnDisplaySize(idx),
+                                                     precis,
+                                                     md.getScale(idx),
+                                                     isSigned,
+                                                     isCurrency,
+                                                     isAutoIncrement,
+                                                     _dialectType);
+      }
+      return columnDefs;
+   }
 
-	private void reset()
-	{
-		_iCurrent = -1;
-		_currentRow = null;
-		_columnCount = 0;
-		_dataSetDefinition = null;
-		_alData = null;
-	}
+   private void reset() {
+      _iCurrent = -1;
+      _currentRow = null;
+      _columnCount = 0;
+      _dataSetDefinition = null;
+      _alData = null;
+   }
 
-   public void resetCursor()
-   {
+   public void resetCursor() {
       _iCurrent = -1;
       _currentRow = null;
    }
@@ -337,10 +359,10 @@ public class ResultSetDataSet implements IDataSet
     *         specified index.
     */
    public Object removeRow(int index) {
-       if (_alData.size() > index) {
-           return _alData.remove(index);
-       } else {
-           return null;
-       }
+      if (_alData.size() > index) {
+         return _alData.remove(index);
+      } else {
+         return null;
+      }
    }
 }

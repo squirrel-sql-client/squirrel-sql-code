@@ -18,6 +18,8 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -81,10 +83,18 @@ public abstract class BaseObjectTab implements IObjectTab
 	 */
 	public final ISession getSession()
 	{
-//		return _session;
 		return _app.getSessionManager().getSession(_sessionId);
 	}
 
+	/**
+	 * Returns the DialectType of the current session.
+	 * 
+	 * @return DialectType of the current session.
+	 */
+	public DialectType getDialectType() {
+	   return DialectFactory.getDialectType(getSession().getMetaData());
+	}
+	
 	/**
 	 * This tab has been selected. This will call <TT>refreshComponent()</TT>
 	 * only if it hasn't been called for the current MTT>IDatabaseObjectInfo</TT> object.

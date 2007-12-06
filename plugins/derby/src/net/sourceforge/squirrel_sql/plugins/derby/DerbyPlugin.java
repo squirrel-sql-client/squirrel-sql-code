@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.derby;
+
 /*
  * Copyright (C) 2006 Rob Manning
  * manningr@users.sourceforge.net
@@ -23,25 +24,31 @@ import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
 import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
+import net.sourceforge.squirrel_sql.client.plugin.PluginQueryTokenizerPreferencesManager;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
+import net.sourceforge.squirrel_sql.client.plugin.gui.PluginGlobalPreferencesTab;
+import net.sourceforge.squirrel_sql.client.plugin.gui.PluginQueryTokenizerPreferencesPanel;
+import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithChildNodesExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
+import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.fw.sql.IQueryTokenizer;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.derby.exp.DerbyTableTriggerExtractorImpl;
+import net.sourceforge.squirrel_sql.plugins.derby.prefs.DerbyPluginPreferencesPanel;
+import net.sourceforge.squirrel_sql.plugins.derby.prefs.DerbyPreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.derby.tab.TriggerDetailsTab;
 import net.sourceforge.squirrel_sql.plugins.derby.tab.TriggerSourceTab;
 import net.sourceforge.squirrel_sql.plugins.derby.tab.ViewSourceTab;
 import net.sourceforge.squirrel_sql.plugins.derby.tokenizer.DerbyQueryTokenizer;
-
+import net.sourceforge.squirrel_sql.plugins.derby.types.DerbyClobDataTypeComponentFactory;
 
 /**
  * The main controller class for the Derby plugin.
@@ -49,128 +56,151 @@ import net.sourceforge.squirrel_sql.plugins.derby.tokenizer.DerbyQueryTokenizer;
  * @author manningr
  */
 public class DerbyPlugin extends DefaultSessionPlugin {
-    
-	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(DerbyPlugin.class);
 
-    /** Logger for this class. */
-    private final static ILogger s_log = 
-        LoggerController.createLogger(DerbyPlugin.class);
+   private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DerbyPlugin.class);
 
-    /** API for the Obejct Tree. */
-    private IObjectTreeAPI _treeAPI;
+   /** Logger for this class. */
+   private final static ILogger s_log = LoggerController.createLogger(DerbyPlugin.class);
 
-    static interface i18n {
-        //i18n[DerbyPlugin.showViewSource=Show view source]
-        String SHOW_VIEW_SOURCE = 
-            s_stringMgr.getString("DerbyPlugin.showViewSource");
-        
-        //i18n[DerbyPlugin.showProcedureSource=Show procedure source]
-        String SHOW_PROCEDURE_SOURCE =
-            s_stringMgr.getString("DerbyPlugin.showProcedureSource");
-    }
-    
-    /**
-     * Return the internal name of this plugin.
-     *
-     * @return  the internal name of this plugin.
-     */
-    public String getInternalName()
-    {
-        return "derby";
-    }
+   /** API for the Obejct Tree. */
+   private IObjectTreeAPI _treeAPI;
 
-    /**
-     * Return the descriptive name of this plugin.
-     *
-     * @return  the descriptive name of this plugin.
-     */
-    public String getDescriptiveName()
-    {
-        return "Derby Plugin";
-    }
+   static interface i18n {
+      //i18n[DerbyPlugin.showViewSource=Show view source]
+      String SHOW_VIEW_SOURCE = s_stringMgr.getString("DerbyPlugin.showViewSource");
 
-    /**
-     * Returns the current version of this plugin.
-     *
-     * @return  the current version of this plugin.
-     */
-    public String getVersion()
-    {
-        return "0.11";
-    }
+      //i18n[DerbyPlugin.showProcedureSource=Show procedure source]
+      String SHOW_PROCEDURE_SOURCE = s_stringMgr.getString("DerbyPlugin.showProcedureSource");
 
-    /**
-     * Returns the authors name.
-     *
-     * @return  the authors name.
-     */
-    public String getAuthor()
-    {
-        return "Rob Manning";
-    }
+      //i18n[DerbyPlugin.prefsTitle=Derby]
+      String PREFS_TITLE = s_stringMgr.getString("DerbyPlugin.prefsTitle");
 
-    /**
-     * Returns a comma separated list of other contributors.
-     *
-     * @return  Contributors names.
-     */    
-    public String getContributors() {
-        return "";
-    }    
-    
-    /**
-     * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getChangeLogFileName()
-     */
-    public String getChangeLogFileName()
-    {
-        return "changes.txt";
-    }
+      //i18n[DerbyPlugin.prefsHint=Set preferences for Derby Plugin]
+      String PREFS_HINT = s_stringMgr.getString("DerbyPlugin.prefsHint");
+   }
 
-    /**
-     * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getHelpFileName()
-     */
-    public String getHelpFileName()
-    {
-        return "readme.html";
-    }
+   /** manages our query tokenizing preferences */
+   private PluginQueryTokenizerPreferencesManager _prefsManager = null;
 
-    /**
-     * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getLicenceFileName()
-     */
-    public String getLicenceFileName()
-    {
-        return "licence.txt";
-    }
+   /**
+    * Return the internal name of this plugin.
+    *
+    * @return  the internal name of this plugin.
+    */
+   public String getInternalName() {
+      return "derby";
+   }
 
-	/**
-	 * Load this plugin.
-	 *
-	 * @param	app	 Application API.
-	 */
-	public synchronized void load(IApplication app) throws PluginException
-	{
-		super.load(app);
-	}
+   /**
+    * Return the descriptive name of this plugin.
+    *
+    * @return  the descriptive name of this plugin.
+    */
+   public String getDescriptiveName() {
+      return "Derby Plugin";
+   }
 
-	/**
-	 * Initialize this plugin.
-	 */
-	public synchronized void initialize() throws PluginException
-	{
-		super.initialize();
-	}
+   /**
+    * Returns the current version of this plugin.
+    *
+    * @return  the current version of this plugin.
+    */
+   public String getVersion() {
+      return "0.12";
+   }
 
-    /**
-     * Application is shutting down so save preferences.
-     */
-    public void unload()
-    {
-        super.unload();
-    }
+   /**
+    * Returns the authors name.
+    *
+    * @return  the authors name.
+    */
+   public String getAuthor() {
+      return "Rob Manning";
+   }
 
-   public boolean allowsSessionStartedInBackground()
-   {
+   /**
+    * Returns a comma separated list of other contributors.
+    *
+    * @return  Contributors names.
+    */
+   public String getContributors() {
+      return "";
+   }
+
+   /**
+    * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getChangeLogFileName()
+    */
+   public String getChangeLogFileName() {
+      return "changes.txt";
+   }
+
+   /**
+    * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getHelpFileName()
+    */
+   public String getHelpFileName() {
+      return "readme.html";
+   }
+
+   /**
+    * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getLicenceFileName()
+    */
+   public String getLicenceFileName() {
+      return "licence.txt";
+   }
+
+   /**
+    * Load this plugin.
+    *
+    * @param	app	 Application API.
+    */
+   public synchronized void load(IApplication app) throws PluginException {
+      super.load(app);
+   }
+
+   /**
+    * Create panel for the Global Properties dialog.
+    * 
+    * @return  properties panel.
+    */
+   public IGlobalPreferencesPanel[] getGlobalPreferencePanels() {
+      PluginQueryTokenizerPreferencesPanel _prefsPanel = new DerbyPluginPreferencesPanel(_prefsManager);
+
+      PluginGlobalPreferencesTab tab = new PluginGlobalPreferencesTab(_prefsPanel);
+
+      tab.setHint(i18n.PREFS_HINT);
+      tab.setTitle(i18n.PREFS_TITLE);
+
+      return new IGlobalPreferencesPanel[] { tab };
+   }
+
+   /**
+    * Initialize this plugin.
+    */
+   public synchronized void initialize() throws PluginException {
+      super.initialize();
+
+      _prefsManager = new PluginQueryTokenizerPreferencesManager();
+      _prefsManager.initialize(this, new DerbyPreferenceBean());
+
+      /** Need to do this to pickup user's prefs from file */
+      DerbyPreferenceBean prefBean = (DerbyPreferenceBean) _prefsManager.getPreferences();
+
+      if (prefBean.isReadClobsFully()) {
+         /* Register custom DataTypeComponent factory for Derby CLOB type */
+         CellComponentFactory.registerDataTypeFactory(new DerbyClobDataTypeComponentFactory(),
+                                                      2005,
+                                                      "CLOB");
+      }      
+   }
+
+   /**
+    * Application is shutting down so save preferences.
+    */
+   public void unload() {
+      super.unload();
+   }
+
+   public boolean allowsSessionStartedInBackground() {
       return true;
    }
 
@@ -182,74 +212,76 @@ public class DerbyPlugin extends DefaultSessionPlugin {
     * @return  <TT>true</TT> if session is Oracle in which case this plugin
     *                          is interested in it.
     */
-   public PluginSessionCallback sessionStarted(final ISession session)
-   {
-       if (!isPluginSession(session)) {
-           return null;
-       }
-       s_log.info("Installing Derby query tokenizer");
-       IQueryTokenizer orig = session.getQueryTokenizer();
-       DerbyQueryTokenizer tokenizer = 
-           new DerbyQueryTokenizer(orig.getSQLStatementSeparator(),
-                                   orig.getLineCommentBegin(),
-                                   orig.isRemoveMultiLineComment());
-       session.setQueryTokenizer(tokenizer);
-       GUIUtils.processOnSwingEventThread(new Runnable() {
-           public void run() {
-               updateTreeApi(session);
-           }
-       });
+   public PluginSessionCallback sessionStarted(final ISession session) {
+      if (!isPluginSession(session)) {
+         return null;
+      }
+      if (s_log.isInfoEnabled()) {
+         s_log.info("Installing Derby query tokenizer");
+      }
+      DerbyPreferenceBean prefBean = (DerbyPreferenceBean) _prefsManager.getPreferences();
+      if (prefBean.isInstallCustomQueryTokenizer()) {
+         DerbyQueryTokenizer tokenizer = new DerbyQueryTokenizer(prefBean.getStatementSeparator(),
+                                                                 prefBean.getLineComment(),
+                                                                 prefBean.isRemoveMultiLineComments());
+         session.setQueryTokenizer(tokenizer);
+      }
+      
+      GUIUtils.processOnSwingEventThread(new Runnable() {
+         public void run() {
+            updateTreeApi(session);
+         }
+      });
 
-       return new PluginSessionCallback()
-       {
-           public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame, ISession sess)
-           {
-               // Supports Session main window only
-           }
+      return new PluginSessionCallback() {
+         public void sqlInternalFrameOpened(SQLInternalFrame sqlInternalFrame,
+               ISession sess) {
+            // Supports Session main window only
+         }
 
-           public void objectTreeInternalFrameOpened(ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess)
-           {
-               // Supports Session main window only
-           }
-       };
-
+         public void objectTreeInternalFrameOpened(
+               ObjectTreeInternalFrame objectTreeInternalFrame, ISession sess) {
+            // Supports Session main window only
+         }
+      };
 
    }
 
-    @Override
-    protected boolean isPluginSession(ISession session) {
-        return DialectFactory.isDerby(session.getMetaData());
-    }
-    
-    private void updateTreeApi(ISession session) {
-        
-        _treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
-        
-        //_treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, 
-        //        new ProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE));
-        
-        _treeAPI.addDetailTab(DatabaseObjectType.VIEW, 
-                              new ViewSourceTab(i18n.SHOW_VIEW_SOURCE));
-        
-        
-        //_treeAPI.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
-        //_treeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexDetailsTab());
-        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new DatabaseObjectInfoTab());
-        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER_TYPE_DBO, new DatabaseObjectInfoTab());
-        //_treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
-        //_treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new SequenceDetailsTab());        
-        
-        // Expanders - trigger and index expanders are added inside the table
-        // expander
-        //_treeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander());
-        TableWithChildNodesExpander trigExp = new TableWithChildNodesExpander();
-        trigExp.setTableTriggerExtractor(new DerbyTableTriggerExtractorImpl());
-        _treeAPI.addExpander(DatabaseObjectType.TABLE, trigExp);
-        
-        
-        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
-        _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab("The source of the trigger"));
-        
-    }
-    
+   @Override
+   protected boolean isPluginSession(ISession session) {
+      return DialectFactory.isDerby(session.getMetaData());
+   }
+
+   private void updateTreeApi(ISession session) {
+
+      _treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
+
+      //_treeAPI.addDetailTab(DatabaseObjectType.PROCEDURE, 
+      //        new ProcedureSourceTab(i18n.SHOW_PROCEDURE_SOURCE));
+
+      _treeAPI.addDetailTab(DatabaseObjectType.VIEW,
+                            new ViewSourceTab(i18n.SHOW_VIEW_SOURCE));
+
+      //_treeAPI.addDetailTab(DatabaseObjectType.INDEX, new DatabaseObjectInfoTab());
+      //_treeAPI.addDetailTab(DatabaseObjectType.INDEX, new IndexDetailsTab());
+      _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER,
+                            new DatabaseObjectInfoTab());
+      _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER_TYPE_DBO,
+                            new DatabaseObjectInfoTab());
+      //_treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new DatabaseObjectInfoTab());
+      //_treeAPI.addDetailTab(DatabaseObjectType.SEQUENCE, new SequenceDetailsTab());        
+
+      // Expanders - trigger and index expanders are added inside the table
+      // expander
+      //_treeAPI.addExpander(DatabaseObjectType.SCHEMA, new SchemaExpander());
+      TableWithChildNodesExpander trigExp = new TableWithChildNodesExpander();
+      trigExp.setTableTriggerExtractor(new DerbyTableTriggerExtractorImpl());
+      _treeAPI.addExpander(DatabaseObjectType.TABLE, trigExp);
+
+      _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerDetailsTab());
+      _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER,
+                            new TriggerSourceTab("The source of the trigger"));
+
+   }
+
 }

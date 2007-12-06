@@ -22,6 +22,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ColumnDisplayDefinition;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.gui.OkJPanel;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -221,7 +222,8 @@ public class CellComponentFactory {
 	/**
 	 * Get a TableCellRenderer for the given column.
 	 */
-	public static TableCellRenderer getTableCellRenderer(ColumnDisplayDefinition colDef)
+	public static TableCellRenderer getTableCellRenderer(
+         ColumnDisplayDefinition colDef)
 	{
 		return new CellRenderer(getDataTypeObject(null, colDef));
 	}
@@ -312,8 +314,8 @@ public class CellComponentFactory {
 	 * Return true if the data type for the column may be edited
 	 * within the table cell, false if not.
 	 */
-	public static boolean isEditableInCell(ColumnDisplayDefinition colDef,     
-                                           Object originalValue)
+	public static boolean isEditableInCell(ColumnDisplayDefinition colDef,
+         Object originalValue)
 	{
 		if (colDef.isAutoIncrement()) {
 		    return false;
@@ -335,7 +337,8 @@ public class CellComponentFactory {
 	 * to be able to view the entire contents of the cell even if it was not
 	 * completely loaded during the initial table setup.
 	 */
-	public static boolean needToReRead(ColumnDisplayDefinition colDef, Object originalValue) {
+	public static boolean needToReRead(ColumnDisplayDefinition colDef,
+         Object originalValue) {
 		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
 		
 		if (dataTypeObject != null)
@@ -376,11 +379,8 @@ public class CellComponentFactory {
 	 * Call the validate and convert method in the appropriate
 	 * DataType object.
 	 */
-	 public static Object validateAndConvert(
-	 	ColumnDisplayDefinition colDef,
-	 	Object originalValue,
-	 	String inputValue,
-	 	StringBuffer messageBuffer) {
+	 public static Object validateAndConvert(ColumnDisplayDefinition colDef,
+         Object originalValue, String inputValue, StringBuffer messageBuffer) {
 
 		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
 
@@ -424,8 +424,8 @@ public class CellComponentFactory {
 	 * Return true if the data type for the column may be edited
 	 * in the popup, false if not.
 	 */
-	public static boolean isEditableInPopup(ColumnDisplayDefinition colDef, 
-                                            Object originalValue) {
+	public static boolean isEditableInPopup(ColumnDisplayDefinition colDef,
+         Object originalValue) {
         if (colDef != null && colDef.isAutoIncrement()) {
             return false;
         }
@@ -445,7 +445,8 @@ public class CellComponentFactory {
 	 * Return a JTextArea with appropriate handlers for editing
 	 * the type of data in the cell.
 	 */
-	 public static JTextArea getJTextArea(ColumnDisplayDefinition colDef, Object value) {
+	 public static JTextArea getJTextArea(ColumnDisplayDefinition colDef,
+         Object value) {
 
 		// The first argument is a JTable, which is only used by instances
 		// of JTextField to convert coordinates on a double-click.  Since that
@@ -478,10 +479,8 @@ public class CellComponentFactory {
 	 * DataType object.
 	 */
 	 public static Object validateAndConvertInPopup(
-	 	ColumnDisplayDefinition colDef,
-	 	Object originalValue,
-	 	String inputValue,
-	 	StringBuffer messageBuffer) {
+         ColumnDisplayDefinition colDef, Object originalValue,
+         String inputValue, StringBuffer messageBuffer) {
 
 		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
 
@@ -530,15 +529,15 @@ public class CellComponentFactory {
      * @throws Exception
      */
     public static Object readResultWithPluginRegisteredDataType(ResultSet rs,
-            int sqlType, String sqlTypeName, int index) throws Exception {
+            int sqlType, String sqlTypeName, int index, DialectType dialectType) throws Exception {
 
         Object result = null;
-        String typeNameKey = getRegDataTypeKey(sqlType, sqlTypeName);
+        String typeNameKey = getRegDataTypeKey(dialectType, sqlType, sqlTypeName);
         if (_pluginDataTypeFactories.containsKey(typeNameKey)) {
             IDataTypeComponentFactory factory = _pluginDataTypeFactories.get(typeNameKey);
             IDataTypeComponent dtComp = factory.constructDataTypeComponent();
             ColumnDisplayDefinition colDef = new ColumnDisplayDefinition(
-                rs, index);
+                rs, index, factory.getDialectType());
             dtComp.setColumnDisplayDefinition(colDef);
             dtComp.setTable(_table);
             result = dtComp.readResultSet(rs, index, false);
@@ -580,7 +579,8 @@ public class CellComponentFactory {
 	 * 	"columnName is null"
 	 * or whatever is appropriate for this column in the database.
 	 */
-	public static String getWhereClauseValue(ColumnDisplayDefinition colDef, Object value, ISQLDatabaseMetaData md) {
+	public static String getWhereClauseValue(ColumnDisplayDefinition colDef,
+         Object value, ISQLDatabaseMetaData md) {
 		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
 
 		if (dataTypeObject != null) {
@@ -597,8 +597,7 @@ public class CellComponentFactory {
 	 * prepared statment at the given variable position.
 	 */
 	public static void setPreparedStatementValue(ColumnDisplayDefinition colDef,
-		PreparedStatement pstmt, Object value, int position)
-		throws java.sql.SQLException {
+         PreparedStatement pstmt, Object value, int position) throws java.sql.SQLException {
 
 		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
 
@@ -615,19 +614,20 @@ public class CellComponentFactory {
 	}
 	
 	/**
-	 * Get a default value for the table used to input data for a new row
-	 * to be inserted into the DB.
-	 */
-	static public Object getDefaultValue(ColumnDisplayDefinition colDef, String dbDefaultValue) {
-		IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
-		
-		if (dataTypeObject != null)
-			return dataTypeObject.getDefaultValue(dbDefaultValue);
-		
-		// there was no data type object, so this data type is unknown
-		// to squirrel and thus cannot be edited.	
-		return null;
-	}
+    * Get a default value for the table used to input data for a new row to be
+    * inserted into the DB.
+    */
+   static public Object getDefaultValue(ColumnDisplayDefinition colDef,
+         String dbDefaultValue) {
+      IDataTypeComponent dataTypeObject = getDataTypeObject(null, colDef);
+
+      if (dataTypeObject != null)
+         return dataTypeObject.getDefaultValue(dbDefaultValue);
+
+      // there was no data type object, so this data type is unknown
+      // to squirrel and thus cannot be edited.
+      return null;
+   }
 	
 	
 	
@@ -700,18 +700,30 @@ public class CellComponentFactory {
 	 }
 	
 	/**
-     * Constructs a key that is used to lookup previously registered custom
-     * types.
-     * 
-     * @param sqlType
-     *        the JDBC type code supplied by the driver
-     * @param sqlTypeName
-     *        the JDBC type name supplied by the driver
-     * 
-     * @return a key that can be used to store/retreive a custom type.
-     */
-	private static String getRegDataTypeKey(int sqlType, String sqlTypeName) {
+    * Constructs a key that is used to lookup previously registered custom
+    * types.
+    * 
+    * @param dialectType
+    *           the type of dialect that describes the session that is in use.
+    *           This is an important component in making the key because it
+    *           allows plugins for example to provide IDataTypeComponents for
+    *           standard types that are only used when a session that the plugin
+    *           is interested in is in use.
+    * @param sqlType
+    *           the JDBC type code supplied by the driver
+    * @param sqlTypeName
+    *           the JDBC type name supplied by the driver
+    * 
+    * @return a key that can be used to store/retreive a custom type.
+    */
+	private static String getRegDataTypeKey(DialectType dialectType, int sqlType, String sqlTypeName) {
 	    StringBuilder result = new StringBuilder();
+	    if (dialectType == null) {
+	       result.append(DialectType.GENERIC.name());
+	    } else {
+	       result.append(dialectType.name());
+	    }
+	    result.append(":");
 	    result.append(sqlType);
 	    result.append(":");
 	    result.append(sqlTypeName);
@@ -719,16 +731,16 @@ public class CellComponentFactory {
 	}
 	 
 	/**
-	 * Method for registering a DataTypeComponent factory for a non-standard
-	 * SQL type (or for overriding a standard handler).
-	 */
-	public static void registerDataTypeFactory(
-	        IDataTypeComponentFactory factory, int sqlType, String sqlTypeName)
-	{
-	    String typeName = getRegDataTypeKey(sqlType, sqlTypeName);
+    * Method for registering a DataTypeComponent factory for a non-standard SQL
+    * type (or for overriding a standard handler).
+    */
+   public static void registerDataTypeFactory(
+         IDataTypeComponentFactory factory, int sqlType, String sqlTypeName) 
+   {
+      String typeName = getRegDataTypeKey(factory.getDialectType(), sqlType, sqlTypeName);
 
-	    _pluginDataTypeFactories.put(typeName, factory);
-	}
+      _pluginDataTypeFactories.put(typeName, factory);
+   }
 	
 	
 	/*
@@ -805,7 +817,8 @@ public class CellComponentFactory {
 	 * Internal method used for both cell and popup work.
 	 */
 
-	/* Identify the type of data in the cell and get an instance
+	/** 
+	 * Identify the type of data in the cell and get an instance
 	 * of the appropriate DataType object to work with it.
 	 * 
 	 * The JTable argument is used only by the DataType objects, not here.
@@ -827,10 +840,23 @@ public class CellComponentFactory {
 	 * is what we do.  By saving the component, we avoid the need to create
 	 * new instances each time the userstarts editing, creates the popup dialog,
 	 * or does an operation requireing a static method call (e.g. validateAndConvert).
+	 * 
+    * @param table the JTable that will render the cells
+    * @param colDef the ColumnDisplayDefinition that describes the column.  It 
+    *               contains SQL type, SQL type name and DialectType, and these
+    *               three criteria are examined to determine if a type has been
+    *               registered 
+	 * 
 	 */
 	private static IDataTypeComponent getDataTypeObject(
 		JTable table, ColumnDisplayDefinition colDef) {
 		
+	   if (s_log.isDebugEnabled()) {
+	      s_log.debug("getDataTypeObject: colDef="+colDef);
+	   }
+	   
+	   IDataTypeComponent dataTypeComponent = null;
+	   
 		// keep a hash table of the column objects
 		// so we can reuse them.
 		if (table != _table) {
@@ -838,162 +864,208 @@ public class CellComponentFactory {
 			_colDataTypeObjects.clear();
 			_table = table;
 		}
-		if (_colDataTypeObjects.containsKey(colDef))
-			return _colDataTypeObjects.get(colDef);
-		
-
-		// we have not already created a DataType object for this column
-		// so do that now and save it
-		IDataTypeComponent dataTypeComponent = null;
-		
-		/* See if we have a custom data-type registered. */
-		if (!_pluginDataTypeFactories.isEmpty()) {
-            String typeName = getRegDataTypeKey(colDef.getSqlType(), 
-                colDef.getSqlTypeName());
-            IDataTypeComponentFactory factory = _pluginDataTypeFactories.get(typeName);
-            if (factory != null) {
-                dataTypeComponent = factory.constructDataTypeComponent();
-                if (colDef != null) {
-                    dataTypeComponent.setColumnDisplayDefinition(colDef);
-                }
-                if (table != null) {
-                    dataTypeComponent.setTable(table);
-                } else if (_table != null) {
-                    dataTypeComponent.setTable(_table);
-                }                
-            }
-		}
-		
-		// Use the standard SQL type code to get the right handler
-		// for this data type.
-		if (dataTypeComponent == null) {	
-			switch (colDef.getSqlType())
-			{
-				case Types.NULL:	// should never happen
-					//??
-					break;
-
-				case Types.BIT:
-				case Types.BOOLEAN:
-					dataTypeComponent = new DataTypeBoolean(table, colDef);
-					break;
-
-				case Types.TIME :
-					dataTypeComponent = new DataTypeTime(table, colDef);
-					break;
-
-				case Types.DATE :
-                    // Some databases store a time component in DATE columns (Oracle) 
-                    // The user can set a preference for DATEs that allows them
-                    // to be read as TIMESTAMP columns instead. This doesn't 
-                    // appear to have ill effects for databases that are standards
-                    // compliant (such as MySQL or PostgreSQL).  If the user 
-                    // prefers it, use the TIMESTAMP data type instead of DATE.
-                    if (DataTypeDate.getReadDateAsTimestamp()) {
-                        colDef.setSqlType(Types.TIMESTAMP);
-                        colDef.setSqlTypeName("TIMESTAMP");
-                        dataTypeComponent = new DataTypeTimestamp(table, colDef);
-                    } else {
-                        dataTypeComponent = new DataTypeDate(table, colDef);
-                    }
-					break;
-
-				case Types.TIMESTAMP :
-                case -101 : // Oracle's 'TIMESTAMP WITH TIME ZONE' == -101  
-                case -102 : // Oracle's 'TIMESTAMP WITH LOCAL TIME ZONE' == -102
-					dataTypeComponent = new DataTypeTimestamp(table, colDef);
-					break;
-
-				case Types.BIGINT :
-					dataTypeComponent = new DataTypeLong(table, colDef);
-					break;
-
-				case Types.DOUBLE:
-				case Types.FLOAT:
-					dataTypeComponent = new DataTypeDouble(table, colDef);
-					break;
-					
-				case Types.REAL:
-					dataTypeComponent = new DataTypeFloat(table, colDef);
-					break;
-
-				case Types.DECIMAL:
-				case Types.NUMERIC:
-					dataTypeComponent = new DataTypeBigDecimal(table, colDef);
-					break;
-
-				case Types.INTEGER:
-					// set up for integers
-					dataTypeComponent = new DataTypeInteger(table, colDef);
-					break;
-					
-				case Types.SMALLINT:
-					dataTypeComponent = new DataTypeShort(table, colDef);
-					break;
-					
-				case Types.TINYINT:
-					dataTypeComponent = new DataTypeByte(table, colDef);
-					break;
-
-				// TODO: Hard coded -. JDBC/ODBC bridge JDK1.4
-				// brings back -9 for nvarchar columns in
-				// MS SQL Server tables.
-				case Types.CHAR:
-				case Types.VARCHAR:
-				case Types.LONGVARCHAR:
-				case -9:
-                    // set up for string types
-                    dataTypeComponent = new DataTypeString(table, colDef);
-                    break;
-                
-                // -8 is ROWID in Oracle.  It's a string, but it's auto-assigned
-                case -8:
-                    dataTypeComponent = new DataTypeString(table, colDef);
-                    // Oracle jdbc driver doesn't properly identify this column
-                    // in ResultSetMetaData as read-only.  For now, just use 
-                    // isAutoIncrement flag to simulate this setting.
-                    colDef.setIsAutoIncrement(true);
-                    break;
-
-				case Types.BINARY:
-				case Types.VARBINARY:
-				case Types.LONGVARBINARY:
-					// set up for Binary types
-					dataTypeComponent = new DataTypeBinary(table, colDef);
-					break;
-
-				case Types.BLOB:
-					dataTypeComponent = new DataTypeBlob(table, colDef);
-					break;
-
-				case Types.CLOB:
-					dataTypeComponent = new DataTypeClob(table, colDef);
-					break;
-
-				case Types.OTHER:
-					dataTypeComponent = new DataTypeOther(table, colDef);
-					break;
-
-               //Add begin
-            case Types.JAVA_OBJECT:
-               dataTypeComponent = new DataTypeJavaObject(table, colDef);
-               break;
-               //Add end
-
-            default:
-					// data type is unknown to us.
-					// It may be an unusual type like "JAVA OBJECT" or "ARRAY",
-					// or it may be a DBMS-specific type
-					dataTypeComponent = new DataTypeUnknown(table, colDef);
-
-			}
+		if (_colDataTypeObjects.containsKey(colDef)) {
+		   dataTypeComponent = _colDataTypeObjects.get(colDef);
+		} else {
+   		if (dataTypeComponent == null ) 
+   		{
+   	      /* See if we have a custom data-type registered. */		   
+   		   dataTypeComponent = getCustomDataType(table, colDef);
+   		}
+   		
+   		if (dataTypeComponent == null) {
+   	      // we have not already created a DataType object for this column
+   	      // so do that now and save it		   
+   		   dataTypeComponent = getGenericDataType(table, colDef);
+   		}
+   
+   		// remember this DataType object so we can reuse it
+   		_colDataTypeObjects.put(colDef, dataTypeComponent);
 		}
 
-		// remember this DataType object so we can reuse it
-		_colDataTypeObjects.put(colDef, dataTypeComponent);
-
+		if (s_log.isDebugEnabled() && dataTypeComponent != null) {
+		   s_log.debug("getDataTypeObject: returning type: "
+               + dataTypeComponent.getClass().getName());
+		} else {
+         s_log.debug("getDataTypeObject: returning null type");		   
+		}
+		
 		// If we get here, then no data type object was found for this column.
 		// (should not get here because switch default returns null.)
 		return dataTypeComponent;
 	}
+	
+	/**
+	 * Look for a plugin-registered custom IDataTypeComponent implementation.
+	 * 
+	 * @param table the JTable that will render the cells
+	 * @param colDef the ColumnDisplayDefinition that describes the column.  It 
+	 *               contains SQL type, SQL type name and DialectType, and these
+	 *               three criteria are examined to determine if a type has been
+	 *               registered
+	 * 
+	 * @return the plugin-registered IDataTypeCompoenent, or null if no plugin 
+	 *         has registered one for the column specified by colDef.
+	 */
+	private static IDataTypeComponent getCustomDataType(JTable table,
+         ColumnDisplayDefinition colDef) {
+	   IDataTypeComponent dataTypeComponent = null;
+	     if (dataTypeComponent == null && !_pluginDataTypeFactories.isEmpty()
+	            && colDef.getDialectType() != null) 
+	      {
+	        
+	         String typeName = getRegDataTypeKey(colDef.getDialectType(),
+	                                             colDef.getSqlType(),
+	                                             colDef.getSqlTypeName());
+	         IDataTypeComponentFactory factory = _pluginDataTypeFactories.get(typeName);
+	         if (factory != null) {
+	            dataTypeComponent = factory.constructDataTypeComponent();
+	            if (colDef != null) {
+	               dataTypeComponent.setColumnDisplayDefinition(colDef);
+	            }
+	            if (table != null) {
+	               dataTypeComponent.setTable(table);
+	            } else if (_table != null) {
+	               dataTypeComponent.setTable(_table);
+	            }
+	         }
+	      }
+	     return dataTypeComponent;
+	}
+	
+	/**
+    * @param table
+    * @param colDef
+    * @return
+    */
+   private static IDataTypeComponent getGenericDataType(JTable table,
+         ColumnDisplayDefinition colDef) {
+      IDataTypeComponent dataTypeComponent = null;
+
+      // Use the standard SQL type code to get the right handler
+      // for this data type.
+      if (dataTypeComponent == null) {
+         switch (colDef.getSqlType()) {
+         case Types.NULL: // should never happen
+            //dataTypeComponent = new DataTypeString(table, colDef);
+            break;
+
+         case Types.BIT:
+         case Types.BOOLEAN:
+            dataTypeComponent = new DataTypeBoolean(table, colDef);
+            break;
+
+         case Types.TIME:
+            dataTypeComponent = new DataTypeTime(table, colDef);
+            break;
+
+         case Types.DATE:
+            // Some databases store a time component in DATE columns (Oracle) 
+            // The user can set a preference for DATEs that allows them
+            // to be read as TIMESTAMP columns instead. This doesn't 
+            // appear to have ill effects for databases that are standards
+            // compliant (such as MySQL or PostgreSQL).  If the user 
+            // prefers it, use the TIMESTAMP data type instead of DATE.
+            if (DataTypeDate.getReadDateAsTimestamp()) {
+               colDef.setSqlType(Types.TIMESTAMP);
+               colDef.setSqlTypeName("TIMESTAMP");
+               dataTypeComponent = new DataTypeTimestamp(table, colDef);
+            } else {
+               dataTypeComponent = new DataTypeDate(table, colDef);
+            }
+            break;
+
+         case Types.TIMESTAMP:
+         case -101: // Oracle's 'TIMESTAMP WITH TIME ZONE' == -101  
+         case -102: // Oracle's 'TIMESTAMP WITH LOCAL TIME ZONE' == -102
+            dataTypeComponent = new DataTypeTimestamp(table, colDef);
+            break;
+
+         case Types.BIGINT:
+            dataTypeComponent = new DataTypeLong(table, colDef);
+            break;
+
+         case Types.DOUBLE:
+         case Types.FLOAT:
+            dataTypeComponent = new DataTypeDouble(table, colDef);
+            break;
+
+         case Types.REAL:
+            dataTypeComponent = new DataTypeFloat(table, colDef);
+            break;
+
+         case Types.DECIMAL:
+         case Types.NUMERIC:
+            dataTypeComponent = new DataTypeBigDecimal(table, colDef);
+            break;
+
+         case Types.INTEGER:
+            // set up for integers
+            dataTypeComponent = new DataTypeInteger(table, colDef);
+            break;
+
+         case Types.SMALLINT:
+            dataTypeComponent = new DataTypeShort(table, colDef);
+            break;
+
+         case Types.TINYINT:
+            dataTypeComponent = new DataTypeByte(table, colDef);
+            break;
+
+         // TODO: Hard coded -. JDBC/ODBC bridge JDK1.4
+         // brings back -9 for nvarchar columns in
+         // MS SQL Server tables.
+         case Types.CHAR:
+         case Types.VARCHAR:
+         case Types.LONGVARCHAR:
+         case -9:
+            // set up for string types
+            dataTypeComponent = new DataTypeString(table, colDef);
+            break;
+
+         // -8 is ROWID in Oracle. It's a string, but it's auto-assigned
+         case -8:
+            dataTypeComponent = new DataTypeString(table, colDef);
+            // Oracle jdbc driver doesn't properly identify this column
+            // in ResultSetMetaData as read-only. For now, just use
+            // isAutoIncrement flag to simulate this setting.
+            colDef.setIsAutoIncrement(true);
+            break;
+
+         case Types.BINARY:
+         case Types.VARBINARY:
+         case Types.LONGVARBINARY:
+            // set up for Binary types
+            dataTypeComponent = new DataTypeBinary(table, colDef);
+            break;
+
+         case Types.BLOB:
+            dataTypeComponent = new DataTypeBlob(table, colDef);
+            break;
+
+         case Types.CLOB:
+            dataTypeComponent = new DataTypeClob(table, colDef);
+            break;
+
+         case Types.OTHER:
+            dataTypeComponent = new DataTypeOther(table, colDef);
+            break;
+
+         //Add begin
+         case Types.JAVA_OBJECT:
+            dataTypeComponent = new DataTypeJavaObject(table, colDef);
+            break;
+         //Add end
+
+         default:
+            // data type is unknown to us.
+            // It may be an unusual type like "JAVA OBJECT" or "ARRAY",
+            // or it may be a DBMS-specific type
+            dataTypeComponent = new DataTypeUnknown(table, colDef);
+
+         }
+      }
+      return dataTypeComponent;
+   }
+	
 }

@@ -162,7 +162,7 @@ public abstract class BasePreparedStatementTab extends BaseObjectTab
 		throws DataSetException
 	{
 		final ResultSetDataSet rsds = new ResultSetDataSet();
-		rsds.setResultSet(rs);
+		rsds.setResultSet(rs, getDialectType());
 		if (!_firstRowOnly)
 		{
 			return rsds;
