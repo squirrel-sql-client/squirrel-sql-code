@@ -9,6 +9,7 @@ import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.Bas
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -59,7 +60,7 @@ public class LockTab extends BaseDataSetTab {
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(QUERY);
             ResultSetDataSet rsds = new ResultSetDataSet();
-            rsds.setResultSet(rs);
+            rsds.setResultSet(rs, DialectType.POSTGRES);
             return rsds;
         }
         catch (SQLException ex)

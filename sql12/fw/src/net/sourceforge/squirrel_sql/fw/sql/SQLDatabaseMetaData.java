@@ -36,6 +36,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.DatabaseTypesDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.sql.dbobj.BestRowIdentifier;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
@@ -137,7 +138,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	}
 
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getUserName()
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getUserName()
      */
     public synchronized String getUserName() throws SQLException
 	{
@@ -152,7 +153,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	}
 
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getDatabaseProductName()
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getDatabaseProductName()
      */
     public synchronized String getDatabaseProductName()
 		throws SQLException
@@ -168,7 +169,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	}
 
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getDatabaseProductVersion()
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getDatabaseProductVersion()
      */
 	public synchronized String getDatabaseProductVersion()
 		throws SQLException
@@ -197,7 +198,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
     }
     
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getDriverName()
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getDriverName()
      */
 	public synchronized String getDriverName() throws SQLException
 	{
@@ -212,7 +213,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	}
 
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getJDBCVersion()
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getJDBCVersion()
      */
     public int getJDBCVersion() throws SQLException
 	{
@@ -231,7 +232,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	}
 
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getIdentifierQuoteString()
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getIdentifierQuoteString()
      */
 	public synchronized String getIdentifierQuoteString() throws SQLException
 	{
@@ -249,7 +250,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	}
 
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getCascadeClause()
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getCascadeClause()
      */
     public synchronized String getCascadeClause() throws SQLException {
         final String key = "getCascadeClause";
@@ -269,74 +270,58 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
         return value;
     }
     
-    /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getSchemas()
-     */
-	public synchronized String[] getSchemas() throws SQLException
-	{
-//		final String key = "getSchemas";
-//		String[] value = (String[])_cache.get(key);
-//		if (value != null)
-//		{
-//			return value;
-//		}
 
-		boolean hasGuest = false;
-		boolean hasSysFun = false;
-        
-        final boolean isMSSQLorSYBASE = 
-              DialectFactory.isSyBase(this) || DialectFactory.isMSSQLServer(this);
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getSchemas()
+    */
+   public synchronized String[] getSchemas() throws SQLException {
 
-		final boolean isDB2 = DialectFactory.isDB2(this);
+      boolean hasGuest = false;
+      boolean hasSysFun = false;
 
-		final ArrayList<String> list = new ArrayList<String>();
-		ResultSet rs = privateGetJDBCMetaData().getSchemas();
-		try
-		{
-            if (rs != null) {
-    			final ResultSetReader rdr = new ResultSetReader(rs);
-    			Object[] row = null;
-    			while ((row = rdr.readRow()) != null)
-    			{
-    				if (isMSSQLorSYBASE && row[0].equals("guest"))
-    				{
-    					hasGuest = true;
-    				}
-    				if (isDB2 && row[0].equals("SYSFUN"))
-    				{
-    					hasSysFun = true;
-    				}
-    				list.add((String)row[0]);
-    			}
+      final boolean isMSSQLorSYBASE = DialectFactory.isSyBase(this)
+            || DialectFactory.isMSSQLServer(this);
+
+      final boolean isDB2 = DialectFactory.isDB2(this);
+
+      final ArrayList<String> list = new ArrayList<String>();
+      ResultSet rs = privateGetJDBCMetaData().getSchemas();
+      try {
+         if (rs != null) {
+            DialectType dialectType = DialectFactory.getDialectType(this);
+            final ResultSetReader rdr = new ResultSetReader(rs, dialectType);
+            Object[] row = null;
+            while ((row = rdr.readRow()) != null) {
+               if (isMSSQLorSYBASE && row[0].equals("guest")) {
+                  hasGuest = true;
+               }
+               if (isDB2 && row[0].equals("SYSFUN")) {
+                  hasSysFun = true;
+               }
+               list.add((String) row[0]);
             }
-		}
-		finally
-		{
+         }
+      } finally {
          close(rs);
       }
 
-		// Some drivers for both MS SQL and Sybase don't return guest as
-		// a schema name.
-		if (isMSSQLorSYBASE && !hasGuest)
-		{
-			list.add("guest");
-		}
+      // Some drivers for both MS SQL and Sybase don't return guest as
+      // a schema name.
+      if (isMSSQLorSYBASE && !hasGuest) {
+         list.add("guest");
+      }
 
-		// Some drivers for DB2 don't return SYSFUN as a schema name. A
-		// number of system stored procs are kept in this schema.
-		if (isDB2 && !hasSysFun)
-		{
-			list.add("SYSFUN");
-		}
+      // Some drivers for DB2 don't return SYSFUN as a schema name. A
+      // number of system stored procs are kept in this schema.
+      if (isDB2 && !hasSysFun) {
+         list.add("SYSFUN");
+      }
 
-//		value = (String[])list.toArray(new String[list.size()]);
-//		_cache.put(key, value);
-
-		return list.toArray(new String[list.size()]);
-	}
+      return list.toArray(new String[list.size()]);
+   }
 
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#supportsSchemas()
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#supportsSchemas()
      */
     public boolean supportsSchemas() throws SQLException
 	{
@@ -345,7 +330,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	}
 
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#supportsSchemasInDataManipulation()
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#supportsSchemasInDataManipulation()
      */
     public synchronized boolean supportsSchemasInDataManipulation()
 		throws SQLException
@@ -380,7 +365,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	}
 
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#supportsSchemasInTableDefinitions()
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#supportsSchemasInTableDefinitions()
      */
 	public synchronized boolean supportsSchemasInTableDefinitions()
 		throws SQLException
@@ -414,7 +399,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	}
 
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#supportsStoredProcedures()
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#supportsStoredProcedures()
      */
     public synchronized boolean supportsStoredProcedures() throws SQLException
 	{
@@ -441,7 +426,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	}
 
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#supportsSavepoints()
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#supportsSavepoints()
      */
     public synchronized boolean supportsSavepoints() throws SQLException {
         
@@ -459,7 +444,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
     }
     
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#supportsResultSetType(int)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#supportsResultSetType(int)
      */
     public synchronized boolean supportsResultSetType(int type) 
         throws SQLException
@@ -480,7 +465,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
     
     /* Not cached.
      * (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getCatalogs()
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getCatalogs()
      */
     public synchronized String[] getCatalogs() throws SQLException
 	{
@@ -489,7 +474,8 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		try
 		{
             if (rs != null) {
-    			final ResultSetReader rdr = new ResultSetReader(rs);
+               DialectType dialectType = DialectFactory.getDialectType(this);
+    			final ResultSetReader rdr = new ResultSetReader(rs, dialectType);
     			Object[] row = null;
     			while ((row = rdr.readRow()) != null)
     			{
@@ -508,7 +494,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	}
 
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getURL()
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getURL()
      */
     public synchronized String getURL() throws SQLException {
         final String key = "getURL";
@@ -524,7 +510,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
     }    
     
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getCatalogTerm()
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getCatalogTerm()
      */
     public synchronized String getCatalogTerm() throws SQLException {
         final String key = "getCatalogTerm";
@@ -540,7 +526,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
     }
     
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getSchemaTerm()
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getSchemaTerm()
      */
     public synchronized String getSchemaTerm() throws SQLException {
         final String key = "getSchemaTerm";
@@ -556,7 +542,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
     }
 
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getProcedureTerm()
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getProcedureTerm()
      */
     public synchronized String getProcedureTerm() throws SQLException {
         final String key = "getProcedureTerm";
@@ -573,7 +559,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
     
     
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getCatalogSeparator()
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getCatalogSeparator()
      */
     public synchronized String getCatalogSeparator() throws SQLException
 	{
@@ -591,7 +577,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	}
 
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#supportsCatalogs()
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#supportsCatalogs()
      */
     public boolean supportsCatalogs() throws SQLException
 	{
@@ -601,7 +587,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	}
 
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#supportsCatalogsInTableDefinitions()
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#supportsCatalogsInTableDefinitions()
      */
     public synchronized boolean supportsCatalogsInTableDefinitions() throws SQLException
 	{
@@ -635,7 +621,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	}
 
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#supportsCatalogsInDataManipulation()
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#supportsCatalogsInDataManipulation()
      */
     public synchronized boolean supportsCatalogsInDataManipulation() throws SQLException
 	{
@@ -668,7 +654,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	}
 
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#supportsCatalogsInProcedureCalls()
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#supportsCatalogsInProcedureCalls()
      */
 	public synchronized boolean supportsCatalogsInProcedureCalls() throws SQLException
 	{
@@ -701,7 +687,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	}
 
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getJDBCMetaData()
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getJDBCMetaData()
      */
 	public synchronized DatabaseMetaData getJDBCMetaData() throws SQLException
 	{
@@ -709,14 +695,14 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	}
 
 	/* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getMetaDataSet()
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getMetaDataSet()
      */
     public synchronized IDataSet getMetaDataSet() throws SQLException {
         return new MetaDataDataSet(privateGetJDBCMetaData());
     }
     
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getTypeInfo()
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getTypeInfo()
      * 
      * @deprecated  Replaced by getDataTypes
      */
@@ -726,7 +712,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	}
 
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getTypesDataSet()
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getTypesDataSet()
      */
     public synchronized IDataSet getTypesDataSet() throws DataSetException {
         ResultSet rs = null;
@@ -741,7 +727,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
     }
     
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getDataTypes()
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getDataTypes()
      */
     public synchronized DataTypeInfo[] getDataTypes()
 		throws SQLException
@@ -802,7 +788,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
    }
 
    /* (non-Javadoc)
- * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getProcedures(java.lang.String, java.lang.String, java.lang.String, net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack)
+ * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getProcedures(java.lang.String, java.lang.String, java.lang.String, net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack)
  */
    public synchronized IProcedureInfo[] getProcedures(String catalog,
                                                       String schemaPattern,
@@ -817,7 +803,8 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
      try
      {
         final int[] cols = new int[]{1, 2, 3, 7, 8};
-        final ResultSetReader rdr = new ResultSetReader(rs, cols);
+        DialectType dialectType = DialectFactory.getDialectType(this);
+        final ResultSetReader rdr = new ResultSetReader(rs, cols, dialectType);
         Object[] row = null;
         while ((row = rdr.readRow()) != null)
         {
@@ -845,7 +832,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
   }
 
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getTableTypes()
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getTableTypes()
      */
     public synchronized String[] getTableTypes() throws SQLException
 	{
@@ -933,7 +920,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 
 
    /* (non-Javadoc)
- * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getTables(java.lang.String, java.lang.String, java.lang.String, java.lang.String[], net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack)
+ * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getTables(java.lang.String, java.lang.String, java.lang.String, java.lang.String[], net.sourceforge.squirrel_sql.fw.sql.ProgressCallBack)
  */
    public synchronized ITableInfo[] getTables(String catalog,
                                               String schemaPattern,
@@ -1072,7 +1059,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
    }
    
    /* (non-Javadoc)
- * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getUDTs(java.lang.String, java.lang.String, java.lang.String, int[])
+ * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getUDTs(java.lang.String, java.lang.String, java.lang.String, int[])
  */
     public synchronized IUDTInfo[] getUDTs(String catalog, String schemaPattern,
 								           String typeNamePattern, int[] types)
@@ -1084,7 +1071,8 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		try
 		{
 			final int[] cols = new int[] {1, 2, 3, 4, 5, 6};
-			final ResultSetReader rdr = new ResultSetReader(rs, cols);
+			DialectType dialectType = DialectFactory.getDialectType(this);
+			final ResultSetReader rdr = new ResultSetReader(rs, cols, dialectType);
 			Object[] row = null;
 			while ((row = rdr.readRow()) != null)
 			{
@@ -1119,7 +1107,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
    }
 
    /* (non-Javadoc)
- * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getNumericFunctions()
+ * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getNumericFunctions()
  */
    public synchronized String[] getNumericFunctions() throws SQLException
 	{
@@ -1136,7 +1124,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	}
 
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getStringFunctions()
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getStringFunctions()
      */
 	public synchronized String[] getStringFunctions() throws SQLException
 	{
@@ -1153,7 +1141,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	}
 
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getSystemFunctions()
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getSystemFunctions()
      */
 	public synchronized String[] getSystemFunctions() throws SQLException
 	{
@@ -1170,7 +1158,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	}
 
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getTimeDateFunctions()
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getTimeDateFunctions()
      */
 	public synchronized String[] getTimeDateFunctions() throws SQLException
 	{
@@ -1187,7 +1175,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	}
 
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getSQLKeywords()
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getSQLKeywords()
      */
 	public synchronized String[] getSQLKeywords() throws SQLException
 	{
@@ -1203,9 +1191,9 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		return value;
 	}
 
-	/* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getBestRowIdentifier(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
-     */
+	/**
+    * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getBestRowIdentifier(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+    */
 	public synchronized BestRowIdentifier[] getBestRowIdentifier(ITableInfo ti)
 		throws SQLException
 	{
@@ -1246,88 +1234,85 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		return results.toArray(ar);
 	}
 
-	/* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getColumnPrivileges(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
-     * 
-     * @deprecated use getColumnPrivilegesDataSet instead. 
-     */
-    public ResultSet getColumnPrivileges(ITableInfo ti)
-		throws SQLException
-	{
-		// MM-MYSQL driver doesnt support null for column name.
-        final String columns = DialectFactory.isMySQL(this) ? "%" : null;
-		return privateGetJDBCMetaData().getColumnPrivileges(ti.getCatalogName(),
-													ti.getSchemaName(),
-													ti.getSimpleName(),
-													columns);
-	}
-
-    /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getColumnPrivilegesDataSet(net.sourceforge.squirrel_sql.fw.sql.ITableInfo, int[], boolean)
-     */
-    public synchronized IDataSet getColumnPrivilegesDataSet(ITableInfo ti,
-                                                            int[] columnIndices,
-                                                            boolean computeWidths) 
-        throws DataSetException 
-    {
-        ResultSet rs = null;
-        try {
-            DatabaseMetaData md = privateGetJDBCMetaData();
-            final String columns = DialectFactory.isMySQL(this) ? "%" : null;
-            
-            rs = md.getColumnPrivileges(ti.getCatalogName(),
-                    ti.getSchemaName(),
-                    ti.getSimpleName(),
-                    columns);
-            ResultSetDataSet rsds = new ResultSetDataSet();
-                rsds.setResultSet(rs, columnIndices, computeWidths);
-            return rsds;
-        } catch (SQLException e) {
-            throw new DataSetException(e);
-        } finally {
-            SQLUtilities.closeResultSet(rs);
-        }
-    }
-    
-    /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getExportedKeys(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
-     * 
-     * @deprecated. Replaced by getExportedKeysInfo 
-     */
-    public ResultSet getExportedKeys(ITableInfo ti)
-		throws SQLException
-	{
-		return privateGetJDBCMetaData().getExportedKeys(
-			ti.getCatalogName(), ti.getSchemaName(),
-			ti.getSimpleName());
-	}
-
-    /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getExportedKeysDataSet(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
-     */
-    public synchronized IDataSet getExportedKeysDataSet(ITableInfo ti) 
-        throws DataSetException  
-    {
-        ResultSet rs = null;
-        try {
-            rs = privateGetJDBCMetaData().getExportedKeys(ti.getCatalogName(), 
+	/**
+    * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getColumnPrivileges(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+    * 
+    * @deprecated use getColumnPrivilegesDataSet instead.
+    */
+   public ResultSet getColumnPrivileges(ITableInfo ti) throws SQLException {
+      // MM-MYSQL driver doesnt support null for column name.
+      final String columns = DialectFactory.isMySQL(this) ? "%" : null;
+      return privateGetJDBCMetaData().getColumnPrivileges(ti.getCatalogName(),
                                                           ti.getSchemaName(),
-                                                          ti.getSimpleName());
-            ResultSetDataSet rsds = new ResultSetDataSet();
-            rsds.setResultSet(rs, null, true);
-            return rsds;            
-        } catch (SQLException e) { 
-            throw new DataSetException(e);
-        } finally {
-            SQLUtilities.closeResultSet(rs);
-        }
-    }
+                                                          ti.getSimpleName(),
+                                                          columns);
+   }
+
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getColumnPrivilegesDataSet(net.sourceforge.squirrel_sql.fw.sql.ITableInfo,
+    *      int[], boolean)
+    */
+   public synchronized IDataSet getColumnPrivilegesDataSet(ITableInfo ti,
+         int[] columnIndices, boolean computeWidths) throws DataSetException {
+      ResultSet rs = null;
+      try {
+         DatabaseMetaData md = privateGetJDBCMetaData();
+         final String columns = DialectFactory.isMySQL(this) ? "%" : null;
+
+         rs = md.getColumnPrivileges(ti.getCatalogName(),
+                                     ti.getSchemaName(),
+                                     ti.getSimpleName(),
+                                     columns);
+         ResultSetDataSet rsds = new ResultSetDataSet();
+         rsds.setResultSet(rs,
+                           columnIndices,
+                           computeWidths,
+                           DialectFactory.getDialectType(this));
+         return rsds;
+      } catch (SQLException e) {
+         throw new DataSetException(e);
+      } finally {
+         SQLUtilities.closeResultSet(rs);
+      }
+   }
     
-    /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getImportedKeys(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
-     * 
-     * @deprecated. Replaced by getImportedKeysInfo
-     */
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getExportedKeys(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+    * 
+    * @deprecated. Replaced by getExportedKeysInfo
+    */
+   public ResultSet getExportedKeys(ITableInfo ti) throws SQLException {
+      return privateGetJDBCMetaData().getExportedKeys(ti.getCatalogName(),
+                                                      ti.getSchemaName(),
+                                                      ti.getSimpleName());
+   }
+
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getExportedKeysDataSet(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+    */
+   public synchronized IDataSet getExportedKeysDataSet(ITableInfo ti)
+         throws DataSetException 
+   {
+      ResultSet rs = null;
+      try {
+         rs = privateGetJDBCMetaData().getExportedKeys(ti.getCatalogName(),
+                                                       ti.getSchemaName(),
+                                                       ti.getSimpleName());
+         ResultSetDataSet rsds = new ResultSetDataSet();
+         rsds.setResultSet(rs, null, true, DialectFactory.getDialectType(this));
+         return rsds;
+      } catch (SQLException e) {
+         throw new DataSetException(e);
+      } finally {
+         SQLUtilities.closeResultSet(rs);
+      }
+   }
+    
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getImportedKeys(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+    * 
+    * @deprecated. Replaced by getImportedKeysInfo
+    */
 	public ResultSet getImportedKeys(ITableInfo ti)
 		throws SQLException
 	{
@@ -1336,9 +1321,9 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 			ti.getSimpleName());
 	}
 
-	/* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getImportedKeysInfo(java.lang.String, java.lang.String, java.lang.String)
-     */
+	/**
+    * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getImportedKeysInfo(java.lang.String, java.lang.String, java.lang.String)
+    */
 	public synchronized ForeignKeyInfo[] getImportedKeysInfo(String catalog, 
                                                              String schema, 
                                                              String tableName) 
@@ -1350,7 +1335,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
     }
     
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getImportedKeysInfo(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getImportedKeysInfo(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
      */
     public synchronized ForeignKeyInfo[] getImportedKeysInfo(ITableInfo ti)
 		throws SQLException
@@ -1359,41 +1344,45 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 								ti.getSchemaName(), ti.getSimpleName()));
 	}
 
-    /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getImportedKeysDataSet(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
-     */
-    public synchronized IDataSet getImportedKeysDataSet(ITableInfo ti) 
-        throws DataSetException  
-    {
-        ResultSet rs = null;
-        try {
-            rs = privateGetJDBCMetaData().getImportedKeys(ti.getCatalogName(), 
-                                                          ti.getSchemaName(),
-                                                          ti.getSimpleName());
-            ResultSetDataSet rsds = new ResultSetDataSet();
-            rsds.setResultSet(rs, null, true);
-            return rsds;            
-        } catch (SQLException e) { 
-            throw new DataSetException(e);
-        } finally {
-            SQLUtilities.closeResultSet(rs);
-        }
-    }    
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getImportedKeysDataSet(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+    */
+   public synchronized IDataSet getImportedKeysDataSet(ITableInfo ti)
+         throws DataSetException {
+      ResultSet rs = null;
+      try {
+         rs = privateGetJDBCMetaData().getImportedKeys(ti.getCatalogName(),
+                                                       ti.getSchemaName(),
+                                                       ti.getSimpleName());
+         ResultSetDataSet rsds = new ResultSetDataSet();
+         rsds.setResultSet(rs, null, true, DialectFactory.getDialectType(this));
+         return rsds;
+      } catch (SQLException e) {
+         throw new DataSetException(e);
+      } finally {
+         SQLUtilities.closeResultSet(rs);
+      }
+   }    
     
-    /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getExportedKeysInfo(java.lang.String, java.lang.String, java.lang.String)
-     */
-    public synchronized ForeignKeyInfo[] getExportedKeysInfo(String catalog, String schema, String tableName)
-        throws SQLException
-    {
-        ResultSet rs = 
-            privateGetJDBCMetaData().getExportedKeys(catalog, schema, tableName);
-        return getForeignKeyInfo(rs);
-    } 
+
+
+   /**
+    * 
+    * 
+    * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getExportedKeysInfo(java.lang.String,
+    *      java.lang.String, java.lang.String)
+    */
+   public synchronized ForeignKeyInfo[] getExportedKeysInfo(String catalog,
+         String schema, String tableName) throws SQLException {
+      ResultSet rs = privateGetJDBCMetaData().getExportedKeys(catalog,
+                                                              schema,
+                                                              tableName);
+      return getForeignKeyInfo(rs);
+   } 
     
-	/* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getExportedKeysInfo(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
-     */
+	/**
+    * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getExportedKeysInfo(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+    */
 	public synchronized ForeignKeyInfo[] getExportedKeysInfo(ITableInfo ti)
 		throws SQLException
 	{
@@ -1456,28 +1445,31 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		return results;
 	}
         
-    /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getIndexInfo(net.sourceforge.squirrel_sql.fw.sql.ITableInfo, int[], boolean)
-     */
-    public synchronized ResultSetDataSet getIndexInfo(ITableInfo ti, 
-                                                      int[] columnIndices,
-                                                      boolean computeWidths) 
-        throws DataSetException 
-    {
-        ResultSet rs = null;
-        try {
-            rs = privateGetJDBCMetaData().getIndexInfo(
-                    ti.getCatalogName(), ti.getSchemaName(),
-                    ti.getSimpleName(), false, true);
-            ResultSetDataSet rsds = new ResultSetDataSet();
-            rsds.setResultSet(rs, columnIndices, computeWidths);
-            return rsds;
-        } catch (SQLException e) {
-            throw new DataSetException(e);
-        } finally {
-            SQLUtilities.closeResultSet(rs);
-        }
-    }
+    /**
+       * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getIndexInfo(net.sourceforge.squirrel_sql.fw.sql.ITableInfo,
+       *      int[], boolean)
+       */
+   public synchronized ResultSetDataSet getIndexInfo(ITableInfo ti,
+         int[] columnIndices, boolean computeWidths) throws DataSetException {
+      ResultSet rs = null;
+      try {
+         rs = privateGetJDBCMetaData().getIndexInfo(ti.getCatalogName(),
+                                                    ti.getSchemaName(),
+                                                    ti.getSimpleName(),
+                                                    false,
+                                                    true);
+         ResultSetDataSet rsds = new ResultSetDataSet();
+         rsds.setResultSet(rs,
+                           columnIndices,
+                           computeWidths,
+                           DialectFactory.getDialectType(this));
+         return rsds;
+      } catch (SQLException e) {
+         throw new DataSetException(e);
+      } finally {
+         SQLUtilities.closeResultSet(rs);
+      }
+   }
     
     /**
      * Returns a list of IndexInfos describing indexes for the specified table.
@@ -1534,7 +1526,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
     }
     
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getPrimaryKeys(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getPrimaryKeys(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
      * 
      * @deprecated use getPrimaryKey instead
      */
@@ -1546,32 +1538,35 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 			ti.getSimpleName());
 	}
     
-	/* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getPrimaryKey(net.sourceforge.squirrel_sql.fw.sql.ITableInfo, int[], boolean)
-     */
-    public synchronized IDataSet getPrimaryKey(ITableInfo ti, 
-                                               int[] columnIndices,
-                                               boolean computeWidths)
-        throws DataSetException
-    {
-        ResultSet rs = null;
-        try {
-            rs = privateGetJDBCMetaData().getPrimaryKeys(
-                    ti.getCatalogName(), ti.getSchemaName(),
-                    ti.getSimpleName());
-            ResultSetDataSet rsds = new ResultSetDataSet();
-                rsds.setResultSet(rs, columnIndices , computeWidths);
-            return rsds;  
-        } catch (SQLException e) { 
-            throw new DataSetException(e);
-        }finally {
-            SQLUtilities.closeResultSet(rs);
-        }
-    }
+	/**
+    * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getPrimaryKey(net.sourceforge.squirrel_sql.fw.sql.ITableInfo,
+    *      int[], boolean)
+    */
+   public synchronized IDataSet getPrimaryKey(ITableInfo ti,
+         int[] columnIndices, boolean computeWidths) throws DataSetException {
+      ResultSet rs = null;
+      try {
+         rs = privateGetJDBCMetaData().getPrimaryKeys(ti.getCatalogName(),
+                                                      ti.getSchemaName(),
+                                                      ti.getSimpleName());
+         ResultSetDataSet rsds = new ResultSetDataSet();
+         rsds.setResultSet(rs,
+                           columnIndices,
+                           computeWidths,
+                           DialectFactory.getDialectType(this));
+         return rsds;
+      } catch (SQLException e) {
+         throw new DataSetException(e);
+      } finally {
+         SQLUtilities.closeResultSet(rs);
+      }
+   }
 
-    /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getPrimaryKey(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
-     */
+    /*
+       * (non-Javadoc)
+       * 
+       * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getPrimaryKey(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+       */
     public synchronized PrimaryKeyInfo[] getPrimaryKey(ITableInfo ti) 
         throws SQLException
     {
@@ -1581,7 +1576,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
     }
     
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getPrimaryKey(java.lang.String, java.lang.String, java.lang.String)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getPrimaryKey(java.lang.String, java.lang.String, java.lang.String)
      */
     public synchronized PrimaryKeyInfo[] getPrimaryKey(String catalog, 
                                                        String schema, 
@@ -1613,7 +1608,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
     
     
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getProcedureColumns(net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getProcedureColumns(net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo)
      * 
      * @deprecated use getProcedureColumnsDataSet instead
      */
@@ -1626,34 +1621,35 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 													        "%");
 	}
 
-    /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getProcedureColumnsDataSet(net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo)
-     */
-    public synchronized IDataSet getProcedureColumnsDataSet(IProcedureInfo ti)
-        throws DataSetException
-    {
-        ResultSet rs = null;
-        try {
-            DatabaseMetaData md = privateGetJDBCMetaData();
-            rs = md.getProcedureColumns(ti.getCatalogName(),
-                                        ti.getSchemaName(),
-                                        ti.getSimpleName(),
-                                        "%");
-            ResultSetDataSet rsds = new ResultSetDataSet();
-            rsds.setResultSet(rs);
-            return rsds;
-        } catch (SQLException e) {
-            throw new DataSetException(e);
-        } finally {
-            SQLUtilities.closeResultSet(rs);
-        }
-    }
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getProcedureColumnsDataSet(net.sourceforge.squirrel_sql.fw.sql.IProcedureInfo)
+    */
+   public synchronized IDataSet getProcedureColumnsDataSet(IProcedureInfo ti)
+         throws DataSetException {
+      ResultSet rs = null;
+      try {
+         DatabaseMetaData md = privateGetJDBCMetaData();
+         rs = md.getProcedureColumns(ti.getCatalogName(),
+                                     ti.getSchemaName(),
+                                     ti.getSimpleName(),
+                                     "%");
+         ResultSetDataSet rsds = new ResultSetDataSet();
+         rsds.setResultSet(rs, DialectFactory.getDialectType(this));
+         return rsds;
+      } catch (SQLException e) {
+         throw new DataSetException(e);
+      } finally {
+         SQLUtilities.closeResultSet(rs);
+      }
+   }
     
-    /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getTablePrivileges(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
-     * 
-     * @deprecated use getTablePrivilegesDataSet instead
-     */ 
+    /*
+       * (non-Javadoc)
+       * 
+       * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getTablePrivileges(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+       * 
+       * @deprecated use getTablePrivilegesDataSet instead
+       */ 
 	public ResultSet getTablePrivileges(ITableInfo ti)
 		throws SQLException
 	{
@@ -1662,36 +1658,39 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 													ti.getSimpleName());
 	}
 
-	/* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getTablePrivilegesDataSet(net.sourceforge.squirrel_sql.fw.sql.ITableInfo, int[], boolean)
-     */
-    public synchronized IDataSet getTablePrivilegesDataSet(ITableInfo ti,
-                                                           int[] columnIndices,
-                                                           boolean computeWidths) 
-        throws DataSetException 
-    {
-        ResultSet rs = null;
-        try {
-            DatabaseMetaData md = privateGetJDBCMetaData();
-            rs = md.getTablePrivileges(ti.getCatalogName(),
-                                       ti.getSchemaName(),
-                                       ti.getSimpleName());
-            ResultSetDataSet rsds = new ResultSetDataSet();
-            rsds.setResultSet(rs, columnIndices, computeWidths);
-            return rsds;
-        } catch (SQLException e) {
-            throw new DataSetException(e);
-        } finally {
-            SQLUtilities.closeResultSet(rs);
-        }
-    }
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getTablePrivilegesDataSet(net.sourceforge.squirrel_sql.fw.sql.ITableInfo,
+    *      int[], boolean)
+    */
+   public synchronized IDataSet getTablePrivilegesDataSet(ITableInfo ti,
+         int[] columnIndices, boolean computeWidths) throws DataSetException {
+      ResultSet rs = null;
+      try {
+         DatabaseMetaData md = privateGetJDBCMetaData();
+         rs = md.getTablePrivileges(ti.getCatalogName(),
+                                    ti.getSchemaName(),
+                                    ti.getSimpleName());
+         ResultSetDataSet rsds = new ResultSetDataSet();
+         rsds.setResultSet(rs,
+                           columnIndices,
+                           computeWidths,
+                           DialectFactory.getDialectType(this));
+         return rsds;
+      } catch (SQLException e) {
+         throw new DataSetException(e);
+      } finally {
+         SQLUtilities.closeResultSet(rs);
+      }
+   }
     
     
-	/* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getVersionColumns(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
-     * 
-     * @deprecated use getVersionColumnsDataSet instead
-     */
+	/*
+    * (non-Javadoc)
+    * 
+    * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getVersionColumns(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+    * 
+    * @deprecated use getVersionColumnsDataSet instead
+    */
 	public ResultSet getVersionColumns(ITableInfo ti)
 		throws SQLException
 	{
@@ -1700,9 +1699,9 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 												          ti.getSimpleName());
 	}
 
-	/* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getVersionColumnsDataSet(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
-     */
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getVersionColumnsDataSet(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+    */
     public synchronized IDataSet getVersionColumnsDataSet(ITableInfo ti)
         throws DataSetException
     {
@@ -1713,7 +1712,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
                                       ti.getSchemaName(),
                                       ti.getSimpleName());
             ResultSetDataSet rsds = new ResultSetDataSet();
-            rsds.setResultSet(rs);
+            rsds.setResultSet(rs, DialectFactory.getDialectType(this));
             return rsds;
         } catch (SQLException e) {
             throw new DataSetException(e);
@@ -1731,32 +1730,35 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 											ti.getSimpleName(), "%");
 	}
     
-	/* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getColumns(net.sourceforge.squirrel_sql.fw.sql.ITableInfo, int[], boolean)
-     */
-    public synchronized IDataSet getColumns(ITableInfo ti, 
-                                            int[] columnIndices,
-                                            boolean computeWidths)
-        throws DataSetException
-    {
-        IDataSet result = null;
-        ResultSet rs = null;
-        try {
-            rs = getColumns(ti);
-            ResultSetDataSet rsds = new ResultSetDataSet();
-            rsds.setResultSet(rs, columnIndices, computeWidths);
-            result = rsds;
-        } catch (SQLException e) { 
-            throw new DataSetException(e);
-        } finally {
-            SQLUtilities.closeResultSet(rs);
-        }
-        return result;
-    }
+	/**
+    * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getColumns(net.sourceforge.squirrel_sql.fw.sql.ITableInfo, int[], boolean)
+    */
+   public synchronized IDataSet getColumns(ITableInfo ti, int[] columnIndices,
+         boolean computeWidths) throws DataSetException {
+      IDataSet result = null;
+      ResultSet rs = null;
+      try {
+         rs = getColumns(ti);
+         ResultSetDataSet rsds = new ResultSetDataSet();
+         rsds.setResultSet(rs,
+                           columnIndices,
+                           computeWidths,
+                           DialectFactory.getDialectType(this));
+         result = rsds;
+      } catch (SQLException e) {
+         throw new DataSetException(e);
+      } finally {
+         SQLUtilities.closeResultSet(rs);
+      }
+      return result;
+   }
     
-    /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getColumnInfo(java.lang.String, java.lang.String, java.lang.String)
-     */
+    /*
+       * (non-Javadoc)
+       * 
+       * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getColumnInfo(java.lang.String,
+       *      java.lang.String, java.lang.String)
+       */
     public synchronized TableColumnInfo[] getColumnInfo(String catalog, 
                                                         String schema, 
                                                         String table) 
@@ -1811,7 +1813,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
     }
     
     /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#getColumnInfo(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#getColumnInfo(net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
      */
     public synchronized TableColumnInfo[] getColumnInfo(ITableInfo ti)
 		throws SQLException
@@ -1819,17 +1821,17 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	    return getColumnInfo(ti.getCatalogName(), ti.getSchemaName(), ti.getSimpleName());
     }
 
-    /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#correctlySupportsSetMaxRows()
-     */
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#correctlySupportsSetMaxRows()
+    */
     public boolean correctlySupportsSetMaxRows() throws SQLException
 	{
 		return !IDriverNames.OPTA2000.equals(getDriverName());
 	}
 
-    /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#supportsMultipleResultSets()
-     */
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#supportsMultipleResultSets()
+    */
 	public synchronized boolean supportsMultipleResultSets()
 			throws SQLException
 	{
@@ -1846,9 +1848,9 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		return value.booleanValue();
 	}
 
-    /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#storesUpperCaseIdentifiers()
-     */
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#storesUpperCaseIdentifiers()
+    */
 	public synchronized boolean storesUpperCaseIdentifiers()
 		throws SQLException
 	{
@@ -1866,9 +1868,9 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	}
 
 
-    /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData2#clearCache()
-     */
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData#clearCache()
+    */
 	public void clearCache()
 	{
 		_cache.clear();

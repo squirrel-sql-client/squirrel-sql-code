@@ -30,6 +30,7 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponent
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeBlob;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeClob;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DataTypeDate;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -71,22 +72,41 @@ public class ResultSetReader
     /** whether or not the user requested to cancel the query */
    private volatile boolean _stopExecution = false; 
 
-	public ResultSetReader(ResultSet rs)
+   /** the type of dialect used to obtain the ResultSet to be read */ 
+   private DialectType _dialectType = null;
+   
+	/**
+    * Constructor
+    * 
+    * @param rs
+    *           the ResultSet to read
+    * @param dialectType
+    *           the DialectType
+    * @throws SQLException
+    */
+	public ResultSetReader(ResultSet rs, DialectType dialectType)
 		throws SQLException
 	{
-		this(rs, null);
+		this(rs, null, dialectType);
 	}
 
 
 
-	public ResultSetReader(ResultSet rs, int[] columnIndices) throws SQLException
+	/**
+	 * @param rs
+	 * @param columnIndices
+	 * @param dialectType
+	 * @throws SQLException
+	 */
+	public ResultSetReader(ResultSet rs, int[] columnIndices,
+         DialectType dialectType) throws SQLException
 	{
 		super();
 		if (rs == null)
 		{
 			throw new IllegalArgumentException("ResultSet == null");
 		}
-
+		_dialectType = dialectType;
 		_rs = rs;
 
 		if (columnIndices != null && columnIndices.length == 0)
@@ -97,7 +117,8 @@ public class ResultSetReader
 
 		_rsmd = rs.getMetaData();
 
-		_columnCount = columnIndices != null ? columnIndices.length : _rsmd.getColumnCount();
+		_columnCount = columnIndices != null ? columnIndices.length
+            : _rsmd.getColumnCount();
 	}
 
 	/**
@@ -215,12 +236,12 @@ public class ResultSetReader
 	}
 	
 	/**
-	 * Method used to read data for all Tabs except the ContentsTab, where
-	 * the data is used only for reading.
-	 * The only data read in the non-ContentsTab tabs is Meta-data about the DB,
-	 * which means that there should be no BLOBs, CLOBs, or unknown fields.
-	 */
-	private Object[] doRead()
+    * Method used to read data for all Tabs except the ContentsTab, where the
+    * data is used only for reading. The only data read in the non-ContentsTab
+    * tabs is Meta-data about the DB, which means that there should be no BLOBs,
+    * CLOBs, or unknown fields.
+    */
+   private Object[] doRead()
 	{
 		Object[] row = new Object[_columnCount];
 		for (int i = 0; i < _columnCount && !_stopExecution; ++i)
@@ -231,217 +252,124 @@ public class ResultSetReader
 				int columnType = _rsmd.getColumnType(idx);
 				String columnTypeName = safelyGetColumnTypeName(idx);
 
-				switch (columnType)
-				{
-					case Types.NULL:
-						row[i] = null;
-						break;
+            /*
+             * See if there is a plugin-registered DataTypeComponent that can
+             * handle this column.
+             */
+            row[i] = 
+                CellComponentFactory.readResultWithPluginRegisteredDataType(_rs, 
+                                                             columnType, 
+                                                             columnTypeName, 
+                                                             idx,
+                                                             _dialectType);
+            if (row[i] == null) {
+				
+               switch (columnType) {
+               case Types.NULL:
+                  row[i] = null;
+                  break;
 
-					case Types.BIT:
-					case Types.BOOLEAN:
-						row[i] = _rs.getObject(idx);
-						if (row[i] != null
-							&& !(row[i] instanceof Boolean))
-						{
-							if (row[i] instanceof Number)
-							{
-								if (((Number) row[i]).intValue() == 0)
-								{
-									row[i] = Boolean.FALSE;
-								}
-								else
-								{
-									row[i] = Boolean.TRUE;
-								}
-							}
-							else
-							{
-								row[i] = Boolean.valueOf(row[i].toString());
-							}
-						}
-						break;
+               case Types.BIT:
+               case Types.BOOLEAN:
+                  row[i] = readBoolean(idx);
+                  break;
 
-					case Types.TIME :
-						row[i] = _rs.getTime(idx);
-						break;
+               case Types.TIME:
+                  row[i] = _rs.getTime(idx);
+                  break;
 
-					case Types.DATE :
-                        if (DataTypeDate.getReadDateAsTimestamp()) {
-                            row[i] = _rs.getTimestamp(idx);
-                        } else {
-                            row[i] = DataTypeDate.staticReadResultSet(_rs, idx, false);
-                        }
-						break;
+               case Types.DATE:
+                  row[i] = readDate(idx);
+                  break;
 
-					case Types.TIMESTAMP :
-                    case -101 : // Oracle's 'TIMESTAMP WITH TIME ZONE' == -101  
-                    case -102 : // Oracle's 'TIMESTAMP WITH LOCAL TIME ZONE' == -102
-						row[i] = _rs.getTimestamp(idx);
-						break;
+               case Types.TIMESTAMP:
+               case -101: // Oracle's 'TIMESTAMP WITH TIME ZONE' == -101
+               case -102: // Oracle's 'TIMESTAMP WITH LOCAL TIME ZONE' ==
+                  // -102
+                  row[i] = _rs.getTimestamp(idx);
+                  break;
 
-					case Types.BIGINT :
-						row[i] = _rs.getObject(idx);
-						if (row[i] != null
-							&& !(row[i] instanceof Long))
-						{
-							if (row[i] instanceof Number)
-							{
-								row[i] = Long.valueOf(((Number)row[i]).longValue());
-							}
-							else
-							{
-								row[i] = Long.valueOf(row[i].toString());
-							}
-						}
-						break;
+               case Types.BIGINT:
+                  row[i] = readBigint(idx);
+                  break;
 
-					case Types.DOUBLE:
-					case Types.FLOAT:
-					case Types.REAL:
-						row[i] = _rs.getObject(idx);
-						if (row[i] != null
-							&& !(row[i] instanceof Double))
-						{
-							if (row[i] instanceof Number)
-							{
-								Number nbr = (Number)row[i];
-								row[i] = new Double(nbr.doubleValue());
-							}
-							else
-							{
-								row[i] = new Double(row[i].toString());
-							}
-						}
-						break;
+               case Types.DOUBLE:
+               case Types.FLOAT:
+               case Types.REAL:
+                  row[i] = readFloat(idx);
+                  break;
 
-					case Types.DECIMAL:
-					case Types.NUMERIC:
-						row[i] = _rs.getObject(idx);
-						if (row[i] != null
-							&& !(row[i] instanceof BigDecimal))
-						{
-							if (row[i] instanceof Number)
-							{
-								Number nbr = (Number)row[i];
-								row[i] = new BigDecimal(nbr.doubleValue());
-							}
-							else
-							{
-								row[i] = new BigDecimal(row[i].toString());
-							}
-						}
-						break;
+               case Types.DECIMAL:
+               case Types.NUMERIC:
+                  row[i] = readNumeric(idx);
+                  break;
 
-					case Types.INTEGER:
-					case Types.SMALLINT:
-					case Types.TINYINT:
-						row[i] = _rs.getObject(idx);
-						if (_rs.wasNull())
-						{
-							row[i] = null;
-						}
-						if (row[i] != null
-							&& !(row[i] instanceof Integer))
-						{
-							if (row[i] instanceof Number)
-							{
-								row[i] = Integer.valueOf(((Number)row[i]).intValue());
-							}
-							else
-							{
-								row[i] = new Integer(row[i].toString());
-							}
-						}
-						break;
+               case Types.INTEGER:
+               case Types.SMALLINT:
+               case Types.TINYINT:
+                  row[i] = readInt(idx);
+                  break;
 
-						// TODO: Hard coded -. JDBC/ODBC bridge JDK1.4
-						// brings back -9 for nvarchar columns in
-						// MS SQL Server tables.
-						// -8 is ROWID in Oracle.
-					case Types.CHAR:
-					case Types.VARCHAR:
-					case Types.LONGVARCHAR:
-					case -9:
-					case -8:
-						row[i] = _rs.getString(idx);
-						if (_rs.wasNull())
-						{
-							row[i] = null;
-						}
-						break;
+               // TODO: Hard coded -. JDBC/ODBC bridge JDK1.4
+               // brings back -9 for nvarchar columns in
+               // MS SQL Server tables.
+               // -8 is ROWID in Oracle.
+               case Types.CHAR:
+               case Types.VARCHAR:
+               case Types.LONGVARCHAR:
+               case -9:
+               case -8:
+                  row[i] = _rs.getString(idx);
+                  if (_rs.wasNull()) {
+                     row[i] = null;
+                  }
+                  break;
 
-					case Types.BINARY:
-					case Types.VARBINARY:
-					case Types.LONGVARBINARY:
-						row[i] = _rs.getString(idx);
-						break;
+               case Types.BINARY:
+               case Types.VARBINARY:
+               case Types.LONGVARBINARY:
+                  row[i] = _rs.getString(idx);
+                  break;
 
-					case Types.BLOB:
-						// Since we are reading Meta-data about the DB, we should
-						// never see a BLOB. If we do, the contents are not interpretable
-						// by Squirrel, so just tell the user that it is a BLOB and that it
-						// has data.
+               case Types.BLOB:
+                  // Since we are reading Meta-data about the DB, we should
+                  // never see a BLOB. If we do, the contents are not
+                  // interpretable
+                  // by Squirrel, so just tell the user that it is a BLOB and
+                  // that it
+                  // has data.
 
-                        row[i] = DataTypeBlob.staticReadResultSet(_rs, idx);
+                  row[i] = DataTypeBlob.staticReadResultSet(_rs, idx);
 
-						break;
+                  break;
 
-					case Types.CLOB:
-						// Since we are reading Meta-data about the DB, we should
-						// never see a CLOB. However, if we do we assume that
-						// it is printable text and that the user wants to see it, so
-						// read in the entire thing.
-                        row[i] = DataTypeClob.staticReadResultSet(_rs, idx);
+               case Types.CLOB:
+                  // Since we are reading Meta-data about the DB, we should
+                  // never see a CLOB. However, if we do we assume that
+                  // it is printable text and that the user wants to see it, so
+                  // read in the entire thing.
+                  row[i] = DataTypeClob.staticReadResultSet(_rs, idx);
 
-						break;
+                  break;
 
-						//Add begin
-					case Types.JAVA_OBJECT:
-					    row[i] = _rs.getObject(idx);
-					    if (_rs.wasNull())
-					    {
-					        row[i] = null;
-					    }
-					    break;
-					    //Add end
+               // Add begin
+               case Types.JAVA_OBJECT:
+                  row[i] = readObject(idx);
+                  break;
+               // Add end
 
+               case Types.OTHER:
+                  row[i] = readOther(idx);
+                  break;
 
-					case Types.OTHER:
-					    // Since we are reading Meta-data, there really should never be
-					    // a field with SQL type Other (1111).
-					    // If there is, we REALLY do not know how to handle it,
-					    // so do not attempt to read.
-//					    ??						if (_largeObjInfo.getReadSQLOther())
-//					    ??						{
-//					    ??							// Running getObject on a java class attempts
-//					    ??							// to load the class in memory which we don't want.
-//					    ??							// getString() just gets the value without loading
-//					    ??							// the class (at least under PostgreSQL).
-//					    ??							//row[i] = _rs.getObject(idx);
-//					    ??							row[i] = _rs.getString(idx);
-//					    ??						}
-//					    ??						else
-//					    ??						{
-					    row[i] = s_stringMgr.getString("ResultSetReader.other");
-//					    ??						}
-					    break;
-
-					default:
-					    /* 
-					     * See if there is a plugin-registered DataTypeComponent
-					     * that can handle this column.
-					     */
-					    row[i] = 
-					        CellComponentFactory.readResultWithPluginRegisteredDataType(_rs, 
-					                                                     columnType, 
-					                                                     columnTypeName, 
-					                                                     idx);
-					    if (row[i] == null) {
-                            Integer colTypeInteger = Integer.valueOf(columnType);
-							row[i] = s_stringMgr.getString("ResultSetReader.unknown", 
-                                                            colTypeInteger);
-					    }
-				}
+               default:
+                  if (row[i] == null) {
+                     Integer colTypeInteger = Integer.valueOf(columnType);
+                     row[i] = s_stringMgr.getString("ResultSetReader.unknown",
+                                                    colTypeInteger);
+                  }
+               }
+            }
 			}
 			catch (Throwable th)
 			{
@@ -460,10 +388,126 @@ public class ResultSetReader
 		return row;
 	}
 
+   private Object readNumeric(int columnIdx) throws SQLException {
+      Object result = _rs.getObject(columnIdx);
+      if (result != null && !(result instanceof BigDecimal)) {
+         if (result instanceof Number) {
+            Number nbr = (Number) result;
+            result = new BigDecimal(nbr.doubleValue());
+         } else {
+            result = new BigDecimal(result.toString());
+         }
+      }
+      return result;
+   }
+   
+   private Object readOther(int columnIdx) throws SQLException {
+         // Since we are reading Meta-data, there really should
+         // never be
+       // a field with SQL type Other (1111).
+       // If there is, we REALLY do not know how to handle it,
+       // so do not attempt to read.
+      // ?? if (_largeObjInfo.getReadSQLOther())
+      // ?? {
+      // ?? // Running getObject on a java class attempts
+      // ?? // to load the class in memory which we don't want.
+      // ?? // getString() just gets the value without loading
+      // ?? // the class (at least under PostgreSQL).
+      // ?? //row[i] = _rs.getObject(idx);
+      // ?? row[i] = _rs.getString(idx);
+      // ?? }
+      // ?? else
+      // ?? {
+      return s_stringMgr.getString("ResultSetReader.other");
+      //      ?? }
+      
+   }
+   
+   private Object readObject(int columnIdx) throws SQLException {
+      Object result = _rs.getObject(columnIdx);
+      if (_rs.wasNull()) {
+         result = null;
+      }
+      return result;
+   }
+   
+   private Object readInt(int columnIdx) throws SQLException {
+      Object result = _rs.getObject(columnIdx);
+      if (_rs.wasNull()) {
+         result = null;
+      }
+      if (result != null && !(result instanceof Integer)) {
+         if (result instanceof Number) {
+            result = Integer.valueOf(((Number) result).intValue());
+         } else {
+            result = new Integer(result.toString());
+         }
+      }
+      return result;
+   }
+   
+   private Object readFloat(int columnIdx) throws SQLException {
+      Object result = _rs.getObject(columnIdx);
+      if (result != null && !(result instanceof Double)) {
+         if (result instanceof Number) {
+            Number nbr = (Number) result;
+            result = new Double(nbr.doubleValue());
+         } else {
+            result = new Double(result.toString());
+         }
+      }
+      return result;
+   }
+   
+   private Object readDate(int columnIdx) throws SQLException {
+      Object result = null;
+      if (DataTypeDate.getReadDateAsTimestamp()) {
+         result = _rs.getTimestamp(columnIdx);
+      } else {
+         result = DataTypeDate.staticReadResultSet(_rs, columnIdx, false);
+      }
+      return result;
+   }
+   
+   private Object readBigint(int columnIdx) throws SQLException {
+      Object result = _rs.getObject(columnIdx);
+      if (result != null
+         && !(result instanceof Long))
+      {
+         if (result instanceof Number)
+         {
+            result = Long.valueOf(((Number)result).longValue());
+         }
+         else
+         {
+            result = Long.valueOf(result.toString());
+         }
+      }
+      return result;
+   }
+   
+   private Object readBoolean(int columnIdx) throws SQLException {
+      Object result = null;
+      result = _rs.getObject(columnIdx);
+
+      if (result != null && !(result instanceof Boolean)) {
+         if (result instanceof Number) {
+            if (((Number) result).intValue() == 0) {
+               result = Boolean.FALSE;
+            } else {
+               result = Boolean.TRUE;
+            }
+         } else {
+            result = Boolean.valueOf(result.toString());
+         }
+      }
+      return result;
+   }
+   
 	/**
-	 * Method used to read data for the ContentsTab, where
-	 * the data is used for both reading and editing.
-	 */
+    * Method used to read data for the ContentsTab, where the data is used for
+    * both reading and editing.
+    */
 	private Object[] doContentTabRead(ColumnDisplayDefinition colDefs[])
 	{
 		Object[] row = new Object[_columnCount];

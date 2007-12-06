@@ -42,6 +42,8 @@ import net.sourceforge.squirrel_sql.fw.datasetviewer.BaseDataSetViewerDestinatio
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSetViewer;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -146,13 +148,12 @@ public class MonitorPanel extends net.sourceforge.squirrel_sql.client.session.ma
 
 		  try {
 				_refreshDate = new Date();
-
 				rs = _whoStmt.executeQuery();
-				_whoDataSet.setResultSet(rs);
+				_whoDataSet.setResultSet(rs, DialectType.MSSQL);
 				_whoViewer.show(_whoDataSet);
 
 				rs = _perfStmt.executeQuery();
-				_perfDataSet.setResultSet(rs);
+				_perfDataSet.setResultSet(rs, DialectType.MSSQL);
 				_perfViewer.show(_perfDataSet);
 		  }
 		  catch (java.sql.SQLException ex) {

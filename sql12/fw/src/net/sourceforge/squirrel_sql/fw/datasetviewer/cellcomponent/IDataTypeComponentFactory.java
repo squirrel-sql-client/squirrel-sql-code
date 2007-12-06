@@ -18,6 +18,8 @@
  */
 package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
 
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
+
 /**
  * Interface that describes a class that creates instances of a particular 
  * IDataTypeComponent. This avoids the need to use ClassLoaders to load/create 
@@ -25,10 +27,26 @@ package net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent;
  * This should be implemented by plugins and registered with the 
  * CellComponentFactory. 
  * 
- * @author rmmannin
+ * @author manningr
  *
  */
 public interface IDataTypeComponentFactory {
 
-    IDataTypeComponent constructDataTypeComponent();
+   /** 
+    * Builds and returns an IDataTypeComponent implementation that handles some
+    * plugin-specific data type, or overrides the behavior provided by the 
+    * defaut datatype components.
+    * 
+    * @return a class that implements IDataTypeComponent  
+    */
+   IDataTypeComponent constructDataTypeComponent();
+
+   /**
+    * Returns the dialect type that this datatype component factory corresponds
+    * to.  This allows SQuirreL to distinguish which IDataTypeComponent to use
+    * when there are multiple ones registered for the same datatype.
+    * 
+    * @return a DialectType from the DialectType enumeration.
+    */
+   DialectType getDialectType();
 }

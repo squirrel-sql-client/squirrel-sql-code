@@ -77,7 +77,7 @@ public class RowCountTab extends BaseTableTab
 				try
 				{
 					final ResultSetDataSet rsds = new ResultSetDataSet();
-					rsds.setResultSet(rs);
+					rsds.setResultSet(rs, getDialectType());
 					return rsds;
 				}
 				finally

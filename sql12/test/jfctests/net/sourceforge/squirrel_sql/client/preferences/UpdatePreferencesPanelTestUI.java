@@ -14,9 +14,9 @@ public class UpdatePreferencesPanelTestUI {
         
         
         final JFrame frame = new JFrame("Test UpdatePreferencesPanel");
-        UpdatePreferencesPanel panel = new UpdatePreferencesPanel();
+        UpdatePreferencesTab tab = new UpdatePreferencesTab();
         
-        frame.getContentPane().add(panel.getPanelComponent());
+        frame.getContentPane().add(tab.getPanelComponent());
         frame.setSize(600,400);
         frame.setVisible(true);
         

@@ -260,7 +260,7 @@ public class DialectFactory {
           }
        }
        if (dialect == null) {
-          return DialectType.UNKNOWN;
+          return DialectType.GENERIC;
        }
        return dialect.getDialectType();
     }

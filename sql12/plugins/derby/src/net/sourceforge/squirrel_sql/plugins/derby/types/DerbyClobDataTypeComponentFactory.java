@@ -16,34 +16,36 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.plugins.oracle.types;
+package net.sourceforge.squirrel_sql.plugins.derby.types;
 
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponent;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponentFactory;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 
-/**
- * A factory that creates OracleXmlTypeDataTypeComponents for rendering 
- * SYS.xmlltype columns.
- * 
- * @author manningr
- *
- */
-public class OracleXmlTypeDataTypeComponentFactory implements
+public class DerbyClobDataTypeComponentFactory implements
         IDataTypeComponentFactory {
 
     /**
     * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponentFactory#constructDataTypeComponent()
     */
    public IDataTypeComponent constructDataTypeComponent() {
-        return new OracleXmlTypeDataTypeComponent();
+        return new DerbyClobDataTypeComponent();
     }
 
+   /**
+    * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponentFactory#providesTypeOverride(net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData)
+    */
+   public boolean providesTypeOverride(ISQLDatabaseMetaData md) {
+      return DialectFactory.isDerby(md);
+   }
+    
    /**
     * @see net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.IDataTypeComponentFactory#getDialectType()
     */
    public DialectType getDialectType() {
-      return DialectType.ORACLE;
+      return DialectType.DERBY;
    }
-   
+
 }

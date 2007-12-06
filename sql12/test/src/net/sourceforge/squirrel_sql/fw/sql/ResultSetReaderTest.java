@@ -12,6 +12,7 @@ import java.sql.Timestamp;
 
 import net.sourceforge.squirrel_sql.BaseSQuirreLTestCase;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.DTProperties;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 
 import org.easymock.EasyMock;
 
@@ -78,7 +79,7 @@ public class ResultSetReaderTest extends BaseSQuirreLTestCase {
         }
 
         replayAll();
-        readerUnderTest = new ResultSetReader(mockResultSet);
+        readerUnderTest = new ResultSetReader(mockResultSet, DialectType.ORACLE);
         Object[] result = readerUnderTest.readRow();
         if (result[0].getClass().getName().equals(type)) {
             // 

@@ -48,5 +48,5 @@ public enum DialectType {
    PROGRESS,
    SYBASEASE, // Sybase Adaptive Server Enterprise 
    TIMESTEN,
-   UNKNOWN
+   GENERIC
 }
