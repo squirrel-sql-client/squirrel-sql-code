@@ -24,6 +24,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -171,6 +173,50 @@ public class UpdateUtilImpl implements UpdateUtil {
       return result;
    }
 
+   /**
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#downloadLocalFile(java.lang.String, java.lang.String)
+    */
+   public boolean downloadLocalFile(String fileToGet, String destDir) {
+      boolean result = false;
+      File fromFile = new File(fileToGet);
+      if (fromFile.isFile() && fromFile.canRead()) {
+         String filename = fromFile.getName();
+         File toFile = new File(destDir, filename);
+         result = copyFile(fromFile, toFile);
+      } else {
+         s_log.error("File "+fileToGet+" doesn't appear to be readable");
+      }
+      return result;
+   }
+   
+   /**
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#copyFile(java.io.File, java.io.File)
+    */
+   public boolean copyFile(final File from, final File to) {
+      boolean result = true;
+      if (s_log.isDebugEnabled()) {
+         s_log.debug("Copying file "+from+" to file " + to);
+      }
+      FileReader in = null;
+      FileWriter out = null;
+      try {
+         in = new FileReader(from);
+         out = new FileWriter(to);
+         int c;
+         while ((c = in.read()) != -1) {
+            out.write(c);         
+         }
+      } catch (Exception e) {
+         s_log.error("copyFile: Unexpected error while trying to "
+               + "copy file " + from + " to file " + to, e);
+         result = false;
+      } finally {
+         IOUtilities.closeReader(in);
+         IOUtilities.closeWriter(out);
+      }
+      return result;
+   }
+   
    /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getLocalReleaseInfo(java.lang.String)
     */
