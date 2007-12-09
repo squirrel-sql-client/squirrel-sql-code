@@ -283,9 +283,15 @@ public class UpdateUtilImpl implements UpdateUtil {
       ApplicationFiles appFiles = new ApplicationFiles();
       File squirrelUpdateDir = appFiles.getUpdateDirectory();      
       if (!squirrelUpdateDir.isDirectory()) {
-         s_log.error("SQuirreL Update Directory ("
-               + squirrelUpdateDir.getAbsolutePath()
-               + " doesn't appear to be a directory");
+         if (squirrelUpdateDir.exists()) {
+            // If the update dir, is actually a file, log an error.
+            s_log.error("SQuirreL Update Directory ("
+                  + squirrelUpdateDir.getAbsolutePath()
+                  + " doesn't appear to be a directory");
+         } else {
+            // If the update dir doesn't already exist, just create it.
+            squirrelUpdateDir.mkdir();
+         }
       }
       return squirrelUpdateDir;
    }   
