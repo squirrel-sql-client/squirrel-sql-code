@@ -1,7 +1,6 @@
-package net.sourceforge.squirrel_sql.client.mainframe.action;
 /*
- * Copyright (C) 2001-2003 Colin Bell
- * colbell@users.sourceforge.net
+ * Copyright (C) 2007 Rob Manning
+ * manningr@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,24 +16,12 @@ package net.sourceforge.squirrel_sql.client.mainframe.action;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.ActionEvent;
+package net.sourceforge.squirrel_sql.client.update;
 
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.SquirrelAction;
-/**
- * Action that terminates this program.
- *
- * @author <A HREF="mailto:colbell@users.sourceforge.net">Colin Bell</A>
- */
-public class ExitAction extends SquirrelAction
-{
-	public ExitAction(IApplication app)
-	{
-		super(app);
-	}
-
-	public void actionPerformed(ActionEvent evt)
-	{
-		getApplication().getMainFrame().shutdown();
-	}
+public enum DownloadEventType {
+   DOWNLOAD_START,
+   DOWNLOAD_FAILED,
+   DOWNLOAD_COMPLETE,
+   DOWNLOAD_FILE_START,
+   DOWNLOAD_FILE_COMPLETE
 }

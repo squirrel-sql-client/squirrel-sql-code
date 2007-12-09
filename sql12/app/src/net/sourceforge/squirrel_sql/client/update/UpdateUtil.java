@@ -90,6 +90,32 @@ public interface UpdateUtil {
          String destDir);
 
    /**
+    * Downloads the a file from a local directory into our update downloads
+    * directory.
+    * 
+    * @param fileToGet
+    *           the file to retreive.
+    * 
+    * @param destDir
+    *           the destination directory into which to place the file.
+    * 
+    * @return true if the download succeeded; false otherwise.
+    */
+   boolean downloadLocalFile(String fileToGet, String destDir);   
+   
+   /**
+    * Copies the specified from file to the specified to file.
+    * 
+    * @param from
+    *           the file to copy from
+    * @param to
+    *           the file to copy to
+    * 
+    * @return true if the file copy succeeded; false otherwise.
+    */
+   boolean copyFile(final File from, final File to);
+   
+   /**
     * Returns an ChannelXmlBean that describes the locally installed release.
     * 
     * @param localReleaseFile

@@ -91,11 +91,16 @@ public class Updater {
       
       UpdateUtilImpl util = new UpdateUtilImpl();
       File f = util.getChangeListFile();
-      if (f.exists() && prompt) {
-         if (showConfirmDialog()) {
-            installUpdates();
+      if (f.exists()) {
+         if (prompt) {
+            if (showConfirmDialog()) {
+               installUpdates();
+            }
+         } else {
+            installUpdates();            
          }
       }
+      
 
    }
 

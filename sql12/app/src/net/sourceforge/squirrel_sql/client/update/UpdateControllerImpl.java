@@ -21,6 +21,7 @@ package net.sourceforge.squirrel_sql.client.update;
 import static net.sourceforge.squirrel_sql.client.update.UpdateUtil.RELEASE_XML_FILENAME;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,6 +35,7 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesActionListener;
 import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesSheet;
 import net.sourceforge.squirrel_sql.client.preferences.UpdatePreferencesPanel;
+import net.sourceforge.squirrel_sql.client.update.gui.ArtifactAction;
 import net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus;
 import net.sourceforge.squirrel_sql.client.update.gui.CheckUpdateListener;
 import net.sourceforge.squirrel_sql.client.update.gui.UpdateManagerDialog;
@@ -123,9 +125,7 @@ public class UpdateControllerImpl implements UpdateController,
       dialog.setVisible(true);
    }
 
-   /*
-    * (non-Javadoc)
-    * 
+   /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateController#isUpToDate()
     */
    public boolean isUpToDate() throws Exception {
@@ -184,12 +184,31 @@ public class UpdateControllerImpl implements UpdateController,
    }
 
    /**
-    * Go get the files that need to be updated.
+    * Go get the files that need to be updated.  The specified list could have
+    * new files to get (INSTALL), existing files to remove (REMOVE).  This 
+    * method's only concern is with fetching the new artifacts to be installed.
     * 
-    * @return
     */
-   public boolean pullDownUpdateFiles() {
-      return true;
+   public void pullDownUpdateFiles(List<ArtifactStatus> artifactStatusList,
+         DownloadStatusListener listener) {
+
+      List<ArtifactStatus> newartifactsList = 
+         new ArrayList<ArtifactStatus>();
+      
+      for (ArtifactStatus status : artifactStatusList) {
+         if (status.getArtifactAction() == ArtifactAction.INSTALL) {
+            newartifactsList.add(status);
+         }
+      }
+      
+      ArtifactDownloader downloader = new ArtifactDownloader(newartifactsList);
+      downloader.setUtil(_util);
+      downloader.setIsRemoteUpdateSite(isRemoteUpdateSite());
+      downloader.setHost(getUpdateServerName());
+      downloader.setPath(getUpdateServerPath());
+      downloader.setFileSystemUpdatePath(getUpdateSettings().getFileSystemUpdatePath());
+      downloader.addDownloadStatusListener(listener);
+      downloader.start();
    }
 
    /**
@@ -219,7 +238,7 @@ public class UpdateControllerImpl implements UpdateController,
    public String getUpdateServerPath() {
       return getUpdateSettings().getUpdateServerPath();
    }
-
+   
    /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateController#getUpdateServerPort()
     */
@@ -304,20 +323,10 @@ public class UpdateControllerImpl implements UpdateController,
          // Persists the change list to the update directory.
          _util.saveChangeList(artifactStatusList);
       
-         // Kick off a thread to go and fetch the files one-by-one.
-         
-         // When all updates are retrieved, consult the user to see if they want to install now or upon the 
-         // next startup.
-         
-         // If install now, then backup files to be updated/removed and shutdown
-         // so that the updater process can run.
-         
-         // shutdown and start the updater.
-         
-         // TODO the updater should be started each time SQuirreL is launched to 
-         // quickly check to see if updates need to be applied and prompt the 
-         // user each time updates are available to be applied, to see if they
-         // want to apply them.
+         // Kick off a thread to go and fetch the files one-by-one and register 
+         // callback class - DownloadStatusEventHandler
+         pullDownUpdateFiles(artifactStatusList,
+                             new DownloadStatusEventHandler());
          
       } catch (Exception e) {
          showErrorMessage("Update Failed", "Exception was - "
@@ -330,10 +339,10 @@ public class UpdateControllerImpl implements UpdateController,
     * @see net.sourceforge.squirrel_sql.client.update.gui.CheckUpdateListener#showPreferences()
     */
    public void showPreferences() {
-      // 2. Wait for user to click ok/close
+      // 1. Wait for user to click ok/close
       listener.setWaitingForOk(true);
       
-      // 1. Display global preferences
+      // 2. Display global preferences
       GlobalPreferencesSheet.showSheet(_app, UpdatePreferencesPanel.class);
    
    }
@@ -375,5 +384,31 @@ public class UpdateControllerImpl implements UpdateController,
       public void setWaitingForOk(boolean waitingForOk) {
          this.waitingForOk = waitingForOk;
       }      
+   }
+   
+   /**
+    * Listener for download events.
+    * 
+    * @author manningr
+    */
+   private class DownloadStatusEventHandler implements DownloadStatusListener {
+
+      /**
+       * @see net.sourceforge.squirrel_sql.client.update.DownloadStatusListener#handleDownloadStatusEvent(net.sourceforge.squirrel_sql.client.update.DownloadStatusEvent)
+       */
+      public void handleDownloadStatusEvent(DownloadStatusEvent evt) {
+         // When all updates are retrieved, consult the user to see if they want to install now or upon the 
+         // next startup.
+         if (evt.getType() == DownloadEventType.DOWNLOAD_COMPLETE) {
+            showMessage("Update Download Complete",
+                        "Requested updates will be installed when SQuirreL "
+                              + "is restarted");            
+         }
+         if (evt.getType() == DownloadEventType.DOWNLOAD_FAILED) {
+            showErrorMessage("Update Download Failed",
+                             "Please consult the log for details");
+         }
+      }
+      
    }
 }
