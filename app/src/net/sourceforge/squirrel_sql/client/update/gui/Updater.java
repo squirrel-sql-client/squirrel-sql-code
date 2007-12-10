@@ -88,26 +88,27 @@ public class Updater {
     */
    public static void main(String[] args) {
       boolean prompt = false;
-      if (args.length > 0){
+      if (args != null && args.length > 0){
          if (args[0].equals("-prompt")) {
             prompt=true;
          }
       }
-      
-      UpdateUtilImpl util = new UpdateUtilImpl();
-      File f = util.getChangeListFile();
-      if (f.exists()) {
-         if (prompt) {
-            if (showConfirmDialog()) {
-               installUpdates();
+      try {
+         UpdateUtilImpl util = new UpdateUtilImpl();
+         File f = util.getChangeListFile();
+         if (f.exists()) {
+            if (prompt) {
+               if (showConfirmDialog()) {
+                  installUpdates();
+               }
+            } else {
+               installUpdates();            
             }
-         } else {
-            installUpdates();            
          }
+      } catch (Throwable e) {
+         e.printStackTrace();
+      } finally {
+         System.exit(0);
       }
-      
-
    }
-
-   
 }
