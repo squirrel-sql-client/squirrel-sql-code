@@ -152,7 +152,7 @@ public class MainFrame extends JFrame implements IMainFrame //BaseMDIParentFrame
 		});
 	}
 
-	public void shutdown()
+	public void dispose()
 	{
       boolean shouldDispose = true;
       if (!_app.shutdown())

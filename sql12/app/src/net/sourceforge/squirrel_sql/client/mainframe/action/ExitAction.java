@@ -35,6 +35,6 @@ public class ExitAction extends SquirrelAction
 
 	public void actionPerformed(ActionEvent evt)
 	{
-		getApplication().getMainFrame().shutdown();
+		getApplication().getMainFrame().dispose();
 	}
 }
