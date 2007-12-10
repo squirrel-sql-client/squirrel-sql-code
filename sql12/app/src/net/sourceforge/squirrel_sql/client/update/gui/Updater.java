@@ -36,20 +36,27 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  */
 public class Updater {
 
-   /* Internationalized strings for this class */
-   private static StringManager s_stringMgr = 
-      StringManagerFactory.getStringManager(Updater.class);
+   private static String MESSAGE;
+   private static String TITLE;
    
-   static interface i18n {
-      
-      // i18n[Updater.message=Updates are ready to be installed.  Install them 
-      // now?]
-      String MESSAGE = s_stringMgr.getString("Updater.message");
-      
-      // i18n[Updater.title=Updates Available]
-      String TITLE = s_stringMgr.getString("Updater.title");
-   }
+   /* Internationalized strings for this class */
+   private static StringManager s_stringMgr;
+   
+   static {
+      ApplicationArguments.initialize(new String[0]);
 
+      s_stringMgr = 
+         StringManagerFactory.getStringManager(Updater.class);
+
+      // i18n[Updater.message=Updates are ready to be installed.  Install them 
+      // now?]      
+      MESSAGE = s_stringMgr.getString("Updater.message");
+
+      // i18n[Updater.title=Updates Available]
+      TITLE = s_stringMgr.getString("Updater.title");
+   
+   }
+   
    /**
     * Ask the user if they want to apply the updates.
     * 
@@ -58,7 +65,7 @@ public class Updater {
    public static boolean showConfirmDialog() {
       int choice = 
          JOptionPane.showConfirmDialog(
-         null, i18n.MESSAGE, i18n.TITLE, JOptionPane.YES_NO_OPTION,
+         null, MESSAGE, TITLE, JOptionPane.YES_NO_OPTION,
          JOptionPane.QUESTION_MESSAGE);
       return choice == JOptionPane.YES_OPTION;
    }
@@ -86,8 +93,6 @@ public class Updater {
             prompt=true;
          }
       }
-      
-      ApplicationArguments.initialize(new String[0]); 
       
       UpdateUtilImpl util = new UpdateUtilImpl();
       File f = util.getChangeListFile();
