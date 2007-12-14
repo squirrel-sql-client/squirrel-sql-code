@@ -225,7 +225,7 @@ public class UpdateSummaryTable extends SortableTable {
             // All core artifacts are linked.
             if (as.isCoreArtifact()) {
                for (ArtifactStatus status : UpdateSummaryTable.this._artifacts) {
-                  if (status.isCoreArtifact()) {
+                  if (status.isInstalled() || status.isCoreArtifact()) {
                      status.setArtifactAction(action);
                   }
                }

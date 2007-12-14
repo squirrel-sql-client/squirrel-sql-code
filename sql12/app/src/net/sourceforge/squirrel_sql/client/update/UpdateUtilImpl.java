@@ -24,10 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -45,8 +42,6 @@ import net.sourceforge.squirrel_sql.client.update.xmlbeans.ReleaseXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.UpdateXmlSerializer;
 import net.sourceforge.squirrel_sql.client.util.ApplicationFiles;
 import net.sourceforge.squirrel_sql.client.util.IOUtilities;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -168,7 +163,7 @@ public class UpdateUtilImpl implements UpdateUtil {
                + e.getMessage(), e);
       } finally {
          IOUtilities.closeInputStream(is);
-         IOUtilities.closeOutpuStream(os);
+         IOUtilities.closeOutputStream(os);
       }
       return result;
    }
@@ -197,22 +192,23 @@ public class UpdateUtilImpl implements UpdateUtil {
       if (s_log.isDebugEnabled()) {
          s_log.debug("Copying file "+from+" to file " + to);
       }
-      FileReader in = null;
-      FileWriter out = null;
+      FileInputStream in = null;
+      FileOutputStream out = null;
       try {
-         in = new FileReader(from);
-         out = new FileWriter(to);
-         int c;
-         while ((c = in.read()) != -1) {
-            out.write(c);         
+         in = new FileInputStream(from);
+         out = new FileOutputStream(to);
+         byte[] buffer = new byte[8192];
+         int len;
+         while ((len = in.read(buffer)) != -1) {
+            out.write(buffer, 0, len);         
          }
       } catch (Exception e) {
          s_log.error("copyFile: Unexpected error while trying to "
                + "copy file " + from + " to file " + to, e);
          result = false;
       } finally {
-         IOUtilities.closeReader(in);
-         IOUtilities.closeWriter(out);
+         IOUtilities.closeInputStream(in);
+         IOUtilities.closeOutputStream(out);
       }
       return result;
    }
