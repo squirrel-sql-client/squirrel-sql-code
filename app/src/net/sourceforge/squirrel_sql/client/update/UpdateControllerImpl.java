@@ -28,8 +28,10 @@ import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.ProgressMonitor;
 
 import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesActionListener;
@@ -393,22 +395,78 @@ public class UpdateControllerImpl implements UpdateController,
     */
    private class DownloadStatusEventHandler implements DownloadStatusListener {
 
+      ProgressMonitor progressMonitor = null;
+      int currentFile = 0;
+      int totalFiles = 0;
       /**
        * @see net.sourceforge.squirrel_sql.client.update.DownloadStatusListener#handleDownloadStatusEvent(net.sourceforge.squirrel_sql.client.update.DownloadStatusEvent)
        */
       public void handleDownloadStatusEvent(DownloadStatusEvent evt) {
+         
+         if (evt.getType() == DownloadEventType.DOWNLOAD_STARTED) {
+            totalFiles = evt.getFileCountTotal();
+            handleDownloadStarted();
+         }
+         if (evt.getType() == DownloadEventType.DOWNLOAD_FILE_STARTED) {
+            setNote("File: "+evt.getFilename());
+         }
+         
+         if (evt.getType() == DownloadEventType.DOWNLOAD_FILE_COMPLETED) {
+            setProgress(++currentFile);
+         }
+         
+         if (evt.getType() == DownloadEventType.DOWNLOAD_STOPPED) {
+            setProgress(totalFiles);
+         }
+         
          // When all updates are retrieved, consult the user to see if they want to install now or upon the 
          // next startup.
-         if (evt.getType() == DownloadEventType.DOWNLOAD_COMPLETE) {
+         if (evt.getType() == DownloadEventType.DOWNLOAD_COMPLETED) {
             showMessage("Update Download Complete",
                         "Requested updates will be installed when SQuirreL "
-                              + "is restarted");            
+                              + "is restarted");
+            setProgress(totalFiles);
          }
          if (evt.getType() == DownloadEventType.DOWNLOAD_FAILED) {
             showErrorMessage("Update Download Failed",
                              "Please consult the log for details");
+            
+            setProgress(totalFiles);
          }
       }
+      
+      private void setProgress(final int value) {
+         GUIUtils.processOnSwingEventThread(new Runnable() {
+            public void run() {
+               progressMonitor.setProgress(value);     
+            }
+         });
+      }
+      
+      private void setNote(final String note) {
+         GUIUtils.processOnSwingEventThread(new Runnable() {
+            public void run() {
+               progressMonitor.setNote(note);     
+            }
+         });
+      }
+      
+      private void handleDownloadStarted() {
+         GUIUtils.processOnSwingEventThread(new Runnable() {
+            public void run() {
+               final MainFrame frame = 
+                  UpdateControllerImpl.this._app.getMainFrame();
+               progressMonitor = 
+                  new ProgressMonitor(frame,
+                                      "Downloading Updates",
+                                      "Downloading Updates", 
+                                      0, 
+                                      totalFiles);
+               setProgress(0);
+            }
+         });
+      }
+      
       
    }
 }

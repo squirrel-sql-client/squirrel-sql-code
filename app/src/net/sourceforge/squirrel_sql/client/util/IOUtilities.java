@@ -42,7 +42,7 @@ public class IOUtilities {
       }
    }
 
-   public static void closeOutpuStream(OutputStream os) {
+   public static void closeOutputStream(OutputStream os) {
       if (os != null) {
          try {
             os.close();

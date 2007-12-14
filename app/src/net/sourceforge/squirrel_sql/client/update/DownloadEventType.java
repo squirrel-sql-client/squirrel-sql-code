@@ -18,10 +18,22 @@
  */
 package net.sourceforge.squirrel_sql.client.update;
 
+/**
+ * An enumeration of the types of download events that can occur.
+ * 
+ * @author manningr
+ */
 public enum DownloadEventType {
-   DOWNLOAD_START,
+   /** Started the process of downloading one or more files */
+   DOWNLOAD_STARTED,
+   /** User chose to stop the process of downloading one or more files */
+   DOWNLOAD_STOPPED,
+   /** The process of downloading one or more files failed for some reason */
    DOWNLOAD_FAILED,
-   DOWNLOAD_COMPLETE,
-   DOWNLOAD_FILE_START,
-   DOWNLOAD_FILE_COMPLETE
+   /** The process of downloading one or more files completed without error */
+   DOWNLOAD_COMPLETED,
+   /** The download of a single file started */
+   DOWNLOAD_FILE_STARTED,
+   /** The download of a single file completed */
+   DOWNLOAD_FILE_COMPLETED
 }

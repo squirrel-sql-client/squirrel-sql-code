@@ -82,15 +82,18 @@ public class ArtifactDownloader implements Runnable {
             
       for (ArtifactStatus status : _artifactStatus) {
          if (_stopped) {
+            sendDownloadStopped();
             break;
+         }  else {
+            sendDownloadFileStarted(status.getName());
          }
          String fileToGet = status.getType() + "/" + status.getName();
 
          String destDir = coreDownloadDir.getAbsolutePath();
-         if (status.getType() == PLUGIN_ARTIFACT_ID) {
+         if (PLUGIN_ARTIFACT_ID.equals(status.getType())) {
             destDir = pluginDownloadDir.getAbsolutePath();
          }
-         if (status.getType() == TRANSLATION_ARTIFACT_ID) {
+         if (TRANSLATION_ARTIFACT_ID.equals(status.getType())) {
             destDir = i18nDownloadDir.getAbsolutePath();
          }
          // TODO: If the file is already present and it has the same size, 
@@ -106,6 +109,8 @@ public class ArtifactDownloader implements Runnable {
          if (result == false) {
             sendDownloadFailed();
             return;
+         } else {
+            sendDownloadFileCompleted(status.getName());
          }
       }
       
@@ -221,14 +226,20 @@ public class ArtifactDownloader implements Runnable {
    
    private void sendDownloadStarted(int totalFileCount) {
       DownloadStatusEvent evt = 
-         new DownloadStatusEvent(DownloadEventType.DOWNLOAD_START);
+         new DownloadStatusEvent(DownloadEventType.DOWNLOAD_STARTED);
       evt.setFileCountTotal(totalFileCount);
+      sendEvent(evt);      
+   }
+
+   private void sendDownloadStopped() {
+      DownloadStatusEvent evt = 
+         new DownloadStatusEvent(DownloadEventType.DOWNLOAD_STOPPED);
       sendEvent(evt);      
    }
    
    private void sendDownloadComplete() {
       DownloadStatusEvent evt = 
-         new DownloadStatusEvent(DownloadEventType.DOWNLOAD_COMPLETE);
+         new DownloadStatusEvent(DownloadEventType.DOWNLOAD_COMPLETED);
       sendEvent(evt);            
    }
    
@@ -238,6 +249,20 @@ public class ArtifactDownloader implements Runnable {
       sendEvent(evt);                  
    }
 
+   private void sendDownloadFileStarted(String filename) {
+      DownloadStatusEvent evt = 
+         new DownloadStatusEvent(DownloadEventType.DOWNLOAD_FILE_STARTED);
+      evt.setFilename(filename);
+      sendEvent(evt);                  
+   }
+
+   private void sendDownloadFileCompleted(String filename) {
+      DownloadStatusEvent evt = 
+         new DownloadStatusEvent(DownloadEventType.DOWNLOAD_FILE_COMPLETED);
+      evt.setFilename(filename);
+      sendEvent(evt);                  
+   }
+   
    /**
     * @return the _fileSystemUpdatePath
     */
