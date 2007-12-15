@@ -18,8 +18,9 @@ Refactoring Plugin:
 
 Bug-Fixes:
 
-Changing to another window using Alt + left/right arrow did not properly set focus.
+1848924: Sybase object browser contents not displayed
 
+Changing to another window using Alt + left/right arrow did not properly set focus.
 
 Hibernate Plugin: 
  - Class names in completion list could change from fully qualified to simple
