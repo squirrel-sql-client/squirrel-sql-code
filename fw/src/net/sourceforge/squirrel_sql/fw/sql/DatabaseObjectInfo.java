@@ -155,7 +155,7 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
        return result.toString();
    }
    
-   protected String generateQualifiedName(ISQLDatabaseMetaData md)
+   protected String generateQualifiedName(final ISQLDatabaseMetaData md)
    {
       String catSep = null;
       String identifierQuoteString = null;
@@ -216,13 +216,15 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
          // Ignore.
       }
 
+      if (DialectFactory.isSyBase(md)) {
+         identifierQuoteString = 
+            checkSybaseIdentifierQuoteString(md, identifierQuoteString);         
+      }
+            
+      
       StringBuffer buf = new StringBuffer();
-      //if (catSep != null
-      //   && catSep.length() > 0
-      //&& _catalog != null
-      //&& _catalog.length() > 0)
       if (supportsCatalogsInDataManipulation
-    	&& !StringUtilities.isEmpty(_catalog))	  
+            && !StringUtilities.isEmpty(_catalog))	  
       {
          if (identifierQuoteString != null)
          {
@@ -249,7 +251,6 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
             buf.append(identifierQuoteString);
          }
          
-         //buf.append(".");
          buf.append(catSep);
       }
 
@@ -266,6 +267,38 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
       return buf.toString();
    }
 
+   /**
+    * Checks for the presence of Sybase 12.x and if found, sets the identifier
+    * quote string to empty string.  See bug:
+    * 
+    * [ 1848924 ] Sybase object browser contents not displayed
+    * 
+    * for more details.
+    * 
+    * @param md the database metadata
+    * @param quoteString the identifer quote string that the driver reported.
+    * @return the same identifier quote string specified if not 12.x; otherwise
+    *         empty string is returned.
+    */
+   private String checkSybaseIdentifierQuoteString(
+         final ISQLDatabaseMetaData md, final String quoteString) 
+   {
+      String result = quoteString;
+      String productName = null;
+      CharSequence sybaseTwelveVersionId = "12.";
+      try {
+         productName = md.getDatabaseProductVersion();
+      } catch (SQLException e) {
+         // ignore
+      }
+      if (productName != null) {
+         if (productName.contains(sybaseTwelveVersionId)) {
+            result = "";
+         }
+      }
+      return result;
+   }
+   
    public boolean equals(Object obj)
    {
       if (obj == null) {
