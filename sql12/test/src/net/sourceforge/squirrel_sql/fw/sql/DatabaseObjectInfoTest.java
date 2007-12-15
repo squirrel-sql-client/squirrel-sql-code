@@ -37,6 +37,10 @@ public class DatabaseObjectInfoTest extends BaseSQuirreLJUnit4TestCase {
     
     ISQLDatabaseMetaData h2SQLDatabaseMetaData = null; 
 
+    ISQLDatabaseMetaData sybase12SQLDatabaseMeta = null;
+    
+    ISQLDatabaseMetaData sybase15SQLDatabaseMeta = null;
+    
     String testCatalog = "TestCatalog";
 
     String testSchema = "TestSchema";
@@ -48,12 +52,16 @@ public class DatabaseObjectInfoTest extends BaseSQuirreLJUnit4TestCase {
                 false, true);
         
         h2SQLDatabaseMetaData = TestUtil.getEasyMockH2SQLMetaData();
+        sybase12SQLDatabaseMeta = TestUtil.getEasyMockSybase12SQLMetaData();
+        sybase15SQLDatabaseMeta = TestUtil.getEasyMockSybase15SQLMetaData();
     }
 
     @After
     public void tearDown() throws Exception {
         h2SQLDatabaseMetaData = null;
         oracleSQLDatabaseMetaData = null;
+        sybase12SQLDatabaseMeta = null;
+        sybase15SQLDatabaseMeta = null;
     }
 
     @Test
@@ -74,6 +82,52 @@ public class DatabaseObjectInfoTest extends BaseSQuirreLJUnit4TestCase {
         assertEquals(expectedQualifiedName, qn);
     }
 
+    @Test 
+    public final void testGetQualifiedNameSybase12() throws Exception {
+       String tableName = "mytable";
+       final ISQLDatabaseMetaData md = sybase12SQLDatabaseMeta;
+       assertEquals("Adaptive Server Enterprise", md.getDatabaseProductName());
+       dboInfoUnderTest = 
+          new DatabaseObjectInfo(testCatalog, testSchema, tableName, 
+                                 DatabaseObjectType.TABLE, md);
+       String identifierQuoteString = md.getIdentifierQuoteString();
+       
+       // Sybase 12.5 doesn't support quotation marks for identifiers, yet 
+       // reports " as the identifier quote string - go figure!
+       assertEquals("\"", identifierQuoteString);
+       
+       String sep = md.getCatalogSeparator();
+       
+       String expected = testCatalog + sep + testSchema + sep + tableName;
+       String actual = dboInfoUnderTest.getQualifiedName();
+       assertEquals(expected, actual);
+    }
+
+    @Test 
+    public final void testGetQualifiedNameSybase15() throws Exception {
+       String tableName = "mytable";
+       final ISQLDatabaseMetaData md = sybase15SQLDatabaseMeta;
+       assertEquals("Adaptive Server Enterprise", md.getDatabaseProductName());
+       dboInfoUnderTest = 
+          new DatabaseObjectInfo(testCatalog, testSchema, tableName, 
+                                 DatabaseObjectType.TABLE, md);
+       String identifierQuoteString = md.getIdentifierQuoteString();
+       
+       // Sybase 15 fully supports quotation marks for identifiers, and 
+       // reports " as the identifier quote string - yeah, they got it right!
+       assertEquals("\"", identifierQuoteString);
+       
+       String sep = md.getCatalogSeparator();
+       
+       // Since catalog, schema and table are all identifiers, they all need 
+       // to be quoted.
+       String expected = identifierQuoteString + testCatalog + identifierQuoteString + sep + 
+                         identifierQuoteString + testSchema + identifierQuoteString + sep + 
+                         identifierQuoteString + tableName + identifierQuoteString;
+       String actual = dboInfoUnderTest.getQualifiedName();
+       assertEquals(expected, actual);
+    }
+    
     @Test
     public final void testEqualsAndHashcode() {
         DatabaseObjectInfo a = new DatabaseObjectInfo(testCatalog, testSchema,
