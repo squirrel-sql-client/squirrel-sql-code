@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.util;
 
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -75,4 +76,24 @@ public class IOUtilities {
       }
    }
    
+   /**
+    * Reads from the specified InputStream and copies bytes read to the
+    * specified OuputStream.
+    * 
+    * @param is
+    *           the InputStream to read from
+    * @param os
+    *           the OutputStream to write to
+    * @throws IOException
+    *            in an exception occurs while reading/writing
+    */
+   public static void copyBytes(InputStream is, OutputStream os) 
+      throws IOException
+   {
+      byte[] buffer = new byte[8192];
+      int length;
+      while ((length = is.read(buffer)) > 0) {
+         os.write(buffer, 0, length);
+      }
+   }
 }

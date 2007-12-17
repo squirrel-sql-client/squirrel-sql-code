@@ -30,6 +30,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import net.sourceforge.squirrel_sql.client.plugin.PluginInfo;
 import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
@@ -428,5 +430,43 @@ public class UpdateUtilImpl implements UpdateUtil {
       _pluginManager = manager;
    }
    
+   public File checkDir(File parent, String child) {
+      File dir = new File(parent, child);
+      if (!dir.exists()) {
+         dir.mkdir();
+      }
+      return dir;
+   }
+   
+   /**
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#createZipFile(java.io.File, java.io.File[])
+    */
+   public void createZipFile(File zipFile, File[] sourceFiles) 
+      throws FileNotFoundException, IOException  
+   {
+      ZipOutputStream os = 
+         new ZipOutputStream(new FileOutputStream(zipFile));
+      zipFileOs(os, sourceFiles);
+      os.close();
+   }
+   
+   private void zipFileOs(ZipOutputStream os, File[] sourceFiles) 
+      throws FileNotFoundException, IOException
+   {
+      for (File file : sourceFiles) {
+         if (file.isDirectory()) {
+            zipFileOs(os, file.listFiles());
+         } else {
+            FileInputStream fis = null; 
+            try {
+               fis = new FileInputStream(file);
+               os.putNextEntry(new ZipEntry(file.getPath()));
+               IOUtilities.copyBytes(fis, os);
+            } finally {
+               IOUtilities.closeInputStream(fis);
+            }
+         }
+      }
+   }
 
 }
