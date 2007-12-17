@@ -31,7 +31,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.Log4jLoggerFactory;
 
 public class SquirrelLoggerFactory extends Log4jLoggerFactory
 {
-	public SquirrelLoggerFactory() throws IllegalArgumentException
+	public SquirrelLoggerFactory(boolean doStartupLogging) throws IllegalArgumentException
 	{
 		super(false);
 		String configFileName = ApplicationArguments.getInstance().getLoggingConfigFileName();
@@ -61,7 +61,9 @@ public class SquirrelLoggerFactory extends Log4jLoggerFactory
 				BasicConfigurator.configure();
 			}
 		}
-		doStartupLogging();
+		if (doStartupLogging) {
+		   doStartupLogging();
+		}
 	}
 
 	private void doStartupLogging()
