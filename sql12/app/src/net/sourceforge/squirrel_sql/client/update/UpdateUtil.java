@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.update;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -137,6 +138,13 @@ public interface UpdateUtil {
 
    File getSquirrelLibraryDir();
 
+   File getChangeListFile();
+   
+   File checkDir(File parent, String child);
+   
+   void createZipFile(File zipFile, File[] sourceFiles)
+      throws FileNotFoundException, IOException;
+   
    /**
     * Returns the update directory in which all information about available 
     * updates and the user's desired actions are located.

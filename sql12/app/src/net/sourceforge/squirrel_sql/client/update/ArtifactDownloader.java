@@ -59,26 +59,19 @@ public class ArtifactDownloader implements Runnable {
    public void start() {
       downloadThread.start();
    }
-   
-   private File checkDir(File parent, String child) {
-      File dir = new File(parent, child);
-      if (!dir.exists()) {
-         dir.mkdir();
-      }
-      return dir;
-   }
-   
+      
    /**
     * @see java.lang.Runnable#run()
     */
    public void run() {
       sendDownloadStarted(_artifactStatus.size());
       
-      File downloadsDir = checkDir(_util.getSquirrelUpdateDir(),
+      File downloadsDir = _util.checkDir(_util.getSquirrelUpdateDir(),
                                    DOWNLOADS_DIR_NAME);
-      File coreDownloadDir = checkDir(downloadsDir, CORE_ARTIFACT_ID);
-      File pluginDownloadDir = checkDir(downloadsDir, PLUGIN_ARTIFACT_ID);
-      File i18nDownloadDir = checkDir(downloadsDir, TRANSLATION_ARTIFACT_ID);
+      File coreDownloadDir = _util.checkDir(downloadsDir, CORE_ARTIFACT_ID);
+      File pluginDownloadDir = _util.checkDir(downloadsDir, PLUGIN_ARTIFACT_ID);
+      File i18nDownloadDir = 
+         _util.checkDir(downloadsDir, TRANSLATION_ARTIFACT_ID);
             
       for (ArtifactStatus status : _artifactStatus) {
          if (_stopped) {

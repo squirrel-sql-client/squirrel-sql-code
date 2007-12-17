@@ -23,13 +23,21 @@ import java.io.File;
 import javax.swing.JOptionPane;
 
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
+import net.sourceforge.squirrel_sql.client.SquirrelLoggerFactory;
+import net.sourceforge.squirrel_sql.client.update.ArtifactInstaller;
+import net.sourceforge.squirrel_sql.client.update.InstallEventType;
+import net.sourceforge.squirrel_sql.client.update.InstallStatusEvent;
+import net.sourceforge.squirrel_sql.client.update.InstallStatusListener;
+import net.sourceforge.squirrel_sql.client.update.UpdateUtil;
 import net.sourceforge.squirrel_sql.client.update.UpdateUtilImpl;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
- * This is a small application that will be launched to quickly check to see if
- * updates are available to be applied.
+ * This is a small application that will be launched each time SQuirreL is 
+ * started to quickly check to see if updates are available to be applied.
  * 
  * @author manningr
  *
@@ -42,9 +50,18 @@ public class Updater {
    /* Internationalized strings for this class */
    private static StringManager s_stringMgr;
    
+   private static UpdateUtil util = null;
+   
+   /** Logger for this class. */
+   private static ILogger s_log;
+   
    static {
       ApplicationArguments.initialize(new String[0]);
-
+      LoggerController.registerLoggerFactory(new SquirrelLoggerFactory(false));
+      s_log = LoggerController.createLogger(Updater.class);
+      
+      util = new UpdateUtilImpl();
+      
       s_stringMgr = 
          StringManagerFactory.getStringManager(Updater.class);
 
@@ -70,17 +87,11 @@ public class Updater {
       return choice == JOptionPane.YES_OPTION;
    }
    
-   public static void installUpdates() {
-      // 1. Show a progress dialog based on how many files to backup.
-      
-      // 2. Launch a thread to start backing up files that will be 
-      //    removed or updated, and report status back to the progress
-      //    dialog.
-      
-      // 3. Show another progress dialog for copying over the changes.
-      
-      // 4. Start a new thread to copy over the changes and report status
-      //    back to the progress dialog.      
+   public static void installUpdates(File changeList) throws Exception {
+      ArtifactInstaller installer = new ArtifactInstaller(util, changeList);
+      installer.addListener(new MyInstallStatusListener());      
+      installer.backupFiles();
+      installer.installFiles();      
    }
    
    /**
@@ -94,21 +105,48 @@ public class Updater {
          }
       }
       try {
-         UpdateUtilImpl util = new UpdateUtilImpl();
-         File f = util.getChangeListFile();
-         if (f.exists()) {
+         File changeListFile = util.getChangeListFile();
+         if (changeListFile.exists()) {
+            if (s_log.isInfoEnabled()) {
+               s_log.info("Updater detected a changeListFile to be processed");
+            }            
             if (prompt) {
                if (showConfirmDialog()) {
-                  installUpdates();
+                  installUpdates(changeListFile);
+               } else {
+                  if (s_log.isInfoEnabled()) {
+                     s_log.info("User cancelled update installation");
+                  }
                }
             } else {
-               installUpdates();            
+               installUpdates(changeListFile);            
             }
          }
       } catch (Throwable e) {
-         e.printStackTrace();
+         s_log.error("Unexpected error while attempting to install updates: "
+               + e.getMessage(), e);         
       } finally {
+         if (s_log.isInfoEnabled()) {
+            s_log.info("Updater finished");
+         }
+         LoggerController.shutdown();
          System.exit(0);
       }
+   }
+   
+   private static class MyInstallStatusListener implements InstallStatusListener {
+
+      /**
+       * @see net.sourceforge.squirrel_sql.client.update.InstallStatusListener#handleInstallStatusEvent(net.sourceforge.squirrel_sql.client.update.InstallStatusEvent)
+       */
+      public void handleInstallStatusEvent(InstallStatusEvent evt) {
+         if (evt.getType() == InstallEventType.BACKUP_STARTED) {}
+         if (evt.getType() == InstallEventType.FILE_BACKUP_STARTED) {}
+         if (evt.getType() == InstallEventType.FILE_BACKUP_COMPLETE) {}
+         if (evt.getType() == InstallEventType.FILE_INSTALL_STARTED) {}
+         if (evt.getType() == InstallEventType.FILE_INSTALL_COMPLETE) {}
+         if (evt.getType() == InstallEventType.BACKUP_COMPLETE) {}
+      }
+      
    }
 }
