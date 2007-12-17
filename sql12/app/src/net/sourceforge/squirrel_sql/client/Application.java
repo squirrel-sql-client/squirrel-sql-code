@@ -166,7 +166,7 @@ class Application implements IApplication
 	 */
 	public void startup()
 	{
-		LoggerController.registerLoggerFactory(new SquirrelLoggerFactory());
+		LoggerController.registerLoggerFactory(new SquirrelLoggerFactory(true));
 		s_log = LoggerController.createLogger(getClass());
 
 		EventQueue q = Toolkit.getDefaultToolkit().getSystemEventQueue();
