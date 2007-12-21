@@ -134,7 +134,7 @@ public class DerbyPlugin extends DefaultSessionPlugin {
     * @return  Contributors names.
     */
    public String getContributors() {
-      return "";
+      return "Alex Pivovarov";
    }
 
    /**
