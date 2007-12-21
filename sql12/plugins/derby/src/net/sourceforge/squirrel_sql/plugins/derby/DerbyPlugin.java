@@ -97,7 +97,7 @@ public class DerbyPlugin extends DefaultSessionPlugin {
      */
     public String getVersion()
     {
-        return "0.11";
+        return "0.12";
     }
 
     /**
@@ -110,14 +110,14 @@ public class DerbyPlugin extends DefaultSessionPlugin {
         return "Rob Manning";
     }
 
-    /**
-     * Returns a comma separated list of other contributors.
-     *
-     * @return  Contributors names.
-     */    
-    public String getContributors() {
-        return "";
-    }    
+   /**
+    * Returns a comma separated list of other contributors.
+    *
+    * @return  Contributors names.
+    */
+   public String getContributors() {
+      return "Alex Pivovarov";
+   }
     
     /**
      * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getChangeLogFileName()
@@ -159,6 +159,8 @@ public class DerbyPlugin extends DefaultSessionPlugin {
 	public synchronized void initialize() throws PluginException
 	{
 		super.initialize();
+      		//Add session ended listener -- needs for Embedded Derby DB
+      		_app.getSessionManager().addSessionListener(new SessionListener());
 	}
 
     /**
@@ -251,5 +253,61 @@ public class DerbyPlugin extends DefaultSessionPlugin {
         _treeAPI.addDetailTab(DatabaseObjectType.TRIGGER, new TriggerSourceTab("The source of the trigger"));
         
     }
+
+   /**
+    * A session listener that shutdown Embedded Derby when session and
+    * connection are already closed
+    * 
+    * @author Alex Pivovarov
+    */
+   private class SessionListener extends SessionAdapter {
+      @Override
+      public void sessionClosed(SessionEvent evt) {
+         ISession session = evt.getSession();
+         shutdownEmbeddedDerby(session);
+      }
+   }
+   
+   /**
+    * Shutdown Embedded Derby DB and reload JDBC Driver
+    * 
+    * @param session
+    *           Current session.
+    * 
+    * @author Alex Pivovarov
+    */
+   private void shutdownEmbeddedDerby(final ISession session) {
+      try {
+         ISQLDriver iSqlDr = session.getDriver();
+         if (!(iSqlDr.getDriverClassName().startsWith("org.apache.derby.jdbc.EmbeddedDriver"))) {
+            return;
+         }
+         //the code bellow is only for Embedded Derby Driver
+         IIdentifier drId = iSqlDr.getIdentifier();
+         SQLDriverManager sqlDrMan = _app.getSQLDriverManager();
+         //Getting java.sql.Driver to run shutdown command
+         Driver jdbcDr = sqlDrMan.getJDBCDriver(drId);
+         //Shutdown Embedded Derby DB
+         try {
+            jdbcDr.connect("jdbc:derby:;shutdown=true", new Properties());
+         } catch (SQLException e) {
+            //it is always thrown as said in Embedded Derby API.
+            //So it is not error it is info
+            s_log.info(e.getMessage());
+         }
+         //Re-registering driver is necessary for Embedded Derby
+         sqlDrMan.registerSQLDriver(iSqlDr);
+      } catch (RuntimeException e) {
+         s_log.error(e.getMessage(),e);
+      } catch (MalformedURLException e) {
+         s_log.error(e.getMessage(),e);
+      } catch (IllegalAccessException e) {
+         s_log.error(e.getMessage(),e);
+      } catch (InstantiationException e) {
+         s_log.error(e.getMessage(),e);
+      } catch (ClassNotFoundException e) {
+         s_log.error(e.getMessage(),e);
+      }
+   }
     
 }
