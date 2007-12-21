@@ -18,6 +18,10 @@ Refactoring Plugin:
 
 Bug-Fixes:
 
+Derby Plugin:
+1541325: Connection doesn't close when ending session - thanks goes to 
+         Alex Pivovarov for the patch that fixed the issue.
+
 1848924: Sybase object browser contents not displayed
 
 Changing to another window using Alt + left/right arrow did not properly set focus.
