@@ -1,6 +1,12 @@
 Derby Plugin Change Log
 ==========================
 
+0.12
+====
+1810486: CLOB not displayed using JavaDB/Derby 10.3.1.4.
+1541325: Connection doesn't close when ending session - thanks goes to 
+         Alex Pivovarov for the patch that fixed the issue.
+
 0.11
 ====
 

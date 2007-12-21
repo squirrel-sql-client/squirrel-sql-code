@@ -19,6 +19,11 @@ package net.sourceforge.squirrel_sql.plugins.derby;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.net.MalformedURLException;
+import java.sql.Driver;
+import java.sql.SQLException;
+import java.util.Properties;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
 import net.sourceforge.squirrel_sql.client.gui.session.SQLInternalFrame;
@@ -31,12 +36,17 @@ import net.sourceforge.squirrel_sql.client.plugin.gui.PluginQueryTokenizerPrefer
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
+import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.expanders.TableWithChildNodesExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.DatabaseObjectInfoTab;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.cellcomponent.CellComponentFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -178,6 +188,11 @@ public class DerbyPlugin extends DefaultSessionPlugin {
     */
    public synchronized void initialize() throws PluginException {
       super.initialize();
+      
+      //Add session ended listener -- needs for Embedded Derby DB
+      _app.getSessionManager().addSessionListener(new SessionListener());
+
+      
 
       _prefsManager = new PluginQueryTokenizerPreferencesManager();
       _prefsManager.initialize(this, new DerbyPreferenceBean());
@@ -284,4 +299,61 @@ public class DerbyPlugin extends DefaultSessionPlugin {
 
    }
 
+   /**
+    * A session listener that shutdown Embedded Derby when session and
+    * connection are already closed
+    * 
+    * @author Alex Pivovarov
+    */
+   private class SessionListener extends SessionAdapter {
+      @Override
+      public void sessionClosed(SessionEvent evt) {
+         ISession session = evt.getSession();
+         shutdownEmbeddedDerby(session);
+      }
+   }
+   
+   /**
+    * Shutdown Embedded Derby DB and reload JDBC Driver
+    * 
+    * @param session
+    *           Current session.
+    * 
+    * @author Alex Pivovarov
+    */
+   private void shutdownEmbeddedDerby(final ISession session) {
+      try {
+         ISQLDriver iSqlDr = session.getDriver();
+         if (!(iSqlDr.getDriverClassName().startsWith("org.apache.derby.jdbc.EmbeddedDriver"))) {
+            return;
+         }
+         //the code bellow is only for Embedded Derby Driver
+         IIdentifier drId = iSqlDr.getIdentifier();
+         SQLDriverManager sqlDrMan = _app.getSQLDriverManager();
+         //Getting java.sql.Driver to run shutdown command
+         Driver jdbcDr = sqlDrMan.getJDBCDriver(drId);
+         //Shutdown Embedded Derby DB
+         try {
+            jdbcDr.connect("jdbc:derby:;shutdown=true", new Properties());
+         } catch (SQLException e) {
+            //it is always thrown as said in Embedded Derby API.
+            //So it is not error it is info
+            s_log.info(e.getMessage());
+         }
+         //Re-registering driver is necessary for Embedded Derby
+         sqlDrMan.registerSQLDriver(iSqlDr);
+      } catch (RuntimeException e) {
+         s_log.error(e.getMessage(),e);
+      } catch (MalformedURLException e) {
+         s_log.error(e.getMessage(),e);
+      } catch (IllegalAccessException e) {
+         s_log.error(e.getMessage(),e);
+      } catch (InstantiationException e) {
+         s_log.error(e.getMessage(),e);
+      } catch (ClassNotFoundException e) {
+         s_log.error(e.getMessage(),e);
+      }
+   }
+
+   
 }
