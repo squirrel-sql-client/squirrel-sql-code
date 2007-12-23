@@ -42,6 +42,16 @@ import net.sourceforge.squirrel_sql.plugins.derby.tab.TriggerSourceTab;
 import net.sourceforge.squirrel_sql.plugins.derby.tab.ViewSourceTab;
 import net.sourceforge.squirrel_sql.plugins.derby.tokenizer.DerbyQueryTokenizer;
 
+import java.net.MalformedURLException;
+import java.sql.Driver;
+import java.sql.SQLException;
+import java.util.Properties;
+import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
+import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDriver;
+import net.sourceforge.squirrel_sql.fw.sql.SQLDriverManager;
+
 
 /**
  * The main controller class for the Derby plugin.
