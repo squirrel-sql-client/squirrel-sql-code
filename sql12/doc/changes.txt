@@ -7,6 +7,8 @@ SQuirreL SQL Client Change Log
 Bug-Fixes:
 
 1848924: Sybase object browser contents not displayed.
+1541325: Connection doesn't close when ending session - thanks goes to
+         Alex Pivovarov for the patch that fixed the issue.
 
 Oracle Plugin:
  - Allow the user to configure whether or not to show the syntax error offset in 
