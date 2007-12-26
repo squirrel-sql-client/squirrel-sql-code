@@ -46,6 +46,9 @@ public class ColumnDifference {
     private String col1remarks = "";
     private String col2remarks = "";
     
+    private String col1default = "";
+    private String col2default = "";
+    
     public ColumnDifference() {}
     
     public void setColumns(TableColumnInfo c1, TableColumnInfo c2) {
@@ -71,6 +74,7 @@ public class ColumnDifference {
         tableName = c1.getTableName();
         columnName = c1.getColumnName();        
         col1remarks = c1.getRemarks();
+        col1default = c1.getDefaultValue();
     }
 
     public void setColumn2(TableColumnInfo c2) {
@@ -80,6 +84,7 @@ public class ColumnDifference {
         tableName = c2.getTableName();
         columnName = c2.getColumnName();    
         col2remarks = c2.getRemarks();
+        col2default = c2.getDefaultValue();
     }
     
     public int getCol1Type() {
@@ -112,6 +117,14 @@ public class ColumnDifference {
     
     public String getCol2Remarks() {
         return col2remarks;
+    }
+
+    public String getCol1Default() {
+        return col1default;
+    }
+    
+    public String getCol2Default() {
+        return col2default;
     }
     
     /**
@@ -193,6 +206,17 @@ public class ColumnDifference {
      */
     public boolean isCol2Exists() {
         return col2Exists;
+    }
+    
+    public boolean defaultsEqual() {
+        if (col1default == null && col2default == null) {
+            return true;
+        }
+        if ((col1default == null && col2default != null)
+                || (col1default != null && col2default == null)) {
+            return false;
+        }
+        return col1default.equals(col2default);
     }
     
     public boolean remarksEqual() {

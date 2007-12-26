@@ -69,22 +69,7 @@ public class DBDiffPlugin extends DefaultSessionPlugin
         addMenuItemsToContextMenu(session);    
         return new DBDiffPluginSessionCallback(this);
     }
-    
-    public void sessionEnding(final ISession session) {
-        /*
-        if (session.equals(copySourceSession)) {
-            copySourceSession = null;
-            // Can't paste from a session that is no longer around.
-            setPasteMenuEnabled(false);
-        }
-        */
-        // Be sure to forget the dialect that was being "remembered" for 
-        // this session.  A reference to the session might possibly be 
-        // maintained in ColTypeMapper that would keep it from being 
-        // garbage collected.
-        //DialectFactory.removeSession(session);        
-    }
-    
+        
     /* (non-Javadoc)
      * @see net.sourceforge.squirrel_sql.client.plugin.IPlugin#getInternalName()
      */

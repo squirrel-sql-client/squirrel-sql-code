@@ -74,16 +74,7 @@ public class DiffExecutor extends I18NBaseObject {
     
     /** the thread we do the work in */
     private Thread execThread = null;
-                
-    /** whether or not the user cancelled the copy operation */
-    private volatile boolean cancelled = false;    
-    
-    /** the start time in millis that the copy operation began */
-    private long start = 0;
-    
-    /** the finish time in millis that the copy operation began */
-    private long end = 0;
-    
+                    
     private List<ColumnDifference> colDifferences = 
         new ArrayList<ColumnDifference>();
     
@@ -116,19 +107,10 @@ public class DiffExecutor extends I18NBaseObject {
         execThread.start();
     }
 
-    /** 
-     * Cancels the copy operation.
-     */
-    public void cancel() {
-        cancelled = true;
-        execThread.interrupt();        
-    }
-    
     /**
      * Performs the table diff operation. 
      */
     private void _execute() throws SQLException {
-        start = System.currentTimeMillis();
         boolean encounteredException = false;
         IDatabaseObjectInfo[] sourceObjs = 
             prov.getSourceSelectedDatabaseObjects();
@@ -207,7 +189,6 @@ public class DiffExecutor extends I18NBaseObject {
         if (encounteredException) {
             return;
         }         
-        end = System.currentTimeMillis();
     }
     
     private Set<String> getAllTableNames(Map<String, ITableInfo> tables) {
@@ -224,7 +205,9 @@ public class DiffExecutor extends I18NBaseObject {
         if (objs[0].getDatabaseObjectType() == DatabaseObjectType.TABLE) {
             for (int i = 0; i < objs.length; i++) {
                 IDatabaseObjectInfo info = objs[i];
-                result.put(info.getSimpleName(), (ITableInfo)info);
+                
+                // TODO: allow the user to specify ignore case or preserve case.
+                result.put(info.getSimpleName().toUpperCase(), (ITableInfo)info);
             }
         } else {
             // Assume objs[0] is a schema/catalog
@@ -296,18 +279,4 @@ public class DiffExecutor extends I18NBaseObject {
         return result;
     }
     
-    /**
-     * 
-     * @return
-     */
-    private long getElapsedSeconds() {
-        long result = 1;
-        double elapsed = end - start;
-        if (elapsed > 1000) {
-            result = Math.round(elapsed / 1000);
-        }
-        return result;
-    }
-        
-        
 }
