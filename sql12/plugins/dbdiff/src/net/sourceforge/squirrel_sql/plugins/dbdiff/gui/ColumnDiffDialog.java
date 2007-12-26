@@ -129,9 +129,9 @@ public class ColumnDiffDialog extends javax.swing.JDialog {
         TableColumn cornerTableCol2 = cornerTableColModel.getColumn(1);
         
         int column1MinWidth = getLongestColumnDifferenceTableName(diffs)*3;
-        System.out.println("column1MinWidth: "+column1MinWidth);
+        //System.out.println("column1MinWidth: "+column1MinWidth);
         int column2MinWidth = getLongestColumnDifferenceColumnName(diffs)*7;
-        System.out.println("column2MinWidth: "+column2MinWidth);
+        //System.out.println("column2MinWidth: "+column2MinWidth);
         rowHeaderTableCol1.setMinWidth(column1MinWidth);
         rowHeaderTableCol2.setMinWidth(column2MinWidth);
         cornerTableCol1.setMinWidth(column1MinWidth);
