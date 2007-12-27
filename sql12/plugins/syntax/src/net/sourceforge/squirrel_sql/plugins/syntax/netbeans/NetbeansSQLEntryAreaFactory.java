@@ -21,7 +21,7 @@ import java.util.HashMap;
 
 import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessorFactory;
+import net.sourceforge.squirrel_sql.fw.id.IIdentifier;
 import net.sourceforge.squirrel_sql.plugins.syntax.IConstants;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPugin;
@@ -39,6 +39,14 @@ public class NetbeansSQLEntryAreaFactory
 {
 	private SyntaxPugin _plugin;
    private SyntaxFactory _syntaxFactory;
+   
+   /** 
+    * This stores the panels that have been allocated so that they can be 
+    * told when sessions are ending.  Internally they store references that need
+    * to be nulled to allow for garbage-collection.
+    */
+   private HashMap<IIdentifier, NetbeansSQLEntryPanel> _panels = 
+      new HashMap<IIdentifier, NetbeansSQLEntryPanel>();
 
    public NetbeansSQLEntryAreaFactory(SyntaxPugin plugin)
 	{
@@ -68,7 +76,10 @@ public class NetbeansSQLEntryAreaFactory
 		}
 
 		SyntaxPreferences prefs = getPreferences(session);
-      return new NetbeansSQLEntryPanel(session, prefs, _syntaxFactory, _plugin, props);
+		NetbeansSQLEntryPanel panel = 
+		   new NetbeansSQLEntryPanel(session, prefs, _syntaxFactory, _plugin, props);
+		_panels.put(session.getIdentifier(), panel);
+      return panel;
 	}
 
 	private SyntaxPreferences getPreferences(ISession session)
@@ -77,8 +88,24 @@ public class NetbeansSQLEntryAreaFactory
 	}
 
 
-   public void sessionEnding(ISession sess)
-   {
-      _syntaxFactory.sessionEnding(sess);
-   }
+   /**
+	 * Removes the references to sessions when they are ending so that they can
+	 * be garbage-collected.
+	 * 
+	 * @param sess the session that is ending.
+	 */
+	public void sessionEnding(final ISession sess)
+	{
+		_syntaxFactory.sessionEnding(sess);
+		final IIdentifier id = sess.getIdentifier();
+		if (id != null && _panels.containsKey(id))
+		{
+			NetbeansSQLEntryPanel panel = _panels.get(id);
+			if (panel != null)
+			{
+				panel.sessionEnding();
+			}
+			_panels.remove(id);
+		}
+	}
 }
