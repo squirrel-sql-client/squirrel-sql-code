@@ -1,6 +1,15 @@
 SQuirreL SQL Client Change Log
 ==============================
 
+
+2.6.4 (??/??/????)
+=================
+
+Bug-Fixes:
+
+Syntax Plugin: Fixed memory leak which caused sessions not to be garbage 
+collected.
+
 2.6.3 (12/22/2007)
 =================
 
