@@ -43,6 +43,9 @@ CASCADE or RESTRICT.  Now we append CASCADE to the DROP TABLE statement.
 1820020: modified tables aren't sorted
 1815667: Create Table Script does not include column defaults
 
+Syntax Plugin: Fixed memory leak which caused sessions not to be garbage 
+collected.
+
 Bug-fix for plugin unloading where unloading a session plugin did not prevent 
 it from binding to new sessions.
 
