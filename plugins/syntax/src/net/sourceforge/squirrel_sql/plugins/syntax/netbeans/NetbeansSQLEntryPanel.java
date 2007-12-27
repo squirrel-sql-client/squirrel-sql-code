@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.syntax.netbeans;
+
 /*
  * Copyright (C) 2004 Gerd Wagner
  * colbell@users.sourceforge.net
@@ -39,7 +40,6 @@ import net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLTokenListener;
 import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessor;
-import net.sourceforge.squirrel_sql.client.session.parser.IParserEventsProcessorFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.syntax.SyntaxPreferences;
@@ -53,62 +53,60 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 	private static final ILogger s_log = LoggerController.createLogger(NetbeansSQLEntryPanel.class);
 
 	/** Application API. */
-    @SuppressWarnings("unused")
+	@SuppressWarnings("unused")
 	private IApplication _app;
 
 	/** Text component. */
 	private NetbeansSQLEditorPane _textArea;
 
-   private SyntaxFactory _syntaxFactory;
-   private ISession _session;
-   private SyntaxPugin _plugin;
-   private NetbeansPropertiesWrapper _propertiesWrapper;
-   
-   @SuppressWarnings("unused")
-   private DropTarget dt;
-   
-   NetbeansSQLEntryPanel(ISession session, 
-                         SyntaxPreferences prefs, 
-                         SyntaxFactory syntaxFactory, 
-                         SyntaxPugin plugin, 
-                         HashMap<String, Object> props)
-   {
-       super(session.getApplication());
-       if (session == null)
-       {
-           throw new IllegalArgumentException("Null ISession passed");
-       }
+	private SyntaxFactory _syntaxFactory;
 
-       _propertiesWrapper = new NetbeansPropertiesWrapper(props);
+	private ISession _session;
 
-       _plugin = plugin;
+	private SyntaxPugin _plugin;
 
+	private NetbeansPropertiesWrapper _propertiesWrapper;
 
-       _syntaxFactory = syntaxFactory;
-       _session = session;
-       _plugin = plugin;
+	@SuppressWarnings("unused")
+	private DropTarget dt;
 
-       _app = session.getApplication();
+	NetbeansSQLEntryPanel(ISession session, SyntaxPreferences prefs,
+			SyntaxFactory syntaxFactory, SyntaxPugin plugin,
+			HashMap<String, Object> props)
+	{
+		super(session.getApplication());
+		if (session == null)
+		{
+			throw new IllegalArgumentException("Null ISession passed");
+		}
 
-       _textArea = new NetbeansSQLEditorPane(session, 
-                                             prefs, 
-                                             syntaxFactory, 
-                                             _plugin, 
-                                             getIdentifier(), 
-                                             _propertiesWrapper);
+		_propertiesWrapper = new NetbeansPropertiesWrapper(props);
 
-       dt = new DropTarget(_textArea, new FileEditorDropTargetListener(session)); 
-   }
+		_plugin = plugin;
 
+		_syntaxFactory = syntaxFactory;
+		_session = session;
+		_plugin = plugin;
 
-   public int getCaretLineNumber()
-   {
-      final int pos = getCaretPosition();
-      final Document doc = _textArea.getDocument();
-      final Element docElem = doc.getDefaultRootElement();
-      return docElem.getElementIndex(pos);
-   }
+		_app = session.getApplication();
 
+		_textArea = new NetbeansSQLEditorPane(	session,
+															prefs,
+															syntaxFactory,
+															_plugin,
+															getIdentifier(),
+															_propertiesWrapper);
+
+		dt = new DropTarget(_textArea, new FileEditorDropTargetListener(session));
+	}
+
+	public int getCaretLineNumber()
+	{
+		final int pos = getCaretPosition();
+		final Document doc = _textArea.getDocument();
+		final Element docElem = doc.getDefaultRootElement();
+		return docElem.getElementIndex(pos);
+	}
 
 	/**
 	 * @see ISQLEntryPanel#gettextComponent()
@@ -119,11 +117,11 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 	}
 
 	/**
-	 * If the component returned by <TT>getTextComponent</TT> contains
-	 * its own scroll bars return <TT>true</TT> other wise this component
-	 * will be wrapped in the scroll pane when added to the SQL panel.
-	 *
-	 * @return	<TT>true</TT> if text component already handles scrolling.
+	 * If the component returned by <TT>getTextComponent</TT> contains its own
+	 * scroll bars return <TT>true</TT> other wise this component will be
+	 * wrapped in the scroll pane when added to the SQL panel.
+	 * 
+	 * @return <TT>true</TT> if text component already handles scrolling.
 	 */
 	public boolean getDoesTextComponentHaveScroller()
 	{
@@ -140,8 +138,8 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 
 	public void setFont(Font font)
 	{
-      // See SQLSettingsInitializer to find out how fonts are
-      // handled in the Netbeans editor.
+		// See SQLSettingsInitializer to find out how fonts are
+		// handled in the Netbeans editor.
 		// _textArea.setFont(font);
 	}
 
@@ -154,41 +152,44 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 	}
 
 	/**
-	 * Replace the contents of the SQL entry area with the passed
-	 * SQL script without selecting it.
-	 *
-	 * @param	sqlScript	The script to be placed in the SQL entry area..
+	 * Replace the contents of the SQL entry area with the passed SQL script
+	 * without selecting it.
+	 * 
+	 * @param sqlScript
+	 *           The script to be placed in the SQL entry area..
 	 */
 	public void setText(String text)
 	{
 		setText(text, true);
-      triggerParser();
+		triggerParser();
 	}
 
 	/**
-	 * Replace the contents of the SQL entry area with the passed
-	 * SQL script and specify whether to select it.
-	 *
-	 * @param	sqlScript	The script to be placed in the SQL entry area..
-	 * @param 	select		If <TT>true</TT> then select the passed script
-	 *						in the sql entry area.
+	 * Replace the contents of the SQL entry area with the passed SQL script and
+	 * specify whether to select it.
+	 * 
+	 * @param sqlScript
+	 *           The script to be placed in the SQL entry area..
+	 * @param select
+	 *           If <TT>true</TT> then select the passed script in the sql
+	 *           entry area.
 	 */
 	public void setText(String text, boolean select)
 	{
 		_textArea.setText(text);
-      if (select)
-      {
-         setSelectionEnd(_textArea.getDocument().getLength());
-         setSelectionStart(0);
-      }
-      triggerParser();
+		if (select)
+		{
+			setSelectionEnd(_textArea.getDocument().getLength());
+			setSelectionStart(0);
+		}
+		triggerParser();
 	}
 
 	/**
-	 * Append the passed SQL script to the SQL entry area but don't select
-	 * it.
-	 *
-	 * @param	sqlScript	The script to be appended.
+	 * Append the passed SQL script to the SQL entry area but don't select it.
+	 * 
+	 * @param sqlScript
+	 *           The script to be appended.
 	 */
 	public void appendText(String sqlScript)
 	{
@@ -196,12 +197,14 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 	}
 
 	/**
-	 * Append the passed SQL script to the SQL entry area and specify
-	 * whether it should be selected.
-	 *
-	 * @param	sqlScript	The script to be appended.
-	 * @param	select		If <TT>true</TT> then select the passed script
-	 *						in the sql entry area.
+	 * Append the passed SQL script to the SQL entry area and specify whether it
+	 * should be selected.
+	 * 
+	 * @param sqlScript
+	 *           The script to be appended.
+	 * @param select
+	 *           If <TT>true</TT> then select the passed script in the sql
+	 *           entry area.
 	 */
 	public void appendText(String sqlScript, boolean select)
 	{
@@ -223,10 +226,9 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 				setSelectionStart(start);
 			}
 
-         triggerParser();
+			triggerParser();
 
-		}
-		catch (Exception ex)
+		} catch (Exception ex)
 		{
 			s_log.error("Error appending text to text area", ex);
 		}
@@ -251,7 +253,7 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 	public void setTabSize(int tabSize)
 	{
 		_textArea.getDocument().putProperty(PlainDocument.tabSizeAttribute,
-												Integer.valueOf(tabSize));
+														Integer.valueOf(tabSize));
 	}
 
 	/**
@@ -287,30 +289,32 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 	}
 
 	/**
-	 * Replace the currently selected text in the SQL entry area
-	 * with the passed text.
-	 *
-	 * @param	sqlScript	The script to be placed in the SQL entry area.
+	 * Replace the currently selected text in the SQL entry area with the passed
+	 * text.
+	 * 
+	 * @param sqlScript
+	 *           The script to be placed in the SQL entry area.
 	 */
 	public void replaceSelection(String sqlScript)
 	{
 		_textArea.replaceSelection(sqlScript);
 
-      triggerParser();
+		triggerParser();
 
-   }
+	}
 
-   private void triggerParser()
-   {
-      IParserEventsProcessor parserEventsProcessor = _propertiesWrapper.getParserEventsProcessor(getIdentifier(), _session);
+	private void triggerParser()
+	{
+		IParserEventsProcessor parserEventsProcessor = _propertiesWrapper.getParserEventsProcessor(	getIdentifier(),
+																																	_session);
 
-      if(null != parserEventsProcessor)
-      {
-         parserEventsProcessor.triggerParser();
-      }
-   }
+		if (null != parserEventsProcessor)
+		{
+			parserEventsProcessor.triggerParser();
+		}
+	}
 
-   /**
+	/**
 	 * @see ISQLEntryPanel#hasFocus()
 	 */
 	public boolean hasFocus()
@@ -323,15 +327,14 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 	 */
 	public void requestFocus()
 	{
-      SwingUtilities.invokeLater(new Runnable()
-      {
-         public void run()
-         {
-            _textArea.requestFocus();
-         }
-      });
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				_textArea.requestFocus();
+			}
+		});
 	}
-
 
 	/**
 	 * @see ISQLEntryPanel#addMouseListener(java.awt.event.MouseListener)
@@ -378,31 +381,28 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 		_textArea.getDocument().removeUndoableEditListener(listener);
 	}
 
-
-
 	/**
 	 * @see ISQLEntryPanel#getCaretLinePosition()
 	 */
 	public int getCaretLinePosition()
 	{
-      String textTillCarret = getText().substring(0, getCaretPosition());
+		String textTillCarret = getText().substring(0, getCaretPosition());
 
-      int lineFeedIndex = textTillCarret.lastIndexOf('\n');
-      if(- 1 == lineFeedIndex)
-      {
-         return getCaretPosition();
-      }
-      else
-      {
-         return getCaretPosition() - lineFeedIndex - 1;
-      }
+		int lineFeedIndex = textTillCarret.lastIndexOf('\n');
+		if (-1 == lineFeedIndex)
+		{
+			return getCaretPosition();
+		} else
+		{
+			return getCaretPosition() - lineFeedIndex - 1;
+		}
 
-// this didn't work      
-//		final int pos = getCaretPosition();
-//		final Document doc = _textArea.getStyledDocument();
-//		final Element docElem = doc.getDefaultRootElement();
-//		final Element lineElem = docElem.getElement(getCaretLineNumber());
-//		return lineElem.getElementIndex(pos);
+		// this didn't work
+		// final int pos = getCaretPosition();
+		// final Document doc = _textArea.getStyledDocument();
+		// final Element docElem = doc.getDefaultRootElement();
+		// final Element lineElem = docElem.getElement(getCaretLineNumber());
+		// return lineElem.getElementIndex(pos);
 	}
 
 	/**
@@ -423,35 +423,47 @@ public class NetbeansSQLEntryPanel extends BaseSQLEntryPanel
 
 	public void addSQLTokenListener(SQLTokenListener tl)
 	{
-      _syntaxFactory.addSQLTokenListeners(_session, tl);
+		_syntaxFactory.addSQLTokenListeners(_session, tl);
 	}
 
 	public void removeSQLTokenListener(SQLTokenListener tl)
 	{
-      _syntaxFactory.addSQLTokenListeners(_session, tl);
+		_syntaxFactory.addSQLTokenListeners(_session, tl);
 	}
 
-   public ISession getSession()
-   {
-      return _session;
-   }
+	public ISession getSession()
+	{
+		return _session;
+	}
 
-   public void showFindDialog(ActionEvent evt)
-   {
-      SQLKit kit = (SQLKit) _textArea.getEditorKit();
-      kit.getActionByName(ExtKit.findAction).actionPerformed(evt);
-   }
+	public void showFindDialog(ActionEvent evt)
+	{
+		SQLKit kit = (SQLKit) _textArea.getEditorKit();
+		kit.getActionByName(ExtKit.findAction).actionPerformed(evt);
+	}
 
-   public void showReplaceDialog(ActionEvent evt)
-   {
-      SQLKit kit = (SQLKit) _textArea.getEditorKit();
-      kit.getActionByName(ExtKit.replaceAction).actionPerformed(evt);
-   }
+	public void showReplaceDialog(ActionEvent evt)
+	{
+		SQLKit kit = (SQLKit) _textArea.getEditorKit();
+		kit.getActionByName(ExtKit.replaceAction).actionPerformed(evt);
+	}
 
-    /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel#setUndoManager(javax.swing.undo.UndoManager)
-     */
-    public void setUndoManager(UndoManager manager) {
-        _textArea.setUndoManager(manager);
-    }    
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see net.sourceforge.squirrel_sql.client.session.ISQLEntryPanel#setUndoManager(javax.swing.undo.UndoManager)
+	 */
+	public void setUndoManager(UndoManager manager)
+	{
+		_textArea.setUndoManager(manager);
+	}
+
+	/**
+	 * Sets the session referenced by this class to null so that it can be
+	 * garbage-collected.
+	 */
+	public void sessionEnding()
+	{
+		_session = null;
+	}
 }

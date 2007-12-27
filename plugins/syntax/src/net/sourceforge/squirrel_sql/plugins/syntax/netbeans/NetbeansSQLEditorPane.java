@@ -32,7 +32,11 @@ import org.netbeans.editor.Settings;
 
 public class NetbeansSQLEditorPane extends JEditorPane
 {
-   private boolean _parsingInitialized;
+   /**
+	 * 
+	 */
+	private static final long serialVersionUID = -7433339152923153176L;
+	private boolean _parsingInitialized;
    private ISession _session;
    private ErrorInfo[] _currentErrorInfos = new ErrorInfo[0];
    private SyntaxPreferences _prefs;
@@ -152,7 +156,9 @@ public class NetbeansSQLEditorPane extends JEditorPane
       final Action origAction = getKeymap().getAction(ks);
       Action triggerParserAction = new AbstractAction()
       {
-         public void actionPerformed(ActionEvent e)
+			private static final long serialVersionUID = 1158324060321498929L;
+
+			public void actionPerformed(ActionEvent e)
          {
             // This event does not always hit the righr editor !?
             // That's why we can't use _sqlEntryPanelIdentifier
@@ -285,8 +291,8 @@ public class NetbeansSQLEditorPane extends JEditorPane
 			// But if two Sessions are open and one is closed the one left open looses
 			// key bindings. For example the Arrow navigation keys.
 			//getKeymap().removeBindings();
+			
+			_session = null;
 		}
 	}
-
-
 }
