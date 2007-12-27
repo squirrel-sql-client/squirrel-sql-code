@@ -1,16 +1,4 @@
-
-import java.util.ArrayList;
-
-import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
-import net.sourceforge.squirrel_sql.client.update.gui.ArtifactAction;
-import net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus;
-import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean;
-import net.sourceforge.squirrel_sql.client.update.xmlbeans.UpdateXmlSerializer;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
+package net.sourceforge.squirrel_sql.client.update.xmlbeans;
 /*
  * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
@@ -29,6 +17,19 @@ import org.junit.Test;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+import java.util.ArrayList;
+
+import net.sourceforge.squirrel_sql.BaseSQuirreLJUnit4TestCase;
+import net.sourceforge.squirrel_sql.client.update.gui.ArtifactAction;
+import net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus;
+import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean;
+import net.sourceforge.squirrel_sql.client.update.xmlbeans.UpdateXmlSerializer;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 
 public class ChangeListXmlBeanExternalTest extends BaseSQuirreLJUnit4TestCase {
 
