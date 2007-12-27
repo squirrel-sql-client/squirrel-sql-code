@@ -33,7 +33,7 @@ public class UpdateUtilExternalTest extends BaseSQuirreLJUnit4TestCase {
     
     @Before
     public void setUp() throws Exception {
-        utilUnderTest = new UpdateUtil();
+        utilUnderTest = new UpdateUtilImpl();
     }
 
     @After
@@ -46,7 +46,7 @@ public class UpdateUtilExternalTest extends BaseSQuirreLJUnit4TestCase {
         String host = "squirrel-sql.sourceforge.net";
         String file = "firebird_object_tree.jpg";
         String path = "/downloads/";
-        UpdateUtil util = new UpdateUtil();
+        UpdateUtil util = new UpdateUtilImpl();
         util.downloadHttpFile(host, path, file, ".");
     }
 }
