@@ -29,9 +29,9 @@ public class LockTab extends BaseDataSetTab {
         String HINT = s_stringMgr.getString("LockDetailsTab.hint");
         //i18n[LockDetailsTab.title=Locks]
         String TITLE = s_stringMgr.getString("LockDetailsTab.title");
-
     }
 
+    /** The query that yields the locks present in the server */
     private static final String QUERY = "SELECT "
         + "    pgl.relation::regclass AS \"Class\", "
         + "    pg_get_userbyid(pg_stat_get_backend_userid(svrid)) AS \"User\", "
@@ -44,7 +44,10 @@ public class LockTab extends BaseDataSetTab {
         + "FROM "
         + "    pg_stat_get_backend_idset() svrid, pg_locks pgl, pg_database db "
         + "WHERE "
-        + "    datname = current_database() AND pgl.pid = pg_stat_get_backend_pid(svrid) AND db.oid = pgl.database "
+        + "    datname = current_database() AND "
+        // This causes locks own by other pids to be excluded from the result.
+        //+ "    pgl.pid = pg_stat_get_backend_pid(svrid) AND "
+        + "    db.oid = pgl.database "
         + "ORDER BY " + "    user,pid";;
     
     

@@ -1,70 +1,130 @@
-<HTML>
+<html>
 
-<HEAD>
-    <TITLE>PostgreSQL Plugin</TITLE>
-</HEAD>
+<head>
+	<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-8859-1">
+  <title>PostgreSQL Plugin</title>
+  <link rel="stylesheet" type="text/css" href="style.css" title="SQuirreL SQL Client Stylesheet">
+</head>
 
-<BODY>
-<center><h1>PostgreSQL Plugin</h1></center>
+<body>
+<h1 align="center">PostgreSQL Plugin</h1>
 
-<h2>Author</h2>
+<table border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td><b>Contents</b></a></td>
+	</tr>
+	<tr>
+		<td><a href="#introduction">Introduction</a></td>
+	</tr>
+	<tr>
+		<td><a href="#new_tabs">New Tabs</a></td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#index_details_tab">Index Details Tab</a></td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#index_source_tab">Index Source Tab</a></td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#stored_procedure_source_tab">Stored Procedure Source Tab</a></td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#sequence_details_tab">Sequence Details Tab</a></td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#trigger_source_tab">Trigger Source Tab</a></td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#trigger_details_tab">Trigger Details Tab</a></td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#view_source_tab">View Source Tab</a></td>
+	</tr>
+	<tr>
+		<td><a href="#vacuum">VACUUM</a></td>
+	</tr>
+	<tr>
+		<td><a href="#explain">EXPLAIN (Query Plan)</a></td>
+	</tr>
+</table>
+
+<h2>Authors</h2>
 <ul>
-<li>Rob Manning</li>
+	<li>Rob Manning</li>
+	<br>
+	<li><b>Contributors</b></li>
+	<ul>
+		<li>Daniel Regli</li>
+		<li>Yannick Winiger</li>
+	</ul>
 </ul>
 
-<H2>Introduction</H2>
-
-<P>The PostgreSQL plugin adds PostgreSQL-specific functionality to the SQuirreL SQL
-Client. Read access is required to the following system views in order for this
-additional functionality to work correctly:
-<UL>
+<a name="introduction">
+	<h2>Introduction</h2>
+</a>
+<p>
+	The PostgreSQL plugin adds PostgreSQL-specific functionality to the SQuirreL SQL
+	Client. Read access is required to the following system views in order for this
+	additional functionality to work correctly:
+</p>
+<ul>
 <li>information_schema.triggers</li>
 <li>information_schema.views</li>
 <li>pg_catalog.pg_stat_all_indexes</li>
 <li>pg_catalog.pg_index</li>
 <li>pg_catalog.pg_proc</li>
 <li>pg_catalog.pg_namespace</li>
-</UL>
-Note: Some statistical counts are only available when statistics collection 
-is enabled.  The statistics collector must be configured to be launched before 
-the server is started by setting stats_start_collector to true in postgresql.conf.
-(This is the default setting) Additionally, statistics need to be sent to the 
-collector with a few more configuration items which can be made at runtime.  To 
-change these for a session the user needs to be a superuser.  This can be done 
-in postgresql.conf or on a per-session basis with the following commands:<p>
-
+</ul>
+<p>
+	Note: Some statistical counts are only available when statistics collection 
+	is enabled.  The statistics collector must be configured to be launched before 
+	the server is started by setting stats_start_collector to true in postgresql.conf.
+	(This is the default setting) Additionally, statistics need to be sent to the 
+	collector with a few more configuration items which can be made at runtime.  To 
+	change these for a session the user needs to be a superuser.  This can be done 
+	in postgresql.conf or on a per-session basis with the following commands:
+</p>
 <pre>
-set stats_block_level to on 
-
-set stats_row_level to on 
+	set stats_block_level to on 
+	
+	set stats_row_level to on 
 </pre>
+<p>
+	Be aware that these settings will add overhead to query execution (which is why
+	they are disabled by default)
+</p>
 
-Be aware that these settings will add overhead to query execution (which is why
-they are disabled by default)
+<br/><hr/>
 
-<H2>New Tabs</H2>
-
-<P>Stored Procedures, Triggers and Views are shown in the object tree and have 
-a &quot;Source&quot; tab which displays the source of the selected object and 
-a &quot;Details&quot; tab which gives PostgreSQL-specific information about the 
-object.  Sequences and Indexes are also shown in the object tree and have a 
-details tab giving DB2-specific information about them.  
+<a name="new_tabs">
+	<h2>New Tabs</h2>
+</a>
+<p>
+	Stored Procedures, Triggers and Views are shown in the object tree and have 
+	a &quot;Source&quot; tab which displays the source of the selected object and 
+	a &quot;Details&quot; tab which gives PostgreSQL-specific information about the 
+	object.  Sequences and Indexes are also shown in the object tree and have a 
+	details tab giving DB2-specific information about them.
+</p>
 
 <!-- INDEX -->
+<a name="index_details_tab">
+	<h3>Index Details Tab</h3>
+</a>
+<p>
+	The index details tab can be accessed by navigating the object tree to the INDEX
+	folder beneath any table that has one or multiple indexes.  The index(es) will 
+	be listed by name under the table folder, and selecting one will place a 
+	details tab in the right-hand view of the session window.
+</p>
+<p align="center">
+	<img src="images/new_tabs/index_details.jpg" border="1">
+</p>
+<p>
+	The information provided by the details tab for indexes is derived by the 
+	following query:
+</p>
 
-<h2>Index Details Tab</h2>
-The index details tab can be accessed by navigating the object tree to the INDEX
-folder beneath any table that has one or multiple indexes.  The index(es) will 
-be listed by name under the table folder, and selecting one will place a 
-details tab in the right-hand view of the session window.
-<p>
-<center>
-<img src="images/index_details.jpg">
-</center>
-<p>
-The information provided by the details tab for indexes is derived by the 
-following query:
-<p>
 <pre>
 	select inds.schemaname as schemaname, 
 	       inds.relname as tablename, 
@@ -79,43 +139,50 @@ following query:
 	and inds.schemaname = ? 
 	and inds.indexrelname = ?  
 </pre>
-<p>
 
+<br/><hr/>
 
-<h2>Index Source Tab</h2>
-The index source tab can be accessed by navigating the object tree as above and
-selecting the "Source" tab which is adjacent to the "Details" tab. An example
-is shown below:
+<a name="index_source_tab">
+	<h3>Index Source Tab</h3>
+</a>
 <p>
-<center>
-<img src="images/index_source.jpg">
-</center>
+	The index source tab can be accessed by navigating the object tree as above and
+	selecting the "Source" tab which is adjacent to the "Details" tab. An example
+	is shown below:
+</p>
+<p align="center">
+	<img src="images/new_tabs/index_source.jpg" border="1">
+</p>
 <p>
-The information provided by the source tab for indexes is derived by the 
-following query:
-<p>
+	The information provided by the source tab for indexes is derived by the 
+	following query:
+</p>
+
 <pre>
 	select indexdef 
 	from pg_indexes 
 	where schemaname = ? 
 	and indexname = ? 
 </pre>
-<p>
 
+<br/><hr/>
 
 <!-- STORED PROC SOURCE -->
-
-<h2>Stored Procedure Source Tab</h2>
-The Stored Procedure Source tab can be accessed by navigating to a schema and 
-then to the PROCEDURE folder beneath the schema.  In the following picture, 
-the schema is &quot;dbcopydest&quot;
+<a name="stored_procedure_source_tab">
+	<h3>Stored Procedure Source Tab</h3>
+</a>
 <p>
-<center>
-<img src="images/procedure_source.jpg">
-</center>
+	The Stored Procedure Source tab can be accessed by navigating to a schema and 
+	then to the PROCEDURE folder beneath the schema.  In the following picture, 
+	the schema is &quot;dbcopydest&quot;
+</p>
+<p align="center">
+	<img src="images/new_tabs/procedure_source.jpg" border="1">
+</p>
 <p>
-The source code for stored procedures is derived by the following query:
-<p>
+	The source code for stored procedures is derived by the following query:
+</p>
+	
 <pre>
 	SELECT p.prosrc FROM pg_proc p, pg_namespace n 
 	where p.pronamespace = n.oid 
@@ -123,39 +190,49 @@ The source code for stored procedures is derived by the following query:
 	and p.proname = ? 
 </pre>
 
-<!-- SEQUENCE -->
+<br/><hr/>
 
-<h2>Sequence Details Tab</h2>
-Sequences will appear in the object tree under the SCHEMA folder. The details 
-tab for sequences displays information about the selected sequence according 
-to the system catalog. An example of this is shown in the following picture:
+<!-- SEQUENCE -->
+<a name="sequence_details_tab">
+	<h3>Sequence Details Tab</h3>
+</a>
 <p>
-<center>
-<img src="images/sequence_details.jpg">
-</center>
+	Sequences will appear in the object tree under the SCHEMA folder. The details 
+	tab for sequences displays information about the selected sequence according 
+	to the system catalog. An example of this is shown in the following picture:
+</p>
+<p align="center">
+	<img src="images/new_tabs/sequence_details.jpg" border="1">
+</p>
 <p>
-The information in the details tab for a sequence is derived from the following
-query:
-<p>
+	The information in the details tab for a sequence is derived from the following
+	query:
+</p>
+
 <pre>
 SELECT last_value, max_value, min_value, cache_value, increment_by, is_cycled 
 FROM  &lt;schema.sequencename&gt;
 </pre>
 
-<!-- TRIGGER SOURCE -->
+<br/><hr/>
 
-<h2>Trigger Source Tab</h2>
-The source tab for triggers displays the source for a table trigger and can
-be accessed by navigating to the &quot;TRIGGER&quot; folder beneath a table 
-object in the object tree.  An example of this is shown in the following 
-picture:
+<!-- TRIGGER SOURCE -->
+<a name="trigger_source_tab">
+	<h3>Trigger Source Tab</h3>
+</a>
 <p>
-<center>
-<img src="images/trigger_source.jpg">
-</center>
+	The source tab for triggers displays the source for a table trigger and can
+	be accessed by navigating to the &quot;TRIGGER&quot; folder beneath a table 
+	object in the object tree.  An example of this is shown in the following 
+	picture:
+</p>
+<p align="center">
+	<img src="images/new_tabs/trigger_source.jpg" border="1">
+</p>
 <p>
-The source code for triggers is derived from the following query:
-<p>
+	The source code for triggers is derived from the following query:
+</p>
+
 <pre>
 	select 'create trigger ' || t.trigger_name || ' ' || condition_timing 
 	|| ' ' || v.manip || ' on ' || event_object_table 
@@ -204,22 +281,26 @@ The source code for triggers is derived from the following query:
 	and t.trigger_name = ? 
 	group by trigdef 
 </pre>
-<p>
+
+<br/><hr/>
 
 <!-- TRIGGER DETAILS -->
+<a name="trigger_details_tab">
+	<h3>Trigger Details Tab</h3>
+</a>
+<p>
+	The details tab for triggers displays information about the selected trigger 
+	according to the system catalog. An example of this is shown in the following 
+	picture:
+</p>
+<p align="center">
+	<img src="images/new_tabs/trigger_details.jpg" border="1">
+</p>
+<p>
+	The information in the details tab for a trigger is derived from the following
+	query:
+</p>
 
-<h2>Trigger Details Tab</h2>
-The details tab for triggers displays information about the selected trigger 
-according to the system catalog. An example of this is shown in the following 
-picture:
-<p>
-<center>
-<img src="images/trigger_details.jpg">
-</center>
-<p>
-The information in the details tab for a trigger is derived from the following
-query:
-<p>
 <pre>
 	select condition_timing AS trigger_time, 
 	       v.manip AS triggering_event, 
@@ -269,27 +350,120 @@ query:
 	and t.trigger_name = ?  
 </pre>
 
-<!-- VIEW SOURCE -->
+<br/><hr/>
 
-<h2>View Source Tab</h2>
-The source tab for views displays the source for a view and can
-be accessed by navigating to the &quot;VIEW&quot; folder beneath a schema 
-object in the object tree.  An example of this is shown in the following 
-picture:
+<!-- VIEW SOURCE -->
+<a name="view_source_tab">
+	<h3>View Source Tab</h3>
+</a>
 <p>
-<center>
-<img src="images/view_source.jpg">
-</center>
+	The source tab for views displays the source for a view and can
+	be accessed by navigating to the &quot;VIEW&quot; folder beneath a schema 
+	object in the object tree.  An example of this is shown in the following 
+	picture:
+</p>
+<p align="center">
+	<img src="images/new_tabs/view_source.jpg" border="1">
+</p>
 <p>
-The source code for views is derived from the following query:
-<p>
+	The source code for views is derived from the following query:
+</p>
+
 <pre>
 	select view_definition 
 	from information_schema.views 
 	where table_schema = ? 
 	and table_name = ? 
 </pre>
-<p>
-</BODY>
-</HTML>
 
+<br/><hr/>
+
+<a name="vacuum">
+	<h3>VACUUM</h3>
+</a>
+<p>
+	The PostgreSQL-specific VACUUM statement garbage-collects and optionally analyzes tables or a whole database.<br>
+	This plugin allows it to directly generate and execute these vacuum statements in the object tree tab of squirrel.<br>
+	<br>
+	The generated statements can optionaly contain the FULL and/or ANALYZE parameters:
+	<ul>
+		<li>FULL: May reclaim more space, but takes much longer and exclusively locks the tables.</li>
+		<li>ANALYZE: Updates statistics used by the planner to determine the most efficient way to execute a query.</li>
+	</ul>
+	Both vacuum dialog (for tables or the database) look almost the same and offer the same set of buttons:
+	<ul>
+		<li>Show SQL: displays a dialog with the generated sql statement.</li>
+		<li>Edit SQL: copys the generated sql statement into the sql panel for further editing.</li>
+		<li>Execute: executes the database vacuumization and displays the results into an extra dialog.</li>
+	</ul>
+</p>
+<p>
+	<b>Vacuum Database</b><br>
+	To vacuum the whole database, right-click the top most node in the object tree (the database node).
+	Access the PostgreSQL menu and select Vacuum Database.<br>
+	<i>Hint: The PostgreSQL menu can also be accessed at any time via the Session menu in Squirrels main menu bar.</i>
+</p>
+<p align="center">
+	<img src="images/vacuum/database_menu.jpg" border="1">
+	<br><br>
+	<img src="images/vacuum/database_dialog.jpg" border="1">
+</p>
+<p>
+	The dialog above would generate the following SQL statement:
+</p>
+<pre>
+	VACUUM FULL VERBOSE ANALYZE ;
+</pre>
+
+<p>
+	<b>Vacuum Table(s)</b><br>
+	To vacuum a set of tables, right-click a selection of one or more tables in the object tree.
+	Access the PostgreSQL menu and select Vacuum Table(s).<br>
+</p>
+<p align="center">
+	<img src="images/vacuum/table_menu.jpg" border="1">
+	<br><br>
+	<img src="images/vacuum/table_dialog.jpg" border="1">
+</p>
+<p>
+	The dialog above would generate the following SQL statement:
+</p>
+<pre>
+	VACUUM FULL VERBOSE ANALYZE "show"."AccountStatus";
+
+	VACUUM FULL VERBOSE ANALYZE "show"."CityLookup";
+
+	VACUUM FULL VERBOSE ANALYZE "show"."EmployeeIdentification";
+</pre>
+
+<br/><hr/>
+
+<a name="explain">
+	<h3>EXPLAIN (Query Plan)</h3>
+</a>
+<p>
+	The PostgreSQL-specific EXPLAIN statement shows the execution plan (query plan) of an sql statement.
+	This plugin adds an additional executor tab to the sql panel for the display of the execution plan.
+</p>
+<p>
+	To display the execution plan of a selected statement in the sql panel, switch to the Query Plan tab.<br>
+	Executing an SQL statement while the Query Plan tab is the activ executor tab, will display the query plan of the statement.
+	(Instead of actualy executing the statement on the database.)
+</p>
+<p align="center">
+	<img src="images/explain/explain_executor_tab.jpg" border="1">
+</p>
+<p>
+	<b>Multiple Statements</b><br>
+	It is also possible to execute multiple statements. Each query plan for a statement
+	will be displayed in own tab within the Query Plan tab.
+</p>
+<p>
+	<b>Closing a Query Plan</b><br>
+	Query Plans will stay in the Query Plan tab until removed by using one of the close action
+	in the right-click menu or by clicking on the close icon on the upper right edge of the panel.
+</p>
+
+
+</body>
+</html>
