@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.refactoring.actions;
 /*
- * Copyright (C) 2006 Rob Manning
+ * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net 
  *
  * This library is free software; you can redistribute it and/or
@@ -17,35 +17,30 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.actions;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.session.action.IObjectTreeAction;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.plugins.refactoring.commands.DropTablesCommand;
 
-public class DropSelectedTablesAction extends AbstractRefactoringAction
-										implements IObjectTreeAction
-{
-    private static final long serialVersionUID = 1L;
+public class DropSelectedTablesAction extends AbstractRefactoringAction {
+    public DropSelectedTablesAction(IApplication app, Resources rsrc) {
+        super(app, rsrc);
+    }
 
-    /**
-	 * @param	app	Application API.
-	 */
-	public DropSelectedTablesAction(IApplication app, Resources rsrc)
-	{
-		super(app, rsrc);
-	}
 
     @Override
     protected ICommand getCommand(IDatabaseObjectInfo[] info) {
         return new DropTablesCommand(_session, info);
     }
 
+
     @Override
     protected String getErrorMessage() {
-        return "";
+        return null;
     }
+
 
     @Override
     protected boolean isMultipleObjectAction() {

@@ -1,460 +1,826 @@
-<HTML>
+<html>
 
-<HEAD>
-    <TITLE>Refactoring Plugin</TITLE>
-</HEAD>
+<head>
+	<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=iso-8859-1">
+  <title>Refactoring Plugin</title>
+  <link rel="stylesheet" type="text/css" href="style.css" title="SQuirreL SQL Client Stylesheet">
+</head>
 
-<BODY>
+<body>
+<h1 align="center">Refactoring Plugin</h1>
 
-<font size="+2"><b>Refactoring Plugin</b></font><font size="+1"> - Rob Manning</font>
 
 
-<H3>Introduction</H3>
+<table border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td><b>Contents</b></a></td>
+	</tr>
+	<tr>
+		<td><a href="#introduction">Introduction</a></td>
+	</tr>
+	<tr>
+		<td><a href="#supported_refactorings">Supported Refactorings</a></td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#refactorings_by_databases">Supported Refactorings by Databases</a></td>
+	</tr>
+	<tr>
+		<td><a href="#usage">Using the Refactoring Plugin</a></td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#menu">Menu</a></td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#dialogs">Dialogs</a></td>
+	</tr>
+</table>
 
-<P>The Refactoring plugin adds the ability to easily change the definition or 
+<h2>Authors</h2>
+<ul>
+	<li>Rob Manning</li>
+	<br>
+	<li><b>Contributors</b></li>
+	<ul>
+		<li>Daniel Regli</li>
+		<li>Yannick Winiger</li>
+	</ul>
+</ul>
+
+
+<a name="introduction">
+	<h2>Introduction</h2>
+</a>
+
+<p>The Refactoring plugin adds the ability to easily change the definition or 
 structure of tables / columns in a database.  Changes can be made or the SQL for
 any particular refactoring can be viewed and/or edited.  The SQL that is 
 generated is crafted specifically for the database that SQuirreL is connected to
 and is made with the help of an extended Hibernate dialect framework.  You can
-choose from the following extended Hibernate dialects:
+choose from the following extended Hibernate dialects:</p>
+
+<p align="center">
+	<table align="center" cellspacing="10" cellpadding="5">
+		<tr>
+			<td align="center">Apache Derby</td>
+			<td align="center">Axion</td>
+			<td align="center">Daffodil</td>
+			<td align="center">DB2</td>
+			<td align="center">Firebird</td>
+		</tr>
+		<tr>
+			<td align="center">FrontBase</td>
+			<td align="center">H2</td>
+			<td align="center">HSQLDB</td>
+			<td align="center">Informix</td>
+			<td align="center">CA Ingres</td>
+		</tr>
+		<tr>
+			<td align="center">MaxDB</td>
+			<td align="center">Mckoi</td>
+			<td align="center">MS-SQLServer</td>
+			<td align="center">MySQL</td>
+			<td align="center">Oracle</td>
+		</tr>
+		<tr>
+			<td align="center">Pointbase</td>
+			<td align="center">PostgreSQL</td>
+			<td align="center">Sybase ASE 12/15</td>
+			<td align="center">TimesTen</td>
+		</tr>
+	</table>
+</p>
+
+<br/><hr/>
+
+<a name="supported_refactorings">
+	<h2>Supported Refactorings</h3>
+</a>
+<p>The following refactorings are supported*:
+	<ul>
+		<li>Structural Refactorings:</li>
+		<ul>
+			<li>Rename/Drop Table</li>
+			<li><a href="#add_column">Add</a>/<a href="#modify_column">Modify</a>/Drop Column</li>
+			<li><a href="#add_view">Add</a>/Rename/Drop View</li>
+			<li>Add/Modify/Drop Sequence</li>
+			<li>Add/Drop Index</li>
+			<li><a href="#merge_columns">Merge Columns</li>
+			<li><a href="#merge_tables">Merge Tables</a></li>
+		</ul>
+		<li>Referential Integrity Refactorings:</li>
+		<ul>
+			<li><a href="#add_pk">Add</a>/Drop Primary Key</li>
+			<li><a href="#add_fk">Add</a>/Drop Foreign Key</li>
+		</ul>
+		<li>Data Quality Refactorings:</li>
+		<ul>
+			<li><a href="#add_lookup_table">Add Lookup Table</a></li>
+			<li><a href="#add_auto_increment">Add Auto Increment</a></li>
+			<li><a href="#add_unique_constraint">Add</a>/Drop Unique Constraint</li>
+		</ul>
+	</ul>
+	
+	<i>* Note: If the database doesn't support the refactoring directly with SQL, 
+	then the refactoring will be unavailable for that database.</i>
+</p>
+<p>
+	For example: Apache Derby (10.2.1.6) allowed you to add a new column to an existing table
+	using a SQL statement like <i>"ALTER TABLE ... ADD COLUMN ..."</i> yet it didn't provide
+	a way to drop an existing column via some SQL statement such as <i>"ALTER TABLE ... DROP COLUMN ..."</i>
+	like many other databases do.
+</p>
+<p>
+	A future release of the refactoring plugin will provide implementations of all refactorings
+	on databases that don't support them directly.
+</p>
+
+<br/><br/>
+
+<a name="refactorings_by_databases">
+	<h3>Supported Refactorings by Databases</h3>
+</a>
+<p>
+	The following table summarizes the refactorings and their availability on each supported database:
+</p>
+<p align="center">
+	<table border="1" align="center"> 
+		<tr>
+		  <td width="60" align="center"></td>
+		  <td width="60" align="center">Rename<br>Table</td>
+		  <td width="60" align="center">Drop<br>Table</td>
+		  <td width="60" align="center">Add<br>Column</td>
+		  <td width="60" align="center">Modify<br>Column</td>
+		  <td width="60" align="center">Drop<br>Column</td>
+		  <td width="60" align="center">Add<br>PK</td>
+		  <td width="60" align="center">Drop<br>PK</td>
+		  <td width="60" align="center">Add<br>FK</td>
+		  <td width="60" align="center">Drop<br>FK</td>
+		  <td width="60" align="center">Add<br>Unique<br>Constraint</td>
+		  <td width="60" align="center">Drop<br>Unique<br>Constraint</td>
+		</tr>
+		<tr>
+		  <td align="center">Axion</td>
+		  <td align="center">-</td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><font size="2px">*1,4</font></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">Daffodil</td>
+		  <td align="center">-</td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><font size="2px">*1,5</font></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">DB2</td>
+		  <td align="center">-</td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><font size="2px">*1,2,5</font></td>
+		  <td align="center">-</td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">Apache Derby</td>
+		  <td align="center">-</td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><font size="2px">*3,5</font></td>
+		  <td align="center">-</td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">Firebird</td>
+		  <td align="center">-</td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><font size="2px">*4,5</font></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">FrontBase</td>
+		  <td align="center">-</td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><font size="2px">*1,5</font></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">H2</td>
+		  <td align="center">-</td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">HSQLDB</td>
+		  <td align="center">-</td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><font size="2px">*1,3,4,5</font></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">Informix</td>
+		  <td align="center">-</td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><font size="2px">*1,3,4,5</font></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">CA Ingres</td>
+		  <td align="center">-</td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><font size="2px">*1,2,3,5</font></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">MaxDB</td>
+		  <td align="center">-</td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">Mckoi</td>
+		  <td align="center">-</td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><font size="2px">*1</font></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">MS-SQLServer</td>
+		  <td align="center">-</td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><font size="2px">*1,3,4,5</font></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">MySQL</td>
+		  <td align="center">-</td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">Oracle</td>
+		  <td align="center">-</td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">Pointbase</td>
+		  <td align="center">-</td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center">-</td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">PostgreSQL</td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		</tr>
+		<tr>
+		  <td align="center">Sybase</td>
+		  <td align="center">-</td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><font size="2px">*3,4,5</font></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+	 	</tr>
+	 	<tr>
+		  <td align="center">TimesTen</td>
+		  <td align="center">-</td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center">-</td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+	</table>
+</p>
+<p align="center">
+	<i>*Supported column modifications: 1) Default Value, 2) Column Comment, 3) Column Nullable, 4) Column Name, 5) Column Type</i>
+</p>
+
+<p align="center">
+	<table border="1" align="center"> 
+		<tr>
+		 	<td width="60" align="center"></td>
+		  <td width="60" align="center">Add<br>View</td>
+		  <td width="60" align="center">Rename<br>View</td>
+		  <td width="60" align="center">Drop<br>View</td>
+		  <td width="60" align="center">Add<br>Sequence</td>
+		  <td width="60" align="center">Modify<br>Sequence</td>
+		  <td width="60" align="center">Drop<br>Sequence</td>
+		  <td width="60" align="center">Add<br>Index</td>
+		  <td width="60" align="center">Drop<br>Index</td>
+		  <td width="60" align="center">Merge<br>Columns</td>
+		  <td width="60" align="center">Merge<br>Tables</td>
+		  <td width="60" align="center">Add<br>Lookup<br>Table</td>
+		  <td width="60" align="center">Add<br>Auto<br>Increment</td>
+		</tr>
+		<tr>
+		  <td align="center">Axion</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">Daffodil</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">DB2</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">Apache Derby</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">Firebird</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">FrontBase</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">H2</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">HSQLDB</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">Informix</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">CA Ingres</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">MaxDB</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">Mckoi</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">MS-SQLServer</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">MySQL</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">Oracle</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">Pointbase</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">PostgreSQL</td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		  <td align="center"><img src="images/checkmark.gif"></td>
+		</tr>
+		<tr>
+		  <td align="center">Sybase</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+		<tr>
+		  <td align="center">TimesTen</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		  <td align="center">-</td>
+		</tr>
+	</table>
+</p>
 
 <p>
+	If you find that a supported database has been updated to support an operation 
+	directly via SQL, I would appreciate an email to let me know so that I can 
+	update the refactoring plugin.(manningr [at] users [dot] sourceforge [dot] net)
+</p>
 
-<center>
-<table cellspacing="10" cellpadding="5">
-<tr>
-<td align="center">
-Apache Derby
-</td>
-<td align="center">
-Axion
-</td>
-<td align="center">
-Daffodil
-</td>
-<td align="center">
-DB2
-</td>
-<td align="center">
-Firebird
-</td>
-</tr>
-<tr>
-<td align="center">
-FrontBase
-</td>
-<td align="center">
-H2
-</td>
-<td align="center">
-HSQLDB
-</td>
-<td align="center">
-Informix
-</td>
-<td align="center">
-CA Ingres
-</td>
-</tr>
-<tr>
-<td align="center">
-MaxDB
-</td>
-<td align="center">
-Mckoi
-</td>
-<td align="center">
-MS-SQLServer
-</td>
-<td align="center">
-MySQL
-</td>
-<td align="center">
-Oracle
-</td>
-</tr>
-<tr>
-<td align="center">
-Pointbase
-</td>
-<td align="center">
-PostgreSQL
-</td>
-<td align="center">
-Sybase ASE 12/15
-</td>
-<td align="center">
-TimesTen
-</td>
-</tr>
-</table>
-</center>
+<br/><hr/>
+
+<a name="usage">
+	<h2>Using the Refactoring Plugin</h2>
+</a>
+<a name="menu">
+	<h3>Menu</h3>
+</a>
+<p>
+	To access the refactoring menu right click on a node in the object tree.<br>
+	Depending on the node or database object you're clicking on, the refactoring menu will provide different refactorings:<br>
+</p>
+<p align="center">
+	<img src="images/menu/table_node_menu.jpg" border="1"><br>
+	<b><i>Right-click on the table, view or sequence node to access the context menu for adding new views and sequences.</i></b>
+</p>
+<p align="center">
+	<img src="images/menu/table_menu.jpg" border="1"><br>
+	<b><i>Right-click on a table to access the context menu for table specific refactorings.</i></b>
+</p>
+<p align="center">
+	<img src="images/menu/view_menu.jpg" border="1"><br>
+	<b><i>Right-click on a view/sequence to access the context menu for view/sequence specific refactorings.</i></b>
+</p>
+
+<br/><hr/>
+	
+<a name="dialogs">
+	<h3>Dialogs</h3>
+</a>
+<p>
+All refactoring dialogs come with a default set of action buttons:
+</p>
+
+<p align="center">
+	<img src="images/dialog/buttons.jpg" border="1">
+</p>
 
 <p>
+	<ul>
+		<li><b>Execute:</b> executes the generated SQL statement.</li>
+		<li><b>Edit SQL:</b> copys the generated SQL statement into the SQL panel. There you can edit the statement before manually execute it.</li>
+	</ul>
+	<p align="center">
+		<img src="images/dialog/edit_sql.jpg" border="1">
+	</p>
+	
+	<ul>
+		<li><b>Show SQL:</b> shows a dialog with the generated SQL statement.</li>
+	</ul>
+	<p align="center">
+		<img src="images/dialog/show_sql.jpg" border="1">
+	</p>
 
-The following refactorings are supported*: <br>
-<ul>
-<li>Add/Drop Primary Key</li>
-<li>Add/Drop Column</li>
-<li>Modify column (type, length, default value, comment, null/not null)</li>
-</ul>
+<br>
+<p>
+	If a database doesn't support an certain option (for example, comments for columns or check options for views) 
+	the corresponding field will be disabled (read-only) in the dialog.
+</p>
+<p align="center">
+	<img src="images/dialog/disabled_options.jpg" border="1">
+</p>
 
-* Note: If the database doesn't support the refactoring directly with SQL, 
-then the refactoring will be unavailable for that database.  For example, 
-when this document was written, Apache Derby (10.2.1.6) allowed you 
-to add a new column to an existing table using a SQL statement like :
-<p>
-'ALTER TABLE ... ADD COLUMN ...'
-<p>
-yet it didn't provide a way to drop an existing column via some SQL statement 
-such as :
-<p>
-'ALTER TABLE ... DROP COLUMN ...' 
-<p>
-like many other databases do. A future release of the refactoring plugin will 
-provide implementations of all refactorings on databases that don't support 
-them directly.
-<p>
-The following table summarizes the refactorings and their availability on 
-each supported database:
-<p>
-<center>
-<table border="1"> 
- <tr>
-  <td width="60" align="center"></td>
-  <td width="60" align="center">Add <br>Column</td>
-  <td width="60" align="center">Drop <br>Column</td>
-  <td width="60" align="center">Default<br> Value</td>
-  <td width="60" align="center">Column<br>Comment</td>
-  <td width="60" align="center">Column <br>Nullable</td>
-  <td width="60" align="center">Column <br>Name</td>
-  <td width="60" align="center">Column <br>Type</td>
-  <td width="60" align="center">Add<br> PK</td>
-  <td width="60" align="center">Drop <br>PK</td>
- </tr>
- <tr>
-  <td align="center">Axion</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center">-</td>
-  <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
- </tr>
- <tr>
-  <td align="center">Daffodil</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center">-</td>
-  <td align="center">-</td>
-  <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
- </tr>
- <tr>
-  <td align="center">DB2</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center">-</td>
-  <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
- </tr>
- <tr>
-  <td align="center">Apache Derby</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center">-</td>
-  <td align="center">-</td>
-  <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
- </tr>
- <tr>
-  <td align="center">Firebird</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center">-</td>
-  <td align="center">-</td>
-  <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
- </tr>
- <tr>
-  <td align="center">FrontBase</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center">-</td>
-  <td align="center">-</td>
-  <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center">-</td>
-  <td align="center">-</td>
- </tr>
- <tr>
-  <td align="center">H2</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
- </tr>
- <tr>
-  <td align="center">HSQLDB</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
- </tr>
- <tr>
-  <td align="center">Informix</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
- </tr>
- <tr>
-  <td align="center">CA Ingres</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
- </tr>
- <tr>
-  <td align="center">MaxDB</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
- </tr>
- <tr>
-  <td align="center">Mckoi</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center">-</td>
-  <td align="center">-</td>
-  <td align="center">-</td>
-  <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
- </tr>
- <tr>
-  <td align="center">MS-SQLServer</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
- </tr>
- <tr>
-  <td align="center">MySQL</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
- </tr>
- <tr>
-  <td align="center">Oracle</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
- </tr>
- <tr>
-  <td align="center">Pointbase</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center">-</td>
-  <td align="center">-</td>
-  <td align="center">-</td>
-  <td align="center">-</td>
-  <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
- </tr>
- <tr>
-  <td align="center">PostgreSQL</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
- </tr>
- <tr>
-  <td align="center">Sybase</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center">-</td>
-  <td align="center">-</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
- </tr>
- <tr>
-  <td align="center">TimesTen</td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center"><img src="images/checkmark.gif"></td>
-  <td align="center">-</td>
-  <td align="center">-</td>
-  <td align="center">-</td>
-  <td align="center">-</td>
-  <td align="center">-</td>
-  <td align="center">-</td>
-  <td align="center">-</td>
- </tr>
-</table>
-</center>
-<p>
-If you find that a supported database has been updated to support an operation
-directly via SQL, I would appreciate an email to let me know so that I can 
-update the refactoring plugin.(manningr [at] users [dot] sourceforge [dot] net)
-<p>
-<h3>Add Primary Key</h3>
+<br/><hr/>
 
-A table that doesn't already have a Primary Key defined can be altered to 
-specify one.  A primary key uniquely identifies each row in the table, and as
-such must consist only of one or more "non-null" columns.  For some databases 
-defining a primary key after table creation implicitly creates constraints 
-which check for "non-null" property, while others require explicit SQL to add
-these constraints manually.  The add primary key feature of the refactoring 
-plugin takes this into consideration for each supported database when generating
-the SQL necessary to make this change.  The following screenshots illustrate 
-adding a primary key to an existing table.
+<a name="add_column">
+	<h3>Add Column</h3>
+</a>
 <p>
-<center>
-<img src="images/add_pk/1_add_pk_menu.jpg"><br>
-<b><i> Figure 1. Right-click to access the context menu for adding a Primary Key</i></b>
-</center>
+	For most databases, columns can be added to an existing table without dropping 
+	the table and re-creating it.
+</p>
 <p>
-First, choose a table to add a primary key to and right-click to access the 
-refactoring menus.
-<p>
-<center>
-<img src="images/add_pk/2_choose_pk_dialog_unslected.jpg"><br>
-<b><i> Figure 2. Dialog displaying columns available for PK in the selected table</i></b>
-</center>
-<p>
-You will see a dialog displaying all of the columns from the selected table that 
-are available for use in the new primary key.  You may also change the name of
-the constraint that is used to enforce the primary key by changing the 
-"Primary Key Name", which by default is set to PK_&lt;Table Name&gt;
-<p>
-<center>
-<img src="images/add_pk/3_choose_pk_dialog_slected.jpg"><br>
-<b><i> Figure 3. Choosing a single column to be the Primary Key</i></b>
-</center>
-<p>
-Next, choose the column (or columns) that will form the new primary key for the 
-selected table.
-<p>
-<center>
-<img src="images/add_pk/4_add_pk_sql.jpg"><br>
-<b><i> Figure 4. Showing the SQL for adding a PK to the table</i></b>
-</center>
-<p>
-You can display the SQL that will be executed by clicking on the "Show SQL" 
-button.  Alternatively, you can click the "Edit SQL" button and the refactoring
-SQL will be placed into the SQL editor tab for you to inspect/customize before
-executing.
-<p>
-<center>
-<img src="images/add_pk/5_add_pk_after_execute.jpg"><br>
-<b><i> Figure 5. After clicking the "Execute" button the change is applied</i></b>
-</center>
-<p>
-When you are satisfied that you want to apply the refactoring to the selected
-table, click the "Execute" button to apply the change. You can click "Cancel"
-at any time and the refactoring will not be applied.
-<p>
-<h3>Drop Primary Key</h3>
-
-A table which has a Primary Key defined can be altered to remove it.
-First, access the "Drop Primary Key" menu by right-clicking on a selected table.
-<center>
-<p>
-<img src="images/drop_pk/1_drop_pk_menu.jpg"><br>
-<b><i> Figure 6. Right-click to access the context menu for dropping a Primary Key</i></b>
-<p>
-</center>
-Next, choose "Drop Primary Key" and the drop primary key dialog will appear 
-showing the column(s) defined in the Primary Key for the selected table.
-<center>
-<img src="images/drop_pk/2_drop_pk_dialog.jpg"><br>
-<b><i> Figure 7. The Drop Primary Key dialog</i></b>
-</center>
-<h3>Add Column</h3>
-For most databases, columns can be added to an existing table without dropping 
-the table and re-creating it.
-<p>
-<center>
-<img src="images/add_column/1_add_column_menu.jpg"><br>
-<b><i> Figure 8. Right-click to access the context menu for adding a column</i></b>
-</center>
+	First, choose a table to add a column to and right-click to access the 
+	refactoring menus. <b>(Refactoring > Column > Add Column)</b>
+</p>
 <p>
 The add column dialog allows you to specify the definition of the new column to 
-be added to the selected table.  Some attributes may be read-only in the case 
-where the database doesn't support the attribute (for example, column comments) , 
-or else don't allow them to be used when adding columns.  In this case, the 
-dialog field that corresponds to an unavailable attribute will be disabled.  The
-"Dialect" drop-down list allows you to see the effect on the SQL when using a 
+be added to the selected table. The "Dialect" drop-down list allows you to see
+the effect on the SQL when using a 
 different dialect (the SQL generated will be according to the dialect chosen - 
 the dialect of the connected database is selected by default)  The type of the
 column can be chosen from the type list (the types are standard JDBC types which
@@ -466,51 +832,307 @@ such as NUMERIC, DECIMAL, FLOAT, etc.  The length attribute only applies to
 character and byte types such as VARCHAR, CHAR, BINARY, etc.  In most databases
 when using BLOB and CLOB types, these attributes are ignored since large objects
 have length that is variable and high-capacity (2GB).
-<p>
-<center>
-<img src="images/add_column/2_add_column_dialog.jpg"><br>
-<b><i> Figure 9. The add column dialog</i></b>
-</center>
-<p>
-The same options that were available for adding primary keys are also available
-for adding columns (Execute, Show SQL and Edit SQL).
-<p>
-<center>
-<img src="images/add_column/3_add_column_show_sql.jpg"><br>
-<b><i> Figure 10. The SQL for the new column addition</i></b>
-</center>
-<p>
-<h3>Modify Column</h3>
-Existing columns can be modified in most databases, although with many more 
-restrictions on supported attributes than adding a new column.  
-<p>
-<center>
-<img src="images/modify_column/1_modify_column_menu.jpg"><br>
-<b><i> Figure 10. Right-click to access the context menu for modifying a column</i></b>
-</center>
-<p>
-Only one column at a time may be modified in the selected table.
-<p>
-<center>
-<img src="images/modify_column/2_modify_column_dialog.jpg"><br>
-<b><i> Figure 11. Choose a column to modify</i></b>
-</center>
-<p>
-The attributes of the column to be modified appear in the modify column dialog
-populated with the current values.  Similar to adding columns, attributes that
-are immutable on existing columns in the specified dialect are disable 
-(read-only).
-<p>
-<center>
-<img src="images/modify_column/3_modify_column_dialog.jpg"><br>
-<b><i> Figure 12. Modify attributes of the selected column</i></b>
-</center>
+</p>
+<p align="center">
+	<img src="images/add_column/2_add_column_dialog.jpg" border="1"><br>
+	<b><i>Specify attributes of the new column.</i></b>
+</p>
 
-<h3>Drop Column</h3>
-Columns can also be removed from an existing table.  Access the drop column 
-refactoring menu in the same way as modifying an existing column (See Figure 10.)
+<br/><hr/>
+	
+<a name="modify_column">
+	<h3>Modify Column</h3>
+</a>
+<p>
+	Existing columns can be modified in most databases, although with many more 
+	restrictions on supported attributes than adding a new column.  
+</p>
+<p>
+	First, choose a table to modify a column from and right-click to access the 
+	refactoring menus. <b>(Refactoring > Column > Modify Column)</b><br>
+	Only one column at a time may be modified in the selected table.
+</p>
+<p align="center">
+	<img src="images/modify_column/2_modify_column_dialog.jpg" border="1"><br>
+	<b><i>Choose a column to modify.</i></b>
+</p>
+<p>
+	The attributes of the column to be modified appear in the modify column dialog
+	populated with the current values.
+</p>
+<p align="center">
+	<img src="images/modify_column/3_modify_column_dialog.jpg" border="1"><br>
+	<b><i>Modify attributes of the selected column.</i></b>
+</p>
 
+<br><br/><hr/>
+
+<a name="add_pk">
+	<h3>Add Primary Key</h3>
+</a>
+<p>
+	A table that doesn't already have a Primary Key defined can be altered to 
+	specify one. A primary key uniquely identifies each row in the table, and as
+	such must consist only of one or more "non-null" columns. For some databases 
+	defining a primary key after table creation implicitly creates constraints 
+	which check for "non-null" property, while others require explicit SQL to add
+	these constraints manually. The add primary key feature of the refactoring 
+	plugin takes this into consideration for each supported database when generating
+	the SQL necessary to make this change. The following screenshots illustrate 
+	adding a primary key to an existing table.
+</p>
+<p>
+	First, choose a table to add a primary key to and right-click to access the 
+	refactoring menus. <b>(Refactoring > Referential Integrity > Add Primary Key)</b>
+</p>
+<p>
+	You will see a dialog displaying all of the columns from the selected table that 
+	are available for use in the new primary key. You may also change the name of
+	the constraint that is used to enforce the primary key by changing the 
+	"Primary Key Name", which by default is set to PK_&lt;Table Name&gt;.
+</p>
+<p>
+	Next, choose the column (or columns) that will form the new primary key for the selected table.
+</p>
+<p align="center">
+	<img src="images/add_pk/3_choose_pk_dialog_slected.jpg" border="1"><br>
+	<b><i>Choose one or more columns to be the primary key.</i></b>
+</p>
+
+<br/><hr/>
+
+<a name="add_fk">
+	<h3>Add Foreign Key</h3>
+</a>
+<p>
+	Adds a foreign key constraint to the selected table to enforce a relationship to another table.
+</p>
+<p>
+	First, choose a table to add a foreign key constraint to and right-click to access the 
+	refactoring menus. <b>(Refactoring > Referential Integrity > Add Foreign Key)</b>
+</p>
+<p>
+	The Add Foreign Key dialog allows you to specify the definition of the foreign key constraint.<br>
+	In the "Properties" tab you need to set the name of the constraint and the table to reference.
+	Optionally you can select other options and you can choose if you want to create a new index for the foreign key columns.
+</p>
+<p align="center">
+	<img src="images/add_fk/props_tab.jpg" border="1"><br>
+	<b><i>Define the foreign key constraint.</i></b>
+</p>
+<p>
+	Next you have to choose the columns of this foreign key in the "Columns" tab.
+	You can add related columns by selecting one from the selected table and one from the referenced table and click the "Add" button.
+	To remove a pair of columns select the corresponding row and click on the "Remove" button.
+</p>
+<p align="center">
+	<img src="images/add_fk/columns_tab.jpg" border="1"><br>
+	<b><i>Choose the referencing columns.</i></b>
+</p>
+<p>
+	At last you can choose the ON UPDATE and ON DELETE actions in the "Action" tab. By default "On Update" and "On Delete" are set to NO ACTION.
+</p>
+<p align="center">
+	<img src="images/add_fk/action_tab.jpg" border="1"><br>
+	<b><i>Choose the On Update and On Delete actions.</i></b>
+</p>
+
+<br/><hr/>
+
+<a name="add_unique_constraint">
+	<h3>Add Unique Constraint</h3>
+</a>
+<p>
+	Adds a unique constraint to the selected table to specify that a group of one or more columns may contain only unique values.
+</p>
+<p>
+	First, choose a table to add a unique constraint to and right-click to access the 
+	refactoring menus. <b>(Refactoring > Data Quality > Add Unique Constraint)</b>
+</p>
+<p>
+	The Add Unique Constraint dialog allows you to specify the definition of the unique constraint.<br>
+	In the "Properties" tab have to set the name of the constraint.
+</p>
+<p align="center">
+	<img src="images/add_unique/props_tab.jpg" border="1"><br>
+	<b><i>Define the name of the unique constraint.</i></b>
+</p>
+<p>
+	Next you have to choose the columns of this unique constraint in the "Columns" tab. At least one column has to be added.
+</p>
+<p align="center">
+	<img src="images/add_unique/columns_tab.jpg" border="1"><br>
+	<b><i>Choose the columns.</i></b>
+</p>
+
+<br/><hr/>
+
+<a name="add_view">
+	<h3>Add View</h3>
+</a>
+<p>
+	Creates a view based on existing tables in the database.
+</p>
+<p>
+	First, select a view or the view node and right-click to access the 
+	refactoring menus. <b>(Refactoring > Add View)</b>
+</p>
+<p>
+	In the "Properties" tab you have to set the name of the view. If the database supports CHECK options you can enable them and choose between LOCAL and CASCADE.
+</p>
+<p align="center">
+	<img src="images/add_view/props_tab.jpg" border="1"><br>
+	<b><i>Define the name and other options of the view.</i></b>
+</p>
+<p>
+	Next you have to specify the query that defines the view's content in the "Definition" tab.
+	There are only two restrictions on how this query should look like:<br>
+	1) There has to be at least a "select" and "from" in the definition before it is accepted as a query.<br>
+	2) The query mustn't be terminated with a semicolon (;). If there is a semicolon, the generated statement might lead to errors on execution.
+</p>
+<p align="center">
+	<img src="images/add_view/def_tab.jpg" border="1"><br>
+	<b><i>Specify the query that defines the view's content.</i></b>
+</p>
+
+<br/><hr/>
+
+<a name="add_auto_increment">
+	<h3>Add Auto-Increment</h3>
+</a>
+<p>
+	Adds auto-incrementing to a column of the selected table.
+</p>
+<p>
+	First, select a table to add auto-increment to and right-click to access the 
+	refactoring menus. <b>(Refactoring > Data Quality > Add Auto-Increment)</b>
+</p>
+<p>
+	In the first dialog you can select the column you want to add auto-increment to.
+</p>
+<p align="center">
+	<img src="images/add_autoinc/select_column.jpg" border="1"><br>
+	<b><i>Select the column to add auto-increment to.</i></b>
+</p>
+<p>
+	In the next dialog you don't have to set any other options. The behaviour and implementation of auto-incrementation is very database specific.
+	Click on the Show SQL button to see how the Auto-Increment functionality is realized on the current database.
+</p>
+<p align="center">
+	<img src="images/add_autoinc/add_autoinc_sql.jpg" border="1"><br>
+	<b><i>An example how Auto-Incrementation is realized for PostgreSQL.</i></b>
+</p>
+
+<br/><hr/>
+
+<a name="add_lookup_table">
+	<h3>Add Lookup Table</h3>
+</a>
+<p>
+	Creates a lookup table for an existing column.
+</p>
+<p>
+	First, select a table to add a lookup table to and right-click to access the 
+	refactoring menus. <b>(Refactoring > Data Quality > Add Lookup Table)</b>
+</p>
+<p>
+	In the "Source Table" tab have to select the source column for the lookup table and the mode you want to use.<br>
+	If you wish you can also change the suggested name for the foreign key constraint.
+</p>
+<p>
+	There are two different modes to choose from:<br>
+	1) Keep the content of the original column and use it as a reference to the new lookup table's primary key.<br>
+	2) Replace the content of the original column with an integer to reference the lookup table.<br>
+</p>
+<p align="center">
+	<img src="images/add_lookup/source_tab.jpg" border="1"><br>
+	<b><i>Select the column, mode and foreign key name for the refactoring.</i></b>
+</p>
+<p>
+	Next you can change the names of the lookup table and its column(s) in the "Lookup Table" tab.
+	To change the name of a column double-click on the name field, change the name and save it by pressing the ENTER key.<br>
+	The amount of columns in the lookup table depends on the mode you've selected.
+</p>
+<p align="center">
+	<img src="images/add_lookup/lookup_tab_keep.jpg" border="1"><br>
+	<b><i>Mode 1: Only one Column with distinct values from the source table.</i></b>
+	<br><br>
+	<img src="images/add_lookup/lookup_tab_replace.jpg" border="1"><br>
+	<b><i>Mode 2: Two columns, an integer column as primary key and a column with the distinct values from the source table.</i></b>
+</p>
+<p>
+	If you've selected the second mode there is an additional "Special Behaviour" tab. In this tab you can specify behaviour of this refactoring.
+	This becomes nessesary because mode 2 may drop the source column to replace it with an integer column to reference the new lookup table.
+	Because the source column could be used by other database objects like views, you have to decide if you want to drop the column cascaded.
+	(Default: column is dropped NOT cascaded)
+</p>
+<p align="center">
+	<img src="images/add_lookup/special_tab.jpg" border="1"><br>
+	<b><i>Select special behaviour for the second mode.</i></b>
+</p>
+
+<br/><hr/>
+
+<a name="merge_columns">
+	<h3>Merge Columns</h3>
+</a>
+<p>
+	Merges the content of two columns of the selected table.
+</p>
+<p>
+	First, select a table to merge columns in and right-click to access the 
+	refactoring menus. <b>(Refactoring > Column > Merge Columns)</b>
+</p>
+<p>
+	In the displayed Merge Column dialog you are able to select the two columns you want to merge. (You can only merge columns from the same, selected table.)<br>
+	Next you can choose if you want to create a new column or use one of the two selected columns for the merged content.
+	(If "new Column" is chosen, the newly created column will be of the type VARCHAR with a size/length that fits the longes merged content.)<br>
+	And finally there's a field for an optional joining string that is inserted between the content of the two columns. 
+</p>
+<p align="center">
+	<img src="images/merge_columns/props_tab.jpg" border="1"><br>
+	<b><i>Select the columns to be merged and other options.</i></b>
+</p>
+<p>
+	<i><b>Important:</b> When you merge the columns into one of the selected columns, this column's type needs to fit the type of the merged content.
+	(For example, when merging an area code with a local phone number into the local phone number column with an integer type,
+	you should NOT add a join string like " " or "/", etc.)</i>
+</p>
+
+<br/><hr/>
+
+<a name="merge_tables">
+	<h3>Merge Tables</h3>
+</a>
+<p>
+	Merges multiple columns from a table into the selected table.
+</p>
+<p>
+	First, select a table to merge columns of an other table into and right-click to access the 
+	refactoring menus. <b>(Refactoring > Table > Merge Tables)</b>
+</p>
+<p>
+	In the "Properties" tab you are able to select the table you want to merge columns from.
+	You can also choose if only the column definitions or even the data in the columns should be merged.<br>
+	And finally you have to define the relation between the two tables.
+</p>
+<p align="center">
+	<img src="images/merge_tables/props_tab.jpg" border="1"><br>
+	<b><i>Select the table to merge from and define the relation between the tables.</i></b>
+</p>
+<p>
+<i><b>Important:</b> For an accurate merge the relation between the selected table and the other table (merge table) should be "many/one to one".
+	Because if there are multiple entries in the other table referencing the same entry in the selected table,
+	only the content of the last one will be applied to the referenced entry in the selected table.</i>
+</p>
+<p>
+ Next you can select the columns to be merged from the other table into the selected table in the "Columns" tab.<br>
+ Choosing columns with a name that is already used by a column in the selected table, leads to an error during the execution of this refactoring.
+</p>
+<p align="center">
+	<img src="images/merge_tables/columns_tab.jpg" border="1"><br>
+	<b><i>Select the columns to merge into the selected table.</i></b>
+</p>
 
 </BODY>
 </HTML>
-

@@ -1,20 +1,70 @@
-
 Refactoring TODO list:
+=============================
 
 Immediate:
+==========
 
 - Fix all of the TODOs involving user notification
 - Figure out why the column list dialog doesn't have a scrollbar
 
 Short Term:
+==========
 
 - For dropping columns allow the user to specify cascade / restrict for dbs that
   support it (like derby)
+- Support quoted and qualified identifiers in the old/initial refactorings like
+  Add/Modify/Remove Column and Add/Drop Primary Key.
+  (use DatabaseObjectQualifier and SqlGenerationPreferences,
+  for examples: look into the new refactorings and the new HibernateDialect methods from version 0.20)
+- Allow the user to set some general refactoring preferences. (Qualify Identifiers, Quote Identifiers, etc.)
+- Give the user some kind of feedback if a refactoring was successful.
+- Give the user some kind of feedback on the progress of a complex refactoring
+  like Add Lookup Table or Merge Table/Column. (maybe a fancy ProgressDialog?)
 
 Long Term:
+==========
 
-- Table refactorings
+- "Create Table" refactoring
 - The rest of the dialects.
-- support operations that aren't directly support by the database (e.g. HADB
+- Support operations that aren't directly support by the database (e.g. HADB
 can't add/drop columns - simulate by creating new table and copying data - maybe
 using dbcopy?)
+
+Possible Additional Refactorings: (Source: Refactoring Databases: Evolutionary Database Design, 978-0-321-29353-4)
+========================
+Structural Refactorings:
+- Introduce Calculated Column
+- Introduce Surrogate Key
+- Move Column
+- Replace Large Object (LOB) With Table
+- Replace Column
+- Replace One-to-Many With Associative Table
+- Replace Surrogate Key With Natural Key
+- Split Column
+- Split Table
+
+Data Quality Refactorings:
+- Apply Standard Codes
+- Apply Standard Type
+- Consolidate Key Strategy
+- Introduce Common Format
+- Move Data
+- Replace Type Code With Property Flags
+
+Referential Integrity Refactorings:
+- Add Trigger For Calculated Column
+- Introduce Cascading Delete
+- Introduce Trigger For History
+
+Architectural Refactorings:
+- Add CRUD Methods
+- Add Mirror Table
+- Add Read Method
+- Encapsulate Table With View
+- Introduce Calculation Method
+- Introduce Read-Only Table
+- Migrate Method From Database
+- Migrate Method To Database
+- Replace Method(s) With View
+- Replace View With Method(s)
+- Use Official Data Source
