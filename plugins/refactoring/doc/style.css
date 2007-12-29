@@ -1,0 +1,34 @@
+BODY, HTML {COLOR: #000000; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; FONT-SIZE: 10pt;}
+
+P {LINE-HEIGHT: 12pt; PADDING-BOTTOM: 0px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; PADDING-TOP: 0px}
+
+A {text-decoration: none;}
+A:link {COLOR: #0000FF;text-decoration: underline;}
+A:visited {COLOR: #0000FF;text-decoration: underline;}
+A:hover {COLOR: #FF0000;text-decoration: underline;}
+A:active {COLOR: #FF0000;text-decoration: underline;}
+
+H1, H2, H3, H4 {font-family: Verdana, Arial, Helvetica, serif; FONT-VARIANT: small-caps; text-decoration: none;}
+H1 {FONT-SIZE: 16pt;}
+H2 {FONT-SIZE: 14pt;}
+H3 {FONT-SIZE: 12pt;}
+H4 {FONT-SIZE: 10pt;}
+
+PRE {font: normal 10pt Courier New, Courier, monospaced; background:#EEEEEE; padding:5pt;}
+
+CODE {font: normal 100% Courier New, Courier, monospaced;}
+
+HR {Color: #CCCCCC;}
+
+TABLE {BORDER-BOTTOM: thin;	BORDER-LEFT: thin; BORDER-RIGHT: thin; BORDER-TOP: thin;
+	MARGIN: 1px; PADDING-BOTTOM: 2px; PADDING-LEFT: 2px; PADDING-RIGHT: 2px; PADDING-TOP: 2px;
+	FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; FONT-SIZE: 10pt;
+}
+
+TR { BORDER-BOTTOM: medium none; BORDER-LEFT: medium none; BORDER-RIGHT: medium none; BORDER-TOP: medium none;
+	MARGIN: 2px; PADDING-BOTTOM: 2px; PADDING-LEFT: 2px; PADDING-RIGHT: 2px; PADDING-TOP: 2px;}
+
+TD {FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; FONT-SIZE: 10pt;}
+
+.menu {FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; FONT-SIZE: x	-small;}
+

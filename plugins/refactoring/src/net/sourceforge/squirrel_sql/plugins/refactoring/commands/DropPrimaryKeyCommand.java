@@ -1,7 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
-
 /*
- * Copyright (C) 2006 Rob Manning
+ * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -19,156 +18,172 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import net.sourceforge.squirrel_sql.client.gui.db.ColumnListDialog;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
-import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.IHibernateDialectExtension;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
- * Implements showing a list of primay key columns for a selected table to the 
+ * Implements showing a list of primay key columns for a selected table to the
  * user, allowing the user to drop the primary key or view the SQL that will do
  * this.
- * 
- * @author manningr
  *
+ * @author manningr
  */
 public class DropPrimaryKeyCommand extends AbstractRefactoringCommand {
-    
-    /** Logger for this class. */
-    private final static ILogger log = 
-                       LoggerController.createLogger(RemoveColumnCommand.class);
-    
-    /** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(DropPrimaryKeyCommand.class);
-        
     /**
-     * Ctor specifying the current session.
+     * Logger for this class.
      */
-    public DropPrimaryKeyCommand(ISession session, IDatabaseObjectInfo[] info)
-    {
+    private final static ILogger s_log = LoggerController.createLogger(RemoveColumnCommand.class);
+
+    /**
+     * Internationalized strings for this class.
+     */
+    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DropPrimaryKeyCommand.class);
+
+    static interface i18n {
+        String SHOWSQL_DIALOG_TITLE = s_stringMgr.getString("DropPrimaryKeyCommand.sqlDialogTitle");
+    }
+
+    protected ColumnListDialog customDialog;
+
+
+    public DropPrimaryKeyCommand(ISession session, IDatabaseObjectInfo[] info) {
         super(session, info);
     }
-    
-    /**
-     * Execute this command. 
-     */
-    public void execute()
-    {
-        if (! (_info[0] instanceof ITableInfo)) {
+
+
+    //TODO: Remove when IHibernateDialectExtension is merged into HibernateDialect.
+    private HibernateDialect _dialect;
+
+
+    //TODO: Remove when IHibernateDialectExtension is merged into HibernateDialect.
+    @Override
+    public void execute() {
+        try {
+            _dialect = DialectFactory.getDialect(DialectFactory.DEST_TYPE,
+                    _session.getApplication().getMainFrame(), _session.getMetaData());
+            onExecute();
+        } catch (UserCancelledOperationException e) {
+            _session.showErrorMessage(AbstractRefactoringCommand.i18n.DIALECT_SELECTION_CANCELLED);
+        } catch (Exception e) {
+            _session.showErrorMessage(e);
+            s_log.error("Unexpected exception on execution: " + e.getMessage(), e);
+        }
+    }
+
+
+    @Override
+    protected void onExecute() throws SQLException {
+        if (!(_info[0] instanceof ITableInfo)) {
             return;
         }
-        ITableInfo ti = (ITableInfo)_info[0];
-        try {
-            if (!tableHasPrimaryKey()) {
-                //i18n[DropPrimaryKeyCommand.noKeyToDrop=Table {0} does not 
-                //have a primary key to drop]
-                String msg = 
-                    s_stringMgr.getString("DropPrimaryKeyCommand.noKeyToDrop",
-                                          ti.getSimpleName());
-                _session.showErrorMessage(msg);
-                return;
-            }
-            super.showColumnListDialog(new DropPrimaryKeyActionListener(), 
-                                       new ShowSQLListener(), 
-                                       ColumnListDialog.DROP_PRIMARY_KEY_MODE);
-        } catch (Exception e) {
-            log.error("Unexpected exception "+e.getMessage(), e);
+        ITableInfo ti = (ITableInfo) _info[0];
+        PrimaryKeyCommandUtility pkcUtil = new PrimaryKeyCommandUtility(super._session, _info);
+        if (!pkcUtil.tableHasPrimaryKey()) {
+            _session.showErrorMessage(s_stringMgr.getString("DropPrimaryKeyCommand.noKeyToDrop",
+                    ti.getSimpleName()));
+        } else {
+            showCustomDialog();
         }
-        
-        
     }
 
-    protected void getSQLFromDialog(SQLResultListener listener) {
-        HibernateDialect dialect = null; 
-        
+
+    protected void showCustomDialog() throws SQLException {
+        ITableInfo ti = (ITableInfo) _info[0];
+        TableColumnInfo[] columns = getPkTableColumns(ti);
+
+        //Show the user a dialog with a list of columns and ask them to select
+        customDialog = new ColumnListDialog(columns, ColumnListDialog.DROP_PRIMARY_KEY_MODE);
+        customDialog.addColumnSelectionListener(new ExecuteListener());
+        customDialog.addEditSQLListener(new EditSQLListener(customDialog));
+        customDialog.addShowSQLListener(new ShowSQLListener(i18n.SHOWSQL_DIALOG_TITLE, customDialog));
+        customDialog.setLocationRelativeTo(_session.getApplication().getMainFrame());
+        customDialog.setMultiSelection();
+        customDialog.setTableName(ti.getQualifiedName());
+
+        SQLDatabaseMetaData md = _session.getSQLConnection().getSQLMetaData();
+        PrimaryKeyInfo[] infos = md.getPrimaryKey(ti);
+        String pkName = infos[0].getSimpleName();
+        customDialog.setPrimaryKeyName(pkName);
+        customDialog.setVisible(true);
+    }
+
+
+    private TableColumnInfo[] getPkTableColumns(ITableInfo ti) throws SQLException {
+        ArrayList<TableColumnInfo> result = new ArrayList<TableColumnInfo>();
+        PrimaryKeyInfo[] pkCols = _session.getMetaData().getPrimaryKey(ti);
+        TableColumnInfo[] colInfos = _session.getMetaData().getColumnInfo(ti);
+
+        for (PrimaryKeyInfo pkInfo : pkCols) {
+            String pkColName = pkInfo.getQualifiedColumnName();
+            for (TableColumnInfo colInfo : colInfos) {
+                if (colInfo.getSimpleName().equals(pkColName)) {
+                    result.add(colInfo);
+                }
+            }
+        }
+        return result.toArray(new TableColumnInfo[result.size()]);
+    }
+
+
+    @Override
+    protected String[] generateSQLStatements() throws UserCancelledOperationException {
         String result = null;
-        try {
-            dialect = DialectFactory.getDialect(DialectFactory.DEST_TYPE, 
-                                                _session.getApplication().getMainFrame(), 
-                                                _session.getMetaData());            
-            result = 
-                dialect.getDropPrimaryKeySQL(this.pkName, 
-                                             columnListDialog.getTableName());
-        } catch (UnsupportedOperationException e2) {
-            //i18n[DropPrimaryKeyCommand.unsupportedOperationMsg=The {0} 
-            //dialect doesn't support dropping primary keys]
-            String msg = 
-                s_stringMgr.getString("DropPrimaryKeyCommand.unsupportedOperationMsg", 
-                                      dialect.getDisplayName());
-                                      
-            _session.showMessage(msg);
-        } catch (UserCancelledOperationException e) {
-            // user cancelled selecting a dialect. do nothing?
-        }
-        listener.finished(new String[] { result });
-        
-    }
-    
-    
-    private class ShowSQLListener implements ActionListener, SQLResultListener {
-        
-        public void finished(String[] sql) {
-            if (sql.length == 0) {
-//              TODO: tell the user no changes
-                return;
-            }
-            StringBuffer script = new StringBuffer();
-            for (int i = 0; i < sql.length; i++) {
-                script.append(sql[i]);
-                script.append(";\n\n");                
-            }
 
-            ErrorDialog sqldialog = 
-                new ErrorDialog(columnListDialog, script.toString());
-            //i18n[DropPrimaryKeyCommand.sqlDialogTitle=Drop Primary Key SQL]
-            String title = 
-                s_stringMgr.getString("DropPrimaryKeyCommand.sqlDialogTitle");
-            sqldialog.setTitle(title);
-            sqldialog.setVisible(true);                            
+        try {
+            result = _dialect.getDropPrimaryKeySQL(customDialog.getPrimaryKeyName(), customDialog.getTableName());
+        } catch (UnsupportedOperationException e2) {
+            _session.showMessage(s_stringMgr.getString("DropPrimaryKeyCommand.unsupportedOperationMsg",
+                    _dialect.getDisplayName()));
         }
-        
-        public void actionPerformed( ActionEvent e) {
-            getSQLFromDialog(this);
-        }
+        return new String[]{result};
     }
-    
-    private class DropPrimaryKeyActionListener implements ActionListener,
-                                                          SQLResultListener {
-        public void finished(String[] sqls) {
-            CommandExecHandler handler = new CommandExecHandler(_session);
-            
-            
-            for (int i = 0; i < sqls.length; i++) {
-                String sql = sqls[i];
-                log.info("DropPrimaryKeyCommand: executing SQL - "+sql);
-                SQLExecuterTask executer = 
-                    new SQLExecuterTask(_session, sql, handler);
-                executer.run();                            
+
+
+    @Override
+    protected void executeScript(String script) {
+        CommandExecHandler handler = new CommandExecHandler(_session);
+
+        SQLExecuterTask executer = new SQLExecuterTask(_session, script, handler);
+        executer.run(); // Execute the sql synchronously
+
+        _session.getApplication().getThreadPool().addTask(new Runnable() {
+            public void run() {
+                GUIUtils.processOnSwingEventThread(new Runnable() {
+                    public void run() {
+                        customDialog.setVisible(false);
+                        _session.getSchemaInfo().reloadAll();
+                    }
+                });
             }
-            columnListDialog.setVisible(false);            
-        }
-        
-        public void actionPerformed(ActionEvent e) {
-            if (columnListDialog == null) {
-                System.err.println("dialog was null");
-                return;
-            }
-            getSQLFromDialog(this);
-        }
-        
+        });
     }
-        
+
+
+	/**
+	 * Returns a boolean value indicating whether or not this refactoring is supported for the specified 
+	 * dialect. 
+	 * 
+	 * @param dialectExt the IHibernateDialectExtension to check
+	 * @return true if this refactoring is supported; false otherwise.
+	 */
+	@Override
+	protected boolean isRefactoringSupportedForDialect(IHibernateDialectExtension dialectExt)
+	{
+		// implemented in all originally supported dialects		
+		return true;
+	}
 }

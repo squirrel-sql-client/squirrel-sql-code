@@ -7,7 +7,7 @@
 	<target name="init">
 		<tstamp/>
 		<property name="internal_name" value="refactoring"/>
-		<property name="version" value="0.10"/>
+		<property name="version" value="0.20"/>
 
 		<property name="debug" value="on"/>
 		<property name="optimize" value="off"/>

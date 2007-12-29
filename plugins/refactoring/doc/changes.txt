@@ -1,20 +1,34 @@
 Refactoring Plugin Change Log
 =============================
 
-0.14
+0.20
 ====
 
 Enhancements:
 
-Don't try to order the list of tables to be dropped (forcing FK info retrieval) 
-when there is only one table being dropped.
+Contributions from Daniel Regli and Yannick Winiger:
+Added new Refactorings (All new refactoring dialogs are now closeable with the ESCAPE key):
+- Rename Table
+- Add/Rename/Drop View
+- Add/Modify/Drop Sequence
+- Add/Drop Index
+- Add/Drop Foreign Key
+- Add/Drop Unique Constraint
+- Add Lookup Table
+- Add Auto Increment
+- Merge Column
+- Merge Table
+
+0.14
+====
+Enhancements:
+- Don't try to order the list of tables to be dropped (forcing FK info retrieval)
+  when there is only one table being dropped.
 
 0.13
 ====
-
 Bug-fixes:
-
-1821354: Changing default value of a column in Derby does nothing
+- 1821354: Changing default value of a column in Derby does nothing
 
 0.12
 ====
@@ -28,5 +42,4 @@ Bug-fixes:
 
 0.10
 ====
-
 - Initial release.

@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
 /*
- * Copyright (C) 2006 Rob Manning
+ * Copyright (C) 2007 Rob Manning
  * manningr@user.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -17,14 +17,6 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 
 import net.sourceforge.squirrel_sql.client.gui.ProgessCallBackDialog;
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
@@ -33,212 +25,207 @@ import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
-import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+import net.sourceforge.squirrel_sql.fw.sql.*;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.refactoring.gui.DropTableDialog;
+import net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.IHibernateDialectExtension;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
-public class DropTablesCommand extends AbstractRefactoringCommand
-{
-    /** Logger for this class. */
-    private final ILogger s_log =
-        LoggerController.createLogger(DropTablesCommand.class);
-    
-    /** Internationalized strings for this class */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(DropTablesCommand.class);
-    
-    private List<ITableInfo> orderedTables = null;
-    
-    private DropTableCommandExecHandler handler = null;
-    
-    ProgessCallBackDialog getOrderedTablesCallBack = null;
-    
-    private static interface i18n {
-                
-        //i18n[DropTablesCommand.progressDialogAnalyzeTitle=Analyzing tables to drop]
-        String PROGRESS_DIALOG_ANALYZE_TITLE = 
-            s_stringMgr.getString("DropTablesCommand.progressDialogAnalyzeTitle");
-        
-        //i18n[DropTablesCommand.progressDialogDropTitle=Dropping tables]
-        String PROGRESS_DIALOG_DROP_TITLE = 
-            s_stringMgr.getString("DropTablesCommand.progressDialogDropTitle");        
-        
-        //i18n[DropTablesCommand.loadingPrefix=Analyzing table:]
-        String LOADING_PREFIX = 
-            s_stringMgr.getString("DropTablesCommand.loadingPrefix");
-
-        //i18n[DropTablesCommand.droppingConstraintPrefix=Dropping Constraint:]
-        String DROPPING_CONSTRAINT_PREFIX = 
-            s_stringMgr.getString("DropTablesCommand.droppingConstraintPrefix");
-
-        //i18n[DropTablesCommand.droppingTablePrefix=Dropping table:]
-        String DROPPING_TABLE_PREFIX = 
-            s_stringMgr.getString("DropTablesCommand.droppingTablePrefix");
-        
-
-    }
-    
-    /** 
-     * A set of materialized view names in the same schema as the table(s) 
-     * being dropped
+public class DropTablesCommand extends AbstractRefactoringCommand {
+    /**
+     * Logger for this class.
      */
-    private HashSet<String> matViewLookup = null;
-    
-	/**
-	 *
-	 * @param	session		Current session..
-	 * @param	tables		Array of <TT>IDatabaseObjectInfo</TT> objects
-	 * 						representing the tables to be deleted.
-	 *
-	 * @throws	IllegalArgumentException
-	 *			Thrown if a <TT>null</TT> <TT>ISession</TT> passed.
-	 */
-	public DropTablesCommand(ISession session, IDatabaseObjectInfo[] tables)
-	{
-		super(session, tables);
-	}
+    private final ILogger s_log = LoggerController.createLogger(DropTablesCommand.class);
 
-	/**
-	 * Drop selected tables in the object tree.
-	 */
-	public void execute()
-	{
+    /**
+     * Internationalized strings for this class
+     */
+    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DropTablesCommand.class);
+
+
+    static interface i18n {
+        String SHOWSQL_DIALOG_TITLE = s_stringMgr.getString("DropTablesCommand.sqlDialogTitle");
+        String PROGRESS_DIALOG_ANALYZE_TITLE = s_stringMgr.getString("DropTablesCommand.progressDialogAnalyzeTitle");
+        String PROGRESS_DIALOG_DROP_TITLE = s_stringMgr.getString("DropTablesCommand.progressDialogDropTitle");
+        String LOADING_PREFIX = s_stringMgr.getString("DropTablesCommand.loadingPrefix");
+        String DROPPING_CONSTRAINT_PREFIX = s_stringMgr.getString("DropTablesCommand.droppingConstraintPrefix");
+        String DROPPING_TABLE_PREFIX = s_stringMgr.getString("DropTablesCommand.droppingTablePrefix");
+    }
+
+    protected DropTableDialog customDialog;
+    private List<ITableInfo> orderedTables;
+    ProgessCallBackDialog getOrderedTablesCallBack;
+
+    /**
+     * A set of materialized view names in the same schema as the table(s) being dropped.
+     */
+    private HashSet<String> matViewLookup;
+
+
+    public DropTablesCommand(ISession session, IDatabaseObjectInfo[] tables) {
+        super(session, tables);
+    }
+
+
+    //TODO: Remove when IHibernateDialectExtension is merged into HibernateDialect.
+    private HibernateDialect _dialect;
+
+
+    //TODO: Remove when IHibernateDialectExtension is merged into HibernateDialect.
+    @Override
+    public void execute() {
         try {
-            super.showDropTableDialog(new DropTablesActionListener(), 
-                                      new ShowSQLListener());
+            _dialect = DialectFactory.getDialect(DialectFactory.DEST_TYPE,
+                    _session.getApplication().getMainFrame(), _session.getMetaData());
+            onExecute();
+        } catch (UserCancelledOperationException e) {
+            _session.showErrorMessage(AbstractRefactoringCommand.i18n.DIALECT_SELECTION_CANCELLED);
         } catch (Exception e) {
-            s_log.error("Unexpected exception "+e.getMessage(), e);
+            _session.showErrorMessage(e);
+            s_log.error("Unexpected exception on execution: " + e.getMessage(), e);
         }
-	}
+    }
+
 
     @Override
-    protected void getSQLFromDialog(SQLResultListener listener) {
-        HibernateDialect dialect = null; 
-        List<ITableInfo> tables = dropTableDialog.getTableInfoList();
-        boolean cascadeConstraints = dropTableDialog.getCascadeConstraints();
-        
+    protected void onExecute() {
+        showCustomDialog();
+    }
+
+
+    protected void showCustomDialog() {
+        ITableInfo[] tableInfos = new ITableInfo[_info.length];
+        for (int i = 0; i < tableInfos.length; i++) {
+            tableInfos[i] = (ITableInfo) _info[i];
+        }
+
+        customDialog = new DropTableDialog(tableInfos);
+        customDialog.addExecuteListener(new ExecuteListener());
+        customDialog.addEditSQLListener(new EditSQLListener(customDialog));
+        customDialog.addShowSQLListener(new ShowSQLListener(i18n.SHOWSQL_DIALOG_TITLE, customDialog));
+        customDialog.setLocationRelativeTo(_session.getApplication().getMainFrame());
+        customDialog.setVisible(true);
+    }
+
+
+    @Override
+    protected String[] generateSQLStatements() throws UserCancelledOperationException, SQLException {
         ArrayList<String> result = new ArrayList<String>();
+        s_log.debug("Generating SQL Statements");
+
+        List<ITableInfo> tables = customDialog.getTableInfoList();
+        boolean cascadeConstraints = customDialog.getCascadeConstraints();
+
         try {
-            if (tables.size() > 1) { 
-               orderedTables = getOrderedTables(tables);
+            if (tables.size() > 1) {
+                orderedTables = getOrderedTables(tables);
             } else {
-               orderedTables = tables;
+                orderedTables = tables;
             }
-            
-            dialect = DialectFactory.getDialect(DialectFactory.DEST_TYPE, 
-                                                _session.getApplication().getMainFrame(), 
-                                                _session.getMetaData()); 
-            String sep = _session.getQueryTokenizer().getSQLStatementSeparator();
-            
-            // Drop FK constraints before dropping any tables.  Otherwise, we 
+
+            // Drop FK constraints before dropping any tables.  Otherwise, we
             // may drop the child table prior to dropping it's FKs, which would
             // be an error.
-            if (cascadeConstraints)  {
-                for (ITableInfo info: orderedTables) {
-                    List<String> dropFKSQLs = 
-                        getDropChildFKConstraints(dialect, info);
+            // TODO: This should be done in the dialect's getTableDropSQL method for a database specific handling(or ignoring) of this problem.
+            if (cascadeConstraints) {
+                s_log.debug("Getting DropChildFKConstraintsSQL (CASCADE=true)");
+                for (ITableInfo info : orderedTables) {
+                    List<String> dropFKSQLs =
+                            getDropChildFKConstraints(info);
                     for (String dropFKSQL : dropFKSQLs) {
-                        StringBuilder dropSQL = new StringBuilder(); 
+                        s_log.debug("dropFKSQL: " + dropFKSQL);
+                        StringBuilder dropSQL = new StringBuilder();
                         dropSQL.append(dropFKSQL);
+                        dropSQL.append(_sqlPrefs.getSqlStatementSeparator());
                         dropSQL.append("\n");
-                        dropSQL.append(sep);
-                        result.add(dropSQL.toString());                        
+                        result.add(dropSQL.toString());
                     }
                 }
             }
-            
-            // Set cascadeConstraints to false, since we've already generated the
-            // SQL for dropping these constraints above.
+
+            s_log.debug("Getting TableDropSQL");
             for (ITableInfo info : orderedTables) {
                 boolean isMaterializedView = isMaterializedView(info, _session);
-                List<String> sqls = dialect.getTableDropSQL(info, 
-                                                            false, // cascadeConstraints                      
-                                                            isMaterializedView);
+                // There are more dependancies then just FKs (like views, etc.),
+                // therefore cascadeConstraints is used as a parameter for the TableDropSQL.
+                List<String> sqls = _dialect.getTableDropSQL(info, cascadeConstraints, isMaterializedView);
                 for (String sql : sqls) {
-                    StringBuilder dropSQL = new StringBuilder(); 
+                    StringBuilder dropSQL = new StringBuilder();
                     dropSQL.append(sql);
+                    dropSQL.append(_sqlPrefs.getSqlStatementSeparator());
                     dropSQL.append("\n");
-                    dropSQL.append(sep);
                     result.add(dropSQL.toString());
                 }
-            }            
+            }
         } catch (UnsupportedOperationException e2) {
-            //i18n[DropTablesCommand.unsupportedOperationMsg=The {0} 
-            //dialect doesn't support dropping tables]
-            String msg = 
-                s_stringMgr.getString("DropTablesCommand.unsupportedOperationMsg",
-                                      dialect.getDisplayName());
-            _session.showMessage(msg);
-        } catch (UserCancelledOperationException e) {
-            // user cancelled selecting a dialect. do nothing?
+            _session.showMessage(s_stringMgr.getString("DropTablesCommand.unsupportedOperationMsg",
+                    _dialect.getDisplayName()));
         }
-        listener.finished(result.toArray(new String[result.size()]));
+        return result.toArray(new String[]{});
     }
-    
-    private List<String> getDropChildFKConstraints(HibernateDialect dialect, 
-                                                   ITableInfo ti) {
+
+
+    private List<String> getDropChildFKConstraints(ITableInfo ti) throws SQLException {
+        s_log.debug("entered getDropChildFKConstraints()");
         ArrayList<String> result = new ArrayList<String>();
-        ForeignKeyInfo[] fks = ti.getExportedKeys();
-        for (int i = 0; i < fks.length; i++) {
-            ForeignKeyInfo info = fks[i];
-            String fkName = info.getForeignKeyName();
-            String fkTable = info.getForeignKeyTableName();
-            result.add(dialect.getDropForeignKeySQL(fkName, fkTable));            
+        ForeignKeyInfo[] fks = _session.getMetaData().getExportedKeysInfo(ti);
+        if (fks != null) {
+            s_log.debug("FKs.length: " + fks.length);
+            for (ForeignKeyInfo info : fks) {
+                s_log.debug("FK Info: " + info);
+                String fkName = info.getForeignKeyName();
+                String fkTable = info.getForeignKeyTableName();
+                result.add(_dialect.getDropForeignKeySQL(fkName, fkTable));
+            }
         }
+        s_log.debug("leaving getDropChildFKConstraints()");
         return result;
     }
-    
-    private List<ITableInfo> getOrderedTables(final List<ITableInfo> tables) {
-        List<ITableInfo> result = tables;
+
+
+    private List<ITableInfo> getOrderedTables(final List<ITableInfo> tables) throws SQLException {
         SQLDatabaseMetaData md = _session.getSQLConnection().getSQLMetaData();
-        
-        try {
-            // Create the analysis dialog using the EDT, and wait for it to finish.
-            GUIUtils.processOnSwingEventThread(new Runnable() {
-                public void run() {
-                    getOrderedTablesCallBack = 
-                        new ProgessCallBackDialog(dropTableDialog,
-                                                  i18n.PROGRESS_DIALOG_ANALYZE_TITLE,
-                                                  tables.size());
-                    
-                    getOrderedTablesCallBack.setLoadingPrefix(i18n.LOADING_PREFIX);                    
-                }
-            }, true);
-            
-            // Now, get the drop order (same as delete) and update the dialog
-            // status while doing so.
-            result = SQLUtilities.getDeletionOrder(tables, 
-                                                   md, 
-                                                   getOrderedTablesCallBack);
-        } catch (SQLException e) {
-            s_log.error(
-                "Encountered exception while attempting to order tables " +
-                "according to constraints: "+e.getMessage(), e);
-        }
-        return result;
+
+        // Create the analysis dialog using the EDT, and wait for it to finish.
+        GUIUtils.processOnSwingEventThread(new Runnable() {
+            public void run() {
+                getOrderedTablesCallBack =
+                        new ProgessCallBackDialog(customDialog,
+                                i18n.PROGRESS_DIALOG_ANALYZE_TITLE,
+                                tables.size());
+
+                getOrderedTablesCallBack.setLoadingPrefix(i18n.LOADING_PREFIX);
+            }
+        }, true);
+
+        // Now, get the drop order (same as delete) and update the dialog
+        // status while doing so.
+
+        return SQLUtilities.getDeletionOrder(tables, md, getOrderedTablesCallBack);
     }
-    
+
+
     /**
-     * Returns a boolean value indicating whether or not the specified table 
+     * Returns a boolean value indicating whether or not the specified table
      * info is not only a table, but also a materialized view.
-     * 
+     *
      * @param ti
      * @param session
      * @return
+     * @throws java.sql.SQLException
      */
-    private boolean isMaterializedView(ITableInfo ti,
-                                      ISession session)
-    {
+    private boolean isMaterializedView(ITableInfo ti, ISession session) throws SQLException {
         if (!DialectFactory.isOracle(session.getMetaData())) {
             // Only Oracle supports materialized views directly.
             return false;
@@ -249,17 +236,17 @@ public class DropTablesCommand extends AbstractRefactoringCommand
         return matViewLookup.contains(ti.getSimpleName());
     }
 
-    private void initMatViewLookup(ISession session, String schema) {
+
+    private void initMatViewLookup(ISession session, String schema) throws SQLException {
         matViewLookup = new HashSet<String>();
-        // There is no good way using JDBC metadata to tell if the table is a 
+        // There is no good way using JDBC metadata to tell if the table is a
         // materialized view.  So, we need to query the data dictionary to find
         // that out.  Get all table names whose comment indicates that they are
         // a materialized view.
-        String sql = 
-            "SELECT TABLE_NAME FROM ALL_TAB_COMMENTS " +
-            "where COMMENTS like 'snapshot%' " +
-            "and OWNER = ? ";
-        
+        String sql = "SELECT TABLE_NAME FROM ALL_TAB_COMMENTS " +
+                "where COMMENTS like 'snapshot%' " +
+                "and OWNER = ? ";
+
         PreparedStatement stmt = null;
         ResultSet rs = null;
         try {
@@ -271,135 +258,72 @@ public class DropTablesCommand extends AbstractRefactoringCommand
                 matViewLookup.add(tableName);
             }
         } catch (SQLException e) {
-            s_log.error(
-                "Unexpected exception while attempting to find mat. views " +
-                "in schema: "+schema, e);
-        } finally {
             SQLUtilities.closeResultSet(rs);
-            SQLUtilities.closeStatement(stmt);            
-        }
-        
-    }
-    
-    private class ShowSQLListener implements ActionListener, SQLResultListener {
-        
-        
-        /* (non-Javadoc)
-         * @see net.sourceforge.squirrel_sql.plugins.refactoring.commands.DropTablesCommand.SQLResultListener#finished(java.lang.String[])
-         */
-        public void finished(String[] sql) {
-            if (sql.length == 0) {
-//              TODO: tell the user no changes
-                return;
-            }
-            StringBuffer script = new StringBuffer();
-            for (int i = 0; i < sql.length; i++) {
-                script.append(sql[i]);
-                script.append("\n\n");                
-            }
-
-            ErrorDialog sqldialog = 
-                new ErrorDialog(dropTableDialog, script.toString());
-            //i18n[DropTablesCommand.sqlDialogTitle=Drop Table SQL]
-            String title = 
-                s_stringMgr.getString("DropTablesCommand.sqlDialogTitle");
-            sqldialog.setTitle(title);
-            sqldialog.setVisible(true);                
-        }
-
-        public void actionPerformed( ActionEvent e) {
-            _session.getApplication().getThreadPool().addTask(new GetSQLTask(this));
-        }
-    }
-    
-    private class DropTablesActionListener implements ActionListener, SQLResultListener {
-
-        /* (non-Javadoc)
-         * @see net.sourceforge.squirrel_sql.plugins.refactoring.commands.DropTablesCommand.SQLResultListener#finished(java.lang.String[])
-         */
-        public void finished(String[] sqls) {
-            final StringBuilder script = new StringBuilder();
-            for (int i = 0; i < sqls.length; i++) {
-                String sql = sqls[i];
-                if (s_log.isDebugEnabled()) {
-                    s_log.debug("DropTablesCommand: adding SQL - "+sql);
-                }
-                script.append(sql);
-                script.append("\n");
-            }
-            // Shows the user a dialog to let them know what's happening
-            GUIUtils.processOnSwingEventThread(new Runnable() {
-                public void run() {
-                    DropTablesCommand.this.handler = 
-                        new DropTableCommandExecHandler(_session);
-
-                    final SQLExecuterTask executer = 
-                        new SQLExecuterTask(_session, 
-                                            script.toString(), 
-                                            DropTablesCommand.this.handler);
-                    executer.setSchemaCheck(false);
-                    _session.getApplication().getThreadPool().addTask(new Runnable() {
-                        public void run() {
-                            executer.run();
-                            
-                            GUIUtils.processOnSwingEventThread(new Runnable() {
-                                public void run() {
-                                    dropTableDialog.setVisible(false);
-                                    _session.getSchemaInfo().reloadAll();
-                                }
-                            });
-                        }
-                    });
-                    
-                    
-                }
-            });            
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            if (dropTableDialog == null) {
-                return;
-            }
-            _session.getApplication().getThreadPool().addTask(new GetSQLTask(this));
-        }
-        
-    }
-    
-    public class GetSQLTask implements Runnable {
-        
-        private SQLResultListener _listener;
-        
-        public GetSQLTask(SQLResultListener listener) {
-            _listener = listener;
-        }
-
-        /* (non-Javadoc)
-         * @see java.lang.Runnable#run()
-         */
-        public void run() {
-            getSQLFromDialog(_listener);
+            SQLUtilities.closeStatement(stmt);
+            throw e;
         }
     }
 
-    private class DropTableCommandExecHandler extends DefaultSQLExecuterHandler {
-        
+
+    @Override
+    protected void executeScript(final String script) {
+        GUIUtils.processOnSwingEventThread(new Runnable() {
+            public void run() {
+                DropTableCommandExecHandler handler = new DropTableCommandExecHandler(_session);
+                final SQLExecuterTask executer = new SQLExecuterTask(_session, script, handler);
+                executer.setSchemaCheck(false);
+                _session.getApplication().getThreadPool().addTask(new Runnable() {
+                    public void run() {
+                        executer.run();
+
+                        GUIUtils.processOnSwingEventThread(new Runnable() {
+                            public void run() {
+                                customDialog.setVisible(false);
+                                _session.getSchemaInfo().reloadAll();
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+
+   /**
+	 * Returns a boolean value indicating whether or not this refactoring is supported for the specified
+	 * dialect.
+	 * 
+	 * @param dialectExt
+	 *           the IHibernateDialectExtension to check
+	 * @return true if this refactoring is supported; false otherwise.
+	 */
+	@Override
+	protected boolean isRefactoringSupportedForDialect(IHibernateDialectExtension dialectExt)
+	{
+		// implemented in all originally supported dialects
+		return true;
+	}
+
+
+	private class DropTableCommandExecHandler extends DefaultSQLExecuterHandler {
         ProgessCallBackDialog cb = null;
-                
-        /** This is used to track the number of tables seen so far, so that we
-         *  can pick the right one from the ordered table list to display as the
-         *  table name of the table currently being dropped - yes, a hack!
+
+        /**
+         * This is used to track the number of tables seen so far, so that we
+         * can pick the right one from the ordered table list to display as the
+         * table name of the table currently being dropped - yes, a hack!
          */
         int tableCount = 0;
-        
-        public DropTableCommandExecHandler(ISession session)
-        {
+
+
+        public DropTableCommandExecHandler(ISession session) {
             super(session);
-            cb = new ProgessCallBackDialog(dropTableDialog,
-                                          i18n.PROGRESS_DIALOG_DROP_TITLE,
-                                          DropTablesCommand.this.orderedTables.size());
+            cb = new ProgessCallBackDialog(customDialog,
+                    i18n.PROGRESS_DIALOG_DROP_TITLE,
+                    DropTablesCommand.this.orderedTables.size());
         }
 
-        
+
         /* (non-Javadoc)
          * @see net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler#sqlStatementCount(int)
          */
@@ -415,15 +339,15 @@ public class DropTablesCommand extends AbstractRefactoringCommand
         @Override
         public void sqlToBeExecuted(String sql) {
             if (s_log.isDebugEnabled()) {
-                s_log.debug("Statement to be executed: "+sql);
+                s_log.debug("Statement to be executed: " + sql);
             }
-            
+
             if (sql.startsWith("ALTER")) {
                 cb.setLoadingPrefix(i18n.DROPPING_CONSTRAINT_PREFIX);
                 // Hack!!! hopefully the FK name will always be the last token!
                 String[] parts = StringUtilities.split(sql, ' ');
                 cb.currentlyLoading(parts[parts.length - 1]);
-            } else {         
+            } else {
                 cb.setLoadingPrefix(i18n.DROPPING_TABLE_PREFIX);
                 if (tableCount < DropTablesCommand.this.orderedTables.size()) {
                     ITableInfo ti = DropTablesCommand.this.orderedTables.get(tableCount);
@@ -432,8 +356,6 @@ public class DropTablesCommand extends AbstractRefactoringCommand
                 tableCount++;
             }
         }
-        
-        
     }
-    
+
 }

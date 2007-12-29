@@ -1,235 +1,313 @@
 package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
+/*
+* Copyright (C) 2007 Daniel Regli & Yannick Winiger
+* http://sourceforge.net/projects/squirrel-sql
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation; either version 2
+* of the License, or any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*/
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.SQLException;
-import java.util.ArrayList;
-
-import net.sourceforge.squirrel_sql.client.gui.db.ColumnDetailDialog;
-import net.sourceforge.squirrel_sql.client.gui.db.ColumnListDialog;
-import net.sourceforge.squirrel_sql.client.gui.mainframe.MainFrame;
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
+import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
+import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
-import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
-import net.sourceforge.squirrel_sql.plugins.refactoring.gui.DropTableDialog;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
+import net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DialectFactoryExtension;
+import net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.IHibernateDialectExtension;
+import net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public abstract class AbstractRefactoringCommand implements ICommand {
+    /**
+     * Logger for this class.
+     */
+    private final static ILogger s_log = LoggerController.createLogger(AbstractRefactoringCommand.class);
 
-    /** Current session */
-    protected ISession _session;
-    
-    /** Selected table(s) */
+    /**
+     * Internationalized strings for this class
+     */
+    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AbstractRefactoringCommand.class);
+
+    static interface i18n {
+        String NO_CHANGES = s_stringMgr.getString("AbstractRefactoringCommand.noChanges");
+        String DIALECT_SELECTION_CANCELLED = s_stringMgr.getString("AbstractRefactoringCommand.dialectSelectionCancelled");
+        String UNSUPPORTED_TYPE_TITLE = s_stringMgr.getString("AbstractRefactoringCommand.unsupportedTypeTitle");
+    }
+
+    /**
+     * Current session
+     */
+    protected final ISession _session;
+
+    /**
+     * Selected database object(s)
+     */
     protected final IDatabaseObjectInfo[] _info;
 
-    protected ColumnListDialog columnListDialog = null;
-    
-    protected ColumnDetailDialog columnDetailDialog = null;
-    
-    protected DropTableDialog dropTableDialog = null;
-    
-    protected String pkName = null;
-    
-    public AbstractRefactoringCommand(ISession session, 
-                                      IDatabaseObjectInfo[] info) 
-    {
-        if (session == null)
-        {
-            throw new IllegalArgumentException("ISession cannot be null");
-        }
-        if (info == null)
-        {
-            throw new IllegalArgumentException("IDatabaseObjectInfo[] cannot be null");
-        }        
+    /**
+     * HibernateDialect to use for this refactoring.
+     * TODO: Replace IHibernateDialectExtension with HibernateDialect as soon
+     * TODO: as all the extensional code is merged into the original HibernateDialect classes.
+     */
+    protected IHibernateDialectExtension _dialect;
+
+    /**
+     * User preferences regarding the generation of SQL scripts.
+     */
+    protected final SqlGenerationPreferences _sqlPrefs;
+
+
+    public AbstractRefactoringCommand(ISession session, IDatabaseObjectInfo[] info) {
+        if (session == null) throw new IllegalArgumentException("ISession cannot be null");
+        if (info == null) throw new IllegalArgumentException("IDatabaseObjectInfo[] cannot be null");
+
         _session = session;
         _info = info;
-    }
-    
-    protected void showColumnListDialog(ActionListener oklistener, 
-                                        ActionListener showSqlListener, 
-                                        int mode) 
-        throws SQLException 
-    {
 
-        ITableInfo ti = (ITableInfo)_info[0];
-        TableColumnInfo[] columns = getTableColumns(ti, mode);
-
-        
-        //Show the user a dialog with a list of columns and ask them to select
-        // one or more columns to drop
-        if (columnListDialog == null) {
-            columnListDialog = new ColumnListDialog(columns, mode);
-            columnListDialog.addColumnSelectionListener(oklistener);
-            columnListDialog.addEditSQLListener(new EditSQLListener());
-            columnListDialog.addShowSQLListener(showSqlListener);
-            MainFrame mainFrame = _session.getApplication().getMainFrame();
-            columnListDialog.setLocationRelativeTo(mainFrame);  
-            columnListDialog.setMultiSelection();
-        }
-        columnListDialog.setTableName(ti.getQualifiedName());
-        if (mode == ColumnListDialog.ADD_PRIMARY_KEY_MODE) {
-            // Set a default primary key name based on the name of the table
-            String pkName = "PK_"+columns[0].getTableName().toUpperCase();
-            columnListDialog.setPrimaryKeyName(pkName);
-        }
-        if (mode == ColumnListDialog.DROP_PRIMARY_KEY_MODE) {
-            SQLDatabaseMetaData md = _session.getSQLConnection().getSQLMetaData();
-            PrimaryKeyInfo[] infos = md.getPrimaryKey(ti);
-            String pkName = infos[0].getSimpleName();
-            columnListDialog.setPrimaryKeyName(pkName);
-        }
-        columnListDialog.setVisible(true);
+        //TODO: Get the actual user-defined preferences.
+        _sqlPrefs = new SqlGenerationPreferences();
+        _sqlPrefs.setSqlStatementSeparator(_session.getQueryTokenizer().getSQLStatementSeparator());
     }
 
-    protected void showDropTableDialog(ActionListener oklistener, 
-                                       ActionListener showSqlListener) {
-        if (dropTableDialog == null) {
-            ITableInfo[] tableInfos = new ITableInfo[_info.length];
-            for (int i = 0; i < tableInfos.length; i++) {
-                tableInfos[i] = (ITableInfo)_info[i];
+
+    /**
+     * Does general execution work that every refactoring command needs (e.g. HibernateDialect)
+     * and then calls the onExecute method for the subclass's specific execution implementation.
+     */
+    public void execute() {
+        try {
+      	  ISQLDatabaseMetaData md = _session.getMetaData();
+            _dialect = DialectFactoryExtension.getDialect(DialectFactory.DEST_TYPE,
+                    _session.getApplication().getMainFrame(), md);
+            if (isRefactoringSupportedForDialect(_dialect)) {
+            	onExecute();
+            } else {
+            	String dialectName = DialectFactory.getDialectType(md).name();
+            	String msg = 
+            		s_stringMgr.getString("AbstractRefactoringCommand.unsupportedRefactoringMsg", dialectName);
+            	_session.showErrorMessage(msg);
             }
-            dropTableDialog = new DropTableDialog(tableInfos);
-            dropTableDialog.addExecuteListener(oklistener);
-            dropTableDialog.addShowSQLListener(showSqlListener);
-            dropTableDialog.addEditSQLListener(new EditSQLListener());
-            MainFrame mainFrame = _session.getApplication().getMainFrame();
-            dropTableDialog.setLocationRelativeTo(mainFrame);              
+        } catch (UserCancelledOperationException e) {
+            _session.showErrorMessage(AbstractRefactoringCommand.i18n.DIALECT_SELECTION_CANCELLED);
+        } catch (Exception e) {
+            _session.showErrorMessage(e);
+            s_log.error("Unexpected exception on execution: " + e.getMessage(), e);
         }
-        dropTableDialog.setVisible(true);
     }
     
-    protected void setPKName(String pkName) {
-        this.pkName = pkName;
-    }
+ 	/**
+	  * Returns a boolean value indicating whether or not this refactoring is supported for the specified 
+	  * dialect. 
+	  * 
+	  * @param dialectExt the IHibernateDialectExtension to check
+	  * @return true if this refactoring is supported; false otherwise.
+	  */
+	protected abstract boolean isRefactoringSupportedForDialect(IHibernateDialectExtension dialectExt);
     
-    protected String getPKName() {
-        return this.pkName;
-    }
-    
-    private TableColumnInfo[] getTableColumns(ITableInfo ti, int mode) 
-    throws SQLException 
-    {
-        SQLDatabaseMetaData md = _session.getSQLConnection().getSQLMetaData();
-        if (mode == ColumnListDialog.DROP_PRIMARY_KEY_MODE) {
-            ArrayList<TableColumnInfo> result= new ArrayList<TableColumnInfo>();
-            PrimaryKeyInfo[] pkCols = md.getPrimaryKey(ti);
-            TableColumnInfo[] colInfos = md.getColumnInfo(ti);
-            for (int i = 0; i < pkCols.length; i++) {
-                PrimaryKeyInfo pkInfo = pkCols[i];
-                setPKName(pkInfo.getSimpleName());
-                String pkColName = pkInfo.getQualifiedColumnName();
-                for (int j = 0; j < colInfos.length; j++) {
-                    TableColumnInfo colInfo = colInfos[j];
-                    if (colInfo.getSimpleName().equals(pkColName)) {
-                        result.add(colInfo);
-                    }
+    /**
+     * The subclass should implement this method with it's refactoring specific execution code.
+     *
+     * @throws Exception if something goes wrong while executing the command
+     */
+    protected abstract void onExecute() throws Exception;
+
+
+    /**
+     * The subclass should implement this so that getSQLStatements can generate the actual statements.
+     *
+     * @return the sql statements
+     * @throws Exception if something goes wrong while generating the sql statements
+     */
+    protected abstract String[] generateSQLStatements() throws Exception;
+
+
+    /**
+     * Adds a new task to the ThreadPool that generates the SQL statements and
+     * notifies the listener when the statements were successfully generated.
+     *
+     * @param listener the listener to notify when the statments are ready
+     */
+    protected void getSQLStatements(final SQLResultListener listener) {
+        _session.getApplication().getThreadPool().addTask(new Runnable() {
+            public void run() {
+                try {
+                    listener.finished(generateSQLStatements());
+                } catch (UserCancelledOperationException ucoe) {
+                    _session.showErrorMessage(i18n.DIALECT_SELECTION_CANCELLED);
+                } catch (Exception e) {
+                    _session.showErrorMessage(e);
+                    s_log.error("Unexpected exception on sql generation: " + e.getMessage(), e);                    
                 }
             }
-            return result.toArray(new TableColumnInfo[result.size()]);
-        } 
-        return _session.getSQLConnection().getSQLMetaData().getColumnInfo(ti);        
+        });
     }
-    
+
+
+    /**
+     * The subclass should implement this so that the ExecuteListener can delegate the execution
+     * of the sql script to the subclass.
+     *
+     * @param script the sql script that should be executed
+     */
+    protected abstract void executeScript(String script);
+
+
+    /**
+     * An ActionListener for the Show SQL button that opens the sql statement in a dialog.
+     * The new dialog will have the title and parent window as specified in the constructors parameters.
+     * <p/>
+     * If the specified parent JDialog is null, the new dialog's parent will be the application's mainframe.
+     */
+    protected class ShowSQLListener implements ActionListener, SQLResultListener {
+        private final String _dialogTitle;
+        private final JDialog _parentDialog;
+
+
+        public ShowSQLListener(String dialogTitle, JDialog parentDialog) {
+            _dialogTitle = dialogTitle;
+            _parentDialog = parentDialog;
+        }
+
+
+        public void actionPerformed(ActionEvent e) {
+            getSQLStatements(this);
+        }
+
+
+        public void finished(final String[] stmts) {
+            if (stmts == null || stmts.length == 0) {
+                _session.showMessage(i18n.NO_CHANGES);
+                return;
+            }
+
+            final StringBuilder script = new StringBuilder();
+            for (String stmt : stmts) {
+                script.append(stmt).append("\n\n");
+            }
+            script.setLength(script.length() - 2);
+
+            GUIUtils.processOnSwingEventThread(new Runnable() {
+                public void run() {
+                    final ErrorDialog showSQLDialog;
+                    if (_parentDialog != null) showSQLDialog = new ErrorDialog(_parentDialog, script.toString());
+                    else showSQLDialog = new ErrorDialog(_session.getApplication().getMainFrame(), script.toString());
+                    showSQLDialog.setTitle(_dialogTitle);
+                    showSQLDialog.setVisible(true);
+                }
+            });
+        }
+    }
+
+
+    /**
+     * An ActionListener for the Edit SQL button that appends the sql statement to the sql panel,
+     * disposes the specified dialog and switches to the sql panel.
+     * <p/>
+     * The specified dialog can be null if no JDialog needs to be disposed.
+     */
+    protected class EditSQLListener implements ActionListener, SQLResultListener {
+        private final JDialog _parentDialog;
+
+
+        public EditSQLListener(JDialog parentDialog) {
+            _parentDialog = parentDialog;
+        }
+
+
+        public void actionPerformed(ActionEvent e) {
+            getSQLStatements(this);
+        }
+
+
+        public void finished(final String[] stmts) {
+            if (stmts == null || stmts.length == 0) {
+                _session.showMessage(i18n.NO_CHANGES);
+                return;
+            }
+            final StringBuilder script = new StringBuilder();
+            for (String stmt : stmts) {
+                script.append(stmt).append("\n\n");
+            }
+            script.setLength(script.length() - 2);
+
+            GUIUtils.processOnSwingEventThread(new Runnable() {
+                public void run() {
+                    if (_parentDialog != null) {
+                        _parentDialog.dispose();
+                    }
+                    _session.getSQLPanelAPIOfActiveSessionWindow().appendSQLScript(script.toString(), true);
+                    _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
+                }
+            });
+        }
+    }
+
+    /**
+     * An ActionListener for the Execute button that delegates the execution of the sql statement to the subclass.
+     * The actual execution is specified in the subclass's implementation of the executeScript method.
+     */
+    protected class ExecuteListener implements ActionListener, SQLResultListener {
+        public void actionPerformed(ActionEvent e) {
+            getSQLStatements(this);
+        }
+
+
+        public void finished(String[] stmts) {
+            if (stmts == null || stmts.length == 0) {
+                _session.showMessage(i18n.NO_CHANGES);
+                return;
+            }
+            final StringBuilder script = new StringBuilder();
+            for (String stmt : stmts) {
+                script.append(stmt).append("\n");
+            }
+            script.setLength(script.length() - 1);
+
+            executeScript(script.toString());
+        }
+    }
+
     protected class CommandExecHandler extends DefaultSQLExecuterHandler {
-        private boolean exceptionEncountered = false;
-        
+        protected boolean exceptionEncountered = false;
+
+
         public CommandExecHandler(ISession session) {
             super(session);
         }
 
-        /* (non-Javadoc)
-         * @see net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler#sqlExecutionException(java.lang.Throwable, java.lang.String)
-         */
+
         public void sqlExecutionException(Throwable th, String postErrorString) {
             super.sqlExecutionException(th, postErrorString);
-            setExceptionEncountered(true);
+            exceptionEncountered = true;
         }
 
-        /**
-         * @param exceptionEncountered the exceptionEncountered to set
-         */
-        public void setExceptionEncountered(boolean exceptionEncountered) {
-            this.exceptionEncountered = exceptionEncountered;
-        }
 
-        /**
-         * @return the exceptionEncountered
-         */
         public boolean exceptionEncountered() {
             return exceptionEncountered;
         }
     }
-    
-    /**
-     * The subclass should implement this so that the action listeners can get
-     * the SQL 
-     * @param listener TODO
-     * @return
-     */
-    protected abstract void getSQLFromDialog(SQLResultListener listener);
-    
-    /**
-     *                      
-     *                      
-     *
-     */
-    protected class EditSQLListener implements ActionListener, SQLResultListener {
-
-        /* (non-Javadoc)
-         * @see net.sourceforge.squirrel_sql.plugins.refactoring.commands.SQLResultListener#finished(java.lang.String[])
-         */
-        public void finished(String[] sqls) {
-            if (sqls == null) {
-                return;
-            }
-            final StringBuffer sql = new StringBuffer();
-            for (int i = 0; i < sqls.length; i++) {
-                sql.append(sqls[i]);
-                if (i < sqls.length) {
-                    sql.append("\n\n");
-                }
-            }            
-            GUIUtils.processOnSwingEventThread(new Runnable() {
-                public void run() {
-                    if (columnListDialog != null) {
-                        columnListDialog.setVisible(false);
-                    }
-                    if (columnDetailDialog != null) {
-                        columnDetailDialog.setVisible(false);
-                    }
-                    if (dropTableDialog != null) {
-                        dropTableDialog.setVisible(false);
-                    }
-                    _session.getSQLPanelAPIOfActiveSessionWindow().appendSQLScript(sql.toString(), true);
-                    _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
-                }
-            });            
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            final SQLResultListener listener = this;
-            _session.getApplication().getThreadPool().addTask(new Runnable() {
-                public void run() {
-                    getSQLFromDialog(listener);
-                }
-            });
-        }
-        
-    }
-    
-    protected boolean tableHasPrimaryKey() throws SQLException {
-        if (! (_info[0] instanceof ITableInfo)) {
-            return false;
-        }
-        ITableInfo ti = (ITableInfo)_info[0];
-        SQLDatabaseMetaData md = _session.getSQLConnection().getSQLMetaData();
-        PrimaryKeyInfo[] pks = md.getPrimaryKey(ti);
-        return (pks != null && pks.length > 0);
-    }
-
 }

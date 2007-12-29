@@ -1,6 +1,6 @@
 package net.sourceforge.squirrel_sql.plugins.refactoring.actions;
 /*
- * Copyright (C) 2006 Rob Manning
+ * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
  *
  * This program is free software; you can redistribute it and/or
@@ -17,8 +17,8 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.actions;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
 import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.session.action.ISessionAction;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
@@ -26,50 +26,40 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.refactoring.commands.RemoveColumnCommand;
 
-public class RemoveColumnAction extends AbstractRefactoringAction
-                                        implements ISessionAction {
+public class RemoveColumnAction extends AbstractRefactoringAction {
+    /**
+     * Internationalized strings for this class.
+     */
+    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(RemoveColumnAction.class);
 
-    private static final long serialVersionUID = 1L;
 
-    /** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(RemoveColumnAction.class);
-    
-    
     private static interface i18n {
-        ///i18n[AddColumnAction.removeColumnPart=remove a column]
-        String columnPart = 
-            s_stringMgr.getString("AddColumnAction.removeColumnPart");
-        //i18n[Shared.singleObjectMessage=You must have a single table selected
-        //in order to {0}]
-        String singleObjectMessage = 
-            s_stringMgr.getString("Shared.singleObjectMessage", columnPart); 
-    }    
-    
-    public RemoveColumnAction(IApplication app, 
-                               Resources rsrc) 
-    {
+        String ACTION_PART = s_stringMgr.getString("RemoveColumnAction.actionPart");
+        String OBJECT_PART = s_stringMgr.getString("Shared.tableObject");
+        String SINGLE_OBJECT_MESSAGE = s_stringMgr.getString("Shared.singleObjectMessage", OBJECT_PART, ACTION_PART);
+    }
+
+
+    public RemoveColumnAction(IApplication app, Resources rsrc) {
         super(app, rsrc);
     }
 
-    /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.plugins.refactoring.actions.AbstractRefactoringAction#getCommand(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
-     */
+
+    @Override
     protected ICommand getCommand(IDatabaseObjectInfo[] info) {
         return new RemoveColumnCommand(_session, info);
     }
 
-    /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.plugins.refactoring.actions.AbstractRefactoringAction#getErrorMessage()
-     */
+
+    @Override
     protected String getErrorMessage() {
-        return i18n.singleObjectMessage;
+        return i18n.SINGLE_OBJECT_MESSAGE;
     }
+
 
     @Override
     protected boolean isMultipleObjectAction() {
-        // Can only remove columns from one table at a time
         return false;
     }
-    
+
 }
