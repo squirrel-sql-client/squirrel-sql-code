@@ -18,6 +18,8 @@ package net.sourceforge.squirrel_sql.plugins.refactoring;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import javax.swing.JMenu;
+
 import net.sourceforge.squirrel_sql.client.IApplication;
 import net.sourceforge.squirrel_sql.client.action.ActionCollection;
 import net.sourceforge.squirrel_sql.client.gui.session.ObjectTreeInternalFrame;
@@ -26,13 +28,36 @@ import net.sourceforge.squirrel_sql.client.plugin.DefaultSessionPlugin;
 import net.sourceforge.squirrel_sql.client.plugin.PluginException;
 import net.sourceforge.squirrel_sql.client.plugin.PluginResources;
 import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
+import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
-import net.sourceforge.squirrel_sql.plugins.refactoring.actions.*;
-
-import javax.swing.*;
+import net.sourceforge.squirrel_sql.plugins.refactoring.actions.AddAutoIncrementAction;
+import net.sourceforge.squirrel_sql.plugins.refactoring.actions.AddColumnAction;
+import net.sourceforge.squirrel_sql.plugins.refactoring.actions.AddForeignKeyAction;
+import net.sourceforge.squirrel_sql.plugins.refactoring.actions.AddIndexAction;
+import net.sourceforge.squirrel_sql.plugins.refactoring.actions.AddLookupTableAction;
+import net.sourceforge.squirrel_sql.plugins.refactoring.actions.AddPrimaryKeyAction;
+import net.sourceforge.squirrel_sql.plugins.refactoring.actions.AddSequenceAction;
+import net.sourceforge.squirrel_sql.plugins.refactoring.actions.AddUniqueConstraintAction;
+import net.sourceforge.squirrel_sql.plugins.refactoring.actions.AddViewAction;
+import net.sourceforge.squirrel_sql.plugins.refactoring.actions.DropForeignKeyAction;
+import net.sourceforge.squirrel_sql.plugins.refactoring.actions.DropIndexTableAction;
+import net.sourceforge.squirrel_sql.plugins.refactoring.actions.DropPrimaryKeyAction;
+import net.sourceforge.squirrel_sql.plugins.refactoring.actions.DropSelectedTablesAction;
+import net.sourceforge.squirrel_sql.plugins.refactoring.actions.DropSequenceAction;
+import net.sourceforge.squirrel_sql.plugins.refactoring.actions.DropUniqueConstraintAction;
+import net.sourceforge.squirrel_sql.plugins.refactoring.actions.DropViewAction;
+import net.sourceforge.squirrel_sql.plugins.refactoring.actions.MergeColumnAction;
+import net.sourceforge.squirrel_sql.plugins.refactoring.actions.MergeTableAction;
+import net.sourceforge.squirrel_sql.plugins.refactoring.actions.ModifyColumnAction;
+import net.sourceforge.squirrel_sql.plugins.refactoring.actions.ModifySequenceAction;
+import net.sourceforge.squirrel_sql.plugins.refactoring.actions.RemoveColumnAction;
+import net.sourceforge.squirrel_sql.plugins.refactoring.actions.RenameTableAction;
+import net.sourceforge.squirrel_sql.plugins.refactoring.actions.RenameViewAction;
+import net.sourceforge.squirrel_sql.plugins.refactoring.prefs.RefactoringPreferencesManager;
+import net.sourceforge.squirrel_sql.plugins.refactoring.prefs.RefactoringPreferencesTab;
 
 /**
  * The Refactoring plugin class.
@@ -149,12 +174,10 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
      *
      * @return Preferences panel.
      */
-    /*
     public IGlobalPreferencesPanel[] getGlobalPreferencePanels() {
-        SQLScriptPreferencesTab tab = new SQLScriptPreferencesTab();
+        RefactoringPreferencesTab tab = new RefactoringPreferencesTab();
         return new IGlobalPreferencesPanel[] {tab};
     }
-    */
 
 
     /**
@@ -190,6 +213,8 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
         coll.add(new RemoveColumnAction(app, _resources));
         coll.add(new RenameTableAction(app, _resources));
         coll.add(new RenameViewAction(app, _resources));
+        
+        RefactoringPreferencesManager.initialize(this);
     }
 
 
