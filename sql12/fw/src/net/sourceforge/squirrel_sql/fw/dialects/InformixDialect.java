@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Collection;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
@@ -473,5 +474,285 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect
     public DialectType getDialectType() {
        return DialectType.INFORMIX;
     }
+
+	public String[] getAccessMethodsTypes()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getAddAutoIncrementSQL(TableColumnInfo column, SqlGenerationPreferences prefs)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getAddColumnSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getAddForeignKeyConstraintSQL(String localTableName, String refTableName,
+		String constraintName, boolean deferrable, boolean initiallyDeferred, boolean matchFull,
+		boolean autoFKIndex, String fkIndexName, Collection<String[]> localRefColumns, String onUpdateAction,
+		String onDeleteAction, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getAddUniqueConstraintSQL(String tableName, String constraintName, String[] columns,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getAlterSequenceSQL(String sequenceName, String increment, String minimum, String maximum,
+		String restart, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getCreateIndexSQL(String indexName, String tableName, String[] columns, boolean unique,
+		String tablespace, String constraints, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getCreateSequenceSQL(String sequenceName, String increment, String minimum, String maximum,
+		String start, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getCreateTableSQL(String tableName, List<TableColumnInfo> columns,
+		List<TableColumnInfo> primaryKeys, SqlGenerationPreferences prefs, DatabaseObjectQualifier qualifier)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getCreateViewSQL(String viewName, String definition, String checkOption,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getDropConstraintSQL(String tableName, String constraintName,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getDropIndexSQL(String indexName, boolean cascade, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getDropSequenceSQL(String sequenceName, boolean cascade, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getDropViewSQL(String viewName, boolean cascade, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getInsertIntoSQL(String tableName, List<String> columns, String valuesPart,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getRenameTableSQL(String oldTableName, String newTableName,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getRenameViewSQL(String oldViewName, String newViewName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getSequenceInformationSQL(String sequenceName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getUpdateSQL(String tableName, String[] setColumns, String[] setValues, String[] fromTables,
+		String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public boolean supportsAccessMethods()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean supportsAddForeignKeyConstraint()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean supportsAddUniqueConstraint()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean supportsAlterSequence()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean supportsAutoIncrement()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean supportsCheckOptionsForViews()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean supportsCreateIndex()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean supportsCreateSequence()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean supportsCreateTable()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean supportsCreateView()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean supportsDropConstraint()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean supportsDropIndex()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean supportsDropSequence()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean supportsDropView()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean supportsEmptyTables()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean supportsIndexes()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean supportsInsertInto()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean supportsMultipleRowInserts()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean supportsRenameTable()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean supportsRenameView()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean supportsSequence()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean supportsSequenceInformation()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean supportsTablespace()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean supportsUpdate()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
     
 }

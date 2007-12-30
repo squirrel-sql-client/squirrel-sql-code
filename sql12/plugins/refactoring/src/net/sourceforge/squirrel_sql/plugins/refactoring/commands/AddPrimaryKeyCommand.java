@@ -32,7 +32,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.IHibernateDialectExtension;
+import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 
 import java.sql.SQLException;
 
@@ -66,11 +66,11 @@ public class AddPrimaryKeyCommand extends AbstractRefactoringCommand {
     }
 
 
-    //TODO: Remove when IHibernateDialectExtension is merged into HibernateDialect.
+    //TODO: Remove when HibernateDialect is merged into HibernateDialect.
     private HibernateDialect _dialect;
 
 
-    //TODO: Remove when IHibernateDialectExtension is merged into HibernateDialect.
+    //TODO: Remove when HibernateDialect is merged into HibernateDialect.
     @Override
     public void execute() {
         try {
@@ -157,11 +157,11 @@ public class AddPrimaryKeyCommand extends AbstractRefactoringCommand {
 	 * Returns a boolean value indicating whether or not this refactoring is supported for the specified 
 	 * dialect. 
 	 * 
-	 * @param dialectExt the IHibernateDialectExtension to check
+	 * @param dialectExt the HibernateDialect to check
 	 * @return true if this refactoring is supported; false otherwise.
 	 */
 	@Override
-	protected boolean isRefactoringSupportedForDialect(IHibernateDialectExtension dialectExt)
+	protected boolean isRefactoringSupportedForDialect(HibernateDialect dialectExt)
 	{
 		// implemented in all originally supported dialects		
 		return true;

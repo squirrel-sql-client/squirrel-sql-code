@@ -31,7 +31,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.refactoring.gui.AddAutoIncrementDialog;
-import net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.IHibernateDialectExtension;
+import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -138,11 +138,11 @@ public class AddAutoIncrementCommand extends AbstractRefactoringCommand {
 	 * dialect.
 	 * 
 	 * @param dialectExt
-	 *           the IHibernateDialectExtension to check
+	 *           the HibernateDialect to check
 	 * @return true if this refactoring is supported; false otherwise.
 	 */
 	@Override
-	protected boolean isRefactoringSupportedForDialect(IHibernateDialectExtension dialectExt)
+	protected boolean isRefactoringSupportedForDialect(HibernateDialect dialectExt)
 	{
 		return dialectExt.supportsAutoIncrement();
 	}

@@ -1,4 +1,4 @@
-package net.sourceforge.squirrel_sql.plugins.refactoring.hibernate;
+package net.sourceforge.squirrel_sql.fw.dialects;
 /*
 * Copyright (C) 2007 Daniel Regli & Yannick Winiger
 * http://sourceforge.net/projects/squirrel-sql

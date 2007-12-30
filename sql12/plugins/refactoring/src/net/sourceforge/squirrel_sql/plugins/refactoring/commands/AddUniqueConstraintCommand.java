@@ -18,8 +18,13 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+import java.sql.SQLException;
+import java.util.TreeSet;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier;
+import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -30,12 +35,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.refactoring.gui.AddUniqueConstraintDialog;
-import net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier;
-import net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.IHibernateDialectExtension;
-
-
-import java.sql.SQLException;
-import java.util.TreeSet;
 
 public class AddUniqueConstraintCommand extends AbstractRefactoringCommand {
     /**
@@ -122,11 +121,11 @@ public class AddUniqueConstraintCommand extends AbstractRefactoringCommand {
 	 * Returns a boolean value indicating whether or not this refactoring is supported for the specified 
 	 * dialect. 
 	 * 
-	 * @param dialectExt the IHibernateDialectExtension to check
+	 * @param dialectExt the HibernateDialect to check
 	 * @return true if this refactoring is supported; false otherwise.
 	 */
 	@Override
-	protected boolean isRefactoringSupportedForDialect(IHibernateDialectExtension dialectExt)
+	protected boolean isRefactoringSupportedForDialect(HibernateDialect dialectExt)
 	{
 		return dialectExt.supportsAddUniqueConstraint();
 	}
