@@ -18,10 +18,23 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
-import net.sourceforge.squirrel_sql.fw.sql.*;
+import net.sourceforge.squirrel_sql.fw.sql.ForeignKeyInfo;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
+import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
+import net.sourceforge.squirrel_sql.fw.sql.SQLUtilities;
+import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -29,14 +42,6 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.refactoring.gui.AddLookupTableDialog;
 import net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier;
 import net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.IHibernateDialectExtension;
-
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.List;
 
 public class AddLookupTableCommand extends AbstractRefactoringCommand {
     /**
@@ -183,7 +188,8 @@ public class AddLookupTableCommand extends AbstractRefactoringCommand {
                     sourceColumn.getRemarks(), sourceColumn.getDefaultValue(), sourceColumn.getOctetLength(),
                     sourceColumn.getOrdinalPosition(), sourceColumn.isNullable(), md);
 
-            results.add(_dialect.getColumnNameAlterSQL(sourceColumn, tempColumn) + ";");
+            results.add(_dialect.getColumnNameAlterSQL(sourceColumn, tempColumn) + "\n"
+            					+ _sqlPrefs.getSqlStatementSeparator());
 
             // Adds the new column (type: integer).
             TableColumnInfo newColumn = new TableColumnInfo(
@@ -194,7 +200,7 @@ public class AddLookupTableCommand extends AbstractRefactoringCommand {
                     sourceColumn.getOrdinalPosition(), "YES", md);
             String[] addColumnResults = _dialect.getColumnAddSQL(newColumn);
             for (String addColumnResult : addColumnResults) {
-                results.add(addColumnResult + ";");
+                results.add(addColumnResult + "\n" + _sqlPrefs.getSqlStatementSeparator());
             }
 
             // Adds a foreign key constraint to the source table for the new column.
@@ -207,6 +213,8 @@ public class AddLookupTableCommand extends AbstractRefactoringCommand {
 
             // Inserts all keys into the new column depending on the content in the old column.
             for (int i = 0; i < data.size(); i++) {
+	           	 // TODO: This won't work when the column has values with quotes in them.  
+	           	 //       Use PreparedStatements instead.            	
                 results.add(_dialect.getUpdateSQL(sourceTableName,
                         new String[]{sourceColumnName}, new String[]{String.valueOf(i)}, null,
                         new String[]{sourceColumnName + "_temp"}, new String[]{"'" + data.get(i) + "'"},
@@ -221,14 +229,15 @@ public class AddLookupTableCommand extends AbstractRefactoringCommand {
                         newColumn.getDecimalDigits(), newColumn.getRadix(), 0,
                         newColumn.getRemarks(), newColumn.getDefaultValue(), newColumn.getOctetLength(),
                         newColumn.getOrdinalPosition(), "NO", md);
-                results.add(_dialect.getColumnNullableAlterSQL(newColumnNotNull) + ";");
+                results.add(_dialect.getColumnNullableAlterSQL(newColumnNotNull) + "\n"
+               	 				+ _sqlPrefs.getSqlStatementSeparator());
             }
 
             // Drops the original column.
             String dropStmt = _dialect.getColumnDropSQL(sourceTableName, sourceColumnName + "_temp");
             if (_customDialog.getDropCascade())
                 dropStmt += " CASCADE";
-            results.add(dropStmt + ";");
+            results.add(dropStmt + "\n" + _sqlPrefs.getSqlStatementSeparator());
         }
         return results.toArray(new String[]{});
     }

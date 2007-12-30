@@ -113,7 +113,8 @@ public class MergeColumnCommand extends AbstractRefactoringCommand {
         ResultSet rs = null;
         try {
             // Selects the values from the existing table
-            String dataQuery = "SELECT  " + "\"" + column1 + "\", \"" + column2 + "\" FROM \"" + schema + "\".\"" + table + "\";";
+            String dataQuery = "SELECT  " + "\"" + column1 + "\", \"" + column2 + 
+            						 "\" FROM \"" + schema + "\".\"" + table + "\"";
             stmt = _session.getSQLConnection().createStatement();
             rs = stmt.executeQuery(dataQuery);
             while (rs.next()) {
