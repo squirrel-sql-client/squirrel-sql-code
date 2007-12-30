@@ -32,12 +32,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Vector;
 
 public class MergeTableDialog extends AbstractRefactoringTabbedDialog {
 
-    /**
+	 private static final long serialVersionUID = 6331522065498766665L;
+	 /**
      * Internationalized strings for this class.
      */
     private static final StringManager s_stringMgr =
@@ -141,7 +143,8 @@ public class MergeTableDialog extends AbstractRefactoringTabbedDialog {
 
 
     class PropertiesTab extends JPanel {
-        private JComboBox _referencesField;
+   	  private static final long serialVersionUID = 5266523997787656787L;
+		  private JComboBox _referencesField;
         private JCheckBox _mergeDataBox;
         private JTable _columTable;
         private final ReferenceColumnTableModel _columnTableModel = new ReferenceColumnTableModel();
@@ -322,6 +325,7 @@ public class MergeTableDialog extends AbstractRefactoringTabbedDialog {
 
             //all tables except the merge into table
             String[] tables = _tables.keySet().toArray(new String[]{});
+            Arrays.sort(tables);
             setReferencesTable(tables);
 
             setReferencedColumnBox(tables[0]);
@@ -333,7 +337,9 @@ public class MergeTableDialog extends AbstractRefactoringTabbedDialog {
 
     class ColumnsTab extends JPanel {
 
-        private JTable _columTable;
+		  private static final long serialVersionUID = -6593805032124150621L;
+
+		  private JTable _columTable;
 
         private final ColumnTableModel _columnTableModel = new ColumnTableModel();
 
@@ -466,7 +472,8 @@ public class MergeTableDialog extends AbstractRefactoringTabbedDialog {
     }
 
     class ColumnTableModel extends AbstractTableModel {
-        private final Vector<String> rowData = new Vector<String>();
+   	  private static final long serialVersionUID = -1078295535237858500L;
+		  private final Vector<String> rowData = new Vector<String>();
         private final String[] columnNames = new String[]{i18n.COLUMNS_REFERENCED_HEADER};
 
 
@@ -519,7 +526,8 @@ public class MergeTableDialog extends AbstractRefactoringTabbedDialog {
     }
 
     class ReferenceColumnTableModel extends AbstractTableModel {
-        private final Vector<String[]> rowData = new Vector<String[]>();
+   	  private static final long serialVersionUID = 3631817804663071486L;
+		  private final Vector<String[]> rowData = new Vector<String[]>();
         private final String[] columnNames = new String[]{i18n.COLUMNS_LOCAL_COLUMN_HEADER, i18n.COLUMNS_MERGE_TABLE_HEADER};
 
 

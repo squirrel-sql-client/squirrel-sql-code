@@ -18,21 +18,38 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.gui;
 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Vector;
+
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.AbstractTableModel;
+
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.AbstractTableModel;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.HashMap;
-import java.util.Vector;
 
 
 public class AddForeignKeyDialog extends AbstractRefactoringTabbedDialog {
@@ -352,8 +369,8 @@ public class AddForeignKeyDialog extends AbstractRefactoringTabbedDialog {
 
         private void initData() {
             String[] tables = _tables.keySet().toArray(new String[]{});
+            Arrays.sort(tables);
             setReferencesTable(tables);
-
         }
 
 
