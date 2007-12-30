@@ -40,7 +40,8 @@ public class ModifySequenceCommand extends AbstractRefactoringCommand {
     /**
      * Logger for this class.
      */
-    private final static ILogger s_log = LoggerController.createLogger(ModifySequenceCommand.class);
+    @SuppressWarnings("unused")
+	private final static ILogger s_log = LoggerController.createLogger(ModifySequenceCommand.class);
 
     /**
      * Internationalized strings for this class.
@@ -91,10 +92,9 @@ public class ModifySequenceCommand extends AbstractRefactoringCommand {
                 customDialog.setLocationRelativeTo(_session.getApplication().getMainFrame());
                 customDialog.setVisible(true);
             }
-        } catch (SQLException e) {
-            SQLUtilities.closeResultSet(rs);
-            SQLUtilities.closeStatement(stmt);
-            throw e;
+        } finally {
+           SQLUtilities.closeResultSet(rs);
+           SQLUtilities.closeStatement(stmt);
         }
     }
 

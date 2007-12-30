@@ -145,48 +145,56 @@ public class MergeTableCommand extends AbstractRefactoringCommand {
 
             // Selects the values from the merge table
             String dataQuery = "SELECT " + columnNamesSelectStmt.toString() + ", " + columnIDSelect.toString() + " FROM \"" + schema + "\".\"" + mergedTable + "\";";
-            Statement stmt = _session.getSQLConnection().createStatement();
-            ResultSet rs = stmt.executeQuery(dataQuery);
-
-            ArrayList<String> whereColumns = new ArrayList<String>();
-            ArrayList<String> whereValues = new ArrayList<String>();
-
-            while (rs.next()) {
-                ArrayList<String> rowColumns = new ArrayList<String>();
-                ArrayList<String> rowData = new ArrayList<String>();
-                for (int i = 1; i <= customDialog.getMergeColumns().size(); i++) {
-                    String value = rs.getString(i);
-                    if (!rs.wasNull()) {
-                        rowColumns.add(mergeColumns[i - 1]);
-                        rowData.add("'" + value + "'");
-                    }
-                }
-
-                if (customDialog.getWhereDataColumns().size() > 0) {
-                    // Selects the values for the where part
-                    whereColumns = new ArrayList<String>();
-                    whereValues = new ArrayList<String>();
-                    int count = 0;
-                    for (String[] whereRow : customDialog.getWhereDataColumns()) {
-                        count++;
-                        // maybe with Inner join better performance
-                        StringBuilder whereColumn = new StringBuilder();
-                        StringBuilder whereValue = new StringBuilder();
-                        whereColumn.append(table).append("\".\"").append(whereRow[0]);
-                        whereValue.append("'").append(rs.getString(customDialog.getMergeColumns().size() + count)).append("'");
-
-                        whereColumns.add(whereColumn.toString());
-                        whereValues.add(whereValue.toString());
-                    }
-                }
-
-                updateResults.add(_dialect.getUpdateSQL(table, rowColumns.toArray(new String[rowColumns.size()]),
-                        rowData.toArray(new String[rowData.size()]), new String[]{mergedTable},
-                        whereColumns.toArray(new String[whereColumns.size()]), whereValues.toArray(new String[whereValues.size()]),
-                        qualifier, _sqlPrefs));
-                rowData.clear();
+            Statement stmt = null;
+            ResultSet rs = null;
+            try {
+	            stmt = _session.getSQLConnection().createStatement();
+	            rs = stmt.executeQuery(dataQuery);
+	
+	            ArrayList<String> whereColumns = new ArrayList<String>();
+	            ArrayList<String> whereValues = new ArrayList<String>();
+	
+	            while (rs.next()) {
+	                ArrayList<String> rowColumns = new ArrayList<String>();
+	                ArrayList<String> rowData = new ArrayList<String>();
+	                for (int i = 1; i <= customDialog.getMergeColumns().size(); i++) {
+	                    String value = rs.getString(i);
+	                    if (!rs.wasNull()) {
+	                        rowColumns.add(mergeColumns[i - 1]);
+	                        rowData.add("'" + value + "'");
+	                    }
+	                }
+	
+	                if (customDialog.getWhereDataColumns().size() > 0) {
+	                    // Selects the values for the where part
+	                    whereColumns = new ArrayList<String>();
+	                    whereValues = new ArrayList<String>();
+	                    int count = 0;
+	                    for (String[] whereRow : customDialog.getWhereDataColumns()) {
+	                        count++;
+	                        // maybe with Inner join better performance
+	                        StringBuilder whereColumn = new StringBuilder();
+	                        StringBuilder whereValue = new StringBuilder();
+	                        whereColumn.append(table).append("\".\"").append(whereRow[0]);
+	                        whereValue.append("'").append(rs.getString(customDialog.getMergeColumns().size() + count)).append("'");
+	
+	                        whereColumns.add(whereColumn.toString());
+	                        whereValues.add(whereValue.toString());
+	                    }
+	                }
+	
+	                updateResults.add(_dialect.getUpdateSQL(table, rowColumns.toArray(new String[rowColumns.size()]),
+	                        rowData.toArray(new String[rowData.size()]), new String[]{mergedTable},
+	                        whereColumns.toArray(new String[whereColumns.size()]), whereValues.toArray(new String[whereValues.size()]),
+	                        qualifier, _sqlPrefs));
+	                rowData.clear();
+	            }
+            } catch (SQLException e) {
+            	s_log.error("generateSQLStatements: Unexpected exception: "+e.getMessage(), e);
+            } finally {
+            	SQLUtilities.closeResultSet(rs);
+            	SQLUtilities.closeStatement(stmt);
             }
-
             results.addAll(updateResults);
         }
 

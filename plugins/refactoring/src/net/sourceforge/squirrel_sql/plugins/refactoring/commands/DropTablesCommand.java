@@ -237,12 +237,20 @@ public class DropTablesCommand extends AbstractRefactoringCommand {
     }
 
 
-    private void initMatViewLookup(ISession session, String schema) throws SQLException {
+   /**
+	 * There is no good way using JDBC metadata to tell if the table is a materialized view. So, we need to
+	 * query the data dictionary to find that out. Get all table names whose comment indicates that they are a
+	 * materialized view.
+	 * 
+	 * @param session
+	 *           the session to query data from
+	 * @param schema
+	 *           the schema whose matviews we are interested in.
+	 * @throws SQLException
+	 *            if an error occurs
+	 */
+   private void initMatViewLookup(ISession session, String schema) throws SQLException {
         matViewLookup = new HashSet<String>();
-        // There is no good way using JDBC metadata to tell if the table is a
-        // materialized view.  So, we need to query the data dictionary to find
-        // that out.  Get all table names whose comment indicates that they are
-        // a materialized view.
         String sql = "SELECT TABLE_NAME FROM ALL_TAB_COMMENTS " +
                 "where COMMENTS like 'snapshot%' " +
                 "and OWNER = ? ";
@@ -257,10 +265,9 @@ public class DropTablesCommand extends AbstractRefactoringCommand {
                 String tableName = rs.getString(1);
                 matViewLookup.add(tableName);
             }
-        } catch (SQLException e) {
+        } finally {
             SQLUtilities.closeResultSet(rs);
             SQLUtilities.closeStatement(stmt);
-            throw e;
         }
     }
 
