@@ -144,7 +144,8 @@ public class MergeTableCommand extends AbstractRefactoringCommand {
             final String[] mergeColumns = customDialog.getMergeColumns().toArray(new String[customDialog.getMergeColumns().size()]);
 
             // Selects the values from the merge table
-            String dataQuery = "SELECT " + columnNamesSelectStmt.toString() + ", " + columnIDSelect.toString() + " FROM \"" + schema + "\".\"" + mergedTable + "\";";
+            String dataQuery = "SELECT " + columnNamesSelectStmt.toString() + ", " + columnIDSelect.toString() + 
+             					  	 " FROM \"" + schema + "\".\"" + mergedTable + "\"";
             Statement stmt = null;
             ResultSet rs = null;
             try {
