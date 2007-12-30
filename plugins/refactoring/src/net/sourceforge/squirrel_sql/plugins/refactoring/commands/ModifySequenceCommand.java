@@ -18,8 +18,14 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier;
+import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -29,12 +35,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.refactoring.gui.AddModifySequenceDialog;
-import net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier;
-import net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.IHibernateDialectExtension;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 public class ModifySequenceCommand extends AbstractRefactoringCommand {
     /**
@@ -136,11 +136,11 @@ public class ModifySequenceCommand extends AbstractRefactoringCommand {
 	 * Returns a boolean value indicating whether or not this refactoring is supported for the specified 
 	 * dialect. 
 	 * 
-	 * @param dialectExt the IHibernateDialectExtension to check
+	 * @param dialectExt the HibernateDialect to check
 	 * @return true if this refactoring is supported; false otherwise.
 	 */
 	@Override
-	protected boolean isRefactoringSupportedForDialect(IHibernateDialectExtension dialectExt)
+	protected boolean isRefactoringSupportedForDialect(HibernateDialect dialectExt)
 	{
 		return dialectExt.supportsAlterSequence();
 	}

@@ -18,30 +18,28 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JDialog;
+
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
-import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
+import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
+import net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.gui.ErrorDialog;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DialectFactoryExtension;
-import net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.IHibernateDialectExtension;
-import net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences;
 import net.sourceforge.squirrel_sql.plugins.refactoring.prefs.RefactoringPreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.refactoring.prefs.RefactoringPreferencesManager;
-
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public abstract class AbstractRefactoringCommand implements ICommand {
     /**
@@ -72,10 +70,10 @@ public abstract class AbstractRefactoringCommand implements ICommand {
 
     /**
      * HibernateDialect to use for this refactoring.
-     * TODO: Replace IHibernateDialectExtension with HibernateDialect as soon
+     * TODO: Replace HibernateDialect with HibernateDialect as soon
      * TODO: as all the extensional code is merged into the original HibernateDialect classes.
      */
-    protected IHibernateDialectExtension _dialect;
+    protected HibernateDialect _dialect;
 
     /**
      * User preferences regarding the generation of SQL scripts.
@@ -105,7 +103,7 @@ public abstract class AbstractRefactoringCommand implements ICommand {
     public void execute() {
         try {
       	  ISQLDatabaseMetaData md = _session.getMetaData();
-            _dialect = DialectFactoryExtension.getDialect(DialectFactory.DEST_TYPE,
+            _dialect = DialectFactory.getDialect(DialectFactory.DEST_TYPE,
                     _session.getApplication().getMainFrame(), md);
             if (isRefactoringSupportedForDialect(_dialect)) {
             	onExecute();
@@ -127,10 +125,10 @@ public abstract class AbstractRefactoringCommand implements ICommand {
 	  * Returns a boolean value indicating whether or not this refactoring is supported for the specified 
 	  * dialect. 
 	  * 
-	  * @param dialectExt the IHibernateDialectExtension to check
+	  * @param dialectExt the HibernateDialect to check
 	  * @return true if this refactoring is supported; false otherwise.
 	  */
-	protected abstract boolean isRefactoringSupportedForDialect(IHibernateDialectExtension dialectExt);
+	protected abstract boolean isRefactoringSupportedForDialect(HibernateDialect dialectExt);
     
     /**
      * The subclass should implement this method with it's refactoring specific execution code.

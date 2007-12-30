@@ -33,7 +33,7 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.refactoring.gui.DefaultDropDialog;
 import net.sourceforge.squirrel_sql.plugins.refactoring.gui.DefaultListDialog;
-import net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.IHibernateDialectExtension;
+import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -65,11 +65,11 @@ public class DropForeignKeyCommand extends AbstractRefactoringCommand {
     }
 
 
-    //TODO: Remove when IHibernateDialectExtension is merged into HibernateDialect.
+    //TODO: Remove when HibernateDialect is merged into HibernateDialect.
     private HibernateDialect _dialect;
 
 
-    //TODO: Remove when IHibernateDialectExtension is merged into HibernateDialect.
+    //TODO: Remove when HibernateDialect is merged into HibernateDialect.
     @Override
     public void execute() {
         try {
@@ -173,11 +173,11 @@ public class DropForeignKeyCommand extends AbstractRefactoringCommand {
 	 * dialect.
 	 * 
 	 * @param dialectExt
-	 *           the IHibernateDialectExtension to check
+	 *           the HibernateDialect to check
 	 * @return true if this refactoring is supported; false otherwise.
 	 */
 	@Override
-	protected boolean isRefactoringSupportedForDialect(IHibernateDialectExtension dialectExt)
+	protected boolean isRefactoringSupportedForDialect(HibernateDialect dialectExt)
 	{
 		return dialectExt.supportsDropConstraint();
 	}

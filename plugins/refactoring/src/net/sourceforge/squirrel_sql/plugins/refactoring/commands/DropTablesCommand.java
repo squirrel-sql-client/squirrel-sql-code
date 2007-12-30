@@ -33,7 +33,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.refactoring.gui.DropTableDialog;
-import net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.IHibernateDialectExtension;
+import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -78,11 +78,11 @@ public class DropTablesCommand extends AbstractRefactoringCommand {
     }
 
 
-    //TODO: Remove when IHibernateDialectExtension is merged into HibernateDialect.
+    //TODO: Remove when HibernateDialect is merged into HibernateDialect.
     private HibernateDialect _dialect;
 
 
-    //TODO: Remove when IHibernateDialectExtension is merged into HibernateDialect.
+    //TODO: Remove when HibernateDialect is merged into HibernateDialect.
     @Override
     public void execute() {
         try {
@@ -301,11 +301,11 @@ public class DropTablesCommand extends AbstractRefactoringCommand {
 	 * dialect.
 	 * 
 	 * @param dialectExt
-	 *           the IHibernateDialectExtension to check
+	 *           the HibernateDialect to check
 	 * @return true if this refactoring is supported; false otherwise.
 	 */
 	@Override
-	protected boolean isRefactoringSupportedForDialect(IHibernateDialectExtension dialectExt)
+	protected boolean isRefactoringSupportedForDialect(HibernateDialect dialectExt)
 	{
 		// implemented in all originally supported dialects
 		return true;
