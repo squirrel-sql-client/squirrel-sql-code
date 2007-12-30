@@ -36,6 +36,8 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DialectFactoryExtension;
 import net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.IHibernateDialectExtension;
 import net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences;
+import net.sourceforge.squirrel_sql.plugins.refactoring.prefs.RefactoringPreferenceBean;
+import net.sourceforge.squirrel_sql.plugins.refactoring.prefs.RefactoringPreferencesManager;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -88,8 +90,10 @@ public abstract class AbstractRefactoringCommand implements ICommand {
         _session = session;
         _info = info;
 
-        //TODO: Get the actual user-defined preferences.
+        RefactoringPreferenceBean prefsBean = RefactoringPreferencesManager.getPreferences();
         _sqlPrefs = new SqlGenerationPreferences();
+        _sqlPrefs.setQualifyTableNames(prefsBean.isQualifyTableNames());
+        _sqlPrefs.setQuoteIdentifiers(prefsBean.isQuoteIdentifiers());
         _sqlPrefs.setSqlStatementSeparator(_session.getQueryTokenizer().getSQLStatementSeparator());
     }
 
