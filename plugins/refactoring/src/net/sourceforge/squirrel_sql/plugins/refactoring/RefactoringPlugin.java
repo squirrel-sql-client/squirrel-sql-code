@@ -62,7 +62,6 @@ import net.sourceforge.squirrel_sql.plugins.refactoring.prefs.RefactoringPrefere
 /**
  * The Refactoring plugin class.
  */
-@SuppressWarnings({"FieldCanBeLocal"})
 public class RefactoringPlugin extends DefaultSessionPlugin {
     private interface IMenuResourceKeys {
         String REFACTORING = "refactoring";
@@ -252,12 +251,10 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
 
     private void addActionsToPopup(ISession session) {
         ActionCollection col = getApplication().getActionCollection();
-
-        //session.getApplication().addToMenu(MainFrameMenuBar, menu)
+        
 
         // TABLE TYPE DBO
         _tableNodeMenu = _resources.createMenu(IMenuResourceKeys.REFACTORING);
-        _resources.addToMenu(col.get(AddSequenceAction.class), _tableNodeMenu);
         _resources.addToMenu(col.get(AddViewAction.class), _tableNodeMenu);
 
         // TABLE
@@ -301,7 +298,6 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
 
         // VIEW
         _viewObjectMenu = _resources.createMenu(IMenuResourceKeys.REFACTORING);
-        _resources.addToMenu(col.get(AddViewAction.class), _viewObjectMenu);
         _resources.addToMenu(col.get(DropViewAction.class), _viewObjectMenu);
         _resources.addToMenu(col.get(RenameViewAction.class), _viewObjectMenu);
 
@@ -311,7 +307,6 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
 
         // SEQUENCE
         _sequenceObjectMenu = _resources.createMenu(IMenuResourceKeys.REFACTORING);
-        _resources.addToMenu(col.get(AddSequenceAction.class), _sequenceObjectMenu);
         _resources.addToMenu(col.get(DropSequenceAction.class), _sequenceObjectMenu);
         _resources.addToMenu(col.get(ModifySequenceAction.class), _sequenceObjectMenu);
 
@@ -322,7 +317,6 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
     private void addMenusToObjectTree(IObjectTreeAPI api) {
         api.addToPopup(DatabaseObjectType.TABLE_TYPE_DBO, _tableNodeMenu);
         api.addToPopup(DatabaseObjectType.TABLE, _tableObjectMenu);
-        //api.addToPopup(DatabaseObjectType.VIEW_TYPE_DBO, _viewNodeMenu);  //TODO: We need a VIEW_TYPE_DBO, currently the view node is a TABLE_TYPE_DBO.
         api.addToPopup(DatabaseObjectType.VIEW, _viewObjectMenu);
         api.addToPopup(DatabaseObjectType.SEQUENCE_TYPE_DBO, _sequenceNodeMenu);
         api.addToPopup(DatabaseObjectType.SEQUENCE, _sequenceObjectMenu);
