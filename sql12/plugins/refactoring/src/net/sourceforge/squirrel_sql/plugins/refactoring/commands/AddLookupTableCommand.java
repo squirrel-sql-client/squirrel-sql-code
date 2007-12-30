@@ -36,6 +36,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.List;
 
 public class AddLookupTableCommand extends AbstractRefactoringCommand {
     /**
@@ -158,15 +159,9 @@ public class AddLookupTableCommand extends AbstractRefactoringCommand {
             results.add(_dialect.getAddForeignKeyConstraintSQL(sourceTableName, lookupTableName, constraintName, false,
                     false, false, false, null, refs, "NO ACTION", "NO ACTION", qualifier, _sqlPrefs));
         } else if (_customDialog.getMode() == AddLookupTableDialog.MODE_REPLACE) {
-            // Selects the distinct values from the source column.
-            ArrayList<String> data = new ArrayList<String>();
+            // Selects the distinct values from the source column.            
             String dataQuery = getDataQuery(schema, sourceTableName, sourceColumnName);
-            Statement stmt = _session.getSQLConnection().createStatement();
-            ResultSet rs = stmt.executeQuery(dataQuery);
-            while (rs.next()) {
-                String value = rs.getString(1);
-                if (!rs.wasNull()) data.add(value);
-            }
+            List<String> data = executeStringQuery(dataQuery);
 
             // Copys the gathered values into the lookup table.
             ArrayList<String> insertColumns = new ArrayList<String>();
@@ -174,6 +169,8 @@ public class AddLookupTableCommand extends AbstractRefactoringCommand {
             insertColumns.add(_customDialog.getLookupSecondColumn());
 
             for (int i = 0; i < data.size(); i++) {
+            	 // TODO: This won't work when the column has values with quotes in them.  
+            	 //       Use PreparedStatements instead.
                 String valuesPart = " VALUES ( " + i + ", '" + data.get(i) + "' );";
                 results.add(_dialect.getInsertIntoSQL(lookupTableName, insertColumns, valuesPart, qualifier, _sqlPrefs));
             }
@@ -236,7 +233,27 @@ public class AddLookupTableCommand extends AbstractRefactoringCommand {
         return results.toArray(new String[]{});
     }
 
-
+    private List<String> executeStringQuery(String sql) {
+   	 ArrayList<String> result = new ArrayList<String>();
+   	 Statement stmt = null;
+   	 ResultSet rs = null;
+   	 try {
+   		 stmt = _session.getSQLConnection().createStatement();
+   		 rs = stmt.executeQuery(sql);
+	       while (rs.next()) {
+	           String value = rs.getString(1);
+	           if (!rs.wasNull()) result.add(value);
+	       }   	
+   	 } catch (SQLException e) {
+   		 s_log.error("executeStringQuery: unexpected exception while executing query ( " + sql + " ): "
+				+ e.getMessage(), e);
+   	 } finally {
+   		 SQLUtilities.closeResultSet(rs);
+   		 SQLUtilities.closeStatement(stmt);
+   	 }
+       return result;
+    }
+    
     private String[] getColumnNames(TableColumnInfo[] infos, ForeignKeyInfo[] exportedKeys, ForeignKeyInfo[] importedKeys) {
         ArrayList<String> columnNames = new ArrayList<String>();
         for (TableColumnInfo info : infos) {
