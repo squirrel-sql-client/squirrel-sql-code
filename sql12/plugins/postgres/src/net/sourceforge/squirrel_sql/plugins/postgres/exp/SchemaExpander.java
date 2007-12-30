@@ -24,9 +24,9 @@ import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.INodeExpander;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.ObjectTreeNode;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
-import net.sourceforge.squirrel_sql.plugins.postgres.IObjectTypes;
 
 /**
  * This class is an expander for the schema nodes. It will add Sequence Object 
@@ -68,7 +68,7 @@ public class SchemaExpander implements INodeExpander
             new DatabaseObjectInfo(catalogName,
                                    schemaName, 
                                    "SEQUENCE",
-                                   IObjectTypes.SEQUENCE_PARENT, 
+                                   DatabaseObjectType.SEQUENCE_TYPE_DBO, 
                                    md);
         ObjectTreeNode node = new ObjectTreeNode(session, seqInfo);
         node.addExpander(new SequenceParentExpander());
