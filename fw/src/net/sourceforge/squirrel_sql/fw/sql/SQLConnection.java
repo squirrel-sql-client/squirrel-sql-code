@@ -17,6 +17,9 @@ package net.sourceforge.squirrel_sql.fw.sql;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import static net.sourceforge.squirrel_sql.fw.dialects.DialectType.INFORMIX;
+import static net.sourceforge.squirrel_sql.fw.dialects.DialectType.MSSQL;
+
 import java.beans.PropertyChangeListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -26,6 +29,8 @@ import java.sql.Statement;
 import java.util.Calendar;
 import java.util.Date;
 
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectType;
 import net.sourceforge.squirrel_sql.fw.util.PropertyChangeReporter;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -301,23 +306,83 @@ public class SQLConnection implements ISQLConnection
 		validateConnection();
 		final Connection conn = getConnection();
 		final String oldValue = conn.getCatalog();
+		final DialectType dialectType = DialectFactory.getDialectType(metaData);
 		if (!StringUtilities.areStringsEqual(oldValue, catalogName))
 		{
-			try
-			{
-				conn.setCatalog(catalogName);
-			}
-			catch (SQLException ex)
-			{
-				// MS SQL Server throws an exception if the catalog name
-				// contains a period without it being quoted.
-				conn.setCatalog(quote(catalogName));
-			}
+			setDbSpecificCatalog(dialectType, catalogName);
 			getPropertyChangeReporter().firePropertyChange(IPropertyNames.CATALOG,
 												oldValue, catalogName);
 		}
 	}
 
+	/**
+	 * Decides which setCatalog method to call. Different databases have special requirements for this method
+	 * so this just determines the database type and redirects to the appropriate db-specific or generic
+	 * method.
+	 * 
+	 * @param dialectType
+	 *           the type of database
+	 * @param catalogName
+	 *           the catalog name to use
+	 * @throws SQLException
+	 *            if an error occurs
+	 */
+	private void setDbSpecificCatalog(DialectType dialectType, String catalogName) throws SQLException {
+		switch (dialectType) {
+			case MSSQL:
+				setMSSQLServerCatalog(catalogName);
+				break;
+			case INFORMIX:
+				setInformixCatalog(catalogName);
+				break;
+			default:
+				setGenericDbCatalog(catalogName);
+				break;
+		};
+	}
+	
+	private void setGenericDbCatalog(String catalogName) throws SQLException {
+		final Connection conn = getConnection();
+		conn.setCatalog(catalogName);
+	}
+	
+	/**
+	 * MS SQL Server throws an exception if the catalog name contains a period without it being quoted.
+	 * 
+	 * @param catalogName
+	 *           the catalog name to use
+	 * @throws SQLException
+	 *            if an error occurs
+	 */
+	private void setMSSQLServerCatalog(String catalogName) throws SQLException {
+		final Connection conn = getConnection();
+		conn.setCatalog(quote(catalogName));
+	}
+
+	/**
+	 * Work-around for Informix catalog switching bugs.
+	 * 
+	 * @param catalogName
+	 *           the catalog name to use
+	 * @throws SQLException
+	 *            if an error occurs
+	 */
+	private void setInformixCatalog(String catalogName) throws SQLException {
+		final Connection conn = getConnection();
+		Statement stmt = null;
+		String sql = "DATABASE "+catalogName;
+		try {
+			stmt = conn.createStatement();
+			stmt.execute(sql);
+		} catch (SQLException e) {
+			s_log.error("setInformixCatalog: failed to change database with the database SQL directive: "+sql);
+		} finally {
+			SQLUtilities.closeStatement(stmt);
+		}
+		// finally, try to set the catalog, which appears to be a NO-OP in the Informix driver.
+		conn.setCatalog(catalogName);
+	}
+	
 	/* (non-Javadoc)
      * @see net.sourceforge.squirrel_sql.fw.sql.ISQLConnection#getWarnings()
      */
