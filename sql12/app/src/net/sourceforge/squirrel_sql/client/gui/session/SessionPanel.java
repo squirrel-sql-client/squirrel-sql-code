@@ -569,9 +569,9 @@ public class SessionPanel extends JPanel
 			{
 				try
 				{
-                    ISession session = getSession();
+               ISession session = getSession();
 					session.getSQLConnection().setCatalog(selectedCatalog);
-                    expandTablesForCatalog(session, selectedCatalog);
+					refreshSchemaInBackground();
 				}
 				catch (SQLException ex)
 				{
@@ -581,30 +581,58 @@ public class SessionPanel extends JPanel
 			}
 		}
         
-        /**
-         * Since the catalog has changed, it is necessary to reload the schema
-         * info and expand the tables node in the tree.  Saves the user a few
-         * clicks.
-         * 
-         * @param session the session whose ObjectTreePanel should be updated
-         * @param selectedCatalog the catalog that was selected.
-         */
-        private void expandTablesForCatalog(ISession session, 
-                                            String selectedCatalog) {
-            IObjectTreeAPI api = 
-                session.getObjectTreeAPIOfActiveSessionWindow();
-            api.refreshTree(true);
-            if (api.selectInObjectTree(selectedCatalog, null, "TABLE")) {
-                ObjectTreeNode[] nodes = api.getSelectedNodes();
-                
-                if (nodes.length > 0) {
-                    ObjectTreeNode tableNode = nodes[0];
-                    
-                    // send a tree expansion event to the object tree
-                    api.expandNode(tableNode);
-                }                        
-            }            
-        }
+		private void refreshSchemaInBackground()
+		{
+			final ISession session = getSession();
+			session.getApplication().getThreadPool().addTask(new Runnable()
+			{
+				public void run()
+				{
+					session.getSchemaInfo().reloadAll();
+					expandTreeInForeground();
+				}
+			});
+		}
+		
+		private void expandTreeInForeground() {
+			
+			final ISession session = getSession();
+			final String selectedCatalog = SessionPanel.this._toolBar._catalogsPanel.getSelectedCatalog();
+			
+			GUIUtils.processOnSwingEventThread(new Runnable() {
+				public void run() {
+					expandTablesForCatalog(session, selectedCatalog);
+				}
+			});
+		}
+		
+		
+      /**
+		 * Since the catalog has changed, it is necessary to reload the schema info and expand the tables node
+		 * in the tree. Saves the user a few clicks.
+		 * 
+		 * @param session
+		 *           the session whose ObjectTreePanel should be updated
+		 * @param selectedCatalog
+		 *           the catalog that was selected.
+		 */
+		private void expandTablesForCatalog(ISession session, String selectedCatalog)
+		{
+			IObjectTreeAPI api = session.getObjectTreeAPIOfActiveSessionWindow();
+			api.refreshTree(true);
+			if (api.selectInObjectTree(selectedCatalog, null, "TABLE"))
+			{
+				ObjectTreeNode[] nodes = api.getSelectedNodes();
+
+				if (nodes.length > 0)
+				{
+					ObjectTreeNode tableNode = nodes[0];
+
+					// send a tree expansion event to the object tree
+					api.expandNode(tableNode);
+				}
+			}
+		}
 	}
 
 
