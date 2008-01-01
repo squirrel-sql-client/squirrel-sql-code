@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.sql;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -799,34 +800,36 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
      DatabaseMetaData md = privateGetJDBCMetaData();
      ArrayList<ProcedureInfo> list = new ArrayList<ProcedureInfo>();
      ResultSet rs = md.getProcedures(catalog, schemaPattern, procedureNamePattern);
-     int count = 0;
-     try
-     {
-        final int[] cols = new int[]{1, 2, 3, 7, 8};
-        DialectType dialectType = DialectFactory.getDialectType(this);
-        final ResultSetReader rdr = new ResultSetReader(rs, cols, dialectType);
-        Object[] row = null;
-        while ((row = rdr.readRow()) != null)
-        {
-           final int type = ((Number) row[4]).intValue();
-           ProcedureInfo pi = new ProcedureInfo(getAsString(row[0]), getAsString(row[1]),
-              getAsString(row[2]), getAsString(row[3]), type, this);
-
-           list.add(pi);
-
-           if (null != progressCallBack)
-           {
-              if(0 == count++ % 200 )
-              {
-                 progressCallBack.currentlyLoading(pi.getSimpleName());
-              }
-           }
-        }
-     }
-     finally
-     {
-        close(rs);
-
+     if (rs != null) {
+	     int count = 0;
+	     try
+	     {
+	        final int[] cols = new int[]{1, 2, 3, 7, 8};
+	        DialectType dialectType = DialectFactory.getDialectType(this);
+	        final ResultSetReader rdr = new ResultSetReader(rs, cols, dialectType);
+	        Object[] row = null;
+	        while ((row = rdr.readRow()) != null)
+	        {
+	           final int type = ((Number) row[4]).intValue();
+	           ProcedureInfo pi = new ProcedureInfo(getAsString(row[0]), getAsString(row[1]),
+	              getAsString(row[2]), getAsString(row[3]), type, this);
+	
+	           list.add(pi);
+	
+	           if (null != progressCallBack)
+	           {
+	              if(0 == count++ % 200 )
+	              {
+	                 progressCallBack.currentlyLoading(pi.getSimpleName());
+	              }
+	           }
+	        }
+	     }
+	     finally
+	     {
+	        close(rs);
+	
+	     }
      }
      return list.toArray(new IProcedureInfo[list.size()]);
   }
@@ -913,6 +916,20 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
             }
 		}
 
+		// Informix: when no database is given in the connect url, then no table types are returned.  The 
+		// catalog can be changed which will select a database, but by that time it is too late.
+		else if (DialectFactory.getDialectType(this) == DialectType.INFORMIX) {
+			if (nbrTableTypes == 0) {
+				if (s_log.isDebugEnabled()) {
+					s_log.debug("Detected Informix with no table types returned.  Defaulting to "
+						+ "TABLE | SYSTEM TABLE | VIEW");
+				}
+				tableTypes.add("TABLE");
+				tableTypes.add("SYSTEM TABLE");
+				tableTypes.add("VIEW");				
+			}
+		}
+		
 		value = tableTypes.toArray(new String[tableTypes.size()]);
 		_cache.put(key, value);
 		return value;
@@ -1067,6 +1084,7 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 	{
 		DatabaseMetaData md = privateGetJDBCMetaData();
 		ArrayList<UDTInfo> list = new ArrayList<UDTInfo>();
+		checkForInformix(catalog);
 		ResultSet rs = md.getUDTs(catalog, schemaPattern, typeNamePattern, types);
 		try
 		{
@@ -1089,6 +1107,34 @@ public class SQLDatabaseMetaData implements ISQLDatabaseMetaData
 		return list.toArray(new IUDTInfo[list.size()]);
 	}
 
+   /**
+    * If we are connected to Informix, then we may need to cleanup 
+	 * @param catalogName
+	 */
+   private void checkForInformix(String catalogName)
+	{
+   	if (DialectFactory.getDialectType(this) != DialectType.INFORMIX) {
+   		return;
+   	}
+   	
+		Statement stmt = null;
+		String sql = "DATABASE " + catalogName;
+
+		try
+		{
+			stmt = _conn.createStatement();
+			stmt.execute("Drop procedure mode_decode");
+		} catch (SQLException e)
+		{
+			// The mode_decode routine may or may not be there. We don't care if it is not there, but log an
+			// info if we failed to drop it for some other reason.
+			s_log.info("setInformixCatalog: unable to drop procedure mode_decode: " + e.getMessage(), e);
+		} finally
+		{
+			SQLUtilities.closeStatement(stmt);
+		}
+	}
+    
    private String getAsString(Object val)
    {
       if(null == val)
