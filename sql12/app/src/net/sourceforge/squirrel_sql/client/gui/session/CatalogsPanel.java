@@ -1,25 +1,29 @@
 package net.sourceforge.squirrel_sql.client.gui.session;
 
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.sql.SQLException;
+
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.SQLCatalogsComboBox;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.sql.SQLException;
-import java.util.Vector;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeEvent;
-
-public class CatalogsPanel extends JPanel implements ActionListener
+public class CatalogsPanel extends JPanel 
 {
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
@@ -129,8 +133,6 @@ public class CatalogsPanel extends JPanel implements ActionListener
 
 		_catalogsCmb.setCatalogs(catalogs, selected);
 
-      addActionListener(this);
-
 		Dimension prefSize = getPreferredSize();
 		prefSize.width = lblCatalogs.getPreferredSize().width + _catalogsCmb.getPreferredSize().width + 20;
 		setPreferredSize(prefSize);
@@ -175,17 +177,4 @@ public class CatalogsPanel extends JPanel implements ActionListener
 		return (String) _catalogsCmb.getSelectedItem();
 	}
 
-
-    public void actionPerformed(ActionEvent e) {
-        // Catalog has changed.  Refresh the tree (in bckgrnd or it keeps the
-        // drop-down from rolling back until the tree refreshing is done.
-
-        _session.getApplication().getThreadPool().addTask(new Runnable()
-        {
-            public void run()
-            {
-                _session.getSchemaInfo().reloadAll();
-            }
-        });
-    }
 }
