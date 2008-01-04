@@ -1448,7 +1448,6 @@ public class SchemaInfo
 
    public void fireSchemaInfoUpdate()
    {
-      System.out.println("SchemaInfo.fireSchemaInfoUpdate");
       SwingUtilities.invokeLater(new Runnable()
       {
          public void run()
