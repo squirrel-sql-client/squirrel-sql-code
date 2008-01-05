@@ -57,6 +57,9 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
 
     private static final String TRIGGER_PATTERN = 
         "^\\s*CREATE\\s+TRIGGER.*|^\\s*CREATE\\s+OR\\s+REPLACE\\s+TRIGGER\\s+.*";    
+
+    private static final String PACKAGE_PATTERN = 
+       "^\\s*CREATE\\s+PACKAGE.*|^\\s*CREATE\\s+OR\\s+REPLACE\\s+PACKAGE\\s+.*";
     
     private static final String DECLARE_PATTERN = "^\\s*DECLARE\\s*.*";
     
@@ -73,6 +76,8 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
     private Pattern funcPattern = Pattern.compile(FUNCTION_PATTERN, Pattern.DOTALL);
     
     private Pattern triggerPattern = Pattern.compile(TRIGGER_PATTERN, Pattern.DOTALL);
+    
+    private Pattern packagePattern = Pattern.compile(PACKAGE_PATTERN, Pattern.DOTALL);
     
     private Pattern declPattern = Pattern.compile(DECLARE_PATTERN, Pattern.DOTALL);
     
@@ -117,6 +122,7 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
         joinFragments(procPattern, false);
         joinFragments(funcPattern, false);
         joinFragments(triggerPattern, false);
+        joinFragments(packagePattern, false);
         joinFragments(declPattern, false);
         joinFragments(beginPattern, true);
         
