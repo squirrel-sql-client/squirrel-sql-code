@@ -49,6 +49,24 @@ public interface OracleSQL {
         " \n" +
         "/ \n\n;";       
     
+    public final static String CREATE_OR_REPLACE_PACKAGE_SQL = 
+   	 "CREATE OR REPLACE PACKAGE tmk IS \n" +
+   	 "  PROCEDURE test; \n" +
+   	 "END tmk; \n" +
+   	 "/ \n";
+    
+    public final static String CREATE_OR_REPLACE_PACKAGE_BODY_SQL =
+   	 "CREATE OR REPLACE PACKAGE BODY tmk IS \n" +
+   	 "  PROCEDURE test IS \n" +
+   	 "    rec_tmp atmk%ROWTYPE; \n" +
+   	 "  BEGIN \n" +
+   	 "    SELECT * INTO rec_tmp FROM atmk WHERE ROWNUM=1; \n" +
+   	 "    Dbms_Output.Put_Line(rec_tmp.table_name || ',' || " +
+   	 "    rec_tmp.tablespace_name || ',' || rec_tmp.cluster_name || '.'); " +
+   	 "  END test; \n" +
+   	 "END tmk; \n" +
+   	 "/ \n";    
+    
     public final static String ANON_PROC_EXEC = 
         "declare \n" +
         "v_foo number(10); \n" +

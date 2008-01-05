@@ -20,6 +20,8 @@ package net.sourceforge.squirrel_sql.plugins.oracle.tokenizer;
 import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.ANON_PROC_EXEC;
 import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.ANON_PROC_EXEC_2;
 import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.CREATE_FUNCTION_SQL;
+import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.CREATE_OR_REPLACE_PACKAGE_BODY_SQL;
+import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.CREATE_OR_REPLACE_PACKAGE_SQL;
 import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.CREATE_OR_REPLACE_STORED_PROC;
 import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.CREATE_STORED_PROC;
 import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.NO_SEP_SLASH_SQL;
@@ -94,6 +96,18 @@ public class OracleQueryTokenizerTest extends TestCase {
         qt.setScriptToTokenize(CREATE_OR_REPLACE_STORED_PROC);
         SQLUtil.checkQueryTokenizer(qt, 1);
     }
+    
+    public void testCreatePackage() {
+       qt = new OracleQueryTokenizer(_prefs);
+       qt.setScriptToTokenize(CREATE_OR_REPLACE_PACKAGE_SQL);
+       SQLUtil.checkQueryTokenizer(qt, 1);   	 
+    }
+
+    public void testCreatePackageBody() {
+       qt = new OracleQueryTokenizer(_prefs);
+       qt.setScriptToTokenize(CREATE_OR_REPLACE_PACKAGE_BODY_SQL);
+       SQLUtil.checkQueryTokenizer(qt, 1);   	 
+    }    
     
     public void testHasQueryFromFile() {
         String fileSQL = "@" + tmpFilename + ";\n";

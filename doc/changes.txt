@@ -11,6 +11,7 @@ Oracle Plugin:
  - Allow the user to configure whether or not to show the syntax error offset in 
    the SQL Editor.  This feature creates a user-defined function called 
    SQUIRREL_GET_ERROR_OFFSET, which can be disabled.
+ - Added ability to recognize "create package" and "create package body" statements.   
 
 PostgreSQL Plugin:
 

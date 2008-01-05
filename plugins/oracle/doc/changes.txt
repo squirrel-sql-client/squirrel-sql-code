@@ -4,6 +4,7 @@ Oracle Change Log
 0.20
 ====
 
+Added ability to recognize "create package" and "create package body" statements.
 Allow the user to configure whether or not to show the syntax error offset 
 in the SQL Editor.
 
