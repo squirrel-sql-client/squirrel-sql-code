@@ -50,6 +50,9 @@ Bug-Fixes:
  - For Informix, setCatalog seems to have no effect, so now an explicit DATABASE <catalogname> command is 
    issued. 
 
+DBCopy Plugin:
+ - Only attempt to order the tables being copied if there is more than one table in the copy set.
+
 Derby Plugin:
 1541325: Connection doesn't close when ending session - thanks goes to 
          Alex Pivovarov for the patch that fixed the issue.
