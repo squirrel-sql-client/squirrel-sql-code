@@ -128,24 +128,32 @@ public class CopyTableCommand implements ICommand
                                                     SQLDatabaseMetaData md) 
         throws SQLException
     {
-        List<ITableInfo> selectedTables = new ArrayList<ITableInfo>();
-        for (int i = 0; i < dbObjs.length; i++) {
-            selectedTables.add((ITableInfo)dbObjs[i]);
+        
+        // Only concerned about order when more than one table.
+   	 if (dbObjs.length > 1) {
+          List<ITableInfo> selectedTables = new ArrayList<ITableInfo>();
+          for (int i = 0; i < dbObjs.length; i++) {
+              selectedTables.add((ITableInfo)dbObjs[i]);
+          }
+	    
+   		 ProgessCallBackDialog cb = 
+	            new ProgessCallBackDialog(_session.getApplication().getMainFrame(), 
+	                                       i18n.PROGRESS_DIALOG_TITLE,
+	                                       dbObjs.length);
+	        
+	        cb.setLoadingPrefix(i18n.LOADING_PREFIX);	        
+	        selectedTables = 
+	            SQLUtilities.getInsertionOrder(selectedTables, 
+	                                           md, 
+	                                           cb);
+	        cb.setVisible(false);
+
+	        _plugin.setSelectedDatabaseObjects(
+              selectedTables.toArray(new IDatabaseObjectInfo[dbObjs.length]));
+	        
+        } else {
+      	  _plugin.setSelectedDatabaseObjects(dbObjs);
         }
-        ProgessCallBackDialog cb = 
-            new ProgessCallBackDialog(_session.getApplication().getMainFrame(), 
-                                       i18n.PROGRESS_DIALOG_TITLE,
-                                       dbObjs.length);
-        
-        cb.setLoadingPrefix(i18n.LOADING_PREFIX);
-        
-        selectedTables = 
-            SQLUtilities.getInsertionOrder(selectedTables, 
-                                           md, 
-                                           cb);
-        
-        _plugin.setSelectedDatabaseObjects(
-                selectedTables.toArray(new IDatabaseObjectInfo[dbObjs.length]));
     }
     
 }
