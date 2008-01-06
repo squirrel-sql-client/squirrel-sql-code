@@ -1,6 +1,11 @@
 DBCopy Change Log
 =================
 
+1.13
+====
+ - Only attempt to order the tables being copied if there is more than one 
+   table in the copy set.
+
 1.12
 ====
  - Copy thread will wait for the dialog record progress bar to be updated 

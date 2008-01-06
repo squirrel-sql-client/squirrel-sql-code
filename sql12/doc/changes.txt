@@ -7,7 +7,11 @@ SQuirreL SQL Client Change Log
 
 Bug-Fixes:
 
-Oracle Plugin: Added ability to recognize "create package" and "create package body" statements.
+DBCopy Plugin: Only attempt to order the tables being copied if there is 
+more than one table in the copy set.
+
+Oracle Plugin: Added ability to recognize "create package" and "create package body" 
+statements to prevent SQLExceptions from improper statement tokenizing.
 
 Syntax Plugin: Fixed memory leak which caused sessions not to be garbage 
 collected.
