@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.fw.util;
+
 /*
  * Copyright (C) 2001-2002 Colin Bell
  * colbell@users.sourceforge.net
@@ -40,9 +41,8 @@ public class MyURLClassLoader extends URLClassLoader
 
 	private Map<String, Class> _classes = new HashMap<String, Class>();
 
-    ArrayList<ClassLoaderListener> listeners = 
-        new ArrayList<ClassLoaderListener>();
-    
+	ArrayList<ClassLoaderListener> listeners = new ArrayList<ClassLoaderListener>();
+
 	public MyURLClassLoader(String fileName) throws IOException
 	{
 		this(new File(fileName).toURL());
@@ -58,40 +58,48 @@ public class MyURLClassLoader extends URLClassLoader
 		super(urls, ClassLoader.getSystemClassLoader());
 	}
 
-    public void addClassLoaderListener(ClassLoaderListener listener) {
-        if (listener != null) {
-            listeners.add(listener);
-        }
-    }
-    
-    /**
-     * Notify listeners that we're loading the specified file.
-     * 
-     * @param filename the name of the file (doesn't include path)
-     */
-    private void notifyListenersLoadedZipFile(String filename) {
-        Iterator<ClassLoaderListener> i = listeners.iterator();
-        while (i.hasNext()) {
-            ClassLoaderListener listener = i.next();
-            listener.loadedZipFile(filename);
-        }
-    }
-    
-    /**
-     * Notify listeners that we've finished loading files.
-     */
-    private void notifyListenersFinished() {
-        Iterator<ClassLoaderListener> i = listeners.iterator();
-        while (i.hasNext()) {
-            ClassLoaderListener listener = i.next();
-            listener.finishedLoadingZipFiles();
-        }        
-    }
-    
-    public void removeClassLoaderListener(ClassLoaderListener listener) {
-        listeners.remove(listener);
-    }
-    
+	public void addClassLoaderListener(ClassLoaderListener listener)
+	{
+		if (listener != null)
+		{
+			listeners.add(listener);
+		}
+	}
+
+	/**
+	 * Notify listeners that we're loading the specified file.
+	 * 
+	 * @param filename
+	 *           the name of the file (doesn't include path)
+	 */
+	private void notifyListenersLoadedZipFile(String filename)
+	{
+		Iterator<ClassLoaderListener> i = listeners.iterator();
+		while (i.hasNext())
+		{
+			ClassLoaderListener listener = i.next();
+			listener.loadedZipFile(filename);
+		}
+	}
+
+	/**
+	 * Notify listeners that we've finished loading files.
+	 */
+	private void notifyListenersFinished()
+	{
+		Iterator<ClassLoaderListener> i = listeners.iterator();
+		while (i.hasNext())
+		{
+			ClassLoaderListener listener = i.next();
+			listener.finishedLoadingZipFiles();
+		}
+	}
+
+	public void removeClassLoaderListener(ClassLoaderListener listener)
+	{
+		listeners.remove(listener);
+	}
+
 	public Class[] getAssignableClasses(Class type, ILogger logger)
 	{
 		List<Class> classes = new ArrayList<Class>();
@@ -106,43 +114,39 @@ public class MyURLClassLoader extends URLClassLoader
 				try
 				{
 					zipFile = new ZipFile(file);
-				}
-				catch (IOException ex)
+				} catch (IOException ex)
 				{
-					Object[] args = {file.getAbsolutePath(),};
-					String msg = s_stringMgr.getString(
-									"MyURLClassLoader.errorLoadingFile", args);
+					Object[] args = { file.getAbsolutePath(), };
+					String msg = s_stringMgr.getString("MyURLClassLoader.errorLoadingFile", args);
 					logger.error(msg, ex);
-                    continue;
+					continue;
 				}
-                notifyListenersLoadedZipFile(file.getName());
-                
-				for (Iterator it = new EnumerationIterator(zipFile.entries());
-						it.hasNext();)
+				notifyListenersLoadedZipFile(file.getName());
+
+				for (Iterator it = new EnumerationIterator(zipFile.entries()); it.hasNext();)
 				{
 					Class cls = null;
 					String entryName = ((ZipEntry) it.next()).getName();
-					String className =
-						Utilities.changeFileNameToClassName(entryName);
+					String className = Utilities.changeFileNameToClassName(entryName);
 					if (className != null)
 					{
 						try
 						{
 							cls = Class.forName(className, false, this);
-						}
-						catch (Throwable th)
+						} catch (Throwable th)
 						{
-//							Object[] args = {className};
-//							String msg = s_stringMgr.getString(
-//											"MyURLClassLoader.errorLoadingClass", args);
-//							logger.error(msg, th);
+							if (logger.isInfoEnabled())
+							{
+								// During assignable checks many classes can't be loaded but don't cause problems
+								// either. So we just issue an info.
+								Object[] args =
+									new Object[] { className, file.getAbsolutePath(), type.getName(), th.toString() };
+								// i18n[MyURLClassLoader.noAssignCheck=Failed to load {0} in {1} to check if it is
+								// assignable to {2}. Reason: {3}]
+								String msg = s_stringMgr.getString("MyURLClassLoader.noAssignCheck", args);
 
-							// During assignable checks many classes can't be loaded but don't cause problems either.
-							// So we just issue an info.
-							Object[] args = new Object[]{className, file.getAbsolutePath(), type.getName(), th.toString()};
-							// i18n[MyURLClassLoader.noAssignCheck=Failed to load {0} in {1} to check if it is assignable to {2}. Reason: {3}]
-							String msg = s_stringMgr.getString("MyURLClassLoader.noAssignCheck", args);
-							logger.info(msg);
+								logger.info(msg);
+							}
 						}
 						if (cls != null)
 						{
@@ -155,12 +159,11 @@ public class MyURLClassLoader extends URLClassLoader
 				}
 			}
 		}
-        notifyListenersFinished();
+		notifyListenersFinished();
 		return classes.toArray(new Class[classes.size()]);
 	}
 
-	protected synchronized Class findClass(String className)
-		throws ClassNotFoundException
+	protected synchronized Class findClass(String className) throws ClassNotFoundException
 	{
 		Class cls = _classes.get(className);
 		if (cls == null)
@@ -171,7 +174,7 @@ public class MyURLClassLoader extends URLClassLoader
 		return cls;
 	}
 
-    @SuppressWarnings("unused")
+	@SuppressWarnings("unused")
 	protected void classHasBeenLoaded(Class cls)
 	{
 		// Empty
