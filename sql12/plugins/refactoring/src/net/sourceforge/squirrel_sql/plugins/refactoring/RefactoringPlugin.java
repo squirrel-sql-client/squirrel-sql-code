@@ -53,7 +53,7 @@ import net.sourceforge.squirrel_sql.plugins.refactoring.actions.MergeColumnActio
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.MergeTableAction;
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.ModifyColumnAction;
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.ModifySequenceAction;
-import net.sourceforge.squirrel_sql.plugins.refactoring.actions.RemoveColumnAction;
+import net.sourceforge.squirrel_sql.plugins.refactoring.actions.DropColumnAction;
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.RenameTableAction;
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.RenameViewAction;
 import net.sourceforge.squirrel_sql.plugins.refactoring.prefs.RefactoringPreferencesManager;
@@ -76,6 +76,7 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
 
     private JMenu _tableNodeMenu;
     private JMenu _tableObjectMenu;
+    private JMenu _indexObjectMenu;
     private JMenu _viewNodeMenu;
     private JMenu _viewObjectMenu;
     private JMenu _sequenceNodeMenu;
@@ -209,7 +210,7 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
         coll.add(new MergeTableAction(app, _resources));
         coll.add(new ModifyColumnAction(app, _resources));
         coll.add(new ModifySequenceAction(app, _resources));
-        coll.add(new RemoveColumnAction(app, _resources));
+        coll.add(new DropColumnAction(app, _resources));
         coll.add(new RenameTableAction(app, _resources));
         coll.add(new RenameViewAction(app, _resources));
         
@@ -268,7 +269,7 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
         _resources.addToMenu(col.get(AddColumnAction.class), columnMenu);
         _resources.addToMenu(col.get(ModifyColumnAction.class), columnMenu);
         _resources.addToMenu(col.get(MergeColumnAction.class), columnMenu);
-        _resources.addToMenu(col.get(RemoveColumnAction.class), columnMenu);
+        _resources.addToMenu(col.get(DropColumnAction.class), columnMenu);
 
         JMenu dataQualityMenu = new JMenu(IMenuResourceKeys.DATA_QUALITY);
         _resources.addToMenu(col.get(AddLookupTableAction.class), dataQualityMenu);
@@ -282,16 +283,20 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
         _resources.addToMenu(col.get(DropPrimaryKeyAction.class), referentialMenu);
         _resources.addToMenu(col.get(DropForeignKeyAction.class), referentialMenu);
 
-        JMenu indexMenu = new JMenu(IMenuResourceKeys.INDEX);
-        _resources.addToMenu(col.get(AddIndexAction.class), indexMenu);
-        _resources.addToMenu(col.get(DropIndexTableAction.class), indexMenu);
+        JMenu tableIndexMenu = new JMenu(IMenuResourceKeys.INDEX);
+        _resources.addToMenu(col.get(AddIndexAction.class), tableIndexMenu);
+        _resources.addToMenu(col.get(DropIndexTableAction.class), tableIndexMenu);
 
         _tableObjectMenu.add(tableMenu);
         _tableObjectMenu.add(columnMenu);
-        _tableObjectMenu.add(indexMenu);
+        _tableObjectMenu.add(tableIndexMenu);
         _tableObjectMenu.add(dataQualityMenu);
         _tableObjectMenu.add(referentialMenu);
 
+        // INDEX
+        _indexObjectMenu = _resources.createMenu(IMenuResourceKeys.REFACTORING);
+        _resources.addToMenu(col.get(DropIndexTableAction.class), _indexObjectMenu);
+        
         // VIEW TYPE DBO (doesn't exist yet)
         _viewNodeMenu = _resources.createMenu(IMenuResourceKeys.REFACTORING);
         _resources.addToMenu(col.get(AddViewAction.class), _viewNodeMenu);
@@ -317,6 +322,7 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
     private void addMenusToObjectTree(IObjectTreeAPI api) {
         api.addToPopup(DatabaseObjectType.TABLE_TYPE_DBO, _tableNodeMenu);
         api.addToPopup(DatabaseObjectType.TABLE, _tableObjectMenu);
+        api.addToPopup(DatabaseObjectType.INDEX, _indexObjectMenu);
         api.addToPopup(DatabaseObjectType.VIEW, _viewObjectMenu);
         api.addToPopup(DatabaseObjectType.SEQUENCE_TYPE_DBO, _sequenceNodeMenu);
         api.addToPopup(DatabaseObjectType.SEQUENCE, _sequenceObjectMenu);
