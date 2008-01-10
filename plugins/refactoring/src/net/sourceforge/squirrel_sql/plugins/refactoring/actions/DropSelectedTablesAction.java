@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.refactoring.actions;
+
 /*
  * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net 
@@ -24,26 +25,39 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.plugins.refactoring.commands.DropTablesCommand;
 
-public class DropSelectedTablesAction extends AbstractRefactoringAction {
-    public DropSelectedTablesAction(IApplication app, Resources rsrc) {
-        super(app, rsrc);
-    }
+public class DropSelectedTablesAction extends AbstractRefactoringAction
+{
+	private static final long serialVersionUID = -8517759137466833243L;
 
+	public DropSelectedTablesAction(IApplication app, Resources rsrc)
+	{
+		super(app, rsrc);
+	}
 
-    @Override
-    protected ICommand getCommand(IDatabaseObjectInfo[] info) {
-        return new DropTablesCommand(_session, info);
-    }
+	/**
+	 * @see net.sourceforge.squirrel_sql.plugins.refactoring.actions.AbstractRefactoringAction#getCommand(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo[])
+	 */
+	@Override
+	protected ICommand getCommand(IDatabaseObjectInfo[] info)
+	{
+		return new DropTablesCommand(_session, info);
+	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.plugins.refactoring.actions.AbstractRefactoringAction#getErrorMessage()
+	 */
+	@Override
+	protected String getErrorMessage()
+	{
+		return null;
+	}
 
-    @Override
-    protected String getErrorMessage() {
-        return null;
-    }
-
-
-    @Override
-    protected boolean isMultipleObjectAction() {
-        return true;
-    }
+	/**
+	 * @see net.sourceforge.squirrel_sql.plugins.refactoring.actions.AbstractRefactoringAction#isMultipleObjectAction()
+	 */
+	@Override
+	protected boolean isMultipleObjectAction()
+	{
+		return true;
+	}
 }

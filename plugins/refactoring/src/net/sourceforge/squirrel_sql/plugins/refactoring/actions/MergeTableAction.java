@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.refactoring.actions;
+
 /*
  * Copyright (C) 2007 Daniel Regli & Yannick Winiger
  * manningr@users.sourceforge.net
@@ -26,38 +27,55 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.refactoring.commands.MergeTableCommand;
 
-public class MergeTableAction extends AbstractRefactoringAction {
-    /**
-     * Internationalized strings for this class.
-     */
-    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(MergeTableAction.class);
+public class MergeTableAction extends AbstractRefactoringAction
+{
+	private static final long serialVersionUID = -7536303163886512534L;
 
-    private static interface i18n {
-        String ACTION_PART = s_stringMgr.getString("MergeTableAction.actionPart");
-        String OBJECT_PART = s_stringMgr.getString("Shared.tableObject");
-        String SINGLE_OBJECT_MESSAGE = s_stringMgr.getString("Shared.singleObjectMessage", OBJECT_PART, ACTION_PART);
-    }
+	/**
+	 * Internationalized strings for this class.
+	 */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(MergeTableAction.class);
 
+	private static interface i18n
+	{
+		String ACTION_PART = s_stringMgr.getString("MergeTableAction.actionPart");
 
-    public MergeTableAction(IApplication app, Resources rsrc) {
-        super(app, rsrc);
-    }
+		String OBJECT_PART = s_stringMgr.getString("Shared.tableObject");
 
+		String SINGLE_OBJECT_MESSAGE =
+			s_stringMgr.getString("Shared.singleObjectMessage", OBJECT_PART, ACTION_PART);
+	}
 
-    @Override
-    protected ICommand getCommand(IDatabaseObjectInfo[] info) {
-        return new MergeTableCommand(_session, info);
-    }
+	public MergeTableAction(IApplication app, Resources rsrc)
+	{
+		super(app, rsrc);
+	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.plugins.refactoring.actions.AbstractRefactoringAction#getCommand(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo[])
+	 */
+	@Override
+	protected ICommand getCommand(IDatabaseObjectInfo[] info)
+	{
+		return new MergeTableCommand(_session, info);
+	}
 
-    @Override
-    protected String getErrorMessage() {
-        return i18n.SINGLE_OBJECT_MESSAGE;
-    }
+	/**
+	 * @see net.sourceforge.squirrel_sql.plugins.refactoring.actions.AbstractRefactoringAction#getErrorMessage()
+	 */
+	@Override
+	protected String getErrorMessage()
+	{
+		return i18n.SINGLE_OBJECT_MESSAGE;
+	}
 
-
-    @Override
-    protected boolean isMultipleObjectAction() {
-        return false;
-    }
+	/**
+	 * @see net.sourceforge.squirrel_sql.plugins.refactoring.actions.AbstractRefactoringAction#isMultipleObjectAction()
+	 */
+	@Override
+	protected boolean isMultipleObjectAction()
+	{
+		return false;
+	}
 }

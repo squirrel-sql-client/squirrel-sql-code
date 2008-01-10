@@ -25,21 +25,21 @@ import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-import net.sourceforge.squirrel_sql.plugins.refactoring.commands.AddColumnCommand;
+import net.sourceforge.squirrel_sql.plugins.refactoring.commands.DropColumnCommand;
 
-public class AddColumnAction extends AbstractRefactoringAction
+public class DropColumnAction extends AbstractRefactoringAction
 {
-	private static final long serialVersionUID = 7427154165349793762L;
+	private static final long serialVersionUID = 481746871206634214L;
 
 	/**
 	 * Internationalized strings for this class.
 	 */
 	private static final StringManager s_stringMgr =
-		StringManagerFactory.getStringManager(AddColumnAction.class);
+		StringManagerFactory.getStringManager(DropColumnAction.class);
 
 	private static interface i18n
 	{
-		String ACTION_PART = s_stringMgr.getString("AddColumnAction.actionPart");
+		String ACTION_PART = s_stringMgr.getString("RemoveColumnAction.actionPart");
 
 		String OBJECT_PART = s_stringMgr.getString("Shared.tableObject");
 
@@ -47,7 +47,7 @@ public class AddColumnAction extends AbstractRefactoringAction
 			s_stringMgr.getString("Shared.singleObjectMessage", OBJECT_PART, ACTION_PART);
 	}
 
-	public AddColumnAction(IApplication app, Resources rsrc)
+	public DropColumnAction(IApplication app, Resources rsrc)
 	{
 		super(app, rsrc);
 	}
@@ -58,7 +58,7 @@ public class AddColumnAction extends AbstractRefactoringAction
 	@Override
 	protected ICommand getCommand(IDatabaseObjectInfo[] info)
 	{
-		return new AddColumnCommand(_session, info);
+		return new DropColumnCommand(_session, info);
 	}
 
 	/**
@@ -78,4 +78,5 @@ public class AddColumnAction extends AbstractRefactoringAction
 	{
 		return false;
 	}
+
 }
