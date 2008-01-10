@@ -18,36 +18,15 @@ package net.sourceforge.squirrel_sql.plugins.refactoring;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-import org.hibernate.HibernateException;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class DBUtil {
 
-    /**
-     * @param info
-     * @param dialect
-     * @return
-     * @throws UnsupportedOperationException if the specified dialect doesn't support
-     * @throws HibernateException            if the type in the specified info isn't supported by this
-     *                                       dialect.
-     */
-    public static String[] getAlterSQLForColumnAddition(TableColumnInfo info, HibernateDialect dialect)
-            throws HibernateException, UnsupportedOperationException {
-        ArrayList<String> result = new ArrayList<String>();
-
-        String[] addSQLs = dialect.getColumnAddSQL(info);
-
-        result.addAll(Arrays.asList(addSQLs));
-
-        return result.toArray(new String[result.size()]);
-    }
-
-
+	// TODO: Pass in Object qualifier and sql preferences
     public static String[] getAlterSQLForColumnChange(TableColumnInfo from,
                                                       TableColumnInfo to, HibernateDialect dialect) {
         ArrayList<String> result = new ArrayList<String>();
@@ -83,7 +62,7 @@ public class DBUtil {
                 && from.getColumnSize() == to.getColumnSize()) {
             return null;
         }
-        return dialect.getColumnTypeAlterSQL(from, to);
+        return dialect.getColumnTypeAlterSQL(from, to, null, null);
     }
 
 
