@@ -416,15 +416,14 @@ public class PluginManager {
                 }
             }
         }
-
+        Collections.sort(pluginUrls, new PluginLoadOrderComparator());
+        
         URL[] urls = pluginUrls.toArray(new URL[pluginUrls.size()]);
         if (s_log.isDebugEnabled()) {
             for (int i = 0; i < urls.length; ++i) {
                 s_log.debug("Plugin class loader URL[" + i + "] = " + urls[i]);
             }
         }
-
-        loadPluginInfoCache();
 
         _pluginsClassLoader = new MyURLClassLoader(urls);
         _pluginsClassLoader.addClassLoaderListener(classLoaderListener);
@@ -505,10 +504,6 @@ public class PluginManager {
                 _app.showErrorDialog(msg, ex);
             }
         }
-    }
-
-    private void loadPluginInfoCache() {
-
     }
 
     private void addPluginLibraries(File libDir, List<URL> pluginUrls) {
