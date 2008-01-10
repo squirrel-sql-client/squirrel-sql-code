@@ -188,10 +188,25 @@ public class DerbyDialect extends DB2Dialect
      * @throws UnsupportedOperationException if the database doesn't support 
      *         adding columns after a table has already been created.
      */
-    public String[] getColumnAddSQL(TableColumnInfo info) throws UnsupportedOperationException {
-        return new String[] {
-            DialectUtils.getColumnAddSQL(info, this, true, false, true)
-        };
+ 	public String[] getAddColumnSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
+ 	{
+
+ 		boolean addDefaultClause = true;
+		boolean supportsNullQualifier = false;
+		boolean addNullClause = true;
+   	 
+		String sql =
+			DialectUtils.getAddColumSQL(column,
+				this,
+				addDefaultClause,
+				supportsNullQualifier,
+				addNullClause,
+				qualifier,
+				prefs);
+		
+		
+        return new String[] { sql };
     }
 
     /**
@@ -367,14 +382,13 @@ public class DerbyDialect extends DB2Dialect
      *       to describe all of those restrictions.
      * 
      * @param from the TableColumnInfo as it is
-     * @param to the TableColumnInfo as it wants to be
-     * 
+    * @param to the TableColumnInfo as it wants to be
      * @return the SQL to make the change
      * @throw UnsupportedOperationException if the database doesn't support 
      *         modifying column types. 
      */
     public List<String> getColumnTypeAlterSQL(TableColumnInfo from, 
-                                        TableColumnInfo to)
+                                        TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
         throws UnsupportedOperationException
     {
         ArrayList<String> list = new ArrayList<String>();
