@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.refactoring.actions;
+
 /*
  * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
@@ -26,38 +27,55 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.refactoring.commands.DropPrimaryKeyCommand;
 
-public class DropPrimaryKeyAction extends AbstractRefactoringAction {
-    /**
-     * Internationalized strings for this class.
-     */
-    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DropPrimaryKeyAction.class);
+public class DropPrimaryKeyAction extends AbstractRefactoringAction
+{
+	private static final long serialVersionUID = -5980831927755792111L;
 
-    private static interface i18n {
-        String ACTION_PART = s_stringMgr.getString("DropPrimaryKeyAction.actionPart");
-        String OBJECT_PART = s_stringMgr.getString("Shared.tableObject");
-        String SINGLE_OBJECT_MESSAGE = s_stringMgr.getString("Shared.singleObjectMessage", OBJECT_PART, ACTION_PART);
-    }
+	/**
+	 * Internationalized strings for this class.
+	 */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(DropPrimaryKeyAction.class);
 
+	private static interface i18n
+	{
+		String ACTION_PART = s_stringMgr.getString("DropPrimaryKeyAction.actionPart");
 
-    public DropPrimaryKeyAction(IApplication app, Resources rsrc) {
-        super(app, rsrc);
-    }
+		String OBJECT_PART = s_stringMgr.getString("Shared.tableObject");
 
+		String SINGLE_OBJECT_MESSAGE =
+			s_stringMgr.getString("Shared.singleObjectMessage", OBJECT_PART, ACTION_PART);
+	}
 
-    @Override
-    protected ICommand getCommand(IDatabaseObjectInfo[] info) {
-        return new DropPrimaryKeyCommand(_session, info);
-    }
+	public DropPrimaryKeyAction(IApplication app, Resources rsrc)
+	{
+		super(app, rsrc);
+	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.plugins.refactoring.actions.AbstractRefactoringAction#getCommand(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo[])
+	 */
+	@Override
+	protected ICommand getCommand(IDatabaseObjectInfo[] info)
+	{
+		return new DropPrimaryKeyCommand(_session, info);
+	}
 
-    @Override
-    protected String getErrorMessage() {
-        return i18n.SINGLE_OBJECT_MESSAGE;
-    }
+	/**
+	 * @see net.sourceforge.squirrel_sql.plugins.refactoring.actions.AbstractRefactoringAction#getErrorMessage()
+	 */
+	@Override
+	protected String getErrorMessage()
+	{
+		return i18n.SINGLE_OBJECT_MESSAGE;
+	}
 
-
-    @Override
-    protected boolean isMultipleObjectAction() {
-        return false;
-    }
+	/**
+	 * @see net.sourceforge.squirrel_sql.plugins.refactoring.actions.AbstractRefactoringAction#isMultipleObjectAction()
+	 */
+	@Override
+	protected boolean isMultipleObjectAction()
+	{
+		return false;
+	}
 }

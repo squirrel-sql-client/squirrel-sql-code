@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.IndexInfo;
@@ -46,7 +47,8 @@ public class DropIndexTableCommand extends AbstractRefactoringCommand {
     /**
      * Logger for this class.
      */
-    private final ILogger s_log = LoggerController.createLogger(DropIndexTableCommand.class);
+    @SuppressWarnings("unused")
+	private final ILogger s_log = LoggerController.createLogger(DropIndexTableCommand.class);
     /**
      * Internationalized strings for this class
      */
@@ -66,23 +68,44 @@ public class DropIndexTableCommand extends AbstractRefactoringCommand {
         super(session, dbInfo);
     }
 
-    @Override
-    protected void onExecute() throws SQLException {
-        ITableInfo ti = (ITableInfo) _info[0];
-        _dropIndexInfo = _session.getSQLConnection().getSQLMetaData().getIndexInfo(ti).toArray(new IndexInfo[]{});
+   @Override
+	protected void onExecute() throws SQLException
+	{
+		String tableName = null;
+		if (_info[0].getDatabaseObjectType() == DatabaseObjectType.INDEX)
+		{
+			_dropIndexInfo = new IndexInfo[_info.length];
+			for (int i = 0; i < _info.length; i++)
+			{
+				_dropIndexInfo[i] = (IndexInfo) _info[i];
+			}
+			showCustomDialog();
+			return;
+		} 
+		else
+		{
+			ITableInfo ti = (ITableInfo) _info[0];
+			tableName = ti.getSimpleName();
+			_dropIndexInfo =
+				_session.getSQLConnection().getSQLMetaData().getIndexInfo(ti).toArray(new IndexInfo[] {});
+		}
 
-        // Don't show indexes dialog if only one index exists to be modified
-        if (_dropIndexInfo.length == 1) {
-            showCustomDialog();
-        } else {
-            if (listDialog == null) {
-                listDialog = new DefaultListDialog(_dropIndexInfo, ti.getSimpleName(), DefaultListDialog.DIALOG_TYPE_INDEX);
-                listDialog.addColumnSelectionListener(new ColumnListSelectionActionListener());
-                listDialog.setLocationRelativeTo(_session.getApplication().getMainFrame());
-            }
-            listDialog.setVisible(true);
-        }
-    }
+		// Don't show indexes dialog if only one index exists to be modified
+		if (_dropIndexInfo.length == 1)
+		{
+			showCustomDialog();
+		} else
+		{
+			if (listDialog == null)
+			{
+				listDialog =
+					new DefaultListDialog(_dropIndexInfo, tableName, DefaultListDialog.DIALOG_TYPE_INDEX);
+				listDialog.addColumnSelectionListener(new ColumnListSelectionActionListener());
+				listDialog.setLocationRelativeTo(_session.getApplication().getMainFrame());
+			}
+			listDialog.setVisible(true);
+		}
+	}
 
 
     protected void showCustomDialog() {
@@ -107,7 +130,7 @@ public class DropIndexTableCommand extends AbstractRefactoringCommand {
     protected String[] generateSQLStatements() throws UserCancelledOperationException {
         ArrayList<String> result = new ArrayList<String>();
 
-        if (_dialect.supportsIndexes()) {
+        if (_dialect.supportsDropIndex()) {
             for (IndexInfo iInfo : _dropIndexInfo) {
                 DatabaseObjectQualifier qualifier = new DatabaseObjectQualifier(iInfo.getCatalogName(), iInfo.getSchemaName());
                 result.add(_dialect.getDropIndexSQL(iInfo.getSimpleName(), customDialog.isCascadeSelected(),

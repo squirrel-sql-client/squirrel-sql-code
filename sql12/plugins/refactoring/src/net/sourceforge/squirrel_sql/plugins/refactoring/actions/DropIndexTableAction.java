@@ -45,20 +45,29 @@ public class DropIndexTableAction extends AbstractRefactoringAction {
     }
 
 
-    @Override
+   /**
+    * @see net.sourceforge.squirrel_sql.plugins.refactoring.actions.AbstractRefactoringAction#getCommand(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo[])
+    */
+   @Override
     protected ICommand getCommand(IDatabaseObjectInfo[] info) {
         return new DropIndexTableCommand(_session, info);
     }
 
 
-    @Override
+   /**
+    * @see net.sourceforge.squirrel_sql.plugins.refactoring.actions.AbstractRefactoringAction#getErrorMessage()
+    */
+   @Override
     protected String getErrorMessage() {
         return i18n.SINGLE_OBJECT_MESSAGE;
     }
 
 
-    @Override
+   /**
+    * @see net.sourceforge.squirrel_sql.plugins.refactoring.actions.AbstractRefactoringAction#isMultipleObjectAction()
+    */
+   @Override
     protected boolean isMultipleObjectAction() {
-        return false;
+        return true;
     }
 }

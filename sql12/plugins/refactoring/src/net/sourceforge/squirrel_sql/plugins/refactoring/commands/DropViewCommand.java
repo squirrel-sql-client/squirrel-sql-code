@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
+
 /*
  * Copyright (C) 2007 Daniel Regli & Yannick Winiger
  * http://sourceforge.net/projects/squirrel-sql
@@ -36,100 +37,128 @@ import net.sourceforge.squirrel_sql.plugins.refactoring.gui.DefaultDropDialog;
 /**
  * Defines a command class to drop view(s).
  */
-public class DropViewCommand extends AbstractRefactoringCommand {
-    /**
-     * Logger for this class.
-     */
-    private final ILogger s_log = LoggerController.createLogger(DropViewCommand.class);
-    /**
-     * Internationalized strings for this class
-     */
-    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DropViewCommand.class);
+public class DropViewCommand extends AbstractRefactoringCommand
+{
+	/**
+	 * Logger for this class.
+	 */
+	@SuppressWarnings("unused")
+	private final ILogger s_log = LoggerController.createLogger(DropViewCommand.class);
 
-    static interface i18n {
-        String SHOWSQL_DIALOG_TITLE = s_stringMgr.getString("DropViewCommand.sqlDialogTitle");
-    }
+	/**
+	 * Internationalized strings for this class
+	 */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(DropViewCommand.class);
 
-    protected DefaultDropDialog customDialog;
+	static interface i18n
+	{
+		String SHOWSQL_DIALOG_TITLE = s_stringMgr.getString("DropViewCommand.sqlDialogTitle");
+	}
 
+	protected DefaultDropDialog customDialog;
 
-    public DropViewCommand(ISession session, IDatabaseObjectInfo[] dbInfo) {
-        super(session, dbInfo);
-    }
+	public DropViewCommand(ISession session, IDatabaseObjectInfo[] dbInfo)
+	{
+		super(session, dbInfo);
+	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.plugins.refactoring.commands.AbstractRefactoringCommand#onExecute()
+	 */
+	@Override
+	protected void onExecute()
+	{
+		showCustomDialog();
+	}
 
-    @Override
-    protected void onExecute() {
-        showCustomDialog();
-    }
+	/**
+	 * @see net.sourceforge.squirrel_sql.plugins.refactoring.commands.AbstractRefactoringCommand#generateSQLStatements()
+	 */
+	@Override
+	protected String[] generateSQLStatements() throws UserCancelledOperationException
+	{
+		ArrayList<String> result = new ArrayList<String>();
 
+		try
+		{
+			for (IDatabaseObjectInfo dbo : _info)
+			{
+				result.add(_dialect.getDropViewSQL(dbo.getSimpleName(),
+					customDialog.isCascadeSelected(),
+					new DatabaseObjectQualifier(dbo.getCatalogName(), dbo.getSchemaName()),
+					_sqlPrefs)
+					+ "\n");
+			}
+		} catch (UnsupportedOperationException e2)
+		{
+			_session.showMessage(s_stringMgr.getString("DropViewCommand.unsupportedOperationMsg",
+				_dialect.getDisplayName()));
+		}
 
-    protected void showCustomDialog() {
-        _session.getApplication().getThreadPool().addTask(new Runnable() {
-            public void run() {
-                GUIUtils.processOnSwingEventThread(new Runnable() {
-                    public void run() {
-                        customDialog = new DefaultDropDialog(_info, DefaultDropDialog.DIALOG_TYPE_VIEW);
-                        customDialog.addExecuteListener(new ExecuteListener());
-                        customDialog.addEditSQLListener(new EditSQLListener(customDialog));
-                        customDialog.addShowSQLListener(new ShowSQLListener(i18n.SHOWSQL_DIALOG_TITLE, customDialog));
-                        customDialog.setLocationRelativeTo(_session.getApplication().getMainFrame());
-                        customDialog.setVisible(true);
-                    }
-                });
-            }
-        });
-    }
+		return result.toArray(new String[] {});
+	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.plugins.refactoring.commands.AbstractRefactoringCommand#executeScript(java.lang.String)
+	 */
+	@Override
+	protected void executeScript(String script)
+	{
+		CommandExecHandler handler = new CommandExecHandler(_session);
 
-    @Override
-    protected String[] generateSQLStatements() throws UserCancelledOperationException {
-        ArrayList<String> result = new ArrayList<String>();
+		SQLExecuterTask executer = new SQLExecuterTask(_session, script, handler);
+		executer.run(); // Execute the sql synchronously
 
-        try {
-            for (IDatabaseObjectInfo dbo : _info) {
-                result.add(_dialect.getDropViewSQL(dbo.getSimpleName(), customDialog.isCascadeSelected(),
-                        new DatabaseObjectQualifier(dbo.getCatalogName(), dbo.getSchemaName())
-                        , _sqlPrefs) + "\n");
-            }
-        } catch (UnsupportedOperationException e2) {
-            _session.showMessage(s_stringMgr.getString("DropViewCommand.unsupportedOperationMsg",
-                    _dialect.getDisplayName()));
-        }
+		_session.getApplication().getThreadPool().addTask(new Runnable()
+		{
+			public void run()
+			{
+				GUIUtils.processOnSwingEventThread(new Runnable()
+				{
+					public void run()
+					{
+						customDialog.setVisible(false);
+						_session.getSchemaInfo().reloadAll();
+					}
+				});
+			}
+		});
+	}
 
-        return result.toArray(new String[]{});
-    }
-
-
-    @Override
-    protected void executeScript(String script) {
-        CommandExecHandler handler = new CommandExecHandler(_session);
-
-        SQLExecuterTask executer = new SQLExecuterTask(_session, script, handler);
-        executer.run(); // Execute the sql synchronously
-
-        _session.getApplication().getThreadPool().addTask(new Runnable() {
-            public void run() {
-                GUIUtils.processOnSwingEventThread(new Runnable() {
-                    public void run() {
-                        customDialog.setVisible(false);
-                        _session.getSchemaInfo().reloadAll();
-                    }
-                });
-            }
-        });
-    }
-
-
-   /**
-	 * Returns a boolean value indicating whether or not this refactoring is supported for the specified 
-	 * dialect. 
+	/**
+	 * Returns a boolean value indicating whether or not this refactoring is supported for the specified
+	 * dialect.
 	 * 
-	 * @param dialectExt the HibernateDialect to check
+	 * @param dialect
+	 *           the HibernateDialect to check
 	 * @return true if this refactoring is supported; false otherwise.
 	 */
-	protected boolean isRefactoringSupportedForDialect(HibernateDialect dialectExt)
+	protected boolean isRefactoringSupportedForDialect(HibernateDialect dialect)
 	{
-		return dialectExt.supportsDropView();
+		return dialect.supportsDropView();
 	}
+
+	private void showCustomDialog()
+	{
+		_session.getApplication().getThreadPool().addTask(new Runnable()
+		{
+			public void run()
+			{
+				GUIUtils.processOnSwingEventThread(new Runnable()
+				{
+					public void run()
+					{
+						customDialog = new DefaultDropDialog(_info, DefaultDropDialog.DIALOG_TYPE_VIEW);
+						customDialog.addExecuteListener(new ExecuteListener());
+						customDialog.addEditSQLListener(new EditSQLListener(customDialog));
+						customDialog.addShowSQLListener(new ShowSQLListener(i18n.SHOWSQL_DIALOG_TITLE, customDialog));
+						customDialog.setLocationRelativeTo(_session.getApplication().getMainFrame());
+						customDialog.setVisible(true);
+					}
+				});
+			}
+		});
+	}
+
 }

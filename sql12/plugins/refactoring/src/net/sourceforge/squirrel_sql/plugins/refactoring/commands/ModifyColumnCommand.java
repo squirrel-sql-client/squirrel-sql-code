@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
+
 /*
  * Copyright (C) 2007 Rob Manning
  * manningr@users.sourceforge.net
@@ -18,13 +19,18 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.SQLException;
+
+import javax.swing.JOptionPane;
+
 import net.sourceforge.squirrel_sql.client.gui.db.ColumnDetailDialog;
 import net.sourceforge.squirrel_sql.client.gui.db.ColumnListDialog;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
-import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
@@ -34,153 +40,166 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.refactoring.DBUtil;
-import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 
 import org.hibernate.HibernateException;
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.SQLException;
+/**
+ * The command implementation that allows a user to modify a single column in a table. If the table has more
+ * than one column, this command will first present the user with a column list dialog to ask them which
+ * column to modify.
+ * 
+ * @author manningr
+ */
+public class ModifyColumnCommand extends AbstractRefactoringCommand
+{
+	/**
+	 * Logger for this class.
+	 */
+	private final static ILogger s_log = LoggerController.createLogger(ModifyColumnCommand.class);
 
-public class ModifyColumnCommand extends AbstractRefactoringCommand {
-    /**
-     * Logger for this class.
-     */
-    private final static ILogger s_log = LoggerController.createLogger(ModifyColumnCommand.class);
+	/**
+	 * Internationalized strings for this class.
+	 */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(ModifyColumnCommand.class);
 
-    /**
-     * Internationalized strings for this class.
-     */
-    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(ModifyColumnCommand.class);
+	static interface i18n
+	{
+		String SHOWSQL_DIALOG_TITLE = s_stringMgr.getString("ModifyColumnCommand.sqlDialogTitle");
 
-    static interface i18n {
-        String SHOWSQL_DIALOG_TITLE = s_stringMgr.getString("ModifyColumnCommand.sqlDialogTitle");
-        String MODIFY_ONE_COL_MSG = s_stringMgr.getString("ModifyColumnCommand.modifyOneColMsg");
-    }
+		String MODIFY_ONE_COL_MSG = s_stringMgr.getString("ModifyColumnCommand.modifyOneColMsg");
+	}
 
-    private ColumnListDialog listDialog = null;
-    protected ColumnDetailDialog customDialog;
-    private TableColumnInfo columnToModify = null;
+	/**
+	 * Dialog that is displayed to user when this command is executed and there is more than one column in the
+	 * table that was selected.
+	 */
+	private ColumnListDialog listDialog = null;
 
+	/**
+	 * Dialog that is displayed to user when this command is executed and there is only one column in the table,
+	 * or the column list dialog as presented and the user chose a single column to modify.
+	 */
+	protected ColumnDetailDialog customDialog;
 
-    public ModifyColumnCommand(ISession session, IDatabaseObjectInfo[] info) {
-        super(session, info);
-    }
+	/**
+	 * The column that we will be modifying in this command, as it exists presently in the table, before
+	 * modification.
+	 */
+	private TableColumnInfo columnToModify = null;
 
+	
+	/**
+	 * Creates an instance of ModifyColumnCommand.
+	 * 
+	 * @param session the current ISession
+	 * @param info the list of IDatabaseObjectInfo(s) that the user selected
+	 */
+	public ModifyColumnCommand(ISession session, IDatabaseObjectInfo[] info)
+	{
+		super(session, info);
+	}
 
-    //TODO: Remove when HibernateDialect is merged into HibernateDialect.
-    private HibernateDialect _dialect;
+	/**
+	 * @see net.sourceforge.squirrel_sql.plugins.refactoring.commands.AbstractRefactoringCommand#onExecute()
+	 */
+	@Override
+	protected void onExecute() throws SQLException
+	{
+		if (!(_info[0] instanceof ITableInfo))
+		{
+			s_log.error("onExecute: _info[0] isn't an instance of ITableInfo: class="
+				+ _info[0].getClass().getName());
+			return;
+		}
 
+		ITableInfo ti = (ITableInfo) _info[0];
+		TableColumnInfo[] columns = _session.getSQLConnection().getSQLMetaData().getColumnInfo(ti);
 
-    //TODO: Remove when HibernateDialect is merged into HibernateDialect.
-    @Override
-    public void execute() {
-        try {
-            _dialect = DialectFactory.getDialect(DialectFactory.DEST_TYPE,
-                    _session.getApplication().getMainFrame(), _session.getMetaData());
-            onExecute();
-        } catch (UserCancelledOperationException e) {
-            _session.showErrorMessage(AbstractRefactoringCommand.i18n.DIALECT_SELECTION_CANCELLED);
-        } catch (Exception e) {
-            _session.showErrorMessage(e);
-            s_log.error("Unexpected exception on execution: " + e.getMessage(), e);
-        }
-    }
+		// If there is only one column in the table,
+		if (columns.length == 1)
+		{
+			if (s_log.isDebugEnabled()) {
+				s_log.debug("Table has exactly one column, so presenting the modify column dialog");
+			}
+			columnToModify = columns[0];
+			showCustomDialog();
+		} else
+		{
+			if (s_log.isDebugEnabled()) {
+				s_log.debug("Table has exactly " + columns.length
+					+ " columns, so presenting the column list selection dialog");
+			}
+			listDialog = new ColumnListDialog(columns, ColumnListDialog.MODIFY_COLUMN_MODE);
+			listDialog.setTableName(ti.getQualifiedName());
+			listDialog.setSingleSelection();
+			listDialog.addColumnSelectionListener(new ColumnListSelectionActionListener());
+			listDialog.setLocationRelativeTo(_session.getApplication().getMainFrame());
+			listDialog.setVisible(true);
+		}
+	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.plugins.refactoring.commands.AbstractRefactoringCommand#generateSQLStatements()
+	 */
+	@Override
+	protected String[] generateSQLStatements()
+	{
+		String[] result = null;
 
-    /**
-     * Execute this command. Save the session and selected objects in the plugin
-     * for use in paste command.
-     */
-    protected void onExecute() throws SQLException {
-        if (!(_info[0] instanceof ITableInfo)) {
-            return;
-        }
+		TableColumnInfo to = customDialog.getColumnInfo();
+		String dbName = customDialog.getSelectedDBName();
+		_dialect = DialectFactory.getDialect(dbName);
 
-        //Show the user a dialog with a list of columns and ask them to select
-        // one or more columns to drop
-        ITableInfo ti = (ITableInfo) _info[0];
-        TableColumnInfo[] columns = _session.getSQLConnection().getSQLMetaData().getColumnInfo(ti);
+		try
+		{
+			result = DBUtil.getAlterSQLForColumnChange(columnToModify, to, _dialect);
 
-        if (columns.length == 1) {
-            columnToModify = columns[0];
-            showCustomDialog();
-        } else {
-            listDialog = new ColumnListDialog(columns, ColumnListDialog.MODIFY_COLUMN_MODE);
-            listDialog.setTableName(ti.getQualifiedName());
-            listDialog.setSingleSelection();
+			for (int i = 0; i < result.length; i++)
+			{
+				result[i] = result[i] + _sqlPrefs.getSqlStatementSeparator();
+			}
+		} catch (HibernateException e1)
+		{
+			JOptionPane.showMessageDialog(customDialog,
+				s_stringMgr.getString("AbstractRefactoringCommand.unsupportedTypeMsg",
+					_dialect.getDisplayName(),
+					customDialog.getSelectedTypeName()),
+				AbstractRefactoringCommand.i18n.UNSUPPORTED_TYPE_TITLE,
+				JOptionPane.ERROR_MESSAGE);
+		} catch (UnsupportedOperationException e2)
+		{
+			_session.showErrorMessage(e2.getMessage());
+		}
 
-            listDialog.addColumnSelectionListener(new ColumnListSelectionActionListener());
-            listDialog.setLocationRelativeTo(_session.getApplication().getMainFrame());
-            listDialog.setVisible(true);
-        }
-    }
+		return result;
+	}
 
+	@Override
+	protected void executeScript(String script)
+	{
+		CommandExecHandler handler = new CommandExecHandler(_session);
 
-    private void showCustomDialog() {
-        customDialog = new ColumnDetailDialog(ColumnDetailDialog.MODIFY_MODE);
-        customDialog.setExistingColumnInfo(columnToModify);
-        customDialog.setTableName(_info[0].getQualifiedName());
-        customDialog.setSelectedDialect(_dialect.getDisplayName());
+		SQLExecuterTask executer = new SQLExecuterTask(_session, script, handler);
+		executer.run(); // Execute the sql synchronously
 
-        customDialog.addExecuteListener(new ExecuteListener());
-        customDialog.addEditSQLListener(new EditSQLListener(customDialog));
-        customDialog.addShowSQLListener(new ShowSQLListener(i18n.SHOWSQL_DIALOG_TITLE, customDialog));
-        customDialog.setLocationRelativeTo(_session.getApplication().getMainFrame());
-        customDialog.setVisible(true);
-    }
+		_session.getApplication().getThreadPool().addTask(new Runnable()
+		{
+			public void run()
+			{
+				GUIUtils.processOnSwingEventThread(new Runnable()
+				{
+					public void run()
+					{
+						customDialog.setVisible(false);
+						_session.getSchemaInfo().reload(_info[0]);
+					}
+				});
+			}
+		});
+	}
 
-
-    @Override
-    protected String[] generateSQLStatements() {
-        String[] result = null;
-
-        TableColumnInfo to = customDialog.getColumnInfo();
-        String dbName = customDialog.getSelectedDBName();
-        _dialect = DialectFactory.getDialect(dbName);
-
-        try {
-            result = DBUtil.getAlterSQLForColumnChange(columnToModify, to, _dialect);
-
-            //TODO: Append the SqlStatementSeparators directly in the Dialect. (for examples, see the DialectExtensions)
-            for (int i = 0; i < result.length; i++) {
-                result[i] = result[i] + _sqlPrefs.getSqlStatementSeparator();
-            }
-        } catch (HibernateException e1) {
-            JOptionPane.showMessageDialog(customDialog,
-                    s_stringMgr.getString("AbstractRefactoringCommand.unsupportedTypeMsg",
-                            _dialect.getDisplayName(), customDialog.getSelectedTypeName()),
-                    AbstractRefactoringCommand.i18n.UNSUPPORTED_TYPE_TITLE, JOptionPane.ERROR_MESSAGE);
-        } catch (UnsupportedOperationException e2) {
-            _session.showErrorMessage(e2.getMessage());
-        }
-
-        return result;
-    }
-
-
-    @Override
-    protected void executeScript(String script) {
-        CommandExecHandler handler = new CommandExecHandler(_session);
-
-        SQLExecuterTask executer = new SQLExecuterTask(_session, script, handler);
-        executer.run(); // Execute the sql synchronously
-
-        _session.getApplication().getThreadPool().addTask(new Runnable() {
-            public void run() {
-                GUIUtils.processOnSwingEventThread(new Runnable() {
-                    public void run() {
-                        customDialog.setVisible(false);
-                        _session.getSchemaInfo().reloadAll();
-                    }
-                });
-            }
-        });
-    }
-
-
-   /**
+	/**
 	 * Returns a boolean value indicating whether or not this refactoring is supported for the specified
 	 * dialect.
 	 * 
@@ -195,20 +214,37 @@ public class ModifyColumnCommand extends AbstractRefactoringCommand {
 		return true;
 	}
 
+	private void showCustomDialog()
+	{
+		customDialog = new ColumnDetailDialog(ColumnDetailDialog.MODIFY_MODE);
+		customDialog.setExistingColumnInfo(columnToModify);
+		customDialog.setTableName(_info[0].getQualifiedName());
+		customDialog.setSelectedDialect(_dialect.getDisplayName());
 
-	private class ColumnListSelectionActionListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            if (listDialog == null) return;
+		customDialog.addExecuteListener(new ExecuteListener());
+		customDialog.addEditSQLListener(new EditSQLListener(customDialog));
+		customDialog.addShowSQLListener(new ShowSQLListener(i18n.SHOWSQL_DIALOG_TITLE, customDialog));
+		customDialog.setLocationRelativeTo(_session.getApplication().getMainFrame());
+		customDialog.setVisible(true);
+	}
 
-            listDialog.setVisible(false);
-            TableColumnInfo[] colInfos = listDialog.getSelectedColumnList();
-            if (colInfos == null || colInfos.length != 1) {
-                _session.showMessage(i18n.MODIFY_ONE_COL_MSG);
-                return;
-            }
-            columnToModify = colInfos[0];
+	private class ColumnListSelectionActionListener implements ActionListener
+	{
+		public void actionPerformed(ActionEvent e)
+		{
+			if (listDialog == null)
+				return;
 
-            showCustomDialog();
-        }
-    }
+			listDialog.setVisible(false);
+			TableColumnInfo[] colInfos = listDialog.getSelectedColumnList();
+			if (colInfos == null || colInfos.length != 1)
+			{
+				_session.showMessage(i18n.MODIFY_ONE_COL_MSG);
+				return;
+			}
+			columnToModify = colInfos[0];
+
+			showCustomDialog();
+		}
+	}
 }

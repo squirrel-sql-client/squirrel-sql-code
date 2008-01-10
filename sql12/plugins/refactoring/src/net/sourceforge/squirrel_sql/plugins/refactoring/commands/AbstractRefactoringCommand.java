@@ -70,8 +70,6 @@ public abstract class AbstractRefactoringCommand implements ICommand {
 
     /**
      * HibernateDialect to use for this refactoring.
-     * TODO: Replace HibernateDialect with HibernateDialect as soon
-     * TODO: as all the extensional code is merged into the original HibernateDialect classes.
      */
     protected HibernateDialect _dialect;
 
@@ -205,18 +203,12 @@ public abstract class AbstractRefactoringCommand implements ICommand {
                 _session.showMessage(i18n.NO_CHANGES);
                 return;
             }
-
-            final StringBuilder script = new StringBuilder();
-            for (String stmt : stmts) {
-                script.append(stmt).append("\n\n");
-            }
-            script.setLength(script.length() - 2);
-
+            final String script = createExecutableScriptFromStatements(stmts, false);            
             GUIUtils.processOnSwingEventThread(new Runnable() {
                 public void run() {
                     final ErrorDialog showSQLDialog;
-                    if (_parentDialog != null) showSQLDialog = new ErrorDialog(_parentDialog, script.toString());
-                    else showSQLDialog = new ErrorDialog(_session.getApplication().getMainFrame(), script.toString());
+                    if (_parentDialog != null) showSQLDialog = new ErrorDialog(_parentDialog, script);
+                    else showSQLDialog = new ErrorDialog(_session.getApplication().getMainFrame(), script);
                     showSQLDialog.setTitle(_dialogTitle);
                     showSQLDialog.setVisible(true);
                 }
@@ -250,18 +242,14 @@ public abstract class AbstractRefactoringCommand implements ICommand {
                 _session.showMessage(i18n.NO_CHANGES);
                 return;
             }
-            final StringBuilder script = new StringBuilder();
-            for (String stmt : stmts) {
-                script.append(stmt).append("\n\n");
-            }
-            script.setLength(script.length() - 2);
-
+            final String script = createExecutableScriptFromStatements(stmts, false);
+            
             GUIUtils.processOnSwingEventThread(new Runnable() {
                 public void run() {
                     if (_parentDialog != null) {
                         _parentDialog.dispose();
                     }
-                    _session.getSQLPanelAPIOfActiveSessionWindow().appendSQLScript(script.toString(), true);
+                    _session.getSQLPanelAPIOfActiveSessionWindow().appendSQLScript(script, true);
                     _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
                 }
             });
@@ -273,23 +261,18 @@ public abstract class AbstractRefactoringCommand implements ICommand {
      * The actual execution is specified in the subclass's implementation of the executeScript method.
      */
     protected class ExecuteListener implements ActionListener, SQLResultListener {
+   	 
         public void actionPerformed(ActionEvent e) {
             getSQLStatements(this);
         }
-
 
         public void finished(String[] stmts) {
             if (stmts == null || stmts.length == 0) {
                 _session.showMessage(i18n.NO_CHANGES);
                 return;
             }
-            final StringBuilder script = new StringBuilder();
-            for (String stmt : stmts) {
-                script.append(stmt).append("\n");
-            }
-            script.setLength(script.length() - 1);
-
-            executeScript(script.toString());
+            final String script = createExecutableScriptFromStatements(stmts, true);
+            executeScript(script);
         }
     }
 
@@ -311,5 +294,39 @@ public abstract class AbstractRefactoringCommand implements ICommand {
         public boolean exceptionEncountered() {
             return exceptionEncountered;
         }
+    }
+    
+   /**
+	 * Builds a script as a single string from the specified statements. EOL chars and statement separators are
+	 * inserted.
+	 * 
+	 * @param stmts
+	 *           the SQL statements to form into a script.
+	 * @param stripComments
+	 *           whether or not to remove comment lines from the specified array
+	 * @return the script as a String
+	 */
+   private String createExecutableScriptFromStatements(final String[] stmts, final boolean stripComments) {
+       StringBuilder result = new StringBuilder();
+       String seperator = _sqlPrefs.getSqlStatementSeparator();
+       for (String stmt : stmts) {
+      	 boolean isComment = stmt.startsWith("--");
+      	  if (stripComments && isComment) {
+         	  // skip comments
+      		  continue;
+      	  }
+      	  
+   		  result.append(stmt);
+   		  
+   		  if (isComment) {
+   			  result.append("\n");
+   		  } else {
+      		  if (!seperator.equals(";")) {
+      			  result.append("\n");
+      		  }
+   			  result.append(seperator).append("\n\n");
+   		  }
+       }
+       return result.toString();
     }
 }

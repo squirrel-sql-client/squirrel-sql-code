@@ -1,4 +1,5 @@
 package net.sourceforge.squirrel_sql.plugins.refactoring.actions;
+
 /*
  * Copyright (C) 2007 Yannick Winiger
  * http://sourceforge.net/projects/squirrel-sql
@@ -26,38 +27,55 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.refactoring.commands.AddLookupTableCommand;
 
-public class AddLookupTableAction extends AbstractRefactoringAction {
-    /**
-     * Internationalized strings for this class.
-     */
-    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AddLookupTableAction.class);
+public class AddLookupTableAction extends AbstractRefactoringAction
+{
+	private static final long serialVersionUID = -2649745492287831607L;
 
-    private static interface i18n {
-        String ACTION_PART = s_stringMgr.getString("AddLookupTableAction.actionPart");
-        String OBJECT_PART = s_stringMgr.getString("Shared.tableObject");
-        String SINGLE_OBJECT_MESSAGE = s_stringMgr.getString("Shared.singleObjectMessage", OBJECT_PART, ACTION_PART);
-    }
+	/**
+	 * Internationalized strings for this class.
+	 */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(AddLookupTableAction.class);
 
+	private static interface i18n
+	{
+		String ACTION_PART = s_stringMgr.getString("AddLookupTableAction.actionPart");
 
-    public AddLookupTableAction(IApplication app, Resources rsrc) {
-        super(app, rsrc);
-    }
+		String OBJECT_PART = s_stringMgr.getString("Shared.tableObject");
 
+		String SINGLE_OBJECT_MESSAGE =
+			s_stringMgr.getString("Shared.singleObjectMessage", OBJECT_PART, ACTION_PART);
+	}
 
-    @Override
-    protected ICommand getCommand(IDatabaseObjectInfo[] infos) {
-        return new AddLookupTableCommand(_session, infos);
-    }
+	public AddLookupTableAction(IApplication app, Resources rsrc)
+	{
+		super(app, rsrc);
+	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.plugins.refactoring.actions.AbstractRefactoringAction#getCommand(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo[])
+	 */
+	@Override
+	protected ICommand getCommand(IDatabaseObjectInfo[] infos)
+	{
+		return new AddLookupTableCommand(_session, infos);
+	}
 
-    @Override
-    protected String getErrorMessage() {
-        return i18n.SINGLE_OBJECT_MESSAGE;
-    }
+	/**
+	 * @see net.sourceforge.squirrel_sql.plugins.refactoring.actions.AbstractRefactoringAction#getErrorMessage()
+	 */
+	@Override
+	protected String getErrorMessage()
+	{
+		return i18n.SINGLE_OBJECT_MESSAGE;
+	}
 
-
-    @Override
-    protected boolean isMultipleObjectAction() {
-        return false;
-    }
+	/**
+	 * @see net.sourceforge.squirrel_sql.plugins.refactoring.actions.AbstractRefactoringAction#isMultipleObjectAction()
+	 */
+	@Override
+	protected boolean isMultipleObjectAction()
+	{
+		return false;
+	}
 }

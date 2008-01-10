@@ -18,6 +18,8 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+import java.sql.SQLException;
+
 import net.sourceforge.squirrel_sql.client.gui.db.ColumnListDialog;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
@@ -32,9 +34,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
-
-import java.sql.SQLException;
 
 /**
  * Implements showing a list of columns for a selected table to the
@@ -47,7 +46,7 @@ public class AddPrimaryKeyCommand extends AbstractRefactoringCommand {
     /**
      * Logger for this class.
      */
-    private final static ILogger s_log = LoggerController.createLogger(RemoveColumnCommand.class);
+    private final static ILogger s_log = LoggerController.createLogger(DropColumnCommand.class);
 
     /**
      * Internationalized strings for this class.

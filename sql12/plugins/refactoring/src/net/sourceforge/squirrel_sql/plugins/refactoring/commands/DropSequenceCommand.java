@@ -37,7 +37,8 @@ public class DropSequenceCommand extends AbstractRefactoringCommand {
     /**
      * Logger for this class.
      */
-    private final ILogger s_log = LoggerController.createLogger(DropSequenceCommand.class);
+    @SuppressWarnings("unused")
+	private final ILogger s_log = LoggerController.createLogger(DropSequenceCommand.class);
     /**
      * Internationalized strings for this class
      */
@@ -80,26 +81,29 @@ public class DropSequenceCommand extends AbstractRefactoringCommand {
 
 
     @Override
-    protected String[] generateSQLStatements() throws UserCancelledOperationException {
-        ArrayList<String> result = new ArrayList<String>();
+    protected String[] generateSQLStatements() throws UserCancelledOperationException
+	{
+		ArrayList<String> result = new ArrayList<String>();
 
-        try {
-            if (!_dialect.supportsIndexes()) {
-                throw new UnsupportedOperationException();
-            }
+		if (_dialect.supportsDropSequence())
+		{
+			for (IDatabaseObjectInfo dbo : _info)
+			{
+				DatabaseObjectQualifier qualifier =
+					new DatabaseObjectQualifier(dbo.getCatalogName(), dbo.getSchemaName());
+				result.add(_dialect.getDropSequenceSQL(dbo.getSimpleName(),
+					customDialog.isCascadeSelected(),
+					qualifier,
+					_sqlPrefs));
+			}
+		} else
+		{
+			_session.showMessage(s_stringMgr.getString("DropSequenceCommand.unsupportedOperationMsg",
+				_dialect.getDisplayName()));
+		}
 
-            for (IDatabaseObjectInfo dbo : _info) {
-                DatabaseObjectQualifier qualifier = new DatabaseObjectQualifier(dbo.getCatalogName(), dbo.getSchemaName());
-                result.add(_dialect.getDropSequenceSQL(dbo.getSimpleName(), customDialog.isCascadeSelected(),
-                        qualifier, _sqlPrefs));
-            }
-        } catch (UnsupportedOperationException e2) {
-            _session.showMessage(s_stringMgr.getString("DropSequenceCommand.unsupportedOperationMsg",
-                    _dialect.getDisplayName()));
-        }
-
-        return result.toArray(new String[]{});
-    }
+		return result.toArray(new String[] {});
+	}
 
 
     @Override
