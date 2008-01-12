@@ -328,7 +328,7 @@ public class Oracle9iDialect extends Oracle9Dialect implements HibernateDialect
 	 *           the column to modify
 	 * @return the SQL to execute
 	 */
-	public String getColumnNullableAlterSQL(TableColumnInfo info)
+	public String getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		StringBuffer result = new StringBuffer();
 		result.append("ALTER TABLE ");
@@ -645,19 +645,19 @@ public class Oracle9iDialect extends Oracle9Dialect implements HibernateDialect
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddUniqueConstraintSQL(java.lang.String,
-	 *      java.lang.String, java.lang.String[],
+	 *      java.lang.String, TableColumnInfo[],
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
-	public String getAddUniqueConstraintSQL(String tableName, String constraintName, String[] columns,
+	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName, TableColumnInfo[] columns,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getAddUniqueConstraintSQL(tableName,
+		return new String[] { DialectUtils.getAddUniqueConstraintSQL(tableName,
 			constraintName,
 			columns,
 			qualifier,
 			prefs,
-			this);
+			this) };
 	}
 
 	/**
@@ -723,17 +723,16 @@ public class Oracle9iDialect extends Oracle9Dialect implements HibernateDialect
 	{
 		StringBuilder result = new StringBuilder();
 		result.append("CREATE ");
-		if (unique)
+
+		// Oracle doesn't allow unique bitmap indexes.
+		if (unique && ! accessMethod.equalsIgnoreCase("bitmap") )
 		{
 			result.append("UNIQUE ");
 		}
 		if (accessMethod != null && accessMethod.equalsIgnoreCase("bitmap"))
 		{
-			if (unique)
-			{
-				result.append(accessMethod);
-				result.append(" ");
-			}
+			result.append(accessMethod);
+			result.append(" ");
 		}
 		result.append("INDEX ");
 		result.append(DialectUtils.shapeQualifiableIdentifier(indexName, qualifier, prefs, this));

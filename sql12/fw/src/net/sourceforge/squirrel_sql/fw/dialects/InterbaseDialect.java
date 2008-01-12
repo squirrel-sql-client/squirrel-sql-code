@@ -303,7 +303,7 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect imp
 	 *           the column to modify
 	 * @return the SQL to execute
 	 */
-	public String getColumnNullableAlterSQL(TableColumnInfo info)
+	public String getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO: implement
 		throw new UnsupportedOperationException("Not yet implemented");
@@ -483,7 +483,7 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect imp
 		return null;
 	}
 
-	public String getAddUniqueConstraintSQL(String tableName, String constraintName, String[] columns,
+	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName, TableColumnInfo[] columns,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO Auto-generated method stub

@@ -327,7 +327,7 @@ public class PostgreSQLDialect extends org.hibernate.dialect.PostgreSQLDialect i
 	 *           the column to modify
 	 * @return the SQL to execute
 	 */
-	public String getColumnNullableAlterSQL(TableColumnInfo info)
+	public String getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		StringBuffer result = new StringBuffer();
 		result.append("ALTER TABLE ");
@@ -823,16 +823,35 @@ public class PostgreSQLDialect extends org.hibernate.dialect.PostgreSQLDialect i
 		boolean unique, String tablespace, String constraints, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getAddIndexSQL(this,
-			indexName,
-			tableName,
-			accessMethod,
-			columns,
-			unique,
-			tablespace,
-			constraints,
-			qualifier,
-			prefs);
+		String result = "";
+		if (unique && accessMethod.equalsIgnoreCase("hash")) {
+			String uniqueHashAccessMethodNotSupported = null;
+			
+			result =
+				DialectUtils.getAddIndexSQL(this,
+					indexName,
+					tableName,
+					uniqueHashAccessMethodNotSupported,
+					columns,
+					unique,
+					tablespace,
+					constraints,
+					qualifier,
+					prefs);			
+		} else {
+			result =
+				DialectUtils.getAddIndexSQL(this,
+					indexName,
+					tableName,
+					accessMethod,
+					columns,
+					unique,
+					tablespace,
+					constraints,
+					qualifier,
+					prefs);
+		}
+		return result;
 	}
 
 	/**
@@ -953,19 +972,19 @@ public class PostgreSQLDialect extends org.hibernate.dialect.PostgreSQLDialect i
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddUniqueConstraintSQL(java.lang.String,
-	 *      java.lang.String, java.lang.String[],
+	 *      java.lang.String, TableColumnInfo[],
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
-	public String getAddUniqueConstraintSQL(String tableName, String constraintName, String[] columns,
+	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName, TableColumnInfo[] columns,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getAddUniqueConstraintSQL(tableName,
+		return new String[] { DialectUtils.getAddUniqueConstraintSQL(tableName,
 			constraintName,
 			columns,
 			qualifier,
 			prefs,
-			this);
+			this) };
 	}
 
 	public String[] getAddAutoIncrementSQL(TableColumnInfo column, SqlGenerationPreferences prefs)

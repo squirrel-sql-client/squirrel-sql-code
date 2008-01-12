@@ -299,7 +299,7 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	 *           the column to modify
 	 * @return the SQL to execute
 	 */
-	public String getColumnNullableAlterSQL(TableColumnInfo info)
+	public String getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		int featureId = DialectUtils.COLUMN_NULL_ALTER_TYPE;
 		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
@@ -504,9 +504,9 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddUniqueConstraintSQL(java.lang.String, java.lang.String, java.lang.String[], net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddUniqueConstraintSQL(java.lang.String, java.lang.String, TableColumnInfo[], net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
-	public String getAddUniqueConstraintSQL(String tableName, String constraintName, String[] columns,
+	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName, TableColumnInfo[] columns,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO Auto-generated method stub

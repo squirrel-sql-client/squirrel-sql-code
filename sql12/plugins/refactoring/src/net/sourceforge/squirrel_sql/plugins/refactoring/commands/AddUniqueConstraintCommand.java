@@ -20,6 +20,9 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
  */
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.TreeSet;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
@@ -58,6 +61,8 @@ public class AddUniqueConstraintCommand extends AbstractRefactoringCommand
 
 	protected AddUniqueConstraintDialog customDialog;
 
+	private HashMap<String, TableColumnInfo> columnMap = new HashMap<String, TableColumnInfo>();
+	
 	public AddUniqueConstraintCommand(ISession session, IDatabaseObjectInfo[] info)
 	{
 		super(session, info);
@@ -79,10 +84,16 @@ public class AddUniqueConstraintCommand extends AbstractRefactoringCommand
 	{
 		ITableInfo selectedTable = (ITableInfo) _info[0];
 		TableColumnInfo[] tableColumnInfos = _session.getMetaData().getColumnInfo(selectedTable);
+		
 		TreeSet<String> localColumns = new TreeSet<String>();
-		for (TableColumnInfo columns : tableColumnInfos)
+		for (TableColumnInfo column : tableColumnInfos)
 		{
-			localColumns.add(columns.getColumnName());
+			// A Map for quick lookup later - we want to pass TableColumnInfos to the dialect, not merely column
+			// names.
+			columnMap.put(column.getColumnName(), column);
+			
+			// Add column name to the list
+			localColumns.add(column.getColumnName());
 		}
 
 		customDialog =
@@ -104,14 +115,20 @@ public class AddUniqueConstraintCommand extends AbstractRefactoringCommand
 		DatabaseObjectQualifier qualifier =
 			new DatabaseObjectQualifier(_info[0].getCatalogName(), _info[0].getSchemaName());
 
-		String result =
+		List<String> columnNames = customDialog.getUniqueColumns();
+		ArrayList<TableColumnInfo> columns = new ArrayList<TableColumnInfo>();
+		for (String columnName : columnNames) {
+			columns.add(columnMap.get(columnName));
+		}
+		
+		String[] result =
 			_dialect.getAddUniqueConstraintSQL(_info[0].getSimpleName(),
 				customDialog.getConstraintName(),
-				customDialog.getUniqueColumns().toArray(new String[] {}),
+				columns.toArray(new TableColumnInfo[] {}),
 				qualifier,
 				_sqlPrefs);
 
-		return new String[] { result };
+		return result;
 	}
 
 	/**
@@ -154,4 +171,5 @@ public class AddUniqueConstraintCommand extends AbstractRefactoringCommand
 	{
 		return dialect.supportsAddUniqueConstraint();
 	}
+	
 }

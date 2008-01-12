@@ -301,7 +301,7 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 	 *           the column to modify
 	 * @return the SQL to execute
 	 */
-	public String getColumnNullableAlterSQL(TableColumnInfo info)
+	public String getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		int featureId = DialectUtils.COLUMN_NULL_ALTER_TYPE;
 		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
@@ -494,11 +494,11 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddUniqueConstraintSQL(java.lang.String,
-	 *      java.lang.String, java.lang.String[],
+	 *      java.lang.String, TableColumnInfo[],
 	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
 	 */
-	public String getAddUniqueConstraintSQL(String tableName, String constraintName, String[] columns,
+	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName, TableColumnInfo[] columns,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO Auto-generated method stub

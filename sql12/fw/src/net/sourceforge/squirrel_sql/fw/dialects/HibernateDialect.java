@@ -256,9 +256,14 @@ public interface HibernateDialect
 	 * 
 	 * @param info
 	 *           the column to modify
+	 * @param qualifier
+	 *           qualifier of the table
+	 * @param prefs
+	 *           preferences for generated sql scripts           
 	 * @return the SQL to execute
 	 */
-	String getColumnNullableAlterSQL(TableColumnInfo info);
+	String getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs);
 
 	/**
 	 * Returns a boolean value indicating whether or not this database dialect supports renaming columns.
@@ -824,7 +829,7 @@ public interface HibernateDialect
 	 *           preferences for generated sql scripts
 	 * @return the sql command to add a unique constraint.
 	 */
-	public String getAddUniqueConstraintSQL(String tableName, String constraintName, String[] columns,
+	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName, TableColumnInfo[] columns,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs);
 
 	/**

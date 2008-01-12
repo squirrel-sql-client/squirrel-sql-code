@@ -18,6 +18,9 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
+import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.CYCLE_CLAUSE;
+import static net.sourceforge.squirrel_sql.fw.dialects.DialectUtils.NO_CYCLE_CLAUSE;
+
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -85,10 +88,8 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType)
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
 	 */
 	public boolean canPasteTo(IDatabaseObjectInfo info)
 	{
@@ -101,40 +102,32 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#supportsSchemasInTableDefinition()
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsSchemasInTableDefinition()
 	 */
 	public boolean supportsSchemasInTableDefinition()
 	{
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getLengthFunction()
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getLengthFunction(int)
 	 */
 	public String getLengthFunction(int dataType)
 	{
 		return "length";
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getMaxFunction()
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getMaxFunction()
 	 */
 	public String getMaxFunction()
 	{
 		return "max";
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getMaxPrecision(int)
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getMaxPrecision(int)
 	 */
 	public int getMaxPrecision(int dataType)
 	{
@@ -147,10 +140,8 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getMaxScale(int)
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getMaxScale(int)
 	 */
 	public int getMaxScale(int dataType)
 	{
@@ -165,20 +156,16 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getPrecisionDigits(int, int)
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getPrecisionDigits(int, int)
 	 */
 	public int getPrecisionDigits(int columnSize, int dataType)
 	{
 		return columnSize;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getColumnLength(int, int)
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getColumnLength(int, int)
 	 */
 	public int getColumnLength(int columnSize, int dataType)
 	{
@@ -229,15 +216,20 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support adding columns after a table has already been created.
 	 */
-	public String[] getColumnAddSQL(TableColumnInfo info) throws UnsupportedOperationException
+	public String[] getAddColumnSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
+		final String qualifedTableName =
+			DialectUtils.shapeQualifiableIdentifier(info.getTableName(), qualifier, prefs, this);
+		final String shapedColumnName = DialectUtils.shapeIdentifier(info.getColumnName(), prefs, this);
+
 		ArrayList<String> result = new ArrayList<String>();
 
 		StringBuffer addColumn = new StringBuffer();
 		addColumn.append("ALTER TABLE ");
-		addColumn.append(info.getTableName());
+		addColumn.append(qualifedTableName);
 		addColumn.append(" ADD ");
-		addColumn.append(info.getColumnName());
+		addColumn.append(shapedColumnName);
 		addColumn.append(" ");
 		addColumn.append(getTypeName(info.getDataType(),
 			info.getColumnSize(),
@@ -264,11 +256,13 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 			// NULL)
 			StringBuffer notnull = new StringBuffer();
 			notnull.append("ALTER TABLE ");
-			notnull.append(info.getTableName());
+			notnull.append(qualifedTableName);
 			notnull.append(" ADD CONSTRAINT ");
-			notnull.append(info.getColumnName());
+			// TODO: should the constraint name simply be the column name or something more like a constraint
+			// name?
+			notnull.append(shapedColumnName);
 			notnull.append(" CHECK (");
-			notnull.append(info.getColumnName());
+			notnull.append(shapedColumnName);
 			notnull.append(" IS NOT NULL)");
 			result.add(notnull.toString());
 		}
@@ -399,10 +393,16 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 	 */
 	public boolean supportsAlterColumnNull()
 	{
-		return false;
+		return true;
 	}
 
 	/**
+	 * Update: DB2 version 9.5 appears to support altering column nullability just fine via:
+	 * 
+	 * ALTER TABLE table_name ALTER COLUMN column_name SET NOT NULL
+	 * 
+	 * So, I'll use that 
+	 * 
 	 * Returns the SQL used to alter the specified column to not allow null values This appears to work: ALTER
 	 * TABLE table_name ADD CONSTRAINT constraint_name CHECK (column_name IS NOT NULL) However, the jdbc driver
 	 * still reports the column as nullable - which means I can't reliably display the correct value for this
@@ -415,13 +415,47 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 	 *           the column to modify
 	 * @return the SQL to execute
 	 */
-	public String getColumnNullableAlterSQL(TableColumnInfo info)
+	public String getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
-		int featureId = DialectUtils.COLUMN_NULL_ALTER_TYPE;
-		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-		throw new UnsupportedOperationException(msg);
+		boolean nullable = info.isNullable().equalsIgnoreCase("yes");
+		return getColumnNullableAlterSQL(info, nullable, qualifier, prefs);
 	}
 
+	/**
+	 * Returns an SQL statement that alters the specified column nullability.
+	 * 
+	 * @param info
+	 *           the column to modify
+	 * @param nullable
+	 *           whether or not the column should allow nulls after being altered
+	 * @param qualifier
+	 *           qualifier of the table
+	 * @param prefs
+	 *           preferences for generated sql scripts
+	 * @return
+	 */
+	private String getColumnNullableAlterSQL(TableColumnInfo info, boolean nullable,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	{
+		StringBuilder result = new StringBuilder();
+		result.append("ALTER TABLE ");
+		result.append(DialectUtils.shapeQualifiableIdentifier(info.getTableName(), qualifier, prefs, this));
+		result.append(" ");
+		result.append(DialectUtils.ALTER_COLUMN_CLAUSE);
+		result.append(" ");
+		result.append(DialectUtils.shapeIdentifier(info.getColumnName(), prefs, this));
+		result.append(" SET ");
+		if (nullable)
+		{
+			result.append("NULL");
+		} else
+		{
+			result.append("NOT NULL");
+		}
+		return result.toString();		
+	}
+	
 	/**
 	 * Returns a boolean value indicating whether or not this database dialect supports renaming columns.
 	 * 
@@ -469,15 +503,15 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 	 * @return the SQL to make the change
 	 * @throw UnsupportedOperationException if the database doesn't support modifying column types.
 	 */
-	public List<String> getColumnTypeAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
-		throws UnsupportedOperationException
+	public List<String> getColumnTypeAlterSQL(TableColumnInfo from, TableColumnInfo to,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
 		ArrayList<String> result = new ArrayList<String>();
 		StringBuffer tmp = new StringBuffer();
 		tmp.append("ALTER TABLE ");
-		tmp.append(from.getTableName());
+		tmp.append(DialectUtils.shapeQualifiableIdentifier(from.getTableName(), qualifier, prefs, this));
 		tmp.append(" ALTER COLUMN ");
-		tmp.append(from.getColumnName());
+		tmp.append(DialectUtils.shapeIdentifier(from.getColumnName(), prefs, this));
 		tmp.append(" SET DATA TYPE ");
 		tmp.append(DialectUtils.getTypeName(to, this));
 		result.add(tmp.toString());
@@ -565,20 +599,15 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 		return DialectType.DB2;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAccessMethodsTypes()
+	 */
 	public String[] getAccessMethodsTypes()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return new String[] { };
 	}
 
 	public String[] getAddAutoIncrementSQL(TableColumnInfo column, SqlGenerationPreferences prefs)
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String[] getAddColumnSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
-		SqlGenerationPreferences prefs)
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -593,35 +622,132 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 		return null;
 	}
 
-	public String getAddUniqueConstraintSQL(String tableName, String constraintName, String[] columns,
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddUniqueConstraintSQL(java.lang.String, java.lang.String, TableColumnInfo[], net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName, TableColumnInfo[] columns,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<String> result = new ArrayList<String>();
+		
+		ArrayList<String> columnNotNullAlters = new ArrayList<String>();
+		// DB2 requires that columns be not-null before applying a unique constraint
+		for (TableColumnInfo column : columns) {
+			if (column.isNullable().equalsIgnoreCase("YES")) {
+				columnNotNullAlters.add(getColumnNullableAlterSQL(column, false, qualifier, prefs));
+			}
+		}
+		if (columnNotNullAlters.size() > 0) {
+			//set INTEGRITY FOR <tablename> IMMEDIATE CHECKED
+			StringBuilder integritySql = new StringBuilder();
+			integritySql.append("SET INTEGRITY FOR ");
+			integritySql.append(DialectUtils.shapeQualifiableIdentifier(columns[0].getTableName(), qualifier, prefs, this));
+			integritySql.append(" OFF");
+			result.add(integritySql.toString());
+			
+			result.addAll(columnNotNullAlters);
+			
+			//set INTEGRITY FOR <tablename> IMMEDIATE CHECKED
+			integritySql = new StringBuilder();
+			integritySql.append("SET INTEGRITY FOR ");
+			integritySql.append(DialectUtils.shapeQualifiableIdentifier(columns[0].getTableName(), qualifier, prefs, this));
+			integritySql.append(" IMMEDIATE CHECKED");
+			result.add(integritySql.toString());
+		}
+		
+		result.add(
+			DialectUtils.getAddUniqueConstraintSQL(tableName,
+			constraintName,
+			columns,
+			qualifier,
+			prefs,
+			this));
+		
+		return result.toArray(new String[result.size()]);
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAlterSequenceSQL(java.lang.String,
+	 *      java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
 	public String[] getAlterSequenceSQL(String sequenceName, String increment, String minimum, String maximum,
 		String restart, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		String cycleClause = NO_CYCLE_CLAUSE;
+		if (cycle == true)
+		{
+			cycleClause = CYCLE_CLAUSE;
+		}
+		return new String[] {
+
+		DialectUtils.getAlterSequenceSQL(sequenceName,
+			increment,
+			minimum,
+			maximum,
+			restart,
+			cache,
+			cycleClause,
+			qualifier,
+			prefs,
+			this) };
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getCreateIndexSQL(java.lang.String,
+	 *      java.lang.String, java.lang.String, java.lang.String[], boolean, java.lang.String,
+	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
 	public String getCreateIndexSQL(String indexName, String tableName, String accessMethod, String[] columns,
 		boolean unique, String tablespace, String constraints, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder result = new StringBuilder();
+		result.append("CREATE ");
+
+		if (unique)
+		{
+			result.append("UNIQUE ");
+		}
+		result.append(" INDEX ");
+		result.append(DialectUtils.shapeQualifiableIdentifier(indexName, qualifier, prefs, this));
+		result.append(" ON ");
+		result.append(DialectUtils.shapeQualifiableIdentifier(tableName, qualifier, prefs, this));
+		result.append("(");
+		for (String column : columns)
+		{
+			result.append(column);
+			result.append(",");
+		}
+		result.setLength(result.length() - 1);
+		result.append(")");
+		return result.toString();
+
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getCreateSequenceSQL(java.lang.String,
+	 *      java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
 	public String getCreateSequenceSQL(String sequenceName, String increment, String minimum, String maximum,
 		String start, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return DialectUtils.getCreateSequenceSQL(sequenceName,
+			increment,
+			minimum,
+			maximum,
+			start,
+			cache,
+			null,
+			qualifier,
+			prefs,
+			this);
 	}
 
 	public String getCreateTableSQL(String tableName, List<TableColumnInfo> columns,
@@ -631,11 +757,16 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 		return null;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getCreateViewSQL(java.lang.String,
+	 *      java.lang.String, java.lang.String,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
 	public String getCreateViewSQL(String viewName, String definition, String checkOption,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return DialectUtils.getCreateViewSQL(viewName, definition, checkOption, qualifier, prefs, this);
 	}
 
 	public String getDropConstraintSQL(String tableName, String constraintName,
@@ -645,25 +776,40 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 		return null;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropIndexSQL(java.lang.String,
+	 *      boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
 	public String getDropIndexSQL(String indexName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		Boolean cascadeNotSupported = null;
+		return DialectUtils.getDropIndexSQL(indexName, cascadeNotSupported, qualifier, prefs, this);
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropSequenceSQL(java.lang.String,
+	 *      boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
 	public String getDropSequenceSQL(String sequenceName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return DialectUtils.getDropSequenceSQL(sequenceName, false, qualifier, prefs, this);
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropViewSQL(java.lang.String, boolean,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
 	public String getDropViewSQL(String viewName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		Boolean cascadeNotSupported = null;
+
+		return DialectUtils.getDropViewSQL(viewName, cascadeNotSupported, qualifier, prefs, this);
 	}
 
 	public String getInsertIntoSQL(String tableName, List<String> columns, String valuesPart,
@@ -673,25 +819,65 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 		return null;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getRenameTableSQL(java.lang.String,
+	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
 	public String getRenameTableSQL(String oldTableName, String newTableName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		// RENAME TABLE <tablename> TO <newtablename>;
+		StringBuilder sql = new StringBuilder();
+
+		sql.append("RENAME TABLE ");
+		sql.append(DialectUtils.shapeQualifiableIdentifier(oldTableName, qualifier, prefs, this));
+		sql.append(" ");
+		sql.append(" TO ");
+		sql.append(DialectUtils.shapeIdentifier(newTableName, prefs, this));
+
+		return sql.toString();
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getRenameViewSQL(java.lang.String,
+	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
 	public String getRenameViewSQL(String oldViewName, String newViewName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("DB2 doesn't support renaming views");
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getSequenceInformationSQL(java.lang.String,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
 	public String getSequenceInformationSQL(String sequenceName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		// SELECT
+		// SEQSCHEMA,SEQNAME,DEFINER,DEFINERTYPE,OWNER,OWNERTYPE,SEQID,SEQTYPE,INCREMENT,START,MAXVALUE,MINVALUE,
+		// NEXTCACHEFIRSTVALUE,CYCLE,CACHE,ORDER,DATATYPEID,SOURCETYPEID,CREATE_TIME,ALTER_TIME,PRECISION,ORIGIN,REMARKS
+		// FROM SYSCAT.SEQUENCES
+		// WHERE SEQNAME = ?
+		// and SEQSCHEMA = <schema>
+
+		StringBuilder result = new StringBuilder();
+		result.append("SELECT NEXTCACHEFIRSTVALUE, MAXVALUE, MINVALUE, CACHE, INCREMENT, CYCLE ");
+		result.append("FROM SYSCAT.SEQUENCES ");
+		result.append("WHERE ");
+		if (qualifier.getSchema() != null)
+		{
+			result.append("SEQSCHEMA = upper(" + qualifier.getSchema() + ") AND ");
+		}
+		// TODO: figure out why bind variables aren't working
+		result.append("SEQNAME = '");
+		result.append(sequenceName);
+		result.append("'");
+		return result.toString();
 	}
 
 	public String getUpdateSQL(String tableName, String[] setColumns, String[] setValues, String[] fromTables,
@@ -702,9 +888,11 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 		return null;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsAccessMethods()
+	 */
 	public boolean supportsAccessMethods()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -714,16 +902,20 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 		return false;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsAddUniqueConstraint()
+	 */
 	public boolean supportsAddUniqueConstraint()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsAlterSequence()
+	 */
 	public boolean supportsAlterSequence()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	public boolean supportsAutoIncrement()
@@ -738,16 +930,20 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 		return false;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCreateIndex()
+	 */
 	public boolean supportsCreateIndex()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCreateSequence()
+	 */
 	public boolean supportsCreateSequence()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	public boolean supportsCreateTable()
@@ -756,10 +952,12 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 		return false;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCreateView()
+	 */
 	public boolean supportsCreateView()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	public boolean supportsDropConstraint()
@@ -768,22 +966,28 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 		return false;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsDropIndex()
+	 */
 	public boolean supportsDropIndex()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsDropSequence()
+	 */
 	public boolean supportsDropSequence()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsDropView()
+	 */
 	public boolean supportsDropView()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	public boolean supportsEmptyTables()
@@ -810,28 +1014,33 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 		return false;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsRenameTable()
+	 */
 	public boolean supportsRenameTable()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsRenameView()
+	 */
 	public boolean supportsRenameView()
 	{
-		// TODO Auto-generated method stub
+		// The following doesn't appear to work on DB2 (V9.5 LUW):
+		// RENAME TABLE <viewname> to <newviewname>;
+		// I get: The name used for this operation is not a table. SQL Code: -156, SQL State: 42809
 		return false;
 	}
 
 	public boolean supportsSequence()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	public boolean supportsSequenceInformation()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	public boolean supportsTablespace()
@@ -851,7 +1060,6 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 	 */
 	public boolean supportsAddColumn()
 	{
-		// TODO verify this is correct
 		return true;
 	}
 

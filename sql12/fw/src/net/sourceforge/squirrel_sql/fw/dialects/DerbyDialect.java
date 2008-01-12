@@ -325,7 +325,7 @@ public class DerbyDialect extends DB2Dialect
      * @param info the column to modify
      * @return the SQL to execute
      */
-    public String getColumnNullableAlterSQL(TableColumnInfo info) {
+    public String getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) {
         String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
         return DialectUtils.getColumnNullableAlterSQL(info, 
                                                       this, 

@@ -145,38 +145,4 @@ public class TableColumnInfo extends DatabaseObjectInfo
 	{
 		return _isNullable;
 	}
-
-/*
-	protected String generateQualifiedName(SQLDatabaseMetaData md)
-	{
-		String identifierQuoteString = null;
-		try
-		{
-			identifierQuoteString = md.getIdentifierQuoteString();
-			if (identifierQuoteString != null
-				&& identifierQuoteString.equals(" "))
-			{
-				identifierQuoteString = null;
-			}
-		}
-		catch (SQLException ignore)
-		{
-		}
-
-		StringBuffer buf = new StringBuffer(super.generateQualifiedName(md));
-		buf.append('.');
-		if (identifierQuoteString != null)
-		{
-			buf.append(identifierQuoteString);
-		}
-		buf.append(_columnName);
-		if (identifierQuoteString != null)
-		{
-			buf.append(identifierQuoteString);
-		}
-		setSimpleName(_columnName);
-
-		return buf.toString();
-	}
-*/
 }

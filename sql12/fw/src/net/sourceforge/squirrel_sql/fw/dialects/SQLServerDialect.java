@@ -311,7 +311,7 @@ public class SQLServerDialect extends org.hibernate.dialect.SQLServerDialect imp
 	 *           the column to modify
 	 * @return the SQL to execute
 	 */
-	public String getColumnNullableAlterSQL(TableColumnInfo info)
+	public String getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		return DialectUtils.getColumnNullableAlterSQL(info, this, alterClause, true);
@@ -538,7 +538,7 @@ public class SQLServerDialect extends org.hibernate.dialect.SQLServerDialect imp
 		return null;
 	}
 
-	public String getAddUniqueConstraintSQL(String tableName, String constraintName, String[] columns,
+	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName, TableColumnInfo[] columns,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO Auto-generated method stub
