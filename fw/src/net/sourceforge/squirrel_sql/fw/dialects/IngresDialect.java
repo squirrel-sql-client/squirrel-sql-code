@@ -334,7 +334,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	 *           the column to modify
 	 * @return the SQL to execute
 	 */
-	public String getColumnNullableAlterSQL(TableColumnInfo info)
+	public String getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		return DialectUtils.getColumnNullableAlterSQL(info, this, alterClause, true);
@@ -517,7 +517,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 		if (column.isNullable().equals("NO"))
 		{
 			result.add(getColumnDefaultAlterSQL(column));
-			result.add(getColumnNullableAlterSQL(column));
+			result.add(getColumnNullableAlterSQL(column, qualifier, prefs));
 		}
 		if (column.getRemarks() != null && !"".equals(column.getRemarks()))
 		{
@@ -535,7 +535,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 		return null;
 	}
 
-	public String getAddUniqueConstraintSQL(String tableName, String constraintName, String[] columns,
+	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName, TableColumnInfo[] columns,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO Auto-generated method stub

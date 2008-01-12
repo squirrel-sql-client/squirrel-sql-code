@@ -29,6 +29,7 @@ import net.sourceforge.squirrel_sql.client.gui.db.ColumnDetailDialog;
 import net.sourceforge.squirrel_sql.client.gui.db.ColumnListDialog;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -151,9 +152,12 @@ public class ModifyColumnCommand extends AbstractRefactoringCommand
 		String dbName = customDialog.getSelectedDBName();
 		_dialect = DialectFactory.getDialect(dbName);
 
+		DatabaseObjectQualifier qualifier =
+			new DatabaseObjectQualifier(_info[0].getCatalogName(), _info[0].getSchemaName());
+		
 		try
 		{
-			result = DBUtil.getAlterSQLForColumnChange(columnToModify, to, _dialect);
+			result = DBUtil.getAlterSQLForColumnChange(columnToModify, to, _dialect, qualifier, _sqlPrefs);
 
 			for (int i = 0; i < result.length; i++)
 			{

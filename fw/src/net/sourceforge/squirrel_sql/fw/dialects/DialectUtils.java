@@ -414,6 +414,8 @@ public class DialectUtils
 	 * 
 	 * @param info
 	 *           the column to modify
+	 * @param nullable
+	 * 			whether or not the column should allow nulls
 	 * @param dialect
 	 *           the HibernateDialect representing the target database.
 	 * @param alterClause
@@ -649,8 +651,9 @@ public class DialectUtils
 	 *           preferences for generated sql scripts
 	 * @return the sql command to add a unique constraint.
 	 */	
-   public static String getAddUniqueConstraintSQL(String tableName, String constraintName, String[] columns,
-		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs, HibernateDialect dialect)
+   public static String getAddUniqueConstraintSQL(String tableName, String constraintName,
+		TableColumnInfo[] columns, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs,
+		HibernateDialect dialect)
 	{
       // ALTER TABLE tableName
       //  ADD CONSTRAINT constraintName UNIQUE (column1, column2);
@@ -663,8 +666,8 @@ public class DialectUtils
       sql.append(shapeIdentifier(constraintName, prefs, dialect));
 
       sql.append(" " + DialectUtils.UNIQUE_CLAUSE + " (");
-      for (String column : columns) {
-          sql.append(shapeIdentifier(column, prefs, dialect)).append(", ");
+      for (TableColumnInfo column : columns) {
+          sql.append(shapeIdentifier(column.getColumnName(), prefs, dialect)).append(", ");
       }
       sql.delete(sql.length() - 2, sql.length());     // deletes the last ", "
       sql.append(")");
@@ -1185,9 +1188,10 @@ public class DialectUtils
       // ALTER TABLE oldTableName RENAME TO newTableName;
       StringBuilder sql = new StringBuilder();
 
-      sql.append(DialectUtils.ALTER_TABLE_CLAUSE + " ");
-      sql.append(shapeQualifiableIdentifier(oldTableName, qualifier, prefs, dialect)).append(" ");
-      sql.append("RENAME TO ").append(shapeIdentifier(newTableName, prefs, dialect));
+      sql.append(DialectUtils.ALTER_TABLE_CLAUSE);
+      sql.append(" ");
+      sql.append(shapeQualifiableIdentifier(oldTableName, qualifier, prefs, dialect));
+      sql.append(" RENAME TO ").append(shapeIdentifier(newTableName, prefs, dialect));
 
       return sql.toString();
   }

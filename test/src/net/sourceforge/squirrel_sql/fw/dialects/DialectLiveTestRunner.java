@@ -39,6 +39,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
+import net.sourceforge.squirrel_sql.plugins.db2.DB2JCCExceptionFormatter;
 
 /**
  * The purpose of this class is to hookup to the database(s) specified in
@@ -86,6 +87,8 @@ public class DialectLiveTestRunner {
    
    TableColumnInfo addColumn = null;
   
+   TableColumnInfo myIdColumn = null;
+   
    private static final String DB2_PK_COLNAME = "db2pkCol";
 
    private DatabaseObjectQualifier qualifier = new DatabaseObjectQualifier();
@@ -219,6 +222,8 @@ public class DialectLiveTestRunner {
 				"Column that will be auto incrementing");
       
       addColumn = getIntegerColumn("columnAdded", testUniqueConstraintTableName, true, null, null);
+      
+      myIdColumn = getCharColumn("myId", testUniqueConstraintTableName, true, null, null);
    }
 
    private ITableInfo getTableInfo(ISession session, String tableName)
@@ -371,9 +376,10 @@ public class DialectLiveTestRunner {
       runSQL(session, "create table " + fixTableName(session, "createViewTest")
          + " ( mychar char(10))" + pageSizeClause);
       runSQL(session, "create table " + fixTableName(session, "createIndexTest")
-         + " ( mychar char(10), myuniquechar char(10))" + pageSizeClause);      
+         + " ( mychar varchar(10), myuniquechar varchar(10))" + pageSizeClause);
+      /* DB2 requires primary keys to also be declared "not null" */
       runSQL(session, "create table " + fixTableName(session, fkParentTableName)
-         + " ( "+fkParentColumnName+" integer primary key, mychar char(10))" + pageSizeClause);
+         + " ( "+fkParentColumnName+" integer not null primary key, mychar char(10))" + pageSizeClause);
       runSQL(session, "create table " + fixTableName(session, fkChildTableName)
          + " ( myid integer, "+fkChildColumnName+" integer)" + pageSizeClause);
       
@@ -473,8 +479,7 @@ public class DialectLiveTestRunner {
          testCreateView(session);
          testRenameView(session);
          testDropView(session);
-         testCreateIndex(session);
-         testDropIndex(session);
+         testCreateAndDropIndex(session);
          testCreateSequence(session);
          testGetSequenceInfo(session);
          testAlterSequence(session);
@@ -583,7 +588,7 @@ public class DialectLiveTestRunner {
                                                         30);
       if (dialect.supportsAlterColumnType()) {
          List<String> alterColLengthSQL = dialect.getColumnTypeAlterSQL(thirdCol,
-                                                                        thirdColLonger, null, null);
+                                                                        thirdColLonger, qualifier, prefs);
          runSQL(session, alterColLengthSQL);
       } else {
          try {
@@ -634,11 +639,11 @@ public class DialectLiveTestRunner {
                                                          "defVal",
                                                          "A varchar comment");
       if (dialect.supportsAlterColumnNull()) {
-         String notNullSQL = dialect.getColumnNullableAlterSQL(notNullThirdCol);
+         String notNullSQL = dialect.getColumnNullableAlterSQL(notNullThirdCol, qualifier, prefs);
          runSQL(session, notNullSQL);
       } else {
          try {
-            dialect.getColumnNullableAlterSQL(notNullThirdCol);
+            dialect.getColumnNullableAlterSQL(notNullThirdCol, qualifier, prefs);
             throw new IllegalStateException("Expected dialect to fail to provide SQL for column nullable alter");
          } catch (UnsupportedOperationException e) {
             // this is expected
@@ -886,9 +891,13 @@ public class DialectLiveTestRunner {
    
    private void testDropView(ISession session) throws Exception {
    	HibernateDialect dialect = getDialect(session);
-   	if (dialect.supportsDropView()) {
-   		String sql = 
-   			dialect.getDropViewSQL("newTestView", false, qualifier, prefs);
+   	if (dialect.supportsCreateView() && dialect.supportsDropView()) {
+   		String sql = "";
+   		if (dialect.supportsRenameView()) {
+   			sql = dialect.getDropViewSQL("newTestView", false, qualifier, prefs);
+   		} else {
+   			sql = dialect.getDropViewSQL("testView", false, qualifier, prefs);
+   		}
    		runSQL(session, sql);
    	} else {
    		try {
@@ -900,26 +909,51 @@ public class DialectLiveTestRunner {
    	}   	
    }
    
-   private void testCreateIndex(ISession session) throws Exception {
+   private void testCreateAndDropIndex(ISession session) throws Exception {
    	HibernateDialect dialect = getDialect(session);
 		String[] columns = new String[] { "mychar" };
 		String tablespace = null;
 		String constraints = null;
 
-   	if (dialect.supportsDropView()) {
+		final String indexName1 = "testIndex";
+		final String indexName2 = "testUniqueIndex";
+		
+   	if (dialect.supportsCreateIndex()) {
    		
-   		// create a non-unique index on mychar
-   		columns = new String[] { "mychar" };
-   		String sql = 
-   			dialect.getCreateIndexSQL("testIndex", "createIndexTest", "hash", columns, false, tablespace, constraints, qualifier, prefs);
-   		runSQL(session, sql);
+   		String[] accessMethods = null;
+   		if (dialect.supportsAccessMethods()) {
+   			accessMethods = dialect.getAccessMethodsTypes();
+   		} else {
+   			accessMethods = new String[] { "" };
+   		}
    		
-   		// create a unique index on myuniquechar
-   		columns = new String[] { "myuniquechar" };
-   		sql = 
-   			dialect.getCreateIndexSQL("testUniqueIndex", "createIndexTest", "btree", columns, true, tablespace, constraints, qualifier, prefs);
-   		runSQL(session, sql);
+   		for (String accessMethod : accessMethods) {
+   			// Postgres has some special indexes that only work on certain columns.  Skip tests for those
+   			if (accessMethod.equalsIgnoreCase("gin") || accessMethod.equalsIgnoreCase("gist")) {
+   				continue;
+   			}
+   			
+	   		// create a non-unique index on mychar
+	   		columns = new String[] { "mychar" };
+	   		String sql = 
+	   			dialect.getCreateIndexSQL(indexName1, "createIndexTest", accessMethod, columns, false, tablespace, constraints, qualifier, prefs);
+	   		// create it.
+	   		runSQL(session, sql);
    		
+	   		// now drop it.
+	   		runSQL(session, dialect.getDropIndexSQL(indexName1, true, qualifier, prefs));
+	   		
+	   		// create a unique index on myuniquechar
+	   		columns = new String[] { "myuniquechar" };
+	   		sql = 
+	   			dialect.getCreateIndexSQL(indexName2, "createIndexTest", accessMethod, columns, true, tablespace, constraints, qualifier, prefs);
+	   		
+	   		// create it.
+	   		runSQL(session, sql);
+	   		
+	   		// now drop it.
+	   		runSQL(session, dialect.getDropIndexSQL(indexName2, true, qualifier, prefs));
+   		}   		
    	} else {
    		try {
    			dialect.getCreateIndexSQL("testIndex", "createIndexTest", null, columns, false, tablespace, constraints, qualifier, prefs);
@@ -929,23 +963,7 @@ public class DialectLiveTestRunner {
    		}
    	}   	
    }
-   
-   private void testDropIndex(ISession session) throws Exception {
-   	HibernateDialect dialect = getDialect(session);
-   	if (dialect.supportsDropIndex()) {
-   		String sql = 
-   			dialect.getDropIndexSQL("testIndex", false, qualifier, prefs);
-   		runSQL(session, sql);
-   	} else {
-   		try {
-   			dialect.getDropIndexSQL("testIndex", false, qualifier, prefs);
-   			throw new IllegalStateException("Expected dialect to fail to provide SQL for drop index");
-   		} catch (Exception e) {
-   			// this is expected
-   		}
-   	}   	   	
-   }
-   
+      
    private void testCreateSequence(ISession session) throws Exception {
    	HibernateDialect dialect = getDialect(session);
    	String cache = null;
@@ -1088,9 +1106,9 @@ public class DialectLiveTestRunner {
    
    private void testAddUniqueConstraint(ISession session) throws Exception {
    	HibernateDialect dialect = getDialect(session);
-   	String[] columns = new String[] { "myid" };
+   	TableColumnInfo[] columns = new TableColumnInfo[] { myIdColumn };
    	if (dialect.supportsAddUniqueConstraint()) {
-   		String sql = 
+   		String[] sql = 
    			dialect.getAddUniqueConstraintSQL(testUniqueConstraintTableName,
    				uniqueConstraintName,
 					columns,
@@ -1291,7 +1309,15 @@ public class DialectLiveTestRunner {
 	      Statement stmt = con.createStatement();
 	      System.out.println("Running SQL  (" + dialect.getDisplayName() + "): "
 	            + sql);
-	      stmt.execute(sql);
+	      try {
+	      	stmt.execute(sql);
+	      } catch(Exception e) {
+	      	if (DialectFactory.isDB2(session.getMetaData())) {
+	      		DB2JCCExceptionFormatter formatter = new DB2JCCExceptionFormatter();
+	      		System.err.println("Formatted message: "+formatter.format(e));
+	      	}
+	      	throw e;
+	      }
    	} else {
          System.out.println("Skip Comment (" + dialect.getDisplayName() + "): "
             + sql);   		
@@ -1321,6 +1347,20 @@ public class DialectLiveTestRunner {
                        0);
    }
 
+   private TableColumnInfo getCharColumn(String name, String tableName,
+      boolean nullable, String defaultVal, String comment) {
+   return getColumn(java.sql.Types.CHAR,
+                    "CHAR",
+                    name,
+                    tableName,
+                    nullable,
+                    defaultVal,
+                    comment,
+                    10,
+                    0);
+}
+   
+   
    private TableColumnInfo getVarcharColumn(String name, String tableName,
          boolean nullable, String defaultVal, String comment, int size) {
       return getColumn(java.sql.Types.VARCHAR,

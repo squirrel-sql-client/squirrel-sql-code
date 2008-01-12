@@ -330,7 +330,7 @@ public class SybaseDialect extends org.hibernate.dialect.SybaseDialect implement
 	 *           the column to modify
 	 * @return the SQL to execute
 	 */
-	public String getColumnNullableAlterSQL(TableColumnInfo info)
+	public String getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		String alterClause = DialectUtils.MODIFY_CLAUSE;
 		return DialectUtils.getColumnNullableAlterSQL(info, this, alterClause, false);
@@ -522,7 +522,7 @@ public class SybaseDialect extends org.hibernate.dialect.SybaseDialect implement
 		return null;
 	}
 
-	public String getAddUniqueConstraintSQL(String tableName, String constraintName, String[] columns,
+	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName, TableColumnInfo[] columns,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO Auto-generated method stub
