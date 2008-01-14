@@ -29,174 +29,176 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
 /**
- * An extension to the standard Derby dialect
+ * An extension to the standard DB2 dialect. Much of the behavior of DB2 is found in Derby.
  */
-public class DerbyDialect extends DB2Dialect 
-                          implements HibernateDialect {
+public class DerbyDialect extends DB2Dialect implements HibernateDialect
+{
 
-    /** Internationalized strings for this class. */
-    private static final StringManager s_stringMgr =
-        StringManagerFactory.getStringManager(DerbyDialect.class);   
-    
-    private static interface i18n {
-        //i18n[DerbyDialect.typeMessage=Derby doesn't allow the column type to 
-        //be altered]
-        String TYPE_MESSAGE = s_stringMgr.getString("DerbyDialect.typeMessage"); 
-        
-        //i18n[DerbyDialect.varcharMessage=Derby only allows varchar columns 
-        //to be altered]
-        String VARCHAR_MESSAGE = 
-            s_stringMgr.getString("DerbyDialect.varcharMessage");
-        
-        //i18n[DerbyDialect.columnLengthMessage=Derby only allows varchar 
-        //column length to be increased]
-        String COLUMN_LENGTH_MESSAGE = 
-            s_stringMgr.getString("DerbyDialect.columnLengthMessage");
-    }
-    
-    public DerbyDialect() {
-        super();        
-        registerColumnType(Types.BIGINT, "bigint");
-        registerColumnType(Types.BINARY, 254, "char($l) for bit data");
-        registerColumnType(Types.BINARY, "blob");
-        registerColumnType(Types.BIT, "smallint");
-        // DB2 spec says max=2147483647, but the driver throws an exception        
-        registerColumnType(Types.BLOB, 1073741823, "blob($l)");
-        registerColumnType(Types.BLOB, "blob(1073741823)");
-        registerColumnType(Types.BOOLEAN, "smallint");
-        registerColumnType(Types.CHAR, 254, "char($l)");
-        registerColumnType(Types.CHAR, 4000, "varchar($l)");
-        registerColumnType(Types.CHAR, 32700, "long varchar");
-        registerColumnType(Types.CHAR, 1073741823, "clob($l)");
-        registerColumnType(Types.CHAR, "clob(1073741823)");
-        // DB2 spec says max=2147483647, but the driver throws an exception
-        registerColumnType(Types.CLOB, 1073741823, "clob($l)");
-        registerColumnType(Types.CLOB, "clob(1073741823)");
-        registerColumnType(Types.DATE, "date");
-        registerColumnType(Types.DECIMAL, "decimal($p)");
-        // Derby is real close to DB2.  Only difference I've found so far is 48
-        // instead of 53 for float length llimit.
-        registerColumnType(Types.DOUBLE, "float($p)");
-        registerColumnType(Types.FLOAT, "float($p)");        
-        registerColumnType(Types.INTEGER, "int");        
-        registerColumnType(Types.LONGVARBINARY, 32700, "long varchar for bit data");
-        // DB2 spec says max=2147483647, but the driver throws an exception
-        registerColumnType(Types.LONGVARBINARY, 1073741823, "blob($l)");
-        registerColumnType(Types.LONGVARBINARY, "blob(1073741823)");
-        registerColumnType(Types.LONGVARCHAR, 32700, "long varchar");
-        // DB2 spec says max=2147483647, but the driver throws an exception
-        registerColumnType(Types.LONGVARCHAR, 1073741823, "clob($l)");
-        registerColumnType(Types.LONGVARCHAR, "clob(1073741823)");
-        registerColumnType(Types.NUMERIC, "bigint");
-        registerColumnType(Types.REAL, "real");
-        registerColumnType(Types.SMALLINT, "smallint");
-        registerColumnType(Types.TIME, "time");
-        registerColumnType(Types.TIMESTAMP, "timestamp");
-        registerColumnType(Types.TINYINT, "smallint");
-        registerColumnType(Types.VARBINARY, 254, "long varchar for bit data");
-        registerColumnType(Types.VARBINARY, "blob");
-        registerColumnType(Types.VARCHAR, 4000, "varchar($l)");
-        registerColumnType(Types.VARCHAR, 32700, "long varchar");
-        // DB2 spec says max=2147483647, but the driver throws an exception
-        registerColumnType(Types.VARCHAR, 1073741823, "clob($l)");
-        registerColumnType(Types.VARCHAR, "clob(1073741823)");
-        
-    }
+	/** Internationalized strings for this class. */
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DerbyDialect.class);
 
-    /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType)
-     */
-    public boolean canPasteTo(IDatabaseObjectInfo info) {
-        // TODO Auto-generated method stub
-        return true;
-    }    
-    
-    /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#supportsSchemasInTableDefinition()
-     */
-    public boolean supportsSchemasInTableDefinition() {
-        return true;
-    }
-
-    /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.DB2Dialect#getMaxPrecision(int)
-     */
-    public int getMaxPrecision(int dataType) {
-        if (dataType == Types.DOUBLE
-                || dataType == Types.FLOAT)
-        {
-            return 48;
-        } else {
-            return 31;
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.DB2Dialect#getMaxScale(int)
-     */
-    public int getMaxScale(int dataType) {
-        return getMaxPrecision(dataType);
-    }
-    
-    /* (non-Javadoc)
-     * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getColumnLength(int, int)
-     */
-    public int getColumnLength(int columnSize, int dataType) {
-        return columnSize;
-    }
-
-    /**
-     * The string which identifies this dialect in the dialect chooser.
-     * 
-     * @return a descriptive name that tells the user what database this dialect
-     *         is design to work with.
-     */
-    public String getDisplayName() {
-        return "Derby";
-    }
-    
-    /**
-     * Returns boolean value indicating whether or not this dialect supports the
-     * specified database product/version.
-     * 
-     * @param databaseProductName the name of the database as reported by 
-     * 							  DatabaseMetaData.getDatabaseProductName()
-     * @param databaseProductVersion the version of the database as reported by
-     *                              DatabaseMetaData.getDatabaseProductVersion()
-     * @return true if this dialect can be used for the specified product name
-     *              and version; false otherwise.
-     */
-    public boolean supportsProduct(String databaseProductName, 
-								   String databaseProductVersion) 
+	private static interface i18n
 	{
-    	if (databaseProductName == null) {
-    		return false;
-    	}
-    	if (databaseProductName.trim().startsWith("Apache Derby")) {
-    		// We don't yet have the need to discriminate by version.
-    		return true;
-    	}
-		return false;
-	}    
-    
-    /**
-     * Returns the SQL statement to use to add a column to the specified table
-     * using the information about the new column specified by info.
-     * @param info information about the new column such as type, name, etc.
-     * 
-     * @return
-     * @throws UnsupportedOperationException if the database doesn't support 
-     *         adding columns after a table has already been created.
-     */
- 	public String[] getAddColumnSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
-		SqlGenerationPreferences prefs)
- 	{
+		// i18n[DerbyDialect.typeMessage=Derby doesn't allow the column type to
+		// be altered]
+		String TYPE_MESSAGE = s_stringMgr.getString("DerbyDialect.typeMessage");
 
- 		boolean addDefaultClause = true;
-		boolean supportsNullQualifier = false;
-		boolean addNullClause = true;
-   	 
-		String sql =
+		// i18n[DerbyDialect.varcharMessage=Derby only allows varchar columns
+		// to be altered]
+		String VARCHAR_MESSAGE = s_stringMgr.getString("DerbyDialect.varcharMessage");
+
+		// i18n[DerbyDialect.columnLengthMessage=Derby only allows varchar
+		// column length to be increased]
+		String COLUMN_LENGTH_MESSAGE = s_stringMgr.getString("DerbyDialect.columnLengthMessage");
+	}
+
+	public DerbyDialect()
+	{
+		super();
+		registerColumnType(Types.BIGINT, "bigint");
+		registerColumnType(Types.BINARY, 254, "char($l) for bit data");
+		registerColumnType(Types.BINARY, "blob");
+		registerColumnType(Types.BIT, "smallint");
+		// DB2 spec says max=2147483647, but the driver throws an exception
+		registerColumnType(Types.BLOB, 1073741823, "blob($l)");
+		registerColumnType(Types.BLOB, "blob(1073741823)");
+		registerColumnType(Types.BOOLEAN, "smallint");
+		registerColumnType(Types.CHAR, 254, "char($l)");
+		registerColumnType(Types.CHAR, 4000, "varchar($l)");
+		registerColumnType(Types.CHAR, 32700, "long varchar");
+		registerColumnType(Types.CHAR, 1073741823, "clob($l)");
+		registerColumnType(Types.CHAR, "clob(1073741823)");
+		// DB2 spec says max=2147483647, but the driver throws an exception
+		registerColumnType(Types.CLOB, 1073741823, "clob($l)");
+		registerColumnType(Types.CLOB, "clob(1073741823)");
+		registerColumnType(Types.DATE, "date");
+		registerColumnType(Types.DECIMAL, "decimal($p)");
+		// Derby is real close to DB2. Only difference I've found so far is 48
+		// instead of 53 for float length llimit.
+		registerColumnType(Types.DOUBLE, "float($p)");
+		registerColumnType(Types.FLOAT, "float($p)");
+		registerColumnType(Types.INTEGER, "int");
+		registerColumnType(Types.LONGVARBINARY, 32700, "long varchar for bit data");
+		// DB2 spec says max=2147483647, but the driver throws an exception
+		registerColumnType(Types.LONGVARBINARY, 1073741823, "blob($l)");
+		registerColumnType(Types.LONGVARBINARY, "blob(1073741823)");
+		registerColumnType(Types.LONGVARCHAR, 32700, "long varchar");
+		// DB2 spec says max=2147483647, but the driver throws an exception
+		registerColumnType(Types.LONGVARCHAR, 1073741823, "clob($l)");
+		registerColumnType(Types.LONGVARCHAR, "clob(1073741823)");
+		registerColumnType(Types.NUMERIC, "bigint");
+		registerColumnType(Types.REAL, "real");
+		registerColumnType(Types.SMALLINT, "smallint");
+		registerColumnType(Types.TIME, "time");
+		registerColumnType(Types.TIMESTAMP, "timestamp");
+		registerColumnType(Types.TINYINT, "smallint");
+		registerColumnType(Types.VARBINARY, 254, "long varchar for bit data");
+		registerColumnType(Types.VARBINARY, "blob");
+		registerColumnType(Types.VARCHAR, 4000, "varchar($l)");
+		registerColumnType(Types.VARCHAR, 32700, "long varchar");
+		// DB2 spec says max=2147483647, but the driver throws an exception
+		registerColumnType(Types.VARCHAR, 1073741823, "clob($l)");
+		registerColumnType(Types.VARCHAR, "clob(1073741823)");
+
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
+	 */
+	@Override
+	public boolean canPasteTo(final IDatabaseObjectInfo info)
+	{
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#supportsSchemasInTableDefinition()
+	 */
+	@Override
+	public boolean supportsSchemasInTableDefinition()
+	{
+		return true;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getMaxPrecision(int)
+	 */
+	@Override
+	public int getMaxPrecision(final int dataType)
+	{
+		if (dataType == Types.DOUBLE || dataType == Types.FLOAT)
+		{
+			return 48;
+		} else
+		{
+			return 31;
+		}
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getMaxScale(int)
+	 */
+	@Override
+	public int getMaxScale(final int dataType)
+	{
+		return getMaxPrecision(dataType);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getColumnLength(int, int)
+	 */
+	@Override
+	public int getColumnLength(final int columnSize, final int dataType)
+	{
+		return columnSize;
+	}
+
+	/**
+	 * The string which identifies this dialect in the dialect chooser.
+	 * 
+	 * @return a descriptive name that tells the user what database this dialect is design to work with.
+	 */
+	@Override
+	public String getDisplayName()
+	{
+		return "Derby";
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#supportsProduct(java.lang.String,
+	 *      java.lang.String)
+	 */
+	@Override
+	public boolean supportsProduct(final String databaseProductName, final String databaseProductVersion)
+	{
+		if (databaseProductName == null)
+		{
+			return false;
+		}
+		if (databaseProductName.trim().startsWith("Apache Derby"))
+		{
+			// We don't yet have the need to discriminate by version.
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getAddColumnSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	@Override
+	public String[] getAddColumnSQL(final TableColumnInfo column, final DatabaseObjectQualifier qualifier,
+		final SqlGenerationPreferences prefs)
+	{
+
+		final boolean addDefaultClause = true;
+		final boolean supportsNullQualifier = false;
+		final boolean addNullClause = true;
+
+		final String sql =
 			DialectUtils.getAddColumSQL(column,
 				this,
 				addDefaultClause,
@@ -204,267 +206,367 @@ public class DerbyDialect extends DB2Dialect
 				addNullClause,
 				qualifier,
 				prefs);
-		
-		
-        return new String[] { sql };
-    }
 
-    /**
-     * Returns a boolean value indicating whether or not this database dialect
-     * supports dropping columns from tables.
-     * 
-     * @return true if the database supports dropping columns; false otherwise.
-     */
-    public boolean supportsDropColumn() {
-        return false;
-    }
+		return new String[] { sql };
+	}
 
-    /**
-     * Returns the SQL that forms the command to drop the specified colum in the
-     * specified table.
-     * 
-     * ALTER TABLE table-Name DROP [ COLUMN ] column-name [ CASCADE | RESTRICT ]
-     * 
-     * @param tableName the name of the table that has the column
-     * @param columnName the name of the column to drop.
-     * @return
-     * @throws UnsupportedOperationException if the database doesn't support 
-     *         dropping columns. 
-     */
-    public String getColumnDropSQL(String tableName, String columnName) {
-        int featureId = DialectUtils.COLUMN_DROP_TYPE;
-        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-        throw new UnsupportedOperationException(msg);        
-    }
-    
-    /**
-     * Returns the SQL that forms the command to drop the specified table.  If
-     * cascade contraints is supported by the dialect and cascadeConstraints is
-     * true, then a drop statement with cascade constraints clause will be 
-     * formed.
-     * 
-     * @param iTableInfo the table to drop
-     * @param cascadeConstraints whether or not to drop any FKs that may 
-     * reference the specified table.
-     * @return the drop SQL command.
-     */
-    public List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints, boolean isMaterializedView){
-        return DialectUtils.getTableDropSQL(iTableInfo, false, cascadeConstraints, false, DialectUtils.CASCADE_CLAUSE, false);
-    }
-   
-    /**
-     * Returns the SQL that forms the command to add a primary key to the 
-     * specified table composed of the given column names.
-     * 
-     * @param pkName the name of the constraint
-     * @param columnInfos the columns that form the key
-     * @return
-     */
-    public String[] getAddPrimaryKeySQL(String pkName, 
-                                        TableColumnInfo[] colInfos, 
-                                        ITableInfo ti) 
-    {
-        ArrayList<String> result = new ArrayList<String>();
-        String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
-        
-        // convert each column that will be a member key to non-null - this 
-        // doesn't hurt if they are already null.        
-        DialectUtils.getMultiColNotNullSQL(colInfos, 
-                                           this, 
-                                           alterClause, 
-                                           false, 
-                                           result);
-        
-        result.add(DialectUtils.getAddPrimaryKeySQL(ti, pkName, colInfos, false));
-        
-        return result.toArray(new String[result.size()]);
-    }
-    
-    /**
-     * Returns a boolean value indicating whether or not this dialect supports
-     * adding comments to columns.
-     * 
-     * @return true if column comments are supported; false otherwise.
-     */
-    public boolean supportsColumnComment() {
-        return false;
-    }    
-    
-    /**
-     * Returns the SQL statement to use to add a comment to the specified 
-     * column of the specified table.
-     * @param info information about the column such as type, name, etc.
-     * @return
-     * @throws UnsupportedOperationException if the database doesn't support 
-     *         annotating columns with a comment.
-     */
-    public String getColumnCommentAlterSQL(TableColumnInfo info) 
-        throws UnsupportedOperationException
-    {        
-        int featureId = DialectUtils.COLUMN_COMMENT_ALTER_TYPE;
-        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-        throw new UnsupportedOperationException(msg);        
-    }
-    
-    /**
-     * Returns a boolean value indicating whether or not this database dialect
-     * supports changing a column from null to not-null and vice versa.
-     * 
-     * @return true if the database supports dropping columns; false otherwise.
-     */
-    public boolean supportsAlterColumnNull() {
-        return true;
-    }
-        
-    /**
-     * Returns the SQL used to alter the specified column to not allow null 
-     * values
-     * 
-     * ALTER TABLE table-Name ALTER [ COLUMN ] column-name [ NOT ] NULL
-     * 
-     * @param info the column to modify
-     * @return the SQL to execute
-     */
-    public String getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) {
-        String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
-        return DialectUtils.getColumnNullableAlterSQL(info, 
-                                                      this, 
-                                                      alterClause, 
-                                                      false);
-    }
-    
-    /**
-     * Returns a boolean value indicating whether or not this database dialect
-     * supports renaming columns.
-     * 
-     * @return true if the database supports changing the name of columns;  
-     *         false otherwise.
-     */
-    public boolean supportsRenameColumn() {
-        return false;
-    }    
-    
-    /**
-     * Returns the SQL that is used to change the column name.
-     * 
-     * RENAME COLUMN table-Name.simple-Column-Name TO simple-Column-Name
-     * 
-     * @param from the TableColumnInfo as it is
-     * @param to the TableColumnInfo as it wants to be
-     * 
-     * @return the SQL to make the change
-     */
-    public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to) {
-        int featureId = DialectUtils.COLUMN_NAME_ALTER_TYPE;
-        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-        throw new UnsupportedOperationException(msg);        
-    }
-    
-    /**
-     * Returns a boolean value indicating whether or not this dialect supports 
-     * modifying a columns type.
-     * 
-     * @return true if supported; false otherwise
-     */
-    public boolean supportsAlterColumnType() {
-        return true;
-    }    
-        
-    /**
-     * Returns the SQL that is used to change the column type.
-     * 
-     * ALTER [ COLUMN ] column-Name SET DATA TYPE VARCHAR(integer)
-     * 
-     * Note: Only allowed to increase size of existing varchar as long as it is
-     *       not a member of a PK that is a parent of a FK.  Also not allowed to
-     *       change the type to anything else.  Oh, and only during a full moon
-     *       while chanting - sheesh!  I think I'll need a dozen or so methods
-     *       to describe all of those restrictions.
-     * 
-     * @param from the TableColumnInfo as it is
-    * @param to the TableColumnInfo as it wants to be
-     * @return the SQL to make the change
-     * @throw UnsupportedOperationException if the database doesn't support 
-     *         modifying column types. 
-     */
-    public List<String> getColumnTypeAlterSQL(TableColumnInfo from, 
-                                        TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
-        throws UnsupportedOperationException
-    {
-        ArrayList<String> list = new ArrayList<String>();
-        if (from.getDataType() != to.getDataType()) {
-            throw new UnsupportedOperationException(i18n.TYPE_MESSAGE);
-        }
-        if (from.getDataType() != Types.VARCHAR) {
-            throw new UnsupportedOperationException(i18n.VARCHAR_MESSAGE);
-        }
-        if (from.getColumnSize() > to.getColumnSize()) {
-            throw new UnsupportedOperationException(i18n.COLUMN_LENGTH_MESSAGE);
-        }
-        StringBuffer result = new StringBuffer();
-        result.append("ALTER TABLE ");
-        result.append(to.getTableName());
-        result.append(" ALTER COLUMN ");
-        result.append(to.getColumnName());
-        result.append(" SET DATA TYPE ");
-        result.append(DialectUtils.getTypeName(to, this));
-        list.add(result.toString());
-        return list;
-    }
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#supportsDropColumn()
+	 */
+	@Override
+	public boolean supportsDropColumn()
+	{
+		return true;
+	}
 
-    /**
-     * Returns a boolean value indicating whether or not this database dialect
-     * supports changing a column's default value.
-     * 
-     * @return true if the database supports modifying column defaults; false 
-     *         otherwise
-     */
-    public boolean supportsAlterColumnDefault() {
-        return false;
-    }
-    
-    /**
-     * Returns the SQL command to change the specified column's default value
-     *   
-     * @param info the column to modify and it's default value.
-     * @return SQL to make the change
-     */
-    public String getColumnDefaultAlterSQL(TableColumnInfo info) {
-        int featureId = DialectUtils.COLUMN_DEFAULT_ALTER_TYPE;
-        String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-        throw new UnsupportedOperationException(msg);        
-    }
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getColumnDropSQL(java.lang.String,
+	 *      java.lang.String)
+	 */
+	@Override
+	public String getColumnDropSQL(final String tableName, final String columnName)
+	{
+		return DialectUtils.getColumnDropSQL(tableName, columnName);
+	}
 
-    /**
-     * Returns the SQL command to drop the specified table's primary key.
-     * 
-     * @param pkName the name of the primary key that should be dropped
-     * @param tableName the name of the table whose primary key should be 
-     *                  dropped
-     * @return
-     */
-    public String getDropPrimaryKeySQL(String pkName, String tableName) {
-        return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false);
-    }
-    
-    /**
-     * Returns the SQL command to drop the specified table's foreign key 
-     * constraint.
-     * 
-     * @param fkName the name of the foreign key that should be dropped
-     * @param tableName the name of the table whose foreign key should be 
-     *                  dropped
-     * @return
-     */
-    public String getDropForeignKeySQL(String fkName, String tableName) {
-        return DialectUtils.getDropForeignKeySQL(fkName, tableName);
-    }
-    
-    /**
-     * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDialectType()
-     */
-    public DialectType getDialectType() {
-       return DialectType.DERBY;
-    }
-    
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getTableDropSQL(net.sourceforge.squirrel_sql.fw.sql.ITableInfo,
+	 *      boolean, boolean)
+	 */
+	@Override
+	public List<String> getTableDropSQL(final ITableInfo iTableInfo, final boolean cascadeConstraints,
+		final boolean isMaterializedView)
+	{
+		return DialectUtils.getTableDropSQL(iTableInfo,
+			false,
+			cascadeConstraints,
+			false,
+			DialectUtils.CASCADE_CLAUSE,
+			false);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getAddPrimaryKeySQL(java.lang.String,
+	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo[],
+	 *      net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+	 */
+	@Override
+	public String[] getAddPrimaryKeySQL(final String pkName, final TableColumnInfo[] colInfos,
+		final ITableInfo ti)
+	{
+		final ArrayList<String> result = new ArrayList<String>();
+		final String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
+
+		// convert each column that will be a member key to non-null - this
+		// doesn't hurt if they are already null.
+		DialectUtils.getMultiColNotNullSQL(colInfos, this, alterClause, false, result);
+
+		result.add(DialectUtils.getAddPrimaryKeySQL(ti, pkName, colInfos, false));
+
+		return result.toArray(new String[result.size()]);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#supportsColumnComment()
+	 */
+	@Override
+	public boolean supportsColumnComment()
+	{
+		return false;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getColumnCommentAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo)
+	 */
+	@Override
+	public String getColumnCommentAlterSQL(final TableColumnInfo info) throws UnsupportedOperationException
+	{
+		final int featureId = DialectUtils.COLUMN_COMMENT_ALTER_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#supportsAlterColumnNull()
+	 */
+	@Override
+	public boolean supportsAlterColumnNull()
+	{
+		return true;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getColumnNullableAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	@Override
+	public String[] getColumnNullableAlterSQL(final TableColumnInfo info,
+		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
+	{
+		final String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
+		final boolean specifyColumnType = false;
+		return new String[] {
+			DialectUtils.getColumnNullableAlterSQL(info, this, alterClause, specifyColumnType)
+		};
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#supportsRenameColumn()
+	 */
+	@Override
+	public boolean supportsRenameColumn()
+	{
+		return false;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getColumnNameAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo)
+	 */
+	@Override
+	public String getColumnNameAlterSQL(final TableColumnInfo from, final TableColumnInfo to)
+	{
+		final int featureId = DialectUtils.COLUMN_NAME_ALTER_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#supportsAlterColumnType()
+	 */
+	@Override
+	public boolean supportsAlterColumnType()
+	{
+		return true;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getColumnTypeAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	@Override
+	public List<String> getColumnTypeAlterSQL(final TableColumnInfo from, final TableColumnInfo to,
+		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
+		throws UnsupportedOperationException
+	{
+		final ArrayList<String> list = new ArrayList<String>();
+		if (from.getDataType() != to.getDataType())
+		{
+			throw new UnsupportedOperationException(i18n.TYPE_MESSAGE);
+		}
+		if (from.getDataType() != Types.VARCHAR)
+		{
+			throw new UnsupportedOperationException(i18n.VARCHAR_MESSAGE);
+		}
+		if (from.getColumnSize() > to.getColumnSize())
+		{
+			throw new UnsupportedOperationException(i18n.COLUMN_LENGTH_MESSAGE);
+		}
+		final StringBuffer result = new StringBuffer();
+		result.append("ALTER TABLE ");
+		result.append(to.getTableName());
+		result.append(" ALTER COLUMN ");
+		result.append(to.getColumnName());
+		result.append(" SET DATA TYPE ");
+		result.append(DialectUtils.getTypeName(to, this));
+		list.add(result.toString());
+		return list;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#supportsAlterColumnDefault()
+	 */
+	@Override
+	public boolean supportsAlterColumnDefault()
+	{
+		return false;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getColumnDefaultAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo)
+	 */
+	@Override
+	public String getColumnDefaultAlterSQL(final TableColumnInfo info)
+	{
+		final int featureId = DialectUtils.COLUMN_DEFAULT_ALTER_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getDropPrimaryKeySQL(java.lang.String,
+	 *      java.lang.String)
+	 */
+	@Override
+	public String getDropPrimaryKeySQL(final String pkName, final String tableName)
+	{
+		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getDropForeignKeySQL(java.lang.String,
+	 *      java.lang.String)
+	 */
+	@Override
+	public String getDropForeignKeySQL(final String fkName, final String tableName)
+	{
+		return DialectUtils.getDropForeignKeySQL(fkName, tableName);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDialectType()
+	 */
+	@Override
+	public DialectType getDialectType()
+	{
+		return DialectType.DERBY;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#supportsCreateSequence()
+	 */
+	@Override
+	public boolean supportsCreateSequence()
+	{
+		return false;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getCreateSequenceSQL(java.lang.String,
+	 *      java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	@Override
+	public String getCreateSequenceSQL(String sequenceName, String increment, String minimum, String maximum,
+		String start, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
+	{
+		final int featureId = DialectUtils.CREATE_SEQUENCE_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#supportsDropSequence()
+	 */
+	@Override
+	public boolean supportsDropSequence()
+	{
+		return false;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getDropSequenceSQL(java.lang.String, boolean,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	@Override
+	public String getDropSequenceSQL(String sequenceName, boolean cascade, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
+	{
+		final int featureId = DialectUtils.DROP_SEQUENCE_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#supportsSequence()
+	 */
+	@Override
+	public boolean supportsSequence()
+	{
+		return false;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#supportsSequenceInformation()
+	 */
+	@Override
+	public boolean supportsSequenceInformation()
+	{
+		return false;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getSequenceInformationSQL(java.lang.String,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	@Override
+	public String getSequenceInformationSQL(String sequenceName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
+	{
+		final int featureId = DialectUtils.SEQUENCE_INFORMATION_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#supportsAlterSequence()
+	 */
+	@Override
+	public boolean supportsAlterSequence()
+	{
+		return false;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getAlterSequenceSQL(java.lang.String,
+	 *      java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	@Override
+	public String[] getAlterSequenceSQL(String sequenceName, String increment, String minimum, String maximum,
+		String restart, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
+	{
+		final int featureId = DialectUtils.ALTER_SEQUENCE_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getAddUniqueConstraintSQL(java.lang.String,
+	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo[],
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	@Override
+	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName,
+		TableColumnInfo[] columns, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	{
+		ArrayList<String> result = new ArrayList<String>();
+
+		ArrayList<String> columnNotNullAlters = new ArrayList<String>();
+		// Derby requires that columns be not-null before applying a unique constraint
+		final boolean specifyColumnType = false;
+		final String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
+		for (TableColumnInfo column : columns)
+		{
+			if (column.isNullable().equalsIgnoreCase("YES"))
+			{
+				columnNotNullAlters.add(DialectUtils.getColumnNullableAlterSQL(column,
+					false,
+					this,
+					alterClause,
+					specifyColumnType));
+			}
+		}
+		result.addAll(columnNotNullAlters);
+
+		result.add(DialectUtils.getAddUniqueConstraintSQL(tableName,
+			constraintName,
+			columns,
+			qualifier,
+			prefs,
+			this));
+
+		return result.toArray(new String[result.size()]);
+	}
+
 }

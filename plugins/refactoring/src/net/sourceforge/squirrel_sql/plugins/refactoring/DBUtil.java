@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.plugins.refactoring;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier;
@@ -41,10 +42,10 @@ public class DBUtil
 		{
 			result.add(nameSQL);
 		}
-		String nullSQL = getNullAlterSQL(from, to, dialect, qualifier, prefs);
+		String[] nullSQL = getNullAlterSQL(from, to, dialect, qualifier, prefs);
 		if (nullSQL != null)
 		{
-			result.add(nullSQL);
+			result.addAll(Arrays.asList(nullSQL));
 		}
 		String commentSQL = getCommentAlterSQL(from, to, dialect);
 		if (commentSQL != null)
@@ -84,7 +85,7 @@ public class DBUtil
 		return dialect.getColumnNameAlterSQL(from, to);
 	}
 
-	public static String getNullAlterSQL(TableColumnInfo from, TableColumnInfo to, HibernateDialect dialect,
+	public static String[] getNullAlterSQL(TableColumnInfo from, TableColumnInfo to, HibernateDialect dialect,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		if (from.isNullable().equalsIgnoreCase(to.isNullable()))

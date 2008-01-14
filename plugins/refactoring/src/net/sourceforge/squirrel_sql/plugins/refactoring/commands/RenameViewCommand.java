@@ -73,7 +73,7 @@ public class RenameViewCommand extends AbstractRefactoringCommand
 	@Override
 	protected String[] generateSQLStatements() throws UserCancelledOperationException
 	{
-		String result = null;
+		String[] result = null;
 		try
 		{
 			DatabaseObjectQualifier qualifier =
@@ -88,7 +88,7 @@ public class RenameViewCommand extends AbstractRefactoringCommand
 			_session.showMessage(s_stringMgr.getString("RenameViewCommand.unsupportedOperationMsg",
 				_dialect.getDisplayName()));
 		}
-		return new String[] { result };
+		return result;
 	}
 
 	/**

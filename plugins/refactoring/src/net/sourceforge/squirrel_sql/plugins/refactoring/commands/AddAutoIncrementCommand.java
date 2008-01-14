@@ -26,6 +26,7 @@ import java.sql.SQLException;
 import net.sourceforge.squirrel_sql.client.gui.db.ColumnListDialog;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
@@ -102,7 +103,10 @@ public class AddAutoIncrementCommand extends AbstractRefactoringCommand
 
 		if (_dialect.supportsAutoIncrement())
 		{
-			result = _dialect.getAddAutoIncrementSQL(columnToModify, _sqlPrefs);
+			DatabaseObjectQualifier qualifier =
+				new DatabaseObjectQualifier(columnToModify.getCatalogName(), columnToModify.getSchemaName());
+
+			result = _dialect.getAddAutoIncrementSQL(columnToModify, qualifier, _sqlPrefs);
 		} else
 		{
 			_session.showMessage(s_stringMgr.getString("AddAutoIncrementCommand.unsupportedOperationMsg",

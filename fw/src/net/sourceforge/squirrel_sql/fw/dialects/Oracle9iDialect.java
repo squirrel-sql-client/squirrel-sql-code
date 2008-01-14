@@ -328,7 +328,7 @@ public class Oracle9iDialect extends Oracle9Dialect implements HibernateDialect
 	 *           the column to modify
 	 * @return the SQL to execute
 	 */
-	public String getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String[] getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		StringBuffer result = new StringBuffer();
 		result.append("ALTER TABLE ");
@@ -342,7 +342,7 @@ public class Oracle9iDialect extends Oracle9Dialect implements HibernateDialect
 		{
 			result.append(" NOT NULL");
 		}
-		return result.toString();
+		return new String[] { result.toString() };
 	}
 
 	/**
@@ -561,9 +561,9 @@ public class Oracle9iDialect extends Oracle9Dialect implements HibernateDialect
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddAutoIncrementSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
-	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 *      DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
-	public String[] getAddAutoIncrementSQL(TableColumnInfo column, SqlGenerationPreferences prefs)
+	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO Auto-generated method stub
 
@@ -868,16 +868,16 @@ public class Oracle9iDialect extends Oracle9Dialect implements HibernateDialect
 	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
-	public String getRenameViewSQL(String oldViewName, String newViewName, DatabaseObjectQualifier qualifier,
+	public String[] getRenameViewSQL(String oldViewName, String newViewName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getRenameViewSQL(RENAME_CLAUSE,
+		return new String[] { DialectUtils.getRenameViewSQL(RENAME_CLAUSE,
 			TO_CLAUSE,
 			oldViewName,
 			newViewName,
 			qualifier,
 			prefs,
-			this);
+			this) };
 	}
 
 	/**

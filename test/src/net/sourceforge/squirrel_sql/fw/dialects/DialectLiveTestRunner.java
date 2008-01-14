@@ -107,6 +107,7 @@ public class DialectLiveTestRunner {
    
    private static final String testSequenceName = "testSequence";
    private static final String testCreateTable = "testCreateTable";
+   private static final String testInsertIntoTable = "testInsertIntoTable";
    
    public DialectLiveTestRunner() throws Exception {
       ApplicationArguments.initialize(new String[] {});
@@ -332,11 +333,13 @@ public class DialectLiveTestRunner {
       dropTable(session, fixTableName(session, integerDataTableName));
       dropTable(session, fixTableName(session, "a"));
       dropTable(session, fixTableName(session, testCreateTable));
+      dropTable(session, fixTableName(session, testInsertIntoTable));
       
       dropView(session, "testView");
       dropView(session, "newTestView");
       
       dropSequence(session, testSequenceName);
+      dropSequence(session, autoIncrementTableName + "_MYID_SEQ");
       
       if (DialectFactory.isOracle(session.getMetaData())) {
          dropTable(session, fixTableName(session, "matview"));
@@ -419,6 +422,9 @@ public class DialectLiveTestRunner {
          runSQL(session, "create table " + fixTableName(session, "pktest")
                + " ( pk_col_1 integer, pk_col_2 integer )" + pageSizeClause);
       }
+      
+      runSQL(session, "create table " + fixTableName(session, testInsertIntoTable)
+         + " ( myid integer)" + pageSizeClause);
    }
 
    private void runTests() throws Exception {
@@ -639,7 +645,7 @@ public class DialectLiveTestRunner {
                                                          "defVal",
                                                          "A varchar comment");
       if (dialect.supportsAlterColumnNull()) {
-         String notNullSQL = dialect.getColumnNullableAlterSQL(notNullThirdCol, qualifier, prefs);
+         String[] notNullSQL = dialect.getColumnNullableAlterSQL(notNullThirdCol, qualifier, prefs);
          runSQL(session, notNullSQL);
       } else {
          try {
@@ -833,6 +839,7 @@ public class DialectLiveTestRunner {
    			throw new IllegalStateException("Expected dialect to fail to provide SQL for create table");
    		} catch (Exception e) {
    			// This is expected
+   			System.err.println(e.getMessage());
    		}
    	}
       
@@ -851,6 +858,7 @@ public class DialectLiveTestRunner {
    			throw new IllegalStateException("Expected dialect to fail to provide SQL for column comment alter");
    		} catch (Exception e) {
    			// This is expected
+   			System.err.println(e.getMessage());
    		}
    	}
    }
@@ -869,6 +877,7 @@ public class DialectLiveTestRunner {
    					"create view");
    		} catch (Exception e) {
    			// This is expected
+   			System.err.println(e.getMessage());
    		}
    	}
    }
@@ -876,7 +885,7 @@ public class DialectLiveTestRunner {
    private void testRenameView(ISession session) throws Exception {
    	HibernateDialect dialect = getDialect(session);
    	if (dialect.supportsRenameView()) {
-   		String sql = 
+   		String[] sql = 
    			dialect.getRenameViewSQL("testView", "newTestView", qualifier, prefs);
    		runSQL(session, sql);
    	} else {
@@ -885,6 +894,7 @@ public class DialectLiveTestRunner {
    			throw new IllegalStateException("Expected dialect to fail to provide SQL for rename view");
    		} catch (Exception e) {
    			// this is expected
+   			System.err.println(e.getMessage());
    		}
    	}
    }
@@ -905,6 +915,7 @@ public class DialectLiveTestRunner {
    			throw new IllegalStateException("Expected dialect to fail to provide SQL for drop view");
    		} catch (Exception e) {
    			// this is expected
+   			System.err.println(e.getMessage());
    		}
    	}   	
    }
@@ -960,6 +971,7 @@ public class DialectLiveTestRunner {
    			throw new IllegalStateException("Expected dialect to fail to provide SQL for create index");
    		} catch (Exception e) {
    			// this is expected
+   			System.err.println(e.getMessage());
    		}
    	}   	
    }
@@ -979,6 +991,7 @@ public class DialectLiveTestRunner {
    			throw new IllegalStateException("Expected dialect to fail to provide SQL for create sequence");
    		} catch (Exception e) {
    			// this is expected
+   			System.err.println(e.getMessage());
    		}
    	}   	   	   	
    }
@@ -1002,6 +1015,7 @@ public class DialectLiveTestRunner {
    			throw new IllegalStateException("Expected dialect to fail to provide SQL for sequence info query");
    		} catch (Exception e) {
    			// this is expected
+   			System.err.println(e.getMessage());
    		}
    	}   	   	   	   	
    }
@@ -1031,6 +1045,7 @@ public class DialectLiveTestRunner {
    			throw new IllegalStateException("Expected dialect to fail to provide SQL for alter sequence");
    		} catch (Exception e) {
    			// this is expected
+   			System.err.println(e.getMessage());
    		}
    	}   	   	   	   	
    }
@@ -1055,6 +1070,7 @@ public class DialectLiveTestRunner {
    			throw new IllegalStateException("Expected dialect to fail to provide SQL for get sequence information");
    		} catch (Exception e) {
    			// this is expected
+   			System.err.println(e.getMessage());
    		}
    	}   	   	   	   	   	
    }
@@ -1071,6 +1087,7 @@ public class DialectLiveTestRunner {
    			throw new IllegalStateException("Expected dialect to fail to provide SQL for drop sequence");
    		} catch (Exception e) {
    			// this is expected
+   			System.err.println(e.getMessage());
    		}
    	}   	   	   	   	   	   	
    }
@@ -1100,6 +1117,7 @@ public class DialectLiveTestRunner {
    			throw new IllegalStateException("Expected dialect to fail to provide SQL for add FK constraint");
    		} catch (Exception e) {
    			// this is expected
+   			System.err.println(e.getMessage());
    		}
    	}   	   	   	   	   	   	   	
    }
@@ -1126,6 +1144,7 @@ public class DialectLiveTestRunner {
 					+ "constraint");
    		} catch (Exception e) {
    			// this is expected
+   			System.err.println(e.getMessage());
    		}
    	}   	   	   	   	   	   	
    }
@@ -1134,15 +1153,16 @@ public class DialectLiveTestRunner {
    	HibernateDialect dialect = getDialect(session);
    	if (dialect.supportsAutoIncrement()) {
    		String[] sql = 
-   			dialect.getAddAutoIncrementSQL(autoIncrementColumn, prefs);
+   			dialect.getAddAutoIncrementSQL(autoIncrementColumn, qualifier, prefs);
    		runSQL(session, sql);   		
    	} else {
    		try {
-   			dialect.getAddAutoIncrementSQL(autoIncrementColumn, prefs);
+   			dialect.getAddAutoIncrementSQL(autoIncrementColumn, qualifier, prefs);
    			throw new IllegalStateException("Expected dialect to fail to provide SQL for add auto increment "
 					+ "column");
    		} catch (Exception e) {
    			// this is expected
+   			System.err.println(e.getMessage());
    		}
    	}   	   	   	   	   	   	   	
    }
@@ -1171,6 +1191,7 @@ public class DialectLiveTestRunner {
 			} catch (Exception e)
 			{
 				// this is expected
+				System.err.println(e.getMessage());
 			}
 		}   	   	   	   	   	   	   	
    }
@@ -1182,22 +1203,23 @@ public class DialectLiveTestRunner {
 		if (dialect.supportsInsertInto())
 		{
 			String sql = 
-				dialect.getInsertIntoSQL(testUniqueConstraintTableName, columns, valuesPart, qualifier, prefs);
+				dialect.getInsertIntoSQL(testInsertIntoTable, columns, valuesPart, qualifier, prefs);
 			runSQL(session, sql);
 			
 			valuesPart = " values ( 20 )";
-			sql = dialect.getInsertIntoSQL(testUniqueConstraintTableName, columns, valuesPart, qualifier, prefs);
+			sql = dialect.getInsertIntoSQL(testInsertIntoTable, columns, valuesPart, qualifier, prefs);
 			runSQL(session, sql);
 		} 
 		else
 		{
 			try
 			{
-				dialect.getInsertIntoSQL(testUniqueConstraintTableName, columns, valuesPart, qualifier, prefs);
+				dialect.getInsertIntoSQL(testInsertIntoTable, columns, valuesPart, qualifier, prefs);
 				throw new IllegalStateException("Expected dialect to fail to provide SQL for insert into ");
 			} catch (Exception e)
 			{
 				// this is expected
+				System.err.println(e.getMessage());
 			}
 		}   	   	   	   	   	   	   	   	
    }
@@ -1220,6 +1242,7 @@ public class DialectLiveTestRunner {
 			} catch (Exception e)
 			{
 				// this is expected
+				System.err.println(e.getMessage());
 			}
 		}   	   	   	   	   	   	   	   	   	
    }
@@ -1270,6 +1293,7 @@ public class DialectLiveTestRunner {
 			} catch (Exception e)
 			{
 				// this is expected
+				System.err.println(e.getMessage());
 			}
 		}   	   	   	   	   	   	   	   	   	
    }   

@@ -262,7 +262,7 @@ public interface HibernateDialect
 	 *           preferences for generated sql scripts           
 	 * @return the SQL to execute
 	 */
-	String getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+	String[] getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs);
 
 	/**
@@ -628,7 +628,7 @@ public interface HibernateDialect
 	 *           preferences for generated sql scripts
 	 * @return the sql command
 	 */
-	public String getRenameViewSQL(String oldViewName, String newViewName, DatabaseObjectQualifier qualifier,
+	public String[] getRenameViewSQL(String oldViewName, String newViewName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs);
 
 	/**
@@ -837,11 +837,14 @@ public interface HibernateDialect
 	 * 
 	 * @param column
 	 *           column to where the auto-increment should be added to.
+	 * @param qualifier
+	 *           qualifier of the table
 	 * @param prefs
 	 *           preferences for generated sql scripts
 	 * @return the sql command to add auto-increment.
 	 */
-	public String[] getAddAutoIncrementSQL(TableColumnInfo column, SqlGenerationPreferences prefs);
+	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs);
 
 	/**
 	 * Gets the SQL command to drop a constraint from a table.
