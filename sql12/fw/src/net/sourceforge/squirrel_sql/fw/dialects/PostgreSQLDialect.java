@@ -327,7 +327,7 @@ public class PostgreSQLDialect extends org.hibernate.dialect.PostgreSQLDialect i
 	 *           the column to modify
 	 * @return the SQL to execute
 	 */
-	public String getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String[] getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		StringBuffer result = new StringBuffer();
 		result.append("ALTER TABLE ");
@@ -341,7 +341,7 @@ public class PostgreSQLDialect extends org.hibernate.dialect.PostgreSQLDialect i
 		{
 			result.append(" SET NOT NULL");
 		}
-		return result.toString();
+		return new String[] { result.toString() };
 	}
 
 	/**
@@ -795,11 +795,13 @@ public class PostgreSQLDialect extends org.hibernate.dialect.PostgreSQLDialect i
 	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
-	public String getRenameViewSQL(String oldViewName, String newViewName, DatabaseObjectQualifier qualifier,
+	public String[] getRenameViewSQL(String oldViewName, String newViewName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
 		// rename view has that same syntax as that of tables.
-		return DialectUtils.getRenameTableSQL(oldViewName, newViewName, qualifier, prefs, this);
+		return new String[] { 
+			DialectUtils.getRenameTableSQL(oldViewName, newViewName, qualifier, prefs, this) 
+		};
 	}
 
 	/**
@@ -987,13 +989,10 @@ public class PostgreSQLDialect extends org.hibernate.dialect.PostgreSQLDialect i
 			this) };
 	}
 
-	public String[] getAddAutoIncrementSQL(TableColumnInfo column, SqlGenerationPreferences prefs)
+	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 
 		ArrayList<String> result = new ArrayList<String>();
-
-		DatabaseObjectQualifier qualifier =
-			new DatabaseObjectQualifier(column.getCatalogName(), column.getSchemaName());
 
 		// ALTER TABLE tableName
 		// ALTER COLUMN columnName

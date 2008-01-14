@@ -1,22 +1,23 @@
 package net.sourceforge.squirrel_sql.plugins.refactoring.gui;
+
 /*
-* Copyright (C) 2007 Daniel Regli & Yannick Winiger
-* http://sourceforge.net/projects/squirrel-sql
-*
-* This program is free software; you can redistribute it and/or
-* modify it under the terms of the GNU General Public License
-* as published by the Free Software Foundation; either version 2
-* of the License, or any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*/
+ * Copyright (C) 2007 Daniel Regli & Yannick Winiger
+ * http://sourceforge.net/projects/squirrel-sql
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
@@ -32,237 +33,261 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+public class DefaultListDialog extends JDialog
+{
 
-public class DefaultListDialog extends JDialog {
+	private static final long serialVersionUID = 2908275309430303054L;
 
-    /**
-     * Internationalized strings for this class.
-     */
-    private static final StringManager s_stringMgr =
-            StringManagerFactory.getStringManager(DefaultListDialog.class);
+	/**
+	 * Internationalized strings for this class.
+	 */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(DefaultListDialog.class);
 
-    private final IDatabaseObjectInfo[] _objectInfo;
+	private final IDatabaseObjectInfo[] _objectInfo;
 
-    private String _selectItem = "";
+	private String _selectItem = "";
 
-    /**
-     * If the dialog is used to select indexes.
-     */
-    public static final int DIALOG_TYPE_INDEX = 3;
+	/**
+	 * If the dialog is used to select indexes.
+	 */
+	public static final int DIALOG_TYPE_INDEX = 3;
 
-    /**
-     * If the dilaog is used to select unique constraints.
-     */
-    public static final int DIALOG_TYPE_UNIQUE_CONSTRAINTS = 4;
-    /**
-     * If the dialog is used to drop sequences.
-     */
-    public static final int DIALOG_TYPE_FOREIGN_KEY = 5;
+	/**
+	 * If the dilaog is used to select unique constraints.
+	 */
+	public static final int DIALOG_TYPE_UNIQUE_CONSTRAINTS = 4;
 
-    private interface i18n {
-        String TABLE_NAME_LABEL =
-                s_stringMgr.getString("DefaultListDialog.tableNameLabel");
-        String CANCEL_BUTTON_LABEL =
-                s_stringMgr.getString("AbstractRefactoringDialog.cancelButtonLabel");
-        String FOREIGN_KEY_LABEL =
-                s_stringMgr.getString("DefaultListDialog.foreignKeyNameLabel");
+	/**
+	 * If the dialog is used to drop sequences.
+	 */
+	public static final int DIALOG_TYPE_FOREIGN_KEY = 5;
 
-        String INDEX_LABEL =
-                s_stringMgr.getString("DefaultListDialog.indexNameLabel");
+	private interface i18n
+	{
+		String TABLE_NAME_LABEL = s_stringMgr.getString("DefaultListDialog.tableNameLabel");
 
-        String UNIQUE_CONSTRAINT_LABEL =
-                s_stringMgr.getString("DefaultListDialog.uniqueConstraintLabel");
+		String CANCEL_BUTTON_LABEL = s_stringMgr.getString("AbstractRefactoringDialog.cancelButtonLabel");
 
-        String OK_BUTTON_LABEL =
-                s_stringMgr.getString("DefaultListDialog.selectButtonLabel");
-    }
+		String FOREIGN_KEY_LABEL = s_stringMgr.getString("DefaultListDialog.foreignKeyNameLabel");
 
-    private JButton _executeButton = null;
-    private JList _columnList;
+		String INDEX_LABEL = s_stringMgr.getString("DefaultListDialog.indexNameLabel");
 
+		String UNIQUE_CONSTRAINT_LABEL = s_stringMgr.getString("DefaultListDialog.uniqueConstraintLabel");
 
-    public DefaultListDialog(IDatabaseObjectInfo[] objectInfo, String tableName, int dialogType) {
-        this._objectInfo = objectInfo;
+		String OK_BUTTON_LABEL = s_stringMgr.getString("DefaultListDialog.selectButtonLabel");
+	}
 
-        setTypeByID(dialogType);
-        init(tableName);
-    }
+	private JButton _executeButton = null;
 
-    /**
-     * Finds and sets the correct title for the specific type dialog.
-     *
-     * @param dialogType dialog type.
-     */
-    private void setTypeByID(int dialogType) {
-        String object = "";
-        switch (dialogType) {
+	private JList _columnList;
 
-            case DIALOG_TYPE_INDEX:
-                object = i18n.INDEX_LABEL;
-                break;
+	public DefaultListDialog(IDatabaseObjectInfo[] objectInfo, String tableName, int dialogType)
+	{
+		this._objectInfo = objectInfo;
 
-            case DIALOG_TYPE_FOREIGN_KEY:
-                object = i18n.FOREIGN_KEY_LABEL;
-                break;
+		setTypeByID(dialogType);
+		init(tableName);
+	}
 
-            case DIALOG_TYPE_UNIQUE_CONSTRAINTS:
-                object = i18n.UNIQUE_CONSTRAINT_LABEL;
-                break;
-            default:
-        }
-        _selectItem = object;
-        setTitle(s_stringMgr.getString("DefaultDropDialog.title", object));
-    }
+	/**
+	 * Finds and sets the correct title for the specific type dialog.
+	 * 
+	 * @param dialogType
+	 *           dialog type.
+	 */
+	private void setTypeByID(int dialogType)
+	{
+		String object = "";
+		switch (dialogType)
+		{
 
-    public String getSelectedIndex() {
-        return _columnList.getSelectedValue().toString();
-    }
+		case DIALOG_TYPE_INDEX:
+			object = i18n.INDEX_LABEL;
+			break;
 
-    public ArrayList<IDatabaseObjectInfo> getSelectedItems() {
-        ArrayList<IDatabaseObjectInfo> idbo = new ArrayList<IDatabaseObjectInfo>();
-        String[] simpleNames = getSimpleNames(_objectInfo);
-        for (int index : _columnList.getSelectedIndices()) {
-            for (IDatabaseObjectInfo info : _objectInfo) {
-                if (info.getSimpleName().equals(simpleNames[index])) {
-                    idbo.add(info);
-                    break;
-                }
-            }
-        }
-        return idbo;
-    }
+		case DIALOG_TYPE_FOREIGN_KEY:
+			object = i18n.FOREIGN_KEY_LABEL;
+			break;
 
-    public void addColumnSelectionListener(ActionListener columnListSelectionActionListener) {
-        _executeButton.addActionListener(columnListSelectionActionListener);
-    }
+		case DIALOG_TYPE_UNIQUE_CONSTRAINTS:
+			object = i18n.UNIQUE_CONSTRAINT_LABEL;
+			break;
+		default:
+		}
+		_selectItem = object;
+		setTitle(s_stringMgr.getString("DefaultDropDialog.title", object));
+	}
 
-    /**
-     * Creates the UI for this dialog.
-     *
-     * @param tableName the name of the table where the index is used.
-     */
-    private void init(String tableName) {
-        super.setModal(true);
+	public String getSelectedIndex()
+	{
+		return _columnList.getSelectedValue().toString();
+	}
 
-        setSize(425, 250);
-        EmptyBorder border = new EmptyBorder(new Insets(5, 5, 5, 5));
-        Dimension mediumField = new Dimension(126, 20);
+	public ArrayList<IDatabaseObjectInfo> getSelectedItems()
+	{
+		ArrayList<IDatabaseObjectInfo> idbo = new ArrayList<IDatabaseObjectInfo>();
+		String[] simpleNames = getSimpleNames(_objectInfo);
+		for (int index : _columnList.getSelectedIndices())
+		{
+			for (IDatabaseObjectInfo info : _objectInfo)
+			{
+				if (info.getSimpleName().equals(simpleNames[index]))
+				{
+					idbo.add(info);
+					break;
+				}
+			}
+		}
+		return idbo;
+	}
 
-        JPanel pane = new JPanel();
-        pane.setLayout(new GridBagLayout());
-        pane.setBorder(new EmptyBorder(10, 0, 0, 30));
+	public void addColumnSelectionListener(ActionListener columnListSelectionActionListener)
+	{
+		_executeButton.addActionListener(columnListSelectionActionListener);
+	}
 
-        GridBagConstraints c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = -1;
+	/**
+	 * Creates the UI for this dialog.
+	 * 
+	 * @param tableName
+	 *           the name of the table where the index is used.
+	 */
+	private void init(String tableName)
+	{
+		super.setModal(true);
 
-        // Table name
-        JLabel tableNameLabel = getBorderedLabel(i18n.TABLE_NAME_LABEL, border);
-        pane.add(tableNameLabel, getLabelConstraints(c));
+		setSize(425, 250);
+		EmptyBorder border = new EmptyBorder(new Insets(5, 5, 5, 5));
+		Dimension mediumField = new Dimension(126, 20);
 
-        JTextField tableNameTextField = new JTextField(tableName);
-        tableNameTextField.setPreferredSize(mediumField);
-        tableNameTextField.setEditable(false);
-        pane.add(tableNameTextField, getFieldConstraints(c));
+		JPanel pane = new JPanel();
+		pane.setLayout(new GridBagLayout());
+		pane.setBorder(new EmptyBorder(10, 0, 0, 30));
 
-        // Column list
-        JLabel columnListLabel = getBorderedLabel(_selectItem, border);
-        columnListLabel.setVerticalAlignment(JLabel.NORTH);
-        pane.add(columnListLabel, getLabelConstraints(c));
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridx = 0;
+		c.gridy = -1;
 
+		// Table name
+		JLabel tableNameLabel = getBorderedLabel(i18n.TABLE_NAME_LABEL, border);
+		pane.add(tableNameLabel, getLabelConstraints(c));
 
-        _columnList = new JList(getSimpleNames(_objectInfo));
-        _columnList.addListSelectionListener(new ColumnListSelectionListener());
-        _columnList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		JTextField tableNameTextField = new JTextField(tableName);
+		tableNameTextField.setPreferredSize(mediumField);
+		tableNameTextField.setEditable(false);
+		pane.add(tableNameTextField, getFieldConstraints(c));
 
-        JScrollPane sp = new JScrollPane(_columnList);
-        c = getFieldConstraints(c);
-        c.weightx = 1;
-        c.weighty = 1;
-        c.fill = GridBagConstraints.BOTH;
-        pane.add(sp, c);
+		// Column list
+		JLabel columnListLabel = getBorderedLabel(_selectItem, border);
+		columnListLabel.setVerticalAlignment(JLabel.NORTH);
+		pane.add(columnListLabel, getLabelConstraints(c));
 
-        Container contentPane = super.getContentPane();
-        contentPane.setLayout(new BorderLayout());
-        contentPane.add(pane, BorderLayout.CENTER);
+		_columnList = new JList(getSimpleNames(_objectInfo));
+		_columnList.addListSelectionListener(new ColumnListSelectionListener());
+		_columnList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
-        contentPane.add(getButtonPanel(), BorderLayout.SOUTH);
-    }
+		JScrollPane sp = new JScrollPane(_columnList);
+		c = getFieldConstraints(c);
+		c.weightx = 1;
+		c.weighty = 1;
+		c.fill = GridBagConstraints.BOTH;
+		pane.add(sp, c);
 
-    private JPanel getButtonPanel() {
-        JPanel result = new JPanel();
-        _executeButton = new JButton(i18n.OK_BUTTON_LABEL);
+		Container contentPane = super.getContentPane();
+		contentPane.setLayout(new BorderLayout());
+		contentPane.add(pane, BorderLayout.CENTER);
 
-        JButton cancelButton = new JButton(i18n.CANCEL_BUTTON_LABEL);
-        cancelButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                setVisible(false);
-            }
-        });
-        result.add(_executeButton);
-        result.add(cancelButton);
-        return result;
-    }
+		contentPane.add(getButtonPanel(), BorderLayout.SOUTH);
+	}
 
-    private String[] getSimpleNames(IDatabaseObjectInfo[] dbInfo) {
-        ArrayList<String> simpleNames = new ArrayList<String>();
-        for (IDatabaseObjectInfo info : dbInfo) {
-            if (!simpleNames.contains(info.getSimpleName())) simpleNames.add(info.getSimpleName());
-        }
-        return simpleNames.toArray(new String[]{});
-    }
+	private JPanel getButtonPanel()
+	{
+		JPanel result = new JPanel();
+		_executeButton = new JButton(i18n.OK_BUTTON_LABEL);
 
-    private GridBagConstraints getLabelConstraints(GridBagConstraints c) {
-        c.gridx = 0;
-        c.gridy++;
-        c.anchor = GridBagConstraints.NORTHEAST;
-        c.fill = GridBagConstraints.NONE;
-        c.weightx = 0;
-        c.weighty = 0;
-        return c;
-    }
+		JButton cancelButton = new JButton(i18n.CANCEL_BUTTON_LABEL);
+		cancelButton.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				setVisible(false);
+			}
+		});
+		result.add(_executeButton);
+		result.add(cancelButton);
+		return result;
+	}
 
-    private GridBagConstraints getFieldConstraints(GridBagConstraints c) {
-        c.gridx++;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        c.weightx = 0;
-        c.weighty = 0;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        return c;
-    }
+	private String[] getSimpleNames(IDatabaseObjectInfo[] dbInfo)
+	{
+		ArrayList<String> simpleNames = new ArrayList<String>();
+		for (IDatabaseObjectInfo info : dbInfo)
+		{
+			if (!simpleNames.contains(info.getSimpleName()))
+				simpleNames.add(info.getSimpleName());
+		}
+		return simpleNames.toArray(new String[] {});
+	}
 
-    private JLabel getBorderedLabel(String text, Border border) {
-        JLabel result = new JLabel(text);
-        result.setBorder(border);
-        result.setPreferredSize(new Dimension(115, 20));
-        result.setHorizontalAlignment(SwingConstants.RIGHT);
-        return result;
-    }
+	private GridBagConstraints getLabelConstraints(GridBagConstraints c)
+	{
+		c.gridx = 0;
+		c.gridy++;
+		c.anchor = GridBagConstraints.NORTHEAST;
+		c.fill = GridBagConstraints.NONE;
+		c.weightx = 0;
+		c.weighty = 0;
+		return c;
+	}
 
-    private class ColumnListSelectionListener implements ListSelectionListener {
+	private GridBagConstraints getFieldConstraints(GridBagConstraints c)
+	{
+		c.gridx++;
+		c.anchor = GridBagConstraints.NORTHWEST;
+		c.weightx = 0;
+		c.weighty = 0;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		return c;
+	}
 
-        /**
-         * Rules to handle enabling/disabling the buttons in this dialog.  Handle
-         * all cases where buttons should be disable first; if every rule passes
-         * then activate.
-         */
-        public void valueChanged(ListSelectionEvent e) {
-            int[] selected = _columnList.getSelectedIndices();
+	private JLabel getBorderedLabel(String text, Border border)
+	{
+		JLabel result = new JLabel(text);
+		result.setBorder(border);
+		result.setPreferredSize(new Dimension(115, 20));
+		result.setHorizontalAlignment(SwingConstants.RIGHT);
+		return result;
+	}
 
-            if (selected == null || selected.length == 0) {
-                activate(_executeButton, false);
-                return;
-            }
+	private class ColumnListSelectionListener implements ListSelectionListener
+	{
 
-            // All rules passed, so activate the button
-            activate(_executeButton, true);
-        }
+		/**
+		 * Rules to handle enabling/disabling the buttons in this dialog. Handle all cases where buttons should
+		 * be disable first; if every rule passes then activate.
+		 */
+		public void valueChanged(ListSelectionEvent e)
+		{
+			int[] selected = _columnList.getSelectedIndices();
 
-    }
+			if (selected == null || selected.length == 0)
+			{
+				activate(_executeButton, false);
+				return;
+			}
 
-    private void activate(JButton button, boolean enable) {
-        if (button != null) {
-            button.setEnabled(enable);
-        }
-    }
+			// All rules passed, so activate the button
+			activate(_executeButton, true);
+		}
+
+	}
+
+	private void activate(JButton button, boolean enable)
+	{
+		if (button != null)
+		{
+			button.setEnabled(enable);
+		}
+	}
 }

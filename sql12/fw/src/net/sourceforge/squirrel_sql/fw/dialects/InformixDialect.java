@@ -307,10 +307,12 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect imple
 	 *           the column to modify
 	 * @return the SQL to execute
 	 */
-	public String getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String[] getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		String alterClause = DialectUtils.MODIFY_CLAUSE;
-		return DialectUtils.getColumnNullableAlterSQL(info, this, alterClause, true);
+		return new String[] {
+			DialectUtils.getColumnNullableAlterSQL(info, this, alterClause, true)
+		};
 	}
 
 	/**
@@ -452,7 +454,7 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect imple
 		return null;
 	}
 
-	public String[] getAddAutoIncrementSQL(TableColumnInfo column, SqlGenerationPreferences prefs)
+	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -585,7 +587,7 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect imple
 		return null;
 	}
 
-	public String getRenameViewSQL(String oldViewName, String newViewName, DatabaseObjectQualifier qualifier,
+	public String[] getRenameViewSQL(String oldViewName, String newViewName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
 		// TODO Auto-generated method stub

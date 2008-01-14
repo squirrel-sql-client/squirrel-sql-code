@@ -44,7 +44,8 @@ public class DropUniqueConstraintCommand extends AbstractRefactoringCommand {
     /**
      * Logger for this class.
      */
-    private final ILogger s_log = LoggerController.createLogger(DropUniqueConstraintCommand.class);
+    @SuppressWarnings("unused")
+	private final ILogger s_log = LoggerController.createLogger(DropUniqueConstraintCommand.class);
     /**
      * Internationalized strings for this class
      */

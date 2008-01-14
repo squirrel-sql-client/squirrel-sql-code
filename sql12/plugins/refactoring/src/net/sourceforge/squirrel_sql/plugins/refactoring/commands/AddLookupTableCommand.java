@@ -347,7 +347,9 @@ public class AddLookupTableCommand extends AbstractRefactoringCommand
 												newColumn.getOrdinalPosition(),
 												"NO",
 												md);
-				results.add(_dialect.getColumnNullableAlterSQL(newColumnNotNull, qualifier, _sqlPrefs));
+				results.addAll(Arrays.asList(_dialect.getColumnNullableAlterSQL(newColumnNotNull,
+					qualifier,
+					_sqlPrefs)));
 			}
 
 			// Drops the original column.
