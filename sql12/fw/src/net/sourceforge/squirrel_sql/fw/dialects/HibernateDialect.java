@@ -259,7 +259,7 @@ public interface HibernateDialect
 	 * @param qualifier
 	 *           qualifier of the table
 	 * @param prefs
-	 *           preferences for generated sql scripts           
+	 *           preferences for generated sql scripts
 	 * @return the SQL to execute
 	 */
 	String[] getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
@@ -304,7 +304,7 @@ public interface HibernateDialect
 	 * @param qualifier
 	 *           qualifier of the table
 	 * @param prefs
-	 *           preferences for generated sql scripts           
+	 *           preferences for generated sql scripts
 	 * @return the SQL to make the change
 	 * @throw UnsupportedOperationException if the database doesn't support modifying column types.
 	 */
@@ -628,8 +628,8 @@ public interface HibernateDialect
 	 *           preferences for generated sql scripts
 	 * @return the sql command
 	 */
-	public String[] getRenameViewSQL(String oldViewName, String newViewName, DatabaseObjectQualifier qualifier,
-		SqlGenerationPreferences prefs);
+	public String[] getRenameViewSQL(String oldViewName, String newViewName,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs);
 
 	/**
 	 * Gets the SQL command to drop a view.
@@ -829,8 +829,8 @@ public interface HibernateDialect
 	 *           preferences for generated sql scripts
 	 * @return the sql command to add a unique constraint.
 	 */
-	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName, TableColumnInfo[] columns,
-		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs);
+	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName,
+		TableColumnInfo[] columns, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs);
 
 	/**
 	 * Gets the SQL to add an auto-increment to a column.
@@ -937,5 +937,21 @@ public interface HibernateDialect
 	 * @return The dialect's specific open quote character.
 	 */
 	public char openQuote();
+
+	/**
+	 * Returns the SQL that can be used to query the data dictionary for the body of a view. This should
+	 * exclude the "CREATE VIEW <viewname> AS" prefix and just return the query. This can return null if the 
+	 * database doesn't provide access to this definition.
+	 * 
+	 * @param viewName
+	 *           the name of the view to get the definition for.
+	 * @param qualifier
+	 *           qualifier of the table
+	 * @param prefs
+	 *           preferences for generated sql scripts
+	 * @return
+	 */
+	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs);
 
 }

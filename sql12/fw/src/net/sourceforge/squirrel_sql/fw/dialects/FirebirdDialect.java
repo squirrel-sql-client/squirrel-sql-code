@@ -882,4 +882,12 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getViewDefinitionSQL(java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs) {
+		return null;
+	}
+	
 }
