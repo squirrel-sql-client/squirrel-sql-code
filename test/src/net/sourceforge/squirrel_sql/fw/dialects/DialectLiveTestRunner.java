@@ -884,13 +884,33 @@ public class DialectLiveTestRunner {
    
    private void testRenameView(ISession session) throws Exception {
    	HibernateDialect dialect = getDialect(session);
+   	String oldViewName = "testView";
+   	String newViewName = "newTestView";
+   	String catalog = ((MockSession)session).getDefaultCatalog();
+   	String schema = ((MockSession)session).getDefaultSchema();
+   	DatabaseObjectQualifier qual = new DatabaseObjectQualifier(catalog, schema);
+   	
+   	String viewDefSql = dialect.getViewDefinitionSQL(oldViewName, qual, prefs);
    	if (dialect.supportsRenameView()) {
    		String[] sql = 
-   			dialect.getRenameViewSQL("testView", "newTestView", qualifier, prefs);
+   			dialect.getRenameViewSQL(oldViewName, newViewName, qual, prefs);
    		runSQL(session, sql);
+   	} else if ( viewDefSql != null) {
+   		
+   		ResultSet rs = this.runQuery(session, viewDefSql);
+   		String viewDefinition = "";
+   		if (rs.next()) {
+				viewDefinition = rs.getString(1);
+				int asIndex = viewDefinition.toUpperCase().indexOf("AS");
+				if (asIndex != -1) {
+					viewDefinition = "create view "+newViewName+ " as "+viewDefinition.substring(asIndex + 2);
+				}
+   		}
+			String dropOldViewSql = dialect.getDropViewSQL(oldViewName, false, qual, prefs);
+			runSQL(session, new String[] { viewDefinition, dropOldViewSql });
    	} else {
    		try {
-   			dialect.getRenameViewSQL("testView", "newTestView", qualifier, prefs);
+   			dialect.getRenameViewSQL(oldViewName, newViewName, qual, prefs);
    			throw new IllegalStateException("Expected dialect to fail to provide SQL for rename view");
    		} catch (Exception e) {
    			// this is expected
@@ -906,12 +926,17 @@ public class DialectLiveTestRunner {
    		if (dialect.supportsRenameView()) {
    			sql = dialect.getDropViewSQL("newTestView", false, qualifier, prefs);
    		} else {
-   			sql = dialect.getDropViewSQL("testView", false, qualifier, prefs);
+   			String viewDefSql = dialect.getViewDefinitionSQL("foo", qualifier, prefs);
+   			if (viewDefSql != null) {
+   				sql = dialect.getDropViewSQL("newTestView", false, qualifier, prefs);
+   			} else {
+   				sql = dialect.getDropViewSQL("testView", false, qualifier, prefs);
+   			}
    		}
    		runSQL(session, sql);
    	} else {
    		try {
-   			dialect.getRenameViewSQL("testView", "newTestView", qualifier, prefs);
+   			dialect.getDropViewSQL("testView", false, qualifier, prefs);
    			throw new IllegalStateException("Expected dialect to fail to provide SQL for drop view");
    		} catch (Exception e) {
    			// this is expected
@@ -1348,6 +1373,17 @@ public class DialectLiveTestRunner {
    	}
    }
 
+   private ResultSet runQuery(ISession session, String sql) throws Exception {
+      HibernateDialect dialect = getDialect(session);
+      Connection con = session.getSQLConnection().getConnection();
+      Statement stmt = con.createStatement();
+      
+      System.out.println("Running SQL (" + dialect.getDisplayName() + "): "
+            + sql);
+      return stmt.executeQuery(sql);
+   }
+   
+   
    private ResultSet runPreparedQuery(ISession session, String sql, String value) throws Exception {
       HibernateDialect dialect = getDialect(session);
       Connection con = session.getSQLConnection().getConnection();

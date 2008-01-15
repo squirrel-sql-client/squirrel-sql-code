@@ -927,9 +927,31 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 	{
 		final int featureId = DialectUtils.RENAME_VIEW_TYPE;
 		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-		throw new UnsupportedOperationException(msg);		
+		throw new UnsupportedOperationException(msg);
 	}
 
+	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
+	{
+		/*
+		SELECT  'CREATE VIEW <newViewName> AS ' || SUBSTR(TEXT ,  LOCATE('as', TEXT)+2, LENGTH(TEXT))
+		FROM SYSCAT.VIEWS 
+		WHERE VIEWSCHEMA = '<schema>'
+		AND VIEWNAME = '<oldViewName>'; 
+	 */ 
+		
+		
+		StringBuilder createViewSql = new StringBuilder();
+		createViewSql.append("SELECT TEXT ");
+		createViewSql.append(" FROM SYSCAT.VIEWS ");
+		createViewSql.append("WHERE VIEWSCHEMA = '");
+		createViewSql.append(qualifier.getSchema());
+		createViewSql.append("' AND UPPER(VIEWNAME) = '");
+		createViewSql.append(viewName.toUpperCase());
+		createViewSql.append("'");
+		return createViewSql.toString();
+	}
+	
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getSequenceInformationSQL(java.lang.String,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
@@ -1126,17 +1148,20 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 	 */
 	public boolean supportsRenameView()
 	{
-		// The following doesn't appear to work on DB2 (V9.5 LUW):
-		// RENAME TABLE <viewname> to <newviewname>;
-		// I get: The name used for this operation is not a table. SQL Code: -156, SQL State: 42809
 		return false;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsSequence()
+	 */
 	public boolean supportsSequence()
 	{
 		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsSequenceInformation()
+	 */
 	public boolean supportsSequenceInformation()
 	{
 		return true;
