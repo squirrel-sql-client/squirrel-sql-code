@@ -569,4 +569,42 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 		return result.toArray(new String[result.size()]);
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getViewDefinitionSQL(java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	@Override
+	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
+	{
+		/*
+		select v.VIEWDEFINITION 
+		from sys.SYSVIEWS v, sys.SYSTABLES t, sys.SYSSCHEMAS s 
+		where v.TABLEID = t.TABLEID 
+		and s.SCHEMAID = t.SCHEMAID 
+		and UPPER(t.TABLENAME) = 'VIEWNAME'
+		and UPPER(s.SCHEMANAME) = 'SCHEMANAME'
+		 */
+		
+		StringBuilder result = new StringBuilder();
+		result.append("select v.VIEWDEFINITION ");
+		result.append("from sys.SYSVIEWS v, sys.SYSTABLES t, sys.SYSSCHEMAS s ");
+		result.append("where v.TABLEID = t.TABLEID ");
+		result.append("and s.SCHEMAID = t.SCHEMAID ");
+		result.append("and UPPER(t.TABLENAME) = '");
+		result.append(viewName.toUpperCase());
+		result.append("' and UPPER(s.SCHEMANAME) = '");
+		result.append(qualifier.getSchema().toUpperCase());
+		result.append("'");
+		return result.toString();
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#supportsAutoIncrement()
+	 */
+	@Override
+	public boolean supportsAutoIncrement()
+	{
+		return false;
+	}
+
 }

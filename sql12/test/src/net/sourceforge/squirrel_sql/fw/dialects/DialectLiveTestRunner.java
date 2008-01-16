@@ -108,6 +108,9 @@ public class DialectLiveTestRunner {
    private static final String testSequenceName = "testSequence";
    private static final String testCreateTable = "testCreateTable";
    private static final String testInsertIntoTable = "testInsertIntoTable";
+   private static final String testCreateViewTable = "createviewtest";
+   private static final String testViewName = "testview";
+   private static final String testNewViewName = "newTestView";
    
    public DialectLiveTestRunner() throws Exception {
       ApplicationArguments.initialize(new String[] {});
@@ -315,6 +318,11 @@ public class DialectLiveTestRunner {
    private void createTestTables(ISession session) throws Exception {
       HibernateDialect dialect = getDialect(session);
       
+      // views will depend on tables, so drop them first
+      dropView(session, testViewName);
+      dropView(session, testNewViewName);
+      
+      // Tables might have triggers that depend on sequences, so drop tables next.
       dropTable(session, fixTableName(session, "test"));
       dropTable(session, fixTableName(session, "test1"));
       dropTable(session, fixTableName(session, "test2"));
@@ -324,7 +332,7 @@ public class DialectLiveTestRunner {
       dropTable(session, fixTableName(session, "pktest"));
       dropTable(session, fixTableName(session, "tableRenameTest"));
       dropTable(session, fixTableName(session, "tableWasRenamed"));
-      dropTable(session, fixTableName(session, "createViewTest"));
+      dropTable(session, fixTableName(session, testCreateViewTable));
       dropTable(session, fixTableName(session, "createIndexTest"));
       dropTable(session, fixTableName(session, fkChildTableName));
       dropTable(session, fixTableName(session, fkParentTableName));
@@ -335,11 +343,9 @@ public class DialectLiveTestRunner {
       dropTable(session, fixTableName(session, testCreateTable));
       dropTable(session, fixTableName(session, testInsertIntoTable));
       
-      dropView(session, "testView");
-      dropView(session, "newTestView");
-      
+      // Now sequences should go.
       dropSequence(session, testSequenceName);
-      dropSequence(session, autoIncrementTableName + "_MYID_SEQ");
+      dropSequence(session, autoIncrementTableName + "_MYID_SEQ");      
       
       if (DialectFactory.isOracle(session.getMetaData())) {
          dropTable(session, fixTableName(session, "matview"));
@@ -376,7 +382,7 @@ public class DialectLiveTestRunner {
             + " ( mychar char(10))" + pageSizeClause);
       runSQL(session, "create table " + fixTableName(session, "tableRenameTest")
          + " ( mychar char(10))" + pageSizeClause);
-      runSQL(session, "create table " + fixTableName(session, "createViewTest")
+      runSQL(session, "create table " + fixTableName(session, testCreateViewTable)
          + " ( mychar char(10))" + pageSizeClause);
       runSQL(session, "create table " + fixTableName(session, "createIndexTest")
          + " ( mychar varchar(10), myuniquechar varchar(10))" + pageSizeClause);
@@ -868,11 +874,11 @@ public class DialectLiveTestRunner {
       
    	if (dialect.supportsCreateView()) {
    		String sql =
-				dialect.getCreateViewSQL("testView", "select * from createViewTest", null, qualifier, prefs);
+				dialect.getCreateViewSQL(testViewName, "select * from "+testCreateViewTable, null, qualifier, prefs);
    		runSQL(session, sql);
    	} else {
    		try {
-   			dialect.getCreateViewSQL("testView", "select * from createViewTest", null, qualifier, prefs);
+   			dialect.getCreateViewSQL(testViewName, "select * from "+testCreateViewTable, null, qualifier, prefs);
    			throw new IllegalStateException("Expected dialect to fail to provide SQL for " +
    					"create view");
    		} catch (Exception e) {
@@ -884,8 +890,8 @@ public class DialectLiveTestRunner {
    
    private void testRenameView(ISession session) throws Exception {
    	HibernateDialect dialect = getDialect(session);
-   	String oldViewName = "testView";
-   	String newViewName = "newTestView";
+   	String oldViewName = testViewName;
+   	String newViewName = testNewViewName;
    	String catalog = ((MockSession)session).getDefaultCatalog();
    	String schema = ((MockSession)session).getDefaultSchema();
    	DatabaseObjectQualifier qual = new DatabaseObjectQualifier(catalog, schema);
@@ -901,6 +907,9 @@ public class DialectLiveTestRunner {
    		String viewDefinition = "";
    		if (rs.next()) {
 				viewDefinition = rs.getString(1);
+				if (viewDefinition == null || "".equals(viewDefinition)) {
+					throw new IllegalStateException("View source was not retrieved by this query: "+viewDefSql);
+				}
 				int asIndex = viewDefinition.toUpperCase().indexOf("AS");
 				if (asIndex != -1) {
 					viewDefinition = "create view "+newViewName+ " as "+viewDefinition.substring(asIndex + 2);
@@ -923,20 +932,11 @@ public class DialectLiveTestRunner {
    	HibernateDialect dialect = getDialect(session);
    	if (dialect.supportsCreateView() && dialect.supportsDropView()) {
    		String sql = "";
-   		if (dialect.supportsRenameView()) {
-   			sql = dialect.getDropViewSQL("newTestView", false, qualifier, prefs);
-   		} else {
-   			String viewDefSql = dialect.getViewDefinitionSQL("foo", qualifier, prefs);
-   			if (viewDefSql != null) {
-   				sql = dialect.getDropViewSQL("newTestView", false, qualifier, prefs);
-   			} else {
-   				sql = dialect.getDropViewSQL("testView", false, qualifier, prefs);
-   			}
-   		}
+   		sql = dialect.getDropViewSQL(testNewViewName, false, qualifier, prefs);
    		runSQL(session, sql);
    	} else {
    		try {
-   			dialect.getDropViewSQL("testView", false, qualifier, prefs);
+   			dialect.getDropViewSQL(testViewName, false, qualifier, prefs);
    			throw new IllegalStateException("Expected dialect to fail to provide SQL for drop view");
    		} catch (Exception e) {
    			// this is expected
