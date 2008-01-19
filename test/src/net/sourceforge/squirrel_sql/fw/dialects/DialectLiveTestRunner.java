@@ -40,6 +40,7 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 import net.sourceforge.squirrel_sql.plugins.db2.DB2JCCExceptionFormatter;
+import net.sourceforge.squirrel_sql.plugins.informix.exception.InformixExceptionFormatter;
 
 /**
  * The purpose of this class is to hookup to the database(s) specified in
@@ -405,16 +406,16 @@ public class DialectLiveTestRunner {
       while (count++ < 11) {
       	runSQL(session, "insert into "+integerDataTableName+" values ("+count+")");
       }
-      
-      runSQL(session, 
-      		"CREATE TABLE " + fixTableName(session, "a") +
-      		"( " +
-      		"   acol int PRIMARY KEY NOT NULL, " +
-      		"   adesc varchar(10), " +
-      		"   bdesc varchar(10)," +
-      		"   joined varchar(20) " +
-   			") ");
 
+      runSQL(session, 
+   		"CREATE TABLE " + fixTableName(session, "a") +
+   		"( " +
+   		"   acol int NOT NULL PRIMARY KEY, " + 
+   		"   adesc varchar(10), " +
+   		"   bdesc varchar(10)," +
+   		"   joined varchar(20) " +
+			") ");
+      
       runSQL(session, 
       		"INSERT INTO " + fixTableName(session, "a") + " (acol,adesc,bdesc) VALUES (1,'a1','b1') ");
 
@@ -861,7 +862,7 @@ public class DialectLiveTestRunner {
    	} else {
    		try {
    			dialect.getRenameTableSQL(oldTableName, newTableName, qualifier, prefs);
-   			throw new IllegalStateException("Expected dialect to fail to provide SQL for column comment alter");
+   			throw new IllegalStateException("Expected dialect to fail to provide SQL for rename table");
    		} catch (Exception e) {
    			// This is expected
    			System.err.println(e.getMessage());
@@ -904,17 +905,20 @@ public class DialectLiveTestRunner {
    	} else if ( viewDefSql != null) {
    		
    		ResultSet rs = this.runQuery(session, viewDefSql);
-   		String viewDefinition = "";
-   		if (rs.next()) {
-				viewDefinition = rs.getString(1);
-				if (viewDefinition == null || "".equals(viewDefinition)) {
-					throw new IllegalStateException("View source was not retrieved by this query: "+viewDefSql);
-				}
-				int asIndex = viewDefinition.toUpperCase().indexOf("AS");
-				if (asIndex != -1) {
-					viewDefinition = "create view "+newViewName+ " as "+viewDefinition.substring(asIndex + 2);
-				}
+   		StringBuilder tmp = new StringBuilder();
+   		while (rs.next()) {
+   			tmp.append(rs.getString(1));
    		}
+   		String viewDefinition = tmp.toString();
+
+			if (viewDefinition == null || "".equals(viewDefinition)) {
+				throw new IllegalStateException("View source was not retrieved by this query: "+viewDefSql);
+			}
+			int asIndex = viewDefinition.toUpperCase().indexOf("AS");
+			if (asIndex != -1) {
+				viewDefinition = "create view "+newViewName+ " as "+viewDefinition.substring(asIndex + 2);
+			}
+
 			String dropOldViewSql = dialect.getDropViewSQL(oldViewName, false, qual, prefs);
 			runSQL(session, new String[] { viewDefinition, dropOldViewSql });
    	} else {
@@ -1353,6 +1357,9 @@ public class DialectLiveTestRunner {
    
    private void runSQL(ISession session, String sql) throws Exception {
    	HibernateDialect dialect = getDialect(session);
+   	if (sql == null) {
+   		throw new IllegalStateException("sql argument was null");
+   	}
    	if (!sql.startsWith("--")) {
 	      Connection con = session.getSQLConnection().getConnection();
 	      Statement stmt = con.createStatement();
@@ -1363,6 +1370,10 @@ public class DialectLiveTestRunner {
 	      } catch(Exception e) {
 	      	if (DialectFactory.isDB2(session.getMetaData())) {
 	      		DB2JCCExceptionFormatter formatter = new DB2JCCExceptionFormatter();
+	      		System.err.println("Formatted message: "+formatter.format(e));
+	      	}
+	      	if (DialectFactory.isInformix(session.getMetaData())) {
+	      		InformixExceptionFormatter formatter = new InformixExceptionFormatter(session);
 	      		System.err.println("Formatted message: "+formatter.format(e));
 	      	}
 	      	throw e;

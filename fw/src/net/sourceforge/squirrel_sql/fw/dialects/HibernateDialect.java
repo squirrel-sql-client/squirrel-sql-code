@@ -382,6 +382,8 @@ public interface HibernateDialect
 
 	/**
 	 * Returns a boolean value indicating whether or not this database dialect suports tablespaces.
+	 * Specifically, when creating an index, some databases allow a tablespace to be specified to create the 
+	 * index in, recognizing that indexes can be quite large.
 	 * 
 	 * @return true if the database supports tablespaces; false otherwise.
 	 */

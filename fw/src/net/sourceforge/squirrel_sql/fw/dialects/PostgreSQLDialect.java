@@ -632,7 +632,14 @@ public class PostgreSQLDialect extends org.hibernate.dialect.PostgreSQLDialect i
 	 */
 	public boolean supportsMultipleRowInserts()
 	{
-
+		/* Can be done as follows in Postgres
+			INSERT INTO mytable(id,name) 
+			  SELECT 1, 'pizza'
+			  UNION
+			  SELECT 2, 'donuts'
+			  UNION
+			  SELECT 3, 'milk';
+		 */
 		return true;
 	}
 
