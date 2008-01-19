@@ -117,6 +117,18 @@ public class DialectUtils
 	
 	public static final String NO_CYCLE_CLAUSE = "NO CYCLE";
 	
+	public static final String MAXVALUE_CLAUSE = "MAXVALUE";
+	
+	public static final String NO_MAXVALUE_CLAUSE = "NO MAXVALUE";
+	
+	public static final String NOMAXVALUE_CLAUSE = "NOMAXVALUE";
+
+	public static final String MINVALUE_CLAUSE = "MINVALUE";
+	
+	public static final String NO_MINVALUE_CLAUSE = "NO MINVALUE";
+	
+	public static final String NOMINVALUE_CLAUSE = "NOMINVALUE";
+	
 	// Clauses
 	public static final String CREATE_CLAUSE = "CREATE";
 
@@ -565,30 +577,40 @@ public class DialectUtils
 		StringBuilder sql = new StringBuilder();
 
 		sql.append(DialectUtils.ALTER_TABLE_CLAUSE + " ");
-		sql.append(shapeQualifiableIdentifier(localTableName, qualifier, prefs, dialect)).append("\n");
+		sql.append(shapeQualifiableIdentifier(localTableName, qualifier, prefs, dialect));
+		sql.append("\n");
 
 		if (constraintName != null && !constraintName.equals(""))
 		{
-			sql.append(" " + DialectUtils.ADD_CONSTRAINT_CLAUSE + " ");
-			sql.append(shapeIdentifier(constraintName, prefs, dialect)).append("\n");
+	      sql.append(" ");
+	      sql.append(DialectUtils.ADD_CONSTRAINT_CLAUSE);
+	      sql.append(" ");
+			sql.append(shapeIdentifier(constraintName, prefs, dialect));
+			sql.append("\n");
 		}
 
-		sql.append(" " + DialectUtils.FOREIGN_KEY_CLAUSE + " (");
+		sql.append(" ");
+		sql.append(DialectUtils.FOREIGN_KEY_CLAUSE);
+		sql.append(" (");
 
 		ArrayList<String> localColumns = new ArrayList<String>();
 		StringBuilder refColumns = new StringBuilder();
 		for (String[] columns : localRefColumns)
 		{
-			sql.append(shapeIdentifier(columns[0], prefs, dialect)).append(", ");
+			sql.append(shapeIdentifier(columns[0], prefs, dialect));
+			sql.append(", ");
 			localColumns.add(columns[0]);
-			refColumns.append(shapeIdentifier(columns[1], prefs, dialect)).append(", ");
+			refColumns.append(shapeIdentifier(columns[1], prefs, dialect));
+			refColumns.append(", ");
 		}
 		sql.setLength(sql.length() - 2); // deletes the last ", "
 		refColumns.setLength(refColumns.length() - 2); // deletes the last ", "
 
 		sql.append(")\n REFERENCES ");
-		sql.append(shapeQualifiableIdentifier(refTableName, qualifier, prefs, dialect)).append(" (");
-		sql.append(refColumns.toString()).append(")\n");
+		sql.append(shapeQualifiableIdentifier(refTableName, qualifier, prefs, dialect));
+		sql.append(" (");
+		sql.append(refColumns.toString());
+		sql.append(")\n");
 
 		// Options
 		if (matchFull != null && matchFull)
@@ -659,19 +681,26 @@ public class DialectUtils
       //  ADD CONSTRAINT constraintName UNIQUE (column1, column2);
       StringBuilder sql = new StringBuilder();
 
-      sql.append(DialectUtils.ALTER_TABLE_CLAUSE + " ");
-      sql.append(shapeQualifiableIdentifier(tableName, qualifier, prefs, dialect)).append("\n");
+      sql.append(DialectUtils.ALTER_TABLE_CLAUSE);
+      sql.append(" ");
+      sql.append(DialectUtils.shapeQualifiableIdentifier(tableName, qualifier, prefs, dialect));
+      sql.append("\n");
 
-      sql.append(" " + DialectUtils.ADD_CONSTRAINT_CLAUSE + " ");
-      sql.append(shapeIdentifier(constraintName, prefs, dialect));
+      sql.append(" ");
+      sql.append(DialectUtils.ADD_CONSTRAINT_CLAUSE);
+      sql.append(" ");
+      sql.append(DialectUtils.shapeIdentifier(constraintName, prefs, dialect));
 
-      sql.append(" " + DialectUtils.UNIQUE_CLAUSE + " (");
+      sql.append(" ");
+      sql.append(DialectUtils.UNIQUE_CLAUSE);
+      sql.append(" (");
       for (TableColumnInfo column : columns) {
-          sql.append(shapeIdentifier(column.getColumnName(), prefs, dialect)).append(", ");
+          sql.append(DialectUtils.shapeIdentifier(column.getColumnName(), prefs, dialect));
+          sql.append(", ");
       }
       sql.delete(sql.length() - 2, sql.length());     // deletes the last ", "
       sql.append(")");
-
+      
       return sql.toString();
   }	
 	
@@ -1458,6 +1487,87 @@ public class DialectUtils
 
 		return sql.toString();
 	}
+
+	/**
+	 * Gets the SQL command to create a sequence.
+	 * 
+	 * @param sequenceName
+	 *           name of the sequence
+	 * @param increment
+	 *           increment value
+	 * @param minimumClause 
+	 * 			 MINVALUE, NO MINVALUE, NOMINVALUE
+	 * @param minimum
+	 *           minimum value
+	 * @param maximumClause 
+	 * 			 MAXVALUE, NO MAXVALUE, NOMAXVALUE
+	 * @param maximum
+	 *           maximum value
+	 * @param start
+	 *           start value (leave empty for default)
+	 * @param cache
+	 *           cache value, how many sequences should be preallocated (leave empty for default)
+	 * @param cycleClause 
+	 * 			 the cycle clause to use
+	 * @param qualifier
+	 *           qualifier of the table
+	 * @param prefs
+	 *           preferences for generated sql scripts
+	 * @return the sql command to create a sequence.
+	 */	
+   public static String getCreateSequenceSQL(String sequenceName, String increment, String minimumClause, String minimum,
+		String maximumClause, String maximum, String start, String cache, String cycleClause, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs, HibernateDialect dialect)
+	{
+      StringBuilder sql = new StringBuilder();
+
+      sql.append(DialectUtils.CREATE_SEQUENCE_CLAUSE).append(" ");
+      sql.append(shapeQualifiableIdentifier(sequenceName, qualifier, prefs, dialect)).append("\n");
+
+      if (increment != null && !increment.equals("")) {
+          sql.append("INCREMENT BY ");
+          sql.append(increment);
+          sql.append(" ");
+      }
+
+      if (minimum != null && !minimum.equals("")) {
+          sql.append(minimumClause);
+          sql.append(" ");
+          sql.append(minimum);
+          sql.append(" ");
+      } else {
+      	sql.append(minimumClause);
+      	sql.append(" ");
+      }
+
+      if (maximum != null && !maximum.equals("")) {
+          sql.append(maximumClause);
+          sql.append(" ");
+          sql.append(maximum);
+          sql.append(" ");          
+      } else {
+      	sql.append(maximumClause);
+      }
+      sql.append("\n");
+      
+
+      if (start != null && !start.equals("")) {
+          sql.append("START WITH ");
+          sql.append(start).append(" ");
+      }
+
+      if (cache != null && !cache.equals("")) {
+          sql.append("CACHE ");
+          sql.append(cache).append(" ");
+      }
+      
+      if (cycleClause != null) {
+      	sql.append(cycleClause);
+      }
+
+      return sql.toString();
+
+	}	
 	
 	/**
 	 * Gets the SQL command to create a sequence.
@@ -1487,45 +1597,42 @@ public class DialectUtils
 		SqlGenerationPreferences prefs, HibernateDialect dialect)
 	{
 		// CREATE SEQUENCE sequenceName
-      //  INCREMENT BY increment MINVALUE minimum MAXVALUE maxvalue
-      //  RESTART WITH restart CACHE cache CYCLE;
-      StringBuilder sql = new StringBuilder();
+		// INCREMENT BY increment MINVALUE minimum MAXVALUE maxvalue
+		// RESTART WITH restart CACHE cache CYCLE;
 
-      sql.append(DialectUtils.CREATE_SEQUENCE_CLAUSE).append(" ");
-      sql.append(shapeQualifiableIdentifier(sequenceName, qualifier, prefs, dialect)).append("\n");
+		String minimumClause = "";
+		if (minimum != null && !minimum.equals(""))
+		{
+			minimumClause = DialectUtils.MINVALUE_CLAUSE;
+		} else
+		{
+			
+			minimumClause = DialectUtils.NO_MINVALUE_CLAUSE;
+		}
 
-      if (increment != null && !increment.equals("")) {
-          sql.append("INCREMENT BY ");
-          sql.append(increment).append(" ");
-      }
+		String maximumClause = "";
+		if (maximum != null && !maximum.equals(""))
+		{
+			maximumClause = DialectUtils.MAXVALUE_CLAUSE;
+		} else
+		{
+			maximumClause = DialectUtils.NO_MAXVALUE_CLAUSE;
+		}
 
-      if (minimum != null && !minimum.equals("")) {
-          sql.append("MINVALUE ");
-          sql.append(minimum).append(" ");
-      } else sql.append("NO MINVALUE ");
+		return getCreateSequenceSQL(sequenceName,
+			increment,
+			minimumClause,
+			minimum,
+			maximumClause,
+			maximum,
+			start,
+			cache,
+			cycleClause,
+			qualifier,
+			prefs,
+			dialect);
 
-      if (maximum != null && !maximum.equals("")) {
-          sql.append("MAXVALUE ");
-          sql.append(maximum).append("\n");
-      } else sql.append("NO MAXVALUE\n");
-
-
-      if (start != null && !start.equals("")) {
-          sql.append("START WITH ");
-          sql.append(start).append(" ");
-      }
-
-      if (cache != null && !cache.equals("")) {
-          sql.append("CACHE ");
-          sql.append(cache).append(" ");
-      }
-      
-      if (cycleClause != null) {
-      	sql.append(cycleClause);
-      }
-
-      return sql.toString();
-  }
+	}
 	
 	/**
 	 * Gets the SQL command to alter a sequence.
@@ -2085,6 +2192,58 @@ public class DialectUtils
        else return identifier;
    }
 
+   /**
+    * @param column
+    * @param qualifier
+    * @param prefs
+    * @param dialect
+    * @return
+    */
+   public static String[] getAddSimulatedAutoIncrementColumn(TableColumnInfo column, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs, HibernateDialect dialect) {
+		ArrayList<String> result = new ArrayList<String>();
+		final String tableName = column.getTableName();
+		final String columnName = column.getColumnName();
+		final String sequenceName = tableName + "_" + columnName + "_" + "seq";
+
+		// TODO Probably want to allow the user to set these sequence properties ??
+		// Sequence settings.  
+		String sequenceIncrement = "1";
+		String minimum = "1";
+		String maximum = null;
+		String start = "1";
+		String cacheClause = null;
+		boolean cycle = false;
+		
+		result.add(dialect.getCreateSequenceSQL(sequenceName,
+			sequenceIncrement,
+			minimum,
+			maximum,
+			start,
+			cacheClause,
+			cycle,
+			qualifier,
+			prefs));
+
+		StringBuilder triggerSql = new StringBuilder();
+		triggerSql.append("CREATE TRIGGER ");
+		triggerSql.append(columnName);
+		triggerSql.append("_trigger \n");
+		triggerSql.append("NO CASCADE BEFORE INSERT ON ");
+		triggerSql.append(tableName);
+		triggerSql.append(" REFERENCING NEW AS n \n");
+		triggerSql.append("FOR EACH ROW \n");
+		triggerSql.append("SET n.");
+		triggerSql.append(columnName);
+		triggerSql.append(" = NEXTVAL FOR ");
+		triggerSql.append(sequenceName);
+
+		result.add(triggerSql.toString());
+
+		return result.toArray(new String[result.size()]);
+   	
+   }
+   
 	/**
 	 * Returns the SQL statement to use to add a column to the specified table using the information about the
 	 * new column specified by info.

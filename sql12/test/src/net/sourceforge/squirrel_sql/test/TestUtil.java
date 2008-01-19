@@ -163,13 +163,16 @@ public class TestUtil {
    public static ISQLPanelAPI getEasyMockSqlPanelApi() {
       ISQLPanelAPI result = createMock(ISQLPanelAPI.class);
       ISQLEntryPanel panel = getEasyMockSqlEntryPanel();
-      expect(result.getSQLEntryPanel()).andReturn(panel);
+      expect(result.getSQLEntryPanel()).andReturn(panel).anyTimes();
       replay(result);
       return result;
    }
 
    public static ISQLEntryPanel getEasyMockSqlEntryPanel() {
       ISQLEntryPanel result = createMock(ISQLEntryPanel.class);
+      expect(result.getBoundsOfSQLToBeExecuted()).andReturn(new int[] {10, 20}).anyTimes();
+      result.setCaretPosition(org.easymock.EasyMock.anyInt());
+      expectLastCall().anyTimes();
       replay(result);
       return result;
    }

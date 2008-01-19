@@ -52,6 +52,7 @@ import net.sourceforge.squirrel_sql.fw.util.ExceptionFormatter;
 import net.sourceforge.squirrel_sql.fw.util.IMessageHandler;
 import net.sourceforge.squirrel_sql.fw.util.MockMessageHandler;
 import net.sourceforge.squirrel_sql.mo.sql.MockDatabaseMetaData;
+import net.sourceforge.squirrel_sql.test.TestUtil;
 
 import com.mockobjects.sql.MockConnection2;
 
@@ -69,6 +70,8 @@ public class MockSession implements ISession {
     SquirrelPreferences prefs = null;
     UidIdentifier id = null;
     boolean closed;
+    
+    ISQLPanelAPI panelApi = TestUtil.getEasyMockSqlPanelApi();
         
     // These tell the Dialect test runner where tables that is creates can be 
     // found.
@@ -323,9 +326,7 @@ public class MockSession implements ISession {
     }
 
     public ISQLPanelAPI getSQLPanelAPIOfActiveSessionWindow() {
-        // TODO Auto-generated method stub
-    	System.err.println("MockSession.getSQLPanelAPIOfActiveSessionWindow: stub not yet implemented");
-        return null;
+   	 return panelApi;
     }
 
     public IObjectTreeAPI getObjectTreeAPIOfActiveSessionWindow() {
