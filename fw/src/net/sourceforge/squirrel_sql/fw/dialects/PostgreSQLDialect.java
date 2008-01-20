@@ -756,13 +756,21 @@ public class PostgreSQLDialect extends org.hibernate.dialect.PostgreSQLDialect i
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAccessMethodsTypes()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getIndexAccessMethodsTypes()
 	 */
-	public String[] getAccessMethodsTypes()
+	public String[] getIndexAccessMethodsTypes()
 	{
 		return ACCESS_METHODS;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getIndexStorageOptions()
+	 */
+	public String[] getIndexStorageOptions()
+	{
+		return null;
+	}
+	
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getCreateTableSQL(java.lang.String,
 	 *      java.util.List, java.util.List, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences,
@@ -832,6 +840,13 @@ public class PostgreSQLDialect extends org.hibernate.dialect.PostgreSQLDialect i
 		boolean unique, String tablespace, String constraints, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
+		// From PostgreSQL 8.2 documentation:
+		// CREATE [ UNIQUE ] INDEX [ CONCURRENTLY ] name ON table [ USING method ]
+		// 	( { column | ( expression ) } [ opclass ] [, ...] )
+		// 	[ WITH ( storage_parameter = value [, ... ] ) ]
+		// 	[ TABLESPACE tablespace ]
+		// 	[ WHERE predicate ]
+		
 		String result = "";
 		if (unique && accessMethod.equalsIgnoreCase("hash")) {
 			String uniqueHashAccessMethodNotSupported = null;
@@ -864,12 +879,12 @@ public class PostgreSQLDialect extends org.hibernate.dialect.PostgreSQLDialect i
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropIndexSQL(java.lang.String,
-	 *      boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
-	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropIndexSQL(String,
+	 *      java.lang.String, boolean,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
-	public String getDropIndexSQL(String indexName, boolean cascade, DatabaseObjectQualifier qualifier,
-		SqlGenerationPreferences prefs)
+	public String getDropIndexSQL(String tableName, String indexName, boolean cascade,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// DROP INDEX indexName CASCADE;
 		return DialectUtils.getDropIndexSQL(indexName, cascade, qualifier, prefs, this);
@@ -1156,7 +1171,6 @@ public class PostgreSQLDialect extends org.hibernate.dialect.PostgreSQLDialect i
 	 */
 	public boolean supportsAddColumn()
 	{
-		// TODO verify this is correct
 		return true;
 	}
 

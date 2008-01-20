@@ -455,9 +455,18 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect imp
 		return DialectType.INTERBASE;
 	}
 
-	public String[] getAccessMethodsTypes()
+	public String[] getIndexAccessMethodsTypes()
 	{
 		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getIndexStorageOptions()
+	 */
+	public String[] getIndexStorageOptions()
+	{
+		// TODO Auto-generated method stub		
 		return null;
 	}
 
@@ -535,8 +544,8 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect imp
 		return null;
 	}
 
-	public String getDropIndexSQL(String indexName, boolean cascade, DatabaseObjectQualifier qualifier,
-		SqlGenerationPreferences prefs)
+	public String getDropIndexSQL(String tableName, String indexName, boolean cascade,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO Auto-generated method stub
 		return null;

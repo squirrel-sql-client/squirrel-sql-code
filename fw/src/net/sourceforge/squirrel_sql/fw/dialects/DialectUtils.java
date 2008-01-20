@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
@@ -41,6 +42,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
+import org.antlr.stringtemplate.StringTemplate;
 import org.hibernate.HibernateException;
 
 /**
@@ -50,7 +52,7 @@ import org.hibernate.HibernateException;
  * 
  * @author manningr
  */
-public class DialectUtils
+public class DialectUtils implements StringTemplateConstants
 {
 
 	/** Logger for this class. */
@@ -527,6 +529,34 @@ public class DialectUtils
 		return pkSQL.toString();
 	}
 
+	public static String[] getAddForeignKeyConstraintSQL(StringTemplate fkST,
+		HashMap<String, String> fkValuesMap, StringTemplate childIndexST,
+		HashMap<String, String> ckIndexValuesMap, Collection<String[]> localRefColumns,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs, HibernateDialect dialect)
+	{
+		
+		ArrayList<String> result = new ArrayList<String>();
+		
+		bindAttributes(dialect, fkST, fkValuesMap, qualifier, prefs);
+		
+		for (String[] localRefColumn : localRefColumns) {
+			String childColumnName = localRefColumn[0];
+			String parentColumnName = localRefColumn[1];
+			bindAttribute(dialect, fkST, ST_CHILD_COLUMN_KEY, childColumnName, qualifier, prefs);
+			bindAttribute(dialect, fkST, ST_PARENT_COLUMN_KEY, parentColumnName, qualifier, prefs);
+		}
+		
+		result.add(fkST.toString());
+		
+		// Additional Index Creation
+		if (childIndexST != null)
+		{
+			result.add(getAddIndexSQL(dialect, childIndexST, ckIndexValuesMap, qualifier, prefs));			
+		}
+				
+		return result.toArray(new String[result.size()]);
+	}
+	
 	/**
 	 * Gets the SQL command to add a foreign key constraint to a table.
 	 * 
@@ -983,7 +1013,9 @@ public class DialectUtils
 	}
 
 	/**
-	 * Gets the SQL command to drop an index.
+	 * Gets the SQL command to drop an index. As follows:
+	 * 
+	 * DROP INDEX indexName [ CASCADE ];
 	 * 
 	 * @param indexName
 	 *           name of the index
@@ -1000,17 +1032,46 @@ public class DialectUtils
    public static String getDropIndexSQL(String indexName, Boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs, HibernateDialect dialect)
 	{
-      // DROP INDEX indexName CASCADE;
+      // DROP INDEX indexName [ CASCADE ];
+   	return getDropIndexSQL(null, indexName, cascade, qualifier, prefs, dialect);   	
+  }
+
+	/**
+	 * Gets the SQL command to drop an index. As follows:
+	 * 
+	 * DROP INDEX indexName [ CASCADE ] [ ON <tableName> ];
+	 * 
+	 * @param indexName
+	 *           name of the index
+	 * @param cascade
+	 *           true if automatically drop object that depend on the view (such as other views).
+	 * @param qualifier
+	 *           qualifier of the table
+	 * @param prefs
+	 *           preferences for generated sql scripts
+	 * @param dialect the HibernateDialect to use for identifier quoting behavior
+	 * 
+	 * @return the sql command to drop an index.
+	 */	
+   public static String getDropIndexSQL(String tableName, String indexName, Boolean cascade, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs, HibernateDialect dialect)
+	{
+      // DROP INDEX indexName [ CASCADE ] [ ON <tableName> ];
       StringBuilder sql = new StringBuilder();
 
-      sql.append(DialectUtils.DROP_INDEX_CLAUSE + " ");
+      sql.append(DialectUtils.DROP_INDEX_CLAUSE);
+      sql.append(" ");
       sql.append(shapeQualifiableIdentifier(indexName, qualifier, prefs, dialect)).append(" ");
       if (cascade != null) {
       	sql.append(cascade ? DialectUtils.CASCADE_CLAUSE : DialectUtils.RESTRICT_CLAUSE);
       }
+      if (tableName != null) {
+      	sql.append(" ON ");
+      	sql.append(shapeQualifiableIdentifier(tableName, qualifier, prefs, dialect));
+      }
       return sql.toString();
   }
-	
+   
    
    
    /**
@@ -1118,6 +1179,13 @@ public class DialectUtils
 	
 	
    /**
+    * Constructs the SQL for adding an index, as follows:
+    * 
+    * CREATE UNIQUE INDEX indexName ON tableName 
+    * USING btree (column1, column2) 
+    * TABLESPACE <tableSpace> 
+    * WHERE constraints;
+    * 
 	 * @param indexName
 	 *           name of the index to be created
 	 * @param tableName
@@ -1175,6 +1243,21 @@ public class DialectUtils
     }	
 	
 
+   /**
+    * @param dialect
+    * @param st
+    * @param valuesMap
+    * @param qualifier
+    * @param prefs
+    * @return
+    */
+   public static String getAddIndexSQL(HibernateDialect dialect, StringTemplate st,
+		HashMap<String, String> valuesMap, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	{
+   	bindAttributes(dialect, st, valuesMap, qualifier, prefs);
+   	return st.toString();
+	}
+   
 	public static TableColumnInfo getRenamedColumn(TableColumnInfo info, String newColumnName)
 	{
 		TableColumnInfo result =
@@ -2299,4 +2382,40 @@ public class DialectUtils
 		return result.toString();
 	}
    
+	/**
+	 * @param dialect
+	 * @param st
+	 * @param valuesMap
+	 * @param qualifier
+	 * @param prefs
+	 * @return
+	 */
+	public static String getAddAutoIncrementColumn(HibernateDialect dialect, StringTemplate st,
+		HashMap<String, String> valuesMap, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	{
+   	bindAttributes(dialect, st, valuesMap, qualifier, prefs);
+   	return st.toString();
+	}
+
+	private static void bindAttribute(HibernateDialect dialect, StringTemplate st, String key, String value,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	{
+		if (ST_TABLE_NAME_KEY.equals(key)) {
+			value = DialectUtils.shapeQualifiableIdentifier(value, qualifier, prefs, dialect);
+		}
+		if (ST_COLUMN_NAME_KEY.equals(key)) {
+			value = DialectUtils.shapeIdentifier(value, prefs, dialect);
+		}
+		st.setAttribute(key, value);
+	}	
+	
+	private static void bindAttributes(HibernateDialect dialect, StringTemplate st,
+		HashMap<String, String> valuesMap, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	{		
+   	for (String key : valuesMap.keySet()) {
+   		String value = valuesMap.get(key);
+   		bindAttribute(dialect, st, key, value, qualifier, prefs);
+   	}
+	}
+	
 }

@@ -33,7 +33,7 @@ import org.hibernate.HibernateException;
  * An interface for methods implemented by database dialects for the purpose of handling standard and
  * non-standard SQL and database types.
  */
-public interface HibernateDialect
+public interface HibernateDialect extends StringTemplateConstants
 {
 
 	/**
@@ -559,12 +559,20 @@ public interface HibernateDialect
 	public boolean supportsUpdate();
 
 	/**
-	 * Gets the access methods which this dialect supports.
+	 * Gets the index access methods that this dialect supports used when creating indexes. 
 	 * 
 	 * @return all the access methods supported by this dialect.
 	 */
-	public String[] getAccessMethodsTypes();
+	public String[] getIndexAccessMethodsTypes();
+	
 
+	/**
+	 * Gets the index storage options that this dialect supports used when creating indexes. 
+	 * 
+	 * @return all the access methods supported by this dialect.
+	 */	
+	public String[] getIndexStorageOptions();
+	
 	/**
 	 * Gets the SQL command to create a new table.
 	 * 
@@ -679,6 +687,8 @@ public interface HibernateDialect
 	/**
 	 * Gets the SQL command to drop an index.
 	 * 
+	 * @param tableName
+	 *           name of the table that the index indexes. This can be null.
 	 * @param indexName
 	 *           name of the index
 	 * @param cascade
@@ -689,8 +699,8 @@ public interface HibernateDialect
 	 *           preferences for generated sql scripts
 	 * @return the sql command to drop an index.
 	 */
-	public String getDropIndexSQL(String indexName, boolean cascade, DatabaseObjectQualifier qualifier,
-		SqlGenerationPreferences prefs);
+	public String getDropIndexSQL(String tableName, String indexName, boolean cascade,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs);
 
 	/**
 	 * Gets the SQL command to create a sequence.
