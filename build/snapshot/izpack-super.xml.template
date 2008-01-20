@@ -87,7 +87,7 @@
 			<file	targetdir="$INSTALL_PATH/lib"
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/ejb3-persistence.jar"/>
 			<file	targetdir="$INSTALL_PATH/lib"
-				    src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/forms.jar"/>
+                                        src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/forms.jar"/>
 			<file	targetdir="$INSTALL_PATH/lib"
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/hibernate3.2.4.sp1.jar"/>
 			<file	targetdir="$INSTALL_PATH/lib"
@@ -96,13 +96,14 @@
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/hibernate-commons-annotations-3.3.0.jar"/>
 			<file	targetdir="$INSTALL_PATH/lib"
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/hibernate-entitymanager-3.3.1.jar"/>
-            <file   targetdir="$INSTALL_PATH/lib"
+                        <file   targetdir="$INSTALL_PATH/lib"
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/jxl.jar"/>
 			<file	targetdir="$INSTALL_PATH/lib"
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/log4j.jar"/>
 			<file	targetdir="$INSTALL_PATH/lib"
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/nanoxml-2.1.jar"/>
-
+                        <file   targetdir="$INSTALL_PATH/lib"
+                                        src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/stringtemplate-3.1.b1.jar"/>
 			<parsable targetfile="$INSTALL_PATH/squirrel-sql.bat"/>
 			<parsable targetfile="$INSTALL_PATH/squirrel-sql.sh" type="shell"/>
 
