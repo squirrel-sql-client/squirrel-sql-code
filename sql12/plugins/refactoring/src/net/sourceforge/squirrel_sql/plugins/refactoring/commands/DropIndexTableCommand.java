@@ -62,18 +62,22 @@ public class DropIndexTableCommand extends AbstractRefactoringCommand {
 
     private IndexInfo[] _dropIndexInfo;
     private DefaultListDialog listDialog;
-
+    private String _tableName = null;
 
     public DropIndexTableCommand(ISession session, IDatabaseObjectInfo[] dbInfo) {
         super(session, dbInfo);
     }
 
+   /**
+    * @see net.sourceforge.squirrel_sql.plugins.refactoring.commands.AbstractRefactoringCommand#onExecute()
+    */
    @Override
 	protected void onExecute() throws SQLException
 	{
-		String tableName = null;
+		
 		if (_info[0].getDatabaseObjectType() == DatabaseObjectType.INDEX)
 		{
+			_tableName = ((IndexInfo) _info[0]).getTableName();
 			_dropIndexInfo = new IndexInfo[_info.length];
 			for (int i = 0; i < _info.length; i++)
 			{
@@ -85,7 +89,7 @@ public class DropIndexTableCommand extends AbstractRefactoringCommand {
 		else
 		{
 			ITableInfo ti = (ITableInfo) _info[0];
-			tableName = ti.getSimpleName();
+			_tableName = ti.getSimpleName();
 			_dropIndexInfo =
 				_session.getSQLConnection().getSQLMetaData().getIndexInfo(ti).toArray(new IndexInfo[] {});
 		}
@@ -99,7 +103,7 @@ public class DropIndexTableCommand extends AbstractRefactoringCommand {
 			if (listDialog == null)
 			{
 				listDialog =
-					new DefaultListDialog(_dropIndexInfo, tableName, DefaultListDialog.DIALOG_TYPE_INDEX);
+					new DefaultListDialog(_dropIndexInfo, _tableName, DefaultListDialog.DIALOG_TYPE_INDEX);
 				listDialog.addColumnSelectionListener(new ColumnListSelectionActionListener());
 				listDialog.setLocationRelativeTo(_session.getApplication().getMainFrame());
 			}
@@ -126,15 +130,18 @@ public class DropIndexTableCommand extends AbstractRefactoringCommand {
     }
 
 
-    @Override
+    /**
+    * @see net.sourceforge.squirrel_sql.plugins.refactoring.commands.AbstractRefactoringCommand#generateSQLStatements()
+    */
+   @Override
     protected String[] generateSQLStatements() throws UserCancelledOperationException {
         ArrayList<String> result = new ArrayList<String>();
 
         if (_dialect.supportsDropIndex()) {
             for (IndexInfo iInfo : _dropIndexInfo) {
                 DatabaseObjectQualifier qualifier = new DatabaseObjectQualifier(iInfo.getCatalogName(), iInfo.getSchemaName());
-                result.add(_dialect.getDropIndexSQL(iInfo.getSimpleName(), customDialog.isCascadeSelected(),
-                        qualifier, _sqlPrefs));
+                result.add(_dialect.getDropIndexSQL(_tableName, iInfo.getSimpleName(),
+                        customDialog.isCascadeSelected(), qualifier, _sqlPrefs));
             }
         } else {
             _session.showMessage(s_stringMgr.getString("DropIndexCommand.unsupportedOperationMsg",
@@ -145,7 +152,10 @@ public class DropIndexTableCommand extends AbstractRefactoringCommand {
     }
 
 
-    @Override
+    /**
+    * @see net.sourceforge.squirrel_sql.plugins.refactoring.commands.AbstractRefactoringCommand#executeScript(java.lang.String)
+    */
+   @Override
     protected void executeScript(String script) {
         CommandExecHandler handler = new CommandExecHandler(_session);
 

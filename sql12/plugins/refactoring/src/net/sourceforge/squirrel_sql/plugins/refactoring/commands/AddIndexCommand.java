@@ -130,7 +130,7 @@ public class AddIndexCommand extends AbstractRefactoringCommand
 
 		customDialog = new AddIndexDialog(localColumns.toArray(new String[] {}));
 		if (_dialect.supportsAccessMethods())
-			customDialog.setAccessMethods(true, _dialect.getAccessMethodsTypes());
+			customDialog.setAccessMethods(true, _dialect.getIndexAccessMethodsTypes());
 		if (_dialect.supportsTablespace())
 			customDialog.enableTablespaceField(true);
 		customDialog.addExecuteListener(new ExecuteListener());

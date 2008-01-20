@@ -447,9 +447,18 @@ public class MAXDBDialect extends SAPDBDialect implements HibernateDialect
 		return DialectType.MAXDB;
 	}
 
-	public String[] getAccessMethodsTypes()
+	public String[] getIndexAccessMethodsTypes()
 	{
 		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getIndexStorageOptions()
+	 */
+	public String[] getIndexStorageOptions()
+	{
+		// TODO Auto-generated method stub		
 		return null;
 	}
 
@@ -554,8 +563,8 @@ public class MAXDBDialect extends SAPDBDialect implements HibernateDialect
 		return null;
 	}
 
-	public String getDropIndexSQL(String indexName, boolean cascade, DatabaseObjectQualifier qualifier,
-		SqlGenerationPreferences prefs)
+	public String getDropIndexSQL(String tableName, String indexName, boolean cascade,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO Auto-generated method stub
 		return null;

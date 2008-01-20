@@ -732,12 +732,21 @@ public class H2Dialect extends Dialect implements HibernateDialect
 		return DialectType.H2;
 	}
 
-	public String[] getAccessMethodsTypes()
+	public String[] getIndexAccessMethodsTypes()
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getIndexStorageOptions()
+	 */
+	public String[] getIndexStorageOptions()
+	{
+		// TODO Auto-generated method stub		
+		return null;
+	}
+	
 	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO Auto-generated method stub
@@ -838,8 +847,8 @@ public class H2Dialect extends Dialect implements HibernateDialect
 		return null;
 	}
 
-	public String getDropIndexSQL(String indexName, boolean cascade, DatabaseObjectQualifier qualifier,
-		SqlGenerationPreferences prefs)
+	public String getDropIndexSQL(String tableName, String indexName, boolean cascade,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO Auto-generated method stub
 		return null;

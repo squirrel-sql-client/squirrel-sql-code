@@ -22,7 +22,10 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+
+import org.antlr.stringtemplate.StringTemplate;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
@@ -69,50 +72,40 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 		registerColumnType(Types.VARCHAR, "text");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType)
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
 	 */
 	public boolean canPasteTo(IDatabaseObjectInfo info)
 	{
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#supportsSchemasInTableDefinition()
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsSchemasInTableDefinition()
 	 */
 	public boolean supportsSchemasInTableDefinition()
 	{
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getLengthFunction()
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getLengthFunction(int)
 	 */
 	public String getLengthFunction(int dataType)
 	{
 		return "length";
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getMaxFunction()
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getMaxFunction()
 	 */
 	public String getMaxFunction()
 	{
 		return "max";
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getMaxPrecision(int)
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getMaxPrecision(int)
 	 */
 	public int getMaxPrecision(int dataType)
 	{
@@ -125,30 +118,24 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getMaxScale(int)
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getMaxScale(int)
 	 */
 	public int getMaxScale(int dataType)
 	{
 		return getMaxPrecision(dataType);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getPrecisionDigits(int, int)
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getPrecisionDigits(int, int)
 	 */
 	public int getPrecisionDigits(int columnSize, int dataType)
 	{
 		return columnSize;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getColumnLength(int, int)
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getColumnLength(int, int)
 	 */
 	public int getColumnLength(int columnSize, int dataType)
 	{
@@ -241,6 +228,12 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 		return returnVal.toArray(new String[returnVal.size()]);
 	}
 
+	/**
+	 * @param tableName
+	 * @param info
+	 * @param nullable
+	 * @return
+	 */
 	public String getModifyColumnNullabilitySQL(String tableName, TableColumnInfo info, boolean nullable)
 	{
 		StringBuilder result = new StringBuilder();
@@ -423,12 +416,11 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 	 *           the column to modify
 	 * @return the SQL to execute
 	 */
-	public String[] getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String[] getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		String alterClause = DialectUtils.MODIFY_COLUMN_CLAUSE;
-		return new String[] {
-			DialectUtils.getColumnNullableAlterSQL(info, this, alterClause, true)
-		};
+		return new String[] { DialectUtils.getColumnNullableAlterSQL(info, this, alterClause, true) };
 	}
 
 	/**
@@ -484,8 +476,8 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 	 * @return the SQL to make the change
 	 * @throw UnsupportedOperationException if the database doesn't support modifying column types.
 	 */
-	public List<String> getColumnTypeAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
-		throws UnsupportedOperationException
+	public List<String> getColumnTypeAlterSQL(TableColumnInfo from, TableColumnInfo to,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
 		StringBuilder result = new StringBuilder();
 		result.append("ALTER TABLE ");
@@ -562,285 +554,570 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 		return DialectType.MYSQL;
 	}
 
-	public String[] getAccessMethodsTypes()
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getIndexAccessMethodsTypes()
+	 */
+	public String[] getIndexAccessMethodsTypes()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return new String[] { "UNIQUE", "FULLTEXT", "SPATIAL" };
 	}
 
-	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getIndexStorageOptions()
+	 */
+	public String[] getIndexStorageOptions()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return new String[] { "BTREE", "HASH" };
+	}
+	
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddAutoIncrementSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
+	{
+		// ALTER TABLE <tableName> MODIFY <columnName> MEDIUMINT NOT NULL AUTO_INCREMENT PRIMARY KEY
+		String templateStr = ST_ADD_AUTO_INCREMENT_STYLE_ONE;
+		StringTemplate st = new StringTemplate(templateStr);
+		
+		HashMap<String, String> valuesMap = new HashMap<String, String>();
+		valuesMap.put(ST_TABLE_NAME_KEY, column.getTableName());
+		valuesMap.put(ST_COLUMN_NAME_KEY, column.getColumnName());
+
+		return new String[] { DialectUtils.getAddAutoIncrementColumn(this, st, valuesMap, qualifier, prefs) };
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddColumnSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
 	public String[] getAddColumnSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		boolean addDefaultClause = true;
+		boolean supportsNullQualifier = true;
+		boolean addNullClause = true;
+
+		return new String[] { DialectUtils.getAddColumSQL(column,
+			this,
+			addDefaultClause,
+			supportsNullQualifier,
+			addNullClause,
+			qualifier,
+			prefs) };
+
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddForeignKeyConstraintSQL(java.lang.String,
+	 *      java.lang.String, java.lang.String, java.lang.Boolean, java.lang.Boolean, java.lang.Boolean,
+	 *      boolean, java.lang.String, java.util.Collection, java.lang.String, java.lang.String,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
 	public String[] getAddForeignKeyConstraintSQL(String localTableName, String refTableName,
 		String constraintName, Boolean deferrable, Boolean initiallyDeferred, Boolean matchFull,
 		boolean autoFKIndex, String fkIndexName, Collection<String[]> localRefColumns, String onUpdateAction,
 		String onDeleteAction, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		// From MySQL 5.0 Reference:
+		// ALTER TABLE tbl_name
+		//  ADD [CONSTRAINT symbol] FOREIGN KEY [id] (index_col_name, ...)
+		//  REFERENCES tbl_name (index_col_name, ...)
+		//  [ON DELETE {RESTRICT | CASCADE | SET NULL | NO ACTION}]
+		//  [ON UPDATE {RESTRICT | CASCADE | SET NULL | NO ACTION}]
+		
+		String fkTemplateStr = ST_ADD_FOREIGN_KEY_CONSTRAINT_STYLE_ONE;
+		
+		StringTemplate fkst = new StringTemplate(fkTemplateStr);
+		HashMap<String, String> fkValuesMap = new HashMap<String, String>();
+		fkValuesMap.put(ST_CHILD_TABLE_KEY, localTableName);
+		if (constraintName != null) {
+			fkValuesMap.put(ST_CONSTRAINT_KEY, "CONSTRAINT");
+			fkValuesMap.put(ST_CONSTRAINT_NAME_KEY, constraintName);
+		}
+		fkValuesMap.put(ST_PARENT_TABLE_KEY, refTableName);
+		
+		StringTemplate ckIndexSt = null;
+		HashMap<String, String> ckIndexValuesMap = null;
+		if (autoFKIndex) {
+			ckIndexSt = new StringTemplate();
+			ckIndexValuesMap = new HashMap<String, String>();
+		} 
+		
+		return DialectUtils.getAddForeignKeyConstraintSQL(fkst,
+			fkValuesMap,
+			ckIndexSt,
+			ckIndexValuesMap,
+			localRefColumns,
+			qualifier,
+			prefs,
+			this);
 	}
 
-	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName, TableColumnInfo[] columns,
-		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddUniqueConstraintSQL(java.lang.String,
+	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo[],
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName,
+		TableColumnInfo[] columns, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		// From MySQL 5.0 reference manual
+		//
+		// ALTER [IGNORE] TABLE tbl_name
+	   // 	alter_specification [, alter_specification] ...
+		// 
+		// alter_specification:
+		//    | ADD [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY] [index_name] [index_type] (index_col_name,...)
+		
+		String templateStr = ST_ADD_UNIQUE_CONSTRAINT_STYLE_ONE;
+		
+		StringTemplate st = new StringTemplate(templateStr);
+		st.setAttribute(ST_TABLE_NAME_KEY, tableName);
+		if (constraintName != null) {
+			st.setAttribute(ST_CONSTRAINT_KEY, "CONSTRAINT");
+			st.setAttribute(ST_CONSTRAINT_NAME_KEY, constraintName);
+		}
+		
+		// TODO: allow the user to choose the name of the index that is created.
+		//		if (indexName != null) {
+		//			st.setAttribute(ST_INDEX_KEY, indexName);
+		//			st.setAttribute(ST_INDEX_NAME_KEY, indexName);
+		//		}
+
+		// TODO: allow the user to choose the index type that is created.
+		//		if (indexType != null) {
+		//			st.setAttribute(ST_INDEX_TYPE_KEY, indexType);
+		//		}
+		
+		for (TableColumnInfo columnInfo : columns) {
+			st.setAttribute(ST_INDEX_COLUMN_NAME_KEY, columnInfo.getColumnName());
+		}
+		
+		return new String[] { st.toString() };
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAlterSequenceSQL(java.lang.String,
+	 *      java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
 	public String[] getAlterSequenceSQL(String sequenceName, String increment, String minimum, String maximum,
 		String restart, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final int featureId = DialectUtils.ALTER_SEQUENCE_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getCreateIndexSQL(java.lang.String,
+	 *      java.lang.String, java.lang.String, java.lang.String[], boolean, java.lang.String,
+	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
 	public String getCreateIndexSQL(String indexName, String tableName, String accessMethod, String[] columns,
 		boolean unique, String tablespace, String constraints, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		/*
+		 * From MySQL 5.0 manual:
+		 */
+		// CREATE [UNIQUE|FULLTEXT|SPATIAL] INDEX index_name
+		// [index_type]
+		// ON tbl_name (index_col_name,...)
+		//
+		// index_col_name:
+		// col_name [(length)] [ASC | DESC]
+		//	
+		// index_type:
+		// USING {BTREE | HASH}
+		
+		// Note; indexType is unused at the moment because the index dialog doesn't accept this.  See below.
+		String templateStr = ST_CREATE_INDEX_STYLE_ONE;
+		
+		StringTemplate st = new StringTemplate(templateStr);
+
+		HashMap<String, String> valuesMap = new HashMap<String, String>();
+
+		if (accessMethod != null && !accessMethod.toLowerCase().equals("default"))
+		{
+			valuesMap.put(ST_ACCESS_METHOD_KEY, accessMethod);
+		}
+		valuesMap.put(ST_INDEX_NAME_KEY, indexName);
+		// TODO: Need to enhance the index dialog to allow specifying storage option.  For now just accept the 
+		// default for the index access method.
+		// valuesMap.put("indexType", "USING BTREE");
+		valuesMap.put(ST_TABLE_NAME_KEY, tableName);
+		
+		for (String columnName : columns) {
+			valuesMap.put(ST_INDEX_COLUMNS_KEY, columnName);
+		}
+		
+		
+		return DialectUtils.getAddIndexSQL(this, st, valuesMap, qualifier, prefs);
+		
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getCreateSequenceSQL(java.lang.String,
+	 *      java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
 	public String getCreateSequenceSQL(String sequenceName, String increment, String minimum, String maximum,
 		String start, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final int featureId = DialectUtils.CREATE_SEQUENCE_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getCreateTableSQL(java.lang.String,
+	 *      java.util.List, java.util.List, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier)
+	 */
 	public String getCreateTableSQL(String tableName, List<TableColumnInfo> columns,
 		List<TableColumnInfo> primaryKeys, SqlGenerationPreferences prefs, DatabaseObjectQualifier qualifier)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return DialectUtils.getCreateTableSQL(tableName, columns, primaryKeys, prefs, qualifier, this);
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getCreateViewSQL(java.lang.String,
+	 *      java.lang.String, java.lang.String,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
 	public String getCreateViewSQL(String viewName, String definition, String checkOption,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return DialectUtils.getCreateViewSQL(viewName, definition, checkOption, qualifier, prefs, this);
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropConstraintSQL(java.lang.String,
+	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
 	public String getDropConstraintSQL(String tableName, String constraintName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final int featureId = DialectUtils.DROP_CONSTRAINT_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);		
 	}
 
-	public String getDropIndexSQL(String indexName, boolean cascade, DatabaseObjectQualifier qualifier,
-		SqlGenerationPreferences prefs)
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropIndexSQL(String, java.lang.String,
+	 *      boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	public String getDropIndexSQL(String tableName, String indexName, boolean cascade,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		Boolean cascadeNotSupported = null;
+		return DialectUtils.getDropIndexSQL(tableName, indexName, cascadeNotSupported, qualifier, prefs, this);
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropSequenceSQL(java.lang.String,
+	 *      boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
 	public String getDropSequenceSQL(String sequenceName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final int featureId = DialectUtils.DROP_SEQUENCE_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropViewSQL(java.lang.String, boolean,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
 	public String getDropViewSQL(String viewName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return DialectUtils.getDropViewSQL(viewName, cascade, qualifier, prefs, this);
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getInsertIntoSQL(java.lang.String,
+	 *      java.util.List, java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
 	public String getInsertIntoSQL(String tableName, List<String> columns, String valuesPart,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return DialectUtils.getInsertIntoSQL(tableName, columns, valuesPart, qualifier, prefs, this);
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getRenameTableSQL(java.lang.String,
+	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
 	public String getRenameTableSQL(String oldTableName, String newTableName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return DialectUtils.getRenameTableSQL(oldTableName, newTableName, qualifier, prefs, this);
 	}
 
-	public String[] getRenameViewSQL(String oldViewName, String newViewName, DatabaseObjectQualifier qualifier,
-		SqlGenerationPreferences prefs)
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getRenameViewSQL(java.lang.String,
+	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	public String[] getRenameViewSQL(String oldViewName, String newViewName,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		String renameClause = DialectUtils.RENAME_CLAUSE;
+		String commandPrefix = DialectUtils.ALTER_TABLE_CLAUSE;
+		return new String[] { DialectUtils.getRenameViewSQL(commandPrefix,
+			renameClause,
+			oldViewName,
+			newViewName,
+			qualifier,
+			prefs,
+			this) };
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getSequenceInformationSQL(java.lang.String,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
 	public String getSequenceInformationSQL(String sequenceName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final int featureId = DialectUtils.SEQUENCE_INFORMATION_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getUpdateSQL(java.lang.String,
+	 *      java.lang.String[], java.lang.String[], java.lang.String[], java.lang.String[], java.lang.String[],
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
 	public String getUpdateSQL(String tableName, String[] setColumns, String[] setValues, String[] fromTables,
 		String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return DialectUtils.getUpdateSQL(tableName,
+			setColumns,
+			setValues,
+			fromTables,
+			whereColumns,
+			whereValues,
+			qualifier,
+			prefs,
+			this);
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsAccessMethods()
+	 */
 	public boolean supportsAccessMethods()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsAddForeignKeyConstraint()
+	 */
 	public boolean supportsAddForeignKeyConstraint()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsAddUniqueConstraint()
+	 */
 	public boolean supportsAddUniqueConstraint()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsAlterSequence()
+	 */
 	public boolean supportsAlterSequence()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsAutoIncrement()
+	 */
 	public boolean supportsAutoIncrement()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCheckOptionsForViews()
+	 */
 	public boolean supportsCheckOptionsForViews()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCreateIndex()
+	 */
 	public boolean supportsCreateIndex()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCreateSequence()
+	 */
 	public boolean supportsCreateSequence()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCreateTable()
+	 */
 	public boolean supportsCreateTable()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCreateView()
+	 */
 	public boolean supportsCreateView()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsDropConstraint()
+	 */
 	public boolean supportsDropConstraint()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsDropIndex()
+	 */
 	public boolean supportsDropIndex()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsDropSequence()
+	 */
 	public boolean supportsDropSequence()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsDropView()
+	 */
 	public boolean supportsDropView()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsEmptyTables()
+	 */
 	public boolean supportsEmptyTables()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsIndexes()
+	 */
 	public boolean supportsIndexes()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsInsertInto()
+	 */
 	public boolean supportsInsertInto()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsMultipleRowInserts()
+	 */
 	public boolean supportsMultipleRowInserts()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsRenameTable()
+	 */
 	public boolean supportsRenameTable()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsRenameView()
+	 */
 	public boolean supportsRenameView()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsSequence()
+	 */
 	public boolean supportsSequence()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsSequenceInformation()
+	 */
 	public boolean supportsSequenceInformation()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsTablespace()
+	 */
 	public boolean supportsTablespace()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsUpdate()
+	 */
 	public boolean supportsUpdate()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -848,15 +1125,17 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 	 */
 	public boolean supportsAddColumn()
 	{
-		// TODO verify this is correct
 		return true;
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getViewDefinitionSQL(java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getViewDefinitionSQL(java.lang.String,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,
-		SqlGenerationPreferences prefs) {
+		SqlGenerationPreferences prefs)
+	{
 		return null;
 	}
 	

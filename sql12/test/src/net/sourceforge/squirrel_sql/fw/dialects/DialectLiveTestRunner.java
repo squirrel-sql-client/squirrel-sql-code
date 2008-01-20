@@ -112,6 +112,9 @@ public class DialectLiveTestRunner {
    private static final String testCreateViewTable = "createviewtest";
    private static final String testViewName = "testview";
    private static final String testNewViewName = "newTestView";
+   private static final String testRenameTableBefore = "tableRenameTest";
+   private static final String testRenameTableAfter = "tableWasRenamed";
+   private static final String testCreateIndexTable = "createIndexTest";
    
    public DialectLiveTestRunner() throws Exception {
       ApplicationArguments.initialize(new String[] {});
@@ -221,14 +224,14 @@ public class DialectLiveTestRunner {
       
       autoIncrementColumn =
 			getIntegerColumn(autoIncrementColumnName,
-				autoIncrementTableName,
+				fixTableName(session, autoIncrementTableName),
 				false,
 				null,
 				"Column that will be auto incrementing");
       
-      addColumn = getIntegerColumn("columnAdded", testUniqueConstraintTableName, true, null, null);
+      addColumn = getIntegerColumn("columnAdded", fixTableName(session, testUniqueConstraintTableName), true, null, null);
       
-      myIdColumn = getCharColumn("myId", testUniqueConstraintTableName, true, null, null);
+      myIdColumn = getCharColumn("myId", fixTableName(session, testUniqueConstraintTableName), true, null, null);
    }
 
    private ITableInfo getTableInfo(ISession session, String tableName)
@@ -331,10 +334,10 @@ public class DialectLiveTestRunner {
       dropTable(session, fixTableName(session, "test4"));
       dropTable(session, fixTableName(session, "test5"));
       dropTable(session, fixTableName(session, "pktest"));
-      dropTable(session, fixTableName(session, "tableRenameTest"));
-      dropTable(session, fixTableName(session, "tableWasRenamed"));
+      dropTable(session, fixTableName(session, testRenameTableBefore));
+      dropTable(session, fixTableName(session, testRenameTableAfter));
       dropTable(session, fixTableName(session, testCreateViewTable));
-      dropTable(session, fixTableName(session, "createIndexTest"));
+      dropTable(session, fixTableName(session, testCreateIndexTable));
       dropTable(session, fixTableName(session, fkChildTableName));
       dropTable(session, fixTableName(session, fkParentTableName));
       dropTable(session, fixTableName(session, testUniqueConstraintTableName));
@@ -381,12 +384,13 @@ public class DialectLiveTestRunner {
             + " ( mychar char(10))" + pageSizeClause);
       runSQL(session, "create table " + fixTableName(session, "test5")
             + " ( mychar char(10))" + pageSizeClause);
-      runSQL(session, "create table " + fixTableName(session, "tableRenameTest")
+      runSQL(session, "create table " + fixTableName(session, testRenameTableBefore)
          + " ( mychar char(10))" + pageSizeClause);
       runSQL(session, "create table " + fixTableName(session, testCreateViewTable)
          + " ( mychar char(10))" + pageSizeClause);
-      runSQL(session, "create table " + fixTableName(session, "createIndexTest")
-         + " ( mychar varchar(10), myuniquechar varchar(10))" + pageSizeClause);
+      // MySQL spatial index requires a not null column
+      runSQL(session, "create table " + fixTableName(session, testCreateIndexTable)
+         + " ( mychar varchar(10) not null, myuniquechar varchar(10))" + pageSizeClause);
       /* DB2 requires primary keys to also be declared "not null" */
       runSQL(session, "create table " + fixTableName(session, fkParentTableName)
          + " ( "+fkParentColumnName+" integer not null primary key, mychar char(10))" + pageSizeClause);
@@ -404,7 +408,7 @@ public class DialectLiveTestRunner {
 
       int count = 0;
       while (count++ < 11) {
-      	runSQL(session, "insert into "+integerDataTableName+" values ("+count+")");
+      	runSQL(session, "insert into "+fixTableName(session, integerDataTableName)+" values ("+count+")");
       }
 
       runSQL(session, 
@@ -817,6 +821,7 @@ public class DialectLiveTestRunner {
       String catalog = ((MockSession) session).getDefaultCatalog();
       String schema = ((MockSession) session).getDefaultSchema();
       String columnName = "firstCol";
+      String tableName = fixTableName(session, testCreateTable);
       
       TableColumnInfo firstCol =
 			new TableColumnInfo(	catalog,
@@ -838,11 +843,11 @@ public class DialectLiveTestRunner {
       List<TableColumnInfo> pkColumns = null;
       
    	if (dialect.supportsCreateTable()) {
-   		String sql = dialect.getCreateTableSQL(testCreateTable, columns, pkColumns, prefs, qualifier); 
+   		String sql = dialect.getCreateTableSQL(tableName, columns, pkColumns, prefs, qualifier); 
    		runSQL(session, sql);
    	} else {
    		try {
-   			dialect.getCreateTableSQL(testCreateTable, columns, pkColumns, prefs, qualifier);
+   			dialect.getCreateTableSQL(tableName, columns, pkColumns, prefs, qualifier);
    			throw new IllegalStateException("Expected dialect to fail to provide SQL for create table");
    		} catch (Exception e) {
    			// This is expected
@@ -853,8 +858,8 @@ public class DialectLiveTestRunner {
    }   
    private void testRenameTable(ISession session) throws Exception {
       HibernateDialect dialect = getDialect(session);
-      String oldTableName = "tableRenameTest";
-      String newTableName = "tableWasRenamed";
+      String oldTableName = fixTableName(session, testRenameTableBefore);
+      String newTableName = fixTableName(session, testRenameTableAfter);
       
    	if (dialect.supportsRenameTable()) {
    		String sql = dialect.getRenameTableSQL(oldTableName, newTableName, qualifier, prefs);
@@ -957,12 +962,13 @@ public class DialectLiveTestRunner {
 
 		final String indexName1 = "testIndex";
 		final String indexName2 = "testUniqueIndex";
+		final String tableName = fixTableName(session, testCreateIndexTable);
 		
    	if (dialect.supportsCreateIndex()) {
    		
    		String[] accessMethods = null;
    		if (dialect.supportsAccessMethods()) {
-   			accessMethods = dialect.getAccessMethodsTypes();
+   			accessMethods = dialect.getIndexAccessMethodsTypes();
    		} else {
    			accessMethods = new String[] { "" };
    		}
@@ -972,31 +978,55 @@ public class DialectLiveTestRunner {
    			if (accessMethod.equalsIgnoreCase("gin") || accessMethod.equalsIgnoreCase("gist")) {
    				continue;
    			}
-   			
+   			// MySQL requires MyISAM storage engine for spatial indexes.
+				if (DialectFactory.isMySQL5(session.getMetaData())
+					|| DialectFactory.isMySQL(session.getMetaData()))
+				{
+					if (accessMethod.equalsIgnoreCase("spatial"))
+					{
+						continue;
+					}
+				}
 	   		// create a non-unique index on mychar
 	   		columns = new String[] { "mychar" };
-	   		String sql = 
-	   			dialect.getCreateIndexSQL(indexName1, "createIndexTest", accessMethod, columns, false, tablespace, constraints, qualifier, prefs);
-	   		// create it.
-	   		runSQL(session, sql);
+				String sql =
+					dialect.getCreateIndexSQL(indexName1,
+						tableName,
+						accessMethod,
+						columns,
+						false,
+						tablespace,
+						constraints,
+						qualifier,
+						prefs);
+				// create it.
+				runSQL(session, sql);
    		
 	   		// now drop it.
-	   		runSQL(session, dialect.getDropIndexSQL(indexName1, true, qualifier, prefs));
+	   		runSQL(session, dialect.getDropIndexSQL(tableName, indexName1, true, qualifier, prefs));
 	   		
 	   		// create a unique index on myuniquechar
-	   		columns = new String[] { "myuniquechar" };
-	   		sql = 
-	   			dialect.getCreateIndexSQL(indexName2, "createIndexTest", accessMethod, columns, true, tablespace, constraints, qualifier, prefs);
+				columns = new String[] { "myuniquechar" };
+				sql =
+					dialect.getCreateIndexSQL(indexName2,
+						tableName,
+						accessMethod,
+						columns,
+						true,
+						tablespace,
+						constraints,
+						qualifier,
+						prefs);
 	   		
 	   		// create it.
 	   		runSQL(session, sql);
 	   		
 	   		// now drop it.
-	   		runSQL(session, dialect.getDropIndexSQL(indexName2, true, qualifier, prefs));
+	   		runSQL(session, dialect.getDropIndexSQL(tableName, indexName2, true, qualifier, prefs));
    		}   		
    	} else {
    		try {
-   			dialect.getCreateIndexSQL("testIndex", "createIndexTest", null, columns, false, tablespace, constraints, qualifier, prefs);
+   			dialect.getCreateIndexSQL(indexName1, tableName, null, columns, false, tablespace, constraints, qualifier, prefs);
    			throw new IllegalStateException("Expected dialect to fail to provide SQL for create index");
    		} catch (Exception e) {
    			// this is expected
@@ -1121,42 +1151,70 @@ public class DialectLiveTestRunner {
    	}   	   	   	   	   	   	
    }
    
-   private void testAddForeignKeyConstraint(ISession session) throws Exception {
-   	HibernateDialect dialect = getDialect(session);
-   	boolean deferrable = true;
-   	boolean initiallyDeferred = true;
-   	boolean matchFull = true;
-   	boolean autoFKIndex = false;
-   	String fkIndexName = "fk_idx";
-   	ArrayList<String[]> localRefColumns = new ArrayList<String[]>();
-   	localRefColumns.add(new String[] { fkChildColumnName, fkParentColumnName });
-   	String onUpdateAction = null;
-   	String onDeleteAction = null;
-   	if (dialect.supportsAddForeignKeyConstraint()) {
-   		String[] sql = 
-   			dialect.getAddForeignKeyConstraintSQL(fkChildTableName, fkParentTableName, "fk_child_refs_parent", 
-   				deferrable, initiallyDeferred, matchFull, autoFKIndex, fkIndexName, localRefColumns, 
-   				onUpdateAction, onDeleteAction, qualifier, prefs);
-   		runSQL(session, sql);   		
-   	} else {
-   		try {
-   			dialect.getAddForeignKeyConstraintSQL(fkChildTableName, fkParentTableName, "fk_child_refs_parent", 
-   				deferrable, initiallyDeferred, matchFull, autoFKIndex, fkIndexName, localRefColumns, 
-   				onUpdateAction, onDeleteAction, qualifier, prefs);
-   			throw new IllegalStateException("Expected dialect to fail to provide SQL for add FK constraint");
-   		} catch (Exception e) {
-   			// this is expected
-   			System.err.println(e.getMessage());
-   		}
-   	}   	   	   	   	   	   	   	
-   }
+   private void testAddForeignKeyConstraint(ISession session) throws Exception
+	{
+		HibernateDialect dialect = getDialect(session);
+		boolean deferrable = true;
+		boolean initiallyDeferred = true;
+		boolean matchFull = true;
+		boolean autoFKIndex = false;
+		String fkIndexName = "fk_idx";
+		ArrayList<String[]> localRefColumns = new ArrayList<String[]>();
+		localRefColumns.add(new String[] { fkChildColumnName, fkParentColumnName });
+		String onUpdateAction = null;
+		String onDeleteAction = null;
+		String childTable = fixTableName(session, fkChildTableName);
+		String parentTable = fixTableName(session, fkParentTableName);
+		if (dialect.supportsAddForeignKeyConstraint())
+		{
+			String[] sql =
+				dialect.getAddForeignKeyConstraintSQL(childTable,
+					parentTable,
+					"fk_child_refs_parent",
+					deferrable,
+					initiallyDeferred,
+					matchFull,
+					autoFKIndex,
+					fkIndexName,
+					localRefColumns,
+					onUpdateAction,
+					onDeleteAction,
+					qualifier,
+					prefs);
+			runSQL(session, sql);
+		} else
+		{
+			try
+			{
+				dialect.getAddForeignKeyConstraintSQL(childTable,
+					parentTable,
+					"fk_child_refs_parent",
+					deferrable,
+					initiallyDeferred,
+					matchFull,
+					autoFKIndex,
+					fkIndexName,
+					localRefColumns,
+					onUpdateAction,
+					onDeleteAction,
+					qualifier,
+					prefs);
+				throw new IllegalStateException("Expected dialect to fail to provide SQL for add FK constraint");
+			} catch (Exception e)
+			{
+				// this is expected
+				System.err.println(e.getMessage());
+			}
+		}
+	}
    
    private void testAddUniqueConstraint(ISession session) throws Exception {
    	HibernateDialect dialect = getDialect(session);
    	TableColumnInfo[] columns = new TableColumnInfo[] { myIdColumn };
+   	String tableName = fixTableName(session, testUniqueConstraintTableName);
    	if (dialect.supportsAddUniqueConstraint()) {
    		String[] sql = 
-   			dialect.getAddUniqueConstraintSQL(testUniqueConstraintTableName,
+   			dialect.getAddUniqueConstraintSQL(tableName,
    				uniqueConstraintName,
 					columns,
 					qualifier,
@@ -1164,7 +1222,7 @@ public class DialectLiveTestRunner {
    		runSQL(session, sql);   		
    	} else {
    		try {
-   			dialect.getAddUniqueConstraintSQL(testUniqueConstraintTableName,
+   			dialect.getAddUniqueConstraintSQL(tableName,
    				uniqueConstraintName,
 					columns,
 					qualifier,
@@ -1227,16 +1285,17 @@ public class DialectLiveTestRunner {
    
    private void testInsertIntoSQL(ISession session) throws Exception {
    	HibernateDialect dialect = getDialect(session);
-   	String valuesPart = "select distinct myid from "+integerDataTableName;
+   	String valuesPart = "select distinct myid from "+fixTableName(session, integerDataTableName);
    	ArrayList<String> columns = new ArrayList<String>();
+   	String tableName = fixTableName(session, testInsertIntoTable);
 		if (dialect.supportsInsertInto())
 		{
 			String sql = 
-				dialect.getInsertIntoSQL(testInsertIntoTable, columns, valuesPart, qualifier, prefs);
+				dialect.getInsertIntoSQL(tableName, columns, valuesPart, qualifier, prefs);
 			runSQL(session, sql);
 			
 			valuesPart = " values ( 20 )";
-			sql = dialect.getInsertIntoSQL(testInsertIntoTable, columns, valuesPart, qualifier, prefs);
+			sql = dialect.getInsertIntoSQL(tableName, columns, valuesPart, qualifier, prefs);
 			runSQL(session, sql);
 		} 
 		else

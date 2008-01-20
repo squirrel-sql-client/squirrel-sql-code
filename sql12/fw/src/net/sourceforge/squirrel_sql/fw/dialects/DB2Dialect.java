@@ -620,11 +620,20 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAccessMethodsTypes()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getIndexAccessMethodsTypes()
 	 */
-	public String[] getAccessMethodsTypes()
+	public String[] getIndexAccessMethodsTypes()
 	{
 		return new String[] { };
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getIndexStorageOptions()
+	 */
+	public String[] getIndexStorageOptions()
+	{
+		// TODO Auto-generated method stub		
+		return null;
 	}
 
 	/**
@@ -853,12 +862,12 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropIndexSQL(java.lang.String,
-	 *      boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
-	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropIndexSQL(String,
+	 *      java.lang.String, boolean,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
-	public String getDropIndexSQL(String indexName, boolean cascade, DatabaseObjectQualifier qualifier,
-		SqlGenerationPreferences prefs)
+	public String getDropIndexSQL(String tableName, String indexName, boolean cascade,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		Boolean cascadeNotSupported = null;
 		return DialectUtils.getDropIndexSQL(indexName, cascadeNotSupported, qualifier, prefs, this);

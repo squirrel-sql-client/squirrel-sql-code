@@ -486,9 +486,18 @@ public class SQLServerDialect extends org.hibernate.dialect.SQLServerDialect imp
 		return DialectType.MSSQL;
 	}
 
-	public String[] getAccessMethodsTypes()
+	public String[] getIndexAccessMethodsTypes()
 	{
 		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getIndexStorageOptions()
+	 */
+	public String[] getIndexStorageOptions()
+	{
+		// TODO Auto-generated method stub		
 		return null;
 	}
 
@@ -592,8 +601,8 @@ public class SQLServerDialect extends org.hibernate.dialect.SQLServerDialect imp
 		return null;
 	}
 
-	public String getDropIndexSQL(String indexName, boolean cascade, DatabaseObjectQualifier qualifier,
-		SqlGenerationPreferences prefs)
+	public String getDropIndexSQL(String tableName, String indexName, boolean cascade,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO Auto-generated method stub
 		return null;
