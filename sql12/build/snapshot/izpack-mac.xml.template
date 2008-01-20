@@ -67,7 +67,7 @@
 			<file   targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/cglib-2.1.3.jar"/> 
 			<file	targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
-				    src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/commons-cli.jar"/>
+                                        src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/commons-cli.jar"/>
 			<file   targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/commons-collections-2.1.1.jar"/> 						    
 			<file   targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
@@ -75,32 +75,33 @@
 			<file	targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
 				    src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/dom4j-1.6.1.jar"/>
 			<file	targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
-				    src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/ejb3-persistence.jar"/>
+                                        src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/ejb3-persistence.jar"/>
 			<file	targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
-				    src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/forms.jar"/>
+                                        src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/forms.jar"/>
 			<file	targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/fw.jar"/>
 			<file   targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
-			        src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/hibernate3.2.4.sp1.jar"/>
+                                        src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/hibernate3.2.4.sp1.jar"/>
 			<file   targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
-			        src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/hibernate-annotations-3.3.0.jar"/>
+                                        src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/hibernate-annotations-3.3.0.jar"/>
 			<file   targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
-			        src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/hibernate-commons-annotations-3.3.0.jar"/>
+                                        src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/hibernate-commons-annotations-3.3.0.jar"/>
 			<file   targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
-			        src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/hibernate-entitymanager-3.3.1.jar"/>
+                                        src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/hibernate-entitymanager-3.3.1.jar"/>
 			<file   targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
-			        src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/hibernate3.2.4.sp1.jar"/>
-            <file   targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
-                    src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/jxl.jar"/>
+                                        src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/hibernate3.2.4.sp1.jar"/>
+                        <file   targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
+                                        src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/jxl.jar"/>
 			<file	targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/log4j.jar"/>
 			<file	targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
 					src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/nanoxml-2.1.jar"/>
-
+                        <file   targetdir="$INSTALL_PATH/Contents/Resources/Java/lib"
+                                        src="../../squirrel-sql-dist/squirrel-sql/core/dist/lib/stringtemplate-3.1.b1.jar"/>
 				
 		    <!-- MacOS X plugin always gets installed since this is the MacOS X installer -->
 			<file   targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins"
-                    src="../../squirrel-sql-dist/squirrel-sql/core/dist/plugins/macosx.jar"/>
+                                        src="../../squirrel-sql-dist/squirrel-sql/core/dist/plugins/macosx.jar"/>
 			<file	targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins"
 					src="../../squirrel-sql-dist/squirrel-sql/plugins/macosx/dist/macosx"/>
 			<file	targetdir="$INSTALL_PATH/Contents/Resources/Java/plugins/macosx"
