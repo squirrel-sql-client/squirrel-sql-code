@@ -86,7 +86,7 @@ public class AddIndexDialog extends AbstractRefactoringTabbedDialog
 	private PropertiesTab _propertiesTab;
 
 	private final String[] _tableColumns;
-
+	
 	public AddIndexDialog(String[] tableColumns)
 	{
 		super(new Dimension(400, 340));
@@ -169,6 +169,7 @@ public class AddIndexDialog extends AbstractRefactoringTabbedDialog
 
 		private JComboBox _accessMethodBox;
 
+		private JLabel _uniqueLabel;
 		private JCheckBox _uniqueBox;
 
 		private JTextArea _constraintArea;
@@ -198,7 +199,7 @@ public class AddIndexDialog extends AbstractRefactoringTabbedDialog
 			_accessMethodBox.setEditable(false);
 			_accessMethodBox.setEnabled(false);
 
-			JLabel uniqueLabel = getBorderedLabel(i18n.PROPERTIES_UNIQUE_LABEL, emptyBorder);
+			_uniqueLabel = getBorderedLabel(i18n.PROPERTIES_UNIQUE_LABEL, emptyBorder);
 			_uniqueBox = new JCheckBox();
 
 			JLabel constraintLabel = getBorderedLabel(i18n.PROPERTIES_CONSTRAINT_LABEL, emptyBorder);
@@ -290,7 +291,7 @@ public class AddIndexDialog extends AbstractRefactoringTabbedDialog
 																		0,
 																		0));
 
-			add(uniqueLabel, new GridBagConstraints(	0,
+			add(_uniqueLabel, new GridBagConstraints(	0,
 																	3,
 																	1,
 																	1,
@@ -353,6 +354,11 @@ public class AddIndexDialog extends AbstractRefactoringTabbedDialog
 				for (String method : accessMethods)
 				{
 					_accessMethodBox.addItem(method);
+					if (method.equalsIgnoreCase("unique")) {
+						_uniqueBox.setEnabled(false);
+						this.remove(_uniqueLabel);
+						this.remove(_uniqueBox);
+					}
 				}
 			}
 		}
