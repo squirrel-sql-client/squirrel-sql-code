@@ -50,11 +50,14 @@ public class TriggerDetailsTab extends BasePreparedStatementTab
 
 	/** SQL that retrieves the data. */
 	private static String SQL =
-		"select owner, trigger_name, trigger_type, triggering_event, table_owner," +
-		" base_object_type, table_name, column_name," +
-		" referencing_names, when_clause, status, description, action_type" +
-		" from sys.all_triggers where owner = ?" +
-		" and trigger_name = ?";
+		"select t.owner, t.trigger_name, t.trigger_type, t.triggering_event, t.table_owner, " +
+		" t.base_object_type, t.table_name, t.column_name, " +
+		" t.referencing_names, t.when_clause, t.status, t.description, t.action_type, o.status as validity " +
+		" from sys.all_triggers t, user_objects o " +
+		" where t.trigger_name = o.OBJECT_NAME " +
+		" and t.owner = ? " +
+		" and t.trigger_name = ? ";
+
 
 	public TriggerDetailsTab()
 	{
