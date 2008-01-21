@@ -574,6 +574,7 @@ public class Oracle9iDialect extends Oracle9Dialect implements HibernateDialect
 	 */
 	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
+		
 		// TODO Auto-generated method stub
 
 		// Cannot use a sequence for the default value of a column. However, we could always reference the
@@ -581,7 +582,40 @@ public class Oracle9iDialect extends Oracle9Dialect implements HibernateDialect
 
 		// :new.id := seq_name@nextval;
 
-		throw new UnsupportedOperationException("Oracle doesn't support using sequences for column defaults");
+		//throw new UnsupportedOperationException("Oracle doesn't support using sequences for column defaults");
+		
+		// create a sequence
+		String seqName = column.getColumnName() + "_AUTOINC_SEQ";
+		String sequenceSql = getCreateSequenceSQL(seqName, "1", "1", null, "1", null, false, qualifier, prefs);
+		
+		// create a trigger
+		//
+		//create or replace trigger foo_trig
+		//before insert on F_BALANCE
+		//for each row
+		//declare
+		//    nextid number(8) := 0;
+		//begin
+		//    SELECT  foo_seq.nextval into nextid from dual;
+		//    :new.ID := nextid;
+		//end;
+		
+		
+		String tableName = column.getTableName();
+		String trigName = column.getColumnName() + "_AUTOINC_TRIG";
+		String triggerSql = 
+			"CREATE OR REPLACE TRIGGER " + trigName + " \n" +
+			"BEFORE INSERT ON " + tableName + " \n" +
+			"FOR EACH ROW \n" +
+			"DECLARE \n" +
+			"    nextid number(8) := 0; \n" +
+			"BEGIN \n" +
+			"    SELECT " +  seqName +".nextval into nextid from dual; \n" +
+			"    :new." + column.getColumnName() + " := nextid; \n" +
+			"END; ";
+		
+		
+		return new String[] { sequenceSql, triggerSql };
 	}
 
 	/**
@@ -768,10 +802,25 @@ public class Oracle9iDialect extends Oracle9Dialect implements HibernateDialect
 		String start, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
+		String minValue = minimum;
+		String minClause = DialectUtils.MINVALUE_CLAUSE;
+		if (minValue == null || "".equals(minValue)) {
+			minValue = DialectUtils.NOMINVALUE_CLAUSE;
+			minClause = "";
+		}
+		String maxValue = maximum; 
+		String maxClause = DialectUtils.MAXVALUE_CLAUSE;
+		if (maxValue == null || "".equals(maxValue)) {
+			maxValue = DialectUtils.NOMAXVALUE_CLAUSE;
+			maxClause = "";
+		}
+		
 		return DialectUtils.getCreateSequenceSQL(sequenceName,
 			increment,
-			minimum,
-			maximum,
+			minClause,
+			minValue,
+			maxClause,
+			maxValue,
 			start,
 			cache,
 			null,
@@ -966,8 +1015,7 @@ public class Oracle9iDialect extends Oracle9Dialect implements HibernateDialect
 	 */
 	public boolean supportsAutoIncrement()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**

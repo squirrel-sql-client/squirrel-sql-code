@@ -107,6 +107,7 @@ public class DialectLiveTestRunner {
    private static final String integerDataTableName = "integerDataTable";
    
    private static final String testSequenceName = "testSequence";
+   private static final String testSequenceName2 = "testSequence2";
    private static final String testCreateTable = "testCreateTable";
    private static final String testInsertIntoTable = "testInsertIntoTable";
    private static final String testCreateViewTable = "createviewtest";
@@ -349,6 +350,7 @@ public class DialectLiveTestRunner {
       
       // Now sequences should go.
       dropSequence(session, testSequenceName);
+      dropSequence(session, testSequenceName2);
       dropSequence(session, autoIncrementTableName + "_MYID_SEQ");      
       
       if (DialectFactory.isOracle(session.getMetaData())) {
@@ -1044,6 +1046,11 @@ public class DialectLiveTestRunner {
    		String sql = 
    			dialect.getCreateSequenceSQL(testSequenceName, "1", "1", "100", "1", cache, cycle, qualifier, prefs);
    		runSQL(session, sql);
+   		
+   		cycle = false;
+   		 sql = 
+    			dialect.getCreateSequenceSQL(testSequenceName2, "1", "1", "100", "1", cache, cycle, qualifier, prefs);
+    		runSQL(session, sql);   		
    	} else {
    		try {
    			dialect.getCreateSequenceSQL(testSequenceName, "1", "1", "100", "1", cache, cycle, qualifier, prefs);
