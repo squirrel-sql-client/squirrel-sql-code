@@ -351,7 +351,8 @@ public class DialectLiveTestRunner {
       // Now sequences should go.
       dropSequence(session, testSequenceName);
       dropSequence(session, testSequenceName2);
-      dropSequence(session, autoIncrementTableName + "_MYID_SEQ");      
+      dropSequence(session, autoIncrementTableName + "_MYID_SEQ");
+      dropSequence(session, autoIncrementColumnName + "_AUTOINC_SEQ");
       
       if (DialectFactory.isOracle(session.getMetaData())) {
          dropTable(session, fixTableName(session, "matview"));

@@ -36,6 +36,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
+import org.antlr.stringtemplate.StringTemplate;
 import org.hibernate.dialect.Oracle9Dialect;
 
 /**
@@ -556,7 +557,7 @@ public class Oracle9iDialect extends Oracle9Dialect implements HibernateDialect
 	 */
 	public String[] getIndexAccessMethodsTypes()
 	{
-		return new String[] { "btree", "bitmap" };
+		return new String[] { "default", "unique", "bitmap" };
 	}
 
 	/**
@@ -574,8 +575,6 @@ public class Oracle9iDialect extends Oracle9Dialect implements HibernateDialect
 	 */
 	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		
-		// TODO Auto-generated method stub
 
 		// Cannot use a sequence for the default value of a column. However, we could always reference the
 		// ssequence in a trigger:
@@ -584,38 +583,31 @@ public class Oracle9iDialect extends Oracle9Dialect implements HibernateDialect
 
 		//throw new UnsupportedOperationException("Oracle doesn't support using sequences for column defaults");
 		
-		// create a sequence
+		// create add sequence sql
 		String seqName = column.getColumnName() + "_AUTOINC_SEQ";
 		String sequenceSql = getCreateSequenceSQL(seqName, "1", "1", null, "1", null, false, qualifier, prefs);
 		
-		// create a trigger
-		//
-		//create or replace trigger foo_trig
-		//before insert on F_BALANCE
-		//for each row
-		//declare
-		//    nextid number(8) := 0;
-		//begin
-		//    SELECT  foo_seq.nextval into nextid from dual;
-		//    :new.ID := nextid;
-		//end;
-		
-		
+		// create trigger sql for column that is to be auto-incremented
 		String tableName = column.getTableName();
 		String trigName = column.getColumnName() + "_AUTOINC_TRIG";
-		String triggerSql = 
-			"CREATE OR REPLACE TRIGGER " + trigName + " \n" +
-			"BEFORE INSERT ON " + tableName + " \n" +
+		String triggerTemplateStr = 
+			"CREATE OR REPLACE TRIGGER $triggerName$ \n" +
+			"BEFORE INSERT ON $tableName$ \n" +
 			"FOR EACH ROW \n" +
 			"DECLARE \n" +
 			"    nextid number(8) := 0; \n" +
 			"BEGIN \n" +
-			"    SELECT " +  seqName +".nextval into nextid from dual; \n" +
-			"    :new." + column.getColumnName() + " := nextid; \n" +
+			"    SELECT $sequenceName$.nextval into nextid from dual; \n" +
+			"    :new.$columnName$ := nextid; \n" +
 			"END; ";
+
+		StringTemplate st = new StringTemplate(triggerTemplateStr);
+		st.setAttribute("triggerName", trigName);
+		st.setAttribute("tableName", tableName);
+		st.setAttribute("sequenceName", seqName);
+		st.setAttribute("columnName", column.getColumnName());
 		
-		
-		return new String[] { sequenceSql, triggerSql };
+		return new String[] { sequenceSql, st.toString() };
 	}
 
 	/**
