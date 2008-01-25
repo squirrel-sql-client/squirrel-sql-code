@@ -355,6 +355,7 @@ public class AddViewDialog extends AbstractRefactoringTabbedDialog
 	public static void main(String[] args)
 	{
 		AddViewDialog dialog = new AddViewDialog();
+		dialog.enableCheckOptions(true);
 		dialog.setVisible(true);
 	}
 

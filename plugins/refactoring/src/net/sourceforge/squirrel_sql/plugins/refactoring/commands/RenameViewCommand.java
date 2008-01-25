@@ -85,13 +85,13 @@ public class RenameViewCommand extends AbstractRefactoringCommand
 				new DatabaseObjectQualifier(_info[0].getCatalogName(), _info[0].getSchemaName());
 			
 			String viewName = _info[0].getSimpleName();
-			
+			String newViewName = customDialog.getNewSimpleName();
 			if (_dialect.supportsRenameView()) {
 				result = 
-					_dialect.getRenameViewSQL(viewName, customDialog.getNewSimpleName(), qualifier, _sqlPrefs);
+					_dialect.getRenameViewSQL(viewName, newViewName, qualifier, _sqlPrefs);
 			} else {
 				String viewDefSql = _dialect.getViewDefinitionSQL(viewName, qualifier, _sqlPrefs);
-				String viewDefinition = getViewDef(viewDefSql);
+				String viewDefinition = getViewDef(newViewName, viewDefSql);
 				String dropOldViewSql = _dialect.getDropViewSQL(viewName, false, qualifier, _sqlPrefs);
 				result = new String[] { viewDefinition, dropOldViewSql };
 			}
@@ -103,7 +103,7 @@ public class RenameViewCommand extends AbstractRefactoringCommand
 		return result;
 	}
 
-	private String getViewDef (String viewDefQuery) {
+	private String getViewDef (String newViewName, String viewDefQuery) {
 		String result = null;
 		ResultSet rs = null;
 		Statement stmt = null;
@@ -114,7 +114,7 @@ public class RenameViewCommand extends AbstractRefactoringCommand
 				result = rs.getString(1);
 				int asIndex = result.toUpperCase().indexOf("AS");
 				if (asIndex != -1) {
-					result = result.substring(asIndex + 2);
+					result = "CREATE VIEW " + newViewName + " AS " + result.substring(asIndex + 2);
 				}
 			}
 		} catch (SQLException e) {
