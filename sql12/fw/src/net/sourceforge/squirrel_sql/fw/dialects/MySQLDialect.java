@@ -757,12 +757,7 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 		// valuesMap.put("indexType", "USING BTREE");
 		valuesMap.put(ST_TABLE_NAME_KEY, tableName);
 		
-		for (String columnName : columns) {
-			valuesMap.put(ST_INDEX_COLUMNS_KEY, columnName);
-		}
-		
-		
-		return DialectUtils.getAddIndexSQL(this, st, valuesMap, qualifier, prefs);
+		return DialectUtils.getAddIndexSQL(this, st, valuesMap, columns, qualifier, prefs);
 		
 	}
 
@@ -801,7 +796,17 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 	public String getCreateViewSQL(String viewName, String definition, String checkOption,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getCreateViewSQL(viewName, definition, checkOption, qualifier, prefs, this);
+		
+		StringTemplate st = new StringTemplate(ST_CREATE_VIEW_STYLE_ONE);
+
+//		"CREATE VIEW $viewName$ " +
+//		"AS $selectStatement$ $with$ $checkOptionType$ $checkOption$";		
+		HashMap<String, String> valuesMap = new HashMap<String, String>();
+		valuesMap.put(ST_VIEW_NAME_KEY, viewName);
+		valuesMap.put(ST_SELECT_STATEMENT_KEY, definition);
+		// check option not supported
+		
+		return DialectUtils.getCreateViewSQL(st, valuesMap, qualifier, prefs, this);
 	}
 
 	/**

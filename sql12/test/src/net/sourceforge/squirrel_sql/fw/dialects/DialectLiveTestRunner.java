@@ -113,6 +113,7 @@ public class DialectLiveTestRunner {
    private static final String testCreateViewTable = "createviewtest";
    private static final String testViewName = "testview";
    private static final String testNewViewName = "newTestView";
+   private static final String testView2Name = "testview2";
    private static final String testRenameTableBefore = "tableRenameTest";
    private static final String testRenameTableAfter = "tableWasRenamed";
    private static final String testCreateIndexTable = "createIndexTest";
@@ -325,6 +326,7 @@ public class DialectLiveTestRunner {
       
       // views will depend on tables, so drop them first
       dropView(session, testViewName);
+      dropView(session, testView2Name);
       dropView(session, testNewViewName);
       
       // Tables might have triggers that depend on sequences, so drop tables next.
@@ -881,13 +883,24 @@ public class DialectLiveTestRunner {
    private void testCreateView(ISession session) throws Exception {
       HibernateDialect dialect = getDialect(session);
       
+      String checkOption = "";
+      
    	if (dialect.supportsCreateView()) {
+         
    		String sql =
-				dialect.getCreateViewSQL(testViewName, "select * from "+testCreateViewTable, null, qualifier, prefs);
+				dialect.getCreateViewSQL(testViewName, "select * from "+testCreateViewTable, checkOption, qualifier, prefs);
    		runSQL(session, sql);
+   		
+         if (dialect.supportsCheckOptionsForViews()) {
+         	checkOption = "some_check";
+         	sql =
+   				dialect.getCreateViewSQL(testView2Name, "select * from "+testCreateViewTable, checkOption, qualifier, prefs);
+      		runSQL(session, sql);
+         }
+
    	} else {
    		try {
-   			dialect.getCreateViewSQL(testViewName, "select * from "+testCreateViewTable, null, qualifier, prefs);
+   			dialect.getCreateViewSQL(testViewName, "select * from "+testCreateViewTable, checkOption, qualifier, prefs);
    			throw new IllegalStateException("Expected dialect to fail to provide SQL for " +
    					"create view");
    		} catch (Exception e) {
@@ -910,7 +923,7 @@ public class DialectLiveTestRunner {
    		String[] sql = 
    			dialect.getRenameViewSQL(oldViewName, newViewName, qual, prefs);
    		runSQL(session, sql);
-   	} else if ( viewDefSql != null) {
+   	} else if ( viewDefSql != null && dialect.supportsCreateView()) {
    		
    		ResultSet rs = this.runQuery(session, viewDefSql);
    		StringBuilder tmp = new StringBuilder();
