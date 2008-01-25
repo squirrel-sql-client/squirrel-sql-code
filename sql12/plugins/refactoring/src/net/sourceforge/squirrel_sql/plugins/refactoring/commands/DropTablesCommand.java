@@ -91,30 +91,6 @@ public class DropTablesCommand extends AbstractRefactoringCommand
 		super(session, tables);
 	}
 
-	// TODO: Remove when HibernateDialect is merged into HibernateDialect.
-	private HibernateDialect _dialect;
-
-	// TODO: Remove when HibernateDialect is merged into HibernateDialect.
-	@Override
-	public void execute()
-	{
-		try
-		{
-			_dialect =
-				DialectFactory.getDialect(DialectFactory.DEST_TYPE,
-					_session.getApplication().getMainFrame(),
-					_session.getMetaData());
-			onExecute();
-		} catch (final UserCancelledOperationException e)
-		{
-			_session.showErrorMessage(AbstractRefactoringCommand.i18n.DIALECT_SELECTION_CANCELLED);
-		} catch (final Exception e)
-		{
-			_session.showErrorMessage(e);
-			s_log.error("Unexpected exception on execution: " + e.getMessage(), e);
-		}
-	}
-
 	@Override
 	protected void onExecute()
 	{
@@ -197,14 +173,7 @@ public class DropTablesCommand extends AbstractRefactoringCommand
 				// There are more dependancies then just FKs (like views, etc.),
 				// therefore cascadeConstraints is used as a parameter for the TableDropSQL.
 				final List<String> sqls = _dialect.getTableDropSQL(info, cascadeConstraints, isMaterializedView);
-				for (final String sql : sqls)
-				{
-					final StringBuilder dropSQL = new StringBuilder();
-					dropSQL.append(sql);
-					dropSQL.append(_sqlPrefs.getSqlStatementSeparator());
-					dropSQL.append("\n");
-					result.add(dropSQL.toString());
-				}
+				result.addAll(sqls);
 			}
 		} catch (final UnsupportedOperationException e2)
 		{
