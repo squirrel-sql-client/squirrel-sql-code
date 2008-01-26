@@ -1409,6 +1409,13 @@ public class DialectUtils implements StringTemplateConstants
 		return sql.toString();
 	}
 
+	public static String getRenameViewSql(StringTemplate st, HashMap<String, String> valuesMap, 
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs, HibernateDialect dialect)
+	{
+		bindAttributes(dialect, st, valuesMap, qualifier, prefs);
+		return st.toString();		
+	}
+	
 	/**
 	 * Returns the SQL command to drop the specified table's foreign key constraint.
 	 * 
@@ -2469,21 +2476,6 @@ public class DialectUtils implements StringTemplateConstants
 		return result.toString();
 	}
 
-	/**
-	 * @param dialect
-	 * @param st
-	 * @param valuesMap
-	 * @param qualifier
-	 * @param prefs
-	 * @return
-	 */
-	public static String getAddAutoIncrementColumn(HibernateDialect dialect, StringTemplate st,
-		HashMap<String, String> valuesMap, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
-	{
-		bindAttributes(dialect, st, valuesMap, qualifier, prefs);
-		return st.toString();
-	}
-
 	private static void bindAttribute(HibernateDialect dialect, StringTemplate st, String key, String value,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
@@ -2495,6 +2487,12 @@ public class DialectUtils implements StringTemplateConstants
 		{
 			value = DialectUtils.shapeQualifiableIdentifier(value, qualifier, prefs, dialect);
 		}
+		if (ST_OLD_OBJECT_NAME_KEY.equals(key)) {
+			value = DialectUtils.shapeQualifiableIdentifier(value, qualifier, prefs, dialect);	
+		}
+		if (ST_NEW_OBJECT_NAME_KEY.equals(key)) {
+			value = DialectUtils.shapeQualifiableIdentifier(value, qualifier, prefs, dialect);	
+		}			
 		if (ST_COLUMN_NAME_KEY.equals(key))
 		{
 			value = DialectUtils.shapeIdentifier(value, prefs, dialect);
@@ -2512,4 +2510,11 @@ public class DialectUtils implements StringTemplateConstants
 		}
 	}
 
+	public static String bindTemplateAttributes(HibernateDialect dialect, StringTemplate st,
+		HashMap<String, String> valuesMap, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	{
+		bindAttributes(dialect, st, valuesMap, qualifier, prefs);
+		return st.toString();
+	}
+	
 }

@@ -233,7 +233,7 @@ public class DialectLiveTestRunner {
       
       addColumn = getIntegerColumn("columnAdded", fixTableName(session, testUniqueConstraintTableName), true, null, null);
       
-      myIdColumn = getCharColumn("myId", fixTableName(session, testUniqueConstraintTableName), true, null, null);
+      myIdColumn = getCharColumn("myid", fixTableName(session, testUniqueConstraintTableName), true, null, null);
    }
 
    private ITableInfo getTableInfo(ISession session, String tableName)
@@ -426,13 +426,13 @@ public class DialectLiveTestRunner {
 			") ");
       
       runSQL(session, 
-      		"INSERT INTO " + fixTableName(session, "a") + " (acol,adesc,bdesc) VALUES (1,'a1','b1') ");
+      		"INSERT INTO " + fixTableName(session, "a") + " (acol,adesc,bdesc,joined) VALUES (1,'a1','b1','a1b1') ");
 
       runSQL(session,
-      		"INSERT INTO " + fixTableName(session, "a") + " (acol,adesc,bdesc) VALUES (2,'a2','b2') ");
+      		"INSERT INTO " + fixTableName(session, "a") + " (acol,adesc,bdesc,joined) VALUES (2,'a2','b2','a2b2') ");
 
       runSQL(session,
-      		"INSERT INTO " + fixTableName(session, "a") + " (acol,adesc,bdesc) VALUES (3,'a3','b3') ");
+      		"INSERT INTO " + fixTableName(session, "a") + " (acol,adesc,bdesc,joined) VALUES (3,'a3','b3','a3b3') ");
 
       if (dialect.supportsAlterColumnNull()) {
          runSQL(session, "create table " + fixTableName(session, "pktest")
@@ -1277,10 +1277,11 @@ public class DialectLiveTestRunner {
    
    private void testDropConstraint(ISession session) throws Exception {
    	HibernateDialect dialect = getDialect(session);
+   	String tableName = fixTableName(session, testUniqueConstraintTableName);
 		if (dialect.supportsDropConstraint())
 		{
 			String sql =
-				dialect.getDropConstraintSQL(testUniqueConstraintTableName,
+				dialect.getDropConstraintSQL(tableName,
 					uniqueConstraintName,
 					qualifier,
 					prefs);
@@ -1290,7 +1291,7 @@ public class DialectLiveTestRunner {
 		{
 			try
 			{
-				dialect.getDropConstraintSQL(testUniqueConstraintTableName,
+				dialect.getDropConstraintSQL(tableName,
 					uniqueConstraintName,
 					qualifier,
 					prefs);
