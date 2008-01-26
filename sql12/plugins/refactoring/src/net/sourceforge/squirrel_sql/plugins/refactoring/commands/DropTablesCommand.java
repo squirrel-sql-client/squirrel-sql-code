@@ -148,18 +148,7 @@ public class DropTablesCommand extends AbstractRefactoringCommand
 				for (final ITableInfo info : orderedTables)
 				{
 					final List<String> dropFKSQLs = getDropChildFKConstraints(info);
-					for (final String dropFKSQL : dropFKSQLs)
-					{
-						if (s_log.isDebugEnabled())
-						{
-							s_log.debug("dropFKSQL: " + dropFKSQL);
-						}
-						final StringBuilder dropSQL = new StringBuilder();
-						dropSQL.append(dropFKSQL);
-						dropSQL.append(_sqlPrefs.getSqlStatementSeparator());
-						dropSQL.append("\n");
-						result.add(dropSQL.toString());
-					}
+					result.addAll(dropFKSQLs);
 				}
 			}
 

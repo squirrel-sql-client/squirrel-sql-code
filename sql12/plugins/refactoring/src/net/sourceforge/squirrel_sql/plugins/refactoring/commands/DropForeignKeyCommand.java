@@ -126,7 +126,7 @@ public class DropForeignKeyCommand extends AbstractRefactoringCommand
 			{
 				sql.append(" RESTRICT");
 			}
-			sql.append(_session.getQueryTokenizer().getSQLStatementSeparator());
+
 			result.add(sql.toString());
 		}
 
