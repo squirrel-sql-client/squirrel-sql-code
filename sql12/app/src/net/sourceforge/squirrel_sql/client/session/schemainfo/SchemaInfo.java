@@ -40,6 +40,7 @@ import net.sourceforge.squirrel_sql.client.session.ExtendedColumnInfo;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.event.SessionAdapter;
 import net.sourceforge.squirrel_sql.client.session.event.SessionEvent;
+import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DataTypeInfo;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -190,7 +191,6 @@ public class SchemaInfo
       }
    }
 
-
    public void reloadAll()
    {
       reloadAll(true);
@@ -206,10 +206,39 @@ public class SchemaInfo
 
       if(fireSchemaInfoUpdate)
       {
-         fireSchemaInfoUpdate();
+      	GUIUtils.processOnSwingEventThread(new Runnable() {
+      		public void run() {
+      			fireSchemaInfoUpdate();
+      		}
+      	});
       }
    }
 
+   /**
+    * Will re-read all table data into the cache.
+    */
+   public void reloadAllTables()
+   {
+   	GUIUtils.processOnSwingEventThread(new Runnable() {
+   		public void run() {
+   			_session.getSessionSheet().setStatusBarProgress(i18n.LOADING_TABLES_MSG, 0, MAX_PROGRESS, 50);
+   		}
+   	});
+   	
+   	breathing();
+   	
+      _schemaInfoCache.clearAllTableData();
+   	loadTables(null, null, null, null, 0);
+      notifyTablesLoaded();   	
+
+   	GUIUtils.processOnSwingEventThread(new Runnable() {
+   		public void run() {
+   			fireSchemaInfoUpdate();
+   			_session.getSessionSheet().setStatusBarProgressFinished();   			
+   		}
+   	});
+   }
+      
    private void privateLoadAll()
    {
       synchronized (this)
@@ -497,7 +526,7 @@ public class SchemaInfo
       }
 
      _session.getSessionSheet().setStatusBarProgress(note, 0, MAX_PROGRESS, value);
-
+     
       if(_inInitialLoad
          && false == _sessionStartupTimeHintShown
          && false == _session.getAlias().getSchemaProperties().isCacheSchemaIndependentMetaData()
@@ -522,17 +551,25 @@ public class SchemaInfo
     */
    private void breathing()
    {
-      synchronized(this)
-      {
-         try
-         {
-            wait(50);
-         }
-         catch (InterruptedException e)
-         {
-            s_log.info("Interrupted", e);
-         }
-      }
+   	// In case this is called by the AWT thread, log a message - this is most likey a bug
+   	if (SwingUtilities.isEventDispatchThread()) {
+   		if (s_log.isDebugEnabled()) {
+   			s_log.debug("breathing: ignoring request to sleep the event dispatch thread");
+   		}
+   		return;
+   	}
+   	synchronized(this) {
+	      try
+	      {
+	         wait(50);
+	      }
+	      catch (InterruptedException e)
+	      {
+	      	if (s_log.isInfoEnabled()) {
+	      		s_log.info("breathing: Interrupted", e);
+	      	}
+	      }
+   	}
    }
 
    private void privateLoadStoredProcedures(String catalog, String schema, String procNamePattern, final String msg, final int beginProgress)

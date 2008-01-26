@@ -455,6 +455,12 @@ public class SchemaInfoCache implements Serializable
       _functions.clear();
    }
 
+   void clearAllTableData() {
+   	_iTableInfos = new CopyOnWriteArrayList<ITableInfo>();
+   	_tableInfosBySimpleName = new Hashtable<CaseInsensitiveString, List<ITableInfo>>();
+   	_tableNames = Collections.synchronizedMap(_internalTableNameTreeMap);
+   }
+   
    void clearTables(String catalogName, String schemaName, String simpleName, String[] types)
    {
       for(Iterator<ITableInfo> i = _iTableInfos.iterator(); i.hasNext();)
