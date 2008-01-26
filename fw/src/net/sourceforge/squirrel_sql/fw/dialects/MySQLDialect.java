@@ -586,7 +586,7 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 		valuesMap.put(ST_TABLE_NAME_KEY, column.getTableName());
 		valuesMap.put(ST_COLUMN_NAME_KEY, column.getColumnName());
 
-		return new String[] { DialectUtils.getAddAutoIncrementColumn(this, st, valuesMap, qualifier, prefs) };
+		return new String[] { DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs) };
 	}
 
 	/**

@@ -60,15 +60,23 @@ public interface StringTemplateConstants
 	String ST_DROP_INDEX_STYLE_ONE = 
 		"DROP INDEX $indexName$ ON $tableName$";
 	
+	String ST_DROP_INDEX_STYLE_TWO =
+		"DROP INDEX $tableName$.$indexName$";
+	
 	String ST_CREATE_VIEW_STYLE_ONE =
 		"CREATE VIEW $viewName$ " +
 		"AS $selectStatement$ $with$ $checkOptionType$ $checkOption$";
+	
+	String ST_SP_RENAME_STYLE_ONE = 
+		"sp_rename $oldObjectName$, $newObjectName$";
 	
 	// Keys that can be embedded in templates for replacement later.
 	
 	String ST_ACCESS_METHOD_KEY = "accessMethod";
 
-	String ST_CHECK_OPTION = "checkOption";
+	String ST_CATALOG_NAME_KEY = "catalogName";
+	
+	String ST_CHECK_OPTION_KEY = "checkOption";
 	
 	String ST_CHECK_OPTION_TYPE = "checkOptionType";
 	
@@ -91,6 +99,10 @@ public interface StringTemplateConstants
 	String ST_INDEX_NAME_KEY = "indexName";
 	
 	String ST_INDEX_TYPE_KEY = "indexType";
+
+	String ST_NEW_OBJECT_NAME_KEY = "newObjectName";
+	
+	String ST_OLD_OBJECT_NAME_KEY = "oldObjectName";
 	
 	String ST_PARENT_COLUMN_KEY = "parentColumn";
 	
