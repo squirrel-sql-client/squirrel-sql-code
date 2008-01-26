@@ -158,11 +158,6 @@ public class ModifyColumnCommand extends AbstractRefactoringCommand
 		try
 		{
 			result = DBUtil.getAlterSQLForColumnChange(columnToModify, to, _dialect, qualifier, _sqlPrefs);
-
-			for (int i = 0; i < result.length; i++)
-			{
-				result[i] = result[i] + _sqlPrefs.getSqlStatementSeparator();
-			}
 		} catch (HibernateException e1)
 		{
 			JOptionPane.showMessageDialog(customDialog,
