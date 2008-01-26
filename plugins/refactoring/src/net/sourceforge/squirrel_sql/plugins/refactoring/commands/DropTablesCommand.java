@@ -312,22 +312,24 @@ public class DropTablesCommand extends AbstractRefactoringCommand
 			public void run()
 			{
 				final DropTableCommandExecHandler handler = new DropTableCommandExecHandler(_session);
-				final SQLExecuterTask executer = new SQLExecuterTask(_session, script, handler);
-				executer.setSchemaCheck(false);
 				_session.getApplication().getThreadPool().addTask(new Runnable()
 				{
 					public void run()
 					{
+						final SQLExecuterTask executer = new SQLExecuterTask(_session, script, handler);
+						executer.setSchemaCheck(false);
 						executer.run();
-
+						
 						GUIUtils.processOnSwingEventThread(new Runnable()
 						{
 							public void run()
 							{
+								handler.hideProgressDialog();	
 								customDialog.setVisible(false);
-								_session.getSchemaInfo().reloadAll();
 							}
 						});
+						
+						_session.getSchemaInfo().reloadAllTables();
 					}
 				});
 			}
@@ -368,9 +370,15 @@ public class DropTablesCommand extends AbstractRefactoringCommand
 													DropTablesCommand.this.orderedTables.size());
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
+		/**
+		 * hides the progress dialog.
+		 */
+		public void hideProgressDialog() {
+			cb.setVisible(false);
+			cb.dispose();
+		}
+		
+		/**
 		 * @see net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler#sqlStatementCount(int)
 		 */
 		@Override
@@ -379,9 +387,7 @@ public class DropTablesCommand extends AbstractRefactoringCommand
 			cb.setTotalItems(statementCount);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
+		/**
 		 * @see net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler#sqlToBeExecuted(java.lang.String)
 		 */
 		@Override
