@@ -2,6 +2,15 @@ SQuirreL SQL Client Change Log
 ==============================
 
 
+2.6.5 (??/??/????)
+==================
+
+Bug-Fixes:
+
+DBCopy Plugin: MS SQLServer tables were created with VARCHAR(8000) columns, regardless of the 
+size of the source database table columns.  Now, the length will be the same as the source 
+database column.
+
 2.6.4 (1/14/2008)
 =================
 

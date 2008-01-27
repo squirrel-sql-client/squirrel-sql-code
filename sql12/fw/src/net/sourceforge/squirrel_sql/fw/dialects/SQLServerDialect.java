@@ -62,7 +62,8 @@ public class SQLServerDialect extends org.hibernate.dialect.SQLServerDialect
         registerColumnType(Types.TINYINT, "tinyint");
         registerColumnType(Types.VARBINARY, 8000, "varbinary($l)");
         registerColumnType(Types.VARBINARY, "image");
-        registerColumnType(Types.VARCHAR, "varchar(8000)");
+        registerColumnType(Types.VARCHAR, 8000, "varchar($l)");
+	registerColumnType(Types.VARCHAR, "text");
     }    
     
     /* (non-Javadoc)
