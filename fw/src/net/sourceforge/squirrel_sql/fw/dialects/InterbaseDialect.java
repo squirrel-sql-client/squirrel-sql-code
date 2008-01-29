@@ -19,6 +19,7 @@
 package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.Collection;
 import java.util.List;
 
@@ -37,21 +38,26 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect imp
 	{
 		super();
 		/*
-		 * TODO: hookup with Interbase spec and adjust these as necessary. registerColumnType(Types.BIGINT,
-		 * "integer"); registerColumnType(Types.BINARY, 2000000000,"bit varying($l)");
-		 * registerColumnType(Types.BIT, "bit(1)"); registerColumnType(Types.BLOB, 2000000000, "bit
-		 * varying($l)"); registerColumnType(Types.BOOLEAN, "bit(1)"); registerColumnType(Types.CHAR,
-		 * 2000000000, "char($l)"); registerColumnType(Types.CLOB, 2000000000, "varchar($l)");
-		 * registerColumnType(Types.DATE, "date"); registerColumnType(Types.DECIMAL, "decimal(36,2");
-		 * registerColumnType(Types.DOUBLE, "double precision"); registerColumnType(Types.FLOAT, 15,
-		 * "float($l)"); registerColumnType(Types.INTEGER, "integer"); registerColumnType(Types.LONGVARBINARY,
-		 * 2000000000, "bit varying($l)"); registerColumnType(Types.LONGVARCHAR, 31995, "varchar($l)");
-		 * registerColumnType(Types.NUMERIC, "numeric(17,2)"); registerColumnType(Types.REAL, "real");
-		 * registerColumnType(Types.SMALLINT, "smallint"); registerColumnType(Types.TIME, "date");
-		 * registerColumnType(Types.TIMESTAMP, "timestamp"); registerColumnType(Types.TINYINT, "tinyint");
-		 * registerColumnType(Types.VARBINARY, 31995, "bit varying($l)"); registerColumnType(Types.VARCHAR,
-		 * 2000000000,"varchar($l)");
+		 * TODO: hookup with Interbase spec and adjust these as necessary. 
 		 */
+		// What follows comes from the standard hibernate dialect.
+		registerColumnType( Types.BIT, "smallint" );
+		registerColumnType( Types.BIGINT, "numeric(18,0)" );
+		registerColumnType( Types.SMALLINT, "smallint" );
+		registerColumnType( Types.TINYINT, "smallint" );
+		registerColumnType( Types.INTEGER, "integer" );
+		registerColumnType( Types.CHAR, "char(1)" );
+		registerColumnType( Types.VARCHAR, "varchar($l)" );
+		registerColumnType( Types.FLOAT, "float" );
+		registerColumnType( Types.DOUBLE, "double precision" );
+		registerColumnType( Types.DATE, "date" );
+		registerColumnType( Types.TIME, "time" );
+		registerColumnType( Types.TIMESTAMP, "timestamp" );
+		registerColumnType( Types.VARBINARY, "blob" );
+		registerColumnType( Types.NUMERIC, "numeric($p,$s)" );
+		registerColumnType( Types.BLOB, "blob" );
+		registerColumnType( Types.CLOB, "blob sub_type 1" );
+		
 	}
 
 	/*
@@ -754,6 +760,14 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect imp
 		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsViewDefinition()
+	 */
+	public boolean supportsViewDefinition() {
+		// TODO verify this is correct
+		return false;
+	}	
+	
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getViewDefinitionSQL(java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */

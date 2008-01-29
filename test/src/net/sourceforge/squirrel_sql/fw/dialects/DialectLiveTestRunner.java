@@ -980,7 +980,7 @@ public class DialectLiveTestRunner {
 		final String indexName2 = "testUniqueIndex";
 		final String tableName = fixTableName(session, testCreateIndexTable);
 		
-   	if (dialect.supportsCreateIndex()) {
+   	if (dialect.supportsCreateIndex() && dialect.supportsDropIndex()) {
    		
    		String[] accessMethods = null;
    		if (dialect.supportsAccessMethods()) {

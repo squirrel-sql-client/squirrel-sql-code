@@ -570,6 +570,13 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsViewDefinition()
+	 */
+	public boolean supportsViewDefinition() {
+		return true;
+	}
+	
+	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getViewDefinitionSQL(java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	@Override

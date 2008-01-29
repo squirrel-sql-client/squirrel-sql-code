@@ -179,13 +179,15 @@ public class AddModifySequenceDialog extends AbstractRefactoringDialog
 		});
 
 		// Last Value
-		JLabel lastValueLabel = getBorderedLabel(i18n.LAST_VALUE_LABEL + " ", emptyBorder);
-		pane.add(lastValueLabel, getLabelConstraints(c));
-		
-		_lastValueField = new JTextField();
-		_lastValueField.setEnabled(false);
-		_lastValueField.setPreferredSize(mediumField);
-		pane.add(_nameField, getFieldConstraints(c));
+		if (_dialogMode == MODIFY_MODE) {
+			JLabel lastValueLabel = getBorderedLabel(i18n.LAST_VALUE_LABEL + " ", emptyBorder);
+			pane.add(lastValueLabel, getLabelConstraints(c));
+			
+			_lastValueField = new JTextField();
+			_lastValueField.setEnabled(false);
+			_lastValueField.setPreferredSize(mediumField);
+			pane.add(_lastValueField, getFieldConstraints(c));
+		}
 
 		// Increment
 		JLabel incrementLabel = getBorderedLabel(i18n.INCREMENT_LABEL + " ", emptyBorder);

@@ -810,6 +810,14 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsViewDefinition()
+	 */
+	public boolean supportsViewDefinition() {
+		// TODO verify this is correct
+		return false;
+	}	
+	
+	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getViewDefinitionSQL(java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,

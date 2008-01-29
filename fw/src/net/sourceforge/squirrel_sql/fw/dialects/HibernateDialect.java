@@ -951,6 +951,14 @@ public interface HibernateDialect extends StringTemplateConstants
 	public char openQuote();
 
 	/**
+	 * Whether or not the definition of a view can be determined via a query that is returned from 
+	 * getViewDefinitionSQL method
+	 * 
+	 * @return true if getViewDefinitionSQL yields a non-null value; false otherwise.
+	 */
+	public boolean supportsViewDefinition();
+	
+	/**
 	 * Returns the SQL that can be used to query the data dictionary for the body of a view. This should
 	 * exclude the "CREATE VIEW <viewname> AS" prefix and just return the query. This can return null if the 
 	 * database doesn't provide access to this definition.

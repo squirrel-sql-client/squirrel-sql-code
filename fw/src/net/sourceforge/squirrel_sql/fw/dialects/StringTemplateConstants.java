@@ -32,19 +32,27 @@ public interface StringTemplateConstants
 	// Template bodies
 	String ST_ADD_UNIQUE_CONSTRAINT_STYLE_ONE = 
 		"ALTER TABLE $tableName$ " +
-		"ADD $constraint$ $constraintName$ UNIQUE $index$ $indexName$ $indexType$ ( $indexColumnName$ )";
+		"ADD $constraint$ $constraintName$ UNIQUE $index$ $indexName$ $indexType$ ($columnName;  separator=\",\"$)";
 
 	String ST_ADD_UNIQUE_CONSTRAINT_STYLE_TWO =
 		"ALTER TABLE $tableName$ " +
-		"add constraint $constraintName$ unique ($columnName;  separator=\",\"$ )";
+		"ADD CONSTRAINT $constraintName$ UNIQUE ($columnName;  separator=\",\"$)";
 	
 	String ST_ADD_AUTO_INCREMENT_STYLE_ONE = 
 		"ALTER TABLE $tableName$ MODIFY $columnName$ BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY";
+	
+	String ST_ADD_AUTO_INCREMENT_STYLE_TWO = 
+		"ALTER TABLE $tableName$ ALTER COLUMN $columnName$ IDENTITY";
 	
 	String ST_ADD_FOREIGN_KEY_CONSTRAINT_STYLE_ONE = 
 		"ALTER TABLE $childTableName$ " +
 		"ADD $constraint$ $constraintName$ FOREIGN KEY ( $childColumn; separator=\",\"$ ) " +
 		"REFERENCES $parentTableName$ ( $parentColumn; separator=\",\"$ )";
+			
+	String ST_ALTER_SEQUENCE_STYLE_ONE = 
+		"ALTER SEQUENCE $sequenceName$ " +
+		"$restartWith$ $startValue$ " +
+		"$incrementBy$ $incrementValue$ ";
 		
 	String ST_CREATE_INDEX_STYLE_ONE = 
 		"CREATE $accessMethod$ INDEX $indexName$ $indexType$ " +
@@ -53,6 +61,14 @@ public interface StringTemplateConstants
 	String ST_CREATE_INDEX_STYLE_TWO =
 		"CREATE $unique$ $storageOption$ INDEX $indexName$ " +
 		"ON $tableName$ ( $columnName; separator=\",\"$ )";
+	
+	String ST_CREATE_SEQUENCE_STYLE_ONE = 
+		"CREATE SEQUENCE $sequenceName$ START WITH $startValue$ " +
+		"INCREMENT BY $incrementValue$ $cache$ $cacheValue$";	
+	
+	String ST_CREATE_VIEW_STYLE_ONE =
+		"CREATE VIEW $viewName$ " +
+		"AS $selectStatement$ $with$ $checkOptionType$ $checkOption$";
 	
 	String ST_DROP_CONSTRAINT_STYLE_ONE = 
 		"ALTER TABLE $tableName$ DROP CONSTRAINT $constraintName$";
@@ -63,9 +79,17 @@ public interface StringTemplateConstants
 	String ST_DROP_INDEX_STYLE_TWO =
 		"DROP INDEX $tableName$.$indexName$";
 	
-	String ST_CREATE_VIEW_STYLE_ONE =
-		"CREATE VIEW $viewName$ " +
-		"AS $selectStatement$ $with$ $checkOptionType$ $checkOption$";
+	String ST_DROP_INDEX_STYLE_THREE = 
+		"DROP INDEX $indexName$";
+	
+	String ST_DROP_SEQUENCE_STYLE_ONE = 
+		"DROP SEQUENCE $sequenceName$ $cascade$";
+	
+	String ST_DROP_VIEW_STYLE_ONE = 
+		"DROP VIEW $viewName$";
+		
+	String ST_RENAME_OBJECT_STYLE_ONE = 
+		"ALTER TABLE $oldObjectName$ RENAME TO $newObjectName$";
 	
 	String ST_SP_RENAME_STYLE_ONE = 
 		"sp_rename $oldObjectName$, $newObjectName$";
@@ -74,6 +98,10 @@ public interface StringTemplateConstants
 	
 	String ST_ACCESS_METHOD_KEY = "accessMethod";
 
+	String ST_CACHE_KEY = "cache";
+	
+	String ST_CACHE_VALUE_KEY = "cacheValue";
+	
 	String ST_CATALOG_NAME_KEY = "catalogName";
 	
 	String ST_CHECK_OPTION_KEY = "checkOption";
@@ -90,6 +118,10 @@ public interface StringTemplateConstants
 	
 	String ST_CONSTRAINT_NAME_KEY = "constraintName";
 
+	String ST_INCREMENT_VALUE_KEY = "incrementValue";	
+	
+	String ST_INCREMENT_BY_KEY = "incrementBy";
+	
 	String ST_INDEX_COLUMNS_KEY = "indexColumns";
 
 	String ST_INDEX_COLUMN_NAME_KEY = "indexColumnName";	
@@ -108,9 +140,15 @@ public interface StringTemplateConstants
 	
 	String ST_PARENT_TABLE_KEY = "parentTableName";
 	
+	String ST_RESTART_WITH_KEY = "restartWith";
+	
+	String ST_SCHEMA_NAME_KEY = "schemaName";	
+	
 	String ST_SEQUENCE_NAME_KEY = "sequenceName";
 	
 	String ST_SELECT_STATEMENT_KEY = "selectStatement";
+	
+	String ST_START_VALUE_KEY = "startValue";
 	
 	String ST_STORAGE_OPTION_KEY = "storageOption";
 	

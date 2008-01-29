@@ -643,9 +643,14 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 		
 		StringTemplate ckIndexSt = null;
 		HashMap<String, String> ckIndexValuesMap = null;
+		
 		if (autoFKIndex) {
-			ckIndexSt = new StringTemplate();
+//			"CREATE $unique$ $storageOption$ INDEX $indexName$ " +
+//			"ON $tableName$ ( $columnName; separator=\",\"$ )";
+
+			ckIndexSt = new StringTemplate(ST_CREATE_INDEX_STYLE_TWO);
 			ckIndexValuesMap = new HashMap<String, String>();
+			ckIndexValuesMap.put(ST_INDEX_NAME_KEY, "fk_child_idx");
 		} 
 		
 		return DialectUtils.getAddForeignKeyConstraintSQL(fkst,
@@ -1133,6 +1138,14 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsViewDefinition()
+	 */
+	public boolean supportsViewDefinition() {
+		// TODO verify this is correct
+		return false;
+	}	
+	
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getViewDefinitionSQL(java.lang.String,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,

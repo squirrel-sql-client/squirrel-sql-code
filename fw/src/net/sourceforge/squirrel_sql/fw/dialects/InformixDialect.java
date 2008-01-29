@@ -1112,6 +1112,13 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect imple
 	}
 
 	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsViewDefinition()
+	 */
+	public boolean supportsViewDefinition() {
+		return true;
+	}
+	
+	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getViewDefinitionSQL(java.lang.String,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
