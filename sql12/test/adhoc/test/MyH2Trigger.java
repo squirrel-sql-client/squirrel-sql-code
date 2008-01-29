@@ -23,27 +23,32 @@ import java.sql.SQLException;
 
 import org.h2.api.Trigger;
 
-public class MyH2Trigger implements Trigger {
+public class MyH2Trigger implements Trigger
+{
 
-    public void foo() {
-        System.out.println("foo was called");
-    }
+	public void foo()
+	{
+		System.out.println("foo was called");
+	}
 
-    /**
-     * @see org.h2.api.Trigger#fire(java.sql.Connection, java.lang.Object[], java.lang.Object[])
-     */
-    public void fire(Connection arg0, Object[] arg1, Object[] arg2) throws SQLException {
-        System.out.println("fire was called");
-        
-    }
+	/**
+	 * @see org.h2.api.Trigger#fire(java.sql.Connection, java.lang.Object[], java.lang.Object[])
+	 */
+	public void fire(Connection arg0, Object[] arg1, Object[] arg2) throws SQLException
+	{
+		System.out.println("fire was called");
 
-    /**
-     * @see org.h2.api.Trigger#init(java.sql.Connection, java.lang.String, java.lang.String, java.lang.String)
-     */
-    public void init(Connection arg0, String arg1, String arg2, String arg3) throws SQLException {
-        System.out.println("init was called");
-        
-    }
-    
-    
+	}
+
+	/**
+	 * @see org.h2.api.Trigger#init(java.sql.Connection, java.lang.String, java.lang.String, java.lang.String,
+	 *      boolean, int)
+	 */
+	public void init(Connection arg0, String arg1, String arg2, String arg3, boolean bool, int anInt)
+		throws SQLException
+	{
+		System.out.println("init was called");
+
+	}
+
 }
