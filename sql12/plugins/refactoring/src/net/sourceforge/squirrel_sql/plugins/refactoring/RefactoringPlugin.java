@@ -42,6 +42,7 @@ import net.sourceforge.squirrel_sql.plugins.refactoring.actions.AddPrimaryKeyAct
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.AddSequenceAction;
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.AddUniqueConstraintAction;
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.AddViewAction;
+import net.sourceforge.squirrel_sql.plugins.refactoring.actions.DropColumnAction;
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.DropForeignKeyAction;
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.DropIndexTableAction;
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.DropPrimaryKeyAction;
@@ -53,11 +54,11 @@ import net.sourceforge.squirrel_sql.plugins.refactoring.actions.MergeColumnActio
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.MergeTableAction;
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.ModifyColumnAction;
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.ModifySequenceAction;
-import net.sourceforge.squirrel_sql.plugins.refactoring.actions.DropColumnAction;
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.RenameTableAction;
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.RenameViewAction;
 import net.sourceforge.squirrel_sql.plugins.refactoring.prefs.RefactoringPreferencesManager;
 import net.sourceforge.squirrel_sql.plugins.refactoring.prefs.RefactoringPreferencesTab;
+import net.sourceforge.squirrel_sql.plugins.refactoring.tab.SupportedRefactoringsTab;
 
 /**
  * The Refactoring plugin class.
@@ -250,10 +251,16 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
     }
 
 
-    private void addActionsToPopup(ISession session) {
+    private void addActionsToPopup(ISession session)  {
         ActionCollection col = getApplication().getActionCollection();
         
-
+        try {
+	        IObjectTreeAPI _treeAPI = session.getSessionInternalFrame().getObjectTreeAPI();
+	        _treeAPI.addDetailTab(DatabaseObjectType.SESSION, new SupportedRefactoringsTab(session));
+        } catch (Exception e) {
+      	  e.printStackTrace();
+        }
+        
         // TABLE TYPE DBO
         _tableNodeMenu = _resources.createMenu(IMenuResourceKeys.REFACTORING);
         _resources.addToMenu(col.get(AddViewAction.class), _tableNodeMenu);

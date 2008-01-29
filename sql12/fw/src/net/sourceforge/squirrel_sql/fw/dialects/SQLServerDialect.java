@@ -505,6 +505,14 @@ public class SQLServerDialect extends SybaseDialect implements HibernateDialect
 	}
 
 	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsViewDefinition()
+	 */
+	public boolean supportsViewDefinition() {
+		// TODO verify this is correct
+		return false;
+	}	
+	
+	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsRenameView()
 	 */
 	public boolean supportsRenameView()

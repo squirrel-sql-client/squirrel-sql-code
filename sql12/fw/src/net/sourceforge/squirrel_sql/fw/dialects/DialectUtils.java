@@ -2479,6 +2479,9 @@ public class DialectUtils implements StringTemplateConstants
 	private static void bindAttribute(HibernateDialect dialect, StringTemplate st, String key, String value,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
+		if (value == null || "".equals(value)) {
+			return;
+		}
 		if (ST_TABLE_NAME_KEY.equals(key))
 		{
 			value = DialectUtils.shapeQualifiableIdentifier(value, qualifier, prefs, dialect);
@@ -2510,11 +2513,52 @@ public class DialectUtils implements StringTemplateConstants
 		}
 	}
 
+	/**
+	 * @param dialect
+	 * @param st
+	 * @param valuesMap
+	 * @param qualifier
+	 * @param prefs
+	 * @return
+	 */
 	public static String bindTemplateAttributes(HibernateDialect dialect, StringTemplate st,
 		HashMap<String, String> valuesMap, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		bindAttributes(dialect, st, valuesMap, qualifier, prefs);
 		return st.toString();
 	}
+
+	/**
+	 * @param dialect the dialect that this attribute binding is meant for
+	 * @param st the String template
+	 * @param valuesMap a map of key/value pairs to bind into the template
+	 * @param columns the TableColumnInfos to use for column names in the column list
+	 * @param qualifier the specifics regarding schema / catalog
+	 * @param prefs user's preferences regarding qualifying identifiers
+	 * @return the SQL result of binding key/values and column list into the specified template
+	 */
+	public static String bindTemplateAttributes(HibernateDialect dialect, StringTemplate st,
+		HashMap<String, String> valuesMap, TableColumnInfo[] columns, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
+	{
+		bindAttributes(dialect, st, valuesMap, qualifier, prefs);
+		for (TableColumnInfo column : columns)
+		{
+			bindAttribute(dialect, st, ST_COLUMN_NAME_KEY, column.getColumnName(), qualifier, prefs);
+		}		
+		return st.toString();
+	}
 	
+	
+	public static HashMap<String, String> getValuesMap(String... elts) {
+		HashMap<String, String> valuesMap = new HashMap<String, String>();
+		for (int i = 0; i < elts.length-1; i++) {
+			valuesMap.put(elts[i], elts[i+1]);
+		}
+		return valuesMap;
+	}
+	
+	public static boolean isNotEmptyString(String value) {
+		return (value != null) && (!"".equals(value));
+	}
 }
