@@ -42,6 +42,10 @@ Refactoring Plugin:
 
 Bug-Fixes:
 
+1769599 fix for permission problem with Windows Vista.  Now we create our temporary path file in a temporary 
+location that the user should always be able to write to.  Thanks to user aberdeen61 for contributing the 
+fix. 
+
 1861402 (Informix catalog switching doesn't work correctly) 
  - Better catalog switching behavior for databases that support catalogs.  Now if a connection is made without specifying the catalog, a place-holder
    catalog ("None") is inserted into the catalog drop-down menu and removed once a catalog is selected.  
