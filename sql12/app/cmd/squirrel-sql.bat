@@ -10,12 +10,10 @@ set basedir=%basedir:~0,-1%
 if NOT "%removed%"=="\" goto strip
 set SQUIRREL_SQL_HOME=%basedir%
 
-@rem dir /b "%SQUIRREL_SQL_HOME%\squirrel-sql.jar" > temp.tmp
-@rem FOR /F %%I IN (temp.tmp) DO CALL "%SQUIRREL_SQL_HOME%\addpath.bat" "%SQUIRREL_SQL_HOME%\%%I"
 set TMP_CP="%SQUIRREL_SQL_HOME%\squirrel-sql.jar"
 
-dir /b "%SQUIRREL_SQL_HOME%\lib\*.*" > temp.tmp
-FOR /F %%I IN (temp.tmp) DO CALL "%SQUIRREL_SQL_HOME%\addpath.bat" "%SQUIRREL_SQL_HOME%\lib\%%I"
+dir /b "%SQUIRREL_SQL_HOME%\lib\*.*" > "%TEMP%\squirrel-lib.tmp"
+FOR /F %%I IN ("%TEMP%\squirrel-lib.tmp") DO CALL "%SQUIRREL_SQL_HOME%\addpath.bat" "%SQUIRREL_SQL_HOME%\lib\%%I"
 
 SET TMP_CP=%TMP_CP%;"%CLASSPATH%"
 SET TMP_PARMS=--log-config-file "%SQUIRREL_SQL_HOME%\log4j.properties" --squirrel-home "%SQUIRREL_SQL_HOME%" %1 %2 %3 %4 %5 %6 %7 %8 %9
