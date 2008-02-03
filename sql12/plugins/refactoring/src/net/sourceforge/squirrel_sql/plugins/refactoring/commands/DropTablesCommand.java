@@ -91,6 +91,9 @@ public class DropTablesCommand extends AbstractRefactoringCommand
 		super(session, tables);
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.plugins.refactoring.commands.AbstractRefactoringCommand#onExecute()
+	 */
 	@Override
 	protected void onExecute()
 	{
@@ -113,6 +116,9 @@ public class DropTablesCommand extends AbstractRefactoringCommand
 		customDialog.setVisible(true);
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.plugins.refactoring.commands.AbstractRefactoringCommand#generateSQLStatements()
+	 */
 	@Override
 	protected String[] generateSQLStatements() throws UserCancelledOperationException, SQLException
 	{
@@ -293,6 +299,9 @@ public class DropTablesCommand extends AbstractRefactoringCommand
 		}
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.plugins.refactoring.commands.AbstractRefactoringCommand#executeScript(java.lang.String)
+	 */
 	@Override
 	protected void executeScript(final String script)
 	{

@@ -36,7 +36,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Vector;
 
-public class MergeTableDialog extends AbstractRefactoringTabbedDialog {
+public class MergeTableDialog extends AbstractRefactoringTabbedDialog implements IMergeTableDialog {
 
 	 private static final long serialVersionUID = 6331522065498766665L;
 	 /**
@@ -122,22 +122,34 @@ public class MergeTableDialog extends AbstractRefactoringTabbedDialog {
     }
 
 
-    public String getReferencedTable() {
+    /**
+	 * @see net.sourceforge.squirrel_sql.plugins.refactoring.gui.IMergeTableDialog#getReferencedTable()
+	 */
+   public String getReferencedTable() {
         return _propertiesTab.getReferencesField();
     }
 
 
-    public Vector<String[]> getWhereDataColumns() {
+    /**
+	 * @see net.sourceforge.squirrel_sql.plugins.refactoring.gui.IMergeTableDialog#getWhereDataColumns()
+	 */
+   public Vector<String[]> getWhereDataColumns() {
         return _propertiesTab._columnTableModel.getRowData();
     }
 
 
-    public Vector<String> getMergeColumns() {
+    /**
+	 * @see net.sourceforge.squirrel_sql.plugins.refactoring.gui.IMergeTableDialog#getMergeColumns()
+	 */
+   public Vector<String> getMergeColumns() {
         return _columnTab.getMergeColumns();
     }
 
 
-    public boolean isMergeData() {
+    /**
+	 * @see net.sourceforge.squirrel_sql.plugins.refactoring.gui.IMergeTableDialog#isMergeData()
+	 */
+   public boolean isMergeData() {
         return _propertiesTab.getMergeData();
     }
 

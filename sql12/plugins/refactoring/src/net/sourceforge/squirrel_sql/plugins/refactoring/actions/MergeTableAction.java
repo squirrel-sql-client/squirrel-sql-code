@@ -26,6 +26,8 @@ import net.sourceforge.squirrel_sql.fw.util.Resources;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.plugins.refactoring.commands.MergeTableCommand;
+import net.sourceforge.squirrel_sql.plugins.refactoring.gui.IMergeTableDialogFactory;
+import net.sourceforge.squirrel_sql.plugins.refactoring.gui.MergeTableDialogFactory;
 
 public class MergeTableAction extends AbstractRefactoringAction
 {
@@ -47,6 +49,9 @@ public class MergeTableAction extends AbstractRefactoringAction
 			s_stringMgr.getString("Shared.singleObjectMessage", OBJECT_PART, ACTION_PART);
 	}
 
+	/** The factory that creates MergeTableDialogs */
+	private IMergeTableDialogFactory _dialogFactory = new MergeTableDialogFactory();
+
 	public MergeTableAction(IApplication app, Resources rsrc)
 	{
 		super(app, rsrc);
@@ -58,7 +63,7 @@ public class MergeTableAction extends AbstractRefactoringAction
 	@Override
 	protected ICommand getCommand(IDatabaseObjectInfo[] info)
 	{
-		return new MergeTableCommand(_session, info);
+		return new MergeTableCommand(_session, info, _dialogFactory);
 	}
 
 	/**

@@ -18,6 +18,8 @@ package net.sourceforge.squirrel_sql.fw.dialects;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+import java.awt.Component;
+import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
@@ -27,20 +29,30 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
+import java.util.Vector;
+
+import org.openide.loaders.DataNode;
 
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.MockSession;
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableInfo;
 import net.sourceforge.squirrel_sql.plugins.db2.DB2JCCExceptionFormatter;
 import net.sourceforge.squirrel_sql.plugins.informix.exception.InformixExceptionFormatter;
+import net.sourceforge.squirrel_sql.plugins.refactoring.commands.MergeTableCommand;
+import net.sourceforge.squirrel_sql.plugins.refactoring.gui.IMergeTableDialog;
+import net.sourceforge.squirrel_sql.plugins.refactoring.gui.IMergeTableDialogFactory;
 
 /**
  * The purpose of this class is to hookup to the database(s) specified in
@@ -89,7 +101,7 @@ public class DialectLiveTestRunner {
    TableColumnInfo addColumn = null;
   
    TableColumnInfo myIdColumn = null;
-   
+      
    private static final String DB2_PK_COLNAME = "db2pkCol";
 
    private DatabaseObjectQualifier qualifier = new DatabaseObjectQualifier();
@@ -117,6 +129,8 @@ public class DialectLiveTestRunner {
    private static final String testRenameTableBefore = "tableRenameTest";
    private static final String testRenameTableAfter = "tableWasRenamed";
    private static final String testCreateIndexTable = "createIndexTest";
+   private static final String testFirstMergeTable = "firstTableToBeMerged";
+   private static final String testSecondMergeTable = "secondTableToBeMerged";
    
    public DialectLiveTestRunner() throws Exception {
       ApplicationArguments.initialize(new String[] {});
@@ -349,6 +363,8 @@ public class DialectLiveTestRunner {
       dropTable(session, fixTableName(session, "a"));
       dropTable(session, fixTableName(session, testCreateTable));
       dropTable(session, fixTableName(session, testInsertIntoTable));
+      dropTable(session, fixTableName(session, testFirstMergeTable)); 
+      dropTable(session, fixTableName(session, testSecondMergeTable));
       
       // Now sequences should go.
       dropSequence(session, testSequenceName);
@@ -441,6 +457,29 @@ public class DialectLiveTestRunner {
       
       runSQL(session, "create table " + fixTableName(session, testInsertIntoTable)
          + " ( myid integer)" + pageSizeClause);
+      
+      
+      runSQL(session, "create table " + fixTableName(session, testFirstMergeTable)
+         + " ( myid integer, desc_t1 varchar(20))" + pageSizeClause);
+
+      runSQL(session, 
+   		"INSERT INTO " + fixTableName(session, testFirstMergeTable) + " (myid, desc_t1) VALUES (1,'table1-row1') ");
+      runSQL(session, 
+   		"INSERT INTO " + fixTableName(session, testFirstMergeTable) + " (myid, desc_t1) VALUES (2,'table1-row2') ");
+      runSQL(session, 
+   		"INSERT INTO " + fixTableName(session, testFirstMergeTable) + " (myid, desc_t1) VALUES (3,'table1-row3') ");
+
+      
+      runSQL(session, "create table " + fixTableName(session, testSecondMergeTable)
+         + " ( myid integer, desc_t2 varchar(20))" + pageSizeClause);
+
+      runSQL(session, 
+   		"INSERT INTO " + fixTableName(session, testSecondMergeTable) + " (myid, desc_t2) VALUES (1,'table2-row1') ");
+      runSQL(session, 
+   		"INSERT INTO " + fixTableName(session, testSecondMergeTable) + " (myid, desc_t2) VALUES (2,'table2-row2') ");
+      runSQL(session, 
+   		"INSERT INTO " + fixTableName(session, testSecondMergeTable) + " (myid, desc_t2) VALUES (3,'table2-row3') ");
+      
    }
 
    private void runTests() throws Exception {
@@ -514,6 +553,7 @@ public class DialectLiveTestRunner {
          testInsertIntoSQL(session);
          testAddColumnSQL(session);
          testUpdateSQL(session);
+         testMergeTable(session);
          System.out.println("Completed tests for "+dialect.getDisplayName());
       }
    }
@@ -1408,6 +1448,29 @@ public class DialectLiveTestRunner {
 		}   	   	   	   	   	   	   	   	   	
    }   
    
+   private void testMergeTable(ISession session) throws Exception {
+   	HibernateDialect dialect = getDialect(session);
+   	if (dialect.supportsUpdate() && dialect.supportsAddColumn()) {
+   		
+   		IDatabaseObjectInfo[] selectedTables = new IDatabaseObjectInfo[1];
+   		String catalog = ((MockSession)session).getDefaultCatalog();
+   		String schema = ((MockSession)session).getDefaultSchema();
+   		
+   		selectedTables[0] =
+				new DatabaseObjectInfoHelper(	catalog,
+														schema,
+														fixTableName(session, testSecondMergeTable),
+														fixTableName(session, testSecondMergeTable),
+														DatabaseObjectType.TABLE);
+   		
+   		MergeTableCommandHelper command = new MergeTableCommandHelper(session, selectedTables, null);
+   		
+   		String[] sqls = command.generateSQLStatements();
+   		
+   		runSQL(session, sqls);
+   	}
+   }
+   
    // Utility methods
    
    private void dropColumn(ISession session, TableColumnInfo info)
@@ -1566,6 +1629,12 @@ public class DialectLiveTestRunner {
       return result;
    }
 
+   /**
+    * @param session
+    * @param table
+    * @return
+    * @throws Exception
+    */
    private String fixTableName(ISession session, String table) throws Exception {
       String result = null;
       SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
@@ -1578,10 +1647,127 @@ public class DialectLiveTestRunner {
    }
 
    /**
+    * @param session
+    * @param tableName
+    * @return
+    * @throws SQLException
+    */
+   private TableColumnInfo[] getLiveColumnInfo(ISession session, String tableName) throws SQLException {
+   	ISQLDatabaseMetaData md = session.getMetaData();
+   	String catalog = ((MockSession)session).getDefaultCatalog();
+   	String schema = ((MockSession)session).getDefaultSchema();
+   	return md.getColumnInfo(catalog, schema, tableName);
+   }
+   
+   /**
     * @param args
     */
    public static void main(String[] args) throws Exception {
       DialectLiveTestRunner runner = new DialectLiveTestRunner();
       runner.runTests();
    }
+
+   
+   /**
+    * A helper "dialog" implementation that simulates getting user input for automating the test.  The merge
+    * table command takes substantial input, and based on that generates a substantial amount of SQL.
+    * 
+    * @author manningr
+    * 
+    */
+   private class MergeTableDialogHelper implements IMergeTableDialog {
+
+   	private Vector<String> _mergeColumns = null;
+   	private String _referencedTable = null;
+   	private Vector<String[]> _whereDataColumns = null;
+   	private boolean _isMergeData = false;
+   	
+   	public MergeTableDialogHelper(Vector<String> mergeColumns, 
+   										   String referencedTable,
+   										   Vector<String[]> whereDataColumns,
+   										   boolean isMergeData) {
+   		_mergeColumns = mergeColumns;
+   		_referencedTable = referencedTable;
+   		_whereDataColumns = whereDataColumns;
+   		_isMergeData = isMergeData;
+   	}
+   	
+   	// Unused methods - this is not a real dialog, just a fake.
+		public void addEditSQLListener(ActionListener listener) {}
+		public void addExecuteListener(ActionListener listener) {}
+		public void addShowSQLListener(ActionListener listener) {}
+		public void setLocationRelativeTo(Component c) {}
+		public void setVisible(boolean val) {}
+		public void dispose() {}
+		
+		public Vector<String> getMergeColumns() { return _mergeColumns; }
+		public String getReferencedTable() { return _referencedTable; }
+		public Vector<String[]> getWhereDataColumns() { return _whereDataColumns; }
+		public boolean isMergeData() { return _isMergeData; }
+   }
+   
+   /**
+      runSQL(session, "create table " + fixTableName(session, testFirstMergeTable)
+         + " ( myid integer, desc_t1 varchar(20))" + pageSizeClause);
+      
+      runSQL(session, "create table " + fixTableName(session, testSecondMergeTable)
+         + " ( myid integer, desc_t2 varchar(20))" + pageSizeClause);
+ 
+    */
+   private class MergeTableCommandHelper extends MergeTableCommand {
+		public MergeTableCommandHelper(ISession session, IDatabaseObjectInfo[] info,
+			IMergeTableDialogFactory dialogFactory) throws Exception 
+		{
+			super(session, info, dialogFactory);
+	   	Vector<String> mergeColumns = new Vector<String>();
+	   	mergeColumns.add("desc_t1");
+	   	String referencedTable = fixTableName(session, testFirstMergeTable);
+	   	Vector<String[]> whereDataColumns = new Vector<String[]>();
+	   	whereDataColumns.add(new String[] { "myid", "myid" });
+	   	boolean _isMergeData = true;			
+			super.customDialog = 
+				new MergeTableDialogHelper(mergeColumns, referencedTable, whereDataColumns, _isMergeData);		
+			_allTables = new HashMap<String, TableColumnInfo[]>();
+			_allTables.put(fixTableName(session, testFirstMergeTable), getLiveColumnInfo(session, fixTableName(session, testFirstMergeTable)));
+			_allTables.put(fixTableName(session, testSecondMergeTable), getLiveColumnInfo(session, fixTableName(session, testSecondMergeTable)));
+			super._dialect = DialectFactory.getDialect(session.getMetaData());
+		}
+		
+		
+		public String[] generateSQLStatements() throws UserCancelledOperationException, SQLException
+		{
+			return super.generateSQLStatements();
+		}
+   }
+   
+   private class DatabaseObjectInfoHelper implements IDatabaseObjectInfo {
+
+   	private String _catalog = null;
+   	private String _schema = null;
+   	private String _simpleName = null;
+   	private String _qualName = null;
+   	private DatabaseObjectType _type = null;
+   	
+   	
+   	public DatabaseObjectInfoHelper(String catalog, String schema, String simpleName, String qualName,
+			DatabaseObjectType type)
+		{
+			_catalog = catalog;
+			_schema = schema;
+			_simpleName = simpleName;
+			_qualName = qualName;
+			_type = type;
+		}
+   	
+		public String getCatalogName() { return _catalog; }
+		public DatabaseObjectType getDatabaseObjectType() { return _type; }
+		public String getQualifiedName() { return _qualName; }
+		public String getSchemaName() { return _schema; }
+		public String getSimpleName() { return _simpleName; }
+		public int compareTo(IDatabaseObjectInfo o) { return 0; }
+   	
+   }
+   
+   
+   
 }

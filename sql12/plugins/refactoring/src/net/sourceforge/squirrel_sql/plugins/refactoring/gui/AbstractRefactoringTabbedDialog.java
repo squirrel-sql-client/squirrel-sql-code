@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.gui;
 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+import net.sourceforge.squirrel_sql.client.gui.db.IDisposableDialog;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -32,7 +33,7 @@ import java.awt.event.KeyEvent;
 /**
  * A tabbed dialog.
  */
-public abstract class AbstractRefactoringTabbedDialog extends JDialog {
+public abstract class AbstractRefactoringTabbedDialog extends JDialog implements IDisposableDialog {
 
     protected JButton executeButton = null;
     protected JButton editSQLButton = null;

@@ -25,6 +25,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Vector;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
@@ -43,7 +44,8 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-import net.sourceforge.squirrel_sql.plugins.refactoring.gui.MergeTableDialog;
+import net.sourceforge.squirrel_sql.plugins.refactoring.gui.IMergeTableDialog;
+import net.sourceforge.squirrel_sql.plugins.refactoring.gui.IMergeTableDialogFactory;
 
 public class MergeTableCommand extends AbstractRefactoringCommand
 {
@@ -63,13 +65,24 @@ public class MergeTableCommand extends AbstractRefactoringCommand
 		String SHOWSQL_DIALOG_TITLE = s_stringMgr.getString("MergeTableCommand.sqlDialogTitle");
 	}
 
-	protected MergeTableDialog customDialog;
+	/** The dialog implementation that gets displayed when we are executed */
+	protected IMergeTableDialog customDialog;
 
-	private HashMap<String, TableColumnInfo[]> _allTables;
+	/** The factory that creates the custom dialog for us. */
+	protected IMergeTableDialogFactory dialogFactory = null;
 
-	public MergeTableCommand(ISession session, IDatabaseObjectInfo[] info)
+	protected HashMap<String, TableColumnInfo[]> _allTables;
+
+	/**
+	 * @param session
+	 * @param info
+	 * @param dialogFactory
+	 */
+	public MergeTableCommand(ISession session, IDatabaseObjectInfo[] info,
+		IMergeTableDialogFactory dialogFactory)
 	{
 		super(session, info);
+		this.dialogFactory = dialogFactory;
 	}
 
 	/**
@@ -105,6 +118,7 @@ public class MergeTableCommand extends AbstractRefactoringCommand
 		{
 			s_log.debug("MergedTable = " + mergedTable);
 			s_log.debug("Is Null " + (mergedTableColumnInfos == null));
+			logDialogInfo();
 		}
 
 		// create new columns in table
@@ -150,8 +164,8 @@ public class MergeTableCommand extends AbstractRefactoringCommand
 				columnNamesSelectStmt.append("\"").append(columnNames).append("\"").append(", ");
 			}
 			columnNamesSelectStmt.delete(columnNamesSelectStmt.length() - 2, columnNamesSelectStmt.length()); // deletes
-																																				// the
-																																				// ", "
+			// the
+			// ", "
 
 			StringBuilder columnIDSelect = new StringBuilder();
 			for (String[] whereRow : customDialog.getWhereDataColumns())
@@ -172,6 +186,9 @@ public class MergeTableCommand extends AbstractRefactoringCommand
 			try
 			{
 				stmt = _session.getSQLConnection().createStatement();
+				if (s_log.isDebugEnabled()) {
+					s_log.debug("generateSQLStatements - running dataQuery: "+dataQuery);
+				}
 				rs = stmt.executeQuery(dataQuery);
 
 				ArrayList<String> whereColumns = new ArrayList<String>();
@@ -203,7 +220,7 @@ public class MergeTableCommand extends AbstractRefactoringCommand
 							// maybe with Inner join better performance
 							StringBuilder whereColumn = new StringBuilder();
 							StringBuilder whereValue = new StringBuilder();
-							whereColumn.append(table).append("\".\"").append(whereRow[0]);
+							whereColumn.append(table).append(".").append(whereRow[0]);
 							whereValue	.append("'")
 											.append(rs.getString(customDialog.getMergeColumns().size() + count))
 											.append("'");
@@ -236,7 +253,7 @@ public class MergeTableCommand extends AbstractRefactoringCommand
 
 		return results.toArray(new String[] {});
 	}
-
+	
 	/**
 	 * @see net.sourceforge.squirrel_sql.plugins.refactoring.commands.AbstractRefactoringCommand#executeScript(java.lang.String)
 	 */
@@ -279,7 +296,6 @@ public class MergeTableCommand extends AbstractRefactoringCommand
 		// This refactoring depends on the following dialect API methods:
 		// getUpdateSQL
 		result = result && dialect.supportsUpdate();
-		// getColumnAddSQL - no API method to check this
 		result = result && dialect.supportsAddColumn();
 
 		return result;
@@ -301,8 +317,7 @@ public class MergeTableCommand extends AbstractRefactoringCommand
 				_allTables.put(table.getSimpleName(), _session.getMetaData().getColumnInfo(table));
 			}
 		}
-
-		customDialog = new MergeTableDialog(selectedTable.getSimpleName(), tableColumnInfos, _allTables);
+		customDialog = dialogFactory.createDialog(selectedTable.getSimpleName(), tableColumnInfos, _allTables);
 		customDialog.addExecuteListener(new ExecuteListener());
 		customDialog.addEditSQLListener(new EditSQLListener(customDialog));
 		customDialog.addShowSQLListener(new ShowSQLListener(i18n.SHOWSQL_DIALOG_TITLE, customDialog));
@@ -310,4 +325,16 @@ public class MergeTableCommand extends AbstractRefactoringCommand
 		customDialog.setVisible(true);
 	}
 
+	private void logDialogInfo() {
+		if (s_log.isDebugEnabled()) {
+			s_log.debug("getReferencedTable: "+customDialog.getReferencedTable());
+			s_log.debug("getWhereDataColumns: ");
+			for (String[] whereColumns : customDialog.getWhereDataColumns()) {
+				s_log.debug("whereDataColumns Array: "+Arrays.toString(whereColumns));
+			}
+			for (String mergeColumn : customDialog.getMergeColumns()) {
+				s_log.debug("mergeColumn: "+mergeColumn);
+			}			
+		}
+	}
 }

@@ -23,6 +23,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JDialog;
 
+import net.sourceforge.squirrel_sql.client.gui.db.IDisposableDialog;
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
@@ -88,8 +89,17 @@ public abstract class AbstractRefactoringCommand implements ICommand {
 
         RefactoringPreferenceBean prefsBean = RefactoringPreferencesManager.getPreferences();
         _sqlPrefs = new SqlGenerationPreferences();
-        _sqlPrefs.setQualifyTableNames(prefsBean.isQualifyTableNames());
-        _sqlPrefs.setQuoteIdentifiers(prefsBean.isQuoteIdentifiers());
+        if (prefsBean != null) {
+	        _sqlPrefs.setQualifyTableNames(prefsBean.isQualifyTableNames());
+	        _sqlPrefs.setQuoteIdentifiers(prefsBean.isQuoteIdentifiers());
+        } else {
+      	  if (s_log.isDebugEnabled()) {
+      		  s_log.debug("RefactoringPreferencesManager.getPreferences returned null.  " +
+      		  		"Unable to get user preferences");
+      	  }
+	        _sqlPrefs.setQualifyTableNames(false);
+	        _sqlPrefs.setQuoteIdentifiers(false);      	        	  
+        }
         _sqlPrefs.setSqlStatementSeparator(_session.getQueryTokenizer().getSQLStatementSeparator());
     }
 
@@ -187,9 +197,9 @@ public abstract class AbstractRefactoringCommand implements ICommand {
         private final JDialog _parentDialog;
 
 
-        public ShowSQLListener(String dialogTitle, JDialog parentDialog) {
+        public ShowSQLListener(String dialogTitle, IDisposableDialog parentDialog) {
             _dialogTitle = dialogTitle;
-            _parentDialog = parentDialog;
+            _parentDialog = (JDialog)parentDialog;
         }
 
 
@@ -224,10 +234,10 @@ public abstract class AbstractRefactoringCommand implements ICommand {
      * The specified dialog can be null if no JDialog needs to be disposed.
      */
     protected class EditSQLListener implements ActionListener, SQLResultListener {
-        private final JDialog _parentDialog;
+        private final IDisposableDialog _parentDialog;
 
 
-        public EditSQLListener(JDialog parentDialog) {
+        public EditSQLListener(IDisposableDialog parentDialog) {
             _parentDialog = parentDialog;
         }
 
