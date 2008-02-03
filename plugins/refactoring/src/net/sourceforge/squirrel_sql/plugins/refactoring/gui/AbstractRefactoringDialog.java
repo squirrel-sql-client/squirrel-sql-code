@@ -18,6 +18,7 @@ package net.sourceforge.squirrel_sql.plugins.refactoring.gui;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import net.sourceforge.squirrel_sql.client.gui.db.IDisposableDialog;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
@@ -34,7 +35,7 @@ import java.awt.event.KeyEvent;
 /**
  * A dialog that can be used to get column(s) selected by the user
  */
-public abstract class AbstractRefactoringDialog extends JDialog {
+public abstract class AbstractRefactoringDialog extends JDialog implements IDisposableDialog {
 
     private JTextField tableNameTextField = null;
 
