@@ -64,7 +64,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
  * A dialog that can be used to get column info from the user for adding new 
  * columns or modifying existing ones.
  */
-public class ColumnDetailDialog extends JDialog {
+public class ColumnDetailDialog extends JDialog implements IDisposableDialog {
 
     private static final long serialVersionUID = 1L;
 
