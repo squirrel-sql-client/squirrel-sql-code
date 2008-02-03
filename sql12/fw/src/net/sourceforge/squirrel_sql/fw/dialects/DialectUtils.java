@@ -114,8 +114,12 @@ public class DialectUtils implements StringTemplateConstants
 
 	// sequence clauses
 
+	public static final String CACHE_CLAUSE = "CACHE";
+	
 	public static final String CYCLE_CLAUSE = "CYCLE";
 
+	public static final String INCREMENT_BY_CLAUSE = "INCREMENT BY";
+	
 	public static final String NOCYCLE_CLAUSE = "NOCYCLE";
 
 	public static final String NO_CYCLE_CLAUSE = "NO CYCLE";
@@ -132,6 +136,10 @@ public class DialectUtils implements StringTemplateConstants
 
 	public static final String NOMINVALUE_CLAUSE = "NOMINVALUE";
 
+	// view clauses
+	
+	public static final String WITH_CHECK_OPTION_CLAUSE = "WITH CHECK OPTION";
+	
 	// Clauses
 	public static final String CREATE_CLAUSE = "CREATE";
 
@@ -760,10 +768,9 @@ public class DialectUtils implements StringTemplateConstants
 		{
 			bindAttribute(dialect, st, ST_COLUMN_NAME_KEY, column.getColumnName(), qualifier, prefs);
 		}
-		return st.toString();		
+		return st.toString();
 	}
-	
-	
+
 	/**
 	 * Returns: (column1, column2, ...)
 	 * 
@@ -1178,7 +1185,7 @@ public class DialectUtils implements StringTemplateConstants
 		bindAttributes(dialect, st, valuesMap, qualifier, prefs);
 		return st.toString();
 	}
-	
+
 	/**
 	 * Gets the SQL command to drop a view.
 	 * 
@@ -1409,13 +1416,13 @@ public class DialectUtils implements StringTemplateConstants
 		return sql.toString();
 	}
 
-	public static String getRenameViewSql(StringTemplate st, HashMap<String, String> valuesMap, 
+	public static String getRenameViewSql(StringTemplate st, HashMap<String, String> valuesMap,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs, HibernateDialect dialect)
 	{
 		bindAttributes(dialect, st, valuesMap, qualifier, prefs);
-		return st.toString();		
+		return st.toString();
 	}
-	
+
 	/**
 	 * Returns the SQL command to drop the specified table's foreign key constraint.
 	 * 
@@ -1734,6 +1741,26 @@ public class DialectUtils implements StringTemplateConstants
 
 		return sql.toString();
 
+	}
+
+	/**
+	 * @param st
+	 * @param sequenceName
+	 * @param increment
+	 * @param minimum
+	 * @param maximum
+	 * @param start
+	 * @param cache
+	 * @param qualifier
+	 * @param prefs
+	 * @param dialect
+	 * @return
+	 */
+	public static String getCreateSequenceSQL(StringTemplate st, HashMap<String, String> valuesMap,
+		DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs, HibernateDialect dialect)
+	{					
+		return bindTemplateAttributes(dialect, st, valuesMap, qualifier, prefs);
 	}
 
 	/**
@@ -2479,7 +2506,8 @@ public class DialectUtils implements StringTemplateConstants
 	private static void bindAttribute(HibernateDialect dialect, StringTemplate st, String key, String value,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		if (value == null || "".equals(value)) {
+		if (value == null || "".equals(value))
+		{
 			return;
 		}
 		if (ST_TABLE_NAME_KEY.equals(key))
@@ -2490,12 +2518,14 @@ public class DialectUtils implements StringTemplateConstants
 		{
 			value = DialectUtils.shapeQualifiableIdentifier(value, qualifier, prefs, dialect);
 		}
-		if (ST_OLD_OBJECT_NAME_KEY.equals(key)) {
-			value = DialectUtils.shapeQualifiableIdentifier(value, qualifier, prefs, dialect);	
+		if (ST_OLD_OBJECT_NAME_KEY.equals(key))
+		{
+			value = DialectUtils.shapeQualifiableIdentifier(value, qualifier, prefs, dialect);
 		}
-		if (ST_NEW_OBJECT_NAME_KEY.equals(key)) {
-			value = DialectUtils.shapeQualifiableIdentifier(value, qualifier, prefs, dialect);	
-		}			
+		if (ST_NEW_OBJECT_NAME_KEY.equals(key))
+		{
+			value = DialectUtils.shapeQualifiableIdentifier(value, qualifier, prefs, dialect);
+		}
 		if (ST_COLUMN_NAME_KEY.equals(key))
 		{
 			value = DialectUtils.shapeIdentifier(value, prefs, dialect);
@@ -2529,12 +2559,18 @@ public class DialectUtils implements StringTemplateConstants
 	}
 
 	/**
-	 * @param dialect the dialect that this attribute binding is meant for
-	 * @param st the String template
-	 * @param valuesMap a map of key/value pairs to bind into the template
-	 * @param columns the TableColumnInfos to use for column names in the column list
-	 * @param qualifier the specifics regarding schema / catalog
-	 * @param prefs user's preferences regarding qualifying identifiers
+	 * @param dialect
+	 *           the dialect that this attribute binding is meant for
+	 * @param st
+	 *           the String template
+	 * @param valuesMap
+	 *           a map of key/value pairs to bind into the template
+	 * @param columns
+	 *           the TableColumnInfos to use for column names in the column list
+	 * @param qualifier
+	 *           the specifics regarding schema / catalog
+	 * @param prefs
+	 *           user's preferences regarding qualifying identifiers
 	 * @return the SQL result of binding key/values and column list into the specified template
 	 */
 	public static String bindTemplateAttributes(HibernateDialect dialect, StringTemplate st,
@@ -2545,20 +2581,22 @@ public class DialectUtils implements StringTemplateConstants
 		for (TableColumnInfo column : columns)
 		{
 			bindAttribute(dialect, st, ST_COLUMN_NAME_KEY, column.getColumnName(), qualifier, prefs);
-		}		
+		}
 		return st.toString();
 	}
-	
-	
-	public static HashMap<String, String> getValuesMap(String... elts) {
+
+	public static HashMap<String, String> getValuesMap(Object... elts)
+	{
 		HashMap<String, String> valuesMap = new HashMap<String, String>();
-		for (int i = 0; i < elts.length-1; i++) {
-			valuesMap.put(elts[i], elts[i+1]);
+		for (int i = 0; i < elts.length - 1; i++)
+		{
+			valuesMap.put(elts[i].toString(), elts[i + 1].toString());
 		}
 		return valuesMap;
 	}
-	
-	public static boolean isNotEmptyString(String value) {
+
+	public static boolean isNotEmptyString(String value)
+	{
 		return (value != null) && (!"".equals(value));
 	}
 }

@@ -65,10 +65,17 @@ public interface StringTemplateConstants
 	String ST_CREATE_SEQUENCE_STYLE_ONE = 
 		"CREATE SEQUENCE $sequenceName$ START WITH $startValue$ " +
 		"INCREMENT BY $incrementValue$ $cache$ $cacheValue$";	
+
+	String ST_CREATE_SEQUENCE_STYLE_TWO = 
+		"CREATE SEQUENCE $sequenceName$ $startWith$ $increment$ $minimum$ $maximum$ $cache$ $cycle$";
 	
 	String ST_CREATE_VIEW_STYLE_ONE =
 		"CREATE VIEW $viewName$ " +
 		"AS $selectStatement$ $with$ $checkOptionType$ $checkOption$";
+	
+	String ST_CREATE_VIEW_STYLE_TWO = 
+		"CREATE VIEW $viewName$ " +
+		"AS $selectStatement$ $withCheckOption$";
 	
 	String ST_DROP_CONSTRAINT_STYLE_ONE = 
 		"ALTER TABLE $tableName$ DROP CONSTRAINT $constraintName$";
@@ -100,6 +107,8 @@ public interface StringTemplateConstants
 
 	String ST_CACHE_KEY = "cache";
 	
+	String ST_CYCLE_KEY = "cycle";
+	
 	String ST_CACHE_VALUE_KEY = "cacheValue";
 	
 	String ST_CATALOG_NAME_KEY = "catalogName";
@@ -118,6 +127,8 @@ public interface StringTemplateConstants
 	
 	String ST_CONSTRAINT_NAME_KEY = "constraintName";
 
+	String ST_INCREMENT_KEY = "increment";
+	
 	String ST_INCREMENT_VALUE_KEY = "incrementValue";	
 	
 	String ST_INCREMENT_BY_KEY = "incrementBy";
@@ -131,7 +142,11 @@ public interface StringTemplateConstants
 	String ST_INDEX_NAME_KEY = "indexName";
 	
 	String ST_INDEX_TYPE_KEY = "indexType";
-
+	
+	String ST_MAXIMUM_KEY = "maximum";
+	
+	String ST_MINIMUM_KEY = "minimum";
+	
 	String ST_NEW_OBJECT_NAME_KEY = "newObjectName";
 	
 	String ST_OLD_OBJECT_NAME_KEY = "oldObjectName";
@@ -150,6 +165,8 @@ public interface StringTemplateConstants
 	
 	String ST_START_VALUE_KEY = "startValue";
 	
+	String ST_START_WITH_KEY = "startWith";
+	
 	String ST_STORAGE_OPTION_KEY = "storageOption";
 	
 	String ST_TABLE_NAME_KEY = "tableName";
@@ -157,4 +174,6 @@ public interface StringTemplateConstants
 	String ST_UNIQUE_KEY = "unique";
 	
 	String ST_VIEW_NAME_KEY = "viewName";
+	
+	String ST_WITH_CHECK_OPTION_KEY = "withcheckOption"; 
 }
