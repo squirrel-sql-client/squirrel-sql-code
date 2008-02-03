@@ -56,7 +56,7 @@ import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * A dialog that can be used to get column(s) selected by the user 
  */
-public class ColumnListDialog extends JDialog {
+public class ColumnListDialog extends JDialog implements IDisposableDialog {
 
     private static final long serialVersionUID = 1L;
 
