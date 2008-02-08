@@ -1005,7 +1005,7 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 		String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		return new String[] { DialectUtils.getUpdateSQL(tableName,
+		return DialectUtils.getUpdateSQL(tableName,
 			setColumns,
 			setValues,
 			fromTables,
@@ -1013,7 +1013,7 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 			whereValues,
 			qualifier,
 			prefs,
-			this) };
+			this);
 	}
 
 	/**
@@ -1183,9 +1183,11 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsTablespace()
+	 */
 	public boolean supportsTablespace()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -1219,8 +1221,7 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 	 */
 	public boolean supportsCorrelatedSubQuery()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 	
 }

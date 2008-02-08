@@ -879,7 +879,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 		String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		return new String[] { DialectUtils.getUpdateSQL(tableName,
+		return DialectUtils.getUpdateSQL(tableName,
 			setColumns,
 			setValues,
 			fromTables,
@@ -887,7 +887,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 			whereValues,
 			qualifier,
 			prefs,
-			this) };
+			this);
 	}
 
 	/**

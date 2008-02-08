@@ -809,8 +809,7 @@ public class SybaseDialect extends org.hibernate.dialect.SybaseDialect implement
 		String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-
-		return new String[] { DialectUtils.getUpdateSQL(tableName,
+		return DialectUtils.getUpdateSQL(tableName,
 			setColumns,
 			setValues,
 			fromTables,
@@ -818,7 +817,7 @@ public class SybaseDialect extends org.hibernate.dialect.SybaseDialect implement
 			whereValues,
 			qualifier,
 			prefs,
-			this) };
+			this);
 	}
 
 	/**

@@ -959,81 +959,15 @@ public class Oracle9iDialect extends Oracle9Dialect implements HibernateDialect
 		String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		if ((setColumns == null && setValues == null)
-			|| (setColumns != null && setValues != null && setColumns.length == 0 && setValues.length == 0))
-		{
-			return new String[] {};
-		}
-		if (fromTables == null &&
-			((setColumns != null && setValues != null && setColumns.length != setValues.length)
-			|| setColumns == null || setValues == null))
-		{
-			throw new IllegalArgumentException("The amount of SET columns and values must be the same!");
-		}
-		if ((whereColumns != null && whereValues != null && whereColumns.length != whereValues.length)
-			|| (whereColumns == null && whereValues != null) || (whereColumns != null && whereValues == null))
-		{
-			throw new IllegalArgumentException("The amount of WHERE columns and values must be the same!");
-		}
-		if (fromTables == null && setValues == null)  {
-			throw new IllegalArgumentException("One of fromTables or setValues args must be non-null");
-		}
-		
-		// Since we can use a correlated sub-query to update all rows in one statement, we don't care about the 
-		// set values, unless fromTables is null, in which case we go with a normal update.  Using the set 
-		// values would require an update statement for each row in the merged table for each column that was 
-		// merged in, which is incredibly inefficient.  However, the API is intended to support database 
-		// dialects that can't handle correlated sub-queries.
-		
-		ArrayList<String> result = new ArrayList<String>();
-		String templateStr = null;
-		String columnName = null;
-		String whereColumnName = null;
-		String whereValueName = null;
-		
-		if (fromTables != null) {
-			// update <destTableName> dest
-			// set <setColumnName> = ( 
-			// 	select s.<setColumnName>
-			//    from <sourceTableName> f where f.<whereColumn> = s.<whereValue>)
-
-			templateStr = 
-				"UPDATE $destTableName$ dest SET $columnName$ = " +
-				"	( 	SELECT src.$columnName$ " +
-				"		FROM $sourceTableName$ src " +
-				"		where src.$whereColumnName$ = dest.$whereValue$ )";
-		} else {
-			// update <destTableName> dest
-			// set <setColumnName> = <setValue> 
-			// where f.<whereColumn> = s.<whereValue>)
-			
-			templateStr = 
-				"UPDATE $destTableName$ dest " +
-				"SET $columnName$ = $columnValue$ " +
-				"where $whereColumnName$ = $whereValue$";
-		}
-
-		for (int idx = 0; idx < setColumns.length; idx++) {
-			columnName = setColumns[idx]; // desc_t1
-
-			whereColumnName = whereColumns[idx]; // myid
-			whereValueName = whereValues[idx]; // myid
-			StringTemplate st = new StringTemplate(templateStr);			
-			
-			st.setAttribute(ST_DEST_TABLE_NAME_KEY, destTableName);
-			st.setAttribute(ST_COLUMN_NAME_KEY, columnName);
-			if (fromTables != null) {
-				st.setAttribute(ST_SOURCE_TABLE_NAME_KEY, fromTables[idx]);
-			} else {
-				st.setAttribute(ST_COLUMN_VALUE_KEY, setValues[idx]);
-			}
-			st.setAttribute(ST_WHERE_COLUMN_NAME_KEY, whereColumnName);
-			st.setAttribute(ST_WHERE_VALUE_KEY, whereValueName);
-			result.add(st.toString());
-		}
-		
-		
-		return result.toArray(new String[result.size()]);
+		return DialectUtils.getUpdateSQL(destTableName,
+			setColumns,
+			setValues,
+			fromTables,
+			whereColumns,
+			whereValues,
+			qualifier,
+			prefs,
+			this);
 	}
  
 	
