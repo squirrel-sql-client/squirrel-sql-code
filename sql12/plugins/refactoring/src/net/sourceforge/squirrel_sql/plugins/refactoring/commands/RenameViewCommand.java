@@ -163,11 +163,7 @@ public class RenameViewCommand extends AbstractRefactoringCommand
 	 */
 	protected boolean isRefactoringSupportedForDialect(HibernateDialect dialect)
 	{
-		DatabaseObjectQualifier qualifier =
-			new DatabaseObjectQualifier(_info[0].getCatalogName(), _info[0].getSchemaName());
-
-		return dialect.supportsRenameView()
-			|| dialect.getViewDefinitionSQL("test", qualifier, _sqlPrefs) != null;
+		return dialect.supportsRenameView() || dialect.supportsViewDefinition();
 	}
 
 	private void showCustomDialog()
