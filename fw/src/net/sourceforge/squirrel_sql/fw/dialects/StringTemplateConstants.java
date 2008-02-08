@@ -54,6 +54,9 @@ public interface StringTemplateConstants
 		"$restartWith$ $startValue$ " +
 		"$incrementBy$ $incrementValue$ ";
 		
+	String ST_ALTER_SEQUENCE_STYLE_TWO = 
+		"ALTER SEQUENCE $sequenceName$ $startWith$ $increment$ $minimum$ $maximum$ $cache$ $cycle$";
+	
 	String ST_CREATE_INDEX_STYLE_ONE = 
 		"CREATE $accessMethod$ INDEX $indexName$ $indexType$ " +
 		"ON $tableName$ ( $columnName; separator=\",\"$ )";
@@ -95,6 +98,9 @@ public interface StringTemplateConstants
 	String ST_DROP_VIEW_STYLE_ONE = 
 		"DROP VIEW $viewName$";
 		
+	String ST_MODIFY_TABLE_TO_RECONSTRUCT = 
+		"MODIFY $tableName$ TO RECONSTRUCT";
+	
 	String ST_RENAME_OBJECT_STYLE_ONE = 
 		"ALTER TABLE $oldObjectName$ RENAME TO $newObjectName$";
 	
@@ -123,10 +129,14 @@ public interface StringTemplateConstants
 	
 	String ST_COLUMN_NAME_KEY = "columnName";
 
+	String ST_COLUMN_VALUE_KEY = "columnValue";	
+	
 	String ST_CONSTRAINT_KEY = "constraint";
 	
 	String ST_CONSTRAINT_NAME_KEY = "constraintName";
 
+	String ST_DEST_TABLE_NAME_KEY = "destTableName";
+	
 	String ST_INCREMENT_KEY = "increment";
 	
 	String ST_INCREMENT_VALUE_KEY = "incrementValue";	
@@ -163,6 +173,8 @@ public interface StringTemplateConstants
 	
 	String ST_SELECT_STATEMENT_KEY = "selectStatement";
 	
+	String ST_SOURCE_TABLE_NAME_KEY = "sourceTableName";
+	
 	String ST_START_VALUE_KEY = "startValue";
 	
 	String ST_START_WITH_KEY = "startWith";
@@ -174,6 +186,10 @@ public interface StringTemplateConstants
 	String ST_UNIQUE_KEY = "unique";
 	
 	String ST_VIEW_NAME_KEY = "viewName";
+	
+	String ST_WHERE_COLUMN_NAME_KEY = "whereColumnName";
+	
+	String ST_WHERE_VALUE_KEY = "whereValue";
 	
 	String ST_WITH_CHECK_OPTION_KEY = "withcheckOption"; 
 }

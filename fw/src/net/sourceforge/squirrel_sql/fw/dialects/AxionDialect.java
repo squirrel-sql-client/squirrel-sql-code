@@ -688,7 +688,7 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
 	 */
-	public String getUpdateSQL(String tableName, String[] setColumns, String[] setValues, String[] fromTables,
+	public String[] getUpdateSQL(String tableName, String[] setColumns, String[] setValues, String[] fromTables,
 		String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
@@ -937,4 +937,22 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 		return null;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getQualifiedIdentifier(java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	public String getQualifiedIdentifier(String identifier, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
+	{
+		return identifier;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCorrelatedSubQuery()
+	 */
+	public boolean supportsCorrelatedSubQuery()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
 }

@@ -923,11 +923,11 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
-	public String getUpdateSQL(String tableName, String[] setColumns, String[] setValues, String[] fromTables,
+	public String[] getUpdateSQL(String tableName, String[] setColumns, String[] setValues, String[] fromTables,
 		String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getUpdateSQL(tableName,
+		return new String[] { DialectUtils.getUpdateSQL(tableName,
 			setColumns,
 			setValues,
 			fromTables,
@@ -935,7 +935,7 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 			whereValues,
 			qualifier,
 			prefs,
-			this);
+			this) };
 	}
 
 	/**
@@ -1156,5 +1156,23 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 	{
 		return null;
 	}
-	
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getQualifiedIdentifier(java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	public String getQualifiedIdentifier(String identifier, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
+	{
+		return identifier;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCorrelatedSubQuery()
+	 */
+	public boolean supportsCorrelatedSubQuery()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

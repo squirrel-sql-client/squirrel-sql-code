@@ -915,7 +915,7 @@ public interface HibernateDialect extends StringTemplateConstants
 	 *           preferences for generated sql scripts
 	 * @return the sql command to update data.
 	 */
-	public String getUpdateSQL(String tableName, String[] setColumns, String[] setValues, String[] fromTables,
+	public String[] getUpdateSQL(String tableName, String[] setColumns, String[] setValues, String[] fromTables,
 		String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs);
 
@@ -973,5 +973,24 @@ public interface HibernateDialect extends StringTemplateConstants
 	 */
 	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs);
+	
+	
+	/**
+	 * Returns the qualified identifier based on the specified qualifier and user preferences.
+	 *  
+	 * @param identifier
+	 * @param qualifier
+	 * @param prefs
+	 * @return
+	 */
+	public String getQualifiedIdentifier(String identifier, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs);
 
+	
+	/**
+	 * Returns a boolean indicating whether or not this dialect supports correlated sub-queries.
+	 * 
+	 * @return true if support for correlated sub-queries and false otherwise.
+	 */
+	public boolean supportsCorrelatedSubQuery();
 }
