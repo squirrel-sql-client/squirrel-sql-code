@@ -25,10 +25,12 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.SQLExecuterTask;
+import net.sourceforge.squirrel_sql.client.session.schemainfo.CaseInsensitiveString;
 import net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.UserCancelledOperationException;
@@ -104,19 +106,19 @@ public class MergeTableCommand extends AbstractRefactoringCommand
 	protected String[] generateSQLStatements() throws UserCancelledOperationException, SQLException
 	{
 		ArrayList<String> results = new ArrayList<String>();
-		ArrayList<String> updateResults = new ArrayList<String>();
+
 
 		ISQLDatabaseMetaData md = _session.getMetaData();
 
 		String catalog = _info[0].getCatalogName();
 		String schema = _info[0].getSchemaName();
 		DatabaseObjectQualifier qualifier = new DatabaseObjectQualifier(catalog, schema);
-		String table = _info[0].getSimpleName();
-		String mergedTable = customDialog.getReferencedTable();
-		TableColumnInfo[] mergedTableColumnInfos = _allTables.get(mergedTable);
+		String destinationTable = _info[0].getSimpleName();
+		String sourceTable = customDialog.getReferencedTable();
+		TableColumnInfo[] mergedTableColumnInfos = _allTables.get(sourceTable);
 		if (s_log.isDebugEnabled())
 		{
-			s_log.debug("MergedTable = " + mergedTable);
+			s_log.debug("MergedTable = " + sourceTable);
 			s_log.debug("Is Null " + (mergedTableColumnInfos == null));
 			logDialogInfo();
 		}
@@ -126,8 +128,8 @@ public class MergeTableCommand extends AbstractRefactoringCommand
 		{
 			for (TableColumnInfo mc : mergedTableColumnInfos)
 			{
-
-				if (customDialog.getMergeColumns().contains(mc.getColumnName()))
+				CaseInsensitiveString cistr = new CaseInsensitiveString(mc.getColumnName());
+				if (customDialog.getMergeColumns().contains(cistr))
 				{
 					if (s_log.isDebugEnabled())
 					{
@@ -136,7 +138,7 @@ public class MergeTableCommand extends AbstractRefactoringCommand
 					TableColumnInfo columnInNewTable =
 						new TableColumnInfo(	mc.getCatalogName(),
 													mc.getSchemaName(),
-													table,
+													destinationTable,
 													mc.getColumnName(),
 													mc.getDataType(),
 													JDBCTypeMapper.getJdbcTypeName(mc.getDataType()),
@@ -158,100 +160,170 @@ public class MergeTableCommand extends AbstractRefactoringCommand
 
 		if (customDialog.isMergeData())
 		{
-			StringBuilder columnNamesSelectStmt = new StringBuilder();
-			for (String columnNames : customDialog.getMergeColumns())
-			{
-				columnNamesSelectStmt.append("\"").append(columnNames).append("\"").append(", ");
-			}
-			columnNamesSelectStmt.delete(columnNamesSelectStmt.length() - 2, columnNamesSelectStmt.length()); // deletes
-			// the
-			// ", "
-
-			StringBuilder columnIDSelect = new StringBuilder();
-			for (String[] whereRow : customDialog.getWhereDataColumns())
-			{
-				columnIDSelect.append("\"").append(whereRow[1]).append("\"").append(", ");
-			}
-			columnIDSelect.delete(columnIDSelect.length() - 2, columnIDSelect.length()); // deletes the ", "
-
-			final String[] mergeColumns =
-				customDialog.getMergeColumns().toArray(new String[customDialog.getMergeColumns().size()]);
-
-			// Selects the values from the merge table
-			String dataQuery =
-				"SELECT " + columnNamesSelectStmt.toString() + ", " + columnIDSelect.toString() + " FROM \""
-					+ schema + "\".\"" + mergedTable + "\"";
-			Statement stmt = null;
-			ResultSet rs = null;
-			try
-			{
-				stmt = _session.getSQLConnection().createStatement();
-				if (s_log.isDebugEnabled()) {
-					s_log.debug("generateSQLStatements - running dataQuery: "+dataQuery);
-				}
-				rs = stmt.executeQuery(dataQuery);
-
-				ArrayList<String> whereColumns = new ArrayList<String>();
-				ArrayList<String> whereValues = new ArrayList<String>();
-
-				while (rs.next())
-				{
-					ArrayList<String> rowColumns = new ArrayList<String>();
-					ArrayList<String> rowData = new ArrayList<String>();
-					for (int i = 1; i <= customDialog.getMergeColumns().size(); i++)
-					{
-						String value = rs.getString(i);
-						if (!rs.wasNull())
-						{
-							rowColumns.add(mergeColumns[i - 1]);
-							rowData.add("'" + value + "'");
-						}
-					}
-
-					if (customDialog.getWhereDataColumns().size() > 0)
-					{
-						// Selects the values for the where part
-						whereColumns = new ArrayList<String>();
-						whereValues = new ArrayList<String>();
-						int count = 0;
-						for (String[] whereRow : customDialog.getWhereDataColumns())
-						{
-							count++;
-							// maybe with Inner join better performance
-							StringBuilder whereColumn = new StringBuilder();
-							StringBuilder whereValue = new StringBuilder();
-							whereColumn.append(table).append(".").append(whereRow[0]);
-							whereValue	.append("'")
-											.append(rs.getString(customDialog.getMergeColumns().size() + count))
-											.append("'");
-
-							whereColumns.add(whereColumn.toString());
-							whereValues.add(whereValue.toString());
-						}
-					}
-
-					updateResults.add(_dialect.getUpdateSQL(table,
-						rowColumns.toArray(new String[rowColumns.size()]),
-						rowData.toArray(new String[rowData.size()]),
-						new String[] { mergedTable },
-						whereColumns.toArray(new String[whereColumns.size()]),
-						whereValues.toArray(new String[whereValues.size()]),
-						qualifier,
-						_sqlPrefs));
-					rowData.clear();
-				}
-			} catch (SQLException e)
-			{
-				s_log.error("generateSQLStatements: Unexpected exception: " + e.getMessage(), e);
-			} finally
-			{
-				SQLUtilities.closeResultSet(rs);
-				SQLUtilities.closeStatement(stmt);
+			List<String> updateResults = null;
+			if (_dialect.supportsCorrelatedSubQuery()) {
+				updateResults = getCorrelatedSubqueryUpdateSqls(qualifier, destinationTable, sourceTable);
+			} else {
+				updateResults = getSimpleUpdateSqls(qualifier, destinationTable, sourceTable);
 			}
 			results.addAll(updateResults);
 		}
 
 		return results.toArray(new String[] {});
+	}
+
+	private List<String> getCorrelatedSubqueryUpdateSqls(DatabaseObjectQualifier qualifier, String destinationTable,
+		String sourceTable)
+	{
+		// update <destinationTable> s 
+		// set destColumn = ( select f.desc_t1 from <fromTable> f where f.myid = s.myid)
+
+		//ArrayList<String> result = new ArrayList<String>();
+		
+		Vector<String> mergeCols =  customDialog.getMergeColumns();
+		String[] mergeColumns = new String[mergeCols.size()];
+		
+		for (int i = 0; i < mergeCols.size(); i++) {
+			mergeColumns[i] = mergeCols.elementAt(i); 
+		}		
+		
+		Vector<String[]> whereDataColumns = customDialog.getWhereDataColumns();
+		String[] whereColumns = new String[whereDataColumns.size()];
+		String[] whereValues = new String[whereDataColumns.size()]; 
+		
+		
+		for (int i = 0; i < whereDataColumns.size(); i++) {
+			String[] whereDataColumn = whereDataColumns.elementAt(i);
+			whereColumns[i] = whereDataColumn[0];
+			whereValues[i] = whereDataColumn[1];
+		}
+		
+		String[] result = 
+			_dialect.getUpdateSQL(destinationTable, mergeColumns, null, new String[] {sourceTable}, whereColumns, whereValues, qualifier, _sqlPrefs);
+		return Arrays.asList(result);
+	}
+	
+	private List<String> getSimpleUpdateSqls(DatabaseObjectQualifier qualifier, String table,
+		String mergedTable)
+	{
+		ArrayList<String> updateResults = new ArrayList<String>();
+		StringBuilder columnNamesSelectStmt = new StringBuilder();
+		for (String columnName : customDialog.getMergeColumns())
+		{
+			columnNamesSelectStmt.append(quoteColumnName(columnName));
+			columnNamesSelectStmt.append(", ");
+		}
+		// deletes the ", "
+		columnNamesSelectStmt.delete(columnNamesSelectStmt.length() - 2, columnNamesSelectStmt.length()); 
+
+		StringBuilder columnIDSelect = new StringBuilder();
+		for (String[] whereRow : customDialog.getWhereDataColumns())
+		{
+			columnIDSelect.append(quoteColumnName(whereRow[1]));
+			columnIDSelect.append(", ");
+		}
+		// deletes the ", "
+		columnIDSelect.delete(columnIDSelect.length() - 2, columnIDSelect.length()); 
+
+		final String[] mergeColumns =
+			customDialog.getMergeColumns().toArray(new String[customDialog.getMergeColumns().size()]);
+
+		String qualifiedTableName = _dialect.getQualifiedIdentifier(mergedTable, qualifier, _sqlPrefs);
+		
+		// Selects the values from the merge table
+		StringBuilder dataQueryBuilder = new StringBuilder();
+		dataQueryBuilder.append("SELECT ");
+		dataQueryBuilder.append(columnNamesSelectStmt.toString());
+		dataQueryBuilder.append(", ").append(columnIDSelect.toString());
+		dataQueryBuilder.append(" FROM ");
+		dataQueryBuilder.append(qualifiedTableName);
+		String dataQuery = dataQueryBuilder.toString();
+		
+		Statement stmt = null;
+		ResultSet rs = null;
+		try
+		{
+			stmt = _session.getSQLConnection().createStatement();
+			if (s_log.isDebugEnabled()) {
+				s_log.debug("generateSQLStatements - running dataQuery: "+dataQuery);
+			}
+			rs = stmt.executeQuery(dataQuery);
+
+			ArrayList<String> whereColumns = new ArrayList<String>();
+			ArrayList<String> whereValues = new ArrayList<String>();
+
+			while (rs.next())
+			{
+				ArrayList<String> rowColumns = new ArrayList<String>();
+				ArrayList<String> rowData = new ArrayList<String>();
+				for (int i = 1; i <= customDialog.getMergeColumns().size(); i++)
+				{
+					String value = rs.getString(i);
+					if (!rs.wasNull())
+					{
+						rowColumns.add(mergeColumns[i - 1]);
+						rowData.add("'" + value + "'");
+					}
+				}
+
+				if (customDialog.getWhereDataColumns().size() > 0)
+				{
+					// Selects the values for the where part
+					whereColumns = new ArrayList<String>();
+					whereValues = new ArrayList<String>();
+					int count = 0;
+					for (String[] whereRow : customDialog.getWhereDataColumns())
+					{
+						count++;
+						// maybe with Inner join better performance
+						StringBuilder whereColumn = new StringBuilder();
+						StringBuilder whereValue = new StringBuilder();
+						whereColumn.append(table).append(".").append(whereRow[0]);
+						whereValue	.append("'")
+										.append(rs.getString(customDialog.getMergeColumns().size() + count))
+										.append("'");
+
+						whereColumns.add(whereColumn.toString());
+						whereValues.add(whereValue.toString());
+					}
+				}
+				
+				String[] updateSqls = _dialect.getUpdateSQL(table,
+					rowColumns.toArray(new String[rowColumns.size()]),
+					rowData.toArray(new String[rowData.size()]),
+					new String[] { mergedTable },
+					whereColumns.toArray(new String[whereColumns.size()]),
+					whereValues.toArray(new String[whereValues.size()]),
+					qualifier,
+					_sqlPrefs);
+				
+				for (String sql : updateSqls) { 
+					updateResults.add(sql);
+				}
+				rowData.clear();
+			}
+		} catch (SQLException e)
+		{
+			s_log.error("generateSQLStatements: Unexpected exception: " + e.getMessage(), e);
+		} finally
+		{
+			SQLUtilities.closeResultSet(rs);
+			SQLUtilities.closeStatement(stmt);
+		}
+		return updateResults;
+	}
+	
+	private String quoteColumnName(String columnName) {
+		StringBuilder result = new StringBuilder();
+		if (_sqlPrefs.isQuoteIdentifiers()) {
+			result.append("\"");
+			result.append(columnName);
+			result.append("\"");
+		} else {
+			result.append(columnName);
+		}
+		return result.toString();
+		
 	}
 	
 	/**
@@ -312,9 +384,12 @@ public class MergeTableCommand extends AbstractRefactoringCommand
 		_allTables = new HashMap<String, TableColumnInfo[]>();
 		for (ITableInfo table : tables)
 		{
-			if (table.getDatabaseObjectType() == DatabaseObjectType.TABLE && table != selectedTable)
+			TableColumnInfo[] columns = safeGetColumns(table);
+			if (table.getDatabaseObjectType() == DatabaseObjectType.TABLE 
+					&& table != selectedTable 
+					&& columns != null)
 			{
-				_allTables.put(table.getSimpleName(), _session.getMetaData().getColumnInfo(table));
+				_allTables.put(table.getSimpleName(), columns);
 			}
 		}
 		customDialog = dialogFactory.createDialog(selectedTable.getSimpleName(), tableColumnInfos, _allTables);
@@ -325,6 +400,28 @@ public class MergeTableCommand extends AbstractRefactoringCommand
 		customDialog.setVisible(true);
 	}
 
+	/**
+	 * Gets the columns for the specified table "safely".  That is, without throwing an exception and returning
+	 * null if an exception occurs.  It is not allowed in Oracle - for example - to get the columns on a 
+	 * flashback table (BIN$...) 
+	 *  
+	 * @param table the table to attempt to get the columns from.
+	 * 
+	 * @return the table columns or null if they are unavailable.
+	 */
+	private TableColumnInfo[] safeGetColumns(ITableInfo table) {
+		TableColumnInfo[] result = null;
+		try {
+			result = _session.getMetaData().getColumnInfo(table);
+		} catch (SQLException e) {
+			if (s_log.isInfoEnabled()) {
+				s_log.info("safeGetColumns: unable to get columns for table " + table.getSimpleName() + ": "
+					+ e.getMessage(), e);
+			}
+		}
+		return result;
+	}
+	
 	private void logDialogInfo() {
 		if (s_log.isDebugEnabled()) {
 			s_log.debug("getReferencedTable: "+customDialog.getReferencedTable());

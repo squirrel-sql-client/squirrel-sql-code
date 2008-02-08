@@ -316,14 +316,14 @@ public class AddLookupTableCommand extends AbstractRefactoringCommand
 			{
 				// TODO: This won't work when the column has values with quotes in them.
 				// Use PreparedStatements instead.
-				results.add(_dialect.getUpdateSQL(sourceTableName,
+				results.addAll(Arrays.asList(_dialect.getUpdateSQL(sourceTableName,
 					new String[] { sourceColumnName },
 					new String[] { String.valueOf(i) },
 					null,
 					new String[] { sourceColumnName + "_temp" },
 					new String[] { "'" + data.get(i) + "'" },
 					qualifier,
-					_sqlPrefs));
+					_sqlPrefs)));
 			}
 
 			// Sets constraints like NOT NULL for the new column, depending on the constraints for the old

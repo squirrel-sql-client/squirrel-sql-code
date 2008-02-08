@@ -1416,7 +1416,7 @@ public class DialectLiveTestRunner {
    	
 		if (dialect.supportsUpdate())
 		{
-			String sql =
+			String[] sql =
 				dialect.getUpdateSQL(tableName,
 					setColumns,
 					setValues,

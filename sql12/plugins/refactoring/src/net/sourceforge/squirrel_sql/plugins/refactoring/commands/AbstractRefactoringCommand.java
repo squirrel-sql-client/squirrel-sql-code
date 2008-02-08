@@ -1,22 +1,23 @@
 package net.sourceforge.squirrel_sql.plugins.refactoring.commands;
+
 /*
-* Copyright (C) 2007 Daniel Regli & Yannick Winiger
-* http://sourceforge.net/projects/squirrel-sql
-*
-* This program is free software; you can redistribute it and/or
-* modify it under the terms of the GNU General Public License
-* as published by the Free Software Foundation; either version 2
-* of the License, or any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*/
+ * Copyright (C) 2007 Daniel Regli & Yannick Winiger
+ * http://sourceforge.net/projects/squirrel-sql
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -42,271 +43,310 @@ import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.refactoring.prefs.RefactoringPreferenceBean;
 import net.sourceforge.squirrel_sql.plugins.refactoring.prefs.RefactoringPreferencesManager;
 
-public abstract class AbstractRefactoringCommand implements ICommand {
-    /**
-     * Logger for this class.
-     */
-    private final static ILogger s_log = LoggerController.createLogger(AbstractRefactoringCommand.class);
+public abstract class AbstractRefactoringCommand implements ICommand
+{
+	/**
+	 * Logger for this class.
+	 */
+	private final static ILogger s_log = LoggerController.createLogger(AbstractRefactoringCommand.class);
 
-    /**
-     * Internationalized strings for this class
-     */
-    private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(AbstractRefactoringCommand.class);
+	/**
+	 * Internationalized strings for this class
+	 */
+	private static final StringManager s_stringMgr =
+		StringManagerFactory.getStringManager(AbstractRefactoringCommand.class);
 
-    static interface i18n {
-        String NO_CHANGES = s_stringMgr.getString("AbstractRefactoringCommand.noChanges");
-        String DIALECT_SELECTION_CANCELLED = s_stringMgr.getString("AbstractRefactoringCommand.dialectSelectionCancelled");
-        String UNSUPPORTED_TYPE_TITLE = s_stringMgr.getString("AbstractRefactoringCommand.unsupportedTypeTitle");
-    }
+	static interface i18n
+	{
+		String NO_CHANGES = s_stringMgr.getString("AbstractRefactoringCommand.noChanges");
 
-    /**
-     * Current session
-     */
-    protected final ISession _session;
+		String DIALECT_SELECTION_CANCELLED =
+			s_stringMgr.getString("AbstractRefactoringCommand.dialectSelectionCancelled");
 
-    /**
-     * Selected database object(s)
-     */
-    protected final IDatabaseObjectInfo[] _info;
+		String UNSUPPORTED_TYPE_TITLE =
+			s_stringMgr.getString("AbstractRefactoringCommand.unsupportedTypeTitle");
+	}
 
-    /**
-     * HibernateDialect to use for this refactoring.
-     */
-    protected HibernateDialect _dialect;
+	/**
+	 * Current session
+	 */
+	protected final ISession _session;
 
-    /**
-     * User preferences regarding the generation of SQL scripts.
-     */
-    protected final SqlGenerationPreferences _sqlPrefs;
+	/**
+	 * Selected database object(s)
+	 */
+	protected final IDatabaseObjectInfo[] _info;
 
+	/**
+	 * HibernateDialect to use for this refactoring.
+	 */
+	protected HibernateDialect _dialect;
 
-    public AbstractRefactoringCommand(ISession session, IDatabaseObjectInfo[] info) {
-        if (session == null) throw new IllegalArgumentException("ISession cannot be null");
-        if (info == null) throw new IllegalArgumentException("IDatabaseObjectInfo[] cannot be null");
+	/**
+	 * User preferences regarding the generation of SQL scripts.
+	 */
+	protected final SqlGenerationPreferences _sqlPrefs;
 
-        _session = session;
-        _info = info;
+	public AbstractRefactoringCommand(ISession session, IDatabaseObjectInfo[] info)
+	{
+		if (session == null)
+			throw new IllegalArgumentException("ISession cannot be null");
+		if (info == null)
+			throw new IllegalArgumentException("IDatabaseObjectInfo[] cannot be null");
 
-        RefactoringPreferenceBean prefsBean = RefactoringPreferencesManager.getPreferences();
-        _sqlPrefs = new SqlGenerationPreferences();
-        if (prefsBean != null) {
-	        _sqlPrefs.setQualifyTableNames(prefsBean.isQualifyTableNames());
-	        _sqlPrefs.setQuoteIdentifiers(prefsBean.isQuoteIdentifiers());
-        } else {
-      	  if (s_log.isDebugEnabled()) {
-      		  s_log.debug("RefactoringPreferencesManager.getPreferences returned null.  " +
-      		  		"Unable to get user preferences");
-      	  }
-	        _sqlPrefs.setQualifyTableNames(false);
-	        _sqlPrefs.setQuoteIdentifiers(false);      	        	  
-        }
-        _sqlPrefs.setSqlStatementSeparator(_session.getQueryTokenizer().getSQLStatementSeparator());
-    }
+		_session = session;
+		_info = info;
 
+		RefactoringPreferenceBean prefsBean = RefactoringPreferencesManager.getPreferences();
+		_sqlPrefs = new SqlGenerationPreferences();
+		if (prefsBean != null)
+		{
+			_sqlPrefs.setQualifyTableNames(prefsBean.isQualifyTableNames());
+			_sqlPrefs.setQuoteIdentifiers(prefsBean.isQuoteIdentifiers());
+		} else
+		{
+			if (s_log.isDebugEnabled())
+			{
+				s_log.debug("RefactoringPreferencesManager.getPreferences returned null.  "
+					+ "Unable to get user preferences");
+			}
+			_sqlPrefs.setQualifyTableNames(false);
+			_sqlPrefs.setQuoteIdentifiers(false);
+		}
+		_sqlPrefs.setSqlStatementSeparator(_session.getQueryTokenizer().getSQLStatementSeparator());
+	}
 
-    /**
-     * Does general execution work that every refactoring command needs (e.g. HibernateDialect)
-     * and then calls the onExecute method for the subclass's specific execution implementation.
-     */
-    public void execute() {
-        try {
-      	  ISQLDatabaseMetaData md = _session.getMetaData();
-            _dialect = DialectFactory.getDialect(DialectFactory.DEST_TYPE,
-                    _session.getApplication().getMainFrame(), md);
-            if (isRefactoringSupportedForDialect(_dialect)) {
-            	onExecute();
-            } else {
-            	String dialectName = DialectFactory.getDialectType(md).name();
-            	String msg = 
-            		s_stringMgr.getString("AbstractRefactoringCommand.unsupportedRefactoringMsg", dialectName);
-            	_session.showErrorMessage(msg);
-            }
-        } catch (UserCancelledOperationException e) {
-            _session.showErrorMessage(AbstractRefactoringCommand.i18n.DIALECT_SELECTION_CANCELLED);
-        } catch (Exception e) {
-            _session.showErrorMessage(e);
-            s_log.error("Unexpected exception on execution: " + e.getMessage(), e);
-        }
-    }
-    
- 	/**
-	  * Returns a boolean value indicating whether or not this refactoring is supported for the specified 
-	  * dialect. 
-	  * 
-	  * @param dialectExt the HibernateDialect to check
-	  * @return true if this refactoring is supported; false otherwise.
-	  */
+	/**
+	 * Does general execution work that every refactoring command needs (e.g. HibernateDialect) and then calls
+	 * the onExecute method for the subclass's specific execution implementation.
+	 */
+	public void execute()
+	{
+		try
+		{
+			ISQLDatabaseMetaData md = _session.getMetaData();
+			_dialect =
+				DialectFactory.getDialect(DialectFactory.DEST_TYPE, _session.getApplication().getMainFrame(), md);
+			if (isRefactoringSupportedForDialect(_dialect))
+			{
+				onExecute();
+			} else
+			{
+				String dialectName = DialectFactory.getDialectType(md).name();
+				String msg =
+					s_stringMgr.getString("AbstractRefactoringCommand.unsupportedRefactoringMsg", dialectName);
+				_session.showErrorMessage(msg);
+			}
+		} catch (UserCancelledOperationException e)
+		{
+			_session.showErrorMessage(AbstractRefactoringCommand.i18n.DIALECT_SELECTION_CANCELLED);
+		} catch (Exception e)
+		{
+			_session.showErrorMessage(e);
+			s_log.error("Unexpected exception on execution: " + e.getMessage(), e);
+		}
+	}
+
+	/**
+	 * Returns a boolean value indicating whether or not this refactoring is supported for the specified
+	 * dialect.
+	 * 
+	 * @param dialectExt
+	 *           the HibernateDialect to check
+	 * @return true if this refactoring is supported; false otherwise.
+	 */
 	protected abstract boolean isRefactoringSupportedForDialect(HibernateDialect dialectExt);
-    
-    /**
-     * The subclass should implement this method with it's refactoring specific execution code.
-     *
-     * @throws Exception if something goes wrong while executing the command
-     */
-    protected abstract void onExecute() throws Exception;
 
+	/**
+	 * The subclass should implement this method with it's refactoring specific execution code.
+	 * 
+	 * @throws Exception
+	 *            if something goes wrong while executing the command
+	 */
+	protected abstract void onExecute() throws Exception;
 
-    /**
-     * The subclass should implement this so that getSQLStatements can generate the actual statements.
-     *
-     * @return the sql statements
-     * @throws Exception if something goes wrong while generating the sql statements
-     */
-    protected abstract String[] generateSQLStatements() throws Exception;
+	/**
+	 * The subclass should implement this so that getSQLStatements can generate the actual statements.
+	 * 
+	 * @return the sql statements
+	 * @throws Exception
+	 *            if something goes wrong while generating the sql statements
+	 */
+	protected abstract String[] generateSQLStatements() throws Exception;
 
+	/**
+	 * Adds a new task to the ThreadPool that generates the SQL statements and notifies the listener when the
+	 * statements were successfully generated.
+	 * 
+	 * @param listener
+	 *           the listener to notify when the statments are ready
+	 */
+	protected void getSQLStatements(final SQLResultListener listener)
+	{
+		_session.getApplication().getThreadPool().addTask(new Runnable()
+		{
+			public void run()
+			{
+				try
+				{
+					listener.finished(generateSQLStatements());
+				} catch (UserCancelledOperationException ucoe)
+				{
+					_session.showErrorMessage(i18n.DIALECT_SELECTION_CANCELLED);
+				} catch (Exception e)
+				{
+					_session.showErrorMessage(e);
+					s_log.error("Unexpected exception on sql generation: " + e.getMessage(), e);
+				}
+			}
+		});
+	}
 
-    /**
-     * Adds a new task to the ThreadPool that generates the SQL statements and
-     * notifies the listener when the statements were successfully generated.
-     *
-     * @param listener the listener to notify when the statments are ready
-     */
-    protected void getSQLStatements(final SQLResultListener listener) {
-        _session.getApplication().getThreadPool().addTask(new Runnable() {
-            public void run() {
-                try {
-                    listener.finished(generateSQLStatements());
-                } catch (UserCancelledOperationException ucoe) {
-                    _session.showErrorMessage(i18n.DIALECT_SELECTION_CANCELLED);
-                } catch (Exception e) {
-                    _session.showErrorMessage(e);
-                    s_log.error("Unexpected exception on sql generation: " + e.getMessage(), e);                    
-                }
-            }
-        });
-    }
+	/**
+	 * The subclass should implement this so that the ExecuteListener can delegate the execution of the sql
+	 * script to the subclass.
+	 * 
+	 * @param script
+	 *           the sql script that should be executed
+	 */
+	protected abstract void executeScript(String script);
 
+	/**
+	 * An ActionListener for the Show SQL button that opens the sql statement in a dialog. The new dialog will
+	 * have the title and parent window as specified in the constructors parameters. <p/> If the specified
+	 * parent JDialog is null, the new dialog's parent will be the application's mainframe.
+	 */
+	protected class ShowSQLListener implements ActionListener, SQLResultListener
+	{
+		private final String _dialogTitle;
 
-    /**
-     * The subclass should implement this so that the ExecuteListener can delegate the execution
-     * of the sql script to the subclass.
-     *
-     * @param script the sql script that should be executed
-     */
-    protected abstract void executeScript(String script);
+		private final JDialog _parentDialog;
 
+		public ShowSQLListener(String dialogTitle, IDisposableDialog parentDialog)
+		{
+			_dialogTitle = dialogTitle;
+			_parentDialog = (JDialog) parentDialog;
+		}
 
-    /**
-     * An ActionListener for the Show SQL button that opens the sql statement in a dialog.
-     * The new dialog will have the title and parent window as specified in the constructors parameters.
-     * <p/>
-     * If the specified parent JDialog is null, the new dialog's parent will be the application's mainframe.
-     */
-    protected class ShowSQLListener implements ActionListener, SQLResultListener {
-        private final String _dialogTitle;
-        private final JDialog _parentDialog;
+		public void actionPerformed(ActionEvent e)
+		{
+			getSQLStatements(this);
+		}
 
+		public void finished(final String[] stmts)
+		{
+			if (stmts == null || stmts.length == 0)
+			{
+				_session.showMessage(i18n.NO_CHANGES);
+				return;
+			}
+			final String script = createExecutableScriptFromStatements(stmts, false);
+			GUIUtils.processOnSwingEventThread(new Runnable()
+			{
+				public void run()
+				{
+					final ErrorDialog showSQLDialog;
+					if (_parentDialog != null)
+						showSQLDialog = new ErrorDialog(_parentDialog, script);
+					else
+						showSQLDialog = new ErrorDialog(_session.getApplication().getMainFrame(), script);
+					showSQLDialog.setTitle(_dialogTitle);
+					showSQLDialog.setVisible(true);
+				}
+			});
+		}
+	}
 
-        public ShowSQLListener(String dialogTitle, IDisposableDialog parentDialog) {
-            _dialogTitle = dialogTitle;
-            _parentDialog = (JDialog)parentDialog;
-        }
+	/**
+	 * An ActionListener for the Edit SQL button that appends the sql statement to the sql panel, disposes the
+	 * specified dialog and switches to the sql panel. <p/> The specified dialog can be null if no JDialog
+	 * needs to be disposed.
+	 */
+	protected class EditSQLListener implements ActionListener, SQLResultListener
+	{
+		private final IDisposableDialog _parentDialog;
 
+		public EditSQLListener(IDisposableDialog parentDialog)
+		{
+			_parentDialog = parentDialog;
+		}
 
-        public void actionPerformed(ActionEvent e) {
-            getSQLStatements(this);
-        }
+		public void actionPerformed(ActionEvent e)
+		{
+			getSQLStatements(this);
+		}
 
+		public void finished(final String[] stmts)
+		{
+			if (stmts == null || stmts.length == 0)
+			{
+				_session.showMessage(i18n.NO_CHANGES);
+				return;
+			}
+			final String script = createExecutableScriptFromStatements(stmts, false);
 
-        public void finished(final String[] stmts) {
-            if (stmts == null || stmts.length == 0) {
-                _session.showMessage(i18n.NO_CHANGES);
-                return;
-            }
-            final String script = createExecutableScriptFromStatements(stmts, false);            
-            GUIUtils.processOnSwingEventThread(new Runnable() {
-                public void run() {
-                    final ErrorDialog showSQLDialog;
-                    if (_parentDialog != null) showSQLDialog = new ErrorDialog(_parentDialog, script);
-                    else showSQLDialog = new ErrorDialog(_session.getApplication().getMainFrame(), script);
-                    showSQLDialog.setTitle(_dialogTitle);
-                    showSQLDialog.setVisible(true);
-                }
-            });
-        }
-    }
+			GUIUtils.processOnSwingEventThread(new Runnable()
+			{
+				public void run()
+				{
+					if (_parentDialog != null)
+					{
+						_parentDialog.dispose();
+					}
+					_session.getSQLPanelAPIOfActiveSessionWindow().appendSQLScript(script, true);
+					_session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
+				}
+			});
+		}
+	}
 
+	/**
+	 * An ActionListener for the Execute button that delegates the execution of the sql statement to the
+	 * subclass. The actual execution is specified in the subclass's implementation of the executeScript
+	 * method.
+	 */
+	protected class ExecuteListener implements ActionListener, SQLResultListener
+	{
 
-    /**
-     * An ActionListener for the Edit SQL button that appends the sql statement to the sql panel,
-     * disposes the specified dialog and switches to the sql panel.
-     * <p/>
-     * The specified dialog can be null if no JDialog needs to be disposed.
-     */
-    protected class EditSQLListener implements ActionListener, SQLResultListener {
-        private final IDisposableDialog _parentDialog;
+		public void actionPerformed(ActionEvent e)
+		{
+			getSQLStatements(this);
+		}
 
+		public void finished(String[] stmts)
+		{
+			if (stmts == null || stmts.length == 0)
+			{
+				_session.showMessage(i18n.NO_CHANGES);
+				return;
+			}
+			final String script = createExecutableScriptFromStatements(stmts, true);
+			executeScript(script);
+		}
+	}
 
-        public EditSQLListener(IDisposableDialog parentDialog) {
-            _parentDialog = parentDialog;
-        }
+	protected class CommandExecHandler extends DefaultSQLExecuterHandler
+	{
+		protected boolean exceptionEncountered = false;
 
+		public CommandExecHandler(ISession session)
+		{
+			super(session);
+		}
 
-        public void actionPerformed(ActionEvent e) {
-            getSQLStatements(this);
-        }
+		public void sqlExecutionException(Throwable th, String postErrorString)
+		{
+			super.sqlExecutionException(th, postErrorString);
+			exceptionEncountered = true;
+		}
 
+		public boolean exceptionEncountered()
+		{
+			return exceptionEncountered;
+		}
+	}
 
-        public void finished(final String[] stmts) {
-            if (stmts == null || stmts.length == 0) {
-                _session.showMessage(i18n.NO_CHANGES);
-                return;
-            }
-            final String script = createExecutableScriptFromStatements(stmts, false);
-            
-            GUIUtils.processOnSwingEventThread(new Runnable() {
-                public void run() {
-                    if (_parentDialog != null) {
-                        _parentDialog.dispose();
-                    }
-                    _session.getSQLPanelAPIOfActiveSessionWindow().appendSQLScript(script, true);
-                    _session.selectMainTab(ISession.IMainPanelTabIndexes.SQL_TAB);
-                }
-            });
-        }
-    }
-
-    /**
-     * An ActionListener for the Execute button that delegates the execution of the sql statement to the subclass.
-     * The actual execution is specified in the subclass's implementation of the executeScript method.
-     */
-    protected class ExecuteListener implements ActionListener, SQLResultListener {
-   	 
-        public void actionPerformed(ActionEvent e) {
-            getSQLStatements(this);
-        }
-
-        public void finished(String[] stmts) {
-            if (stmts == null || stmts.length == 0) {
-                _session.showMessage(i18n.NO_CHANGES);
-                return;
-            }
-            final String script = createExecutableScriptFromStatements(stmts, true);
-            executeScript(script);
-        }
-    }
-
-    protected class CommandExecHandler extends DefaultSQLExecuterHandler {
-        protected boolean exceptionEncountered = false;
-
-
-        public CommandExecHandler(ISession session) {
-            super(session);
-        }
-
-
-        public void sqlExecutionException(Throwable th, String postErrorString) {
-            super.sqlExecutionException(th, postErrorString);
-            exceptionEncountered = true;
-        }
-
-
-        public boolean exceptionEncountered() {
-            return exceptionEncountered;
-        }
-    }
-    
-   /**
+	/**
 	 * Builds a script as a single string from the specified statements. EOL chars and statement separators are
 	 * inserted.
 	 * 
@@ -316,27 +356,33 @@ public abstract class AbstractRefactoringCommand implements ICommand {
 	 *           whether or not to remove comment lines from the specified array
 	 * @return the script as a String
 	 */
-   private String createExecutableScriptFromStatements(final String[] stmts, final boolean stripComments) {
-       StringBuilder result = new StringBuilder();
-       String seperator = _sqlPrefs.getSqlStatementSeparator();
-       for (String stmt : stmts) {
-      	 boolean isComment = stmt.startsWith("--");
-      	  if (stripComments && isComment) {
-         	  // skip comments
-      		  continue;
-      	  }
-      	  
-   		  result.append(stmt);
-   		  
-   		  if (isComment) {
-   			  result.append("\n");
-   		  } else {
-      		  if (!seperator.equals(";")) {
-      			  result.append("\n");
-      		  }
-   			  result.append(seperator).append("\n\n");
-   		  }
-       }
-       return result.toString();
-    }
+	private String createExecutableScriptFromStatements(final String[] stmts, final boolean stripComments)
+	{
+		StringBuilder result = new StringBuilder();
+		String seperator = _sqlPrefs.getSqlStatementSeparator();
+		for (String stmt : stmts)
+		{
+			boolean isComment = stmt.startsWith("--");
+			if (stripComments && isComment)
+			{
+				// skip comments
+				continue;
+			}
+
+			result.append(stmt);
+
+			if (isComment)
+			{
+				result.append("\n");
+			} else
+			{
+				if (!seperator.equals(";"))
+				{
+					result.append("\n");
+				}
+				result.append(seperator).append("\n\n");
+			}
+		}
+		return result.toString();
+	}
 }
