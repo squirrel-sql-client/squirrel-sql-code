@@ -142,7 +142,7 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
     *         (or both) are null, this simply returns the simpleName
     */
    private String getInformixQualifiedName() {
-       StringBuffer result = new StringBuffer();
+       StringBuilder result = new StringBuilder();
        if (_catalog != null && _schema != null) {
            result.append(_catalog);
            result.append(":");
