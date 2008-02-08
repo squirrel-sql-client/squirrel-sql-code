@@ -927,7 +927,7 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 		String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		return new String[] { DialectUtils.getUpdateSQL(tableName,
+		return DialectUtils.getUpdateSQL(tableName,
 			setColumns,
 			setValues,
 			fromTables,
@@ -935,7 +935,7 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 			whereValues,
 			qualifier,
 			prefs,
-			this) };
+			this);
 	}
 
 	/**

@@ -900,8 +900,7 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect imple
 		String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-
-		return new String[] { DialectUtils.getUpdateSQL(tableName,
+		return DialectUtils.getUpdateSQL(tableName,
 			setColumns,
 			setValues,
 			fromTables,
@@ -909,7 +908,7 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect imple
 			whereValues,
 			qualifier,
 			prefs,
-			this) };
+			this);
 	}
 
 	public boolean supportsAccessMethods()

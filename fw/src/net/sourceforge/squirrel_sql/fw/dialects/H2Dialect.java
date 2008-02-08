@@ -1201,7 +1201,7 @@ public class H2Dialect extends Dialect implements HibernateDialect
 		String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		return new String[] { DialectUtils.getUpdateSQL(tableName,
+		return DialectUtils.getUpdateSQL(tableName,
 			setColumns,
 			setValues,
 			fromTables,
@@ -1209,7 +1209,7 @@ public class H2Dialect extends Dialect implements HibernateDialect
 			whereValues,
 			qualifier,
 			prefs,
-			this) };
+			this);
 	}
 
 	/**
@@ -1456,8 +1456,7 @@ public class H2Dialect extends Dialect implements HibernateDialect
 	 */
 	public boolean supportsCorrelatedSubQuery()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 	
 }
