@@ -155,14 +155,14 @@ public class MergeColumnCommand extends AbstractRefactoringCommand
 						dataColumn[1] = "'" + dataColumn[1] + "'";
 				}
 
-				updateResults.add(_dialect.getUpdateSQL(table,
+				updateResults.addAll(Arrays.asList(_dialect.getUpdateSQL(table,
 					new String[] { mergeInColumn },
 					new String[] { mergeColumnData },
 					null,
 					new String[] { column1, column2 },
 					new String[] { dataColumn[0], dataColumn[1] },
 					qualifier,
-					_sqlPrefs));
+					_sqlPrefs)));
 			}
 
 			// add column if neeeded
