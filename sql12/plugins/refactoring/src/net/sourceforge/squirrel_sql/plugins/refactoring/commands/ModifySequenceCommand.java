@@ -185,6 +185,8 @@ public class ModifySequenceCommand extends AbstractRefactoringCommand
 															min_value,
 															max_value,
 															cache_value, is_cyled);
+			} else {
+				throw new IllegalStateException("createCustomDialog: failed to find sequence named : "+simpleName);
 			}
 		} finally
 		{
