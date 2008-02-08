@@ -1076,14 +1076,14 @@ public class PostgreSQLDialect extends org.hibernate.dialect.PostgreSQLDialect i
 		return DialectUtils.getInsertIntoSQL(tableName, columns, query, qualifier, prefs, this);
 	}
 
-	public String getUpdateSQL(String tableName, String[] setColumns, String[] setValues, String[] fromTables,
+	public String[] getUpdateSQL(String tableName, String[] setColumns, String[] setValues, String[] fromTables,
 		String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
 		if ((setColumns == null && setValues == null)
 			|| (setColumns != null && setValues != null && setColumns.length == 0 && setValues.length == 0))
 		{
-			return "";
+			return new String[] {};
 		}
 		if ((setColumns != null && setValues != null && setColumns.length != setValues.length)
 			|| setColumns == null || setValues == null)
@@ -1139,7 +1139,7 @@ public class PostgreSQLDialect extends org.hibernate.dialect.PostgreSQLDialect i
 			sql.setLength(sql.length() - 5);
 		}
 
-		return sql.toString();
+		return new String[] { sql.toString() };
 	}
 
 	public String[] getAddColumnSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
@@ -1188,6 +1188,24 @@ public class PostgreSQLDialect extends org.hibernate.dialect.PostgreSQLDialect i
 	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs) {
 		return null;
+	}
+	
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getQualifiedIdentifier(java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	public String getQualifiedIdentifier(String identifier, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
+	{
+		return identifier;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCorrelatedSubQuery()
+	 */
+	public boolean supportsCorrelatedSubQuery()
+	{
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 }

@@ -2598,5 +2598,5 @@ public class DialectUtils implements StringTemplateConstants
 	public static boolean isNotEmptyString(String value)
 	{
 		return (value != null) && (!"".equals(value));
-	}
+	}	
 }

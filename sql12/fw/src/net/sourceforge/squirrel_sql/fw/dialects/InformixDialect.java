@@ -896,12 +896,12 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect imple
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
-	public String getUpdateSQL(String tableName, String[] setColumns, String[] setValues, String[] fromTables,
+	public String[] getUpdateSQL(String tableName, String[] setColumns, String[] setValues, String[] fromTables,
 		String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
 
-		return DialectUtils.getUpdateSQL(tableName,
+		return new String[] { DialectUtils.getUpdateSQL(tableName,
 			setColumns,
 			setValues,
 			fromTables,
@@ -909,7 +909,7 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect imple
 			whereValues,
 			qualifier,
 			prefs,
-			this);
+			this) };
 	}
 
 	public boolean supportsAccessMethods()
@@ -1142,4 +1142,38 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect imple
 		return result.toString();
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getQualifiedIdentifier(java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	public String getQualifiedIdentifier(String identifier, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
+	{
+		// TODO: should I be adding quotes if user wants identifiers quoted??
+		StringBuilder result = new StringBuilder();
+		if (prefs.isQualifyTableNames()) {
+			String catalog = qualifier.getCatalog();
+			String schema = qualifier.getSchema();
+		
+			if (catalog != null && schema != null) {
+				result.append(catalog);
+				result.append(":");
+				result.append(schema);
+				result.append(".");
+				result.append(identifier);
+			}	
+		} else {
+			result.append(identifier);
+		}
+		return result.toString();
+	}
+	
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCorrelatedSubQuery()
+	 */
+	public boolean supportsCorrelatedSubQuery()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
 }
