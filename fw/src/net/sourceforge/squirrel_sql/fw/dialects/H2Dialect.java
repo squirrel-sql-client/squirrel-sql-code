@@ -1201,7 +1201,10 @@ public class H2Dialect extends Dialect implements HibernateDialect
 		String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getUpdateSQL(tableName,
+		StringTemplate st = new StringTemplate(ST_UPDATE_CORRELATED_QUERY_STYLE_ONE);
+
+		return DialectUtils.getUpdateSQL(st,
+			tableName,
 			setColumns,
 			setValues,
 			fromTables,

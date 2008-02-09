@@ -879,7 +879,10 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 		String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getUpdateSQL(tableName,
+		StringTemplate st = new StringTemplate(ST_UPDATE_CORRELATED_QUERY_STYLE_TWO);
+		
+		return DialectUtils.getUpdateSQL(st,
+			tableName,
 			setColumns,
 			setValues,
 			fromTables,
@@ -1128,8 +1131,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	 */
 	public boolean supportsCorrelatedSubQuery()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 	
 }

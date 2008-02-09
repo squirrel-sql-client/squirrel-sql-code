@@ -28,6 +28,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.antlr.stringtemplate.StringTemplate;
+
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
@@ -1005,7 +1007,17 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 		String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getUpdateSQL(tableName,
+		String templateStr = "";
+		
+		if (fromTables != null) {
+			templateStr = ST_UPDATE_CORRELATED_QUERY_STYLE_ONE;
+		} else {
+			templateStr = ST_UPDATE_STYLE_ONE;
+		}
+			
+		StringTemplate st = new StringTemplate(templateStr);
+		
+		return DialectUtils.getUpdateSQL(st, tableName,
 			setColumns,
 			setValues,
 			fromTables,

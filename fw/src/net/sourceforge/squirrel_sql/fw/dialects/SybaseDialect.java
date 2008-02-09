@@ -809,7 +809,19 @@ public class SybaseDialect extends org.hibernate.dialect.SybaseDialect implement
 		String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getUpdateSQL(tableName,
+		
+		String templateStr = "";
+		
+		if (fromTables != null) {
+			templateStr = ST_UPDATE_CORRELATED_QUERY_STYLE_TWO;
+		} else {
+			templateStr = ST_UPDATE_STYLE_ONE;
+		}
+			
+		StringTemplate st = new StringTemplate(templateStr);
+		
+		return DialectUtils.getUpdateSQL(st,
+			tableName,
 			setColumns,
 			setValues,
 			fromTables,
@@ -1063,8 +1075,7 @@ public class SybaseDialect extends org.hibernate.dialect.SybaseDialect implement
 	 */
 	public boolean supportsCorrelatedSubQuery()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 	
 }

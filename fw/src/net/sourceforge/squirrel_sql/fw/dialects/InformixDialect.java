@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.antlr.stringtemplate.StringTemplate;
+
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
@@ -900,7 +902,24 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect imple
 		String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getUpdateSQL(tableName,
+		// UPDATE t SET a = (SELECT a FROM t2 WHERE t.b = t2.b);
+//		String templateStr = 
+//			"UPDATE $destTableName$ SET $columnName$ = " +
+//			"(SELECT $columnName$ FROM $sourceTableName$ " +
+//			"WHERE $sourceTableName$.$whereColumnName$ = $destTableName$.$whereColumnValue$";
+//		StringTemplate st = new StringTemplate(templateStr);
+
+		String templateStr = "";
+		
+		if (fromTables != null) {
+			templateStr = ST_UPDATE_CORRELATED_QUERY_STYLE_TWO;
+		} else {
+			templateStr = ST_UPDATE_STYLE_ONE;
+		}
+			
+		StringTemplate st = new StringTemplate(templateStr);
+
+		return DialectUtils.getUpdateSQL(st, tableName,
 			setColumns,
 			setValues,
 			fromTables,
@@ -1171,8 +1190,7 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect imple
 	 */
 	public boolean supportsCorrelatedSubQuery()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 	
 }

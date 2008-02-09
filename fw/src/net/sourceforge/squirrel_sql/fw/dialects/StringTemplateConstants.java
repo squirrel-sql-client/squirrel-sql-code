@@ -106,6 +106,25 @@ public interface StringTemplateConstants
 	
 	String ST_SP_RENAME_STYLE_ONE = 
 		"sp_rename $oldObjectName$, $newObjectName$";
+
+	String ST_UPDATE_STYLE_ONE =
+		"UPDATE $destTableName$ " +
+		"SET $columnName$ = $columnValue$ " +
+		"where $whereColumnName$ = $whereValue$";		
+	
+	/** with table aliases */
+	String ST_UPDATE_CORRELATED_QUERY_STYLE_ONE = 
+		"UPDATE $destTableName$ dest SET $columnName$ = " +
+		"(SELECT src.$columnName$ " +
+		 "FROM $sourceTableName$ src " +
+		 "where src.$whereColumnName$ = dest.$whereValue$)";		
+
+	/** without table aliases */
+	String ST_UPDATE_CORRELATED_QUERY_STYLE_TWO = 
+		"UPDATE $destTableName$ SET $columnName$ = " +
+		"(SELECT $columnName$ " +
+		 "FROM $sourceTableName$ " +
+		 "where $sourceTableName$.$whereColumnName$ = $destTableName$.$whereValue$)";		
 	
 	// Keys that can be embedded in templates for replacement later.
 	
