@@ -36,8 +36,6 @@ import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import org.openide.loaders.DataNode;
-
 import net.sourceforge.squirrel_sql.client.ApplicationArguments;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.MockSession;
