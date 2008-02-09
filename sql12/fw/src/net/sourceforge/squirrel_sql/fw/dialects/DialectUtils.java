@@ -1933,9 +1933,13 @@ public class DialectUtils implements StringTemplateConstants
 	}
 
 	/**
-	 * UPDATE tableName SET setColumn1 = setValue1, setColumn2 = setValue2 FROM fromTable1, fromTable2 WHERE
-	 * whereColumn1 = whereValue1 AND whereColumn2 = whereValue2;
+	 * Returns the update SQL for the specified table and values, using either a correlated sub-query (if
+	 * fromTables != null) in one statement, or setValues (if fromTables == null) and returning an update SQL
+	 * using each setValue.
 	 * 
+	 * @param st
+	 *           The StringTemplate that provides the form for the SQL (some dbs allow table name aliases, some
+	 *           don't, etc.)
 	 * @param tableName
 	 * @param setColumns
 	 * @param setValues
@@ -1945,9 +1949,9 @@ public class DialectUtils implements StringTemplateConstants
 	 * @param qualifier
 	 * @param prefs
 	 * @param dialect
-	 * @return
+	 * @return a String array of one or more SQL statements
 	 */
-	public static String[] getUpdateSQL(String destTableName, String[] setColumns, String[] setValues,
+	public static String[] getUpdateSQL(StringTemplate st, String destTableName, String[] setColumns, String[] setValues,
 		String[] fromTables, String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs, HibernateDialect dialect)
 	{
@@ -1978,39 +1982,39 @@ public class DialectUtils implements StringTemplateConstants
 		// dialects that can't handle correlated sub-queries.
 		
 		ArrayList<String> result = new ArrayList<String>();
-		String templateStr = null;
+//		String templateStr = null;
 		String columnName = null;
 		String whereColumnName = null;
 		String whereValueName = null;
 		
-		if (fromTables != null) {
-			// update <destTableName> dest
-			// set <setColumnName> = ( 
-			// 	select s.<setColumnName>
-			//    from <sourceTableName> f where f.<whereColumn> = s.<whereValue>)
-
-			templateStr = 
-				"UPDATE $destTableName$ dest SET $columnName$ = " +
-				"(SELECT src.$columnName$ " +
-				 "FROM $sourceTableName$ src " +
-				 "where src.$whereColumnName$ = dest.$whereValue$)";
-		} else {
-			// update <destTableName> dest
-			// set <setColumnName> = <setValue> 
-			// where f.<whereColumn> = s.<whereValue>)
-			
-			templateStr = 
-				"UPDATE $destTableName$ dest " +
-				"SET $columnName$ = $columnValue$ " +
-				"where $whereColumnName$ = $whereValue$";
-		}
+//		if (fromTables != null) {
+//			// update <destTableName> dest
+//			// set <setColumnName> = ( 
+//			// 	select s.<setColumnName>
+//			//    from <sourceTableName> f where f.<whereColumn> = s.<whereValue>)
+//
+//			templateStr = 
+//				"UPDATE $destTableName$ dest SET $columnName$ = " +
+//				"(SELECT src.$columnName$ " +
+//				 "FROM $sourceTableName$ src " +
+//				 "where src.$whereColumnName$ = dest.$whereValue$)";
+//		} else {
+//			// update <destTableName> dest
+//			// set <setColumnName> = <setValue> 
+//			// where f.<whereColumn> = s.<whereValue>)
+//			
+//			templateStr = 
+//				"UPDATE $destTableName$ " +
+//				"SET $columnName$ = $columnValue$ " +
+//				"where $whereColumnName$ = $whereValue$";
+//		}
 
 		for (int idx = 0; idx < setColumns.length; idx++) {
 			columnName = setColumns[idx]; // desc_t1
 
 			whereColumnName = whereColumns[idx]; // myid
 			whereValueName = whereValues[idx]; // myid
-			StringTemplate st = new StringTemplate(templateStr);			
+//			StringTemplate st = new StringTemplate(templateStr);			
 			
 			st.setAttribute(ST_DEST_TABLE_NAME_KEY, destTableName);
 			st.setAttribute(ST_COLUMN_NAME_KEY, columnName);
@@ -2026,8 +2030,9 @@ public class DialectUtils implements StringTemplateConstants
 		
 		
 		return result.toArray(new String[result.size()]);
-	}
-
+	}	
+	
+	
 	private static void addConstraintsSQLs(List<String> sqls, List<String> allconstraints,
 		List<String> sqlsToAdd, CreateScriptPreferences prefs)
 	{

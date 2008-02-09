@@ -959,7 +959,18 @@ public class Oracle9iDialect extends Oracle9Dialect implements HibernateDialect
 		String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getUpdateSQL(destTableName,
+		String templateStr = "";
+		
+		if (fromTables != null) {
+			templateStr = ST_UPDATE_CORRELATED_QUERY_STYLE_ONE;
+		} else {
+			templateStr = ST_UPDATE_STYLE_ONE;
+		}
+			
+		StringTemplate st = new StringTemplate(templateStr);
+		
+		return DialectUtils.getUpdateSQL(st,
+			destTableName,
 			setColumns,
 			setValues,
 			fromTables,
