@@ -24,11 +24,10 @@ import net.sourceforge.squirrel_sql.BaseSQuirreLTestCase;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 
 import org.hibernate.MappingException;
-import org.hibernate.dialect.Dialect;
 
 public class DialectTestCase extends BaseSQuirreLTestCase {
 
-    protected void testAllTypes(Dialect d) {
+    protected void testAllTypes(HibernateDialect d) {
         try {
             Field[] fields = java.sql.Types.class.getDeclaredFields();
             for (int i = 0; i < fields.length; i++) {
@@ -41,7 +40,7 @@ public class DialectTestCase extends BaseSQuirreLTestCase {
         }
     }
     
-    protected void testType(int type, Dialect dialect) {
+    protected void testType(int type, HibernateDialect dialect) {
         try {
             dialect.getTypeName(type);
         } catch (MappingException e) {

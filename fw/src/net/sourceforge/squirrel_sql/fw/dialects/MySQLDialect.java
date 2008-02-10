@@ -25,88 +25,98 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-import org.antlr.stringtemplate.StringTemplate;
-
-import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
-/**
- * An extension to the standard Hibernate MySQL dialect
- */
+import org.antlr.stringtemplate.StringTemplate;
+import org.hibernate.HibernateException;
 
-public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements HibernateDialect
+/**
+ * A dialect delegate for the MySQL database.
+ */
+public class MySQLDialect extends CommonHibernateDialect implements HibernateDialect
 {
 
-	public MySQLDialect()
+	/**
+	 * The hibernate extension that we delegate certain operations to. This is mostly just used for resolving
+	 * the sql data type.
+	 * 
+	 * @author manningr
+	 */
+	class MySQLDialectExt extends org.hibernate.dialect.MySQLDialect
 	{
-		super();
-		registerColumnType(Types.BIGINT, "bigint");
-		registerColumnType(Types.BINARY, 255, "binary($l)");
-		registerColumnType(Types.BINARY, 65532, "blob");
-		registerColumnType(Types.BINARY, "longblob");
-		registerColumnType(Types.BIT, "bit");
-		registerColumnType(Types.BLOB, 65532, "blob");
-		registerColumnType(Types.BLOB, "longblob");
-		registerColumnType(Types.BOOLEAN, "bool");
-		registerColumnType(Types.CHAR, 255, "char($l)");
-		registerColumnType(Types.CHAR, 65532, "text");
-		registerColumnType(Types.CHAR, "longtext");
-		registerColumnType(Types.CLOB, "longtext");
-		registerColumnType(Types.DATE, "date");
-		registerColumnType(Types.DECIMAL, "decimal($p,$s)");
-		registerColumnType(Types.DOUBLE, "double");
-		registerColumnType(Types.FLOAT, "float($p)");
-		registerColumnType(Types.INTEGER, "int");
-		registerColumnType(Types.LONGVARBINARY, "longblob");
-		registerColumnType(Types.LONGVARCHAR, "longtext");
-		registerColumnType(Types.NUMERIC, "numeric($p,$s)");
-		registerColumnType(Types.REAL, "real");
-		registerColumnType(Types.SMALLINT, "smallint");
-		registerColumnType(Types.TIME, "time");
-		registerColumnType(Types.TIMESTAMP, "timestamp");
-		registerColumnType(Types.TINYINT, "tinyint");
-		registerColumnType(Types.VARBINARY, 255, "varbinary($l)");
-		registerColumnType(Types.VARBINARY, "blob");
-		registerColumnType(Types.VARCHAR, "text");
+		public MySQLDialectExt()
+		{
+			super();
+			registerColumnType(Types.BIGINT, "bigint");
+			registerColumnType(Types.BINARY, 255, "binary($l)");
+			registerColumnType(Types.BINARY, 65532, "blob");
+			registerColumnType(Types.BINARY, "longblob");
+			registerColumnType(Types.BIT, "bit");
+			registerColumnType(Types.BLOB, 65532, "blob");
+			registerColumnType(Types.BLOB, "longblob");
+			registerColumnType(Types.BOOLEAN, "bool");
+			registerColumnType(Types.CHAR, 255, "char($l)");
+			registerColumnType(Types.CHAR, 65532, "text");
+			registerColumnType(Types.CHAR, "longtext");
+			registerColumnType(Types.CLOB, "longtext");
+			registerColumnType(Types.DATE, "date");
+			registerColumnType(Types.DECIMAL, "decimal($p,$s)");
+			registerColumnType(Types.DOUBLE, "double");
+			registerColumnType(Types.FLOAT, "float($p)");
+			registerColumnType(Types.INTEGER, "int");
+			registerColumnType(Types.LONGVARBINARY, "longblob");
+			registerColumnType(Types.LONGVARCHAR, "longtext");
+			registerColumnType(Types.NUMERIC, "numeric($p,$s)");
+			registerColumnType(Types.REAL, "real");
+			registerColumnType(Types.SMALLINT, "smallint");
+			registerColumnType(Types.TIME, "time");
+			registerColumnType(Types.TIMESTAMP, "timestamp");
+			registerColumnType(Types.TINYINT, "tinyint");
+			registerColumnType(Types.VARBINARY, 255, "varbinary($l)");
+			registerColumnType(Types.VARBINARY, "blob");
+			registerColumnType(Types.VARCHAR, "text");
+		}
+	}
+
+	/** extended hibernate dialect used in this wrapper */
+	private MySQLDialectExt _dialect = new MySQLDialectExt();
+
+	/**
+	 * Get the name of the database type associated with the given {@link java.sql.Types} typecode with the
+	 * given storage specification parameters.
+	 * 
+	 * @param code
+	 *           The {@link java.sql.Types} typecode
+	 * @param length
+	 *           The datatype length
+	 * @param precision
+	 *           The datatype precision
+	 * @param scale
+	 *           The datatype scale
+	 * @return the database type name
+	 * @throws HibernateException
+	 *            If no mapping was specified for that type.
+	 */
+	public String getTypeName(int code, int length, int precision, int scale) throws HibernateException
+	{
+		return _dialect.getTypeName(code, length, precision, scale);
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsSchemasInTableDefinition()
 	 */
-	public boolean canPasteTo(IDatabaseObjectInfo info)
-	{
-		return true;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsSchemasInTableDefinition()
-	 */
+	@Override
 	public boolean supportsSchemasInTableDefinition()
 	{
 		return true;
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getLengthFunction(int)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getMaxPrecision(int)
 	 */
-	public String getLengthFunction(int dataType)
-	{
-		return "length";
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getMaxFunction()
-	 */
-	public String getMaxFunction()
-	{
-		return "max";
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getMaxPrecision(int)
-	 */
+	@Override
 	public int getMaxPrecision(int dataType)
 	{
 		if (dataType == Types.FLOAT)
@@ -119,33 +129,7 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getMaxScale(int)
-	 */
-	public int getMaxScale(int dataType)
-	{
-		return getMaxPrecision(dataType);
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getPrecisionDigits(int, int)
-	 */
-	public int getPrecisionDigits(int columnSize, int dataType)
-	{
-		return columnSize;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getColumnLength(int, int)
-	 */
-	public int getColumnLength(int columnSize, int dataType)
-	{
-		return columnSize;
-	}
-
-	/**
-	 * The string which identifies this dialect in the dialect chooser.
-	 * 
-	 * @return a descriptive name that tells the user what database this dialect is design to work with.
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDisplayName()
 	 */
 	public String getDisplayName()
 	{
@@ -168,9 +152,9 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 		{
 			return false;
 		}
-		if (databaseProductName.trim().toLowerCase().startsWith("mysql"))
+		if (databaseProductName.trim().toLowerCase().startsWith("mysql")
+			&& !databaseProductVersion.startsWith("5"))
 		{
-			// We don't yet have the need to discriminate by version.
 			return true;
 		}
 		return false;
@@ -327,74 +311,6 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 	public boolean supportsDropColumn()
 	{
 		return true;
-	}
-
-	/**
-	 * Returns the SQL that forms the command to drop the specified colum in the specified table.
-	 * 
-	 * @param tableName
-	 *           the name of the table that has the column
-	 * @param columnName
-	 *           the name of the column to drop.
-	 * @return
-	 * @throws UnsupportedOperationException
-	 *            if the database doesn't support dropping columns.
-	 */
-	public String getColumnDropSQL(String tableName, String columnName)
-	{
-		return DialectUtils.getColumnDropSQL(tableName, columnName);
-	}
-
-	/**
-	 * Returns the SQL that forms the command to drop the specified table. If cascade contraints is supported
-	 * by the dialect and cascadeConstraints is true, then a drop statement with cascade constraints clause
-	 * will be formed.
-	 * 
-	 * @param iTableInfo
-	 *           the table to drop
-	 * @param cascadeConstraints
-	 *           whether or not to drop any FKs that may reference the specified table.
-	 * @return the drop SQL command.
-	 */
-	public List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints,
-		boolean isMaterializedView)
-	{
-		return DialectUtils.getTableDropSQL(iTableInfo,
-			true,
-			cascadeConstraints,
-			false,
-			DialectUtils.CASCADE_CLAUSE,
-			false);
-	}
-
-	/**
-	 * Returns the SQL that forms the command to add a primary key to the specified table composed of the given
-	 * column names.
-	 * 
-	 * @param tableName
-	 *           the table to add a Primary Key to.
-	 * @param columnNames
-	 *           the columns that form the key
-	 * @return
-	 */
-	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] colInfos, ITableInfo ti)
-	{
-		StringBuilder result = new StringBuilder();
-		result.append("ALTER TABLE ");
-		result.append(ti.getQualifiedName());
-		result.append(" ADD CONSTRAINT ");
-		result.append(pkName);
-		result.append(" PRIMARY KEY (");
-		for (int i = 0; i < colInfos.length; i++)
-		{
-			result.append(colInfos[i].getColumnName());
-			if (i + 1 < colInfos.length)
-			{
-				result.append(", ");
-			}
-		}
-		result.append(")");
-		return new String[] { result.toString() };
 	}
 
 	/**
@@ -569,7 +485,7 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 	{
 		return new String[] { "BTREE", "HASH" };
 	}
-	
+
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddAutoIncrementSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
@@ -581,7 +497,7 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 		// ALTER TABLE <tableName> MODIFY <columnName> MEDIUMINT NOT NULL AUTO_INCREMENT PRIMARY KEY
 		String templateStr = ST_ADD_AUTO_INCREMENT_STYLE_ONE;
 		StringTemplate st = new StringTemplate(templateStr);
-		
+
 		HashMap<String, String> valuesMap = new HashMap<String, String>();
 		valuesMap.put(ST_TABLE_NAME_KEY, column.getTableName());
 		valuesMap.put(ST_COLUMN_NAME_KEY, column.getColumnName());
@@ -625,34 +541,36 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 	{
 		// From MySQL 5.0 Reference:
 		// ALTER TABLE tbl_name
-		//  ADD [CONSTRAINT symbol] FOREIGN KEY [id] (index_col_name, ...)
-		//  REFERENCES tbl_name (index_col_name, ...)
-		//  [ON DELETE {RESTRICT | CASCADE | SET NULL | NO ACTION}]
-		//  [ON UPDATE {RESTRICT | CASCADE | SET NULL | NO ACTION}]
-		
+		// ADD [CONSTRAINT symbol] FOREIGN KEY [id] (index_col_name, ...)
+		// REFERENCES tbl_name (index_col_name, ...)
+		// [ON DELETE {RESTRICT | CASCADE | SET NULL | NO ACTION}]
+		// [ON UPDATE {RESTRICT | CASCADE | SET NULL | NO ACTION}]
+
 		String fkTemplateStr = ST_ADD_FOREIGN_KEY_CONSTRAINT_STYLE_ONE;
-		
+
 		StringTemplate fkst = new StringTemplate(fkTemplateStr);
 		HashMap<String, String> fkValuesMap = new HashMap<String, String>();
 		fkValuesMap.put(ST_CHILD_TABLE_KEY, localTableName);
-		if (constraintName != null) {
+		if (constraintName != null)
+		{
 			fkValuesMap.put(ST_CONSTRAINT_KEY, "CONSTRAINT");
 			fkValuesMap.put(ST_CONSTRAINT_NAME_KEY, constraintName);
 		}
 		fkValuesMap.put(ST_PARENT_TABLE_KEY, refTableName);
-		
+
 		StringTemplate ckIndexSt = null;
 		HashMap<String, String> ckIndexValuesMap = null;
-		
-		if (autoFKIndex) {
-//			"CREATE $unique$ $storageOption$ INDEX $indexName$ " +
-//			"ON $tableName$ ( $columnName; separator=\",\"$ )";
+
+		if (autoFKIndex)
+		{
+			// "CREATE $unique$ $storageOption$ INDEX $indexName$ " +
+			// "ON $tableName$ ( $columnName; separator=\",\"$ )";
 
 			ckIndexSt = new StringTemplate(ST_CREATE_INDEX_STYLE_TWO);
 			ckIndexValuesMap = new HashMap<String, String>();
 			ckIndexValuesMap.put(ST_INDEX_NAME_KEY, "fk_child_idx");
-		} 
-		
+		}
+
 		return DialectUtils.getAddForeignKeyConstraintSQL(fkst,
 			fkValuesMap,
 			ckIndexSt,
@@ -675,35 +593,37 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 		// From MySQL 5.0 reference manual
 		//
 		// ALTER [IGNORE] TABLE tbl_name
-	   // 	alter_specification [, alter_specification] ...
+		// alter_specification [, alter_specification] ...
 		// 
 		// alter_specification:
-		//    | ADD [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY] [index_name] [index_type] (index_col_name,...)
-		
+		// | ADD [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY] [index_name] [index_type] (index_col_name,...)
+
 		String templateStr = ST_ADD_UNIQUE_CONSTRAINT_STYLE_ONE;
-		
+
 		StringTemplate st = new StringTemplate(templateStr);
 		st.setAttribute(ST_TABLE_NAME_KEY, tableName);
-		if (constraintName != null) {
+		if (constraintName != null)
+		{
 			st.setAttribute(ST_CONSTRAINT_KEY, "CONSTRAINT");
 			st.setAttribute(ST_CONSTRAINT_NAME_KEY, constraintName);
 		}
-		
+
 		// TODO: allow the user to choose the name of the index that is created.
-		//		if (indexName != null) {
-		//			st.setAttribute(ST_INDEX_KEY, indexName);
-		//			st.setAttribute(ST_INDEX_NAME_KEY, indexName);
-		//		}
+		// if (indexName != null) {
+		// st.setAttribute(ST_INDEX_KEY, indexName);
+		// st.setAttribute(ST_INDEX_NAME_KEY, indexName);
+		// }
 
 		// TODO: allow the user to choose the index type that is created.
-		//		if (indexType != null) {
-		//			st.setAttribute(ST_INDEX_TYPE_KEY, indexType);
-		//		}
-		
-		for (TableColumnInfo columnInfo : columns) {
+		// if (indexType != null) {
+		// st.setAttribute(ST_INDEX_TYPE_KEY, indexType);
+		// }
+
+		for (TableColumnInfo columnInfo : columns)
+		{
 			st.setAttribute(ST_COLUMN_NAME_KEY, columnInfo.getColumnName());
 		}
-		
+
 		return new String[] { st.toString() };
 	}
 
@@ -732,6 +652,17 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 		boolean unique, String tablespace, String constraints, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
+		// TODO: SPATIAL and FULLTEXT indexes require a MyISAM engine for the table.  Is there a way
+		// to tell what engine is being used for a table?  It may not be necessary, since the following
+		// doens't hurt if already a MyISAM engine:
+		//
+		// ALTER TABLE my_table ENGINE = MYISAM;
+		//
+		// Still, this is not the kind of thing we would want to do automatically, since MyISAM engine is
+		// non-transactional.  We will probably need to tell the user - somehow - that they need this
+		// otherwise the create index statement will fail.  Maybe a comment in the script and if they 
+		// happen to read it they could uncomment the conversion of the engine?  Maybe a custom dialog?
+		
 		/*
 		 * From MySQL 5.0 manual:
 		 */
@@ -744,10 +675,9 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 		//	
 		// index_type:
 		// USING {BTREE | HASH}
-		
-		// Note; indexType is unused at the moment because the index dialog doesn't accept this.  See below.
+		// Note; indexType is unused at the moment because the index dialog doesn't accept this. See below.
 		String templateStr = ST_CREATE_INDEX_STYLE_ONE;
-		
+
 		StringTemplate st = new StringTemplate(templateStr);
 
 		HashMap<String, String> valuesMap = new HashMap<String, String>();
@@ -757,13 +687,13 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 			valuesMap.put(ST_ACCESS_METHOD_KEY, accessMethod);
 		}
 		valuesMap.put(ST_INDEX_NAME_KEY, indexName);
-		// TODO: Need to enhance the index dialog to allow specifying storage option.  For now just accept the 
+		// TODO: Need to enhance the index dialog to allow specifying storage option. For now just accept the
 		// default for the index access method.
 		// valuesMap.put("indexType", "USING BTREE");
 		valuesMap.put(ST_TABLE_NAME_KEY, tableName);
-		
+
 		return DialectUtils.getAddIndexSQL(this, st, valuesMap, columns, qualifier, prefs);
-		
+
 	}
 
 	/**
@@ -801,17 +731,9 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 	public String getCreateViewSQL(String viewName, String definition, String checkOption,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		
-		StringTemplate st = new StringTemplate(ST_CREATE_VIEW_STYLE_ONE);
-
-//		"CREATE VIEW $viewName$ " +
-//		"AS $selectStatement$ $with$ $checkOptionType$ $checkOption$";		
-		HashMap<String, String> valuesMap = new HashMap<String, String>();
-		valuesMap.put(ST_VIEW_NAME_KEY, viewName);
-		valuesMap.put(ST_SELECT_STATEMENT_KEY, definition);
-		// check option not supported
-		
-		return DialectUtils.getCreateViewSQL(st, valuesMap, qualifier, prefs, this);
+		final int featureId = DialectUtils.CREATE_VIEW_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -824,7 +746,7 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 	{
 		final int featureId = DialectUtils.DROP_CONSTRAINT_TYPE;
 		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-		throw new UnsupportedOperationException(msg);		
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -860,7 +782,9 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 	public String getDropViewSQL(String viewName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropViewSQL(viewName, cascade, qualifier, prefs, this);
+		final int featureId = DialectUtils.DROP_VIEW_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -893,15 +817,9 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 	public String[] getRenameViewSQL(String oldViewName, String newViewName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		String renameClause = DialectUtils.RENAME_CLAUSE;
-		String commandPrefix = DialectUtils.ALTER_TABLE_CLAUSE;
-		return new String[] { DialectUtils.getRenameViewSQL(commandPrefix,
-			renameClause,
-			oldViewName,
-			newViewName,
-			qualifier,
-			prefs,
-			this) };
+		final int featureId = DialectUtils.RENAME_VIEW_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -923,20 +841,22 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
-	public String[] getUpdateSQL(String tableName, String[] setColumns, String[] setValues, String[] fromTables,
-		String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
+	public String[] getUpdateSQL(String tableName, String[] setColumns, String[] setValues,
+		String[] fromTables, String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
 		String templateStr = "";
-		
-		if (fromTables != null) {
+
+		if (fromTables != null)
+		{
 			templateStr = ST_UPDATE_CORRELATED_QUERY_STYLE_TWO;
-		} else {
+		} else
+		{
 			templateStr = ST_UPDATE_STYLE_ONE;
 		}
-			
+
 		StringTemplate st = new StringTemplate(templateStr);
-		
+
 		return DialectUtils.getUpdateSQL(st,
 			tableName,
 			setColumns,
@@ -994,7 +914,7 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 	 */
 	public boolean supportsCheckOptionsForViews()
 	{
-		return true;
+		return false;
 	}
 
 	/**
@@ -1026,7 +946,7 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 	 */
 	public boolean supportsCreateView()
 	{
-		return true;
+		return false;
 	}
 
 	/**
@@ -1058,7 +978,7 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 	 */
 	public boolean supportsDropView()
 	{
-		return true;
+		return false;
 	}
 
 	/**
@@ -1106,7 +1026,7 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 	 */
 	public boolean supportsRenameView()
 	{
-		return true;
+		return false;
 	}
 
 	/**
@@ -1152,11 +1072,11 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsViewDefinition()
 	 */
-	public boolean supportsViewDefinition() {
-		// TODO verify this is correct
+	public boolean supportsViewDefinition()
+	{
 		return false;
-	}	
-	
+	}
+
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getViewDefinitionSQL(java.lang.String,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
@@ -1165,11 +1085,13 @@ public class MySQLDialect extends org.hibernate.dialect.MySQLDialect implements 
 	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		return null;
+		throw new UnsupportedOperationException("getViewDefinitionSQL: MySQL 4 and below doesn't support views");
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getQualifiedIdentifier(java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getQualifiedIdentifier(java.lang.String,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	public String getQualifiedIdentifier(String identifier, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
