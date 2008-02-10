@@ -357,6 +357,9 @@ public class DialectFactory {
         if (isMySQL(md)) {
             return mysqlDialect;
         }
+        if (isMySQL5(md)) {
+      	   return mysql5Dialect;
+        }
         if (isMSSQLServer(md)) {
             return sqlserverDialect;
         }

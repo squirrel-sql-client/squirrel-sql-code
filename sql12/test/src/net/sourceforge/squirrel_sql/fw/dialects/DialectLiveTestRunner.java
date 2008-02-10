@@ -956,13 +956,14 @@ public class DialectLiveTestRunner {
    	String schema = ((MockSession)session).getDefaultSchema();
    	DatabaseObjectQualifier qual = new DatabaseObjectQualifier(catalog, schema);
    	
-   	String viewDefSql = dialect.getViewDefinitionSQL(oldViewName, qual, prefs);
+   	
    	if (dialect.supportsRenameView()) {
    		String[] sql = 
    			dialect.getRenameViewSQL(oldViewName, newViewName, qual, prefs);
    		runSQL(session, sql);
-   	} else if ( viewDefSql != null && dialect.supportsCreateView()) {
+   	} else if ( dialect.supportsViewDefinition() && dialect.supportsCreateView()) {
    		
+   		String viewDefSql = dialect.getViewDefinitionSQL(oldViewName, qual, prefs);	
    		ResultSet rs = this.runQuery(session, viewDefSql);
    		StringBuilder tmp = new StringBuilder();
    		while (rs.next()) {
@@ -1032,11 +1033,12 @@ public class DialectLiveTestRunner {
    			if (accessMethod.equalsIgnoreCase("gin") || accessMethod.equalsIgnoreCase("gist")) {
    				continue;
    			}
-   			// MySQL requires MyISAM storage engine for spatial indexes.
+   			// MySQL requires MyISAM storage engine for spatial and fulltext indexes.  Don't test them 
+   			// for now.  See the TODO in the MySQLDialect for getCreateIndexSQL.
 				if (DialectFactory.isMySQL5(session.getMetaData())
 					|| DialectFactory.isMySQL(session.getMetaData()))
 				{
-					if (accessMethod.equalsIgnoreCase("spatial"))
+					if (accessMethod.equalsIgnoreCase("spatial") || accessMethod.equalsIgnoreCase("fulltext"))
 					{
 						continue;
 					}

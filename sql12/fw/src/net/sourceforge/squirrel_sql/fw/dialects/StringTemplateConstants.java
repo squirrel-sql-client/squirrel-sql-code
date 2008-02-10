@@ -97,7 +97,13 @@ public interface StringTemplateConstants
 	
 	String ST_DROP_VIEW_STYLE_ONE = 
 		"DROP VIEW $viewName$";
-		
+
+	String ST_DROP_TABLE_STYLE_ONE = 
+		"DROP TABLE $tableName$ $cascade$";
+
+	String ST_DROP_MATERIALIZED_VIEW_STYLE_ONE = 
+		"DROP MATERIALIZED VIEW $tableName$ $cascade$";
+	
 	String ST_MODIFY_TABLE_TO_RECONSTRUCT = 
 		"MODIFY $tableName$ TO RECONSTRUCT";
 	

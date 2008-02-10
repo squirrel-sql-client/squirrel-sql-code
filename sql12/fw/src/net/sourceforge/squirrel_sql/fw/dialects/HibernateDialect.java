@@ -53,6 +53,17 @@ public interface HibernateDialect extends StringTemplateConstants
 	String getTypeName(int code, int length, int precision, int scale) throws HibernateException;
 
 	/**
+	 * Get the name of the database type associated with the given
+	 * {@link java.sql.Types} typecode.
+	 *
+	 * @param code The {@link java.sql.Types} typecode
+	 * @return the database type name
+	 * @throws HibernateException If no mapping was specified for that type.
+	 */
+	public String getTypeName(int code) throws HibernateException;
+	
+	
+	/**
 	 * Returns a boolean indicating whether or not the specified database object can be pasted into for this
 	 * database dialect. Some databases support the notion of schemas where tables live, and in those cases
 	 * pasting to a database object in the object tree is not really appropriate. However, other databases
