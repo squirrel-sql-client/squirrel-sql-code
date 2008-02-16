@@ -314,7 +314,7 @@ public class ProgressDialect extends org.hibernate.dialect.Dialect implements Hi
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support annotating columns with a comment.
 	 */
-	public String getColumnCommentAlterSQL(TableColumnInfo info) throws UnsupportedOperationException
+	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
 		// TODO: implement
 		throw new UnsupportedOperationException("Not yet implemented");

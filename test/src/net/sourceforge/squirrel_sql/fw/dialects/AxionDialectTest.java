@@ -19,12 +19,12 @@ package net.sourceforge.squirrel_sql.fw.dialects;
  */
 public class AxionDialectTest extends DialectTestCase {
 
-    private AxionDialect dialect = null;
+    private AxionDialectExt dialect = null;
     
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        dialect = new AxionDialect();
+        dialect = new AxionDialectExt();
     }
     
     /*

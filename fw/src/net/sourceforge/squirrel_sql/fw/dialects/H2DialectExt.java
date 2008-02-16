@@ -1,20 +1,5 @@
 /*
- * Copyright (C) 2006 Rob Manning
- * manningr@users.sourceforge.net
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Copyright 2004, 2005, 2006 H2 Group.
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
@@ -25,6 +10,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
+import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
@@ -33,107 +20,89 @@ import org.antlr.stringtemplate.StringTemplate;
 import org.hibernate.HibernateException;
 
 /**
- * A dialect delegate for the MySQL database.
+ * A dialect delegate for the H2 database.
  */
-public class MySQLDialect extends CommonHibernateDialect implements HibernateDialect
+public class H2DialectExt extends CommonHibernateDialect implements HibernateDialect
 {
 
 	/**
-	 * The hibernate extension that we delegate certain operations to. This is mostly just used for resolving
-	 * the sql data type.
-	 * 
+	 * A subclass to allow access to getTypeName without having to extend Dialect.
 	 * @author manningr
 	 */
-	class MySQLDialectExt extends org.hibernate.dialect.MySQLDialect
+	private class H2DialectHelper extends org.hibernate.dialect.Dialect
 	{
-		public MySQLDialectExt()
+
+		public H2DialectHelper()
 		{
 			super();
+			registerColumnType(Types.ARRAY, "array");
 			registerColumnType(Types.BIGINT, "bigint");
-			registerColumnType(Types.BINARY, 255, "binary($l)");
-			registerColumnType(Types.BINARY, 65532, "blob");
-			registerColumnType(Types.BINARY, "longblob");
-			registerColumnType(Types.BIT, "bit");
-			registerColumnType(Types.BLOB, 65532, "blob");
-			registerColumnType(Types.BLOB, "longblob");
-			registerColumnType(Types.BOOLEAN, "bool");
-			registerColumnType(Types.CHAR, 255, "char($l)");
-			registerColumnType(Types.CHAR, 65532, "text");
-			registerColumnType(Types.CHAR, "longtext");
-			registerColumnType(Types.CLOB, "longtext");
+			registerColumnType(Types.BINARY, "binary");
+			registerColumnType(Types.BIT, "boolean");
+			registerColumnType(Types.BOOLEAN, "boolean");
+			registerColumnType(Types.BLOB, "blob");
+			registerColumnType(Types.CHAR, "varchar($l)");
+			registerColumnType(Types.CLOB, "clob");
 			registerColumnType(Types.DATE, "date");
 			registerColumnType(Types.DECIMAL, "decimal($p,$s)");
 			registerColumnType(Types.DOUBLE, "double");
-			registerColumnType(Types.FLOAT, "float($p)");
-			registerColumnType(Types.INTEGER, "int");
-			registerColumnType(Types.LONGVARBINARY, "longblob");
-			registerColumnType(Types.LONGVARCHAR, "longtext");
-			registerColumnType(Types.NUMERIC, "numeric($p,$s)");
+			registerColumnType(Types.FLOAT, "float");
+			registerColumnType(Types.INTEGER, "integer");
+			registerColumnType(Types.LONGVARBINARY, "longvarbinary");
+			registerColumnType(Types.LONGVARCHAR, "longvarchar");
+			registerColumnType(Types.NUMERIC, "numeric");
 			registerColumnType(Types.REAL, "real");
 			registerColumnType(Types.SMALLINT, "smallint");
 			registerColumnType(Types.TIME, "time");
 			registerColumnType(Types.TIMESTAMP, "timestamp");
 			registerColumnType(Types.TINYINT, "tinyint");
-			registerColumnType(Types.VARBINARY, 255, "varbinary($l)");
-			registerColumnType(Types.VARBINARY, "blob");
-			registerColumnType(Types.VARCHAR, "text");
+			registerColumnType(Types.VARBINARY, "binary($l)");
+			registerColumnType(Types.VARCHAR, "varchar($l)");
+
 		}
+
 	}
 
 	/** extended hibernate dialect used in this wrapper */
-	private MySQLDialectExt _dialect = new MySQLDialectExt();
+	private H2DialectHelper _dialect = new H2DialectHelper();
+
+	public H2DialectExt()
+	{
+		/* override common behavior to use drop column style two */
+		super.DROP_COLUMN_SQL_TEMPLATE = ST_DROP_COLUMN_STYLE_TWO;
+	}
 
 	/**
-	 * Get the name of the database type associated with the given {@link java.sql.Types} typecode with the
-	 * given storage specification parameters.
-	 * 
-	 * @param code
-	 *           The {@link java.sql.Types} typecode
-	 * @param length
-	 *           The datatype length
-	 * @param precision
-	 *           The datatype precision
-	 * @param scale
-	 *           The datatype scale
-	 * @return the database type name
-	 * @throws HibernateException
-	 *            If no mapping was specified for that type.
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTypeName(int, int, int, int)
 	 */
+	@Override
 	public String getTypeName(int code, int length, int precision, int scale) throws HibernateException
 	{
 		return _dialect.getTypeName(code, length, precision, scale);
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsSchemasInTableDefinition()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
 	 */
-	@Override
-	public boolean supportsSchemasInTableDefinition()
+	public boolean canPasteTo(IDatabaseObjectInfo info)
 	{
-		return true;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getMaxPrecision(int)
-	 */
-	@Override
-	public int getMaxPrecision(int dataType)
-	{
-		if (dataType == Types.FLOAT)
+		boolean result = true;
+		DatabaseObjectType type = info.getDatabaseObjectType();
+		if (type.getName().equalsIgnoreCase("database"))
 		{
-			return 53;
-		} else
-		{
-			return 38;
+			result = false;
 		}
+		return result;
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDisplayName()
+	 * The string which identifies this dialect in the dialect chooser.
+	 * 
+	 * @return a descriptive name that tells the user what database this dialect is design to work with.
 	 */
 	public String getDisplayName()
 	{
-		return "MySQL";
+		return "H2";
 	}
 
 	/**
@@ -152,120 +121,12 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 		{
 			return false;
 		}
-		if (databaseProductName.trim().toLowerCase().startsWith("mysql")
-			&& !databaseProductVersion.startsWith("5"))
+		if (databaseProductName.trim().startsWith("H2"))
 		{
+			// We don't yet have the need to discriminate by version.
 			return true;
 		}
 		return false;
-	}
-
-	/**
-	 * Returns the SQL statement to use to add a column to the specified table using the information about the
-	 * new column specified by info.
-	 * 
-	 * @param info
-	 *           information about the new column such as type, name, etc.
-	 * @return
-	 * @throws UnsupportedOperationException
-	 *            if the database doesn't support adding columns after a table has already been created.
-	 */
-	public String[] getColumnAddSQL(TableColumnInfo info) throws UnsupportedOperationException
-	{
-		ArrayList<String> returnVal = new ArrayList<String>();
-		StringBuilder result = new StringBuilder();
-		result.append("ALTER TABLE ");
-		result.append(info.getTableName());
-		result.append(" ADD COLUMN ");
-		result.append(info.getColumnName());
-		result.append(" ");
-		result.append(DialectUtils.getTypeName(info, this));
-		result.append(" ");
-		DialectUtils.appendDefaultClause(info, result);
-		if (info.getRemarks() != null && !"".equals(info.getRemarks()))
-		{
-			result.append(" COMMENT ");
-			result.append("'");
-			result.append(info.getRemarks());
-			result.append("'");
-		}
-		returnVal.add(result.toString());
-		if (info.isNullable().equals("NO"))
-		{
-			String setNullSQL = getModifyColumnNullabilitySQL(info.getTableName(), info, false);
-			returnVal.add(setNullSQL);
-		}
-		// Sometimes, MySQL omits the change for COMMENT, so explicitly add
-		// it in a separate alter statement as well
-		if (info.getRemarks() != null && !"".equals(info.getRemarks()))
-		{
-			returnVal.add(getColumnCommentAlterSQL(info));
-		}
-		// Sometimes, MySQL omits the change for DEFAULT, so explicitly add
-		// it in a separate alter statement as well
-		// returnVal.add()
-		if (info.getDefaultValue() != null && !"".equals(info.getDefaultValue()))
-		{
-			returnVal.add(getColumnDefaultAlterSQL(info));
-		}
-
-		return returnVal.toArray(new String[returnVal.size()]);
-	}
-
-	/**
-	 * @param tableName
-	 * @param info
-	 * @param nullable
-	 * @return
-	 */
-	public String getModifyColumnNullabilitySQL(String tableName, TableColumnInfo info, boolean nullable)
-	{
-		StringBuilder result = new StringBuilder();
-		result.append(" ALTER TABLE ");
-		result.append(tableName);
-		result.append(" MODIFY ");
-		result.append(info.getColumnName());
-		result.append(" ");
-		result.append(DialectUtils.getTypeName(info, this));
-		if (nullable)
-		{
-			result.append(" NULL ");
-		} else
-		{
-			result.append(" NOT NULL ");
-		}
-		return result.toString();
-	}
-
-	/**
-	 * Returns a boolean value indicating whether or not this database dialect supports changing a column's
-	 * default value.
-	 * 
-	 * @return true if the database supports modifying column defaults; false otherwise
-	 */
-	public boolean supportsAlterColumnDefault()
-	{
-		return true;
-	}
-
-	/**
-	 * Returns SQL statement used to add the default value of the specified column.
-	 * 
-	 * @param info
-	 * @return
-	 * @throws UnsupportedOperationException
-	 */
-	public String getColumnDefaultAlterSQL(TableColumnInfo info) throws UnsupportedOperationException
-	{
-		StringBuilder result = new StringBuilder();
-		result.append("ALTER TABLE ");
-		result.append(info.getTableName());
-		result.append(" MODIFY ");
-		result.append(info.getColumnName());
-		result.append(" ");
-		result.append(DialectUtils.getTypeName(info, this));
-		DialectUtils.appendDefaultClause(info, result);
-		return result.toString();
 	}
 
 	/**
@@ -279,6 +140,66 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	}
 
 	/**
+	 * Returns the SQL that forms the command to drop the specified table. If cascade contraints is supported
+	 * by the dialect and cascadeConstraints is true, then a drop statement with cascade constraints clause
+	 * will be formed.
+	 * 
+	 * @param iTableInfo
+	 *           the table to drop
+	 * @param cascadeConstraints
+	 *           whether or not to drop any FKs that may reference the specified table.
+	 * @return the drop SQL command.
+	 */
+	public List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints,
+		boolean isMaterializedView)
+	{
+		return DialectUtils.getTableDropSQL(iTableInfo,
+			true,
+			cascadeConstraints,
+			false,
+			DialectUtils.CASCADE_CLAUSE,
+			false);
+	}
+
+	/**
+	 * Returns the SQL that forms the command to add a primary key to the specified table composed of the given
+	 * column names. alter table test alter column mychar char(10) not null alter table test add primary key
+	 * (mychar) alter table pktest add constraint pk_pktest primary key (pkcol)
+	 * 
+	 * @param pkName
+	 *           the name of the constraint
+	 * @param columns
+	 *           the columns that form the key
+	 * @return
+	 */
+	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, ITableInfo ti)
+	{
+		ArrayList<String> result = new ArrayList<String>();
+		StringBuffer addPKSQL = new StringBuffer();
+		addPKSQL.append("ALTER TABLE ");
+		addPKSQL.append(ti.getQualifiedName());
+		addPKSQL.append(" ADD CONSTRAINT ");
+		addPKSQL.append(pkName);
+		addPKSQL.append(" PRIMARY KEY (");
+		for (int i = 0; i < columns.length; i++)
+		{
+			TableColumnInfo info = columns[i];
+			if (info.isNullable().equals("YES"))
+			{
+				result.add(getColumnNullableAlterSQL(info, false));
+			}
+			addPKSQL.append(info.getColumnName());
+			if (i + 1 < columns.length)
+			{
+				addPKSQL.append(", ");
+			}
+		}
+		addPKSQL.append(")");
+		result.add(addPKSQL.toString());
+		return result.toArray(new String[result.size()]);
+	}
+
+	/**
 	 * Returns the SQL statement to use to add a comment to the specified column of the specified table.
 	 * 
 	 * @param info
@@ -287,30 +208,24 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support annotating columns with a comment.
 	 */
-	public String getColumnCommentAlterSQL(TableColumnInfo info) throws UnsupportedOperationException
+	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
-		StringBuilder result = new StringBuilder();
-		result.append("ALTER TABLE ");
-		result.append(info.getTableName());
-		result.append(" MODIFY ");
-		result.append(info.getColumnName());
-		result.append(" ");
-		result.append(DialectUtils.getTypeName(info, this));
-		result.append(" COMMENT '");
-		result.append(info.getRemarks());
-		result.append("'");
-		return result.toString();
+		return DialectUtils.getColumnCommentAlterSQL(info, null, null, null);
 	}
 
 	/**
-	 * Returns a boolean value indicating whether or not this database dialect supports dropping columns from
-	 * tables.
+	 * Returns the SQL used to alter the nullability of the specified column ALTER TABLE tableName ALTER COLUMN
+	 * columnName dataType [DEFAULT expression] [NOT [NULL]]
 	 * 
-	 * @return true if the database supports dropping columns; false otherwise.
+	 * @param info
+	 *           the column to modify
+	 * @return the SQL to execute
 	 */
-	public boolean supportsDropColumn()
+	public String[] getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
-		return true;
+		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
+		return new String[] { DialectUtils.getColumnNullableAlterSQL(info, this, alterClause, true) };
 	}
 
 	/**
@@ -325,18 +240,30 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	}
 
 	/**
-	 * Returns the SQL used to alter the specified column to not allow null values ALTER TABLE testdate MODIFY
-	 * mydate date NOT NULL;
+	 * Returns the SQL used to alter the nullability of the specified column
 	 * 
 	 * @param info
 	 *           the column to modify
 	 * @return the SQL to execute
 	 */
-	public String[] getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
-		SqlGenerationPreferences prefs)
+	private String getColumnNullableAlterSQL(TableColumnInfo info, boolean isNullable)
 	{
-		String alterClause = DialectUtils.MODIFY_COLUMN_CLAUSE;
-		return new String[] { DialectUtils.getColumnNullableAlterSQL(info, this, alterClause, true) };
+		StringBuffer result = new StringBuffer();
+		result.append("ALTER TABLE ");
+		result.append(info.getTableName());
+		result.append(" ALTER COLUMN ");
+		result.append(info.getColumnName());
+		result.append(" ");
+		result.append(DialectUtils.getTypeName(info, this));
+		if (isNullable)
+		{
+			result.append(" NULL ");
+		} else
+		{
+			result.append(" NOT NULL ");
+		}
+		return result.toString();
+
 	}
 
 	/**
@@ -350,7 +277,8 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	}
 
 	/**
-	 * Returns the SQL that is used to change the column name. ALTER TABLE t1 CHANGE a b INTEGER;
+	 * Returns the SQL that is used to change the column name. ALTER TABLE tableName ALTER COLUMN columnName
+	 * RENAME TO name
 	 * 
 	 * @param from
 	 *           the TableColumnInfo as it is
@@ -360,16 +288,9 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	 */
 	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to)
 	{
-		StringBuilder result = new StringBuilder();
-		result.append("ALTER TABLE ");
-		result.append(from.getTableName());
-		result.append(" CHANGE ");
-		result.append(from.getColumnName());
-		result.append(" ");
-		result.append(to.getColumnName());
-		result.append(" ");
-		result.append(DialectUtils.getTypeName(from, this));
-		return result.toString();
+		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
+		String renameToClause = DialectUtils.RENAME_TO_CLAUSE;
+		return DialectUtils.getColumnNameAlterSQL(from, to, alterClause, renameToClause);
 	}
 
 	/**
@@ -383,7 +304,8 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	}
 
 	/**
-	 * Returns the SQL that is used to change the column type. ALTER TABLE t1 CHANGE b b BIGINT NOT NULL;
+	 * Returns the SQL that is used to change the column type. ALTER TABLE table_name ALTER COLUMN column_name
+	 * data_type
 	 * 
 	 * @param from
 	 *           the TableColumnInfo as it is
@@ -395,19 +317,35 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	public List<String> getColumnTypeAlterSQL(TableColumnInfo from, TableColumnInfo to,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
-		StringBuilder result = new StringBuilder();
-		result.append("ALTER TABLE ");
-		result.append(from.getTableName());
-		result.append(" CHANGE ");
-		// Always use "to" column name since name changes happen first
-		result.append(to.getColumnName());
-		result.append(" ");
-		result.append(to.getColumnName());
-		result.append(" ");
-		result.append(DialectUtils.getTypeName(to, this));
-		ArrayList<String> list = new ArrayList<String>();
-		list.add(result.toString());
-		return list;
+		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
+		String setClause = "";
+		return DialectUtils.getColumnTypeAlterSQL(this, alterClause, setClause, false, from, to);
+	}
+
+	/**
+	 * Returns a boolean value indicating whether or not this database dialect supports changing a column's
+	 * default value.
+	 * 
+	 * @return true if the database supports modifying column defaults; false otherwise
+	 */
+	public boolean supportsAlterColumnDefault()
+	{
+		return true;
+	}
+
+	/**
+	 * Returns the SQL command to change the specified column's default value ALTER TABLE table_name ALTER
+	 * COLUMN column_name SET DEFAULT 'default value'
+	 * 
+	 * @param info
+	 *           the column to modify and it's default value.
+	 * @return SQL to make the change
+	 */
+	public String getColumnDefaultAlterSQL(TableColumnInfo info)
+	{
+		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
+		String defaultClause = DialectUtils.SET_DEFAULT_CLAUSE;
+		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, false, defaultClause);
 	}
 
 	/**
@@ -435,12 +373,7 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	 */
 	public String getDropForeignKeySQL(String fkName, String tableName)
 	{
-		StringBuilder tmp = new StringBuilder();
-		tmp.append("ALTER TABLE ");
-		tmp.append(tableName);
-		tmp.append(" DROP FOREIGN KEY ");
-		tmp.append(fkName);
-		return tmp.toString();
+		return DialectUtils.getDropForeignKeySQL(fkName, tableName);
 	}
 
 	/**
@@ -467,7 +400,7 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	 */
 	public DialectType getDialectType()
 	{
-		return DialectType.MYSQL;
+		return DialectType.H2;
 	}
 
 	/**
@@ -475,7 +408,7 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	 */
 	public String[] getIndexAccessMethodsTypes()
 	{
-		return new String[] { "UNIQUE", "FULLTEXT", "SPATIAL" };
+		return new String[] { "DEFAULT", "HASH" };
 	}
 
 	/**
@@ -483,7 +416,7 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	 */
 	public String[] getIndexStorageOptions()
 	{
-		return new String[] { "BTREE", "HASH" };
+		return null;
 	}
 
 	/**
@@ -494,13 +427,14 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// ALTER TABLE <tableName> MODIFY <columnName> MEDIUMINT NOT NULL AUTO_INCREMENT PRIMARY KEY
-		String templateStr = ST_ADD_AUTO_INCREMENT_STYLE_ONE;
-		StringTemplate st = new StringTemplate(templateStr);
+		// "ALTER TABLE $tableName$ ALTER COLUMN $columnName$ IDENTITY";
+		StringTemplate st = new StringTemplate(ST_ADD_AUTO_INCREMENT_STYLE_TWO);
 
-		HashMap<String, String> valuesMap = new HashMap<String, String>();
-		valuesMap.put(ST_TABLE_NAME_KEY, column.getTableName());
-		valuesMap.put(ST_COLUMN_NAME_KEY, column.getColumnName());
+		HashMap<String, String> valuesMap =
+			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY,
+				column.getTableName(),
+				ST_COLUMN_NAME_KEY,
+				column.getColumnName());
 
 		return new String[] { DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs) };
 	}
@@ -513,18 +447,29 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	public String[] getAddColumnSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
+		ArrayList<String> result = new ArrayList<String>();
+
 		boolean addDefaultClause = true;
 		boolean supportsNullQualifier = true;
 		boolean addNullClause = true;
 
-		return new String[] { DialectUtils.getAddColumSQL(column,
-			this,
-			addDefaultClause,
-			supportsNullQualifier,
-			addNullClause,
-			qualifier,
-			prefs) };
+		String sql =
+			DialectUtils.getAddColumSQL(column,
+				this,
+				addDefaultClause,
+				supportsNullQualifier,
+				addNullClause,
+				qualifier,
+				prefs);
 
+		result.add(sql);
+
+		if (column.getRemarks() != null && !"".equals(column.getRemarks()))
+		{
+			result.add(getColumnCommentAlterSQL(column, null, null));
+		}
+
+		return result.toArray(new String[result.size()]);
 	}
 
 	/**
@@ -539,26 +484,21 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 		boolean autoFKIndex, String fkIndexName, Collection<String[]> localRefColumns, String onUpdateAction,
 		String onDeleteAction, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// From MySQL 5.0 Reference:
-		// ALTER TABLE tbl_name
-		// ADD [CONSTRAINT symbol] FOREIGN KEY [id] (index_col_name, ...)
-		// REFERENCES tbl_name (index_col_name, ...)
-		// [ON DELETE {RESTRICT | CASCADE | SET NULL | NO ACTION}]
-		// [ON UPDATE {RESTRICT | CASCADE | SET NULL | NO ACTION}]
+		// FOREIGN KEY (columnName [,...])
+		// REFERENCES [refTableName] [(refColumnName[,...])]
+		// [ON DELETE {CASCADE | RESTRICT | NO ACTION | SET DEFAULT | SET NULL}]
+		// [ON UPDATE {CASCADE | SET DEFAULT | SET NULL}]
 
-		String fkTemplateStr = ST_ADD_FOREIGN_KEY_CONSTRAINT_STYLE_ONE;
-
-		StringTemplate fkst = new StringTemplate(fkTemplateStr);
-		HashMap<String, String> fkValuesMap = new HashMap<String, String>();
-		fkValuesMap.put(ST_CHILD_TABLE_KEY, localTableName);
-		if (constraintName != null)
-		{
-			fkValuesMap.put(ST_CONSTRAINT_KEY, "CONSTRAINT");
-			fkValuesMap.put(ST_CONSTRAINT_NAME_KEY, constraintName);
-		}
+		// "ALTER TABLE $childTableName$ " +
+		// "ADD $constraint$ $constraintName$ FOREIGN KEY ( $childColumn; separator=\",\"$ ) " +
+		// "REFERENCES $parentTableName$ ( $parentColumn; separator=\",\"$ )";
+		StringTemplate fkST = new StringTemplate(ST_ADD_FOREIGN_KEY_CONSTRAINT_STYLE_ONE);
+		HashMap<String, String> fkValuesMap = DialectUtils.getValuesMap(ST_CHILD_TABLE_KEY, localTableName);
+		fkValuesMap.put(ST_CONSTRAINT_KEY, "CONSTRAINT");
+		fkValuesMap.put(ST_CONSTRAINT_NAME_KEY, constraintName);
 		fkValuesMap.put(ST_PARENT_TABLE_KEY, refTableName);
 
-		StringTemplate ckIndexSt = null;
+		StringTemplate childIndexST = null;
 		HashMap<String, String> ckIndexValuesMap = null;
 
 		if (autoFKIndex)
@@ -566,14 +506,14 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 			// "CREATE $unique$ $storageOption$ INDEX $indexName$ " +
 			// "ON $tableName$ ( $columnName; separator=\",\"$ )";
 
-			ckIndexSt = new StringTemplate(ST_CREATE_INDEX_STYLE_TWO);
+			childIndexST = new StringTemplate(ST_CREATE_INDEX_STYLE_TWO);
 			ckIndexValuesMap = new HashMap<String, String>();
 			ckIndexValuesMap.put(ST_INDEX_NAME_KEY, "fk_child_idx");
 		}
 
-		return DialectUtils.getAddForeignKeyConstraintSQL(fkst,
+		return DialectUtils.getAddForeignKeyConstraintSQL(fkST,
 			fkValuesMap,
-			ckIndexSt,
+			childIndexST,
 			ckIndexValuesMap,
 			localRefColumns,
 			qualifier,
@@ -590,41 +530,26 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName,
 		TableColumnInfo[] columns, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// From MySQL 5.0 reference manual
-		//
-		// ALTER [IGNORE] TABLE tbl_name
-		// alter_specification [, alter_specification] ...
-		// 
-		// alter_specification:
-		// | ADD [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY] [index_name] [index_type] (index_col_name,...)
+		// "ALTER TABLE $tableName$ " +
+		// "ADD $constraint$ $constraintName$ UNIQUE $index$ $indexName$ $indexType$ ( $indexColumnName$ )";
 
-		String templateStr = ST_ADD_UNIQUE_CONSTRAINT_STYLE_ONE;
+		StringTemplate st = new StringTemplate(ST_ADD_UNIQUE_CONSTRAINT_STYLE_ONE);
 
-		StringTemplate st = new StringTemplate(templateStr);
-		st.setAttribute(ST_TABLE_NAME_KEY, tableName);
-		if (constraintName != null)
-		{
-			st.setAttribute(ST_CONSTRAINT_KEY, "CONSTRAINT");
-			st.setAttribute(ST_CONSTRAINT_NAME_KEY, constraintName);
-		}
+		HashMap<String, String> valuesMap =
+			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY,
+				tableName,
+				ST_CONSTRAINT_KEY,
+				"CONSTRAINT",
+				ST_CONSTRAINT_NAME_KEY,
+				constraintName);
 
-		// TODO: allow the user to choose the name of the index that is created.
-		// if (indexName != null) {
-		// st.setAttribute(ST_INDEX_KEY, indexName);
-		// st.setAttribute(ST_INDEX_NAME_KEY, indexName);
-		// }
+		return new String[] { DialectUtils.bindTemplateAttributes(this,
+			st,
+			valuesMap,
+			columns,
+			qualifier,
+			prefs) };
 
-		// TODO: allow the user to choose the index type that is created.
-		// if (indexType != null) {
-		// st.setAttribute(ST_INDEX_TYPE_KEY, indexType);
-		// }
-
-		for (TableColumnInfo columnInfo : columns)
-		{
-			st.setAttribute(ST_COLUMN_NAME_KEY, columnInfo.getColumnName());
-		}
-
-		return new String[] { st.toString() };
 	}
 
 	/**
@@ -637,9 +562,26 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 		String restart, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		final int featureId = DialectUtils.ALTER_SEQUENCE_TYPE;
-		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-		throw new UnsupportedOperationException(msg);
+
+		// "ALTER SEQUENCE $sequenceName$ " +
+		// "$restartWith$ $startValue$ " +
+		// "$incrementBy$ $incrementValue$ ";
+
+		StringTemplate st = new StringTemplate(ST_ALTER_SEQUENCE_STYLE_ONE);
+
+		HashMap<String, String> valuesMap = DialectUtils.getValuesMap(ST_SEQUENCE_NAME_KEY, sequenceName);
+		if (DialectUtils.isNotEmptyString(restart))
+		{
+			valuesMap.put(ST_RESTART_WITH_KEY, "RESTART WITH");
+			valuesMap.put(ST_START_VALUE_KEY, restart);
+		}
+		if (DialectUtils.isNotEmptyString(increment))
+		{
+			valuesMap.put(ST_INCREMENT_BY_KEY, "INCREMENT BY");
+			valuesMap.put(ST_INCREMENT_VALUE_KEY, increment);
+		}
+
+		return new String[] { DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs) };
 	}
 
 	/**
@@ -652,48 +594,27 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 		boolean unique, String tablespace, String constraints, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO: SPATIAL and FULLTEXT indexes require a MyISAM engine for the table.  Is there a way
-		// to tell what engine is being used for a table?  It may not be necessary, since the following
-		// doens't hurt if already a MyISAM engine:
-		//
-		// ALTER TABLE my_table ENGINE = MYISAM;
-		//
-		// Still, this is not the kind of thing we would want to do automatically, since MyISAM engine is
-		// non-transactional.  We will probably need to tell the user - somehow - that they need this
-		// otherwise the create index statement will fail.  Maybe a comment in the script and if they 
-		// happen to read it they could uncomment the conversion of the engine?  Maybe a custom dialog?
-		
-		/*
-		 * From MySQL 5.0 manual:
-		 */
-		// CREATE [UNIQUE|FULLTEXT|SPATIAL] INDEX index_name
-		// [index_type]
-		// ON tbl_name (index_col_name,...)
-		//
-		// index_col_name:
-		// col_name [(length)] [ASC | DESC]
-		//	
-		// index_type:
-		// USING {BTREE | HASH}
-		// Note; indexType is unused at the moment because the index dialog doesn't accept this. See below.
-		String templateStr = ST_CREATE_INDEX_STYLE_ONE;
+		// CREATE {[UNIQUE [HASH]] INDEX [[IF NOT EXISTS] newIndexName]
+		// | PRIMARY KEY [HASH]} ON (columnName [,...])
 
-		StringTemplate st = new StringTemplate(templateStr);
+		StringTemplate st = new StringTemplate(ST_CREATE_INDEX_STYLE_TWO);
+		// "CREATE $unique$ $storageOption$ INDEX $indexName$ " +
+		// "ON $tableName$ ( $columnName; separator=\",\"$ )";
 
 		HashMap<String, String> valuesMap = new HashMap<String, String>();
 
-		if (accessMethod != null && !accessMethod.toLowerCase().equals("default"))
+		if (unique)
 		{
-			valuesMap.put(ST_ACCESS_METHOD_KEY, accessMethod);
+			valuesMap.put(ST_UNIQUE_KEY, "UNIQUE");
+			if (accessMethod != null && "HASH".equalsIgnoreCase(accessMethod))
+			{
+				valuesMap.put(ST_STORAGE_OPTION_KEY, "HASH");
+			}
 		}
 		valuesMap.put(ST_INDEX_NAME_KEY, indexName);
-		// TODO: Need to enhance the index dialog to allow specifying storage option. For now just accept the
-		// default for the index access method.
-		// valuesMap.put("indexType", "USING BTREE");
 		valuesMap.put(ST_TABLE_NAME_KEY, tableName);
 
 		return DialectUtils.getAddIndexSQL(this, st, valuesMap, columns, qualifier, prefs);
-
 	}
 
 	/**
@@ -706,9 +627,32 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 		String start, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		final int featureId = DialectUtils.CREATE_SEQUENCE_TYPE;
-		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-		throw new UnsupportedOperationException(msg);
+		// CREATE SEQUENCE [IF NOT EXISTS] newSequenceName
+		// [START WITH long]
+		// [INCREMENT BY long]
+		// [CACHE long]
+
+		// "CREATE SEQUENCE $sequenceName$ START WITH $startValue$ " +
+		// "INCREMENT BY $incrementValue$ $cache$ $cacheValue$";
+
+		StringTemplate st = new StringTemplate(ST_CREATE_SEQUENCE_STYLE_ONE);
+
+		HashMap<String, String> valuesMap = DialectUtils.getValuesMap(ST_SEQUENCE_NAME_KEY, sequenceName);
+		if (DialectUtils.isNotEmptyString(cache))
+		{
+			valuesMap.put(ST_CACHE_KEY, "CACHE");
+			valuesMap.put(ST_CACHE_VALUE_KEY, cache);
+		}
+		if (DialectUtils.isNotEmptyString(increment))
+		{
+			valuesMap.put(ST_INCREMENT_VALUE_KEY, increment);
+		}
+		if (DialectUtils.isNotEmptyString(start))
+		{
+			valuesMap.put(ST_START_VALUE_KEY, start);
+		}
+
+		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**
@@ -731,9 +675,17 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	public String getCreateViewSQL(String viewName, String definition, String checkOption,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		final int featureId = DialectUtils.CREATE_VIEW_TYPE;
-		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-		throw new UnsupportedOperationException(msg);
+		// CREATE [FORCE] VIEW [IF NOT EXISTS] newViewName [(columnName [,..])]
+		// AS select
+		// "CREATE VIEW $viewName$ " +
+		// "AS $selectStatement$ $with$ $checkOptionType$ $checkOption$";
+
+		StringTemplate st = new StringTemplate(ST_CREATE_VIEW_STYLE_ONE);
+
+		HashMap<String, String> valuesMap =
+			DialectUtils.getValuesMap(ST_VIEW_NAME_KEY, viewName, ST_SELECT_STATEMENT_KEY, definition);
+
+		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**
@@ -744,21 +696,29 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	public String getDropConstraintSQL(String tableName, String constraintName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		final int featureId = DialectUtils.DROP_CONSTRAINT_TYPE;
-		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-		throw new UnsupportedOperationException(msg);
+		// ALTER TABLE $tableName$ DROP CONSTRAINT $constraintName$
+		StringTemplate st = new StringTemplate(ST_DROP_CONSTRAINT_STYLE_ONE);
+
+		HashMap<String, String> valuesMap =
+			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, tableName, ST_CONSTRAINT_NAME_KEY, constraintName);
+
+		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropIndexSQL(String, java.lang.String,
-	 *      boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropIndexSQL(java.lang.String,
+	 *      java.lang.String, boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	public String getDropIndexSQL(String tableName, String indexName, boolean cascade,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		Boolean cascadeNotSupported = null;
-		return DialectUtils.getDropIndexSQL(tableName, indexName, cascadeNotSupported, qualifier, prefs, this);
+		// "DROP INDEX $indexName$";
+		StringTemplate st = new StringTemplate(ST_DROP_INDEX_STYLE_THREE);
+
+		HashMap<String, String> valuesMap = DialectUtils.getValuesMap(ST_INDEX_NAME_KEY, indexName);
+
+		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**
@@ -769,9 +729,13 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	public String getDropSequenceSQL(String sequenceName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		final int featureId = DialectUtils.DROP_SEQUENCE_TYPE;
-		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-		throw new UnsupportedOperationException(msg);
+		// "DROP SEQUENCE $sequenceName$ $cascade$";
+		StringTemplate st = new StringTemplate(ST_DROP_SEQUENCE_STYLE_ONE);
+
+		HashMap<String, String> valuesMap = DialectUtils.getValuesMap(ST_SEQUENCE_NAME_KEY, sequenceName);
+
+		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
+
 	}
 
 	/**
@@ -782,9 +746,12 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	public String getDropViewSQL(String viewName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		final int featureId = DialectUtils.DROP_VIEW_TYPE;
-		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-		throw new UnsupportedOperationException(msg);
+		// "DROP VIEW $viewName$";
+		StringTemplate st = new StringTemplate(ST_DROP_VIEW_STYLE_ONE);
+
+		HashMap<String, String> valuesMap = DialectUtils.getValuesMap(ST_VIEW_NAME_KEY, viewName);
+
+		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**
@@ -806,7 +773,13 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	public String getRenameTableSQL(String oldTableName, String newTableName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getRenameTableSQL(oldTableName, newTableName, qualifier, prefs, this);
+		// "ALTER TABLE $oldObjectName$ RENAME TO $newObjectName$";
+		StringTemplate st = new StringTemplate(ST_RENAME_OBJECT_STYLE_ONE);
+
+		HashMap<String, String> valuesMap =
+			DialectUtils.getValuesMap(ST_OLD_OBJECT_NAME_KEY, oldTableName, ST_NEW_OBJECT_NAME_KEY, newTableName);
+
+		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**
@@ -817,8 +790,7 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	public String[] getRenameViewSQL(String oldViewName, String newViewName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		final int featureId = DialectUtils.RENAME_VIEW_TYPE;
-		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		String msg = DialectUtils.getUnsupportedMessage(this, DialectUtils.RENAME_VIEW_TYPE);
 		throw new UnsupportedOperationException(msg);
 	}
 
@@ -830,9 +802,22 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	public String getSequenceInformationSQL(String sequenceName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		final int featureId = DialectUtils.SEQUENCE_INFORMATION_TYPE;
-		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-		throw new UnsupportedOperationException(msg);
+		// "SELECT CURRENT_VALUE, 'NONE', 'NONE', CACHE, INCREMENT, 0 " +
+		// "FROM INFORMATION_SCHEMA.SEQUENCES " +
+		// "WHERE SEQUENCE_SCHEMA = ? " +
+		// "AND SEQUENCE_NAME = ? ";
+		String templateStr =
+			"SELECT CURRENT_VALUE, 'NONE', 'NONE', CACHE, INCREMENT, 0 " + "FROM INFORMATION_SCHEMA.SEQUENCES "
+				+ "WHERE SEQUENCE_SCHEMA = '$schemaName$' " + "AND SEQUENCE_NAME = '$sequenceName$' "
+				+ "AND SEQUENCE_CATALOG = '$catalogName$'";
+		StringTemplate st = new StringTemplate(templateStr);
+
+		st.setAttribute(ST_SCHEMA_NAME_KEY, qualifier.getSchema());
+		st.setAttribute(ST_CATALOG_NAME_KEY, qualifier.getCatalog());
+		st.setAttribute(ST_SEQUENCE_NAME_KEY, sequenceName);
+
+		return st.toString();
+
 	}
 
 	/**
@@ -849,7 +834,7 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 
 		if (fromTables != null)
 		{
-			templateStr = ST_UPDATE_CORRELATED_QUERY_STYLE_TWO;
+			templateStr = ST_UPDATE_CORRELATED_QUERY_STYLE_ONE;
 		} else
 		{
 			templateStr = ST_UPDATE_STYLE_ONE;
@@ -898,7 +883,7 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	 */
 	public boolean supportsAlterSequence()
 	{
-		return false;
+		return true;
 	}
 
 	/**
@@ -930,7 +915,7 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	 */
 	public boolean supportsCreateSequence()
 	{
-		return false;
+		return true;
 	}
 
 	/**
@@ -946,7 +931,7 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	 */
 	public boolean supportsCreateView()
 	{
-		return false;
+		return true;
 	}
 
 	/**
@@ -954,7 +939,7 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	 */
 	public boolean supportsDropConstraint()
 	{
-		return false;
+		return true;
 	}
 
 	/**
@@ -970,7 +955,7 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	 */
 	public boolean supportsDropSequence()
 	{
-		return false;
+		return true;
 	}
 
 	/**
@@ -978,7 +963,7 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	 */
 	public boolean supportsDropView()
 	{
-		return false;
+		return true;
 	}
 
 	/**
@@ -986,7 +971,7 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	 */
 	public boolean supportsEmptyTables()
 	{
-		return false;
+		return true;
 	}
 
 	/**
@@ -1034,7 +1019,7 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	 */
 	public boolean supportsSequence()
 	{
-		return false;
+		return true;
 	}
 
 	/**
@@ -1042,7 +1027,7 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	 */
 	public boolean supportsSequenceInformation()
 	{
-		return false;
+		return true;
 	}
 
 	/**
@@ -1050,7 +1035,7 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	 */
 	public boolean supportsTablespace()
 	{
-		return true;
+		return false;
 	}
 
 	/**
@@ -1074,7 +1059,7 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	 */
 	public boolean supportsViewDefinition()
 	{
-		return false;
+		return true;
 	}
 
 	/**
@@ -1085,7 +1070,19 @@ public class MySQLDialect extends CommonHibernateDialect implements HibernateDia
 	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		throw new UnsupportedOperationException("getViewDefinitionSQL: MySQL 4 and below doesn't support views");
+		// "select view_definition " +
+		// "from information_schema.views " +
+		// "where table_schema = ? " +
+		// "and table_name = ? ";
+		String templateStr =
+			"select view_definition from information_schema.views "
+				+ "where table_schema = '$schemaName$' and UPPER(table_name) = UPPER('$viewName$') ";
+
+		StringTemplate st = new StringTemplate(templateStr);
+		st.setAttribute(ST_SCHEMA_NAME_KEY, qualifier.getSchema());
+		st.setAttribute(ST_VIEW_NAME_KEY, viewName);
+
+		return st.toString();
 	}
 
 	/**

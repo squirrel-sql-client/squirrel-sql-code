@@ -115,11 +115,11 @@ public class DialectUtils implements StringTemplateConstants
 	// sequence clauses
 
 	public static final String CACHE_CLAUSE = "CACHE";
-	
+
 	public static final String CYCLE_CLAUSE = "CYCLE";
 
 	public static final String INCREMENT_BY_CLAUSE = "INCREMENT BY";
-	
+
 	public static final String NOCYCLE_CLAUSE = "NOCYCLE";
 
 	public static final String NO_CYCLE_CLAUSE = "NO CYCLE";
@@ -137,9 +137,9 @@ public class DialectUtils implements StringTemplateConstants
 	public static final String NOMINVALUE_CLAUSE = "NOMINVALUE";
 
 	// view clauses
-	
+
 	public static final String WITH_CHECK_OPTION_CLAUSE = "WITH CHECK OPTION";
-	
+
 	// Clauses
 	public static final String CREATE_CLAUSE = "CREATE";
 
@@ -306,6 +306,12 @@ public class DialectUtils implements StringTemplateConstants
 	/**
 	 * Returns the SQL statement to use to add a comment to the specified column of the specified table.
 	 * 
+	 * @param qualifier
+	 *           TODO
+	 * @param prefs
+	 *           TODO
+	 * @param dialect
+	 *           TODO
 	 * @param tableName
 	 *           the name of the table to create the SQL for.
 	 * @param columnName
@@ -316,7 +322,8 @@ public class DialectUtils implements StringTemplateConstants
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support annotating columns with a comment.
 	 */
-	public static String getColumnCommentAlterSQL(TableColumnInfo info)
+	public static String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs, HibernateDialect dialect)
 	{
 		// TODO take into account qualifier and prefs
 		return getColumnCommentAlterSQL(info.getTableName(), info.getColumnName(), info.getRemarks());
@@ -1757,9 +1764,8 @@ public class DialectUtils implements StringTemplateConstants
 	 * @return
 	 */
 	public static String getCreateSequenceSQL(StringTemplate st, HashMap<String, String> valuesMap,
-		DatabaseObjectQualifier qualifier,
-		SqlGenerationPreferences prefs, HibernateDialect dialect)
-	{					
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs, HibernateDialect dialect)
+	{
 		return bindTemplateAttributes(dialect, st, valuesMap, qualifier, prefs);
 	}
 
@@ -1951,18 +1957,18 @@ public class DialectUtils implements StringTemplateConstants
 	 * @param dialect
 	 * @return a String array of one or more SQL statements
 	 */
-	public static String[] getUpdateSQL(StringTemplate st, String destTableName, String[] setColumns, String[] setValues,
-		String[] fromTables, String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
-		SqlGenerationPreferences prefs, HibernateDialect dialect)
+	public static String[] getUpdateSQL(StringTemplate st, String destTableName, String[] setColumns,
+		String[] setValues, String[] fromTables, String[] whereColumns, String[] whereValues,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs, HibernateDialect dialect)
 	{
 		if ((setColumns == null && setValues == null)
 			|| (setColumns != null && setValues != null && setColumns.length == 0 && setValues.length == 0))
 		{
 			return new String[] {};
 		}
-		if (fromTables == null &&
-			((setColumns != null && setValues != null && setColumns.length != setValues.length)
-			|| setColumns == null || setValues == null))
+		if (fromTables == null
+			&& ((setColumns != null && setValues != null && setColumns.length != setValues.length)
+				|| setColumns == null || setValues == null))
 		{
 			throw new IllegalArgumentException("The amount of SET columns and values must be the same!");
 		}
@@ -1971,68 +1977,70 @@ public class DialectUtils implements StringTemplateConstants
 		{
 			throw new IllegalArgumentException("The amount of WHERE columns and values must be the same!");
 		}
-		if (fromTables == null && setValues == null)  {
+		if (fromTables == null && setValues == null)
+		{
 			throw new IllegalArgumentException("One of fromTables or setValues args must be non-null");
 		}
-		
-		// Since we can use a correlated sub-query to update all rows in one statement, we don't care about the 
-		// set values, unless fromTables is null, in which case we go with a normal update.  Using the set 
-		// values would require an update statement for each row in the merged table for each column that was 
-		// merged in, which is incredibly inefficient.  However, the API is intended to support database 
+
+		// Since we can use a correlated sub-query to update all rows in one statement, we don't care about the
+		// set values, unless fromTables is null, in which case we go with a normal update. Using the set
+		// values would require an update statement for each row in the merged table for each column that was
+		// merged in, which is incredibly inefficient. However, the API is intended to support database
 		// dialects that can't handle correlated sub-queries.
-		
+
 		ArrayList<String> result = new ArrayList<String>();
-//		String templateStr = null;
+		// String templateStr = null;
 		String columnName = null;
 		String whereColumnName = null;
 		String whereValueName = null;
-		
-//		if (fromTables != null) {
-//			// update <destTableName> dest
-//			// set <setColumnName> = ( 
-//			// 	select s.<setColumnName>
-//			//    from <sourceTableName> f where f.<whereColumn> = s.<whereValue>)
-//
-//			templateStr = 
-//				"UPDATE $destTableName$ dest SET $columnName$ = " +
-//				"(SELECT src.$columnName$ " +
-//				 "FROM $sourceTableName$ src " +
-//				 "where src.$whereColumnName$ = dest.$whereValue$)";
-//		} else {
-//			// update <destTableName> dest
-//			// set <setColumnName> = <setValue> 
-//			// where f.<whereColumn> = s.<whereValue>)
-//			
-//			templateStr = 
-//				"UPDATE $destTableName$ " +
-//				"SET $columnName$ = $columnValue$ " +
-//				"where $whereColumnName$ = $whereValue$";
-//		}
 
-		for (int idx = 0; idx < setColumns.length; idx++) {
+		// if (fromTables != null) {
+		// // update <destTableName> dest
+		// // set <setColumnName> = (
+		// // select s.<setColumnName>
+		// // from <sourceTableName> f where f.<whereColumn> = s.<whereValue>)
+		//
+		// templateStr =
+		// "UPDATE $destTableName$ dest SET $columnName$ = " +
+		// "(SELECT src.$columnName$ " +
+		// "FROM $sourceTableName$ src " +
+		// "where src.$whereColumnName$ = dest.$whereValue$)";
+		// } else {
+		// // update <destTableName> dest
+		// // set <setColumnName> = <setValue>
+		// // where f.<whereColumn> = s.<whereValue>)
+		//			
+		// templateStr =
+		// "UPDATE $destTableName$ " +
+		// "SET $columnName$ = $columnValue$ " +
+		// "where $whereColumnName$ = $whereValue$";
+		// }
+
+		for (int idx = 0; idx < setColumns.length; idx++)
+		{
 			columnName = setColumns[idx]; // desc_t1
 
 			whereColumnName = whereColumns[idx]; // myid
 			whereValueName = whereValues[idx]; // myid
-//			StringTemplate st = new StringTemplate(templateStr);			
-			
+			// StringTemplate st = new StringTemplate(templateStr);
+
 			st.setAttribute(ST_DEST_TABLE_NAME_KEY, destTableName);
 			st.setAttribute(ST_COLUMN_NAME_KEY, columnName);
-			if (fromTables != null) {
+			if (fromTables != null)
+			{
 				st.setAttribute(ST_SOURCE_TABLE_NAME_KEY, fromTables[idx]);
-			} else {
+			} else
+			{
 				st.setAttribute(ST_COLUMN_VALUE_KEY, setValues[idx]);
 			}
 			st.setAttribute(ST_WHERE_COLUMN_NAME_KEY, whereColumnName);
 			st.setAttribute(ST_WHERE_VALUE_KEY, whereValueName);
 			result.add(st.toString());
 		}
-		
-		
+
 		return result.toArray(new String[result.size()]);
-	}	
-	
-	
+	}
+
 	private static void addConstraintsSQLs(List<String> sqls, List<String> allconstraints,
 		List<String> sqlsToAdd, CreateScriptPreferences prefs)
 	{
@@ -2620,5 +2628,5 @@ public class DialectUtils implements StringTemplateConstants
 	public static boolean isNotEmptyString(String value)
 	{
 		return (value != null) && (!"".equals(value));
-	}	
+	}
 }

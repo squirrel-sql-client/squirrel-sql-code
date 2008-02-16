@@ -19,12 +19,12 @@ package net.sourceforge.squirrel_sql.fw.dialects;
  */
 public class H2DialectTest extends DialectTestCase {
 
-    private H2Dialect dialect = null;
+    private H2DialectExt dialect = null;
     
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        dialect = new H2Dialect();
+        dialect = new H2DialectExt();
     }
     
     /*

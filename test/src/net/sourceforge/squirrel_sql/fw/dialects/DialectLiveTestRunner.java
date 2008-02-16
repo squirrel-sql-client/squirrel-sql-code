@@ -124,11 +124,13 @@ public class DialectLiveTestRunner {
    private static final String testViewName = "testview";
    private static final String testNewViewName = "newTestView";
    private static final String testView2Name = "testview2";
+   private static final String testViewToBeDropped = "testViewToDrop";
    private static final String testRenameTableBefore = "tableRenameTest";
    private static final String testRenameTableAfter = "tableWasRenamed";
    private static final String testCreateIndexTable = "createIndexTest";
    private static final String testFirstMergeTable = "firstTableToBeMerged";
    private static final String testSecondMergeTable = "secondTableToBeMerged";
+   private static final String testTableForDropView = "testTableForDropView";
    
    public DialectLiveTestRunner() throws Exception {
       ApplicationArguments.initialize(new String[] {});
@@ -308,10 +310,11 @@ public class DialectLiveTestRunner {
    }
    
    private void dropSequence(ISession session, String sequenceName) throws Exception {
+   	HibernateDialect dialect = getDialect(session);
       try {
-      	runSQL(session, "drop sequence "+sequenceName);
+      	runSQL(session, dialect.getDropSequenceSQL(sequenceName, false, qualifier, prefs));
       } catch (SQLException e) {
-         // Do Nothing
+      	//e.printStackTrace();
       }
    }
    
@@ -340,6 +343,7 @@ public class DialectLiveTestRunner {
       dropView(session, testViewName);
       dropView(session, testView2Name);
       dropView(session, testNewViewName);
+      dropView(session, testViewToBeDropped);
       
       // Tables might have triggers that depend on sequences, so drop tables next.
       dropTable(session, fixTableName(session, "test"));
@@ -363,6 +367,7 @@ public class DialectLiveTestRunner {
       dropTable(session, fixTableName(session, testInsertIntoTable));
       dropTable(session, fixTableName(session, testFirstMergeTable)); 
       dropTable(session, fixTableName(session, testSecondMergeTable));
+      dropTable(session, fixTableName(session, testTableForDropView));
       
       // Now sequences should go.
       dropSequence(session, testSequenceName);
@@ -477,6 +482,9 @@ public class DialectLiveTestRunner {
    		"INSERT INTO " + fixTableName(session, testSecondMergeTable) + " (myid, desc_t2) VALUES (2,'table2-row2') ");
       runSQL(session, 
    		"INSERT INTO " + fixTableName(session, testSecondMergeTable) + " (myid, desc_t2) VALUES (3,'table2-row3') ");
+      
+      runSQL(session, "create table " + fixTableName(session, testTableForDropView)
+      	+ " ( myid integer, mydesc varchar(20))" + pageSizeClause);
       
    }
 
@@ -757,7 +765,10 @@ public class DialectLiveTestRunner {
    private void alterColumnComment(ISession session, TableColumnInfo info)
          throws Exception {
       HibernateDialect dialect = getDialect(session);
-      String commentSQL = dialect.getColumnCommentAlterSQL(info);
+   	String catalog = ((MockSession)session).getDefaultCatalog();
+   	String schema = ((MockSession)session).getDefaultSchema();
+      DatabaseObjectQualifier qual = new DatabaseObjectQualifier(catalog, schema);      
+      String commentSQL = dialect.getColumnCommentAlterSQL(info, qual, prefs);
       if (commentSQL != null && !commentSQL.equals("")) {
          runSQL(session, commentSQL);
       }
@@ -950,8 +961,8 @@ public class DialectLiveTestRunner {
    
    private void testRenameView(ISession session) throws Exception {
    	HibernateDialect dialect = getDialect(session);
-   	String oldViewName = testViewName;
-   	String newViewName = testNewViewName;
+   	String oldViewName = fixTableName(session, testViewName);
+   	String newViewName = fixTableName(session, testNewViewName);
    	String catalog = ((MockSession)session).getDefaultCatalog();
    	String schema = ((MockSession)session).getDefaultSchema();
    	DatabaseObjectQualifier qual = new DatabaseObjectQualifier(catalog, schema);
@@ -994,13 +1005,18 @@ public class DialectLiveTestRunner {
    
    private void testDropView(ISession session) throws Exception {
    	HibernateDialect dialect = getDialect(session);
-   	if (dialect.supportsCreateView() && dialect.supportsDropView()) {
-   		String sql = "";
-   		sql = dialect.getDropViewSQL(testNewViewName, false, qualifier, prefs);
+		final String tableName = fixTableName(session, testTableForDropView); 
+		final String viewName = fixTableName(session, testViewToBeDropped);
+   	if (dialect.supportsCreateView() && dialect.supportsDropView()) {  
+   			
+   		String sql = dialect.getCreateViewSQL(viewName, "select * from "+tableName, null, qualifier, prefs);
+   		runSQL(session, sql);
+
+   		sql = dialect.getDropViewSQL(viewName, false, qualifier, prefs);
    		runSQL(session, sql);
    	} else {
    		try {
-   			dialect.getDropViewSQL(testViewName, false, qualifier, prefs);
+   			dialect.getDropViewSQL(viewName, false, qualifier, prefs);
    			throw new IllegalStateException("Expected dialect to fail to provide SQL for drop view");
    		} catch (Exception e) {
    			// this is expected
@@ -1242,7 +1258,14 @@ public class DialectLiveTestRunner {
 					onDeleteAction,
 					qualifier,
 					prefs);
-			runSQL(session, sql);
+			
+			if (DialectFactory.isFirebird(session.getMetaData())) {
+				// Firebird gives weird exception: unsuccessful metadata update
+				// object FKTESTPARENTTABLE is in use; squelch it and continue.
+				try { runSQL(session, sql); } catch (Exception e) {}
+			} else {
+				runSQL(session, sql);
+			}
 		} else
 		{
 			try

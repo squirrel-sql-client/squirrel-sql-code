@@ -24,53 +24,66 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.antlr.stringtemplate.StringTemplate;
-
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
+import org.antlr.stringtemplate.StringTemplate;
+import org.hibernate.HibernateException;
+
 /**
  * An extension to the standard Hibernate Informix dialect
+ * 
+ * @author manningr 
  */
-/**
- * @author manningr
- */
-public class InformixDialect extends org.hibernate.dialect.InformixDialect implements HibernateDialect
+public class InformixDialectExt extends CommonHibernateDialect implements HibernateDialect
 {
 
-	public InformixDialect()
-	{
-		super();
-		registerColumnType(Types.BIGINT, "integer");
-		registerColumnType(Types.BINARY, "byte");
-		registerColumnType(Types.BIT, "smallint");
-		registerColumnType(Types.BLOB, "byte");
-		registerColumnType(Types.BOOLEAN, "smallint");
-		registerColumnType(Types.CHAR, 32511, "char($l)");
-		registerColumnType(Types.CHAR, "char(32511)");
-		registerColumnType(Types.CLOB, "text");
-		registerColumnType(Types.DATE, "date");
-		registerColumnType(Types.DECIMAL, "decimal($p,$s)");
-		registerColumnType(Types.DOUBLE, 15, "float($l)");
-		registerColumnType(Types.DOUBLE, "float(15)");
-		registerColumnType(Types.FLOAT, 15, "float($l)");
-		registerColumnType(Types.FLOAT, "float(15)");
-		registerColumnType(Types.INTEGER, "integer");
-		registerColumnType(Types.LONGVARBINARY, "byte");
-		registerColumnType(Types.LONGVARCHAR, "text");
-		registerColumnType(Types.NUMERIC, "numeric($p,$s)");
-		registerColumnType(Types.REAL, "real");
-		registerColumnType(Types.SMALLINT, "smallint");
-		registerColumnType(Types.TIME, "datetime hour to second");
-		registerColumnType(Types.TIMESTAMP, "datetime year to fraction");
-		registerColumnType(Types.TINYINT, "smallint");
-		registerColumnType(Types.VARBINARY, "byte");
-		registerColumnType(Types.VARCHAR, 255, "varchar($l)");
-		registerColumnType(Types.VARCHAR, "text");
+	private class InformixDialectHelper extends org.hibernate.dialect.InformixDialect {
+		public InformixDialectHelper() {
+			super();
+			registerColumnType(Types.BIGINT, "integer");
+			registerColumnType(Types.BINARY, "byte");
+			registerColumnType(Types.BIT, "smallint");
+			registerColumnType(Types.BLOB, "byte");
+			registerColumnType(Types.BOOLEAN, "smallint");
+			registerColumnType(Types.CHAR, 32511, "char($l)");
+			registerColumnType(Types.CHAR, "char(32511)");
+			registerColumnType(Types.CLOB, "text");
+			registerColumnType(Types.DATE, "date");
+			registerColumnType(Types.DECIMAL, "decimal($p,$s)");
+			registerColumnType(Types.DOUBLE, 15, "float($l)");
+			registerColumnType(Types.DOUBLE, "float(15)");
+			registerColumnType(Types.FLOAT, 15, "float($l)");
+			registerColumnType(Types.FLOAT, "float(15)");
+			registerColumnType(Types.INTEGER, "integer");
+			registerColumnType(Types.LONGVARBINARY, "byte");
+			registerColumnType(Types.LONGVARCHAR, "text");
+			registerColumnType(Types.NUMERIC, "numeric($p,$s)");
+			registerColumnType(Types.REAL, "real");
+			registerColumnType(Types.SMALLINT, "smallint");
+			registerColumnType(Types.TIME, "datetime hour to second");
+			registerColumnType(Types.TIMESTAMP, "datetime year to fraction");
+			registerColumnType(Types.TINYINT, "smallint");
+			registerColumnType(Types.VARBINARY, "byte");
+			registerColumnType(Types.VARCHAR, 255, "varchar($l)");
+			registerColumnType(Types.VARCHAR, "text");			
+		}
 	}
+	
+	/** extended hibernate dialect used in this wrapper */
+	private InformixDialectHelper _dialect = new InformixDialectHelper();
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTypeName(int, int, int, int)
+	 */
+	@Override
+	public String getTypeName(int code, int length, int precision, int scale) throws HibernateException
+	{
+		return _dialect.getTypeName(code, length, precision, scale);
+	}	
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
@@ -84,30 +97,6 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect imple
 		{
 			return false;
 		}
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsSchemasInTableDefinition()
-	 */
-	public boolean supportsSchemasInTableDefinition()
-	{
-		return true;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getLengthFunction(int)
-	 */
-	public String getLengthFunction(int dataType)
-	{
-		return "length";
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getMaxFunction()
-	 */
-	public String getMaxFunction()
-	{
-		return "max";
 	}
 
 	/**
@@ -272,7 +261,7 @@ public class InformixDialect extends org.hibernate.dialect.InformixDialect imple
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support annotating columns with a comment.
 	 */
-	public String getColumnCommentAlterSQL(TableColumnInfo info) throws UnsupportedOperationException
+	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
 		int featureId = DialectUtils.COLUMN_COMMENT_ALTER_TYPE;
 		String msg = DialectUtils.getUnsupportedMessage(this, featureId);

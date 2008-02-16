@@ -19,12 +19,12 @@ package net.sourceforge.squirrel_sql.fw.dialects;
  */
 public class FirebirdDialectTest extends DialectTestCase {
 
-    private FirebirdDialect dialect = null;
+    private FirebirdDialectExt dialect = null;
     
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        dialect = new FirebirdDialect();
+        dialect = new FirebirdDialectExt();
     }
         
     /*

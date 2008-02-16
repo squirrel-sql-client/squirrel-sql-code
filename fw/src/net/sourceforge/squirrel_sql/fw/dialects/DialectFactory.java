@@ -51,9 +51,9 @@ public class DialectFactory {
     private final static ILogger s_log = 
         LoggerController.createLogger(DialectFactory.class);  
     
-    private static final AxionDialect axionDialect = new AxionDialect();
+    private static final AxionDialectExt axionDialect = new AxionDialectExt();
     
-    private static final DB2Dialect db2Dialect = new DB2Dialect();
+    private static final DB2DialectExt db2Dialect = new DB2DialectExt();
     
     // TODO: subclass these hibernate dialects to provide the "canPasteTo" 
     //       api method in HibernateDialect interface.
@@ -61,49 +61,49 @@ public class DialectFactory {
     
     //private static final DB2400Dialect db2400Dialect = new DB2400Dialect();
     
-    private static final DaffodilDialect daffodilDialect = new DaffodilDialect();
+    private static final DaffodilDialectExt daffodilDialect = new DaffodilDialectExt();
     
-    private static final DerbyDialect derbyDialect = new DerbyDialect();
+    private static final DerbyDialectExt derbyDialect = new DerbyDialectExt();
     
-    private static final FirebirdDialect firebirdDialect = new FirebirdDialect();
+    private static final FirebirdDialectExt firebirdDialect = new FirebirdDialectExt();
     
-    private static final FrontBaseDialect frontbaseDialect = new FrontBaseDialect();
+    private static final FrontBaseDialectExt frontbaseDialect = new FrontBaseDialectExt();
     
-    private static final HADBDialect hadbDialect = new HADBDialect();
+    private static final HADBDialectExt hadbDialect = new HADBDialectExt();
     
-    private static final H2Dialect h2Dialect = new H2Dialect();
+    private static final H2DialectExt h2Dialect = new H2DialectExt();
     
-    private static final HSQLDialect hsqlDialect = new HSQLDialect();
+    private static final HSQLDialectExt hsqlDialect = new HSQLDialectExt();
     
-    private static final InformixDialect informixDialect = new InformixDialect();
+    private static final InformixDialectExt informixDialect = new InformixDialectExt();
     
-    private static final InterbaseDialect interbaseDialect = new InterbaseDialect();
+    private static final InterbaseDialectExt interbaseDialect = new InterbaseDialectExt();
     
-    private static final IngresDialect ingresDialect = new IngresDialect();
+    private static final IngresDialectExt ingresDialect = new IngresDialectExt();
     
-    private static final MAXDBDialect maxDbDialect = new MAXDBDialect();
+    private static final MAXDBDialectExt maxDbDialect = new MAXDBDialectExt();
     
-    private static final McKoiDialect mckoiDialect = new McKoiDialect();
+    private static final McKoiDialectExt mckoiDialect = new McKoiDialectExt();
     
-    private static final MySQLDialect mysqlDialect = new MySQLDialect();
+    private static final MySQLDialectExt mysqlDialect = new MySQLDialectExt();
     
-    private static final MySQL5Dialect mysql5Dialect = new MySQL5Dialect();    
+    private static final MySQL5DialectExt mysql5Dialect = new MySQL5DialectExt();    
     
-    private static final Oracle9iDialect oracle9iDialect = new Oracle9iDialect();
+    private static final OracleDialectExt oracle9iDialect = new OracleDialectExt();
     
-    private static final PointbaseDialect pointbaseDialect = 
-                                                         new PointbaseDialect();
+    private static final PointbaseDialectExt pointbaseDialect = 
+                                                         new PointbaseDialectExt();
     
-    private static final PostgreSQLDialect postgreSQLDialect = 
-                                                        new PostgreSQLDialect();
+    private static final PostgreSQLDialectExt postgreSQLDialect = 
+                                                        new PostgreSQLDialectExt();
 
     private static final ProgressDialect progressDialect = new ProgressDialect();
     
-    private static final SybaseDialect sybaseDialect = new SybaseDialect();
+    private static final SybaseDialectExt sybaseDialect = new SybaseDialectExt();
     
-    private static final SQLServerDialect sqlserverDialect = new SQLServerDialect();
+    private static final SQLServerDialectExt sqlserverDialect = new SQLServerDialectExt();
     
-    private static final TimesTenDialect timestenDialect = new TimesTenDialect();
+    private static final TimesTenDialectExt timestenDialect = new TimesTenDialectExt();
     
     private static HashMap<String, HibernateDialect> dbNameDialectMap = 
         new HashMap<String, HibernateDialect>();

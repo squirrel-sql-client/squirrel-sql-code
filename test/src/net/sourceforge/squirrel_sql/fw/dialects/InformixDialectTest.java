@@ -19,12 +19,12 @@ package net.sourceforge.squirrel_sql.fw.dialects;
  */
 public class InformixDialectTest extends DialectTestCase {
 
-    private InformixDialect dialect = null;
+    private InformixDialectExt dialect = null;
     
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        dialect = new InformixDialect();
+        dialect = new InformixDialectExt();
     }
     
     /*

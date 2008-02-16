@@ -80,6 +80,12 @@ public interface StringTemplateConstants
 		"CREATE VIEW $viewName$ " +
 		"AS $selectStatement$ $withCheckOption$";
 	
+	String ST_DROP_COLUMN_STYLE_ONE = 
+		"ALTER TABLE $tableName$ DROP $columnName$ $cascade$";
+
+	String ST_DROP_COLUMN_STYLE_TWO = 
+		"ALTER TABLE $tableName$ DROP COLUMN $columnName$ $cascade$";
+	
 	String ST_DROP_CONSTRAINT_STYLE_ONE = 
 		"ALTER TABLE $tableName$ DROP CONSTRAINT $constraintName$";
 	
@@ -138,6 +144,8 @@ public interface StringTemplateConstants
 
 	String ST_CACHE_KEY = "cache";
 	
+	String ST_CASCADE_KEY = "cascade";
+	
 	String ST_CYCLE_KEY = "cycle";
 	
 	String ST_CACHE_VALUE_KEY = "cacheValue";
@@ -161,6 +169,8 @@ public interface StringTemplateConstants
 	String ST_CONSTRAINT_NAME_KEY = "constraintName";
 
 	String ST_DEST_TABLE_NAME_KEY = "destTableName";
+	
+	String ST_GENERATOR_NAME_KEY = "generatorName";
 	
 	String ST_INCREMENT_KEY = "increment";
 	
@@ -209,6 +219,8 @@ public interface StringTemplateConstants
 	String ST_TABLE_NAME_KEY = "tableName";
 	
 	String ST_UNIQUE_KEY = "unique";
+	
+	String ST_VALUE_KEY = "value";
 	
 	String ST_VIEW_NAME_KEY = "viewName";
 	

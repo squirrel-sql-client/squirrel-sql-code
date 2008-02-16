@@ -192,11 +192,13 @@ public interface HibernateDialect extends StringTemplateConstants
 	 * 
 	 * @param info
 	 *           information about the column such as type, name, etc.
+	 * @param qualifier TODO
+	 * @param prefs TODO
 	 * @return
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support annotating columns with a comment.
 	 */
-	public String getColumnCommentAlterSQL(TableColumnInfo info) throws UnsupportedOperationException;
+	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException;
 
 	/**
 	 * Returns a boolean value indicating whether or not this database dialect supports dropping columns from

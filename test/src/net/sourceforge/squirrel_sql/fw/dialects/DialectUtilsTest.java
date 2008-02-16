@@ -231,7 +231,7 @@ public class DialectUtilsTest extends BaseSQuirreLJUnit4TestCase {
     @Test
     public void testConstraintsAfterTable() throws SQLException {
         prefs.setConstraintsAtEnd(false);
-        checkGetTableSource(new HSQLDialect(), 
+        checkGetTableSource(new HSQLDialectExt(), 
                             twoTableList,
                             mockMetaData,
                             prefs,
@@ -243,7 +243,7 @@ public class DialectUtilsTest extends BaseSQuirreLJUnit4TestCase {
     public void testGetTableSourceDeleteAction() throws SQLException {
         prefs.setDeleteRefAction(true);
         prefs.setDeleteAction(DatabaseMetaData.importedKeyCascade);
-        List<String> sqls = checkGetTableSource(new HSQLDialect(), 
+        List<String> sqls = checkGetTableSource(new HSQLDialectExt(), 
                                                  twoTableList,
                                                  mockMetaData,
                                                  prefs,
@@ -252,7 +252,7 @@ public class DialectUtilsTest extends BaseSQuirreLJUnit4TestCase {
         checkAction(sqls, "ALTER TABLE", " ON DELETE CASCADE");
         
         prefs.setDeleteAction(DatabaseMetaData.importedKeyRestrict);
-        sqls = checkGetTableSource(new HSQLDialect(), 
+        sqls = checkGetTableSource(new HSQLDialectExt(), 
                                    twoTableList,
                                    mockMetaData,
                                    prefs,
@@ -261,7 +261,7 @@ public class DialectUtilsTest extends BaseSQuirreLJUnit4TestCase {
         checkAction(sqls, "ALTER TABLE", " ON DELETE NO ACTION");
         
         prefs.setDeleteAction(DatabaseMetaData.importedKeyNoAction);
-        sqls = checkGetTableSource(new HSQLDialect(), 
+        sqls = checkGetTableSource(new HSQLDialectExt(), 
                                    twoTableList,
                                    mockMetaData,
                                    prefs,
@@ -270,7 +270,7 @@ public class DialectUtilsTest extends BaseSQuirreLJUnit4TestCase {
         checkAction(sqls, "ALTER TABLE", " ON DELETE NO ACTION");
         
         prefs.setDeleteAction(DatabaseMetaData.importedKeySetNull);
-        sqls = checkGetTableSource(new HSQLDialect(), 
+        sqls = checkGetTableSource(new HSQLDialectExt(), 
                                    twoTableList,
                                    mockMetaData,
                                    prefs,
@@ -279,7 +279,7 @@ public class DialectUtilsTest extends BaseSQuirreLJUnit4TestCase {
         checkAction(sqls, "ALTER TABLE", " ON DELETE SET NULL");
         
         prefs.setDeleteAction(DatabaseMetaData.importedKeySetDefault);
-        sqls = checkGetTableSource(new HSQLDialect(), 
+        sqls = checkGetTableSource(new HSQLDialectExt(), 
                                    twoTableList,
                                    mockMetaData,
                                    prefs,
@@ -292,7 +292,7 @@ public class DialectUtilsTest extends BaseSQuirreLJUnit4TestCase {
     
     @Test
     public void testIsJdbcOdbc() throws SQLException {
-        checkGetTableSource(new HSQLDialect(), 
+        checkGetTableSource(new HSQLDialectExt(), 
                             twoTableList,
                             mockMetaData,
                             prefs,

@@ -37,56 +37,69 @@ import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 import org.antlr.stringtemplate.StringTemplate;
-import org.hibernate.dialect.Oracle9Dialect;
+import org.hibernate.HibernateException;
 
 /**
- * A description of this class goes here...
+ * A dialect delegate for the Oracle database.
  */
-
-public class Oracle9iDialect extends Oracle9Dialect implements HibernateDialect
+public class OracleDialectExt extends CommonHibernateDialect implements HibernateDialect
 {
 
-	public Oracle9iDialect()
-	{
-		super();
-		registerColumnType(Types.BIGINT, "number($p)");
-		registerColumnType(Types.BINARY, 2000, "raw($l)");
-		registerColumnType(Types.BINARY, "blob");
-		registerColumnType(Types.BIT, "smallint");
-		registerColumnType(Types.BLOB, "blob");
-		registerColumnType(Types.BOOLEAN, "smallint");
-		registerColumnType(Types.CHAR, 2000, "char($l)");
-		registerColumnType(Types.CHAR, 4000, "varchar2($l)");
-		registerColumnType(Types.CHAR, "clob");
-		registerColumnType(Types.CLOB, "clob");
-		registerColumnType(Types.DATE, "date");
-		registerColumnType(Types.DECIMAL, "decimal($p)");
-		registerColumnType(Types.DOUBLE, "float($p)");
-		registerColumnType(Types.FLOAT, "float($p)");
-		registerColumnType(Types.INTEGER, "int");
-		registerColumnType(Types.LONGVARBINARY, "blob");
-		registerColumnType(Types.LONGVARCHAR, 4000, "varchar2($l)");
-		registerColumnType(Types.LONGVARCHAR, "clob");
-		registerColumnType(Types.NUMERIC, "number($p)");
-		registerColumnType(Types.REAL, "real");
-		registerColumnType(Types.SMALLINT, "smallint");
-		registerColumnType(Types.TIME, "date");
-		registerColumnType(Types.TIMESTAMP, "timestamp");
-		registerColumnType(Types.TINYINT, "smallint");
-		registerColumnType(Types.VARBINARY, "blob");
-		registerColumnType(Types.VARCHAR, 4000, "varchar2($l)");
-		registerColumnType(Types.VARCHAR, "clob");
-		// Total Hack! Type OTHER(1111) can be other types as well?
-		registerColumnType(Types.OTHER, 4000, "varchar2(4000)");
-		registerColumnType(Types.OTHER, "clob");
+	private class OracleDialectHelper extends org.hibernate.dialect.Oracle9Dialect {
+		public OracleDialectHelper()
+		{
+			super();
+			registerColumnType(Types.BIGINT, "number($p)");
+			registerColumnType(Types.BINARY, 2000, "raw($l)");
+			registerColumnType(Types.BINARY, "blob");
+			registerColumnType(Types.BIT, "smallint");
+			registerColumnType(Types.BLOB, "blob");
+			registerColumnType(Types.BOOLEAN, "smallint");
+			registerColumnType(Types.CHAR, 2000, "char($l)");
+			registerColumnType(Types.CHAR, 4000, "varchar2($l)");
+			registerColumnType(Types.CHAR, "clob");
+			registerColumnType(Types.CLOB, "clob");
+			registerColumnType(Types.DATE, "date");
+			registerColumnType(Types.DECIMAL, "decimal($p)");
+			registerColumnType(Types.DOUBLE, "float($p)");
+			registerColumnType(Types.FLOAT, "float($p)");
+			registerColumnType(Types.INTEGER, "int");
+			registerColumnType(Types.LONGVARBINARY, "blob");
+			registerColumnType(Types.LONGVARCHAR, 4000, "varchar2($l)");
+			registerColumnType(Types.LONGVARCHAR, "clob");
+			registerColumnType(Types.NUMERIC, "number($p)");
+			registerColumnType(Types.REAL, "real");
+			registerColumnType(Types.SMALLINT, "smallint");
+			registerColumnType(Types.TIME, "date");
+			registerColumnType(Types.TIMESTAMP, "timestamp");
+			registerColumnType(Types.TINYINT, "smallint");
+			registerColumnType(Types.VARBINARY, "blob");
+			registerColumnType(Types.VARCHAR, 4000, "varchar2($l)");
+			registerColumnType(Types.VARCHAR, "clob");
+			// Total Hack! Type OTHER(1111) can be other types as well?
+			registerColumnType(Types.OTHER, 4000, "varchar2(4000)");
+			registerColumnType(Types.OTHER, "clob");
 
+		}
+		
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType)
+	
+	/** extended hibernate dialect used in this wrapper */
+	private OracleDialectHelper _dialect = new OracleDialectHelper();
+	
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTypeName(int, int, int, int)
 	 */
+	@Override
+	public String getTypeName(int code, int length, int precision, int scale) throws HibernateException
+	{
+		return _dialect.getTypeName(code, length, precision, scale);
+	}
+	
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
+	 */
+	@Override
 	public boolean canPasteTo(IDatabaseObjectInfo info)
 	{
 		boolean result = true;
@@ -98,41 +111,10 @@ public class Oracle9iDialect extends Oracle9Dialect implements HibernateDialect
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#supportsSchemasInTableDefinition()
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getMaxPrecision(int)
 	 */
-	public boolean supportsSchemasInTableDefinition()
-	{
-		return true;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getLengthFunction()
-	 */
-	public String getLengthFunction(int dataType)
-	{
-		return "length";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getMaxFunction()
-	 */
-	public String getMaxFunction()
-	{
-		return "max";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getMaxPrecision(int)
-	 */
+	@Override
 	public int getMaxPrecision(int dataType)
 	{
 		if (dataType == Types.DOUBLE || dataType == Types.FLOAT)
@@ -144,56 +126,19 @@ public class Oracle9iDialect extends Oracle9Dialect implements HibernateDialect
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getMaxScale(int)
-	 */
-	public int getMaxScale(int dataType)
-	{
-		return getMaxPrecision(dataType);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getPrecisionDigits(int, int)
-	 */
-	public int getPrecisionDigits(int columnSize, int dataType)
-	{
-		return columnSize;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getColumnLength(int, int)
-	 */
-	public int getColumnLength(int columnSize, int dataType)
-	{
-		return columnSize;
-	}
-
 	/**
-	 * The string which identifies this dialect in the dialect chooser.
-	 * 
-	 * @return a descriptive name that tells the user what database this dialect is design to work with.
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDisplayName()
 	 */
+	@Override
 	public String getDisplayName()
 	{
 		return "Oracle";
 	}
 
 	/**
-	 * Returns boolean value indicating whether or not this dialect supports the specified database
-	 * product/version.
-	 * 
-	 * @param databaseProductName
-	 *           the name of the database as reported by DatabaseMetaData.getDatabaseProductName()
-	 * @param databaseProductVersion
-	 *           the version of the database as reported by DatabaseMetaData.getDatabaseProductVersion()
-	 * @return true if this dialect can be used for the specified product name and version; false otherwise.
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsProduct(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public boolean supportsProduct(String databaseProductName, String databaseProductVersion)
 	{
 		if (databaseProductName == null)
@@ -209,10 +154,9 @@ public class Oracle9iDialect extends Oracle9Dialect implements HibernateDialect
 	}
 
 	/**
-	 * Returns a boolean value indicating whether or not this dialect supports adding comments to columns.
-	 * 
-	 * @return true if column comments are supported; false otherwise.
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsColumnComment()
 	 */
+	@Override
 	public boolean supportsColumnComment()
 	{
 		return true;
@@ -229,9 +173,9 @@ public class Oracle9iDialect extends Oracle9Dialect implements HibernateDialect
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support annotating columns with a comment.
 	 */
-	public String getColumnCommentAlterSQL(TableColumnInfo info) throws UnsupportedOperationException
+	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
-		return DialectUtils.getColumnCommentAlterSQL(info);
+		return DialectUtils.getColumnCommentAlterSQL(info, null, null, null);
 	}
 
 	/**
@@ -635,7 +579,7 @@ public class Oracle9iDialect extends Oracle9Dialect implements HibernateDialect
 		if (info.getRemarks() != null && !"".equals(info.getRemarks()))
 		{
 			// TODO take into account qualifier and prefs
-			return new String[] { addColumnSql, DialectUtils.getColumnCommentAlterSQL(info) };
+			return new String[] { addColumnSql, DialectUtils.getColumnCommentAlterSQL(info, null, null, null) };
 		} else
 		{
 			return new String[] { addColumnSql };

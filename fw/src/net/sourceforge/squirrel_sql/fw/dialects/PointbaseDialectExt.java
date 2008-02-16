@@ -23,51 +23,80 @@ import java.sql.Types;
 import java.util.Collection;
 import java.util.List;
 
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
+import org.hibernate.HibernateException;
+
 /**
- * An extension to the standard Hibernate Interbase dialect
+ * A dialect delegate for the Pointbase database.
  */
-public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect implements HibernateDialect
+public class PointbaseDialectExt extends CommonHibernateDialect implements HibernateDialect
 {
 
-	public InterbaseDialect()
+	private class PointbaseDialectHelper extends org.hibernate.dialect.PointbaseDialect {
+		public PointbaseDialectHelper() {
+			registerColumnType(Types.BIGINT, "bigint");
+			registerColumnType(Types.BINARY, "blob(8K)");
+			registerColumnType(Types.BIT, "smallint");
+			registerColumnType(Types.BLOB, 2000000000, "blob($l)");
+			registerColumnType(Types.BLOB, "blob(2000000000)");
+			registerColumnType(Types.BOOLEAN, "smallint");
+			registerColumnType(Types.CHAR, 4054, "char($l)");
+			registerColumnType(Types.CHAR, 2000000000, "clob($l)");
+			registerColumnType(Types.CHAR, "clob(2000000000)");
+			registerColumnType(Types.CLOB, 2000000000, "clob($l)");
+			registerColumnType(Types.CLOB, "clob(2000000000)");
+			registerColumnType(Types.DATE, "date");
+			registerColumnType(Types.DECIMAL, "decimal($p)");
+			registerColumnType(Types.DOUBLE, "float($p)");
+			registerColumnType(Types.FLOAT, "float($p)");
+			registerColumnType(Types.INTEGER, "int");
+			registerColumnType(Types.LONGVARBINARY, 2000000000, "blob($l)");
+			registerColumnType(Types.LONGVARBINARY, "blob(2000000000)");
+			registerColumnType(Types.LONGVARCHAR, 2000000000, "clob($l)");
+			registerColumnType(Types.LONGVARCHAR, "clob(2000000000)");
+			registerColumnType(Types.NUMERIC, "bigint");
+			registerColumnType(Types.REAL, "real");
+			registerColumnType(Types.SMALLINT, "smallint");
+			registerColumnType(Types.TIME, "time");
+			registerColumnType(Types.TIMESTAMP, "timestamp");
+			registerColumnType(Types.TINYINT, "smallint");
+			registerColumnType(Types.VARBINARY, 2000000000, "blob($l)");
+			registerColumnType(Types.VARBINARY, "blob(2000000000)");
+			registerColumnType(Types.VARCHAR, 4054, "varchar($l)");
+			registerColumnType(Types.VARCHAR, 2000000000, "clob($l)");
+			registerColumnType(Types.VARCHAR, "clob(2000000000)");
+		}
+	}
+	
+	/** extended hibernate dialect used in this wrapper */
+	private PointbaseDialectHelper _dialect = new PointbaseDialectHelper();
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTypeName(int, int, int, int)
+	 */
+	@Override
+	public String getTypeName(int code, int length, int precision, int scale) throws HibernateException
 	{
-		super();
-		/*
-		 * TODO: hookup with Interbase spec and adjust these as necessary. 
-		 */
-		// What follows comes from the standard hibernate dialect.
-		registerColumnType( Types.BIT, "smallint" );
-		registerColumnType( Types.BIGINT, "numeric(18,0)" );
-		registerColumnType( Types.SMALLINT, "smallint" );
-		registerColumnType( Types.TINYINT, "smallint" );
-		registerColumnType( Types.INTEGER, "integer" );
-		registerColumnType( Types.CHAR, "char(1)" );
-		registerColumnType( Types.VARCHAR, "varchar($l)" );
-		registerColumnType( Types.FLOAT, "float" );
-		registerColumnType( Types.DOUBLE, "double precision" );
-		registerColumnType( Types.DATE, "date" );
-		registerColumnType( Types.TIME, "time" );
-		registerColumnType( Types.TIMESTAMP, "timestamp" );
-		registerColumnType( Types.VARBINARY, "blob" );
-		registerColumnType( Types.NUMERIC, "numeric($p,$s)" );
-		registerColumnType( Types.BLOB, "blob" );
-		registerColumnType( Types.CLOB, "blob sub_type 1" );
-		
+		return _dialect.getTypeName(code, length, precision, scale);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType)
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
 	 */
 	public boolean canPasteTo(IDatabaseObjectInfo info)
 	{
-		return true;
+		boolean result = true;
+		DatabaseObjectType type = info.getDatabaseObjectType();
+		if (type.getName().equalsIgnoreCase("database"))
+		{
+			result = false;
+		}
+		return result;
 	}
 
 	/*
@@ -77,7 +106,7 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect imp
 	 */
 	public boolean supportsSchemasInTableDefinition()
 	{
-		return false;
+		return true;
 	}
 
 	/*
@@ -107,7 +136,13 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect imp
 	 */
 	public int getMaxPrecision(int dataType)
 	{
-		return 0;
+		if (dataType == Types.DOUBLE || dataType == Types.FLOAT)
+		{
+			return 48;
+		} else
+		{
+			return 31;
+		}
 	}
 
 	/*
@@ -147,7 +182,7 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect imp
 	 */
 	public String getDisplayName()
 	{
-		return "Interbase";
+		return "Pointbase";
 	}
 
 	/**
@@ -166,57 +201,12 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect imp
 		{
 			return false;
 		}
-		if (databaseProductName.trim().toLowerCase().startsWith("interbase"))
+		if (databaseProductName.trim().toLowerCase().startsWith("pointbase"))
 		{
 			// We don't yet have the need to discriminate by version.
 			return true;
 		}
 		return false;
-	}
-
-	/**
-	 * Returns the SQL statement to use to add a column to the specified table using the information about the
-	 * new column specified by info.
-	 * 
-	 * @param info
-	 *           information about the new column such as type, name, etc.
-	 * @return
-	 * @throws UnsupportedOperationException
-	 *            if the database doesn't support adding columns after a table has already been created.
-	 */
-	public String[] getColumnAddSQL(TableColumnInfo info) throws UnsupportedOperationException
-	{
-		throw new UnsupportedOperationException("This database dialect doesn't support adding columns to tables");
-	}
-
-	/**
-	 * Returns a boolean value indicating whether or not this dialect supports adding comments to columns.
-	 * 
-	 * @return true if column comments are supported; false otherwise.
-	 */
-	public boolean supportsColumnComment()
-	{
-		return false;
-	}
-
-	/**
-	 * Returns the SQL statement to use to add a comment to the specified column of the specified table.
-	 * 
-	 * @param tableName
-	 *           the name of the table to create the SQL for.
-	 * @param columnName
-	 *           the name of the column to create the SQL for.
-	 * @param comment
-	 *           the comment to add.
-	 * @return
-	 * @throws UnsupportedOperationException
-	 *            if the database doesn't support annotating columns with a comment.
-	 */
-	@SuppressWarnings("unused")
-	public String getColumnCommentAlterSQL(String tableName, String columnName, String comment)
-		throws UnsupportedOperationException
-	{
-		throw new UnsupportedOperationException("This database dialect doesn't support adding comments to columns");
 	}
 
 	/**
@@ -227,7 +217,6 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect imp
 	 */
 	public boolean supportsDropColumn()
 	{
-		// TODO: need to verify this
 		return true;
 	}
 
@@ -244,7 +233,6 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect imp
 	 */
 	public String getColumnDropSQL(String tableName, String columnName)
 	{
-		// TODO: Need to verify this
 		return DialectUtils.getColumnDropSQL(tableName, columnName);
 	}
 
@@ -273,7 +261,7 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect imp
 
 	/**
 	 * Returns the SQL that forms the command to add a primary key to the specified table composed of the given
-	 * column names.
+	 * column names. alter table pktest add constraint pk_pktest primary key (pkcol)
 	 * 
 	 * @param pkName
 	 *           the name of the constraint
@@ -281,10 +269,19 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect imp
 	 *           the columns that form the key
 	 * @return
 	 */
-	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columnNames, ITableInfo ti)
+	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, ITableInfo ti)
 	{
-		// TODO: implement
-		throw new UnsupportedOperationException("getAddPrimaryKeySQL not implemented");
+		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false) };
+	}
+
+	/**
+	 * Returns a boolean value indicating whether or not this dialect supports adding comments to columns.
+	 * 
+	 * @return true if column comments are supported; false otherwise.
+	 */
+	public boolean supportsColumnComment()
+	{
+		return false;
 	}
 
 	/**
@@ -296,10 +293,22 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect imp
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support annotating columns with a comment.
 	 */
-	public String getColumnCommentAlterSQL(TableColumnInfo info) throws UnsupportedOperationException
+	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
-		// TODO: implement
-		throw new UnsupportedOperationException("Not yet implemented");
+		int featureId = DialectUtils.COLUMN_COMMENT_ALTER_TYPE;
+		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
+	}
+
+	/**
+	 * Returns a boolean value indicating whether or not this database dialect supports changing a column from
+	 * null to not-null and vice versa.
+	 * 
+	 * @return true if the database supports dropping columns; false otherwise.
+	 */
+	public boolean supportsAlterColumnNull()
+	{
+		return false;
 	}
 
 	/**
@@ -311,8 +320,9 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect imp
 	 */
 	public String[] getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO: implement
-		throw new UnsupportedOperationException("Not yet implemented");
+		int featureId = DialectUtils.COLUMN_NULL_ALTER_TYPE;
+		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -322,8 +332,7 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect imp
 	 */
 	public boolean supportsRenameColumn()
 	{
-		// TODO: need to verify this
-		return true;
+		return false;
 	}
 
 	/**
@@ -337,8 +346,9 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect imp
 	 */
 	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to)
 	{
-		// TODO: implement
-		throw new UnsupportedOperationException("Not yet implemented");
+		int featureId = DialectUtils.COLUMN_NAME_ALTER_TYPE;
+		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -348,8 +358,7 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect imp
 	 */
 	public boolean supportsAlterColumnType()
 	{
-		// TODO: verify this
-		return true;
+		return false;
 	}
 
 	/**
@@ -362,23 +371,12 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect imp
 	 * @return the SQL to make the change
 	 * @throw UnsupportedOperationException if the database doesn't support modifying column types.
 	 */
-	public List<String> getColumnTypeAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
-		throws UnsupportedOperationException
+	public List<String> getColumnTypeAlterSQL(TableColumnInfo from, TableColumnInfo to,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
-		// TODO: implement
-		throw new UnsupportedOperationException("Not Yet Implemented");
-	}
-
-	/**
-	 * Returns a boolean value indicating whether or not this database dialect supports changing a column from
-	 * null to not-null and vice versa.
-	 * 
-	 * @return true if the database supports dropping columns; false otherwise.
-	 */
-	public boolean supportsAlterColumnNull()
-	{
-		// TODO Auto-generated method stub
-		return false;
+		int featureId = DialectUtils.COLUMN_TYPE_ALTER_TYPE;
+		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -389,8 +387,7 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect imp
 	 */
 	public boolean supportsAlterColumnDefault()
 	{
-		// TODO Need to verify this
-		return true;
+		return false;
 	}
 
 	/**
@@ -402,12 +399,14 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect imp
 	 */
 	public String getColumnDefaultAlterSQL(TableColumnInfo info)
 	{
-		// TODO need to implement or change the message
-		throw new UnsupportedOperationException("Not yet implemented");
+		int featureId = DialectUtils.COLUMN_DEFAULT_ALTER_TYPE;
+		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
-	 * Returns the SQL command to drop the specified table's primary key.
+	 * Returns the SQL command to drop the specified table's primary key. alter table <tableName> drop
+	 * constraint <pkName>
 	 * 
 	 * @param pkName
 	 *           the name of the primary key that should be dropped
@@ -417,7 +416,7 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect imp
 	 */
 	public String getDropPrimaryKeySQL(String pkName, String tableName)
 	{
-		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false);
+		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true, false);
 	}
 
 	/**
@@ -458,7 +457,7 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect imp
 	 */
 	public DialectType getDialectType()
 	{
-		return DialectType.INTERBASE;
+		return DialectType.POINTBASE;
 	}
 
 	public String[] getIndexAccessMethodsTypes()
@@ -482,11 +481,28 @@ public class InterbaseDialect extends org.hibernate.dialect.InterbaseDialect imp
 		return null;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddColumnSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
 	public String[] getAddColumnSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		boolean addDefaultClause = true;
+		boolean supportsNullQualifier = false;
+		boolean addNullClause = true;
+
+		String sql =
+			DialectUtils.getAddColumSQL(column,
+				this,
+				addDefaultClause,
+				supportsNullQualifier,
+				addNullClause,
+				qualifier,
+				prefs);
+
+		return new String[] { sql };
 	}
 
 	public String[] getAddForeignKeyConstraintSQL(String localTableName, String refTableName,

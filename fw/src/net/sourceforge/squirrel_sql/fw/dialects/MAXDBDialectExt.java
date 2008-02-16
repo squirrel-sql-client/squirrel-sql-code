@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -29,52 +30,58 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
-/**
- * An extension to the standard Hibernate Pointbase dialect
- */
-public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect implements HibernateDialect
-{
+import org.hibernate.HibernateException;
+import org.hibernate.dialect.SAPDBDialect;
 
-	public PointbaseDialect()
+public class MAXDBDialectExt extends CommonHibernateDialect implements HibernateDialect
+{
+	private class MAXDBDialectHelper extends SAPDBDialect
 	{
-		super();
-		registerColumnType(Types.BIGINT, "bigint");
-		registerColumnType(Types.BINARY, "blob(8K)");
-		registerColumnType(Types.BIT, "smallint");
-		registerColumnType(Types.BLOB, 2000000000, "blob($l)");
-		registerColumnType(Types.BLOB, "blob(2000000000)");
-		registerColumnType(Types.BOOLEAN, "smallint");
-		registerColumnType(Types.CHAR, 4054, "char($l)");
-		registerColumnType(Types.CHAR, 2000000000, "clob($l)");
-		registerColumnType(Types.CHAR, "clob(2000000000)");
-		registerColumnType(Types.CLOB, 2000000000, "clob($l)");
-		registerColumnType(Types.CLOB, "clob(2000000000)");
-		registerColumnType(Types.DATE, "date");
-		registerColumnType(Types.DECIMAL, "decimal($p)");
-		registerColumnType(Types.DOUBLE, "float($p)");
-		registerColumnType(Types.FLOAT, "float($p)");
-		registerColumnType(Types.INTEGER, "int");
-		registerColumnType(Types.LONGVARBINARY, 2000000000, "blob($l)");
-		registerColumnType(Types.LONGVARBINARY, "blob(2000000000)");
-		registerColumnType(Types.LONGVARCHAR, 2000000000, "clob($l)");
-		registerColumnType(Types.LONGVARCHAR, "clob(2000000000)");
-		registerColumnType(Types.NUMERIC, "bigint");
-		registerColumnType(Types.REAL, "real");
-		registerColumnType(Types.SMALLINT, "smallint");
-		registerColumnType(Types.TIME, "time");
-		registerColumnType(Types.TIMESTAMP, "timestamp");
-		registerColumnType(Types.TINYINT, "smallint");
-		registerColumnType(Types.VARBINARY, 2000000000, "blob($l)");
-		registerColumnType(Types.VARBINARY, "blob(2000000000)");
-		registerColumnType(Types.VARCHAR, 4054, "varchar($l)");
-		registerColumnType(Types.VARCHAR, 2000000000, "clob($l)");
-		registerColumnType(Types.VARCHAR, "clob(2000000000)");
+		public MAXDBDialectHelper()
+		{
+			registerColumnType(Types.BIGINT, "fixed(19,0)");
+			registerColumnType(Types.BINARY, 8000, "char($l) byte");
+			registerColumnType(Types.BINARY, "long varchar byte");
+			registerColumnType(Types.BIT, "boolean");
+			registerColumnType(Types.BLOB, "long byte");
+			registerColumnType(Types.BOOLEAN, "boolean");
+			registerColumnType(Types.CLOB, "long varchar");
+			registerColumnType(Types.CHAR, 8000, "char($l) ascii");
+			registerColumnType(Types.CHAR, "long varchar ascii");
+			registerColumnType(Types.DECIMAL, "decimal($p,$s)");
+			registerColumnType(Types.DOUBLE, "double precision");
+			registerColumnType(Types.DATE, "date");
+			registerColumnType(Types.FLOAT, "float($p)");
+			registerColumnType(Types.INTEGER, "int");
+			registerColumnType(Types.LONGVARBINARY, 8000, "varchar($l) byte");
+			registerColumnType(Types.LONGVARBINARY, "long byte");
+			registerColumnType(Types.LONGVARCHAR, "long ascii");
+			registerColumnType(Types.NUMERIC, "fixed($p,$s)");
+			registerColumnType(Types.REAL, "float($p)");
+			registerColumnType(Types.SMALLINT, "smallint");
+			registerColumnType(Types.TIME, "time");
+			registerColumnType(Types.TIMESTAMP, "timestamp");
+			registerColumnType(Types.TINYINT, "fixed(3,0)");
+			registerColumnType(Types.VARBINARY, "long byte");
+			registerColumnType(Types.VARCHAR, 8000, "varchar($l)");
+			registerColumnType(Types.VARCHAR, "long ascii");
+		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType)
+	/** extended hibernate dialect used in this wrapper */
+	private MAXDBDialectHelper _dialect = new MAXDBDialectHelper();
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTypeName(int, int, int, int)
+	 */
+	@Override
+	public String getTypeName(int code, int length, int precision, int scale) throws HibernateException
+	{
+		return _dialect.getTypeName(code, length, precision, scale);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
 	 */
 	public boolean canPasteTo(IDatabaseObjectInfo info)
 	{
@@ -87,70 +94,34 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect imp
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#supportsSchemasInTableDefinition()
-	 */
 	public boolean supportsSchemasInTableDefinition()
 	{
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getLengthFunction()
-	 */
-	public String getLengthFunction(int dataType)
-	{
-		return "length";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getMaxFunction()
-	 */
 	public String getMaxFunction()
 	{
 		return "max";
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getMaxPrecision(int)
-	 */
-	public int getMaxPrecision(int dataType)
+	public String getLengthFunction(int dataType)
 	{
-		if (dataType == Types.DOUBLE || dataType == Types.FLOAT)
-		{
-			return 48;
-		} else
-		{
-			return 31;
-		}
+		return "length";
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getMaxScale(int)
-	 */
+	public int getMaxPrecision(int dataType)
+	{
+		return 38;
+	}
+
 	public int getMaxScale(int dataType)
 	{
 		return getMaxPrecision(dataType);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getPrecisionDigits(int, int)
-	 */
 	public int getPrecisionDigits(int columnSize, int dataType)
 	{
-		return columnSize;
+		return columnSize * 2;
 	}
 
 	/*
@@ -160,6 +131,11 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect imp
 	 */
 	public int getColumnLength(int columnSize, int dataType)
 	{
+		// driver returns 8 for "long byte", yet it can store 2GB of data.
+		if (dataType == Types.LONGVARBINARY)
+		{
+			return Integer.MAX_VALUE;
+		}
 		return columnSize;
 	}
 
@@ -170,7 +146,7 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect imp
 	 */
 	public String getDisplayName()
 	{
-		return "Pointbase";
+		return "MaxDB";
 	}
 
 	/**
@@ -189,7 +165,8 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect imp
 		{
 			return false;
 		}
-		if (databaseProductName.trim().toLowerCase().startsWith("pointbase"))
+		String lname = databaseProductName.trim().toLowerCase();
+		if (lname.startsWith("sap") || lname.startsWith("maxdb"))
 		{
 			// We don't yet have the need to discriminate by version.
 			return true;
@@ -238,7 +215,6 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect imp
 	public List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints,
 		boolean isMaterializedView)
 	{
-		// TODO: Need to verify this
 		return DialectUtils.getTableDropSQL(iTableInfo,
 			true,
 			cascadeConstraints,
@@ -249,7 +225,7 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect imp
 
 	/**
 	 * Returns the SQL that forms the command to add a primary key to the specified table composed of the given
-	 * column names. alter table pktest add constraint pk_pktest primary key (pkcol)
+	 * column names. ALTER TABLE test ADD constraint test_pk PRIMARY KEY (notnullint)
 	 * 
 	 * @param pkName
 	 *           the name of the constraint
@@ -259,7 +235,14 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect imp
 	 */
 	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, ITableInfo ti)
 	{
-		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false) };
+		ArrayList<String> result = new ArrayList<String>();
+		for (int i = 0; i < columns.length; i++)
+		{
+			TableColumnInfo info = columns[i];
+			result.add(getColumnNullableAlterSQL(info, false));
+		}
+		result.add(DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false));
+		return result.toArray(new String[result.size()]);
 	}
 
 	/**
@@ -269,7 +252,7 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect imp
 	 */
 	public boolean supportsColumnComment()
 	{
-		return false;
+		return true;
 	}
 
 	/**
@@ -281,11 +264,10 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect imp
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support annotating columns with a comment.
 	 */
-	public String getColumnCommentAlterSQL(TableColumnInfo info) throws UnsupportedOperationException
+	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
-		int featureId = DialectUtils.COLUMN_COMMENT_ALTER_TYPE;
-		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-		throw new UnsupportedOperationException(msg);
+		return DialectUtils.getColumnCommentAlterSQL(info, null, null, null);
 	}
 
 	/**
@@ -296,21 +278,49 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect imp
 	 */
 	public boolean supportsAlterColumnNull()
 	{
-		return false;
+		return true;
 	}
 
 	/**
-	 * Returns the SQL used to alter the specified column to not allow null values
+	 * Returns the SQL used to alter the specified column to not allow null values ALTER TABLE table_name
+	 * COLUMN column_name DEFAULT NULL ALTER TABLE table_name COLUMN column_name NOT NULL
 	 * 
 	 * @param info
 	 *           the column to modify
 	 * @return the SQL to execute
 	 */
-	public String[] getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String[] getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
-		int featureId = DialectUtils.COLUMN_NULL_ALTER_TYPE;
-		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-		throw new UnsupportedOperationException(msg);
+		boolean nullable = info.isNullable().equalsIgnoreCase("YES");
+		return new String[] { getColumnNullableAlterSQL(info, nullable) };
+	}
+
+	/**
+	 * Returns the SQL used to alter the specified column to not allow null values ALTER TABLE table_name
+	 * COLUMN column_name DEFAULT NULL ALTER TABLE table_name COLUMN column_name NOT NULL
+	 * 
+	 * @param info
+	 *           the column to modify
+	 * @param nullable
+	 *           whether or not the column should allow nulls
+	 * @return the SQL to execute
+	 */
+	public String getColumnNullableAlterSQL(TableColumnInfo info, boolean nullable)
+	{
+		StringBuffer result = new StringBuffer();
+		result.append("ALTER TABLE ");
+		result.append(info.getTableName());
+		result.append(" COLUMN ");
+		result.append(info.getColumnName());
+		if (nullable)
+		{
+			result.append(" DEFAULT NULL");
+		} else
+		{
+			result.append(" NOT NULL");
+		}
+		return result.toString();
 	}
 
 	/**
@@ -320,11 +330,12 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect imp
 	 */
 	public boolean supportsRenameColumn()
 	{
-		return false;
+		return true;
 	}
 
 	/**
-	 * Returns the SQL that is used to change the column name.
+	 * Returns the SQL that is used to change the column name. RENAME COLUMN table_name.column_name TO
+	 * new_column_name
 	 * 
 	 * @param from
 	 *           the TableColumnInfo as it is
@@ -334,9 +345,7 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect imp
 	 */
 	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to)
 	{
-		int featureId = DialectUtils.COLUMN_NAME_ALTER_TYPE;
-		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-		throw new UnsupportedOperationException(msg);
+		return DialectUtils.getColumnRenameSQL(from, to);
 	}
 
 	/**
@@ -346,7 +355,7 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect imp
 	 */
 	public boolean supportsAlterColumnType()
 	{
-		return false;
+		return true;
 	}
 
 	/**
@@ -362,9 +371,8 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect imp
 	public List<String> getColumnTypeAlterSQL(TableColumnInfo from, TableColumnInfo to,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
-		int featureId = DialectUtils.COLUMN_TYPE_ALTER_TYPE;
-		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-		throw new UnsupportedOperationException(msg);
+		String alterClause = DialectUtils.MODIFY_CLAUSE;
+		return DialectUtils.getColumnTypeAlterSQL(this, alterClause, "", false, from, to);
 	}
 
 	/**
@@ -375,11 +383,12 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect imp
 	 */
 	public boolean supportsAlterColumnDefault()
 	{
-		return false;
+		return true;
 	}
 
 	/**
-	 * Returns the SQL command to change the specified column's default value
+	 * Returns the SQL command to change the specified column's default value alter table test column mychar
+	 * drop default alter table test column mychar add default 'a default'
 	 * 
 	 * @param info
 	 *           the column to modify and it's default value.
@@ -387,14 +396,21 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect imp
 	 */
 	public String getColumnDefaultAlterSQL(TableColumnInfo info)
 	{
-		int featureId = DialectUtils.COLUMN_DEFAULT_ALTER_TYPE;
-		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-		throw new UnsupportedOperationException(msg);
+		String alterClause = DialectUtils.COLUMN_CLAUSE;
+		String newDefault = info.getDefaultValue();
+		String defaultClause = null;
+		if (newDefault != null && !"".equals(newDefault))
+		{
+			defaultClause = DialectUtils.ADD_DEFAULT_CLAUSE;
+		} else
+		{
+			defaultClause = DialectUtils.DROP_DEFAULT_CLAUSE;
+		}
+		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, false, defaultClause);
 	}
 
 	/**
-	 * Returns the SQL command to drop the specified table's primary key. alter table <tableName> drop
-	 * constraint <pkName>
+	 * Returns the SQL command to drop the specified table's primary key.
 	 * 
 	 * @param pkName
 	 *           the name of the primary key that should be dropped
@@ -404,7 +420,7 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect imp
 	 */
 	public String getDropPrimaryKeySQL(String pkName, String tableName)
 	{
-		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true, false);
+		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false);
 	}
 
 	/**
@@ -445,7 +461,7 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect imp
 	 */
 	public DialectType getDialectType()
 	{
-		return DialectType.POINTBASE;
+		return DialectType.MAXDB;
 	}
 
 	public String[] getIndexAccessMethodsTypes()
@@ -459,11 +475,12 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect imp
 	 */
 	public String[] getIndexStorageOptions()
 	{
-		// TODO Auto-generated method stub		
+		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -477,6 +494,8 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect imp
 	public String[] getAddColumnSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
+		ArrayList<String> result = new ArrayList<String>();
+
 		boolean addDefaultClause = true;
 		boolean supportsNullQualifier = false;
 		boolean addNullClause = true;
@@ -490,7 +509,15 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect imp
 				qualifier,
 				prefs);
 
-		return new String[] { sql };
+		result.add(sql);
+
+		if (column.getRemarks() != null && !"".equals(column.getRemarks()))
+		{
+			result.add(getColumnCommentAlterSQL(column, null, null));
+		}
+
+		return result.toArray(new String[result.size()]);
+
 	}
 
 	public String[] getAddForeignKeyConstraintSQL(String localTableName, String refTableName,
@@ -502,8 +529,8 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect imp
 		return null;
 	}
 
-	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName, TableColumnInfo[] columns,
-		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName,
+		TableColumnInfo[] columns, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -589,8 +616,8 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect imp
 		return null;
 	}
 
-	public String[] getRenameViewSQL(String oldViewName, String newViewName, DatabaseObjectQualifier qualifier,
-		SqlGenerationPreferences prefs)
+	public String[] getRenameViewSQL(String oldViewName, String newViewName,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -603,8 +630,8 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect imp
 		return null;
 	}
 
-	public String[] getUpdateSQL(String tableName, String[] setColumns, String[] setValues, String[] fromTables,
-		String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
+	public String[] getUpdateSQL(String tableName, String[] setColumns, String[] setValues,
+		String[] fromTables, String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
 		// TODO Auto-generated method stub
@@ -767,21 +794,27 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect imp
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsViewDefinition()
 	 */
-	public boolean supportsViewDefinition() {
+	public boolean supportsViewDefinition()
+	{
 		// TODO verify this is correct
 		return false;
-	}	
-	
+	}
+
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getViewDefinitionSQL(java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getViewDefinitionSQL(java.lang.String,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,
-		SqlGenerationPreferences prefs) {
+		SqlGenerationPreferences prefs)
+	{
 		return null;
 	}
-	
+
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getQualifiedIdentifier(java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getQualifiedIdentifier(java.lang.String,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	public String getQualifiedIdentifier(String identifier, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
@@ -797,5 +830,5 @@ public class PointbaseDialect extends org.hibernate.dialect.PointbaseDialect imp
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 }
