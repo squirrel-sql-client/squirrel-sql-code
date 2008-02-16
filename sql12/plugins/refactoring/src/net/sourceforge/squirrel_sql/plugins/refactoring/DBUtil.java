@@ -47,7 +47,7 @@ public class DBUtil
 		{
 			result.addAll(Arrays.asList(nullSQL));
 		}
-		String commentSQL = getCommentAlterSQL(from, to, dialect);
+		String commentSQL = getCommentAlterSQL(from, to, dialect, qualifier, prefs);
 		if (commentSQL != null)
 		{
 			result.add(commentSQL);
@@ -95,7 +95,8 @@ public class DBUtil
 		return dialect.getColumnNullableAlterSQL(to, qualifier, prefs);
 	}
 
-	public static String getCommentAlterSQL(TableColumnInfo from, TableColumnInfo to, HibernateDialect dialect)
+	public static String getCommentAlterSQL(TableColumnInfo from, TableColumnInfo to,
+		HibernateDialect dialect, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		String oldComment = from.getRemarks();
 		String newComment = to.getRemarks();
@@ -109,7 +110,7 @@ public class DBUtil
 		}
 		if (oldComment == null || !oldComment.equals(newComment))
 		{
-			return dialect.getColumnCommentAlterSQL(to);
+			return dialect.getColumnCommentAlterSQL(to, qualifier, prefs);
 		}
 		return null;
 	}
