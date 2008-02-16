@@ -33,64 +33,76 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 import org.antlr.stringtemplate.StringTemplate;
+import org.hibernate.HibernateException;
 
 /**
  * An extension to the standard Hibernate Ingres dialect
  */
-public class IngresDialect extends org.hibernate.dialect.IngresDialect implements HibernateDialect
+public class IngresDialectExt extends CommonHibernateDialect implements HibernateDialect
 {
 
-	public IngresDialect()
+	private class IngresDialectHelper extends org.hibernate.dialect.IngresDialect
 	{
-		super();
-
-		registerColumnType(Types.BIGINT, "bigint");
-		// SQL Reference Guide says 32k, but I get:
-		//
-		// The specified row size exceeded the maximum allowable row width.,
-		// SQL State: 50002, Error Code: 2045
-		//
-		// when I go above 8000.
-		registerColumnType(Types.BINARY, 8000, "byte($l)");
-		registerColumnType(Types.BINARY, "long byte");
-		registerColumnType(Types.BIT, "tinyint");
-		registerColumnType(Types.BLOB, "long byte");
-		registerColumnType(Types.BOOLEAN, "tinyint");
-		registerColumnType(Types.CHAR, 2000, "char($l)");
-		registerColumnType(Types.CHAR, "long varchar");
-		registerColumnType(Types.CLOB, "long varchar");
-		registerColumnType(Types.DATE, "date");
-		registerColumnType(Types.DECIMAL, "decimal($p, $s)");
-		registerColumnType(Types.DOUBLE, "double precision");
-		registerColumnType(Types.FLOAT, "float($p)");
-		registerColumnType(Types.INTEGER, "integer");
-		registerColumnType(Types.LONGVARBINARY, "long byte");
-		registerColumnType(Types.LONGVARCHAR, "long varchar");
-		registerColumnType(Types.NUMERIC, "numeric($p, $s)");
-		registerColumnType(Types.REAL, "real");
-		registerColumnType(Types.SMALLINT, "smallint");
-		registerColumnType(Types.TIME, "date");
-		registerColumnType(Types.TIMESTAMP, "date");
-		registerColumnType(Types.TINYINT, "tinyint");
-		// I tried the following for values under 8000 but I get
-		// Encountered unexpected exception - line 1, You cannot assign a
-		// value of type 'long byte' to a column of type 'byte varying'.
-		// Explicitly convert the value to the required type.
-		// registerColumnType(Types.VARBINARY, 8000, "byte varying($l)");
-		registerColumnType(Types.VARBINARY, "long byte");
-		// I tried 8000 for the max length of VARCHAR and ingres gives an exception
-		// (cannot assign a value of type long varchar to a varchar field). So
-		// I limit this field to 4000 for now - the Ingres product documentation
-		// indicated that 32k was acceptable. I've tested 4k and it seems to
-		// work fine.
-		registerColumnType(Types.VARCHAR, 4000, "varchar($l)");
-		registerColumnType(Types.VARCHAR, "long varchar");
+		public IngresDialectHelper()
+		{
+			registerColumnType(Types.BIGINT, "bigint");
+			// SQL Reference Guide says 32k, but I get:
+			//
+			// The specified row size exceeded the maximum allowable row width.,
+			// SQL State: 50002, Error Code: 2045
+			//
+			// when I go above 8000.
+			registerColumnType(Types.BINARY, 8000, "byte($l)");
+			registerColumnType(Types.BINARY, "long byte");
+			registerColumnType(Types.BIT, "tinyint");
+			registerColumnType(Types.BLOB, "long byte");
+			registerColumnType(Types.BOOLEAN, "tinyint");
+			registerColumnType(Types.CHAR, 2000, "char($l)");
+			registerColumnType(Types.CHAR, "long varchar");
+			registerColumnType(Types.CLOB, "long varchar");
+			registerColumnType(Types.DATE, "date");
+			registerColumnType(Types.DECIMAL, "decimal($p, $s)");
+			registerColumnType(Types.DOUBLE, "double precision");
+			registerColumnType(Types.FLOAT, "float($p)");
+			registerColumnType(Types.INTEGER, "integer");
+			registerColumnType(Types.LONGVARBINARY, "long byte");
+			registerColumnType(Types.LONGVARCHAR, "long varchar");
+			registerColumnType(Types.NUMERIC, "numeric($p, $s)");
+			registerColumnType(Types.REAL, "real");
+			registerColumnType(Types.SMALLINT, "smallint");
+			registerColumnType(Types.TIME, "date");
+			registerColumnType(Types.TIMESTAMP, "date");
+			registerColumnType(Types.TINYINT, "tinyint");
+			// I tried the following for values under 8000 but I get
+			// Encountered unexpected exception - line 1, You cannot assign a
+			// value of type 'long byte' to a column of type 'byte varying'.
+			// Explicitly convert the value to the required type.
+			// registerColumnType(Types.VARBINARY, 8000, "byte varying($l)");
+			registerColumnType(Types.VARBINARY, "long byte");
+			// I tried 8000 for the max length of VARCHAR and ingres gives an exception
+			// (cannot assign a value of type long varchar to a varchar field). So
+			// I limit this field to 4000 for now - the Ingres product documentation
+			// indicated that 32k was acceptable. I've tested 4k and it seems to
+			// work fine.
+			registerColumnType(Types.VARCHAR, 4000, "varchar($l)");
+			registerColumnType(Types.VARCHAR, "long varchar");
+		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType)
+	/** extended hibernate dialect used in this wrapper */
+	private IngresDialectHelper _dialect = new IngresDialectHelper();
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTypeName(int, int, int, int)
+	 */
+	@Override
+	public String getTypeName(int code, int length, int precision, int scale) throws HibernateException
+	{
+		return _dialect.getTypeName(code, length, precision, scale);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
 	 */
 	public boolean canPasteTo(IDatabaseObjectInfo info)
 	{
@@ -103,40 +115,16 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#supportsSchemasInTableDefinition()
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsSchemasInTableDefinition()
 	 */
 	public boolean supportsSchemasInTableDefinition()
 	{
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getLengthFunction()
-	 */
-	public String getLengthFunction(int dataType)
-	{
-		return "length";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getMaxFunction()
-	 */
-	public String getMaxFunction()
-	{
-		return "max";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getMaxPrecision(int)
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getMaxPrecision(int)
 	 */
 	public int getMaxPrecision(int dataType)
 	{
@@ -153,40 +141,8 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getMaxScale(int)
-	 */
-	public int getMaxScale(int dataType)
-	{
-		return getMaxPrecision(dataType);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getPrecisionDigits(int, int)
-	 */
-	public int getPrecisionDigits(int columnSize, int dataType)
-	{
-		return columnSize;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#getColumnLength(int, int)
-	 */
-	public int getColumnLength(int columnSize, int dataType)
-	{
-		return columnSize;
-	}
-
 	/**
-	 * The string which identifies this dialect in the dialect chooser.
-	 * 
-	 * @return a descriptive name that tells the user what database this dialect is design to work with.
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDisplayName()
 	 */
 	public String getDisplayName()
 	{
@@ -194,14 +150,8 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * Returns boolean value indicating whether or not this dialect supports the specified database
-	 * product/version.
-	 * 
-	 * @param databaseProductName
-	 *           the name of the database as reported by DatabaseMetaData.getDatabaseProductName()
-	 * @param databaseProductVersion
-	 *           the version of the database as reported by DatabaseMetaData.getDatabaseProductVersion()
-	 * @return true if this dialect can be used for the specified product name and version; false otherwise.
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsProduct(java.lang.String,
+	 *      java.lang.String)
 	 */
 	public boolean supportsProduct(String databaseProductName, String databaseProductVersion)
 	{
@@ -218,26 +168,8 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * Returns a boolean value indicating whether or not this database dialect supports dropping columns from
-	 * tables.
-	 * 
-	 * @return true if the database supports dropping columns; false otherwise.
-	 */
-	public boolean supportsDropColumn()
-	{
-		return true;
-	}
-
-	/**
-	 * Returns the SQL that forms the command to drop the specified colum in the specified table.
-	 * 
-	 * @param tableName
-	 *           the name of the table that has the column
-	 * @param columnName
-	 *           the name of the column to drop.
-	 * @return
-	 * @throws UnsupportedOperationException
-	 *            if the database doesn't support dropping columns.
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnDropSQL(java.lang.String,
+	 *      java.lang.String)
 	 */
 	public String getColumnDropSQL(String tableName, String columnName)
 	{
@@ -249,15 +181,8 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * Returns the SQL that forms the command to drop the specified table. If cascade contraints is supported
-	 * by the dialect and cascadeConstraints is true, then a drop statement with cascade constraints clause
-	 * will be formed.
-	 * 
-	 * @param iTableInfo
-	 *           the table to drop
-	 * @param cascadeConstraints
-	 *           whether or not to drop any FKs that may reference the specified table.
-	 * @return the drop SQL command.
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTableDropSQL(net.sourceforge.squirrel_sql.fw.sql.ITableInfo,
+	 *      boolean, boolean)
 	 */
 	public List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints,
 		boolean isMaterializedView)
@@ -271,15 +196,9 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * Returns the SQL that forms the command to add a primary key to the specified table composed of the given
-	 * column names. alter table test alter column pkcol integer not null alter table test add constraint
-	 * pk_test primary key (pkcol)
-	 * 
-	 * @param pkName
-	 *           the name of the constraint
-	 * @param columnNames
-	 *           the columns that form the key
-	 * @return
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddPrimaryKeySQL(java.lang.String,
+	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo[],
+	 *      net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
 	 */
 	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, ITableInfo ti)
 	{
@@ -296,9 +215,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * Returns a boolean value indicating whether or not this dialect supports adding comments to columns.
-	 * 
-	 * @return true if column comments are supported; false otherwise.
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsColumnComment()
 	 */
 	public boolean supportsColumnComment()
 	{
@@ -306,24 +223,18 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * Returns the SQL statement to use to add a comment to the specified column of the specified table.
-	 * 
-	 * @param info
-	 *           information about the column such as type, name, etc.
-	 * @return
-	 * @throws UnsupportedOperationException
-	 *            if the database doesn't support annotating columns with a comment.
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnCommentAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
-	public String getColumnCommentAlterSQL(TableColumnInfo info) throws UnsupportedOperationException
+	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
-		return DialectUtils.getColumnCommentAlterSQL(info);
+		return DialectUtils.getColumnCommentAlterSQL(info, null, null, null);
 	}
 
 	/**
-	 * Returns a boolean value indicating whether or not this database dialect supports changing a column from
-	 * null to not-null and vice versa.
-	 * 
-	 * @return true if the database supports dropping columns; false otherwise.
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsAlterColumnNull()
 	 */
 	public boolean supportsAlterColumnNull()
 	{
@@ -331,12 +242,9 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * Returns the SQL used to alter the specified column to not allow null values alter table test alter
-	 * column notnullint integer not null
-	 * 
-	 * @param info
-	 *           the column to modify
-	 * @return the SQL to execute
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnNullableAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	public String[] getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
@@ -346,9 +254,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * Returns a boolean value indicating whether or not this database dialect supports renaming columns.
-	 * 
-	 * @return true if the database supports changing the name of columns; false otherwise.
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsRenameColumn()
 	 */
 	public boolean supportsRenameColumn()
 	{
@@ -356,13 +262,8 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * Returns the SQL that is used to change the column name.
-	 * 
-	 * @param from
-	 *           the TableColumnInfo as it is
-	 * @param to
-	 *           the TableColumnInfo as it wants to be
-	 * @return the SQL to make the change
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnNameAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo)
 	 */
 	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to)
 	{
@@ -372,9 +273,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * Returns a boolean value indicating whether or not this dialect supports modifying a columns type.
-	 * 
-	 * @return true if supported; false otherwise
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsAlterColumnType()
 	 */
 	public boolean supportsAlterColumnType()
 	{
@@ -382,15 +281,10 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * Returns the SQL that is used to change the column type. alter table tableName alter column columnName
-	 * columnTypeSpec
-	 * 
-	 * @param from
-	 *           the TableColumnInfo as it is
-	 * @param to
-	 *           the TableColumnInfo as it wants to be
-	 * @return the SQL to make the change
-	 * @throw UnsupportedOperationException if the database doesn't support modifying column types.
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnTypeAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	public List<String> getColumnTypeAlterSQL(TableColumnInfo from, TableColumnInfo to,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
@@ -401,10 +295,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * Returns a boolean value indicating whether or not this database dialect supports changing a column's
-	 * default value.
-	 * 
-	 * @return true if the database supports modifying column defaults; false otherwise
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsAlterColumnDefault()
 	 */
 	public boolean supportsAlterColumnDefault()
 	{
@@ -413,14 +304,10 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 
 	/**
 	 * Returns the SQL command to change the specified column's default value alter table test2 alter column
-	 * mycol char(10) default 'foo'
-	 * 
-	 * Note: This worked in a previous release of Ingres, however, it no longer works and fails with:
-	 * 
-		Exception in thread "main" com.ingres.gcf.util.SqlEx: ALTER TABLE: invalid change of attributes on an ALTER COLUMN
-			at com.ingres.gcf.jdbc.DrvObj.readError(DrvObj.java:844)
-			
-		I would file a bug if I knew where the bug database was.  Too bad for them.
+	 * mycol char(10) default 'foo' Note: This worked in a previous release of Ingres, however, it no longer
+	 * works and fails with: Exception in thread "main" com.ingres.gcf.util.SqlEx: ALTER TABLE: invalid change
+	 * of attributes on an ALTER COLUMN at com.ingres.gcf.jdbc.DrvObj.readError(DrvObj.java:844) I would file a
+	 * bug if I knew where the bug database was. Too bad for them.
 	 * 
 	 * @param info
 	 *           the column to modify and it's default value.
@@ -428,19 +315,14 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	 */
 	public String getColumnDefaultAlterSQL(TableColumnInfo info)
 	{
-		 String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
-		 String defaultClause = DialectUtils.DEFAULT_CLAUSE;
-		 return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, true, defaultClause);
+		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
+		String defaultClause = DialectUtils.DEFAULT_CLAUSE;
+		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, true, defaultClause);
 	}
 
 	/**
-	 * Returns the SQL command to drop the specified table's primary key.
-	 * 
-	 * @param pkName
-	 *           the name of the primary key that should be dropped
-	 * @param tableName
-	 *           the name of the table whose primary key should be dropped
-	 * @return
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropPrimaryKeySQL(java.lang.String,
+	 *      java.lang.String)
 	 */
 	public String getDropPrimaryKeySQL(String pkName, String tableName)
 	{
@@ -448,13 +330,8 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * Returns the SQL command to drop the specified table's foreign key constraint.
-	 * 
-	 * @param fkName
-	 *           the name of the foreign key that should be dropped
-	 * @param tableName
-	 *           the name of the table whose foreign key should be dropped
-	 * @return
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropForeignKeySQL(java.lang.String,
+	 *      java.lang.String)
 	 */
 	public String getDropForeignKeySQL(String fkName, String tableName)
 	{
@@ -462,17 +339,9 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * Returns the SQL command to create the specified table.
-	 * 
-	 * @param tables
-	 *           the tables to get create statements for
-	 * @param md
-	 *           the metadata from the ISession
-	 * @param prefs
-	 *           preferences about how the resultant SQL commands should be formed.
-	 * @param isJdbcOdbc
-	 *           whether or not the connection is via JDBC-ODBC bridge.
-	 * @return the SQL that is used to create the specified table
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getCreateTableSQL(java.util.List,
+	 *      net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.CreateScriptPreferences, boolean)
 	 */
 	public List<String> getCreateTableSQL(List<ITableInfo> tables, ISQLDatabaseMetaData md,
 		CreateScriptPreferences prefs, boolean isJdbcOdbc) throws SQLException
@@ -481,7 +350,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getCreateTableSQL(java.lang.String,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getCreateTableSQL(java.lang.String,
 	 *      java.util.List, java.util.List, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier)
 	 */
@@ -492,7 +361,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDialectType()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDialectType()
 	 */
 	public DialectType getDialectType()
 	{
@@ -500,7 +369,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getIndexAccessMethodsTypes()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getIndexAccessMethodsTypes()
 	 */
 	public String[] getIndexAccessMethodsTypes()
 	{
@@ -508,7 +377,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getIndexStorageOptions()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getIndexStorageOptions()
 	 */
 	public String[] getIndexStorageOptions()
 	{
@@ -516,7 +385,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddAutoIncrementSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddAutoIncrementSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
@@ -528,7 +397,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddColumnSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddColumnSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
@@ -550,12 +419,11 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 				prefs);
 
 		result.add(sql);
-		
+
 		StringTemplate st = new StringTemplate(ST_MODIFY_TABLE_TO_RECONSTRUCT);
-		
+
 		result.add(DialectUtils.bindTemplateAttributes(this, st, DialectUtils.getValuesMap(ST_TABLE_NAME_KEY,
 			column.getTableName()), qualifier, prefs));
-		
 
 		// Ingres requires that columns that are to become not null must have a
 		// default value.
@@ -566,13 +434,13 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 		}
 		if (column.getRemarks() != null && !"".equals(column.getRemarks()))
 		{
-			result.add(getColumnCommentAlterSQL(column));
+			result.add(getColumnCommentAlterSQL(column, null, null));
 		}
 		return result.toArray(new String[result.size()]);
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddForeignKeyConstraintSQL(java.lang.String,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddForeignKeyConstraintSQL(java.lang.String,
 	 *      java.lang.String, java.lang.String, java.lang.Boolean, java.lang.Boolean, java.lang.Boolean,
 	 *      boolean, java.lang.String, java.util.Collection, java.lang.String, java.lang.String,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
@@ -621,7 +489,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddUniqueConstraintSQL(java.lang.String,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddUniqueConstraintSQL(java.lang.String,
 	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo[],
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
@@ -650,7 +518,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAlterSequenceSQL(java.lang.String,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAlterSequenceSQL(java.lang.String,
 	 *      java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
@@ -689,7 +557,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getCreateIndexSQL(java.lang.String,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getCreateIndexSQL(java.lang.String,
 	 *      java.lang.String, java.lang.String, java.lang.String[], boolean, java.lang.String,
 	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
@@ -703,7 +571,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getCreateSequenceSQL(java.lang.String,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getCreateSequenceSQL(java.lang.String,
 	 *      java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
@@ -741,7 +609,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getCreateViewSQL(java.lang.String,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getCreateViewSQL(java.lang.String,
 	 *      java.lang.String, java.lang.String,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
@@ -770,6 +638,11 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropConstraintSQL(java.lang.String,
+	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
 	public String getDropConstraintSQL(String tableName, String constraintName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
@@ -777,6 +650,11 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 		return null;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropIndexSQL(java.lang.String,
+	 *      java.lang.String, boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
 	public String getDropIndexSQL(String tableName, String indexName, boolean cascade,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
@@ -785,7 +663,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropSequenceSQL(java.lang.String,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropSequenceSQL(java.lang.String,
 	 *      boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
@@ -801,8 +679,8 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropViewSQL(java.lang.String, boolean,
-	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropViewSQL(java.lang.String,
+	 *      boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	public String getDropViewSQL(String viewName, boolean cascade, DatabaseObjectQualifier qualifier,
@@ -813,11 +691,11 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 
 		HashMap<String, String> valuesMap = DialectUtils.getValuesMap(ST_VIEW_NAME_KEY, viewName);
 
-		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);		
+		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getInsertIntoSQL(java.lang.String,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getInsertIntoSQL(java.lang.String,
 	 *      java.util.List, java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
@@ -828,7 +706,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getRenameTableSQL(java.lang.String,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getRenameTableSQL(java.lang.String,
 	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
@@ -841,7 +719,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getRenameViewSQL(java.lang.String,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getRenameViewSQL(java.lang.String,
 	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
@@ -854,7 +732,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getSequenceInformationSQL(java.lang.String,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getSequenceInformationSQL(java.lang.String,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
@@ -870,17 +748,17 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getUpdateSQL(java.lang.String,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getUpdateSQL(java.lang.String,
 	 *      java.lang.String[], java.lang.String[], java.lang.String[], java.lang.String[], java.lang.String[],
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
-	public String[] getUpdateSQL(String tableName, String[] setColumns, String[] setValues, String[] fromTables,
-		String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
+	public String[] getUpdateSQL(String tableName, String[] setColumns, String[] setValues,
+		String[] fromTables, String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
 		StringTemplate st = new StringTemplate(ST_UPDATE_CORRELATED_QUERY_STYLE_TWO);
-		
+
 		return DialectUtils.getUpdateSQL(st,
 			tableName,
 			setColumns,
@@ -894,7 +772,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsAccessMethods()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsAccessMethods()
 	 */
 	public boolean supportsAccessMethods()
 	{
@@ -902,7 +780,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsAddForeignKeyConstraint()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsAddForeignKeyConstraint()
 	 */
 	public boolean supportsAddForeignKeyConstraint()
 	{
@@ -910,7 +788,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsAddUniqueConstraint()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsAddUniqueConstraint()
 	 */
 	public boolean supportsAddUniqueConstraint()
 	{
@@ -918,7 +796,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsAlterSequence()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsAlterSequence()
 	 */
 	public boolean supportsAlterSequence()
 	{
@@ -926,7 +804,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsAutoIncrement()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsAutoIncrement()
 	 */
 	public boolean supportsAutoIncrement()
 	{
@@ -934,7 +812,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCheckOptionsForViews()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsCheckOptionsForViews()
 	 */
 	public boolean supportsCheckOptionsForViews()
 	{
@@ -942,7 +820,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCreateIndex()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsCreateIndex()
 	 */
 	public boolean supportsCreateIndex()
 	{
@@ -950,7 +828,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCreateSequence()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsCreateSequence()
 	 */
 	public boolean supportsCreateSequence()
 	{
@@ -958,7 +836,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCreateTable()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsCreateTable()
 	 */
 	public boolean supportsCreateTable()
 	{
@@ -966,7 +844,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCreateView()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsCreateView()
 	 */
 	public boolean supportsCreateView()
 	{
@@ -974,7 +852,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsDropConstraint()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsDropConstraint()
 	 */
 	public boolean supportsDropConstraint()
 	{
@@ -982,7 +860,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsDropIndex()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsDropIndex()
 	 */
 	public boolean supportsDropIndex()
 	{
@@ -990,7 +868,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsDropSequence()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsDropSequence()
 	 */
 	public boolean supportsDropSequence()
 	{
@@ -998,7 +876,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsDropView()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsDropView()
 	 */
 	public boolean supportsDropView()
 	{
@@ -1006,7 +884,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsEmptyTables()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsEmptyTables()
 	 */
 	public boolean supportsEmptyTables()
 	{
@@ -1014,7 +892,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsIndexes()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsIndexes()
 	 */
 	public boolean supportsIndexes()
 	{
@@ -1022,7 +900,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsInsertInto()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsInsertInto()
 	 */
 	public boolean supportsInsertInto()
 	{
@@ -1030,7 +908,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsMultipleRowInserts()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsMultipleRowInserts()
 	 */
 	public boolean supportsMultipleRowInserts()
 	{
@@ -1038,7 +916,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsRenameTable()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsRenameTable()
 	 */
 	public boolean supportsRenameTable()
 	{
@@ -1046,7 +924,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsRenameView()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsRenameView()
 	 */
 	public boolean supportsRenameView()
 	{
@@ -1065,7 +943,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsTablespace()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsTablespace()
 	 */
 	public boolean supportsTablespace()
 	{
@@ -1073,7 +951,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsUpdate()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsUpdate()
 	 */
 	public boolean supportsUpdate()
 	{
@@ -1081,7 +959,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsAddColumn()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsAddColumn()
 	 */
 	public boolean supportsAddColumn()
 	{
@@ -1089,7 +967,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsViewDefinition()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsViewDefinition()
 	 */
 	public boolean supportsViewDefinition()
 	{
@@ -1097,7 +975,7 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getViewDefinitionSQL(java.lang.String,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getViewDefinitionSQL(java.lang.String,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
@@ -1118,20 +996,22 @@ public class IngresDialect extends org.hibernate.dialect.IngresDialect implement
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getQualifiedIdentifier(java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getQualifiedIdentifier(java.lang.String,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	public String getQualifiedIdentifier(String identifier, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
 		return identifier;
 	}
-	
+
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCorrelatedSubQuery()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsCorrelatedSubQuery()
 	 */
 	public boolean supportsCorrelatedSubQuery()
 	{
 		return true;
 	}
-	
+
 }

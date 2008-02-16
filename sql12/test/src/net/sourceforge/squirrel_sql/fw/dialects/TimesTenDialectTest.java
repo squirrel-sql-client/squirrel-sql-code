@@ -19,12 +19,12 @@ package net.sourceforge.squirrel_sql.fw.dialects;
  */
 public class TimesTenDialectTest extends DialectTestCase {
 
-    private TimesTenDialect dialect = null;
+    private TimesTenDialectExt dialect = null;
     
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        dialect = new TimesTenDialect();
+        dialect = new TimesTenDialectExt();
     }
     
     /*

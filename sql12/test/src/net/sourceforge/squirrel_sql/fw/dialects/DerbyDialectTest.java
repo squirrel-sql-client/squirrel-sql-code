@@ -19,12 +19,12 @@ package net.sourceforge.squirrel_sql.fw.dialects;
  */
 public class DerbyDialectTest extends DialectTestCase {
 
-    private DerbyDialect dialect = null;
+    private DerbyDialectExt dialect = null;
     
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        dialect = new DerbyDialect();
+        dialect = new DerbyDialectExt();
     }
     
     /*

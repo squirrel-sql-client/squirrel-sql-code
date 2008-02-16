@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
@@ -27,6 +28,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
+import org.antlr.stringtemplate.StringTemplate;
 import org.hibernate.HibernateException;
 
 /**
@@ -36,8 +38,10 @@ import org.hibernate.HibernateException;
  * 
  * @author manningr
  */
-public class CommonHibernateDialect implements HibernateDialect
+public class CommonHibernateDialect implements HibernateDialect, StringTemplateConstants
 {
+	/** default template for drop column */
+	protected String DROP_COLUMN_SQL_TEMPLATE = ST_DROP_COLUMN_STYLE_ONE;
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
@@ -67,8 +71,20 @@ public class CommonHibernateDialect implements HibernateDialect
 	public String[] getAddColumnSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final boolean addDefaultClause = true;
+		final boolean supportsNullQualifier = false;
+		final boolean addNullClause = true;
+
+		final String sql =
+			DialectUtils.getAddColumSQL(column,
+				this,
+				addDefaultClause,
+				supportsNullQualifier,
+				addNullClause,
+				qualifier,
+				prefs);
+
+		return new String[] { sql };
 	}
 
 	/**
@@ -76,7 +92,7 @@ public class CommonHibernateDialect implements HibernateDialect
 	 */
 	public String getAddColumnString()
 	{
-		return "add column";
+		return "ADD";
 	}
 
 	/**
@@ -134,9 +150,9 @@ public class CommonHibernateDialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getColumnCommentAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getColumnCommentAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
-	public String getColumnCommentAlterSQL(TableColumnInfo info) throws UnsupportedOperationException
+	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -157,7 +173,18 @@ public class CommonHibernateDialect implements HibernateDialect
 	 */
 	public String getColumnDropSQL(String tableName, String columnName) throws UnsupportedOperationException
 	{
-		return DialectUtils.getColumnDropSQL(tableName, columnName);
+		StringTemplate st = new StringTemplate(DROP_COLUMN_SQL_TEMPLATE);
+
+		// TODO: implement this when qualifier and prefs are being passed in.
+		// HashMap<String, String> valuesMap =
+		// DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, tableName, ST_COLUMN_NAME_KEY, columnName);
+		//		
+		// DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs)
+		
+		st.setAttribute(ST_TABLE_NAME_KEY, tableName);
+		st.setAttribute(ST_COLUMN_NAME_KEY, columnName);
+		
+		return st.toString();
 	}
 
 	/**
@@ -315,9 +342,13 @@ public class CommonHibernateDialect implements HibernateDialect
 	 */
 	public String getDropIndexSQL(String tableName, String indexName, boolean cascade,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
-	{
-		// TODO Auto-generated method stub
-		return null;
+	{                        
+		// "DROP INDEX $indexName$";
+      StringTemplate st = new StringTemplate(ST_DROP_INDEX_STYLE_THREE);
+
+      HashMap<String, String> valuesMap = DialectUtils.getValuesMap(ST_INDEX_NAME_KEY, indexName);
+
+      return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**
@@ -350,8 +381,8 @@ public class CommonHibernateDialect implements HibernateDialect
 	public String getDropViewSQL(String viewName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		Boolean cascadeNotSupported = null;
+		return DialectUtils.getDropViewSQL(viewName, cascadeNotSupported, qualifier, prefs, this);
 	}
 
 	/**
@@ -359,7 +390,6 @@ public class CommonHibernateDialect implements HibernateDialect
 	 */
 	public String[] getIndexAccessMethodsTypes()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -368,7 +398,6 @@ public class CommonHibernateDialect implements HibernateDialect
 	 */
 	public String[] getIndexStorageOptions()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -380,8 +409,7 @@ public class CommonHibernateDialect implements HibernateDialect
 	public String getInsertIntoSQL(String tableName, List<String> columns, String valuesPart,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return DialectUtils.getInsertIntoSQL(tableName, columns, valuesPart, qualifier, prefs, this);
 	}
 
 	/**
@@ -421,8 +449,7 @@ public class CommonHibernateDialect implements HibernateDialect
 	 */
 	public String getNullColumnString()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return "";
 	}
 
 	/**
@@ -680,7 +707,6 @@ public class CommonHibernateDialect implements HibernateDialect
 	 */
 	public boolean supportsCreateView()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -689,8 +715,7 @@ public class CommonHibernateDialect implements HibernateDialect
 	 */
 	public boolean supportsDropColumn()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -725,8 +750,7 @@ public class CommonHibernateDialect implements HibernateDialect
 	 */
 	public boolean supportsDropView()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -799,7 +823,7 @@ public class CommonHibernateDialect implements HibernateDialect
 	 */
 	public boolean supportsSchemasInTableDefinition()
 	{
-		return false;
+		return true;
 	}
 
 	/**

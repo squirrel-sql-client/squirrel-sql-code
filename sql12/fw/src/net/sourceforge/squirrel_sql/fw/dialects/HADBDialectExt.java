@@ -13,41 +13,52 @@ import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import org.hibernate.HibernateException;
 import org.hibernate.dialect.Dialect;
 
-public class HADBDialect extends Dialect implements HibernateDialect
+public class HADBDialectExt extends Dialect implements HibernateDialect
 {
 
-	public HADBDialect()
-	{
-		super();
-
-		registerColumnType(Types.BIGINT, "double integer");
-		registerColumnType(Types.BINARY, 8000, "binary($l)");
-		registerColumnType(Types.BINARY, "binary(8000)");
-		registerColumnType(Types.BIT, "smallint");
-		registerColumnType(Types.BOOLEAN, "smallint");
-		registerColumnType(Types.BLOB, "blob");
-		registerColumnType(Types.CHAR, 8000, "char($l)");
-		registerColumnType(Types.CHAR, "char(8000)");
-		registerColumnType(Types.CLOB, "clob");
-		registerColumnType(Types.DATE, "date");
-		registerColumnType(Types.DECIMAL, "decimal($p,$s)");
-		registerColumnType(Types.DOUBLE, "double precision");
-		registerColumnType(Types.FLOAT, "float($p)");
-		registerColumnType(Types.INTEGER, "integer");
-		registerColumnType(Types.LONGVARBINARY, "blob");
-		registerColumnType(Types.LONGVARCHAR, "clob");
-		registerColumnType(Types.NUMERIC, "decimal($p,$s)");
-		registerColumnType(Types.REAL, "real");
-		registerColumnType(Types.SMALLINT, "smallint");
-		registerColumnType(Types.TIME, "time");
-		registerColumnType(Types.TIMESTAMP, "timestamp");
-		registerColumnType(Types.TINYINT, "smallint");
-		registerColumnType(Types.VARBINARY, 8000, "varbinary($l)");
-		registerColumnType(Types.VARBINARY, "varbinary(8000)");
-		registerColumnType(Types.VARCHAR, 8000, "varchar($l)");
-		registerColumnType(Types.VARCHAR, "varchar(8000)");
-
+	private class HADBDialectHelper extends Dialect {
+		public HADBDialectHelper() {
+			registerColumnType(Types.BIGINT, "double integer");
+			registerColumnType(Types.BINARY, 8000, "binary($l)");
+			registerColumnType(Types.BINARY, "binary(8000)");
+			registerColumnType(Types.BIT, "smallint");
+			registerColumnType(Types.BOOLEAN, "smallint");
+			registerColumnType(Types.BLOB, "blob");
+			registerColumnType(Types.CHAR, 8000, "char($l)");
+			registerColumnType(Types.CHAR, "char(8000)");
+			registerColumnType(Types.CLOB, "clob");
+			registerColumnType(Types.DATE, "date");
+			registerColumnType(Types.DECIMAL, "decimal($p,$s)");
+			registerColumnType(Types.DOUBLE, "double precision");
+			registerColumnType(Types.FLOAT, "float($p)");
+			registerColumnType(Types.INTEGER, "integer");
+			registerColumnType(Types.LONGVARBINARY, "blob");
+			registerColumnType(Types.LONGVARCHAR, "clob");
+			registerColumnType(Types.NUMERIC, "decimal($p,$s)");
+			registerColumnType(Types.REAL, "real");
+			registerColumnType(Types.SMALLINT, "smallint");
+			registerColumnType(Types.TIME, "time");
+			registerColumnType(Types.TIMESTAMP, "timestamp");
+			registerColumnType(Types.TINYINT, "smallint");
+			registerColumnType(Types.VARBINARY, 8000, "varbinary($l)");
+			registerColumnType(Types.VARBINARY, "varbinary(8000)");
+			registerColumnType(Types.VARCHAR, 8000, "varchar($l)");
+			registerColumnType(Types.VARCHAR, "varchar(8000)");			
+		}
 	}
+	
+	/** extended hibernate dialect used in this wrapper */
+	private HADBDialectHelper _dialect = new HADBDialectHelper();
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTypeName(int, int, int, int)
+	 */
+	@Override
+	public String getTypeName(int code, int length, int precision, int scale) throws HibernateException
+	{
+		return _dialect.getTypeName(code, length, precision, scale);
+	}	
+	
 
 	/**
 	 * Returns a boolean indicating whether or not the specified database object can be pasted into for this
@@ -76,7 +87,7 @@ public class HADBDialect extends Dialect implements HibernateDialect
 		return null;
 	}
 
-	public String getColumnCommentAlterSQL(TableColumnInfo info) throws UnsupportedOperationException
+	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
 		throw new UnsupportedOperationException("Not yet implemented");
 	}

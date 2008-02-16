@@ -28,14 +28,16 @@ import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
+import org.hibernate.HibernateException;
+
 /**
- * An extension to the standard DB2 dialect. Much of the behavior of DB2 is found in Derby.
+ * An extension to the DB2DialectExt. Much of the behavior of DB2 is happily found in Derby.
  */
-public class DerbyDialect extends DB2Dialect implements HibernateDialect
+public class DerbyDialectExt extends DB2DialectExt implements HibernateDialect
 {
 
 	/** Internationalized strings for this class. */
-	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DerbyDialect.class);
+	private static final StringManager s_stringMgr = StringManagerFactory.getStringManager(DerbyDialectExt.class);
 
 	private static interface i18n
 	{
@@ -52,58 +54,70 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 		String COLUMN_LENGTH_MESSAGE = s_stringMgr.getString("DerbyDialect.columnLengthMessage");
 	}
 
-	public DerbyDialect()
-	{
-		super();
-		registerColumnType(Types.BIGINT, "bigint");
-		registerColumnType(Types.BINARY, 254, "char($l) for bit data");
-		registerColumnType(Types.BINARY, "blob");
-		registerColumnType(Types.BIT, "smallint");
-		// DB2 spec says max=2147483647, but the driver throws an exception
-		registerColumnType(Types.BLOB, 1073741823, "blob($l)");
-		registerColumnType(Types.BLOB, "blob(1073741823)");
-		registerColumnType(Types.BOOLEAN, "smallint");
-		registerColumnType(Types.CHAR, 254, "char($l)");
-		registerColumnType(Types.CHAR, 4000, "varchar($l)");
-		registerColumnType(Types.CHAR, 32700, "long varchar");
-		registerColumnType(Types.CHAR, 1073741823, "clob($l)");
-		registerColumnType(Types.CHAR, "clob(1073741823)");
-		// DB2 spec says max=2147483647, but the driver throws an exception
-		registerColumnType(Types.CLOB, 1073741823, "clob($l)");
-		registerColumnType(Types.CLOB, "clob(1073741823)");
-		registerColumnType(Types.DATE, "date");
-		registerColumnType(Types.DECIMAL, "decimal($p)");
-		// Derby is real close to DB2. Only difference I've found so far is 48
-		// instead of 53 for float length llimit.
-		registerColumnType(Types.DOUBLE, "float($p)");
-		registerColumnType(Types.FLOAT, "float($p)");
-		registerColumnType(Types.INTEGER, "int");
-		registerColumnType(Types.LONGVARBINARY, 32700, "long varchar for bit data");
-		// DB2 spec says max=2147483647, but the driver throws an exception
-		registerColumnType(Types.LONGVARBINARY, 1073741823, "blob($l)");
-		registerColumnType(Types.LONGVARBINARY, "blob(1073741823)");
-		registerColumnType(Types.LONGVARCHAR, 32700, "long varchar");
-		// DB2 spec says max=2147483647, but the driver throws an exception
-		registerColumnType(Types.LONGVARCHAR, 1073741823, "clob($l)");
-		registerColumnType(Types.LONGVARCHAR, "clob(1073741823)");
-		registerColumnType(Types.NUMERIC, "bigint");
-		registerColumnType(Types.REAL, "real");
-		registerColumnType(Types.SMALLINT, "smallint");
-		registerColumnType(Types.TIME, "time");
-		registerColumnType(Types.TIMESTAMP, "timestamp");
-		registerColumnType(Types.TINYINT, "smallint");
-		registerColumnType(Types.VARBINARY, 254, "long varchar for bit data");
-		registerColumnType(Types.VARBINARY, "blob");
-		registerColumnType(Types.VARCHAR, 4000, "varchar($l)");
-		registerColumnType(Types.VARCHAR, 32700, "long varchar");
-		// DB2 spec says max=2147483647, but the driver throws an exception
-		registerColumnType(Types.VARCHAR, 1073741823, "clob($l)");
-		registerColumnType(Types.VARCHAR, "clob(1073741823)");
+	private class DerbyDialectHelper extends org.hibernate.dialect.DB2Dialect {
+		public DerbyDialectHelper() {
+			super();
+			registerColumnType(Types.BIGINT, "bigint");
+			registerColumnType(Types.BINARY, 254, "char($l) for bit data");
+			registerColumnType(Types.BINARY, "blob");
+			registerColumnType(Types.BIT, "smallint");
+			// DB2 spec says max=2147483647, but the driver throws an exception
+			registerColumnType(Types.BLOB, 1073741823, "blob($l)");
+			registerColumnType(Types.BLOB, "blob(1073741823)");
+			registerColumnType(Types.BOOLEAN, "smallint");
+			registerColumnType(Types.CHAR, 254, "char($l)");
+			registerColumnType(Types.CHAR, 4000, "varchar($l)");
+			registerColumnType(Types.CHAR, 32700, "long varchar");
+			registerColumnType(Types.CHAR, 1073741823, "clob($l)");
+			registerColumnType(Types.CHAR, "clob(1073741823)");
+			// DB2 spec says max=2147483647, but the driver throws an exception
+			registerColumnType(Types.CLOB, 1073741823, "clob($l)");
+			registerColumnType(Types.CLOB, "clob(1073741823)");
+			registerColumnType(Types.DATE, "date");
+			registerColumnType(Types.DECIMAL, "decimal($p)");
+			// Derby is real close to DB2. Only difference I've found so far is 48
+			// instead of 53 for float length llimit.
+			registerColumnType(Types.DOUBLE, "float($p)");
+			registerColumnType(Types.FLOAT, "float($p)");
+			registerColumnType(Types.INTEGER, "int");
+			registerColumnType(Types.LONGVARBINARY, 32700, "long varchar for bit data");
+			// DB2 spec says max=2147483647, but the driver throws an exception
+			registerColumnType(Types.LONGVARBINARY, 1073741823, "blob($l)");
+			registerColumnType(Types.LONGVARBINARY, "blob(1073741823)");
+			registerColumnType(Types.LONGVARCHAR, 32700, "long varchar");
+			// DB2 spec says max=2147483647, but the driver throws an exception
+			registerColumnType(Types.LONGVARCHAR, 1073741823, "clob($l)");
+			registerColumnType(Types.LONGVARCHAR, "clob(1073741823)");
+			registerColumnType(Types.NUMERIC, "bigint");
+			registerColumnType(Types.REAL, "real");
+			registerColumnType(Types.SMALLINT, "smallint");
+			registerColumnType(Types.TIME, "time");
+			registerColumnType(Types.TIMESTAMP, "timestamp");
+			registerColumnType(Types.TINYINT, "smallint");
+			registerColumnType(Types.VARBINARY, 254, "long varchar for bit data");
+			registerColumnType(Types.VARBINARY, "blob");
+			registerColumnType(Types.VARCHAR, 4000, "varchar($l)");
+			registerColumnType(Types.VARCHAR, 32700, "long varchar");
+			// DB2 spec says max=2147483647, but the driver throws an exception
+			registerColumnType(Types.VARCHAR, 1073741823, "clob($l)");
+			registerColumnType(Types.VARCHAR, "clob(1073741823)");			
+		}
+	}
+	
+	/** extended hibernate dialect used in this wrapper */
+	private DerbyDialectHelper _dialect = new DerbyDialectHelper();
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTypeName(int, int, int, int)
+	 */
+	@Override
+	public String getTypeName(int code, int length, int precision, int scale) throws HibernateException
+	{
+		return _dialect.getTypeName(code, length, precision, scale);
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
 	 */
 	@Override
 	public boolean canPasteTo(final IDatabaseObjectInfo info)
@@ -113,16 +127,7 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#supportsSchemasInTableDefinition()
-	 */
-	@Override
-	public boolean supportsSchemasInTableDefinition()
-	{
-		return true;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getMaxPrecision(int)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#getMaxPrecision(int)
 	 */
 	@Override
 	public int getMaxPrecision(final int dataType)
@@ -137,7 +142,7 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getMaxScale(int)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#getMaxScale(int)
 	 */
 	@Override
 	public int getMaxScale(final int dataType)
@@ -146,7 +151,7 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getColumnLength(int, int)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#getColumnLength(int, int)
 	 */
 	@Override
 	public int getColumnLength(final int columnSize, final int dataType)
@@ -166,7 +171,7 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#supportsProduct(java.lang.String,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#supportsProduct(java.lang.String,
 	 *      java.lang.String)
 	 */
 	@Override
@@ -185,7 +190,7 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getAddColumnSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#getAddColumnSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
@@ -193,7 +198,6 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	public String[] getAddColumnSQL(final TableColumnInfo column, final DatabaseObjectQualifier qualifier,
 		final SqlGenerationPreferences prefs)
 	{
-
 		final boolean addDefaultClause = true;
 		final boolean supportsNullQualifier = false;
 		final boolean addNullClause = true;
@@ -211,7 +215,7 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#supportsDropColumn()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#supportsDropColumn()
 	 */
 	@Override
 	public boolean supportsDropColumn()
@@ -220,7 +224,7 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getColumnDropSQL(java.lang.String,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#getColumnDropSQL(java.lang.String,
 	 *      java.lang.String)
 	 */
 	@Override
@@ -230,7 +234,7 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getTableDropSQL(net.sourceforge.squirrel_sql.fw.sql.ITableInfo,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#getTableDropSQL(net.sourceforge.squirrel_sql.fw.sql.ITableInfo,
 	 *      boolean, boolean)
 	 */
 	@Override
@@ -246,7 +250,7 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getAddPrimaryKeySQL(java.lang.String,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#getAddPrimaryKeySQL(java.lang.String,
 	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo[],
 	 *      net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
 	 */
@@ -267,7 +271,7 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#supportsColumnComment()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#supportsColumnComment()
 	 */
 	@Override
 	public boolean supportsColumnComment()
@@ -276,10 +280,10 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getColumnCommentAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#getColumnCommentAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
-	public String getColumnCommentAlterSQL(final TableColumnInfo info) throws UnsupportedOperationException
+	public String getColumnCommentAlterSQL(final TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
 		final int featureId = DialectUtils.COLUMN_COMMENT_ALTER_TYPE;
 		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
@@ -287,7 +291,7 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#supportsAlterColumnNull()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#supportsAlterColumnNull()
 	 */
 	@Override
 	public boolean supportsAlterColumnNull()
@@ -296,7 +300,7 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getColumnNullableAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#getColumnNullableAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
@@ -312,7 +316,7 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#supportsRenameColumn()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#supportsRenameColumn()
 	 */
 	@Override
 	public boolean supportsRenameColumn()
@@ -321,7 +325,7 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getColumnNameAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#getColumnNameAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
 	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo)
 	 */
 	@Override
@@ -333,7 +337,7 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#supportsAlterColumnType()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#supportsAlterColumnType()
 	 */
 	@Override
 	public boolean supportsAlterColumnType()
@@ -342,7 +346,7 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getColumnTypeAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#getColumnTypeAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
 	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
@@ -377,7 +381,7 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#supportsAlterColumnDefault()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#supportsAlterColumnDefault()
 	 */
 	@Override
 	public boolean supportsAlterColumnDefault()
@@ -386,7 +390,7 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getColumnDefaultAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#getColumnDefaultAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo)
 	 */
 	@Override
 	public String getColumnDefaultAlterSQL(final TableColumnInfo info)
@@ -397,7 +401,7 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getDropPrimaryKeySQL(java.lang.String,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#getDropPrimaryKeySQL(java.lang.String,
 	 *      java.lang.String)
 	 */
 	@Override
@@ -407,7 +411,7 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getDropForeignKeySQL(java.lang.String,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#getDropForeignKeySQL(java.lang.String,
 	 *      java.lang.String)
 	 */
 	@Override
@@ -426,7 +430,7 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#supportsCreateSequence()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#supportsCreateSequence()
 	 */
 	@Override
 	public boolean supportsCreateSequence()
@@ -435,7 +439,7 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getCreateSequenceSQL(java.lang.String,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#getCreateSequenceSQL(java.lang.String,
 	 *      java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
@@ -451,7 +455,7 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#supportsDropSequence()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#supportsDropSequence()
 	 */
 	@Override
 	public boolean supportsDropSequence()
@@ -460,7 +464,7 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getDropSequenceSQL(java.lang.String, boolean,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#getDropSequenceSQL(java.lang.String, boolean,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
@@ -474,7 +478,7 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#supportsSequence()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#supportsSequence()
 	 */
 	@Override
 	public boolean supportsSequence()
@@ -483,7 +487,7 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#supportsSequenceInformation()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#supportsSequenceInformation()
 	 */
 	@Override
 	public boolean supportsSequenceInformation()
@@ -492,7 +496,7 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getSequenceInformationSQL(java.lang.String,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#getSequenceInformationSQL(java.lang.String,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
@@ -506,7 +510,7 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#supportsAlterSequence()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#supportsAlterSequence()
 	 */
 	@Override
 	public boolean supportsAlterSequence()
@@ -515,7 +519,7 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getAlterSequenceSQL(java.lang.String,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#getAlterSequenceSQL(java.lang.String,
 	 *      java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
@@ -531,7 +535,7 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getAddUniqueConstraintSQL(java.lang.String,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#getAddUniqueConstraintSQL(java.lang.String,
 	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo[],
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
@@ -577,7 +581,7 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 	
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#getViewDefinitionSQL(java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#getViewDefinitionSQL(java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	@Override
 	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,
@@ -606,7 +610,7 @@ public class DerbyDialect extends DB2Dialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2Dialect#supportsAutoIncrement()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#supportsAutoIncrement()
 	 */
 	@Override
 	public boolean supportsAutoIncrement()

@@ -20,7 +20,6 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -29,53 +28,83 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
-/**
- * An extension to the standard Hibernate Firebird dialect
- */
-public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect implements HibernateDialect
-{
+import org.hibernate.HibernateException;
+import org.hibernate.dialect.Dialect;
 
-	public FirebirdDialect()
-	{
-		super();
-		registerColumnType(Types.BIGINT, "bigint");
-		registerColumnType(Types.BINARY, "blob sub_type 0");
-		registerColumnType(Types.BIT, "char(1)");
-		registerColumnType(Types.BLOB, "blob sub_type -1");
-		registerColumnType(Types.BOOLEAN, "char(1)");
-		registerColumnType(Types.CHAR, 32767, "char($l)");
-		registerColumnType(Types.CHAR, "char(32767)");
-		registerColumnType(Types.CLOB, "blob sub_type text");
-		registerColumnType(Types.DATE, "date");
-		registerColumnType(Types.DECIMAL, "decimal($p,$s)");
-		registerColumnType(Types.DOUBLE, "double precision");
-		registerColumnType(Types.FLOAT, "double precision");
-		registerColumnType(Types.INTEGER, "integer");
-		registerColumnType(Types.LONGVARBINARY, "blob sub_type 0");
-		registerColumnType(Types.LONGVARCHAR, "blob sub_type 1");
-		registerColumnType(Types.NUMERIC, 18, "numeric($p,$s)");
-		registerColumnType(Types.NUMERIC, "double precision");
-		registerColumnType(Types.REAL, "double precision");
-		registerColumnType(Types.SMALLINT, "smallint");
-		registerColumnType(Types.TIME, "time");
-		registerColumnType(Types.TIMESTAMP, "timestamp");
-		registerColumnType(Types.TINYINT, "smallint");
-		registerColumnType(Types.VARBINARY, "blob sub_type -1");
-		registerColumnType(Types.VARCHAR, 32765, "varchar($l)");
-		registerColumnType(Types.VARCHAR, "varchar(32765)");
+/**
+ * A dialect delegate for the Axion database.
+ */
+
+public class AxionDialectExt extends CommonHibernateDialect implements HibernateDialect
+{
+	private class AxionDialectHelper extends Dialect {
+		public AxionDialectHelper() {
+			// Do not use Axion's bigint data type.
+			// I get the following exception in my test:
+			// org.axiondb.AxionException:
+			// Invalid value "3074478078827346" for column
+			// (BIGINT_TYPE_TABLE).BIGINT_COLUMN, expected numeric(20,10) :
+			// data exception: numeric value out of range
+			// Can someone please tell me why Axion expects big integers to be limited
+			// to 20 precision and 10 scale?(Integers should have scale == 0, right?)
+			// So an Axion bigint is limited to just 20 digits to the left of the
+			// decimal point.
+			// TODO: consider filing a bug report against Axion build M3.
+			// 38 is the maximum precision for Axion's numeric type.
+			registerColumnType(Types.BIGINT, "numeric($p,0)");
+			registerColumnType(Types.BINARY, "binary($l)");
+			registerColumnType(Types.BIT, "bit");
+			registerColumnType(Types.BLOB, "blob");
+			registerColumnType(Types.BOOLEAN, "bit");
+			registerColumnType(Types.CHAR, "char($l)");
+			registerColumnType(Types.CLOB, "clob");
+			registerColumnType(Types.DATE, "date");
+			registerColumnType(Types.DECIMAL, "numeric($p,$s)");
+			registerColumnType(Types.DOUBLE, "numeric($p,$s)");
+			registerColumnType(Types.FLOAT, "numeric($p,$s)");
+			registerColumnType(Types.INTEGER, "integer");
+			registerColumnType(Types.LONGVARBINARY, "longvarbinary");
+			registerColumnType(Types.LONGVARCHAR, "longvarchar");
+			registerColumnType(Types.NUMERIC, "numeric($p,$s)");
+			// Don't use "real" type. Axion sets the column size to 12 by default,
+			// yet it can handle more precision. So data being copied from the real
+			// column can potentially be larger than what the column claims to support.
+			// This will be a problem for other databases that pay attention to the
+			// column size.
+			// TODO: Perhaps re-introduce the REAL type, but use the new
+			// getPrecisionDigits to max out the precision.
+			registerColumnType(Types.REAL, "numeric($p,$s)");
+			registerColumnType(Types.SMALLINT, "smallint");
+			registerColumnType(Types.TIME, "time");
+			registerColumnType(Types.TIMESTAMP, "timestamp");
+			registerColumnType(Types.TINYINT, "smallint");
+			registerColumnType(Types.VARBINARY, "varbinary($l)");
+			registerColumnType(Types.VARCHAR, "varchar($l)");
+		}
 	}
+	
+	/** extended hibernate dialect used in this wrapper */
+	private AxionDialectHelper _dialect = new AxionDialectHelper();
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTypeName(int, int, int, int)
+	 */
+	@Override
+	public String getTypeName(int code, int length, int precision, int scale) throws HibernateException
+	{
+		return _dialect.getTypeName(code, length, precision, scale);
+	}
+	
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
 	 */
 	public boolean canPasteTo(IDatabaseObjectInfo info)
 	{
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsSchemasInTableDefinition()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsSchemasInTableDefinition()
 	 */
 	public boolean supportsSchemasInTableDefinition()
 	{
@@ -83,61 +112,11 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getLengthFunction(int)
-	 */
-	public String getLengthFunction(int dataType)
-	{
-		return "strlen";
-	}
-
-	
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getMaxFunction()
-	 */
-	public String getMaxFunction()
-	{
-		return "max";
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getMaxPrecision(int)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getMaxPrecision(int)
 	 */
 	public int getMaxPrecision(int dataType)
 	{
-		return 18;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getMaxScale(int)
-	 */
-	public int getMaxScale(int dataType)
-	{
-		return getMaxPrecision(dataType);
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getPrecisionDigits(int, int)
-	 */
-	public int getPrecisionDigits(int columnSize, int dataType)
-	{
-		return columnSize * 2;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getColumnLength(int, int)
-	 */
-	public int getColumnLength(int columnSize, int dataType)
-	{
-		if (dataType == Types.BIGINT || dataType == Types.DECIMAL || dataType == Types.DOUBLE
-			|| dataType == Types.FLOAT || dataType == Types.NUMERIC || dataType == Types.REAL)
-		{
-			return getMaxPrecision(dataType);
-		}
-		if (dataType == Types.BLOB || dataType == Types.LONGVARBINARY || dataType == Types.LONGVARCHAR)
-		{
-			return 2147483647;
-		}
-		return columnSize;
+		return 38;
 	}
 
 	/**
@@ -147,7 +126,7 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	 */
 	public String getDisplayName()
 	{
-		return "Firebird";
+		return "Axion";
 	}
 
 	/**
@@ -166,7 +145,7 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 		{
 			return false;
 		}
-		if (databaseProductName.trim().startsWith("Firebird"))
+		if (databaseProductName.trim().startsWith("Axion"))
 		{
 			// We don't yet have the need to discriminate by version.
 			return true;
@@ -215,17 +194,13 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	public List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints,
 		boolean isMaterializedView)
 	{
-		return DialectUtils.getTableDropSQL(iTableInfo,
-			false,
-			cascadeConstraints,
-			false,
-			DialectUtils.CASCADE_CLAUSE,
-			false);
+		String cascadeClause = DialectUtils.CASCADE_CLAUSE;
+		return DialectUtils.getTableDropSQL(iTableInfo, false, cascadeConstraints, false, cascadeClause, false);
 	}
 
 	/**
 	 * Returns the SQL that forms the command to add a primary key to the specified table composed of the given
-	 * column names. ALTER TABLE table_name ADD CONSTRAINT constraint_name PRIMARY KEY (column_name);
+	 * column names. alter table tableName add constraint constraintName primary key (column [,column])
 	 * 
 	 * @param pkName
 	 *           the name of the constraint
@@ -235,22 +210,9 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	 */
 	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, ITableInfo ti)
 	{
-		StringBuffer result = new StringBuffer();
-		result.append("ALTER TABLE ");
-		result.append(ti.getQualifiedName());
-		result.append(" ADD CONSTRAINT ");
-		result.append(pkName);
-		result.append(" PRIMARY KEY (");
-		for (int i = 0; i < columns.length; i++)
-		{
-			result.append(columns[i].getColumnName());
-			if (i + 1 < columns.length)
-			{
-				result.append(", ");
-			}
-		}
-		result.append(")");
-		return new String[] { result.toString() };
+		// Axion doesn't allow column alterations of the nullable attribute.
+		// Fortunately, it doesn't require this to add a primary key.
+		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false) };
 	}
 
 	/**
@@ -272,7 +234,7 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support annotating columns with a comment.
 	 */
-	public String getColumnCommentAlterSQL(TableColumnInfo info) throws UnsupportedOperationException
+	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
 		int featureId = DialectUtils.COLUMN_COMMENT_ALTER_TYPE;
 		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
@@ -287,8 +249,6 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	 */
 	public boolean supportsAlterColumnNull()
 	{
-		// Firebird doesn't natively support altering a columns nullable
-		// property. Will have to simulate in a future release.
 		return false;
 	}
 
@@ -317,8 +277,8 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	}
 
 	/**
-	 * Returns the SQL that is used to change the column name. ALTER TABLE table ALTER [COLUMN] column_name TO
-	 * new_col_name
+	 * Returns the SQL that is used to change the column name. alter table tableName alter column oldColumnName
+	 * rename to newColumnName
 	 * 
 	 * @param from
 	 *           the TableColumnInfo as it is
@@ -329,7 +289,7 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to)
 	{
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
-		String renameToClause = DialectUtils.TO_CLAUSE;
+		String renameToClause = DialectUtils.RENAME_TO_CLAUSE;
 		return DialectUtils.getColumnNameAlterSQL(from, to, alterClause, renameToClause);
 	}
 
@@ -340,12 +300,11 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	 */
 	public boolean supportsAlterColumnType()
 	{
-		return true;
+		return false;
 	}
 
 	/**
-	 * Returns the SQL that is used to change the column type. alter table table_name alter column column_name
-	 * type varchar(10)
+	 * Returns the SQL that is used to change the column type.
 	 * 
 	 * @param from
 	 *           the TableColumnInfo as it is
@@ -357,16 +316,9 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	public List<String> getColumnTypeAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 		throws UnsupportedOperationException
 	{
-		StringBuffer result = new StringBuffer();
-		result.append("ALTER TABLE ");
-		result.append(from.getTableName());
-		result.append(" ALTER COLUMN ");
-		result.append(from.getColumnName());
-		result.append(" TYPE ");
-		result.append(DialectUtils.getTypeName(to, this));
-		ArrayList<String> list = new ArrayList<String>();
-		list.add(result.toString());
-		return list;
+		int featureId = DialectUtils.COLUMN_TYPE_ALTER_TYPE;
+		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -377,11 +329,12 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	 */
 	public boolean supportsAlterColumnDefault()
 	{
-		return false;
+		return true;
 	}
 
 	/**
-	 * Returns the SQL command to change the specified column's default value
+	 * Returns the SQL command to change the specified column's default value alter table test alter column
+	 * PKCOL2 set default 0
 	 * 
 	 * @param info
 	 *           the column to modify and it's default value.
@@ -389,14 +342,14 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	 */
 	public String getColumnDefaultAlterSQL(TableColumnInfo info)
 	{
-		int featureId = DialectUtils.COLUMN_DEFAULT_ALTER_TYPE;
-		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-		throw new UnsupportedOperationException(msg);
+		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
+		String defaultClause = DialectUtils.SET_DEFAULT_CLAUSE;
+		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, false, defaultClause);
 	}
 
 	/**
-	 * Returns the SQL command to drop the specified table's primary key. alter table table_name drop
-	 * constraint pk_constraint_name
+	 * Returns the SQL command to drop the specified table's primary key. alter table tableName drop primary
+	 * key
 	 * 
 	 * @param pkName
 	 *           the name of the primary key that should be dropped
@@ -406,7 +359,7 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	 */
 	public String getDropPrimaryKeySQL(String pkName, String tableName)
 	{
-		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true, false);
+		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false);
 	}
 
 	/**
@@ -447,7 +400,7 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	 */
 	public DialectType getDialectType()
 	{
-		return DialectType.FIREBIRD;
+		return DialectType.AXION;
 	}
 
 	/**
@@ -467,9 +420,10 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 		// TODO Auto-generated method stub		
 		return null;
 	}
-
+	
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddAutoIncrementSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddAutoIncrementSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      DatabaseObjectQualifier, net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
 	 */
 	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
@@ -478,30 +432,23 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddColumnSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddColumnSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
 	 */
 	public String[] getAddColumnSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
- 		boolean addDefaultClause = true;
-		boolean supportsNullQualifier = false;
-		boolean addNullClause = true;
-   	 
-		String sql =
-			DialectUtils.getAddColumSQL(column,
-				this,
-				addDefaultClause,
-				supportsNullQualifier,
-				addNullClause,
-				qualifier,
-				prefs);
-		
-		
-        return new String[] { sql };
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddForeignKeyConstraintSQL(java.lang.String, java.lang.String, java.lang.String, java.lang.Boolean, java.lang.Boolean, java.lang.Boolean, boolean, java.lang.String, java.util.Collection, java.lang.String, java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddForeignKeyConstraintSQL(java.lang.String,
+	 *      java.lang.String, java.lang.String, Boolean, Boolean, Boolean, boolean, java.lang.String,
+	 *      java.util.Collection, java.lang.String, java.lang.String,
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
 	 */
 	public String[] getAddForeignKeyConstraintSQL(String localTableName, String refTableName,
 		String constraintName, Boolean deferrable, Boolean initiallyDeferred, Boolean matchFull,
@@ -513,7 +460,10 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddUniqueConstraintSQL(java.lang.String, java.lang.String, TableColumnInfo[], net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddUniqueConstraintSQL(java.lang.String,
+	 *      java.lang.String, TableColumnInfo[],
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
 	 */
 	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName, TableColumnInfo[] columns,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
@@ -523,7 +473,10 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAlterSequenceSQL(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAlterSequenceSQL(java.lang.String,
+	 *      java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean,
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
 	 */
 	public String[] getAlterSequenceSQL(String sequenceName, String increment, String minimum, String maximum,
 		String restart, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
@@ -534,7 +487,10 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getCreateIndexSQL(java.lang.String, java.lang.String, java.lang.String, java.lang.String[], boolean, java.lang.String, java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getCreateIndexSQL(java.lang.String,
+	 *      java.lang.String, String, java.lang.String[], boolean, java.lang.String, java.lang.String,
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
 	 */
 	public String getCreateIndexSQL(String indexName, String tableName, String accessMethod, String[] columns,
 		boolean unique, String tablespace, String constraints, DatabaseObjectQualifier qualifier,
@@ -545,7 +501,10 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getCreateSequenceSQL(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getCreateSequenceSQL(java.lang.String,
+	 *      java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean,
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
 	 */
 	public String getCreateSequenceSQL(String sequenceName, String increment, String minimum, String maximum,
 		String start, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
@@ -556,7 +515,10 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getCreateTableSQL(java.lang.String, java.util.List, java.util.List, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getCreateTableSQL(java.lang.String,
+	 *      java.util.List, java.util.List,
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences,
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier)
 	 */
 	public String getCreateTableSQL(String tableName, List<TableColumnInfo> columns,
 		List<TableColumnInfo> primaryKeys, SqlGenerationPreferences prefs, DatabaseObjectQualifier qualifier)
@@ -566,7 +528,10 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getCreateViewSQL(java.lang.String, java.lang.String, java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getCreateViewSQL(java.lang.String,
+	 *      java.lang.String, java.lang.String,
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
 	 */
 	public String getCreateViewSQL(String viewName, String definition, String checkOption,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
@@ -576,7 +541,10 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropConstraintSQL(java.lang.String, java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropConstraintSQL(java.lang.String,
+	 *      java.lang.String,
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
 	 */
 	public String getDropConstraintSQL(String tableName, String constraintName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
@@ -586,7 +554,9 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropIndexSQL(String, java.lang.String, boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropIndexSQL(String,
+	 *      java.lang.String, boolean,
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
 	 */
 	public String getDropIndexSQL(String tableName, String indexName, boolean cascade,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
@@ -596,7 +566,9 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropSequenceSQL(java.lang.String, boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropSequenceSQL(java.lang.String,
+	 *      boolean, net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
 	 */
 	public String getDropSequenceSQL(String sequenceName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
@@ -606,7 +578,9 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropViewSQL(java.lang.String, boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropViewSQL(java.lang.String, boolean,
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
 	 */
 	public String getDropViewSQL(String viewName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
@@ -616,7 +590,10 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getInsertIntoSQL(java.lang.String, java.util.List, java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getInsertIntoSQL(java.lang.String,
+	 *      java.util.List, java.lang.String,
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
 	 */
 	public String getInsertIntoSQL(String tableName, List<String> columns, String valuesPart,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
@@ -626,7 +603,10 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getRenameTableSQL(java.lang.String, java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getRenameTableSQL(java.lang.String,
+	 *      java.lang.String,
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
 	 */
 	public String getRenameTableSQL(String oldTableName, String newTableName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
@@ -636,7 +616,10 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getRenameViewSQL(java.lang.String, java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getRenameViewSQL(java.lang.String,
+	 *      java.lang.String,
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
 	 */
 	public String[] getRenameViewSQL(String oldViewName, String newViewName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
@@ -646,7 +629,9 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getSequenceInformationSQL(java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getSequenceInformationSQL(java.lang.String,
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
 	 */
 	public String getSequenceInformationSQL(String sequenceName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
@@ -656,7 +641,10 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getUpdateSQL(java.lang.String, java.lang.String[], java.lang.String[], java.lang.String[], java.lang.String[], java.lang.String[], net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getUpdateSQL(java.lang.String,
+	 *      java.lang.String[], java.lang.String[], java.lang.String[], java.lang.String[], java.lang.String[],
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
 	 */
 	public String[] getUpdateSQL(String tableName, String[] setColumns, String[] setValues, String[] fromTables,
 		String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
@@ -898,7 +886,7 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 		// TODO verify this is correct
 		return false;
 	}
-	
+		
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getViewDefinitionSQL(java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
@@ -906,7 +894,7 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 		SqlGenerationPreferences prefs) {
 		return null;
 	}
-	
+
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getQualifiedIdentifier(java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
@@ -915,7 +903,7 @@ public class FirebirdDialect extends org.hibernate.dialect.FirebirdDialect imple
 	{
 		return identifier;
 	}
-	
+
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCorrelatedSubQuery()
 	 */

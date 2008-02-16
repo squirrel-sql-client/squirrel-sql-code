@@ -34,56 +34,69 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
+import org.hibernate.HibernateException;
+
 /**
  * An extension to the standard Hibernate PostgreSQL dialect
+ * 
+ * @author manningr 
  */
-
-/**
- * @author manningr
- */
-public class PostgreSQLDialect extends org.hibernate.dialect.PostgreSQLDialect implements HibernateDialect
+public class PostgreSQLDialectExt extends CommonHibernateDialect implements HibernateDialect
 {
 
-	public PostgreSQLDialect()
-	{
-		super();
-		registerColumnType(Types.BIGINT, "bigint");
-		registerColumnType(Types.BINARY, "bytea");
-		// PostgreSQL follows the standard for SQL BIT. It's a string of BITs.
-		// So bit(10) is a string of 10 bits. JDBC treats SQL BIT as if it
-		// were only a single BIT. It specifies that BIT is equivalent to
-		// BOOLEAN. It claims that the PreparedStatement set method that should
-		// be used with BIT is setBoolean and getBoolean. This is not compliant
-		// with the standard. So SQL BIT type support is broken in Java, there
-		// is nothing we can do about that.
-		// Best thing to do for now, is try to convert the BIT type to a
-		// boolean like the JDBC spec says and hope for the best. Hope that the
-		// source database isn't using the BIT column as a sequence of multiple
-		// BITs.
-		registerColumnType(Types.BIT, "bool");
-		registerColumnType(Types.BLOB, "bytea");
-		registerColumnType(Types.BOOLEAN, "bool");
-		registerColumnType(Types.CHAR, 8000, "char($l)");
-		registerColumnType(Types.CHAR, "text");
-		registerColumnType(Types.CLOB, "text");
-		registerColumnType(Types.DATE, "date");
-		registerColumnType(Types.DECIMAL, "decimal($p,2)");
-		registerColumnType(Types.DOUBLE, "float($p)");
-		registerColumnType(Types.FLOAT, "float($p)");
-		registerColumnType(Types.INTEGER, "int");
-		registerColumnType(Types.LONGVARBINARY, "bytea");
-		registerColumnType(Types.LONGVARCHAR, "text");
-		registerColumnType(Types.NUMERIC, "numeric($p)");
-		registerColumnType(Types.REAL, "real");
-		registerColumnType(Types.SMALLINT, "smallint");
-		registerColumnType(Types.TIME, "time");
-		registerColumnType(Types.TIMESTAMP, "timestamp");
-		registerColumnType(Types.TINYINT, "int");
-		registerColumnType(Types.VARBINARY, "bytea");
-		registerColumnType(Types.VARCHAR, 8000, "varchar($l)");
-		registerColumnType(Types.VARCHAR, "text");
+	private class PostgreSQLDialectHelper extends org.hibernate.dialect.PostgreSQLDialect {
+		public PostgreSQLDialectHelper() {
+			super();
+			registerColumnType(Types.BIGINT, "bigint");
+			registerColumnType(Types.BINARY, "bytea");
+			// PostgreSQL follows the standard for SQL BIT. It's a string of BITs.
+			// So bit(10) is a string of 10 bits. JDBC treats SQL BIT as if it
+			// were only a single BIT. It specifies that BIT is equivalent to
+			// BOOLEAN. It claims that the PreparedStatement set method that should
+			// be used with BIT is setBoolean and getBoolean. This is not compliant
+			// with the standard. So SQL BIT type support is broken in Java, there
+			// is nothing we can do about that.
+			// Best thing to do for now, is try to convert the BIT type to a
+			// boolean like the JDBC spec says and hope for the best. Hope that the
+			// source database isn't using the BIT column as a sequence of multiple
+			// BITs.
+			registerColumnType(Types.BIT, "bool");
+			registerColumnType(Types.BLOB, "bytea");
+			registerColumnType(Types.BOOLEAN, "bool");
+			registerColumnType(Types.CHAR, 8000, "char($l)");
+			registerColumnType(Types.CHAR, "text");
+			registerColumnType(Types.CLOB, "text");
+			registerColumnType(Types.DATE, "date");
+			registerColumnType(Types.DECIMAL, "decimal($p,2)");
+			registerColumnType(Types.DOUBLE, "float($p)");
+			registerColumnType(Types.FLOAT, "float($p)");
+			registerColumnType(Types.INTEGER, "int");
+			registerColumnType(Types.LONGVARBINARY, "bytea");
+			registerColumnType(Types.LONGVARCHAR, "text");
+			registerColumnType(Types.NUMERIC, "numeric($p)");
+			registerColumnType(Types.REAL, "real");
+			registerColumnType(Types.SMALLINT, "smallint");
+			registerColumnType(Types.TIME, "time");
+			registerColumnType(Types.TIMESTAMP, "timestamp");
+			registerColumnType(Types.TINYINT, "int");
+			registerColumnType(Types.VARBINARY, "bytea");
+			registerColumnType(Types.VARCHAR, 8000, "varchar($l)");
+			registerColumnType(Types.VARCHAR, "text");			
+		}
 	}
+	
+	/** extended hibernate dialect used in this wrapper */
+	private PostgreSQLDialectHelper _dialect = new PostgreSQLDialectHelper();
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTypeName(int, int, int, int)
+	 */
+	@Override
+	public String getTypeName(int code, int length, int precision, int scale) throws HibernateException
+	{
+		return _dialect.getTypeName(code, length, precision, scale);
+	}
+	
 	/**
 	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType)
 	 */
@@ -311,7 +324,7 @@ public class PostgreSQLDialect extends org.hibernate.dialect.PostgreSQLDialect i
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support annotating columns with a comment.
 	 */
-	public String getColumnCommentAlterSQL(TableColumnInfo info) throws UnsupportedOperationException
+	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
 		return DialectUtils.getColumnCommentAlterSQL(info.getTableName(),
 			info.getColumnName(),
@@ -560,7 +573,7 @@ public class PostgreSQLDialect extends org.hibernate.dialect.PostgreSQLDialect i
 	 */
 	public boolean supportsSequence()
 	{
-		return supportsSequences();
+		return _dialect.supportsSequences();
 	}
 
 	/**
@@ -1161,7 +1174,7 @@ public class PostgreSQLDialect extends org.hibernate.dialect.PostgreSQLDialect i
 
 		if (column.getRemarks() != null && !"".equals(column.getRemarks()))
 		{
-			result.add(getColumnCommentAlterSQL(column));
+			result.add(getColumnCommentAlterSQL(column, null, null));
 		}		
 		return result.toArray(new String[result.size()]);
 	}
@@ -1178,8 +1191,7 @@ public class PostgreSQLDialect extends org.hibernate.dialect.PostgreSQLDialect i
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsViewDefinition()
 	 */
 	public boolean supportsViewDefinition() {
-		// TODO verify this is correct
-		return false;
+		return true;
 	}	
 	
 	/**
@@ -1187,7 +1199,14 @@ public class PostgreSQLDialect extends org.hibernate.dialect.PostgreSQLDialect i
 	 */
 	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs) {
-		return null;
+		
+      StringBuilder result = new StringBuilder();
+      result.append("select view_definition from information_schema.views where table_schema = '");
+      result.append(qualifier.getSchema());
+      result.append("' and table_name =  '");
+      result.append(viewName);
+      result.append("'");
+      return result.toString();
 	}
 	
 	/**
@@ -1204,7 +1223,6 @@ public class PostgreSQLDialect extends org.hibernate.dialect.PostgreSQLDialect i
 	 */
 	public boolean supportsCorrelatedSubQuery()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 	

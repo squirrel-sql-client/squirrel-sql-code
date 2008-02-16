@@ -21,12 +21,12 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 
 public class MySQLDialectTest extends DialectTestCase {
 
-    private MySQLDialect dialect = null;
+    private MySQLDialectExt dialect = null;
     
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        dialect = new MySQLDialect();
+        dialect = new MySQLDialectExt();
     }
     
     /*

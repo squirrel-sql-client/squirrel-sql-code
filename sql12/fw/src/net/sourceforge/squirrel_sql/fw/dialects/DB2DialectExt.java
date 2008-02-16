@@ -28,8 +28,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.antlr.stringtemplate.StringTemplate;
-
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
@@ -37,63 +35,79 @@ import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
+import org.antlr.stringtemplate.StringTemplate;
+import org.hibernate.HibernateException;
+
 /**
  * An extension to the standard Hibernate DB2 dialect
  */
-public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements HibernateDialect
+public class DB2DialectExt extends CommonHibernateDialect implements HibernateDialect
 {
-
-	public DB2Dialect()
-	{
-		super();
-		registerColumnType(Types.BIGINT, "bigint");
-		registerColumnType(Types.BINARY, 254, "char($l) for bit data");
-		registerColumnType(Types.BINARY, "blob");
-		registerColumnType(Types.BIT, "smallint");
-		// DB2 spec says max=2147483647, but the driver throws an exception
-		registerColumnType(Types.BLOB, 1073741823, "blob($l)");
-		registerColumnType(Types.BLOB, "blob(1073741823)");
-		registerColumnType(Types.BOOLEAN, "smallint");
-		registerColumnType(Types.CHAR, 254, "char($l)");
-		registerColumnType(Types.CHAR, 4000, "varchar($l)");
-		registerColumnType(Types.CHAR, 32700, "long varchar");
-		registerColumnType(Types.CHAR, 1073741823, "clob($l)");
-		registerColumnType(Types.CHAR, "clob(1073741823)");
-		// DB2 spec says max=2147483647, but the driver throws an exception
-		registerColumnType(Types.CLOB, 1073741823, "clob($l)");
-		registerColumnType(Types.CLOB, "clob(1073741823)");
-		registerColumnType(Types.DATE, "date");
-		registerColumnType(Types.DECIMAL, "decimal($p,$s)");
-		registerColumnType(Types.DOUBLE, "float($p)");
-		registerColumnType(Types.FLOAT, "float($p)");
-		registerColumnType(Types.INTEGER, "int");
-		registerColumnType(Types.LONGVARBINARY, 32700, "long varchar for bit data");
-		registerColumnType(Types.LONGVARBINARY, 1073741823, "blob($l)");
-		registerColumnType(Types.LONGVARBINARY, "blob(1073741823)");
-		registerColumnType(Types.LONGVARCHAR, 32700, "long varchar");
-		// DB2 spec says max=2147483647, but the driver throws an exception
-		registerColumnType(Types.LONGVARCHAR, 1073741823, "clob($l)");
-		registerColumnType(Types.LONGVARCHAR, "clob(1073741823)");
-		registerColumnType(Types.NUMERIC, "bigint");
-		registerColumnType(Types.REAL, "real");
-		registerColumnType(Types.SMALLINT, "smallint");
-		registerColumnType(Types.TIME, "time");
-		registerColumnType(Types.TIMESTAMP, "timestamp");
-		registerColumnType(Types.TINYINT, "smallint");
-		registerColumnType(Types.VARBINARY, 254, "varchar($l) for bit data");
-		registerColumnType(Types.VARBINARY, "blob");
-		// The driver throws an exception for varchar with length > 3924
-		registerColumnType(Types.VARCHAR, 3924, "varchar($l)");
-		registerColumnType(Types.VARCHAR, 32700, "long varchar");
-		// DB2 spec says max=2147483647, but the driver throws an exception
-		registerColumnType(Types.VARCHAR, 1073741823, "clob($l)");
-		registerColumnType(Types.VARCHAR, "clob(1073741823)");
-
+	
+	private class DB2DialectHelper extends org.hibernate.dialect.DB2Dialect {
+		public DB2DialectHelper() {
+			super();
+			registerColumnType(Types.BIGINT, "bigint");
+			registerColumnType(Types.BINARY, 254, "char($l) for bit data");
+			registerColumnType(Types.BINARY, "blob");
+			registerColumnType(Types.BIT, "smallint");
+			// DB2 spec says max=2147483647, but the driver throws an exception
+			registerColumnType(Types.BLOB, 1073741823, "blob($l)");
+			registerColumnType(Types.BLOB, "blob(1073741823)");
+			registerColumnType(Types.BOOLEAN, "smallint");
+			registerColumnType(Types.CHAR, 254, "char($l)");
+			registerColumnType(Types.CHAR, 4000, "varchar($l)");
+			registerColumnType(Types.CHAR, 32700, "long varchar");
+			registerColumnType(Types.CHAR, 1073741823, "clob($l)");
+			registerColumnType(Types.CHAR, "clob(1073741823)");
+			// DB2 spec says max=2147483647, but the driver throws an exception
+			registerColumnType(Types.CLOB, 1073741823, "clob($l)");
+			registerColumnType(Types.CLOB, "clob(1073741823)");
+			registerColumnType(Types.DATE, "date");
+			registerColumnType(Types.DECIMAL, "decimal($p,$s)");
+			registerColumnType(Types.DOUBLE, "float($p)");
+			registerColumnType(Types.FLOAT, "float($p)");
+			registerColumnType(Types.INTEGER, "int");
+			registerColumnType(Types.LONGVARBINARY, 32700, "long varchar for bit data");
+			registerColumnType(Types.LONGVARBINARY, 1073741823, "blob($l)");
+			registerColumnType(Types.LONGVARBINARY, "blob(1073741823)");
+			registerColumnType(Types.LONGVARCHAR, 32700, "long varchar");
+			// DB2 spec says max=2147483647, but the driver throws an exception
+			registerColumnType(Types.LONGVARCHAR, 1073741823, "clob($l)");
+			registerColumnType(Types.LONGVARCHAR, "clob(1073741823)");
+			registerColumnType(Types.NUMERIC, "bigint");
+			registerColumnType(Types.REAL, "real");
+			registerColumnType(Types.SMALLINT, "smallint");
+			registerColumnType(Types.TIME, "time");
+			registerColumnType(Types.TIMESTAMP, "timestamp");
+			registerColumnType(Types.TINYINT, "smallint");
+			registerColumnType(Types.VARBINARY, 254, "varchar($l) for bit data");
+			registerColumnType(Types.VARBINARY, "blob");
+			// The driver throws an exception for varchar with length > 3924
+			registerColumnType(Types.VARCHAR, 3924, "varchar($l)");
+			registerColumnType(Types.VARCHAR, 32700, "long varchar");
+			// DB2 spec says max=2147483647, but the driver throws an exception
+			registerColumnType(Types.VARCHAR, 1073741823, "clob($l)");
+			registerColumnType(Types.VARCHAR, "clob(1073741823)");			
+		}
 	}
 
+	/** extended hibernate dialect used in this wrapper */
+	private DB2DialectHelper _dialect = new DB2DialectHelper();
+
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTypeName(int, int, int, int)
 	 */
+	@Override
+	public String getTypeName(int code, int length, int precision, int scale) throws HibernateException
+	{
+		return _dialect.getTypeName(code, length, precision, scale);
+	}
+	
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
+	 */
+	@Override
 	public boolean canPasteTo(IDatabaseObjectInfo info)
 	{
 		boolean result = true;
@@ -103,14 +117,6 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 			result = false;
 		}
 		return result;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsSchemasInTableDefinition()
-	 */
-	public boolean supportsSchemasInTableDefinition()
-	{
-		return true;
 	}
 
 	/**
@@ -272,7 +278,7 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 
 		if (info.getRemarks() != null && !"".equals(info.getRemarks()))
 		{
-			result.add(getColumnCommentAlterSQL(info));
+			result.add(getColumnCommentAlterSQL(info, null, null));
 		}
 
 		return result.toArray(new String[result.size()]);
@@ -322,7 +328,7 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 	 */
 	public String getColumnDropSQL(String tableName, String columnName)
 	{
-		//alter table <tablename> drop column <columnName>
+		// alter table <tablename> drop column <columnName>
 		StringBuilder result = new StringBuilder();
 		result.append("ALTER TABLE ");
 		result.append(tableName);
@@ -387,9 +393,10 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support annotating columns with a comment.
 	 */
-	public String getColumnCommentAlterSQL(TableColumnInfo info) throws UnsupportedOperationException
+	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
-		return DialectUtils.getColumnCommentAlterSQL(info);
+		return DialectUtils.getColumnCommentAlterSQL(info, qualifier, prefs, this);
 	}
 
 	/**
@@ -404,19 +411,15 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 	}
 
 	/**
-	 * Update: DB2 version 9.5 appears to support altering column nullability just fine via:
-	 * 
-	 * ALTER TABLE table_name ALTER COLUMN column_name SET NOT NULL
-	 * 
-	 * So, I'll use that 
-	 * 
-	 * Returns the SQL used to alter the specified column to not allow null values This appears to work: ALTER
-	 * TABLE table_name ADD CONSTRAINT constraint_name CHECK (column_name IS NOT NULL) However, the jdbc driver
-	 * still reports the column as nullable - which means I can't reliably display the correct value for this
-	 * attribute in the UI. I tried this alternate syntax and it fails with an exception: ALTER TABLE
-	 * table_name ALTER COLUMN column_name SET NOT NULL Error: com.ibm.db2.jcc.b.SqlException: DB2 SQL error:
-	 * SQLCODE: -104, SQLSTATE: 42601, SQLERRMC: NOT;ER COLUMN mychar SET;DEFAULT, SQL State: 42601, Error
-	 * Code: -104 I don't see how I can practically support changing column nullability in DB2.
+	 * Update: DB2 version 9.5 appears to support altering column nullability just fine via: ALTER TABLE
+	 * table_name ALTER COLUMN column_name SET NOT NULL So, I'll use that Returns the SQL used to alter the
+	 * specified column to not allow null values This appears to work: ALTER TABLE table_name ADD CONSTRAINT
+	 * constraint_name CHECK (column_name IS NOT NULL) However, the jdbc driver still reports the column as
+	 * nullable - which means I can't reliably display the correct value for this attribute in the UI. I tried
+	 * this alternate syntax and it fails with an exception: ALTER TABLE table_name ALTER COLUMN column_name
+	 * SET NOT NULL Error: com.ibm.db2.jcc.b.SqlException: DB2 SQL error: SQLCODE: -104, SQLSTATE: 42601,
+	 * SQLERRMC: NOT;ER COLUMN mychar SET;DEFAULT, SQL State: 42601, Error Code: -104 I don't see how I can
+	 * practically support changing column nullability in DB2.
 	 * 
 	 * @param info
 	 *           the column to modify
@@ -426,7 +429,7 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 		SqlGenerationPreferences prefs)
 	{
 		ArrayList<String> result = new ArrayList<String>();
-		
+
 		boolean nullable = info.isNullable().equalsIgnoreCase("yes");
 		result.addAll(Arrays.asList(getColumnNullableAlterSQL(info, nullable, qualifier, prefs)));
 
@@ -435,7 +438,7 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 		reorgSql.append("CALL SYSPROC.ADMIN_CMD('REORG TABLE ");
 		reorgSql.append(DialectUtils.shapeQualifiableIdentifier(info.getTableName(), qualifier, prefs, this));
 		reorgSql.append("')");
-		
+
 		result.add(reorgSql.toString());
 		return result.toArray(new String[result.size()]);
 	}
@@ -457,7 +460,7 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		ArrayList<String> sql = new ArrayList<String>();
-		
+
 		StringBuilder result = new StringBuilder();
 		result.append("ALTER TABLE ");
 		result.append(DialectUtils.shapeQualifiableIdentifier(info.getTableName(), qualifier, prefs, this));
@@ -477,7 +480,7 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 		sql.add(getTableReorgSql(info.getTableName(), qualifier, prefs));
 		return sql.toArray(new String[sql.size()]);
 	}
-	
+
 	/**
 	 * Returns a boolean value indicating whether or not this database dialect supports renaming columns.
 	 * 
@@ -626,7 +629,7 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 	 */
 	public String[] getIndexAccessMethodsTypes()
 	{
-		return new String[] { };
+		return new String[] {};
 	}
 
 	/**
@@ -634,7 +637,7 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 	 */
 	public String[] getIndexStorageOptions()
 	{
-		// TODO Auto-generated method stub		
+		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -646,26 +649,20 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 		SqlGenerationPreferences prefs)
 	{
 		ArrayList<String> result = new ArrayList<String>();
-		/* DB2 doesn't support adding an auto-increment column once the table has already been
-		 * created.  So this can simulate one using trigger on the table to access a sequence. 
-		 * Found this idea at wikibooks:
+		/*
+		 * DB2 doesn't support adding an auto-increment column once the table has already been created. So this
+		 * can simulate one using trigger on the table to access a sequence. Found this idea at wikibooks:
 		 * http://en.wikibooks.org/wiki/SQL_dialects_reference/Data_structure_definition/Auto-increment_column
-		CREATE SEQUENCE sequence_name;
-
-		CREATE TABLE table_name ( column_name INT );
-
-		CREATE TRIGGER insert_trigger
-		   NO CASCADE BEFORE INSERT ON table_name
-		   REFERENCING NEW AS n
-		   FOR EACH ROW
-		   SET n.column_name = NEXTVAL FOR sequence_name;
+		 * CREATE SEQUENCE sequence_name; CREATE TABLE table_name ( column_name INT ); CREATE TRIGGER
+		 * insert_trigger NO CASCADE BEFORE INSERT ON table_name REFERENCING NEW AS n FOR EACH ROW SET
+		 * n.column_name = NEXTVAL FOR sequence_name;
 		 */
 		final String tableName = column.getTableName();
 		final String columnName = column.getColumnName();
 		final String sequenceName = tableName + "_" + columnName + "_" + "seq";
-		
+
 		result.add(getCreateSequenceSQL(sequenceName, "1", "1", null, "1", null, false, qualifier, prefs));
-		
+
 		StringBuilder triggerSql = new StringBuilder();
 		triggerSql.append("CREATE TRIGGER ");
 		triggerSql.append(columnName);
@@ -678,9 +675,9 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 		triggerSql.append(columnName);
 		triggerSql.append(" = NEXTVAL FOR ");
 		triggerSql.append(sequenceName);
-		
+
 		result.add(triggerSql.toString());
-		
+
 		return result.toArray(new String[result.size()]);
 	}
 
@@ -692,7 +689,7 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 		Boolean deferrableNotSupported = null;
 		Boolean initiallyDeferredNotSupported = null;
 		Boolean matchFullNotSupported = null;
-		
+
 		return DialectUtils.getAddForeignKeyConstraintSQL(localTableName,
 			refTableName,
 			constraintName,
@@ -709,7 +706,9 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 			this);
 	}
 
-	private String getTableReorgSql(String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) {
+	private String getTableReorgSql(String tableName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
+	{
 		/* DB2 needs to reorg table after changing nullabolity */
 		StringBuilder reorgSql = new StringBuilder();
 		reorgSql.append("CALL SYSPROC.ADMIN_CMD('REORG TABLE ");
@@ -717,33 +716,34 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 		reorgSql.append("')");
 		return reorgSql.toString();
 	}
-	
+
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddUniqueConstraintSQL(java.lang.String, java.lang.String, TableColumnInfo[], net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddUniqueConstraintSQL(java.lang.String,
+	 *      java.lang.String, TableColumnInfo[],
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
-	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName, TableColumnInfo[] columns,
-		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName,
+		TableColumnInfo[] columns, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		ArrayList<String> result = new ArrayList<String>();
-		
+
 		// DB2 requires that columns be not-null before applying a unique constraint
-		for (TableColumnInfo column : columns) {
-			if (column.isNullable().equalsIgnoreCase("YES")) {
-				result.addAll(Arrays.asList(getColumnNullableAlterSQL(column,
-					false,
-					qualifier,
-					prefs)));
+		for (TableColumnInfo column : columns)
+		{
+			if (column.isNullable().equalsIgnoreCase("YES"))
+			{
+				result.addAll(Arrays.asList(getColumnNullableAlterSQL(column, false, qualifier, prefs)));
 			}
 		}
-		
-		result.add(
-			DialectUtils.getAddUniqueConstraintSQL(tableName,
+
+		result.add(DialectUtils.getAddUniqueConstraintSQL(tableName,
 			constraintName,
 			columns,
 			qualifier,
 			prefs,
 			this));
-		
+
 		return result.toArray(new String[result.size()]);
 	}
 
@@ -832,7 +832,9 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getCreateTableSQL(java.lang.String, java.util.List, java.util.List, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getCreateTableSQL(java.lang.String,
+	 *      java.util.List, java.util.List, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier)
 	 */
 	public String getCreateTableSQL(String tableName, List<TableColumnInfo> columns,
 		List<TableColumnInfo> primaryKeys, SqlGenerationPreferences prefs, DatabaseObjectQualifier qualifier)
@@ -864,9 +866,9 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropIndexSQL(String,
-	 *      java.lang.String, boolean,
-	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropIndexSQL(String, java.lang.String,
+	 *      boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	public String getDropIndexSQL(String tableName, String indexName, boolean cascade,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
@@ -900,7 +902,9 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getInsertIntoSQL(java.lang.String, java.util.List, java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getInsertIntoSQL(java.lang.String,
+	 *      java.util.List, java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	public String getInsertIntoSQL(String tableName, List<String> columns, String valuesPart,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
@@ -933,8 +937,8 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
-	public String[] getRenameViewSQL(String oldViewName, String newViewName, DatabaseObjectQualifier qualifier,
-		SqlGenerationPreferences prefs)
+	public String[] getRenameViewSQL(String oldViewName, String newViewName,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		final int featureId = DialectUtils.RENAME_VIEW_TYPE;
 		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
@@ -944,21 +948,19 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsViewDefinition()
 	 */
-	public boolean supportsViewDefinition() {
+	public boolean supportsViewDefinition()
+	{
 		return true;
-	}	
-	
+	}
+
 	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
 		/*
-		SELECT  'CREATE VIEW <newViewName> AS ' || SUBSTR(TEXT ,  LOCATE('as', TEXT)+2, LENGTH(TEXT))
-		FROM SYSCAT.VIEWS 
-		WHERE VIEWSCHEMA = '<schema>'
-		AND VIEWNAME = '<oldViewName>'; 
-	 */ 
-		
-		
+		 * SELECT 'CREATE VIEW <newViewName> AS ' || SUBSTR(TEXT , LOCATE('as', TEXT)+2, LENGTH(TEXT)) FROM
+		 * SYSCAT.VIEWS WHERE VIEWSCHEMA = '<schema>' AND VIEWNAME = '<oldViewName>';
+		 */
+
 		StringBuilder createViewSql = new StringBuilder();
 		createViewSql.append("SELECT TEXT ");
 		createViewSql.append(" FROM SYSCAT.VIEWS ");
@@ -969,7 +971,7 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 		createViewSql.append("'");
 		return createViewSql.toString();
 	}
-	
+
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getSequenceInformationSQL(java.lang.String,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
@@ -1001,23 +1003,29 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getUpdateSQL(java.lang.String, java.lang.String[], java.lang.String[], java.lang.String[], java.lang.String[], java.lang.String[], net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getUpdateSQL(java.lang.String,
+	 *      java.lang.String[], java.lang.String[], java.lang.String[], java.lang.String[], java.lang.String[],
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
-	public String[] getUpdateSQL(String tableName, String[] setColumns, String[] setValues, String[] fromTables,
-		String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
+	public String[] getUpdateSQL(String tableName, String[] setColumns, String[] setValues,
+		String[] fromTables, String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
 		String templateStr = "";
-		
-		if (fromTables != null) {
+
+		if (fromTables != null)
+		{
 			templateStr = ST_UPDATE_CORRELATED_QUERY_STYLE_ONE;
-		} else {
+		} else
+		{
 			templateStr = ST_UPDATE_STYLE_ONE;
 		}
-			
+
 		StringTemplate st = new StringTemplate(templateStr);
-		
-		return DialectUtils.getUpdateSQL(st, tableName,
+
+		return DialectUtils.getUpdateSQL(st,
+			tableName,
 			setColumns,
 			setValues,
 			fromTables,
@@ -1220,7 +1228,9 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getQualifiedIdentifier(java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getQualifiedIdentifier(java.lang.String,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	public String getQualifiedIdentifier(String identifier, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
@@ -1235,5 +1245,5 @@ public class DB2Dialect extends org.hibernate.dialect.DB2Dialect implements Hibe
 	{
 		return true;
 	}
-	
+
 }

@@ -19,12 +19,12 @@ package net.sourceforge.squirrel_sql.fw.dialects;
  */
 public class Oracle9iDialectTest extends DialectTestCase {
 
-    private Oracle9iDialect dialect = null;
+    private OracleDialectExt dialect = null;
     
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        dialect = new Oracle9iDialect();
+        dialect = new OracleDialectExt();
     }
     
     /*

@@ -30,47 +30,62 @@ import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
 import org.antlr.stringtemplate.StringTemplate;
+import org.hibernate.HibernateException;
 
 /**
- * An extension to the standard SQuirreL Sybase dialect
+ * A dialect delegate for the MS SQLServer database.
  */
-
-public class SQLServerDialect extends SybaseDialect implements HibernateDialect
+public class SQLServerDialectExt extends SybaseDialectExt implements HibernateDialect
 {
-
-	public SQLServerDialect()
+	private class SQLServerDialectHelper extends org.hibernate.dialect.SybaseDialect
 	{
-		super();
-		registerColumnType(Types.BIGINT, "bigint");
-		registerColumnType(Types.BINARY, "image");
-		registerColumnType(Types.BIT, "tinyint");
-		registerColumnType(Types.BLOB, "image");
-		registerColumnType(Types.BOOLEAN, "tinyint");
-		registerColumnType(Types.CHAR, 8000, "char($l)");
-		registerColumnType(Types.CHAR, "text");
-		registerColumnType(Types.CLOB, "text");
-		registerColumnType(Types.DATE, "datetime");
-		registerColumnType(Types.DECIMAL, "decimal($p)");
-		registerColumnType(Types.DOUBLE, "float($p)");
-		registerColumnType(Types.FLOAT, "float($p)");
-		registerColumnType(Types.INTEGER, "int");
-		registerColumnType(Types.LONGVARBINARY, "image");
-		registerColumnType(Types.LONGVARCHAR, "text");
-		registerColumnType(Types.NUMERIC, "numeric($p)");
-		registerColumnType(Types.REAL, "real");
-		registerColumnType(Types.SMALLINT, "smallint");
-		registerColumnType(Types.TIME, "datetime");
-		registerColumnType(Types.TIMESTAMP, "datetime");
-		registerColumnType(Types.TINYINT, "tinyint");
-		registerColumnType(Types.VARBINARY, 8000, "varbinary($l)");
-		registerColumnType(Types.VARBINARY, "image");
-		registerColumnType(Types.VARCHAR, 8000, "varchar($l)");
-		registerColumnType(Types.VARCHAR, "text");
+		public SQLServerDialectHelper()
+		{
+			super();
+			registerColumnType(Types.BIGINT, "bigint");
+			registerColumnType(Types.BINARY, "image");
+			registerColumnType(Types.BIT, "tinyint");
+			registerColumnType(Types.BLOB, "image");
+			registerColumnType(Types.BOOLEAN, "tinyint");
+			registerColumnType(Types.CHAR, 8000, "char($l)");
+			registerColumnType(Types.CHAR, "text");
+			registerColumnType(Types.CLOB, "text");
+			registerColumnType(Types.DATE, "datetime");
+			registerColumnType(Types.DECIMAL, "decimal($p)");
+			registerColumnType(Types.DOUBLE, "float($p)");
+			registerColumnType(Types.FLOAT, "float($p)");
+			registerColumnType(Types.INTEGER, "int");
+			registerColumnType(Types.LONGVARBINARY, "image");
+			registerColumnType(Types.LONGVARCHAR, "text");
+			registerColumnType(Types.NUMERIC, "numeric($p)");
+			registerColumnType(Types.REAL, "real");
+			registerColumnType(Types.SMALLINT, "smallint");
+			registerColumnType(Types.TIME, "datetime");
+			registerColumnType(Types.TIMESTAMP, "datetime");
+			registerColumnType(Types.TINYINT, "tinyint");
+			registerColumnType(Types.VARBINARY, 8000, "varbinary($l)");
+			registerColumnType(Types.VARBINARY, "image");
+			registerColumnType(Types.VARCHAR, 8000, "varchar($l)");
+			registerColumnType(Types.VARCHAR, "text");
+		}
+	}
+
+	/** extended hibernate dialect used in this wrapper */
+	private SQLServerDialectHelper _dialect = new SQLServerDialectHelper();
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTypeName(int, int, int, int)
+	 */
+	@Override
+	public String getTypeName(int code, int length, int precision, int scale) throws HibernateException
+	{
+		return _dialect.getTypeName(code, length, precision, scale);
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.SybaseDialect#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.SybaseDialectExt#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
 	 */
+	@Override
 	public boolean canPasteTo(IDatabaseObjectInfo info)
 	{
 		boolean result = true;
@@ -83,32 +98,18 @@ public class SQLServerDialect extends SybaseDialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.SybaseDialect#supportsSchemasInTableDefinition()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getLengthFunction(int)
 	 */
-	public boolean supportsSchemasInTableDefinition()
-	{
-		return true;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.SybaseDialect#getLengthFunction(int)
-	 */
+	@Override
 	public String getLengthFunction(int dataType)
 	{
 		return "len";
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.SybaseDialect#getMaxFunction()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.SybaseDialectExt#getMaxPrecision(int)
 	 */
-	public String getMaxFunction()
-	{
-		return "max";
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.SybaseDialect#getMaxPrecision(int)
-	 */
+	@Override
 	public int getMaxPrecision(int dataType)
 	{
 		if (dataType == Types.DOUBLE || dataType == Types.FLOAT)
@@ -121,24 +122,27 @@ public class SQLServerDialect extends SybaseDialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.SybaseDialect#getMaxScale(int)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.SybaseDialectExt#getMaxScale(int)
 	 */
+	@Override
 	public int getMaxScale(int dataType)
 	{
 		return getMaxPrecision(dataType);
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.SybaseDialect#getPrecisionDigits(int, int)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.SybaseDialectExt#getPrecisionDigits(int, int)
 	 */
+	@Override
 	public int getPrecisionDigits(int columnSize, int dataType)
 	{
 		return columnSize;
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.SybaseDialect#getColumnLength(int, int)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.SybaseDialectExt#getColumnLength(int, int)
 	 */
+	@Override
 	public int getColumnLength(int columnSize, int dataType)
 	{
 		return columnSize;
@@ -149,6 +153,7 @@ public class SQLServerDialect extends SybaseDialect implements HibernateDialect
 	 * 
 	 * @return a descriptive name that tells the user what database this dialect is design to work with.
 	 */
+	@Override
 	public String getDisplayName()
 	{
 		return "MS SQLServer";
@@ -164,6 +169,7 @@ public class SQLServerDialect extends SybaseDialect implements HibernateDialect
 	 *           the version of the database as reported by DatabaseMetaData.getDatabaseProductVersion()
 	 * @return true if this dialect can be used for the specified product name and version; false otherwise.
 	 */
+	@Override
 	public boolean supportsProduct(String databaseProductName, String databaseProductVersion)
 	{
 		if (databaseProductName == null)
@@ -183,6 +189,7 @@ public class SQLServerDialect extends SybaseDialect implements HibernateDialect
 	 * 
 	 * @return true if column comments are supported; false otherwise.
 	 */
+	@Override
 	public boolean supportsColumnComment()
 	{
 		return false;
@@ -197,7 +204,9 @@ public class SQLServerDialect extends SybaseDialect implements HibernateDialect
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support annotating columns with a comment.
 	 */
-	public String getColumnCommentAlterSQL(TableColumnInfo info) throws UnsupportedOperationException
+	@Override
+	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
 		final int featureId = DialectUtils.COLUMN_COMMENT_ALTER_TYPE;
 		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
@@ -205,11 +214,9 @@ public class SQLServerDialect extends SybaseDialect implements HibernateDialect
 	}
 
 	/**
-	 * Returns a boolean value indicating whether or not this database dialect supports dropping columns from
-	 * tables.
-	 * 
-	 * @return true if the database supports dropping columns; false otherwise.
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.SybaseDialectExt#supportsDropColumn()
 	 */
+	@Override
 	public boolean supportsDropColumn()
 	{
 		return true;
@@ -226,6 +233,7 @@ public class SQLServerDialect extends SybaseDialect implements HibernateDialect
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support dropping columns.
 	 */
+	@Override
 	public String getColumnDropSQL(String tableName, String columnName)
 	{
 		return DialectUtils.getColumnDropSQL(tableName, columnName, "DROP COLUMN", false, null);
@@ -242,6 +250,7 @@ public class SQLServerDialect extends SybaseDialect implements HibernateDialect
 	 *           whether or not to drop any FKs that may reference the specified table.
 	 * @return the drop SQL command.
 	 */
+	@Override
 	public List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints,
 		boolean isMaterializedView)
 	{
@@ -264,6 +273,7 @@ public class SQLServerDialect extends SybaseDialect implements HibernateDialect
 	 *           the columns that form the key
 	 * @return
 	 */
+	@Override
 	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] colInfos, ITableInfo ti)
 	{
 		ArrayList<String> result = new ArrayList<String>();
@@ -284,6 +294,7 @@ public class SQLServerDialect extends SybaseDialect implements HibernateDialect
 	 * 
 	 * @return true if the database supports dropping columns; false otherwise.
 	 */
+	@Override
 	public boolean supportsAlterColumnNull()
 	{
 		return true;
@@ -297,6 +308,7 @@ public class SQLServerDialect extends SybaseDialect implements HibernateDialect
 	 *           the column to modify
 	 * @return the SQL to execute
 	 */
+	@Override
 	public String[] getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
@@ -309,6 +321,7 @@ public class SQLServerDialect extends SybaseDialect implements HibernateDialect
 	 * 
 	 * @return true if the database supports changing the name of columns; false otherwise.
 	 */
+	@Override
 	public boolean supportsRenameColumn()
 	{
 		return true;
@@ -324,6 +337,7 @@ public class SQLServerDialect extends SybaseDialect implements HibernateDialect
 	 *           the TableColumnInfo as it wants to be
 	 * @return the SQL to make the change
 	 */
+	@Override
 	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to)
 	{
 		StringBuffer result = new StringBuffer();
@@ -344,6 +358,7 @@ public class SQLServerDialect extends SybaseDialect implements HibernateDialect
 	 * 
 	 * @return true if supported; false otherwise
 	 */
+	@Override
 	public boolean supportsAlterColumnType()
 	{
 		return true;
@@ -360,6 +375,7 @@ public class SQLServerDialect extends SybaseDialect implements HibernateDialect
 	 * @return the SQL to make the change
 	 * @throw UnsupportedOperationException if the database doesn't support modifying column types.
 	 */
+	@Override
 	public List<String> getColumnTypeAlterSQL(TableColumnInfo from, TableColumnInfo to,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
@@ -381,6 +397,7 @@ public class SQLServerDialect extends SybaseDialect implements HibernateDialect
 	 * 
 	 * @return true if the database supports modifying column defaults; false otherwise
 	 */
+	@Override
 	public boolean supportsAlterColumnDefault()
 	{
 		return true;
@@ -394,6 +411,7 @@ public class SQLServerDialect extends SybaseDialect implements HibernateDialect
 	 *           the column to modify and it's default value.
 	 * @return SQL to make the change
 	 */
+	@Override
 	public String getColumnDefaultAlterSQL(TableColumnInfo info)
 	{
 		StringBuffer result = new StringBuffer();
@@ -417,18 +435,20 @@ public class SQLServerDialect extends SybaseDialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDialectType()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDialectType()
 	 */
+	@Override
 	public DialectType getDialectType()
 	{
 		return DialectType.MSSQL;
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddColumnSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddColumnSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
+	@Override
 	public String[] getAddColumnSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
@@ -458,10 +478,11 @@ public class SQLServerDialect extends SybaseDialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropIndexSQL(java.lang.String,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropIndexSQL(java.lang.String,
 	 *      java.lang.String, boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
+	@Override
 	public String getDropIndexSQL(String tableName, String indexName, boolean cascade,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
@@ -473,10 +494,11 @@ public class SQLServerDialect extends SybaseDialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getRenameTableSQL(java.lang.String,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getRenameTableSQL(java.lang.String,
 	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
+	@Override
 	public String getRenameTableSQL(String oldTableName, String newTableName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
@@ -486,10 +508,11 @@ public class SQLServerDialect extends SybaseDialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getViewDefinitionSQL(java.lang.String,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.SybaseDialectExt#getViewDefinitionSQL(java.lang.String,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
+	@Override
 	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
@@ -497,27 +520,35 @@ public class SQLServerDialect extends SybaseDialect implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsRenameTable()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsRenameTable()
 	 */
+	@Override
 	public boolean supportsRenameTable()
 	{
 		return false;
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsViewDefinition()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.SybaseDialectExt#supportsRenameView()
 	 */
-	public boolean supportsViewDefinition() {
-		// TODO verify this is correct
-		return false;
-	}	
-	
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsRenameView()
-	 */
+	@Override
 	public boolean supportsRenameView()
 	{
 		return false;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.SybaseDialectExt#getRenameViewSQL(java.lang.String,
+	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	@Override
+	public String[] getRenameViewSQL(String oldViewName, String newViewName,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	{
+		final int featureId = DialectUtils.RENAME_VIEW_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 }

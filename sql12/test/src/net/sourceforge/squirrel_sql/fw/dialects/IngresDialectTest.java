@@ -19,7 +19,7 @@ package net.sourceforge.squirrel_sql.fw.dialects;
  */
 public class IngresDialectTest extends DialectTestCase {
 
-    private IngresDialect dialect = null;
+    private IngresDialectExt dialect = null;
     
     /*
      * Test method for 'org.hibernate.dialect.Dialect.getTypeName(int)'
@@ -31,7 +31,7 @@ public class IngresDialectTest extends DialectTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        dialect = new IngresDialect();
+        dialect = new IngresDialectExt();
     }
     
 }

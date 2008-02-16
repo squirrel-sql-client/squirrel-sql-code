@@ -23,72 +23,87 @@ import java.sql.Types;
 import java.util.Collection;
 import java.util.List;
 
+import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
+import org.hibernate.HibernateException;
+import org.hibernate.dialect.Dialect;
+
 /**
  * An extension to the standard Hibernate HSQL dialect
  */
 
-public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements HibernateDialect
+public class McKoiDialectExt extends CommonHibernateDialect implements HibernateDialect
 {
-
-	public AxionDialect()
-	{
-		super();
-		// Do not use Axion's bigint data type.
-		// I get the following exception in my test:
-		// org.axiondb.AxionException:
-		// Invalid value "3074478078827346" for column
-		// (BIGINT_TYPE_TABLE).BIGINT_COLUMN, expected numeric(20,10) :
-		// data exception: numeric value out of range
-		// Can someone please tell me why Axion expects big integers to be limited
-		// to 20 precision and 10 scale?(Integers should have scale == 0, right?)
-		// So an Axion bigint is limited to just 20 digits to the left of the
-		// decimal point.
-		// TODO: consider filing a bug report against Axion build M3.
-		// 38 is the maximum precision for Axion's numeric type.
-		registerColumnType(Types.BIGINT, "numeric($p,0)");
-		registerColumnType(Types.BINARY, "binary($l)");
-		registerColumnType(Types.BIT, "bit");
-		registerColumnType(Types.BLOB, "blob");
-		registerColumnType(Types.BOOLEAN, "bit");
-		registerColumnType(Types.CHAR, "char($l)");
-		registerColumnType(Types.CLOB, "clob");
-		registerColumnType(Types.DATE, "date");
-		registerColumnType(Types.DECIMAL, "numeric($p,$s)");
-		registerColumnType(Types.DOUBLE, "numeric($p,$s)");
-		registerColumnType(Types.FLOAT, "numeric($p,$s)");
-		registerColumnType(Types.INTEGER, "integer");
-		registerColumnType(Types.LONGVARBINARY, "longvarbinary");
-		registerColumnType(Types.LONGVARCHAR, "longvarchar");
-		registerColumnType(Types.NUMERIC, "numeric($p,$s)");
-		// Don't use "real" type. Axion sets the column size to 12 by default,
-		// yet it can handle more precision. So data being copied from the real
-		// column can potentially be larger than what the column claims to support.
-		// This will be a problem for other databases that pay attention to the
-		// column size.
-		// TODO: Perhaps re-introduce the REAL type, but use the new
-		// getPrecisionDigits to max out the precision.
-		registerColumnType(Types.REAL, "numeric($p,$s)");
-		registerColumnType(Types.SMALLINT, "smallint");
-		registerColumnType(Types.TIME, "time");
-		registerColumnType(Types.TIMESTAMP, "timestamp");
-		registerColumnType(Types.TINYINT, "smallint");
-		registerColumnType(Types.VARBINARY, "varbinary($l)");
-		registerColumnType(Types.VARCHAR, "varchar($l)");
+	private class McKoiDialectHelper extends Dialect {
+		public McKoiDialectHelper() {
+			registerColumnType(Types.BIGINT, "bigint");
+			registerColumnType(Types.BINARY, 2000000000, "binary($l)");
+			registerColumnType(Types.BINARY, "binary(2000000000)");
+			registerColumnType(Types.BIT, "bit");
+			registerColumnType(Types.BLOB, 2000000000, "blob");
+			registerColumnType(Types.BLOB, "blob(2000000000)");
+			registerColumnType(Types.BOOLEAN, "bit");
+			registerColumnType(Types.CHAR, 255, "char($l)");
+			registerColumnType(Types.CHAR, 1000000000, "varchar($l)");
+			registerColumnType(Types.CHAR, "varchar(1000000000)");
+			registerColumnType(Types.CLOB, 1000000000, "clob($l)");
+			registerColumnType(Types.CLOB, "clob(1000000000)");
+			registerColumnType(Types.DATE, "date");
+			registerColumnType(Types.DECIMAL, "decimal($p,$s)");
+			registerColumnType(Types.DOUBLE, "double($p)");
+			registerColumnType(Types.FLOAT, "float($p)");
+			registerColumnType(Types.INTEGER, "integer");
+			registerColumnType(Types.LONGVARBINARY, 2000000000, "longvarbinary($l)");
+			registerColumnType(Types.LONGVARBINARY, "longvarbinary(2000000000)");
+			registerColumnType(Types.LONGVARCHAR, 1000000000, "longvarchar($l)");
+			registerColumnType(Types.LONGVARCHAR, "longvarchar(1000000000)");
+			registerColumnType(Types.NUMERIC, "numeric($p,$s)");
+			registerColumnType(Types.REAL, "real");
+			registerColumnType(Types.SMALLINT, "smallint");
+			registerColumnType(Types.TIME, "time");
+			registerColumnType(Types.TIMESTAMP, "timestamp");
+			// Don't use tinyint for now, even though Mckoi "supports" it. It's
+			// notion of tinyint is 7-bit (not 8-bit) so it is not compatible with
+			// other DBs and leads to overflow (resulting in negative values which
+			// are a corruption of the actual value inserted/updated). This is not
+			// a great work-around. I filed a bug report on the mailing list;
+			// hopefully it will get fixed soon.
+			registerColumnType(Types.TINYINT, "smallint");
+			registerColumnType(Types.VARBINARY, 2000000000, "varbinary($l)");
+			registerColumnType(Types.VARBINARY, "varbinary(2000000000)");
+			registerColumnType(Types.VARCHAR, 1000000000, "varchar($l)");
+			registerColumnType(Types.VARCHAR, "varchar(1000000000)");			
+		}
 	}
+	
+	/** extended hibernate dialect used in this wrapper */
+	private McKoiDialectHelper _dialect = new McKoiDialectHelper();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.squirrel_sql.plugins.dbcopy.dialects.HibernateDialect#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType)
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTypeName(int, int, int, int)
+	 */
+	@Override
+	public String getTypeName(int code, int length, int precision, int scale) throws HibernateException
+	{
+		return _dialect.getTypeName(code, length, precision, scale);
+	}	
+	
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
 	 */
 	public boolean canPasteTo(IDatabaseObjectInfo info)
 	{
-		return true;
+		boolean result = true;
+		DatabaseObjectType type = info.getDatabaseObjectType();
+		if (type.getName().equalsIgnoreCase("database"))
+		{
+			result = false;
+		}
+		return result;
 	}
 
 	/*
@@ -128,7 +143,7 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 	 */
 	public int getMaxPrecision(int dataType)
 	{
-		return 38;
+		return Integer.MAX_VALUE;
 	}
 
 	/*
@@ -168,7 +183,7 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 	 */
 	public String getDisplayName()
 	{
-		return "Axion";
+		return "McKoi";
 	}
 
 	/**
@@ -187,7 +202,7 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 		{
 			return false;
 		}
-		if (databaseProductName.trim().startsWith("Axion"))
+		if (databaseProductName.trim().toLowerCase().startsWith("mckoi"))
 		{
 			// We don't yet have the need to discriminate by version.
 			return true;
@@ -203,6 +218,7 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 	 */
 	public boolean supportsDropColumn()
 	{
+		// TODO: need to verify this
 		return true;
 	}
 
@@ -219,6 +235,7 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 	 */
 	public String getColumnDropSQL(String tableName, String columnName)
 	{
+		// TODO: Need to verify this
 		return DialectUtils.getColumnDropSQL(tableName, columnName);
 	}
 
@@ -236,13 +253,18 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 	public List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints,
 		boolean isMaterializedView)
 	{
-		String cascadeClause = DialectUtils.CASCADE_CLAUSE;
-		return DialectUtils.getTableDropSQL(iTableInfo, false, cascadeConstraints, false, cascadeClause, false);
+		// TODO: Need to verify this
+		return DialectUtils.getTableDropSQL(iTableInfo,
+			false,
+			cascadeConstraints,
+			false,
+			DialectUtils.CASCADE_CLAUSE,
+			false);
 	}
 
 	/**
 	 * Returns the SQL that forms the command to add a primary key to the specified table composed of the given
-	 * column names. alter table tableName add constraint constraintName primary key (column [,column])
+	 * column names. alter table foo add constraint pk_foo primary key (pkcol)
 	 * 
 	 * @param pkName
 	 *           the name of the constraint
@@ -252,8 +274,6 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 	 */
 	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, ITableInfo ti)
 	{
-		// Axion doesn't allow column alterations of the nullable attribute.
-		// Fortunately, it doesn't require this to add a primary key.
 		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false) };
 	}
 
@@ -276,7 +296,7 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support annotating columns with a comment.
 	 */
-	public String getColumnCommentAlterSQL(TableColumnInfo info) throws UnsupportedOperationException
+	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
 		int featureId = DialectUtils.COLUMN_COMMENT_ALTER_TYPE;
 		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
@@ -315,12 +335,11 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 	 */
 	public boolean supportsRenameColumn()
 	{
-		return true;
+		return false;
 	}
 
 	/**
-	 * Returns the SQL that is used to change the column name. alter table tableName alter column oldColumnName
-	 * rename to newColumnName
+	 * Returns the SQL that is used to change the column name.
 	 * 
 	 * @param from
 	 *           the TableColumnInfo as it is
@@ -330,9 +349,9 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 	 */
 	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to)
 	{
-		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
-		String renameToClause = DialectUtils.RENAME_TO_CLAUSE;
-		return DialectUtils.getColumnNameAlterSQL(from, to, alterClause, renameToClause);
+		int featureId = DialectUtils.COLUMN_NAME_ALTER_TYPE;
+		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -355,8 +374,8 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 	 * @return the SQL to make the change
 	 * @throw UnsupportedOperationException if the database doesn't support modifying column types.
 	 */
-	public List<String> getColumnTypeAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
-		throws UnsupportedOperationException
+	public List<String> getColumnTypeAlterSQL(TableColumnInfo from, TableColumnInfo to,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
 		int featureId = DialectUtils.COLUMN_TYPE_ALTER_TYPE;
 		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
@@ -375,8 +394,7 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 	}
 
 	/**
-	 * Returns the SQL command to change the specified column's default value alter table test alter column
-	 * PKCOL2 set default 0
+	 * Returns the SQL command to change the specified column's default value
 	 * 
 	 * @param info
 	 *           the column to modify and it's default value.
@@ -385,13 +403,12 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 	public String getColumnDefaultAlterSQL(TableColumnInfo info)
 	{
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
-		String defaultClause = DialectUtils.SET_DEFAULT_CLAUSE;
+		String defaultClause = DialectUtils.SET_CLAUSE;
 		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, false, defaultClause);
 	}
 
 	/**
-	 * Returns the SQL command to drop the specified table's primary key. alter table tableName drop primary
-	 * key
+	 * Returns the SQL command to drop the specified table's primary key.
 	 * 
 	 * @param pkName
 	 *           the name of the primary key that should be dropped
@@ -442,12 +459,9 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 	 */
 	public DialectType getDialectType()
 	{
-		return DialectType.AXION;
+		return DialectType.MCKOI;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getIndexAccessMethodsTypes()
-	 */
 	public String[] getIndexAccessMethodsTypes()
 	{
 		// TODO Auto-generated method stub
@@ -462,11 +476,7 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 		// TODO Auto-generated method stub		
 		return null;
 	}
-	
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddAutoIncrementSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
-	 *      DatabaseObjectQualifier, net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
-	 */
+
 	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO Auto-generated method stub
@@ -475,23 +485,28 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddColumnSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	public String[] getAddColumnSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		boolean addDefaultClause = true;
+		boolean supportsNullQualifier = true;
+		boolean addNullClause = true;
+
+		String sql =
+			DialectUtils.getAddColumSQL(column,
+				this,
+				addDefaultClause,
+				supportsNullQualifier,
+				addNullClause,
+				qualifier,
+				prefs);
+
+		return new String[] { sql };
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddForeignKeyConstraintSQL(java.lang.String,
-	 *      java.lang.String, java.lang.String, Boolean, Boolean, Boolean, boolean, java.lang.String,
-	 *      java.util.Collection, java.lang.String, java.lang.String,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
-	 */
 	public String[] getAddForeignKeyConstraintSQL(String localTableName, String refTableName,
 		String constraintName, Boolean deferrable, Boolean initiallyDeferred, Boolean matchFull,
 		boolean autoFKIndex, String fkIndexName, Collection<String[]> localRefColumns, String onUpdateAction,
@@ -501,12 +516,6 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 		return null;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddUniqueConstraintSQL(java.lang.String,
-	 *      java.lang.String, TableColumnInfo[],
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
-	 */
 	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName, TableColumnInfo[] columns,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
@@ -514,12 +523,6 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 		return null;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAlterSequenceSQL(java.lang.String,
-	 *      java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
-	 */
 	public String[] getAlterSequenceSQL(String sequenceName, String increment, String minimum, String maximum,
 		String restart, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
@@ -528,12 +531,6 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 		return null;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getCreateIndexSQL(java.lang.String,
-	 *      java.lang.String, String, java.lang.String[], boolean, java.lang.String, java.lang.String,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
-	 */
 	public String getCreateIndexSQL(String indexName, String tableName, String accessMethod, String[] columns,
 		boolean unique, String tablespace, String constraints, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
@@ -542,12 +539,6 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 		return null;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getCreateSequenceSQL(java.lang.String,
-	 *      java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
-	 */
 	public String getCreateSequenceSQL(String sequenceName, String increment, String minimum, String maximum,
 		String start, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
@@ -556,12 +547,6 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 		return null;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getCreateTableSQL(java.lang.String,
-	 *      java.util.List, java.util.List,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier)
-	 */
 	public String getCreateTableSQL(String tableName, List<TableColumnInfo> columns,
 		List<TableColumnInfo> primaryKeys, SqlGenerationPreferences prefs, DatabaseObjectQualifier qualifier)
 	{
@@ -569,12 +554,6 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 		return null;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getCreateViewSQL(java.lang.String,
-	 *      java.lang.String, java.lang.String,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
-	 */
 	public String getCreateViewSQL(String viewName, String definition, String checkOption,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
@@ -582,12 +561,6 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 		return null;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropConstraintSQL(java.lang.String,
-	 *      java.lang.String,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
-	 */
 	public String getDropConstraintSQL(String tableName, String constraintName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
@@ -595,11 +568,6 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 		return null;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropIndexSQL(String,
-	 *      java.lang.String, boolean,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
-	 */
 	public String getDropIndexSQL(String tableName, String indexName, boolean cascade,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
@@ -607,11 +575,6 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 		return null;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropSequenceSQL(java.lang.String,
-	 *      boolean, net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
-	 */
 	public String getDropSequenceSQL(String sequenceName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
@@ -619,11 +582,6 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 		return null;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropViewSQL(java.lang.String, boolean,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
-	 */
 	public String getDropViewSQL(String viewName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
@@ -631,12 +589,6 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 		return null;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getInsertIntoSQL(java.lang.String,
-	 *      java.util.List, java.lang.String,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
-	 */
 	public String getInsertIntoSQL(String tableName, List<String> columns, String valuesPart,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
@@ -644,12 +596,6 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 		return null;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getRenameTableSQL(java.lang.String,
-	 *      java.lang.String,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
-	 */
 	public String getRenameTableSQL(String oldTableName, String newTableName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
@@ -657,12 +603,6 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 		return null;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getRenameViewSQL(java.lang.String,
-	 *      java.lang.String,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
-	 */
 	public String[] getRenameViewSQL(String oldViewName, String newViewName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
@@ -670,11 +610,6 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 		return null;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getSequenceInformationSQL(java.lang.String,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
-	 */
 	public String getSequenceInformationSQL(String sequenceName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
@@ -682,12 +617,6 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 		return null;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getUpdateSQL(java.lang.String,
-	 *      java.lang.String[], java.lang.String[], java.lang.String[], java.lang.String[], java.lang.String[],
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.DatabaseObjectQualifier,
-	 *      net.sourceforge.squirrel_sql.plugins.refactoring.hibernate.SqlGenerationPreferences)
-	 */
 	public String[] getUpdateSQL(String tableName, String[] setColumns, String[] setValues, String[] fromTables,
 		String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
@@ -696,216 +625,144 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 		return null;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsAccessMethods()
-	 */
 	public boolean supportsAccessMethods()
 	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsAddForeignKeyConstraint()
-	 */
 	public boolean supportsAddForeignKeyConstraint()
 	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsAddUniqueConstraint()
-	 */
 	public boolean supportsAddUniqueConstraint()
 	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsAlterSequence()
-	 */
 	public boolean supportsAlterSequence()
 	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsAutoIncrement()
-	 */
 	public boolean supportsAutoIncrement()
 	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCheckOptionsForViews()
-	 */
 	public boolean supportsCheckOptionsForViews()
 	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCreateIndex()
-	 */
 	public boolean supportsCreateIndex()
 	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCreateSequence()
-	 */
 	public boolean supportsCreateSequence()
 	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCreateTable()
-	 */
 	public boolean supportsCreateTable()
 	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCreateView()
-	 */
 	public boolean supportsCreateView()
 	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsDropConstraint()
-	 */
 	public boolean supportsDropConstraint()
 	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsDropIndex()
-	 */
 	public boolean supportsDropIndex()
 	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsDropSequence()
-	 */
 	public boolean supportsDropSequence()
 	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsDropView()
-	 */
 	public boolean supportsDropView()
 	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsEmptyTables()
-	 */
 	public boolean supportsEmptyTables()
 	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsIndexes()
-	 */
 	public boolean supportsIndexes()
 	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsInsertInto()
-	 */
 	public boolean supportsInsertInto()
 	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsMultipleRowInserts()
-	 */
 	public boolean supportsMultipleRowInserts()
 	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsRenameTable()
-	 */
 	public boolean supportsRenameTable()
 	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsRenameView()
-	 */
 	public boolean supportsRenameView()
 	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsSequence()
-	 */
 	public boolean supportsSequence()
 	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsSequenceInformation()
-	 */
 	public boolean supportsSequenceInformation()
 	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsTablespace()
-	 */
 	public boolean supportsTablespace()
 	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsUpdate()
-	 */
 	public boolean supportsUpdate()
 	{
 		// TODO Auto-generated method stub
@@ -927,8 +784,8 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 	public boolean supportsViewDefinition() {
 		// TODO verify this is correct
 		return false;
-	}
-		
+	}	
+	
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getViewDefinitionSQL(java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
@@ -936,7 +793,7 @@ public class AxionDialect extends org.hibernate.dialect.HSQLDialect implements H
 		SqlGenerationPreferences prefs) {
 		return null;
 	}
-
+	
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getQualifiedIdentifier(java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */

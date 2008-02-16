@@ -27,11 +27,11 @@ import org.antlr.stringtemplate.StringTemplate;
  * 
  * @author manningr
  */
-public class MySQL5Dialect extends MySQLDialect
+public class MySQL5DialectExt extends MySQLDialectExt
 {
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.MySQLDialect#getCreateViewSQL(java.lang.String,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.MySQLDialectExt#getCreateViewSQL(java.lang.String,
 	 *      java.lang.String, java.lang.String,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
@@ -54,7 +54,7 @@ public class MySQL5Dialect extends MySQLDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.MySQLDialect#getDialectType()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.MySQLDialectExt#getDialectType()
 	 */
 	@Override
 	public DialectType getDialectType()
@@ -63,7 +63,7 @@ public class MySQL5Dialect extends MySQLDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.MySQLDialect#getDropViewSQL(java.lang.String, boolean,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.MySQLDialectExt#getDropViewSQL(java.lang.String, boolean,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
@@ -75,7 +75,7 @@ public class MySQL5Dialect extends MySQLDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.MySQLDialect#getRenameViewSQL(java.lang.String,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.MySQLDialectExt#getRenameViewSQL(java.lang.String,
 	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
@@ -95,7 +95,7 @@ public class MySQL5Dialect extends MySQLDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.MySQLDialect#getViewDefinitionSQL(java.lang.String,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.MySQLDialectExt#getViewDefinitionSQL(java.lang.String,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
@@ -116,7 +116,7 @@ public class MySQL5Dialect extends MySQLDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.MySQLDialect#supportsCreateView()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.MySQLDialectExt#supportsCreateView()
 	 */
 	@Override
 	public boolean supportsCreateView()
@@ -125,7 +125,7 @@ public class MySQL5Dialect extends MySQLDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.MySQLDialect#supportsDropView()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.MySQLDialectExt#supportsDropView()
 	 */
 	@Override
 	public boolean supportsDropView()
@@ -134,7 +134,7 @@ public class MySQL5Dialect extends MySQLDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.MySQLDialect#supportsProduct(java.lang.String,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.MySQLDialectExt#supportsProduct(java.lang.String,
 	 *      java.lang.String)
 	 */
 	@Override
@@ -152,7 +152,7 @@ public class MySQL5Dialect extends MySQLDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.MySQLDialect#supportsRenameView()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.MySQLDialectExt#supportsRenameView()
 	 */
 	@Override
 	public boolean supportsRenameView()
@@ -161,7 +161,7 @@ public class MySQL5Dialect extends MySQLDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.MySQLDialect#supportsViewDefinition()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.MySQLDialectExt#supportsViewDefinition()
 	 */
 	@Override
 	public boolean supportsViewDefinition()
@@ -170,7 +170,7 @@ public class MySQL5Dialect extends MySQLDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.MySQLDialect#supportsCheckOptionsForViews()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.MySQLDialectExt#supportsCheckOptionsForViews()
 	 */
 	@Override
 	public boolean supportsCheckOptionsForViews()
@@ -179,7 +179,7 @@ public class MySQL5Dialect extends MySQLDialect
 	}
 	
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.MySQLDialect#getDisplayName()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.MySQLDialectExt#getDisplayName()
 	 */
 	@Override
 	public String getDisplayName()

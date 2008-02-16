@@ -19,12 +19,12 @@ package net.sourceforge.squirrel_sql.fw.dialects;
  */
 public class SybaseDialectTest extends DialectTestCase {
 
-    private SybaseDialect dialect = null;
+    private SybaseDialectExt dialect = null;
     
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        dialect = new SybaseDialect();
+        dialect = new SybaseDialectExt();
     }
     
     /*
