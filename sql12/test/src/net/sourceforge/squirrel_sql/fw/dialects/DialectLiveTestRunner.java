@@ -302,20 +302,25 @@ public class DialectLiveTestRunner {
    }
 
    private void dropView(ISession session, String viewName) throws Exception {
-      try {
-      	runSQL(session, "drop view "+viewName);
-      } catch (SQLException e) {
-         // Do Nothing
-      }
+   	HibernateDialect dialect = getDialect(session);
+   	if (dialect.supportsDropView()) {
+	   	try {
+	      	runSQL(session, dialect.getDropViewSQL(viewName, false, qualifier, prefs));
+	      } catch (SQLException e) {
+	         // Do Nothing
+	      }
+   	}
    }
    
    private void dropSequence(ISession session, String sequenceName) throws Exception {
    	HibernateDialect dialect = getDialect(session);
-      try {
-      	runSQL(session, dialect.getDropSequenceSQL(sequenceName, false, qualifier, prefs));
-      } catch (SQLException e) {
-      	//e.printStackTrace();
-      }
+   	if (dialect.supportsDropSequence()) {
+	      try {
+	      	runSQL(session, dialect.getDropSequenceSQL(sequenceName, false, qualifier, prefs));
+	      } catch (SQLException e) {
+	      	//e.printStackTrace();
+	      }
+   	}
    }
    
    private void dropTable(ISession session, ITableInfo ti) throws Exception {
