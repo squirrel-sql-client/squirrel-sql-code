@@ -166,11 +166,7 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
     * @return
     */
    protected String generateQualifiedName(final ISQLDatabaseMetaData md)
-   {
-   	if (this._simpleName.equals("SYSTEM_ALIASES")) {
-   		System.out.println("In system");
-   	}
-   	
+   {   	
       String catSep = null;
       String identifierQuoteString = null;
       boolean supportsSchemasInDataManipulation = false;
