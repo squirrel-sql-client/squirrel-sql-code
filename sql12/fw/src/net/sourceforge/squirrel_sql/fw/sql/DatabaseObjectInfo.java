@@ -142,7 +142,7 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
     *         (or both) are null, this simply returns the simpleName
     */
    private String getInformixQualifiedName() {
-       StringBuffer result = new StringBuffer();
+       StringBuilder result = new StringBuilder();
        if (_catalog != null && _schema != null) {
            result.append(_catalog);
            result.append(":");
@@ -238,8 +238,9 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
          buf.append(catSep);
       }
 
-      if (supportsSchemasInDataManipulation && _schema != null
-         && _schema.length() > 0)
+      boolean isHSQLDB = DialectFactory.isHSQL(md);
+      if (isHSQLDB 
+      		|| (supportsSchemasInDataManipulation && _schema != null && _schema.length() > 0))
       {
          if (identifierQuoteString != null)
          {

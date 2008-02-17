@@ -7,6 +7,9 @@ SQuirreL SQL Client Change Log
 
 Bug-Fixes:
 
+1596240: Fixed bug which occurred while displaying HSQLDB->Objects->Content, where contents are not shown 
+and exceptions are thrown because tables are not being qualified with the schema name.
+
 1769599 fix for permission problem with Windows Vista.  Now we create our temporary path file in a temporary 
 location that the user should always be able to write to.  Thanks to user aberdeen61 for contributing the 
 fix.
