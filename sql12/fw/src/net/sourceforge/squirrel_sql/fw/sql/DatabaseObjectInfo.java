@@ -155,12 +155,27 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
        return result.toString();
    }
    
+   /**
+    * Generates the qualified name (for example, "SCHEMA.SIMPLENAME").  This is highly database specific and
+    * should probably be moved into the dialects.
+    *   
+    * @TODO Break out the dialect-specific logic into the dialects.  Allow for the default parts of the 
+    * algorithm below to be used when a dialect is unavailable.  
+    *   
+    * @param md
+    * @return
+    */
    protected String generateQualifiedName(final ISQLDatabaseMetaData md)
    {
+   	if (this._simpleName.equals("SYSTEM_ALIASES")) {
+   		System.out.println("In system");
+   	}
+   	
       String catSep = null;
       String identifierQuoteString = null;
       boolean supportsSchemasInDataManipulation = false;
       boolean supportsCatalogsInDataManipulation = false;
+      boolean supportsSchemasInTableDefinitions = false;
 
       // check for Informix - it has very "special" qualified names
       if (DialectFactory.isInformix(md)) {
@@ -185,11 +200,16 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
       }
       
       try
+		{
+			supportsSchemasInTableDefinitions = md.supportsSchemasInTableDefinitions();
+		} catch (SQLException ignore)
+		{
+			// Ignore.
+		}
+      
+      try
       {
-//         if (supportsCatalogsInDataManipulation)
-//         {
-            catSep = md.getCatalogSeparator();
-//         }
+      	catSep = md.getCatalogSeparator();
       }
       catch (SQLException ignore)
       {
@@ -238,9 +258,8 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
          buf.append(catSep);
       }
 
-      if (supportsSchemasInDataManipulation && _schema != null
-         && _schema.length() > 0)
-      {
+      if (shouldQualifyWithSchema(supportsSchemasInDataManipulation, supportsSchemasInTableDefinitions, md))
+		{
          if (identifierQuoteString != null)
          {
             buf.append(identifierQuoteString);
@@ -267,6 +286,30 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
       return buf.toString();
    }
 
+   private boolean shouldQualifyWithSchema(final boolean supportsSchemasInDataManipulation, final boolean supportsSchemasInTableDefinitions,
+   	final ISQLDatabaseMetaData md) {
+   	
+   	if (_schema == null || _schema.length() == 0) {
+   		return false;
+   	}
+   	if (supportsSchemasInDataManipulation) {
+   		return true;
+   	}
+   	if (this._dboType == DatabaseObjectType.TABLE) {
+	   	if (supportsSchemasInTableDefinitions) {
+	   		return true;
+	   	}
+   	}
+   	// Always qualify table name for HSQL - Bug 1596240 HSQLDB->Objects->Content.  Cannot detect if table
+   	// like above, since objects in HSQLDB's INFORMATION_SCHEMA under "SYSTEM TABLE" node have a database 
+   	// object type of "OTHER", instead of "TABLE".
+   	//
+   	if (DialectFactory.isHSQL(md)) {
+   		return true;
+   	}
+   	return false;
+   }
+   
    /**
     * Checks for the presence of Sybase 12.x and if found, sets the identifier
     * quote string to empty string.  See bug:
