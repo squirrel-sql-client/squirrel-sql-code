@@ -1087,4 +1087,14 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsSubSecondTimestamps()
+	 */
+	@Override
+	public boolean supportsSubSecondTimestamps()
+	{
+		return false;
+	}
+
+	
 }

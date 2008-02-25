@@ -28,49 +28,69 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
+import org.hibernate.HibernateException;
+import org.hibernate.dialect.Dialect;
+
 /**
- * An extension to the standard Hibernate dialect TODO: Progress specification says that the sum of all column
- * lengths of a table row may not exceed 31960. Need to add an interface method to the HibernateDialect
+ * A dialect delegate for the Progress database.
+ *  
+ * TODO: Progress specification says that the sum of all column lengths of a table row may not exceed 31960. 
+ * Need to add an interface method to the HibernateDialect
  * interface that takes an array of lengths and and checks the sum of columns for a row. This maximum number
  * may be different across databases so this check method needs to be implemented by each dialect.
+ * 
+ * @author manningr
  */
-public class ProgressDialect extends org.hibernate.dialect.Dialect implements HibernateDialect
+public class ProgressDialect extends CommonHibernateDialect implements HibernateDialect
 {
 
-	public ProgressDialect()
-	{
-		super();
-		registerColumnType(Types.BIGINT, "integer");
-		registerColumnType(Types.BINARY, 2000, "binary($l)");
-		registerColumnType(Types.BINARY, 31982, "varbinary($l)");
-		registerColumnType(Types.BINARY, "lvarbinary($l)");
-		registerColumnType(Types.BIT, "bit");
-		registerColumnType(Types.BLOB, "lvarbinary($l)");
-		registerColumnType(Types.BOOLEAN, "bit");
-		registerColumnType(Types.CHAR, 2000, "char($l)");
-		registerColumnType(Types.CHAR, "char(2000)");
-		// registerColumnType(Types.CLOB, 31982, "varchar($l)");
-		registerColumnType(Types.CLOB, "varchar($l)");
-		registerColumnType(Types.DATE, "date");
-		registerColumnType(Types.DECIMAL, "numeric($p,2)");
-		registerColumnType(Types.DOUBLE, "double precision");
-		registerColumnType(Types.FLOAT, "float($p)");
-		registerColumnType(Types.INTEGER, "integer");
-		registerColumnType(Types.LONGVARBINARY, 999999999, "lvarbinary($l)");
-		registerColumnType(Types.LONGVARBINARY, "lvarbinary(999999999)");
-		// registerColumnType(Types.LONGVARCHAR, 31982, "varchar($l)");
-		registerColumnType(Types.LONGVARCHAR, "varchar($l)");
-		registerColumnType(Types.NUMERIC, "numeric($p,2)");
-		registerColumnType(Types.REAL, "real");
-		registerColumnType(Types.SMALLINT, "smallint");
-		registerColumnType(Types.TIME, "date");
-		registerColumnType(Types.TIMESTAMP, "timestamp");
-		registerColumnType(Types.TINYINT, "tinyint");
-		registerColumnType(Types.VARBINARY, 31982, "varbinary($l)");
-		registerColumnType(Types.VARBINARY, "varbinary(31982)");
-		registerColumnType(Types.VARCHAR, 31982, "varchar($l)");
-		registerColumnType(Types.VARCHAR, "varchar(31982)");
+	private class ProgressDialectHelper extends Dialect {
+		public ProgressDialectHelper() {
+			super();
+			registerColumnType(Types.BIGINT, "integer");
+			registerColumnType(Types.BINARY, 2000, "binary($l)");
+			registerColumnType(Types.BINARY, 31982, "varbinary($l)");
+			registerColumnType(Types.BINARY, "lvarbinary($l)");
+			registerColumnType(Types.BIT, "bit");
+			registerColumnType(Types.BLOB, "lvarbinary($l)");
+			registerColumnType(Types.BOOLEAN, "bit");
+			registerColumnType(Types.CHAR, 2000, "char($l)");
+			registerColumnType(Types.CHAR, "char(2000)");
+			// registerColumnType(Types.CLOB, 31982, "varchar($l)");
+			registerColumnType(Types.CLOB, "varchar($l)");
+			registerColumnType(Types.DATE, "date");
+			registerColumnType(Types.DECIMAL, "numeric($p,2)");
+			registerColumnType(Types.DOUBLE, "double precision");
+			registerColumnType(Types.FLOAT, "float($p)");
+			registerColumnType(Types.INTEGER, "integer");
+			registerColumnType(Types.LONGVARBINARY, 999999999, "lvarbinary($l)");
+			registerColumnType(Types.LONGVARBINARY, "lvarbinary(999999999)");
+			// registerColumnType(Types.LONGVARCHAR, 31982, "varchar($l)");
+			registerColumnType(Types.LONGVARCHAR, "varchar($l)");
+			registerColumnType(Types.NUMERIC, "numeric($p,2)");
+			registerColumnType(Types.REAL, "real");
+			registerColumnType(Types.SMALLINT, "smallint");
+			registerColumnType(Types.TIME, "date");
+			registerColumnType(Types.TIMESTAMP, "timestamp");
+			registerColumnType(Types.TINYINT, "tinyint");
+			registerColumnType(Types.VARBINARY, 31982, "varbinary($l)");
+			registerColumnType(Types.VARBINARY, "varbinary(31982)");
+			registerColumnType(Types.VARCHAR, 31982, "varchar($l)");
+			registerColumnType(Types.VARCHAR, "varchar(31982)");			
+		}
 	}
+	
+	/** extended hibernate dialect used in this wrapper */
+	private ProgressDialectHelper _dialect = new ProgressDialectHelper();
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTypeName(int, int, int, int)
+	 */
+	@Override
+	public String getTypeName(int code, int length, int precision, int scale) throws HibernateException
+	{
+		return _dialect.getTypeName(code, length, precision, scale);
+	}	
 
 	/*
 	 * (non-Javadoc)
