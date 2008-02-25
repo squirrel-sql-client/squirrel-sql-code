@@ -40,8 +40,8 @@ Refactoring Plugin:
     - Merge Column
     - Merge Table
 
-Refactoring, scripting for Intersystems Cache DB
-Made Refactoring and scripting functions available for the Intersystems Cache DB by activating its Hibernate dialect.
+Refactoring, scripting for Intersystems Cache DB:
+  Made Refactoring and scripting functions available for the Intersystems Cache DB by activating its Hibernate dialect.
 
 
 Bug-Fixes:
