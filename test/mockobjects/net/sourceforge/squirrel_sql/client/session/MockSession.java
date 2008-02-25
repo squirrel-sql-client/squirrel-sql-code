@@ -126,7 +126,7 @@ public class MockSession implements ISession {
         // unimplemented methods in the MockObjects implementation that are 
         // required by this.
         if (!initConnection) {
-            sessionPanel = new SessionPanel(this);
+            //sessionPanel = new SessionPanel(this);
         }
     }
     
