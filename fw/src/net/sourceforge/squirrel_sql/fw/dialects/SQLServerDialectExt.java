@@ -551,4 +551,12 @@ public class SQLServerDialectExt extends SybaseDialectExt implements HibernateDi
 		throw new UnsupportedOperationException(msg);
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsSubSecondTimestamps()
+	 */
+	@Override
+	public boolean supportsSubSecondTimestamps() {
+		return false;
+	}
+	
 }

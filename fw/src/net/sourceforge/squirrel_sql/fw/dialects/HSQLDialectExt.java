@@ -18,25 +18,24 @@
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
-import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
-import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
+import org.antlr.stringtemplate.StringTemplate;
 import org.hibernate.HibernateException;
 
 /**
  * A dialect delegate for the HSQL database.
  */
-
 public class HSQLDialectExt extends CommonHibernateDialect implements HibernateDialect
 {
 
@@ -266,15 +265,6 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsAlterColumnType()
-	 */
-	@Override
-	public boolean supportsAlterColumnType()
-	{
-		return true;
-	}
-
-	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnTypeAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
 	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
@@ -317,28 +307,6 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	public String getDropPrimaryKeySQL(String pkName, String tableName)
 	{
 		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false);
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropForeignKeySQL(java.lang.String,
-	 *      java.lang.String)
-	 */
-	@Override
-	public String getDropForeignKeySQL(String fkName, String tableName)
-	{
-		return DialectUtils.getDropForeignKeySQL(fkName, tableName);
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getCreateTableSQL(java.util.List,
-	 *      net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData,
-	 *      net.sourceforge.squirrel_sql.fw.dialects.CreateScriptPreferences, boolean)
-	 */
-	@Override
-	public List<String> getCreateTableSQL(List<ITableInfo> tables, ISQLDatabaseMetaData md,
-		CreateScriptPreferences prefs, boolean isJdbcOdbc) throws SQLException
-	{
-		return DialectUtils.getCreateTableSQL(tables, md, this, prefs, isJdbcOdbc);
 	}
 
 	/**
@@ -444,8 +412,43 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 		boolean autoFKIndex, String fkIndexName, Collection<String[]> localRefColumns, String onUpdateAction,
 		String onDeleteAction, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		// ALTER TABLE <tablename>
+		// ADD [CONSTRAINT <constraintname>] FOREIGN KEY (<column list>)
+		// REFERENCES <exptablename> (<column list>)
+		// [ON {DELETE | UPDATE} {CASCADE | SET DEFAULT | SET NULL}];
+
+		// "ALTER TABLE $childTableName$ " +
+		// "ADD $constraint$ $constraintName$ FOREIGN KEY ( $childColumn; separator=\",\"$ ) " +
+		// "REFERENCES $parentTableName$ ( $parentColumn; separator=\",\"$ )";
+		
+		StringTemplate fkST = new StringTemplate(ST_ADD_FOREIGN_KEY_CONSTRAINT_STYLE_ONE);
+		HashMap<String, String> fkValuesMap = DialectUtils.getValuesMap(ST_CHILD_TABLE_KEY, localTableName);
+		fkValuesMap.put(ST_CONSTRAINT_KEY, "CONSTRAINT");
+		fkValuesMap.put(ST_CONSTRAINT_NAME_KEY, constraintName);
+		fkValuesMap.put(ST_PARENT_TABLE_KEY, refTableName);
+
+		StringTemplate childIndexST = null;
+		HashMap<String, String> ckIndexValuesMap = null;
+
+		if (autoFKIndex)
+		{
+			// "CREATE $unique$ $storageOption$ INDEX $indexName$ " +
+			// "ON $tableName$ ( $columnName; separator=\",\"$ )";
+
+			childIndexST = new StringTemplate(ST_CREATE_INDEX_STYLE_TWO);
+			ckIndexValuesMap = new HashMap<String, String>();
+			ckIndexValuesMap.put(ST_INDEX_NAME_KEY, "fk_child_idx");
+		}
+
+		return DialectUtils.getAddForeignKeyConstraintSQL(fkST,
+			fkValuesMap,
+			childIndexST,
+			ckIndexValuesMap,
+			localRefColumns,
+			qualifier,
+			prefs,
+			this);
+		
 	}
 
 	/**
@@ -458,8 +461,21 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName,
 		TableColumnInfo[] columns, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		// ALTER TABLE <tablename> ADD [CONSTRAINT <constraintname>] UNIQUE (<column list>);
+
+		// "ALTER TABLE $tableName$ " +
+		// "ADD CONSTRAINT $constraintName$ UNIQUE ($columnName; separator=\",\"$)";
+		StringTemplate st = new StringTemplate(ST_ADD_UNIQUE_CONSTRAINT_STYLE_TWO);
+		
+		HashMap<String, String> valuesMap =
+			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, tableName, ST_CONSTRAINT_NAME_KEY, constraintName);
+
+		return new String[] { DialectUtils.getAddUniqueConstraintSQL(st,
+			valuesMap,
+			columns,
+			qualifier,
+			prefs,
+			this) };
 	}
 
 	/**
@@ -473,8 +489,18 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 		String restart, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		// ALTER SEQUENCE <sequencename> RESTART WITH <value>;
+		
+		// "ALTER SEQUENCE $sequenceName$ " +
+		// "$restartWith$ $startValue$ " +
+		// "$incrementBy$ $incrementValue$ ";
+		StringTemplate st = new StringTemplate(ST_ALTER_SEQUENCE_STYLE_ONE);
+		
+		st.setAttribute(ST_SEQUENCE_NAME_KEY, sequenceName);
+		st.setAttribute(ST_RESTART_WITH_KEY, "RESTART WITH");
+		st.setAttribute(ST_START_VALUE_KEY, restart);
+		
+		return new String[] { st.toString() };
 	}
 
 	/**
@@ -503,8 +529,23 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 		String start, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		// CREATE SEQUENCE <sequencename> [AS {INTEGER | BIGINT}]
+		// [START WITH <startvalue>] [INCREMENT BY <incrementvalue>];
+
+		// "CREATE SEQUENCE $sequenceName$ $startWith$ " +
+		// "$increment$ $minimum$ $maximum$ $cache$ $cycle$";
+		
+		StringTemplate st = new StringTemplate(ST_CREATE_SEQUENCE_STYLE_TWO);
+		
+		HashMap<String, String> valuesMap = DialectUtils.getValuesMap(ST_SEQUENCE_NAME_KEY, sequenceName);
+		
+		OptionalSqlClause startWithClause = new OptionalSqlClause("START WITH", start);
+		OptionalSqlClause incrementByClause = new OptionalSqlClause("INCREMENT BY", increment);
+		
+		valuesMap.put(ST_START_WITH_KEY, startWithClause.toString());
+		valuesMap.put(ST_INCREMENT_KEY, incrementByClause.toString());
+		
+		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**
@@ -512,13 +553,13 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	 *      java.util.List, java.util.List, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier)
 	 */
-	@Override
-	public String getCreateTableSQL(String tableName, List<TableColumnInfo> columns,
-		List<TableColumnInfo> primaryKeys, SqlGenerationPreferences prefs, DatabaseObjectQualifier qualifier)
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	@Override
+//	public String getCreateTableSQL(String tableName, List<TableColumnInfo> columns,
+//		List<TableColumnInfo> primaryKeys, SqlGenerationPreferences prefs, DatabaseObjectQualifier qualifier)
+//	{
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getCreateViewSQL(java.lang.String,
@@ -530,8 +571,20 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	public String getCreateViewSQL(String viewName, String definition, String checkOption,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+//		CREATE VIEW <viewname>[(<viewcolumn>,..) AS SELECT ... FROM ... [WHERE Expression]
+//      [ORDER BY orderExpression [, ...]]
+//      [LIMIT <limit> [OFFSET <offset>]];
+		
+		
+//		"CREATE VIEW $viewName$ " +
+//		"AS $selectStatement$ $with$ $checkOptionType$ $checkOption$";
+      StringTemplate st = new StringTemplate(ST_CREATE_VIEW_STYLE_ONE);
+
+      HashMap<String, String> valuesMap = new HashMap<String, String>();
+      valuesMap.put("viewName", viewName);
+      valuesMap.put("selectStatement", definition);
+      
+      return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**
@@ -569,8 +622,12 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	public String getDropSequenceSQL(String sequenceName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+      // "DROP SEQUENCE $sequenceName$ $cascade$";
+      StringTemplate st = new StringTemplate(ST_DROP_SEQUENCE_STYLE_ONE);
+
+      HashMap<String, String> valuesMap = DialectUtils.getValuesMap(ST_SEQUENCE_NAME_KEY, sequenceName);
+
+      return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**
@@ -582,21 +639,12 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	public String getDropViewSQL(String viewName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
-	}
+      // "DROP VIEW $viewName$";
+      StringTemplate st = new StringTemplate(ST_DROP_VIEW_STYLE_ONE);
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getInsertIntoSQL(java.lang.String,
-	 *      java.util.List, java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
-	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
-	 */
-	@Override
-	public String getInsertIntoSQL(String tableName, List<String> columns, String valuesPart,
-		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
-	{
-		// TODO Auto-generated method stub
-		return null;
+      HashMap<String, String> valuesMap = DialectUtils.getValuesMap(ST_VIEW_NAME_KEY, viewName);
+
+      return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**
@@ -608,8 +656,9 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	public String getRenameTableSQL(String oldTableName, String newTableName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final int featureId = DialectUtils.RENAME_TABLE_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -634,8 +683,29 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	public String getSequenceInformationSQL(String sequenceName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+//		String last_value = rs.getString(1); // last_value
+//		String max_value = rs.getString(2); // max_value
+//		String min_value = rs.getString(3); // min_value
+//		String cache_value = rs.getString(4); // cache_value
+//		String increment_by = rs.getString(5); // increment_by
+//		int cycleInt = rs.getInt(6); // is_cycled
+		
+		String templateStr = 
+			"select start_with as last_value, MAXIMUM_VALUE, MINIMUM_VALUE, 0 as CACHE_VALUE, INCREMENT, " +
+		"case INCREMENT " +
+		"when 'NO' then 0 " +
+		"else 1 " +
+		"end as INCREMENT_BY " +
+		"from INFORMATION_SCHEMA.SYSTEM_SEQUENCES " +
+		"where SEQUENCE_SCHEMA = '$sequenceSchema$' " +
+		"and SEQUENCE_NAME = '$sequenceName$' ";
+		
+		StringTemplate st = new StringTemplate(templateStr);
+		
+		st.setAttribute(ST_SEQUENCE_NAME_KEY, sequenceName);
+		st.setAttribute(ST_SCHEMA_NAME_KEY, qualifier.getSchema());
+		
+		return st.toString();
 	}
 
 	/**
@@ -649,8 +719,30 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 		String[] fromTables, String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		String templateStr = "";
+
+		if (fromTables != null)
+		{
+			templateStr = ST_UPDATE_CORRELATED_QUERY_STYLE_ONE;
+		} else
+		{
+			templateStr = ST_UPDATE_STYLE_ONE;
+		}
+
+		StringTemplate st = new StringTemplate(templateStr);
+
+		return DialectUtils.getUpdateSQL(st,
+			tableName,
+			setColumns,
+			setValues,
+			fromTables,
+			whereColumns,
+			whereValues,
+			qualifier,
+			prefs,
+			this);
+
+		
 	}
 
 	/**
@@ -669,8 +761,7 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	@Override
 	public boolean supportsAddForeignKeyConstraint()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -679,8 +770,7 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	@Override
 	public boolean supportsAddUniqueConstraint()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -689,8 +779,7 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	@Override
 	public boolean supportsAlterSequence()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -729,18 +818,7 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	@Override
 	public boolean supportsCreateSequence()
 	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsCreateTable()
-	 */
-	@Override
-	public boolean supportsCreateTable()
-	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -749,8 +827,7 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	@Override
 	public boolean supportsCreateView()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -779,8 +856,7 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	@Override
 	public boolean supportsDropSequence()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -789,8 +865,7 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	@Override
 	public boolean supportsDropView()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -799,7 +874,6 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	@Override
 	public boolean supportsEmptyTables()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -807,15 +881,6 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsIndexes()
 	 */
 	public boolean supportsIndexes()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsInsertInto()
-	 */
-	public boolean supportsInsertInto()
 	{
 		// TODO Auto-generated method stub
 		return false;
@@ -853,8 +918,7 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	 */
 	public boolean supportsSequence()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -862,8 +926,7 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	 */
 	public boolean supportsSequenceInformation()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -880,8 +943,7 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	 */
 	public boolean supportsUpdate()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -898,8 +960,7 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	 */
 	public boolean supportsViewDefinition()
 	{
-		// TODO verify this is correct
-		return false;
+		return true;
 	}
 
 	/**
@@ -910,7 +971,17 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		return null;
+		String templateStr =
+			"SELECT VIEW_DEFINITION " +
+			"FROM INFORMATION_SCHEMA.SYSTEM_VIEWS " +
+			"WHERE TABLE_NAME = '$viewName$' " + 
+			"and TABLE_SCHEMA = '$schemaName$' ";
+		
+		StringTemplate st = new StringTemplate(templateStr);
+		st.setAttribute(ST_VIEW_NAME_KEY, viewName);
+		st.setAttribute(ST_SCHEMA_NAME_KEY, qualifier.getSchema());
+		
+		return st.toString();
 	}
 
 	/**
@@ -929,8 +1000,23 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	 */
 	public boolean supportsCorrelatedSubQuery()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getSequencePropertyMutability()
+	 */
+	@Override
+	public SequencePropertyMutability getSequencePropertyMutability()
+	{
+		SequencePropertyMutability result = new SequencePropertyMutability();
+		result.setCache(false);
+		result.setCycle(false);
+		result.setMaxValue(false);
+		result.setMinValue(false);
+		result.setRestart(true);
+		result.setStartWith(true);
+		return result;
 	}
 
 }

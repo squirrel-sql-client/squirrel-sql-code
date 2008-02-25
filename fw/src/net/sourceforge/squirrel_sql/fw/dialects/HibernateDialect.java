@@ -1006,4 +1006,25 @@ public interface HibernateDialect extends StringTemplateConstants
 	 * @return true if support for correlated sub-queries and false otherwise.
 	 */
 	public boolean supportsCorrelatedSubQuery();
+
+	/**
+	 * Gets the sequence property mutability, which describes which properties of a sequence can be changed, 
+	 * and which cannot.
+	 * 
+	 * @return the SequencePropertyMutability
+	 */
+	SequencePropertyMutability getSequencePropertyMutability();
+	
+	
+	/**
+	 * Returns a boolean indicating whether or not this dialect supports timestamps with fractional second
+	 * precision. For dialects that do, Timestamp.getNanos returns the sub-second fractional value.
+	 * 
+	 * @return true if support for sub-second precision, or false if timestamps are granular only to the
+	 *         second.
+	 */
+	boolean supportsSubSecondTimestamps();
+	
+	
+	
 }

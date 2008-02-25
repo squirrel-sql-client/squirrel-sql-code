@@ -266,8 +266,7 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	public List<String> getCreateTableSQL(List<ITableInfo> tables, ISQLDatabaseMetaData md,
 		CreateScriptPreferences prefs, boolean isJdbcOdbc) throws SQLException
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return DialectUtils.getCreateTableSQL(tables, md, this, prefs, isJdbcOdbc);
 	}
 
 	/**
@@ -278,8 +277,7 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	public String getCreateTableSQL(String tableName, List<TableColumnInfo> columns,
 		List<TableColumnInfo> primaryKeys, SqlGenerationPreferences prefs, DatabaseObjectQualifier qualifier)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return DialectUtils.getCreateTableSQL(tableName, columns, primaryKeys, prefs, qualifier, this);
 	}
 
 	/**
@@ -331,8 +329,7 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 */
 	public String getDropForeignKeySQL(String fkName, String tableName)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return DialectUtils.getDropForeignKeySQL(fkName, tableName);
 	}
 
 	/**
@@ -626,8 +623,7 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 */
 	public boolean supportsAlterColumnType()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -698,8 +694,7 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 */
 	public boolean supportsCreateTable()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -882,4 +877,17 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 		return '"';
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getSequencePropertyMutability()
+	 */
+	public SequencePropertyMutability getSequencePropertyMutability() {
+		return new SequencePropertyMutability();
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsSubSecondTimestamps()
+	 */
+	public boolean supportsSubSecondTimestamps() {
+		return true;
+	}
 }

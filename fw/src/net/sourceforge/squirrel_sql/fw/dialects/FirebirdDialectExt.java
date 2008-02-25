@@ -1071,4 +1071,13 @@ public class FirebirdDialectExt extends CommonHibernateDialect implements Hibern
 		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsSubSecondTimestamps()
+	 */
+	@Override
+	public boolean supportsSubSecondTimestamps()
+	{
+		return false;
+	}
+
 }

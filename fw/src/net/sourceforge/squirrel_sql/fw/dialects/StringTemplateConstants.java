@@ -70,7 +70,8 @@ public interface StringTemplateConstants
 		"INCREMENT BY $incrementValue$ $cache$ $cacheValue$";	
 
 	String ST_CREATE_SEQUENCE_STYLE_TWO = 
-		"CREATE SEQUENCE $sequenceName$ $startWith$ $increment$ $minimum$ $maximum$ $cache$ $cycle$";
+		"CREATE SEQUENCE $sequenceName$ $startWith$ " +
+		"$increment$ $minimum$ $maximum$ $cache$ $cycle$";
 	
 	String ST_CREATE_VIEW_STYLE_ONE =
 		"CREATE VIEW $viewName$ " +

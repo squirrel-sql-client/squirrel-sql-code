@@ -65,7 +65,7 @@ public class InformixDialectExt extends CommonHibernateDialect implements Hibern
 			registerColumnType(Types.REAL, "real");
 			registerColumnType(Types.SMALLINT, "smallint");
 			registerColumnType(Types.TIME, "datetime hour to second");
-			registerColumnType(Types.TIMESTAMP, "datetime year to fraction");
+			registerColumnType(Types.TIMESTAMP, "datetime year to fraction(5)");
 			registerColumnType(Types.TINYINT, "smallint");
 			registerColumnType(Types.VARBINARY, "byte");
 			registerColumnType(Types.VARCHAR, 255, "varchar($l)");
