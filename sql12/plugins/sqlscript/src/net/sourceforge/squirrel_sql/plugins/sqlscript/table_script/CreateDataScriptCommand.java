@@ -23,6 +23,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Calendar;
 
@@ -35,14 +36,19 @@ import javax.swing.event.InternalFrameListener;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
+import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
+import net.sourceforge.squirrel_sql.fw.dialects.UnknownDialectException;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
+import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.ICommand;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
+import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.FrameWorkAcessor;
 import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
 
@@ -51,7 +57,13 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(CreateDataScriptCommand.class);
 
+   /** Logger for this class. */
+   private static final ILogger s_log = 
+       LoggerController.createLogger(CreateDataScriptCommand.class);
 
+   /** flag that gets set when the first timestamp column is encountered */
+   private Boolean dialectSupportsSubSecondTimestamps = null; 
+   
 	protected JInternalFrame _statusFrame;
    protected boolean _bStop = false;
 
@@ -298,14 +310,22 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
                   }
                   else if (Types.TIMESTAMP == colInfo[i].sqlType)
                   {
-                     String esc = "{ts '" + prefixNulls(calendar.get(Calendar.YEAR), 4) + "-" +
-                        prefixNulls(calendar.get(Calendar.MONTH) + 1, 2) + "-" +
-                        prefixNulls(calendar.get(Calendar.DAY_OF_MONTH), 2) + " " +
-                        prefixNulls(calendar.get(Calendar.HOUR_OF_DAY), 2) + ":" +
-                        prefixNulls(calendar.get(Calendar.MINUTE), 2) + ":" +
-                        prefixNulls(calendar.get(Calendar.SECOND), 2) + "." +
-                        prefixNulls(calendar.get(Calendar.MILLISECOND), 3) + "'}";
-                     esc = fromResultSet ? esc : esc + getNullableComment(metaData, i+1);
+                  	Timestamp ts = (Timestamp)timestamp;
+                  	
+                     StringBuilder esc = new StringBuilder("{ts '");
+                     esc.append(prefixNulls(calendar.get(Calendar.YEAR), 4)).append("-");
+                     esc.append(prefixNulls(calendar.get(Calendar.MONTH) + 1, 2)).append("-");
+                     esc.append(prefixNulls(calendar.get(Calendar.DAY_OF_MONTH), 2)).append(" ");
+                     esc.append(prefixNulls(calendar.get(Calendar.HOUR_OF_DAY), 2)).append(":");
+                     esc.append(prefixNulls(calendar.get(Calendar.MINUTE), 2)).append(":");
+                     esc.append(prefixNulls(calendar.get(Calendar.SECOND), 2)).append(".");
+                     esc.append(prefixNulls(calendar.get(Calendar.MILLISECOND), 3));
+                     esc.append(getNanos(ts));
+                     esc.append("'}");
+
+                     if (!fromResultSet) {
+                     	esc.append(getNullableComment(metaData, i+1));
+                     }
                      sbValues.append(esc);
                   }
 
@@ -439,6 +459,53 @@ public class CreateDataScriptCommand implements ICommand, InternalFrameListener
       srcResult.close();
    }
 
+   /**
+    * Returns the sub-second precision value from the specified timestamp if supported by the session's 
+    * dialect.
+    * 
+    * @param ts the Timestamp to get the nanosecond value from
+    * @return a string representing the nanosecond value.
+    */
+   private String getNanos(Timestamp ts) throws SQLException {
+   	boolean dialectSupportsSubSecondTimestamps = getTimestampFlag();
+   	if (!dialectSupportsSubSecondTimestamps) {
+   		return "";
+   	}
+   	String nanos = ""+(ts.getNanos()/1000);
+   	if (nanos.length() > 3) {
+   		nanos = nanos.substring(3);
+   	} else {
+   		nanos = "";
+   	}   	
+   	return nanos;
+   }
+   
+   /**
+    * If necessary inits the timestamp flag and returns the value indicating whether or not this session
+    * supports sub-second timestamps.
+    * 
+    * @return true if supported; false otherwise.
+    * @throws SQLException
+    */
+   private boolean getTimestampFlag() throws SQLException {
+   	if (dialectSupportsSubSecondTimestamps == null) {
+   		ISQLDatabaseMetaData md = _session.getMetaData();
+      	try {
+      		HibernateDialect dialect = DialectFactory.getDialect(md);
+      		dialectSupportsSubSecondTimestamps = dialect.supportsSubSecondTimestamps();
+      	} catch (UnknownDialectException e) {
+      		/* unknown so, assume that they are */
+      		dialectSupportsSubSecondTimestamps = true;
+      		if (s_log.isDebugEnabled()) {
+      			s_log.debug("getTimestampFlag: database "+md.getDatabaseProductName()+" version "+
+      				md.getDatabaseProductVersion()+" does not have a supported dialect.  Please submit a " +
+      						"feature request to add a dialect for SQuirreL to better support this database.");
+      		}
+      	}   		
+   	}
+   	return dialectSupportsSubSecondTimestamps;
+   }
+   
    private String getNullableComment(ResultSetMetaData metaData, int colIndex) throws SQLException
    {
       if(ResultSetMetaData.columnNoNulls == metaData.isNullable(colIndex))

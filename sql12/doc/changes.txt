@@ -43,7 +43,8 @@ Refactoring Plugin:
 Bug-Fixes:
 
 
-
+1876352: Incorrect DB2 TIMESTAMP in create data script (loss of precision - nanosecond component - also 
+affected other databases.
 
 1861402 (Informix catalog switching doesn't work correctly) 
  - Better catalog switching behavior for databases that support catalogs.  Now if a connection is made 

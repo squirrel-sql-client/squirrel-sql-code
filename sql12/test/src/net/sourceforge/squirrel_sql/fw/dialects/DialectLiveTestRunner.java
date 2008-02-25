@@ -26,6 +26,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,6 +52,8 @@ import net.sourceforge.squirrel_sql.plugins.informix.exception.InformixException
 import net.sourceforge.squirrel_sql.plugins.refactoring.commands.MergeTableCommand;
 import net.sourceforge.squirrel_sql.plugins.refactoring.gui.IMergeTableDialog;
 import net.sourceforge.squirrel_sql.plugins.refactoring.gui.IMergeTableDialogFactory;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.SQLScriptPlugin;
+import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptCommand;
 
 /**
  * The purpose of this class is to hookup to the database(s) specified in
@@ -345,10 +348,10 @@ public class DialectLiveTestRunner {
       HibernateDialect dialect = getDialect(session);
       
       // views will depend on tables, so drop them first
-      dropView(session, testViewName);
-      dropView(session, testView2Name);
-      dropView(session, testNewViewName);
-      dropView(session, testViewToBeDropped);
+      dropView(session, fixTableName(session, testViewName));
+      dropView(session, fixTableName(session, testView2Name));
+      dropView(session, fixTableName(session, testNewViewName));
+      dropView(session, fixTableName(session, testViewToBeDropped));
       
       // Tables might have triggers that depend on sequences, so drop tables next.
       dropTable(session, fixTableName(session, "test"));
@@ -565,6 +568,7 @@ public class DialectLiveTestRunner {
          testAddColumnSQL(session);
          testUpdateSQL(session);
          testMergeTable(session);
+         testDataScript(session);
          System.out.println("Completed tests for "+dialect.getDisplayName());
       }
    }
@@ -1166,23 +1170,24 @@ public class DialectLiveTestRunner {
    	String cache = null;
    	boolean cycle = true;
    	if (dialect.supportsAlterSequence()) {
-   		
-   		String restart = "5";
-   		
-   		String[] sql = 
-   			dialect.getAlterSequenceSQL(testSequenceName, "1", "1", "1000", restart, cache, cycle, qualifier, prefs);
-   		runSQL(session, sql);
-   		
-   		cache = "10";
-   		cycle = false;
-   		restart = null;
-   		sql = 
-   			dialect.getAlterSequenceSQL(testSequenceName, "1", "1", "1000", restart, cache, cycle, qualifier, prefs);
-   		runSQL(session, sql);
-   		
+   		SequencePropertyMutability mutability = dialect.getSequencePropertyMutability();
+   		if (mutability.isRestart()) {
+	   		String restart = "5";
+	   		String[] sql = 
+	   			dialect.getAlterSequenceSQL(testSequenceName, "1", "1", "1000", restart, cache, cycle, qualifier, prefs);
+	   		runSQL(session, sql);
+   		}
+   		if (mutability.isCache() && mutability.isCycle()) {
+	   		cache = "10";
+	   		cycle = false;
+	   		String restart = null;
+	   		String[] sql = 
+	   			dialect.getAlterSequenceSQL(testSequenceName, "1", "1", "1000", restart, cache, cycle, qualifier, prefs);
+	   		runSQL(session, sql);
+   		}
    	} else {
    		try {
-   			dialect.getCreateSequenceSQL(testSequenceName, "1", "1", "1000", "1", cache, cycle, qualifier, prefs);
+   			dialect.getAlterSequenceSQL(testSequenceName, "1", "1", "1000", "1", cache, cycle, qualifier, prefs);
    			throw new IllegalStateException("Expected dialect to fail to provide SQL for alter sequence");
    		} catch (Exception e) {
    			// this is expected
@@ -1363,8 +1368,7 @@ public class DialectLiveTestRunner {
 					uniqueConstraintName,
 					qualifier,
 					prefs);
-				throw new IllegalStateException("Expected dialect to fail to provide SQL for add unique "
-					+ "constraint");
+				throw new IllegalStateException("Expected dialect to fail to provide SQL for drop constraint");
 			} catch (Exception e)
 			{
 				// this is expected
@@ -1499,6 +1503,46 @@ public class DialectLiveTestRunner {
    	}
    }
    
+   private void testDataScript(ISession session) throws Exception {
+   	HibernateDialect dialect = getDialect(session);
+   	
+   	String tableName = fixTableName(session, "timestamptest");
+   	String timestampTypeName =  dialect.getTypeName(Types.TIMESTAMP,5,5,5);
+   	
+   	CreateDataScriptHelper command = new CreateDataScriptHelper(session, null, false);
+   	
+   	dropTable(session, tableName);
+   	runSQL(session, "create table "+tableName+" ( mytime "+timestampTypeName+" )");
+   	if (dialect.supportsSubSecondTimestamps()) {
+   		runSQL(session, "insert into "+tableName+" values ({ts '2008-02-21 21:26:23.966123'})");
+   	} else {
+   		// MS SQLServer yields "Conversion failed when converting datetime from character string"
+   		// for {ts '2008-02-21 21:26:23.966123'}
+   		runSQL(session, "insert into "+tableName+" values ({ts '2008-02-21 21:26:23.966'})");
+   	}
+   	
+   	StringBuffer sb = command.getSQL(tableName);
+
+   	dropTable(session, tableName);
+   	runSQL(session, "create table "+tableName+" ( mytime "+timestampTypeName+" )");
+   	runSQL(session, sb.toString());
+
+   	/* Verify insert worked only if the dialect supports sub-second timestamp values */
+   	if (dialect.supportsSubSecondTimestamps()) {
+	   	ResultSet rs = runQuery(session, "select mytime from timestamptest");
+	   	if (rs.next()) {
+	   		Timestamp ts = rs.getTimestamp(1);
+	   		String nanos = (""+ts.getNanos()/1000).substring(3);
+	   		if (!"123".equals(nanos)) {
+	   			System.err.println("Expected nanos to be 123, but was instead: "+nanos);
+	   		}
+	   	}
+	   	Statement stmt = rs.getStatement();
+	   	rs.close();
+	   	stmt.close();
+   	}
+   }
+   
    // Utility methods
    
    private void dropColumn(ISession session, TableColumnInfo info)
@@ -1527,12 +1571,16 @@ public class DialectLiveTestRunner {
       }
    } 
    
-   private void runSQL(ISession session, String sql) throws Exception {
+   private void runSQL(ISession session, String sqlIn) throws Exception {
    	HibernateDialect dialect = getDialect(session);
-   	if (sql == null) {
+   	if (sqlIn == null) {
    		throw new IllegalStateException("sql argument was null");
    	}
-   	if (!sql.startsWith("--")) {
+   	if (!sqlIn.startsWith("--")) {
+   		String sql = sqlIn.trim();
+   		if (sql.endsWith(";")) {
+   			sql = sql.substring(0, sql.length()-1);
+   		}
 	      Connection con = session.getSQLConnection().getConnection();
 	      Statement stmt = con.createStatement();
 	      System.out.println("Running SQL  (" + dialect.getDisplayName() + "): "
@@ -1552,7 +1600,7 @@ public class DialectLiveTestRunner {
 	      }
    	} else {
          System.out.println("Skip Comment (" + dialect.getDisplayName() + "): "
-            + sql);   		
+            + sqlIn);   		
    	}
    }
 
@@ -1766,6 +1814,36 @@ public class DialectLiveTestRunner {
 		{
 			return super.generateSQLStatements();
 		}
+   }
+   
+   private class CreateDataScriptHelper extends CreateDataScriptCommand {
+
+		public CreateDataScriptHelper(ISession session, SQLScriptPlugin plugin, boolean templateScriptOnly)
+		{
+			super(session, plugin, templateScriptOnly);
+		}
+
+		public StringBuffer getSQL(String tableName) throws SQLException {
+			StringBuffer result = new StringBuffer();
+			Statement st = _session.getSQLConnection().getConnection().createStatement();
+			ResultSet rs = st.executeQuery("select * from "+tableName);
+			
+			genInserts(rs, tableName, result, false);
+			return result;
+		}
+		
+		/**
+		 * @see net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScriptCommand#genInserts(java.sql.ResultSet, java.lang.String, java.lang.StringBuffer, boolean)
+		 */
+		@Override
+		protected void genInserts(ResultSet srcResult, String table, StringBuffer sbRows, boolean headerOnly)
+			throws SQLException
+		{
+			// TODO Auto-generated method stub
+			super.genInserts(srcResult, table, sbRows, headerOnly);
+		}
+   	
+		
    }
    
    private class DatabaseObjectInfoHelper implements IDatabaseObjectInfo {
