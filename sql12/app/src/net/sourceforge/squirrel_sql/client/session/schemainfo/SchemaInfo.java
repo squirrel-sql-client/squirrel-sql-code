@@ -1319,12 +1319,12 @@ public class SchemaInfo
          {
             ExtendedColumnInfo extendedColumnInfo = extColInfo.get(i);
             boolean toAdd = true;
-            if (null != catalog && false == catalog.equalsIgnoreCase(extendedColumnInfo.getCatalog()))
+            if (null != catalog && null != extendedColumnInfo.getCatalog() && false == catalog.equalsIgnoreCase(extendedColumnInfo.getCatalog()))
             {
                toAdd = false;
             }
 
-            if (null != schema && false == schema.equalsIgnoreCase(extendedColumnInfo.getSchema()))
+            if (null != schema && null != extendedColumnInfo.getSchema() && false == schema.equalsIgnoreCase(extendedColumnInfo.getSchema()))
             {
                toAdd = false;
             }
