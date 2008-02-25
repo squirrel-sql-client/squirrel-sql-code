@@ -104,7 +104,9 @@ public class DialectFactory {
     private static final SQLServerDialectExt sqlserverDialect = new SQLServerDialectExt();
     
     private static final TimesTenDialectExt timestenDialect = new TimesTenDialectExt();
-    
+
+    private static final IntersystemsCacheDialectExt  intersystemsCacheDialectExt = new IntersystemsCacheDialectExt();
+
     private static HashMap<String, HibernateDialect> dbNameDialectMap = 
         new HashMap<String, HibernateDialect>();
     
@@ -144,6 +146,7 @@ public class DialectFactory {
         dbNameDialectMap.put(progressDialect.getDisplayName(), progressDialect);
         dbNameDialectMap.put(sybaseDialect.getDisplayName(), sybaseDialect);
         dbNameDialectMap.put(timestenDialect.getDisplayName(), timestenDialect);
+        dbNameDialectMap.put(intersystemsCacheDialectExt.getDisplayName(), intersystemsCacheDialectExt);
     }
     
     public static boolean isAxion(ISQLDatabaseMetaData md) {
@@ -238,6 +241,10 @@ public class DialectFactory {
         return dialectSupportsProduct(md, timestenDialect);            	
     }
     
+    public static boolean isIntersystemsCacheDialectExt(ISQLDatabaseMetaData md) {
+        return dialectSupportsProduct(md, intersystemsCacheDialectExt);
+    }
+
     /**
      * Returns a DialectType for the specified ISQLDatabaseMetaData
      * 
@@ -381,6 +388,9 @@ public class DialectFactory {
         if (isTimesTen(md)) {
             return timestenDialect;
         }        
+        if (isIntersystemsCacheDialectExt(md)) {
+            return intersystemsCacheDialectExt;
+        }
         throw new UnknownDialectException();
     }
     
