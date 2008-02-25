@@ -40,8 +40,16 @@ Refactoring Plugin:
     - Merge Column
     - Merge Table
 
+Refactoring, scripting for Intersystems Cache DB
+Made Refactoring and scripting functions available for the Intersystems Cache DB by activating its Hibernate dialect.
+
+
 Bug-Fixes:
 
+Code Completion Plugin:
+  Made column completion available for databases/JDBC drivers that support catalogs and/or schemas
+  but don't provide catalog or schemas in their column meta data. For example some versions of MySQL
+  show this behavior.
 
 1876352: Incorrect DB2 TIMESTAMP in create data script (loss of precision - nanosecond component - also 
 affected other databases.
