@@ -57,6 +57,8 @@ import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
  */
 public class DriversListInternalFrame extends BaseListInternalFrame
 {
+	private static final long serialVersionUID = 1L;
+
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(BaseListInternalFrame.class);
@@ -277,6 +279,11 @@ public class DriversListInternalFrame extends BaseListInternalFrame
 			btn.setSelected(show);
 			btn.setText(null);
 			_tb.add(btn);
+		}
+
+		public SquirrelPreferences getPreferences()
+		{
+			return _app.getSquirrelPreferences();
 		}
 	}
 }

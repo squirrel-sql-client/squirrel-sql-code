@@ -123,7 +123,8 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
       private JCheckBox _warnForUnsavedBufferEdits = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.warnForUnsavedBufferEdits"));
       private JCheckBox _showSessionStartupTimeHint = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showSessionStartupTimeHint"));
       private JCheckBox _savePreferencesImmediately = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.savePreferencesImmediately"));
-
+      private JCheckBox _selectOnRightMouseClick = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.selectOnRightMouseClick"));
+      
       MyPanel()
 		{
 			super(new GridBagLayout());
@@ -149,7 +150,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
          _warnForUnsavedBufferEdits.setSelected(prefs.getWarnForUnsavedBufferEdits());
          _showSessionStartupTimeHint.setSelected(prefs.getShowSessionStartupTimeHint());
          _savePreferencesImmediately.setSelected(prefs.getSavePreferencesImmediately());
-         
+         _selectOnRightMouseClick.setSelected(prefs.getSelectOnRightMouseClick());
       }
 
       void applyChanges(SquirrelPreferences prefs)
@@ -170,6 +171,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
          prefs.setWarnForUnsavedBufferEdits(_warnForUnsavedBufferEdits.isSelected());
          prefs.setShowSessionStartupTimeHint(_showSessionStartupTimeHint.isSelected());
          prefs.setSavePreferencesImmediately(_savePreferencesImmediately.isSelected());
+         prefs.setSelectOnRightMouseClick(_selectOnRightMouseClick.isSelected());
       }
 
 		private void createUserInterface()
@@ -266,6 +268,10 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
          gbc.gridx = 0;
          gbc.gridy = 5;
          pnl.add(_savePreferencesImmediately, gbc);
+
+         gbc.gridx = 0;
+         gbc.gridy = 6;
+         pnl.add(_selectOnRightMouseClick, gbc);
          
          return pnl;
 		}
