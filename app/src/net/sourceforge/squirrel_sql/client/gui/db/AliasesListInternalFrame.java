@@ -17,26 +17,36 @@ package net.sourceforge.squirrel_sql.client.gui.db;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-import net.sourceforge.squirrel_sql.client.IApplication;
-import net.sourceforge.squirrel_sql.client.action.ActionCollection;
-import net.sourceforge.squirrel_sql.client.mainframe.action.*;
-import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
-import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
-import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
-import net.sourceforge.squirrel_sql.fw.util.ICommand;
-import net.sourceforge.squirrel_sql.fw.util.StringManager;
-import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
-
-import javax.swing.*;
-import javax.swing.event.InternalFrameEvent;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.SwingConstants;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
+
+import net.sourceforge.squirrel_sql.client.IApplication;
+import net.sourceforge.squirrel_sql.client.action.ActionCollection;
+import net.sourceforge.squirrel_sql.client.mainframe.action.AliasPropertiesAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ConnectToAliasCommand;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CopyAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.CreateAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.DeleteAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.ModifyAliasAction;
+import net.sourceforge.squirrel_sql.client.mainframe.action.SortAliasesAction;
+import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
+import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
+import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
+import net.sourceforge.squirrel_sql.fw.util.ICommand;
+import net.sourceforge.squirrel_sql.fw.util.StringManager;
+import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 /**
  * This window shows all the database aliases defined in the system.
  *
@@ -44,6 +54,8 @@ import java.beans.VetoableChangeListener;
  */
 public class AliasesListInternalFrame extends BaseListInternalFrame
 {
+	private static final long serialVersionUID = 1L;
+
 	/** Internationalized strings for this class. */
 	private static final StringManager s_stringMgr =
 		StringManagerFactory.getStringManager(AliasesListInternalFrame.class);
@@ -266,5 +278,12 @@ public class AliasesListInternalFrame extends BaseListInternalFrame
 			_tb.addSeparator();
 			_tb.add(actions.get(SortAliasesAction.class));
 		}
+
+		public SquirrelPreferences getPreferences()
+		{
+			return _app.getSquirrelPreferences();
+		}
 	}
+   
+   
 }

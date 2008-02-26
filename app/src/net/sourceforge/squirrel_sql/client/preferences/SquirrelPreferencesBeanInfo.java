@@ -120,7 +120,10 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
             new PropertyDescriptor(SHOW_ERROR_LOG_MESSAGES, CLS,
                "getShowErrorLogMessages", "setShowErrorLogMessages"),
             new PropertyDescriptor(SAVE_PREFERENCES_IMMEDIATELY, CLS,
-               "getSavePreferencesImmediately", "setSavePreferencesImmediately"),            
+               "getSavePreferencesImmediately", "setSavePreferencesImmediately"),
+            new PropertyDescriptor(SELECT_ON_RIGHT_MOUSE_CLICK, CLS,
+               "getSelectOnRightMouseClick", "setSelectOnRightMouseClick"),            
+               
          };
       }
    }

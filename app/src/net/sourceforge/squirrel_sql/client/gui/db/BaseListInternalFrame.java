@@ -25,11 +25,14 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JList;
 import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
+import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
+import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.fw.gui.BasePopupMenu;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.gui.ToolBar;
@@ -39,8 +42,6 @@ import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
-
-import net.sourceforge.squirrel_sql.client.gui.BaseInternalFrame;
 
 abstract class BaseListInternalFrame extends BaseInternalFrame
 {
@@ -52,6 +53,7 @@ abstract class BaseListInternalFrame extends BaseInternalFrame
 		String getWindowTitle();
 		ICommand getDoubleClickCommand();
 		void enableDisableActions();
+		SquirrelPreferences getPreferences();
 	}
 
 	/** Logger for this class. */
@@ -125,6 +127,32 @@ abstract class BaseListInternalFrame extends BaseInternalFrame
 	{
 		if (evt.isPopupTrigger())
 		{
+			
+			// If the user wants to select for Right mouse clicks then change the selection before popup appears
+			if (_uiFactory.getPreferences().getSelectOnRightMouseClick()) {
+				JList list = _uiFactory.getList();
+				int selectEventListIndex = list.locationToIndex(evt.getPoint());
+				if (list.getSelectionMode() == ListSelectionModel.SINGLE_SELECTION) {
+					// Only a single selection can be made at a time.
+					int selectedIndex = list.getSelectedIndex();
+					if (selectedIndex != selectEventListIndex) {
+						_uiFactory.getList().setSelectedIndex(selectEventListIndex);
+					}
+				} else {
+					// More than one selection is allowed - check to see if we should change the selection
+					int[] selectedIndices = list.getSelectedIndices();
+					boolean alreadySelected = false;
+					for (int selectedIndex : selectedIndices) {
+						if (selectedIndex == selectEventListIndex) {
+							alreadySelected = true;
+						}
+					}
+					if (!alreadySelected) {
+						_uiFactory.getList().setSelectedIndex(selectEventListIndex);
+					}
+				}
+			}
+			
 			if (_popupMenu == null)
 			{
 				_popupMenu = _uiFactory.getPopupMenu();

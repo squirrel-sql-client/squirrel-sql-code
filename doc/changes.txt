@@ -6,6 +6,11 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+Added a preference option to allow the selection of items in lists to change while activating
+the popup menu on a single right-mouse button click.  For example, without this, you need to 
+select an object in the tree with a left mouse button click, then press the right mouse button 
+to activate the popup menu.(See Global Preferences -> General -> Select On Right Mouse Click)
+
 Oracle Plugin:
  - Added validity (VALID|INVALID) field to trigger details tab for triggers.
  - Allow the user to configure whether or not to show the syntax error offset in 
@@ -42,7 +47,6 @@ Refactoring Plugin:
 
 Refactoring, scripting for Intersystems Cache DB:
   Made Refactoring and scripting functions available for the Intersystems Cache DB by activating its Hibernate dialect.
-
 
 Bug-Fixes:
 

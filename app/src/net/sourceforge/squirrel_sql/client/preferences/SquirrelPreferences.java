@@ -90,7 +90,8 @@ public class SquirrelPreferences implements Serializable
       String SHOW_DEBUG_LOG_MESSAGES = "showDebugLogMessages";
       String SHOW_INFO_LOG_MESSAGES = "showInfoLogMessages";
       String SHOW_ERROR_LOG_MESSAGES = "showErrorLogMessages";
-      String SAVE_PREFERENCES_IMMEDIATELY = "savePreferencesImmediately";      
+      String SAVE_PREFERENCES_IMMEDIATELY = "savePreferencesImmediately";   
+      String SELECT_ON_RIGHT_MOUSE_CLICK = "selectOnRightMouseClick";
    }
 
    public interface IJdbcDebugTypes
@@ -223,6 +224,9 @@ public class SquirrelPreferences implements Serializable
     /** Always save preferences immediately when they change, instead of at shutdown */
     private boolean _savePreferencesImmediately = true;
 
+    /** Whether or not to change the selection while right-clicking on list or tree node */
+    private boolean _selectOnRightMouseClick = true;
+    
     /** Host to use when checking for and installing updates */
 //    private String _updateHost = "squirrel-sql.sourceforge.net";
     
@@ -1115,5 +1119,24 @@ public class SquirrelPreferences implements Serializable
    public boolean getSavePreferencesImmediately() {
        return _savePreferencesImmediately;
    }   
+   
+   
+   /**
+    * Sets the behavior of changing the selected nodes in a list / tree when the popup menu is accessed. 
+    * 
+    * @param selectOnRightMouseClick if true, then if the popup is triggered over a non-selected node, that 
+    * node is selected prior to showing the popup menu.
+    */
+   public void setSelectOnRightMouseClick(boolean selectOnRightMouseClick) {
+   	this._selectOnRightMouseClick = selectOnRightMouseClick;
+   }
+   
+   /**
+    * @return a boolean value indicating whether or not to change the selected node in a tree or
+    * list on a right-mouse click just before the popup is displayed.
+    */
+   public boolean getSelectOnRightMouseClick() {
+   	return _selectOnRightMouseClick;
+   }
    
 }
