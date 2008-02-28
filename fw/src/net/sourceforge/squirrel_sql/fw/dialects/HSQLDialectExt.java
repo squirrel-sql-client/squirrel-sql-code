@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -178,9 +179,16 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	{
 		// ALTER TABLE <tablename> ADD [CONSTRAINT <constraintname>] PRIMARY KEY (<column list>);
 
+		return getAddPrimaryKeySQL(pkName, columns, ti.getQualifiedName());		
+	}
+
+	private String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, String tableName) {
+		
+		// ALTER TABLE <tablename> ADD [CONSTRAINT <constraintname>] PRIMARY KEY (<column list>);
+
 		StringBuffer result = new StringBuffer();
 		result.append("ALTER TABLE ");
-		result.append(ti.getQualifiedName());
+		result.append(tableName);
 		result.append(" ADD CONSTRAINT ");
 		result.append(pkName);
 		result.append(" PRIMARY KEY (");
@@ -195,7 +203,7 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 		result.append(")");
 		return new String[] { result.toString() };
 	}
-
+	
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnCommentAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
@@ -347,8 +355,26 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		// Pre-requisites are that column needs to be primary key and it must be integer type.
+		// alter table IDENTITYTEST2 alter column myid identity
+		
+		// "ALTER TABLE $tableName$ ALTER COLUMN $columnName$ IDENTITY";
+		StringTemplate st = new StringTemplate(ST_ADD_AUTO_INCREMENT_STYLE_TWO);
+		
+		HashMap<String, String> valuesMap = 
+			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, column.getTableName(), 
+											  ST_COLUMN_NAME_KEY, column.getColumnName());
+		
+		String[] pkSQL = 
+			getAddPrimaryKeySQL("PK_"+column.getTableName()+"_"+column.getColumnName(), new TableColumnInfo[] {column}, column.getTableName());
+			
+		ArrayList<String> result = new ArrayList<String>();
+		
+		result.add("-- Column must be a primary key and an integer type");
+		result.addAll(Arrays.asList(pkSQL));
+		result.add(DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs));
+		
+		return result.toArray(new String[result.size()]);
 	}
 
 	/**
@@ -514,8 +540,22 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 		boolean unique, String tablespace, String constraints, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		// CREATE [UNIQUE] INDEX <index> ON <table> (<column> [DESC] [, ...]) [DESC];		
+
+		// "CREATE $unique$ $storageOption$ INDEX $indexName$ " +
+		// "ON $tableName$ ( $columnName; separator=\",\"$ )";
+
+		StringTemplate st = new StringTemplate(ST_CREATE_INDEX_STYLE_TWO); 
+		
+		HashMap<String, String> valuesMap = 
+			DialectUtils.getValuesMap(ST_INDEX_NAME_KEY, indexName, ST_TABLE_NAME_KEY, tableName);
+		
+		if (unique) {
+			valuesMap.put(ST_UNIQUE_KEY, "UNIQUE");
+		}
+		
+		
+		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, columns, qualifier, prefs);
 	}
 
 	/**
@@ -596,8 +636,13 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	public String getDropConstraintSQL(String tableName, String constraintName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+      // ALTER TABLE $tableName$ DROP CONSTRAINT $constraintName$
+      StringTemplate st = new StringTemplate(ST_DROP_CONSTRAINT_STYLE_ONE);
+
+      HashMap<String, String> valuesMap =
+              DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, tableName, ST_CONSTRAINT_NAME_KEY, constraintName);
+
+      return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**
@@ -609,8 +654,14 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	public String getDropIndexSQL(String tableName, String indexName, boolean cascade,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		//DROP INDEX index [IF EXISTS];
+
+ 
+		// "DROP INDEX $indexName$";
+		StringTemplate st = new StringTemplate(ST_DROP_INDEX_STYLE_THREE);
+		st.setAttribute(ST_INDEX_NAME_KEY, indexName);
+		
+		return st.toString();
 	}
 
 	/**
@@ -788,8 +839,7 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	@Override
 	public boolean supportsAutoIncrement()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -808,8 +858,7 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	@Override
 	public boolean supportsCreateIndex()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -836,8 +885,7 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	@Override
 	public boolean supportsDropConstraint()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -846,8 +894,7 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	@Override
 	public boolean supportsDropIndex()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**

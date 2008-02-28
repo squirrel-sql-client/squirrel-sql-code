@@ -2615,6 +2615,18 @@ public class DialectUtils implements StringTemplateConstants
 		return st.toString();
 	}
 
+	public static String bindTemplateAttributes(HibernateDialect dialect, StringTemplate st,
+		HashMap<String, String> valuesMap, String[] columns, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
+	{
+		bindAttributes(dialect, st, valuesMap, qualifier, prefs);
+		for (String column : columns)
+		{
+			bindAttribute(dialect, st, ST_COLUMN_NAME_KEY, column, qualifier, prefs);
+		}
+		return st.toString();
+	}
+	
 	public static HashMap<String, String> getValuesMap(Object... elts)
 	{
 		HashMap<String, String> valuesMap = new HashMap<String, String>();
