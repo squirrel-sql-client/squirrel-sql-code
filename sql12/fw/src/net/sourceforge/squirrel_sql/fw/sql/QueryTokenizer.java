@@ -381,6 +381,9 @@ public class QueryTokenizer implements IQueryTokenizer
         if (filename.endsWith("'")) {
             filename = StringUtilities.chop(filename);
         }
+        if (filename.endsWith("\n")) {
+      	  filename = StringUtilities.chop(filename);
+        }
         ArrayList<String> result = new ArrayList<String>();
         if (s_log.isDebugEnabled()) {
             s_log.debug("Attemping to open file '"+filename+"'");
