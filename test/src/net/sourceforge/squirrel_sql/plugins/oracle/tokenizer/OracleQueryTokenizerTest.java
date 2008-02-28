@@ -27,13 +27,13 @@ import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.CREATE_STORED_PROC;
 import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.NO_SEP_SLASH_SQL;
 import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.SELECT_DUAL;
 import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.SELECT_DUAL_2;
+import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.SET_COMMANDS;
 import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.STUDENTS_NOT_TAKING_CS112;
 import static net.sourceforge.squirrel_sql.fw.sql.OracleSQL.UPDATE_TEST;
 
 import java.io.IOException;
 import java.util.Arrays;
 
-import junit.framework.TestCase;
 import net.sourceforge.squirrel_sql.client.ApplicationManager;
 import net.sourceforge.squirrel_sql.client.plugin.PluginQueryTokenizerPreferencesManager;
 import net.sourceforge.squirrel_sql.fw.preferences.IQueryTokenizerPreferenceBean;
@@ -42,7 +42,11 @@ import net.sourceforge.squirrel_sql.fw.sql.SQLUtil;
 import net.sourceforge.squirrel_sql.plugins.oracle.gui.DummyPlugin;
 import net.sourceforge.squirrel_sql.plugins.oracle.prefs.OraclePreferenceBean;
 
-public class OracleQueryTokenizerTest extends TestCase {
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+public class OracleQueryTokenizerTest {
 
     static String nullSQL = null;       
     static String tmpFilename = null;
@@ -56,6 +60,7 @@ public class OracleQueryTokenizerTest extends TestCase {
     
     static IQueryTokenizerPreferenceBean _prefs;
     
+    @Before
     public void setUp() throws Exception {
         createSQLFile();
         DummyPlugin plugin = new DummyPlugin();
@@ -64,10 +69,12 @@ public class OracleQueryTokenizerTest extends TestCase {
         _prefs = prefsManager.getPreferences();  
     }
     
+    @After
     public void tearDown() {
         
     }
     
+    @Test
     public void testHasQuery() {
         qt = new OracleQueryTokenizer(_prefs);
         qt.setScriptToTokenize(SELECT_DUAL);
@@ -78,6 +85,7 @@ public class OracleQueryTokenizerTest extends TestCase {
         SQLUtil.checkQueryTokenizer(qt, 1);        
     }
 
+    @Test
     public void testGenericSQL() {
         String script = SQLUtil.getGenericSQLScript();
         qt = new OracleQueryTokenizer(_prefs);
@@ -85,30 +93,35 @@ public class OracleQueryTokenizerTest extends TestCase {
         SQLUtil.checkQueryTokenizer(qt, SQLUtil.getGenericSQLCount());
     }
     
+    @Test
     public void testCreateStoredProcedure() {
         qt = new OracleQueryTokenizer(_prefs);
         qt.setScriptToTokenize(CREATE_STORED_PROC);
         SQLUtil.checkQueryTokenizer(qt, 1);
     }
 
+    @Test
     public void testCreateOrReplaceStoredProcedure() {
         qt = new OracleQueryTokenizer(_prefs);
         qt.setScriptToTokenize(CREATE_OR_REPLACE_STORED_PROC);
         SQLUtil.checkQueryTokenizer(qt, 1);
     }
     
+    @Test
     public void testCreatePackage() {
        qt = new OracleQueryTokenizer(_prefs);
        qt.setScriptToTokenize(CREATE_OR_REPLACE_PACKAGE_SQL);
        SQLUtil.checkQueryTokenizer(qt, 1);   	 
     }
 
+    @Test
     public void testCreatePackageBody() {
        qt = new OracleQueryTokenizer(_prefs);
        qt.setScriptToTokenize(CREATE_OR_REPLACE_PACKAGE_BODY_SQL);
        SQLUtil.checkQueryTokenizer(qt, 1);   	 
     }    
     
+    @Test
     public void testHasQueryFromFile() {
         String fileSQL = "@" + tmpFilename + ";\n";
         qt = new OracleQueryTokenizer(_prefs);
@@ -116,24 +129,33 @@ public class OracleQueryTokenizerTest extends TestCase {
         SQLUtil.checkQueryTokenizer(qt, sqlFileStmtCount);
     }
 
+    @Test 
     public void testExecAnonProcedure() {
         qt = new OracleQueryTokenizer(_prefs);
         qt.setScriptToTokenize(ANON_PROC_EXEC);
         SQLUtil.checkQueryTokenizer(qt, 1);
     }    
 
+    @Test
     public void testExecAnonProcedure2() {
         qt = new OracleQueryTokenizer(_prefs);
         qt.setScriptToTokenize(ANON_PROC_EXEC_2);
         SQLUtil.checkQueryTokenizer(qt, 1);
     }    
     
+    @Test
     public void testNoSepSlash() {
         qt = new OracleQueryTokenizer(_prefs);
         qt.setScriptToTokenize(NO_SEP_SLASH_SQL);
         SQLUtil.checkQueryTokenizer(qt, 2);        
     }    
     
+    @Test
+    public void testStripSQLPlusCommands() {
+       qt = new OracleQueryTokenizer(_prefs);
+       qt.setScriptToTokenize(SET_COMMANDS);
+       SQLUtil.checkQueryTokenizer(qt, 2);
+    }
     
     
     private static void createSQLFile() throws IOException {

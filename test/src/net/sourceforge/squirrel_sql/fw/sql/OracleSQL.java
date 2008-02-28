@@ -25,6 +25,13 @@ public interface OracleSQL {
     public final static String SELECT_DUAL_2 = 
         "select 1/100 from dual;";        
     
+    public final static String SET_COMMANDS = 
+   	 "set define off\n\n" + 
+   	 SELECT_DUAL + 
+   	 "\n\nset feedback off\n" +
+   	 "set spool off\n\n" +
+   	 "update foo set mycol = 'foo';\n";
+    
     public final static String CREATE_STORED_PROC = 
         " create procedure fooproc (Person_name IN varchar2) \n" +
         "AS \n" +
