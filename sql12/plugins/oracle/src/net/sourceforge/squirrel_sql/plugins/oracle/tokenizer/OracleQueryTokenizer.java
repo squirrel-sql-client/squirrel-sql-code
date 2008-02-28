@@ -99,6 +99,8 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
 
     public void setScriptToTokenize(String script) {
         super.setScriptToTokenize(script);
+
+	removeSqlPlusSetCommands();
         
         // Since it is likely to have "/" on it's own line, and it is key to 
         // letting us know that proceeding statements form a multi-statement
@@ -132,6 +134,35 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
         
         _queryIterator = _queries.iterator();
     }
+
+
+	/**
+	 * Bug #1902611: Don't fail on "set" commands in SQL script
+	 * SQL-Plus allows various "SET ... " commands that have nothing to do with SQL, but customize the behavior
+	 * of SQL-Plus.  For example, you can "SET TIMING ON" to print the time that every sql statement took to 
+	 * execute after executing it.  We may want support a subset of these commands in the future, but for now, 
+	 * just strip them out so that they don't get sent to Oracle. 
+	 */
+	private void removeSqlPlusSetCommands()
+	{
+		ArrayList<String> tmp = new ArrayList<String>();
+		for (Iterator<String> iter = _queries.iterator(); iter.hasNext();)
+		{
+			String next = iter.next();
+			String[] parts = next.split("\\n");
+			StringBuilder noCommandStr = new StringBuilder();
+			for (String part : parts)
+			{
+				if (!setPattern.matcher(part.toUpperCase()).matches())
+				{
+					noCommandStr.append(part).append("\n");
+				}
+			}
+			tmp.add(noCommandStr.toString());
+		}
+		_queries = tmp;
+	}
+
     
     /**
      * Sets the ITokenizerFactory which is used to create additional instances
