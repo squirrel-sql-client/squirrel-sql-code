@@ -7,6 +7,9 @@ SQuirreL SQL Client Change Log
 
 Bug-Fixes:
 
+1902611: (Oracle) Don't fail on SQL-Plus "SET ..." commands in SQL script; Now, the Oracle plugin skips 
+                  over them. 
+
 1596240: Fixed bug which occurred while displaying HSQLDB->Objects->Content, where contents are not shown 
 and exceptions are thrown because tables are not being qualified with the schema name.
 
