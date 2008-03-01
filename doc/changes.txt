@@ -6,10 +6,13 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
-Added a preference option to allow the selection of items in lists to change while activating
-the popup menu on a single right-mouse button click.  For example, without this, you need to 
-select an object in the tree with a left mouse button click, then press the right mouse button 
-to activate the popup menu.(See Global Preferences -> General -> Select On Right Mouse Click)
+ - Added a preference option to allow the selection of items in lists to change while activating
+   the popup menu on a single right-mouse button click.  For example, without this, you need to 
+   select an object in the tree with a left mouse button click, then press the right mouse button 
+   to activate the popup menu.(See Global Preferences -> General -> Select On Right Mouse Click)
+
+DB2 Plugin: Lars Heller provided a patch to add support for XML column types in SQuirreL via the 
+            DB2 Plugin (tested against DB2 v9.5 LUW)
 
 Oracle Plugin:
  - Added validity (VALID|INVALID) field to trigger details tab for triggers.
@@ -20,20 +23,20 @@ Oracle Plugin:
 
 PostgreSQL Plugin:
 
-Contributions from Daniel Regli and Yannick Winiger:
-- Menu: added a new "PostgreSQL" menu to the object tree and the session menu for
-  Postgres specific functionalities.
-- Vacuum: added visual (dialog) support for the PostgreSQL-specific VACUUM statement for
-  garbage-collecting a selection of tables or the whole database.
-- Explain: added an additional SQLResultExecuter to the sql panel that shows
-  the query plan of executed statements.
+ Contributions from Daniel Regli and Yannick Winiger:
+ - Menu: added a new "PostgreSQL" menu to the object tree and the session menu for
+   Postgres specific functionalities.
+ - Vacuum: added visual (dialog) support for the PostgreSQL-specific VACUUM statement for
+   garbage-collecting a selection of tables or the whole database.
+ - Explain: added an additional SQLResultExecuter to the sql panel that shows
+   the query plan of executed statements.
 
 Refactoring Plugin:
  - Don't try to order the list of tables to be dropped (forcing FK info retrieval) 
    when there is only one table being dropped.
 
-  Contributions from Daniel Regli and Yannick Winiger:
-  Added new Refactorings (All new refactoring dialogs are now closeable with the ESCAPE key):
+ - Contributions from Daniel Regli and Yannick Winiger:
+   Added new Refactorings (All new refactoring dialogs are now closeable with the ESCAPE key):
     - Rename Table
     - Add/Rename/Drop View
     - Add/Modify/Drop Sequence
@@ -45,20 +48,19 @@ Refactoring Plugin:
     - Merge Column
     - Merge Table
 
-Refactoring, scripting for Intersystems Cache DB:
-  Made Refactoring and scripting functions available for the Intersystems Cache DB by activating its Hibernate dialect.
+ - Refactoring, scripting for Intersystems Cache DB:
+   Made Refactoring and scripting functions available for the Intersystems Cache DB by activating its 
+   Hibernate dialect.
 
 Bug-Fixes:
 
-Code Completion Plugin:
-  Made column completion available for databases/JDBC drivers that support catalogs and/or schemas
-  but don't provide catalog or schemas in their column meta data. For example some versions of MySQL
-  show this behavior.
+1902611: (Oracle) Don't fail on SQL-Plus "SET ..." commands in SQL script; Now, the Oracle plugin skips over 
+                  them. 
 
-1876352: Incorrect DB2 TIMESTAMP in create data script (loss of precision - nanosecond component - also 
-affected other databases.
+1876352: (DB2) Incorrect  TIMESTAMP in create data script (loss of precision - nanosecond component - also 
+               affected other databases.
 
-1861402 (Informix catalog switching doesn't work correctly) 
+1861402: (Informix catalog switching doesn't work correctly) 
  - Better catalog switching behavior for databases that support catalogs.  Now if a connection is made 
    without specifying the catalog, a place-holder
    catalog ("None") is inserted into the catalog drop-down menu and removed once a catalog is selected.  
@@ -67,21 +69,25 @@ affected other databases.
  - For Informix, setCatalog seems to have no effect, so now an explicit DATABASE <catalogname> command is 
    issued. 
 
-1769599 fix for permission problem with Windows Vista.  Now we create our temporary path file in a temporary 
+1848924: Sybase object browser contents not displayed
+
+1769599: fix for permission problem with Windows Vista.  Now we create our temporary path file in a temporary 
 location that the user should always be able to write to.  Thanks to user aberdeen61 for contributing the 
 fix. 
 
 1596240: Fixed bug when displaying HSQLDB->Objects->Content, where contents are not shown and exceptions are 
 thrown because tables are not being qualified with the schema name.
 
+1541325: (Derby) Connection doesn't close when ending session - thanks goes to Alex Pivovarov for the 
+                 patch that fixed the issue. 
+
+Code Completion Plugin:
+ - Made column completion available for databases/JDBC drivers that support catalogs and/or schemas
+   but don't provide catalog or schemas in their column meta data. For example some versions of MySQL
+   show this behavior.
+
 DBCopy Plugin:
  - Only attempt to order the tables being copied if there is more than one table in the copy set.
-
-Derby Plugin:
-1541325: Connection doesn't close when ending session - thanks goes to 
-         Alex Pivovarov for the patch that fixed the issue.
-
-1848924: Sybase object browser contents not displayed
 
 Changing to another window using Alt + left/right arrow did not properly set focus.
 
