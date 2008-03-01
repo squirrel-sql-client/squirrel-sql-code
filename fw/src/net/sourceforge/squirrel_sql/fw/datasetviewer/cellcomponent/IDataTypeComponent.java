@@ -167,7 +167,7 @@ public interface IDataTypeComponent {
 
     /**
      * When updating the database, insert the appropriate datatype into the
-     * prepared statment at the given variable position.
+     * prepared statement at the given variable position.
      */
     public void setPreparedStatementValue(PreparedStatement pstmt,
             Object value, int position) throws java.sql.SQLException;

@@ -160,7 +160,7 @@ public class ResultSetDataSet implements IDataSet {
 
             // Read the entire row, since some drivers complain if columns are
             // read out of sequence
-            rdr = new ResultSetReader(rs, null);
+            rdr = new ResultSetReader(rs, dialectType);
             Object[] row = null;
 
             while (true) {
