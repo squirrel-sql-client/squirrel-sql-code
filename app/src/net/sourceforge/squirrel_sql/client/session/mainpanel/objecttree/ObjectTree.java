@@ -224,13 +224,15 @@ class ObjectTree extends JTree
          	// appears
          	 if (_session.getApplication().getSquirrelPreferences().getSelectOnRightMouseClick()) {         	 
 	         	 TreePath path = ObjectTree.this.getPathForLocation(evt.getX(), evt.getY());
-	         	 TreePath[] selectedPaths = ObjectTree.this.getSelectionPaths();
 	         	 boolean alreadySelected = false;
-	         	 for (TreePath selectedPath : selectedPaths) {
-	         		 if (path != null && path.equals(selectedPath)) {
-	         			 alreadySelected = true;
-	         			 break;
-	         		 }
+	         	 TreePath[] selectedPaths = ObjectTree.this.getSelectionPaths();
+	         	 if (selectedPaths != null) {	         	 
+		         	 for (TreePath selectedPath : selectedPaths) {
+		         		 if (path != null && path.equals(selectedPath)) {
+		         			 alreadySelected = true;
+		         			 break;
+		         		 }
+		         	 }
 	         	 }
 	         	 if (!alreadySelected) {
 	         		 ObjectTree.this.setSelectionPath(path);
