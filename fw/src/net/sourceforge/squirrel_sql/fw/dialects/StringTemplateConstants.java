@@ -116,6 +116,12 @@ public interface StringTemplateConstants
 	
 	String ST_RENAME_OBJECT_STYLE_ONE = 
 		"ALTER TABLE $oldObjectName$ RENAME TO $newObjectName$";
+
+	String ST_RENAME_TABLE_STYLE_ONE = 
+		"RENAME TABLE $oldObjectName$ TO $newObjectName$";
+	
+	String ST_RENAME_VIEW_STYLE_ONE = 
+		"RENAME VIEW $oldObjectName$ TO $newObjectName$";
 	
 	String ST_SP_RENAME_STYLE_ONE = 
 		"sp_rename $oldObjectName$, $newObjectName$";
