@@ -548,8 +548,28 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 		String[] fromTables, String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		String templateStr = "";
+
+		if (fromTables != null)
+		{
+			templateStr = ST_UPDATE_CORRELATED_QUERY_STYLE_ONE;
+		} else
+		{
+			templateStr = ST_UPDATE_STYLE_ONE;
+		}
+
+		StringTemplate st = new StringTemplate(templateStr);
+
+		return DialectUtils.getUpdateSQL(st,
+			tableName,
+			setColumns,
+			setValues,
+			fromTables,
+			whereColumns,
+			whereValues,
+			qualifier,
+			prefs,
+			this);
 	}
 
 	/**
@@ -667,8 +687,7 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 */
 	public boolean supportsCorrelatedSubQuery()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
