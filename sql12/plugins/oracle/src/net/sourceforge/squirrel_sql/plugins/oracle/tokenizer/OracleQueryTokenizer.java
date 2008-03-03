@@ -70,6 +70,8 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
 
     /** Finds any "\n/" (slash) characters on their own line (no sep) */
     private static final String SLASH_SPLIT_PATTERN = "\\n/\\n";
+
+    private final String SET_COMMAND_PATTERN = "^\\s*SET\\s+\\w+\\s+\\w+\\s*$";
     
     private Pattern procPattern = Pattern.compile(PROCEDURE_PATTERN, Pattern.DOTALL);
     
@@ -84,7 +86,9 @@ public class OracleQueryTokenizer extends QueryTokenizer implements IQueryTokeni
     private Pattern beginPattern = Pattern.compile(BEGIN_PATTERN, Pattern.DOTALL);
     
     private Pattern slashPattern = Pattern.compile(SLASH_PATTERN, Pattern.DOTALL);
-    
+   
+    private Pattern setPattern = Pattern.compile(SET_COMMAND_PATTERN, Pattern.DOTALL);
+ 
     private static final String ORACLE_SCRIPT_INCLUDE_PREFIX = "@";
     
     private IQueryTokenizerPreferenceBean _prefs = null;
