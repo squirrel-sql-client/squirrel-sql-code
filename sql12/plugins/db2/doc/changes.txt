@@ -1,6 +1,11 @@
 DB2 Plugin Change Log
 =====================
 
+0.04
+====
+ - Lars Heller provided a patch to add support for XML column types in SQuirreL via the 
+   DB2 Plugin (tested against DB2 v9.5 LUW)
+
 0.03
 ====
 - Added tab for displaying the source code for DB2 MQTs as well as DB2 tables.
