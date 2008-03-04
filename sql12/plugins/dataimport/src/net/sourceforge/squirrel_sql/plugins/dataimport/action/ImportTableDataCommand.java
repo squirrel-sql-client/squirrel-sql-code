@@ -79,6 +79,15 @@ public class ImportTableDataCommand implements ICommand {
 	 * Then the column mapping dialog is shown.
 	 */
 	public void execute() {
+		// Show a warning dialog and let the user confirm it.
+		if (JOptionPane.showConfirmDialog(session.getApplication().getMainFrame(),
+				stringMgr.getString("ImportTableDataCommand.truncateWarning"),
+				stringMgr.getString("ImportTableDataCommand.warning"),
+				JOptionPane.YES_NO_OPTION,
+				JOptionPane.WARNING_MESSAGE,
+				null) != JOptionPane.YES_OPTION)
+			return;
+			
 		JFileChooser openFile = new JFileChooser(Preferences.userRoot().get(PREFS_KEY_LAST_IMPORT_DIRECTORY, System.getProperty("user.home")));
 
 		int res = openFile.showOpenDialog(session.getApplication().getMainFrame());
