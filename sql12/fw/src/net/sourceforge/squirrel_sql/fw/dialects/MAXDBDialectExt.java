@@ -487,7 +487,6 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	@Override
 	public String[] getIndexAccessMethodsTypes()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -497,7 +496,6 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	@Override
 	public String[] getIndexStorageOptions()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -512,7 +510,7 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	{
 		final int featureId = DialectUtils.ADD_AUTO_INCREMENT_TYPE;
 		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-		throw new UnsupportedOperationException(msg);		
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -567,14 +565,14 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 		// ALTER TABLE <table_name> ADD
 		// FOREIGN KEY [<referential_constraint_name>] (<referencing_column>,...)
 		// REFERENCES <referenced_table> [(<referenced_column>,...)] [<delete_rule>]
-		
-		
+
 		// "ALTER TABLE $childTableName$ " +
 		// "ADD $constraint$ $constraintName$ FOREIGN KEY ( $childColumn; separator=\",\"$ ) " +
 		// "REFERENCES $parentTableName$ ( $parentColumn; separator=\",\"$ )";
 
-		StringTemplate fkST = new StringTemplate(ST_ADD_FOREIGN_KEY_CONSTRAINT_STYLE_ONE);
-		HashMap<String, String> fkValuesMap = DialectUtils.getValuesMap(ST_CHILD_TABLE_KEY, localTableName);
+		final StringTemplate fkST = new StringTemplate(ST_ADD_FOREIGN_KEY_CONSTRAINT_STYLE_ONE);
+		final HashMap<String, String> fkValuesMap =
+			DialectUtils.getValuesMap(ST_CHILD_TABLE_KEY, localTableName);
 		fkValuesMap.put(ST_CONSTRAINT_KEY, "CONSTRAINT");
 		fkValuesMap.put(ST_CONSTRAINT_NAME_KEY, constraintName);
 		fkValuesMap.put(ST_PARENT_TABLE_KEY, refTableName);
@@ -616,7 +614,7 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	{
 		final int featureId = DialectUtils.ADD_UNIQUE_TYPE;
 		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-		throw new UnsupportedOperationException(msg);		
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -661,8 +659,8 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 		// "CREATE $unique$ $storageOption$ INDEX $indexName$ " +
 		// "ON $tableName$ ( $columnName; separator=\",\"$ )";
 
-		StringTemplate st = new StringTemplate(ST_CREATE_INDEX_STYLE_TWO);
-		HashMap<String, String> valuesMap = new HashMap<String, String>();
+		final StringTemplate st = new StringTemplate(ST_CREATE_INDEX_STYLE_TWO);
+		final HashMap<String, String> valuesMap = new HashMap<String, String>();
 
 		if (unique)
 		{
@@ -739,9 +737,9 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 
 		// "CREATE VIEW $viewName$ " +
 		// "AS $selectStatement$ $withCheckOption$";
-		StringTemplate st = new StringTemplate(ST_CREATE_VIEW_STYLE_TWO);
+		final StringTemplate st = new StringTemplate(ST_CREATE_VIEW_STYLE_TWO);
 
-		HashMap<String, String> valuesMap =
+		final HashMap<String, String> valuesMap =
 			DialectUtils.getValuesMap(ST_VIEW_NAME_KEY, viewName, ST_SELECT_STATEMENT_KEY, definition);
 
 		if (checkOption != null && !"".equals(checkOption))
@@ -777,12 +775,12 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	{
 		// <drop_index_statement> ::=
 		// DROP INDEX <index_name> [ON <table_name>]
-		
-      StringTemplate st = new StringTemplate(ST_DROP_INDEX_STYLE_ONE);
-      HashMap<String, String> valuesMap = new HashMap<String, String>();
-      valuesMap.put(ST_INDEX_NAME_KEY, indexName);
-      valuesMap.put(ST_TABLE_NAME_KEY, tableName);
-      return DialectUtils.getDropIndexSQL(st, valuesMap, qualifier, prefs, this);
+
+		final StringTemplate st = new StringTemplate(ST_DROP_INDEX_STYLE_ONE);
+		final HashMap<String, String> valuesMap = new HashMap<String, String>();
+		valuesMap.put(ST_INDEX_NAME_KEY, indexName);
+		valuesMap.put(ST_TABLE_NAME_KEY, tableName);
+		return DialectUtils.getDropIndexSQL(st, valuesMap, qualifier, prefs, this);
 	}
 
 	/**
@@ -812,9 +810,9 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 	{
 		// "DROP VIEW $viewName$";
-		StringTemplate st = new StringTemplate(ST_DROP_VIEW_STYLE_ONE);
+		final StringTemplate st = new StringTemplate(ST_DROP_VIEW_STYLE_ONE);
 
-		HashMap<String, String> valuesMap = DialectUtils.getValuesMap(ST_VIEW_NAME_KEY, viewName);
+		final HashMap<String, String> valuesMap = DialectUtils.getValuesMap(ST_VIEW_NAME_KEY, viewName);
 
 		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
@@ -829,9 +827,9 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 	{
 		// "RENAME TABLE $oldObjectName$ TO $newObjectName$";
-		StringTemplate st = new StringTemplate(ST_RENAME_TABLE_STYLE_ONE);
+		final StringTemplate st = new StringTemplate(ST_RENAME_TABLE_STYLE_ONE);
 
-		HashMap<String, String> valuesMap =
+		final HashMap<String, String> valuesMap =
 			DialectUtils.getValuesMap(ST_OLD_OBJECT_NAME_KEY, oldTableName, ST_NEW_OBJECT_NAME_KEY, newTableName);
 
 		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
@@ -851,9 +849,9 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 		// <new_table_name> ::= <table_name
 
 		// "RENAME VIEW $oldObjectName$ TO $newObjectName$";
-		StringTemplate st = new StringTemplate(ST_RENAME_VIEW_STYLE_ONE);
+		final StringTemplate st = new StringTemplate(ST_RENAME_VIEW_STYLE_ONE);
 
-		HashMap<String, String> valuesMap =
+		final HashMap<String, String> valuesMap =
 			DialectUtils.getValuesMap(ST_OLD_OBJECT_NAME_KEY, oldViewName, ST_NEW_OBJECT_NAME_KEY, newViewName);
 
 		return new String[] { DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs) };
@@ -878,7 +876,6 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	@Override
 	public boolean supportsAccessMethods()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -915,7 +912,7 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	@Override
 	public boolean supportsAutoIncrement()
 	{
-		return false ;
+		return false;
 	}
 
 	/**
@@ -990,24 +987,30 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsEmptyTables()
+	 */
 	@Override
 	public boolean supportsEmptyTables()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsIndexes()
+	 */
 	@Override
 	public boolean supportsIndexes()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsMultipleRowInserts()
+	 */
 	@Override
 	public boolean supportsMultipleRowInserts()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -1032,6 +1035,7 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsSequence()
 	 */
+	@Override
 	public boolean supportsSequence()
 	{
 		return true;
@@ -1049,9 +1053,9 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsTablespace()
 	 */
+	@Override
 	public boolean supportsTablespace()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -1078,6 +1082,7 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
+	@Override
 	public String getViewDefinitionSQL(final String viewName, final DatabaseObjectQualifier qualifier,
 		final SqlGenerationPreferences prefs)
 	{
@@ -1089,6 +1094,7 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
+	@Override
 	public String getQualifiedIdentifier(final String identifier, final DatabaseObjectQualifier qualifier,
 		final SqlGenerationPreferences prefs)
 	{
