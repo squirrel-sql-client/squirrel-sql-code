@@ -2309,7 +2309,8 @@ public class DialectUtils implements StringTemplateConstants
 			}
 			sbToAppend.append("\n");
 			result.add(sbToAppend.toString());
-		}
+         sbToAppend.setLength(0);
+      }
 
 		return result;
 	}
