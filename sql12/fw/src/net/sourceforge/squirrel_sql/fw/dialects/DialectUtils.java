@@ -1112,6 +1112,7 @@ public class DialectUtils {
             }
             sbToAppend.append("\n");
             result.add(sbToAppend.toString());
+            sbToAppend.setLength(0);
         }
 
         return result;
