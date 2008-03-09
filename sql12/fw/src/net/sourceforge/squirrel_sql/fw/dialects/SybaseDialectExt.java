@@ -330,7 +330,7 @@ public class SybaseDialectExt extends CommonHibernateDialect implements Hibernat
 	 * @return the SQL to make the change
 	 */
 	@Override
-	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to)
+	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		StringBuffer result = new StringBuffer();
 		result.append("exec sp_rename ");
@@ -395,7 +395,7 @@ public class SybaseDialectExt extends CommonHibernateDialect implements Hibernat
 	 * @return SQL to make the change
 	 */
 	@Override
-	public String getColumnDefaultAlterSQL(TableColumnInfo info)
+	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		int featureId = DialectUtils.COLUMN_DEFAULT_ALTER_TYPE;
 		String msg = DialectUtils.getUnsupportedMessage(this, featureId);

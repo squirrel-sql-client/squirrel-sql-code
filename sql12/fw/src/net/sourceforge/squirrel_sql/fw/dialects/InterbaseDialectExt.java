@@ -351,7 +351,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	 * @return the SQL to make the change
 	 */
 	@Override
-	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to)
+	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO: implement
 		throw new UnsupportedOperationException("Not yet implemented");
@@ -421,7 +421,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	 * @return SQL to make the change
 	 */
 	@Override
-	public String getColumnDefaultAlterSQL(TableColumnInfo info)
+	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO need to implement or change the message
 		throw new UnsupportedOperationException("Not yet implemented");

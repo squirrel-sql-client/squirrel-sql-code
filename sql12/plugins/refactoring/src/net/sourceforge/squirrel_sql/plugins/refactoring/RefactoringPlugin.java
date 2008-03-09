@@ -31,7 +31,6 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginSessionCallback;
 import net.sourceforge.squirrel_sql.client.preferences.IGlobalPreferencesPanel;
 import net.sourceforge.squirrel_sql.client.session.IObjectTreeAPI;
 import net.sourceforge.squirrel_sql.client.session.ISession;
-import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.gui.GUIUtils;
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.plugins.refactoring.actions.AddAutoIncrementAction;
@@ -323,15 +322,19 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
         _sequenceObjectMenu = _resources.createMenu(IMenuResourceKeys.REFACTORING);
         _resources.addToMenu(col.get(DropSequenceAction.class), _sequenceObjectMenu);
         _resources.addToMenu(col.get(ModifySequenceAction.class), _sequenceObjectMenu);
-
+        
         // Ingres supports sequences, but there is no Ingres plugin yet to produce sequence nodes.
         // Also, since we don't have a good way to modify /delete sequences when they don't appear in the tree
         // this rules out their use in Ingres, for now.
         // TODO: Write the Ingres plugin, then rip this out.
-        if (DialectFactory.isIngres(session.getMetaData())) {
+        // 
+        // Update: Since there are a number of other databases that support sequences without plugins, we will
+        //         for now, just always put the add sequence in the session node's popup menu.  
+        //
+        //if (DialectFactory.isIngres(session.getMetaData())) {
       	  _sessionNodeMenu = _resources.createMenu(IMenuResourceKeys.REFACTORING);
       	  _resources.addToMenu(col.get(AddSequenceAction.class), _sessionNodeMenu);
-        }
+        //}
         
         addMenusToObjectTree(session.getObjectTreeAPIOfActiveSessionWindow());
     }
@@ -348,5 +351,5 @@ public class RefactoringPlugin extends DefaultSessionPlugin {
       	  api.addToPopup(DatabaseObjectType.SESSION, _sessionNodeMenu);
         }
     }
-
+    
 }

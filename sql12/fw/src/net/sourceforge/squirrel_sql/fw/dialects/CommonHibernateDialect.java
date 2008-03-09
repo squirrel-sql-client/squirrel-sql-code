@@ -159,9 +159,9 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getColumnDefaultAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getColumnDefaultAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
-	public String getColumnDefaultAlterSQL(TableColumnInfo info)
+	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -197,9 +197,9 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getColumnNameAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
-	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo)
+	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
-	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to)
+	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -737,7 +737,6 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 */
 	public boolean supportsDropConstraint()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -909,4 +908,22 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	public boolean supportsSubSecondTimestamps() {
 		return true;
 	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsAddPrimaryKey()
+	 */
+	public boolean supportsAddPrimaryKey()
+	{
+		return true;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsDropPrimaryKey()
+	 */
+	public boolean supportsDropPrimaryKey()
+	{
+		return true;
+	}
+	
+	
 }

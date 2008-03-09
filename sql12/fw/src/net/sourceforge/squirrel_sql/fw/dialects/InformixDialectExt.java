@@ -312,7 +312,7 @@ public class InformixDialectExt extends CommonHibernateDialect implements Hibern
 	 *           the TableColumnInfo as it wants to be
 	 * @return the SQL to make the change
 	 */
-	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to)
+	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getColumnRenameSQL(from, to);
 	}
@@ -364,7 +364,7 @@ public class InformixDialectExt extends CommonHibernateDialect implements Hibern
 	 *           the column to modify and it's default value.
 	 * @return SQL to make the change
 	 */
-	public String getColumnDefaultAlterSQL(TableColumnInfo info)
+	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		String alterClause = DialectUtils.MODIFY_CLAUSE;
 		String defaultClause = DialectUtils.DEFAULT_CLAUSE;

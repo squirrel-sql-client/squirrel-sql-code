@@ -97,7 +97,7 @@ public class DialectFactory {
     private static final PostgreSQLDialectExt postgreSQLDialect = 
                                                         new PostgreSQLDialectExt();
 
-    private static final ProgressDialect progressDialect = new ProgressDialect();
+    private static final ProgressDialectExt progressDialect = new ProgressDialectExt();
     
     private static final SybaseDialectExt sybaseDialect = new SybaseDialectExt();
     
@@ -309,6 +309,15 @@ public class DialectFactory {
             
     public static HibernateDialect getDialect(String dbName) {
         return dbNameDialectMap.get(dbName);
+    }
+    
+    public static HibernateDialect getDialectIgnoreCase(String dbName) {
+   	 for (String displayName : dbNameDialectMap.keySet()) {
+   		 if (displayName.toLowerCase().equals(dbName.toLowerCase())) {
+   			 return dbNameDialectMap.get(displayName);
+   		 }
+   	 }
+   	 return null;
     }
     
     /**

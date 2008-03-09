@@ -27,6 +27,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
@@ -309,16 +310,20 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 	 *           the TableColumnInfo as it wants to be
 	 * @return the SQL to make the change
 	 */
-	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to)
+	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		StringBuffer result = new StringBuffer();
-		result.append("ALTER TABLE ");
-		result.append(from.getTableName());
-		result.append(" RENAME COLUMN ");
-		result.append(from.getColumnName());
-		result.append(" TO ");
-		result.append(to.getColumnName());
-		return result.toString();
+		// "ALTER TABLE $tableName$ RENAME COLUMN $oldColumnName$ to $newColumnName$";
+		StringTemplate st = new StringTemplate(ST_ALTER_COLUMN_NAME_STYLE_ONE);
+		
+		HashMap<String, String> valuesMap =
+			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY,
+				from.getTableName(),
+				ST_OLD_COLUMN_NAME_KEY,
+				from.getColumnName(),
+				ST_NEW_COLUMN_NAME_KEY,
+				to.getColumnName());
+		
+		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**
@@ -374,7 +379,7 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 			result.add(dropSQL);
 
 			// rename <columnName>_2 to <columnName>
-			String renameSQL = this.getColumnNameAlterSQL(newInfo, to);
+			String renameSQL = this.getColumnNameAlterSQL(newInfo, to, qualifier, prefs);
 			result.add(renameSQL);
 		} else
 		{
@@ -421,7 +426,7 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 	 *           the column to modify and it's default value.
 	 * @return SQL to make the change
 	 */
-	public String getColumnDefaultAlterSQL(TableColumnInfo info)
+	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		StringBuffer result = new StringBuffer();
 		result.append("ALTER TABLE ");

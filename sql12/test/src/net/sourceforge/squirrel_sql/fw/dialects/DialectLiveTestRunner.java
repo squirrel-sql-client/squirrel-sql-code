@@ -30,6 +30,7 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -65,8 +66,18 @@ import net.sourceforge.squirrel_sql.plugins.sqlscript.table_script.CreateDataScr
  */
 public class DialectLiveTestRunner {
 
+	/**
+	 * These sessions are the ones that are being tested.  This is populated from the dbsToTest list in 
+	 * the properties file.
+	 */
    ArrayList<ISession> sessions = new ArrayList<ISession>();
-
+   
+   /** 
+    * These sessions will only be used to produce SQL, in case the session that is being tested is failing to 
+    * produce valid SQL.  This is populated from the dbsToReference list in the properties file.
+    */
+   ArrayList<HibernateDialect> referenceDialects = new ArrayList<HibernateDialect>();
+   
    ResourceBundle bundle = null;
 
    TableColumnInfo firstCol = null;
@@ -102,7 +113,9 @@ public class DialectLiveTestRunner {
    TableColumnInfo addColumn = null;
   
    TableColumnInfo myIdColumn = null;
-      
+   
+   private TableColumnInfo dropConstraintColumn = null;
+   
    private static final String DB2_PK_COLNAME = "db2pkCol";
 
    private DatabaseObjectQualifier qualifier = new DatabaseObjectQualifier();
@@ -115,6 +128,11 @@ public class DialectLiveTestRunner {
    private static final String fkChildColumnName = "fkchildid";
    private static final String testUniqueConstraintTableName = "testUniqueConstraintTable";
    private static final String uniqueConstraintName = "uniq_constraint";
+   // this is the constraint that is dropped in drop constraint test
+   private static final String secondUniqueConstraintName = "uniq_constraint2";
+   // this is the column on which the constraint to be dropped is defined
+   private static final String secondUniqueColumnName = "secondUniqueColumn";
+
    private static final String autoIncrementTableName = "testAutoIncrementTable";
    private static final String autoIncrementColumnName = "myid";
    private static final String integerDataTableName = "integerDataTable";
@@ -138,20 +156,51 @@ public class DialectLiveTestRunner {
    public DialectLiveTestRunner() throws Exception {
       ApplicationArguments.initialize(new String[] {});
       bundle = ResourceBundle.getBundle("net.sourceforge.squirrel_sql.fw.dialects.dialectLiveTest");
-      initSessions();
+      initSessions(sessions, "dbsToTest");
+      initReferenceDialects(referenceDialects);
    }
 
-   private void initSessions() throws Exception {
-   	prefs.setQualifyTableNames(false);
-   	prefs.setQuoteIdentifiers(false);
-   	prefs.setSqlStatementSeparator(";");
-      String dbsToTest = bundle.getString("dbsToTest");
+   /**
+    * This sets up the dialects that will be used as references to consult for sql variants that can be tried
+    * to see discover whether an undocumented variant might be allowed.
+    * 
+    * @param dialects a data structure to hold the dialects in.
+    */
+   private void initReferenceDialects(ArrayList<HibernateDialect> dialects) 
+	{
+      List<String> dbs = getPropertyListValue("dbsToReference");
+   	
+      for (String dbName : dbs) {
+      	if (dbName.equals("mssql")) {
+      		dbName = "MS SQLServer";
+      	}
+      	HibernateDialect dialectToRef = DialectFactory.getDialectIgnoreCase(dbName);
+      	if (dialectToRef == null) {
+      		System.err.println("Failed to find dialect for : "+dbName);
+      		System.exit(1);
+      	}
+      	dialects.add(dialectToRef);
+      }
+	}
+
+	private List<String> getPropertyListValue(String propertyKey)
+	{
+		String dbsToTest = bundle.getString(propertyKey);
       StringTokenizer st = new StringTokenizer(dbsToTest, ",");
       ArrayList<String> dbs = new ArrayList<String>();
       while (st.hasMoreTokens()) {
          String db = st.nextToken().trim();
          dbs.add(db);
       }
+		return dbs;
+	}
+
+	private void initSessions(ArrayList<ISession> sessionsList, String sessionListPropKey) throws Exception {
+   	prefs.setQualifyTableNames(false);
+   	prefs.setQuoteIdentifiers(false);
+   	prefs.setSqlStatementSeparator(";");
+
+   	List<String> dbs = getPropertyListValue(sessionListPropKey);
       for (Iterator<String> iter = dbs.iterator(); iter.hasNext();) {
          String db = iter.next();
          String url = bundle.getString(db + "_jdbcUrl");
@@ -163,7 +212,7 @@ public class DialectLiveTestRunner {
          MockSession session = new MockSession(driver, url, user, pass);
          session.setDefaultCatalog(catalog);
          session.setDefaultSchema(schema);
-         sessions.add(session);
+         sessionsList.add(session);
       }
    }
 
@@ -251,6 +300,8 @@ public class DialectLiveTestRunner {
       addColumn = getIntegerColumn("columnAdded", fixTableName(session, testUniqueConstraintTableName), true, null, null);
       
       myIdColumn = getCharColumn("myid", fixTableName(session, testUniqueConstraintTableName), true, null, null);
+      
+      dropConstraintColumn = getCharColumn(secondUniqueColumnName, fixTableName(session, testUniqueConstraintTableName), true, null, null);
    }
 
    private ITableInfo getTableInfo(ISession session, String tableName)
@@ -258,8 +309,7 @@ public class DialectLiveTestRunner {
       SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
       String catalog = ((MockSession) session).getDefaultCatalog();
       String schema = ((MockSession) session).getDefaultSchema();
-      // System.out.println("Looking for table with catalog="+catalog+"
-      // schema="+schema+" tableName="+tableName);
+      System.out.println("Looking for table with catalog="+catalog+" schema="+schema+" tableName="+tableName);
       ITableInfo[] infos = md.getTables(catalog,
                                         schema,
                                         tableName,
@@ -312,6 +362,8 @@ public class DialectLiveTestRunner {
 	      } catch (SQLException e) {
 	         // Do Nothing
 	      }
+   	} else {
+   		System.err.println("Dialect doesn't appear to support dropping views");
    	}
    }
    
@@ -319,7 +371,9 @@ public class DialectLiveTestRunner {
    	HibernateDialect dialect = getDialect(session);
    	if (dialect.supportsDropSequence()) {
 	      try {
-	      	runSQL(session, dialect.getDropSequenceSQL(sequenceName, false, qualifier, prefs));
+	      	String sql = dialect.getDropSequenceSQL(sequenceName, false, qualifier, prefs);
+	      	
+	      	runSQL(session, sql);
 	      } catch (SQLException e) {
 	      	//e.printStackTrace();
 	      }
@@ -430,7 +484,7 @@ public class DialectLiveTestRunner {
          + " ( myid integer, "+fkChildColumnName+" integer)" + pageSizeClause);
       
       runSQL(session, "create table " + fixTableName(session, testUniqueConstraintTableName)
-         + " ( myid char(10))" + pageSizeClause);
+         + " ( myid char(10), "+secondUniqueColumnName+" char(10))" + pageSizeClause);
 
       runSQL(session, "create table " + fixTableName(session, autoIncrementTableName)
          + " ( "+autoIncrementColumnName+" integer)" + pageSizeClause);
@@ -510,7 +564,7 @@ public class DialectLiveTestRunner {
          testAlterDefaultValue(session);
          testColumnComment(session);
          testAlterNull(session);
-         testAlterName(session);
+         testAlterColumnName(session);
          testAlterColumnlength(session);
          // DB2 cannot alter a column's null attribute directly (only
          // through constraints). Not only that, but it's apparently not a
@@ -607,7 +661,7 @@ public class DialectLiveTestRunner {
       runSQL(session, dropSQL);
    }
 
-   private void testAlterName(ISession session) throws Exception {
+   private void testAlterColumnName(ISession session) throws Exception {
       HibernateDialect dialect = getDialect(session);
       
       TableColumnInfo newNameCol = getVarcharColumn("newNameCol",
@@ -616,19 +670,21 @@ public class DialectLiveTestRunner {
                                                     null,
                                                     "A column to be renamed");
       if (dialect.supportsRenameColumn()) {
-         String sql = dialect.getColumnNameAlterSQL(renameCol, newNameCol);
-         runSQL(session, sql);
+         String sql = dialect.getColumnNameAlterSQL(renameCol, newNameCol, qualifier, prefs);
+      	AlterColumnNameSqlExtractor extractor = new AlterColumnNameSqlExtractor(renameCol, newNameCol);
+      	runSQL(session, new String[] { sql }, extractor);         	
       } else {
          try {
-            dialect.getColumnNameAlterSQL(renameCol, newNameCol);
+            dialect.getColumnNameAlterSQL(renameCol, newNameCol, qualifier, prefs);
+            throw new IllegalStateException("testAlterColumnName: Expected dialect to failed to provide SQL.");
          } catch (UnsupportedOperationException e) {
             // this is expected
-            System.err.println(e.getMessage());
+         	System.err.println(e.getMessage());
          }
       }
    }
 
-   private void testDropColumn(ISession session) throws Exception {
+	private void testDropColumn(ISession session) throws Exception {
       HibernateDialect dialect = getDialect(session);
       
       if (dialect.supportsDropColumn()) {
@@ -636,7 +692,7 @@ public class DialectLiveTestRunner {
       } else {
          try {
             dropColumn(session, dropCol);
-            throw new IllegalStateException("Expected dialect to fail to provide SQL for dropping a column");
+            throw new IllegalStateException("testDropColumn: Expected dialect to failed to provide SQL.");
          } catch (UnsupportedOperationException e) {
             // This is what we expect
             System.err.println(e.getMessage());
@@ -666,13 +722,16 @@ public class DialectLiveTestRunner {
       if (dialect.supportsAlterColumnType()) {
          List<String> alterColLengthSQL = dialect.getColumnTypeAlterSQL(thirdCol,
                                                                         thirdColLonger, qualifier, prefs);
-         runSQL(session, alterColLengthSQL);
+         runSQL(session,
+				alterColLengthSQL.toArray(new String[alterColLengthSQL.size()]),
+				new AlterColumnTypeSqlExtractor(thirdCol, thirdColLonger));
       } else {
          try {
-            dialect.getColumnTypeAlterSQL(thirdCol, thirdColLonger, null, null);
+            dialect.getColumnTypeAlterSQL(thirdCol, thirdColLonger, qualifier, prefs);
             throw new IllegalStateException("Expected dialect to fail to provide SQL for altering column type");
          } catch (UnsupportedOperationException e) {
             // this is expected
+         	System.err.println(e.getMessage());
          }
       }
    }
@@ -692,14 +751,14 @@ public class DialectLiveTestRunner {
                                                                   "An integer column with a default value");
 
       if (dialect.supportsAlterColumnDefault()) {
-         String defaultValSQL = dialect.getColumnDefaultAlterSQL(varcharColWithDefaultValue);
+         String defaultValSQL = dialect.getColumnDefaultAlterSQL(varcharColWithDefaultValue, qualifier, prefs);
          runSQL(session, defaultValSQL);
 
-         defaultValSQL = dialect.getColumnDefaultAlterSQL(integerColWithDefaultVal);
+         defaultValSQL = dialect.getColumnDefaultAlterSQL(integerColWithDefaultVal, qualifier, prefs);
          runSQL(session, defaultValSQL);
       } else {
          try {
-            dialect.getColumnDefaultAlterSQL(noDefaultValueVarcharCol);
+            dialect.getColumnDefaultAlterSQL(noDefaultValueVarcharCol, qualifier, prefs);
             throw new IllegalStateException("Expected dialect to fail to provide SQL for column default alter");
          } catch (UnsupportedOperationException e) {
             // This is what we expect.
@@ -717,7 +776,7 @@ public class DialectLiveTestRunner {
                                                          "A varchar comment");
       if (dialect.supportsAlterColumnNull()) {
          String[] notNullSQL = dialect.getColumnNullableAlterSQL(notNullThirdCol, qualifier, prefs);
-         runSQL(session, notNullSQL);
+         runSQL(session, notNullSQL, new AlterColumnNullSqlExtractor(notNullThirdCol));
       } else {
          try {
             dialect.getColumnNullableAlterSQL(notNullThirdCol, qualifier, prefs);
@@ -763,10 +822,10 @@ public class DialectLiveTestRunner {
       } else {
          try {
             alterColumnComment(session, firstCol);
-            throw new IllegalStateException("Expected dialect to fail to provide SQL for column comment alter");
+            throw new IllegalStateException("testColumnComment: Expected dialect to failed to provide SQL.");
          } catch (UnsupportedOperationException e) {
-            // This is expected
-            System.err.println(e.getMessage());
+            // this is expected
+         	System.err.println(e.getMessage());
          }
       }
    }
@@ -779,7 +838,8 @@ public class DialectLiveTestRunner {
       DatabaseObjectQualifier qual = new DatabaseObjectQualifier(catalog, schema);      
       String commentSQL = dialect.getColumnCommentAlterSQL(info, qual, prefs);
       if (commentSQL != null && !commentSQL.equals("")) {
-         runSQL(session, commentSQL);
+      	AlterColumnCommentSqlExtractor extractor = new AlterColumnCommentSqlExtractor(info);
+         runSQL(session, new String[] { commentSQL }, extractor);
       }
    }
 
@@ -791,8 +851,24 @@ public class DialectLiveTestRunner {
          throws Exception {
       HibernateDialect dialect = getDialect(session);
       String pkName = getPKName(tableName);
-      String sql = dialect.getDropPrimaryKeySQL(pkName, tableName);
-      runSQL(session, sql);
+
+      if (dialect.supportsDropPrimaryKey())
+		{
+			String sql = dialect.getDropPrimaryKeySQL(pkName, tableName);
+			runSQL(session, new String[] { sql }, new DropPrimaryKeySqlExtractor(tableName, pkName));
+		} else
+		{
+			try
+			{
+				dialect.getDropPrimaryKeySQL(pkName, tableName);
+            throw new IllegalStateException("testDropPrimaryKey: Expected dialect to failed to provide SQL.");
+         } catch (UnsupportedOperationException e) {
+            // this is expected
+         	System.err.println(e.getMessage());
+         }
+		}
+      
+      
    }
 
    private void testAddPrimaryKey(ISession session, TableColumnInfo[] colInfos)
@@ -830,14 +906,30 @@ public class DialectLiveTestRunner {
          ti = new TableInfo(catalog, schema, tableName, "TABLE", "", md);
       }
 
-      String[] pkSQLs = dialect.getAddPrimaryKeySQL(getPKName(tableName),
-                                                    colInfos,
-                                                    ti);
+      String pkName = getPKName(tableName);
+      
+      if (dialect.supportsAddPrimaryKey()) {
+         String[] pkSQLs = dialect.getAddPrimaryKeySQL(pkName, colInfos, ti);
 
-      for (int i = 0; i < pkSQLs.length; i++) {
-         String pkSQL = pkSQLs[i];
-         runSQL(session, pkSQL);
+			for (int i = 0; i < pkSQLs.length; i++)
+			{
+				String pkSQL = pkSQLs[i];
+				runSQL(session, new String[] { pkSQL }, new AddPrimaryKeySqlExtractor(ti, colInfos, pkName));
+			}
+
+      } else {
+      	try {
+      		dialect.getAddPrimaryKeySQL(pkName, colInfos, ti);
+   			throw new IllegalStateException("Expected dialect to fail to provide SQL for add primary key");
+   		} catch (Exception e) {
+   			// This is expected
+   			System.err.println(e.getMessage());
+   		}
+      	
       }
+      
+      
+      
    }
 
    private void testCreateTableWithDefault(ISession session) throws Exception {
@@ -926,7 +1018,7 @@ public class DialectLiveTestRunner {
       
    	if (dialect.supportsRenameTable()) {
    		String sql = dialect.getRenameTableSQL(oldTableName, newTableName, qualifier, prefs);
-   		runSQL(session, sql);
+   		runSQL(session, new String[] { sql }, new RenameTableSqlExtractor(oldTableName, newTableName));
    	} else {
    		try {
    			dialect.getRenameTableSQL(oldTableName, newTableName, qualifier, prefs);
@@ -942,18 +1034,22 @@ public class DialectLiveTestRunner {
       HibernateDialect dialect = getDialect(session);
       
       String checkOption = "";
+      String tableToView = fixTableName(session, testCreateViewTable);
+      String firstViewName = fixTableName(session, testViewName);
+      String secondViewName = fixTableName(session, testView2Name);
       
    	if (dialect.supportsCreateView()) {
-         
+         String definition = "select * from "+tableToView;
+   		
    		String sql =
-				dialect.getCreateViewSQL(testViewName, "select * from "+testCreateViewTable, checkOption, qualifier, prefs);
-   		runSQL(session, sql);
+				dialect.getCreateViewSQL(firstViewName, definition, checkOption, qualifier, prefs);
+   		runSQL(session, new String[] { sql }, new CreateViewSqlExtractor(firstViewName, definition, checkOption));
    		
          if (dialect.supportsCheckOptionsForViews()) {
          	checkOption = "some_check";
          	sql =
-   				dialect.getCreateViewSQL(testView2Name, "select * from "+testCreateViewTable, checkOption, qualifier, prefs);
-      		runSQL(session, sql);
+   				dialect.getCreateViewSQL(secondViewName, definition, checkOption, qualifier, prefs);
+      		runSQL(session, new String[] { sql }, new CreateViewSqlExtractor(secondViewName, definition, checkOption));
          }
 
    	} else {
@@ -1080,11 +1176,19 @@ public class DialectLiveTestRunner {
 						constraints,
 						qualifier,
 						prefs);
+				
+				CreateIndexSqlExtractor extractor =
+					new CreateIndexSqlExtractor(indexName1,
+						tableName,
+						accessMethod,
+						columns,
+						false,
+						tablespace,
+						constraints);
+				
 				// create it.
-				runSQL(session, sql);
+				runSQL(session, new String[] { sql }, extractor);
    		
-	   		// now drop it.
-	   		runSQL(session, dialect.getDropIndexSQL(tableName, indexName1, true, qualifier, prefs));
 	   		
 	   		// create a unique index on myuniquechar
 				columns = new String[] { "myuniquechar" };
@@ -1101,9 +1205,20 @@ public class DialectLiveTestRunner {
 	   		
 	   		// create it.
 	   		runSQL(session, sql);
+
+	   		// now drop the second.
+	   		String dropIndexSQL = dialect.getDropIndexSQL(tableName, indexName2, true, qualifier, prefs);
+				runSQL(session, new String[] { dropIndexSQL }, new DropIndexSqlExtractor(tableName, indexName2, true));
 	   		
-	   		// now drop it.
-	   		runSQL(session, dialect.getDropIndexSQL(tableName, indexName2, true, qualifier, prefs));
+	   		
+	   		// now drop the first
+				dropIndexSQL = dialect.getDropIndexSQL(tableName, indexName1, true, qualifier, prefs);
+				try {
+					runSQL(session, dropIndexSQL);
+				} catch (Exception e) {
+					// Progress throws an exception if you try to drop the first index that was created
+				}
+				 
    		}   		
    	} else {
    		try {
@@ -1124,12 +1239,12 @@ public class DialectLiveTestRunner {
    		
    		String sql = 
    			dialect.getCreateSequenceSQL(testSequenceName, "1", "1", "100", "1", cache, cycle, qualifier, prefs);
-   		runSQL(session, sql);
+   		runSQL(session, new String[] { sql }, new CreateSequenceSqlExtractor(testSequenceName, "1", "1", "100", "1", cache, cycle));
    		
    		cycle = false;
    		 sql = 
     			dialect.getCreateSequenceSQL(testSequenceName2, "1", "1", "100", "1", cache, cycle, qualifier, prefs);
-    		runSQL(session, sql);   		
+    		runSQL(session, new String[] { sql }, new CreateSequenceSqlExtractor(testSequenceName2, "1", "1", "100", "1", cache, cycle));   		
    	} else {
    		try {
    			dialect.getCreateSequenceSQL(testSequenceName, "1", "1", "100", "1", cache, cycle, qualifier, prefs);
@@ -1226,7 +1341,7 @@ public class DialectLiveTestRunner {
    	if (dialect.supportsDropSequence()) {
    		String sql = 
    			dialect.getDropSequenceSQL(testSequenceName, false, qualifier, prefs);
-   		runSQL(session, sql);   		
+   		runSQL(session, new String[] {sql}, new DropSequenceSqlExtractor(testSequenceName, false));   		
    	} else {
    		try {
    			dialect.getDropSequenceSQL(testSequenceName, false, qualifier, prefs);
@@ -1274,7 +1389,21 @@ public class DialectLiveTestRunner {
 				// object FKTESTPARENTTABLE is in use; squelch it and continue.
 				try { runSQL(session, sql); } catch (Exception e) {}
 			} else {
-				runSQL(session, sql);
+				
+				CreateForeignKeyConstraintSqlExtractor extractor =
+					new CreateForeignKeyConstraintSqlExtractor(	"fk_child_refs_parent",
+																				deferrable,
+																				initiallyDeferred,
+																				matchFull,
+																				autoFKIndex,
+																				fkIndexName,
+																				localRefColumns,
+																				onUpdateAction,
+																				onDeleteAction,
+																				childTable,
+																				parentTable);
+				
+				runSQL(session, sql, extractor);
 			}
 		} else
 		{
@@ -1313,7 +1442,19 @@ public class DialectLiveTestRunner {
 					columns,
 					qualifier,
 					prefs);
-   		runSQL(session, sql);   		
+   		runSQL(session, sql, new AddUniqueConstraintSqlExtractor(tableName, uniqueConstraintName, columns));   		
+   		
+   		// We need to add a second column to have a unique constraint so that we can drop that one.  Progress
+   		// doesn't allow the very first index to ever be dropped.
+   		columns = new TableColumnInfo[] { dropConstraintColumn };
+   		sql = 
+   			dialect.getAddUniqueConstraintSQL(tableName,
+   				secondUniqueConstraintName,
+					columns,
+					qualifier,
+					prefs);
+   		runSQL(session, sql, new AddUniqueConstraintSqlExtractor(tableName, secondUniqueConstraintName, columns));
+   		
    	} else {
    		try {
    			dialect.getAddUniqueConstraintSQL(tableName,
@@ -1353,12 +1494,9 @@ public class DialectLiveTestRunner {
    	String tableName = fixTableName(session, testUniqueConstraintTableName);
 		if (dialect.supportsDropConstraint())
 		{
-			String sql =
-				dialect.getDropConstraintSQL(tableName,
-					uniqueConstraintName,
-					qualifier,
-					prefs);
-			runSQL(session, sql);
+			String[] sql =
+				new String[] { dialect.getDropConstraintSQL(tableName, secondUniqueConstraintName, qualifier, prefs) };
+			runSQL(session, sql, new DropConstraintSqlExtractor(tableName, secondUniqueConstraintName));
 		} 
 		else
 		{
@@ -1457,7 +1595,12 @@ public class DialectLiveTestRunner {
 					whereValues,
 					qualifier,
 					prefs);
-			runSQL(session, sql);			
+			runSQL(session, sql, new UpdateSqlExtractor(	tableName,
+																		setColumns,
+																		setValues,
+																		fromTables,
+																		whereColumns,
+																		whereValues));			
 		} 
 		else
 		{
@@ -1604,6 +1747,53 @@ public class DialectLiveTestRunner {
    	}
    }
 
+   /**
+    * Uses the specified extractor to look up the SQL in all other dialects and try them to see if they will 
+    * work, if the specified session's dialect isn't up to the task.
+    * 
+    * @param session
+    * @param sql
+    * @param extractor
+    */
+   private void runSQL(ISession session, String[] sql, IDialectSqlExtractor extractor)
+	{
+   	try {
+   		runSQL(session, sql);
+   		return;
+   	} catch (Exception e) {
+   		System.err.println("Dialect failed to produce valid sql: "+e.getMessage());
+   		e.printStackTrace();
+   	}
+   	boolean success = false;
+   	HibernateDialect lastDialect = null;
+   	for (HibernateDialect referenceDialect : referenceDialects) {
+   		if (success) break;
+   		if (!extractor.supportsOperation(referenceDialect)) { continue; }
+   		
+   		lastDialect = referenceDialect;
+   		sql = extractor.getSql(referenceDialect);
+
+   		
+   		if (sql == null || "".equals(sql)) {
+   			continue;
+   		}
+   		try { 
+   			System.err.println("Trying SQL generated by "+referenceDialect.getDisplayName());
+   			runSQL(session, sql); 
+   			success = true;
+   		} catch (Exception e2) { 
+   			System.err.println("Attempt to use dialect sql from "+referenceDialect.getDisplayName()+" failed: "+e2.getMessage());
+   		}
+   	}
+   	if (success) {
+   		System.out.println("Dialect "+lastDialect.getDisplayName()+" produced valid SQL: "+Arrays.toString(sql));
+   	} else {
+   		System.err.println("No reference dialect was able to generate valid SQL for this operation.");
+   	}
+   	System.exit(1);		
+	}
+   
+   
    private ResultSet runQuery(ISession session, String sql) throws Exception {
       HibernateDialect dialect = getDialect(session);
       Connection con = session.getSQLConnection().getConnection();
@@ -1706,6 +1896,9 @@ public class DialectLiveTestRunner {
    }
 
    /**
+    * Some databases that I have are particular about the case of table/view names.  This method (hopefully)
+    * normalizes the names such that they can be found later after they are created.
+    * 
     * @param session
     * @param table
     * @return
@@ -1874,6 +2067,449 @@ public class DialectLiveTestRunner {
    	
    }
    
+   private class AlterColumnNameSqlExtractor implements IDialectSqlExtractor {
+
+   	TableColumnInfo from;
+   	TableColumnInfo to;
+   	
+   	public AlterColumnNameSqlExtractor(TableColumnInfo from, TableColumnInfo to) {
+   		this.from = from;
+   		this.to = to;
+   	}
+   	
+		public String[] getSql(HibernateDialect dialect)
+		{
+			return new String[] { dialect.getColumnNameAlterSQL(from, to, qualifier, prefs) };
+		}
+
+		public boolean supportsOperation(HibernateDialect dialect)
+		{
+			return dialect.supportsRenameColumn();
+		}
+   	
+   }
    
+   private class AlterColumnCommentSqlExtractor implements IDialectSqlExtractor {
+
+   	TableColumnInfo info = null;
+   	
+   	public AlterColumnCommentSqlExtractor(TableColumnInfo info) {
+   		this.info = info;
+   	}
+   	
+		public String[] getSql(HibernateDialect dialect)
+		{
+			return new String[] { dialect.getColumnCommentAlterSQL(info, qualifier, prefs) };
+		}
+
+		public boolean supportsOperation(HibernateDialect dialect)
+		{
+			return dialect.supportsColumnComment();
+		}
+   }
    
+   private class AlterColumnNullSqlExtractor implements IDialectSqlExtractor {
+
+   	TableColumnInfo info;
+   	
+		public AlterColumnNullSqlExtractor(TableColumnInfo info)
+		{
+			this.info = info;
+		}
+
+		public String[] getSql(HibernateDialect dialect)
+		{
+			return dialect.getColumnNullableAlterSQL(info, qualifier, prefs);
+		}
+
+		public boolean supportsOperation(HibernateDialect dialect)
+		{
+			return dialect.supportsAlterColumnNull();
+		}
+   	
+   }
+   
+   private class AlterColumnTypeSqlExtractor implements IDialectSqlExtractor {
+   	TableColumnInfo from;
+   	TableColumnInfo to;
+   	
+		public AlterColumnTypeSqlExtractor(TableColumnInfo from, TableColumnInfo to)
+		{
+			super();
+			this.from = from;
+			this.to = to;
+		}   	
+   	
+		public String[] getSql(HibernateDialect dialect)
+		{
+			List<String> result = dialect.getColumnTypeAlterSQL(from, to, qualifier, prefs);
+			return result.toArray(new String[result.size()]);
+		}
+		
+		public boolean supportsOperation(HibernateDialect dialect)
+		{
+			return dialect.supportsAlterColumnType();
+		}
+   }
+   
+   private class AddPrimaryKeySqlExtractor implements IDialectSqlExtractor {
+   	ITableInfo ti;
+   	TableColumnInfo[] columns;
+   	String pkName;
+   	
+		public AddPrimaryKeySqlExtractor(ITableInfo ti, TableColumnInfo[] columns, String pkName)
+		{
+			super();
+			this.ti = ti;
+			this.columns = columns;
+			this.pkName = pkName;
+		}
+
+		public String[] getSql(HibernateDialect dialect)
+		{
+			return dialect.getAddPrimaryKeySQL(pkName, columns, ti);
+		}
+
+		public boolean supportsOperation(HibernateDialect dialect)
+		{
+			return true;
+		}
+   }
+   
+   private class DropPrimaryKeySqlExtractor implements IDialectSqlExtractor {
+
+   	String tableName;
+   	String pkName;
+   	
+		public DropPrimaryKeySqlExtractor(String tableName, String pkName)
+		{
+			super();
+			this.tableName = tableName;
+			this.pkName = pkName;
+		}
+
+		public String[] getSql(HibernateDialect dialect)
+		{
+			return new String[] { dialect.getDropPrimaryKeySQL(pkName, tableName) };
+		}
+
+		public boolean supportsOperation(HibernateDialect dialect)
+		{
+			return true;
+		}
+   	
+   }
+   
+   private class DropSequenceSqlExtractor implements IDialectSqlExtractor  {
+
+   	String sequenceName;
+   	boolean cascade;
+   	
+		public DropSequenceSqlExtractor(String sequenceName, boolean cascade)
+		{
+			super();
+			this.sequenceName = sequenceName;
+			this.cascade = cascade;
+		}
+
+		public String[] getSql(HibernateDialect dialect)
+		{
+			return new String[] { dialect.getDropSequenceSQL(sequenceName, cascade, qualifier, prefs) };
+		}
+
+		public boolean supportsOperation(HibernateDialect dialect)
+		{
+			return dialect.supportsDropSequence();
+		}
+   	
+   }
+   
+   private class RenameTableSqlExtractor implements IDialectSqlExtractor {
+
+		private String oldTableName;
+		private String newTableName;
+
+		public RenameTableSqlExtractor(String oldTableName, String newTableName)
+		{
+			super();
+			this.oldTableName = oldTableName;
+			this.newTableName = newTableName;
+		}
+
+		public String[] getSql(HibernateDialect dialect)
+		{
+			return new String[] { dialect.getRenameTableSQL(oldTableName, newTableName, qualifier, prefs) };
+		}
+
+		public boolean supportsOperation(HibernateDialect dialect)
+		{
+			return dialect.supportsRenameTable();
+		}
+   	
+   }
+   
+   private class CreateViewSqlExtractor implements IDialectSqlExtractor {
+
+		private String viewName;
+		private String definition;
+		private String checkOption;
+
+		public CreateViewSqlExtractor(String viewName, String definition, String checkOption)
+		{
+			super();
+			this.viewName = viewName;
+			this.definition = definition;
+			this.checkOption = checkOption;
+		}
+
+		public String[] getSql(HibernateDialect dialect)
+		{
+			return new String[] { dialect.getCreateViewSQL(viewName, definition, checkOption, qualifier, prefs) };
+		}
+
+		public boolean supportsOperation(HibernateDialect dialect)
+		{
+			return dialect.supportsCreateView();
+		}
+   	
+   }
+   
+   private class CreateIndexSqlExtractor implements IDialectSqlExtractor {
+
+		private String indexName;
+		private String tableName;
+		private String accessMethod;
+		private String[] columns;
+		private boolean unique;
+		private String tablespace;
+		private String constraints;
+
+		public CreateIndexSqlExtractor(String indexName, String tableName, String accessMethod,
+			String[] columns, boolean unique, String tablespace, String constraints)
+		{
+			super();
+			this.indexName = indexName;
+			this.tableName = tableName;
+			this.accessMethod = accessMethod;
+			this.columns = columns;
+			this.unique = unique;
+			this.tablespace = tablespace;
+			this.constraints = constraints;
+		}
+
+		public String[] getSql(HibernateDialect dialect)
+		{
+			return new String[] {
+				dialect.getCreateIndexSQL(indexName, tableName, accessMethod, columns, unique, tablespace, constraints, qualifier, prefs)
+			};
+		}
+
+		public boolean supportsOperation(HibernateDialect dialect)
+		{
+			return dialect.supportsCreateIndex();
+		}
+   	
+   }
+   
+   private class DropIndexSqlExtractor implements IDialectSqlExtractor {
+
+		private String tableName;
+		private String indexName;
+		private boolean cascade;
+
+		public DropIndexSqlExtractor(String tableName, String indexName, boolean cascade)
+		{
+			super();
+			this.tableName = tableName;
+			this.indexName = indexName;
+			this.cascade = cascade;
+		}
+
+		public String[] getSql(HibernateDialect dialect)
+		{
+			return new String[] { dialect.getDropIndexSQL(tableName, indexName, cascade, qualifier, prefs) };
+		}
+
+		public boolean supportsOperation(HibernateDialect dialect)
+		{
+			return dialect.supportsDropIndex();
+		}
+   	
+   }
+   
+   private class CreateSequenceSqlExtractor implements IDialectSqlExtractor {
+
+		private String sequenceName;
+		private String increment;
+		private String minimum;
+		private String maximum;
+		private String start;
+		private String cache;
+		private boolean cycle;
+
+		public CreateSequenceSqlExtractor(String sequenceName, String increment, String minimum,
+			String maximum, String start, String cache, boolean cycle)
+		{
+			super();
+			this.sequenceName = sequenceName;
+			this.increment = increment;
+			this.minimum = minimum;
+			this.maximum = maximum;
+			this.start = start;
+			this.cache = cache;
+			this.cycle = cycle;
+		}
+
+		public String[] getSql(HibernateDialect dialect)
+		{
+			return new String[] { 
+				dialect.getCreateSequenceSQL(sequenceName, increment, minimum, maximum, start, cache, cycle, qualifier, prefs)
+			};
+		}
+
+		public boolean supportsOperation(HibernateDialect dialect)
+		{
+			return dialect.supportsCreateSequence();
+		}
+   	
+   }
+   
+   private class CreateForeignKeyConstraintSqlExtractor implements IDialectSqlExtractor {
+
+		private String constraintName;
+		private Boolean deferrable;
+		private Boolean initiallyDeferred;
+		private Boolean matchFull;
+		private boolean autoFKIndex;
+		private String fkIndexName;
+		private Collection<String[]> localRefColumns;
+		private String onUpdateAction;
+		private String onDeleteAction;
+		private String localTableName;
+		private String refTableName;
+
+		
+		
+		public CreateForeignKeyConstraintSqlExtractor(String constraintName, Boolean deferrable,
+			Boolean initiallyDeferred, Boolean matchFull, boolean autoFKIndex, String fkIndexName,
+			Collection<String[]> localRefColumns, String onUpdateAction, String onDeleteAction,
+			String localTableName, String refTableName)
+		{
+			super();
+			this.constraintName = constraintName;
+			this.deferrable = deferrable;
+			this.initiallyDeferred = initiallyDeferred;
+			this.matchFull = matchFull;
+			this.autoFKIndex = autoFKIndex;
+			this.fkIndexName = fkIndexName;
+			this.localRefColumns = localRefColumns;
+			this.onUpdateAction = onUpdateAction;
+			this.onDeleteAction = onDeleteAction;
+			this.localTableName = localTableName;
+			this.refTableName = refTableName;
+		}
+
+		public String[] getSql(HibernateDialect dialect)
+		{
+			return dialect.getAddForeignKeyConstraintSQL(localTableName, refTableName, constraintName,
+				deferrable, initiallyDeferred, matchFull, autoFKIndex, fkIndexName, localRefColumns, onUpdateAction, onDeleteAction, qualifier, prefs);
+		}
+
+		public boolean supportsOperation(HibernateDialect dialect)
+		{
+			return dialect.supportsAddForeignKeyConstraint();
+		}
+   	
+   }
+   
+   private class UpdateSqlExtractor implements IDialectSqlExtractor {
+
+		private String tableName;
+		private String[] setColumns;
+		private String[] setValues;
+		private String[] fromTables;
+		private String[] whereColumns;
+		private String[] whereValues;
+		
+		public UpdateSqlExtractor(String tableName, String[] setColumns, String[] setValues,
+			String[] fromTables, String[] whereColumns, String[] whereValues)
+		{
+			super();
+			this.tableName = tableName;
+			this.setColumns = setColumns;
+			this.setValues = setValues;
+			this.fromTables = fromTables;
+			this.whereColumns = whereColumns;
+			this.whereValues = whereValues;
+		}
+
+		public String[] getSql(HibernateDialect dialect)
+		{
+			return dialect.getUpdateSQL(tableName,
+				setColumns,
+				setValues,
+				fromTables,
+				whereColumns,
+				whereValues,
+				qualifier,
+				prefs);
+		}
+
+		public boolean supportsOperation(HibernateDialect dialect)
+		{
+			return dialect.supportsUpdate();
+		}
+   	
+   }
+   
+   private class AddUniqueConstraintSqlExtractor implements IDialectSqlExtractor {
+
+		private String tableName;
+		private String constraintName;
+		private TableColumnInfo[] columns;
+
+		public AddUniqueConstraintSqlExtractor(String tableName, String constraintName,
+			TableColumnInfo[] columns)
+		{
+			super();
+			this.tableName = tableName;
+			this.constraintName = constraintName;
+			this.columns = columns;
+		}
+
+		public String[] getSql(HibernateDialect dialect)
+		{
+			return dialect.getAddUniqueConstraintSQL(tableName, constraintName, columns, qualifier, prefs);
+		}
+
+		public boolean supportsOperation(HibernateDialect dialect)
+		{
+			return dialect.supportsAddUniqueConstraint();
+		}
+  	
+   }
+   
+   private class DropConstraintSqlExtractor implements IDialectSqlExtractor {
+   	
+		private String tableName;
+		private String constraintName;
+
+		public DropConstraintSqlExtractor(String tableName, String constraintName)
+		{
+			super();
+			this.tableName = tableName;
+			this.constraintName = constraintName;
+		}
+
+		public String[] getSql(HibernateDialect dialect)
+		{
+			return new String[] { dialect.getDropConstraintSQL(tableName, constraintName, qualifier, prefs) };
+		}
+
+		public boolean supportsOperation(HibernateDialect dialect)
+		{
+			return dialect.supportsDropConstraint();
+		}
+   	
+   }
 }

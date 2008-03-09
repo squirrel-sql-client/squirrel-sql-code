@@ -20,58 +20,72 @@ package net.sourceforge.squirrel_sql.fw.dialects;
 
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
 import net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
+import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.hibernate.HibernateException;
-import org.hibernate.dialect.SAPDBDialect;
+import org.hibernate.dialect.Dialect;
 
-public class MAXDBDialectExt extends CommonHibernateDialect implements HibernateDialect
+/**
+ * A dialect delegate for the Progress database. TODO: Progress specification says that the sum of all column
+ * lengths of a table row may not exceed 31960. Need to add an interface method to the HibernateDialect
+ * interface that takes an array of lengths and and checks the sum of columns for a row. This maximum number
+ * may be different across databases so this check method needs to be implemented by each dialect.
+ * 
+ * @author manningr
+ */
+public class ProgressDialectExt extends CommonHibernateDialect implements HibernateDialect
 {
-	private class MAXDBDialectHelper extends SAPDBDialect
+
+	private class ProgressDialectHelper extends Dialect
 	{
-		public MAXDBDialectHelper()
+		public ProgressDialectHelper()
 		{
-			registerColumnType(Types.BIGINT, "fixed(19,0)");
-			registerColumnType(Types.BINARY, 8000, "char($l) byte");
-			registerColumnType(Types.BINARY, "long varchar byte");
-			registerColumnType(Types.BIT, "boolean");
-			registerColumnType(Types.BLOB, "long byte");
-			registerColumnType(Types.BOOLEAN, "boolean");
-			registerColumnType(Types.CLOB, "long varchar");
-			registerColumnType(Types.CHAR, 8000, "char($l) ascii");
-			registerColumnType(Types.CHAR, "long varchar ascii");
-			registerColumnType(Types.DECIMAL, "decimal($p,$s)");
-			registerColumnType(Types.DOUBLE, "double precision");
+			super();
+			registerColumnType(Types.BIGINT, "integer");
+			registerColumnType(Types.BINARY, 2000, "binary($l)");
+			registerColumnType(Types.BINARY, 31982, "varbinary($l)");
+			registerColumnType(Types.BINARY, "lvarbinary($l)");
+			registerColumnType(Types.BIT, "bit");
+			registerColumnType(Types.BLOB, "lvarbinary($l)");
+			registerColumnType(Types.BOOLEAN, "bit");
+			registerColumnType(Types.CHAR, 2000, "char($l)");
+			registerColumnType(Types.CHAR, "char(2000)");
+			// registerColumnType(Types.CLOB, 31982, "varchar($l)");
+			registerColumnType(Types.CLOB, "varchar($l)");
 			registerColumnType(Types.DATE, "date");
+			registerColumnType(Types.DECIMAL, "numeric($p,2)");
+			registerColumnType(Types.DOUBLE, "double precision");
 			registerColumnType(Types.FLOAT, "float($p)");
-			registerColumnType(Types.INTEGER, "int");
-			registerColumnType(Types.LONGVARBINARY, 8000, "varchar($l) byte");
-			registerColumnType(Types.LONGVARBINARY, "long byte");
-			registerColumnType(Types.LONGVARCHAR, "long ascii");
-			registerColumnType(Types.NUMERIC, "fixed($p,$s)");
-			registerColumnType(Types.REAL, "float($p)");
+			registerColumnType(Types.INTEGER, "integer");
+			registerColumnType(Types.LONGVARBINARY, 999999999, "lvarbinary($l)");
+			registerColumnType(Types.LONGVARBINARY, "lvarbinary(999999999)");
+			// registerColumnType(Types.LONGVARCHAR, 31982, "varchar($l)");
+			registerColumnType(Types.LONGVARCHAR, "varchar($l)");
+			registerColumnType(Types.NUMERIC, "numeric($p,2)");
+			registerColumnType(Types.REAL, "real");
 			registerColumnType(Types.SMALLINT, "smallint");
-			registerColumnType(Types.TIME, "time");
+			registerColumnType(Types.TIME, "date");
 			registerColumnType(Types.TIMESTAMP, "timestamp");
-			registerColumnType(Types.TINYINT, "fixed(3,0)");
-			registerColumnType(Types.VARBINARY, "long byte");
-			registerColumnType(Types.VARCHAR, 8000, "varchar($l)");
-			registerColumnType(Types.VARCHAR, "long ascii");
+			registerColumnType(Types.TINYINT, "tinyint");
+			registerColumnType(Types.VARBINARY, 31982, "varbinary($l)");
+			registerColumnType(Types.VARBINARY, "varbinary(31982)");
+			registerColumnType(Types.VARCHAR, 31982, "varchar($l)");
+			registerColumnType(Types.VARCHAR, "varchar(31982)");
 		}
 	}
 
 	/** extended hibernate dialect used in this wrapper */
-	private final MAXDBDialectHelper _dialect = new MAXDBDialectHelper();
+	private final ProgressDialectHelper _dialect = new ProgressDialectHelper();
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTypeName(int, int, int, int)
@@ -89,13 +103,7 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	@Override
 	public boolean canPasteTo(final IDatabaseObjectInfo info)
 	{
-		boolean result = true;
-		final DatabaseObjectType type = info.getDatabaseObjectType();
-		if (type.getName().equalsIgnoreCase("database"))
-		{
-			result = false;
-		}
-		return result;
+		return true;
 	}
 
 	/**
@@ -107,10 +115,43 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getLengthFunction(int)
+	 */
+	@Override
+	public String getLengthFunction(final int dataType)
+	{
+		return "length";
+	}
+
+	@Override
+	public String getMaxFunction()
+	{
+		return "max";
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getMaxPrecision(int)
+	 */
 	@Override
 	public int getMaxPrecision(final int dataType)
 	{
-		return 38;
+		if (dataType == Types.FLOAT)
+		{
+			return 15;
+		} else
+		{
+			return 32;
+		}
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getMaxScale(int)
+	 */
+	@Override
+	public int getMaxScale(final int dataType)
+	{
+		return getMaxPrecision(dataType);
 	}
 
 	/**
@@ -119,7 +160,7 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	@Override
 	public int getPrecisionDigits(final int columnSize, final int dataType)
 	{
-		return columnSize * 2;
+		return columnSize;
 	}
 
 	/**
@@ -128,11 +169,6 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	@Override
 	public int getColumnLength(final int columnSize, final int dataType)
 	{
-		// driver returns 8 for "long byte", yet it can store 2GB of data.
-		if (dataType == Types.LONGVARBINARY)
-		{
-			return Integer.MAX_VALUE;
-		}
 		return columnSize;
 	}
 
@@ -142,18 +178,12 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	@Override
 	public String getDisplayName()
 	{
-		return "MaxDB";
+		return "Progress";
 	}
 
 	/**
-	 * Returns boolean value indicating whether or not this dialect supports the specified database
-	 * product/version.
-	 * 
-	 * @param databaseProductName
-	 *           the name of the database as reported by DatabaseMetaData.getDatabaseProductName()
-	 * @param databaseProductVersion
-	 *           the version of the database as reported by DatabaseMetaData.getDatabaseProductVersion()
-	 * @return true if this dialect can be used for the specified product name and version; false otherwise.
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsProduct(java.lang.String,
+	 *      java.lang.String)
 	 */
 	@Override
 	public boolean supportsProduct(final String databaseProductName, final String databaseProductVersion)
@@ -162,8 +192,8 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 		{
 			return false;
 		}
-		final String lname = databaseProductName.trim().toLowerCase();
-		if (lname.startsWith("sap") || lname.startsWith("maxdb"))
+		if (databaseProductName.trim().toLowerCase().startsWith("progress")
+			|| databaseProductName.trim().toLowerCase().startsWith("openedge"))
 		{
 			// We don't yet have the need to discriminate by version.
 			return true;
@@ -172,27 +202,37 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	}
 
 	/**
-	 * Returns a boolean value indicating whether or not this database dialect supports dropping columns from
-	 * tables.
-	 * 
-	 * @return true if the database supports dropping columns; false otherwise.
+	 * @param info
+	 * @return
+	 * @throws UnsupportedOperationException
+	 */
+	public String[] getColumnAddSQL(final TableColumnInfo info) throws UnsupportedOperationException
+	{
+		return new String[] { "Column add not yet supported" };
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsColumnComment()
+	 */
+	@Override
+	public boolean supportsColumnComment()
+	{
+		return false;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsDropColumn()
 	 */
 	@Override
 	public boolean supportsDropColumn()
 	{
+		// TODO: need to verify this
 		return true;
 	}
 
 	/**
-	 * Returns the SQL that forms the command to drop the specified colum in the specified table.
-	 * 
-	 * @param tableName
-	 *           the name of the table that has the column
-	 * @param columnName
-	 *           the name of the column to drop.
-	 * @return
-	 * @throws UnsupportedOperationException
-	 *            if the database doesn't support dropping columns.
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnDropSQL(java.lang.String,
+	 *      java.lang.String)
 	 */
 	@Override
 	public String getColumnDropSQL(final String tableName, final String columnName)
@@ -201,22 +241,15 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	}
 
 	/**
-	 * Returns the SQL that forms the command to drop the specified table. If cascade contraints is supported
-	 * by the dialect and cascadeConstraints is true, then a drop statement with cascade constraints clause
-	 * will be formed.
-	 * 
-	 * @param iTableInfo
-	 *           the table to drop
-	 * @param cascadeConstraints
-	 *           whether or not to drop any FKs that may reference the specified table.
-	 * @return the drop SQL command.
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTableDropSQL(net.sourceforge.squirrel_sql.fw.sql.ITableInfo,
+	 *      boolean, boolean)
 	 */
 	@Override
 	public List<String> getTableDropSQL(final ITableInfo iTableInfo, final boolean cascadeConstraints,
 		final boolean isMaterializedView)
 	{
 		return DialectUtils.getTableDropSQL(iTableInfo,
-			true,
+			false,
 			cascadeConstraints,
 			false,
 			DialectUtils.CASCADE_CLAUSE,
@@ -224,115 +257,61 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	}
 
 	/**
-	 * Returns the SQL that forms the command to add a primary key to the specified table composed of the given
-	 * column names. ALTER TABLE test ADD constraint test_pk PRIMARY KEY (notnullint)
-	 * 
-	 * @param pkName
-	 *           the name of the constraint
-	 * @param columnNames
-	 *           the columns that form the key
-	 * @return
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddPrimaryKeySQL(java.lang.String,
+	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo[],
+	 *      net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
 	 */
 	@Override
 	public String[] getAddPrimaryKeySQL(final String pkName, final TableColumnInfo[] columns,
 		final ITableInfo ti)
 	{
-		final ArrayList<String> result = new ArrayList<String>();
-		for (final TableColumnInfo info : columns)
-		{
-			result.add(getColumnNullableAlterSQL(info, false));
-		}
-		result.add(DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false));
-		return result.toArray(new String[result.size()]);
+		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false) };
 	}
 
 	/**
-	 * Returns a boolean value indicating whether or not this dialect supports adding comments to columns.
-	 * 
-	 * @return true if column comments are supported; false otherwise.
-	 */
-	@Override
-	public boolean supportsColumnComment()
-	{
-		return true;
-	}
-
-	/**
-	 * Returns the SQL statement to use to add a comment to the specified column of the specified table.
-	 * 
-	 * @param info
-	 *           information about the column such as type, name, etc.
-	 * @return
-	 * @throws UnsupportedOperationException
-	 *            if the database doesn't support annotating columns with a comment.
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnCommentAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	@Override
 	public String getColumnCommentAlterSQL(final TableColumnInfo info,
 		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 		throws UnsupportedOperationException
 	{
-		return DialectUtils.getColumnCommentAlterSQL(info, null, null, null);
+		final int featureId = DialectUtils.COLUMN_COMMENT_ALTER_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
-	 * Returns a boolean value indicating whether or not this database dialect supports changing a column from
-	 * null to not-null and vice versa.
-	 * 
-	 * @return true if the database supports dropping columns; false otherwise.
-	 */
-	@Override
-	public boolean supportsAlterColumnNull()
-	{
-		return true;
-	}
-
-	/**
-	 * Returns the SQL used to alter the specified column to not allow null values ALTER TABLE table_name
-	 * COLUMN column_name DEFAULT NULL ALTER TABLE table_name COLUMN column_name NOT NULL
-	 * 
-	 * @param info
-	 *           the column to modify
-	 * @return the SQL to execute
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnNullableAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	@Override
 	public String[] getColumnNullableAlterSQL(final TableColumnInfo info,
 		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 	{
-		final boolean nullable = info.isNullable().equalsIgnoreCase("YES");
-		return new String[] { getColumnNullableAlterSQL(info, nullable) };
-	}
+		// "ALTER TABLE $tableName$ ALTER COLUMN $columnName$ SET $nullable$";
+		final StringTemplate st = new StringTemplate(ST_ALTER_COLUMN_NULL_STYLE_ONE);
+		final HashMap<String, String> valuesMap =
+			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY,
+				info.getTableName(),
+				ST_COLUMN_NAME_KEY,
+				info.getColumnName());
 
-	/**
-	 * Returns the SQL used to alter the specified column to not allow null values ALTER TABLE table_name
-	 * COLUMN column_name DEFAULT NULL ALTER TABLE table_name COLUMN column_name NOT NULL
-	 * 
-	 * @param info
-	 *           the column to modify
-	 * @param nullable
-	 *           whether or not the column should allow nulls
-	 * @return the SQL to execute
-	 */
-	public String getColumnNullableAlterSQL(final TableColumnInfo info, final boolean nullable)
-	{
-		final StringBuffer result = new StringBuffer();
-		result.append("ALTER TABLE ");
-		result.append(info.getTableName());
-		result.append(" COLUMN ");
-		result.append(info.getColumnName());
-		if (nullable)
+		if (info.isNullable().equalsIgnoreCase("YES"))
 		{
-			result.append(" DEFAULT NULL");
+			valuesMap.put(ST_NULLABLE_KEY, "NULL");
 		} else
 		{
-			result.append(" NOT NULL");
+			valuesMap.put(ST_NULLABLE_KEY, "NOT NULL");
 		}
-		return result.toString();
+		return new String[] { DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs) };
 	}
 
 	/**
-	 * Returns a boolean value indicating whether or not this database dialect supports renaming columns.
-	 * 
-	 * @return true if the database supports changing the name of columns; false otherwise.
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsRenameColumn()
 	 */
 	@Override
 	public boolean supportsRenameColumn()
@@ -341,56 +320,64 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	}
 
 	/**
-	 * Returns the SQL that is used to change the column name. RENAME COLUMN table_name.column_name TO
-	 * new_column_name
-	 * 
-	 * @param from
-	 *           the TableColumnInfo as it is
-	 * @param to
-	 *           the TableColumnInfo as it wants to be
-	 * @return the SQL to make the change
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnNameAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, DatabaseObjectQualifier,
+	 *      SqlGenerationPreferences)
 	 */
 	@Override
-	public String getColumnNameAlterSQL(final TableColumnInfo from, final TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnNameAlterSQL(final TableColumnInfo from, final TableColumnInfo to,
+		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getColumnRenameSQL(from, to);
+		// "ALTER TABLE $tableName$ RENAME COLUMN $oldColumnName$ to $newColumnName$";
+		final StringTemplate st = new StringTemplate(ST_ALTER_COLUMN_NAME_STYLE_ONE);
+
+		final HashMap<String, String> valuesMap =
+			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY,
+				from.getTableName(),
+				ST_OLD_COLUMN_NAME_KEY,
+				from.getColumnName(),
+				ST_NEW_COLUMN_NAME_KEY,
+				to.getColumnName());
+
+		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**
-	 * Returns a boolean value indicating whether or not this dialect supports modifying a columns type.
-	 * 
-	 * @return true if supported; false otherwise
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsAlterColumnType()
 	 */
 	@Override
 	public boolean supportsAlterColumnType()
 	{
-		return true;
+		return false;
 	}
 
 	/**
-	 * Returns the SQL that is used to change the column type.
-	 * 
-	 * @param from
-	 *           the TableColumnInfo as it is
-	 * @param to
-	 *           the TableColumnInfo as it wants to be
-	 * @return the SQL to make the change
-	 * @throw UnsupportedOperationException if the database doesn't support modifying column types.
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnTypeAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	@Override
 	public List<String> getColumnTypeAlterSQL(final TableColumnInfo from, final TableColumnInfo to,
 		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 		throws UnsupportedOperationException
 	{
-		final String alterClause = DialectUtils.MODIFY_CLAUSE;
-		return DialectUtils.getColumnTypeAlterSQL(this, alterClause, "", false, from, to);
+		final int featureId = DialectUtils.COLUMN_COMMENT_ALTER_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
-	 * Returns a boolean value indicating whether or not this database dialect supports changing a column's
-	 * default value.
-	 * 
-	 * @return true if the database supports modifying column defaults; false otherwise
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsAlterColumnNull()
+	 */
+	@Override
+	public boolean supportsAlterColumnNull()
+	{
+		return true;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsAlterColumnDefault()
 	 */
 	@Override
 	public boolean supportsAlterColumnDefault()
@@ -399,52 +386,63 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	}
 
 	/**
-	 * Returns the SQL command to change the specified column's default value alter table test column mychar
-	 * drop default alter table test column mychar add default 'a default'
-	 * 
-	 * @param info
-	 *           the column to modify and it's default value.
-	 * @return SQL to make the change
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnDefaultAlterSQL(
+	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, DatabaseObjectQualifier,
+	 *      SqlGenerationPreferences)
 	 */
 	@Override
-	public String getColumnDefaultAlterSQL(final TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnDefaultAlterSQL(final TableColumnInfo info,
+		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 	{
-		final String alterClause = DialectUtils.COLUMN_CLAUSE;
-		final String newDefault = info.getDefaultValue();
-		String defaultClause = null;
-		if (newDefault != null && !"".equals(newDefault))
+		// alter table TEST ALTER MYCHAR SET DEFAULT 'FOO'
+		// alter table TEST ALTER MYCHAR DROP DEFAULT
+
+		StringTemplate st = null;
+		final HashMap<String, String> valuesMap =
+			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY,
+				info.getTableName(),
+				ST_COLUMN_NAME_KEY,
+				info.getColumnName());
+
+		if (info.getDefaultValue() != null)
 		{
-			defaultClause = DialectUtils.ADD_DEFAULT_CLAUSE;
+			// add a default value
+			// "ALTER TABLE $tableName$ " +
+			// "ALTER $columnName$ SET DEFAULT $defaultValue$";
+			st = new StringTemplate(ST_ALTER_COLUMN_SET_DEFAULT_STYLE_ONE);
+			if (JDBCTypeMapper.isNumberType(info.getDataType()))
+			{
+				valuesMap.put(ST_DEFAULT_VALUE_KEY, info.getDefaultValue());
+			} else
+			{
+				valuesMap.put(ST_DEFAULT_VALUE_KEY, "'" + info.getDefaultValue() + "'");
+			}
 		} else
 		{
-			defaultClause = DialectUtils.DROP_DEFAULT_CLAUSE;
+			// drop the existing default value.
+			// "ALTER TABLE $tableName$ " +
+			// "ALTER $columnName$ DROP DEFAULT";
+			st = new StringTemplate(ST_ALTER_COLUMN_DROP_DEFAULT_STYLE_ONE);
+
 		}
-		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, false, defaultClause);
+		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**
-	 * Returns the SQL command to drop the specified table's primary key.
-	 * 
-	 * @param pkName
-	 *           the name of the primary key that should be dropped
-	 * @param tableName
-	 *           the name of the table whose primary key should be dropped
-	 * @return
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropPrimaryKeySQL(java.lang.String,
+	 *      java.lang.String)
 	 */
 	@Override
 	public String getDropPrimaryKeySQL(final String pkName, final String tableName)
 	{
-		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false);
+		final int featureId = DialectUtils.DROP_PRIMARY_KEY_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
-	 * Returns the SQL command to drop the specified table's foreign key constraint.
-	 * 
-	 * @param fkName
-	 *           the name of the foreign key that should be dropped
-	 * @param tableName
-	 *           the name of the table whose foreign key should be dropped
-	 * @return
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropForeignKeySQL(java.lang.String,
+	 *      java.lang.String)
 	 */
 	@Override
 	public String getDropForeignKeySQL(final String fkName, final String tableName)
@@ -453,17 +451,9 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	}
 
 	/**
-	 * Returns the SQL command to create the specified table.
-	 * 
-	 * @param tables
-	 *           the tables to get create statements for
-	 * @param md
-	 *           the metadata from the ISession
-	 * @param prefs
-	 *           preferences about how the resultant SQL commands should be formed.
-	 * @param isJdbcOdbc
-	 *           whether or not the connection is via JDBC-ODBC bridge.
-	 * @return the SQL that is used to create the specified table
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getCreateTableSQL(java.util.List,
+	 *      net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.CreateScriptPreferences, boolean)
 	 */
 	@Override
 	public List<String> getCreateTableSQL(final List<ITableInfo> tables, final ISQLDatabaseMetaData md,
@@ -478,7 +468,7 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	@Override
 	public DialectType getDialectType()
 	{
-		return DialectType.MAXDB;
+		return DialectType.PROGRESS;
 	}
 
 	/**
@@ -487,30 +477,26 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	@Override
 	public String[] getIndexAccessMethodsTypes()
 	{
+		// TODO Auto-generated method stub
 		return null;
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getIndexStorageOptions()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getIndexStorageOptions()
 	 */
 	@Override
 	public String[] getIndexStorageOptions()
 	{
+		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddAutoIncrementSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
-	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
-	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
-	 */
 	@Override
 	public String[] getAddAutoIncrementSQL(final TableColumnInfo column,
 		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 	{
-		final int featureId = DialectUtils.ADD_AUTO_INCREMENT_TYPE;
-		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-		throw new UnsupportedOperationException(msg);
+		// TODO Auto-generated method stub
+		return new String[] { "blah" };
 	}
 
 	/**
@@ -522,30 +508,17 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	public String[] getAddColumnSQL(final TableColumnInfo column, final DatabaseObjectQualifier qualifier,
 		final SqlGenerationPreferences prefs)
 	{
-		final ArrayList<String> result = new ArrayList<String>();
-
 		final boolean addDefaultClause = true;
 		final boolean supportsNullQualifier = false;
 		final boolean addNullClause = true;
 
-		final String sql =
-			DialectUtils.getAddColumSQL(column,
-				this,
-				addDefaultClause,
-				supportsNullQualifier,
-				addNullClause,
-				qualifier,
-				prefs);
-
-		result.add(sql);
-
-		if (column.getRemarks() != null && !"".equals(column.getRemarks()))
-		{
-			result.add(getColumnCommentAlterSQL(column, null, null));
-		}
-
-		return result.toArray(new String[result.size()]);
-
+		return new String[] { DialectUtils.getAddColumSQL(column,
+			this,
+			addDefaultClause,
+			supportsNullQualifier,
+			addNullClause,
+			qualifier,
+			prefs) };
 	}
 
 	/**
@@ -562,43 +535,24 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 		final Collection<String[]> localRefColumns, final String onUpdateAction, final String onDeleteAction,
 		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 	{
-		// ALTER TABLE <table_name> ADD
-		// FOREIGN KEY [<referential_constraint_name>] (<referencing_column>,...)
-		// REFERENCES <referenced_table> [(<referenced_column>,...)] [<delete_rule>]
+		Boolean deferrableNotSupported = null;
+		Boolean initiallyDeferredNotSupported = null;
+		Boolean matchFullNotSupported = null;
 
-		// "ALTER TABLE $childTableName$ " +
-		// "ADD $constraint$ $constraintName$ FOREIGN KEY ( $childColumn; separator=\",\"$ ) " +
-		// "REFERENCES $parentTableName$ ( $parentColumn; separator=\",\"$ )";
-
-		final StringTemplate fkST = new StringTemplate(ST_ADD_FOREIGN_KEY_CONSTRAINT_STYLE_ONE);
-		final HashMap<String, String> fkValuesMap =
-			DialectUtils.getValuesMap(ST_CHILD_TABLE_KEY, localTableName);
-		fkValuesMap.put(ST_CONSTRAINT_KEY, "CONSTRAINT");
-		fkValuesMap.put(ST_CONSTRAINT_NAME_KEY, constraintName);
-		fkValuesMap.put(ST_PARENT_TABLE_KEY, refTableName);
-
-		StringTemplate childIndexST = null;
-		HashMap<String, String> ckIndexValuesMap = null;
-
-		if (autoFKIndex)
-		{
-			// "CREATE $unique$ $storageOption$ INDEX $indexName$ " +
-			// "ON $tableName$ ( $columnName; separator=\",\"$ )";
-
-			childIndexST = new StringTemplate(ST_CREATE_INDEX_STYLE_TWO);
-			ckIndexValuesMap = new HashMap<String, String>();
-			ckIndexValuesMap.put(ST_INDEX_NAME_KEY, "fk_child_idx");
-		}
-
-		return DialectUtils.getAddForeignKeyConstraintSQL(fkST,
-			fkValuesMap,
-			childIndexST,
-			ckIndexValuesMap,
+		return DialectUtils.getAddForeignKeyConstraintSQL(localTableName,
+			refTableName,
+			constraintName,
+			deferrableNotSupported,
+			initiallyDeferredNotSupported,
+			matchFullNotSupported,
+			autoFKIndex,
+			fkIndexName,
 			localRefColumns,
+			onUpdateAction,
+			onDeleteAction,
 			qualifier,
 			prefs,
 			this);
-
 	}
 
 	/**
@@ -612,9 +566,21 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 		final TableColumnInfo[] columns, final DatabaseObjectQualifier qualifier,
 		final SqlGenerationPreferences prefs)
 	{
-		final int featureId = DialectUtils.ADD_UNIQUE_TYPE;
-		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-		throw new UnsupportedOperationException(msg);
+		// alter table FKTESTCHILDTABLE add CONSTRAINT foo_const UNIQUE (MYID)
+
+		// "ALTER TABLE $tableName$ " +
+		// "ADD CONSTRAINT $constraintName$ UNIQUE ($columnName; separator=\",\"$)";
+		
+		String templateStr = ST_ADD_UNIQUE_CONSTRAINT_STYLE_TWO;
+		
+		StringTemplate st = new StringTemplate(templateStr);
+		
+		HashMap<String, String> valuesMap = 
+			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, tableName, ST_CONSTRAINT_NAME_KEY, constraintName);
+		
+		return new String[] { 
+			DialectUtils.getAddUniqueConstraintSQL(st, valuesMap, columns, qualifier, prefs, this)
+		};
 	}
 
 	/**
@@ -644,36 +610,26 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 		final String[] columns, final boolean unique, final String tablespace, final String constraints,
 		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 	{
-
-		// <create_index_statement> ::=
-		// CREATE [UNIQUE] INDEX <index_name> ON <table_name> (<index_spec>)
-		//
-		// <index_spec> ::=
-		// <index_column_name>,...
-		// | <dbfunction_name> (<column_name>,...) [ASC|DESC]
-		//
-		// <index_column_name> ::=
-		// <column_name> [ASC|DESC]
-
-		// String ST_CREATE_INDEX_STYLE_TWO =
-		// "CREATE $unique$ $storageOption$ INDEX $indexName$ " +
-		// "ON $tableName$ ( $columnName; separator=\",\"$ )";
-
-		final StringTemplate st = new StringTemplate(ST_CREATE_INDEX_STYLE_TWO);
-		final HashMap<String, String> valuesMap = new HashMap<String, String>();
+		StringBuilder result = new StringBuilder();
+		result.append("CREATE ");
 
 		if (unique)
 		{
-			valuesMap.put(ST_UNIQUE_KEY, "UNIQUE");
-			if (accessMethod != null && "HASH".equalsIgnoreCase(accessMethod))
-			{
-				valuesMap.put(ST_STORAGE_OPTION_KEY, "HASH");
-			}
+			result.append("UNIQUE ");
 		}
-		valuesMap.put(ST_INDEX_NAME_KEY, indexName);
-		valuesMap.put(ST_TABLE_NAME_KEY, tableName);
-
-		return DialectUtils.getAddIndexSQL(this, st, valuesMap, columns, qualifier, prefs);
+		result.append(" INDEX ");
+		result.append(DialectUtils.shapeQualifiableIdentifier(indexName, qualifier, prefs, this));
+		result.append(" ON ");
+		result.append(DialectUtils.shapeQualifiableIdentifier(tableName, qualifier, prefs, this));
+		result.append("(");
+		for (String column : columns)
+		{
+			result.append(column);
+			result.append(",");
+		}
+		result.setLength(result.length() - 1);
+		result.append(")");
+		return result.toString();
 	}
 
 	/**
@@ -687,39 +643,55 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 		final String minimum, final String maximum, final String start, final String cache,
 		final boolean cycle, final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 	{
-		// <create_sequence_statement> ::= CREATE SEQUENCE [<schema_name>.]<sequence_name>
-		// [INCREMENT BY <integer>] [START WITH <integer>]
-		// [MAXVALUE <integer> | NOMAXVALUE] [MINVALUE <integer> | NOMINVALUE]
-		// [CYCLE | NOCYCLE]
-		// [CACHE <unsigned_integer> | NOCACHE]
-		// [ORDER | NOORDER]
+		// This is what the spec says:
+		//
+		// CREATE SEQUENCE
+		// [schema_name.]sequence_name
+		// [INCREMENT BY value],
+		// [START WITH value],
+		// [MAXVALUE value | NOMAXVALUE],
+		// [MINVALUE value | NOMINVALUE],
+		// [CYLCE | NOCYLCE]
+				
+		// Currently, OpenEdge only supports the PUB schema for sequences.
+		
+		// "CREATE SEQUENCE $sequenceName$  " +
+		// "$increment$ $startWith$ $minimum$ $maximum$ $cache$ $cycle$";
 
-		// "CREATE SEQUENCE $sequenceName$ $startWith$ $increment$ $minimum$ $maximum$ $cache$ $cycle$";
+		String templateStr = ST_CREATE_SEQUENCE_STYLE_TWO;
+		
+		StringTemplate startClauseTemplate = new StringTemplate("START WITH $startWith$ ,");
+		OptionalSqlClause startClause = new OptionalSqlClause(startClauseTemplate, ST_START_WITH_KEY, start);
+		
+		StringTemplate incrementByClauseTemplate = new StringTemplate("INCREMENT BY $incrementBy$ ,");
+		OptionalSqlClause incrementClause =
+			new OptionalSqlClause(incrementByClauseTemplate, ST_INCREMENT_BY_KEY, increment);
+		
+		StringTemplate maxClauseTemplate = new StringTemplate("MAXVALUE $maximum$ ,");
+		OptionalSqlClause maxClause = 
+			new OptionalSqlClause(maxClauseTemplate, ST_MAXIMUM_KEY, maximum);
+		
+		StringTemplate minClauseTemplate = new StringTemplate("MINVALUE $minimum$ ,");
+		OptionalSqlClause minClause = 
+			new OptionalSqlClause(minClauseTemplate, ST_MINIMUM_KEY, minimum);
+		
+		
+		
+		StringTemplate st = new StringTemplate(templateStr);
 
-		final StringTemplate st = new StringTemplate(ST_CREATE_SEQUENCE_STYLE_TWO);
-
-		final OptionalSqlClause incClause = new OptionalSqlClause(DialectUtils.INCREMENT_BY_CLAUSE, increment);
-		final OptionalSqlClause minClause = new OptionalSqlClause(DialectUtils.MINVALUE_CLAUSE, minimum);
-		final OptionalSqlClause maxClause = new OptionalSqlClause(DialectUtils.MAXVALUE_CLAUSE, maximum);
-		final OptionalSqlClause cacheClause = new OptionalSqlClause(DialectUtils.CACHE_CLAUSE, cache);
-
-		final HashMap<String, String> valuesMap =
-			DialectUtils.getValuesMap(ST_SEQUENCE_NAME_KEY,
-				sequenceName,
-				ST_INCREMENT_KEY,
-				incClause,
-				ST_MINIMUM_KEY,
-				minClause,
-				ST_MAXIMUM_KEY,
-				maxClause,
-				ST_CACHE_KEY,
-				cacheClause);
-		if (cycle)
-		{
-			valuesMap.put(ST_CYCLE_KEY, "CYCLE");
+		st.setAttribute(ST_SEQUENCE_NAME_KEY, "PUB."+sequenceName);
+		st.setAttribute(ST_START_WITH_KEY, startClause.toString());
+		st.setAttribute(ST_INCREMENT_KEY, incrementClause.toString());
+		st.setAttribute(ST_MAXIMUM_KEY, maxClause.toString());
+		st.setAttribute(ST_MINIMUM_KEY, minClause.toString());
+		
+		if (cycle) {
+			st.setAttribute(ST_CYCLE_KEY, "CYCLE");
+		} else {
+			st.setAttribute(ST_CYCLE_KEY, "NOCYCLE");
 		}
-
-		return DialectUtils.getCreateSequenceSQL(st, valuesMap, qualifier, prefs, this);
+		
+		return st.toString();
 	}
 
 	/**
@@ -732,22 +704,21 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	public String getCreateViewSQL(final String viewName, final String definition, final String checkOption,
 		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 	{
-		// <create_view_statement> ::=
-		// CREATE [OR REPLACE] VIEW <table_name> [(<alias_name>,...)] AS <query_expression> [WITH CHECK OPTION]
-
+		// CREATE VIEW name [(view_col [, view_col …])]
+		// AS <select> [WITH CHECK OPTION];
+		
 		// "CREATE VIEW $viewName$ " +
-		// "AS $selectStatement$ $withCheckOption$";
-		final StringTemplate st = new StringTemplate(ST_CREATE_VIEW_STYLE_TWO);
+		// "AS $selectStatement$ $withCheckOption$";	
+      StringTemplate st = new StringTemplate(ST_CREATE_VIEW_STYLE_TWO);
 
-		final HashMap<String, String> valuesMap =
-			DialectUtils.getValuesMap(ST_VIEW_NAME_KEY, viewName, ST_SELECT_STATEMENT_KEY, definition);
+      HashMap<String, String> valuesMap =
+              DialectUtils.getValuesMap(ST_VIEW_NAME_KEY, viewName, ST_SELECT_STATEMENT_KEY, definition);
+      
+      if (checkOption != null) {
+      	valuesMap.put(ST_WITH_CHECK_OPTION_KEY, "WITH CHECK OPTION");
+      }
 
-		if (checkOption != null && !"".equals(checkOption))
-		{
-			valuesMap.put(ST_WITH_CHECK_OPTION_KEY, "WITH CHECK OPTION");
-		}
-
-		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
+      return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**
@@ -759,9 +730,7 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	public String getDropConstraintSQL(final String tableName, final String constraintName,
 		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 	{
-		final int featureId = DialectUtils.DROP_CONSTRAINT_TYPE;
-		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-		throw new UnsupportedOperationException(msg);
+		return DialectUtils.getDropConstraintSQL(tableName, constraintName, qualifier, prefs, this);
 	}
 
 	/**
@@ -773,11 +742,8 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	public String getDropIndexSQL(final String tableName, final String indexName, final boolean cascade,
 		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 	{
-		// <drop_index_statement> ::=
-		// DROP INDEX <index_name> [ON <table_name>]
-
-		final StringTemplate st = new StringTemplate(ST_DROP_INDEX_STYLE_ONE);
-		final HashMap<String, String> valuesMap = new HashMap<String, String>();
+		StringTemplate st = new StringTemplate(ST_DROP_INDEX_STYLE_ONE);
+		HashMap<String, String> valuesMap = new HashMap<String, String>();
 		valuesMap.put(ST_INDEX_NAME_KEY, indexName);
 		valuesMap.put(ST_TABLE_NAME_KEY, tableName);
 		return DialectUtils.getDropIndexSQL(st, valuesMap, qualifier, prefs, this);
@@ -792,12 +758,14 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	public String getDropSequenceSQL(final String sequenceName, final boolean cascade,
 		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 	{
-		// "DROP SEQUENCE $sequenceName$ $cascade$";
-		final StringTemplate st = new StringTemplate(ST_DROP_SEQUENCE_STYLE_ONE);
+		// Currently, OpenEdge only supports the PUB schema for sequences.
+		
+		DatabaseObjectQualifier pubQualifier = 
+			new DatabaseObjectQualifier(qualifier.getCatalog(), "PUB");
+		SqlGenerationPreferences pubPrefs = new SqlGenerationPreferences();
+		pubPrefs.setQualifyTableNames(true);
 
-		final HashMap<String, String> valuesMap = DialectUtils.getValuesMap(ST_SEQUENCE_NAME_KEY, sequenceName);
-
-		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
+		return DialectUtils.getDropSequenceSQL(sequenceName, null, pubQualifier, pubPrefs, this);
 	}
 
 	/**
@@ -809,13 +777,11 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	public String getDropViewSQL(final String viewName, final boolean cascade,
 		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 	{
-		// "DROP VIEW $viewName$";
-		final StringTemplate st = new StringTemplate(ST_DROP_VIEW_STYLE_ONE);
+		Boolean cascadeNotSupported = null;
 
-		final HashMap<String, String> valuesMap = DialectUtils.getValuesMap(ST_VIEW_NAME_KEY, viewName);
-
-		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
+		return DialectUtils.getDropViewSQL(viewName, cascadeNotSupported, qualifier, prefs, this);		
 	}
+
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getRenameTableSQL(java.lang.String,
@@ -826,10 +792,10 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	public String getRenameTableSQL(final String oldTableName, final String newTableName,
 		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 	{
-		// "RENAME TABLE $oldObjectName$ TO $newObjectName$";
-		final StringTemplate st = new StringTemplate(ST_RENAME_TABLE_STYLE_ONE);
+		// "ALTER TABLE $oldObjectName$ RENAME TO $newObjectName$";
+		StringTemplate st = new StringTemplate(ST_RENAME_OBJECT_STYLE_ONE);
 
-		final HashMap<String, String> valuesMap =
+		HashMap<String, String> valuesMap =
 			DialectUtils.getValuesMap(ST_OLD_OBJECT_NAME_KEY, oldTableName, ST_NEW_OBJECT_NAME_KEY, newTableName);
 
 		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
@@ -844,17 +810,8 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	public String[] getRenameViewSQL(final String oldViewName, final String newViewName,
 		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 	{
-		// <rename_view_statement> ::= RENAME VIEW <old_table_name> TO <new_table_name>
-		// <old_table_name> ::= <table_name>
-		// <new_table_name> ::= <table_name
-
-		// "RENAME VIEW $oldObjectName$ TO $newObjectName$";
-		final StringTemplate st = new StringTemplate(ST_RENAME_VIEW_STYLE_ONE);
-
-		final HashMap<String, String> valuesMap =
-			DialectUtils.getValuesMap(ST_OLD_OBJECT_NAME_KEY, oldViewName, ST_NEW_OBJECT_NAME_KEY, newViewName);
-
-		return new String[] { DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs) };
+		// TODO Auto-generated method stub
+		return new String[] { "blah" };
 	}
 
 	/**
@@ -866,8 +823,32 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	public String getSequenceInformationSQL(final String sequenceName,
 		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 	{
-		return "SELECT LAST_NUMBER as last_value, MAX_VALUE, MIN_VALUE, CACHE_SIZE as cache_value, "
-			+ "INCREMENT_BY, CYCLE_FLAG as is_cycled " + "FROM DOMAIN.SEQUENCES";
+		return
+		"SELECT PUB."+sequenceName+".CURRVAL, \"SEQ-MAX\", \"SEQ-MIN\", \"USER-MISC\", " +
+		"\"SEQ-INCR\", " +
+		"case \"CYCLE-OK\" " +
+		"when 0 then 0 " +
+		"else 1 " +
+		"end as CYCLE_FLAG " +
+		"FROM SYSPROGRESS.SYSSEQUENCES " +
+		"where \"SEQ-NAME\" = '"+sequenceName+"' ";
+	
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getUpdateSQL(java.lang.String,
+	 *      java.lang.String[], java.lang.String[], java.lang.String[], java.lang.String[], java.lang.String[],
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	@Override
+	public String[] getUpdateSQL(final String tableName, final String[] setColumns, final String[] setValues,
+		final String[] fromTables, final String[] whereColumns, final String[] whereValues,
+		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
+	{
+		final int featureId = DialectUtils.UPDATE_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -876,6 +857,7 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	@Override
 	public boolean supportsAccessMethods()
 	{
+		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -894,7 +876,7 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	@Override
 	public boolean supportsAddUniqueConstraint()
 	{
-		return false;
+		return true;
 	}
 
 	/**
@@ -906,12 +888,10 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 		return false;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsAutoIncrement()
-	 */
 	@Override
 	public boolean supportsAutoIncrement()
 	{
+		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -943,9 +923,17 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsCreateView()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsCreateTable()
 	 */
 	@Override
+	public boolean supportsCreateTable()
+	{
+		return true;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsCreateView()
+	 */
 	public boolean supportsCreateView()
 	{
 		return true;
@@ -954,16 +942,14 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsDropConstraint()
 	 */
-	@Override
 	public boolean supportsDropConstraint()
 	{
-		return false;
+		return true;
 	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsDropIndex()
 	 */
-	@Override
 	public boolean supportsDropIndex()
 	{
 		return true;
@@ -972,7 +958,6 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsDropSequence()
 	 */
-	@Override
 	public boolean supportsDropSequence()
 	{
 		return true;
@@ -981,7 +966,6 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsDropView()
 	 */
-	@Override
 	public boolean supportsDropView()
 	{
 		return true;
@@ -990,7 +974,6 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsEmptyTables()
 	 */
-	@Override
 	public boolean supportsEmptyTables()
 	{
 		return false;
@@ -999,7 +982,6 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsIndexes()
 	 */
-	@Override
 	public boolean supportsIndexes()
 	{
 		return true;
@@ -1008,34 +990,27 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsMultipleRowInserts()
 	 */
-	@Override
 	public boolean supportsMultipleRowInserts()
 	{
-		return false;
+		return true;
 	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsRenameTable()
 	 */
-	@Override
 	public boolean supportsRenameTable()
 	{
 		return true;
 	}
 
-	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsRenameView()
-	 */
-	@Override
 	public boolean supportsRenameView()
 	{
-		return true;
+		return false;
 	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsSequence()
 	 */
-	@Override
 	public boolean supportsSequence()
 	{
 		return true;
@@ -1044,7 +1019,6 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsSequenceInformation()
 	 */
-	@Override
 	public boolean supportsSequenceInformation()
 	{
 		return true;
@@ -1053,8 +1027,15 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsTablespace()
 	 */
-	@Override
 	public boolean supportsTablespace()
+	{
+		return false;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsUpdate()
+	 */
+	public boolean supportsUpdate()
 	{
 		return false;
 	}
@@ -1062,16 +1043,14 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsAddColumn()
 	 */
-	@Override
 	public boolean supportsAddColumn()
 	{
 		return true;
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsViewDefinition()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsViewDefinition()
 	 */
-	@Override
 	public boolean supportsViewDefinition()
 	{
 		return true;
@@ -1082,23 +1061,60 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
-	@Override
 	public String getViewDefinitionSQL(final String viewName, final DatabaseObjectQualifier qualifier,
 		final SqlGenerationPreferences prefs)
 	{
-		return null;
+		// SELECT 'CREATE VIEW FOOVIEW AS ' || VIEWTEXT
+		// FROM SYSPROGRESS.SYSVIEWS
+		// where VIEWNAME = 'FOOVIEW' and OWNER = 'MANNINGR'
+
+		final String templateStr =
+			"SELECT 'CREATE VIEW $viewName$ AS ' || VIEWTEXT " + "FROM SYSPROGRESS.SYSVIEWS "
+				+ "where VIEWNAME = '$viewName$' and OWNER = '$schemaName$' ";
+
+		final StringTemplate st = new StringTemplate(templateStr);
+		st.setAttribute(ST_VIEW_NAME_KEY, viewName);
+		st.setAttribute(ST_SCHEMA_NAME_KEY, qualifier.getSchema());
+
+		return st.toString();
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getQualifiedIdentifier(java.lang.String,
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getQualifiedIdentifier(java.lang.String,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
-	@Override
 	public String getQualifiedIdentifier(final String identifier, final DatabaseObjectQualifier qualifier,
 		final SqlGenerationPreferences prefs)
 	{
-		return identifier;
+		return qualifier.getSchema() + "." + identifier;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCorrelatedSubQuery()
+	 */
+	public boolean supportsCorrelatedSubQuery()
+	{
+		return false;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsDropPrimaryKey()
+	 */
+	@Override
+	public boolean supportsDropPrimaryKey()
+	{
+		// Oddly enough, progress will let you add pks to existing tables, but not drop them.
+		return false;
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsSubSecondTimestamps()
+	 */
+	@Override
+	public boolean supportsSubSecondTimestamps()
+	{
+		return false;
 	}
 
 }

@@ -263,9 +263,9 @@ public class IngresDialectExt extends CommonHibernateDialect implements Hibernat
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnNameAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
-	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo)
+	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
-	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to)
+	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		int featureId = DialectUtils.COLUMN_NAME_ALTER_TYPE;
 		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
@@ -313,7 +313,7 @@ public class IngresDialectExt extends CommonHibernateDialect implements Hibernat
 	 *           the column to modify and it's default value.
 	 * @return SQL to make the change
 	 */
-	public String getColumnDefaultAlterSQL(TableColumnInfo info)
+	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		String defaultClause = DialectUtils.DEFAULT_CLAUSE;
@@ -429,7 +429,7 @@ public class IngresDialectExt extends CommonHibernateDialect implements Hibernat
 		// default value.
 		if (column.isNullable().equals("NO"))
 		{
-			result.add(getColumnDefaultAlterSQL(column));
+			result.add(getColumnDefaultAlterSQL(column, qualifier, prefs));
 			result.addAll(Arrays.asList(getColumnNullableAlterSQL(column, qualifier, prefs)));
 		}
 		if (column.getRemarks() != null && !"".equals(column.getRemarks()))
