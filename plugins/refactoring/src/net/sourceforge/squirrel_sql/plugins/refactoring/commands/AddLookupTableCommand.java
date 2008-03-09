@@ -263,7 +263,7 @@ public class AddLookupTableCommand extends AbstractRefactoringCommand
 											sourceColumn.isNullable(),
 											md);
 
-			results.add(_dialect.getColumnNameAlterSQL(sourceColumn, tempColumn));
+			results.add(_dialect.getColumnNameAlterSQL(sourceColumn, tempColumn, qualifier, _sqlPrefs));
 
 			// Adds the new column (type: integer).
 			TableColumnInfo newColumn =

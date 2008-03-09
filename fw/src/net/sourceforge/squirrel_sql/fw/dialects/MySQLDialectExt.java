@@ -149,47 +149,47 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support adding columns after a table has already been created.
 	 */
-	public String[] getColumnAddSQL(TableColumnInfo info) throws UnsupportedOperationException
-	{
-		ArrayList<String> returnVal = new ArrayList<String>();
-		StringBuilder result = new StringBuilder();
-		result.append("ALTER TABLE ");
-		result.append(info.getTableName());
-		result.append(" ADD COLUMN ");
-		result.append(info.getColumnName());
-		result.append(" ");
-		result.append(DialectUtils.getTypeName(info, this));
-		result.append(" ");
-		DialectUtils.appendDefaultClause(info, result);
-		if (info.getRemarks() != null && !"".equals(info.getRemarks()))
-		{
-			result.append(" COMMENT ");
-			result.append("'");
-			result.append(info.getRemarks());
-			result.append("'");
-		}
-		returnVal.add(result.toString());
-		if (info.isNullable().equals("NO"))
-		{
-			String setNullSQL = getModifyColumnNullabilitySQL(info.getTableName(), info, false);
-			returnVal.add(setNullSQL);
-		}
-		// Sometimes, MySQL omits the change for COMMENT, so explicitly add
-		// it in a separate alter statement as well
-		if (info.getRemarks() != null && !"".equals(info.getRemarks()))
-		{
-			returnVal.add(getColumnCommentAlterSQL(info, null, null));
-		}
-		// Sometimes, MySQL omits the change for DEFAULT, so explicitly add
-		// it in a separate alter statement as well
-		// returnVal.add()
-		if (info.getDefaultValue() != null && !"".equals(info.getDefaultValue()))
-		{
-			returnVal.add(getColumnDefaultAlterSQL(info));
-		}
-
-		return returnVal.toArray(new String[returnVal.size()]);
-	}
+//	public String[] getColumnAddSQL(TableColumnInfo info) throws UnsupportedOperationException
+//	{
+//		ArrayList<String> returnVal = new ArrayList<String>();
+//		StringBuilder result = new StringBuilder();
+//		result.append("ALTER TABLE ");
+//		result.append(info.getTableName());
+//		result.append(" ADD COLUMN ");
+//		result.append(info.getColumnName());
+//		result.append(" ");
+//		result.append(DialectUtils.getTypeName(info, this));
+//		result.append(" ");
+//		DialectUtils.appendDefaultClause(info, result);
+//		if (info.getRemarks() != null && !"".equals(info.getRemarks()))
+//		{
+//			result.append(" COMMENT ");
+//			result.append("'");
+//			result.append(info.getRemarks());
+//			result.append("'");
+//		}
+//		returnVal.add(result.toString());
+//		if (info.isNullable().equals("NO"))
+//		{
+//			String setNullSQL = getModifyColumnNullabilitySQL(info.getTableName(), info, false);
+//			returnVal.add(setNullSQL);
+//		}
+//		// Sometimes, MySQL omits the change for COMMENT, so explicitly add
+//		// it in a separate alter statement as well
+//		if (info.getRemarks() != null && !"".equals(info.getRemarks()))
+//		{
+//			returnVal.add(getColumnCommentAlterSQL(info, null, null));
+//		}
+//		// Sometimes, MySQL omits the change for DEFAULT, so explicitly add
+//		// it in a separate alter statement as well
+//		// returnVal.add()
+//		if (info.getDefaultValue() != null && !"".equals(info.getDefaultValue()))
+//		{
+//			returnVal.add(getColumnDefaultAlterSQL(info, qualifier, prefs));
+//		}
+//
+//		return returnVal.toArray(new String[returnVal.size()]);
+//	}
 
 	/**
 	 * @param tableName
@@ -234,7 +234,7 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 * @return
 	 * @throws UnsupportedOperationException
 	 */
-	public String getColumnDefaultAlterSQL(TableColumnInfo info) throws UnsupportedOperationException
+	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
 		StringBuilder result = new StringBuilder();
 		result.append("ALTER TABLE ");
@@ -338,7 +338,7 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 *           the TableColumnInfo as it wants to be
 	 * @return the SQL to make the change
 	 */
-	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to)
+	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		StringBuilder result = new StringBuilder();
 		result.append("ALTER TABLE ");

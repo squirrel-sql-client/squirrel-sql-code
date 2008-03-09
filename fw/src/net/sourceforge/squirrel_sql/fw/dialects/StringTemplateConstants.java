@@ -48,7 +48,21 @@ public interface StringTemplateConstants
 		"ALTER TABLE $childTableName$ " +
 		"ADD $constraint$ $constraintName$ FOREIGN KEY ( $childColumn; separator=\",\"$ ) " +
 		"REFERENCES $parentTableName$ ( $parentColumn; separator=\",\"$ )";
-			
+
+	String ST_ALTER_COLUMN_NAME_STYLE_ONE = 
+		"ALTER TABLE $tableName$ RENAME COLUMN $oldColumnName$ to $newColumnName$";
+
+	String ST_ALTER_COLUMN_SET_DEFAULT_STYLE_ONE = 
+		"ALTER TABLE $tableName$ " +
+		"ALTER $columnName$ SET DEFAULT $defaultValue$";
+		
+	String ST_ALTER_COLUMN_DROP_DEFAULT_STYLE_ONE = 
+		"ALTER TABLE $tableName$ " +
+		"ALTER $columnName$ DROP DEFAULT";		
+	
+	String ST_ALTER_COLUMN_NULL_STYLE_ONE = 
+		"ALTER TABLE $tableName$ ALTER COLUMN $columnName$ SET $nullable$";
+	
 	String ST_ALTER_SEQUENCE_STYLE_ONE = 
 		"ALTER SEQUENCE $sequenceName$ " +
 		"$restartWith$ $startValue$ " +
@@ -175,6 +189,8 @@ public interface StringTemplateConstants
 	
 	String ST_CONSTRAINT_NAME_KEY = "constraintName";
 
+	String ST_DEFAULT_VALUE_KEY = "defaultValue";
+	
 	String ST_DEST_TABLE_NAME_KEY = "destTableName";
 	
 	String ST_GENERATOR_NAME_KEY = "generatorName";
@@ -199,7 +215,13 @@ public interface StringTemplateConstants
 	
 	String ST_MINIMUM_KEY = "minimum";
 	
+	String ST_NEW_COLUMN_NAME_KEY = "newColumnName";
+	
 	String ST_NEW_OBJECT_NAME_KEY = "newObjectName";
+	
+	String ST_NULLABLE_KEY = "nullable";
+	
+	String ST_OLD_COLUMN_NAME_KEY = "oldColumnName";
 	
 	String ST_OLD_OBJECT_NAME_KEY = "oldObjectName";
 	

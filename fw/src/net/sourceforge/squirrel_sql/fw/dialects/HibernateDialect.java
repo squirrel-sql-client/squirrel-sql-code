@@ -292,9 +292,12 @@ public interface HibernateDialect extends StringTemplateConstants
 	 *           the TableColumnInfo as it is
 	 * @param to
 	 *           the TableColumnInfo as it wants to be
+	 * @param qualifier TODO
+	 * @param prefs TODO
 	 * @return the SQL to make the change
 	 */
-	String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to);
+	String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs);
 
 	/**
 	 * Returns a boolean value indicating whether or not this dialect supports modifying a columns type.
@@ -337,9 +340,11 @@ public interface HibernateDialect extends StringTemplateConstants
 	 * 
 	 * @param info
 	 *           the column to modify and it's default value.
+	 * @param qualifier TODO
+	 * @param prefs TODO
 	 * @return SQL to make the change
 	 */
-	String getColumnDefaultAlterSQL(TableColumnInfo info);
+	String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs);
 
 	/**
 	 * Returns the SQL command to drop the specified table's primary key.
@@ -1024,7 +1029,21 @@ public interface HibernateDialect extends StringTemplateConstants
 	 *         second.
 	 */
 	boolean supportsSubSecondTimestamps();
+
+	/**
+	 * Returns a boolean indicating whether or not this dialect supports generating SQL for adding primary keys
+	 * to existing tables.
+	 * 
+	 * @return true if adding primary keys is supported; false otherwise.
+	 */
+	boolean supportsAddPrimaryKey();
 	
-	
+	/**
+	 * Returns a boolean indicating whether or not this dialect supports generating SQL for dropping primary 
+	 * keys from existing tables.
+	 * 
+	 * @return true if dropping primary keys is supported; false otherwise.
+	 */	
+	boolean supportsDropPrimaryKey();
 	
 }

@@ -37,7 +37,7 @@ public class DBUtil
 		ArrayList<String> result = new ArrayList<String>();
 		// It is important to process the name change first - so that we can use
 		// the new name instead of the old in subsequent alterations
-		String nameSQL = getColumnNameAlterSQL(from, to, dialect);
+		String nameSQL = getColumnNameAlterSQL(from, to, dialect, qualifier, prefs);
 		if (nameSQL != null)
 		{
 			result.add(nameSQL);
@@ -57,7 +57,7 @@ public class DBUtil
 		{
 			result.addAll(typeSQL);
 		}
-		String defaultSQL = getAlterSQLForColumnDefault(from, to, dialect);
+		String defaultSQL = getAlterSQLForColumnDefault(from, to, dialect, qualifier, prefs);
 		if (defaultSQL != null)
 		{
 			result.add(defaultSQL);
@@ -76,13 +76,13 @@ public class DBUtil
 	}
 
 	public static String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to,
-		HibernateDialect dialect)
+		HibernateDialect dialect, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		if (from.getColumnName().equals(to.getColumnName()))
 		{
 			return null;
 		}
-		return dialect.getColumnNameAlterSQL(from, to);
+		return dialect.getColumnNameAlterSQL(from, to, qualifier, prefs);
 	}
 
 	public static String[] getNullAlterSQL(TableColumnInfo from, TableColumnInfo to, HibernateDialect dialect,
@@ -116,7 +116,7 @@ public class DBUtil
 	}
 
 	public static String getAlterSQLForColumnDefault(TableColumnInfo from, TableColumnInfo to,
-		HibernateDialect dialect)
+		HibernateDialect dialect, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		String oldDefault = from.getDefaultValue();
 		String newDefault = to.getDefaultValue();
@@ -138,7 +138,7 @@ public class DBUtil
 				throw new UnsupportedOperationException(dialect.getDisplayName()
 					+ " doesn't support column default value alterations");
 			}
-			return dialect.getColumnDefaultAlterSQL(to);
+			return dialect.getColumnDefaultAlterSQL(to, qualifier, prefs);
 		}
 		return null;
 	}

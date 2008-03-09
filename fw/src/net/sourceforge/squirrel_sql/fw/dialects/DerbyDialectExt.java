@@ -326,10 +326,10 @@ public class DerbyDialectExt extends DB2DialectExt implements HibernateDialect
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#getColumnNameAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
-	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo)
+	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
-	public String getColumnNameAlterSQL(final TableColumnInfo from, final TableColumnInfo to)
+	public String getColumnNameAlterSQL(final TableColumnInfo from, final TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		final int featureId = DialectUtils.COLUMN_NAME_ALTER_TYPE;
 		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
@@ -390,10 +390,10 @@ public class DerbyDialectExt extends DB2DialectExt implements HibernateDialect
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#getColumnDefaultAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#getColumnDefaultAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
-	public String getColumnDefaultAlterSQL(final TableColumnInfo info)
+	public String getColumnDefaultAlterSQL(final TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		final int featureId = DialectUtils.COLUMN_DEFAULT_ALTER_TYPE;
 		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);

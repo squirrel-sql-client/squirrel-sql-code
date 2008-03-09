@@ -40,6 +40,7 @@ import net.sourceforge.squirrel_sql.fw.sql.PrimaryKeyInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
@@ -2109,8 +2110,12 @@ public class DialectUtils implements StringTemplateConstants
 		for (IndexInfo indexInfo : indexInfos)
 		{
 			String indexName = indexInfo.getSimpleName();
-			if (null == indexName)
+			if (StringUtilities.isEmpty(indexName))
 			{
+				continue;
+			}
+			String columnName = indexInfo.getColumnName();
+			if (StringUtilities.isEmpty(columnName)) {
 				continue;
 			}
 			TableIndexInfo ixi = buf.get(indexName);
@@ -2118,7 +2123,7 @@ public class DialectUtils implements StringTemplateConstants
 			{
 				List<IndexColInfo> ixCols = new ArrayList<IndexColInfo>();
 
-				ixCols.add(new IndexColInfo(indexInfo.getColumnName(), indexInfo.getOrdinalPosition()));
+				ixCols.add(new IndexColInfo(columnName, indexInfo.getOrdinalPosition()));
 				buf.put(indexName, new TableIndexInfo(	indexInfo.getTableName(),
 																	indexName,
 																	ixCols,

@@ -234,20 +234,22 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	public String[] getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		StringBuffer result = new StringBuffer();
-		result.append("ALTER TABLE ");
-		result.append(info.getTableName());
-		result.append(" ALTER COLUMN ");
-		result.append(info.getColumnName());
-		result.append(" SET ");
+		// "ALTER TABLE $tableName$ ALTER COLUMN $columnName$ SET $nullable$";
+		StringTemplate st = new StringTemplate(ST_ALTER_COLUMN_NULL_STYLE_ONE);
+		HashMap<String, String> valuesMap =
+			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY,
+				info.getTableName(),
+				ST_COLUMN_NAME_KEY,
+				info.getColumnName());
+		
 		if (info.isNullable().equalsIgnoreCase("YES"))
 		{
-			result.append(" NULL");
+			valuesMap.put(ST_NULLABLE_KEY, "NULL");
 		} else
 		{
-			result.append(" NOT NULL");
+			valuesMap.put(ST_NULLABLE_KEY, "NOT NULL");
 		}
-		return new String[] { result.toString() };
+		return new String[] { DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs) };
 	}
 
 	/**
@@ -261,10 +263,10 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnNameAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
-	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo)
+	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
-	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to)
+	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		String renameToClause = DialectUtils.RENAME_TO_CLAUSE;
@@ -297,10 +299,10 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnDefaultAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnDefaultAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
-	public String getColumnDefaultAlterSQL(TableColumnInfo info)
+	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		String defaultClause = DialectUtils.SET_DEFAULT_CLAUSE;

@@ -338,7 +338,7 @@ public class SQLServerDialectExt extends SybaseDialectExt implements HibernateDi
 	 * @return the SQL to make the change
 	 */
 	@Override
-	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to)
+	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		StringBuffer result = new StringBuffer();
 		result.append("exec sp_rename ");
@@ -412,7 +412,7 @@ public class SQLServerDialectExt extends SybaseDialectExt implements HibernateDi
 	 * @return SQL to make the change
 	 */
 	@Override
-	public String getColumnDefaultAlterSQL(TableColumnInfo info)
+	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		StringBuffer result = new StringBuffer();
 		result.append("ALTER TABLE ");
@@ -471,7 +471,7 @@ public class SQLServerDialectExt extends SybaseDialectExt implements HibernateDi
 
 		if (column.getDefaultValue() != null)
 		{
-			result.add(getColumnDefaultAlterSQL(column));
+			result.add(getColumnDefaultAlterSQL(column, qualifier, prefs));
 		}
 
 		return result.toArray(new String[result.size()]);
