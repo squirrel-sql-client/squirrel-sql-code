@@ -11,6 +11,9 @@ Enhancements:
    select an object in the tree with a left mouse button click, then press the right mouse button 
    to activate the popup menu.(See Global Preferences -> General -> Select On Right Mouse Click)
 
+Data Import Plugin: It now warns the user when importing data into an existing table, that it's current data 
+                    will be truncated first.
+
 DB2 Plugin: Lars Heller provided a patch to add support for XML column types in SQuirreL via the 
             DB2 Plugin (tested against DB2 v9.5 LUW)
 
@@ -99,7 +102,7 @@ Changing to another window using Alt + left/right arrow did not properly set foc
 Hibernate Plugin: 
  - Class names in completion list could change from fully qualified to simple
    while scrolling through the completion list.
- - When a statement like "from Kv k where k." was completed the 
+ - When a statement like "Fixed identifier qualification in Progress - tested on OpenEdge 10.1C.  Now only schema is pre-fixed to identifiers, instead of catalog and schema.from Kv k where k." was completed the 
    fields for k. would come from any arbitrary mapped class which name started 
    with Kv
 

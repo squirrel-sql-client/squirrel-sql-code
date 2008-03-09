@@ -1,4 +1,8 @@
 Changes for Dataimport plugin
 =============================
 
-0.01
+0.03
+====
+
+ - It now warns the user when importing data into an existing table, that it's current data will be 
+   truncated first.
