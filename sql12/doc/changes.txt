@@ -83,6 +83,9 @@ thrown because tables are not being qualified with the schema name.
 1541325: (Derby) Connection doesn't close when ending session - thanks goes to Alex Pivovarov for the 
                  patch that fixed the issue. 
 
+Fixed identifier qualification in Progress - tested on OpenEdge 10.1C.  Now only schema is pre-fixed to 
+identifiers, instead of catalog and schema.
+
 Code Completion Plugin:
  - Made column completion available for databases/JDBC drivers that support catalogs and/or schemas
    but don't provide catalog or schemas in their column meta data. For example some versions of MySQL

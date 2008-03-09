@@ -155,6 +155,16 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
        return result.toString();
    }
    
+   private String getProgressQualifiedName() {
+   	StringBuilder result = new StringBuilder();
+   	if (_schema != null) {
+   		result.append(_schema);
+   		result.append(".");
+   	}
+   	result.append(_simpleName);
+   	return result.toString();
+   }
+   
    /**
     * Generates the qualified name (for example, "SCHEMA.SIMPLENAME").  This is highly database specific and
     * should probably be moved into the dialects.
@@ -176,6 +186,10 @@ public class DatabaseObjectInfo implements IDatabaseObjectInfo, Serializable
       // check for Informix - it has very "special" qualified names
       if (DialectFactory.isInformix(md)) {
           return getInformixQualifiedName();
+      }
+      // Progress claims to support catalogs in data manip - but it actually doesn't honor that claim. 
+      if (DialectFactory.isProgress(md)) {
+      	return getProgressQualifiedName();
       }
       
       try
