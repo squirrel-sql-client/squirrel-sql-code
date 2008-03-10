@@ -86,6 +86,11 @@ public interface StringTemplateConstants
 	String ST_CREATE_SEQUENCE_STYLE_TWO = 
 		"CREATE SEQUENCE $sequenceName$ $startWith$ " +
 		"$increment$ $minimum$ $maximum$ $cache$ $cycle$";
+
+	String ST_CREATE_SEQUENCE_STYLE_THREE = 
+		"CREATE SEQUENCE $sequenceName$  " +
+		"$increment$ $minimum$ $maximum$ $startWith$ $cache$ $cycle$";
+	
 	
 	String ST_CREATE_VIEW_STYLE_ONE =
 		"CREATE VIEW $viewName$ " +

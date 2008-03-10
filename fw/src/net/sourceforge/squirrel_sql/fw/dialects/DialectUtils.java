@@ -119,6 +119,8 @@ public class DialectUtils implements StringTemplateConstants
 
 	public static final String CYCLE_CLAUSE = "CYCLE";
 
+	public static final String INCREMENT_CLAUSE = "INCREMENT";
+	
 	public static final String INCREMENT_BY_CLAUSE = "INCREMENT BY";
 
 	public static final String NOCYCLE_CLAUSE = "NOCYCLE";

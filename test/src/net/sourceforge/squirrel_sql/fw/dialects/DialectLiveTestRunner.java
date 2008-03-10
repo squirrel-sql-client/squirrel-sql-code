@@ -999,7 +999,7 @@ public class DialectLiveTestRunner {
       
    	if (dialect.supportsCreateTable()) {
    		String sql = dialect.getCreateTableSQL(tableName, columns, pkColumns, prefs, qualifier); 
-   		runSQL(session, sql);
+   		runSQL(session, new String[] { sql }, new CreateTableSqlExtractor(tableName, columns, pkColumns));
    	} else {
    		try {
    			dialect.getCreateTableSQL(tableName, columns, pkColumns, prefs, qualifier);
@@ -1076,7 +1076,7 @@ public class DialectLiveTestRunner {
    	if (dialect.supportsRenameView()) {
    		String[] sql = 
    			dialect.getRenameViewSQL(oldViewName, newViewName, qual, prefs);
-   		runSQL(session, sql);
+   		runSQL(session, sql, new RenameViewSqlExtractor(oldViewName, newViewName));
    	} else if ( dialect.supportsViewDefinition() && dialect.supportsCreateView()) {
    		
    		String viewDefSql = dialect.getViewDefinitionSQL(oldViewName, qual, prefs);	
@@ -1258,7 +1258,7 @@ public class DialectLiveTestRunner {
    
    private void testGetSequenceInfo(ISession session) throws Exception {
    	HibernateDialect dialect = getDialect(session);
-   	if (dialect.supportsSequence()) {
+   	if (dialect.supportsSequence() && dialect.supportsSequenceInformation()) {
    		String sql = dialect.getSequenceInformationSQL(testSequenceName, qualifier, prefs);
    		if (sql.endsWith("?") || sql.endsWith("?)")) {
    			ResultSet rs = runPreparedQuery(session, sql, testSequenceName);
@@ -1266,7 +1266,7 @@ public class DialectLiveTestRunner {
    				throw new IllegalStateException("Expected a result from sequence info query");
    			}
    		} else {
-   			runSQL(session, sql);
+   			runSQL(session, new String[] { sql }, new  SequenceInfoSqlExtractor(testSequenceName));
    		}
    		
    	} else {
@@ -1290,7 +1290,7 @@ public class DialectLiveTestRunner {
 	   		String restart = "5";
 	   		String[] sql = 
 	   			dialect.getAlterSequenceSQL(testSequenceName, "1", "1", "1000", restart, cache, cycle, qualifier, prefs);
-	   		runSQL(session, sql);
+	   		runSQL(session, sql, new AlterSequenceSqlExtractor(testSequenceName, "1", "1", "1000", restart, cache, cycle));
    		}
    		if (mutability.isCache() && mutability.isCycle()) {
 	   		cache = "10";
@@ -1476,7 +1476,7 @@ public class DialectLiveTestRunner {
    	if (dialect.supportsAutoIncrement()) {
    		String[] sql = 
    			dialect.getAddAutoIncrementSQL(autoIncrementColumn, qualifier, prefs);
-   		runSQL(session, sql);   		
+   		runSQL(session, sql, new AddAutoIncrementSqlExtractor(autoIncrementColumn));   		
    	} else {
    		try {
    			dialect.getAddAutoIncrementSQL(autoIncrementColumn, qualifier, prefs);
@@ -1524,7 +1524,7 @@ public class DialectLiveTestRunner {
 		{
 			String sql = 
 				dialect.getInsertIntoSQL(tableName, columns, valuesPart, qualifier, prefs);
-			runSQL(session, sql);
+			runSQL(session, new String[] { sql }, new InsertIntoSqlExtractor(tableName, columns, valuesPart));
 			
 			valuesPart = " values ( 20 )";
 			sql = dialect.getInsertIntoSQL(tableName, columns, valuesPart, qualifier, prefs);
@@ -1709,6 +1709,9 @@ public class DialectLiveTestRunner {
    }
 
    private void runSQL(ISession session, String[] sql) throws Exception {
+   	if (sql == null) {
+   		throw new IllegalStateException("sql argument was null");
+   	}
       for (String stmt : sql) {
       	runSQL(session, stmt);
       }
@@ -1717,7 +1720,7 @@ public class DialectLiveTestRunner {
    private void runSQL(ISession session, String sqlIn) throws Exception {
    	HibernateDialect dialect = getDialect(session);
    	if (sqlIn == null) {
-   		throw new IllegalStateException("sql argument was null");
+   		throw new IllegalStateException("sqlIn argument was null");
    	}
    	if (!sqlIn.startsWith("--")) {
    		String sql = sqlIn.trim();
@@ -2509,6 +2512,167 @@ public class DialectLiveTestRunner {
 		public boolean supportsOperation(HibernateDialect dialect)
 		{
 			return dialect.supportsDropConstraint();
+		}
+   	
+   }
+   
+   private class CreateTableSqlExtractor implements IDialectSqlExtractor {
+
+		private String tableName;
+		private List<TableColumnInfo> columns;
+		private List<TableColumnInfo> primaryKeys;
+
+		
+		
+		public CreateTableSqlExtractor(String tableName, List<TableColumnInfo> columns,
+			List<TableColumnInfo> primaryKeys)
+		{
+			super();
+			this.tableName = tableName;
+			this.columns = columns;
+			this.primaryKeys = primaryKeys;
+		}
+
+		public String[] getSql(HibernateDialect dialect)
+		{
+			//tableName, columns, pkColumns, prefs, qualifier
+			return new String[] { dialect.getCreateTableSQL(tableName, columns, primaryKeys, prefs, qualifier) };
+		}
+
+		public boolean supportsOperation(HibernateDialect dialect)
+		{
+			return dialect.supportsCreateTable();
+		}
+   	
+   }
+   
+   private class RenameViewSqlExtractor implements IDialectSqlExtractor {
+
+		private String oldViewName;
+		private String newViewName;
+
+		public RenameViewSqlExtractor(String oldViewName, String newViewName)
+		{
+			super();
+			this.oldViewName = oldViewName;
+			this.newViewName = newViewName;
+		}
+
+		public String[] getSql(HibernateDialect dialect)
+		{
+			return dialect.getRenameViewSQL(oldViewName, newViewName, qualifier, prefs);
+		}
+
+		public boolean supportsOperation(HibernateDialect dialect)
+		{
+			return dialect.supportsRenameView();
+		}
+   	
+   }
+   
+   private class SequenceInfoSqlExtractor implements IDialectSqlExtractor {
+
+		private String sequenceName;
+
+		public SequenceInfoSqlExtractor(String sequenceName)
+		{
+			super();
+			this.sequenceName = sequenceName;
+		}
+
+		public String[] getSql(HibernateDialect dialect)
+		{
+			return new String [] { dialect.getSequenceInformationSQL(sequenceName, qualifier, prefs) };
+		}
+
+		public boolean supportsOperation(HibernateDialect dialect)
+		{
+			return dialect.supportsSequenceInformation();
+		}
+   	
+   }
+   
+   private class AlterSequenceSqlExtractor implements IDialectSqlExtractor {
+
+   	
+   	
+		private String sequenceName;
+		private String increment;
+		private String minimum;
+		private String maximum;
+		private String restart;
+		private String cache;
+		private boolean cycle;
+		
+		public AlterSequenceSqlExtractor(String sequenceName, String increment, String minimum, String maximum,
+			String restart, String cache, boolean cycle)
+		{
+			super();
+			this.sequenceName = sequenceName;
+			this.increment = increment;
+			this.minimum = minimum;
+			this.maximum = maximum;
+			this.restart = restart;
+			this.cache = cache;
+			this.cycle = cycle;
+		}
+
+		public String[] getSql(HibernateDialect dialect)
+		{
+			return dialect.getAlterSequenceSQL(sequenceName, increment, minimum, maximum, restart, cache, cycle, qualifier, prefs);
+		}
+
+		public boolean supportsOperation(HibernateDialect dialect)
+		{
+			return dialect.supportsAlterSequence();
+		}
+   	
+   }
+   
+   private class AddAutoIncrementSqlExtractor implements IDialectSqlExtractor {
+
+		private TableColumnInfo column;
+		
+		public AddAutoIncrementSqlExtractor(TableColumnInfo column)
+		{
+			super();
+			this.column = column;
+		}
+
+		public String[] getSql(HibernateDialect dialect)
+		{
+			return dialect.getAddAutoIncrementSQL(column, qualifier, prefs);
+		}
+
+		public boolean supportsOperation(HibernateDialect dialect)
+		{
+			return dialect.supportsAutoIncrement();
+		}
+   	
+   }
+   
+   private class InsertIntoSqlExtractor implements IDialectSqlExtractor {
+
+		private String tableName;
+		private List<String> columns;
+		private String valuesPart;
+
+		public InsertIntoSqlExtractor(String tableName, List<String> columns, String valuesPart)
+		{
+			super();
+			this.tableName = tableName;
+			this.columns = columns;
+			this.valuesPart = valuesPart;
+		}
+
+		public String[] getSql(HibernateDialect dialect)
+		{
+			return new String[] { dialect.getInsertIntoSQL(tableName, columns, valuesPart, qualifier, prefs) };
+		}
+
+		public boolean supportsOperation(HibernateDialect dialect)
+		{
+			return dialect.supportsInsertInto();
 		}
    	
    }
