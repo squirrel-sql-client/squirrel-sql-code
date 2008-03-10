@@ -43,9 +43,11 @@ import org.hibernate.HibernateException;
  */
 public class DB2DialectExt extends CommonHibernateDialect implements HibernateDialect
 {
-	
-	private class DB2DialectHelper extends org.hibernate.dialect.DB2Dialect {
-		public DB2DialectHelper() {
+
+	private class DB2DialectHelper extends org.hibernate.dialect.DB2Dialect
+	{
+		public DB2DialectHelper()
+		{
 			super();
 			registerColumnType(Types.BIGINT, "bigint");
 			registerColumnType(Types.BINARY, 254, "char($l) for bit data");
@@ -88,7 +90,7 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 			registerColumnType(Types.VARCHAR, 32700, "long varchar");
 			// DB2 spec says max=2147483647, but the driver throws an exception
 			registerColumnType(Types.VARCHAR, 1073741823, "clob($l)");
-			registerColumnType(Types.VARCHAR, "clob(1073741823)");			
+			registerColumnType(Types.VARCHAR, "clob(1073741823)");
 		}
 	}
 
@@ -103,7 +105,7 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	{
 		return _dialect.getTypeName(code, length, precision, scale);
 	}
-	
+
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#canPasteTo(net.sourceforge.squirrel_sql.fw.sql.IDatabaseObjectInfo)
 	 */
@@ -500,7 +502,8 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	 *           the TableColumnInfo as it wants to be
 	 * @return the SQL to make the change
 	 */
-	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		int featureId = DialectUtils.COLUMN_NAME_ALTER_TYPE;
 		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
@@ -562,7 +565,8 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	 *           the column to modify and it's default value.
 	 * @return SQL to make the change
 	 */
-	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		String defaultClause = DialectUtils.SET_DEFAULT_CLAUSE;
@@ -681,6 +685,13 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 		return result.toArray(new String[result.size()]);
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddForeignKeyConstraintSQL(java.lang.String,
+	 *      java.lang.String, java.lang.String, java.lang.Boolean, java.lang.Boolean, java.lang.Boolean,
+	 *      boolean, java.lang.String, java.util.Collection, java.lang.String, java.lang.String,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
 	public String[] getAddForeignKeyConstraintSQL(String localTableName, String refTableName,
 		String constraintName, Boolean deferrable, Boolean initiallyDeferred, Boolean matchFull,
 		boolean autoFKIndex, String fkIndexName, Collection<String[]> localRefColumns, String onUpdateAction,
