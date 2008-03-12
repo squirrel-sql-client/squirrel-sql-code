@@ -752,10 +752,15 @@ public class DialectLiveTestRunner {
 
       if (dialect.supportsAlterColumnDefault()) {
          String defaultValSQL = dialect.getColumnDefaultAlterSQL(varcharColWithDefaultValue, qualifier, prefs);
-         runSQL(session, defaultValSQL);
+         runSQL(session,
+				new String[] { defaultValSQL },
+				new AlterDefaultValueSqlExtractor(varcharColWithDefaultValue));
 
          defaultValSQL = dialect.getColumnDefaultAlterSQL(integerColWithDefaultVal, qualifier, prefs);
-         runSQL(session, defaultValSQL);
+			runSQL(session,
+				new String[] { defaultValSQL },
+				new AlterDefaultValueSqlExtractor(varcharColWithDefaultValue));
+
       } else {
          try {
             dialect.getColumnDefaultAlterSQL(noDefaultValueVarcharCol, qualifier, prefs);
@@ -2676,4 +2681,27 @@ public class DialectLiveTestRunner {
 		}
    	
    }
+   
+   private class AlterDefaultValueSqlExtractor implements IDialectSqlExtractor {
+
+		private TableColumnInfo info;
+		
+		public AlterDefaultValueSqlExtractor(TableColumnInfo info)
+		{
+			super();
+			this.info = info;
+		}
+
+		public String[] getSql(HibernateDialect dialect)
+		{
+			return new String[] {dialect.getColumnDefaultAlterSQL(info, qualifier, prefs)};
+		}
+
+		public boolean supportsOperation(HibernateDialect dialect)
+		{
+			return dialect.supportsAlterColumnDefault();
+		}
+   	
+   }
+   
 }
