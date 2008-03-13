@@ -366,8 +366,9 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	public String getDropSequenceSQL(String sequenceName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+      final int featureId = DialectUtils.DROP_SEQUENCE_TYPE;
+      final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+      throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -489,8 +490,9 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	public String[] getRenameViewSQL(String oldViewName, String newViewName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+      final int featureId = DialectUtils.RENAME_VIEW_TYPE;
+      final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+      throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -580,8 +582,9 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+      final int featureId = DialectUtils.VIEW_DEFINITION_TYPE;
+      final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+      throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -737,6 +740,7 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 */
 	public boolean supportsDropConstraint()
 	{
+		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -754,7 +758,6 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 */
 	public boolean supportsDropSequence()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 

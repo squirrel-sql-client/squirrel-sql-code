@@ -257,6 +257,8 @@ public class DialectUtils implements StringTemplateConstants
 	public static final int INSERT_INTO_TYPE = 23;
 
 	public static final int UPDATE_TYPE = 24;
+	
+	public static final int VIEW_DEFINITION_TYPE = 25;
 
 	public static String appendDefaultClause(TableColumnInfo info, StringBuilder buffer)
 	{
@@ -965,7 +967,7 @@ public class DialectUtils implements StringTemplateConstants
 		case COLUMN_NULL_ALTER_TYPE:
 			// i18n[DialectUtils.columnNullUnsupported={0} doesn''t support
 			// altering a column's nullable attribute]
-			msg = s_stringMgr.getString("DialectUtils.columnCommentUnsupported", dialect.getDisplayName());
+			msg = s_stringMgr.getString("DialectUtils.columnNullUnsupported", dialect.getDisplayName());
 			break;
 		case COLUMN_TYPE_ALTER_TYPE:
 			// i18n[DialectUtils.columnTypeUnsupported={0} doesn''t support
@@ -1016,7 +1018,9 @@ public class DialectUtils implements StringTemplateConstants
 			return s_stringMgr.getString("DialectUtils.insertIntoUnsupported", dialect.getDisplayName());
 		case UPDATE_TYPE:
 			return s_stringMgr.getString("DialectUtils.updateUnsupported", dialect.getDisplayName());
-
+		case VIEW_DEFINITION_TYPE:
+			return s_stringMgr.getString("DialectUtils.viewDefinitionUnsupported", dialect.getDisplayName());
+			
 		default:
 			throw new IllegalArgumentException("Unknown featureId: " + featureId);
 		}
