@@ -6,6 +6,10 @@ Not yet released - available from CVS or in the latest snapshot:
 
 Enhancements:
 
+ - New Plugin: SQLReplace by Dieter Engelhardt
+   This plugin replaces a set of variables before a statement is executed.
+   The variables to replace can be defined at the Plugin's Global Preferences tab.  
+
  - Added a preference option to allow the selection of items in lists to change while activating
    the popup menu on a single right-mouse button click.  For example, without this, you need to 
    select an object in the tree with a left mouse button click, then press the right mouse button 
