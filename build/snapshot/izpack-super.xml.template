@@ -292,6 +292,14 @@
 				  src="../../squirrel-sql-dist/squirrel-sql/plugins/sqlparam/dist/sqlparam"/>
 		</pack>				
 
+                <pack required="no" preselected="no" name="Optional Plugin - SQL Replace ">
+                        <description>This plugin allows you to place environment variables into your SQL statements </description>
+                        <file targetdir="$INSTALL_PATH/plugins" 
+                                  src="../../squirrel-sql-dist/squirrel-sql/plugins/sqlreplace/dist/sqlreplace.jar"/>
+                        <file targetdir="$INSTALL_PATH/plugins" 
+                                  src="../../squirrel-sql-dist/squirrel-sql/plugins/sqlreplace/dist/sqlreplace"/>
+                </pack>                         
+
 		<pack required="no" preselected="no" name="Optional Plugin - SQL Validator ">
 			<description>Provides SQL validation (ISO SQL99) based on results of the Mimer SQL web service </description>
 			<file targetdir="$INSTALL_PATH/plugins" 
