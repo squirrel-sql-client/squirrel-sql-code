@@ -1018,14 +1018,18 @@
 			<param name="p_internal_name" value="sessionscript"/>
 			<param name="shoulddeploy" value="${rebuild.plugin.sessionscript}"/>
 		</antcall>
+                <antcall target="deploytest">
+                        <param name="p_internal_name" value="sqlbookmark"/>
+                        <param name="shoulddeploy" value="${rebuild.plugin.sqlbookmark}"/>
+                </antcall>
 		<antcall target="deploytest">
 			<param name="p_internal_name" value="sqlparam"/>
 			<param name="shoulddeploy" value="${rebuild.plugin.sqlparam}"/>
 		</antcall>
-		<antcall target="deploytest">
-			<param name="p_internal_name" value="sqlbookmark"/>
-			<param name="shoulddeploy" value="${rebuild.plugin.sqlbookmark}"/>
-		</antcall>
+                <antcall target="deploytest">
+                        <param name="p_internal_name" value="sqlreplace"/>
+                        <param name="shoulddeploy" value="${rebuild.plugin.sqlreplace}"/>
+                </antcall>
 		<antcall target="deploytest">
 			<param name="p_internal_name" value="sqlscript"/>
 			<param name="shoulddeploy" value="${rebuild.plugin.sqlscript}"/>
