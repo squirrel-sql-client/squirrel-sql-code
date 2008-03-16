@@ -393,6 +393,10 @@
 			<param name="p_rebuild" value="${rebuild.plugin.sqlparam}"/>
 		</antcall>
 		<antcall target="build_plugin">
+			<param name="p_internal_name" value="sqlreplace"/>
+			<param name="p_rebuild" value="${rebuild.plugin.sqlreplace}"/>
+		</antcall>
+		<antcall target="build_plugin">
 			<param name="p_internal_name" value="sqlscript"/>
 			<param name="p_rebuild" value="${rebuild.plugin.sqlscript}"/>
 		</antcall>
@@ -497,7 +501,7 @@
 
 	        <arg value="-HOME"/>
 	        <arg value="${izpack.home.dir}"/>
-		    
+
 			<arg value="${basedir}/build/${izpack.config.file}"/>
 		    <arg value="-b"/>
 		    <arg value="${basedir}/build"/>
