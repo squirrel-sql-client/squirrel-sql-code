@@ -46,9 +46,6 @@
         		target="${targetVM}">
         	
             <classpath>
-            	<fileset dir="lib">
- 					<include name="**/*.*"/>
- 				</fileset>
                <fileset dir="${p_plugin.core_libs_dir}">
                     <include name="**/*.*"/>
                 </fileset>
