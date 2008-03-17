@@ -252,10 +252,10 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	 *            if the database doesn't support dropping columns.
 	 */
 	@Override
-	public String getColumnDropSQL(String tableName, String columnName)
+	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO: Need to verify this
-		return DialectUtils.getColumnDropSQL(tableName, columnName);
+		return DialectUtils.getColumnDropSQL(tableName, columnName, qualifier, prefs, this);
 	}
 
 	/**

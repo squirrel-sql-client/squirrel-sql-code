@@ -234,9 +234,9 @@ public class SQLServerDialectExt extends SybaseDialectExt implements HibernateDi
 	 *            if the database doesn't support dropping columns.
 	 */
 	@Override
-	public String getColumnDropSQL(String tableName, String columnName)
+	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getColumnDropSQL(tableName, columnName, "DROP COLUMN", false, null);
+		return DialectUtils.getColumnDropSQL(tableName, columnName, "DROP COLUMN", false, null, qualifier, prefs, this);
 	}
 
 	/**

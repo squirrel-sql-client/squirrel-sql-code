@@ -370,13 +370,13 @@ public class DialectLiveTestRunner {
    private void dropSequence(ISession session, String sequenceName) throws Exception {
    	HibernateDialect dialect = getDialect(session);
    	if (dialect.supportsDropSequence()) {
-	      try {
+   		try {
 	      	String sql = dialect.getDropSequenceSQL(sequenceName, false, qualifier, prefs);
 	      	
 	      	runSQL(session, sql);
-	      } catch (SQLException e) {
-	      	//e.printStackTrace();
-	      }
+   		} catch (Exception e) {
+   			// Do nothing
+   		}
    	}
    }
    
@@ -1123,7 +1123,7 @@ public class DialectLiveTestRunner {
    		runSQL(session, sql);
 
    		sql = dialect.getDropViewSQL(viewName, false, qualifier, prefs);
-   		runSQL(session, sql);
+   		runSQL(session, new String[] { sql }, new DropViewSqlExtractor(viewName, false));
    	} else {
    		try {
    			dialect.getDropViewSQL(viewName, false, qualifier, prefs);
@@ -1208,8 +1208,17 @@ public class DialectLiveTestRunner {
 						qualifier,
 						prefs);
 	   		
+				CreateIndexSqlExtractor extractor2 =
+					new CreateIndexSqlExtractor(indexName2,
+						tableName,
+						accessMethod,
+						columns,
+						true,
+						tablespace,
+						constraints);				
+				
 	   		// create it.
-	   		runSQL(session, sql);
+	   		runSQL(session, new String[] { sql }, extractor2);
 
 	   		// now drop the second.
 	   		String dropIndexSQL = dialect.getDropIndexSQL(tableName, indexName2, true, qualifier, prefs);
@@ -1228,6 +1237,7 @@ public class DialectLiveTestRunner {
    	} else {
    		try {
    			dialect.getCreateIndexSQL(indexName1, tableName, null, columns, false, tablespace, constraints, qualifier, prefs);
+   			dialect.getDropIndexSQL(tableName, indexName1, false, qualifier, prefs);
    			throw new IllegalStateException("Expected dialect to fail to provide SQL for create index");
    		} catch (Exception e) {
    			// this is expected
@@ -1697,7 +1707,7 @@ public class DialectLiveTestRunner {
          throws Exception {
       HibernateDialect dialect = getDialect(session);
       String sql = dialect.getColumnDropSQL(info.getTableName(),
-                                            info.getColumnName());
+                                            info.getColumnName(), qualifier, prefs);
       runSQL(session, sql);
    }
 
@@ -2704,4 +2714,28 @@ public class DialectLiveTestRunner {
    	
    }
    
+   private class DropViewSqlExtractor implements IDialectSqlExtractor {
+
+		private String viewName;
+		private boolean cascade;
+		
+		public DropViewSqlExtractor(String viewName, boolean cascade)
+		{
+			super();
+			this.viewName = viewName;
+			this.cascade = cascade;
+		}
+
+		public String[] getSql(HibernateDialect dialect)
+		{
+			return new String[] { dialect.getDropViewSQL(viewName, cascade, qualifier, prefs) };
+		}
+
+		public boolean supportsOperation(HibernateDialect dialect)
+		{
+			return dialect.supportsDropView();
+		}
+   	
+   	
+   }
 }

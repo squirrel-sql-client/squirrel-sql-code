@@ -27,6 +27,7 @@ import javax.swing.JDialog;
 import net.sourceforge.squirrel_sql.client.gui.db.IDisposableDialog;
 import net.sourceforge.squirrel_sql.client.session.DefaultSQLExecuterHandler;
 import net.sourceforge.squirrel_sql.client.session.ISession;
+import net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier;
 import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect;
 import net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences;
@@ -82,21 +83,30 @@ public abstract class AbstractRefactoringCommand implements ICommand
 	 */
 	protected HibernateDialect _dialect;
 
-	/**
-	 * User preferences regarding the generation of SQL scripts.
-	 */
+	/** User preferences regarding the generation of SQL scripts. */
 	protected final SqlGenerationPreferences _sqlPrefs;
+	
+	/** qualifier object to use in qualifying identifiers. */
+	protected final DatabaseObjectQualifier _qualifier;
 
 	public AbstractRefactoringCommand(ISession session, IDatabaseObjectInfo[] info)
 	{
-		if (session == null)
+		if (session == null) {
 			throw new IllegalArgumentException("ISession cannot be null");
-		if (info == null)
+		}
+		if (info == null) {
 			throw new IllegalArgumentException("IDatabaseObjectInfo[] cannot be null");
-
+		}
+		if (info[0] == null) { 
+			throw new IllegalArgumentException("IDatabaseObjectInfo[0] cannot be null.  Must have at least " +
+					"one object selected to be refactored");
+		}
+		
 		_session = session;
 		_info = info;
 
+		_qualifier = new DatabaseObjectQualifier(info[0].getCatalogName(), info[0].getSchemaName());
+		
 		RefactoringPreferenceBean prefsBean = RefactoringPreferencesManager.getPreferences();
 		_sqlPrefs = new SqlGenerationPreferences();
 		if (prefsBean != null)

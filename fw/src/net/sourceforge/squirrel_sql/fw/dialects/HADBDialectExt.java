@@ -125,7 +125,7 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 	 * @return
 	 * @throw UnsupportedOperationException if the database doesn't support dropping columns.
 	 */
-	public String getColumnDropSQL(String tableName, String columnName) throws UnsupportedOperationException
+	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
 		throw new UnsupportedOperationException("Not yet implemented");
 	}

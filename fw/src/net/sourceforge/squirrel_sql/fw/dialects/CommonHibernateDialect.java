@@ -59,8 +59,9 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+      final int featureId = DialectUtils.ADD_AUTO_INCREMENT_TYPE;
+      final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+      throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -107,8 +108,9 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 		boolean autoFKIndex, String fkIndexName, Collection<String[]> localRefColumns, String onUpdateAction,
 		String onDeleteAction, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+      final int featureId = DialectUtils.ADD_FOREIGN_KEY_TYPE;
+      final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+      throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -130,8 +132,9 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName,
 		TableColumnInfo[] columns, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+      final int featureId = DialectUtils.ADD_UNIQUE_TYPE;
+      final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+      throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -150,41 +153,41 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getColumnCommentAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, DatabaseObjectQualifier, SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getColumnCommentAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
-	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
+	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final int featureId = DialectUtils.COLUMN_COMMENT_ALTER_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getColumnDefaultAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, DatabaseObjectQualifier, SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getColumnDefaultAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
-	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final int featureId = DialectUtils.COLUMN_DEFAULT_ALTER_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getColumnDropSQL(java.lang.String,
-	 *      java.lang.String)
+	 *      java.lang.String, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
-	public String getColumnDropSQL(String tableName, String columnName) throws UnsupportedOperationException
+	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
 		StringTemplate st = new StringTemplate(DROP_COLUMN_SQL_TEMPLATE);
 
-		// TODO: implement this when qualifier and prefs are being passed in.
-		// HashMap<String, String> valuesMap =
-		// DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, tableName, ST_COLUMN_NAME_KEY, columnName);
-		//		
-		// DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs)
-		
-		st.setAttribute(ST_TABLE_NAME_KEY, tableName);
-		st.setAttribute(ST_COLUMN_NAME_KEY, columnName);
-		
-		return st.toString();
+		HashMap<String, String> valuesMap =
+		DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, tableName, ST_COLUMN_NAME_KEY, columnName);
+				
+		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**
@@ -197,12 +200,15 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getColumnNameAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
-	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, DatabaseObjectQualifier, SqlGenerationPreferences)
+	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, DatabaseObjectQualifier,
+	 *      SqlGenerationPreferences)
 	 */
-	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final int featureId = DialectUtils.COLUMN_NAME_ALTER_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -213,8 +219,9 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	public String[] getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final int featureId = DialectUtils.COLUMN_NULL_ALTER_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -226,8 +233,9 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	public List<String> getColumnTypeAlterSQL(TableColumnInfo from, TableColumnInfo to,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final int featureId = DialectUtils.COLUMN_TYPE_ALTER_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -240,8 +248,9 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 		boolean unique, String tablespace, String constraints, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final int featureId = DialectUtils.CREATE_INDEX_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -254,8 +263,9 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 		String start, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final int featureId = DialectUtils.CREATE_SEQUENCE_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -289,8 +299,9 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	public String getCreateViewSQL(String viewName, String definition, String checkOption,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final int featureId = DialectUtils.CREATE_VIEW_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -298,7 +309,6 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 */
 	public DialectType getDialectType()
 	{
-		// TODO Auto-generated method stub
 		return DialectType.GENERIC;
 	}
 
@@ -339,13 +349,13 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 */
 	public String getDropIndexSQL(String tableName, String indexName, boolean cascade,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
-	{                        
+	{
 		// "DROP INDEX $indexName$";
-      StringTemplate st = new StringTemplate(ST_DROP_INDEX_STYLE_THREE);
+		StringTemplate st = new StringTemplate(ST_DROP_INDEX_STYLE_THREE);
 
-      HashMap<String, String> valuesMap = DialectUtils.getValuesMap(ST_INDEX_NAME_KEY, indexName);
+		HashMap<String, String> valuesMap = DialectUtils.getValuesMap(ST_INDEX_NAME_KEY, indexName);
 
-      return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
+		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**
@@ -354,8 +364,9 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 */
 	public String getDropPrimaryKeySQL(String pkName, String tableName)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final int featureId = DialectUtils.DROP_PRIMARY_KEY_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -366,9 +377,9 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	public String getDropSequenceSQL(String sequenceName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-      final int featureId = DialectUtils.DROP_SEQUENCE_TYPE;
-      final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-      throw new UnsupportedOperationException(msg);
+		final int featureId = DialectUtils.DROP_SEQUENCE_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -466,8 +477,7 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	public String getQualifiedIdentifier(String identifier, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return identifier;
 	}
 
 	/**
@@ -478,8 +488,9 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	public String getRenameTableSQL(String oldTableName, String newTableName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final int featureId = DialectUtils.RENAME_TABLE_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -490,9 +501,9 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	public String[] getRenameViewSQL(String oldViewName, String newViewName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-      final int featureId = DialectUtils.RENAME_VIEW_TYPE;
-      final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-      throw new UnsupportedOperationException(msg);
+		final int featureId = DialectUtils.RENAME_VIEW_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -503,8 +514,9 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	public String getSequenceInformationSQL(String sequenceName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final int featureId = DialectUtils.SEQUENCE_INFORMATION_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -582,9 +594,9 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-      final int featureId = DialectUtils.VIEW_DEFINITION_TYPE;
-      final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-      throw new UnsupportedOperationException(msg);
+		final int featureId = DialectUtils.VIEW_DEFINITION_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -592,7 +604,6 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 */
 	public boolean supportsAccessMethods()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -601,7 +612,6 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 */
 	public boolean supportsAddColumn()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -610,7 +620,6 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 */
 	public boolean supportsAddForeignKeyConstraint()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -619,7 +628,6 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 */
 	public boolean supportsAddUniqueConstraint()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -628,7 +636,6 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 */
 	public boolean supportsAlterColumnDefault()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -637,7 +644,6 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 */
 	public boolean supportsAlterColumnNull()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -654,7 +660,6 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 */
 	public boolean supportsAlterSequence()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -663,7 +668,6 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 */
 	public boolean supportsAutoIncrement()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -672,7 +676,6 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 */
 	public boolean supportsCheckOptionsForViews()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -681,7 +684,6 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 */
 	public boolean supportsColumnComment()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -698,7 +700,6 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 */
 	public boolean supportsCreateIndex()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -707,7 +708,6 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 */
 	public boolean supportsCreateSequence()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -740,7 +740,6 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 */
 	public boolean supportsDropConstraint()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -749,7 +748,6 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 */
 	public boolean supportsDropIndex()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -901,14 +899,16 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getSequencePropertyMutability()
 	 */
-	public SequencePropertyMutability getSequencePropertyMutability() {
+	public SequencePropertyMutability getSequencePropertyMutability()
+	{
 		return new SequencePropertyMutability();
 	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsSubSecondTimestamps()
 	 */
-	public boolean supportsSubSecondTimestamps() {
+	public boolean supportsSubSecondTimestamps()
+	{
 		return true;
 	}
 
@@ -927,6 +927,5 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	{
 		return true;
 	}
-	
-	
+
 }

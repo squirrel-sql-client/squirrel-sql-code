@@ -53,16 +53,16 @@ public interface HibernateDialect extends StringTemplateConstants
 	String getTypeName(int code, int length, int precision, int scale) throws HibernateException;
 
 	/**
-	 * Get the name of the database type associated with the given
-	 * {@link java.sql.Types} typecode.
-	 *
-	 * @param code The {@link java.sql.Types} typecode
+	 * Get the name of the database type associated with the given {@link java.sql.Types} typecode.
+	 * 
+	 * @param code
+	 *           The {@link java.sql.Types} typecode
 	 * @return the database type name
-	 * @throws HibernateException If no mapping was specified for that type.
+	 * @throws HibernateException
+	 *            If no mapping was specified for that type.
 	 */
 	public String getTypeName(int code) throws HibernateException;
-	
-	
+
 	/**
 	 * Returns a boolean indicating whether or not the specified database object can be pasted into for this
 	 * database dialect. Some databases support the notion of schemas where tables live, and in those cases
@@ -192,13 +192,16 @@ public interface HibernateDialect extends StringTemplateConstants
 	 * 
 	 * @param info
 	 *           information about the column such as type, name, etc.
-	 * @param qualifier TODO
-	 * @param prefs TODO
+	 * @param qualifier
+	 *           qualifier of the table
+	 * @param prefs
+	 *           preferences for generated sql scripts
 	 * @return
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support annotating columns with a comment.
 	 */
-	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException;
+	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs) throws UnsupportedOperationException;
 
 	/**
 	 * Returns a boolean value indicating whether or not this database dialect supports dropping columns from
@@ -223,10 +226,15 @@ public interface HibernateDialect extends StringTemplateConstants
 	 *           the name of the table that has the column
 	 * @param columnName
 	 *           the name of the column to drop.
-	 * @return
+	 * @param qualifier
+	 *           qualifier of the table
+	 * @param prefs
+	 *           preferences for generated sql scripts
+	 * @return the sql for dropping the specified column
 	 * @throw UnsupportedOperationException if the database doesn't support dropping columns.
 	 */
-	String getColumnDropSQL(String tableName, String columnName) throws UnsupportedOperationException;
+	String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs) throws UnsupportedOperationException;
 
 	/**
 	 * Returns the SQL that forms the command to drop the specified table. If cascade contraints is supported
@@ -292,8 +300,10 @@ public interface HibernateDialect extends StringTemplateConstants
 	 *           the TableColumnInfo as it is
 	 * @param to
 	 *           the TableColumnInfo as it wants to be
-	 * @param qualifier TODO
-	 * @param prefs TODO
+	 * @param qualifier
+	 *           qualifier of the table
+	 * @param prefs
+	 *           preferences for generated sql scripts
 	 * @return the SQL to make the change
 	 */
 	String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier,
@@ -340,11 +350,14 @@ public interface HibernateDialect extends StringTemplateConstants
 	 * 
 	 * @param info
 	 *           the column to modify and it's default value.
-	 * @param qualifier TODO
-	 * @param prefs TODO
+	 * @param qualifier
+	 *           qualifier of the table
+	 * @param prefs
+	 *           preferences for generated sql scripts
 	 * @return SQL to make the change
 	 */
-	String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs);
+	String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs);
 
 	/**
 	 * Returns the SQL command to drop the specified table's primary key.
@@ -400,7 +413,7 @@ public interface HibernateDialect extends StringTemplateConstants
 
 	/**
 	 * Returns a boolean value indicating whether or not this database dialect suports tablespaces.
-	 * Specifically, when creating an index, some databases allow a tablespace to be specified to create the 
+	 * Specifically, when creating an index, some databases allow a tablespace to be specified to create the
 	 * index in, recognizing that indexes can be quite large.
 	 * 
 	 * @return true if the database supports tablespaces; false otherwise.
@@ -577,20 +590,19 @@ public interface HibernateDialect extends StringTemplateConstants
 	public boolean supportsUpdate();
 
 	/**
-	 * Gets the index access methods that this dialect supports used when creating indexes. 
+	 * Gets the index access methods that this dialect supports used when creating indexes.
 	 * 
 	 * @return all the access methods supported by this dialect.
 	 */
 	public String[] getIndexAccessMethodsTypes();
-	
 
 	/**
-	 * Gets the index storage options that this dialect supports used when creating indexes. 
+	 * Gets the index storage options that this dialect supports used when creating indexes.
 	 * 
 	 * @return all the access methods supported by this dialect.
-	 */	
+	 */
 	public String[] getIndexStorageOptions();
-	
+
 	/**
 	 * Gets the SQL command to create a new table.
 	 * 
@@ -933,8 +945,8 @@ public interface HibernateDialect extends StringTemplateConstants
 	 *           preferences for generated sql scripts
 	 * @return the sql command to update data.
 	 */
-	public String[] getUpdateSQL(String tableName, String[] setColumns, String[] setValues, String[] fromTables,
-		String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
+	public String[] getUpdateSQL(String tableName, String[] setColumns, String[] setValues,
+		String[] fromTables, String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs);
 
 	/**
@@ -969,16 +981,16 @@ public interface HibernateDialect extends StringTemplateConstants
 	public char openQuote();
 
 	/**
-	 * Whether or not the definition of a view can be determined via a query that is returned from 
+	 * Whether or not the definition of a view can be determined via a query that is returned from
 	 * getViewDefinitionSQL method
 	 * 
 	 * @return true if getViewDefinitionSQL yields a non-null value; false otherwise.
 	 */
 	public boolean supportsViewDefinition();
-	
+
 	/**
 	 * Returns the SQL that can be used to query the data dictionary for the body of a view. This should
-	 * exclude the "CREATE VIEW <viewname> AS" prefix and just return the query. This can return null if the 
+	 * exclude the "CREATE VIEW <viewname> AS" prefix and just return the query. This can return null if the
 	 * database doesn't provide access to this definition.
 	 * 
 	 * @param viewName
@@ -991,11 +1003,10 @@ public interface HibernateDialect extends StringTemplateConstants
 	 */
 	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs);
-	
-	
+
 	/**
 	 * Returns the qualified identifier based on the specified qualifier and user preferences.
-	 *  
+	 * 
 	 * @param identifier
 	 * @param qualifier
 	 * @param prefs
@@ -1004,7 +1015,6 @@ public interface HibernateDialect extends StringTemplateConstants
 	public String getQualifiedIdentifier(String identifier, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs);
 
-	
 	/**
 	 * Returns a boolean indicating whether or not this dialect supports correlated sub-queries.
 	 * 
@@ -1013,14 +1023,13 @@ public interface HibernateDialect extends StringTemplateConstants
 	public boolean supportsCorrelatedSubQuery();
 
 	/**
-	 * Gets the sequence property mutability, which describes which properties of a sequence can be changed, 
+	 * Gets the sequence property mutability, which describes which properties of a sequence can be changed,
 	 * and which cannot.
 	 * 
 	 * @return the SequencePropertyMutability
 	 */
 	SequencePropertyMutability getSequencePropertyMutability();
-	
-	
+
 	/**
 	 * Returns a boolean indicating whether or not this dialect supports timestamps with fractional second
 	 * precision. For dialects that do, Timestamp.getNanos returns the sub-second fractional value.
@@ -1037,13 +1046,13 @@ public interface HibernateDialect extends StringTemplateConstants
 	 * @return true if adding primary keys is supported; false otherwise.
 	 */
 	boolean supportsAddPrimaryKey();
-	
+
 	/**
-	 * Returns a boolean indicating whether or not this dialect supports generating SQL for dropping primary 
+	 * Returns a boolean indicating whether or not this dialect supports generating SQL for dropping primary
 	 * keys from existing tables.
 	 * 
 	 * @return true if dropping primary keys is supported; false otherwise.
-	 */	
+	 */
 	boolean supportsDropPrimaryKey();
-	
+
 }

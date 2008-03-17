@@ -39,7 +39,7 @@ public class DropColumnAction extends AbstractRefactoringAction
 
 	private static interface i18n
 	{
-		String ACTION_PART = s_stringMgr.getString("RemoveColumnAction.actionPart");
+		String ACTION_PART = s_stringMgr.getString("DropColumnAction.actionPart");
 
 		String OBJECT_PART = s_stringMgr.getString("Shared.tableObject");
 

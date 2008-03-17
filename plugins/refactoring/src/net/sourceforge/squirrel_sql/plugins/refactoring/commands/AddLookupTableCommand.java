@@ -94,7 +94,6 @@ public class AddLookupTableCommand extends AbstractRefactoringCommand
 
 		String catalog = _info[0].getCatalogName();
 		String schema = _info[0].getSchemaName();
-		DatabaseObjectQualifier qualifier = new DatabaseObjectQualifier(catalog, schema);
 
 		String lookupTableName = _customDialog.getLookupTableName();
 		String lookupPrimaryKey = _customDialog.getLookupPrimaryKey();
@@ -180,7 +179,7 @@ public class AddLookupTableCommand extends AbstractRefactoringCommand
 			columns.add(second);
 			primaryKeys.add(pk);
 		}
-		results.add(_dialect.getCreateTableSQL(lookupTableName, columns, primaryKeys, _sqlPrefs, qualifier));
+		results.add(_dialect.getCreateTableSQL(lookupTableName, columns, primaryKeys, _sqlPrefs, _qualifier));
 
 		if (_customDialog.getMode() == AddLookupTableDialog.MODE_KEEP)
 		{
@@ -192,7 +191,7 @@ public class AddLookupTableCommand extends AbstractRefactoringCommand
 			results.add(_dialect.getInsertIntoSQL(lookupTableName,
 				insertColumns,
 				dataQuery,
-				qualifier,
+				_qualifier,
 				_sqlPrefs));
 
 			// Adds a foreign key constraint to the source table.
@@ -212,7 +211,7 @@ public class AddLookupTableCommand extends AbstractRefactoringCommand
 					refs,
 					"NO ACTION",
 					"NO ACTION",
-					qualifier,
+					_qualifier,
 					_sqlPrefs);
 
 			results.addAll(Arrays.asList(fkSQLs));
@@ -240,7 +239,7 @@ public class AddLookupTableCommand extends AbstractRefactoringCommand
 				results.add(_dialect.getInsertIntoSQL(lookupTableName,
 					insertColumns,
 					valuesPart,
-					qualifier,
+					_qualifier,
 					_sqlPrefs));
 			}
 
@@ -263,7 +262,7 @@ public class AddLookupTableCommand extends AbstractRefactoringCommand
 											sourceColumn.isNullable(),
 											md);
 
-			results.add(_dialect.getColumnNameAlterSQL(sourceColumn, tempColumn, qualifier, _sqlPrefs));
+			results.add(_dialect.getColumnNameAlterSQL(sourceColumn, tempColumn, _qualifier, _sqlPrefs));
 
 			// Adds the new column (type: integer).
 			TableColumnInfo newColumn =
@@ -283,7 +282,7 @@ public class AddLookupTableCommand extends AbstractRefactoringCommand
 											sourceColumn.getOrdinalPosition(),
 											"YES",
 											md);
-			String[] addColumnResults = _dialect.getAddColumnSQL(newColumn, qualifier, _sqlPrefs);
+			String[] addColumnResults = _dialect.getAddColumnSQL(newColumn, _qualifier, _sqlPrefs);
 			for (String addColumnResult : addColumnResults)
 			{
 				results.add(addColumnResult);
@@ -306,7 +305,7 @@ public class AddLookupTableCommand extends AbstractRefactoringCommand
 					refs,
 					"NO ACTION",
 					"NO ACTION",
-					qualifier,
+					_qualifier,
 					_sqlPrefs);
 
 			results.addAll(Arrays.asList(fkSQLs));
@@ -322,7 +321,7 @@ public class AddLookupTableCommand extends AbstractRefactoringCommand
 					null,
 					new String[] { sourceColumnName + "_temp" },
 					new String[] { "'" + data.get(i) + "'" },
-					qualifier,
+					_qualifier,
 					_sqlPrefs)));
 			}
 
@@ -348,12 +347,12 @@ public class AddLookupTableCommand extends AbstractRefactoringCommand
 												"NO",
 												md);
 				results.addAll(Arrays.asList(_dialect.getColumnNullableAlterSQL(newColumnNotNull,
-					qualifier,
+					_qualifier,
 					_sqlPrefs)));
 			}
 
 			// Drops the original column.
-			String dropStmt = _dialect.getColumnDropSQL(sourceTableName, sourceColumnName + "_temp");
+			String dropStmt = _dialect.getColumnDropSQL(sourceTableName, sourceColumnName + "_temp", _qualifier, _sqlPrefs);
 			if (_customDialog.getDropCascade())
 			{
 				dropStmt += " CASCADE";

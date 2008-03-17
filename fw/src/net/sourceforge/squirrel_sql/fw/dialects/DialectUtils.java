@@ -312,9 +312,9 @@ public class DialectUtils implements StringTemplateConstants
 	 * Returns the SQL statement to use to add a comment to the specified column of the specified table.
 	 * 
 	 * @param qualifier
-	 *           TODO
+	 *           qualifier of the table
 	 * @param prefs
-	 *           TODO
+	 *           preferences for generated sql scripts
 	 * @param dialect
 	 *           TODO
 	 * @param tableName
@@ -337,28 +337,39 @@ public class DialectUtils implements StringTemplateConstants
 	/**
 	 * @param tableName
 	 * @param columnName
+	 * @param qualifier
+	 *           qualifier of the table
+	 * @param prefs
+	 *           preferences for generated sql scripts
+	 * @param dialect
 	 * @return
 	 */
-	public static String getColumnDropSQL(String tableName, String columnName)
+	public static String getColumnDropSQL(String tableName, String columnName,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs, HibernateDialect dialect)
 	{
-		return getColumnDropSQL(tableName, columnName, "DROP", false, null);
+		return getColumnDropSQL(tableName, columnName, "DROP", false, null, qualifier, prefs, dialect);
 	}
 
 	/**
-	 * @param tableName
+	 * @param tableName the unqualified table
 	 * @param columnName
 	 * @param addConstraintClause
 	 *           TODO
 	 * @param constraintClause
 	 *           TODO
+	 * @param qualifier
+	 *           qualifier of the table
+	 * @param prefs
+	 *           preferences for generated sql scripts
 	 * @return
 	 */
 	public static String getColumnDropSQL(String tableName, String columnName, String dropClause,
-		boolean addConstraintClause, String constraintClause)
+		boolean addConstraintClause, String constraintClause, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs, HibernateDialect dialect)
 	{
 		StringBuilder result = new StringBuilder();
 		result.append("ALTER TABLE ");
-		result.append(tableName);
+		result.append(shapeQualifiableIdentifier(tableName, qualifier, prefs, dialect));
 		result.append(" ");
 		result.append(dropClause);
 		result.append(" ");
@@ -410,6 +421,11 @@ public class DialectUtils implements StringTemplateConstants
 		return Arrays.asList(new String[] { result.toString() });
 	}
 
+	/**
+	 * @param info
+	 * @param dialect
+	 * @return
+	 */
 	public static String getTypeName(TableColumnInfo info, HibernateDialect dialect)
 	{
 		return dialect.getTypeName(info.getDataType(),
@@ -548,6 +564,19 @@ public class DialectUtils implements StringTemplateConstants
 		return pkSQL.toString();
 	}
 
+	/**
+	 * @param fkST
+	 * @param fkValuesMap
+	 * @param childIndexST
+	 * @param ckIndexValuesMap
+	 * @param localRefColumns
+	 * @param qualifier
+	 * @param qualifier
+	 *           qualifier of the table
+	 * @param prefs
+	 *           preferences for generated sql scripts
+	 * @return
+	 */
 	public static String[] getAddForeignKeyConstraintSQL(StringTemplate fkST,
 		HashMap<String, String> fkValuesMap, StringTemplate childIndexST,
 		HashMap<String, String> ckIndexValuesMap, Collection<String[]> localRefColumns,

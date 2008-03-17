@@ -169,15 +169,23 @@ public class IngresDialectExt extends CommonHibernateDialect implements Hibernat
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnDropSQL(java.lang.String,
-	 *      java.lang.String)
+	 *      java.lang.String, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
-	public String getColumnDropSQL(String tableName, String columnName)
+	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		String dropClause = DialectUtils.DROP_COLUMN_CLAUSE;
 		// TODO: Need to allow user to specify this
 		String constraintClause = "CASCADE";
 
-		return DialectUtils.getColumnDropSQL(tableName, columnName, dropClause, true, constraintClause);
+		return DialectUtils.getColumnDropSQL(tableName,
+			columnName,
+			dropClause,
+			true,
+			constraintClause,
+			qualifier,
+			prefs,
+			this);
 	}
 
 	/**
@@ -263,9 +271,11 @@ public class IngresDialectExt extends CommonHibernateDialect implements Hibernat
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnNameAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
-	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, DatabaseObjectQualifier, SqlGenerationPreferences)
+	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, DatabaseObjectQualifier,
+	 *      SqlGenerationPreferences)
 	 */
-	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		int featureId = DialectUtils.COLUMN_NAME_ALTER_TYPE;
 		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
@@ -313,7 +323,8 @@ public class IngresDialectExt extends CommonHibernateDialect implements Hibernat
 	 *           the column to modify and it's default value.
 	 * @return SQL to make the change
 	 */
-	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		String defaultClause = DialectUtils.DEFAULT_CLAUSE;
