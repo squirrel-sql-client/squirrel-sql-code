@@ -195,10 +195,10 @@ public class DaffodilDialectExt extends CommonHibernateDialect implements Hibern
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnDropSQL(java.lang.String,
-	 *      java.lang.String)
+	 *      java.lang.String, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
-	public String getColumnDropSQL(final String tableName, final String columnName)
+	public String getColumnDropSQL(final String tableName, final String columnName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 		throws UnsupportedOperationException
 	{
 		final StringBuffer result = new StringBuffer();

@@ -145,12 +145,12 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnDropSQL(java.lang.String,
-	 *      java.lang.String)
+	 *      java.lang.String, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
-	public String getColumnDropSQL(String tableName, String columnName)
+	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getColumnDropSQL(tableName, columnName);
+		return DialectUtils.getColumnDropSQL(tableName, columnName, qualifier, prefs, this);
 	}
 
 	/**

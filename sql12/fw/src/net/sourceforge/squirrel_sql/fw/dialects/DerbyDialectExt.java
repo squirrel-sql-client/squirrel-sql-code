@@ -225,12 +225,12 @@ public class DerbyDialectExt extends DB2DialectExt implements HibernateDialect
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#getColumnDropSQL(java.lang.String,
-	 *      java.lang.String)
+	 *      java.lang.String, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
-	public String getColumnDropSQL(final String tableName, final String columnName)
+	public String getColumnDropSQL(final String tableName, final String columnName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getColumnDropSQL(tableName, columnName);
+		return DialectUtils.getColumnDropSQL(tableName, columnName, qualifier, prefs, this);
 	}
 
 	/**

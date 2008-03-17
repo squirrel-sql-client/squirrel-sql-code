@@ -112,14 +112,12 @@ public class DropColumnCommand extends AbstractRefactoringCommand
 		String[] result = new String[columns.length];
 		try
 		{
-			// TODO: add configuration for whether or not to qualify names. (SqlGenerationPreferences &
-			// DatabaseObjectQualifier can be used, see DialectExtension)
-			String tableName = _info[0].getQualifiedName();
+			String tableName = _info[0].getSimpleName();
 			for (int i = 0; i < columns.length; i++)
 			{
 				TableColumnInfo info = columns[i];
 				String columnName = info.getColumnName();
-				result[i] = _dialect.getColumnDropSQL(tableName, columnName);
+				result[i] = _dialect.getColumnDropSQL(tableName, columnName, _qualifier, _sqlPrefs);
 			}
 		} catch (UnsupportedOperationException e2)
 		{

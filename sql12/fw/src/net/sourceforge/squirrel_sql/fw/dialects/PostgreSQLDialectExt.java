@@ -273,9 +273,9 @@ public class PostgreSQLDialectExt extends CommonHibernateDialect implements Hibe
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support dropping columns.
 	 */
-	public String getColumnDropSQL(String tableName, String columnName)
+	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getColumnDropSQL(tableName, columnName);
+		return DialectUtils.getColumnDropSQL(tableName, columnName, qualifier, prefs, this);
 	}
 
 	/**

@@ -236,10 +236,10 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support dropping columns.
 	 */
-	public String getColumnDropSQL(String tableName, String columnName)
+	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		String dropClause = DialectUtils.DROP_COLUMN_CLAUSE;
-		return DialectUtils.getColumnDropSQL(tableName, columnName, dropClause, true, "CASCADE");
+		return DialectUtils.getColumnDropSQL(tableName, columnName, dropClause, true, "CASCADE", qualifier, prefs, this);
 	}
 
 	/**

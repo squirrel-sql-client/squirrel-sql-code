@@ -328,15 +328,10 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support dropping columns.
 	 */
-	public String getColumnDropSQL(String tableName, String columnName)
+	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// alter table <tablename> drop column <columnName>
-		StringBuilder result = new StringBuilder();
-		result.append("ALTER TABLE ");
-		result.append(tableName);
-		result.append(" DROP COLUMN ");
-		result.append(columnName);
-		return result.toString();
+		return DialectUtils.getColumnDropSQL(tableName, columnName, qualifier, prefs, this);
 	}
 
 	/**

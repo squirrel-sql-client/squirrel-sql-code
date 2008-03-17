@@ -201,7 +201,7 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support dropping columns.
 	 */
-	public String getColumnDropSQL(String tableName, String columnName)
+	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		StringBuffer result = new StringBuffer();
 		result.append("ALTER TABLE ");
@@ -375,7 +375,7 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 			result.add(updateSQL.toString());
 
 			// drop <columnName>
-			String dropSQL = getColumnDropSQL(from.getTableName(), from.getColumnName());
+			String dropSQL = getColumnDropSQL(from.getTableName(), from.getColumnName(), qualifier, prefs);
 			result.add(dropSQL);
 
 			// rename <columnName>_2 to <columnName>
