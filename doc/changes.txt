@@ -90,6 +90,9 @@ thrown because tables are not being qualified with the schema name.
 1541325: (Derby) Connection doesn't close when ending session - thanks goes to Alex Pivovarov for the 
                  patch that fixed the issue. 
 
+Bug-Fix for bug that caused Frontbase indexes not to be displayed in the indexes tab, for tables in the 
+Object tree.
+
 Fixed identifier qualification in Progress - tested on OpenEdge 10.1C.  Now only schema is pre-fixed to 
 identifiers, instead of catalog and schema.
 
