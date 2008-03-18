@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.session.mainpanel.objecttree.tabs.ta
 import net.sourceforge.squirrel_sql.fw.datasetviewer.DataSetException;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.IDataSet;
 import net.sourceforge.squirrel_sql.fw.datasetviewer.ResultSetDataSet;
+import net.sourceforge.squirrel_sql.fw.dialects.DialectFactory;
 import net.sourceforge.squirrel_sql.fw.sql.ISQLConnection;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.SQLDatabaseMetaData;
@@ -69,9 +70,13 @@ public class IndexesTab extends BaseTableTab
 	{
 		final ISQLConnection conn = getSession().getSQLConnection();
         final SQLDatabaseMetaData dmd = conn.getSQLMetaData();
+        
         ITableInfo ti = getTableInfo();
         if (! "TABLE".equalsIgnoreCase(ti.getType())) {
-            return null; 
+      	  // Frontbase describes it's tables as "BASE TABLE".
+      	  if (!DialectFactory.isFrontBase(dmd)) {
+      		  return null;  
+      	  }
         }
         ResultSetDataSet rsds = 
             dmd.getIndexInfo(getTableInfo(), indexIndices, true);
@@ -83,4 +88,5 @@ public class IndexesTab extends BaseTableTab
         rsds.resetCursor();
         return rsds;
 	}
+	
 }
