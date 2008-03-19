@@ -153,6 +153,9 @@ public class DialectLiveTestRunner {
    private static final String testSecondMergeTable = "secondTableToBeMerged";
    private static final String testTableForDropView = "testTableForDropView";
    
+   /** this is set to true to try to derive SQL for the dialect being tested automatically, using other dialects */
+   private boolean dialectDiscoveryMode = false;
+   
    public DialectLiveTestRunner() throws Exception {
       ApplicationArguments.initialize(new String[] {});
       bundle = ResourceBundle.getBundle("net.sourceforge.squirrel_sql.fw.dialects.dialectLiveTest");
@@ -199,7 +202,10 @@ public class DialectLiveTestRunner {
    	prefs.setQualifyTableNames(false);
    	prefs.setQuoteIdentifiers(false);
    	prefs.setSqlStatementSeparator(";");
-
+   	
+   	dialectDiscoveryMode = Boolean.parseBoolean(bundle.getString("dialectDiscoveryMode"));
+   	System.out.println("In discovery mode - assuming that the dialect being tested isn't yet implemented");
+   	
    	List<String> dbs = getPropertyListValue(sessionListPropKey);
       for (Iterator<String> iter = dbs.iterator(); iter.hasNext();) {
          String db = iter.next();
@@ -669,9 +675,16 @@ public class DialectLiveTestRunner {
                                                     true,
                                                     null,
                                                     "A column to be renamed");
+      
+      AlterColumnNameSqlExtractor extractor = new AlterColumnNameSqlExtractor(renameCol, newNameCol);
+   	if (dialectDiscoveryMode) { 
+   		findSQL(session, extractor);
+   		return;
+   	}         	
+      
       if (dialect.supportsRenameColumn()) {
          String sql = dialect.getColumnNameAlterSQL(renameCol, newNameCol, qualifier, prefs);
-      	AlterColumnNameSqlExtractor extractor = new AlterColumnNameSqlExtractor(renameCol, newNameCol);
+      	
       	runSQL(session, new String[] { sql }, extractor);         	
       } else {
          try {
@@ -719,12 +732,18 @@ public class DialectLiveTestRunner {
                                                         "defVal",
                                                         "A varchar comment",
                                                         30);
+      
+      AlterColumnTypeSqlExtractor extractor = new AlterColumnTypeSqlExtractor(thirdCol, thirdColLonger);
+   	if (dialectDiscoveryMode) { 
+   		findSQL(session, extractor);
+   		return;
+   	}
+      
       if (dialect.supportsAlterColumnType()) {
          List<String> alterColLengthSQL = dialect.getColumnTypeAlterSQL(thirdCol,
                                                                         thirdColLonger, qualifier, prefs);
          runSQL(session,
-				alterColLengthSQL.toArray(new String[alterColLengthSQL.size()]),
-				new AlterColumnTypeSqlExtractor(thirdCol, thirdColLonger));
+				alterColLengthSQL.toArray(new String[alterColLengthSQL.size()]), extractor);
       } else {
          try {
             dialect.getColumnTypeAlterSQL(thirdCol, thirdColLonger, qualifier, prefs);
@@ -750,16 +769,18 @@ public class DialectLiveTestRunner {
                                                                   "0",
                                                                   "An integer column with a default value");
 
+      AlterDefaultValueSqlExtractor extractor = new AlterDefaultValueSqlExtractor(varcharColWithDefaultValue);
+   	if (dialectDiscoveryMode) { 
+   		findSQL(session, extractor);
+   		return;
+   	}
+      
       if (dialect.supportsAlterColumnDefault()) {
          String defaultValSQL = dialect.getColumnDefaultAlterSQL(varcharColWithDefaultValue, qualifier, prefs);
-         runSQL(session,
-				new String[] { defaultValSQL },
-				new AlterDefaultValueSqlExtractor(varcharColWithDefaultValue));
+         runSQL(session, new String[] { defaultValSQL }, extractor);
 
          defaultValSQL = dialect.getColumnDefaultAlterSQL(integerColWithDefaultVal, qualifier, prefs);
-			runSQL(session,
-				new String[] { defaultValSQL },
-				new AlterDefaultValueSqlExtractor(varcharColWithDefaultValue));
+			runSQL(session, new String[] { defaultValSQL }, extractor);
 
       } else {
          try {
@@ -779,9 +800,16 @@ public class DialectLiveTestRunner {
                                                          false,
                                                          "defVal",
                                                          "A varchar comment");
+      
+      AlterColumnNullSqlExtractor extractor  = new AlterColumnNullSqlExtractor(notNullThirdCol);
+   	if (dialectDiscoveryMode) { 
+   		findSQL(session, extractor);
+   		return;
+   	}      
+      
       if (dialect.supportsAlterColumnNull()) {
          String[] notNullSQL = dialect.getColumnNullableAlterSQL(notNullThirdCol, qualifier, prefs);
-         runSQL(session, notNullSQL, new AlterColumnNullSqlExtractor(notNullThirdCol));
+         runSQL(session, notNullSQL, extractor);
       } else {
          try {
             dialect.getColumnNullableAlterSQL(notNullThirdCol, qualifier, prefs);
@@ -819,6 +847,13 @@ public class DialectLiveTestRunner {
 
    private void testColumnComment(ISession session) throws Exception {
       HibernateDialect dialect = getDialect(session);
+      
+      AlterColumnCommentSqlExtractor extractor = new AlterColumnCommentSqlExtractor(firstCol);
+   	if (dialectDiscoveryMode) { 
+   		findSQL(session, extractor);
+   		return;
+   	}         	
+      
       if (dialect.supportsColumnComment()) {
          alterColumnComment(session, firstCol);
          alterColumnComment(session, secondCol);
@@ -840,12 +875,11 @@ public class DialectLiveTestRunner {
       HibernateDialect dialect = getDialect(session);
    	String catalog = ((MockSession)session).getDefaultCatalog();
    	String schema = ((MockSession)session).getDefaultSchema();
-      DatabaseObjectQualifier qual = new DatabaseObjectQualifier(catalog, schema);      
+      DatabaseObjectQualifier qual = new DatabaseObjectQualifier(catalog, schema);
+      
+      AlterColumnCommentSqlExtractor extractor = new AlterColumnCommentSqlExtractor(info);
       String commentSQL = dialect.getColumnCommentAlterSQL(info, qual, prefs);
-      if (commentSQL != null && !commentSQL.equals("")) {
-      	AlterColumnCommentSqlExtractor extractor = new AlterColumnCommentSqlExtractor(info);
-         runSQL(session, new String[] { commentSQL }, extractor);
-      }
+      runSQL(session, new String[] { commentSQL }, extractor);
    }
 
    private String getPKName(String tableName) {
@@ -857,10 +891,18 @@ public class DialectLiveTestRunner {
       HibernateDialect dialect = getDialect(session);
       String pkName = getPKName(tableName);
 
+		DropPrimaryKeySqlExtractor dropPrimaryKeySqlExtractor = new DropPrimaryKeySqlExtractor(tableName, pkName);      
+      
+   	if (dialectDiscoveryMode) { 
+   		findSQL(session, dropPrimaryKeySqlExtractor);
+   		return;
+   	}         			
+		
       if (dialect.supportsDropPrimaryKey())
 		{
 			String sql = dialect.getDropPrimaryKeySQL(pkName, tableName);
-			runSQL(session, new String[] { sql }, new DropPrimaryKeySqlExtractor(tableName, pkName));
+
+			runSQL(session, new String[] { sql }, dropPrimaryKeySqlExtractor);
 		} else
 		{
 			try
@@ -912,6 +954,12 @@ public class DialectLiveTestRunner {
       }
 
       String pkName = getPKName(tableName);
+      AddPrimaryKeySqlExtractor extractor = new AddPrimaryKeySqlExtractor(ti, colInfos, pkName);
+   	if (dialectDiscoveryMode) { 
+   		findSQL(session, extractor);
+   		return;
+   	}
+      
       
       if (dialect.supportsAddPrimaryKey()) {
          String[] pkSQLs = dialect.getAddPrimaryKeySQL(pkName, colInfos, ti);
@@ -919,7 +967,7 @@ public class DialectLiveTestRunner {
 			for (int i = 0; i < pkSQLs.length; i++)
 			{
 				String pkSQL = pkSQLs[i];
-				runSQL(session, new String[] { pkSQL }, new AddPrimaryKeySqlExtractor(ti, colInfos, pkName));
+				runSQL(session, new String[] { pkSQL }, extractor);
 			}
 
       } else {
@@ -1001,10 +1049,16 @@ public class DialectLiveTestRunner {
 										"YES");
       columns.add(firstCol);
       List<TableColumnInfo> pkColumns = null;
+      CreateTableSqlExtractor extractor = new CreateTableSqlExtractor(tableName, columns, pkColumns);
       
+   	if (dialectDiscoveryMode) { 
+   		findSQL(session, extractor);
+   		return;
+   	}      
+
    	if (dialect.supportsCreateTable()) {
    		String sql = dialect.getCreateTableSQL(tableName, columns, pkColumns, prefs, qualifier); 
-   		runSQL(session, new String[] { sql }, new CreateTableSqlExtractor(tableName, columns, pkColumns));
+   		runSQL(session, new String[] { sql }, extractor);
    	} else {
    		try {
    			dialect.getCreateTableSQL(tableName, columns, pkColumns, prefs, qualifier);
@@ -1021,9 +1075,18 @@ public class DialectLiveTestRunner {
       String oldTableName = fixTableName(session, testRenameTableBefore);
       String newTableName = fixTableName(session, testRenameTableAfter);
       
+		RenameTableSqlExtractor renameTableSqlExtractor = 
+			new RenameTableSqlExtractor(oldTableName, newTableName);      
+      
+   	if (dialectDiscoveryMode) { 
+   		findSQL(session, renameTableSqlExtractor);
+   		return;
+   	}         	
+		
    	if (dialect.supportsRenameTable()) {
    		String sql = dialect.getRenameTableSQL(oldTableName, newTableName, qualifier, prefs);
-   		runSQL(session, new String[] { sql }, new RenameTableSqlExtractor(oldTableName, newTableName));
+
+			runSQL(session, new String[] { sql }, renameTableSqlExtractor);
    	} else {
    		try {
    			dialect.getRenameTableSQL(oldTableName, newTableName, qualifier, prefs);
@@ -1042,13 +1105,18 @@ public class DialectLiveTestRunner {
       String tableToView = fixTableName(session, testCreateViewTable);
       String firstViewName = fixTableName(session, testViewName);
       String secondViewName = fixTableName(session, testView2Name);
+      String definition = "select * from "+tableToView;
+      CreateViewSqlExtractor extractor = new CreateViewSqlExtractor(firstViewName, definition, checkOption);
+   	if (dialectDiscoveryMode) { 
+   		findSQL(session, extractor);
+   		return;
+   	}      
       
    	if (dialect.supportsCreateView()) {
-         String definition = "select * from "+tableToView;
    		
    		String sql =
 				dialect.getCreateViewSQL(firstViewName, definition, checkOption, qualifier, prefs);
-   		runSQL(session, new String[] { sql }, new CreateViewSqlExtractor(firstViewName, definition, checkOption));
+   		runSQL(session, new String[] { sql }, extractor);
    		
          if (dialect.supportsCheckOptionsForViews()) {
          	checkOption = "some_check";
@@ -1077,11 +1145,18 @@ public class DialectLiveTestRunner {
    	String schema = ((MockSession)session).getDefaultSchema();
    	DatabaseObjectQualifier qual = new DatabaseObjectQualifier(catalog, schema);
    	
+   	RenameViewSqlExtractor renameViewSqlExtractor = new RenameViewSqlExtractor(oldViewName, newViewName);
+   	
+   	if (dialectDiscoveryMode) { 
+   		findSQL(session, renameViewSqlExtractor);
+   		return;
+   	}         	
    	
    	if (dialect.supportsRenameView()) {
    		String[] sql = 
    			dialect.getRenameViewSQL(oldViewName, newViewName, qual, prefs);
-   		runSQL(session, sql, new RenameViewSqlExtractor(oldViewName, newViewName));
+   		
+			runSQL(session, sql, renameViewSqlExtractor);
    	} else if ( dialect.supportsViewDefinition() && dialect.supportsCreateView()) {
    		
    		String viewDefSql = dialect.getViewDefinitionSQL(oldViewName, qual, prefs);	
@@ -1117,13 +1192,21 @@ public class DialectLiveTestRunner {
    	HibernateDialect dialect = getDialect(session);
 		final String tableName = fixTableName(session, testTableForDropView); 
 		final String viewName = fixTableName(session, testViewToBeDropped);
+		
+		DropViewSqlExtractor dropViewSqlExtractor = new DropViewSqlExtractor(viewName, false);
+   	if (dialectDiscoveryMode) { 
+   		findSQL(session, dropViewSqlExtractor);
+   		return;
+   	}         	
+		
    	if (dialect.supportsCreateView() && dialect.supportsDropView()) {  
    			
    		String sql = dialect.getCreateViewSQL(viewName, "select * from "+tableName, null, qualifier, prefs);
    		runSQL(session, sql);
 
    		sql = dialect.getDropViewSQL(viewName, false, qualifier, prefs);
-   		runSQL(session, new String[] { sql }, new DropViewSqlExtractor(viewName, false));
+
+			runSQL(session, new String[] { sql }, dropViewSqlExtractor);
    	} else {
    		try {
    			dialect.getDropViewSQL(viewName, false, qualifier, prefs);
@@ -1222,7 +1305,14 @@ public class DialectLiveTestRunner {
 
 	   		// now drop the second.
 	   		String dropIndexSQL = dialect.getDropIndexSQL(tableName, indexName2, true, qualifier, prefs);
-				runSQL(session, new String[] { dropIndexSQL }, new DropIndexSqlExtractor(tableName, indexName2, true));
+	   		
+	   		
+	   		// TODO: Remove this when Frontbase bug gets fixed.
+	   		// For some reason, Frontbase renames the unique indexes to a generated value.  Since we don't 
+	   		// know what that new name for the index is, skip dropping it for now.
+	   		if (!DialectFactory.isFrontBase(session.getMetaData())) {
+	   			runSQL(session, new String[] { dropIndexSQL }, new DropIndexSqlExtractor(tableName, indexName2, true));
+	   		}
 	   		
 	   		
 	   		// now drop the first
@@ -1250,11 +1340,19 @@ public class DialectLiveTestRunner {
    	HibernateDialect dialect = getDialect(session);
    	String cache = null;
    	boolean cycle = true;
+   	CreateSequenceSqlExtractor extractor = 
+   		new CreateSequenceSqlExtractor(testSequenceName, "1", "1", "100", "1", cache, cycle);
+   	
+   	if (dialectDiscoveryMode) { 
+   		findSQL(session, extractor);
+   		return;
+   	}      
+   	
    	if (dialect.supportsCreateSequence()) {
    		
    		String sql = 
    			dialect.getCreateSequenceSQL(testSequenceName, "1", "1", "100", "1", cache, cycle, qualifier, prefs);
-   		runSQL(session, new String[] { sql }, new CreateSequenceSqlExtractor(testSequenceName, "1", "1", "100", "1", cache, cycle));
+   		runSQL(session, new String[] { sql }, extractor);
    		
    		cycle = false;
    		 sql = 
@@ -1273,6 +1371,13 @@ public class DialectLiveTestRunner {
    
    private void testGetSequenceInfo(ISession session) throws Exception {
    	HibernateDialect dialect = getDialect(session);
+   	
+		SequenceInfoSqlExtractor sequenceInfoSqlExtractor = new  SequenceInfoSqlExtractor(testSequenceName);   	
+   	if (dialectDiscoveryMode) { 
+   		findSQL(session, sequenceInfoSqlExtractor);
+   		return;
+   	}         	
+   	
    	if (dialect.supportsSequence() && dialect.supportsSequenceInformation()) {
    		String sql = dialect.getSequenceInformationSQL(testSequenceName, qualifier, prefs);
    		if (sql.endsWith("?") || sql.endsWith("?)")) {
@@ -1281,7 +1386,8 @@ public class DialectLiveTestRunner {
    				throw new IllegalStateException("Expected a result from sequence info query");
    			}
    		} else {
-   			runSQL(session, new String[] { sql }, new  SequenceInfoSqlExtractor(testSequenceName));
+
+				runSQL(session, new String[] { sql }, sequenceInfoSqlExtractor);
    		}
    		
    	} else {
@@ -1299,18 +1405,27 @@ public class DialectLiveTestRunner {
    	HibernateDialect dialect = getDialect(session);
    	String cache = null;
    	boolean cycle = true;
+   	String restart = "5";
+   	SequencePropertyMutability mutability = dialect.getSequencePropertyMutability();
+   	AlterSequenceSqlExtractor restartExtractor = 
+   		new AlterSequenceSqlExtractor(testSequenceName, "1", "1", "1000", restart, cache, cycle); 
+   		
+   	if (dialectDiscoveryMode) { 
+   		findSQL(session, restartExtractor);
+   		return;
+   	}      
+   	
    	if (dialect.supportsAlterSequence()) {
-   		SequencePropertyMutability mutability = dialect.getSequencePropertyMutability();
+   		
    		if (mutability.isRestart()) {
-	   		String restart = "5";
 	   		String[] sql = 
 	   			dialect.getAlterSequenceSQL(testSequenceName, "1", "1", "1000", restart, cache, cycle, qualifier, prefs);
-	   		runSQL(session, sql, new AlterSequenceSqlExtractor(testSequenceName, "1", "1", "1000", restart, cache, cycle));
+				runSQL(session, sql, restartExtractor);
    		}
    		if (mutability.isCache() && mutability.isCycle()) {
 	   		cache = "10";
 	   		cycle = false;
-	   		String restart = null;
+	   		restart = null;
 	   		String[] sql = 
 	   			dialect.getAlterSequenceSQL(testSequenceName, "1", "1", "1000", restart, cache, cycle, qualifier, prefs);
 	   		runSQL(session, sql);
@@ -1328,6 +1443,7 @@ public class DialectLiveTestRunner {
    
    private void testGetSequenceInformation(ISession session) throws Exception {
    	HibernateDialect dialect = getDialect(session);
+   	   	
    	if (dialect.supportsSequenceInformation()) {
    		String sql = 
    			dialect.getSequenceInformationSQL(testSequenceName, qualifier, prefs);
@@ -1353,10 +1469,19 @@ public class DialectLiveTestRunner {
    
    private void testDropSequence(ISession session) throws Exception {
    	HibernateDialect dialect = getDialect(session);
+   	
+   	DropSequenceSqlExtractor dropSequenceSqlExtractor = new DropSequenceSqlExtractor(testSequenceName, false);
+   	
+   	if (dialectDiscoveryMode) { 
+   		findSQL(session, dropSequenceSqlExtractor);
+   		return;
+   	}         	
+   	
    	if (dialect.supportsDropSequence()) {
    		String sql = 
    			dialect.getDropSequenceSQL(testSequenceName, false, qualifier, prefs);
-   		runSQL(session, new String[] {sql}, new DropSequenceSqlExtractor(testSequenceName, false));   		
+   		
+			runSQL(session, new String[] {sql}, dropSequenceSqlExtractor);   		
    	} else {
    		try {
    			dialect.getDropSequenceSQL(testSequenceName, false, qualifier, prefs);
@@ -1382,6 +1507,25 @@ public class DialectLiveTestRunner {
 		String onDeleteAction = null;
 		String childTable = fixTableName(session, fkChildTableName);
 		String parentTable = fixTableName(session, fkParentTableName);
+		
+		CreateForeignKeyConstraintSqlExtractor extractor =
+			new CreateForeignKeyConstraintSqlExtractor(	"fk_child_refs_parent",
+																		deferrable,
+																		initiallyDeferred,
+																		matchFull,
+																		autoFKIndex,
+																		fkIndexName,
+																		localRefColumns,
+																		onUpdateAction,
+																		onDeleteAction,
+																		childTable,
+																		parentTable);
+				
+   	if (dialectDiscoveryMode) { 
+   		findSQL(session, extractor);
+   		return;
+   	}
+		
 		if (dialect.supportsAddForeignKeyConstraint())
 		{
 			String[] sql =
@@ -1404,20 +1548,6 @@ public class DialectLiveTestRunner {
 				// object FKTESTPARENTTABLE is in use; squelch it and continue.
 				try { runSQL(session, sql); } catch (Exception e) {}
 			} else {
-				
-				CreateForeignKeyConstraintSqlExtractor extractor =
-					new CreateForeignKeyConstraintSqlExtractor(	"fk_child_refs_parent",
-																				deferrable,
-																				initiallyDeferred,
-																				matchFull,
-																				autoFKIndex,
-																				fkIndexName,
-																				localRefColumns,
-																				onUpdateAction,
-																				onDeleteAction,
-																				childTable,
-																				parentTable);
-				
 				runSQL(session, sql, extractor);
 			}
 		} else
@@ -1450,6 +1580,15 @@ public class DialectLiveTestRunner {
    	HibernateDialect dialect = getDialect(session);
    	TableColumnInfo[] columns = new TableColumnInfo[] { myIdColumn };
    	String tableName = fixTableName(session, testUniqueConstraintTableName);
+   	
+   	AddUniqueConstraintSqlExtractor extractor = 
+   		new AddUniqueConstraintSqlExtractor(tableName, secondUniqueConstraintName, columns);
+   	
+   	if (dialectDiscoveryMode) { 
+   		findSQL(session, extractor);
+   		return;
+   	}   	
+   	
    	if (dialect.supportsAddUniqueConstraint()) {
    		String[] sql = 
    			dialect.getAddUniqueConstraintSQL(tableName,
@@ -1457,7 +1596,7 @@ public class DialectLiveTestRunner {
 					columns,
 					qualifier,
 					prefs);
-   		runSQL(session, sql, new AddUniqueConstraintSqlExtractor(tableName, uniqueConstraintName, columns));   		
+   		runSQL(session, sql, extractor);   		
    		
    		// We need to add a second column to have a unique constraint so that we can drop that one.  Progress
    		// doesn't allow the very first index to ever be dropped.
@@ -1468,7 +1607,7 @@ public class DialectLiveTestRunner {
 					columns,
 					qualifier,
 					prefs);
-   		runSQL(session, sql, new AddUniqueConstraintSqlExtractor(tableName, secondUniqueConstraintName, columns));
+   		runSQL(session, sql, extractor);
    		
    	} else {
    		try {
@@ -1487,6 +1626,10 @@ public class DialectLiveTestRunner {
    }
    
    private void testAddAutoIncrement(ISession session) throws Exception {
+   	if (dialectDiscoveryMode) { 
+   		findSQL(session, new AddAutoIncrementSqlExtractor(autoIncrementColumn)); 
+   		return;
+   	}
    	HibernateDialect dialect = getDialect(session);
    	if (dialect.supportsAutoIncrement()) {
    		String[] sql = 
@@ -1507,11 +1650,21 @@ public class DialectLiveTestRunner {
    private void testDropConstraint(ISession session) throws Exception {
    	HibernateDialect dialect = getDialect(session);
    	String tableName = fixTableName(session, testUniqueConstraintTableName);
+   	
+   	DropConstraintSqlExtractor dropConstraintSqlExtractor = 
+   		new DropConstraintSqlExtractor(tableName, secondUniqueConstraintName);
+   	
+   	if (dialectDiscoveryMode) { 
+   		findSQL(session, dropConstraintSqlExtractor);
+   		return;
+   	}         	
+   	
 		if (dialect.supportsDropConstraint())
 		{
 			String[] sql =
 				new String[] { dialect.getDropConstraintSQL(tableName, secondUniqueConstraintName, qualifier, prefs) };
-			runSQL(session, sql, new DropConstraintSqlExtractor(tableName, secondUniqueConstraintName));
+			
+			runSQL(session, sql, dropConstraintSqlExtractor);
 		} 
 		else
 		{
@@ -1535,11 +1688,21 @@ public class DialectLiveTestRunner {
    	String valuesPart = "select distinct myid from "+fixTableName(session, integerDataTableName);
    	ArrayList<String> columns = new ArrayList<String>();
    	String tableName = fixTableName(session, testInsertIntoTable);
+   	
+   	InsertIntoSqlExtractor insertIntoSqlExtractor = 
+   		new InsertIntoSqlExtractor(tableName, columns, valuesPart);
+   	if (dialectDiscoveryMode) { 
+   		findSQL(session, insertIntoSqlExtractor);
+   		return;
+   	}         	
+   	
+   	
 		if (dialect.supportsInsertInto())
 		{
 			String sql = 
 				dialect.getInsertIntoSQL(tableName, columns, valuesPart, qualifier, prefs);
-			runSQL(session, new String[] { sql }, new InsertIntoSqlExtractor(tableName, columns, valuesPart));
+			
+			runSQL(session, new String[] { sql }, insertIntoSqlExtractor);
 			
 			valuesPart = " values ( 20 )";
 			sql = dialect.getInsertIntoSQL(tableName, columns, valuesPart, qualifier, prefs);
@@ -1599,6 +1762,18 @@ public class DialectLiveTestRunner {
    	String[] whereColumns = new String[] { "adesc", "bdesc"};
    	String[] whereValues = new String[] { "'a1'", "'b1'" };
    	
+   	UpdateSqlExtractor extractor = new UpdateSqlExtractor(	tableName,
+			setColumns,
+			setValues,
+			fromTables,
+			whereColumns,
+			whereValues);
+   	
+   	if (dialectDiscoveryMode) { 
+   		findSQL(session, extractor);
+   		return;
+   	}         	
+   	
 		if (dialect.supportsUpdate())
 		{
 			String[] sql =
@@ -1610,12 +1785,7 @@ public class DialectLiveTestRunner {
 					whereValues,
 					qualifier,
 					prefs);
-			runSQL(session, sql, new UpdateSqlExtractor(	tableName,
-																		setColumns,
-																		setValues,
-																		fromTables,
-																		whereColumns,
-																		whereValues));			
+			runSQL(session, sql, extractor);			
 		} 
 		else
 		{
@@ -1744,8 +1914,9 @@ public class DialectLiveTestRunner {
    		}
 	      Connection con = session.getSQLConnection().getConnection();
 	      Statement stmt = con.createStatement();
-	      System.out.println("Running SQL  (" + dialect.getDisplayName() + "): "
-	            + sql);
+	      if (!dialectDiscoveryMode) {
+		      System.out.println("Running SQL  (" + dialect.getDisplayName() + "): " + sql);
+	      }
 	      try {
 	      	stmt.execute(sql);
 	      } catch(Exception e) {
@@ -1765,6 +1936,49 @@ public class DialectLiveTestRunner {
    	}
    }
 
+   /**
+    * This is only useful in discovery mode.  Since there is not SQL to try, the assumption here is that the 
+    * dialect's SQL isn't correctly implemented.
+    * @param session
+    * @param extractor
+    */
+   private void findSQL(ISession session, IDialectSqlExtractor extractor) {
+   	boolean success = false;
+   	HibernateDialect lastDialect = null;
+   	for (HibernateDialect referenceDialect : referenceDialects) {
+   		if (success) break;
+   		if (!extractor.supportsOperation(referenceDialect)) { continue; }
+   		
+   		lastDialect = referenceDialect;
+   		String[] sql = extractor.getSql(referenceDialect);
+
+   		
+   		if (sql == null || "".equals(sql)) {
+   			continue;
+   		}
+   		try
+			{
+				runSQL(session, sql);
+				//System.err.println("("+extractor.getClass().getSimpleName()+"):The SQL generated by " + referenceDialect.getDisplayName() + " works !!!");
+				success = true;
+			} catch (Exception e2)
+			{
+//				System.err.println("Attempt to use dialect sql from " + referenceDialect.getDisplayName()
+//					+ " failed: " + e2.getMessage());
+			}
+   	}
+   	if (success)
+		{
+			System.out.println("Dialect " + lastDialect.getDisplayName()
+				+ " produced valid SQL using extractor: " + extractor.getClass().getSimpleName());
+		} else
+		{
+			System.err.println("No reference dialect was able to generate valid SQL for extractor: "
+				+ extractor.getClass().getSimpleName());
+		}
+   	
+   }
+   
    /**
     * Uses the specified extractor to look up the SQL in all other dialects and try them to see if they will 
     * work, if the specified session's dialect isn't up to the task.
@@ -1808,7 +2022,9 @@ public class DialectLiveTestRunner {
    	} else {
    		System.err.println("No reference dialect was able to generate valid SQL for this operation.");
    	}
-   	System.exit(1);		
+   	if (!dialectDiscoveryMode) {
+   		System.exit(1);		
+   	}
 	}
    
    
