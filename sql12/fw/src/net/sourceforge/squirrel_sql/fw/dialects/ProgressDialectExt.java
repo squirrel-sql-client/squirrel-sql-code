@@ -29,7 +29,6 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
-import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.hibernate.HibernateException;
@@ -226,7 +225,6 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	@Override
 	public boolean supportsDropColumn()
 	{
-		// TODO: need to verify this
 		return true;
 	}
 
@@ -235,7 +233,8 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	 *      java.lang.String, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
-	public String getColumnDropSQL(final String tableName, final String columnName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnDropSQL(final String tableName, final String columnName,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getColumnDropSQL(tableName, columnName, qualifier, prefs, this);
 	}
@@ -477,7 +476,6 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	@Override
 	public String[] getIndexAccessMethodsTypes()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -487,16 +485,21 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	@Override
 	public String[] getIndexStorageOptions()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddAutoIncrementSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
 	@Override
 	public String[] getAddAutoIncrementSQL(final TableColumnInfo column,
 		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return new String[] { "blah" };
+		final int featureId = DialectUtils.ALTER_SEQUENCE_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -570,17 +573,20 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 
 		// "ALTER TABLE $tableName$ " +
 		// "ADD CONSTRAINT $constraintName$ UNIQUE ($columnName; separator=\",\"$)";
-		
+
 		String templateStr = ST_ADD_UNIQUE_CONSTRAINT_STYLE_TWO;
-		
+
 		StringTemplate st = new StringTemplate(templateStr);
-		
-		HashMap<String, String> valuesMap = 
+
+		HashMap<String, String> valuesMap =
 			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, tableName, ST_CONSTRAINT_NAME_KEY, constraintName);
-		
-		return new String[] { 
-			DialectUtils.getAddUniqueConstraintSQL(st, valuesMap, columns, qualifier, prefs, this)
-		};
+
+		return new String[] { DialectUtils.getAddUniqueConstraintSQL(st,
+			valuesMap,
+			columns,
+			qualifier,
+			prefs,
+			this) };
 	}
 
 	/**
@@ -652,45 +658,43 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 		// [MAXVALUE value | NOMAXVALUE],
 		// [MINVALUE value | NOMINVALUE],
 		// [CYLCE | NOCYLCE]
-				
+
 		// Currently, OpenEdge only supports the PUB schema for sequences.
-		
-		// "CREATE SEQUENCE $sequenceName$  " +
+
+		// "CREATE SEQUENCE $sequenceName$ " +
 		// "$increment$ $startWith$ $minimum$ $maximum$ $cache$ $cycle$";
 
 		String templateStr = ST_CREATE_SEQUENCE_STYLE_TWO;
-		
+
 		StringTemplate startClauseTemplate = new StringTemplate("START WITH $startWith$ ,");
 		OptionalSqlClause startClause = new OptionalSqlClause(startClauseTemplate, ST_START_WITH_KEY, start);
-		
+
 		StringTemplate incrementByClauseTemplate = new StringTemplate("INCREMENT BY $incrementBy$ ,");
 		OptionalSqlClause incrementClause =
 			new OptionalSqlClause(incrementByClauseTemplate, ST_INCREMENT_BY_KEY, increment);
-		
+
 		StringTemplate maxClauseTemplate = new StringTemplate("MAXVALUE $maximum$ ,");
-		OptionalSqlClause maxClause = 
-			new OptionalSqlClause(maxClauseTemplate, ST_MAXIMUM_KEY, maximum);
-		
+		OptionalSqlClause maxClause = new OptionalSqlClause(maxClauseTemplate, ST_MAXIMUM_KEY, maximum);
+
 		StringTemplate minClauseTemplate = new StringTemplate("MINVALUE $minimum$ ,");
-		OptionalSqlClause minClause = 
-			new OptionalSqlClause(minClauseTemplate, ST_MINIMUM_KEY, minimum);
-		
-		
-		
+		OptionalSqlClause minClause = new OptionalSqlClause(minClauseTemplate, ST_MINIMUM_KEY, minimum);
+
 		StringTemplate st = new StringTemplate(templateStr);
 
-		st.setAttribute(ST_SEQUENCE_NAME_KEY, "PUB."+sequenceName);
+		st.setAttribute(ST_SEQUENCE_NAME_KEY, "PUB." + sequenceName);
 		st.setAttribute(ST_START_WITH_KEY, startClause.toString());
 		st.setAttribute(ST_INCREMENT_KEY, incrementClause.toString());
 		st.setAttribute(ST_MAXIMUM_KEY, maxClause.toString());
 		st.setAttribute(ST_MINIMUM_KEY, minClause.toString());
-		
-		if (cycle) {
+
+		if (cycle)
+		{
 			st.setAttribute(ST_CYCLE_KEY, "CYCLE");
-		} else {
+		} else
+		{
 			st.setAttribute(ST_CYCLE_KEY, "NOCYCLE");
 		}
-		
+
 		return st.toString();
 	}
 
@@ -706,19 +710,20 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	{
 		// CREATE VIEW name [(view_col [, view_col …])]
 		// AS <select> [WITH CHECK OPTION];
-		
+
 		// "CREATE VIEW $viewName$ " +
-		// "AS $selectStatement$ $withCheckOption$";	
-      StringTemplate st = new StringTemplate(ST_CREATE_VIEW_STYLE_TWO);
+		// "AS $selectStatement$ $withCheckOption$";
+		StringTemplate st = new StringTemplate(ST_CREATE_VIEW_STYLE_TWO);
 
-      HashMap<String, String> valuesMap =
-              DialectUtils.getValuesMap(ST_VIEW_NAME_KEY, viewName, ST_SELECT_STATEMENT_KEY, definition);
-      
-      if (checkOption != null) {
-      	valuesMap.put(ST_WITH_CHECK_OPTION_KEY, "WITH CHECK OPTION");
-      }
+		HashMap<String, String> valuesMap =
+			DialectUtils.getValuesMap(ST_VIEW_NAME_KEY, viewName, ST_SELECT_STATEMENT_KEY, definition);
 
-      return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
+		if (checkOption != null)
+		{
+			valuesMap.put(ST_WITH_CHECK_OPTION_KEY, "WITH CHECK OPTION");
+		}
+
+		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**
@@ -759,9 +764,8 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 	{
 		// Currently, OpenEdge only supports the PUB schema for sequences.
-		
-		DatabaseObjectQualifier pubQualifier = 
-			new DatabaseObjectQualifier(qualifier.getCatalog(), "PUB");
+
+		DatabaseObjectQualifier pubQualifier = new DatabaseObjectQualifier(qualifier.getCatalog(), "PUB");
 		SqlGenerationPreferences pubPrefs = new SqlGenerationPreferences();
 		pubPrefs.setQualifyTableNames(true);
 
@@ -779,9 +783,8 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	{
 		Boolean cascadeNotSupported = null;
 
-		return DialectUtils.getDropViewSQL(viewName, cascadeNotSupported, qualifier, prefs, this);		
+		return DialectUtils.getDropViewSQL(viewName, cascadeNotSupported, qualifier, prefs, this);
 	}
-
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getRenameTableSQL(java.lang.String,
@@ -810,7 +813,6 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	public String[] getRenameViewSQL(final String oldViewName, final String newViewName,
 		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
 		return new String[] { "blah" };
 	}
 
@@ -823,16 +825,10 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	public String getSequenceInformationSQL(final String sequenceName,
 		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 	{
-		return
-		"SELECT PUB."+sequenceName+".CURRVAL, \"SEQ-MAX\", \"SEQ-MIN\", \"USER-MISC\", " +
-		"\"SEQ-INCR\", " +
-		"case \"CYCLE-OK\" " +
-		"when 0 then 0 " +
-		"else 1 " +
-		"end as CYCLE_FLAG " +
-		"FROM SYSPROGRESS.SYSSEQUENCES " +
-		"where \"SEQ-NAME\" = '"+sequenceName+"' ";
-	
+		return "SELECT PUB." + sequenceName + ".CURRVAL, \"SEQ-MAX\", \"SEQ-MIN\", \"USER-MISC\", "
+			+ "\"SEQ-INCR\", " + "case \"CYCLE-OK\" " + "when 0 then 0 " + "else 1 " + "end as CYCLE_FLAG "
+			+ "FROM SYSPROGRESS.SYSSEQUENCES " + "where \"SEQ-NAME\" = '" + sequenceName + "' ";
+
 	}
 
 	/**
@@ -857,7 +853,6 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	@Override
 	public boolean supportsAccessMethods()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -891,7 +886,6 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 	@Override
 	public boolean supportsAutoIncrement()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -1003,6 +997,9 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 		return true;
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#supportsRenameView()
+	 */
 	public boolean supportsRenameView()
 	{
 		return false;
