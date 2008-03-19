@@ -22,6 +22,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
@@ -30,6 +31,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
 
+import org.antlr.stringtemplate.StringTemplate;
 import org.hibernate.HibernateException;
 
 /**
@@ -236,10 +238,18 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support dropping columns.
 	 */
-	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		String dropClause = DialectUtils.DROP_COLUMN_CLAUSE;
-		return DialectUtils.getColumnDropSQL(tableName, columnName, dropClause, true, "CASCADE", qualifier, prefs, this);
+		return DialectUtils.getColumnDropSQL(tableName,
+			columnName,
+			dropClause,
+			true,
+			"CASCADE",
+			qualifier,
+			prefs,
+			this);
 	}
 
 	/**
@@ -276,9 +286,7 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columnNames, ITableInfo ti)
 	{
-		int featureId = DialectUtils.ADD_PRIMARY_KEY_TYPE;
-		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-		throw new UnsupportedOperationException(msg);
+		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, columnNames, false) };
 	}
 
 	/**
@@ -353,7 +361,8 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 *           the TableColumnInfo as it wants to be
 	 * @return the SQL to make the change
 	 */
-	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		int featureId = DialectUtils.COLUMN_NAME_ALTER_TYPE;
 		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
@@ -414,7 +423,8 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 *           the column to modify and it's default value.
 	 * @return SQL to make the change
 	 */
-	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		String defaultClause = DialectUtils.SET_DEFAULT_CLAUSE;
@@ -432,9 +442,7 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public String getDropPrimaryKeySQL(String pkName, String tableName)
 	{
-		int featureId = DialectUtils.DROP_PRIMARY_KEY_TYPE;
-		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-		throw new UnsupportedOperationException(msg);
+		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true, true);
 	}
 
 	/**
@@ -479,20 +487,18 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getIndexAccessMethodsTypes()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getIndexAccessMethodsTypes()
 	 */
 	public String[] getIndexAccessMethodsTypes()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getIndexStorageOptions()
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getIndexStorageOptions()
 	 */
 	public String[] getIndexStorageOptions()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -503,8 +509,9 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final int featureId = DialectUtils.ADD_AUTO_INCREMENT_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -543,8 +550,24 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 		boolean autoFKIndex, String fkIndexName, Collection<String[]> localRefColumns, String onUpdateAction,
 		String onDeleteAction, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		Boolean deferrableNotSupported = null;
+		Boolean initiallyDeferredNotSupported = null;
+		Boolean matchFullNotSupported = null;
+
+		return DialectUtils.getAddForeignKeyConstraintSQL(localTableName,
+			refTableName,
+			constraintName,
+			deferrableNotSupported,
+			initiallyDeferredNotSupported,
+			matchFullNotSupported,
+			autoFKIndex,
+			fkIndexName,
+			localRefColumns,
+			onUpdateAction,
+			onDeleteAction,
+			qualifier,
+			prefs,
+			this);
 	}
 
 	/**
@@ -556,8 +579,21 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName,
 		TableColumnInfo[] columns, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		// alter table FKTESTCHILDTABLE add CONSTRAINT foo_const UNIQUE (MYID)
+
+		// "ALTER TABLE $tableName$ " +
+		// "ADD CONSTRAINT $constraintName$ UNIQUE ($columnName; separator=\",\"$)";
+		
+		String templateStr = ST_ADD_UNIQUE_CONSTRAINT_STYLE_TWO;
+		
+		StringTemplate st = new StringTemplate(templateStr);
+		
+		HashMap<String, String> valuesMap = 
+			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, tableName, ST_CONSTRAINT_NAME_KEY, constraintName);
+		
+		return new String[] { 
+			DialectUtils.getAddUniqueConstraintSQL(st, valuesMap, columns, qualifier, prefs, this)
+		};
 	}
 
 	/**
@@ -570,8 +606,9 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 		String restart, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final int featureId = DialectUtils.ALTER_SEQUENCE_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -584,8 +621,26 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 		boolean unique, String tablespace, String constraints, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder result = new StringBuilder();
+		result.append("CREATE ");
+
+		if (unique)
+		{
+			result.append("UNIQUE ");
+		}
+		result.append(" INDEX ");
+		result.append(DialectUtils.shapeQualifiableIdentifier(indexName, qualifier, prefs, this));
+		result.append(" ON ");
+		result.append(DialectUtils.shapeQualifiableIdentifier(tableName, qualifier, prefs, this));
+		result.append("(");
+		for (String column : columns)
+		{
+			result.append(column);
+			result.append(",");
+		}
+		result.setLength(result.length() - 1);
+		result.append(")");
+		return result.toString();
 	}
 
 	/**
@@ -598,8 +653,9 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 		String start, String cache, boolean cycle, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final int featureId = DialectUtils.CREATE_SEQUENCE_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -610,15 +666,19 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String getCreateTableSQL(String tableName, List<TableColumnInfo> columns,
 		List<TableColumnInfo> primaryKeys, SqlGenerationPreferences prefs, DatabaseObjectQualifier qualifier)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return DialectUtils.getCreateTableSQL(tableName, columns, primaryKeys, prefs, qualifier, this);
 	}
 
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getCreateViewSQL(java.lang.String,
+	 *      java.lang.String, java.lang.String,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
 	public String getCreateViewSQL(String viewName, String definition, String checkOption,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return DialectUtils.getCreateViewSQL(viewName, definition, checkOption, qualifier, prefs, this);
 	}
 
 	/**
@@ -629,8 +689,9 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String getDropConstraintSQL(String tableName, String constraintName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final int featureId = DialectUtils.DROP_CONSTRAINT_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -638,12 +699,11 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 *      java.lang.String, boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
-	public String getDropIndexSQL(String tableName, String indexName, boolean cascade,
-		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	public String getDropIndexSQL(String tableName, String indexName, boolean cascade,
+//		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+//	{
+//		return null;
+//	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropSequenceSQL(java.lang.String,
@@ -653,8 +713,9 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String getDropSequenceSQL(String sequenceName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final int featureId = DialectUtils.DROP_SEQUENCE_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -665,8 +726,9 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String getDropViewSQL(String viewName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final int featureId = DialectUtils.DROP_VIEW_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -677,8 +739,7 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String getInsertIntoSQL(String tableName, List<String> columns, String valuesPart,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return DialectUtils.getInsertIntoSQL(tableName, columns, valuesPart, qualifier, prefs, this);
 	}
 
 	/**
@@ -689,8 +750,9 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String getRenameTableSQL(String oldTableName, String newTableName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final int featureId = DialectUtils.RENAME_TABLE_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -701,8 +763,9 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String[] getRenameViewSQL(String oldViewName, String newViewName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final int featureId = DialectUtils.RENAME_VIEW_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -713,8 +776,9 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String getSequenceInformationSQL(String sequenceName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final int featureId = DialectUtils.SEQUENCE_INFORMATION_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -727,8 +791,9 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 		String[] fromTables, String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final int featureId = DialectUtils.UPDATE_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);		
 	}
 
 	/**
@@ -736,7 +801,6 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public boolean supportsAccessMethods()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -745,8 +809,7 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public boolean supportsAddForeignKeyConstraint()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -754,8 +817,7 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public boolean supportsAddUniqueConstraint()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -763,7 +825,6 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public boolean supportsAlterSequence()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -772,7 +833,6 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public boolean supportsAutoIncrement()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -781,7 +841,6 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public boolean supportsCheckOptionsForViews()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -790,8 +849,7 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public boolean supportsCreateIndex()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -799,7 +857,6 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public boolean supportsCreateSequence()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -808,8 +865,7 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public boolean supportsCreateTable()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -817,8 +873,7 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public boolean supportsCreateView()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -826,7 +881,6 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public boolean supportsDropConstraint()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -835,8 +889,7 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public boolean supportsDropIndex()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -844,7 +897,6 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public boolean supportsDropSequence()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -853,7 +905,6 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public boolean supportsDropView()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -862,7 +913,6 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public boolean supportsEmptyTables()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -871,7 +921,6 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public boolean supportsIndexes()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -880,8 +929,7 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public boolean supportsInsertInto()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -889,7 +937,6 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public boolean supportsMultipleRowInserts()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -898,7 +945,6 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public boolean supportsRenameTable()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -907,7 +953,6 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public boolean supportsRenameView()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -916,7 +961,6 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public boolean supportsSequence()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -925,7 +969,6 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public boolean supportsSequenceInformation()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -934,7 +977,6 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public boolean supportsTablespace()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -943,7 +985,6 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public boolean supportsUpdate()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -955,7 +996,6 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public boolean supportsAddColumn()
 	{
-		// TODO verify this is correct
 		return true;
 	}
 
@@ -964,7 +1004,6 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public boolean supportsViewDefinition()
 	{
-		// TODO verify this is correct
 		return false;
 	}
 
@@ -976,7 +1015,9 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		return null;
+		final int featureId = DialectUtils.VIEW_DEFINITION_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);		
 	}
 
 	/**
@@ -995,7 +1036,6 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	public boolean supportsCorrelatedSubQuery()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
