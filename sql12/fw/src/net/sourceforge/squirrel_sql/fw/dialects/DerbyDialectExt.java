@@ -235,37 +235,37 @@ public class DerbyDialectExt extends DB2DialectExt implements HibernateDialect
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#getTableDropSQL(net.sourceforge.squirrel_sql.fw.sql.ITableInfo,
-	 *      boolean, boolean)
+	 *      boolean, boolean, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
 	public List<String> getTableDropSQL(final ITableInfo iTableInfo, final boolean cascadeConstraints,
-		final boolean isMaterializedView)
+		final boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getTableDropSQL(iTableInfo,
 			false,
 			cascadeConstraints,
 			false,
 			DialectUtils.CASCADE_CLAUSE,
-			false);
+			false, qualifier, prefs, this);
 	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#getAddPrimaryKeySQL(java.lang.String,
 	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo[],
-	 *      net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+	 *      net.sourceforge.squirrel_sql.fw.sql.ITableInfo, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
 	public String[] getAddPrimaryKeySQL(final String pkName, final TableColumnInfo[] colInfos,
-		final ITableInfo ti)
+		final ITableInfo ti, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		final ArrayList<String> result = new ArrayList<String>();
 		final String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 
 		// convert each column that will be a member key to non-null - this
 		// doesn't hurt if they are already null.
-		DialectUtils.getMultiColNotNullSQL(colInfos, this, alterClause, false, result);
+		DialectUtils.getMultiColNotNullSQL(colInfos, this, alterClause, false, result, qualifier, prefs);
 
-		result.add(DialectUtils.getAddPrimaryKeySQL(ti, pkName, colInfos, false));
+		result.add(DialectUtils.getAddPrimaryKeySQL(ti, pkName, colInfos, false, qualifier, prefs, this));
 
 		return result.toArray(new String[result.size()]);
 	}
@@ -311,7 +311,7 @@ public class DerbyDialectExt extends DB2DialectExt implements HibernateDialect
 		final String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		final boolean specifyColumnType = false;
 		return new String[] {
-			DialectUtils.getColumnNullableAlterSQL(info, this, alterClause, specifyColumnType)
+			DialectUtils.getColumnNullableAlterSQL(info, this, alterClause, specifyColumnType, qualifier, prefs)
 		};
 	}
 
@@ -402,22 +402,22 @@ public class DerbyDialectExt extends DB2DialectExt implements HibernateDialect
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#getDropPrimaryKeySQL(java.lang.String,
-	 *      java.lang.String)
+	 *      java.lang.String, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
-	public String getDropPrimaryKeySQL(final String pkName, final String tableName)
+	public String getDropPrimaryKeySQL(final String pkName, final String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false);
+		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false, qualifier, prefs, this);
 	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.DB2DialectExt#getDropForeignKeySQL(java.lang.String,
-	 *      java.lang.String)
+	 *      java.lang.String, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
-	public String getDropForeignKeySQL(final String fkName, final String tableName)
+	public String getDropForeignKeySQL(final String fkName, final String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropForeignKeySQL(fkName, tableName);
+		return DialectUtils.getDropForeignKeySQL(fkName, tableName, qualifier, prefs, this);
 	}
 
 	/**
@@ -558,7 +558,7 @@ public class DerbyDialectExt extends DB2DialectExt implements HibernateDialect
 					false,
 					this,
 					alterClause,
-					specifyColumnType));
+					specifyColumnType, qualifier, prefs));
 			}
 		}
 		result.addAll(columnNotNullAlters);

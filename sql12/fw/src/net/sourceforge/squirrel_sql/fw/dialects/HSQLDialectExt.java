@@ -148,42 +148,48 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	 *      java.lang.String, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
-	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getColumnDropSQL(tableName, columnName, qualifier, prefs, this);
 	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTableDropSQL(net.sourceforge.squirrel_sql.fw.sql.ITableInfo,
-	 *      boolean, boolean)
+	 *      boolean, boolean, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
 	public List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints,
-		boolean isMaterializedView)
+		boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getTableDropSQL(iTableInfo,
 			true,
 			cascadeConstraints,
 			false,
 			DialectUtils.CASCADE_CLAUSE,
-			false);
+			false,
+			qualifier,
+			prefs,
+			this);
 	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddPrimaryKeySQL(java.lang.String,
 	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo[],
-	 *      net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+	 *      net.sourceforge.squirrel_sql.fw.sql.ITableInfo, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
-	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, ITableInfo ti)
+	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, ITableInfo ti,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// ALTER TABLE <tablename> ADD [CONSTRAINT <constraintname>] PRIMARY KEY (<column list>);
 
-		return getAddPrimaryKeySQL(pkName, columns, ti.getQualifiedName());		
+		return getAddPrimaryKeySQL(pkName, columns, ti.getQualifiedName());
 	}
 
-	private String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, String tableName) {
-		
+	private String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, String tableName)
+	{
+
 		// ALTER TABLE <tablename> ADD [CONSTRAINT <constraintname>] PRIMARY KEY (<column list>);
 
 		StringBuffer result = new StringBuffer();
@@ -203,7 +209,7 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 		result.append(")");
 		return new String[] { result.toString() };
 	}
-	
+
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnCommentAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
@@ -241,7 +247,7 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 				info.getTableName(),
 				ST_COLUMN_NAME_KEY,
 				info.getColumnName());
-		
+
 		if (info.isNullable().equalsIgnoreCase("YES"))
 		{
 			valuesMap.put(ST_NULLABLE_KEY, "NULL");
@@ -263,14 +269,16 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnNameAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
-	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, DatabaseObjectQualifier, SqlGenerationPreferences)
+	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, DatabaseObjectQualifier,
+	 *      SqlGenerationPreferences)
 	 */
 	@Override
-	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		String renameToClause = DialectUtils.RENAME_TO_CLAUSE;
-		return DialectUtils.getColumnNameAlterSQL(from, to, alterClause, renameToClause);
+		return DialectUtils.getColumnNameAlterSQL(from, to, alterClause, renameToClause, qualifier, prefs, this);
 
 	}
 
@@ -286,7 +294,7 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	{
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		String setClause = "";
-		return DialectUtils.getColumnTypeAlterSQL(this, alterClause, setClause, false, from, to);
+		return DialectUtils.getColumnTypeAlterSQL(this, alterClause, setClause, false, from, to, qualifier, prefs);
 	}
 
 	/**
@@ -299,24 +307,33 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnDefaultAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, DatabaseObjectQualifier, SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnDefaultAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
-	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		String defaultClause = DialectUtils.SET_DEFAULT_CLAUSE;
-		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, false, defaultClause);
+		return DialectUtils.getColumnDefaultAlterSQL(this,
+			info,
+			alterClause,
+			false,
+			defaultClause,
+			qualifier,
+			prefs);
 	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropPrimaryKeySQL(java.lang.String,
-	 *      java.lang.String)
+	 *      java.lang.String, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
-	public String getDropPrimaryKeySQL(String pkName, String tableName)
+	public String getDropPrimaryKeySQL(String pkName, String tableName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false);
+		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false, qualifier, prefs, this);
 	}
 
 	/**
@@ -359,23 +376,27 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	{
 		// Pre-requisites are that column needs to be primary key and it must be integer type.
 		// alter table IDENTITYTEST2 alter column myid identity
-		
+
 		// "ALTER TABLE $tableName$ ALTER COLUMN $columnName$ IDENTITY";
 		StringTemplate st = new StringTemplate(ST_ADD_AUTO_INCREMENT_STYLE_TWO);
-		
-		HashMap<String, String> valuesMap = 
-			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, column.getTableName(), 
-											  ST_COLUMN_NAME_KEY, column.getColumnName());
-		
-		String[] pkSQL = 
-			getAddPrimaryKeySQL("PK_"+column.getTableName()+"_"+column.getColumnName(), new TableColumnInfo[] {column}, column.getTableName());
-			
+
+		HashMap<String, String> valuesMap =
+			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY,
+				column.getTableName(),
+				ST_COLUMN_NAME_KEY,
+				column.getColumnName());
+
+		String[] pkSQL =
+			getAddPrimaryKeySQL("PK_" + column.getTableName() + "_" + column.getColumnName(),
+				new TableColumnInfo[] { column },
+				column.getTableName());
+
 		ArrayList<String> result = new ArrayList<String>();
-		
+
 		result.add("-- Column must be a primary key and an integer type");
 		result.addAll(Arrays.asList(pkSQL));
 		result.add(DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs));
-		
+
 		return result.toArray(new String[result.size()]);
 	}
 
@@ -448,7 +469,7 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 		// "ALTER TABLE $childTableName$ " +
 		// "ADD $constraint$ $constraintName$ FOREIGN KEY ( $childColumn; separator=\",\"$ ) " +
 		// "REFERENCES $parentTableName$ ( $parentColumn; separator=\",\"$ )";
-		
+
 		StringTemplate fkST = new StringTemplate(ST_ADD_FOREIGN_KEY_CONSTRAINT_STYLE_ONE);
 		HashMap<String, String> fkValuesMap = DialectUtils.getValuesMap(ST_CHILD_TABLE_KEY, localTableName);
 		fkValuesMap.put(ST_CONSTRAINT_KEY, "CONSTRAINT");
@@ -476,7 +497,7 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 			qualifier,
 			prefs,
 			this);
-		
+
 	}
 
 	/**
@@ -494,7 +515,7 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 		// "ALTER TABLE $tableName$ " +
 		// "ADD CONSTRAINT $constraintName$ UNIQUE ($columnName; separator=\",\"$)";
 		StringTemplate st = new StringTemplate(ST_ADD_UNIQUE_CONSTRAINT_STYLE_TWO);
-		
+
 		HashMap<String, String> valuesMap =
 			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, tableName, ST_CONSTRAINT_NAME_KEY, constraintName);
 
@@ -518,16 +539,16 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 		SqlGenerationPreferences prefs)
 	{
 		// ALTER SEQUENCE <sequencename> RESTART WITH <value>;
-		
+
 		// "ALTER SEQUENCE $sequenceName$ " +
 		// "$restartWith$ $startValue$ " +
 		// "$incrementBy$ $incrementValue$ ";
 		StringTemplate st = new StringTemplate(ST_ALTER_SEQUENCE_STYLE_ONE);
-		
+
 		st.setAttribute(ST_SEQUENCE_NAME_KEY, sequenceName);
 		st.setAttribute(ST_RESTART_WITH_KEY, "RESTART WITH");
 		st.setAttribute(ST_START_VALUE_KEY, restart);
-		
+
 		return new String[] { st.toString() };
 	}
 
@@ -542,21 +563,21 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 		boolean unique, String tablespace, String constraints, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		// CREATE [UNIQUE] INDEX <index> ON <table> (<column> [DESC] [, ...]) [DESC];		
+		// CREATE [UNIQUE] INDEX <index> ON <table> (<column> [DESC] [, ...]) [DESC];
 
 		// "CREATE $unique$ $storageOption$ INDEX $indexName$ " +
 		// "ON $tableName$ ( $columnName; separator=\",\"$ )";
 
-		StringTemplate st = new StringTemplate(ST_CREATE_INDEX_STYLE_TWO); 
-		
-		HashMap<String, String> valuesMap = 
+		StringTemplate st = new StringTemplate(ST_CREATE_INDEX_STYLE_TWO);
+
+		HashMap<String, String> valuesMap =
 			DialectUtils.getValuesMap(ST_INDEX_NAME_KEY, indexName, ST_TABLE_NAME_KEY, tableName);
-		
-		if (unique) {
+
+		if (unique)
+		{
 			valuesMap.put(ST_UNIQUE_KEY, "UNIQUE");
 		}
-		
-		
+
 		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, columns, qualifier, prefs);
 	}
 
@@ -576,17 +597,17 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 
 		// "CREATE SEQUENCE $sequenceName$ $startWith$ " +
 		// "$increment$ $minimum$ $maximum$ $cache$ $cycle$";
-		
+
 		StringTemplate st = new StringTemplate(ST_CREATE_SEQUENCE_STYLE_TWO);
-		
+
 		HashMap<String, String> valuesMap = DialectUtils.getValuesMap(ST_SEQUENCE_NAME_KEY, sequenceName);
-		
+
 		OptionalSqlClause startWithClause = new OptionalSqlClause("START WITH", start);
 		OptionalSqlClause incrementByClause = new OptionalSqlClause("INCREMENT BY", increment);
-		
+
 		valuesMap.put(ST_START_WITH_KEY, startWithClause.toString());
 		valuesMap.put(ST_INCREMENT_KEY, incrementByClause.toString());
-		
+
 		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
@@ -595,14 +616,13 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	 *      java.util.List, java.util.List, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier)
 	 */
-//	@Override
-//	public String getCreateTableSQL(String tableName, List<TableColumnInfo> columns,
-//		List<TableColumnInfo> primaryKeys, SqlGenerationPreferences prefs, DatabaseObjectQualifier qualifier)
-//	{
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-
+	// @Override
+	// public String getCreateTableSQL(String tableName, List<TableColumnInfo> columns,
+	// List<TableColumnInfo> primaryKeys, SqlGenerationPreferences prefs, DatabaseObjectQualifier qualifier)
+	// {
+	// // TODO Auto-generated method stub
+	// return null;
+	// }
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getCreateViewSQL(java.lang.String,
 	 *      java.lang.String, java.lang.String,
@@ -613,20 +633,19 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	public String getCreateViewSQL(String viewName, String definition, String checkOption,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-//		CREATE VIEW <viewname>[(<viewcolumn>,..) AS SELECT ... FROM ... [WHERE Expression]
-//      [ORDER BY orderExpression [, ...]]
-//      [LIMIT <limit> [OFFSET <offset>]];
-		
-		
-//		"CREATE VIEW $viewName$ " +
-//		"AS $selectStatement$ $with$ $checkOptionType$ $checkOption$";
-      StringTemplate st = new StringTemplate(ST_CREATE_VIEW_STYLE_ONE);
+		// CREATE VIEW <viewname>[(<viewcolumn>,..) AS SELECT ... FROM ... [WHERE Expression]
+		// [ORDER BY orderExpression [, ...]]
+		// [LIMIT <limit> [OFFSET <offset>]];
 
-      HashMap<String, String> valuesMap = new HashMap<String, String>();
-      valuesMap.put("viewName", viewName);
-      valuesMap.put("selectStatement", definition);
-      
-      return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
+		// "CREATE VIEW $viewName$ " +
+		// "AS $selectStatement$ $with$ $checkOptionType$ $checkOption$";
+		StringTemplate st = new StringTemplate(ST_CREATE_VIEW_STYLE_ONE);
+
+		HashMap<String, String> valuesMap = new HashMap<String, String>();
+		valuesMap.put("viewName", viewName);
+		valuesMap.put("selectStatement", definition);
+
+		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**
@@ -638,13 +657,13 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	public String getDropConstraintSQL(String tableName, String constraintName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-      // ALTER TABLE $tableName$ DROP CONSTRAINT $constraintName$
-      StringTemplate st = new StringTemplate(ST_DROP_CONSTRAINT_STYLE_ONE);
+		// ALTER TABLE $tableName$ DROP CONSTRAINT $constraintName$
+		StringTemplate st = new StringTemplate(ST_DROP_CONSTRAINT_STYLE_ONE);
 
-      HashMap<String, String> valuesMap =
-              DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, tableName, ST_CONSTRAINT_NAME_KEY, constraintName);
+		HashMap<String, String> valuesMap =
+			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, tableName, ST_CONSTRAINT_NAME_KEY, constraintName);
 
-      return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
+		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**
@@ -656,13 +675,12 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	public String getDropIndexSQL(String tableName, String indexName, boolean cascade,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		//DROP INDEX index [IF EXISTS];
+		// DROP INDEX index [IF EXISTS];
 
- 
 		// "DROP INDEX $indexName$";
 		StringTemplate st = new StringTemplate(ST_DROP_INDEX_STYLE_THREE);
 		st.setAttribute(ST_INDEX_NAME_KEY, indexName);
-		
+
 		return st.toString();
 	}
 
@@ -675,12 +693,12 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	public String getDropSequenceSQL(String sequenceName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-      // "DROP SEQUENCE $sequenceName$ $cascade$";
-      StringTemplate st = new StringTemplate(ST_DROP_SEQUENCE_STYLE_ONE);
+		// "DROP SEQUENCE $sequenceName$ $cascade$";
+		StringTemplate st = new StringTemplate(ST_DROP_SEQUENCE_STYLE_ONE);
 
-      HashMap<String, String> valuesMap = DialectUtils.getValuesMap(ST_SEQUENCE_NAME_KEY, sequenceName);
+		HashMap<String, String> valuesMap = DialectUtils.getValuesMap(ST_SEQUENCE_NAME_KEY, sequenceName);
 
-      return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
+		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**
@@ -692,12 +710,12 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	public String getDropViewSQL(String viewName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-      // "DROP VIEW $viewName$";
-      StringTemplate st = new StringTemplate(ST_DROP_VIEW_STYLE_ONE);
+		// "DROP VIEW $viewName$";
+		StringTemplate st = new StringTemplate(ST_DROP_VIEW_STYLE_ONE);
 
-      HashMap<String, String> valuesMap = DialectUtils.getValuesMap(ST_VIEW_NAME_KEY, viewName);
+		HashMap<String, String> valuesMap = DialectUtils.getValuesMap(ST_VIEW_NAME_KEY, viewName);
 
-      return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
+		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**
@@ -736,28 +754,24 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 	public String getSequenceInformationSQL(String sequenceName, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-//		String last_value = rs.getString(1); // last_value
-//		String max_value = rs.getString(2); // max_value
-//		String min_value = rs.getString(3); // min_value
-//		String cache_value = rs.getString(4); // cache_value
-//		String increment_by = rs.getString(5); // increment_by
-//		int cycleInt = rs.getInt(6); // is_cycled
-		
-		String templateStr = 
-			"select start_with as last_value, MAXIMUM_VALUE, MINIMUM_VALUE, 0 as CACHE_VALUE, INCREMENT, " +
-		"case INCREMENT " +
-		"when 'NO' then 0 " +
-		"else 1 " +
-		"end as INCREMENT_BY " +
-		"from INFORMATION_SCHEMA.SYSTEM_SEQUENCES " +
-		"where SEQUENCE_SCHEMA = '$sequenceSchema$' " +
-		"and SEQUENCE_NAME = '$sequenceName$' ";
-		
+		// String last_value = rs.getString(1); // last_value
+		// String max_value = rs.getString(2); // max_value
+		// String min_value = rs.getString(3); // min_value
+		// String cache_value = rs.getString(4); // cache_value
+		// String increment_by = rs.getString(5); // increment_by
+		// int cycleInt = rs.getInt(6); // is_cycled
+
+		String templateStr =
+			"select start_with as last_value, MAXIMUM_VALUE, MINIMUM_VALUE, 0 as CACHE_VALUE, INCREMENT, "
+				+ "case INCREMENT " + "when 'NO' then 0 " + "else 1 " + "end as INCREMENT_BY "
+				+ "from INFORMATION_SCHEMA.SYSTEM_SEQUENCES " + "where SEQUENCE_SCHEMA = '$sequenceSchema$' "
+				+ "and SEQUENCE_NAME = '$sequenceName$' ";
+
 		StringTemplate st = new StringTemplate(templateStr);
-		
+
 		st.setAttribute(ST_SEQUENCE_NAME_KEY, sequenceName);
 		st.setAttribute(ST_SCHEMA_NAME_KEY, qualifier.getSchema());
-		
+
 		return st.toString();
 	}
 
@@ -795,7 +809,6 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 			prefs,
 			this);
 
-		
 	}
 
 	/**
@@ -1021,15 +1034,13 @@ public class HSQLDialectExt extends CommonHibernateDialect implements HibernateD
 		SqlGenerationPreferences prefs)
 	{
 		String templateStr =
-			"SELECT VIEW_DEFINITION " +
-			"FROM INFORMATION_SCHEMA.SYSTEM_VIEWS " +
-			"WHERE TABLE_NAME = '$viewName$' " + 
-			"and TABLE_SCHEMA = '$schemaName$' ";
-		
+			"SELECT VIEW_DEFINITION " + "FROM INFORMATION_SCHEMA.SYSTEM_VIEWS "
+				+ "WHERE TABLE_NAME = '$viewName$' " + "and TABLE_SCHEMA = '$schemaName$' ";
+
 		StringTemplate st = new StringTemplate(templateStr);
 		st.setAttribute(ST_VIEW_NAME_KEY, viewName);
 		st.setAttribute(ST_SCHEMA_NAME_KEY, qualifier.getSchema());
-		
+
 		return st.toString();
 	}
 

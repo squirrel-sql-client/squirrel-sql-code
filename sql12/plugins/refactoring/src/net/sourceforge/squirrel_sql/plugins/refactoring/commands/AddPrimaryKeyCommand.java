@@ -102,7 +102,7 @@ public class AddPrimaryKeyCommand extends AbstractRefactoringCommand
 	{
 		return _dialect.getAddPrimaryKeySQL(customDialog.getPrimaryKeyName(),
 			customDialog.getSelectedColumnList(),
-			(ITableInfo) _info[0]);
+			(ITableInfo) _info[0], _qualifier, _sqlPrefs);
 	}
 
 	/**

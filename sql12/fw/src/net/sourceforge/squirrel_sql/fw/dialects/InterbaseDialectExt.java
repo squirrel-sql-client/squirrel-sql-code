@@ -271,7 +271,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	@Override
 	public List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints,
-		boolean isMaterializedView)
+		boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO: Need to verify this
 		return DialectUtils.getTableDropSQL(iTableInfo,
@@ -279,7 +279,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 			cascadeConstraints,
 			false,
 			DialectUtils.CASCADE_CLAUSE,
-			false);
+			false, qualifier, prefs, this);
 	}
 
 	/**
@@ -293,7 +293,7 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	 * @return
 	 */
 	@Override
-	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columnNames, ITableInfo ti)
+	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columnNames, ITableInfo ti, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO: implement
 		throw new UnsupportedOperationException("getAddPrimaryKeySQL not implemented");
@@ -437,9 +437,9 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	 * @return
 	 */
 	@Override
-	public String getDropPrimaryKeySQL(String pkName, String tableName)
+	public String getDropPrimaryKeySQL(String pkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false);
+		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false, qualifier, prefs, this);
 	}
 
 	/**
@@ -452,9 +452,9 @@ public class InterbaseDialectExt extends CommonHibernateDialect implements Hiber
 	 * @return
 	 */
 	@Override
-	public String getDropForeignKeySQL(String fkName, String tableName)
+	public String getDropForeignKeySQL(String fkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropForeignKeySQL(fkName, tableName);
+		return DialectUtils.getDropForeignKeySQL(fkName, tableName, qualifier, prefs, this);
 	}
 
 	/**

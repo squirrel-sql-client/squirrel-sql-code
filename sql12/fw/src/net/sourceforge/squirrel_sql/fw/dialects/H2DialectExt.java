@@ -1,8 +1,22 @@
-/*
- * Copyright 2004, 2005, 2006 H2 Group.
- */
 package net.sourceforge.squirrel_sql.fw.dialects;
-
+/*
+ * Copyright (C) 2008 Rob Manning
+ * manningr@users.sourceforge.net
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -27,6 +41,7 @@ public class H2DialectExt extends CommonHibernateDialect implements HibernateDia
 
 	/**
 	 * A subclass to allow access to getTypeName without having to extend Dialect.
+	 * 
 	 * @author manningr
 	 */
 	private class H2DialectHelper extends org.hibernate.dialect.Dialect
@@ -151,14 +166,17 @@ public class H2DialectExt extends CommonHibernateDialect implements HibernateDia
 	 * @return the drop SQL command.
 	 */
 	public List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints,
-		boolean isMaterializedView)
+		boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getTableDropSQL(iTableInfo,
 			true,
 			cascadeConstraints,
 			false,
 			DialectUtils.CASCADE_CLAUSE,
-			false);
+			false,
+			qualifier,
+			prefs,
+			this);
 	}
 
 	/**
@@ -172,12 +190,13 @@ public class H2DialectExt extends CommonHibernateDialect implements HibernateDia
 	 *           the columns that form the key
 	 * @return
 	 */
-	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, ITableInfo ti)
+	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, ITableInfo ti,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		ArrayList<String> result = new ArrayList<String>();
 		StringBuffer addPKSQL = new StringBuffer();
 		addPKSQL.append("ALTER TABLE ");
-		addPKSQL.append(ti.getQualifiedName());
+		addPKSQL.append(DialectUtils.shapeQualifiableIdentifier(ti.getSimpleName(), qualifier, prefs, this));
 		addPKSQL.append(" ADD CONSTRAINT ");
 		addPKSQL.append(pkName);
 		addPKSQL.append(" PRIMARY KEY (");
@@ -186,7 +205,11 @@ public class H2DialectExt extends CommonHibernateDialect implements HibernateDia
 			TableColumnInfo info = columns[i];
 			if (info.isNullable().equals("YES"))
 			{
-				result.add(getColumnNullableAlterSQL(info, false));
+				String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
+				String notNullSql = 
+					DialectUtils.getColumnNullableAlterSQL(info, false, this, alterClause, true, qualifier, prefs);
+				
+				result.add(notNullSql);
 			}
 			addPKSQL.append(info.getColumnName());
 			if (i + 1 < columns.length)
@@ -195,6 +218,7 @@ public class H2DialectExt extends CommonHibernateDialect implements HibernateDia
 			}
 		}
 		addPKSQL.append(")");
+		
 		result.add(addPKSQL.toString());
 		return result.toArray(new String[result.size()]);
 	}
@@ -208,9 +232,10 @@ public class H2DialectExt extends CommonHibernateDialect implements HibernateDia
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support annotating columns with a comment.
 	 */
-	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
+	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
-		return DialectUtils.getColumnCommentAlterSQL(info, null, null, null);
+		return DialectUtils.getColumnCommentAlterSQL(info, qualifier, prefs, this);
 	}
 
 	/**
@@ -225,7 +250,12 @@ public class H2DialectExt extends CommonHibernateDialect implements HibernateDia
 		SqlGenerationPreferences prefs)
 	{
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
-		return new String[] { DialectUtils.getColumnNullableAlterSQL(info, this, alterClause, true) };
+		return new String[] { DialectUtils.getColumnNullableAlterSQL(info,
+			this,
+			alterClause,
+			true,
+			qualifier,
+			prefs) };
 	}
 
 	/**
@@ -237,33 +267,6 @@ public class H2DialectExt extends CommonHibernateDialect implements HibernateDia
 	public boolean supportsAlterColumnNull()
 	{
 		return true;
-	}
-
-	/**
-	 * Returns the SQL used to alter the nullability of the specified column
-	 * 
-	 * @param info
-	 *           the column to modify
-	 * @return the SQL to execute
-	 */
-	private String getColumnNullableAlterSQL(TableColumnInfo info, boolean isNullable)
-	{
-		StringBuffer result = new StringBuffer();
-		result.append("ALTER TABLE ");
-		result.append(info.getTableName());
-		result.append(" ALTER COLUMN ");
-		result.append(info.getColumnName());
-		result.append(" ");
-		result.append(DialectUtils.getTypeName(info, this));
-		if (isNullable)
-		{
-			result.append(" NULL ");
-		} else
-		{
-			result.append(" NOT NULL ");
-		}
-		return result.toString();
-
 	}
 
 	/**
@@ -286,11 +289,12 @@ public class H2DialectExt extends CommonHibernateDialect implements HibernateDia
 	 *           the TableColumnInfo as it wants to be
 	 * @return the SQL to make the change
 	 */
-	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		String renameToClause = DialectUtils.RENAME_TO_CLAUSE;
-		return DialectUtils.getColumnNameAlterSQL(from, to, alterClause, renameToClause);
+		return DialectUtils.getColumnNameAlterSQL(from, to, alterClause, renameToClause, qualifier, prefs, this);
 	}
 
 	/**
@@ -319,7 +323,7 @@ public class H2DialectExt extends CommonHibernateDialect implements HibernateDia
 	{
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		String setClause = "";
-		return DialectUtils.getColumnTypeAlterSQL(this, alterClause, setClause, false, from, to);
+		return DialectUtils.getColumnTypeAlterSQL(this, alterClause, setClause, false, from, to, qualifier, prefs);
 	}
 
 	/**
@@ -341,11 +345,18 @@ public class H2DialectExt extends CommonHibernateDialect implements HibernateDia
 	 *           the column to modify and it's default value.
 	 * @return SQL to make the change
 	 */
-	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		String defaultClause = DialectUtils.SET_DEFAULT_CLAUSE;
-		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, false, defaultClause);
+		return DialectUtils.getColumnDefaultAlterSQL(this,
+			info,
+			alterClause,
+			false,
+			defaultClause,
+			qualifier,
+			prefs);
 	}
 
 	/**
@@ -357,9 +368,10 @@ public class H2DialectExt extends CommonHibernateDialect implements HibernateDia
 	 *           the name of the table whose primary key should be dropped
 	 * @return
 	 */
-	public String getDropPrimaryKeySQL(String pkName, String tableName)
+	public String getDropPrimaryKeySQL(String pkName, String tableName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false);
+		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false, qualifier, prefs, this);
 	}
 
 	/**
@@ -371,9 +383,10 @@ public class H2DialectExt extends CommonHibernateDialect implements HibernateDia
 	 *           the name of the table whose foreign key should be dropped
 	 * @return
 	 */
-	public String getDropForeignKeySQL(String fkName, String tableName)
+	public String getDropForeignKeySQL(String fkName, String tableName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropForeignKeySQL(fkName, tableName);
+		return DialectUtils.getDropForeignKeySQL(fkName, tableName, qualifier, prefs, this);
 	}
 
 	/**
@@ -466,7 +479,7 @@ public class H2DialectExt extends CommonHibernateDialect implements HibernateDia
 
 		if (column.getRemarks() != null && !"".equals(column.getRemarks()))
 		{
-			result.add(getColumnCommentAlterSQL(column, null, null));
+			result.add(getColumnCommentAlterSQL(column, qualifier, prefs));
 		}
 
 		return result.toArray(new String[result.size()]);

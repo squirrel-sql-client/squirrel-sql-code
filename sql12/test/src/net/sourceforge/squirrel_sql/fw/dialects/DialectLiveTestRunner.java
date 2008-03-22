@@ -204,7 +204,9 @@ public class DialectLiveTestRunner {
    	prefs.setSqlStatementSeparator(";");
    	
    	dialectDiscoveryMode = Boolean.parseBoolean(bundle.getString("dialectDiscoveryMode"));
-   	System.out.println("In discovery mode - assuming that the dialect being tested isn't yet implemented");
+   	if (dialectDiscoveryMode) {
+   		System.out.println("In discovery mode - assuming that the dialect being tested isn't yet implemented");
+   	}
    	
    	List<String> dbs = getPropertyListValue(sessionListPropKey);
       for (Iterator<String> iter = dbs.iterator(); iter.hasNext();) {
@@ -389,7 +391,7 @@ public class DialectLiveTestRunner {
    private void dropTable(ISession session, ITableInfo ti) throws Exception {
       HibernateDialect dialect = getDialect(session);
       try {
-         runSQL(session, dialect.getTableDropSQL(ti, true, false));
+         runSQL(session, dialect.getTableDropSQL(ti, true, false, qualifier, prefs));
       } catch (SQLException e) {
          // Do Nothing
       }
@@ -663,7 +665,7 @@ public class DialectLiveTestRunner {
       String schema = msession.getDefaultSchema();
       SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
       ITableInfo info = new TableInfo(cat, schema, "MATVIEW", "TABLE", "", md);
-      List<String> dropSQL = dialect.getTableDropSQL(info, true, true);
+      List<String> dropSQL = dialect.getTableDropSQL(info, true, true, qualifier, prefs);
       runSQL(session, dropSQL);
    }
 
@@ -900,14 +902,14 @@ public class DialectLiveTestRunner {
 		
       if (dialect.supportsDropPrimaryKey())
 		{
-			String sql = dialect.getDropPrimaryKeySQL(pkName, tableName);
+			String sql = dialect.getDropPrimaryKeySQL(pkName, tableName, qualifier, prefs);
 
 			runSQL(session, new String[] { sql }, dropPrimaryKeySqlExtractor);
 		} else
 		{
 			try
 			{
-				dialect.getDropPrimaryKeySQL(pkName, tableName);
+				dialect.getDropPrimaryKeySQL(pkName, tableName, qualifier, prefs);
             throw new IllegalStateException("testDropPrimaryKey: Expected dialect to failed to provide SQL.");
          } catch (UnsupportedOperationException e) {
             // this is expected
@@ -936,11 +938,7 @@ public class DialectLiveTestRunner {
 
       ITableInfo[] infos = null;
       try {
-         md.getTables(catalog,
-                      schema,
-                      tableName,
-                      new String[] { "TABLE" },
-                      null);
+         infos = md.getTables(catalog, schema, tableName, new String[] { "TABLE" }, null);
       } catch (SQLException e) {
          // Do nothing
       }
@@ -962,7 +960,7 @@ public class DialectLiveTestRunner {
       
       
       if (dialect.supportsAddPrimaryKey()) {
-         String[] pkSQLs = dialect.getAddPrimaryKeySQL(pkName, colInfos, ti);
+         String[] pkSQLs = dialect.getAddPrimaryKeySQL(pkName, colInfos, ti, qualifier, prefs);
 
 			for (int i = 0; i < pkSQLs.length; i++)
 			{
@@ -972,7 +970,7 @@ public class DialectLiveTestRunner {
 
       } else {
       	try {
-      		dialect.getAddPrimaryKeySQL(pkName, colInfos, ti);
+      		dialect.getAddPrimaryKeySQL(pkName, colInfos, ti, qualifier, prefs);
    			throw new IllegalStateException("Expected dialect to fail to provide SQL for add primary key");
    		} catch (Exception e) {
    			// This is expected
@@ -2401,7 +2399,7 @@ public class DialectLiveTestRunner {
 
 		public String[] getSql(HibernateDialect dialect)
 		{
-			return dialect.getAddPrimaryKeySQL(pkName, columns, ti);
+			return dialect.getAddPrimaryKeySQL(pkName, columns, ti, qualifier, prefs);
 		}
 
 		public boolean supportsOperation(HibernateDialect dialect)
@@ -2424,7 +2422,7 @@ public class DialectLiveTestRunner {
 
 		public String[] getSql(HibernateDialect dialect)
 		{
-			return new String[] { dialect.getDropPrimaryKeySQL(pkName, tableName) };
+			return new String[] { dialect.getDropPrimaryKeySQL(pkName, tableName, qualifier, prefs) };
 		}
 
 		public boolean supportsOperation(HibernateDialect dialect)

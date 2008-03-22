@@ -111,14 +111,17 @@ public class DropForeignKeyCommand extends AbstractRefactoringCommand
 		for (ForeignKeyInfo fgInfo : _foreignKeyInfo)
 		{
 			StringBuilder sql = new StringBuilder();
-			sql.append(_dialect.getDropForeignKeySQL(fgInfo.getForeignKeyName(), _info[0].getQualifiedName())); // only
-																																					// gives
-																																					// the
-																																					// SQL
-																																					// without
-																																					// the
-																																					// Cascade/Restrict
-																																					// Constraint
+			sql.append(_dialect.getDropForeignKeySQL(fgInfo.getForeignKeyName(),
+				_info[0].getQualifiedName(),
+				_qualifier,
+				_sqlPrefs)); // only
+			// gives
+			// the
+			// SQL
+			// without
+			// the
+			// Cascade/Restrict
+			// Constraint
 			if (customDialog.isCascadeSelected())
 			{
 				sql.append(" CASCADE");

@@ -264,14 +264,14 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 * @return the drop SQL command.
 	 */
 	public List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints,
-		boolean isMaterializedView)
+		boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 
 		return DialectUtils.getTableDropSQL(iTableInfo, true, true, // Frontbase requires CASCADE
 			// or RESTRICT keywords.
 			false,
 			DialectUtils.CASCADE_CLAUSE,
-			false);
+			false, qualifier, prefs, this);
 	}
 
 	/**
@@ -284,9 +284,16 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 *           the columns that form the key
 	 * @return
 	 */
-	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columnNames, ITableInfo ti)
+	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columnNames, ITableInfo ti,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, columnNames, false) };
+		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti,
+			pkName,
+			columnNames,
+			false,
+			qualifier,
+			prefs,
+			this) };
 	}
 
 	/**
@@ -428,7 +435,7 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	{
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		String defaultClause = DialectUtils.SET_DEFAULT_CLAUSE;
-		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, false, defaultClause);
+		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, false, defaultClause, qualifier, prefs);
 	}
 
 	/**
@@ -440,9 +447,10 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 *           the name of the table whose primary key should be dropped
 	 * @return
 	 */
-	public String getDropPrimaryKeySQL(String pkName, String tableName)
+	public String getDropPrimaryKeySQL(String pkName, String tableName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true, true);
+		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true, true, qualifier, prefs, this);
 	}
 
 	/**
@@ -454,9 +462,9 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 *           the name of the table whose foreign key should be dropped
 	 * @return
 	 */
-	public String getDropForeignKeySQL(String fkName, String tableName)
+	public String getDropForeignKeySQL(String fkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropForeignKeySQL(fkName, tableName);
+		return DialectUtils.getDropForeignKeySQL(fkName, tableName, qualifier, prefs, this);
 	}
 
 	/**
@@ -583,17 +591,20 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 
 		// "ALTER TABLE $tableName$ " +
 		// "ADD CONSTRAINT $constraintName$ UNIQUE ($columnName; separator=\",\"$)";
-		
+
 		String templateStr = ST_ADD_UNIQUE_CONSTRAINT_STYLE_TWO;
-		
+
 		StringTemplate st = new StringTemplate(templateStr);
-		
-		HashMap<String, String> valuesMap = 
+
+		HashMap<String, String> valuesMap =
 			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, tableName, ST_CONSTRAINT_NAME_KEY, constraintName);
-		
-		return new String[] { 
-			DialectUtils.getAddUniqueConstraintSQL(st, valuesMap, columns, qualifier, prefs, this)
-		};
+
+		return new String[] { DialectUtils.getAddUniqueConstraintSQL(st,
+			valuesMap,
+			columns,
+			qualifier,
+			prefs,
+			this) };
 	}
 
 	/**
@@ -699,12 +710,11 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	 *      java.lang.String, boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
 	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
-//	public String getDropIndexSQL(String tableName, String indexName, boolean cascade,
-//		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
-//	{
-//		return null;
-//	}
-
+	// public String getDropIndexSQL(String tableName, String indexName, boolean cascade,
+	// DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	// {
+	// return null;
+	// }
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropSequenceSQL(java.lang.String,
 	 *      boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
@@ -793,7 +803,7 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	{
 		final int featureId = DialectUtils.UPDATE_TYPE;
 		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-		throw new UnsupportedOperationException(msg);		
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -1017,7 +1027,7 @@ public class FrontBaseDialectExt extends CommonHibernateDialect implements Hiber
 	{
 		final int featureId = DialectUtils.VIEW_DEFINITION_TYPE;
 		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-		throw new UnsupportedOperationException(msg);		
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**

@@ -120,7 +120,7 @@ public class DialectUtils implements StringTemplateConstants
 	public static final String CYCLE_CLAUSE = "CYCLE";
 
 	public static final String INCREMENT_CLAUSE = "INCREMENT";
-	
+
 	public static final String INCREMENT_BY_CLAUSE = "INCREMENT BY";
 
 	public static final String NOCYCLE_CLAUSE = "NOCYCLE";
@@ -257,7 +257,7 @@ public class DialectUtils implements StringTemplateConstants
 	public static final int INSERT_INTO_TYPE = 23;
 
 	public static final int UPDATE_TYPE = 24;
-	
+
 	public static final int VIEW_DEFINITION_TYPE = 25;
 
 	public static String appendDefaultClause(TableColumnInfo info, StringBuilder buffer)
@@ -288,17 +288,24 @@ public class DialectUtils implements StringTemplateConstants
 	 *           the name of the column to create the SQL for.
 	 * @param comment
 	 *           the comment to add.
+	 * @param qualifier
+	 *           qualifier of the table
+	 * @param prefs
+	 *           preferences for generated sql scripts
+	 * @param dialect
+	 *           the HibernateDialect representing the target database.
 	 * @return
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support annotating columns with a comment.
 	 */
-	public static String getColumnCommentAlterSQL(String tableName, String columnName, String comment)
+	public static String getColumnCommentAlterSQL(String tableName, String columnName, String comment,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs, HibernateDialect dialect)
 	{
 		StringBuilder result = new StringBuilder();
 		result.append("COMMENT ON COLUMN ");
-		result.append(tableName);
+		result.append(shapeQualifiableIdentifier(tableName, qualifier, prefs, dialect));
 		result.append(".");
-		result.append(columnName);
+		result.append(shapeIdentifier(columnName, prefs, dialect));
 		result.append(" IS '");
 		if (comment != null && !"".equals(comment))
 		{
@@ -316,7 +323,7 @@ public class DialectUtils implements StringTemplateConstants
 	 * @param prefs
 	 *           preferences for generated sql scripts
 	 * @param dialect
-	 *           TODO
+	 *           the HibernateDialect representing the target database.
 	 * @param tableName
 	 *           the name of the table to create the SQL for.
 	 * @param columnName
@@ -330,8 +337,12 @@ public class DialectUtils implements StringTemplateConstants
 	public static String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs, HibernateDialect dialect)
 	{
-		// TODO take into account qualifier and prefs
-		return getColumnCommentAlterSQL(info.getTableName(), info.getColumnName(), info.getRemarks());
+		return getColumnCommentAlterSQL(info.getTableName(),
+			info.getColumnName(),
+			info.getRemarks(),
+			qualifier,
+			prefs,
+			dialect);
 	}
 
 	/**
@@ -342,6 +353,7 @@ public class DialectUtils implements StringTemplateConstants
 	 * @param prefs
 	 *           preferences for generated sql scripts
 	 * @param dialect
+	 *           the HibernateDialect representing the target database.
 	 * @return
 	 */
 	public static String getColumnDropSQL(String tableName, String columnName,
@@ -351,7 +363,8 @@ public class DialectUtils implements StringTemplateConstants
 	}
 
 	/**
-	 * @param tableName the unqualified table
+	 * @param tableName
+	 *           the unqualified table
 	 * @param columnName
 	 * @param addConstraintClause
 	 *           TODO
@@ -373,7 +386,7 @@ public class DialectUtils implements StringTemplateConstants
 		result.append(" ");
 		result.append(dropClause);
 		result.append(" ");
-		result.append(columnName);
+		result.append(shapeIdentifier(columnName, prefs, dialect));
 		if (addConstraintClause)
 		{
 			result.append(" ");
@@ -399,10 +412,16 @@ public class DialectUtils implements StringTemplateConstants
 	 *           TODO
 	 * @param isMatView
 	 *           TODO
+	 * @param qualifier
+	 *           qualifier of the table
+	 * @param prefs
+	 *           preferences for generated sql scripts
+	 * @param dialect
+	 *           the HibernateDialect representing the target database.
 	 * @return the drop SQL command.
 	 */
 	public static List<String> getTableDropSQL(ITableInfo iTableInfo, boolean supportsCascade,
-		boolean cascadeValue, boolean supportsMatViews, String cascadeClause, boolean isMatView)
+		boolean cascadeValue, boolean supportsMatViews, String cascadeClause, boolean isMatView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs, HibernateDialect dialect)
 	{
 		StringBuilder result = new StringBuilder();
 		if (supportsMatViews && isMatView)
@@ -412,7 +431,7 @@ public class DialectUtils implements StringTemplateConstants
 		{
 			result.append("DROP TABLE ");
 		}
-		result.append(iTableInfo.getQualifiedName());
+		result.append(shapeQualifiableIdentifier(iTableInfo.getSimpleName(), qualifier, prefs, dialect));
 		if (supportsCascade && cascadeValue)
 		{
 			result.append(" ");
@@ -447,13 +466,18 @@ public class DialectUtils implements StringTemplateConstants
 	 *           the alter column clause (e.g. ALTER COLUMN )
 	 * @param specifyType
 	 *           whether or not the column type needs to be specified
+	 * @param qualifier
+	 *           qualifier of the table
+	 * @param prefs
+	 *           preferences for generated sql scripts
 	 * @return the SQL to execute
 	 */
 	public static String getColumnNullableAlterSQL(TableColumnInfo info, HibernateDialect dialect,
-		String alterClause, boolean specifyType)
+		String alterClause, boolean specifyType, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		boolean nullable = info.isNullable().equalsIgnoreCase("YES");
-		return getColumnNullableAlterSQL(info, nullable, dialect, alterClause, specifyType);
+		return getColumnNullableAlterSQL(info, nullable, dialect, alterClause, specifyType, qualifier, prefs);
 	}
 
 	/**
@@ -471,18 +495,23 @@ public class DialectUtils implements StringTemplateConstants
 	 *           the alter column clause (e.g. ALTER COLUMN )
 	 * @param specifyType
 	 *           whether or not the column type needs to be specified
+	 * @param qualifier
+	 *           qualifier of the table
+	 * @param prefs
+	 *           preferences for generated sql scripts
 	 * @return the SQL to execute
 	 */
 	public static String getColumnNullableAlterSQL(TableColumnInfo info, boolean nullable,
-		HibernateDialect dialect, String alterClause, boolean specifyType)
+		HibernateDialect dialect, String alterClause, boolean specifyType, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		StringBuilder result = new StringBuilder();
 		result.append("ALTER TABLE ");
-		result.append(info.getTableName());
+		result.append(shapeQualifiableIdentifier(info.getTableName(), qualifier, prefs, dialect));
 		result.append(" ");
 		result.append(alterClause);
 		result.append(" ");
-		result.append(info.getColumnName());
+		result.append(shapeIdentifier(info.getColumnName(), prefs, dialect));
 		if (specifyType)
 		{
 			result.append(" ");
@@ -508,19 +537,24 @@ public class DialectUtils implements StringTemplateConstants
 	 *           the columns to be made not null
 	 * @param dialect
 	 * @param result
+	 * @param qualifier
+	 *           qualifier of the table
+	 * @param prefs
+	 *           preferences for generated sql scripts
 	 */
 	public static void getMultiColNotNullSQL(TableColumnInfo[] colInfos, HibernateDialect dialect,
-		String alterClause, boolean specifyType, ArrayList<String> result)
+		String alterClause, boolean specifyType, ArrayList<String> result, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		for (int i = 0; i < colInfos.length; i++)
 		{
 			StringBuilder notNullSQL = new StringBuilder();
 			notNullSQL.append("ALTER TABLE ");
-			notNullSQL.append(colInfos[i].getTableName());
+			notNullSQL.append(shapeQualifiableIdentifier(colInfos[i].getTableName(), qualifier, prefs, dialect));
 			notNullSQL.append(" ");
 			notNullSQL.append(alterClause);
 			notNullSQL.append(" ");
-			notNullSQL.append(colInfos[i].getColumnName());
+			notNullSQL.append(shapeIdentifier(colInfos[i].getColumnName(), prefs, dialect));
 			if (specifyType)
 			{
 				notNullSQL.append(" ");
@@ -541,25 +575,35 @@ public class DialectUtils implements StringTemplateConstants
 	 * @param colInfos
 	 * @param appendConstraintName
 	 *           whether or not the pkName (constraint name) should be placed at the end of the statement.
+	 * @param qualifier
+	 *           TODO
+	 * @param qualifier
+	 *           qualifier of the table
+	 * @param prefs
+	 *           preferences for generated sql scripts
 	 * @return
 	 */
 	public static String getAddPrimaryKeySQL(ITableInfo ti, String pkName, TableColumnInfo[] colInfos,
-		boolean appendConstraintName)
+		boolean appendConstraintName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs,
+		HibernateDialect dialect)
 	{
 		StringBuilder pkSQL = new StringBuilder();
+
+		String shapedPkName = shapeIdentifier(pkName, prefs, dialect);
+
 		pkSQL.append("ALTER TABLE ");
-		pkSQL.append(ti.getQualifiedName());
+		pkSQL.append(shapeQualifiableIdentifier(ti.getSimpleName(), qualifier, prefs, dialect));
 		pkSQL.append(" ADD CONSTRAINT ");
 		if (!appendConstraintName)
 		{
-			pkSQL.append(pkName);
+			pkSQL.append(shapedPkName);
 		}
 		pkSQL.append(" PRIMARY KEY ");
-		pkSQL.append(getColumnList(colInfos));
+		pkSQL.append(getColumnList(colInfos, qualifier, prefs, dialect));
 		if (appendConstraintName)
 		{
 			pkSQL.append(" CONSTRAINT ");
-			pkSQL.append(pkName);
+			pkSQL.append(shapedPkName);
 		}
 		return pkSQL.toString();
 	}
@@ -570,7 +614,6 @@ public class DialectUtils implements StringTemplateConstants
 	 * @param childIndexST
 	 * @param ckIndexValuesMap
 	 * @param localRefColumns
-	 * @param qualifier
 	 * @param qualifier
 	 *           qualifier of the table
 	 * @param prefs
@@ -816,15 +859,20 @@ public class DialectUtils implements StringTemplateConstants
 	 * Returns: (column1, column2, ...)
 	 * 
 	 * @param colInfos
+	 * @param qualifier TODO
+	 * @param prefs TODO
+	 * @param dialect TODO
 	 * @return
 	 */
-	private static String getColumnList(TableColumnInfo[] colInfos)
+	private static String getColumnList(TableColumnInfo[] colInfos, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs, HibernateDialect dialect)
 	{
 		StringBuilder result = new StringBuilder();
 		result.append("(");
 		for (int i = 0; i < colInfos.length; i++)
 		{
-			result.append(colInfos[i].getColumnName());
+			String shapedColumnName = shapeIdentifier(colInfos[i].getColumnName(), prefs, dialect);
+			result.append(shapedColumnName);
 			if (i + 1 < colInfos.length)
 			{
 				result.append(", ");
@@ -842,22 +890,31 @@ public class DialectUtils implements StringTemplateConstants
 	 *           the TableColumnInfo as it is
 	 * @param to
 	 *           the TableColumnInfo as it wants to be
+	 * @param qualifier TODO
+	 * @param prefs TODO
+	 * @param dialect TODO
 	 * @return the SQL to make the change
 	 */
 	public static String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to, String alterClause,
-		String renameToClause)
+		String renameToClause, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs,
+		HibernateDialect dialect)
 	{
+		String shapedTable = shapeQualifiableIdentifier(from.getTableName(), qualifier, prefs, dialect);
+		String shapedFromColumn = shapeIdentifier(from.getColumnName(), prefs, dialect);
+		String shapedToColumn = shapeIdentifier(to.getColumnName(), prefs, dialect);
+		
+		
 		StringBuilder result = new StringBuilder();
 		result.append("ALTER TABLE ");
-		result.append(from.getTableName());
+		result.append(shapedTable);
 		result.append(" ");
 		result.append(alterClause);
 		result.append(" ");
-		result.append(from.getColumnName());
+		result.append(shapedFromColumn);
 		result.append(" ");
 		result.append(renameToClause);
 		result.append(" ");
-		result.append(to.getColumnName());
+		result.append(shapedToColumn);
 		return result.toString();
 	}
 
@@ -867,23 +924,27 @@ public class DialectUtils implements StringTemplateConstants
 	 * [defaultClause] 1234
 	 * 
 	 * @param dialect
-	 *           TODO
+	 *           the HibernateDialect representing the target database.
 	 * @param info
 	 *           the column to modify and it's default value.
 	 * @param specifyType
 	 *           TODO
+	 * @param qualifier TODO
+	 * @param prefs TODO
 	 * @return SQL to make the change
 	 */
 	public static String getColumnDefaultAlterSQL(HibernateDialect dialect, TableColumnInfo info,
-		String alterClause, boolean specifyType, String defaultClause)
+		String alterClause, boolean specifyType, String defaultClause, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
+		
 		StringBuilder result = new StringBuilder();
 		result.append("ALTER TABLE ");
-		result.append(info.getTableName());
+		result.append(shapeQualifiableIdentifier(info.getTableName(), qualifier, prefs, dialect));
 		result.append(" ");
 		result.append(alterClause);
 		result.append(" ");
-		result.append(info.getColumnName());
+		result.append(shapeIdentifier(info.getColumnName(), prefs, dialect));
 		result.append(" ");
 		if (specifyType)
 		{
@@ -907,32 +968,39 @@ public class DialectUtils implements StringTemplateConstants
 	/**
 	 * Returns the SQL that is used to change the column type. ALTER TABLE table_name alter_clause column_name
 	 * [setClause] data_type ALTER TABLE table_name alter_clause column_name column_name [setClause] data_type
-	 * 
 	 * @param from
 	 *           the TableColumnInfo as it is
 	 * @param to
 	 *           the TableColumnInfo as it wants to be
+	 * @param qualifier TODO
+	 * @param prefs TODO
+	 * 
 	 * @return the SQL to make the change
 	 * @throw UnsupportedOperationException if the database doesn't support modifying column types.
 	 */
 	@SuppressWarnings("unused")
 	public static List<String> getColumnTypeAlterSQL(HibernateDialect dialect, String alterClause,
-		String setClause, boolean repeatColumn, TableColumnInfo from, TableColumnInfo to)
-		throws UnsupportedOperationException
+		String setClause, boolean repeatColumn, TableColumnInfo from, TableColumnInfo to,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
+		String shapedTable = shapeQualifiableIdentifier(to.getTableName(), qualifier, prefs, dialect);
+		String shapedFromColumn = shapeIdentifier(from.getColumnName(), prefs, dialect);
+		String shapedToColumn = shapeIdentifier(to.getColumnName(), prefs, dialect);
+		
+		
 		ArrayList<String> list = new ArrayList<String>();
 		StringBuilder result = new StringBuilder();
 		result.append("ALTER TABLE ");
-		result.append(to.getTableName());
+		result.append(shapedTable);
 		result.append(" ");
 		result.append(alterClause);
 		result.append(" ");
 		if (repeatColumn)
 		{
-			result.append(to.getColumnName());
+			result.append(shapedToColumn);
 			result.append(" ");
 		}
-		result.append(to.getColumnName());
+		result.append(shapedToColumn);
 		result.append(" ");
 		if (setClause != null && !"".equals(setClause))
 		{
@@ -952,17 +1020,26 @@ public class DialectUtils implements StringTemplateConstants
 	 *           the TableColumnInfo as it is
 	 * @param to
 	 *           the TableColumnInfo as it wants to be
+	 * @param qualifier TODO
+	 * @param prefs TODO
+	 * @param dialect TODO
 	 * @return the SQL to make the change
 	 */
-	public static String getColumnRenameSQL(TableColumnInfo from, TableColumnInfo to)
+	public static String getColumnRenameSQL(TableColumnInfo from, TableColumnInfo to,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs, HibernateDialect dialect)
 	{
 		StringBuilder result = new StringBuilder();
+
+		String shapedTable = shapeQualifiableIdentifier(from.getTableName(), qualifier, prefs, dialect);
+		String shapedFromColumn = shapeIdentifier(from.getColumnName(), prefs, dialect);
+		String shapedToColumn = shapeIdentifier(to.getColumnName(), prefs, dialect);
+				
 		result.append("RENAME COLUMN ");
-		result.append(from.getTableName());
+		result.append(shapedTable);
 		result.append(".");
-		result.append(from.getColumnName());
+		result.append(shapedFromColumn);
 		result.append(" TO ");
-		result.append(to.getColumnName());
+		result.append(shapedToColumn);
 		return result.toString();
 	}
 
@@ -1049,7 +1126,7 @@ public class DialectUtils implements StringTemplateConstants
 			return s_stringMgr.getString("DialectUtils.updateUnsupported", dialect.getDisplayName());
 		case VIEW_DEFINITION_TYPE:
 			return s_stringMgr.getString("DialectUtils.viewDefinitionUnsupported", dialect.getDisplayName());
-			
+
 		default:
 			throw new IllegalArgumentException("Unknown featureId: " + featureId);
 		}
@@ -1069,14 +1146,20 @@ public class DialectUtils implements StringTemplateConstants
 	 *           'DROP PRIMARY KEY' is used instead.
 	 * @param cascadeConstraints
 	 *           whether or not to append 'CASCADE' to the end.
+	 * @param qualifier
+	 *           qualifier of the table
+	 * @param prefs
+	 *           preferences for generated sql scripts
+	 * @param dialect TODO
 	 * @return
 	 */
 	public static String getDropPrimaryKeySQL(String pkName, String tableName, boolean useConstraintName,
-		boolean cascadeConstraints)
+		boolean cascadeConstraints, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs,
+		HibernateDialect dialect)
 	{
 		StringBuilder result = new StringBuilder();
 		result.append("ALTER TABLE ");
-		result.append(tableName);
+		result.append(shapeQualifiableIdentifier(tableName, qualifier, prefs, null));
 		if (useConstraintName)
 		{
 			result.append(" DROP CONSTRAINT ");
@@ -1159,12 +1242,12 @@ public class DialectUtils implements StringTemplateConstants
 	 * @param dialect
 	 * @return
 	 */
-	public static String getDropIndexSQL(StringTemplate st, HashMap<String, String> valuesMap,
-		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs, HibernateDialect dialect)
-	{
-		bindAttributes(dialect, st, valuesMap, qualifier, prefs);
-		return st.toString();
-	}
+//	public static String getDropIndexSQL(StringTemplate st, HashMap<String, String> valuesMap,
+//		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs, HibernateDialect dialect)
+//	{
+//		bindAttributes(dialect, st, valuesMap, qualifier, prefs);
+//		return st.toString();
+//	}
 
 	/**
 	 * Gets the SQL command to drop a sequence.
@@ -1215,21 +1298,6 @@ public class DialectUtils implements StringTemplateConstants
 	}
 
 	/**
-	 * @param st
-	 * @param valuesMap
-	 * @param qualifier
-	 * @param prefs
-	 * @param dialect
-	 * @return
-	 */
-	public static String getDropConstraintSQL(StringTemplate st, HashMap<String, String> valuesMap,
-		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs, HibernateDialect dialect)
-	{
-		bindAttributes(dialect, st, valuesMap, qualifier, prefs);
-		return st.toString();
-	}
-
-	/**
 	 * Gets the SQL command to drop a view.
 	 * 
 	 * @param viewName
@@ -1264,13 +1332,21 @@ public class DialectUtils implements StringTemplateConstants
 	 * CREATE UNIQUE INDEX indexName ON tableName (columns);
 	 * 
 	 * @param indexName
-	 * @param tableName
 	 * @param columns
+	 * @param qualifier TODO
+	 * @param prefs TODO
+	 * @param dialect TODO
+	 * @param tableName
 	 * @return
 	 */
-	public static String getAddIndexSQL(String indexName, boolean unique, TableColumnInfo[] columns)
+	public static String getAddIndexSQL(String indexName, boolean unique, TableColumnInfo[] columns,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs, HibernateDialect dialect)
 	{
 		StringBuilder result = new StringBuilder();
+		
+		String shapedTable = shapeQualifiableIdentifier(columns[0].getTableName(), qualifier, prefs, dialect);
+		String shapedIndexName = shapeIdentifier(indexName, prefs, dialect);
+		
 		if (unique)
 		{
 			result.append("CREATE UNIQUE INDEX ");
@@ -1278,11 +1354,11 @@ public class DialectUtils implements StringTemplateConstants
 		{
 			result.append("CREATE INDEX ");
 		}
-		result.append(indexName);
+		result.append(shapedIndexName);
 		result.append(" ON ");
-		result.append(columns[0].getTableName());
+		result.append(shapedTable);
 		result.append(" ");
-		result.append(getColumnList(columns));
+		result.append(getColumnList(columns, qualifier, prefs, dialect));
 		return result.toString();
 	}
 
@@ -1417,7 +1493,7 @@ public class DialectUtils implements StringTemplateConstants
 		sql.append(DialectUtils.ALTER_TABLE_CLAUSE);
 		sql.append(" ");
 		sql.append(shapeQualifiableIdentifier(oldTableName, qualifier, prefs, dialect));
-		sql.append(" RENAME TO ").append(shapeIdentifier(newTableName, prefs, dialect));
+		sql.append(" RENAME TO ").append(shapeQualifiableIdentifier(newTableName, qualifier, prefs, dialect));
 
 		return sql.toString();
 	}
@@ -1438,6 +1514,8 @@ public class DialectUtils implements StringTemplateConstants
 	 *           qualifier of the table
 	 * @param prefs
 	 *           preferences for generated sql scripts
+	 * @param dialect
+	 *           the HibernateDialect to generate the SQL for.
 	 * @return the sql command
 	 */
 	public static String getRenameViewSQL(String commandPrefix, String renameClause, String oldViewName,
@@ -1473,15 +1551,21 @@ public class DialectUtils implements StringTemplateConstants
 	 *           the name of the foreign key that should be dropped
 	 * @param tableName
 	 *           the name of the table whose foreign key should be dropped
+	 * @param qualifier
+	 *           qualifier of the table
+	 * @param prefs
+	 *           preferences for generated sql scripts
+	 * @param dialect
+	 *           the HibernateDialect to generate the SQL for.
 	 * @return
 	 */
-	public static String getDropForeignKeySQL(String fkName, String tableName)
+	public static String getDropForeignKeySQL(String fkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs, HibernateDialect dialect)
 	{
 		StringBuilder tmp = new StringBuilder();
 		tmp.append("ALTER TABLE ");
-		tmp.append(tableName);
+		tmp.append(shapeQualifiableIdentifier(tableName, qualifier, prefs, dialect));
 		tmp.append(" DROP CONSTRAINT ");
-		tmp.append(fkName);
+		tmp.append(shapeIdentifier(fkName, prefs, dialect));
 		return tmp.toString();
 	}
 
@@ -1689,13 +1773,6 @@ public class DialectUtils implements StringTemplateConstants
 		}
 
 		return sql.toString();
-	}
-
-	public static String getCreateViewSQL(StringTemplate st, HashMap<String, String> valuesMap,
-		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs, HibernateDialect dialect)
-	{
-		bindAttributes(dialect, st, valuesMap, qualifier, prefs);
-		return st.toString();
 	}
 
 	/**
@@ -2150,7 +2227,8 @@ public class DialectUtils implements StringTemplateConstants
 				continue;
 			}
 			String columnName = indexInfo.getColumnName();
-			if (StringUtilities.isEmpty(columnName)) {
+			if (StringUtilities.isEmpty(columnName))
+			{
 				continue;
 			}
 			TableIndexInfo ixi = buf.get(indexName);
@@ -2349,8 +2427,8 @@ public class DialectUtils implements StringTemplateConstants
 			}
 			sbToAppend.append("\n");
 			result.add(sbToAppend.toString());
-         sbToAppend.setLength(0);
-      }
+			sbToAppend.setLength(0);
+		}
 
 		return result;
 	}
@@ -2477,9 +2555,9 @@ public class DialectUtils implements StringTemplateConstants
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs, HibernateDialect dialect)
 	{
 		ArrayList<String> result = new ArrayList<String>();
-		final String tableName = column.getTableName();
-		final String columnName = column.getColumnName();
-		final String sequenceName = tableName + "_" + columnName + "_" + "seq";
+		final String tableName = shapeQualifiableIdentifier(column.getTableName(), qualifier, prefs, dialect);
+		final String columnName = shapeIdentifier(column.getColumnName(), prefs, dialect);
+		final String sequenceName = shapeIdentifier(tableName + "_" + columnName + "_" + "seq", prefs, dialect);
 
 		// TODO Probably want to allow the user to set these sequence properties ??
 		// Sequence settings.
@@ -2604,7 +2682,7 @@ public class DialectUtils implements StringTemplateConstants
 		st.setAttribute(key, value);
 	}
 
-	private static void bindAttributes(HibernateDialect dialect, StringTemplate st,
+	public static String bindAttributes(HibernateDialect dialect, StringTemplate st,
 		HashMap<String, String> valuesMap, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		for (String key : valuesMap.keySet())
@@ -2612,6 +2690,8 @@ public class DialectUtils implements StringTemplateConstants
 			String value = valuesMap.get(key);
 			bindAttribute(dialect, st, key, value, qualifier, prefs);
 		}
+		
+		return st.toString();
 	}
 
 	/**
@@ -2667,7 +2747,7 @@ public class DialectUtils implements StringTemplateConstants
 		}
 		return st.toString();
 	}
-	
+
 	public static HashMap<String, String> getValuesMap(Object... elts)
 	{
 		HashMap<String, String> valuesMap = new HashMap<String, String>();
