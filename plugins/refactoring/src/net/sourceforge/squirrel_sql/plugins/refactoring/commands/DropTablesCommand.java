@@ -167,7 +167,8 @@ public class DropTablesCommand extends AbstractRefactoringCommand
 				final boolean isMaterializedView = isMaterializedView(info, _session);
 				// There are more dependancies then just FKs (like views, etc.),
 				// therefore cascadeConstraints is used as a parameter for the TableDropSQL.
-				final List<String> sqls = _dialect.getTableDropSQL(info, cascadeConstraints, isMaterializedView);
+				final List<String> sqls =
+					_dialect.getTableDropSQL(info, cascadeConstraints, isMaterializedView, _qualifier, _sqlPrefs);
 				result.addAll(sqls);
 			}
 		} catch (final UnsupportedOperationException e2)
@@ -200,7 +201,7 @@ public class DropTablesCommand extends AbstractRefactoringCommand
 				}
 				final String fkName = info.getForeignKeyName();
 				final String fkTable = info.getForeignKeyTableName();
-				result.add(_dialect.getDropForeignKeySQL(fkName, fkTable));
+				result.add(_dialect.getDropForeignKeySQL(fkName, fkTable, _qualifier, _sqlPrefs));
 			}
 		}
 		if (s_log.isDebugEnabled())

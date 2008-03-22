@@ -108,7 +108,10 @@ public class DropPrimaryKeyCommand extends AbstractRefactoringCommand
 		try
 		{
 			result =
-				_dialect.getDropPrimaryKeySQL(customDialog.getPrimaryKeyName(), customDialog.getTableName());
+				_dialect.getDropPrimaryKeySQL(customDialog.getPrimaryKeyName(),
+					customDialog.getTableName(),
+					_qualifier,
+					_sqlPrefs);
 		} catch (UnsupportedOperationException e2)
 		{
 			_session.showMessage(s_stringMgr.getString("DropPrimaryKeyCommand.unsupportedOperationMsg",

@@ -176,7 +176,7 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 	 */
 	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
-		return DialectUtils.getColumnCommentAlterSQL(info, null, null, null);
+		return DialectUtils.getColumnCommentAlterSQL(info, qualifier, prefs, this);
 	}
 
 	/**
@@ -215,14 +215,14 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 	 * Returns the SQL that forms the command to drop the specified table. If cascade contraints is supported
 	 * by the dialect and cascadeConstraints is true, then a drop statement with cascade constraints clause
 	 * will be formed.
-	 * 
 	 * @param cascadeConstraints
 	 *           whether or not to drop any FKs that may reference the specified table.
 	 * @param ti
 	 *           the table to drop
+	 * 
 	 * @return the drop SQL command.
 	 */
-	public List<String> getTableDropSQL(ITableInfo ti, boolean cascadeConstraints, boolean isMaterializedView)
+	public List<String> getTableDropSQL(ITableInfo ti, boolean cascadeConstraints, boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		String cascadeClause = "";
 		if (!isMaterializedView)
@@ -235,18 +235,18 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 			cascadeConstraints,
 			true,
 			cascadeClause,
-			isMaterializedView);
+			isMaterializedView, qualifier, prefs, this);
 	}
 
 	/**
 	 * Returns the SQL that forms the command to add a primary key to the specified table composed of the given
 	 * column names.
-	 * 
 	 * @param columns
 	 *           the columns that form the key
+	 * 
 	 * @return
 	 */
-	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, ITableInfo ti)
+	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, ITableInfo ti, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		StringBuffer result = new StringBuffer();
 		result.append("ALTER TABLE ");
@@ -455,9 +455,9 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 	 *           the name of the table whose primary key should be dropped
 	 * @return
 	 */
-	public String getDropPrimaryKeySQL(String pkName, String tableName)
+	public String getDropPrimaryKeySQL(String pkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false);
+		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false, qualifier, prefs, this);
 	}
 
 	/**
@@ -469,9 +469,9 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 	 *           the name of the table whose foreign key should be dropped
 	 * @return
 	 */
-	public String getDropForeignKeySQL(String fkName, String tableName)
+	public String getDropForeignKeySQL(String fkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropForeignKeySQL(fkName, tableName);
+		return DialectUtils.getDropForeignKeySQL(fkName, tableName, qualifier, prefs, this);
 	}
 
 	/**
@@ -583,8 +583,8 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 
 		if (info.getRemarks() != null && !"".equals(info.getRemarks()))
 		{
-			// TODO take into account qualifier and prefs
-			return new String[] { addColumnSql, DialectUtils.getColumnCommentAlterSQL(info, null, null, null) };
+			return new String[] { addColumnSql,
+					DialectUtils.getColumnCommentAlterSQL(info, qualifier, prefs, this) };
 		} else
 		{
 			return new String[] { addColumnSql };
@@ -976,7 +976,6 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 	 */
 	public boolean supportsCheckOptionsForViews()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -1049,7 +1048,6 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 	 */
 	public boolean supportsEmptyTables()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -1071,7 +1069,6 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 
 	public boolean supportsMultipleRowInserts()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -1130,7 +1127,6 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 	 */
 	public boolean supportsAddColumn()
 	{
-		// TODO verify this is correct
 		return true;
 	}
 
@@ -1138,7 +1134,6 @@ public class OracleDialectExt extends CommonHibernateDialect implements Hibernat
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsViewDefinition()
 	 */
 	public boolean supportsViewDefinition() {
-		// TODO verify this is correct
 		return false;
 	}	
 	

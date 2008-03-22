@@ -280,7 +280,7 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 
 		if (info.getRemarks() != null && !"".equals(info.getRemarks()))
 		{
-			result.add(getColumnCommentAlterSQL(info, null, null));
+			result.add(getColumnCommentAlterSQL(info, qualifier, prefs));
 		}
 
 		return result.toArray(new String[result.size()]);
@@ -296,14 +296,18 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	 *           the name of the column to create the SQL for.
 	 * @param comment
 	 *           the comment to add.
+	 * @param qualifier TODO
+	 * @param prefs TODO
+	 * @param dialect TODO
 	 * @return
 	 * @throws UnsupportedOperationException
 	 *            if the database doesn't support annotating columns with a comment.
 	 */
-	public String getColumnCommentAlterSQL(String tableName, String columnName, String comment)
+	public String getColumnCommentAlterSQL(String tableName, String columnName, String comment,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs, HibernateDialect dialect)
 		throws UnsupportedOperationException
 	{
-		return DialectUtils.getColumnCommentAlterSQL(tableName, columnName, comment);
+		return DialectUtils.getColumnCommentAlterSQL(tableName, columnName, comment, qualifier, prefs, dialect);
 	}
 
 	/**
@@ -346,14 +350,14 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	 * @return the drop SQL command.
 	 */
 	public List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints,
-		boolean isMaterializedView)
+		boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getTableDropSQL(iTableInfo,
 			false,
 			cascadeConstraints,
 			false,
 			DialectUtils.CASCADE_CLAUSE,
-			false);
+			false, qualifier, prefs, this);
 	}
 
 	/**
@@ -366,9 +370,9 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	 *           the columns that form the key
 	 * @return
 	 */
-	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, ITableInfo ti)
+	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, ITableInfo ti, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false) };
+		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false, qualifier, prefs, this) };
 	}
 
 	/**
@@ -565,7 +569,7 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	{
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		String defaultClause = DialectUtils.SET_DEFAULT_CLAUSE;
-		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, false, defaultClause);
+		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, false, defaultClause, qualifier, prefs);
 	}
 
 	/**
@@ -577,9 +581,9 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	 *           the name of the table whose primary key should be dropped
 	 * @return
 	 */
-	public String getDropPrimaryKeySQL(String pkName, String tableName)
+	public String getDropPrimaryKeySQL(String pkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false);
+		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false, qualifier, prefs, this);
 	}
 
 	/**
@@ -591,9 +595,9 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	 *           the name of the table whose foreign key should be dropped
 	 * @return
 	 */
-	public String getDropForeignKeySQL(String fkName, String tableName)
+	public String getDropForeignKeySQL(String fkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropForeignKeySQL(fkName, tableName);
+		return DialectUtils.getDropForeignKeySQL(fkName, tableName, qualifier, prefs, this);
 	}
 
 	/**

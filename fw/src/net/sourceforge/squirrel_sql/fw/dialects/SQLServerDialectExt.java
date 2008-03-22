@@ -252,14 +252,14 @@ public class SQLServerDialectExt extends SybaseDialectExt implements HibernateDi
 	 */
 	@Override
 	public List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints,
-		boolean isMaterializedView)
+		boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getTableDropSQL(iTableInfo,
 			false,
 			cascadeConstraints,
 			false,
 			DialectUtils.CASCADE_CLAUSE,
-			false);
+			false, qualifier, prefs, this);
 	}
 
 	/**
@@ -274,15 +274,15 @@ public class SQLServerDialectExt extends SybaseDialectExt implements HibernateDi
 	 * @return
 	 */
 	@Override
-	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] colInfos, ITableInfo ti)
+	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] colInfos, ITableInfo ti, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		ArrayList<String> result = new ArrayList<String>();
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		// convert all columns in key to not null - this doesn't hurt if they
 		// are already null.
-		DialectUtils.getMultiColNotNullSQL(colInfos, this, alterClause, true, result);
+		DialectUtils.getMultiColNotNullSQL(colInfos, this, alterClause, true, result, qualifier, prefs);
 
-		String pkSQL = DialectUtils.getAddPrimaryKeySQL(ti, pkName, colInfos, false);
+		String pkSQL = DialectUtils.getAddPrimaryKeySQL(ti, pkName, colInfos, false, qualifier, prefs, this);
 		result.add(pkSQL);
 
 		return result.toArray(new String[result.size()]);
@@ -313,7 +313,7 @@ public class SQLServerDialectExt extends SybaseDialectExt implements HibernateDi
 		SqlGenerationPreferences prefs)
 	{
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
-		return new String[] { DialectUtils.getColumnNullableAlterSQL(info, this, alterClause, true) };
+		return new String[] { DialectUtils.getColumnNullableAlterSQL(info, this, alterClause, true, qualifier, prefs) };
 	}
 
 	/**
@@ -490,7 +490,7 @@ public class SQLServerDialectExt extends SybaseDialectExt implements HibernateDi
 		HashMap<String, String> valuesMap = new HashMap<String, String>();
 		valuesMap.put(ST_INDEX_NAME_KEY, indexName);
 		valuesMap.put(ST_TABLE_NAME_KEY, tableName);
-		return DialectUtils.getDropIndexSQL(st, valuesMap, qualifier, prefs, this);
+		return DialectUtils.bindAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**

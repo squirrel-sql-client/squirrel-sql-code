@@ -258,14 +258,14 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	@Override
 	public List<String> getTableDropSQL(final ITableInfo iTableInfo, final boolean cascadeConstraints,
-		final boolean isMaterializedView)
+		final boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getTableDropSQL(iTableInfo,
 			true,
 			cascadeConstraints,
 			false,
 			DialectUtils.CASCADE_CLAUSE,
-			false);
+			false, qualifier, prefs, this);
 	}
 
 	/**
@@ -280,9 +280,9 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	 */
 	@Override
 	public String[] getAddPrimaryKeySQL(final String pkName, final TableColumnInfo[] columns,
-		final ITableInfo ti)
+		final ITableInfo ti, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false) };
+		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false, qualifier, prefs, this) };
 	}
 
 	/**
@@ -396,7 +396,7 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 
 		final String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		final String setClause = "";
-		return DialectUtils.getColumnTypeAlterSQL(this, alterClause, setClause, false, from, to);
+		return DialectUtils.getColumnTypeAlterSQL(this, alterClause, setClause, false, from, to, qualifier, prefs);
 	}
 
 	/**
@@ -433,9 +433,9 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	 * @return
 	 */
 	@Override
-	public String getDropPrimaryKeySQL(final String pkName, final String tableName)
+	public String getDropPrimaryKeySQL(final String pkName, final String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true, false);
+		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true, false, qualifier, prefs, this);
 	}
 
 	/**
@@ -448,9 +448,9 @@ public class PointbaseDialectExt extends CommonHibernateDialect implements Hiber
 	 * @return
 	 */
 	@Override
-	public String getDropForeignKeySQL(final String fkName, final String tableName)
+	public String getDropForeignKeySQL(final String fkName, final String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropForeignKeySQL(fkName, tableName);
+		return DialectUtils.getDropForeignKeySQL(fkName, tableName, qualifier, prefs, this);
 	}
 
 	/**

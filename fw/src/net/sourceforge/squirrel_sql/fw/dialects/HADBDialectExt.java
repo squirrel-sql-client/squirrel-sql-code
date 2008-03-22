@@ -39,8 +39,10 @@ import org.hibernate.dialect.Dialect;
 public class HADBDialectExt extends CommonHibernateDialect implements HibernateDialect
 {
 
-	private class HADBDialectHelper extends Dialect {
-		public HADBDialectHelper() {
+	private class HADBDialectHelper extends Dialect
+	{
+		public HADBDialectHelper()
+		{
 			registerColumnType(Types.BIGINT, "double integer");
 			registerColumnType(Types.BINARY, 8000, "binary($l)");
 			registerColumnType(Types.BINARY, "binary(8000)");
@@ -66,10 +68,10 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 			registerColumnType(Types.VARBINARY, 8000, "varbinary($l)");
 			registerColumnType(Types.VARBINARY, "varbinary(8000)");
 			registerColumnType(Types.VARCHAR, 8000, "varchar($l)");
-			registerColumnType(Types.VARCHAR, "varchar(8000)");			
+			registerColumnType(Types.VARCHAR, "varchar(8000)");
 		}
 	}
-	
+
 	/** extended hibernate dialect used in this wrapper */
 	private HADBDialectHelper _dialect = new HADBDialectHelper();
 
@@ -80,8 +82,7 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 	public String getTypeName(int code, int length, int precision, int scale) throws HibernateException
 	{
 		return _dialect.getTypeName(code, length, precision, scale);
-	}	
-	
+	}
 
 	/**
 	 * Returns a boolean indicating whether or not the specified database object can be pasted into for this
@@ -97,7 +98,8 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 		return true;
 	}
 
-	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] colInfos, ITableInfo ti)
+	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] colInfos, ITableInfo ti,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -110,7 +112,8 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 		return null;
 	}
 
-	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
+	public String getColumnCommentAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
 		throw new UnsupportedOperationException("Not yet implemented");
 	}
@@ -125,7 +128,8 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 	 * @return
 	 * @throw UnsupportedOperationException if the database doesn't support dropping columns.
 	 */
-	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
+	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
 		throw new UnsupportedOperationException("Not yet implemented");
 	}
@@ -173,7 +177,8 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 	 *           the TableColumnInfo as it wants to be
 	 * @return the SQL to make the change
 	 */
-	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		StringBuffer result = new StringBuffer();
 		result.append("ALTER TABLE ");
@@ -192,7 +197,8 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 	 *           the column to modify
 	 * @return the SQL to execute
 	 */
-	public String[] getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String[] getColumnNullableAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		throw new UnsupportedOperationException("Not yet implemented");
 	}
@@ -217,8 +223,8 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 	 * @return the SQL to make the change
 	 * @throw UnsupportedOperationException if the database doesn't support modifying column types.
 	 */
-	public List<String> getColumnTypeAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
-		throws UnsupportedOperationException
+	public List<String> getColumnTypeAlterSQL(TableColumnInfo from, TableColumnInfo to,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
 		throw new UnsupportedOperationException("Not yet implemented");
 	}
@@ -325,14 +331,14 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 	 * @return the drop SQL command.
 	 */
 	public List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints,
-		boolean isMaterializedView)
+		boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getTableDropSQL(iTableInfo,
 			false,
 			cascadeConstraints,
 			false,
 			DialectUtils.CASCADE_CLAUSE,
-			false);
+			false, qualifier, prefs, this);
 	}
 
 	/**
@@ -418,7 +424,8 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 	 *           the column to modify and it's default value.
 	 * @return SQL to make the change
 	 */
-	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		// TODO need to implement or change the message
 		throw new UnsupportedOperationException("Not yet implemented");
@@ -433,9 +440,10 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 	 *           the name of the table whose primary key should be dropped
 	 * @return
 	 */
-	public String getDropPrimaryKeySQL(String pkName, String tableName)
+	public String getDropPrimaryKeySQL(String pkName, String tableName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false);
+		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false, qualifier, prefs, this);
 	}
 
 	/**
@@ -447,9 +455,9 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 	 *           the name of the table whose foreign key should be dropped
 	 * @return
 	 */
-	public String getDropForeignKeySQL(String fkName, String tableName)
+	public String getDropForeignKeySQL(String fkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropForeignKeySQL(fkName, tableName);
+		return DialectUtils.getDropForeignKeySQL(fkName, tableName, qualifier, prefs, this);
 	}
 
 	/**
@@ -490,11 +498,12 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 	 */
 	public String[] getIndexStorageOptions()
 	{
-		// TODO Auto-generated method stub		
+		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -516,8 +525,8 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 		return null;
 	}
 
-	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName, TableColumnInfo[] columns,
-		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName,
+		TableColumnInfo[] columns, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -603,8 +612,8 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 		return null;
 	}
 
-	public String[] getRenameViewSQL(String oldViewName, String newViewName, DatabaseObjectQualifier qualifier,
-		SqlGenerationPreferences prefs)
+	public String[] getRenameViewSQL(String oldViewName, String newViewName,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -617,8 +626,8 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 		return null;
 	}
 
-	public String[] getUpdateSQL(String tableName, String[] setColumns, String[] setValues, String[] fromTables,
-		String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
+	public String[] getUpdateSQL(String tableName, String[] setColumns, String[] setValues,
+		String[] fromTables, String[] whereColumns, String[] whereValues, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
 		// TODO Auto-generated method stub
@@ -777,32 +786,38 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 		// TODO verify this is correct
 		return true;
 	}
-	
+
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsViewDefinition()
 	 */
-	public boolean supportsViewDefinition() {
+	public boolean supportsViewDefinition()
+	{
 		// TODO verify this is correct
 		return false;
-	}	
+	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getViewDefinitionSQL(java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getViewDefinitionSQL(java.lang.String,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	public String getViewDefinitionSQL(String viewName, DatabaseObjectQualifier qualifier,
-		SqlGenerationPreferences prefs) {
+		SqlGenerationPreferences prefs)
+	{
 		return null;
 	}
-	
+
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getQualifiedIdentifier(java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getQualifiedIdentifier(java.lang.String,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	public String getQualifiedIdentifier(String identifier, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
 		return identifier;
 	}
-	
+
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#supportsCorrelatedSubQuery()
 	 */
@@ -811,5 +826,5 @@ public class HADBDialectExt extends CommonHibernateDialect implements HibernateD
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 }

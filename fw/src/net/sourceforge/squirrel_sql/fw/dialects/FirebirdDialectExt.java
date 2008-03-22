@@ -177,34 +177,39 @@ public class FirebirdDialectExt extends CommonHibernateDialect implements Hibern
 	 *      java.lang.String, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
-	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getColumnDropSQL(tableName, columnName, qualifier, prefs, this);
 	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTableDropSQL(net.sourceforge.squirrel_sql.fw.sql.ITableInfo,
-	 *      boolean, boolean)
+	 *      boolean, boolean, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
 	public List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints,
-		boolean isMaterializedView)
+		boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getTableDropSQL(iTableInfo,
 			false,
 			cascadeConstraints,
 			false,
 			DialectUtils.CASCADE_CLAUSE,
-			false);
+			false,
+			qualifier,
+			prefs,
+			this);
 	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddPrimaryKeySQL(java.lang.String,
 	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo[],
-	 *      net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+	 *      net.sourceforge.squirrel_sql.fw.sql.ITableInfo, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
-	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, ITableInfo ti)
+	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, ITableInfo ti,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		StringBuffer result = new StringBuffer();
 		result.append("ALTER TABLE ");
@@ -283,14 +288,16 @@ public class FirebirdDialectExt extends CommonHibernateDialect implements Hibern
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnNameAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
-	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, DatabaseObjectQualifier, SqlGenerationPreferences)
+	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, DatabaseObjectQualifier,
+	 *      SqlGenerationPreferences)
 	 */
 	@Override
-	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		String renameToClause = DialectUtils.TO_CLAUSE;
-		return DialectUtils.getColumnNameAlterSQL(from, to, alterClause, renameToClause);
+		return DialectUtils.getColumnNameAlterSQL(from, to, alterClause, renameToClause, qualifier, prefs, this);
 	}
 
 	/**
@@ -334,10 +341,12 @@ public class FirebirdDialectExt extends CommonHibernateDialect implements Hibern
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnDefaultAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, DatabaseObjectQualifier, SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getColumnDefaultAlterSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
-	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnDefaultAlterSQL(TableColumnInfo info, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		int featureId = DialectUtils.COLUMN_DEFAULT_ALTER_TYPE;
 		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
@@ -346,22 +355,24 @@ public class FirebirdDialectExt extends CommonHibernateDialect implements Hibern
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropPrimaryKeySQL(java.lang.String,
-	 *      java.lang.String)
+	 *      java.lang.String, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
-	public String getDropPrimaryKeySQL(String pkName, String tableName)
+	public String getDropPrimaryKeySQL(String pkName, String tableName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true, false);
+		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true, false, qualifier, prefs, this);
 	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropForeignKeySQL(java.lang.String,
-	 *      java.lang.String)
+	 *      java.lang.String, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
-	public String getDropForeignKeySQL(String fkName, String tableName)
+	public String getDropForeignKeySQL(String fkName, String tableName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropForeignKeySQL(fkName, tableName);
+		return DialectUtils.getDropForeignKeySQL(fkName, tableName, qualifier, prefs, this);
 	}
 
 	/**
@@ -413,7 +424,6 @@ public class FirebirdDialectExt extends CommonHibernateDialect implements Hibern
 	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		
 
 		// CREATE GENERATOR EMPNO_GEN;
 		//
@@ -429,17 +439,17 @@ public class FirebirdDialectExt extends CommonHibernateDialect implements Hibern
 		//
 		// NEW.EMPNO = GEN_ID(EMPNO_GEN, 1);
 		//
-		//		END		
+		// END
 		String incrementNotSupported = null;
 		String minValueNotSupported = null;
 		String maxValueNotSupported = null;
 		String startValueNotSupported = null;
 		String cacheNotSupported = null;
 		boolean cycle = false;
-		
+
 		// autoinc_gen_<column>
 		String sequenceName = column.getColumnName() + "_AUTOINC_SEQ";
-		
+
 		String generatorSql =
 			getCreateSequenceSQL(sequenceName,
 				incrementNotSupported,
@@ -451,26 +461,20 @@ public class FirebirdDialectExt extends CommonHibernateDialect implements Hibern
 				qualifier,
 				prefs);
 
-		String trigTemplate = 
-			"CREATE TRIGGER CREATE_$columnName$ " +
-			"FOR $tableName$ " +
-			"BEFORE INSERT POSITION 0 " +
-			"AS " +
-			"BEGIN " +
-			"NEW.$columnName$ = GEN_ID($sequenceName$, 1); " +
-			"END";
-		
+		String trigTemplate =
+			"CREATE TRIGGER CREATE_$columnName$ " + "FOR $tableName$ " + "BEFORE INSERT POSITION 0 " + "AS "
+				+ "BEGIN " + "NEW.$columnName$ = GEN_ID($sequenceName$, 1); " + "END";
+
 		StringTemplate st = new StringTemplate(trigTemplate);
-		
-		HashMap<String, String> valuesMap = 
+
+		HashMap<String, String> valuesMap =
 			DialectUtils.getValuesMap(ST_COLUMN_NAME_KEY, column.getColumnName());
-		
+
 		valuesMap.put(ST_TABLE_NAME_KEY, column.getTableName());
 		valuesMap.put(ST_SEQUENCE_NAME_KEY, sequenceName);
-		
-		String trigSql = 
-			DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
-		
+
+		String trigSql = DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
+
 		return new String[] { generatorSql, trigSql.toString() };
 	}
 
@@ -559,17 +563,20 @@ public class FirebirdDialectExt extends CommonHibernateDialect implements Hibern
 
 		// "ALTER TABLE $tableName$ " +
 		// "ADD CONSTRAINT $constraintName$ UNIQUE ($columnName; separator=\",\"$)";
-		
+
 		String templateStr = ST_ADD_UNIQUE_CONSTRAINT_STYLE_TWO;
-		
+
 		StringTemplate st = new StringTemplate(templateStr);
-		
-		HashMap<String, String> valuesMap = 
+
+		HashMap<String, String> valuesMap =
 			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, tableName, ST_CONSTRAINT_NAME_KEY, constraintName);
-		
-		return new String[] { 
-			DialectUtils.getAddUniqueConstraintSQL(st, valuesMap, columns, qualifier, prefs, this)
-		};
+
+		return new String[] { DialectUtils.getAddUniqueConstraintSQL(st,
+			valuesMap,
+			columns,
+			qualifier,
+			prefs,
+			this) };
 	}
 
 	/**
@@ -585,10 +592,10 @@ public class FirebirdDialectExt extends CommonHibernateDialect implements Hibern
 	{
 		// SET GENERATOR name TO int;
 		StringTemplate st = new StringTemplate("SET GENERATOR $generatorName$ TO $value$");
-		
+
 		st.setAttribute(ST_GENERATOR_NAME_KEY, sequenceName);
 		st.setAttribute(ST_VALUE_KEY, minimum);
-		
+
 		return new String[] { st.toString() };
 	}
 
@@ -605,7 +612,7 @@ public class FirebirdDialectExt extends CommonHibernateDialect implements Hibern
 	{
 		// CREATE [UNIQUE] [ASC[ENDING] | DESC[ENDING]] INDEX index
 		// ON table (col [, col …]);
-		
+
 		StringTemplate st = new StringTemplate(ST_CREATE_INDEX_STYLE_TWO);
 		// "CREATE $unique$ $storageOption$ INDEX $indexName$ " +
 		// "ON $tableName$ ( $columnName; separator=\",\"$ )";
@@ -634,9 +641,9 @@ public class FirebirdDialectExt extends CommonHibernateDialect implements Hibern
 		SqlGenerationPreferences prefs)
 	{
 		StringTemplate st = new StringTemplate("CREATE GENERATOR $generatorName$");
-		
+
 		st.setAttribute("generatorName", sequenceName);
-		
+
 		return st.toString();
 	}
 
@@ -664,19 +671,20 @@ public class FirebirdDialectExt extends CommonHibernateDialect implements Hibern
 	{
 		// CREATE VIEW name [(view_col [, view_col …])]
 		// AS <select> [WITH CHECK OPTION];
-		
+
 		// "CREATE VIEW $viewName$ " +
-		// "AS $selectStatement$ $withCheckOption$";	
-      StringTemplate st = new StringTemplate(ST_CREATE_VIEW_STYLE_TWO);
+		// "AS $selectStatement$ $withCheckOption$";
+		StringTemplate st = new StringTemplate(ST_CREATE_VIEW_STYLE_TWO);
 
-      HashMap<String, String> valuesMap =
-              DialectUtils.getValuesMap(ST_VIEW_NAME_KEY, viewName, ST_SELECT_STATEMENT_KEY, definition);
-      
-      if (checkOption != null) {
-      	valuesMap.put(ST_WITH_CHECK_OPTION_KEY, "WITH CHECK OPTION");
-      }
+		HashMap<String, String> valuesMap =
+			DialectUtils.getValuesMap(ST_VIEW_NAME_KEY, viewName, ST_SELECT_STATEMENT_KEY, definition);
 
-      return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
+		if (checkOption != null)
+		{
+			valuesMap.put(ST_WITH_CHECK_OPTION_KEY, "WITH CHECK OPTION");
+		}
+
+		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**
@@ -688,13 +696,13 @@ public class FirebirdDialectExt extends CommonHibernateDialect implements Hibern
 	public String getDropConstraintSQL(String tableName, String constraintName,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-      // ALTER TABLE $tableName$ DROP CONSTRAINT $constraintName$
-      StringTemplate st = new StringTemplate(ST_DROP_CONSTRAINT_STYLE_ONE);
+		// ALTER TABLE $tableName$ DROP CONSTRAINT $constraintName$
+		StringTemplate st = new StringTemplate(ST_DROP_CONSTRAINT_STYLE_ONE);
 
-      HashMap<String, String> valuesMap =
-              DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, tableName, ST_CONSTRAINT_NAME_KEY, constraintName);
+		HashMap<String, String> valuesMap =
+			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, tableName, ST_CONSTRAINT_NAME_KEY, constraintName);
 
-      return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
+		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**
@@ -706,12 +714,12 @@ public class FirebirdDialectExt extends CommonHibernateDialect implements Hibern
 	public String getDropIndexSQL(String tableName, String indexName, boolean cascade,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-      // "DROP INDEX $indexName$";
-      StringTemplate st = new StringTemplate(ST_DROP_INDEX_STYLE_THREE);
+		// "DROP INDEX $indexName$";
+		StringTemplate st = new StringTemplate(ST_DROP_INDEX_STYLE_THREE);
 
-      HashMap<String, String> valuesMap = DialectUtils.getValuesMap(ST_INDEX_NAME_KEY, indexName);
+		HashMap<String, String> valuesMap = DialectUtils.getValuesMap(ST_INDEX_NAME_KEY, indexName);
 
-      return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
+		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**
@@ -724,9 +732,9 @@ public class FirebirdDialectExt extends CommonHibernateDialect implements Hibern
 		SqlGenerationPreferences prefs)
 	{
 		StringTemplate st = new StringTemplate("DROP GENERATOR $generatorName$");
-		
+
 		st.setAttribute("generatorName", sequenceName);
-		
+
 		return st.toString();
 	}
 
@@ -769,7 +777,7 @@ public class FirebirdDialectExt extends CommonHibernateDialect implements Hibern
 	{
 		int featureId = DialectUtils.SEQUENCE_INFORMATION_TYPE;
 		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-		throw new UnsupportedOperationException(msg);		
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -1048,18 +1056,20 @@ public class FirebirdDialectExt extends CommonHibernateDialect implements Hibern
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropViewSQL(java.lang.String, boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropViewSQL(java.lang.String,
+	 *      boolean, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
 	@Override
 	public String getDropViewSQL(String viewName, boolean cascade, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-      // "DROP VIEW $viewName$";
-      StringTemplate st = new StringTemplate(ST_DROP_VIEW_STYLE_ONE);
+		// "DROP VIEW $viewName$";
+		StringTemplate st = new StringTemplate(ST_DROP_VIEW_STYLE_ONE);
 
-      HashMap<String, String> valuesMap = DialectUtils.getValuesMap(ST_VIEW_NAME_KEY, viewName);
+		HashMap<String, String> valuesMap = DialectUtils.getValuesMap(ST_VIEW_NAME_KEY, viewName);
 
-      return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
+		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**

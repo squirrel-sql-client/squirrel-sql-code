@@ -199,7 +199,7 @@ public class SybaseDialectExt extends CommonHibernateDialect implements Hibernat
 	 */
 	@Override
 	public List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints,
-		boolean isMaterializedView)
+		boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 
 		// SQL-Server doesn't support a cascade clause.
@@ -209,7 +209,7 @@ public class SybaseDialectExt extends CommonHibernateDialect implements Hibernat
 				cascadeConstraints,
 				false,
 				DialectUtils.CASCADE_CLAUSE,
-				false);
+				false, qualifier, prefs, this);
 		if (cascadeConstraints)
 		{
 			ArrayList<String> result = new ArrayList<String>();
@@ -248,9 +248,9 @@ public class SybaseDialectExt extends CommonHibernateDialect implements Hibernat
 	 * @return
 	 */
 	@Override
-	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, ITableInfo ti)
+	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, ITableInfo ti, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false) };
+		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false, qualifier, prefs, this) };
 	}
 
 	/**
@@ -306,7 +306,7 @@ public class SybaseDialectExt extends CommonHibernateDialect implements Hibernat
 		SqlGenerationPreferences prefs)
 	{
 		String alterClause = DialectUtils.MODIFY_CLAUSE;
-		return new String[] { DialectUtils.getColumnNullableAlterSQL(info, this, alterClause, false) };
+		return new String[] { DialectUtils.getColumnNullableAlterSQL(info, this, alterClause, false, qualifier, prefs) };
 	}
 
 	/**
@@ -372,7 +372,7 @@ public class SybaseDialectExt extends CommonHibernateDialect implements Hibernat
 	{
 		String alterClause = DialectUtils.MODIFY_CLAUSE;
 		String setClause = "";
-		return DialectUtils.getColumnTypeAlterSQL(this, alterClause, setClause, false, from, to);
+		return DialectUtils.getColumnTypeAlterSQL(this, alterClause, setClause, false, from, to, qualifier, prefs);
 	}
 
 	/**
@@ -412,9 +412,9 @@ public class SybaseDialectExt extends CommonHibernateDialect implements Hibernat
 	 * @return
 	 */
 	@Override
-	public String getDropPrimaryKeySQL(String pkName, String tableName)
+	public String getDropPrimaryKeySQL(String pkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true, false);
+		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true, false, qualifier, prefs, this);
 	}
 
 	/**
@@ -427,9 +427,9 @@ public class SybaseDialectExt extends CommonHibernateDialect implements Hibernat
 	 * @return
 	 */
 	@Override
-	public String getDropForeignKeySQL(String fkName, String tableName)
+	public String getDropForeignKeySQL(String fkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropForeignKeySQL(fkName, tableName);
+		return DialectUtils.getDropForeignKeySQL(fkName, tableName, qualifier, prefs, this);
 	}
 
 	/**
@@ -678,7 +678,7 @@ public class SybaseDialectExt extends CommonHibernateDialect implements Hibernat
 			valuesMap.put("checkOption", "CHECK OPTION");
 		}
 
-		return DialectUtils.getCreateViewSQL(st, valuesMap, qualifier, prefs, this);
+		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**

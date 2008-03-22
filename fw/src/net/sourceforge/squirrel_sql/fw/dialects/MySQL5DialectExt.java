@@ -50,7 +50,7 @@ public class MySQL5DialectExt extends MySQLDialectExt
 		valuesMap.put(ST_SELECT_STATEMENT_KEY, definition);
 		// check option not supported
 
-		return DialectUtils.getCreateViewSQL(st, valuesMap, qualifier, prefs, this);
+		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**

@@ -241,30 +241,30 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTableDropSQL(net.sourceforge.squirrel_sql.fw.sql.ITableInfo,
-	 *      boolean, boolean)
+	 *      boolean, boolean, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
 	public List<String> getTableDropSQL(final ITableInfo iTableInfo, final boolean cascadeConstraints,
-		final boolean isMaterializedView)
+		final boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getTableDropSQL(iTableInfo,
 			false,
 			cascadeConstraints,
 			false,
 			DialectUtils.CASCADE_CLAUSE,
-			false);
+			false, qualifier, prefs, this);
 	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddPrimaryKeySQL(java.lang.String,
 	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo[],
-	 *      net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+	 *      net.sourceforge.squirrel_sql.fw.sql.ITableInfo, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
 	public String[] getAddPrimaryKeySQL(final String pkName, final TableColumnInfo[] columns,
-		final ITableInfo ti)
+		final ITableInfo ti, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false) };
+		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false, qualifier, prefs, this) };
 	}
 
 	/**
@@ -429,10 +429,10 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropPrimaryKeySQL(java.lang.String,
-	 *      java.lang.String)
+	 *      java.lang.String, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
-	public String getDropPrimaryKeySQL(final String pkName, final String tableName)
+	public String getDropPrimaryKeySQL(final String pkName, final String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		final int featureId = DialectUtils.DROP_PRIMARY_KEY_TYPE;
 		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
@@ -441,12 +441,12 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropForeignKeySQL(java.lang.String,
-	 *      java.lang.String)
+	 *      java.lang.String, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
-	public String getDropForeignKeySQL(final String fkName, final String tableName)
+	public String getDropForeignKeySQL(final String fkName, final String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropForeignKeySQL(fkName, tableName);
+		return DialectUtils.getDropForeignKeySQL(fkName, tableName, qualifier, prefs, this);
 	}
 
 	/**
@@ -751,7 +751,7 @@ public class ProgressDialectExt extends CommonHibernateDialect implements Hibern
 		HashMap<String, String> valuesMap = new HashMap<String, String>();
 		valuesMap.put(ST_INDEX_NAME_KEY, indexName);
 		valuesMap.put(ST_TABLE_NAME_KEY, tableName);
-		return DialectUtils.getDropIndexSQL(st, valuesMap, qualifier, prefs, this);
+		return DialectUtils.bindAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**

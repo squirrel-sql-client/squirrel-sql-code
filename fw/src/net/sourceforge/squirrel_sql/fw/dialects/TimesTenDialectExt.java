@@ -219,14 +219,14 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	 * @return the drop SQL command.
 	 */
 	public List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints,
-		boolean isMaterializedView)
+		boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getTableDropSQL(iTableInfo,
 			true,
 			cascadeConstraints,
 			false,
 			DialectUtils.CASCADE_CLAUSE,
-			false);
+			false, qualifier, prefs, this);
 	}
 
 	/**
@@ -239,7 +239,7 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	 *           the columns that form the key
 	 * @return
 	 */
-	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columnNames, ITableInfo ti)
+	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columnNames, ITableInfo ti, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		int featureId = DialectUtils.ADD_PRIMARY_KEY_TYPE;
 		String msg = DialectUtils.getUnsupportedMessage(this, featureId);
@@ -396,9 +396,9 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	 *           the name of the table whose primary key should be dropped
 	 * @return
 	 */
-	public String getDropPrimaryKeySQL(String pkName, String tableName)
+	public String getDropPrimaryKeySQL(String pkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false);
+		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false, qualifier, prefs, this);
 	}
 
 	/**
@@ -410,9 +410,9 @@ public class TimesTenDialectExt extends CommonHibernateDialect implements Hibern
 	 *           the name of the table whose foreign key should be dropped
 	 * @return
 	 */
-	public String getDropForeignKeySQL(String fkName, String tableName)
+	public String getDropForeignKeySQL(String fkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropForeignKeySQL(fkName, tableName);
+		return DialectUtils.getDropForeignKeySQL(fkName, tableName, qualifier, prefs, this);
 	}
 
 	/**

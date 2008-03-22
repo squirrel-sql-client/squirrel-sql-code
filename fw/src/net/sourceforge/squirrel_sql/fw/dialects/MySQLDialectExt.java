@@ -316,7 +316,7 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 		SqlGenerationPreferences prefs)
 	{
 		String alterClause = DialectUtils.MODIFY_COLUMN_CLAUSE;
-		return new String[] { DialectUtils.getColumnNullableAlterSQL(info, this, alterClause, true) };
+		return new String[] { DialectUtils.getColumnNullableAlterSQL(info, this, alterClause, true, qualifier, prefs) };
 	}
 
 	/**
@@ -399,9 +399,9 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 *           the name of the table whose primary key should be dropped
 	 * @return
 	 */
-	public String getDropPrimaryKeySQL(String pkName, String tableName)
+	public String getDropPrimaryKeySQL(String pkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false);
+		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false, qualifier, prefs, this);
 	}
 
 	/**
@@ -413,7 +413,7 @@ public class MySQLDialectExt extends CommonHibernateDialect implements Hibernate
 	 *           the name of the table whose foreign key should be dropped
 	 * @return
 	 */
-	public String getDropForeignKeySQL(String fkName, String tableName)
+	public String getDropForeignKeySQL(String fkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		StringBuilder tmp = new StringBuilder();
 		tmp.append("ALTER TABLE ");

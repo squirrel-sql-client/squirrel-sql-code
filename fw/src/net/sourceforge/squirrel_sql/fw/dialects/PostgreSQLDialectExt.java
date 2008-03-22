@@ -290,14 +290,14 @@ public class PostgreSQLDialectExt extends CommonHibernateDialect implements Hibe
 	 * @return the drop SQL command.
 	 */
 	public List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints,
-		boolean isMaterializedView)
+		boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getTableDropSQL(iTableInfo,
 			true,
 			cascadeConstraints,
 			false,
 			DialectUtils.CASCADE_CLAUSE,
-			false);
+			false, qualifier, prefs, this);
 	}
 
 	/**
@@ -310,9 +310,9 @@ public class PostgreSQLDialectExt extends CommonHibernateDialect implements Hibe
 	 *           the columns that form the key
 	 * @return
 	 */
-	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] colInfos, ITableInfo ti)
+	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] colInfos, ITableInfo ti, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, colInfos, false) };
+		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, colInfos, false, qualifier, prefs, this) };
 	}
 
 	/**
@@ -328,7 +328,7 @@ public class PostgreSQLDialectExt extends CommonHibernateDialect implements Hibe
 	{
 		return DialectUtils.getColumnCommentAlterSQL(info.getTableName(),
 			info.getColumnName(),
-			info.getRemarks());
+			info.getRemarks(), qualifier, prefs, this);
 
 	}
 
@@ -376,11 +376,12 @@ public class PostgreSQLDialectExt extends CommonHibernateDialect implements Hibe
 	 *           the TableColumnInfo as it wants to be
 	 * @return the SQL to make the change
 	 */
-	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		String alterClause = DialectUtils.RENAME_COLUMN_CLAUSE;
 		String toClause = DialectUtils.TO_CLAUSE;
-		return DialectUtils.getColumnNameAlterSQL(from, to, alterClause, toClause);
+		return DialectUtils.getColumnNameAlterSQL(from, to, alterClause, toClause, qualifier, prefs, this);
 	}
 
 	/**
@@ -484,9 +485,9 @@ public class PostgreSQLDialectExt extends CommonHibernateDialect implements Hibe
 	 *           the name of the table whose primary key should be dropped
 	 * @return
 	 */
-	public String getDropPrimaryKeySQL(String pkName, String tableName)
+	public String getDropPrimaryKeySQL(String pkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true, false);
+		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true, false, qualifier, prefs, this);
 	}
 
 	/**
@@ -498,9 +499,9 @@ public class PostgreSQLDialectExt extends CommonHibernateDialect implements Hibe
 	 *           the name of the table whose foreign key should be dropped
 	 * @return
 	 */
-	public String getDropForeignKeySQL(String fkName, String tableName)
+	public String getDropForeignKeySQL(String fkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropForeignKeySQL(fkName, tableName);
+		return DialectUtils.getDropForeignKeySQL(fkName, tableName, qualifier, prefs, this);
 	}
 
 	/**
@@ -1174,7 +1175,7 @@ public class PostgreSQLDialectExt extends CommonHibernateDialect implements Hibe
 
 		if (column.getRemarks() != null && !"".equals(column.getRemarks()))
 		{
-			result.add(getColumnCommentAlterSQL(column, null, null));
+			result.add(getColumnCommentAlterSQL(column, qualifier, prefs));
 		}		
 		return result.toArray(new String[result.size()]);
 	}

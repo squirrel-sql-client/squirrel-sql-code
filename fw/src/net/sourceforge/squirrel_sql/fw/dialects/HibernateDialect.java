@@ -247,9 +247,14 @@ public interface HibernateDialect extends StringTemplateConstants
 	 *           whether or not to drop any FKs that may reference the specified table.
 	 * @param isMaterializedView
 	 *           whether or not the specified table info is actually a materialized view
+	 * @param qualifier
+	 *           qualifier of the table
+	 * @param prefs
+	 *           preferences for generated sql scripts
 	 * @return the drop SQL command.
 	 */
-	List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints, boolean isMaterializedView);
+	List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints,
+		boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs);
 
 	/**
 	 * Returns the SQL that forms the command to add a primary key to the specified table composed of the given
@@ -259,11 +264,16 @@ public interface HibernateDialect extends StringTemplateConstants
 	 *           the name of the constraint
 	 * @param ti
 	 *           the table to add a primary key to
+	 * @param qualifier
+	 *           qualifier of the table
+	 * @param prefs
+	 *           preferences for generated sql scripts
 	 * @param columnNames
 	 *           the columns that form the key
 	 * @return
 	 */
-	String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] colInfos, ITableInfo ti);
+	String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] colInfos, ITableInfo ti,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs);
 
 	/**
 	 * Returns the SQL fragment for adding a column in an alter table statement.
@@ -366,9 +376,14 @@ public interface HibernateDialect extends StringTemplateConstants
 	 *           the name of the primary key that should be dropped
 	 * @param tableName
 	 *           the name of the table whose primary key should be dropped
+	 * @param qualifier
+	 *           qualifier of the table
+	 * @param prefs
+	 *           preferences for generated sql scripts
 	 * @return
 	 */
-	String getDropPrimaryKeySQL(String pkName, String tableName);
+	String getDropPrimaryKeySQL(String pkName, String tableName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs);
 
 	/**
 	 * Returns the SQL command to drop the specified table's foreign key constraint.
@@ -377,9 +392,14 @@ public interface HibernateDialect extends StringTemplateConstants
 	 *           the name of the foreign key that should be dropped
 	 * @param tableName
 	 *           the name of the table whose foreign key should be dropped
+	 * @param qualifier
+	 *           qualifier of the table
+	 * @param prefs
+	 *           preferences for generated sql scripts
 	 * @return
 	 */
-	String getDropForeignKeySQL(String fkName, String tableName);
+	String getDropForeignKeySQL(String fkName, String tableName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs);
 
 	/**
 	 * Returns the SQL command to create the specified table.

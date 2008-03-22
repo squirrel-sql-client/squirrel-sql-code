@@ -2,19 +2,19 @@
  * Copyright (C) 2006 Rob Manning
  * manningr@users.sourceforge.net
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 package net.sourceforge.squirrel_sql.fw.dialects;
 
@@ -192,10 +192,10 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	 * @return the drop SQL command.
 	 */
 	public List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints,
-		boolean isMaterializedView)
+		boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		String cascadeClause = DialectUtils.CASCADE_CLAUSE;
-		return DialectUtils.getTableDropSQL(iTableInfo, false, cascadeConstraints, false, cascadeClause, false);
+		return DialectUtils.getTableDropSQL(iTableInfo, false, cascadeConstraints, false, cascadeClause, false, qualifier, prefs, this);
 	}
 
 	/**
@@ -208,11 +208,11 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	 *           the columns that form the key
 	 * @return
 	 */
-	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, ITableInfo ti)
+	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, ITableInfo ti, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// Axion doesn't allow column alterations of the nullable attribute.
 		// Fortunately, it doesn't require this to add a primary key.
-		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false) };
+		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false, qualifier, prefs, this) };
 	}
 
 	/**
@@ -286,11 +286,12 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	 *           the TableColumnInfo as it wants to be
 	 * @return the SQL to make the change
 	 */
-	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		String renameToClause = DialectUtils.RENAME_TO_CLAUSE;
-		return DialectUtils.getColumnNameAlterSQL(from, to, alterClause, renameToClause);
+		return DialectUtils.getColumnNameAlterSQL(from, to, alterClause, renameToClause, qualifier, prefs, this);
 	}
 
 	/**
@@ -344,7 +345,7 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	{
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		String defaultClause = DialectUtils.SET_DEFAULT_CLAUSE;
-		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, false, defaultClause);
+		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, false, defaultClause, qualifier, prefs);
 	}
 
 	/**
@@ -357,9 +358,9 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	 *           the name of the table whose primary key should be dropped
 	 * @return
 	 */
-	public String getDropPrimaryKeySQL(String pkName, String tableName)
+	public String getDropPrimaryKeySQL(String pkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false);
+		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false, qualifier, prefs, this);
 	}
 
 	/**
@@ -371,9 +372,9 @@ public class AxionDialectExt extends CommonHibernateDialect implements Hibernate
 	 *           the name of the table whose foreign key should be dropped
 	 * @return
 	 */
-	public String getDropForeignKeySQL(String fkName, String tableName)
+	public String getDropForeignKeySQL(String fkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropForeignKeySQL(fkName, tableName);
+		return DialectUtils.getDropForeignKeySQL(fkName, tableName, qualifier, prefs, this);
 	}
 
 	/**

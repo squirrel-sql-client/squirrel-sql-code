@@ -213,14 +213,14 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	 */
 	@Override
 	public List<String> getTableDropSQL(final ITableInfo iTableInfo, final boolean cascadeConstraints,
-		final boolean isMaterializedView)
+		final boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getTableDropSQL(iTableInfo,
 			true,
 			cascadeConstraints,
 			false,
 			DialectUtils.CASCADE_CLAUSE,
-			false);
+			false, qualifier, prefs, this);
 	}
 
 	/**
@@ -235,14 +235,14 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	 */
 	@Override
 	public String[] getAddPrimaryKeySQL(final String pkName, final TableColumnInfo[] columns,
-		final ITableInfo ti)
+		final ITableInfo ti, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		final ArrayList<String> result = new ArrayList<String>();
 		for (final TableColumnInfo info : columns)
 		{
 			result.add(getColumnNullableAlterSQL(info, false));
 		}
-		result.add(DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false));
+		result.add(DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false, qualifier, prefs, this));
 		return result.toArray(new String[result.size()]);
 	}
 
@@ -271,7 +271,7 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 		throws UnsupportedOperationException
 	{
-		return DialectUtils.getColumnCommentAlterSQL(info, null, null, null);
+		return DialectUtils.getColumnCommentAlterSQL(info, qualifier, prefs, this);
 	}
 
 	/**
@@ -353,7 +353,7 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	@Override
 	public String getColumnNameAlterSQL(final TableColumnInfo from, final TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getColumnRenameSQL(from, to);
+		return DialectUtils.getColumnRenameSQL(from, to, qualifier, prefs, this);
 	}
 
 	/**
@@ -383,7 +383,7 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 		throws UnsupportedOperationException
 	{
 		final String alterClause = DialectUtils.MODIFY_CLAUSE;
-		return DialectUtils.getColumnTypeAlterSQL(this, alterClause, "", false, from, to);
+		return DialectUtils.getColumnTypeAlterSQL(this, alterClause, "", false, from, to, qualifier, prefs);
 	}
 
 	/**
@@ -419,7 +419,7 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 		{
 			defaultClause = DialectUtils.DROP_DEFAULT_CLAUSE;
 		}
-		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, false, defaultClause);
+		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, false, defaultClause, qualifier, prefs);
 	}
 
 	/**
@@ -432,9 +432,9 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	 * @return
 	 */
 	@Override
-	public String getDropPrimaryKeySQL(final String pkName, final String tableName)
+	public String getDropPrimaryKeySQL(final String pkName, final String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false);
+		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, false, false, qualifier, prefs, this);
 	}
 
 	/**
@@ -447,9 +447,9 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 	 * @return
 	 */
 	@Override
-	public String getDropForeignKeySQL(final String fkName, final String tableName)
+	public String getDropForeignKeySQL(final String fkName, final String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropForeignKeySQL(fkName, tableName);
+		return DialectUtils.getDropForeignKeySQL(fkName, tableName, qualifier, prefs, this);
 	}
 
 	/**
@@ -541,7 +541,7 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 
 		if (column.getRemarks() != null && !"".equals(column.getRemarks()))
 		{
-			result.add(getColumnCommentAlterSQL(column, null, null));
+			result.add(getColumnCommentAlterSQL(column, qualifier, prefs));
 		}
 
 		return result.toArray(new String[result.size()]);
@@ -780,7 +780,7 @@ public class MAXDBDialectExt extends CommonHibernateDialect implements Hibernate
 		final HashMap<String, String> valuesMap = new HashMap<String, String>();
 		valuesMap.put(ST_INDEX_NAME_KEY, indexName);
 		valuesMap.put(ST_TABLE_NAME_KEY, tableName);
-		return DialectUtils.getDropIndexSQL(st, valuesMap, qualifier, prefs, this);
+		return DialectUtils.bindAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
 	/**

@@ -190,35 +190,35 @@ public class IngresDialectExt extends CommonHibernateDialect implements Hibernat
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTableDropSQL(net.sourceforge.squirrel_sql.fw.sql.ITableInfo,
-	 *      boolean, boolean)
+	 *      boolean, boolean, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	public List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints,
-		boolean isMaterializedView)
+		boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getTableDropSQL(iTableInfo,
 			false,
 			cascadeConstraints,
 			false,
 			DialectUtils.CASCADE_CLAUSE,
-			false);
+			false, qualifier, prefs, this);
 	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddPrimaryKeySQL(java.lang.String,
 	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo[],
-	 *      net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+	 *      net.sourceforge.squirrel_sql.fw.sql.ITableInfo, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
-	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, ITableInfo ti)
+	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, ITableInfo ti, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		ArrayList<String> result = new ArrayList<String>();
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		for (int i = 0; i < columns.length; i++)
 		{
 			TableColumnInfo info = columns[i];
-			String notNullSQL = DialectUtils.getColumnNullableAlterSQL(info, false, this, alterClause, true);
+			String notNullSQL = DialectUtils.getColumnNullableAlterSQL(info, false, this, alterClause, true, qualifier, prefs);
 			result.add(notNullSQL);
 		}
-		result.add(DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false));
+		result.add(DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false, qualifier, prefs, this));
 		return result.toArray(new String[result.size()]);
 	}
 
@@ -258,7 +258,7 @@ public class IngresDialectExt extends CommonHibernateDialect implements Hibernat
 		SqlGenerationPreferences prefs)
 	{
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
-		return new String[] { DialectUtils.getColumnNullableAlterSQL(info, this, alterClause, true) };
+		return new String[] { DialectUtils.getColumnNullableAlterSQL(info, this, alterClause, true, qualifier, prefs) };
 	}
 
 	/**
@@ -301,7 +301,7 @@ public class IngresDialectExt extends CommonHibernateDialect implements Hibernat
 	{
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		String setClause = "";
-		return DialectUtils.getColumnTypeAlterSQL(this, alterClause, setClause, false, from, to);
+		return DialectUtils.getColumnTypeAlterSQL(this, alterClause, setClause, false, from, to, qualifier, prefs);
 	}
 
 	/**
@@ -328,25 +328,25 @@ public class IngresDialectExt extends CommonHibernateDialect implements Hibernat
 	{
 		String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		String defaultClause = DialectUtils.DEFAULT_CLAUSE;
-		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, true, defaultClause);
+		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, true, defaultClause, qualifier, prefs);
 	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropPrimaryKeySQL(java.lang.String,
-	 *      java.lang.String)
+	 *      java.lang.String, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
-	public String getDropPrimaryKeySQL(String pkName, String tableName)
+	public String getDropPrimaryKeySQL(String pkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true, true);
+		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true, true, qualifier, prefs, this);
 	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropForeignKeySQL(java.lang.String,
-	 *      java.lang.String)
+	 *      java.lang.String, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
-	public String getDropForeignKeySQL(String fkName, String tableName)
+	public String getDropForeignKeySQL(String fkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropForeignKeySQL(fkName, tableName);
+		return DialectUtils.getDropForeignKeySQL(fkName, tableName, qualifier, prefs, this);
 	}
 
 	/**

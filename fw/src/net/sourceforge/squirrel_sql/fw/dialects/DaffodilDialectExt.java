@@ -212,30 +212,30 @@ public class DaffodilDialectExt extends CommonHibernateDialect implements Hibern
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getTableDropSQL(net.sourceforge.squirrel_sql.fw.sql.ITableInfo,
-	 *      boolean, boolean)
+	 *      boolean, boolean, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
 	public List<String> getTableDropSQL(final ITableInfo iTableInfo, final boolean cascadeConstraints,
-		final boolean isMaterializedView)
+		final boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getTableDropSQL(iTableInfo,
 			true,
 			cascadeConstraints,
 			false,
 			DialectUtils.CASCADE_CLAUSE,
-			false);
+			false, qualifier, prefs, this);
 	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddPrimaryKeySQL(java.lang.String,
 	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo[],
-	 *      net.sourceforge.squirrel_sql.fw.sql.ITableInfo)
+	 *      net.sourceforge.squirrel_sql.fw.sql.ITableInfo, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
 	public String[] getAddPrimaryKeySQL(final String pkName, final TableColumnInfo[] columns,
-		final ITableInfo ti)
+		final ITableInfo ti, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false) };
+		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, false, qualifier, prefs, this) };
 	}
 
 	/**
@@ -343,27 +343,27 @@ public class DaffodilDialectExt extends CommonHibernateDialect implements Hibern
 	{
 		final String alterClause = DialectUtils.ALTER_COLUMN_CLAUSE;
 		final String defaultClause = DialectUtils.SET_DEFAULT_CLAUSE;
-		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, false, defaultClause);
+		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, false, defaultClause, qualifier, prefs);
 	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropPrimaryKeySQL(java.lang.String,
-	 *      java.lang.String)
+	 *      java.lang.String, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
-	public String getDropPrimaryKeySQL(final String pkName, final String tableName)
+	public String getDropPrimaryKeySQL(final String pkName, final String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true, true);
+		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true, true, qualifier, prefs, this);
 	}
 
 	/**
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getDropForeignKeySQL(java.lang.String,
-	 *      java.lang.String)
+	 *      java.lang.String, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
 	@Override
-	public String getDropForeignKeySQL(final String fkName, final String tableName)
+	public String getDropForeignKeySQL(final String fkName, final String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropForeignKeySQL(fkName, tableName);
+		return DialectUtils.getDropForeignKeySQL(fkName, tableName, qualifier, prefs, this);
 	}
 
 	/**

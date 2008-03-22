@@ -212,14 +212,14 @@ public class InformixDialectExt extends CommonHibernateDialect implements Hibern
 	 * @return the drop SQL command.
 	 */
 	public List<String> getTableDropSQL(ITableInfo iTableInfo, boolean cascadeConstraints,
-		boolean isMaterializedView)
+		boolean isMaterializedView, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getTableDropSQL(iTableInfo,
 			true,
 			cascadeConstraints,
 			false,
 			DialectUtils.CASCADE_CLAUSE,
-			false);
+			false, qualifier, prefs, this);
 	}
 
 	/**
@@ -234,12 +234,12 @@ public class InformixDialectExt extends CommonHibernateDialect implements Hibern
 	 *           the columns that form the key
 	 * @return
 	 */
-	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, ITableInfo ti)
+	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, ITableInfo ti, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		// TODO: should also make sure that each of the columns is made "NOT NULL"
 
-		return new String[] { DialectUtils.getAddIndexSQL(pkName, true, columns),
-				DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, true) };
+		return new String[] { DialectUtils.getAddIndexSQL(pkName, true, columns, qualifier, prefs, this),
+				DialectUtils.getAddPrimaryKeySQL(ti, pkName, columns, true, qualifier, prefs, this) };
 	}
 
 	/**
@@ -290,7 +290,7 @@ public class InformixDialectExt extends CommonHibernateDialect implements Hibern
 		SqlGenerationPreferences prefs)
 	{
 		String alterClause = DialectUtils.MODIFY_CLAUSE;
-		return new String[] { DialectUtils.getColumnNullableAlterSQL(info, this, alterClause, true) };
+		return new String[] { DialectUtils.getColumnNullableAlterSQL(info, this, alterClause, true, qualifier, prefs) };
 	}
 
 	/**
@@ -314,7 +314,7 @@ public class InformixDialectExt extends CommonHibernateDialect implements Hibern
 	 */
 	public String getColumnNameAlterSQL(TableColumnInfo from, TableColumnInfo to, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getColumnRenameSQL(from, to);
+		return DialectUtils.getColumnRenameSQL(from, to, qualifier, prefs, this);
 	}
 
 	/**
@@ -343,7 +343,7 @@ public class InformixDialectExt extends CommonHibernateDialect implements Hibern
 	{
 		String alterClause = DialectUtils.MODIFY_CLAUSE;
 		String setClause = null;
-		return DialectUtils.getColumnTypeAlterSQL(this, alterClause, setClause, false, from, to);
+		return DialectUtils.getColumnTypeAlterSQL(this, alterClause, setClause, false, from, to, qualifier, prefs);
 	}
 
 	/**
@@ -368,7 +368,7 @@ public class InformixDialectExt extends CommonHibernateDialect implements Hibern
 	{
 		String alterClause = DialectUtils.MODIFY_CLAUSE;
 		String defaultClause = DialectUtils.DEFAULT_CLAUSE;
-		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, true, defaultClause);
+		return DialectUtils.getColumnDefaultAlterSQL(this, info, alterClause, true, defaultClause, qualifier, prefs);
 	}
 
 	/**
@@ -380,9 +380,9 @@ public class InformixDialectExt extends CommonHibernateDialect implements Hibern
 	 *           the name of the table whose primary key should be dropped
 	 * @return
 	 */
-	public String getDropPrimaryKeySQL(String pkName, String tableName)
+	public String getDropPrimaryKeySQL(String pkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true, false);
+		return DialectUtils.getDropPrimaryKeySQL(pkName, tableName, true, false, qualifier, prefs, this);
 	}
 
 	/**
@@ -394,9 +394,9 @@ public class InformixDialectExt extends CommonHibernateDialect implements Hibern
 	 *           the name of the table whose foreign key should be dropped
 	 * @return
 	 */
-	public String getDropForeignKeySQL(String fkName, String tableName)
+	public String getDropForeignKeySQL(String fkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return DialectUtils.getDropForeignKeySQL(fkName, tableName);
+		return DialectUtils.getDropForeignKeySQL(fkName, tableName, qualifier, prefs, this);
 	}
 
 	/**
