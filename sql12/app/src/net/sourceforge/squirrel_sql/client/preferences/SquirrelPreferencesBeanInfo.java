@@ -119,6 +119,9 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
                "getShowErrorLogMessages", "setShowErrorLogMessages"),
             new PropertyDescriptor(SAVE_PREFERENCES_IMMEDIATELY, CLS,
                "getSavePreferencesImmediately", "setSavePreferencesImmediately"),
+            new PropertyDescriptor(SHOW_PLEASE_WAIT_DIALOG, CLS,
+               "getShowPleaseWaitDialog", "setShowPleaseWaitDialog"),            
+               
          };
       }
    }

@@ -89,6 +89,7 @@ public class SquirrelPreferences implements Serializable
       String SHOW_INFO_LOG_MESSAGES = "showInfoLogMessages";
       String SHOW_ERROR_LOG_MESSAGES = "showErrorLogMessages";
       String SAVE_PREFERENCES_IMMEDIATELY = "savePreferencesImmediately";
+      String SHOW_PLEASE_WAIT_DIALOG = "showPleaseWaitDialog";
    }
 
    public interface IJdbcDebugTypes
@@ -220,6 +221,8 @@ public class SquirrelPreferences implements Serializable
    
 	/** Object to handle property change events. */
 	private transient PropertyChangeReporter _propChgReporter;
+	
+	private boolean _showPleaseWaitDialog;	
 
 	/**
 	 * Default ctor.
@@ -1079,4 +1082,21 @@ public class SquirrelPreferences implements Serializable
        return _savePreferencesImmediately;
    }   
    
+   /**
+    * @return a boolean value indicating whether or not to show a cancel dialog that allows a user to cancel
+    * long-running queries.
+    */
+	public boolean getShowPleaseWaitDialog() 
+	{
+		return _showPleaseWaitDialog;
+	}
+	
+	/**
+	 * Sets whether or not to show a cancel dialog that allows a user to cancel long-running queries.
+	 * 
+	 * @param showPleaseWaitDialog boolean value 
+	 */
+	public void setShowPleaseWaitDialog(boolean showPleaseWaitDialog) {
+		this._showPleaseWaitDialog = showPleaseWaitDialog;
+	}   
 }

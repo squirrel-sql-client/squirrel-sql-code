@@ -27,6 +27,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
+import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.DataSetUpdateableTableModelImpl;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.PleaseWaitDialog;
@@ -91,8 +92,13 @@ public class ContentsTab extends BaseTableTab
 
 	private ObjectTreePanel _treePanel = null;
 	
+	private PleaseWaitDialog _waitDialog = null;
+	
+	private SquirrelPreferences _prefs = null;
+	
    public ContentsTab(ObjectTreePanel treePanel) { 
       _treePanel = treePanel;
+      _prefs = _treePanel.getSession().getApplication().getSquirrelPreferences();
    }
 
 	/**
@@ -210,7 +216,6 @@ public class ContentsTab extends BaseTableTab
       final ISession session = getSession();
       final ISQLConnection conn = session.getSQLConnection();
       ISQLDatabaseMetaData md = session.getMetaData();
-      PleaseWaitDialog waitDialog = null;
       
       try
       {
@@ -337,20 +342,9 @@ public class ContentsTab extends BaseTableTab
                    s_log.debug("createDataSet running SQL: "+buf.toString());
                }
                               
-               if (objectTreeTabIsSelected()) {
-                  // Save off selections so that selection/focus can be restored 
-                  // later.
-
-                  _treePanel.saveSelectedPaths();
-                  // Initialize the dialog to ask the user to wait, because 
-                  // the query can take a while.  Only do this if the object 
-                  // tree (and hence this contents tab) is visible.
-                  waitDialog = new PleaseWaitDialog(stmt, _app.getMessageHandler());
-                  waitDialog.showDialog(_app);
-                  
-                  _treePanel.restoreSavedSelectedPaths();
-               }
-           	   rs = stmt.executeQuery(buf.toString());
+               showWaitDialog(stmt);
+               
+               rs = stmt.executeQuery(buf.toString());
 
             }
             catch (SQLException ex)
@@ -473,7 +467,7 @@ public class ContentsTab extends BaseTableTab
       {
          throw new DataSetException(ex);
       } finally {
-          disposeWaitDialog(waitDialog);
+          disposeWaitDialog(_waitDialog);
       }
    }
 
@@ -496,12 +490,43 @@ public class ContentsTab extends BaseTableTab
    }
    
    /**
+    * Initialize the dialog to ask the user to wait, because the query can 
+    * take a while, but only if the ObjectTreeTab is selected.
+    * 
+    * @param stmt the Statement to cancel.
+    */
+   private void showWaitDialog(final Statement stmt) {
+      
+   	
+      if (!_prefs.getShowPleaseWaitDialog()) return;
+      
+      // Only do this if the object tree 
+      // (and hence this contents tab) is visible.
+      if (objectTreeTabIsSelected()) {
+         
+         // Save off selections so that selection/focus can be restored 
+         // later.
+         _treePanel.saveSelectedPaths();
+         
+         GUIUtils.processOnSwingEventThread(new Runnable() {
+            public void run() {
+               _waitDialog = new PleaseWaitDialog(stmt, _app.getMessageHandler());
+               _waitDialog.showDialog(_app);                                          
+               // Restore the paths
+               _treePanel.restoreSavedSelectedPaths();
+            }
+         });         
+      }
+   }
+   
+   /**
     * Hide the dialog if one is shown
     * 
     * @param waitDialog the PleaseWaitDialog to close - can be null.
     */
    private void disposeWaitDialog(final PleaseWaitDialog waitDialog) {
-      if (waitDialog != null) {
+   	if (!_prefs.getShowPleaseWaitDialog()) return;
+   	if (waitDialog != null) {
           GUIUtils.processOnSwingEventThread(new Runnable() {
               public void run() {
                   waitDialog.dispose();

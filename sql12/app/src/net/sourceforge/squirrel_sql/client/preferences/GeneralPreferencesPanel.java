@@ -123,7 +123,8 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
       private JCheckBox _warnForUnsavedBufferEdits = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.warnForUnsavedBufferEdits"));
       private JCheckBox _showSessionStartupTimeHint = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showSessionStartupTimeHint"));
       private JCheckBox _savePreferencesImmediately = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.savePreferencesImmediately"));
-
+      private JCheckBox _showPleaseWaitDialog = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showPleaseWaitDialog"));
+      
       MyPanel()
 		{
 			super(new GridBagLayout());
@@ -149,7 +150,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
          _warnForUnsavedBufferEdits.setSelected(prefs.getWarnForUnsavedBufferEdits());
          _showSessionStartupTimeHint.setSelected(prefs.getShowSessionStartupTimeHint());
          _savePreferencesImmediately.setSelected(prefs.getSavePreferencesImmediately());
-         
+         _showPleaseWaitDialog.setSelected(prefs.getShowPleaseWaitDialog());
       }
 
       void applyChanges(SquirrelPreferences prefs)
@@ -266,6 +267,10 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
          gbc.gridx = 0;
          gbc.gridy = 5;
          pnl.add(_savePreferencesImmediately, gbc);
+         
+         gbc.gridx = 0;
+         gbc.gridy = 6;
+         pnl.add(_showPleaseWaitDialog, gbc);
          
          return pnl;
 		}
