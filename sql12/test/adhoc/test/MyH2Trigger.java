@@ -37,13 +37,12 @@ public class MyH2Trigger implements Trigger {
         
     }
 
-    /**
-     * @see org.h2.api.Trigger#init(java.sql.Connection, java.lang.String, java.lang.String, java.lang.String)
-     */
-    public void init(Connection arg0, String arg1, String arg2, String arg3) throws SQLException {
-        System.out.println("init was called");
-        
-    }
+	public void init(Connection arg0, String arg1, String arg2, String arg3, boolean arg4, int arg5)
+		throws SQLException
+	{
+		 System.out.println("init was called");
+		
+	}
     
     
 }
