@@ -6,6 +6,8 @@ SQuirreL SQL Client Change Log
 
 Bug-Fixes: 
 
+1858937: Encoding parameter in desktop file wrong
+
 1830649: Focus Loss
 
 
