@@ -124,6 +124,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
       private JCheckBox _showSessionStartupTimeHint = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showSessionStartupTimeHint"));
       private JCheckBox _savePreferencesImmediately = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.savePreferencesImmediately"));
       private JCheckBox _selectOnRightMouseClick = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.selectOnRightMouseClick"));
+      private JCheckBox _showPleaseWaitDialog = new JCheckBox(s_stringMgr.getString("GeneralPreferencesPanel.showPleaseWaitDialog"));
       
       MyPanel()
 		{
@@ -151,6 +152,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
          _showSessionStartupTimeHint.setSelected(prefs.getShowSessionStartupTimeHint());
          _savePreferencesImmediately.setSelected(prefs.getSavePreferencesImmediately());
          _selectOnRightMouseClick.setSelected(prefs.getSelectOnRightMouseClick());
+         _showPleaseWaitDialog.setSelected(prefs.getShowPleaseWaitDialog());
       }
 
       void applyChanges(SquirrelPreferences prefs)
@@ -172,6 +174,7 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
          prefs.setShowSessionStartupTimeHint(_showSessionStartupTimeHint.isSelected());
          prefs.setSavePreferencesImmediately(_savePreferencesImmediately.isSelected());
          prefs.setSelectOnRightMouseClick(_selectOnRightMouseClick.isSelected());
+         prefs.setShowPleaseWaitDialog(_showPleaseWaitDialog.isSelected());
       }
 
 		private void createUserInterface()
@@ -272,6 +275,10 @@ class GeneralPreferencesPanel implements IGlobalPreferencesPanel
          gbc.gridx = 0;
          gbc.gridy = 6;
          pnl.add(_selectOnRightMouseClick, gbc);
+
+         gbc.gridx = 0;
+         gbc.gridy = 7;
+         pnl.add(_showPleaseWaitDialog, gbc);
          
          return pnl;
 		}

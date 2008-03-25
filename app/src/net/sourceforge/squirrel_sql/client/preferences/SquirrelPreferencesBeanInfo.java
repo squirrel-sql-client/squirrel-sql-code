@@ -123,6 +123,8 @@ public class SquirrelPreferencesBeanInfo extends SimpleBeanInfo
                "getSavePreferencesImmediately", "setSavePreferencesImmediately"),
             new PropertyDescriptor(SELECT_ON_RIGHT_MOUSE_CLICK, CLS,
                "getSelectOnRightMouseClick", "setSelectOnRightMouseClick"),            
+            new PropertyDescriptor(SHOW_PLEASE_WAIT_DIALOG, CLS,
+               "getShowPleaseWaitDialog", "setShowPleaseWaitDialog"),            
                
          };
       }

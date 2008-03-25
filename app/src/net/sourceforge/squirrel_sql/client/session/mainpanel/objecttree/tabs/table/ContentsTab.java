@@ -27,6 +27,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import net.sourceforge.squirrel_sql.client.gui.session.SessionPanel;
+import net.sourceforge.squirrel_sql.client.preferences.SquirrelPreferences;
 import net.sourceforge.squirrel_sql.client.session.DataSetUpdateableTableModelImpl;
 import net.sourceforge.squirrel_sql.client.session.ISession;
 import net.sourceforge.squirrel_sql.client.session.mainpanel.PleaseWaitDialog;
@@ -91,10 +92,14 @@ public class ContentsTab extends BaseTableTab
 
 	private ObjectTreePanel _treePanel = null;
 	
-   PleaseWaitDialog waitDialog = null;
-	
+   private PleaseWaitDialog _waitDialog = null;
+
+	private SquirrelPreferences _prefs = null;
+   
    public ContentsTab(ObjectTreePanel treePanel) { 
       _treePanel = treePanel;
+   	_prefs = _treePanel.getSession().getApplication().getSquirrelPreferences();
+
    }
 
 	/**
@@ -496,7 +501,8 @@ public class ContentsTab extends BaseTableTab
     */
    private void showWaitDialog(final Statement stmt) {
       
-      if (true) return;
+   	
+      if (!_prefs.getShowPleaseWaitDialog()) return;
       
       // Only do this if the object tree 
       // (and hence this contents tab) is visible.
@@ -508,8 +514,8 @@ public class ContentsTab extends BaseTableTab
          
          GUIUtils.processOnSwingEventThread(new Runnable() {
             public void run() {
-               waitDialog = new PleaseWaitDialog(stmt, _app.getMessageHandler());
-               waitDialog.showDialog(_app);                                          
+               _waitDialog = new PleaseWaitDialog(stmt, _app.getMessageHandler());
+               _waitDialog.showDialog(_app);                                          
                // Restore the paths
                _treePanel.restoreSavedSelectedPaths();
             }
@@ -520,13 +526,14 @@ public class ContentsTab extends BaseTableTab
    /**
     * Hide the dialog if one is shown
     * 
-    * @param waitDialog the PleaseWaitDialog to close - can be null.
+    * @param _waitDialog the PleaseWaitDialog to close - can be null.
     */
    private void disposeWaitDialog() {
-      if (waitDialog != null) {
+   	if (!_prefs.getShowPleaseWaitDialog()) return;
+      if (_waitDialog != null) {
           GUIUtils.processOnSwingEventThread(new Runnable() {
               public void run() {
-                  waitDialog.dispose();
+                  _waitDialog.dispose();
               }
           });
       }       
