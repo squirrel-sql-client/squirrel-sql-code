@@ -14,7 +14,8 @@
       applications="no"
       startMenu="no"
       startup="no"
-      type="Application"> 
+      type="Application"
+      encoding="UTF-8" >
       <createForPack name="Base"/>
    </shortcut>
 </shortcuts>
