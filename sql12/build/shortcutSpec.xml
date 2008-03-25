@@ -13,7 +13,8 @@
       desktop="yes"
       applications="no"
       startMenu="no"
-      startup="no">
+      startup="no"
+      encoding="UTF-8">
       <createForPack name="Base"/>
    </shortcut>
 </shortcuts>
