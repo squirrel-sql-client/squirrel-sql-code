@@ -16,17 +16,10 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.client.update;
+package net.sourceforge.squirrel_sql.client.update.gui.installer.event;
 
-public enum InstallEventType {
 
-   BACKUP_STARTED,
-   FILE_BACKUP_STARTED,
-   FILE_BACKUP_COMPLETE,
-   BACKUP_COMPLETE,
-   INSTALL_STARTED,
-   INSTALL_COMPLETE,
-   FILE_INSTALL_STARTED,
-   FILE_INSTALL_COMPLETE
-   
+public interface InstallStatusListener {
+
+   void handleInstallStatusEvent(InstallStatusEvent evt);
 }

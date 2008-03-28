@@ -16,44 +16,20 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.client.update;
+package net.sourceforge.squirrel_sql.client.update.gui.installer.event;
 
-public class InstallStatusEvent {
+/**
+ * Interface for factory
+ * 
+ * @author manningr
+ */
+public interface InstallStatusEventFactory
+{
 
-   String _artifactName;
-   
-   InstallEventType _type;
-   
-   public InstallStatusEvent(InstallEventType type) {
-      this._type = type;
-   }
+	/**
+	 * @param installEventType
+	 * @return
+	 */
+	InstallStatusEvent create(InstallEventType installEventType);
 
-   /**
-    * @return the _artifactName
-    */
-   public String getArtifactName() {
-      return _artifactName;
-   }
-
-   /**
-    * @param name the _artifactName to set
-    */
-   public void setArtifactName(String name) {
-      _artifactName = name;
-   }
-
-   /**
-    * @return the event type
-    */
-   public InstallEventType getType() {
-      return _type;
-   }
-
-   /**
-    * @param _type the event type to set
-    */
-   public void setType(InstallEventType type) {
-      this._type = type;
-   }
-   
 }

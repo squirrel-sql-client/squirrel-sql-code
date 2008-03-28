@@ -20,6 +20,7 @@ package net.sourceforge.squirrel_sql.client.update.gui;
 
 import java.io.Serializable;
 
+import net.sourceforge.squirrel_sql.client.update.UpdateUtil;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 
@@ -48,15 +49,6 @@ public class ArtifactStatus implements Serializable {
       String PLUGIN_LABEL = s_stringMgr.getString("ArtifactStatus.pluginLabel");
    }
       
-   /** the value for artifact type that identifies it as a core artifact */
-   public static final String CORE_ARTIFACT_ID = "core";
-
-   /** the value for artifact type that identifies it as a plugin artifact */
-   public static final String PLUGIN_ARTIFACT_ID = "plugin";
-
-   /** the value for artifact type that identifies it as a plugin artifact */
-   public static final String TRANSLATION_ARTIFACT_ID = "i18n";   
-   
    private String name = null;
    private String type;
    private boolean installed;
@@ -101,15 +93,15 @@ public class ArtifactStatus implements Serializable {
    }
 
    public boolean isCoreArtifact() {
-      return CORE_ARTIFACT_ID.equals(this.type);
+      return UpdateUtil.CORE_ARTIFACT_ID.equals(this.type);
    }
    
    public boolean isPluginArtifact() {
-      return PLUGIN_ARTIFACT_ID.equals(this.type);
+      return UpdateUtil.PLUGIN_ARTIFACT_ID.equals(this.type);
    }
    
    public boolean isTranslationArtifact() {
-      return TRANSLATION_ARTIFACT_ID.equals(this.type);
+      return UpdateUtil.TRANSLATION_ARTIFACT_ID.equals(this.type);
    }
    
    /**

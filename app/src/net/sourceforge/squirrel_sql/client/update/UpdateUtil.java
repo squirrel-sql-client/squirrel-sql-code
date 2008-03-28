@@ -56,6 +56,20 @@ public interface UpdateUtil {
    public static final String CHANGE_LIST_FILENAME = "changeList.xml";
 
    /**
+    * This is the directory below the update directory where updated files are downloaded for installation.
+    */
+	public final static String DOWNLOADS_DIR_NAME = "downloads";
+
+	/** the value for artifact type that identifies it as a core artifact */
+	public static final String CORE_ARTIFACT_ID = "core";
+
+	/** the value for artifact type that identifies it as a plugin artifact */
+	public static final String PLUGIN_ARTIFACT_ID = "plugin";
+
+	/** the value for artifact type that identifies it as a plugin artifact */
+	public static final String TRANSLATION_ARTIFACT_ID = "i18n";
+
+   /**
     * Downloads the current release available at the specified host and path.
     * 
     * @param host
@@ -138,6 +152,12 @@ public interface UpdateUtil {
 
    File getSquirrelLibraryDir();
 
+   /**
+    * Returns the file that represents the list of changes to make when running the prelaunch update
+    * application
+    * 
+    * @return a File representing the change list.
+    */
    File getChangeListFile();
    
    File checkDir(File parent, String child);
@@ -205,5 +225,19 @@ public interface UpdateUtil {
     * @param manager the _pluginManager to set
     */
    void setPluginManager(PluginManager manager);
+
+	/**
+	 * Returns the top-level directory that contains artifact type sub-folders into which downloaded files are
+	 * copied.
+	 *  
+	 * @return a File representing the root directory of the download tree.
+	 */
+	public File getDownloadsDir();
+
+	public File getCoreDownloadsDir();
+
+	public File getPluginDownloadsDir();
+
+	public File getI18nDownloadsDir();
 
 }

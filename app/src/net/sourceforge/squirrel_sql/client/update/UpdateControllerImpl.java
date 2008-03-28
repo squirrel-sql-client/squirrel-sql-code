@@ -37,6 +37,10 @@ import net.sourceforge.squirrel_sql.client.plugin.PluginManager;
 import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesActionListener;
 import net.sourceforge.squirrel_sql.client.preferences.GlobalPreferencesSheet;
 import net.sourceforge.squirrel_sql.client.preferences.UpdatePreferencesPanel;
+import net.sourceforge.squirrel_sql.client.update.downloader.ArtifactDownloader;
+import net.sourceforge.squirrel_sql.client.update.downloader.event.DownloadEventType;
+import net.sourceforge.squirrel_sql.client.update.downloader.event.DownloadStatusEvent;
+import net.sourceforge.squirrel_sql.client.update.downloader.event.DownloadStatusListener;
 import net.sourceforge.squirrel_sql.client.update.gui.ArtifactAction;
 import net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus;
 import net.sourceforge.squirrel_sql.client.update.gui.CheckUpdateListener;
@@ -399,7 +403,7 @@ public class UpdateControllerImpl implements UpdateController,
       int currentFile = 0;
       int totalFiles = 0;
       /**
-       * @see net.sourceforge.squirrel_sql.client.update.DownloadStatusListener#handleDownloadStatusEvent(net.sourceforge.squirrel_sql.client.update.DownloadStatusEvent)
+       * @see net.sourceforge.squirrel_sql.client.update.downloader.event.DownloadStatusListener#handleDownloadStatusEvent(net.sourceforge.squirrel_sql.client.update.downloader.event.DownloadStatusEvent)
        */
       public void handleDownloadStatusEvent(DownloadStatusEvent evt) {
          
