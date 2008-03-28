@@ -106,7 +106,14 @@ public class AddAutoIncrementCommand extends AbstractRefactoringCommand
 			DatabaseObjectQualifier qualifier =
 				new DatabaseObjectQualifier(columnToModify.getCatalogName(), columnToModify.getSchemaName());
 
-			result = _dialect.getAddAutoIncrementSQL(columnToModify, qualifier, _sqlPrefs);
+			// TODO: Allow the user to specify the sequence name for dialects that don't natively support 
+			// auto-increment columns without using sequence/trigger combo.
+			final StringBuilder sequenceName = new StringBuilder();
+			sequenceName.append(columnToModify.getTableName().toUpperCase()).append("_");
+			sequenceName.append(columnToModify.getColumnName().toUpperCase()).append("_SEQ");
+			
+			result =
+				_dialect.getAddAutoIncrementSQL(columnToModify, sequenceName.toString(), qualifier, _sqlPrefs);
 		} else
 		{
 			_session.showMessage(s_stringMgr.getString("AddAutoIncrementCommand.unsupportedOperationMsg",

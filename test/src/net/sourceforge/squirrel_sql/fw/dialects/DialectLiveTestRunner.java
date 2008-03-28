@@ -112,49 +112,64 @@ public class DialectLiveTestRunner {
    
    TableColumnInfo addColumn = null;
   
-   TableColumnInfo myIdColumn = null;
+   TableColumnInfo uniqueConstraintTableColumnInfo = null;
    
    private TableColumnInfo dropConstraintColumn = null;
    
-   private static final String DB2_PK_COLNAME = "db2pkCol";
+   private static final String DB2_PK_COLNAME = "DB2PKCOL";
 
-   private DatabaseObjectQualifier qualifier = new DatabaseObjectQualifier();
+   private DatabaseObjectQualifier qualifier = null;
    
    private SqlGenerationPreferences prefs = new SqlGenerationPreferences();
    
-   private static final String fkParentTableName = "fkTestParentTable";
-   private static final String fkChildTableName = "fkTestChildTable";
-   private static final String fkParentColumnName = "parentid";
-   private static final String fkChildColumnName = "fkchildid";
-   private static final String testUniqueConstraintTableName = "testUniqueConstraintTable";
-   private static final String uniqueConstraintName = "uniq_constraint";
+   private static String fkParentTableName = "fkTestParentTable";
+   private static String fkChildTableName = "fkTestChildTable";
+   private static String fkParentColumnName = "parentid";
+   private static String fkChildColumnName = "fkchildid";
+   private static String fkChildPrimaryKeyColumnName = "childpkid";
+   private static String testUniqueConstraintTableName = "testUniqueConstraintTable";
+   private static String uniqueConstraintName = "uniq_constraint";
+   private static String uniqueConstraintColName = "uid";
    // this is the constraint that is dropped in drop constraint test
-   private static final String secondUniqueConstraintName = "uniq_constraint2";
+   private static String secondUniqueConstraintName = "uniq_constraint2";
    // this is the column on which the constraint to be dropped is defined
-   private static final String secondUniqueColumnName = "secondUniqueColumn";
-
-   private static final String autoIncrementTableName = "testAutoIncrementTable";
-   private static final String autoIncrementColumnName = "myid";
-   private static final String integerDataTableName = "integerDataTable";
+   private static String secondUniqueColumnName = "secondUniqueColumn";
    
-   private static final String testSequenceName = "testSequence";
-   private static final String testSequenceName2 = "testSequence2";
-   private static final String testCreateTable = "testCreateTable";
-   private static final String testInsertIntoTable = "testInsertIntoTable";
-   private static final String testCreateViewTable = "createviewtest";
-   private static final String testViewName = "testview";
-   private static final String testNewViewName = "newTestView";
-   private static final String testView2Name = "testview2";
-   private static final String testViewToBeDropped = "testViewToDrop";
-   private static final String testRenameTableBefore = "tableRenameTest";
-   private static final String testRenameTableAfter = "tableWasRenamed";
-   private static final String testCreateIndexTable = "createIndexTest";
-   private static final String testFirstMergeTable = "firstTableToBeMerged";
-   private static final String testSecondMergeTable = "secondTableToBeMerged";
-   private static final String testTableForDropView = "testTableForDropView";
+   private static String autoIncrementTableName = "testAutoIncrementTable";
+   private static String autoIncrementColumnName = "myid";
+   private static String autoIncrementSequenceName = "auto_increment_seq";
+   private static String integerDataTableName = "integerDataTable";
+   
+   private static String primaryKeyTestColumnOne = "pk_col_1";
+   private static String primaryKeyTestColumnTwo = "pk_col_2";
+   
+   private static String nullVarcharColumnName = "nullvc";
+   
+   private static String indexTestColumnName = "idxTestColumnName";
+   private static String uniqueIndexTestColumnName = "uniqidxTestColumnName";
+   
+   private static String columnAddedColumnName = "columnAdded";
+   
+   private static String testSequenceName = "testSequence";
+   private static String testSequenceName2 = "testSequence2";
+   private static String testCreateTable = "testCreateTable";
+   private static String testInsertIntoTable = "testInsertIntoTable";
+   private static String testCreateViewTable = "createviewtest";
+   private static String testViewName = "testview";
+   private static String testNewViewName = "newTestView";
+   private static String testView2Name = "testview2";
+   private static String testViewToBeDropped = "testViewToDrop";
+   private static String testRenameTableBefore = "tableRenameTest";
+   private static String testRenameTableAfter = "tableWasRenamed";
+   private static String testCreateIndexTable = "createIndexTest";
+   private static String testFirstMergeTable = "firstTableToBeMerged";
+   private static String testSecondMergeTable = "secondTableToBeMerged";
+   private static String testTableForDropView = "testTableForDropView";
    
    /** this is set to true to try to derive SQL for the dialect being tested automatically, using other dialects */
    private boolean dialectDiscoveryMode = false;
+
+	
    
    public DialectLiveTestRunner() throws Exception {
       ApplicationArguments.initialize(new String[] {});
@@ -199,8 +214,8 @@ public class DialectLiveTestRunner {
 	}
 
 	private void initSessions(ArrayList<ISession> sessionsList, String sessionListPropKey) throws Exception {
-   	prefs.setQualifyTableNames(false);
-   	prefs.setQuoteIdentifiers(false);
+   	prefs.setQualifyTableNames(Boolean.parseBoolean(bundle.getString("qualifyTableNames")));
+   	prefs.setQuoteIdentifiers(Boolean.parseBoolean(bundle.getString("quoteIdentifiers")));
    	prefs.setSqlStatementSeparator(";");
    	
    	dialectDiscoveryMode = Boolean.parseBoolean(bundle.getString("dialectDiscoveryMode"));
@@ -225,59 +240,69 @@ public class DialectLiveTestRunner {
    }
 
    private void init(ISession session) throws Exception {
+   	MockSession mockSession = (MockSession)session;
+   	qualifier = new DatabaseObjectQualifier(mockSession.getDefaultCatalog(), mockSession.getDefaultSchema());
+   	
+   	uniqueConstraintColName = fixIdentifierCase(session, uniqueConstraintColName);
+   	autoIncrementSequenceName = fixIdentifierCase(session, autoIncrementSequenceName);
+   	primaryKeyTestColumnOne = fixIdentifierCase(session, primaryKeyTestColumnOne);
+   	primaryKeyTestColumnTwo = fixIdentifierCase(session, primaryKeyTestColumnTwo);
+   	nullVarcharColumnName = fixIdentifierCase(session, nullVarcharColumnName);
+   	columnAddedColumnName = fixIdentifierCase(session, columnAddedColumnName);
+   	
       createTestTables(session);
       firstCol = getIntegerColumn("nullint",
-                                  fixTableName(session, "test1"),
+                                  fixIdentifierCase(session, "test1"),
                                   true,
                                   "0",
                                   "An int comment");
       secondCol = getIntegerColumn("notnullint",
-                                   fixTableName(session, "test2"),
+                                   fixIdentifierCase(session, "test2"),
                                    false,
                                    "0",
                                    "An int comment");
-      thirdCol = getVarcharColumn("nullvc",
-                                  fixTableName(session, "test3"),
+      thirdCol = getVarcharColumn(nullVarcharColumnName,
+                                  fixIdentifierCase(session, "test3"),
                                   true,
                                   "defVal",
                                   "A varchar comment");
       fourthCol = getVarcharColumn("notnullvc",
-                                   fixTableName(session, "test4"),
+                                   fixIdentifierCase(session, "test4"),
                                    false,
                                    "defVal",
                                    "A varchar comment");
       noDefaultValueVarcharCol = getVarcharColumn("noDefaultVarcharCol",
-                                                  fixTableName(session, "test"),
+                                                  fixIdentifierCase(session, "test"),
                                                   true,
                                                   null,
                                                   "A varchar column with no default value");
       dropCol = getVarcharColumn("dropCol",
-                                 fixTableName(session, "test5"),
+                                 fixIdentifierCase(session, "test5"),
                                  true,
                                  null,
                                  "A varchar comment");
       noDefaultValueIntegerCol = getIntegerColumn("noDefaultIntgerCol",
-                                                  fixTableName(session, "test5"),
+                                                  fixIdentifierCase(session, "test5"),
                                                   true,
                                                   null,
                                                   "An integer column with no default value");
       renameCol = getVarcharColumn("renameCol",
-                                   fixTableName(session, "test"),
+                                   fixIdentifierCase(session, "test"),
                                    true,
                                    null,
                                    "A column to be renamed");
       pkCol = getIntegerColumn("pkCol",
-                               fixTableName(session, "test"),
+                               fixIdentifierCase(session, "test"),
                                false,
                                "0",
                                "primary key column");
       notNullIntegerCol = getIntegerColumn("notNullIntegerCol",
-                                           fixTableName(session, "test5"),
+                                           fixIdentifierCase(session, "test5"),
                                            false,
                                            "0",
                                            "potential pk column");
       db2pkCol = getIntegerColumn(DB2_PK_COLNAME,
-                                  fixTableName(session, "test"),
+                                  fixIdentifierCase(session, "test"),
                                   false,
                                   "0",
                                   "A DB2 Primary Key column");
@@ -287,29 +312,29 @@ public class DialectLiveTestRunner {
       // converts them to non-null then applies the PK constraint to them.
       // This test shall not be run against any database dialect that claims not
       // to support changing the nullability of a column.
-      doubleColumnPKOne = getIntegerColumn("pk_col_1",
-                                           fixTableName(session, "pktest"),
+      doubleColumnPKOne = getIntegerColumn(primaryKeyTestColumnOne,
+                                           fixIdentifierCase(session, "pktest"),
                                            true,
                                            null,
                                            "an initially nullable field to be made part of a PK");
-      doubleColumnPKTwo = getIntegerColumn("pk_col_2",
-                                           fixTableName(session, "pktest"),
+      doubleColumnPKTwo = getIntegerColumn(primaryKeyTestColumnTwo,
+                                           fixIdentifierCase(session, "pktest"),
                                            true,
                                            null,
                                            "an initially nullable field to be made part of a PK");
       
       autoIncrementColumn =
 			getIntegerColumn(autoIncrementColumnName,
-				fixTableName(session, autoIncrementTableName),
+				fixIdentifierCase(session, autoIncrementTableName),
 				false,
 				null,
 				"Column that will be auto incrementing");
       
-      addColumn = getIntegerColumn("columnAdded", fixTableName(session, testUniqueConstraintTableName), true, null, null);
+      addColumn = getIntegerColumn(columnAddedColumnName, fixIdentifierCase(session, testUniqueConstraintTableName), true, null, null);
       
-      myIdColumn = getCharColumn("myid", fixTableName(session, testUniqueConstraintTableName), true, null, null);
+      uniqueConstraintTableColumnInfo = getCharColumn(uniqueConstraintColName, fixIdentifierCase(session, testUniqueConstraintTableName), true, null, null);
       
-      dropConstraintColumn = getCharColumn(secondUniqueColumnName, fixTableName(session, testUniqueConstraintTableName), true, null, null);
+      dropConstraintColumn = getCharColumn(secondUniqueColumnName, fixIdentifierCase(session, testUniqueConstraintTableName), true, null, null);
    }
 
    private ITableInfo getTableInfo(ISession session, String tableName)
@@ -410,43 +435,44 @@ public class DialectLiveTestRunner {
       HibernateDialect dialect = getDialect(session);
       
       // views will depend on tables, so drop them first
-      dropView(session, fixTableName(session, testViewName));
-      dropView(session, fixTableName(session, testView2Name));
-      dropView(session, fixTableName(session, testNewViewName));
-      dropView(session, fixTableName(session, testViewToBeDropped));
+      dropView(session, fixIdentifierCase(session, testViewName));
+      dropView(session, fixIdentifierCase(session, testView2Name));
+      dropView(session, fixIdentifierCase(session, testNewViewName));
+      dropView(session, fixIdentifierCase(session, testViewToBeDropped));
       
       // Tables might have triggers that depend on sequences, so drop tables next.
-      dropTable(session, fixTableName(session, "test"));
-      dropTable(session, fixTableName(session, "test1"));
-      dropTable(session, fixTableName(session, "test2"));
-      dropTable(session, fixTableName(session, "test3"));
-      dropTable(session, fixTableName(session, "test4"));
-      dropTable(session, fixTableName(session, "test5"));
-      dropTable(session, fixTableName(session, "pktest"));
-      dropTable(session, fixTableName(session, testRenameTableBefore));
-      dropTable(session, fixTableName(session, testRenameTableAfter));
-      dropTable(session, fixTableName(session, testCreateViewTable));
-      dropTable(session, fixTableName(session, testCreateIndexTable));
-      dropTable(session, fixTableName(session, fkChildTableName));
-      dropTable(session, fixTableName(session, fkParentTableName));
-      dropTable(session, fixTableName(session, testUniqueConstraintTableName));
-      dropTable(session, fixTableName(session, autoIncrementTableName));
-      dropTable(session, fixTableName(session, integerDataTableName));
-      dropTable(session, fixTableName(session, "a"));
-      dropTable(session, fixTableName(session, testCreateTable));
-      dropTable(session, fixTableName(session, testInsertIntoTable));
-      dropTable(session, fixTableName(session, testFirstMergeTable)); 
-      dropTable(session, fixTableName(session, testSecondMergeTable));
-      dropTable(session, fixTableName(session, testTableForDropView));
+      dropTable(session, fixIdentifierCase(session, "test"));
+      dropTable(session, fixIdentifierCase(session, "test1"));
+      dropTable(session, fixIdentifierCase(session, "test2"));
+      dropTable(session, fixIdentifierCase(session, "test3"));
+      dropTable(session, fixIdentifierCase(session, "test4"));
+      dropTable(session, fixIdentifierCase(session, "test5"));
+      dropTable(session, fixIdentifierCase(session, "pktest"));
+      dropTable(session, fixIdentifierCase(session, testRenameTableBefore));
+      dropTable(session, fixIdentifierCase(session, testRenameTableAfter));
+      dropTable(session, fixIdentifierCase(session, testCreateViewTable));
+      dropTable(session, fixIdentifierCase(session, testCreateIndexTable));
+      dropTable(session, fixIdentifierCase(session, fkChildTableName));
+      dropTable(session, fixIdentifierCase(session, fkParentTableName));
+      dropTable(session, fixIdentifierCase(session, testUniqueConstraintTableName));
+      dropTable(session, fixIdentifierCase(session, autoIncrementTableName));
+      dropTable(session, fixIdentifierCase(session, integerDataTableName));
+      dropTable(session, fixIdentifierCase(session, "a"));
+      dropTable(session, fixIdentifierCase(session, testCreateTable));
+      dropTable(session, fixIdentifierCase(session, testInsertIntoTable));
+      dropTable(session, fixIdentifierCase(session, testFirstMergeTable)); 
+      dropTable(session, fixIdentifierCase(session, testSecondMergeTable));
+      dropTable(session, fixIdentifierCase(session, testTableForDropView));
       
       // Now sequences should go.
       dropSequence(session, testSequenceName);
       dropSequence(session, testSequenceName2);
       dropSequence(session, autoIncrementTableName + "_MYID_SEQ");
       dropSequence(session, autoIncrementColumnName + "_AUTOINC_SEQ");
+      dropSequence(session, autoIncrementSequenceName);
       
       if (DialectFactory.isOracle(session.getMetaData())) {
-         dropTable(session, fixTableName(session, "matview"));
+         dropTable(session, fixIdentifierCase(session, "matview"));
       }
 
       String pageSizeClause = "";
@@ -461,52 +487,60 @@ public class DialectLiveTestRunner {
          // you to add a PK to a table after it has been constructed unless the
          // column(s) that comprise the PK were originally there when created
          // *and* created not null.
-         runSQL(session, "create table " + fixTableName(session, "test")
+         runSQL(session, "create table " + fixIdentifierCase(session, "test")
                + " ( mychar char(10), " + DB2_PK_COLNAME + " integer not null)");
       } else {
-         runSQL(session, "create table " + fixTableName(session, "test")
+         runSQL(session, "create table " + fixIdentifierCase(session, "test")
                + " ( mychar char(10))" + pageSizeClause);
       }
-
-      runSQL(session, "create table " + fixTableName(session, "test1")
+      fkParentColumnName = fixIdentifierCase(session, fkParentColumnName);
+      fkChildColumnName = fixIdentifierCase(session, fkChildColumnName);
+      uniqueConstraintColName = fixIdentifierCase(session, uniqueConstraintColName);
+      secondUniqueColumnName = fixIdentifierCase(session, secondUniqueColumnName);
+      indexTestColumnName = fixIdentifierCase(session, indexTestColumnName);
+      uniqueIndexTestColumnName = fixIdentifierCase(session, uniqueIndexTestColumnName);
+      autoIncrementColumnName = fixIdentifierCase(session, autoIncrementColumnName);
+      fkChildPrimaryKeyColumnName = fixIdentifierCase(session, fkChildPrimaryKeyColumnName);
+      
+      runSQL(session, "create table " + fixIdentifierCase(session, "test1")
             + " ( mychar char(10))" + pageSizeClause);
-      runSQL(session, "create table " + fixTableName(session, "test2")
+      runSQL(session, "create table " + fixIdentifierCase(session, "test2")
             + " ( mychar char(10))" + pageSizeClause);
-      runSQL(session, "create table " + fixTableName(session, "test3")
+      runSQL(session, "create table " + fixIdentifierCase(session, "test3")
             + " ( mychar char(10))" + pageSizeClause);
-      runSQL(session, "create table " + fixTableName(session, "test4")
+      runSQL(session, "create table " + fixIdentifierCase(session, "test4")
             + " ( mychar char(10))" + pageSizeClause);
-      runSQL(session, "create table " + fixTableName(session, "test5")
+      runSQL(session, "create table " + fixIdentifierCase(session, "test5")
             + " ( mychar char(10))" + pageSizeClause);
-      runSQL(session, "create table " + fixTableName(session, testRenameTableBefore)
+      runSQL(session, "create table " + fixIdentifierCase(session, testRenameTableBefore)
          + " ( mychar char(10))" + pageSizeClause);
-      runSQL(session, "create table " + fixTableName(session, testCreateViewTable)
+      runSQL(session, "create table " + fixIdentifierCase(session, testCreateViewTable)
          + " ( mychar char(10))" + pageSizeClause);
       // MySQL spatial index requires a not null column
-      runSQL(session, "create table " + fixTableName(session, testCreateIndexTable)
-         + " ( mychar varchar(10) not null, myuniquechar varchar(10))" + pageSizeClause);
+      runSQL(session, "create table " + fixIdentifierCase(session, testCreateIndexTable)
+         + " ( "+indexTestColumnName+" varchar(10) not null, "+uniqueIndexTestColumnName+" varchar(10))" + pageSizeClause);
       /* DB2 requires primary keys to also be declared "not null" */
-      runSQL(session, "create table " + fixTableName(session, fkParentTableName)
-         + " ( "+fkParentColumnName+" integer not null primary key, mychar char(10))" + pageSizeClause);
-      runSQL(session, "create table " + fixTableName(session, fkChildTableName)
-         + " ( myid integer, "+fkChildColumnName+" integer)" + pageSizeClause);
+      runSQL(session, "create table " + fixIdentifierCase(session, fkParentTableName) + " ( "
+			+ fkParentColumnName + " integer not null primary key, mychar char(10))" + pageSizeClause);
+      runSQL(session, "create table " + fixIdentifierCase(session, fkChildTableName)
+         + " ( "+fkChildPrimaryKeyColumnName+" integer, "+fkChildColumnName+" integer)" + pageSizeClause);
       
-      runSQL(session, "create table " + fixTableName(session, testUniqueConstraintTableName)
-         + " ( myid char(10), "+secondUniqueColumnName+" char(10))" + pageSizeClause);
+      runSQL(session, "create table " + fixIdentifierCase(session, testUniqueConstraintTableName)
+         + " ( "+uniqueConstraintColName+" char(10), "+secondUniqueColumnName+" char(10))" + pageSizeClause);
 
-      runSQL(session, "create table " + fixTableName(session, autoIncrementTableName)
+      runSQL(session, "create table " + fixIdentifierCase(session, autoIncrementTableName)
          + " ( "+autoIncrementColumnName+" integer)" + pageSizeClause);
 
-      runSQL(session, "create table " + fixTableName(session, integerDataTableName)
+      runSQL(session, "create table " + fixIdentifierCase(session, integerDataTableName)
          + " ( myid integer)" + pageSizeClause);
 
       int count = 0;
       while (count++ < 11) {
-      	runSQL(session, "insert into "+fixTableName(session, integerDataTableName)+" values ("+count+")");
+      	runSQL(session, "insert into "+fixIdentifierCase(session, integerDataTableName)+" values ("+count+")");
       }
 
       runSQL(session, 
-   		"CREATE TABLE " + fixTableName(session, "a") +
+   		"CREATE TABLE " + fixIdentifierCase(session, "a") +
    		"( " +
    		"   acol int NOT NULL PRIMARY KEY, " + 
    		"   adesc varchar(10), " +
@@ -515,45 +549,46 @@ public class DialectLiveTestRunner {
 			") ");
       
       runSQL(session, 
-      		"INSERT INTO " + fixTableName(session, "a") + " (acol,adesc,bdesc,joined) VALUES (1,'a1','b1','a1b1') ");
+      		"INSERT INTO " + fixIdentifierCase(session, "a") + " (acol,adesc,bdesc,joined) VALUES (1,'a1','b1','a1b1') ");
 
       runSQL(session,
-      		"INSERT INTO " + fixTableName(session, "a") + " (acol,adesc,bdesc,joined) VALUES (2,'a2','b2','a2b2') ");
+      		"INSERT INTO " + fixIdentifierCase(session, "a") + " (acol,adesc,bdesc,joined) VALUES (2,'a2','b2','a2b2') ");
 
       runSQL(session,
-      		"INSERT INTO " + fixTableName(session, "a") + " (acol,adesc,bdesc,joined) VALUES (3,'a3','b3','a3b3') ");
+      		"INSERT INTO " + fixIdentifierCase(session, "a") + " (acol,adesc,bdesc,joined) VALUES (3,'a3','b3','a3b3') ");
 
       if (dialect.supportsAlterColumnNull()) {
-         runSQL(session, "create table " + fixTableName(session, "pktest")
-               + " ( pk_col_1 integer, pk_col_2 integer )" + pageSizeClause);
+         runSQL(session, "create table " + fixIdentifierCase(session, "pktest") + " ( "
+				+ primaryKeyTestColumnOne + " integer, " + primaryKeyTestColumnTwo + " integer )"
+				+ pageSizeClause);
       }
       
-      runSQL(session, "create table " + fixTableName(session, testInsertIntoTable)
+      runSQL(session, "create table " + fixIdentifierCase(session, testInsertIntoTable)
          + " ( myid integer)" + pageSizeClause);
       
       
-      runSQL(session, "create table " + fixTableName(session, testFirstMergeTable)
+      runSQL(session, "create table " + fixIdentifierCase(session, testFirstMergeTable)
          + " ( myid integer, desc_t1 varchar(20))" + pageSizeClause);
 
       runSQL(session, 
-   		"INSERT INTO " + fixTableName(session, testFirstMergeTable) + " (myid, desc_t1) VALUES (1,'table1-row1') ");
+   		"INSERT INTO " + fixIdentifierCase(session, testFirstMergeTable) + " (myid, desc_t1) VALUES (1,'table1-row1') ");
       runSQL(session, 
-   		"INSERT INTO " + fixTableName(session, testFirstMergeTable) + " (myid, desc_t1) VALUES (2,'table1-row2') ");
+   		"INSERT INTO " + fixIdentifierCase(session, testFirstMergeTable) + " (myid, desc_t1) VALUES (2,'table1-row2') ");
       runSQL(session, 
-   		"INSERT INTO " + fixTableName(session, testFirstMergeTable) + " (myid, desc_t1) VALUES (3,'table1-row3') ");
+   		"INSERT INTO " + fixIdentifierCase(session, testFirstMergeTable) + " (myid, desc_t1) VALUES (3,'table1-row3') ");
 
       
-      runSQL(session, "create table " + fixTableName(session, testSecondMergeTable)
+      runSQL(session, "create table " + fixIdentifierCase(session, testSecondMergeTable)
          + " ( myid integer, desc_t2 varchar(20))" + pageSizeClause);
 
       runSQL(session, 
-   		"INSERT INTO " + fixTableName(session, testSecondMergeTable) + " (myid, desc_t2) VALUES (1,'table2-row1') ");
+   		"INSERT INTO " + fixIdentifierCase(session, testSecondMergeTable) + " (myid, desc_t2) VALUES (1,'table2-row1') ");
       runSQL(session, 
-   		"INSERT INTO " + fixTableName(session, testSecondMergeTable) + " (myid, desc_t2) VALUES (2,'table2-row2') ");
+   		"INSERT INTO " + fixIdentifierCase(session, testSecondMergeTable) + " (myid, desc_t2) VALUES (2,'table2-row2') ");
       runSQL(session, 
-   		"INSERT INTO " + fixTableName(session, testSecondMergeTable) + " (myid, desc_t2) VALUES (3,'table2-row3') ");
+   		"INSERT INTO " + fixIdentifierCase(session, testSecondMergeTable) + " (myid, desc_t2) VALUES (3,'table2-row3') ");
       
-      runSQL(session, "create table " + fixTableName(session, testTableForDropView)
+      runSQL(session, "create table " + fixIdentifierCase(session, testTableForDropView)
       	+ " ( myid integer, mydesc varchar(20))" + pageSizeClause);
       
    }
@@ -728,7 +763,7 @@ public class DialectLiveTestRunner {
        * dialect.getColumnTypeAlterSQL(firstCol, nullintVC); runSQL(session,
        * alterColTypeSQL);
        */
-      TableColumnInfo thirdColLonger = getVarcharColumn("nullvc",
+      TableColumnInfo thirdColLonger = getVarcharColumn(nullVarcharColumnName,
                                                         "test3",
                                                         true,
                                                         "defVal",
@@ -797,8 +832,9 @@ public class DialectLiveTestRunner {
 
    private void testAlterNull(ISession session) throws Exception {
       HibernateDialect dialect = getDialect(session);
+      String tableName = fixIdentifierCase(session, "test3");
       TableColumnInfo notNullThirdCol = getVarcharColumn("nullvc",
-                                                         "test3",
+                                                         tableName,
                                                          false,
                                                          "defVal",
                                                          "A varchar comment");
@@ -1027,7 +1063,7 @@ public class DialectLiveTestRunner {
       String catalog = ((MockSession) session).getDefaultCatalog();
       String schema = ((MockSession) session).getDefaultSchema();
       String columnName = "firstCol";
-      String tableName = fixTableName(session, testCreateTable);
+      String tableName = fixIdentifierCase(session, testCreateTable);
       
       TableColumnInfo firstCol =
 			new TableColumnInfo(	catalog,
@@ -1070,8 +1106,8 @@ public class DialectLiveTestRunner {
    }   
    private void testRenameTable(ISession session) throws Exception {
       HibernateDialect dialect = getDialect(session);
-      String oldTableName = fixTableName(session, testRenameTableBefore);
-      String newTableName = fixTableName(session, testRenameTableAfter);
+      String oldTableName = fixIdentifierCase(session, testRenameTableBefore);
+      String newTableName = fixIdentifierCase(session, testRenameTableAfter);
       
 		RenameTableSqlExtractor renameTableSqlExtractor = 
 			new RenameTableSqlExtractor(oldTableName, newTableName);      
@@ -1100,9 +1136,9 @@ public class DialectLiveTestRunner {
       HibernateDialect dialect = getDialect(session);
       
       String checkOption = "";
-      String tableToView = fixTableName(session, testCreateViewTable);
-      String firstViewName = fixTableName(session, testViewName);
-      String secondViewName = fixTableName(session, testView2Name);
+      String tableToView = fixIdentifierCase(session, testCreateViewTable);
+      String firstViewName = fixIdentifierCase(session, testViewName);
+      String secondViewName = fixIdentifierCase(session, testView2Name);
       String definition = "select * from "+tableToView;
       CreateViewSqlExtractor extractor = new CreateViewSqlExtractor(firstViewName, definition, checkOption);
    	if (dialectDiscoveryMode) { 
@@ -1137,8 +1173,8 @@ public class DialectLiveTestRunner {
    
    private void testRenameView(ISession session) throws Exception {
    	HibernateDialect dialect = getDialect(session);
-   	String oldViewName = fixTableName(session, testViewName);
-   	String newViewName = fixTableName(session, testNewViewName);
+   	String oldViewName = fixIdentifierCase(session, testViewName);
+   	String newViewName = fixIdentifierCase(session, testNewViewName);
    	String catalog = ((MockSession)session).getDefaultCatalog();
    	String schema = ((MockSession)session).getDefaultSchema();
    	DatabaseObjectQualifier qual = new DatabaseObjectQualifier(catalog, schema);
@@ -1188,8 +1224,8 @@ public class DialectLiveTestRunner {
    
    private void testDropView(ISession session) throws Exception {
    	HibernateDialect dialect = getDialect(session);
-		final String tableName = fixTableName(session, testTableForDropView); 
-		final String viewName = fixTableName(session, testViewToBeDropped);
+		final String tableName = fixIdentifierCase(session, testTableForDropView); 
+		final String viewName = fixIdentifierCase(session, testViewToBeDropped);
 		
 		DropViewSqlExtractor dropViewSqlExtractor = new DropViewSqlExtractor(viewName, false);
    	if (dialectDiscoveryMode) { 
@@ -1218,13 +1254,13 @@ public class DialectLiveTestRunner {
    
    private void testCreateAndDropIndex(ISession session) throws Exception {
    	HibernateDialect dialect = getDialect(session);
-		String[] columns = new String[] { "mychar" };
+		String[] columns = new String[] { indexTestColumnName };
 		String tablespace = null;
 		String constraints = null;
 
 		final String indexName1 = "testIndex";
 		final String indexName2 = "testUniqueIndex";
-		final String tableName = fixTableName(session, testCreateIndexTable);
+		final String tableName = fixIdentifierCase(session, testCreateIndexTable);
 		
    	if (dialect.supportsCreateIndex() && dialect.supportsDropIndex()) {
    		
@@ -1251,7 +1287,7 @@ public class DialectLiveTestRunner {
 					}
 				}
 	   		// create a non-unique index on mychar
-	   		columns = new String[] { "mychar" };
+	   		columns = new String[] { indexTestColumnName };
 				String sql =
 					dialect.getCreateIndexSQL(indexName1,
 						tableName,
@@ -1277,7 +1313,7 @@ public class DialectLiveTestRunner {
    		
 	   		
 	   		// create a unique index on myuniquechar
-				columns = new String[] { "myuniquechar" };
+				columns = new String[] { uniqueIndexTestColumnName };
 				sql =
 					dialect.getCreateIndexSQL(indexName2,
 						tableName,
@@ -1503,8 +1539,8 @@ public class DialectLiveTestRunner {
 		localRefColumns.add(new String[] { fkChildColumnName, fkParentColumnName });
 		String onUpdateAction = null;
 		String onDeleteAction = null;
-		String childTable = fixTableName(session, fkChildTableName);
-		String parentTable = fixTableName(session, fkParentTableName);
+		String childTable = fixIdentifierCase(session, fkChildTableName);
+		String parentTable = fixIdentifierCase(session, fkParentTableName);
 		
 		CreateForeignKeyConstraintSqlExtractor extractor =
 			new CreateForeignKeyConstraintSqlExtractor(	"fk_child_refs_parent",
@@ -1576,8 +1612,8 @@ public class DialectLiveTestRunner {
    
    private void testAddUniqueConstraint(ISession session) throws Exception {
    	HibernateDialect dialect = getDialect(session);
-   	TableColumnInfo[] columns = new TableColumnInfo[] { myIdColumn };
-   	String tableName = fixTableName(session, testUniqueConstraintTableName);
+   	TableColumnInfo[] columns = new TableColumnInfo[] { uniqueConstraintTableColumnInfo };
+   	String tableName = fixIdentifierCase(session, testUniqueConstraintTableName);
    	
    	AddUniqueConstraintSqlExtractor extractor = 
    		new AddUniqueConstraintSqlExtractor(tableName, secondUniqueConstraintName, columns);
@@ -1631,7 +1667,7 @@ public class DialectLiveTestRunner {
    	HibernateDialect dialect = getDialect(session);
    	if (dialect.supportsAutoIncrement()) {
    		String[] sql = 
-   			dialect.getAddAutoIncrementSQL(autoIncrementColumn, qualifier, prefs);
+   			dialect.getAddAutoIncrementSQL(autoIncrementColumn, autoIncrementSequenceName, qualifier, prefs);
    		runSQL(session, sql, new AddAutoIncrementSqlExtractor(autoIncrementColumn));   		
    	} else {
    		try {
@@ -1647,7 +1683,7 @@ public class DialectLiveTestRunner {
    
    private void testDropConstraint(ISession session) throws Exception {
    	HibernateDialect dialect = getDialect(session);
-   	String tableName = fixTableName(session, testUniqueConstraintTableName);
+   	String tableName = fixIdentifierCase(session, testUniqueConstraintTableName);
    	
    	DropConstraintSqlExtractor dropConstraintSqlExtractor = 
    		new DropConstraintSqlExtractor(tableName, secondUniqueConstraintName);
@@ -1683,9 +1719,9 @@ public class DialectLiveTestRunner {
    
    private void testInsertIntoSQL(ISession session) throws Exception {
    	HibernateDialect dialect = getDialect(session);
-   	String valuesPart = "select distinct myid from "+fixTableName(session, integerDataTableName);
+   	String valuesPart = "select distinct myid from "+fixIdentifierCase(session, integerDataTableName);
    	ArrayList<String> columns = new ArrayList<String>();
-   	String tableName = fixTableName(session, testInsertIntoTable);
+   	String tableName = fixIdentifierCase(session, testInsertIntoTable);
    	
    	InsertIntoSqlExtractor insertIntoSqlExtractor = 
    		new InsertIntoSqlExtractor(tableName, columns, valuesPart);
@@ -1817,8 +1853,8 @@ public class DialectLiveTestRunner {
    		selectedTables[0] =
 				new DatabaseObjectInfoHelper(	catalog,
 														schema,
-														fixTableName(session, testSecondMergeTable),
-														fixTableName(session, testSecondMergeTable),
+														fixIdentifierCase(session, testSecondMergeTable),
+														fixIdentifierCase(session, testSecondMergeTable),
 														DatabaseObjectType.TABLE);
    		
    		MergeTableCommandHelper command = new MergeTableCommandHelper(session, selectedTables, null);
@@ -1832,7 +1868,7 @@ public class DialectLiveTestRunner {
    private void testDataScript(ISession session) throws Exception {
    	HibernateDialect dialect = getDialect(session);
    	
-   	String tableName = fixTableName(session, "timestamptest");
+   	String tableName = fixIdentifierCase(session, "timestamptest");
    	String timestampTypeName =  dialect.getTypeName(Types.TIMESTAMP,5,5,5);
    	
    	CreateDataScriptHelper command = new CreateDataScriptHelper(session, null, false);
@@ -2132,17 +2168,17 @@ public class DialectLiveTestRunner {
     * normalizes the names such that they can be found later after they are created.
     * 
     * @param session
-    * @param table
+    * @param identifier
     * @return
     * @throws Exception
     */
-   private String fixTableName(ISession session, String table) throws Exception {
+   private String fixIdentifierCase(ISession session, String identifier) throws Exception {
       String result = null;
       SQLDatabaseMetaData md = session.getSQLConnection().getSQLMetaData();
       if (md.storesUpperCaseIdentifiers()) {
-         result = table.toUpperCase();
+         result = identifier.toUpperCase();
       } else {
-         result = table.toLowerCase();
+         result = identifier.toLowerCase();
       }
       return result;
    }
@@ -2222,15 +2258,15 @@ public class DialectLiveTestRunner {
 			super(session, info, dialogFactory);
 	   	Vector<String> mergeColumns = new Vector<String>();
 	   	mergeColumns.add("desc_t1");
-	   	String referencedTable = fixTableName(session, testFirstMergeTable);
+	   	String referencedTable = fixIdentifierCase(session, testFirstMergeTable);
 	   	Vector<String[]> whereDataColumns = new Vector<String[]>();
 	   	whereDataColumns.add(new String[] { "myid", "myid" });
 	   	boolean _isMergeData = true;			
 			super.customDialog = 
 				new MergeTableDialogHelper(mergeColumns, referencedTable, whereDataColumns, _isMergeData);		
 			_allTables = new HashMap<String, TableColumnInfo[]>();
-			_allTables.put(fixTableName(session, testFirstMergeTable), getLiveColumnInfo(session, fixTableName(session, testFirstMergeTable)));
-			_allTables.put(fixTableName(session, testSecondMergeTable), getLiveColumnInfo(session, fixTableName(session, testSecondMergeTable)));
+			_allTables.put(fixIdentifierCase(session, testFirstMergeTable), getLiveColumnInfo(session, fixIdentifierCase(session, testFirstMergeTable)));
+			_allTables.put(fixIdentifierCase(session, testSecondMergeTable), getLiveColumnInfo(session, fixIdentifierCase(session, testSecondMergeTable)));
 			super._dialect = DialectFactory.getDialect(session.getMetaData());
 		}
 		

@@ -898,7 +898,19 @@ public class DaffodilDialectExt extends CommonHibernateDialect implements Hibern
 	public String getQualifiedIdentifier(final String identifier, final DatabaseObjectQualifier qualifier,
 		final SqlGenerationPreferences prefs)
 	{
-		return identifier;
+		String schema = qualifier.getSchema();
+		String catalog = qualifier.getCatalog();
+		StringBuilder result = new StringBuilder();
+		if (catalog != null) {
+			result.append(DialectUtils.shapeIdentifier(catalog, prefs, this));
+			result.append(".");
+		}
+		if (schema != null) {
+			result.append(DialectUtils.shapeIdentifier(schema, prefs, this));
+			result.append(".");
+		}
+		result.append(DialectUtils.shapeIdentifier(identifier, prefs, this));
+		return result.toString();
 	}
 
 	/**

@@ -909,6 +909,23 @@ public interface HibernateDialect extends StringTemplateConstants
 		SqlGenerationPreferences prefs);
 
 	/**
+	 * Gets the SQL to add an auto-increment to a column.
+	 * 
+	 * @param column
+	 *           column to where the auto-increment should be added to.
+	 * @param sequenceName
+	 *           if a sequence is created for the purpose of generating the next auto-incremented value, then
+	 *           this is the name of the sequence.
+	 * @param qualifier
+	 *           qualifier of the table
+	 * @param prefs
+	 *           preferences for generated sql scripts
+	 * @return the sql command to add auto-increment.
+	 */	
+	public String[] getAddAutoIncrementSQL(TableColumnInfo column, String sequenceName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs);
+	
+	/**
 	 * Gets the SQL command to drop a constraint from a table.
 	 * 
 	 * @param tableName
