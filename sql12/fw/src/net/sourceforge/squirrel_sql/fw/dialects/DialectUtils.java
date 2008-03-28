@@ -1159,7 +1159,7 @@ public class DialectUtils implements StringTemplateConstants
 	{
 		StringBuilder result = new StringBuilder();
 		result.append("ALTER TABLE ");
-		result.append(shapeQualifiableIdentifier(tableName, qualifier, prefs, null));
+		result.append(shapeQualifiableIdentifier(tableName, qualifier, prefs, dialect));
 		if (useConstraintName)
 		{
 			result.append(" DROP CONSTRAINT ");
@@ -2517,8 +2517,7 @@ public class DialectUtils implements StringTemplateConstants
 		SqlGenerationPreferences prefs, HibernateDialect dialect)
 	{
 		if (prefs.isQualifyTableNames())
-			return shapeIdentifier(qualifier.getSchema(), prefs, dialect) + "."
-				+ shapeIdentifier(identifier, prefs, dialect);
+			return dialect.getQualifiedIdentifier(identifier, qualifier, prefs);
 		else
 			return shapeIdentifier(identifier, prefs, dialect);
 	}

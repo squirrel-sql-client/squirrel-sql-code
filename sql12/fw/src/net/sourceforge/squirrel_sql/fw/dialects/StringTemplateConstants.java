@@ -56,6 +56,10 @@ public interface StringTemplateConstants
 		"ALTER TABLE $tableName$ " +
 		"ALTER $columnName$ SET DEFAULT $defaultValue$";
 		
+	String ST_ALTER_COLUMN_SET_DATA_TYPE_STYLE_ONE = 
+		"ALTER TABLE $tableName$ " +
+		"ALTER $columnName$ SET DATA TYPE $dataType$";
+	
 	String ST_ALTER_COLUMN_DROP_DEFAULT_STYLE_ONE = 
 		"ALTER TABLE $tableName$ " +
 		"ALTER $columnName$ DROP DEFAULT";		
@@ -77,6 +81,10 @@ public interface StringTemplateConstants
 	
 	String ST_CREATE_INDEX_STYLE_TWO =
 		"CREATE $unique$ $storageOption$ INDEX $indexName$ " +
+		"ON $tableName$ ( $columnName; separator=\",\"$ )";
+
+	String ST_CREATE_INDEX_STYLE_THREE =
+		"CREATE $unique$ INDEX $indexName$ " +
 		"ON $tableName$ ( $columnName; separator=\",\"$ )";
 	
 	String ST_CREATE_SEQUENCE_STYLE_ONE = 
@@ -194,6 +202,8 @@ public interface StringTemplateConstants
 	
 	String ST_CONSTRAINT_NAME_KEY = "constraintName";
 
+	String ST_DATA_TYPE_KEY = "dataType";
+	
 	String ST_DEFAULT_VALUE_KEY = "defaultValue";
 	
 	String ST_DEST_TABLE_NAME_KEY = "destTableName";
@@ -251,6 +261,8 @@ public interface StringTemplateConstants
 	String ST_STORAGE_OPTION_KEY = "storageOption";
 	
 	String ST_TABLE_NAME_KEY = "tableName";
+	
+	String ST_TRIGGER_NAME_KEY = "triggerName";
 	
 	String ST_UNIQUE_KEY = "unique";
 	

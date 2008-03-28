@@ -356,7 +356,6 @@ public class DerbyDialectExt extends DB2DialectExt implements HibernateDialect
 		final DatabaseObjectQualifier qualifier, final SqlGenerationPreferences prefs)
 		throws UnsupportedOperationException
 	{
-		final ArrayList<String> list = new ArrayList<String>();
 		if (from.getDataType() != to.getDataType())
 		{
 			throw new UnsupportedOperationException(i18n.TYPE_MESSAGE);
@@ -369,15 +368,7 @@ public class DerbyDialectExt extends DB2DialectExt implements HibernateDialect
 		{
 			throw new UnsupportedOperationException(i18n.COLUMN_LENGTH_MESSAGE);
 		}
-		final StringBuffer result = new StringBuffer();
-		result.append("ALTER TABLE ");
-		result.append(to.getTableName());
-		result.append(" ALTER COLUMN ");
-		result.append(to.getColumnName());
-		result.append(" SET DATA TYPE ");
-		result.append(DialectUtils.getTypeName(to, this));
-		list.add(result.toString());
-		return list;
+		return super.getColumnTypeAlterSQL(from, to, qualifier, prefs);
 	}
 
 	/**

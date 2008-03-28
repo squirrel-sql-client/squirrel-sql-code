@@ -211,15 +211,18 @@ public class FirebirdDialectExt extends CommonHibernateDialect implements Hibern
 	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] columns, ITableInfo ti,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		StringBuffer result = new StringBuffer();
+		
+		
+		StringBuilder result = new StringBuilder();
 		result.append("ALTER TABLE ");
-		result.append(ti.getQualifiedName());
+		result.append(DialectUtils.shapeQualifiableIdentifier(ti.getQualifiedName(), qualifier, prefs, this));
 		result.append(" ADD CONSTRAINT ");
 		result.append(pkName);
 		result.append(" PRIMARY KEY (");
 		for (int i = 0; i < columns.length; i++)
 		{
-			result.append(columns[i].getColumnName());
+			String shapedColumn = DialectUtils.shapeIdentifier(columns[i].getColumnName(), prefs, this);
+			result.append(shapedColumn);
 			if (i + 1 < columns.length)
 			{
 				result.append(", ");
@@ -319,7 +322,7 @@ public class FirebirdDialectExt extends CommonHibernateDialect implements Hibern
 	public List<String> getColumnTypeAlterSQL(TableColumnInfo from, TableColumnInfo to,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		result.append("ALTER TABLE ");
 		result.append(from.getTableName());
 		result.append(" ALTER COLUMN ");
@@ -461,9 +464,11 @@ public class FirebirdDialectExt extends CommonHibernateDialect implements Hibern
 				qualifier,
 				prefs);
 
+		String triggerName = "CREATE_" + column.getColumnName().toUpperCase();
+		
 		String trigTemplate =
-			"CREATE TRIGGER CREATE_$columnName$ " + "FOR $tableName$ " + "BEFORE INSERT POSITION 0 " + "AS "
-				+ "BEGIN " + "NEW.$columnName$ = GEN_ID($sequenceName$, 1); " + "END";
+			"CREATE TRIGGER $triggerName$ FOR $tableName$ BEFORE INSERT POSITION 0 AS "
+				+ "BEGIN NEW.$columnName$ = GEN_ID($sequenceName$, 1); END";
 
 		StringTemplate st = new StringTemplate(trigTemplate);
 
@@ -472,7 +477,8 @@ public class FirebirdDialectExt extends CommonHibernateDialect implements Hibern
 
 		valuesMap.put(ST_TABLE_NAME_KEY, column.getTableName());
 		valuesMap.put(ST_SEQUENCE_NAME_KEY, sequenceName);
-
+		valuesMap.put(ST_TRIGGER_NAME_KEY, triggerName);
+		
 		String trigSql = DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 
 		return new String[] { generatorSql, trigSql.toString() };
@@ -613,7 +619,7 @@ public class FirebirdDialectExt extends CommonHibernateDialect implements Hibern
 		// CREATE [UNIQUE] [ASC[ENDING] | DESC[ENDING]] INDEX index
 		// ON table (col [, col …]);
 
-		StringTemplate st = new StringTemplate(ST_CREATE_INDEX_STYLE_TWO);
+		StringTemplate st = new StringTemplate(ST_CREATE_INDEX_STYLE_THREE);
 		// "CREATE $unique$ $storageOption$ INDEX $indexName$ " +
 		// "ON $tableName$ ( $columnName; separator=\",\"$ )";
 

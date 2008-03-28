@@ -26,6 +26,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import net.sourceforge.squirrel_sql.fw.sql.DatabaseObjectType;
@@ -34,6 +35,7 @@ import net.sourceforge.squirrel_sql.fw.sql.ISQLDatabaseMetaData;
 import net.sourceforge.squirrel_sql.fw.sql.ITableInfo;
 import net.sourceforge.squirrel_sql.fw.sql.JDBCTypeMapper;
 import net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo;
+import net.sourceforge.squirrel_sql.fw.util.StringUtilities;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.hibernate.HibernateException;
@@ -532,16 +534,21 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	 */
 	public List<String> getColumnTypeAlterSQL(TableColumnInfo from, TableColumnInfo to,
 		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
-	{
-		ArrayList<String> result = new ArrayList<String>();
-		StringBuffer tmp = new StringBuffer();
-		tmp.append("ALTER TABLE ");
-		tmp.append(DialectUtils.shapeQualifiableIdentifier(from.getTableName(), qualifier, prefs, this));
-		tmp.append(" ALTER COLUMN ");
-		tmp.append(DialectUtils.shapeIdentifier(from.getColumnName(), prefs, this));
-		tmp.append(" SET DATA TYPE ");
-		tmp.append(DialectUtils.getTypeName(to, this));
-		result.add(tmp.toString());
+	{ 
+
+		// "ALTER TABLE $tableName$ " +
+		// "ALTER $columnName$ SET DATA TYPE $dataType$";
+		
+		
+		String templateString = ST_ALTER_COLUMN_SET_DATA_TYPE_STYLE_ONE;
+		StringTemplate st = new StringTemplate(templateString);
+		
+		HashMap<String, String> valuesMap = DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, from.getTableName());
+		valuesMap.put(ST_COLUMN_NAME_KEY, from.getColumnName());
+		valuesMap.put(ST_DATA_TYPE_KEY, DialectUtils.getTypeName(to, this));
+
+		ArrayList<String> result = new ArrayList<String>();		
+		result.add(DialectUtils.bindAttributes(this, st, valuesMap, qualifier, prefs));
 		return result;
 	}
 
@@ -645,11 +652,11 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	}
 
 	/**
-	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddAutoIncrementSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
-	 *      DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.CommonHibernateDialect#getAddAutoIncrementSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo, java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
 	 */
-	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
-		SqlGenerationPreferences prefs)
+	@Override
+	public String[] getAddAutoIncrementSQL(TableColumnInfo column, String sequenceName,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
 		ArrayList<String> result = new ArrayList<String>();
 		/*
@@ -662,9 +669,16 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 		 */
 		final String tableName = column.getTableName();
 		final String columnName = column.getColumnName();
-		final String sequenceName = tableName + "_" + columnName + "_" + "seq";
-
-		result.add(getCreateSequenceSQL(sequenceName, "1", "1", null, "1", null, false, qualifier, prefs));
+		
+		result.add(getCreateSequenceSQL(sequenceName.toString(),
+			"1",
+			"1",
+			null,
+			"1",
+			null,
+			false,
+			qualifier,
+			prefs));
 
 		StringBuilder triggerSql = new StringBuilder();
 		triggerSql.append("CREATE TRIGGER ");
@@ -682,6 +696,25 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 		result.add(triggerSql.toString());
 
 		return result.toArray(new String[result.size()]);
+
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddAutoIncrementSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      DatabaseObjectQualifier, net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 *      
+	 * @deprecated use the version that accepts the sequence name instead.
+	 */
+	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
+	{
+		final String tableName = column.getTableName();
+		final String columnName = column.getColumnName();
+		final StringBuilder sequenceName = new StringBuilder();
+		sequenceName.append(tableName.toUpperCase()).append("_");
+		sequenceName.append(columnName.toUpperCase()).append("_SEQ");
+
+		return getAddAutoIncrementSQL(column, sequenceName.toString(), qualifier, prefs);
 	}
 
 	/**
@@ -1003,7 +1036,7 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 		result.append("WHERE ");
 		if (qualifier.getSchema() != null)
 		{
-			result.append("SEQSCHEMA = upper(" + qualifier.getSchema() + ") AND ");
+			result.append("SEQSCHEMA = upper('" + qualifier.getSchema() + "') AND ");
 		}
 		// TODO: figure out why bind variables aren't working
 		result.append("SEQNAME = '");
@@ -1245,7 +1278,19 @@ public class DB2DialectExt extends CommonHibernateDialect implements HibernateDi
 	public String getQualifiedIdentifier(String identifier, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-		return identifier;
+		String schema = qualifier.getSchema();
+		String catalog = qualifier.getCatalog();
+		StringBuilder result = new StringBuilder();
+		if (!StringUtilities.isEmpty(catalog)) {
+			result.append(DialectUtils.shapeIdentifier(catalog, prefs, this));
+			result.append(".");
+		}
+		if (!StringUtilities.isEmpty(schema)) {
+			result.append(DialectUtils.shapeIdentifier(schema, prefs, this));
+			result.append(".");
+		}
+		result.append(DialectUtils.shapeIdentifier(identifier, prefs, this));
+		return result.toString();
 	}
 
 	/**

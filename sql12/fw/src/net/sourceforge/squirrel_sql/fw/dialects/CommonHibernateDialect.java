@@ -59,9 +59,20 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	public String[] getAddAutoIncrementSQL(TableColumnInfo column, DatabaseObjectQualifier qualifier,
 		SqlGenerationPreferences prefs)
 	{
-      final int featureId = DialectUtils.ADD_AUTO_INCREMENT_TYPE;
-      final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-      throw new UnsupportedOperationException(msg);
+		final int featureId = DialectUtils.ADD_AUTO_INCREMENT_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
+	}
+
+	/**
+	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getAddAutoIncrementSQL(net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo,
+	 *      java.lang.String, net.sourceforge.squirrel_sql.fw.dialects.DatabaseObjectQualifier,
+	 *      net.sourceforge.squirrel_sql.fw.dialects.SqlGenerationPreferences)
+	 */
+	public String[] getAddAutoIncrementSQL(TableColumnInfo column, String sequenceName,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	{
+		return getAddAutoIncrementSQL(column, qualifier, prefs);
 	}
 
 	/**
@@ -108,9 +119,9 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 		boolean autoFKIndex, String fkIndexName, Collection<String[]> localRefColumns, String onUpdateAction,
 		String onDeleteAction, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-      final int featureId = DialectUtils.ADD_FOREIGN_KEY_TYPE;
-      final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-      throw new UnsupportedOperationException(msg);
+		final int featureId = DialectUtils.ADD_FOREIGN_KEY_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -118,9 +129,16 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 *      net.sourceforge.squirrel_sql.fw.sql.TableColumnInfo[],
 	 *      net.sourceforge.squirrel_sql.fw.sql.ITableInfo, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
-	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] colInfos, ITableInfo ti, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String[] getAddPrimaryKeySQL(String pkName, TableColumnInfo[] colInfos, ITableInfo ti,
+		DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti, pkName, colInfos, false, qualifier, prefs, this) };
+		return new String[] { DialectUtils.getAddPrimaryKeySQL(ti,
+			pkName,
+			colInfos,
+			false,
+			qualifier,
+			prefs,
+			this) };
 	}
 
 	/**
@@ -132,9 +150,9 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	public String[] getAddUniqueConstraintSQL(String tableName, String constraintName,
 		TableColumnInfo[] columns, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
 	{
-      final int featureId = DialectUtils.ADD_UNIQUE_TYPE;
-      final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
-      throw new UnsupportedOperationException(msg);
+		final int featureId = DialectUtils.ADD_UNIQUE_TYPE;
+		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
+		throw new UnsupportedOperationException(msg);
 	}
 
 	/**
@@ -180,13 +198,14 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getColumnDropSQL(java.lang.String,
 	 *      java.lang.String, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
-	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs) throws UnsupportedOperationException
+	public String getColumnDropSQL(String tableName, String columnName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs) throws UnsupportedOperationException
 	{
 		StringTemplate st = new StringTemplate(DROP_COLUMN_SQL_TEMPLATE);
 
 		HashMap<String, String> valuesMap =
-		DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, tableName, ST_COLUMN_NAME_KEY, columnName);
-				
+			DialectUtils.getValuesMap(ST_TABLE_NAME_KEY, tableName, ST_COLUMN_NAME_KEY, columnName);
+
 		return DialectUtils.bindTemplateAttributes(this, st, valuesMap, qualifier, prefs);
 	}
 
@@ -337,7 +356,8 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropForeignKeySQL(java.lang.String,
 	 *      java.lang.String, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
-	public String getDropForeignKeySQL(String fkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getDropForeignKeySQL(String fkName, String tableName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		return DialectUtils.getDropForeignKeySQL(fkName, tableName, qualifier, prefs, this);
 	}
@@ -362,7 +382,8 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 	 * @see net.sourceforge.squirrel_sql.fw.dialects.HibernateDialect#getDropPrimaryKeySQL(java.lang.String,
 	 *      java.lang.String, DatabaseObjectQualifier, SqlGenerationPreferences)
 	 */
-	public String getDropPrimaryKeySQL(String pkName, String tableName, DatabaseObjectQualifier qualifier, SqlGenerationPreferences prefs)
+	public String getDropPrimaryKeySQL(String pkName, String tableName, DatabaseObjectQualifier qualifier,
+		SqlGenerationPreferences prefs)
 	{
 		final int featureId = DialectUtils.DROP_PRIMARY_KEY_TYPE;
 		final String msg = DialectUtils.getUnsupportedMessage(this, featureId);
@@ -531,7 +552,10 @@ public class CommonHibernateDialect implements HibernateDialect, StringTemplateC
 			cascadeConstraints,
 			false,
 			DialectUtils.CASCADE_CLAUSE,
-			false, qualifier, prefs, this);
+			false,
+			qualifier,
+			prefs,
+			this);
 	}
 
 	/**
