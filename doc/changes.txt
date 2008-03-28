@@ -61,6 +61,8 @@ Refactoring Plugin:
 
 Bug-Fixes:
 
+1830649: Focus Loss
+
 1824534: Constraint created twice
 
 1902611: (Oracle) Don't fail on SQL-Plus "SET ..." commands in SQL script; Now, the Oracle plugin skips over 
