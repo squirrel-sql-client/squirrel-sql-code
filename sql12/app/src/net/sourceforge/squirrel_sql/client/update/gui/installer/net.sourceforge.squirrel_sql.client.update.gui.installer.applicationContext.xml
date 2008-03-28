@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+        <!--  relocate this to app module when Spring support is added to SQuirreL -->
+        <bean id="net.sourceforge.squirrel_sql.client.update.UpdateUtil"
+                class="net.sourceforge.squirrel_sql.client.update.UpdateUtilImpl">
+        </bean>
+
+        <bean id="net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchHelper"
+                class="net.sourceforge.squirrel_sql.client.update.gui.installer.PreLaunchHelperImpl">
+           <property name="updateUtil" ref="net.sourceforge.squirrel_sql.client.update.UpdateUtil"/>
+           <property name="artifactInstallerFactory" 
+                     ref="net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstallerFactory" />
+        </bean>
+                
+        <bean id="net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstallerFactory"
+                class="net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstallerFactoryImpl">
+           <property name="installStatusEventFactory" 
+                     ref="net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusEventFactory" />
+        </bean>
+</beans>        

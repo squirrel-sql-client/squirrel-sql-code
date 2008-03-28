@@ -16,16 +16,16 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.client.update;
-
-import static net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus.CORE_ARTIFACT_ID;
-import static net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus.PLUGIN_ARTIFACT_ID;
-import static net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus.TRANSLATION_ARTIFACT_ID;
+package net.sourceforge.squirrel_sql.client.update.downloader;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sourceforge.squirrel_sql.client.update.UpdateUtil;
+import net.sourceforge.squirrel_sql.client.update.downloader.event.DownloadEventType;
+import net.sourceforge.squirrel_sql.client.update.downloader.event.DownloadStatusEvent;
+import net.sourceforge.squirrel_sql.client.update.downloader.event.DownloadStatusListener;
 import net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus;
 
 /**
@@ -36,8 +36,6 @@ import net.sourceforge.squirrel_sql.client.update.gui.ArtifactStatus;
  */
 public class ArtifactDownloader implements Runnable {
 
-   public final static String DOWNLOADS_DIR_NAME = "downloads";
-   
    private List<ArtifactStatus> _artifactStatus = null; 
    private volatile boolean _stopped = false;
    private boolean _isRemoteUpdateSite = true;
@@ -66,12 +64,10 @@ public class ArtifactDownloader implements Runnable {
    public void run() {
       sendDownloadStarted(_artifactStatus.size());
       
-      File downloadsDir = _util.checkDir(_util.getSquirrelUpdateDir(),
-                                   DOWNLOADS_DIR_NAME);
-      File coreDownloadDir = _util.checkDir(downloadsDir, CORE_ARTIFACT_ID);
-      File pluginDownloadDir = _util.checkDir(downloadsDir, PLUGIN_ARTIFACT_ID);
-      File i18nDownloadDir = 
-         _util.checkDir(downloadsDir, TRANSLATION_ARTIFACT_ID);
+      File downloadsDir = _util.getDownloadsDir();
+      File coreDownloadDir = _util.getCoreDownloadsDir();
+      File pluginDownloadDir = _util.getPluginDownloadsDir();
+      File i18nDownloadDir = _util.getI18nDownloadsDir();
             
       for (ArtifactStatus status : _artifactStatus) {
          if (_stopped) {
@@ -83,10 +79,10 @@ public class ArtifactDownloader implements Runnable {
          String fileToGet = status.getType() + "/" + status.getName();
 
          String destDir = coreDownloadDir.getAbsolutePath();
-         if (PLUGIN_ARTIFACT_ID.equals(status.getType())) {
+         if (UpdateUtil.PLUGIN_ARTIFACT_ID.equals(status.getType())) {
             destDir = pluginDownloadDir.getAbsolutePath();
          }
-         if (TRANSLATION_ARTIFACT_ID.equals(status.getType())) {
+         if (UpdateUtil.TRANSLATION_ARTIFACT_ID.equals(status.getType())) {
             destDir = i18nDownloadDir.getAbsolutePath();
          }
          // TODO: If the file is already present and it has the same size, 

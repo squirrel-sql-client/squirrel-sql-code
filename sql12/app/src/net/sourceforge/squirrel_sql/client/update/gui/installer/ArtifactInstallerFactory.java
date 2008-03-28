@@ -16,17 +16,14 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.client.update;
+package net.sourceforge.squirrel_sql.client.update.gui.installer;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 
-/**
- * Callback interface that allows the update controller to be notified when the 
- * downloads have completed/failed.
- * 
- * @author manningr
- */
-public interface DownloadStatusListener {
+import net.sourceforge.squirrel_sql.client.update.UpdateUtil;
 
-   void handleDownloadStatusEvent(DownloadStatusEvent evt);   
-   
+public interface ArtifactInstallerFactory {
+
+	ArtifactInstaller create(UpdateUtil util, File changeList) throws FileNotFoundException;
 }

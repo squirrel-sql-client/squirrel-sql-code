@@ -48,7 +48,33 @@ import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
 import net.sourceforge.squirrel_sql.fw.util.log.LoggerController;
 
 /**
- * Low-level utility methods for the UpdateController.
+ * Low-level utility methods for the UpdateController.  Among other things this class provides file locations
+ * for important directories that are needed for backup/restore, installation/removal of updates and existing
+ * software. The following is a pictorial anatomy of the update directory.
+ * 
+ * SQUIRREL_SQL_HOME/
+ *   |
+ *   + update/ (root of the update hierarchy)
+ *       |
+ *       + backup/ (original files that are to be updated are copied here for recovery purposes)
+ *       |   |
+ *       |   + core/
+ *       |   |
+ *       |   + i18n/
+ *       |   |
+ *       |   + plugin/
+ *       |   
+ *       + downloads/
+ *       |   |
+ *       |   + core/
+ *       |   |
+ *       |   + i18n/
+ *       |   |
+ *       |   + plugin/
+ *       |
+ *       + changeList.xml (describes what is in downloads to be installed - deleted after update)
+ *       |
+ *       + release.xml (describes the release that is currently installed)
  * 
  * @author manningr
  */
@@ -279,21 +305,69 @@ public class UpdateUtilImpl implements UpdateUtil {
     */
    public File getSquirrelUpdateDir()  {
       ApplicationFiles appFiles = new ApplicationFiles();
-      File squirrelUpdateDir = appFiles.getUpdateDirectory();      
-      if (!squirrelUpdateDir.isDirectory()) {
-         if (squirrelUpdateDir.exists()) {
-            // If the update dir, is actually a file, log an error.
-            s_log.error("SQuirreL Update Directory ("
-                  + squirrelUpdateDir.getAbsolutePath()
-                  + " doesn't appear to be a directory");
-         } else {
-            // If the update dir doesn't already exist, just create it.
-            squirrelUpdateDir.mkdir();
-         }
-      }
-      return squirrelUpdateDir;
+      return getDir(appFiles.getUpdateDirectory(), null, true);       
    }   
 
+   /**
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getDownloadsDir()
+    */
+   public File getDownloadsDir() {
+   	return getDir(getSquirrelUpdateDir(), DOWNLOADS_DIR_NAME, true);
+   }
+   
+   /**
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getCoreDownloadsDir()
+    */
+   public File getCoreDownloadsDir() {
+   	return getDir(getDownloadsDir(), CORE_ARTIFACT_ID, true);
+   }
+
+   /**
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getPluginDownloadsDir()
+    */
+   public File getPluginDownloadsDir() {
+   	return getDir(getDownloadsDir(), PLUGIN_ARTIFACT_ID, true);
+   }
+
+   /**
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getI18nDownloadsDir()
+    */
+   public File getI18nDownloadsDir() {
+   	return getDir(getDownloadsDir(), TRANSLATION_ARTIFACT_ID, true);
+   }
+
+   
+   /**
+    * @param parent
+    * @param dirName
+    * @param create
+    * @return
+    */
+   File getDir(File parent, String dirName, boolean create) {
+		File result = null;
+		if (dirName != null) {
+			result = new File(parent, dirName);
+		} else {
+			result = parent;
+		}
+		if (!result.isDirectory()) {
+	   	if (result.exists()) {
+	         // If the update dir, is actually a file, log an error.
+				s_log.error(dirName + " directory (" + result.getAbsolutePath()
+					+ ") doesn't appear to be a directory");	   		
+	   	} else {
+	   	   // If the downloads dir doesn't already exist, just create it.
+	   		if (create) {
+	   			result.mkdir();
+	   		}
+	   	}
+		}
+		return result;
+   }
+   
+   /**
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getChangeListFile()
+    */
    public File getChangeListFile() {
        File updateDir = getSquirrelUpdateDir();
        File changeListFile = new File(updateDir, CHANGE_LIST_FILENAME);
