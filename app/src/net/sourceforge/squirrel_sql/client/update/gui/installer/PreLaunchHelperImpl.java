@@ -25,6 +25,7 @@ import javax.swing.JOptionPane;
 import net.sourceforge.squirrel_sql.client.SquirrelLoggerFactory;
 import net.sourceforge.squirrel_sql.client.update.UpdateUtil;
 import net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusListenerImpl;
+import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean;
 import net.sourceforge.squirrel_sql.fw.util.StringManager;
 import net.sourceforge.squirrel_sql.fw.util.StringManagerFactory;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -145,7 +146,8 @@ public class PreLaunchHelperImpl implements PreLaunchHelper
 	 */
 	private void installUpdates(File changeList) throws Exception
 	{
-		ArtifactInstaller installer = artifactInstallerFactory.create(updateUtil, changeList);
+	   ChangeListXmlBean changeListBean = updateUtil.getChangeList(changeList);
+		ArtifactInstaller installer = artifactInstallerFactory.create(updateUtil, changeListBean);
 		installer.addListener(new InstallStatusListenerImpl());
 		installer.backupFiles();
 		installer.installFiles();

@@ -21,5 +21,7 @@
                 class="net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstallerFactoryImpl">
            <property name="installStatusEventFactory" 
                      ref="net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusEventFactory" />
+           <property name="installFileOperationInfoFactory"
+           				ref="net.sourceforge.squirrel_sql.client.update.gui.installer.util.InstallFileOperationInfoFactory"/>
         </bean>
 </beans>        

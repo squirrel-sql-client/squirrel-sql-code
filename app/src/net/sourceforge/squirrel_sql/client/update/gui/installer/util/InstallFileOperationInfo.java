@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Rob Manning
+ * Copyright (C) 2008 Rob Manning
  * manningr@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
@@ -16,23 +16,20 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package net.sourceforge.squirrel_sql.client.update.gui.installer;
+package net.sourceforge.squirrel_sql.client.update.gui.installer.util;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.File;
 
-import net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusEventFactory;
-import net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusListener;
+public interface InstallFileOperationInfo {
 
-public interface ArtifactInstaller
-{
+   /**
+    * @return the fileToInstall
+    */
+   File getFileToInstall();
 
-	public abstract void addListener(InstallStatusListener listener);
-
-	public abstract boolean backupFiles() throws FileNotFoundException, IOException;
-
-	public abstract void installFiles() throws FileNotFoundException, IOException;
-
-	public void setInstallStatusEventFactory(InstallStatusEventFactory installStatusEventFactory);
+   /**
+    * @return the installDir
+    */
+   File getInstallDir();
 
 }

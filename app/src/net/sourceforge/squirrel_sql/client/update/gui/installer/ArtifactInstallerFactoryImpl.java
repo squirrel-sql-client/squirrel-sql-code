@@ -18,11 +18,11 @@
  */
 package net.sourceforge.squirrel_sql.client.update.gui.installer;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 
 import net.sourceforge.squirrel_sql.client.update.UpdateUtil;
 import net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusEventFactory;
+import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean;
 
 public class ArtifactInstallerFactoryImpl implements ArtifactInstallerFactory
 {
@@ -35,7 +35,7 @@ public class ArtifactInstallerFactoryImpl implements ArtifactInstallerFactory
 	}
 
 
-	public ArtifactInstaller create(UpdateUtil util, File changeList) throws FileNotFoundException
+	public ArtifactInstaller create(UpdateUtil util, ChangeListXmlBean changeList) throws FileNotFoundException
 	{
 		ArtifactInstaller result = new ArtifactInstallerImpl(util, changeList);
 		result.setInstallStatusEventFactory(installStatusEventFactory);
