@@ -18,9 +18,6 @@
  */
 package net.sourceforge.squirrel_sql.client.update.gui.installer;
 
-import static net.sourceforge.squirrel_sql.client.update.gui.ArtifactAction.INSTALL;
-import static net.sourceforge.squirrel_sql.client.update.gui.ArtifactAction.REMOVE;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -34,6 +31,8 @@ import net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallEve
 import net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusEvent;
 import net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusEventFactory;
 import net.sourceforge.squirrel_sql.client.update.gui.installer.event.InstallStatusListener;
+import net.sourceforge.squirrel_sql.client.update.gui.installer.util.InstallFileOperationInfo;
+import net.sourceforge.squirrel_sql.client.update.gui.installer.util.InstallFileOperationInfoFactory;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.ChangeListXmlBean;
 import net.sourceforge.squirrel_sql.client.update.xmlbeans.UpdateXmlSerializer;
 import net.sourceforge.squirrel_sql.fw.util.log.ILogger;
@@ -50,11 +49,9 @@ public class ArtifactInstallerImpl implements ArtifactInstaller {
    private static ILogger s_log = 
       LoggerController.createLogger(ArtifactInstallerImpl.class);
 
-   
    private UpdateUtil _util = null;
    private ChangeListXmlBean _changeListBean = null;
    
-   private UpdateXmlSerializer _serializer = new UpdateXmlSerializer();
    private List<InstallStatusListener> _listeners = 
       new ArrayList<InstallStatusListener>();
    private File updateDir = null;
@@ -78,19 +75,28 @@ public class ArtifactInstallerImpl implements ArtifactInstaller {
    
    /** the lib directory where translation jars are */
    File translationInstallDir = null; 
+
    
+   // Spring-Injected
    InstallStatusEventFactory installStatusEventFactory = null;
    public void setInstallStatusEventFactory(InstallStatusEventFactory installStatusEventFactory)
 	{
 		this.installStatusEventFactory = installStatusEventFactory;
 	}
 
-	/**
+   // Spring-Injected
+   InstallFileOperationInfoFactory installFileOperationInfoFactory = null;
+   public void setInstallFileOperationInfoFactory(
+         InstallFileOperationInfoFactory installFileOperationInfoFactory) {
+      this.installFileOperationInfoFactory = installFileOperationInfoFactory;
+   }
+
+   /**
 	 * @param util
 	 * @param changeList
 	 * @throws FileNotFoundException
 	 */
-	public ArtifactInstallerImpl(UpdateUtil util, File changeList) 
+	public ArtifactInstallerImpl(UpdateUtil util, ChangeListXmlBean changeList) 
       throws FileNotFoundException 
    {
       setUpdateUtil(util);
@@ -101,9 +107,9 @@ public class ArtifactInstallerImpl implements ArtifactInstaller {
 	 * @param changeList
 	 * @throws FileNotFoundException
 	 */
-	public void setChangeList(File changeList) throws FileNotFoundException
+	public void setChangeList(ChangeListXmlBean changeList) throws FileNotFoundException
 	{
-		_changeListBean = _serializer.readChangeListBean(changeList);
+		_changeListBean = changeList;
 	}
 
 	/**
@@ -113,7 +119,7 @@ public class ArtifactInstallerImpl implements ArtifactInstaller {
 	{
 		this._util = util;
       updateDir = _util.getSquirrelUpdateDir();
-      backupRootDir = _util.checkDir(updateDir, "backup");
+      backupRootDir = _util.checkDir(updateDir, UpdateUtil.BACKUP_ROOT_DIR_NAME);
       
       coreBackupDir = 
          _util.checkDir(backupRootDir, UpdateUtil.CORE_ARTIFACT_ID);
@@ -139,10 +145,11 @@ public class ArtifactInstallerImpl implements ArtifactInstaller {
    /**
 	 * @see net.sourceforge.squirrel_sql.client.update.gui.installer.ArtifactInstaller#backupFiles()
 	 */
-   public void backupFiles() throws FileNotFoundException, IOException {
+   public boolean backupFiles() throws FileNotFoundException, IOException {
+      boolean result = true;
       sendBackupStarted();
-      List<ArtifactStatus> stats = 
-         (List<ArtifactStatus>)_changeListBean.getChanges();
+      
+      List<ArtifactStatus> stats = _changeListBean.getChanges();
       for (ArtifactStatus status : stats) {
          String artifactName = status.getName();
          String artifactType = status.getType();
@@ -155,11 +162,14 @@ public class ArtifactInstallerImpl implements ArtifactInstaller {
             continue;
          }
          if (UpdateUtil.CORE_ARTIFACT_ID.equals(artifactType)) {
-            File coreFile = new File(coreInstallDir, artifactName);
+            
+            File installDir = coreInstallDir;
             if (artifactName.equals("squirrel-sql.jar")) {
-               coreFile = new File(installRootDir, artifactName);
+               installDir = installRootDir;
             }
-            if (!coreFile.exists()) {
+            File coreFile = _util.getFile(installDir, artifactName);
+               
+            if (!_util.fileExists(coreFile)) {
                // a new core file? - skip files that don't exist
                if (s_log.isInfoEnabled()) {
                   s_log.info("Skipping backup of file (" + artifactName
@@ -167,29 +177,30 @@ public class ArtifactInstallerImpl implements ArtifactInstaller {
                }               
                continue;
             }
-            File backupFile = new File(coreBackupDir, artifactName);
+            File backupFile = _util.getFile(coreBackupDir, artifactName);
             _util.copyFile(coreFile, backupFile);
          }
          if (UpdateUtil.PLUGIN_ARTIFACT_ID.equals(artifactType)) {
             // artifact name for plugins is <plugin internal name>.zip
-            File pluginBackupFile = new File(pluginBackupDir, artifactName);
+            File pluginBackupFile = _util.getFile(pluginBackupDir, artifactName);
             String pluginDirectory = artifactName.replace(".zip", "");
             String pluginJarFilename = artifactName.replace(".zip", ".jar"); 
             File[] sourceFiles = new File[2];
-            sourceFiles[0] = new File(pluginInstallDir, pluginDirectory);
-            sourceFiles[1] = new File(pluginInstallDir, pluginJarFilename);
+            sourceFiles[0] = _util.getFile(pluginInstallDir, pluginDirectory);
+            sourceFiles[1] = _util.getFile(pluginInstallDir, pluginJarFilename);
             _util.createZipFile(pluginBackupFile, sourceFiles);
          }
          if (UpdateUtil.TRANSLATION_ARTIFACT_ID.equals(artifactType)) {
-            File translationFile = new File(translationInstallDir, artifactName);
-            File backupFile = new File(translationBackupDir, artifactName);
-            if (translationFile.exists()) {
+            File translationFile = _util.getFile(translationInstallDir, artifactName);
+            File backupFile = _util.getFile(translationBackupDir, artifactName);
+            if (_util.fileExists(translationFile)) {
                _util.copyFile(translationFile, backupFile);
             }
          }
       }
       
       sendBackupComplete();
+      return result;
    }
    
    /**
@@ -197,6 +208,10 @@ public class ArtifactInstallerImpl implements ArtifactInstaller {
 	 */
    public void installFiles() {
       sendInstallStarted();
+      
+      List<File> filesToRemove = new ArrayList<File>();
+      List<InstallFileOperationInfo> filesToInstall = 
+         new ArrayList<InstallFileOperationInfo>();
       
       for (ArtifactStatus status : _changeListBean.getChanges()) {
       	ArtifactAction action = status.getArtifactAction();
@@ -227,16 +242,28 @@ public class ArtifactInstallerImpl implements ArtifactInstaller {
       			// log error
       	}
       	fileToRemove = new File(installDir, artifactName);
-      	removeOldFile(fileToRemove);
-      	installFile(installDir, fileToCopy);
+      	filesToRemove.add(fileToRemove);
+      	
+      	InstallFileOperationInfo info = installFileOperationInfoFactory.create(fileToCopy, installDir);
+      	filesToInstall.add(info);
       }
+      removeOldFiles(filesToRemove);
+      installFiles(filesToInstall);      
       sendInstallComplete();
    }
    
    // Helper methods
    
+   private void removeOldFiles(List<File> filesToRemove) {
+      // TODO: complete    
+   }
+   
    private void removeOldFile(File fileToRemove) {
    	// TODO: complete   	
+   }
+   
+   private void installFiles(List<InstallFileOperationInfo> filesToInstall) {
+      // TODO: complete          
    }
    
    private void installFile(File installDir, File FileToCopy) {
@@ -281,4 +308,5 @@ public class ArtifactInstallerImpl implements ArtifactInstaller {
          listener.handleInstallStatusEvent(evt);
       }
    }
+   
 }

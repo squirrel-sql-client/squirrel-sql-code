@@ -19,6 +19,8 @@
 package net.sourceforge.squirrel_sql.client.update.downloader;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,7 +95,13 @@ public class ArtifactDownloader implements Runnable {
             result = _util.downloadHttpFile(_host, _path, fileToGet, destDir);
          } else {
             fileToGet = this._fileSystemUpdatePath +"/" + fileToGet;
-            result = _util.downloadLocalFile(fileToGet, destDir);
+            try {
+               result = _util.downloadLocalFile(fileToGet, destDir);
+            } catch (FileNotFoundException e) {
+               // TODO: alert the user that downloads failed.  Prevent installation
+            } catch (IOException e) {
+               // TODO: alert the user that downloads failed.  Prevent installation
+            }
          }
          if (result == false) {
             sendDownloadFailed();

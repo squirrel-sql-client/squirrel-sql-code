@@ -199,13 +199,14 @@ public class UpdateUtilImpl implements UpdateUtil {
    /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#downloadLocalFile(java.lang.String, java.lang.String)
     */
-   public boolean downloadLocalFile(String fileToGet, String destDir) {
+   public boolean downloadLocalFile(String fileToGet, String destDir) throws FileNotFoundException, IOException {
       boolean result = false;
       File fromFile = new File(fileToGet);
       if (fromFile.isFile() && fromFile.canRead()) {
          String filename = fromFile.getName();
          File toFile = new File(destDir, filename);
-         result = copyFile(fromFile, toFile);
+         copyFile(fromFile, toFile);
+         result = true;
       } else {
          s_log.error("File "+fileToGet+" doesn't appear to be readable");
       }
@@ -215,8 +216,7 @@ public class UpdateUtilImpl implements UpdateUtil {
    /**
     * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#copyFile(java.io.File, java.io.File)
     */
-   public boolean copyFile(final File from, final File to) {
-      boolean result = true;
+   public void copyFile(final File from, final File to) throws FileNotFoundException, IOException {
       if (s_log.isDebugEnabled()) {
          s_log.debug("Copying file "+from+" to file " + to);
       }
@@ -230,15 +230,10 @@ public class UpdateUtilImpl implements UpdateUtil {
          while ((len = in.read(buffer)) != -1) {
             out.write(buffer, 0, len);         
          }
-      } catch (Exception e) {
-         s_log.error("copyFile: Unexpected error while trying to "
-               + "copy file " + from + " to file " + to, e);
-         result = false;
       } finally {
          IOUtilities.closeInputStream(in);
          IOUtilities.closeOutputStream(out);
       }
-      return result;
    }
    
    /**
@@ -524,14 +519,34 @@ public class UpdateUtilImpl implements UpdateUtil {
       os.close();
    }
    
-   private void zipFileOs(ZipOutputStream os, File[] sourceFiles) 
-      throws FileNotFoundException, IOException
-   {
+   /**
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getChangeList(java.io.File)
+    */
+   public ChangeListXmlBean getChangeList(File changeListFile) throws FileNotFoundException {
+      return serializer.readChangeListBean(changeListFile);
+   }
+
+   /**
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#fileExists(java.io.File)
+    */
+   public boolean fileExists(File file) {
+      return file.exists();
+   }
+
+   /**
+    * @see net.sourceforge.squirrel_sql.client.update.UpdateUtil#getFile(java.io.File, java.lang.String)
+    */
+   public File getFile(File installDir, String artifactName) {
+      return new File(installDir, artifactName);
+   }
+
+   private void zipFileOs(ZipOutputStream os, File[] sourceFiles)
+         throws FileNotFoundException, IOException {
       for (File file : sourceFiles) {
          if (file.isDirectory()) {
             zipFileOs(os, file.listFiles());
          } else {
-            FileInputStream fis = null; 
+            FileInputStream fis = null;
             try {
                fis = new FileInputStream(file);
                os.putNextEntry(new ZipEntry(file.getPath()));
@@ -542,5 +557,5 @@ public class UpdateUtilImpl implements UpdateUtil {
          }
       }
    }
-
+   
 }

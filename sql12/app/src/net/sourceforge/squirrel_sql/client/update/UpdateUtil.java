@@ -45,6 +45,12 @@ public interface UpdateUtil {
    public static final String LOCAL_UPDATE_DIR_NAME = "update";
 
    /**
+    * The directory under the local update diretory where previous versions of artifacts are saved for 
+    * recovery purposes or if the user decides to revert to the previous version.               
+    */
+   public static final String BACKUP_ROOT_DIR_NAME = "backup";
+   
+   /**
     * The name of the release xml file that describes the installed version
     */
    public static final String RELEASE_XML_FILENAME = "release.xml";
@@ -116,7 +122,7 @@ public interface UpdateUtil {
     * 
     * @return true if the download succeeded; false otherwise.
     */
-   boolean downloadLocalFile(String fileToGet, String destDir);   
+   boolean downloadLocalFile(String fileToGet, String destDir) throws FileNotFoundException, IOException;   
    
    /**
     * Copies the specified from file to the specified to file.
@@ -128,7 +134,7 @@ public interface UpdateUtil {
     * 
     * @return true if the file copy succeeded; false otherwise.
     */
-   boolean copyFile(final File from, final File to);
+   void copyFile(final File from, final File to) throws FileNotFoundException, IOException;
    
    /**
     * Returns an ChannelXmlBean that describes the locally installed release.
@@ -240,4 +246,9 @@ public interface UpdateUtil {
 
 	public File getI18nDownloadsDir();
 
+	public ChangeListXmlBean getChangeList(File changeListFile) throws FileNotFoundException;
+
+   boolean fileExists(File File);
+
+   File getFile(File installDir, String artifactName);
 }
